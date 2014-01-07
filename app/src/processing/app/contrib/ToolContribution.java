@@ -15,7 +15,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License along 
+  You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
@@ -40,8 +40,11 @@ public class ToolContribution extends LocalContribution implements Tool {
       return new ToolContribution(folder);
     } catch (IgnorableException ig) {
       Base.log(ig.getMessage());
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (Error err) {
+      // Handles UnsupportedClassVersionError and others
+      err.printStackTrace();
+    } catch (Exception ex) {
+      ex.printStackTrace();
     }
     return null;
   }
@@ -71,27 +74,44 @@ public class ToolContribution extends LocalContribution implements Tool {
   static public ArrayList<ToolContribution> loadAll(File toolsFolder) {
     File[] list = ContributionType.TOOL.listCandidates(toolsFolder);
     ArrayList<ToolContribution> outgoing = new ArrayList<ToolContribution>();
-    for (File folder : list) {
-      try {
-        ToolContribution tc = load(folder);
-        if (tc != null) {
-          outgoing.add(tc);
+    // If toolsFolder does not exist or is inaccessible (stranger things have
+    // happened, and are reported as bugs) list will come back null.
+    if (list != null) {
+      for (File folder : list) {
+        try {
+          ToolContribution tc = load(folder);
+          if (tc != null) {
+            outgoing.add(tc);
+          }
+        } catch (Exception e) {
+          e.printStackTrace();
         }
-      } catch (Exception e) {
-        e.printStackTrace();
       }
     }
     return outgoing;
   }
 
 
+//  Editor editor;  // used to send error messages
+  
   public void init(Editor editor) {
+//    try {
+//      this.editor = editor;
     tool.init(editor);
+//    } catch (NoSuchMethodError nsme) {
+//      editor.statusError(tool.getMenuTitle() + " is not compatible with this version of Processing");
+//      nsme.printStackTrace();
+//    }
   }
 
 
   public void run() {
+//    try {
     tool.run();
+//    } catch (NoSuchMethodError nsme) {
+//      editor.statusError(tool.getMenuTitle() + " is not compatible with this version of Processing");
+//      nsme.printStackTrace();
+//    }
   }
 
 

@@ -104,10 +104,11 @@ cmd_name='processing-java'
 if [ $current_name = $cmd_name ]
 then
     java processing.mode.java.Commander "$@"
+    exit $?
 else
   # Start Processing in the same directory as this script
   if [ "$1" ]; then
-    SKETCH=`readlink -f $1`
+    SKETCH=`readlink -f "$1"`
   else
     SKETCH=
   fi

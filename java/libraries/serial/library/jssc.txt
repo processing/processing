@@ -1,0 +1,4 @@
+This is using a modified version of Java Simple Serial Connector by Alexey Sokolov. See https://github.com/gohai/java-simple-serial-connector for details on the modifications.
+
+To compile the C++ portion of the library on OS X:
+g++ -shared [or: -dynamiclib?] -arch i386 -arch x86_64 -I/System/Library/Frameworks/IOKit.framework/Versions/A/Headers -I$JAVA_HOME/include -I$JAVA_HOME/include/darwin -framework IOKit -framework CoreFoundation -o libjSSC-2.6.jnilib jssc.cpp

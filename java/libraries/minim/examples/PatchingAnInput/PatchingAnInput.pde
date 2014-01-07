@@ -4,6 +4,9 @@
   * a UGen. In this case, we patch an Oscil generating a sine wave into 
   * the amplitude input of an Oscil generating a square wave. The result 
   * is known as amplitude modulation.
+  * <p>
+  * For more information about Minim and additional features, 
+  * visit http://code.compartmental.net/minim/
   */
 
 import ddf.minim.*;

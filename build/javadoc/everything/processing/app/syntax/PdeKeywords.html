@@ -81,13 +81,13 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../processing/app/syntax/TokenMarker.html" title="class in processing.app.syntax">processing.app.syntax.TokenMarker</a></li>
+<li><a href="../../../processing/app/syntax/TokenMarker.html" title="class in processing.app.syntax">TokenMarker</a></li>
 <li>
 <ul class="inheritance">
-<li>processing.app.syntax.PdeKeywords</li>
+<li>PdeKeywords</li>
 </ul>
 </li>
 </ul>
@@ -139,33 +139,33 @@ extends <a href="../../../processing/app/syntax/TokenMarker.html" title="class i
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/PdeKeywords.html#addColoring(java.lang.String, java.lang.String)">addColoring</a></strong>(java.lang.String&nbsp;keyword,
-           java.lang.String&nbsp;coloring)</code>
+<td class="colLast"><code><strong><a href="../../../processing/app/syntax/PdeKeywords.html#addColoring(java.lang.String, java.lang.String)">addColoring</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;keyword,
+           <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;coloring)</code>
 <div class="block">Add a keyword, and the associated coloring.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>byte</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/PdeKeywords.html#markTokensImpl(byte, javax.swing.text.Segment, int)">markTokensImpl</a></strong>(byte&nbsp;token,
-              javax.swing.text.Segment&nbsp;line,
+              <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Segment.html?is-external=true" title="class or interface in javax.swing.text">Segment</a>&nbsp;line,
               int&nbsp;lineIndex)</code>
 <div class="block">An abstract method that splits a line up into tokens.</div>
 </td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_processing.app.syntax.TokenMarker">
+<li class="blockList"><a name="methods_inherited_from_class_TokenMarker">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;processing.app.syntax.<a href="../../../processing/app/syntax/TokenMarker.html" title="class in processing.app.syntax">TokenMarker</a></h3>
+<h3>Methods inherited from class&nbsp;<a href="../../../processing/app/syntax/TokenMarker.html" title="class in processing.app.syntax">TokenMarker</a></h3>
 <code><a href="../../../processing/app/syntax/TokenMarker.html#deleteLines(int, int)">deleteLines</a>, <a href="../../../processing/app/syntax/TokenMarker.html#getLineCount()">getLineCount</a>, <a href="../../../processing/app/syntax/TokenMarker.html#insertLines(int, int)">insertLines</a>, <a href="../../../processing/app/syntax/TokenMarker.html#isNextLineRequested()">isNextLineRequested</a>, <a href="../../../processing/app/syntax/TokenMarker.html#markTokens(javax.swing.text.Segment, int)">markTokens</a>, <a href="../../../processing/app/syntax/TokenMarker.html#supportsMultilineTokens()">supportsMultilineTokens</a></code></li>
 </ul>
 <ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -204,10 +204,10 @@ extends <a href="../../../processing/app/syntax/TokenMarker.html" title="class i
 <ul class="blockList">
 <li class="blockList">
 <h4>addColoring</h4>
-<pre>public&nbsp;void&nbsp;addColoring(java.lang.String&nbsp;keyword,
-               java.lang.String&nbsp;coloring)</pre>
-<div class="block">Add a keyword, and the associated coloring. KEYWORD2 and KEYWORD3 
- should only be used with functions (where parens are present). 
+<pre>public&nbsp;void&nbsp;addColoring(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;keyword,
+               <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;coloring)</pre>
+<div class="block">Add a keyword, and the associated coloring. KEYWORD2 and KEYWORD3
+ should only be used with functions (where parens are present).
  This is done for the extra paren handling.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>coloring</code> - one of KEYWORD1, KEYWORD2, LITERAL1, etc.</dd></dl>
 </li>
@@ -219,7 +219,7 @@ extends <a href="../../../processing/app/syntax/TokenMarker.html" title="class i
 <li class="blockList">
 <h4>markTokensImpl</h4>
 <pre>public&nbsp;byte&nbsp;markTokensImpl(byte&nbsp;token,
-                  javax.swing.text.Segment&nbsp;line,
+                  <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Segment.html?is-external=true" title="class or interface in javax.swing.text">Segment</a>&nbsp;line,
                   int&nbsp;lineIndex)</pre>
 <div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../processing/app/syntax/TokenMarker.html#markTokensImpl(byte, javax.swing.text.Segment, int)">TokenMarker</a></code></strong></div>
 <div class="block">An abstract method that splits a line up into tokens. It

@@ -9,12 +9,14 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class HtmlSelection implements Transferable {
 
-  private static List<DataFlavor> flavors = new ArrayList<DataFlavor>();
+  private static List<DataFlavor> flavors;
 
   static {
     try {
+      flavors = new ArrayList<DataFlavor>();
       flavors.add(DataFlavor.stringFlavor);
       flavors.add(new DataFlavor("text/html;class=java.lang.String"));
       flavors.add(new DataFlavor("text/html;class=java.io.Reader"));
@@ -26,18 +28,22 @@ public class HtmlSelection implements Transferable {
 
   private String html;
 
+  
   public HtmlSelection(String html) {
     this.html = html;
   }
 
+  
   public DataFlavor[] getTransferDataFlavors() {
     return flavors.toArray(new DataFlavor[flavors.size()]);
   }
 
+  
   public boolean isDataFlavorSupported(DataFlavor flavor) {
     return flavors.contains(flavor);
   }
 
+  
   public Object getTransferData(DataFlavor flavor)
     throws UnsupportedFlavorException {
     if (flavor.equals(DataFlavor.stringFlavor)) {

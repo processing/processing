@@ -23,6 +23,7 @@ package processing.app.contrib;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import processing.app.Base;
@@ -30,7 +31,6 @@ import processing.app.Editor;
 import processing.app.Library;
 
 public enum ContributionType {
-//    LIBRARY, LIBRARY_COMPILATION, TOOL, MODE;
   LIBRARY, TOOL, MODE;
 
     
@@ -38,8 +38,6 @@ public enum ContributionType {
     switch (this) {
     case LIBRARY:
       return "library";
-//      case LIBRARY_COMPILATION:
-//        return "compilation";
     case TOOL:
       return "tool";
     case MODE:
@@ -49,7 +47,10 @@ public enum ContributionType {
   };
   
   
-  /** Return Mode for mode, Tool for tool, etc. */
+  /** 
+   * Get this type name as a purtied up, capitalized version. 
+   * @return Mode for mode, Tool for tool, etc. 
+   */
   public String getTitle() {
     String s = toString();
     return Character.toUpperCase(s.charAt(0)) + s.substring(1);
@@ -60,8 +61,6 @@ public enum ContributionType {
     switch (this) {
     case LIBRARY:
       return "libraries";
-//      case LIBRARY_COMPILATION:
-//        return "libraries";
     case TOOL:
       return "tools";
     case MODE:
@@ -69,6 +68,26 @@ public enum ContributionType {
     }
     return null;  // should be unreachable
   }
+  
+  
+  public File createTempFolder() throws IOException {
+    return Base.createTempFolder(toString(), "tmp", getSketchbookFolder());
+  }
+  
+  
+  public boolean isTempFolderName(String name) {
+    return name.startsWith(toString()) && name.endsWith("tmp");
+  }
+  
+  
+//  public String getTempPrefix() {
+//    return toString();
+//  }
+//  
+//  
+//  public String getTempSuffix() {
+//    return "tmp";
+//  }
     
     
 //    public String getPropertiesName() {
@@ -78,16 +97,13 @@ public enum ContributionType {
     
   static public ContributionType fromName(String s) {
     if (s != null) {
-      if ("library".equals(s.toLowerCase())) {
+      if ("library".equalsIgnoreCase(s)) {
         return LIBRARY;
       }
-//        if ("compilation".equals(s.toLowerCase())) {
-//          return LIBRARY_COMPILATION;
-//        }
-      if ("tool".equals(s.toLowerCase())) {
+      if ("tool".equalsIgnoreCase(s)) {
         return TOOL;
       }
-      if ("mode".equals(s.toLowerCase())) {
+      if ("mode".equalsIgnoreCase(s)) {
         return MODE;
       }
     }
@@ -109,7 +125,9 @@ public enum ContributionType {
 
 
   boolean isCandidate(File potential) {
-    return (potential.isDirectory() && new File(potential, toString()).exists());
+    return (potential.isDirectory() && 
+            new File(potential, toString()).exists() && 
+            !isTempFolderName(potential.getName()));
   }
 
 
@@ -145,10 +163,20 @@ public enum ContributionType {
   }
   
   
+  /** 
+   * Returns true if the type of contribution requires the PDE to restart
+   * when being added or removed. 
+   */
+  boolean requiresRestart() {
+    return this == ContributionType.TOOL || this == ContributionType.MODE;
+  }
+  
+  
   LocalContribution load(Base base, File folder) {
     switch (this) {
     case LIBRARY:
-      return new Library(folder);
+      //return new Library(folder);
+      return Library.load(folder);
     case TOOL:
       return ToolContribution.load(folder);
     case MODE:
@@ -174,15 +202,20 @@ public enum ContributionType {
     return contribs;
   }
   
+
+  File getBackupFolder() {
+    return new File(getSketchbookFolder(), "old");
+  }
+  
   
   File createBackupFolder(StatusPanel status) {
-    File backupFolder = new File(getSketchbookFolder(), "old");
-    if (backupFolder.isDirectory()) {
-      status.setErrorMessage("First remove the folder named \"old\" from the " + 
-                             getFolderName() + " folder in the sketchbook.");
-      return null;
-    }
-    if (!backupFolder.mkdirs()) {
+    File backupFolder = getBackupFolder(); 
+//    if (backupFolder.isDirectory()) {
+//      status.setErrorMessage("First remove the folder named \"old\" from the " + 
+//                             getFolderName() + " folder in the sketchbook.");
+//      return null;
+//    }
+    if (!backupFolder.exists() && !backupFolder.mkdirs()) {
       status.setErrorMessage("Could not create a backup folder in the " +
       		                   "sketchbook " + toString() + " folder.");
       return null;

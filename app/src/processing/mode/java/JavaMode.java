@@ -101,6 +101,12 @@ public class JavaMode extends Mode {
     if (coreLibrary == null) {
       File coreFolder = Base.getContentFile("core");
       coreLibrary = new Library(coreFolder);
+//      try {
+//        coreLibrary = getLibrary("processing.core");
+//        System.out.println("core found at " + coreLibrary.getLibraryPath());
+//      } catch (SketchException e) { 
+//        Base.log("Serious problem while locating processing.core", e);
+//      }
     }
     return coreLibrary;
   }

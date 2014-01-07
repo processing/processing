@@ -26,8 +26,7 @@ String[] urls = {
   "http://www.processing.org/learning/gettingstarted/",
   "http://www.processing.org/download/", 
   "http://www.processing.org/shop/", 
-  "http://www.processing.org/about/", 
-  "http://www.processing.org/about/people"
+  "http://www.processing.org/about/"
 };
 
 // This will keep track of whether the thread is finished

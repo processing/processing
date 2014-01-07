@@ -81,10 +81,10 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li>java.lang.Object</li>
+<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
 <li>
 <ul class="inheritance">
-<li>processing.app.Platform</li>
+<li>Platform</li>
 </ul>
 </li>
 </ul>
@@ -93,12 +93,12 @@
 <li class="blockList">
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../processing/app/linux/Platform.html" title="class in processing.app.linux">Platform</a>, <a href="../../processing/app/macosx/Platform.html" title="class in processing.app.macosx">Platform</a>, <a href="../../processing/app/windows/Platform.html" title="class in processing.app.windows">Platform</a></dd>
+<dd><a href="../../processing/app/platform/LinuxPlatform.html" title="class in processing.app.platform">LinuxPlatform</a>, <a href="../../processing/app/platform/MacPlatform.html" title="class in processing.app.platform">MacPlatform</a>, <a href="../../processing/app/platform/WindowsPlatform.html" title="class in processing.app.platform">WindowsPlatform</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="strong">Platform</span>
-extends java.lang.Object</pre>
+extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
 <div class="block">Used by Base for platform-specific tweaking, for instance finding the
  sketchbook location using the Windows registry, or OS X event handling.
 
@@ -167,55 +167,61 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>java.io.File</code></td>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../processing/app/Platform.html#deleteFile(java.io.File)">deleteFile</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file)</code>
+<div class="block">Attempts to move to the Trash on OS X, or the Recycle Bin on Windows.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Platform.html#getDefaultSketchbookFolder()">getDefaultSketchbookFolder</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Platform.html#getenv(java.lang.String)">getenv</a></strong>(java.lang.String&nbsp;variable)</code>&nbsp;</td>
-</tr>
 <tr class="altColor">
-<td class="colFirst"><code>java.io.File</code></td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colLast"><code><strong><a href="../../processing/app/Platform.html#getenv(java.lang.String)">getenv</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variable)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Platform.html#getSettingsFolder()">getSettingsFolder</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Platform.html#init(processing.app.Base)">init</a></strong>(<a href="../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Platform.html#openFolder(java.io.File)">openFolder</a></strong>(java.io.File&nbsp;file)</code>&nbsp;</td>
-</tr>
 <tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/app/Platform.html#openFolder(java.io.File)">openFolder</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Platform.html#openFolderAvailable()">openFolderAvailable</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Platform.html#openURL(java.lang.String)">openURL</a></strong>(java.lang.String&nbsp;url)</code>&nbsp;</td>
-</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Platform.html#setenv(java.lang.String, java.lang.String)">setenv</a></strong>(java.lang.String&nbsp;variable,
-      java.lang.String&nbsp;value)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/app/Platform.html#openURL(java.lang.String)">openURL</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;url)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/app/Platform.html#setenv(java.lang.String, java.lang.String)">setenv</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variable,
+      <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/app/Platform.html#setLookAndFeel()">setLookAndFeel</a></strong>()</code>
 <div class="block">Set the default L & F.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../processing/app/Platform.html#unsetenv(java.lang.String)">unsetenv</a></strong>(java.lang.String&nbsp;variable)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/app/Platform.html#unsetenv(java.lang.String)">unsetenv</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variable)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
+<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
 </ul>
 </li>
 </ul>
@@ -255,7 +261,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>setLookAndFeel</h4>
 <pre>public&nbsp;void&nbsp;setLookAndFeel()
-                    throws java.lang.Exception</pre>
+                    throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></pre>
 <div class="block">Set the default L & F. While I enjoy the bounty of the sixteen possible
  exception types that this UIManager method might throw, I feel that in
  just this one particular case, I'm being spoiled by those engineers
@@ -265,7 +271,7 @@ extends java.lang.Object</pre>
  all into a single catch-all "Exception". Because in the end, all I really
  care about is whether things worked or not. And even then, I don't care.</div>
 <dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.lang.Exception</code> - Just like I said.</dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></code> - Just like I said.</dd></dl>
 </li>
 </ul>
 <a name="init(processing.app.Base)">
@@ -283,10 +289,10 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSettingsFolder</h4>
-<pre>public&nbsp;java.io.File&nbsp;getSettingsFolder()
-                               throws java.lang.Exception</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;getSettingsFolder()
+                       throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></pre>
 <dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.lang.Exception</code></dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></code></dd></dl>
 </li>
 </ul>
 <a name="getDefaultSketchbookFolder()">
@@ -295,11 +301,11 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getDefaultSketchbookFolder</h4>
-<pre>public&nbsp;java.io.File&nbsp;getDefaultSketchbookFolder()
-                                        throws java.lang.Exception</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;getDefaultSketchbookFolder()
+                                throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd>if not overridden, a folder named "sketchbook" in user.home.</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code>java.lang.Exception</code> - so that subclasses can throw a fit</dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></code> - so that subclasses can throw a fit</dd></dl>
 </li>
 </ul>
 <a name="openURL(java.lang.String)">
@@ -308,10 +314,10 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>openURL</h4>
-<pre>public&nbsp;void&nbsp;openURL(java.lang.String&nbsp;url)
-             throws java.lang.Exception</pre>
+<pre>public&nbsp;void&nbsp;openURL(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;url)
+             throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></pre>
 <dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.lang.Exception</code></dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></code></dd></dl>
 </li>
 </ul>
 <a name="openFolderAvailable()">
@@ -329,10 +335,27 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>openFolder</h4>
-<pre>public&nbsp;void&nbsp;openFolder(java.io.File&nbsp;file)
-                throws java.lang.Exception</pre>
+<pre>public&nbsp;void&nbsp;openFolder(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file)
+                throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></pre>
 <dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.lang.Exception</code></dd></dl>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></code></dd></dl>
+</li>
+</ul>
+<a name="deleteFile(java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>deleteFile</h4>
+<pre>public final&nbsp;boolean&nbsp;deleteFile(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;file)
+                         throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
+<div class="block">Attempts to move to the Trash on OS X, or the Recycle Bin on Windows. 
+ Also tries to find a suitable Trash location on Linux. 
+ If not possible, just deletes the file or folder instead.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>file</code> - the folder or file to be removed/deleted</dd>
+<dt><span class="strong">Returns:</span></dt><dd>true if the folder was successfully removed</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
 </li>
 </ul>
 <a name="setenv(java.lang.String, java.lang.String)">
@@ -341,8 +364,8 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setenv</h4>
-<pre>public&nbsp;void&nbsp;setenv(java.lang.String&nbsp;variable,
-          java.lang.String&nbsp;value)</pre>
+<pre>public&nbsp;void&nbsp;setenv(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variable,
+          <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;value)</pre>
 </li>
 </ul>
 <a name="getenv(java.lang.String)">
@@ -351,7 +374,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getenv</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getenv(java.lang.String&nbsp;variable)</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getenv(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variable)</pre>
 </li>
 </ul>
 <a name="unsetenv(java.lang.String)">
@@ -360,7 +383,7 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>unsetenv</h4>
-<pre>public&nbsp;int&nbsp;unsetenv(java.lang.String&nbsp;variable)</pre>
+<pre>public&nbsp;int&nbsp;unsetenv(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variable)</pre>
 </li>
 </ul>
 </li>

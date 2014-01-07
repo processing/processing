@@ -38,11 +38,11 @@ public class PdeKeywords extends TokenMarker {
 
   private int lastOffset;
   private int lastKeyword;
-  
+
 
   /**
-   * Add a keyword, and the associated coloring. KEYWORD2 and KEYWORD3 
-   * should only be used with functions (where parens are present). 
+   * Add a keyword, and the associated coloring. KEYWORD2 and KEYWORD3
+   * should only be used with functions (where parens are present).
    * This is done for the extra paren handling.
    * @param coloring one of KEYWORD1, KEYWORD2, LITERAL1, etc.
    */
@@ -57,7 +57,7 @@ public class PdeKeywords extends TokenMarker {
     boolean paren = false;
     switch (coloring.charAt(0)) {
       case 'K': id = Token.KEYWORD1 + num; break;
-      case 'L': id = Token.LITERAL1 + num; break; 
+      case 'L': id = Token.LITERAL1 + num; break;
       case 'F': id = Token.FUNCTION1 + num; paren = true; break;
     }
     keywordColoring.add(keyword, (byte) id, paren);
@@ -137,7 +137,10 @@ public class PdeKeywords extends TokenMarker {
               lastOffset = lastKeyword = mlength;
               break loop;
             }
-            i++;  // http://processing.org/bugs/bugzilla/609.html [jdf] 
+            // https://github.com/processing/processing/issues/1681
+            if (array[i1] != ' ') {
+              i++;  // http://processing.org/bugs/bugzilla/609.html [jdf]
+            }
           }
           break;
         default:
@@ -216,24 +219,24 @@ public class PdeKeywords extends TokenMarker {
     }
     return token;
   }
-  
-  
+
+
   private boolean doKeyword(Segment line, int i, char c) {
 //    return doKeyword(line, i, false);
 //  }
-//  
-//  
+//
+//
 //  //private boolean doKeyword(Segment line, int i, char c) {
 //  private boolean doKeyword(Segment line, int i, boolean paren) {
     int i1 = i + 1;
     int len = i - lastKeyword;
-    
+
     boolean paren = Editor.checkParen(line.array, i, line.array.length);
 //    String s = new String(line.array, lastKeyword, len);
 //    if (s.equals("mousePressed")) {
 //      System.out.println("found mousePressed" + (paren ? "()" : ""));
 //      //new Exception().printStackTrace(System.out);
-////      System.out.println("  " + i + " " + line.count + " " + 
+////      System.out.println("  " + i + " " + line.count + " " +
 ////        //new String(line.array, line.offset + i, line.offset + line.count - i));
 ////        new String(line.array, i, line.array.length - i));
 //    }

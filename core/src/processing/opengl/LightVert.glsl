@@ -20,8 +20,8 @@
 
 #define PROCESSING_LIGHT_SHADER
 
-uniform mat4 modelview;
-uniform mat4 transform;
+uniform mat4 modelviewMatrix;
+uniform mat4 transformMatrix;
 uniform mat3 normalMatrix;
 
 uniform int lightCount;
@@ -33,7 +33,7 @@ uniform vec3 lightSpecular[8];
 uniform vec3 lightFalloff[8];
 uniform vec2 lightSpot[8];
 
-attribute vec4 vertex;
+attribute vec4 position;
 attribute vec4 color;
 attribute vec3 normal;
 
@@ -75,10 +75,10 @@ float blinnPhongFactor(vec3 lightDir, vec3 vertPos, vec3 vecNormal, float shine)
 
 void main() {
   // Vertex in clip coordinates
-  gl_Position = transform * vertex;
+  gl_Position = transformMatrix * position;
     
   // Vertex in eye coordinates
-  vec3 ecVertex = vec3(modelview * vertex);
+  vec3 ecVertex = vec3(modelviewMatrix * position);
   
   // Normal vector in eye coordinates
   vec3 ecNormal = normalize(normalMatrix * normal);

@@ -49,6 +49,9 @@
 	  message="Please build the core library first and make sure it sits in ../core/library/core.jar" />
 
     <mkdir dir="bin" />
+    <!-- in some cases, pde.jar was not getting built
+	 https://github.com/processing/processing/issues/1792 -->
+    <delete file="pde.jar" />
 
     <!-- env used to set classpath below -->
     <property environment="env" />
@@ -89,9 +92,12 @@
 	   encoding="UTF-8" 
 	   includeAntRuntime="false" 
 	   classpath="../core/library/core.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/jdt-core.jar; lib/jna.jar; lib/org-netbeans-swing-outline.jar;lib/com.ibm.icu_4.4.2.v20110823.jar;lib/jdi.jar;lib/jdimodel.jar;lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar"
-	   debug="on">
+	   debug="on"
+	   nowarn="true"
+	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
       <src path="src" />
       <src path="generated" />
+      <compilerclasspath path="../java/mode/ecj.jar" />
     </javac>
   </target>
 

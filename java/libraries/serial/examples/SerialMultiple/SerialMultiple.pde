@@ -13,7 +13,7 @@ int[] dataIn = new int[2];         // a list to hold data from the serial ports
 void setup()  {
   size(400, 300);
   // print a list of the serial ports:
-  println(Serial.list());
+  printArray(Serial.list());
   // On my machine, the first and third ports in the list
   // were the serial ports that my microcontrollers were 
   // attached to.
@@ -77,7 +77,7 @@ void setup()
 void loop() {
   // read analog input, divide by 4 to make the range 0-255:
   int analogValue = analogRead(0)/4; 
-  Serial.print(analogValue, BYTE);
+  Serial.write(analogValue);
   // pause for 10 milliseconds:
   delay(10);                 
 }

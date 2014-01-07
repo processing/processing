@@ -104,6 +104,11 @@ import processing.core.PApplet;
  * @author JSON.org
  * @version 2012-12-01
  * @webref data:composite
+ * @see JSONArray
+ * @see PApplet#loadJSONObject(String)
+ * @see PApplet#loadJSONArray(String)
+ * @see PApplet#saveJSONObject(JSONObject, String)
+ * @see PApplet#saveJSONArray(JSONArray, String)
  */
 public class JSONObject {
   /**
@@ -189,6 +194,7 @@ public class JSONObject {
 
   /**
    * Construct an empty JSONObject.
+   * @nowebref
    */
   public JSONObject() {
     this.map = new HashMap<String, Object>();
@@ -215,6 +221,9 @@ public class JSONObject {
 //  }
 
 
+  /**
+   * @nowebref
+   */
   public JSONObject(Reader reader) {
     this(new JSONTokener(reader));
   }
@@ -299,6 +308,9 @@ public class JSONObject {
   }
 
 
+  /**
+   * @nowebref
+   */
   public JSONObject(IntDict dict) {
     map = new HashMap<String, Object>();
     for (int i = 0; i < dict.size(); i++) {
@@ -307,6 +319,9 @@ public class JSONObject {
   }
 
 
+  /**
+   * @nowebref
+   */
   public JSONObject(FloatDict dict) {
     map = new HashMap<String, Object>();
     for (int i = 0; i < dict.size(); i++) {
@@ -315,6 +330,9 @@ public class JSONObject {
   }
 
 
+  /**
+   * @nowebref
+   */
   public JSONObject(StringDict dict) {
     map = new HashMap<String, Object>();
     for (int i = 0; i < dict.size(); i++) {
@@ -535,13 +553,16 @@ public class JSONObject {
 
 
   /**
-   * Get the string associated with a key.
+   * Gets the String associated with a key
    *
-   * @param key   A key string.
-   * @return      A string which is the value.
-   * @throws   JSONException if there is no string value for the key.
    * @webref jsonobject:method
-   * @brief Get the string associated with a key
+   * @brief Gets the string value associated with a key
+   * @param key a key string
+   * @return A string which is the value.
+   * @throws JSONException if there is no string value for the key.
+   * @see JSONObject#getInt(String)
+   * @see JSONObject#getFloat(String)
+   * @see JSONObject#getBoolean(String)
    */
   public String getString(String key) {
     Object object = this.get(key);
@@ -553,14 +574,31 @@ public class JSONObject {
 
 
   /**
-   * Get the int value associated with a key.
+   * Get an optional string associated with a key.
+   * It returns the defaultValue if there is no such key.
    *
    * @param key   A key string.
-   * @return      The integer value.
-   * @throws   JSONException if the key is not found or if the value cannot
-   *  be converted to an integer.
+   * @param defaultValue     The default.
+   * @return      A string which is the value.
+   */
+  public String getString(String key, String defaultValue) {
+    Object object = this.opt(key);
+    return NULL.equals(object) ? defaultValue : object.toString();
+  }
+
+
+  /**
+   * Gets the int value associated with a key
+   *
    * @webref jsonobject:method
-   * @brief Get the int value associated with a key
+   * @brief Gets the int value associated with a key
+   * @param key a key string
+   * @return The integer value.
+   * @throws JSONException if the key is not found or if the value cannot
+   *  be converted to an integer.
+   * @see JSONObject#getFloat(String)
+   * @see JSONObject#getString(String)
+   * @see JSONObject#getBoolean(String)
    */
   public int getInt(String key) {
     Object object = this.get(key);
@@ -570,6 +608,25 @@ public class JSONObject {
           : Integer.parseInt((String)object);
     } catch (Exception e) {
       throw new RuntimeException("JSONObject[" + quote(key) + "] is not an int.");
+    }
+  }
+
+
+  /**
+   * Get an optional int value associated with a key,
+   * or the default if there is no such key or if the value is not a number.
+   * If the value is a string, an attempt will be made to evaluate it as
+   * a number.
+   *
+   * @param key   A key string.
+   * @param defaultValue     The default.
+   * @return      An object which is the value.
+   */
+  public int getInt(String key, int defaultValue) {
+    try {
+      return this.getInt(key);
+    } catch (Exception e) {
+      return defaultValue;
     }
   }
 
@@ -593,12 +650,45 @@ public class JSONObject {
     }
   }
 
+
+  /**
+   * Get an optional long value associated with a key,
+   * or the default if there is no such key or if the value is not a number.
+   * If the value is a string, an attempt will be made to evaluate it as
+   * a number.
+   *
+   * @param key          A key string.
+   * @param defaultValue The default.
+   * @return             An object which is the value.
+   */
+  public long getLong(String key, long defaultValue) {
+    try {
+      return this.getLong(key);
+    } catch (Exception e) {
+      return defaultValue;
+    }
+  }
+
+
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Gets the float value associated with a key
+   * @param key a key string
+   * @see JSONObject#getInt(String)
+   * @see JSONObject#getString(String)
+   * @see JSONObject#getBoolean(String)
    */
   public float getFloat(String key) {
     return (float) getDouble(key);
+  }
+
+
+  public float getFloat(String key, float defaultValue) {
+    try {
+      return getFloat(key);
+    } catch (Exception e) {
+      return defaultValue;
+    }
   }
 
 
@@ -622,13 +712,35 @@ public class JSONObject {
 
 
   /**
-   * Get the boolean value associated with a key.
+   * Get an optional double associated with a key, or the
+   * defaultValue if there is no such key or if its value is not a number.
+   * If the value is a string, an attempt will be made to evaluate it as
+   * a number.
    *
    * @param key   A key string.
-   * @return      The truth.
-   * @throws      JSONException if the value is not a Boolean or the String "true" or "false".
+   * @param defaultValue     The default.
+   * @return      An object which is the value.
+   */
+  public double getDouble(String key, double defaultValue) {
+    try {
+      return this.getDouble(key);
+    } catch (Exception e) {
+      return defaultValue;
+    }
+  }
+
+
+  /**
+   * Get the boolean value associated with a key.
+   *
    * @webref jsonobject:method
-   * @brief Get the boolean value associated with a key
+   * @brief Gets the boolean value associated with a key
+   * @param key a key string
+   * @return The truth.
+   * @throws JSONException if the value is not a Boolean or the String "true" or "false".
+   * @see JSONObject#getInt(String)
+   * @see JSONObject#getFloat(String)
+   * @see JSONObject#getString(String)
    */
   public boolean getBoolean(String key) {
     Object object = this.get(key);
@@ -646,13 +758,34 @@ public class JSONObject {
 
 
   /**
+   * Get an optional boolean associated with a key.
+   * It returns the defaultValue if there is no such key, or if it is not
+   * a Boolean or the String "true" or "false" (case insensitive).
+   *
+   * @param key              A key string.
+   * @param defaultValue     The default.
+   * @return      The truth.
+   */
+  public boolean getBoolean(String key, boolean defaultValue) {
+    try {
+      return this.getBoolean(key);
+    } catch (Exception e) {
+      return defaultValue;
+    }
+  }
+
+
+  /**
    * Get the JSONArray value associated with a key.
    *
-   * @param key   A key string.
-   * @return      A JSONArray which is the value.
-   * @throws      JSONException if the key is not found or if the value is not a JSONArray.
    * @webref jsonobject:method
-   * @brief Get the JSONArray value associated with a key
+   * @brief Gets the JSONArray value associated with a key
+   * @param key a key string
+   * @return A JSONArray which is the value.
+   * @throws JSONException if the key is not found or if the value is not a JSONArray.
+   * @see JSONObject#getJSONObject(String)
+   * @see JSONObject#setJSONObject(String, JSONObject)
+   * @see JSONObject#setJSONArray(String, JSONArray)
    */
   public JSONArray getJSONArray(String key) {
     Object object = this.get(key);
@@ -666,11 +799,14 @@ public class JSONObject {
   /**
    * Get the JSONObject value associated with a key.
    *
-   * @param key   A key string.
-   * @return      A JSONObject which is the value.
-   * @throws      JSONException if the key is not found or if the value is not a JSONObject.
    * @webref jsonobject:method
-   * @brief Get the JSONObject value associated with a key
+   * @brief Gets the JSONObject value associated with a key
+   * @param key a key string
+   * @return A JSONObject which is the value.
+   * @throws JSONException if the key is not found or if the value is not a JSONObject.
+   * @see JSONObject#getJSONArray(String)
+   * @see JSONObject#setJSONObject(String, JSONObject)
+   * @see JSONObject#setJSONArray(String, JSONArray)
    */
   public JSONObject getJSONObject(String key) {
     Object object = this.get(key);
@@ -770,7 +906,7 @@ public class JSONObject {
    * @return      true if there is no value associated with the key or if
    *  the value is the JSONObject.NULL object.
    */
-  protected boolean isNull(String key) {
+  public boolean isNull(String key) {
     return JSONObject.NULL.equals(this.opt(key));
   }
 
@@ -874,24 +1010,6 @@ public class JSONObject {
 
 
 //  /**
-//   * Get an optional boolean associated with a key.
-//   * It returns the defaultValue if there is no such key, or if it is not
-//   * a Boolean or the String "true" or "false" (case insensitive).
-//   *
-//   * @param key              A key string.
-//   * @param defaultValue     The default.
-//   * @return      The truth.
-//   */
-//  private boolean optBoolean(String key, boolean defaultValue) {
-//    try {
-//      return this.getBoolean(key);
-//    } catch (Exception e) {
-//      return defaultValue;
-//    }
-//  }
-
-
-//  /**
 //   * Get an optional double associated with a key,
 //   * or NaN if there is no such key or if its value is not a number.
 //   * If the value is a string, an attempt will be made to evaluate it as
@@ -906,25 +1024,6 @@ public class JSONObject {
 
 
 //  /**
-//   * Get an optional double associated with a key, or the
-//   * defaultValue if there is no such key or if its value is not a number.
-//   * If the value is a string, an attempt will be made to evaluate it as
-//   * a number.
-//   *
-//   * @param key   A key string.
-//   * @param defaultValue     The default.
-//   * @return      An object which is the value.
-//   */
-//  private double optDouble(String key, double defaultValue) {
-//    try {
-//      return this.getDouble(key);
-//    } catch (Exception e) {
-//      return defaultValue;
-//    }
-//  }
-
-
-//  /**
 //   * Get an optional int value associated with a key,
 //   * or zero if there is no such key or if the value is not a number.
 //   * If the value is a string, an attempt will be made to evaluate it as
@@ -935,25 +1034,6 @@ public class JSONObject {
 //   */
 //  private int optInt(String key) {
 //    return this.optInt(key, 0);
-//  }
-
-
-//  /**
-//   * Get an optional int value associated with a key,
-//   * or the default if there is no such key or if the value is not a number.
-//   * If the value is a string, an attempt will be made to evaluate it as
-//   * a number.
-//   *
-//   * @param key   A key string.
-//   * @param defaultValue     The default.
-//   * @return      An object which is the value.
-//   */
-//  private int optInt(String key, int defaultValue) {
-//    try {
-//      return this.getInt(key);
-//    } catch (Exception e) {
-//      return defaultValue;
-//    }
 //  }
 
 
@@ -1000,25 +1080,6 @@ public class JSONObject {
 
 
 //  /**
-//   * Get an optional long value associated with a key,
-//   * or the default if there is no such key or if the value is not a number.
-//   * If the value is a string, an attempt will be made to evaluate it as
-//   * a number.
-//   *
-//   * @param key          A key string.
-//   * @param defaultValue The default.
-//   * @return             An object which is the value.
-//   */
-//  public long optLong(String key, long defaultValue) {
-//    try {
-//      return this.getLong(key);
-//    } catch (Exception e) {
-//      return defaultValue;
-//    }
-//  }
-
-
-//  /**
 //   * Get an optional string associated with a key.
 //   * It returns an empty string if there is no such key. If the value is not
 //   * a string and is not null, then it is converted to a string.
@@ -1028,20 +1089,6 @@ public class JSONObject {
 //   */
 //  public String optString(String key) {
 //    return this.optString(key, "");
-//  }
-
-
-//  /**
-//   * Get an optional string associated with a key.
-//   * It returns the defaultValue if there is no such key.
-//   *
-//   * @param key   A key string.
-//   * @param defaultValue     The default.
-//   * @return      A string which is the value.
-//   */
-//  public String optString(String key, String defaultValue) {
-//    Object object = this.opt(key);
-//    return NULL.equals(object) ? defaultValue : object.toString();
 //  }
 
 
@@ -1095,7 +1142,12 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Put a key/String pair in the JSONObject
+   * @param key a key string
+   * @param value the value to assign
+   * @see JSONObject#setInt(String, int)
+   * @see JSONObject#setFloat(String, float)
+   * @see JSONObject#setBoolean(String, boolean)
    */
   public JSONObject setString(String key, String value) {
     return put(key, value);
@@ -1105,12 +1157,15 @@ public class JSONObject {
   /**
    * Put a key/int pair in the JSONObject.
    *
-   * @param key   A key string.
-   * @param value An int which is the value.
-   * @return this.
-   * @throws JSONException If the key is null.
    * @webref jsonobject:method
    * @brief Put a key/int pair in the JSONObject
+   * @param key a key string
+   * @param value the value to assign
+   * @return this.
+   * @throws JSONException If the key is null.
+   * @see JSONObject#setFloat(String, float)
+   * @see JSONObject#setString(String, String)
+   * @see JSONObject#setBoolean(String, boolean)
    */
   public JSONObject setInt(String key, int value) {
     this.put(key, new Integer(value));
@@ -1133,7 +1188,12 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Put a key/float pair in the JSONObject
+   * @param key a key string
+   * @param value the value to assign
+   * @see JSONObject#setInt(String, int)
+   * @see JSONObject#setString(String, String)
+   * @see JSONObject#setBoolean(String, boolean)
    */
   public JSONObject setFloat(String key, float value) {
     this.put(key, new Double(value));
@@ -1158,12 +1218,15 @@ public class JSONObject {
   /**
    * Put a key/boolean pair in the JSONObject.
    *
-   * @param key   A key string.
-   * @param value A boolean which is the value.
-   * @return this.
-   * @throws JSONException If the key is null.
    * @webref jsonobject:method
    * @brief Put a key/boolean pair in the JSONObject
+   * @param key a key string
+   * @param value the value to assign
+   * @return this.
+   * @throws JSONException If the key is null.
+   * @see JSONObject#setInt(String, int)
+   * @see JSONObject#setFloat(String, float)
+   * @see JSONObject#setString(String, String)
    */
   public JSONObject setBoolean(String key, boolean value) {
     this.put(key, value ? Boolean.TRUE : Boolean.FALSE);
@@ -1172,7 +1235,12 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Sets the JSONObject value associated with a key
+   * @param key a key string
+   * @param value value to assign
+   * @see JSONObject#setJSONArray(String, JSONArray)
+   * @see JSONObject#getJSONObject(String)
+   * @see JSONObject#getJSONArray(String)
    */
   public JSONObject setJSONObject(String key, JSONObject value) {
     return put(key, value);
@@ -1180,7 +1248,12 @@ public class JSONObject {
 
   /**
    * @webref jsonobject:method
-   * @brief To come...
+   * @brief Sets the JSONArray value associated with a key
+   * @param key a key string
+   * @param value value to assign
+   * @see JSONObject#setJSONObject(String, JSONObject)
+   * @see JSONObject#getJSONObject(String)
+   * @see JSONObject#getJSONArray(String)
    */
   public JSONObject setJSONArray(String key, JSONArray value) {
     return put(key, value);
@@ -1717,9 +1790,10 @@ public class JSONObject {
         if (actualFactor > 0) {
           writer.write(' ');
         }
-        writeValue(writer, this.map.get(key), actualFactor, indent);
+        //writeValue(writer, this.map.get(key), actualFactor, indent);
+        writeValue(writer, this.map.get(key), indentFactor, indent);
       } else if (length != 0) {
-        final int newindent = indent + actualFactor;
+        final int newIndent = indent + actualFactor;
         while (keys.hasNext()) {
           Object key = keys.next();
           if (commanate) {
@@ -1728,14 +1802,14 @@ public class JSONObject {
           if (indentFactor != -1) {
             writer.write('\n');
           }
-          indent(writer, newindent);
+          indent(writer, newIndent);
           writer.write(quote(key.toString()));
           writer.write(':');
           if (actualFactor > 0) {
             writer.write(' ');
           }
-          writeValue(writer, this.map.get(key), actualFactor,
-                     newindent);
+          //writeValue(writer, this.map.get(key), actualFactor, newIndent);
+          writeValue(writer, this.map.get(key), indentFactor, newIndent);
           commanate = true;
         }
         if (indentFactor != -1) {

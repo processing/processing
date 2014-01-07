@@ -87,7 +87,20 @@ public class PGraphics3D extends PGraphicsOpenGL {
     pushProjection();
     ortho(0, width, 0, height, -1, +1);
     pushMatrix();
-    camera(width/2, height/2);
+
+    // Set camera for 2D rendering, it simply centers at (width/2, height/2)
+    float centerX = width/2;
+    float centerY = height/2;
+    modelview.reset();
+    modelview.translate(-centerX, -centerY);
+
+    modelviewInv.set(modelview);
+    modelviewInv.invert();
+
+    camera.set(modelview);
+    cameraInv.set(modelviewInv);
+
+    updateProjmodelview();
   }
 
 
@@ -117,6 +130,9 @@ public class PGraphics3D extends PGraphicsOpenGL {
 
     } else if (extension.equals("objz")) {
       try {
+        // TODO: The obj file can be read from the gzip, but if it refers to
+        // a materials file and texture images, those must be contained in the
+        // data folder, cannot be inside the gzip.
         InputStream input =
           new GZIPInputStream(pg.parent.createInput(filename));
         obj = new PShapeOBJ(pg.parent, PApplet.createReader(input));
@@ -175,38 +191,6 @@ public class PGraphics3D extends PGraphicsOpenGL {
     } else if (type == PShape.GEOMETRY) {
       shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
     }
-
-    /*
-    (type == POINTS) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-
-      shape.setKind(POINTS);
-    } else if (type == LINES) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-
-      shape.setKind(LINES);
-    } else if (type == TRIANGLE || type == TRIANGLES) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-
-      shape.setKind(TRIANGLES);
-    } else if (type == TRIANGLE_FAN) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-      shape.setKind(TRIANGLE_FAN);
-    } else if (type == TRIANGLE_STRIP) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-      shape.setKind(TRIANGLE_STRIP);
-    } else if (type == QUAD || type == QUADS) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-      shape.setKind(QUADS);
-    } else if (type == QUAD_STRIP) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-      shape.setKind(QUAD_STRIP);
-    } else if (type == POLYGON) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
-      shape.setKind(POLYGON);
-    }
-    */
-
     shape.is3D(true);
     return shape;
   }
@@ -246,14 +230,14 @@ public class PGraphics3D extends PGraphicsOpenGL {
       shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(QUAD);
     } else if (kind == RECT) {
-      if (len != 4 && len != 5 && len != 8) {
+      if (len != 4 && len != 5 && len != 8 && len != 9) {
         showWarning("Wrong number of parameters");
         return null;
       }
       shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(RECT);
     } else if (kind == ELLIPSE) {
-      if (len != 4) {
+      if (len != 4 && len != 5) {
         showWarning("Wrong number of parameters");
         return null;
       }
@@ -274,7 +258,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
       shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(BOX);
     } else if (kind == SPHERE) {
-      if (len != 1) {
+      if (len < 1 || 3 < len) {
         showWarning("Wrong number of parameters");
         return null;
       }

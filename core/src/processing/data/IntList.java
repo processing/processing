@@ -13,11 +13,16 @@ import processing.core.PApplet;
 
 
 /**
- * Helper class for a list of ints. By design (for efficiency), functions like
- * sort() and shuffle() always act on the list itself. To get a sorted copy,
- * use list.copy().sort().
- * 
+ * Helper class for a list of ints. Lists are designed to have some of the
+ * features of ArrayLists, but to maintain the simplicity and efficiency of
+ * working with arrays.
+ *
+ * Functions like sort() and shuffle() always act on the list itself. To get
+ * a sorted copy, use list.copy().sort().
+ *
  * @webref data:composite
+ * @see FloatList
+ * @see StringList
  */
 public class IntList implements Iterable<Integer> {
   protected int count;
@@ -28,24 +33,45 @@ public class IntList implements Iterable<Integer> {
     data = new int[10];
   }
 
-
+  /**
+   * @nowebref
+   */
   public IntList(int length) {
     data = new int[length];
   }
 
-
+  /**
+   * @nowebref
+   */
   public IntList(int[] source) {
     count = source.length;
     data = new int[count];
     System.arraycopy(source, 0, data, 0, count);
   }
 
-
+  /**
+   * @nowebref
+   */
   public IntList(Iterable<Integer> iter) {
     this(10);
     for (int v : iter) {
       append(v);
     }
+  }
+
+
+  static public IntList fromRange(int stop) {
+    return fromRange(0, stop);
+  }
+
+
+  static public IntList fromRange(int start, int stop) {
+    int count = stop - start;
+    IntList newbie = new IntList(count);
+    for (int i = 0; i < count; i++) {
+      newbie.set(i, start+i);
+    }
+    return newbie;
   }
 
 
@@ -64,8 +90,8 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * Get the length of the list.
-   * 
-   * @webref floatlist:method
+   *
+   * @webref intlist:method
    * @brief Get the length of the list
    */
   public int size() {
@@ -88,8 +114,8 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * Remove all entries from the list.
-   * 
-   * @webref floatlist:method
+   *
+   * @webref intlist:method
    * @brief Remove all entries from the list
    */
   public void clear() {
@@ -100,7 +126,7 @@ public class IntList implements Iterable<Integer> {
   /**
    * Get an entry at a particular index.
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Get an entry at a particular index
    */
   public int get(int index) {
@@ -113,7 +139,7 @@ public class IntList implements Iterable<Integer> {
    * the list, it'll expand the list to accommodate, and fill the intermediate
    * entries with 0s.
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Set the entry at a particular index
    */
   public void set(int index, int what) {
@@ -128,55 +154,64 @@ public class IntList implements Iterable<Integer> {
   }
 
 
-  /** 
-   * Remove an element from the specified index 
+  /**
+   * Remove an element from the specified index
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Remove an element from the specified index
    */
-  public void remove(int index) {
+  public int remove(int index) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
+    int entry = data[index];
 //    int[] outgoing = new int[count - 1];
 //    System.arraycopy(data, 0, outgoing, 0, index);
 //    count--;
 //    System.arraycopy(data, index + 1, outgoing, 0, count - index);
 //    data = outgoing;
-    for (int i = index; i < count; i++) {
+    // For most cases, this actually appears to be faster
+    // than arraycopy() on an array copying into itself.
+    for (int i = index; i < count-1; i++) {
       data[i] = data[i+1];
     }
     count--;
+    return entry;
   }
 
 
-  /** Remove the first instance of a particular value */
-  public boolean removeValue(int value) {
+  // Remove the first instance of a particular value,
+  // and return the index at which it was found.
+  public int removeValue(int value) {
     int index = index(value);
     if (index != -1) {
       remove(index);
-      return true;
+      return index;
     }
-    return false;
+    return -1;
   }
 
 
-  /** Remove all instances of a particular value */
-  public boolean removeValues(int value) {
+  // Remove all instances of a particular value,
+  // and return the number of values found and removed
+  public int removeValues(int value) {
     int ii = 0;
     for (int i = 0; i < count; i++) {
       if (data[i] != value) {
         data[ii++] = data[i];
       }
     }
-    boolean changed = count == ii;
+    int removed = count - ii;
     count = ii;
-    return changed;
+    return removed;
   }
 
 
-  /** 
+  /**
    * Add a new entry to the list.
    *
-   * @webref floatlist:method
-   * @brief Add a new entry to the list 
+   * @webref intlist:method
+   * @brief Add a new entry to the list
    */
   public void append(int value) {
     if (count == data.length) {
@@ -235,7 +270,7 @@ public class IntList implements Iterable<Integer> {
     if (index < 0) {
       throw new IllegalArgumentException("insert() index cannot be negative: it was " + index);
     }
-    if (index >= values.length) {
+    if (index >= data.length) {
       throw new IllegalArgumentException("insert() index " + index + " is past the end of this list");
     }
 
@@ -337,8 +372,8 @@ public class IntList implements Iterable<Integer> {
 //  }
 
   /**
-   * @webref floatlist:method
-   * @brief Check if a number is a part of the data structure
+   * @webref intlist:method
+   * @brief Check if a number is a part of the list
    */
   public boolean hasValue(int value) {
 //    if (indexCache == null) {
@@ -354,15 +389,18 @@ public class IntList implements Iterable<Integer> {
   }
 
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Add one to a value
    */
   public void increment(int index) {
+    if (count <= index) {
+      resize(index + 1);
+    }
     data[index]++;
   }
 
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Add to a value
    */
   public void add(int index, int amount) {
@@ -370,7 +408,7 @@ public class IntList implements Iterable<Integer> {
   }
 
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Subtract from a value
    */
   public void sub(int index, int amount) {
@@ -378,7 +416,7 @@ public class IntList implements Iterable<Integer> {
   }
 
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Multiply a value
    */
   public void mult(int index, int amount) {
@@ -386,48 +424,97 @@ public class IntList implements Iterable<Integer> {
   }
 
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Divide a value
    */
   public void div(int index, int amount) {
     data[index] /= amount;
   }
 
+
+  private void checkMinMax(String functionName) {
+    if (count == 0) {
+      String msg =
+        String.format("Cannot use %s() on an empty %s.",
+                      functionName, getClass().getSimpleName());
+      throw new RuntimeException(msg);
+    }
+  }
+
+
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Return the smallest value
    */
   public int min() {
-    if (count == 0) {
-      throw new ArrayIndexOutOfBoundsException("Cannot use min() on IntList of length 0.");
-    }
+    checkMinMax("min");
     int outgoing = data[0];
-    for (int i = 1; i < data.length; i++) {
+    for (int i = 1; i < count; i++) {
       if (data[i] < outgoing) outgoing = data[i];
     }
     return outgoing;
   }
 
+
+  // returns the index of the minimum value.
+  // if there are ties, it returns the first one found.
+  public int minIndex() {
+    checkMinMax("minIndex");
+    int value = data[0];
+    int index = 0;
+    for (int i = 1; i < count; i++) {
+      if (data[i] < value) {
+        value = data[i];
+        index = i;
+      }
+    }
+    return index;
+  }
+
+
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Return the largest value
    */
   public int max() {
-    if (count == 0) {
-      throw new ArrayIndexOutOfBoundsException("Cannot use max() on IntList of length 0.");
-    }
+    checkMinMax("max");
     int outgoing = data[0];
-    for (int i = 1; i < data.length; i++) {
+    for (int i = 1; i < count; i++) {
       if (data[i] > outgoing) outgoing = data[i];
     }
     return outgoing;
   }
 
 
-  /** 
-   * Sorts the array in place. 
-   * 
-   * @webref floatlist:method
+  // returns the index of the maximum value.
+  // if there are ties, it returns the first one found.
+  public int maxIndex() {
+    checkMinMax("maxIndex");
+    int value = data[0];
+    int index = 0;
+    for (int i = 1; i < count; i++) {
+      if (data[i] > value) {
+        value = data[i];
+        index = i;
+      }
+    }
+    return index;
+  }
+
+
+  public int sum() {
+    int outgoing = 0;
+    for (int i = 0; i < count; i++) {
+      outgoing += data[i];
+    }
+    return outgoing;
+  }
+
+
+  /**
+   * Sorts the array in place.
+   *
+   * @webref intlist:method
    * @brief Sorts the array, lowest to highest
    */
   public void sort() {
@@ -435,10 +522,10 @@ public class IntList implements Iterable<Integer> {
   }
 
 
-  /** 
-   * Reverse sort, orders values from highest to lowest. 
+  /**
+   * Reverse sort, orders values from highest to lowest.
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Reverse sort, orders values from highest to lowest
    */
   public void sortReverse() {
@@ -480,8 +567,8 @@ public class IntList implements Iterable<Integer> {
 //    count = num;
 //  }
 
-  /** 
-   * @webref floatlist:method
+  /**
+   * @webref intlist:method
    * @brief Reverse sort, orders values by first digit
    */
   public void reverse() {
@@ -499,7 +586,7 @@ public class IntList implements Iterable<Integer> {
    * Randomize the order of the list elements. Note that this does not
    * obey the randomSeed() function in PApplet.
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Randomize the order of the list elements
    */
   public void shuffle() {
@@ -572,9 +659,9 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * Create a new array with a copy of all the values.
-   * 
+   *
    * @return an array sized by the length of the list with each of the values.
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Create a new array with a copy of all the values
    */
   public int[] array() {
@@ -638,17 +725,49 @@ public class IntList implements Iterable<Integer> {
 //  }
 
 
+  /**
+   * Returns a normalized version of this array. Called getPercent() for
+   * consistency with the Dict classes. It's a getter method because it needs
+   * to returns a new list (because IntList/Dict can't do percentages or
+   * normalization in place on int values).
+   */
+  public FloatList getPercent() {
+    double sum = 0;
+    for (float value : array()) {
+      sum += value;
+    }
+    FloatList outgoing = new FloatList(count);
+    for (int i = 0; i < count; i++) {
+      double percent = data[i] / sum;
+      outgoing.set(i, (float) percent);
+    }
+    return outgoing;
+  }
+
+
   public IntList getSubset(int start) {
     return getSubset(start, count - start);
   }
 
 
   public IntList getSubset(int start, int num) {
-    IntList outgoing = new IntList(num);
-    for (int i = 0; i < num; i++) {
-      System.arraycopy(data, start, outgoing.data, 0, num);
+    int[] subset = new int[num];
+    System.arraycopy(data, start, subset, 0, num);
+    return new IntList(subset);
+  }
+
+
+  public String join(String separator) {
+    if (count == 0) {
+      return "";
     }
-    return outgoing;
+    StringBuilder sb = new StringBuilder();
+    sb.append(data[0]);
+    for (int i = 1; i < count; i++) {
+      sb.append(separator);
+      sb.append(data[i]);
+    }
+    return sb.toString();
   }
 
 

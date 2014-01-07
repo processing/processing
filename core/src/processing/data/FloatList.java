@@ -8,7 +8,16 @@ import processing.core.PApplet;
 
 
 /**
+ * Helper class for a list of floats. Lists are designed to have some of the
+ * features of ArrayLists, but to maintain the simplicity and efficiency of
+ * working with arrays.
+ *
+ * Functions like sort() and shuffle() always act on the list itself. To get
+ * a sorted copy, use list.copy().sort().
+ *
  * @webref data:composite
+ * @see IntList
+ * @see StringList
  */
 public class FloatList implements Iterable<Float> {
   int count;
@@ -19,19 +28,25 @@ public class FloatList implements Iterable<Float> {
     data = new float[10];
   }
 
-
+  /**
+   * @nowebref
+   */
   public FloatList(int length) {
     data = new float[length];
   }
 
-
+  /**
+   * @nowebref
+   */
   public FloatList(float[] list) {
     count = list.length;
     data = new float[count];
     System.arraycopy(list, 0, data, 0, count);
   }
 
-
+  /**
+   * @nowebref
+   */
   public FloatList(Iterable<Float> iter) {
     this(10);
     for (float v : iter) {
@@ -55,7 +70,7 @@ public class FloatList implements Iterable<Float> {
 
   /**
    * Get the length of the list.
-   *    
+   *
    * @webref floatlist:method
    * @brief Get the length of the list
    */
@@ -120,46 +135,46 @@ public class FloatList implements Iterable<Float> {
 
 
   /**
-   * Remove an element from the specified index. 
-   * 
+   * Remove an element from the specified index.
+   *
    * @webref floatlist:method
    * @brief Remove an element from the specified index
    */
-  public void remove(int index) {
+  public float remove(int index) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
+    float entry = data[index];
 //    int[] outgoing = new int[count - 1];
 //    System.arraycopy(data, 0, outgoing, 0, index);
 //    count--;
 //    System.arraycopy(data, index + 1, outgoing, 0, count - index);
 //    data = outgoing;
-    for (int i = index; i < count; i++) {
+    // For most cases, this actually appears to be faster
+    // than arraycopy() on an array copying into itself.
+    for (int i = index; i < count-1; i++) {
       data[i] = data[i+1];
     }
     count--;
+    return entry;
   }
 
 
-  /** Remove the first instance of a particular value */
-  public boolean removeValue(float value) {
-    if (Float.isNaN(value)) {
-      for (int i = 0; i < count; i++) {
-        if (Float.isNaN(data[i])) {
-          remove(i);
-          return true;
-        }
-      }
-    } else {
-      int index = index(value);
-      if (index != -1) {
-        remove(index);
-        return true;
-      }
+  // Remove the first instance of a particular value,
+  // and return the index at which it was found.
+  public int removeValue(int value) {
+    int index = index(value);
+    if (index != -1) {
+      remove(index);
+      return index;
     }
-    return false;
+    return -1;
   }
 
 
-  /** Remove all instances of a particular value */
-  public boolean removeValues(float value) {
+  // Remove all instances of a particular value,
+  // and return the number of values found and removed
+  public int removeValues(int value) {
     int ii = 0;
     if (Float.isNaN(value)) {
       for (int i = 0; i < count; i++) {
@@ -174,11 +189,9 @@ public class FloatList implements Iterable<Float> {
         }
       }
     }
-    if (count == ii) {
-      return false;
-    }
+    int removed = count - ii;
     count = ii;
-    return true;
+    return removed;
   }
 
 
@@ -225,8 +238,8 @@ public class FloatList implements Iterable<Float> {
 
 
 
-  /** 
-   * Add a new entry to the list. 
+  /**
+   * Add a new entry to the list.
    *
    * @webref floatlist:method
    * @brief Add a new entry to the list
@@ -288,7 +301,7 @@ public class FloatList implements Iterable<Float> {
     if (index < 0) {
       throw new IllegalArgumentException("insert() index cannot be negative: it was " + index);
     }
-    if (index >= values.length) {
+    if (index >= data.length) {
       throw new IllegalArgumentException("insert() index " + index + " is past the end of this list");
     }
 
@@ -380,15 +393,6 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  // !!! TODO this is not yet correct, because it's not being reset when
-  // the rest of the entries are changed
-//  protected void cacheIndices() {
-//    indexCache = new HashMap<Integer, Integer>();
-//    for (int i = 0; i < count; i++) {
-//      indexCache.put(data[i], i);
-//    }
-//  }
-
   /**
    * @webref floatlist:method
    * @brief Check if a number is a part of the list
@@ -411,11 +415,6 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  // doesn't really make sense with float.. use add() if you need it
-//  public void increment(int index) {
-//    data[index]++;
-//  }
-
   /**
    * @webref floatlist:method
    * @brief Add to a value
@@ -423,6 +422,7 @@ public class FloatList implements Iterable<Float> {
   public void add(int index, float amount) {
     data[index] += amount;
   }
+
 
   /**
    * @webref floatlist:method
@@ -432,6 +432,7 @@ public class FloatList implements Iterable<Float> {
     data[index] -= amount;
   }
 
+
   /**
    * @webref floatlist:method
    * @brief Multiply a value
@@ -439,6 +440,7 @@ public class FloatList implements Iterable<Float> {
   public void mult(int index, float amount) {
     data[index] *= amount;
   }
+
 
   /**
    * @webref floatlist:method
@@ -448,69 +450,100 @@ public class FloatList implements Iterable<Float> {
     data[index] /= amount;
   }
 
+
+  private void checkMinMax(String functionName) {
+    if (count == 0) {
+      String msg =
+        String.format("Cannot use %s() on an empty %s.",
+                      functionName, getClass().getSimpleName());
+      throw new RuntimeException(msg);
+    }
+  }
+
+
   /**
    * @webref floatlist:method
    * @brief Return the smallest value
    */
   public float min() {
-    if (count == 0) {
-      throw new ArrayIndexOutOfBoundsException("Cannot use min() on IntList of length 0.");
-    }
-    if (data.length == 0) {
-      return Float.NaN;
-    }
+    checkMinMax("min");
+    int index = minIndex();
+    return index == -1 ? Float.NaN : data[index];
+  }
+
+
+  public int minIndex() {
+    checkMinMax("minIndex");
     float m = Float.NaN;
-    for (int i = 0; i < data.length; i++) {
+    int mi = -1;
+    for (int i = 0; i < count; i++) {
       // find one good value to start
       if (data[i] == data[i]) {
         m = data[i];
+        mi = i;
 
         // calculate the rest
-        for (int j = i+1; j < data.length; j++) {
+        for (int j = i+1; j < count; j++) {
           float d = data[j];
           if (!Float.isNaN(d) && (d < m)) {
             m = data[j];
+            mi = j;
           }
         }
         break;
       }
     }
-    return m;
+    return mi;
   }
+
 
   /**
    * @webref floatlist:method
    * @brief Return the largest value
    */
   public float max() {
-    if (count == 0) {
-      throw new ArrayIndexOutOfBoundsException("Cannot use max() on IntList of length 0.");
-    }
-    if (data.length == 0) {
-      return Float.NaN;
-    }
+    checkMinMax("max");
+    int index = maxIndex();
+    return index == -1 ? Float.NaN : data[index];
+  }
+
+
+  public int maxIndex() {
+    checkMinMax("maxIndex");
     float m = Float.NaN;
-    for (int i = 0; i < data.length; i++) {
+    int mi = -1;
+    for (int i = 0; i < count; i++) {
       // find one good value to start
       if (data[i] == data[i]) {
         m = data[i];
+        mi = i;
 
         // calculate the rest
-        for (int j = i+1; j < data.length; j++) {
+        for (int j = i+1; j < count; j++) {
           float d = data[j];
           if (!Float.isNaN(d) && (d > m)) {
             m = data[j];
+            mi = j;
           }
         }
         break;
       }
     }
-    return m;
+    return mi;
   }
 
 
-  /** 
-   * Sorts the array in place. 
+  public float sum() {
+    double outgoing = 0;
+    for (int i = 0; i < count; i++) {
+      outgoing += data[i];
+    }
+    return (float) outgoing;
+  }
+
+
+  /**
+   * Sorts the array in place.
    *
    * @webref floatlist:method
    * @brief Sorts an array, lowest to highest
@@ -520,8 +553,8 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  /** 
-   * Reverse sort, orders values from highest to lowest 
+  /**
+   * Reverse sort, orders values from highest to lowest
    *
    * @webref floatlist:method
    * @brief Reverse sort, orders values from highest to lowest
@@ -553,19 +586,20 @@ public class FloatList implements Iterable<Float> {
 //  }
 
 
-  public void subset(int start) {
-    subset(start, count - start);
-  }
+//  public void subset(int start) {
+//    subset(start, count - start);
+//  }
 
 
-  public void subset(int start, int num) {
-    for (int i = 0; i < num; i++) {
-      data[i] = data[i+start];
-    }
-    count = num;
-  }
+//  public void subset(int start, int num) {
+//    for (int i = 0; i < num; i++) {
+//      data[i] = data[i+start];
+//    }
+//    count = num;
+//  }
 
-  /** 
+
+  /**
    * @webref floatlist:method
    * @brief Reverse sort, orders values by first digit
    */
@@ -665,7 +699,7 @@ public class FloatList implements Iterable<Float> {
    * @webref floatlist:method
    * @brief Create a new array with a copy of all the values
    */
-  public int[] array() {
+  public float[] array() {
     return array(null);
   }
 
@@ -674,12 +708,58 @@ public class FloatList implements Iterable<Float> {
    * Copy as many values as possible into the specified array.
    * @param array
    */
-  public int[] array(int[] array) {
+  public float[] array(float[] array) {
     if (array == null || array.length != count) {
-      array = new int[count];
+      array = new float[count];
     }
     System.arraycopy(data, 0, array, 0, count);
     return array;
+  }
+
+
+  /**
+   * Returns a normalized version of this array. Called getPercent() for
+   * consistency with the Dict classes. It's a getter method because it needs
+   * to returns a new list (because IntList/Dict can't do percentages or
+   * normalization in place on int values).
+   */
+  public FloatList getPercent() {
+    double sum = 0;
+    for (float value : array()) {
+      sum += value;
+    }
+    FloatList outgoing = new FloatList(count);
+    for (int i = 0; i < count; i++) {
+      double percent = data[i] / sum;
+      outgoing.set(i, (float) percent);
+    }
+    return outgoing;
+  }
+
+
+  public FloatList getSubset(int start) {
+    return getSubset(start, count - start);
+  }
+
+
+  public FloatList getSubset(int start, int num) {
+    float[] subset = new float[num];
+    System.arraycopy(data, start, subset, 0, num);
+    return new FloatList(subset);
+  }
+
+
+  public String join(String separator) {
+    if (count == 0) {
+      return "";
+    }
+    StringBuilder sb = new StringBuilder();
+    sb.append(data[0]);
+    for (int i = 1; i < count; i++) {
+      sb.append(separator);
+      sb.append(data[i]);
+    }
+    return sb.toString();
   }
 
 

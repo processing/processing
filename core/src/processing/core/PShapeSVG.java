@@ -915,7 +915,7 @@ public class PShapeSVG extends PShape {
                                float x2, float y2) {
     //System.out.println("quadto: " + x1 + "," + y1 + " " + cx + "," + cy + " " + x2 + "," + y2);
 //    parsePathCode(BEZIER_VERTEX);
-    parsePathCode(QUAD_BEZIER_VERTEX);
+    parsePathCode(QUADRATIC_VERTEX);
     // x1/y1 already covered by last moveto, lineto, or curveto
     parsePathVertex(cx, cy);
     parsePathVertex(x2, y2);

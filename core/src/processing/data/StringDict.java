@@ -9,8 +9,10 @@ import processing.core.PApplet;
 
 /**
  * A simple table class to use a String as a lookup for another String value.
- * 
+ *
  * @webref data:composite
+ * @see IntDict
+ * @see FloatDict
  */
 public class StringDict {
 
@@ -35,6 +37,8 @@ public class StringDict {
    * Create a new lookup pre-allocated to a specific length. This will not
    * change the size(), but is more efficient than not specifying a length.
    * Use it when you know the rough size of the thing you're creating.
+   *
+   * @nowebref
    */
   public StringDict(int length) {
     count = 0;
@@ -46,6 +50,8 @@ public class StringDict {
   /**
    * Read a set of entries from a Reader that has each key/value pair on
    * a single line, separated by a tab.
+   *
+   * @nowebref
    */
   public StringDict(BufferedReader reader) {
     String[] lines = PApplet.loadStrings(reader);
@@ -62,7 +68,9 @@ public class StringDict {
     }
   }
 
-
+  /**
+   * @nowebref
+   */
   public StringDict(String[] keys, String[] values) {
     if (keys.length != values.length) {
       throw new IllegalArgumentException("key and value arrays must be the same length");
@@ -84,8 +92,8 @@ public class StringDict {
   }
 
 
-  /** 
-   * Remove all entries. 
+  /**
+   * Remove all entries.
    *
    * @webref stringdict:method
    * @brief Remove all entries
@@ -149,7 +157,7 @@ public class StringDict {
 
   /**
    * Return a copy of the internal keys array. This array can be modified.
-   * 
+   *
    * @webref stringdict:method
    * @brief Return a copy of the internal keys array
    */
@@ -227,7 +235,7 @@ public class StringDict {
 
   /**
    * Return a value for the specified key.
-   * 
+   *
    * @webref stringdict:method
    * @brief Return a value for the specified key
    */
@@ -280,14 +288,22 @@ public class StringDict {
    * @webref stringdict:method
    * @brief Remove a key/value pair
    */
-  public void remove(String key) {
-    removeIndex(index(key));
+  public int remove(String key) {
+    int index = index(key);
+    if (index != -1) {
+      removeIndex(index);
+    }
+    return index;
   }
 
 
-  public void removeIndex(int index) {
+  public String removeIndex(int index) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     //System.out.println("index is " + which + " and " + keys[which]);
-    indices.remove(keys[index]);
+    String key = keys[index];
+    indices.remove(key);
     for (int i = index; i < count-1; i++) {
       keys[i] = keys[i+1];
       values[i] = values[i+1];
@@ -296,10 +312,11 @@ public class StringDict {
     count--;
     keys[count] = null;
     values[count] = null;
+    return key;
   }
 
 
-  protected void swap(int a, int b) {
+  public void swap(int a, int b) {
     String tkey = keys[a];
     String tvalue = values[a];
     keys[a] = keys[b];
@@ -315,7 +332,7 @@ public class StringDict {
   /**
    * Sort the keys alphabetically (ignoring case). Uses the value as a
    * tie-breaker (only really possible with a key that has a case change).
-   * 
+   *
    * @webref stringdict:method
    * @brief Sort the keys alphabetically
    */

@@ -52,6 +52,6 @@ public class About extends Window {
 
     g.setFont(new Font("SansSerif", Font.PLAIN, 11)); //$NON-NLS-1$
     g.setColor(Color.white);
-    g.drawString(Base.VERSION_NAME, 50, 30);
+    g.drawString(Base.getVersionName(), 50, 30);
   }
 }

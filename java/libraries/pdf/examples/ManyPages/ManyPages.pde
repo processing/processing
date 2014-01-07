@@ -14,7 +14,6 @@ void setup() {
   size(600, 600);
   frameRate(4);
   pdf = (PGraphicsPDF)beginRecord(PDF, "Lines.pdf");
-  beginRecord(pdf);
 }
 
 void draw() {

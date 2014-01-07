@@ -19,7 +19,7 @@ int angles[];
 
 void setup() {
   // size must be set to video.width*video.height*2 in both directions
-  size(600, 600, P2D); 
+  size(600, 600); 
 
   // This the default video input, see the GettingStartedCapture 
   // example if it creates an error

@@ -12,7 +12,7 @@ void setup() {
   background(0);
 
   // Create the font
-  println(PFont.list());
+  printArray(PFont.list());
   f = createFont("Georgia", 24);
   textFont(f);
   textAlign(CENTER, CENTER);

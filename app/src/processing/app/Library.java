@@ -15,9 +15,10 @@ public class Library extends LocalContribution {
   protected File examplesFolder;  // shortname/examples
   protected File referenceFile;   // shortname/reference/index.html
 
-  /** 
-   * Subfolder for grouping libraries in a menu. Basic subfolder support 
-   * is provided so that basic organization can be done in the import menu. 
+  /**
+   * Subfolder for grouping libraries in a menu. Basic subfolder support
+   * is provided so that some organization can be done in the import menu.
+   * (This is the replacement for the "library compilation" type.)
    */
   protected String group;
 
@@ -83,12 +84,27 @@ public class Library extends LocalContribution {
   };
 
 
+  static public Library load(File folder) {
+    try {
+      return new Library(folder);
+//    } catch (IgnorableException ig) {
+//      Base.log(ig.getMessage());
+    } catch (Error err) {
+      // Handles UnsupportedClassVersionError and others
+      err.printStackTrace();
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return null;
+  }
+
+
   public Library(File folder) {
     this(folder, null);
   }
 
 
-  public Library(File folder, String groupName) {
+  private Library(File folder, String groupName) {
     super(folder);
     this.group = groupName;
 
@@ -196,7 +212,6 @@ public class Library extends LocalContribution {
 
     // get the path for all .jar files in this code folder
     packageList = Base.packageListFromClassPath(getClassPath());
-
   }
 
 
@@ -420,14 +435,14 @@ public class Library extends LocalContribution {
     }
   };
 
-  
+
   static public ArrayList<File> discover(File folder) {
     ArrayList<File> libraries = new ArrayList<File>();
     discover(folder, libraries);
     return libraries;
   }
 
-  
+
   static public void discover(File folder, ArrayList<File> libraries) {
     String[] list = folder.list(junkFolderFilter);
 
@@ -462,14 +477,14 @@ public class Library extends LocalContribution {
     }
   }
 
-  
+
   static protected ArrayList<Library> list(File folder) {
     ArrayList<Library> libraries = new ArrayList<Library>();
     list(folder, libraries);
     return libraries;
   }
 
-  
+
   static protected void list(File folder, ArrayList<Library> libraries) {
     ArrayList<File> librariesFolders = new ArrayList<File>();
     discover(folder, librariesFolders);
@@ -495,7 +510,7 @@ public class Library extends LocalContribution {
     }
   }
 
-  
+
   public ContributionType getType() {
     return ContributionType.LIBRARY;
   }

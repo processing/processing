@@ -7,7 +7,16 @@ import java.util.Random;
 import processing.core.PApplet;
 
 /**
+ * Helper class for a list of Strings. Lists are designed to have some of the
+ * features of ArrayLists, but to maintain the simplicity and efficiency of
+ * working with arrays.
+ *
+ * Functions like sort() and shuffle() always act on the list itself. To get
+ * a sorted copy, use list.copy().sort().
+ *
  * @webref data:composite
+ * @see IntList
+ * @see FloatList
  */
 public class StringList implements Iterable<String> {
   int count;
@@ -18,12 +27,16 @@ public class StringList implements Iterable<String> {
     this(10);
   }
 
-
+  /**
+   * @nowebref
+   */
   public StringList(int length) {
     data = new String[length];
   }
 
-
+  /**
+   * @nowebref
+   */
   public StringList(String[] list) {
     count = list.length;
     data = new String[count];
@@ -31,8 +44,12 @@ public class StringList implements Iterable<String> {
   }
 
 
-  // Create from something iterable, for instance:
-  // StringList list = new StringList(hashMap.keySet());
+  /**
+   * Create from something iterable, for instance:
+   * StringList list = new StringList(hashMap.keySet());
+   *
+   * @nowebref
+   */
   public StringList(Iterable<String> iter) {
     this(10);
     for (String s : iter) {
@@ -120,47 +137,52 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** 
-   * Remove an element from the specified index. 
-   * 
+  /**
+   * Remove an element from the specified index.
+   *
    * @webref stringlist:method
    * @brief Remove an element from the specified index
    */
-  public void remove(int index) {
+  public String remove(int index) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
+    String entry = data[index];
 //    int[] outgoing = new int[count - 1];
 //    System.arraycopy(data, 0, outgoing, 0, index);
 //    count--;
 //    System.arraycopy(data, index + 1, outgoing, 0, count - index);
 //    data = outgoing;
-    for (int i = index; i < count; i++) {
+    for (int i = index; i < count-1; i++) {
       data[i] = data[i+1];
     }
     count--;
+    return entry;
   }
 
 
-  /** Remove the first instance of a particular value */
-  public boolean removeValue(String value) {
+  // Remove the first instance of a particular value and return its index.
+  public int removeValue(String value) {
     if (value == null) {
       for (int i = 0; i < count; i++) {
         if (data[i] == null) {
           remove(i);
-          return true;
+          return i;
         }
       }
     } else {
       int index = index(value);
       if (index != -1) {
         remove(index);
-        return true;
+        return index;
       }
     }
-    return false;
+    return -1;
   }
 
 
-  /** Remove all instances of a particular value */
-  public boolean removeValues(String value) {
+  // Remove all instances of a particular value and return the count removed.
+  public int removeValues(String value) {
     int ii = 0;
     if (value == null) {
       for (int i = 0; i < count; i++) {
@@ -175,46 +197,48 @@ public class StringList implements Iterable<String> {
         }
       }
     }
-    boolean changed = count == ii;
+    int removed = count - ii;
     count = ii;
-    return changed;
+    return removed;
   }
 
 
-  public boolean replaceValue(String value, String newValue) {
+  // replace the first value that matches, return the index that was replaced
+  public int replaceValue(String value, String newValue) {
     if (value == null) {
       for (int i = 0; i < count; i++) {
         if (data[i] == null) {
           data[i] = newValue;
-          return true;
+          return i;
         }
       }
     } else {
       for (int i = 0; i < count; i++) {
         if (value.equals(data[i])) {
           data[i] = newValue;
-          return true;
+          return i;
         }
       }
     }
-    return false;
+    return -1;
   }
 
 
-  public boolean replaceValues(String value, String newValue) {
-    boolean changed = false;
+  // replace all values that match, return the count of those replaced
+  public int replaceValues(String value, String newValue) {
+    int changed = 0;
     if (value == null) {
       for (int i = 0; i < count; i++) {
         if (data[i] == null) {
           data[i] = newValue;
-          changed = true;
+          changed++;
         }
       }
     } else {
       for (int i = 0; i < count; i++) {
         if (value.equals(data[i])) {
           data[i] = newValue;
-          changed = true;
+          changed++;
         }
       }
     }
@@ -222,9 +246,9 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** 
-   * Add a new entry to the list.  
-   * 
+  /**
+   * Add a new entry to the list.
+   *
    * @webref stringlist:method
    * @brief Add a new entry to the list
    */
@@ -407,9 +431,9 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** 
-   * Sorts the array in place. 
-   * 
+  /**
+   * Sorts the array in place.
+   *
    * @webref stringlist:method
    * @brief Sorts the array in place
    */
@@ -418,11 +442,11 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** 
+  /**
    * Reverse sort, orders values from highest to lowest.
-   * 
+   *
    * @webref stringlist:method
-   * @brief Reverse sort, orders values from highest to lowest 
+   * @brief Reverse sort, orders values from highest to lowest
    */
   public void sortReverse() {
     sortImpl(true);
@@ -471,7 +495,7 @@ public class StringList implements Iterable<String> {
 
   /**
    * @webref stringlist:method
-   * @brief To come... 
+   * @brief To come...
    */
   public void reverse() {
     int ii = count - 1;
@@ -487,7 +511,7 @@ public class StringList implements Iterable<String> {
   /**
    * Randomize the order of the list elements. Note that this does not
    * obey the randomSeed() function in PApplet.
-   * 
+   *
    * @webref stringlist:method
    * @brief Randomize the order of the list elements
    */
@@ -520,9 +544,9 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** 
-   * Make the entire list lower case. 
-   * 
+  /**
+   * Make the entire list lower case.
+   *
    * @webref stringlist:method
    * @brief Make the entire list lower case
    */
@@ -535,8 +559,8 @@ public class StringList implements Iterable<String> {
   }
 
 
-  /** 
-   * Make the entire list upper case. 
+  /**
+   * Make the entire list upper case.
    *
    * @webref stringlist:method
    * @brief Make the entire list upper case
@@ -595,7 +619,7 @@ public class StringList implements Iterable<String> {
 
   /**
    * Create a new array with a copy of all the values.
-   * 
+   *
    * @return an array sized by the length of the list with each of the values.
    * @webref stringlist:method
    * @brief Create a new array with a copy of all the values
@@ -624,11 +648,9 @@ public class StringList implements Iterable<String> {
 
 
   public StringList getSubset(int start, int num) {
-    StringList outgoing = new StringList(num);
-    for (int i = 0; i < num; i++) {
-      System.arraycopy(data, start, outgoing.data, 0, num);
-    }
-    return outgoing;
+    String[] subset = new String[num];
+    System.arraycopy(data, start, subset, 0, num);
+    return new StringList(subset);
   }
 
 
@@ -663,6 +685,26 @@ public class StringList implements Iterable<String> {
 //      System.out.println("[" + i + "] " + data[i]);
 //    }
 //    System.out.flush();
+//  }
+
+
+  public String join(String separator) {
+    if (count == 0) {
+      return "";
+    }
+    StringBuilder sb = new StringBuilder();
+    sb.append(data[0]);
+    for (int i = 1; i < count; i++) {
+      sb.append(separator);
+      sb.append(data[i]);
+    }
+    return sb.toString();
+  }
+
+
+//  static public StringList split(String value, char delim) {
+//    String[] array = PApplet.split(value, delim);
+//    return new StringList(array);
 //  }
 
 

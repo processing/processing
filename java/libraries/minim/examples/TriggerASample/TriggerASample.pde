@@ -22,6 +22,9 @@
   * <p>
   * Use 'k' and 's' to trigger a kick drum sample and a snare sample, respectively. 
   * You will see their waveforms drawn when they are played back.
+  * <p>
+  * For more information about Minim and additional features, 
+  * visit http://code.compartmental.net/minim/
   */
 
 import ddf.minim.*;

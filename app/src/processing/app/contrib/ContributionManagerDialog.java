@@ -27,6 +27,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
+import java.net.SocketTimeoutException;
 import java.util.*;
 
 import javax.swing.*;
@@ -85,13 +86,8 @@ public class ContributionManagerDialog {
 
       dialog.pack();
       dialog.setLocationRelativeTo(null);
-//      Dimension screen = Toolkit.getScreenSize();
-//      dialog.setLocation((screen.width - dialog.getWidth()) / 2,
-//                         (screen.height - dialog.getHeight()) / 2);
-
       contributionListPanel.grabFocus();
     }
-
     dialog.setVisible(true);
 
     if (contribListing.hasDownloadedLatestList()) {
@@ -99,19 +95,21 @@ public class ContributionManagerDialog {
 
     } else {
       contribListing.downloadAvailableList(new ProgressMonitor() {
-//        public void startTask(String name, int maxValue) {
-//        }
-//
+        
         public void finished() {
           super.finished();
-
+          
           updateContributionListing();
           updateCategoryChooser();
-          if (isError()) {
-            status.setErrorMessage("An error occured when downloading " +
-                                   "the list of available contributions.");
-//          } else {
-//            status.updateUI();
+          if (error) {
+            if (exception instanceof SocketTimeoutException) {
+              status.setErrorMessage("Connection timed out while " +
+                                     "downloading the contribution list.");
+            } else {
+              status.setErrorMessage("Could not download the list" +
+                                     "of available contributions.");
+            }
+            exception.printStackTrace();
           }
         }
       });
@@ -274,11 +272,15 @@ public class ContributionManagerDialog {
 //      }
       Collections.sort(categories);
 //    categories.add(0, ContributionManagerDialog.ANY_CATEGORY);
+      boolean categoriesFound = false;
       categoryChooser.addItem(ContributionManagerDialog.ANY_CATEGORY);
       for (String s : categories) {
         categoryChooser.addItem(s);
+        if (!s.equals("Unknown")) {
+          categoriesFound = true;
+        }
       }
-      categoryChooser.setEnabled(categories.size() != 0);
+      categoryChooser.setEnabled(categoriesFound);
     }
   }
 
@@ -318,7 +320,18 @@ public class ContributionManagerDialog {
   
   protected void updateContributionListing() {
     if (editor != null) {
-      ArrayList<Library> libraries = new ArrayList<Library>(editor.getMode().contribLibraries);
+      ArrayList<Contribution> contributions = new ArrayList<Contribution>();
+
+      ArrayList<Library> libraries = 
+        new ArrayList<Library>(editor.getMode().contribLibraries);
+      contributions.addAll(libraries);
+
+      ArrayList<ToolContribution> tools = editor.contribTools;
+      contributions.addAll(tools);
+      
+      ArrayList<ModeContribution> modes = editor.getBase().getModeContribs();
+      contributions.addAll(modes);
+
 //    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
 //
 //    // Remove libraries from the list that are part of a compilations
@@ -331,11 +344,6 @@ public class ContributionManagerDialog {
 //        }
 //      }
 //    }
-
-      ArrayList<Contribution> contributions = new ArrayList<Contribution>();
-      contributions.addAll(editor.contribTools);
-      contributions.addAll(libraries);
-//    contributions.addAll(compilations);
 
       contribListing.updateInstalledList(contributions);
     }

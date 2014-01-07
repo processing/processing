@@ -1,0 +1,195 @@
+<!--
+Copyright 2012, Oracle and/or its affiliates. All rights reserved.
+
+DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+
+This code is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License version 2 only, as
+published by the Free Software Foundation.  Oracle designates this
+particular file as subject to the "Classpath" exception as provided
+by Oracle in the LICENSE file that accompanied this code.
+
+This code is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+version 2 for more details (a copy is included in the LICENSE file that
+accompanied this code).
+
+You should have received a copy of the GNU General Public License version
+2 along with this work; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+
+Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
+or visit www.oracle.com if you need additional information or have any
+questions.
+-->
+
+<html lang="en-us">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<link rel="stylesheet" type="text/css" href="http://ant.apache.org/manual/stylesheets/style.css">
+<title>AppBundler Task</title>
+</head>
+
+<body>
+<h2><a name="appbundler">AppBundler</a></h2>
+<h3>Description</h3>
+<p>Generates a native launcher for a Java application.</p>
+
+<h3>Parameters</h3>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">outputdirectory</td>
+    <td valign="top">The output folder for the generated bundle.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">name</td>
+    <td valign="top">The name of the application.
+    Corresponds to the <code>CFBundleName</code> key in the <tt>Info.plist</tt> file.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">displayname</td>
+    <td valign="top">The display name of the application.
+    Corresponds to the <code>CFBundleDisplayName</code> key in the <tt>Info.plist</tt> file.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">identifier</td>
+    <td valign="top">An identifier string that specifies the application type.
+    Corresponds to the <code>CFBundleIdentifier</code> key in the <tt>Info.plist</tt> file.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">icon</td>
+    <td valign="top">The icon file for the application.
+    Corresponds to the <code>CFBundleIconFile</code> key in the <tt>Info.plist</tt> file.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">shortversion</td>
+    <td valign="top">The release version number string for the application.
+    Corresponds to the <code>CFBundleShortVersionString</code> key in the <tt>Info.plist</tt>
+    file.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">signature</td>
+    <td valign="top">The four-letter code identifying the application creator.
+    Corresponds to the <code>CFBundleSignature</code> key in the <tt>Info.plist</tt> file.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">copyright</td>
+    <td valign="top">The copyright notice for the application.
+    Corresponds to the <code>NSHumanReadableCopyright</code> key in the <tt>Info.plist</tt>
+    file.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">applicationCategory</td>
+    <td valign="top">The application category.
+    Corresponds to the <code>LSApplicationCategoryType</code> key in the <tt>Info.plist</tt>
+    file.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">mainclassname</td>
+    <td valign="top">The name of the bundled application's main class.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+</table>
+
+<h3>Parameters specified as nested elements</h3>
+<h4>runtime</h4>
+<p>A <a href="http://ant.apache.org/manual/Types/fileset.html">fileset</a> representing the Java
+runtime environment to embed in the application.</p>
+
+<p>This element is optional. If specified, the base directory of the fileset must point to the
+root directory of a valid Java runtime environment. The contents of the runtime will be copied to
+the <tt>Contents/PlugIns/</tt> folder of the generated application bundle.</p>
+
+<p>By default, only the contents of the <tt>jre/</tt> directory will be included with the bundled
+application. All executable content (i.e. <tt>bin/</tt>, <tt>jre/bin/</tt>) is excluded. Additional
+content can be included or excluded using nested <code>&lt;include&gt;</code> and
+<code>&lt;exclude&gt;</code> elements, respectively.</p>
+
+<p>If this element is omitted, a Java runtime environment will not be copied into the generated
+bundle, and target systems must have a shared JRE installed in
+<tt>/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/</tt> in order to run the application.</p>
+
+<h4>classpath</h4>
+<p>A <a href="http://ant.apache.org/manual/Types/fileset.html">fileset</a> representing the class
+path of the bundled application. Corresponds to the <tt>java.class.path</tt> system property.
+Entries will be copied to the <tt>Contents/Java/</tt> folder of the generated bundle.</p>
+
+<h4>librarypath</h4>
+<p>A <a href="http://ant.apache.org/manual/Types/fileset.html">fileset</a> representing the library
+path of the bundled application. Corresponds to the <tt>java.library.path</tt> system property.
+Entries will be copied to the <tt>Contents/MacOS/</tt> folder of the generated bundle.</p>
+
+<h4>option</h4>
+<p>Specifies a command-line option to be passed to the JVM at startup.</p>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">value</td>
+    <td valign="top">The option value.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+</table>
+
+<h4>argument</h4>
+<p>Specifies a command-line argument to be passed to the bundled application at startup.</p>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">value</td>
+    <td valign="top">The argument value.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+</table>
+
+<h3>Examples</h3>
+<p>Generate a launcher for the "Swing Set" demo, bundling the JRE defined by the <tt>JAVA_HOME</tt>
+environment variable with the resulting executable.</p>
+<pre>
+&lt;-- Import environment variables --&gt;
+&lt;property environment="env"/&gt;
+
+&lt;-- Define the appbundler task --&gt;
+&lt;taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask"/&gt;
+
+&lt;-- Create the app bundle --&gt;
+&lt;target name="bundle-swingset" depends="package"&gt;
+    &lt;bundleapp outputdirectory="."
+        name="SwingSet2"
+        displayname="SwingSet 2"
+        identifier="com.oracle.javax.swing.SwingSet2"
+        shortversion="1.0"
+        applicationCategory="public.app-category.developer-tools"
+        mainclassname="SwingSet2"&gt;
+        &lt;runtime dir="${env.JAVA_HOME}"/&gt;
+        &lt;classpath file="/Library/Java/Demos/JFC/SwingSet2/SwingSet2.jar"/&gt;
+        &lt;option value="-Dapple.laf.useScreenMenuBar=true"/&gt;
+    &lt;/bundleapp&gt;
+&lt;/target&gt;
+</pre>
+
+</body>
+</html>

@@ -15,7 +15,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License along 
+  You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
@@ -39,20 +39,23 @@ public class ModeContribution extends LocalContribution {
   }
 
 
-  static public ModeContribution load(Base base, File folder, 
+  static public ModeContribution load(Base base, File folder,
                                       String searchName) {
     try {
       return new ModeContribution(base, folder, searchName);
+      
     } catch (IgnorableException ig) {
       Base.log(ig.getMessage());
-    } catch (Exception e) {
+      
+    } catch (Throwable err) {  
+      // Throwable to catch Exceptions or UnsupportedClassVersionError et al
       if (searchName == null) {
-        e.printStackTrace();
+        err.printStackTrace();
       } else {
-        // For the built-in modes, don't print the exception, just log it 
-        // for debugging. This should be impossible for most users to reach, 
+        // For the built-in modes, don't print the exception, just log it
+        // for debugging. This should be impossible for most users to reach,
         // but it helps us load experimental mode when it's available.
-        Base.log("ModeContribution.load() failed for " + searchName, e);
+        Base.log("ModeContribution.load() failed for " + searchName, err);
       }
     }
     return null;
@@ -92,15 +95,19 @@ public class ModeContribution extends LocalContribution {
       existing.put(contrib.getFolder(), contrib);
     }
     File[] potential = ContributionType.MODE.listCandidates(modesFolder);
-    for (File folder : potential) {
-      if (!existing.containsKey(folder)) {
+    // If modesFolder does not exist or is inaccessible (folks might like to 
+    // mess with folders then report it as a bug) 'potential' will be null.
+    if (potential != null) {
+      for (File folder : potential) {
+        if (!existing.containsKey(folder)) {
           try {
             contribModes.add(new ModeContribution(base, folder, null));
           } catch (IgnorableException ig) {
             Base.log(ig.getMessage());
-          } catch (Exception e) {
+          } catch (Throwable e) {
             e.printStackTrace();
           }
+        }
       }
     }
   }

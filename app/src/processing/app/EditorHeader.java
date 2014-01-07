@@ -42,18 +42,26 @@ public class EditorHeader extends JComponent {
   // distance from the righthand side of a tab to the drop-down arrow
   static final int ARROW_GAP_WIDTH = 8;
   // indent x/y for notch on the tab
-  static final int NOTCH = 4;
+  static final int NOTCH = 0;
   // how far to raise the tab from the bottom of this Component
-  static final int TAB_HEIGHT = 27;
+  static final int TAB_HEIGHT = 25;
+  // line that continues across all of the tabs for the current one
+  static final int TAB_STRETCH = 3;
+  // amount of extra space between individual tabs
+  static final int TAB_BETWEEN = 2;
   // amount of margin on the left/right for the text on the tab
-  static final int TEXT_MARGIN = 5;
-  // width of the tab when no text visible 
+  static final int TEXT_MARGIN = 10;
+  // width of the tab when no text visible
   // (total tab width will be this plus TEXT_MARGIN*2)
   static final int NO_TEXT_WIDTH = 10;
 
-  Color backgroundColor;
+  Color bgColor;
+  boolean hiding;
+  Color hideColor;
+  
   Color textColor[] = new Color[2];
   Color tabColor[] = new Color[2];
+  Color modifiedColor;
 
   Editor editor;
 
@@ -61,7 +69,7 @@ public class EditorHeader extends JComponent {
   Tab[] visitOrder;
 
   Font font;
-  FontMetrics metrics;
+//  FontMetrics metrics;
   int fontAscent;
 
   JMenu menu;
@@ -85,7 +93,7 @@ public class EditorHeader extends JComponent {
   static final int PIECE_WIDTH = 4;
   static final int PIECE_HEIGHT = 33;
   Image[][] pieces;
-  
+
   static final int ARROW_WIDTH = 14;
   static final int ARROW_HEIGHT = 14;
   static Image tabArrow;
@@ -156,13 +164,13 @@ public class EditorHeader extends JComponent {
 //  protected String tabFile(int status, int where) {
 //    return "theme/tab-" + STATUS[status] + "-" + WHERE[where];
 //  }
-  
-  
+
+
   public void updateMode() {
     Mode mode = editor.getMode();
 //    int res = Toolkit.isRetina() ? 2 : 1;
 //    String suffix = "-2x.png";  // wishful thinking
-//    // Some modes may not have a 2x version. If a mode doesn't have a 1x 
+//    // Some modes may not have a 2x version. If a mode doesn't have a 1x
 //    // version, this will cause an error... they should always have 1x.
 //    if (res == 2) {
 //      if (!mode.getContentFile(tabFile(0, 0) + suffix).exists()) {
@@ -175,7 +183,7 @@ public class EditorHeader extends JComponent {
 //        suffix = ".gif";
 //      }
 //    }
-//    
+//
 //    pieces = new Image[STATUS.length][WHERE.length];
 //    for (int status = 0; status < STATUS.length; status++) {
 //      for (int where = 0; where < WHERE.length; where++) {
@@ -183,19 +191,25 @@ public class EditorHeader extends JComponent {
 //        pieces[status][where] = mode.loadImage(tabFile(status, where) + suffix);
 //      }
 //    }
-    
+
     if (tabArrow == null) {
       String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
       tabArrow = Toolkit.getLibImage("tab-arrow" + suffix);
     }
 
-    backgroundColor = mode.getColor("header.bgcolor");
+    bgColor = mode.getColor("header.bgcolor");
+    
+    hiding = Preferences.getBoolean("buttons.hide.image");
+    hideColor = mode.getColor("buttons.hide.color");
+
     textColor[SELECTED] = mode.getColor("header.text.selected.color");
     textColor[UNSELECTED] = mode.getColor("header.text.unselected.color");
     font = mode.getFont("header.text.font");
-    
+
     tabColor[SELECTED] = mode.getColor("header.tab.selected.color");
     tabColor[UNSELECTED] = mode.getColor("header.tab.unselected.color");
+    
+    modifiedColor = mode.getColor("editor.selection.color");
   }
 
 
@@ -234,38 +248,36 @@ public class EditorHeader extends JComponent {
 
     Graphics g = offscreen.getGraphics();
     g.setFont(font);  // need to set this each time through
-    metrics = g.getFontMetrics();
-    fontAscent = metrics.getAscent();
+//    metrics = g.getFontMetrics();
+//    fontAscent = metrics.getAscent();
+    if (fontAscent == 0) {
+      fontAscent = (int) Toolkit.getAscent(g);
+    }
 
     Graphics2D g2 = (Graphics2D) g;
-    
+
     if (Toolkit.highResDisplay()) {
       // scale everything 2x, will be scaled down when drawn to the screen
       g2.scale(2, 2);
+      if (Base.isUsableOracleJava()) {
+        // Oracle Java looks better with anti-aliasing turned on
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      }
     } else {
-      // don't anti-alias text in retina mode
+      // don't anti-alias text in retina mode w/ Apple Java
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                           RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
 
     // set the background for the offscreen
-    g.setColor(backgroundColor);
+    g.setColor(hiding ? hideColor : bgColor);
     g.fillRect(0, 0, imageW, imageH);
-    
-//    EditorToolbar toolbar = editor.toolbar;
-//    if (toolbar != null && toolbar.backgroundImage != null) {
-//      g.drawImage(toolbar.backgroundImage, 
-//                  0, -toolbar.getHeight(), 
-//                  EditorToolbar.BACKGROUND_WIDTH, 
-//                  EditorToolbar.BACKGROUND_HEIGHT, null);
-//    }
-    editor.getMode().drawBackground(g, EditorToolbar.BUTTON_HEIGHT);
 
-//    int codeCount = sketch.getCodeCount();
-//    if ((tabLeft == null) || (tabLeft.length < codeCount)) {
-//      tabLeft = new int[codeCount];
-//      tabRight = new int[codeCount];
-//    }
+    if (!hiding) {
+      editor.getMode().drawBackground(g, Preferences.GRID_SIZE);
+    }
+
     if (tabs.length != sketch.getCodeCount()) {
       tabs = new Tab[sketch.getCodeCount()];
       for (int i = 0; i < tabs.length; i++) {
@@ -274,10 +286,7 @@ public class EditorHeader extends JComponent {
       visitOrder = new Tab[sketch.getCodeCount() - 1];
     }
 
-//    menuRight = sizeW - 16;
-//    menuLeft = menuRight - pieces[0][MENU].getWidth(this);
-//    menuLeft = menuRight - 50;  // FIXME!!
-    int leftover = 
+    int leftover =
       ARROW_GAP_WIDTH + ARROW_WIDTH + MARGIN_WIDTH; // + SCROLLBAR_WIDTH;
     int tabMax = getWidth() - leftover;
 
@@ -289,10 +298,12 @@ public class EditorHeader extends JComponent {
 
       // hide extensions for .pde files (or whatever else is the norm elsewhere
       boolean hide = editor.getMode().hideExtension(code.getExtension());
-      String codeName = hide ? code.getPrettyName() : code.getFileName();
+//      String codeName = hide ? code.getPrettyName() : code.getFileName();
       // if modified, add the li'l glyph next to the name
-      tab.text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");
-
+//      tab.text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");
+//      tab.text = "  " + codeName + "  ";
+      tab.text = hide ? code.getPrettyName() : code.getFileName();
+      
       tab.textWidth = (int)
         font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
     }
@@ -328,8 +339,8 @@ public class EditorHeader extends JComponent {
     // draw the dropdown menu target
     menuLeft = tabs[tabs.length - 1].right + ARROW_GAP_WIDTH;
     menuRight = menuLeft + ARROW_WIDTH;
-    int arrowY = (getHeight() - TAB_HEIGHT) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
-    g.drawImage(tabArrow, menuLeft, arrowY, 
+    int arrowY = (getHeight() - TAB_HEIGHT - TAB_STRETCH) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
+    g.drawImage(tabArrow, menuLeft, arrowY,
                 ARROW_WIDTH, ARROW_HEIGHT, null);
 //    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
 //                menuLeft, 0, null);
@@ -342,7 +353,7 @@ public class EditorHeader extends JComponent {
     Sketch sketch = editor.getSketch();
     int x = left;
 
-    final int bottom = getHeight();
+    final int bottom = getHeight() - TAB_STRETCH;
     final int top = bottom - TAB_HEIGHT;
     GeneralPath path = null;
     
@@ -389,19 +400,26 @@ public class EditorHeader extends JComponent {
         path.closePath();
         g.setColor(tabColor[state]);
         g.fill(path);
+        // have to draw an extra outline to make things line up on retina
+        g.draw(path);
         //g.drawImage(pieces[state][RIGHT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
-      }
 
-      if (tab.textVisible) {
-//        int textLeft = contentLeft + (pieceWidth - tab.textWidth) / 2;
-        if (g != null) {
+        if (tab.textVisible) {
           int textLeft = tab.left + ((tab.right - tab.left) - tab.textWidth) / 2;
           g.setColor(textColor[state]);
 //          int baseline = (int) Math.ceil((sizeH + fontAscent) / 2.0);
-          int baseline = bottom - (TAB_HEIGHT - fontAscent)/2 - 1;
+          //int baseline = bottom - (TAB_HEIGHT - fontAscent)/2;
+          int tabHeight = TAB_HEIGHT; //bottom - top;
+          int baseline = top + (tabHeight + fontAscent) / 2;
           //g.drawString(sketch.code[i].name, textLeft, baseline);
           g.drawString(tab.text, textLeft, baseline);
 //          g.drawLine(tab.left, baseline-fontAscent, tab.right, baseline-fontAscent);
+//          g.drawLine(tab.left, baseline, tab.right, baseline);
+        }
+      
+        if (code.isModified()) {
+          g.setColor(modifiedColor);
+          g.drawLine(tab.left + NOTCH, top, tab.right - NOTCH, top);
         }
       }
 
@@ -409,8 +427,15 @@ public class EditorHeader extends JComponent {
 //        g.drawImage(pieces[state][RIGHT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
 //      }
 //      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
-      x += 1;
+      x += TAB_BETWEEN;
     }
+    
+    // Draw this last because of half-pixel overlaps on retina displays
+    if (g != null) {
+      g.setColor(tabColor[SELECTED]);
+      g.fillRect(0, bottom, getWidth(), TAB_STRETCH);
+    }
+    
     return x <= right;
   }
 
@@ -509,16 +534,14 @@ public class EditorHeader extends JComponent {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Sketch sketch = editor.getSketch();
-          if (!sketch.isUntitled()) {  // don't bother if untitled
-            if (!Base.isMacOS() &&  // ok on OS X
-                editor.base.editors.size() == 1 &&  // mmm! accessor
-                sketch.getCurrentCodeIndex() == 0) {
+          if (!Base.isMacOS() &&  // ok on OS X
+              editor.base.editors.size() == 1 &&  // mmm! accessor
+              sketch.getCurrentCodeIndex() == 0) {
               Base.showWarning("Yeah, no." ,
                                "You can't delete the last tab " +
                                "of the last open sketch.", null);
-            } else {
-              editor.getSketch().handleDeleteCode();
-            }
+          } else {
+            editor.getSketch().handleDeleteCode();
           }
         }
       });
@@ -584,18 +607,18 @@ public class EditorHeader extends JComponent {
 
 
   public Dimension getMinimumSize() {
-    if (Base.isMacOS()) {
-      return new Dimension(300, Preferences.GRID_SIZE);
-    }
-    return new Dimension(300, Preferences.GRID_SIZE - 1);
+//    if (Base.isMacOS()) {
+    return new Dimension(300, Preferences.GRID_SIZE);
+//    }
+//    return new Dimension(300, Preferences.GRID_SIZE - 1);
   }
 
 
   public Dimension getMaximumSize() {
-    if (Base.isMacOS()) {
-      return new Dimension(3000, Preferences.GRID_SIZE);
-    }
-    return new Dimension(3000, Preferences.GRID_SIZE - 1);
+//    if (Base.isMacOS()) {
+    return new Dimension(3000, Preferences.GRID_SIZE);
+//    }
+//    return new Dimension(3000, Preferences.GRID_SIZE - 1);
   }
 
 

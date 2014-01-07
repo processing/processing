@@ -1,52 +1,52 @@
-# GUI - STATUS
+# STATUS
+# Status messages (1 file added to sketch, errors, etc)
 status.notice.fgcolor = #000000
 status.notice.bgcolor = #818b95
 status.error.fgcolor = #ffffff
 status.error.bgcolor = #662000
 status.edit.fgcolor = #000000
 status.edit.bgcolor = #cc9900
-status.font = SansSerif,plain,12
-#status.font.macosx = Helvetica,plain,12
+status.font = processing.sans,plain,14
 
-# GUI - TABS
-# settings for the tabs at the top
-# (tab images are stored in the lib/theme folder)
-#header.bgcolor = #818b95
+# TABS
+# Settings for the tab area at the top.
 header.bgcolor = #000000
-#header.text.selected.color = #1a1a00
+#header.hide.image = false # in preferences.txt
+header.hide.color = #0E1B25
 header.text.selected.color = #000000
 header.text.unselected.color = #ffffff
-header.text.font = SansSerif,plain,12
-#header.text.font.macosx = Helvetica,plain,12
+header.text.font = processing.sans,plain,14
 header.tab.selected.color = #a2afba
 header.tab.unselected.color = #2a4159
 
-# GUI - CONSOLE
-# font is handled by preferences, since size/etc is modifiable
+# CONSOLE
+# The font is handled by preferences, so its size/etc are modifiable.
 console.color = #000000
 console.output.color = #cccccc
 console.error.color = #ff3000
 
-# GUI - BUTTONS
-#buttons.bgcolor = #4a545e
+# TOOLBAR BUTTONS
 buttons.bgcolor = #000000
-buttons.status.font = SansSerif,plain,12
-#buttons.status.font.macosx = Helvetica,plain,12
+#buttons.hide.image = false # in preferences.txt
+buttons.hide.color = #0E1B25
+buttons.bgimage = true
+
+# TOOLBAR BUTTON TEXT
+buttons.status.font = processing.sans,bold,13
 buttons.status.color = #ffffff
 
-# GUI - MODE
-#mode.button.bgcolor = #9ca6b0
-#mode.button.font = SansSerif,plain,9
-#mode.button.font.macosx = Helvetica,plain,9
-mode.button.font = Monospaced,plain,11
-mode.button.font.macosx = Monaco,plain,10
-#mode.button.color = #4a545e
-#mode.button.color = #9ca6b0
+# MODE SELECTOR
+mode.button.font = processing.sans,bold,13
+# outline color of the mode button
 mode.button.color = #ffffff
 
-# GUI - LINESTATUS
+# LINE STATUS
+# The editor line number status bar at the bottom of the screen
 linestatus.color = #ffffff
 linestatus.bgcolor = #29333d
+linestatus.font = processing.sans,plain,13
+linestatus.height  = 20
+
 
 # EDITOR - DETAILS
 
@@ -78,8 +78,3 @@ editor.eolmarkers.color = #999999
 # bracket/brace highlighting
 editor.brackethighlight = true
 editor.brackethighlight.color = #006699
-
-# LINE STATUS - editor line number status bar at the bottom of the screen
-linestatus.font = SansSerif,plain,10
-#linestatus.font.macosx = Helvetica,plain,10
-linestatus.height  = 20

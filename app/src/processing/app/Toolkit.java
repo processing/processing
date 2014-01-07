@@ -22,14 +22,29 @@
 package processing.app;
 
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -207,25 +222,244 @@ public class Toolkit {
     return awtToolkit.getSystemClipboard();
   }
 
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  static Boolean retinaProp;
+
+  static Boolean highResProp;
+
 
   static public boolean highResDisplay() {
+    if (highResProp == null) {
+      highResProp = checkRetina();
+    }
+    return highResProp;
+  }
+  
+  
+  static private boolean checkRetina() {
     if (Base.isMacOS()) {
-      // This should probably be reset each time there's a display change.
-      // A 5-minute search didn't turn up any such event in the Java API.
-      // Also, should we use the Toolkit associated with the editor window?
-      if (retinaProp == null) {
+    // This should probably be reset each time there's a display change.
+    // A 5-minute search didn't turn up any such event in the Java API.
+    // Also, should we use the Toolkit associated with the editor window?
+//      String javaVendor = System.getProperty("java.vendor");
+//      if (javaVendor.contains("Apple")) {
+      if (System.getProperty("java.vendor").contains("Apple")) {
         Float prop = (Float)
           awtToolkit.getDesktopProperty("apple.awt.contentScaleFactor");
         if (prop != null) {
-          retinaProp = prop == 2;
-        } else {
-          retinaProp = false;
+          return prop == 2;
         }
+//      } else if (javaVendor.contains("Oracle")) {
+//        String version = System.getProperty("java.version");  // 1.7.0_40
+//        String[] m = PApplet.match(version, "1.(\\d).*_(\\d+)");
+//        
+//        // Make sure this is Oracle Java 7u40 or later
+//        if (m != null && 
+//            PApplet.parseInt(m[1]) >= 7 && 
+//            PApplet.parseInt(m[1]) >= 40) {
+      } else if (Base.isUsableOracleJava()) {
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+
+        try {
+          Field field = device.getClass().getDeclaredField("scale");
+          if (field != null) {
+            field.setAccessible(true);
+            Object scale = field.get(device);
+
+            if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
+              return true;
+            }
+          }
+        } catch (Exception ignore) { } 
       }
-      return retinaProp;
     }
     return false;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+//  static Font monoFont;
+//  static Font plainFont;
+//  static Font boldFont;
+//
+//
+//  static public Font getMonoFont(int size) {
+//    if (monoFont == null) {
+//      try {
+//        monoFont = createFont("DroidSansMono.ttf", size);
+//      } catch (Exception e) {
+//        monoFont = new Font("Monospaced", Font.PLAIN, size);
+//      }
+//    }
+//    return monoFont;
+//  }
+//
+//
+//  static public Font getPlainFont(int size) {
+//    if (plainFont == null) {
+//      try {
+//        plainFont = createFont("DroidSans.ttf", size);
+//      } catch (Exception e) {
+//        plainFont = new Font("SansSerif", Font.PLAIN, size);
+//      }
+//    }
+//    return plainFont;
+//  }
+//
+//
+//  static public Font getBoldFont(int size) {
+//    if (boldFont == null) {
+//      try {
+//        boldFont = createFont("DroidSans-Bold.ttf", size);
+//      } catch (Exception e) {
+//        boldFont = new Font("SansSerif", Font.BOLD, size);
+//      }
+//    }
+//    return boldFont;
+//  }
+
+
+  // Gets the plain (not bold, not italic) version of each
+  static private List<Font> getMonoFontList() {
+    GraphicsEnvironment ge =
+      GraphicsEnvironment.getLocalGraphicsEnvironment();
+    Font[] fonts = ge.getAllFonts();
+    ArrayList<Font> outgoing = new ArrayList<Font>();
+    // Using AffineTransform.getScaleInstance(100, 100) doesn't change sizes
+    FontRenderContext frc = 
+      new FontRenderContext(new AffineTransform(),
+                            Preferences.getBoolean("editor.antialias"), 
+                            true);  // use fractional metrics 
+    for (Font font : fonts) {
+      if (font.getStyle() == Font.PLAIN &&
+          font.canDisplay('i') && font.canDisplay('M') &&
+          font.canDisplay(' ') && font.canDisplay('.')) {
+        
+        // The old method just returns 1 or 0, and using deriveFont(size)  
+        // is overkill. It also causes deprecation warnings
+//        @SuppressWarnings("deprecation")
+//        FontMetrics fm = awtToolkit.getFontMetrics(font);
+        //FontMetrics fm = awtToolkit.getFontMetrics(font.deriveFont(24));
+//        System.out.println(fm.charWidth('i') + " " + fm.charWidth('M'));
+//        if (fm.charWidth('i') == fm.charWidth('M') &&
+//            fm.charWidth('M') == fm.charWidth(' ') && 
+//            fm.charWidth(' ') == fm.charWidth('.')) {
+        double w = font.getStringBounds(" ", frc).getWidth();
+        if (w == font.getStringBounds("i", frc).getWidth() && 
+            w == font.getStringBounds("M", frc).getWidth() &&
+            w == font.getStringBounds(".", frc).getWidth()) {
+          
+//          //PApplet.printArray(font.getAvailableAttributes());
+//          Map<TextAttribute,?> attr = font.getAttributes();
+//          System.out.println(font.getFamily() + " > " + font.getName());
+//          System.out.println(font.getAttributes());
+//          System.out.println("  " + attr.get(TextAttribute.WEIGHT));
+//          System.out.println("  " + attr.get(TextAttribute.POSTURE));
+          
+          outgoing.add(font);
+//          System.out.println("  good " + w);
+        }
+      }
+    }
+    return outgoing;
+  }
+  
+  
+  static public String[] getMonoFontFamilies() {
+    HashSet<String> families = new HashSet<String>();
+    for (Font font : getMonoFontList()) {
+      families.add(font.getFamily());
+    }
+    return families.toArray(new String[0]);
+  }
+
+
+  static Font monoFont;
+  static Font monoBoldFont;
+  static Font sansFont;
+  static Font sansBoldFont;
+
+
+  static public String getMonoFontName() {
+    if (monoFont == null) {
+      getMonoFont(12, Font.PLAIN);  // load a dummy version
+    }
+    return monoFont.getName();
+  }
+  
+  
+  static public Font getMonoFont(int size, int style) {
+    if (monoFont == null) {
+      try {
+        monoFont = createFont("SourceCodePro-Regular.ttf", size);
+        //monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
+        monoBoldFont = createFont("SourceCodePro-Bold.ttf", size);
+      } catch (Exception e) {
+        Base.log("Could not load mono font", e);
+        monoFont = new Font("Monospaced", Font.PLAIN, size);
+        monoBoldFont = new Font("Monospaced", Font.BOLD, size);
+      }
+    }
+    if (style == Font.BOLD) {
+      if (size == monoBoldFont.getSize()) {
+        return monoBoldFont;
+      } else {
+        return monoBoldFont.deriveFont((float) size);
+      }
+    } else {
+      if (size == monoFont.getSize()) {
+        return monoFont;
+      } else {
+        return monoFont.deriveFont((float) size);
+      }
+    }
+  }
+
+
+  static public Font getSansFont(int size, int style) {
+    if (sansFont == null) {
+      try {
+        sansFont = createFont("SourceSansPro-Regular.ttf", size);
+        sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
+      } catch (Exception e) {
+        Base.log("Could not load sans font", e);
+        sansFont = new Font("SansSerif", Font.PLAIN, size);
+        sansBoldFont = new Font("SansSerif", Font.BOLD, size);
+      }
+    }
+    if (style == Font.BOLD) {
+      if (size == sansBoldFont.getSize()) {
+        return sansBoldFont;
+      } else {
+        return sansBoldFont.deriveFont((float) size);
+      }
+    } else {
+      if (size == sansFont.getSize()) {
+        return sansFont;
+      } else {
+        return sansFont.deriveFont((float) size);
+      }
+    }
+  }
+
+
+  static private Font createFont(String filename, int size) throws IOException, FontFormatException {
+    InputStream is = Base.getLibStream("fonts/" + filename);
+    BufferedInputStream input = new BufferedInputStream(is);
+    Font font = Font.createFont(Font.TRUETYPE_FONT, input);
+    input.close();
+    return font.deriveFont((float) size);
+  }
+  
+  
+  static double getAscent(Graphics g) { //, Font font) {
+    Graphics2D g2 = (Graphics2D) g;
+    FontRenderContext frc = g2.getFontRenderContext();
+    //return new TextLayout("H", font, frc).getBounds().getHeight();
+    return new TextLayout("H", g.getFont(), frc).getBounds().getHeight();
   }
 }

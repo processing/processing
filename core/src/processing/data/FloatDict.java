@@ -9,8 +9,10 @@ import processing.core.PApplet;
 
 /**
  * A simple table class to use a String as a lookup for an float value.
- * 
+ *
  * @webref data:composite
+ * @see IntDict
+ * @see StringDict
  */
 public class FloatDict {
 
@@ -34,6 +36,8 @@ public class FloatDict {
   /**
    * Create a new lookup with a specific size. This is more efficient than not
    * specifying a size. Use it when you know the rough size of the thing you're creating.
+   *
+   * @nowebref
    */
   public FloatDict(int length) {
     count = 0;
@@ -45,6 +49,8 @@ public class FloatDict {
   /**
    * Read a set of entries from a Reader that has each key/value pair on
    * a single line, separated by a tab.
+   *
+   * @nowebref
    */
   public FloatDict(BufferedReader reader) {
 //  public FloatHash(PApplet parent, String filename) {
@@ -64,7 +70,9 @@ public class FloatDict {
     }
   }
 
-
+  /**
+   * @nowebref
+   */
   public FloatDict(String[] keys, float[] values) {
     if (keys.length != values.length) {
       throw new IllegalArgumentException("key and value arrays must be the same length");
@@ -86,12 +94,12 @@ public class FloatDict {
   }
 
 
-  /** 
+  /**
    * Remove all entries.
-   * 
+   *
    * @webref floatdict:method
    * @brief Remove all entries
-   */ 
+   */
   public void clear() {
     count = 0;
     indices = new HashMap<String, Integer>();
@@ -180,7 +188,7 @@ public class FloatDict {
 
   /**
    * Return a copy of the internal keys array. This array can be modified.
-   * 
+   *
    * @webref floatdict:method
    * @brief Return a copy of the internal keys array
    */
@@ -264,7 +272,7 @@ public class FloatDict {
 
   /**
    * Return a value for the specified key.
-   * 
+   *
    * @webref floatdict:method
    * @brief Return a value for the specified key
    */
@@ -363,19 +371,107 @@ public class FloatDict {
   }
 
 
+  private void checkMinMax(String functionName) {
+    if (count == 0) {
+      String msg =
+        String.format("Cannot use %s() on an empty %s.",
+                      functionName, getClass().getSimpleName());
+      throw new RuntimeException(msg);
+    }
+  }
+
+
+  /**
+   * @webref floatlist:method
+   * @brief Return the smallest value
+   */
+  public int minIndex() {
+    checkMinMax("minIndex");
+    // Will still return NaN if there is 1 or more entries, and they're all NaN
+    float m = Float.NaN;
+    int mi = -1;
+    for (int i = 0; i < count; i++) {
+      // find one good value to start
+      if (values[i] == values[i]) {
+        m = values[i];
+        mi = i;
+
+        // calculate the rest
+        for (int j = i+1; j < count; j++) {
+          float d = values[j];
+          if (!Float.isNaN(d) && (d < m)) {
+            m = values[j];
+            mi = j;
+          }
+        }
+        break;
+      }
+    }
+    return mi;
+  }
+
+
+  public String minKey() {
+    checkMinMax("minKey");
+    return keys[minIndex()];
+  }
+
+
+  public float minValue() {
+    checkMinMax("minValue");
+    return values[minIndex()];
+  }
+
+
+  /**
+   * @webref floatlist:method
+   * @brief Return the largest value
+   */
+  // The index of the entry that has the max value. Reference above is incorrect.
+  public int maxIndex() {
+    checkMinMax("maxIndex");
+    // Will still return NaN if there is 1 or more entries, and they're all NaN
+    float m = Float.NaN;
+    int mi = -1;
+    for (int i = 0; i < count; i++) {
+      // find one good value to start
+      if (values[i] == values[i]) {
+        m = values[i];
+        mi = i;
+
+        // calculate the rest
+        for (int j = i+1; j < count; j++) {
+          float d = values[j];
+          if (!Float.isNaN(d) && (d > m)) {
+            m = values[j];
+            mi = j;
+          }
+        }
+        break;
+      }
+    }
+    return mi;
+  }
+
+
+  /** The key for a max value. */
+  public String maxKey() {
+    checkMinMax("maxKey");
+    return keys[maxIndex()];
+  }
+
+
+  /** The max value. */
+  public float maxValue() {
+    checkMinMax("maxValue");
+    return values[maxIndex()];
+  }
+
+
   public int index(String what) {
     Integer found = indices.get(what);
     return (found == null) ? -1 : found.intValue();
   }
-
-
-//  public void add(String key) {
-//    if (index(key) != -1) {
-//      throw new IllegalArgumentException("Use inc() to increment an entry, " +
-//      		                               "add() is for adding a new key");
-//    }
-//    add(key, 0);
-//  }
 
 
   protected void create(String what, float much) {
@@ -394,12 +490,20 @@ public class FloatDict {
    * @webref floatdict:method
    * @brief Remove a key/value pair
    */
-  public void remove(String key) {
-    removeIndex(index(key));
+  public int remove(String key) {
+    int index = index(key);
+    if (index != -1) {
+      removeIndex(index);
+    }
+    return index;
   }
 
 
-  public void removeIndex(int index) {
+  public String removeIndex(int index) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
+    String key = keys[index];
     //System.out.println("index is " + which + " and " + keys[which]);
     indices.remove(keys[index]);
     for (int i = index; i < count-1; i++) {
@@ -410,10 +514,11 @@ public class FloatDict {
     count--;
     keys[count] = null;
     values[count] = 0;
+    return key;
   }
 
 
-  protected void swap(int a, int b) {
+  public void swap(int a, int b) {
     String tkey = keys[a];
     float tvalue = values[a];
     keys[a] = keys[b];
@@ -442,9 +547,9 @@ public class FloatDict {
   /**
    * Sort the keys alphabetically (ignoring case). Uses the value as a
    * tie-breaker (only really possible with a key that has a case change).
-   * 
+   *
    * @webref floatdict:method
-   * @brief Sort the keys alphabetically 
+   * @brief Sort the keys alphabetically
    */
   public void sortKeys() {
     sortImpl(true, false);
@@ -482,9 +587,9 @@ public class FloatDict {
 
   /**
    * Sort by values in descending order (largest value will be at [0]).
-   * 
+   *
    * @webref floatdict:method
-   * @brief Sort by values in ascending order  
+   * @brief Sort by values in ascending order
    */
   public void sortValues() {
     sortImpl(false, false);
@@ -575,6 +680,25 @@ public class FloatDict {
       }
     };
     s.run();
+  }
+
+
+  /**
+   * Sum all of the values in this dictionary, then return a new FloatDict of
+   * each key, divided by the total sum. The total for all values will be ~1.0.
+   * @return a Dict with the original keys, mapped to their pct of the total
+   */
+  public FloatDict getPercent() {
+    double sum = 0;
+    for (float value : valueArray()) {
+      sum += value;
+    }
+    FloatDict outgoing = new FloatDict();
+    for (int i = 0; i < size(); i++) {
+      double percent = value(i) / sum;
+      outgoing.set(key(i), (float) percent);
+    }
+    return outgoing;
   }
 
 

@@ -454,6 +454,12 @@ public class JavaBuild {
       javaClassPath = javaClassPath.substring(1, javaClassPath.length() - 1);
     }
     classPath += File.pathSeparator + javaClassPath;
+    
+    // But make sure that there isn't anything in there that's missing, 
+    // otherwise ECJ will complain and die. For instance, Java 1.7 (or maybe
+    // it's appbundler?) adds Java/Classes to the path, which kills us.
+    //String[] classPieces = PApplet.split(classPath, File.pathSeparator);
+    // Nah, nevermind... we'll just create the @!#$! folder until they fix it.
 
 
     // 3. then loop over the code[] and save each .java file
@@ -1084,6 +1090,7 @@ public class JavaBuild {
       return false;
     }
 
+    /*
     File folder = null;
     for (String platformName : PConstants.platformNames) {
       int platform = Base.getPlatformIndex(platformName);
@@ -1107,15 +1114,33 @@ public class JavaBuild {
         }
       }
     }
+    */
+    
+    File folder = null;
+    String platformName = Base.getPlatformName();
+    boolean embedJava = Preferences.getBoolean("export.application.embed_java");
+    if (Library.hasMultipleArch(PApplet.platform, importedLibraries)) {
+      if (Base.getNativeBits() == 32) {
+        // export the 32-bit version
+        folder = new File(sketch.getFolder(), "application." + platformName + "32");
+        if (!exportApplication(folder, PApplet.platform, 32, embedJava)) {
+          return false;
+        }
+      } else if (Base.getNativeBits() == 64) {
+        // export the 64-bit version
+        folder = new File(sketch.getFolder(), "application." + platformName + "64");
+        if (!exportApplication(folder, PApplet.platform, 64, embedJava)) {
+          return false;
+        }
+      }
+    } else { // just make a single one for this platform
+      folder = new File(sketch.getFolder(), "application." + platformName);
+      if (!exportApplication(folder, PApplet.platform, 0, embedJava)) {
+        return false;
+      }
+    }
     return true;  // all good
   }
-
-
-//  public boolean exportApplication(String destPath,
-//                                   String platformName,
-//                                   int exportBits) throws IOException, RunnerException {
-//    return exportApplication(destPath, Base.getPlatformIndex(platformName), exportBits);
-//  }
 
 
   /**
@@ -1123,7 +1148,8 @@ public class JavaBuild {
    */
   protected boolean exportApplication(File destFolder,
                                       int exportPlatform,
-                                      int exportBits) throws IOException, SketchException {
+                                      int exportBits,
+                                      boolean embedJava) throws IOException, SketchException {
     // TODO this should probably be a dialog box instead of a warning
     // on the terminal. And the message should be written better than this.
     // http://code.google.com/p/processing/issues/detail?id=884
@@ -1154,13 +1180,54 @@ public class JavaBuild {
     /// on macosx, need to copy .app skeleton since that's
     /// also where the jar files will be placed
     File dotAppFolder = null;
+//    String jdkFolderName = null;
+    String jvmRuntime = "";
     if (exportPlatform == PConstants.MACOSX) {
       dotAppFolder = new File(destFolder, sketch.getName() + ".app");
-//      String APP_SKELETON = "skeleton.app";
-      //File dotAppSkeleton = new File(folder, APP_SKELETON);
-      File dotAppSkeleton = mode.getContentFile("application/template.app");
-      Base.copyDir(dotAppSkeleton, dotAppFolder);
 
+      File contentsOrig = new File(Base.getJavaHome(), "../../../../..");
+
+      if (embedJava) {
+        File jdkFolder = new File(Base.getJavaHome(), "../../..");
+        String jdkFolderName = jdkFolder.getCanonicalFile().getName();
+        jvmRuntime = "<key>JVMRuntime</key>\n    <string>" + jdkFolderName + "</string>";
+      }
+
+//      File dotAppSkeleton = mode.getContentFile("application/template.app");
+//      Base.copyDir(dotAppSkeleton, dotAppFolder);
+      File contentsFolder = new File(dotAppFolder, "Contents");
+      contentsFolder.mkdirs();
+
+      // Info.plist will be written later
+      
+      // set the jar folder to a different location than windows/linux
+      //jarFolder = new File(dotAppFolder, "Contents/Resources/Java");
+      jarFolder = new File(contentsFolder, "Java");
+
+      File macosFolder = new File(contentsFolder, "MacOS");
+      macosFolder.mkdirs();
+      Base.copyFile(new File(contentsOrig, "MacOS/Processing"), 
+                    new File(contentsFolder, "MacOS/" + sketch.getName()));
+      
+      File pkgInfo = new File(contentsFolder, "PkgInfo");
+      PrintWriter writer = PApplet.createWriter(pkgInfo);
+      writer.println("APPL????");
+      writer.flush();
+      writer.close();
+      
+      // Use faster(?) native copy here (also to do sym links)
+      if (embedJava) {
+        Base.copyDirNative(new File(contentsOrig, "PlugIns"),
+                           new File(contentsFolder, "PlugIns"));
+      }
+      
+      File resourcesFolder = new File(contentsFolder, "Resources");
+      Base.copyDir(new File(contentsOrig, "Resources/en.lproj"), 
+                   new File(resourcesFolder, "en.lproj"));
+      Base.copyFile(mode.getContentFile("application/sketch.icns"),
+                    new File(resourcesFolder, "sketch.icns"));
+      
+      /*
       String stubName = "Contents/MacOS/JavaApplicationStub";
       // need to set the stub to executable
       // will work on osx or *nix, but just dies on windows, oh well..
@@ -1183,13 +1250,20 @@ public class JavaBuild {
         String stubPath = stubFile.getAbsolutePath();
         Runtime.getRuntime().exec(new String[] { "chmod", "+x", stubPath });
       }
-
-      // set the jar folder to a different location than windows/linux
-      jarFolder = new File(dotAppFolder, "Contents/Resources/Java");
+      */
+    } else if (exportPlatform == PConstants.LINUX) {
+      if (embedJava) {
+        Base.copyDirNative(Base.getJavaHome(), new File(destFolder, "java"));
+      }
+      
+    } else if (exportPlatform == PConstants.WINDOWS) {
+      if (embedJava) {
+        Base.copyDir(Base.getJavaHome(), new File(destFolder, "java"));
+      }
     }
 
 
-    /// make the jar folder (windows and linux)
+    /// make the jar folder (all platforms)
 
     if (!jarFolder.exists()) jarFolder.mkdirs();
 
@@ -1374,13 +1448,22 @@ public class JavaBuild {
 
     /// figure out run options for the VM
 
-    String runOptions = Preferences.get("run.options");
+    // this is too vague. if anyone is using it, we can bring it back
+//    String runOptions = Preferences.get("run.options");
+    List<String> runOptions = new ArrayList<String>();
     if (Preferences.getBoolean("run.options.memory")) {
-      runOptions += " -Xms" +
-        Preferences.get("run.options.memory.initial") + "m";
-      runOptions += " -Xmx" +
-        Preferences.get("run.options.memory.maximum") + "m";
+      runOptions.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
+      runOptions.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
     }
+    
+    StringBuilder jvmOptionsList = new StringBuilder();
+    for (String opt : runOptions) {
+      jvmOptionsList.append("      <string>");
+      jvmOptionsList.append(opt);
+      jvmOptionsList.append("</string>");
+      jvmOptionsList.append('\n');
+    }
+    
 //    if (exportPlatform == PConstants.MACOSX) {
 //      // If no bits specified (libs are all universal, or no native libs)
 //      // then exportBits will be 0, and can be controlled via "Get Info".
@@ -1395,10 +1478,12 @@ public class JavaBuild {
     /// macosx: write out Info.plist (template for classpath, etc)
 
     if (exportPlatform == PConstants.MACOSX) {
-      String PLIST_TEMPLATE = "template.plist";
+      //String PLIST_TEMPLATE = "template.plist";
+      String PLIST_TEMPLATE = "Info.plist.tmpl";
       File plistTemplate = new File(sketch.getFolder(), PLIST_TEMPLATE);
       if (!plistTemplate.exists()) {
-        plistTemplate = mode.getContentFile("application/template.plist");
+        //plistTemplate = mode.getContentFile("application/template.plist");
+        plistTemplate = mode.getContentFile("application/Info.plist.tmpl");
       }
       File plistFile = new File(dotAppFolder, "Contents/Info.plist");
       PrintWriter pw = PApplet.createWriter(plistFile);
@@ -1408,33 +1493,37 @@ public class JavaBuild {
         if (lines[i].indexOf("@@") != -1) {
           StringBuffer sb = new StringBuffer(lines[i]);
           int index = 0;
-          while ((index = sb.indexOf("@@vmoptions@@")) != -1) {
-            sb.replace(index, index + "@@vmoptions@@".length(),
-                       runOptions);
+          while ((index = sb.indexOf("@@jvm_runtime@@")) != -1) {
+            sb.replace(index, index + "@@jvm_runtime@@".length(),
+                       jvmRuntime);
+          }
+          while ((index = sb.indexOf("@@jvm_options_list@@")) != -1) {
+            sb.replace(index, index + "@@jvm_options_list@@".length(),
+                       jvmOptionsList.toString());
           }
           while ((index = sb.indexOf("@@sketch@@")) != -1) {
             sb.replace(index, index + "@@sketch@@".length(),
                        sketch.getName());
           }
-          while ((index = sb.indexOf("@@classpath@@")) != -1) {
-            sb.replace(index, index + "@@classpath@@".length(),
-                       exportClassPath.toString());
-          }
+//          while ((index = sb.indexOf("@@classpath@@")) != -1) {
+//            sb.replace(index, index + "@@classpath@@".length(),
+//                       exportClassPath.toString());
+//          }
           while ((index = sb.indexOf("@@lsuipresentationmode@@")) != -1) {
             sb.replace(index, index + "@@lsuipresentationmode@@".length(),
                        Preferences.getBoolean("export.application.fullscreen") ? "4" : "0");
           }
-          while ((index = sb.indexOf("@@lsarchitecturepriority@@")) != -1) {
-            // More about this mess: http://support.apple.com/kb/TS2827
-            // First default to exportBits == 0 case
-            String arch = "<string>x86_64</string>\n      <string>i386</string>";
-            if (exportBits == 32) {
-              arch = "<string>i386</string>";
-            } else if (exportBits == 64) {
-              arch = "<string>x86_64</string>";
-            }
-            sb.replace(index, index + "@@lsarchitecturepriority@@".length(), arch);
-          }
+//          while ((index = sb.indexOf("@@lsarchitecturepriority@@")) != -1) {
+//            // More about this mess: http://support.apple.com/kb/TS2827
+//            // First default to exportBits == 0 case
+//            String arch = "<string>x86_64</string>\n      <string>i386</string>";
+//            if (exportBits == 32) {
+//              arch = "<string>i386</string>";
+//            } else if (exportBits == 64) {
+//              arch = "<string>x86_64</string>";
+//            }
+//            sb.replace(index, index + "@@lsarchitecturepriority@@".length(), arch);
+//          }
 
           lines[i] = sb.toString();
         }
@@ -1448,10 +1537,10 @@ public class JavaBuild {
       File argsFile = new File(destFolder + "/lib/args.txt");
       PrintWriter pw = PApplet.createWriter(argsFile);
 
-      pw.println(runOptions);
-
-      pw.println(sketch.getName());
-      pw.println(exportClassPath);
+      // Since this is only on Windows, make sure we use Windows CRLF
+      pw.print(runOptions + "\r\n");
+      pw.print(sketch.getName() + "\r\n");
+      pw.print(exportClassPath);
 
       pw.flush();
       pw.close();
@@ -1529,7 +1618,7 @@ public class JavaBuild {
 
     String contents =
       "Manifest-Version: 1.0\n" +
-      "Created-By: Processing " + Base.VERSION_NAME + "\n" +
+      "Created-By: Processing " + Base.getVersionName() + "\n" +
       "Main-Class: " + sketch.getName() + "\n";  // TODO not package friendly
     zos.write(contents.getBytes());
     zos.closeEntry();

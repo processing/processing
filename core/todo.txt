@@ -1,127 +1,185 @@
-0218 core (2.0b10 or 2.0)
+0224 core
+X PImage resize() causes PImage not to be rendered in JAVA2D
+X   https://github.com/processing/processing/issues/2179
+
+fixed in 2.1
+X draw() called again before finishing on OS X (retina issue)
+X   https://github.com/processing/processing/issues/1709
 
 
-before 2.0
-_ PImage.loadPixels() shouldn't be calling out to the renderer
-_   setting image.parent = null for it makes it work again for get().save() case
-_ PShape should be cached as well
+high
+_ zero alpha values still a problem with retina renderer
+_   https://github.com/processing/processing/issues/2030
+_ Sort out blending differences with P2D/P3D
+_   https://github.com/processing/processing/issues/1844
+_ 'collector' class.. Dict that points to a list
+_   String as a key, int/float/string list as values
+_ blendMode(ADD) is broken with default renderer
+_   https://github.com/processing/processing/issues/2012
+_   may have been introduced between 2.0b7 and 2.0b8
+_ add option to have full screen span across screens
+_   display=all in cmd line
+_   sketchDisplay() -> 0 for all, or 1, 2, 3...
+_ test PGraphicsRetina2D w/ 7u40 
+_ make sure that 7u40 doesn't reintroduce starvation issue on retina Macs
+_ Linux sometimes not responding correctly w/ the size() command
+_   https://github.com/processing/processing/issues/1672
+_ clean up requestFocus() stuff
+_   make sure it works with retina/canvas/strategy as well
+_ finish PFont.getShape() implementation
+_   needs to have a way to set width/height properly
+_   draw(s) doesn't work on the returned PShape
+_ TGA files writing strangely
+_   https://github.com/processing/processing/issues/2096
+
+table
+_ addRow() is not efficient, probably need to do the doubling
+_   or have a setIncrement() function?
+_   it would default to 1 on tables loaded from a file
+_   and default to doubling when created with "new Table"
+_   row count and array size are combined.. need to break apart
+_ match and iterators
+_   add match version that returns table that's only a pointer to original
+_   save the constructor for the version that actually copies data
+_   the table pointer version will be speedy and allow chaining 
+
+decisions/misc
 _ add options for image.save() (or saveImage?)
 _   add quality=[0,1] for jpeg images
 _   add dpi=[0,n] for for png images
+_   implemented internally, just needs the wrapper for the args
+_ possible addition for 'implementation' variable
+X   http://code.google.com/p/processing/issues/detail?id=281
+_   https://github.com/processing/processing/issues/320
+_ should map() actually constrain to the low and high values?
+_   or have an alternate version that does that? (boolean param at end?)
+_ decide whether to keep:
+_   public float textWidth(char[] chars, int start, int length)
+_ add version of math functions that use doubles?
+_   what other methods should work with doubles? all math functions?
+_   seems like internal (mostly static) things, but not graphics api
+_ new PGraphics(... OutputStream) 
+X   http://code.google.com/p/processing/issues/detail?id=246
+_   https://github.com/processing/processing/issues/285
+_   already added for PDF, just need to work out the API
+_ if save() returns boolean, does saveFrame()?
+_   also need to copy this over to android
+_ "translate, or this variation of it" when using text(s, x, y, z) accidentally
+_   change to be the text command
+_ size() and resize() and whatever? 
+_   should be setSize(), but that's odd for image files
+_   -> resize() is fine with PImage and PGraphics... 
+_   we may be inheriting the resize() from Java -> make it final?
+_   add resize().. make it call setSize().
+_     also needs to do a redraw if noLoop() has been called
+_   the registered method for size() also needs to be called
+_ get() or copy()? for vectors, image, etc.
+_ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
+_   toColorArray(), toColorArray(float[])...
+_ make sure that loadXxxx() methods are used after init()
+_   nasty errors when loadImage/Font/createFont/etc used outside
+_   decision: add error messages where possible
+_   idea: set frameCount to -1 when setup not run yet?
+_     then set frameCount to 0 when setup() starts?
+_ how much of com.benfry.* should go in? 
+_   Table? StringIntPairs? JSON? MD5? Integrator? ColorIntegrator?
+_   decision: depends on if we can think of a good name
+_ check on DXFWriter, since it used to subclass P3D
+_   at least implement is3D? 
+_ sleep time needs to be set *much* higher for dormant applets
+_   10s should be fine--no need to keep spinning (bad for android too)
+_   just call interrupt() when it's time to get back to work
+_ need to clean up the hints in the reference/source
+_ sort out edge + 1 issue on stroke/fill for rectangles
+_   http://code.google.com/p/processing/issues/detail?id=509
+_ exactly how should pixel filling work with single pixel strokes?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1025 (no gcode)
+_ y2 position of rectangles not same as y2 position of lines
+_   happens when the rectangle is flipped on the x or y axis
+_   probably a hack that draws the "last" point differently
+_ add inputPath() and outputPath() -> sketch folder or sd card
+_   or should this just be a change to sketchPath() on Android?
+_   also because input/output won't be different (since not data folder)
+_   or should this be storagePath() etc?
+_ PUtil -> move match(), lots of other non-gui functions into own class
+_   and merge it in statically via the methods code
+_ check for what else inside PApplet should be static
+_   maybe catch RuntimeExceptions in the called sub-functions
+_   that way more stuff can be static w/o losing useful error handling
+_   (emitting errors when closest to source.. i.e. w/ the filename)
+_ change how beginRecord() works.. passing around PApplet vs PGraphics is gross
+_   have to pass PApplet just to make the rendering work to both renderers
+_   should instead be a renderer that splits things out
+_ wrap exceptions with die() and warn() methods
+_   this way, people can make use of exceptions if they would rather
+_   or shut them off if they don't want to 
+_   also need to explain exception handling in general
+_   http://code.google.com/p/processing/issues/detail?id=183
+_ bring PConstants back in line w/ previous 1.5 (can't renumber)
+_ finish adding loadStrings(BufferedReader)
+_   decide if we want to keep this (and/or others?)
+_   port to android
+_ deprecate the older splice() etc API inside PApplet?
+_ splice() throws ClassCastException when used with objects like PVector 
+_   http://code.google.com/p/processing/issues/detail?id=1407
+_ add notes about the new shader setup
+_ online is there but deprecated
+_   doesn't test net connection to see if 'online'
+_   only tests whether running inside an applet viewer (not relevant)
+_   remove 'online' from the docs
+_ createGraphics() with no renderer param to point to JAVA2D
+_ docs: P2D and P3D are now OpenGL variations
+_ shader support - make decisions, Andres email, etc
+_ setAntiAlias() should instead just use parent.smooth
+_ antialias -> smoothMode(), smoothQuality(), quality()
+_   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
+_ final decision on pg.setQuality(sketchQuality())
+_   should probably be setQuality(parent.sketchQuality())
+_ add reference/docs for urlEncode() and urlDecode()
+_ verify (and document) public access members of PApplet
+_   http://code.google.com/p/processing/issues/detail?id=83
+_ add explanation to the reference about using beginRecord() with fonts
+_   pdf.textMode(SHAPE)
+_   also set the font *after* the record has started
+_   maybe should instead make textMode(SHAPE) the norm? 
+_   and people can change it to textMode(MODEL) if they want?
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1535 (no gcode)
+_ fix regex documentation (assigned to Shiffman)
+_   http://code.google.com/p/processing/issues/detail?id=169
+_ OpenGL offscreen requires primary surface to be OpenGL
+_ explain the new PGL interface
+_ can't really change the smoothing/options on offscreen
+_   is this still true?
 
-high
-_ draw() called again before finishing on OS X (retina issue)
-_   https://github.com/processing/processing/issues/1709
-_ Linux sometimes not responding correctly w/ the size() command
-_   https://github.com/processing/processing/issues/1672
 
-_ function that will convert awful CSV to TSV.. or something else?
-_   maybe to write binary instead? then read the binary file once it's ok?
-_ if loading from a File object
-_   (or PApplet is passed in and we can check online)
-_   then check the (probable) size of the file before loading
-_ no column max/min functions since it needs to be per-datatype
-_   better to use float mx = max(float(getColumn(3)));
-_   but what to do with null entries?
-_ need a method to reset the row/column indices after add/remove
-_   or just make sure that it's covered for all cases
-_ prefixes like # as comments? easy to remove?
-_ naming for these (or whether to include hash)
-_   Table createSubset() -> leave out?
-_   String[] getUnique(col) (SQL DISTINCT, sort --unique)
-_   HashMap<String,Integer> getUniqueCount(col)
-_ really need to get an option to grab matches based on a col
-_   i.e. get unique tables based on a particular column
-_   or, get uniques, then grab rows that match a name in a particular col
-_ create table from TableRow iterator...allows for subset and find
-_   downside is types are not included
-_ getMaxFloat() (whole table) or getMaxFloat(col) 
-_   that's max(getFloatColumn(n))
-_   also important b/c can leave out missing values
-_ dictionary support
-_ join tables together (static is kinda gross)
-_   table.append(anotherTable)?
-_   table.join(anotherTable)
-_ getInt() on categorial to return index?
-_   getCategories() and getCategory() methods to query names?
 
-data
-_ add indent= as option for XML save
-_ add indent= as option for JSON save
-_ not doing print() methods, since alternatives are more descriptive
-_   println(obj) and obj.write(System.out) are both better
-_ can we use String... for options? or does it screw up the method signature?
-_   and would we have to always concatenate arrays to prepend extensions, etc
-_ include Instant and Interval? (or just Time and TimeSpan)
-_ it's going to be File or Reader (mostly BufferedReader) everywhere
-_   though TableODS needs an InputStream... 
-_   and XML could use InputStream if we hope to be able to reflect doc encoding
-_   ok, so File, Reader, and InputStream (where needed)
-_ setMissingXxxx() -> should this live in PApplet? be static?
-_   cons: static stinks, diff tables might use diff values
-_ will also need an iterator for the Dict class ala Map.Entry
-_ using Iterable for rows(), keys(), etc
-_   generally more efficient for Table, but slower for FloatHash and IntHash
-_   could use an int array instead, but a bit hokey in places
-_ Iterable, Iterator, or [] returned for keys(), rows(), etc.
-_   list, dict, json, table are each more efficient at different things
-_   keys(), rows(), etc. should return something Iterable
-_     whether that means an array or an actual Iterator or even a Set
-_     that way we can do what's most efficient
-_   then we add keyIterator() and others to handle the other case (deletion)
-_   blogs.oracle.com/CoreJavaTechTips/entry/using_enhanced_for_loops_with
-_ means that JSON.keys() -> JSON.keyIterator(), JSON.keySet() -> JSON.keys()
-_ what should they all return? 
-_   remove -> true/false based on whether it found something?
-_   remove all -> the number removed?
-_ List: remove(), append(), index(), etc all use values
-_   removeIndex(index) is the other
-_   otherwise remove() would be the only one that dealt with indices
-_   Dict will use remove(key), so using remove(index) as default
-_     and removeValue(value) is probably used less
-_ introduce remap() instead of map() (if not deprecate?)
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
-andres
-_ P2D/P3D sketches don't get focus until clicked
-_   also problem for Java2D when canvas is used?
-_   need to standardize canvas handling
-_   https://github.com/processing/processing/issues/1700
-_ warning message present
-_   Deleted 1 texture objects, 0 remaining
-_ shader syntax (Andres request)
-_   might also need a define inside the shader to control what type it is
 
-shape
-_ major surgery to put loadShape() back into PApplet/PGraphics
-_   then have the OpenGL or Java2D versions as cached objects
-_ PShape s = createShape(); / s.beginShape(QUADS);
-_ createShape() not yet implemented for Java2D
-_   http://code.google.com/p/processing/issues/detail?id=1400
-_ keeping these public for now
-_   get/setNormal
-_   get/setTextureUV
-_   get/setFill
-_   get/setStroke
-_   -> perhaps these go into their own section?
-_   -> or have their own accessor that returns all params?
-_ trying to remember why primitive was changed to kind? (better name?)
-_ these aren't per-vertex:
-_   get/setStrokeWeight
-_   get/setAmbient
-_   get/setEmissive 
-_   get/setShininess
-_ boolean isGL() -> now removed
-_ unapproved (made protected)
-_   static shape copying methods
-_   getTop, getBottom, etc
-_   void solid(boolean)
-_   void setParams()
-_   void setPath()
-_ colorCalc() methods added to PShape.. should just be used from PGraphics
-_ loadShape() needs to live in PApplet
-_ make PShapeOpenGL a cache object
 
-stop() mess
+CORE / rendering/performance/threading
+
+_ hint(DISABLE_LOAD_PIXELS) -> faster rendering in Java2D
+_ problems with 2D rendering speed
+_   volatile images
+_   http://www.javalobby.org/forums/thread.jspa?threadID=16840&tstart=0
+_   http://www.javalobby.org/forums/thread.jspa?threadID=16867&tstart=0
+_   http://www.gamedev.net/page/resources/_/technical/general-programming/java-games-active-rendering-r2418
+_ look into using BufferStrategy again to improve performance
+_   there are more improvements to be made ala issue #729
+_ make sure rendering is happening on the EDT
+_   (hopefully fixes flicker issues)
+_   change PApplet.java javadoc to reflect the change
+_   Update http://wiki.processing.org/w/Troubleshooting#Flicker
+_   http://code.google.com/p/processing/issues/detail?id=775
+_ thread() causes weird flickering
+_   http://code.google.com/p/processing/issues/detail?id=742
+
+
+CORE / stop() 
+
 _ in PApplet.main(), windowClosing() should probably be calling 'exit()'
 _   or rather, we should never call System.exit(0), ja?
 _ dispose() method in PApplet should be empty so ppl can override
@@ -178,180 +236,6 @@ _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
 
-api to be fixed/removed
-_ remove PImage.delete() and friends from PImage, Movie, etc.
-_ delete()/dispose() being used in the movie
-_ buffer sink methods in movie
-_ 'newFrame' is 'available', and ready() is part of that
-_ splice() throws ClassCastException when used with objects like PVector 
-_   http://code.google.com/p/processing/issues/detail?id=1407
-_ deprecate the older splice() etc API inside PApplet?
-_ wrap exceptions with die() and warn() methods
-_   this way, people can make use of exceptions if they would rather
-_   or shut them off if they don't want to 
-_   also need to explain exception handling in general
-_   http://code.google.com/p/processing/issues/detail?id=183
-_ bring PConstants back in line w/ previous 1.5 (can't renumber)
-
-docs (2.0)
-_ add notes about the new shader setup
-_ online is there but deprecated
-_   doesn't test net connection to see if 'online'
-_   only tests whether running inside an applet viewer (not relevant)
-_   remove 'online' from the docs
-_ createGraphics() with no renderer param to point to JAVA2D
-_ docs: P2D and P3D are now OpenGL variations
-_ shader support - make decisions, Andres email, etc
-_ setAntiAlias() should instead just use parent.smooth
-_ antialias -> smoothMode(), smoothQuality(), quality()
-_   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
-_ final decision on pg.setQuality(sketchQuality())
-_   should probably be setQuality(parent.sketchQuality())
-_ add reference/docs for urlEncode() and urlDecode()
-_ verify (and document) public access members of PApplet
-_   http://code.google.com/p/processing/issues/detail?id=83
-_ add explanation to the reference about using beginRecord() with fonts
-_   pdf.textMode(SHAPE)
-_   also set the font *after* the record has started
-_   maybe should instead make textMode(SHAPE) the norm? 
-_   and people can change it to textMode(MODEL) if they want?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1535 (no gcode)
-_ fix regex documentation (assigned to Shiffman)
-_   http://code.google.com/p/processing/issues/detail?id=169
-_ OpenGL offscreen requires primary surface to be OpenGL
-_ explain the new PGL interface
-_ can't really change the smoothing/options on offscreen
-_   is this still true?
-
-rendering/performance/threading
-_ hint(DISABLE_LOAD_PIXELS) -> faster rendering in Java2D
-_ problems with 2D rendering speed
-_   volatile images
-_   http://www.javalobby.org/forums/thread.jspa?threadID=16840&tstart=0
-_   http://www.javalobby.org/forums/thread.jspa?threadID=16867&tstart=0
-_   http://www.gamedev.net/page/resources/_/technical/general-programming/java-games-active-rendering-r2418
-_ look into using BufferStrategy again to improve performance
-_   there are more improvements to be made ala issue #729
-_ make sure rendering is happening on the EDT
-_   (hopefully fixes flicker issues)
-_   change PApplet.java javadoc to reflect the change
-_   Update http://wiki.processing.org/w/Troubleshooting#Flicker
-_   http://code.google.com/p/processing/issues/detail?id=775
-_ thread() causes weird flickering
-_   http://code.google.com/p/processing/issues/detail?id=742
-_ move requestFocusInWindow() to safter EDT place
-
-_ PUtil -> move match(), lots of other non-gui functions into own class
-_   and merge it in statically via the methods code
-_ check for what else inside PApplet should be static
-_   maybe catch RuntimeExceptions in the called sub-functions
-_   that way more stuff can be static w/o losing useful error handling
-_   (emitting errors when closest to source.. i.e. w/ the filename)
-
-_ sort out edge + 1 issue on stroke/fill for rectangles
-_   http://code.google.com/p/processing/issues/detail?id=509
-_ exactly how should pixel filling work with single pixel strokes?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1025 (no gcode)
-_ y2 position of rectangles not same as y2 position of lines
-_   happens when the rectangle is flipped on the x or y axis
-_   probably a hack that draws the "last" point differently
-
-_ add inputPath() and outputPath() -> sketch folder or sd card
-_   or should this just be a change to sketchPath() on Android?
-_   also because input/output won't be different (since not data folder)
-_ or should this be storagePath() etc?
-
-_ finish adding loadStrings(BufferedReader)
-_   decide if we want to keep this (and/or others?)
-_   port to android
-
-_ change how beginRecord() works.. passing around PApplet vs PGraphics is gross
-_   have to pass PApplet just to make the rendering work to both renderers
-_   should instead be a renderer that splits things out
-
-
-2.0
-_ size() and resize() and whatever? 
-_   should be setSize(), but that's odd for image files
-_   -> resize() is fine with PImage and PGraphics... 
-_   we may be inheriting the resize() from Java -> make it final?
-_   add resize().. make it call setSize().
-_     also needs to do a redraw if noLoop() has been called
-_   the registered method for size() also needs to be called
-_ get() or copy()? for vectors, image, etc.
-_ PVector chaining -> Dan looking into this
-_ PNode.getChildren() shouldn't make a new array.. toArray() can do that
-_ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
-_   toColorArray(), toColorArray(float[])...
-_ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
-X   also works that way with tables
-X   decision: useExtension() or something like that
-_ require people to put things in the data folder
-_ make sure that loadXxxx() methods are used after init()
-_   nasty errors when loadImage/Font/createFont/etc used outside
-_   decision: add error messages where possible
-_   idea: set frameCount to -1 when setup not run yet?
-_     then set frameCount to 0 when setup() starts?
-_ PShape API to handle internal vertex stuff
-_   add deconstruct() method for paths
-_   toArray() and toVector()
-_   setVertex(0, x, y), setVertex(0, x, y, z)
-_ how much of com.benfry.* should go in? 
-_   Table? StringIntPairs? JSON? MD5? Integrator? ColorIntegrator?
-_   decision: depends on if we can think of a good name
-_ if PShape3D, then is it PShape2D? or do you handle both the same?
-_ svg fonts
-_   would be nifty if we could convert on the fly to ttf for speed...
-_   http://code.google.com/p/processing/issues/detail?id=748
-_ check on DXFWriter, since it used to subclass P3D
-_   at least implement is3D? 
-_ sleep time needs to be set *much* higher for dormant applets
-_   10s should be fine--no need to keep spinning (bad for android too)
-_   just call interrupt() when it's time to get back to work
-_ add methods to PShape to apply all transformations in the tree
-_ need to clean up the hints in the reference/source
-
-vector
-_ PVector discussion with Dan
-_   jer and dan will look at their code, plus toxiclibs
-_ modify PVector to include better methods for chaining operations
-_   http://code.google.com/p/processing/issues/detail?id=218
-_ add screen(PVector), model(PVector) and world(PVector)?
-_   maybe screenVec()? or screenXYZ()?
-
-decisions to make
-_ possible addition for 'implementation' variable
-_   http://code.google.com/p/processing/issues/detail?id=281
-_ should map() actually constrain to the low and high values?
-_   or have an alternate version that does that? (boolean param at end?)
-_ decide whether to keep:
-_   public float textWidth(char[] chars, int start, int length)
-_ add version of math functions that use doubles?
-_   what other methods should work with doubles? all math functions?
-_   seems like internal (mostly static) things, but not graphics api
-_ add shuffle methods for arrays
-_   http://code.google.com/p/processing/issues/detail?id=229
-_ don't allow things inside begin/endShape() that aren't possible
-_   better lockout inside beginShape() to keep other things from happening
-_   don't allow you to draw stroked items unless stroke() is called
-_   don't allow beginShape() if shape is already set
-_     (otherwise will cause some very strange errors)
-_   http://code.google.com/p/processing/issues/detail?id=135
-_ make determination on shape(x,y,z,w,h,d) or no
-_ new PGraphics(... OutputStream) 
-_   http://code.google.com/p/processing/issues/detail?id=246
-_   already added for PDF, just need to work out the API
-_ if save() returns boolean, does saveFrame()?
-_   also need to copy this over to android
-_ "translate, or this variation of it" when using text(s, x, y, z) accidentally
-_   change to be the text command
-
-
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
 
 CORE / PFont and text()
 
@@ -360,9 +244,13 @@ _   http://code.google.com/p/processing/issues/detail?id=439
 _ remove subsetting stuff from PFont?
 _   or use hint(ENABLE_FONT_SUBSETTING)? 
 _ what's the difference with ascent on loadFont vs. createFont?
-_ svg font support seems nice.. add PFontSVG
+_ svg fonts
+_   would be nifty if we could convert on the fly to ttf for speed...
+X   http://code.google.com/p/processing/issues/detail?id=748
+_   https://github.com/processing/processing/issues/787
 _ font rotation (native font problem?) with natives?
-_   http://code.google.com/p/processing/issues/detail?id=692
+X   http://code.google.com/p/processing/issues/detail?id=692
+_   https://github.com/processing/processing/issues/731
 _ text position is quantized in JAVA2D
 _   text placement is ugly, seems like fractional metrics problem
 _   http://code.google.com/p/processing/issues/detail?id=99
@@ -436,6 +324,50 @@ _   http://code.google.com/p/processing/issues/detail?id=182
 
 CORE / PShape
 
+_ major refactoring for PShape/PShapeOpenGL
+_   https://github.com/processing/processing/issues/1623
+_ PShape should be cached as well
+_ major surgery to put loadShape() back into PApplet/PGraphics
+_   then have the OpenGL or Java2D versions as cached objects
+_ PShape s = createShape(); / s.beginShape(QUADS);
+_ createShape() not yet implemented for Java2D
+_   http://code.google.com/p/processing/issues/detail?id=1400
+_ keeping these public for now
+_   get/setNormal
+_   get/setTextureUV
+_   get/setFill
+_   get/setStroke
+_   -> perhaps these go into their own section?
+_   -> or have their own accessor that returns all params?
+_ trying to remember why primitive was changed to kind? (better name?)
+_ these aren't per-vertex:
+_   get/setStrokeWeight
+_   get/setAmbient
+_   get/setEmissive 
+_   get/setShininess
+_ boolean isGL() -> now removed
+_ unapproved (made protected)
+_   static shape copying methods
+_   getTop, getBottom, etc
+_   void solid(boolean)
+_   void setParams()
+_   void setPath()
+_ colorCalc() methods added to PShape.. should just be used from PGraphics
+_ loadShape() needs to live in PApplet
+_ make PShapeOpenGL a cache object
+_ don't allow things inside begin/endShape() that aren't possible
+_   better lockout inside beginShape() to keep other things from happening
+_   don't allow you to draw stroked items unless stroke() is called
+_   don't allow beginShape() if shape is already set
+_     (otherwise will cause some very strange errors)
+_   http://code.google.com/p/processing/issues/detail?id=135
+_ make determination on shape(x,y,z,w,h,d) or no
+_ PShape API to handle internal vertex stuff
+_   add deconstruct() method for paths
+_   toArray() and toVector()
+_   setVertex(0, x, y), setVertex(0, x, y, z)
+_ if PShape3D, then is it PShape2D? or do you handle both the same?
+_ add methods to PShape to apply all transformations in the tree
 _ we can do hit testing (at least in 2D) now that we rely on java2d
 _ for subclasses, make it easy to grab the structure of vertices
 _   actually, just use PShape internally and this will be easier
@@ -468,6 +400,20 @@ _   i.e. M with several coords means moveto followed by many linetos
 _   also curveto with multiple sets of points is ignored
 _ document somehow.. svg viewer will be discontinued
 _   http://www.adobe.com/svg/eol.html
+_ PShape getVertex() not implemented properly for SVG files
+X   https://code.google.com/p/processing/issues/detail?id=1558
+_   https://github.com/processing/processing/issues/1596
+
+
+CORE / PVector
+
+_ PVector discussion with Dan
+_   Jer and Dan will look at their code, plus toxiclibs
+_ modify PVector to include better methods for chaining operations
+_   http://code.google.com/p/processing/issues/detail?id=218
+_ add screen(PVector), model(PVector) and world(PVector)?
+_   maybe screenVec()? or screenXYZ()?
+_ PVector chaining -> Dan looking into this
 
 
 CORE / OpenGL (Andres)
@@ -532,7 +478,9 @@ _ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
 _   libraries have to do a lot of casting
 _ opengl isn't drawing rectangles out to raw properly with fonts
 _   when not in textMode(SHAPE) should have rects
-
+_ InvScreenX, Y, Z to convert screen (mouse) coordinates to model coordinates
+_   https://github.com/processing/processing/issues/1609
+X   https://code.google.com/p/processing/issues/detail?id=1571
 
 CORE / Mac OS X
 
@@ -544,6 +492,9 @@ _   -Xdock:icon=<path to icon file>
 
 CORE / Events
 
+_ Implement a way to disable automatic key repeat
+_   https://github.com/processing/processing/issues/1622
+X   https://code.google.com/p/processing/issues/detail?id=1584
 _ touch events.. can't do MouseEvent et al with Android
 _   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
 _   http://www.html5rocks.com/en/mobile/touch.html
@@ -551,10 +502,8 @@ _   decision: go with what looks like javascript/ios
 _   touchEvent(), gestureEvent()?
 
 
-LIBRARIES / PGraphicsPDF
+LIBRARIES / PDF
 
-_ pdf not rendering unicode with beginRecord()
-_   http://code.google.com/p/processing/issues/detail?id=90
 _ beginRecord() doesn't use current settings of the sketch
 _   sometimes reported as a bug, but probably not a good way to 
 _   consistently carry these over
@@ -563,6 +512,97 @@ _   people have to call exit() (so that dispose() is called in particular)
 _ when using noLoop() and the PDF renderer, sketch should exit gracefully
 _   because isDisplayable() returns false, there's no coming back from noLoop
 
+
+LIBRARIES / Video 
+
+_ remove dispose() being used in the Movie and Capture
+_   added warning notes, but shouldn't be necessary
+_ buffer sink methods in Movie and Capture
+_   added warning to JavaDoc, but need proper API for it
+_ 'newFrame' is 'available', and ready() is part of that
+
+
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+
+DATA / Misc
+
+_ add indent= as option for XML save
+_ add indent= as option for JSON save
+_ not doing print() methods, since alternatives are more descriptive
+_   println(obj) and obj.write(System.out) are both better
+_ can we use String... for options? or does it screw up the method signature?
+_   and would we have to always concatenate arrays to prepend extensions, etc
+_ include Instant and Interval? (or just Time and TimeSpan)
+_ it's going to be File or Reader (mostly BufferedReader) everywhere
+_   though TableODS needs an InputStream... 
+_   and XML could use InputStream if we hope to be able to reflect doc encoding
+_   ok, so File, Reader, and InputStream (where needed)
+_ setMissingXxxx() -> should this live in PApplet? be static?
+_   cons: static stinks, diff tables might use diff values
+_ will also need an iterator for the Dict class ala Map.Entry
+_ using Iterable for rows(), keys(), etc
+_   generally more efficient for Table, but slower for FloatHash and IntHash
+_   could use an int array instead, but a bit hokey in places
+_ Iterable, Iterator, or [] returned for keys(), rows(), etc.
+_   list, dict, json, table are each more efficient at different things
+_   keys(), rows(), etc. should return something Iterable
+_     whether that means an array or an actual Iterator or even a Set
+_     that way we can do what's most efficient
+_   then we add keyIterator() and others to handle the other case (deletion)
+_   blogs.oracle.com/CoreJavaTechTips/entry/using_enhanced_for_loops_with
+_ means that JSON.keys() -> JSON.keyIterator(), JSON.keySet() -> JSON.keys()
+_ what should they all return? 
+_   remove -> true/false based on whether it found something?
+_   remove all -> the number removed?
+_ List: remove(), append(), index(), etc all use values
+_   removeIndex(index) is the other
+_   otherwise remove() would be the only one that dealt with indices
+_   Dict will use remove(key), so using remove(index) as default
+_     and removeValue(value) is probably used less
+_ introduce remap() instead of map() (if not deprecate?)
+_ key/valueIterator to get a version that can be removed in a loop
+_   in Table, added an Iterator function
+_ should keys() returns cropped internal array after all?
+_   right now it's making a copy (which is safer, so folks don't modify)
+_   but this means that we don't have a fast method for access
+_ methods for max, min, index of max/min entries? valueIndex?
+
+
+DATA / Table
+
+_ function that will convert awful CSV to TSV.. or something else?
+_   maybe to write binary instead? then read the binary file once it's ok?
+_ if loading from a File object
+_   (or PApplet is passed in and we can check online)
+_   then check the (probable) size of the file before loading
+_ no column max/min functions since it needs to be per-datatype
+_   better to use float mx = max(float(getColumn(3)));
+_   but what to do with null entries?
+_ need a method to reset the row/column indices after add/remove
+_   or just make sure that it's covered for all cases
+_ prefixes like # as comments? easy to remove?
+_ naming for these (or whether to include hash)
+_   Table createSubset() -> leave out?
+_   String[] getUnique(col) (SQL DISTINCT, sort --unique)
+_   HashMap<String,Integer> getUniqueCount(col)
+_ really need to get an option to grab matches based on a col
+_   i.e. get unique tables based on a particular column
+_   or, get uniques, then grab rows that match a name in a particular col
+_ create table from TableRow iterator...allows for subset and find
+_   downside is types are not included
+_ getMaxFloat() (whole table) or getMaxFloat(col) 
+_   that's max(getFloatColumn(n))
+_   also important b/c can leave out missing values
+_ dictionary support
+_ join tables together (static is kinda gross)
+_   table.append(anotherTable)?
+_   table.join(anotherTable)
+_ getInt() on categorial to return index?
+_   getCategories() and getCategory() methods to query names?
 
 
 ////////////////////////////////////////////////////////////////////

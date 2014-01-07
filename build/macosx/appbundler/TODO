@@ -1,0 +1,3 @@
+- Architectures should be automatically inferred from the embedded JVM
+- It makes more sense to take as input a JRE instead of taking a JDK and strip
+  it until it becomes a JRE...

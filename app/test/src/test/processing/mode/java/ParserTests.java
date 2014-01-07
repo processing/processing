@@ -184,7 +184,7 @@ public class ParserTests {
 
   @Test
   public void bug820() {
-    expectCompilerException("bug820", "x1 is already defined in setup()", 21);
+    expectCompilerException("bug820", "error: variable x1 is already defined in method setup()", 18);
   }
 
   @Test
@@ -194,7 +194,7 @@ public class ParserTests {
 
   @Test
   public void bug1145() {
-    expectCompilerException("bug1145", "'.' expected", 4);
+    expectCompilerException("bug1145", "error: '.' expected", 6);
   }
 
   @Test

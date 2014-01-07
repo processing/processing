@@ -27,7 +27,6 @@ package processing.core;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import javax.imageio.*;
@@ -55,7 +54,7 @@ import javax.imageio.metadata.*;
    *
  * @webref image
  * @usage Web &amp; Application
- * @instanceName img any object of type PImage
+ * @instanceName pimg any object of type PImage
  * @see PApplet#loadImage(String)
  * @see PApplet#imageMode(int)
  * @see PApplet#createImage(int, int, int)
@@ -139,6 +138,8 @@ public class PImage implements PConstants, Cloneable {
   protected boolean modified;
   protected int mx1, my1, mx2, my2;
 
+  /** Loaded pixels flag */
+  public boolean loaded = false;
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -415,6 +416,10 @@ public class PImage implements PConstants, Cloneable {
 
   public void setModified() {  // ignore
     modified = true;
+    mx1 = 0;
+    my1 = 0;
+    mx2 = width;
+    my2 = height;
   }
 
 
@@ -472,24 +477,7 @@ public class PImage implements PConstants, Cloneable {
     if (pixels == null || pixels.length != width*height) {
       pixels = new int[width*height];
     }
-
-    if (parent != null) {
-      Object cache = parent.g.initCache(this);
-      if (cache != null) {
-        Method loadPixelsMethod = null;
-        try {
-          loadPixelsMethod = cache.getClass().getMethod("loadPixels", new Class[] { int[].class });
-        } catch (Exception e) { }
-
-        if (loadPixelsMethod != null) {
-          try {
-            loadPixelsMethod.invoke(cache, new Object[] { pixels });
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-        }
-      }
-    }
+    isLoaded();
   }
 
 
@@ -545,21 +533,27 @@ public class PImage implements PConstants, Cloneable {
 
     if (!modified) {
       mx1 = PApplet.max(0, x);
-      mx2 = PApplet.min(width - 1, x2);
+      //mx2 = PApplet.min(width - 1, x2);
+      mx2 = PApplet.min(width, x2);
       my1 = PApplet.max(0, y);
-      my2 = PApplet.min(height - 1, y2);
+      //my2 = PApplet.min(height - 1, y2);
+      my2 = PApplet.min(height, y2);
       modified = true;
 
     } else {
       if (x < mx1) mx1 = PApplet.max(0, x);
-      if (x > mx2) mx2 = PApplet.min(width - 1, x);
+      //if (x > mx2) mx2 = PApplet.min(width - 1, x);
+      if (x > mx2) mx2 = PApplet.min(width, x);
       if (y < my1) my1 = PApplet.max(0, y);
-      if (y > my2) my2 = y;
+      //if (y > my2) my2 = y;
+      if (y > my2) my2 = PApplet.min(height, y);
 
       if (x2 < mx1) mx1 = PApplet.max(0, x2);
-      if (x2 > mx2) mx2 = PApplet.min(width - 1, x2);
+      //if (x2 > mx2) mx2 = PApplet.min(width - 1, x2);
+      if (x2 > mx2) mx2 = PApplet.min(width, x2);
       if (y2 < my1) my1 = PApplet.max(0, y2);
-      if (y2 > my2) my2 = PApplet.min(height - 1, y2);
+      //if (y2 > my2) my2 = PApplet.min(height - 1, y2);
+      if (y2 > my2) my2 = PApplet.min(height, y2);
     }
   }
 
@@ -709,6 +703,25 @@ public class PImage implements PConstants, Cloneable {
     return outgoing;
   }
 
+
+  //////////////////////////////////////////////////////////////
+
+  // MARKING IMAGE AS LOADED / FOR USE IN RENDERERS
+
+
+  public boolean isLoaded() { // ignore
+    return loaded;
+  }
+
+
+  public void setLoaded() {  // ignore
+    loaded = true;
+  }
+
+
+  public void setLoaded(boolean l) {  // ignore
+    loaded = l;
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -3109,6 +3122,7 @@ public class PImage implements PConstants, Cloneable {
       ImageWriter writer = null;
       ImageWriteParam param = null;
       IIOMetadata metadata = null;
+
       if (extension.equals("jpg") || extension.equals("jpeg")) {
         if ((writer = imageioWriter("jpeg")) != null) {
           // Set JPEG quality to 90% with baseline optimization. Setting this
@@ -3120,12 +3134,16 @@ public class PImage implements PConstants, Cloneable {
           param.setCompressionQuality(0.9f);
         }
       }
-      if ((writer = imageioWriter("png")) != null) {
-        param = writer.getDefaultWriteParam();
-        if (false) {
-          metadata = imageioDPI(writer, param, 100);
+
+      if (extension.equals("png")) {
+        if ((writer = imageioWriter("png")) != null) {
+          param = writer.getDefaultWriteParam();
+          if (false) {
+            metadata = imageioDPI(writer, param, 100);
+          }
         }
       }
+
       if (writer != null) {
         BufferedOutputStream output =
           new BufferedOutputStream(PApplet.createOutput(file));

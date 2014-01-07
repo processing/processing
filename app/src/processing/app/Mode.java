@@ -663,6 +663,7 @@ public abstract class Mode {
   public void showExamplesFrame() {
     if (examplesFrame == null) {
       examplesFrame = new JFrame(getTitle() + " Examples");
+      Toolkit.setIcon(examplesFrame);
       Toolkit.registerWindowCloseKeys(examplesFrame.getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           examplesFrame.setVisible(false);
@@ -958,9 +959,10 @@ public abstract class Mode {
 
     s = st.nextToken();
     boolean bold = (s.indexOf("bold") != -1);
-    boolean italic = (s.indexOf("italic") != -1);
+//    boolean italic = (s.indexOf("italic") != -1);
 
-    return new SyntaxStyle(color, italic, bold);
+//    return new SyntaxStyle(color, italic, bold);
+    return new SyntaxStyle(color, bold);
   }
 
 

@@ -17,7 +17,7 @@ int videoSliceX;
 int drawPositionX;
 
 void setup() {
-  size(600, 240, P2D);
+  size(600, 240);
   
   // This the default video input, see the GettingStartedCapture 
   // example if it creates an error

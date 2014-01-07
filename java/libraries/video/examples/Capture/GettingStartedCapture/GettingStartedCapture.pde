@@ -9,15 +9,17 @@ import processing.video.*;
 Capture cam;
 
 void setup() {
-  size(640, 480, P2D);
+  size(640, 480);
 
   String[] cameras = Capture.list();
 
-  if (cameras.length == 0) {
+  if (cameras == null) {
+    println("Failed to retrieve the list of available cameras, will try the default...");
+    cam = new Capture(this, 640, 480);
+  } if (cameras.length == 0) {
     println("There are no cameras available for capture.");
     exit();
-  } 
-  else {
+  } else {
     println("Available cameras:");
     for (int i = 0; i < cameras.length; i++) {
       println(cameras[i]);

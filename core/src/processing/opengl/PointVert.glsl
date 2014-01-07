@@ -20,13 +20,13 @@
 
 #define PROCESSING_POINT_SHADER
 
-uniform mat4 projection;
-uniform mat4 modelview;
+uniform mat4 projectionMatrix;
+uniform mat4 modelviewMatrix;
  
 uniform vec4 viewport;
 uniform int perspective; 
  
-attribute vec4 vertex;
+attribute vec4 position;
 attribute vec4 color;
 attribute vec2 offset;
 
@@ -38,13 +38,13 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clipw) {
 }  
 
 void main() {
-  vec4 pos = modelview * vertex;
-  vec4 clip = projection * pos;
+  vec4 pos = modelviewMatrix * position;
+  vec4 clip = projectionMatrix * pos;
   
   if (0 < perspective) {
     // Perspective correction (points will look thiner as they move away 
     // from the view position).
-    gl_Position = clip + projection * vec4(offset.xy, 0, 0);
+    gl_Position = clip + projectionMatrix * vec4(offset.xy, 0, 0);
   } else {
     // No perspective correction.	
     vec4 offset = windowToClipVector(offset.xy, viewport, clip.w);

@@ -13,7 +13,7 @@ int[] previousFrame;
 Capture video;
 
 void setup() {
-  size(640, 480, P2D);
+  size(640, 480);
   
   // This the default video input, see the GettingStartedCapture 
   // example if it creates an error

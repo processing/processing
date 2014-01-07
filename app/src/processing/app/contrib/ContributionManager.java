@@ -22,9 +22,7 @@
 package processing.app.contrib;
 
 import java.io.*;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 
 import processing.app.Base;
 import processing.app.Editor;
@@ -55,9 +53,13 @@ public class ContributionManager {
     boolean success = false;
     try {
 //      System.out.println("downloading file " + source);
-      URLConnection conn = source.openConnection();
-      conn.setConnectTimeout(2000);
-      conn.setReadTimeout(5000);
+//      URLConnection conn = source.openConnection();
+      HttpURLConnection conn = (HttpURLConnection) source.openConnection();
+      HttpURLConnection.setFollowRedirects(true);
+      conn.setConnectTimeout(15 * 1000);
+      conn.setReadTimeout(60 * 1000);
+      conn.setRequestMethod("GET");
+      conn.connect();
   
       // TODO this is often -1, may need to set progress to indeterminate
       int fileSize = conn.getContentLength();
@@ -147,6 +149,7 @@ public class ContributionManager {
 
   static public void refreshInstalled(Editor editor) {
     editor.getMode().rebuildImportMenu();
+    editor.getMode().resetExamples();
     editor.rebuildToolMenu();
   }
 
@@ -202,15 +205,21 @@ public class ContributionManager {
   }
   
   
-  /** Called by Base to clean up entries previously marked for deletion. */
-  static public void deleteFlagged() {
+  /** 
+   * Called by Base to clean up entries previously marked for deletion
+   * and remove any "requires restart" flags.
+   */
+  static public void cleanup() throws Exception {
     deleteFlagged(Base.getSketchbookLibrariesFolder());
     deleteFlagged(Base.getSketchbookModesFolder());
     deleteFlagged(Base.getSketchbookToolsFolder());
+    
+    clearRestartFlags(Base.getSketchbookModesFolder());
+    clearRestartFlags(Base.getSketchbookToolsFolder());
   }
 
   
-  static private void deleteFlagged(File root) {
+  static private void deleteFlagged(File root) throws Exception {
     File[] markedForDeletion = root.listFiles(new FileFilter() {
       public boolean accept(File folder) {
         return (folder.isDirectory() && 
@@ -219,6 +228,18 @@ public class ContributionManager {
     });
     for (File folder : markedForDeletion) {
       Base.removeDir(folder);
+    }
+  }
+  
+  
+  static private void clearRestartFlags(File root) throws Exception {
+    File[] folderList = root.listFiles(new FileFilter() {
+      public boolean accept(File folder) {
+        return folder.isDirectory();
+      }
+    });
+    for (File folder : folderList) {
+      LocalContribution.clearRestartFlags(folder);
     }
   }
 }
