@@ -902,6 +902,21 @@ public class PApplet extends Applet
       }
     } catch (Exception e) { }  // may be a security problem
 
+    // Figure out the available display width and height.
+    // No major problem if this fails, we have to try again anyway in
+    // handleDraw() on the first (== 0) frame.
+    if (getGraphicsConfiguration() != null) {
+        GraphicsDevice displayDevice = getGraphicsConfiguration().getDevice();
+        
+        if (displayDevice != null) {
+          Rectangle screenRect =
+            displayDevice.getDefaultConfiguration().getBounds();
+
+          displayWidth = screenRect.width;
+          displayHeight = screenRect.height;
+        }
+    }
+     
     Dimension size = getSize();
     if ((size.width != 0) && (size.height != 0)) {
       // When this PApplet is embedded inside a Java application with other
@@ -2271,8 +2286,7 @@ public class PApplet extends Applet
         if (displayDevice == null) return;
         Rectangle screenRect =
           displayDevice.getDefaultConfiguration().getBounds();
-//        screenX = screenRect.x;
-//        screenY = screenRect.y;
+
         displayWidth = screenRect.width;
         displayHeight = screenRect.height;
 
