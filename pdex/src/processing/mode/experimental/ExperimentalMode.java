@@ -253,4 +253,14 @@ public class ExperimentalMode extends JavaMode {
     if(ExperimentalMode.DEBUG)
       System.out.print(message);
   }
+  
+  public String[] getIgnorable() {
+    return new String[] {
+      "applet",
+      "application.macosx",
+      "application.windows",
+      "application.linux",
+      ".autosave"
+    };
+  }
 }
