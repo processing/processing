@@ -260,7 +260,7 @@ public class ExperimentalMode extends JavaMode {
       "application.macosx",
       "application.windows",
       "application.linux",
-      ".autosave"
+      "_autosave"
     };
   }
 }

@@ -331,7 +331,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     @Override
     public void dispose() {
-        autosaver.shutDown();
         //System.out.println("window dispose");
         // quit running debug session
         dbg.stopDebug();        
@@ -345,6 +344,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     // Added temporarily to dump error log. TODO: Remove this later
     public void internalCloseRunner(){      
       if(ExperimentalMode.errorLogsEnabled) writeErrorsToFile();
+      autosaver.stop();
       super.internalCloseRunner();
     }
     

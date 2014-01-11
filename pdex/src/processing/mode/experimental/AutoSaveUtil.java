@@ -17,6 +17,9 @@ public class AutoSaveUtil {
   
   private int saveTime;
   
+  private File autosaveDir;
+  
+  private boolean isSaving;
   /**
    * 
    * @param dedit
@@ -31,27 +34,31 @@ public class AutoSaveUtil {
     else{
       saveTime = timeOut * 60 * 1000;
     }
+    autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + "_autosave");
   }
   
   public void init(){
     if(saveTime < 1000) return;
-    saveTime = 3000;
+    saveTime = 10 * 1000;
     timer = new Timer();
     timer.schedule(new SaveTask(), saveTime, saveTime);
+    isSaving = false;
   }
   
-  public void shutDown(){
+  public void stop(){
+    while(isSaving); // save operation mustn't be interrupted
     timer.cancel();
+    Base.removeDir(autosaveDir);
   }
   
   private boolean saveSketch() throws IOException{
-    
+    isSaving = true;
     Sketch sc = editor.getSketch();
-    File autosaveDir = new File(sc.getFolder().getAbsolutePath() + File.separator + ".autosave");
+    
     boolean deleteOldSave = false;
     String oldSave = null;
     if(!autosaveDir.exists()){
-      autosaveDir = new File(sc.getFolder().getAbsolutePath(), ".autosave");
+      autosaveDir = new File(sc.getFolder().getAbsolutePath(), "_autosave");
       autosaveDir.mkdir();
     }
     else
@@ -74,6 +81,7 @@ public class AutoSaveUtil {
       Base.showMessage("Cannot Save",
                        "A sketch with the cleaned name\n" +
                        "“" + sanitaryName + "” already exists.");
+      isSaving = false;
       return false;
     }
     newName = sanitaryName;
@@ -93,6 +101,7 @@ public class AutoSaveUtil {
         Base.showMessage("Nope",
                          "You can't save the sketch as \"" + newName + "\"\n" +
                          "because the sketch already has a tab with that name.");
+        isSaving = false;
         return false;
       }
     }
@@ -181,7 +190,7 @@ public class AutoSaveUtil {
     
     if(deleteOldSave)
       Base.removeDir(new File(oldSave));
-    
+    isSaving = false;
     return true;
   }
   
