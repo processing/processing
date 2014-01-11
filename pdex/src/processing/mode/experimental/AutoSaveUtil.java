@@ -40,15 +40,30 @@ public class AutoSaveUtil {
     timer.schedule(new SaveTask(), saveTime, saveTime);
   }
   
+  public void shutDown(){
+    timer.cancel();
+  }
+  
   private boolean saveSketch() throws IOException{
     
     Sketch sc = editor.getSketch();
     File autosaveDir = new File(sc.getFolder().getAbsolutePath() + File.separator + ".autosave");
+    boolean deleteOldSave = false;
+    String oldSave = null;
     if(!autosaveDir.exists()){
       autosaveDir = new File(sc.getFolder().getAbsolutePath(), ".autosave");
       autosaveDir.mkdir();
     }
-    String newParentDir = autosaveDir + File.separator + sc.getName() + System.currentTimeMillis();
+    else
+    {
+      // delete the previous backup after saving current one.
+      String prevSaves[] = Base.listFiles(autosaveDir, false);
+      if(prevSaves.length > 0){
+        deleteOldSave = true;
+        oldSave = prevSaves[0];
+      }
+    }
+    String newParentDir = autosaveDir + File.separator + System.currentTimeMillis();
     String newName = sc.getName();
 
     
@@ -163,6 +178,10 @@ public class AutoSaveUtil {
 //    editor.addRecent();
 
     // let Editor know that the save was successful
+    
+    if(deleteOldSave)
+      Base.removeDir(new File(oldSave));
+    
     return true;
   }
   
