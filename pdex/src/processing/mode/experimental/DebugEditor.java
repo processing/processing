@@ -177,6 +177,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     protected JCheckBoxMenuItem completionsEnabled;
     
+    protected AutoSaveUtil autosaver;
+    
     public DebugEditor(Base base, String path, EditorState state, Mode mode) {
         super(base, path, state, mode);
 
@@ -244,6 +246,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         addXQModeUI();    
         debugToolbarEnabled = new AtomicBoolean(false);
         log("Sketch Path: " + path);
+        autosaver = new AutoSaveUtil(this, 5);
+        autosaver.init();
     }
     
     private void addXQModeUI(){
