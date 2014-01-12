@@ -41,7 +41,8 @@ public class AutoSaveUtil {
     if(autosaveDir.exists()){
       String prevSaves[] = Base.listFiles(autosaveDir, false);
       if(prevSaves.length > 0){
-       pastSave = new File(prevSaves[0]);
+       File t = new File(Base.listFiles(new File(prevSaves[0]), false)[0]);
+       pastSave = new File(t.getAbsolutePath() + File.separator + t.getName() + ".pde"); 
        return true;
       }
     }
@@ -62,8 +63,8 @@ public class AutoSaveUtil {
   
   public void stop(){
     while(isSaving); // save operation mustn't be interrupted
-    timer.cancel();
-    Base.removeDir(autosaveDir);
+    if(timer != null) timer.cancel();
+    //Base.removeDir(autosaveDir);
   }
   
   private boolean saveSketch() throws IOException{

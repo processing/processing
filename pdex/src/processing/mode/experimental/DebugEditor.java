@@ -883,10 +883,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       		"Select YES to view it or NO to delete the backup.");
       if(response == JOptionPane.YES_OPTION){
         handleOpenInternal(pastSave.getAbsolutePath());
+        //log(getSketch().getMainFilePath());
+        autosaver = new AutoSaveUtil(this, 5);
       }
-      else{
-        autosaver.init();
-      }
+      autosaver.init();        
     }
 
     /**
