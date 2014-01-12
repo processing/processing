@@ -246,8 +246,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         addXQModeUI();    
         debugToolbarEnabled = new AtomicBoolean(false);
         log("Sketch Path: " + path);
-        autosaver = new AutoSaveUtil(this, 5);
-        autosaver.init();
+        loadAutoSaver();        
     }
     
     private void addXQModeUI(){
@@ -869,6 +868,25 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             vi.setTitle(getSketch().getName());
         }
         return saved;
+    }
+    
+    public void loadAutoSaver(){
+      autosaver = new AutoSaveUtil(this, 5);
+      if(!autosaver.checkForPastSave()) {
+        autosaver.init();
+        return;
+      }
+      
+      File pastSave = autosaver.getPastSave();
+      int response = Base.showYesNoQuestion(this, "Unsaved backup found!", "An automatic backup of this " +
+      		"sketch has been found. This may mean Processing quit unexpectedly last time.", 
+      		"Select YES to view it or NO to delete the backup.");
+      if(response == JOptionPane.YES_OPTION){
+        handleOpenInternal(pastSave.getAbsolutePath());
+      }
+      else{
+        autosaver.init();
+      }
     }
 
     /**

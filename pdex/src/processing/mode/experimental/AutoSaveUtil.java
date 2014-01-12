@@ -17,7 +17,7 @@ public class AutoSaveUtil {
   
   private int saveTime;
   
-  private File autosaveDir;
+  private File autosaveDir, pastSave;
   
   private boolean isSaving;
   /**
@@ -35,6 +35,21 @@ public class AutoSaveUtil {
       saveTime = timeOut * 60 * 1000;
     }
     autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + "_autosave");
+  }
+  
+  public boolean checkForPastSave(){
+    if(autosaveDir.exists()){
+      String prevSaves[] = Base.listFiles(autosaveDir, false);
+      if(prevSaves.length > 0){
+       pastSave = new File(prevSaves[0]);
+       return true;
+      }
+    }
+    return false;
+  }
+  
+  public File getPastSave(){
+    return pastSave;
   }
   
   public void init(){
