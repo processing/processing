@@ -55,7 +55,7 @@ public class AutoSaveUtil {
   
   public void init(){
     if(saveTime < 1000) return;
-    saveTime = 10 * 1000;
+    saveTime = 10 * 1000; //TODO: remove
     timer = new Timer();
     timer.schedule(new SaveTask(), saveTime, saveTime);
     isSaving = false;
@@ -64,7 +64,7 @@ public class AutoSaveUtil {
   public void stop(){
     while(isSaving); // save operation mustn't be interrupted
     if(timer != null) timer.cancel();
-    //Base.removeDir(autosaveDir);
+    Base.removeDir(autosaveDir);
   }
   
   private boolean saveSketch() throws IOException{
@@ -216,7 +216,7 @@ public class AutoSaveUtil {
     public void run() {
       try {
         saveSketch();
-        ExperimentalMode.log("Saved " + editor.getSketch().getMainFilePath());
+        ExperimentalMode.log("Backup Saved " + editor.getSketch().getMainFilePath());
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
