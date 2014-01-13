@@ -342,7 +342,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     // Added temporarily to dump error log. TODO: Remove this later
     public void internalCloseRunner(){      
       if(ExperimentalMode.errorLogsEnabled) writeErrorsToFile();
-      autosaver.stop();
+      if(autosaver != null) autosaver.stop();
       super.internalCloseRunner();
     }
     
@@ -874,18 +874,23 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     }
     
     public void loadAutoSaver(){
-      autosaver = new AutoSaveUtil(this, 5);
+      autosaver = new AutoSaveUtil(this, dmode.autoSaveInterval);
       if(!autosaver.checkForPastSave()) {
         autosaver.init();
         return;
       }
       
       File pastSave = autosaver.getPastSave();
-      int response = Base.showYesNoQuestion(this, "Unsaved backup found!", "An automatic backup of this " +
-      		"sketch has been found. This may mean Processing quit unexpectedly last time.", 
-      		"Select YES to view it or NO to delete the backup.");
+      int response = Base
+        .showYesNoQuestion(this,
+                           "Unsaved backup found!",
+                           "An automatic backup of "
+                               + pastSave.getParentFile().getName()
+                               + "sketch has been found. This may mean Processing quit unexpectedly last time.",
+                           "Select YES to view it or NO to delete the backup.");
       if(response == JOptionPane.YES_OPTION){
         handleOpenInternal(pastSave.getAbsolutePath());
+        Base.showMessage("Save it", "Remember to save the backup to a specific location if you want to.");
         //log(getSketch().getMainFilePath());
         return;
       }

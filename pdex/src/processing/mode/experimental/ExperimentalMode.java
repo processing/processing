@@ -119,11 +119,12 @@ public class ExperimentalMode extends JavaMode {
   
   volatile public static boolean errorCheckEnabled = true, warningsEnabled = true,
       codeCompletionsEnabled = true, debugOutputEnabled = false, errorLogsEnabled = false;
+  public int autoSaveInterval = 5; //in minutes
 
   public final String prefErrorCheck = "pdex.errorCheckEnabled",
       prefWarnings = "pdex.warningsEnabled",
       prefCodeCompletionEnabled = "pdex.ccEnabled",
-      prefDebugOP = "pdex.dbgOutput", prefErrorLogs = "pdex.writeErrorLogs";
+      prefDebugOP = "pdex.dbgOutput", prefErrorLogs = "pdex.writeErrorLogs", prefAutoSaveInterval = "pdex.autoSaveInterval";
   
   public void loadPreferences(){
     log("Load PDEX prefs");
@@ -133,6 +134,7 @@ public class ExperimentalMode extends JavaMode {
     codeCompletionsEnabled = Preferences.getBoolean(prefCodeCompletionEnabled);
     DEBUG = Preferences.getBoolean(prefDebugOP);
     errorLogsEnabled = Preferences.getBoolean(prefErrorLogs);
+    autoSaveInterval = Preferences.getInteger(prefAutoSaveInterval);
   }
   
   public void savePreferences(){
@@ -142,6 +144,7 @@ public class ExperimentalMode extends JavaMode {
     Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);
     Preferences.setBoolean(prefDebugOP, DEBUG);
     Preferences.setBoolean(prefErrorLogs,errorLogsEnabled);
+    Preferences.setInteger(prefAutoSaveInterval,autoSaveInterval);
   }
   
   public void ensurePrefsExist(){
@@ -155,6 +158,8 @@ public class ExperimentalMode extends JavaMode {
       Preferences.setBoolean(prefDebugOP,DEBUG);
     if(Preferences.get(prefErrorLogs) == null) 
       Preferences.setBoolean(prefErrorLogs,errorLogsEnabled);
+    if(Preferences.get(prefAutoSaveInterval) == null) 
+      Preferences.setInteger(prefAutoSaveInterval,autoSaveInterval);
   }
 
 

@@ -33,6 +33,7 @@ public class AutoSaveUtil {
     }
     else{
       saveTime = timeOut * 60 * 1000;
+      ExperimentalMode.log("AutoSaver Interval(mins): " + timeOut);
     }
     autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + "_autosave");
   }
@@ -42,7 +43,8 @@ public class AutoSaveUtil {
       String prevSaves[] = Base.listFiles(autosaveDir, false);
       if(prevSaves.length > 0){
        File t = new File(Base.listFiles(new File(prevSaves[0]), false)[0]);
-       pastSave = new File(t.getAbsolutePath() + File.separator + t.getName() + ".pde"); 
+       pastSave = new File(t.getAbsolutePath() + File.separator + t.getName() + ".pde");
+       if(pastSave.exists())
        return true;
       }
     }
@@ -55,10 +57,11 @@ public class AutoSaveUtil {
   
   public void init(){
     if(saveTime < 1000) return;
-    saveTime = 10 * 1000; //TODO: remove
+    //saveTime = 10 * 1000; //TODO: remove
     timer = new Timer();
     timer.schedule(new SaveTask(), saveTime, saveTime);
     isSaving = false;
+    ExperimentalMode.log("AutoSaver started");
   }
   
   public void stop(){
@@ -204,8 +207,9 @@ public class AutoSaveUtil {
 
     // let Editor know that the save was successful
     
-    if(deleteOldSave)
+    if(deleteOldSave){
       Base.removeDir(new File(oldSave));
+    }
     isSaving = false;
     return true;
   }
