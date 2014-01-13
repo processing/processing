@@ -245,7 +245,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         ta.setECSandThemeforTextArea(errorCheckerService, dmode);
         addXQModeUI();    
         debugToolbarEnabled = new AtomicBoolean(false);
-        log("Sketch Path: " + path);        
+        log("Sketch Path: " + path);    
     }
     
     private void addXQModeUI(){
@@ -737,7 +737,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         if(autosaver != null)
           autosaver.stop();
         loadAutoSaver();
-        //System.out.println("LOADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
         return didOpen;
     }
 
@@ -878,10 +877,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     }
     
     public void loadAutoSaver(){
+      log("Load Auto Saver()");
       if(autosaver != null){
         autosaver.stop();
       }
-      autosaver = new AutoSaveUtil(this, dmode.autoSaveInterval);
+      autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval);
       if(!autosaver.checkForPastSave()) {
         autosaver.init();
         return;

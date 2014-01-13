@@ -61,7 +61,7 @@ public class AutoSaveUtil {
   }
   
   public void init(){
-    if(saveTime < 1000) return;
+    if(saveTime < 10000) saveTime = 10 * 1000;
     //saveTime = 10 * 1000; //TODO: remove
     timer = new Timer();
     timer.schedule(new SaveTask(), saveTime, saveTime);
@@ -76,6 +76,7 @@ public class AutoSaveUtil {
   }
   
   private boolean saveSketch() throws IOException{
+    if(!editor.getSketch().isModified()) return false;
     isSaving = true;
     Sketch sc = editor.getSketch();
     
@@ -224,8 +225,8 @@ public class AutoSaveUtil {
     @Override
     public void run() {
       try {
-        saveSketch();
-        ExperimentalMode.log("Backup Saved " + editor.getSketch().getMainFilePath());
+        if(saveSketch())
+          ExperimentalMode.log("Backup Saved " + editor.getSketch().getMainFilePath());
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
