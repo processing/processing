@@ -842,6 +842,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
                 });
             }
         }
+        //  if file location has changed, update autosaver
+        autosaver.reloadAutosaveDir();
         return saved;
     }
 
@@ -870,10 +872,15 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             // set new name of variable inspector
             vi.setTitle(getSketch().getName());
         }
+        //  if file location has changed, update autosaver
+        autosaver.reloadAutosaveDir();
         return saved;
     }
     
     public void loadAutoSaver(){
+      if(autosaver != null){
+        autosaver.stop();
+      }
       autosaver = new AutoSaveUtil(this, dmode.autoSaveInterval);
       if(!autosaver.checkForPastSave()) {
         autosaver.init();

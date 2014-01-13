@@ -51,6 +51,11 @@ public class AutoSaveUtil {
     return false;
   }
   
+  public void reloadAutosaveDir(){
+    while(isSaving);
+    autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + "_autosave");
+  }
+  
   public File getPastSave(){
     return pastSave;
   }
