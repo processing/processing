@@ -881,7 +881,7 @@ public class Texture implements PConstants {
   public void getBufferPixels(int[] pixels) {
     BufferData data = null;
     if (usedBuffers != null && 0 < usedBuffers.size()) {
-      // the last used buffer is the one currently stored in the opengl the
+      // the last used buffer is the one currently stored in the opengl
       // texture
       data = usedBuffers.getLast();
     } else if (bufferCache != null && 0 < bufferCache.size()) {

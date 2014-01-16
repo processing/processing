@@ -79,6 +79,7 @@ public class Movie extends PImage implements PConstants {
   protected boolean seeking = false;
 
   protected boolean useBufferSink = false;
+  protected boolean outdatedPixels = true;
   protected Object bufferSink;
   protected Method sinkCopyMethod;
   protected Method sinkSetMethod;
@@ -487,6 +488,7 @@ public class Movie extends PImage implements PConstants {
     }
 
     if (useBufferSink) { // The native buffer from gstreamer is copied to the buffer sink.
+      outdatedPixels = true;
       if (natBuffer == null) {
         return;
       }
@@ -565,8 +567,30 @@ public class Movie extends PImage implements PConstants {
         } catch (Exception e) {
           e.printStackTrace();
         }        
-      }      
+      }
+      
+      // super.loadPixels() sets loaded to true, but in the useBufferSink mode,
+      // the contents of the pixels array is overriden by the buffers coming
+      // from gstreamer, so we don't want PGraphicsOpenGL replacing the OpenGL
+      // texture with the pixels.
+      setLoaded(false);
+      outdatedPixels = false;
     }
+  }
+  
+  
+  public int get(int x, int y) {
+    if (outdatedPixels) loadPixels();
+    return super.get(x, y);
+  }
+  
+  
+  protected void getImpl(int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         PImage target, int targetX, int targetY) {
+    if (outdatedPixels) loadPixels();
+    super.getImpl(sourceX, sourceY, sourceWidth, sourceHeight,
+                  target, targetX, targetY);
   }
   
   
