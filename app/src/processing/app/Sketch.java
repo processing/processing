@@ -30,6 +30,9 @@ import java.io.*;
 
 import javax.swing.*;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 
 /**
  * Stores information about files in the current sketch.
@@ -759,7 +762,7 @@ public class Sketch {
     if (!sanitaryName.equals(newName) && newFolder.exists()) {
       Base.showMessage("Cannot Save",
                        "A sketch with the cleaned name\n" +
-                       "“" + sanitaryName + "” already exists.");
+                       "â€œ" + sanitaryName + "â€� already exists.");
       return false;
     }
     newName = sanitaryName;
@@ -847,20 +850,26 @@ public class Sketch {
         return true;
       }
     });
-    // now copy over the items that make sense
-    for (File copyable : copyItems) {
-      if (copyable.isDirectory()) {
-        Base.copyDir(copyable, new File(newFolder, copyable.getName()));
-      } else {
-        Base.copyFile(copyable, new File(newFolder, copyable.getName()));
-      }
-    }
+	
 
+    final File newFolder2 = newFolder;
+    final File[] copyItems2 = copyItems;
+    
+    // create a new event dispatch thread
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+            ProgressBarGUI p = new ProgressBarGUI(copyItems2,newFolder2);
+        }
+    });
+    
+	
     // save the other tabs to their new location
     for (int i = 1; i < codeCount; i++) {
       File newFile = new File(newFolder, code[i].getFileName());
       code[i].saveAs(newFile);
     }
+    
+
 
     // While the old path to the main .pde is still set, remove the entry from
     // the Recent menu so that it's not sticking around after the rename.
@@ -884,6 +893,143 @@ public class Sketch {
     // let Editor know that the save was successful
     return true;
   }
+
+
+
+	private class ProgressBarGUI extends JFrame implements
+			PropertyChangeListener {
+
+		private static final long serialVersionUID = 1L;
+		private JProgressBar progressBar;
+		private JLabel saveAsLabel;
+		private Task t;
+		private File[] copyItems;
+		private File newFolder;
+
+		// create a new background thread
+		private class Task extends SwingWorker<Void, Void> {
+
+			@Override
+			protected Void doInBackground() throws Exception {
+				// a large part of the file copying happens in this background
+				// thread
+
+				long totalSize = 0;
+				for (File copyable : copyItems) {
+					totalSize += getFileLength(copyable);
+				}
+
+				int i = 0;
+
+				long progress = 0;
+				setProgress(0);
+				for (File copyable : ProgressBarGUI.this.copyItems)
+				// loop to copy over the items that make sense, and to set the
+				// current progress
+				{
+					if (copyable.isDirectory()) {
+						Base.copyDir(copyable,
+								new File(ProgressBarGUI.this.newFolder,
+										copyable.getName()));
+					} else {
+						Base.copyFile(copyable,
+								new File(ProgressBarGUI.this.newFolder,
+										copyable.getName()));
+					}
+					progress += getFileLength(copyable);
+					setProgress((int) Math.min(
+							Math.ceil((double)progress * 100.0 / (double)totalSize), 100));
+					
+					System.out.println(""+(int) Math.min(
+							Math.ceil((double)progress * 100.0 / (double)totalSize), 100));
+					
+				}
+
+				return null;
+			}
+
+			@Override
+			public void done() {
+				// to close the progress bar automatically when done
+				ProgressBarGUI.this.closeProgressBar();
+			}
+
+		}
+
+		public ProgressBarGUI(File[] c, File nf) {
+			// initialize a copyItems and newFolder, which are used for file
+			// copying in the background thread
+			copyItems = c;
+			newFolder = nf;
+
+			// the UI of the progres bar follows
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			setBounds(200, 200, 400, 140);
+			setResizable(false);
+			setTitle("Saving As...");
+			JPanel panel = new JPanel(null);
+			add(panel);
+			setContentPane(panel);
+			saveAsLabel = new JLabel("Saving X as Y...");
+			saveAsLabel.setBounds(40, 20, 150, 20);
+
+			progressBar = new JProgressBar(0, 100);
+			progressBar.setValue(0);
+			progressBar.setBounds(40, 50, 300, 30);
+			progressBar.setStringPainted(true);
+
+			panel.add(progressBar);
+			panel.add(saveAsLabel);
+			Toolkit.setIcon(this);
+			this.setVisible(true);
+
+			// create an instance of Task and run execute() on this instance to
+			// start background thread
+			t = new Task();
+			t.addPropertyChangeListener(this);
+			t.execute();
+		}
+
+		private long getFileLength(File f)// function to return the length of
+											// the file, or
+											// ENTIRE directory, including the
+											// component files
+											// and sub-folders if passed
+		{
+			long fol_len = 0;
+			if (f.isDirectory()) {
+				String files[] = f.list();
+				for (int i = 0; i < files.length; i++) {
+					File temp = new File(f, files[i]);
+					if (temp.isDirectory()) {
+						fol_len += getFileLength(temp);
+					} else {
+						fol_len += (long) (temp.length());
+					}
+				}
+			} else {
+				return (long) (f.length());
+			}
+			return fol_len;
+		}
+
+		public void propertyChange(PropertyChangeEvent evt)
+		// detects a change in the property of the background task, i.e., is
+		// called when the size of files already copied changes
+		{
+			if ("progress" == evt.getPropertyName()) {
+				int progress = (Integer) evt.getNewValue();
+				progressBar.setValue(progress);
+			}
+		}
+
+		private void closeProgressBar()
+		// closes progress bar
+		{
+			this.dispose();
+		}
+
+	}
 
 
   /**
@@ -912,6 +1058,7 @@ public class Sketch {
     editor.updateTitle();
     editor.base.rebuildSketchbookMenus();
 //    editor.header.rebuild();
+
   }
 
 
