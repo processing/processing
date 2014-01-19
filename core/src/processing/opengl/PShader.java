@@ -180,7 +180,7 @@ public class PShader implements PConstants {
   public PShader(PApplet parent) {
     this();
     this.parent = parent;
-    pgl = PGraphicsOpenGL.pgl;
+    pgl = PGraphicsOpenGL.pgCurrent.pgl;
     context = pgl.createEmptyContext();
   }
 
@@ -195,7 +195,7 @@ public class PShader implements PConstants {
    */
   public PShader(PApplet parent, String vertFilename, String fragFilename) {
     this.parent = parent;
-    pgl = PGraphicsOpenGL.pgl;
+    pgl = PGraphicsOpenGL.pgCurrent.pgl;
 
     this.vertexURL = null;
     this.fragmentURL = null;
@@ -233,7 +233,7 @@ public class PShader implements PConstants {
    */
   public PShader(PApplet parent, URL vertURL, URL fragURL) {
     this.parent = parent;
-    pgl = PGraphicsOpenGL.pgl;
+    pgl = PGraphicsOpenGL.pgCurrent.pgl;
 
     this.vertexURL = vertURL;
     this.fragmentURL = fragURL;
@@ -266,7 +266,7 @@ public class PShader implements PConstants {
 
   public PShader(PApplet parent, String[] vertSource, String[] fragSource) {
     this.parent = parent;
-    pgl = PGraphicsOpenGL.pgl;
+    pgl = PGraphicsOpenGL.pgCurrent.pgl;
 
     this.vertexURL = null;
     this.fragmentURL = null;
@@ -894,7 +894,7 @@ public class PShader implements PConstants {
   protected void init() {
     if (glProgram == 0 || contextIsOutdated()) {
       context = pgl.getCurrentContext();
-      glProgram = PGraphicsOpenGL.createGLSLProgramObject(context);
+      glProgram = PGraphicsOpenGL.createGLSLProgramObject(context, pgl);
 
       boolean vertRes = true;
       if (hasVertexShader()) {
@@ -964,7 +964,7 @@ public class PShader implements PConstants {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileVertexShader() {
-    glVertex = PGraphicsOpenGL.createGLSLVertShaderObject(context);
+    glVertex = PGraphicsOpenGL.createGLSLVertShaderObject(context, pgl);
 
     pgl.shaderSource(glVertex, PApplet.join(vertexShaderSource, "\n"));
     pgl.compileShader(glVertex);
@@ -985,7 +985,7 @@ public class PShader implements PConstants {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileFragmentShader() {
-    glFragment = PGraphicsOpenGL.createGLSLFragShaderObject(context);
+    glFragment = PGraphicsOpenGL.createGLSLFragShaderObject(context, pgl);
 
     pgl.shaderSource(glFragment, PApplet.join(fragmentShaderSource, "\n"));
     pgl.compileShader(glFragment);
@@ -1004,15 +1004,15 @@ public class PShader implements PConstants {
 
   protected void dispose() {
     if (glVertex != 0) {
-      PGraphicsOpenGL.deleteGLSLVertShaderObject(glVertex, context);
+      PGraphicsOpenGL.deleteGLSLVertShaderObject(glVertex, context, pgl);
       glVertex = 0;
     }
     if (glFragment != 0) {
-      PGraphicsOpenGL.deleteGLSLFragShaderObject(glFragment, context);
+      PGraphicsOpenGL.deleteGLSLFragShaderObject(glFragment, context, pgl);
       glFragment = 0;
     }
     if (glProgram != 0) {
-      PGraphicsOpenGL.deleteGLSLProgramObject(glProgram, context);
+      PGraphicsOpenGL.deleteGLSLProgramObject(glProgram, context, pgl);
       glProgram = 0;
     }
   }

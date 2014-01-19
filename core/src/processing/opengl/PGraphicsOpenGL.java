@@ -34,7 +34,7 @@ import java.util.*;
  */
 public class PGraphicsOpenGL extends PGraphics {
   /** Interface between Processing and OpenGL */
-  public static PGL pgl;
+  public PGL pgl;
 
   /** The main PApplet renderer. */
   protected static PGraphicsOpenGL pgPrimary = null;
@@ -520,9 +520,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public PGraphicsOpenGL() {
-    if (pgl == null) {
-      pgl = createPGL(this);
-    }
+    pgl = createPGL(this);
 
     if (tessellator == null) {
       tessellator = new Tessellator();
@@ -647,7 +645,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-    deleteFinalizedGLResources();
+    deleteFinalizedGLResources(pgl);
 
     if (primarySurface) {
       pgl.deleteSurface();
@@ -656,7 +654,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // This is important in the context of, say, a unit test suite, which
       // runs more than one OpenGL sketch within the same classloader
       // (as in the case of processing.py). Please don't remove it!
-      pgl = null;
+      //pgl = null;
     }
   }
 
@@ -738,8 +736,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Texture Objects -----------------------------------------------------------
 
-  protected static int createTextureObject(int context) {
-    deleteFinalizedTextureObjects();
+  protected static int createTextureObject(int context, PGL pgl) {
+    deleteFinalizedTextureObjects(pgl);
 
     pgl.genTextures(1, intBuffer);
     int id = intBuffer.get(0);
@@ -752,7 +750,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected static void deleteTextureObject(int id, int context) {
+  protected static void deleteTextureObject(int id, int context, PGL pgl) {
     GLResource res = new GLResource(id, context);
     if (glTextureObjects.containsKey(res)) {
       intBuffer.put(0, id);
@@ -761,7 +759,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteAllTextureObjects() {
+  protected static void deleteAllTextureObjects(PGL pgl) {
     for (GLResource res : glTextureObjects.keySet()) {
       intBuffer.put(0, res.id);
       if (pgl.threadIsCurrent()) pgl.deleteTextures(1, intBuffer);
@@ -777,7 +775,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteFinalizedTextureObjects() {
+  protected static void deleteFinalizedTextureObjects(PGL pgl) {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glTextureObjects.keySet()) {
@@ -802,8 +800,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Vertex Buffer Objects -----------------------------------------------------
 
-  protected static int createVertexBufferObject(int context) {
-    deleteFinalizedVertexBufferObjects();
+  protected static int createVertexBufferObject(int context, PGL pgl) {
+    deleteFinalizedVertexBufferObjects(pgl);
 
     pgl.genBuffers(1, intBuffer);
     int id = intBuffer.get(0);
@@ -816,7 +814,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected static void deleteVertexBufferObject(int id, int context) {
+  protected static void deleteVertexBufferObject(int id, int context, PGL pgl) {
     GLResource res = new GLResource(id, context);
     if (glVertexBuffers.containsKey(res)) {
       intBuffer.put(0, id);
@@ -825,7 +823,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteAllVertexBufferObjects() {
+  protected static void deleteAllVertexBufferObjects(PGL pgl) {
     for (GLResource res : glVertexBuffers.keySet()) {
       intBuffer.put(0, res.id);
       if (pgl.threadIsCurrent()) pgl.deleteBuffers(1, intBuffer);
@@ -841,7 +839,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteFinalizedVertexBufferObjects() {
+  protected static void deleteFinalizedVertexBufferObjects(PGL pgl) {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glVertexBuffers.keySet()) {
@@ -866,8 +864,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // FrameBuffer Objects -------------------------------------------------------
 
-  protected static int createFrameBufferObject(int context) {
-    deleteFinalizedFrameBufferObjects();
+  protected static int createFrameBufferObject(int context, PGL pgl) {
+    deleteFinalizedFrameBufferObjects(pgl);
 
     pgl.genFramebuffers(1, intBuffer);
     int id = intBuffer.get(0);
@@ -880,7 +878,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected static void deleteFrameBufferObject(int id, int context) {
+  protected static void deleteFrameBufferObject(int id, int context, PGL pgl) {
     GLResource res = new GLResource(id, context);
     if (glFrameBuffers.containsKey(res)) {
       intBuffer.put(0, id);
@@ -889,7 +887,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteAllFrameBufferObjects() {
+  protected static void deleteAllFrameBufferObjects(PGL pgl) {
     for (GLResource res : glFrameBuffers.keySet()) {
       intBuffer.put(0, res.id);
       if (pgl.threadIsCurrent()) pgl.deleteFramebuffers(1, intBuffer);
@@ -905,7 +903,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteFinalizedFrameBufferObjects() {
+  protected static void deleteFinalizedFrameBufferObjects(PGL pgl) {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glFrameBuffers.keySet()) {
@@ -932,8 +930,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // RenderBuffer Objects ------------------------------------------------------
 
-  protected static int createRenderBufferObject(int context) {
-    deleteFinalizedRenderBufferObjects();
+  protected static int createRenderBufferObject(int context, PGL pgl) {
+    deleteFinalizedRenderBufferObjects(pgl);
 
     pgl.genRenderbuffers(1, intBuffer);
     int id = intBuffer.get(0);
@@ -946,7 +944,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected static void deleteRenderBufferObject(int id, int context) {
+  protected static void deleteRenderBufferObject(int id, int context, PGL pgl) {
     GLResource res = new GLResource(id, context);
     if (glRenderBuffers.containsKey(res)) {
       intBuffer.put(0, id);
@@ -955,7 +953,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteAllRenderBufferObjects() {
+  protected static void deleteAllRenderBufferObjects(PGL pgl) {
     for (GLResource res : glRenderBuffers.keySet()) {
       intBuffer.put(0, res.id);
       if (pgl.threadIsCurrent()) pgl.deleteRenderbuffers(1, intBuffer);
@@ -971,7 +969,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteFinalizedRenderBufferObjects() {
+  protected static void deleteFinalizedRenderBufferObjects(PGL pgl) {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glRenderBuffers.keySet()) {
@@ -996,8 +994,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // GLSL Program Objects ------------------------------------------------------
 
-  protected static int createGLSLProgramObject(int context) {
-    deleteFinalizedGLSLProgramObjects();
+  protected static int createGLSLProgramObject(int context, PGL pgl) {
+    deleteFinalizedGLSLProgramObjects(pgl);
 
     int id = pgl.createProgram();
 
@@ -1009,7 +1007,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected static void deleteGLSLProgramObject(int id, int context) {
+  protected static void deleteGLSLProgramObject(int id, int context, PGL pgl) {
     GLResource res = new GLResource(id, context);
     if (glslPrograms.containsKey(res)) {
       if (pgl.threadIsCurrent()) pgl.deleteProgram(res.id);
@@ -1017,7 +1015,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteAllGLSLProgramObjects() {
+  protected static void deleteAllGLSLProgramObjects(PGL pgl) {
     for (GLResource res : glslPrograms.keySet()) {
       if (pgl.threadIsCurrent()) pgl.deleteProgram(res.id);
     }
@@ -1032,7 +1030,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteFinalizedGLSLProgramObjects() {
+  protected static void deleteFinalizedGLSLProgramObjects(PGL pgl) {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glslPrograms.keySet()) {
@@ -1056,8 +1054,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // GLSL Vertex Shader Objects ------------------------------------------------
 
-  protected static int createGLSLVertShaderObject(int context) {
-    deleteFinalizedGLSLVertShaderObjects();
+  protected static int createGLSLVertShaderObject(int context, PGL pgl) {
+    deleteFinalizedGLSLVertShaderObjects(pgl);
 
     int id = pgl.createShader(PGL.VERTEX_SHADER);
 
@@ -1069,7 +1067,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected static void deleteGLSLVertShaderObject(int id, int context) {
+  protected static void deleteGLSLVertShaderObject(int id, int context, PGL pgl) {
     GLResource res = new GLResource(id, context);
     if (glslVertexShaders.containsKey(res)) {
       if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
@@ -1077,7 +1075,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteAllGLSLVertShaderObjects() {
+  protected static void deleteAllGLSLVertShaderObjects(PGL pgl) {
     for (GLResource res : glslVertexShaders.keySet()) {
       if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
     }
@@ -1093,7 +1091,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteFinalizedGLSLVertShaderObjects() {
+  protected static void deleteFinalizedGLSLVertShaderObjects(PGL pgl) {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glslVertexShaders.keySet()) {
@@ -1117,8 +1115,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // GLSL Fragment Shader Objects ----------------------------------------------
 
-  protected static int createGLSLFragShaderObject(int context) {
-    deleteFinalizedGLSLFragShaderObjects();
+  protected static int createGLSLFragShaderObject(int context, PGL pgl) {
+    deleteFinalizedGLSLFragShaderObjects(pgl);
 
     int id = pgl.createShader(PGL.FRAGMENT_SHADER);
 
@@ -1130,7 +1128,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return id;
   }
 
-  protected static void deleteGLSLFragShaderObject(int id, int context) {
+  protected static void deleteGLSLFragShaderObject(int id, int context, PGL pgl) {
     GLResource res = new GLResource(id, context);
     if (glslFragmentShaders.containsKey(res)) {
       if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
@@ -1138,7 +1136,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteAllGLSLFragShaderObjects() {
+  protected static void deleteAllGLSLFragShaderObjects(PGL pgl) {
     for (GLResource res : glslFragmentShaders.keySet()) {
       if (pgl.threadIsCurrent()) pgl.deleteShader(res.id);
     }
@@ -1154,7 +1152,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected static void deleteFinalizedGLSLFragShaderObjects() {
+  protected static void deleteFinalizedGLSLFragShaderObjects(PGL pgl) {
     Set<GLResource> finalized = new HashSet<GLResource>();
 
     for (GLResource res : glslFragmentShaders.keySet()) {
@@ -1178,14 +1176,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // All OpenGL resources ------------------------------------------------------
 
-  protected static void deleteFinalizedGLResources() {
-    deleteFinalizedTextureObjects();
-    deleteFinalizedVertexBufferObjects();
-    deleteFinalizedFrameBufferObjects();
-    deleteFinalizedRenderBufferObjects();
-    deleteFinalizedGLSLProgramObjects();
-    deleteFinalizedGLSLVertShaderObjects();
-    deleteFinalizedGLSLFragShaderObjects();
+  protected static void deleteFinalizedGLResources(PGL pgl) {
+    deleteFinalizedTextureObjects(pgl);
+    deleteFinalizedVertexBufferObjects(pgl);
+    deleteFinalizedFrameBufferObjects(pgl);
+    deleteFinalizedRenderBufferObjects(pgl);
+    deleteFinalizedGLSLProgramObjects(pgl);
+    deleteFinalizedGLSLVertShaderObjects(pgl);
+    deleteFinalizedGLSLFragShaderObjects(pgl);
   }
 
 
@@ -1238,41 +1236,41 @@ public class PGraphicsOpenGL extends PGraphics {
       int sizei = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_INT;
       int sizex = INIT_INDEX_BUFFER_SIZE * PGL.SIZEOF_INDEX;
 
-      glPolyVertex = createVertexBufferObject(polyBuffersContext);
+      glPolyVertex = createVertexBufferObject(polyBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyVertex);
       pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef, null, PGL.STATIC_DRAW);
 
-      glPolyColor = createVertexBufferObject(polyBuffersContext);
+      glPolyColor = createVertexBufferObject(polyBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyColor);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPolyNormal = createVertexBufferObject(polyBuffersContext);
+      glPolyNormal = createVertexBufferObject(polyBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyNormal);
       pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef, null, PGL.STATIC_DRAW);
 
-      glPolyTexcoord = createVertexBufferObject(polyBuffersContext);
+      glPolyTexcoord = createVertexBufferObject(polyBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyTexcoord);
       pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef, null, PGL.STATIC_DRAW);
 
-      glPolyAmbient = createVertexBufferObject(polyBuffersContext);
+      glPolyAmbient = createVertexBufferObject(polyBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyAmbient);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPolySpecular = createVertexBufferObject(polyBuffersContext);
+      glPolySpecular = createVertexBufferObject(polyBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolySpecular);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPolyEmissive = createVertexBufferObject(polyBuffersContext);
+      glPolyEmissive = createVertexBufferObject(polyBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyEmissive);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPolyShininess = createVertexBufferObject(polyBuffersContext);
+      glPolyShininess = createVertexBufferObject(polyBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyShininess);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizef, null, PGL.STATIC_DRAW);
 
       pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
-      glPolyIndex = createVertexBufferObject(polyBuffersContext);
+      glPolyIndex = createVertexBufferObject(polyBuffersContext, pgl);
       pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPolyIndex);
       pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER, sizex, null, PGL.STATIC_DRAW);
 
@@ -1357,31 +1355,31 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void deletePolyBuffers() {
     if (polyBuffersCreated) {
-      deleteVertexBufferObject(glPolyVertex, polyBuffersContext);
+      deleteVertexBufferObject(glPolyVertex, polyBuffersContext, pgl);
       glPolyVertex = 0;
 
-      deleteVertexBufferObject(glPolyColor, polyBuffersContext);
+      deleteVertexBufferObject(glPolyColor, polyBuffersContext, pgl);
       glPolyColor = 0;
 
-      deleteVertexBufferObject(glPolyNormal, polyBuffersContext);
+      deleteVertexBufferObject(glPolyNormal, polyBuffersContext, pgl);
       glPolyNormal = 0;
 
-      deleteVertexBufferObject(glPolyTexcoord, polyBuffersContext);
+      deleteVertexBufferObject(glPolyTexcoord, polyBuffersContext, pgl);
       glPolyTexcoord = 0;
 
-      deleteVertexBufferObject(glPolyAmbient, polyBuffersContext);
+      deleteVertexBufferObject(glPolyAmbient, polyBuffersContext, pgl);
       glPolyAmbient = 0;
 
-      deleteVertexBufferObject(glPolySpecular, polyBuffersContext);
+      deleteVertexBufferObject(glPolySpecular, polyBuffersContext, pgl);
       glPolySpecular = 0;
 
-      deleteVertexBufferObject(glPolyEmissive, polyBuffersContext);
+      deleteVertexBufferObject(glPolyEmissive, polyBuffersContext, pgl);
       glPolyEmissive = 0;
 
-      deleteVertexBufferObject(glPolyShininess, polyBuffersContext);
+      deleteVertexBufferObject(glPolyShininess, polyBuffersContext, pgl);
       glPolyShininess = 0;
 
-      deleteVertexBufferObject(glPolyIndex, polyBuffersContext);
+      deleteVertexBufferObject(glPolyIndex, polyBuffersContext, pgl);
       glPolyIndex = 0;
 
       polyBuffersCreated = false;
@@ -1397,22 +1395,22 @@ public class PGraphicsOpenGL extends PGraphics {
       int sizei = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_INT;
       int sizex = INIT_INDEX_BUFFER_SIZE * PGL.SIZEOF_INDEX;
 
-      glLineVertex = createVertexBufferObject(lineBuffersContext);
+      glLineVertex = createVertexBufferObject(lineBuffersContext, pgl);
 
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineVertex);
       pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef, null, PGL.STATIC_DRAW);
 
-      glLineColor = createVertexBufferObject(lineBuffersContext);
+      glLineColor = createVertexBufferObject(lineBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineColor);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glLineAttrib = createVertexBufferObject(lineBuffersContext);
+      glLineAttrib = createVertexBufferObject(lineBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineAttrib);
       pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef, null, PGL.STATIC_DRAW);
 
       pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
-      glLineIndex = createVertexBufferObject(lineBuffersContext);
+      glLineIndex = createVertexBufferObject(lineBuffersContext, pgl);
       pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glLineIndex);
       pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER, sizex, null, PGL.STATIC_DRAW);
 
@@ -1466,16 +1464,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void deleteLineBuffers() {
     if (lineBuffersCreated) {
-      deleteVertexBufferObject(glLineVertex, lineBuffersContext);
+      deleteVertexBufferObject(glLineVertex, lineBuffersContext, pgl);
       glLineVertex = 0;
 
-      deleteVertexBufferObject(glLineColor, lineBuffersContext);
+      deleteVertexBufferObject(glLineColor, lineBuffersContext, pgl);
       glLineColor = 0;
 
-      deleteVertexBufferObject(glLineAttrib, lineBuffersContext);
+      deleteVertexBufferObject(glLineAttrib, lineBuffersContext, pgl);
       glLineAttrib = 0;
 
-      deleteVertexBufferObject(glLineIndex, lineBuffersContext);
+      deleteVertexBufferObject(glLineIndex, lineBuffersContext, pgl);
       glLineIndex = 0;
 
       lineBuffersCreated = false;
@@ -1491,21 +1489,21 @@ public class PGraphicsOpenGL extends PGraphics {
       int sizei = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_INT;
       int sizex = INIT_INDEX_BUFFER_SIZE * PGL.SIZEOF_INDEX;
 
-      glPointVertex = createVertexBufferObject(pointBuffersContext);
+      glPointVertex = createVertexBufferObject(pointBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointVertex);
       pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef, null, PGL.STATIC_DRAW);
 
-      glPointColor = createVertexBufferObject(pointBuffersContext);
+      glPointColor = createVertexBufferObject(pointBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointColor);
       pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
 
-      glPointAttrib = createVertexBufferObject(pointBuffersContext);
+      glPointAttrib = createVertexBufferObject(pointBuffersContext, pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointAttrib);
       pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef, null, PGL.STATIC_DRAW);
 
       pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
-      glPointIndex = createVertexBufferObject(pointBuffersContext);
+      glPointIndex = createVertexBufferObject(pointBuffersContext, pgl);
       pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPointIndex);
       pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER, sizex, null, PGL.STATIC_DRAW);
 
@@ -1559,16 +1557,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void deletePointBuffers() {
     if (pointBuffersCreated) {
-      deleteVertexBufferObject(glPointVertex, pointBuffersContext);
+      deleteVertexBufferObject(glPointVertex, pointBuffersContext, pgl);
       glPointVertex = 0;
 
-      deleteVertexBufferObject(glPointColor, pointBuffersContext);
+      deleteVertexBufferObject(glPointColor, pointBuffersContext, pgl);
       glPointColor = 0;
 
-      deleteVertexBufferObject(glPointAttrib, pointBuffersContext);
+      deleteVertexBufferObject(glPointAttrib, pointBuffersContext, pgl);
       glPointAttrib = 0;
 
-      deleteVertexBufferObject(glPointIndex, pointBuffersContext);
+      deleteVertexBufferObject(glPointIndex, pointBuffersContext, pgl);
       glPointIndex = 0;
 
       pointBuffersCreated = false;
@@ -3510,7 +3508,7 @@ public class PGraphicsOpenGL extends PGraphics {
       textTex = pgPrimary.getFontTexture(textFont);
 
       if (textTex == null || textTex.contextIsOutdated()) {
-        textTex = new FontTexture(pgPrimary, textFont, is3D());
+        textTex = new FontTexture(textFont, is3D());
         pgPrimary.setFontTexture(textFont, textTex);
       }
 
@@ -6208,11 +6206,11 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.beginDraw(clearColorBuffer);
 
     if (drawFramebuffer == null) {
-      drawFramebuffer = new FrameBuffer(width, height, true);
+      drawFramebuffer = new FrameBuffer(this, width, height, true);
     }
     drawFramebuffer.setFBO(pgl.getDrawFramebuffer());
     if (readFramebuffer == null) {
-      readFramebuffer = new FrameBuffer(width, height, true);
+      readFramebuffer = new FrameBuffer(this, width, height, true);
     }
     readFramebuffer.setFBO(pgl.getReadFramebuffer());
     if (currentFramebuffer == null) {
@@ -9659,13 +9657,18 @@ public class PGraphicsOpenGL extends PGraphics {
     int beginPath;
 
     public Tessellator() {
-      callback = new TessellatorCallback();
-      gluTess = pgl.createTessellator(callback);
       rawIndices = new int[512];
       accurate2DStrokes = true;
       transform = null;
       is2D = false;
       is3D = true;
+    }
+
+    void initGluTess() {
+      if (gluTess == null) {
+        callback = new TessellatorCallback();
+        gluTess = pg.pgl.createTessellator(callback);
+      }
     }
 
     void setInGeometry(InGeometry in) {
@@ -9689,7 +9692,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void setTexCache(TexCache texCache, PImage newTexImage) {
       this.texCache = texCache;
-      //this.prevTexImage = prevTexImage;
       this.newTexImage = newTexImage;
     }
 
@@ -11198,6 +11200,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (3 <= nInVert) {
         firstPolyIndexCache = -1;
 
+        initGluTess();
         boolean clamp = clampPolygon();
         callback.init(in.renderMode == RETAINED, false, calcNormals, clamp);
 
@@ -11727,8 +11730,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // Based on the opengl stroke hack described here:
     // http://wiki.processing.org/w/Stroke_attributes_in_OpenGL
     public void tessellateLinePath(LinePath path) {
+      initGluTess();
       boolean clamp = clampLinePath();
-
       callback.init(in.renderMode == RETAINED, true, false, clamp);
 
       int cap = strokeCap == ROUND ? LinePath.CAP_ROUND :
@@ -11960,7 +11963,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       public void error(int errnum) {
-        String estring = pgl.tessError(errnum);
+        String estring = pg.pgl.tessError(errnum);
         PGraphics.showWarning(TESSELLATION_ERROR, estring);
       }
 

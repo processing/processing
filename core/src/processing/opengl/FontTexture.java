@@ -63,11 +63,11 @@ class FontTexture implements PConstants {
   protected TextureInfo[] glyphTexinfos;
   protected HashMap<PFont.Glyph, TextureInfo> texinfoMap;
 
-  public FontTexture(PGraphicsOpenGL pg, PFont font, boolean is3D) {
-    pgl = PGraphicsOpenGL.pgl;
+  public FontTexture(PFont font, boolean is3D) {
+    pgl = PGraphicsOpenGL.pgPrimary.pgl;
     this.is3D = is3D;
 
-    initTexture(pg, font);
+    initTexture(PGraphicsOpenGL.pgPrimary, font);
   }
 
 

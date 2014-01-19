@@ -119,7 +119,7 @@ public class Texture implements PConstants {
 
 
   public Texture() {
-    pgl = PGraphicsOpenGL.pgl;
+    pgl = PGraphicsOpenGL.pgPrimary.pgl;
     context = pgl.createEmptyContext();
 
     colorBuffer = false;
@@ -147,7 +147,7 @@ public class Texture implements PConstants {
    * @param params Parameters
    */
   public Texture(int width, int height, Object params) {
-    pgl = PGraphicsOpenGL.pgl;
+    pgl = PGraphicsOpenGL.pgPrimary.pgl;
     context = pgl.createEmptyContext();
 
     colorBuffer = false;
@@ -1157,7 +1157,7 @@ public class Texture implements PConstants {
     }
 
     context = pgl.getCurrentContext();
-    glName = PGraphicsOpenGL.createTextureObject(context);
+    glName = PGraphicsOpenGL.createTextureObject(context, pgl);
 
     pgl.bindTexture(glTarget, glName);
     pgl.texParameteri(glTarget, PGL.TEXTURE_MIN_FILTER, glMinFilter);

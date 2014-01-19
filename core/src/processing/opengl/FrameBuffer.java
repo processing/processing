@@ -68,14 +68,14 @@ public class FrameBuffer implements PConstants {
 
 
   FrameBuffer() {
-    pgl = PGraphicsOpenGL.pgl;
+    pgl = PGraphicsOpenGL.pgPrimary.pgl;
     context = pgl.createEmptyContext();
   }
 
 
   FrameBuffer(int w, int h, int samples, int colorBuffers,
-               int depthBits, int stencilBits, boolean packedDepthStencil,
-               boolean screen) {
+              int depthBits, int stencilBits, boolean packedDepthStencil,
+              boolean screen) {
     this();
 
     glFbo = 0;
@@ -141,7 +141,7 @@ public class FrameBuffer implements PConstants {
   }
 
 
-  FrameBuffer(int w, int h, boolean screen) {
+  FrameBuffer(PGraphicsOpenGL pg, int w, int h, boolean screen) {
     this(w, h, 1, 1, 0, 0, false, screen);
   }
 
@@ -345,7 +345,7 @@ public class FrameBuffer implements PConstants {
       glFbo = 0;
     } else {
       //create the FBO object...
-      glFbo = PGraphicsOpenGL.createFrameBufferObject(context);
+      glFbo = PGraphicsOpenGL.createFrameBufferObject(context, pgl);
 
       // ... and then create the rest of the stuff.
       if (multisample) {
@@ -423,7 +423,7 @@ public class FrameBuffer implements PConstants {
     PGraphicsOpenGL.pushFramebuffer();
     PGraphicsOpenGL.setFramebuffer(this);
 
-    glMultisample = PGraphicsOpenGL.createRenderBufferObject(context);
+    glMultisample = PGraphicsOpenGL.createRenderBufferObject(context, pgl);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glMultisample);
     pgl.renderbufferStorageMultisample(PGL.RENDERBUFFER, nsamples,
                                        PGL.RGBA8, width, height);
@@ -444,7 +444,7 @@ public class FrameBuffer implements PConstants {
     PGraphicsOpenGL.pushFramebuffer();
     PGraphicsOpenGL.setFramebuffer(this);
 
-    glDepthStencil = PGraphicsOpenGL.createRenderBufferObject(context);
+    glDepthStencil = PGraphicsOpenGL.createRenderBufferObject(context, pgl);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glDepthStencil);
 
     if (multisample) {
@@ -474,7 +474,7 @@ public class FrameBuffer implements PConstants {
     PGraphicsOpenGL.pushFramebuffer();
     PGraphicsOpenGL.setFramebuffer(this);
 
-    glDepth = PGraphicsOpenGL.createRenderBufferObject(context);
+    glDepth = PGraphicsOpenGL.createRenderBufferObject(context, pgl);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glDepth);
 
     int glConst = PGL.DEPTH_COMPONENT16;
@@ -510,7 +510,7 @@ public class FrameBuffer implements PConstants {
     PGraphicsOpenGL.pushFramebuffer();
     PGraphicsOpenGL.setFramebuffer(this);
 
-    glStencil = PGraphicsOpenGL.createRenderBufferObject(context);
+    glStencil = PGraphicsOpenGL.createRenderBufferObject(context, pgl);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glStencil);
 
     int glConst = PGL.STENCIL_INDEX1;
