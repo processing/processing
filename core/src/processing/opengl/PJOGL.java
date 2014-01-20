@@ -66,16 +66,16 @@ public class PJOGL extends PGL {
   // Public members to access the underlying GL objects and context
 
   /** Basic GL functionality, common to all profiles */
-  public static GL gl;
+  public GL gl;
 
   /** GLU interface **/
-  public static GLU glu;
+  public GLU glu;
 
   /** The rendering context (holds rendering state info) */
-  public static GLContext context;
+  public GLContext context;
 
   /** The canvas where OpenGL rendering takes place */
-  public static Canvas canvas;
+  public Canvas canvas;
 
   /** Selected GL profile */
   public static GLProfile profile;
@@ -132,32 +132,32 @@ public class PJOGL extends PGL {
   // Protected JOGL-specific objects needed to access the GL profiles
 
   /** The capabilities of the OpenGL rendering surface */
-  protected static GLCapabilitiesImmutable capabilities;
+  protected GLCapabilitiesImmutable capabilities;
 
   /** The rendering surface */
-  protected static GLDrawable drawable;
+  protected GLDrawable drawable;
 
   /** GLES2 functionality (shaders, etc) */
-  protected static GL2ES2 gl2;
+  protected GL2ES2 gl2;
 
   /** GL3 interface */
-  protected static GL2GL3 gl3;
+  protected GL2GL3 gl3;
 
   /** GL2 desktop functionality (blit framebuffer, map buffer range,
    * multisampled renerbuffers) */
-  protected static GL2 gl2x;
+  protected GL2 gl2x;
 
   /** The AWT-OpenGL canvas */
-  protected static GLCanvas canvasAWT;
+  protected GLCanvas canvasAWT;
 
   /** The NEWT-OpenGL canvas */
-  protected static NewtCanvasAWT canvasNEWT;
+  protected NewtCanvasAWT canvasNEWT;
 
   /** The NEWT window */
-  protected static GLWindow window;
+  protected GLWindow window;
 
   /** The listener that fires the frame rendering in Processing */
-  protected static PGLListener listener;
+  protected PGLListener listener;
 
   /** This countdown latch is used to maintain the synchronization between
    * Processing's drawing thread and JOGL's rendering thread */
@@ -490,7 +490,7 @@ public class PJOGL extends PGL {
   protected Texture wrapBackTexture(Texture texture) {
     if (texture == null || changedBackTex) {
       if (USE_JOGL_FBOLAYER) {
-        texture = new Texture();
+        texture = new Texture(pg);
         texture.init(pg.width, pg.height,
                      backTexAttach.getName(), TEXTURE_2D, RGBA,
                      backTexAttach.getWidth(), backTexAttach.getHeight(),
@@ -517,7 +517,7 @@ public class PJOGL extends PGL {
   protected Texture wrapFrontTexture(Texture texture) {
     if (texture == null || changedFrontTex) {
       if (USE_JOGL_FBOLAYER) {
-        texture = new Texture();
+        texture = new Texture(pg);
         texture.init(pg.width, pg.height,
                      backTexAttach.getName(), TEXTURE_2D, RGBA,
                      frontTexAttach.getWidth(), frontTexAttach.getHeight(),
@@ -610,6 +610,23 @@ public class PJOGL extends PGL {
       }
     }
   }
+
+
+  @Override
+  protected void getGL(PGL pgl) {
+    PJOGL pjogl = (PJOGL)pgl;
+
+    this.drawable = pjogl.drawable;
+    this.context = pjogl.context;
+    this.glContext = pjogl.glContext;
+    this.glThread = pjogl.glThread;
+
+    this.gl = pjogl.gl;
+    this.gl2 = pjogl.gl2;
+    this.gl2x = pjogl.gl2x;
+    this.gl3 = pjogl.gl3;
+  }
+
 
 
   @Override

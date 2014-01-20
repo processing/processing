@@ -36,11 +36,8 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Interface between Processing and OpenGL */
   public PGL pgl;
 
-  /** The main PApplet renderer. */
-  protected static PGraphicsOpenGL pgPrimary = null;
-
   /** The renderer currently in use. */
-  protected static PGraphicsOpenGL pgCurrent = null;
+  protected PGraphicsOpenGL currentPG;
 
   /** Font cache for texture objects. */
   protected WeakHashMap<PFont, FontTexture> fontMap =
@@ -56,8 +53,6 @@ public class PGraphicsOpenGL extends PGraphics {
     "blendMode(%1$s) is not supported by this hardware (or driver)";
   static final String BLEND_RENDERER_ERROR =
     "blendMode(%1$s) is not supported by this renderer";
-  static final String NESTED_DRAW_ERROR =
-    "Already called drawing on another PGraphicsOpenGL object";
   static final String ALREADY_BEGAN_CONTOUR_ERROR =
     "Already called beginContour()";
   static final String NO_BEGIN_CONTOUR_ERROR =
@@ -424,7 +419,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // Screen surface:
 
   /** Texture containing the current frame */
-  protected Texture texture;
+  public Texture texture;
 
   /** Texture containing the previous frame */
   protected Texture ptexture;
@@ -535,7 +530,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     inGeo = newInGeometry(this, IMMEDIATE);
     tessGeo = newTessGeometry(this, IMMEDIATE);
-    texCache = newTexCache();
+    texCache = newTexCache(this);
 
     initialized = false;
   }
@@ -688,19 +683,42 @@ public class PGraphicsOpenGL extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
+  // IMAGE METADATA FOR THIS RENDERER
+
+
+  @Override
+  public void setCache(PImage image, Object storage) {
+    getPrimaryPG().cacheMap.put(image, storage);
+  }
+
+
+  @Override
+  public Object getCache(PImage image) {
+    return getPrimaryPG().cacheMap.get(image);
+  }
+
+
+  @Override
+  public void removeCache(PImage image) {
+    getPrimaryPG().cacheMap.remove(image);
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
 
   protected void setFontTexture(PFont font, FontTexture fontTexture) {
-    fontMap.put(font, fontTexture);
+    getPrimaryPG().fontMap.put(font, fontTexture);
   }
 
 
   protected FontTexture getFontTexture(PFont font) {
-    return fontMap.get(font);
+    return getPrimaryPG().fontMap.get(font);
   }
 
 
   protected void removeFontTexture(PFont font) {
-    fontMap.remove(font);
+    getPrimaryPG().fontMap.remove(font);
   }
 
 
@@ -1216,7 +1234,7 @@ public class PGraphicsOpenGL extends PGraphics {
     fbStackDepth--;
     FrameBuffer fbo = fbStack[fbStackDepth];
     if (currentFramebuffer != fbo) {
-      currentFramebuffer.finish(pgPrimary);
+      currentFramebuffer.finish();
       currentFramebuffer = fbo;
       currentFramebuffer.bind();
     }
@@ -1605,6 +1623,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void beginDraw() {
+    if (primarySurface) {
+      setCurrentPG(this);
+    } else {
+      pgl.getGL(getPrimaryPGL());
+      getPrimaryPG().setCurrentPG(this);
+    }
+
     report("top beginDraw()");
 
     if (!checkGLThread()) {
@@ -1615,19 +1640,11 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }
 
-    if (pgCurrent != null && !pgCurrent.primarySurface &&
-                             !this.primarySurface) {
-      // It seems that the user is trying to start another beginDraw()/endDraw()
-      // block for an offscreen surface, still drawing on another one.
-      PGraphics.showWarning(NESTED_DRAW_ERROR);
-      return;
-    }
-
-    if (!primarySurface && pgPrimary.texCache.containsTexture(this)) {
+    if (!primarySurface && getPrimaryPG().texCache.containsTexture(this)) {
       // This offscreen surface is being used as a texture earlier in draw,
-      // so we should update the rendering up to this point since it will
+      // so we should update the rendering up to this point since it will be
       // modified.
-      pgPrimary.flush();
+      getPrimaryPG().flush();
     }
 
     if (!glParamsRead) {
@@ -1642,7 +1659,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     setDrawDefaults(); // TODO: look at using checkSettings() instead...
 
-    pgCurrent = this;
     drawing = true;
 
     report("bot beginDraw()");
@@ -1661,7 +1677,7 @@ public class PGraphicsOpenGL extends PGraphics {
     flush();
 
     if (PGL.SAVE_SURFACE_TO_PIXELS_HACK &&
-        (!pgPrimary.initialized || parent.frameCount == 0)) {
+        (!getPrimaryPG().initialized || parent.frameCount == 0)) {
       // Smooth was disabled/enabled at some point during drawing. We save
       // the current contents of the back buffer (because the  buffers haven't
       // been swapped yet) to the pixels array. The frameCount == 0 condition
@@ -1677,12 +1693,10 @@ public class PGraphicsOpenGL extends PGraphics {
       endOffscreenDraw();
     }
 
-    if (pgCurrent == pgPrimary) {
-      // Done with the main surface
-      pgCurrent = null;
+    if (primarySurface) {
+      setCurrentPG(null);
     } else {
-      // Done with an offscreen surface, going back to onscreen drawing.
-      pgCurrent = pgPrimary;
+      getPrimaryPG().setCurrentPG(getPrimaryPG());
     }
     drawing = false;
 
@@ -1693,6 +1707,31 @@ public class PGraphicsOpenGL extends PGraphics {
   // Factory method
   protected PGL createPGL(PGraphicsOpenGL pg) {
     return new PJOGL(pg);
+  }
+
+
+  protected PGraphicsOpenGL getPrimaryPG() {
+    if (primarySurface) {
+      return this;
+    } else {
+      return (PGraphicsOpenGL)parent.g;
+    }
+  }
+
+  protected void setCurrentPG(PGraphicsOpenGL pg) {
+    currentPG = pg;
+  }
+
+  protected PGraphicsOpenGL getCurrentPG() {
+    return currentPG;
+  }
+
+  protected PGL getPrimaryPGL() {
+    if (primarySurface) {
+      return pgl;
+    } else {
+      return ((PGraphicsOpenGL)parent.g).pgl;
+    }
   }
 
 
@@ -1764,11 +1803,11 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   public void beginReadPixels() {
-    pgCurrent.beginPixelsOp(OP_READ);
+    beginPixelsOp(OP_READ);
   }
 
   public void endReadPixels() {
-    pgCurrent.endPixelsOp();
+    endPixelsOp();
   }
 
   protected void beginPixelsOp(int op) {
@@ -2229,7 +2268,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setStrokeWeight(strokeWeight);
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
-    tessellator.setRenderer(pgCurrent);
+    tessellator.setRenderer(this);
     tessellator.setTransform(modelview);
     tessellator.set3D(is3D());
 
@@ -3505,11 +3544,11 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
     if (textMode == MODEL) {
-      textTex = pgPrimary.getFontTexture(textFont);
+      textTex = getFontTexture(textFont);
 
       if (textTex == null || textTex.contextIsOutdated()) {
-        textTex = new FontTexture(textFont, is3D());
-        pgPrimary.setFontTexture(textFont, textTex);
+        textTex = new FontTexture(this, textFont, is3D());
+        setFontTexture(textFont, textTex);
       }
 
       textTex.begin();
@@ -3568,7 +3607,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
         if (tinfo == null) {
           // Adding new glyph to the font texture.
-          tinfo = textTex.addToTexture(pgPrimary, glyph);
+          tinfo = textTex.addToTexture(this, glyph);
         }
 
         float high    = glyph.height     / (float) textFont.getSize();
@@ -5327,16 +5366,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-
-  //////////////////////////////////////////////////////////////
-
-  // PIMAGE METHODS
-
-  // getImage
-  // setCache, getCache, removeCache
-  // isModified, setModified
-
-
   //////////////////////////////////////////////////////////////
 
   // LOAD/UPDATE PIXELS
@@ -5617,16 +5646,16 @@ public class PGraphicsOpenGL extends PGraphics {
     if (texture == null || texture.contextIsOutdated()) {
       Texture.Parameters params = new Texture.Parameters(ARGB,
                                                          sampling, mipmap);
-      texture = new Texture(width, height, params);
+      texture = new Texture(this, width, height, params);
       texture.invertedY(true);
       texture.colorBuffer(true);
-      pgPrimary.setCache(this, texture);
+      setCache(this, texture);
     }
   }
 
 
   protected void createPTexture() {
-    ptexture = new Texture(width, height, texture.getParameters());
+    ptexture = new Texture(this, width, height, texture.getParameters());
     ptexture.invertedY(true);
     ptexture.colorBuffer(true);
   }
@@ -5755,7 +5784,7 @@ public class PGraphicsOpenGL extends PGraphics {
     loadTexture();
 
     if (filterTexture == null || filterTexture.contextIsOutdated()) {
-      filterTexture = new Texture(texture.width, texture.height,
+      filterTexture = new Texture(this, texture.width, texture.height,
                                   texture.getParameters());
       filterTexture.invertedY(true);
       filterImage = wrapTexture(filterTexture);
@@ -5826,7 +5855,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) pgl.requestFBOLayer();
     loadTexture();
     if (filterTexture == null || filterTexture.contextIsOutdated()) {
-      filterTexture = new Texture(texture.width, texture.height,
+      filterTexture = new Texture(this, texture.width, texture.height,
                                   texture.getParameters());
       filterTexture.invertedY(true);
       filterImage = wrapTexture(filterTexture);
@@ -6044,7 +6073,7 @@ public class PGraphicsOpenGL extends PGraphics {
       return null;
     }
 
-    Texture tex = (Texture)pgPrimary.getCache(img);
+    Texture tex = (Texture)getCache(img);
     if (tex == null || tex.contextIsOutdated()) {
       tex = addTexture(img);
       if (tex != null) {
@@ -6097,8 +6126,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (img.parent == null) {
       img.parent = parent;
     }
-    Texture tex = new Texture(img.width, img.height, params);
-    pgPrimary.setCache(img, tex);
+    Texture tex = new Texture(this, img.width, img.height, params);
+    setCache(img, tex);
     return tex;
   }
 
@@ -6132,7 +6161,7 @@ public class PGraphicsOpenGL extends PGraphics {
     img.width = tex.width;
     img.height = tex.height;
     img.format = ARGB;
-    pgPrimary.setCache(img, tex);
+    setCache(img, tex);
     return img;
   }
 
@@ -6194,10 +6223,9 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void initPrimary() {
     pgl.initSurface(quality);
     if (texture != null) {
-      pgPrimary.removeCache(this);
+      removeCache(this);
       texture = ptexture = null;
     }
-    pgPrimary = this;
     initialized = true;
   }
 
@@ -6247,7 +6275,7 @@ public class PGraphicsOpenGL extends PGraphics {
                      packedDepthStencilSupported;
     if (PGraphicsOpenGL.fboMultisampleSupported && 1 < quality) {
       multisampleFramebuffer =
-        new FrameBuffer(texture.glWidth, texture.glHeight, quality, 0,
+        new FrameBuffer(this, texture.glWidth, texture.glHeight, quality, 0,
                         depthBits, stencilBits, packed, false);
 
       multisampleFramebuffer.clear();
@@ -6257,13 +6285,13 @@ public class PGraphicsOpenGL extends PGraphics {
       // to doesn't need depth and stencil buffers since they are part of the
       // multisampled framebuffer.
       offscreenFramebuffer =
-        new FrameBuffer(texture.glWidth, texture.glHeight, 1, 1, 0, 0,
+        new FrameBuffer(this, texture.glWidth, texture.glHeight, 1, 1, 0, 0,
                         false, false);
 
     } else {
       quality = 0;
       offscreenFramebuffer =
-        new FrameBuffer(texture.glWidth, texture.glHeight, 1, 1,
+        new FrameBuffer(this, texture.glWidth, texture.glHeight, 1, 1,
                         depthBits, stencilBits, packed, false);
       offscreenMultisample = false;
     }
@@ -6331,7 +6359,7 @@ public class PGraphicsOpenGL extends PGraphics {
     popFramebuffer();
     texture.updateTexels(); // Mark all texels in screen texture as modified.
 
-    pgPrimary.restoreGL();
+    getPrimaryPG().restoreGL();
   }
 
 
@@ -6740,14 +6768,15 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  static protected TexCache newTexCache() {
-    return new TexCache();
+  static protected TexCache newTexCache(PGraphicsOpenGL pg) {
+    return new TexCache(pg);
   }
 
 
   // Holds an array of textures and the range of vertex
   // indices each texture applies to.
   static protected class TexCache {
+    PGraphicsOpenGL pg;
     int size;
     PImage[] textures;
     int[] firstIndex;
@@ -6756,7 +6785,8 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] lastCache;
     boolean hasTextures;
 
-    TexCache() {
+    TexCache(PGraphicsOpenGL pg) {
+      this.pg = pg;
       allocate();
     }
 
@@ -6792,7 +6822,7 @@ public class PGraphicsOpenGL extends PGraphics {
       Texture tex = null;
 
       if (img != null) {
-        tex = pgPrimary.getTexture(img);
+        tex = pg.getTexture(img);
       }
 
       return tex;

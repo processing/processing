@@ -290,8 +290,8 @@ public class PShapeOpenGL extends PShape {
   }
 
 
-  public PShapeOpenGL(PApplet parent, int family) {
-    pg = PGraphicsOpenGL.pgCurrent;
+  public PShapeOpenGL(PGraphicsOpenGL pg, int family) {
+    this.pg = pg;
     pgl = pg.pgl;
     context = pgl.createEmptyContext();
 
@@ -568,20 +568,19 @@ public class PShapeOpenGL extends PShape {
   // Shape creation (temporary hack)
 
 
-  public static PShapeOpenGL createShape3D(PApplet parent, PShape src) {
+  public static PShapeOpenGL createShape3D(PGraphicsOpenGL pg, PShape src) {
     PShapeOpenGL dest = null;
     if (src.getFamily() == GROUP) {
-      dest = PGraphics3D.createShapeImpl(parent, GROUP);
-      copyGroup3D(parent, src, dest);
+      dest = PGraphics3D.createShapeImpl(pg, GROUP);
+      copyGroup3D(pg, src, dest);
     } else if (src.getFamily() == PRIMITIVE) {
-      dest = PGraphics3D.createShapeImpl(parent, src.getKind(),
-                                         src.getParams());
+      dest = PGraphics3D.createShapeImpl(pg, src.getKind(), src.getParams());
       PShape.copyPrimitive(src, dest);
     } else if (src.getFamily() == GEOMETRY) {
-      dest = PGraphics3D.createShapeImpl(parent, PShape.GEOMETRY);
+      dest = PGraphics3D.createShapeImpl(pg, PShape.GEOMETRY);
       PShape.copyGeometry(src, dest);
     } else if (src.getFamily() == PATH) {
-      dest = PGraphics3D.createShapeImpl(parent, PATH);
+      dest = PGraphics3D.createShapeImpl(pg, PATH);
       PShape.copyPath(src, dest);
     }
     dest.setName(src.getName());
@@ -592,20 +591,19 @@ public class PShapeOpenGL extends PShape {
   }
 
 
-  static public PShapeOpenGL createShape2D(PApplet parent, PShape src) {
+  static public PShapeOpenGL createShape2D(PGraphicsOpenGL pg, PShape src) {
     PShapeOpenGL dest = null;
     if (src.getFamily() == GROUP) {
-      dest = PGraphics2D.createShapeImpl(parent, GROUP);
-      copyGroup2D(parent, src, dest);
+      dest = PGraphics2D.createShapeImpl(pg, GROUP);
+      copyGroup2D(pg, src, dest);
     } else if (src.getFamily() == PRIMITIVE) {
-      dest = PGraphics2D.createShapeImpl(parent, src.getKind(),
-                                         src.getParams());
+      dest = PGraphics2D.createShapeImpl(pg, src.getKind(), src.getParams());
       PShape.copyPrimitive(src, dest);
     } else if (src.getFamily() == GEOMETRY) {
-      dest = PGraphics2D.createShapeImpl(parent, PShape.GEOMETRY);
+      dest = PGraphics2D.createShapeImpl(pg, PShape.GEOMETRY);
       PShape.copyGeometry(src, dest);
     } else if (src.getFamily() == PATH) {
-      dest = PGraphics2D.createShapeImpl(parent, PATH);
+      dest = PGraphics2D.createShapeImpl(pg, PATH);
       PShape.copyPath(src, dest);
     }
     dest.setName(src.getName());
@@ -615,25 +613,25 @@ public class PShapeOpenGL extends PShape {
   }
 
 
-  static public void copyGroup3D(PApplet parent, PShape src, PShape dest) {
+  static public void copyGroup3D(PGraphicsOpenGL pg, PShape src, PShape dest) {
     copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
 
     for (int i = 0; i < src.getChildCount(); i++) {
-      PShape c = createShape3D(parent, src.getChild(i));
+      PShape c = createShape3D(pg, src.getChild(i));
       dest.addChild(c);
     }
   }
 
 
-  static public void copyGroup2D(PApplet parent, PShape src, PShape dest) {
+  static public void copyGroup2D(PGraphicsOpenGL pg, PShape src, PShape dest) {
     copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
 
     for (int i = 0; i < src.getChildCount(); i++) {
-      PShape c = createShape2D(parent, src.getChild(i));
+      PShape c = createShape2D(pg, src.getChild(i));
       dest.addChild(c);
     }
   }
@@ -2413,9 +2411,9 @@ public class PShapeOpenGL extends PShape {
 
     PShape tess;
     if (is3D()) {
-      tess = PGraphics3D.createShapeImpl(pg.parent, PShape.GEOMETRY);
+      tess = PGraphics3D.createShapeImpl(pg, PShape.GEOMETRY);
     } else if (is2D()) {
-      tess = PGraphics2D.createShapeImpl(pg.parent, PShape.GEOMETRY);
+      tess = PGraphics2D.createShapeImpl(pg, PShape.GEOMETRY);
     } else {
       PGraphics.showWarning("This shape is not either 2D or 3D!");
       return null;

@@ -144,7 +144,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
     if (obj != null) {
       int prevTextureMode = pg.textureMode;
       pg.textureMode = NORMAL;
-      PShapeOpenGL p3d = PShapeOpenGL.createShape3D(pg.parent, obj);
+      PShapeOpenGL p3d = PShapeOpenGL.createShape3D((PGraphicsOpenGL)pg, obj);
       pg.textureMode = prevTextureMode;
       return p3d;
     } else {
@@ -160,7 +160,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
 
   @Override
   public PShape createShape(PShape source) {
-    return PShapeOpenGL.createShape3D(parent, source);
+    return PShapeOpenGL.createShape3D(this, source);
   }
 
 
@@ -172,31 +172,31 @@ public class PGraphics3D extends PGraphicsOpenGL {
 
   @Override
   public PShape createShape(int type) {
-    return createShapeImpl(parent, type);
+    return createShapeImpl(this, type);
   }
 
 
   @Override
   public PShape createShape(int kind, float... p) {
-    return createShapeImpl(parent, kind, p);
+    return createShapeImpl(this, kind, p);
   }
 
 
-  static protected PShapeOpenGL createShapeImpl(PApplet parent, int type) {
+  static protected PShapeOpenGL createShapeImpl(PGraphicsOpenGL pg, int type) {
     PShapeOpenGL shape = null;
     if (type == PConstants.GROUP) {
-      shape = new PShapeOpenGL(parent, PConstants.GROUP);
+      shape = new PShapeOpenGL(pg, PConstants.GROUP);
     } else if (type == PShape.PATH) {
-      shape = new PShapeOpenGL(parent, PShape.PATH);
+      shape = new PShapeOpenGL(pg, PShape.PATH);
     } else if (type == PShape.GEOMETRY) {
-      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(pg, PShape.GEOMETRY);
     }
     shape.is3D(true);
     return shape;
   }
 
 
-  static protected PShapeOpenGL createShapeImpl(PApplet parent,
+  static protected PShapeOpenGL createShapeImpl(PGraphicsOpenGL pg,
                                                 int kind, float... p) {
     PShapeOpenGL shape = null;
     int len = p.length;
@@ -206,63 +206,63 @@ public class PGraphics3D extends PGraphicsOpenGL {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(pg, PShape.PRIMITIVE);
       shape.setKind(POINT);
     } else if (kind == LINE) {
       if (len != 4 && len != 6) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(pg, PShape.PRIMITIVE);
       shape.setKind(LINE);
     } else if (kind == TRIANGLE) {
       if (len != 6) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(pg, PShape.PRIMITIVE);
       shape.setKind(TRIANGLE);
     } else if (kind == QUAD) {
       if (len != 8) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(pg, PShape.PRIMITIVE);
       shape.setKind(QUAD);
     } else if (kind == RECT) {
       if (len != 4 && len != 5 && len != 8 && len != 9) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(pg, PShape.PRIMITIVE);
       shape.setKind(RECT);
     } else if (kind == ELLIPSE) {
       if (len != 4 && len != 5) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(pg, PShape.PRIMITIVE);
       shape.setKind(ELLIPSE);
     } else if (kind == ARC) {
       if (len != 6 && len != 7) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(pg, PShape.PRIMITIVE);
       shape.setKind(ARC);
     } else if (kind == BOX) {
       if (len != 1 && len != 3) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(pg, PShape.PRIMITIVE);
       shape.setKind(BOX);
     } else if (kind == SPHERE) {
       if (len < 1 || 3 < len) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(pg, PShape.PRIMITIVE);
       shape.setKind(SPHERE);
     } else {
       showWarning("Unrecognized primitive type");

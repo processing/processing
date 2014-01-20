@@ -52,10 +52,10 @@ public abstract class PGL {
   protected PGraphicsOpenGL pg;
 
   /** OpenGL thread */
-  protected static Thread glThread;
+  protected Thread glThread;
 
   /** ID of the GL context associated to the surface **/
-  protected static int glContext;
+  protected int glContext;
 
   // ........................................................
 
@@ -437,7 +437,7 @@ public abstract class PGL {
 
   protected Texture wrapBackTexture(Texture texture) {
     if (texture == null) {
-      texture = new Texture();
+      texture = new Texture(pg);
       texture.init(pg.width, pg.height,
                    glColorTex.get(backTex), TEXTURE_2D, RGBA,
                    fboWidth, fboHeight, NEAREST, NEAREST,
@@ -454,7 +454,7 @@ public abstract class PGL {
 
   protected Texture wrapFrontTexture(Texture texture)  {
     if (texture == null) {
-      texture = new Texture();
+      texture = new Texture(pg);
       texture.init(pg.width, pg.height,
                    glColorTex.get(frontTex), TEXTURE_2D, RGBA,
                    fboWidth, fboHeight, NEAREST, NEAREST,
@@ -737,6 +737,9 @@ public abstract class PGL {
   }
 
 
+  protected abstract void getGL(PGL pgl);
+
+
   protected abstract boolean canDraw();
 
 
@@ -903,7 +906,8 @@ public abstract class PGL {
 
 
   protected void initTex2DShader() {
-    if (!loadedTex2DShader || tex2DShaderContext != glContext) {
+    if (!loadedTex2DShader/* || tex2DShaderContext != glContext*/) {
+      System.out.println("initializing texture shader");
       String vertSource = PApplet.join(texVertShaderSource, "\n");
       String fragSource = PApplet.join(tex2DFragShaderSource, "\n");
       tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
