@@ -80,7 +80,6 @@ public class PJOGL extends PGL {
   /** Selected GL profile */
   public static GLProfile profile;
   static {
-    System.out.println("Animation thread: " + Thread.currentThread());
     if (PROFILE == 2) {
       try {
         profile = GLProfile.getGL2ES1();
@@ -106,7 +105,6 @@ public class PJOGL extends PGL {
         PGraphics.showWarning("Requested profile GL4 but is not available, got: " + profile);
       }
     } else throw new RuntimeException(UNSUPPORTED_GLPROF_ERROR);
-    System.out.println("Done, got this profile: " + profile);
 
     if (2 < PROFILE) {
       texVertShaderSource = convertVertexSource(texVertShaderSource, 120, 150);
@@ -276,8 +274,6 @@ public class PJOGL extends PGL {
   protected void initSurface(int antialias) {
     checkPrimary();
 
-    System.out.println("initializing surface");
-
     if (canvasAWT != null && canvasNEWT != null) {
       // Restarting...
       if (canvasAWT != null) {
@@ -363,8 +359,6 @@ public class PJOGL extends PGL {
     fboLayerInUse = false;
     firstFrame = true;
     setFps = false;
-
-    System.out.println("done");
   }
 
 

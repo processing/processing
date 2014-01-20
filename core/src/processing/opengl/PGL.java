@@ -163,7 +163,6 @@ public abstract class PGL {
   protected int tex2DVertShader;
   protected int tex2DFragShader;
   protected int tex2DShaderContext;
-  protected int texGeoVBO;
   protected int tex2DVertLoc;
   protected int tex2DTCoordLoc;
   protected int tex2DSamplerLoc;
@@ -176,6 +175,8 @@ public abstract class PGL {
   protected int texRectVertLoc;
   protected int texRectTCoordLoc;
   protected int texRectSamplerLoc;
+
+  protected int texGeoVBO;
 
   protected float[] texCoords = {
     //  X,     Y,    U,    V
@@ -932,44 +933,48 @@ public abstract class PGL {
   }
 
 
-  protected void initTex2DShader() {
-    if (!loadedTex2DShader || tex2DShaderContext != glContext) {
+  protected PGL initTex2DShader() {
+    PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
+
+    if (!ppgl.loadedTex2DShader || ppgl.tex2DShaderContext != ppgl.glContext) {
       System.out.println("Initializing PGL texture shader");
       String vertSource = PApplet.join(texVertShaderSource, "\n");
       String fragSource = PApplet.join(tex2DFragShaderSource, "\n");
-      tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
-      tex2DFragShader = createShader(FRAGMENT_SHADER, fragSource);
-      if (0 < tex2DVertShader && 0 < tex2DFragShader) {
-        tex2DShaderProgram = createProgram(tex2DVertShader, tex2DFragShader);
+      ppgl.tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
+      ppgl.tex2DFragShader = createShader(FRAGMENT_SHADER, fragSource);
+      if (0 < ppgl.tex2DVertShader && 0 < ppgl.tex2DFragShader) {
+        ppgl.tex2DShaderProgram = createProgram(ppgl.tex2DVertShader, ppgl.tex2DFragShader);
       }
-      if (0 < tex2DShaderProgram) {
-        tex2DVertLoc = getAttribLocation(tex2DShaderProgram, "position");
-        tex2DTCoordLoc = getAttribLocation(tex2DShaderProgram, "texCoord");
-        tex2DSamplerLoc = getUniformLocation(tex2DShaderProgram, "texMap");
+      if (0 < ppgl.tex2DShaderProgram) {
+        ppgl.tex2DVertLoc = getAttribLocation(ppgl.tex2DShaderProgram, "position");
+        ppgl.tex2DTCoordLoc = getAttribLocation(ppgl.tex2DShaderProgram, "texCoord");
+        ppgl.tex2DSamplerLoc = getUniformLocation(ppgl.tex2DShaderProgram, "texMap");
       }
-      loadedTex2DShader = true;
-      tex2DShaderContext = glContext;
+      ppgl.loadedTex2DShader = true;
+      ppgl.tex2DShaderContext = ppgl.glContext;
 
-      genBuffers(1, intBuffer);
-      texGeoVBO = intBuffer.get(0);
-      bindBuffer(ARRAY_BUFFER, texGeoVBO);
-      bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
-
-      System.out.println("Done!");
+      if (ppgl.texGeoVBO == 0) {
+        genBuffers(1, intBuffer);
+        ppgl.texGeoVBO = intBuffer.get(0);
+        bindBuffer(ARRAY_BUFFER, ppgl.texGeoVBO);
+        bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
+      }
     }
 
     if (texData == null) {
       texData = allocateDirectFloatBuffer(texCoords.length);
     }
+
+    return ppgl;
   }
 
 
   protected void drawTexture2D(int id, int texW, int texH, int scrW, int scrH,
                                int texX0, int texY0, int texX1, int texY1,
                                int scrX0, int scrY0, int scrX1, int scrY1) {
-    initTex2DShader();
+    PGL ppgl = initTex2DShader();
 
-    if (0 < tex2DShaderProgram) {
+    if (0 < ppgl.tex2DShaderProgram) {
       // The texture overwrites anything drawn earlier.
       boolean depthTest = getDepthTest();
       disable(DEPTH_TEST);
@@ -986,10 +991,10 @@ public abstract class PGL {
       getIntegerv(VIEWPORT, viewBuffer);
       viewport(0, 0, scrW, scrH);
 
-      useProgram(tex2DShaderProgram);
+      useProgram(ppgl.tex2DShaderProgram);
 
-      enableVertexAttribArray(tex2DVertLoc);
-      enableVertexAttribArray(tex2DTCoordLoc);
+      enableVertexAttribArray(ppgl.tex2DVertLoc);
+      enableVertexAttribArray(ppgl.tex2DTCoordLoc);
 
       // Vertex coordinates of the textured quad are specified
       // in normalized screen space (-1, 1):
@@ -1024,14 +1029,14 @@ public abstract class PGL {
         enabledTex = true;
       }
       bindTexture(TEXTURE_2D, id);
-      uniform1i(tex2DSamplerLoc, 0);
+      uniform1i(ppgl.tex2DSamplerLoc, 0);
 
       texData.position(0);
-      bindBuffer(ARRAY_BUFFER, texGeoVBO);
+      bindBuffer(ARRAY_BUFFER, ppgl.texGeoVBO);
       bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, texData, STATIC_DRAW);
 
-      vertexAttribPointer(tex2DVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
-      vertexAttribPointer(tex2DTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
+      vertexAttribPointer(ppgl.tex2DVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
+      vertexAttribPointer(ppgl.tex2DTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
 
       drawArrays(TRIANGLE_STRIP, 0, 4);
 
@@ -1042,8 +1047,8 @@ public abstract class PGL {
         disableTexturing(TEXTURE_2D);
       }
 
-      disableVertexAttribArray(tex2DVertLoc);
-      disableVertexAttribArray(tex2DTCoordLoc);
+      disableVertexAttribArray(ppgl.tex2DVertLoc);
+      disableVertexAttribArray(ppgl.tex2DTCoordLoc);
 
       useProgram(0);
 
@@ -1055,47 +1060,53 @@ public abstract class PGL {
       depthMask(depthMask);
 
       viewport(viewBuffer.get(0), viewBuffer.get(1),
-               viewBuffer.get(2),viewBuffer.get(3));
+               viewBuffer.get(2), viewBuffer.get(3));
     }
   }
 
 
-  protected void initTexRectShader() {
-    if (!loadedTexRectShader || texRectShaderContext != glContext) {
+  protected PGL initTexRectShader() {
+    PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
+
+    if (!ppgl.loadedTexRectShader || ppgl.texRectShaderContext != ppgl.glContext) {
       String vertSource = PApplet.join(texVertShaderSource, "\n");
       String fragSource = PApplet.join(texRectFragShaderSource, "\n");
-      texRectVertShader = createShader(VERTEX_SHADER, vertSource);
-      texRectFragShader = createShader(FRAGMENT_SHADER, fragSource);
-      if (0 < texRectVertShader && 0 < texRectFragShader) {
-        texRectShaderProgram = createProgram(texRectVertShader,
-                                             texRectFragShader);
+      ppgl.texRectVertShader = createShader(VERTEX_SHADER, vertSource);
+      ppgl.texRectFragShader = createShader(FRAGMENT_SHADER, fragSource);
+      if (0 < ppgl.texRectVertShader && 0 < ppgl.texRectFragShader) {
+        ppgl.texRectShaderProgram = createProgram(ppgl.texRectVertShader,
+                                                  ppgl.texRectFragShader);
       }
-      if (0 < texRectShaderProgram) {
-        texRectVertLoc = getAttribLocation(texRectShaderProgram, "position");
-        texRectTCoordLoc = getAttribLocation(texRectShaderProgram, "texCoord");
-        texRectSamplerLoc = getUniformLocation(texRectShaderProgram, "texMap");
+      if (0 < ppgl.texRectShaderProgram) {
+        ppgl.texRectVertLoc = getAttribLocation(ppgl.texRectShaderProgram, "position");
+        ppgl.texRectTCoordLoc = getAttribLocation(ppgl.texRectShaderProgram, "texCoord");
+        ppgl.texRectSamplerLoc = getUniformLocation(ppgl.texRectShaderProgram, "texMap");
       }
-      loadedTexRectShader = true;
-      texRectShaderContext = glContext;
+      ppgl.loadedTexRectShader = true;
+      ppgl.texRectShaderContext = ppgl.glContext;
 
-      genBuffers(1, intBuffer);
-      texGeoVBO = intBuffer.get(0);
-      bindBuffer(ARRAY_BUFFER, texGeoVBO);
-      bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
+      if (ppgl.texGeoVBO == 0) {
+        genBuffers(1, intBuffer);
+        ppgl.texGeoVBO = intBuffer.get(0);
+        bindBuffer(ARRAY_BUFFER, ppgl.texGeoVBO);
+        bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
+      }
     }
+
+    return ppgl;
   }
 
 
   protected void drawTextureRect(int id, int texW, int texH, int scrW, int scrH,
                                  int texX0, int texY0, int texX1, int texY1,
                                  int scrX0, int scrY0, int scrX1, int scrY1) {
-    initTexRectShader();
+    PGL ppgl = initTexRectShader();
 
     if (texData == null) {
       texData = allocateDirectFloatBuffer(texCoords.length);
     }
 
-    if (0 < texRectShaderProgram) {
+    if (0 < ppgl.texRectShaderProgram) {
       // The texture overwrites anything drawn earlier.
       boolean depthTest = getDepthTest();
       disable(DEPTH_TEST);
@@ -1112,10 +1123,10 @@ public abstract class PGL {
       getIntegerv(VIEWPORT, viewBuffer);
       viewport(0, 0, scrW, scrH);
 
-      useProgram(texRectShaderProgram);
+      useProgram(ppgl.texRectShaderProgram);
 
-      enableVertexAttribArray(texRectVertLoc);
-      enableVertexAttribArray(texRectTCoordLoc);
+      enableVertexAttribArray(ppgl.texRectVertLoc);
+      enableVertexAttribArray(ppgl.texRectTCoordLoc);
 
       // Vertex coordinates of the textured quad are specified
       // in normalized screen space (-1, 1):
@@ -1150,14 +1161,14 @@ public abstract class PGL {
         enabledTex = true;
       }
       bindTexture(TEXTURE_RECTANGLE, id);
-      uniform1i(texRectSamplerLoc, 0);
+      uniform1i(ppgl.texRectSamplerLoc, 0);
 
       texData.position(0);
-      bindBuffer(ARRAY_BUFFER, texGeoVBO);
+      bindBuffer(ARRAY_BUFFER, ppgl.texGeoVBO);
       bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, texData, STATIC_DRAW);
 
-      vertexAttribPointer(texRectVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
-      vertexAttribPointer(texRectTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
+      vertexAttribPointer(ppgl.texRectVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
+      vertexAttribPointer(ppgl.texRectTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
 
       drawArrays(TRIANGLE_STRIP, 0, 4);
 
@@ -1168,8 +1179,8 @@ public abstract class PGL {
         disableTexturing(TEXTURE_RECTANGLE);
       }
 
-      disableVertexAttribArray(texRectVertLoc);
-      disableVertexAttribArray(texRectTCoordLoc);
+      disableVertexAttribArray(ppgl.texRectVertLoc);
+      disableVertexAttribArray(ppgl.texRectTCoordLoc);
 
       useProgram(0);
 
@@ -1181,7 +1192,7 @@ public abstract class PGL {
       depthMask(depthMask);
 
       viewport(viewBuffer.get(0), viewBuffer.get(1),
-               viewBuffer.get(2),viewBuffer.get(3));
+               viewBuffer.get(2), viewBuffer.get(3));
     }
   }
 
