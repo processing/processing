@@ -186,7 +186,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // ........................................................
 
-  // GL objects:
+  // GL resources:
 
   static protected HashMap<GLResource, Boolean> glTextureObjects =
     new HashMap<GLResource, Boolean>();
@@ -227,17 +227,16 @@ public class PGraphicsOpenGL extends PGraphics {
     PGraphicsOpenGL.class.getResource("PointVert.glsl");
   static protected URL defPointShaderFragURL =
     PGraphicsOpenGL.class.getResource("PointFrag.glsl");
-
-  static protected PShader defColorShader;
-  static protected PShader defTextureShader;
-  static protected PShader defLightShader;
-  static protected PShader defTexlightShader;
-  static protected PShader defLineShader;
-  static protected PShader defPointShader;
-
   static protected URL maskShaderFragURL =
     PGraphicsOpenGL.class.getResource("MaskFrag.glsl");
-  static protected PShader maskShader;
+
+  protected PShader defColorShader;
+  protected PShader defTextureShader;
+  protected PShader defLightShader;
+  protected PShader defTexlightShader;
+  protected PShader defLineShader;
+  protected PShader defPointShader;
+  protected PShader maskShader;
 
   protected PShader polyShader;
   protected PShader lineShader;
@@ -5727,12 +5726,13 @@ public class PGraphicsOpenGL extends PGraphics {
       "the same size as the applet.");
     }
 
-    if (maskShader == null) {
-      maskShader = new PShader(parent, defTextureShaderVertURL,
-                                       maskShaderFragURL);
+    PGraphicsOpenGL ppg = getPrimaryPG();
+    if (ppg.maskShader == null) {
+      ppg.maskShader = new PShader(parent, defTextureShaderVertURL,
+                                           maskShaderFragURL);
     }
-    maskShader.set("mask", alpha);
-    filter(maskShader);
+    ppg.maskShader.set("mask", alpha);
+    filter(ppg.maskShader);
   }
 
 
@@ -6634,6 +6634,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected PShader getPolyShader(boolean lit, boolean tex) {
     PShader shader;
+    PGraphicsOpenGL ppg = getPrimaryPG();
     boolean useDefault = polyShader == null;
     if (polyShader != null) {
       polyShader.setRenderer(this);
@@ -6643,23 +6644,23 @@ public class PGraphicsOpenGL extends PGraphics {
     if (lit) {
       if (tex) {
         if (useDefault || !polyShader.checkPolyType(PShader.TEXLIGHT)) {
-          if (defTexlightShader == null) {
+          if (ppg.defTexlightShader == null) {
             String[] vertSource = pgl.loadVertexShader(defTexlightShaderVertURL, 120);
             String[] fragSource = pgl.loadFragmentShader(defTextureShaderFragURL, 120);
-            defTexlightShader = new PShader(parent, vertSource, fragSource);
+            ppg.defTexlightShader = new PShader(parent, vertSource, fragSource);
           }
-          shader = defTexlightShader;
+          shader = ppg.defTexlightShader;
         } else {
           shader = polyShader;
         }
       } else {
         if (useDefault || !polyShader.checkPolyType(PShader.LIGHT)) {
-          if (defLightShader == null) {
+          if (ppg.defLightShader == null) {
             String[] vertSource = pgl.loadVertexShader(defLightShaderVertURL, 120);
             String[] fragSource = pgl.loadFragmentShader(defColorShaderFragURL, 120);
-            defLightShader = new PShader(parent, vertSource, fragSource);
+            ppg.defLightShader = new PShader(parent, vertSource, fragSource);
           }
-          shader = defLightShader;
+          shader = ppg.defLightShader;
         } else {
           shader = polyShader;
         }
@@ -6672,23 +6673,23 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (tex) {
         if (useDefault || !polyShader.checkPolyType(PShader.TEXTURE)) {
-          if (defTextureShader == null) {
+          if (ppg.defTextureShader == null) {
             String[] vertSource = pgl.loadVertexShader(defTextureShaderVertURL, 120);
             String[] fragSource = pgl.loadFragmentShader(defTextureShaderFragURL, 120);
-            defTextureShader = new PShader(parent, vertSource, fragSource);
+            ppg.defTextureShader = new PShader(parent, vertSource, fragSource);
           }
-          shader = defTextureShader;
+          shader = ppg.defTextureShader;
         } else {
           shader = polyShader;
         }
       } else {
         if (useDefault || !polyShader.checkPolyType(PShader.COLOR)) {
-          if (defColorShader == null) {
+          if (ppg.defColorShader == null) {
             String[] vertSource = pgl.loadVertexShader(defColorShaderVertURL, 120);
             String[] fragSource = pgl.loadFragmentShader(defColorShaderFragURL, 120);
-            defColorShader = new PShader(parent, vertSource, fragSource);
+            ppg.defColorShader = new PShader(parent, vertSource, fragSource);
           }
-          shader = defColorShader;
+          shader = ppg.defColorShader;
         } else {
           shader = polyShader;
         }
@@ -6705,13 +6706,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected PShader getLineShader() {
     PShader shader;
+    PGraphicsOpenGL ppg = getPrimaryPG();
     if (lineShader == null) {
-      if (defLineShader == null) {
+      if (ppg.defLineShader == null) {
         String[] vertSource = pgl.loadVertexShader(defLineShaderVertURL, 120);
         String[] fragSource = pgl.loadFragmentShader(defLineShaderFragURL, 120);
-        defLineShader = new PShader(parent, vertSource, fragSource);
+        ppg.defLineShader = new PShader(parent, vertSource, fragSource);
       }
-      shader = defLineShader;
+      shader = ppg.defLineShader;
     } else {
       shader = lineShader;
     }
@@ -6724,13 +6726,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected PShader getPointShader() {
     PShader shader;
+    PGraphicsOpenGL ppg = getPrimaryPG();
     if (pointShader == null) {
-      if (defPointShader == null) {
+      if (ppg.defPointShader == null) {
         String[] vertSource = pgl.loadVertexShader(defPointShaderVertURL, 120);
         String[] fragSource = pgl.loadFragmentShader(defPointShaderFragURL, 120);
-        defPointShader = new PShader(parent, vertSource, fragSource);
+        ppg.defPointShader = new PShader(parent, vertSource, fragSource);
       }
-      shader = defPointShader;
+      shader = ppg.defPointShader;
     } else {
       shader = pointShader;
     }
