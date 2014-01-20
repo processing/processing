@@ -40,66 +40,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected PGraphicsOpenGL currentPG;
 
   /** Font cache for texture objects. */
-  protected WeakHashMap<PFont, FontTexture> fontMap =
-    new WeakHashMap<PFont, FontTexture>();
-
-  // ........................................................
-
-  static final String OPENGL_THREAD_ERROR =
-    "Cannot run the OpenGL renderer outside the main thread, change your code" +
-    "\nso the drawing calls are all inside the main thread, " +
-    "\nor use the default renderer instead.";
-  static final String BLEND_DRIVER_ERROR =
-    "blendMode(%1$s) is not supported by this hardware (or driver)";
-  static final String BLEND_RENDERER_ERROR =
-    "blendMode(%1$s) is not supported by this renderer";
-  static final String ALREADY_BEGAN_CONTOUR_ERROR =
-    "Already called beginContour()";
-  static final String NO_BEGIN_CONTOUR_ERROR =
-    "Need to call beginContour() first";
-  static final String UNSUPPORTED_SMOOTH_LEVEL_ERROR =
-    "Smooth level %1$s is not available. Using %2$s instead";
-  static final String UNSUPPORTED_SMOOTH_ERROR =
-    "Smooth is not supported by this hardware (or driver)";
-  static final String TOO_MANY_SMOOTH_CALLS_ERROR =
-    "The smooth/noSmooth functions are being called too often.\n" +
-    "This results in screen flickering, so they will be disabled\n" +
-    "for the rest of the sketch's execution";
-  static final String UNSUPPORTED_SHAPE_FORMAT_ERROR =
-    "Unsupported shape format";
-  static final String MISSING_UV_TEXCOORDS_ERROR =
-    "No uv texture coordinates supplied with vertex() call";
-  static final String INVALID_FILTER_SHADER_ERROR =
-    "Your shader cannot be used as a filter because is of type POINT or LINES";
-  static final String INCONSISTENT_SHADER_TYPES =
-    "The vertex and fragment shaders have different types";
-  static final String WRONG_SHADER_TYPE_ERROR =
-    "shader() called with a wrong shader";
-  static final String SHADER_NEED_LIGHT_ATTRIBS =
-    "The provided shader needs light attributes (ambient, diffuse, etc.), but " +
-    "the current scene is unlit, so the default shader will be used instead";
-  static final String MISSING_FRAGMENT_SHADER =
-    "The fragment shader is missing, cannot create shader object";
-  static final String MISSING_VERTEX_SHADER =
-    "The vertex shader is missing, cannot create shader object";
-  static final String UNKNOWN_SHADER_KIND_ERROR =
-    "Unknown shader kind";
-  static final String NO_TEXLIGHT_SHADER_ERROR =
-    "Your shader needs to be of TEXLIGHT type " +
-    "to render this geometry properly, using default shader instead.";
-  static final String NO_LIGHT_SHADER_ERROR =
-    "Your shader needs to be of LIGHT type " +
-    "to render this geometry properly, using default shader instead.";
-  static final String NO_TEXTURE_SHADER_ERROR =
-    "Your shader needs to be of TEXTURE type " +
-    "to render this geometry properly, using default shader instead.";
-  static final String NO_COLOR_SHADER_ERROR =
-    "Your shader needs to be of COLOR type " +
-    "to render this geometry properly, using default shader instead.";
-  static final String TOO_LONG_STROKE_PATH_ERROR =
-    "Stroke path is too long, some bevel triangles won't be added";
-  static final String TESSELLATION_ERROR =
-    "Tessellation Error: %1$s";
+  protected WeakHashMap<PFont, FontTexture> fontMap;
 
   // ........................................................
 
@@ -153,8 +94,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected boolean pointBuffersCreated = false;
   protected int pointBuffersContext;
 
-  protected static final int INIT_VERTEX_BUFFER_SIZE  = 256;
-  protected static final int INIT_INDEX_BUFFER_SIZE   = 512;
+  static protected final int INIT_VERTEX_BUFFER_SIZE  = 256;
+  static protected final int INIT_INDEX_BUFFER_SIZE   = 512;
 
   // ........................................................
 
@@ -248,8 +189,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected InGeometry inGeo;
   protected TessGeometry tessGeo;
-  static protected Tessellator tessellator;
   protected TexCache texCache;
+  static protected Tessellator tessellator;
 
   // ........................................................
 
@@ -397,11 +338,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
   static protected final int FB_STACK_DEPTH = 16;
 
-  static protected int fbStackDepth;
-  static protected FrameBuffer[] fbStack = new FrameBuffer[FB_STACK_DEPTH];
-  static protected FrameBuffer drawFramebuffer;
-  static protected FrameBuffer readFramebuffer;
-  static protected FrameBuffer currentFramebuffer;
+  protected int fbStackDepth;
+  protected FrameBuffer[] fbStack;
+  protected FrameBuffer drawFramebuffer;
+  protected FrameBuffer readFramebuffer;
+  protected FrameBuffer currentFramebuffer;
 
   // .......................................................
 
@@ -508,6 +449,67 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected IntBuffer intBuffer;
   static protected FloatBuffer floatBuffer;
 
+  // ........................................................
+
+  // Error strings:
+
+  static final String OPENGL_THREAD_ERROR =
+    "Cannot run the OpenGL renderer outside the main thread, change your code" +
+    "\nso the drawing calls are all inside the main thread, " +
+    "\nor use the default renderer instead.";
+  static final String BLEND_DRIVER_ERROR =
+    "blendMode(%1$s) is not supported by this hardware (or driver)";
+  static final String BLEND_RENDERER_ERROR =
+    "blendMode(%1$s) is not supported by this renderer";
+  static final String ALREADY_BEGAN_CONTOUR_ERROR =
+    "Already called beginContour()";
+  static final String NO_BEGIN_CONTOUR_ERROR =
+    "Need to call beginContour() first";
+  static final String UNSUPPORTED_SMOOTH_LEVEL_ERROR =
+    "Smooth level %1$s is not available. Using %2$s instead";
+  static final String UNSUPPORTED_SMOOTH_ERROR =
+    "Smooth is not supported by this hardware (or driver)";
+  static final String TOO_MANY_SMOOTH_CALLS_ERROR =
+    "The smooth/noSmooth functions are being called too often.\n" +
+    "This results in screen flickering, so they will be disabled\n" +
+    "for the rest of the sketch's execution";
+  static final String UNSUPPORTED_SHAPE_FORMAT_ERROR =
+    "Unsupported shape format";
+  static final String MISSING_UV_TEXCOORDS_ERROR =
+    "No uv texture coordinates supplied with vertex() call";
+  static final String INVALID_FILTER_SHADER_ERROR =
+    "Your shader cannot be used as a filter because is of type POINT or LINES";
+  static final String INCONSISTENT_SHADER_TYPES =
+    "The vertex and fragment shaders have different types";
+  static final String WRONG_SHADER_TYPE_ERROR =
+    "shader() called with a wrong shader";
+  static final String SHADER_NEED_LIGHT_ATTRIBS =
+    "The provided shader needs light attributes (ambient, diffuse, etc.), but " +
+    "the current scene is unlit, so the default shader will be used instead";
+  static final String MISSING_FRAGMENT_SHADER =
+    "The fragment shader is missing, cannot create shader object";
+  static final String MISSING_VERTEX_SHADER =
+    "The vertex shader is missing, cannot create shader object";
+  static final String UNKNOWN_SHADER_KIND_ERROR =
+    "Unknown shader kind";
+  static final String NO_TEXLIGHT_SHADER_ERROR =
+    "Your shader needs to be of TEXLIGHT type " +
+    "to render this geometry properly, using default shader instead.";
+  static final String NO_LIGHT_SHADER_ERROR =
+    "Your shader needs to be of LIGHT type " +
+    "to render this geometry properly, using default shader instead.";
+  static final String NO_TEXTURE_SHADER_ERROR =
+    "Your shader needs to be of TEXTURE type " +
+    "to render this geometry properly, using default shader instead.";
+  static final String NO_COLOR_SHADER_ERROR =
+    "Your shader needs to be of COLOR type " +
+    "to render this geometry properly, using default shader instead.";
+  static final String TOO_LONG_STROKE_PATH_ERROR =
+    "Stroke path is too long, some bevel triangles won't be added";
+  static final String TESSELLATION_ERROR =
+    "Tessellation Error: %1$s";
+
+
   //////////////////////////////////////////////////////////////
 
   // INIT/ALLOCATE/FINISH
@@ -538,7 +540,12 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void setPrimary(boolean primary) {
     super.setPrimary(primary);
+    pgl.setPrimary(primary);
     format = ARGB;
+    if (primary) {
+      fbStack = new FrameBuffer[FB_STACK_DEPTH];
+      fontMap = new WeakHashMap<PFont, FontTexture>();
+    }
   }
 
 
@@ -643,12 +650,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (primarySurface) {
       pgl.deleteSurface();
-
-      // This next line is critical to release many static allocations.
-      // This is important in the context of, say, a unit test suite, which
-      // runs more than one OpenGL sketch within the same classloader
-      // (as in the case of processing.py). Please don't remove it!
-      //pgl = null;
     }
   }
 
@@ -1209,34 +1210,42 @@ public class PGraphicsOpenGL extends PGraphics {
   // FRAMEBUFFERS
 
 
-  protected static void pushFramebuffer() {
-    if (fbStackDepth == FB_STACK_DEPTH) {
+  protected void pushFramebuffer() {
+    PGraphicsOpenGL ppg = getPrimaryPG();
+    if (ppg.fbStackDepth == FB_STACK_DEPTH) {
       throw new RuntimeException("Too many pushFramebuffer calls");
     }
-    fbStack[fbStackDepth] = currentFramebuffer;
-    fbStackDepth++;
+    ppg.fbStack[ppg.fbStackDepth] = ppg.currentFramebuffer;
+    ppg.fbStackDepth++;
   }
 
 
-  protected static void setFramebuffer(FrameBuffer fbo) {
-    if (currentFramebuffer != fbo) {
-      currentFramebuffer = fbo;
-      currentFramebuffer.bind();
+  protected void setFramebuffer(FrameBuffer fbo) {
+    PGraphicsOpenGL ppg = getPrimaryPG();
+    if (ppg.currentFramebuffer != fbo) {
+      ppg.currentFramebuffer = fbo;
+      ppg.currentFramebuffer.bind();
     }
   }
 
 
-  protected static void popFramebuffer() {
-    if (fbStackDepth == 0) {
+  protected void popFramebuffer() {
+    PGraphicsOpenGL ppg = getPrimaryPG();
+    if (ppg.fbStackDepth == 0) {
       throw new RuntimeException("popFramebuffer call is unbalanced.");
     }
-    fbStackDepth--;
-    FrameBuffer fbo = fbStack[fbStackDepth];
-    if (currentFramebuffer != fbo) {
-      currentFramebuffer.finish();
-      currentFramebuffer = fbo;
-      currentFramebuffer.bind();
+    ppg.fbStackDepth--;
+    FrameBuffer fbo = ppg.fbStack[ppg.fbStackDepth];
+    if (ppg.currentFramebuffer != fbo) {
+      ppg.currentFramebuffer.finish();
+      ppg.currentFramebuffer = fbo;
+      ppg.currentFramebuffer.bind();
     }
+  }
+
+
+  protected FrameBuffer getCurrentFB() {
+    return getPrimaryPG().currentFramebuffer;
   }
 
 
@@ -1797,8 +1806,8 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.depthMask(true);
     }
 
-    currentFramebuffer.bind();
-    pgl.drawBuffer(currentFramebuffer.getDefaultDrawBuffer());
+    getCurrentFB().bind();
+    pgl.drawBuffer(getCurrentFB().getDefaultDrawBuffer());
   }
 
   public void beginReadPixels() {
@@ -1831,7 +1840,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (op == OP_READ) {
         if (offscreenMultisample) {
           // Making sure the offscreen FBO is up-to-date
-          multisampleFramebuffer.copy(offscreenFramebuffer, currentFramebuffer);
+          multisampleFramebuffer.copy(offscreenFramebuffer, getCurrentFB());
         }
         // We always read the screen pixels from the color FBO.
         pixfb = offscreenFramebuffer;
@@ -1844,7 +1853,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     // Set the framebuffer where the pixel operation shall be carried out.
-    if (pixfb != currentFramebuffer) {
+    if (pixfb != getCurrentFB()) {
       pushFramebuffer();
       setFramebuffer(pixfb);
       pixOpChangedFB = true;
@@ -1852,9 +1861,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     // We read from/write to the draw buffer.
     if (op == OP_READ) {
-      pgl.readBuffer(currentFramebuffer.getDefaultDrawBuffer());
+      pgl.readBuffer(getCurrentFB().getDefaultDrawBuffer());
     } else if (op == OP_WRITE) {
-      pgl.drawBuffer(currentFramebuffer.getDefaultDrawBuffer());
+      pgl.drawBuffer(getCurrentFB().getDefaultDrawBuffer());
     }
 
     pixelsOp = op;
@@ -1869,8 +1878,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     // Restoring default read/draw buffer configuration.
-    pgl.readBuffer(currentFramebuffer.getDefaultReadBuffer());
-    pgl.drawBuffer(currentFramebuffer.getDefaultDrawBuffer());
+    pgl.readBuffer(getCurrentFB().getDefaultReadBuffer());
+    pgl.drawBuffer(getCurrentFB().getDefaultDrawBuffer());
 
     pixelsOp = OP_NONE;
   }
@@ -5609,7 +5618,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (offscreenMultisample) {
        // We need to copy the contents of the multisampled buffer to the color
        // buffer, so the later is up-to-date with the last drawing.
-       multisampleFramebuffer.copy(offscreenFramebuffer, currentFramebuffer);
+       multisampleFramebuffer.copy(offscreenFramebuffer, getCurrentFB());
     }
 
     if (needEndDraw) {
@@ -6353,7 +6362,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //    pgl.colorMask(true, true, true, true);
 
     if (offscreenMultisample) {
-      multisampleFramebuffer.copy(offscreenFramebuffer, currentFramebuffer);
+      multisampleFramebuffer.copy(offscreenFramebuffer, getCurrentFB());
     }
 
     popFramebuffer();

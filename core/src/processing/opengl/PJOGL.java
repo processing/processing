@@ -79,6 +79,41 @@ public class PJOGL extends PGL {
 
   /** Selected GL profile */
   public static GLProfile profile;
+  static {
+    System.out.println("Animation thread: " + Thread.currentThread());
+    if (PROFILE == 2) {
+      try {
+        profile = GLProfile.getGL2ES1();
+      } catch (GLException ex) {
+        profile = GLProfile.getMaxFixedFunc(true);
+      }
+    } else if (PROFILE == 3) {
+      try {
+        profile = GLProfile.getGL2GL3();
+      } catch (GLException ex) {
+        profile = GLProfile.getMaxProgrammable(true);
+      }
+      if (!profile.isGL3()) {
+        PGraphics.showWarning("Requested profile GL3 but is not available, got: " + profile);
+      }
+    } else if (PROFILE == 4) {
+      try {
+        profile = GLProfile.getGL4ES3();
+      } catch (GLException ex) {
+        profile = GLProfile.getMaxProgrammable(true);
+      }
+      if (!profile.isGL4()) {
+        PGraphics.showWarning("Requested profile GL4 but is not available, got: " + profile);
+      }
+    } else throw new RuntimeException(UNSUPPORTED_GLPROF_ERROR);
+    System.out.println("Done, got this profile: " + profile);
+
+    if (2 < PROFILE) {
+      texVertShaderSource = convertVertexSource(texVertShaderSource, 120, 150);
+      tex2DFragShaderSource = convertFragmentSource(tex2DFragShaderSource, 120, 150);
+      texRectFragShaderSource = convertFragmentSource(texRectFragShaderSource, 120, 150);
+    }
+  }
 
   // ........................................................
 
@@ -173,13 +208,13 @@ public class PJOGL extends PGL {
   // JOGL's FBO-layer
 
   /** Back (== draw, current frame) buffer */
-  protected static FBObject backFBO;
+  protected FBObject backFBO;
   /** Sink buffer, used in the multisampled case */
-  protected static FBObject sinkFBO;
+  protected FBObject sinkFBO;
   /** Front (== read, previous frame) buffer */
-  protected static FBObject frontFBO;
-  protected static FBObject.TextureAttachment backTexAttach;
-  protected static FBObject.TextureAttachment frontTexAttach;
+  protected FBObject frontFBO;
+  protected FBObject.TextureAttachment backTexAttach;
+  protected FBObject.TextureAttachment frontTexAttach;
 
   protected boolean changedFrontTex = false;
   protected boolean changedBackTex = false;
@@ -221,6 +256,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected void setFps(float fps) {
+    checkPrimary();
     if (!setFps || targetFps != fps) {
       if (60 < fps) {
         // Disables v-sync
@@ -238,39 +274,11 @@ public class PJOGL extends PGL {
 
   @Override
   protected void initSurface(int antialias) {
-    if (profile == null) {
-      if (PROFILE == 2) {
-        try {
-          profile = GLProfile.getGL2ES1();
-        } catch (GLException ex) {
-          profile = GLProfile.getMaxFixedFunc(true);
-        }
-      } else if (PROFILE == 3) {
-        try {
-          profile = GLProfile.getGL2GL3();
-        } catch (GLException ex) {
-          profile = GLProfile.getMaxProgrammable(true);
-        }
-        if (!profile.isGL3()) {
-          PGraphics.showWarning("Requested profile GL3 but is not available, got: " + profile);
-        }
-      } else if (PROFILE == 4) {
-        try {
-          profile = GLProfile.getGL4ES3();
-        } catch (GLException ex) {
-          profile = GLProfile.getMaxProgrammable(true);
-        }
-        if (!profile.isGL4()) {
-          PGraphics.showWarning("Requested profile GL4 but is not available, got: " + profile);
-        }
-      } else throw new RuntimeException(UNSUPPORTED_GLPROF_ERROR);
+    checkPrimary();
 
-      if (2 < PROFILE) {
-        texVertShaderSource = convertVertexSource(texVertShaderSource, 120, 150);
-        tex2DFragShaderSource = convertFragmentSource(tex2DFragShaderSource, 120, 150);
-        texRectFragShaderSource = convertFragmentSource(texRectFragShaderSource, 120, 150);
-      }
-    } else {
+    System.out.println("initializing surface");
+
+    if (canvasAWT != null && canvasNEWT != null) {
       // Restarting...
       if (canvasAWT != null) {
         canvasAWT.removeGLEventListener(listener);
@@ -355,11 +363,14 @@ public class PJOGL extends PGL {
     fboLayerInUse = false;
     firstFrame = true;
     setFps = false;
+
+    System.out.println("done");
   }
 
 
   @Override
   protected void reinitSurface() {
+    checkPrimary();
     sinkFBO = backFBO = frontFBO = null;
     fboLayerCreated = false;
     fboLayerInUse = false;
@@ -409,11 +420,13 @@ public class PJOGL extends PGL {
       window.removeGLEventListener(listener);
     }
     GLProfile.shutdown();
+    System.out.println("bye bye");
   }
 
 
   @Override
   protected int getReadFramebuffer() {
+    checkPrimary();
     if (fboLayerInUse) {
       return glColorFbo.get(0);
     } else if (capabilities.isFBO()) {
@@ -426,6 +439,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected int getDrawFramebuffer() {
+    checkPrimary();
     if (fboLayerInUse) {
       if (1 < numSamples) {
         return glMultiFbo.get(0);
@@ -442,6 +456,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected int getDefaultDrawBuffer() {
+    checkPrimary();
     if (fboLayerInUse) {
       return COLOR_ATTACHMENT0;
     } else if (capabilities.isFBO()) {
@@ -456,6 +471,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected int getDefaultReadBuffer() {
+    checkPrimary();
     if (fboLayerInUse) {
       return COLOR_ATTACHMENT0;
     } else if (capabilities.isFBO()) {
@@ -470,6 +486,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected boolean isFBOBacked() {
+    checkPrimary();
     return super.isFBOBacked() || capabilities.isFBO();
   }
 
@@ -488,6 +505,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected Texture wrapBackTexture(Texture texture) {
+    checkPrimary();
     if (texture == null || changedBackTex) {
       if (USE_JOGL_FBOLAYER) {
         texture = new Texture(pg);
@@ -515,6 +533,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected Texture wrapFrontTexture(Texture texture) {
+    checkPrimary();
     if (texture == null || changedFrontTex) {
       if (USE_JOGL_FBOLAYER) {
         texture = new Texture(pg);
@@ -542,6 +561,7 @@ public class PJOGL extends PGL {
   @Override
   protected void bindFrontTexture() {
     if (USE_JOGL_FBOLAYER) {
+      checkPrimary();
       usingFrontTex = true;
       if (!texturingIsEnabled(TEXTURE_2D)) {
         enableTexturing(TEXTURE_2D);
@@ -554,6 +574,7 @@ public class PJOGL extends PGL {
   @Override
   protected void unbindFrontTexture() {
     if (USE_JOGL_FBOLAYER) {
+      checkPrimary();
       if (textureIsBound(TEXTURE_2D, frontTexAttach.getName())) {
         // We don't want to unbind another texture
         // that might be bound instead of this one.
@@ -572,6 +593,7 @@ public class PJOGL extends PGL {
   @Override
   protected void syncBackTexture() {
     if (USE_JOGL_FBOLAYER) {
+      checkPrimary();
       if (usingFrontTex) needSepFrontTex = true;
       if (1 < numSamples) {
         backFBO.syncSamplingSink(gl);
@@ -628,7 +650,6 @@ public class PJOGL extends PGL {
   }
 
 
-
   @Override
   protected boolean canDraw() {
     return pg.initialized && pg.parent.isDisplayable();
@@ -641,6 +662,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected void requestDraw() {
+    checkPrimary();
     boolean canDraw = pg.parent.canDraw();
     if (pg.initialized && (canDraw || prevCanDraw)) {
       try {
@@ -673,6 +695,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected void swapBuffers() {
+    checkPrimary();
     if (WINDOW_TOOLKIT == AWT) {
       canvasAWT.swapBuffers();
     } else if (WINDOW_TOOLKIT == NEWT) {
@@ -1126,41 +1149,6 @@ public class PJOGL extends PGL {
       PGraphics.showException("Cannot load vertex shader " + url.getFile());
     }
     return null;
-  }
-
-
-  @Override
-  protected String[] convertFragmentSource(String[] fragSrc0,
-                                           int version0, int version1) {
-    String[] fragSrc = new String[fragSrc0.length + 2];
-    fragSrc[0] = "#version 150";
-    fragSrc[1] = "out vec4 fragColor;";
-    for (int i = 0; i < fragSrc0.length; i++) {
-      String line = fragSrc0[i];
-      line = line.replace("varying", "in");
-      line = line.replace("attribute", "in");
-      line = line.replace("gl_FragColor", "fragColor");
-      line = line.replace("texture", "texMap");
-      line = line.replace("texMap2D(", "texture(");
-      line = line.replace("texMap2DRect(", "texture(");
-      fragSrc[i + 2] = line;
-    }
-    return fragSrc;
-  }
-
-
-  @Override
-  protected String[] convertVertexSource(String[] vertSrc0,
-                                         int version0, int version1) {
-    String[] vertSrc = new String[vertSrc0.length + 1];
-    vertSrc[0] = "#version 150";
-    for (int i = 0; i < vertSrc0.length; i++) {
-      String line = vertSrc0[i];
-      line = line.replace("attribute", "in");
-      line = line.replace("varying", "out");
-      vertSrc[i + 1] = line;
-    }
-    return vertSrc;
   }
 
 

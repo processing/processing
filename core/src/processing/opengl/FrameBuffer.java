@@ -174,15 +174,15 @@ public class FrameBuffer implements PConstants {
   }
 
   public void clear() {
-    PGraphicsOpenGL.pushFramebuffer();
-    PGraphicsOpenGL.setFramebuffer(this);
+    pg.pushFramebuffer();
+    pg.setFramebuffer(this);
     pgl.clearDepth(1);
     pgl.clearStencil(0);
     pgl.clearColor(0, 0, 0, 0);
     pgl.clear(PGL.DEPTH_BUFFER_BIT |
               PGL.STENCIL_BUFFER_BIT |
               PGL.COLOR_BUFFER_BIT);
-    PGraphicsOpenGL.popFramebuffer();
+    pg.popFramebuffer();
   }
 
   public void copy(FrameBuffer dest, FrameBuffer current) {
@@ -273,8 +273,8 @@ public class FrameBuffer implements PConstants {
       colorBufferTex[i] = textures[i];
     }
 
-    PGraphicsOpenGL.pushFramebuffer();
-    PGraphicsOpenGL.setFramebuffer(this);
+    pg.pushFramebuffer();
+    pg.setFramebuffer(this);
 
     // Making sure nothing is attached.
     for (int i = 0; i < numColorBuffers; i++) {
@@ -290,7 +290,7 @@ public class FrameBuffer implements PConstants {
 
     pgl.validateFramebuffer();
 
-    PGraphicsOpenGL.popFramebuffer();
+    pg.popFramebuffer();
   }
 
 
@@ -302,8 +302,8 @@ public class FrameBuffer implements PConstants {
       colorBufferTex[i1] = tmp;
     }
 
-    PGraphicsOpenGL.pushFramebuffer();
-    PGraphicsOpenGL.setFramebuffer(this);
+    pg.pushFramebuffer();
+    pg.setFramebuffer(this);
     for (int i = 0; i < numColorBuffers; i++) {
       pgl.framebufferTexture2D(PGL.FRAMEBUFFER, PGL.COLOR_ATTACHMENT0 + i,
                                colorBufferTex[i].glTarget,
@@ -311,7 +311,7 @@ public class FrameBuffer implements PConstants {
     }
     pgl.validateFramebuffer();
 
-    PGraphicsOpenGL.popFramebuffer();
+    pg.popFramebuffer();
   }
 
 
@@ -422,8 +422,8 @@ public class FrameBuffer implements PConstants {
   protected void createColorBufferMultisample() {
     if (screenFb) return;
 
-    PGraphicsOpenGL.pushFramebuffer();
-    PGraphicsOpenGL.setFramebuffer(this);
+    pg.pushFramebuffer();
+    pg.setFramebuffer(this);
 
     glMultisample = PGraphicsOpenGL.createRenderBufferObject(context, pgl);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glMultisample);
@@ -432,7 +432,7 @@ public class FrameBuffer implements PConstants {
     pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.COLOR_ATTACHMENT0,
                                 PGL.RENDERBUFFER, glMultisample);
 
-    PGraphicsOpenGL.popFramebuffer();
+    pg.popFramebuffer();
   }
 
 
@@ -443,8 +443,8 @@ public class FrameBuffer implements PConstants {
       throw new RuntimeException("PFramebuffer: size undefined.");
     }
 
-    PGraphicsOpenGL.pushFramebuffer();
-    PGraphicsOpenGL.setFramebuffer(this);
+    pg.pushFramebuffer();
+    pg.setFramebuffer(this);
 
     glDepthStencil = PGraphicsOpenGL.createRenderBufferObject(context, pgl);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glDepthStencil);
@@ -462,7 +462,7 @@ public class FrameBuffer implements PConstants {
     pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.STENCIL_ATTACHMENT,
                                 PGL.RENDERBUFFER, glDepthStencil);
 
-    PGraphicsOpenGL.popFramebuffer();
+    pg.popFramebuffer();
   }
 
 
@@ -473,8 +473,8 @@ public class FrameBuffer implements PConstants {
       throw new RuntimeException("PFramebuffer: size undefined.");
     }
 
-    PGraphicsOpenGL.pushFramebuffer();
-    PGraphicsOpenGL.setFramebuffer(this);
+    pg.pushFramebuffer();
+    pg.setFramebuffer(this);
 
     glDepth = PGraphicsOpenGL.createRenderBufferObject(context, pgl);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glDepth);
@@ -498,7 +498,7 @@ public class FrameBuffer implements PConstants {
     pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.DEPTH_ATTACHMENT,
                                 PGL.RENDERBUFFER, glDepth);
 
-    PGraphicsOpenGL.popFramebuffer();
+    pg.popFramebuffer();
   }
 
 
@@ -509,8 +509,8 @@ public class FrameBuffer implements PConstants {
       throw new RuntimeException("PFramebuffer: size undefined.");
     }
 
-    PGraphicsOpenGL.pushFramebuffer();
-    PGraphicsOpenGL.setFramebuffer(this);
+    pg.pushFramebuffer();
+    pg.setFramebuffer(this);
 
     glStencil = PGraphicsOpenGL.createRenderBufferObject(context, pgl);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glStencil);
@@ -533,7 +533,7 @@ public class FrameBuffer implements PConstants {
     pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.STENCIL_ATTACHMENT,
                                 PGL.RENDERBUFFER, glStencil);
 
-    PGraphicsOpenGL.popFramebuffer();
+    pg.popFramebuffer();
   }
 
 

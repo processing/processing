@@ -57,6 +57,9 @@ public abstract class PGL {
   /** ID of the GL context associated to the surface **/
   protected int glContext;
 
+  /** true if this is the GL interface for a primary surface PGraphics */
+  protected boolean primaryPGL;
+
   // ........................................................
 
   // Parameters
@@ -131,21 +134,21 @@ public abstract class PGL {
 
   // FBO layer
 
-  protected static boolean fboLayerRequested = false;
-  protected static boolean fboLayerCreated = false;
-  protected static boolean fboLayerInUse = false;
-  protected static boolean firstFrame = true;
-  protected static int reqNumSamples;
-  protected static int numSamples;
-  protected static IntBuffer glColorFbo;
-  protected static IntBuffer glMultiFbo;
-  protected static IntBuffer glColorBuf;
-  protected static IntBuffer glColorTex;
-  protected static IntBuffer glDepthStencil;
-  protected static IntBuffer glDepth;
-  protected static IntBuffer glStencil;
-  protected static int fboWidth, fboHeight;
-  protected static int backTex, frontTex;
+  protected boolean fboLayerRequested = false;
+  protected boolean fboLayerCreated = false;
+  protected boolean fboLayerInUse = false;
+  protected boolean firstFrame = true;
+  protected int reqNumSamples;
+  protected int numSamples;
+  protected IntBuffer glColorFbo;
+  protected IntBuffer glMultiFbo;
+  protected IntBuffer glColorBuf;
+  protected IntBuffer glColorTex;
+  protected IntBuffer glDepthStencil;
+  protected IntBuffer glDepth;
+  protected IntBuffer glStencil;
+  protected int fboWidth, fboHeight;
+  protected int backTex, frontTex;
 
   /** Flags used to handle the creation of a separate front texture */
   protected boolean usingFrontTex = false;
@@ -155,33 +158,33 @@ public abstract class PGL {
 
   // Texture rendering
 
-  protected static boolean loadedTex2DShader = false;
-  protected static int tex2DShaderProgram;
-  protected static int tex2DVertShader;
-  protected static int tex2DFragShader;
-  protected static int tex2DShaderContext;
-  protected static int texGeoVBO;
-  protected static int tex2DVertLoc;
-  protected static int tex2DTCoordLoc;
-  protected static int tex2DSamplerLoc;
+  protected boolean loadedTex2DShader = false;
+  protected int tex2DShaderProgram;
+  protected int tex2DVertShader;
+  protected int tex2DFragShader;
+  protected int tex2DShaderContext;
+  protected int texGeoVBO;
+  protected int tex2DVertLoc;
+  protected int tex2DTCoordLoc;
+  protected int tex2DSamplerLoc;
 
-  protected static boolean loadedTexRectShader = false;
-  protected static int texRectShaderProgram;
-  protected static int texRectVertShader;
-  protected static int texRectFragShader;
-  protected static int texRectShaderContext;
-  protected static int texRectVertLoc;
-  protected static int texRectTCoordLoc;
-  protected static int texRectSamplerLoc;
+  protected boolean loadedTexRectShader = false;
+  protected int texRectShaderProgram;
+  protected int texRectVertShader;
+  protected int texRectFragShader;
+  protected int texRectShaderContext;
+  protected int texRectVertLoc;
+  protected int texRectTCoordLoc;
+  protected int texRectSamplerLoc;
 
-  protected static float[] texCoords = {
+  protected float[] texCoords = {
     //  X,     Y,    U,    V
     -1.0f, -1.0f, 0.0f, 0.0f,
     +1.0f, -1.0f, 1.0f, 0.0f,
     -1.0f, +1.0f, 0.0f, 1.0f,
     +1.0f, +1.0f, 1.0f, 1.0f
   };
-  protected static FloatBuffer texData;
+  protected FloatBuffer texData;
 
   protected static final String SHADER_PREPROCESSOR_DIRECTIVE =
     "#ifdef GL_ES\n" +
@@ -218,12 +221,12 @@ public abstract class PGL {
   };
 
   /** Which texturing targets are enabled */
-  protected static boolean[] texturingTargets = { false, false };
+  protected boolean[] texturingTargets = { false, false };
 
   /** Used to keep track of which textures are bound to each target */
-  protected static int maxTexUnits;
-  protected static int activeTexUnit = 0;
-  protected static int[][] boundTextures;
+  protected int maxTexUnits;
+  protected int activeTexUnit = 0;
+  protected int[][] boundTextures;
 
   // ........................................................
 
@@ -269,6 +272,13 @@ public abstract class PGL {
 
   protected static final String TEXUNIT_ERROR =
     "Number of texture units not supported by this hardware (or driver)" + WIKI;
+
+  protected static final String NONPRIMARY_ERROR =
+    "The renderer is trying to call a PGL function that can only be called on a primary PGL. " +
+    "This is most likely due to a bug in the renderer's code, please report it with an " +
+    "issue on Processing's github page https://github.com/processing/processing/issues?state=open " +
+    "if using any of the built-in OpenGL renderers. If you are using a contributed " +
+    "library, contact the library's developers.";
 
   // ........................................................
 
@@ -334,6 +344,17 @@ public abstract class PGL {
   }
 
 
+  public void setPrimary(boolean primary) {
+    primaryPGL = primary;
+  }
+
+
+  protected void checkPrimary() {
+    if (!primaryPGL) {
+      throw new RuntimeException(NONPRIMARY_ERROR);
+    }
+  }
+
   /**
    * Return the native canvas the OpenGL context associated to this PGL object
    * is rendering to (if any).
@@ -354,6 +375,8 @@ public abstract class PGL {
 
 
   protected void deleteSurface() {
+    checkPrimary();
+
     if (threadIsCurrent() && fboLayerCreated) {
       deleteTextures(2, glColorTex);
       deleteFramebuffers(1, glColorFbo);
@@ -371,11 +394,13 @@ public abstract class PGL {
 
 
   protected int getReadFramebuffer()  {
+    checkPrimary();
     return fboLayerInUse ? glColorFbo.get(0) : 0;
   }
 
 
   protected int getDrawFramebuffer()  {
+    checkPrimary();
     if (fboLayerInUse) return 1 < numSamples ? glMultiFbo.get(0) :
                                                glColorFbo.get(0);
     else return 0;
@@ -383,26 +408,31 @@ public abstract class PGL {
 
 
   protected int getDefaultDrawBuffer()  {
+    checkPrimary();
     return fboLayerInUse ? COLOR_ATTACHMENT0 : FRONT;
   }
 
 
   protected int getDefaultReadBuffer()  {
+    checkPrimary();
     return fboLayerInUse ? COLOR_ATTACHMENT0 : FRONT;
   }
 
 
   protected boolean isFBOBacked() {
+    checkPrimary();
     return fboLayerInUse;
   }
 
 
   protected void requestFBOLayer() {
+    checkPrimary();
     fboLayerRequested = true;
   }
 
 
   protected boolean isMultisampled() {
+    checkPrimary();
     return 1 < numSamples;
   }
 
@@ -436,6 +466,7 @@ public abstract class PGL {
 
 
   protected Texture wrapBackTexture(Texture texture) {
+    checkPrimary();
     if (texture == null) {
       texture = new Texture(pg);
       texture.init(pg.width, pg.height,
@@ -453,6 +484,7 @@ public abstract class PGL {
 
 
   protected Texture wrapFrontTexture(Texture texture)  {
+    checkPrimary();
     if (texture == null) {
       texture = new Texture(pg);
       texture.init(pg.width, pg.height,
@@ -469,6 +501,7 @@ public abstract class PGL {
 
 
   protected void bindFrontTexture() {
+    checkPrimary();
     usingFrontTex = true;
     if (!texturingIsEnabled(TEXTURE_2D)) {
       enableTexturing(TEXTURE_2D);
@@ -478,6 +511,7 @@ public abstract class PGL {
 
 
   protected void unbindFrontTexture() {
+    checkPrimary();
     if (textureIsBound(TEXTURE_2D, glColorTex.get(frontTex))) {
       // We don't want to unbind another texture
       // that might be bound instead of this one.
@@ -493,6 +527,7 @@ public abstract class PGL {
 
 
   protected void syncBackTexture() {
+    checkPrimary();
     if (usingFrontTex) needSepFrontTex = true;
     if (1 < numSamples) {
       bindFramebuffer(READ_FRAMEBUFFER, glMultiFbo.get(0));
@@ -504,18 +539,122 @@ public abstract class PGL {
   }
 
 
-  protected int qualityToSamples(int quality) {
-    if (quality <= 1) {
-      return 1;
+  ///////////////////////////////////////////////////////////
+
+  // Frame rendering
+
+
+  protected void beginDraw(boolean clear0) {
+    checkPrimary();
+    if (needFBOLayer(clear0)) {
+      if (!fboLayerCreated) createFBOLayer();
+
+      bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
+      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                           TEXTURE_2D, glColorTex.get(backTex), 0);
+
+      if (1 < numSamples) {
+        bindFramebuffer(FRAMEBUFFER, glMultiFbo.get(0));
+      }
+
+      if (firstFrame) {
+        // No need to draw back color buffer because we are in the first frame.
+        int argb = pg.backgroundColor;
+        float a = ((argb >> 24) & 0xff) / 255.0f;
+        float r = ((argb >> 16) & 0xff) / 255.0f;
+        float g = ((argb >> 8) & 0xff) / 255.0f;
+        float b = ((argb) & 0xff) / 255.0f;
+        clearColor(r, g, b, a);
+        clear(COLOR_BUFFER_BIT);
+      } else if (!clear0) {
+        // Render previous back texture (now is the front) as background,
+        // because no background() is being used ("incremental drawing")
+        drawTexture(TEXTURE_2D, glColorTex.get(frontTex),
+                    fboWidth, fboHeight, pg.width, pg.height,
+                                         0, 0, pg.width, pg.height,
+                                         0, 0, pg.width, pg.height);
+      }
+
+      fboLayerInUse = true;
     } else {
-      // Number of samples is always an even number:
-      int n = 2 * (quality / 2);
-      return n;
+      fboLayerInUse = false;
+    }
+
+    if (firstFrame) {
+      firstFrame = false;
+    }
+
+    if (!USE_FBOLAYER_BY_DEFAULT) {
+      // The result of this assignment is the following: if the user requested
+      // at some point the use of the FBO layer, but subsequently didn't
+      // request it again, then the rendering won't render to the FBO layer if
+      // not needed by the condif, since it is slower than simple onscreen
+      // rendering.
+      fboLayerRequested = false;
     }
   }
 
 
-  protected void createFBOLayer() {
+  protected void endDraw(boolean clear0) {
+    checkPrimary();
+    if (fboLayerInUse) {
+      syncBackTexture();
+
+      // Draw the contents of the back texture to the screen framebuffer.
+      bindFramebuffer(FRAMEBUFFER, 0);
+
+      clearDepth(1);
+      clearColor(0, 0, 0, 0);
+      clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+
+      // Render current back texture to screen, without blending.
+      disable(BLEND);
+      drawTexture(TEXTURE_2D, glColorTex.get(backTex),
+                  fboWidth, fboHeight, pg.width, pg.height,
+                                       0, 0, pg.width, pg.height,
+                                       0, 0, pg.width, pg.height);
+
+      // Swapping front and back textures.
+      int temp = frontTex;
+      frontTex = backTex;
+      backTex = temp;
+    }
+  }
+
+
+  protected abstract void getGL(PGL pgl);
+
+
+  protected abstract boolean canDraw();
+
+
+  protected abstract void requestFocus();
+
+
+  protected abstract void requestDraw();
+
+
+  protected abstract void swapBuffers();
+
+
+  protected boolean threadIsCurrent()  {
+    return Thread.currentThread() == glThread;
+  }
+
+
+  protected void beginGL() { }
+
+
+  protected void endGL() { }
+
+
+  private boolean needFBOLayer(boolean clear0) {
+    return !clear0 || fboLayerRequested || 1 < numSamples;
+  }
+
+
+  private void createFBOLayer() {
+    System.out.println("Creating FBO layer");
     String ext = getString(EXTENSIONS);
     if (-1 < ext.indexOf("texture_non_power_of_two")) {
       fboWidth = pg.width;
@@ -658,118 +797,6 @@ public abstract class PGL {
 
   ///////////////////////////////////////////////////////////
 
-  // Frame rendering
-
-
-  protected void beginDraw(boolean clear0) {
-    if (needFBOLayer(clear0)) {
-      if (!fboLayerCreated) createFBOLayer();
-
-      bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
-      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
-                           TEXTURE_2D, glColorTex.get(backTex), 0);
-
-      if (1 < numSamples) {
-        bindFramebuffer(FRAMEBUFFER, glMultiFbo.get(0));
-      }
-
-      if (firstFrame) {
-        // No need to draw back color buffer because we are in the first frame.
-        int argb = pg.backgroundColor;
-        float a = ((argb >> 24) & 0xff) / 255.0f;
-        float r = ((argb >> 16) & 0xff) / 255.0f;
-        float g = ((argb >> 8) & 0xff) / 255.0f;
-        float b = ((argb) & 0xff) / 255.0f;
-        clearColor(r, g, b, a);
-        clear(COLOR_BUFFER_BIT);
-      } else if (!clear0) {
-        // Render previous back texture (now is the front) as background,
-        // because no background() is being used ("incremental drawing")
-        drawTexture(TEXTURE_2D, glColorTex.get(frontTex),
-                    fboWidth, fboHeight, pg.width, pg.height,
-                                         0, 0, pg.width, pg.height,
-                                         0, 0, pg.width, pg.height);
-      }
-
-      fboLayerInUse = true;
-    } else {
-      fboLayerInUse = false;
-    }
-
-    if (firstFrame) {
-      firstFrame = false;
-    }
-
-    if (!USE_FBOLAYER_BY_DEFAULT) {
-      // The result of this assignment is the following: if the user requested
-      // at some point the use of the FBO layer, but subsequently didn't
-      // request it again, then the rendering won't render to the FBO layer if
-      // not needed by the condif, since it is slower than simple onscreen
-      // rendering.
-      fboLayerRequested = false;
-    }
-  }
-
-
-  protected void endDraw(boolean clear0) {
-    if (fboLayerInUse) {
-      syncBackTexture();
-
-      // Draw the contents of the back texture to the screen framebuffer.
-      bindFramebuffer(FRAMEBUFFER, 0);
-
-      clearDepth(1);
-      clearColor(0, 0, 0, 0);
-      clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
-
-      // Render current back texture to screen, without blending.
-      disable(BLEND);
-      drawTexture(TEXTURE_2D, glColorTex.get(backTex),
-                  fboWidth, fboHeight, pg.width, pg.height,
-                                       0, 0, pg.width, pg.height,
-                                       0, 0, pg.width, pg.height);
-
-      // Swapping front and back textures.
-      int temp = frontTex;
-      frontTex = backTex;
-      backTex = temp;
-    }
-  }
-
-
-  protected abstract void getGL(PGL pgl);
-
-
-  protected abstract boolean canDraw();
-
-
-  protected abstract void requestFocus();
-
-
-  protected abstract void requestDraw();
-
-
-  protected abstract void swapBuffers();
-
-
-  protected boolean threadIsCurrent()  {
-    return Thread.currentThread() == glThread;
-  }
-
-
-  protected boolean needFBOLayer(boolean clear0) {
-    return !clear0 || fboLayerRequested || 1 < numSamples;
-  }
-
-
-  protected void beginGL() { }
-
-
-  protected void endGL() { }
-
-
-  ///////////////////////////////////////////////////////////
-
   // Context interface
 
 
@@ -906,8 +933,8 @@ public abstract class PGL {
 
 
   protected void initTex2DShader() {
-    if (!loadedTex2DShader/* || tex2DShaderContext != glContext*/) {
-      System.out.println("initializing texture shader");
+    if (!loadedTex2DShader || tex2DShaderContext != glContext) {
+      System.out.println("Initializing PGL texture shader");
       String vertSource = PApplet.join(texVertShaderSource, "\n");
       String fragSource = PApplet.join(tex2DFragShaderSource, "\n");
       tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
@@ -927,6 +954,8 @@ public abstract class PGL {
       texGeoVBO = intBuffer.get(0);
       bindBuffer(ARRAY_BUFFER, texGeoVBO);
       bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
+
+      System.out.println("Done!");
     }
 
     if (texData == null) {
@@ -1436,6 +1465,17 @@ public abstract class PGL {
   }
 
 
+  protected static int qualityToSamples(int quality) {
+    if (quality <= 1) {
+      return 1;
+    } else {
+      // Number of samples is always an even number:
+      int n = 2 * (quality / 2);
+      return n;
+    }
+  }
+
+
   protected String[] loadVertexShader(String filename) {
     return pg.parent.loadStrings(filename);
   }
@@ -1486,17 +1526,44 @@ public abstract class PGL {
   }
 
 
-  protected String[] convertFragmentSource(String[] fragSrc0,
-                                           int version0, int version1) {
+  protected static String[] convertFragmentSource(String[] fragSrc0,
+                                                  int version0, int version1) {
+    if (version0 == 120 && version1 == 150) {
+      String[] fragSrc = new String[fragSrc0.length + 2];
+      fragSrc[0] = "#version 150";
+      fragSrc[1] = "out vec4 fragColor;";
+      for (int i = 0; i < fragSrc0.length; i++) {
+        String line = fragSrc0[i];
+        line = line.replace("varying", "in");
+        line = line.replace("attribute", "in");
+        line = line.replace("gl_FragColor", "fragColor");
+        line = line.replace("texture", "texMap");
+        line = line.replace("texMap2D(", "texture(");
+        line = line.replace("texMap2DRect(", "texture(");
+        fragSrc[i + 2] = line;
+      }
+      return fragSrc;
+    }
     return fragSrc0;
   }
 
 
-  protected String[] convertVertexSource(String[] vertSrc0,
-                                         int version0, int version1) {
+
+  protected static String[] convertVertexSource(String[] vertSrc0,
+                                                int version0, int version1) {
+    if (version0 == 120 && version1 == 150) {
+      String[] vertSrc = new String[vertSrc0.length + 1];
+      vertSrc[0] = "#version 150";
+      for (int i = 0; i < vertSrc0.length; i++) {
+        String line = vertSrc0[i];
+        line = line.replace("attribute", "in");
+        line = line.replace("varying", "out");
+        vertSrc[i + 1] = line;
+      }
+      return vertSrc;
+    }
     return vertSrc0;
   }
-
 
   protected int createShader(int shaderType, String source) {
     int shader = createShader(shaderType);

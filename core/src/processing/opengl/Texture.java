@@ -521,10 +521,10 @@ public class Texture implements PConstants {
     // reading the pixels from the current draw buffer (which is the color
     // buffer of the FBO).
     tempFbo.setColorBuffer(this);
-    PGraphicsOpenGL.pushFramebuffer();
-    PGraphicsOpenGL.setFramebuffer(tempFbo);
+    pg.pushFramebuffer();
+    pg.setFramebuffer(tempFbo);
     tempFbo.readPixels();
-    PGraphicsOpenGL.popFramebuffer();
+    pg.popFramebuffer();
 
     tempFbo.getPixels(pixels);
     convertToARGB(pixels);
@@ -1248,8 +1248,8 @@ public class Texture implements PConstants {
     tempFbo.disableDepthTest();
 
     // FBO copy:
-    PGraphicsOpenGL.pushFramebuffer();
-    PGraphicsOpenGL.setFramebuffer(tempFbo);
+    pg.pushFramebuffer();
+    pg.setFramebuffer(tempFbo);
     // Clear the color buffer to make sure that the alpha channel is set to
     // full transparency
     pgl.clearColor(0, 0, 0, 0);
@@ -1269,7 +1269,7 @@ public class Texture implements PConstants {
                       tex.glWidth, tex.glHeight, tempFbo.width, tempFbo.height,
                       x, y, w, h, x, y, w, h);
     }
-    PGraphicsOpenGL.popFramebuffer();
+    pg.popFramebuffer();
 
     updateTexels(x, y, w, h);
   }
@@ -1288,8 +1288,8 @@ public class Texture implements PConstants {
     tempFbo.disableDepthTest();
 
     // FBO copy:
-    PGraphicsOpenGL.pushFramebuffer();
-    PGraphicsOpenGL.setFramebuffer(tempFbo);
+    pg.pushFramebuffer();
+    pg.setFramebuffer(tempFbo);
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
@@ -1305,7 +1305,7 @@ public class Texture implements PConstants {
                       texWidth, texHeight, tempFbo.width, tempFbo.height,
                       x, y, w, h, x, y, w, h);
     }
-    PGraphicsOpenGL.popFramebuffer();
+    pg.popFramebuffer();
     updateTexels(x, y, w, h);
   }
 
