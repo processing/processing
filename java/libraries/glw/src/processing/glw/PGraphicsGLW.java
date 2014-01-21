@@ -26,23 +26,60 @@ import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
 /**
- * GLW renderer.
+ * GLW renderer. It's only role is to drive the main animation loop by calling 
+ * requestDraw() and so allowing the offscreen canvases to be drawn inside the
+ * draw() method of the sketch. Currently, it cannot be used to draw into.
  *
  */
 public class PGraphicsGLW extends PGraphicsOpenGL {
-//  protected boolean windowed = false;
-  
   protected PGL createPGL(PGraphicsOpenGL pg) {
     return new PNEWT(pg);
-  }  
+  }
   
-//  public void requestDraw() {
-//    if (primarySurface || windowed) {
-//      if (initialized) {
-//        ((PNEWT)pgl).update(sized);
-//      } else {
-//        initPrimary();
-//      }
-//    }
-//  }  
+  public void beginDraw() {
+    if (primarySurface) {
+      setCurrentPG(this);  
+    } else {
+      throw new RuntimeException("GLW renderer cannot be used as an offscreen surface");
+    }
+    
+    report("top beginDraw()");
+
+    if (!checkGLThread()) {
+      return;
+    }
+    
+    if (drawing) {
+      return;
+    }
+    
+    if (!glParamsRead) {
+      getGLParameters();
+    }
+    
+    drawing = true;
+
+    report("bot beginDraw()"); 
+  }
+  
+  public void endDraw() {
+    report("top endDraw()");
+
+    if (!drawing) {
+      return;
+    }
+    
+    if (primarySurface) {
+      setCurrentPG(null);
+    } else {
+      throw new RuntimeException("GLW renderer cannot be used as an offscreen surface.");
+    }    
+    drawing = false;
+
+    report("bot endDraw()");    
+  }
+  
+  protected void vertexImpl(float x, float y, float z, float u, float v) {
+    throw new RuntimeException("The main GLW renderer cannot be used to draw to.");
+  }
 }

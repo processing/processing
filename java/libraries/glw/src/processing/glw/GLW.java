@@ -1,47 +1,29 @@
 package processing.glw;
 
-import java.util.HashMap;
+import processing.core.PGraphics;
 
 import com.jogamp.newt.opengl.GLWindow;
 
-import processing.core.PGraphics;
-import processing.opengl.PGraphicsOpenGL;
+import java.util.HashMap;
 
 public class GLW {
-  static public final String DUMMY  = "processing.glw.PGraphicsGLW";
-  static public final String OPENGL = "processing.glw.PGraphicsGLW";
-  static public final String P2D    = "processing.glw.PGraphics2D";
-  static public final String P3D    = "processing.glw.PGraphics3D";
+  static public final String RENDERER = "processing.glw.PGraphicsGLW";
+  static public final String OPENGL   = "processing.glw.PGraphicsGLW";
   
-  static protected HashMap<PGraphics, GLWindow> windows = new HashMap<PGraphics, GLWindow>();
-//  static protected HashMap<GLWindow, PGraphics> canvases;
+  static public final String P2D      = "processing.glw.PGraphics2D";
+  static public final String P3D      = "processing.glw.PGraphics3D";
   
-  public GLW() {
-    
+  static protected HashMap<PGraphics, GLWindow> windows = 
+      new HashMap<PGraphics, GLWindow>();
+  
+  public GLW() {    
   }
   
   static public void createWindow(PGraphics pg) {
-    if (pg instanceof PGraphicsGLW || pg instanceof PGraphics2D || pg instanceof PGraphics3D) {
-      //PGraphicsOpenGL pgopengl = (PGraphicsOpenGL)pg;
-      //PNEWT pgl = (PNEWT)pgopengl.pgl;
-      //GLWindow win = pgl.createWindow(pg.width, pg.height, /*PNEWT.getWindow().getContext(), */pgopengl);
-      
-
-//      windows.put(pg, win);
+    if (pg instanceof PGraphics2D || pg instanceof PGraphics3D) {
       windows.put(pg, null);
-      //canvases.put(win, pg);
-      //win.setTitle("NEWT window " + windows.size());
-      
-//      if (pg instanceof PGraphicsGLW) {
-//        PGraphicsGLW pgw = (PGraphicsGLW)pg;
-//        pgw.windowed = true;        
-//      } else if (pg instanceof PGraphics2D) {
-//        PGraphics2D pgw = (PGraphics2D)pg;
-//        pgw.windowed = true;        
-//      } else if (pg instanceof PGraphics3D) {
-//        PGraphics3D pgw = (PGraphics3D)pg;
-//        pgw.windowed = true;      
-//      }
+    } else {
+      throw new RuntimeException("Only GLW.P2D or GLW.P3D surfaces can be attached to a window");
     }
   }
   

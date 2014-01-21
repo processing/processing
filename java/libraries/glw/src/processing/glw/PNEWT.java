@@ -24,26 +24,19 @@
 package processing.glw;
 
 
-import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
-import javax.media.opengl.GLFBODrawable;
 import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLCanvas;
 
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
-import com.jogamp.opengl.FBObject;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
-import processing.event.KeyEvent;
-import processing.event.MouseEvent;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PJOGL;
@@ -60,7 +53,7 @@ public class PNEWT extends PJOGL {
   }
   
   protected static GLCapabilities sharedCaps;
-  protected static GLAutoDrawable sharedDrawable;    
+  protected static GLAutoDrawable sharedDrawable;
   
   
   public PNEWT(PGraphicsOpenGL pg) {
@@ -69,6 +62,10 @@ public class PNEWT extends PJOGL {
 
   
   protected void initSurface(int antialias) {
+    if (!(pg instanceof PGraphicsGLW)) {
+      throw new RuntimeException("GLW.RENDERER is the only option in size() when using the GLW library.");
+    }
+    
     if (profile == null) {
       if (PROFILE == 2) {
         try {
@@ -118,28 +115,6 @@ public class PNEWT extends PJOGL {
     sharedDrawable.display(); // triggers GLContext object creation and native realization.    
     DummyListener listener = new DummyListener();
     sharedDrawable.addGLEventListener(listener);
-
-    
-    /*
-    window = GLWindow.create(caps);
-    window.setSize(pg.width, pg.height);
-    window.setVisible(true);
-    window.setTitle(pg.parent.frame.getTitle());
-    //window.setUndecorated(true);
-    pg.parent.frame.setVisible(false);
-    
-    canvas = canvasNEWT;
-    canvasAWT = null;
-
-    window.addWindowListener(new WindowAdapter() {
-      @Override
-      public void windowDestroyNotify(final WindowEvent e) {
-        System.exit(0);
-      }
-    });   
-    
-    registerListeners();
-    */
     
     pg.parent.frame.setVisible(false);
   }
@@ -149,20 +124,35 @@ public class PNEWT extends PJOGL {
     return false;
   }
   
+  
+  protected void beginDraw(boolean clear0) {      
+  }
+  
+  
+  protected void endDraw(boolean clear0) {    
+  }
+  
+  
   protected void requestDraw() {
-    // Creating windows
+    createWindows();
+    
+    // Calling display() so the main draw() method is triggered, where the 
+    // offscreen GLW canvases can be updated.
+    sharedDrawable.display();
+    
+    displayWindows();
+  }
+  
+  private void createWindows() {
     for (PGraphics pg: GLW.windows.keySet()) {
       GLWindow win = GLW.windows.get(pg);
       if (win == null) {
-        System.out.println("creating window");
-        //win = GLWindow.create(sharedCaps);
         win = GLWindow.create(sharedCaps);
         win.setSharedAutoDrawable(sharedDrawable);
         win.setSize(pg.width, pg.height);
         win.setTitle("TEST");
         win.setVisible(true);
         GLW.windows.put(pg, win);
-        
         
         NEWTListener listener = new NEWTListener(pg);
         win.addGLEventListener(listener);     
@@ -173,21 +163,18 @@ public class PNEWT extends PJOGL {
         win.addKeyListener(keyListener);
         NEWTWindowListener winListener = new NEWTWindowListener();
         win.addWindowListener(winListener);
- 
         
         win.addWindowListener(new WindowAdapter() {
           @Override
           public void windowDestroyNotify(final WindowEvent e) {
-            System.out.println("window destroyed");
-//            System.exit(0);
           }
         });        
       }
     }
-    
-    sharedDrawable.display();
-    
-    // Display windows
+  }
+
+  
+  private void displayWindows() {
     int totalCount = 0;
     int realizedCount = 0;
     for (GLWindow win: GLW.windows.values()) {
@@ -199,11 +186,12 @@ public class PNEWT extends PJOGL {
     }
     
     if (0 < totalCount && realizedCount == 0) {
-      System.out.println("SHOULD QUIT NOW");
+      // All windows where closed, exit the application
       sharedDrawable.destroy();
       System.exit(0);
-    }   
-  }
+    }       
+  }  
+  
   
   protected class DummyListener implements GLEventListener {
     public DummyListener() { 
@@ -254,7 +242,7 @@ public class PNEWT extends PJOGL {
     @Override
     public void display(GLAutoDrawable glDrawable) {
       pgl.getGL(glDrawable);
-      Texture tex = pg.texture;
+      Texture tex = pg.getTexture(false);
       if (tex != null) {
         pgl.disable(PGL.BLEND);
         pgl.drawTexture(tex.glTarget, tex.glName,
