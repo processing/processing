@@ -3545,13 +3545,21 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#print(java.lang.Object)">print</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;what)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#print(java.lang.Object...)">print</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>...&nbsp;variables)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#print(java.lang.String)">print</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#printArray(java.lang.Object)">printArray</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;what)</code>
+<div class="block">( begin auto-generated from printArray.xml )
+
+ To come...</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#printCamera()">printCamera</a></strong>()</code>
 <div class="block">( begin auto-generated from printCamera.xml )
@@ -3560,7 +3568,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
  bottom of Processing).</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#println()">println</a></strong>()</code>
 <div class="block">( begin auto-generated from println.xml )
@@ -3568,37 +3576,43 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
  Writes to the text area of the Processing environment's console.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#println(boolean)">println</a></strong>(boolean&nbsp;what)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#println(byte)">println</a></strong>(byte&nbsp;what)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#println(char)">println</a></strong>(char&nbsp;what)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#println(double)">println</a></strong>(double&nbsp;what)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#println(float)">println</a></strong>(float&nbsp;what)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#println(int)">println</a></strong>(int&nbsp;what)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#println(long)">println</a></strong>(long&nbsp;what)</code>&nbsp;</td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#println(java.lang.Object...)">println</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>...&nbsp;variables)</code>&nbsp;</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#println(java.lang.Object)">println</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;what)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/core/PApplet.html#println(java.lang.Object)">println</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;what)</code>
+<div class="block">For arrays, use printArray() instead.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
@@ -8341,7 +8355,8 @@ public&nbsp;void&nbsp;unregisterKeyEvent(<a href="http://docs.oracle.com/javase/
  a String.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - boolean, byte, char, color, int, float, String, Object</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#println(byte)"><code>println(byte)</code></a>, 
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - data to print to console</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#println()"><code>println()</code></a>, 
+<a href="../../processing/core/PApplet.html#printArray(java.lang.Object)"><code>printArray(Object)</code></a>, 
 <a href="../../processing/core/PApplet.html#join(java.lang.String[], char)"><code>join(String[], char)</code></a></dd></dl>
 </li>
 </ul>
@@ -8408,13 +8423,14 @@ public&nbsp;void&nbsp;unregisterKeyEvent(<a href="http://docs.oracle.com/javase/
 <pre>public static&nbsp;void&nbsp;print(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</pre>
 </li>
 </ul>
-<a name="print(java.lang.Object)">
+<a name="print(java.lang.Object...)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>print</h4>
-<pre>public static&nbsp;void&nbsp;print(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;what)</pre>
+<pre>public static&nbsp;void&nbsp;print(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>...&nbsp;variables)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>variables</code> - list of data, separated by commas</dd></dl>
 </li>
 </ul>
 <a name="println()">
@@ -8439,7 +8455,8 @@ public&nbsp;void&nbsp;unregisterKeyEvent(<a href="http://docs.oracle.com/javase/
  that of <b>print()</b>.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#print(byte)"><code>print(byte)</code></a></dd></dl>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#print(byte)"><code>print(byte)</code></a>, 
+<a href="../../processing/core/PApplet.html#printArray(java.lang.Object)"><code>printArray(Object)</code></a></dd></dl>
 </li>
 </ul>
 <a name="println(byte)">
@@ -8449,7 +8466,7 @@ public&nbsp;void&nbsp;unregisterKeyEvent(<a href="http://docs.oracle.com/javase/
 <li class="blockList">
 <h4>println</h4>
 <pre>public static&nbsp;void&nbsp;println(byte&nbsp;what)</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - boolean, byte, char, color, int, float, String, Object</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - data to print to console</dd></dl>
 </li>
 </ul>
 <a name="println(boolean)">
@@ -8515,6 +8532,16 @@ public&nbsp;void&nbsp;unregisterKeyEvent(<a href="http://docs.oracle.com/javase/
 <pre>public static&nbsp;void&nbsp;println(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</pre>
 </li>
 </ul>
+<a name="println(java.lang.Object...)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>println</h4>
+<pre>public static&nbsp;void&nbsp;println(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>...&nbsp;variables)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>variables</code> - list of data, separated by commas</dd></dl>
+</li>
+</ul>
 <a name="println(java.lang.Object)">
 <!--   -->
 </a>
@@ -8522,6 +8549,25 @@ public&nbsp;void&nbsp;unregisterKeyEvent(<a href="http://docs.oracle.com/javase/
 <li class="blockList">
 <h4>println</h4>
 <pre>public static&nbsp;void&nbsp;println(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;what)</pre>
+<div class="block">For arrays, use printArray() instead. This function causes a warning
+ because the new print(Object...) and println(Object...) functions can't
+ be reliably bound by the compiler.</div>
+</li>
+</ul>
+<a name="printArray(java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>printArray</h4>
+<pre>public static&nbsp;void&nbsp;printArray(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;what)</pre>
+<div class="block">( begin auto-generated from printArray.xml )
+
+ To come...
+
+ ( end auto-generated )</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>what</code> - one-dimensional array</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#print(byte)"><code>print(byte)</code></a>, 
+<a href="../../processing/core/PApplet.html#println()"><code>println()</code></a></dd></dl>
 </li>
 </ul>
 <a name="debug(java.lang.String)">
@@ -10606,7 +10652,7 @@ public&nbsp;void&nbsp;unregisterKeyEvent(<a href="http://docs.oracle.com/javase/
  This is only available with applications, not applets or Android.
  On Windows and Linux, this is simply the data folder, which is located
  in the same directory as the EXE file and lib folders. On Mac OS X, this
- is a path to the data folder buried inside Contents/Resources/Java.
+ is a path to the data folder buried inside Contents/Java.
  For the latter point, that also means that the data folder should not be
  considered writable. Use sketchPath() for now, or inputPath() and
  outputPath() once they're available in the 2.0 release.

@@ -8,8 +8,8 @@
  * If you are familiar with associative arrays from other languages,
  * this is the same idea.
  *
- * A simpler example is CountingStrings which uses IntHash instead of 
- * HashMap.  The Processing classes IntHash, FloatHash, and StringHash
+ * A simpler example is CountingStrings which uses IntDict instead of 
+ * HashMap.  The Processing classes IntDict, FloatDict, and StringDict
  * offer a simpler way of pairing Strings with numbers or other Strings.
  * Here we use a HashMap because we want to pair a String with a custom
  * object, in this case a "Word" object that stores two numbers.

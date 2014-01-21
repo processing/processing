@@ -5817,6 +5817,8 @@ public class PGraphics extends PImage implements PConstants {
     ellipseMode(s.ellipseMode);
     shapeMode(s.shapeMode);
 
+    blendMode(s.blendMode);
+
     if (s.tint) {
       tint(s.tintColor);
     } else {
@@ -5894,6 +5896,8 @@ public class PGraphics extends PImage implements PConstants {
     s.rectMode = rectMode;
     s.ellipseMode = ellipseMode;
     s.shapeMode = shapeMode;
+
+    s.blendMode = blendMode;
 
     s.colorMode = colorMode;
     s.colorModeX = colorModeX;
@@ -6031,7 +6035,9 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    *
    * @webref color:setting
-   * @see PGraphics#stroke(float, float, float, float)
+   * @see PGraphics#stroke(int, float)
+   * @see PGraphics#fill(float, float, float, float)
+   * @see PGraphics#noFill()
    */
   public void noStroke() {
     stroke = false;
@@ -6062,7 +6068,9 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @param rgb color value in hexadecimal notation
    * @see PGraphics#noStroke()
+   * @see PGraphics#strokeWeight(float)
    * @see PGraphics#fill(int, float)
+   * @see PGraphics#noFill()
    * @see PGraphics#tint(int, float)
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#colorMode(int, float, float, float, float)
@@ -6266,6 +6274,8 @@ public class PGraphics extends PImage implements PConstants {
    * @webref color:setting
    * @usage web_application
    * @see PGraphics#fill(float, float, float, float)
+   * @see PGraphics#stroke(int, float)
+   * @see PGraphics#noStroke()
    */
   public void noFill() {
     fill = false;
@@ -6302,6 +6312,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param rgb color variable or hex value
    * @see PGraphics#noFill()
    * @see PGraphics#stroke(int, float)
+   * @see PGraphics#noStroke()
    * @see PGraphics#tint(int, float)
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#colorMode(int, float, float, float, float)

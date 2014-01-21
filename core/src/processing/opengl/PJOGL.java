@@ -66,16 +66,16 @@ public class PJOGL extends PGL {
   // Public members to access the underlying GL objects and context
 
   /** Basic GL functionality, common to all profiles */
-  public static GL gl;
+  public GL gl;
 
   /** GLU interface **/
-  public static GLU glu;
+  public GLU glu;
 
   /** The rendering context (holds rendering state info) */
-  public static GLContext context;
+  public GLContext context;
 
   /** The canvas where OpenGL rendering takes place */
-  public static Canvas canvas;
+  public Canvas canvas;
 
   /** Selected GL profile */
   public static GLProfile profile;
@@ -132,32 +132,38 @@ public class PJOGL extends PGL {
   // Protected JOGL-specific objects needed to access the GL profiles
 
   /** The capabilities of the OpenGL rendering surface */
-  protected static GLCapabilitiesImmutable capabilities;
+  protected GLCapabilitiesImmutable capabilities;
 
   /** The rendering surface */
-  protected static GLDrawable drawable;
+  protected GLDrawable drawable;
 
   /** GLES2 functionality (shaders, etc) */
-  protected static GL2ES2 gl2;
+  protected GL2ES2 gl2;
 
   /** GL3 interface */
-  protected static GL2GL3 gl3;
+  protected GL2GL3 gl3;
 
   /** GL2 desktop functionality (blit framebuffer, map buffer range,
    * multisampled renerbuffers) */
-  protected static GL2 gl2x;
+  protected GL2 gl2x;
 
   /** The AWT-OpenGL canvas */
-  protected static GLCanvas canvasAWT;
+  protected GLCanvas canvasAWT;
 
-  /** The NEWT-OpenGL canvas */
-  protected static NewtCanvasAWT canvasNEWT;
+  /** The shared AWT-OpenGL canvas */
+  protected static GLCanvas sharedCanvasAWT;
 
   /** The NEWT window */
-  protected static GLWindow window;
+  protected GLWindow windowNEWT;
+
+  /** The shared NEWT window */
+  protected static GLWindow sharedWindowNEWT;
+
+  /** The NEWT-OpenGL canvas */
+  protected NewtCanvasAWT canvasNEWT;
 
   /** The listener that fires the frame rendering in Processing */
-  protected static PGLListener listener;
+  protected PGLListener listener;
 
   /** This countdown latch is used to maintain the synchronization between
    * Processing's drawing thread and JOGL's rendering thread */
@@ -173,13 +179,13 @@ public class PJOGL extends PGL {
   // JOGL's FBO-layer
 
   /** Back (== draw, current frame) buffer */
-  protected static FBObject backFBO;
+  protected FBObject backFBO;
   /** Sink buffer, used in the multisampled case */
-  protected static FBObject sinkFBO;
+  protected FBObject sinkFBO;
   /** Front (== read, previous frame) buffer */
-  protected static FBObject frontFBO;
-  protected static FBObject.TextureAttachment backTexAttach;
-  protected static FBObject.TextureAttachment frontTexAttach;
+  protected FBObject frontFBO;
+  protected FBObject.TextureAttachment backTexAttach;
+  protected FBObject.TextureAttachment frontTexAttach;
 
   protected boolean changedFrontTex = false;
   protected boolean changedBackTex = false;
@@ -210,6 +216,12 @@ public class PJOGL extends PGL {
   public PJOGL(PGraphicsOpenGL pg) {
     super(pg);
     if (glu == null) glu = new GLU();
+  }
+
+
+  @Override
+  public Canvas getCanvas() {
+    return canvas;
   }
 
 
@@ -264,14 +276,18 @@ public class PJOGL extends PGL {
         tex2DFragShaderSource = convertFragmentSource(tex2DFragShaderSource, 120, 150);
         texRectFragShaderSource = convertFragmentSource(texRectFragShaderSource, 120, 150);
       }
-    } else {
+    }
+
+    if (canvasAWT != null && canvasNEWT != null) {
       // Restarting...
       if (canvasAWT != null) {
+        sharedCanvasAWT = null;
         canvasAWT.removeGLEventListener(listener);
         pg.parent.removeListeners(canvasAWT);
         pg.parent.remove(canvasAWT);
       } else if (canvasNEWT != null) {
-        window.removeGLEventListener(listener);
+        sharedWindowNEWT = null;
+        windowNEWT.removeGLEventListener(listener);
         pg.parent.remove(canvasNEWT);
       }
       sinkFBO = backFBO = frontFBO = null;
@@ -318,6 +334,11 @@ public class PJOGL extends PGL {
 
     if (WINDOW_TOOLKIT == AWT) {
       canvasAWT = new GLCanvas(caps);
+      if (sharedCanvasAWT == null) {
+        sharedCanvasAWT = canvasAWT;
+      } else {
+        canvasAWT.setSharedAutoDrawable(sharedCanvasAWT);
+      }
       canvasAWT.setBounds(0, 0, pg.width, pg.height);
       canvasAWT.setBackground(new Color(pg.backgroundColor, true));
       canvasAWT.setFocusable(true);
@@ -329,8 +350,13 @@ public class PJOGL extends PGL {
       canvas = canvasAWT;
       canvasNEWT = null;
     } else if (WINDOW_TOOLKIT == NEWT) {
-      window = GLWindow.create(caps);
-      canvasNEWT = new NewtCanvasAWT(window);
+      windowNEWT = GLWindow.create(caps);
+      if (sharedWindowNEWT == null) {
+        sharedWindowNEWT = windowNEWT;
+      } else {
+        windowNEWT.setSharedAutoDrawable(sharedWindowNEWT);
+      }
+      canvasNEWT = new NewtCanvasAWT(windowNEWT);
       canvasNEWT.setBounds(0, 0, pg.width, pg.height);
       canvasNEWT.setBackground(new Color(pg.backgroundColor, true));
       canvasNEWT.setFocusable(true);
@@ -372,18 +398,18 @@ public class PJOGL extends PGL {
     } else if (WINDOW_TOOLKIT == NEWT) {
       if (EVENTS_TOOLKIT == NEWT) {
         NEWTMouseListener mouseListener = new NEWTMouseListener();
-        window.addMouseListener(mouseListener);
+        windowNEWT.addMouseListener(mouseListener);
         NEWTKeyListener keyListener = new NEWTKeyListener();
-        window.addKeyListener(keyListener);
+        windowNEWT.addKeyListener(keyListener);
         NEWTWindowListener winListener = new NEWTWindowListener();
-        window.addWindowListener(winListener);
+        windowNEWT.addWindowListener(winListener);
       } else if (EVENTS_TOOLKIT == AWT) {
         pg.parent.removeListeners(canvasNEWT);
         pg.parent.addListeners(canvasNEWT);
       }
 
       listener = new PGLListener();
-      window.addGLEventListener(listener);
+      windowNEWT.addGLEventListener(listener);
     }
 
     if (canvas != null) {
@@ -400,7 +426,7 @@ public class PJOGL extends PGL {
       canvasAWT.removeGLEventListener(listener);
       pg.parent.removeListeners(canvasAWT);
     } else if (canvasNEWT != null) {
-      window.removeGLEventListener(listener);
+      windowNEWT.removeGLEventListener(listener);
     }
     GLProfile.shutdown();
   }
@@ -484,7 +510,7 @@ public class PJOGL extends PGL {
   protected Texture wrapBackTexture(Texture texture) {
     if (texture == null || changedBackTex) {
       if (USE_JOGL_FBOLAYER) {
-        texture = new Texture();
+        texture = new Texture(pg);
         texture.init(pg.width, pg.height,
                      backTexAttach.getName(), TEXTURE_2D, RGBA,
                      backTexAttach.getWidth(), backTexAttach.getHeight(),
@@ -511,7 +537,7 @@ public class PJOGL extends PGL {
   protected Texture wrapFrontTexture(Texture texture) {
     if (texture == null || changedFrontTex) {
       if (USE_JOGL_FBOLAYER) {
-        texture = new Texture();
+        texture = new Texture(pg);
         texture.init(pg.width, pg.height,
                      backTexAttach.getName(), TEXTURE_2D, RGBA,
                      frontTexAttach.getWidth(), frontTexAttach.getHeight(),
@@ -607,6 +633,42 @@ public class PJOGL extends PGL {
 
 
   @Override
+  protected void getGL(PGL pgl) {
+    PJOGL pjogl = (PJOGL)pgl;
+
+    this.drawable = pjogl.drawable;
+    this.context = pjogl.context;
+    this.glContext = pjogl.glContext;
+    this.glThread = pjogl.glThread;
+
+    this.gl = pjogl.gl;
+    this.gl2 = pjogl.gl2;
+    this.gl2x = pjogl.gl2x;
+    this.gl3 = pjogl.gl3;
+  }
+
+
+  protected void getGL(GLAutoDrawable glDrawable) {
+    context = glDrawable.getContext();
+    glContext = context.hashCode();
+    glThread = Thread.currentThread();
+
+    gl = context.getGL();
+    gl2 = gl.getGL2ES2();
+    try {
+      gl2x = gl.getGL2();
+    } catch (javax.media.opengl.GLException e) {
+      gl2x = null;
+    }
+    try {
+      gl3 = gl.getGL2GL3();
+    } catch (javax.media.opengl.GLException e) {
+      gl3 = null;
+    }
+  }
+
+
+  @Override
   protected boolean canDraw() {
     return pg.initialized && pg.parent.isDisplayable();
   }
@@ -625,7 +687,7 @@ public class PJOGL extends PGL {
         if (WINDOW_TOOLKIT == AWT) {
           canvasAWT.display();
         } else if (WINDOW_TOOLKIT == NEWT) {
-          window.display();
+          windowNEWT.display();
         }
         try {
           drawLatch.await(DRAW_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
@@ -653,7 +715,7 @@ public class PJOGL extends PGL {
     if (WINDOW_TOOLKIT == AWT) {
       canvasAWT.swapBuffers();
     } else if (WINDOW_TOOLKIT == NEWT) {
-      window.swapBuffers();
+      windowNEWT.swapBuffers();
     }
   }
 
@@ -778,6 +840,8 @@ public class PJOGL extends PGL {
               frontTexAttach = (FBObject.TextureAttachment)frontFBO.
                                getColorbuffer(0);
             } else {
+              changedFrontTex = changedBackTex = sinkFBO == null;
+
               // Default setting (to save resources): the front and back
               // textures are the same.
               sinkFBO = backFBO.getSamplingSinkFBO();
@@ -785,7 +849,6 @@ public class PJOGL extends PGL {
                               getColorbuffer(0);
               frontTexAttach = backTexAttach;
             }
-
           } else {
             // w/out multisampling, rendering is done on the back buffer.
             frontFBO = fboDrawable.getFBObject(GL.GL_FRONT);
@@ -826,25 +889,25 @@ public class PJOGL extends PGL {
       //getGL(glDrawable);
     }
 
-    private void getGL(GLAutoDrawable glDrawable) {
-      drawable = glDrawable;
-      context = glDrawable.getContext();
-      glContext = context.hashCode();
-      glThread = Thread.currentThread();
-
-      gl = context.getGL();
-      gl2 = gl.getGL2ES2();
-      try {
-        gl2x = gl.getGL2();
-      } catch (javax.media.opengl.GLException e) {
-        gl2x = null;
-      }
-      try {
-        gl3 = gl.getGL2GL3();
-      } catch (javax.media.opengl.GLException e) {
-        gl3 = null;
-      }
-    }
+//    private void getGL(GLAutoDrawable glDrawable) {
+//      drawable = glDrawable;
+//      context = glDrawable.getContext();
+//      glContext = context.hashCode();
+//      glThread = Thread.currentThread();
+//
+//      gl = context.getGL();
+//      gl2 = gl.getGL2ES2();
+//      try {
+//        gl2x = gl.getGL2();
+//      } catch (javax.media.opengl.GLException e) {
+//        gl2x = null;
+//      }
+//      try {
+//        gl3 = gl.getGL2GL3();
+//      } catch (javax.media.opengl.GLException e) {
+//        gl3 = null;
+//      }
+//    }
   }
 
   protected void nativeMouseEvent(com.jogamp.newt.event.MouseEvent nativeEvent,
@@ -913,6 +976,9 @@ public class PJOGL extends PGL {
   }
 
   protected class NEWTWindowListener implements com.jogamp.newt.event.WindowListener {
+    public NEWTWindowListener() {
+      super();
+    }
     @Override
     public void windowGainedFocus(com.jogamp.newt.event.WindowEvent arg0) {
       pg.parent.focusGained(null);
@@ -945,6 +1011,9 @@ public class PJOGL extends PGL {
 
   // NEWT mouse listener
   protected class NEWTMouseListener extends com.jogamp.newt.event.MouseAdapter {
+    public NEWTMouseListener() {
+      super();
+    }
     @Override
     public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
       nativeMouseEvent(e, MouseEvent.PRESS);
@@ -981,6 +1050,9 @@ public class PJOGL extends PGL {
 
   // NEWT key listener
   protected class NEWTKeyListener extends com.jogamp.newt.event.KeyAdapter {
+    public NEWTKeyListener() {
+      super();
+    }
     @Override
     public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
       nativeKeyEvent(e, KeyEvent.PRESS);
@@ -1103,41 +1175,6 @@ public class PJOGL extends PGL {
       PGraphics.showException("Cannot load vertex shader " + url.getFile());
     }
     return null;
-  }
-
-
-  @Override
-  protected String[] convertFragmentSource(String[] fragSrc0,
-                                           int version0, int version1) {
-    String[] fragSrc = new String[fragSrc0.length + 2];
-    fragSrc[0] = "#version 150";
-    fragSrc[1] = "out vec4 fragColor;";
-    for (int i = 0; i < fragSrc0.length; i++) {
-      String line = fragSrc0[i];
-      line = line.replace("varying", "in");
-      line = line.replace("attribute", "in");
-      line = line.replace("gl_FragColor", "fragColor");
-      line = line.replace("texture", "texMap");
-      line = line.replace("texMap2D(", "texture(");
-      line = line.replace("texMap2DRect(", "texture(");
-      fragSrc[i + 2] = line;
-    }
-    return fragSrc;
-  }
-
-
-  @Override
-  protected String[] convertVertexSource(String[] vertSrc0,
-                                         int version0, int version1) {
-    String[] vertSrc = new String[vertSrc0.length + 1];
-    vertSrc[0] = "#version 150";
-    for (int i = 0; i < vertSrc0.length; i++) {
-      String line = vertSrc0[i];
-      line = line.replace("attribute", "in");
-      line = line.replace("varying", "out");
-      vertSrc[i + 1] = line;
-    }
-    return vertSrc;
   }
 
 

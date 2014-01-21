@@ -108,13 +108,13 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/image/ImageObserver.html?is-external=true" title="class or interface in java.awt.image">ImageObserver</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/MenuContainer.html?is-external=true" title="class or interface in java.awt">MenuContainer</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/Printable.html?is-external=true" title="class or interface in java.awt.print">Printable</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/TabExpander.html?is-external=true" title="class or interface in javax.swing.text">TabExpander</a></dd>
+<dd><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/image/ImageObserver.html?is-external=true" title="class or interface in java.awt.image">ImageObserver</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/MenuContainer.html?is-external=true" title="class or interface in java.awt">MenuContainer</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/TabExpander.html?is-external=true" title="class or interface in javax.swing.text">TabExpander</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="strong">TextAreaPainter</span>
 extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a>
-implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/TabExpander.html?is-external=true" title="class or interface in javax.swing.text">TabExpander</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/Printable.html?is-external=true" title="class or interface in java.awt.print">Printable</a></pre>
+implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/TabExpander.html?is-external=true" title="class or interface in javax.swing.text">TabExpander</a></pre>
 <div class="block">The text area repaint manager. It performs double buffering and paints
  lines of text.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../serialized-form.html#processing.app.syntax.TextAreaPainter">Serialized Form</a></dd></dl>
@@ -180,13 +180,6 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Component.html?is-external=true#BOTTOM_ALIGNMENT" title="class or interface in java.awt">BOTTOM_ALIGNMENT</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Component.html?is-external=true#CENTER_ALIGNMENT" title="class or interface in java.awt">CENTER_ALIGNMENT</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Component.html?is-external=true#LEFT_ALIGNMENT" title="class or interface in java.awt">LEFT_ALIGNMENT</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Component.html?is-external=true#RIGHT_ALIGNMENT" title="class or interface in java.awt">RIGHT_ALIGNMENT</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Component.html?is-external=true#TOP_ALIGNMENT" title="class or interface in java.awt">TOP_ALIGNMENT</a></code></li>
 </ul>
 <ul class="blockList">
-<li class="blockList"><a name="fields_inherited_from_class_Printable">
-<!--   -->
-</a>
-<h3>Fields inherited from interface&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/Printable.html?is-external=true" title="class or interface in java.awt.print">Printable</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/Printable.html?is-external=true#NO_SUCH_PAGE" title="class or interface in java.awt.print">NO_SUCH_PAGE</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/Printable.html?is-external=true#PAGE_EXISTS" title="class or interface in java.awt.print">PAGE_EXISTS</a></code></li>
-</ul>
-<ul class="blockList">
 <li class="blockList"><a name="fields_inherited_from_class_ImageObserver">
 <!--   -->
 </a>
@@ -228,118 +221,61 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#addCustomHighlight(processing.app.syntax.TextAreaPainter.Highlight)">addCustomHighlight</a></strong>(<a href="../../../processing/app/syntax/TextAreaPainter.Highlight.html" title="interface in processing.app.syntax">TextAreaPainter.Highlight</a>&nbsp;highlight)</code>
-<div class="block">Adds a custom highlight painter.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getBracketHighlightColor()">getBracketHighlightColor</a></strong>()</code>
-<div class="block">Returns the bracket highlight color.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getCaretColor()">getCaretColor</a></strong>()</code>
-<div class="block">Returns the caret color.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../processing/app/syntax/im/CompositionTextPainter.html" title="class in processing.app.syntax.im">CompositionTextPainter</a></code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getCompositionTextpainter()">getCompositionTextpainter</a></strong>()</code>
-<div class="block">Get CompositionTextPainter.</div>
+<div class="block">Get CompositionTextPainter, creating one if it doesn't exist.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Segment.html?is-external=true" title="class or interface in javax.swing.text">Segment</a></code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getCurrentLine()">getCurrentLine</a></strong>()</code>
 <div class="block">Accessor used by tools that want to hook in and grab the formatting.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getCurrentLineIndex()">getCurrentLineIndex</a></strong>()</code>
 <div class="block">Accessor used by tools that want to hook in and grab the formatting.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../processing/app/syntax/Token.html" title="class in processing.app.syntax">Token</a></code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getCurrentLineTokens()">getCurrentLineTokens</a></strong>()</code>
 <div class="block">Accessor used by tools that want to hook in and grab the formatting.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getEOLMarkerColor()">getEOLMarkerColor</a></strong>()</code>
-<div class="block">Returns the EOL marker color.</div>
-</td>
-</tr>
 <tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getEOLMarkersPainted()">getEOLMarkersPainted</a></strong>()</code>
-<div class="block">Returns true if EOL markers are drawn, false otherwise.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/FontMetrics.html?is-external=true" title="class or interface in java.awt">FontMetrics</a></code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getFontMetrics()">getFontMetrics</a></strong>()</code>
 <div class="block">Returns the font metrics used by this component.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getLineHighlightColor()">getLineHighlightColor</a></strong>()</code>
-<div class="block">Returns the line highlight color.</div>
-</td>
-</tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Dimension.html?is-external=true" title="class or interface in java.awt">Dimension</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getMinimumSize()">getMinimumSize</a></strong>()</code>
-<div class="block">Returns the painter's minimum size.</div>
-</td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/FontMetrics.html?is-external=true" title="class or interface in java.awt">FontMetrics</a></code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getFontMetrics(processing.app.syntax.SyntaxStyle)">getFontMetrics</a></strong>(<a href="../../../processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax">SyntaxStyle</a>&nbsp;style)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Dimension.html?is-external=true" title="class or interface in java.awt">Dimension</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getPreferredSize()">getPreferredSize</a></strong>()</code>
-<div class="block">Returns the painter's preferred size.</div>
-</td>
+<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getMinimumSize()">getMinimumSize</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getSelectionColor()">getSelectionColor</a></strong>()</code>
-<div class="block">Returns the selection color.</div>
-</td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Dimension.html?is-external=true" title="class or interface in java.awt">Dimension</a></code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getPreferredSize()">getPreferredSize</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/Printable.html?is-external=true" title="class or interface in java.awt.print">Printable</a></code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getPrintable()">getPrintable</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax">SyntaxStyle</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getStyles()">getStyles</a></strong>()</code>
 <div class="block">Returns the syntax styles used to paint colorized text.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#getToolTipText(java.awt.event.MouseEvent)">getToolTipText</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseEvent.html?is-external=true" title="class or interface in java.awt.event">MouseEvent</a>&nbsp;evt)</code>
-<div class="block">Returns the tool tip to display at the specified location.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#invalidateLine(int)">invalidateLine</a></strong>(int&nbsp;line)</code>
 <div class="block">Marks a line as needing a repaint.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#invalidateLineRange(int, int)">invalidateLineRange</a></strong>(int&nbsp;firstLine,
-                   int&nbsp;lastLine)</code>
-<div class="block">Marks a range of lines as needing a repaint.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#invalidateSelectedLines()">invalidateSelectedLines</a></strong>()</code>
-<div class="block">Repaints the lines containing the selection.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -355,96 +291,28 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#isLineHighlightEnabled()">isLineHighlightEnabled</a></strong>()</code>
-<div class="block">Returns true if line highlight is enabled, false otherwise.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>float</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#nextTabStop(float, int)">nextTabStop</a></strong>(float&nbsp;x,
            int&nbsp;tabOffset)</code>
-<div class="block">Implementation of TabExpander interface.</div>
+<div class="block">Returns next tab stop after a specified point.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#paint(java.awt.Graphics)">paint</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Graphics.html?is-external=true" title="class or interface in java.awt">Graphics</a>&nbsp;gfx)</code>
 <div class="block">Repaints the text.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#print(java.awt.Graphics, java.awt.print.PageFormat, int)">print</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Graphics.html?is-external=true" title="class or interface in java.awt">Graphics</a>&nbsp;g,
-     <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/PageFormat.html?is-external=true" title="class or interface in java.awt.print">PageFormat</a>&nbsp;pageFormat,
-     int&nbsp;pageIndex)</code>&nbsp;</td>
-</tr>
 <tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setAntialias(boolean)">setAntialias</a></strong>(boolean&nbsp;antialias)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setBlockCaretEnabled(boolean)">setBlockCaretEnabled</a></strong>(boolean&nbsp;blockCaret)</code>
-<div class="block">Sets if the caret should be drawn as a block, false otherwise.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setBracketHighlightColor(java.awt.Color)">setBracketHighlightColor</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;bracketHighlightColor)</code>
-<div class="block">Sets the bracket highlight color.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setBracketHighlightEnabled(boolean)">setBracketHighlightEnabled</a></strong>(boolean&nbsp;bracketHighlight)</code>
-<div class="block">Enables or disables bracket highlighting.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setCaretColor(java.awt.Color)">setCaretColor</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;caretColor)</code>
-<div class="block">Sets the caret color.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setCurrentLineIndex(int)">setCurrentLineIndex</a></strong>(int&nbsp;what)</code>
 <div class="block">Accessor used by tools that want to hook in and grab the formatting.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setCurrentLineTokens(processing.app.syntax.Token)">setCurrentLineTokens</a></strong>(<a href="../../../processing/app/syntax/Token.html" title="class in processing.app.syntax">Token</a>&nbsp;tokens)</code>
 <div class="block">Accessor used by tools that want to hook in and grab the formatting.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setDefaults(processing.app.syntax.TextAreaDefaults)">setDefaults</a></strong>(<a href="../../../processing/app/syntax/TextAreaDefaults.html" title="class in processing.app.syntax">TextAreaDefaults</a>&nbsp;defaults)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setEOLMarkerColor(java.awt.Color)">setEOLMarkerColor</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;eolMarkerColor)</code>
-<div class="block">Sets the EOL marker color.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setEOLMarkersPainted(boolean)">setEOLMarkersPainted</a></strong>(boolean&nbsp;eolMarkers)</code>
-<div class="block">Sets if EOL markers are to be drawn.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setFont(java.awt.Font)">setFont</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font)</code>
-<div class="block">Sets the font for this component.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setLineHighlightColor(java.awt.Color)">setLineHighlightColor</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;lineHighlightColor)</code>
-<div class="block">Sets the line highlight color.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -455,15 +323,7 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setSelectionColor(java.awt.Color)">setSelectionColor</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;selectionColor)</code>
-<div class="block">Sets the selection color.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#setStyles(processing.app.syntax.SyntaxStyle[])">setStyles</a></strong>(<a href="../../../processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax">SyntaxStyle</a>[]&nbsp;styles)</code>
-<div class="block">Sets the syntax styles used to paint colorized text.</div>
-</td>
+<td class="colLast"><code><strong><a href="../../../processing/app/syntax/TextAreaPainter.html#updateAppearance()">updateAppearance</a></strong>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -471,7 +331,7 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#addAncestorListener(javax.swing.event.AncestorListener)" title="class or interface in javax.swing">addAncestorListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#addNotify()" title="class or interface in javax.swing">addNotify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#addVetoableChangeListener(java.beans.VetoableChangeListener)" title="class or interface in javax.swing">addVetoableChangeListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#computeVisibleRect(java.awt.Rectangle)" title="class or interface in javax.swing">computeVisibleRect</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#contains(int, int)" title="class or interface in javax.swing">contains</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#createToolTip()" title="class or interface in javax.swing">createToolTip</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#disable()" title="class or interface in javax.swing">disable</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#enable()" title="class or interface in javax.swing">enable</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#firePropertyChange(java.lang.String, boolean, boolean)" title="class or interface in javax.swing">firePropertyChange</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#firePropertyChange(java.lang.String, char, char)" title="class or interface in javax.swing">firePropertyChange</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#firePropertyChange(java.lang.String, int, int)" title="class or interface in javax.swing">firePropertyChange</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getAccessibleContext()" title="class or interface in javax.swing">getAccessibleContext</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getActionForKeyStroke(javax.swing.KeyStroke)" title="class or interface in javax.swing">getActionForKeyStroke</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getActionMap()" title="class or interface in javax.swing">getActionMap</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getAlignmentX()" title="class or interface in javax.swing">getAlignmentX</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getAlignmentY()" title="class or interface in javax.swing">getAlignmentY</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getAncestorListeners()" title="class or interface in javax.swing">getAncestorListeners</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getAutoscrolls()" title="class or interface in javax.swing">getAutoscrolls</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getBaseline(int, int)" title="class or interface in javax.swing">getBaseline</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getBaselineResizeBehavior()" title="class or interface in javax.swing">getBaselineResizeBehavior</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getBorder()" title="class or interface in javax.swing">getBorder</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getBounds(java.awt.Rectangle)" title="class or interface in javax.swing">getBounds</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getClientProperty(java.lang.Object)" title="class or interface in javax.swing">getClientProperty</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getComponentPopupMenu()" title="class or interface in javax.swing">getComponentPopupMenu</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getConditionForKeyStroke(javax.swing.KeyStroke)" title="class or interface in javax.swing">getConditionForKeyStroke</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getDebugGraphicsOptions()" title="class or interface in javax.swing">getDebugGraphicsOptions</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getDefaultLocale()" title="class or interface in javax.swing">getDefaultLocale</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getFontMetrics(java.awt.Font)" title="class or interface in javax.swing">getFontMetrics</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getGraphics()" title="class or interface in javax.swing">getGraphics</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getHeight()" title="class or interface in javax.swing">getHeight</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getInheritsPopupMenu()" title="class or interface in javax.swing">getInheritsPopupMenu</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getInputMap()" title="class or interface in javax.swing">getInputMap</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getInputMap(int)" title="class or interface in javax.swing">getInputMap</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getInputVerifier()" title="class or interface in javax.swing">getInputVerifier</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getInsets()" title="class or interface in javax.swing">getInsets</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getInsets(java.awt.Insets)" title="class or interface in javax.swing">getInsets</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getListeners(java.lang.Class)" title="class or interface in javax.swing">getListeners</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getLocation(java.awt.Point)" title="class or interface in javax.swing">getLocation</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getMaximumSize()" title="class or interface in javax.swing">getMaximumSize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getNextFocusableComponent()" title="class or interface in javax.swing">getNextFocusableComponent</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getPopupLocation(java.awt.event.MouseEvent)" title="class or interface in javax.swing">getPopupLocation</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getRegisteredKeyStrokes()" title="class or interface in javax.swing">getRegisteredKeyStrokes</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getRootPane()" title="class or interface in javax.swing">getRootPane</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getSize(java.awt.Dimension)" title="class or interface in javax.swing">getSize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getToolTipLocation(java.awt.event.MouseEvent)" title="class or interface in javax.swing">getToolTipLocation</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getToolTipText()" title="class or interface in javax.swing">getToolTipText</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getTopLevelAncestor()" title="class or interface in javax.swing">getTopLevelAncestor</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getTransferHandler()" title="class or interface in javax.swing">getTransferHandler</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getUIClassID()" title="class or interface in javax.swing">getUIClassID</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getVerifyInputWhenFocusTarget()" title="class or interface in javax.swing">getVerifyInputWhenFocusTarget</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getVetoableChangeListeners()" title="class or interface in javax.swing">getVetoableChangeListeners</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getVisibleRect()" title="class or interface in javax.swing">getVisibleRect</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getWidth()" title="class or interface in javax.swing">getWidth</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getX()" title="class or interface in javax.swing">getX</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getY()" title="class or interface in javax.swing">getY</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#grabFocus()" title="class or interface in javax.swing">grabFocus</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#hide()" title="class or interface in javax.swing">hide</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isDoubleBuffered()" title="class or interface in javax.swing">isDoubleBuffered</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isLightweightComponent(java.awt.Component)" title="class or interface in javax.swing">isLightweightComponent</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isManagingFocus()" title="class or interface in javax.swing">isManagingFocus</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isOpaque()" title="class or interface in javax.swing">isOpaque</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isOptimizedDrawingEnabled()" title="class or interface in javax.swing">isOptimizedDrawingEnabled</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isPaintingForPrint()" title="class or interface in javax.swing">isPaintingForPrint</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isPaintingTile()" title="class or interface in javax.swing">isPaintingTile</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isRequestFocusEnabled()" title="class or interface in javax.swing">isRequestFocusEnabled</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isValidateRoot()" title="class or interface in javax.swing">isValidateRoot</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#paintImmediately(int, int, int, int)" title="class or interface in javax.swing">paintImmediately</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#paintImmediately(java.awt.Rectangle)" title="class or interface in javax.swing">paintImmediately</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#print(java.awt.Graphics)" title="class or interface in javax.swing">print</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#printAll(java.awt.Graphics)" title="class or interface in javax.swing">printAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#putClientProperty(java.lang.Object, java.lang.Object)" title="class or interface in javax.swing">putClientProperty</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#registerKeyboardAction(java.awt.event.ActionListener, javax.swing.KeyStroke, int)" title="class or interface in javax.swing">registerKeyboardAction</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#registerKeyboardAction(java.awt.event.ActionListener, java.lang.String, javax.swing.KeyStroke, int)" title="class or interface in javax.swing">registerKeyboardAction</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#removeAncestorListener(javax.swing.event.AncestorListener)" title="class or interface in javax.swing">removeAncestorListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#removeNotify()" title="class or interface in javax.swing">removeNotify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#removeVetoableChangeListener(java.beans.VetoableChangeListener)" title="class or interface in javax.swing">removeVetoableChangeListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#repaint(long, int, int, int, int)" title="class or interface in javax.swing">repaint</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#repaint(java.awt.Rectangle)" title="class or interface in javax.swing">repaint</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#requestDefaultFocus()" title="class or interface in javax.swing">requestDefaultFocus</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#requestFocus()" title="class or interface in javax.swing">requestFocus</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#requestFocus(boolean)" title="class or interface in javax.swing">requestFocus</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#requestFocusInWindow()" title="class or interface in javax.swing">requestFocusInWindow</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#resetKeyboardActions()" title="class or interface in javax.swing">resetKeyboardActions</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#reshape(int, int, int, int)" title="class or interface in javax.swing">reshape</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#revalidate()" title="class or interface in javax.swing">revalidate</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#scrollRectToVisible(java.awt.Rectangle)" title="class or interface in javax.swing">scrollRectToVisible</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setActionMap(javax.swing.ActionMap)" title="class or interface in javax.swing">setActionMap</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setAlignmentX(float)" title="class or interface in javax.swing">setAlignmentX</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setAlignmentY(float)" title="class or interface in javax.swing">setAlignmentY</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setAutoscrolls(boolean)" title="class or interface in javax.swing">setAutoscrolls</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setBackground(java.awt.Color)" title="class or interface in javax.swing">setBackground</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setBorder(javax.swing.border.Border)" title="class or interface in javax.swing">setBorder</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setComponentPopupMenu(javax.swing.JPopupMenu)" title="class or interface in javax.swing">setComponentPopupMenu</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setDebugGraphicsOptions(int)" title="class or interface in javax.swing">setDebugGraphicsOptions</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setDefaultLocale(java.util.Locale)" title="class or interface in javax.swing">setDefaultLocale</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setDoubleBuffered(boolean)" title="class or interface in javax.swing">setDoubleBuffered</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setEnabled(boolean)" title="class or interface in javax.swing">setEnabled</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setFocusTraversalKeys(int, java.util.Set)" title="class or interface in javax.swing">setFocusTraversalKeys</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setForeground(java.awt.Color)" title="class or interface in javax.swing">setForeground</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setInheritsPopupMenu(boolean)" title="class or interface in javax.swing">setInheritsPopupMenu</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setInputMap(int, javax.swing.InputMap)" title="class or interface in javax.swing">setInputMap</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setInputVerifier(javax.swing.InputVerifier)" title="class or interface in javax.swing">setInputVerifier</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setMaximumSize(java.awt.Dimension)" title="class or interface in javax.swing">setMaximumSize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setMinimumSize(java.awt.Dimension)" title="class or interface in javax.swing">setMinimumSize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setNextFocusableComponent(java.awt.Component)" title="class or interface in javax.swing">setNextFocusableComponent</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setOpaque(boolean)" title="class or interface in javax.swing">setOpaque</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setPreferredSize(java.awt.Dimension)" title="class or interface in javax.swing">setPreferredSize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setRequestFocusEnabled(boolean)" title="class or interface in javax.swing">setRequestFocusEnabled</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setToolTipText(java.lang.String)" title="class or interface in javax.swing">setToolTipText</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setTransferHandler(javax.swing.TransferHandler)" title="class or interface in javax.swing">setTransferHandler</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setVerifyInputWhenFocusTarget(boolean)" title="class or interface in javax.swing">setVerifyInputWhenFocusTarget</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setVisible(boolean)" title="class or interface in javax.swing">setVisible</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#unregisterKeyboardAction(javax.swing.KeyStroke)" title="class or interface in javax.swing">unregisterKeyboardAction</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#update(java.awt.Graphics)" title="class or interface in javax.swing">update</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#updateUI()" title="class or interface in javax.swing">updateUI</a></code></li>
+<code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#addAncestorListener(javax.swing.event.AncestorListener)" title="class or interface in javax.swing">addAncestorListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#addNotify()" title="class or interface in javax.swing">addNotify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#addVetoableChangeListener(java.beans.VetoableChangeListener)" title="class or interface in javax.swing">addVetoableChangeListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#computeVisibleRect(java.awt.Rectangle)" title="class or interface in javax.swing">computeVisibleRect</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#contains(int, int)" title="class or interface in javax.swing">contains</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#createToolTip()" title="class or interface in javax.swing">createToolTip</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#disable()" title="class or interface in javax.swing">disable</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#enable()" title="class or interface in javax.swing">enable</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#firePropertyChange(java.lang.String, boolean, boolean)" title="class or interface in javax.swing">firePropertyChange</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#firePropertyChange(java.lang.String, char, char)" title="class or interface in javax.swing">firePropertyChange</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#firePropertyChange(java.lang.String, int, int)" title="class or interface in javax.swing">firePropertyChange</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getAccessibleContext()" title="class or interface in javax.swing">getAccessibleContext</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getActionForKeyStroke(javax.swing.KeyStroke)" title="class or interface in javax.swing">getActionForKeyStroke</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getActionMap()" title="class or interface in javax.swing">getActionMap</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getAlignmentX()" title="class or interface in javax.swing">getAlignmentX</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getAlignmentY()" title="class or interface in javax.swing">getAlignmentY</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getAncestorListeners()" title="class or interface in javax.swing">getAncestorListeners</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getAutoscrolls()" title="class or interface in javax.swing">getAutoscrolls</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getBaseline(int, int)" title="class or interface in javax.swing">getBaseline</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getBaselineResizeBehavior()" title="class or interface in javax.swing">getBaselineResizeBehavior</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getBorder()" title="class or interface in javax.swing">getBorder</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getBounds(java.awt.Rectangle)" title="class or interface in javax.swing">getBounds</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getClientProperty(java.lang.Object)" title="class or interface in javax.swing">getClientProperty</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getComponentPopupMenu()" title="class or interface in javax.swing">getComponentPopupMenu</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getConditionForKeyStroke(javax.swing.KeyStroke)" title="class or interface in javax.swing">getConditionForKeyStroke</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getDebugGraphicsOptions()" title="class or interface in javax.swing">getDebugGraphicsOptions</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getDefaultLocale()" title="class or interface in javax.swing">getDefaultLocale</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getFontMetrics(java.awt.Font)" title="class or interface in javax.swing">getFontMetrics</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getGraphics()" title="class or interface in javax.swing">getGraphics</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getHeight()" title="class or interface in javax.swing">getHeight</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getInheritsPopupMenu()" title="class or interface in javax.swing">getInheritsPopupMenu</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getInputMap()" title="class or interface in javax.swing">getInputMap</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getInputMap(int)" title="class or interface in javax.swing">getInputMap</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getInputVerifier()" title="class or interface in javax.swing">getInputVerifier</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getInsets()" title="class or interface in javax.swing">getInsets</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getInsets(java.awt.Insets)" title="class or interface in javax.swing">getInsets</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getListeners(java.lang.Class)" title="class or interface in javax.swing">getListeners</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getLocation(java.awt.Point)" title="class or interface in javax.swing">getLocation</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getMaximumSize()" title="class or interface in javax.swing">getMaximumSize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getNextFocusableComponent()" title="class or interface in javax.swing">getNextFocusableComponent</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getPopupLocation(java.awt.event.MouseEvent)" title="class or interface in javax.swing">getPopupLocation</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getRegisteredKeyStrokes()" title="class or interface in javax.swing">getRegisteredKeyStrokes</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getRootPane()" title="class or interface in javax.swing">getRootPane</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getSize(java.awt.Dimension)" title="class or interface in javax.swing">getSize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getToolTipLocation(java.awt.event.MouseEvent)" title="class or interface in javax.swing">getToolTipLocation</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getToolTipText()" title="class or interface in javax.swing">getToolTipText</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getToolTipText(java.awt.event.MouseEvent)" title="class or interface in javax.swing">getToolTipText</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getTopLevelAncestor()" title="class or interface in javax.swing">getTopLevelAncestor</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getTransferHandler()" title="class or interface in javax.swing">getTransferHandler</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getUIClassID()" title="class or interface in javax.swing">getUIClassID</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getVerifyInputWhenFocusTarget()" title="class or interface in javax.swing">getVerifyInputWhenFocusTarget</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getVetoableChangeListeners()" title="class or interface in javax.swing">getVetoableChangeListeners</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getVisibleRect()" title="class or interface in javax.swing">getVisibleRect</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getWidth()" title="class or interface in javax.swing">getWidth</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getX()" title="class or interface in javax.swing">getX</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getY()" title="class or interface in javax.swing">getY</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#grabFocus()" title="class or interface in javax.swing">grabFocus</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#hide()" title="class or interface in javax.swing">hide</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isDoubleBuffered()" title="class or interface in javax.swing">isDoubleBuffered</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isLightweightComponent(java.awt.Component)" title="class or interface in javax.swing">isLightweightComponent</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isManagingFocus()" title="class or interface in javax.swing">isManagingFocus</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isOpaque()" title="class or interface in javax.swing">isOpaque</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isOptimizedDrawingEnabled()" title="class or interface in javax.swing">isOptimizedDrawingEnabled</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isPaintingForPrint()" title="class or interface in javax.swing">isPaintingForPrint</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isPaintingTile()" title="class or interface in javax.swing">isPaintingTile</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isRequestFocusEnabled()" title="class or interface in javax.swing">isRequestFocusEnabled</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#isValidateRoot()" title="class or interface in javax.swing">isValidateRoot</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#paintImmediately(int, int, int, int)" title="class or interface in javax.swing">paintImmediately</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#paintImmediately(java.awt.Rectangle)" title="class or interface in javax.swing">paintImmediately</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#print(java.awt.Graphics)" title="class or interface in javax.swing">print</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#printAll(java.awt.Graphics)" title="class or interface in javax.swing">printAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#putClientProperty(java.lang.Object, java.lang.Object)" title="class or interface in javax.swing">putClientProperty</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#registerKeyboardAction(java.awt.event.ActionListener, javax.swing.KeyStroke, int)" title="class or interface in javax.swing">registerKeyboardAction</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#registerKeyboardAction(java.awt.event.ActionListener, java.lang.String, javax.swing.KeyStroke, int)" title="class or interface in javax.swing">registerKeyboardAction</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#removeAncestorListener(javax.swing.event.AncestorListener)" title="class or interface in javax.swing">removeAncestorListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#removeNotify()" title="class or interface in javax.swing">removeNotify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#removeVetoableChangeListener(java.beans.VetoableChangeListener)" title="class or interface in javax.swing">removeVetoableChangeListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#repaint(long, int, int, int, int)" title="class or interface in javax.swing">repaint</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#repaint(java.awt.Rectangle)" title="class or interface in javax.swing">repaint</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#requestDefaultFocus()" title="class or interface in javax.swing">requestDefaultFocus</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#requestFocus()" title="class or interface in javax.swing">requestFocus</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#requestFocus(boolean)" title="class or interface in javax.swing">requestFocus</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#requestFocusInWindow()" title="class or interface in javax.swing">requestFocusInWindow</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#resetKeyboardActions()" title="class or interface in javax.swing">resetKeyboardActions</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#reshape(int, int, int, int)" title="class or interface in javax.swing">reshape</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#revalidate()" title="class or interface in javax.swing">revalidate</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#scrollRectToVisible(java.awt.Rectangle)" title="class or interface in javax.swing">scrollRectToVisible</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setActionMap(javax.swing.ActionMap)" title="class or interface in javax.swing">setActionMap</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setAlignmentX(float)" title="class or interface in javax.swing">setAlignmentX</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setAlignmentY(float)" title="class or interface in javax.swing">setAlignmentY</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setAutoscrolls(boolean)" title="class or interface in javax.swing">setAutoscrolls</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setBackground(java.awt.Color)" title="class or interface in javax.swing">setBackground</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setBorder(javax.swing.border.Border)" title="class or interface in javax.swing">setBorder</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setComponentPopupMenu(javax.swing.JPopupMenu)" title="class or interface in javax.swing">setComponentPopupMenu</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setDebugGraphicsOptions(int)" title="class or interface in javax.swing">setDebugGraphicsOptions</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setDefaultLocale(java.util.Locale)" title="class or interface in javax.swing">setDefaultLocale</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setDoubleBuffered(boolean)" title="class or interface in javax.swing">setDoubleBuffered</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setEnabled(boolean)" title="class or interface in javax.swing">setEnabled</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setFocusTraversalKeys(int, java.util.Set)" title="class or interface in javax.swing">setFocusTraversalKeys</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setFont(java.awt.Font)" title="class or interface in javax.swing">setFont</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setForeground(java.awt.Color)" title="class or interface in javax.swing">setForeground</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setInheritsPopupMenu(boolean)" title="class or interface in javax.swing">setInheritsPopupMenu</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setInputMap(int, javax.swing.InputMap)" title="class or interface in javax.swing">setInputMap</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setInputVerifier(javax.swing.InputVerifier)" title="class or interface in javax.swing">setInputVerifier</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setMaximumSize(java.awt.Dimension)" title="class or interface in javax.swing">setMaximumSize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setMinimumSize(java.awt.Dimension)" title="class or interface in javax.swing">setMinimumSize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setNextFocusableComponent(java.awt.Component)" title="class or interface in javax.swing">setNextFocusableComponent</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setOpaque(boolean)" title="class or interface in javax.swing">setOpaque</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setPreferredSize(java.awt.Dimension)" title="class or interface in javax.swing">setPreferredSize</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setRequestFocusEnabled(boolean)" title="class or interface in javax.swing">setRequestFocusEnabled</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setToolTipText(java.lang.String)" title="class or interface in javax.swing">setToolTipText</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setTransferHandler(javax.swing.TransferHandler)" title="class or interface in javax.swing">setTransferHandler</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setVerifyInputWhenFocusTarget(boolean)" title="class or interface in javax.swing">setVerifyInputWhenFocusTarget</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setVisible(boolean)" title="class or interface in javax.swing">setVisible</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#unregisterKeyboardAction(javax.swing.KeyStroke)" title="class or interface in javax.swing">unregisterKeyboardAction</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#update(java.awt.Graphics)" title="class or interface in javax.swing">update</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#updateUI()" title="class or interface in javax.swing">updateUI</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_Container">
@@ -527,13 +387,13 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="setDefaults(processing.app.syntax.TextAreaDefaults)">
+<a name="updateAppearance()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setDefaults</h4>
-<pre>public&nbsp;void&nbsp;setDefaults(<a href="../../../processing/app/syntax/TextAreaDefaults.html" title="class in processing.app.syntax">TextAreaDefaults</a>&nbsp;defaults)</pre>
+<h4>updateAppearance</h4>
+<pre>public&nbsp;void&nbsp;updateAppearance()</pre>
 </li>
 </ul>
 <a name="getCompositionTextpainter()">
@@ -543,7 +403,7 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <li class="blockList">
 <h4>getCompositionTextpainter</h4>
 <pre>public&nbsp;<a href="../../../processing/app/syntax/im/CompositionTextPainter.html" title="class in processing.app.syntax.im">CompositionTextPainter</a>&nbsp;getCompositionTextpainter()</pre>
-<div class="block">Get CompositionTextPainter. if CompositionTextPainter is not created, create it.</div>
+<div class="block">Get CompositionTextPainter, creating one if it doesn't exist.</div>
 </li>
 </ul>
 <a name="getStyles()">
@@ -558,91 +418,6 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../processing/app/syntax/Token.html" title="class in processing.app.syntax"><code>Token</code></a></dd></dl>
 </li>
 </ul>
-<a name="setStyles(processing.app.syntax.SyntaxStyle[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setStyles</h4>
-<pre>public final&nbsp;void&nbsp;setStyles(<a href="../../../processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax">SyntaxStyle</a>[]&nbsp;styles)</pre>
-<div class="block">Sets the syntax styles used to paint colorized text. Entry <i>n</i>
- will be used to paint tokens with id = <i>n</i>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>styles</code> - The syntax styles</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../processing/app/syntax/Token.html" title="class in processing.app.syntax"><code>Token</code></a></dd></dl>
-</li>
-</ul>
-<a name="getCaretColor()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getCaretColor</h4>
-<pre>public final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;getCaretColor()</pre>
-<div class="block">Returns the caret color.</div>
-</li>
-</ul>
-<a name="setCaretColor(java.awt.Color)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setCaretColor</h4>
-<pre>public final&nbsp;void&nbsp;setCaretColor(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;caretColor)</pre>
-<div class="block">Sets the caret color.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>caretColor</code> - The caret color</dd></dl>
-</li>
-</ul>
-<a name="getSelectionColor()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSelectionColor</h4>
-<pre>public final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;getSelectionColor()</pre>
-<div class="block">Returns the selection color.</div>
-</li>
-</ul>
-<a name="setSelectionColor(java.awt.Color)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setSelectionColor</h4>
-<pre>public final&nbsp;void&nbsp;setSelectionColor(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;selectionColor)</pre>
-<div class="block">Sets the selection color.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>selectionColor</code> - The selection color</dd></dl>
-</li>
-</ul>
-<a name="getLineHighlightColor()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getLineHighlightColor</h4>
-<pre>public final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;getLineHighlightColor()</pre>
-<div class="block">Returns the line highlight color.</div>
-</li>
-</ul>
-<a name="setLineHighlightColor(java.awt.Color)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setLineHighlightColor</h4>
-<pre>public final&nbsp;void&nbsp;setLineHighlightColor(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;lineHighlightColor)</pre>
-<div class="block">Sets the line highlight color.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>lineHighlightColor</code> - The line highlight color</dd></dl>
-</li>
-</ul>
-<a name="isLineHighlightEnabled()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isLineHighlightEnabled</h4>
-<pre>public final&nbsp;boolean&nbsp;isLineHighlightEnabled()</pre>
-<div class="block">Returns true if line highlight is enabled, false otherwise.</div>
-</li>
-</ul>
 <a name="setLineHighlightEnabled(boolean)">
 <!--   -->
 </a>
@@ -653,27 +428,6 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <div class="block">Enables or disables current line highlighting.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>lineHighlight</code> - True if current line highlight
  should be enabled, false otherwise</dd></dl>
-</li>
-</ul>
-<a name="getBracketHighlightColor()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getBracketHighlightColor</h4>
-<pre>public final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;getBracketHighlightColor()</pre>
-<div class="block">Returns the bracket highlight color.</div>
-</li>
-</ul>
-<a name="setBracketHighlightColor(java.awt.Color)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setBracketHighlightColor</h4>
-<pre>public final&nbsp;void&nbsp;setBracketHighlightColor(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;bracketHighlightColor)</pre>
-<div class="block">Sets the bracket highlight color.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>bracketHighlightColor</code> - The bracket highlight color</dd></dl>
 </li>
 </ul>
 <a name="isBracketHighlightEnabled()">
@@ -688,20 +442,6 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
  one before the caret (if any) is highlighted.</div>
 </li>
 </ul>
-<a name="setBracketHighlightEnabled(boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setBracketHighlightEnabled</h4>
-<pre>public final&nbsp;void&nbsp;setBracketHighlightEnabled(boolean&nbsp;bracketHighlight)</pre>
-<div class="block">Enables or disables bracket highlighting.
- When bracket highlighting is enabled, the bracket matching the
- one before the caret (if any) is highlighted.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>bracketHighlight</code> - True if bracket highlighting should be
- enabled, false otherwise</dd></dl>
-</li>
-</ul>
 <a name="isBlockCaretEnabled()">
 <!--   -->
 </a>
@@ -710,94 +450,6 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <h4>isBlockCaretEnabled</h4>
 <pre>public final&nbsp;boolean&nbsp;isBlockCaretEnabled()</pre>
 <div class="block">Returns true if the caret should be drawn as a block, false otherwise.</div>
-</li>
-</ul>
-<a name="setBlockCaretEnabled(boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setBlockCaretEnabled</h4>
-<pre>public final&nbsp;void&nbsp;setBlockCaretEnabled(boolean&nbsp;blockCaret)</pre>
-<div class="block">Sets if the caret should be drawn as a block, false otherwise.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>blockCaret</code> - True if the caret should be drawn as a block,
- false otherwise.</dd></dl>
-</li>
-</ul>
-<a name="getEOLMarkerColor()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getEOLMarkerColor</h4>
-<pre>public final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;getEOLMarkerColor()</pre>
-<div class="block">Returns the EOL marker color.</div>
-</li>
-</ul>
-<a name="setEOLMarkerColor(java.awt.Color)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setEOLMarkerColor</h4>
-<pre>public final&nbsp;void&nbsp;setEOLMarkerColor(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;eolMarkerColor)</pre>
-<div class="block">Sets the EOL marker color.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>eolMarkerColor</code> - The EOL marker color</dd></dl>
-</li>
-</ul>
-<a name="getEOLMarkersPainted()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getEOLMarkersPainted</h4>
-<pre>public final&nbsp;boolean&nbsp;getEOLMarkersPainted()</pre>
-<div class="block">Returns true if EOL markers are drawn, false otherwise.</div>
-</li>
-</ul>
-<a name="setEOLMarkersPainted(boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setEOLMarkersPainted</h4>
-<pre>public final&nbsp;void&nbsp;setEOLMarkersPainted(boolean&nbsp;eolMarkers)</pre>
-<div class="block">Sets if EOL markers are to be drawn.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>eolMarkers</code> - True if EOL markers should be drawn, false otherwise</dd></dl>
-</li>
-</ul>
-<a name="setAntialias(boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setAntialias</h4>
-<pre>public final&nbsp;void&nbsp;setAntialias(boolean&nbsp;antialias)</pre>
-</li>
-</ul>
-<a name="addCustomHighlight(processing.app.syntax.TextAreaPainter.Highlight)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>addCustomHighlight</h4>
-<pre>public&nbsp;void&nbsp;addCustomHighlight(<a href="../../../processing/app/syntax/TextAreaPainter.Highlight.html" title="interface in processing.app.syntax">TextAreaPainter.Highlight</a>&nbsp;highlight)</pre>
-<div class="block">Adds a custom highlight painter.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>highlight</code> - The highlight</dd></dl>
-</li>
-</ul>
-<a name="getToolTipText(java.awt.event.MouseEvent)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getToolTipText</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getToolTipText(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseEvent.html?is-external=true" title="class or interface in java.awt.event">MouseEvent</a>&nbsp;evt)</pre>
-<div class="block">Returns the tool tip to display at the specified location.</div>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getToolTipText(java.awt.event.MouseEvent)" title="class or interface in javax.swing">getToolTipText</a></code>&nbsp;in class&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a></code></dd>
-<dt><span class="strong">Parameters:</span></dt><dd><code>evt</code> - The mouse event</dd></dl>
 </li>
 </ul>
 <a name="getFontMetrics()">
@@ -810,19 +462,13 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <div class="block">Returns the font metrics used by this component.</div>
 </li>
 </ul>
-<a name="setFont(java.awt.Font)">
+<a name="getFontMetrics(processing.app.syntax.SyntaxStyle)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setFont</h4>
-<pre>public&nbsp;void&nbsp;setFont(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font)</pre>
-<div class="block">Sets the font for this component. This is overridden to update the
- cached font metrics and to recalculate which lines are visible.</div>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#setFont(java.awt.Font)" title="class or interface in javax.swing">setFont</a></code>&nbsp;in class&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a></code></dd>
-<dt><span class="strong">Parameters:</span></dt><dd><code>font</code> - The font</dd></dl>
+<h4>getFontMetrics</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/FontMetrics.html?is-external=true" title="class or interface in java.awt">FontMetrics</a>&nbsp;getFontMetrics(<a href="../../../processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax">SyntaxStyle</a>&nbsp;style)</pre>
 </li>
 </ul>
 <a name="paint(java.awt.Graphics)">
@@ -839,19 +485,13 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <dt><span class="strong">Parameters:</span></dt><dd><code>gfx</code> - The graphics context</dd></dl>
 </li>
 </ul>
-<a name="print(java.awt.Graphics, java.awt.print.PageFormat, int)">
+<a name="getPrintable()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>print</h4>
-<pre>public&nbsp;int&nbsp;print(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Graphics.html?is-external=true" title="class or interface in java.awt">Graphics</a>&nbsp;g,
-        <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/PageFormat.html?is-external=true" title="class or interface in java.awt.print">PageFormat</a>&nbsp;pageFormat,
-        int&nbsp;pageIndex)</pre>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/Printable.html?is-external=true#print(java.awt.Graphics, java.awt.print.PageFormat, int)" title="class or interface in java.awt.print">print</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/Printable.html?is-external=true" title="class or interface in java.awt.print">Printable</a></code></dd>
-</dl>
+<h4>getPrintable</h4>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/Printable.html?is-external=true" title="class or interface in java.awt.print">Printable</a>&nbsp;getPrintable()</pre>
 </li>
 </ul>
 <a name="invalidateLine(int)">
@@ -865,28 +505,6 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>line</code> - The line to invalidate</dd></dl>
 </li>
 </ul>
-<a name="invalidateLineRange(int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>invalidateLineRange</h4>
-<pre>public final&nbsp;void&nbsp;invalidateLineRange(int&nbsp;firstLine,
-                       int&nbsp;lastLine)</pre>
-<div class="block">Marks a range of lines as needing a repaint.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>firstLine</code> - The first line to invalidate</dd><dd><code>lastLine</code> - The last line to invalidate</dd></dl>
-</li>
-</ul>
-<a name="invalidateSelectedLines()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>invalidateSelectedLines</h4>
-<pre>public final&nbsp;void&nbsp;invalidateSelectedLines()</pre>
-<div class="block">Repaints the lines containing the selection.</div>
-</li>
-</ul>
 <a name="nextTabStop(float, int)">
 <!--   -->
 </a>
@@ -895,13 +513,11 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <h4>nextTabStop</h4>
 <pre>public&nbsp;float&nbsp;nextTabStop(float&nbsp;x,
                 int&nbsp;tabOffset)</pre>
-<div class="block">Implementation of TabExpander interface. Returns next tab stop after
- a specified point.</div>
+<div class="block">Returns next tab stop after a specified point.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/TabExpander.html?is-external=true#nextTabStop(float, int)" title="class or interface in javax.swing.text">nextTabStop</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/TabExpander.html?is-external=true" title="class or interface in javax.swing.text">TabExpander</a></code></dd>
-<dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - The x co-ordinate</dd><dd><code>tabOffset</code> - Ignored</dd>
-<dt><span class="strong">Returns:</span></dt><dd>The next tab stop after <i>x</i></dd></dl>
+</dl>
 </li>
 </ul>
 <a name="getPreferredSize()">
@@ -911,7 +527,6 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <li class="blockList">
 <h4>getPreferredSize</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Dimension.html?is-external=true" title="class or interface in java.awt">Dimension</a>&nbsp;getPreferredSize()</pre>
-<div class="block">Returns the painter's preferred size.</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getPreferredSize()" title="class or interface in javax.swing">getPreferredSize</a></code>&nbsp;in class&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a></code></dd>
@@ -925,7 +540,6 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <li class="blockList">
 <h4>getMinimumSize</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Dimension.html?is-external=true" title="class or interface in java.awt">Dimension</a>&nbsp;getMinimumSize()</pre>
-<div class="block">Returns the painter's minimum size.</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true#getMinimumSize()" title="class or interface in javax.swing">getMinimumSize</a></code>&nbsp;in class&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a></code></dd>

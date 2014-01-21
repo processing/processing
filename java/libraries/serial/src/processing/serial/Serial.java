@@ -166,7 +166,7 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
-  
+
   public boolean getCTS() {
     try {
       return port.isCTS();
@@ -189,7 +189,7 @@ public class Serial implements SerialPortEventListener {
     return SerialPortList.getPortProperties(portName);
   }
 
-  
+
   public int last() {
     if (inBuffer == readOffset) {
       return -1;
@@ -366,6 +366,10 @@ public class Serial implements SerialPortEventListener {
         while (0 < (toRead = port.getInputBufferBytesCount())) {
           // this method can be called from the context of another thread
           synchronized (buffer) {
+            // read one byte at a time if the sketch is using serialEvent
+            if (serialEventMethod != null) {
+              toRead = 1;
+            }
             // enlarge buffer if necessary
             if (buffer.length < inBuffer+toRead) {
               byte temp[] = new byte[buffer.length<<1];
@@ -376,27 +380,27 @@ public class Serial implements SerialPortEventListener {
             byte[] read = port.readBytes(toRead);
             System.arraycopy(read, 0, buffer, inBuffer, read.length);
             inBuffer += read.length;
-            if (serialEventMethod != null) {
-              if ((0 < bufferUntilSize && bufferUntilSize <= inBuffer-readOffset) ||
-                (0 == bufferUntilSize && bufferUntilByte == buffer[inBuffer-1])) {
-                try {
-                  // serialEvent() is invoked in the context of the current (serial) thread
-                  // which means that serialization and atomic variables need to be used to
-                  // guarantee reliable operation (and better not draw() etc..)
-                  // serialAvailable() does not provide any real benefits over using
-                  // available() and read() inside draw - but this function has no
-                  // thread-safety issues since it's being invoked during pre in the context
-                  // of the Processing applet
-                  serialEventMethod.invoke(parent, new Object[] { this });
-                } catch (Exception e) {
-                  System.err.println("Error, disabling serialEvent() for "+port.getPortName());
-                  System.err.println(e.getLocalizedMessage());
-                  serialEventMethod = null;
-                }
+          }
+          if (serialEventMethod != null) {
+            if ((0 < bufferUntilSize && bufferUntilSize <= inBuffer-readOffset) ||
+              (0 == bufferUntilSize && bufferUntilByte == buffer[inBuffer-1])) {
+              try {
+                // serialEvent() is invoked in the context of the current (serial) thread
+                // which means that serialization and atomic variables need to be used to
+                // guarantee reliable operation (and better not draw() etc..)
+                // serialAvailable() does not provide any real benefits over using
+                // available() and read() inside draw - but this function has no
+                // thread-safety issues since it's being invoked during pre in the context
+                // of the Processing applet
+                serialEventMethod.invoke(parent, new Object[] { this });
+              } catch (Exception e) {
+                System.err.println("Error, disabling serialEvent() for "+port.getPortName());
+                System.err.println(e.getLocalizedMessage());
+                serialEventMethod = null;
               }
             }
-            invokeSerialAvailable = true;
           }
+          invokeSerialAvailable = true;
         }
       } catch (SerialPortException e) {
         throw new RuntimeException("Error reading from serial port " + e.getPortName() + ": " + e.getExceptionType());

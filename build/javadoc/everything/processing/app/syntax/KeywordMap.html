@@ -162,6 +162,16 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/syntax/KeywordMap.html#regionMatches(boolean, javax.swing.text.Segment, int, char[])">regionMatches</a></strong>(boolean&nbsp;ignoreCase,
+             <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Segment.html?is-external=true" title="class or interface in javax.swing.text">Segment</a>&nbsp;text,
+             int&nbsp;offset,
+             char[]&nbsp;match)</code>
+<div class="block">Checks if a subregion of a <code>Segment</code> is equal to a
+ character array.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/KeywordMap.html#setIgnoreCase(boolean)">setIgnoreCase</a></strong>(boolean&nbsp;ignoreCase)</code>
 <div class="block">Sets if the keyword map should be case insensitive.</div>
@@ -220,6 +230,21 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
           boolean&nbsp;paren)</pre>
 <div class="block">Looks up a key.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>text</code> - The text segment</dd><dd><code>offset</code> - The offset of the substring within the text segment</dd><dd><code>length</code> - The length of the substring</dd></dl>
+</li>
+</ul>
+<a name="regionMatches(boolean, javax.swing.text.Segment, int, char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>regionMatches</h4>
+<pre>public static&nbsp;boolean&nbsp;regionMatches(boolean&nbsp;ignoreCase,
+                    <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Segment.html?is-external=true" title="class or interface in javax.swing.text">Segment</a>&nbsp;text,
+                    int&nbsp;offset,
+                    char[]&nbsp;match)</pre>
+<div class="block">Checks if a subregion of a <code>Segment</code> is equal to a
+ character array.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>ignoreCase</code> - True if case should be ignored, false otherwise</dd><dd><code>text</code> - The segment</dd><dd><code>offset</code> - The offset into the segment</dd><dd><code>match</code> - The character array to match</dd></dl>
 </li>
 </ul>
 <a name="add(java.lang.String, byte, boolean)">

@@ -12,7 +12,7 @@ PImage img;
 
 void setup() {
   size(640, 360);
-  img = loadImage("http://processing.org/img/processing.gif");
+  img = loadImage("http://processing.org/img/processing-web.png");
   noLoop();
 }
 

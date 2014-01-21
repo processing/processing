@@ -125,6 +125,11 @@ public class PLWJGL extends PGL {
     if (glu == null) glu = new GLU();
   }
 
+  
+  public Canvas getCanvas() {
+    return canvas;
+  } 
+  
 
   protected void setFps(float fps) {
     if (!setFps || targetFps != fps) {
@@ -1990,5 +1995,10 @@ public class PLWJGL extends PGL {
 
   public void drawBuffer(int buf) {
     GL11.glDrawBuffer(buf);
+  }
+
+
+  @Override
+  protected void getGL(PGL pgl) {
   }
 }
