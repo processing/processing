@@ -508,7 +508,9 @@ public class PGraphicsOpenGL extends PGraphics {
     "Stroke path is too long, some bevel triangles won't be added";
   static final String TESSELLATION_ERROR =
     "Tessellation Error: %1$s";
-
+  static final String TEXTURE_SIZE_ERROR =
+    "The backing texture for the primary surface has a width/height different " +
+    "from the one given in size().";
 
   //////////////////////////////////////////////////////////////
 
@@ -5348,7 +5350,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * Don't use this inside glBegin/glEnd otherwise it'll
    * throw an GL_INVALID_OPERATION error.
    */
-  public void report(String where) {
+  protected void report(String where) {
     if (!hints[DISABLE_OPENGL_ERRORS]) {
       int err = pgl.getError();
       if (err != 0) {
@@ -5499,11 +5501,12 @@ public class PGraphicsOpenGL extends PGraphics {
       // non-multisampled FBO, texture is actually the color buffer used by the
       // color FBO, so with the copy operation we should be done updating the
       // (off)screen buffer.
-
       // First, copy the pixels to the texture. We don't need to invert the
       // pixel copy because the texture will be drawn inverted.
+      int tw = PApplet.min(texture.glWidth - x, w);
+      int th = PApplet.min(texture.glHeight - y, h);
       pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
-                        x, y, w, h, nativePixelBuffer);
+                        x, y, tw, th, nativePixelBuffer);
       beginPixelsOp(OP_WRITE);
       drawTexture(x, y, w, h);
       endPixelsOp();
@@ -6257,6 +6260,10 @@ public class PGraphicsOpenGL extends PGraphics {
     if (pgl.isFBOBacked()) {
       texture = pgl.wrapBackTexture(texture);
       ptexture = pgl.wrapFrontTexture(ptexture);
+
+      if (texture.glWidth != width || texture.glHeight != height) {
+        PGraphics.showWarning(TEXTURE_SIZE_ERROR);
+      }
     }
   }
 

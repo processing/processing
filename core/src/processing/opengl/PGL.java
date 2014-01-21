@@ -350,12 +350,6 @@ public abstract class PGL {
   }
 
 
-  protected void checkPrimary() {
-    if (!primaryPGL) {
-      throw new RuntimeException(NONPRIMARY_ERROR);
-    }
-  }
-
   /**
    * Return the native canvas the OpenGL context associated to this PGL object
    * is rendering to (if any).
@@ -376,8 +370,6 @@ public abstract class PGL {
 
 
   protected void deleteSurface() {
-    checkPrimary();
-
     if (threadIsCurrent() && fboLayerCreated) {
       deleteTextures(2, glColorTex);
       deleteFramebuffers(1, glColorFbo);
@@ -395,13 +387,11 @@ public abstract class PGL {
 
 
   protected int getReadFramebuffer()  {
-    checkPrimary();
     return fboLayerInUse ? glColorFbo.get(0) : 0;
   }
 
 
   protected int getDrawFramebuffer()  {
-    checkPrimary();
     if (fboLayerInUse) return 1 < numSamples ? glMultiFbo.get(0) :
                                                glColorFbo.get(0);
     else return 0;
@@ -409,31 +399,26 @@ public abstract class PGL {
 
 
   protected int getDefaultDrawBuffer()  {
-    checkPrimary();
     return fboLayerInUse ? COLOR_ATTACHMENT0 : FRONT;
   }
 
 
   protected int getDefaultReadBuffer()  {
-    checkPrimary();
     return fboLayerInUse ? COLOR_ATTACHMENT0 : FRONT;
   }
 
 
-  protected boolean isFBOBacked() {
-    checkPrimary();
+  protected boolean isFBOBacked() {;
     return fboLayerInUse;
   }
 
 
   protected void requestFBOLayer() {
-    checkPrimary();
     fboLayerRequested = true;
   }
 
 
   protected boolean isMultisampled() {
-    checkPrimary();
     return 1 < numSamples;
   }
 
@@ -467,7 +452,6 @@ public abstract class PGL {
 
 
   protected Texture wrapBackTexture(Texture texture) {
-    checkPrimary();
     if (texture == null) {
       texture = new Texture(pg);
       texture.init(pg.width, pg.height,
@@ -485,7 +469,6 @@ public abstract class PGL {
 
 
   protected Texture wrapFrontTexture(Texture texture)  {
-    checkPrimary();
     if (texture == null) {
       texture = new Texture(pg);
       texture.init(pg.width, pg.height,
@@ -502,7 +485,6 @@ public abstract class PGL {
 
 
   protected void bindFrontTexture() {
-    checkPrimary();
     usingFrontTex = true;
     if (!texturingIsEnabled(TEXTURE_2D)) {
       enableTexturing(TEXTURE_2D);
@@ -512,7 +494,6 @@ public abstract class PGL {
 
 
   protected void unbindFrontTexture() {
-    checkPrimary();
     if (textureIsBound(TEXTURE_2D, glColorTex.get(frontTex))) {
       // We don't want to unbind another texture
       // that might be bound instead of this one.
@@ -528,7 +509,6 @@ public abstract class PGL {
 
 
   protected void syncBackTexture() {
-    checkPrimary();
     if (usingFrontTex) needSepFrontTex = true;
     if (1 < numSamples) {
       bindFramebuffer(READ_FRAMEBUFFER, glMultiFbo.get(0));
@@ -546,7 +526,6 @@ public abstract class PGL {
 
 
   protected void beginDraw(boolean clear0) {
-    checkPrimary();
     if (needFBOLayer(clear0)) {
       if (!fboLayerCreated) createFBOLayer();
 
@@ -597,7 +576,6 @@ public abstract class PGL {
 
 
   protected void endDraw(boolean clear0) {
-    checkPrimary();
     if (fboLayerInUse) {
       syncBackTexture();
 
@@ -655,7 +633,6 @@ public abstract class PGL {
 
 
   private void createFBOLayer() {
-    System.out.println("Creating FBO layer");
     String ext = getString(EXTENSIONS);
     if (-1 < ext.indexOf("texture_non_power_of_two")) {
       fboWidth = pg.width;
