@@ -1,6 +1,10 @@
 0224 pde
 X readStringUntil() missing from new serial library
 X   https://github.com/processing/processing/issues/2174
+_ noJavaArg set to --export
+_   https://github.com/processing/processing/issues/2182
+_ decision to be made on nextTabStop() inside TextAreaPainter
+
 
 fixed in 2.1
 X init() not called on tools until later 
@@ -10,10 +14,16 @@ X   https://github.com/processing/processing/issues/1840
 
 
 high
-_ adding characters doesn't happen on position of cursor
+_ sketchPath() returns user.home in exported apps on OSX
+_   https://github.com/processing/processing/issues/2181
+_ tab characters not recognized/drawn in the editor (2.1)
 _   https://github.com/processing/processing/issues/2180
+_   https://github.com/processing/processing/issues/2183
+_   udp library has tabs in the text
 _ Chinese text is overlapped in Processing 2.1 editor
 _   https://github.com/processing/processing/issues/2173
+_ check on why 2x core.jar inside the Java folder
+_   maybe OS X Java can't look in subfolders? (just auto-adds things)
 
 
 medium
@@ -607,6 +617,9 @@ _ make available the background colors for present mode, stop button color
 _   isolate color chooser into a simpler/smaller class outside tools
 _   then can also use from inside processing applications as well
 _   http://code.google.com/p/processing/issues/detail?id=30
+_ maybe user prefs should only cover things that've changed?
+_   how to balance colors/etc being stored elsewhere
+_   ton of work to maintain this...
 
 
 PDE / Runner 
@@ -779,6 +792,8 @@ _   http://code.google.com/p/processing/issues/detail?id=632
 
 DIST / Mac OS X
 
+_ possible better option for doing retina?
+_   g.getFontRenderContext().getTransform().equals(AffineTransform.getScaleInstance(2.0, 2.0))
 _ appbundler improvements
 _   don't re-copy JRE into work folder if already exists
 _   implement a splash screen

@@ -564,7 +564,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 
   
   /** Returns next tab stop after a specified point. */
-//  TabExpander tabExpander = new TabExpander() {    
+//  TabExpander tabExpander = new TabExpander() {
   @Override
   public float nextTabStop(float x, int tabOffset) {
     int offset = textArea.getHorizontalOffset();
@@ -572,7 +572,13 @@ public class TextAreaPainter extends JComponent implements TabExpander {
     return (ntabs + 1) * tabSize + offset;
   }
 //  };
-    
+
+
+  // do we go here? do will kill tabs?
+//  public float nextTabStop(float x, int tabOffset) {
+//    return x;
+//  }
+
 
   public Dimension getPreferredSize() {
     return new Dimension(fm.charWidth('w') * defaults.cols,
