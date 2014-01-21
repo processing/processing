@@ -113,7 +113,7 @@ public class PJOGL extends PGL {
       WINDOW_TOOLKIT = AWT;
       EVENTS_TOOLKIT = AWT;
       USE_FBOLAYER_BY_DEFAULT = true;
-      USE_JOGL_FBOLAYER = true;
+      USE_JOGL_FBOLAYER = false;
     } else if (PApplet.platform == PConstants.LINUX) {
       WINDOW_TOOLKIT = AWT;
       EVENTS_TOOLKIT = AWT;
@@ -820,6 +820,8 @@ public class PJOGL extends PGL {
               frontTexAttach = (FBObject.TextureAttachment)frontFBO.
                                getColorbuffer(0);
             } else {
+              changedFrontTex = changedBackTex = sinkFBO == null;
+
               // Default setting (to save resources): the front and back
               // textures are the same.
               sinkFBO = backFBO.getSamplingSinkFBO();
@@ -827,7 +829,6 @@ public class PJOGL extends PGL {
                               getColorbuffer(0);
               frontTexAttach = backTexAttach;
             }
-
           } else {
             // w/out multisampling, rendering is done on the back buffer.
             frontFBO = fboDrawable.getFBObject(GL.GL_FRONT);

@@ -508,9 +508,6 @@ public class PGraphicsOpenGL extends PGraphics {
     "Stroke path is too long, some bevel triangles won't be added";
   static final String TESSELLATION_ERROR =
     "Tessellation Error: %1$s";
-  static final String TEXTURE_SIZE_ERROR =
-    "The backing texture for the primary surface has a width/height different " +
-    "from the one given in size().";
 
   //////////////////////////////////////////////////////////////
 
@@ -6260,10 +6257,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (pgl.isFBOBacked()) {
       texture = pgl.wrapBackTexture(texture);
       ptexture = pgl.wrapFrontTexture(ptexture);
-
-      if (texture.glWidth != width || texture.glHeight != height) {
-        PGraphics.showWarning(TEXTURE_SIZE_ERROR);
-      }
     }
   }
 
@@ -6428,7 +6421,7 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.disable(PGL.POLYGON_SMOOTH);
 
     if (sized) {
-      //reapplySettings();
+//      reapplySettings();
 
       // To avoid having garbage in the screen after a resize,
       // in the case background is not called in draw().
