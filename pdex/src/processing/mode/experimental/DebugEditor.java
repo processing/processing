@@ -891,13 +891,14 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       int response = Base
         .showYesNoQuestion(this,
                            "Unsaved backup found!",
-                           "An automatic backup of "
+                           "An automatic backup of \""
                                + pastSave.getParentFile().getName()
-                               + "sketch has been found. This may mean Processing quit unexpectedly last time.",
+                               + "\" sketch has been found. This may mean Processing " +
+                               "was closed unexpectedly last time.",
                            "Select YES to view it or NO to delete the backup.");
       if(response == JOptionPane.YES_OPTION){
         handleOpenInternal(pastSave.getAbsolutePath());
-        Base.showMessage("Save it", "Remember to save the backup to a specific location if you want to.");
+        Base.showMessage("Save it..", "Remember to save the backup sketch to a specific location if you want to.");
         //log(getSketch().getMainFilePath());
         return;
       }

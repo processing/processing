@@ -119,7 +119,7 @@ public class ExperimentalMode extends JavaMode {
   
   volatile public static boolean errorCheckEnabled = true, warningsEnabled = true,
       codeCompletionsEnabled = true, debugOutputEnabled = false, errorLogsEnabled = false;
-  public static int autoSaveInterval = 5; //in minutes
+  public static int autoSaveInterval = 3; //in minutes
 
   public static final String prefErrorCheck = "pdex.errorCheckEnabled",
       prefWarnings = "pdex.warningsEnabled",
