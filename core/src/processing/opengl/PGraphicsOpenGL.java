@@ -359,7 +359,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // Screen surface:
 
   /** Texture containing the current frame */
-  public Texture texture;
+  protected Texture texture;
 
   /** Texture containing the previous frame */
   protected Texture ptexture;
@@ -1223,7 +1223,7 @@ public class PGraphicsOpenGL extends PGraphics {
     PGraphicsOpenGL ppg = getPrimaryPG();
     if (ppg.currentFramebuffer != fbo) {
       ppg.currentFramebuffer = fbo;
-      ppg.currentFramebuffer.bind();
+      if (ppg.currentFramebuffer != null) ppg.currentFramebuffer.bind();
     }
   }
 
@@ -1238,7 +1238,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (ppg.currentFramebuffer != fbo) {
       ppg.currentFramebuffer.finish();
       ppg.currentFramebuffer = fbo;
-      ppg.currentFramebuffer.bind();
+      if (ppg.currentFramebuffer != null) ppg.currentFramebuffer.bind();
     }
   }
 
@@ -1805,8 +1805,11 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.depthMask(true);
     }
 
-    getCurrentFB().bind();
-    pgl.drawBuffer(getCurrentFB().getDefaultDrawBuffer());
+    FrameBuffer fb = getCurrentFB();
+    if (fb != null) {
+      getCurrentFB().bind();
+      pgl.drawBuffer(getCurrentFB().getDefaultDrawBuffer());
+    }
   }
 
   public void beginReadPixels() {
@@ -6044,7 +6047,15 @@ public class PGraphicsOpenGL extends PGraphics {
    * off the screen (or offscreen drawing surface).
    */
   public Texture getTexture() {
-    loadTexture();
+    return getTexture(true);
+  }
+
+
+  /**
+   * Not an approved function either, don't use it.
+   */
+  public Texture getTexture(boolean load) {
+    if (load) loadTexture();
     return texture;
   }
 
