@@ -27,7 +27,7 @@ public class AutoSaveUtil {
    */
   public AutoSaveUtil(DebugEditor dedit, int timeOut){
     editor = dedit;
-    if (timeOut < 5) {
+    if (timeOut < 1) { // less than 1 minute not allowed!
       saveTime = -1;
       throw new IllegalArgumentException("");      
     }
