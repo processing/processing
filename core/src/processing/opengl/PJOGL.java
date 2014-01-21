@@ -976,6 +976,9 @@ public class PJOGL extends PGL {
   }
 
   protected class NEWTWindowListener implements com.jogamp.newt.event.WindowListener {
+    public NEWTWindowListener() {
+      super();
+    }
     @Override
     public void windowGainedFocus(com.jogamp.newt.event.WindowEvent arg0) {
       pg.parent.focusGained(null);
@@ -1008,6 +1011,9 @@ public class PJOGL extends PGL {
 
   // NEWT mouse listener
   protected class NEWTMouseListener extends com.jogamp.newt.event.MouseAdapter {
+    public NEWTMouseListener() {
+      super();
+    }
     @Override
     public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
       nativeMouseEvent(e, MouseEvent.PRESS);
@@ -1044,6 +1050,9 @@ public class PJOGL extends PGL {
 
   // NEWT key listener
   protected class NEWTKeyListener extends com.jogamp.newt.event.KeyAdapter {
+    public NEWTKeyListener() {
+      super();
+    }
     @Override
     public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
       nativeKeyEvent(e, KeyEvent.PRESS);
