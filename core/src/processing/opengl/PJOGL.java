@@ -113,7 +113,7 @@ public class PJOGL extends PGL {
       WINDOW_TOOLKIT = AWT;
       EVENTS_TOOLKIT = AWT;
       USE_FBOLAYER_BY_DEFAULT = true;
-      USE_JOGL_FBOLAYER = false;
+      USE_JOGL_FBOLAYER = true;
     } else if (PApplet.platform == PConstants.LINUX) {
       WINDOW_TOOLKIT = AWT;
       EVENTS_TOOLKIT = AWT;
@@ -648,6 +648,26 @@ public class PJOGL extends PGL {
   }
 
 
+  protected void getGL(GLAutoDrawable glDrawable) {
+    context = glDrawable.getContext();
+    glContext = context.hashCode();
+    glThread = Thread.currentThread();
+
+    gl = context.getGL();
+    gl2 = gl.getGL2ES2();
+    try {
+      gl2x = gl.getGL2();
+    } catch (javax.media.opengl.GLException e) {
+      gl2x = null;
+    }
+    try {
+      gl3 = gl.getGL2GL3();
+    } catch (javax.media.opengl.GLException e) {
+      gl3 = null;
+    }
+  }
+
+
   @Override
   protected boolean canDraw() {
     return pg.initialized && pg.parent.isDisplayable();
@@ -869,25 +889,25 @@ public class PJOGL extends PGL {
       //getGL(glDrawable);
     }
 
-    private void getGL(GLAutoDrawable glDrawable) {
-      drawable = glDrawable;
-      context = glDrawable.getContext();
-      glContext = context.hashCode();
-      glThread = Thread.currentThread();
-
-      gl = context.getGL();
-      gl2 = gl.getGL2ES2();
-      try {
-        gl2x = gl.getGL2();
-      } catch (javax.media.opengl.GLException e) {
-        gl2x = null;
-      }
-      try {
-        gl3 = gl.getGL2GL3();
-      } catch (javax.media.opengl.GLException e) {
-        gl3 = null;
-      }
-    }
+//    private void getGL(GLAutoDrawable glDrawable) {
+//      drawable = glDrawable;
+//      context = glDrawable.getContext();
+//      glContext = context.hashCode();
+//      glThread = Thread.currentThread();
+//
+//      gl = context.getGL();
+//      gl2 = gl.getGL2ES2();
+//      try {
+//        gl2x = gl.getGL2();
+//      } catch (javax.media.opengl.GLException e) {
+//        gl2x = null;
+//      }
+//      try {
+//        gl3 = gl.getGL2GL3();
+//      } catch (javax.media.opengl.GLException e) {
+//        gl3 = null;
+//      }
+//    }
   }
 
   protected void nativeMouseEvent(com.jogamp.newt.event.MouseEvent nativeEvent,

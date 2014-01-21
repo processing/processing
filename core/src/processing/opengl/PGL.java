@@ -58,7 +58,7 @@ public abstract class PGL {
   protected int glContext;
 
   /** true if this is the GL interface for a primary surface PGraphics */
-  protected boolean primaryPGL;
+  public boolean primaryPGL;
 
   // ........................................................
 
@@ -914,7 +914,6 @@ public abstract class PGL {
     PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
 
     if (!ppgl.loadedTex2DShader || ppgl.tex2DShaderContext != ppgl.glContext) {
-      System.out.println("Initializing PGL texture shader");
       String vertSource = PApplet.join(texVertShaderSource, "\n");
       String fragSource = PApplet.join(tex2DFragShaderSource, "\n");
       ppgl.tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
