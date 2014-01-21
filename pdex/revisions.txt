@@ -1,4 +1,22 @@
 
+PDE X v1.0.3b - January 21, 2014
+
+New Feature
+
++ PDE X now saves a backup of your sketch every 3 minutes(configurable in preferences.txt). 
+In case of an unexpected crash, this should save the day!
+https://github.com/processing/processing-experimental/issues/36
+
+Bug fixes
+
++ Outline Window width is now fixed
+https://github.com/processing/processing-experimental/issues/31
+
++ Export Application works again on OS X
+https://github.com/processing/processing-experimental/issues/33
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
 PDE X v1.0.2b - October 21, 2013
 
 Bug fixes
