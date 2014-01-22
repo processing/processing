@@ -5,11 +5,12 @@ X remove make.sh from core.. ancient
 X remove println() from dataPath()
 X add special case for 'null' to println()
 X added print() method to IntList
-X   do for the others as well
 X fix esoteric typo with alpha and color
 X   https://github.com/processing/processing/issues/2230
 A pushStyle/popStyle should save/restore blendMode
 A   https://github.com/processing/processing/issues/2232
+A get() + video requires loadPixels in P2D/P3D
+A   https://github.com/processing/processing/issues/2202
 
 opengl
 A PImage copy() function used with P2D flips the image
@@ -29,10 +30,8 @@ X   https://github.com/processing/processing/pull/2279
 A pie arcs have stroke between endpoints in P2D/P3D
 A   https://github.com/processing/processing/issues/2233
 
-video
-A get() + video requires loadPixels in P2D/P3D
-A   https://github.com/processing/processing/issues/2202
 
+_ add print() method to other data types (not just IntList)
 
 _ run window border color changed in 2.1
 _   https://github.com/processing/processing/issues/2297
