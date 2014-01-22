@@ -672,10 +672,11 @@ public class TextAreaPainter extends JComponent implements TabExpander {
     y += fm.getHeight();
     // doesn't respect fixed width like it should
 //    x = Utilities.drawTabbedText(currentLine, x, y, gfx, this, 0);
-    int w = fm.charWidth(' ');
+//    int w = fm.charWidth(' ');
     for (int i = 0; i < currentLine.count; i++) {
       gfx.drawChars(currentLine.array, currentLine.offset+i, 1, x, y);
-      x += w;
+      x = currentLine.array[currentLine.offset + i] == '\t' ? (int)nextTabStop(x, i) : 
+          x + fm.charWidth(currentLine.array[currentLine.offset+i]);
     }
 
     // Draw characters via input method. 
@@ -767,10 +768,11 @@ public class TextAreaPainter extends JComponent implements TabExpander {
       // doesn't respect mono metrics, insists on spacing w/ fractional or something
 //      x = Utilities.drawTabbedText(line, x, y, gfx, this, 0);
 //      gfx.drawChars(line.array, line.offset, line.count, x, y);
-      int w = fm.charWidth(' ');
+//      int w = fm.charWidth(' ');
       for (int i = 0; i < line.count; i++) {
         gfx.drawChars(line.array, line.offset+i, 1, x, y);
-        x += w;
+        x = currentLine.array[currentLine.offset + i] == '\t' ? (int)nextTabStop(x, i) : 
+          x + fm.charWidth(currentLine.array[currentLine.offset+i]);
       }
       //x += fm.charsWidth(line.array, line.offset, line.count);
       //x += fm.charWidth(' ') * line.count;
