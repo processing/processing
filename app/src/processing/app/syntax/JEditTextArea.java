@@ -2384,9 +2384,15 @@ public class JEditTextArea extends JComponent
         return;
       }
 
-      if (event.isPopupTrigger() && (popup != null)) {
-        popup.show(painter, event.getX(), event.getY());
-        return;
+//      boolean windowsRightClick =
+//        Base.isWindows() && (event.getButton() == MouseEvent.BUTTON3);
+//      if ((event.isPopupTrigger() || windowsRightClick) && (popup != null)) {
+      // Windows fires the popup triger on release (see mouseReleased() below)
+      if (!Base.isWindows()) {
+        if (event.isPopupTrigger() && (popup != null)) {
+          popup.show(painter, event.getX(), event.getY());
+          return;
+        }
       }
 
       int line = yToLine(event.getY());
