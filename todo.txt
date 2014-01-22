@@ -11,13 +11,11 @@ X noJavaArg set to --export
 X   https://github.com/processing/processing/issues/2182
 X export not working on Windows
 X   https://github.com/processing/processing/issues/2219
-
-_ jnilib not loading on OS X because Contents/Java needs to be added to path
-_   https://github.com/processing/processing/pull/2269 (from gohai)
-
-_ right-click on selection is a problem on Windows
-_   https://github.com/processing/processing/issues/2210
-_   https://github.com/GKFX/processing/commit/e1a50a8f984430048bf63a57f580e8940ed46cf9
+X right-click on selection is a problem on Windows
+X   https://github.com/processing/processing/issues/2210
+G Add Contents/Java to java.library.path for loadLibrary to find .jnilib files
+X   jnilib not loading on OS X because Contents/Java needs to be added to path
+X   https://github.com/processing/processing/pull/2269
 
 serial
 G readStringUntil() missing from new serial library
