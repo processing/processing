@@ -278,7 +278,7 @@ public class PJOGL extends PGL {
       }
     }
 
-    if (canvasAWT != null && canvasNEWT != null) {
+    if (canvasAWT != null || canvasNEWT != null) {
       // Restarting...
       if (canvasAWT != null) {
         sharedCanvasAWT = null;
