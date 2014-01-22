@@ -1,3 +1,36 @@
+0224 core (2.1.1)
+X PImage resize() causes PImage not to be rendered in JAVA2D
+X   https://github.com/processing/processing/issues/2179
+X remove make.sh from core.. ancient
+X remove println() from dataPath()
+X add special case for 'null' to println()
+X added print() method to IntList
+X fix esoteric typo with alpha and color
+X   https://github.com/processing/processing/issues/2230
+A pushStyle/popStyle should save/restore blendMode
+A   https://github.com/processing/processing/issues/2232
+A get() + video requires loadPixels in P2D/P3D
+A   https://github.com/processing/processing/issues/2202
+
+opengl
+A PImage copy() function used with P2D flips the image
+A   https://github.com/processing/processing/issues/2171
+A filter shaders don't need to use the texture uniform
+A   https://github.com/processing/processing/issues/2204
+A texture() bug with stroke() in P2D
+A   https://github.com/processing/processing/issues/2205
+A allow sharing of GL context amongst multiple windows
+A   https://github.com/processing/processing/issues/1698
+A texture sampling setting is ignored when creating an offscreen PGraphics
+A   https://github.com/processing/processing/issues/1900
+A rounded rect broken with Processing 2.1 P3D renderer
+A   https://github.com/processing/processing/issues/2193
+X Clear the global PGL on dispose() (from JDF)
+X   https://github.com/processing/processing/pull/2279
+A pie arcs have stroke between endpoints in P2D/P3D
+A   https://github.com/processing/processing/issues/2233
+
+
 0223 core (2.1)
 X fix dataPath() problem with OS X (was breaking Movie)
 X alpha values from the pixels array coming back as 0

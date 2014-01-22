@@ -1,46 +1,4 @@
-0224 pde
-M fix infinite loop in Find/Replace
-M   https://github.com/processing/processing/issues/2082
-X updated to Minim 2.2
-X   https://github.com/processing/processing/pull/2250
-X minor change to bracket handling
-X   https://github.com/processing/processing/pull/2313
-X app is called procesing.app.Base
-X   https://github.com/processing/processing/issues/2217
-X noJavaArg set to --export
-X   https://github.com/processing/processing/issues/2182
-X export not working on Windows
-X   https://github.com/processing/processing/issues/2219
-X right-click on selection is a problem on Windows
-X   https://github.com/processing/processing/issues/2210
-G Add Contents/Java to java.library.path for loadLibrary to find .jnilib files
-X   jnilib not loading on OS X because Contents/Java needs to be added to path
-X   https://github.com/processing/processing/pull/2269
-
-serial
-G readStringUntil() missing from new serial library
-G   https://github.com/processing/processing/issues/2174
-G updates to serial library
-G   https://github.com/processing/processing/pull/2265
-G serial running slowly
-G   https://github.com/processing/processing/issues/2249
-G   https://github.com/processing/processing/issues/2214
-G Only read a single character at a time to emulate RXTX behavior
-G   https://github.com/processing/processing/pull/2240
-G Add basic tests for throughput and latency
-G   https://github.com/processing/processing/pull/2225
-G Add a debug() method to Serial
-G   https://github.com/processing/processing/pull/2237
-G Switch the examples over to printArray()
-G   https://github.com/processing/processing/pull/2226
-G Handle the UnsatisfiedLinkError when loading the native library fails
-G   https://github.com/processing/processing/pull/2266
-
-fixed in 2.1
-X init() not called on tools until later 
-X   https://github.com/processing/processing/issues/1859
-X Finish changes so the PDE can use an unmodified JRE
-X   https://github.com/processing/processing/issues/1840
+0225 pde
 
 
 high
