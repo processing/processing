@@ -185,7 +185,7 @@ int launch(char *commandName) {
     */
 
     // Set the library path
-    NSString *libraryPath = [NSString stringWithFormat:@"-Djava.library.path=%@/Contents/MacOS", mainBundlePath];
+    NSString *libraryPath = [NSString stringWithFormat:@"-Djava.library.path=:%@/Contents/Java:%@/Contents/MacOS", mainBundlePath, mainBundlePath];
 
     // Get the VM options
     NSArray *options = [infoDictionary objectForKey:@JVM_OPTIONS_KEY];
