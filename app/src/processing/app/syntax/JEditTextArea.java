@@ -2384,15 +2384,15 @@ public class JEditTextArea extends JComponent
         return;
       }
 
-//      boolean windowsRightClick =
-//        Base.isWindows() && (event.getButton() == MouseEvent.BUTTON3);
-//      if ((event.isPopupTrigger() || windowsRightClick) && (popup != null)) {
-      // Windows fires the popup triger on release (see mouseReleased() below)
-      if (!Base.isWindows()) {
-        if (event.isPopupTrigger() && (popup != null)) {
-          popup.show(painter, event.getX(), event.getY());
-          return;
-        }
+      boolean windowsRightClick =
+        Base.isWindows() && (event.getButton() == MouseEvent.BUTTON3);
+      if ((event.isPopupTrigger() || windowsRightClick) && (popup != null)) {
+//      // Windows fires the popup trigger on release (see mouseReleased() below)(
+//      if (!Base.isWindows()) {
+//        if (event.isPopupTrigger() && (popup != null)) {
+        popup.show(painter, event.getX(), event.getY());
+        return;
+//        }
       }
 
       int line = yToLine(event.getY());
@@ -2429,14 +2429,14 @@ public class JEditTextArea extends JComponent
     }
 
 
-    // Because isPopupTrigger() is handled differently across platforms, 
-    // it may fire during release, or during the press.
-    // http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseEvent.html#isPopupTrigger()
-    public void mouseReleased(MouseEvent event) {
-      if (event.isPopupTrigger() && (popup != null)) {
-        popup.show(painter, event.getX(), event.getY());
-      }
-    }
+//    // Because isPopupTrigger() is handled differently across platforms, 
+//    // it may fire during release, or during the press.
+//    // http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseEvent.html#isPopupTrigger()
+//    public void mouseReleased(MouseEvent event) {
+//      if (event.isPopupTrigger() && (popup != null)) {
+//        popup.show(painter, event.getX(), event.getY());
+//      }
+//    }
     
     
     private void doSingleClick(MouseEvent evt, int line, int offset, int dot) {
