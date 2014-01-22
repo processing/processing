@@ -4512,7 +4512,9 @@ public class PApplet extends Applet
    * be reliably bound by the compiler.
    */
   static public void println(Object what) {
-    if (what != null && what.getClass().isArray()) {
+    if (what == null) {
+      System.out.println("null");
+    } else if (what.getClass().isArray()) {
       printArray(what);
     } else {
       System.out.println(what.toString());
@@ -7876,7 +7878,6 @@ public class PApplet extends Applet
       // http://code.google.com/p/processing/issues/detail?id=1073
       File containingFolder = new File(urlDecode(jarPath)).getParentFile();
       File dataFolder = new File(containingFolder, "data");
-      System.out.println(dataFolder);
       return new File(dataFolder, where);
     }
     // Windows, Linux, or when not using a Mac OS X .app file
@@ -10115,7 +10116,7 @@ public class PApplet extends Applet
       int alpha = (int) falpha;
       if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
       if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
-      return 0xff000000 | (gray << 16) | (gray << 8) | gray;
+      return (alpha << 24) | (gray << 16) | (gray << 8) | gray;
     }
     return g.color(fgray, falpha);
   }
@@ -10894,7 +10895,7 @@ public class PApplet extends Applet
     final String[] argsWithSketchName = new String[args.length + 1];
     System.arraycopy(args, 0, argsWithSketchName, 0, args.length);
     final String className = this.getClass().getSimpleName();
-    final  String cleanedClass =
+    final String cleanedClass =
       className.replaceAll("__[^_]+__\\$", "").replaceAll("\\$\\d+", "");
     argsWithSketchName[args.length] = cleanedClass;
     runSketch(argsWithSketchName, this);

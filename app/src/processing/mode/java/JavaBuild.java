@@ -1538,7 +1538,7 @@ public class JavaBuild {
       PrintWriter pw = PApplet.createWriter(argsFile);
 
       // Since this is only on Windows, make sure we use Windows CRLF
-      pw.print(runOptions + "\r\n");
+      pw.print(PApplet.join(runOptions.toArray(new String[0]), " ") + "\r\n");
       pw.print(sketch.getName() + "\r\n");
       pw.print(exportClassPath);
 

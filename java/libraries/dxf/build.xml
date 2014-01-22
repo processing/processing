@@ -3,7 +3,7 @@
   
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
-    <delete file="library/net.jar" />
+    <delete file="library/dxf.jar" />
   </target>
   
   <target name="compile" description="Compile sources">

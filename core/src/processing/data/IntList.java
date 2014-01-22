@@ -771,6 +771,13 @@ public class IntList implements Iterable<Integer> {
   }
 
 
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.format("[%d] %d%n", i, data[i]);
+    }
+  }
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

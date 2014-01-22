@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-11 Ben Fry and Casey Reas
+  Copyright (c) 2013-14 The Processing Foundation
+  Copyright (c) 2005-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -35,22 +36,15 @@ import processing.data.XML;
 
 /**
  * Subclass for PGraphics that implements the graphics API using Java2D.
- *
- * <p>Pixel operations too slow? As of release 0085 (the first beta),
- * the default renderer uses Java2D. It's more accurate than the renderer
- * used in alpha releases of Processing (it handles stroke caps and joins,
- * and has better polygon tessellation), but it's super slow for handling
- * pixels. At least until we get a chance to get the old 2D renderer
- * (now called P2D) working in a similar fashion, you can use
- * <TT>size(w, h, P3D)</TT> instead of <TT>size(w, h)</TT> which will
- * be faster for general pixel flipping madness. </p>
- *
- * <p>To get access to the Java 2D "Graphics2D" object for the default
+ * <p>
+ * To get access to the Java 2D "Graphics2D" object for the default
  * renderer, use:
  * <PRE>Graphics2D g2 = ((PGraphicsJava2D)g).g2;</PRE>
  * This will let you do Java 2D stuff directly, but is not supported in
  * any way shape or form. Which just means "have fun, but don't complain
- * if it breaks."</p>
+ * if it breaks."
+ * <p>
+ * Advanced <a href="http://docs.oracle.com/javase/7/docs/webnotes/tsg/TSG-Desktop/html/java2d.html">debugging notes</a> for Java2D.
  */
 public class PGraphicsJava2D extends PGraphics {
   BufferStrategy strategy;
@@ -425,6 +419,14 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   protected void defaultSettings() {
     if (!useCanvas) {
+      // Papered over another threading issue...
+      // See if this comes back now that the other issue is fixed.
+//      while (g2 == null) {
+//        try {
+//          System.out.println("sleeping until g2 is available");
+//          Thread.sleep(5);
+//        } catch (InterruptedException e) { }
+//      }
       defaultComposite = g2.getComposite();
     }
     super.defaultSettings();
@@ -1191,6 +1193,17 @@ public class PGraphicsJava2D extends PGraphics {
                         quality == 4 ?
                         RenderingHints.VALUE_INTERPOLATION_BICUBIC :
                         RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+    // http://docs.oracle.com/javase/tutorial/2d/text/renderinghints.html
+    // Oracle Java text anti-aliasing on OS X looks like s*t compared to the
+    // text rendering with Apple's old Java 6. Below, failed attempts to fix:
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//                         RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//                         RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+
 //    g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
 //                        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
   }
@@ -1214,6 +1227,8 @@ public class PGraphicsJava2D extends PGraphics {
                         RenderingHints.VALUE_ANTIALIAS_OFF);
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                         RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
   }
 
 

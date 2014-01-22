@@ -19,8 +19,7 @@ The [processing-web](https://github.com/processing/processing-web/) repository
 contains reference, examples, and the site. 
 (Please use that link to file issues regarding the web site, the examples, or the reference.)
 
-The instructions for building the source [are here](https://github.com/processing/processing/wiki/Build-Instructions), 
-although they [need an update](https://github.com/processing/processing/issues/1629).
+The instructions for building the source [are here](https://github.com/processing/processing/wiki/Build-Instructions).
 
 Someday we'll also write code style guidelines, fix all these bugs, 
 throw together hundreds of unit tests, and solve the Israeli-Palestinian conflict. 

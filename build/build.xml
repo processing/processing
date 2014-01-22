@@ -152,7 +152,7 @@
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.update.macosx" value="45" />
+  <property name="jdk.update.macosx" value="51" />
   <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_${jdk.update.macosx}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
@@ -542,10 +542,11 @@
       <option value="-Xmx256M" />
       -->
 
+      <option value="-Dapple.awt.application.name=Processing" />
+
       <option value="-Dapple.laf.useScreenMenuBar=true" />
       <option value="-Dcom.apple.macos.use-file-dialog-packages=true" />
       <option value="-Dcom.apple.macos.useScreenMenuBar=true" />
-      <option value="-Dcom.apple.mrj.application.apple.menu.about.name=${bundle.name}" />
       <option value="-Dcom.apple.smallTabs=true" />
 
 <!--

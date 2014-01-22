@@ -477,7 +477,7 @@ public class PImage implements PConstants, Cloneable {
     if (pixels == null || pixels.length != width*height) {
       pixels = new int[width*height];
     }
-    isLoaded();
+    setLoaded();
   }
 
 

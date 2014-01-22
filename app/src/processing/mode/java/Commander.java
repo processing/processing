@@ -48,7 +48,7 @@ public class Commander implements RunnerListener {
   static final String forceArg = "--force";
   static final String outputArg = "--output=";
   static final String exportApplicationArg = "--export";
-  static final String noJavaArg = "--export";
+  static final String noJavaArg = "--no-java";
   static final String platformArg = "--platform=";
   static final String bitsArg = "--bits=";
 //  static final String preferencesArg = "--preferences=";
@@ -62,19 +62,19 @@ public class Commander implements RunnerListener {
   static final int EXPORT = 4;
 
   Sketch sketch;
-  
+
   PrintStream systemOut;
   PrintStream systemErr;
 
 
-  static public void main(String[] args) {    
+  static public void main(String[] args) {
     // Do this early so that error messages go to the console
     Base.setCommandLine();
     // init the platform so that prefs and other native code is ready to go
     Base.initPlatform();
     // make sure a full JDK is installed
     Base.initRequirements();
-    
+
     // launch command line handler
     new Commander(args);
   }
@@ -93,22 +93,22 @@ public class Commander implements RunnerListener {
 //    int platformBits = 0;
     int platformBits = Base.getNativeBits();
     int task = HELP;
-    boolean embedJava = true; 
+    boolean embedJava = true;
 
     // Turns out the output goes as MacRoman or something else useless.
     // http://code.google.com/p/processing/issues/detail?id=1418
     try {
       systemOut = new PrintStream(System.out, true, "UTF-8");
       systemErr = new PrintStream(System.err, true, "UTF-8");
-      
+
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
       System.exit(1);
     }
-    
+
 //    File preferencesFile = Base.getSettingsFile("preferences.txt");
 //    System.out.println("Preferences file at " + preferencesFile.getAbsolutePath());
-    
+
     for (String arg : args) {
       if (arg.length() == 0) {
         // ignore it, just the crappy shell script
@@ -133,7 +133,7 @@ public class Commander implements RunnerListener {
 
       } else if (arg.equals(exportApplicationArg)) {
         task = EXPORT;
-        
+
       } else if (arg.equals(noJavaArg)) {
         embedJava = false;
 
@@ -196,6 +196,7 @@ public class Commander implements RunnerListener {
       System.exit(0);
     }
 
+<<<<<<< HEAD
     if (outputSet) {
       if (outputPath == null) {
         complainAndQuit("An output path must be specified.", true);
@@ -213,6 +214,19 @@ public class Commander implements RunnerListener {
       
       if (!outputFolder.mkdirs()) {
         complainAndQuit("Could not create the output folder.", false);
+=======
+    if (outputPath == null) {
+      complainAndQuit("An output path must be specified.", true);
+    }
+
+    outputFolder = new File(outputPath);
+    if (outputFolder.exists()) {
+      if (force) {
+        Base.removeDir(outputFolder);
+      } else {
+        complainAndQuit("The output folder already exists. " +
+                                    "Use --force to remove it.", false);
+>>>>>>> remotes/upstream/master
       }
     }
 
@@ -331,9 +345,9 @@ public class Commander implements RunnerListener {
         // TODO if column not specified, should just select the whole line.
         // But what's the correct syntax for that?
         systemErr.println(filename + ":" +
-          line + ":" + column + ":" + 
+          line + ":" + column + ":" +
           line + ":" + column + ":" + " " + re.getMessage());
-        
+
       } else {  // no line number, pass the trace along to the user
         exception.printStackTrace();
       }

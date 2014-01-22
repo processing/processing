@@ -290,9 +290,9 @@ public class PShapeOpenGL extends PShape {
   }
 
 
-  public PShapeOpenGL(PApplet parent, int family) {
-    pg = PGraphicsOpenGL.pgCurrent;
-    pgl = PGraphicsOpenGL.pgl;
+  public PShapeOpenGL(PGraphicsOpenGL pg, int family) {
+    this.pg = pg;
+    pgl = pg.pgl;
     context = pgl.createEmptyContext();
 
     glPolyVertex = 0;
@@ -568,20 +568,19 @@ public class PShapeOpenGL extends PShape {
   // Shape creation (temporary hack)
 
 
-  public static PShapeOpenGL createShape3D(PApplet parent, PShape src) {
+  public static PShapeOpenGL createShape3D(PGraphicsOpenGL pg, PShape src) {
     PShapeOpenGL dest = null;
     if (src.getFamily() == GROUP) {
-      dest = PGraphics3D.createShapeImpl(parent, GROUP);
-      copyGroup3D(parent, src, dest);
+      dest = PGraphics3D.createShapeImpl(pg, GROUP);
+      copyGroup3D(pg, src, dest);
     } else if (src.getFamily() == PRIMITIVE) {
-      dest = PGraphics3D.createShapeImpl(parent, src.getKind(),
-                                         src.getParams());
+      dest = PGraphics3D.createShapeImpl(pg, src.getKind(), src.getParams());
       PShape.copyPrimitive(src, dest);
     } else if (src.getFamily() == GEOMETRY) {
-      dest = PGraphics3D.createShapeImpl(parent, PShape.GEOMETRY);
+      dest = PGraphics3D.createShapeImpl(pg, PShape.GEOMETRY);
       PShape.copyGeometry(src, dest);
     } else if (src.getFamily() == PATH) {
-      dest = PGraphics3D.createShapeImpl(parent, PATH);
+      dest = PGraphics3D.createShapeImpl(pg, PATH);
       PShape.copyPath(src, dest);
     }
     dest.setName(src.getName());
@@ -592,20 +591,19 @@ public class PShapeOpenGL extends PShape {
   }
 
 
-  static public PShapeOpenGL createShape2D(PApplet parent, PShape src) {
+  static public PShapeOpenGL createShape2D(PGraphicsOpenGL pg, PShape src) {
     PShapeOpenGL dest = null;
     if (src.getFamily() == GROUP) {
-      dest = PGraphics2D.createShapeImpl(parent, GROUP);
-      copyGroup2D(parent, src, dest);
+      dest = PGraphics2D.createShapeImpl(pg, GROUP);
+      copyGroup2D(pg, src, dest);
     } else if (src.getFamily() == PRIMITIVE) {
-      dest = PGraphics2D.createShapeImpl(parent, src.getKind(),
-                                         src.getParams());
+      dest = PGraphics2D.createShapeImpl(pg, src.getKind(), src.getParams());
       PShape.copyPrimitive(src, dest);
     } else if (src.getFamily() == GEOMETRY) {
-      dest = PGraphics2D.createShapeImpl(parent, PShape.GEOMETRY);
+      dest = PGraphics2D.createShapeImpl(pg, PShape.GEOMETRY);
       PShape.copyGeometry(src, dest);
     } else if (src.getFamily() == PATH) {
-      dest = PGraphics2D.createShapeImpl(parent, PATH);
+      dest = PGraphics2D.createShapeImpl(pg, PATH);
       PShape.copyPath(src, dest);
     }
     dest.setName(src.getName());
@@ -615,25 +613,25 @@ public class PShapeOpenGL extends PShape {
   }
 
 
-  static public void copyGroup3D(PApplet parent, PShape src, PShape dest) {
+  static public void copyGroup3D(PGraphicsOpenGL pg, PShape src, PShape dest) {
     copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
 
     for (int i = 0; i < src.getChildCount(); i++) {
-      PShape c = createShape3D(parent, src.getChild(i));
+      PShape c = createShape3D(pg, src.getChild(i));
       dest.addChild(c);
     }
   }
 
 
-  static public void copyGroup2D(PApplet parent, PShape src, PShape dest) {
+  static public void copyGroup2D(PGraphicsOpenGL pg, PShape src, PShape dest) {
     copyMatrix(src, dest);
     copyStyles(src, dest);
     copyImage(src, dest);
 
     for (int i = 0; i < src.getChildCount(); i++) {
-      PShape c = createShape2D(parent, src.getChild(i));
+      PShape c = createShape2D(pg, src.getChild(i));
       dest.addChild(c);
     }
   }
@@ -2413,9 +2411,9 @@ public class PShapeOpenGL extends PShape {
 
     PShape tess;
     if (is3D()) {
-      tess = PGraphics3D.createShapeImpl(pg.parent, PShape.GEOMETRY);
+      tess = PGraphics3D.createShapeImpl(pg, PShape.GEOMETRY);
     } else if (is2D()) {
-      tess = PGraphics2D.createShapeImpl(pg.parent, PShape.GEOMETRY);
+      tess = PGraphics2D.createShapeImpl(pg, PShape.GEOMETRY);
     } else {
       PGraphics.showWarning("This shape is not either 2D or 3D!");
       return null;
@@ -3651,56 +3649,56 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePolyVerticesBuffer();
     if (glPolyVertex == 0)
-      glPolyVertex = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPolyVertex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyVertex);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
                    tessGeo.polyVerticesBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updatePolyColorsBuffer();
     if (glPolyColor == 0)
-      glPolyColor = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPolyColor = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyColor);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
                    tessGeo.polyColorsBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updatePolyNormalsBuffer();
     if (glPolyNormal == 0)
-      glPolyNormal = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPolyNormal = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyNormal);
     pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef,
                    tessGeo.polyNormalsBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updatePolyTexCoordsBuffer();
     if (glPolyTexcoord == 0)
-      glPolyTexcoord = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPolyTexcoord = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyTexcoord);
     pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef,
                    tessGeo.polyTexCoordsBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updatePolyAmbientBuffer();
     if (glPolyAmbient == 0)
-      glPolyAmbient = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPolyAmbient = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyAmbient);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
                    tessGeo.polyAmbientBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updatePolySpecularBuffer();
     if (glPolySpecular == 0)
-      glPolySpecular = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPolySpecular = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolySpecular);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
                    tessGeo.polySpecularBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updatePolyEmissiveBuffer();
     if (glPolyEmissive == 0)
-      glPolyEmissive = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPolyEmissive = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyEmissive);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
                    tessGeo.polyEmissiveBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updatePolyShininessBuffer();
     if (glPolyShininess == 0)
-      glPolyShininess = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPolyShininess = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyShininess);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizef,
                    tessGeo.polyShininessBuffer, PGL.STATIC_DRAW);
@@ -3709,7 +3707,7 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePolyIndicesBuffer();
     if (glPolyIndex == 0)
-      glPolyIndex = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPolyIndex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPolyIndex);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
                    tessGeo.polyIndexCount * PGL.SIZEOF_INDEX,
@@ -3726,21 +3724,21 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updateLineVerticesBuffer();
     if (glLineVertex == 0)
-      glLineVertex = PGraphicsOpenGL.createVertexBufferObject(context);
+      glLineVertex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineVertex);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
                    tessGeo.lineVerticesBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updateLineColorsBuffer();
     if (glLineColor == 0)
-      glLineColor = PGraphicsOpenGL.createVertexBufferObject(context);
+      glLineColor = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineColor);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
                    tessGeo.lineColorsBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updateLineDirectionsBuffer();
     if (glLineAttrib == 0)
-      glLineAttrib = PGraphicsOpenGL.createVertexBufferObject(context);
+      glLineAttrib = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineAttrib);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
                    tessGeo.lineDirectionsBuffer, PGL.STATIC_DRAW);
@@ -3749,7 +3747,7 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updateLineIndicesBuffer();
     if (glLineIndex == 0)
-      glLineIndex = PGraphicsOpenGL.createVertexBufferObject(context);
+      glLineIndex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glLineIndex);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
                    tessGeo.lineIndexCount * PGL.SIZEOF_INDEX,
@@ -3766,21 +3764,21 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePointVerticesBuffer();
     if (glPointVertex == 0)
-      glPointVertex = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPointVertex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointVertex);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
                    tessGeo.pointVerticesBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updatePointColorsBuffer();
     if (glPointColor == 0)
-      glPointColor = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPointColor = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointColor);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
                    tessGeo.pointColorsBuffer, PGL.STATIC_DRAW);
 
     tessGeo.updatePointOffsetsBuffer();
     if (glPointAttrib == 0)
-      glPointAttrib = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPointAttrib = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointAttrib);
     pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef,
                    tessGeo.pointOffsetsBuffer, PGL.STATIC_DRAW);
@@ -3789,7 +3787,7 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePointIndicesBuffer();
     if (glPointIndex == 0)
-      glPointIndex = PGraphicsOpenGL.createVertexBufferObject(context);
+      glPointIndex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPointIndex);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
                    tessGeo.pointIndexCount * PGL.SIZEOF_INDEX,
@@ -3870,47 +3868,47 @@ public class PShapeOpenGL extends PShape {
 
   protected void deletePolyBuffers() {
     if (glPolyVertex != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPolyVertex, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPolyVertex, context, pgl);
       glPolyVertex = 0;
     }
 
     if (glPolyColor != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPolyColor, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPolyColor, context, pgl);
       glPolyColor = 0;
     }
 
     if (glPolyNormal != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPolyNormal, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPolyNormal, context, pgl);
       glPolyNormal = 0;
     }
 
     if (glPolyTexcoord != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPolyTexcoord, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPolyTexcoord, context, pgl);
       glPolyTexcoord = 0;
     }
 
     if (glPolyAmbient != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPolyAmbient, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPolyAmbient, context, pgl);
       glPolyAmbient = 0;
     }
 
     if (glPolySpecular != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPolySpecular, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPolySpecular, context, pgl);
       glPolySpecular = 0;
     }
 
     if (glPolyEmissive != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPolyEmissive, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPolyEmissive, context, pgl);
       glPolyEmissive = 0;
     }
 
     if (glPolyShininess != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPolyShininess, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPolyShininess, context, pgl);
       glPolyShininess = 0;
     }
 
     if (glPolyIndex != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPolyIndex, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPolyIndex, context, pgl);
       glPolyIndex = 0;
     }
   }
@@ -3918,22 +3916,22 @@ public class PShapeOpenGL extends PShape {
 
   protected void deleteLineBuffers() {
     if (glLineVertex != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glLineVertex, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glLineVertex, context, pgl);
       glLineVertex = 0;
     }
 
     if (glLineColor != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glLineColor, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glLineColor, context, pgl);
       glLineColor = 0;
     }
 
     if (glLineAttrib != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glLineAttrib, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glLineAttrib, context, pgl);
       glLineAttrib = 0;
     }
 
     if (glLineIndex != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glLineIndex, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glLineIndex, context, pgl);
       glLineIndex = 0;
     }
   }
@@ -3941,22 +3939,22 @@ public class PShapeOpenGL extends PShape {
 
   protected void deletePointBuffers() {
     if (glPointVertex != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPointVertex, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPointVertex, context, pgl);
       glPointVertex = 0;
     }
 
     if (glPointColor != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPointColor, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPointColor, context, pgl);
       glPointColor = 0;
     }
 
     if (glPointAttrib != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPointAttrib, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPointAttrib, context, pgl);
       glPointAttrib = 0;
     }
 
     if (glPointIndex != 0) {
-      PGraphicsOpenGL.deleteVertexBufferObject(glPointIndex, context);
+      PGraphicsOpenGL.deleteVertexBufferObject(glPointIndex, context, pgl);
       glPointIndex = 0;
     }
   }

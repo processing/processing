@@ -1,3 +1,129 @@
+PROCESSING 2.1.1 (REV 0224) - 21 January 2014
+
+Several fixes for issues in 2.1 that weren't found in the 2.1 beta release.
+Still a number of known issues, but this cleans up several of the biggies.
+
++ Fixed infinite loop in Find/Replace
+  https://github.com/processing/processing/issues/2082
+
++ Updated to Minim 2.2
+  https://github.com/processing/processing/pull/2250
+
++ Minor change to bracket handling
+  https://github.com/processing/processing/pull/2313
+
++ On the command line version, --no-java wasn't working properly
+  https://github.com/processing/processing/issues/2182
+
++ get() + video requires loadPixels in P2D/P3D
+  https://github.com/processing/processing/issues/2202
+
+
+[ windows ] 
+
++ Export to Application was broken on Windows
+  https://github.com/processing/processing/issues/2219
+
++ Right-click on selection was causing text to de-select on Windows
+  https://github.com/processing/processing/issues/2210
+
+
+[ mac os x ]
+
++ On Mac OS X, the app was called procesing.app.Base
+  https://github.com/processing/processing/issues/2217
+
++ Better support for native libraries in exported applications on OS X
+  https://github.com/processing/processing/pull/2269
+
+
+[ serial library ]
+
++ readStringUntil() missing from new serial library
+  https://github.com/processing/processing/issues/2174
+
++ Miscellaneous pdates to the serial library
+  https://github.com/processing/processing/pull/2265
+
++ Serial (apears to be) running slowly
+  https://github.com/processing/processing/issues/2249
+  https://github.com/processing/processing/issues/2214
+
++ Read a single character at a time to emulate RXTX behavior
+  https://github.com/processing/processing/pull/2240
+
++ Add basic tests for throughput and latency
+  https://github.com/processing/processing/pull/2225
+
++ Add a debug() method to Serial
+  https://github.com/processing/processing/pull/2237
+
++ Switch the examples over to use printArray()
+  https://github.com/processing/processing/pull/2226
+
++ Handle the UnsatisfiedLinkError when loading the native library fails
+  https://github.com/processing/processing/pull/2266
+
+
+[ core fixes ] 
+
++ PImage resize() causes PImage not to be rendered in JAVA2D
+  https://github.com/processing/processing/issues/2179
+
++ Remove make.sh from core source folder... ancient
+
++ Remove println() from the dataPath() method
+
++ Add special case for 'null' to println()
+
++ Added print() method to IntList
+
++ Fix esoteric typo with alpha and color
+  https://github.com/processing/processing/issues/2230
+
++ pushStyle/popStyle should save/restore blendMode
+  https://github.com/processing/processing/issues/2232
+
+
+[ opengl updates ]
+
++ PImage copy() function used with P2D flips the image
+  https://github.com/processing/processing/issues/2171
+
++ Filter shaders don't need to use the texture uniform
+  https://github.com/processing/processing/issues/2204
+
++ texture() bug with stroke() in P2D
+  https://github.com/processing/processing/issues/2205
+
++ Allow sharing of GL context amongst multiple windows
+  https://github.com/processing/processing/issues/1698
+
++ Texture sampling setting ignored when creating an offscreen PGraphics
+  https://github.com/processing/processing/issues/1900
+
++ Rounded rectangle broken with Processing 2.1 P3D renderer
+  https://github.com/processing/processing/issues/2193
+
++ Clear the global PGL on dispose()
+  https://github.com/processing/processing/pull/2279
+
++ Pie arcs have stroke between endpoints in P2D/P3D
+  https://github.com/processing/processing/issues/2233
+
+
+[ missing in the 2.1 release notes ] 
+
++ init() not called on tools until later 
+  https://github.com/processing/processing/issues/1859
+
++ Finish changes so the PDE can use an unmodified JRE
+  https://github.com/processing/processing/issues/1840
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.1 (REV 0223) - 27 October 2013
 
 There have been major changes since 2.0.3, most of them are outlined in 
