@@ -26,6 +26,8 @@ A rounded rect broken with Processing 2.1 P3D renderer
 A   https://github.com/processing/processing/issues/2193
 X Clear the global PGL on dispose() (from JDF)
 X   https://github.com/processing/processing/pull/2279
+A pie arcs have stroke between endpoints in P2D/P3D
+A   https://github.com/processing/processing/issues/2233
 
 video
 A get() + video requires loadPixels in P2D/P3D

@@ -7,6 +7,13 @@ X minor change to bracket handling
 X   https://github.com/processing/processing/pull/2313
 X app is called procesing.app.Base
 X   https://github.com/processing/processing/issues/2217
+X noJavaArg set to --export
+X   https://github.com/processing/processing/issues/2182
+
+_ export not working on Windows
+_   https://github.com/processing/processing/issues/2219
+_ jnilib not loading on OS X because Contents/Java needs to be added to path
+_   https://github.com/processing/processing/pull/2269 (from gohai)
 
 _ right-click on selection is a problem on Windows
 _   https://github.com/processing/processing/issues/2210
@@ -28,17 +35,8 @@ G Add a debug() method to Serial
 G   https://github.com/processing/processing/pull/2237
 G Switch the examples over to printArray()
 G   https://github.com/processing/processing/pull/2226
-
-_ noJavaArg set to --export
-_   https://github.com/processing/processing/issues/2182
-
-_ jnilib not loading on OS X because Contents/Java needs to be added to path
-_   https://github.com/processing/processing/pull/2269 (from gohai)
-
-_ export not working on Windows
-_   https://github.com/processing/processing/issues/2219
-_ exported apps reporting as "damaged"
-_   https://github.com/processing/processing/issues/2095
+G Handle the UnsatisfiedLinkError when loading the native library fails
+G   https://github.com/processing/processing/pull/2266
 
 fixed in 2.1
 X init() not called on tools until later 
@@ -48,6 +46,8 @@ X   https://github.com/processing/processing/issues/1840
 
 
 high
+_ exported apps reporting as "damaged" on OS X
+_   https://github.com/processing/processing/issues/2095
 _ sketchPath() returns user.home in exported apps on OSX
 _   https://github.com/processing/processing/issues/2181
 _ QuickReference tool was able to bring down the environment
