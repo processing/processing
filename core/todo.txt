@@ -6,14 +6,48 @@ X remove println() from dataPath()
 X add special case for 'null' to println()
 X added print() method to IntList
 X   do for the others as well
+X fix esoteric typo with alpha and color
+X   https://github.com/processing/processing/issues/2230
+A pushStyle/popStyle should save/restore blendMode
+A   https://github.com/processing/processing/issues/2232
+
+opengl
+A PImage copy() function used with P2D flips the image
+A   https://github.com/processing/processing/issues/2171
+A filter shaders don't need to use the texture uniform
+A   https://github.com/processing/processing/issues/2204
+A texture() bug with stroke() in P2D
+A   https://github.com/processing/processing/issues/2205
+A allow sharing of GL context amongst multiple windows
+A   https://github.com/processing/processing/issues/1698
+A texture sampling setting is ignored when creating an offscreen PGraphics
+A   https://github.com/processing/processing/issues/1900
+A rounded rect broken with Processing 2.1 P3D renderer
+A   https://github.com/processing/processing/issues/2193
+X Clear the global PGL on dispose() (from JDF)
+X   https://github.com/processing/processing/pull/2279
+
+video
+A get() + video requires loadPixels in P2D/P3D
+A   https://github.com/processing/processing/issues/2202
+
+
+_ run window border color changed in 2.1
+_   https://github.com/processing/processing/issues/2297
 
 _ text looks lousy compared to the Apple JVM
 _   mess with rendering hints? (notes in PGraphicsJava2D)
+_ point() rendering differently in 2.0.3 and 2.1
+_   https://github.com/processing/processing/issues/2278
+
+_ Sketch runs with default size if size() is followed by large memory allocation
+_   https://github.com/processing/processing/issues/2039
 
 fixed in 2.1
 X draw() called again before finishing on OS X (retina issue)
 X   https://github.com/processing/processing/issues/1709
-
+X get() not always setting alpha channel when used with point()
+X   https://github.com/processing/processing/issues/1756
 
 high
 _ zero alpha values still a problem with retina renderer
@@ -25,6 +59,8 @@ _   String as a key, int/float/string list as values
 _ blendMode(ADD) is broken with default renderer
 _   https://github.com/processing/processing/issues/2012
 _   may have been introduced between 2.0b7 and 2.0b8
+_   https://github.com/processing/processing/issues/2275
+_   https://github.com/processing/processing/issues/2276
 _ add option to have full screen span across screens
 _   display=all in cmd line
 _   sketchDisplay() -> 0 for all, or 1, 2, 3...

@@ -1,10 +1,44 @@
 0224 pde
-X readStringUntil() missing from new serial library
-X   https://github.com/processing/processing/issues/2174
+M fix infinite loop in Find/Replace
+M   https://github.com/processing/processing/issues/2082
+X updated to Minim 2.2
+X   https://github.com/processing/processing/pull/2250
+X minor change to bracket handling
+X   https://github.com/processing/processing/pull/2313
+X app is called procesing.app.Base
+X   https://github.com/processing/processing/issues/2217
+
+_ right-click on selection is a problem on Windows
+_   https://github.com/processing/processing/issues/2210
+_   https://github.com/GKFX/processing/commit/e1a50a8f984430048bf63a57f580e8940ed46cf9
+
+serial
+G readStringUntil() missing from new serial library
+G   https://github.com/processing/processing/issues/2174
+G updates to serial library
+G   https://github.com/processing/processing/pull/2265
+G serial running slowly
+G   https://github.com/processing/processing/issues/2249
+G   https://github.com/processing/processing/issues/2214
+G Only read a single character at a time to emulate RXTX behavior
+G   https://github.com/processing/processing/pull/2240
+G Add basic tests for throughput and latency
+G   https://github.com/processing/processing/pull/2225
+G Add a debug() method to Serial
+G   https://github.com/processing/processing/pull/2237
+G Switch the examples over to printArray()
+G   https://github.com/processing/processing/pull/2226
+
 _ noJavaArg set to --export
 _   https://github.com/processing/processing/issues/2182
-_ decision to be made on nextTabStop() inside TextAreaPainter
 
+_ jnilib not loading on OS X because Contents/Java needs to be added to path
+_   https://github.com/processing/processing/pull/2269 (from gohai)
+
+_ export not working on Windows
+_   https://github.com/processing/processing/issues/2219
+_ exported apps reporting as "damaged"
+_   https://github.com/processing/processing/issues/2095
 
 fixed in 2.1
 X init() not called on tools until later 
@@ -16,10 +50,13 @@ X   https://github.com/processing/processing/issues/1840
 high
 _ sketchPath() returns user.home in exported apps on OSX
 _   https://github.com/processing/processing/issues/2181
+_ QuickReference tool was able to bring down the environment
+_   https://github.com/processing/processing/issues/2229
 _ tab characters not recognized/drawn in the editor (2.1)
 _   https://github.com/processing/processing/issues/2180
 _   https://github.com/processing/processing/issues/2183
 _   udp library has tabs in the text
+_   decision to be made on nextTabStop() inside TextAreaPainter
 _ Chinese text is overlapped in Processing 2.1 editor
 _   https://github.com/processing/processing/issues/2173
 _ check on why 2x core.jar inside the Java folder
@@ -27,6 +64,10 @@ _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 
 
 medium
+_ JNA conflicts can be avoided with a -D option
+_   https://github.com/processing/processing/issues/2239
+_ dataPath() not working when app is not run from app dir
+_   https://github.com/processing/processing/issues/2195
 _ should default to the local Java on Windows and Linux
 _   have export apps default to the local JRE
 _   Linux is probably using the system JRE if available
