@@ -2384,6 +2384,13 @@ public class JEditTextArea extends JComponent
         return;
       }
 
+      // isPopupTrigger() is handled differently across platforms, 
+      // so it may fire during release, or during the press. 
+      // http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseEvent.html#isPopupTrigger()
+      // However, we have to exit out of this method if it's a right-click
+      // anyway, because otherwise it'll de-select the current word. 
+      // As a result, better to just check for BUTTON3 now, indicating that
+      // isPopupTrigger() is going to fire on the release anyway.
       boolean windowsRightClick =
         Base.isWindows() && (event.getButton() == MouseEvent.BUTTON3);
       if ((event.isPopupTrigger() || windowsRightClick) && (popup != null)) {
@@ -2429,14 +2436,16 @@ public class JEditTextArea extends JComponent
     }
 
 
-//    // Because isPopupTrigger() is handled differently across platforms, 
-//    // it may fire during release, or during the press.
-//    // http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseEvent.html#isPopupTrigger()
-//    public void mouseReleased(MouseEvent event) {
-//      if (event.isPopupTrigger() && (popup != null)) {
-//        popup.show(painter, event.getX(), event.getY());
-//      }
-//    }
+    /*
+    // Because isPopupTrigger() is handled differently across platforms, 
+    // it may fire during release, or during the press.
+    // http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseEvent.html#isPopupTrigger()
+    public void mouseReleased(MouseEvent event) {
+      if (event.isPopupTrigger() && (popup != null)) {
+        popup.show(painter, event.getX(), event.getY());
+      }
+    }
+    */
     
     
     private void doSingleClick(MouseEvent evt, int line, int offset, int dot) {
