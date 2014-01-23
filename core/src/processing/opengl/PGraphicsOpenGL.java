@@ -1842,7 +1842,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (op == OP_READ) {
         if (offscreenMultisample) {
           // Making sure the offscreen FBO is up-to-date
-          multisampleFramebuffer.copy(offscreenFramebuffer, getCurrentFB());
+          multisampleFramebuffer.copyColor(offscreenFramebuffer);
         }
         // We always read the screen pixels from the color FBO.
         pixfb = offscreenFramebuffer;
@@ -5621,7 +5621,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (offscreenMultisample) {
        // We need to copy the contents of the multisampled buffer to the color
        // buffer, so the later is up-to-date with the last drawing.
-       multisampleFramebuffer.copy(offscreenFramebuffer, getCurrentFB());
+       multisampleFramebuffer.copyColor(offscreenFramebuffer);
     }
 
     if (needEndDraw) {
@@ -6088,6 +6088,24 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  /**
+   * Not an approved function, test its use in libraries to grab the FB objects
+   * for offscreen PGraphics.
+   */
+  public FrameBuffer getFrameBuffer() {
+    return getFrameBuffer(false);
+  }
+
+
+  public FrameBuffer getFrameBuffer(boolean multi) {
+    if (multi) {
+      return multisampleFramebuffer;
+    } else {
+      return offscreenFramebuffer;
+    }
+  }
+
+
   protected Object initCache(PImage img) {
     if (!checkGLThread()) {
       return null;
@@ -6373,7 +6391,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //    pgl.colorMask(true, true, true, true);
 
     if (offscreenMultisample) {
-      multisampleFramebuffer.copy(offscreenFramebuffer, getCurrentFB());
+      multisampleFramebuffer.copyColor(offscreenFramebuffer);
     }
 
     popFramebuffer();
