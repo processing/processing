@@ -11889,6 +11889,7 @@ public class PGraphicsOpenGL extends PGraphics {
       int cacheIndex;
       int vertFirst;
       int vertCount;
+      int vertOffset;
       int primitive;
 
       public void init(boolean addCache, boolean strokeTess, boolean calcNorm,
@@ -11913,7 +11914,9 @@ public class PGraphicsOpenGL extends PGraphics {
         }
 
         vertFirst = cache.vertexCount[cacheIndex];
+        vertOffset = cache.vertexOffset[cacheIndex];
         vertCount = 0;
+        System.out.println(vertFirst + " " + vertOffset);
 
         if (type == PGL.TRIANGLE_FAN) primitive = TRIANGLE_FAN;
         else if (type == PGL.TRIANGLE_STRIP) primitive = TRIANGLE_STRIP;
@@ -11929,7 +11932,8 @@ public class PGraphicsOpenGL extends PGraphics {
           // every time a new vertex was emitted (see vertex() below).
           //tessBlock = tess.addFillIndexBlock(tessBlock);
           cacheIndex = cache.addNew();
-          vertFirst = 0;
+          vertFirst = cache.vertexCount[cacheIndex];
+          vertOffset = cache.vertexOffset[cacheIndex];
         }
 
         int indCount = 0;
@@ -11989,8 +11993,9 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       protected void calcTriNormal(int tessIdx0, int tessIdx1, int tessIdx2) {
-        tess.calcPolyNormal(vertFirst + tessIdx0, vertFirst + tessIdx1,
-                            vertFirst + tessIdx2);
+        tess.calcPolyNormal(vertFirst + vertOffset + tessIdx0,
+                            vertFirst + vertOffset + tessIdx1,
+                            vertFirst + vertOffset + tessIdx2);
       }
 
       public void vertex(Object data) {
