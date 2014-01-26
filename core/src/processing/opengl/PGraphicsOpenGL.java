@@ -6386,7 +6386,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // but still not working as expected. Some strange artifacts with multismapled
     // surfaces (see second code example in the issue above).
 //    pgl.colorMask(false, false, false, true);
-//    pgl.clearColor(0, 0, 0, 1);
+//    pgl.clearColor(0, 0, 0, backgroundColor);
 //    pgl.clear(PGL.COLOR_BUFFER_BIT);
 //    pgl.colorMask(true, true, true, true);
 
@@ -6454,7 +6454,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
       // To avoid having garbage in the screen after a resize,
       // in the case background is not called in draw().
-      background(backgroundColor);
+      if (primarySurface) {
+        background(backgroundColor);
+      } else {
+        // offscreen surfaces are transparent by default.
+        background(0x00 << 24 | (backgroundColor & 0xFFFFFF));
+      }
 
       // Sets the default projection and camera (initializes modelview).
       // If the user has setup up their own projection, they'll need
@@ -11916,7 +11921,6 @@ public class PGraphicsOpenGL extends PGraphics {
         vertFirst = cache.vertexCount[cacheIndex];
         vertOffset = cache.vertexOffset[cacheIndex];
         vertCount = 0;
-        System.out.println(vertFirst + " " + vertOffset);
 
         if (type == PGL.TRIANGLE_FAN) primitive = TRIANGLE_FAN;
         else if (type == PGL.TRIANGLE_STRIP) primitive = TRIANGLE_STRIP;
