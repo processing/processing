@@ -6381,14 +6381,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void endOffscreenDraw() {
-    // Set alpha channel to opaque in order to match behavior of JAVA2D:
-    // https://github.com/processing/processing/issues/1844
-    // but still not working as expected. Some strange artifacts with multismapled
-    // surfaces (see second code example in the issue above).
-//    pgl.colorMask(false, false, false, true);
-//    pgl.clearColor(0, 0, 0, backgroundColor);
-//    pgl.clear(PGL.COLOR_BUFFER_BIT);
-//    pgl.colorMask(true, true, true, true);
+    if (backgroundA == 1) {
+      // Set alpha channel to opaque in order to match behavior of JAVA2D:
+      pgl.colorMask(false, false, false, true);
+      pgl.clearColor(0, 0, 0, backgroundA);
+      pgl.clear(PGL.COLOR_BUFFER_BIT);
+      pgl.colorMask(true, true, true, true);
+    }
 
     if (offscreenMultisample) {
       multisampleFramebuffer.copyColor(offscreenFramebuffer);
