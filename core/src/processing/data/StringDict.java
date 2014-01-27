@@ -63,6 +63,7 @@ public class StringDict {
       if (pieces.length == 2) {
         keys[count] = pieces[0];
         values[count] = pieces[1];
+        indices.put(keys[count], count);
         count++;
       }
     }
