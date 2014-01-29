@@ -1564,7 +1564,7 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public float textDescent() {
     if (textFont == null) {
-      defaultFontOrDeath("textAscent");
+      defaultFontOrDeath("textDescent");
     }
     Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
@@ -1603,7 +1603,7 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public void textSize(float size) {
     if (textFont == null) {
-      defaultFontOrDeath("textAscent", size);
+      defaultFontOrDeath("textSize", size);
     }
 
     // if a native version available, derive this font
@@ -1635,6 +1635,10 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   protected float textWidthImpl(char buffer[], int start, int stop) {
+    if (textFont == null) {
+      defaultFontOrDeath("textWidth");
+    }
+        
     Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
