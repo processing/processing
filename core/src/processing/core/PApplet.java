@@ -267,6 +267,9 @@ public class PApplet extends Applet
   boolean useStrategy = false;
   Canvas canvas;
 
+  Method revalidateMethod;
+
+
 //  /**
 //   * Usually just 0, but with multiple displays, the X and Y coordinates of
 //   * the screen will depend on the current screen's position relative to
@@ -867,6 +870,12 @@ public class PApplet extends Applet
       // with retina. On a non-retina machine, however, useActive seems
       // the only (or best) way to handle the rendering.
       useActive = false;
+    }
+
+    if (javaVersion >= 1.7f) {
+      try {
+        revalidateMethod = getClass().getMethod("revalidate", new Class[] {});
+      } catch (Exception e) { }
     }
 
     // send tab keys through to the PApplet
@@ -10260,7 +10269,21 @@ public class PApplet extends Applet
               if (!newBounds.equals(oldBounds)) {
                 // the ComponentListener in PApplet will handle calling size()
                 setBounds(newBounds);
-                revalidate();   // let the layout manager do its work
+
+                // In 0225, calling this via reflection so that we can still
+                // compile in Java 1.6. This is a trap since we really need
+                // to move to 1.7 and cannot support 1.6, but things like text
+                // are still a little wonky on 1.7, especially on OS X.
+                // This gives us a way to at least test against older VMs.
+                //revalidate();   // let the layout manager do its work
+                if (revalidateMethod != null) {
+                  try {
+                    revalidateMethod.invoke(this);
+                  } catch (Exception ex) {
+                    ex.printStackTrace();
+                    revalidateMethod = null;
+                  }
+                }
               }
             }
           }
