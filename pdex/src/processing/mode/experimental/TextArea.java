@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Martin Leopold <m@martinleopold.com>
+ * Copyright (C) 2012-14 Martin Leopold <m@martinleopold.com> and Manindra Moharana <me@mkmoharana.com>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -127,6 +127,10 @@ public class TextArea extends JEditTextArea {
     customPainter.setECSandTheme(ecs, mode);
   }
 
+  /**
+   * Handles KeyEvents for TextArea
+   * Code completion begins from here.
+   */
   public void processKeyEvent(KeyEvent evt) {
     
     if(evt.getKeyCode() == KeyEvent.VK_ESCAPE){
@@ -215,7 +219,11 @@ public class TextArea extends JEditTextArea {
     
   }
  
-  
+  /**
+   * Retrieves the word on which the mouse pointer is present
+   * @param evt - the MouseEvent which triggered this method 
+   * @return
+   */
   private String fetchPhrase(MouseEvent evt) {
     log("--handle Mouse Right Click--");
     int off = xyToOffset(evt.getX(), evt.getY());
@@ -276,6 +284,14 @@ public class TextArea extends JEditTextArea {
       return word.trim();
     }
   }
+  
+  /**
+   * Retrieves the current word typed just before the caret.
+   * Then triggers code completion for that word.
+   * 
+   * @param evt - the KeyEvent which triggered this method 
+   * @return
+   */
   private String fetchPhrase(KeyEvent evt) {
    
     int off = getCaretPosition();
@@ -361,29 +377,29 @@ public class TextArea extends JEditTextArea {
         break;
       }
 
-//        if (x2 >= 0 && x2 < s.length()) {
-//          if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
-//              || s.charAt(x2) == '$')
-//            word = word + s.charAt(x2++);
-//          else
-//            x2 = -1;
-//        } else
-//          x2 = -1;
-
-//        if (x1 < 0  )//&& x2 < 0
-//          break;
+      //        if (x2 >= 0 && x2 < s.length()) {
+      //          if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
+      //              || s.charAt(x2) == '$')
+      //            word = word + s.charAt(x2++);
+      //          else
+      //            x2 = -1;
+      //        } else
+      //          x2 = -1;
+      
+      //        if (x1 < 0  )//&& x2 < 0
+      //          break;
       if (i > 200) {
         // time out!
         break;
       }
     }
-//    if (keyChar != KeyEvent.CHAR_UNDEFINED)
+    //    if (keyChar != KeyEvent.CHAR_UNDEFINED)
 
     if (Character.isDigit(word.charAt(0)))
       return null;
     word = word.trim();
-//    if (word.endsWith("."))
-//      word = word.substring(0, word.length() - 1);
+    //    if (word.endsWith("."))
+    //      word = word.substring(0, word.length() - 1);
     int lineStartNonWSOffset = 0;
     if(word.length() > 1)
     errorCheckerService.getASTGenerator().preparePredictions(word, line
@@ -664,7 +680,7 @@ public class TextArea extends JEditTextArea {
 
   //JEditTextArea textarea;
 
-  // worthless
+  /* No longer used
   private void addCompletionPopupListner() {
     this.addKeyListener(new KeyListener() {
 
@@ -695,7 +711,7 @@ public class TextArea extends JEditTextArea {
       public void keyPressed(KeyEvent e) {
       }
     });
-  }
+  }*/
 
   public void showSuggestionLater(final DefaultListModel defListModel, final String word) {
     SwingUtilities.invokeLater(new Runnable() {
@@ -707,6 +723,12 @@ public class TextArea extends JEditTextArea {
     });
   }
 
+  /**
+   * Calculates location of caret and displays the suggestion popup at the location. 
+   * 
+   * @param defListModel
+   * @param subWord
+   */
   protected void showSuggestion(DefaultListModel defListModel,String subWord) {
     hideSuggestion();
     if (defListModel.size() == 0) {
@@ -745,6 +767,9 @@ public class TextArea extends JEditTextArea {
 //    });
   }
 
+  /**
+   * Hides suggestion popup
+   */
   protected void hideSuggestion() {
     if (suggestion != null) {
       suggestion.hide();
