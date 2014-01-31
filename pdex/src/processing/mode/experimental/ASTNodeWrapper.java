@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2012-14 Manindra Moharana <me@mkmoharana.com>
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
 package processing.mode.experimental;
 import static processing.mode.experimental.ExperimentalMode.log;
 import static processing.mode.experimental.ExperimentalMode.log2;
@@ -19,6 +37,11 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
+/**
+ * Wrapper class for ASTNode objects
+ * @author Manindra Moharana <me@mkmoharana.com>
+ *
+ */
 public class ASTNodeWrapper {
   private ASTNode Node;
 
@@ -142,7 +165,7 @@ public class ASTNodeWrapper {
   
  
   /**
-   * 
+   * Finds the difference in pde and java code offsets
    * @param source
    * @param inpOffset
    * @param nodeLen
@@ -354,6 +377,13 @@ public class ASTNodeWrapper {
     return new int[][]{javaCodeMap,pdeCodeMap};
   }
   
+  /**
+   * Gets offset mapping between java and pde code
+   * int[0][x] stores the java code offset and 
+   * int[1][x] is the corresponding offset in pde code  
+   * @param ecs
+   * @return int[0] - java code offset, int[1] - pde code offset
+   */
   public int[][] getOffsetMapping(ErrorCheckerService ecs){
     int pdeoffsets[] = getPDECodeOffsets(ecs);
     String pdeCode = ecs.getPDECodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
