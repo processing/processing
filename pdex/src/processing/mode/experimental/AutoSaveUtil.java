@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2012-14 Manindra Moharana <me@mkmoharana.com>
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
 package processing.mode.experimental;
 
 import java.io.File;
@@ -9,6 +27,13 @@ import java.util.TimerTask;
 import processing.app.Base;
 import processing.app.Sketch;
 
+/**
+ * Autosave utility for saving sketch backups in the background after
+ * certain intervals
+ * 
+ * @author Manindra Moharana <me@mkmoharana.com>
+ *
+ */
 public class AutoSaveUtil {
   
   private DebugEditor editor;
@@ -20,10 +45,11 @@ public class AutoSaveUtil {
   private File autosaveDir, pastSave;
   
   private boolean isSaving;
+  
   /**
    * 
    * @param dedit
-   * @param timeOut - in minutes
+   * @param timeOut - in minutes, how frequently should saves occur
    */
   public AutoSaveUtil(DebugEditor dedit, int timeOut){
     editor = dedit;
@@ -38,6 +64,10 @@ public class AutoSaveUtil {
     autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + "_autosave");
   }
   
+  /**
+   * Check if any previous autosave exists
+   * @return
+   */
   public boolean checkForPastSave(){
     if(autosaveDir.exists()){
       String prevSaves[] = Base.listFiles(autosaveDir, false);
@@ -51,6 +81,9 @@ public class AutoSaveUtil {
     return false;
   }
   
+  /**
+   * Refresh autosave directory if current sketch location in the editor changes
+   */
   public void reloadAutosaveDir(){
     while(isSaving);
     autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + "_autosave");
@@ -60,6 +93,9 @@ public class AutoSaveUtil {
     return pastSave;
   }
   
+  /**
+   * Start the auto save service
+   */
   public void init(){
     if(saveTime < 10000) saveTime = 10 * 1000;
     //saveTime = 10 * 1000; //TODO: remove
@@ -69,12 +105,21 @@ public class AutoSaveUtil {
     ExperimentalMode.log("AutoSaver started");
   }
   
+  /**
+   * Stop the autosave service
+   */
   public void stop(){
     while(isSaving); // save operation mustn't be interrupted
     if(timer != null) timer.cancel();
     Base.removeDir(autosaveDir);
   }
   
+  /**
+   * Main function that performs the save operation
+   * Code reused from processing.app.Sketch.saveAs()
+   * @return
+   * @throws IOException
+   */
   private boolean saveSketch() throws IOException{
     if(!editor.getSketch().isModified()) return false;
     isSaving = true;
@@ -220,6 +265,11 @@ public class AutoSaveUtil {
     return true;
   }
   
+  /**
+   * Timertask used to perform the save operation every X minutes
+   * @author quarkninja
+   *
+   */
   private class SaveTask extends TimerTask{
 
     @Override
@@ -228,19 +278,11 @@ public class AutoSaveUtil {
         if(saveSketch())
           ExperimentalMode.log("Backup Saved " + editor.getSketch().getMainFilePath());
       } catch (IOException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
       
-      //editor
-      
-      
     }
     
-  }
-
-  public static void main(String[] args) {
-
   }
 
 }
