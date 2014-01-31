@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Martin Leopold <m@martinleopold.com>
+ * Copyright (C) 2012-14 Martin Leopold <m@martinleopold.com> and Manindra Moharana <me@mkmoharana.com>
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
