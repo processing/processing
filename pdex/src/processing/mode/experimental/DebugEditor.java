@@ -346,6 +346,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       super.internalCloseRunner();
     }
     
+    /**
+     * Writes all error messages to a csv file.
+     * For analytics purposes only.
+     */
     private void writeErrorsToFile(){
     if (errorCheckerService.tempErrorLog.size() == 0)
       return;
@@ -417,9 +421,16 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         return buildSketchMenu(new JMenuItem[]{runItem, presentItem, stopItem});
     }*/
     
+    /**
+     * Whether debug toolbar is enabled
+     */
     AtomicBoolean debugToolbarEnabled;
+    
     protected EditorToolbar javaToolbar, debugToolbar;
     
+    /**
+     * Toggles between java mode and debug mode toolbar
+     */
     protected void switchToolbars(){
       final EditorToolbar nextToolbar;
       if(debugToolbarEnabled.get()){
@@ -876,6 +887,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         return saved;
     }
     
+    /**
+     * Loads and starts the auto save service
+     * Also handles the case where an auto save backup is found.
+     * The user is asked to save the sketch to a new location
+     */
     public void loadAutoSaver(){
       log("Load Auto Saver()");
       if(autosaver != null){
@@ -1376,17 +1392,27 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       return errorTable.updateTable(tableModel);
     }
     
+    /**
+     * Handle whether the tiny red error indicator is shown near the error button
+     * at the bottom of the PDE
+     */
     public void updateErrorToggle(){
       btnShowErrors.updateMarker(errorCheckerService.hasErrors(),
                                errorBar.errorColor);
     }
     
+    /**
+     * Handle refactor operation
+     */
     private void handleRefactor() {
       log("Caret at:");
       log(ta.getLineText(ta.getCaretLine()));
       errorCheckerService.getASTGenerator().handleRefactor();
     }
     
+    /**
+     * Handle show usage operation
+     */
     private void handleShowUsage() {
       log("Caret at:");
       log(ta.getLineText(ta.getCaretLine()));
