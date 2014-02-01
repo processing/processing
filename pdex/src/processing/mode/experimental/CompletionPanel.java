@@ -199,31 +199,37 @@ public class CompletionPanel {
   }
 
   /**
-   * Inserts the CompletionCandidate chosen from the suggestion   list
+   * Inserts the CompletionCandidate chosen from the suggestion list
+   * 
    * @return
    */
   public boolean insertSelection() {
     if (completionList.getSelectedValue() != null) {
       try {
+        String currentSubword = fetchCurrentSubword();
         String selectedSuggestion = ((CompletionCandidate) completionList
-            .getSelectedValue()).getCompletionString().substring(subWord.length());
-        logE(subWord+" <= subword,Inserting suggestion=> " + selectedSuggestion + " Current sub: " + fetchPhrase());
-        textarea.getDocument().remove(insertionPosition-subWord.length(), subWord.length());
-        textarea.getDocument().insertString(insertionPosition-subWord.length(),
-                                            ((CompletionCandidate) completionList
-                                            .getSelectedValue()).getCompletionString(), null);
-        if(selectedSuggestion.endsWith(")"))
-        {
-          if(!selectedSuggestion.endsWith("()")){
+            .getSelectedValue()).getCompletionString().substring(currentSubword
+                                                                     .length());
+        logE(subWord + " <= subword,Inserting suggestion=> "
+            + selectedSuggestion + " Current sub: " + currentSubword);
+        textarea.getDocument().remove(insertionPosition
+                                          - currentSubword.length(),
+                                      currentSubword.length());
+        textarea.getDocument()
+            .insertString(insertionPosition - currentSubword.length(),
+                          ((CompletionCandidate) completionList
+                              .getSelectedValue()).getCompletionString(), null);
+        if (selectedSuggestion.endsWith(")")) {
+          if (!selectedSuggestion.endsWith("()")) {
             int x = selectedSuggestion.indexOf('(');
-            if(x != -1){
+            if (x != -1) {
               //log("X................... " + x);
-              textarea.setCaretPosition(insertionPosition + (x+1));
+              textarea.setCaretPosition(insertionPosition + (x + 1));
             }
           }
-        }
-        else {
-          textarea.setCaretPosition(insertionPosition + selectedSuggestion.length());
+        } else {
+          textarea.setCaretPosition(insertionPosition
+              + selectedSuggestion.length());
         }
         log("Suggestion inserted: " + System.currentTimeMillis());
         return true;
@@ -235,17 +241,17 @@ public class CompletionPanel {
     return false;
   }
   
-  private String fetchPhrase() {
+  private String fetchCurrentSubword() {
     TextArea ta = editor.ta;
     int off = ta.getCaretPosition();
-    log2("off " + off);
+    //log2("off " + off);
     if (off < 0)
       return null;
     int line = ta.getCaretLine();
     if (line < 0)
       return null;
     String s = ta.getLineText(line);
-    log2("lin " + line);
+    //log2("lin " + line);
     /*
      * if (s == null) return null; else if (s.length() == 0) return null;
      */
@@ -255,7 +261,7 @@ public class CompletionPanel {
     int x = ta.getCaretPosition() - ta.getLineStartOffset(line) - 1, x2 = x + 1, x1 = x - 1;
     if(x >= s.length() || x < 0)
       return null; //TODO: Does this check cause problems? Verify.
-    log2(" x char: " + s.charAt(x));
+    //log2(" x char: " + s.charAt(x));
     //int xLS = off - getLineStartNonWhiteSpaceOffset(line);    
 
     String word = (x < s.length() ? s.charAt(x) : "") + "";
@@ -281,54 +287,16 @@ public class CompletionPanel {
       //TODO: currently works on single line only. "a. <new line> b()" won't be detected
       if (x1 >= 0) {
 //        if (s.charAt(x1) != ';' && s.charAt(x1) != ',' && s.charAt(x1) != '(')
-        if (Character.isLetterOrDigit(s.charAt(x1)) || s.charAt(x1) == '_'
-            || s.charAt(x1) == '.' || s.charAt(x1) == ')' || s.charAt(x1) == ']') {
+        if (Character.isLetterOrDigit(s.charAt(x1)) || s.charAt(x1) == '_') {
 
-          if (s.charAt(x1) == ')') {
-            word = s.charAt(x1--) + word;
-            closeB++;
-            while (x1 >= 0 && closeB > 0) {
-              word = s.charAt(x1) + word;
-              if (s.charAt(x1) == '(')
-                closeB--;
-              if (s.charAt(x1) == ')')
-                closeB++;
-              x1--;
-            }
-          }
-          else if (s.charAt(x1) == ']') {
-            word = s.charAt(x1--) + word;
-            closeB++;
-            while (x1 >= 0 && closeB > 0) {
-              word = s.charAt(x1) + word;
-              if (s.charAt(x1) == '[')
-                closeB--;
-              if (s.charAt(x1) == ']')
-                closeB++;
-              x1--;
-            }
-          }
-          else {
-            word = s.charAt(x1--) + word;
-          }
+          word = s.charAt(x1--) + word;
+
         } else {
           break;
         }
       } else {
         break;
       }
-
-      //        if (x2 >= 0 && x2 < s.length()) {
-      //          if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
-      //              || s.charAt(x2) == '$')
-      //            word = word + s.charAt(x2++);
-      //          else
-      //            x2 = -1;
-      //        } else
-      //          x2 = -1;
-      
-      //        if (x1 < 0  )//&& x2 < 0
-      //          break;
       if (i > 200) {
         // time out!
         break;
@@ -339,13 +307,11 @@ public class CompletionPanel {
     if (Character.isDigit(word.charAt(0)))
       return null;
     word = word.trim();
-    //    if (word.endsWith("."))
-    //      word = word.substring(0, word.length() - 1);
-    if(word.length() > 1)
+    if (word.endsWith("."))
+      word = word.substring(0, word.length() - 1);
     
     //showSuggestionLater();
     return word;
-    else return "";
     //}
   }
 
