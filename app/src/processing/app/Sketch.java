@@ -716,6 +716,8 @@ public class Sketch {
   protected boolean saveAs() throws IOException {
     String newParentDir = null;
     String newName = null;
+	
+    final String oldName2 = folder.getName();
     // TODO rewrite this to use shared version from PApplet
     final String PROMPT = "Save sketch folder as...";
     if (Preferences.getBoolean("chooser.files.native")) {
@@ -762,7 +764,7 @@ public class Sketch {
     if (!sanitaryName.equals(newName) && newFolder.exists()) {
       Base.showMessage("Cannot Save",
                        "A sketch with the cleaned name\n" +
-                       "â€œ" + sanitaryName + "â€� already exists.");
+                       "“" + sanitaryName + "” already exists.");
       return false;
     }
     newName = sanitaryName;
@@ -854,11 +856,12 @@ public class Sketch {
 
     final File newFolder2 = newFolder;
     final File[] copyItems2 = copyItems;
+    final String newName2 = newName; 
     
     // create a new event dispatch thread
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-            ProgressBarGUI p = new ProgressBarGUI(copyItems2,newFolder2);
+            ProgressBarGUI p = new ProgressBarGUI(copyItems2,newFolder2,oldName2,newName2);
         }
     });
     
@@ -868,8 +871,6 @@ public class Sketch {
       File newFile = new File(newFolder, code[i].getFileName());
       code[i].saveAs(newFile);
     }
-    
-
 
     // While the old path to the main .pde is still set, remove the entry from
     // the Recent menu so that it's not sticking around after the rename.
@@ -896,7 +897,7 @@ public class Sketch {
 
 
 
-	private class ProgressBarGUI extends JFrame implements
+	public class ProgressBarGUI extends JFrame implements
 			PropertyChangeListener {
 
 		private static final long serialVersionUID = 1L;
@@ -907,7 +908,7 @@ public class Sketch {
 		private File newFolder;
 
 		// create a new background thread
-		private class Task extends SwingWorker<Void, Void> {
+		public class Task extends SwingWorker<Void, Void> {
 
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -930,33 +931,38 @@ public class Sketch {
 					if (copyable.isDirectory()) {
 						Base.copyDir(copyable,
 								new File(ProgressBarGUI.this.newFolder,
-										copyable.getName()));
+										copyable.getName()),this,progress,totalSize);
+						progress += getFileLength(copyable);
 					} else {
 						Base.copyFile(copyable,
 								new File(ProgressBarGUI.this.newFolder,
 										copyable.getName()));
+						progress += getFileLength(copyable);
+						setProgress((int) Math.min(
+								Math.ceil((double)progress * 100.0 / (double)totalSize), 100));
 					}
-					progress += getFileLength(copyable);
-					setProgress((int) Math.min(
-							Math.ceil((double)progress * 100.0 / (double)totalSize), 100));
-					
-					System.out.println(""+(int) Math.min(
-							Math.ceil((double)progress * 100.0 / (double)totalSize), 100));
-					
 				}
 
 				return null;
 			}
+			
+			public void setProgressBarStatus(int status)
+			{
+				setProgress(status);
+			}
 
 			@Override
 			public void done() {
-				// to close the progress bar automatically when done
+				// to close the progress bar automatically when done, and to 
+				// print that Saving is done in Message Area
+
+			    editor.statusNotice("Done Saving.");
 				ProgressBarGUI.this.closeProgressBar();
 			}
 
 		}
 
-		public ProgressBarGUI(File[] c, File nf) {
+		public ProgressBarGUI(File[] c, File nf, String oldName, String newName) {
 			// initialize a copyItems and newFolder, which are used for file
 			// copying in the background thread
 			copyItems = c;
@@ -970,8 +976,8 @@ public class Sketch {
 			JPanel panel = new JPanel(null);
 			add(panel);
 			setContentPane(panel);
-			saveAsLabel = new JLabel("Saving X as Y...");
-			saveAsLabel.setBounds(40, 20, 150, 20);
+			saveAsLabel = new JLabel("Saving "+oldName+" as "+newName+"...");
+			saveAsLabel.setBounds(40, 20, 300, 20);
 
 			progressBar = new JProgressBar(0, 100);
 			progressBar.setValue(0);
@@ -1058,7 +1064,6 @@ public class Sketch {
     editor.updateTitle();
     editor.base.rebuildSketchbookMenus();
 //    editor.header.rebuild();
-
   }
 
 

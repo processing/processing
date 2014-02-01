@@ -1592,7 +1592,7 @@ public class Base {
   }
 
 
-  // Because the Oracle JDK is 64-bit only, we lose this ability, feature,
+  // Because the Oracle JDK is 64-bit only, we lose this ability, feature, 
   // edge case, headache.
 //  /**
 //   * Return whether sketches will run as 32- or 64-bits. On Linux and Windows,
@@ -1605,10 +1605,10 @@ public class Base {
 //    }
 //    return nativeBits;
 //  }
-
-  /**
+  
+  /** 
    * Return whether sketches will run as 32- or 64-bits based
-   * on the JVM that's in use.
+   * on the JVM that's in use. 
    */
   static public int getNativeBits() {
     return nativeBits;
@@ -2649,7 +2649,7 @@ public class Base {
    * files and potentially troublesome .svn folders.
    */
   static public void copyDir(File sourceDir,
-                             File targetDir) throws IOException {
+                             File targetDir,Sketch.ProgressBarGUI.Task progBar,double progress,double totalSize) throws IOException {
     if (sourceDir.equals(targetDir)) {
       final String urDum = "source and target directories are identical";
       throw new IllegalArgumentException(urDum);
@@ -2664,10 +2664,13 @@ public class Base {
       File target = new File(targetDir, files[i]);
       if (source.isDirectory()) {
         //target.mkdirs();
-        copyDir(source, target);
+        copyDir(source, target, progBar, progress, totalSize);
         target.setLastModified(source.lastModified());
       } else {
         copyFile(source, target);
+        progress += source.length();
+        progBar.setProgressBarStatus((int) Math.min(
+				Math.ceil((double)progress * 100.0 / (double)totalSize), 100));
       }
     }
   }
