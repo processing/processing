@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
@@ -150,6 +151,7 @@ public class ASTGenerator {
     //addCompletionPopupListner();
     addListeners(); 
     //loadJavaDoc();
+    predictionOngoing = new AtomicBoolean(false);
   }
   
   protected void setupGUI(){
@@ -784,15 +786,24 @@ public class ASTGenerator {
   //protected AtomicBoolean predictionsEnabled;
   protected int predictionMinLength = 2;
   
+  
+  private AtomicBoolean predictionOngoing;
+  
   public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
+    if(predictionOngoing.get()) return;
+        
     if(!ExperimentalMode.codeCompletionsEnabled) return;
-    if(word.length() < predictionMinLength) return; 
+    if(word.length() < predictionMinLength) return;
+    
+    predictionOngoing.set(true);
     // This method is called from TextArea.fetchPhrase, which is called via a SwingWorker instance
     // in TextArea.processKeyEvent
     if(caretWithinLineComment()){
       log("No predictions.");
+      predictionOngoing.set(false);
       return;
     }
+    
 //    SwingWorker worker = new SwingWorker() {
 //
 //      @Override
@@ -826,6 +837,7 @@ public class ASTGenerator {
             }
             showPredictions(word);
             lastPredictedWord = word2;
+            predictionOngoing.set(false);
             return;
           }
         }
@@ -1006,7 +1018,7 @@ public class ASTGenerator {
         }
         
         showPredictions(word);
-        
+        predictionOngoing.set(false);
 //      }
 //    };
 //

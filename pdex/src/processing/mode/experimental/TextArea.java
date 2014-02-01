@@ -205,11 +205,12 @@ public class TextArea extends JEditTextArea {
       final KeyEvent evt2 = evt;      
       SwingWorker worker = new SwingWorker() {
         protected Object doInBackground() throws Exception {
+          log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started: " + System.currentTimeMillis());
           errorCheckerService.runManualErrorCheck();
           // Provide completions only if it's enabled
           if(ExperimentalMode.codeCompletionsEnabled)
-            log(" Typing: " + fetchPhrase(evt2) + " "
-                + (evt2.getKeyChar() == KeyEvent.VK_ENTER));
+            log("Typing: " + fetchPhrase(evt2) + " "
+                + (evt2.getKeyChar() == KeyEvent.VK_ENTER) + " T: " + System.currentTimeMillis());
           return null;
         }
       };
