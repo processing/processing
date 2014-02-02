@@ -123,11 +123,15 @@ public class CompletionPanel {
   }
   
   private int setHeight(int itemCount){
-    if(scrollPane.getHorizontalScrollBar().isVisible()) itemCount++;
-    FontMetrics fm = textarea.getFontMetrics(textarea.getFont()); 
-    float h = (fm.getHeight() +  fm.getDescent()*0.5f) * (itemCount + 1);
-    log("popup height " + Math.min(250,h));
-    return Math.min(250,(int)h); // popup menu height
+    FontMetrics fm = textarea.getFontMetrics(textarea.getFont());
+    float h = (fm.getHeight() + (fm.getDescent()) * 0.5f) * (itemCount);
+    if (scrollPane.getHorizontalScrollBar().isVisible())
+      h += scrollPane.getHorizontalScrollBar().getHeight() + fm.getHeight()
+          + (fm.getDescent() + fm.getAscent()) * 0.8f;
+    // 0.5f and 0.8f scaling give respectable results.
+    //log("popup height " + Math.min(250,h) 
+    //+ scrollPane.getHorizontalScrollBar().isVisible());
+    return Math.min(250, (int) h); // popup menu height
   }
   
   /*TODO: Make width dynamic
