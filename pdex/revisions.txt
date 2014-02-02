@@ -1,4 +1,13 @@
 
+PDE X v1.0.4b - February , 2014
+
+Bug fixes
+
++ Autocompletion bug, column is sometimes off by 1
+https://github.com/processing/processing-experimental/issues/38
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
 PDE X v1.0.3b - January 21, 2014
 
 New Feature
