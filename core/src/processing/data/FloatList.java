@@ -110,6 +110,9 @@ public class FloatList implements Iterable<Float> {
    * @brief Get an entry at a particular index
    */
   public float get(int index) {
+    if (index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return data[index];
   }
 

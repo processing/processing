@@ -113,6 +113,9 @@ public class StringList implements Iterable<String> {
    * @brief Get an entry at a particular index
    */
   public String get(int index) {
+    if (index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return data[index];
   }
 

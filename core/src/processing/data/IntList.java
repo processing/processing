@@ -130,6 +130,9 @@ public class IntList implements Iterable<Integer> {
    * @brief Get an entry at a particular index
    */
   public int get(int index) {
+    if (index >= this.count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return data[index];
   }
 
