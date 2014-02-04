@@ -411,6 +411,8 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref environment
+   * @see PApplet#height
+   * @see PApplet#size(int, int)
    */
   public int width;
 
@@ -425,7 +427,8 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref environment
-   *
+   * @see PApplet#width
+   * @see PApplet#size(int, int)
    */
   public int height;
 
@@ -1651,6 +1654,8 @@ public class PApplet extends Applet
    * @webref environment
    * @param w width of the display window in units of pixels
    * @param h height of the display window in units of pixels
+   * @see PApplet#width
+   * @see PApplet#height
    */
   public void size(int w, int h) {
     size(w, h, JAVA2D, null);
@@ -3666,6 +3671,8 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    * @param fps number of desired frames per second
+   * @see PApplet#frameRate
+   * @see PApplet#frameCount
    * @see PApplet#setup()
    * @see PApplet#draw()
    * @see PApplet#loop()
@@ -14231,6 +14238,8 @@ public class PApplet extends Applet
    * @param rgb color value in hexadecimal notation
    * @see PGraphics#noStroke()
    * @see PGraphics#strokeWeight(float)
+   * @see PGraphics#strokeJoin(int)
+   * @see PGraphics#strokeCap(int)
    * @see PGraphics#fill(int, float)
    * @see PGraphics#noFill()
    * @see PGraphics#tint(int, float)

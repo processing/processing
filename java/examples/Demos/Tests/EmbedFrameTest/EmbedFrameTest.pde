@@ -1,24 +1,23 @@
 // Based on code by GeneKao (https://github.com/GeneKao)
 
-import peasy.*;
-
 import javax.swing.JFrame;
 import java.awt.BorderLayout;
 import java.awt.Insets;
 EmbeddedSketch eSketch;
 ChildApplet child = new ChildApplet();
 boolean mousePressedOnParent = false;
-PeasyCam cam, cam2;
+Arcball arcball, arcball2;
 
 void setup() {
   size(320, 240, P3D);
-  cam = new PeasyCam(this, 300);
+  arcball = new Arcball(this, 300);
   eSketch = new EmbeddedSketch(child);
   smooth();
 }
 
 void draw() {
   background(250);
+  arcball.run();
   if (mousePressed) {
     fill(0);
     text("Mouse pressed on parent.", 10, 10);
@@ -34,6 +33,14 @@ void draw() {
   if (eSketch.sketch.mousePressed) {
     text("Mouse pressed on child.", 10, 30);
   }
+}
+
+void mousePressed(){
+  arcball.mousePressed();
+}
+
+void mouseDragged(){
+  arcball.mouseDragged();
 }
 
 //The JFrame which will contain the child applet
@@ -62,12 +69,12 @@ class ChildApplet extends PApplet {
   void setup() {
     size(400, 400, P3D);
     smooth();
-    cam2 = new PeasyCam(this, 300);
-    cam2.reset();
+    arcball2 = new Arcball(this, 300);
   }
   
   void draw() {
     background(0);
+    arcball2.run();
     if (mousePressed) {
       fill(240, 0, 0);
       ellipse(mouseX, mouseY, 20, 20);
@@ -84,5 +91,13 @@ class ChildApplet extends PApplet {
       text("Mouse pressed on parent", 20, 20);
     }
   }
+  
+  void mousePressed(){
+    arcball2.mousePressed();
+  }
+
+  void mouseDragged(){
+    arcball2.mouseDragged();
+  }  
 }
 

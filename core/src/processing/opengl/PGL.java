@@ -166,6 +166,7 @@ public abstract class PGL {
   protected int tex2DVertLoc;
   protected int tex2DTCoordLoc;
   protected int tex2DSamplerLoc;
+  protected int tex2DGeoVBO;
 
   protected boolean loadedTexRectShader = false;
   protected int texRectShaderProgram;
@@ -175,8 +176,7 @@ public abstract class PGL {
   protected int texRectVertLoc;
   protected int texRectTCoordLoc;
   protected int texRectSamplerLoc;
-
-  protected int texGeoVBO;
+  protected int texRectGeoVBO;
 
   protected float[] texCoords = {
     //  X,     Y,    U,    V
@@ -929,12 +929,10 @@ public abstract class PGL {
       ppgl.loadedTex2DShader = true;
       ppgl.tex2DShaderContext = ppgl.glContext;
 
-      if (ppgl.texGeoVBO == 0) {
-        genBuffers(1, intBuffer);
-        ppgl.texGeoVBO = intBuffer.get(0);
-        bindBuffer(ARRAY_BUFFER, ppgl.texGeoVBO);
-        bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
-      }
+      genBuffers(1, intBuffer);
+      ppgl.tex2DGeoVBO = intBuffer.get(0);
+      bindBuffer(ARRAY_BUFFER, ppgl.tex2DGeoVBO);
+      bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
     }
 
     if (texData == null) {
@@ -1008,7 +1006,7 @@ public abstract class PGL {
       uniform1i(ppgl.tex2DSamplerLoc, 0);
 
       texData.position(0);
-      bindBuffer(ARRAY_BUFFER, ppgl.texGeoVBO);
+      bindBuffer(ARRAY_BUFFER, ppgl.tex2DGeoVBO);
       bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, texData, STATIC_DRAW);
 
       vertexAttribPointer(ppgl.tex2DVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
@@ -1061,12 +1059,10 @@ public abstract class PGL {
       ppgl.loadedTexRectShader = true;
       ppgl.texRectShaderContext = ppgl.glContext;
 
-      if (ppgl.texGeoVBO == 0) {
-        genBuffers(1, intBuffer);
-        ppgl.texGeoVBO = intBuffer.get(0);
-        bindBuffer(ARRAY_BUFFER, ppgl.texGeoVBO);
-        bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
-      }
+      genBuffers(1, intBuffer);
+      ppgl.texRectGeoVBO = intBuffer.get(0);
+      bindBuffer(ARRAY_BUFFER, ppgl.texRectGeoVBO);
+      bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
     }
 
     return ppgl;
@@ -1140,7 +1136,7 @@ public abstract class PGL {
       uniform1i(ppgl.texRectSamplerLoc, 0);
 
       texData.position(0);
-      bindBuffer(ARRAY_BUFFER, ppgl.texGeoVBO);
+      bindBuffer(ARRAY_BUFFER, ppgl.texRectGeoVBO);
       bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, texData, STATIC_DRAW);
 
       vertexAttribPointer(ppgl.texRectVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);

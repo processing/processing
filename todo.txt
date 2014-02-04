@@ -15,6 +15,8 @@ _   udp library has tabs in the text
 _   decision to be made on nextTabStop() inside TextAreaPainter
 _ Chinese text is overlapped in Processing 2.1 editor
 _   https://github.com/processing/processing/issues/2173
+_   https://github.com/processing/processing/pull/2318
+_   https://github.com/processing/processing/pull/2323
 _ check on why 2x core.jar inside the Java folder
 _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 
