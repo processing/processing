@@ -683,6 +683,8 @@ public class Runner implements MessageConsumer {
 //                  System.out.println("thread : " + thread);
 ////                  thread.suspend();
 //                }
+                System.out.println(
+                  ExceptionEvent.class.getName());
                 exceptionEvent((ExceptionEvent) event);
               } else if (event instanceof VMDisconnectEvent) {
                 connected = false;
@@ -916,16 +918,24 @@ public class Runner implements MessageConsumer {
     // since sometimes exceptions are re-thrown from a different context
     try {
       // assume object reference is Throwable, get stack trace
-      Method method = ((ClassType) or.referenceType()).concreteMethodByName("getStackTrace", "()[Ljava/lang/StackTraceElement;");
-      ArrayReference result = (ArrayReference) or.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
+      Method method = ((ClassType) or.referenceType()).concreteMethodByName(
+        "getStackTrace", "()[Ljava/lang/StackTraceElement;");
+      ArrayReference result = (ArrayReference) or.invokeMethod( thread, method,
+        new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
       // iterate through stack frames and pull filename and line number for each
       for (Value val: result.getValues()) {
-        ObjectReference ref = (ObjectReference)val;
-        method = ((ClassType) ref.referenceType()).concreteMethodByName("getFileName", "()Ljava/lang/String;");
-        StringReference strref = (StringReference) ref.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
+        ObjectReference ref = (ObjectReference) val;
+        method = ((ClassType) ref.referenceType()).concreteMethodByName(
+          "getFileName", "()Ljava/lang/String;");
+        Object strref_object = ref.invokeMethod( thread, method,
+          new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
+        StringReference strref = (StringReference) strref_object;
+        System.out.println( strref_object == null ? "null" : strref.value());
         String filename = strref.value();
-        method = ((ClassType) ref.referenceType()).concreteMethodByName("getLineNumber", "()I");
-        IntegerValue intval = (IntegerValue) ref.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
+        method = ((ClassType) ref.referenceType()).concreteMethodByName(
+          "getLineNumber", "()I");
+        IntegerValue intval = (IntegerValue) ref.invokeMethod( thread, method,
+          new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
         int lineNumber = intval.intValue() - 1;
         SketchException rex =
           build.placeException(message, filename, lineNumber);
