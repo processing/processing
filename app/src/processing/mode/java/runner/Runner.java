@@ -683,8 +683,6 @@ public class Runner implements MessageConsumer {
 //                  System.out.println("thread : " + thread);
 ////                  thread.suspend();
 //                }
-                System.out.println(
-                  ExceptionEvent.class.getName());
                 exceptionEvent((ExceptionEvent) event);
               } else if (event instanceof VMDisconnectEvent) {
                 connected = false;
