@@ -920,28 +920,34 @@ public class Runner implements MessageConsumer {
       // assume object reference is Throwable, get stack trace
       Method method = ((ClassType) or.referenceType()).concreteMethodByName(
         "getStackTrace", "()[Ljava/lang/StackTraceElement;");
+      ArrayList<Value> emptyList = new ArrayList<Value>();
       ArrayReference result = (ArrayReference) or.invokeMethod( thread, method,
-        new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
+        emptyList, ObjectReference.INVOKE_SINGLE_THREADED);
+
       // iterate through stack frames and pull filename and line number for each
       for (Value val: result.getValues()) {
         ObjectReference ref = (ObjectReference) val;
-        method = ((ClassType) ref.referenceType()).concreteMethodByName(
+        ClassType refType = (ClassType) ref.referenceType();
+
+        //get file name
+        method = refType.concreteMethodByName(
           "getFileName", "()Ljava/lang/String;");
         Object strref_object = ref.invokeMethod( thread, method,
-          new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
+          emptyList, ObjectReference.INVOKE_SINGLE_THREADED);
         StringReference strref = (StringReference) strref_object;
-        System.out.println( strref_object == null ? "null" : strref.value());
-        String filename = strref.value();
-        method = ((ClassType) ref.referenceType()).concreteMethodByName(
+        String filename = strref_object == null ? "Unknown Source" : strref.value();
+
+        //get line number
+        method = refType.concreteMethodByName(
           "getLineNumber", "()I");
         IntegerValue intval = (IntegerValue) ref.invokeMethod( thread, method,
-          new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
+          emptyList, ObjectReference.INVOKE_SINGLE_THREADED);
         int lineNumber = intval.intValue() - 1;
+
         SketchException rex =
           build.placeException(message, filename, lineNumber);
-        if (rex != null) {
+        if (rex != null)
           return rex;
-        }
       }
 //      for (Method m : ((ClassType) or.referenceType()).allMethods()) {
 //        System.out.println(m + " | " + m.signature() + " | " + m.genericSignature());
