@@ -1637,11 +1637,11 @@ public class PGraphicsOpenGL extends PGraphics {
       getPrimaryPG().setCurrentPG(this);
     }
 
-    report("top beginDraw()");
-
     if (!checkGLThread()) {
       return;
     }
+
+    report("top beginDraw()");
 
     if (drawing) {
       return;
