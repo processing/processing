@@ -914,6 +914,11 @@ public class PApplet extends Applet
       }
     } catch (Exception e) { }  // may be a security problem
 
+    // Figure out the available display width and height.
+    // No major problem if this fails, we have to try again anyway in
+    // handleDraw() on the first (== 0) frame.
+    checkDisplaySize();
+
     Dimension size = getSize();
     if ((size.width != 0) && (size.height != 0)) {
       // When this PApplet is embedded inside a Java application with other
@@ -964,6 +969,21 @@ public class PApplet extends Applet
     // this is automatically called in applets
     // though it's here for applications anyway
 //    start();
+  }
+
+
+  private void checkDisplaySize() {
+    if (getGraphicsConfiguration() != null) {
+      GraphicsDevice displayDevice = getGraphicsConfiguration().getDevice();
+
+      if (displayDevice != null) {
+        Rectangle screenRect =
+          displayDevice.getDefaultConfiguration().getBounds();
+
+        displayWidth = screenRect.width;
+        displayHeight = screenRect.height;
+      }
+    }
   }
 
 
@@ -2278,17 +2298,18 @@ public class PApplet extends Applet
       long now = System.nanoTime();
 
       if (frameCount == 0) {
-        GraphicsConfiguration gc = getGraphicsConfiguration();
-        if (gc == null) return;
-        GraphicsDevice displayDevice =
-          getGraphicsConfiguration().getDevice();
-        if (displayDevice == null) return;
-        Rectangle screenRect =
-          displayDevice.getDefaultConfiguration().getBounds();
-//        screenX = screenRect.x;
-//        screenY = screenRect.y;
-        displayWidth = screenRect.width;
-        displayHeight = screenRect.height;
+//        GraphicsConfiguration gc = getGraphicsConfiguration();
+//        if (gc == null) return;
+//        GraphicsDevice displayDevice =
+//          getGraphicsConfiguration().getDevice();
+//        if (displayDevice == null) return;
+//        Rectangle screenRect =
+//          displayDevice.getDefaultConfiguration().getBounds();
+////        screenX = screenRect.x;
+////        screenY = screenRect.y;
+//        displayWidth = screenRect.width;
+//        displayHeight = screenRect.height;
+        checkDisplaySize();
 
         try {
           //println("Calling setup()");
