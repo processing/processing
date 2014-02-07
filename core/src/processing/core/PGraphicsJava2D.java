@@ -2364,7 +2364,7 @@ public class PGraphicsJava2D extends PGraphics {
     if (primarySurface) {
       // 'offscreen' will probably be removed in the next release
       if (useOffscreen) {
-        raster = ((BufferedImage) offscreen).getRaster();
+        raster = offscreen.getRaster();
       } else if (image instanceof VolatileImage) {
         // when possible, we'll try VolatileImage
         raster = ((VolatileImage) image).getSnapshot().getRaster();

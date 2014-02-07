@@ -6,12 +6,20 @@ X text looks lousy compared to the Apple JVM
 X   mess with rendering hints? (notes in PGraphicsJava2D)
 X   improvements made, but still not amazing.. just at level of Windows/Linux
 
+_ default font fixes 
+_   https://github.com/processing/processing/issues/2331
+_   https://github.com/processing/processing/pull/2338
+
 fixed in 2.1
 X draw() called again before finishing on OS X (retina issue)
 X   https://github.com/processing/processing/issues/1709
 X get() not always setting alpha channel when used with point()
 X   https://github.com/processing/processing/issues/1756
 
+A depth buffer shouldn't be cleared when depth mask is disabled
+A   https://github.com/processing/processing/issues/2296
+A set pixels transparent by default in P2D/P3D
+A   https://github.com/processing/processing/issues/2207
 
 _ saveFrame() with retina render is making black images
 _ add print() method to other data types (not just IntList)

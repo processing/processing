@@ -961,7 +961,7 @@ public class PJOGL extends PGL {
                        InputEvent.ALT_MASK);
 
     char keyChar;
-    if ((int)nativeEvent.getKeyChar() == 0) {
+    if (nativeEvent.getKeyChar() == 0) {
       keyChar = PConstants.CODED;
     } else {
       keyChar = nativeEvent.getKeyChar();
