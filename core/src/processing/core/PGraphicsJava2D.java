@@ -25,10 +25,13 @@
 package processing.core;
 
 import java.awt.*;
+import java.awt.font.TextAttribute;
 import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import processing.data.XML;
@@ -1189,6 +1192,7 @@ public class PGraphicsJava2D extends PGraphics {
 
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
+
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                         quality == 4 ?
                         RenderingHints.VALUE_INTERPOLATION_BICUBIC :
@@ -1196,11 +1200,15 @@ public class PGraphicsJava2D extends PGraphics {
 
     // http://docs.oracle.com/javase/tutorial/2d/text/renderinghints.html
     // Oracle Java text anti-aliasing on OS X looks like s*t compared to the
-    // text rendering with Apple's old Java 6. Below, failed attempts to fix:
+    // text rendering with Apple's old Java 6. Below, several attempts to fix:
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                          RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    // Turns out this is the one that actually makes things work.
+    // Kerning is still screwed up, however.
+    g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 //    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//                         RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+//                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 //    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 //                         RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
@@ -1615,9 +1623,24 @@ public class PGraphicsJava2D extends PGraphics {
     Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
-      Font dfont = font.deriveFont(size);
-      g2.setFont(dfont);
-      textFont.setNative(dfont);
+      Map<TextAttribute, Object> map =
+        new Hashtable<TextAttribute, Object>();
+      map.put(TextAttribute.SIZE, size);
+      map.put(TextAttribute.KERNING,
+              TextAttribute.KERNING_ON);
+//      map.put(TextAttribute.TRACKING,
+//              TextAttribute.TRACKING_TIGHT);
+      font = font.deriveFont(map);
+      g2.setFont(font);
+      textFont.setNative(font);
+
+//      Font dfont = font.deriveFont(size);
+////      Map<TextAttribute, ?> attrs = dfont.getAttributes();
+////      for (TextAttribute ta : attrs.keySet()) {
+////        System.out.println(ta + " -> " + attrs.get(ta));
+////      }
+//      g2.setFont(dfont);
+//      textFont.setNative(dfont);
     }
 
     // take care of setting the textSize and textLeading vars
@@ -1724,30 +1747,25 @@ public class PGraphicsJava2D extends PGraphics {
                           RenderingHints.VALUE_ANTIALIAS_ON :
                           RenderingHints.VALUE_ANTIALIAS_OFF);
 
-      //System.out.println("setting frac metrics");
-      //g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-      //                    RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-
       g2.setColor(fillColorObject);
+
       int length = stop - start;
       g2.drawChars(buffer, start, length, (int) (x + 0.5f), (int) (y + 0.5f));
+      // better to use round here? also, drawChars now just calls drawString
+//      g2.drawString(new String(buffer, start, stop - start), Math.round(x), Math.round(y));
+
       // better to use drawString() with floats? (nope, draws the same)
       //g2.drawString(new String(buffer, start, length), x, y);
 
-      // this didn't seem to help the scaling issue
-      // and creates garbage because of the new temporary object
-      //java.awt.font.GlyphVector gv = textFontNative.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop));
-      //g2.drawGlyphVector(gv, x, y);
-
-      //    System.out.println("text() " + new String(buffer, start, stop));
+      // this didn't seem to help the scaling issue, and creates garbage
+      // because of a fairly heavyweight new temporary object
+//      java.awt.font.GlyphVector gv =
+//        font.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop - start));
+//      g2.drawGlyphVector(gv, x, y);
 
       // return to previous smoothing state if it was changed
       //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialias);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias);
-
-//      textX = x + textWidthImpl(buffer, start, stop);
-//      textY = y;
-//      textZ = 0;  // this will get set by the caller if non-zero
 
     } else {  // otherwise just do the default
       super.textLineImpl(buffer, start, stop, x, y);

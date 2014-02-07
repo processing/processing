@@ -1,26 +1,29 @@
 0225 core
 X bug with StringDict(Reader) that wasn't setting the indices hashmap
 _   check this with other versions of this class
-
-
-_ add print() method to other data types (not just IntList)
-
-_ run window border color changed in 2.1
-_   https://github.com/processing/processing/issues/2297
-
-_ text looks lousy compared to the Apple JVM
-_   mess with rendering hints? (notes in PGraphicsJava2D)
-_ point() rendering differently in 2.0.3 and 2.1
-_   https://github.com/processing/processing/issues/2278
-
-_ Sketch runs with default size if size() is followed by large memory allocation
-_   https://github.com/processing/processing/issues/2039
+X call revalidate() via reflection
+X text looks lousy compared to the Apple JVM
+X   mess with rendering hints? (notes in PGraphicsJava2D)
+X   improvements made, but still not amazing.. just at level of Windows/Linux
 
 fixed in 2.1
 X draw() called again before finishing on OS X (retina issue)
 X   https://github.com/processing/processing/issues/1709
 X get() not always setting alpha channel when used with point()
 X   https://github.com/processing/processing/issues/1756
+
+
+_ saveFrame() with retina render is making black images
+_ add print() method to other data types (not just IntList)
+
+_ run window border color changed in 2.1
+_   https://github.com/processing/processing/issues/2297
+
+_ point() rendering differently in 2.0.3 and 2.1
+_   https://github.com/processing/processing/issues/2278
+
+_ Sketch runs with default size if size() is followed by large memory allocation
+_   https://github.com/processing/processing/issues/2039
 
 high
 _ zero alpha values still a problem with retina renderer
