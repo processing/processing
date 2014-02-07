@@ -151,13 +151,13 @@ public class PJOGL extends PGL {
   protected GLCanvas canvasAWT;
 
   /** The shared AWT-OpenGL canvas */
-  protected static GLCanvas sharedCanvasAWT;
+//  protected static GLCanvas sharedCanvasAWT;
 
   /** The NEWT window */
   protected GLWindow windowNEWT;
 
   /** The shared NEWT window */
-  protected static GLWindow sharedWindowNEWT;
+//  protected static GLWindow sharedWindowNEWT;
 
   /** The NEWT-OpenGL canvas */
   protected NewtCanvasAWT canvasNEWT;
@@ -281,12 +281,12 @@ public class PJOGL extends PGL {
     if (canvasAWT != null || canvasNEWT != null) {
       // Restarting...
       if (canvasAWT != null) {
-        sharedCanvasAWT = null;
+//        sharedCanvasAWT = null;
         canvasAWT.removeGLEventListener(listener);
         pg.parent.removeListeners(canvasAWT);
         pg.parent.remove(canvasAWT);
       } else if (canvasNEWT != null) {
-        sharedWindowNEWT = null;
+//        sharedWindowNEWT = null;
         windowNEWT.removeGLEventListener(listener);
         pg.parent.remove(canvasNEWT);
       }
@@ -334,11 +334,11 @@ public class PJOGL extends PGL {
 
     if (WINDOW_TOOLKIT == AWT) {
       canvasAWT = new GLCanvas(caps);
-      if (sharedCanvasAWT == null) {
-        sharedCanvasAWT = canvasAWT;
-      } else {
-        canvasAWT.setSharedAutoDrawable(sharedCanvasAWT);
-      }
+//      if (sharedCanvasAWT == null) {
+//        sharedCanvasAWT = canvasAWT;
+//      } else {
+//        canvasAWT.setSharedAutoDrawable(sharedCanvasAWT);
+//      }
       canvasAWT.setBounds(0, 0, pg.width, pg.height);
       canvasAWT.setBackground(new Color(pg.backgroundColor, true));
       canvasAWT.setFocusable(true);
@@ -351,11 +351,11 @@ public class PJOGL extends PGL {
       canvasNEWT = null;
     } else if (WINDOW_TOOLKIT == NEWT) {
       windowNEWT = GLWindow.create(caps);
-      if (sharedWindowNEWT == null) {
-        sharedWindowNEWT = windowNEWT;
-      } else {
-        windowNEWT.setSharedAutoDrawable(sharedWindowNEWT);
-      }
+//      if (sharedWindowNEWT == null) {
+//        sharedWindowNEWT = windowNEWT;
+//      } else {
+//        windowNEWT.setSharedAutoDrawable(sharedWindowNEWT);
+//      }
       canvasNEWT = new NewtCanvasAWT(windowNEWT);
       canvasNEWT.setBounds(0, 0, pg.width, pg.height);
       canvasNEWT.setBackground(new Color(pg.backgroundColor, true));
