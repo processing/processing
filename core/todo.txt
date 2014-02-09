@@ -37,6 +37,8 @@ high
 _ zero alpha values still a problem with retina renderer
 _   https://github.com/processing/processing/issues/2030
 _ Sort out blending differences with P2D/P3D
+_   might be that compatible images not setting alpha mode correctly
+_   image = gc.createCompatibleVolatileImage(source.width, source.height, Transparency.TRANSLUCENT);
 _   https://github.com/processing/processing/issues/1844
 _ 'collector' class.. Dict that points to a list
 _   String as a key, int/float/string list as values

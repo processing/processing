@@ -1335,6 +1335,7 @@ public class PGraphicsJava2D extends PGraphics {
     int tintedColor;
     int[] tintedTemp;  // one row of tinted pixels
     BufferedImage image;
+//    BufferedImage compat;
 
 //    public ImageCache(PImage source) {
 ////      this.source = source;
@@ -1484,6 +1485,15 @@ public class PGraphicsJava2D extends PGraphics {
       }
       this.tinted = tint;
       this.tintedColor = tintColor;
+
+//      GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+//      compat = gc.createCompatibleImage(image.getWidth(), 
+//                                        image.getHeight(), 
+//                                        Transparency.TRANSLUCENT);
+//
+//      Graphics2D g = compat.createGraphics();
+//      g.drawImage(image, 0, 0, null);
+//      g.dispose();
     }
   }
 
@@ -1750,6 +1760,7 @@ public class PGraphicsJava2D extends PGraphics {
       g2.setColor(fillColorObject);
 
       int length = stop - start;
+      if (length != 0) {
       g2.drawChars(buffer, start, length, (int) (x + 0.5f), (int) (y + 0.5f));
       // better to use round here? also, drawChars now just calls drawString
 //      g2.drawString(new String(buffer, start, stop - start), Math.round(x), Math.round(y));
@@ -1762,6 +1773,7 @@ public class PGraphicsJava2D extends PGraphics {
 //      java.awt.font.GlyphVector gv =
 //        font.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop - start));
 //      g2.drawGlyphVector(gv, x, y);
+      }
 
       // return to previous smoothing state if it was changed
       //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialias);
