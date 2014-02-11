@@ -2613,7 +2613,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float[] vertices = tessGeo.polyVertices;
     int[] color = tessGeo.polyColors;
     float[] uv = tessGeo.polyTexCoords;
-    short[] indices = tessGeo.polyIndices;
+    //short[] indices = tessGeo.polyIndices;  // unused [fry]
 
 
     sortTriangles();

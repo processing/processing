@@ -267,6 +267,9 @@ public class PApplet extends Applet
   boolean useStrategy = false;
   Canvas canvas;
 
+  Method revalidateMethod;
+
+
 //  /**
 //   * Usually just 0, but with multiple displays, the X and Y coordinates of
 //   * the screen will depend on the current screen's position relative to
@@ -869,6 +872,12 @@ public class PApplet extends Applet
       useActive = false;
     }
 
+    if (javaVersion >= 1.7f) {
+      try {
+        revalidateMethod = getClass().getMethod("revalidate", new Class[] {});
+      } catch (Exception e) { }
+    }
+
     // send tab keys through to the PApplet
     setFocusTraversalKeysEnabled(false);
 
@@ -904,6 +913,11 @@ public class PApplet extends Applet
         sketchPath = System.getProperty("user.dir");
       }
     } catch (Exception e) { }  // may be a security problem
+
+    // Figure out the available display width and height.
+    // No major problem if this fails, we have to try again anyway in
+    // handleDraw() on the first (== 0) frame.
+    checkDisplaySize();
 
     Dimension size = getSize();
     if ((size.width != 0) && (size.height != 0)) {
@@ -955,6 +969,21 @@ public class PApplet extends Applet
     // this is automatically called in applets
     // though it's here for applications anyway
 //    start();
+  }
+
+
+  private void checkDisplaySize() {
+    if (getGraphicsConfiguration() != null) {
+      GraphicsDevice displayDevice = getGraphicsConfiguration().getDevice();
+
+      if (displayDevice != null) {
+        Rectangle screenRect =
+          displayDevice.getDefaultConfiguration().getBounds();
+
+        displayWidth = screenRect.width;
+        displayHeight = screenRect.height;
+      }
+    }
   }
 
 
@@ -2269,17 +2298,18 @@ public class PApplet extends Applet
       long now = System.nanoTime();
 
       if (frameCount == 0) {
-        GraphicsConfiguration gc = getGraphicsConfiguration();
-        if (gc == null) return;
-        GraphicsDevice displayDevice =
-          getGraphicsConfiguration().getDevice();
-        if (displayDevice == null) return;
-        Rectangle screenRect =
-          displayDevice.getDefaultConfiguration().getBounds();
-//        screenX = screenRect.x;
-//        screenY = screenRect.y;
-        displayWidth = screenRect.width;
-        displayHeight = screenRect.height;
+//        GraphicsConfiguration gc = getGraphicsConfiguration();
+//        if (gc == null) return;
+//        GraphicsDevice displayDevice =
+//          getGraphicsConfiguration().getDevice();
+//        if (displayDevice == null) return;
+//        Rectangle screenRect =
+//          displayDevice.getDefaultConfiguration().getBounds();
+////        screenX = screenRect.x;
+////        screenY = screenRect.y;
+//        displayWidth = screenRect.width;
+//        displayHeight = screenRect.height;
+        checkDisplaySize();
 
         try {
           //println("Calling setup()");
@@ -10260,7 +10290,21 @@ public class PApplet extends Applet
               if (!newBounds.equals(oldBounds)) {
                 // the ComponentListener in PApplet will handle calling size()
                 setBounds(newBounds);
-                revalidate();   // let the layout manager do its work
+
+                // In 0225, calling this via reflection so that we can still
+                // compile in Java 1.6. This is a trap since we really need
+                // to move to 1.7 and cannot support 1.6, but things like text
+                // are still a little wonky on 1.7, especially on OS X.
+                // This gives us a way to at least test against older VMs.
+                //revalidate();   // let the layout manager do its work
+                if (revalidateMethod != null) {
+                  try {
+                    revalidateMethod.invoke(this);
+                  } catch (Exception ex) {
+                    ex.printStackTrace();
+                    revalidateMethod = null;
+                  }
+                }
               }
             }
           }

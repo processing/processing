@@ -1,7 +1,10 @@
 0225 pde
+_ add font fixes to the rest of the API
 
 
 high
+_ use --deep for codesign to work?
+_   http://furbo.org/2013/10/17/code-signing-and-mavericks/
 _ exported apps reporting as "damaged" on OS X
 _   https://github.com/processing/processing/issues/2095
 _ sketchPath() returns user.home in exported apps on OSX
