@@ -617,10 +617,6 @@ public abstract class PGL {
 
 
   protected boolean threadIsCurrent()  {
-    if( false)
-      if( ! Thread.currentThread().equals( glThread))
-        System.out.printf( "desired: %s, current: %s\n",
-          glThread, Thread.currentThread());
     return Thread.currentThread() == glThread;
   }
 
