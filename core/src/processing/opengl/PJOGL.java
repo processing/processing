@@ -214,7 +214,7 @@ public class PJOGL extends PGL {
 
 
   public PJOGL(PGraphicsOpenGL pg) {
-    super(pg);
+    super( pg);
     glu = new GLU();
   }
 

@@ -455,8 +455,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   static final String OPENGL_THREAD_ERROR =
     "Cannot run the OpenGL renderer outside the main thread, change your code" +
-    "\nso the drawing calls are all inside the main thread, " +
-    "\nor use the default renderer instead.";
+    "\n so the drawing calls are all inside the main thread, " +
+    "\n or use the default renderer instead.";
   static final String BLEND_DRIVER_ERROR =
     "blendMode(%1$s) is not supported by this hardware (or driver)";
   static final String BLEND_RENDERER_ERROR =
@@ -1674,6 +1674,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void endDraw() {
+    if( ! checkGLThread())
+      return;
+
     report("top endDraw()");
 
     if (!drawing) {
@@ -1752,6 +1755,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void endPGL() {
+    if( ! checkGLThread())
+      return;
     pgl.endGL();
     restoreGL();
   }
@@ -1821,6 +1826,9 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   protected void beginPixelsOp(int op) {
+    if( ! checkGLThread())
+      return;
+    
     FrameBuffer pixfb = null;
     if (primarySurface) {
       if (op == OP_READ) {
@@ -2338,6 +2346,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void flush() {
+    if( ! checkGLThread())
+      return;
+
     boolean hasPolys = 0 < tessGeo.polyVertexCount &&
                        0 < tessGeo.polyIndexCount;
     boolean hasLines = 0 < tessGeo.lineVertexCount &&
@@ -4782,6 +4793,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // popStyle() sets ambient to true (because it calls ambient() in style())
     // and so setting the setAmbient flag to true, even if the user didn't call
     // ambient, so need to revert to false.
+    if( ! checkGLThread())
+      return;
     boolean savedSetAmbient = setAmbient;
     super.popStyle();
     if (!savedSetAmbient) setAmbient = false;
