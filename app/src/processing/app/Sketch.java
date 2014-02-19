@@ -896,7 +896,8 @@ public class Sketch {
   }
 
 
-
+  // Class used to handle progress bar, and run Save As in background so that
+  // progress bar can update without freezing
 	public class ProgressBarGUI extends JFrame implements
 			PropertyChangeListener {
 
@@ -924,10 +925,10 @@ public class Sketch {
 
 				long progress = 0;
 				setProgress(0);
-				for (File copyable : ProgressBarGUI.this.copyItems)
+				for (File copyable : ProgressBarGUI.this.copyItems) {
 				// loop to copy over the items that make sense, and to set the
 				// current progress
-				{
+				
 					if (copyable.isDirectory()) {
 						Base.copyDir(copyable,
 								new File(ProgressBarGUI.this.newFolder,
@@ -936,18 +937,23 @@ public class Sketch {
 					} else {
 						Base.copyFile(copyable,
 								new File(ProgressBarGUI.this.newFolder,
-										copyable.getName()));
-						progress += getFileLength(copyable);
-						setProgress((int) Math.min(
+										copyable.getName()), this,progress,totalSize);
+						if (getFileLength(copyable)<524288) {
+							// If the file length > 50MB, the Base.copyFile() function has 
+							// been redesigned to change progress every 50MB so that
+							// the progress bar doesn't stagnate during that time
+							progress += getFileLength(copyable);
+							setProgress((int) Math.min(
 								Math.ceil((double)progress * 100.0 / (double)totalSize), 100));
+						}
 					}
 				}
 
 				return null;
 			}
 			
-			public void setProgressBarStatus(int status)
-			{
+			public void setProgressBarStatus(int status) {
+			
 				setProgress(status);
 			}
 
@@ -996,7 +1002,7 @@ public class Sketch {
 			t.execute();
 		}
 
-		private long getFileLength(File f)// function to return the length of
+		public long getFileLength(File f)// function to return the length of
 											// the file, or
 											// ENTIRE directory, including the
 											// component files
