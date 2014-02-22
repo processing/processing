@@ -235,7 +235,10 @@ public class ASTGenerator {
     
   }
   
-  public static final boolean SHOWAST = !true;
+  /**
+   * Toggle AST View window
+   */
+  public static final boolean SHOWAST = true;
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {

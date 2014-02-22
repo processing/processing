@@ -1278,9 +1278,13 @@ public class ErrorCheckerService implements Runnable{
    * @return true - if highlighting happened correctly.
    */
   public boolean highlightNode(ASTNodeWrapper awrap){
+    log("Highlighting: " + awrap);
     try {
       int pdeoffsets[] = awrap.getPDECodeOffsets(this);
       int javaoffsets[] = awrap.getJavaCodeOffsets(this);
+      log("offsets: " +pdeoffsets[0] + "," +
+          pdeoffsets[1]+ "," +javaoffsets[1]+ "," +
+          javaoffsets[2]);
       scrollToErrorLine(editor, pdeoffsets[0],
                                             pdeoffsets[1],javaoffsets[1],
                                             javaoffsets[2]);
