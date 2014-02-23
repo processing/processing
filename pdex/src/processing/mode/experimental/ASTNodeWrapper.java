@@ -36,7 +36,9 @@ import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
+import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 /**
  * Wrapper class for ASTNode objects
@@ -127,31 +129,155 @@ public class ASTNodeWrapper {
     
     if(thisNode instanceof TypeDeclaration){
        jd = ((TypeDeclaration)thisNode).getJavadoc();
+       altStartPos = getLen((TypeDeclaration)thisNode);
       log("Has t jdoc " + ((TypeDeclaration)thisNode).getJavadoc());
     } else if(thisNode instanceof MethodDeclaration){
+      altStartPos = getLen((MethodDeclaration)thisNode);
       jd = ((MethodDeclaration)thisNode).getJavadoc();
       log("Has m jdoc " + jd);
     } else if(thisNode instanceof FieldDeclaration){
-      jd = ((FieldDeclaration)thisNode).getJavadoc();
-      log("Has f jdoc " + ((FieldDeclaration)thisNode).getJavadoc());
+      FieldDeclaration fd = ((FieldDeclaration)thisNode); 
+      jd = fd.getJavadoc();
+      log("Has f jdoc " + fd.getJavadoc());
+      altStartPos = getLen(fd);
+      //nodeOffset = ((VariableDeclarationFragment)(fd.fragments().get(0))).getName().getStartPosition();
     } 
     
     if(jd != null){
-      jdocOffset = jd.getLength();
-      log("jdoc offset: " + jdocOffset);
-      while (thisNode.getParent() != null) {
-        if (getLineNumber2(thisNode.getParent()) == getLineNumber2(getNode())) {
-          thisNode = thisNode.getParent();
-        } else {
-          break;
-        }
-      }
+//      jdocOffset = jd.getLength();
+//      log("jdoc offset: " + jdocOffset);
+      //testForMultilineDecl(thisNode);
       //thisNode = thisNode.getParent();
     }
+    else{
+      log("Visiting children of node " + getNodeAsString(thisNode));
+      Iterator<StructuralPropertyDescriptor> it = thisNode
+          .structuralPropertiesForType().iterator();
+      boolean flag = true;
+      while (it.hasNext()) {
+        StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
+            .next();
+        if (prop.isChildListProperty()) {
+          List<ASTNode> nodelist = (List<ASTNode>) thisNode
+              .getStructuralProperty(prop);
+          log("prop " + prop);
+          for (ASTNode cnode : nodelist) {
+            log("Visiting node " + getNodeAsString(cnode));
+            if (getLineNumber(cnode) == lineNumber) {
+              if (flag) {
+                altStartPos = cnode.getStartPosition();
+                // log("multi...");
+  
+                flag = false;
+              } else {
+                if (cnode == Node) {
+                  // loop only till the current node.
+                  break;
+                }
+                // We've located the first node in the line.
+                // Now normalize offsets till Node
+                //altStartPos += normalizeOffsets(cnode);
+                
+              }
+              
+            }
+          }
+        }
+      }
+      log("Altspos " + altStartPos);
+    }
+   
+    int pdeoffsets[] = getPDECodeOffsets(ecs);
+    String pdeCode = ecs.getPDECodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
+    int vals[] = createOffsetMapping(pdeCode,nodeOffset - altStartPos,nodeLength);
+    if (vals != null)
+      return new int[] {
+        lineNumber, nodeOffset + vals[0] - altStartPos, vals[1] };
+    else {// no offset mapping needed
+      log("joff[1] = " + (nodeOffset - altStartPos));
+      return new int[] { lineNumber, nodeOffset - altStartPos, nodeLength };
+    }
+  }
+  
+  private int getLen(FieldDeclaration fd){
+    List<ASTNode> list= fd.modifiers();
+    SimpleName sn = (SimpleName) getNode();
+    
+    Type tp = fd.getType();
+    int lineNum = getLineNumber(sn);
+    log("SN "+sn + ", " + lineNum);
+    for (ASTNode astNode : list) {
+      if(getLineNumber(astNode) == lineNum)
+      {
+        log("first node in that line " + astNode);
+        log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
+        return (astNode.getStartPosition());
+      }
+    }
+    if(getLineNumber(fd.getType()) == lineNum)
+    {
+      log("first node in that line " + tp);
+      log("diff " + (sn.getStartPosition() - tp.getStartPosition()));
+      return (tp.getStartPosition());
+    }
+    
+    
+    return 0;   
+  }
+
+  private int getLen(MethodDeclaration md) {
+    List<ASTNode> list = md.modifiers();
+    SimpleName sn = (SimpleName) getNode();
+    int lineNum = getLineNumber(sn);
+    log("SN " + sn + ", " + lineNum);
+    
+    for (ASTNode astNode : list) {
+      if (getLineNumber(astNode) == lineNum) {
+        log("first node in that line " + astNode);
+        log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
+        return (astNode.getStartPosition());
+      }
+    }
+    
+    if (!md.isConstructor()) {
+      Type tp = md.getReturnType2();
+      if (getLineNumber(tp) == lineNum) {
+        log("first node in that line " + tp);
+        log("diff " + (sn.getStartPosition() - tp.getStartPosition()));
+        return (tp.getStartPosition());
+      }
+    }
+    
+    return 0;
+  }
+  
+  private int getLen(TypeDeclaration td){
+    List<ASTNode> list= td.modifiers();
+    list = td.modifiers();
+    SimpleName sn = (SimpleName) getNode();
+    
+    int lineNum = getLineNumber(sn);
+    log("SN "+sn + ", " + lineNum);
+    for (ASTNode astNode : list) {
+      if(getLineNumber(astNode) == lineNum)
+      {
+        log("first node in that line " + astNode);
+        log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
+        return (astNode.getStartPosition());
+      }
+    }
+    
+    return 0;   
+  }
+  
+  private void testForMultilineDecl(ASTNode thisNode){
+    int minLineNum = lineNumber, maxLineNum = ((CompilationUnit) thisNode
+        .getRoot()).getLineNumber(thisNode.getStartPosition());
     log("Visiting children of node " + getNodeAsString(thisNode));
     Iterator<StructuralPropertyDescriptor> it = thisNode
         .structuralPropertiesForType().iterator();
     boolean flag = true;
+    int altStartPos = 0;
     while (it.hasNext()) {
       StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
           .next();
@@ -161,7 +287,7 @@ public class ASTNodeWrapper {
         log("prop " + prop);
         for (ASTNode cnode : nodelist) {
           log("Visiting node " + getNodeAsString(cnode));
-          if (getLineNumber2(cnode) == lineNumber) {
+          if (getLineNumber(cnode) >= minLineNum && getLineNumber(cnode) <= maxLineNum) {
             if (flag) {
               altStartPos = cnode.getStartPosition();
               // log("multi...");
@@ -177,49 +303,14 @@ public class ASTNodeWrapper {
               //altStartPos += normalizeOffsets(cnode);
               
             }
-            
+            testForMultilineDecl(cnode); FieldDeclaration f;
           }
         }
       }
     }
     log("Altspos " + altStartPos);
-    int pdeoffsets[] = getPDECodeOffsets(ecs);
-    String pdeCode = ecs.getPDECodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
-    int vals[] = createOffsetMapping(pdeCode,nodeOffset - altStartPos,nodeLength);
-    if (vals != null)
-      return new int[] {
-        lineNumber, nodeOffset + vals[0] - altStartPos, vals[1] };
-    else {// no offset mapping needed
-      log("joff[1] = " + (nodeOffset - altStartPos));
-      return new int[] { lineNumber, nodeOffset - altStartPos, nodeLength };
-    }
   }
   
-  private boolean hasJavaDoc(ASTNode node){
-    if(node != null){
-      Iterator<StructuralPropertyDescriptor> it = node
-          .structuralPropertiesForType().iterator();
-      log("Checkin for javadoc in child node of " + getNodeAsString(node));
-      while (it.hasNext()) {
-        StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
-            .next();
-        if (prop.isChildListProperty()) {
-          List<ASTNode> nodelist = (List<ASTNode>) node
-              .getStructuralProperty(prop);
-          log("prop " + prop);
-          for (ASTNode cnode : nodelist) {
-            log("Visiting node " + getNodeAsString(cnode));
-            if(cnode instanceof Javadoc){
-              log("Visiting jdoc " + cnode);
-              return true;
-            }
-          }
-        }
-      }
-    }
-    return false;
-  }
- 
   /**
    * Finds the difference in pde and java code offsets
    * @param source
@@ -549,7 +640,7 @@ public class ASTNodeWrapper {
         .getStartPosition());
   }
   
-  private static int getLineNumber2(ASTNode thisNode) {
+  /*private static int getLineNumber2(ASTNode thisNode) {
     int jdocOffset = 0; Javadoc jd = null;
     if(thisNode instanceof TypeDeclaration){
        jd = ((TypeDeclaration)thisNode).getJavadoc();
@@ -568,7 +659,7 @@ public class ASTNodeWrapper {
                                                                          .getStartPosition() + jdocOffset));
     return ((CompilationUnit) thisNode.getRoot()).getLineNumber(thisNode
         .getStartPosition() + jdocOffset);
-  }
+  }*/
 
   static private String getNodeAsString(ASTNode node) {
     if (node == null)
