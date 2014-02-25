@@ -24,6 +24,7 @@ package processing.app;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -43,6 +44,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -50,6 +53,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
@@ -112,6 +116,218 @@ public class Toolkit {
     return menuItem;
   }
 
+  /**
+   * Removes all mnemonics, then sets a mnemonic for each menu and menu item 
+   * recursively by these rules:
+   * <ol>
+   * <li> It tries to assign one of <a href="http://techbase.kde.org/Projects/Usability/HIG/Keyboard_Accelerators">
+   * KDE's defaults</a>.</li>
+   * <li> Failing that, it loops through the first letter of each word, where a word
+   *  is a block of Unicode "alphabetical" chars, looking for an upper-case ASCII mnemonic 
+   *  that is not taken. This is to try to be relevant, by using a letter well-associated 
+   *  with the command. (MS guidelines) </li>
+   * <li> Ditto, but with lowercase. </li>
+   * <li> Next, it tries the second ASCII character, if its width >= half the width of
+   *  'A'. </li>
+   * <li> If the first letters are all taken/non-ASCII, then it loops through the
+   *  ASCII letters in the item, widest to narrowest, seeing if any of them is not taken.
+   *  To improve readability, it discriminates against decenders (qypgj), imagining they
+   *  have 2/3 their actual width. (MS guidelines: avoid decenders). It also discriminates
+   *  against vowels, imagining they have 2/3 their actual width. (MS and Gnome guidelines:
+   *  avoid vowels. </li>
+   * <li>Failing that, it will loop left-to-right for an available digit. This is a last 
+   *  resort because the normal setMnemonic dislikes them.</li>
+   * <li> If that doesn't work, it doesn't assign a mnemonic. </li>
+   * </ol>
+   *
+   * As a special case, strings starting "sketchbook \u2192 " have that bit ignored
+   * because otherwise the Recent menu looks awful. However, the name <tt>"sketchbook \u2192
+   * Sketch"</tt>, for example, will have the 'S' of "Sketch" chosen, but the 's' of 'sketchbook
+   * will get underlined.
+   * No letter by an underscore will be assigned.
+   * Disabled on Mac, per Apple guidelines.
+   * <tt>menu</tt> may contain nulls.
+   * @param menu
+   *          A menu, a list of menus or an array of menu items to set mnemonics for.
+   * @param font
+   *          A font for rendering character widths.
+   */
+  public static void setMenuMnemonics(JMenuItem... menu) {
+    if (Base.isMacOS()) return;
+    if (menu.length == 0) return;
+
+    // This list is the contents of http://techbase.kde.org/Projects/Usability/HIG/
+    // Keyboard_Accelerators, made lowercase, with nothing but letters left except
+    // for ampersands before mnemonics and ".+" for changable text. (They are regexs.)
+    // Note that every ampersand MUST be followed by a lowercase ASCII letter.
+    final String[] kdePreDefs = { "&file", "&new", "&open", "open&recent", "&save",
+      "save&as", "saveacop&y", "saveas&template", "savea&ll", "reloa&d", "&print", 
+      "printpre&view", "&import", "e&xport", "&closefile", "clos&eallfiles", "&quit", 
+      "&edit", "&undo", "re&do", "cu&t&", "&copy", "&paste", "&delete", "select&all", 
+      "dese&lect", "&find", "find&next", "findpre&vious", "&replace", "&gotoline", 
+      "&view", "&newview", "close&allviews", "&splitview", "&removeview", 
+      "splitter&orientation", "&horizontal", "&vertical", "view&mode", "&fullscreenmode", 
+      "&zoom", "zoom&in", "zoom&out", "zoomtopage&width", "zoomwhole&page", "zoom&factor", 
+      "&insert", "&format", "&go", "&up", "&back", "&forward", "&home", "&go", "&previouspage", 
+      "&nextpage", "&firstpage", "&lastpage", "read&updocument", "read&downdocument", "&back", 
+      "&forward", "&gotopage", "&bookmarks", "&addbookmark", "bookmark&tabsasfolder", 
+      "&editbookmarks", "&newbookmarksfolder", "&tools", "&settings", "&toolbars",
+      "configure&shortcuts", "configuretool&bars", "&configure*", "&help", ".+&handbook", 
+      "&whatsthis", "report&bug", "&about[^k].*", "about&kde" };
+    
+    final FontMetrics fm = menu[0].getFontMetrics(menu[0].getFont());
+    final Comparator<Character> charComparator = new Comparator<Character>() {
+      public int compare(Character ch1, Character ch2) {
+        // Descriminates against decenders for readability, per MS
+	// Human Interface Guide, and vowels per MS and Gnome.
+        float w1 = fm.charWidth(ch1), w2 = fm.charWidth(ch2);
+        for (char bad : "qypgjaeiouQYPGJAEIOU".toCharArray()) {
+          if (bad == ch1) w1 *= 0.66;
+          if (bad == ch2) w2 *= 0.66;
+	}
+        return (int)Math.signum(w2 - w1);
+      }
+    };
+    // taken holds only [a-z], not uppercase.
+    // Prevents uppercase letters != lowercase letters, so
+    // "Save" and "Save As" aren't both given 'a'.
+    final List<Character> taken = new ArrayList<Character>(menu.length);
+    char firstChar;
+    char[] w; // temp char array
+    Character[] word;
+    boolean foundYet = false;
+
+    // METHOD 1: attempt to assign KDE defaults.
+    for (JMenuItem jmi : menu) {
+      if (jmi == null) continue;
+      jmi.setMnemonic(0); // Reset.
+      for (String kdePreDef : kdePreDefs) {
+        if (jmi.getText().toLowerCase().replaceAll("[^a-z]","").matches(kdePreDef.replace("&",""))) {
+	  // mnem is lowercase: might be best to make uppercase if neccessary. 
+          char mnem = kdePreDef.charAt(1+kdePreDef.indexOf("&"));
+          jmi.setMnemonic(jmi.getText().indexOf(Character.toString(mnem).toUpperCase()) < 0 ?
+	    mnem : (char)(mnem-32));
+	  taken.add(mnem);
+	  break;
+	}
+      }
+    }
+    
+    // Where KDE defaults fail, use an algorithm.
+    algorithmicAssaignment:
+    for (JMenuItem jmi : menu) {
+      if (jmi == null) continue;
+      if (jmi.getMnemonic() != 0) continue; // Already assigned.
+
+      // The string can't be made lower-case as that would spoil
+      // the width comparison.
+      String cleanString = jmi.getText();
+      if (cleanString.startsWith("sketchbook \u2192 "))
+        cleanString = cleanString.substring(13);
+	
+      if (cleanString.length() == 0) continue;
+
+      // First, ban letters by underscores.
+      final List<Character> banned = new ArrayList<Character>();
+      for (int i = 0; i < cleanString.length(); i++) {
+        if (cleanString.charAt(i) == '_') {
+          if (i > 0)
+	    banned.add(Character.toLowerCase(cleanString.charAt(i-1)));
+	  if (i+1 < cleanString.length())
+	    banned.add(Character.toLowerCase(cleanString.charAt(i+1)));
+	}
+      }
+
+      // METHOD 2: Uppercase starts of words.
+      // Splitting into blocks of ASCII letters wouldn't work
+      // because there could be non-ASCII letters in a word.
+      for (String wd : cleanString.split("[^\\p{IsAlphabetic}]")) {
+        if (wd.length() == 0) continue;
+        firstChar = wd.charAt(0);
+        if (taken.contains(Character.toLowerCase(firstChar))) continue;
+	if (banned.contains(Character.toLowerCase(firstChar))) continue;
+        if ('A' <= firstChar && firstChar <= 'Z') {
+          jmi.setMnemonic(firstChar);
+          taken.add((char)(firstChar | 32)); // tolowercase
+          continue algorithmicAssaignment;
+        }
+      }
+
+      // METHOD 3: Lowercase starts of words.
+      for (String wd : cleanString.split("[^\\p{IsAlphabetic}]")) {
+        if (wd.length() == 0) continue;
+        firstChar = wd.charAt(0);
+        if (taken.contains(Character.toLowerCase(firstChar))) continue;
+	if (banned.contains(Character.toLowerCase(firstChar))) continue;
+        if ('a' <= firstChar && firstChar <= 'z') {
+          jmi.setMnemonic(firstChar);
+          taken.add(firstChar); // is lowercase
+          continue algorithmicAssaignment;
+        }
+      }
+
+      // METHOD 4: Second ASCII letter.
+      cleanString = cleanString.replaceAll("[^A-Za-z]", "");
+      if (cleanString.length() >= 2) {
+        if (!taken.contains((char)(cleanString.charAt(1)|32))) {
+	  if (!banned.contains((char)(cleanString.charAt(1)|32))) {
+	    if (fm.charWidth('A') <= 2*fm.charWidth(cleanString.charAt(1))) {
+              jmi.setMnemonic(cleanString.charAt(1));
+              taken.add((char)(cleanString.charAt(1)|32));
+              continue algorithmicAssaignment;
+	    }
+	  }
+        }
+      }
+
+      // METHOD 5: charComparator.
+      w = cleanString.toCharArray();
+      word = new Character[w.length];
+      for (int i = 0; i < w.length; i++) {
+        word[i] = new Character(w[i]);
+      }
+      Arrays.sort(word, charComparator); // sorts in increasing order
+      for (char mnem : word) {
+        if (taken.contains(Character.toLowerCase(mnem))) continue;
+	if (banned.contains(Character.toLowerCase(mnem))) continue;
+        // NB: setMnemonic(char) doesn't want [^A-Za-z]
+        jmi.setMnemonic(mnem);
+        taken.add(Character.toLowerCase(mnem));
+        continue algorithmicAssaignment;
+      }
+
+      // METHOD 6: Digits
+      for (char digit : jmi.getText().replaceAll("[^0-9]", "").toCharArray()) {
+        if (taken.contains(digit)) continue;
+        jmi.setMnemonic(KeyEvent.VK_0 + (digit - '0'));
+	taken.add(digit);
+	continue algorithmicAssaignment;
+      }
+    }
+
+    // Finally, RECURSION.
+    for (JMenuItem jmi : menu) {
+      if (jmi instanceof JMenu) {
+        JMenu jm = (JMenu) jmi;
+        JMenuItem[] items = new JMenuItem[jm.getItemCount()];
+        for (int i = 0; i < items.length; i++) {
+          items[i] = jm.getItem(i);
+        }
+        setMenuMnemonics(items);
+      }
+    }
+  }
+
+  /**
+   * As setMenuMnemonics(JMenuItem...).
+   */
+  public static void setMenuMnemonics(JMenuBar menubar) {
+    JMenuItem[] items = new JMenuItem[menubar.getMenuCount()];
+    for (int i = 0; i < items.length; i++) {
+      items[i] = menubar.getMenu(i);
+    }
+    setMenuMnemonics(items);
+  }
 
   static public JCheckBoxMenuItem newJCheckBoxMenuItem(String title, int what) {
     JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(title);
@@ -119,7 +335,6 @@ public class Toolkit {
     menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
     return menuItem;
   }
-
 
   static public void addDisabledItem(JMenu menu, String title) {
     JMenuItem item = new JMenuItem(title);

@@ -146,6 +146,8 @@ class ContributionPanel extends JPanel {
         }
       }
     });
+    openFolder.setMnemonic(KeyEvent.VK_O);
+    //Toolkit.setMenuMnemonics;
 
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 

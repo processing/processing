@@ -198,6 +198,7 @@ public class Recent {
       //menu.add(item);
       menu.insert(item, 0);
     }
+    Toolkit.setMenuMnemonics(menu);
   }
 
 

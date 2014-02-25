@@ -386,6 +386,9 @@ public abstract class Mode {
     // Add a list of all sketches and subfolders
     toolbarMenu.addSeparator();
     base.populateSketchbookMenu(toolbarMenu);
+
+    Toolkit.setMenuMnemonics(toolbarMenu);
+
 //    boolean found = false;
 //    try {
 //      found = base.addSketches(toolbarMenu, base.getSketchbookFolder(), true);
