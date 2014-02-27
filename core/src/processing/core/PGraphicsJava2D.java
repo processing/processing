@@ -1487,8 +1487,8 @@ public class PGraphicsJava2D extends PGraphics {
       this.tintedColor = tintColor;
 
 //      GraphicsConfiguration gc = parent.getGraphicsConfiguration();
-//      compat = gc.createCompatibleImage(image.getWidth(), 
-//                                        image.getHeight(), 
+//      compat = gc.createCompatibleImage(image.getWidth(),
+//                                        image.getHeight(),
 //                                        Transparency.TRANSLUCENT);
 //
 //      Graphics2D g = compat.createGraphics();

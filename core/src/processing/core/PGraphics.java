@@ -1096,7 +1096,7 @@ public class PGraphics extends PImage implements PConstants {
     if (which == ENABLE_NATIVE_FONTS ||
         which == DISABLE_NATIVE_FONTS) {
       showWarning("hint(ENABLE_NATIVE_FONTS) no longer supported. " +
-      		        "Use createFont() instead.");
+                  "Use createFont() instead.");
     }
     if (which > 0) {
       hints[which] = true;
