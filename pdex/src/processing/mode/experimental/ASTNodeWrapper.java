@@ -259,6 +259,7 @@ public class ASTNodeWrapper {
   }
   
   private int getJavadocOffset(TypeDeclaration td){
+    // TODO: This is still broken. Hence no refactoring or highlighting on scroll works :\
     List<ASTNode> list= td.modifiers();
     list = td.modifiers();
     SimpleName sn = (SimpleName) getNode();
@@ -275,47 +276,6 @@ public class ASTNodeWrapper {
     }
     
     return 0;   
-  }
-  
-  private void testForMultilineDecl(ASTNode thisNode){
-    int minLineNum = lineNumber, maxLineNum = ((CompilationUnit) thisNode
-        .getRoot()).getLineNumber(thisNode.getStartPosition());
-    log("Visiting children of node " + getNodeAsString(thisNode));
-    Iterator<StructuralPropertyDescriptor> it = thisNode
-        .structuralPropertiesForType().iterator();
-    boolean flag = true;
-    int altStartPos = 0;
-    while (it.hasNext()) {
-      StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
-          .next();
-      if (prop.isChildListProperty()) {
-        List<ASTNode> nodelist = (List<ASTNode>) thisNode
-            .getStructuralProperty(prop);
-        log("prop " + prop);
-        for (ASTNode cnode : nodelist) {
-          log("Visiting node " + getNodeAsString(cnode));
-          if (getLineNumber(cnode) >= minLineNum && getLineNumber(cnode) <= maxLineNum) {
-            if (flag) {
-              altStartPos = cnode.getStartPosition();
-              // log("multi...");
-
-              flag = false;
-            } else {
-              if (cnode == Node) {
-                // loop only till the current node.
-                break;
-              }
-              // We've located the first node in the line.
-              // Now normalize offsets till Node
-              //altStartPos += normalizeOffsets(cnode);
-              
-            }
-            testForMultilineDecl(cnode); FieldDeclaration f;
-          }
-        }
-      }
-    }
-    log("Altspos " + altStartPos);
   }
   
   /**
