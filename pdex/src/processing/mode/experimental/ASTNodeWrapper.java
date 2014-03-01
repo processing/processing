@@ -137,10 +137,10 @@ public class ASTNodeWrapper {
      */
     if (thisNode instanceof TypeDeclaration) {
       jd = ((TypeDeclaration) thisNode).getJavadoc();
-      altStartPos = getLen((TypeDeclaration) thisNode);
+      altStartPos = getJavadocOffset((TypeDeclaration) thisNode);
       log("Has t jdoc " + ((TypeDeclaration) thisNode).getJavadoc());
     } else if (thisNode instanceof MethodDeclaration) {
-      altStartPos = getLen((MethodDeclaration) thisNode);
+      altStartPos = getJavadocOffset((MethodDeclaration) thisNode);
       jd = ((MethodDeclaration) thisNode).getJavadoc();
       log("Has m jdoc " + jd);
     } else if (thisNode instanceof FieldDeclaration) {
@@ -232,7 +232,7 @@ public class ASTNodeWrapper {
     return 0;   
   }
 
-  private int getLen(MethodDeclaration md) {
+  private int getJavadocOffset(MethodDeclaration md) {
     List<ASTNode> list = md.modifiers();
     SimpleName sn = (SimpleName) getNode();
     int lineNum = getLineNumber(sn);
@@ -258,7 +258,7 @@ public class ASTNodeWrapper {
     return 0;
   }
   
-  private int getLen(TypeDeclaration td){
+  private int getJavadocOffset(TypeDeclaration td){
     List<ASTNode> list= td.modifiers();
     list = td.modifiers();
     SimpleName sn = (SimpleName) getNode();
