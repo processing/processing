@@ -125,31 +125,33 @@ public class ASTNodeWrapper {
     int altStartPos = thisNode.getStartPosition();
     log("1.Altspos " + altStartPos);
     thisNode = thisNode.getParent();
-    int jdocOffset; Javadoc jd = null;
+    Javadoc jd = null;
     
-    if(thisNode instanceof TypeDeclaration){
-       jd = ((TypeDeclaration)thisNode).getJavadoc();
-       altStartPos = getLen((TypeDeclaration)thisNode);
-      log("Has t jdoc " + ((TypeDeclaration)thisNode).getJavadoc());
-    } else if(thisNode instanceof MethodDeclaration){
-      altStartPos = getLen((MethodDeclaration)thisNode);
-      jd = ((MethodDeclaration)thisNode).getJavadoc();
+    /* 
+     * There's another case that needs to be handled. If a TD, MD or FD
+     * contains javadoc comments(multi or single line) the starting position
+     * of the javadoc is treated as the beginning of the declaration by the AST parser.
+     * But that's clearly not what we need. The true decl begins after the javadoc ends.
+     * So this offset needs to be found carefully and stored in altStartPos
+     * 
+     */
+    if (thisNode instanceof TypeDeclaration) {
+      jd = ((TypeDeclaration) thisNode).getJavadoc();
+      altStartPos = getLen((TypeDeclaration) thisNode);
+      log("Has t jdoc " + ((TypeDeclaration) thisNode).getJavadoc());
+    } else if (thisNode instanceof MethodDeclaration) {
+      altStartPos = getLen((MethodDeclaration) thisNode);
+      jd = ((MethodDeclaration) thisNode).getJavadoc();
       log("Has m jdoc " + jd);
-    } else if(thisNode instanceof FieldDeclaration){
-      FieldDeclaration fd = ((FieldDeclaration)thisNode); 
+    } else if (thisNode instanceof FieldDeclaration) {
+      FieldDeclaration fd = ((FieldDeclaration) thisNode);
       jd = fd.getJavadoc();
       log("Has f jdoc " + fd.getJavadoc());
-      altStartPos = getLen(fd);
+      altStartPos = getJavadocOffset(fd);
       //nodeOffset = ((VariableDeclarationFragment)(fd.fragments().get(0))).getName().getStartPosition();
     } 
     
-    if(jd != null){
-//      jdocOffset = jd.getLength();
-//      log("jdoc offset: " + jdocOffset);
-      //testForMultilineDecl(thisNode);
-      //thisNode = thisNode.getParent();
-    }
-    else{
+    if(jd == null){
       log("Visiting children of node " + getNodeAsString(thisNode));
       Iterator<StructuralPropertyDescriptor> it = thisNode
           .structuralPropertiesForType().iterator();
@@ -199,7 +201,12 @@ public class ASTNodeWrapper {
     }
   }
   
-  private int getLen(FieldDeclaration fd){
+  /**
+   * 
+   * @param fd
+   * @return
+   */
+  private int getJavadocOffset(FieldDeclaration fd){
     List<ASTNode> list= fd.modifiers();
     SimpleName sn = (SimpleName) getNode();
     
