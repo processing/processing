@@ -46,6 +46,10 @@ public class AutoSaveUtil {
   
   private boolean isSaving;
   
+  private boolean isAutoSaveBackup;
+  
+  private File sketchFolder, sketchBackupFolder;
+  
   /**
    * 
    * @param dedit
@@ -62,8 +66,18 @@ public class AutoSaveUtil {
       ExperimentalMode.log("AutoSaver Interval(mins): " + timeOut);
     }
     autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + "_autosave");
+    sketchFolder = editor.getSketch().getFolder();
+    checkIfBackup();
   }
   
+  private void checkIfBackup(){
+    
+  }
+  
+  public boolean isAutoSaveBackup() {
+    return isAutoSaveBackup;
+  }
+
   /**
    * Check if any previous autosave exists
    * @return
@@ -73,6 +87,7 @@ public class AutoSaveUtil {
       String prevSaves[] = Base.listFiles(autosaveDir, false);
       if(prevSaves.length > 0){
        File t = new File(Base.listFiles(new File(prevSaves[0]), false)[0]);
+       sketchBackupFolder = t;
        pastSave = new File(t.getAbsolutePath() + File.separator + t.getName() + ".pde");
        if(pastSave.exists())
        return true;
@@ -89,6 +104,18 @@ public class AutoSaveUtil {
     autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + "_autosave");
   }
   
+  /**
+   * The folder of the original sketch
+   * @return
+   */
+  public File getSketchFolder(){
+    return sketchFolder;
+  }
+  
+  public File getSketchBackupFolder(){
+    return sketchBackupFolder;
+  }
+  
   public File getPastSave(){
     return pastSave;
   }
@@ -98,7 +125,7 @@ public class AutoSaveUtil {
    */
   public void init(){
     if(saveTime < 10000) saveTime = 10 * 1000;
-    //saveTime = 10 * 1000; //TODO: remove
+    saveTime = 5 * 1000; //TODO: remove
     timer = new Timer();
     timer.schedule(new SaveTask(), saveTime, saveTime);
     isSaving = false;
@@ -112,6 +139,7 @@ public class AutoSaveUtil {
     while(isSaving); // save operation mustn't be interrupted
     if(timer != null) timer.cancel();
     Base.removeDir(autosaveDir);
+    ExperimentalMode.log("Stopping autosaver and deleting backup dir");
   }
   
   /**

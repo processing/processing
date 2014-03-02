@@ -245,7 +245,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         ta.setECSandThemeforTextArea(errorCheckerService, dmode);
         addXQModeUI();    
         debugToolbarEnabled = new AtomicBoolean(false);
-        log("Sketch Path: " + path);    
+        //log("Sketch Path: " + path);
+        
+        viewingAutosaveBackup = false;
+        log("DebugEdit constructed. Viewing auto save false  " + viewingAutosaveBackup);
     }
     
     private void addXQModeUI(){
@@ -342,7 +345,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     // Added temporarily to dump error log. TODO: Remove this later
     public void internalCloseRunner(){      
       if(ExperimentalMode.errorLogsEnabled) writeErrorsToFile();
-      if(autosaver != null) autosaver.stop();
+      if(autosaver != null && !viewingAutosaveBackup) {
+        log("stopping autosaver in internalCloseRunner");
+        autosaver.stop();
+      }
       super.internalCloseRunner();
     }
     
@@ -738,6 +744,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     @Override
     protected boolean handleOpenInternal(String path) {
+      log("handleOpenInternal, path: " + path);
         boolean didOpen = super.handleOpenInternal(path);
         if (didOpen && dbg != null) {
             // should already been stopped (open calls handleStop)
@@ -745,9 +752,16 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             clearBreakpointedLines(); // force clear breakpoint highlights
             variableInspector().reset(); // clear contents of variable inspector
         }
-        if(autosaver != null)
-          autosaver.stop();
-        loadAutoSaver();
+        
+        if(!viewingAutosaveBackup){
+          log("Sketch isn't a backup");          
+          if(autosaver != null){
+            log("stopping autosaver in handleOpenInternal");
+            autosaver.stop();
+          }
+          loadAutoSaver();
+        }       
+        log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
         return didOpen;
     }
 
@@ -825,7 +839,25 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     @Override
     public boolean handleSave(boolean immediately) {
         //System.out.println("handleSave " + immediately);
-
+      
+        log("handleSave, viewing autosave? " + viewingAutosaveBackup);
+        /* If user wants to save a backup, the backup sketch should get
+         * copied to the main sketch directory, simply reload the main sketch. 
+         */
+        if(viewingAutosaveBackup){
+          File files[] = autosaver.getSketchBackupFolder().listFiles();
+          File src = autosaver.getSketchBackupFolder(), dst = autosaver
+              .getSketchFolder();
+          for (File f : files) {
+            log("Copying " + f.getAbsolutePath() + " to " + dst.getAbsolutePath());
+//            if(f.isFile())
+            //Base.copyFile(f, new File(dst + File.separator + f.getName()));
+//            else
+//              Base.copyDir(f, new File(dst + File.separator + f.getName()));
+          }
+          //viewingAutosaveBackup = false;
+        }
+      
         // note modified tabs
         final List<String> modified = new ArrayList();
         for (int i = 0; i < getSketch().getCodeCount(); i++) {
@@ -887,6 +919,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         return saved;
     }
     
+    private boolean viewingAutosaveBackup;
+    
     /**
      * Loads and starts the auto save service
      * Also handles the case where an auto save backup is found.
@@ -894,15 +928,12 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     public void loadAutoSaver(){
       log("Load Auto Saver()");
-      if(autosaver != null){
-        autosaver.stop();
-      }
-      autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval);
+      autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval);      
       if(!autosaver.checkForPastSave()) {
         autosaver.init();
         return;
       }
-      
+      if(viewingAutosaveBackup) return;
       File pastSave = autosaver.getPastSave();
       int response = Base
         .showYesNoQuestion(this,
@@ -913,9 +944,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
                                "was closed unexpectedly last time.",
                            "Select YES to view it or NO to delete the backup.");
       if(response == JOptionPane.YES_OPTION){
-        handleOpenInternal(pastSave.getAbsolutePath());
-        Base.showMessage("Save it..", "Remember to save the backup sketch to a specific location if you want to.");
+        viewingAutosaveBackup = true;
+        handleOpenInternal(pastSave.getAbsolutePath());        
+        // Base.showMessage("Save it..", "Remember to save the backup sketch to a specific location if you want to.");
         //log(getSketch().getMainFilePath());
+        log("loadAutoSaver, viewing autosave? " + viewingAutosaveBackup);
         return;
       }
       else{

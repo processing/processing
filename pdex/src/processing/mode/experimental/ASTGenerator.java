@@ -238,7 +238,7 @@ public class ASTGenerator {
   /**
    * Toggle AST View window
    */
-  public static final boolean SHOWAST = true;
+  public static final boolean SHOWAST = !true;
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
@@ -254,14 +254,14 @@ public class ASTGenerator {
       compilationUnit = (CompilationUnit) parser.createAST(null);
     } else {
       compilationUnit = cu;
-      log("Other cu");
+      //log("Other cu");
     }
 //    OutlineVisitor visitor = new OutlineVisitor();
 //    compilationUnit.accept(visitor);
     getCodeComments();
     codeTree = new DefaultMutableTreeNode(new ASTNodeWrapper((ASTNode) compilationUnit
                                               .types().get(0)));
-    log("Total CU " + compilationUnit.types().size());
+    //log("Total CU " + compilationUnit.types().size());
     if(compilationUnit.types() == null || compilationUnit.types().isEmpty()){
       logE("No CU found!");
     }

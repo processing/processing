@@ -1387,9 +1387,9 @@ public class ErrorCheckerService implements Runnable{
    * compiler classpath needs to be updated.
    */
   protected void checkForChangedImports() {
-     log("Imports: " + programImports.size() +
-     " Prev Imp: "
-     + previousImports.size());
+//     log("Imports: " + programImports.size() +
+//     " Prev Imp: "
+//     + previousImports.size());
     if (programImports.size() != previousImports.size()) {
       // log(1);
       loadCompClass = true;
