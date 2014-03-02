@@ -246,9 +246,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         addXQModeUI();    
         debugToolbarEnabled = new AtomicBoolean(false);
         //log("Sketch Path: " + path);
-        
-        viewingAutosaveBackup = false;
-        log("DebugEdit constructed. Viewing auto save false  " + viewingAutosaveBackup);
     }
     
     private void addXQModeUI(){
@@ -744,7 +741,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     @Override
     protected boolean handleOpenInternal(String path) {
-      log("handleOpenInternal, path: " + path);
+        log("handleOpenInternal, path: " + path);
         boolean didOpen = super.handleOpenInternal(path);
         if (didOpen && dbg != null) {
             // should already been stopped (open calls handleStop)
@@ -752,16 +749,12 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             clearBreakpointedLines(); // force clear breakpoint highlights
             variableInspector().reset(); // clear contents of variable inspector
         }
-        
-        if(!viewingAutosaveBackup){
-          log("Sketch isn't a backup");          
-          if(autosaver != null){
-            log("stopping autosaver in handleOpenInternal");
-            autosaver.stop();
-          }
+        //if(didOpen){
+          
           loadAutoSaver();
-        }       
-        log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
+          viewingAutosaveBackup = autosaver.isAutoSaveBackup();
+          log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
+        //}
         return didOpen;
     }
 
@@ -845,17 +838,30 @@ public class DebugEditor extends JavaEditor implements ActionListener {
          * copied to the main sketch directory, simply reload the main sketch. 
          */
         if(viewingAutosaveBackup){
+          /*
           File files[] = autosaver.getSketchBackupFolder().listFiles();
           File src = autosaver.getSketchBackupFolder(), dst = autosaver
-              .getSketchFolder();
+              .getActualSketchFolder();
           for (File f : files) {
             log("Copying " + f.getAbsolutePath() + " to " + dst.getAbsolutePath());
-//            if(f.isFile())
-            //Base.copyFile(f, new File(dst + File.separator + f.getName()));
-//            else
-//              Base.copyDir(f, new File(dst + File.separator + f.getName()));
+            try {
+              if (f.isFile()) {
+                f.delete();
+                Base.copyFile(f, new File(dst + File.separator + f.getName()));
+              } else {
+                Base.removeDir(f);
+                Base.copyDir(f, new File(dst + File.separator + f.getName()));
+              }
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
           }
+          File sk = autosaver.getActualSketchFolder();
+          Base.removeDir(autosaver.getAutoSaveDir());
+          //handleOpenInternal(sk.getAbsolutePath() + File.separator + sk.getName() + ".pde");
+          getBase().handleOpen(sk.getAbsolutePath() + File.separator + sk.getName() + ".pde");
           //viewingAutosaveBackup = false;
+          */
         }
       
         // note modified tabs
@@ -933,7 +939,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         autosaver.init();
         return;
       }
-      if(viewingAutosaveBackup) return;
       File pastSave = autosaver.getPastSave();
       int response = Base
         .showYesNoQuestion(this,
@@ -944,7 +949,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
                                "was closed unexpectedly last time.",
                            "Select YES to view it or NO to delete the backup.");
       if(response == JOptionPane.YES_OPTION){
-        viewingAutosaveBackup = true;
         handleOpenInternal(pastSave.getAbsolutePath());        
         // Base.showMessage("Save it..", "Remember to save the backup sketch to a specific location if you want to.");
         //log(getSketch().getMainFilePath());

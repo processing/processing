@@ -27,6 +27,8 @@ import java.util.TimerTask;
 import processing.app.Base;
 import processing.app.Sketch;
 
+import static processing.mode.experimental.ExperimentalMode.log;
+
 /**
  * Autosave utility for saving sketch backups in the background after
  * certain intervals
@@ -50,6 +52,8 @@ public class AutoSaveUtil {
   
   private File sketchFolder, sketchBackupFolder;
   
+  private static final String AUTOSAVEFOLDER = "__autosave__";
+  
   /**
    * 
    * @param dedit
@@ -63,15 +67,36 @@ public class AutoSaveUtil {
     }
     else{
       saveTime = timeOut * 60 * 1000;
-      ExperimentalMode.log("AutoSaver Interval(mins): " + timeOut);
+      log("AutoSaver Interval(mins): " + timeOut);
     }
-    autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + "_autosave");
-    sketchFolder = editor.getSketch().getFolder();
     checkIfBackup();
+    if(isAutoSaveBackup){
+      sketchBackupFolder = sketchFolder;
+    }
+    else{
+      autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + AUTOSAVEFOLDER);
+      sketchFolder = editor.getSketch().getFolder();
+      sketchBackupFolder = autosaveDir;
+    }
   }
   
+  /**
+   * If the sketch path looks like ../__autosave__/../FooSketch
+   * then assume this is a backup sketch
+   */
   private void checkIfBackup(){
-    
+    File parent = sketchFolder.getParentFile().getParentFile();
+    if(parent.isDirectory() && parent.getName().equals(AUTOSAVEFOLDER)){
+      isAutoSaveBackup = true;
+      log("IS AUTOSAVE " + sketchFolder.getAbsolutePath());
+    }    
+  }
+  
+  public File getActualSketchFolder(){
+    if(isAutoSaveBackup)
+      return sketchFolder.getParentFile().getParentFile().getParentFile();
+    else
+      return sketchFolder;
   }
   
   public boolean isAutoSaveBackup() {
@@ -101,7 +126,11 @@ public class AutoSaveUtil {
    */
   public void reloadAutosaveDir(){
     while(isSaving);
-    autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + "_autosave");
+    autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + AUTOSAVEFOLDER);
+  }
+  
+  public File getAutoSaveDir(){
+    return autosaveDir;
   }
   
   /**
@@ -124,12 +153,16 @@ public class AutoSaveUtil {
    * Start the auto save service
    */
   public void init(){
+    if(isAutoSaveBackup) {
+      log("AutoSaver not started");
+      return;
+    }
     if(saveTime < 10000) saveTime = 10 * 1000;
     saveTime = 5 * 1000; //TODO: remove
     timer = new Timer();
     timer.schedule(new SaveTask(), saveTime, saveTime);
     isSaving = false;
-    ExperimentalMode.log("AutoSaver started");
+    log("AutoSaver started");
   }
   
   /**
@@ -156,7 +189,7 @@ public class AutoSaveUtil {
     boolean deleteOldSave = false;
     String oldSave = null;
     if(!autosaveDir.exists()){
-      autosaveDir = new File(sc.getFolder().getAbsolutePath(), "_autosave");
+      autosaveDir = new File(sc.getFolder().getAbsolutePath(), AUTOSAVEFOLDER);
       autosaveDir.mkdir();
     }
     else
