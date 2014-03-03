@@ -3696,12 +3696,15 @@ public class PGraphicsOpenGL extends PGraphics {
     float lastX = 0;
     float lastY = 0;
 
+    boolean open = false;
     beginShape();
     while (!outline.isDone()) {
       int type = outline.currentSegment(textPoints);
-      if (type == PGL.SEG_MOVETO) {         // 1 point (2 vars) in textPoints
-      } else if (type == PGL.SEG_LINETO) {  // 1 point
-        if (type == PGL.SEG_MOVETO) beginContour();
+      if (!open) {
+        beginContour();
+        open = true;
+      }
+      if (type == PGL.SEG_MOVETO || type == PGL.SEG_LINETO) {  // 1 point
         vertex(x + textPoints[0], y + textPoints[1]);
         lastX = textPoints[0];
         lastY = textPoints[1];
@@ -3731,6 +3734,7 @@ public class PGraphicsOpenGL extends PGraphics {
         lastY = textPoints[5];
       } else if (type == PGL.SEG_CLOSE) {
         endContour();
+        open = false;
       }
       outline.next();
     }
