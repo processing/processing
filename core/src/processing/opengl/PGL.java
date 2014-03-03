@@ -590,8 +590,7 @@ public abstract class PGL {
       disable(BLEND);
       drawTexture(TEXTURE_2D, glColorTex.get(backTex),
                   fboWidth, fboHeight, pg.width, pg.height,
-                                       0, 0, pg.width, pg.height,
-                                       0, 0, pg.width, pg.height);
+                  0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
 
       // Swapping front and back textures.
       int temp = frontTex;
