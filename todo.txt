@@ -1,6 +1,8 @@
 0225 pde
 _ add font fixes to the rest of the API
 
+G Serial: Update to latest upstream (fixes potential port handle leak)
+G   https://github.com/processing/processing/pull/2361
 
 high
 _ use --deep for codesign to work?
@@ -25,6 +27,8 @@ _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 
 
 medium
+_ get stack trace issues with NPE
+_   https://github.com/processing/processing/pull/2359
 _ JNA conflicts can be avoided with a -D option
 _   https://github.com/processing/processing/issues/2239
 _ dataPath() not working when app is not run from app dir
