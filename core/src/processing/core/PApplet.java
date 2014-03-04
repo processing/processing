@@ -1925,7 +1925,7 @@ public class PApplet extends Applet
         }
       } else {
         if (platform == MACOSX) e.printStackTrace(System.out);
-        throw new RuntimeException(e.getMessage());
+        throw new RuntimeException(e.getMessage(), e);
       }
     }
   }

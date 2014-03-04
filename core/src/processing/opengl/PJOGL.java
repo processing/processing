@@ -214,7 +214,7 @@ public class PJOGL extends PGL {
 
 
   public PJOGL(PGraphicsOpenGL pg) {
-    super(pg);
+    super( pg);
     glu = new GLU();
   }
 
@@ -1697,6 +1697,10 @@ public class PJOGL extends PGL {
 
   @Override
   public int getError() {
+    //temporary solution yo?
+    int error = gl == null ?
+      0 : gl.glGetError();
+    //return error;
     return gl.glGetError();
   }
 
