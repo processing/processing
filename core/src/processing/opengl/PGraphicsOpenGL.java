@@ -4469,7 +4469,7 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   @Override
   public void ortho() {
-    ortho(0, width, 0, height, cameraNear, cameraFar);
+    ortho(0, width, 0, height, 0, cameraEyeZ * 10);
   }
 
 
@@ -4480,7 +4480,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void ortho(float left, float right,
                     float bottom, float top) {
-    ortho(left, right, bottom, top, cameraNear, cameraFar);
+    ortho(left, right, bottom, top, 0, cameraEyeZ * 10);
   }
 
 
@@ -4492,24 +4492,27 @@ public class PGraphicsOpenGL extends PGraphics {
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
-    // Translating the origin to (widht/2, height/2) since the matrix math
-    // below assumes the center of the screen to be (0, 0), but in Processing
-    // it is (w/2, h/2).
-    left   -= width/2f;
-    right  -= width/2f;
-    bottom -= height/2f;
-    top    -= height/2f;
+    float w = right - left;
+    float h = top - bottom;
+    float d = far - near;
+
+    // Applying the camera translation (only on x and y, as near and far
+    // are given as distances from the viewer)
+    left   -= cameraEyeX;
+    right  -= cameraEyeX;
+    bottom -= cameraEyeY;
+    top    -= cameraEyeY;
 
     // Flushing geometry with a different perspective configuration.
     flush();
 
-    float x = +2.0f / (right - left);
-    float y = +2.0f / (top - bottom);
-    float z = -2.0f / (far - near);
+    float x = +2.0f / w;
+    float y = +2.0f / h;
+    float z = -2.0f / d;
 
-    float tx = -(right + left) / (right - left);
-    float ty = -(top + bottom) / (top - bottom);
-    float tz = -(far + near)   / (far - near);
+    float tx = -(right + left) / w;
+    float ty = -(top + bottom) / h;
+    float tz = -(far + near)   / d;
 
     // The minus sign is needed to invert the Y axis.
     projection.set(x,  0, 0, tx,
