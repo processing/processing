@@ -3392,8 +3392,8 @@ public class PGraphicsOpenGL extends PGraphics {
       pushMatrix();
 
       if (shapeMode == CENTER) {
-        translate(x - shape.getWidth() / 2, y - shape.getHeight() / 2, z
-            - shape.getDepth() / 2);
+        translate(x - shape.getWidth() / 2, y - shape.getHeight() / 2,
+                  z - shape.getDepth() / 2);
 
       } else if ((shapeMode == CORNER) || (shapeMode == CORNERS)) {
         translate(x, y, z);
@@ -3696,12 +3696,15 @@ public class PGraphicsOpenGL extends PGraphics {
     float lastX = 0;
     float lastY = 0;
 
+    boolean open = false;
     beginShape();
     while (!outline.isDone()) {
       int type = outline.currentSegment(textPoints);
-      if (type == PGL.SEG_MOVETO) {         // 1 point (2 vars) in textPoints
-      } else if (type == PGL.SEG_LINETO) {  // 1 point
-        if (type == PGL.SEG_MOVETO) beginContour();
+      if (!open) {
+        beginContour();
+        open = true;
+      }
+      if (type == PGL.SEG_MOVETO || type == PGL.SEG_LINETO) {  // 1 point
         vertex(x + textPoints[0], y + textPoints[1]);
         lastX = textPoints[0];
         lastY = textPoints[1];
@@ -3731,6 +3734,7 @@ public class PGraphicsOpenGL extends PGraphics {
         lastY = textPoints[5];
       } else if (type == PGL.SEG_CLOSE) {
         endContour();
+        open = false;
       }
       outline.next();
     }
@@ -4465,7 +4469,7 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   @Override
   public void ortho() {
-    ortho(0, width, 0, height, cameraNear, cameraFar);
+    ortho(0, width, 0, height, 0, cameraEyeZ * 10);
   }
 
 
@@ -4476,7 +4480,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void ortho(float left, float right,
                     float bottom, float top) {
-    ortho(left, right, bottom, top, cameraNear, cameraFar);
+    ortho(left, right, bottom, top, 0, cameraEyeZ * 10);
   }
 
 
@@ -4488,24 +4492,27 @@ public class PGraphicsOpenGL extends PGraphics {
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
-    // Translating the origin to (widht/2, height/2) since the matrix math
-    // below assumes the center of the screen to be (0, 0), but in Processing
-    // it is (w/2, h/2).
-    left   -= width/2f;
-    right  -= width/2f;
-    bottom -= height/2f;
-    top    -= height/2f;
+    float w = right - left;
+    float h = top - bottom;
+    float d = far - near;
+
+    // Applying the camera translation (only on x and y, as near and far
+    // are given as distances from the viewer)
+    left   -= cameraEyeX;
+    right  -= cameraEyeX;
+    bottom -= cameraEyeY;
+    top    -= cameraEyeY;
 
     // Flushing geometry with a different perspective configuration.
     flush();
 
-    float x = +2.0f / (right - left);
-    float y = +2.0f / (top - bottom);
-    float z = -2.0f / (far - near);
+    float x = +2.0f / w;
+    float y = +2.0f / h;
+    float z = -2.0f / d;
 
-    float tx = -(right + left) / (right - left);
-    float ty = -(top + bottom) / (top - bottom);
-    float tz = -(far + near)   / (far - near);
+    float tx = -(right + left) / w;
+    float ty = -(top + bottom) / h;
+    float tz = -(far + near)   / d;
 
     // The minus sign is needed to invert the Y axis.
     projection.set(x,  0, 0, tx,
@@ -5890,21 +5897,27 @@ public class PGraphicsOpenGL extends PGraphics {
       scrX0 = dx;
       scrX1 = dx + dw;
     }
+
+    int texX0 = sx;
+    int texX1 = sx + sw;
+    int texY0, texY1;
     if (invY) {
       scrY0 = height - (dy + dh);
       scrY1 = height - dy;
+      texY0 = tex.height - (sy + sh);
+      texY1 = tex.height - sy;
     } else {
       // Because drawTexture uses bottom-to-top orientation of Y axis.
       scrY0 = height - dy;
       scrY1 = height - (dy + dh);
+      texY0 = sy;
+      texY1 = sy + sh;
     }
 
     pgl.drawTexture(tex.glTarget, tex.glName,
                     tex.glWidth, tex.glHeight, width, height,
-                    sx, tex.height - (sy + sh),
-                    sx + sw, tex.height - sy,
-                    scrX0, scrY0,
-                    scrX1, scrY1);
+                    texX0, texY0, texX1, texY1,
+                    scrX0, scrY0, scrX1, scrY1);
 
 
     if (needEndDraw) {

@@ -1252,14 +1252,14 @@ public class Texture implements PConstants {
     pg.setFramebuffer(tempFbo);
     // Clear the color buffer to make sure that the alpha channel is set to
     // full transparency
-    pgl.clearColor(0, 0, 0, 0);
+    pgl.clearColor(1, 1, 1, 1);
     pgl.clear(PGL.COLOR_BUFFER_BIT);
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
       pgl.drawTexture(tex.glTarget, tex.glName,
                       tex.glWidth, tex.glHeight, tempFbo.width, tempFbo.height,
-                      x, y, w, h, 0, 0, width, height);
+                      x, y, x + w, y + h, 0, 0, width, height);
 
     } else {
       // Rendering tex into "this" but without scaling so the contents
@@ -1267,7 +1267,7 @@ public class Texture implements PConstants {
       // destination.
       pgl.drawTexture(tex.glTarget, tex.glName,
                       tex.glWidth, tex.glHeight, tempFbo.width, tempFbo.height,
-                      x, y, w, h, x, y, w, h);
+                      x, y, x + w, y + h, x, y, x + w, y + h);
     }
     pg.popFramebuffer();
 
