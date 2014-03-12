@@ -1807,8 +1807,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     FrameBuffer fb = getCurrentFB();
     if (fb != null) {
-      getCurrentFB().bind();
-      pgl.drawBuffer(getCurrentFB().getDefaultDrawBuffer());
+      fb.bind();
+      pgl.drawBuffer(fb.getDefaultDrawBuffer());
     }
   }
 
@@ -1817,11 +1817,11 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   protected void endBindFramebuffer(int target, int framebuffer) {
-    if (framebuffer == 0 && currentFramebuffer != null &&
-                            currentFramebuffer.glFbo != 0) {
+    FrameBuffer fb = getCurrentFB();
+    if (framebuffer == 0 && fb != null && fb.glFbo != 0) {
       // The user is setting the framebuffer to 0 (screen buffer), but the
-      // renderer is rendering to an offscreen buffer.
-      currentFramebuffer.bind();
+      // renderer is drawing into an offscreen buffer.
+      fb.bind();
     }
   }
 
