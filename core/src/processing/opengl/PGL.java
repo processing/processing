@@ -511,8 +511,8 @@ public abstract class PGL {
   protected void syncBackTexture() {
     if (usingFrontTex) needSepFrontTex = true;
     if (1 < numSamples) {
-      bindFramebuffer(READ_FRAMEBUFFER, glMultiFbo.get(0));
-      bindFramebuffer(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+      bindFramebufferImpl(READ_FRAMEBUFFER, glMultiFbo.get(0));
+      bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
       blitFramebuffer(0, 0, fboWidth, fboHeight,
                       0, 0, fboWidth, fboHeight,
                       COLOR_BUFFER_BIT, NEAREST);
@@ -529,12 +529,12 @@ public abstract class PGL {
     if (needFBOLayer(clear0)) {
       if (!fboLayerCreated) createFBOLayer();
 
-      bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
+      bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(backTex), 0);
 
       if (1 < numSamples) {
-        bindFramebuffer(FRAMEBUFFER, glMultiFbo.get(0));
+        bindFramebufferImpl(FRAMEBUFFER, glMultiFbo.get(0));
       }
 
       if (firstFrame) {
@@ -580,7 +580,7 @@ public abstract class PGL {
       syncBackTexture();
 
       // Draw the contents of the back texture to the screen framebuffer.
-      bindFramebuffer(FRAMEBUFFER, 0);
+      bindFramebufferImpl(FRAMEBUFFER, 0);
 
       clearDepth(1);
       clearColor(0, 0, 0, 0);
@@ -670,14 +670,14 @@ public abstract class PGL {
     frontTex = 1;
 
     genFramebuffers(1, glColorFbo);
-    bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
+    bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
     framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D,
                          glColorTex.get(backTex), 0);
 
     if (multisample) {
       // Creating multisampled FBO
       genFramebuffers(1, glMultiFbo);
-      bindFramebuffer(FRAMEBUFFER, glMultiFbo.get(0));
+      bindFramebufferImpl(FRAMEBUFFER, glMultiFbo.get(0));
 
       // color render buffer...
       genRenderbuffers(1, glColorBuf);
@@ -766,7 +766,7 @@ public abstract class PGL {
     clearColor(r, g, b, a);
     clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
 
-    bindFramebuffer(FRAMEBUFFER, 0);
+    bindFramebufferImpl(FRAMEBUFFER, 0);
 
     fboLayerCreated = true;
   }
@@ -2559,11 +2559,11 @@ public abstract class PGL {
   // to glReadPixels() should be done in readPixelsImpl().
 
   public void readPixels(int x, int y, int width, int height, int format, int type, Buffer buffer){
-    boolean needEndBegin = format != STENCIL_INDEX &&
-                           format != DEPTH_COMPONENT && format != DEPTH_STENCIL;
-    if (needEndBegin) pg.beginReadPixels();
+    boolean pgCall = format != STENCIL_INDEX &&
+                     format != DEPTH_COMPONENT && format != DEPTH_STENCIL;
+    if (pgCall) pg.beginReadPixels();
     readPixelsImpl(x, y, width, height, format, type, buffer);
-    if (needEndBegin) pg.endReadPixels();
+    if (pgCall) pg.endReadPixels();
   }
 
   protected abstract void readPixelsImpl(int x, int y, int width, int height, int format, int type, Buffer buffer);
@@ -2745,7 +2745,13 @@ public abstract class PGL {
 
   // Framebuffers Objects
 
-  public abstract void bindFramebuffer(int target, int framebuffer);
+  public void bindFramebuffer(int target, int framebuffer) {
+    pg.beginBindFramebuffer(target, framebuffer);
+    bindFramebufferImpl(target, framebuffer);
+    pg.endBindFramebuffer(target, framebuffer);
+  }
+  protected abstract void bindFramebufferImpl(int target, int framebuffer);
+
   public abstract void deleteFramebuffers(int n, IntBuffer framebuffers);
   public abstract void genFramebuffers(int n, IntBuffer framebuffers);
   public abstract void bindRenderbuffer(int target, int renderbuffer);

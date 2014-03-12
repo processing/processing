@@ -1812,11 +1812,24 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  public void beginReadPixels() {
+  protected void beginBindFramebuffer(int target, int framebuffer) {
+    // Actually, nothing to do here.
+  }
+
+  protected void endBindFramebuffer(int target, int framebuffer) {
+    if (framebuffer == 0 && currentFramebuffer != null &&
+                            currentFramebuffer.glFbo != 0) {
+      // The user is setting the framebuffer to 0 (screen buffer), but the
+      // renderer is rendering to an offscreen buffer.
+      currentFramebuffer.bind();
+    }
+  }
+
+  protected void beginReadPixels() {
     beginPixelsOp(OP_READ);
   }
 
-  public void endReadPixels() {
+  protected void endReadPixels() {
     endPixelsOp();
   }
 

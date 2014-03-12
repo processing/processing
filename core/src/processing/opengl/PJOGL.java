@@ -2414,7 +2414,7 @@ public class PJOGL extends PGL {
   // Framebuffers Objects
 
   @Override
-  public void bindFramebuffer(int target, int framebuffer) {
+  protected void bindFramebufferImpl(int target, int framebuffer) {
     gl.glBindFramebuffer(target, framebuffer);
   }
 

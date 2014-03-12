@@ -198,16 +198,16 @@ public class FrameBuffer implements PConstants {
   }
 
   public void copy(FrameBuffer dest, int mask) {
-    pgl.bindFramebuffer(PGL.READ_FRAMEBUFFER, this.glFbo);
-    pgl.bindFramebuffer(PGL.DRAW_FRAMEBUFFER, dest.glFbo);
+    pgl.bindFramebufferImpl(PGL.READ_FRAMEBUFFER, this.glFbo);
+    pgl.bindFramebufferImpl(PGL.DRAW_FRAMEBUFFER, dest.glFbo);
     pgl.blitFramebuffer(0, 0, this.width, this.height,
                         0, 0, dest.width, dest.height, mask, PGL.NEAREST);
-    pgl.bindFramebuffer(PGL.READ_FRAMEBUFFER, pg.getCurrentFB().glFbo);
-    pgl.bindFramebuffer(PGL.DRAW_FRAMEBUFFER, pg.getCurrentFB().glFbo);
+    pgl.bindFramebufferImpl(PGL.READ_FRAMEBUFFER, pg.getCurrentFB().glFbo);
+    pgl.bindFramebufferImpl(PGL.DRAW_FRAMEBUFFER, pg.getCurrentFB().glFbo);
   }
 
   public void bind() {
-    pgl.bindFramebuffer(PGL.FRAMEBUFFER, glFbo);
+    pgl.bindFramebufferImpl(PGL.FRAMEBUFFER, glFbo);
   }
 
   public void disableDepthTest() {
