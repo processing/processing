@@ -858,7 +858,8 @@ public class Sketch {
     final File[] copyItems2 = copyItems;
     final String newName2 = newName; 
     
-    // create a new event dispatch thread
+    // Create a new event dispatch thread- to display ProgressBar
+    // while Saving As
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
         public void run() {
             ProgressBarGUI p = new ProgressBarGUI(copyItems2,newFolder2,oldName2,newName2);
@@ -896,20 +897,23 @@ public class Sketch {
   }
 
 
-  // Class used to handle progress bar, and run Save As in background so that
-  // progress bar can update without freezing
+// Class used to handle progress bar, and run Save As or Add File in
+// background so that
+// progress bar can update without freezing
 	public class ProgressBarGUI extends JFrame implements
 			PropertyChangeListener {
 
 		private static final long serialVersionUID = 1L;
 		private JProgressBar progressBar;
 		private JLabel saveAsLabel;
-		private Task t;
+		private TaskSaveAs t;
+		private TaskAddFile t2;
 		private File[] copyItems;
 		private File newFolder;
-
-		// create a new background thread
-		public class Task extends SwingWorker<Void, Void> {
+		private File addFile, sourceFile;
+		
+		// create a new background thread to save as
+		public class TaskSaveAs extends SwingWorker<Void, Void> {
 
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -939,8 +943,8 @@ public class Sketch {
 								new File(ProgressBarGUI.this.newFolder,
 										copyable.getName()), this,progress,totalSize);
 						if (getFileLength(copyable)<524288) {
-							// If the file length > 50MB, the Base.copyFile() function has 
-							// been redesigned to change progress every 50MB so that
+							// If the file length > 0.5MB, the Base.copyFile() function has 
+							// been redesigned to change progress every 0.5MB so that
 							// the progress bar doesn't stagnate during that time
 							progress += getFileLength(copyable);
 							setProgress((int) Math.min(
@@ -968,14 +972,59 @@ public class Sketch {
 
 		}
 
+		// create a new background thread to add a file
+		public class TaskAddFile extends SwingWorker<Void, Void> {
+
+			@Override
+			protected Void doInBackground() throws Exception {
+				// a large part of the file copying happens in this background
+				// thread
+
+				int i = 0;
+				long progress = 0;
+				setProgress(0);
+
+				Base.copyFile(sourceFile, addFile, this);
+				
+				if (addFile.length()<1024) {
+					// If the file length > 1kB, the Base.copyFile() function has 
+					// been redesigned to change progress every 1kB so that
+					// the progress bar doesn't stagnate during that time
+					
+					// If file <1 kB, just fill up Progress Bar to 100%
+					// directly, since time to copy is now negligable (when
+					// perceived by a human, anyway)
+					setProgress(100);
+				}
+				
+				return null;
+			}
+			
+			public void setProgressBarStatus(int status) {
+				setProgress(status);
+			}
+
+			@Override
+			public void done() {
+				// to close the progress bar automatically when done, and to 
+				// print that adding file is done in Message Area
+
+				editor.statusNotice("One file added to the sketch.");
+				ProgressBarGUI.this.closeProgressBar();
+			}
+
+		}
+
+		
+		//Use for Save As
 		public ProgressBarGUI(File[] c, File nf, String oldName, String newName) {
 			// initialize a copyItems and newFolder, which are used for file
 			// copying in the background thread
 			copyItems = c;
 			newFolder = nf;
 
-			// the UI of the progres bar follows
-			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			// the UI of the progress bar follows
+			setDefaultCloseOperation(HIDE_ON_CLOSE);
 			setBounds(200, 200, 400, 140);
 			setResizable(false);
 			setTitle("Saving As...");
@@ -995,13 +1044,50 @@ public class Sketch {
 			Toolkit.setIcon(this);
 			this.setVisible(true);
 
-			// create an instance of Task and run execute() on this instance to
+			// create an instance of TaskSaveAs and run execute() on this
+			// instance to
 			// start background thread
-			t = new Task();
+			t = new TaskSaveAs();
 			t.addPropertyChangeListener(this);
 			t.execute();
 		}
 
+		//Use for Add File
+		public ProgressBarGUI(File sf, File add) {
+			
+			addFile = add;
+			sourceFile = sf;
+
+			// the UI of the progress bar follows
+			setDefaultCloseOperation(HIDE_ON_CLOSE);
+			setBounds(200, 200, 400, 140);
+			setResizable(false);
+			setTitle("Adding File...");
+			JPanel panel = new JPanel(null);
+			add(panel);
+			setContentPane(panel);
+			saveAsLabel = new JLabel("Adding "+addFile.getName());
+			saveAsLabel.setBounds(40, 20, 300, 20);
+
+			progressBar = new JProgressBar(0, 100);
+			progressBar.setValue(0);
+			progressBar.setBounds(40, 50, 300, 30);
+			progressBar.setStringPainted(true);
+
+			panel.add(progressBar);
+			panel.add(saveAsLabel);
+			Toolkit.setIcon(this);
+			this.setVisible(true);
+
+			// create an instance of TaskAddFile and run execute() on this
+			// instance to
+			// start background thread
+			t2 = new TaskAddFile();
+			t2.addPropertyChangeListener(this);
+			t2.execute();
+		}
+
+		
 		public long getFileLength(File f)// function to return the length of
 											// the file, or
 											// ENTIRE directory, including the
@@ -1110,7 +1196,8 @@ public class Sketch {
     boolean result = addFile(sourceFile);
 
     if (result) {
-      editor.statusNotice("One file added to the sketch.");
+//      editor.statusNotice("One file added to the sketch.");
+    	//Done from within TaskAddFile inner class when copying is completed
     }
   }
 
@@ -1203,16 +1290,18 @@ public class Sketch {
 
     // in case the user is "adding" the code in an attempt
     // to update the sketch's tabs
-    if (!sourceFile.equals(destFile)) {
-      try {
-        Base.copyFile(sourceFile, destFile);
-
-      } catch (IOException e) {
-        Base.showWarning("Error adding file",
-                         "Could not add '" + filename + "' to the sketch.", e);
-        return false;
-      }
-    }
+	if (!sourceFile.equals(destFile)) {
+		final File sourceFile2 = sourceFile;
+		final File destFile2 = destFile;
+	    // Create a new event dispatch thread- to display ProgressBar
+	    // while Saving As
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				ProgressBarGUI p = new ProgressBarGUI(sourceFile2,
+						destFile2);
+			}
+		});
+	}
 
     if (codeExtension != null) {
       SketchCode newCode = new SketchCode(destFile, codeExtension);
