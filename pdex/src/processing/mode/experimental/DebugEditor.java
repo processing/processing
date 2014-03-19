@@ -342,10 +342,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     // Added temporarily to dump error log. TODO: Remove this later
     public void internalCloseRunner(){      
       if(ExperimentalMode.errorLogsEnabled) writeErrorsToFile();
-      if(autosaver != null && !viewingAutosaveBackup) {
-        log("stopping autosaver in internalCloseRunner");
-        autosaver.stop();
-      }
+//      if(autosaver != null && !viewingAutosaveBackup) {
+//        log("stopping autosaver in internalCloseRunner");
+//        autosaver.stop();
+//      }
       super.internalCloseRunner();
     }
     
@@ -750,8 +750,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             variableInspector().reset(); // clear contents of variable inspector
         }
         //if(didOpen){
-          
-          loadAutoSaver();
+          autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval); // this is used instead of loadAutosaver(), temp measure
+          //loadAutoSaver();
           viewingAutosaveBackup = autosaver.isAutoSaveBackup();
           log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
         //}
@@ -932,7 +932,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * Also handles the case where an auto save backup is found.
      * The user is asked to save the sketch to a new location
      */
-    public void loadAutoSaver(){
+    private void loadAutoSaver(){
       log("Load Auto Saver()");
       autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval);      
       if(!autosaver.checkForPastSave()) {

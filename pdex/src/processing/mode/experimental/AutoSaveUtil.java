@@ -60,6 +60,7 @@ public class AutoSaveUtil {
    * @param timeOut - in minutes, how frequently should saves occur
    */
   public AutoSaveUtil(DebugEditor dedit, int timeOut){
+    /*
     editor = dedit;
     if (timeOut < 1) { // less than 1 minute not allowed!
       saveTime = -1;
@@ -77,7 +78,7 @@ public class AutoSaveUtil {
       autosaveDir = new File(editor.getSketch().getFolder().getAbsolutePath() + File.separator + AUTOSAVEFOLDER);
       sketchFolder = editor.getSketch().getFolder();
       sketchBackupFolder = autosaveDir;
-    }
+    }*/
   }
   
   /**
@@ -153,6 +154,7 @@ public class AutoSaveUtil {
    * Start the auto save service
    */
   public void init(){
+    /*
     if(isAutoSaveBackup) {
       log("AutoSaver not started");
       return;
@@ -163,6 +165,7 @@ public class AutoSaveUtil {
     timer.schedule(new SaveTask(), saveTime, saveTime);
     isSaving = false;
     log("AutoSaver started");
+    */
   }
   
   /**
