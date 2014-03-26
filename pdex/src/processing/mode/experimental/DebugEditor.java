@@ -891,7 +891,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             }
         }
         //  if file location has changed, update autosaver
-        autosaver.reloadAutosaveDir();
+        // autosaver.reloadAutosaveDir();
         return saved;
     }
 

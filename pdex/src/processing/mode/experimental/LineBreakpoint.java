@@ -53,6 +53,7 @@ public class LineBreakpoint implements ClassLoadListener {
         this.dbg = dbg;
         theClass = dbg.getClass(className()); // try to get the class immediately, may return null if not yet loaded
         set(); // activate the breakpoint (show highlight, attach if debugger is running)
+        Logger.getLogger(LineBreakpoint.class.getName()).log(Level.INFO, "LBP Created " +toString() + " class: " + theClass, new Object[]{});
     }
 
     /**
@@ -108,6 +109,7 @@ public class LineBreakpoint implements ClassLoadListener {
             return;
         }
         try {
+          Logger.getLogger(LineBreakpoint.class.getName()).log(Level.WARNING, "BPs of class: {0}", new Object[]{theClass});
             List<Location> locations = theClass.locationsOfLine(javaLine.lineIdx() + 1);
             if (locations.isEmpty()) {
                 Logger.getLogger(LineBreakpoint.class.getName()).log(Level.WARNING, "no location found for line {0} -> {1}", new Object[]{line, javaLine});
