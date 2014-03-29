@@ -1618,7 +1618,13 @@ public class ASTGenerator {
       log("FLON3 "+lineNode.getStartPosition() + " off " + offset + " alt off" + altOff);
       ASTNode simpName = pinpointOnLine(lineNode, altOff,
                                         lineNode.getStartPosition(), name);
-      log("+++> " + simpName);
+      
+      if(simpName == null){ //Added while fixing #51
+        log("1+++> " + simpName);
+        simpName = pinpointOnLine(lineNode.getParent(), altOff,
+                                  lineNode.getStartPosition(), name);
+      }
+      log("2+++> " + simpName);
       
       if (simpName instanceof SimpleName) {
         nameOfNode = simpName.toString();
