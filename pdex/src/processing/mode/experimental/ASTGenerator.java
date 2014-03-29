@@ -238,7 +238,7 @@ public class ASTGenerator {
   /**
    * Toggle AST View window
    */
-  public static final boolean SHOWAST = !true;
+  public static final boolean SHOWAST = true;
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
@@ -1625,6 +1625,21 @@ public class ASTGenerator {
                                   lineNode.getStartPosition(), name);
       }
       log("2+++> " + simpName);
+      if(simpName == null && lineNode instanceof SimpleName){
+        switch (lineNode.getParent().getNodeType()) {
+        case ASTNode.TYPE_DECLARATION:
+          
+        case ASTNode.METHOD_DECLARATION:
+
+        case ASTNode.FIELD_DECLARATION:
+
+        case ASTNode.VARIABLE_DECLARATION_FRAGMENT:
+          decl = lineNode.getParent();
+          return new ASTNodeWrapper(decl,"");         
+        default:
+          break;
+        }
+      }
       
       if (simpName instanceof SimpleName) {
         nameOfNode = simpName.toString();
@@ -2339,7 +2354,7 @@ public class ASTGenerator {
 
     if (node instanceof SimpleName) {
       SimpleName sn = (SimpleName) node;
-      log(offset+ "off,pol " + getNodeAsString(sn));
+      //log(offset+ "off,pol " + getNodeAsString(sn));
       if ((lineStartOffset + offset) >= sn.getStartPosition()
           && (lineStartOffset + offset) <= sn.getStartPosition()
               + sn.getLength()) {
