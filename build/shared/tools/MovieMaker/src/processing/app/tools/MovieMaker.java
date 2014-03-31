@@ -1347,7 +1347,7 @@ public class MovieMaker extends JFrame implements Tool {
   private JLabel aboutLabel;
   private JButton chooseImageFolderButton;
   private JButton chooseSoundFileButton;
-  private JComboBox compressionBox;
+  private JComboBox<?> compressionBox;
   private JLabel compressionLabel;
 //  private JRadioButton fastStartCompressedRadio;
 //  private JRadioButton fastStartRadio;

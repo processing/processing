@@ -1925,7 +1925,7 @@ public class PLWJGL extends PGL {
 
   // Framebuffers Objects
 
-  public void bindFramebuffer(int target, int framebuffer) {
+  protected void bindFramebufferImpl(int target, int framebuffer) {
     GL30.glBindFramebuffer(target, framebuffer);
   }
 
@@ -1995,5 +1995,10 @@ public class PLWJGL extends PGL {
 
   public void drawBuffer(int buf) {
     GL11.glDrawBuffer(buf);
+  }
+
+
+  @Override
+  protected void getGL(PGL pgl) {
   }
 }

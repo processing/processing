@@ -1,7 +1,7 @@
 // GLSL version of Conway's game of life, ported from GLSL sandbox:
 // http://glsl.heroku.com/e#207.3
-// Exemplifies the use of the buffer uniform in the shader, that gives
-// access to the previous frame.
+// Exemplifies the use of the ppixels uniform in the shader, that gives
+// access to the pixels of the previous frame.
 PShader conway;
 PGraphics pg;
 

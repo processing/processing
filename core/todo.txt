@@ -1,22 +1,52 @@
-0224 core
-X PImage resize() causes PImage not to be rendered in JAVA2D
-X   https://github.com/processing/processing/issues/2179
+0225 core
+X bug with StringDict(Reader) that wasn't setting the indices hashmap
+_   check this with other versions of this class
+X call revalidate() via reflection
+X text looks lousy compared to the Apple JVM
+X   mess with rendering hints? (notes in PGraphicsJava2D)
+X   improvements made, but still not amazing.. just at level of Windows/Linux
+
+_ default font fixes 
+_   https://github.com/processing/processing/issues/2331
+_   https://github.com/processing/processing/pull/2338
 
 fixed in 2.1
 X draw() called again before finishing on OS X (retina issue)
 X   https://github.com/processing/processing/issues/1709
+X get() not always setting alpha channel when used with point()
+X   https://github.com/processing/processing/issues/1756
 
+A depth buffer shouldn't be cleared when depth mask is disabled
+A   https://github.com/processing/processing/issues/2296
+A set pixels transparent by default in P2D/P3D
+A   https://github.com/processing/processing/issues/2207
+
+_ saveFrame() with retina render is making black images
+_ add print() method to other data types (not just IntList)
+
+_ run window border color changed in 2.1
+_   https://github.com/processing/processing/issues/2297
+
+_ point() rendering differently in 2.0.3 and 2.1
+_   https://github.com/processing/processing/issues/2278
+
+_ Sketch runs with default size if size() is followed by large memory allocation
+_   https://github.com/processing/processing/issues/2039
 
 high
 _ zero alpha values still a problem with retina renderer
 _   https://github.com/processing/processing/issues/2030
 _ Sort out blending differences with P2D/P3D
+_   might be that compatible images not setting alpha mode correctly
+_   image = gc.createCompatibleVolatileImage(source.width, source.height, Transparency.TRANSLUCENT);
 _   https://github.com/processing/processing/issues/1844
 _ 'collector' class.. Dict that points to a list
 _   String as a key, int/float/string list as values
 _ blendMode(ADD) is broken with default renderer
 _   https://github.com/processing/processing/issues/2012
 _   may have been introduced between 2.0b7 and 2.0b8
+_   https://github.com/processing/processing/issues/2275
+_   https://github.com/processing/processing/issues/2276
 _ add option to have full screen span across screens
 _   display=all in cmd line
 _   sketchDisplay() -> 0 for all, or 1, 2, 3...
@@ -150,6 +180,10 @@ _ OpenGL offscreen requires primary surface to be OpenGL
 _ explain the new PGL interface
 _ can't really change the smoothing/options on offscreen
 _   is this still true?
+_ how to name the retina pixel stuff
+_   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
+_   hint(ENABLE_2X_PIXELS)?
+_   hidpi is Apple's name as well
 
 
 

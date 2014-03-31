@@ -80,8 +80,9 @@ void draw() {
   rotateY(radians(36 + leftRightAngle)); //, 0, 1, 0);
   rotateX(radians(-228 + upDownAngle)); //, 1, 0, 0);
 
-  if (blobby) {
-    stroke(0.35, 0.35, 0.25, 0.15);
+  strokeWeight(0.1);
+  if (blobby) {    
+    stroke(0.35, 0.35, 0.25, 0.15);    
     wireCone(MAX_RADIUS, MAX_RADIUS * CONE_HEIGHT, 18, 18);
   } 
   else {

@@ -267,6 +267,9 @@ public class PApplet extends Applet
   boolean useStrategy = false;
   Canvas canvas;
 
+  Method revalidateMethod;
+
+
 //  /**
 //   * Usually just 0, but with multiple displays, the X and Y coordinates of
 //   * the screen will depend on the current screen's position relative to
@@ -411,6 +414,8 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref environment
+   * @see PApplet#height
+   * @see PApplet#size(int, int)
    */
   public int width;
 
@@ -425,7 +430,8 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref environment
-   *
+   * @see PApplet#width
+   * @see PApplet#size(int, int)
    */
   public int height;
 
@@ -866,6 +872,12 @@ public class PApplet extends Applet
       useActive = false;
     }
 
+    if (javaVersion >= 1.7f) {
+      try {
+        revalidateMethod = getClass().getMethod("revalidate", new Class[] {});
+      } catch (Exception e) { }
+    }
+
     // send tab keys through to the PApplet
     setFocusTraversalKeysEnabled(false);
 
@@ -901,6 +913,11 @@ public class PApplet extends Applet
         sketchPath = System.getProperty("user.dir");
       }
     } catch (Exception e) { }  // may be a security problem
+
+    // Figure out the available display width and height.
+    // No major problem if this fails, we have to try again anyway in
+    // handleDraw() on the first (== 0) frame.
+    checkDisplaySize();
 
     Dimension size = getSize();
     if ((size.width != 0) && (size.height != 0)) {
@@ -952,6 +969,21 @@ public class PApplet extends Applet
     // this is automatically called in applets
     // though it's here for applications anyway
 //    start();
+  }
+
+
+  private void checkDisplaySize() {
+    if (getGraphicsConfiguration() != null) {
+      GraphicsDevice displayDevice = getGraphicsConfiguration().getDevice();
+
+      if (displayDevice != null) {
+        Rectangle screenRect =
+          displayDevice.getDefaultConfiguration().getBounds();
+
+        displayWidth = screenRect.width;
+        displayHeight = screenRect.height;
+      }
+    }
   }
 
 
@@ -1651,6 +1683,8 @@ public class PApplet extends Applet
    * @webref environment
    * @param w width of the display window in units of pixels
    * @param h height of the display window in units of pixels
+   * @see PApplet#width
+   * @see PApplet#height
    */
   public void size(int w, int h) {
     size(w, h, JAVA2D, null);
@@ -2264,17 +2298,18 @@ public class PApplet extends Applet
       long now = System.nanoTime();
 
       if (frameCount == 0) {
-        GraphicsConfiguration gc = getGraphicsConfiguration();
-        if (gc == null) return;
-        GraphicsDevice displayDevice =
-          getGraphicsConfiguration().getDevice();
-        if (displayDevice == null) return;
-        Rectangle screenRect =
-          displayDevice.getDefaultConfiguration().getBounds();
-//        screenX = screenRect.x;
-//        screenY = screenRect.y;
-        displayWidth = screenRect.width;
-        displayHeight = screenRect.height;
+//        GraphicsConfiguration gc = getGraphicsConfiguration();
+//        if (gc == null) return;
+//        GraphicsDevice displayDevice =
+//          getGraphicsConfiguration().getDevice();
+//        if (displayDevice == null) return;
+//        Rectangle screenRect =
+//          displayDevice.getDefaultConfiguration().getBounds();
+////        screenX = screenRect.x;
+////        screenY = screenRect.y;
+//        displayWidth = screenRect.width;
+//        displayHeight = screenRect.height;
+        checkDisplaySize();
 
         try {
           //println("Calling setup()");
@@ -3666,6 +3701,8 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    * @param fps number of desired frames per second
+   * @see PApplet#frameRate
+   * @see PApplet#frameCount
    * @see PApplet#setup()
    * @see PApplet#draw()
    * @see PApplet#loop()
@@ -4512,7 +4549,9 @@ public class PApplet extends Applet
    * be reliably bound by the compiler.
    */
   static public void println(Object what) {
-    if (what != null && what.getClass().isArray()) {
+    if (what == null) {
+      System.out.println("null");
+    } else if (what.getClass().isArray()) {
       printArray(what);
     } else {
       System.out.println(what.toString());
@@ -7876,7 +7915,6 @@ public class PApplet extends Applet
       // http://code.google.com/p/processing/issues/detail?id=1073
       File containingFolder = new File(urlDecode(jarPath)).getParentFile();
       File dataFolder = new File(containingFolder, "data");
-      System.out.println(dataFolder);
       return new File(dataFolder, where);
     }
     // Windows, Linux, or when not using a Mac OS X .app file
@@ -10115,7 +10153,7 @@ public class PApplet extends Applet
       int alpha = (int) falpha;
       if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
       if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
-      return 0xff000000 | (gray << 16) | (gray << 8) | gray;
+      return (alpha << 24) | (gray << 16) | (gray << 8) | gray;
     }
     return g.color(fgray, falpha);
   }
@@ -10252,7 +10290,21 @@ public class PApplet extends Applet
               if (!newBounds.equals(oldBounds)) {
                 // the ComponentListener in PApplet will handle calling size()
                 setBounds(newBounds);
-                revalidate();   // let the layout manager do its work
+
+                // In 0225, calling this via reflection so that we can still
+                // compile in Java 1.6. This is a trap since we really need
+                // to move to 1.7 and cannot support 1.6, but things like text
+                // are still a little wonky on 1.7, especially on OS X.
+                // This gives us a way to at least test against older VMs.
+                //revalidate();   // let the layout manager do its work
+                if (revalidateMethod != null) {
+                  try {
+                    revalidateMethod.invoke(PApplet.this);
+                  } catch (Exception ex) {
+                    ex.printStackTrace();
+                    revalidateMethod = null;
+                  }
+                }
               }
             }
           }
@@ -10894,7 +10946,7 @@ public class PApplet extends Applet
     final String[] argsWithSketchName = new String[args.length + 1];
     System.arraycopy(args, 0, argsWithSketchName, 0, args.length);
     final String className = this.getClass().getSimpleName();
-    final  String cleanedClass =
+    final String cleanedClass =
       className.replaceAll("__[^_]+__\\$", "").replaceAll("\\$\\d+", "");
     argsWithSketchName[args.length] = cleanedClass;
     runSketch(argsWithSketchName, this);
@@ -14229,6 +14281,9 @@ public class PApplet extends Applet
    *
    * @param rgb color value in hexadecimal notation
    * @see PGraphics#noStroke()
+   * @see PGraphics#strokeWeight(float)
+   * @see PGraphics#strokeJoin(int)
+   * @see PGraphics#strokeCap(int)
    * @see PGraphics#fill(int, float)
    * @see PGraphics#noFill()
    * @see PGraphics#tint(int, float)

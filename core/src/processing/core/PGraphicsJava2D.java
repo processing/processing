@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-11 Ben Fry and Casey Reas
+  Copyright (c) 2013-14 The Processing Foundation
+  Copyright (c) 2005-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,10 +25,13 @@
 package processing.core;
 
 import java.awt.*;
+import java.awt.font.TextAttribute;
 import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import processing.data.XML;
@@ -35,22 +39,15 @@ import processing.data.XML;
 
 /**
  * Subclass for PGraphics that implements the graphics API using Java2D.
- *
- * <p>Pixel operations too slow? As of release 0085 (the first beta),
- * the default renderer uses Java2D. It's more accurate than the renderer
- * used in alpha releases of Processing (it handles stroke caps and joins,
- * and has better polygon tessellation), but it's super slow for handling
- * pixels. At least until we get a chance to get the old 2D renderer
- * (now called P2D) working in a similar fashion, you can use
- * <TT>size(w, h, P3D)</TT> instead of <TT>size(w, h)</TT> which will
- * be faster for general pixel flipping madness. </p>
- *
- * <p>To get access to the Java 2D "Graphics2D" object for the default
+ * <p>
+ * To get access to the Java 2D "Graphics2D" object for the default
  * renderer, use:
  * <PRE>Graphics2D g2 = ((PGraphicsJava2D)g).g2;</PRE>
  * This will let you do Java 2D stuff directly, but is not supported in
  * any way shape or form. Which just means "have fun, but don't complain
- * if it breaks."</p>
+ * if it breaks."
+ * <p>
+ * Advanced <a href="http://docs.oracle.com/javase/7/docs/webnotes/tsg/TSG-Desktop/html/java2d.html">debugging notes</a> for Java2D.
  */
 public class PGraphicsJava2D extends PGraphics {
   BufferStrategy strategy;
@@ -425,6 +422,14 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   protected void defaultSettings() {
     if (!useCanvas) {
+      // Papered over another threading issue...
+      // See if this comes back now that the other issue is fixed.
+//      while (g2 == null) {
+//        try {
+//          System.out.println("sleeping until g2 is available");
+//          Thread.sleep(5);
+//        } catch (InterruptedException e) { }
+//      }
       defaultComposite = g2.getComposite();
     }
     super.defaultSettings();
@@ -1187,10 +1192,26 @@ public class PGraphicsJava2D extends PGraphics {
 
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
+
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                         quality == 4 ?
                         RenderingHints.VALUE_INTERPOLATION_BICUBIC :
                         RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+    // http://docs.oracle.com/javase/tutorial/2d/text/renderinghints.html
+    // Oracle Java text anti-aliasing on OS X looks like s*t compared to the
+    // text rendering with Apple's old Java 6. Below, several attempts to fix:
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    // Turns out this is the one that actually makes things work.
+    // Kerning is still screwed up, however.
+    g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//                         RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+
 //    g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
 //                        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
   }
@@ -1214,6 +1235,8 @@ public class PGraphicsJava2D extends PGraphics {
                         RenderingHints.VALUE_ANTIALIAS_OFF);
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                         RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
   }
 
 
@@ -1312,6 +1335,7 @@ public class PGraphicsJava2D extends PGraphics {
     int tintedColor;
     int[] tintedTemp;  // one row of tinted pixels
     BufferedImage image;
+//    BufferedImage compat;
 
 //    public ImageCache(PImage source) {
 ////      this.source = source;
@@ -1461,6 +1485,15 @@ public class PGraphicsJava2D extends PGraphics {
       }
       this.tinted = tint;
       this.tintedColor = tintColor;
+
+//      GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+//      compat = gc.createCompatibleImage(image.getWidth(),
+//                                        image.getHeight(),
+//                                        Transparency.TRANSLUCENT);
+//
+//      Graphics2D g = compat.createGraphics();
+//      g.drawImage(image, 0, 0, null);
+//      g.dispose();
     }
   }
 
@@ -1600,9 +1633,24 @@ public class PGraphicsJava2D extends PGraphics {
     Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
-      Font dfont = font.deriveFont(size);
-      g2.setFont(dfont);
-      textFont.setNative(dfont);
+      Map<TextAttribute, Object> map =
+        new Hashtable<TextAttribute, Object>();
+      map.put(TextAttribute.SIZE, size);
+      map.put(TextAttribute.KERNING,
+              TextAttribute.KERNING_ON);
+//      map.put(TextAttribute.TRACKING,
+//              TextAttribute.TRACKING_TIGHT);
+      font = font.deriveFont(map);
+      g2.setFont(font);
+      textFont.setNative(font);
+
+//      Font dfont = font.deriveFont(size);
+////      Map<TextAttribute, ?> attrs = dfont.getAttributes();
+////      for (TextAttribute ta : attrs.keySet()) {
+////        System.out.println(ta + " -> " + attrs.get(ta));
+////      }
+//      g2.setFont(dfont);
+//      textFont.setNative(dfont);
     }
 
     // take care of setting the textSize and textLeading vars
@@ -1709,30 +1757,27 @@ public class PGraphicsJava2D extends PGraphics {
                           RenderingHints.VALUE_ANTIALIAS_ON :
                           RenderingHints.VALUE_ANTIALIAS_OFF);
 
-      //System.out.println("setting frac metrics");
-      //g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-      //                    RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-
       g2.setColor(fillColorObject);
+
       int length = stop - start;
+      if (length != 0) {
       g2.drawChars(buffer, start, length, (int) (x + 0.5f), (int) (y + 0.5f));
+      // better to use round here? also, drawChars now just calls drawString
+//      g2.drawString(new String(buffer, start, stop - start), Math.round(x), Math.round(y));
+
       // better to use drawString() with floats? (nope, draws the same)
       //g2.drawString(new String(buffer, start, length), x, y);
 
-      // this didn't seem to help the scaling issue
-      // and creates garbage because of the new temporary object
-      //java.awt.font.GlyphVector gv = textFontNative.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop));
-      //g2.drawGlyphVector(gv, x, y);
-
-      //    System.out.println("text() " + new String(buffer, start, stop));
+      // this didn't seem to help the scaling issue, and creates garbage
+      // because of a fairly heavyweight new temporary object
+//      java.awt.font.GlyphVector gv =
+//        font.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop - start));
+//      g2.drawGlyphVector(gv, x, y);
+      }
 
       // return to previous smoothing state if it was changed
       //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialias);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias);
-
-//      textX = x + textWidthImpl(buffer, start, stop);
-//      textY = y;
-//      textZ = 0;  // this will get set by the caller if non-zero
 
     } else {  // otherwise just do the default
       super.textLineImpl(buffer, start, stop, x, y);
@@ -2331,7 +2376,7 @@ public class PGraphicsJava2D extends PGraphics {
     if (primarySurface) {
       // 'offscreen' will probably be removed in the next release
       if (useOffscreen) {
-        raster = ((BufferedImage) offscreen).getRaster();
+        raster = offscreen.getRaster();
       } else if (image instanceof VolatileImage) {
         // when possible, we'll try VolatileImage
         raster = ((VolatileImage) image).getSnapshot().getRaster();

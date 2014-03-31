@@ -13,13 +13,6 @@ class CA {
     restart();
   }
   
-   CA() {
-    scl = 1;
-    cells = new int[width/scl];
-    randomize();
-    restart();
-  }
-  
   // Set the rules of the CA
   void setRules(int[] r) {
     rules = r;
