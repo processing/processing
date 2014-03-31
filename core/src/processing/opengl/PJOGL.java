@@ -369,6 +369,7 @@ public class PJOGL extends PGL {
       canvasAWT = null;
     }
 
+    pg.parent.defaultSize = false;
     registerListeners();
 
     fboLayerCreated = false;
@@ -384,6 +385,7 @@ public class PJOGL extends PGL {
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = true;
+    pg.parent.defaultSize = false;
   }
 
 

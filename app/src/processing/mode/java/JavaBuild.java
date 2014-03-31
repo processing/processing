@@ -531,6 +531,8 @@ public class JavaBuild {
     if (pkg.startsWith("processing.data.")) return true;
     if (pkg.startsWith("processing.event.")) return true;
     if (pkg.startsWith("processing.opengl.")) return true;
+    
+//    if (pkg.startsWith("com.jogamp.")) return true;
 
 //    // ignore core, data, and opengl packages
 //    String[] coreImports = preprocessor.getCoreImports();

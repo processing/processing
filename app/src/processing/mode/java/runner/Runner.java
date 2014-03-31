@@ -923,7 +923,7 @@ public class Runner implements MessageConsumer {
         ObjectReference ref = (ObjectReference)val;
         method = ((ClassType) ref.referenceType()).concreteMethodByName("getFileName", "()Ljava/lang/String;");
         StringReference strref = (StringReference) ref.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
-        String filename = strref.value();
+        String filename = strref == null ? "Unknown Source" : strref.value();
         method = ((ClassType) ref.referenceType()).concreteMethodByName("getLineNumber", "()I");
         IntegerValue intval = (IntegerValue) ref.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
         int lineNumber = intval.intValue() - 1;

@@ -10299,7 +10299,7 @@ public class PApplet extends Applet
                 //revalidate();   // let the layout manager do its work
                 if (revalidateMethod != null) {
                   try {
-                    revalidateMethod.invoke(this);
+                    revalidateMethod.invoke(PApplet.this);
                   } catch (Exception ex) {
                     ex.printStackTrace();
                     revalidateMethod = null;
