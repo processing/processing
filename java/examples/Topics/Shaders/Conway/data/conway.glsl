@@ -9,7 +9,7 @@ precision highp float;
 uniform float time;
 uniform vec2 mouse;
 uniform vec2 resolution;
-uniform sampler2D buffer;
+uniform sampler2D ppixels;
 
 vec4 live = vec4(0.5,1.0,0.7,1.);
 vec4 dead = vec4(0.,0.,0.,1.);
@@ -28,15 +28,15 @@ void main( void ) {
 		}
 	} else {
 		float sum = 0.;
-		sum += texture2D(buffer, position + pixel * vec2(-1., -1.)).g;
-		sum += texture2D(buffer, position + pixel * vec2(-1., 0.)).g;
-		sum += texture2D(buffer, position + pixel * vec2(-1., 1.)).g;
-		sum += texture2D(buffer, position + pixel * vec2(1., -1.)).g;
-		sum += texture2D(buffer, position + pixel * vec2(1., 0.)).g;
-		sum += texture2D(buffer, position + pixel * vec2(1., 1.)).g;
-		sum += texture2D(buffer, position + pixel * vec2(0., -1.)).g;
-		sum += texture2D(buffer, position + pixel * vec2(0., 1.)).g;
-		vec4 me = texture2D(buffer, position);
+		sum += texture2D(ppixels, position + pixel * vec2(-1., -1.)).g;
+		sum += texture2D(ppixels, position + pixel * vec2(-1., 0.)).g;
+		sum += texture2D(ppixels, position + pixel * vec2(-1., 1.)).g;
+		sum += texture2D(ppixels, position + pixel * vec2(1., -1.)).g;
+		sum += texture2D(ppixels, position + pixel * vec2(1., 0.)).g;
+		sum += texture2D(ppixels, position + pixel * vec2(1., 1.)).g;
+		sum += texture2D(ppixels, position + pixel * vec2(0., -1.)).g;
+		sum += texture2D(ppixels, position + pixel * vec2(0., 1.)).g;
+		vec4 me = texture2D(ppixels, position);
 
 		if (me.g <= 0.1) {
 			if ((sum >= 2.9) && (sum <= 3.1)) {

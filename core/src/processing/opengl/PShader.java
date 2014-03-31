@@ -116,7 +116,7 @@ public class PShader implements PConstants {
   protected int transformMatLoc;
   protected int modelviewMatLoc;
   protected int projectionMatLoc;
-  protected int bufferLoc;
+  protected int ppixelsLoc;
   protected int bufferUnit;
   protected int viewportLoc;
 
@@ -1158,7 +1158,7 @@ public class PShader implements PConstants {
       projectionMatLoc = getUniformLoc("projectionMatrix");
 
     viewportLoc = getUniformLoc("viewport");
-    bufferLoc = getUniformLoc("buffer");
+    ppixelsLoc = getUniformLoc("ppixels");
 
     normalMatLoc = getUniformLoc("normalMatrix");
 
@@ -1209,9 +1209,9 @@ public class PShader implements PConstants {
       setUniformValue(viewportLoc, x, y, w, h);
     }
 
-    if (-1 < bufferLoc) {
+    if (-1 < ppixelsLoc) {
       bufferUnit = getLastTexUnit() + 1;
-      setUniformValue(bufferLoc, bufferUnit);
+      setUniformValue(ppixelsLoc, bufferUnit);
       pgl.activeTexture(PGL.TEXTURE0 + bufferUnit);
       currentPG.bindFrontTexture();
     } else {
@@ -1304,7 +1304,7 @@ public class PShader implements PConstants {
     if (-1 < texCoordLoc) pgl.disableVertexAttribArray(texCoordLoc);
     if (-1 < normalLoc) pgl.disableVertexAttribArray(normalLoc);
 
-    if (-1 < bufferLoc) {
+    if (-1 < ppixelsLoc) {
       pgl.requestFBOLayer();
       pgl.activeTexture(PGL.TEXTURE0 + bufferUnit);
       currentPG.unbindFrontTexture();

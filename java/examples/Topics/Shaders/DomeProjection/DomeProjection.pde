@@ -21,7 +21,7 @@ IntBuffer envMapTextureID;
 int envMapSize = 1024;   
 
 void setup() {
-  size(640, 640, P3D);  
+  size(640, 640, P3D);
   initCubeMap();
 }
 
@@ -32,6 +32,7 @@ void draw() {
 
 void drawScene() {  
   background(0);
+  
   stroke(255, 0, 0);
   strokeWeight(2);
   for (int i = -width; i < 2 * width; i += 50) {
@@ -46,6 +47,6 @@ void drawScene() {
   translate(mouseX, mouseY, 200);
   rotateX(frameCount * 0.01);
   rotateY(frameCount * 0.01);  
-  box(100);  
+  box(100);
 }
 

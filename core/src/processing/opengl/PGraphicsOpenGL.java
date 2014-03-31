@@ -2610,14 +2610,15 @@ public class PGraphicsOpenGL extends PGraphics {
     raw.noStroke();
     raw.beginShape(TRIANGLES);
 
-    sortTriangles();
+
+    //sortTriangles();
 
     float[] vertices = tessGeo.polyVertices;
     int[] color = tessGeo.polyColors;
     float[] uv = tessGeo.polyTexCoords;
-    //short[] indices = tessGeo.polyIndices;  // unused [fry]
+    short[] indices = tessGeo.polyIndices;  // unused [fry]
 
-
+/*
     sortTriangles();
     for (int i = 0; i < sortedTriangleCount; i++) {
       Triangle tri = sortedPolyTriangles[i];
@@ -2697,9 +2698,9 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
     }
+*/
 
 
-/*
     for (int i = 0; i < texCache.size; i++) {
       PImage textureImage = texCache.getTextureImage(i);
 
@@ -2791,7 +2792,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
     }
-*/
+
 
     raw.endShape();
   }
