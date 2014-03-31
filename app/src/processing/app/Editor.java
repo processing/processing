@@ -876,8 +876,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
       sketchMenu.add(mi);
     }
 
-    if (runItems.length != 0)
-      sketchMenu.addSeparator();
+    if (runItems != null)
+      if (runItems.length != 0)
+        sketchMenu.addSeparator();
       
     sketchMenu.add(mode.getImportMenu());
 
