@@ -117,12 +117,14 @@ public class Toolkit {
     return menuItem;
   }
 
+
   static public JCheckBoxMenuItem newJCheckBoxMenuItem(String title, int what) {
     JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(title);
     int modifiers = awtToolkit.getMenuShortcutKeyMask();
     menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
     return menuItem;
   }
+
 
   static public void addDisabledItem(JMenu menu, String title) {
     JMenuItem item = new JMenuItem(title);
@@ -337,6 +339,7 @@ public class Toolkit {
       }
     }
   }
+
 
   /**
    * As setMenuMnemonics(JMenuItem...).
