@@ -430,7 +430,6 @@ public class PJOGL extends PGL {
     } else if (canvasNEWT != null) {
       windowNEWT.removeGLEventListener(listener);
     }
-    GLProfile.shutdown();
   }
 
 
