@@ -202,6 +202,9 @@ public class ASTNodeWrapper {
   }
   
   /**
+   * When FD has javadoc attached, the beginning of FD is marked as the
+   * start of the javadoc. This kind of screws things when trying to locate
+   * the exact name of the FD. So, offset compensations...
    * 
    * @param fd
    * @return
@@ -232,6 +235,14 @@ public class ASTNodeWrapper {
     return 0;   
   }
 
+  /**
+   * When MD has javadoc attached, the beginning of FD is marked as the
+   * start of the javadoc. This kind of screws things when trying to locate
+   * the exact name of the MD. So, offset compensations...
+   * 
+   * @param md
+   * @return
+   */
   private int getJavadocOffset(MethodDeclaration md) {
     List<ASTNode> list = md.modifiers();
     SimpleName sn = (SimpleName) getNode();
@@ -258,8 +269,16 @@ public class ASTNodeWrapper {
     return 0;
   }
   
+  /**
+   * When TD has javadoc attached, the beginning of FD is marked as the
+   * start of the javadoc. This kind of screws things when trying to locate
+   * the exact name of the TD. So, offset compensations...
+   * 
+   * @param td
+   * @return
+   */
   private int getJavadocOffset(TypeDeclaration td){
-    // TODO: This is still broken. Hence no refactoring or highlighting on scroll works :\
+    // TODO: This isn't perfect yet. Class \n \n \n className still breaks it.. :'(
     List<ASTNode> list= td.modifiers();
     list = td.modifiers();
     SimpleName sn = (SimpleName) getNode();
@@ -275,7 +294,13 @@ public class ASTNodeWrapper {
       }
     }
     
-    return 0;   
+    if(td.getJavadoc() != null){
+      log("diff "
+          + (td.getJavadoc().getStartPosition() + td.getJavadoc().getLength() + 1));
+      return (td.getJavadoc().getStartPosition() + td.getJavadoc().getLength() + 1);
+    }
+    log("getJavadocOffset(TypeDeclaration td) "+sn + ", found nothing. Meh.");
+    return 0;
   }
   
   /**
