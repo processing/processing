@@ -2605,7 +2605,7 @@ public class Base {
 
 
   static public void copyFile(File sourceFile,
-                              File targetFile,Sketch.ProgressBarGUI.TaskSaveAs progBar,
+                              File targetFile,ProgressFrame.TaskSaveAs progBar,
                               double progress,double totalSize) throws IOException {
 	  // Overloaded copyFile that is called whenever a Save As is being done, so that the 
 	  //   ProgressBar is updated for very large files as well
@@ -2623,17 +2623,17 @@ public class Base {
       {
           progress += totalRead;
           progBar.setProgressBarStatus((int) Math.min(
-				Math.ceil((double)progress * 100.0 / (double)totalSize), 100));
+				Math.ceil(progress * 100.0 / totalSize), 100));
     	  totalRead = 0;
       }
     }
     if (sourceFile.length()>524288) {
     // Update the progress bar one final time if file size is more than 0.5MB,
     //    otherwise, the update is handled either by the copyDir function, 
-    //    or directly by Sketch.ProgressBarGUI.TaskSaveAs.doInBackground()
+    //    or directly by ProgressFrame.TaskSaveAs.doInBackground()
       progress += totalRead;
       progBar.setProgressBarStatus((int) Math.min(
-		  	  Math.ceil((double)progress * 100.0 / (double)totalSize), 100));
+		  	  Math.ceil(progress * 100.0 / totalSize), 100));
     }
     from.close();
     from = null;
@@ -2646,7 +2646,7 @@ public class Base {
   }
   
   static public void copyFile(File sourceFile, File targetFile,
-			Sketch.ProgressBarGUI.TaskAddFile progBar) throws IOException {
+			ProgressFrame.TaskAddFile progBar) throws IOException {
     // Overloaded copyFile that is called whenever a addFile is being done,
 	// so that the
 	// ProgressBar is updated
@@ -2666,8 +2666,8 @@ public class Base {
 		{
 			progress += totalRead;
 			progBar.setProgressBarStatus((int) Math.min(
-					Math.ceil((double) progress * 100.0
-							/ (double) totalSize), 100));
+					Math.ceil(progress * 100.0
+							/ totalSize), 100));
 			totalRead = 0;
 		}
 	}
@@ -2675,10 +2675,10 @@ public class Base {
 		// Update the progress bar one final time if file size is more than
 		// 1kB,
 		// otherwise, the update is handled directly by
-		// Sketch.ProgressBarGUI.TaskAddFile.doInBackground()
+		// ProgressFrame.TaskAddFile.doInBackground()
 		progress += totalRead;
 		progBar.setProgressBarStatus((int) Math.min(
-				Math.ceil((double) progress * 100.0 / (double) totalSize),
+				Math.ceil(progress * 100.0 / totalSize),
 				100));
 	}
 	from.close();
@@ -2760,7 +2760,7 @@ public class Base {
 
    
   static public double copyDir(File sourceDir,
-                             File targetDir,Sketch.ProgressBarGUI.TaskSaveAs progBar,
+                             File targetDir,ProgressFrame.TaskSaveAs progBar,
                              double progress,double totalSize) throws IOException {
 	// Overloaded copyDir so that the Save As progress bar gets updated when the 
 	//    files are in folders as well (like in the data folder)
@@ -2780,14 +2780,14 @@ public class Base {
         //target.mkdirs();
         progress = copyDir(source, target, progBar, progress, totalSize);
         progBar.setProgressBarStatus((int) Math.min(
-				Math.ceil((double)progress * 100.0 / (double)totalSize), 100));
+				Math.ceil(progress * 100.0 / totalSize), 100));
         target.setLastModified(source.lastModified());
       } else {
           copyFile(source, target, progBar, progress, totalSize);
           // Update SaveAs progress bar
           progress += source.length(); 
           progBar.setProgressBarStatus((int) Math.min(
-				Math.ceil((double)progress * 100.0 / (double)totalSize), 100));
+				Math.ceil(progress * 100.0 / totalSize), 100));
       }
     }
     return progress;
