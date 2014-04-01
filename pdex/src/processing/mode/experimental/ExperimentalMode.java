@@ -117,6 +117,15 @@ public class ExperimentalMode extends JavaMode {
     };
   }
   
+  public File getContentFile(String path) {
+    // workaround for #45
+    if (path.startsWith("application" + File.separator)) {
+      return new File(Base.getContentFile("modes" + File.separator + "java")
+          .getAbsolutePath() + File.separator + path);
+    }
+    return new File(folder, path);
+  }
+  
   volatile public static boolean errorCheckEnabled = true, warningsEnabled = true,
       codeCompletionsEnabled = true, debugOutputEnabled = false, errorLogsEnabled = false;
   public static int autoSaveInterval = 3; //in minutes
