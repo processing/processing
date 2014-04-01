@@ -511,7 +511,7 @@ public class ErrorCheckerService implements Runnable{
       // Populate the probList
       problemsList = new ArrayList<Problem>();
       for (int i = 0; i < problems.length; i++) {
-        int a[] = calculateTabIndexAndLineNumber(problems[i]);
+        int a[] = calculateTabIndexAndLineNumber(problems[i].getSourceLineNumber());
         Problem p = new Problem(problems[i], a[0], a[1] + 1);
         //TODO: ^Why do cheeky stuff?
         problemsList.add(p);
@@ -642,7 +642,7 @@ public class ErrorCheckerService implements Runnable{
   //        for (String j : problem.getArguments()) {
   //          log("arg " + j);
   //        }
-          int a[] = calculateTabIndexAndLineNumber(problem);
+          int a[] = calculateTabIndexAndLineNumber(problem.getSourceLineNumber());
           Problem p = new Problem(problem, a[0], a[1]);
           if ((Boolean) errorList[i][8]) {
             p.setType(Problem.ERROR);
@@ -1055,16 +1055,16 @@ public class ErrorCheckerService implements Runnable{
    *            - IProblem
    * @return int[0] - tab number, int[1] - line number
    */
-  public int[] calculateTabIndexAndLineNumber(IProblem problem) {
+  public int[] calculateTabIndexAndLineNumber(int javalineNumber) {
     // String[] lines = {};// = PApplet.split(sourceString, '\n');
     int codeIndex = 0;
 
-    int x = problem.getSourceLineNumber() - mainClassOffset;
+    int x = javalineNumber - mainClassOffset;
     if (x < 0) {
       // log("Negative line number "
       // + problem.getSourceLineNumber() + " , offset "
       // + mainClassOffset);
-      x = problem.getSourceLineNumber() - 2; // Another -1 for 0 index
+      x = javalineNumber - 2; // Another -1 for 0 index
       if (x < programImports.size() && x >= 0) {
         ImportStatement is = programImports.get(x);
         // log(is.importName + ", " + is.tab + ", "
