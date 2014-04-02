@@ -2,7 +2,12 @@ package processing.app;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -53,16 +58,16 @@ public class ProgressFrame extends JFrame implements PropertyChangeListener {
         // current progress
 
         if (copyable.isDirectory()) {
-          Base.copyDir(copyable, new File(ProgressFrame.this.newFolder,
-                                          copyable.getName()), this, progress,
-                       totalSize);
+          copyDir(copyable,
+                  new File(ProgressFrame.this.newFolder, copyable.getName()),
+                  this, progress, totalSize);
           progress += getFileLength(copyable);
         } else {
-          Base.copyFile(copyable, new File(ProgressFrame.this.newFolder,
-                                           copyable.getName()), this, progress,
-                        totalSize);
+          copyFile(copyable,
+                   new File(ProgressFrame.this.newFolder, copyable.getName()),
+                   this, progress, totalSize);
           if (getFileLength(copyable) < 524288) {
-            // If the file length > 0.5MB, the Base.copyFile() function has 
+            // If the file length > 0.5MB, the copyFile() function has 
             // been redesigned to change progress every 0.5MB so that
             // the progress bar doesn't stagnate during that time
             progress += getFileLength(copyable);
@@ -101,10 +106,10 @@ public class ProgressFrame extends JFrame implements PropertyChangeListener {
 
       setProgress(0);
 
-      Base.copyFile(sourceFile, addFile, this);
+      copyFile(sourceFile, addFile, this);
 
       if (addFile.length() < 1024) {
-        // If the file length > 1kB, the Base.copyFile() function has 
+        // If the file length > 1kB, the copyFile() function has 
         // been redesigned to change progress every 1kB so that
         // the progress bar doesn't stagnate during that time
 
@@ -243,6 +248,132 @@ public class ProgressFrame extends JFrame implements PropertyChangeListener {
   // closes progress bar
   {
     this.dispose();
+  }
+
+  static public void copyFile(File sourceFile, File targetFile,
+                              ProgressFrame.TaskSaveAs progBar,
+                              double progress, double totalSize)
+    throws IOException {
+    // Overloaded copyFile that is called whenever a Save As is being done, so that the 
+    //   ProgressBar is updated for very large files as well
+    BufferedInputStream from = new BufferedInputStream(
+                                                       new FileInputStream(
+                                                                           sourceFile));
+    BufferedOutputStream to = new BufferedOutputStream(
+                                                       new FileOutputStream(
+                                                                            targetFile));
+    byte[] buffer = new byte[16 * 1024];
+    int bytesRead;
+    int totalRead = 0;
+    while ((bytesRead = from.read(buffer)) != -1) {
+      to.write(buffer, 0, bytesRead);
+      totalRead += bytesRead;
+      if (totalRead >= 524288) //to update progress bar every 0.5MB
+      {
+        progress += totalRead;
+        progBar.setProgressBarStatus((int) Math.min(Math.ceil(progress * 100.0
+                                                      / totalSize), 100));
+        totalRead = 0;
+      }
+    }
+    if (sourceFile.length() > 524288) {
+      // Update the progress bar one final time if file size is more than 0.5MB,
+      //    otherwise, the update is handled either by the copyDir function, 
+      //    or directly by ProgressFrame.TaskSaveAs.doInBackground()
+      progress += totalRead;
+      progBar.setProgressBarStatus((int) Math.min(Math.ceil(progress * 100.0
+                                                    / totalSize), 100));
+    }
+    from.close();
+    from = null;
+    to.flush();
+    to.close();
+    to = null;
+
+    targetFile.setLastModified(sourceFile.lastModified());
+    targetFile.setExecutable(sourceFile.canExecute());
+  }
+
+  static public void copyFile(File sourceFile, File targetFile,
+                              ProgressFrame.TaskAddFile progBar)
+    throws IOException {
+    // Overloaded copyFile that is called whenever a addFile is being done,
+    // so that the
+    // ProgressBar is updated
+    double totalSize = sourceFile.length();
+    int progress = 0;
+    BufferedInputStream from = new BufferedInputStream(
+                                                       new FileInputStream(
+                                                                           sourceFile));
+    BufferedOutputStream to = new BufferedOutputStream(
+                                                       new FileOutputStream(
+                                                                            targetFile));
+    byte[] buffer = new byte[16 * 1024];
+    int bytesRead;
+    int totalRead = 0;
+    while ((bytesRead = from.read(buffer)) != -1) {
+      to.write(buffer, 0, bytesRead);
+      totalRead += bytesRead;
+      if (totalRead >= 1024) // to update progress bar every 1kB
+      {
+        progress += totalRead;
+        progBar.setProgressBarStatus((int) Math.min(Math.ceil(progress * 100.0
+                                                      / totalSize), 100));
+        totalRead = 0;
+      }
+    }
+    if (sourceFile.length() > 1024) {
+      // Update the progress bar one final time if file size is more than
+      // 1kB,
+      // otherwise, the update is handled directly by
+      // ProgressFrame.TaskAddFile.doInBackground()
+      progress += totalRead;
+      progBar.setProgressBarStatus((int) Math.min(Math.ceil(progress * 100.0
+                                                    / totalSize), 100));
+    }
+    from.close();
+    from = null;
+    to.flush();
+    to.close();
+    to = null;
+    targetFile.setLastModified(sourceFile.lastModified());
+    targetFile.setExecutable(sourceFile.canExecute());
+  }
+
+  static public double copyDir(File sourceDir, File targetDir,
+                               ProgressFrame.TaskSaveAs progBar,
+                               double progress, double totalSize)
+    throws IOException {
+    // Overloaded copyDir so that the Save As progress bar gets updated when the 
+    //    files are in folders as well (like in the data folder)
+    if (sourceDir.equals(targetDir)) {
+      final String urDum = "source and target directories are identical";
+      throw new IllegalArgumentException(urDum);
+    }
+    targetDir.mkdirs();
+    String files[] = sourceDir.list();
+    for (int i = 0; i < files.length; i++) {
+      // Ignore dot files (.DS_Store), dot folders (.svn) while copying
+      if (files[i].charAt(0) == '.')
+        continue;
+      //if (files[i].equals(".") || files[i].equals("..")) continue;
+      File source = new File(sourceDir, files[i]);
+      File target = new File(targetDir, files[i]);
+      if (source.isDirectory()) {
+        //target.mkdirs();
+        progress = copyDir(source, target, progBar, progress, totalSize);
+        progBar.setProgressBarStatus((int) Math.min(Math.ceil(progress * 100.0
+                                                      / totalSize), 100));
+        target.setLastModified(source.lastModified());
+      } else {
+        copyFile(source, target, progBar, progress, totalSize);
+        // Update SaveAs progress bar
+        progress += source.length();
+        progBar.setProgressBarStatus((int) Math.min(Math.ceil(progress * 100.0
+                                                      / totalSize), 100));
+      }
+    }
+    return progress;
   }
 
 }

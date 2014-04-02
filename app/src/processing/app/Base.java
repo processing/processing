@@ -2604,92 +2604,6 @@ public class Base {
   }
 
 
-  static public void copyFile(File sourceFile,
-                              File targetFile,ProgressFrame.TaskSaveAs progBar,
-                              double progress,double totalSize) throws IOException {
-	  // Overloaded copyFile that is called whenever a Save As is being done, so that the 
-	  //   ProgressBar is updated for very large files as well
-    BufferedInputStream from =
-      new BufferedInputStream(new FileInputStream(sourceFile));
-    BufferedOutputStream to =
-      new BufferedOutputStream(new FileOutputStream(targetFile));
-    byte[] buffer = new byte[16 * 1024];
-    int bytesRead;
-    int totalRead=0;
-    while ((bytesRead = from.read(buffer)) != -1) {
-      to.write(buffer, 0, bytesRead);
-      totalRead += bytesRead;
-      if (totalRead >= 524288) //to update progress bar every 0.5MB
-      {
-          progress += totalRead;
-          progBar.setProgressBarStatus((int) Math.min(
-				Math.ceil(progress * 100.0 / totalSize), 100));
-    	  totalRead = 0;
-      }
-    }
-    if (sourceFile.length()>524288) {
-    // Update the progress bar one final time if file size is more than 0.5MB,
-    //    otherwise, the update is handled either by the copyDir function, 
-    //    or directly by ProgressFrame.TaskSaveAs.doInBackground()
-      progress += totalRead;
-      progBar.setProgressBarStatus((int) Math.min(
-		  	  Math.ceil(progress * 100.0 / totalSize), 100));
-    }
-    from.close();
-    from = null;
-    to.flush();
-    to.close();
-    to = null;
-
-    targetFile.setLastModified(sourceFile.lastModified());
-    targetFile.setExecutable(sourceFile.canExecute());
-  }
-  
-  static public void copyFile(File sourceFile, File targetFile,
-			ProgressFrame.TaskAddFile progBar) throws IOException {
-    // Overloaded copyFile that is called whenever a addFile is being done,
-	// so that the
-	// ProgressBar is updated
-	double totalSize = sourceFile.length();
-	int progress = 0;
-	BufferedInputStream from = new BufferedInputStream(new FileInputStream(
-			sourceFile));
-	BufferedOutputStream to = new BufferedOutputStream(
-			new FileOutputStream(targetFile));
-	byte[] buffer = new byte[16 * 1024];
-	int bytesRead;
-	int totalRead = 0;
-	while ((bytesRead = from.read(buffer)) != -1) {
-		to.write(buffer, 0, bytesRead);
-		totalRead += bytesRead;
-		if (totalRead >= 1024) // to update progress bar every 1kB
-		{
-			progress += totalRead;
-			progBar.setProgressBarStatus((int) Math.min(
-					Math.ceil(progress * 100.0
-							/ totalSize), 100));
-			totalRead = 0;
-		}
-	}
-	if (sourceFile.length() > 1024) {
-		// Update the progress bar one final time if file size is more than
-		// 1kB,
-		// otherwise, the update is handled directly by
-		// ProgressFrame.TaskAddFile.doInBackground()
-		progress += totalRead;
-		progBar.setProgressBarStatus((int) Math.min(
-				Math.ceil(progress * 100.0 / totalSize),
-				100));
-	}
-	from.close();
-	from = null;
-	to.flush();
-	to.close();
-	to = null;
-	targetFile.setLastModified(sourceFile.lastModified());
-	targetFile.setExecutable(sourceFile.canExecute());
-}
-
   /**
    * Grab the contents of a file as a string.
    */
@@ -2758,40 +2672,6 @@ public class Base {
     }
   }
 
-   
-  static public double copyDir(File sourceDir,
-                             File targetDir,ProgressFrame.TaskSaveAs progBar,
-                             double progress,double totalSize) throws IOException {
-	// Overloaded copyDir so that the Save As progress bar gets updated when the 
-	//    files are in folders as well (like in the data folder)
-    if (sourceDir.equals(targetDir)) {
-      final String urDum = "source and target directories are identical";
-      throw new IllegalArgumentException(urDum);
-    }
-    targetDir.mkdirs();
-    String files[] = sourceDir.list();
-    for (int i = 0; i < files.length; i++) {
-      // Ignore dot files (.DS_Store), dot folders (.svn) while copying
-      if (files[i].charAt(0) == '.') continue;
-      //if (files[i].equals(".") || files[i].equals("..")) continue;
-      File source = new File(sourceDir, files[i]);
-      File target = new File(targetDir, files[i]);
-      if (source.isDirectory()) {
-        //target.mkdirs();
-        progress = copyDir(source, target, progBar, progress, totalSize);
-        progBar.setProgressBarStatus((int) Math.min(
-				Math.ceil(progress * 100.0 / totalSize), 100));
-        target.setLastModified(source.lastModified());
-      } else {
-          copyFile(source, target, progBar, progress, totalSize);
-          // Update SaveAs progress bar
-          progress += source.length(); 
-          progBar.setProgressBarStatus((int) Math.min(
-				Math.ceil(progress * 100.0 / totalSize), 100));
-      }
-    }
-    return progress;
-  }
 
   static public void copyDirNative(File sourceDir,
                                    File targetDir) throws IOException {

@@ -1060,12 +1060,11 @@ public class Sketch {
 		final File destFile2 = destFile;
 	    // Create a new event dispatch thread- to display ProgressBar
 	    // while Saving As
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				new ProgressFrame(sourceFile2,
-						destFile2, editor);
-			}
-		});
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new ProgressFrame(sourceFile2, destFile2, editor);
+      }
+    });
 	}
 
     if (codeExtension != null) {
