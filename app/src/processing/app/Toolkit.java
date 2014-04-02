@@ -167,8 +167,6 @@ public class Toolkit {
    * Author: George Bateman. Initial work Myer Nore.
    * @param menu
    *          A menu, a list of menus or an array of menu items to set mnemonics for.
-   * @param font
-   *          A font for rendering character widths.
    */
   public static void setMenuMnemonics(JMenuItem... menu) {
     if (Base.isMacOS()) return;
