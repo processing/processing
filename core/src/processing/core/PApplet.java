@@ -784,6 +784,8 @@ public class PApplet extends Applet
    */
   static public final String ARGS_EDITOR_LOCATION = "--editor-location";
 
+  static public final String ARGS_EXTERNAL = "--external";
+
   /**
    * Location for where to position the applet window on screen.
    * <p>
@@ -791,8 +793,6 @@ public class PApplet extends Applet
    * location, or could be used by other classes to launch at a
    * specific position on-screen.
    */
-  static public final String ARGS_EXTERNAL = "--external";
-
   static public final String ARGS_LOCATION = "--location";
 
   static public final String ARGS_DISPLAY = "--display";
