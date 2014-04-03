@@ -2369,7 +2369,9 @@ public class PApplet extends Applet
           render();
         } else {
           Graphics screen = getGraphics();
-          screen.drawImage(g.image, 0, 0, width, height, null);
+          if (screen != null) {
+            screen.drawImage(g.image, 0, 0, width, height, null);
+          }
         }
       } else {
         repaint();
