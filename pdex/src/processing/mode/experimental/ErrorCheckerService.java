@@ -433,11 +433,11 @@ public class ErrorCheckerService implements Runnable{
 //        }
         //         log(sourceCode);
         //         log("--------------------------");
-        compileCheck();
-        //astGenerator.buildAST(cu);
+        compileCheck();        
         log(editor.getSketch().getName() + "2 MCO "
             + mainClassOffset);
       }
+      astGenerator.buildAST(cu);
       if(ExperimentalMode.errorCheckEnabled){
         updateErrorTable();
         editor.updateErrorBar(problemsList);
