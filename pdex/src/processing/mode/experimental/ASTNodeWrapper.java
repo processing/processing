@@ -546,29 +546,33 @@ public class ASTNodeWrapper {
       String pdeLine = astGenerator.editor.getLineText(pdeOffs[1]);
       String lookingFor = nodeName.toString();
       log(lookingFor + ", " + nodeName.getStartPosition());
-      log("JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
+      log(javaLineNumber +" JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
           + lineElement.getEndOffset());
-      log("PL " + pdeLine);
+      log(pdeOffs[1] + " PL " + pdeLine);
       if (!javaLine.contains(lookingFor) || !pdeLine.contains(lookingFor)) {
         logE("Logical error in highLightNode(). Please file a bug report.");
         return false;
       }
       Pattern toFind = Pattern.compile("\\b" + nodeName.toString() + "\\b");
       Matcher matcher = toFind.matcher(javaLine);
+      int count = 0, index = 0;
       int lsto = lineElement.getStartOffset();
       while(matcher.find()){
+        count++;
         System.out.println(matcher.start() + lsto);
+        if(lsto + matcher.start() == nodeName.getStartPosition())
+          break;
       }
       // find the count of the name in the java code
-      int count = 0, index = 0;
-      do {
-        index = javaLine.indexOf(lookingFor, index);
-        if (index != -1) {
-          count++;
-          index += lookingFor.length();
-        } else
-          break;
-      } while (true);
+      
+//      do {
+//        index = javaLine.indexOf(lookingFor, index);
+//        if (index != -1) {
+//          count++;
+//          index += lookingFor.length();
+//        } else
+//          break;
+//      } while (true);
       log("count=" + count);
       // find the offset of the name of that index in the pde code
       index = 0;

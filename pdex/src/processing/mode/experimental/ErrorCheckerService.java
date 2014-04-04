@@ -434,7 +434,7 @@ public class ErrorCheckerService implements Runnable{
         //         log(sourceCode);
         //         log("--------------------------");
         compileCheck();
-        astGenerator.buildAST(cu);
+        //astGenerator.buildAST(cu);
         log(editor.getSketch().getName() + "2 MCO "
             + mainClassOffset);
       }
@@ -535,6 +535,27 @@ public class ErrorCheckerService implements Runnable{
   protected URLClassLoader classLoader;
   
   protected void compileCheck() {
+    
+    // CU needs to be updated coz before compileCheck xqpreprocessor is run on the source code which makes some further changes
+    //TODO Check if this breaks things 
+    
+    parser.setSource(sourceCode.toCharArray());
+    parser.setKind(ASTParser.K_COMPILATION_UNIT);
+
+    Map<String, String> options = JavaCore.getOptions();
+
+    JavaCore.setComplianceOptions(JavaCore.VERSION_1_6, options);
+    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
+    options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
+    parser.setCompilerOptions(options);
+    
+    if (cu == null)
+      cu = (CompilationUnit) parser.createAST(null);
+    else {
+      synchronized (cu) {
+        cu = (CompilationUnit) parser.createAST(null);
+      }
+    }
 
     // Currently (Sept, 2012) I'm using Java's reflection api to load the
     // CompilationChecker class(from CompilationChecker.jar) that houses the

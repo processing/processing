@@ -53,6 +53,8 @@ import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.PlainDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
@@ -1680,10 +1682,10 @@ public class ASTGenerator {
       logE("FINAL String label: " + getNodeAsString(simpName2));
       //errorCheckerService.highlightNode(simpName2);
       ASTNodeWrapper declWrap = new ASTNodeWrapper(simpName2,nodeLabel);
-      errorCheckerService.highlightNode(declWrap);
-//      if (!declWrap.highlightNode(this)) {
-//        logE("Highlighting failed.");
-//      }
+      //errorCheckerService.highlightNode(declWrap);
+      if (!declWrap.highlightNode(this)) {
+        logE("Highlighting failed.");
+      }
     } 
 
     return new ASTNodeWrapper(decl,nodeLabel);
@@ -1812,6 +1814,34 @@ public class ASTGenerator {
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
               errorCheckerService.highlightNode(awrap);
+              
+              //--
+              try {
+                int javaLineNumber = getLineNumber(awrap.getNode());
+                int pdeOffs[] = errorCheckerService
+                    .calculateTabIndexAndLineNumber(javaLineNumber);
+                PlainDocument javaSource = new PlainDocument();
+                javaSource.insertString(0, errorCheckerService.sourceCode, null);
+                Element lineElement = javaSource.getDefaultRootElement()
+                    .getElement(javaLineNumber-1);
+                if(lineElement == null) {
+                  return;
+                }
+                
+                String javaLine = javaSource.getText(lineElement.getStartOffset(),
+                                                     lineElement.getEndOffset()
+                                                         - lineElement.getStartOffset());
+                editor.getSketch().setCurrentCode(pdeOffs[0]);
+                String pdeLine = editor.getLineText(pdeOffs[1]);
+                //String lookingFor = nodeName.toString();
+                //log(lookingFor + ", " + nodeName.getStartPosition());
+                log("JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
+                    + lineElement.getEndOffset());
+                log("PL " + pdeLine);
+              } catch (BadLocationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              }
             }
           }
         };
