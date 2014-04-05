@@ -882,6 +882,7 @@ public class Texture implements PConstants {
   }
 
   public void getBufferPixels(int[] pixels) {
+    boolean addToUsed = false;
     BufferData data = null;
     if (usedBuffers != null && 0 < usedBuffers.size()) {
       // the last used buffer is the one currently stored in the opengl
@@ -890,12 +891,24 @@ public class Texture implements PConstants {
     } else if (bufferCache != null && 0 < bufferCache.size()) {
       // The first buffer in the cache will be uploaded to the opengl texture
       // the next time it is rendered
-      data = bufferCache.getFirst();
+      data = bufferCache.remove(0);
+      addToUsed = true;
     }
     if (data != null) {
+      if ((data.w != width) || (data.h != height)) {
+        init(data.w, data.h);
+      }
+
       data.rgbBuf.rewind();
       data.rgbBuf.get(pixels);
       convertToARGB(pixels);
+
+      if (addToUsed) {
+        if (usedBuffers == null) {
+          usedBuffers = new LinkedList<BufferData>();
+        }
+        usedBuffers.add(data);
+      }
     }
   }
 

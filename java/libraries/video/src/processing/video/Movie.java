@@ -570,7 +570,7 @@ public class Movie extends PImage implements PConstants {
       }
       
       // super.loadPixels() sets loaded to true, but in the useBufferSink mode,
-      // the contents of the pixels array is overriden by the buffers coming
+      // the contents of the pixels array is overwritten by the buffers coming
       // from gstreamer, so we don't want PGraphicsOpenGL replacing the OpenGL
       // texture with the pixels.
       setLoaded(false);
