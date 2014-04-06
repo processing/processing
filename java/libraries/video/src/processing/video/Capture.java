@@ -439,17 +439,15 @@ public class Capture extends PImage implements PConstants {
         Video.convertToARGB(pixels, width, height);
       } else if (sinkGetMethod != null) {
         try {
+          // sinkGetMethod will copy the latest buffer to the pixels array,
+          // and the pixels will be copied to the texture when the OpenGL
+          // renderer needs to draw it.          
           sinkGetMethod.invoke(bufferSink, new Object[] { pixels });          
         } catch (Exception e) {
           e.printStackTrace();
         }        
       }      
-            
-      // super.loadPixels() sets loaded to true, but in the useBufferSink mode,
-      // the contents of the pixels array is overwritten by the buffers coming
-      // from gstreamer, so we don't want PGraphicsOpenGL replacing the OpenGL
-      // texture with the pixels.
-      setLoaded(false);
+
       outdatedPixels = false;      
     }
   }

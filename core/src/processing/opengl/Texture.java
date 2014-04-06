@@ -882,17 +882,15 @@ public class Texture implements PConstants {
   }
 
   public void getBufferPixels(int[] pixels) {
-    boolean addToUsed = false;
+    // We get the buffer either from the used buffers or the cache, giving
+    // priority to the used buffers. Why? Because the used buffer was already
+    // transferred to the texture, so the pixels should be in sync with the
+    // texture.
     BufferData data = null;
     if (usedBuffers != null && 0 < usedBuffers.size()) {
-      // the last used buffer is the one currently stored in the opengl
-      // texture
       data = usedBuffers.getLast();
     } else if (bufferCache != null && 0 < bufferCache.size()) {
-      // The first buffer in the cache will be uploaded to the opengl texture
-      // the next time it is rendered
-      data = bufferCache.remove(0);
-      addToUsed = true;
+      data = bufferCache.getLast();
     }
     if (data != null) {
       if ((data.w != width) || (data.h != height)) {
@@ -903,10 +901,14 @@ public class Texture implements PConstants {
       data.rgbBuf.get(pixels);
       convertToARGB(pixels);
 
-      if (addToUsed) {
-        if (usedBuffers == null) {
-          usedBuffers = new LinkedList<BufferData>();
-        }
+      // In order to avoid a cached buffer to overwrite the texture when the
+      // renderer draws the texture, and hence put the pixels put of sync, we
+      // simply empty the cache.
+      if (usedBuffers == null) {
+        usedBuffers = new LinkedList<BufferData>();
+      }
+      while (0 < bufferCache.size()) {
+        data = bufferCache.remove(0);
         usedBuffers.add(data);
       }
     }
