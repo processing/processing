@@ -430,7 +430,6 @@ public class PJOGL extends PGL {
     } else if (canvasNEWT != null) {
       windowNEWT.removeGLEventListener(listener);
     }
-    GLProfile.shutdown();
   }
 
 
@@ -595,7 +594,7 @@ public class PJOGL extends PGL {
   protected void syncBackTexture() {
     if (USE_JOGL_FBOLAYER) {
       if (usingFrontTex) needSepFrontTex = true;
-      if (1 < numSamples) {
+      if (1 < numSamples && backFBO != null) {
         backFBO.syncSamplingSink(gl);
         backFBO.bind(gl);
       }
@@ -615,7 +614,8 @@ public class PJOGL extends PGL {
   protected void endDraw(boolean clear0) {
     if (isFBOBacked()) {
       if (USE_JOGL_FBOLAYER) {
-        if (!clear0 && isFBOBacked() && !isMultisampled()) {
+        if (!clear0 && isFBOBacked() && !isMultisampled() &&
+            frontFBO != null && backFBO != null) {
           // Draw the back texture into the front texture, which will be used as
           // back texture in the next frame. Otherwise flickering will occur if
           // the sketch uses "incremental drawing" (background() not called).

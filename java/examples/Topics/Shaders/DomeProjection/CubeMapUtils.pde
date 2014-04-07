@@ -32,10 +32,6 @@ void initCubeMap() {
   // Attach depth buffer to FBO
   pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.DEPTH_ATTACHMENT, PGL.RENDERBUFFER, rbo.get(0));    
 
-  pgl.enable(PGL.TEXTURE_CUBE_MAP);
-  pgl.activeTexture(PGL.TEXTURE1);
-  pgl.bindTexture(PGL.TEXTURE_CUBE_MAP, envMapTextureID.get(0));     
-
   endPGL();
 
   // Load cubemap shader.
@@ -44,12 +40,22 @@ void initCubeMap() {
 }
 
 void drawCubeMap() {
-  regenerateEnvMap();
+  PGL pgl = beginPGL();
+  pgl.activeTexture(PGL.TEXTURE1);
+  pgl.enable(PGL.TEXTURE_CUBE_MAP);  
+  pgl.bindTexture(PGL.TEXTURE_CUBE_MAP, envMapTextureID.get(0));     
+  regenerateEnvMap(pgl);
+  endPGL();
+  
   drawDomeMaster();
+  
+  pgl.disable(PGL.TEXTURE_CUBE_MAP);
+  pgl.bindTexture(PGL.TEXTURE_CUBE_MAP, 0);    
 }
 
 void drawDomeMaster() {
-  ortho();
+  camera();
+  ortho(0, width, 0, height);
   resetMatrix();
   shader(cubemapShader);
   shape(domeSphere);
@@ -57,9 +63,7 @@ void drawDomeMaster() {
 }
 
 // Called to regenerate the envmap
-void regenerateEnvMap() {    
-  PGL pgl = beginPGL();
-
+void regenerateEnvMap(PGL pgl) {    
   // bind fbo
   pgl.bindFramebuffer(PGL.FRAMEBUFFER, fbo.get(0));
 
@@ -92,6 +96,4 @@ void regenerateEnvMap() {
     noLights();  // Disabling lights to avoid adding many times
     pgl.framebufferTexture2D(PGL.FRAMEBUFFER, PGL.COLOR_ATTACHMENT0, face, 0, 0);
   }
-
-  endPGL();
 }

@@ -364,13 +364,13 @@ public class Base {
     } else {
       for (Mode m : getModeList()) {
         if (m.getIdentifier().equals(lastModeIdentifier)) {
-          logf("Setting next mode to {0}.", lastModeIdentifier); //$NON-NLS-1$
+          logf("Setting next mode to %s.", lastModeIdentifier); //$NON-NLS-1$
           nextMode = m;
         }
       }
       if (nextMode == null) {
         nextMode = coreModes[0];
-        logf("Could not find mode {0}, using default.", lastModeIdentifier); //$NON-NLS-1$
+        logf("Could not find mode %s, using default.", lastModeIdentifier); //$NON-NLS-1$
       }
     }
 

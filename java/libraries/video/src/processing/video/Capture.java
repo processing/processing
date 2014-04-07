@@ -428,7 +428,7 @@ public class Capture extends PImage implements PConstants {
   
   public synchronized void loadPixels() {
     super.loadPixels();
-    if (useBufferSink) {      
+    if (useBufferSink) {
       if (natBuffer != null) {
         // This means that the OpenGL texture hasn't been created so far (the
         // video frame not drawn using image()), but the user wants to use the
@@ -436,20 +436,18 @@ public class Capture extends PImage implements PConstants {
         IntBuffer buf = natBuffer.getByteBuffer().asIntBuffer();
         buf.rewind();
         buf.get(pixels);
-        Video.convertToARGB(pixels, width, height);        
+        Video.convertToARGB(pixels, width, height);
       } else if (sinkGetMethod != null) {
         try {
-          sinkGetMethod.invoke(bufferSink, new Object[] { pixels });
+          // sinkGetMethod will copy the latest buffer to the pixels array,
+          // and the pixels will be copied to the texture when the OpenGL
+          // renderer needs to draw it.          
+          sinkGetMethod.invoke(bufferSink, new Object[] { pixels });          
         } catch (Exception e) {
           e.printStackTrace();
         }        
       }      
-            
-      // super.loadPixels() sets loaded to true, but in the useBufferSink mode,
-      // the contents of the pixels array is overriden by the buffers coming
-      // from gstreamer, so we don't want PGraphicsOpenGL replacing the OpenGL
-      // texture with the pixels.
-      setLoaded(false);
+
       outdatedPixels = false;      
     }
   }
