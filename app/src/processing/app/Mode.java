@@ -43,7 +43,7 @@ public abstract class Mode {
 
   protected File folder;
 
-  protected PdeKeywords tokenMarker = new PdeKeywords();
+  protected TokenMarker tokenMarker;
   protected HashMap<String, String> keywordToReference = 
     new HashMap<String, String>();
   
@@ -94,6 +94,7 @@ public abstract class Mode {
   public Mode(Base base, File folder) {
     this.base = base;
     this.folder = folder;
+    tokenMarker = createTokenMarker();
 
     // Get paths for the libraries and examples in the mode folder
     examplesFolder = new File(folder, "examples");
@@ -911,6 +912,10 @@ public abstract class Mode {
   //}
   public TokenMarker getTokenMarker() {
     return tokenMarker;
+  }
+  
+  protected TokenMarker createTokenMarker() {
+    return new PdeKeywords();
   }
 
 
