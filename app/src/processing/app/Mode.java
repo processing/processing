@@ -125,27 +125,38 @@ public abstract class Mode {
 
   
   protected void loadKeywords(File keywordFile) throws IOException {
+    // overridden for Python, where # is an actual keyword 
+    loadKeywords(keywordFile, "#");
+  }
+  
+  
+  protected void loadKeywords(File keywordFile, 
+                              String commentPrefix) throws IOException {
     BufferedReader reader = PApplet.createReader(keywordFile);
     String line = null;
     while ((line = reader.readLine()) != null) {
-//      String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
-      String[] pieces = PApplet.splitTokens(line);
-      if (pieces.length >= 2) {
-        String keyword = pieces[0];
-        String coloring = pieces[1];
+      if (!line.trim().startsWith(commentPrefix)) {
+        // Was difficult to make sure that mode authors were properly doing 
+        // tab-separated values. By definition, there can't be additional 
+        // spaces inside a keyword (or filename), so just splitting on tokens. 
+        String[] pieces = PApplet.splitTokens(line);
+        if (pieces.length >= 2) {
+          String keyword = pieces[0];
+          String coloring = pieces[1];
 
-        if (coloring.length() > 0) {
-          tokenMarker.addColoring(keyword, coloring);
-        }
-        if (pieces.length == 3) {
-          String htmlFilename = pieces[2];
-          if (htmlFilename.length() > 0) {
-            // if the file is for the version with parens, 
-            // add a paren to the keyword
-            if (htmlFilename.endsWith("_")) {
-              keyword += "_";
+          if (coloring.length() > 0) {
+            tokenMarker.addColoring(keyword, coloring);
+          }
+          if (pieces.length == 3) {
+            String htmlFilename = pieces[2];
+            if (htmlFilename.length() > 0) {
+              // if the file is for the version with parens, 
+              // add a paren to the keyword
+              if (htmlFilename.endsWith("_")) {
+                keyword += "_";
+              }
+              keywordToReference.put(keyword, htmlFilename);
             }
-            keywordToReference.put(keyword, htmlFilename);
           }
         }
       }
