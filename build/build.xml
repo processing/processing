@@ -517,6 +517,10 @@
 
       <!-- plus core.jar... note that this is no longer shared -->
       <classpath file="../core/library/core.jar" />
+      <classpath file="../core/library/gluegen-rt.jar" />
+      <classpath file="../core/library/gluegen-rt-natives-macosx-universal.jar" />
+      <classpath file="../core/library/jogl-all.jar" />
+      <classpath file="../core/library/jogl-all-natives-macosx-universal.jar" />
 
       <arch name="x86_64"/>
       <!-- no support for this with Java 7 from Oracle -->
