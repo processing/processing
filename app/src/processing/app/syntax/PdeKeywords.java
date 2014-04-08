@@ -29,10 +29,6 @@ import javax.swing.text.Segment;
 import processing.app.Editor;
 
 
-/**
- * This class reads a keywords.txt file to get coloring put links to reference
- * locations for the set of keywords.
- */
 public class PdeKeywords extends TokenMarker {
   private KeywordMap keywordColoring;
 
