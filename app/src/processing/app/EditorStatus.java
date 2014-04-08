@@ -36,11 +36,9 @@ public class EditorStatus extends JPanel {
   Color[] bgcolor;
   Color[] fgcolor;
 
-  public static final int NOTICE = 0;
-  public static final int ERR    = 1;
-  //static final int PROMPT = 2;
-  //static final int EDIT   = 3;
-  public static final int EDIT   = 2;
+  static public final int NOTICE = 0;
+  static public final int ERR    = 1;
+  static public final int EDIT   = 2;
 
   static final int YES    = 1;
   static final int NO     = 2;
