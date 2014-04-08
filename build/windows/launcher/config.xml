@@ -17,6 +17,12 @@
     <mainClass>processing.app.Base</mainClass>
     <cp>lib/pde.jar</cp>
     <cp>core/library/core.jar</cp>
+    <cp>core/library/gluegen-rt.jar</cp>
+    <cp>core/library/gluegen-rt-natives-windows-amd64.jar</cp>
+    <cp>core/library/gluegen-rt-natives-windows-i586.jar</cp>
+    <cp>core/library/jogl-all-natives-windows-amd64.jar</cp>
+    <cp>core/library/jogl-all-natives-windows-i586.jar</cp>
+    <cp>core/library/core.jar</cp>
     <cp>lib/jna.jar</cp>
     <cp>lib/antlr.jar</cp>
     <cp>lib/ant.jar</cp>
