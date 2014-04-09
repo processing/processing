@@ -5261,6 +5261,8 @@ public class PApplet extends Applet
    * @param amt float between 0.0 and 1.0
    * @see PGraphics#curvePoint(float, float, float, float, float)
    * @see PGraphics#bezierPoint(float, float, float, float, float)
+   * @see PVector#lerp(PVector, float)
+   * @see PGraphics#lerpColor(int, int, float)
    */
   static public final float lerp(float start, float stop, float amt) {
     return start + (stop-start) * amt;
@@ -15334,6 +15336,7 @@ public class PApplet extends Applet
    * @param amt between 0.0 and 1.0
    * @see PImage#blendColor(int, int, int)
    * @see PGraphics#color(float, float, float, float)
+   * @see PApplet#lerp(float, float, float)
    */
   public int lerpColor(int c1, int c2, float amt) {
     return g.lerpColor(c1, c2, amt);
