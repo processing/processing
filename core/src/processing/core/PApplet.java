@@ -27,23 +27,15 @@ package processing.core;
 import processing.data.*;
 import processing.event.*;
 import processing.event.Event;
+import processing.event.KeyEvent;
+import processing.event.MouseEvent;
 import processing.opengl.*;
 
 import java.applet.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
+import java.awt.font.TextHitInfo;
+import java.awt.im.InputMethodRequests;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -158,7 +150,8 @@ import javax.swing.filechooser.FileSystemView;
  */
 public class PApplet extends Applet
   implements PConstants, Runnable,
-             MouseListener, MouseWheelListener, MouseMotionListener, KeyListener, FocusListener
+             MouseListener, MouseWheelListener, MouseMotionListener, KeyListener, FocusListener,
+             InputMethodListener, InputMethodRequests
 {
   /**
    * Full name of the Java version (i.e. 1.5.0_11).
@@ -702,6 +695,31 @@ public class PApplet extends Applet
    * @webref environment
    */
   public boolean focused = false;
+
+  /**
+   * ( begin auto-generated from committedText.xml )
+   *
+   * The String system variable <b>committedText</b> is committed text.
+   *
+   * ( end auto-generated )
+   * @webref input:inputmethod
+   * @see PApplet#committedText
+   * @see PApplet#composedText
+   * @see PApplet#inputMethodTextChanged()
+   */
+  public String committedText;
+  /**
+   * ( begin auto-generated from committedText.xml )
+   *
+   * The String system variable <b>committedText</b> is composed text.
+   *
+   * ( end auto-generated )
+   * @webref input:inputmethod
+   * @see PApplet#committedText
+   * @see PApplet#composedText
+   * @see PApplet#inputMethodTextChanged()
+   */
+  public String composedText;
 
   /**
    * Confirms if a Processing program is running inside a web browser. This
@@ -2545,6 +2563,8 @@ public class PApplet extends Applet
     comp.addMouseMotionListener(this);
     comp.addKeyListener(this);
     comp.addFocusListener(this);
+    comp.enableInputMethods(true);
+    comp.addInputMethodListener(this);
 
 //    canvas.addComponentListener(new ComponentAdapter() {
 //      public void componentResized(ComponentEvent e) {
@@ -2569,6 +2589,8 @@ public class PApplet extends Applet
     comp.removeMouseMotionListener(this);
     comp.removeKeyListener(this);
     comp.removeFocusListener(this);
+    comp.enableInputMethods(false);
+    comp.removeInputMethodListener(this);
   }
 
 
@@ -3498,6 +3520,75 @@ public class PApplet extends Applet
     focusLost();
   }
 
+  /////////////////////////////////////////////////////////////
+  // TODO : write javadoc.
+  // Input Method(Multi-language) support
+  // InputMethodListener, InputMethodRequests
+  public void inputMethodTextChanged() {
+  }
+
+  public void inputMethodTextChanged(InputMethodEvent event) {
+    int committedCharacterCount = event.getCommittedCharacterCount();
+    AttributedCharacterIterator text = event.getText();
+
+    if (text != null) {
+      StringBuilder committedTextBuilder = new StringBuilder();
+      int toCopy = committedCharacterCount;
+      char c = text.first();
+      while (toCopy-- > 0) {
+        committedTextBuilder.append(c);
+        c = text.next();
+      }
+      committedText = committedTextBuilder.toString();
+      composedText = String.valueOf(c);
+    }
+    event.consume();
+    repaint();
+
+    this.inputMethodTextChanged();
+  }
+
+  public void caretPositionChanged(InputMethodEvent event) {
+  }
+
+  public InputMethodRequests getInputMethodRequests() {
+    return this;
+  }
+
+  @Override
+  public Rectangle getTextLocation(TextHitInfo offset) {
+    return null;
+  }
+
+  @Override
+  public TextHitInfo getLocationOffset(int x, int y) {
+    return null;
+  }
+
+  @Override
+  public int getInsertPositionOffset() {
+    return 0;
+  }
+
+  @Override
+  public AttributedCharacterIterator getCommittedText(int beginIndex, int endIndex, AttributedCharacterIterator.Attribute[] attributes) {
+    return null;
+  }
+
+  @Override
+  public int getCommittedTextLength() {
+    return 0;
+  }
+
+  @Override
+  public AttributedCharacterIterator cancelLatestCommittedText(AttributedCharacterIterator.Attribute[] attributes) {
+    return null;
+  }
+
+  @Override
+  public AttributedCharacterIterator getSelectedText(AttributedCharacterIterator.Attribute[] attributes) {
+    return null;
+  }
 
   //////////////////////////////////////////////////////////////
 
