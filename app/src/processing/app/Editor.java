@@ -2185,31 +2185,30 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected boolean handleOpenInternal(String path) {
     // check to make sure that this .pde file is
     // in a folder of the same name
-    File file = new File(path);
-    File parentFile = new File(file.getParent());
-    String parentName = parentFile.getName();
-    String pdeName = parentName + ".pde";
-    File altFile = new File(file.getParent(), pdeName);
+    final File file = new File(path);
+    final File parentFile = new File(file.getParent());
+    final String parentName = parentFile.getName();
+    final String defaultName = parentName + "." + mode.getDefaultExtension();
+    final File altFile = new File(file.getParent(), defaultName);
 
-    if (pdeName.equals(file.getName())) {
+    if (defaultName.equals(file.getName())) {
       // no beef with this guy
-
     } else if (altFile.exists()) {
-      // user selected a .java from the same sketch,
-      // but open the .pde instead
+      // The user selected a source file from the same sketch,
+      // but open the file with the default extension instead.
       path = altFile.getAbsolutePath();
-      //System.out.println("found alt file in same folder");
-
-    } else if (!path.endsWith(".pde")) {
-      Base.showWarning("Bad file selected",
-                       "Processing can only open its own sketches\n" +
-                       "and other files ending in .pde", null);
+    } else if (!mode.canEdit(file)) {
+      final String modeName = (mode.getTitle().equals("Java")) ? "Processing"
+        : mode.getTitle();
+      Base
+        .showWarning("Bad file selected", modeName
+          + " can only open its own sketches\nand other files ending in "
+          + mode.getDefaultExtension(), null);
       return false;
-
     } else {
-      String properParent =
-        file.getName().substring(0, file.getName().length() - 4);
-
+      final String properParent =
+        file.getName().substring(0, file.getName().lastIndexOf('.'));
+      
       Object[] options = { "OK", "Cancel" };
       String prompt =
         "The file \"" + file.getName() + "\" needs to be inside\n" +

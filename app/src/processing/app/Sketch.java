@@ -179,7 +179,7 @@ public class Sketch {
 
           // Don't allow people to use files with invalid names, since on load,
           // it would be otherwise possible to sneak in nasty filenames. [0116]
-          if (Sketch.isSanitaryName(base)) {
+          if (isSanitaryName(base)) {
             code[codeCount++] =
               new SketchCode(new File(folder, filename), extension);
           }
@@ -324,7 +324,7 @@ public class Sketch {
     renamingCode = true;
     String prompt = (currentIndex == 0) ?
       "New name for sketch:" : "New name for file:";
-    String oldName = (current.isExtension("pde")) ?
+    String oldName = (current.isExtension(mode.getDefaultExtension())) ?
       current.getPrettyName() : current.getFileName();
     editor.status.edit(prompt, oldName);
   }
@@ -338,6 +338,11 @@ public class Sketch {
    * where they diverge.
    */
   protected void nameCode(String newName) {
+    newName = newName.trim();
+    if (newName.length() == 0) {
+      return;
+    }
+
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
@@ -359,21 +364,18 @@ public class Sketch {
       }
     }
 
-    newName = newName.trim();
-    if (newName.equals("")) return;
-
-    int dot = newName.indexOf('.');
-    if (dot == 0) {
+    if (newName.startsWith(".")) {
       Base.showWarning("Problem with rename",
-                       "The name cannot start with a period.", null);
+                       "The name cannot start with a period.");
       return;
     }
 
+    int dot = newName.lastIndexOf('.');
     String newExtension = newName.substring(dot+1).toLowerCase();
     if (!mode.validExtension(newExtension)) {
       Base.showWarning("Problem with rename",
                        "\"." + newExtension + "\"" +
-                       "is not a valid extension.", null);
+                       "is not a valid extension.");
       return;
     }
 
@@ -384,7 +386,7 @@ public class Sketch {
           Base.showWarning("Problem with rename",
                            "The first tab cannot be a ." + newExtension + " file.\n" +
                            "(It may be time for your to graduate to a\n" +
-                           "\"real\" programming environment, hotshot.)", null);
+                           "\"real\" programming environment, hotshot.)");
           return;
         }
       }
@@ -425,14 +427,14 @@ public class Sketch {
         if (newFolder.exists()) {
           Base.showWarning("Cannot Rename",
                            "Sorry, a sketch (or folder) named " +
-                           "\"" + newName + "\" already exists.", null);
+                           "\"" + newName + "\" already exists.");
           return;
         }
 
         // renaming the containing sketch folder
         boolean success = folder.renameTo(newFolder);
         if (!success) {
-          Base.showWarning("Error", "Could not rename the sketch folder.", null);
+          Base.showWarning("Error", "Could not rename the sketch folder.");
           return;
         }
         // let this guy know where he's living (at least for a split second)
@@ -454,7 +456,7 @@ public class Sketch {
         if (!current.renameTo(newFile, newExtension)) {
           Base.showWarning("Error",
                            "Could not rename \"" + current.getFileName() +
-                           "\" to \"" + newFile.getName() + "\"", null);
+                           "\" to \"" + newFile.getName() + "\"");
           return;
         }
 
@@ -486,7 +488,7 @@ public class Sketch {
         if (!current.renameTo(newFile, newExtension)) {
           Base.showWarning("Error",
                            "Could not rename \"" + current.getFileName() +
-                           "\" to \"" + newFile.getName() + "\"", null);
+                           "\" to \"" + newFile.getName() + "\"");
           return;
         }
       }
@@ -870,7 +872,7 @@ public class Sketch {
     }
 
     // save the main tab with its new name
-    File newFile = new File(newFolder, newName + ".pde");
+    File newFile = new File(newFolder, newName + "." + mode.getDefaultExtension());
     code[0].saveAs(newFile);
 
     updateInternal(newName, newFolder);
@@ -1435,11 +1437,13 @@ public class Sketch {
 
 
   /**
-   * Return true if the name is valid for a Processing sketch.
+   * Return true if the name is valid for a Processing sketch. Extensions of the form .foo are
+   * ignored.
    */
-  static public boolean isSanitaryName(String name) {
-    if (name.toLowerCase().endsWith(".pde")) {
-      name = name.substring(0, name.length() - 4);
+  public static boolean isSanitaryName(String name) {
+    final int dot = name.lastIndexOf('.');
+    if (dot >= 0) {
+      name = name.substring(0, dot);
     }
     return sanitizeName(name).equals(name);
   }

@@ -608,37 +608,13 @@ public class Base {
                          "Please save the sketch before changing the mode.",
                          null);
       } else {
-//        boolean untitled = activeEditor.untitled;
-        String mainPath = sketch.getMainFilePath();
-        boolean wasUntitled = sketch.isUntitled();
-
-        // save a mode file into this sketch folder
-        File sketchProps = new File(sketch.getFolder(), "sketch.properties"); //$NON-NLS-1$
-        try {
-          Settings props = new Settings(sketchProps);
-          // Include the pretty name for error messages to show the user
-          props.set("mode", mode.getTitle()); //$NON-NLS-1$
-          // Actual identifier to be used to resurrect the mode
-          props.set("mode.id", mode.getIdentifier()); //$NON-NLS-1$
-          props.save();
-        } catch (IOException e) {
-          e.printStackTrace();
+        // If you're changing modes, and there's nothing in the current sketch, you probably
+        // don't intend to keep the old, wrong-mode editor around.
+        if (sketch.isUntitled()) {
+          handleClose(activeEditor, true);
         }
-//        PrintWriter writer = PApplet.createWriter(sketchProps);
-//        writer.println("mode=" + mode.getTitle());
-//        writer.flush();
-//        writer.close();
-
-//        // close this sketch
-////        int[] where = activeEditor.getPlacement();
-//        Rectangle bounds = activeEditor.getBounds();
-//        int divider = activeEditor.getDividerLocation();
-        EditorState state = activeEditor.state;
-        handleClose(activeEditor, true);
-
-        // re-open the sketch
-//        /*Editor editor =*/ handleOpen(mainPath, untitled, state);
-        /*Editor editor =*/ handleOpen(mainPath, wasUntitled, state);
+        nextMode = mode;
+        handleNew();
       }
     }
   }
@@ -903,10 +879,23 @@ public class Base {
 //  protected Editor handleOpen(String path, int[] location) {
 //  protected Editor handleOpen(String path, Rectangle bounds, int divider) {
   protected Editor handleOpen(String path, boolean untitled, EditorState state) {
-//    System.err.println("entering handleOpen " + path);
+    // System.err.println("entering handleOpen " + path);
 
-    File file = new File(path);
-    if (!file.exists()) return null;
+    final File file = new File(path);
+    if (!file.exists()) {
+      return null;
+    }
+
+    //  System.err.println("  editors: " + editors);
+    // Cycle through open windows to make sure that it's not already open.
+    for (Editor editor : editors) {
+      if (editor.getSketch().getMainFile().equals(file)) {
+        editor.toFront();
+        // move back to the top of the recent list
+        handleRecent(editor);
+        return editor;
+      }
+    }
 
     if (!Sketch.isSanitaryName(file.getName())) {
       Base.showWarning("You're tricky, but not tricky enough",
@@ -916,17 +905,25 @@ public class Base {
       return null;
     }
 
-//    System.err.println("  editors: " + editors);
-    // Cycle through open windows to make sure that it's not already open.
-    for (Editor editor : editors) {
-      if (editor.getSketch().getMainFilePath().equals(path)) {
-        editor.toFront();
-        // move back to the top of the recent list
-        handleRecent(editor);
-        return editor;
+    if (!nextMode.canEdit(file)) {
+      // The currently active mode can't open the file. Perhaps some other mode known to us can?
+      for (final Mode mode: getModeList()) {
+        if (mode.canEdit(file)) {
+          // Yep! Change modes.
+          nextMode = mode;
+          break;
+        }
+      }
+      if (!nextMode.canEdit(file)) {
+        Base.showWarning("Wrong Mode",
+                         nextMode.getTitle()
+                           + " doesn't understand that kind of file.\n"
+                           + "It prefers files with the extension ."
+                           + nextMode.getDefaultExtension() + ".", null);
+        return null;
       }
     }
-
+    
     // If the active editor window is an untitled, and un-modified document,
     // just replace it with the file that's being opened.
 //    if (activeEditor != null) {
@@ -2089,6 +2086,13 @@ public class Base {
     }
   }
 
+
+  /**
+   * Non-fatal error message.
+   */
+  static public void showWarning(String title, String message) {
+    showWarning(title, message, null);
+  }
 
   /**
    * Non-fatal error message with optional stack trace side dish.
