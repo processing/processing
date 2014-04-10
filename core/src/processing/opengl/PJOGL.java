@@ -392,7 +392,6 @@ public class PJOGL extends PGL {
   @Override
   protected void registerListeners() {
     if (WINDOW_TOOLKIT == AWT) {
-      pg.parent.removeListeners(pg.parent);
       pg.parent.addListeners(canvasAWT);
 
       listener = new PGLListener();
@@ -406,7 +405,6 @@ public class PJOGL extends PGL {
         NEWTWindowListener winListener = new NEWTWindowListener();
         windowNEWT.addWindowListener(winListener);
       } else if (EVENTS_TOOLKIT == AWT) {
-        pg.parent.removeListeners(canvasNEWT);
         pg.parent.addListeners(canvasNEWT);
       }
 
