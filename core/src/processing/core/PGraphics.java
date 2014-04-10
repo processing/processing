@@ -7637,6 +7637,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param amt between 0.0 and 1.0
    * @see PImage#blendColor(int, int, int)
    * @see PGraphics#color(float, float, float, float)
+   * @see PApplet#lerp(float, float, float)
    */
   public int lerpColor(int c1, int c2, float amt) {
     return lerpColor(c1, c2, amt, colorMode);
