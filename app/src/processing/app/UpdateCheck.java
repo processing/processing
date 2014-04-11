@@ -112,8 +112,9 @@ public class UpdateCheck {
       boolean offerToUpdateContributions = true;
 
       if (latest > Base.getRevision()) {
-        System.out.println("You are running Processing revision " +
-                           Base.getRevision() + ", the latest is " + latest + ".");
+        System.out.println("You are running Processing revision 0" +
+                           Base.getRevision() + ", the latest build is 0" +
+                           latest + ".");
         // Assume the person is busy downloading the latest version
         offerToUpdateContributions = !promptToVisitDownloadPage();
       }

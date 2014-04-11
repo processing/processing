@@ -7287,14 +7287,15 @@ public class PGraphics extends PImage implements PConstants {
    * Strangely the old version of this code ignored the alpha
    * value. not sure if that was a bug or what.
    * <P>
-   * Note, no need for a bounds check since it's a 32 bit number.
+   * Note, no need for a bounds check for 'argb' since it's a 32 bit number.
+   * Bounds now checked on alpha, however (rev 0225).
    */
   protected void colorCalcARGB(int argb, float alpha) {
     if (alpha == colorModeA) {
       calcAi = (argb >> 24) & 0xff;
       calcColor = argb;
     } else {
-      calcAi = (int) (((argb >> 24) & 0xff) * (alpha / colorModeA));
+      calcAi = (int) (((argb >> 24) & 0xff) * PApplet.constrain((alpha / colorModeA), 0, 1));
       calcColor = (calcAi << 24) | (argb & 0xFFFFFF);
     }
     calcRi = (argb >> 16) & 0xff;
@@ -7637,6 +7638,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param amt between 0.0 and 1.0
    * @see PImage#blendColor(int, int, int)
    * @see PGraphics#color(float, float, float, float)
+   * @see PApplet#lerp(float, float, float)
    */
   public int lerpColor(int c1, int c2, float amt) {
     return lerpColor(c1, c2, amt, colorMode);

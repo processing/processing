@@ -776,6 +776,11 @@ public class PApplet extends Applet
   Object pauseObject = new Object();
   Thread thread;
 
+  // Background default needs to be different from the default value in
+  // PGraphics.backgroundColor, otherwise size(100, 100) bg spills over.
+  // https://github.com/processing/processing/issues/2297
+  static final Color WINDOW_BGCOLOR = new Color(0xDD, 0xDD, 0xDD);
+
   // messages to send if attached as an external vm
 
   /**
@@ -5261,6 +5266,8 @@ public class PApplet extends Applet
    * @param amt float between 0.0 and 1.0
    * @see PGraphics#curvePoint(float, float, float, float, float)
    * @see PGraphics#bezierPoint(float, float, float, float, float)
+   * @see PVector#lerp(PVector, float)
+   * @see PGraphics#lerpColor(int, int, float)
    */
   static public final float lerp(float start, float stop, float amt) {
     return start + (stop-start) * amt;
@@ -10614,8 +10621,7 @@ public class PApplet extends Applet
     Frame frame = new JFrame(displayDevice.getDefaultConfiguration());
     // Default Processing gray, which will be replaced below if another
     // color is specified on the command line (i.e. in the prefs).
-    final Color defaultGray = new Color(0xCC, 0xCC, 0xCC);
-    ((JFrame) frame).getContentPane().setBackground(defaultGray);
+    ((JFrame) frame).getContentPane().setBackground(WINDOW_BGCOLOR);
     // Cannot call setResizable(false) until later due to OS X (issue #467)
 
     final PApplet applet;
@@ -15334,6 +15340,7 @@ public class PApplet extends Applet
    * @param amt between 0.0 and 1.0
    * @see PImage#blendColor(int, int, int)
    * @see PGraphics#color(float, float, float, float)
+   * @see PApplet#lerp(float, float, float)
    */
   public int lerpColor(int c1, int c2, float amt) {
     return g.lerpColor(c1, c2, amt);

@@ -1,31 +1,50 @@
 0225 core
 X bug with StringDict(Reader) that wasn't setting the indices hashmap
-_   check this with other versions of this class
+X   check this with other versions of this class
 X call revalidate() via reflection
 X text looks lousy compared to the Apple JVM
 X   mess with rendering hints? (notes in PGraphicsJava2D)
 X   improvements made, but still not amazing.. just at level of Windows/Linux
-
-_ default font fixes 
-_   https://github.com/processing/processing/issues/2331
-_   https://github.com/processing/processing/pull/2338
+o XML.getChildren() throwing NPE when getInt() called on non-existent var
+o   https://github.com/processing/processing/issues/2367
+X PGraphics.colorCalcARGB(int, float) doesn't cap alpha
+X   https://github.com/processing/processing/issues/2439
+X run window border color changed in 2.1
+X   https://github.com/processing/processing/issues/2297
+X simple NPE issue that needs workaround
+X   https://github.com/processing/processing/issues/2354
 
 fixed in 2.1
 X draw() called again before finishing on OS X (retina issue)
 X   https://github.com/processing/processing/issues/1709
 X get() not always setting alpha channel when used with point()
 X   https://github.com/processing/processing/issues/1756
+A support for geometry and tessellation shaders (on desktop)
+A   https://github.com/processing/processing/issues/2252
 
+andres
+X copy() under OPENGL uses upside-down coordinates for cropping
+X   https://github.com/processing/processing/issues/2345
+X video on windows causes exception
+X   https://github.com/processing/processing/issues/2327
+X Shape Font Rendering was broken with the OpenGL Renderer
+X   https://github.com/processing/processing/issues/2375
 A depth buffer shouldn't be cleared when depth mask is disabled
 A   https://github.com/processing/processing/issues/2296
 A set pixels transparent by default in P2D/P3D
 A   https://github.com/processing/processing/issues/2207
+A unwind depth sorting because it was breaking DXF export
+A   https://github.com/processing/processing/issues/2404
+A Sketch hangs if sketchRenderer() returns an OpenGL renderer
+A   https://github.com/processing/processing/issues/2363
+A "buffer" uniform triggers shader compilation error
+A   https://github.com/processing/processing/issues/2325
+A   buffer has been renamed to ppixels for shaders
+A noLoop clears screen on Windows 8
+A   https://github.com/processing/processing/issues/2416
+A fix pixels[] array for video capture
+A   https://github.com/processing/processing/issues/2424
 
-_ saveFrame() with retina render is making black images
-_ add print() method to other data types (not just IntList)
-
-_ run window border color changed in 2.1
-_   https://github.com/processing/processing/issues/2297
 
 _ point() rendering differently in 2.0.3 and 2.1
 _   https://github.com/processing/processing/issues/2278
@@ -33,7 +52,15 @@ _   https://github.com/processing/processing/issues/2278
 _ Sketch runs with default size if size() is followed by large memory allocation
 _   https://github.com/processing/processing/issues/2039
 
+
 high
+_ tint() not working in PDF (regression between 2.0.3 and 2.1)
+_   https://github.com/processing/processing/issues/2428
+_ default font fixes 
+_   https://github.com/processing/processing/issues/2331
+_   https://github.com/processing/processing/pull/2338
+_ saveFrame() with retina render is making black images
+_ add print() method to other data types (not just IntList)
 _ zero alpha values still a problem with retina renderer
 _   https://github.com/processing/processing/issues/2030
 _ Sort out blending differences with P2D/P3D
