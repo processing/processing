@@ -32,8 +32,6 @@ _   https://github.com/processing/processing/pull/2318
 _   https://github.com/processing/processing/pull/2323
 _ check on why 2x core.jar inside the Java folder
 _   maybe OS X Java can't look in subfolders? (just auto-adds things)
-_ simple NPE issue that needs workaround
-_   https://github.com/processing/processing/issues/2354
 
 
 medium

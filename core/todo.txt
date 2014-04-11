@@ -11,6 +11,8 @@ X PGraphics.colorCalcARGB(int, float) doesn't cap alpha
 X   https://github.com/processing/processing/issues/2439
 X run window border color changed in 2.1
 X   https://github.com/processing/processing/issues/2297
+X simple NPE issue that needs workaround
+X   https://github.com/processing/processing/issues/2354
 
 fixed in 2.1
 X draw() called again before finishing on OS X (retina issue)

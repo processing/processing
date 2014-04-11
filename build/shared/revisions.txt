@@ -1,3 +1,97 @@
+PROCESSING 2.1.2 (REV 0225) - 11 April 2014
+
+Lots of small bug fixes plus some additional changes to support 
+the new Python Mode, coming soon: https://github.com/jdf/processing.py
+
+
+[ the pde ] 
+
++ Fix exception caused by Runner when it can't find location
+  https://github.com/processing/processing/issues/2346
+  https://github.com/processing/processing/pull/2359
+
++ Serial: Update to latest upstream (fixes potential port handle leak)
+  https://github.com/processing/processing/pull/2361
+
++ Add affordance for mode developers to run from Eclipse
+  https://github.com/processing/processing/pull/2422
+
++ Non-PDE extensions for modes cause a crash
+  https://github.com/processing/processing/issues/2419
+
++ Remove some hardcoding for .pde as extension
+  https://github.com/processing/processing/issues/2420
+
+
+[ the core ] 
+
++ Fix bug in StringDict(Reader) that wasn't setting the indices hashmap
+
++ Call revalidate() via reflection so that build works under 1.6 (using
+  1.6 very much not supported, but we need it for regression testing).
+
++ Some text rendering improvements. Fairly limited in what we can fix here.
+
++ PGraphics.colorCalcARGB(int, float) wasn't properly capping alpha values
+  https://github.com/processing/processing/issues/2439
+
++ Make sure that the window background color isn't the same as the default 
+  sketch background color (otherwise the sketch area isn't clear). 
+  https://github.com/processing/processing/issues/2297
+
++ Fix for occasional NullPointerException in paint()
+  https://github.com/processing/processing/issues/2354
+
+
+[ andres vs opengl, episode 225 ] 
+
++ copy() under OPENGL uses upside-down coordinates for cropping
+  https://github.com/processing/processing/issues/2345
+
++ Video on Windows causes exception
+  https://github.com/processing/processing/issues/2327
+
++ Shape Font Rendering was broken with the OpenGL Renderer
+  https://github.com/processing/processing/issues/2375
+
++ Depth buffer shouldn't be cleared when depth mask is disabled
+  https://github.com/processing/processing/issues/2296
+
++ Set pixels transparent by default in P2D/P3D
+  https://github.com/processing/processing/issues/2207
+
++ Unwind depth sorting because it was breaking DXF export
+  https://github.com/processing/processing/issues/2404
+
++ Sketch hangs if sketchRenderer() returns an OpenGL renderer
+  https://github.com/processing/processing/issues/2363
+
++ "buffer" uniform triggers shader compilation error
+  https://github.com/processing/processing/issues/2325
+  buffer has been renamed to ppixels for shaders
+
++ noLoop() clears screen on Windows 8
+  https://github.com/processing/processing/issues/2416
+
++ Fix pixels[] array for video capture
+  https://github.com/processing/processing/issues/2424
+
+
+[ fixed in earlier releases ] 
+
++ draw() called again before finishing on OS X (retina issue)
+  https://github.com/processing/processing/issues/1709
+
++ get() not always setting alpha channel when used with point()
+  https://github.com/processing/processing/issues/1756
+
++ support for geometry and tessellation shaders (on desktop)
+  https://github.com/processing/processing/issues/2252
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.1.1 (REV 0224) - 21 January 2014
 
 Several fixes for issues in 2.1 that weren't found in the 2.1 beta release.
