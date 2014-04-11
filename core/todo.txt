@@ -5,6 +5,10 @@ X call revalidate() via reflection
 X text looks lousy compared to the Apple JVM
 X   mess with rendering hints? (notes in PGraphicsJava2D)
 X   improvements made, but still not amazing.. just at level of Windows/Linux
+o XML.getChildren() throwing NPE when getInt() called on non-existent var
+o   https://github.com/processing/processing/issues/2367
+X PGraphics.colorCalcARGB(int, float) doesn't cap alpha
+X   https://github.com/processing/processing/issues/2439
 
 fixed in 2.1
 X draw() called again before finishing on OS X (retina issue)
@@ -37,14 +41,9 @@ A   https://github.com/processing/processing/issues/2416
 A fix pixels[] array for video capture
 A   https://github.com/processing/processing/issues/2424
 
-_ PGraphics.colorCalcARGB(int, float) doesn't cap alpha
-_   https://github.com/processing/processing/issues/2439
-
 _ tint() not working in PDF (regression from previous release)
 _   https://github.com/processing/processing/issues/2428
 
-_ XML.getChildren() fix
-_   https://github.com/processing/processing/issues/2367
 _ default font fixes 
 _   https://github.com/processing/processing/issues/2331
 _   https://github.com/processing/processing/pull/2338
