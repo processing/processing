@@ -1,6 +1,6 @@
 0225 core
 X bug with StringDict(Reader) that wasn't setting the indices hashmap
-_   check this with other versions of this class
+X   check this with other versions of this class
 X call revalidate() via reflection
 X text looks lousy compared to the Apple JVM
 X   mess with rendering hints? (notes in PGraphicsJava2D)
