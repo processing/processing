@@ -3542,8 +3542,10 @@ public class PApplet extends Applet
       committedText = committedTextBuilder.toString();
       composedText = String.valueOf(c);
     }
+    if(event.getCaret() == null) {
+      composedText = "";
+    }
     event.consume();
-    repaint();
 
     this.inputMethodTextChanged();
   }
