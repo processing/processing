@@ -9,6 +9,8 @@ o XML.getChildren() throwing NPE when getInt() called on non-existent var
 o   https://github.com/processing/processing/issues/2367
 X PGraphics.colorCalcARGB(int, float) doesn't cap alpha
 X   https://github.com/processing/processing/issues/2439
+X run window border color changed in 2.1
+X   https://github.com/processing/processing/issues/2297
 
 fixed in 2.1
 X draw() called again before finishing on OS X (retina issue)
@@ -41,18 +43,6 @@ A   https://github.com/processing/processing/issues/2416
 A fix pixels[] array for video capture
 A   https://github.com/processing/processing/issues/2424
 
-_ tint() not working in PDF (regression from previous release)
-_   https://github.com/processing/processing/issues/2428
-
-_ default font fixes 
-_   https://github.com/processing/processing/issues/2331
-_   https://github.com/processing/processing/pull/2338
-
-_ saveFrame() with retina render is making black images
-_ add print() method to other data types (not just IntList)
-
-_ run window border color changed in 2.1
-_   https://github.com/processing/processing/issues/2297
 
 _ point() rendering differently in 2.0.3 and 2.1
 _   https://github.com/processing/processing/issues/2278
@@ -60,7 +50,15 @@ _   https://github.com/processing/processing/issues/2278
 _ Sketch runs with default size if size() is followed by large memory allocation
 _   https://github.com/processing/processing/issues/2039
 
+
 high
+_ tint() not working in PDF (regression between 2.0.3 and 2.1)
+_   https://github.com/processing/processing/issues/2428
+_ default font fixes 
+_   https://github.com/processing/processing/issues/2331
+_   https://github.com/processing/processing/pull/2338
+_ saveFrame() with retina render is making black images
+_ add print() method to other data types (not just IntList)
 _ zero alpha values still a problem with retina renderer
 _   https://github.com/processing/processing/issues/2030
 _ Sort out blending differences with P2D/P3D

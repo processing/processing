@@ -776,6 +776,11 @@ public class PApplet extends Applet
   Object pauseObject = new Object();
   Thread thread;
 
+  // Background default needs to be different from the default value in
+  // PGraphics.backgroundColor, otherwise size(100, 100) bg spills over.
+  // https://github.com/processing/processing/issues/2297
+  final Color WINDOW_BGCOLOR = new Color(0xDD, 0xDD, 0xDD);
+
   // messages to send if attached as an external vm
 
   /**
@@ -10616,8 +10621,7 @@ public class PApplet extends Applet
     Frame frame = new JFrame(displayDevice.getDefaultConfiguration());
     // Default Processing gray, which will be replaced below if another
     // color is specified on the command line (i.e. in the prefs).
-    final Color defaultGray = new Color(0xCC, 0xCC, 0xCC);
-    ((JFrame) frame).getContentPane().setBackground(defaultGray);
+    ((JFrame) frame).getContentPane().setBackground(WINDOW_BGCOLOR);
     // Cannot call setResizable(false) until later due to OS X (issue #467)
 
     final PApplet applet;
