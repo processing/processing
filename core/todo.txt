@@ -37,6 +37,9 @@ A   https://github.com/processing/processing/issues/2416
 A fix pixels[] array for video capture
 A   https://github.com/processing/processing/issues/2424
 
+_ PGraphics.colorCalcARGB(int, float) doesn't cap alpha
+_   https://github.com/processing/processing/issues/2439
+
 _ tint() not working in PDF (regression from previous release)
 _   https://github.com/processing/processing/issues/2428
 
