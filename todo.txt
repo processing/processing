@@ -6,7 +6,10 @@ G Serial: Update to latest upstream (fixes potential port handle leak)
 G   https://github.com/processing/processing/pull/2361
 J add affordance for mode developers to run from Eclipse
 J   https://github.com/processing/processing/pull/2422
-_   make some documentation for this, pick correct naming
+J non-pde extensions for modes cause a crash
+J   https://github.com/processing/processing/issues/2419
+J some hardcoding for .pde still exists
+J   https://github.com/processing/processing/issues/2420
 
 
 high
@@ -34,10 +37,6 @@ _   https://github.com/processing/processing/issues/2354
 
 
 medium
-_ non-pde extensions for modes cause a crash
-_   https://github.com/processing/processing/issues/2419
-_ some hardcoding for .pde still exists
-_   https://github.com/processing/processing/issues/2420
 _ actual help with cleaning out the repo
 _   https://github.com/processing/processing/issues/1898
 _   requires re-forking, so still a ton of work
@@ -85,6 +84,8 @@ _   https://github.com/processing/processing/issues/2399
 _ import static causes exception (with fix)
 _   https://github.com/processing/processing/issues/8
 _   https://github.com/processing/processing/pull/2273
+_ add documentation for how to run mode development from Eclipse
+_   implementation/changes from JDF
 
 
 pulls

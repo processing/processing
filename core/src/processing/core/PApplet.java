@@ -779,7 +779,7 @@ public class PApplet extends Applet
   // Background default needs to be different from the default value in
   // PGraphics.backgroundColor, otherwise size(100, 100) bg spills over.
   // https://github.com/processing/processing/issues/2297
-  final Color WINDOW_BGCOLOR = new Color(0xDD, 0xDD, 0xDD);
+  static final Color WINDOW_BGCOLOR = new Color(0xDD, 0xDD, 0xDD);
 
   // messages to send if attached as an external vm
 
