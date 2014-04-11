@@ -35,7 +35,7 @@ import javax.swing.tree.*;
 
 import processing.app.contrib.*;
 import processing.core.*;
-
+import processing.mode.java.JavaMode;
 
 /**
  * The base class for the main processing application.
@@ -727,6 +727,18 @@ public class Base {
       if (!newbieFile.createNewFile()) {
         throw new IOException(newbieFile + " already exists.");
       }
+      
+      // Create sketch properties.
+      final File sketchProps = new File(newbieDir, "sketch.properties");
+      try {
+        final Settings settings = new Settings(sketchProps);
+        settings.set("mode", nextMode.getTitle());
+        settings.set("mode.id", nextMode.getIdentifier());
+        settings.save();
+      } catch (IOException e) {
+        System.err.println("While creating " + sketchProps + ": " + e.getMessage());
+      }
+
       String path = newbieFile.getAbsolutePath();
       /*Editor editor =*/ handleOpen(path, true);
 
@@ -906,64 +918,13 @@ public class Base {
     }
 
     if (!nextMode.canEdit(file)) {
-      // The currently active mode can't open the file. Perhaps some other mode known to us can?
-      for (final Mode mode: getModeList()) {
-        if (mode.canEdit(file)) {
-          // Yep! Change modes.
-          nextMode = mode;
-          break;
-        }
-      }
-      if (!nextMode.canEdit(file)) {
-        Base.showWarning("Wrong Mode",
-                         nextMode.getTitle()
-                           + " doesn't understand that kind of file.\n"
-                           + "It prefers files with the extension ."
-                           + nextMode.getDefaultExtension() + ".", null);
+      final Mode mode = selectMode(file);
+      if (mode == null) {
         return null;
       }
+      nextMode = mode;
     }
     
-    // If the active editor window is an untitled, and un-modified document,
-    // just replace it with the file that's being opened.
-//    if (activeEditor != null) {
-//      Sketch activeSketch = activeEditor.sketch;
-//      if (activeSketch.isUntitled() && !activeSketch.isModified()) {
-//        // if it's an untitled, unmodified document, it can be replaced.
-//        // except in cases where a second blank window is being opened.
-//        if (!path.startsWith(untitledFolder.getAbsolutePath())) {
-//          activeEditor.handleOpenUnchecked(path, 0, 0, 0, 0);
-//          return activeEditor;
-//        }
-//      }
-//    }
-
-//    Mode nextMode = nextEditorMode();
-    try {
-      File sketchFolder = new File(path).getParentFile();
-      File sketchProps = new File(sketchFolder, "sketch.properties"); //$NON-NLS-1$
-      if (sketchProps.exists()) {
-        Settings props = new Settings(sketchProps);
-        String modeTitle = props.get("mode"); //$NON-NLS-1$
-        String modeIdentifier = props.get("mode.id"); //$NON-NLS-1$
-        if (modeTitle != null && modeIdentifier != null) {
-//          nextMode = findMode(modeTitle);
-          Mode mode = findMode(modeIdentifier);
-          if (mode != null) {
-            nextMode = mode;
-
-          } else {
-            final String msg =
-              "This sketch was last used in “" + modeTitle + "” mode,\n" +
-              "which does not appear to be installed. The sketch will\n" +
-              "be opened in “" + nextMode.getTitle() + "” mode instead.";
-            Base.showWarning("Depeche Mode", msg, null);
-          }
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
 //    Editor.State state = new Editor.State(editors);
     Editor editor = nextMode.createEditor(this, path, state);
     if (editor == null) {
@@ -1000,15 +961,87 @@ public class Base {
     return editor;
   }
 
+  private static class ModeInfo {
+    public final String title;
 
-//  protected Mode findMode(String title) {
-//    for (Mode mode : getModeList()) {
-//      if (mode.getTitle().equals(title)) {
-//        return mode;
-//      }
-//    }
-//    return null;
-//  }
+    public final String id;
+
+    public ModeInfo(String id, String title) {
+      this.id = id;
+      this.title = title;
+    }
+  }
+
+  private static ModeInfo modeInfoFor(final File sketch) {
+    final File sketchFolder = sketch.getParentFile();
+    final File sketchProps = new File(sketchFolder, "sketch.properties");
+    if (!sketchProps.exists()) {
+      return null;
+    }
+    try {
+      final Settings settings = new Settings(sketchProps);
+      final String title = settings.get("mode");
+      final String id = settings.get("mode.id");
+      if (title == null || id == null) {
+        return null;
+      }
+      return new ModeInfo(id, title);
+    } catch (IOException e) {
+      System.err.println("While trying to read " + sketchProps + ": "
+        + e.getMessage());
+    }
+    return null;
+  }
+
+  private Mode promptForMode(final File sketch, final ModeInfo preferredMode) {
+    final String extension = sketch.getName().substring(sketch.getName().lastIndexOf('.') + 1);
+    final List<Mode> possibleModes = new ArrayList<>();
+    for (final Mode mode : getModeList()) {
+      if (mode.canEdit(sketch))
+        possibleModes.add(mode);
+    }
+    if (possibleModes.size() == 1
+      && possibleModes.get(0).getIdentifier()
+        .equals(JavaMode.class.getCanonicalName())) {
+      // If default mode can open it, then do so without prompting. 
+      return possibleModes.get(0);
+    }
+    if (possibleModes.size() == 0) {
+      if (preferredMode == null) {
+        Base
+          .showWarning("Modeless Dialog",
+                       "I don't know how to open a sketch with the \""
+                         + extension
+                         + "\"\nfile extension. You'll have to install a different"
+                         + "\nProcessing mode for that.");
+      } else {
+        Base.showWarning("Modeless Dialog", "You'll have to install "
+          + preferredMode.title + " Mode " + "\nin order to open that sketch.");
+      }
+      return null;
+    }
+    final Mode[] modes = possibleModes.toArray(new Mode[possibleModes.size()]);
+    final String message = preferredMode == null ? nextMode.getTitle()
+      + " Mode can't open ."
+      + extension
+      + " files, but you have one or more modes\ninstalled that can. Would you like to try one?"
+      : "That's a " + preferredMode.title + " Mode sketch, but you don't have "
+        + preferredMode.title
+        + " installed.\nWould you like to try a different mode for opening a ."
+        + extension + " sketch?";
+    return (Mode) JOptionPane.showInputDialog(null, message, "Modal Dialog",
+                                              JOptionPane.QUESTION_MESSAGE,
+                                              null, modes, modes[0]);
+  }
+
+  private Mode selectMode(final File sketch) {
+    final ModeInfo modeInfo = modeInfoFor(sketch);
+    final Mode specifiedMode = modeInfo == null ? null : findMode(modeInfo.id);
+    if (specifiedMode != null) {
+      return specifiedMode;
+    }
+    return promptForMode(sketch, modeInfo);
+  }
 
   protected Mode findMode(String id) {
     for (Mode mode : getModeList()) {

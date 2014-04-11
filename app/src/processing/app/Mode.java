@@ -1087,4 +1087,9 @@ public abstract class Mode {
 //  public void handleNewReplace() {
 //    base.handleNewReplace();
 //  }
+  
+  @Override
+  public String toString() {
+    return getTitle();
+  }
 }
