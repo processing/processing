@@ -220,6 +220,7 @@ public class Toolkit {
     // METHOD 1: attempt to assign KDE defaults.
     for (JMenuItem jmi : menu) {
       if (jmi == null) continue;
+      if (jmi.getText() == null) continue;
       jmi.setMnemonic(0); // Reset.
       for (int i = 0; i < kdePreDefStrs.length; i++) {
         String cleanName = nonAAlpha.matcher(jmi.getText()).replaceAll("").toLowerCase();
@@ -236,6 +237,7 @@ public class Toolkit {
     algorithmicAssaignment:
     for (JMenuItem jmi : menu) {
       if (jmi == null) continue;
+      if (jmi.getText() == null) continue;
       if (jmi.getMnemonic() != 0) continue; // Already assigned.
 
       // The string can't be made lower-case as that would spoil
