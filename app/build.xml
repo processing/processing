@@ -56,37 +56,9 @@
     <!-- env used to set classpath below -->
     <property environment="env" />
 
-    <!-- moved to the main build script -->
-    <!-- ant seems to nuke ${java.home} for some reason, pointing at the JRE
-	 subfolder instead of the actual JDK found at JAVA_HOME. 
-	 To avoid this, we grab the actual JAVA_HOME environment variable 
-	 and use that to specify the location of tools.jar. -->
-    <!-- if someone is better with ant please help clean this up -->
-    <!--
-    <property name="java_home" value="${env.JAVA_HOME}" />
-    <available file="${env.JAVA_HOME}/lib/tools.jar"
-	       property="java_tools_found" />
-
-    <condition property="linux">
-      <and>
-	<os family="unix" />
-	<not>
-	  <os family="mac" />
-	</not>
-      </and>
-    </condition>
-    <fail if="linux" unless="java_tools_found" 
-	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
-
-    <condition property="windows">
-      <os family="windows" />
-    </condition>
-    <fail if="windows" unless="java_tools_found" 
-	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
-    -->
-
-    <javac source="1.7" 
-	   target="1.7" 
+    <!-- need to stay at 1.6 until we update ecj.jar -->
+    <javac source="1.6" 
+	   target="1.6" 
 	   destdir="bin" 
 	   excludes="**/tools/format/**" 
 	   encoding="UTF-8" 
