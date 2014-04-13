@@ -85,8 +85,8 @@
 	  message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
     -->
 
-    <javac source="1.6" 
-	   target="1.6" 
+    <javac source="1.7" 
+	   target="1.7" 
 	   destdir="bin" 
 	   excludes="**/tools/format/**" 
 	   encoding="UTF-8" 
