@@ -53,6 +53,7 @@ import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
 import processing.app.Base;
 import processing.app.Editor;
+import processing.app.EditorStatus;
 import processing.app.Library;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
@@ -947,12 +948,16 @@ public class ErrorCheckerService implements Runnable{
     }
 
   }
+  
   protected int lastCaretLine = -1;
+  
   /**
    * Updates editor status bar, depending on whether the caret is on an error
    * line or not
    */
   public void updateEditorStatus() {
+    
+    if(editor.getStatusMode() == EditorStatus.EDIT) return;
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
     if(ExperimentalMode.errorCheckEnabled)
