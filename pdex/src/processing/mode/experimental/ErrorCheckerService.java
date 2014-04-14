@@ -978,10 +978,17 @@ public class ErrorCheckerService implements Runnable{
         }
       }
     }
-    if (editor.ta.getCaretLine() != lastCaretLine) {
+    
+    // This line isn't an error line anymore, so probably just clear it
+    if (editor.getStatusMode() == EditorStatus.ERR
+        || editor.getStatusMode() == EditorStatus.NOTICE) {
       editor.statusEmpty();
-      lastCaretLine = editor.ta.getCaretLine();
+      return;
     }
+//    if (editor.ta.getCaretLine() != lastCaretLine) {
+//      editor.statusEmpty();
+//      lastCaretLine = editor.ta.getCaretLine();
+//    }
   }
   
   /**
