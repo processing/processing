@@ -31,26 +31,21 @@ import processing.app.Preferences;
 
 public class LinuxPlatform extends Platform {
 
-  private static final boolean SUPPRESS_JVM_WARNING =
-    Boolean.parseBoolean(System.getProperty("SUPPRESS_JVM_WARNING", "false"));
-
   public void init(Base base) {
     super.init(base);
 
-    if (!SUPPRESS_JVM_WARNING) {
-      final String javaVendor = System.getProperty("java.vendor");
-      final String javaVM = System.getProperty("java.vm.name");
-      if (javaVendor == null ||
-          (!javaVendor.contains("Sun") && !javaVendor.contains("Oracle")) ||
-          javaVM == null || !javaVM.contains("Java")) {
-        Base.showWarning("Not fond of this Java VM",
-          "Processing requires Java 6 from Sun (i.e. the sun-java-jdk\n" +
-          "package on Ubuntu). Other versions such as OpenJDK, IcedTea,\n" +
-          "and GCJ are strongly discouraged. Among other things, you're\n" +
-          "likely to run into problems with sketch window size and\n" +
-          "placement. For more background, please read the wiki:\n" +
-          "http://wiki.processing.org/w/Supported_Platforms#Linux", null);
-      }
+    String javaVendor = System.getProperty("java.vendor");
+    String javaVM = System.getProperty("java.vm.name");
+    if (javaVendor == null ||
+        (!javaVendor.contains("Sun") && !javaVendor.contains("Oracle")) ||
+        javaVM == null || !javaVM.contains("Java")) {
+      Base.showWarning("Not fond of this Java VM",
+        "Processing requires Java 6 from Sun (i.e. the sun-java-jdk\n" +
+        "package on Ubuntu). Other versions such as OpenJDK, IcedTea,\n" +
+        "and GCJ are strongly discouraged. Among other things, you're\n" +
+        "likely to run into problems with sketch window size and\n" +
+        "placement. For more background, please read the wiki:\n" +
+        "http://wiki.processing.org/w/Supported_Platforms#Linux", null);
     }
   }
 
