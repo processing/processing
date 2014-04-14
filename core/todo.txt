@@ -5,8 +5,6 @@ X call revalidate() via reflection
 X text looks lousy compared to the Apple JVM
 X   mess with rendering hints? (notes in PGraphicsJava2D)
 X   improvements made, but still not amazing.. just at level of Windows/Linux
-o XML.getChildren() throwing NPE when getInt() called on non-existent var
-o   https://github.com/processing/processing/issues/2367
 X PGraphics.colorCalcARGB(int, float) doesn't cap alpha
 X   https://github.com/processing/processing/issues/2439
 X run window border color changed in 2.1
@@ -45,6 +43,9 @@ A   https://github.com/processing/processing/issues/2416
 A fix pixels[] array for video capture
 A   https://github.com/processing/processing/issues/2424
 
+_ XML.getChildren() throwing NPE when getInt() called on non-existent var
+_   https://github.com/processing/processing/issues/2367
+_   need to sort out with docs what's happening here
 
 _ point() rendering differently in 2.0.3 and 2.1
 _   https://github.com/processing/processing/issues/2278

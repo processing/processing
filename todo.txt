@@ -10,11 +10,14 @@ J non-pde extensions for modes cause a crash
 J   https://github.com/processing/processing/issues/2419
 J some hardcoding for .pde still exists
 J   https://github.com/processing/processing/issues/2420
+X the PDE uses 15% of CPU while just sitting idle (thx to David Fokkema)
+X   https://github.com/processing/processing/issues/1561
 
 
 high
 _ use --deep for codesign to work?
 _   http://furbo.org/2013/10/17/code-signing-and-mavericks/
+_   http://brockerhoff.net/RB/AppCheckerLite/
 _ exported apps reporting as "damaged" on OS X
 _   https://github.com/processing/processing/issues/2095
 _ sketchPath() returns user.home in exported apps on OSX
@@ -388,8 +391,6 @@ _ active editor not being set null
 _   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
 _   instead of (activeEditor == null), but that's papering over a problem
 _   where the active editor is not being set null
-_ the PDE uses 15% of CPU while just sitting idle
-_   https://github.com/processing/processing/issues/1561
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
 _ improve update check message "a new release (1.0.1) is available"
 _   be more descriptive, use a second line in latest.txt

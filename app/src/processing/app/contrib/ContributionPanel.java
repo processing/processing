@@ -122,6 +122,7 @@ class ContributionPanel extends JPanel {
           updateButton.setEnabled(false);
           installRemoveButton.setEnabled(false);
           installProgressBar.setVisible(true);
+          installProgressBar.setIndeterminate(true);
 
           ((LocalContribution) contrib).removeContribution(listPanel.contribManager.editor,
                                                            new JProgressMonitor(installProgressBar) {
