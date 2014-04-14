@@ -631,8 +631,11 @@
       export CODESIGN_ALLOCATE="/Applications/Xcode.app/Contents/Developer/usr/bin/codesign_allocate"
     </echo>
     <exec executable="codesign" dir="macosx/work">
+      <arg value="--deep" />
       <arg value="--force" />
       <arg value="--sign" />
+      <!-- 3rd party is for the app store, dev id is gatekeeper only -->
+<!--      <arg value="3rd Party Mac Developer Application" />-->
       <arg value="Developer ID Application" />
       <arg value="Processing.app" />
     </exec>

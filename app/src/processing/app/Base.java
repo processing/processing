@@ -727,7 +727,7 @@ public class Base {
       if (!newbieFile.createNewFile()) {
         throw new IOException(newbieFile + " already exists.");
       }
-      
+
       // Create sketch properties.
       final File sketchProps = new File(newbieDir, "sketch.properties");
       try {
@@ -924,7 +924,7 @@ public class Base {
       }
       nextMode = mode;
     }
-    
+
 //    Editor.State state = new Editor.State(editors);
     Editor editor = nextMode.createEditor(this, path, state);
     if (editor == null) {
@@ -994,23 +994,24 @@ public class Base {
   }
 
   private Mode promptForMode(final File sketch, final ModeInfo preferredMode) {
-    final String extension = sketch.getName().substring(sketch.getName().lastIndexOf('.') + 1);
-    final List<Mode> possibleModes = new ArrayList<>();
+    final String extension =
+      sketch.getName().substring(sketch.getName().lastIndexOf('.') + 1);
+    final List<Mode> possibleModes = new ArrayList<Mode>();
     for (final Mode mode : getModeList()) {
-      if (mode.canEdit(sketch))
+      if (mode.canEdit(sketch)) {
         possibleModes.add(mode);
+      }
     }
-    if (possibleModes.size() == 1
-      && possibleModes.get(0).getIdentifier()
+    if (possibleModes.size() == 1 &&
+        possibleModes.get(0).getIdentifier()
         .equals(JavaMode.class.getCanonicalName())) {
-      // If default mode can open it, then do so without prompting. 
+      // If default mode can open it, then do so without prompting.
       return possibleModes.get(0);
     }
     if (possibleModes.size() == 0) {
       if (preferredMode == null) {
-        Base
-          .showWarning("Modeless Dialog",
-                       "I don't know how to open a sketch with the \""
+        Base.showWarning("Modeless Dialog",
+                         "I don't know how to open a sketch with the \""
                          + extension
                          + "\"\nfile extension. You'll have to install a different"
                          + "\nProcessing mode for that.");
@@ -1021,14 +1022,14 @@ public class Base {
       return null;
     }
     final Mode[] modes = possibleModes.toArray(new Mode[possibleModes.size()]);
-    final String message = preferredMode == null ? nextMode.getTitle()
-      + " Mode can't open ."
-      + extension
-      + " files, but you have one or more modes\ninstalled that can. Would you like to try one?"
-      : "That's a " + preferredMode.title + " Mode sketch, but you don't have "
-        + preferredMode.title
-        + " installed.\nWould you like to try a different mode for opening a ."
-        + extension + " sketch?";
+    final String message = preferredMode == null ?
+      (nextMode.getTitle() + " Mode can't open ." + extension + " files, " +
+       "but you have one or more modes\ninstalled that can. " +
+       "Would you like to try one?") :
+      ("That's a " + preferredMode.title + " Mode sketch, " +
+       "but you don't have " + preferredMode.title + " installed.\n" +
+       "Would you like to try a different mode for opening a " +
+       "." + extension + " sketch?");
     return (Mode) JOptionPane.showInputDialog(null, message, "Modal Dialog",
                                               JOptionPane.QUESTION_MESSAGE,
                                               null, modes, modes[0]);
