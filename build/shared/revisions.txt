@@ -1,10 +1,15 @@
-PROCESSING 2.1.2 (REV 0225) - 11 April 2014
+PROCESSING 2.1.2 (REV 0225) - 15 April 2014
 
 Lots of small bug fixes plus some additional changes to support 
 the new Python Mode, coming soon: https://github.com/jdf/processing.py
 
 
 [ the pde ] 
+
++ The PDE was using 15% of CPU while just sitting idle. Thanks to
+  David Fokkema for the fix (and pull request).
+  https://github.com/processing/processing/issues/1561
+  https://github.com/processing/processing/pull/2451
 
 + Fix exception caused by Runner when it can't find location
   https://github.com/processing/processing/issues/2346
@@ -21,6 +26,9 @@ the new Python Mode, coming soon: https://github.com/jdf/processing.py
 
 + Remove some hardcoding for .pde as extension
   https://github.com/processing/processing/issues/2420
+
++ Update code signing for Processing.app for Mavericks changes
+  https://github.com/processing/processing/issues/2453
 
 
 [ the core ] 
