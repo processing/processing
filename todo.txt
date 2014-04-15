@@ -18,6 +18,8 @@ X   https://github.com/processing/processing/issues/2453
 o   use --deep for codesign to work? (nope)
 o   http://furbo.org/2013/10/17/code-signing-and-mavericks/
 o   http://brockerhoff.net/RB/AppCheckerLite/
+J permit modes to specify alternate extension (.py for .pyde stuff)
+J   https://github.com/processing/processing/pull/2452
 
 
 high
