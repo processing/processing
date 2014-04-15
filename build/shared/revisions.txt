@@ -33,6 +33,9 @@ the new Python Mode, coming soon: https://github.com/jdf/processing.py
 
 [ the core ] 
 
++ sketchPath() was returning user.home in exported apps on OS X
+  https://github.com/processing/processing/issues/2181
+
 + Fix bug in StringDict(Reader) that wasn't setting the indices hashmap
 
 + Call revalidate() via reflection so that build works under 1.6 (using

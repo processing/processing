@@ -20,13 +20,13 @@ o   http://furbo.org/2013/10/17/code-signing-and-mavericks/
 o   http://brockerhoff.net/RB/AppCheckerLite/
 J permit modes to specify alternate extension (.py for .pyde stuff)
 J   https://github.com/processing/processing/pull/2452
+X sketchPath() returns user.home in exported apps on OSX
+X   https://github.com/processing/processing/issues/2181
 
 
 high
 _ exported apps reporting as "damaged" on OS X
 _   https://github.com/processing/processing/issues/2095
-_ sketchPath() returns user.home in exported apps on OSX
-_   https://github.com/processing/processing/issues/2181
 _ QuickReference tool was able to bring down the environment
 _   https://github.com/processing/processing/issues/2229
 _ tab characters not recognized/drawn in the editor (2.1)
