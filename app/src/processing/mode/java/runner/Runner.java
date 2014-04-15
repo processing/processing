@@ -133,7 +133,7 @@ public class Runner implements MessageConsumer {
 //    String jdwpArg = "-Xrunjdwp:transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
 //    String debugArg = "-Xdebug"; 
     // Newer (Java 1.5+) version that uses JVMTI
-    String jdwpArg = "-agentlib:jdwp=transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
+    String jdwpArg = "-agentlib:jdwp=transport=dt_socket,address=" + portStr + ",server=y,suspend=n";
 
     // Everyone works the same under Java 7 (also on OS X) 
     String[] commandArgs = new String[] { Base.getJavaPath(), jdwpArg };
