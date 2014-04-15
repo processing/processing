@@ -727,7 +727,7 @@ public class Base {
       if (!newbieFile.createNewFile()) {
         throw new IOException(newbieFile + " already exists.");
       }
-      
+
       // Create sketch properties.
       final File sketchProps = new File(newbieDir, "sketch.properties");
       try {
@@ -924,7 +924,7 @@ public class Base {
       }
       nextMode = mode;
     }
-    
+
 //    Editor.State state = new Editor.State(editors);
     Editor editor = nextMode.createEditor(this, path, state);
     if (editor == null) {
@@ -995,7 +995,7 @@ public class Base {
 
   private Mode promptForMode(final File sketch, final ModeInfo preferredMode) {
     final String extension = sketch.getName().substring(sketch.getName().lastIndexOf('.') + 1);
-    final List<Mode> possibleModes = new ArrayList<>();
+    final List<Mode> possibleModes = new ArrayList<Mode>();
     for (final Mode mode : getModeList()) {
       if (mode.canEdit(sketch))
         possibleModes.add(mode);
@@ -1003,7 +1003,7 @@ public class Base {
     if (possibleModes.size() == 1
       && possibleModes.get(0).getIdentifier()
         .equals(JavaMode.class.getCanonicalName())) {
-      // If default mode can open it, then do so without prompting. 
+      // If default mode can open it, then do so without prompting.
       return possibleModes.get(0);
     }
     if (possibleModes.size() == 0) {
