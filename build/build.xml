@@ -630,12 +630,20 @@
       With a proper ID, if code signing fails, you may need to use:
       export CODESIGN_ALLOCATE="/Applications/Xcode.app/Contents/Developer/usr/bin/codesign_allocate"
     </echo>
-    <exec executable="codesign" dir="macosx/work">
-      <arg value="--deep" />
+
+    <!-- 3rd party is for the app store, dev id is gatekeeper only -->
+    <!--<arg value="3rd Party Mac Developer Application" />-->
+
+    <exec executable="/usr/bin/codesign" dir="macosx/work">
       <arg value="--force" />
       <arg value="--sign" />
-      <!-- 3rd party is for the app store, dev id is gatekeeper only -->
-<!--      <arg value="3rd Party Mac Developer Application" />-->
+      <arg value="Developer ID Application" />
+      <arg value="Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk" />
+    </exec>
+
+    <exec executable="/usr/bin/codesign" dir="macosx/work">
+      <arg value="--force" />
+      <arg value="--sign" />
       <arg value="Developer ID Application" />
       <arg value="Processing.app" />
     </exec>
