@@ -444,11 +444,16 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    *
    *
    */
@@ -463,11 +468,16 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    *
    */
   public int mouseY;
@@ -496,9 +506,17 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref input:mouse
-   * @see PApplet#pmouseY
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public int pmouseX;
 
@@ -512,9 +530,17 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref input:mouse
-   * @see PApplet#pmouseX
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public int pmouseY;
 
@@ -564,10 +590,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public int mouseButton;
 
@@ -582,9 +613,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public boolean mousePressed;
 
@@ -3025,11 +3062,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
-   * @see PApplet#mouseButton
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mousePressed() { }
 
@@ -3049,11 +3090,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
-   * @see PApplet#mouseButton
    * @see PApplet#mousePressed()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseReleased() { }
 
@@ -3077,11 +3122,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
-   * @see PApplet#mouseButton
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseClicked() { }
 
@@ -3101,10 +3150,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseDragged() { }
 
@@ -3124,10 +3178,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseMoved() { }
 
@@ -3164,6 +3223,17 @@ public class PApplet extends Applet
    *
    * @webref input:mouse
    * @param event the MouseEvent
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
    */
   public void mouseWheel(MouseEvent event) {
     mouseWheel();
