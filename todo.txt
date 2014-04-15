@@ -12,12 +12,15 @@ J some hardcoding for .pde still exists
 J   https://github.com/processing/processing/issues/2420
 X the PDE uses 15% of CPU while just sitting idle (thx to David Fokkema)
 X   https://github.com/processing/processing/issues/1561
+X   https://github.com/processing/processing/pull/2451
+X Update code signing for Processing.app for Mavericks changes
+X   https://github.com/processing/processing/issues/2453
+o   use --deep for codesign to work? (nope)
+o   http://furbo.org/2013/10/17/code-signing-and-mavericks/
+o   http://brockerhoff.net/RB/AppCheckerLite/
 
 
 high
-_ use --deep for codesign to work?
-_   http://furbo.org/2013/10/17/code-signing-and-mavericks/
-_   http://brockerhoff.net/RB/AppCheckerLite/
 _ exported apps reporting as "damaged" on OS X
 _   https://github.com/processing/processing/issues/2095
 _ sketchPath() returns user.home in exported apps on OSX

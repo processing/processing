@@ -327,7 +327,7 @@ public class PApplet extends Applet
   public String[] args;
 
   /** Path to sketch folder */
-  public String sketchPath; //folder;
+  public String sketchPath;
 
   static final boolean DEBUG = false;
 //  static final boolean DEBUG = true;
@@ -913,11 +913,12 @@ public class PApplet extends Applet
       online = false;
     }
 
-    try {
-      if (sketchPath == null) {
-        sketchPath = System.getProperty("user.dir");
-      }
-    } catch (Exception e) { }  // may be a security problem
+    // overridden in runSketch(), removing for 2.1.2
+//    try {
+//      if (sketchPath == null) {
+//        sketchPath = System.getProperty("user.dir");
+//      }
+//    } catch (Exception e) { }  // may be a security problem
 
     // Figure out the available display width and height.
     // No major problem if this fails, we have to try again anyway in
@@ -10525,7 +10526,29 @@ public class PApplet extends Applet
     String folder = null;
     try {
       folder = System.getProperty("user.dir");
-    } catch (Exception e) { }
+//      println("user dir is " + folder);
+
+      // Workaround for bug in Java for OS X from Oracle (7u51)
+      // https://github.com/processing/processing/issues/2181
+      if (platform == MACOSX) {
+        String jarPath =
+          PApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+//        println("jar path: " + jarPath);
+        // The jarPath from above will be URL encoded (%20 for spaces)
+        jarPath = urlDecode(jarPath);
+//        println("decoded jar path: " + jarPath);
+        if (jarPath.contains("Contents/Java/")) {
+          String appPath = jarPath.substring(0, jarPath.indexOf(".app") + 4);
+          File containingFolder = new File(appPath).getParentFile();
+          folder = containingFolder.getAbsolutePath();
+//          println("folder is " + folder);
+        }
+//      } else {
+//        println("platform is " + platform);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     int argIndex = 0;
     while (argIndex < args.length) {
