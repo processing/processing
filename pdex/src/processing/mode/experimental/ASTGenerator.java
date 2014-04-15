@@ -240,7 +240,7 @@ public class ASTGenerator {
   /**
    * Toggle AST View window
    */
-  public static final boolean SHOWAST = true;
+  public static final boolean SHOWAST = !true;
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
@@ -3239,17 +3239,16 @@ public class ASTGenerator {
 
   }
   
-  public void disposeAllWindows(){
-   disposeWindow(frmASTView);
-   disposeWindow(frameAutoComp);
-   disposeWindow(frmImportSuggest);
-   disposeWindow(frmOccurenceList);
-   disposeWindow(frmRename);
+  public void disposeAllWindows() {
+    disposeWindow(frmASTView, frameAutoComp, frmImportSuggest,
+                  frmOccurenceList, frmRename);
   }
   
-  public static void disposeWindow(JFrame f) {
-    if(f != null)
-      f.dispose();
+  public static void disposeWindow(JFrame... f) {
+    for (JFrame jFrame : f) {
+      if(jFrame != null)
+        jFrame.dispose();
+    }
   }
 
   public static final String ignoredImports[] = {
