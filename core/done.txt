@@ -1,3 +1,49 @@
+0225 core (2.1.2)
+X bug with StringDict(Reader) that wasn't setting the indices hashmap
+X   check this with other versions of this class
+X call revalidate() via reflection
+X text looks lousy compared to the Apple JVM
+X   mess with rendering hints? (notes in PGraphicsJava2D)
+X   improvements made, but still not amazing.. just at level of Windows/Linux
+X PGraphics.colorCalcARGB(int, float) doesn't cap alpha
+X   https://github.com/processing/processing/issues/2439
+X run window border color changed in 2.1
+X   https://github.com/processing/processing/issues/2297
+X simple NPE issue that needs workaround
+X   https://github.com/processing/processing/issues/2354
+
+fixed in 2.1
+X draw() called again before finishing on OS X (retina issue)
+X   https://github.com/processing/processing/issues/1709
+X get() not always setting alpha channel when used with point()
+X   https://github.com/processing/processing/issues/1756
+A support for geometry and tessellation shaders (on desktop)
+A   https://github.com/processing/processing/issues/2252
+
+andres
+X copy() under OPENGL uses upside-down coordinates for cropping
+X   https://github.com/processing/processing/issues/2345
+X video on windows causes exception
+X   https://github.com/processing/processing/issues/2327
+X Shape Font Rendering was broken with the OpenGL Renderer
+X   https://github.com/processing/processing/issues/2375
+A depth buffer shouldn't be cleared when depth mask is disabled
+A   https://github.com/processing/processing/issues/2296
+A set pixels transparent by default in P2D/P3D
+A   https://github.com/processing/processing/issues/2207
+A unwind depth sorting because it was breaking DXF export
+A   https://github.com/processing/processing/issues/2404
+A Sketch hangs if sketchRenderer() returns an OpenGL renderer
+A   https://github.com/processing/processing/issues/2363
+A "buffer" uniform triggers shader compilation error
+A   https://github.com/processing/processing/issues/2325
+A   buffer has been renamed to ppixels for shaders
+A noLoop clears screen on Windows 8
+A   https://github.com/processing/processing/issues/2416
+A fix pixels[] array for video capture
+A   https://github.com/processing/processing/issues/2424
+
+
 0224 core (2.1.1)
 X PImage resize() causes PImage not to be rendered in JAVA2D
 X   https://github.com/processing/processing/issues/2179

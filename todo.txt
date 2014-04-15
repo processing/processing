@@ -1,30 +1,10 @@
-0225 pde
-X Fix exception caused by Runner when it can't find location
-X   https://github.com/processing/processing/issues/2346
-X   https://github.com/processing/processing/pull/2359
-G Serial: Update to latest upstream (fixes potential port handle leak)
-G   https://github.com/processing/processing/pull/2361
-J add affordance for mode developers to run from Eclipse
-J   https://github.com/processing/processing/pull/2422
-J non-pde extensions for modes cause a crash
-J   https://github.com/processing/processing/issues/2419
-J some hardcoding for .pde still exists
-J   https://github.com/processing/processing/issues/2420
-X the PDE uses 15% of CPU while just sitting idle (thx to David Fokkema)
-X   https://github.com/processing/processing/issues/1561
-X   https://github.com/processing/processing/pull/2451
-X Update code signing for Processing.app for Mavericks changes
-X   https://github.com/processing/processing/issues/2453
-o   use --deep for codesign to work? (nope)
-o   http://furbo.org/2013/10/17/code-signing-and-mavericks/
-o   http://brockerhoff.net/RB/AppCheckerLite/
-J permit modes to specify alternate extension (.py for .pyde stuff)
-J   https://github.com/processing/processing/pull/2452
-X sketchPath() returns user.home in exported apps on OSX
-X   https://github.com/processing/processing/issues/2181
+0226 pde
 
 
 high
+_ sketch sometimes simply does not launch
+_   https://github.com/processing/processing/issues/2402
+_   https://github.com/processing/processing/pull/2455
 _ exported apps reporting as "damaged" on OS X
 _   https://github.com/processing/processing/issues/2095
 _ QuickReference tool was able to bring down the environment
@@ -43,6 +23,8 @@ _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 
 
 medium
+_ re/move things from Google Code downloads
+_   https://code.google.com/p/support/wiki/DownloadsFAQ
 _ actual help with cleaning out the repo
 _   https://github.com/processing/processing/issues/1898
 _   requires re-forking, so still a ton of work

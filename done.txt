@@ -1,3 +1,29 @@
+0225 pde (2.1.2)
+X Fix exception caused by Runner when it can't find location
+X   https://github.com/processing/processing/issues/2346
+X   https://github.com/processing/processing/pull/2359
+G Serial: Update to latest upstream (fixes potential port handle leak)
+G   https://github.com/processing/processing/pull/2361
+J add affordance for mode developers to run from Eclipse
+J   https://github.com/processing/processing/pull/2422
+J non-pde extensions for modes cause a crash
+J   https://github.com/processing/processing/issues/2419
+J some hardcoding for .pde still exists
+J   https://github.com/processing/processing/issues/2420
+X the PDE uses 15% of CPU while just sitting idle (thx to David Fokkema)
+X   https://github.com/processing/processing/issues/1561
+X   https://github.com/processing/processing/pull/2451
+X Update code signing for Processing.app for Mavericks changes
+X   https://github.com/processing/processing/issues/2453
+o   use --deep for codesign to work? (nope)
+o   http://furbo.org/2013/10/17/code-signing-and-mavericks/
+o   http://brockerhoff.net/RB/AppCheckerLite/
+J permit modes to specify alternate extension (.py for .pyde stuff)
+J   https://github.com/processing/processing/pull/2452
+X sketchPath() returns user.home in exported apps on OSX
+X   https://github.com/processing/processing/issues/2181
+
+
 0224 pde (2.1.1)
 M fix infinite loop in Find/Replace
 M   https://github.com/processing/processing/issues/2082
