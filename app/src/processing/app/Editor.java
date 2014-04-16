@@ -22,6 +22,7 @@
 
 package processing.app;
 
+import processing.app.Base.LastEditorClosePolicy;
 import processing.app.contrib.ToolContribution;
 import processing.app.syntax.*;
 import processing.app.tools.*;
@@ -126,7 +127,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // add listener to handle window close box hit event
     addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          base.handleClose(Editor.this, false);
+          base.handleClose(Editor.this, LastEditorClosePolicy.QUIT);
         }
       });
     // don't close the window when clicked, the app will take care
@@ -601,7 +602,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     item = Toolkit.newJMenuItem("Close", 'W');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.handleClose(Editor.this, false);
+        base.handleClose(Editor.this, LastEditorClosePolicy.QUIT);
       }
     });
     fileMenu.add(item);

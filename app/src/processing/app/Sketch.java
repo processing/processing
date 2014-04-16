@@ -23,6 +23,7 @@
 
 package processing.app;
 
+import processing.app.Base.LastEditorClosePolicy;
 import processing.core.*;
 
 import java.awt.*;
@@ -569,7 +570,7 @@ public class Sketch {
         // make a new sketch, and i think this will rebuild the sketch menu
         //editor.handleNewUnchecked();
         //editor.handleClose2();
-        editor.base.handleClose(editor, false);
+        editor.base.handleClose(editor, LastEditorClosePolicy.QUIT);
 
       } else {
         // delete the file
