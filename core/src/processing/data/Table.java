@@ -2087,7 +2087,12 @@ public class Table {
         if (piece == null) {
           indexData[row] = missingCategory;
         } else {
-          indexData[row] = columnCategories[col].index(String.valueOf(piece));
+          String peace = String.valueOf(piece);
+          if (peace.equals(missingString)) {  // missingString might be null
+            indexData[row] = missingCategory;
+          } else {
+            indexData[row] = columnCategories[col].index(peace);
+          }
         }
         break;
       default:
@@ -2933,6 +2938,9 @@ public class Table {
   }
 
 
+  /**
+   * Treat entries with this string as "missing". Also used for categorial.
+   */
   public void setMissingString(String value) {
     missingString = value;
   }
@@ -3562,6 +3570,7 @@ public class Table {
       read(input);
     }
 
+    /** gets the index, and creates one if it doesn't already exist. */
     int index(String key) {
       Integer value = dataToIndex.get(key);
       if (value != null) {
