@@ -8606,19 +8606,20 @@ public class PApplet extends Applet
   }
 
   static final public Object splice(Object list, Object value, int index) {
-    Object[] outgoing = null;
+    Class<?> type = list.getClass().getComponentType();
+    Object outgoing = null;
     int length = Array.getLength(list);
 
     // check whether item being spliced in is an array
     if (value.getClass().getName().charAt(0) == '[') {
       int vlength = Array.getLength(value);
-      outgoing = new Object[length + vlength];
+      outgoing = Array.newInstance(type, length + vlength);
       System.arraycopy(list, 0, outgoing, 0, index);
       System.arraycopy(value, 0, outgoing, index, vlength);
       System.arraycopy(list, index, outgoing, index + vlength, length - index);
 
     } else {
-      outgoing = new Object[length + 1];
+      outgoing = Array.newInstance(type, length + 1);
       System.arraycopy(list, 0, outgoing, 0, index);
       Array.set(outgoing, index, value);
       System.arraycopy(list, index, outgoing, index + 1, length - index);
