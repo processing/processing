@@ -623,13 +623,13 @@ public class Base {
       if (newModeCanHandleCurrentSource) {
         final File props = new File(sketch.getCodeFolder(), "sketch.properties");
         saveModeSettings(props, nextMode);
-        handleClose(activeEditor, LastEditorClosePolicy.DO_NOT_QUIT);
+        handleClose(activeEditor, true);
         handleOpen(sketch.getMainFilePath());
       } else {
         // If you're changing modes, and there's nothing in the current sketch, you probably
         // don't intend to keep the old, wrong-mode editor around.
         if (sketch.isUntitled()) {
-          handleClose(activeEditor, LastEditorClosePolicy.DO_NOT_QUIT);
+          handleClose(activeEditor, true);
         }
         handleNew();
       }
@@ -1074,16 +1074,14 @@ public class Base {
     return null;
   }
 
-  enum LastEditorClosePolicy {
-    QUIT, DO_NOT_QUIT
-  }
-  
   /**
    * Close a sketch as specified by its editor window.
    * @param editor Editor object of the sketch to be closed.
+   * @param modeSwitch Whether this close is being done in the context of a
+   *      mode switch.
    * @return true if succeeded in closing, false if canceled.
    */
-  public boolean handleClose(Editor editor, LastEditorClosePolicy closePolicy) {
+  public boolean handleClose(Editor editor, boolean modeSwitch) {
     // Check if modified
 //    boolean immediate = editors.size() == 1;
     if (!editor.checkModified()) {
@@ -1140,7 +1138,7 @@ public class Base {
       Preferences.save();
 
       if (defaultFileMenu == null) {
-        if (closePolicy == LastEditorClosePolicy.DO_NOT_QUIT) {
+        if (modeSwitch) {
           // need to close this editor, ever so temporarily
           editor.setVisible(false);
           editor.dispose();
