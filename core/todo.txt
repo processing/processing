@@ -1,4 +1,5 @@
 0226 core
+X fix parsing with missing categorical values
 
 
 _ XML.getChildren() throwing NPE when getInt() called on non-existent var

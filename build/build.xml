@@ -20,13 +20,12 @@
   </condition>
 
   <!-- Require Java 7 to bootstrap, otherwise there will be sadness. 
-       And I guess Java 8 should work too? Sorta? --> 
+       Java 1.8 caused build problems (with ECJ?) so not supported. --> 
   <fail message="Unsupported Java version: ${java.version}. Make sure that Java 7 (aka Java 1.7) is installed."> 
     <condition> 
       <not> 
         <or> 
           <contains string="${java.version}" substring="1.7" /> 
-          <contains string="${java.version}" substring="1.8" /> 
         </or> 
       </not> 
     </condition> 
@@ -152,7 +151,7 @@
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.update.macosx" value="51" />
+  <property name="jdk.update.macosx" value="55" />
   <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_${jdk.update.macosx}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
