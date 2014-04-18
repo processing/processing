@@ -607,13 +607,30 @@ public class Base {
         Base.showWarning("Save",
                          "Please save the sketch before changing the mode.",
                          null);
+        return;
+      }
+      nextMode = mode;
+
+      // If the current editor contains file extensions that the new mode can handle, then
+      // write a sketch.properties file with the new mode specified, and reopen.
+      boolean newModeCanHandleCurrentSource = true;
+      for (final SketchCode code: sketch.getCode()) {
+        if (!mode.validExtension(code.getExtension())) {
+          newModeCanHandleCurrentSource = false;
+          break;
+        }
+      }
+      if (newModeCanHandleCurrentSource) {
+        final File props = new File(sketch.getCodeFolder(), "sketch.properties");
+        saveModeSettings(props, nextMode);
+        handleClose(activeEditor, true);
+        handleOpen(sketch.getMainFilePath());
       } else {
         // If you're changing modes, and there's nothing in the current sketch, you probably
         // don't intend to keep the old, wrong-mode editor around.
         if (sketch.isUntitled()) {
           handleClose(activeEditor, true);
         }
-        nextMode = mode;
         handleNew();
       }
     }
@@ -729,15 +746,7 @@ public class Base {
       }
 
       // Create sketch properties.
-      final File sketchProps = new File(newbieDir, "sketch.properties");
-      try {
-        final Settings settings = new Settings(sketchProps);
-        settings.set("mode", nextMode.getTitle());
-        settings.set("mode.id", nextMode.getIdentifier());
-        settings.save();
-      } catch (IOException e) {
-        System.err.println("While creating " + sketchProps + ": " + e.getMessage());
-      }
+      saveModeSettings(new File(newbieDir, "sketch.properties"), nextMode);
 
       String path = newbieFile.getAbsolutePath();
       /*Editor editor =*/ handleOpen(path, true);
@@ -746,6 +755,18 @@ public class Base {
       Base.showWarning("That's new to me",
                        "A strange and unexplainable error occurred\n" +
                        "while trying to create a new sketch.", e);
+    }
+  }
+
+  // Create or modify a sketch.proprties file to specify the given Mode.
+  private void saveModeSettings(final File sketchProps, final Mode mode) {
+    try {
+      final Settings settings = new Settings(sketchProps);
+      settings.set("mode", mode.getTitle());
+      settings.set("mode.id", mode.getIdentifier());
+      settings.save();
+    } catch (IOException e) {
+      System.err.println("While creating " + sketchProps + ": " + e.getMessage());
     }
   }
 
@@ -1053,10 +1074,11 @@ public class Base {
     return null;
   }
 
-
   /**
    * Close a sketch as specified by its editor window.
    * @param editor Editor object of the sketch to be closed.
+   * @param modeSwitch Whether this close is being done in the context of a
+   *      mode switch.
    * @return true if succeeded in closing, false if canceled.
    */
   public boolean handleClose(Editor editor, boolean modeSwitch) {
