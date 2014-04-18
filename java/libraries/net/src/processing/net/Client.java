@@ -151,7 +151,7 @@ public class Client implements Runnable {
    * @usage application
    */
   public void stop() {    
-    if (disconnectEventMethod != null) {
+    if (disconnectEventMethod != null && thread != null){
       try {
         disconnectEventMethod.invoke(parent, new Object[] { this });
       } catch (Exception e) {

@@ -109,12 +109,7 @@ public class Server implements Runnable {
    * @param client the client to disconnect
    */
   public void disconnect(Client client) {
-    //Calling client.stop() here would cause duplicate
-    //calls to disconnectEvent in the containing sketch,
-    //once for the stop() and once for the terminated connection.
-    //Instead just dispose of the client and let the terminated
-    //connection generate the disconnectEvent message;
-    client.dispose();
+    client.stop();
     int index = clientIndex(client);
     if (index != -1) {
       removeIndex(index);
@@ -220,8 +215,8 @@ public class Server implements Runnable {
     thread = null;
 
     if (clients != null) {
-      for (int i = 0; i < clientCount; i++) {
-        disconnect(clients[i]);
+      while(clientCount>0){
+        disconnect(clients[0]);
       }
       clientCount = 0;
       clients = null;
