@@ -25,6 +25,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static processing.mode.experimental.ExperimentalMode.log;
+import static processing.mode.experimental.ExperimentalMode.logE;
+import static processing.mode.experimental.ExperimentalMode.log2;
+
 /**
  * Model/Controller of a line breakpoint. Can be set before or while debugging.
  * Adds a highlight using the debuggers view ({@link DebugEditor}).
@@ -53,7 +57,7 @@ public class LineBreakpoint implements ClassLoadListener {
         this.dbg = dbg;
         theClass = dbg.getClass(className()); // try to get the class immediately, may return null if not yet loaded
         set(); // activate the breakpoint (show highlight, attach if debugger is running)
-        Logger.getLogger(LineBreakpoint.class.getName()).log(Level.INFO, "LBP Created " +toString() + " class: " + theClass, new Object[]{});
+        Logger.getLogger(LineBreakpoint.class.getName()).log(Level.INFO, "LBP Created " +toString() + " class: " + className(), new Object[]{});
     }
 
     /**
@@ -109,7 +113,7 @@ public class LineBreakpoint implements ClassLoadListener {
             return;
         }
         try {
-          Logger.getLogger(LineBreakpoint.class.getName()).log(Level.WARNING, "BPs of class: {0}", new Object[]{theClass});
+            Logger.getLogger(LineBreakpoint.class.getName()).log(Level.WARNING, "BPs of class: {0} , line " + (javaLine.lineIdx() + 1), new Object[]{theClass});
             List<Location> locations = theClass.locationsOfLine(javaLine.lineIdx() + 1);
             if (locations.isEmpty()) {
                 Logger.getLogger(LineBreakpoint.class.getName()).log(Level.WARNING, "no location found for line {0} -> {1}", new Object[]{line, javaLine});
@@ -189,6 +193,7 @@ public class LineBreakpoint implements ClassLoadListener {
         if (line.fileName().endsWith(".pde")) {
             // standard tab
             ReferenceType mainClass = dbg.getMainClass();
+            //System.out.println(dbg.getMainClass().name());
             if (mainClass == null) {
                 return null;
             }
@@ -212,9 +217,13 @@ public class LineBreakpoint implements ClassLoadListener {
     @Override
     public void classLoaded(ReferenceType theClass) {
         // check if our class is being loaded
+        log("Class Loaded: " + theClass.name());
         if (theClass.name().equals(className())) {
             this.theClass = theClass;
             attach();
+        }
+        for (ReferenceType ct : theClass.nestedTypes()) {
+          log("Nested " + ct.name());
         }
     }
 }

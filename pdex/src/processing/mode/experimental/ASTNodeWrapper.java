@@ -553,6 +553,7 @@ public class ASTNodeWrapper {
         logE("Logical error in highLightNode(). Please file a bug report.");
         return false;
       }
+      //TODO: Asteriods example. Spaceship ship; wrong highlight
       Pattern toFind = Pattern.compile("\\b" + nodeName.toString() + "\\b");
       Matcher matcher = toFind.matcher(javaLine);
       int count = 0, index = 0;
@@ -583,6 +584,7 @@ public class ASTNodeWrapper {
           index += lookingFor.length();
         }
       }
+      
       log("pde lso " + (index - lookingFor.length()));
       
       int lso = astGenerator.editor.ta.getLineStartOffset(pdeOffs[1]);
