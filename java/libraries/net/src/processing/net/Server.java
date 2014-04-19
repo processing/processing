@@ -109,8 +109,7 @@ public class Server implements Runnable {
    * @param client the client to disconnect
    */
   public void disconnect(Client client) {
-    //client.stop();
-    client.dispose();
+    client.stop();
     int index = clientIndex(client);
     if (index != -1) {
       removeIndex(index);
@@ -216,8 +215,8 @@ public class Server implements Runnable {
     thread = null;
 
     if (clients != null) {
-      for (int i = 0; i < clientCount; i++) {
-        disconnect(clients[i]);
+      while(clientCount>0){
+        disconnect(clients[0]);
       }
       clientCount = 0;
       clients = null;
