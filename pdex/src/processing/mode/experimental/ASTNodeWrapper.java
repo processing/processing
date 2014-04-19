@@ -521,6 +521,12 @@ public class ASTNodeWrapper {
     return new int[][]{javaCodeMap,pdeCodeMap};
   }
   
+  /**
+   * Highlight the ASTNode in the editor, if it's of type
+   * SimpleName
+   * @param astGenerator
+   * @return - true if highlighting was successful
+   */
   public boolean highlightNode(ASTGenerator astGenerator){
     if(!(Node instanceof SimpleName)){
       return false; 
@@ -553,7 +559,8 @@ public class ASTNodeWrapper {
         logE("Logical error in highLightNode(). Please file a bug report.");
         return false;
       }
-      //TODO: Asteriods example. Spaceship ship; wrong highlight
+      
+      // First find the name in the java line, and marks its index
       Pattern toFind = Pattern.compile("\\b" + nodeName.toString() + "\\b");
       Matcher matcher = toFind.matcher(javaLine);
       int count = 0, index = 0;
@@ -564,27 +571,18 @@ public class ASTNodeWrapper {
         if(lsto + matcher.start() == nodeName.getStartPosition())
           break;
       }
-      // find the count of the name in the java code
-      
-//      do {
-//        index = javaLine.indexOf(lookingFor, index);
-//        if (index != -1) {
-//          count++;
-//          index += lookingFor.length();
-//        } else
-//          break;
-//      } while (true);
       log("count=" + count);
-      // find the offset of the name of that index in the pde code
       index = 0;
-      while (count > 0) {
-        index = pdeLine.indexOf(lookingFor, index);
-        if (index != -1) {
-          count--;
-          index += lookingFor.length();
+      // find the same name in the pde line by its index and get its offsets
+      matcher = toFind.matcher(pdeLine);
+      while(matcher.find()){
+        count--;
+        if(count == 0){
+          log("Found on pde line lso: " + matcher.start());
+          index = matcher.end();
+          break;
         }
       }
-      
       log("pde lso " + (index - lookingFor.length()));
       
       int lso = astGenerator.editor.ta.getLineStartOffset(pdeOffs[1]);
