@@ -710,6 +710,12 @@ public class Runner implements MessageConsumer {
     errThread.start();
     outThread.start();
 
+    try {
+        Thread.sleep(1000);
+    } catch(InterruptedException ex) {
+        Thread.currentThread().interrupt();
+    }
+
     vm.resume();
 
     // Shutdown begins when event thread terminates
