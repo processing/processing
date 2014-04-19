@@ -678,7 +678,9 @@ public class Runner implements MessageConsumer {
 
             for (Event event : eventSet) {
 //              System.out.println("EventThread.handleEvent -> " + event);
-              if (event instanceof ExceptionEvent) {
+              if (event instanceof VMStartEvent) {
+                vm.resume();
+              } else if (event instanceof ExceptionEvent) {
 //                for (ThreadReference thread : vm.allThreads()) {
 //                  System.out.println("thread : " + thread);
 ////                  thread.suspend();
@@ -709,14 +711,6 @@ public class Runner implements MessageConsumer {
                                          System.out);
     errThread.start();
     outThread.start();
-
-    try {
-        Thread.sleep(1000);
-    } catch(InterruptedException ex) {
-        Thread.currentThread().interrupt();
-    }
-
-    vm.resume();
 
     // Shutdown begins when event thread terminates
     try {
