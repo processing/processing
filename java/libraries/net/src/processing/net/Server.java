@@ -24,11 +24,13 @@
 */
 
 package processing.net;
+
 import processing.core.*;
 
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
+
 
 /**
  * ( begin auto-generated from Server.xml )
@@ -128,6 +130,21 @@ public class Server implements Runnable {
   }
   
   
+  protected void disconnectAll() {
+    synchronized (clients) {
+      for (int i = 0; i < clientCount; i++) {
+        try {
+          clients[i].stop();
+        } catch (Exception e) {
+          // ignore
+        }
+        clients[i] = null;
+      }
+      clientCount = 0;
+    }
+  }
+  
+  
   protected void addClient(Client client) {
     if (clientCount == clients.length) {
       clients = (Client[]) PApplet.expand(clients);
@@ -215,9 +232,7 @@ public class Server implements Runnable {
     thread = null;
 
     if (clients != null) {
-      while(clientCount>0){
-        disconnect(clients[0]);
-      }
+      disconnectAll();
       clientCount = 0;
       clients = null;
     }
@@ -310,15 +325,4 @@ public class Server implements Runnable {
       }
     }
   }
-
-
-  /**
-   * General error reporting, all corralled here just in case
-   * I think of something slightly more intelligent to do.
-   */
-//  public void errorMessage(String where, Exception e) {
-//    parent.die("Error inside Server." + where + "()", e);
-//    //System.err.println("Error inside Server." + where + "()");
-//    //e.printStackTrace(System.err);
-//  }
 }
