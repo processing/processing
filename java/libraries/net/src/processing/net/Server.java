@@ -24,11 +24,13 @@
 */
 
 package processing.net;
+
 import processing.core.*;
 
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
+
 
 /**
  * ( begin auto-generated from Server.xml )
@@ -109,8 +111,7 @@ public class Server implements Runnable {
    * @param client the client to disconnect
    */
   public void disconnect(Client client) {
-    //client.stop();
-    client.dispose();
+    client.stop();
     int index = clientIndex(client);
     if (index != -1) {
       removeIndex(index);
@@ -126,6 +127,21 @@ public class Server implements Runnable {
     }
     // mark last empty var for garbage collection
     clients[clientCount] = null;
+  }
+  
+  
+  protected void disconnectAll() {
+    synchronized (clients) {
+      for (int i = 0; i < clientCount; i++) {
+        try {
+          clients[i].stop();
+        } catch (Exception e) {
+          // ignore
+        }
+        clients[i] = null;
+      }
+      clientCount = 0;
+    }
   }
   
   
@@ -216,9 +232,7 @@ public class Server implements Runnable {
     thread = null;
 
     if (clients != null) {
-      for (int i = 0; i < clientCount; i++) {
-        disconnect(clients[i]);
-      }
+      disconnectAll();
       clientCount = 0;
       clients = null;
     }
@@ -311,15 +325,4 @@ public class Server implements Runnable {
       }
     }
   }
-
-
-  /**
-   * General error reporting, all corralled here just in case
-   * I think of something slightly more intelligent to do.
-   */
-//  public void errorMessage(String where, Exception e) {
-//    parent.die("Error inside Server." + where + "()", e);
-//    //System.err.println("Error inside Server." + where + "()");
-//    //e.printStackTrace(System.err);
-//  }
 }
