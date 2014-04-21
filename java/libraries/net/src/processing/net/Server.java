@@ -265,6 +265,8 @@ public class Server implements Runnable {
             }
           }
         }
+      } catch (SocketException e) {
+        //thrown when server.close() is called and server is waiting on accept
       } catch (IOException e) {
         //errorMessage("run", e);
         e.printStackTrace();
