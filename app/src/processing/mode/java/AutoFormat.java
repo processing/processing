@@ -154,8 +154,8 @@ public class AutoFormat implements Formatter {
       if (lastNonSpaceChar() == '}') {
         trimRight(result);
         result.append(" ");
-        e_flg = false;
       }
+      e_flg = false;
     }
     result.append(buf);
     buf.setLength(0);
