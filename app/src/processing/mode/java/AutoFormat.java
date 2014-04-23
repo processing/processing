@@ -154,6 +154,7 @@ public class AutoFormat implements Formatter {
       if (lastNonSpaceChar() == '}') {
         trimRight(result);
         result.append(" ");
+        e_flg = false;
       }
     }
     result.append(buf);
@@ -393,10 +394,6 @@ public class AutoFormat implements Formatter {
           if ((!s_flag) || buf.length() > 0) {
             buf.append(c);
           }
-//          // issue https://github.com/processing/processing/issues/364
-//          s_flag = false;
-//          trimRight(result);
-//          result.append(" ");
           writeIndentedLine();
           s_flag = false;
           break;
