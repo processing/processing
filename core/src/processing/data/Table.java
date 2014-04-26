@@ -1165,7 +1165,12 @@ public class Table {
           output.writeDouble(row.getDouble(col));
           break;
         case CATEGORY:
-          output.writeInt(columnCategories[col].index(row.getString(col)));
+          String peace = row.getString(col);
+          if (peace.equals(missingString)) {
+            output.writeInt(missingCategory);
+          } else {
+            output.writeInt(columnCategories[col].index(peace));
+          }
           break;
         }
       }
@@ -4140,7 +4145,12 @@ public class Table {
         }
         break;
       case CATEGORY:
-        output.writeInt(columnCategories[col].index(pieces[col]));
+        String peace = pieces[col];
+        if (peace.equals(missingString)) {
+          output.writeInt(missingCategory);
+        } else {
+          output.writeInt(columnCategories[col].index(peace));
+        }
         break;
       }
     }
