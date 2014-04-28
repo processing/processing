@@ -1267,7 +1267,7 @@ public class Texture implements PConstants {
     pg.setFramebuffer(tempFbo);
     // Clear the color buffer to make sure that the alpha channel is set to
     // full transparency
-    pgl.clearColor(1, 1, 1, 1);
+    pgl.clearColor(0, 0, 0, 0);
     pgl.clear(PGL.COLOR_BUFFER_BIT);
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle

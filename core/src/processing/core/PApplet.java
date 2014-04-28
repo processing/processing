@@ -327,7 +327,7 @@ public class PApplet extends Applet
   public String[] args;
 
   /** Path to sketch folder */
-  public String sketchPath; //folder;
+  public String sketchPath;
 
   static final boolean DEBUG = false;
 //  static final boolean DEBUG = true;
@@ -444,11 +444,16 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    *
    *
    */
@@ -463,11 +468,16 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    *
    */
   public int mouseY;
@@ -496,9 +506,17 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref input:mouse
-   * @see PApplet#pmouseY
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public int pmouseX;
 
@@ -512,9 +530,17 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref input:mouse
-   * @see PApplet#pmouseX
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public int pmouseY;
 
@@ -564,10 +590,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public int mouseButton;
 
@@ -582,9 +613,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public boolean mousePressed;
 
@@ -913,11 +950,12 @@ public class PApplet extends Applet
       online = false;
     }
 
-    try {
-      if (sketchPath == null) {
-        sketchPath = System.getProperty("user.dir");
-      }
-    } catch (Exception e) { }  // may be a security problem
+    // overridden in runSketch(), removing for 2.1.2
+//    try {
+//      if (sketchPath == null) {
+//        sketchPath = System.getProperty("user.dir");
+//      }
+//    } catch (Exception e) { }  // may be a security problem
 
     // Figure out the available display width and height.
     // No major problem if this fails, we have to try again anyway in
@@ -3024,11 +3062,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
-   * @see PApplet#mouseButton
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mousePressed() { }
 
@@ -3048,11 +3090,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
-   * @see PApplet#mouseButton
    * @see PApplet#mousePressed()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseReleased() { }
 
@@ -3076,11 +3122,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
-   * @see PApplet#mouseButton
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseClicked() { }
 
@@ -3100,10 +3150,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseDragged() { }
 
@@ -3123,10 +3178,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseMoved() { }
 
@@ -3163,6 +3223,17 @@ public class PApplet extends Applet
    *
    * @webref input:mouse
    * @param event the MouseEvent
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
    */
   public void mouseWheel(MouseEvent event) {
     mouseWheel();
@@ -8535,19 +8606,20 @@ public class PApplet extends Applet
   }
 
   static final public Object splice(Object list, Object value, int index) {
-    Object[] outgoing = null;
+    Class<?> type = list.getClass().getComponentType();
+    Object outgoing = null;
     int length = Array.getLength(list);
 
     // check whether item being spliced in is an array
     if (value.getClass().getName().charAt(0) == '[') {
       int vlength = Array.getLength(value);
-      outgoing = new Object[length + vlength];
+      outgoing = Array.newInstance(type, length + vlength);
       System.arraycopy(list, 0, outgoing, 0, index);
       System.arraycopy(value, 0, outgoing, index, vlength);
       System.arraycopy(list, index, outgoing, index + vlength, length - index);
 
     } else {
-      outgoing = new Object[length + 1];
+      outgoing = Array.newInstance(type, length + 1);
       System.arraycopy(list, 0, outgoing, 0, index);
       Array.set(outgoing, index, value);
       System.arraycopy(list, index, outgoing, index + 1, length - index);
@@ -10525,7 +10597,29 @@ public class PApplet extends Applet
     String folder = null;
     try {
       folder = System.getProperty("user.dir");
-    } catch (Exception e) { }
+//      println("user dir is " + folder);
+
+      // Workaround for bug in Java for OS X from Oracle (7u51)
+      // https://github.com/processing/processing/issues/2181
+      if (platform == MACOSX) {
+        String jarPath =
+          PApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+//        println("jar path: " + jarPath);
+        // The jarPath from above will be URL encoded (%20 for spaces)
+        jarPath = urlDecode(jarPath);
+//        println("decoded jar path: " + jarPath);
+        if (jarPath.contains("Contents/Java/")) {
+          String appPath = jarPath.substring(0, jarPath.indexOf(".app") + 4);
+          File containingFolder = new File(appPath).getParentFile();
+          folder = containingFolder.getAbsolutePath();
+//          println("folder is " + folder);
+        }
+//      } else {
+//        println("platform is " + platform);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     int argIndex = 0;
     while (argIndex < args.length) {

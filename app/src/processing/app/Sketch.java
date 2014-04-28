@@ -333,9 +333,6 @@ public class Sketch {
   /**
    * This is called upon return from entering a new file name.
    * (that is, from either newCode or renameCode after the prompt)
-   * This code is almost identical for both the newCode and renameCode
-   * cases, so they're kept merged except for right in the middle
-   * where they diverge.
    */
   protected void nameCode(String newName) {
     newName = newName.trim();
@@ -348,7 +345,7 @@ public class Sketch {
 
     // Add the extension here, this simplifies some of the logic below.
     if (newName.indexOf('.') == -1) {
-      newName += "." + mode.getDefaultExtension();
+      newName += "." + (renamingCode ? mode.getDefaultExtension() : mode.getModuleExtension());
     }
 
     // if renaming to the same thing as before, just ignore.

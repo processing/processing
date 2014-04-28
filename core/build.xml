@@ -22,6 +22,7 @@
 	       else="modern">
       <available file="${ecj.jar}" />
     </condition>
+    <!--<echo message="compiler is ${build.compiler}" />-->
 
     <mkdir dir="bin" />
     <javac source="1.7"
