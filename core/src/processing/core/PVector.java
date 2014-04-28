@@ -322,7 +322,7 @@ public class PVector implements Serializable {
    * @webref pvector:method
    * @usage web_application
    * @brief Make a new 2D unit vector from an angle
-   * @param angle the angle
+   * @param angle the angle in radians
    * @return the new unit PVector
    */
   static public PVector fromAngle(float angle) {
