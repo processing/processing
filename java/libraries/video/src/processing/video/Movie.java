@@ -297,33 +297,38 @@ public class Movie extends PImage implements PConstants {
    * @brief Jumps to a specific location
    */
   public void jump(float where) {
-    if (seeking) return;
+    if (seeking) return; // don't seek again until the current seek operation is done.
 
     if (!sinkReady) {
       initSink();
     }
 
     // Round the time to a multiple of the source framerate, in
-    // order to eliminate stutter. Suggested by Daniel Shiffman
+    // order to eliminate stutter. Suggested by Daniel Shiffman    
     float fps = getSourceFrameRate();
     int frame = (int)(where * fps);
-    where = frame / fps;
+    final float seconds = frame / fps;
+    
+    // Put the seek operation inside a thread to avoid blocking the main 
+    // animation thread
+    Thread seeker = new Thread() {
+      @Override
+      public void run() {
+        long pos = Video.secToNanoLong(seconds);
+        boolean res = playbin.seek(rate, Format.TIME, SeekFlags.FLUSH,
+                                   SeekType.SET, pos, SeekType.NONE, -1);
+        if (!res) {
+          PGraphics.showWarning("Seek operation failed.");
+        }
 
-    boolean res;
-    long pos = Video.secToNanoLong(where);
-
-    res = playbin.seek(rate, Format.TIME, SeekFlags.FLUSH,
-                       SeekType.SET, pos, SeekType.NONE, -1);
-
-    if (!res) {
-      PGraphics.showWarning("Seek operation failed.");
-    }
-
-    // getState() will wait until any async state change
-    // (like seek in this case) has completed
-    seeking = true;
-    playbin.getState();
-    seeking = false;
+        // getState() will wait until any async state change
+        // (like seek in this case) has completed
+        seeking = true;
+        playbin.getState();
+        seeking = false;        
+      }
+    };
+    seeker.start();    
   }
 
 
