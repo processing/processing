@@ -240,7 +240,7 @@ public class ASTGenerator {
   /**
    * Toggle AST View window
    */
-  public static final boolean SHOWAST = !true;
+  public static final boolean SHOWAST = true;
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
@@ -1545,7 +1545,7 @@ public class ASTGenerator {
   public ASTNodeWrapper getASTNodeAt(int lineNumber, String name, int offset,
                                      boolean scrollOnly) {
     
-    log("----getASTNodeAt----");
+    log("----getASTNodeAt---- CU State: " + errorCheckerService.compilationUnitState);
     if (errorCheckerService != null) {
       editor = errorCheckerService.getEditor();
       int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
@@ -1558,10 +1558,10 @@ public class ASTGenerator {
       }
 
     }
-    log("FLON: " + lineNumber);
+    log("FLON: Node line number " + lineNumber);
     ASTNode lineNode = findLineOfNode(compilationUnit, lineNumber, offset, name);
     
-    log("+> " + lineNode);
+    log("Node text +> " + lineNode);
     ASTNode decl = null;
     String nodeLabel = null;
     String nameOfNode = null; // The node name which is to be scrolled to
@@ -1581,7 +1581,7 @@ public class ASTGenerator {
           }
         }
       }
-      log("FLON2: " + lineNumber + " LN spos "
+      log("FLON2: " + lineNumber + " LN start pos "
           + lineNode.getStartPosition() + " off " + offset + " alt off" + altOff);
       /* 
        * Now I need to see if multiple statements exist with this same line number
@@ -1617,16 +1617,16 @@ public class ASTGenerator {
           }
         }
       }
-      log("FLON3 "+lineNode.getStartPosition() + " off " + offset + " alt off" + altOff);
+      log("FLON3 new alt off: " + altOff);
       ASTNode simpName = pinpointOnLine(lineNode, altOff,
                                         lineNode.getStartPosition(), name);
       
       if(simpName == null){ //Added while fixing #51
-        log("1+++> " + simpName);
+        log("pinpointOnLine 1+++> " + simpName);
         simpName = pinpointOnLine(lineNode.getParent(), altOff,
                                   lineNode.getStartPosition(), name);
       }
-      log("2+++> " + simpName);
+      log("pinpointOnLine 2+++> " + simpName);
       if(simpName == null && lineNode instanceof SimpleName){
         switch (lineNode.getParent().getNodeType()) {
         case ASTNode.TYPE_DECLARATION:
@@ -2386,7 +2386,7 @@ public class ASTGenerator {
   @SuppressWarnings("unchecked")
   public static ASTNode pinpointOnLine(ASTNode node, int offset,
                                        int lineStartOffset, String name) {
-
+    //log("pinpointOnLine node class: " + node.getClass().getSimpleName());
     if (node instanceof SimpleName) {
       SimpleName sn = (SimpleName) node;
       //log(offset+ "off,pol " + getNodeAsString(sn));

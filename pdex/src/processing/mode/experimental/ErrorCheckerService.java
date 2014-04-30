@@ -409,13 +409,15 @@ public class ErrorCheckerService implements Runnable{
     
   }
 
+  public int compilationUnitState = 0;
+  
   protected boolean checkCode() {
     //log("checkCode() " + textModified.get() );
     log("checkCode() " + textModified.get());
     lastTimeStamp = System.currentTimeMillis();
     try {
       sourceCode = preprocessCode(editor.getSketch().getMainProgram());
-
+      compilationUnitState = 0;
       syntaxCheck();
       log(editor.getSketch().getName() + "1 MCO "
           + mainClassOffset);
@@ -503,7 +505,7 @@ public class ErrorCheckerService implements Runnable{
         cu = (CompilationUnit) parser.createAST(null);
       }
     }
-    
+    compilationUnitState = 1;
     synchronized (problemsList) {
       
       // Store errors returned by the ast parser
@@ -557,7 +559,7 @@ public class ErrorCheckerService implements Runnable{
         cu = (CompilationUnit) parser.createAST(null);
       }
     }
-
+    compilationUnitState = 2;
     // Currently (Sept, 2012) I'm using Java's reflection api to load the
     // CompilationChecker class(from CompilationChecker.jar) that houses the
     // Eclispe JDT compiler, and call its getErrorsAsObj method to obtain
