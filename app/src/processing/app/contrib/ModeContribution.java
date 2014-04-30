@@ -114,7 +114,7 @@ public class ModeContribution extends LocalContribution {
     // -Dusemode=com.foo.FrobMode:/path/to/FrobMode/resources
     final String usemode = System.getProperty("usemode");
     if (usemode != null) {
-      final String[] modeinfo = usemode.split(":");
+      final String[] modeinfo = usemode.split(":", 2);
       final String modeClass = modeinfo[0];
       final String modeResourcePath = modeinfo[1];
       System.err.println("Attempting to load " + modeClass + " with resources at " + modeResourcePath);
