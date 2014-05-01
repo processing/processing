@@ -2,6 +2,8 @@
 // Based on code 50-12 (p. 486)
 // Requires Particle, ArrowParticle classes
 
+import processing.pdf.*;
+
 int num = 900;
 ArrowParticle[] p = new ArrowParticle[num];
 float radius = 1.2;

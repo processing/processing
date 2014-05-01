@@ -1,6 +1,7 @@
 
 // Based on code 43-02 (p. 409)
 
+import processing.pdf.*;
 
 Ring[] rings;                  // Declare the array
 int numRings = 50;
