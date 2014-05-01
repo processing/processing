@@ -950,12 +950,13 @@ public class PApplet extends Applet
       online = false;
     }
 
-    // overridden in runSketch(), removing for 2.1.2
-//    try {
-//      if (sketchPath == null) {
-//        sketchPath = System.getProperty("user.dir");
-//      }
-//    } catch (Exception e) { }  // may be a security problem
+    // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
+    // inside runSketch(), but if this sketch takes care of calls  to init()
+    // and setup() itself (i.e. it's in a larger Java application), it'll
+    // still need to be set here so that fonts, etc can be retrieved.
+    if (sketchPath == null) {
+      sketchPath = calcSketchPath();
+    }
 
     // Figure out the available display width and height.
     // No major problem if this fails, we have to try again anyway in
@@ -10590,36 +10591,7 @@ public class PApplet extends Applet
     boolean hideStop = false;
 
     String param = null, value = null;
-
-    // try to get the user folder. if running under java web start,
-    // this may cause a security exception if the code is not signed.
-    // http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1159386274
-    String folder = null;
-    try {
-      folder = System.getProperty("user.dir");
-//      println("user dir is " + folder);
-
-      // Workaround for bug in Java for OS X from Oracle (7u51)
-      // https://github.com/processing/processing/issues/2181
-      if (platform == MACOSX) {
-        String jarPath =
-          PApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-//        println("jar path: " + jarPath);
-        // The jarPath from above will be URL encoded (%20 for spaces)
-        jarPath = urlDecode(jarPath);
-//        println("decoded jar path: " + jarPath);
-        if (jarPath.contains("Contents/Java/")) {
-          String appPath = jarPath.substring(0, jarPath.indexOf(".app") + 4);
-          File containingFolder = new File(appPath).getParentFile();
-          folder = containingFolder.getAbsolutePath();
-//          println("folder is " + folder);
-        }
-//      } else {
-//        println("platform is " + platform);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    String folder = calcSketchPath();
 
     int argIndex = 0;
     while (argIndex < args.length) {
@@ -11061,6 +11033,34 @@ public class PApplet extends Applet
 
   protected void runSketch() {
     runSketch(new String[0]);
+  }
+
+
+  static protected String calcSketchPath() {
+    // try to get the user folder. if running under java web start,
+    // this may cause a security exception if the code is not signed.
+    // http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1159386274
+    String folder = null;
+    try {
+      folder = System.getProperty("user.dir");
+
+      // Workaround for bug in Java for OS X from Oracle (7u51)
+      // https://github.com/processing/processing/issues/2181
+      if (platform == MACOSX) {
+        String jarPath =
+          PApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        // The jarPath from above will be URL encoded (%20 for spaces)
+        jarPath = urlDecode(jarPath);
+        if (jarPath.contains("Contents/Java/")) {
+          String appPath = jarPath.substring(0, jarPath.indexOf(".app") + 4);
+          File containingFolder = new File(appPath).getParentFile();
+          folder = containingFolder.getAbsolutePath();
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return folder;
   }
 
 
