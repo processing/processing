@@ -4270,6 +4270,7 @@ public class PApplet extends Applet
    * @webref output:image
    * @see PApplet#save(String)
    * @see PApplet#createGraphics(int, int, String, String)
+   * @see PApplet#frameCount
    * @param filename any sequence of letters or numbers that ends with either ".tif", ".tga", ".jpg", or ".png"
    */
   public void saveFrame(String filename) {
