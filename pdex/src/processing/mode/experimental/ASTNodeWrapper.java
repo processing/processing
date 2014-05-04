@@ -196,7 +196,7 @@ public class ASTNodeWrapper {
    
     int pdeoffsets[] = getPDECodeOffsets(ecs);
     String pdeCode = ecs.getPDECodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
-    int vals[] = createOffsetMapping(pdeCode,nodeOffset - altStartPos,nodeLength);
+    int vals[] = createOffsetMapping(ecs, pdeCode,nodeOffset - altStartPos,nodeLength);
     if (vals != null)
       return new int[] {
         lineNumber, nodeOffset + vals[0] - altStartPos, vals[1] };
@@ -315,9 +315,9 @@ public class ASTNodeWrapper {
    * @param nodeLen
    * @return int[0] - difference in start offset, int[1] - node length
    */
-  private int[] createOffsetMapping(String source, int inpOffset, int nodeLen) {
+  private int[] createOffsetMapping(ErrorCheckerService ecs, String source, int inpOffset, int nodeLen) {
    
-    int ret[][] = getOffsetMapping(source);
+    int ret[][] = getOffsetMapping(ecs, source);
     if(ret == null){
       // no offset mapping needed
       return null;
@@ -358,7 +358,7 @@ public class ASTNodeWrapper {
    * @param source
    * @return int[0] - java code offsets, int[1] = pde code offsets
    */
-  public int[][] getOffsetMapping(String source){
+  public int[][] getOffsetMapping(ErrorCheckerService ecs, String source){
     
     /*
      * This is some tricky shiz. So detailed explanation follows:
@@ -392,8 +392,13 @@ public class ASTNodeWrapper {
     // Instead of converting pde into java, how can I simply extract the same source 
     // from the java code? Think. TODO
     String sourceAlt = new String(source);
+    String sourceJava = ecs.astGenerator.getJavaSourceCodeline(lineNumber);
     TreeMap<Integer, Integer> offsetmap = new TreeMap<Integer, Integer>();
 
+    if(sourceJava.trim().startsWith("public") && !source.startsWith("public")){
+      offsetmap.put(0,6); 
+      //TODO: This is a temp fix. You GOTTA rewrite offset matching
+    }
     // Find all #[web color] 
     // Should be 6 digits only.
     final String webColorRegexp = "#{1}[A-F|a-f|0-9]{6}\\W";
@@ -435,7 +440,7 @@ public class ASTNodeWrapper {
           + Character.toUpperCase(dataType.charAt(0)) + dataType.substring(1)
           + "(");
 
-    }
+    } 
     if(offsetmap.isEmpty()){
       log("No offset matching needed.");
       return null;
@@ -452,8 +457,11 @@ public class ASTNodeWrapper {
 
     colorMatcher = colorPattern.matcher(sourceAlt);
     sourceAlt = colorMatcher.replaceAll("int");
-
+    
+    log("From direct source: ");
+    sourceAlt = sourceJava;
     log(sourceAlt);
+    
 
     // Create code map. Beware! Dark magic ahead.
     int javaCodeMap[] = new int[source.length() * 2];
@@ -476,16 +484,20 @@ public class ASTNodeWrapper {
         pi--;
         pj--;
         for (int i = 0; i < kval; i++, pi++, pj++) {
-          javaCodeMap[pi] = javaCodeMap[pi - 1];
-          pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
+          if (pi > 1 && pj > 1) {
+            javaCodeMap[pi] = javaCodeMap[pi - 1];
+            pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
+          }
         }
       } else {
         // repeat pde offsets
         pi--;
         pj--;
         for (int i = 0; i < -kval; i++, pi++, pj++) {
-          javaCodeMap[pi] = javaCodeMap[pi - 1] + 1;
-          pdeCodeMap[pj] = pdeCodeMap[pj - 1];
+          if (pi > 1 && pj > 1) {
+            javaCodeMap[pi] = javaCodeMap[pi - 1] + 1;
+            pdeCodeMap[pj] = pdeCodeMap[pj - 1];
+          }
         }
       }
       
@@ -506,7 +518,7 @@ public class ASTNodeWrapper {
       pj++;
     }
     
-    // deubg o/p
+    // debug o/p
     for (int i = 0; i < pdeCodeMap.length; i++) {
       if (pdeCodeMap[i] > 0 || javaCodeMap[i] > 0 || i == 0) {
         if (i < source.length())
@@ -609,7 +621,7 @@ public class ASTNodeWrapper {
   public int[][] getOffsetMapping(ErrorCheckerService ecs){
     int pdeoffsets[] = getPDECodeOffsets(ecs);
     String pdeCode = ecs.getPDECodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
-    return getOffsetMapping(pdeCode);
+    return getOffsetMapping(ecs, pdeCode);
   }
  
   /**

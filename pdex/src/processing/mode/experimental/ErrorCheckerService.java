@@ -1163,6 +1163,16 @@ public class ErrorCheckerService implements Runnable{
 
     return new int[] { codeIndex, x };
   }
+  
+  public int getJavaLineNumFromPDElineNum(int tab, int pdeLineNum){
+    int jLineNum = programImports.size() + 1;
+    for (int i = 0; i < tab; i++) {
+      SketchCode sc = editor.getSketch().getCode(i);
+      int len = Base.countLines(sc.getProgram()) + 1;
+      jLineNum += len;
+    }
+    return jLineNum;
+  }
 
   /**
    * Fetches code from the editor tabs and pre-processes it into parsable pure
