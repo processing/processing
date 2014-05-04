@@ -1,12 +1,24 @@
 0226 pde
+X sketches only starting once, or half-starting and hanging
+X   https://github.com/processing/processing/issues/2402
+X   https://github.com/processing/processing/pull/2455
+X reopen current sketch in new mode editor if file extension is compatible
+X   https://github.com/processing/processing/pull/2457
+X   https://github.com/processing/processing/issues/2456
+X crash in the 'recent' menu on startup
+X   https://github.com/processing/processing/issues/2463
+X   sketchbook location is set to an actual sketch (huh?)
 
 
 high
+_ exported apps on Windows 64 not working?
+_   https://github.com/processing/processing/issues/2468
 _ sketch sometimes simply does not launch
 _   https://github.com/processing/processing/issues/2402
 _   https://github.com/processing/processing/pull/2455
 _ exported apps reporting as "damaged" on OS X
-_   https://github.com/processing/processing/issues/2095
+_ JNA conflicts can be avoided with a -D option
+_   https://github.com/processing/processing/issues/2239
 _ QuickReference tool was able to bring down the environment
 _   https://github.com/processing/processing/issues/2229
 _ tab characters not recognized/drawn in the editor (2.1)
@@ -23,11 +35,17 @@ _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 
 
 medium
+_ import static causes exception (with fix)
+_   https://github.com/processing/processing/issues/8
+_   https://github.com/processing/processing/pull/2273
 _ re/move things from Google Code downloads
 _   https://code.google.com/p/support/wiki/DownloadsFAQ
 _ actual help with cleaning out the repo
 _   https://github.com/processing/processing/issues/1898
 _   requires re-forking, so still a ton of work
+_   remove non-web stuff from web
+_   remove non-android stuff from android
+_   remove web and android from the main repo
 _ add font fixes to the rest of the API
 _   https://github.com/processing/processing/commit/eaff673d173b2d27f276cf5c59e3abf6c0fab86b
 _   g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
@@ -37,8 +55,6 @@ _   https://github.com/processing/processing/issues/2349
 _   (we can do this now since we're actually doing the embedding)
 _ get stack trace issues with NPE
 _   https://github.com/processing/processing/pull/2359
-_ JNA conflicts can be avoided with a -D option
-_   https://github.com/processing/processing/issues/2239
 _ dataPath() not working when app is not run from app dir
 _   https://github.com/processing/processing/issues/2195
 _ should default to the local Java on Windows and Linux
@@ -69,14 +85,17 @@ _ emacs style errors in commander aren't quite right
 _   https://github.com/processing/processing/issues/2158
 _ export application folder location (for Manindra)
 _   https://github.com/processing/processing/issues/2399
-_ import static causes exception (with fix)
-_   https://github.com/processing/processing/issues/8
-_   https://github.com/processing/processing/pull/2273
 _ add documentation for how to run mode development from Eclipse
 _   implementation/changes from JDF
+_ modes are being loaded multiple times, which can cause trouble
+_ add minimum version required (or max version?) to libraries/modes/etc
 
 
 pulls
+_ if/else formatting is broken
+_   https://github.com/processing/processing/pull/2477
+_ fix for various net issues
+_   https://github.com/processing/processing/pull/2475
 _ may need a progress bar for "save as"
 _   or just the file copy function in general
 _   since it may take a long time (i.e. 1000s of screen grabs)
@@ -489,6 +508,7 @@ _   but don't do this with untitled, cuz it kinda stinks
 _   this is too weird--just put examples into individual zip files
 _   mark example files as untitled
 _   though will that require the sketch to be saved before export?
+_   https://github.com/processing/processing/issues/2459
 _ examples window sketches should load in proper environment
 _ write build.xml file to automatically update the examples
 _ sketch.isReadOnly returns false for examples coming from multiple modes
@@ -565,6 +585,7 @@ _   https://github.com/processing/processing/issues/943
 
 PDE / Manager
 
+_ ability to cancel a download/install
 _ we shouldn't use .properties extension for modes, et al
 _   because a .properties file is iso8859-1
 _ make note that .properties file *must* be utf-8

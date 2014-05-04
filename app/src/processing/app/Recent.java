@@ -118,7 +118,14 @@ public class Recent {
     menu.removeAll();
     String sketchbookPath = Base.getSketchbookFolder().getAbsolutePath();
 //    String homePath = System.getProperty("user.home");
-    for (final Record rec : records) {
+    for (Record rec : records) {
+      updateMenuRecord(menu, rec, sketchbookPath);
+    }
+  }
+  
+  
+  private void updateMenuRecord(JMenu menu, final Record rec, String sketchbookPath) {
+    try {
       String recPath = new File(rec.getPath()).getParent();
       String purtyPath = null;
       
@@ -197,6 +204,11 @@ public class Recent {
       });
       //menu.add(item);
       menu.insert(item, 0);
+      
+    } catch (Exception e) {
+      // Strange things can happen... report them for the geeky and move on:
+      // https://github.com/processing/processing/issues/2463
+      e.printStackTrace();
     }
   }
 
