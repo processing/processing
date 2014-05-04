@@ -161,7 +161,7 @@ public class PVector implements Serializable {
    * @param x the x component of the vector
    * @param y the y component of the vector
    * @param z the z component of the vector
-   * @brief Set the x, y, and z component of the vector
+   * @brief Set the components of the vector
    */
   public void set(float x, float y, float z) {
     this.x = x;
@@ -170,11 +170,8 @@ public class PVector implements Serializable {
   }
 
   /**
-   *
-   * @webref pvector:method
    * @param x the x component of the vector
    * @param y the y component of the vector
-   * @brief Set the x, y components of the vector
    */
   public void set(float x, float y) {
     this.x = x;
