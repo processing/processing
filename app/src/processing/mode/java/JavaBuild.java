@@ -1559,6 +1559,10 @@ public class JavaBuild {
       pw.print("APPDIR=$(dirname \"$0\")\n");  // more posix compliant
       // another fix for bug #234, LD_LIBRARY_PATH ignored on some platforms
       //ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
+      if (embedJava) {
+        // https://github.com/processing/processing/issues/2349        
+        pw.print("$APPDIR/java/bin/");
+      }
       pw.print("java " + Preferences.get("run.options") +
                " -Djava.library.path=\"$APPDIR:$APPDIR/lib\"" +
                " -cp \"" + exportClassPath + "\"" +

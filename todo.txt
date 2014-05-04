@@ -11,6 +11,9 @@ X   sketchbook location is set to an actual sketch (huh?)
 X exported apps on Windows 64 not working?
 X   https://github.com/processing/processing/issues/2468
 X   just needed to add the local path for Java
+X when exporting with local Java embedded, use that version
+X   https://github.com/processing/processing/issues/2349
+X   (we can do this now since we're actually doing the embedding)
 
 
 high
@@ -40,10 +43,11 @@ _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 medium
 _ import static causes exception (with fix)
 _   https://github.com/processing/processing/issues/8
-_   https://github.com/processing/processing/pull/2273
+o   https://github.com/processing/processing/pull/2273
+X   can't use this patch, too confusing
 _ re/move things from Google Code downloads
 _   https://code.google.com/p/support/wiki/DownloadsFAQ
-_ actual help with cleaning out the repo
+_ clean out the repo
 _   https://github.com/processing/processing/issues/1898
 _   requires re-forking, so still a ton of work
 _   remove non-web stuff from web
@@ -53,9 +57,6 @@ _ add font fixes to the rest of the API
 _   https://github.com/processing/processing/commit/eaff673d173b2d27f276cf5c59e3abf6c0fab86b
 _   g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
 _                       RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-_ when exporting with local Java embedded, use that version
-_   https://github.com/processing/processing/issues/2349
-_   (we can do this now since we're actually doing the embedding)
 _ get stack trace issues with NPE
 _   https://github.com/processing/processing/pull/2359
 _ dataPath() not working when app is not run from app dir
