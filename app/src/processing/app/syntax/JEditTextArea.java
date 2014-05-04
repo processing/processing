@@ -207,6 +207,7 @@ public class JEditTextArea extends JComponent
     setVerticalScrollPosition(what);
   }
   
+  
   /**
    * Get current position of the vertical scroll bar.
    */
@@ -222,12 +223,14 @@ public class JEditTextArea extends JComponent
     vertical.setValue(what);
   }
   
+  
   /**
    * Get current position of the horizontal scroll bar.
    */
   public int getHorizontalScrollPosition() {
     return horizontal.getValue();
   }
+  
 
   /**
    * Set position of the horizontal scroll bar.
@@ -235,6 +238,7 @@ public class JEditTextArea extends JComponent
   public void setHorizontalScrollPosition(int what) {
     horizontal.setValue(what);
   }
+  
 
   /**
    * Returns the object responsible for painting this text area.

@@ -1051,7 +1051,7 @@ public class Base {
        "but you don't have " + preferredMode.title + " installed.\n" +
        "Would you like to try a different mode for opening a " +
        "." + extension + " sketch?");
-    return (Mode) JOptionPane.showInputDialog(null, message, "Modal Dialog",
+    return (Mode) JOptionPane.showInputDialog(null, message, "Choose Wisely",
                                               JOptionPane.QUESTION_MESSAGE,
                                               null, modes, modes[0]);
   }
