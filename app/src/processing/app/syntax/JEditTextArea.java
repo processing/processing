@@ -190,22 +190,22 @@ public class JEditTextArea extends JComponent
   }
 
 
-//  /**
-//   * Get current position of the vertical scroll bar. [fry]
-//   * @deprecated Use {@link #getVerticalScrollPosition()}.
-//   */
-//  public int getScrollPosition() {
-//    return getVerticalScrollPosition();
-//  }
-//
-//
-//  /**
-//   * Set position of the vertical scroll bar. [fry]
-//   * @deprecated Use {@link #setVerticalScrollPosition(int)}.
-//   */
-//  public void setScrollPosition(int what) {
-//    setVerticalScrollPosition(what);
-//  }
+  /**
+   * Get current position of the vertical scroll bar. [fry]
+   * @deprecated Use {@link #getVerticalScrollPosition()}.
+   */
+  public int getScrollPosition() {
+    return getVerticalScrollPosition();
+  }
+
+
+  /**
+   * Set position of the vertical scroll bar. [fry]
+   * @deprecated Use {@link #setVerticalScrollPosition(int)}.
+   */
+  public void setScrollPosition(int what) {
+    setVerticalScrollPosition(what);
+  }
   
   
   /**
