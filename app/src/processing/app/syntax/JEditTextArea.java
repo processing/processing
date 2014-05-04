@@ -192,19 +192,49 @@ public class JEditTextArea extends JComponent
 
   /**
    * Get current position of the vertical scroll bar. [fry]
+   * @deprecated Use {@link #getVerticalScrollPosition()}.
    */
   public int getScrollPosition() {
-    return vertical.getValue();
+    return getVerticalScrollPosition();
   }
 
 
   /**
    * Set position of the vertical scroll bar. [fry]
+   * @deprecated Use {@link #setVerticalScrollPosition(int)}.
    */
   public void setScrollPosition(int what) {
-    vertical.setValue(what);
+    setVerticalScrollPosition(what);
+  }
+  
+  /**
+   * Get current position of the vertical scroll bar.
+   */
+  public int getVerticalScrollPosition() {
+    return vertical.getValue();
   }
 
+
+  /**
+   * Set position of the vertical scroll bar.
+   */
+  public void setVerticalScrollPosition(int what) {
+    vertical.setValue(what);
+  }
+  
+  /**
+   * Get current position of the horizontal scroll bar.
+   */
+  public int getHorizontalScrollPosition() {
+    return horizontal.getValue();
+  }
+
+  /**
+   * Set position of the horizontal scroll bar.
+   */
+  public void setHorizontalScrollPosition(int what) {
+    horizontal.setValue(what);
+  }
 
   /**
    * Returns the object responsible for painting this text area.
