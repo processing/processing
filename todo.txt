@@ -8,13 +8,14 @@ X   https://github.com/processing/processing/issues/2456
 X crash in the 'recent' menu on startup
 X   https://github.com/processing/processing/issues/2463
 X   sketchbook location is set to an actual sketch (huh?)
+X exported apps on Windows 64 not working?
+X   https://github.com/processing/processing/issues/2468
+X   just needed to add the local path for Java
 
 
 high
 _ new launch4j 3.4
 _   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
-_ exported apps on Windows 64 not working?
-_   https://github.com/processing/processing/issues/2468
 _ sketch sometimes simply does not launch
 _   https://github.com/processing/processing/issues/2402
 _   https://github.com/processing/processing/pull/2455
