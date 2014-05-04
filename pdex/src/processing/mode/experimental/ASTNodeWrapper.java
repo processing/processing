@@ -377,7 +377,7 @@ public class ASTNodeWrapper {
      * index correction needed. (2) Now all java conversions are applied after
      * marking the offsets. This ensures that the index order isn't disturbed by
      * one at a time conversions as done in preprocessCode() in ECS. Took me
-     * sometime to figure out this was a bug. (3) Next I create a tables(two
+     * sometime to figure out this was a bug. (3) Next I create a table(two
      * separate arrays) which allows me to look it up for matching any index
      * between pde or java version of the snippet. This also lets me find out
      * any difference in length between both versions.
@@ -389,6 +389,8 @@ public class ASTNodeWrapper {
      */
         
     log("Src:" + source);
+    // Instead of converting pde into java, how can I simply extract the same source 
+    // from the java code? Think. TODO
     String sourceAlt = new String(source);
     TreeMap<Integer, Integer> offsetmap = new TreeMap<Integer, Integer>();
 
@@ -533,6 +535,7 @@ public class ASTNodeWrapper {
     }
     SimpleName nodeName = (SimpleName) Node;
     try {
+      //TODO: Redundant code. See ASTGenerator.getJavaSourceCodeline()
       int javaLineNumber = getLineNumber(nodeName);
       int pdeOffs[] = astGenerator.errorCheckerService
           .calculateTabIndexAndLineNumber(javaLineNumber);

@@ -1179,6 +1179,26 @@ public class ASTGenerator {
     return candidates;
   }
   
+  public String getJavaSourceCodeline(int jLineNumber){
+    try {
+      PlainDocument javaSource = new PlainDocument();
+      javaSource.insertString(0, errorCheckerService.sourceCode, null);
+      Element lineElement = javaSource.getDefaultRootElement()
+          .getElement(jLineNumber-1);
+      if(lineElement == null) {
+        log("Couldn't fetch jlinenum " + jLineNumber);
+        return null;
+      }      
+      String javaLine = javaSource.getText(lineElement.getStartOffset(),
+                                           lineElement.getEndOffset()
+                                               - lineElement.getStartOffset());
+      return javaLine;
+    } catch (BadLocationException e) {
+      logE(e + " in getJavaSourceCodeline() for jinenum: " + jLineNumber);
+    }
+    return null;
+  }
+  
   /**
    * Searches for the particular class in the default list of imports as well as
    * the Sketch classpath
