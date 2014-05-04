@@ -11,6 +11,8 @@ X   sketchbook location is set to an actual sketch (huh?)
 
 
 high
+_ new launch4j 3.4
+_   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
 _ exported apps on Windows 64 not working?
 _   https://github.com/processing/processing/issues/2468
 _ sketch sometimes simply does not launch

@@ -1278,7 +1278,8 @@ public class JavaBuild {
         File batFile = new File(destFolder, sketch.getName() + ".bat");
         PrintWriter writer = PApplet.createWriter(batFile);
         writer.println("@echo off");
-        writer.println("java -Djava.ext.dirs=lib -Djava.library.path=lib " + sketch.getName());
+        String javaPath = embedJava ? ".\\java\\bin\\java.exe" : "java";
+        writer.println(javaPath + " -Djava.ext.dirs=lib -Djava.library.path=lib " + sketch.getName());
         writer.flush();
         writer.close();
       } else {
