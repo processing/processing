@@ -329,8 +329,7 @@ public class Texture implements PConstants {
       return;
     }
 
-    if (pixels.length == 0) {
-      // Nothing to do (means that w == h == 0) but not an erroneous situation
+    if (pixels.length == 0 || w == 0 || h == 0) {
       return;
     }
 
