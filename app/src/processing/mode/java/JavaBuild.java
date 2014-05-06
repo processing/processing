@@ -1278,7 +1278,8 @@ public class JavaBuild {
         File batFile = new File(destFolder, sketch.getName() + ".bat");
         PrintWriter writer = PApplet.createWriter(batFile);
         writer.println("@echo off");
-        writer.println("java -Djava.ext.dirs=lib -Djava.library.path=lib " + sketch.getName());
+        String javaPath = embedJava ? ".\\java\\bin\\java.exe" : "java";
+        writer.println(javaPath + " -Djava.ext.dirs=lib -Djava.library.path=lib " + sketch.getName());
         writer.flush();
         writer.close();
       } else {
@@ -1558,6 +1559,10 @@ public class JavaBuild {
       pw.print("APPDIR=$(dirname \"$0\")\n");  // more posix compliant
       // another fix for bug #234, LD_LIBRARY_PATH ignored on some platforms
       //ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
+      if (embedJava) {
+        // https://github.com/processing/processing/issues/2349        
+        pw.print("$APPDIR/java/bin/");
+      }
       pw.print("java " + Preferences.get("run.options") +
                " -Djava.library.path=\"$APPDIR:$APPDIR/lib\"" +
                " -cp \"" + exportClassPath + "\"" +

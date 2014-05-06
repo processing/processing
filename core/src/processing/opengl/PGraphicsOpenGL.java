@@ -6250,11 +6250,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void updateTexture(PImage img, Texture tex) {
     if (tex != null) {
-      int x = img.getModifiedX1();
-      int y = img.getModifiedY1();
-      int w = img.getModifiedX2() - x;
-      int h = img.getModifiedY2() - y;
-      tex.set(img.pixels, x, y, w, h, img.format);
+      if (img.isModified()) {
+        int x = img.getModifiedX1();
+        int y = img.getModifiedY1();
+        int w = img.getModifiedX2() - x;
+        int h = img.getModifiedY2() - y;
+        tex.set(img.pixels, x, y, w, h, img.format);
+      } else if (img.isLoaded()) {
+        tex.set(img.pixels, 0, 0, img.width, img.height, img.format);
+      }
     }
     img.setModified(false);
     img.setLoaded(false);

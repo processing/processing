@@ -1,5 +1,29 @@
 0226 core
 X fix parsing with missing categorical values
+X fix for splice() throwing a ClassCastException with other object types
+X   https://github.com/processing/processing/issues/1445
+X   https://github.com/processing/processing/pull/2461
+X add candDraw() method to the retina renderer
+X fix sketchPath() issue when used in another environment
+
+andres
+X Fonts from loadFont() show up as blocks in P3D (regression)
+X   https://github.com/processing/processing/issues/2465
+
+_ "Buffers have not been created" error for sketches w/o draw()
+_   https://github.com/processing/processing/issues/2469
+_   could not reproduce
+
+net
+X add disconnectEvent() to Server
+X   https://github.com/processing/processing/pull/2466
+X   https://github.com/processing/processing/issues/2133
+_   decide how this should actually be handled
+_     was disconnect always there? 
+_   will need documentation
+_ modernize Client/Server code to use synchronized lists
+_   do we let people use the public vars in Server and Client?
+_   are they documented?
 
 
 _ XML.getChildren() throwing NPE when getInt() called on non-existent var
@@ -34,6 +58,7 @@ _   https://github.com/processing/processing/issues/2012
 _   may have been introduced between 2.0b7 and 2.0b8
 _   https://github.com/processing/processing/issues/2275
 _   https://github.com/processing/processing/issues/2276
+_   https://github.com/processing/processing/issues/2483
 _ add option to have full screen span across screens
 _   display=all in cmd line
 _   sketchDisplay() -> 0 for all, or 1, 2, 3...
