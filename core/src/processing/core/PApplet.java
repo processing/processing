@@ -1635,6 +1635,7 @@ public class PApplet extends Applet
  * @see PApplet#noLoop()
  * @see PApplet#redraw()
  * @see PApplet#frameRate(float)
+ * @see PGraphics#background(float, float, float, float)
  */
   public void draw() {
     // if no draw method, then shut things down
