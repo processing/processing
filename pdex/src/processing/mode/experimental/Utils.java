@@ -27,10 +27,23 @@ package processing.mode.experimental;
 
 public class Utils {
   
+  public static String reverse(String s){
+    char w[] = s.toCharArray();
+    for (int i = 0; i < w.length/2; i++) {
+      char t = w[i];
+      w[i] = w[w.length - 1 - i];
+      w[w.length - 1 - i] = t;
+    }
+    return new String(w);
+  }
+  
   public static int minDistance(String word1, String word2) {
+//    word1 = reverse(word1);
+//    word2 = reverse(word2);
     int len1 = word1.length();
     int len2 = word2.length();
-
+    System.out.println(word1 + " len: " + len1);
+    System.out.println(word2 + " len: " + len2);
     // len1+1, len2+1, because finally return dp[len1][len2]
     int[][] dp = new int[len1 + 1][len2 + 1];
 
@@ -52,7 +65,7 @@ public class Utils {
         if (c1 == c2) {
           //update dp value for +1 length
           dp[i + 1][j + 1] = dp[i][j];
-          System.out.println();
+//          System.out.println();
         } else {
           int replace = dp[i][j] + 1;
           int insert = dp[i][j + 1] + 1;
@@ -67,6 +80,7 @@ public class Utils {
         }
       }
     }
+    
 //    for (int i = 0; i < dp.length; i++) {
 //      for (int j = 0; j < dp[0].length; j++) {
 //        System.out.print(dp[i][j] + " ");
@@ -75,7 +89,7 @@ public class Utils {
 //    }
 
     System.out.println("Edit distance1: " + dp[len1][len2]);
-    minDistInGrid(dp, 0, 0, len1, len2, word1.toCharArray(),
+    minDistInGrid(dp,len1, len2, 0, 0 , word1.toCharArray(),
                   word2.toCharArray());
     return dp[len1][len2];
   }
@@ -108,38 +122,40 @@ public class Utils {
 //    if(i < s1.length)System.out.print(s1[i] + " <->");
 //    if(j < s2.length)System.out.print(s2[j]);
     if (i < s1.length && j < s2.length) {
-      System.out.print(s1[i] + " <-> " + s2[j]);
-      if (s1[i] != s2[j])
-        System.out.println("--");
+      System.out.print(s1[i] + " "+ i +" <-> " + j + " " + s2[j]);
+//      if (s1[i] != s2[j])
+//        System.out.println("--");
     }
     System.out.println();
     if (i == fi && j == fj) {
       System.out.println("Reached end.");
     } else {
       int a = Integer.MAX_VALUE, b = a, c = a;
-      if (i < fi)
-        a = g[i + 1][j];
-      if (i < fi && j < fj)
-        b = g[i][j + 1];
-      if (i < fi && j < fj)
-        c = g[i + 1][j + 1];
+      if (i > 0)
+        a = g[i - 1][j];
+      if (j > 0)
+        b = g[i][j - 1];
+      if (i > 0 && j > 0)
+        c = g[i - 1][j - 1];
       int mini = Math.min(a, Math.min(b, c));
       if (mini == a) {
         //System.out.println(s1[i + 1] + " " + s2[j]);
-        minDistInGrid(g, i + 1, j, fi, fj, s1, s2);
+        minDistInGrid(g, i - 1, j, fi, fj, s1, s2);
       } else if (mini == b) {
         //System.out.println(s1[i] + " " + s2[j + 1]);
-        minDistInGrid(g, i, j + 1, fi, fj, s1, s2);
+        minDistInGrid(g, i, j - 1, fi, fj, s1, s2);
       } else if (mini == c) {
         //System.out.println(s1[i + 1] + " " + s2[j + 1]);
-        minDistInGrid(g, i + 1, j + 1, fi, fj, s1, s2);
+        minDistInGrid(g, i - 1, j -  1, fi, fj, s1, s2);
       }
     }
   }
 
   public static void main(String[] args) {
-    minDistance("c = #qwerty;", "c = 0xffqwerty;");
-    //minDistance("c = #bb00aa;", "c = 0xffbb00aa;");
+//    minDistance("c = #qwerty;", "c = 0xffqwerty;");
+//    minDistance("int a = int(4.5);", "int a = PApplet.parseInt(4.5f);");
+    minDistance("static void main(){;", "public static void main(){;");
+//      minDistance("#bb00aa", "0xffbb00aa");
 //    distance("c = #bb00aa;", "c = 0xffbb00aa;");
   }
 }
