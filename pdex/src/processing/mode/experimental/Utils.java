@@ -18,25 +18,27 @@
 
 package processing.mode.experimental;
 
+import java.util.HashMap;
+
 /**
  * A class containing multiple utility methods
  * 
  * @author Manindra Moharana <me@mkmoharana.com>
- *
+ * 
  */
 
 public class Utils {
-  
-  public static String reverse(String s){
+
+  public static String reverse(String s) {
     char w[] = s.toCharArray();
-    for (int i = 0; i < w.length/2; i++) {
+    for (int i = 0; i < w.length / 2; i++) {
       char t = w[i];
       w[i] = w[w.length - 1 - i];
       w[w.length - 1 - i] = t;
     }
     return new String(w);
   }
-  
+
   public static int minDistance(String word1, String word2) {
 //    word1 = reverse(word1);
 //    word2 = reverse(word2);
@@ -80,17 +82,24 @@ public class Utils {
         }
       }
     }
-    
+
 //    for (int i = 0; i < dp.length; i++) {
 //      for (int j = 0; j < dp[0].length; j++) {
 //        System.out.print(dp[i][j] + " ");
 //      }
 //      System.out.println();
 //    }
-
+    int maxLen = Math.max(len1, len2);
+    int pdeCodeMap[] = new int[maxLen], javaCodeMap[] = new int[maxLen];
     System.out.println("Edit distance1: " + dp[len1][len2]);
-    minDistInGrid(dp,len1, len2, 0, 0 , word1.toCharArray(),
-                  word2.toCharArray());
+    minDistInGrid(dp, len1, len2, 0, 0, word1.toCharArray(),
+                  word2.toCharArray(), pdeCodeMap, javaCodeMap, maxLen);
+    System.out.println("PDE-to-Java");
+    for (int i = 0; i < maxLen; i++) {
+      System.out.print(pdeCodeMap[i] + " <-> " + javaCodeMap[i]);
+      System.out.println(", " + word1.charAt(pdeCodeMap[i]) + " <-> "
+          + word2.charAt(javaCodeMap[i]));
+    }
     return dp[len1][len2];
   }
 
@@ -118,11 +127,14 @@ public class Utils {
   }
 
   public static void minDistInGrid(int g[][], int i, int j, int fi, int fj,
-                                   char s1[], char s2[]) {
+                                   char s1[], char s2[], int pdeCodeMap[],
+                                   int javaCodeMap[], int k) {
 //    if(i < s1.length)System.out.print(s1[i] + " <->");
 //    if(j < s2.length)System.out.print(s2[j]);
     if (i < s1.length && j < s2.length) {
-      System.out.print(s1[i] + " "+ i +" <-> " + j + " " + s2[j]);
+      pdeCodeMap[k] = i;
+      javaCodeMap[k] = j;
+      System.out.print(s1[i] + " " + i + " <-> " + j + " " + s2[j] + " k = " + k);
 //      if (s1[i] != s2[j])
 //        System.out.println("--");
     }
@@ -140,21 +152,25 @@ public class Utils {
       int mini = Math.min(a, Math.min(b, c));
       if (mini == a) {
         //System.out.println(s1[i + 1] + " " + s2[j]);
-        minDistInGrid(g, i - 1, j, fi, fj, s1, s2);
+        minDistInGrid(g, i - 1, j, fi, fj, s1, s2, pdeCodeMap, javaCodeMap,
+                      k - 1);
       } else if (mini == b) {
         //System.out.println(s1[i] + " " + s2[j + 1]);
-        minDistInGrid(g, i, j - 1, fi, fj, s1, s2);
+        minDistInGrid(g, i, j - 1, fi, fj, s1, s2, pdeCodeMap, javaCodeMap,
+                      k - 1);
       } else if (mini == c) {
         //System.out.println(s1[i + 1] + " " + s2[j + 1]);
-        minDistInGrid(g, i - 1, j -  1, fi, fj, s1, s2);
+        minDistInGrid(g, i - 1, j - 1, fi, fj, s1, s2, pdeCodeMap, javaCodeMap,
+                      k - 1);
       }
     }
   }
 
   public static void main(String[] args) {
 //    minDistance("c = #qwerty;", "c = 0xffqwerty;");
+    minDistance("color g = #qwerty;", "int g = 0xffqwerty;");
 //    minDistance("int a = int(4.5);", "int a = PApplet.parseInt(4.5f);");
-    minDistance("static void main(){;", "public static void main(){;");
+//    minDistance("static void main(){;", "public static void main(){;");
 //      minDistance("#bb00aa", "0xffbb00aa");
 //    distance("c = #bb00aa;", "c = 0xffbb00aa;");
   }
