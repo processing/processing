@@ -30,6 +30,8 @@
   </classPath>
   <jre>
     <path>java</path>
+    <!-- https://github.com/processing/processing/issues/2239 -->
+    <opt>-Djna.nosys=true</opt>
 <!--
     <minVersion>1.6.0</minVersion>
     <maxVersion></maxVersion>

@@ -14,17 +14,26 @@ X   just needed to add the local path for Java
 X when exporting with local Java embedded, use that version
 X   https://github.com/processing/processing/issues/2349
 X   (we can do this now since we're actually doing the embedding)
+o export application folder location (for Manindra)
+X   https://github.com/processing/processing/issues/2399
+X sketch sometimes simply does not launch
+X   https://github.com/processing/processing/issues/2402
+X   https://github.com/processing/processing/pull/2455
+X   helpful fix contributed by David Fokkema
 
 
 high
-_ new launch4j 3.4
-_   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
-_ sketch sometimes simply does not launch
-_   https://github.com/processing/processing/issues/2402
-_   https://github.com/processing/processing/pull/2455
 _ exported apps reporting as "damaged" on OS X
+_   https://github.com/processing/processing/issues/2095
 _ JNA conflicts can be avoided with a -D option
 _   https://github.com/processing/processing/issues/2239
+X   fix for Windows launchers
+_   fix for Windows export
+_   fix for Windows export 64-bit
+_   fix for Linux launcher
+_   fix for Linux export
+_   fix for OS X launcher 
+_   fix for OS X export
 _ QuickReference tool was able to bring down the environment
 _   https://github.com/processing/processing/issues/2229
 _ tab characters not recognized/drawn in the editor (2.1)
@@ -41,6 +50,8 @@ _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 
 
 medium
+_ should be a quick fix
+_   https://github.com/processing/processing/issues/2502
 _ import static causes exception (with fix)
 _   https://github.com/processing/processing/issues/8
 o   https://github.com/processing/processing/pull/2273
@@ -57,8 +68,6 @@ _ add font fixes to the rest of the API
 _   https://github.com/processing/processing/commit/eaff673d173b2d27f276cf5c59e3abf6c0fab86b
 _   g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
 _                       RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-_ get stack trace issues with NPE
-_   https://github.com/processing/processing/pull/2359
 _ dataPath() not working when app is not run from app dir
 _   https://github.com/processing/processing/issues/2195
 _ should default to the local Java on Windows and Linux
@@ -68,6 +77,7 @@ _   launch4j may be all set, but double-check
 _ try installing 10.7.3 on Mac Mini and check whether things run
 _   make sure it's only running on 64-bit machines? 
 _ use platformDelete() to remove untitled sketches?
+_   would allow us to use the /tmp folder
 _ change to using platformDelete() instead of Base.removeDir() where possible
 _   verify that the OS X version uses the real call
 _   and doesn't just look for .Trash
@@ -87,12 +97,12 @@ _ change Windows export to use launch4j instead of the launcher.cpp file
 _   actually call ant from inside p5?
 _ emacs style errors in commander aren't quite right
 _   https://github.com/processing/processing/issues/2158
-_ export application folder location (for Manindra)
-_   https://github.com/processing/processing/issues/2399
 _ add documentation for how to run mode development from Eclipse
 _   implementation/changes from JDF
 _ modes are being loaded multiple times, which can cause trouble
 _ add minimum version required (or max version?) to libraries/modes/etc
+_ new launch4j 3.4
+_   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
 
 
 pulls

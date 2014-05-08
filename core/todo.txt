@@ -9,6 +9,8 @@ X fix sketchPath() issue when used in another environment
 andres
 X Fonts from loadFont() show up as blocks in P3D (regression)
 X   https://github.com/processing/processing/issues/2465
+X loadPixels problem in OpenGL
+X   https://github.com/processing/processing/issues/2493
 
 _ "Buffers have not been created" error for sketches w/o draw()
 _   https://github.com/processing/processing/issues/2469
