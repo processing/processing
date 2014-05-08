@@ -25,7 +25,7 @@ X   helpful fix contributed by David Fokkema
 high
 _ exported apps reporting as "damaged" on OS X
 _   https://github.com/processing/processing/issues/2095
-_ JNA conflicts can be avoided with a -D option
+_ JNA conflicts can be avoided with "-Djna.nosys=true"
 _   https://github.com/processing/processing/issues/2239
 X   fix for Windows launchers
 X   fix for Windows export
