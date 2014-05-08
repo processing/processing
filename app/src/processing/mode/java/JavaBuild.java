@@ -1279,7 +1279,7 @@ public class JavaBuild {
         PrintWriter writer = PApplet.createWriter(batFile);
         writer.println("@echo off");
         String javaPath = embedJava ? ".\\java\\bin\\java.exe" : "java";
-        writer.println(javaPath + " -Djava.ext.dirs=lib -Djava.library.path=lib " + sketch.getName());
+        writer.println(javaPath + " -Djna.nosys=true -Djava.ext.dirs=lib -Djava.library.path=lib " + sketch.getName());
         writer.flush();
         writer.close();
       } else {

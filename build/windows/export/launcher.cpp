@@ -187,6 +187,10 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   strcat(outgoing_cmd_line, exe_directory);
   strcat(outgoing_cmd_line, "\\lib\" ");
 
+  // Ignore JNA from the system path
+  // https://github.com/processing/processing/issues/2239
+  strcat(outgoing_cmd_line, "-Djna.nosys=true ");
+
   // add the name of the class to execute and a space before the next arg
   strcat(outgoing_cmd_line, java_main_class);
   strcat(outgoing_cmd_line, " ");

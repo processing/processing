@@ -28,8 +28,8 @@ _   https://github.com/processing/processing/issues/2095
 _ JNA conflicts can be avoided with a -D option
 _   https://github.com/processing/processing/issues/2239
 X   fix for Windows launchers
-_   fix for Windows export
-_   fix for Windows export 64-bit
+X   fix for Windows export
+X   fix for Windows export 64-bit
 _   fix for Linux launcher
 _   fix for Linux export
 _   fix for OS X launcher 
