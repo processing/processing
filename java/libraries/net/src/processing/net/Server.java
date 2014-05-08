@@ -295,8 +295,8 @@ public class Server implements Runnable {
   public void write(int data) {  // will also cover char
     int index = 0;
     while (index < clientCount) {
-      clients[index].write(data);
       if (clients[index].active()) {
+        clients[index].write(data);
         index++;
       } else {
         removeIndex(index);
@@ -308,8 +308,8 @@ public class Server implements Runnable {
   public void write(byte data[]) {
     int index = 0;
     while (index < clientCount) {
-      clients[index].write(data);
       if (clients[index].active()) {
+        clients[index].write(data);
         index++;
       } else {
         removeIndex(index);
@@ -321,8 +321,8 @@ public class Server implements Runnable {
   public void write(String data) {
     int index = 0;
     while (index < clientCount) {
-      clients[index].write(data);
       if (clients[index].active()) {
+        clients[index].write(data);
         index++;
       } else {
         removeIndex(index);
