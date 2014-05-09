@@ -607,7 +607,6 @@
 	     value="macosx/work/Processing.app/Contents/Java" />
     </antcall>
 
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
   </target>
@@ -713,9 +712,9 @@
     <property name="launch4j.dir" value="linux/work/launch4j" />
 
     <!-- rename the version we need -->
-    <move file="${launch4j.dir}/bin/windres-linux${sun.arch.data.model}"
+    <move file="${launch4j.dir}/bin/windres-linux"
 	  tofile="${launch4j.dir}/bin/windres" />
-    <move file="${launch4j.dir}/bin/ld-linux${sun.arch.data.model}"
+    <move file="${launch4j.dir}/bin/ld-linux"
 	  tofile="${launch4j.dir}/bin/ld" />
 
     <!-- make executable (ant doesn't preserve) -->
@@ -736,7 +735,6 @@
       <param name="target.path" value="linux/work" />
     </antcall>
 
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
     <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
@@ -889,9 +887,9 @@
     <property name="launch4j.dir" value="windows/work/launch4j" />
 
     <!-- rename the version we need -->
-    <move file="${launch4j.dir}/bin/windres-windows32.exe"
+    <move file="${launch4j.dir}/bin/windres-windows.exe"
 	  tofile="${launch4j.dir}/bin/windres.exe" />
-    <move file="${launch4j.dir}/bin/ld-windows32.exe"
+    <move file="${launch4j.dir}/bin/ld-windows.exe"
 	  tofile="${launch4j.dir}/bin/ld.exe" />
 
     <!-- remove the others -->
@@ -904,24 +902,7 @@
       <param name="target.path" value="windows/work" />
     </antcall>
 
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
-<!--
-    <echo message="the path is ${target.path}" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" failonerror="true" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
-    <exec executable="ls" dir="${target.path}/modes/java/libraries/video/library" />
-
-    <condition property="delete32"> 
-      <equals arg1="${sun.arch.data.model}" arg2="64" />
-    </condition>
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
-
-    <condition property="delete64"> 
-      <equals arg1="${sun.arch.data.model}" arg2="32" />
-    </condition>
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
--->
 
     <condition property="video.delete" value="32"> 
       <equals arg1="${sun.arch.data.model}" arg2="64" />
@@ -931,14 +912,14 @@
     </condition>
     <delete dir="${target.path}/modes/java/libraries/video/library/windows${video.delete}" />
     
-    <taskdef name="launch4j" 
-	     classname="net.sf.launch4j.ant.Launch4jTask" 
-	     classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
 
     <copy todir="windows/work">
       <fileset dir="windows/launcher" 
 	       includes="about.bmp, application.ico, config.xml, config-cmd.xml"/>
     </copy>
+    <taskdef name="launch4j" 
+	     classname="net.sf.launch4j.ant.Launch4jTask" 
+	     classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
 
     <launch4j configFile="windows/work/config.xml" />
     <launch4j configFile="windows/work/config-cmd.xml" />
