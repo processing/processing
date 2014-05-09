@@ -213,6 +213,7 @@ public class ErrorCheckerService implements Runnable{
   protected ErrorMessageSimplifier errorMsgSimplifier;
   
   public ErrorCheckerService(DebugEditor debugEditor) {
+    ensureMinP5Version();
     this.editor = debugEditor;
     stopThread = new AtomicBoolean(false);
     pauseThread = new AtomicBoolean(false);
@@ -282,6 +283,14 @@ public class ErrorCheckerService implements Runnable{
         }
       }
     });
+  }
+  
+  public void ensureMinP5Version(){
+    // Processing 2.1.2 - Revision 0225
+    if(Base.getRevision() < 225){
+//      System.err.println("ERROR: PDE X requires Processing 2.1.2 or higher.");
+      Base.showWarning("Error", "ERROR: PDE X requires Processing 2.1.2 or higher.", null);
+    }
   }
 
   public void run() {

@@ -1,10 +1,32 @@
 
-PDE X v1.0.4b - February , 2014
+PDE X v1.0.4b - May 9, 2014
+
+Requires Processing 2.1.2 or above.
 
 Bug fixes
 
++ Disabled auto-save. My sincere apologies to those who lost data due
+to this bug. It was wrong of me to release an untested feature without
+adding an option to enable/disable it. I've learnt a lesson and I shall
+ensure this sort of thing doesn't happen again in the future.
+
 + Autocompletion bug, column is sometimes off by 1
 https://github.com/processing/processing-experimental/issues/38
+
++ Persistent completion dialog on OS X
+https://github.com/processing/processing-experimental/issues/32
+
++ Status bar update bug
+https://github.com/processing/processing-experimental/issues/29
+
++ Export application broken
+https://github.com/processing/processing-experimental/issues/45
+
++ Status Bar - New Tab prompt bug
+https://github.com/processing/processing-experimental/issues/53
+
++ Show usage fails for methods which have javadoc comment
+https://github.com/processing/processing-experimental/issues/51
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 

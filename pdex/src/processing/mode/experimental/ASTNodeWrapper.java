@@ -459,7 +459,7 @@ public class ASTNodeWrapper {
     sourceAlt = colorMatcher.replaceAll("int");
     
     log("From direct source: ");
-    sourceAlt = sourceJava;
+//    sourceAlt = sourceJava;
     log(sourceAlt);
     
 
@@ -582,7 +582,7 @@ public class ASTNodeWrapper {
       int lsto = lineElement.getStartOffset();
       while(matcher.find()){
         count++;
-        System.out.println(matcher.start() + lsto);
+        //log(matcher.start() + lsto);
         if(lsto + matcher.start() == nodeName.getStartPosition())
           break;
       }
