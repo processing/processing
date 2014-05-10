@@ -128,7 +128,9 @@ public class Base {
 
   private Recent recent;
 
-  // For opening sketches, save the chooser to remember the current directory 
+  // Used by handleOpen(), this saves the chooser to remember the directory. 
+  // Doesn't appear to be necessary with the AWT native file dialog.
+  // https://github.com/processing/processing/pull/2366
   private JFileChooser openChooser;
 
   static protected File sketchbookFolder;
