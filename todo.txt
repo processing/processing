@@ -20,13 +20,20 @@ X sketch sometimes simply does not launch
 X   https://github.com/processing/processing/issues/2402
 X   https://github.com/processing/processing/pull/2455
 X   helpful fix contributed by David Fokkema
-X new launch4j 3.4
+X remove the google code uploader
+
+export
+X incorporate new launch4j 3.4
 X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
+X change Windows export to use launch4j instead of the launcher.cpp file
+X   actually call ant from inside p5?
+_ re-implement an icon for exported applications on Windows
+_ remove build/windows/export from repo
+_ exported apps reporting as "damaged" on OS X
+_   https://github.com/processing/processing/issues/2095
 
 
 high
-_ exported apps reporting as "damaged" on OS X
-_   https://github.com/processing/processing/issues/2095
 _ JNA conflicts can be avoided with "-Djna.nosys=true"
 _   https://github.com/processing/processing/issues/2239
 X   fix for Windows launchers
@@ -95,8 +102,6 @@ _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 _ look through all isPopupTrigger() code 
 _   make sure both press/release are implemented
-_ change Windows export to use launch4j instead of the launcher.cpp file
-_   actually call ant from inside p5?
 _ emacs style errors in commander aren't quite right
 _   https://github.com/processing/processing/issues/2158
 _ add documentation for how to run mode development from Eclipse

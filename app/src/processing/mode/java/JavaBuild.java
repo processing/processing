@@ -1497,6 +1497,9 @@ public class JavaBuild {
       config.setString("dontWrapJar", "true");
       config.setString("jarPath", "lib\\" + jarList[0]);
       
+      File iconFile = mode.getContentFile("application/sketch.ico");
+      config.addChild("icon").setContent(iconFile.getAbsolutePath());
+      
       XML clazzPath = config.addChild("classPath");
       clazzPath.setString("mainClass", sketch.getName());
       for (int i = 1; i < jarList.length; i++) {
@@ -1512,7 +1515,11 @@ public class JavaBuild {
       
       File buildFile = new File(destFolder, "build-launch4j.xml");
       project.save(buildFile);
-      buildWindowsLauncher(buildFile, "windows");
+      if (!buildWindowsLauncher(buildFile, "windows")) {
+        // don't delete the build file, might be useful for debugging 
+        return false;
+      }
+      buildFile.delete();
 
     } else {
       File shellScript = new File(destFolder, sketch.getName());
