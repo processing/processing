@@ -1021,11 +1021,21 @@ public abstract class Editor extends JFrame implements RunnerListener {
       } catch (NoSuchMethodError nsme) {
         System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
                            "compatible with this version of Processing");
-        System.err.println("This method no longer exists: " + nsme.getMessage());
+        System.err.println("The " + nsme.getMessage() + " method no longer exists.");
         Base.log("Incompatible Tool found during tool.init()", nsme);
 
-      } catch (Exception ex) {
+      } catch (NoClassDefFoundError ncdfe) {
+        System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
+                           "compatible with this version of Processing");
+        System.err.println("The " + ncdfe.getMessage() + " class is no longer available.");
+        Base.log("Incompatible Tool found during tool.init()", ncdfe);
+
+      } catch (Error err) {
         System.err.println("An error occurred inside \"" + tool.getMenuTitle() + "\"");
+        err.printStackTrace();
+
+      } catch (Exception ex) {
+        System.err.println("An exception occurred inside \"" + tool.getMenuTitle() + "\"");
         ex.printStackTrace();
       }
     }

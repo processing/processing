@@ -33,6 +33,12 @@ X   fix for Linux command line
 X   fix for OS X launcher 
 X   fix for OS X export
 X   fix for OS X command line
+X import static causes exception (with fix)
+X   https://github.com/processing/processing/issues/8
+o   https://github.com/processing/processing/pull/2273
+X improve handling of tool loading
+X   QuickReference tool was able to bring down the environment
+X   https://github.com/processing/processing/issues/2229
 
 earlier (2.1.2)
 X added get/set methods for status lines (Manindra)
@@ -41,10 +47,6 @@ X   https://github.com/processing/processing/pull/2433
 X allow non-pde file extensions (JDF)
 X   https://github.com/processing/processing/issues/2420
 
-retina
-_ PDE and sketches are 2x smaller on high-res Windows 8 machines
-_   https://github.com/processing/processing/issues/2411
-
 
 export
 X incorporate new launch4j 3.4
@@ -52,16 +54,20 @@ X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
 X change Windows export to use launch4j instead of the launcher.cpp file
 X   actually call ant from inside p5?
 X re-implement an icon for exported applications on Windows
-_ make sure that Windows export uses the local Java
+X make sure that Windows export uses the local Java
+X   double-checked with a clean XP install
 X make sure Windows export includes library DLLs
+X remove build/windows/export from repo
 _ make sure launch4j export isn't printing to console unless trouble
-_ remove build/windows/export from repo
 _ exported apps reporting as "damaged" on OS X
 _   https://github.com/processing/processing/issues/2095
+_   implement a call to codesign, and a message box re: installing Xcode
+_ bring back multi-platform export?
+_   OS X applications can only be exported from OS X
+_   embed Java only works for the current platform
+
 
 high
-_ QuickReference tool was able to bring down the environment
-_   https://github.com/processing/processing/issues/2229
 _ tab characters not recognized/drawn in the editor (2.1)
 _   https://github.com/processing/processing/issues/2180
 _   https://github.com/processing/processing/issues/2183
@@ -78,10 +84,6 @@ _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 medium
 _ display "1" is not correct in 2.1.2
 _   https://github.com/processing/processing/issues/2502
-_ import static causes exception (with fix)
-_   https://github.com/processing/processing/issues/8
-o   https://github.com/processing/processing/pull/2273
-X   can't use this patch, too confusing
 _ re/move things from Google Code downloads
 _   https://code.google.com/p/support/wiki/DownloadsFAQ
 _ clean out the repo
@@ -126,6 +128,8 @@ _   implementation/changes from JDF
 _ modes are being loaded multiple times, which can cause trouble
 _ add minimum version required (or max version?) to libraries/modes/etc
 _ no high-res display support for the PDE
+_ PDE and sketches are 2x smaller on high-res Windows 8 machines
+_   https://github.com/processing/processing/issues/2411
 
 
 pulls
