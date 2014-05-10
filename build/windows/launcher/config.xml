@@ -32,8 +32,9 @@
     <path>java</path>
     <!-- https://github.com/processing/processing/issues/2239 -->
     <opt>-Djna.nosys=true</opt>
+    <!-- for 2.2, set a minimum version -->
+    <minVersion>1.7.0_40</minVersion>
 <!--
-    <minVersion>1.6.0</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>jdkOnly</jdkPreference>
     <opt>-Xms128m -Xmx128m</opt>
@@ -48,8 +49,8 @@
   <messages>
     <startupErr>An error occurred while starting the application.</startupErr>
     <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted.</bundledJreErr>
-    <jreVersionErr>This application requires at least Java Development Kit (not JRE)</jreVersionErr>
-    <launcherErr>The registry refers to a nonexistent Java Development Kit  installation or the runtime is corrupted.</launcherErr>
+    <jreVersionErr>This application requires Java to be installed</jreVersionErr>
+    <launcherErr>The registry refers to a nonexistent Java installation or the runtime is corrupted.</launcherErr>
     <instanceAlreadyExistsMsg>An application instance is already running.</instanceAlreadyExistsMsg>
   </messages>
 </launch4jConfig>

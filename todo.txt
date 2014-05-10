@@ -28,6 +28,8 @@ X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
 X change Windows export to use launch4j instead of the launcher.cpp file
 X   actually call ant from inside p5?
 _ re-implement an icon for exported applications on Windows
+_ make sure that Windows export uses the local Java
+_ make sure Windows export includes library DLLs
 _ remove build/windows/export from repo
 _ exported apps reporting as "damaged" on OS X
 _   https://github.com/processing/processing/issues/2095

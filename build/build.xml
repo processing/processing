@@ -807,6 +807,8 @@
 	     classname="net.sf.launch4j.ant.Launch4jTask" 
 	     classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
 
+    <!-- not all launch4j options are available when embedded inside this 
+	 file (i.e. the icon param doesn't work), so use a config file -->
     <launch4j configFile="windows/work/config.xml" />
     <launch4j configFile="windows/work/config-cmd.xml" />
 
