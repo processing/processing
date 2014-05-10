@@ -1595,13 +1595,13 @@ public class JavaBuild {
       File exeFile = new File(destFolder, sketch.getName() + ".exe");
       config.setString("outfile", exeFile.getAbsolutePath());
       config.setString("dontWrapJar", "true");
-      config.setString("jarPath", jarList[0]);
+      config.setString("jarPath", "lib\\" + jarList[0]);
       
       XML clazzPath = config.addChild("classPath");
       clazzPath.setString("mainClass", sketch.getName());
       for (int i = 1; i < jarList.length; i++) {
         String jarName = jarList[i];
-        clazzPath.addChild("cp").setContent(jarName);
+        clazzPath.addChild("cp").setContent("lib\\" + jarName);
       }
       XML jre = config.addChild("jre");
       jre.setString("minVersion", "1.7.0_40");
@@ -1610,7 +1610,7 @@ public class JavaBuild {
         jre.addChild("opt").setContent(opt);
       }
       
-      File buildFile = new File(destFolder + "build.xml");
+      File buildFile = new File(destFolder, "build-launch4j.xml");
       project.save(buildFile);
       buildWindowsLauncher(buildFile, "windows");
 //    PrintWriter pw = PApplet.createWriter(buildFile);
