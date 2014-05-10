@@ -4324,6 +4324,8 @@ public class PApplet extends Applet
    * @param kind either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT
    */
   public void cursor(int kind) {
+    // Swap the HAND cursor because MOVE doesn't seem to be available on OS X
+    // https://github.com/processing/processing/issues/2358
     if (platform == MACOSX && kind == MOVE) {
       kind = HAND;
     }

@@ -11,6 +11,11 @@ X   need to sort out with docs what's happening here
 X   just a reference issue
 X substitute MOVE cursor with HAND on OS X
 X   https://github.com/processing/processing/issues/2358
+X Allow textWidth() with the default font
+X   https://github.com/processing/processing/issues/2331
+X   https://github.com/processing/processing/pull/2338
+X bug in relative moveto commands for SVG
+X   https://github.com/processing/processing/issues/2377
 
 cleaning
 o how much of com.benfry.* should go in? 
@@ -56,14 +61,13 @@ _ modernize Client/Server code to use synchronized lists
 _   do we let people use the public vars in Server and Client?
 _   are they documented?
 
-_ make join() work with Iterable?
-_   will this collide with the current String[] version?
-
 
 high
 _ Sketch runs with default size if size() is followed by large memory allocation
-_   https://github.com/processing/processing/issues/2039
+_   some sort of threading issue happening here
 _   https://github.com/processing/processing/issues/1672
+_   https://github.com/processing/processing/issues/2039 (dupe)
+_   https://github.com/processing/processing/issues/2294 (dupe)
 _ point() rendering differently in 2.0.3 and 2.1
 _   https://github.com/processing/processing/issues/2278
 _   internally, we probably have to call set() if it's a 1 pixel point
@@ -127,6 +131,8 @@ _   save the constructor for the version that actually copies data
 _   the table pointer version will be speedy and allow chaining 
 
 decisions/misc
+_ make join() work with Iterable?
+_   will this collide with the current String[] version?
 _ add options for image.save() (or saveImage?)
 _   add quality=[0,1] for jpeg images
 _   add dpi=[0,n] for for png images
