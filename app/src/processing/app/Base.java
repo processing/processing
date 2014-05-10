@@ -127,6 +127,8 @@ public class Base {
   private JMenu sketchbookMenu;
 
   private Recent recent;
+
+  private JFileChooser fileChooser; // to remember the current directory
 //  private JMenu recentMenu;
 
   static protected File sketchbookFolder;
@@ -862,10 +864,13 @@ public class Base {
       }
 
     } else {
-      JFileChooser fc = new JFileChooser();
-      fc.setDialogTitle(prompt);
+      if (fileChooser == null)
+      {
+        fileChooser = new JFileChooser();
+      }
+      fileChooser.setDialogTitle(prompt);
 
-      fc.setFileFilter(new javax.swing.filechooser.FileFilter() {
+      fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
         public boolean accept(File file) {
           // JFileChooser requires you to explicitly say yes to directories
           // as well (unlike the AWT chooser). Useful, but... different.
@@ -885,8 +890,8 @@ public class Base {
           return "Processing Sketch";
         }
       });
-      if (fc.showOpenDialog(activeEditor) == JFileChooser.APPROVE_OPTION) {
-        handleOpen(fc.getSelectedFile().getAbsolutePath());
+      if (fileChooser.showOpenDialog(activeEditor) == JFileChooser.APPROVE_OPTION) {
+        handleOpen(fileChooser.getSelectedFile().getAbsolutePath());
       }
     }
   }
