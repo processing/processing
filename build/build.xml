@@ -803,7 +803,7 @@
     
 
     <copy todir="windows/work">
-      <fileset dir="windows/launcher" 
+      <fileset dir="windows" 
 	       includes="about.bmp, application.ico, config.xml, config-cmd.xml"/>
     </copy>
     <taskdef name="launch4j" 
