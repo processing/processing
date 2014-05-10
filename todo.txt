@@ -21,6 +21,18 @@ X   https://github.com/processing/processing/issues/2402
 X   https://github.com/processing/processing/pull/2455
 X   helpful fix contributed by David Fokkema
 X remove the google code uploader
+X JNA conflicts can be avoided with "-Djna.nosys=true"
+X   https://github.com/processing/processing/issues/2239
+X   fix for Windows launchers
+X   fix for Windows export
+X   fix for Windows export 64-bit
+X   fix for Windows command line
+X   fix for Linux launcher
+X   fix for Linux export
+X   fix for Linux command line
+X   fix for OS X launcher 
+X   fix for OS X export
+X   fix for OS X command line
 
 export
 X incorporate new launch4j 3.4
@@ -36,18 +48,6 @@ _ exported apps reporting as "damaged" on OS X
 _   https://github.com/processing/processing/issues/2095
 
 high
-X JNA conflicts can be avoided with "-Djna.nosys=true"
-X   https://github.com/processing/processing/issues/2239
-X   fix for Windows launchers
-X   fix for Windows export
-X   fix for Windows export 64-bit
-X   fix for Windows command line
-X   fix for Linux launcher
-X   fix for Linux export
-X   fix for Linux command line
-X   fix for OS X launcher 
-X   fix for OS X export
-X   fix for OS X command line
 _ QuickReference tool was able to bring down the environment
 _   https://github.com/processing/processing/issues/2229
 _ tab characters not recognized/drawn in the editor (2.1)
