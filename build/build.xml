@@ -802,21 +802,34 @@
     <delete dir="${target.path}/modes/java/libraries/video/library/windows${video.delete}" />
     
 
+    <!-- TODO It would be better to not copy these, but use them in place.
+         I believe it's handled this way b/c launch4j was finicky about paths.
+         (i.e. it needed the lib/pde.jar to be present during build) -->
+<!--
     <copy todir="windows/work">
       <fileset dir="windows" 
 	       includes="about.bmp, application.ico, config.xml, config-cmd.xml"/>
     </copy>
+-->
     <taskdef name="launch4j" 
 	     classname="net.sf.launch4j.ant.Launch4jTask" 
 	     classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
 
     <!-- not all launch4j options are available when embedded inside this 
 	 file (i.e. the icon param doesn't work), so use a config file -->
+
+<!--
     <launch4j configFile="windows/work/config.xml" />
     <launch4j configFile="windows/work/config-cmd.xml" />
+-->
 
+    <launch4j configFile="windows/config.xml" />
+    <launch4j configFile="windows/config-cmd.xml" />
+
+<!--
     <delete dir="windows/work" 
 	    includes="about.bmp, application.ico, config.xml, config-cmd.xml" />
+-->
 
 <!--
     <launch4j>

@@ -2,7 +2,7 @@
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>lib</jar>
-  <outfile>processing.exe</outfile>
+  <outfile>work/processing.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -34,11 +34,6 @@
     <opt>-Djna.nosys=true</opt>
     <!-- for 2.2, set a minimum version -->
     <minVersion>1.7.0_40</minVersion>
-<!--
-    <maxVersion></maxVersion>
-    <jdkPreference>jdkOnly</jdkPreference>
-    <opt>-Xms128m -Xmx128m</opt>
--->
   </jre>
   <splash>
     <file>about.bmp</file>
