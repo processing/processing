@@ -9,6 +9,8 @@ X XML.getChildren() throwing NPE when getInt() called on non-existent var
 X   https://github.com/processing/processing/issues/2367
 X   need to sort out with docs what's happening here
 X   just a reference issue
+X substitute MOVE cursor with HAND on OS X
+X   https://github.com/processing/processing/issues/2358
 
 cleaning
 o how much of com.benfry.* should go in? 
@@ -57,15 +59,6 @@ _   are they documented?
 _ make join() work with Iterable?
 _   will this collide with the current String[] version?
 
-retina
-_ saveFrame() with retina render is making black images
-_ zero alpha values still a problem with retina renderer
-_   https://github.com/processing/processing/issues/2030
-_ how to name the retina pixel stuff
-_   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
-_   hint(ENABLE_2X_PIXELS)?
-_   hidpi is Apple's name as well
-_ no high-res display support for the renderers
 
 high
 _ Sketch runs with default size if size() is followed by large memory allocation
@@ -103,6 +96,24 @@ _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
 _ TGA files writing strangely
 _   https://github.com/processing/processing/issues/2096
+
+hidpi
+_ saveFrame() with retina render is making black images
+_ zero alpha values still a problem with retina renderer
+_   https://github.com/processing/processing/issues/2030
+_ how to name the retina pixel stuff
+_   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
+_   hint(ENABLE_2X_PIXELS)?
+_   hidpi is Apple's name as well
+_ no high-res display support for OpenGL
+_ no high-dpi support for core on Windows
+_   https://github.com/processing/processing/issues/2411
+_ retina sketches slow to start
+_   https://github.com/processing/processing/issues/2357
+
+cantfix
+_ crash on startup when "Mirror Displays" selected
+_   https://github.com/processing/processing/issues/2186
 
 table
 _ addRow() is not efficient, probably need to do the doubling

@@ -4324,6 +4324,9 @@ public class PApplet extends Applet
    * @param kind either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT
    */
   public void cursor(int kind) {
+    if (platform == MACOSX && kind == MOVE) {
+      kind = HAND;
+    }
     setCursor(Cursor.getPredefinedCursor(kind));
     cursorVisible = true;
     this.cursorType = kind;

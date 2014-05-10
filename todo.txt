@@ -34,6 +34,18 @@ X   fix for OS X launcher
 X   fix for OS X export
 X   fix for OS X command line
 
+earlier (2.1.2)
+X added get/set methods for status lines (Manindra)
+X   https://github.com/processing/processing/issues/2430
+X   https://github.com/processing/processing/pull/2433
+X allow non-pde file extensions (JDF)
+X   https://github.com/processing/processing/issues/2420
+
+retina
+_ PDE and sketches are 2x smaller on high-res Windows 8 machines
+_   https://github.com/processing/processing/issues/2411
+
+
 export
 X incorporate new launch4j 3.4
 X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
