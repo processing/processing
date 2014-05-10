@@ -7,7 +7,7 @@
   <cmdLine></cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
-  <downloadUrl>http://java.sun.com/javase/downloads/</downloadUrl>
+  <downloadUrl>http://java.com/download</downloadUrl>
   <supportUrl></supportUrl>
   <customProcName>false</customProcName>
   <stayAlive>false</stayAlive>

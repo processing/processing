@@ -1479,6 +1479,9 @@ public class JavaBuild {
       pw.close();
 
     } else if (exportPlatform == PConstants.WINDOWS) {
+      File buildFile = new File(destFolder, "launch4j-build.xml");
+      File configFile = new File(destFolder, "launch4j-config.xml");
+
       XML project = new XML("project");
       XML target = project.addChild("target");
       target.setString("name", "windows");
@@ -1490,6 +1493,37 @@ public class JavaBuild {
       taskdef.setString("classpath", launchPath + "/launch4j.jar:" + launchPath + "/lib/xstream.jar");
       
       XML launch4j = target.addChild("launch4j");
+      // not all launch4j options are available when embedded inside the ant
+      // build file (i.e. the icon param doesn't work), so use a config file
+      //<launch4j configFile="windows/work/config.xml" />
+      launch4j.setString("configFile", configFile.getAbsolutePath());
+      
+      XML config = new XML("launch4jConfig");
+      config.addChild("headerType").setContent("gui");
+      config.addChild("dontWrapJar").setContent("true");
+      config.addChild("downloadUrl").setContent("http://java.com/download");
+      
+      File exeFile = new File(destFolder, sketch.getName() + ".exe");
+      config.addChild("outfile").setContent(exeFile.getAbsolutePath());
+      
+      File iconFile = mode.getContentFile("application/sketch.ico");
+      config.addChild("icon").setContent(iconFile.getAbsolutePath());
+
+      XML clazzPath = config.addChild("classPath");
+      clazzPath.addChild("mainClass").setContent(sketch.getName());
+      for (String jarName : jarList) {
+        clazzPath.addChild("cp").setContent("lib/" + jarName);
+      }
+      XML jre = config.addChild("jre");
+      if (embedJava) {
+        jre.addChild("path").setContent("java");
+      }
+      jre.addChild("minVersion").setContent("1.7.0_40");
+      for (String opt : runOptions) {
+        jre.addChild("opt").setContent(opt);
+      }
+      
+      /*
       XML config = launch4j.addChild("config");
       config.setString("headerType", "gui");
       File exeFile = new File(destFolder, sketch.getName() + ".exe");
@@ -1512,13 +1546,15 @@ public class JavaBuild {
       for (String opt : runOptions) {
         jre.addChild("opt").setContent(opt);
       }
+      */
       
-      File buildFile = new File(destFolder, "build-launch4j.xml");
+      config.save(configFile);
       project.save(buildFile);
       if (!buildWindowsLauncher(buildFile, "windows")) {
         // don't delete the build file, might be useful for debugging 
         return false;
       }
+      configFile.delete();
       buildFile.delete();
 
     } else {
@@ -1592,13 +1628,16 @@ public class JavaBuild {
     // deals with a problem where javac error messages weren't coming through
     p.setUserProperty("build.compiler", "extJavac");
 
+    // too chatty
+    /*
     // try to spew something useful to the console
     final DefaultLogger consoleLogger = new DefaultLogger();
     consoleLogger.setErrorPrintStream(System.err);
-    consoleLogger.setOutputPrintStream(System.out);  // ? uncommented before
+    consoleLogger.setOutputPrintStream(System.out);
     // WARN, INFO, VERBOSE, DEBUG
     consoleLogger.setMessageOutputLevel(Project.MSG_ERR);
     p.addBuildListener(consoleLogger);
+    */
 
     DefaultLogger errorLogger = new DefaultLogger();
     ByteArrayOutputStream errb = new ByteArrayOutputStream();
