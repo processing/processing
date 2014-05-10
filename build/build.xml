@@ -571,7 +571,7 @@
 
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
-      <fileset dir="shared" includes="launch4j/**" />
+      <!--<fileset dir="shared" includes="launch4j/**" />-->
       <fileset dir="shared" includes="lib/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
@@ -583,8 +583,12 @@
       <fileset dir="shared/lib/fonts" includes="*" />
     </copy>
 
-    <property name="launch4j.dir" 
-	      value="macosx/work/Processing.app/Contents/Java/launch4j" />
+    <antcall target="assemble">
+      <param name="target.path" 
+	     value="macosx/work/Processing.app/Contents/Java" />
+    </antcall>
+
+    <property name="launch4j.dir" value="macosx/work/Processing.app/Contents/Java/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
     <move file="${launch4j.dir}/bin/windres-macosx"
@@ -601,11 +605,6 @@
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
-
-    <antcall target="assemble">
-      <param name="target.path" 
-	     value="macosx/work/Processing.app/Contents/Java" />
-    </antcall>
 
     <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
@@ -709,7 +708,11 @@
       <fileset file="shared/revisions.txt" />
     </copy>
 
-    <property name="launch4j.dir" value="linux/work/launch4j" />
+    <antcall target="assemble">
+      <param name="target.path" value="linux/work" />
+    </antcall>
+
+    <property name="launch4j.dir" value="linux/work/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
     <move file="${launch4j.dir}/bin/windres-linux"
@@ -731,10 +734,6 @@
       <fileset refid="runtime.jars" />
     </copy>
     
-    <antcall target="assemble">
-      <param name="target.path" value="linux/work" />
-    </antcall>
-
     <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
     <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
@@ -884,7 +883,11 @@
 
     <fixcrlf file="windows/work/revisions.txt" eol="crlf" encoding="UTF-8" />
 
-    <property name="launch4j.dir" value="windows/work/launch4j" />
+    <antcall target="assemble">
+      <param name="target.path" value="windows/work" />
+    </antcall>
+
+    <property name="launch4j.dir" value="windows/work/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
     <move file="${launch4j.dir}/bin/windres-windows.exe"
@@ -897,10 +900,6 @@
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
-
-    <antcall target="assemble">
-      <param name="target.path" value="windows/work" />
-    </antcall>
 
     <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
 
