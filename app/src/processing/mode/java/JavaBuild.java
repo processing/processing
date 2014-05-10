@@ -26,8 +26,14 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DefaultLogger;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectHelper;
+
 import processing.app.*;
 import processing.core.*;
+import processing.data.XML;
 import processing.mode.java.preproc.*;
 
 // Would you believe there's a java.lang.Compiler class? I wouldn't.
@@ -1270,6 +1276,7 @@ public class JavaBuild {
     if (!jarFolder.exists()) jarFolder.mkdirs();
 
 
+    /*
     /// on windows, copy the exe file
 
     if (exportPlatform == PConstants.WINDOWS) {
@@ -1287,8 +1294,9 @@ public class JavaBuild {
                       new File(destFolder, sketch.getName() + ".exe"));
       }
     }
+    */
 
-
+    
     /// start copying all jar files
 
     Vector<String> jarListVector = new Vector<String>();
@@ -1451,42 +1459,28 @@ public class JavaBuild {
 
     /// figure out run options for the VM
 
-    // this is too vague. if anyone is using it, we can bring it back
-//    String runOptions = Preferences.get("run.options");
     List<String> runOptions = new ArrayList<String>();
     if (Preferences.getBoolean("run.options.memory")) {
       runOptions.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
       runOptions.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
     }
     
-    StringBuilder jvmOptionsList = new StringBuilder();
-    for (String opt : runOptions) {
-      jvmOptionsList.append("      <string>");
-      jvmOptionsList.append(opt);
-      jvmOptionsList.append("</string>");
-      jvmOptionsList.append('\n');
-    }
-    
-//    if (exportPlatform == PConstants.MACOSX) {
-//      // If no bits specified (libs are all universal, or no native libs)
-//      // then exportBits will be 0, and can be controlled via "Get Info".
-//      // Otherwise, need to specify the bits as a VM option.
-//      if (exportBits == 32) {
-//        runOptions += " -d32";
-//      } else if (exportBits == 64) {
-//        runOptions += " -d64";
-//      }
-//    }
 
     /// macosx: write out Info.plist (template for classpath, etc)
 
     if (exportPlatform == PConstants.MACOSX) {
-      //String PLIST_TEMPLATE = "template.plist";
+      StringBuilder runOptionsXML = new StringBuilder();
+      for (String opt : runOptions) {
+        runOptionsXML.append("      <string>");
+        runOptionsXML.append(opt);
+        runOptionsXML.append("</string>");
+        runOptionsXML.append('\n');
+      }      
+
       String PLIST_TEMPLATE = "Info.plist.tmpl";
       File plistTemplate = new File(sketch.getFolder(), PLIST_TEMPLATE);
       if (!plistTemplate.exists()) {
-        //plistTemplate = mode.getContentFile("application/template.plist");
-        plistTemplate = mode.getContentFile("application/Info.plist.tmpl");
+        plistTemplate = mode.getContentFile("application/" + PLIST_TEMPLATE);
       }
       File plistFile = new File(dotAppFolder, "Contents/Info.plist");
       PrintWriter pw = PApplet.createWriter(plistFile);
@@ -1502,7 +1496,7 @@ public class JavaBuild {
           }
           while ((index = sb.indexOf("@@jvm_options_list@@")) != -1) {
             sb.replace(index, index + "@@jvm_options_list@@".length(),
-                       jvmOptionsList.toString());
+                       runOptionsXML.toString());
           }
           while ((index = sb.indexOf("@@sketch@@")) != -1) {
             sb.replace(index, index + "@@sketch@@".length(),
@@ -1537,16 +1531,100 @@ public class JavaBuild {
       pw.close();
 
     } else if (exportPlatform == PConstants.WINDOWS) {
-      File argsFile = new File(destFolder + "/lib/args.txt");
-      PrintWriter pw = PApplet.createWriter(argsFile);
+//      File buildFile = new File(destFolder + "build.xml");
+//      PrintWriter pw = PApplet.createWriter(buildFile);
+      
+//      StringBuilder runOptionsXML = new StringBuilder();
+//      for (String opt : runOptions) {
+//        runOptionsXML.append("          <cp>");
+//        runOptionsXML.append(opt);
+//        runOptionsXML.append("</string>");
+//        runOptionsXML.append('\n');
+//      }      
 
-      // Since this is only on Windows, make sure we use Windows CRLF
-      pw.print(PApplet.join(runOptions.toArray(new String[0]), " ") + "\r\n");
-      pw.print(sketch.getName() + "\r\n");
-      pw.print(exportClassPath);
+      XML project = new XML("project");
+      //project.setString("default", "windows");
+      XML target = project.addChild("target");
+      target.setString("name", "windows");
+      
+      XML taskdef = target.addChild("taskdef");
+      taskdef.setString("name", "launch4j");
+      taskdef.setString("classname", "net.sf.launch4j.ant.Launch4jTask");
+      //pw.println("           classpath=\"${launch4j.dir}/launch4j/launch4j.jar:launch4j/lib/xstream.jar\" />");
+      String launchPath = mode.getContentFile("application/launch4j").getAbsolutePath();
+      taskdef.setString("classpath", launchPath + "/launch4j.jar:" + launchPath + "/lib/xstream.jar");
+        
+//      pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+//
+//      pw.println("<project default=\"windows\" name=\"Build an executable for Windows\">");
 
-      pw.flush();
-      pw.close();
+      //  <property name="output.name" value="prototype" />
+      //  <property name="jar.name" value="${output.name}-full.jar" />
+
+      //  <property name="sketch.folder" value="????" />
+      //  <property name="sketch.class" value="????" />
+
+//      pw.println("<target name=\"windows\">");
+//      pw.println("  <taskdef name=\"launch4j\"");
+//      pw.println("           classname=\"net.sf.launch4j.ant.Launch4jTask\"");
+//      pw.println("           classpath=\"${launch4j.dir}/launch4j/launch4j.jar:launch4j/lib/xstream.jar\" />");
+
+      // http://launch4j.sourceforge.net/docs.html#Ant_task
+//          <launch4j>
+//            <!-- jar="something.jar" vs jarPath="something.jar" with the cp stuff -->
+//            <config headerType="gui" 
+//              outfile="${sketch.name}.exe"
+//              dontWrapJar="true"
+//              jarPath="${jar.name}">
+//        <classPath mainClass="${sketch.class}">
+//                <cp>something.jar</cp>
+//          <cp>something2.jar</cp>
+//        </classPath>
+//              <jre minVersion="1.7.0">
+//          <opt>-Xmx512M</opt>
+//        </jre>
+//            </config>
+//          </launch4j>
+//        </target>
+//
+//      </project>
+      
+      XML launch4j = target.addChild("launch4j");
+      XML config = launch4j.addChild("config");
+      config.setString("headerType", "gui");
+      File exeFile = new File(destFolder, sketch.getName() + ".exe");
+      config.setString("outfile", exeFile.getAbsolutePath());
+      config.setString("dontWrapJar", "true");
+      config.setString("jarPath", jarList[0]);
+      
+      XML clazzPath = config.addChild("classPath");
+      clazzPath.setString("mainClass", sketch.getName());
+      for (int i = 1; i < jarList.length; i++) {
+        String jarName = jarList[i];
+        clazzPath.addChild("cp").setContent(jarName);
+      }
+      XML jre = config.addChild("jre");
+      jre.setString("minVersion", "1.7.0_40");
+      //PApplet.join(runOptions.toArray(new String[0]), " ")
+      for (String opt : runOptions) {
+        jre.addChild("opt").setContent(opt);
+      }
+      
+      File buildFile = new File(destFolder + "build.xml");
+      project.save(buildFile);
+      buildWindowsLauncher(buildFile, "windows");
+//    PrintWriter pw = PApplet.createWriter(buildFile);
+            
+//      File argsFile = new File(destFolder + "/lib/args.txt");
+//      PrintWriter pw = PApplet.createWriter(argsFile);
+//
+//      // Since this is only on Windows, make sure we use Windows CRLF
+//      pw.print(PApplet.join(runOptions.toArray(new String[0]), " ") + "\r\n");
+//      pw.print(sketch.getName() + "\r\n");
+//      pw.print(exportClassPath);
+//
+//      pw.flush();
+//      pw.close();
 
     } else {
       File shellScript = new File(destFolder, sketch.getName());
@@ -1619,7 +1697,80 @@ public class JavaBuild {
   }
 
 
-  protected void addManifest(ZipOutputStream zos) throws IOException {
+  protected boolean buildWindowsLauncher(File buildFile, String target) {
+    //System.setProperty("user.dir", tmpFolder.getAbsolutePath());  // oh why not { because it doesn't help }
+    final Project p = new Project();
+    //p.setBaseDir(tmpFolder);  // doesn't seem to do anything
+
+//    System.out.println(tmpFolder.getAbsolutePath());
+//    p.setUserProperty("user.dir", tmpFolder.getAbsolutePath());
+    String path = buildFile.getAbsolutePath().replace('\\', '/');
+    p.setUserProperty("ant.file", path);
+
+    // deals with a problem where javac error messages weren't coming through
+    p.setUserProperty("build.compiler", "extJavac");
+    // p.setUserProperty("build.compiler.emacs", "true"); // does nothing
+
+    // try to spew something useful to the console
+    final DefaultLogger consoleLogger = new DefaultLogger();
+    consoleLogger.setErrorPrintStream(System.err);
+    consoleLogger.setOutputPrintStream(System.out);  // ? uncommented before
+    // WARN, INFO, VERBOSE, DEBUG
+    //    consoleLogger.setMessageOutputLevel(Project.MSG_ERR);
+    consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
+//    consoleLogger.setMessageOutputLevel(Project.MSG_DEBUG);
+    p.addBuildListener(consoleLogger);
+
+    // This logger is used to pick up javac errors to be parsed into
+    // SketchException objects. Note that most errors seem to show up on stdout
+    // since that's where the [javac] prefixed lines are coming through.
+    final DefaultLogger errorLogger = new DefaultLogger();
+    final ByteArrayOutputStream errb = new ByteArrayOutputStream();
+    final PrintStream errp = new PrintStream(errb);
+    errorLogger.setErrorPrintStream(errp);
+    final ByteArrayOutputStream outb = new ByteArrayOutputStream();
+    final PrintStream outp = new PrintStream(outb);
+    errorLogger.setOutputPrintStream(outp);
+    errorLogger.setMessageOutputLevel(Project.MSG_INFO);
+    //    errorLogger.setMessageOutputLevel(Project.MSG_DEBUG);
+    p.addBuildListener(errorLogger);
+
+    try {
+      //editor.statusNotice("Building sketch for Android...");
+      p.fireBuildStarted();
+      p.init();
+      final ProjectHelper helper = ProjectHelper.getProjectHelper();
+      p.addReference("ant.projectHelper", helper);
+      helper.parse(p, buildFile);
+      // p.executeTarget(p.getDefaultTarget());
+      p.executeTarget(target);
+//      editor.statusNotice("Finished building sketch.");
+      return true;
+
+    } catch (final BuildException e) {
+      // Send a "build finished" event to the build listeners for this project.
+      p.fireBuildFinished(e);
+
+      // PApplet.println(new String(errb.toByteArray()));
+      // PApplet.println(new String(outb.toByteArray()));
+
+      // String errorOutput = new String(errb.toByteArray());
+      // String[] errorLines =
+      // errorOutput.split(System.getProperty("line.separator"));
+      // PApplet.println(errorLines);
+
+      //final String outPile = new String(outb.toByteArray());
+      //antBuildProblems(new String(outb.toByteArray())
+      String out = new String(outb.toByteArray());
+      String err = new String(errb.toByteArray());
+      System.out.println(out);
+      System.err.println(err);
+    }
+    return false;
+  }
+
+
+    protected void addManifest(ZipOutputStream zos) throws IOException {
     ZipEntry entry = new ZipEntry("META-INF/MANIFEST.MF");
     zos.putNextEntry(entry);
 
