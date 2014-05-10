@@ -43,9 +43,9 @@ X   fix for Windows launchers
 X   fix for Windows export
 X   fix for Windows export 64-bit
 X   fix for Windows command line
-_   fix for Linux launcher
+X   fix for Linux launcher
 _   fix for Linux export
-_   fix for Linux command line
+X   fix for Linux command line
 X   fix for OS X launcher 
 X   fix for OS X export
 X   fix for OS X command line
