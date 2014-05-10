@@ -35,16 +35,15 @@ _ remove build/windows/export from repo
 _ exported apps reporting as "damaged" on OS X
 _   https://github.com/processing/processing/issues/2095
 
-
 high
-_ JNA conflicts can be avoided with "-Djna.nosys=true"
-_   https://github.com/processing/processing/issues/2239
+X JNA conflicts can be avoided with "-Djna.nosys=true"
+X   https://github.com/processing/processing/issues/2239
 X   fix for Windows launchers
 X   fix for Windows export
 X   fix for Windows export 64-bit
 X   fix for Windows command line
 X   fix for Linux launcher
-_   fix for Linux export
+X   fix for Linux export
 X   fix for Linux command line
 X   fix for OS X launcher 
 X   fix for OS X export
@@ -65,7 +64,7 @@ _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 
 
 medium
-_ should be a quick fix
+_ display "1" is not correct in 2.1.2
 _   https://github.com/processing/processing/issues/2502
 _ import static causes exception (with fix)
 _   https://github.com/processing/processing/issues/8
@@ -114,6 +113,7 @@ _ add documentation for how to run mode development from Eclipse
 _   implementation/changes from JDF
 _ modes are being loaded multiple times, which can cause trouble
 _ add minimum version required (or max version?) to libraries/modes/etc
+_ no high-res display support for the PDE
 
 
 pulls

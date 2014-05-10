@@ -1572,7 +1572,9 @@ public class JavaBuild {
         // https://github.com/processing/processing/issues/2349        
         pw.print("$APPDIR/java/bin/");
       }
-      pw.print("java " + Preferences.get("run.options") +
+      String runOptionsStr = 
+        PApplet.join(runOptions.toArray(new String[0]), " ");
+      pw.print("java " + runOptionsStr +
                " -Djava.library.path=\"$APPDIR:$APPDIR/lib\"" +
                " -cp \"" + exportClassPath + "\"" +
                " " + sketch.getName() + " \"$@\"\n");
