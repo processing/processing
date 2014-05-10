@@ -101,6 +101,7 @@ public class InstallCommander implements Tool {
       String javaRoot = Base.getContentFile(".").getCanonicalPath();
       writer.println("cd \"" + javaRoot + "\" && " +
                      Base.getJavaPath() + 
+                     " -Djna.nosys=true" +
       		           " -cp \"" + classPath + "\"" +
       		           " processing.mode.java.Commander \"$@\"");
       writer.flush();

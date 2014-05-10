@@ -42,13 +42,13 @@ _   https://github.com/processing/processing/issues/2239
 X   fix for Windows launchers
 X   fix for Windows export
 X   fix for Windows export 64-bit
-_   fix for Windows command line
+X   fix for Windows command line
 _   fix for Linux launcher
 _   fix for Linux export
 _   fix for Linux command line
 X   fix for OS X launcher 
-_   fix for OS X export
-_   fix for OS X command line
+X   fix for OS X export
+X   fix for OS X command line
 _ QuickReference tool was able to bring down the environment
 _   https://github.com/processing/processing/issues/2229
 _ tab characters not recognized/drawn in the editor (2.1)
