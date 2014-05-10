@@ -2439,7 +2439,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   /**
    * Grab current contents of the sketch window, advance the console,
-   * stop any other running sketches... not in that order.
+   * stop any other running sketches, autosave... not in that order.
    */
   public void prepareRun() {
     internalCloseRunner();
@@ -2460,6 +2460,20 @@ public abstract class Editor extends JFrame implements RunnerListener {
     //current.setProgram(editor.getText());
     sketch.getCurrentCode().setProgram(getText());
 
+	// AutoSave implementation for Issue 131:
+	// https://github.com/processing/processing/issues/131
+	try {
+		if (Preferences.getBoolean("autosave.set")) {
+			if (handleSave(true))
+				statusNotice("Autosaved.");
+			else
+				statusNotice("Save Canceled. Running anyway.");
+		}
+	} catch (Exception e) {
+		// show the error as a message in the window
+		statusError(e);
+	}
+    
 //    // if an external editor is being used, need to grab the
 //    // latest version of the code from the file.
 //    if (Preferences.getBoolean("editor.external")) {
