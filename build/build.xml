@@ -268,118 +268,15 @@
 	<exclude name="reference.zip" />
 	<exclude name="**/._*" />
 
+	<!-- probably not necessary anymore -->
 	<exclude name="examples/**/applet/**" />
       </fileset>
     </copy>
 
-<!-- decided against this. 
-     see: http://code.google.com/p/processing/issues/detail?id=650 -->
-<!--
-    <get src="http://www.java.com/js/deployJava.js" 
-	 dest="${target.path}/modes/java/applet/deployJava.js"
-	 usetimestamp="true" />
--->
-
     <delete dir="${target.path}/modes/java/examples">
       <include name="**/applet/**" />
     </delete>
-<!--
-    <delete>
-      <fileset dir="${target.path}/modes/java/examples"
-	       includes="**/applet/**" />
-    </delete>
--->
 
-<!--
-    not happy on windows, since cygwin may not be installed
-    <exec executable="find" dir="${target.path}/modes/java/examples"
-	  errorproperty="ignored">
-      <arg line=". -name applet -exec rm -rf {} ';'" />
-    </exec>
--->
-
-<!--
-    <copy todir="${target.path}/modes/java/examples">
-      <fileset dir="../java/examples">
-	<exclude name="**/applet/**" />
-      </fileset>
-    </copy>
--->
-
-<!--     <copy todir="${target.path}/modes/javascript">
-      <fileset dir="../javascript">
-      	<exclude name="**/._*" />
-      </fileset>
-    </copy> -->
-
-<!--
-    <copy todir="${target.path}/modes/android">
-      <fileset dir="../android">
-	<include name="android-core.zip" />
-	<include name="examples/**" />
-	<include name="icons/**" />
-	<include name="theme/**" />
-	<include name="keywords.txt" />
-	<exclude name="**/._*" />
--->
-<!-- these had already been commented out 
-	<exclude name="**/bin/**" />
-	<exclude name="**/src/**" />
-	<exclude name="cmd" />
-	<exclude name="reference.zip" />
--->
-<!--
-      </fileset>
-    </copy>
--->
-    
-    <!-- copy libraries -->
-<!--
-    <copy todir="${target.path}/modes/java/libraries">
-      <fileset dir="../java/libraries">
-	<include name="**/library/**" />
-	<include name="**/src/**" />
-      </fileset>
-    </copy>
--->
-
-    <!-- copy shared library folder -->
-<!--
-    <copy todir="${target.path}/modes/java/libraries">
-      <fileset dir="shared/modes/java/libraries" />
-    </copy>
--->
-    
-    <!-- copy libraries for dxf, pdf, etc. -->
-<!--
-    <copy todir="${target.path}/modes/java/libraries/dxf">
-      <fileset dir="../dxf" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/net">
-      <fileset dir="../net" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/pdf">
-      <fileset dir="../pdf" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/serial">
-      <fileset dir="../serial" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/video">
-      <fileset dir="../video" includes="library/**,src/**" />
-    </copy>
--->
-    
-    <!-- Unzip documentation + examples -->
-<!--
-    <unzip dest="${target.path}/modes/java" 
-	   src="shared/modes/java/examples.zip" 
-	   overwrite="false">
-      <patternset>
-	<exclude name="__MACOSX/**" />
-	<exclude name="**/._*" />
-      </patternset>
-    </unzip>
--->
     <unzip dest="${target.path}/modes/java" 
 	   src="../java/reference.zip" 
 	   overwrite="false">
@@ -387,17 +284,7 @@
 	<exclude name="__MACOSX/**" />
 	<exclude name="**/._*" />
       </patternset>
-    </unzip>
-    
-    <!-- Write the revision file -->
-    <!-- is there a good way to do this? -->
-    <!--
-    <echo file="${target.path}/lib/version.txt" 
-	  message="${version}" 
-	  if="${version}" />
-    <delete file="${target.path}/lib/version.txt"
-	    unless="${version}" />
-    -->
+    </unzip>    
   </target>
 
   <target name="version-clear">

@@ -1188,7 +1188,6 @@ public class JavaBuild {
     /// on macosx, need to copy .app skeleton since that's
     /// also where the jar files will be placed
     File dotAppFolder = null;
-//    String jdkFolderName = null;
     String jvmRuntime = "";
     if (exportPlatform == PConstants.MACOSX) {
       dotAppFolder = new File(destFolder, sketch.getName() + ".app");
@@ -1201,8 +1200,6 @@ public class JavaBuild {
         jvmRuntime = "<key>JVMRuntime</key>\n    <string>" + jdkFolderName + "</string>";
       }
 
-//      File dotAppSkeleton = mode.getContentFile("application/template.app");
-//      Base.copyDir(dotAppSkeleton, dotAppFolder);
       File contentsFolder = new File(dotAppFolder, "Contents");
       contentsFolder.mkdirs();
 
@@ -1350,7 +1347,6 @@ public class JavaBuild {
       String includes = Base.contentsToClassPath(sketch.getCodeFolder());
       // Use tokens to get rid of extra blanks, which causes huge exports
       String[] codeList = PApplet.splitTokens(includes, File.pathSeparator);
-//      String cp = "";
       for (int i = 0; i < codeList.length; i++) {
         if (codeList[i].toLowerCase().endsWith(".jar") ||
             codeList[i].toLowerCase().endsWith(".zip")) {
@@ -1362,22 +1358,12 @@ public class JavaBuild {
 //          cp += codeList[i] + File.pathSeparator;
         }
       }
-//      packClassPathIntoZipFile(cp, zos, zipFileContents);  // this was double adding the code folder prior to 2.0a2
     }
 
     zos.flush();
     zos.close();
 
     jarListVector.add(sketch.getName() + ".jar");
-
-
-//    /// add core.jar to the jar destination folder
-//
-//    File bagelJar = Base.isMacOS() ?
-//      Base.getContentFile("core.jar") :
-//      Base.getContentFile("lib/core.jar");
-//    Base.copyFile(bagelJar, new File(jarFolder, "core.jar"));
-//    jarListVector.add("core.jar");
 
 
     /// add contents of 'library' folders to the export
@@ -1392,38 +1378,13 @@ public class JavaBuild {
                              "a big fat lie and does not exist.");
 
         } else if (exportFile.isDirectory()) {
-          //System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
-//          if (exportPlatform == PConstants.MACOSX) {
-//            // For OS X, copy subfolders to Contents/Resources/Java
           Base.copyDir(exportFile, new File(jarFolder, exportName));
-//          } else {
-//            // For other platforms, just copy the folder to the same directory
-//            // as the application.
-//            Base.copyDir(exportFile, new File(destFolder, exportName));
-//          }
 
         } else if (exportName.toLowerCase().endsWith(".zip") ||
                    exportName.toLowerCase().endsWith(".jar")) {
           Base.copyFile(exportFile, new File(jarFolder, exportName));
           jarListVector.add(exportName);
 
-          // old style, prior to 2.0a2
-//        } else if ((exportPlatform == PConstants.MACOSX) &&
-//                   (exportFile.getName().toLowerCase().endsWith(".jnilib"))) {
-//          // jnilib files can be placed in Contents/Resources/Java
-//          Base.copyFile(exportFile, new File(jarFolder, exportName));
-//
-//        } else {
-//          // copy the file to the main directory.. prolly a .dll or something
-//          Base.copyFile(exportFile, new File(destFolder, exportName));
-//        }
-
-          // first 2.0a2 attempt, until below...
-//        } else if (exportPlatform == PConstants.MACOSX) {
-//          Base.copyFile(exportFile, new File(jarFolder, exportName));
-//
-//        } else {
-//          Base.copyFile(exportFile, new File(destFolder, exportName));
         } else {
           // Starting with 2.0a2 put extra export files (DLLs, plugins folder,
           // anything else for libraries) inside lib or Contents/Resources/Java
@@ -1464,6 +1425,8 @@ public class JavaBuild {
       runOptions.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
       runOptions.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
     }
+    // https://github.com/processing/processing/issues/2239
+    runOptions.add("-Djna.nosys=true");
     
 
     /// macosx: write out Info.plist (template for classpath, etc)
@@ -1502,25 +1465,10 @@ public class JavaBuild {
             sb.replace(index, index + "@@sketch@@".length(),
                        sketch.getName());
           }
-//          while ((index = sb.indexOf("@@classpath@@")) != -1) {
-//            sb.replace(index, index + "@@classpath@@".length(),
-//                       exportClassPath.toString());
-//          }
           while ((index = sb.indexOf("@@lsuipresentationmode@@")) != -1) {
             sb.replace(index, index + "@@lsuipresentationmode@@".length(),
                        Preferences.getBoolean("export.application.fullscreen") ? "4" : "0");
           }
-//          while ((index = sb.indexOf("@@lsarchitecturepriority@@")) != -1) {
-//            // More about this mess: http://support.apple.com/kb/TS2827
-//            // First default to exportBits == 0 case
-//            String arch = "<string>x86_64</string>\n      <string>i386</string>";
-//            if (exportBits == 32) {
-//              arch = "<string>i386</string>";
-//            } else if (exportBits == 64) {
-//              arch = "<string>x86_64</string>";
-//            }
-//            sb.replace(index, index + "@@lsarchitecturepriority@@".length(), arch);
-//          }
 
           lines[i] = sb.toString();
         }
@@ -1531,63 +1479,15 @@ public class JavaBuild {
       pw.close();
 
     } else if (exportPlatform == PConstants.WINDOWS) {
-//      File buildFile = new File(destFolder + "build.xml");
-//      PrintWriter pw = PApplet.createWriter(buildFile);
-      
-//      StringBuilder runOptionsXML = new StringBuilder();
-//      for (String opt : runOptions) {
-//        runOptionsXML.append("          <cp>");
-//        runOptionsXML.append(opt);
-//        runOptionsXML.append("</string>");
-//        runOptionsXML.append('\n');
-//      }      
-
       XML project = new XML("project");
-      //project.setString("default", "windows");
       XML target = project.addChild("target");
       target.setString("name", "windows");
       
       XML taskdef = target.addChild("taskdef");
       taskdef.setString("name", "launch4j");
       taskdef.setString("classname", "net.sf.launch4j.ant.Launch4jTask");
-      //pw.println("           classpath=\"${launch4j.dir}/launch4j/launch4j.jar:launch4j/lib/xstream.jar\" />");
       String launchPath = mode.getContentFile("application/launch4j").getAbsolutePath();
       taskdef.setString("classpath", launchPath + "/launch4j.jar:" + launchPath + "/lib/xstream.jar");
-        
-//      pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-//
-//      pw.println("<project default=\"windows\" name=\"Build an executable for Windows\">");
-
-      //  <property name="output.name" value="prototype" />
-      //  <property name="jar.name" value="${output.name}-full.jar" />
-
-      //  <property name="sketch.folder" value="????" />
-      //  <property name="sketch.class" value="????" />
-
-//      pw.println("<target name=\"windows\">");
-//      pw.println("  <taskdef name=\"launch4j\"");
-//      pw.println("           classname=\"net.sf.launch4j.ant.Launch4jTask\"");
-//      pw.println("           classpath=\"${launch4j.dir}/launch4j/launch4j.jar:launch4j/lib/xstream.jar\" />");
-
-      // http://launch4j.sourceforge.net/docs.html#Ant_task
-//          <launch4j>
-//            <!-- jar="something.jar" vs jarPath="something.jar" with the cp stuff -->
-//            <config headerType="gui" 
-//              outfile="${sketch.name}.exe"
-//              dontWrapJar="true"
-//              jarPath="${jar.name}">
-//        <classPath mainClass="${sketch.class}">
-//                <cp>something.jar</cp>
-//          <cp>something2.jar</cp>
-//        </classPath>
-//              <jre minVersion="1.7.0">
-//          <opt>-Xmx512M</opt>
-//        </jre>
-//            </config>
-//          </launch4j>
-//        </target>
-//
-//      </project>
       
       XML launch4j = target.addChild("launch4j");
       XML config = launch4j.addChild("config");
@@ -1613,18 +1513,6 @@ public class JavaBuild {
       File buildFile = new File(destFolder, "build-launch4j.xml");
       project.save(buildFile);
       buildWindowsLauncher(buildFile, "windows");
-//    PrintWriter pw = PApplet.createWriter(buildFile);
-            
-//      File argsFile = new File(destFolder + "/lib/args.txt");
-//      PrintWriter pw = PApplet.createWriter(argsFile);
-//
-//      // Since this is only on Windows, make sure we use Windows CRLF
-//      pw.print(PApplet.join(runOptions.toArray(new String[0]), " ") + "\r\n");
-//      pw.print(sketch.getName() + "\r\n");
-//      pw.print(exportClassPath);
-//
-//      pw.flush();
-//      pw.close();
 
     } else {
       File shellScript = new File(destFolder, sketch.getName());
@@ -1680,87 +1568,54 @@ public class JavaBuild {
     }
 
 
-    /// remove the .class files from the export folder.
-//    for (File file : classFiles) {
-//      if (!file.delete()) {
-//        Base.showWarning("Could not delete",
-//                         file.getName() + " could not \n" +
-//                         "be deleted from the applet folder.  \n" +
-//                         "You'll need to remove it by hand.", null);
-//      }
-//    }
-    // these will now be removed automatically via the temp folder deleteOnExit()
-
-
     /// goodbye
     return true;
   }
 
 
+  /** 
+   * Run the launch4j build.xml file through ant to create the exe.
+   * Most of this code was lifted from Android mode.
+   */
   protected boolean buildWindowsLauncher(File buildFile, String target) {
-    //System.setProperty("user.dir", tmpFolder.getAbsolutePath());  // oh why not { because it doesn't help }
-    final Project p = new Project();
-    //p.setBaseDir(tmpFolder);  // doesn't seem to do anything
-
-//    System.out.println(tmpFolder.getAbsolutePath());
-//    p.setUserProperty("user.dir", tmpFolder.getAbsolutePath());
+    Project p = new Project();
     String path = buildFile.getAbsolutePath().replace('\\', '/');
     p.setUserProperty("ant.file", path);
 
     // deals with a problem where javac error messages weren't coming through
     p.setUserProperty("build.compiler", "extJavac");
-    // p.setUserProperty("build.compiler.emacs", "true"); // does nothing
 
     // try to spew something useful to the console
     final DefaultLogger consoleLogger = new DefaultLogger();
     consoleLogger.setErrorPrintStream(System.err);
     consoleLogger.setOutputPrintStream(System.out);  // ? uncommented before
     // WARN, INFO, VERBOSE, DEBUG
-    //    consoleLogger.setMessageOutputLevel(Project.MSG_ERR);
-    consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
-//    consoleLogger.setMessageOutputLevel(Project.MSG_DEBUG);
+    consoleLogger.setMessageOutputLevel(Project.MSG_ERR);
     p.addBuildListener(consoleLogger);
 
-    // This logger is used to pick up javac errors to be parsed into
-    // SketchException objects. Note that most errors seem to show up on stdout
-    // since that's where the [javac] prefixed lines are coming through.
-    final DefaultLogger errorLogger = new DefaultLogger();
-    final ByteArrayOutputStream errb = new ByteArrayOutputStream();
-    final PrintStream errp = new PrintStream(errb);
+    DefaultLogger errorLogger = new DefaultLogger();
+    ByteArrayOutputStream errb = new ByteArrayOutputStream();
+    PrintStream errp = new PrintStream(errb);
     errorLogger.setErrorPrintStream(errp);
-    final ByteArrayOutputStream outb = new ByteArrayOutputStream();
-    final PrintStream outp = new PrintStream(outb);
+    ByteArrayOutputStream outb = new ByteArrayOutputStream();
+    PrintStream outp = new PrintStream(outb);
     errorLogger.setOutputPrintStream(outp);
     errorLogger.setMessageOutputLevel(Project.MSG_INFO);
-    //    errorLogger.setMessageOutputLevel(Project.MSG_DEBUG);
     p.addBuildListener(errorLogger);
 
     try {
-      //editor.statusNotice("Building sketch for Android...");
       p.fireBuildStarted();
       p.init();
       final ProjectHelper helper = ProjectHelper.getProjectHelper();
       p.addReference("ant.projectHelper", helper);
       helper.parse(p, buildFile);
-      // p.executeTarget(p.getDefaultTarget());
       p.executeTarget(target);
-//      editor.statusNotice("Finished building sketch.");
       return true;
 
     } catch (final BuildException e) {
       // Send a "build finished" event to the build listeners for this project.
       p.fireBuildFinished(e);
 
-      // PApplet.println(new String(errb.toByteArray()));
-      // PApplet.println(new String(outb.toByteArray()));
-
-      // String errorOutput = new String(errb.toByteArray());
-      // String[] errorLines =
-      // errorOutput.split(System.getProperty("line.separator"));
-      // PApplet.println(errorLines);
-
-      //final String outPile = new String(outb.toByteArray());
-      //antBuildProblems(new String(outb.toByteArray())
       String out = new String(outb.toByteArray());
       String err = new String(errb.toByteArray());
       System.out.println(out);
@@ -1770,7 +1625,7 @@ public class JavaBuild {
   }
 
 
-    protected void addManifest(ZipOutputStream zos) throws IOException {
+  protected void addManifest(ZipOutputStream zos) throws IOException {
     ZipEntry entry = new ZipEntry("META-INF/MANIFEST.MF");
     zos.putNextEntry(entry);
 

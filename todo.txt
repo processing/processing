@@ -20,6 +20,8 @@ X sketch sometimes simply does not launch
 X   https://github.com/processing/processing/issues/2402
 X   https://github.com/processing/processing/pull/2455
 X   helpful fix contributed by David Fokkema
+X new launch4j 3.4
+X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
 
 
 high
@@ -101,8 +103,6 @@ _ add documentation for how to run mode development from Eclipse
 _   implementation/changes from JDF
 _ modes are being loaded multiple times, which can cause trouble
 _ add minimum version required (or max version?) to libraries/modes/etc
-_ new launch4j 3.4
-_   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
 
 
 pulls
