@@ -403,7 +403,7 @@ public class JavaBuild {
       throw new SketchException(ex.toString());
     }
 
-    // grab the imports from the code just preproc'd
+    // grab the imports from the code just preprocessed
 
     importedLibraries = new ArrayList<Library>();
     Library core = mode.getCoreLibrary();
@@ -414,10 +414,21 @@ public class JavaBuild {
 
 //    System.out.println("extra imports: " + result.extraImports);
     for (String item : result.extraImports) {
+//      System.out.println("item = '" + item + "'");
       // remove things up to the last dot
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
       String entry = (dot == -1) ? item : item.substring(0, dot);
+//      System.out.print(entry + " => ");
+
+      if (item.startsWith("static ")) { 
+        // import static - https://github.com/processing/processing/issues/8
+        // Remove more stuff.
+        int dot2 = item.lastIndexOf('.');
+        entry = entry.substring(7, (dot2 == -1) ? entry.length() : dot2);
+//        System.out.println(entry);
+      }
+
 //      System.out.println("library searching for " + entry);
       Library library = mode.getLibrary(entry);
 //      System.out.println("  found " + library);
@@ -433,7 +444,7 @@ public class JavaBuild {
         // If someone insists on unnecessarily repeating the code folder
         // import, don't show an error for it.
         if (codeFolderPackages != null) {
-          String itemPkg = item.substring(0, item.lastIndexOf('.'));
+          String itemPkg = entry;
           for (String pkg : codeFolderPackages) {
             if (pkg.equals(itemPkg)) {
               found = true;
@@ -441,7 +452,7 @@ public class JavaBuild {
             }
           }
         }
-        if (ignorableImport(item)) {
+        if (ignorableImport(entry + '.')) {
           found = true;
         }
         if (!found) {
