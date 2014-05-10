@@ -27,9 +27,10 @@ X incorporate new launch4j 3.4
 X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
 X change Windows export to use launch4j instead of the launcher.cpp file
 X   actually call ant from inside p5?
-_ re-implement an icon for exported applications on Windows
+X re-implement an icon for exported applications on Windows
 _ make sure that Windows export uses the local Java
-_ make sure Windows export includes library DLLs
+X make sure Windows export includes library DLLs
+_ make sure launch4j export isn't printing to console unless trouble
 _ remove build/windows/export from repo
 _ exported apps reporting as "damaged" on OS X
 _   https://github.com/processing/processing/issues/2095
@@ -41,10 +42,13 @@ _   https://github.com/processing/processing/issues/2239
 X   fix for Windows launchers
 X   fix for Windows export
 X   fix for Windows export 64-bit
+_   fix for Windows command line
 _   fix for Linux launcher
 _   fix for Linux export
-_   fix for OS X launcher 
+_   fix for Linux command line
+X   fix for OS X launcher 
 _   fix for OS X export
+_   fix for OS X command line
 _ QuickReference tool was able to bring down the environment
 _   https://github.com/processing/processing/issues/2229
 _ tab characters not recognized/drawn in the editor (2.1)

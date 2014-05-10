@@ -430,6 +430,9 @@
 
       <option value="-Dapple.awt.application.name=Processing" />
 
+      <!-- avoid conflicts with JNA DLLs already in the path -->
+      <option value="-Djna.nosys=true" />
+
       <option value="-Dapple.laf.useScreenMenuBar=true" />
       <option value="-Dcom.apple.macos.use-file-dialog-packages=true" />
       <option value="-Dcom.apple.macos.useScreenMenuBar=true" />
