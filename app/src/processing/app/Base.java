@@ -128,8 +128,8 @@ public class Base {
 
   private Recent recent;
 
-  private JFileChooser fileChooser; // to remember the current directory
-//  private JMenu recentMenu;
+  // For opening sketches, save the chooser to remember the current directory 
+  private JFileChooser openChooser;
 
   static protected File sketchbookFolder;
 //  protected File toolsFolder;
@@ -836,13 +836,14 @@ public class Base {
 
     final String prompt = "Open a Processing sketch...";
     
-    // don't use native dialogs on Linux 
+    // don't use native dialogs on Linux (or anyone else w/ override)
     if (Preferences.getBoolean("chooser.files.native")) {  //$NON-NLS-1$
-      // get the front-most window frame for placing file dialog
-      FileDialog fd = new FileDialog(activeEditor, prompt, FileDialog.LOAD);
+      // use the front-most window frame for placing file dialog
+      FileDialog openDialog = 
+        new FileDialog(activeEditor, prompt, FileDialog.LOAD);
 
       // Only show .pde files as eligible bachelors
-      fd.setFilenameFilter(new FilenameFilter() {
+      openDialog.setFilenameFilter(new FilenameFilter() {
         public boolean accept(File dir, String name) {
           // confirmed to be working properly [fry 110128]
           for (String ext : extensions) {
@@ -854,23 +855,22 @@ public class Base {
         }
       });
 
-      fd.setVisible(true);
+      openDialog.setVisible(true);
 
-      String directory = fd.getDirectory();
-      String filename = fd.getFile();
+      String directory = openDialog.getDirectory();
+      String filename = openDialog.getFile();
       if (filename != null) {
         File inputFile = new File(directory, filename);
         handleOpen(inputFile.getAbsolutePath());
       }
 
     } else {
-      if (fileChooser == null)
-      {
-        fileChooser = new JFileChooser();
+      if (openChooser == null) {
+        openChooser = new JFileChooser();
       }
-      fileChooser.setDialogTitle(prompt);
+      openChooser.setDialogTitle(prompt);
 
-      fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+      openChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
         public boolean accept(File file) {
           // JFileChooser requires you to explicitly say yes to directories
           // as well (unlike the AWT chooser). Useful, but... different.
@@ -890,8 +890,8 @@ public class Base {
           return "Processing Sketch";
         }
       });
-      if (fileChooser.showOpenDialog(activeEditor) == JFileChooser.APPROVE_OPTION) {
-        handleOpen(fileChooser.getSelectedFile().getAbsolutePath());
+      if (openChooser.showOpenDialog(activeEditor) == JFileChooser.APPROVE_OPTION) {
+        handleOpen(openChooser.getSelectedFile().getAbsolutePath());
       }
     }
   }
