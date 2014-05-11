@@ -67,11 +67,25 @@ public class Server implements Runnable {
    * @param port port used to transfer data
    */
   public Server(PApplet parent, int port) {
+    this(parent, port, null);
+  }
+    
+    
+  /**
+   * @param parent typically use "this"
+   * @param port port used to transfer data
+   * @param host when multiple NICs are in use, the ip (or name) to bind from 
+   */
+  public Server(PApplet parent, int port, String host) {
     this.parent = parent;
     this.port = port;
 
     try {
-      server = new ServerSocket(this.port);
+      if (host == null) {
+        server = new ServerSocket(this.port);
+      } else {
+        server = new ServerSocket(this.port, 10, InetAddress.getByName(host));
+      }
       //clients = new Vector();
       clients = new Client[10];
 
@@ -168,8 +182,8 @@ public class Server implements Runnable {
       return InetAddress.getLocalHost().getHostAddress();
     } catch (UnknownHostException e) {
       e.printStackTrace();
+      return null;
     }
-    return null;
   }
 
 

@@ -41,6 +41,18 @@ X   QuickReference tool was able to bring down the environment
 X   https://github.com/processing/processing/issues/2229
 X save the previous open dialog so that we return to the directory
 X   https://github.com/processing/processing/pull/2366
+X "if-else" block formatting doesn't follow Processing conventions
+X   https://github.com/processing/processing/issues/364
+X   https://github.com/processing/processing/pull/2477
+X tab characters not recognized/drawn in the editor (2.1)
+X   https://github.com/processing/processing/issues/2180
+X   https://github.com/processing/processing/issues/2183
+o   udp library has tabs in the text
+X   decision to be made on nextTabStop() inside TextAreaPainter
+X Chinese text is overlapped in Processing 2.1 editor
+X   https://github.com/processing/processing/issues/2173
+X   https://github.com/processing/processing/pull/2318
+X   https://github.com/processing/processing/pull/2323
 
 earlier (2.1.2)
 X added get/set methods for status lines (Manindra)
@@ -48,7 +60,6 @@ X   https://github.com/processing/processing/issues/2430
 X   https://github.com/processing/processing/pull/2433
 X allow non-pde file extensions (JDF)
 X   https://github.com/processing/processing/issues/2420
-
 
 export
 X incorporate new launch4j 3.4
@@ -69,21 +80,9 @@ _   OS X applications can only be exported from OS X
 _   embed Java only works for the current platform
 
 
-high
-_ tab characters not recognized/drawn in the editor (2.1)
-_   https://github.com/processing/processing/issues/2180
-_   https://github.com/processing/processing/issues/2183
-_   udp library has tabs in the text
-_   decision to be made on nextTabStop() inside TextAreaPainter
-_ Chinese text is overlapped in Processing 2.1 editor
-_   https://github.com/processing/processing/issues/2173
-_   https://github.com/processing/processing/pull/2318
-_   https://github.com/processing/processing/pull/2323
+medium
 _ check on why 2x core.jar inside the Java folder
 _   maybe OS X Java can't look in subfolders? (just auto-adds things)
-
-
-medium
 _ display "1" is not correct in 2.1.2
 _   https://github.com/processing/processing/issues/2502
 _ re/move things from Google Code downloads
@@ -806,6 +805,13 @@ LIBRARIES / General
 
 _ need to unpack InvocationTargetException in xxxxxxEvent calls
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328#3
+
+
+LIBRARIES / Net
+
+_ modernize Client/Server code to use synchronized lists
+_   do we let people use the public vars in Server and Client?
+_   are they documented?
 
 
 

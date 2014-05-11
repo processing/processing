@@ -16,6 +16,12 @@ X   https://github.com/processing/processing/issues/2331
 X   https://github.com/processing/processing/pull/2338
 X bug in relative moveto commands for SVG
 X   https://github.com/processing/processing/issues/2377
+X Add a constructor to bind Server to a specific address 
+X   https://github.com/processing/processing/issues/2356
+X add disconnectEvent() to Server
+X   https://github.com/processing/processing/pull/2466
+X   https://github.com/processing/processing/issues/2133
+X   don't document for now
 
 cleaning
 o how much of com.benfry.* should go in? 
@@ -46,23 +52,11 @@ X   https://github.com/processing/processing/issues/2465
 X loadPixels problem in OpenGL
 X   https://github.com/processing/processing/issues/2493
 
+
+high
 _ "Buffers have not been created" error for sketches w/o draw()
 _   https://github.com/processing/processing/issues/2469
 _   could not reproduce
-
-net
-X add disconnectEvent() to Server
-X   https://github.com/processing/processing/pull/2466
-X   https://github.com/processing/processing/issues/2133
-_   decide how this should actually be handled
-_     was disconnect always there? 
-_   will need documentation
-_ modernize Client/Server code to use synchronized lists
-_   do we let people use the public vars in Server and Client?
-_   are they documented?
-
-
-high
 _ Sketch runs with default size if size() is followed by large memory allocation
 _   some sort of threading issue happening here
 _   https://github.com/processing/processing/issues/1672
@@ -223,6 +217,9 @@ _ OpenGL offscreen requires primary surface to be OpenGL
 _ explain the new PGL interface
 _ can't really change the smoothing/options on offscreen
 _   is this still true?
+_ decide how disconnectEvent should actually be handled (and name?)
+_   was disconnect always there? 
+_   will need documentation
 
 
 
@@ -526,6 +523,8 @@ _   Updating graphics drivers may prevent the problem
 _ ellipse scaling method isn't great
 _   http://code.google.com/p/processing/issues/detail?id=87
 _ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
+_   https://github.com/processing/processing/issues/90
+_   for begin/endRaw: https://github.com/processing/processing/issues/2235
 _   http://code.google.com/p/processing/issues/detail?id=51
 _   polygon z-order depth sorting with alpha in opengl
 _   complete the implementation of hint() with proper implementation
