@@ -771,8 +771,8 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 //      int w = fm.charWidth(' ');
       for (int i = 0; i < line.count; i++) {
         gfx.drawChars(line.array, line.offset+i, 1, x, y);
-        x = currentLine.array[currentLine.offset + i] == '\t' ? (int)nextTabStop(x, i) : 
-          x + fm.charWidth(currentLine.array[currentLine.offset+i]);
+        x = line.array[line.offset + i] == '\t' ? (int)nextTabStop(x, i) : 
+          x + fm.charWidth(line.array[line.offset+i]);
       }
       //x += fm.charsWidth(line.array, line.offset, line.count);
       //x += fm.charWidth(' ') * line.count;
