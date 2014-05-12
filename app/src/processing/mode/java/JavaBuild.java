@@ -32,6 +32,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 
 import processing.app.*;
+import processing.app.exec.ProcessHelper;
+import processing.app.exec.ProcessResult;
 import processing.core.*;
 import processing.data.XML;
 import processing.mode.java.preproc.*;
@@ -1109,32 +1111,36 @@ public class JavaBuild {
       return false;
     }
 
-    /*
     File folder = null;
     for (String platformName : PConstants.platformNames) {
       int platform = Base.getPlatformIndex(platformName);
+      
+      // Can only embed Java on the native platform
+      boolean embedJava = (platform == PApplet.platform) && 
+        Preferences.getBoolean("export.application.embed_java");
+      
       if (Preferences.getBoolean("export.application.platform." + platformName)) {
         if (Library.hasMultipleArch(platform, importedLibraries)) {
           // export the 32-bit version
           folder = new File(sketch.getFolder(), "application." + platformName + "32");
-          if (!exportApplication(folder, platform, 32)) {
+          if (!exportApplication(folder, platform, 32, embedJava && Base.getNativeBits() == 32)) {
             return false;
           }
           // export the 64-bit version
           folder = new File(sketch.getFolder(), "application." + platformName + "64");
-          if (!exportApplication(folder, platform, 64)) {
+          if (!exportApplication(folder, platform, 64, embedJava && Base.getNativeBits() == 64)) {
             return false;
           }
         } else { // just make a single one for this platform
           folder = new File(sketch.getFolder(), "application." + platformName);
-          if (!exportApplication(folder, platform, 0)) {
+          if (!exportApplication(folder, platform, 0, embedJava)) {
             return false;
           }
         }
       }
     }
-    */
-    
+
+    /*
     File folder = null;
     String platformName = Base.getPlatformName();
     boolean embedJava = Preferences.getBoolean("export.application.embed_java");
@@ -1158,6 +1164,7 @@ public class JavaBuild {
         return false;
       }
     }
+    */
     return true;  // all good
   }
 
@@ -1200,6 +1207,7 @@ public class JavaBuild {
     /// also where the jar files will be placed
     File dotAppFolder = null;
     String jvmRuntime = "";
+    String jdkPath = null;
     if (exportPlatform == PConstants.MACOSX) {
       dotAppFolder = new File(destFolder, sketch.getName() + ".app");
 
@@ -1209,6 +1217,7 @@ public class JavaBuild {
         File jdkFolder = new File(Base.getJavaHome(), "../../..");
         String jdkFolderName = jdkFolder.getCanonicalFile().getName();
         jvmRuntime = "<key>JVMRuntime</key>\n    <string>" + jdkFolderName + "</string>";
+        jdkPath = new File(dotAppFolder, "Contents/PlugIns/" + jdkFolderName + ".jdk").getAbsolutePath();
       }
 
       File contentsFolder = new File(dotAppFolder, "Contents");
@@ -1488,6 +1497,15 @@ public class JavaBuild {
       }
       pw.flush();
       pw.close();
+
+      // attempt to code sign if the Xcode tools appear to be installed
+      if (Base.isMacOS() && new File("/usr/bin/codesign_allocate").exists()) {
+        if (embedJava) {
+          ProcessHelper.ffs("codesign", "--force", "--sign", "-", jdkPath); 
+        }
+        String appPath = dotAppFolder.getAbsolutePath();
+        ProcessHelper.ffs("codesign", "--force", "--sign", "-", appPath); 
+      }
 
     } else if (exportPlatform == PConstants.WINDOWS) {
       File buildFile = new File(destFolder, "launch4j-build.xml");

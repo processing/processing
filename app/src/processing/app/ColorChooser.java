@@ -39,7 +39,9 @@ import javax.swing.text.*;
 
 
 /**
- * Generic color selector frame, pulled from the Tool object. 
+ * Generic color selector frame, pulled from the Tool object. API not really
+ * worked out here (what should the constructor be? how flexible?) So use with 
+ * caution and be ready for it to break in future releases.
  */
 public class ColorChooser {  //extends JFrame implements DocumentListener {
 
@@ -60,14 +62,13 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
   JDialog window;
 
 
-  public String getMenuTitle() {
-    return "Color Selector";
-  }
+//  public String getMenuTitle() {
+//    return "Color Selector";
+//  }
 
 
-  public ColorChooser(Frame owner, boolean modal, 
-                       String buttonName, ActionListener buttonListener) {
-    //window = new jdi
+  public ColorChooser(Frame owner, boolean modal, Color initialColor,
+                      String buttonName, ActionListener buttonListener) {
     //super("Color Selector");
     window = new JDialog(owner, "Color Selector", modal);
     window.getContentPane().setLayout(new BorderLayout());
@@ -93,7 +94,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     box.add(sliderBox);
     box.add(Box.createHorizontalStrut(10));
 
-    box.add(createColorFields());
+    box.add(createColorFields(buttonName, buttonListener));
 //    System.out.println("1: " + hexField.getInsets());
 
     box.add(Box.createHorizontalStrut(10));
@@ -117,12 +118,12 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     window.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     window.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
-          hideSelector();
+          hide();
         }
       });
     Toolkit.registerWindowCloseKeys(window.getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent actionEvent) {
-          hideSelector();
+          hide();
         }
       });
 
@@ -137,6 +138,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     blueField.getDocument().addDocumentListener(colorListener);
     hexField.getDocument().addDocumentListener(colorListener);
     
+    setColor(initialColor);
 //    System.out.println("4: " + hexField.getInsets());
   }
 
@@ -144,19 +146,24 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
   //hexField.setText("#FFFFFF");
 
   
-  public void showSelector() {
+  public void show() {
     window.setVisible(true);
     window.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
   }
   
   
-  public void hideSelector() {
+  public void hide() {
     window.setVisible(false);
   }
   
   
   public Color getColor() {
     return new Color(red, green, blue);
+  }
+  
+  
+  public void setColor(Color color) {
+    updateRGB(color.getRGB());
   }
   
   
@@ -313,7 +320,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
   }
 
 
-  protected Container createColorFields() {
+  protected Container createColorFields(String buttonName, ActionListener buttonListener) {
     Box box = Box.createVerticalBox();
     box.setAlignmentY(0);
 
@@ -403,7 +410,8 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     row = Box.createHorizontalBox();
     row.add(createFixedLabel(""));
     // Windows needs extra space, OS X and Linux do not
-    final int hexCount = Base.isWindows() ? 7 : 5;
+    // Mac OS X needs 6 because #CCCCCC is quite wide
+    final int hexCount = Base.isWindows() ? 7 : 6;
     row.add(hexField = new NumberField(hexCount, true));
     row.add(Box.createHorizontalGlue());
     box.add(row);
@@ -421,19 +429,18 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 
     // 
     
-    /*
     row = Box.createHorizontalBox();
     if (Base.isMacOS()) {
       row.add(Box.createHorizontalStrut(11));
     } else {
       row.add(createFixedLabel(""));
     }
-    JButton button = new JButton("Select");
+    JButton button = new JButton(buttonName);
+    button.addActionListener(buttonListener);
     //System.out.println("button: " + button.getInsets());
     row.add(button);
     row.add(Box.createHorizontalGlue());
     box.add(row);
-    */
     
     //
     
@@ -533,8 +540,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 
     public void keyPressed() {
       if (key == ESC) {
-        //ColorSelector.this.setVisible(false);
-        hideSelector();
+        ColorChooser.this.hide();
         // don't quit out of processing
         // http://dev.processing.org/bugs/show_bug.cgi?id=1006
         key = 0;
@@ -604,8 +610,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 
     public void keyPressed() {
       if (key == ESC) {
-        //ColorSelector.this.setVisible(false);
-        hideSelector();
+        ColorChooser.this.hide();
         // don't quit out of processing
         // http://dev.processing.org/bugs/show_bug.cgi?id=1006
         key = 0;

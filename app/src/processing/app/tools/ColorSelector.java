@@ -23,6 +23,7 @@ package processing.app.tools;
 
 import processing.app.*;
 
+import java.awt.Color;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
@@ -52,7 +53,8 @@ public class ColorSelector implements Tool {
 
   public void init(Editor editor) {
     if (selector == null) {
-      selector = new ColorChooser(editor, false, "Copy", new ActionListener() {
+      selector = new ColorChooser(editor, false, Color.WHITE, 
+                                  "Copy", new ActionListener() {
         
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -65,6 +67,6 @@ public class ColorSelector implements Tool {
 
 
   public void run() {
-    selector.showSelector();
+    selector.show();
   }
 }

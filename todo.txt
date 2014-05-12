@@ -77,23 +77,29 @@ X make sure Windows export includes library DLLs
 X remove build/windows/export from repo
 o make sure launch4j export isn't printing to console unless trouble
 X   OS X is doing this, though Windows is pushing some stuff through
-_ exported apps reporting as "damaged" on OS X
-_   https://github.com/processing/processing/issues/2095
-_   implement a call to codesign, and a message box re: installing Xcode
-_ bring back multi-platform export?
-_   OS X applications can only be exported from OS X
-_   embed Java only works for the current platform
+X bring back multi-platform export?
+X   embed Java only works for the current platform
+o   OS X applications can only be exported from OS X
+X     actually it's just the embedding, which is a problem on any platform
+X add all sorts of language to the export dialog
+X make available the background colors for present mode, stop button color
+X   isolate color chooser into a simpler/smaller class outside tools
+X   then can also use from inside processing applications as well
+X   http://code.google.com/p/processing/issues/detail?id=30
+X   https://github.com/processing/processing/issues/69
+X exported apps reporting as "damaged" on OS X
+X   https://github.com/processing/processing/issues/2095
+X   implement a call to codesign, and a message box re: installing Xcode
 
 
+_ possible to open a sketch multiple times 
+_   by double-clicking one of its files instead of the main pde file
+_   https://github.com/processing/processing/issues/2506
 _ closing the color selector makes things freeze
 _   https://github.com/processing/processing/issues/2381
 
 
 medium
-_ make available the background colors for present mode, stop button color
-_   isolate color chooser into a simpler/smaller class outside tools
-_   then can also use from inside processing applications as well
-_   http://code.google.com/p/processing/issues/detail?id=30
 _ check on why 2x core.jar inside the Java folder
 _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 _ display "1" is not correct in 2.1.2
