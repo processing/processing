@@ -31,6 +31,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -108,9 +109,17 @@ public class ColorSelector implements Tool, DocumentListener {
     box.add(Box.createHorizontalStrut(10));
 
     box.add(createColorFields());
-    box.add(Box.createHorizontalStrut(10));
+//    System.out.println("1: " + hexField.getInsets());
 
+    box.add(Box.createHorizontalStrut(10));
+    
+//    System.out.println("2: " + hexField.getInsets());
+    
     frame.getContentPane().add(box, BorderLayout.CENTER);
+//    System.out.println(hexField);
+//    System.out.println("3: " + hexField.getInsets());
+//    colorPanel.setInsets(hexField.getInsets());
+
     frame.pack();
     frame.setResizable(false);
 
@@ -147,11 +156,15 @@ public class ColorSelector implements Tool, DocumentListener {
     hexField.getDocument().addDocumentListener(this);
 
     hexField.setText("#FFFFFF");
+//    System.out.println("4: " + hexField.getInsets());
   }
 
 
   public void run() {
     frame.setVisible(true);
+//    System.out.println(hexField);
+//    System.out.println(hexField.getInsets());
+//    colorPanel.setInsets(hexField.getInsets());
     // You've got to be f--ing kidding me.. why did the following line
     // get deprecated for the pile of s-- that follows it?
     //frame.setCursor(Cursor.CROSSHAIR_CURSOR);
@@ -216,11 +229,12 @@ public class ColorSelector implements Tool, DocumentListener {
       if (str.length() > 6) {
         str = str.substring(0, 6);
       }
-      updateRGB2(Integer.parseInt(str, 16));
+      updateRGB(Integer.parseInt(str, 16));
       updateHSB();
     }
     range.redraw();
     slider.redraw();
+    //colorPanel.setBackground(new Color(red, green, blue));
     colorPanel.repaint();
     updating = false;
   }
@@ -230,10 +244,9 @@ public class ColorSelector implements Tool, DocumentListener {
    * Set the RGB values based on the current HSB values.
    */
   protected void updateRGB() {
-    int rgb = Color.HSBtoRGB(hue / 359f,
+    updateRGB(Color.HSBtoRGB(hue / 359f,
                              saturation / 99f,
-                             brightness / 99f);
-    updateRGB2(rgb);
+                             brightness / 99f));
   }
 
 
@@ -242,7 +255,7 @@ public class ColorSelector implements Tool, DocumentListener {
    * Used by both updateRGB() to set the color from the HSB values,
    * and by updateHex(), to unpack the hex colors and assign them.
    */
-  protected void updateRGB2(int rgb) {
+  protected void updateRGB(int rgb) {
     red = (rgb >> 16) & 0xff;
     green = (rgb >> 8) & 0xff;
     blue = rgb & 0xff;
@@ -311,6 +324,19 @@ public class ColorSelector implements Tool, DocumentListener {
     Box box = Box.createVerticalBox();
     box.setAlignmentY(0);
 
+    final int GAP = Base.isWindows() ? 5 : 0;
+    final int BETWEEN = Base.isWindows() ? 8 : 6; //10;
+
+    Box row;
+
+    row = Box.createHorizontalBox();
+    if (Base.isMacOS()) {
+      row.add(Box.createHorizontalStrut(17));
+    } else {
+      row.add(createFixedLabel(""));
+    }
+    // Can't just set the bg color of the panel because it also tints the bevel
+    // (on OS X), which looks odd. So instead we override paintComponent().
     colorPanel = new JPanel() {
         public void paintComponent(Graphics g) {
           g.setColor(new Color(red, green, blue));
@@ -319,14 +345,18 @@ public class ColorSelector implements Tool, DocumentListener {
         }
       };
     colorPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    Dimension dim = new Dimension(60, 40);
+    Dimension dim = new Dimension(70, 25);
     colorPanel.setMinimumSize(dim);
-    //colorPanel.setMaximumSize(dim);
-    //colorPanel.setPreferredSize(dim);
-    box.add(colorPanel);
-    box.add(Box.createVerticalStrut(10));
+    colorPanel.setMaximumSize(dim);
+    colorPanel.setPreferredSize(dim);
+    row.add(colorPanel);
+    row.add(Box.createHorizontalGlue());
+    box.add(row);
+    box.add(Box.createVerticalStrut(BETWEEN));
+//    if (Base.isMacOS()) {  // need a little extra
+//      box.add(Box.createVerticalStrut(BETWEEN));
+//    }
 
-    Box row;
 
     row = Box.createHorizontalBox();
     row.add(createFixedLabel("H"));
@@ -334,7 +364,7 @@ public class ColorSelector implements Tool, DocumentListener {
     row.add(new JLabel(" \u00B0"));  // degree symbol
     row.add(Box.createHorizontalGlue());
     box.add(row);
-    box.add(Box.createVerticalStrut(5));
+    box.add(Box.createVerticalStrut(GAP));
 
     row = Box.createHorizontalBox();
     row.add(createFixedLabel("S"));
@@ -342,7 +372,7 @@ public class ColorSelector implements Tool, DocumentListener {
     row.add(new JLabel(" %"));
     row.add(Box.createHorizontalGlue());
     box.add(row);
-    box.add(Box.createVerticalStrut(5));
+    box.add(Box.createVerticalStrut(GAP));
 
     row = Box.createHorizontalBox();
     row.add(createFixedLabel("B"));
@@ -350,7 +380,7 @@ public class ColorSelector implements Tool, DocumentListener {
     row.add(new JLabel(" %"));
     row.add(Box.createHorizontalGlue());
     box.add(row);
-    box.add(Box.createVerticalStrut(10));
+    box.add(Box.createVerticalStrut(BETWEEN));
 
     //
 
@@ -359,31 +389,61 @@ public class ColorSelector implements Tool, DocumentListener {
     row.add(redField = new NumberField(4, false));
     row.add(Box.createHorizontalGlue());
     box.add(row);
-    box.add(Box.createVerticalStrut(5));
+    box.add(Box.createVerticalStrut(GAP));
 
     row = Box.createHorizontalBox();
     row.add(createFixedLabel("G"));
     row.add(greenField = new NumberField(4, false));
     row.add(Box.createHorizontalGlue());
     box.add(row);
-    box.add(Box.createVerticalStrut(5));
+    box.add(Box.createVerticalStrut(GAP));
 
     row = Box.createHorizontalBox();
     row.add(createFixedLabel("B"));
     row.add(blueField = new NumberField(4, false));
     row.add(Box.createHorizontalGlue());
     box.add(row);
-    box.add(Box.createVerticalStrut(10));
+    box.add(Box.createVerticalStrut(BETWEEN));
 
     //
 
     row = Box.createHorizontalBox();
     row.add(createFixedLabel(""));
-    row.add(hexField = new NumberField(5, true));
+    // Windows needs extra space, OS X and Linux do not
+    final int hexCount = Base.isWindows() ? 7 : 5;
+    row.add(hexField = new NumberField(hexCount, true));
     row.add(Box.createHorizontalGlue());
     box.add(row);
-    box.add(Box.createVerticalStrut(10));
+    box.add(Box.createVerticalStrut(GAP));
 
+    //
+    
+//    // Not great, because the insets make things weird anyway
+//    //Dimension dim = new Dimension(hexField.getPreferredSize()); 
+//    Dimension dim = new Dimension(70, 20);
+//    colorPanel.setMinimumSize(dim);
+//    colorPanel.setMaximumSize(dim);
+//    colorPanel.setPreferredSize(dim);
+////    colorPanel.setBorder(new EmptyBorder(hexField.getInsets()));
+
+    // 
+    
+    /*
+    row = Box.createHorizontalBox();
+    if (Base.isMacOS()) {
+      row.add(Box.createHorizontalStrut(11));
+    } else {
+      row.add(createFixedLabel(""));
+    }
+    JButton button = new JButton("Select");
+    //System.out.println("button: " + button.getInsets());
+    row.add(button);
+    row.add(Box.createHorizontalGlue());
+    box.add(row);
+    */
+    
+    //
+    
     box.add(Box.createVerticalGlue());
     return box;
   }
@@ -399,7 +459,7 @@ public class ColorSelector implements Tool, DocumentListener {
     if (labelH == 0) {
       labelH = label.getPreferredSize().height;
     }
-    Dimension dim = new Dimension(20, labelH);
+    Dimension dim = new Dimension(15, labelH);
     label.setPreferredSize(dim);
     label.setMinimumSize(dim);
     label.setMaximumSize(dim);
