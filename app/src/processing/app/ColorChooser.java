@@ -41,7 +41,7 @@ import javax.swing.text.*;
 /**
  * Generic color selector frame, pulled from the Tool object. 
  */
-public class ColorSelector {  //extends JFrame implements DocumentListener {
+public class ColorChooser {  //extends JFrame implements DocumentListener {
 
   int hue, saturation, brightness;  // range 360, 100, 100
   int red, green, blue;   // range 256, 256, 256
@@ -65,7 +65,7 @@ public class ColorSelector {  //extends JFrame implements DocumentListener {
   }
 
 
-  public ColorSelector(Frame owner, boolean modal, 
+  public ColorChooser(Frame owner, boolean modal, 
                        String buttonName, ActionListener buttonListener) {
     //window = new jdi
     //super("Color Selector");
