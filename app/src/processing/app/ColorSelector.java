@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2006-12 Ben Fry and Casey Reas
+  Copyright (c) 2006-14 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -21,7 +21,6 @@
 
 package processing.app;
 
-import processing.app.*;
 import processing.core.*;
 
 import java.awt.BorderLayout;
@@ -29,6 +28,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.event.*;
 
@@ -39,22 +39,9 @@ import javax.swing.text.*;
 
 
 /**
- * Color selector tool for the Tools menu.
- * <p/>
- * Using the keyboard shortcuts, you can copy/paste the values for the
- * colors and paste them into your program. We didn't do any sort of
- * auto-insert of colorMode() or fill() or stroke() code cuz we couldn't
- * decide on a good way to do this.. your contributions welcome).
+ * Generic color selector frame, pulled from the Tool object. 
  */
-public class ColorSelector implements Tool, DocumentListener {
-
-//  Editor editor;
-
-  /**
-   * Only create one instance, otherwise we'll have dozens of animation
-   * threads going if you open/close a lot of editor windows.
-   */
-  static JFrame frame;
+public class ColorSelector {  //extends JFrame implements DocumentListener {
 
   int hue, saturation, brightness;  // range 360, 100, 100
   int red, green, blue;   // range 256, 256, 256
@@ -68,6 +55,9 @@ public class ColorSelector implements Tool, DocumentListener {
   JTextField hexField;
 
   JPanel colorPanel;
+  DocumentListener colorListener;
+  
+  JDialog window;
 
 
   public String getMenuTitle() {
@@ -75,17 +65,12 @@ public class ColorSelector implements Tool, DocumentListener {
   }
 
 
-  public void init(Editor editor) {
-//    this.editor = editor;
-    if (frame == null) {
-      createFrame();
-    }
-  }
-
-
-  void createFrame() {
-    frame = new JFrame("Color Selector");
-    frame.getContentPane().setLayout(new BorderLayout());
+  public ColorSelector(Frame owner, boolean modal, 
+                       String buttonName, ActionListener buttonListener) {
+    //window = new jdi
+    //super("Color Selector");
+    window = new JDialog(owner, "Color Selector", modal);
+    window.getContentPane().setLayout(new BorderLayout());
 
     Box box = Box.createHorizontalBox();
     box.setBorder(new EmptyBorder(12, 12, 12, 12));
@@ -115,70 +100,80 @@ public class ColorSelector implements Tool, DocumentListener {
     
 //    System.out.println("2: " + hexField.getInsets());
     
-    frame.getContentPane().add(box, BorderLayout.CENTER);
+    window.getContentPane().add(box, BorderLayout.CENTER);
 //    System.out.println(hexField);
 //    System.out.println("3: " + hexField.getInsets());
 //    colorPanel.setInsets(hexField.getInsets());
 
-    frame.pack();
-    frame.setResizable(false);
+    window.pack();
+    window.setResizable(false);
 
-    // these don't help either.. they fix the component size but
-    // leave a gap where the component is located
-    //range.setSize(256, 256);
-    //slider.setSize(256, 20);
+//    Dimension size = getSize();
+//    Dimension screen = Toolkit.getScreenSize();
+//    setLocation((screen.width - size.width) / 2,
+//                (screen.height - size.height) / 2);
+    window.setLocationRelativeTo(null);
 
-    Dimension size = frame.getSize();
-    Dimension screen = Toolkit.getScreenSize();
-    frame.setLocation((screen.width - size.width) / 2,
-                      (screen.height - size.height) / 2);
-
-    frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-    frame.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          frame.setVisible(false);
+    window.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    window.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+          hideSelector();
         }
       });
-    Toolkit.registerWindowCloseKeys(frame.getRootPane(), new ActionListener() {
+    Toolkit.registerWindowCloseKeys(window.getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent actionEvent) {
-          frame.setVisible(false);
+          hideSelector();
         }
       });
 
-    Toolkit.setIcon(frame);
+    Toolkit.setIcon(window);
 
-    hueField.getDocument().addDocumentListener(this);
-    saturationField.getDocument().addDocumentListener(this);
-    brightnessField.getDocument().addDocumentListener(this);
-    redField.getDocument().addDocumentListener(this);
-    greenField.getDocument().addDocumentListener(this);
-    blueField.getDocument().addDocumentListener(this);
-    hexField.getDocument().addDocumentListener(this);
-
-    hexField.setText("#FFFFFF");
+    colorListener = new ColorListener();
+    hueField.getDocument().addDocumentListener(colorListener);
+    saturationField.getDocument().addDocumentListener(colorListener);
+    brightnessField.getDocument().addDocumentListener(colorListener);
+    redField.getDocument().addDocumentListener(colorListener);
+    greenField.getDocument().addDocumentListener(colorListener);
+    blueField.getDocument().addDocumentListener(colorListener);
+    hexField.getDocument().addDocumentListener(colorListener);
+    
 //    System.out.println("4: " + hexField.getInsets());
   }
 
+  
+  //hexField.setText("#FFFFFF");
 
-  public void run() {
-    frame.setVisible(true);
-//    System.out.println(hexField);
-//    System.out.println(hexField.getInsets());
-//    colorPanel.setInsets(hexField.getInsets());
-    // You've got to be f--ing kidding me.. why did the following line
-    // get deprecated for the pile of s-- that follows it?
-    //frame.setCursor(Cursor.CROSSHAIR_CURSOR);
-    frame.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+  
+  public void showSelector() {
+    window.setVisible(true);
+    window.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+  }
+  
+  
+  public void hideSelector() {
+    window.setVisible(false);
+  }
+  
+  
+  public Color getColor() {
+    return new Color(red, green, blue);
+  }
+  
+  
+  public String getHexColor() {
+    return "#" + PApplet.hex(red, 2) + PApplet.hex(green, 2) + PApplet.hex(blue, 2);
   }
 
 
-  public void changedUpdate(DocumentEvent e) {
-    //System.out.println("changed");
-  }
+  public class ColorListener implements DocumentListener {
+    
+    public void changedUpdate(DocumentEvent e) {
+      //System.out.println("changed");
+    }
 
-  public void removeUpdate(DocumentEvent e) {
-    //System.out.println("remove");
-  }
+    public void removeUpdate(DocumentEvent e) {
+      //System.out.println("remove");
+    }
 
 
   boolean updating;
@@ -238,6 +233,7 @@ public class ColorSelector implements Tool, DocumentListener {
     colorPanel.repaint();
     updating = false;
   }
+}
 
 
   /**
@@ -284,10 +280,7 @@ public class ColorSelector implements Tool, DocumentListener {
 
 
   protected void updateHex() {
-    hexField.setText("#" +
-                     PApplet.hex(red, 2) +
-                     PApplet.hex(green, 2) +
-                     PApplet.hex(blue, 2));
+    hexField.setText(getHexColor());
   }
 
 
@@ -540,7 +533,8 @@ public class ColorSelector implements Tool, DocumentListener {
 
     public void keyPressed() {
       if (key == ESC) {
-        ColorSelector.frame.setVisible(false);
+        //ColorSelector.this.setVisible(false);
+        hideSelector();
         // don't quit out of processing
         // http://dev.processing.org/bugs/show_bug.cgi?id=1006
         key = 0;
@@ -610,7 +604,8 @@ public class ColorSelector implements Tool, DocumentListener {
 
     public void keyPressed() {
       if (key == ESC) {
-        ColorSelector.frame.setVisible(false);
+        //ColorSelector.this.setVisible(false);
+        hideSelector();
         // don't quit out of processing
         // http://dev.processing.org/bugs/show_bug.cgi?id=1006
         key = 0;
