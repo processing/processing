@@ -33,7 +33,6 @@ import org.apache.tools.ant.ProjectHelper;
 
 import processing.app.*;
 import processing.app.exec.ProcessHelper;
-import processing.app.exec.ProcessResult;
 import processing.core.*;
 import processing.data.XML;
 import processing.mode.java.preproc.*;
