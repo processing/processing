@@ -57,6 +57,10 @@ o maybe user prefs should only cover things that've changed?
 o   how to balance colors/etc being stored elsewhere
 o   ton of work to maintain this...
 X   yeah, no
+X remove video for macosx32 from the repo permanently
+o fix for various net issues
+o   https://github.com/processing/processing/pull/2475
+X   incorporates other unrelated code, had to close
 
 earlier (2.1.2)
 X added get/set methods for status lines (Manindra)
@@ -92,14 +96,12 @@ X   https://github.com/processing/processing/issues/2095
 X   implement a call to codesign, and a message box re: installing Xcode
 
 
+medium
 _ possible to open a sketch multiple times 
 _   by double-clicking one of its files instead of the main pde file
 _   https://github.com/processing/processing/issues/2506
-_ closing the color selector makes things freeze
+_ closing the color selector makes things freeze (only Linux and Windows?)
 _   https://github.com/processing/processing/issues/2381
-
-
-medium
 _ check on why 2x core.jar inside the Java folder
 _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 _ display "1" is not correct in 2.1.2
@@ -116,7 +118,7 @@ _ add font fixes to the rest of the API
 _   https://github.com/processing/processing/commit/eaff673d173b2d27f276cf5c59e3abf6c0fab86b
 _   g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
 _                       RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-_ dataPath() not working when app is not run from app dir
+_ dataPath() not working when app is not run from app dir on Linux
 _   https://github.com/processing/processing/issues/2195
 _ should default to the local Java on Windows and Linux
 _   have export apps default to the local JRE
@@ -153,10 +155,6 @@ _   https://github.com/processing/processing/issues/2411
 
 
 pulls
-_ if/else formatting is broken
-_   https://github.com/processing/processing/pull/2477
-_ fix for various net issues
-_   https://github.com/processing/processing/pull/2475
 _ may need a progress bar for "save as"
 _   or just the file copy function in general
 _   since it may take a long time (i.e. 1000s of screen grabs)
@@ -166,7 +164,6 @@ _   https://github.com/processing/processing/pull/2370
 
 
 post 2.1 cleaning
-_ remove video for macosx32 from the repo permanently
 _ remove the prefs for 32/64-bit from Preferences
 _ remove the extra OS X cruft inside Runner.java
 _ exclude 'fonts' folder from build (since it's going into the JRE)
