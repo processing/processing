@@ -46,9 +46,9 @@ import processing.mode.java.JavaMode;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 226;
+  static private final int REVISION = 227;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0226"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0227"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 //  static private boolean RELEASE = false;
 
@@ -128,7 +128,7 @@ public class Base {
 
   private Recent recent;
 
-  // Used by handleOpen(), this saves the chooser to remember the directory. 
+  // Used by handleOpen(), this saves the chooser to remember the directory.
   // Doesn't appear to be necessary with the AWT native file dialog.
   // https://github.com/processing/processing/pull/2366
   private JFileChooser openChooser;
@@ -837,11 +837,11 @@ public class Base {
     }
 
     final String prompt = "Open a Processing sketch...";
-    
+
     // don't use native dialogs on Linux (or anyone else w/ override)
     if (Preferences.getBoolean("chooser.files.native")) {  //$NON-NLS-1$
       // use the front-most window frame for placing file dialog
-      FileDialog openDialog = 
+      FileDialog openDialog =
         new FileDialog(activeEditor, prompt, FileDialog.LOAD);
 
       // Only show .pde files as eligible bachelors
