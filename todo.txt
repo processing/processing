@@ -8,14 +8,6 @@ X   https://github.com/processing/processing/issues/2456
 X crash in the 'recent' menu on startup
 X   https://github.com/processing/processing/issues/2463
 X   sketchbook location is set to an actual sketch (huh?)
-X exported apps on Windows 64 not working?
-X   https://github.com/processing/processing/issues/2468
-X   just needed to add the local path for Java
-X when exporting with local Java embedded, use that version
-X   https://github.com/processing/processing/issues/2349
-X   (we can do this now since we're actually doing the embedding)
-o export application folder location (for Manindra)
-X   https://github.com/processing/processing/issues/2399
 X sketch sometimes simply does not launch
 X   https://github.com/processing/processing/issues/2402
 X   https://github.com/processing/processing/pull/2455
@@ -70,6 +62,14 @@ X allow non-pde file extensions (JDF)
 X   https://github.com/processing/processing/issues/2420
 
 export
+X exported apps on Windows 64 not working?
+X   https://github.com/processing/processing/issues/2468
+X   just needed to add the local path for Java
+X when exporting with local Java embedded, use that version
+X   https://github.com/processing/processing/issues/2349
+X   (we can do this now since we're actually doing the embedding)
+o export application folder location (for Manindra)
+X   https://github.com/processing/processing/issues/2399
 X incorporate new launch4j 3.4
 X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
 X change Windows export to use launch4j instead of the launcher.cpp file
@@ -94,6 +94,14 @@ X   https://github.com/processing/processing/issues/69
 X exported apps reporting as "damaged" on OS X
 X   https://github.com/processing/processing/issues/2095
 X   implement a call to codesign, and a message box re: installing Xcode
+X use launch4j for export and p5 app itself
+X   perhaps even calling it through an ant task
+X   windows exported exe problems (pcho)
+o updated launch4j 3.1 beta
+o   http://sourceforge.net/projects/launch4j/files/launch4j-3/
+X exe instead of bat to make exported apps run in 64-bit
+X   http://code.google.com/p/processing/issues/detail?id=885
+X   https://github.com/processing/processing/issues/923
 
 
 medium
@@ -526,9 +534,6 @@ _   http://code.google.com/p/processing/issues/detail?id=746
 
 PDE / Export
 
-_ use launch4j for export and p5 app itself
-_   perhaps even calling it through an ant task
-_   windows exported exe problems (pcho)
 _ if the lib folder goes missing from export, give an error
 _   also any .jar files that are missing, give an error
 _   showing more debug messages (command line?)
@@ -879,13 +884,8 @@ DIST / Windows
 
 _ processing-java output as UTF-8 makes Windows unhappy
 _   https://github.com/processing/processing/issues/1633
-_ updated launch4j 3.1 beta
-_   http://sourceforge.net/projects/launch4j/files/launch4j-3/
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
 _   how can we provide an error message here?
-_ exe instead of bat to make exported apps run in 64-bit
-_   http://code.google.com/p/processing/issues/detail?id=885
-_   might not be necessary with new launch4j!
 _ how to handle double-clicked files on windows?
 _   big deal for psk and others
 _   this may already work with SingleInstance stuff

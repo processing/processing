@@ -111,6 +111,7 @@ _   https://github.com/processing/processing/issues/2357
 
 cantfix
 _ crash on startup when "Mirror Displays" selected
+_   suspect that this is a specific chipset since Oracle didn't reproduce
 _   https://github.com/processing/processing/issues/2186
 
 table
