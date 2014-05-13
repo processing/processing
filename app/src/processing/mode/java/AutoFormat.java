@@ -52,7 +52,7 @@ public class AutoFormat implements Formatter {
   private boolean EOF;
   private boolean a_flg, if_flg, s_flag;
   
-  /* Number of ? entered without exiting at : of a?b:c structures. */
+  /** Number of ? entered without exiting at : of a?b:c structures. */
   private int questClnLvl;
   private int pos;
 //  private int lineNumber;
@@ -74,6 +74,10 @@ public class AutoFormat implements Formatter {
   private char cc;
   private int tabs;
   private char c;
+  
+  /**
+   * The last non-space seen by nextChar()
+   */
   private char lastNonWhitespace = 0;
 
   private final Stack<Boolean> castFlags = new Stack<Boolean>();
@@ -81,7 +85,6 @@ public class AutoFormat implements Formatter {
 
   private void handleMultiLineComment() {
     final boolean saved_s_flag = s_flag;
-
     char ch;
     buf.append(ch = nextChar()); // extra char
     while (true) {
@@ -119,7 +122,7 @@ public class AutoFormat implements Formatter {
 
   /**
    * Transfers buf to result until a character is reached that
-   * is neither \, \n, or in a string. \n is not writted, but
+   * is neither \, \n, or in a string. \n is not written, but
    * writeIndentedLine is called on finding it.
    * @return The first character not listed above.
    */
@@ -127,13 +130,9 @@ public class AutoFormat implements Formatter {
     char ch1, ch2;
     while (true) {
       buf.append(ch1 = nextChar());
-      switch (ch1) {
-      case '\\':
+      if (ch1 == '\\') {
         buf.append(nextChar());
-        break;
-      
-      case '\'':
-      case '"':
+      } else if (ch1 == '\'' || ch1 == '\"') {
         buf.append(ch2 = nextChar());
         while (!EOF && ch2 != ch1) {
           if (ch2 == '\\') {
@@ -142,14 +141,10 @@ public class AutoFormat implements Formatter {
           }
           buf.append(ch2 = nextChar());
         }
-        break;
-      
-      case '\n':
+      } else if (ch1 == '\n') {
         writeIndentedLine();
         a_flg = true;
-        break;
-
-      default:
+      } else {
         return ch1;
       }
     }
@@ -159,13 +154,13 @@ public class AutoFormat implements Formatter {
   private void writeIndentedLine() {
     if (buf.length() == 0) {
       if (s_flag) {
-        s_flag = a_flg = false;
+        s_flag = a_flg = e_flg = false;
       }
       return;
     }
     if (s_flag) {
-      final boolean shouldIndent = (tabs > 0) && (buf.charAt(0) != '{')
-          && a_flg;
+      final boolean shouldIndent = 
+          (tabs > 0) && (buf.charAt(0) != '{') && a_flg;
       if (shouldIndent) {
         tabs++;
       }
@@ -176,8 +171,27 @@ public class AutoFormat implements Formatter {
       }
       a_flg = false;
     }
+    if (e_flg) {
+      if (lastNonSpaceChar() == '}') {
+        trimRight(result);
+        result.append(" ");
+      }
+      e_flg = false;
+    }
     result.append(buf);
     buf.setLength(0);
+  }
+  
+  /**
+   * @return the last character in <tt>result</tt> not ' ' or '\n'.
+   */
+  private char lastNonSpaceChar() {
+    for (int i=result.length()-1; i >= 0; i--) {
+      char cAtI = result.charAt(i);
+      if (cAtI == ' ' || cAtI == '\n') continue;
+      else return cAtI;
+    }
+    return 0;
   }
 
 
@@ -213,13 +227,9 @@ public class AutoFormat implements Formatter {
   }
 
 
-
-
   private void printIndentation() {
-    if (tabs < 0) {
+    if (tabs <= 0) {
       tabs = 0;
-    }
-    if (tabs == 0) {
       return;
     }
     final int spaces = tabs * indentValue;
@@ -385,16 +395,12 @@ public class AutoFormat implements Formatter {
 
       case ' ':
       case '\t':
-        if (lookup("else")) {
+        e_flg = lookup("else");
+        if (e_flg) {
           gotelse();
           if ((!s_flag) || buf.length() > 0) {
             buf.append(c);
           }
-//          // issue https://github.com/processing/processing/issues/364
-//          s_flag = false;
-//          trimRight(result);
-//          result.append(" ");
-
           writeIndentedLine();
           s_flag = false;
           break;
@@ -432,7 +438,8 @@ public class AutoFormat implements Formatter {
         break;
 
       case '{':
-        if (lookup("else")) {
+        e_flg = lookup("else");
+        if (e_flg) {
           gotelse();
         }
         if (s_if_lev.length == c_level) {
