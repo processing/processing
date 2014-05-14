@@ -2773,10 +2773,14 @@ public class PApplet extends Applet
     // also prevents mouseExited() on the mac from hosing the mouse
     // position, because x/y are bizarre values on the exit event.
     // see also the id check below.. both of these go together.
-    // Not necessary to set mouseX/Y on PRESS or RELEASE events because the
-    // actual position will have been set by a MOVE or DRAG event.
-    if (event.getAction() == MouseEvent.DRAG ||
-        event.getAction() == MouseEvent.MOVE) {
+    // Not necessary to set mouseX/Y on RELEASE events because the
+    // actual position will have been set by a PRESS or DRAG event.
+    // However, PRESS events might come without a preceeding move,
+    // if the sketch window gains focus on that PRESS.
+    final int action = event.getAction();
+    if (action == MouseEvent.DRAG ||
+        action == MouseEvent.MOVE ||
+        action == MouseEvent.PRESS) {
       pmouseX = emouseX;
       pmouseY = emouseY;
       mouseX = event.getX();
@@ -2810,7 +2814,7 @@ public class PApplet extends Applet
     // Do this up here in case a registered method relies on the
     // boolean for mousePressed.
 
-    switch (event.getAction()) {
+    switch (action) {
     case MouseEvent.PRESS:
       mousePressed = true;
       break;
@@ -2821,7 +2825,7 @@ public class PApplet extends Applet
 
     handleMethods("mouseEvent", new Object[] { event });
 
-    switch (event.getAction()) {
+    switch (action) {
     case MouseEvent.PRESS:
 //      mousePressed = true;
       mousePressed(event);
@@ -2850,8 +2854,8 @@ public class PApplet extends Applet
       break;
     }
 
-    if ((event.getAction() == MouseEvent.DRAG) ||
-        (event.getAction() == MouseEvent.MOVE)) {
+    if ((action == MouseEvent.DRAG) ||
+        (action == MouseEvent.MOVE)) {
       emouseX = mouseX;
       emouseY = mouseY;
     }
