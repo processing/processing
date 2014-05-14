@@ -1,4 +1,7 @@
 0227 pde
+X use mouseReleased() instead of mousePressed() in color selector
+X   otherwise it registers the release as a click in the color window
+X   https://github.com/processing/processing/issues/2514
 
 
 medium

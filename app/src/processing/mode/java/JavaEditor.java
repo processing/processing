@@ -616,7 +616,7 @@ public class JavaEditor extends Editor {
       setMaximumSize(new Dimension(30, 20));
       
       addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
+        public void mouseReleased(MouseEvent e) {
           Color color = Preferences.getColor(prefName);
           chooser = new ColorChooser(JavaEditor.this, true, color, "Select", ColorPreference.this);
           chooser.show();
