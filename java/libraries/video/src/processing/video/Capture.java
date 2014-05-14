@@ -91,8 +91,7 @@ public class Capture extends PImage implements PConstants {
   protected String sourceName;
   protected Element sourceElement;
 
-  protected Method captureEventMethod;
-  protected Object eventHandler;
+  private CaptureHandler captureHandler;
 
   protected boolean available;
   protected boolean pipelineReady;
@@ -966,22 +965,23 @@ public class Capture extends PImage implements PConstants {
 
   /**
    * Uses a generic object as handler of the capture. This object should have a
-   * movieEvent method that receives a GSMovie argument. This method will
+   * captureEvent method that receives a Capture argument. This method will
    * be called upon a new frame read event.
    *
    */
   protected void setEventHandlerObject(Object obj) {
-    eventHandler = obj;
-
     try {
-      captureEventMethod = parent.getClass().getMethod("captureEvent",
+      final Method captureEvent = obj.getClass().getMethod("captureEvent",
           new Class[] { Capture.class });
+      captureHandler = new ReflectionCaptureHandler(obj, captureEvent);
     } catch (Exception e) {
       // no such method, or an error.. which is fine, just ignore
     }
   }
 
-
+  public void setCaptureHandler(final CaptureHandler captureHandler) {
+    this.captureHandler = captureHandler;
+  }
   ////////////////////////////////////////////////////////////
 
   // Stream event handling.
@@ -1009,16 +1009,9 @@ public class Capture extends PImage implements PConstants {
       return;
     }
 
-    // Creates a movieEvent.
-    if (captureEventMethod != null) {
-      try {
-        captureEventMethod.invoke(eventHandler, new Object[] { this });
-      } catch (Exception e) {
-        System.err.println(
-          "error, disabling captureEvent() for capture object");
-        e.printStackTrace();
-        captureEventMethod = null;
-      }
+    // Creates a captureEvent.
+    if (captureHandler != null) {
+      captureHandler.handleCapture(this);
     }
   }
 
@@ -1035,16 +1028,9 @@ public class Capture extends PImage implements PConstants {
     }    
     natBuffer = buffer;
 
-    // Creates a movieEvent.
-    if (captureEventMethod != null) {
-      try {
-        captureEventMethod.invoke(eventHandler, new Object[] { this });
-      } catch (Exception e) {
-        System.err.println(
-          "error, disabling captureEvent() for capture object");
-        e.printStackTrace();
-        captureEventMethod = null;
-      }
+    // Creates a captureEvent.
+    if (captureHandler != null) {
+      captureHandler.handleCapture(this);
     }
   }
 
