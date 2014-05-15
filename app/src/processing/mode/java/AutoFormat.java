@@ -50,9 +50,9 @@ public class AutoFormat implements Formatter {
 
   private int indentValue;
   private boolean EOF;
-  private boolean a_flg, if_flg, s_flag;
+  private boolean a_flg, if_flg, s_flag, elseFlag;
   
-  /* Number of ? entered without exiting at : of a?b:c structures. */
+  /** Number of ? entered without exiting at : of a?b:c structures. */
   private int questClnLvl;
   private int pos;
 //  private int lineNumber;
@@ -127,13 +127,9 @@ public class AutoFormat implements Formatter {
     char ch1, ch2;
     while (true) {
       buf.append(ch1 = nextChar());
-      switch (ch1) {
-      case '\\':
+      if (ch1 == '\\') {
         buf.append(nextChar());
-        break;
-      
-      case '\'':
-      case '"':
+      } else if (ch1 == '\'' || ch1 == '\"') {
         buf.append(ch2 = nextChar());
         while (!EOF && ch2 != ch1) {
           if (ch2 == '\\') {
@@ -142,14 +138,10 @@ public class AutoFormat implements Formatter {
           }
           buf.append(ch2 = nextChar());
         }
-        break;
-      
-      case '\n':
+      } else if (ch1 == '\n') {
         writeIndentedLine();
         a_flg = true;
-        break;
-
-      default:
+      } else {
         return ch1;
       }
     }
@@ -159,7 +151,7 @@ public class AutoFormat implements Formatter {
   private void writeIndentedLine() {
     if (buf.length() == 0) {
       if (s_flag) {
-        s_flag = a_flg = false;
+        s_flag = a_flg = elseFlag = false;
       }
       return;
     }
@@ -176,8 +168,23 @@ public class AutoFormat implements Formatter {
       }
       a_flg = false;
     }
+    if (elseFlag) {
+      if (lastNonSpaceChar() == '}') {
+        trimRight(result);
+        result.append(' ');
+      }
+      elseFlag = false;
+    }
     result.append(buf);
     buf.setLength(0);
+  }
+
+  private char lastNonSpaceChar() {
+    for (int i = result.length() - 1; i >= 0; i--) {
+      char c_i = result.charAt(i);
+      if (c_i != ' ' && c_i != '\n') return c_i;
+    }
+    return 0;
   }
 
 
@@ -385,15 +392,12 @@ public class AutoFormat implements Formatter {
 
       case ' ':
       case '\t':
-        if (lookup("else")) {
+        elseFlag = lookup("else");
+        if (elseFlag) {
           gotelse();
           if ((!s_flag) || buf.length() > 0) {
             buf.append(c);
           }
-//          // issue https://github.com/processing/processing/issues/364
-//          s_flag = false;
-//          trimRight(result);
-//          result.append(" ");
 
           writeIndentedLine();
           s_flag = false;
@@ -409,7 +413,7 @@ public class AutoFormat implements Formatter {
         if (EOF) {
           break;
         }
-        boolean elseFlag = lookup("else");
+        elseFlag = lookup("else");
         if (elseFlag)  {
           gotelse();
         }
@@ -432,9 +436,9 @@ public class AutoFormat implements Formatter {
         break;
 
       case '{':
-        if (lookup("else")) {
-          gotelse();
-        }
+        elseFlag = lookup("else");
+        if (elseFlag) gotelse();
+
         if (s_if_lev.length == c_level) {
           s_if_lev = PApplet.expand(s_if_lev);
           s_if_flg = PApplet.expand(s_if_flg);
