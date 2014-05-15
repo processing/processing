@@ -38,56 +38,61 @@ import processing.core.PApplet;
  * <p/>
  * After some further digging, this code in fact appears to be a modified
  * version of Jason Pell's GPLed "Java Beautifier" class found
- * <a href="http://www.geocities.com/jasonpell/programs.html">here</a>.
- * Which is itself based on code from Van Di-Han Ho from
- * <a href="http://www.geocities.com/~starkville/vancbj_idx.html">here</a>.
+ * <a href="http://web.archive.org/web/20091018220353/http://geocities.com/jasonpell/programs.html">here</a>,
+ * which is itself based on code from Van Di-Han Ho from
+ * <a href="http://web.archive.org/web/20091027043013/http://www.geocities.com/~starkville/vancbj_idx.html">here</a>.
  * [Ben Fry, August 2009]
  */
 public class AutoFormat implements Formatter {
   private char[] chars;
   private final StringBuilder buf = new StringBuilder();
-
   private final StringBuilder result = new StringBuilder();
 
   private int indentValue;
   private boolean EOF;
-  private boolean a_flg, e_flg, if_flg, s_flag, q_flg;
-  private boolean s_if_flg[];
+  private boolean a_flg, if_flg, s_flag;
+  
+  /* Number of ? entered without exiting at : of a?b:c structures. */
+  private int questClnLvl;
   private int pos;
 //  private int lineNumber;
-  private int s_level[];
   private int c_level;
-  private int sp_flg[][];
-  private int s_ind[][];
-  private int s_if_lev[];
-  private int if_lev, level;
-  private int ind[];
-  private int paren;
-  private int p_flg[];
+  private int[][] sp_flg;
+  private int[][] s_ind;
+  private int if_lev;
+
+  /** Number of curly brackets entered and not exited. */
+  private int level;
+
+  /** Number of paraentheses entered and not exited. */
+  private int parenth_lvl;
+  private int[] ind;
+  private int[] p_flg;
   private char l_char;
-  private int ct;
-  private int s_tabs[][];
+  private int[][] s_tabs;
   private boolean jdoc_flag;
   private char cc;
   private int tabs;
   private char c;
+  private char lastNonWhitespace = 0;
 
   private final Stack<Boolean> castFlags = new Stack<Boolean>();
 
 
-  private void comment() {
-    final boolean save_s_flg = s_flag;
+  private void handleMultiLineComment() {
+    final boolean saved_s_flag = s_flag;
 
-    buf.append(c = next()); // extra char
+    char ch;
+    buf.append(ch = nextChar()); // extra char
     while (true) {
-      buf.append(c = next());
-      while ((c != '/')) {
-        if (c == '\n') {
-//          lineNumber++;
+      buf.append(ch = nextChar());
+      while (ch != '/') {
+        if (ch == '\n') {
+//        lineNumber++;
           writeIndentedComment();
           s_flag = true;
         }
-        buf.append(c = next());
+        buf.append(ch = nextChar());
       }
       if (buf.length() >= 2 && buf.charAt(buf.length() - 2) == '*') {
         jdoc_flag = false;
@@ -96,36 +101,57 @@ public class AutoFormat implements Formatter {
     }
 
     writeIndentedComment();
-    s_flag = save_s_flg;
+    s_flag = saved_s_flag;
     jdoc_flag = false;
     return;
   }
 
+  private void handleSingleLineComment() {
+    char ch = nextChar();
+    while (ch != '\n') {
+      buf.append(ch);
+      ch = nextChar();
+    }
+//  lineNumber++;
+    writeIndentedLine();
+    s_flag = true;
+  }
 
+  /**
+   * Transfers buf to result until a character is reached that
+   * is neither \, \n, or in a string. \n is not writted, but
+   * writeIndentedLine is called on finding it.
+   * @return The first character not listed above.
+   */
   private char get_string() {
-    char ch;
+    char ch1, ch2;
     while (true) {
-      buf.append(ch = next());
-      if (ch == '\\') {
-        buf.append(next());
-        continue;
-      }
-      if (ch == '\'' || ch == '"') {
-        buf.append(cc = next());
-        while (!EOF && cc != ch) {
-          if (cc == '\\') {
-            buf.append(next());
+      buf.append(ch1 = nextChar());
+      switch (ch1) {
+      case '\\':
+        buf.append(nextChar());
+        break;
+      
+      case '\'':
+      case '"':
+        buf.append(ch2 = nextChar());
+        while (!EOF && ch2 != ch1) {
+          if (ch2 == '\\') {
+            // Next char is escaped, ignore.
+            buf.append(nextChar());
           }
-          buf.append(cc = next());
+          buf.append(ch2 = nextChar());
         }
-        continue;
-      }
-      if (ch == '\n') {
+        break;
+      
+      case '\n':
         writeIndentedLine();
         a_flg = true;
-        continue;
+        break;
+
+      default:
+        return ch1;
       }
-      return ch;
     }
   }
 
@@ -187,7 +213,7 @@ public class AutoFormat implements Formatter {
         jdoc_flag = true;
       }
       if (buf.charAt(i) == '/' && buf.charAt(i + 1) == '*') {
-        if (saved_s_flag && prev() != ';') {
+        if (saved_s_flag && getLastNonWhitespace() != ';') {
           result.append(buf.substring(i));
         } else {
           result.append(buf);
@@ -204,16 +230,6 @@ public class AutoFormat implements Formatter {
   }
 
 
-  private void handleSingleLineComment() {
-    c = next();
-    while (c != '\n') {
-      buf.append(c);
-      c = next();
-    }
-//    lineNumber++;
-    writeIndentedLine();
-    s_flag = true;
-  }
 
 
   private void printIndentation() {
@@ -225,7 +241,7 @@ public class AutoFormat implements Formatter {
     }
     final int spaces = tabs * indentValue;
     for (int k = 0; k < spaces; k++) {
-      result.append(" ");
+      result.append(' ');
     }
   }
 
@@ -238,10 +254,7 @@ public class AutoFormat implements Formatter {
   }
 
 
-  private char lastNonWhitespace = 0;
-
-
-  private int prev() {
+  private int getLastNonWhitespace() {
     return lastNonWhitespace;
   }
 
@@ -256,28 +269,28 @@ public class AutoFormat implements Formatter {
     if (pos == chars.length - 1) {
       EOF = true;
     } else {
-      pos--; // reset for next()
+      pos--; // reset for nextChar()
     }
   }
 
 
-  private char next() {
+  private char nextChar() {
     if (EOF) {
-      return 0;
+      return '\0';
     }
     pos++;
-    final char c;
+    char retVal;
     if (pos < chars.length) {
-      c = chars[pos];
-      if (!Character.isWhitespace(c))
-        lastNonWhitespace = c;
+      retVal = chars[pos];
+      if (!Character.isWhitespace(retVal))
+        lastNonWhitespace = retVal;
     } else {
-      c = 0;
+      retVal = '\0';
     }
-    if (pos == chars.length - 1) {
+    if (pos == chars.length-1) {
       EOF = true;
     }
-    return c;
+    return retVal;
   }
 
 
@@ -295,18 +308,18 @@ public class AutoFormat implements Formatter {
     final int savedTabs = tabs;
     char c = peek();
     while (!EOF && (c == '\t' || c == ' ')) {
-      buf.append(next());
+      buf.append(nextChar());
       c = peek();
     }
 
     if (c == '/') {
-      buf.append(next());
+      buf.append(nextChar());
       c = peek();
       if (c == '*') {
-        buf.append(next());
-        comment();
+        buf.append(nextChar());
+        handleMultiLineComment();
       } else if (c == '/') {
-        buf.append(next());
+        buf.append(nextChar());
         handleSingleLineComment();
         return true;
       }
@@ -315,7 +328,7 @@ public class AutoFormat implements Formatter {
     c = peek();
     if (c == '\n') {
       // eat it
-      next();
+      nextChar();
 //      lineNumber++;
       tabs = savedTabs;
       return true;
@@ -350,18 +363,19 @@ public class AutoFormat implements Formatter {
     result.setLength(0);
     indentValue = Preferences.getInteger("editor.tabs.size");
 
-//    lineNumber = 0;
-    q_flg = e_flg = a_flg = if_flg = false;
+//  lineNumber = 0;
+    boolean forFlag = a_flg = if_flg = false;
     s_flag = true;
-    c_level = if_lev = level = paren = 0;
+    int forParenthLevel = 0;
+    questClnLvl = parenth_lvl = c_level = if_lev = level = 0;
     tabs = 0;
     jdoc_flag = false;
 
-    s_level = new int[10];
+    int[] s_level = new int[10];
     sp_flg = new int[20][10];
     s_ind = new int[20][10];
-    s_if_lev = new int[10];
-    s_if_flg = new boolean[10];
+    int[] s_if_lev = new int[10];
+    boolean[] s_if_flg = new boolean[10];
     ind = new int[10];
     p_flg = new int[10];
     s_tabs = new int[20][10];
@@ -369,10 +383,10 @@ public class AutoFormat implements Formatter {
     chars = cleanText.toCharArray();
 //    lineNumber = 1;
 
-    EOF = false; // set in next() when EOF
+    EOF = false; // set in nextChar() when EOF
 
     while (!EOF) {
-      c = next();
+      c = nextChar();
       switch (c) {
       default:
         buf.append(c);
@@ -408,8 +422,8 @@ public class AutoFormat implements Formatter {
         if (EOF) {
           break;
         }
-        e_flg = lookup("else");
-        if (e_flg) {
+        boolean elseFlag = lookup("else");
+        if (elseFlag)  {
           gotelse();
         }
         if (lookup_com("//")) {
@@ -422,10 +436,10 @@ public class AutoFormat implements Formatter {
         writeIndentedLine();
         result.append("\n");
         s_flag = true;
-        if (e_flg) {
+        if (elseFlag) {
           p_flg[level]++;
           tabs++;
-        } else if (prev() == l_char) {
+        } else if (getLastNonWhitespace() == l_char) {
           a_flg = true;
         }
         break;
@@ -456,7 +470,7 @@ public class AutoFormat implements Formatter {
         writeIndentedLine();
         getnl();
         writeIndentedLine();
-        //fprintf(outfil,"\n");
+        
         result.append("\n");
         tabs++;
         s_flag = true;
@@ -489,11 +503,12 @@ public class AutoFormat implements Formatter {
           printIndentation();
           result.append(c);
           if (peek() == ';') {
-            result.append(next());
+            result.append(nextChar());
           }
+
           getnl();
           writeIndentedLine();
-          result.append("\n");
+          result.append('\n');
           s_flag = true;
           if (c_level < s_level[level]) {
             if (level > 0) {
@@ -511,18 +526,18 @@ public class AutoFormat implements Formatter {
       case '"':
       case '\'':
         buf.append(c);
-        cc = next();
+        cc = nextChar();
         while (!EOF && cc != c) {
           buf.append(cc);
           if (cc == '\\') {
-            buf.append(cc = next());
+            buf.append(cc = nextChar());
           }
           if (cc == '\n') {
 //            lineNumber++;
             writeIndentedLine();
             s_flag = true;
           }
-          cc = next();
+          cc = nextChar();
         }
         buf.append(cc);
         if (getnl()) {
@@ -533,6 +548,14 @@ public class AutoFormat implements Formatter {
         break;
 
       case ';':
+        if (forFlag) {
+          // This is like a comma.
+          trimRight(buf);
+          buf.append("; ");
+          // Not non-whitespace: allow \n.
+          advanceToNonSpace();
+          break;
+        }
         buf.append(c);
         writeIndentedLine();
         if (p_flg[level] > 0 && ind[level] == 0) {
@@ -555,26 +578,39 @@ public class AutoFormat implements Formatter {
 
       case '\\':
         buf.append(c);
-        buf.append(next());
+        buf.append(nextChar());
         break;
 
       case '?':
-        q_flg = true;
+        questClnLvl++;
         buf.append(c);
         break;
 
       case ':':
-        buf.append(c);
+        // Java 8 :: operator. 
         if (peek() == ':') {
           writeIndentedLine();
-          result.append(next());
+          result.append(c).append(nextChar());
           break;
         }
 
-        if (q_flg) {
-          q_flg = false;
+        // End a?b:c structures.
+        else if (questClnLvl>0) {
+          questClnLvl--;
+          buf.append(c);
           break;
         }
+
+        else if (forFlag) {
+          trimRight(buf);
+          buf.append(" : ");
+          // Not to non-whitespace: allow \n.
+          advanceToNonSpace();
+          break;
+        }
+
+        buf.append(c);
+
         if (!lookup("default") && !lookup("case")) {
           s_flag = false;
           writeIndentedLine();
@@ -584,26 +620,27 @@ public class AutoFormat implements Formatter {
           tabs++;
         }
         if (peek() == ';') {
-          result.append(next());
+          result.append(nextChar());
         }
         getnl();
         writeIndentedLine();
-        result.append("\n");
+        result.append('\n');
         s_flag = true;
         break;
 
       case '/':
-        final char la = peek();
-        if (la == '/') {
-          buf.append(c).append(next());
+        final char next = peek();
+        if (next == '/') {
+          // call nextChar to move on.
+          buf.append(c).append(nextChar());
           handleSingleLineComment();
           result.append("\n");
-        } else if (la == '*') {
+        } else if (next == '*') {
           if (buf.length() > 0) {
             writeIndentedLine();
           }
-          buf.append(c).append(next());
-          comment();
+          buf.append(c).append(nextChar());
+          handleMultiLineComment();
         } else {
           buf.append(c);
         }
@@ -613,15 +650,23 @@ public class AutoFormat implements Formatter {
 
         final boolean isCast = castFlags.isEmpty() ? false : castFlags.pop();
 
-        paren--;
-        if (paren < 0) {
-          paren = 0;
+        parenth_lvl--;
+	
+        // If we're further back than the start of a for loop, we've
+        // left it.
+        if (forFlag && forParenthLevel > parenth_lvl) {
+          forFlag = false;
         }
+
+        if (parenth_lvl < 0) {
+          parenth_lvl = 0;
+        }
+
         buf.append(c);
         writeIndentedLine();
         if (getnl()) {
           chars[pos--] = '\n';
-          if (paren != 0) {
+          if (parenth_lvl != 0) {
             a_flg = true;
           } else if (tabs > 0 && !isCast) {
             p_flg[level]++;
@@ -644,42 +689,16 @@ public class AutoFormat implements Formatter {
         }
 
         buf.append(c);
-        paren++;
+        parenth_lvl++;
 
+        // isFor says "is it the start of a for?". If it is, we set forFlag and
+        // forParenthLevel. If it is not parenth_lvl was incremented above and
+        // that's it.
         if (isFor) {
-          // TODO(feinberg): handle new-style for loops
-          c = get_string();
-          while (c != ';' && c != ':') {
-            c = get_string();
+	        if (!forFlag) {
+            forParenthLevel = parenth_lvl;
+            forFlag = true;
           }
-          ct = 0;
-          int for_done = 0;
-          while (for_done == 0) {
-            c = get_string();
-            while (c != ')') {
-              if (c == '(') {
-                ct++;
-              }
-              c = get_string();
-            }
-            if (ct != 0) {
-              ct--;
-            } else {
-              for_done = 1;
-            }
-          } // endwhile for_done
-          paren--;
-          if (paren < 0) {
-            paren = 0;
-          }
-          writeIndentedLine();
-          if (getnl()) {
-            chars[pos--] = '\n';
-            p_flg[level]++;
-            tabs++;
-            ind[level] = 0;
-          }
-          break;
         } else if (isIf) {
           writeIndentedLine();
           s_tabs[c_level][if_lev] = tabs;
