@@ -182,7 +182,9 @@ public class Toolkit {
     }
   }
 
-
+  static public void setIcon(java.awt.Frame frame) {
+	// do nothing; stub out to fix Modes that use this call.
+  }
   // someone needs to be slapped
   //static KeyStroke closeWindowKeyStroke;
 
