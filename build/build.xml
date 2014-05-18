@@ -472,6 +472,14 @@
     <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/lib/fonts">
       <fileset dir="shared/lib/fonts" includes="*" />
     </copy>
+	<copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/bin">
+	  <fileset dir="/Library/Java/JavaVirtualMachines/jdk1.7.0_55.jdk/Contents/Home/bin" includes="java,javac" />
+	</copy>
+	<copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/lib">
+	  <fileset dir="/Library/Java/JavaVirtualMachines/jdk1.7.0_55.jdk/Contents/Home/lib" includes="tools.jar" />
+	</copy>
+	<chmod perm="ugo+x" file="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/bin/java*" />
+	
 
     <antcall target="assemble">
       <param name="target.path" 
