@@ -157,7 +157,7 @@ public class Toolkit {
   // breaking tools and modes (they'd only require a recompile, but they would 
   // no longer be backwards compatible. 
   static public void setIcon(Frame frame) {
-    setIcon(frame);
+    setIcon((Window) frame);
   }
 
   
