@@ -1017,9 +1017,9 @@ public class Capture extends PImage implements PConstants {
       copyPixels = null;
       return;
     }
-
     fireCaptureEvent();
   }
+  
 
   protected synchronized void invokeEvent(int w, int h, Buffer buffer) {
     available = true;
@@ -1032,10 +1032,12 @@ public class Capture extends PImage implements PConstants {
       natBuffer.dispose(); 
     }    
     natBuffer = buffer;
-
     fireCaptureEvent();
   }
 
+  
+  // moved to separate method for Jython support
+  // https://github.com/processing/processing/pull/2527
   private void fireCaptureEvent() {
     // Creates a captureEvent.
     if (captureEventMethod != null) {
@@ -1050,6 +1052,7 @@ public class Capture extends PImage implements PConstants {
     }
   }
 
+  
   ////////////////////////////////////////////////////////////
 
   // Stream query methods.

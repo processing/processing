@@ -10,14 +10,12 @@ X how was PDE X able to crash 2.2?
 X   add additional code to rework how this is handled
 X Auto Format patch mess
 X   https://github.com/processing/processing/pull/2271
-
-_ why is the JDK path showing up as a ._ feller in OS X?
-_   https://github.com/processing/processing/issues/2520
-_ "Archive Sketch" Tool doesn't add a file extension
-_   https://github.com/processing/processing/issues/2526
-
-_ modifications for captureEvent and Python
-_   https://github.com/processing/processing/pull/2527
+X why is the JDK path showing up as a ._ feller in OS X?
+X   https://github.com/processing/processing/issues/2520
+X "Archive Sketch" Tool doesn't force a .zip file extension
+X   https://github.com/processing/processing/issues/2526
+X modifications for captureEvent and Python
+X   https://github.com/processing/processing/pull/2527
 
 
 medium
