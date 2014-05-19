@@ -2527,7 +2527,8 @@ public class Base {
       //return "Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java";
       File[] plugins = getContentFile("../PlugIns").listFiles(new FilenameFilter() {
         public boolean accept(File dir, String name) {
-          return name.endsWith(".jdk") && dir.isDirectory();
+          return dir.isDirectory() && 
+            name.endsWith(".jdk") && !name.startsWith(".");
         }
       });
       return new File(plugins[0], "Contents/Home/jre");
