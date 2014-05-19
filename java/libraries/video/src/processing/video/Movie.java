@@ -722,10 +722,19 @@ public class Movie extends PImage implements PConstants {
     eventHandler = obj;
 
     try {
-      movieEventMethod = eventHandler.getClass().getMethod("movieEvent",
-          new Class[] { Movie.class });
+      movieEventMethod = eventHandler.getClass().getMethod("movieEvent", Movie.class);
+      return;
     } catch (Exception e) {
-      // no such method, or an error.. which is fine, just ignore
+      // no such method, or an error... which is fine, just ignore
+    }
+
+    // movieEvent can alternatively be defined as receiving an Object, to allow
+    // Processing mode implementors to support the video library without linking
+    // to it at build-time.
+    try {
+      movieEventMethod = eventHandler.getClass().getMethod("movieEvent", Object.class);
+    } catch (Exception e) {
+      // no such method, or an error... which is fine, just ignore
     }
   }
 
@@ -808,19 +817,9 @@ public class Movie extends PImage implements PConstants {
     }
 
     if (playing) {
-      // Creates a movieEvent.
-      if (movieEventMethod != null) {
-        try {
-          movieEventMethod.invoke(eventHandler, new Object[] { this });
-        } catch (Exception e) {
-          System.err.println("error, disabling movieEvent() for " + filename);
-          e.printStackTrace();
-          movieEventMethod = null;
-        }
-      }
+      fireMovieEvent();
     }
   }
-
 
   protected synchronized void invokeEvent(int w, int h, Buffer buffer) {
     available = true;
@@ -835,19 +834,22 @@ public class Movie extends PImage implements PConstants {
     natBuffer = buffer;
 
     if (playing) {
-      // Creates a movieEvent.
-      if (movieEventMethod != null) {
-        try {
-          movieEventMethod.invoke(eventHandler, new Object[] { this });
-        } catch (Exception e) {
-          System.err.println("error, disabling movieEvent() for " + filename);
-          e.printStackTrace();
-          movieEventMethod = null;
-        }
-      }
+      fireMovieEvent();
     }
   }
 
+  private void fireMovieEvent() {
+    // Creates a movieEvent.
+    if (movieEventMethod != null) {
+      try {
+        movieEventMethod.invoke(eventHandler, this);
+      } catch (Exception e) {
+        System.err.println("error, disabling movieEvent() for " + filename);
+        e.printStackTrace();
+        movieEventMethod = null;
+      }
+    }
+  }
 
   protected void eosEvent() {
     if (repeat) {
