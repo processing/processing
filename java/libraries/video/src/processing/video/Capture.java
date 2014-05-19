@@ -112,7 +112,7 @@ public class Capture extends PImage implements PConstants {
   protected Method sinkCopyMethod;
   protected Method sinkSetMethod;
   protected Method sinkDisposeMethod;
-  protected Method sinkGetMethod;  
+  protected Method sinkGetMethod;
   protected String copyMask;
   protected Buffer natBuffer = null;
   protected BufferDataAppSink natSink = null;
@@ -239,7 +239,7 @@ public class Capture extends PImage implements PConstants {
 
   /**
    * Disposes all the native resources associated to this capture device.
-   * 
+   *
    * NOTE: This is not official API and may/will be removed at any time.
    */
   public void dispose() {
@@ -271,10 +271,10 @@ public class Capture extends PImage implements PConstants {
 
       pipeline.dispose();
       pipeline = null;
-      
+
       parent.g.removeCache(this);
       parent.unregisterMethod("dispose", this);
-      parent.unregisterMethod("post", this);      
+      parent.unregisterMethod("post", this);
     }
   }
 
@@ -308,11 +308,11 @@ public class Capture extends PImage implements PConstants {
 
   /**
    * ( begin auto-generated from Capture_start.xml )
-   * 
+   *
    * Starts capturing frames from the selected device.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref capture
    * @brief Starts capturing frames from the selected device
    */
@@ -425,7 +425,7 @@ public class Capture extends PImage implements PConstants {
     newFrame = true;
   }
 
-  
+
   public synchronized void loadPixels() {
     super.loadPixels();
     if (useBufferSink) {
@@ -441,24 +441,24 @@ public class Capture extends PImage implements PConstants {
         try {
           // sinkGetMethod will copy the latest buffer to the pixels array,
           // and the pixels will be copied to the texture when the OpenGL
-          // renderer needs to draw it.          
-          sinkGetMethod.invoke(bufferSink, new Object[] { pixels });          
+          // renderer needs to draw it.
+          sinkGetMethod.invoke(bufferSink, new Object[] { pixels });
         } catch (Exception e) {
           e.printStackTrace();
-        }        
-      }      
+        }
+      }
 
-      outdatedPixels = false;      
+      outdatedPixels = false;
     }
   }
-  
-  
+
+
   public int get(int x, int y) {
     if (outdatedPixels) loadPixels();
     return super.get(x, y);
   }
-  
-  
+
+
   protected void getImpl(int sourceX, int sourceY,
                          int sourceWidth, int sourceHeight,
                          PImage target, int targetX, int targetY) {
@@ -466,8 +466,8 @@ public class Capture extends PImage implements PConstants {
     super.getImpl(sourceX, sourceY, sourceWidth, sourceHeight,
                   target, targetX, targetY);
   }
-  
- 
+
+
   ////////////////////////////////////////////////////////////
 
   // List methods.
@@ -1019,40 +1019,37 @@ public class Capture extends PImage implements PConstants {
     }
     fireCaptureEvent();
   }
-  
+
 
   protected synchronized void invokeEvent(int w, int h, Buffer buffer) {
     available = true;
     bufWidth = w;
     bufHeight = h;
     if (natBuffer != null) {
-      // To handle the situation where read() is not called in the sketch, so 
-      // that the native buffers are not being sent to the sinke, and therefore, not disposed
-      // by it.
-      natBuffer.dispose(); 
-    }    
+      // To handle the situation where read() is not called in the sketch,
+      // so that the native buffers are not being sent to the sink,
+      // and therefore, not disposed by it.
+      natBuffer.dispose();
+    }
     natBuffer = buffer;
     fireCaptureEvent();
   }
 
-  
-  // moved to separate method for Jython support
-  // https://github.com/processing/processing/pull/2527
+
   private void fireCaptureEvent() {
-    // Creates a captureEvent.
     if (captureEventMethod != null) {
       try {
         captureEventMethod.invoke(eventHandler, this);
+
       } catch (Exception e) {
-        System.err.println(
-          "error, disabling captureEvent() for capture object");
+        System.err.println("error, disabling captureEvent()");
         e.printStackTrace();
         captureEventMethod = null;
       }
     }
   }
 
-  
+
   ////////////////////////////////////////////////////////////
 
   // Stream query methods.
@@ -1134,7 +1131,7 @@ public class Capture extends PImage implements PConstants {
    * copy the frames to OpenGL.
    *
    * NOTE: This is not official API and may/will be removed at any time.
-   * 
+   *
    * @param Object dest
    */
   public void setBufferSink(Object sink) {
@@ -1145,7 +1142,7 @@ public class Capture extends PImage implements PConstants {
 
   /**
    * Sets the object to use as destination for the frames read from the stream.
-   * 
+   *
    * NOTE: This is not official API and may/will be removed at any time.
    *
    * @param Object dest
@@ -1190,22 +1187,22 @@ public class Capture extends PImage implements PConstants {
       throw new RuntimeException("Capture: provided sink object doesn't have "+
                                  "a setBufferSource method.");
     }
-    
+
     try {
-      sinkDisposeMethod = bufferSink.getClass().getMethod("disposeSourceBuffer", 
+      sinkDisposeMethod = bufferSink.getClass().getMethod("disposeSourceBuffer",
         new Class[] { });
     } catch (Exception e) {
       throw new RuntimeException("Capture: provided sink object doesn't have " +
                                  "a disposeSourceBuffer method.");
     }
-        
+
     try {
-      sinkGetMethod = bufferSink.getClass().getMethod("getBufferPixels", 
+      sinkGetMethod = bufferSink.getClass().getMethod("getBufferPixels",
         new Class[] { int[].class });
     } catch (Exception e) {
       throw new RuntimeException("Capture: provided sink object doesn't have " +
                                  "a getBufferPixels method.");
-    }    
+    }
   }
 
 
@@ -1216,8 +1213,8 @@ public class Capture extends PImage implements PConstants {
       copyMask = "red_mask=(int)0xFF, green_mask=(int)0xFF00, blue_mask=(int)0xFF0000";
     }
   }
-  
-  
+
+
   public synchronized void post() {
     if (useBufferSink && sinkDisposeMethod != null) {
       try {
@@ -1226,5 +1223,5 @@ public class Capture extends PImage implements PConstants {
         e.printStackTrace();
       }
     }
-  }  
+  }
 }

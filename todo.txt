@@ -14,9 +14,12 @@ X why is the JDK path showing up as a ._ feller in OS X?
 X   https://github.com/processing/processing/issues/2520
 X "Archive Sketch" Tool doesn't force a .zip file extension
 X   https://github.com/processing/processing/issues/2526
-X modifications for captureEvent and Python
-X   https://github.com/processing/processing/pull/2527
 
+python
+J modifications for captureEvent and Python
+J   https://github.com/processing/processing/pull/2527
+J Permit implementing movieEvent without having to link to Movie at build time
+J   https://github.com/processing/processing/pull/2528
 
 medium
 _ possible to open a sketch multiple times 
