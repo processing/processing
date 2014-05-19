@@ -966,7 +966,7 @@ public class Capture extends PImage implements PConstants {
 
   /**
    * Uses a generic object as handler of the capture. This object should have a
-   * movieEvent method that receives a GSMovie argument. This method will
+   * captureEvent method that receives a GSMovie argument. This method will
    * be called upon a new frame read event.
    *
    */
@@ -974,8 +974,17 @@ public class Capture extends PImage implements PConstants {
     eventHandler = obj;
 
     try {
-      captureEventMethod = parent.getClass().getMethod("captureEvent",
-          new Class[] { Capture.class });
+      captureEventMethod = obj.getClass().getMethod("captureEvent", Capture.class);
+      return;
+    } catch (Exception e) {
+      // no such method, or an error.. which is fine, just ignore
+    }
+
+    // The captureEvent method may be declared as receiving Object, rather
+    // than Capture.
+    try {
+      captureEventMethod = obj.getClass().getMethod("captureEvent", Object.class);
+      return;
     } catch (Exception e) {
       // no such method, or an error.. which is fine, just ignore
     }
@@ -1009,10 +1018,10 @@ public class Capture extends PImage implements PConstants {
       return;
     }
 
-    // Creates a movieEvent.
+    // Creates a captureEvent.
     if (captureEventMethod != null) {
       try {
-        captureEventMethod.invoke(eventHandler, new Object[] { this });
+        captureEventMethod.invoke(eventHandler, this);
       } catch (Exception e) {
         System.err.println(
           "error, disabling captureEvent() for capture object");
@@ -1035,10 +1044,10 @@ public class Capture extends PImage implements PConstants {
     }    
     natBuffer = buffer;
 
-    // Creates a movieEvent.
+    // Creates a captureEvent.
     if (captureEventMethod != null) {
       try {
-        captureEventMethod.invoke(eventHandler, new Object[] { this });
+        captureEventMethod.invoke(eventHandler, this);
       } catch (Exception e) {
         System.err.println(
           "error, disabling captureEvent() for capture object");
