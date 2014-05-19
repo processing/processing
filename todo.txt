@@ -2,6 +2,22 @@
 X use mouseReleased() instead of mousePressed() in color selector
 X   otherwise it registers the release as a click in the color window
 X   https://github.com/processing/processing/issues/2514
+X missing 'version' in contrib causes NPE
+X   https://github.com/processing/processing/issues/2517
+X bring back setIcon(Frame) for PDE X and others
+X   https://github.com/processing/processing-experimental/issues/64
+X how was PDE X able to crash 2.2? 
+X   add additional code to rework how this is handled
+X Auto Format patch mess
+X   https://github.com/processing/processing/pull/2271
+
+_ why is the JDK path showing up as a ._ feller in OS X?
+_   https://github.com/processing/processing/issues/2520
+_ "Archive Sketch" Tool doesn't add a file extension
+_   https://github.com/processing/processing/issues/2526
+
+_ modifications for captureEvent and Python
+_   https://github.com/processing/processing/pull/2527
 
 
 medium
@@ -26,8 +42,6 @@ _ add font fixes to the rest of the API
 _   https://github.com/processing/processing/commit/eaff673d173b2d27f276cf5c59e3abf6c0fab86b
 _   g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
 _                       RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-_ dataPath() not working when app is not run from app dir on Linux
-_   https://github.com/processing/processing/issues/2195
 _ should default to the local Java on Windows and Linux
 _   have export apps default to the local JRE
 _   Linux is probably using the system JRE if available
