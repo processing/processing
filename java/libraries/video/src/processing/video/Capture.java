@@ -1018,19 +1018,8 @@ public class Capture extends PImage implements PConstants {
       return;
     }
 
-    // Creates a captureEvent.
-    if (captureEventMethod != null) {
-      try {
-        captureEventMethod.invoke(eventHandler, this);
-      } catch (Exception e) {
-        System.err.println(
-          "error, disabling captureEvent() for capture object");
-        e.printStackTrace();
-        captureEventMethod = null;
-      }
-    }
+    fireCaptureEvent();
   }
-
 
   protected synchronized void invokeEvent(int w, int h, Buffer buffer) {
     available = true;
@@ -1044,6 +1033,10 @@ public class Capture extends PImage implements PConstants {
     }    
     natBuffer = buffer;
 
+    fireCaptureEvent();
+  }
+
+  private void fireCaptureEvent() {
     // Creates a captureEvent.
     if (captureEventMethod != null) {
       try {
@@ -1056,7 +1049,6 @@ public class Capture extends PImage implements PConstants {
       }
     }
   }
-
 
   ////////////////////////////////////////////////////////////
 
