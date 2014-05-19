@@ -48,7 +48,10 @@ class AvailableContribution extends Contribution {
     url = params.get("url");
     sentence = params.get("sentence");
     paragraph = params.get("paragraph");
-    version = PApplet.parseInt(params.get("version"), 0);
+    String versionStr = params.get("version");
+    if (versionStr != null) {
+      version = PApplet.parseInt(versionStr, 0);
+    }
     prettyVersion = params.get("prettyVersion");
   }
   
