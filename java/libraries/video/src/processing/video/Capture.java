@@ -966,7 +966,7 @@ public class Capture extends PImage implements PConstants {
 
   /**
    * Uses a generic object as handler of the capture. This object should have a
-   * captureEvent method that receives a GSMovie argument. This method will
+   * captureEvent method that receives a Capture argument. This method will
    * be called upon a new frame read event.
    *
    */
