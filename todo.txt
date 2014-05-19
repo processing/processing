@@ -1,50 +1,19 @@
-0226 pde
-X sketches only starting once, or half-starting and hanging
-X   https://github.com/processing/processing/issues/2402
-X   https://github.com/processing/processing/pull/2455
-X reopen current sketch in new mode editor if file extension is compatible
-X   https://github.com/processing/processing/pull/2457
-X   https://github.com/processing/processing/issues/2456
-X crash in the 'recent' menu on startup
-X   https://github.com/processing/processing/issues/2463
-X   sketchbook location is set to an actual sketch (huh?)
-X exported apps on Windows 64 not working?
-X   https://github.com/processing/processing/issues/2468
-X   just needed to add the local path for Java
-X when exporting with local Java embedded, use that version
-X   https://github.com/processing/processing/issues/2349
-X   (we can do this now since we're actually doing the embedding)
-
-
-high
-_ new launch4j 3.4
-_   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
-_ sketch sometimes simply does not launch
-_   https://github.com/processing/processing/issues/2402
-_   https://github.com/processing/processing/pull/2455
-_ exported apps reporting as "damaged" on OS X
-_ JNA conflicts can be avoided with a -D option
-_   https://github.com/processing/processing/issues/2239
-_ QuickReference tool was able to bring down the environment
-_   https://github.com/processing/processing/issues/2229
-_ tab characters not recognized/drawn in the editor (2.1)
-_   https://github.com/processing/processing/issues/2180
-_   https://github.com/processing/processing/issues/2183
-_   udp library has tabs in the text
-_   decision to be made on nextTabStop() inside TextAreaPainter
-_ Chinese text is overlapped in Processing 2.1 editor
-_   https://github.com/processing/processing/issues/2173
-_   https://github.com/processing/processing/pull/2318
-_   https://github.com/processing/processing/pull/2323
-_ check on why 2x core.jar inside the Java folder
-_   maybe OS X Java can't look in subfolders? (just auto-adds things)
+0227 pde
+X use mouseReleased() instead of mousePressed() in color selector
+X   otherwise it registers the release as a click in the color window
+X   https://github.com/processing/processing/issues/2514
 
 
 medium
-_ import static causes exception (with fix)
-_   https://github.com/processing/processing/issues/8
-o   https://github.com/processing/processing/pull/2273
-X   can't use this patch, too confusing
+_ possible to open a sketch multiple times 
+_   by double-clicking one of its files instead of the main pde file
+_   https://github.com/processing/processing/issues/2506
+_ closing the color selector makes things freeze (only Linux and Windows?)
+_   https://github.com/processing/processing/issues/2381
+_ check on why 2x core.jar inside the Java folder
+_   maybe OS X Java can't look in subfolders? (just auto-adds things)
+_ display "1" is not correct in 2.1.2
+_   https://github.com/processing/processing/issues/2502
 _ re/move things from Google Code downloads
 _   https://code.google.com/p/support/wiki/DownloadsFAQ
 _ clean out the repo
@@ -57,9 +26,7 @@ _ add font fixes to the rest of the API
 _   https://github.com/processing/processing/commit/eaff673d173b2d27f276cf5c59e3abf6c0fab86b
 _   g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
 _                       RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-_ get stack trace issues with NPE
-_   https://github.com/processing/processing/pull/2359
-_ dataPath() not working when app is not run from app dir
+_ dataPath() not working when app is not run from app dir on Linux
 _   https://github.com/processing/processing/issues/2195
 _ should default to the local Java on Windows and Linux
 _   have export apps default to the local JRE
@@ -68,6 +35,7 @@ _   launch4j may be all set, but double-check
 _ try installing 10.7.3 on Mac Mini and check whether things run
 _   make sure it's only running on 64-bit machines? 
 _ use platformDelete() to remove untitled sketches?
+_   would allow us to use the /tmp folder
 _ change to using platformDelete() instead of Base.removeDir() where possible
 _   verify that the OS X version uses the real call
 _   and doesn't just look for .Trash
@@ -83,23 +51,18 @@ _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 _ look through all isPopupTrigger() code 
 _   make sure both press/release are implemented
-_ change Windows export to use launch4j instead of the launcher.cpp file
-_   actually call ant from inside p5?
 _ emacs style errors in commander aren't quite right
 _   https://github.com/processing/processing/issues/2158
-_ export application folder location (for Manindra)
-_   https://github.com/processing/processing/issues/2399
 _ add documentation for how to run mode development from Eclipse
 _   implementation/changes from JDF
 _ modes are being loaded multiple times, which can cause trouble
 _ add minimum version required (or max version?) to libraries/modes/etc
+_ no high-res display support for the PDE
+_ PDE and sketches are 2x smaller on high-res Windows 8 machines
+_   https://github.com/processing/processing/issues/2411
 
 
 pulls
-_ if/else formatting is broken
-_   https://github.com/processing/processing/pull/2477
-_ fix for various net issues
-_   https://github.com/processing/processing/pull/2475
 _ may need a progress bar for "save as"
 _   or just the file copy function in general
 _   since it may take a long time (i.e. 1000s of screen grabs)
@@ -109,7 +72,6 @@ _   https://github.com/processing/processing/pull/2370
 
 
 post 2.1 cleaning
-_ remove video for macosx32 from the repo permanently
 _ remove the prefs for 32/64-bit from Preferences
 _ remove the extra OS X cruft inside Runner.java
 _ exclude 'fonts' folder from build (since it's going into the JRE)
@@ -472,9 +434,6 @@ _   http://code.google.com/p/processing/issues/detail?id=746
 
 PDE / Export
 
-_ use launch4j for export and p5 app itself
-_   perhaps even calling it through an ant task
-_   windows exported exe problems (pcho)
 _ if the lib folder goes missing from export, give an error
 _   also any .jar files that are missing, give an error
 _   showing more debug messages (command line?)
@@ -666,13 +625,6 @@ _   redo panel to use proper Box layout etc
 _   also needs to look good across all platforms
 _   http://code.google.com/p/processing/issues/detail?id=28
 _   https://github.com/processing/processing/issues/67
-_ make available the background colors for present mode, stop button color
-_   isolate color chooser into a simpler/smaller class outside tools
-_   then can also use from inside processing applications as well
-_   http://code.google.com/p/processing/issues/detail?id=30
-_ maybe user prefs should only cover things that've changed?
-_   how to balance colors/etc being stored elsewhere
-_   ton of work to maintain this...
 
 
 PDE / Runner 
@@ -769,6 +721,13 @@ _ need to unpack InvocationTargetException in xxxxxxEvent calls
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328#3
 
 
+LIBRARIES / Net
+
+_ modernize Client/Server code to use synchronized lists
+_   do we let people use the public vars in Server and Client?
+_   are they documented?
+
+
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -825,13 +784,8 @@ DIST / Windows
 
 _ processing-java output as UTF-8 makes Windows unhappy
 _   https://github.com/processing/processing/issues/1633
-_ updated launch4j 3.1 beta
-_   http://sourceforge.net/projects/launch4j/files/launch4j-3/
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
 _   how can we provide an error message here?
-_ exe instead of bat to make exported apps run in 64-bit
-_   http://code.google.com/p/processing/issues/detail?id=885
-_   might not be necessary with new launch4j!
 _ how to handle double-clicked files on windows?
 _   big deal for psk and others
 _   this may already work with SingleInstance stuff

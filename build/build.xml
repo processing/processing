@@ -78,13 +78,13 @@
     <include name="lib/cmm/PYCC.pf" />
   </fileset>
 
-  <!-- There might be others, based on what was in the Java 6 docs, 
-       but that info isn't part of the Java 7 instructions.
-       http://www.oracle.com/technetwork/java/javase/jrereadme-182762.html -->
-
   <!-- Unused JavaFX files that can be removed from the JRE on Windows 
        and Linux. On Mac OS X, this is removed by the appbundler task.
        www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html -->
+
+  <!-- There might be others, based on what was in the Java 6 docs, 
+       but that info isn't part of the Java 7 instructions.
+       http://www.oracle.com/technetwork/java/javase/jrereadme-182762.html -->
 
   <fileset dir="${platform}/work/java" id="javafx-basics">
     <include name="THIRDPARTYLICENSEREADME-JAVAFX.txt" />
@@ -268,118 +268,15 @@
 	<exclude name="reference.zip" />
 	<exclude name="**/._*" />
 
+	<!-- probably not necessary anymore -->
 	<exclude name="examples/**/applet/**" />
       </fileset>
     </copy>
 
-<!-- decided against this. 
-     see: http://code.google.com/p/processing/issues/detail?id=650 -->
-<!--
-    <get src="http://www.java.com/js/deployJava.js" 
-	 dest="${target.path}/modes/java/applet/deployJava.js"
-	 usetimestamp="true" />
--->
-
     <delete dir="${target.path}/modes/java/examples">
       <include name="**/applet/**" />
     </delete>
-<!--
-    <delete>
-      <fileset dir="${target.path}/modes/java/examples"
-	       includes="**/applet/**" />
-    </delete>
--->
 
-<!--
-    not happy on windows, since cygwin may not be installed
-    <exec executable="find" dir="${target.path}/modes/java/examples"
-	  errorproperty="ignored">
-      <arg line=". -name applet -exec rm -rf {} ';'" />
-    </exec>
--->
-
-<!--
-    <copy todir="${target.path}/modes/java/examples">
-      <fileset dir="../java/examples">
-	<exclude name="**/applet/**" />
-      </fileset>
-    </copy>
--->
-
-<!--     <copy todir="${target.path}/modes/javascript">
-      <fileset dir="../javascript">
-      	<exclude name="**/._*" />
-      </fileset>
-    </copy> -->
-
-<!--
-    <copy todir="${target.path}/modes/android">
-      <fileset dir="../android">
-	<include name="android-core.zip" />
-	<include name="examples/**" />
-	<include name="icons/**" />
-	<include name="theme/**" />
-	<include name="keywords.txt" />
-	<exclude name="**/._*" />
--->
-<!-- these had already been commented out 
-	<exclude name="**/bin/**" />
-	<exclude name="**/src/**" />
-	<exclude name="cmd" />
-	<exclude name="reference.zip" />
--->
-<!--
-      </fileset>
-    </copy>
--->
-    
-    <!-- copy libraries -->
-<!--
-    <copy todir="${target.path}/modes/java/libraries">
-      <fileset dir="../java/libraries">
-	<include name="**/library/**" />
-	<include name="**/src/**" />
-      </fileset>
-    </copy>
--->
-
-    <!-- copy shared library folder -->
-<!--
-    <copy todir="${target.path}/modes/java/libraries">
-      <fileset dir="shared/modes/java/libraries" />
-    </copy>
--->
-    
-    <!-- copy libraries for dxf, pdf, etc. -->
-<!--
-    <copy todir="${target.path}/modes/java/libraries/dxf">
-      <fileset dir="../dxf" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/net">
-      <fileset dir="../net" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/pdf">
-      <fileset dir="../pdf" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/serial">
-      <fileset dir="../serial" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/video">
-      <fileset dir="../video" includes="library/**,src/**" />
-    </copy>
--->
-    
-    <!-- Unzip documentation + examples -->
-<!--
-    <unzip dest="${target.path}/modes/java" 
-	   src="shared/modes/java/examples.zip" 
-	   overwrite="false">
-      <patternset>
-	<exclude name="__MACOSX/**" />
-	<exclude name="**/._*" />
-      </patternset>
-    </unzip>
--->
     <unzip dest="${target.path}/modes/java" 
 	   src="../java/reference.zip" 
 	   overwrite="false">
@@ -387,17 +284,7 @@
 	<exclude name="__MACOSX/**" />
 	<exclude name="**/._*" />
       </patternset>
-    </unzip>
-    
-    <!-- Write the revision file -->
-    <!-- is there a good way to do this? -->
-    <!--
-    <echo file="${target.path}/lib/version.txt" 
-	  message="${version}" 
-	  if="${version}" />
-    <delete file="${target.path}/lib/version.txt"
-	    unless="${version}" />
-    -->
+    </unzip>    
   </target>
 
   <target name="version-clear">
@@ -543,6 +430,9 @@
 
       <option value="-Dapple.awt.application.name=Processing" />
 
+      <!-- avoid conflicts with JNA DLLs already in the path -->
+      <option value="-Djna.nosys=true" />
+
       <option value="-Dapple.laf.useScreenMenuBar=true" />
       <option value="-Dcom.apple.macos.use-file-dialog-packages=true" />
       <option value="-Dcom.apple.macos.useScreenMenuBar=true" />
@@ -571,7 +461,7 @@
 
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
-      <fileset dir="shared" includes="launch4j/**" />
+      <!--<fileset dir="shared" includes="launch4j/**" />-->
       <fileset dir="shared" includes="lib/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
@@ -583,8 +473,12 @@
       <fileset dir="shared/lib/fonts" includes="*" />
     </copy>
 
-    <property name="launch4j.dir" 
-	      value="macosx/work/Processing.app/Contents/Java/launch4j" />
+    <antcall target="assemble">
+      <param name="target.path" 
+	     value="macosx/work/Processing.app/Contents/Java" />
+    </antcall>
+
+    <property name="launch4j.dir" value="macosx/work/Processing.app/Contents/Java/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
     <move file="${launch4j.dir}/bin/windres-macosx"
@@ -602,12 +496,6 @@
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
 
-    <antcall target="assemble">
-      <param name="target.path" 
-	     value="macosx/work/Processing.app/Contents/Java" />
-    </antcall>
-
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
   </target>
@@ -710,12 +598,16 @@
       <fileset file="shared/revisions.txt" />
     </copy>
 
-    <property name="launch4j.dir" value="linux/work/launch4j" />
+    <antcall target="assemble">
+      <param name="target.path" value="linux/work" />
+    </antcall>
+
+    <property name="launch4j.dir" value="linux/work/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
-    <move file="${launch4j.dir}/bin/windres-linux${sun.arch.data.model}"
+    <move file="${launch4j.dir}/bin/windres-linux"
 	  tofile="${launch4j.dir}/bin/windres" />
-    <move file="${launch4j.dir}/bin/ld-linux${sun.arch.data.model}"
+    <move file="${launch4j.dir}/bin/ld-linux"
 	  tofile="${launch4j.dir}/bin/ld" />
 
     <!-- make executable (ant doesn't preserve) -->
@@ -732,11 +624,6 @@
       <fileset refid="runtime.jars" />
     </copy>
     
-    <antcall target="assemble">
-      <param name="target.path" value="linux/work" />
-    </antcall>
-
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
     <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
@@ -886,12 +773,16 @@
 
     <fixcrlf file="windows/work/revisions.txt" eol="crlf" encoding="UTF-8" />
 
-    <property name="launch4j.dir" value="windows/work/launch4j" />
+    <antcall target="assemble">
+      <param name="target.path" value="windows/work" />
+    </antcall>
+
+    <property name="launch4j.dir" value="windows/work/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
-    <move file="${launch4j.dir}/bin/windres-windows32.exe"
+    <move file="${launch4j.dir}/bin/windres-windows.exe"
 	  tofile="${launch4j.dir}/bin/windres.exe" />
-    <move file="${launch4j.dir}/bin/ld-windows32.exe"
+    <move file="${launch4j.dir}/bin/ld-windows.exe"
 	  tofile="${launch4j.dir}/bin/ld.exe" />
 
     <!-- remove the others -->
@@ -900,28 +791,7 @@
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
 
-    <antcall target="assemble">
-      <param name="target.path" value="windows/work" />
-    </antcall>
-
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
     <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
-<!--
-    <echo message="the path is ${target.path}" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" failonerror="true" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
-    <exec executable="ls" dir="${target.path}/modes/java/libraries/video/library" />
-
-    <condition property="delete32"> 
-      <equals arg1="${sun.arch.data.model}" arg2="64" />
-    </condition>
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
-
-    <condition property="delete64"> 
-      <equals arg1="${sun.arch.data.model}" arg2="32" />
-    </condition>
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
--->
 
     <condition property="video.delete" value="32"> 
       <equals arg1="${sun.arch.data.model}" arg2="64" />
@@ -935,38 +805,10 @@
 	     classname="net.sf.launch4j.ant.Launch4jTask" 
 	     classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
 
-    <copy todir="windows/work">
-      <fileset dir="windows/launcher" 
-	       includes="about.bmp, application.ico, config.xml, config-cmd.xml"/>
-    </copy>
-
-    <launch4j configFile="windows/work/config.xml" />
-    <launch4j configFile="windows/work/config-cmd.xml" />
-
-    <delete dir="windows/work" 
-	    includes="about.bmp, application.ico, config.xml, config-cmd.xml" />
-
-<!--
-    <launch4j>
-      <config headerType="gui"
-	      outfile="windows/work/processing-java.exe"
-	      dontWrapJar="false"
-	      jarPath="../app/pde.jar">
-	<classPath mainClass="processing.mode.java.Commander">
-	  <cp>lib/pde.jar</cp>
-	  <cp>lib/antlr.jar</cp>
-	  <cp>lib/jdt-core.jar</cp>
-	  <cp>lib/jna.jar</cp>
-	  <cp>lib/ant.jar</cp>
-	  <cp>lib/ant-launcher.jar</cp>
-	  <cp>core/library/core.jar</cp>
-	  <cp>%JAVA_HOME%/lib/tools.jar</cp>
-	</classPath>
-	<jre minVersion="1.6.0" jdkPreference="jdkOnly">
-	</jre>
-      </config>
-    </launch4j>
--->
+    <!-- not all launch4j options are available when embedded inside this 
+	 file (i.e. the icon param doesn't work), so use a config file -->
+    <launch4j configFile="windows/config.xml" />
+    <launch4j configFile="windows/config-cmd.xml" />
 
     <!-- cygwin requires html, dll, and exe to have the +x flag -->
     <chmod perm="ugo+x">
@@ -974,10 +816,6 @@
     </chmod>
 
     <!-- starting with 2.0a7, require the local JRE + tools.jar -->
-    <!--
-    <property name="jre.file" 
-	      value="jre-tools-6u37-windows${sun.arch.data.model}.zip" />
-    -->
     <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="windows/jre.tgz" 
 	 usetimestamp="true" />

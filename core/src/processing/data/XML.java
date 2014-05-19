@@ -260,6 +260,11 @@ public class XML implements Serializable {
 //  }
 
 
+  public boolean save(File file) {
+    return save(file, null);
+  }
+
+
   public boolean save(File file, String options) {
     PrintWriter writer = PApplet.createWriter(file);
     boolean result = write(writer);

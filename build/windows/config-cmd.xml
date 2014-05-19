@@ -1,20 +1,20 @@
 <launch4jConfig>
   <dontWrapJar>true</dontWrapJar>
-  <headerType>gui</headerType>
+  <headerType>console</headerType>
   <jar>lib</jar>
-  <outfile>processing.exe</outfile>
+  <outfile>work/processing-java.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
-  <downloadUrl>http://java.sun.com/javase/downloads/</downloadUrl>
+  <downloadUrl>http://java.com/download</downloadUrl>
   <supportUrl></supportUrl>
   <customProcName>false</customProcName>
   <stayAlive>false</stayAlive>
   <manifest></manifest>
-  <icon>application.ico</icon>
+  <!-- avoid confusion w/ the real app by not setting the icon -->
   <classPath>
-    <mainClass>processing.app.Base</mainClass>
+    <mainClass>processing.mode.java.Commander</mainClass>
     <cp>lib/pde.jar</cp>
     <cp>core/library/core.jar</cp>
     <cp>lib/jna.jar</cp>
@@ -30,24 +30,16 @@
   </classPath>
   <jre>
     <path>java</path>
-<!--
-    <minVersion>1.6.0</minVersion>
-    <maxVersion></maxVersion>
-    <jdkPreference>jdkOnly</jdkPreference>
-    <opt>-Xms128m -Xmx128m</opt>
--->
+    <!-- https://github.com/processing/processing/issues/2239 -->
+    <opt>-Djna.nosys=true</opt>
+    <!-- for 2.2, set a minimum version -->
+    <minVersion>1.7.0_40</minVersion>
   </jre>
-  <splash>
-    <file>about.bmp</file>
-    <waitForWindow>true</waitForWindow>
-    <timeout>60</timeout>
-    <timeoutErr>false</timeoutErr>
-  </splash>
   <messages>
     <startupErr>An error occurred while starting the application.</startupErr>
     <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted.</bundledJreErr>
-    <jreVersionErr>This application requires at least Java Development Kit (not JRE)</jreVersionErr>
-    <launcherErr>The registry refers to a nonexistent Java Development Kit  installation or the runtime is corrupted.</launcherErr>
+    <jreVersionErr>This application requires Java to be installed</jreVersionErr>
+    <launcherErr>The registry refers to a nonexistent Java installation or the runtime is corrupted.</launcherErr>
     <instanceAlreadyExistsMsg>An application instance is already running.</instanceAlreadyExistsMsg>
   </messages>
 </launch4jConfig>

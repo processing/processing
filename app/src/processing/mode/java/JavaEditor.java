@@ -251,15 +251,18 @@ public class JavaEditor extends Editor {
     toolbar.deactivate(JavaToolbar.EXPORT);
   }
 
-
+  
+//  JPanel presentColorPanel;
+//  JTextField presentColorPanel;
+  
   protected boolean exportApplicationPrompt() throws IOException, SketchException {
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     panel.add(Box.createVerticalStrut(6));
 
     String line1 = "Export to Application creates double-clickable,";
-    //String line2 = "standalone applications for the selected plaforms.";
-    String line2 = "standalone application for the current plaform.";
+    String line2 = "standalone applications for the selected plaforms.";
+    //String line2 = "standalone application for the current plaform.";
     JLabel label1 = new JLabel(line1, SwingConstants.CENTER);
     JLabel label2 = new JLabel(line2, SwingConstants.CENTER);
     label1.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -267,11 +270,10 @@ public class JavaEditor extends Editor {
     panel.add(label1);
     panel.add(label2);
     // The longer line is different between Windows and OS X.
-    int wide = Math.max(label1.getPreferredSize().width,
-                        label2.getPreferredSize().width);
+//    int wide = Math.max(label1.getPreferredSize().width,
+//                        label2.getPreferredSize().width);
     panel.add(Box.createVerticalStrut(12));
 
-    /*
     final JCheckBox windowsButton = new JCheckBox("Windows");
     //windowsButton.setMnemonic(KeyEvent.VK_W);
     windowsButton.setSelected(Preferences.getBoolean("export.application.platform.windows"));
@@ -282,7 +284,6 @@ public class JavaEditor extends Editor {
     });
 
     final JCheckBox macosxButton = new JCheckBox("Mac OS X");
-    //macosxButton.setMnemonic(KeyEvent.VK_M);
     macosxButton.setSelected(Preferences.getBoolean("export.application.platform.macosx"));
     macosxButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -309,11 +310,13 @@ public class JavaEditor extends Editor {
     platformPanel.setBorder(new TitledBorder("Platforms"));
     //Dimension goodIdea = new Dimension(wide, platformPanel.getPreferredSize().height);
     //platformPanel.setMaximumSize(goodIdea);
-    wide = Math.max(wide, platformPanel.getPreferredSize().width);
+//    wide = Math.max(wide, platformPanel.getPreferredSize().width);
     platformPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     panel.add(platformPanel);
-    */
+    int divWidth = platformPanel.getPreferredSize().width;
 
+    // 
+    
     //int indent = new JCheckBox().getPreferredSize().width;
     int indent = 0;
     
@@ -338,13 +341,101 @@ public class JavaEditor extends Editor {
     });
     fullScreenButton.setBorder(new EmptyBorder(3, 13, 3, 13));
 
-    boolean embed = Preferences.getBoolean("export.application.embed_java");
-    final String embedWarning = "Embedding Java makes larger applications";
-    final String nopeWarning = "Users will have to install the latest Java 7";
-    final JLabel warningLabel = new JLabel(embed ? embedWarning : nopeWarning);
-    warningLabel.setBorder(new EmptyBorder(3, 13 + indent, 3, 13));
+    JPanel presentPanel = new JPanel();
+    presentPanel.setLayout(new BoxLayout(presentPanel, BoxLayout.Y_AXIS));
+    Box fullScreenBox = Box.createHorizontalBox();
+    fullScreenBox.add(fullScreenButton);
     
-    final JCheckBox embedJavaButton = new JCheckBox("Embed Java");
+    /*
+    //run.present.stop.color
+//    presentColorPanel = new JTextField();
+//    presentColorPanel.setFocusable(false);
+//    presentColorPanel.setEnabled(false);
+    presentColorPanel = new JPanel() {
+      public void paintComponent(Graphics g) {
+        g.setColor(Preferences.getColor("run.present.bgcolor"));
+        Dimension size = getSize();
+        g.fillRect(0, 0, size.width, size.height);
+      }
+    };
+    presentColorPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+//    presentColorPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+    presentColorPanel.setMaximumSize(new Dimension(30, 20));
+    fullScreenBox.add(presentColorPanel);
+    */
+    fullScreenBox.add(new ColorPreference("run.present.bgcolor"));
+    //presentPanel.add(fullScreenButton);
+    fullScreenBox.add(Box.createHorizontalStrut(10));
+    fullScreenBox.add(Box.createHorizontalGlue());
+
+    presentPanel.add(fullScreenBox);
+    
+//    presentColorPanel.addMouseListener(new MouseAdapter() {
+//      public void mousePressed(MouseEvent e) {
+//        new ColorListener("run.present.bgcolor");
+//      }
+//    });
+
+    Box showStopBox = Box.createHorizontalBox();
+    showStopBox.add(showStopButton);
+    showStopBox.add(new ColorPreference("run.present.stop.color"));
+    showStopBox.add(Box.createHorizontalStrut(10));
+    showStopBox.add(Box.createHorizontalGlue());
+    presentPanel.add(showStopBox);
+    
+    //presentPanel.add(showStopButton);
+//    presentPanel.add(Box.createHorizontalStrut(10));
+//    presentPanel.add(Box.createHorizontalGlue());
+    presentPanel.setBorder(new TitledBorder("Full Screen"));
+//    wide = Math.max(wide, platformPanel.getPreferredSize().width);
+    presentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    panel.add(presentPanel);
+
+//    Dimension good;
+//    good = new Dimension(wide, label1.getPreferredSize().height);
+//    label1.setMaximumSize(good);
+//    good = new Dimension(wide, label2.getPreferredSize().height);
+//    label2.setMaximumSize(good);
+//    good = new Dimension(wide, presentPanel.getPreferredSize().height);
+    
+    //
+    
+    JPanel embedPanel = new JPanel();
+    embedPanel.setLayout(new BoxLayout(embedPanel, BoxLayout.Y_AXIS));
+    
+    String platformName = null;
+    if (Base.isMacOS()) {
+      platformName = "Mac OS X";
+    } else if (Base.isWindows()) {
+      platformName = "Windows (" + Base.getNativeBits() + "-bit)";
+    } else if (Base.isLinux()) {
+      platformName = "Linux (" + Base.getNativeBits() + "-bit)";
+    }
+    
+    boolean embed = Preferences.getBoolean("export.application.embed_java");
+    final String embedWarning =
+      "<html><div width=\"" + divWidth + "\"><font size=\"2\">" + 
+//      "<html><body><font size=2>" +
+      "Embedding Java will make the " + platformName + " application " +
+      "larger, but it will be far more likely to work. " +
+      "Users on other platforms will need to <a href=\"\">install Java 7</a>.";
+    final String nopeWarning = 
+      "<html><div width=\"" + divWidth + "\"><font size=\"2\">" + 
+//      "<html><body><font size=2>" +
+      "Users on all platforms will have to install the latest " +
+      "version of Java 7 from <a href=\"\">http://java.com/download</a>. " +
+      "<br/>&nbsp;";
+      //"from <a href=\"http://java.com/download\">java.com/download</a>.";
+    final JLabel warningLabel = new JLabel(embed ? embedWarning : nopeWarning);
+    warningLabel.addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent event) {
+        Base.openURL("http://java.com/download");
+      }
+    });
+    warningLabel.setBorder(new EmptyBorder(3, 13 + indent, 3, 13));
+
+    final JCheckBox embedJavaButton = 
+      new JCheckBox("Embed Java for " + platformName);
     embedJavaButton.setSelected(embed);
     embedJavaButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -359,27 +450,76 @@ public class JavaEditor extends Editor {
     });
     embedJavaButton.setBorder(new EmptyBorder(3, 13, 3, 13));
     
-    JPanel optionPanel = new JPanel();
-    optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
-    optionPanel.add(fullScreenButton);
-    optionPanel.add(showStopButton);
-    optionPanel.add(embedJavaButton);
-    optionPanel.add(warningLabel);
-    optionPanel.setBorder(new TitledBorder("Options"));
-//    wide = Math.max(wide, platformPanel.getPreferredSize().width);
-    optionPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    panel.add(optionPanel);
-
-    Dimension good;
-    //label1, label2, platformPanel, optionPanel
-    good = new Dimension(wide, label1.getPreferredSize().height);
-    label1.setMaximumSize(good);
-    good = new Dimension(wide, label2.getPreferredSize().height);
-    label2.setMaximumSize(good);
-//    good = new Dimension(wide, platformPanel.getPreferredSize().height);
-//    platformPanel.setMaximumSize(good);
-    good = new Dimension(wide, optionPanel.getPreferredSize().height);
-//    optionPanel.setMaximumSize(good);
+    embedPanel.add(embedJavaButton);
+    embedPanel.add(warningLabel);
+    embedPanel.setBorder(new TitledBorder("Embed Java"));
+    panel.add(embedPanel);
+    
+    //
+    
+    if (Base.isMacOS()) {
+      JPanel signPanel = new JPanel();
+      signPanel.setLayout(new BoxLayout(signPanel, BoxLayout.Y_AXIS));
+      signPanel.setBorder(new TitledBorder("Code Signing"));
+      
+      // gatekeeper: http://support.apple.com/kb/ht5290
+      // for developers: https://developer.apple.com/developer-id/
+      String thePain =
+        //"<html><body><font size=2>" +
+        "In recent versions of OS X, Apple has introduced the \u201CGatekeeper\u201D system, " + 
+        "which makes it more difficult to run applications like those exported from Processing. ";
+      
+      if (new File("/usr/bin/codesign_allocate").exists()) {
+        thePain +=  
+          "This application will be \u201Cself-signed\u201D which means that Finder may report that the " +
+          "application is from an \u201Cunidentified developer\u201D. If the application will not " + 
+          "run, try right-clicking the app and selecting Open from the pop-up menu. Or you can visit " +
+          "System Preferences \u2192 Security & Privacy and select Allow apps downloaded from: anywhere. ";          
+      } else {
+        thePain += 
+          "Gatekeeper requires applications to be \u201Csigned\u201D, or they will be reported as damaged. " +
+          "To prevent this message, install Xcode (and the Command Line Tools) from the App Store, or visit " + 
+          "System Preferences \u2192 Security & Privacy and select Allow apps downloaded from: anywhere. ";
+      }
+      thePain += 
+        "To avoid the messages entirely, manually code sign your app. " +
+        "For more information: <a href=\"\">https://developer.apple.com/developer-id/</a>";
+      
+      // xattr -d com.apple.quarantine thesketch.app
+      
+      //signPanel.add(new JLabel(thePain));
+      //JEditorPane area = new JEditorPane("text/html", thePain);
+      //JTextPane area = new JEditorPane("text/html", thePain);
+      
+//      JTextArea area = new JTextArea(thePain);
+//      area.setBackground(null);
+//      area.setFont(new Font("Dialog", Font.PLAIN, 10));
+//      area.setLineWrap(true);
+//      area.setWrapStyleWord(true);
+      // Are you f-king serious, Java API developers?
+      JLabel area = new JLabel("<html><div width=\"" + divWidth + "\"><font size=\"2\">" + thePain + "</div></html>");
+      
+      area.setBorder(new EmptyBorder(3, 13, 3, 13));
+//      area.setPreferredSize(new Dimension(embedPanel.getPreferredSize().width, 100));
+//      area.setPreferredSize(new Dimension(300, 200));
+      signPanel.add(area);
+//      signPanel.add(Box.createHorizontalGlue());
+      signPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+      
+      area.addMouseListener(new MouseAdapter() {
+        public void mousePressed(MouseEvent event) {
+          Base.openURL("https://developer.apple.com/developer-id/");
+        }
+      });
+      
+      panel.add(signPanel);
+    }
+    //System.out.println(panel.getPreferredSize());
+//    panel.setMinimumSize(new Dimension(316, 461));
+//    panel.setPreferredSize(new Dimension(316, 461));
+//    panel.setMaximumSize(new Dimension(316, 461));
+    
+    //
 
     String[] options = { "Export", "Cancel" };
     final JOptionPane optionPane = new JOptionPane(panel,
@@ -391,7 +531,8 @@ public class JavaEditor extends Editor {
 
     final JDialog dialog = new JDialog(this, "Export Application", true);
     dialog.setContentPane(optionPane);
-
+//    System.out.println(optionPane.getLayout());
+    
     optionPane.addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent e) {
         String prop = e.getPropertyName();
@@ -406,12 +547,17 @@ public class JavaEditor extends Editor {
       }
     });
     dialog.pack();
+//    System.out.println("after pack: " + panel.getPreferredSize());
+//    dialog.setSize(optionPane.getPreferredSize());
     dialog.setResizable(false);
-
+    
+    // Center the window in the middle of the editor
     Rectangle bounds = getBounds();
     dialog.setLocation(bounds.x + (bounds.width - dialog.getSize().width) / 2,
                        bounds.y + (bounds.height - dialog.getSize().height) / 2);
     dialog.setVisible(true);
+    
+    //System.out.println(panel.getSize());
 
     Object value = optionPane.getValue();
     if (value.equals(options[0])) {
@@ -423,7 +569,90 @@ public class JavaEditor extends Editor {
     return false;
   }
 
+  /*
+  Color bgcolor = Preferences.getColor("run.present.bgcolor");
+  final ColorChooser c = new ColorChooser(JavaEditor.this, true, bgcolor, 
+                                          "Select", new ActionListener() {
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      Preferences.setColor("run.present.bgcolor", c.getColor());
+    }
+  });
+  */
 
+  /*
+  class ColorListener implements ActionListener {
+    ColorChooser chooser;
+    String prefName;
+    
+    public ColorListener(String prefName) {
+      this.prefName = prefName;
+      Color color = Preferences.getColor(prefName);
+      chooser = new ColorChooser(JavaEditor.this, true, color, "Select", this);
+      chooser.show();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      Color color = chooser.getColor();
+      Preferences.setColor(prefName, color);
+//      presentColorPanel.setBackground(color);
+      presentColorPanel.repaint();
+      chooser.hide();
+    }    
+  }
+  */
+  
+  class ColorPreference extends JPanel implements ActionListener {
+    ColorChooser chooser;
+    String prefName;
+    
+    public ColorPreference(String pref) {
+      prefName = pref;
+      
+      setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+      setPreferredSize(new Dimension(30, 20));
+      setMaximumSize(new Dimension(30, 20));
+      
+      addMouseListener(new MouseAdapter() {
+        public void mouseReleased(MouseEvent e) {
+          Color color = Preferences.getColor(prefName);
+          chooser = new ColorChooser(JavaEditor.this, true, color, "Select", ColorPreference.this);
+          chooser.show();
+        }
+      });
+    }
+    
+    public void paintComponent(Graphics g) {
+      g.setColor(Preferences.getColor(prefName));
+      Dimension size = getSize();
+      g.fillRect(0, 0, size.width, size.height);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      Color color = chooser.getColor();
+      Preferences.setColor(prefName, color);
+      //presentColorPanel.repaint();
+      repaint();
+      chooser.hide();
+    }    
+  }
+  
+  
+//  protected void selectColor(String prefName) {
+//    Color color = Preferences.getColor(prefName);
+//    final ColorChooser chooser = new ColorChooser(JavaEditor.this, true, color, 
+//                                            "Select", new ActionListener() {
+//      
+//      @Override
+//      public void actionPerformed(ActionEvent e) {
+//        Preferences.setColor(prefName, c.getColor());
+//      }
+//    });
+//  }
+
+  
   /**
    * Checks to see if the sketch has been modified, and if so,
    * asks the user to save the sketch or cancel the export.

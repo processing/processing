@@ -1,3 +1,117 @@
+PROCESSING 2.2 (REV 0226) - 12 May 2014
+
+Major changes to, and improvements upon, how "Export to Application" works.
+Plus dozens of bug fixes for all manner of atrocities.
+
+
+[ bug fixes and additions ] 
+
++ Sketches only starting once, or half-starting and hanging on Mac OS X.
+  A major problem on OS X, thanks to David Fokkema for tracking down a fix.
+  https://github.com/processing/processing/issues/2402
+  https://github.com/processing/processing/pull/2455
+
++ Re-open current sketch in new mode editor if file extension is compatible.
+  This was a regression in 2.1.2 due to the Python Mode changes.
+  https://github.com/processing/processing/pull/2457
+  https://github.com/processing/processing/issues/2456
+
++ Crash in the 'recent' menu on startup
+  https://github.com/processing/processing/issues/2463
+
++ Avoid conflict when some goofball has installed JNA DLLs in your path.
+  https://github.com/processing/processing/issues/2239
+
++ Add support for "import static" syntax from Java
+  https://github.com/processing/processing/issues/8
+  https://github.com/processing/processing/pull/2273
+
++ Improve error handling during Tool loading. In previous releases, an
+  out of date QuickReference Tool was able to hang Processing. No longer.
+  https://github.com/processing/processing/issues/2229
+
++ Save the previous open dialog so that we return to the directory
+  https://github.com/processing/processing/pull/2366
+
++ "if-else" block formatting wasn't following Processing conventions
+  https://github.com/processing/processing/issues/364
+  https://github.com/processing/processing/pull/2477
+
++ Tab characters not recognized or handled in the editor (since 2.1)
+  https://github.com/processing/processing/issues/2180
+  https://github.com/processing/processing/issues/2183
+
++ Chinese text is overlapped in Processing 2.1 editor
+  https://github.com/processing/processing/issues/2173
+  https://github.com/processing/processing/pull/2318
+  https://github.com/processing/processing/pull/2323
+
+
+[ export to application ]
+
++ The return of multi-platform export! Create applications for Windows
+  and Linux while using OS X. Create a Linux application from Windows. 
+  Against my better judgement, we're supporting it again. It's extremely
+  difficult, but was disappointing to remove it earlier.
+
++ When exporting with local Java embedded, always use that version
+  https://github.com/processing/processing/issues/2349
+
++ Change Windows export to use launch4j instead of our custom launcher.
+  This will fix many, many problems, but may introduce some new ones. 
+
++ Windows (64-bit) now creates a proper .exe instead of a .bat file
+  https://github.com/processing/processing/issues/923
+
++ Exported apps on Windows 64 were not quite working correctly
+  https://github.com/processing/processing/issues/2468
+
++ Improved icons on Windows for exported apps
+
++ Add additional language and explanation to the Export dialog box
+
++ Make it possible to edit the background colors for full screen as well as
+  the stop button color directly from the Export dialog box
+  https://github.com/processing/processing/issues/69
+
++ Exported apps reporting as "damaged" on OS X
+  https://github.com/processing/processing/issues/2095
+  You'll have to install Xcode to remove the warnings, but it's possible
+
+
+[ core ]
+
++ Fix for splice() throwing a ClassCastException with other object types
+  https://github.com/processing/processing/issues/1445
+  https://github.com/processing/processing/pull/2461
+
++ Add candDraw() method to the retina renderer to fix embedding problems
+
++ Fix sketchPath() issue when used in other environments (i.e. Eclipse)
+
++ Substitute MOVE cursor with HAND on OS X
+  https://github.com/processing/processing/issues/2358
+
++ Allow textWidth() with the default font
+  https://github.com/processing/processing/issues/2331
+  https://github.com/processing/processing/pull/2338
+
++ Bug in relative moveto commands for SVG
+  https://github.com/processing/processing/issues/2377
+
++ Add a constructor to bind Server to a specific address 
+  https://github.com/processing/processing/issues/2356
+
++ Fonts from loadFont() show up as blocks in P3D (regression)
+  https://github.com/processing/processing/issues/2465
+
++ loadPixels() problems in OpenGL
+  https://github.com/processing/processing/issues/2493
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.1.2 (REV 0225) - 15 April 2014
 
 Lots of small bug fixes plus some additional changes to support 

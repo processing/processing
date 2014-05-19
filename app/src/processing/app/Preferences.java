@@ -430,8 +430,8 @@ public class Preferences {
     deletePreviousBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
-
-
+    
+    
 //    // [ ] Use external editor
 //
 //    externalEditorBox = new JCheckBox("Use external editor");

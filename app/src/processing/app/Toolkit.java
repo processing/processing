@@ -24,12 +24,12 @@ package processing.app;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -151,12 +151,21 @@ public class Toolkit {
 
   static ArrayList<Image> iconImages;
 
+  
+  // Removed in favor of Window being the base object, so that dialogs can   
+  // be supported as well. If this breaks tools/modes, we can bring it back,
+  // but it was essentially an undocumented feature.
+//  static public void setIcon(Frame frame) {
+//    setIcon(frame);
+//  }
+
+  
   /**
    * Give this Frame the Processing icon set. Ignored on OS X, because they
    * thought different and made this function set the minified image of the
    * window, not the window icon for the dock or cmd-tab.
    */
-  static public void setIcon(Frame frame) {
+  static public void setIcon(Window window) {
     if (!Base.isMacOS()) {
 //    // too low-res, prepping for nicer icons in 2.0 timeframe
 //    Image image = awtToolkit.createImage(PApplet.ICON_IMAGE);
@@ -169,7 +178,7 @@ public class Toolkit {
           iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png"));
         }
       }
-      frame.setIconImages(iconImages);
+      window.setIconImages(iconImages);
     }
   }
 

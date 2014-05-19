@@ -133,7 +133,7 @@ public class AutoFormat implements Formatter {
   private void writeIndentedLine() {
     if (buf.length() == 0) {
       if (s_flag) {
-        s_flag = a_flg = false;
+        s_flag = a_flg = e_flg = false;
       }
       return;
     }
@@ -150,8 +150,25 @@ public class AutoFormat implements Formatter {
       }
       a_flg = false;
     }
+    if (e_flg) {
+      if (lastNonSpaceChar() == '}') {
+        trimRight(result);
+        result.append(" ");
+      }
+      e_flg = false;
+    }
     result.append(buf);
     buf.setLength(0);
+  }
+  
+  
+  private char lastNonSpaceChar() {
+    for (int i=result.length()-1; i>=0; i--) {
+      char c_i = result.charAt(i);
+      if (c_i == ' ' || c_i == '\n') continue;
+      else return c_i;
+    }
+    return 0;
   }
 
 
@@ -371,16 +388,12 @@ public class AutoFormat implements Formatter {
 
       case ' ':
       case '\t':
-        if (lookup("else")) {
+        e_flg = lookup("else");
+        if (e_flg) {
           gotelse();
           if ((!s_flag) || buf.length() > 0) {
             buf.append(c);
           }
-//          // issue https://github.com/processing/processing/issues/364
-//          s_flag = false;
-//          trimRight(result);
-//          result.append(" ");
-
           writeIndentedLine();
           s_flag = false;
           break;
@@ -418,7 +431,8 @@ public class AutoFormat implements Formatter {
         break;
 
       case '{':
-        if (lookup("else")) {
+        e_flg = lookup("else");
+        if (e_flg) {
           gotelse();
         }
         if (s_if_lev.length == c_level) {
