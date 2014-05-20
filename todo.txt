@@ -20,6 +20,9 @@ J modifications for captureEvent and Python
 J   https://github.com/processing/processing/pull/2527
 J Permit implementing movieEvent without having to link to Movie at build time
 J   https://github.com/processing/processing/pull/2528
+J implement serial events without having to link to Serial at build time
+J   https://github.com/processing/processing/pull/2529
+
 
 medium
 _ possible to open a sketch multiple times 

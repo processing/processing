@@ -25,9 +25,10 @@ PDE X and other Modes and Tools.
 + Make "Archive Sketch" Tool force a .zip file extension
   https://github.com/processing/processing/issues/2526
 
-+ Modifications for capture and movie events with Python Mode
++ Event handling modifications in video and serial libraries w/ Python Mode
   https://github.com/processing/processing/pull/2527
   https://github.com/processing/processing/pull/2528
+  https://github.com/processing/processing/pull/2529
 
 + Permit mouse PRESS to set mouseX/mouseY
   https://github.com/processing/processing/pull/2509
