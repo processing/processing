@@ -46,9 +46,9 @@ import processing.mode.java.JavaMode;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 227;
+  static private final int REVISION = 228;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0227"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0228"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 //  static private boolean RELEASE = false;
 
@@ -990,7 +990,7 @@ public class Base {
       return editor;
 
     } catch (Throwable t) {
-      showBadnessTrace("Terrible News", 
+      showBadnessTrace("Terrible News",
                        "A serious error occurred while " +
                        "trying to create a new editor window.", t, false);
       nextMode = coreModes[0];
@@ -998,7 +998,7 @@ public class Base {
     }
   }
 
-  
+
   private static class ModeInfo {
     public final String title;
     public final String id;
@@ -1009,7 +1009,7 @@ public class Base {
     }
   }
 
-  
+
   private static ModeInfo modeInfoFor(final File sketch) {
     final File sketchFolder = sketch.getParentFile();
     final File sketchProps = new File(sketchFolder, "sketch.properties");
@@ -1031,7 +1031,7 @@ public class Base {
     return null;
   }
 
-  
+
   private Mode promptForMode(final File sketch, final ModeInfo preferredMode) {
     final String extension =
       sketch.getName().substring(sketch.getName().lastIndexOf('.') + 1);
@@ -1074,7 +1074,7 @@ public class Base {
                                               null, modes, modes[0]);
   }
 
-  
+
   private Mode selectMode(final File sketch) {
     final ModeInfo modeInfo = modeInfoFor(sketch);
     final Mode specifiedMode = modeInfo == null ? null : findMode(modeInfo.id);
@@ -1084,7 +1084,7 @@ public class Base {
     return promptForMode(sketch, modeInfo);
   }
 
-  
+
   protected Mode findMode(String id) {
     for (Mode mode : getModeList()) {
       if (mode.getIdentifier().equals(id)) {
@@ -1094,7 +1094,7 @@ public class Base {
     return null;
   }
 
-  
+
   /**
    * Close a sketch as specified by its editor window.
    * @param editor Editor object of the sketch to be closed.
@@ -2186,8 +2186,8 @@ public class Base {
     }
     if (e != null) e.printStackTrace();
   }
-  
-  
+
+
   /**
    * Non-fatal error message with optional stack trace side dish.
    */
@@ -2265,12 +2265,12 @@ public class Base {
     if (e != null) e.printStackTrace();
     System.exit(1);
   }
-  
-  
+
+
   /**
    * Testing a new warning window that includes the stack trace.
    */
-  static private void showBadnessTrace(String title, String message, 
+  static private void showBadnessTrace(String title, String message,
                                        Throwable t, boolean fatal) {
     if (title == null) title = fatal ? "Error" : "Warning";
 
@@ -2279,17 +2279,17 @@ public class Base {
       if (t != null) {
         t.printStackTrace();
       }
-      
+
     } else {
       StringWriter sw = new StringWriter();
       t.printStackTrace(new PrintWriter(sw));
       // Necessary to replace \n with <br/> (even if pre) otherwise Java
-      // treats it as a closed tag and reverts to plain formatting. 
-      message = "<html>" + message + "<br/><font size=2><br/>" + 
+      // treats it as a closed tag and reverts to plain formatting.
+      message = "<html>" + message + "<br/><font size=2><br/>" +
         sw.toString().replaceAll("\n", "<br/>");
 
       JOptionPane.showMessageDialog(new Frame(), message, title,
-                                    fatal ? 
+                                    fatal ?
                                     JOptionPane.ERROR_MESSAGE :
                                     JOptionPane.WARNING_MESSAGE);
     }
@@ -2527,7 +2527,7 @@ public class Base {
       //return "Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java";
       File[] plugins = getContentFile("../PlugIns").listFiles(new FilenameFilter() {
         public boolean accept(File dir, String name) {
-          return dir.isDirectory() && 
+          return dir.isDirectory() &&
             name.endsWith(".jdk") && !name.startsWith(".");
         }
       });

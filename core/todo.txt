@@ -1,8 +1,4 @@
-0227 core
-X Permit mouse PRESS to set mouseX/mouseY
-X   https://github.com/processing/processing/pull/2509
-A Fix for video, loop() broken in 2.2
-A   https://github.com/processing/processing/issues/2524
+0228 core
 
 
 high

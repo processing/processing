@@ -1,27 +1,4 @@
-0227 pde
-X use mouseReleased() instead of mousePressed() in color selector
-X   otherwise it registers the release as a click in the color window
-X   https://github.com/processing/processing/issues/2514
-X missing 'version' in contrib causes NPE
-X   https://github.com/processing/processing/issues/2517
-X bring back setIcon(Frame) for PDE X and others
-X   https://github.com/processing/processing-experimental/issues/64
-X how was PDE X able to crash 2.2? 
-X   add additional code to rework how this is handled
-X Auto Format patch mess
-X   https://github.com/processing/processing/pull/2271
-X why is the JDK path showing up as a ._ feller in OS X?
-X   https://github.com/processing/processing/issues/2520
-X "Archive Sketch" Tool doesn't force a .zip file extension
-X   https://github.com/processing/processing/issues/2526
-
-python
-J modifications for captureEvent and Python
-J   https://github.com/processing/processing/pull/2527
-J Permit implementing movieEvent without having to link to Movie at build time
-J   https://github.com/processing/processing/pull/2528
-J implement serial events without having to link to Serial at build time
-J   https://github.com/processing/processing/pull/2529
+0228 pde
 
 
 medium

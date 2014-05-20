@@ -1,3 +1,10 @@
+0227 core (2.2.1)
+X Permit mouse PRESS to set mouseX/mouseY
+X   https://github.com/processing/processing/pull/2509
+A Fix for video, loop() broken in 2.2
+A   https://github.com/processing/processing/issues/2524
+
+
 0226 core (2.2)
 X fix parsing with missing categorical values
 X fix for splice() throwing a ClassCastException with other object types
