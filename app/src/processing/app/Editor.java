@@ -895,49 +895,58 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     sketchMenu.add(item);
 
-    sketchMenu.add(item); 
-    
     sketchMenu.addSeparator();
-    
+
     sketchMenu.addMenuListener(new MenuListener() {
 
-        java.util.List<JMenuItem> menuList = new java.util.ArrayList<JMenuItem>();
-    	
-        @Override
-        public void menuSelected(MenuEvent arg0) {
-		  java.util.List<Editor> ed = base.getEditors();
-		  JMenuItem item;
-		  for (Editor editor2 : ed)
-		  {
-		  	item = new JMenuItem(editor2.getSketch().getName()); 
-			item.setText(editor2.getSketch().getName() + " ("
-					+ editor2.getMode().getTitle() + ")");
-			sketchMenu.add(item);
-			menuList.add(item);
-		  }
-        }
+      java.util.List<JMenuItem> menuList = new java.util.ArrayList<JMenuItem>();
 
-        @Override
-        public void menuDeselected(MenuEvent arg0) {
-          for (JMenuItem it : menuList) 
-        	sketchMenu.remove(it);
-          menuList.clear();
-        }
+      JMenu openSketchesSubmenu = new JMenu("Open Sketches");
 
-        @Override
-        public void menuCanceled(MenuEvent arg0) {
-          menuDeselected(arg0);
-        }
-      });
+      @Override
+      public void menuSelected(MenuEvent arg0) {
+        java.util.List<Editor> ed = base.getEditors();
+        JMenuItem item;
+        for (final Editor editor2 : ed) {
+          item = new JMenuItem(editor2.getSketch().getName());
+          item.setText(editor2.getSketch().getName() + " ("
+            + editor2.getMode().getTitle() + ")");
     
+          item.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              editor2.setState(Frame.NORMAL);
+              editor2.setVisible(true);
+              editor2.toFront();
+            }
+          });
+
+          openSketchesSubmenu.add(item);
+          menuList.add(item);
+        }
+        sketchMenu.add(openSketchesSubmenu);
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent arg0) {
+        for (JMenuItem it : menuList)
+          openSketchesSubmenu.remove(it);
+        menuList.clear();
+        sketchMenu.remove(openSketchesSubmenu);
+      }
+
+      @Override
+      public void menuCanceled(MenuEvent arg0) {
+        menuDeselected(arg0);
+      }
+    });
+
     return sketchMenu;
   }
 
-  //DONE: Handle closing of sketches
-  //DONE: Destroy uneccesary background threads when a sketch has been closed
-  //TODO: Handle changing mode of sketches
+
   //TODO: Make current sketch at the top of the list / tick mark it 
-  //TODO: Bring sketch to foreground when it is clicked (duh :p)
   abstract public void handleImportLibrary(String jarPath);
 
 
