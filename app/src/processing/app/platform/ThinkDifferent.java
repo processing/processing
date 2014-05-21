@@ -22,13 +22,10 @@
 
 package processing.app.platform;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import java.awt.Dimension;
+import java.awt.event.*;
+
+import javax.swing.*;
 
 import processing.app.About;
 import processing.app.Base;
@@ -77,38 +74,39 @@ public class ThinkDifferent implements ApplicationListener {
     application.setEnabledPreferencesMenu(true);
 
     // Set the menubar to be used when nothing else is open. http://j.mp/dkZmka
-    // http://developer.apple.com/mac/library/documentation/Java/Reference/
-    //   JavaSE6_AppleExtensionsRef/api/com/apple/eawt/Application.html
-    // Only available since Java for Mac OS X 10.6 Update 1, and
-    // Java for Mac OS X 10.5 Update 6, so need to load this dynamically
+    // Only available since Java for Mac OS X 10.6 Update 1, but removed
+    // dynamic loading code because that should be installed in 10.6.8, and
+    // we may be dropped 10.6 really soon anyway
+    
+    JMenuBar defaultMenuBar = new JMenuBar();
+    JMenu fileMenu = buildFileMenu(base);
+    defaultMenuBar.add(fileMenu);
+    // This is kind of a gross way to do this, but the alternatives? Hrm.
+    Base.defaultFileMenu = fileMenu;
+
     if (PApplet.javaVersion <= 1.6f) {  // doesn't work on Oracle's Java
-//    if (System.getProperty("java.vendor").contains("Apple") ||
-//        Base.isUsableOracleJava()) {
       try {
-        // com.apple.eawt.Application.setDefaultMenuBar(JMenuBar)
-        Class<?> appClass = Application.class;
-        Method method =
-          appClass.getMethod("setDefaultMenuBar", new Class[] { JMenuBar.class });
-        if (method != null) {
-          JMenuBar defaultMenuBar = new JMenuBar();
-          JMenu fileMenu = buildFileMenu(base);
-          defaultMenuBar.add(fileMenu);
-          method.invoke(application, new Object[] { defaultMenuBar });
-          // This is kind of a gross way to do this, but the alternatives? Hrm.
-          Base.defaultFileMenu = fileMenu;
-        }
-      } catch (InvocationTargetException ite) {
-        ite.getTargetException().printStackTrace();
+        application.setDefaultMenuBar(defaultMenuBar);
+        
       } catch (Exception e) {
         e.printStackTrace();  // oh well nevermind
       }
     } else {
-      // http://java.net/jira/browse/MACOSX_PORT-775?page=com.atlassian.jira.plugin.system.issuetabpanels%3Aall-tabpanel
-      System.err.println("Skipping default menu bar due to Oracle Java 7 bug:");
-      System.err.println("http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267");
+      // The douchebags at Oracle didn't feel that a working f*king menubar 
+      // on OS X was important enough to make it into the 7u40 release. 
+      //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
+      // It languished in the JDK 8 source and has been backported for 7u60:
+      //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
+      
+      JFrame offscreen = new JFrame();
+      offscreen.setUndecorated(true);
+      offscreen.setJMenuBar(defaultMenuBar);
+      Dimension screen = Toolkit.getScreenSize();
+      offscreen.setLocation(screen.width, screen.height);
+      offscreen.setVisible(true);
     }
   }
-
+  
 
   public ThinkDifferent(Base base) {
     this.base = base;

@@ -24,7 +24,6 @@ package processing.app.contrib;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.*;
-import java.util.HashMap;
 
 import processing.app.Base;
 import processing.app.Mode;
@@ -43,19 +42,19 @@ public class ModeContribution extends LocalContribution {
                                       String searchName) {
     try {
       return new ModeContribution(base, folder, searchName);
+      
     } catch (IgnorableException ig) {
       Base.log(ig.getMessage());
-    } catch (Error err) {
-      // Handles UnsupportedClassVersionError and others
-      err.printStackTrace();
-    } catch (Exception e) {
+      
+    } catch (Throwable err) {  
+      // Throwable to catch Exceptions or UnsupportedClassVersionError et al
       if (searchName == null) {
-        e.printStackTrace();
+        err.printStackTrace();
       } else {
         // For the built-in modes, don't print the exception, just log it
         // for debugging. This should be impossible for most users to reach,
         // but it helps us load experimental mode when it's available.
-        Base.log("ModeContribution.load() failed for " + searchName, e);
+        Base.log("ModeContribution.load() failed for " + searchName, err);
       }
     }
     return null;
@@ -95,16 +94,31 @@ public class ModeContribution extends LocalContribution {
       existing.put(contrib.getFolder(), contrib);
     }
     File[] potential = ContributionType.MODE.listCandidates(modesFolder);
-    for (File folder : potential) {
-      if (!existing.containsKey(folder)) {
-        try {
-          contribModes.add(new ModeContribution(base, folder, null));
-        } catch (IgnorableException ig) {
-          Base.log(ig.getMessage());
-        } catch (Exception e) {
-          e.printStackTrace();
+    // If modesFolder does not exist or is inaccessible (folks might like to 
+    // mess with folders then report it as a bug) 'potential' will be null.
+    if (potential != null) {
+      for (File folder : potential) {
+        if (!existing.containsKey(folder)) {
+          try {
+            contribModes.add(new ModeContribution(base, folder, null));
+          } catch (IgnorableException ig) {
+            Base.log(ig.getMessage());
+          } catch (Throwable e) {
+            e.printStackTrace();
+          }
         }
       }
+    }
+    
+    // This allows you to build and test your Mode code from Eclipse.
+    // -Dusemode=com.foo.FrobMode:/path/to/FrobMode/resources
+    final String usemode = System.getProperty("usemode");
+    if (usemode != null) {
+      final String[] modeinfo = usemode.split(":", 2);
+      final String modeClass = modeinfo[0];
+      final String modeResourcePath = modeinfo[1];
+      System.err.println("Attempting to load " + modeClass + " with resources at " + modeResourcePath);
+      contribModes.add(ModeContribution.load(base, new File(modeResourcePath), modeClass));
     }
   }
 

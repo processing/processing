@@ -661,6 +661,7 @@ popMatrix	FUNCTION1	popMatrix_
 popStyle	FUNCTION1	popStyle_
 pow	FUNCTION1	pow_
 print	FUNCTION1	print_
+printArray	FUNCTION1	printArray_
 printCamera	FUNCTION1	printCamera_
 println	FUNCTION1	println_
 printMatrix	FUNCTION1	printMatrix_
@@ -670,6 +671,7 @@ PShader	FUNCTION2	PShader_set_
 PShape	KEYWORD5	PShape
 addChild	FUNCTION2	PShape_addChild_
 beginContour	FUNCTION2	PShape_beginContour_
+beginShape	FUNCTION2	PShape_beginShape_
 disableStyle	FUNCTION2	PShape_disableStyle_
 enableStyle	FUNCTION2	PShape_enableStyle_
 endContour	FUNCTION2	PShape_endContour_

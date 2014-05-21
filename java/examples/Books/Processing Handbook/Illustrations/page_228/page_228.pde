@@ -1,6 +1,7 @@
 
 // Based on code 26-04 (p. 231)
 
+import processing.pdf.*;
 
 int dragX, dragY, moveX, moveY;
 boolean record = false;

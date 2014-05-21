@@ -369,6 +369,15 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   /**
    * Apply another matrix to the left of this one.
    */
+  public void preApply(PMatrix source) {
+    if (source instanceof PMatrix2D) {
+      preApply((PMatrix2D) source);
+    } else if (source instanceof PMatrix3D) {
+      preApply((PMatrix3D) source);
+    }
+  }
+
+
   public void preApply(PMatrix3D left) {
     preApply(left.m00, left.m01, left.m02, left.m03,
              left.m10, left.m11, left.m12, left.m13,

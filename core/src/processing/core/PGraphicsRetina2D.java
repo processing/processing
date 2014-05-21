@@ -87,11 +87,19 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
 
   // FRAME
 
+
+  @Override
+  public boolean canDraw() {
+    return parent.getGraphicsConfiguration() != null;
+  }
+
+
   @Override
   public void beginDraw() {
 //    g2 = (Graphics2D) parent.getGraphics();
 
     GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+
 //    if (false) {
 //      if (image == null || ((VolatileImage) image).validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
 //        image = gc.createCompatibleVolatileImage(width*2, height*2);

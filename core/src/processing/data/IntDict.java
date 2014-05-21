@@ -76,18 +76,16 @@ public class IntDict {
    * @nowebref
    */
   public IntDict(BufferedReader reader) {
-//  public IntHash(PApplet parent, String filename) {
     String[] lines = PApplet.loadStrings(reader);
     keys = new String[lines.length];
     values = new int[lines.length];
 
-//    boolean csv = (lines[0].indexOf('\t') == -1);
     for (int i = 0; i < lines.length; i++) {
-//      String[] pieces = csv ? Table.splitLineCSV(lines[i]) : PApplet.split(lines[i], '\t');
       String[] pieces = PApplet.split(lines[i], '\t');
       if (pieces.length == 2) {
         keys[count] = pieces[0];
         values[count] = PApplet.parseInt(pieces[1]);
+        indices.put(pieces[0], count);
         count++;
       }
     }
@@ -526,7 +524,7 @@ public class IntDict {
   }
 
 
-  protected void swap(int a, int b) {
+  public void swap(int a, int b) {
     String tkey = keys[a];
     int tvalue = values[a];
     keys[a] = keys[b];

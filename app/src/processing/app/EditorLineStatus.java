@@ -23,6 +23,7 @@
 package processing.app;
 
 import java.awt.*;
+
 import javax.swing.*;
 
 
@@ -87,6 +88,10 @@ public class EditorLineStatus extends JComponent {
 
 
   public void paintComponent(Graphics g) {
+    Graphics2D g2 = (Graphics2D) g;
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
     g.setColor(background);
     Dimension size = getSize();
     g.fillRect(0, 0, size.width, size.height);
@@ -94,7 +99,8 @@ public class EditorLineStatus extends JComponent {
     g.setFont(font);
     g.setColor(foreground);
     int baseline = (high + g.getFontMetrics().getAscent()) / 2;
-    g.drawString(text, 6, baseline);
+    // With 7u40 (or Source Code Sans?) things seem to be edged up a bit
+    g.drawString(text, 6, baseline - 1);
   }
 
 

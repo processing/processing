@@ -97,6 +97,8 @@ public interface PMatrix {
   /**
    * Apply another matrix to the left of this one.
    */
+  public void preApply(PMatrix left);
+
   public void preApply(PMatrix2D left);
 
   public void preApply(PMatrix3D left);

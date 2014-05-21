@@ -3,12 +3,10 @@ japplemenubar
 processing.app
 processing.app.contrib
 processing.app.exec
-processing.app.linux
-processing.app.macosx
+processing.app.platform
 processing.app.syntax
 processing.app.syntax.im
 processing.app.tools
-processing.app.windows
 processing.core
 processing.data
 processing.event

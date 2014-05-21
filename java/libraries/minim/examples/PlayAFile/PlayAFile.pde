@@ -1,6 +1,9 @@
 /**
   * This sketch demonstrates how to play a file with Minim using an AudioPlayer. <br />
   * It's also a good example of how to draw the waveform of the audio.
+  * <p>
+  * For more information about Minim and additional features, 
+  * visit http://code.compartmental.net/minim/
   */
 
 import ddf.minim.*;
@@ -20,7 +23,9 @@ void setup()
   // sketch folder. you can also pass an absolute path, or a URL.
   player = minim.loadFile("marcus_kellis_theme.mp3");
   
-  // play the file
+  // play the file from start to finish.
+  // if you want to play the file again, 
+  // you need to call rewind() first.
   player.play();
 }
 

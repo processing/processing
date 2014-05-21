@@ -27,6 +27,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
+import java.net.SocketTimeoutException;
 import java.util.*;
 
 import javax.swing.*;
@@ -85,13 +86,8 @@ public class ContributionManagerDialog {
 
       dialog.pack();
       dialog.setLocationRelativeTo(null);
-//      Dimension screen = Toolkit.getScreenSize();
-//      dialog.setLocation((screen.width - dialog.getWidth()) / 2,
-//                         (screen.height - dialog.getHeight()) / 2);
-
       contributionListPanel.grabFocus();
     }
-
     dialog.setVisible(true);
 
     if (contribListing.hasDownloadedLatestList()) {
@@ -99,19 +95,21 @@ public class ContributionManagerDialog {
 
     } else {
       contribListing.downloadAvailableList(new ProgressMonitor() {
-//        public void startTask(String name, int maxValue) {
-//        }
-//
+        
         public void finished() {
           super.finished();
-
+          
           updateContributionListing();
           updateCategoryChooser();
-          if (isError()) {
-            status.setErrorMessage("An error occured when downloading " +
-                                   "the list of available contributions.");
-//          } else {
-//            status.updateUI();
+          if (error) {
+            if (exception instanceof SocketTimeoutException) {
+              status.setErrorMessage("Connection timed out while " +
+                                     "downloading the contribution list.");
+            } else {
+              status.setErrorMessage("Could not download the list" +
+                                     "of available contributions.");
+            }
+            exception.printStackTrace();
           }
         }
       });

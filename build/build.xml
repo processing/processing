@@ -19,6 +19,122 @@
     </and>
   </condition>
 
+  <!-- Require Java 7 to bootstrap, otherwise there will be sadness. 
+       Java 1.8 caused build problems (with ECJ?) so not supported. --> 
+  <fail message="Unsupported Java version: ${java.version}. Make sure that Java 7 (aka Java 1.7) is installed."> 
+    <condition> 
+      <not> 
+        <or> 
+          <contains string="${java.version}" substring="1.7" /> 
+        </or> 
+      </not> 
+    </condition> 
+  </fail> 
+
+  <!-- Figure out the JRE download location for Linux and Windows. -->
+  <condition property="jre.file" value="jre-7u40-${platform}-i586.tgz"> 
+    <equals arg1="${sun.arch.data.model}" arg2="32" />
+  </condition>
+  <condition property="jre.file" value="jre-7u40-${platform}-x64.tgz"> 
+    <equals arg1="${sun.arch.data.model}" arg2="64" />
+  </condition>
+
+  <fileset dir="windows/work/java" id="jre-optional-windows">
+    <include name="bin/dtplugin" />
+    <include name="bin/plugin2" />
+
+    <include name="bin/kinit.exe" />
+    <include name="bin/klist.exe" />
+    <include name="bin/ktab.exe" />
+
+    <include name="bin/keytool" />
+    <include name="bin/orbd" />
+    <include name="bin/policytool" />
+    <include name="bin/rmid" />
+    <include name="bin/rmiregistry" />
+    <include name="bin/servertool" />
+    <include name="bin/tnameserv" />
+
+    <include name="bin/javaws.exe" />
+    <include name="lib/javaws.jar" />
+
+    <include name="lib/ext/dnsns.jar" />
+    <include name="lib/cmm/PYCC.pf" />
+  </fileset>
+
+  <fileset dir="linux/work/java" id="jre-optional-linux">
+    <include name="bin/keytool" />
+    <include name="bin/orbd" />
+    <include name="bin/policytool" />
+    <include name="bin/rmid" />
+    <include name="bin/rmiregistry" />
+    <include name="bin/servertool" />
+    <include name="bin/tnameserv" />
+
+    <include name="bin/javaws" />
+    <include name="lib/javaws.jar" />
+
+    <include name="lib/ext/dnsns.jar" />
+    <include name="lib/cmm/PYCC.pf" />
+  </fileset>
+
+  <!-- Unused JavaFX files that can be removed from the JRE on Windows 
+       and Linux. On Mac OS X, this is removed by the appbundler task.
+       www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html -->
+
+  <!-- There might be others, based on what was in the Java 6 docs, 
+       but that info isn't part of the Java 7 instructions.
+       http://www.oracle.com/technetwork/java/javase/jrereadme-182762.html -->
+
+  <fileset dir="${platform}/work/java" id="javafx-basics">
+    <include name="THIRDPARTYLICENSEREADME-JAVAFX.txt" />
+    <include name="lib/javafx.properties" />
+    <include name="lib/jfxrt.jar" />
+    <include name="lib/security/javafx.policy" />
+  </fileset>
+
+  <fileset dir="windows/work/java" id="javafx-windows">
+    <include name="bin/decora-sse.dll" />
+    <include name="bin/fxplugins.dll" />
+    <include name="bin/glass.dll" />
+    <include name="bin/glib-lite.dll" />
+    <include name="bin/gstreamer-lite.dll" />
+    <include name="bin/javafx-font.dll" />
+    <include name="bin/javafx-iio.dll" />
+    <include name="bin/jfxmedia.dll" />
+    <include name="bin/jfxwebkit.dll" />
+    <include name="bin/libxml2.dll" />
+    <include name="bin/libxslt.dll" />
+  </fileset>
+
+  <fileset dir="linux/work/java" id="javafx-linux-32">
+    <include name="lib/i386/fxavcodecplugin-52.so" />
+    <include name="lib/i386/fxavcodecplugin-53.so" />
+    <include name="lib/i386/fxplugins.so" />
+    <include name="lib/i386/libglass.so" />
+    <include name="lib/i386/libgstplugins-lite.so" />
+    <include name="lib/i386/libgstreamer-lite.so" />
+    <include name="lib/i386/libjavafx-font.so" />
+    <include name="lib/i386/libjavafx-iio.so" />
+    <include name="lib/i386/libjfxmedia.so" />
+    <include name="lib/i386/libjfxwebkit.so" />
+    <include name="lib/i386/libprism-es2.so" />
+  </fileset>
+
+  <fileset dir="linux/work/java" id="javafx-linux-64">
+    <include name="lib/amd64/fxavcodecplugin-52.so" />
+    <include name="lib/amd64/fxavcodecplugin-53.so" />
+    <include name="lib/amd64/fxplugins.so" />
+    <include name="lib/amd64/libglass.so" />
+    <include name="lib/amd64/libgstplugins-lite.so" />
+    <include name="lib/amd64/libgstreamer-lite.so" />
+    <include name="lib/amd64/libjavafx-font.so" />
+    <include name="lib/amd64/libjavafx-iio.so" />
+    <include name="lib/amd64/libjfxmedia.so" />
+    <include name="lib/amd64/libjfxwebkit.so" />
+    <include name="lib/amd64/libprism-es2.so" />
+  </fileset>
+
   <!--
   <echo message="${java.class.path}" />
   -->
@@ -34,28 +150,22 @@
     <equals arg1="${env.USER}" arg2="fry" />
   </condition>
 
-  <!-- Make sure that we have a legitimate JDK... This was promoted 
-       from app/build.xml because we now need this on OS X as well. -->
-  <property name="java_home" value="${env.JAVA_HOME}" />
-  <available file="${env.JAVA_HOME}/lib/tools.jar"
-	     property="java_tools_found" />
+  <!-- Set the version of Java that must be present to build. -->
+  <property name="jdk.update.macosx" value="55" />
+  <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_${jdk.update.macosx}.jdk" />
 
-  <fail if="windows" unless="java_tools_found" 
-	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Windows, this might be c:\jdk1.6.0_19." />
+  <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
-  <!-- OS X gets a second chance that covers JDK 6, 
-       a necessity for building on OS X 10.6. -->
-  <available file="/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar" property="java_tools_found" />
-
-  <fail if="macosx" unless="java_tools_found"
-	message="To build on OS X, you must install both Apple's Java 6 and Oracle's JDK 7 (not just the plugin). Then add this line: ${line.separator}export JAVA_HOME=`/usr/libexec/java_home`${line.separator}to ~/.profile and open a new Terminal window." />
-
+  <fail if="macosx" unless="macosx_jdk_found"
+	message="JDK 7u${jdk.update.macosx} required.${line.separator}To build on OS X, you must install Oracle's JDK 7u${jdk.update.macosx} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only 7u${jdk.update.macosx} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
+  <!--
   <fail if="linux" unless="java_tools_found" 
 	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
+  -->
 	       
   <!-- Figure out the platform-specific output directory for all this work. -->
   <condition property="target.path" 
-	     value="macosx/work/Processing.app/Contents/Resources/Java">
+	     value="macosx/work/Processing.app/Contents/Java">
     <os family="mac" /> 
   </condition>
 
@@ -68,6 +178,7 @@
   </condition>
 
   <!-- Libraries required for running processing -->
+  <!-- also need to copy these to the bundleapp task for macosx -->
   <fileset dir=".." id="runtime.jars">
     <include name="app/pde.jar" />
     <include name="app/lib/antlr.jar" />
@@ -97,18 +208,6 @@
     <antcall target="${platform}-dist" />
   </target>
 
-<!--
-  <target name="android-dist-check">
--->
-    <!-- ensure that the android-core.zip file has been built -->
-<!--
-    <available file="${target.path}/modes/android/android-core.zip" 
-	       property="android-core-present" />
-    <fail unless="android-core-present" 
-	  message="android-core.zip was not built, but is required for dist. Install the Android tools, set ANDROID_SDK, and try again." />
-  </target>
--->
-
   <!-- "§$§$&, ant doesn't have a built-in help target :(  -->
   <target name="help" description="Show project help">
     <java classname="org.apache.tools.ant.Main">
@@ -128,7 +227,6 @@
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
     <subant buildpath="../java/libraries/video" target="clean"/>
-<!--    <subant buildpath="../experimental" target="clean"/>-->
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
   </target>
   
@@ -140,7 +238,6 @@
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
     <subant buildpath="../java/libraries/video" target="build"/>
-<!--    <subant buildpath="../experimental" target="build"/>-->
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
   </target>
   
@@ -148,21 +245,8 @@
   <!-- - - - - - - - - -->
   <!-- Basic Assembly  -->
   <!-- - - - - - - - - -->
-
-
-<!--  <target name="experimental" unless="version">-->
-  <target name="experimental">
-<!--
-    <copy todir="${target.path}/modes/experimental">
-      <fileset dir="../experimental">
-	<include name="**/mode/*" />
-	<include name="**/theme/*" />
-      </fileset>
-    </copy>
--->
-  </target>
-  
-  <target name="assemble" depends="version-clear, version-write, experimental">
+ 
+  <target name="assemble" depends="version-clear, version-write">
     <fail unless="target.path" 
 	  message="Do not call assemble from the command line." />
     
@@ -184,118 +268,15 @@
 	<exclude name="reference.zip" />
 	<exclude name="**/._*" />
 
+	<!-- probably not necessary anymore -->
 	<exclude name="examples/**/applet/**" />
       </fileset>
     </copy>
 
-<!-- decided against this. 
-     see: http://code.google.com/p/processing/issues/detail?id=650 -->
-<!--
-    <get src="http://www.java.com/js/deployJava.js" 
-	 dest="${target.path}/modes/java/applet/deployJava.js"
-	 usetimestamp="true" />
--->
-
     <delete dir="${target.path}/modes/java/examples">
       <include name="**/applet/**" />
     </delete>
-<!--
-    <delete>
-      <fileset dir="${target.path}/modes/java/examples"
-	       includes="**/applet/**" />
-    </delete>
--->
 
-<!--
-    not happy on windows, since cygwin may not be installed
-    <exec executable="find" dir="${target.path}/modes/java/examples"
-	  errorproperty="ignored">
-      <arg line=". -name applet -exec rm -rf {} ';'" />
-    </exec>
--->
-
-<!--
-    <copy todir="${target.path}/modes/java/examples">
-      <fileset dir="../java/examples">
-	<exclude name="**/applet/**" />
-      </fileset>
-    </copy>
--->
-
-<!--     <copy todir="${target.path}/modes/javascript">
-      <fileset dir="../javascript">
-      	<exclude name="**/._*" />
-      </fileset>
-    </copy> -->
-
-<!--
-    <copy todir="${target.path}/modes/android">
-      <fileset dir="../android">
-	<include name="android-core.zip" />
-	<include name="examples/**" />
-	<include name="icons/**" />
-	<include name="theme/**" />
-	<include name="keywords.txt" />
-	<exclude name="**/._*" />
--->
-<!-- these had already been commented out 
-	<exclude name="**/bin/**" />
-	<exclude name="**/src/**" />
-	<exclude name="cmd" />
-	<exclude name="reference.zip" />
--->
-<!--
-      </fileset>
-    </copy>
--->
-    
-    <!-- copy libraries -->
-<!--
-    <copy todir="${target.path}/modes/java/libraries">
-      <fileset dir="../java/libraries">
-	<include name="**/library/**" />
-	<include name="**/src/**" />
-      </fileset>
-    </copy>
--->
-
-    <!-- copy shared library folder -->
-<!--
-    <copy todir="${target.path}/modes/java/libraries">
-      <fileset dir="shared/modes/java/libraries" />
-    </copy>
--->
-    
-    <!-- copy libraries for dxf, pdf, etc. -->
-<!--
-    <copy todir="${target.path}/modes/java/libraries/dxf">
-      <fileset dir="../dxf" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/net">
-      <fileset dir="../net" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/pdf">
-      <fileset dir="../pdf" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/serial">
-      <fileset dir="../serial" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/video">
-      <fileset dir="../video" includes="library/**,src/**" />
-    </copy>
--->
-    
-    <!-- Unzip documentation + examples -->
-<!--
-    <unzip dest="${target.path}/modes/java" 
-	   src="shared/modes/java/examples.zip" 
-	   overwrite="false">
-      <patternset>
-	<exclude name="__MACOSX/**" />
-	<exclude name="**/._*" />
-      </patternset>
-    </unzip>
--->
     <unzip dest="${target.path}/modes/java" 
 	   src="../java/reference.zip" 
 	   overwrite="false">
@@ -303,17 +284,7 @@
 	<exclude name="__MACOSX/**" />
 	<exclude name="**/._*" />
       </patternset>
-    </unzip>
-    
-    <!-- Write the revision file -->
-    <!-- is there a good way to do this? -->
-    <!--
-    <echo file="${target.path}/lib/version.txt" 
-	  message="${version}" 
-	  if="${version}" />
-    <delete file="${target.path}/lib/version.txt"
-	    unless="${version}" />
-    -->
+    </unzip>    
   </target>
 
   <target name="version-clear">
@@ -374,8 +345,6 @@
 
   <target name="macosx-clean" depends="subprojects-clean" description="Clean Mac OS X build">
     <delete dir="macosx/work" />
-    <delete dir="macosx/working_dir" />
-    <delete dir="macosx/working.dmg" />
     <delete file="macosx/processing-*.dmg" />
   </target>
   
@@ -393,30 +362,123 @@
   <target name="macosx-build" if="macosx" depends="revision-check, macosx-checkos, subprojects-build" description="Build Mac OS X version">
     <mkdir dir="macosx/work" />
     
-    <!-- assemble the pde -->
-    <copy todir="macosx/work">
-      <fileset dir="macosx/" includes="template.app/**"/>
-    </copy>
-    
-    <move file="macosx/work/template.app" 
-	  tofile="macosx/work/Processing.app" />
+    <!-- app bundler for OS X and Java 1.7 -->
+    <taskdef name="bundleapp"
+             classname="com.oracle.appbundler.AppBundlerTask"   
+             classpath="macosx/appbundler.jar" />
 
-    <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
-      
-    <copy todir="macosx/work/Processing.app/Contents/Resources/Java">
-      <fileset dir=".." includes="core/library/**" />
-      <fileset dir="shared" includes="launch4j/**" />
+    <!--icon="macosx/processing.icns"-->
+    <bundleapp outputDirectory="macosx/work"
+	       name="Processing"
+	       displayName="Processing"
+	       executableName="Processing"
+	       identifier="org.processing.app"
+	       signature="Pde2"
+	       icon="macosx/processing.icns"
+	       copyright="© The Processing Foundation"
+	       getInfo="${version}, Copyright © The Processing Foundation"
+	       shortVersion="${version}"
+	       version="${revision}"
+	       mainClassName="processing.app.Base">
+
+      <!-- The appbundler task needs a couple files (the Info.plist and
+           anything else outside /jre) from the full JDK, even though 
+	   it's primarily copying over the JRE folder. -->
+      <runtime dir="${jdk.path.macosx}/Contents/Home" />
+      <!-- Eventually we'll want to load the JRE directly from 
+	   the .tgz on the Oracle site, though it's in a folder called 
+	   jre1.7.0_40.jre, so we'll need to strip that out. -->
+
+      <!-- Same as runtime.jars, seen above; plus core.jar. -->
+      <classpath file="../app/pde.jar" />
+      <classpath file="../app/lib/antlr.jar" />
+      <classpath file="../app/lib/jna.jar" />
+      <classpath file="../app/lib/ant.jar" />
+      <classpath file="../app/lib/ant-launcher.jar" />
+      <classpath file="../app/lib/org-netbeans-swing-outline.jar" />
+      <classpath file="../app/lib/jdi.jar" />
+      <classpath file="../app/lib/jdimodel.jar" />
+      <classpath file="../app/lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar" />
+      <classpath file="../app/lib/com.ibm.icu_4.4.2.v20110823.jar" />
+
+      <!-- plus core.jar... note that this is no longer shared -->
+      <classpath file="../core/library/core.jar" />
+
+      <arch name="x86_64"/>
+      <!-- no support for this with Java 7 from Oracle -->
+      <!--<arch name="i386"/>-->
+
+      <!--icon="macosx/template.app/Contents/Resources/pde.icns"-->
+      <!--icon="${bundle.icon}"-->
+      <bundledocument extensions="pde"
+		      icon="macosx/pde.icns"
+		      name="Processing Source Code"
+		      role="Editor">
+      </bundledocument>
+
+      <!-- Sets dock icon when debugging (not launched via launch svcs) -->
+      <option value="-Xdock:icon=Contents/Resources/processing.icns" />
+      <!-- Don't think these actually make any difference. -->
+      <!--
+      <option value="-Xdock:name=Processing" />
+      -->
+
+      <!-- Probably no longer needed? [fry 130917]
+      <option value="-Xms128M" />
+      <option value="-Xmx256M" />
+      -->
+
+      <option value="-Dapple.awt.application.name=Processing" />
+
+      <!-- avoid conflicts with JNA DLLs already in the path -->
+      <option value="-Djna.nosys=true" />
+
+      <option value="-Dapple.laf.useScreenMenuBar=true" />
+      <option value="-Dcom.apple.macos.use-file-dialog-packages=true" />
+      <option value="-Dcom.apple.macos.useScreenMenuBar=true" />
+      <option value="-Dcom.apple.smallTabs=true" />
+
+<!--
+    the old options; most of these are probably no longer useful
+        <key>apple.laf.useScreenMenuBar</key>
+        <string>true</string>
+	<key>apple.awt.showGrowBox</key>
+	<string>true</string>
+	<key>com.apple.smallTabs</key>
+	<string>true</string>
+	<key>apple.awt.Antialiasing</key>
+	<string>false</string>
+	<key>apple.awt.TextAntialiasing</key>
+	<string>true</string>
+	<key>com.apple.hwaccel</key>
+	<string>true</string>
+	<key>apple.awt.use-file-dialog-packages</key>
+	<string>false</string>
+	<key>apple.awt.graphics.UseQuartz</key>
+	<string>true</string>
+-->
+    </bundleapp>
+
+    <copy todir="macosx/work/Processing.app/Contents/Java">
+      <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
+      <!--<fileset dir="shared" includes="launch4j/**" />-->
       <fileset dir="shared" includes="lib/**" />
-      <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
 
-    <copy todir="macosx/work/Processing.app/Contents/Resources/Java/lib" 
-	  flatten="true">
-      <fileset refid="runtime.jars"/>
+    <!--
+    Processing.app/Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/lib/fonts
+    -->
+    <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/lib/fonts">
+      <fileset dir="shared/lib/fonts" includes="*" />
     </copy>
 
-    <property name="launch4j.dir" value="macosx/work/Processing.app/Contents/Resources/Java/launch4j" />
+    <antcall target="assemble">
+      <param name="target.path" 
+	     value="macosx/work/Processing.app/Contents/Java" />
+    </antcall>
+
+    <property name="launch4j.dir" value="macosx/work/Processing.app/Contents/Java/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
     <move file="${launch4j.dir}/bin/windres-macosx"
@@ -434,9 +496,8 @@
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
 
-    <antcall target="assemble">
-      <param name="target.path" value="macosx/work/Processing.app/Contents/Resources/Java" />
-    </antcall>
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
   </target>
   
   <target name="macosx-run" depends="macosx-build" 
@@ -444,7 +505,8 @@
     <exec executable="open" dir="macosx/work" spawn="true">
       <arg value="-a" />
       <arg value="/Applications/Utilities/Terminal.app" />
-      <arg value="Processing.app/Contents/MacOS/JavaApplicationStub" />
+<!--      <arg value="Processing.app/Contents/MacOS/JavaApplicationStub" />-->
+      <arg value="Processing.app/Contents/MacOS/Processing" />
     </exec>
   </target>
 
@@ -455,7 +517,18 @@
       With a proper ID, if code signing fails, you may need to use:
       export CODESIGN_ALLOCATE="/Applications/Xcode.app/Contents/Developer/usr/bin/codesign_allocate"
     </echo>
-    <exec executable="codesign" dir="macosx/work">
+
+    <!-- 3rd party is for the app store, dev id is gatekeeper only -->
+    <!--<arg value="3rd Party Mac Developer Application" />-->
+
+    <exec executable="/usr/bin/codesign" dir="macosx/work">
+      <arg value="--force" />
+      <arg value="--sign" />
+      <arg value="Developer ID Application" />
+      <arg value="Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk" />
+    </exec>
+
+    <exec executable="/usr/bin/codesign" dir="macosx/work">
       <arg value="--force" />
       <arg value="--sign" />
       <arg value="Developer ID Application" />
@@ -470,10 +543,13 @@
     <!-- The ant copy command does not preserve permissions. -->
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
 
+    <!-- Now handled by the app bundler -->
+    <!--
     <replace file="macosx/work/Processing.app/Contents/Info.plist"
 	     token="VERSION" value="${version}" />
     <replace file="macosx/work/Processing.app/Contents/Info.plist"
 	     token="REVISION" value="${revision}" />
+    -->
 
     <antcall target="macosx-dist-sign" />
 
@@ -486,57 +562,6 @@
       Processing for Mac OS X was built. Grab it from
       
       macosx/processing-${version}-macosx.zip
-      =======================================================
-    </echo>
-  </target>
-
-  <target name="macosx-dist-old" if="macosx" depends="macosx-build" description="Create a .dmg of the Mac OS X version">
-    <!-- now build the dmg -->
-    <gunzip src="macosx/template.dmg.gz" dest="macosx/working.dmg" />
-    
-    <mkdir dir="macosx/working_dir" />
-    <exec executable="hdiutil">
-      <arg line="attach macosx/working.dmg -noautoopen -mountpoint macosx/working_dir" />
-      <!--<arg line="attach macosx/working.dmg -noautoopen -quiet -mountpoint macosx/working_dir" />-->
-    </exec>
-    
-    <copy todir="macosx/working_dir">
-      <fileset dir="macosx/work" />
-    </copy>
-
-    <!-- The ant copy command does not preserve permissions. -->
-    <chmod file="macosx/working_dir/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
-
-    <!-- Pause briefly for the OS to catch up with the DMG changes. 
-	 This prevents "hdiutil: couldn't eject "disk3" - Resource busy"
-	 errors when ejecting the disk in the next step.
-         You may need to set this value higher for your system. -->
-<!--    <sleep seconds="5" />-->
-
-    <!-- while building 0182, had a lot of trouble with the disk eject -->
-    <input message="Manually eject the Processing volume and hit return." />
-
-    <!-- used -quiet -force in the dist.sh version -->
-<!--    
-    <exec executable="hdiutil">
-      <arg line="detach macosx/working_dir" />
-    </exec>
--->
-
-    <delete file="macosx/processing-*.dmg" />
-    <exec executable="hdiutil">
-      <arg line="convert macosx/working.dmg -format UDZO -imagekey zlib-level=9 -o macosx/processing-${version}.dmg" />
-    </exec>
-
-    <!-- Clean up the interim files. -->
-    <delete file="macosx/working.dmg" />
-    <delete dir="macosx/working_dir" />
-    
-    <echo>
-      =======================================================
-      Processing for Mac OS X was built. Grab the image from   
-      
-      macosx/processing-${version}.dmg
       =======================================================
     </echo>
   </target>
@@ -573,12 +598,16 @@
       <fileset file="shared/revisions.txt" />
     </copy>
 
-    <property name="launch4j.dir" value="linux/work/launch4j" />
+    <antcall target="assemble">
+      <param name="target.path" value="linux/work" />
+    </antcall>
+
+    <property name="launch4j.dir" value="linux/work/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
-    <move file="${launch4j.dir}/bin/windres-linux${sun.arch.data.model}"
+    <move file="${launch4j.dir}/bin/windres-linux"
 	  tofile="${launch4j.dir}/bin/windres" />
-    <move file="${launch4j.dir}/bin/ld-linux${sun.arch.data.model}"
+    <move file="${launch4j.dir}/bin/ld-linux"
 	  tofile="${launch4j.dir}/bin/ld" />
 
     <!-- make executable (ant doesn't preserve) -->
@@ -595,9 +624,9 @@
       <fileset refid="runtime.jars" />
     </copy>
     
-    <antcall target="assemble">
-      <param name="target.path" value="linux/work" />
-    </antcall>
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
 
     <copy file="linux/processing" todir="linux/work" />
     <chmod perm="ugo+x" file="linux/work/processing" />
@@ -606,13 +635,13 @@
     <copy file="linux/processing" tofile="linux/work/processing-java" />
     <chmod perm="ugo+x" file="linux/work/processing-java" />
 
+    <!--
     <property name="jre.file" 
 	      value="jre-tools-6u37-linux${sun.arch.data.model}.tgz" />
+    -->
 
-    <!-- See notes in Windows section about ignoreerrors and the JRE. -->
     <get src="http://processing.googlecode.com/files/${jre.file}" 
 	 dest="linux/jre.tgz" 
-	 ignoreerrors="true"
 	 usetimestamp="true" />
 
 <!--	   
@@ -626,12 +655,39 @@
 <!--
     http://www.gnu.org/software/tar/manual/html_section/transform.html
 -->
-    <exec executable="tar">
-      <arg value="-C" /> <!-- Change directory -->
+    <exec executable="tar" dir="linux">
+      <!-- Change directory -->
+      <!--
+      <arg value="-C" /> 
       <arg value="linux/work" />
       <arg value="-xzpf" />
-      <arg value="linux/jre.tgz"/>
+      -->
+      <arg value="xfz" />
+      <arg value="jre.tgz"/>
     </exec>
+
+    <!--
+    We only want to move when the folder didn't exist before
+    <move file="linux/jre1.7.0_40" tofile="linux/work/java" />
+    -->
+    <exec executable="rsync" dir="linux">
+      <arg value="-a" />
+      <arg value="--delete" />
+      <arg value="jre1.7.0_40/" />
+      <arg value="work/java" />
+    </exec>
+    <delete dir="linux/jre1.7.0_40" />
+
+    <!-- Remove unused JRE bloat. -->
+    <delete> 
+      <fileset refid="javafx-basics" />
+      <fileset refid="javafx-linux-${sun.arch.data.model}" />
+      <fileset refid="jre-optional-linux" />
+    </delete>
+
+    <copy todir="linux/work/java/lib/fonts">
+      <fileset dir="shared/lib/fonts" includes="*" />
+    </copy>
 
   </target>
   
@@ -717,12 +773,16 @@
 
     <fixcrlf file="windows/work/revisions.txt" eol="crlf" encoding="UTF-8" />
 
-    <property name="launch4j.dir" value="windows/work/launch4j" />
+    <antcall target="assemble">
+      <param name="target.path" value="windows/work" />
+    </antcall>
+
+    <property name="launch4j.dir" value="windows/work/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
-    <move file="${launch4j.dir}/bin/windres-windows32.exe"
+    <move file="${launch4j.dir}/bin/windres-windows.exe"
 	  tofile="${launch4j.dir}/bin/windres.exe" />
-    <move file="${launch4j.dir}/bin/ld-windows32.exe"
+    <move file="${launch4j.dir}/bin/ld-windows.exe"
 	  tofile="${launch4j.dir}/bin/ld.exe" />
 
     <!-- remove the others -->
@@ -731,46 +791,24 @@
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
 
-    <antcall target="assemble">
-      <param name="target.path" value="windows/work" />
-    </antcall>
+    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
+
+    <condition property="video.delete" value="32"> 
+      <equals arg1="${sun.arch.data.model}" arg2="64" />
+    </condition>
+    <condition property="video.delete" value="64"> 
+      <equals arg1="${sun.arch.data.model}" arg2="32" />
+    </condition>
+    <delete dir="${target.path}/modes/java/libraries/video/library/windows${video.delete}" />
     
     <taskdef name="launch4j" 
 	     classname="net.sf.launch4j.ant.Launch4jTask" 
 	     classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
 
-    <copy todir="windows/work">
-      <fileset dir="windows/launcher" 
-	       includes="about.bmp, application.ico, config.xml, config-cmd.xml"/>
-    </copy>
-
-    <launch4j configFile="windows/work/config.xml" />
-    <launch4j configFile="windows/work/config-cmd.xml" />
-
-    <delete dir="windows/work" 
-	    includes="about.bmp, application.ico, config.xml, config-cmd.xml" />
-
-<!--
-    <launch4j>
-      <config headerType="gui"
-	      outfile="windows/work/processing-java.exe"
-	      dontWrapJar="false"
-	      jarPath="../app/pde.jar">
-	<classPath mainClass="processing.mode.java.Commander">
-	  <cp>lib/pde.jar</cp>
-	  <cp>lib/antlr.jar</cp>
-	  <cp>lib/jdt-core.jar</cp>
-	  <cp>lib/jna.jar</cp>
-	  <cp>lib/ant.jar</cp>
-	  <cp>lib/ant-launcher.jar</cp>
-	  <cp>core/library/core.jar</cp>
-	  <cp>%JAVA_HOME%/lib/tools.jar</cp>
-	</classPath>
-	<jre minVersion="1.6.0" jdkPreference="jdkOnly">
-	</jre>
-      </config>
-    </launch4j>
--->
+    <!-- not all launch4j options are available when embedded inside this 
+	 file (i.e. the icon param doesn't work), so use a config file -->
+    <launch4j configFile="windows/config.xml" />
+    <launch4j configFile="windows/config-cmd.xml" />
 
     <!-- cygwin requires html, dll, and exe to have the +x flag -->
     <chmod perm="ugo+x">
@@ -778,20 +816,31 @@
     </chmod>
 
     <!-- starting with 2.0a7, require the local JRE + tools.jar -->
-    <property name="jre.file" 
-	      value="jre-tools-6u37-windows${sun.arch.data.model}.zip" />
-
-    <!-- Added ignoreerrors so we can build even if no network connection.
-	 This will allow us to build so long as a version of jre.zip 
-	 has downloaded, even though it may not be up to date. -->
     <get src="http://processing.googlecode.com/files/${jre.file}" 
-	 dest="windows/jre.zip" 
-	 ignoreerrors="true"
+	 dest="windows/jre.tgz" 
 	 usetimestamp="true" />
 
-    <!-- If no version of jre.zip is available (see above), 
-	 this should give us an error. -->
+    <!--
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
+    -->
+    <!-- Hopefully this is OK with the permissions (unlike Linux), 
+	 since those shouldn't matter on Windows. -->
+    <untar compression="gzip"
+	   dest="windows/work" 
+	   src="windows/jre.tgz" 
+	   overwrite="false" />
+    <move file="windows/work/jre1.7.0_40" tofile="windows/work/java" />
+
+    <!-- Remove space-wasting JavaFX garbage. -->
+    <delete> 
+      <fileset refid="javafx-basics" />
+      <fileset refid="javafx-windows" />
+      <fileset refid="jre-optional-windows" />
+    </delete>
+
+    <copy todir="windows/work/java/lib/fonts">
+      <fileset dir="shared/lib/fonts" includes="*" />
+    </copy>
   </target>
   
   <target name="windows-run" depends="windows-build" 
@@ -835,8 +884,23 @@
       ${windows.dist}
       =======================================================
     </echo>
+  </target> 
+
+
+  <!-- - - - - - - - - - - - - - - - - - -->
+  <!-- Package source 'n tag the release -->
+  <!-- - - - - - - - - - - - - - - - - - -->
+
+<!--
+not ready to automate this yet, since we often have to reset the tag
+  <target name="dist-src" depends="dist">
+    <exec executable="git">
+remove the spaces for depth since it should be double dash, but screws up comments
+      <arg line="clone - -depth 1 git@github.com:processing/processing.git /tmp/processing-${version}-src" />
+    </exec>
   </target>
-  
+-->
+
 
   <!-- - - - - - - - - -->
   <!-- Developer Docs -->
@@ -851,6 +915,11 @@
 
     <javadoc access="public" author="false" classpath="../core/library/jogl-all.jar:../core/bin:../core/library/gluegen-rt.jar" destdir="javadoc/core" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="false" use="false" version="false">
 
+      <!-- provide links for java.* classes. 
+	   also suppresses the java.lang prefix in the text.  --> 
+      <link href="http://docs.oracle.com/javase/7/docs/api/" />
+
+      <!-- prevent files from always appearing to have changed -->
       <arg value="-notimestamp" />
 
       <packageset dir="../core/src">
@@ -871,9 +940,11 @@
       <arg line="everything -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../java/libraries/video/library/jna.jar:../java/libraries/serial/bin:lib/antlr.jar:../core/library/jogl-all.jar:../java/libraries/video/bin:lib/apple.jar:lib/jna.jar:lib/ant-launcher.jar:../java/libraries/pdf/bin:lib/ant.jar:../core/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/video/library/gstreamer-java.jar:lib/org-netbeans-swing-outline.jar:../java/libraries/dxf/bin:bin:../java/libraries/net/bin:../java/libraries/serial/library/RXTXcomm.jar:../core/library/gluegen-rt.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="false" use="false" version="false">
+    <javadoc access="public" author="false" classpath="../java/libraries/video/library/jna.jar:../java/libraries/serial/bin:lib/antlr.jar:../core/library/jogl-all.jar:../java/libraries/video/bin:lib/apple.jar:lib/jna.jar:lib/ant-launcher.jar:../java/libraries/pdf/bin:lib/ant.jar:../core/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/video/library/gstreamer-java.jar:lib/org-netbeans-swing-outline.jar:../java/libraries/dxf/bin:bin:../java/libraries/net/bin:../java/libraries/serial/library/jssc.jar:../core/library/gluegen-rt.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="false" use="false" version="false" noqualifier="all">
 
       <arg value="-notimestamp" />
+
+      <link href="http://docs.oracle.com/javase/7/docs/api/" />
       
       <packageset dir="../app/src">
 	<include name="antlr/**" />

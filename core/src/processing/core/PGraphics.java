@@ -1096,7 +1096,7 @@ public class PGraphics extends PImage implements PConstants {
     if (which == ENABLE_NATIVE_FONTS ||
         which == DISABLE_NATIVE_FONTS) {
       showWarning("hint(ENABLE_NATIVE_FONTS) no longer supported. " +
-      		        "Use createFont() instead.");
+                  "Use createFont() instead.");
     }
     if (which > 0) {
       hints[which] = true;
@@ -1224,6 +1224,9 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#textureWrap(int)
    */
   public void textureMode(int mode) {
+    if (mode != IMAGE && mode != NORMAL) {
+      throw new RuntimeException("textureMode() only supports IMAGE and NORMAL");
+    }
     this.textureMode = mode;
   }
 
@@ -5814,6 +5817,8 @@ public class PGraphics extends PImage implements PConstants {
     ellipseMode(s.ellipseMode);
     shapeMode(s.shapeMode);
 
+    blendMode(s.blendMode);
+
     if (s.tint) {
       tint(s.tintColor);
     } else {
@@ -5891,6 +5896,8 @@ public class PGraphics extends PImage implements PConstants {
     s.rectMode = rectMode;
     s.ellipseMode = ellipseMode;
     s.shapeMode = shapeMode;
+
+    s.blendMode = blendMode;
 
     s.colorMode = colorMode;
     s.colorModeX = colorModeX;
@@ -6028,7 +6035,9 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    *
    * @webref color:setting
-   * @see PGraphics#stroke(float, float, float, float)
+   * @see PGraphics#stroke(int, float)
+   * @see PGraphics#fill(float, float, float, float)
+   * @see PGraphics#noFill()
    */
   public void noStroke() {
     stroke = false;
@@ -6059,7 +6068,11 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @param rgb color value in hexadecimal notation
    * @see PGraphics#noStroke()
+   * @see PGraphics#strokeWeight(float)
+   * @see PGraphics#strokeJoin(int)
+   * @see PGraphics#strokeCap(int)
    * @see PGraphics#fill(int, float)
+   * @see PGraphics#noFill()
    * @see PGraphics#tint(int, float)
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#colorMode(int, float, float, float, float)
@@ -6263,6 +6276,8 @@ public class PGraphics extends PImage implements PConstants {
    * @webref color:setting
    * @usage web_application
    * @see PGraphics#fill(float, float, float, float)
+   * @see PGraphics#stroke(int, float)
+   * @see PGraphics#noStroke()
    */
   public void noFill() {
     fill = false;
@@ -6299,6 +6314,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param rgb color variable or hex value
    * @see PGraphics#noFill()
    * @see PGraphics#stroke(int, float)
+   * @see PGraphics#noStroke()
    * @see PGraphics#tint(int, float)
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#colorMode(int, float, float, float, float)
@@ -7271,14 +7287,15 @@ public class PGraphics extends PImage implements PConstants {
    * Strangely the old version of this code ignored the alpha
    * value. not sure if that was a bug or what.
    * <P>
-   * Note, no need for a bounds check since it's a 32 bit number.
+   * Note, no need for a bounds check for 'argb' since it's a 32 bit number.
+   * Bounds now checked on alpha, however (rev 0225).
    */
   protected void colorCalcARGB(int argb, float alpha) {
     if (alpha == colorModeA) {
       calcAi = (argb >> 24) & 0xff;
       calcColor = argb;
     } else {
-      calcAi = (int) (((argb >> 24) & 0xff) * (alpha / colorModeA));
+      calcAi = (int) (((argb >> 24) & 0xff) * PApplet.constrain((alpha / colorModeA), 0, 1));
       calcColor = (calcAi << 24) | (argb & 0xFFFFFF);
     }
     calcRi = (argb >> 16) & 0xff;
@@ -7621,6 +7638,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param amt between 0.0 and 1.0
    * @see PImage#blendColor(int, int, int)
    * @see PGraphics#color(float, float, float, float)
+   * @see PApplet#lerp(float, float, float)
    */
   public int lerpColor(int c1, int c2, float amt) {
     return lerpColor(c1, c2, amt, colorMode);
@@ -7635,6 +7653,9 @@ public class PGraphics extends PImage implements PConstants {
    * individual color components of a color supplied as an int value.
    */
   static public int lerpColor(int c1, int c2, float amt, int mode) {
+    if (amt < 0) amt = 0;
+    if (amt > 1) amt = 1;
+
     if (mode == RGB) {
       float a1 = ((c1 >> 24) & 0xff);
       float r1 = (c1 >> 16) & 0xff;

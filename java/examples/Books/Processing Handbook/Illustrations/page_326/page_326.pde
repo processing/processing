@@ -1,6 +1,7 @@
 
 // Based on code 36-07 (p. 331)
 
+import processing.pdf.*;
 
 PFont f; 
 String s = "012345678901234567890123456789";

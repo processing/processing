@@ -63,6 +63,7 @@ public class StringDict {
       if (pieces.length == 2) {
         keys[count] = pieces[0];
         values[count] = pieces[1];
+        indices.put(keys[count], count);
         count++;
       }
     }
@@ -316,7 +317,7 @@ public class StringDict {
   }
 
 
-  protected void swap(int a, int b) {
+  public void swap(int a, int b) {
     String tkey = keys[a];
     String tvalue = values[a];
     keys[a] = keys[b];

@@ -118,6 +118,7 @@ public class Client implements Runnable {
    * @throws IOException
    */
   public Client(PApplet parent, Socket socket) throws IOException {
+    this.parent = parent;
     this.socket = socket;
 
     input = socket.getInputStream();
@@ -125,6 +126,16 @@ public class Client implements Runnable {
 
     thread = new Thread(this);
     thread.start();
+
+    // reflection to check whether host sketch has a call for
+    // public void disconnectEvent(processing.net.Client)
+    try {
+      disconnectEventMethod =
+        parent.getClass().getMethod("disconnectEvent",
+                                    new Class[] { Client.class });
+    } catch (Exception e) {
+      // no such method, or an error.. which is fine, just ignore
+    }
   }
 
 
@@ -140,7 +151,7 @@ public class Client implements Runnable {
    * @usage application
    */
   public void stop() {    
-    if (disconnectEventMethod != null) {
+    if (disconnectEventMethod != null && thread != null){
       try {
         disconnectEventMethod.invoke(parent, new Object[] { this });
       } catch (Exception e) {

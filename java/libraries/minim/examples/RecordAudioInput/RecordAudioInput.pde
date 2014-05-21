@@ -1,8 +1,13 @@
 /**
   * This sketch demonstrates how to an <code>AudioRecorder</code> to record audio to disk. 
-  * To use this sketch you need to have something plugged into the line-in on your computer, or else be working on a
-  * laptop with an active built-in microphone. Press 'r' to toggle recording on and off and the press 's' to save to disk. 
+  * To use this sketch you need to have something plugged into the line-in on your computer, 
+  * or else be working on a laptop with an active built-in microphone. 
+  * <p>
+  * Press 'r' to toggle recording on and off and the press 's' to save to disk. 
   * The recorded file will be placed in the sketch folder of the sketch.
+  * <p>
+  * For more information about Minim and additional features, 
+  * visit http://code.compartmental.net/minim/
   */
 
 import ddf.minim.*;
@@ -18,11 +23,9 @@ void setup()
   minim = new Minim(this);
 
   in = minim.getLineIn();
-  // create a recorder that will record from the input to the filename specified, using buffered recording
-  // buffered recording means that all captured audio will be written into a sample buffer
-  // then when save() is called, the contents of the buffer will actually be written to a file
+  // create a recorder that will record from the input to the filename specified
   // the file will be located in the sketch's root folder.
-  recorder = minim.createRecorder(in, "myrecording.wav", true);
+  recorder = minim.createRecorder(in, "myrecording.wav");
   
   textFont(createFont("Arial", 12));
 }

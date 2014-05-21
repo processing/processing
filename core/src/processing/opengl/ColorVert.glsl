@@ -20,15 +20,15 @@
 
 #define PROCESSING_COLOR_SHADER
 
-uniform mat4 transform;
+uniform mat4 transformMatrix;
 
-attribute vec4 vertex;
+attribute vec4 position;
 attribute vec4 color;
 
 varying vec4 vertColor;
 
 void main() {
-  gl_Position = transform * vertex;
+  gl_Position = transformMatrix * position;
     
   vertColor = color;
 }

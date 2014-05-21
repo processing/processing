@@ -1268,7 +1268,12 @@ public class QuickTimeWriter {
             // A 32-bit integer containing the number of sample descriptions that follow.
 
             // A 32-bit integer indicating the number of bytes in the sample description.
-            d.writeInt(86); // sampleDescriptionTable[0].size
+//            d.writeInt(86); // sampleDescriptionTable[0].size
+            d.writeInt(86 + 12);
+            // This looks like a bug, it'll be incorrect if the color table
+            // is written down below. [fry 131008]
+            // 12 bytes for gamma (appears from the file)
+            // 18 bytes for colr
 
             d.writeType(mediaCompressionType); // sampleDescriptionTable[0].type
 
@@ -1353,13 +1358,36 @@ public class QuickTimeWriter {
             // for the specified depth. Depths of 16, 24, and 32 have no
             // color table.
 
-
-
             if (videoColorTable != null) {
                 writeColorTableAtom(leaf);
             }
+            // Add gamma atom so things aren't all washed out [fry 131008]
+            writeGammaAtom(leaf);
         }
 
+        /**
+         * Color table atoms define a list of preferred colors for displaying
+         * the movie on devices that support only 256 colors. The list may
+         * contain up to 256 colors. These optional atoms have a type value of
+         * 'ctab'. The color table atom contains a Macintosh color table data
+         * structure.
+         *
+         * @param stblAtom
+         * @throws IOException
+         */
+        protected void writeGammaAtom(CompositeAtom stblAtom) throws IOException {
+            DataAtom leaf;
+            DataAtomOutputStream d;
+            leaf = new DataAtom("gama");
+            stblAtom.add(leaf);
+
+            d = leaf.getOutputStream();
+
+            // Write the gamma value as a 16:16 fixed number
+            //d.writeFixed16D16(1.8);
+            d.writeFixed16D16(2.2);
+        }
+        
         /**
          * Color table atoms define a list of preferred colors for displaying
          * the movie on devices that support only 256 colors. The list may

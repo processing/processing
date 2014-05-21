@@ -1644,10 +1644,10 @@ public class JSONObject {
       return value.toString();
     }
     if (value instanceof Map) {
-      return new JSONObject((Map)value).toString();
+      return new JSONObject(value).toString();
     }
     if (value instanceof Collection) {
-      return new JSONArray((Collection)value).toString();
+      return new JSONArray(value).toString();
     }
     if (value.getClass().isArray()) {
       return new JSONArray(value).toString();
@@ -1683,13 +1683,13 @@ public class JSONObject {
       }
 
       if (object instanceof Collection) {
-        return new JSONArray((Collection)object);
+        return new JSONArray(object);
       }
       if (object.getClass().isArray()) {
         return new JSONArray(object);
       }
       if (object instanceof Map) {
-        return new JSONObject((Map)object);
+        return new JSONObject(object);
       }
       Package objectPackage = object.getClass().getPackage();
       String objectPackageName = objectPackage != null
@@ -1732,9 +1732,9 @@ public class JSONObject {
     } else if (value instanceof JSONArray) {
       ((JSONArray) value).write(writer, indentFactor, indent);
     } else if (value instanceof Map) {
-      new JSONObject((Map) value).write(writer, indentFactor, indent);
+      new JSONObject(value).write(writer, indentFactor, indent);
     } else if (value instanceof Collection) {
-      new JSONArray((Collection) value).write(writer, indentFactor,
+      new JSONArray(value).write(writer, indentFactor,
                                               indent);
     } else if (value.getClass().isArray()) {
       new JSONArray(value).write(writer, indentFactor, indent);
@@ -1790,9 +1790,10 @@ public class JSONObject {
         if (actualFactor > 0) {
           writer.write(' ');
         }
-        writeValue(writer, this.map.get(key), actualFactor, indent);
+        //writeValue(writer, this.map.get(key), actualFactor, indent);
+        writeValue(writer, this.map.get(key), indentFactor, indent);
       } else if (length != 0) {
-        final int newindent = indent + actualFactor;
+        final int newIndent = indent + actualFactor;
         while (keys.hasNext()) {
           Object key = keys.next();
           if (commanate) {
@@ -1801,14 +1802,14 @@ public class JSONObject {
           if (indentFactor != -1) {
             writer.write('\n');
           }
-          indent(writer, newindent);
+          indent(writer, newIndent);
           writer.write(quote(key.toString()));
           writer.write(':');
           if (actualFactor > 0) {
             writer.write(' ');
           }
-          writeValue(writer, this.map.get(key), actualFactor,
-                     newindent);
+          //writeValue(writer, this.map.get(key), actualFactor, newIndent);
+          writeValue(writer, this.map.get(key), indentFactor, newIndent);
           commanate = true;
         }
         if (indentFactor != -1) {

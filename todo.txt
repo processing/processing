@@ -1,100 +1,89 @@
-0221 pde
-X add double quotes to readlink call, fixes issue w/ paths and spaces
-X   https://github.com/processing/processing/pull/2027
-X   fix submitted by hamoid
+0228 pde
 
-_ changing modes brings the PDE back on the second screen
-_   the Find window (also the save windows) also have the same problem
-
-
-high
-_ MovieMaker needs to be compiling as 1.6
-_ move old Google Code SVN back to processing.org
-_   then cull out the old branches/tags from the Github repo
-_ figure out Android build w/o javac so we can remove tools.jar and javac
-_   also to the p5 repo with just a JRE
-_   remove initRequirements from Base (no longer need JDI)
-_     move this into Android mode?
-_ "String index out of range" error
-_   https://github.com/processing/processing/issues/1940
-_ freeze after splash screen on OS X (looks like core.jar in the path)
-_   https://github.com/processing/processing/issues/1872
 
 medium
+_ possible to open a sketch multiple times 
+_   by double-clicking one of its files instead of the main pde file
+_   https://github.com/processing/processing/issues/2506
+_ closing the color selector makes things freeze (only Linux and Windows?)
+_   https://github.com/processing/processing/issues/2381
+_ check on why 2x core.jar inside the Java folder
+_   maybe OS X Java can't look in subfolders? (just auto-adds things)
+_ display "1" is not correct in 2.1.2
+_   https://github.com/processing/processing/issues/2502
+_ re/move things from Google Code downloads
+_   https://code.google.com/p/support/wiki/DownloadsFAQ
+_ clean out the repo
+_   https://github.com/processing/processing/issues/1898
+_   requires re-forking, so still a ton of work
+_   remove non-web stuff from web
+_   remove non-android stuff from android
+_   remove web and android from the main repo
+_ add font fixes to the rest of the API
+_   https://github.com/processing/processing/commit/eaff673d173b2d27f276cf5c59e3abf6c0fab86b
+_   g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+_                       RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+_ should default to the local Java on Windows and Linux
+_   have export apps default to the local JRE
+_   Linux is probably using the system JRE if available
+_   launch4j may be all set, but double-check
+_ try installing 10.7.3 on Mac Mini and check whether things run
+_   make sure it's only running on 64-bit machines? 
+_ use platformDelete() to remove untitled sketches?
+_   would allow us to use the /tmp folder
 _ change to using platformDelete() instead of Base.removeDir() where possible
 _   verify that the OS X version uses the real call
 _   and doesn't just look for .Trash
 _ getCoreLibrary() is breaking OpenGL
 _   "new Library()" constructor needs to go back to private
 _ add .bat file to lib on windows so that we can get better debugging info
+_ changing modes brings the PDE back on the second screen
+_   the Find window (also the save windows) also have the same problem
+_ move old Google Code SVN back to processing.org
+_   then cull out the old branches/tags from the Github repo
+_   and/or start bundling separate source downloads
+_ "String index out of range" error
+_   https://github.com/processing/processing/issues/1940
+_ look through all isPopupTrigger() code 
+_   make sure both press/release are implemented
+_ emacs style errors in commander aren't quite right
+_   https://github.com/processing/processing/issues/2158
+_ add documentation for how to run mode development from Eclipse
+_   implementation/changes from JDF
+_ modes are being loaded multiple times, which can cause trouble
+_ add minimum version required (or max version?) to libraries/modes/etc
+_ no high-res display support for the PDE
+_ PDE and sketches are 2x smaller on high-res Windows 8 machines
+_   https://github.com/processing/processing/issues/2411
 
-7u40 switch
-_ change how export is handled
-_   remove ability to export cross-platform apps
-_   add ability to embed the current JRE
-_ appbundler fixes/changes
-_   icon location uses path, even when embedded
-_   add indents to the Info.plist output file
-_     inside writeInfoPlist from AppBundlerTask.java
-_   use Contents/Resources/Java instead of Contents/Java?
-_     this is in main.m. why the change?
-_   any missing args from our app (copyrights/versions?)
-_   make sure it's only running on 64-bit machines? 
-_   add MinimumSystemVersion?
-_   the "Classes" folder is included
-_     appears to be line 138 of main.m
-_     maybe this is a holdover from OS X Java?
-_   bring back the splash screen?
 
-direct link for download (replace .md5 with .dmg on that page)
-http://www.java.net/download/jdk7u40/archive/b38/binaries/jre-7u40-ea-bin-b38-macosx-x86_64-07_aug_2013.dmg
-http://www.java.net/download/jdk7u40/archive/b40/binaries/jre-7u40-fcs-bin-b40-macosx-x86_64-16_aug_2013.dmg
+pulls
+_ may need a progress bar for "save as"
+_   or just the file copy function in general
+_   since it may take a long time (i.e. 1000s of screen grabs)
+_   http://code.google.com/p/processing/issues/detail?id=31
+_   https://github.com/processing/processing/issues/70
+_   https://github.com/processing/processing/pull/2370
 
-needs cookie for proper download
-http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-i586.tar.gz
 
-http://ivan-site.com/2012/05/download-oracle-java-jre-jdk-using-a-script/
-wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F" http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-i586.tar.gz
+post 2.1 cleaning
+_ remove the prefs for 32/64-bit from Preferences
+_ remove the extra OS X cruft inside Runner.java
+_ exclude 'fonts' folder from build (since it's going into the JRE)
 
-http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-i586.tar.gz
-http://download.oracle.com/otn-pub/java/jdk/7u25-b15/jre-7u25-linux-x64.tar.gz
-http://download.oracle.com/otn-pub/java/jdk/7u25-b17/jre-7u25-windows-i586.tar.gz
-http://download.oracle.com/otn-pub/java/jdk/7u25-b17/jre-7u25-windows-x64.tar.gz
-
-or a direct download from http://www.java.com/en/download/manual.jsp
-http://javadl.sun.com/webapps/download/AutoDL?BundleId=78695 Linux i386
-http://javadl.sun.com/webapps/download/AutoDL?BundleId=78697 Linux x64
-http://javadl.sun.com/webapps/download/AutoDL?BundleId=78698 OS X (64-bit)
-http://javadl.sun.com/webapps/download/AutoDL?BundleId=79063 Windows (32?)
-http://javadl.sun.com/webapps/download/AutoDL?BundleId=79065 Windows (64-bit)
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
 
-DOC / Mess
+DOC / Misc
 
 _ find in reference for copy() (on image) tries to open PVector.copy()
 _   might need disambiguation pages?
 _   if a reference page is missing, throws a bunch of exceptions
 _   i.e. PVector.copy() not in the reference
-_ import p5 reference into the javadoc
 _ local web server to run reference from .zip?
 _   no more gazillion file nastiness
 _ yahoo search example is out of date (included in the examples? the book?)
-_ document the move of the auto format menu
-_   in the book(s)? in the reference?
-_ improve documentation of the pdf stuff
-_   be clearer about the font setup stuff
-_   fonts by default not working that well?
-_ jer: opengl2 tutorial
-_ jer: android tutorial
-_ probably later: examples into categories based on difficulty
-_   add ratings/difficult level to examples online and in the pde
-_ go through examples, figure out how to do many on the site w/ js instead
-
-
-DOC / Write Me
-
 _ stop() to shut down a sketch (but not quit/close window)
 _   actually pause/resume
 _ MIN_FLOAT, MAX_FLOAT, also the difference from the Java functions
@@ -111,8 +100,6 @@ _   and that java2d should complain if people try it
 _ method to go from function name to the included examples where used?
 _ encourage use of set() instead of point() in the drawing api
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116
-_ moviemaker video sizes / usability
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Exhibition;action=display;num=1211318862
 _ other projects on which p5 is built 
 _   no longer oro matcher and jikes
 _   add: quaqua, jna, registry stuff, .. ?
@@ -156,6 +143,9 @@ _   3) use createFont() (which you already are)
 _   this will convert all the shape data from the fonts for writing. 
 _   it will be *extremely* slow, which is part of why it's not documented yet. 
 _   but it will work with beginRaw().
+_ improve documentation of the pdf stuff
+_   be clearer about the font setup stuff
+_   fonts by default not working that well?
 
 
 DOC / Other
@@ -259,15 +249,17 @@ PDE - Processing Development Environment
 
 PDE / Dialogs
 
-_ proper dialog support
-_   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
+_ type cut off in dialog boxes on OS X retina machines
+_   https://github.com/processing/processing/issues/2116
+_   add spaces to the end of the text?
+_ dialog box icon is fuzzy on OS X retina machines
+_   https://github.com/processing/processing/issues/2117
+_ solution might be our own dialog boxes
 _ two-tiered dialogs for everything - use big font/little font style throughout
 _   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
 _   http://code.google.com/p/processing/issues/detail?id=7
-_ the first time someone hides a tab, put up a msg explaining what it does
-_   "don't warn me about this anymore"
 _ add "don't warn me about this" for sketch renaming
 _   make sure renamed version doesn't exist already
 _ prompt user before nuking applet or application folders
@@ -307,7 +299,8 @@ _ missing brackets, unmatched brackets
 _   examples added to the bug report
 _   http://code.google.com/p/processing/issues/detail?id=6
 _ enums not supported properly
-_   http://code.google.com/p/processing/issues/detail?id=1352
+_   https://github.com/processing/processing/issues/1390
+X   http://code.google.com/p/processing/issues/detail?id=1352
 
 low (features)
 _ combining char/int/etc casts in one statement causes preproc trouble
@@ -365,8 +358,6 @@ _ active editor not being set null
 _   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
 _   instead of (activeEditor == null), but that's papering over a problem
 _   where the active editor is not being set null
-_ the PDE uses 15% of CPU while just sitting idle
-_   https://github.com/processing/processing/issues/1561
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
 _ improve update check message "a new release (1.0.1) is available"
 _   be more descriptive, use a second line in latest.txt
@@ -376,10 +367,9 @@ _ deal with isManagingFocus() warning in the editor src
 _ strange NullPointerException problem prevents launch
 _   some kind of NPE in handleOpenInternal and friends
 _   appears to be a synchronization problem with the loading
-_ when opening from double-click on the mac, doesn't replace untitled
-_   or in general, issues between opening new window and another launching
-_   probably need to synchronize the file open methods inside Base
-_   (could in fact cause nastiness with editors[] access)
+_ blank sketch opened even if another opened by double-click
+_   add a 150 ms or more lag before opening the untitled window
+_   https://github.com/processing/processing/issues/218
 _   https://github.com/processing/processing/issues/1745
 _ editors opening up at the same time on load?
 _   either synchronize the open (at a minimum)
@@ -439,9 +429,6 @@ _   http://code.google.com/p/processing/issues/detail?id=746
 
 PDE / Export
 
-_ use launch4j for export and p5 app itself
-_   perhaps even calling it through an ant task
-_   windows exported exe problems (pcho)
 _ if the lib folder goes missing from export, give an error
 _   also any .jar files that are missing, give an error
 _   showing more debug messages (command line?)
@@ -471,16 +458,17 @@ _   mark examples as untitled (rather than read-only)
 _   maybe even pull these directly from the zip file?
 _ load examples from zip files
 _   http://code.google.com/p/processing/issues/detail?id=143
+_ don't make examples read-only
+_   just do them from psk files
 _ disallow add file to sketch, export, export application
 _   pretty much anything inside the sketch?
 _   but don't do this with untitled, cuz it kinda stinks
 _   this is too weird--just put examples into individual zip files
 _   mark example files as untitled
 _   though will that require the sketch to be saved before export?
+_   https://github.com/processing/processing/issues/2459
 _ examples window sketches should load in proper environment
 _ write build.xml file to automatically update the examples
-_ don't make examples read-only
-_   just do them from psk files
 _ sketch.isReadOnly returns false for examples coming from multiple modes
 _   http://code.google.com/p/processing/issues/detail?id=734
 _ see how library installation goes, then possibly do same w/ examples
@@ -489,6 +477,8 @@ _ see how library installation goes, then possibly do same w/ examples
 
 PDE / Libraries
 
+_ Add a means to specify packages to import in library.properties
+_   https://github.com/processing/processing/issues/2134
 _ need to deal with classpath conflicts
 _   avoid garbage that people have installed on their machines
 _   antlr.jar in the classpath will cause trouble.. 
@@ -533,7 +523,8 @@ _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
 _   http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
 _ add control for dependencies (i.e. svg needs xml), needed for export
-_   http://code.google.com/p/processing/issues/detail?id=70
+X   http://code.google.com/p/processing/issues/detail?id=70
+_   https://github.com/processing/processing/issues/109
 _ need better platform designation setup for libs
 _ library installation should use the sketchbook folder, not the p5 folder
 _   actually enforce this, give users a warning about other libs
@@ -552,6 +543,7 @@ _   https://github.com/processing/processing/issues/943
 
 PDE / Manager
 
+_ ability to cancel a download/install
 _ we shouldn't use .properties extension for modes, et al
 _   because a .properties file is iso8859-1
 _ make note that .properties file *must* be utf-8
@@ -567,8 +559,6 @@ _ classpath conflicts..
 _   getPackageList.. from Library... maybe others?
 _   really need to make sure that a weird core.jar isn't being imported
 _   coffeescript was doing this and breaking the pde
-_ init() not called on tools until later 
-_   https://github.com/processing/processing/issues/1859
 _ contrib library examples are not read-only
 _   another point for doing .zip files to prevent overwriting
 _ add BookContribution?
@@ -615,12 +605,6 @@ _ clear up prefs so that multiple editors don't trash each other's prefs
 _   when are prefs saved? could instead save whenever changes are made
 _   and then if the file gets modified, it'll put up an error message
 _   also, this may be part of why other sketches aren't reloading properly
-_ control text size in console
-o   why aren't prefs from theme.txt showing up in preferences.txt? hrm
-o   or rather, why can't they be overridden? 
-X     because theme.txt data is a different animal / that's part of the point
-_   should fonts at least be in prefs.txt?
-_   http://code.google.com/p/processing/issues/detail?id=226
 _ simple prefs implementation to set key/value pairs using a JTable
 _ separate prefs and sketch state info?
 _   this would mean prefs being rewritten far less
@@ -635,10 +619,7 @@ _ preferences window has been hit with the ugly stick
 _   redo panel to use proper Box layout etc
 _   also needs to look good across all platforms
 _   http://code.google.com/p/processing/issues/detail?id=28
-_ make available the background colors for present mode, stop button color
-_   isolate color chooser into a simpler/smaller class outside tools
-_   then can also use from inside processing applications as well
-_   http://code.google.com/p/processing/issues/detail?id=30
+_   https://github.com/processing/processing/issues/67
 
 
 PDE / Runner 
@@ -667,10 +648,6 @@ _   because there's a dash in the name
 _   and instead only loads StemCell.pde
 _ show progress dialog during export and save
 _ hitting ESC on "create this, move file, continue" opened anyway
-_ may need a progress bar for "save as"
-_   or just the file copy function in general
-_   since it may take a long time (i.e. 1000s of screen grabs)
-_   http://code.google.com/p/processing/issues/detail?id=31
 _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
 _   http://code.google.com/p/processing/issues/detail?id=34
@@ -690,18 +667,10 @@ TOOLS / General
 _ create default tools folder (just like libraries)
 _ for tools, maybe don't run on event thread? (makes the gui hang)
 _   but instead, things that affect gui need to be called w/ invokeLater?
-_ bad tool brings down the environment
-_   http://code.google.com/p/processing/issues/detail?id=798
 _ need a proper means to handle command keys for tools (?)
 _   http://code.google.com/p/processing/issues/detail?id=44
 _ handle native code for tools menu (?)
 _   http://code.google.com/p/processing/issues/detail?id=109
-
-
-TOOLS / Movie Maker
-
-_ move Movie Maker out to its own separate tool package (with separate build)
-_   http://code.google.com/p/processing/issues/detail?id=837
 
 
 TOOLS / Ideas 
@@ -723,10 +692,12 @@ _   update will update classes from shared in the current folder
 
 TOOLS / Auto Format
 
+_ for() loop with nothing inside parens crashes Auto Format
+_   https://github.com/processing/processing/issues/2141
 _ extra indent found
-_   http://code.google.com/p/processing/issues/detail?id=1003
+_   https://github.com/processing/processing/issues/1041
 _ Switch block cases not indented
-_   http://code.google.com/p/processing/issues/detail?id=1004
+_   https://github.com/processing/processing/issues/1042
 _ do a better job of maintaining cursor 
 _ only auto-format a particular section of code
 _   set the 'tabs' var based on how many spaces on previous line
@@ -745,16 +716,11 @@ _ need to unpack InvocationTargetException in xxxxxxEvent calls
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328#3
 
 
-LIBRARIES / Serial
+LIBRARIES / Net
 
-_ need 64-bit version of RXTX library
-_   http://code.google.com/p/processing/issues/detail?id=1237
-_ serial still causing problems on OS X
-_   http://code.google.com/p/processing/issues/detail?id=52
-_ serial ports missing from list (OS X)
-_   http://code.google.com/p/processing/issues/detail?id=52
-_ Serial.write problem with Bluetooth SPP virtual serial port 
-_   http://code.google.com/p/processing/issues/detail?id=318
+_ modernize Client/Server code to use synchronized lists
+_   do we let people use the public vars in Server and Client?
+_   are they documented?
 
 
 
@@ -775,6 +741,7 @@ _   https://github.com/processing/processing/issues/1840
 _   need to have ecj.jar accessible to ant, then modify build.xml to use this:
 _   <property name="build.compiler" 
 _             value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+_   http://help.eclipse.org/juno/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Ftasks%2Ftask-ant_javac_adapter.htm
 _ line ending issues
 _   doesn't really help on Windows since we use Cygwin
 _     but it would be helpful for people not using it (ant/other LF issues)
@@ -812,13 +779,8 @@ DIST / Windows
 
 _ processing-java output as UTF-8 makes Windows unhappy
 _   https://github.com/processing/processing/issues/1633
-_ updated launch4j 3.1 beta
-_   http://sourceforge.net/projects/launch4j/files/launch4j-3/
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
 _   how can we provide an error message here?
-_ exe instead of bat to make exported apps run in 64-bit
-_   http://code.google.com/p/processing/issues/detail?id=885
-_   might not be necessary with new launch4j!
 _ how to handle double-clicked files on windows?
 _   big deal for psk and others
 _   this may already work with SingleInstance stuff
@@ -828,23 +790,13 @@ _   http://code.google.com/p/processing/issues/detail?id=632
 
 DIST / Mac OS X
 
-_ package Java 7u40 version of the app
-_   docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html
-_   http://www.intransitione.com/blog/take-java-to-app-store/
-X   retina support http://bugs.sun.com/view_bug.do?bug_id=8009754
-_   useful retina digging/findings for Oracle Java
-_     http://bulenkov.com/2013/06/23/retina-support-in-oracle-jdk-1-7/
-_   7u40 target release is "late August"
-_     http://openjdk.java.net/projects/jdk7u/releases/7u40.html
-_   Contents/Java/Classes folder is added to java.class.path
-_     so the folder must exist otherwise the ECJ compiler will crash
-_     once fixed, remove notes from JavaBuild.java
-_ "Are you sure you want to quit?" when switching modes on Oracle JVM
-_   default menu bar is still broken
-_   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
-_ blank sketch opened even if another opened by double-click
-_   add a 150 ms or more lag before opening the untitled window (on os x)
-_   https://github.com/processing/processing/issues/218
+_ possible better option for doing retina?
+_   g.getFontRenderContext().getTransform().equals(AffineTransform.getScaleInstance(2.0, 2.0))
+_ appbundler improvements
+_   don't re-copy JRE into work folder if already exists
+_   implement a splash screen
+_ remove default menu bar hack when 7u60 arrives
+_   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
 _ OS X not opening a sketch at all on pde double-click? (though opening the app)
 _ LWJGL forum discussion 
 _   http://lwjgl.org/forum/index.php/topic,4711.225.html
@@ -953,9 +905,6 @@ _ write up code guidelines for project
 _   make proper Eclipse style prefs to reinforce
 _ write up guidelines for modes
 _   i.e. don't mess with Sketch menu, put it in the mode menu
-_ add notes to build instructions re: building core with eclipse
-_ update the build instructions page
-_   http://code.google.com/p/processing/wiki/BuildInstructions
 _ p5 assets need to be licensed differently from the source
 
 

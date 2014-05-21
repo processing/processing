@@ -30,18 +30,22 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -148,17 +152,22 @@ public class Toolkit {
 
   static ArrayList<Image> iconImages;
 
+  
+  // Deprecated version of the function, but can't get rid of it without 
+  // breaking tools and modes (they'd only require a recompile, but they would 
+  // no longer be backwards compatible. 
+  static public void setIcon(Frame frame) {
+    setIcon((Window) frame);
+  }
+
+  
   /**
    * Give this Frame the Processing icon set. Ignored on OS X, because they
    * thought different and made this function set the minified image of the
    * window, not the window icon for the dock or cmd-tab.
    */
-  static public void setIcon(Frame frame) {
+  static public void setIcon(Window window) {
     if (!Base.isMacOS()) {
-//    // too low-res, prepping for nicer icons in 2.0 timeframe
-//    Image image = awtToolkit.createImage(PApplet.ICON_IMAGE);
-//    frame.setIconImage(image);
-
       if (iconImages == null) {
         iconImages = new ArrayList<Image>();
         final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
@@ -166,7 +175,7 @@ public class Toolkit {
           iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png"));
         }
       }
-      frame.setIconImages(iconImages);
+      window.setIconImages(iconImages);
     }
   }
 
@@ -320,17 +329,81 @@ public class Toolkit {
 //  }
 
 
+  // Gets the plain (not bold, not italic) version of each
+  static private List<Font> getMonoFontList() {
+    GraphicsEnvironment ge =
+      GraphicsEnvironment.getLocalGraphicsEnvironment();
+    Font[] fonts = ge.getAllFonts();
+    ArrayList<Font> outgoing = new ArrayList<Font>();
+    // Using AffineTransform.getScaleInstance(100, 100) doesn't change sizes
+    FontRenderContext frc = 
+      new FontRenderContext(new AffineTransform(),
+                            Preferences.getBoolean("editor.antialias"), 
+                            true);  // use fractional metrics 
+    for (Font font : fonts) {
+      if (font.getStyle() == Font.PLAIN &&
+          font.canDisplay('i') && font.canDisplay('M') &&
+          font.canDisplay(' ') && font.canDisplay('.')) {
+        
+        // The old method just returns 1 or 0, and using deriveFont(size)  
+        // is overkill. It also causes deprecation warnings
+//        @SuppressWarnings("deprecation")
+//        FontMetrics fm = awtToolkit.getFontMetrics(font);
+        //FontMetrics fm = awtToolkit.getFontMetrics(font.deriveFont(24));
+//        System.out.println(fm.charWidth('i') + " " + fm.charWidth('M'));
+//        if (fm.charWidth('i') == fm.charWidth('M') &&
+//            fm.charWidth('M') == fm.charWidth(' ') && 
+//            fm.charWidth(' ') == fm.charWidth('.')) {
+        double w = font.getStringBounds(" ", frc).getWidth();
+        if (w == font.getStringBounds("i", frc).getWidth() && 
+            w == font.getStringBounds("M", frc).getWidth() &&
+            w == font.getStringBounds(".", frc).getWidth()) {
+          
+//          //PApplet.printArray(font.getAvailableAttributes());
+//          Map<TextAttribute,?> attr = font.getAttributes();
+//          System.out.println(font.getFamily() + " > " + font.getName());
+//          System.out.println(font.getAttributes());
+//          System.out.println("  " + attr.get(TextAttribute.WEIGHT));
+//          System.out.println("  " + attr.get(TextAttribute.POSTURE));
+          
+          outgoing.add(font);
+//          System.out.println("  good " + w);
+        }
+      }
+    }
+    return outgoing;
+  }
+  
+  
+  static public String[] getMonoFontFamilies() {
+    HashSet<String> families = new HashSet<String>();
+    for (Font font : getMonoFontList()) {
+      families.add(font.getFamily());
+    }
+    return families.toArray(new String[0]);
+  }
+
+
   static Font monoFont;
   static Font monoBoldFont;
   static Font sansFont;
   static Font sansBoldFont;
 
 
+  static public String getMonoFontName() {
+    if (monoFont == null) {
+      getMonoFont(12, Font.PLAIN);  // load a dummy version
+    }
+    return monoFont.getName();
+  }
+  
+  
   static public Font getMonoFont(int size, int style) {
     if (monoFont == null) {
       try {
         monoFont = createFont("SourceCodePro-Regular.ttf", size);
-        monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
+        //monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
+        monoBoldFont = createFont("SourceCodePro-Bold.ttf", size);
       } catch (Exception e) {
         Base.log("Could not load mono font", e);
         monoFont = new Font("Monospaced", Font.PLAIN, size);
@@ -341,20 +414,15 @@ public class Toolkit {
       if (size == monoBoldFont.getSize()) {
         return monoBoldFont;
       } else {
-//        System.out.println("deriving new font");
         return monoBoldFont.deriveFont((float) size);
       }
     } else {
       if (size == monoFont.getSize()) {
         return monoFont;
       } else {
-//        System.out.println("deriving new font");
         return monoFont.deriveFont((float) size);
       }
     }
-//    return style == Font.BOLD ?
-//      monoBoldFont.deriveFont((float) size) :
-//      monoFont.deriveFont((float) size);
   }
 
 
@@ -365,26 +433,20 @@ public class Toolkit {
         sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
       } catch (Exception e) {
         Base.log("Could not load sans font", e);
-        sansFont = new Font("Monospaced", Font.PLAIN, size);
-        sansBoldFont = new Font("Monospaced", Font.BOLD, size);
+        sansFont = new Font("SansSerif", Font.PLAIN, size);
+        sansBoldFont = new Font("SansSerif", Font.BOLD, size);
       }
     }
-//    System.out.println("deriving new font");
-//    return style == Font.BOLD ?
-//      sansBoldFont.deriveFont((float) size) :
-//      sansFont.deriveFont((float) size);
     if (style == Font.BOLD) {
       if (size == sansBoldFont.getSize()) {
         return sansBoldFont;
       } else {
-//        System.out.println("deriving new font");
         return sansBoldFont.deriveFont((float) size);
       }
     } else {
       if (size == sansFont.getSize()) {
         return sansFont;
       } else {
-//        System.out.println("deriving new font");
         return sansFont.deriveFont((float) size);
       }
     }

@@ -33,7 +33,7 @@ void setup() {
   ypos = height/2;
 
   // Print a list of the serial ports, for debugging purposes:
-  println(Serial.list());
+  printArray(Serial.list());
 
   // I know that the first port in the serial list on my mac
   // is always my  FTDI adaptor, so I open Serial.list()[0].
@@ -133,15 +133,15 @@ void loop()
     // so that you're sending 100 or 255:
     thirdSensor = 100 + (155 * digitalRead(2));
     // send sensor values:
-    Serial.print(firstSensor, BYTE);
-    Serial.print(secondSensor, BYTE);
-    Serial.print(thirdSensor, BYTE);               
+    Serial.write(firstSensor);
+    Serial.write(secondSensor);
+    Serial.write(thirdSensor);               
   }
 }
 
 void establishContact() {
  while (Serial.available() <= 0) {
-      Serial.print('A', BYTE);   // send a capital A
+      Serial.write('A');   // send a capital A
       delay(300);
   }
 }

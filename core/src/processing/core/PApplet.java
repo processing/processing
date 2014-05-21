@@ -56,6 +56,7 @@ import java.util.zip.*;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileSystemView;
 
 
 /**
@@ -266,6 +267,9 @@ public class PApplet extends Applet
   boolean useStrategy = false;
   Canvas canvas;
 
+  Method revalidateMethod;
+
+
 //  /**
 //   * Usually just 0, but with multiple displays, the X and Y coordinates of
 //   * the screen will depend on the current screen's position relative to
@@ -323,7 +327,7 @@ public class PApplet extends Applet
   public String[] args;
 
   /** Path to sketch folder */
-  public String sketchPath; //folder;
+  public String sketchPath;
 
   static final boolean DEBUG = false;
 //  static final boolean DEBUG = true;
@@ -410,6 +414,8 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref environment
+   * @see PApplet#height
+   * @see PApplet#size(int, int)
    */
   public int width;
 
@@ -424,7 +430,8 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref environment
-   *
+   * @see PApplet#width
+   * @see PApplet#size(int, int)
    */
   public int height;
 
@@ -437,11 +444,16 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    *
    *
    */
@@ -456,11 +468,16 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    *
    */
   public int mouseY;
@@ -489,9 +506,17 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref input:mouse
-   * @see PApplet#pmouseY
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public int pmouseX;
 
@@ -505,9 +530,17 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref input:mouse
-   * @see PApplet#pmouseX
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public int pmouseY;
 
@@ -557,10 +590,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public int mouseButton;
 
@@ -575,9 +613,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public boolean mousePressed;
 
@@ -769,6 +813,11 @@ public class PApplet extends Applet
   Object pauseObject = new Object();
   Thread thread;
 
+  // Background default needs to be different from the default value in
+  // PGraphics.backgroundColor, otherwise size(100, 100) bg spills over.
+  // https://github.com/processing/processing/issues/2297
+  static final Color WINDOW_BGCOLOR = new Color(0xDD, 0xDD, 0xDD);
+
   // messages to send if attached as an external vm
 
   /**
@@ -777,6 +826,8 @@ public class PApplet extends Applet
    */
   static public final String ARGS_EDITOR_LOCATION = "--editor-location";
 
+  static public final String ARGS_EXTERNAL = "--external";
+
   /**
    * Location for where to position the applet window on screen.
    * <p>
@@ -784,8 +835,6 @@ public class PApplet extends Applet
    * location, or could be used by other classes to launch at a
    * specific position on-screen.
    */
-  static public final String ARGS_EXTERNAL = "--external";
-
   static public final String ARGS_LOCATION = "--location";
 
   static public final String ARGS_DISPLAY = "--display";
@@ -865,6 +914,12 @@ public class PApplet extends Applet
       useActive = false;
     }
 
+    if (javaVersion >= 1.7f) {
+      try {
+        revalidateMethod = getClass().getMethod("revalidate", new Class[] {});
+      } catch (Exception e) { }
+    }
+
     // send tab keys through to the PApplet
     setFocusTraversalKeysEnabled(false);
 
@@ -895,11 +950,18 @@ public class PApplet extends Applet
       online = false;
     }
 
-    try {
-      if (sketchPath == null) {
-        sketchPath = System.getProperty("user.dir");
-      }
-    } catch (Exception e) { }  // may be a security problem
+    // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
+    // inside runSketch(), but if this sketch takes care of calls  to init()
+    // and setup() itself (i.e. it's in a larger Java application), it'll
+    // still need to be set here so that fonts, etc can be retrieved.
+    if (sketchPath == null) {
+      sketchPath = calcSketchPath();
+    }
+
+    // Figure out the available display width and height.
+    // No major problem if this fails, we have to try again anyway in
+    // handleDraw() on the first (== 0) frame.
+    checkDisplaySize();
 
     Dimension size = getSize();
     if ((size.width != 0) && (size.height != 0)) {
@@ -951,6 +1013,21 @@ public class PApplet extends Applet
     // this is automatically called in applets
     // though it's here for applications anyway
 //    start();
+  }
+
+
+  private void checkDisplaySize() {
+    if (getGraphicsConfiguration() != null) {
+      GraphicsDevice displayDevice = getGraphicsConfiguration().getDevice();
+
+      if (displayDevice != null) {
+        Rectangle screenRect =
+          displayDevice.getDefaultConfiguration().getBounds();
+
+        displayWidth = screenRect.width;
+        displayHeight = screenRect.height;
+      }
+    }
   }
 
 
@@ -1558,6 +1635,7 @@ public class PApplet extends Applet
  * @see PApplet#noLoop()
  * @see PApplet#redraw()
  * @see PApplet#frameRate(float)
+ * @see PGraphics#background(float, float, float, float)
  */
   public void draw() {
     // if no draw method, then shut things down
@@ -1650,6 +1728,8 @@ public class PApplet extends Applet
    * @webref environment
    * @param w width of the display window in units of pixels
    * @param h height of the display window in units of pixels
+   * @see PApplet#width
+   * @see PApplet#height
    */
   public void size(int w, int h) {
     size(w, h, JAVA2D, null);
@@ -2263,17 +2343,18 @@ public class PApplet extends Applet
       long now = System.nanoTime();
 
       if (frameCount == 0) {
-        GraphicsConfiguration gc = getGraphicsConfiguration();
-        if (gc == null) return;
-        GraphicsDevice displayDevice =
-          getGraphicsConfiguration().getDevice();
-        if (displayDevice == null) return;
-        Rectangle screenRect =
-          displayDevice.getDefaultConfiguration().getBounds();
-//        screenX = screenRect.x;
-//        screenY = screenRect.y;
-        displayWidth = screenRect.width;
-        displayHeight = screenRect.height;
+//        GraphicsConfiguration gc = getGraphicsConfiguration();
+//        if (gc == null) return;
+//        GraphicsDevice displayDevice =
+//          getGraphicsConfiguration().getDevice();
+//        if (displayDevice == null) return;
+//        Rectangle screenRect =
+//          displayDevice.getDefaultConfiguration().getBounds();
+////        screenX = screenRect.x;
+////        screenY = screenRect.y;
+//        displayWidth = screenRect.width;
+//        displayHeight = screenRect.height;
+        checkDisplaySize();
 
         try {
           //println("Calling setup()");
@@ -2333,7 +2414,9 @@ public class PApplet extends Applet
           render();
         } else {
           Graphics screen = getGraphics();
-          screen.drawImage(g.image, 0, 0, width, height, null);
+          if (screen != null) {
+            screen.drawImage(g.image, 0, 0, width, height, null);
+          }
         }
       } else {
         repaint();
@@ -2690,10 +2773,14 @@ public class PApplet extends Applet
     // also prevents mouseExited() on the mac from hosing the mouse
     // position, because x/y are bizarre values on the exit event.
     // see also the id check below.. both of these go together.
-    // Not necessary to set mouseX/Y on PRESS or RELEASE events because the
-    // actual position will have been set by a MOVE or DRAG event.
-    if (event.getAction() == MouseEvent.DRAG ||
-        event.getAction() == MouseEvent.MOVE) {
+    // Not necessary to set mouseX/Y on RELEASE events because the
+    // actual position will have been set by a PRESS or DRAG event.
+    // However, PRESS events might come without a preceeding move,
+    // if the sketch window gains focus on that PRESS.
+    final int action = event.getAction();
+    if (action == MouseEvent.DRAG ||
+        action == MouseEvent.MOVE ||
+        action == MouseEvent.PRESS) {
       pmouseX = emouseX;
       pmouseY = emouseY;
       mouseX = event.getX();
@@ -2727,7 +2814,7 @@ public class PApplet extends Applet
     // Do this up here in case a registered method relies on the
     // boolean for mousePressed.
 
-    switch (event.getAction()) {
+    switch (action) {
     case MouseEvent.PRESS:
       mousePressed = true;
       break;
@@ -2738,7 +2825,7 @@ public class PApplet extends Applet
 
     handleMethods("mouseEvent", new Object[] { event });
 
-    switch (event.getAction()) {
+    switch (action) {
     case MouseEvent.PRESS:
 //      mousePressed = true;
       mousePressed(event);
@@ -2767,8 +2854,8 @@ public class PApplet extends Applet
       break;
     }
 
-    if ((event.getAction() == MouseEvent.DRAG) ||
-        (event.getAction() == MouseEvent.MOVE)) {
+    if ((action == MouseEvent.DRAG) ||
+        (action == MouseEvent.MOVE)) {
       emouseX = mouseX;
       emouseY = mouseY;
     }
@@ -2981,11 +3068,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
-   * @see PApplet#mouseButton
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mousePressed() { }
 
@@ -3005,11 +3096,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
-   * @see PApplet#mouseButton
    * @see PApplet#mousePressed()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseReleased() { }
 
@@ -3033,11 +3128,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
-   * @see PApplet#mouseButton
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseClicked() { }
 
@@ -3057,10 +3156,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseDragged() { }
 
@@ -3080,10 +3184,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseMoved() { }
 
@@ -3120,6 +3229,17 @@ public class PApplet extends Applet
    *
    * @webref input:mouse
    * @param event the MouseEvent
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
    */
   public void mouseWheel(MouseEvent event) {
     mouseWheel();
@@ -3665,6 +3785,8 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    * @param fps number of desired frames per second
+   * @see PApplet#frameRate
+   * @see PApplet#frameCount
    * @see PApplet#setup()
    * @see PApplet#draw()
    * @see PApplet#loop()
@@ -3989,8 +4111,12 @@ public class PApplet extends Applet
     }
   }
 
-
-  void exitActual() {
+  /**
+   * Some subclasses (I'm looking at you, processing.py) might wish to do something
+   * other than actually terminate the JVM. This gives them a chance to do whatever
+   * they have in mind when cleaning up.
+   */
+  protected void exitActual() {
     try {
       System.exit(0);
     } catch (SecurityException e) {
@@ -4149,6 +4275,7 @@ public class PApplet extends Applet
    * @webref output:image
    * @see PApplet#save(String)
    * @see PApplet#createGraphics(int, int, String, String)
+   * @see PApplet#frameCount
    * @param filename any sequence of letters or numbers that ends with either ".tif", ".tga", ".jpg", or ".png"
    */
   public void saveFrame(String filename) {
@@ -4201,6 +4328,11 @@ public class PApplet extends Applet
    * @param kind either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT
    */
   public void cursor(int kind) {
+    // Swap the HAND cursor because MOVE doesn't seem to be available on OS X
+    // https://github.com/processing/processing/issues/2358
+    if (platform == MACOSX && kind == MOVE) {
+      kind = HAND;
+    }
     setCursor(Cursor.getPredefinedCursor(kind));
     cursorVisible = true;
     this.cursorType = kind;
@@ -4335,8 +4467,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
  * @webref output:text_area
  * @usage IDE
- * @param what boolean, byte, char, color, int, float, String, Object
- * @see PApplet#println(byte)
+ * @param what data to print to console
+ * @see PApplet#println()
+ * @see PApplet#printArray(Object)
  * @see PApplet#join(String[], char)
  */
   static public void print(byte what) {
@@ -4379,6 +4512,26 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
+  /**
+   * @param variables list of data, separated by commas
+   */
+  static public void print(Object... variables) {
+    StringBuilder sb = new StringBuilder();
+    for (Object o : variables) {
+      if (sb.length() != 0) {
+        sb.append(" ");
+      }
+      if (o == null) {
+        sb.append("null");
+      } else {
+        sb.append(o.toString());
+      }
+    }
+    System.out.print(sb.toString());
+  }
+
+
+  /*
   static public void print(Object what) {
     if (what == null) {
       // special case since this does fuggly things on > 1.1
@@ -4387,9 +4540,10 @@ public class PApplet extends Applet
       System.out.println(what.toString());
     }
   }
+  */
 
-  //
-/**
+
+  /**
    * ( begin auto-generated from println.xml )
    *
    * Writes to the text area of the Processing environment's console. This is
@@ -4408,14 +4562,15 @@ public class PApplet extends Applet
  * @webref output:text_area
  * @usage IDE
  * @see PApplet#print(byte)
+ * @see PApplet#printArray(Object)
  */
   static public void println() {
     System.out.println();
   }
 
-  //
+
 /**
- * @param what boolean, byte, char, color, int, float, String, Object
+ * @param what data to print to console
  */
   static public void println(byte what) {
     System.out.println(what);
@@ -4457,7 +4612,60 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
+  /**
+   * @param variables list of data, separated by commas
+   */
+  static public void println(Object... variables) {
+//    System.out.println("got " + variables.length + " variables");
+    print(variables);
+    println();
+  }
+
+
+  /*
+  // Breaking this out since the compiler doesn't know the difference between
+  // Object... and just Object (with an array passed in). This should take care
+  // of the confusion for at least the most common case (a String array).
+  // On second thought, we're going the printArray() route, since the other
+  // object types are also used frequently.
+  static public void println(String[] array) {
+    for (int i = 0; i < array.length; i++) {
+      System.out.println("[" + i + "] \"" + array[i] + "\"");
+    }
+    System.out.flush();
+  }
+  */
+
+
+  /**
+   * For arrays, use printArray() instead. This function causes a warning
+   * because the new print(Object...) and println(Object...) functions can't
+   * be reliably bound by the compiler.
+   */
   static public void println(Object what) {
+    if (what == null) {
+      System.out.println("null");
+    } else if (what.getClass().isArray()) {
+      printArray(what);
+    } else {
+      System.out.println(what.toString());
+      System.out.flush();
+    }
+  }
+
+  /**
+   * ( begin auto-generated from printArray.xml )
+   *
+   * To come...
+   *
+   * ( end auto-generated )
+ * @webref output:text_area
+ * @param what one-dimensional array
+ * @usage IDE
+ * @see PApplet#print(byte)
+ * @see PApplet#println()
+ */
+  static public void printArray(Object what) {
     if (what == null) {
       // special case since this does fuggly things on > 1.1
       System.out.println("null");
@@ -5141,6 +5349,8 @@ public class PApplet extends Applet
    * @param amt float between 0.0 and 1.0
    * @see PGraphics#curvePoint(float, float, float, float, float)
    * @see PGraphics#bezierPoint(float, float, float, float, float)
+   * @see PVector#lerp(PVector, float)
+   * @see PGraphics#lerpColor(int, int, float)
    */
   static public final float lerp(float start, float stop, float amt) {
     return start + (stop-start) * amt;
@@ -5863,6 +6073,13 @@ public class PApplet extends Applet
    * Rewritten for 0115 to read/write RLE-encoded targa images.
    * For 0125, non-RLE encoded images are now supported, along with
    * images whose y-order is reversed (which is standard for TGA files).
+   * <p>
+   * A version of this function is in MovieMaker.java. Any fixes here
+   * should be applied over in MovieMaker as well.
+   * <p>
+   * Known issue with RLE encoding and odd behavior in some apps:
+   * https://github.com/processing/processing/issues/2096
+   * Please help!
    */
   protected PImage loadImageTGA(String filename) throws IOException {
     InputStream is = createInput(filename);
@@ -5880,7 +6097,7 @@ public class PApplet extends Applet
       header[2] image type code
       2  (0x02) - Uncompressed, RGB images.
       3  (0x03) - Uncompressed, black and white images.
-      10 (0x0A) - Runlength encoded RGB images.
+      10 (0x0A) - Run-length encoded RGB images.
       11 (0x0B) - Compressed, black and white images. (grayscale?)
 
       header[16] is the bit depth (8, 24, 32)
@@ -6103,6 +6320,7 @@ public class PApplet extends Applet
   public XML loadXML(String filename, String options) {
     try {
       return new XML(createReader(filename), options);
+//      return new XML(createInput(filename), options);
     } catch (Exception e) {
       e.printStackTrace();
       return null;
@@ -6294,7 +6512,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @webref input:files
+   * @webref output:files
    * @param table the Table object to save to a file
    * @param filename the filename to which the Table should be saved
    * @see Table
@@ -7729,13 +7947,39 @@ public class PApplet extends Applet
   }
 
 
+  static File desktopFolder;
+
+  /** Not a supported function. For testing use only. */
+  static public File desktopFile(String what) {
+    if (desktopFolder == null) {
+      // Should work on Linux and OS X (on OS X, even with the localized version).
+      desktopFolder = new File(System.getProperty("user.home"), "Desktop");
+      if (!desktopFolder.exists()) {
+        if (platform == WINDOWS) {
+          FileSystemView filesys = FileSystemView.getFileSystemView();
+          desktopFolder = filesys.getHomeDirectory();
+        } else {
+          throw new UnsupportedOperationException("Could not find a suitable desktop foldder");
+        }
+      }
+    }
+    return new File(desktopFolder, what);
+  }
+
+
+  /** Not a supported function. For testing use only. */
+  static public String desktopPath(String what) {
+    return desktopFile(what).getAbsolutePath();
+  }
+
+
   /**
    * Return a full path to an item in the data folder.
    * <p>
    * This is only available with applications, not applets or Android.
    * On Windows and Linux, this is simply the data folder, which is located
    * in the same directory as the EXE file and lib folders. On Mac OS X, this
-   * is a path to the data folder buried inside Contents/Resources/Java.
+   * is a path to the data folder buried inside Contents/Java.
    * For the latter point, that also means that the data folder should not be
    * considered writable. Use sketchPath() for now, or inputPath() and
    * outputPath() once they're available in the 2.0 release.
@@ -7762,7 +8006,7 @@ public class PApplet extends Applet
 
     String jarPath =
       getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-    if (jarPath.contains("Contents/Resources/Java/")) {
+    if (jarPath.contains("Contents/Java/")) {
       // The path will be URL encoded (%20 for spaces) coming from above
       // http://code.google.com/p/processing/issues/detail?id=1073
       File containingFolder = new File(urlDecode(jarPath)).getParentFile();
@@ -7776,7 +8020,7 @@ public class PApplet extends Applet
 
   /**
    * On Windows and Linux, this is simply the data folder. On Mac OS X, this is
-   * the path to the data folder buried inside Contents/Resources/Java
+   * the path to the data folder buried inside Contents/Java
    */
 //  public File inputFile(String where) {
 //  }
@@ -8374,19 +8618,20 @@ public class PApplet extends Applet
   }
 
   static final public Object splice(Object list, Object value, int index) {
-    Object[] outgoing = null;
+    Class<?> type = list.getClass().getComponentType();
+    Object outgoing = null;
     int length = Array.getLength(list);
 
     // check whether item being spliced in is an array
     if (value.getClass().getName().charAt(0) == '[') {
       int vlength = Array.getLength(value);
-      outgoing = new Object[length + vlength];
+      outgoing = Array.newInstance(type, length + vlength);
       System.arraycopy(list, 0, outgoing, 0, index);
       System.arraycopy(value, 0, outgoing, index, vlength);
       System.arraycopy(list, index, outgoing, index + vlength, length - index);
 
     } else {
-      outgoing = new Object[length + 1];
+      outgoing = Array.newInstance(type, length + 1);
       System.arraycopy(list, 0, outgoing, 0, index);
       Array.set(outgoing, index, value);
       System.arraycopy(list, index, outgoing, index + 1, length - index);
@@ -10005,7 +10250,7 @@ public class PApplet extends Applet
       int alpha = (int) falpha;
       if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
       if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
-      return 0xff000000 | (gray << 16) | (gray << 8) | gray;
+      return (alpha << 24) | (gray << 16) | (gray << 8) | gray;
     }
     return g.color(fgray, falpha);
   }
@@ -10142,6 +10387,21 @@ public class PApplet extends Applet
               if (!newBounds.equals(oldBounds)) {
                 // the ComponentListener in PApplet will handle calling size()
                 setBounds(newBounds);
+
+                // In 0225, calling this via reflection so that we can still
+                // compile in Java 1.6. This is a trap since we really need
+                // to move to 1.7 and cannot support 1.6, but things like text
+                // are still a little wonky on 1.7, especially on OS X.
+                // This gives us a way to at least test against older VMs.
+                //revalidate();   // let the layout manager do its work
+                if (revalidateMethod != null) {
+                  try {
+                    revalidateMethod.invoke(PApplet.this);
+                  } catch (Exception ex) {
+                    ex.printStackTrace();
+                    revalidateMethod = null;
+                  }
+                }
               }
             }
           }
@@ -10342,14 +10602,7 @@ public class PApplet extends Applet
     boolean hideStop = false;
 
     String param = null, value = null;
-
-    // try to get the user folder. if running under java web start,
-    // this may cause a security exception if the code is not signed.
-    // http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1159386274
-    String folder = null;
-    try {
-      folder = System.getProperty("user.dir");
-    } catch (Exception e) { }
+    String folder = calcSketchPath();
 
     int argIndex = 0;
     while (argIndex < args.length) {
@@ -10445,7 +10698,7 @@ public class PApplet extends Applet
     Frame frame = new JFrame(displayDevice.getDefaultConfiguration());
     // Default Processing gray, which will be replaced below if another
     // color is specified on the command line (i.e. in the prefs).
-    frame.setBackground(new Color(0xCC, 0xCC, 0xCC));
+    ((JFrame) frame).getContentPane().setBackground(WINDOW_BGCOLOR);
     // Cannot call setResizable(false) until later due to OS X (issue #467)
 
     final PApplet applet;
@@ -10557,7 +10810,7 @@ public class PApplet extends Applet
       //frame.setExtendedState(Frame.MAXIMIZED_BOTH);
       frame.setUndecorated(true);
       if (backgroundColor != null) {
-        frame.setBackground(backgroundColor);
+        ((JFrame) frame).getContentPane().setBackground(backgroundColor);
       }
 //      if (exclusive) {
 //        displayDevice.setFullScreenWindow(frame);
@@ -10714,7 +10967,7 @@ public class PApplet extends Applet
 //        // this means no bg color unless specified
 //        backgroundColor = SystemColor.control;
 //      }
-        frame.setBackground(backgroundColor);
+        ((JFrame) frame).getContentPane().setBackground(backgroundColor);
       }
 
 //      int usableWindowH = windowH - insets.top - insets.bottom;
@@ -10782,7 +11035,7 @@ public class PApplet extends Applet
     final String[] argsWithSketchName = new String[args.length + 1];
     System.arraycopy(args, 0, argsWithSketchName, 0, args.length);
     final String className = this.getClass().getSimpleName();
-    final  String cleanedClass =
+    final String cleanedClass =
       className.replaceAll("__[^_]+__\\$", "").replaceAll("\\$\\d+", "");
     argsWithSketchName[args.length] = cleanedClass;
     runSketch(argsWithSketchName, this);
@@ -10791,6 +11044,34 @@ public class PApplet extends Applet
 
   protected void runSketch() {
     runSketch(new String[0]);
+  }
+
+
+  static protected String calcSketchPath() {
+    // try to get the user folder. if running under java web start,
+    // this may cause a security exception if the code is not signed.
+    // http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1159386274
+    String folder = null;
+    try {
+      folder = System.getProperty("user.dir");
+
+      // Workaround for bug in Java for OS X from Oracle (7u51)
+      // https://github.com/processing/processing/issues/2181
+      if (platform == MACOSX) {
+        String jarPath =
+          PApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        // The jarPath from above will be URL encoded (%20 for spaces)
+        jarPath = urlDecode(jarPath);
+        if (jarPath.contains("Contents/Java/")) {
+          String appPath = jarPath.substring(0, jarPath.indexOf(".app") + 4);
+          File containingFolder = new File(appPath).getParentFile();
+          folder = containingFolder.getAbsolutePath();
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return folder;
   }
 
 
@@ -14083,7 +14364,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
    *
    * @webref color:setting
-   * @see PGraphics#stroke(float, float, float, float)
+   * @see PGraphics#stroke(int, float)
+   * @see PGraphics#fill(float, float, float, float)
+   * @see PGraphics#noFill()
    */
   public void noStroke() {
     if (recorder != null) recorder.noStroke();
@@ -14115,7 +14398,11 @@ public class PApplet extends Applet
    *
    * @param rgb color value in hexadecimal notation
    * @see PGraphics#noStroke()
+   * @see PGraphics#strokeWeight(float)
+   * @see PGraphics#strokeJoin(int)
+   * @see PGraphics#strokeCap(int)
    * @see PGraphics#fill(int, float)
+   * @see PGraphics#noFill()
    * @see PGraphics#tint(int, float)
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#colorMode(int, float, float, float, float)
@@ -14279,6 +14566,8 @@ public class PApplet extends Applet
    * @webref color:setting
    * @usage web_application
    * @see PGraphics#fill(float, float, float, float)
+   * @see PGraphics#stroke(int, float)
+   * @see PGraphics#noStroke()
    */
   public void noFill() {
     if (recorder != null) recorder.noFill();
@@ -14316,6 +14605,7 @@ public class PApplet extends Applet
    * @param rgb color variable or hex value
    * @see PGraphics#noFill()
    * @see PGraphics#stroke(int, float)
+   * @see PGraphics#noStroke()
    * @see PGraphics#tint(int, float)
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#colorMode(int, float, float, float, float)
@@ -15155,6 +15445,7 @@ public class PApplet extends Applet
    * @param amt between 0.0 and 1.0
    * @see PImage#blendColor(int, int, int)
    * @see PGraphics#color(float, float, float, float)
+   * @see PApplet#lerp(float, float, float)
    */
   public int lerpColor(int c1, int c2, float amt) {
     return g.lerpColor(c1, c2, amt);

@@ -1,6 +1,714 @@
-PROCESSING 2.0.3 (REV 0221) - 23 August 2013
+PROCESSING 2.2.1 (REV 0227) - 19 May 2014
 
-Several OpenGL fixes.
+A handful of bug fixes, the most prominent rolls back a change that broke
+PDE X and other Modes and Tools. 
+
++ Bring back setIcon(Frame) for PDE X and others
+  https://github.com/processing/processing-experimental/issues/64
+
++ Add additional code for crashing when the Mode is changed or new editor
+  windows opened.
+
++ Use mouseReleased() instead of mousePressed() in the color selector, 
+  otherwise it registers the release as a click in the color window
+  https://github.com/processing/processing/issues/2514
+
++ Missing 'version' in contribution properties file causes NullPointerException
+  https://github.com/processing/processing/issues/2517
+
++ A handful of fixes to Auto Format
+  https://github.com/processing/processing/pull/2271
+
++ Command line tools not working on OS X due to AppleDouble file boogers.
+  https://github.com/processing/processing/issues/2520
+
++ Make "Archive Sketch" Tool force a .zip file extension
+  https://github.com/processing/processing/issues/2526
+
++ Event handling modifications in video and serial libraries w/ Python Mode
+  https://github.com/processing/processing/pull/2527
+  https://github.com/processing/processing/pull/2528
+  https://github.com/processing/processing/pull/2529
+
++ Permit mouse PRESS to set mouseX/mouseY
+  https://github.com/processing/processing/pull/2509
+
++ Fix for video: the loop() method was broken in the last release.
+  https://github.com/processing/processing/issues/2524
+
++ Updated reference files included in the download.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+PROCESSING 2.2 (REV 0226) - 12 May 2014
+
+Major changes to, and improvements upon, how "Export to Application" works.
+Plus dozens of bug fixes for all manner of atrocities.
+
+
+[ bug fixes and additions ] 
+
++ Sketches only starting once, or half-starting and hanging on Mac OS X.
+  A major problem on OS X, thanks to David Fokkema for tracking down a fix.
+  https://github.com/processing/processing/issues/2402
+  https://github.com/processing/processing/pull/2455
+
++ Re-open current sketch in new mode editor if file extension is compatible.
+  This was a regression in 2.1.2 due to the Python Mode changes.
+  https://github.com/processing/processing/pull/2457
+  https://github.com/processing/processing/issues/2456
+
++ Crash in the 'recent' menu on startup
+  https://github.com/processing/processing/issues/2463
+
++ Avoid conflict when some goofball has installed JNA DLLs in your path.
+  https://github.com/processing/processing/issues/2239
+
++ Add support for "import static" syntax from Java
+  https://github.com/processing/processing/issues/8
+  https://github.com/processing/processing/pull/2273
+
++ Improve error handling during Tool loading. In previous releases, an
+  out of date QuickReference Tool was able to hang Processing. No longer.
+  https://github.com/processing/processing/issues/2229
+
++ Save the previous open dialog so that we return to the directory
+  https://github.com/processing/processing/pull/2366
+
++ "if-else" block formatting wasn't following Processing conventions
+  https://github.com/processing/processing/issues/364
+  https://github.com/processing/processing/pull/2477
+
++ Tab characters not recognized or handled in the editor (since 2.1)
+  https://github.com/processing/processing/issues/2180
+  https://github.com/processing/processing/issues/2183
+
++ Chinese text is overlapped in Processing 2.1 editor
+  https://github.com/processing/processing/issues/2173
+  https://github.com/processing/processing/pull/2318
+  https://github.com/processing/processing/pull/2323
+
+
+[ export to application ]
+
++ The return of multi-platform export! Create applications for Windows
+  and Linux while using OS X. Create a Linux application from Windows. 
+  Against my better judgement, we're supporting it again. It's extremely
+  difficult, but was disappointing to remove it earlier.
+
++ When exporting with local Java embedded, always use that version
+  https://github.com/processing/processing/issues/2349
+
++ Change Windows export to use launch4j instead of our custom launcher.
+  This will fix many, many problems, but may introduce some new ones. 
+
++ Windows (64-bit) now creates a proper .exe instead of a .bat file
+  https://github.com/processing/processing/issues/923
+
++ Exported apps on Windows 64 were not quite working correctly
+  https://github.com/processing/processing/issues/2468
+
++ Improved icons on Windows for exported apps
+
++ Add additional language and explanation to the Export dialog box
+
++ Make it possible to edit the background colors for full screen as well as
+  the stop button color directly from the Export dialog box
+  https://github.com/processing/processing/issues/69
+
++ Exported apps reporting as "damaged" on OS X
+  https://github.com/processing/processing/issues/2095
+  You'll have to install Xcode to remove the warnings, but it's possible
+
+
+[ core ]
+
++ Fix for splice() throwing a ClassCastException with other object types
+  https://github.com/processing/processing/issues/1445
+  https://github.com/processing/processing/pull/2461
+
++ Add candDraw() method to the retina renderer to fix embedding problems
+
++ Fix sketchPath() issue when used in other environments (i.e. Eclipse)
+
++ Substitute MOVE cursor with HAND on OS X
+  https://github.com/processing/processing/issues/2358
+
++ Allow textWidth() with the default font
+  https://github.com/processing/processing/issues/2331
+  https://github.com/processing/processing/pull/2338
+
++ Bug in relative moveto commands for SVG
+  https://github.com/processing/processing/issues/2377
+
++ Add a constructor to bind Server to a specific address 
+  https://github.com/processing/processing/issues/2356
+
++ Fonts from loadFont() show up as blocks in P3D (regression)
+  https://github.com/processing/processing/issues/2465
+
++ loadPixels() problems in OpenGL
+  https://github.com/processing/processing/issues/2493
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+PROCESSING 2.1.2 (REV 0225) - 15 April 2014
+
+Lots of small bug fixes plus some additional changes to support 
+the new Python Mode, coming soon: https://github.com/jdf/processing.py
+
+
+[ the pde ] 
+
++ The PDE was using 15% of CPU while just sitting idle. Thanks to
+  David Fokkema for the fix (and pull request).
+  https://github.com/processing/processing/issues/1561
+  https://github.com/processing/processing/pull/2451
+
++ Fix exception caused by Runner when it can't find location
+  https://github.com/processing/processing/issues/2346
+  https://github.com/processing/processing/pull/2359
+
++ Serial: Update to latest upstream (fixes potential port handle leak)
+  https://github.com/processing/processing/pull/2361
+
++ Add affordance for mode developers to run from Eclipse
+  https://github.com/processing/processing/pull/2422
+
++ Non-PDE extensions for modes cause a crash
+  https://github.com/processing/processing/issues/2419
+
++ Remove some hardcoding for .pde as extension
+  https://github.com/processing/processing/issues/2420
+
++ Update code signing for Processing.app for Mavericks changes
+  https://github.com/processing/processing/issues/2453
+
+
+[ the core ] 
+
++ sketchPath() was returning user.home in exported apps on OS X
+  https://github.com/processing/processing/issues/2181
+
++ Fix bug in StringDict(Reader) that wasn't setting the indices hashmap
+
++ Call revalidate() via reflection so that build works under 1.6 (using
+  1.6 very much not supported, but we need it for regression testing).
+
++ Some text rendering improvements. Fairly limited in what we can fix here.
+
++ PGraphics.colorCalcARGB(int, float) wasn't properly capping alpha values
+  https://github.com/processing/processing/issues/2439
+
++ Make sure that the window background color isn't the same as the default 
+  sketch background color (otherwise the sketch area isn't clear). 
+  https://github.com/processing/processing/issues/2297
+
++ Fix for occasional NullPointerException in paint()
+  https://github.com/processing/processing/issues/2354
+
+
+[ andres vs opengl, episode 225 ] 
+
++ copy() under OPENGL uses upside-down coordinates for cropping
+  https://github.com/processing/processing/issues/2345
+
++ Video on Windows causes exception
+  https://github.com/processing/processing/issues/2327
+
++ Shape Font Rendering was broken with the OpenGL Renderer
+  https://github.com/processing/processing/issues/2375
+
++ Depth buffer shouldn't be cleared when depth mask is disabled
+  https://github.com/processing/processing/issues/2296
+
++ Set pixels transparent by default in P2D/P3D
+  https://github.com/processing/processing/issues/2207
+
++ Unwind depth sorting because it was breaking DXF export
+  https://github.com/processing/processing/issues/2404
+
++ Sketch hangs if sketchRenderer() returns an OpenGL renderer
+  https://github.com/processing/processing/issues/2363
+
++ "buffer" uniform triggers shader compilation error
+  https://github.com/processing/processing/issues/2325
+  buffer has been renamed to ppixels for shaders
+
++ noLoop() clears screen on Windows 8
+  https://github.com/processing/processing/issues/2416
+
++ Fix pixels[] array for video capture
+  https://github.com/processing/processing/issues/2424
+
+
+[ fixed in earlier releases ] 
+
++ draw() called again before finishing on OS X (retina issue)
+  https://github.com/processing/processing/issues/1709
+
++ get() not always setting alpha channel when used with point()
+  https://github.com/processing/processing/issues/1756
+
++ support for geometry and tessellation shaders (on desktop)
+  https://github.com/processing/processing/issues/2252
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+PROCESSING 2.1.1 (REV 0224) - 21 January 2014
+
+Several fixes for issues in 2.1 that weren't found in the 2.1 beta release.
+Still a number of known issues, but this cleans up several of the biggies.
+
++ Fixed infinite loop in Find/Replace
+  https://github.com/processing/processing/issues/2082
+
++ Updated to Minim 2.2
+  https://github.com/processing/processing/pull/2250
+
++ Minor change to bracket handling
+  https://github.com/processing/processing/pull/2313
+
++ On the command line version, --no-java wasn't working properly
+  https://github.com/processing/processing/issues/2182
+
++ get() + video requires loadPixels in P2D/P3D
+  https://github.com/processing/processing/issues/2202
+
+
+[ windows ] 
+
++ Export to Application was broken on Windows
+  https://github.com/processing/processing/issues/2219
+
++ Right-click on selection was causing text to de-select on Windows
+  https://github.com/processing/processing/issues/2210
+
+
+[ mac os x ]
+
++ On Mac OS X, the app was called procesing.app.Base
+  https://github.com/processing/processing/issues/2217
+
++ Better support for native libraries in exported applications on OS X
+  https://github.com/processing/processing/pull/2269
+
+
+[ serial library ]
+
++ readStringUntil() missing from new serial library
+  https://github.com/processing/processing/issues/2174
+
++ Miscellaneous pdates to the serial library
+  https://github.com/processing/processing/pull/2265
+
++ Serial (apears to be) running slowly
+  https://github.com/processing/processing/issues/2249
+  https://github.com/processing/processing/issues/2214
+
++ Read a single character at a time to emulate RXTX behavior
+  https://github.com/processing/processing/pull/2240
+
++ Add basic tests for throughput and latency
+  https://github.com/processing/processing/pull/2225
+
++ Add a debug() method to Serial
+  https://github.com/processing/processing/pull/2237
+
++ Switch the examples over to use printArray()
+  https://github.com/processing/processing/pull/2226
+
++ Handle the UnsatisfiedLinkError when loading the native library fails
+  https://github.com/processing/processing/pull/2266
+
+
+[ core fixes ] 
+
++ PImage resize() causes PImage not to be rendered in JAVA2D
+  https://github.com/processing/processing/issues/2179
+
++ Remove make.sh from core source folder... ancient
+
++ Remove println() from the dataPath() method
+
++ Add special case for 'null' to println()
+
++ Added print() method to IntList
+
++ Fix esoteric typo with alpha and color
+  https://github.com/processing/processing/issues/2230
+
++ pushStyle/popStyle should save/restore blendMode
+  https://github.com/processing/processing/issues/2232
+
+
+[ opengl updates ]
+
++ PImage copy() function used with P2D flips the image
+  https://github.com/processing/processing/issues/2171
+
++ Filter shaders don't need to use the texture uniform
+  https://github.com/processing/processing/issues/2204
+
++ texture() bug with stroke() in P2D
+  https://github.com/processing/processing/issues/2205
+
++ Allow sharing of GL context amongst multiple windows
+  https://github.com/processing/processing/issues/1698
+
++ Texture sampling setting ignored when creating an offscreen PGraphics
+  https://github.com/processing/processing/issues/1900
+
++ Rounded rectangle broken with Processing 2.1 P3D renderer
+  https://github.com/processing/processing/issues/2193
+
++ Clear the global PGL on dispose()
+  https://github.com/processing/processing/pull/2279
+
++ Pie arcs have stroke between endpoints in P2D/P3D
+  https://github.com/processing/processing/issues/2233
+
+
+[ missing in the 2.1 release notes ] 
+
++ init() not called on tools until later 
+  https://github.com/processing/processing/issues/1859
+
++ Finish changes so the PDE can use an unmodified JRE
+  https://github.com/processing/processing/issues/1840
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+PROCESSING 2.1 (REV 0223) - 27 October 2013
+
+There have been major changes since 2.0.3, most of them are outlined in 
+the release notes for 2.1 beta 1 (look down a few dozen lines).
+
+This release includes a few updates to fix problems introduced in the beta 
+release, as well as additional general bug fixes, especially for OpenGL.
+
++ Added an option to not embed the Java runtime into an exported application.
+  This saves you the 100 MB footprint, but requires your users to install
+  Java 7u45 or later. Details on the same page that nobody read last time:
+  http://wiki.processing.org/w/Export_Info_and_Tips
+
++ The new println() (see the beta 1 notes) makes some old code behave a 
+  little differently. In the past, println() with an array would write 
+  out the array, one element per line, with the index in the front. i.e.:
+  PFont.list()) would write something like this to the console:
+
+  [0] "Serif"
+  [1] "SansSerif"
+  [2] "Monospaced"
+  [3] "Dialog"
+  [4] "DialogInput"
+  [5] "ACaslonPro-Bold"
+  [6] "ACaslonPro-BoldItalic"
+  ...and so on
+
+  Now it's going to write out something like:
+
+  Serif SansSerif Monospaced Dialog DialogInput ACaslonPro-Bold...
+
+  To get the old behavior, use printArray(). It's the price of progress, 
+  and shouldn't really "break" anyone's code since it's just writing to the
+  console. We think the new syntax outweighs the downside of the change. 
+
+  With arrays of primitive types (int[], float[], anything that's not an
+  object), we've added code so that println() works as before. But we
+  can't do the same for arrays of objects, such as String. 
+
++ The preference for font smoothing (anti-aliasing) in the editor has been
+  reset in this release. Fonts are unusably gross on OS X (and Linux) 
+  without smoothing and Oracle's version of Java (now in use with 2.1),
+  and many longtime users have anti-aliasing turned off. You can still 
+  turn off smoothing in the Preferences window, but the results may be poor.
+  https://github.com/processing/processing/issues/2164
+  https://github.com/processing/processing/issues/2160
+
+
+[ bug fixes ]
+
++ Fix dataPath() problem with OS X (was breaking Movie on export)
+
++ Command line processing-java was broken in 2.1 beta 1 on OS X
+  https://github.com/processing/processing/issues/2159
+
++ Fix a situation where processing-java would return 0 instead of 1 on errors
+  https://github.com/processing/processing/issues/1798#issuecomment-26711847
+
++ Alpha values from the pixels array were coming back as 0
+  https://github.com/processing/processing/issues/2030
+
++ Additional UI font tweaks due to decreased legibility with Oracle Java
+  https://github.com/processing/processing/issues/2135
+
+
+[ OpenGL updates ] 
+
++ Using sketchQuality() does not work properly with P3D, OPENGL, P2D
+  https://github.com/processing/processing/pull/2157
+
++ Fix crashes when the sketch window is resized
+  https://github.com/processing/processing/issues/1880
+  https://github.com/processing/processing/pull/2156
+
++ scale() wasn't affecting stroke weight in P3D
+  https://github.com/processing/processing/issues/2162
+
++ Add set(boolean) to PShader
+  https://github.com/processing/processing/issues/1991
+  https://github.com/processing/processing/pull/1993
+
++ Add PMatrix.preApply(PMatrix)
+  https://github.com/processing/processing/pull/2146
+  https://github.com/processing/processing/issues/2145
+
++ Updated to another version of JOGL (jogl-2.1-b1115, gluegen-2.1-b735)
+  for OS X 10.9 support.
+
++ Add warning when no uv texture coordinates are supplied
+  https://github.com/processing/processing/issues/2034
+
++ Flicker issues when resizing P2D/P3D/OPENGL
+  https://github.com/processing/processing/issues/15
+
++ Additional fix for occasional flash/flicker with drawing complex scenes
+  https://github.com/processing/processing/commit/cca2f08a24ef892c494f5a75aa0e4b01de7e5d8a
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+PROCESSING 2.1 beta 1 (REV 0222) - 20 October 2013
+
+This release contains major changes. The big ones:
+
++ Java 7 is now used across all platforms. On Mac OS X, 
+  we're now embedding Java 7u45. More info here:
+  http://wiki.processing.org/w/Supported_Platforms#Java_Versions
+
++ Major changes have been made to Export to Application. 
+  Read here: http://wiki.processing.org/w/Export_Info_and_Tips
+
++ print() and println() now make debugging fun! They can now take any 
+  number of parameters, which means that code like:
+  println(x, y, mouseX, mouseY);
+  will print out
+  3 5 142 220
+  No more println(x + " " +  y + " " + mouseX + " " + mouseY);
+  that was for suckers!
+
++ A new serial library has been added! The results of Gottfried Haider's
+  Google Summer of Code project now replaces the old serial library.
+
+And everyone should wish Casey Reas happy birthday today! 
+This release is my birthday present for him. What did you get him?
+
+Here's a more detailed rundown of what else is in this release:
+
+
+[ new features and additions ] 
+
++ For people using Eclipse, the new print() and println() methods add
+  some quirks because of how println() works for arrays in previous
+  versions of Processing. When printing an array, you should instead use
+  the new printArray() function, which works the same as the old println().
+  This will help avoid the compiler warnings with Eclipse and others.
+  In the PDE, this should be transparent, because warnings are not shown.
+  https://github.com/processing/processing/issues/2056
+
++ Update the JavaDoc, remove java.* package prefix ugliness. Also link
+  out to the online version of the Oracle documentation. 
+
++ Major work on the source and the build scripts as we completed the 
+  transition to Java 7, and away from Apple's deprecated Java 6.
+  http://wiki.processing.org/w/Supported_Platforms#Mac_OS_X
+
++ Incorporated a version of Oracle's appbundler for OS X build. Made heavy
+  modifications to the original version to add features and simplify.
+
++ Culled un-needed resources from the Java 7 runtime to save space.
+  Unfortunately Java 7 is also much larger than Java 6, so the size change
+  isn't as considerable as we would hope.
+
++ Remove unused/outdated 'Mangler' Tool example
+
++ Remove video library for other platforms in download. This saves 
+  significant space because we're not doing cross-platform export anymore.
+
++ Update apple.jar file with new version
+  https://developer.apple.com/legacy/library/samplecode/AppleJavaExtensions/Introduction/Intro.html
+
++ Update build instructions on Github
+  https://github.com/processing/processing/wiki/Build-Instructions
+  https://github.com/processing/processing/issues/1629
+
++ Many changes to the Supported Platforms page
+  http://wiki.processing.org/w/Supported_Platforms
+
++ Updates to the Export page to cover changes in this release
+  http://wiki.processing.org/w/Export_Info_and_Tips
+
++ Removed the 32- and 64-bit selector from the Preferences on OS X.
+  Java 7 on OS X only supports 64-bit, so 32-bit is no longer available.
+
+
+[ editor fixes ] 
+
++ Deal with null/missing folders for Tools and Modes
+  https://github.com/processing/processing/issues/2068
+
++ Non-compliant libraries cause crash on "Add Library"
+  https://github.com/processing/processing/issues/2026
+
++ Bad tools could bring down the environment
+  http://code.google.com/p/processing/issues/detail?id=798
+  https://github.com/processing/processing/issues/836
+
++ Open new PDE maximized when current PDE is maximized
+  https://github.com/processing/processing/pull/2037
+
++ cmd-left was bringing up the text area popup, causing X Mode weirdness
+  https://github.com/processing/processing/issues/2103
+
+
+[ core bug fixes ]
+
++ Screen stops updating sometimes with retina displays on OS X
+  https://github.com/processing/processing/issues/1699
+  This was an Apple bug, and is fixed by our switch to Oracle's Java 7.
+
++ Background color for present mode had no effect
+  https://github.com/processing/processing/issues/2071
+  https://github.com/processing/processing/pull/2072
+
++ Add desktopPath() and desktopFile() methods for testing (not finished)
+
++ Unicode NLF causing problems in XML files
+  https://github.com/processing/processing/issues/2100
+
++ Fix image transparency in PDF output
+  https://github.com/processing/processing/pull/2070
+
++ Java2D images crash after being resized
+  https://github.com/processing/processing/issues/2113
+
++ Constrain lerpColor() between 0 and 1. Unlike lerp(), where it might 
+  make mathematical sense, going outside the boundary colors produces 
+  really messy results.
+
++ JSONObject/Array.format(-1) not working on embedded JSONObjects
+  https://github.com/processing/processing/issues/2119
+
++ Fix insertRow() bug with Table
+  https://github.com/processing/processing/issues/2137
+
+
+[ opengl updates ]
+
++ Updated to JOGL 2.1.0
+  https://github.com/processing/processing/issues/2136
+
++ Fixed inconsistency with P2D and resetMatrix()
+  https://github.com/processing/processing/issues/2087
+
++ Deal with text rendering problems
+  https://github.com/processing/processing/issues/2109
+
++ Fix textSize() problem with P2D
+  https://github.com/processing/processing/issues/2073
+
++ Repair incorrectly applied transformations in retained mode
+  https://github.com/processing/processing/issues/2097
+
++ push/popStyle() was causing color problems with P2D/P3D
+  https://github.com/processing/processing/issues/2102
+
++ Child SVG elements were misplaced when rendering with P2D/P3D
+  https://github.com/processing/processing/issues/2086
+
++ SUBTRACT and DIFFERENCE blend modes are swapped
+  https://github.com/processing/processing/issues/2075
+
++ Throw an error for textureMode(REPEAT)
+  https://github.com/processing/processing/issues/2052
+
++ Vertex codes were not being properly set in P2D/P3D
+  https://github.com/processing/processing/issues/2131
+
++ Some box normals were inverted
+  https://github.com/processing/processing/issues/2151
+
+
+[ new serial library ] 
+
++ Incorporate the new serial library. Woohoo!
+  https://github.com/processing/processing/pull/2093
+
++ 64-bit version of serial library
+  http://code.google.com/p/processing/issues/detail?id=1237
+  https://github.com/processing/processing/issues/1275
+
++ Closed several serial bugs because they're no longer relevant:
+  http://code.google.com/p/processing/issues/detail?id=52
+  http://code.google.com/p/processing/issues/detail?id=318
+  https://github.com/processing/processing/issues/2114
+  https://github.com/processing/processing/issues/2066
+  https://github.com/processing/processing/issues/1460
+  https://github.com/processing/processing/issues/1374
+
+
+[ font fixes and changes ] 
+
++ Add ability to change the editor (and console) font from a menu 
+  in the Preferences window.
+  https://github.com/processing/processing/issues/2078
+
++ Add ability to change the console font size from the Preferences window.
+  http://code.google.com/p/processing/issues/detail?id=226
+  https://github.com/processing/processing/issues/265
+
++ Allow editor and console font changes without restart.
+
++ Anti-aliasing fix for the editor line status. 
+
++ Change to bold instead of semibold version of Source Code Pro. 
+  The semibold wasn't mapping properly as the same family.
+
++ Use the same font in the console as the editor.
+
++ Fix Windows/Linux console font issues.
+
+
+[ movie maker ]
+
++ Fix default gamma issues inside MovieMaker by adding extra atom
+
++ TGA files cause Movie Maker to not work properly
+  https://github.com/processing/processing/issues/1933
+
++ Fix file selection dialog with MovieMaker (instead of the nasty
+  Swing-based version that was in use)
+
++ Add support for many other image file types to Movie Maker
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
+PROCESSING 2.0.3 (REV 0221) - 5 September 2013
+
+Lots of bug fixes, primarily a ton of work by Andres to improve 
+OpenGL rendering with P2D and P3D.
 
 
 [ andres vs the volcano ]
@@ -47,10 +755,29 @@ Several OpenGL fixes.
   https://github.com/processing/processing/pull/2022
   https://github.com/processing/processing/issues/2021
 
++ Copy doesn't produce a true copy with P2D and P3D renderers
+  https://github.com/processing/processing/issues/1924
+
++ Additional improvements to memory handling with images
+  https://github.com/processing/processing/issues/1975
+
++ Additional memory handling changes for render buffers
+  https://github.com/processing/processing/issues/1776
+
++ PShape does not draw arc properly
+  https://github.com/processing/processing/issues/1990
+
++ PShape style is not restored after calling enableStyle in P2D/P3D
+  https://github.com/processing/processing/issues/2061
+
 
 [ other bug fixes ] 
 
 + Fix options parsing on loadTable() to handle spaces.
+
++ PVector.angleBetween() returns 0 for 3D vectors whenever x and y are both 0
+  https://github.com/processing/processing/issues/2045
+  https://github.com/processing/processing/pull/2046
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

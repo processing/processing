@@ -20,8 +20,8 @@ import java.io.*;
  * @author  Werner Randelshofer
  */
 public class CompositeTransferable implements java.awt.datatransfer.Transferable {
-    private HashMap transferables = new HashMap();
-    private LinkedList flavors = new LinkedList();
+    private HashMap<DataFlavor, Transferable> transferables = new HashMap<DataFlavor, Transferable>();
+    private LinkedList<DataFlavor> flavors = new LinkedList<DataFlavor>();
     
     /** Creates a new instance of CompositeTransferable */
     public CompositeTransferable() {
@@ -48,7 +48,7 @@ public class CompositeTransferable implements java.awt.datatransfer.Transferable
      *             not supported.
      */
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-        Transferable t = (Transferable) transferables.get(flavor);
+        Transferable t = transferables.get(flavor);
         if (t == null) throw new UnsupportedFlavorException(flavor);
         return t.getTransferData(flavor);
     }
@@ -60,7 +60,7 @@ public class CompositeTransferable implements java.awt.datatransfer.Transferable
      * @return an array of data flavors in which this data can be transferred
      */
     public DataFlavor[] getTransferDataFlavors() {
-        return (DataFlavor[]) flavors.toArray(new DataFlavor[transferables.size()]);
+        return flavors.toArray(new DataFlavor[transferables.size()]);
     }
     
     /**

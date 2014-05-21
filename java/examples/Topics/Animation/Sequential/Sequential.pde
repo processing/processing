@@ -13,7 +13,7 @@ PT_anim0004.gif, PT_anim0005.gif, PT_anim0006.gif, PT_anim0007.gif, PT_anim0008.
 PT_anim0009.gif, PT_anim0010.gif, PT_anim0011.gif"; */ 
 
 int numFrames = 12;  // The number of frames in the animation
-int frame = 0;
+int currentFrame = 0;
 PImage[] images = new PImage[numFrames];
     
 void setup() {
@@ -46,12 +46,12 @@ void setup() {
  
 void draw() { 
   background(0);
-  frame = (frame+1) % numFrames;  // Use % to cycle through frames
+  currentFrame = (currentFrame+1) % numFrames;  // Use % to cycle through frames
   int offset = 0;
   for (int x = -100; x < width; x += images[0].width) { 
-    image(images[(frame+offset) % numFrames], x, -20);
+    image(images[(currentFrame+offset) % numFrames], x, -20);
     offset+=2;
-    image(images[(frame+offset) % numFrames], x, height/2);
+    image(images[(currentFrame+offset) % numFrames], x, height/2);
     offset+=2;
   }
 }

@@ -1,3 +1,283 @@
+0227 core (2.2.1)
+X Permit mouse PRESS to set mouseX/mouseY
+X   https://github.com/processing/processing/pull/2509
+A Fix for video, loop() broken in 2.2
+A   https://github.com/processing/processing/issues/2524
+
+
+0226 core (2.2)
+X fix parsing with missing categorical values
+X fix for splice() throwing a ClassCastException with other object types
+X   https://github.com/processing/processing/issues/1445
+X   https://github.com/processing/processing/pull/2461
+X add candDraw() method to the retina renderer
+X fix sketchPath() issue when used in another environment
+X XML.getChildren() throwing NPE when getInt() called on non-existent var
+X   https://github.com/processing/processing/issues/2367
+X   need to sort out with docs what's happening here
+X   just a reference issue
+X substitute MOVE cursor with HAND on OS X
+X   https://github.com/processing/processing/issues/2358
+X Allow textWidth() with the default font
+X   https://github.com/processing/processing/issues/2331
+X   https://github.com/processing/processing/pull/2338
+X bug in relative moveto commands for SVG
+X   https://github.com/processing/processing/issues/2377
+X Add a constructor to bind Server to a specific address 
+X   https://github.com/processing/processing/issues/2356
+X add disconnectEvent() to Server
+X   https://github.com/processing/processing/pull/2466
+X   https://github.com/processing/processing/issues/2133
+X   don't document for now
+
+cleaning
+o how much of com.benfry.* should go in? 
+o   Table? StringIntPairs? JSON? MD5? Integrator? ColorIntegrator?
+o   decision: depends on if we can think of a good name
+X   finished these up in the 2.x series
+o check on DXFWriter, since it used to subclass P3D
+o   at least implement is3D? 
+X   should be working, barring recent regression
+o sleep time needs to be set *much* higher for dormant applets
+o   10s should be fine--no need to keep spinning (bad for android too)
+o   just call interrupt() when it's time to get back to work
+X   applets removed
+X test PGraphicsRetina2D w/ 7u40 
+X make sure that 7u40 doesn't reintroduce starvation issue on retina Macs
+X createGraphics() with no renderer param to point to JAVA2D
+X docs: P2D and P3D are now OpenGL variations
+X shader support - make decisions, Andres email, etc
+X antialias -> smoothMode(), smoothQuality(), quality()
+o   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
+X   setAntiAlias() should instead just use parent.smooth
+X final decision on pg.setQuality(sketchQuality())
+X   should probably be setQuality(parent.sketchQuality())
+
+andres
+X Fonts from loadFont() show up as blocks in P3D (regression)
+X   https://github.com/processing/processing/issues/2465
+X loadPixels problem in OpenGL
+X   https://github.com/processing/processing/issues/2493
+
+
+0225 core (2.1.2)
+X bug with StringDict(Reader) that wasn't setting the indices hashmap
+X   check this with other versions of this class
+X call revalidate() via reflection
+X text looks lousy compared to the Apple JVM
+X   mess with rendering hints? (notes in PGraphicsJava2D)
+X   improvements made, but still not amazing.. just at level of Windows/Linux
+X PGraphics.colorCalcARGB(int, float) doesn't cap alpha
+X   https://github.com/processing/processing/issues/2439
+X run window border color changed in 2.1
+X   https://github.com/processing/processing/issues/2297
+X simple NPE issue that needs workaround
+X   https://github.com/processing/processing/issues/2354
+
+fixed in 2.1
+X draw() called again before finishing on OS X (retina issue)
+X   https://github.com/processing/processing/issues/1709
+X get() not always setting alpha channel when used with point()
+X   https://github.com/processing/processing/issues/1756
+A support for geometry and tessellation shaders (on desktop)
+A   https://github.com/processing/processing/issues/2252
+
+andres
+X copy() under OPENGL uses upside-down coordinates for cropping
+X   https://github.com/processing/processing/issues/2345
+X video on windows causes exception
+X   https://github.com/processing/processing/issues/2327
+X Shape Font Rendering was broken with the OpenGL Renderer
+X   https://github.com/processing/processing/issues/2375
+A depth buffer shouldn't be cleared when depth mask is disabled
+A   https://github.com/processing/processing/issues/2296
+A set pixels transparent by default in P2D/P3D
+A   https://github.com/processing/processing/issues/2207
+A unwind depth sorting because it was breaking DXF export
+A   https://github.com/processing/processing/issues/2404
+A Sketch hangs if sketchRenderer() returns an OpenGL renderer
+A   https://github.com/processing/processing/issues/2363
+A "buffer" uniform triggers shader compilation error
+A   https://github.com/processing/processing/issues/2325
+A   buffer has been renamed to ppixels for shaders
+A noLoop clears screen on Windows 8
+A   https://github.com/processing/processing/issues/2416
+A fix pixels[] array for video capture
+A   https://github.com/processing/processing/issues/2424
+
+
+0224 core (2.1.1)
+X PImage resize() causes PImage not to be rendered in JAVA2D
+X   https://github.com/processing/processing/issues/2179
+X remove make.sh from core.. ancient
+X remove println() from dataPath()
+X add special case for 'null' to println()
+X added print() method to IntList
+X fix esoteric typo with alpha and color
+X   https://github.com/processing/processing/issues/2230
+A pushStyle/popStyle should save/restore blendMode
+A   https://github.com/processing/processing/issues/2232
+A get() + video requires loadPixels in P2D/P3D
+A   https://github.com/processing/processing/issues/2202
+
+opengl
+A PImage copy() function used with P2D flips the image
+A   https://github.com/processing/processing/issues/2171
+A filter shaders don't need to use the texture uniform
+A   https://github.com/processing/processing/issues/2204
+A texture() bug with stroke() in P2D
+A   https://github.com/processing/processing/issues/2205
+A allow sharing of GL context amongst multiple windows
+A   https://github.com/processing/processing/issues/1698
+A texture sampling setting is ignored when creating an offscreen PGraphics
+A   https://github.com/processing/processing/issues/1900
+A rounded rect broken with Processing 2.1 P3D renderer
+A   https://github.com/processing/processing/issues/2193
+X Clear the global PGL on dispose() (from JDF)
+X   https://github.com/processing/processing/pull/2279
+A pie arcs have stroke between endpoints in P2D/P3D
+A   https://github.com/processing/processing/issues/2233
+
+
+0223 core (2.1)
+X fix dataPath() problem with OS X (was breaking Movie)
+X alpha values from the pixels array coming back as 0
+X   only tested on background(), not image()
+X   https://github.com/processing/processing/issues/2030
+
+opengl 
+X Using sketchQuality() does not work properly with P3D, OPENGL, P2D
+X   https://github.com/processing/processing/pull/2157
+X Fix crashes when the sketch window is resized
+X   https://github.com/processing/processing/issues/1880
+X   https://github.com/processing/processing/pull/2156
+X scale() wasn't affecting stroke weight in P3D
+X   https://github.com/processing/processing/issues/2162
+X add set(boolean) to PShader
+X   https://github.com/processing/processing/issues/1991
+X   https://github.com/processing/processing/pull/1993
+X add PMatrix.preApply(PMatrix)
+X   https://github.com/processing/processing/pull/2146
+X   https://github.com/processing/processing/issues/2145
+X updated to another version of JOGL
+X   updated to jogl-2.1-b1115, gluegen-2.1-b735 for OSX 10.9 support
+X Add warning when no uv texture coordinates are supplied
+X   https://github.com/processing/processing/issues/2034
+X threading/flicker issues when resizing P2D/P3D/OPENGL
+X   https://github.com/processing/processing/issues/15
+X additional flicker avoidance
+X   https://github.com/processing/processing/commit/cca2f08a24ef892c494f5a75aa0e4b01de7e5d8a
+
+
+0222 core (2.1b1)
+X background color for present mode has no effect
+X   https://github.com/processing/processing/issues/2071
+X   https://github.com/processing/processing/pull/2072
+X add desktopPath() and desktopFile() methods for testing
+X screen stops updating sometimes with retina
+X   https://github.com/processing/processing/issues/1699
+X Unicode NLF causing problems in XML files
+X   https://github.com/processing/processing/issues/2100
+X   not handled by BufferedReader (or XML parser)
+X   http://stackoverflow.com/questions/10556875/list-of-unicode-characters-that-should-be-filtered-in-output
+X   http://stackoverflow.com/questions/3072152/what-is-unicode-character-2028-ls-line-separator-used-for
+X fix image transparency in PDF output
+X   https://github.com/processing/processing/pull/2070
+X Java2D images crash after being resized
+X   https://github.com/processing/processing/issues/2113
+X constrain lerpColor() between 0 and 1
+X JSONObject/Array.format(-1) not working on embedded JSONObjects
+X   https://github.com/processing/processing/issues/2119
+X allow println() and print() to take varargs 
+o   https://github.com/processing/processing/issues/2056
+X   causes conflict with printing arrays
+X   added printArray() function instead
+o custom DPI settings with PDF
+X   https://github.com/processing/processing/pull/2069
+X pdf not rendering unicode with beginRecord()
+X   seems to have fixed itself / can't reproduce
+X   http://code.google.com/p/processing/issues/detail?id=90
+X   https://github.com/processing/processing/issues/129
+X insertRow() bug
+X   https://github.com/processing/processing/issues/2137
+
+opengl
+X fix inconsistency with P2D and resetMatrix()
+X   https://github.com/processing/processing/issues/2087
+X text rendering problems
+X   https://github.com/processing/processing/issues/2109
+X textSize() not working properly in P2D
+X   https://github.com/processing/processing/issues/2073
+X incorrectly applied transformations in retained mode
+X   https://github.com/processing/processing/issues/2097
+X push/popStyle() causes color problems with P2D/P3D
+X   https://github.com/processing/processing/issues/2102
+X child SVG elements misplaced when rendering with P2D/P3D
+X   https://github.com/processing/processing/issues/2086
+X SUBTRACT and DIFFERENCE blend modes are swapped
+X   https://github.com/processing/processing/issues/2075
+X throw an error for textureMode(REPEAT) [fry]
+X   https://github.com/processing/processing/issues/2052
+X Updated to JOGL 2.1.0
+X   https://github.com/processing/processing/issues/2136
+X vertex codes not being properly set in P2D/P3D
+X   https://github.com/processing/processing/issues/2131
+X some box normals are inverted
+X   https://github.com/processing/processing/issues/2151
+
+
+0221 core (2.0.3)
+X fix options parsing on loadTable() to handle spaces
+X add static versions of loadJSONObject and loadJSONArray that take File inputs
+X PVector.angleBetween() returns 0 for 3D vectors whenever x and y are both 0
+X   https://github.com/processing/processing/issues/2045
+X   https://github.com/processing/processing/pull/2046
+
+andres
+X blendMode() change causes OpenGL renderer to be very slow
+X   https://github.com/processing/processing/issues/2021
+X serious OpenGL performance issues on OS X (fixed earlier?)
+X   https://github.com/processing/processing/issues/1714
+X   fixed with a recent JOGL update
+X P2D low quality text rendering
+X   https://github.com/processing/processing/issues/1972
+X Rendering artifacts on the diagonal line (topleft to bottomright) in P2D
+X   https://github.com/processing/processing/issues/1964
+X Fix issues with slow text rendering and OpenGL
+X   https://github.com/processing/processing/issues/2025
+X loadShape doesn't load OBJ files in subdirectories properly
+X   https://github.com/processing/processing/issues/2003
+X more OpenGL issues fixed by JOGL or newer drivers
+X   https://github.com/processing/processing/issues/1986
+X Vertical offset when sketch height is indivisible by 2
+X   https://github.com/processing/processing/issues/1985
+X ellipse() causes RuntimeException: java.lang.OutOfMemoryError
+X   https://github.com/processing/processing/issues/1941
+X beginShape()..endShape() lines look wrong at joins/caps with P2D
+X   https://github.com/processing/processing/issues/1927
+X Corrupted text with large font and OpenGL
+X   https://github.com/processing/processing/issues/1869
+X loadFont hangs on Processing 2.0 with any OpenGL renderer
+X   https://github.com/processing/processing/issues/1854
+X copy doesn't produce a true copy with P2D and P3D renderers
+X   https://github.com/processing/processing/issues/1924
+X Additional improvements to memory handling with images
+X   https://github.com/processing/processing/issues/1975
+X PShape does not draw arc properly
+X   https://github.com/processing/processing/issues/1990
+
+X Additional memory handling changes for render buffers
+X   https://github.com/processing/processing/issues/1776
+X PShape style is not restored after calling enableStyle in P2D/P3D
+X   https://github.com/processing/processing/issues/2061
+
+video
+X problem with bit shifting
+X   https://github.com/processing/processing/pull/2023
+X   https://github.com/processing/processing/pull/2022
+X   https://github.com/processing/processing/issues/2021
+
+
 0220 core (2.0.2)
 X basic getShape(ch) implementation for font glyph shapes
 X change QUAD_BEZIER_VERTEX to QUADRATIC_VERTEX to match the API call

@@ -1,0 +1,341 @@
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+# DO NOT MAKE CHANGES TO THIS FILE!!! 
+
+# These are the default preferences. If you want to modify 
+# them directly, use the per-user local version of the file:
+
+# Documents and Settings -> [username] -> Application Data -> 
+#    Processing -> preferences.txt (on Windows XP)
+
+# Users -> [username] -> AppData -> Roaming -> 
+#    Processing -> preferences.txt (on Windows Vista and 7)
+
+# ~/Library -> Processing -> preferences.txt (on Mac OS X)
+
+# ~/.processing -> preferences.txt (on Linux)
+
+# The exact location of your preferences file can be found at
+# the bottom of the Preferences window inside Processing.
+
+# Because AppData and Application Data may be considered 
+# hidden or system folders on Windows, you'll have to ensure
+# that they're visible in order to get at preferences.txt
+
+# You'll have problems running Processing if you incorrectly 
+# modify lines in this file. It will probably not start at all.
+
+# AGAIN, DO NOT ALTER THIS FILE! I'M ONLY YELLING BECAUSE I LOVE YOU!
+
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+# DEFAULT PATHS FOR SKETCHBOOK AND SETTINGS
+
+# relative paths will be relative to processing.exe or processing.app.
+# absolute paths may also be used.
+
+# note that this path should use forward slashes (like unix)
+# instead of \ on windows or : on macos or whatever else
+
+# If you don't want users to have their sketchbook default to 
+# "My Documents/Processing" on Windows and "Documents/Processing" on OS X, 
+# set this to another path that will be used by default. 
+# Note that this path must exist already otherwise it won't see
+# the sketchbook folder, and will instead assume the sketchbook
+# has gone missing, and that it should instead use the default.
+#sketchbook.path=
+
+# if you don't want settings to go into "application data" on windows
+# and "library" on macosx, set this to the alternate location.
+#settings.path=data
+
+# By default, no sketches currently open
+last.sketch.count=0
+
+# true if you want sketches to re-open when you next run processing
+last.sketch.restore=true
+
+# by default, contributions are moved to backup folders when
+# they are removed or replaced. The locations of the backup
+# folders are:
+#              sketchbook/libraries/old
+#              sketchbook/tools/old
+#              sketchbook/modes/old
+# true to backup contributions when "Remove" button is pressed
+contribution.backup.on_remove = true
+# true to backup contributions when installing a newer version
+# (for example, from a plb file)
+contribution.backup.on_install = true
+
+recent.count = 10
+
+# Default to the native (AWT) file selector where possible
+chooser.files.native = true
+# native Linux file chooser is atrocious, use Swing instead
+chooser.files.native.linux = false
+
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+# by default, check the processing server for any updates
+# (please avoid disabling, this also helps us know basic numbers 
+# on how many people are using Processing)
+update.check = true
+
+# on windows, automatically associate .pde files with processing.exe
+platform.auto_file_type_associations = true
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+# default size for the main window
+editor.window.width.default = 500
+editor.window.height.default = 600
+
+editor.window.width.min = 400
+editor.window.height.min = 500
+# tested as approx 440 on OS X
+editor.window.height.min.macosx = 450
+# tested to be 515 on Windows XP, this leaves some room
+editor.window.height.min.windows = 530
+
+# font size for editor
+#editor.font = Monospaced,plain,12
+# Monaco is nicer on Mac OS X, so use that explicitly
+#editor.font.macosx = Monaco,plain,10
+# trying for a built-in, consistent monospace for 2.0
+#editor.font = processing.mono,plain,12
+editor.font.family = Source Code Pro
+editor.font.size = 12
+
+# To reset everyone's default, replaced editor.antialias with editor.smooth 
+# for 2.1. Fonts are unusably gross on OS X (and Linux) w/o smoothing and 
+# the Oracle JVM, and many longtime users have anti-aliasing turned off.
+editor.smooth = true
+
+# blink the caret by default
+editor.caret.blink = true
+# change to true to use a block (instead of a bar)
+editor.caret.block = false
+
+# enable ctrl-ins, shift-ins, shift-delete for cut/copy/paste
+# on windows and linux, but disable on the mac
+editor.keys.alternative_cut_copy_paste = true
+editor.keys.alternative_cut_copy_paste.macosx = false
+
+# true if shift-backspace sends the delete character, 
+# false if shift-backspace just means backspace
+editor.keys.shift_backspace_is_delete = false
+
+# home and end keys should only travel to the start/end of the current line
+editor.keys.home_and_end_travel_far = false
+# home and end keys move to the first/last non-whitespace character,
+# and move to the actual start/end when pressed a second time. 
+# Only works if editor.keys.home_and_end_travel_far is false.
+editor.keys.home_and_end_travel_smart = true
+# The OS X HI Guidelines say that home/end are relative to the document, 
+# but that drives some people nuts. This pref enables/disables it.
+editor.keys.home_and_end_travel_far.macosx = true
+
+# Enable/disable support for complex scripts. Used for Japanese and others, 
+# but disable when not needed, otherwise basic Western European chars break.
+editor.input_method_support = false
+
+# convert tabs to spaces? how many spaces?
+editor.tabs.expand = true
+editor.tabs.size = 2
+
+# automatically indent each line
+editor.indent = true
+
+# size of divider between editing area and the console
+editor.divider.size = 0
+# the larger divider on windows is ugly with the little arrows
+# this makes it large enough to see (mouse changes) and use, 
+# but keeps it from being annoyingly obtrusive
+editor.divider.size.windows = 2
+
+# Hide the background image. Gross because this is a pref that
+# really lives over in theme.txt but it's split here.
+buttons.hide.image = false
+toolbar.hide.image = false
+
+# font choice and size for the console
+#console.font = Monospaced,plain,11
+#console.font.macosx = Monaco,plain,10
+#console.font = processing.mono,plain,12
+console.font.size = 12
+
+# number of lines to show by default
+console.lines = 4
+
+# set to false to disable automatically clearing the console
+# each time 'run' is hit
+console.auto_clear = true
+
+# set the maximum number of lines remembered by the console
+# the default is 500, lengthen at your own peril
+console.length = 500
+
+# Any additional Java options when running. 
+# If you change this and can't run things, it's your own durn fault.
+run.options = 
+
+# settings for the -XmsNNNm and -XmxNNNm command line option
+run.options.memory = false
+run.options.memory.initial = 64
+run.options.memory.maximum = 256
+
+# By default, Mac OS X 10.6 launches applications in 32-bit mode, 
+# which is more compatible with libraries (many have not updated to 64-bit).
+# Changing this doesn't do anything on other platforms. 
+run.options.bits.macosx = 32
+
+# Index of the display to use for running sketches (starts at 1). 
+# Kept this 1-indexed because older vesions of Processing were setting
+# the preference even before it was being used.
+run.display = 0
+
+# set internally
+#run.window.bgcolor=
+
+# set to false to open a new untitled window when closing the last window
+# (otherwise, the environment will quit)
+# default to the relative norm for the different platforms, 
+# but the setting can be changed in the prefs dialog anyway
+#sketchbook.closing_last_window_quits = true
+#sketchbook.closing_last_window_quits.macosx = false
+
+editor.untitled.prefix=sketch_
+# The old (pre-1.0, back for 2.0) style for default sketch name.
+# If you change this, be careful that this will work with your language 
+# settings. For instance, MMMdd won't work on Korean-language systems 
+# because it'll insert non-ASCII characters and break the environment.
+# http://code.google.com/p/processing/issues/detail?id=283
+editor.untitled.suffix=yyMMdd
+
+# Set the default look & feel on Linux to something other than 
+# the 'native' platform default, which is usually Metal (yuck!)
+# GTK isn't for everyone (and KDE users will get Metal or some
+# such anyway, so this is now broken out as an option
+# Linux is by default even uglier than metal (Motif?).
+# Actually, i'm using native menus, so they're even uglier
+# and Motif-looking (Lesstif?). Ick. Need to fix this.
+# For 0120, trying out the gtk+ look and feel as the default.
+# This is available in Java 1.4.2 and later, and it can't possibly
+# be any worse than Metal. (Ocean might also work, but that's for
+# Java 1.5, and we aren't going there yet)
+editor.laf.linux = com.sun.java.swing.plaf.gtk.GTKLookAndFeel
+
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+# TEXT - KEYWORDS, LITERALS
+# For an explanation of these tags, see Token.java:
+# processing/app/src/processing/app/syntax/Token.java
+
+editor.token.function1.style = #006699,plain
+editor.token.function2.style = #006699,plain
+editor.token.function3.style = #669900,plain
+editor.token.function4.style = #006699,bold
+
+editor.token.keyword1.style = #33997e,plain
+editor.token.keyword2.style = #33997e,plain
+editor.token.keyword3.style = #669900,plain
+editor.token.keyword4.style = #d94a7a,plain
+editor.token.keyword5.style = #e2661a,plain
+
+editor.token.literal1.style = #7D4793,plain
+editor.token.literal2.style = #718a62,plain
+
+editor.token.operator.style = #006699,plain
+
+editor.token.label.style = #666666,bold
+
+editor.token.comment1.style = #666666,plain
+editor.token.comment2.style = #666666,plain
+
+editor.token.invalid.style = #666666,bold
+
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+# which platforms to export by default
+#export.application.platform.windows = true
+#export.application.platform.macosx = true
+#export.application.platform.linux = true
+
+# whether or not to export as full screen (present) mode
+export.application.fullscreen = false
+
+# whether to show the stop button when exporting to application
+export.application.stop = true
+
+# embed Java by default for lower likelihood of problems
+export.application.embed_java = true
+
+# set to false to no longer delete applet or application folders before export
+export.delete_target_folder = true
+
+# may be useful when attempting to debug the preprocessor
+preproc.save_build_files=false
+
+# allows various preprocessor features to be toggled 
+# in case they are causing problems
+
+# preprocessor: pde.g
+preproc.color_datatype = true
+preproc.web_colors = true
+preproc.enhanced_casting = true
+
+# preprocessor: PdeEmitter.java
+preproc.substitute_floats = true
+#preproc.substitute_image = false
+#preproc.substitute_font = false
+
+# auto-convert non-ascii chars to unicode escape sequences
+preproc.substitute_unicode = true
+
+# PdePreproc.java
+# writes out the parse tree as parseTree.xml, which can be usefully
+# viewed in (at least) Mozilla or IE.  useful when debugging the preprocessor.
+preproc.output_parse_tree = false
+
+# Changed after 2.0b6 to remove those that aren't compatible with Android, 
+# as we move to the new built-in event types. Also remove .list from the end
+# of the name, so that the pref will reset. These are now the same imports
+# as are used over on the Android side.
+# Changed again for revision 0215 (around 2.0b7) to remove all default 
+# imports that aren't covered by the reference. This has been done to improve
+# overall cross-platform parity and to avoid users unknowingly adding 
+# Java classes, and then the sadness that comes when switching to Android
+# or JavaScript modes.
+#preproc.imports.list = java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
+#preproc.imports = java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
+#preproc.imports = java.io.*,java.util.*
+
+# set to the program to be used for opening HTML files, folders, etc.
+#launcher.linux = xdg-open
+
+# FULL SCREEN (PRESENT MODE)
+run.present.bgcolor = #666666
+run.present.stop.color = #cccccc
+# Starting in 2.0a6, don't use FSEM at all, embed native lib to hide menubar
+# starting in release 0159, don't use full screen exclusive anymore
+#run.present.exclusive = false
+# use this by default to hide the menu bar and dock on osx
+#run.present.exclusive.macosx = true
+
+# HTTP PROXY
+# Set a proxy server for folks that require it. This will allow the update
+# checker and the contrib manager to run properly in those environments.
+#proxy.host=proxy.example.com
+#proxy.port=8080
+proxy.host=
+proxy.port=

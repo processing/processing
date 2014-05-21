@@ -1,0 +1,1 @@
+uniform samplerCube cubemap;varying vec3 reflectDir;void main() {  vec3 color = vec3(textureCube(cubemap, reflectDir));  gl_FragColor = vec4(color, 1.0);      }

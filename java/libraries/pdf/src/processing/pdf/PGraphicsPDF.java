@@ -22,15 +22,12 @@ package processing.pdf;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.io.*;
 import java.util.*;
 
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
-
-// Tried iText 5, but it was too slow
-//import com.itextpdf.text.*;
-//import com.itextpdf.text.pdf.*;
 
 import processing.core.*;
 
@@ -404,22 +401,23 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   //////////////////////////////////////////////////////////////
 
 
-  /*
-  protected void imageImplAWT(java.awt.Image awtImage,
-                              float x1, float y1, float x2, float y2,
-                              int u1, int v1, int u2, int v2) {
+  protected void imageImpl(PImage image,
+                           float x1, float y1, float x2, float y2,
+                           int u1, int v1, int u2, int v2) {
     pushMatrix();
     translate(x1, y1);
-    int awtImageWidth = awtImage.getWidth(null);
-    int awtImageHeight = awtImage.getHeight(null);
-    scale((x2 - x1) / (float)awtImageWidth,
-          (y2 - y1) / (float)awtImageHeight);
-    g2.drawImage(awtImage,
-                 0, 0, awtImageWidth, awtImageHeight,
-                 u1, v1, u2, v2, null);
+    int imageWidth = image.width;
+    int imageHeight = image.height;
+    scale((x2 - x1) / imageWidth,
+          (y2 - y1) / imageHeight);
+    if (u2-u1 == imageWidth && v2-v1 == imageHeight) {
+      g2.drawImage((Image) image.getNative(), 0, 0, null);
+    } else {
+      PImage tmp = image.get(u1, v1, u2-u1, v2-v1);
+      g2.drawImage((Image) tmp.getNative(), 0, 0, null);
+    }
     popMatrix();
   }
-  */
 
 
   //////////////////////////////////////////////////////////////

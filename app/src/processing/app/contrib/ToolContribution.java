@@ -74,27 +74,44 @@ public class ToolContribution extends LocalContribution implements Tool {
   static public ArrayList<ToolContribution> loadAll(File toolsFolder) {
     File[] list = ContributionType.TOOL.listCandidates(toolsFolder);
     ArrayList<ToolContribution> outgoing = new ArrayList<ToolContribution>();
-    for (File folder : list) {
-      try {
-        ToolContribution tc = load(folder);
-        if (tc != null) {
-          outgoing.add(tc);
+    // If toolsFolder does not exist or is inaccessible (stranger things have
+    // happened, and are reported as bugs) list will come back null.
+    if (list != null) {
+      for (File folder : list) {
+        try {
+          ToolContribution tc = load(folder);
+          if (tc != null) {
+            outgoing.add(tc);
+          }
+        } catch (Exception e) {
+          e.printStackTrace();
         }
-      } catch (Exception e) {
-        e.printStackTrace();
       }
     }
     return outgoing;
   }
 
 
+//  Editor editor;  // used to send error messages
+  
   public void init(Editor editor) {
+//    try {
+//      this.editor = editor;
     tool.init(editor);
+//    } catch (NoSuchMethodError nsme) {
+//      editor.statusError(tool.getMenuTitle() + " is not compatible with this version of Processing");
+//      nsme.printStackTrace();
+//    }
   }
 
 
   public void run() {
+//    try {
     tool.run();
+//    } catch (NoSuchMethodError nsme) {
+//      editor.statusError(tool.getMenuTitle() + " is not compatible with this version of Processing");
+//      nsme.printStackTrace();
+//    }
   }
 
 

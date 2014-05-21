@@ -48,6 +48,7 @@ public class Commander implements RunnerListener {
   static final String forceArg = "--force";
   static final String outputArg = "--output=";
   static final String exportApplicationArg = "--export";
+  static final String noJavaArg = "--no-java";
   static final String platformArg = "--platform=";
   static final String bitsArg = "--bits=";
 //  static final String preferencesArg = "--preferences=";
@@ -61,38 +62,19 @@ public class Commander implements RunnerListener {
   static final int EXPORT = 4;
 
   Sketch sketch;
-  
+
   PrintStream systemOut;
   PrintStream systemErr;
 
 
   static public void main(String[] args) {
-    /*
-    if (args == null || args.length == 0) {
-//      System.out.println(System.getProperty("user.dir"));
-      args = new String[] {
-        "--export",
-//        "--build",
-//        "--run",
-//        "--present",
-        "--force",
-//        "--platform=windows",
-        "--platform=macosx",
-        "--bits=64",
-        "--sketch=/Users/fry/coconut/processing/java/examples/Basics/Lights/Directional",
-//        "--sketch=/Users/fry/coconut/sketchbook/sketchbook_libraries_test",
-        "--output=/Users/fry/Desktop/test-build"
-      };
-    }
-    */
-    
     // Do this early so that error messages go to the console
     Base.setCommandLine();
     // init the platform so that prefs and other native code is ready to go
     Base.initPlatform();
     // make sure a full JDK is installed
     Base.initRequirements();
-    
+
     // launch command line handler
     new Commander(args);
   }
@@ -107,20 +89,25 @@ public class Commander implements RunnerListener {
     boolean force = false;  // replace that no good output folder
 //    String preferencesPath = null;
     int platform = PApplet.platform; // default to this platform
-    int platformBits = 0;
+//    int platformBits = 0;
+    int platformBits = Base.getNativeBits();
     int task = HELP;
+    boolean embedJava = true;
 
     // Turns out the output goes as MacRoman or something else useless.
     // http://code.google.com/p/processing/issues/detail?id=1418
     try {
       systemOut = new PrintStream(System.out, true, "UTF-8");
       systemErr = new PrintStream(System.err, true, "UTF-8");
-      
+
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
       System.exit(1);
     }
-    
+
+//    File preferencesFile = Base.getSettingsFile("preferences.txt");
+//    System.out.println("Preferences file at " + preferencesFile.getAbsolutePath());
+
     for (String arg : args) {
       if (arg.length() == 0) {
         // ignore it, just the crappy shell script
@@ -146,23 +133,28 @@ public class Commander implements RunnerListener {
       } else if (arg.equals(exportApplicationArg)) {
         task = EXPORT;
 
+      } else if (arg.equals(noJavaArg)) {
+        embedJava = false;
+
       } else if (arg.startsWith(platformArg)) {
-        String platformStr = arg.substring(platformArg.length());
-        platform = Base.getPlatformIndex(platformStr);
-        if (platform == -1) {
-          complainAndQuit(platformStr + " should instead be " +
-                          "'windows', 'macosx', or 'linux'.", true);
-        }
+        complainAndQuit("The --platform option has been removed from Processing 2.1.", false);
+//        String platformStr = arg.substring(platformArg.length());
+//        platform = Base.getPlatformIndex(platformStr);
+//        if (platform == -1) {
+//          complainAndQuit(platformStr + " should instead be " +
+//                          "'windows', 'macosx', or 'linux'.", true);
+//        }
 
       } else if (arg.startsWith(bitsArg)) {
-        String bitsStr = arg.substring(bitsArg.length());
-        if (bitsStr.equals("32")) {
-          platformBits = 32;
-        } else if (bitsStr.equals("64")) {
-          platformBits = 64;
-        } else {
-          complainAndQuit("Bits should be either 32 or 64, not " + bitsStr, true);
-        }
+        complainAndQuit("The --bits option has been removed from Processing 2.1.", false);
+//        String bitsStr = arg.substring(bitsArg.length());
+//        if (bitsStr.equals("32")) {
+//          platformBits = 32;
+//        } else if (bitsStr.equals("64")) {
+//          platformBits = 64;
+//        } else {
+//          complainAndQuit("Bits should be either 32 or 64, not " + bitsStr, true);
+//        }
 
       } else if (arg.startsWith(sketchArg)) {
         sketchPath = arg.substring(sketchArg.length());
@@ -212,7 +204,7 @@ public class Commander implements RunnerListener {
         Base.removeDir(outputFolder);
       } else {
         complainAndQuit("The output folder already exists. " +
-        		            "Use --force to remove it.", false);
+                                    "Use --force to remove it.", false);
       }
     }
 
@@ -273,11 +265,11 @@ public class Commander implements RunnerListener {
 //              if (platformBits == 0) {
 //                platformBits = Base.getNativeBits();
 //              }
-              if (platformBits == 0 &&
-                Library.hasMultipleArch(platform, build.getImportedLibraries())) {
-                complainAndQuit("This sketch can be exported for 32- or 64-bit, please specify one.", true);
-              }
-              success = build.exportApplication(outputFolder, platform, platformBits);
+//              if (platformBits == 0 &&
+//                Library.hasMultipleArch(platform, build.getImportedLibraries())) {
+//                complainAndQuit("This sketch can be exported for 32- or 64-bit, please specify one.", true);
+//              }
+              success = build.exportApplication(outputFolder, platform, platformBits, embedJava);
             }
           }
         }
@@ -289,6 +281,7 @@ public class Commander implements RunnerListener {
 
       } catch (SketchException re) {
         statusError(re);
+        System.exit(1);
 
       } catch (IOException e) {
         e.printStackTrace();
@@ -316,15 +309,18 @@ public class Commander implements RunnerListener {
       if (codeIndex != -1) {
         // format the runner exception like emacs
         //blah.java:2:10:2:13: Syntax Error: This is a big error message
+        // Emacs doesn't like the double line thing coming from Java
+        // https://github.com/processing/processing/issues/2158
         String filename = sketch.getCode(codeIndex).getFileName();
         int line = re.getCodeLine() + 1;
         int column = re.getCodeColumn() + 1;
         //if (column == -1) column = 0;
         // TODO if column not specified, should just select the whole line.
+        // But what's the correct syntax for that?
         systemErr.println(filename + ":" +
           line + ":" + column + ":" +
           line + ":" + column + ":" + " " + re.getMessage());
-        
+
       } else {  // no line number, pass the trace along to the user
         exception.printStackTrace();
       }
@@ -363,11 +359,12 @@ public class Commander implements RunnerListener {
     out.println("--present            Preprocess, compile, and run a sketch full screen.");
     out.println();
     out.println("--export             Export an application.");
-    out.println("--platform           Specify the platform (export to application only).");
-    out.println("                     Should be one of 'windows', 'macosx', or 'linux'.");
-    out.println("--bits               Must be specified if libraries are used that are");
-    out.println("                     32- or 64-bit specific such as the OpenGL library.");
-    out.println("                     Otherwise specify 0 or leave it out.");
+    out.println("--no-java            Do not embed Java. Use at your own risk!");
+//    out.println("--platform           Specify the platform (export to application only).");
+//    out.println("                     Should be one of 'windows', 'macosx', or 'linux'.");
+//    out.println("--bits               Must be specified if libraries are used that are");
+//    out.println("                     32- or 64-bit specific such as the OpenGL library.");
+//    out.println("                     Otherwise specify 0 or leave it out.");
     out.println();
   }
 

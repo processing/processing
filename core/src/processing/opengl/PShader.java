@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011-12 Ben Fry and Casey Reas
+  Copyright (c) 2011-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,6 @@ package processing.opengl;
 
 import processing.core.*;
 
-import java.io.IOException;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -39,26 +38,52 @@ import java.util.HashMap;
  *
  * @webref rendering:shaders
  */
-public class PShader {
-  // shaders constants
-  static protected final int COLOR    = 0;
-  static protected final int LIGHT    = 1;
-  static protected final int TEXTURE  = 2;
-  static protected final int TEXLIGHT = 3;
-  static protected final int LINE     = 4;
-  static protected final int POINT    = 5;
+public class PShader implements PConstants {
+  static protected final int POINT    = 0;
+  static protected final int LINE     = 1;
+  static protected final int POLY     = 2;
+  static protected final int COLOR    = 3;
+  static protected final int LIGHT    = 4;
+  static protected final int TEXTURE  = 5;
+  static protected final int TEXLIGHT = 6;
+
+  static protected String pointShaderAttrRegexp =
+    "attribute *vec2 *offset";
+  static protected String lineShaderAttrRegexp =
+    "attribute *vec4 *direction";
+  static protected String pointShaderDefRegexp =
+    "#define *PROCESSING_POINT_SHADER";
+  static protected String lineShaderDefRegexp =
+    "#define *PROCESSING_LINE_SHADER";
+  static protected String colorShaderDefRegexp =
+    "#define *PROCESSING_COLOR_SHADER";
+  static protected String lightShaderDefRegexp =
+    "#define *PROCESSING_LIGHT_SHADER";
+  static protected String texShaderDefRegexp =
+    "#define *PROCESSING_TEXTURE_SHADER";
+  static protected String texlightShaderDefRegexp =
+    "#define *PROCESSING_TEXLIGHT_SHADER";
+  static protected String polyShaderDefRegexp =
+    "#define *PROCESSING_POLYGON_SHADER";
+  static protected String triShaderAttrRegexp =
+    "#define *PROCESSING_TRIANGLES_SHADER";
+  static protected String quadShaderAttrRegexp =
+    "#define *PROCESSING_QUADS_SHADER";
 
   protected PApplet parent;
   // The main renderer associated to the parent PApplet.
-  protected PGraphicsOpenGL pgMain;
+  //protected PGraphicsOpenGL pgMain;
   // We need a reference to the renderer since a shader might
   // be called by different renderers within a single application
   // (the one corresponding to the main surface, or other offscreen
   // renderers).
-  protected PGraphicsOpenGL pgCurrent;
-
+  protected PGraphicsOpenGL primaryPG;
+  protected PGraphicsOpenGL currentPG;
   protected PGL pgl;
   protected int context;      // The context that created this shader.
+
+  // The shader type: POINT, LINE, POLY, etc.
+  protected int type;
 
   public int glProgram;
   public int glVertex;
@@ -70,8 +95,8 @@ public class PShader {
   protected String vertexFilename;
   protected String fragmentFilename;
 
-  protected String vertexShaderSource;
-  protected String fragmentShaderSource;
+  protected String[] vertexShaderSource;
+  protected String[] fragmentShaderSource;
 
   protected boolean bound;
 
@@ -84,9 +109,54 @@ public class PShader {
   protected IntBuffer intBuffer;
   protected FloatBuffer floatBuffer;
 
+  protected boolean loadedAttributes = false;
+  protected boolean loadedUniforms = false;
+
+  // Uniforms common to all shader types
+  protected int transformMatLoc;
+  protected int modelviewMatLoc;
+  protected int projectionMatLoc;
+  protected int ppixelsLoc;
+  protected int ppixelsUnit;
+  protected int viewportLoc;
+
+  // Uniforms only for lines and points
+  protected int perspectiveLoc;
+  protected int scaleLoc;
+
+  // Lighting uniforms
+  protected int lightCountLoc;
+  protected int lightPositionLoc;
+  protected int lightNormalLoc;
+  protected int lightAmbientLoc;
+  protected int lightDiffuseLoc;
+  protected int lightSpecularLoc;
+  protected int lightFalloffLoc;
+  protected int lightSpotLoc;
+
+  // Texturing uniforms
+  protected Texture texture;
+  protected int texUnit;
+  protected int textureLoc;
+  protected int texMatrixLoc;
+  protected int texOffsetLoc;
+  protected float[] tcmat;
+
+  // Vertex attributes
+  protected int vertexLoc;
+  protected int colorLoc;
+  protected int normalLoc;
+  protected int texCoordLoc;
+  protected int normalMatLoc;
+  protected int directionLoc;
+  protected int offsetLoc;
+  protected int ambientLoc;
+  protected int specularLoc;
+  protected int emissiveLoc;
+  protected int shininessLoc;
+
   public PShader() {
     parent = null;
-    pgMain = null;
     pgl = null;
     context = -1;
 
@@ -103,14 +173,16 @@ public class PShader {
     floatBuffer = PGL.allocateFloatBuffer(1);
 
     bound = false;
+
+    type = -1;
   }
 
 
   public PShader(PApplet parent) {
     this();
     this.parent = parent;
-    pgMain = (PGraphicsOpenGL) parent.g;
-    pgl = PGraphicsOpenGL.pgl;
+    primaryPG = (PGraphicsOpenGL)parent.g;
+    pgl = primaryPG.pgl;
     context = pgl.createEmptyContext();
   }
 
@@ -125,13 +197,15 @@ public class PShader {
    */
   public PShader(PApplet parent, String vertFilename, String fragFilename) {
     this.parent = parent;
-    pgMain = (PGraphicsOpenGL) parent.g;
-    pgl = PGraphicsOpenGL.pgl;
+    primaryPG = (PGraphicsOpenGL)parent.g;
+    pgl = primaryPG.pgl;
 
     this.vertexURL = null;
     this.fragmentURL = null;
     this.vertexFilename = vertFilename;
     this.fragmentFilename = fragFilename;
+    fragmentShaderSource = pgl.loadFragmentShader(fragFilename);
+    vertexShaderSource = pgl.loadVertexShader(vertFilename);
 
     glProgram = 0;
     glVertex = 0;
@@ -139,6 +213,20 @@ public class PShader {
 
     intBuffer = PGL.allocateIntBuffer(1);
     floatBuffer = PGL.allocateFloatBuffer(1);
+
+    int vertType = getShaderType(vertexShaderSource, -1);
+    int fragType = getShaderType(fragmentShaderSource, -1);
+    if (vertType == -1 && fragType == -1) {
+      type = PShader.POLY;
+    } else if (vertType == -1) {
+      type = fragType;
+    } else if (fragType == -1) {
+      type = vertType;
+    } else if (fragType == vertType)  {
+      type = vertType;
+    } else {
+      PGraphics.showWarning(PGraphicsOpenGL.INCONSISTENT_SHADER_TYPES);
+    }
   }
 
 
@@ -148,13 +236,15 @@ public class PShader {
    */
   public PShader(PApplet parent, URL vertURL, URL fragURL) {
     this.parent = parent;
-    pgMain = (PGraphicsOpenGL) parent.g;
-    pgl = PGraphicsOpenGL.pgl;
+    primaryPG = (PGraphicsOpenGL)parent.g;
+    pgl = primaryPG.pgl;
 
     this.vertexURL = vertURL;
     this.fragmentURL = fragURL;
     this.vertexFilename = null;
     this.fragmentFilename = null;
+    fragmentShaderSource = pgl.loadFragmentShader(fragURL);
+    vertexShaderSource = pgl.loadVertexShader(vertURL);
 
     glProgram = 0;
     glVertex = 0;
@@ -162,6 +252,54 @@ public class PShader {
 
     intBuffer = PGL.allocateIntBuffer(1);
     floatBuffer = PGL.allocateFloatBuffer(1);
+
+    int vertType = getShaderType(vertexShaderSource, -1);
+    int fragType = getShaderType(fragmentShaderSource, -1);
+    if (vertType == -1 && fragType == -1) {
+      type = PShader.POLY;
+    } else if (vertType == -1) {
+      type = fragType;
+    } else if (fragType == -1) {
+      type = vertType;
+    } else if (fragType == vertType)  {
+      type = vertType;
+    } else {
+      PGraphics.showWarning(PGraphicsOpenGL.INCONSISTENT_SHADER_TYPES);
+    }
+  }
+
+  public PShader(PApplet parent, String[] vertSource, String[] fragSource) {
+    this.parent = parent;
+    primaryPG = (PGraphicsOpenGL)parent.g;
+    pgl = primaryPG.pgl;
+
+    this.vertexURL = null;
+    this.fragmentURL = null;
+    this.vertexFilename = null;
+    this.fragmentFilename = null;
+    vertexShaderSource = vertSource;
+    fragmentShaderSource = fragSource;
+
+    glProgram = 0;
+    glVertex = 0;
+    glFragment = 0;
+
+    intBuffer = PGL.allocateIntBuffer(1);
+    floatBuffer = PGL.allocateFloatBuffer(1);
+
+    int vertType = getShaderType(vertexShaderSource, -1);
+    int fragType = getShaderType(fragmentShaderSource, -1);
+    if (vertType == -1 && fragType == -1) {
+      type = PShader.POLY;
+    } else if (vertType == -1) {
+      type = fragType;
+    } else if (fragType == -1) {
+      type = vertType;
+    } else if (fragType == vertType)  {
+      type = vertType;
+    } else {
+      PGraphics.showWarning(PGraphicsOpenGL.INCONSISTENT_SHADER_TYPES);
+    }
   }
 
 
@@ -185,21 +323,34 @@ public class PShader {
 
   public void setVertexShader(String vertFilename) {
     this.vertexFilename = vertFilename;
+    vertexShaderSource = pgl.loadFragmentShader(vertFilename);
   }
 
 
   public void setVertexShader(URL vertURL) {
     this.vertexURL = vertURL;
+    vertexShaderSource = pgl.loadVertexShader(vertURL);
+  }
+
+
+  public void setVertexShader(String[] vertSource) {
+    vertexShaderSource = vertSource;
   }
 
 
   public void setFragmentShader(String fragFilename) {
     this.fragmentFilename = fragFilename;
+    fragmentShaderSource = pgl.loadVertexShader(fragFilename);
   }
 
 
   public void setFragmentShader(URL fragURL) {
     this.fragmentURL = fragURL;
+    fragmentShaderSource = pgl.loadVertexShader(fragURL);
+  }
+
+  public void setFragmentShader(String[] fragSource) {
+    fragmentShaderSource = fragSource;
   }
 
 
@@ -214,6 +365,8 @@ public class PShader {
       consumeUniforms();
       bindTextures();
     }
+
+    if (hasType()) bindTyped();
   }
 
 
@@ -221,6 +374,8 @@ public class PShader {
    * Unbinds the shader program.
    */
   public void unbind() {
+    if (hasType()) unbindTyped();
+
     if (bound) {
       unbindTextures();
       pgl.useProgram(0);
@@ -264,7 +419,7 @@ public class PShader {
    * @param w fourth component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[4], vec4)
    */
   public void set(String name, int x, int y, int z, int w) {
-    setUniformImpl(name, UniformValue.INT4, new int[] { x, y, z });
+    setUniformImpl(name, UniformValue.INT4, new int[] { x, y, z, w });
   }
 
 
@@ -296,9 +451,33 @@ public class PShader {
   }
 
 
+  public void set(String name, boolean x) {
+    setUniformImpl(name, UniformValue.INT1, new int[] { (x)?1:0 });
+  }
+
+
+  public void set(String name, boolean x, boolean y) {
+    setUniformImpl(name, UniformValue.INT2,
+                   new int[] { (x)?1:0, (y)?1:0 });
+  }
+
+
+  public void set(String name, boolean x, boolean y, boolean z) {
+    setUniformImpl(name, UniformValue.INT3,
+                   new int[] { (x)?1:0, (y)?1:0, (z)?1:0 });
+  }
+
+
+  public void set(String name, boolean x, boolean y, boolean z, boolean w) {
+    setUniformImpl(name, UniformValue.INT4,
+                   new int[] { (x)?1:0, (y)?1:0, (z)?1:0, (w)?1:0 });
+  }
+
+
   public void set(String name, int[] vec) {
     set(name, vec, 1);
   }
+
 
   /**
    * @param ncoords number of coordinates per element, max 4
@@ -343,6 +522,21 @@ public class PShader {
     }
   }
 
+
+  public void set(String name, boolean[] vec) {
+    set(name, vec, 1);
+  }
+
+
+  public void set(String name, boolean[] boolvec, int ncoords) {
+    int[] vec = new int[boolvec.length];
+    for (int i = 0; i < boolvec.length; i++) {
+      vec[i] = (boolvec[i])?1:0;
+    }
+    set(name, vec, ncoords);
+  }
+
+
   /**
    * @param mat matrix of values
    */
@@ -382,6 +576,23 @@ public class PShader {
     setUniformImpl(name, UniformValue.SAMPLER2D, tex);
   }
 
+
+  /**
+   * Extra initialization method that can be used by subclasses, called after
+   * compiling and attaching the vertex and fragment shaders, and before
+   * linking the shader program.
+   *
+   */
+  protected void setup() {
+  }
+
+
+  protected void draw(int idxId, int count, int offset) {
+    pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, idxId);
+    pgl.drawElements(PGL.TRIANGLES, count, PGL.INDEX_TYPE,
+                     offset * PGL.SIZEOF_INDEX);
+    pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
+  }
 
 
   /**
@@ -622,7 +833,7 @@ public class PShader {
           pgl.uniformMatrix4fv(loc, 1, false, floatBuffer);
         } else if (val.type == UniformValue.SAMPLER2D) {
           PImage img = (PImage)val.value;
-          Texture tex = pgMain.getTexture(img);
+          Texture tex = currentPG.getTexture(img);
 
           if (textures == null) textures = new HashMap<Integer, Texture>();
           textures.put(loc, tex);
@@ -685,54 +896,30 @@ public class PShader {
     }
   }
 
-
-  protected int getLastTexUnit() {
-    if (texUnits == null) return -1;
-    else return texUnits.size() - 1;
-  }
-
   protected void init() {
     if (glProgram == 0 || contextIsOutdated()) {
       context = pgl.getCurrentContext();
-      glProgram = PGraphicsOpenGL.createGLSLProgramObject(context);
-
-      boolean hasVert = false;
-      if (vertexFilename != null) {
-        hasVert = loadVertexShader(vertexFilename);
-      } else if (vertexURL != null) {
-        hasVert = loadVertexShader(vertexURL);
-      } else {
-        PGraphics.showException("Vertex shader filenames and URLs are " +
-                                "both null!");
-      }
-
-      boolean hasFrag = false;
-      if (fragmentFilename != null) {
-        hasFrag = loadFragmentShader(fragmentFilename);
-      } else if (fragmentURL != null) {
-        hasFrag = loadFragmentShader(fragmentURL);
-      } else {
-        PGraphics.showException("Fragment shader filenames and URLs are " +
-                                "both null!");
-      }
+      glProgram = PGraphicsOpenGL.createGLSLProgramObject(context, pgl);
 
       boolean vertRes = true;
-      if (hasVert) {
+      if (hasVertexShader()) {
         vertRes = compileVertexShader();
+      } else {
+        PGraphics.showException("Doesn't have a vertex shader");
       }
 
       boolean fragRes = true;
-      if (hasFrag) {
+      if (hasFragmentShader()) {
         fragRes = compileFragmentShader();
+      } else {
+        PGraphics.showException("Doesn't have a fragment shader");
       }
 
       if (vertRes && fragRes) {
-        if (hasVert) {
-          pgl.attachShader(glProgram, glVertex);
-        }
-        if (hasFrag) {
-          pgl.attachShader(glProgram, glFragment);
-        }
+        pgl.attachShader(glProgram, glVertex);
+        pgl.attachShader(glProgram, glFragment);
+        setup();
+
         pgl.linkProgram(glProgram);
 
         pgl.getProgramiv(glProgram, PGL.LINK_STATUS, intBuffer);
@@ -769,69 +956,22 @@ public class PShader {
   }
 
 
-  /**
-   * Loads and compiles the vertex shader contained in file.
-   *
-   * @param file String
-   */
-  protected boolean loadVertexShader(String filename) {
-    vertexShaderSource = PApplet.join(parent.loadStrings(filename), "\n");
-    return vertexShaderSource != null;
+
+  protected boolean hasVertexShader() {
+    return vertexShaderSource != null && 0 < vertexShaderSource.length;
   }
 
-
-  /**
-   * Loads and compiles the vertex shader contained in the URL.
-   *
-   * @param file String
-   */
-  protected boolean loadVertexShader(URL url) {
-    try {
-      vertexShaderSource = PApplet.join(PApplet.loadStrings(url.openStream()),
-                                        "\n");
-      return vertexShaderSource != null;
-    } catch (IOException e) {
-      PGraphics.showException("Cannot load vertex shader " + url.getFile());
-      return false;
-    }
+  protected boolean hasFragmentShader() {
+    return fragmentShaderSource != null && 0 < fragmentShaderSource.length;
   }
-
-
-  /**
-   * Loads and compiles the fragment shader contained in file.
-   *
-   * @param file String
-   */
-  protected boolean loadFragmentShader(String filename) {
-    fragmentShaderSource = PApplet.join(parent.loadStrings(filename), "\n");
-    return fragmentShaderSource != null;
-  }
-
-
-  /**
-   * Loads and compiles the fragment shader contained in the URL.
-   *
-   * @param url URL
-   */
-  protected boolean loadFragmentShader(URL url) {
-    try {
-      fragmentShaderSource = PApplet.join(PApplet.loadStrings(url.openStream()),
-                                          "\n");
-      return fragmentShaderSource != null;
-    } catch (IOException e) {
-      PGraphics.showException("Cannot load fragment shader " + url.getFile());
-      return false;
-    }
-  }
-
 
   /**
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileVertexShader() {
-    glVertex = PGraphicsOpenGL.createGLSLVertShaderObject(context);
+    glVertex = PGraphicsOpenGL.createGLSLVertShaderObject(context, pgl);
 
-    pgl.shaderSource(glVertex, vertexShaderSource);
+    pgl.shaderSource(glVertex, PApplet.join(vertexShaderSource, "\n"));
     pgl.compileShader(glVertex);
 
     pgl.getShaderiv(glVertex, PGL.COMPILE_STATUS, intBuffer);
@@ -850,9 +990,9 @@ public class PShader {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileFragmentShader() {
-    glFragment = PGraphicsOpenGL.createGLSLFragShaderObject(context);
+    glFragment = PGraphicsOpenGL.createGLSLFragShaderObject(context, pgl);
 
-    pgl.shaderSource(glFragment, fragmentShaderSource);
+    pgl.shaderSource(glFragment, PApplet.join(fragmentShaderSource, "\n"));
     pgl.compileShader(glFragment);
 
     pgl.getShaderiv(glFragment, PGL.COMPILE_STATUS, intBuffer);
@@ -867,31 +1007,434 @@ public class PShader {
   }
 
 
-  protected void setRenderer(PGraphicsOpenGL pg) {
-    pgCurrent = pg;
-  }
-
-  protected void loadAttributes() { }
-
-
-  protected void loadUniforms() { }
-
-
   protected void dispose() {
     if (glVertex != 0) {
-      PGraphicsOpenGL.deleteGLSLVertShaderObject(glVertex, context);
+      PGraphicsOpenGL.deleteGLSLVertShaderObject(glVertex, context, pgl);
       glVertex = 0;
     }
     if (glFragment != 0) {
-      PGraphicsOpenGL.deleteGLSLFragShaderObject(glFragment, context);
+      PGraphicsOpenGL.deleteGLSLFragShaderObject(glFragment, context, pgl);
       glFragment = 0;
     }
     if (glProgram != 0) {
-      PGraphicsOpenGL.deleteGLSLProgramObject(glProgram, context);
+      PGraphicsOpenGL.deleteGLSLProgramObject(glProgram, context, pgl);
       glProgram = 0;
     }
   }
 
+  static protected int getShaderType(String[] source, int defaultType) {
+    for (int i = 0; i < source.length; i++) {
+      String line = source[i].trim();
+      if (PApplet.match(line, pointShaderAttrRegexp) != null)
+        return PShader.POINT;
+      else if (PApplet.match(line, lineShaderAttrRegexp) != null)
+        return PShader.LINE;
+      else if (PApplet.match(line, pointShaderDefRegexp) != null)
+        return PShader.POINT;
+      else if (PApplet.match(line, lineShaderDefRegexp) != null)
+        return PShader.LINE;
+      else if (PApplet.match(line, colorShaderDefRegexp) != null)
+        return PShader.COLOR;
+      else if (PApplet.match(line, lightShaderDefRegexp) != null)
+        return PShader.LIGHT;
+      else if (PApplet.match(line, texShaderDefRegexp) != null)
+        return PShader.TEXTURE;
+      else if (PApplet.match(line, texlightShaderDefRegexp) != null)
+        return PShader.TEXLIGHT;
+      else if (PApplet.match(line, polyShaderDefRegexp) != null)
+        return PShader.POLY;
+      else if (PApplet.match(line, triShaderAttrRegexp) != null)
+        return PShader.POLY;
+      else if (PApplet.match(line, quadShaderAttrRegexp) != null)
+        return PShader.POLY;
+    }
+    return defaultType;
+  }
+
+
+  // ***************************************************************************
+  //
+  // Processing specific
+
+
+  protected int getType() {
+    return type;
+  }
+
+
+  protected void setType(int type) {
+    this.type = type;
+  }
+
+
+  protected boolean hasType() {
+    return POINT <= type && type <= TEXLIGHT;
+  }
+
+
+  protected boolean isPointShader() {
+    return type == POINT;
+  }
+
+
+  protected boolean isLineShader() {
+    return type == LINE;
+  }
+
+
+  protected boolean isPolyShader() {
+    return POLY <= type && type <= TEXLIGHT;
+  }
+
+
+  protected boolean checkPolyType(int type) {
+    if (getType() == PShader.POLY) return true;
+
+    if (getType() != type) {
+      if (type == TEXLIGHT) {
+        PGraphics.showWarning(PGraphicsOpenGL.NO_TEXLIGHT_SHADER_ERROR);
+      } else if (type == LIGHT) {
+        PGraphics.showWarning(PGraphicsOpenGL.NO_LIGHT_SHADER_ERROR);
+      } else if (type == TEXTURE) {
+        PGraphics.showWarning(PGraphicsOpenGL.NO_TEXTURE_SHADER_ERROR);
+      } else if (type == COLOR) {
+        PGraphics.showWarning(PGraphicsOpenGL.NO_COLOR_SHADER_ERROR);
+      }
+      return false;
+    }
+
+    return true;
+  }
+
+
+  protected int getLastTexUnit() {
+    return texUnits == null ? -1 : texUnits.size() - 1;
+  }
+
+
+  protected void setRenderer(PGraphicsOpenGL pg) {
+    this.currentPG = pg;
+  }
+
+
+  protected void loadAttributes() {
+    if (loadedAttributes) return;
+
+    vertexLoc = getAttributeLoc("vertex");
+    if (vertexLoc == -1) vertexLoc = getAttributeLoc("position");
+
+    colorLoc = getAttributeLoc("color");
+    texCoordLoc = getAttributeLoc("texCoord");
+    normalLoc = getAttributeLoc("normal");
+
+    ambientLoc = getAttributeLoc("ambient");
+    specularLoc = getAttributeLoc("specular");
+    emissiveLoc = getAttributeLoc("emissive");
+    shininessLoc = getAttributeLoc("shininess");
+
+    directionLoc = getAttributeLoc("direction");
+
+    offsetLoc = getAttributeLoc("offset");
+
+    directionLoc = getAttributeLoc("direction");
+    offsetLoc = getAttributeLoc("offset");
+
+    loadedAttributes = true;
+  }
+
+
+  protected void loadUniforms() {
+    if (loadedUniforms) return;
+    transformMatLoc = getUniformLoc("transform");
+    if (transformMatLoc == -1)
+      transformMatLoc = getUniformLoc("transformMatrix");
+
+    modelviewMatLoc = getUniformLoc("modelview");
+    if (modelviewMatLoc == -1)
+      modelviewMatLoc = getUniformLoc("modelviewMatrix");
+
+    projectionMatLoc = getUniformLoc("projection");
+    if (projectionMatLoc == -1)
+      projectionMatLoc = getUniformLoc("projectionMatrix");
+
+    viewportLoc = getUniformLoc("viewport");
+    ppixelsLoc = getUniformLoc("ppixels");
+
+    normalMatLoc = getUniformLoc("normalMatrix");
+
+    lightCountLoc = getUniformLoc("lightCount");
+    lightPositionLoc = getUniformLoc("lightPosition");
+    lightNormalLoc = getUniformLoc("lightNormal");
+    lightAmbientLoc = getUniformLoc("lightAmbient");
+    lightDiffuseLoc = getUniformLoc("lightDiffuse");
+    lightSpecularLoc = getUniformLoc("lightSpecular");
+    lightFalloffLoc = getUniformLoc("lightFalloff");
+    lightSpotLoc = getUniformLoc("lightSpot");
+
+    textureLoc = getUniformLoc("texture");
+    if (textureLoc == -1) {
+      textureLoc = getUniformLoc("texMap");
+    }
+
+    texMatrixLoc = getUniformLoc("texMatrix");
+    texOffsetLoc = getUniformLoc("texOffset");
+
+    perspectiveLoc = getUniformLoc("perspective");
+    scaleLoc = getUniformLoc("scale");
+    loadedUniforms = true;
+  }
+
+
+  protected void setCommonUniforms() {
+    if (-1 < transformMatLoc) {
+      currentPG.updateGLProjmodelview();
+      setUniformMatrix(transformMatLoc, currentPG.glProjmodelview);
+    }
+
+    if (-1 < modelviewMatLoc) {
+      currentPG.updateGLModelview();
+      setUniformMatrix(modelviewMatLoc, currentPG.glModelview);
+    }
+
+    if (-1 < projectionMatLoc) {
+      currentPG.updateGLProjection();
+      setUniformMatrix(projectionMatLoc, currentPG.glProjection);
+    }
+
+    if (-1 < viewportLoc) {
+      float x = currentPG.viewport.get(0);
+      float y = currentPG.viewport.get(1);
+      float w = currentPG.viewport.get(2);
+      float h = currentPG.viewport.get(3);
+      setUniformValue(viewportLoc, x, y, w, h);
+    }
+
+    if (-1 < ppixelsLoc) {
+      ppixelsUnit = getLastTexUnit() + 1;
+      setUniformValue(ppixelsLoc, ppixelsUnit);
+      pgl.activeTexture(PGL.TEXTURE0 + ppixelsUnit);
+      currentPG.bindFrontTexture();
+    } else {
+      ppixelsUnit = -1;
+    }
+  }
+
+  protected void bindTyped() {
+    if (currentPG == null) {
+      setRenderer(primaryPG.getCurrentPG());
+      loadAttributes();
+      loadUniforms();
+    }
+    setCommonUniforms();
+
+    if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
+    if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
+    if (-1 < texCoordLoc) pgl.enableVertexAttribArray(texCoordLoc);
+    if (-1 < normalLoc) pgl.enableVertexAttribArray(normalLoc);
+
+    if (-1 < normalMatLoc) {
+      currentPG.updateGLNormal();
+      setUniformMatrix(normalMatLoc, currentPG.glNormal);
+    }
+
+    if (-1 < ambientLoc) pgl.enableVertexAttribArray(ambientLoc);
+    if (-1 < specularLoc) pgl.enableVertexAttribArray(specularLoc);
+    if (-1 < emissiveLoc) pgl.enableVertexAttribArray(emissiveLoc);
+    if (-1 < shininessLoc) pgl.enableVertexAttribArray(shininessLoc);
+
+    int count = currentPG.lightCount;
+    setUniformValue(lightCountLoc, count);
+    if (0 < count) {
+      setUniformVector(lightPositionLoc, currentPG.lightPosition, 4, count);
+      setUniformVector(lightNormalLoc, currentPG.lightNormal, 3, count);
+      setUniformVector(lightAmbientLoc, currentPG.lightAmbient, 3, count);
+      setUniformVector(lightDiffuseLoc, currentPG.lightDiffuse, 3, count);
+      setUniformVector(lightSpecularLoc, currentPG.lightSpecular, 3, count);
+      setUniformVector(lightFalloffLoc, currentPG.lightFalloffCoefficients,
+                       3, count);
+      setUniformVector(lightSpotLoc, currentPG.lightSpotParameters, 2, count);
+    }
+
+    if (-1 < directionLoc) pgl.enableVertexAttribArray(directionLoc);
+
+    if (-1 < offsetLoc) pgl.enableVertexAttribArray(offsetLoc);
+
+    if (-1 < perspectiveLoc) {
+      if (currentPG.getHint(ENABLE_STROKE_PERSPECTIVE) &&
+          currentPG.nonOrthoProjection()) {
+        setUniformValue(perspectiveLoc, 1);
+      } else {
+        setUniformValue(perspectiveLoc, 0);
+      }
+    }
+
+    if (-1 < scaleLoc) {
+      if (currentPG.getHint(DISABLE_OPTIMIZED_STROKE)) {
+        setUniformValue(scaleLoc, 1.0f, 1.0f, 1.0f);
+      } else {
+        float f = PGL.STROKE_DISPLACEMENT;
+        if (currentPG.orthoProjection()) {
+          setUniformValue(scaleLoc, 1, 1, f);
+        } else {
+          setUniformValue(scaleLoc, f, f, f);
+        }
+      }
+    }
+  }
+
+  protected void unbindTyped() {
+    if (-1 < offsetLoc) pgl.disableVertexAttribArray(offsetLoc);
+
+    if (-1 < directionLoc) pgl.disableVertexAttribArray(directionLoc);
+
+    if (-1 < textureLoc && texture != null) {
+      pgl.activeTexture(PGL.TEXTURE0 + texUnit);
+      texture.unbind();
+      pgl.activeTexture(PGL.TEXTURE0);
+      texture = null;
+    }
+
+    if (-1 < ambientLoc) pgl.disableVertexAttribArray(ambientLoc);
+    if (-1 < specularLoc) pgl.disableVertexAttribArray(specularLoc);
+    if (-1 < emissiveLoc) pgl.disableVertexAttribArray(emissiveLoc);
+    if (-1 < shininessLoc) pgl.disableVertexAttribArray(shininessLoc);
+
+    if (-1 < vertexLoc) pgl.disableVertexAttribArray(vertexLoc);
+    if (-1 < colorLoc) pgl.disableVertexAttribArray(colorLoc);
+    if (-1 < texCoordLoc) pgl.disableVertexAttribArray(texCoordLoc);
+    if (-1 < normalLoc) pgl.disableVertexAttribArray(normalLoc);
+
+    if (-1 < ppixelsLoc) {
+      pgl.requestFBOLayer();
+      pgl.activeTexture(PGL.TEXTURE0 + ppixelsUnit);
+      currentPG.unbindFrontTexture();
+      pgl.activeTexture(PGL.TEXTURE0);
+    }
+
+    pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
+  }
+
+  protected void setTexture(Texture tex) {
+    texture = tex;
+
+    float scaleu = 1;
+    float scalev = 1;
+    float dispu  = 0;
+    float dispv  = 0;
+
+    if (tex != null) {
+      if (tex.invertedX()) {
+        scaleu = -1;
+        dispu  = 1;
+      }
+
+      if (tex.invertedY()) {
+        scalev = -1;
+        dispv  = 1;
+      }
+
+      scaleu *= tex.maxTexcoordU();
+      dispu  *= tex.maxTexcoordU();
+      scalev *= tex.maxTexcoordV();
+      dispv  *= tex.maxTexcoordV();
+
+      setUniformValue(texOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
+
+      if (-1 < textureLoc) {
+        texUnit =  -1 < ppixelsUnit ? ppixelsUnit + 1 : getLastTexUnit() + 1;
+        setUniformValue(textureLoc, texUnit);
+        pgl.activeTexture(PGL.TEXTURE0 + texUnit);
+        tex.bind();
+      }
+    }
+
+    if (-1 < texMatrixLoc) {
+      if (tcmat == null) {
+        tcmat = new float[16];
+      }
+      tcmat[0] = scaleu; tcmat[4] = 0;      tcmat[ 8] = 0; tcmat[12] = dispu;
+      tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
+      tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
+      tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;
+      setUniformMatrix(texMatrixLoc, tcmat);
+    }
+  }
+
+
+  protected boolean supportsTexturing() {
+    return -1 < textureLoc;
+  }
+
+  protected boolean supportLighting() {
+    return -1 < lightCountLoc || -1 < lightPositionLoc || -1 < lightNormalLoc;
+  }
+
+  protected boolean accessTexCoords() {
+    return -1 < texCoordLoc;
+  }
+
+  protected boolean accessNormals() {
+    return -1 < normalLoc;
+  }
+
+  protected boolean accessLightAttribs() {
+    return -1 < ambientLoc || -1 < specularLoc || -1 < emissiveLoc ||
+           -1 < shininessLoc;
+  }
+
+  protected void setVertexAttribute(int vboId, int size, int type,
+                                    int stride, int offset) {
+    setAttributeVBO(vertexLoc, vboId, size, type, false, stride, offset);
+  }
+
+  protected void setColorAttribute(int vboId, int size, int type,
+                                   int stride, int offset) {
+    setAttributeVBO(colorLoc, vboId, size, type, true, stride, offset);
+  }
+
+  protected void setNormalAttribute(int vboId, int size, int type,
+                                    int stride, int offset) {
+    setAttributeVBO(normalLoc, vboId, size, type, false, stride, offset);
+  }
+
+  protected void setTexcoordAttribute(int vboId, int size, int type,
+                                      int stride, int offset) {
+    setAttributeVBO(texCoordLoc, vboId, size, type, false, stride, offset);
+  }
+
+  protected void setAmbientAttribute(int vboId, int size, int type,
+                                     int stride, int offset) {
+    setAttributeVBO(ambientLoc, vboId, size, type, true, stride, offset);
+  }
+
+  protected void setSpecularAttribute(int vboId, int size, int type,
+                                      int stride, int offset) {
+    setAttributeVBO(specularLoc, vboId, size, type, true, stride, offset);
+  }
+
+  protected void setEmissiveAttribute(int vboId, int size, int type,
+                                      int stride, int offset) {
+    setAttributeVBO(emissiveLoc, vboId, size, type, true, stride, offset);
+  }
+
+  protected void setShininessAttribute(int vboId, int size, int type,
+                                       int stride, int offset) {
+    setAttributeVBO(shininessLoc, vboId, size, type, false, stride, offset);
+  }
+
+  protected void setLineAttribute(int vboId, int size, int type,
+                                  int stride, int offset) {
+    setAttributeVBO(directionLoc, vboId, size, type, false, stride, offset);
+  }
+
+  protected void setPointAttribute(int vboId, int size, int type,
+                                   int stride, int offset) {
+    setAttributeVBO(offsetLoc, vboId, size, type, false, stride, offset);
+  }
+
+
+  // ***************************************************************************
+  //
   // Class to store a user-specified value for a uniform parameter
   // in the shader
   protected class UniformValue {

@@ -43,7 +43,7 @@ public abstract class Mode {
 
   protected File folder;
 
-  protected PdeKeywords tokenMarker = new PdeKeywords();
+  protected TokenMarker tokenMarker;
   protected HashMap<String, String> keywordToReference = 
     new HashMap<String, String>();
   
@@ -94,6 +94,7 @@ public abstract class Mode {
   public Mode(Base base, File folder) {
     this.base = base;
     this.folder = folder;
+    tokenMarker = createTokenMarker();
 
     // Get paths for the libraries and examples in the mode folder
     examplesFolder = new File(folder, "examples");
@@ -125,27 +126,38 @@ public abstract class Mode {
 
   
   protected void loadKeywords(File keywordFile) throws IOException {
+    // overridden for Python, where # is an actual keyword 
+    loadKeywords(keywordFile, "#");
+  }
+  
+  
+  protected void loadKeywords(File keywordFile, 
+                              String commentPrefix) throws IOException {
     BufferedReader reader = PApplet.createReader(keywordFile);
     String line = null;
     while ((line = reader.readLine()) != null) {
-//      String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
-      String[] pieces = PApplet.splitTokens(line);
-      if (pieces.length >= 2) {
-        String keyword = pieces[0];
-        String coloring = pieces[1];
+      if (!line.trim().startsWith(commentPrefix)) {
+        // Was difficult to make sure that mode authors were properly doing 
+        // tab-separated values. By definition, there can't be additional 
+        // spaces inside a keyword (or filename), so just splitting on tokens. 
+        String[] pieces = PApplet.splitTokens(line);
+        if (pieces.length >= 2) {
+          String keyword = pieces[0];
+          String coloring = pieces[1];
 
-        if (coloring.length() > 0) {
-          tokenMarker.addColoring(keyword, coloring);
-        }
-        if (pieces.length == 3) {
-          String htmlFilename = pieces[2];
-          if (htmlFilename.length() > 0) {
-            // if the file is for the version with parens, 
-            // add a paren to the keyword
-            if (htmlFilename.endsWith("_")) {
-              keyword += "_";
+          if (coloring.length() > 0) {
+            tokenMarker.addColoring(keyword, coloring);
+          }
+          if (pieces.length == 3) {
+            String htmlFilename = pieces[2];
+            if (htmlFilename.length() > 0) {
+              // if the file is for the version with parens, 
+              // add a paren to the keyword
+              if (htmlFilename.endsWith("_")) {
+                keyword += "_";
+              }
+              keywordToReference.put(keyword, htmlFilename);
             }
-            keywordToReference.put(keyword, htmlFilename);
           }
         }
       }
@@ -901,6 +913,10 @@ public abstract class Mode {
   public TokenMarker getTokenMarker() {
     return tokenMarker;
   }
+  
+  protected TokenMarker createTokenMarker() {
+    return new PdeKeywords();
+  }
 
 
 //  abstract public Formatter createFormatter();
@@ -959,9 +975,10 @@ public abstract class Mode {
 
     s = st.nextToken();
     boolean bold = (s.indexOf("bold") != -1);
-    boolean italic = (s.indexOf("italic") != -1);
+//    boolean italic = (s.indexOf("italic") != -1);
 
-    return new SyntaxStyle(color, italic, bold);
+//    return new SyntaxStyle(color, italic, bold);
+    return new SyntaxStyle(color, bold);
   }
 
 
@@ -999,6 +1016,18 @@ public abstract class Mode {
 
 
   /**
+   * @param f File to be checked against this mode's accepted extensions.
+   * @return Whether or not the given file name features an extension supported by this mode.
+   */
+  public boolean canEdit(final File f) {
+    final int dot = f.getName().lastIndexOf('.');
+    if (dot < 0) {
+      return false;
+    }
+    return validExtension(f.getName().substring(dot + 1));
+  }
+  
+  /**
    * Check this extension (no dots, please) against the list of valid
    * extensions.
    */
@@ -1016,6 +1045,18 @@ public abstract class Mode {
    */
   abstract public String getDefaultExtension();
 
+
+  /**
+   * Returns the appropriate file extension to use for auxilliary source files in a sketch.
+   * For example, in a Java-mode sketch, auxilliary files should be name "Foo.java"; in
+   * Python mode, they should be named "foo.py".
+   * 
+   * <p>Modes that do not override this function will get the default behavior of returning the
+   * default extension.
+   */
+  public String getModuleExtension() {
+    return getDefaultExtension();
+  }
 
 
   /**
@@ -1058,4 +1099,9 @@ public abstract class Mode {
 //  public void handleNewReplace() {
 //    base.handleNewReplace();
 //  }
+  
+  @Override
+  public String toString() {
+    return getTitle();
+  }
 }

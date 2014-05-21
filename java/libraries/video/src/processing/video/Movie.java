@@ -79,6 +79,7 @@ public class Movie extends PImage implements PConstants {
   protected boolean seeking = false;
 
   protected boolean useBufferSink = false;
+  protected boolean outdatedPixels = true;
   protected Object bufferSink;
   protected Method sinkCopyMethod;
   protected Method sinkSetMethod;
@@ -135,6 +136,10 @@ public class Movie extends PImage implements PConstants {
 
       playbin.dispose();
       playbin = null;
+      
+      parent.g.removeCache(this);
+      parent.unregisterMethod("dispose", this);
+      parent.unregisterMethod("post", this);      
     }
   }
 
@@ -318,7 +323,41 @@ public class Movie extends PImage implements PConstants {
     // (like seek in this case) has completed
     seeking = true;
     playbin.getState();
-    seeking = false;
+    seeking = false;    
+    /*
+    if (seeking) return; // don't seek again until the current seek operation is done.
+
+    if (!sinkReady) {
+      initSink();
+    }
+
+    // Round the time to a multiple of the source framerate, in
+    // order to eliminate stutter. Suggested by Daniel Shiffman    
+    float fps = getSourceFrameRate();
+    int frame = (int)(where * fps);
+    final float seconds = frame / fps;
+    
+    // Put the seek operation inside a thread to avoid blocking the main 
+    // animation thread
+    Thread seeker = new Thread() {
+      @Override
+      public void run() {
+        long pos = Video.secToNanoLong(seconds);
+        boolean res = playbin.seek(rate, Format.TIME, SeekFlags.FLUSH,
+                                   SeekType.SET, pos, SeekType.NONE, -1);
+        if (!res) {
+          PGraphics.showWarning("Seek operation failed.");
+        }
+
+        // getState() will wait until any async state change
+        // (like seek in this case) has completed
+        seeking = true;
+        playbin.getState();
+        seeking = false;        
+      }
+    };
+    seeker.start();    
+    */
   }
 
 
@@ -483,6 +522,7 @@ public class Movie extends PImage implements PConstants {
     }
 
     if (useBufferSink) { // The native buffer from gstreamer is copied to the buffer sink.
+      outdatedPixels = true;
       if (natBuffer == null) {
         return;
       }
@@ -557,12 +597,32 @@ public class Movie extends PImage implements PConstants {
         Video.convertToARGB(pixels, width, height);        
       } else if (sinkGetMethod != null) {
         try {
+          // sinkGetMethod will copy the latest buffer to the pixels array,
+          // and the pixels will be copied to the texture when the OpenGL
+          // renderer needs to draw it.
           sinkGetMethod.invoke(bufferSink, new Object[] { pixels });
         } catch (Exception e) {
           e.printStackTrace();
         }        
-      }      
+      }
+      
+      outdatedPixels = false;
     }
+  }
+  
+  
+  public int get(int x, int y) {
+    if (outdatedPixels) loadPixels();
+    return super.get(x, y);
+  }
+  
+  
+  protected void getImpl(int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         PImage target, int targetX, int targetY) {
+    if (outdatedPixels) loadPixels();
+    super.getImpl(sourceX, sourceY, sourceWidth, sourceHeight,
+                  target, targetX, targetY);
   }
   
   
@@ -662,10 +722,19 @@ public class Movie extends PImage implements PConstants {
     eventHandler = obj;
 
     try {
-      movieEventMethod = eventHandler.getClass().getMethod("movieEvent",
-          new Class[] { Movie.class });
+      movieEventMethod = eventHandler.getClass().getMethod("movieEvent", Movie.class);
+      return;
     } catch (Exception e) {
-      // no such method, or an error.. which is fine, just ignore
+      // no such method, or an error... which is fine, just ignore
+    }
+
+    // movieEvent can alternatively be defined as receiving an Object, to allow
+    // Processing mode implementors to support the video library without linking
+    // to it at build-time.
+    try {
+      movieEventMethod = eventHandler.getClass().getMethod("movieEvent", Object.class);
+    } catch (Exception e) {
+      // no such method, or an error... which is fine, just ignore
     }
   }
 
@@ -748,19 +817,9 @@ public class Movie extends PImage implements PConstants {
     }
 
     if (playing) {
-      // Creates a movieEvent.
-      if (movieEventMethod != null) {
-        try {
-          movieEventMethod.invoke(eventHandler, new Object[] { this });
-        } catch (Exception e) {
-          System.err.println("error, disabling movieEvent() for " + filename);
-          e.printStackTrace();
-          movieEventMethod = null;
-        }
-      }
+      fireMovieEvent();
     }
   }
-
 
   protected synchronized void invokeEvent(int w, int h, Buffer buffer) {
     available = true;
@@ -775,19 +834,22 @@ public class Movie extends PImage implements PConstants {
     natBuffer = buffer;
 
     if (playing) {
-      // Creates a movieEvent.
-      if (movieEventMethod != null) {
-        try {
-          movieEventMethod.invoke(eventHandler, new Object[] { this });
-        } catch (Exception e) {
-          System.err.println("error, disabling movieEvent() for " + filename);
-          e.printStackTrace();
-          movieEventMethod = null;
-        }
-      }
+      fireMovieEvent();
     }
   }
 
+  private void fireMovieEvent() {
+    // Creates a movieEvent.
+    if (movieEventMethod != null) {
+      try {
+        movieEventMethod.invoke(eventHandler, this);
+      } catch (Exception e) {
+        System.err.println("error, disabling movieEvent() for " + filename);
+        e.printStackTrace();
+        movieEventMethod = null;
+      }
+    }
+  }
 
   protected void eosEvent() {
     if (repeat) {

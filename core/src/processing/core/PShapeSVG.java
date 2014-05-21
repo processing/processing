@@ -586,6 +586,8 @@ public class PShapeSVG extends PShape {
       case 'm':  // m - move to (relative)
         cx = cx + PApplet.parseFloat(pathTokens[i + 1]);
         cy = cy + PApplet.parseFloat(pathTokens[i + 2]);
+        movetoX = cx;
+        movetoY = cy;
         parsePathMoveto(cx, cy);
         implicitCommand = 'l';
         i += 3;

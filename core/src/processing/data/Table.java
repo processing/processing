@@ -1165,7 +1165,12 @@ public class Table {
           output.writeDouble(row.getDouble(col));
           break;
         case CATEGORY:
-          output.writeInt(columnCategories[col].index(row.getString(col)));
+          String peace = row.getString(col);
+          if (peace.equals(missingString)) {
+            output.writeInt(missingCategory);
+          } else {
+            output.writeInt(columnCategories[col].index(peace));
+          }
           break;
         }
       }
@@ -1859,35 +1864,35 @@ public class Table {
         case INT: {
           int[] intTemp = new int[rowCount+1];
           System.arraycopy(columns[col], 0, intTemp, 0, insert);
-          System.arraycopy(columns[col], insert, intTemp, insert+1, (rowCount - insert) + 1);
+          System.arraycopy(columns[col], insert, intTemp, insert+1, rowCount - insert);
           columns[col] = intTemp;
           break;
         }
         case LONG: {
           long[] longTemp = new long[rowCount+1];
           System.arraycopy(columns[col], 0, longTemp, 0, insert);
-          System.arraycopy(columns[col], insert, longTemp, insert+1, (rowCount - insert) + 1);
+          System.arraycopy(columns[col], insert, longTemp, insert+1, rowCount - insert);
           columns[col] = longTemp;
           break;
         }
         case FLOAT: {
           float[] floatTemp = new float[rowCount+1];
           System.arraycopy(columns[col], 0, floatTemp, 0, insert);
-          System.arraycopy(columns[col], insert, floatTemp, insert+1, (rowCount - insert) + 1);
+          System.arraycopy(columns[col], insert, floatTemp, insert+1, rowCount - insert);
           columns[col] = floatTemp;
           break;
         }
         case DOUBLE: {
           double[] doubleTemp = new double[rowCount+1];
           System.arraycopy(columns[col], 0, doubleTemp, 0, insert);
-          System.arraycopy(columns[col], insert, doubleTemp, insert+1, (rowCount - insert) + 1);
+          System.arraycopy(columns[col], insert, doubleTemp, insert+1, rowCount - insert);
           columns[col] = doubleTemp;
           break;
         }
         case STRING: {
           String[] stringTemp = new String[rowCount+1];
           System.arraycopy(columns[col], 0, stringTemp, 0, insert);
-          System.arraycopy(columns[col], insert, stringTemp, insert+1, (rowCount - insert) + 1);
+          System.arraycopy(columns[col], insert, stringTemp, insert+1, rowCount - insert);
           columns[col] = stringTemp;
           break;
         }
@@ -2087,7 +2092,12 @@ public class Table {
         if (piece == null) {
           indexData[row] = missingCategory;
         } else {
-          indexData[row] = columnCategories[col].index(String.valueOf(piece));
+          String peace = String.valueOf(piece);
+          if (peace.equals(missingString)) {  // missingString might be null
+            indexData[row] = missingCategory;
+          } else {
+            indexData[row] = columnCategories[col].index(peace);
+          }
         }
         break;
       default:
@@ -2933,6 +2943,9 @@ public class Table {
   }
 
 
+  /**
+   * Treat entries with this string as "missing". Also used for categorial.
+   */
   public void setMissingString(String value) {
     missingString = value;
   }
@@ -3562,6 +3575,7 @@ public class Table {
       read(input);
     }
 
+    /** gets the index, and creates one if it doesn't already exist. */
     int index(String key) {
       Integer value = dataToIndex.get(key);
       if (value != null) {
@@ -4131,7 +4145,12 @@ public class Table {
         }
         break;
       case CATEGORY:
-        output.writeInt(columnCategories[col].index(pieces[col]));
+        String peace = pieces[col];
+        if (peace.equals(missingString)) {
+          output.writeInt(missingCategory);
+        } else {
+          output.writeInt(columnCategories[col].index(peace));
+        }
         break;
       }
     }

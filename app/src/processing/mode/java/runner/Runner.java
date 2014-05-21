@@ -123,11 +123,7 @@ public class Runner implements MessageConsumer {
   }
   
   
-//  public void launch(String appletClassName, boolean presenting) {
-//    this.appletClassName = appletClassName;
   public boolean launchVirtualMachine(boolean presenting) {
-//    this.presenting = presenting;
-
     String[] vmParams = getMachineParams();
     String[] sketchParams = getSketchParams(presenting);
     int port = 8000 + (int) (Math.random() * 1000);
@@ -139,10 +135,15 @@ public class Runner implements MessageConsumer {
     // Newer (Java 1.5+) version that uses JVMTI
     String jdwpArg = "-agentlib:jdwp=transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
 
+    // Everyone works the same under Java 7 (also on OS X) 
+    String[] commandArgs = new String[] { Base.getJavaPath(), jdwpArg };
+    
+    /*
     String[] commandArgs = null;
     if (!Base.isMacOS()) {
       commandArgs = new String[] {
-        "java", jdwpArg
+        Base.getJavaPath(),
+        jdwpArg
       };
     } else {
       // Decided to just set this to 1.6 only, because otherwise it's gonna
@@ -160,7 +161,7 @@ public class Runner implements MessageConsumer {
       // OS X at this point, because we require 10.6.8 and higher. That also
       // means we don't need to check for any other OS versions, the user is 
       // a douchebag and modifies Info.plist to get around the restriction.
-      if (true) {
+      if (false) {
         if (System.getProperty("os.version").startsWith("10.6")) {
           commandArgs = new String[] {
             "/usr/libexec/java_home",
@@ -183,41 +184,19 @@ public class Runner implements MessageConsumer {
       } else {
         // testing jdk-7u40
         commandArgs = new String[] { 
-          "/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin/java",
+          //"/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin/java",
+          Base.getJavaPath(),
           jdwpArg
         };
       }
     }
+    */
 
     commandArgs = PApplet.concat(commandArgs, vmParams);
     commandArgs = PApplet.concat(commandArgs, sketchParams);
 //  PApplet.println(commandArgs);
 //  commandArg.setValue(commandArgs);
     launchJava(commandArgs);
-//    try {
-//      Thread.sleep(2000);
-//    } catch (InterruptedException e) {
-//      e.printStackTrace();
-//    }
-
-//    boolean available = false;
-//    while (!available) {
-//      try {
-//        Socket socket = new Socket((String) null, port);
-////        socket.close();
-//        // this should mean we're all set?
-//        available = true;
-//
-//      } catch (IOException e) {
-//        System.out.println("waiting");
-//        //e.printStackTrace();
-//        try {
-//          Thread.sleep(100);
-//        } catch (InterruptedException e1) {
-//          e1.printStackTrace();
-//        }
-//      }
-//    }
     
     AttachingConnector connector = (AttachingConnector) 
       findConnector("com.sun.jdi.SocketAttach");
@@ -467,7 +446,7 @@ public class Runner implements MessageConsumer {
 //            PApplet.println("launchJava stderr:");
 //            PApplet.println(errorStrings);
 //            PApplet.println("launchJava stdout:");
-            PApplet.println(inputStrings);
+            PApplet.printArray(inputStrings);
             
             if (errorStrings != null && errorStrings.length > 1) {
               if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
@@ -699,7 +678,9 @@ public class Runner implements MessageConsumer {
 
             for (Event event : eventSet) {
 //              System.out.println("EventThread.handleEvent -> " + event);
-              if (event instanceof ExceptionEvent) {
+              if (event instanceof VMStartEvent) {
+                vm.resume();
+              } else if (event instanceof ExceptionEvent) {
 //                for (ThreadReference thread : vm.allThreads()) {
 //                  System.out.println("thread : " + thread);
 ////                  thread.suspend();
@@ -730,8 +711,6 @@ public class Runner implements MessageConsumer {
                                          System.out);
     errThread.start();
     outThread.start();
-
-    vm.resume();
 
     // Shutdown begins when event thread terminates
     try {
@@ -944,7 +923,7 @@ public class Runner implements MessageConsumer {
         ObjectReference ref = (ObjectReference)val;
         method = ((ClassType) ref.referenceType()).concreteMethodByName("getFileName", "()Ljava/lang/String;");
         StringReference strref = (StringReference) ref.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
-        String filename = strref.value();
+        String filename = strref == null ? "Unknown Source" : strref.value();
         method = ((ClassType) ref.referenceType()).concreteMethodByName("getLineNumber", "()I");
         IntegerValue intval = (IntegerValue) ref.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
         int lineNumber = intval.intValue() - 1;

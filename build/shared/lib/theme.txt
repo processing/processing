@@ -6,9 +6,7 @@ status.error.fgcolor = #ffffff
 status.error.bgcolor = #662000
 status.edit.fgcolor = #000000
 status.edit.bgcolor = #cc9900
-#status.font = SansSerif,plain,12
-#status.font.macosx = Helvetica,plain,12
-status.font = processing.sans,plain,13
+status.font = processing.sans,plain,14
 
 # TABS
 # Settings for the tab area at the top.
@@ -34,11 +32,11 @@ buttons.hide.color = #0E1B25
 buttons.bgimage = true
 
 # TOOLBAR BUTTON TEXT
-buttons.status.font = processing.sans,plain,13
+buttons.status.font = processing.sans,bold,13
 buttons.status.color = #ffffff
 
 # MODE SELECTOR
-mode.button.font = processing.sans,plain,12
+mode.button.font = processing.sans,bold,13
 # outline color of the mode button
 mode.button.color = #ffffff
 
@@ -46,7 +44,7 @@ mode.button.color = #ffffff
 # The editor line number status bar at the bottom of the screen
 linestatus.color = #ffffff
 linestatus.bgcolor = #29333d
-linestatus.font = processing.sans,plain,12
+linestatus.font = processing.sans,plain,13
 linestatus.height  = 20
 
 

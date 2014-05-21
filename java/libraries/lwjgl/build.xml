@@ -18,7 +18,11 @@
 	   srcdir="src" destdir="bin" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
-	   classpath="../../../core/library/core.jar; library/lwjgl.jar; library/lwjgl_util.jar" />
+	   classpath="../../../core/library/core.jar; library/lwjgl.jar; library/lwjgl_util.jar" 
+	   nowarn="true"
+	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
+      <compilerclasspath path="../../mode/ecj.jar" />
+    </javac>
   </target>
   
   <target name="build" depends="compile" description="Build OpenGL LWJGL library">

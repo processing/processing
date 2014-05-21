@@ -8,7 +8,6 @@ import java.awt.Point;
 import java.awt.font.TextLayout;
 
 import processing.app.syntax.JEditTextArea;
-import processing.app.syntax.TextAreaPainter;
 
 /**
  * Paint texts from input method. Text via input method are transmitted by 
@@ -26,15 +25,17 @@ public class CompositionTextPainter {
   private int composedBeginCaretPosition = 0;
   private JEditTextArea textArea;
 
+  
   /**
    * Constructor for painter.
-   * @param textarea textarea used by PDE.
+   * @param textArea textarea used by PDE.
    */
   public CompositionTextPainter(JEditTextArea textArea) {
     this.textArea = textArea;
     composedTextLayout = null;
   }
 
+  
   /**
    * Check the painter has TextLayout.
    * If a user input via InputMethod, this result will return true.
@@ -43,6 +44,7 @@ public class CompositionTextPainter {
   public boolean hasComposedTextLayout() {
     return (composedTextLayout != null);
   }
+  
   
   /**
    * Set TextLayout to the painter.
@@ -55,6 +57,7 @@ public class CompositionTextPainter {
     this.composedTextLayout = composedTextLayout;
     this.composedBeginCaretPosition = composedStartCaretPosition;
   }
+  
 
   /**
    * Invalidate this TextLayout to set null.
@@ -65,6 +68,7 @@ public class CompositionTextPainter {
     this.composedBeginCaretPosition = composedEndCaretPosition;
     //this.composedBeginCaretPosition = textArea.getCaretPosition();
   }
+  
   
   /**
    * Draw text via input method with composed text information.
@@ -92,6 +96,7 @@ public class CompositionTextPainter {
     refillComposedArea(fillBackGroundColor, composedLoc.x, composedLoc.y);
     composedTextLayout.draw((Graphics2D) gfx, composedLoc.x, composedLoc.y);
   }
+  
 
   /**
    * Fill color to erase characters drawn by original TextAreaPainter. 
@@ -109,16 +114,18 @@ public class CompositionTextPainter {
     int paintWidth = (int) composedTextLayout.getBounds().getWidth();
     gfx.fillRect(x, newY, paintWidth, paintHeight);
   }
+  
 
   private Point getCaretLocation() {
-    Point loc = new Point();
-    TextAreaPainter painter = textArea.getPainter();
-    FontMetrics fm = painter.getFontMetrics();
+    FontMetrics fm = textArea.getPainter().getFontMetrics();
     int offsetY = fm.getHeight() - CompositionTextManager.COMPOSING_UNDERBAR_HEIGHT;
     int lineIndex = textArea.getCaretLine();
-    loc.y = lineIndex * fm.getHeight() + offsetY;
+//    loc.y = lineIndex * fm.getHeight() + offsetY;
     int offsetX = composedBeginCaretPosition - textArea.getLineStartOffset(lineIndex);
-    loc.x = textArea.offsetToX(lineIndex, offsetX);
-    return loc;
+//    loc.x = textArea.offsetToX(lineIndex, offsetX);
+    return new Point(textArea.offsetToX(lineIndex, offsetX), 
+                     lineIndex * fm.getHeight() + offsetY);
+//    Point loc = new Point();
+//    return loc;
   }
 }

@@ -1,64 +1,70 @@
-0221 core
-X fix options parsing on loadTable() to handle spaces
-X add static versions of loadJSONObject and loadJSONArray that take File inputs
+0228 core
 
-andres
-X blendMode() change causes OpenGL renderer to be very slow
-X   https://github.com/processing/processing/issues/2021
-X serious OpenGL performance issues on OS X (fixed earlier?)
-X   https://github.com/processing/processing/issues/1714
-X   fixed with a recent JOGL update
-X P2D low quality text rendering
-X   https://github.com/processing/processing/issues/1972
-X Rendering artifacts on the diagonal line (topleft to bottomright) in P2D
-X   https://github.com/processing/processing/issues/1964
-X Fix issues with slow text rendering and OpenGL
-X   https://github.com/processing/processing/issues/2025
-X loadShape doesn't load OBJ files in subdirectories properly
-X   https://github.com/processing/processing/issues/2003
-X more OpenGL issues fixed by JOGL or newer drivers
-X   https://github.com/processing/processing/issues/1986
-X Vertical offset when sketch height is indivisible by 2
-X   https://github.com/processing/processing/issues/1985
-X ellipse() causes RuntimeException: java.lang.OutOfMemoryError
-X   https://github.com/processing/processing/issues/1941
-X beginShape()..endShape() lines look wrong at joins/caps with P2D
-X   https://github.com/processing/processing/issues/1927
-X Corrupted text with large font and OpenGL
-X   https://github.com/processing/processing/issues/1869
-X loadFont hangs on Processing 2.0 with any OpenGL renderer
-X   https://github.com/processing/processing/issues/1854
-
-video
-X problem with bit shifting
-X   https://github.com/processing/processing/pull/2023
-X   https://github.com/processing/processing/pull/2022
-X   https://github.com/processing/processing/issues/2021
-
-
-critical
-_ loadPixels doesn't set alpha value for pixels on Java2D
-_   https://github.com/processing/processing/issues/2030
 
 high
+_ pull for image resize and alpha issues
+_   https://github.com/processing/processing/pull/2324
+_ dataPath() not working when app is not run from app dir on Linux
+_   https://github.com/processing/processing/issues/2195
+_ "Buffers have not been created" error for sketches w/o draw()
+_   https://github.com/processing/processing/issues/2469
+_   could not reproduce
+_ Sketch runs with default size if size() is followed by large memory allocation
+_   some sort of threading issue happening here
+_   https://github.com/processing/processing/issues/1672
+_   https://github.com/processing/processing/issues/2039 (dupe)
+_   https://github.com/processing/processing/issues/2294 (dupe)
+_ point() rendering differently in 2.0.3 and 2.1
+_   https://github.com/processing/processing/issues/2278
+_   internally, we probably have to call set() if it's a 1 pixel point
+_     but that's going to be a mess.. need to first check the CTM
+_ tint() not working in PDF (regression between 2.0.3 and 2.1)
+_   https://github.com/processing/processing/issues/2428
+_ default font fixes 
+_   https://github.com/processing/processing/issues/2331
+_   https://github.com/processing/processing/pull/2338
+_ add print() method to other data types (not just IntList)
+_ Sort out blending differences with P2D/P3D
+_   might be that compatible images not setting alpha mode correctly
+_   image = gc.createCompatibleVolatileImage(source.width, source.height, Transparency.TRANSLUCENT);
+_   https://github.com/processing/processing/issues/1844
+_ 'collector' class.. Dict that points to a list
+_   String as a key, int/float/string list as values
 _ blendMode(ADD) is broken with default renderer
 _   https://github.com/processing/processing/issues/2012
+_   may have been introduced between 2.0b7 and 2.0b8
+_   https://github.com/processing/processing/issues/2275
+_   https://github.com/processing/processing/issues/2276
+_   https://github.com/processing/processing/issues/2483
 _ add option to have full screen span across screens
 _   display=all in cmd line
 _   sketchDisplay() -> 0 for all, or 1, 2, 3...
-_ test PGraphicsRetina2D w/ 7u40 
-_ make sure that 7u40 doesn't reintroduce starvation issue on retina Macs
-_ draw() called again before finishing on OS X (retina issue)
-_   https://github.com/processing/processing/issues/1709
-_ screen stops updating sometimes with retina
-_   https://github.com/processing/processing/issues/1699
-_ Linux sometimes not responding correctly w/ the size() command
-_   https://github.com/processing/processing/issues/1672
 _ clean up requestFocus() stuff
 _   make sure it works with retina/canvas/strategy as well
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
+_ TGA files writing strangely
+_   https://github.com/processing/processing/issues/2096
+
+hidpi
+_ saveFrame() with retina render is making black images
+_ zero alpha values still a problem with retina renderer
+_   https://github.com/processing/processing/issues/2030
+_ how to name the retina pixel stuff
+_   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
+_   hint(ENABLE_2X_PIXELS)?
+_   hidpi is Apple's name as well
+_ no high-res display support for OpenGL
+_ no high-dpi support for core on Windows
+_   https://github.com/processing/processing/issues/2411
+_ retina sketches slow to start
+_   https://github.com/processing/processing/issues/2357
+
+cantfix
+_ crash on startup when "Mirror Displays" selected
+_   suspect that this is a specific chipset since Oracle didn't reproduce
+_   https://github.com/processing/processing/issues/2186
 
 table
 _ addRow() is not efficient, probably need to do the doubling
@@ -72,6 +78,8 @@ _   save the constructor for the version that actually copies data
 _   the table pointer version will be speedy and allow chaining 
 
 decisions/misc
+_ make join() work with Iterable?
+_   will this collide with the current String[] version?
 _ add options for image.save() (or saveImage?)
 _   add quality=[0,1] for jpeg images
 _   add dpi=[0,n] for for png images
@@ -80,7 +88,7 @@ _ possible addition for 'implementation' variable
 X   http://code.google.com/p/processing/issues/detail?id=281
 _   https://github.com/processing/processing/issues/320
 _ should map() actually constrain to the low and high values?
-_   or have an alternate version that does that? (boolean param at end?)
+_   or have an alternate version that does that? (or boolean param at end?)
 _ decide whether to keep:
 _   public float textWidth(char[] chars, int start, int length)
 _ add version of math functions that use doubles?
@@ -109,14 +117,6 @@ _   nasty errors when loadImage/Font/createFont/etc used outside
 _   decision: add error messages where possible
 _   idea: set frameCount to -1 when setup not run yet?
 _     then set frameCount to 0 when setup() starts?
-_ how much of com.benfry.* should go in? 
-_   Table? StringIntPairs? JSON? MD5? Integrator? ColorIntegrator?
-_   decision: depends on if we can think of a good name
-_ check on DXFWriter, since it used to subclass P3D
-_   at least implement is3D? 
-_ sleep time needs to be set *much* higher for dormant applets
-_   10s should be fine--no need to keep spinning (bad for android too)
-_   just call interrupt() when it's time to get back to work
 _ need to clean up the hints in the reference/source
 _ sort out edge + 1 issue on stroke/fill for rectangles
 _   http://code.google.com/p/processing/issues/detail?id=509
@@ -155,14 +155,6 @@ _ online is there but deprecated
 _   doesn't test net connection to see if 'online'
 _   only tests whether running inside an applet viewer (not relevant)
 _   remove 'online' from the docs
-_ createGraphics() with no renderer param to point to JAVA2D
-_ docs: P2D and P3D are now OpenGL variations
-_ shader support - make decisions, Andres email, etc
-_ setAntiAlias() should instead just use parent.smooth
-_ antialias -> smoothMode(), smoothQuality(), quality()
-_   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
-_ final decision on pg.setQuality(sketchQuality())
-_   should probably be setQuality(parent.sketchQuality())
 _ add reference/docs for urlEncode() and urlDecode()
 _ verify (and document) public access members of PApplet
 _   http://code.google.com/p/processing/issues/detail?id=83
@@ -178,6 +170,9 @@ _ OpenGL offscreen requires primary surface to be OpenGL
 _ explain the new PGL interface
 _ can't really change the smoothing/options on offscreen
 _   is this still true?
+_ decide how disconnectEvent should actually be handled (and name?)
+_   was disconnect always there? 
+_   will need documentation
 
 
 
@@ -352,6 +347,8 @@ _   http://code.google.com/p/processing/issues/detail?id=182
 
 CORE / PShape
 
+_ major refactoring for PShape/PShapeOpenGL
+_   https://github.com/processing/processing/issues/1623
 _ PShape should be cached as well
 _ major surgery to put loadShape() back into PApplet/PGraphics
 _   then have the OpenGL or Java2D versions as cached objects
@@ -479,6 +476,8 @@ _   Updating graphics drivers may prevent the problem
 _ ellipse scaling method isn't great
 _   http://code.google.com/p/processing/issues/detail?id=87
 _ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
+_   https://github.com/processing/processing/issues/90
+_   for begin/endRaw: https://github.com/processing/processing/issues/2235
 _   http://code.google.com/p/processing/issues/detail?id=51
 _   polygon z-order depth sorting with alpha in opengl
 _   complete the implementation of hint() with proper implementation
@@ -530,8 +529,6 @@ _   touchEvent(), gestureEvent()?
 
 LIBRARIES / PDF
 
-_ pdf not rendering unicode with beginRecord()
-_   http://code.google.com/p/processing/issues/detail?id=90
 _ beginRecord() doesn't use current settings of the sketch
 _   sometimes reported as a bug, but probably not a good way to 
 _   consistently carry these over

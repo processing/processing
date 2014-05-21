@@ -161,7 +161,7 @@ public class PVector implements Serializable {
    * @param x the x component of the vector
    * @param y the y component of the vector
    * @param z the z component of the vector
-   * @brief Set the x, y, and z component of the vector
+   * @brief Set the components of the vector
    */
   public void set(float x, float y, float z) {
     this.x = x;
@@ -170,11 +170,8 @@ public class PVector implements Serializable {
   }
 
   /**
-   *
-   * @webref pvector:method
    * @param x the x component of the vector
    * @param y the y component of the vector
-   * @brief Set the x, y components of the vector
    */
   public void set(float x, float y) {
     this.x = x;
@@ -322,7 +319,7 @@ public class PVector implements Serializable {
    * @webref pvector:method
    * @usage web_application
    * @brief Make a new 2D unit vector from an angle
-   * @param angle the angle
+   * @param angle the angle in radians
    * @return the new unit PVector
    */
   static public PVector fromAngle(float angle) {
@@ -880,6 +877,7 @@ public class PVector implements Serializable {
    * @brief Linear interpolate the vector to another vector
    * @param v the vector to lerp to
    * @param amt  The amount of interpolation; some value between 0.0 (old vector) and 1.0 (new vector). 0.1 is very near the new vector. 0.5 is halfway in between.
+   * @see PApplet#lerp(float, float, float)
    */
   public void lerp(PVector v, float amt) {
     x = PApplet.lerp(x,v.x,amt);

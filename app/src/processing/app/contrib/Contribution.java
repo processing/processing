@@ -152,12 +152,22 @@ abstract public class Contribution {
     return false;
   }
 
+
+  /** 
+   * @return a single element list with "Unknown" as the category.
+   */
+  static List<String> defaultCategory() {
+    List<String> outgoing = new ArrayList<String>();
+    outgoing.add("Unknown");
+    return outgoing;
+  }
+  
   
   /**
    * @return the list of categories that this contribution is part of
    *         (e.g. "Typography / Geometry"). "Unknown" if the category null.
    */
-  static public List<String> parseCategories(String categoryStr) {
+  static List<String> parseCategories(String categoryStr) {
     List<String> outgoing = new ArrayList<String>();
     
     if (categoryStr != null) {
@@ -169,7 +179,7 @@ abstract public class Contribution {
       }
     }
     if (outgoing.size() == 0) {
-      outgoing.add("Unknown");
+      return defaultCategory();
     }
     return outgoing;
   }

@@ -25,6 +25,7 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 
@@ -35,11 +36,9 @@ public class EditorStatus extends JPanel {
   Color[] bgcolor;
   Color[] fgcolor;
 
-  static final int NOTICE = 0;
-  static final int ERR    = 1;
-  //static final int PROMPT = 2;
-  //static final int EDIT   = 3;
-  static final int EDIT   = 2;
+  static public final int NOTICE = 0;
+  static public final int ERR    = 1;
+  static public final int EDIT   = 2;
 
   static final int YES    = 1;
   static final int NO     = 2;
@@ -196,6 +195,11 @@ public class EditorStatus extends JPanel {
     Graphics2D g2 = (Graphics2D) g;
     if (Toolkit.highResDisplay()) {
       g2.scale(2, 2);
+      if (Base.isUsableOracleJava()) {
+        // Oracle Java looks better with anti-aliasing turned on
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      }
     } else {
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                           RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
