@@ -714,6 +714,10 @@ public class PShape implements PConstants {
   }
 
 
+  public void fill(long argb) {
+    fill((int)(argb & 0xFFFFFFFF));
+  }
+
   public void fill(int rgb) {
     if (!openShape) {
       PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "fill()");
@@ -829,6 +833,9 @@ public class PShape implements PConstants {
     stroke = false;
   }
 
+  public void stroke(long argb) {
+    stroke((int)(argb & 0xFFFFFFFF));
+  }
 
   public void stroke(int rgb) {
     if (!openShape) {
@@ -917,6 +924,10 @@ public class PShape implements PConstants {
   }
 
 
+  public void tint(long argb) {
+    tint((int)(argb & 0xFFFFFFFF));
+  }
+
   public void tint(int rgb) {
     if (!openShape) {
       PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "tint()");
@@ -993,6 +1004,10 @@ public class PShape implements PConstants {
 
   // Ambient set/update
 
+  public void ambient(long argb) {
+    ambient((int)(argb & 0xFFFFFFFF));
+  }
+
   public void ambient(int rgb) {
     if (!openShape) {
       PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "ambient()");
@@ -1033,6 +1048,10 @@ public class PShape implements PConstants {
 
   // Specular set/update
 
+  public void specular(long argb) {
+    specular((int)(argb & 0xFFFFFFFF));
+  }
+
   public void specular(int rgb) {
     if (!openShape) {
       PGraphics.showWarning(OUTSIDE_BEGIN_END_ERROR, "specular()");
@@ -1069,6 +1088,10 @@ public class PShape implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // Emissive set/update
+
+  public void emissive(long argb) {
+    emissive((int)(argb & 0xFFFFFFFF));
+  }
 
   public void emissive(int rgb) {
     if (!openShape) {
@@ -2175,6 +2198,9 @@ public class PShape implements PConstants {
     this.fill = fill;
   }
 
+  public void setFill(long fill) {
+    setFill((int)(fill & 0xFFFFFFFF));
+  }
 
   public void setFill(int fill) {
     if (openShape) {
@@ -2187,6 +2213,9 @@ public class PShape implements PConstants {
     }
   }
 
+  public void setFill(int index, long fill) {
+    setFill(index, (int)(fill & 0xFFFFFFFF));
+  }
 
   public void setFill(int index, int fill) {
     if (openShape) {
@@ -2225,6 +2254,9 @@ public class PShape implements PConstants {
     this.tint = tint;
   }
 
+  public void setTint(long tint) {
+    setTint((int)(tint & 0xFFFFFFFF));
+  }
 
   public void setTint(int fill) {
     if (openShape) {
@@ -2237,6 +2269,9 @@ public class PShape implements PConstants {
     }
   }
 
+  public void setTint(int index, long tint) {
+    setTint(index, (int)(tint & 0xFFFFFFFF));
+  }
 
   public void setTint(int index, int tint) {
     if (openShape) {
@@ -2272,6 +2307,10 @@ public class PShape implements PConstants {
   }
 
 
+  public void setStroke(long stroke) {
+    setStroke((int)(stroke & 0xFFFFFFFF));
+  }
+
   public void setStroke(int stroke) {
     if (openShape) {
       PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStroke()");
@@ -2283,6 +2322,10 @@ public class PShape implements PConstants {
     }
   }
 
+
+  public void setStroke(int index, long stroke) {
+    setStroke(index, (int)(stroke & 0xFFFFFFFF));
+  }
 
   public void setStroke(int index, int stroke) {
     if (openShape) {
@@ -2384,6 +2427,10 @@ public class PShape implements PConstants {
   }
 
 
+  public void setSpecular(long specular) {
+    setSpecular((int)(specular & 0xFFFFFFFF));
+  }
+
   public void setSpecular(int specular) {
     if (openShape) {
       PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setSpecular()");
@@ -2393,6 +2440,11 @@ public class PShape implements PConstants {
     for  (int i = 0; i < vertices.length; i++) {
       setSpecular(i, specular);
     }
+  }
+
+
+  public void setSpecular(int index, long specular) {
+    setSpecular(index, (int)(specular & 0xFFFFFFFF));
   }
 
 
@@ -2416,6 +2468,10 @@ public class PShape implements PConstants {
   }
 
 
+  public void setEmissive(long emissive) {
+    setEmissive((int)(emissive & 0xFFFFFFFF));
+  }
+
   public void setEmissive(int emissive) {
     if (openShape) {
       PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setEmissive()");
@@ -2427,6 +2483,10 @@ public class PShape implements PConstants {
     }
   }
 
+
+  public void setEmissive(int index, long emissive) {
+    setEmissive(index, (int)(emissive & 0xFFFFFFFF));
+  }
 
   public void setEmissive(int index, int emissive) {
     if (openShape) {
