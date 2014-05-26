@@ -26,6 +26,7 @@ package processing.app;
 import processing.core.*;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 
 import javax.swing.*;
@@ -265,7 +266,6 @@ public class Sketch {
     }
   }
 
-
   boolean renamingCode;
 
   /**
@@ -286,7 +286,7 @@ public class Sketch {
     }
 
     renamingCode = false;
-    editor.status.edit("Name for new file:", "");
+    promptForName("Name for new file:", "");
   }
 
 
@@ -319,16 +319,74 @@ public class Sketch {
       return;
     }
 
-    // ask for new name of file (internal to window)
-    // TODO maybe just popup a text area?
     renamingCode = true;
     String prompt = (currentIndex == 0) ?
       "New name for sketch:" : "New name for file:";
     String oldName = (current.isExtension(mode.getDefaultExtension())) ?
       current.getPrettyName() : current.getFileName();
-    editor.status.edit(prompt, oldName);
+    promptForName(prompt, oldName);
   }
 
+  private JTextField tabNameField;
+
+  void promptForName(String prompt, String oldName) {
+    tabNameField = new JTextField();
+    tabNameField.addKeyListener(new KeyAdapter() {
+      // Forget ESC, the JDialog should handle it.
+
+      // Use keyTyped to catch when the feller is actually
+      // added to the text field. With keyTyped, as opposed to
+      // keyPressed, the keyCode will be zero, even if it's
+      // enter or backspace or whatever, so the keychar should
+      // be used instead. Grr.
+      public void keyTyped(KeyEvent event) {
+        //System.out.println("got event " + event);
+        char ch = event.getKeyChar();
+
+        if ((ch == '_') || (ch == '.')      || // allow.pde and .java 
+            (('A' <= ch) && (ch <= 'Z'))    ||
+	    (('a' <= ch) && (ch <= 'z'))) { 
+	  // These events are allowed straight through.
+        } else if (ch == ' ') {
+          String t = tabNameField.getText();
+          int start = tabNameField.getSelectionStart();
+          int end = tabNameField.getSelectionEnd();
+          tabNameField.setText(t.substring(0, start) + "_" +
+                            t.substring(end));
+          tabNameField.setCaretPosition(start+1);
+          event.consume();
+        } else if ((ch >= '0') && (ch <= '9')) {
+          // getCaretPosition == 0 means that it's the first char
+          // and the field is empty.
+          // getSelectionStart means that it *will be* the first
+          // char, because the selection is about to be replaced
+          // with whatever is typed.
+          if ((tabNameField.getCaretPosition() == 0) ||
+              (tabNameField.getSelectionStart() == 0)) {
+             // number not allowed as first digit
+             //System.out.println("bad number bad");
+             event.consume();
+          }
+        } else {
+          event.consume();
+          //System.out.println("Char = " + ch);
+        }
+        System.out.println("Char = " + ch);
+      }
+    });
+
+    int userReply = JOptionPane.showOptionDialog(editor, new Object[] {
+      prompt, tabNameField
+    }, "Tab name", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+    null, new Object[] {
+       Preferences.PROMPT_OK, Preferences.PROMPT_CANCEL
+    }, Preferences.PROMPT_OK);
+
+    if (userReply == JOptionPane.OK_OPTION) {
+      String answer = tabNameField.getText();
+      nameCode(answer);
+    }
+  }
 
   /**
    * This is called upon return from entering a new file name.
@@ -382,7 +440,7 @@ public class Sketch {
         if (current == code[0]) {  // If this is the main tab, disallow
           Base.showWarning("Problem with rename",
                            "The first tab cannot be a ." + newExtension + " file.\n" +
-                           "(It may be time for your to graduate to a\n" +
+                           "(It may be time for you to graduate to a\n" +
                            "\"real\" programming environment, hotshot.)");
           return;
         }
