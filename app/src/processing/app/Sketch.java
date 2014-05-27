@@ -327,6 +327,7 @@ public class Sketch {
     promptForName(prompt, oldName);
   }
 
+
   private JTextField tabNameField;
 
   void promptForName(String prompt, String oldName) {
@@ -371,7 +372,7 @@ public class Sketch {
           event.consume();
           //System.out.println("Char = " + ch);
         }
-        System.out.println("Char = " + ch);
+        //System.out.println("Char = " + ch);
       }
     });
 
@@ -387,6 +388,7 @@ public class Sketch {
       nameCode(answer);
     }
   }
+
 
   /**
    * This is called upon return from entering a new file name.

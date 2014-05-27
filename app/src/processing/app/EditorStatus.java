@@ -38,12 +38,6 @@ public class EditorStatus extends JPanel {
 
   static public final int NOTICE = 0;
   static public final int ERR    = 1;
-//  static public final int EDIT   = 2;
-//
-//  static final int YES    = 1;
-//  static final int NO     = 2;
-//  static final int CANCEL = 3;
-//  static final int OK     = 4;
 
   static final String NO_MESSAGE = "";
 
@@ -59,15 +53,8 @@ public class EditorStatus extends JPanel {
   Image offscreen;
   int sizeW, sizeH;
 
-//  JButton cancelButton;
-//  JButton okButton;
-//  JTextField editField;
-
-//  int response;
-
   boolean indeterminate;
   Thread thread;
-
 
 
   public EditorStatus(Editor editor) {
@@ -82,13 +69,11 @@ public class EditorStatus extends JPanel {
     bgcolor = new Color[] {
       mode.getColor("status.notice.bgcolor"),
       mode.getColor("status.error.bgcolor"),
-//      mode.getColor("status.edit.bgcolor")
     };
 
     fgcolor = new Color[] {
       mode.getColor("status.notice.fgcolor"),
       mode.getColor("status.error.fgcolor"),
-//      mode.getColor("status.edit.fgcolor")
     };
 
     font = mode.getFont("status.font");
@@ -122,31 +107,6 @@ public class EditorStatus extends JPanel {
   }
 
 
-//  public void edit(String message, String dflt) {
-//    mode = EDIT;
-//    this.message = message;
-//
-//    response = 0;
-//    okButton.setVisible(true);
-//    cancelButton.setVisible(true);
-//    editField.setVisible(true);
-//    editField.setText(dflt);
-//    editField.selectAll();
-//    editField.requestFocusInWindow();
-//
-//    repaint();
-//  }
-//
-//
-//  public void unedit() {
-//    okButton.setVisible(false);
-//    cancelButton.setVisible(false);
-//    editField.setVisible(false);
-//    editor.textarea.requestFocusInWindow();
-//    empty();
-//  }
-
-
   public void startIndeterminate() {
     indeterminate = true;
     thread = new Thread() {
@@ -171,8 +131,6 @@ public class EditorStatus extends JPanel {
 
 
   public void paintComponent(Graphics screen) {
-//    if (okButton == null) setup();
-
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
       // component has been resized
@@ -182,7 +140,6 @@ public class EditorStatus extends JPanel {
     if (offscreen == null) {
       sizeW = size.width;
       sizeH = size.height;
-//      setButtonBounds();
       if (Toolkit.highResDisplay()) {
         offscreen = createImage(sizeW*2, sizeH*2);
       } else {
@@ -221,11 +178,7 @@ public class EditorStatus extends JPanel {
     g.drawString(message, Preferences.GUI_SMALL, (sizeH + ascent) / 2);
 
     if (indeterminate) {
-//      int x = cancelButton.getX();
-//      int y = cancelButton.getY();
-//      int w = cancelButton.getWidth();
-//      int h = cancelButton.getHeight();
-      int x = getWidth()*2 / 3;
+      int x = getWidth()*3 / 5;
       int y = getHeight() / 3;
       int w = getWidth() / 3;
       int h = getHeight() / 3;
@@ -244,161 +197,8 @@ public class EditorStatus extends JPanel {
 
 
   protected void setup() {
-//    if (okButton == null) {
-//      cancelButton = new JButton(Preferences.PROMPT_CANCEL);
-//      okButton = new JButton(Preferences.PROMPT_OK);
-//
-//      cancelButton.addActionListener(new ActionListener() {
-//        public void actionPerformed(ActionEvent e) {
-//          if (mode == EDIT) {
-//            unedit();
-//            //editor.toolbar.clear();
-//          }
-//        }
-//      });
-//
-//      okButton.addActionListener(new ActionListener() {
-//        public void actionPerformed(ActionEvent e) {
-//          // answering to rename/new code question
-//          if (mode == EDIT) {  // this if() isn't (shouldn't be?) necessary
-//            String answer = editField.getText();
-//            editor.getSketch().nameCode(answer);
-//            unedit();
-//          }
-//        }
-//      });
-//
-//      // !@#(* aqua ui #($*(( that turtle-neck wearing #(** (#$@)(
-//      // os9 seems to work if bg of component is set, but x still a bastard
-//      if (Base.isMacOS()) {
-//        //yesButton.setBackground(bgcolor[EDIT]);
-//        //noButton.setBackground(bgcolor[EDIT]);
-//        cancelButton.setBackground(bgcolor[EDIT]);
-//        okButton.setBackground(bgcolor[EDIT]);
-//      }
       setLayout(null);
-//
-//      add(cancelButton);
-//      add(okButton);
-//
-//      cancelButton.setVisible(false);
-//      okButton.setVisible(false);
-//
-//      editField = new JTextField();
-//      // disabling, was not in use
-//      //editField.addActionListener(this);
-//
-//      //if (Base.platform != Base.MACOSX) {
-//      editField.addKeyListener(new KeyAdapter() {
-//
-//          // Grab ESC with keyPressed, because it's not making it to keyTyped
-//          public void keyPressed(KeyEvent event) {
-//            if (event.getKeyChar() == KeyEvent.VK_ESCAPE) {
-//              unedit();
-//              //editor.toolbar.clear();
-//              event.consume();
-//            }
-//          }
-//
-//          // use keyTyped to catch when the feller is actually
-//          // added to the text field. with keyTyped, as opposed to
-//          // keyPressed, the keyCode will be zero, even if it's
-//          // enter or backspace or whatever, so the keychar should
-//          // be used instead. grr.
-//          public void keyTyped(KeyEvent event) {
-//            //System.out.println("got event " + event);
-//            int c = event.getKeyChar();
-//
-//            if (c == KeyEvent.VK_ENTER) {  // accept the input
-//              String answer = editField.getText();
-//              editor.getSketch().nameCode(answer);
-//              unedit();
-//              event.consume();
-//
-//              // easier to test the affirmative case than the negative
-//            } else if ((c == KeyEvent.VK_BACK_SPACE) ||
-//                       (c == KeyEvent.VK_DELETE) ||
-//                       (c == KeyEvent.VK_RIGHT) ||
-//                       (c == KeyEvent.VK_LEFT) ||
-//                       (c == KeyEvent.VK_UP) ||
-//                       (c == KeyEvent.VK_DOWN) ||
-//                       (c == KeyEvent.VK_HOME) ||
-//                       (c == KeyEvent.VK_END) ||
-//                       (c == KeyEvent.VK_SHIFT)) {
-//              // these events are ignored
-//
-//              /*
-//            } else if (c == KeyEvent.VK_ESCAPE) {
-//              unedit();
-//              editor.toolbar.clear();
-//              event.consume();
-//              */
-//
-//            } else if (c == KeyEvent.VK_SPACE) {
-//              String t = editField.getText();
-//              int start = editField.getSelectionStart();
-//              int end = editField.getSelectionEnd();
-//              editField.setText(t.substring(0, start) + "_" +
-//                                t.substring(end));
-//              editField.setCaretPosition(start+1);
-//              event.consume();
-//
-//            } else if ((c == '_') || (c == '.') ||  // allow .pde and .java
-//                       ((c >= 'A') && (c <= 'Z')) ||
-//                       ((c >= 'a') && (c <= 'z'))) {
-//              // these are ok, allow them through
-//
-//            } else if ((c >= '0') && (c <= '9')) {
-//              // getCaretPosition == 0 means that it's the first char
-//              // and the field is empty.
-//              // getSelectionStart means that it *will be* the first
-//              // char, because the selection is about to be replaced
-//              // with whatever is typed.
-//              if ((editField.getCaretPosition() == 0) ||
-//                  (editField.getSelectionStart() == 0)) {
-//                // number not allowed as first digit
-//                //System.out.println("bad number bad");
-//                event.consume();
-//              }
-//            } else {
-//              event.consume();
-//              //System.out.println("code is " + code + "  char = " + c);
-//            }
-//            //System.out.println("code is " + code + "  char = " + c);
-//          }
-//        });
-//      add(editField);
-//      editField.setVisible(false);
-//    }
   }
-
-
-//  protected void setButtonBounds() {
-//    int top = (sizeH - Preferences.BUTTON_HEIGHT) / 2;
-//    int eachButton = Preferences.GUI_SMALL + Preferences.BUTTON_WIDTH;
-//
-//    int cancelLeft = sizeW      - eachButton;
-//    int noLeft     = cancelLeft - eachButton;
-//    int yesLeft    = noLeft     - eachButton;
-//
-//    //yesButton.setLocation(yesLeft, top);
-//    //noButton.setLocation(noLeft, top);
-//    cancelButton.setLocation(cancelLeft, top);
-//    okButton.setLocation(noLeft, top);
-//
-//    //yesButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
-//    //noButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
-//    cancelButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
-//    okButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
-//
-//    // edit field height is awkward, and very different between mac and pc,
-//    // so use at least the preferred height for now.
-//    int editWidth = 2*Preferences.BUTTON_WIDTH;
-//    int editHeight = editField.getPreferredSize().height;
-//    int editTop = (1 + sizeH - editHeight) / 2;  // add 1 for ceil
-//    editField.setBounds(yesLeft - Preferences.BUTTON_WIDTH, editTop,
-//                        editWidth, editHeight);
-//  }
 
 
   public Dimension getPreferredSize() {
@@ -414,20 +214,4 @@ public class EditorStatus extends JPanel {
   public Dimension getMaximumSize() {
     return new Dimension(3000, Preferences.GRID_SIZE);
   }
-
-
-//  public void actionPerformed(ActionEvent e) {
-//    if (e.getSource() == cancelButton) {
-//      if (mode == EDIT) unedit();
-//      //editor.toolbar.clear();
-//
-//    } else if (e.getSource() == okButton) {
-//      // answering to rename/new code question
-//      if (mode == EDIT) {  // this if() isn't (shouldn't be?) necessary
-//        String answer = editField.getText();
-//        editor.getSketch().nameCode(answer);
-//        unedit();
-//      }
-//    }
-//  }
 }
