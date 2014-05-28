@@ -1,3 +1,47 @@
+PROCESSING 2.2.1 (REV 0227) - 19 May 2014
+
+A handful of bug fixes, the most prominent rolls back a change that broke
+PDE X and other Modes and Tools. 
+
++ Bring back setIcon(Frame) for PDE X and others
+  https://github.com/processing/processing-experimental/issues/64
+
++ Add additional code for crashing when the Mode is changed or new editor
+  windows opened.
+
++ Use mouseReleased() instead of mousePressed() in the color selector, 
+  otherwise it registers the release as a click in the color window
+  https://github.com/processing/processing/issues/2514
+
++ Missing 'version' in contribution properties file causes NullPointerException
+  https://github.com/processing/processing/issues/2517
+
++ A handful of fixes to Auto Format
+  https://github.com/processing/processing/pull/2271
+
++ Command line tools not working on OS X due to AppleDouble file boogers.
+  https://github.com/processing/processing/issues/2520
+
++ Make "Archive Sketch" Tool force a .zip file extension
+  https://github.com/processing/processing/issues/2526
+
++ Event handling modifications in video and serial libraries w/ Python Mode
+  https://github.com/processing/processing/pull/2527
+  https://github.com/processing/processing/pull/2528
+  https://github.com/processing/processing/pull/2529
+
++ Permit mouse PRESS to set mouseX/mouseY
+  https://github.com/processing/processing/pull/2509
+
++ Fix for video: the loop() method was broken in the last release.
+  https://github.com/processing/processing/issues/2524
+
++ Updated reference files included in the download.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.2 (REV 0226) - 12 May 2014
 
 Major changes to, and improvements upon, how "Export to Application" works.

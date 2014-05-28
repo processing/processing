@@ -24,6 +24,7 @@ package processing.app;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
@@ -152,12 +153,12 @@ public class Toolkit {
   static ArrayList<Image> iconImages;
 
   
-  // Removed in favor of Window being the base object, so that dialogs can   
-  // be supported as well. If this breaks tools/modes, we can bring it back,
-  // but it was essentially an undocumented feature.
-//  static public void setIcon(Frame frame) {
-//    setIcon(frame);
-//  }
+  // Deprecated version of the function, but can't get rid of it without 
+  // breaking tools and modes (they'd only require a recompile, but they would 
+  // no longer be backwards compatible. 
+  static public void setIcon(Frame frame) {
+    setIcon((Window) frame);
+  }
 
   
   /**
@@ -167,10 +168,6 @@ public class Toolkit {
    */
   static public void setIcon(Window window) {
     if (!Base.isMacOS()) {
-//    // too low-res, prepping for nicer icons in 2.0 timeframe
-//    Image image = awtToolkit.createImage(PApplet.ICON_IMAGE);
-//    frame.setIconImage(image);
-
       if (iconImages == null) {
         iconImages = new ArrayList<Image>();
         final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };

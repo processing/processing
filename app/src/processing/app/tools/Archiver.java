@@ -102,6 +102,11 @@ public class Archiver implements Tool {
   public void fileSelected(File newbie) {
     if (newbie != null) {
       try {
+        // Force a .zip extension
+        // https://github.com/processing/processing/issues/2526
+        if (!newbie.getName().toLowerCase().endsWith(".zip")) {
+          newbie = new File(newbie.getAbsolutePath() + ".zip");
+        }
         //System.out.println(newbie);
         FileOutputStream zipOutputFile = new FileOutputStream(newbie);
         ZipOutputStream zos = new ZipOutputStream(zipOutputFile);

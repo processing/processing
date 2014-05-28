@@ -1,7 +1,4 @@
-0227 pde
-X use mouseReleased() instead of mousePressed() in color selector
-X   otherwise it registers the release as a click in the color window
-X   https://github.com/processing/processing/issues/2514
+0228 pde
 
 
 medium
@@ -26,8 +23,6 @@ _ add font fixes to the rest of the API
 _   https://github.com/processing/processing/commit/eaff673d173b2d27f276cf5c59e3abf6c0fab86b
 _   g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
 _                       RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-_ dataPath() not working when app is not run from app dir on Linux
-_   https://github.com/processing/processing/issues/2195
 _ should default to the local Java on Windows and Linux
 _   have export apps default to the local JRE
 _   Linux is probably using the system JRE if available

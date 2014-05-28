@@ -1,7 +1,11 @@
-0227 core
+0228 core
 
 
 high
+_ pull for image resize and alpha issues
+_   https://github.com/processing/processing/pull/2324
+_ dataPath() not working when app is not run from app dir on Linux
+_   https://github.com/processing/processing/issues/2195
 _ "Buffers have not been created" error for sketches w/o draw()
 _   https://github.com/processing/processing/issues/2469
 _   could not reproduce
