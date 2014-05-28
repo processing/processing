@@ -897,7 +897,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     sketchMenu.addSeparator();
 
-    sketchMenu.addMenuListener(new MenuListener() {
+    final Editor editorName = this;
+    
+    sketchMenu.addMenuListener(new MenuListener() { // Menu Listener so that
+      // the Open Sketches sub-menu is populated 
+      // only when the Sketch menu is opened
 
       java.util.List<JMenuItem> menuList = new java.util.ArrayList<JMenuItem>();
 
@@ -908,11 +912,19 @@ public abstract class Editor extends JFrame implements RunnerListener {
         java.util.List<Editor> ed = base.getEditors();
         JMenuItem item;
         for (final Editor editor2 : ed) {
-          item = new JMenuItem(editor2.getSketch().getName());
+          if (editorName.getSketch().getName().trim().contains(editor2.getSketch().getName().trim()))
+          {
+            item = new JCheckBoxMenuItem(editor2.getSketch().getName());
+            item.setSelected(true);
+          }
+          else 
+          {
+            item = new JMenuItem(editor2.getSketch().getName());
+          }
           item.setText(editor2.getSketch().getName() + " ("
             + editor2.getMode().getTitle() + ")");
-    
-          item.addActionListener(new ActionListener() {
+
+          item.addActionListener(new ActionListener() { // Action listener to bring the appropriate sketch in front
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -921,7 +933,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
               editor2.toFront();
             }
           });
-
           openSketchesSubmenu.add(item);
           menuList.add(item);
         }
@@ -946,7 +957,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  //TODO: Make current sketch at the top of the list / tick mark it 
   abstract public void handleImportLibrary(String jarPath);
 
 
