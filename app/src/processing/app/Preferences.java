@@ -28,10 +28,8 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.border.*;
+import javax.swing.event.*;
 import javax.swing.text.*;
 
 import processing.core.*;
@@ -432,14 +430,6 @@ public class Preferences {
 		}
 	});
 
-    presentColorHex.addActionListener(new ActionListener() {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			c.hide();
-		}
-	});
-    
     colorBox.add(presentColorHex);
         
     pain.add(colorBox);
@@ -1501,6 +1491,8 @@ public class Preferences {
       consoleSizeField.setSelectedItem(getInteger("console.font.size"));
     }
     
+    setColor("run.present.bgcolor", presentColor.getBackground());
+    
     setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
 
     if (autoAssociateBox != null) {
@@ -1559,6 +1551,9 @@ public class Preferences {
     fontSizeField.setSelectedItem(getInteger("editor.font.size"));
     consoleSizeField.setSelectedItem(getInteger("console.font.size"));
 
+    presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
+    presentColorHex.setText(Preferences.get("run.present.bgcolor").substring(1));
+    
     memoryOverrideBox.
       setSelected(getBoolean("run.options.memory")); //$NON-NLS-1$
     memoryField.
