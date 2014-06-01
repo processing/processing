@@ -30,6 +30,8 @@ import java.util.HashMap;
 
 public class Utils {
 
+  public ArrayList<Utils.OfsSet> offsetMatch;
+  String word1, word2;
   public static String reverse(String s) {
     char w[] = s.toCharArray();
     for (int i = 0; i < w.length / 2; i++) {
@@ -39,8 +41,19 @@ public class Utils {
     }
     return new String(w);
   }
+  
+  public void getJavaOffForPdeOff(int start, int length){
+    for (int i = 0; i < offsetMatch.size(); i++) {
+      System.out.print(offsetMatch.get(i).pdeOffset + " <-> " + offsetMatch.get(i).javaOffset);
+      System.out.println(", " + word1.charAt(offsetMatch.get(i).pdeOffset) + " <-> "
+          + word2.charAt(offsetMatch.get(i).javaOffset));
+    }
+    System.out.println("Length " + offsetMatch.size());
+  }
 
   public int minDistance(String word1, String word2) {
+    this.word1 = word1;
+    this.word2 = word2;
 //    word1 = reverse(word1);
 //    word2 = reverse(word2);
     int len1 = word1.length();
@@ -94,20 +107,21 @@ public class Utils {
 //    int pdeCodeMap[] = new int[maxLen], javaCodeMap[] = new int[maxLen];
 //    System.out.println("Edit distance1: " + dp[len1][len2]);
     ArrayList<OfsSet> alist = new ArrayList<Utils.OfsSet>();
+    offsetMatch = alist;
     minDistInGrid(dp, len1, len2, 0, 0, word1.toCharArray(),
                   word2.toCharArray(), alist);
-    System.out.println("PDE-to-Java");
+//    System.out.println("PDE-to-Java");
 //    for (int i = 0; i < maxLen; i++) {
 //      System.out.print(pdeCodeMap[i] + " <-> " + javaCodeMap[i]);
 //      System.out.println(", " + word1.charAt(pdeCodeMap[i]) + " <-> "
 //          + word2.charAt(javaCodeMap[i]));
 //    }
-    for (int i = 0; i < alist.size(); i++) {
-      System.out.print(alist.get(i).pdeOffset + " <-> " + alist.get(i).javaOffset);
-      System.out.println(", " + word1.charAt(alist.get(i).pdeOffset) + " <-> "
-          + word2.charAt(alist.get(i).javaOffset));
-    }
-    System.out.println("Length " + alist.size());
+//    for (int i = 0; i < alist.size(); i++) {
+//      System.out.print(alist.get(i).pdeOffset + " <-> " + alist.get(i).javaOffset);
+//      System.out.println(", " + word1.charAt(alist.get(i).pdeOffset) + " <-> "
+//          + word2.charAt(alist.get(i).javaOffset));
+//    }
+//    System.out.println("Length " + alist.size());
     return dp[len1][len2];
   }
 
@@ -141,14 +155,14 @@ public class Utils {
     if (i < s1.length && j < s2.length) {
 //      pdeCodeMap[k] = i;
 //      javaCodeMap[k] = j;
-      System.out.print(s1[i] + " " + i + " <-> " + j + " " + s2[j]);
+      //System.out.print(s1[i] + " " + i + " <-> " + j + " " + s2[j]);
       set.add(new OfsSet(i, j));
 //      if (s1[i] != s2[j])
 //        System.out.println("--");
     }
-    System.out.println();
+    //System.out.println();
     if (i == fi && j == fj) {
-      System.out.println("Reached end.");
+      //System.out.println("Reached end.");
     } else {
       int a = Integer.MAX_VALUE, b = a, c = a;
       if (i > 0)
@@ -178,13 +192,27 @@ public class Utils {
       javaOffset = java;
     }
   }
+  
+//  public class OffsetMatch{
+//    public final ArrayList<Integer> pdeOffset, javaOffset;
+//    
+//    public OffsetMatch(){
+//      pdeOffset = new ArrayList<Integer>();
+//      javaOffset = new ArrayList<Integer>();
+//    }
+//  }
 
   public static void main(String[] args) {
 //    minDistance("c = #qwerty;", "c = 0xffqwerty;");
-    new Utils().minDistance("color g = #qwerty;", "int g = 0xffqwerty;");
-//    minDistance("int a = int(4.5);", "int a = PApplet.parseInt(4.5f);");
+    Utils a = new Utils();
+    
+    a.minDistance("int a = int(can); int ball;", "int a = PApplet.parseInt(can); int ball;");
+    a.getJavaOffForPdeOff(10, 20);
 //    minDistance("static void main(){;", "public static void main(){;");
 //      minDistance("#bb00aa", "0xffbb00aa");
+    //a.minDistance("color g = #qwerty;", "int g = 0xffqwerty;");
+    a.minDistance("color abc = #qwerty;", "int abc = 0xffqwerty;");
+    a.getJavaOffForPdeOff(10, 20);
 //    distance("c = #bb00aa;", "c = 0xffbb00aa;");
   }
 }
