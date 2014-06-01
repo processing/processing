@@ -42,13 +42,64 @@ public class Utils {
     return new String(w);
   }
   
-  public void getJavaOffForPdeOff(int start, int length){
+  public void getPdeOffForJavaOff(int start, int length){
+    System.out.println("PDE <-> Java" );
     for (int i = 0; i < offsetMatch.size(); i++) {
       System.out.print(offsetMatch.get(i).pdeOffset + " <-> " + offsetMatch.get(i).javaOffset);
       System.out.println(", " + word1.charAt(offsetMatch.get(i).pdeOffset) + " <-> "
           + word2.charAt(offsetMatch.get(i).javaOffset));
     }
     System.out.println("Length " + offsetMatch.size());
+    System.out.println(start + " java start off, pde start off "
+        + getPdeOffForJavaOff(start));
+    System.out.println((start + length - 1) + " java end off, pde end off "
+        + getPdeOffForJavaOff(start + length - 1));
+  }
+  
+  public int getPdeOffForJavaOff(int javaOff){
+    for (int i = offsetMatch.size() - 1; i >= 0;i--) {
+      if(offsetMatch.get(i).javaOffset < javaOff){
+        continue;
+      }
+      else
+      if(offsetMatch.get(i).javaOffset == javaOff){
+//        int j = i;
+        while(offsetMatch.get(--i).javaOffset == javaOff){
+          System.out.println("MP " + offsetMatch.get(i).javaOffset + " "
+              + offsetMatch.get(i).pdeOffset); 
+        }
+        int pdeOff = offsetMatch.get(++i).pdeOffset;
+        while(offsetMatch.get(--i).pdeOffset == pdeOff);
+        int j = i + 1;
+        if (j > -1 && j < offsetMatch.size())
+          return offsetMatch.get(j).pdeOffset;      
+      }
+      
+    }
+    return -1;
+  }
+  
+  public int getJavaOffForPdeOff(int pdeOff){
+    for (int i = offsetMatch.size() - 1; i >= 0;i--) {
+      if(offsetMatch.get(i).pdeOffset < pdeOff){
+        continue;
+      }
+      else
+      if(offsetMatch.get(i).pdeOffset == pdeOff){
+//        int j = i;
+        while(offsetMatch.get(--i).pdeOffset == pdeOff){
+//          System.out.println("MP " + offsetMatch.get(i).javaOffset + " "
+//              + offsetMatch.get(i).pdeOffset); 
+        }
+        int javaOff = offsetMatch.get(++i).javaOffset;
+        while(offsetMatch.get(--i).javaOffset == javaOff);
+        int j = i + 1;
+        if (j > -1 && j < offsetMatch.size())
+          return offsetMatch.get(j).javaOffset;
+      }
+      
+    }
+    return -1;
   }
 
   public int minDistance(String word1, String word2) {
@@ -207,12 +258,13 @@ public class Utils {
     Utils a = new Utils();
     
     a.minDistance("int a = int(can); int ball;", "int a = PApplet.parseInt(can); int ball;");
-    a.getJavaOffForPdeOff(10, 20);
+    a.getPdeOffForJavaOff(25, 3);
 //    minDistance("static void main(){;", "public static void main(){;");
 //      minDistance("#bb00aa", "0xffbb00aa");
     //a.minDistance("color g = #qwerty;", "int g = 0xffqwerty;");
+    System.out.println("--");
     a.minDistance("color abc = #qwerty;", "int abc = 0xffqwerty;");
-    a.getJavaOffForPdeOff(10, 20);
+    a.getPdeOffForJavaOff(4, 3);
 //    distance("c = #bb00aa;", "c = 0xffbb00aa;");
   }
 }
