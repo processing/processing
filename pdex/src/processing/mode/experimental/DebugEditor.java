@@ -48,6 +48,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableModel;
 import javax.swing.text.Document;
@@ -921,7 +922,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             vi.setTitle(getSketch().getName());
         }
         //  if file location has changed, update autosaver
-        autosaver.reloadAutosaveDir();
+//        autosaver.reloadAutosaveDir();
         return saved;
     }
     
@@ -1071,6 +1072,83 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         return ta;
     }
 
+    /**
+     * Grab current contents of the sketch window, advance the console, stop any
+     * other running sketches, auto-save the user's code... not in that order.
+     */
+    @Override
+    public void prepareRun() {
+        super.prepareRun();
+        try {
+            if (sketch.isUntitled()) {
+                if (handleSave(true))
+                    statusTimedNotice("Saved. Running...", 5);
+                else
+                    statusTimedNotice("Save Canceled. Running anyway...", 5);
+            }
+            else if (sketch.isModified())// TODO: Fix ugly UI
+                                         // TODO: Add to preferences
+            {
+                Object[] options = { "Save", "Continue Without Saving" };
+                int op = JOptionPane
+                        .showOptionDialog(
+                                new Frame(),
+                                "There are unsaved changes in your sketch. Save before proceeding?",
+                                this.getSketch().getName(), JOptionPane.YES_NO_OPTION,
+                                JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+                if (op == JOptionPane.YES_OPTION) {
+                    if (handleSave(true))
+                        statusTimedNotice("Saved. Running...", 5);
+                }
+                else
+                    if (op == JOptionPane.NO_OPTION)
+                        statusTimedNotice("Not saved. Running...", 5);
+            }
+        } catch (Exception e) {
+            // show the error as a message in the window
+            statusError(e);
+        }
+    }
+
+    /**
+     * Shows a notice message in the editor status bar for a certain duration of
+     * time.
+     * 
+     * @param msg
+     * @param secs
+     */
+    public void statusTimedNotice(final String msg, final int secs) {
+//        EventQueue.invokeLater(new Runnable() {
+//            
+//            @Override
+//            public void run() {
+//                statusNotice(msg);
+//                try {
+//                    Thread.sleep(secs * 1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                statusEmpty();
+//                
+//            }
+//        });
+        SwingWorker s = new SwingWorker<Void, Void>() {
+
+            @Override
+            protected Void doInBackground() throws Exception {
+              statusNotice(msg);
+              try {
+                  Thread.sleep(secs * 1000);
+              } catch (InterruptedException e) {
+                  e.printStackTrace();
+              }
+              statusEmpty();
+                return null;
+            }
+        };
+        s.execute();
+    }
+    
     /**
      * Access variable inspector window.
      *
