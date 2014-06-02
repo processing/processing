@@ -33,44 +33,57 @@ public class OffsetMatcher {
   public ArrayList<OffsetMatcher.OffsetPair> offsetMatch;
 
   String word1, word2;
+  
+  boolean matchingNeeded = false;
 
   public OffsetMatcher(String pdeCode, String javaCode) {
     this.word1 = pdeCode;
     this.word2 = javaCode;
-    minDistance();
-    log("PDE <-> Java");
-    for (int i = 0; i < offsetMatch.size(); i++) {
-      log(offsetMatch.get(i).pdeOffset + " <-> "
-          + offsetMatch.get(i).javaOffset +
-          ", " + word1.charAt(offsetMatch.get(i).pdeOffset)
-          + " <-> " + word2.charAt(offsetMatch.get(i).javaOffset));
+    if(word1.trim().equals(word2.trim())){ //TODO: trim() needed here?
+      matchingNeeded = false;
+      offsetMatch = new ArrayList<OffsetMatcher.OffsetPair>();
+      log("Offset Matching not needed");
     }
-    log("Length " + offsetMatch.size());
-  }
-
-  public void getPdeOffForJavaOff(int start, int length) {
+    else 
+    {
+      matchingNeeded = true;
+      minDistance();
+    }
     
-    log(start + " java start off, pde start off "
-        + getPdeOffForJavaOff(start));
-    log((start + length - 1) + " java end off, pde end off "
-        + getPdeOffForJavaOff(start + length - 1));
+//    log("PDE <-> Java");
+    for (int i = 0; i < offsetMatch.size(); i++) {
+//      log(offsetMatch.get(i).pdeOffset + " <-> "
+//          + offsetMatch.get(i).javaOffset +
+//          ", " + word1.charAt(offsetMatch.get(i).pdeOffset)
+//          + " <-> " + word2.charAt(offsetMatch.get(i).javaOffset));
+    }
+//    log("Length " + offsetMatch.size());
   }
 
-  public void getJavaOffForPdeOff(int start, int length) {
-//    System.out.println("PDE <-> Java" );
-//    for (int i = 0; i < offsetMatch.size(); i++) {
-//      System.out.print(offsetMatch.get(i).pdeOffset + " <-> " + offsetMatch.get(i).javaOffset);
-//      System.out.println(", " + word1.charAt(offsetMatch.get(i).pdeOffset) + " <-> "
-//          + word2.charAt(offsetMatch.get(i).javaOffset));
-//    }
-//    System.out.println("Length " + offsetMatch.size());
+  public int getPdeOffForJavaOff(int start, int length) {
+    if(!matchingNeeded) return start;
+    int ans = getPdeOffForJavaOff(start), end = getPdeOffForJavaOff(start + length - 1); 
+    log(start + " java start off, pde start off "
+        + ans);
+    log((start + length - 1) + " java end off, pde end off "
+        + end);
+    log("J: " + word2.substring(start, start + length) + "\nP: "
+        + word1.substring(ans, end + 1));
+    return ans;
+  }
+
+  public int getJavaOffForPdeOff(int start, int length) {
+    if(!matchingNeeded) return start;
+    int ans = getJavaOffForPdeOff(start); 
     log(start + " pde start off, java start off "
         + getJavaOffForPdeOff(start));
     log((start + length - 1) + " pde end off, java end off "
         + getJavaOffForPdeOff(start + length - 1));
+    return ans;
   }
 
   public int getPdeOffForJavaOff(int javaOff) {
+    if(!matchingNeeded) return javaOff;
     for (int i = offsetMatch.size() - 1; i >= 0; i--) {
       if (offsetMatch.get(i).javaOffset < javaOff) {
         continue;
@@ -93,6 +106,7 @@ public class OffsetMatcher {
   }
 
   public int getJavaOffForPdeOff(int pdeOff) {
+    if(!matchingNeeded) return pdeOff;
     for (int i = offsetMatch.size() - 1; i >= 0; i--) {
       if (offsetMatch.get(i).pdeOffset < pdeOff) {
         continue;
@@ -114,6 +128,13 @@ public class OffsetMatcher {
     return -1;
   }
 
+  /**
+   * Finds 'distance' between two Strings.
+   * See Edit Distance Problem
+   * https://secweb.cs.odu.edu/~zeil/cs361/web/website/Lectures/styles/pages/editdistance.html
+   * http://www.stanford.edu/class/cs124/lec/med.pdf 
+   * 
+   */
   private int minDistance() {
 
 //    word1 = reverse(word1);
@@ -159,31 +180,10 @@ public class OffsetMatcher {
       }
     }
 
-//    for (int i = 0; i < dp.length; i++) {
-//      for (int j = 0; j < dp[0].length; j++) {
-//        System.out.print(dp[i][j] + " ");
-//      }
-//      System.out.println();
-//    }
-//    int maxLen = Math.max(len1, len2)+2;
-//    int pdeCodeMap[] = new int[maxLen], javaCodeMap[] = new int[maxLen];
-//    System.out.println("Edit distance1: " + dp[len1][len2]);
     ArrayList<OffsetPair> alist = new ArrayList<OffsetMatcher.OffsetPair>();
     offsetMatch = alist;
     minDistInGrid(dp, len1, len2, 0, 0, word1.toCharArray(),
                   word2.toCharArray(), alist);
-//    System.out.println("PDE-to-Java");
-//    for (int i = 0; i < maxLen; i++) {
-//      System.out.print(pdeCodeMap[i] + " <-> " + javaCodeMap[i]);
-//      System.out.println(", " + word1.charAt(pdeCodeMap[i]) + " <-> "
-//          + word2.charAt(javaCodeMap[i]));
-//    }
-//    for (int i = 0; i < alist.size(); i++) {
-//      System.out.print(alist.get(i).pdeOffset + " <-> " + alist.get(i).javaOffset);
-//      System.out.println(", " + word1.charAt(alist.get(i).pdeOffset) + " <-> "
-//          + word2.charAt(alist.get(i).javaOffset));
-//    }
-//    System.out.println("Length " + alist.size());
     return dp[len1][len2];
   }
 

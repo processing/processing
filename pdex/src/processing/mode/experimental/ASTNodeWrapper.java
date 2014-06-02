@@ -575,6 +575,20 @@ public class ASTNodeWrapper {
         return false;
       }
       
+      OffsetMatcher ofm = new OffsetMatcher(pdeLine, javaLine);
+      int highlightStart = ofm.getPdeOffForJavaOff(nodeName.getStartPosition()
+                                  - lineElement.getStartOffset(),
+                              nodeName.getLength());
+      if (highlightStart == -1) {
+        logE("Logical error in highLightNode() during offset matching. " +
+        		"Please file a bug report.");
+        return false;
+      }
+      int lso = astGenerator.editor.ta.getLineStartOffset(pdeOffs[1]);
+      highlightStart += lso;
+      astGenerator.editor.setSelection(highlightStart, highlightStart
+          + nodeName.getLength());
+      /*
       // First find the name in the java line, and marks its index
       Pattern toFind = Pattern.compile("\\b" + nodeName.toString() + "\\b");
       Matcher matcher = toFind.matcher(javaLine);
@@ -603,6 +617,7 @@ public class ASTNodeWrapper {
       int lso = astGenerator.editor.ta.getLineStartOffset(pdeOffs[1]);
       astGenerator.editor.setSelection(lso + index - lookingFor.length(), lso
           + index);
+      */
       return true;
     } catch (BadLocationException e) {
       logE("BLE in highLightNode() for " + nodeName);
