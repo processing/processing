@@ -51,7 +51,7 @@ public class AutoFormat implements Formatter {
   /** The number of spaces in one indent. Constant. */
   private int indentValue;
 
-  /** Set when the end of the chars array is reached */
+  /** Set when the end of the chars array is reached. */
   private boolean EOF;
 
   private boolean if_flg;
@@ -67,6 +67,12 @@ public class AutoFormat implements Formatter {
   private int[][] s_ind;
   private int if_lev;
 
+  /** Is this statement (or whatever) unfinished? */
+  private boolean inStatementFlag;
+
+  /** Did the previous line overrun? */
+  private boolean continuationFlag;
+
   /** Number of curly brackets entered and not exited. */
   private int curlyLvl;
 
@@ -81,9 +87,7 @@ public class AutoFormat implements Formatter {
   /** The number of times to indent at a given point */
   private int tabs;
 
-  /**
-   * The last non-space seen by nextChar()
-   */
+  /** The last non-space seen by nextChar(). */
   private char lastNonWhitespace = 0;
 
   private final Stack<Boolean> castFlags = new Stack<Boolean>();
@@ -141,16 +145,15 @@ public class AutoFormat implements Formatter {
   private void writeIndentedLine() {
     if (buf.length() == 0) {
       if (s_flag) {
-        s_flag = indentFlag = elseFlag = false;
+        s_flag = elseFlag = false;
       }
       return;
     }
     if (s_flag) {
-      boolean shouldIndent = (buf.charAt(0) != '{');
-      if (shouldIndent) tabs++;
+      if (continuationFlag) tabs++;
       printIndentation();
       s_flag = false;
-      if (shouldIndent) tabs--;
+      if (continuationFlag) tabs--;
     }
     if (elseFlag) {
       if (lastNonSpaceChar() == '}') {
@@ -355,7 +358,7 @@ public class AutoFormat implements Formatter {
     int forParenthLevel = 0;
     conditionalLevel = parenLevel = curlyLvl = if_lev = level = 0;
     tabs = 0;
-    jdoc_flag = false;
+    jdoc_flag = continuationFlag = inStatementFlag = false;
     char cc;
 
     int[] s_level = new int[10];
@@ -376,6 +379,7 @@ public class AutoFormat implements Formatter {
       char c = nextChar();
       switch (c) {
       default:
+        inStatementFlag = true;
         buf.append(c);
         break;
 
@@ -425,10 +429,12 @@ public class AutoFormat implements Formatter {
         if (elseFlag) {
           p_flg[level]++;
           tabs++;
-	}
+        }
+	continuationFlag = inStatementFlag;
         break;
 
       case '{':
+        inStatementFlag = false;
         elseFlag = lookup("else");
         if (elseFlag) gotElse();
 
@@ -465,7 +471,8 @@ public class AutoFormat implements Formatter {
         break;
 
       case '}':
-        curlyLvl--;
+        inStatementFlag = false;
+	curlyLvl--;
         if (curlyLvl < 0) {
           curlyLvl = 0;
           buf.append(c);
@@ -507,6 +514,7 @@ public class AutoFormat implements Formatter {
 
       case '"':
       case '\'':
+        inStatementFlag = true;
         buf.append(c);
         cc = nextChar();
         while (!EOF && cc != c) {
@@ -537,6 +545,7 @@ public class AutoFormat implements Formatter {
           advanceToNonSpace();
           break;
         }
+        inStatementFlag = false;
         buf.append(c);
         writeIndentedLine();
         if (p_flg[level] > 0 && ind[level] == 0) {
@@ -628,14 +637,11 @@ public class AutoFormat implements Formatter {
 
       case ')':
         final boolean isCast = castFlags.isEmpty() ? false : castFlags.pop();
-
         parenLevel--;
 	
         // If we're further back than the start of a for loop, we've
         // left it.
-        if (forFlag && forParenthLevel > parenLevel) {
-          forFlag = false;
-        }
+        if (forFlag && forParenthLevel > parenLevel) forFlag = false;
 
         if (parenLevel < 0) parenLevel = 0;
 
@@ -643,8 +649,7 @@ public class AutoFormat implements Formatter {
         writeIndentedLine();
         if (readForNewLine()) {
           chars[pos--] = '\n';
-          if (parenLevel != 0) {
-          } else if (tabs > 0 && !isCast) {
+          if (parenLevel == 0 && tabs > 0 && !isCast) {
             p_flg[level]++;
             tabs++;
             ind[level] = 0;
@@ -670,11 +675,9 @@ public class AutoFormat implements Formatter {
         // isFor says "Is it the start of a for?". If it is, we set forFlag and
         // forParenthLevel. If it is not parenth_lvl was incremented above and
         // that's it.
-        if (isFor) {
-	  if (!forFlag) {
-            forParenthLevel = parenLevel;
-            forFlag = true;
-          }
+        if (isFor && !forFlag) {
+          forParenthLevel = parenLevel;
+          forFlag = true;
         } else if (isIf) {
           writeIndentedLine();
           s_tabs[curlyLvl][if_lev] = tabs;
@@ -691,7 +694,8 @@ public class AutoFormat implements Formatter {
         .equals(source.replaceAll("[\\s\\*/]",""))) {
       // Double-check - this thing's so buggy it might be best to have one.
       throw new RuntimeException("The autoformatter did something funny. Please" +
-      "copy and paste your sketch into a new issue on GitHub.");
+      "copy and paste your sketch into a new issue on GitHub. \n" + 
+      "https://github.com/processing/processing/issues/new");
     }
     return formatted.equals(cleanText) ? source : formatted;
   }
