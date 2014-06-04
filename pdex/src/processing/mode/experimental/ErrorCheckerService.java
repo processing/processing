@@ -36,11 +36,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.AbstractDocument;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -137,7 +135,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Compilation Unit for current sketch
    */
-  protected CompilationUnit cu;
+  protected CompilationUnit cu, lastCorrectCu;
 
   /**
    * If true, compilation checker will be reloaded with updated classpath
@@ -537,7 +535,10 @@ public class ErrorCheckerService implements Runnable{
       if (problems.length == 0) {
         syntaxErrors.set(false);
         containsErrors.set(false);
+        lastCorrectCu = cu;
       } else {
+        CompilationUnit cuTemp = null;
+        lastCorrectCu = cuTemp;
         syntaxErrors.set(true);
         containsErrors.set(true);
       }
@@ -548,7 +549,8 @@ public class ErrorCheckerService implements Runnable{
   
   protected void compileCheck() {
     
-    // CU needs to be updated coz before compileCheck xqpreprocessor is run on the source code which makes some further changes
+    // CU needs to be updated coz before compileCheck xqpreprocessor is run on 
+    // the source code which makes some further changes
     //TODO Check if this breaks things 
     
     parser.setSource(sourceCode.toCharArray());
@@ -565,6 +567,7 @@ public class ErrorCheckerService implements Runnable{
       cu = (CompilationUnit) parser.createAST(null);
     else {
       synchronized (cu) {
+        if (!hasSyntaxErrors())
         cu = (CompilationUnit) parser.createAST(null);
       }
     }

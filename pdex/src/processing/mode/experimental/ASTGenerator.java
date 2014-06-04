@@ -240,7 +240,7 @@ public class ASTGenerator {
   /**
    * Toggle AST View window
    */
-  public static final boolean SHOWAST = !true;
+  public static final boolean SHOWAST = true;
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
@@ -794,6 +794,13 @@ public class ASTGenerator {
   
   private AtomicBoolean predictionOngoing;
   
+  /**
+   * The main function that calculates possible code completion candidates
+   *  
+   * @param word
+   * @param line
+   * @param lineStartNonWSOffset
+   */
   public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
     if(predictionOngoing.get()) return;
         
@@ -890,11 +897,14 @@ public class ASTGenerator {
           MethodInvocation mi = (MethodInvocation)testnode;
           System.out.println(mi.getName() + "," + mi.getExpression() + "," + mi.typeArguments().size());
         }
+        
+        // find nearest ASTNode
         nearestNode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
             .get(0));
-        if (nearestNode == null)
-          //Make sure nearestNode is not NULL if couldn't find a closeset node
+        if (nearestNode == null) {
+          // Make sure nearestNode is not NULL if couldn't find a closeset node
           nearestNode = (ASTNode) compilationUnit.types().get(0);
+        }
         logE(lineNumber + " Nearest ASTNode to PRED "
             + getNodeAsString(nearestNode));
 
