@@ -127,13 +127,15 @@ public class ExperimentalMode extends JavaMode {
   }
   
   volatile public static boolean errorCheckEnabled = true, warningsEnabled = true,
-      codeCompletionsEnabled = true, debugOutputEnabled = false, errorLogsEnabled = false;
+      codeCompletionsEnabled = true, debugOutputEnabled = false, errorLogsEnabled = false,
+      untitledAutoSaveEnabled = false, autoSaveEnabled = true;
   public static int autoSaveInterval = 3; //in minutes
 
   public static final String prefErrorCheck = "pdex.errorCheckEnabled",
       prefWarnings = "pdex.warningsEnabled",
       prefCodeCompletionEnabled = "pdex.ccEnabled",
-      prefDebugOP = "pdex.dbgOutput", prefErrorLogs = "pdex.writeErrorLogs", prefAutoSaveInterval = "pdex.autoSaveInterval";
+      prefDebugOP = "pdex.dbgOutput", prefErrorLogs = "pdex.writeErrorLogs", prefAutoSaveInterval = "pdex.autoSaveInterval",
+      prefUntitledAutoSave = "pdex.autoSave.untitledAutoSaveEnabled", prefAutoSave = "pdex.autoSaveEnabled";
   
   public void loadPreferences(){
     log("Load PDEX prefs");
@@ -144,6 +146,8 @@ public class ExperimentalMode extends JavaMode {
     DEBUG = Preferences.getBoolean(prefDebugOP);
     errorLogsEnabled = Preferences.getBoolean(prefErrorLogs);
     autoSaveInterval = Preferences.getInteger(prefAutoSaveInterval);
+    untitledAutoSaveEnabled = Preferences.getBoolean(prefUntitledAutoSave);
+    autoSaveEnabled = Preferences.getBoolean(prefAutoSave);
   }
   
   public void savePreferences(){
@@ -154,6 +158,8 @@ public class ExperimentalMode extends JavaMode {
     Preferences.setBoolean(prefDebugOP, DEBUG);
     Preferences.setBoolean(prefErrorLogs,errorLogsEnabled);
     Preferences.setInteger(prefAutoSaveInterval,autoSaveInterval);
+    Preferences.setBoolean(prefUntitledAutoSave,untitledAutoSaveEnabled);
+    Preferences.setBoolean(prefAutoSave,autoSaveEnabled);
   }
   
   public void ensurePrefsExist(){
@@ -169,6 +175,10 @@ public class ExperimentalMode extends JavaMode {
       Preferences.setBoolean(prefErrorLogs,errorLogsEnabled);
     if(Preferences.get(prefAutoSaveInterval) == null) 
       Preferences.setInteger(prefAutoSaveInterval,autoSaveInterval);
+    if(Preferences.get(prefUntitledAutoSave) == null) 
+      Preferences.setBoolean(prefUntitledAutoSave,untitledAutoSaveEnabled);
+    if(Preferences.get(prefAutoSave) == null) 
+      Preferences.setBoolean(prefAutoSave,autoSaveEnabled);
   }
 
 

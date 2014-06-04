@@ -1079,8 +1079,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     @Override
     public void prepareRun() {
         super.prepareRun();
+        if (!ExperimentalMode.autoSaveEnabled)
+          return;
+        
         try {
-            if (sketch.isUntitled()) {
+            if (sketch.isUntitled() && ExperimentalMode.untitledAutoSaveEnabled) {
                 if (handleSave(true))
                     statusTimedNotice("Saved. Running...", 5);
                 else
@@ -1118,20 +1121,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @param secs
      */
     public void statusTimedNotice(final String msg, final int secs) {
-//        EventQueue.invokeLater(new Runnable() {
-//            
-//            @Override
-//            public void run() {
-//                statusNotice(msg);
-//                try {
-//                    Thread.sleep(secs * 1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                statusEmpty();
-//                
-//            }
-//        });
         SwingWorker s = new SwingWorker<Void, Void>() {
 
             @Override
