@@ -688,15 +688,10 @@ public class AutoFormat implements Formatter {
         }
       } // end switch
     } // end while not EOF
+
+    if (buf.length() > 0) writeIndentedLine();
     
     final String formatted = result.toString();
-    if (!formatted.replaceAll("[\\s\\*/]","")
-        .equals(source.replaceAll("[\\s\\*/]",""))) {
-      // Double-check - this thing's so buggy it might be best to have one.
-      throw new RuntimeException("The autoformatter did something funny. Please" +
-      "copy and paste your sketch into a new issue on GitHub. \n" + 
-      "https://github.com/processing/processing/issues/new");
-    }
     return formatted.equals(cleanText) ? source : formatted;
   }
 }
