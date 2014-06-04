@@ -19,9 +19,10 @@ Critical Bugs
 
 Normal Bugs
 -----------
-[ ] Sketch NOC 6_09: steer PVector, doesn't show completion. 
-Classname in Template, doesn't scroll to decl. This is happening due certain 
-post processing offsets not being accounted for. "public void"
+[ ] Sketch NOC 6_09: steer PVector, doesn't show completion. #68 
+
+[x] Sketch NOC 6_09: Classname in Template, doesn't scroll to decl. This is 
+happening due certain post processing offsets not being accounted for - "public void"
 
 Enhancements/New Features
 -------------------------
