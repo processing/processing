@@ -1083,13 +1083,14 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           return;
         
         try {
-            if (sketch.isUntitled() && ExperimentalMode.untitledAutoSaveEnabled) {
-                if (handleSave(true))
-                    statusTimedNotice("Saved. Running...", 5);
-                else
-                    statusTimedNotice("Save Canceled. Running anyway...", 5);
-            }
-            else if (sketch.isModified())// TODO: Fix ugly UI
+//            if (sketch.isUntitled() && ExperimentalMode.untitledAutoSaveEnabled) {
+//                if (handleSave(true))
+//                    statusTimedNotice("Saved. Running...", 5);
+//                else
+//                    statusTimedNotice("Save Canceled. Running anyway...", 5);
+//            }
+//            else 
+            if (sketch.isModified() && !sketch.isUntitled())// TODO: Fix ugly UI
                                          // TODO: Add to preferences
             {
                 Object[] options = { "Save", "Continue Without Saving" };
