@@ -1,4 +1,12 @@
 0228 core
+X add copy() method to PVector
+X modify PVector to include better methods for chaining operations
+X   http://code.google.com/p/processing/issues/detail?id=218
+X   https://github.com/processing/processing/issues/257
+X   PVector discussion with Dan
+o   Jer and Dan will look at their code, plus toxiclibs
+
+_ bring back chaining in JSON (and add to XML)
 
 
 high
@@ -434,13 +442,8 @@ _   https://github.com/processing/processing/issues/1596
 
 CORE / PVector
 
-_ PVector discussion with Dan
-_   Jer and Dan will look at their code, plus toxiclibs
-_ modify PVector to include better methods for chaining operations
-_   http://code.google.com/p/processing/issues/detail?id=218
 _ add screen(PVector), model(PVector) and world(PVector)?
 _   maybe screenVec()? or screenXYZ()?
-_ PVector chaining -> Dan looking into this
 
 
 CORE / OpenGL (Andres)
