@@ -1,5 +1,22 @@
 0228 pde
+_ shouldn't write sketch.properties unless it's a non-default mode
+_   https://github.com/processing/processing/issues/2531
+_ huge i18n patch
+_   https://github.com/processing/processing/pull/2084
+_ make ant fail when trying to delete JRE files that don't exist
+_   some aren't being removed properly
 
+earlier
+X for() loop with nothing inside parens crashes Auto Format
+X   https://github.com/processing/processing/issues/2141
+
+gsoc
+_ `return` keyword not treated as such when followed by a bracket
+_   https://github.com/processing/processing/issues/2099
+_ IllegalArgumentException when clicking between editor windows
+_   https://github.com/processing/processing/issues/2530
+_ "String index out of range" error
+_   https://github.com/processing/processing/issues/1940
 
 medium
 _ possible to open a sketch multiple times 
@@ -42,8 +59,6 @@ _   the Find window (also the save windows) also have the same problem
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
 _   and/or start bundling separate source downloads
-_ "String index out of range" error
-_   https://github.com/processing/processing/issues/1940
 _ look through all isPopupTrigger() code 
 _   make sure both press/release are implemented
 _ emacs style errors in commander aren't quite right
@@ -692,8 +707,6 @@ _   update will update classes from shared in the current folder
 
 TOOLS / Auto Format
 
-_ for() loop with nothing inside parens crashes Auto Format
-_   https://github.com/processing/processing/issues/2141
 _ extra indent found
 _   https://github.com/processing/processing/issues/1041
 _ Switch block cases not indented
@@ -861,6 +874,8 @@ find YOUR_APP/Contents/ -type f \
 
 DIST / Linux
 
+_ Processing is named processing-app-Base in Gnome 3
+_   https://github.com/processing/processing/issues/2534
 _ how to run "headless" from user Batuff
 _   sudo apt-get install xvfb
 _   Xvfb :2 -screen 0 1024x768x24 &
