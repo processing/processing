@@ -679,7 +679,7 @@
     <delete dir="linux/jre1.7.0_40" />
 
     <!-- Remove unused JRE bloat. -->
-    <delete> 
+    <delete failonerror="true"> 
       <fileset refid="javafx-basics" />
       <fileset refid="javafx-linux-${sun.arch.data.model}" />
       <fileset refid="jre-optional-linux" />
@@ -832,7 +832,7 @@
     <move file="windows/work/jre1.7.0_40" tofile="windows/work/java" />
 
     <!-- Remove space-wasting JavaFX garbage. -->
-    <delete> 
+    <delete failonerror="true">
       <fileset refid="javafx-basics" />
       <fileset refid="javafx-windows" />
       <fileset refid="jre-optional-windows" />
