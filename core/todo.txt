@@ -2,6 +2,10 @@
 
 
 high
+_ Closing opengl sketch from the PDE doesn't stop java process on windows
+_   https://github.com/processing/processing/issues/2335
+_ StingList.insert() error (should be an easy fix)
+_   https://github.com/processing/processing/issues/2548
 _ pull for image resize and alpha issues
 _   https://github.com/processing/processing/pull/2324
 _ dataPath() not working when app is not run from app dir on Linux
