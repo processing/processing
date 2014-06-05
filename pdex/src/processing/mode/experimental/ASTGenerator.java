@@ -899,11 +899,11 @@ public class ASTGenerator {
         }
         
         // find nearest ASTNode
-        nearestNode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
+        nearestNode = findClosestNode(lineNumber, (ASTNode) errorCheckerService.getLastCorrectCU().types()
             .get(0));
         if (nearestNode == null) {
           // Make sure nearestNode is not NULL if couldn't find a closeset node
-          nearestNode = (ASTNode) compilationUnit.types().get(0);
+          nearestNode = (ASTNode) errorCheckerService.getLastCorrectCU().types().get(0);
         }
         logE(lineNumber + " Nearest ASTNode to PRED "
             + getNodeAsString(nearestNode));

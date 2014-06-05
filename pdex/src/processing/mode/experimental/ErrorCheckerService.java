@@ -135,7 +135,17 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Compilation Unit for current sketch
    */
-  protected CompilationUnit cu, lastCorrectCu;
+  protected CompilationUnit cu; 
+  
+  /**
+   * The Compilation Unit generated during compile check
+   */
+  protected CompilationUnit compileCheckCU;
+  
+  /**
+   * This Compilation Unit points to the last error free CU
+   */
+  protected CompilationUnit lastCorrectCU; 
 
   /**
    * If true, compilation checker will be reloaded with updated classpath
@@ -431,6 +441,9 @@ public class ErrorCheckerService implements Runnable{
       // No syntax errors, proceed for compilation check, Stage 2.
       
       //if(hasSyntaxErrors()) astGenerator.buildAST(null);
+      if (!hasSyntaxErrors()) {
+             
+      }
       if (problems.length == 0 && editor.compilationCheckEnabled) {
         //mainClassOffset++; // just a hack.
         
@@ -535,10 +548,11 @@ public class ErrorCheckerService implements Runnable{
       if (problems.length == 0) {
         syntaxErrors.set(false);
         containsErrors.set(false);
-        lastCorrectCu = cu;
+        parser.setSource(sourceCode.toCharArray());
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);        
+        parser.setCompilerOptions(options);
+        lastCorrectCU = (CompilationUnit) parser.createAST(null);  
       } else {
-        CompilationUnit cuTemp = null;
-        lastCorrectCu = cuTemp;
         syntaxErrors.set(true);
         containsErrors.set(true);
       }
@@ -563,14 +577,17 @@ public class ErrorCheckerService implements Runnable{
     options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
     parser.setCompilerOptions(options);
     
-    if (cu == null)
-      cu = (CompilationUnit) parser.createAST(null);
+    if (compileCheckCU == null)
+      compileCheckCU = (CompilationUnit) parser.createAST(null);
     else {
-      synchronized (cu) {
-        if (!hasSyntaxErrors())
-          cu = (CompilationUnit) parser.createAST(null);
+      synchronized (compileCheckCU) {
+          compileCheckCU = (CompilationUnit) parser.createAST(null);
       }
     }
+    if(!hasSyntaxErrors())
+      lastCorrectCU = compileCheckCU;
+    cu = compileCheckCU;
+    
     compilationUnitState = 2;
     // Currently (Sept, 2012) I'm using Java's reflection api to load the
     // CompilationChecker class(from CompilationChecker.jar) that houses the
@@ -720,6 +737,14 @@ public class ErrorCheckerService implements Runnable{
     }
     
     // log("Compilecheck, Done.");
+  }
+  
+  public CompilationUnit getLastCorrectCU(){
+    return lastCorrectCU;
+  }
+  
+  public CompilationUnit getLatestCU(){
+    return compileCheckCU;
   }
   
   private int loadClassCounter = 0;
