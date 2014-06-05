@@ -135,7 +135,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Compilation Unit for current sketch
    */
-  protected CompilationUnit cu, lastCorrectCu;
+  protected CompilationUnit cu;
 
   /**
    * If true, compilation checker will be reloaded with updated classpath
@@ -535,10 +535,10 @@ public class ErrorCheckerService implements Runnable{
       if (problems.length == 0) {
         syntaxErrors.set(false);
         containsErrors.set(false);
-        lastCorrectCu = cu;
+        //lastCorrectCu = cu;
       } else {
         CompilationUnit cuTemp = null;
-        lastCorrectCu = cuTemp;
+        //lastCorrectCu = cuTemp;
         syntaxErrors.set(true);
         containsErrors.set(true);
       }
@@ -567,7 +567,7 @@ public class ErrorCheckerService implements Runnable{
       cu = (CompilationUnit) parser.createAST(null);
     else {
       synchronized (cu) {
-        if (!hasSyntaxErrors())
+        //if (!hasSyntaxErrors())
         cu = (CompilationUnit) parser.createAST(null);
       }
     }
