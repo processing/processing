@@ -12,28 +12,29 @@ Manindra Moharana (me@mkmoharana.com)
 Critical Bugs
 -------------
 
-[ ] Better memory management. #1
+-[ ] Better memory management. #1
 
-[ ] Breakpoints in classes. #47
+-[ ] Breakpoints in classes. #47
 
 
 Normal Bugs
 -----------
-[ ] Sketch NOC 6_09: steer PVector, doesn't show completion. #68 
+-[x] Sketch NOC 6_09: steer PVector, doesn't show completion. #68 
 
-[x] Sketch NOC 6_09: Classname in Template, doesn't scroll to decl. This is 
+-[ ] Sketch NOC 6_09: Classname in Template, doesn't scroll to decl. This is 
 happening due certain post processing offsets not being accounted for - "public void"
 
 Enhancements/New Features
 -------------------------
 
-[ ] When viewing Outline View, instead of showing the beginning of the list, 
-it should select the current node element within which the cursor is presently positioned.
+-[ ] When viewing Outline View, instead of showing the beginning of the list, 
+it should select the current node element within which the cursor is presently 
+positioned.
 
-[ ] Begin work on code snippets.
+-[ ] Begin work on code snippets.
 
-[ ] JUnit Testing?
+-[ ] JUnit Testing?
 
-[ ] Preferences panel
+-[ ] Preferences panel
 
-[ ] Line Numbers
+-[ ] Line Numbers
