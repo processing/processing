@@ -1681,8 +1681,13 @@ public class ASTGenerator {
           logE("DECLA: " + decl.getClass().getName());
           nodeLabel = getLabelIfType(new ASTNodeWrapper(decl), (SimpleName) simpName);
           //retLabelString = getNodeAsString(decl);
-        } else
+        } else {
           logE("null");
+          if(scrollOnly) {
+            editor.statusMessage("Can't find definition of " + simpName,
+                                 DebugEditor.STATUS_ERR);
+          }
+        }
 
         log(getNodeAsString(decl));
         
@@ -2027,19 +2032,22 @@ public class ASTGenerator {
   public void handleShowUsage(){
     log("Last clicked word:" + lastClickedWord);
     if(lastClickedWord == null && editor.ta.getSelectedText() == null){
-      editor.statusError("Highlight the class/function/variable name first");
+      editor.statusMessage("Highlight the class/function/variable name first"
+                           , DebugEditor.STATUS_INFO);
       return;
     }
     
     if(errorCheckerService.hasSyntaxErrors()){
-      editor.statusError("Can't perform action until syntax errors are fixed :(");
+      editor.statusMessage("Can't perform action until syntax errors are " +
+      		"fixed :(", DebugEditor.STATUS_WARNING);
       return;
     }
     DefaultMutableTreeNode defCU = findAllOccurrences();   
     String selText = lastClickedWord == null ? editor.ta.getSelectedText()
         : lastClickedWord;
     if(defCU == null){
-      editor.statusError("Can't locate definition of " + selText);
+      editor.statusMessage("Can't locate definition of " + selText, 
+                           DebugEditor.STATUS_ERR);
       return;
     }
     if(defCU.getChildCount() == 0)
@@ -2291,12 +2299,15 @@ public class ASTGenerator {
   public void handleRefactor(){
     log("Last clicked word:" + lastClickedWord);
     if(lastClickedWord == null && editor.ta.getSelectedText() == null){
-      editor.statusError("Highlight the class/function/variable name first");
+      editor.statusMessage("Highlight the class/function/variable name first",
+                           DebugEditor.STATUS_INFO);
       return;
     }
     
     if(errorCheckerService.hasSyntaxErrors()){
-      editor.statusError("Can't perform action until syntax errors are fixed :(");
+      editor
+          .statusMessage("Can't perform action until syntax errors are fixed :(",
+                         DebugEditor.STATUS_WARNING);
       return;
     }
     if (!frmRename.isVisible()){

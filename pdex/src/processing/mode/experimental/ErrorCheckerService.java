@@ -1005,12 +1005,14 @@ public class ErrorCheckerService implements Runnable{
         if (emarker.getProblem().getLineNumber() == editor.getTextArea()
             .getCaretLine() + 1) {
           if (emarker.getType() == ErrorMarker.Warning) {
-            editor.statusNotice(emarker.getProblem().getMessage()); 
+              editor.statusMessage(emarker.getProblem().getMessage(),
+                                   DebugEditor.STATUS_INFO);
                                 //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
           //TODO: this is temporary
           }
           else {
-            editor.statusError(emarker.getProblem().getMessage());
+              editor.statusMessage(emarker.getProblem().getMessage(),
+                                   DebugEditor.STATUS_COMPILER_ERR);
                                //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
           }
           return;
@@ -1019,8 +1021,7 @@ public class ErrorCheckerService implements Runnable{
     }
     
     // This line isn't an error line anymore, so probably just clear it
-    if (editor.getStatusMode() == EditorStatus.ERR
-        || editor.getStatusMode() == EditorStatus.NOTICE) {
+    if (editor.statusMessageType == DebugEditor.STATUS_COMPILER_ERR) {
       editor.statusEmpty();
       return;
     }
