@@ -101,7 +101,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
     else {
       int x = ta.xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
       log("x="+x);
-      int xLS = off - ta.getLineStartNonWhiteSpaceOffset(line);
+      int xLS = off - ta.getLineStartOffset(line);
       if (x < 0 || x >= s.length())
         return;
       String word = s.charAt(x) + "";
@@ -116,6 +116,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
         if (x1 >= 0 && x1 < s.length()) {
           if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
             word = s.charAt(x1--) + word;
+            xLS--;
           } else
             x1 = -1;
         } else
@@ -140,7 +141,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       }
       if (Character.isDigit(word.charAt(0)))
         return;
-
+      
       log(errorCheckerService.mainClassOffset + line +
       "|" + line + "| offset " + xLS + word + " <= \n");
       errorCheckerService.getASTGenerator().scrollToDeclaration(line

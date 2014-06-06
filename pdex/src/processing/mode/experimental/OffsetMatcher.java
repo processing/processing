@@ -52,10 +52,10 @@ public class OffsetMatcher {
     
 //    log("PDE <-> Java");
     for (int i = 0; i < offsetMatch.size(); i++) {
-//      log(offsetMatch.get(i).pdeOffset + " <-> "
-//          + offsetMatch.get(i).javaOffset +
-//          ", " + word1.charAt(offsetMatch.get(i).pdeOffset)
-//          + " <-> " + word2.charAt(offsetMatch.get(i).javaOffset));
+      log(offsetMatch.get(i).pdeOffset + " <-> "
+          + offsetMatch.get(i).javaOffset +
+          ", " + word1.charAt(offsetMatch.get(i).pdeOffset)
+          + " <-> " + word2.charAt(offsetMatch.get(i).javaOffset));
     }
 //    log("Length " + offsetMatch.size());
   }
@@ -237,17 +237,19 @@ public class OffsetMatcher {
 //    minDistance("c = #qwerty;", "c = 0xffqwerty;");
     OffsetMatcher a;
 
-    a = new OffsetMatcher("int a = int(can); int ball;",
-                          "int a = PApplet.parseInt(can); int ball;");
-    a.getPdeOffForJavaOff(25, 3);
-    a.getJavaOffForPdeOff(12, 3);
+//    a = new OffsetMatcher("int a = int(can); int ball;",
+//                          "int a = PApplet.parseInt(can); int ball;");
+//    a.getPdeOffForJavaOff(25, 3);
+//    a.getJavaOffForPdeOff(12, 3);
 //    minDistance("static void main(){;", "public static void main(){;");
 //      minDistance("#bb00aa", "0xffbb00aa");
-    //a.minDistance("color g = #qwerty;", "int g = 0xffqwerty;");
+    a = new OffsetMatcher("void test(ArrayList<Boid> boids){", 
+    "public void test(ArrayList<Boid> boids){");
+    a.getJavaOffForPdeOff(20,4);
     log("--");
-    a = new OffsetMatcher("color abc = #qwerty;", "int abc = 0xffqwerty;");
-    a.getPdeOffForJavaOff(4, 3);
-    a.getJavaOffForPdeOff(6, 3);
+//    a = new OffsetMatcher("color abc = #qwerty;", "int abc = 0xffqwerty;");
+//    a.getPdeOffForJavaOff(4, 3);
+//    a.getJavaOffForPdeOff(6, 3);
 //    distance("c = #bb00aa;", "c = 0xffbb00aa;");
   }
 }

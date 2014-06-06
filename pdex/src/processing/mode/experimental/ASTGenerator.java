@@ -1574,7 +1574,7 @@ public class ASTGenerator {
    */
   public ASTNodeWrapper getASTNodeAt(int lineNumber, String name, int offset,
                                      boolean scrollOnly) {
-    
+    int originalLN = lineNumber - errorCheckerService.mainClassOffset;
     log("----getASTNodeAt---- CU State: " + errorCheckerService.compilationUnitState);
     if (errorCheckerService != null) {
       editor = errorCheckerService.getEditor();
@@ -1596,67 +1596,80 @@ public class ASTGenerator {
     String nodeLabel = null;
     String nameOfNode = null; // The node name which is to be scrolled to
     if (lineNode != null) {
-      
-      // Some delicate offset handling follows.
-      ASTNodeWrapper lineNodeWrap = new ASTNodeWrapper(lineNode);
-      int altOff = offset;
-      int ret[][] = lineNodeWrap.getOffsetMapping(errorCheckerService);
-      if(ret != null){
-        altOff = 0;
-        int javaCodeMap[] = ret[0], pdeCodeMap[] = ret[1];
+      // Being test
 
-        for (; altOff < javaCodeMap.length; altOff++) {
-          if (javaCodeMap[altOff] == pdeCodeMap[offset]) {
-            break;
-          }
-        }
-      }
-      log("FLON2: " + lineNumber + " LN start pos "
-          + lineNode.getStartPosition() + " off " + offset + " alt off" + altOff);
-      /* 
-       * Now I need to see if multiple statements exist with this same line number
-       * If that's the case, I need to ensure the offset is right. 
-       */
-      ASTNode parLineNode = lineNode.getParent(); 
+      //ASTNodeWrapper lineNodeWrap = new ASTNodeWrapper(lineNode);
+      String pdeCodeLine = errorCheckerService.getPDECodeAtLine(editor
+          .getSketch().getCurrentCodeIndex(), originalLN);
+      String javaCodeLine = getJavaSourceCodeline(lineNumber);
       
-      Iterator<StructuralPropertyDescriptor> it = parLineNode
-          .structuralPropertiesForType().iterator();
-      boolean flag = true;
-      int offAdjust = 0;
-      while (it.hasNext() && flag) {
-        StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
-            .next();
-        if (prop.isChildListProperty()) {
-          List<ASTNode> nodelist = (List<ASTNode>) parLineNode
-              .getStructuralProperty(prop);
-          for (ASTNode cnode : nodelist) {
-            if (getLineNumber(cnode) == lineNumber) {
-              if (cnode.getStartPosition() <= lineNode.getStartPosition()
-                  + altOff
-                  && cnode.getStartPosition() + cnode.getLength() > lineNode
-                      .getStartPosition() + altOff) {
-                log(cnode);
-                offAdjust = cnode.getStartPosition() - lineNode.getStartPosition();
-                lineNode = cnode;
-                altOff -= offAdjust;
-                flag = false;
-                break;
-              }
-              
-            }
-          }
-        }
-      }
-      log("FLON3 new alt off: " + altOff);
-      ASTNode simpName = pinpointOnLine(lineNode, altOff,
-                                        lineNode.getStartPosition(), name);
+      log(originalLN + " PDE :" + pdeCodeLine);
+      log("JAVA:" + javaCodeLine);
+      log("Clicked on: " + name + " start offset: " + offset);
+      OffsetMatcher ofm = new OffsetMatcher(pdeCodeLine, javaCodeLine);
+      int javaOffset = ofm.getJavaOffForPdeOff(offset, name.length());
       
-      if(simpName == null){ //Added while fixing #51
-        log("pinpointOnLine 1+++> " + simpName);
-        simpName = pinpointOnLine(lineNode.getParent(), altOff,
-                                  lineNode.getStartPosition(), name);
-      }
-      log("pinpointOnLine 2+++> " + simpName);
+      ASTNode simpName = null;
+      if(simpName == null) return null;
+   // End test
+//      int altOff = offset;
+//      int ret[][] = lineNodeWrap.getOffsetMapping(errorCheckerService);
+//      if(ret != null){
+//        altOff = 0;
+//        int javaCodeMap[] = ret[0], pdeCodeMap[] = ret[1];
+//
+//        for (; altOff < javaCodeMap.length; altOff++) {
+//          if (javaCodeMap[altOff] == pdeCodeMap[offset]) {
+//            break;
+//          }
+//        }
+//      }
+//      log("FLON2: " + lineNumber + " LN start pos "
+//          + lineNode.getStartPosition() + " off " + offset + " alt off" + altOff);
+//      /* 
+//       * Now I need to see if multiple statements exist with this same line number
+//       * If that's the case, I need to ensure the offset is right. 
+//       */
+//      ASTNode parLineNode = lineNode.getParent(); 
+//      
+//      Iterator<StructuralPropertyDescriptor> it = parLineNode
+//          .structuralPropertiesForType().iterator();
+//      boolean flag = true;
+//      int offAdjust = 0;
+//      while (it.hasNext() && flag) {
+//        StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
+//            .next();
+//        if (prop.isChildListProperty()) {
+//          List<ASTNode> nodelist = (List<ASTNode>) parLineNode
+//              .getStructuralProperty(prop);
+//          for (ASTNode cnode : nodelist) {
+//            if (getLineNumber(cnode) == lineNumber) {
+//              if (cnode.getStartPosition() <= lineNode.getStartPosition()
+//                  + altOff
+//                  && cnode.getStartPosition() + cnode.getLength() > lineNode
+//                      .getStartPosition() + altOff) {
+//                log(cnode);
+//                offAdjust = cnode.getStartPosition() - lineNode.getStartPosition();
+//                lineNode = cnode;
+//                altOff -= offAdjust;
+//                flag = false;
+//                break;
+//              }
+//              
+//            }
+//          }
+//        }
+//      }
+//      log("FLON3 new alt off: " + altOff);
+//      ASTNode simpName = pinpointOnLine(lineNode, altOff,
+//                                        lineNode.getStartPosition(), name);
+//      
+//      if(simpName == null){ //Added while fixing #51
+//        log("pinpointOnLine 1+++> " + simpName);
+//        simpName = pinpointOnLine(lineNode.getParent(), altOff,
+//                                  lineNode.getStartPosition(), name);
+//      }
+//      log("pinpointOnLine 2+++> " + simpName);
       if(simpName == null && lineNode instanceof SimpleName){
         switch (lineNode.getParent().getNodeType()) {
         case ASTNode.TYPE_DECLARATION:
