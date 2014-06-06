@@ -895,6 +895,64 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     sketchMenu.add(item);
 
+    sketchMenu.addSeparator();
+
+    final Editor editorName = this;
+    
+    sketchMenu.addMenuListener(new MenuListener() { // Menu Listener so that
+      // the Open Sketches sub-menu is populated 
+      // only when the Sketch menu is opened
+
+      java.util.List<JMenuItem> menuList = new java.util.ArrayList<JMenuItem>();
+
+      JMenu openSketchesSubmenu = new JMenu("Open Sketches");
+
+      @Override
+      public void menuSelected(MenuEvent arg0) {
+        java.util.List<Editor> ed = base.getEditors();
+        JMenuItem item;
+        for (final Editor editor2 : ed) {
+          if (editorName.getSketch().getName().trim().contains(editor2.getSketch().getName().trim()))
+          {
+            item = new JCheckBoxMenuItem(editor2.getSketch().getName());
+            item.setSelected(true);
+          }
+          else 
+          {
+            item = new JMenuItem(editor2.getSketch().getName());
+          }
+          item.setText(editor2.getSketch().getName() + " ("
+            + editor2.getMode().getTitle() + ")");
+
+          item.addActionListener(new ActionListener() { // Action listener to bring the appropriate sketch in front
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              editor2.setState(Frame.NORMAL);
+              editor2.setVisible(true);
+              editor2.toFront();
+            }
+          });
+          openSketchesSubmenu.add(item);
+          menuList.add(item);
+        }
+        sketchMenu.add(openSketchesSubmenu);
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent arg0) {
+        for (JMenuItem it : menuList)
+          openSketchesSubmenu.remove(it);
+        menuList.clear();
+        sketchMenu.remove(openSketchesSubmenu);
+      }
+
+      @Override
+      public void menuCanceled(MenuEvent arg0) {
+        menuDeselected(arg0);
+      }
+    });
+
     return sketchMenu;
   }
 
