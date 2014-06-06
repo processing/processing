@@ -1,4 +1,21 @@
 0228 pde
+X increase heap size to 256m (-Xmx256) per Manindra request
+
+
+_ incorporate new preproc
+_   https://github.com/fjenett/processing-preprocessor-antlr4
+_ glw? lwjgl? 
+_ move sketchbook into its own window
+_ move recent into the sketchbook menu
+_   needs to recognize the p5 app folder
+_   also should recognize the user's home dir
+_ move examples into web repo 
+_ make reference and examples build process part of dist
+_   separate ant targets, but only require them for dist
+_   as separate targets, folks can build explicitly if they'd like
+_ remove reference.zip from main repo
+_ processing-web/java_generate/ReferenceGenerator
+
 _ shouldn't write sketch.properties unless it's a non-default mode
 _   https://github.com/processing/processing/issues/2531
 _ huge i18n patch

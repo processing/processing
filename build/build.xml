@@ -423,8 +423,9 @@
 
       <!-- Probably no longer needed? [fry 130917]
       <option value="-Xms128M" />
-      <option value="-Xmx256M" />
       -->
+      <!-- returning 140606 per PDE X request -->
+      <option value="-Xmx256M" />
 
       <option value="-Dapple.awt.application.name=Processing" />
 
