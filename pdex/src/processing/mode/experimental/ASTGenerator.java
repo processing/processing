@@ -1684,7 +1684,7 @@ public class ASTGenerator {
         } else {
           logE("null");
           if(scrollOnly) {
-            editor.statusMessage("Can't find definition of " + simpName,
+            editor.statusMessage(simpName + " is not defined in this sketch",
                                  DebugEditor.STATUS_ERR);
           }
         }
@@ -2308,6 +2308,15 @@ public class ASTGenerator {
       editor
           .statusMessage("Can't perform action until syntax errors are fixed :(",
                          DebugEditor.STATUS_WARNING);
+      return;
+    }
+    
+    DefaultMutableTreeNode defCU = findAllOccurrences();   
+    String selText = lastClickedWord == null ? editor.ta.getSelectedText()
+        : lastClickedWord;
+    if(defCU == null){
+      editor.statusMessage(selText + " isn't defined in this sketch, so it can't" +
+      		" be renamed", DebugEditor.STATUS_ERR);
       return;
     }
     if (!frmRename.isVisible()){
