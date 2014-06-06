@@ -4234,9 +4234,9 @@ public class PGraphics extends PImage implements PConstants {
    * @param x x-coordinate of text
    * @param y y-coordinate of text
    * @see PGraphics#textAlign(int, int)
-   * @see PGraphics#textMode(int)
-   * @see PApplet#loadFont(String)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textMode(int)
+   * @see PGraphics#textSize(float)
    * @see PGraphics#rectMode(int)
    * @see PGraphics#fill(int, float)
    * @see_external String
