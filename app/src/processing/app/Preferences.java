@@ -30,7 +30,6 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
-import javax.swing.text.*;
 
 import processing.core.*;
 
@@ -390,7 +389,9 @@ public class Preferences {
     presentColor = new JTextField("      ");
     presentColor.setOpaque(true);
     presentColor.setEnabled(false);
-    presentColor.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    presentColor.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(
+        1, 1, 0, 0, new Color(195, 195, 195)), BorderFactory.createMatteBorder(
+        0, 0, 1, 1, new Color(54, 54, 54))));
     presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
 
     presentColorHex = new JTextField(6);
@@ -449,25 +450,34 @@ public class Preferences {
       @Override public void changedUpdate(DocumentEvent e) {}
     });
 
-    selector = new ColorChooser(
-      dialog, false, Preferences.getColor("run.present.bgcolor"), "OK", new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          String colorValue = selector.getHexColor();
-          presentColorHex.setText(colorValue.substring(1));
-          presentColor.setBackground(new Color(Integer.parseInt(
-              colorValue.substring(1, 3), 16), Integer.parseInt(
-              colorValue.substring(3, 5), 16), Integer.parseInt(
-              colorValue.substring(5, 7), 16)));
-          selector.hide();
-        }
-      });
+    selector = new ColorChooser(dialog, false,
+        Preferences.getColor("run.present.bgcolor"), "OK",
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            String colorValue = selector.getHexColor();
+            presentColorHex.setText(colorValue.substring(1));
+            presentColor.setBackground(new Color(Integer.parseInt(
+                colorValue.substring(1, 3), 16), Integer.parseInt(
+                colorValue.substring(3, 5), 16), Integer.parseInt(
+                colorValue.substring(5, 7), 16)));
+            selector.hide();
+          }
+        });
 
     presentColor.addMouseListener(new MouseListener() {
       @Override public void mouseReleased(MouseEvent e) {}
       @Override public void mousePressed(MouseEvent e) {}
-      @Override public void mouseExited(MouseEvent e) {}
-      @Override public void mouseEntered(MouseEvent e) {}
+      
+      @Override 
+      public void mouseExited(MouseEvent e) {
+        dialog.setCursor(Cursor.DEFAULT_CURSOR);
+      }
+
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        dialog.setCursor(Cursor.HAND_CURSOR);
+      }
 
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -480,10 +490,10 @@ public class Preferences {
 
     colorBox.add(presentColorHex);
 
-    colorBox.add(Box.createHorizontalStrut(GUI_SMALL));
+    colorBox.add(Box.createHorizontalStrut(GUI_SMALL + 2 / 3 * GUI_SMALL));
 
     colorBox.add(presentColor);
-
+    
     pain.add(colorBox);
     d = colorBox.getPreferredSize();
     colorBox.setBounds(left, top, d.width, d.height);
