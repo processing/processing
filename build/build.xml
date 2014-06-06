@@ -151,7 +151,7 @@
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.update.macosx" value="55" />
+  <property name="jdk.update.macosx" value="60" />
   <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_${jdk.update.macosx}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
@@ -226,7 +226,6 @@
     <subant buildpath="../java/libraries/net" target="clean"/>
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
-    <subant buildpath="../java/libraries/video" target="clean"/>
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
   </target>
   
@@ -237,7 +236,6 @@
     <subant buildpath="../java/libraries/net" target="build"/>
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
-    <subant buildpath="../java/libraries/video" target="build"/>
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
   </target>
   
@@ -495,9 +493,6 @@
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
-
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
   </target>
   
   <target name="macosx-run" depends="macosx-build" 
@@ -623,10 +618,6 @@
     <copy todir="linux/work/lib" flatten="true">
       <fileset refid="runtime.jars" />
     </copy>
-    
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
 
     <copy file="linux/processing" todir="linux/work" />
     <chmod perm="ugo+x" file="linux/work/processing" />
@@ -679,7 +670,7 @@
     <delete dir="linux/jre1.7.0_40" />
 
     <!-- Remove unused JRE bloat. -->
-    <delete> 
+    <delete failonerror="true"> 
       <fileset refid="javafx-basics" />
       <fileset refid="javafx-linux-${sun.arch.data.model}" />
       <fileset refid="jre-optional-linux" />
@@ -790,16 +781,6 @@
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
-
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
-
-    <condition property="video.delete" value="32"> 
-      <equals arg1="${sun.arch.data.model}" arg2="64" />
-    </condition>
-    <condition property="video.delete" value="64"> 
-      <equals arg1="${sun.arch.data.model}" arg2="32" />
-    </condition>
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows${video.delete}" />
     
     <taskdef name="launch4j" 
 	     classname="net.sf.launch4j.ant.Launch4jTask" 
@@ -832,7 +813,7 @@
     <move file="windows/work/jre1.7.0_40" tofile="windows/work/java" />
 
     <!-- Remove space-wasting JavaFX garbage. -->
-    <delete> 
+    <delete failonerror="true">
       <fileset refid="javafx-basics" />
       <fileset refid="javafx-windows" />
       <fileset refid="jre-optional-windows" />
