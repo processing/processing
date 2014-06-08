@@ -1287,7 +1287,6 @@ public class Sketch {
    */
   public String getMainFilePath() {
     return primaryFile.getAbsolutePath();
-    //return code[0].file.getAbsolutePath();
   }
 
 

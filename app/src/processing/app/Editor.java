@@ -33,6 +33,7 @@ import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.Timer;
 
 import javax.swing.*;
@@ -897,59 +898,56 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     sketchMenu.addSeparator();
 
-    final Editor editorName = this;
+//    final Editor editorName = this;
     
-    sketchMenu.addMenuListener(new MenuListener() { // Menu Listener so that
-      // the Open Sketches sub-menu is populated 
-      // only when the Sketch menu is opened
+    sketchMenu.addMenuListener(new MenuListener() { 
+      // Menu Listener that populates the menu only when the menu is opened
+      List<JMenuItem> menuList = new ArrayList<JMenuItem>();
 
-      java.util.List<JMenuItem> menuList = new java.util.ArrayList<JMenuItem>();
-
-      JMenu openSketchesSubmenu = new JMenu("Open Sketches");
+      JMenu windowMenu = new JMenu("Window");
 
       @Override
-      public void menuSelected(MenuEvent arg0) {
-        java.util.List<Editor> ed = base.getEditors();
+      public void menuSelected(MenuEvent event) {
         JMenuItem item;
-        for (final Editor editor2 : ed) {
-          if (editorName.getSketch().getName().trim().contains(editor2.getSketch().getName().trim()))
-          {
-            item = new JCheckBoxMenuItem(editor2.getSketch().getName());
+        for (final Editor editor : base.getEditors()) {
+          //if (Editor.this.getSketch().getName().trim().contains(editor2.getSketch().getName().trim()))
+          if (getSketch().getMainFilePath().equals(editor.getSketch().getMainFilePath())) {
+            item = new JCheckBoxMenuItem(editor.getSketch().getName());
             item.setSelected(true);
+          } else {
+            item = new JMenuItem(editor.getSketch().getName());
           }
-          else 
-          {
-            item = new JMenuItem(editor2.getSketch().getName());
-          }
-          item.setText(editor2.getSketch().getName() + " ("
-            + editor2.getMode().getTitle() + ")");
+          item.setText(editor.getSketch().getName() + 
+                       " (" + editor.getMode().getTitle() + ")");
 
-          item.addActionListener(new ActionListener() { // Action listener to bring the appropriate sketch in front
+          // Action listener to bring the appropriate sketch in front
+          item.addActionListener(new ActionListener() { 
 
             @Override
             public void actionPerformed(ActionEvent e) {
-              editor2.setState(Frame.NORMAL);
-              editor2.setVisible(true);
-              editor2.toFront();
+              editor.setState(Frame.NORMAL);
+              editor.setVisible(true);
+              editor.toFront();
             }
           });
-          openSketchesSubmenu.add(item);
+          windowMenu.add(item);
           menuList.add(item);
         }
-        sketchMenu.add(openSketchesSubmenu);
+        sketchMenu.add(windowMenu);
       }
 
       @Override
-      public void menuDeselected(MenuEvent arg0) {
-        for (JMenuItem it : menuList)
-          openSketchesSubmenu.remove(it);
+      public void menuDeselected(MenuEvent event) {
+        for (JMenuItem item : menuList) {
+          windowMenu.remove(item);
+        }
         menuList.clear();
-        sketchMenu.remove(openSketchesSubmenu);
+        sketchMenu.remove(windowMenu);
       }
 
       @Override
-      public void menuCanceled(MenuEvent arg0) {
-        menuDeselected(arg0);
+      public void menuCanceled(MenuEvent event) {
+        menuDeselected(event);
       }
     });
 
