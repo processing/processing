@@ -387,7 +387,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
     for (final Mode m : base.getModeList()) {
       if (mode == m) {
         JRadioButtonMenuItem item = new JRadioButtonMenuItem(m.getTitle());
-        // doesn't need a listener, since it doesn't do anything
+        item.addItemListener(new ItemListener() {
+          public void itemStateChanged(ItemEvent e) {
+            JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+            item.setSelected(true);
+          }
+        });
         item.setSelected(true);
         modeMenu.add(item);
       } else {
