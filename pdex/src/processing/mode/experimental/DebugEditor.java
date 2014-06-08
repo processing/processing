@@ -22,7 +22,10 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,8 +43,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -49,6 +58,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableModel;
 import javax.swing.text.Document;
@@ -59,6 +69,7 @@ import processing.app.Base;
 import processing.app.EditorState;
 import processing.app.EditorToolbar;
 import processing.app.Mode;
+import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Toolkit;
@@ -922,7 +933,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             vi.setTitle(getSketch().getName());
         }
         //  if file location has changed, update autosaver
-//        autosaver.reloadAutosaveDir();
+        autosaver.reloadAutosaveDir();
         return saved;
     }
     
@@ -1080,36 +1091,95 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     public void prepareRun() {
         super.prepareRun();
         if (!ExperimentalMode.autoSaveEnabled)
-          return;
-        
+            return;
+
         try {
-//            if (sketch.isUntitled() && ExperimentalMode.untitledAutoSaveEnabled) {
-//                if (handleSave(true))
-//                    statusTimedNotice("Saved. Running...", 5);
-//                else
-//                    statusTimedNotice("Save Canceled. Running anyway...", 5);
-//            }
-//            else 
-            if (sketch.isModified() && !sketch.isUntitled())// TODO: Fix ugly UI
-                                         // TODO: Add to preferences
-            {
-                Object[] options = { "Save", "Continue Without Saving" };
-                int op = JOptionPane
-                        .showOptionDialog(
-                                new Frame(),
-                                "There are unsaved changes in your sketch. Save before proceeding?",
-                                this.getSketch().getName(), JOptionPane.YES_NO_OPTION,
-                                JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-                if (op == JOptionPane.YES_OPTION) {
-                    if (handleSave(true))
-                        statusTimedNotice("Saved. Running...", 5);
-                }
-                else
-                    if (op == JOptionPane.NO_OPTION)
-                        statusTimedNotice("Not saved. Running...", 5);
+            // if (sketch.isUntitled() &&
+            // ExperimentalMode.untitledAutoSaveEnabled) {
+            // if (handleSave(true))
+            // statusTimedNotice("Saved. Running...", 5);
+            // else
+            // statusTimedNotice("Save Canceled. Running anyway...", 5);
+            // }
+            // else
+            if (sketch.isModified() && !sketch.isUntitled()) {
+                if (ExperimentalMode.autoSavePromptEnabled) {
+                    final JDialog autoSaveDialog = new JDialog(
+                            base.getActiveEditor(), this.getSketch().getName(),
+                            true);
+                    Container container = autoSaveDialog.getContentPane();
+
+                    JPanel panel = new JPanel();
+                    panel.setBorder(BorderFactory.createEmptyBorder(4, 0, 2, 2));
+                    panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+
+                    JPanel panel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    JLabel label = new JLabel(
+                            "<html><body>&nbsp;There are unsaved"
+                                    + " changes in your sketch.<br />"
+                                    + "&nbsp;&nbsp;&nbsp; Do you want to save it before"
+                                    + " running? </body></html>");
+                    label.setFont(new Font(label.getFont().getName(),
+                            Font.PLAIN, label.getFont().getSize() + 1));
+                    panel1.add(label);
+                    panel.add(panel1);
+                    final JCheckBox dontRedisplay = new JCheckBox(
+                            "Remember this decision");
+
+                    panel1 = new JPanel(new FlowLayout(
+                            FlowLayout.CENTER, 8, 2));
+                    JButton button = new JButton("Save and Run");
+                    button.addActionListener(new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if (handleSave(true))
+                                statusTimedNotice("Saved. Running...", 5);
+                            if (dontRedisplay.isSelected()) {
+                                ExperimentalMode.autoSavePromptEnabled = !dontRedisplay
+                                        .isSelected();
+                                ExperimentalMode.defaultAutoSaveEnabled = true;
+                                dmode.savePreferences();
+                            }
+                            autoSaveDialog.dispose();
+                        }
+                    });
+                    panel1.add(button);
+                    button = new JButton("Run, Don't Save");
+                    button.addActionListener(new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            statusTimedNotice("Not saved. Running...", 5);
+                            if (dontRedisplay.isSelected()) {
+                                ExperimentalMode.autoSavePromptEnabled = !dontRedisplay
+                                        .isSelected();
+                                ExperimentalMode.defaultAutoSaveEnabled = false;
+                                dmode.savePreferences();
+                            }
+                            autoSaveDialog.dispose();
+                        }
+                    });
+                    panel1.add(button);
+                    panel.add(panel1);
+
+                    panel1 = new JPanel();
+                    panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+                    panel1.add(dontRedisplay);
+                    panel.add(panel1);
+
+                    container.add(panel);
+
+                    autoSaveDialog.setResizable(false);
+                    autoSaveDialog.pack();
+                    autoSaveDialog
+                            .setLocationRelativeTo(base.getActiveEditor());
+                    autoSaveDialog.setVisible(true);
+
+                } else if (ExperimentalMode.defaultAutoSaveEnabled)
+                    handleSave(true);
             }
         } catch (Exception e) {
-            // show the error as a message in the window
             statusError(e);
         }
     }
@@ -1126,13 +1196,13 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
             @Override
             protected Void doInBackground() throws Exception {
-              statusNotice(msg);
-              try {
-                  Thread.sleep(secs * 1000);
-              } catch (InterruptedException e) {
-                  e.printStackTrace();
-              }
-              statusEmpty();
+                statusNotice(msg);
+                try {
+                    Thread.sleep(secs * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                statusEmpty();
                 return null;
             }
         };
