@@ -22,16 +22,12 @@ import static processing.mode.experimental.ExperimentalMode.log2;
 import static processing.mode.experimental.ExperimentalMode.logE;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.FontMetrics;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Iterator;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -210,17 +206,29 @@ public class CompletionPanel {
   public boolean insertSelection() {
     if (completionList.getSelectedValue() != null) {
       try {
+        // If user types 'abc.', subword becomes '.' and null is returned
         String currentSubword = fetchCurrentSubword();
+        int currentSubwordLen = currentSubword == null ? 0 : currentSubword
+            .length();
+        //logE(currentSubword + " <= subword,len => " + currentSubword.length());
         String selectedSuggestion = ((CompletionCandidate) completionList
-            .getSelectedValue()).getCompletionString().substring(currentSubword
-                                                                     .length());
-        logE(subWord + " <= subword,Inserting suggestion=> "
+            .getSelectedValue()).getCompletionString();
+        
+        if (currentSubword != null) {
+          selectedSuggestion = selectedSuggestion.substring(currentSubwordLen);
+        } else {
+          currentSubword = "";
+        }
+        
+        logE(subWord + " <= subword, Inserting suggestion=> "
             + selectedSuggestion + " Current sub: " + currentSubword);
-        textarea.getDocument().remove(insertionPosition
-                                          - currentSubword.length(),
-                                      currentSubword.length());
+        if (currentSubword.length() > 0) {
+          textarea.getDocument().remove(insertionPosition - currentSubwordLen,
+                                        currentSubwordLen);
+        }
+        
         textarea.getDocument()
-            .insertString(insertionPosition - currentSubword.length(),
+            .insertString(insertionPosition - currentSubwordLen,
                           ((CompletionCandidate) completionList
                               .getSelectedValue()).getCompletionString(), null);
         if (selectedSuggestion.endsWith(")")) {
@@ -240,12 +248,16 @@ public class CompletionPanel {
       } catch (BadLocationException e1) {
         e1.printStackTrace();
       }
+      catch (Exception e) {
+        e.printStackTrace();
+      }
       hide();
     }
     return false;
   }
   
   private String fetchCurrentSubword() {
+    //log("Entering fetchCurrentSubword");
     TextArea ta = editor.ta;
     int off = ta.getCaretPosition();
     //log2("off " + off);
@@ -256,35 +268,32 @@ public class CompletionPanel {
       return null;
     String s = ta.getLineText(line);
     //log2("lin " + line);
-    /*
-     * if (s == null) return null; else if (s.length() == 0) return null;
-     */
-//    else {
     //log2(s + " len " + s.length());
 
-    int x = ta.getCaretPosition() - ta.getLineStartOffset(line) - 1, x2 = x + 1, x1 = x - 1;
+    int x = ta.getCaretPosition() - ta.getLineStartOffset(line) - 1, x1 = x - 1;
     if(x >= s.length() || x < 0)
       return null; //TODO: Does this check cause problems? Verify.
-    //log2(" x char: " + s.charAt(x));
+    log2(" x char: " + s.charAt(x));
     //int xLS = off - getLineStartNonWhiteSpaceOffset(line);    
 
     String word = (x < s.length() ? s.charAt(x) : "") + "";
     if (s.trim().length() == 1) {
-//      word = ""
-//          + (keyChar == KeyEvent.CHAR_UNDEFINED ? s.charAt(x - 1) : keyChar);
-      //word = (x < s.length()?s.charAt(x):"") + "";
+    //      word = ""
+    //          + (keyChar == KeyEvent.CHAR_UNDEFINED ? s.charAt(x - 1) : keyChar);
+          //word = (x < s.length()?s.charAt(x):"") + "";
       word = word.trim();
       if (word.endsWith("."))
         word = word.substring(0, word.length() - 1);
       
       return word;
     }
-//    if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
-//      ; // accepted these keys
-//    else if (!(Character.isLetterOrDigit(keyChar) || keyChar == '_' || keyChar == '$'))
-//      return null;
+    //log("fetchCurrentSubword 1 " + word);
+    if(word.equals(".")) return null; // If user types 'abc.', subword becomes '.'
+    //    if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
+    //      ; // accepted these keys
+    //    else if (!(Character.isLetterOrDigit(keyChar) || keyChar == '_' || keyChar == '$'))
+    //      return null;
     int i = 0;
-    int closeB = 0;
 
     while (true) {
       i++;
@@ -307,13 +316,13 @@ public class CompletionPanel {
       }
     }
     //    if (keyChar != KeyEvent.CHAR_UNDEFINED)
-
+    //log("fetchCurrentSubword 2 " + word);
     if (Character.isDigit(word.charAt(0)))
       return null;
     word = word.trim();
     if (word.endsWith("."))
       word = word.substring(0, word.length() - 1);
-    
+    //log("fetchCurrentSubword 3 " + word);
     //showSuggestionLater();
     return word;
     //}

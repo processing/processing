@@ -36,11 +36,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.AbstractDocument;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -137,7 +135,17 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Compilation Unit for current sketch
    */
-  protected CompilationUnit cu;
+  protected CompilationUnit cu; 
+  
+  /**
+   * The Compilation Unit generated during compile check
+   */
+  protected CompilationUnit compileCheckCU;
+  
+  /**
+   * This Compilation Unit points to the last error free CU
+   */
+  protected CompilationUnit lastCorrectCU; 
 
   /**
    * If true, compilation checker will be reloaded with updated classpath
@@ -433,6 +441,9 @@ public class ErrorCheckerService implements Runnable{
       // No syntax errors, proceed for compilation check, Stage 2.
       
       //if(hasSyntaxErrors()) astGenerator.buildAST(null);
+      if (!hasSyntaxErrors()) {
+             
+      }
       if (problems.length == 0 && editor.compilationCheckEnabled) {
         //mainClassOffset++; // just a hack.
         
@@ -537,6 +548,10 @@ public class ErrorCheckerService implements Runnable{
       if (problems.length == 0) {
         syntaxErrors.set(false);
         containsErrors.set(false);
+        parser.setSource(sourceCode.toCharArray());
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);        
+        parser.setCompilerOptions(options);
+        lastCorrectCU = (CompilationUnit) parser.createAST(null);  
       } else {
         syntaxErrors.set(true);
         containsErrors.set(true);
@@ -548,7 +563,8 @@ public class ErrorCheckerService implements Runnable{
   
   protected void compileCheck() {
     
-    // CU needs to be updated coz before compileCheck xqpreprocessor is run on the source code which makes some further changes
+    // CU needs to be updated coz before compileCheck xqpreprocessor is run on 
+    // the source code which makes some further changes
     //TODO Check if this breaks things 
     
     parser.setSource(sourceCode.toCharArray());
@@ -561,13 +577,17 @@ public class ErrorCheckerService implements Runnable{
     options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
     parser.setCompilerOptions(options);
     
-    if (cu == null)
-      cu = (CompilationUnit) parser.createAST(null);
+    if (compileCheckCU == null)
+      compileCheckCU = (CompilationUnit) parser.createAST(null);
     else {
-      synchronized (cu) {
-        cu = (CompilationUnit) parser.createAST(null);
+      synchronized (compileCheckCU) {
+          compileCheckCU = (CompilationUnit) parser.createAST(null);
       }
     }
+    if(!hasSyntaxErrors())
+      lastCorrectCU = compileCheckCU;
+    cu = compileCheckCU;
+    
     compilationUnitState = 2;
     // Currently (Sept, 2012) I'm using Java's reflection api to load the
     // CompilationChecker class(from CompilationChecker.jar) that houses the
@@ -717,6 +737,14 @@ public class ErrorCheckerService implements Runnable{
     }
     
     // log("Compilecheck, Done.");
+  }
+  
+  public CompilationUnit getLastCorrectCU(){
+    return lastCorrectCU;
+  }
+  
+  public CompilationUnit getLatestCU(){
+    return compileCheckCU;
   }
   
   private int loadClassCounter = 0;
@@ -977,12 +1005,14 @@ public class ErrorCheckerService implements Runnable{
         if (emarker.getProblem().getLineNumber() == editor.getTextArea()
             .getCaretLine() + 1) {
           if (emarker.getType() == ErrorMarker.Warning) {
-            editor.statusNotice(emarker.getProblem().getMessage()); 
+              editor.statusMessage(emarker.getProblem().getMessage(),
+                                   DebugEditor.STATUS_INFO);
                                 //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
           //TODO: this is temporary
           }
           else {
-            editor.statusError(emarker.getProblem().getMessage());
+              editor.statusMessage(emarker.getProblem().getMessage(),
+                                   DebugEditor.STATUS_COMPILER_ERR);
                                //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
           }
           return;
@@ -991,8 +1021,7 @@ public class ErrorCheckerService implements Runnable{
     }
     
     // This line isn't an error line anymore, so probably just clear it
-    if (editor.getStatusMode() == EditorStatus.ERR
-        || editor.getStatusMode() == EditorStatus.NOTICE) {
+    if (editor.statusMessageType == DebugEditor.STATUS_COMPILER_ERR) {
       editor.statusEmpty();
       return;
     }

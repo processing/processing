@@ -794,6 +794,13 @@ public class ASTGenerator {
   
   private AtomicBoolean predictionOngoing;
   
+  /**
+   * The main function that calculates possible code completion candidates
+   *  
+   * @param word
+   * @param line
+   * @param lineStartNonWSOffset
+   */
   public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
     if(predictionOngoing.get()) return;
         
@@ -890,11 +897,14 @@ public class ASTGenerator {
           MethodInvocation mi = (MethodInvocation)testnode;
           System.out.println(mi.getName() + "," + mi.getExpression() + "," + mi.typeArguments().size());
         }
-        nearestNode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
+        
+        // find nearest ASTNode
+        nearestNode = findClosestNode(lineNumber, (ASTNode) errorCheckerService.getLastCorrectCU().types()
             .get(0));
-        if (nearestNode == null)
-          //Make sure nearestNode is not NULL if couldn't find a closeset node
-          nearestNode = (ASTNode) compilationUnit.types().get(0);
+        if (nearestNode == null) {
+          // Make sure nearestNode is not NULL if couldn't find a closeset node
+          nearestNode = (ASTNode) errorCheckerService.getLastCorrectCU().types().get(0);
+        }
         logE(lineNumber + " Nearest ASTNode to PRED "
             + getNodeAsString(nearestNode));
 
@@ -1671,8 +1681,13 @@ public class ASTGenerator {
           logE("DECLA: " + decl.getClass().getName());
           nodeLabel = getLabelIfType(new ASTNodeWrapper(decl), (SimpleName) simpName);
           //retLabelString = getNodeAsString(decl);
-        } else
+        } else {
           logE("null");
+          if(scrollOnly) {
+            editor.statusMessage(simpName + " is not defined in this sketch",
+                                 DebugEditor.STATUS_ERR);
+          }
+        }
 
         log(getNodeAsString(decl));
         
@@ -2017,19 +2032,22 @@ public class ASTGenerator {
   public void handleShowUsage(){
     log("Last clicked word:" + lastClickedWord);
     if(lastClickedWord == null && editor.ta.getSelectedText() == null){
-      editor.statusError("Highlight the class/function/variable name first");
+      editor.statusMessage("Highlight the class/function/variable name first"
+                           , DebugEditor.STATUS_INFO);
       return;
     }
     
     if(errorCheckerService.hasSyntaxErrors()){
-      editor.statusError("Can't perform action until syntax errors are fixed :(");
+      editor.statusMessage("Can't perform action until syntax errors are " +
+      		"fixed :(", DebugEditor.STATUS_WARNING);
       return;
     }
     DefaultMutableTreeNode defCU = findAllOccurrences();   
     String selText = lastClickedWord == null ? editor.ta.getSelectedText()
         : lastClickedWord;
     if(defCU == null){
-      editor.statusError("Can't locate definition of " + selText);
+      editor.statusMessage("Can't locate definition of " + selText, 
+                           DebugEditor.STATUS_ERR);
       return;
     }
     if(defCU.getChildCount() == 0)
@@ -2281,12 +2299,24 @@ public class ASTGenerator {
   public void handleRefactor(){
     log("Last clicked word:" + lastClickedWord);
     if(lastClickedWord == null && editor.ta.getSelectedText() == null){
-      editor.statusError("Highlight the class/function/variable name first");
+      editor.statusMessage("Highlight the class/function/variable name first",
+                           DebugEditor.STATUS_INFO);
       return;
     }
     
     if(errorCheckerService.hasSyntaxErrors()){
-      editor.statusError("Can't perform action until syntax errors are fixed :(");
+      editor
+          .statusMessage("Can't perform action until syntax errors are fixed :(",
+                         DebugEditor.STATUS_WARNING);
+      return;
+    }
+    
+    DefaultMutableTreeNode defCU = findAllOccurrences();   
+    String selText = lastClickedWord == null ? editor.ta.getSelectedText()
+        : lastClickedWord;
+    if(defCU == null){
+      editor.statusMessage(selText + " isn't defined in this sketch, so it can't" +
+      		" be renamed", DebugEditor.STATUS_ERR);
       return;
     }
     if (!frmRename.isVisible()){

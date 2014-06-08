@@ -39,6 +39,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -933,7 +935,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             vi.setTitle(getSketch().getName());
         }
         //  if file location has changed, update autosaver
-        autosaver.reloadAutosaveDir();
+//        autosaver.reloadAutosaveDir();
         return saved;
     }
     
@@ -1513,6 +1515,54 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
     public void statusHalted() {
         statusNotice("Debugger halted.");
+    }
+    
+    public static final int STATUS_EMPTY = 100, STATUS_COMPILER_ERR = 200,
+        STATUS_WARNING = 300, STATUS_INFO = 400, STATUS_ERR = 500;
+    public int statusMessageType = STATUS_EMPTY;
+    public String statusMessage;
+    public void statusMessage(final String what, int type){
+      // Don't re-display the old message again
+      if(type != STATUS_EMPTY) {
+        if(what.equals(statusMessage) && type == statusMessageType) {
+          return;
+        }
+      }
+      statusMessage = new String(what);
+      statusMessageType = type;
+      switch (type) {
+      case STATUS_COMPILER_ERR:
+      case STATUS_ERR:
+        super.statusError(what);
+        break;
+      case STATUS_INFO:
+      case STATUS_WARNING:  
+        statusNotice(what);        
+        break;
+      }
+      // Don't need to clear compiler error messages
+      if(type == STATUS_COMPILER_ERR) return;
+      
+      // Clear the message after a delay
+      SwingWorker s = new SwingWorker<Void, Void>() {
+        @Override
+        protected Void doInBackground() throws Exception {
+          try {
+            Thread.sleep(2 * 1000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          statusEmpty();
+          return null;
+        }
+      };
+      s.execute();
+    }
+    
+    public void statusEmpty(){
+      statusMessage = null;
+      statusMessageType = STATUS_EMPTY;
+      super.statusEmpty();
     }
     
     ErrorCheckerService errorCheckerService;
