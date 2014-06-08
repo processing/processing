@@ -555,27 +555,22 @@ public class EditorHeader extends JComponent {
     KeyStroke ctrlAltLeft =
       KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
     item.setAccelerator(ctrlAltLeft);
-    // this didn't want to work consistently
-    /*
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.sketch.prevCode();
+          editor.sketch.handlePrevCode();
         }
       });
-    */
     menu.add(item);
 
     item = new JMenuItem("Next Tab");
     KeyStroke ctrlAltRight =
       KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
     item.setAccelerator(ctrlAltRight);
-    /*
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          editor.sketch.nextCode();
+          editor.sketch.handleNextCode();
         }
       });
-    */
     menu.add(item);
 
     Sketch sketch = editor.getSketch();
