@@ -1603,7 +1603,7 @@ public class ASTGenerator {
           .getSketch().getCurrentCodeIndex(), originalLN);
       String javaCodeLine = getJavaSourceCodeline(lineNumber);
       
-      log(originalLN + " PDE :" + pdeCodeLine);
+      log(originalLN + " Original Line num.\nPDE :" + pdeCodeLine);
       log("JAVA:" + javaCodeLine);
       log("Clicked on: " + name + " start offset: " + offset);
       OffsetMatcher ofm = new OffsetMatcher(pdeCodeLine, javaCodeLine);
@@ -1611,7 +1611,7 @@ public class ASTGenerator {
           + lineNode.getStartPosition();
       log("JAVA ast offset: " + (javaOffset));
       dfsLookForASTNode(errorCheckerService.getLatestCU(), name,
-                        javaOffset, javaOffset + name.length() - 1);
+                        javaOffset, javaOffset + name.length());
       ASTNode simpName = null;
       if(simpName == null) return null;
    // End test
@@ -2259,10 +2259,12 @@ public class ASTGenerator {
             if (temp.getStartPosition() <= startOffset
                 && (temp.getStartPosition() + temp.getLength()) >= endOffset) {
               if(temp instanceof SimpleName){
+                log("Found possible simplename: " + getNodeAsString(temp));
                 if(name.equals(temp.toString())){
                   log("Found simplename: " + getNodeAsString(temp));
                   return temp;
                 }
+                log("Bummer, didn't match");
               }
               else
                 stack.push(temp);

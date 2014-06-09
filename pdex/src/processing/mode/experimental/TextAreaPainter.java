@@ -101,7 +101,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
     else {
       int x = ta.xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
       log("x="+x);
-      int xLS = off - ta.getLineStartOffset(line);
+      int xLS = off - ta.getLineStartNonWhiteSpaceOffset(line);
       if (x < 0 || x >= s.length())
         return;
       String word = s.charAt(x) + "";
