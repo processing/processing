@@ -1651,6 +1651,7 @@ public class ASTGenerator {
 
         log(getNodeAsString(decl));
 
+        /*
         // - findDecl3 testing
 
         ASTNode nearestNode = findClosestNode(lineNumber,
@@ -1663,6 +1664,7 @@ public class ASTGenerator {
           log("CMEM-> " + cmem);
         } else
           log("CMEM-> null");
+        */
       }
     }
 
