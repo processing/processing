@@ -654,7 +654,7 @@ public class ASTNodeWrapper {
   public int getPDECodeOffsetForSN(ASTGenerator astGen){
     if (Node instanceof SimpleName) {
       Element lineElement = astGen.getJavaSourceCodeElement(lineNumber);
-
+      log("Line element off " + lineElement.getStartOffset());
       OffsetMatcher ofm = new OffsetMatcher(
                                             astGen
                                                 .getPDESourceCodeLine(lineNumber),

@@ -2081,37 +2081,49 @@ public class ASTGenerator {
 
     // I need to store the pde and java offsets beforehand because once
     // the replace starts, all offsets returned are affected
-    int offsetsMap[][][] = new int[defCU.getChildCount()][2][];
+    //int offsetsMap[][][] = new int[defCU.getChildCount()][2][];
+    int pdeOffsets[][] = new int[defCU.getChildCount()][3];
     for (int i = 0; i < defCU.getChildCount(); i++) {
       ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
           .getChildAt(i))).getUserObject();
-      offsetsMap[i][0] = awrap.getPDECodeOffsets(errorCheckerService);
-      offsetsMap[i][1] = awrap.getJavaCodeOffsets(errorCheckerService);
-      log(getNodeAsString(awrap.getNode()) + ", "
-          + awrap.getPDECodeOffsetForSN(this));
+//      offsetsMap[i][0] = awrap.getPDECodeOffsets(errorCheckerService);
+//      offsetsMap[i][1] = awrap.getJavaCodeOffsets(errorCheckerService);
+      int ans[] = errorCheckerService.calculateTabIndexAndLineNumber(awrap
+          .getLineNumber());
+      pdeOffsets[i][0] = ans[0];
+      pdeOffsets[i][1] = ans[1];
+      pdeOffsets[i][2] = awrap.getPDECodeOffsetForSN(this);
+//      logE(getNodeAsString(awrap.getNode()) + ", "
+//          + pdeOffsets[i][2]);
     }
-    /*
+    
     for (int i = 0; i < defCU.getChildCount(); i++) {
-      int pdeoffsets[] = offsetsMap[i][0];
-      int javaoffsets[] = offsetsMap[i][1];
+      ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
+          .getChildAt(i))).getUserObject();
       // correction for pde enhancements related displacement on a line
       int off = 0;
-      if (lineOffsetDisplacement.get(javaoffsets[0]) != null) {
-        off = lineOffsetDisplacement.get(javaoffsets[0]);
+      if (lineOffsetDisplacement.get(awrap.getLineNumber()) != null) {
+        off = lineOffsetDisplacement.get(awrap.getLineNumber());
 
-        lineOffsetDisplacement.put(javaoffsets[0],
+        lineOffsetDisplacement.put(awrap.getLineNumber(),
                                    lineOffsetDisplacementConst + off);
       } else {
-        lineOffsetDisplacement.put(javaoffsets[0],
+        lineOffsetDisplacement.put(awrap.getLineNumber(),
                                    lineOffsetDisplacementConst);
       }
-      ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
-                                            pdeoffsets[1],
-                                            javaoffsets[1] + off,
-                                            javaoffsets[2]);
-      //int k = JOptionPane.showConfirmDialog(new JFrame(), "Rename?","", JOptionPane.INFORMATION_MESSAGE));
+      logE(getNodeAsString(awrap.getNode()) + ", T:" + pdeOffsets[i][0]
+          + ", L:" + pdeOffsets[i][1] + ", O:" + pdeOffsets[i][2]);
+//      ErrorCheckerService.scrollToErrorLine(editor, pdeOffsets[i][0],
+//                                            pdeOffsets[i][1] - 1, pdeOffsets[i][2]
+//                                                + off, awrap.getNode()
+//                                                .toString().length());
+      highlightPDECode(pdeOffsets[i][0],
+                       pdeOffsets[i][1], pdeOffsets[i][2]
+                           + off, awrap.getNode()
+                           .toString().length());
+      //int k = JOptionPane.showConfirmDialog(new JFrame(), "Rename?","", JOptionPane.INFORMATION_MESSAGE);
       editor.ta.setSelectedText(newName);
-    }*/
+    }
     errorCheckerService.resumeThread();
 //    for (Integer lineNum : lineOffsetDisplacement.keySet()) {
 //      log(lineNum + "line, disp"
@@ -2123,6 +2135,21 @@ public class ASTGenerator {
     frmRename.setVisible(false);
     lastClickedWord = null;
     lastClickedWordNode = null;
+  }
+  
+  /**
+   * Highlights text in the editor
+   * @param tab
+   * @param lineNumber
+   * @param lineStartWSOffset - line start offset including initial white space
+   * @param length
+   */
+  public void highlightPDECode(int tab, int lineNumber, int lineStartWSOffset,
+                               int length) {
+    editor.toFront();
+    editor.getSketch().setCurrentCode(tab);
+    lineStartWSOffset += editor.ta.getLineStartOffset(lineNumber);
+    editor.ta.select(lineStartWSOffset, lineStartWSOffset + length);
   }
   
   public void handleShowUsage(){

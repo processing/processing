@@ -61,6 +61,7 @@ public class OffsetMatcher {
   }
 
   public int getPdeOffForJavaOff(int start, int length) {
+    log("PDE :" + pdeCodeLine + "\nJAVA:" + javaCodeLine);
     if(!matchingNeeded) return start;
     int ans = getPdeOffForJavaOff(start), end = getPdeOffForJavaOff(start + length - 1); 
     log(start + " java start off, pde start off "
