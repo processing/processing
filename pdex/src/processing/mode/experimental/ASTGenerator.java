@@ -240,7 +240,7 @@ public class ASTGenerator {
   /**
    * Toggle AST View window
    */
-  public static final boolean SHOWAST = !true;
+  public static final boolean SHOWAST = true;
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
@@ -1607,8 +1607,11 @@ public class ASTGenerator {
       log("JAVA:" + javaCodeLine);
       log("Clicked on: " + name + " start offset: " + offset);
       OffsetMatcher ofm = new OffsetMatcher(pdeCodeLine, javaCodeLine);
-      int javaOffset = ofm.getJavaOffForPdeOff(offset, name.length());
-      
+      int javaOffset = ofm.getJavaOffForPdeOff(offset, name.length())
+          + lineNode.getStartPosition();
+      log("JAVA ast offset: " + (javaOffset));
+      dfsLookForASTNode(errorCheckerService.getLatestCU(), name,
+                        javaOffset, javaOffset + name.length() - 1);
       ASTNode simpName = null;
       if(simpName == null) return null;
    // End test
@@ -2224,13 +2227,64 @@ public class ASTGenerator {
       ASTNodeWrapper awnode = (ASTNodeWrapper) cnode.getUserObject();
 //      log("Visiting: " + getNodeAsString(awnode.getNode()));
       if(isInstanceOfType(awnode.getNode(), decl, name)){
-        int val[] = errorCheckerService.JavaToPdeOffsets(awnode.getLineNumber(), 0);
+        int val[] = errorCheckerService
+            .JavaToPdeOffsets(awnode.getLineNumber(), 0);
         tnode.add(new DefaultMutableTreeNode(new ASTNodeWrapper(awnode
             .getNode(), "Line " + (val[1] + 1) + " | Tab: "
             + editor.getSketch().getCode(val[0]).getPrettyName())));
       }
       
     }
+  }
+  
+  public ASTNode dfsLookForASTNode(ASTNode root, String name, int startOffset,
+                                   int endOffset) {
+    log("dfsLookForASTNode() lookin for " + name + " Offsets: " + startOffset
+        + "," + endOffset);
+    Stack stack = new Stack<ASTNode>();
+    stack.push(root);
+
+    while (!stack.isEmpty()) {
+      ASTNode node = (ASTNode) stack.pop();
+      log("Popped from stack: " + getNodeAsString(node));
+      Iterator<StructuralPropertyDescriptor> it = node
+          .structuralPropertiesForType().iterator();
+      while (it.hasNext()) {
+        StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
+            .next();
+
+        if (prop.isChildProperty() || prop.isSimpleProperty()) {
+          if (node.getStructuralProperty(prop) instanceof ASTNode) {
+            ASTNode temp = (ASTNode) node.getStructuralProperty(prop);
+            if (temp.getStartPosition() <= startOffset
+                && (temp.getStartPosition() + temp.getLength()) >= endOffset) {
+              if(temp instanceof SimpleName){
+                if(name.equals(temp.toString())){
+                  log("Found simplename: " + getNodeAsString(temp));
+                  return temp;
+                }
+              }
+              else
+                stack.push(temp);
+                log("Pushed onto stack: " + getNodeAsString(temp));
+            }
+          }
+        }
+        else if (prop.isChildListProperty()) {
+          List<ASTNode> nodelist = (List<ASTNode>) node
+              .getStructuralProperty(prop);
+          for (ASTNode temp : nodelist) {
+            if (temp.getStartPosition() <= startOffset
+                && (temp.getStartPosition() + temp.getLength()) >= endOffset) {
+                stack.push(temp);
+                log("Pushed onto stack: " + getNodeAsString(temp));
+            }
+          }
+        }
+      }
+    }
+    log("dfsLookForASTNode() not found " + name);
+    return null;
   }
   
   protected SketchOutline sketchOutline;
