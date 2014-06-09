@@ -1996,9 +1996,10 @@ public class ASTGenerator {
       treeRename.setModel(new DefaultTreeModel(defCU));
       ((DefaultTreeModel) treeRename.getModel()).reload();
     }
-    frmOccurenceList.setTitle("Usage of " + selText);
-    frmOccurenceList.setLocation(editor.getX() + editor.getWidth(),editor.getY());
-    frmOccurenceList.setVisible(true);
+//    frmOccurenceList.setTitle("Usage of \"" + selText + "\" : "
+//        + defCU.getChildCount() + " time(s)");
+//    frmOccurenceList.setLocation(editor.getX() + editor.getWidth(),editor.getY());
+//    frmOccurenceList.setVisible(true);
     int lineOffsetDisplacementConst = newName.length()
         - selText.length();
     HashMap<Integer, Integer> lineOffsetDisplacement = new HashMap<Integer, Integer>();
@@ -2043,7 +2044,7 @@ public class ASTGenerator {
     errorCheckerService.resumeThread();
     editor.getSketch().setModified(true);
     errorCheckerService.runManualErrorCheck();
-    frmOccurenceList.setVisible(false);
+//    frmOccurenceList.setVisible(false);
     frmRename.setVisible(false);
     lastClickedWord = null;
     lastClickedWordNode = null;
@@ -2090,7 +2091,8 @@ public class ASTGenerator {
     treeRename.setModel(new DefaultTreeModel(defCU));
     ((DefaultTreeModel) treeRename.getModel()).reload();
     treeRename.setRootVisible(false);
-    frmOccurenceList.setTitle("Usage of \"" + selText+ "\"");
+    frmOccurenceList.setTitle("Usage of \"" + selText + "\" : "
+        + defCU.getChildCount() + " time(s)");
     frmOccurenceList.setLocation(editor.getX() + editor.getWidth(),editor.getY());
     frmOccurenceList.setVisible(true);
     lastClickedWord = null;
