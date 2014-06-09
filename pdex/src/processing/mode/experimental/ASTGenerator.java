@@ -2246,7 +2246,7 @@ public class ASTGenerator {
 
     while (!stack.isEmpty()) {
       ASTNode node = (ASTNode) stack.pop();
-      log("Popped from stack: " + getNodeAsString(node));
+      //log("Popped from stack: " + getNodeAsString(node));
       Iterator<StructuralPropertyDescriptor> it = node
           .structuralPropertiesForType().iterator();
       while (it.hasNext()) {
@@ -2259,7 +2259,6 @@ public class ASTGenerator {
             if (temp.getStartPosition() <= startOffset
                 && (temp.getStartPosition() + temp.getLength()) >= endOffset) {
               if(temp instanceof SimpleName){
-                log("Found possible simplename: " + getNodeAsString(temp));
                 if(name.equals(temp.toString())){
                   log("Found simplename: " + getNodeAsString(temp));
                   return temp;
@@ -2268,7 +2267,7 @@ public class ASTGenerator {
               }
               else
                 stack.push(temp);
-                log("Pushed onto stack: " + getNodeAsString(temp));
+                //log("Pushed onto stack: " + getNodeAsString(temp));
             }
           }
         }
@@ -2280,6 +2279,16 @@ public class ASTGenerator {
                 && (temp.getStartPosition() + temp.getLength()) >= endOffset) {
                 stack.push(temp);
                 log("Pushed onto stack: " + getNodeAsString(temp));
+                if(temp instanceof SimpleName){
+                  if(name.equals(temp.toString())){
+                    log("Found simplename: " + getNodeAsString(temp));
+                    return temp;
+                  }
+                  log("Bummer, didn't match");
+                }
+                else
+                  stack.push(temp);
+                  //log("Pushed onto stack: " + getNodeAsString(temp));
             }
           }
         }
