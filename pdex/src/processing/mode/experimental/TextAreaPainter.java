@@ -458,6 +458,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
         if (x1 >= 0 && x1 < s.length()) {
           if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
             word = s.charAt(x1--) + word;
+            xLS--;
           } else
             x1 = -1;
         } else
@@ -483,8 +484,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       if (Character.isDigit(word.charAt(0)))
         return null;
       String tooltipText = errorCheckerService.getASTGenerator()
-          .getLabelForASTNode(line + errorCheckerService.mainClassOffset, word,
-                              xLS);
+          .getLabelForASTNode(line, word, xLS);
 
       log(errorCheckerService.mainClassOffset + " MCO "
       + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");

@@ -256,6 +256,7 @@ public class TextArea extends JEditTextArea {
         if (x1 >= 0 && x1 < s.length()) {
           if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
             word = s.charAt(x1--) + word;
+            xLS--;
           } else
             x1 = -1;
         } else
@@ -280,8 +281,7 @@ public class TextArea extends JEditTextArea {
       if (Character.isDigit(word.charAt(0)))
         return null;
       log("Mouse click, word: " + word.trim());
-      errorCheckerService.getASTGenerator().setLastClickedWord(line
-          + errorCheckerService.mainClassOffset, word, xLS);
+      errorCheckerService.getASTGenerator().setLastClickedWord(line, word, xLS);
       return word.trim();
     }
   }
