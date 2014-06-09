@@ -2087,8 +2087,10 @@ public class ASTGenerator {
           .getChildAt(i))).getUserObject();
       offsetsMap[i][0] = awrap.getPDECodeOffsets(errorCheckerService);
       offsetsMap[i][1] = awrap.getJavaCodeOffsets(errorCheckerService);
+      log(getNodeAsString(awrap.getNode()) + ", "
+          + awrap.getPDECodeOffsetForSN(this));
     }
-    
+    /*
     for (int i = 0; i < defCU.getChildCount(); i++) {
       int pdeoffsets[] = offsetsMap[i][0];
       int javaoffsets[] = offsetsMap[i][1];
@@ -2109,7 +2111,7 @@ public class ASTGenerator {
                                             javaoffsets[2]);
       //int k = JOptionPane.showConfirmDialog(new JFrame(), "Rename?","", JOptionPane.INFORMATION_MESSAGE));
       editor.ta.setSelectedText(newName);
-    }
+    }*/
     errorCheckerService.resumeThread();
 //    for (Integer lineNum : lineOffsetDisplacement.keySet()) {
 //      log(lineNum + "line, disp"
