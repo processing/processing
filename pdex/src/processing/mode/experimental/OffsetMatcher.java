@@ -52,10 +52,10 @@ public class OffsetMatcher {
     
 //    log("PDE <-> Java");
     for (int i = 0; i < offsetMatch.size(); i++) {
-      log(offsetMatch.get(i).pdeOffset + " <-> "
-          + offsetMatch.get(i).javaOffset +
-          ", " + word1.charAt(offsetMatch.get(i).pdeOffset)
-          + " <-> " + word2.charAt(offsetMatch.get(i).javaOffset));
+//      log(offsetMatch.get(i).pdeOffset + " <-> "
+//          + offsetMatch.get(i).javaOffset +
+//          ", " + word1.charAt(offsetMatch.get(i).pdeOffset)
+//          + " <-> " + word2.charAt(offsetMatch.get(i).javaOffset));
     }
 //    log("Length " + offsetMatch.size());
   }

@@ -1565,7 +1565,7 @@ public class ASTGenerator {
 
 
   /**
-   * 
+   * Given a word(identifier) in pde code, finds its location in the ASTNode
    * @param lineNumber
    * @param name
    * @param offset - line start nonwhitespace offset
@@ -1588,7 +1588,7 @@ public class ASTGenerator {
       }
 
     }
-    log("FLON: Node line number " + lineNumber);
+    log("getASTNodeAt: Node line number " + lineNumber);
     ASTNode lineNode = findLineOfNode(compilationUnit, lineNumber, offset, name);
     
     log("Node text +> " + lineNode);
@@ -1610,69 +1610,10 @@ public class ASTGenerator {
       int javaOffset = ofm.getJavaOffForPdeOff(offset, name.length())
           + lineNode.getStartPosition();
       log("JAVA ast offset: " + (javaOffset));
-      dfsLookForASTNode(errorCheckerService.getLatestCU(), name,
-                        javaOffset, javaOffset + name.length());
-      ASTNode simpName = null;
-      if(simpName == null) return null;
-   // End test
-//      int altOff = offset;
-//      int ret[][] = lineNodeWrap.getOffsetMapping(errorCheckerService);
-//      if(ret != null){
-//        altOff = 0;
-//        int javaCodeMap[] = ret[0], pdeCodeMap[] = ret[1];
-//
-//        for (; altOff < javaCodeMap.length; altOff++) {
-//          if (javaCodeMap[altOff] == pdeCodeMap[offset]) {
-//            break;
-//          }
-//        }
-//      }
-//      log("FLON2: " + lineNumber + " LN start pos "
-//          + lineNode.getStartPosition() + " off " + offset + " alt off" + altOff);
-//      /* 
-//       * Now I need to see if multiple statements exist with this same line number
-//       * If that's the case, I need to ensure the offset is right. 
-//       */
-//      ASTNode parLineNode = lineNode.getParent(); 
-//      
-//      Iterator<StructuralPropertyDescriptor> it = parLineNode
-//          .structuralPropertiesForType().iterator();
-//      boolean flag = true;
-//      int offAdjust = 0;
-//      while (it.hasNext() && flag) {
-//        StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
-//            .next();
-//        if (prop.isChildListProperty()) {
-//          List<ASTNode> nodelist = (List<ASTNode>) parLineNode
-//              .getStructuralProperty(prop);
-//          for (ASTNode cnode : nodelist) {
-//            if (getLineNumber(cnode) == lineNumber) {
-//              if (cnode.getStartPosition() <= lineNode.getStartPosition()
-//                  + altOff
-//                  && cnode.getStartPosition() + cnode.getLength() > lineNode
-//                      .getStartPosition() + altOff) {
-//                log(cnode);
-//                offAdjust = cnode.getStartPosition() - lineNode.getStartPosition();
-//                lineNode = cnode;
-//                altOff -= offAdjust;
-//                flag = false;
-//                break;
-//              }
-//              
-//            }
-//          }
-//        }
-//      }
-//      log("FLON3 new alt off: " + altOff);
-//      ASTNode simpName = pinpointOnLine(lineNode, altOff,
-//                                        lineNode.getStartPosition(), name);
-//      
-//      if(simpName == null){ //Added while fixing #51
-//        log("pinpointOnLine 1+++> " + simpName);
-//        simpName = pinpointOnLine(lineNode.getParent(), altOff,
-//                                  lineNode.getStartPosition(), name);
-//      }
-//      log("pinpointOnLine 2+++> " + simpName);
+      ASTNode simpName = dfsLookForASTNode(errorCheckerService.getLatestCU(),
+                                           name, javaOffset,
+                                           javaOffset + name.length());
+      
       if(simpName == null && lineNode instanceof SimpleName){
         switch (lineNode.getParent().getNodeType()) {
         case ASTNode.TYPE_DECLARATION:
