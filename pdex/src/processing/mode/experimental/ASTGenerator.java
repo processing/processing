@@ -1189,12 +1189,21 @@ public class ASTGenerator {
     return candidates;
   }
   
+  public String getPDESourceCodeLine(int javaLineNumber) {
+    int res[] = errorCheckerService
+        .calculateTabIndexAndLineNumber(javaLineNumber);
+    if (res != null) {
+      return errorCheckerService.getPDECodeAtLine(res[0], res[1]);
+    }
+    return null;
+  }
+  
   /**
    * Returns the java source code line at the given line number
    * @param javaLineNumber
    * @return
    */
-  public String getJavaSourceCodeline(int javaLineNumber) {
+  public String getJavaSourceCodeLine(int javaLineNumber) {
     try {
       PlainDocument javaSource = new PlainDocument();
       javaSource.insertString(0, errorCheckerService.sourceCode, null);
@@ -1638,7 +1647,7 @@ public class ASTGenerator {
     if (lineNode != null) {
       String pdeCodeLine = errorCheckerService.getPDECodeAtLine(editor
           .getSketch().getCurrentCodeIndex(), lineNumber);
-      String javaCodeLine = getJavaSourceCodeline(pdeLineNumber);
+      String javaCodeLine = getJavaSourceCodeLine(pdeLineNumber);
 
       log(lineNumber + " Original Line num.\nPDE :" + pdeCodeLine);
       log("JAVA:" + javaCodeLine);
