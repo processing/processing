@@ -1574,7 +1574,8 @@ public class ASTGenerator {
    */
   public ASTNodeWrapper getASTNodeAt(int lineNumber, String name, int offset,
                                      boolean scrollOnly) {
-    //int originalLN = lineNumber;
+    
+    // Convert tab based pde line number to actual line number
     int pdeLineNumber = lineNumber + errorCheckerService.mainClassOffset;
     log("----getASTNodeAt---- CU State: "
         + errorCheckerService.compilationUnitState);
@@ -1591,6 +1592,7 @@ public class ASTGenerator {
 
     }
 
+    // Find closest ASTNode to the linenumber
     log("getASTNodeAt: Node line number " + pdeLineNumber);
     ASTNode lineNode = findLineOfNode(compilationUnit, pdeLineNumber, offset,
                                       name);
@@ -1600,6 +1602,7 @@ public class ASTGenerator {
     String nodeLabel = null;
     String nameOfNode = null; // The node name which is to be scrolled to
 
+    // Obtain correspondin java code at that line, match offsets
     if (lineNode != null) {
       String pdeCodeLine = errorCheckerService.getPDECodeAtLine(editor
           .getSketch().getCurrentCodeIndex(), lineNumber);
@@ -1608,14 +1611,18 @@ public class ASTGenerator {
       log(lineNumber + " Original Line num.\nPDE :" + pdeCodeLine);
       log("JAVA:" + javaCodeLine);
       log("Clicked on: " + name + " start offset: " + offset);
+      // Calculate expected java offset based on the pde line
       OffsetMatcher ofm = new OffsetMatcher(pdeCodeLine, javaCodeLine);
       int javaOffset = ofm.getJavaOffForPdeOff(offset, name.length())
           + lineNode.getStartPosition();
       log("JAVA ast offset: " + (javaOffset));
+      
+      // Find the corresponding node in the AST
       ASTNode simpName = dfsLookForASTNode(errorCheckerService.getLatestCU(),
                                            name, javaOffset,
                                            javaOffset + name.length());
 
+      // If node wasn't found in the AST, lineNode may contain something
       if (simpName == null && lineNode instanceof SimpleName) {
         switch (lineNode.getParent().getNodeType()) {
         case ASTNode.TYPE_DECLARATION:
@@ -1632,6 +1639,7 @@ public class ASTGenerator {
         }
       }
 
+      // SimpleName instance found, now find its declaration in code
       if (simpName instanceof SimpleName) {
         nameOfNode = simpName.toString();
         log(getNodeAsString(simpName));
@@ -1686,6 +1694,7 @@ public class ASTGenerator {
       }
     }
 
+    // Return the declaration wrapped as ASTNodeWrapper
     return new ASTNodeWrapper(decl, nodeLabel);
   }
 
