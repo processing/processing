@@ -144,8 +144,8 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       
       log(errorCheckerService.mainClassOffset + line +
       "|" + line + "| offset " + xLS + word + " <= \n");
-      errorCheckerService.getASTGenerator().scrollToDeclaration(line
-          + errorCheckerService.mainClassOffset, word, xLS);
+      errorCheckerService.getASTGenerator()
+          .scrollToDeclaration(line, word, xLS);
     }
   }
 

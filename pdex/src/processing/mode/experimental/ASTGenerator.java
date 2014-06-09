@@ -1574,7 +1574,8 @@ public class ASTGenerator {
    */
   public ASTNodeWrapper getASTNodeAt(int lineNumber, String name, int offset,
                                      boolean scrollOnly) {
-    int originalLN = lineNumber - errorCheckerService.mainClassOffset;
+    int originalLN = lineNumber;
+    lineNumber += errorCheckerService.mainClassOffset;
     log("----getASTNodeAt---- CU State: " + errorCheckerService.compilationUnitState);
     if (errorCheckerService != null) {
       editor = errorCheckerService.getEditor();
@@ -1588,6 +1589,7 @@ public class ASTGenerator {
       }
 
     }
+    lineNumber = pdeLineNumToJavaLineNum(lineNumber);
     log("getASTNodeAt: Node line number " + lineNumber);
     ASTNode lineNode = findLineOfNode(compilationUnit, lineNumber, offset, name);
     
@@ -1595,10 +1597,8 @@ public class ASTGenerator {
     ASTNode decl = null;
     String nodeLabel = null;
     String nameOfNode = null; // The node name which is to be scrolled to
+    
     if (lineNode != null) {
-      // Being test
-
-      //ASTNodeWrapper lineNodeWrap = new ASTNodeWrapper(lineNode);
       String pdeCodeLine = errorCheckerService.getPDECodeAtLine(editor
           .getSketch().getCurrentCodeIndex(), originalLN);
       String javaCodeLine = getJavaSourceCodeline(lineNumber);
@@ -2247,7 +2247,7 @@ public class ASTGenerator {
   
   public int javaCodeOffsetToLineStartOffset(int line, int jOffset){
     // Find the first node with this line number, return its offset - jOffset
-    line = PdeToJavaLineNumber(line);
+    line = pdeLineNumToJavaLineNum(line);
     log("Looking for line: " + line + ", jOff " + jOffset);
     Stack temp = new Stack<DefaultMutableTreeNode>();
     temp.push(codeTree);
@@ -2271,17 +2271,22 @@ public class ASTGenerator {
     return -1;
   }
   
-  protected int PdeToJavaLineNumber(int lineNum){
-    int lineNumber = lineNum + errorCheckerService.getPdeImportsCount();
+  /**
+   * Converts pde line number to java line number
+   * @param pdeLineNum - pde line number
+   * @return
+   */
+  protected int pdeLineNumToJavaLineNum(int pdeLineNum){
+    int javaLineNumber = pdeLineNum + errorCheckerService.getPdeImportsCount();
     // Adjust line number for tabbed sketches
     int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
     if (codeIndex > 0)
       for (int i = 0; i < codeIndex; i++) {
         SketchCode sc = editor.getSketch().getCode(i);
         int len = Base.countLines(sc.getProgram()) + 1;
-        lineNumber += len;
+        javaLineNumber += len;
       }
-    return lineNumber;
+    return javaLineNumber;
   }
   
   protected boolean isInstanceOfType(ASTNode node,ASTNode decl, String name){
