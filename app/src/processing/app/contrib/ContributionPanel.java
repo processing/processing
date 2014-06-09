@@ -359,6 +359,20 @@ class ContributionPanel extends JPanel {
       }
       description.append(sentence);
     }
+    
+    String version = contrib.getPrettyVersion();
+
+    if (version != null && !version.isEmpty()) {
+      description.append("<br/>");
+      if (version.toLowerCase().startsWith("build")) // For Python mode
+        description.append("v"
+            + version.substring(5, version.indexOf(',')).trim());
+      else if (version.toLowerCase().startsWith("v")) // For ketai library
+        description.append(version);
+      else
+        description.append("v" + version);
+    }
+    
     description.append("</body></html>");
     //descriptionText.setText(description.toString());
     descriptionBlock.setText(description.toString());
