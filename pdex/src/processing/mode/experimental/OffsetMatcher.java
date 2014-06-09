@@ -32,14 +32,14 @@ public class OffsetMatcher {
 
   public ArrayList<OffsetMatcher.OffsetPair> offsetMatch;
 
-  String word1, word2;
+  String pdeCodeLine, javaCodeLine;
   
   boolean matchingNeeded = false;
 
   public OffsetMatcher(String pdeCode, String javaCode) {
-    this.word1 = pdeCode;
-    this.word2 = javaCode;
-    if(word1.trim().equals(word2.trim())){ //TODO: trim() needed here?
+    this.pdeCodeLine = pdeCode;
+    this.javaCodeLine = javaCode;
+    if(pdeCodeLine.trim().equals(javaCodeLine.trim())){ //TODO: trim() needed here?
       matchingNeeded = false;
       offsetMatch = new ArrayList<OffsetMatcher.OffsetPair>();
       log("Offset Matching not needed");
@@ -67,8 +67,8 @@ public class OffsetMatcher {
         + ans);
     log((start + length - 1) + " java end off, pde end off "
         + end);
-    log("J: " + word2.substring(start, start + length) + "\nP: "
-        + word1.substring(ans, end + 1));
+    log("J: " + javaCodeLine.substring(start, start + length) + "\nP: "
+        + pdeCodeLine.substring(ans, end + 1));
     return ans;
   }
 
@@ -139,10 +139,10 @@ public class OffsetMatcher {
 
 //    word1 = reverse(word1);
 //    word2 = reverse(word2);
-    int len1 = word1.length();
-    int len2 = word2.length();
-    log(word1 + " len: " + len1);
-    log(word2 + " len: " + len2);
+    int len1 = pdeCodeLine.length();
+    int len2 = javaCodeLine.length();
+    log(pdeCodeLine + " len: " + len1);
+    log(javaCodeLine + " len: " + len2);
     // len1+1, len2+1, because finally return dp[len1][len2]
     int[][] dp = new int[len1 + 1][len2 + 1];
 
@@ -156,9 +156,9 @@ public class OffsetMatcher {
 
     //iterate though, and check last char
     for (int i = 0; i < len1; i++) {
-      char c1 = word1.charAt(i);
+      char c1 = pdeCodeLine.charAt(i);
       for (int j = 0; j < len2; j++) {
-        char c2 = word2.charAt(j);
+        char c2 = javaCodeLine.charAt(j);
         //System.out.print(c1 + "<->" + c2);
         //if last two chars equal
         if (c1 == c2) {
@@ -182,8 +182,8 @@ public class OffsetMatcher {
 
     ArrayList<OffsetPair> alist = new ArrayList<OffsetMatcher.OffsetPair>();
     offsetMatch = alist;
-    minDistInGrid(dp, len1, len2, 0, 0, word1.toCharArray(),
-                  word2.toCharArray(), alist);
+    minDistInGrid(dp, len1, len2, 0, 0, pdeCodeLine.toCharArray(),
+                  javaCodeLine.toCharArray(), alist);
     return dp[len1][len2];
   }
 
