@@ -1576,7 +1576,8 @@ public class ASTGenerator {
                                      boolean scrollOnly) {
     //int originalLN = lineNumber;
     int pdeLineNumber = lineNumber + errorCheckerService.mainClassOffset;
-    log("----getASTNodeAt---- CU State: " + errorCheckerService.compilationUnitState);
+    log("----getASTNodeAt---- CU State: "
+        + errorCheckerService.compilationUnitState);
     if (errorCheckerService != null) {
       editor = errorCheckerService.getEditor();
       int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
@@ -1591,18 +1592,19 @@ public class ASTGenerator {
     }
 
     log("getASTNodeAt: Node line number " + pdeLineNumber);
-    ASTNode lineNode = findLineOfNode(compilationUnit, pdeLineNumber, offset, name);
-    
+    ASTNode lineNode = findLineOfNode(compilationUnit, pdeLineNumber, offset,
+                                      name);
+
     log("Node text +> " + lineNode);
     ASTNode decl = null;
     String nodeLabel = null;
     String nameOfNode = null; // The node name which is to be scrolled to
-    
+
     if (lineNode != null) {
       String pdeCodeLine = errorCheckerService.getPDECodeAtLine(editor
           .getSketch().getCurrentCodeIndex(), lineNumber);
       String javaCodeLine = getJavaSourceCodeline(pdeLineNumber);
-      
+
       log(lineNumber + " Original Line num.\nPDE :" + pdeCodeLine);
       log("JAVA:" + javaCodeLine);
       log("Clicked on: " + name + " start offset: " + offset);
@@ -1613,76 +1615,78 @@ public class ASTGenerator {
       ASTNode simpName = dfsLookForASTNode(errorCheckerService.getLatestCU(),
                                            name, javaOffset,
                                            javaOffset + name.length());
-      
-      if(simpName == null && lineNode instanceof SimpleName){
+
+      if (simpName == null && lineNode instanceof SimpleName) {
         switch (lineNode.getParent().getNodeType()) {
         case ASTNode.TYPE_DECLARATION:
-          
+
         case ASTNode.METHOD_DECLARATION:
 
         case ASTNode.FIELD_DECLARATION:
 
         case ASTNode.VARIABLE_DECLARATION_FRAGMENT:
           decl = lineNode.getParent();
-          return new ASTNodeWrapper(decl,"");         
+          return new ASTNodeWrapper(decl, "");
         default:
           break;
         }
       }
-      
+
       if (simpName instanceof SimpleName) {
         nameOfNode = simpName.toString();
         log(getNodeAsString(simpName));
         decl = findDeclaration((SimpleName) simpName);
         if (decl != null) {
           logE("DECLA: " + decl.getClass().getName());
-          nodeLabel = getLabelIfType(new ASTNodeWrapper(decl), (SimpleName) simpName);
+          nodeLabel = getLabelIfType(new ASTNodeWrapper(decl),
+                                     (SimpleName) simpName);
           //retLabelString = getNodeAsString(decl);
         } else {
           logE("null");
-          if(scrollOnly) {
+          if (scrollOnly) {
             editor.statusMessage(simpName + " is not defined in this sketch",
                                  DebugEditor.STATUS_ERR);
           }
         }
 
         log(getNodeAsString(decl));
-        
+
         // - findDecl3 testing
-        
-        ASTNode nearestNode = findClosestNode(lineNumber, (ASTNode) compilationUnit.types()
-                                              .get(0));
+
+        ASTNode nearestNode = findClosestNode(lineNumber,
+                                              (ASTNode) compilationUnit.types()
+                                                  .get(0));
         ClassMember cmem = resolveExpression3rdParty(nearestNode,
-                                                     (SimpleName) simpName, false);
-        if(cmem != null){
-          log("CMEM-> "+cmem);
-        }
-        else
+                                                     (SimpleName) simpName,
+                                                     false);
+        if (cmem != null) {
+          log("CMEM-> " + cmem);
+        } else
           log("CMEM-> null");
       }
     }
 
     if (decl != null && scrollOnly) {
       /*
-       * For scrolling, we highlight just the name of the node, 
-       * i.e., a SimpleName instance. But the declared node always 
-       * points to the declared node itself, like TypeDecl, MethodDecl, etc.
-       * This is important since it contains all the properties.
+       * For scrolling, we highlight just the name of the node, i.e., a
+       * SimpleName instance. But the declared node always points to the
+       * declared node itself, like TypeDecl, MethodDecl, etc. This is important
+       * since it contains all the properties.
        */
-      ASTNode simpName2 = getNodeName(decl,nameOfNode);
+      ASTNode simpName2 = getNodeName(decl, nameOfNode);
       logE("FINAL String decl: " + getNodeAsString(decl));
       logE("FINAL String label: " + getNodeAsString(simpName2));
       //errorCheckerService.highlightNode(simpName2);
-      ASTNodeWrapper declWrap = new ASTNodeWrapper(simpName2,nodeLabel);
+      ASTNodeWrapper declWrap = new ASTNodeWrapper(simpName2, nodeLabel);
       //errorCheckerService.highlightNode(declWrap);
       if (!declWrap.highlightNode(this)) {
         logE("Highlighting failed.");
       }
-    } 
+    }
 
-    return new ASTNodeWrapper(decl,nodeLabel);
+    return new ASTNodeWrapper(decl, nodeLabel);
   }
-  
+
   /**
    * Given a declaration type astnode, returns the SimpleName peroperty
    * of that node.
