@@ -1574,8 +1574,8 @@ public class ASTGenerator {
    */
   public ASTNodeWrapper getASTNodeAt(int lineNumber, String name, int offset,
                                      boolean scrollOnly) {
-    int originalLN = lineNumber;
-    lineNumber += errorCheckerService.mainClassOffset;
+    //int originalLN = lineNumber;
+    int pdeLineNumber = lineNumber + errorCheckerService.mainClassOffset;
     log("----getASTNodeAt---- CU State: " + errorCheckerService.compilationUnitState);
     if (errorCheckerService != null) {
       editor = errorCheckerService.getEditor();
@@ -1584,14 +1584,14 @@ public class ASTGenerator {
         for (int i = 0; i < codeIndex; i++) {
           SketchCode sc = editor.getSketch().getCode(i);
           int len = Base.countLines(sc.getProgram()) + 1;
-          lineNumber += len;
+          pdeLineNumber += len;
         }
       }
 
     }
-    lineNumber = pdeLineNumToJavaLineNum(lineNumber);
-    log("getASTNodeAt: Node line number " + lineNumber);
-    ASTNode lineNode = findLineOfNode(compilationUnit, lineNumber, offset, name);
+
+    log("getASTNodeAt: Node line number " + pdeLineNumber);
+    ASTNode lineNode = findLineOfNode(compilationUnit, pdeLineNumber, offset, name);
     
     log("Node text +> " + lineNode);
     ASTNode decl = null;
@@ -1600,10 +1600,10 @@ public class ASTGenerator {
     
     if (lineNode != null) {
       String pdeCodeLine = errorCheckerService.getPDECodeAtLine(editor
-          .getSketch().getCurrentCodeIndex(), originalLN);
-      String javaCodeLine = getJavaSourceCodeline(lineNumber);
+          .getSketch().getCurrentCodeIndex(), lineNumber);
+      String javaCodeLine = getJavaSourceCodeline(pdeLineNumber);
       
-      log(originalLN + " Original Line num.\nPDE :" + pdeCodeLine);
+      log(lineNumber + " Original Line num.\nPDE :" + pdeCodeLine);
       log("JAVA:" + javaCodeLine);
       log("Clicked on: " + name + " start offset: " + offset);
       OffsetMatcher ofm = new OffsetMatcher(pdeCodeLine, javaCodeLine);
