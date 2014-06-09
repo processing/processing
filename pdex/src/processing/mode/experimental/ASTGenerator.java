@@ -1189,22 +1189,54 @@ public class ASTGenerator {
     return candidates;
   }
   
-  public String getJavaSourceCodeline(int jLineNumber){
+  /**
+   * Returns the java source code line at the given line number
+   * @param javaLineNumber
+   * @return
+   */
+  public String getJavaSourceCodeline(int javaLineNumber) {
     try {
       PlainDocument javaSource = new PlainDocument();
       javaSource.insertString(0, errorCheckerService.sourceCode, null);
       Element lineElement = javaSource.getDefaultRootElement()
-          .getElement(jLineNumber-1);
-      if(lineElement == null) {
-        log("Couldn't fetch jlinenum " + jLineNumber);
+          .getElement(javaLineNumber - 1);
+      if (lineElement == null) {
+        log("Couldn't fetch jlinenum " + javaLineNumber);
         return null;
-      }      
+      }
       String javaLine = javaSource.getText(lineElement.getStartOffset(),
                                            lineElement.getEndOffset()
                                                - lineElement.getStartOffset());
       return javaLine;
     } catch (BadLocationException e) {
-      logE(e + " in getJavaSourceCodeline() for jinenum: " + jLineNumber);
+      logE(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
+    }
+    return null;
+  }
+
+  /**
+   * Returns the java source code line Element at the given line number.
+   * The Element object stores the offset data, but not the actual line
+   * of code.
+   * @param javaLineNumber
+   * @return
+   */
+  public Element getJavaSourceCodeElement(int javaLineNumber) {
+    try {
+      PlainDocument javaSource = new PlainDocument();
+      javaSource.insertString(0, errorCheckerService.sourceCode, null);
+      Element lineElement = javaSource.getDefaultRootElement()
+          .getElement(javaLineNumber - 1);
+      if (lineElement == null) {
+        log("Couldn't fetch jlinenum " + javaLineNumber);
+        return null;
+      }
+//      String javaLine = javaSource.getText(lineElement.getStartOffset(),
+//                                           lineElement.getEndOffset()
+//                                               - lineElement.getStartOffset());
+      return lineElement;
+    } catch (BadLocationException e) {
+      logE(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
     }
     return null;
   }
@@ -1929,6 +1961,7 @@ public class ASTGenerator {
     });
   }
   
+  /*
   protected void refactorIt(){
     String newName = txtRenameField.getText().trim();
     String selText = lastClickedWord == null ? editor.ta.getSelectedText()
@@ -1939,6 +1972,84 @@ public class ASTGenerator {
       return;
     }
     
+    if(!newName.matches("([a-zA-Z][a-zA-Z0-9_]*)|([_][a-zA-Z0-9_]+)"))
+    {
+      JOptionPane.showConfirmDialog(new JFrame(), newName
+          + " isn't a valid name.", "Uh oh..", JOptionPane.PLAIN_MESSAGE);
+      return;
+    }
+    //else log("New name looks K.");
+    
+    errorCheckerService.pauseThread();
+    if(treeRename.isVisible()){
+      treeRename.setModel(new DefaultTreeModel(defCU));
+      ((DefaultTreeModel) treeRename.getModel()).reload();
+    }
+    frmOccurenceList.setTitle("Usage of " + selText);
+    frmOccurenceList.setLocation(editor.getX() + editor.getWidth(),editor.getY());
+    frmOccurenceList.setVisible(true);
+    int lineOffsetDisplacementConst = newName.length()
+        - selText.length();
+    HashMap<Integer, Integer> lineOffsetDisplacement = new HashMap<Integer, Integer>();
+
+    // I need to store the pde and java offsets beforehand because once
+    // the replace starts, all offsets returned are affected
+    int offsetsMap[][][] = new int[defCU.getChildCount()][2][];
+    for (int i = 0; i < defCU.getChildCount(); i++) {
+      ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
+          .getChildAt(i))).getUserObject();
+      offsetsMap[i][0] = awrap.getPDECodeOffsets(errorCheckerService);
+      offsetsMap[i][1] = awrap.getJavaCodeOffsets(errorCheckerService);
+    }
+    
+    for (int i = 0; i < defCU.getChildCount(); i++) {
+      int pdeoffsets[] = offsetsMap[i][0];
+      int javaoffsets[] = offsetsMap[i][1];
+      // correction for pde enhancements related displacement on a line
+      int off = 0;
+      if (lineOffsetDisplacement.get(javaoffsets[0]) != null) {
+        off = lineOffsetDisplacement.get(javaoffsets[0]);
+
+        lineOffsetDisplacement.put(javaoffsets[0],
+                                   lineOffsetDisplacementConst + off);
+      } else {
+        lineOffsetDisplacement.put(javaoffsets[0],
+                                   lineOffsetDisplacementConst);
+      }
+      ErrorCheckerService.scrollToErrorLine(editor, pdeoffsets[0],
+                                            pdeoffsets[1],
+                                            javaoffsets[1] + off,
+                                            javaoffsets[2]);
+      //int k = JOptionPane.showConfirmDialog(new JFrame(), "Rename?","", JOptionPane.INFORMATION_MESSAGE));
+      editor.ta.setSelectedText(newName);
+    }
+    errorCheckerService.resumeThread();
+//    for (Integer lineNum : lineOffsetDisplacement.keySet()) {
+//      log(lineNum + "line, disp"
+//          + lineOffsetDisplacement.get(lineNum));
+//    }
+    editor.getSketch().setModified(true);
+    errorCheckerService.runManualErrorCheck();
+    frmOccurenceList.setVisible(false);
+    frmRename.setVisible(false);
+    lastClickedWord = null;
+    lastClickedWordNode = null;
+  }
+  */
+  
+  protected void refactorIt(){
+    String newName = txtRenameField.getText().trim();
+    String selText = lastClickedWord == null ? editor.ta.getSelectedText()
+        : lastClickedWord;
+    // Find all occurrences of last clicked word
+    DefaultMutableTreeNode defCU = findAllOccurrences(); //TODO: Repetition here
+    if(defCU == null){
+      editor.statusMessage("Can't locate definition of " + selText, 
+                           DebugEditor.STATUS_ERR);
+      return;
+    }
+    
+    // Verify if the new name is a valid java identifier
     if(!newName.matches("([a-zA-Z][a-zA-Z0-9_]*)|([_][a-zA-Z0-9_]+)"))
     {
       JOptionPane.showConfirmDialog(new JFrame(), newName
