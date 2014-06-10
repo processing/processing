@@ -1085,13 +1085,24 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         return ta;
     }
 
+    private boolean wasSaved;
+
     /**
      * Grab current contents of the sketch window, advance the console, stop any
      * other running sketches, auto-save the user's code... not in that order.
      */
     @Override
     public void prepareRun() {
+        wasSaved = false;
+        autoSave();
         super.prepareRun();
+        if (wasSaved)
+            statusTimedNotice("Saved. Running...", 5);
+        else
+            statusTimedNotice("Not saved. Running...", 5);
+    }
+
+    protected void autoSave() {
         if (!ExperimentalMode.autoSaveEnabled)
             return;
 
@@ -1128,15 +1139,14 @@ public class DebugEditor extends JavaEditor implements ActionListener {
                     final JCheckBox dontRedisplay = new JCheckBox(
                             "Remember this decision");
 
-                    panel1 = new JPanel(new FlowLayout(
-                            FlowLayout.CENTER, 8, 2));
+                    panel1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 2));
                     JButton button = new JButton("Save and Run");
                     button.addActionListener(new ActionListener() {
 
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             if (handleSave(true))
-                                statusTimedNotice("Saved. Running...", 5);
+                                wasSaved = true;
                             if (dontRedisplay.isSelected()) {
                                 ExperimentalMode.autoSavePromptEnabled = !dontRedisplay
                                         .isSelected();
@@ -1152,7 +1162,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            statusTimedNotice("Not saved. Running...", 5);
                             if (dontRedisplay.isSelected()) {
                                 ExperimentalMode.autoSavePromptEnabled = !dontRedisplay
                                         .isSelected();
@@ -1179,11 +1188,13 @@ public class DebugEditor extends JavaEditor implements ActionListener {
                     autoSaveDialog.setVisible(true);
 
                 } else if (ExperimentalMode.defaultAutoSaveEnabled)
-                    handleSave(true);
+                    if (handleSave(true))
+                        wasSaved = true;
             }
         } catch (Exception e) {
             statusError(e);
         }
+
     }
 
     /**
