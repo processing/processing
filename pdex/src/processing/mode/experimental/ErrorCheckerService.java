@@ -87,7 +87,7 @@ public class ErrorCheckerService implements Runnable{
    */
   protected AtomicBoolean pauseThread;
 
-  protected ErrorWindow errorWindow;
+  //protected ErrorWindow errorWindow;
 
   /**
    * IProblem[] returned by parser stored in here
@@ -230,7 +230,7 @@ public class ErrorCheckerService implements Runnable{
     classpathJars = new ArrayList<URL>();
     
     initParser();
-    initializeErrorWindow();
+    //initializeErrorWindow();
     xqpreproc = new XQPreprocessor();
     PdePreprocessor pdePrepoc = new PdePreprocessor(null);
     defaultImportsOffset = pdePrepoc.getCoreImports().length + 
@@ -266,7 +266,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Initialiazes the Error Window
    */
-  public void initializeErrorWindow() {
+  /*public void initializeErrorWindow() {
     
     if (editor == null) {
       return;
@@ -291,7 +291,7 @@ public class ErrorCheckerService implements Runnable{
         }
       }
     });
-  }
+  }*/
   
   public void ensureMinP5Version(){
     // Processing 2.1.2 - Revision 0225
@@ -927,26 +927,28 @@ public class ErrorCheckerService implements Runnable{
       String[][] errorData = new String[problemsList.size()][3];
       for (int i = 0; i < problemsList.size(); i++) {
         errorData[i][0] = problemsList.get(i).getMessage(); ////TODO: this is temporary
-            //+ " : " + errorMsgSimplifier.getIDName(problemsList.get(i).getIProblem().getID());
+        //+ " : " + errorMsgSimplifier.getIDName(problemsList.get(i).getIProblem().getID());
         errorData[i][1] = editor.getSketch()
             .getCode(problemsList.get(i).getTabIndex()).getPrettyName();
         errorData[i][2] = problemsList.get(i).getLineNumber() + "";
-        
+
         //TODO: This is temporary
-        if(tempErrorLog.size() < 200)
-        tempErrorLog.put(problemsList.get(i).getMessage(),problemsList.get(i).getIProblem());
+        if (tempErrorLog.size() < 200)
+          tempErrorLog.put(problemsList.get(i).getMessage(), problemsList
+              .get(i).getIProblem());
       }
+
+      DefaultTableModel tm = new DefaultTableModel(errorData,
+                                                   XQErrorTable.columnNames);
+      // Update error table in the editor
+      editor.updateTable(tm);
       
+      /*
       if (errorWindow != null) {
-        DefaultTableModel tm = new DefaultTableModel(errorData,
-            XQErrorTable.columnNames);
         if (errorWindow.isVisible()) {
           errorWindow.updateTable(tm);
         }
         
-        // Update error table in the editor
-        editor.updateTable(tm);
-
         // A rotating slash animation on the title bar to show
         // that error checker thread is running
 
@@ -961,7 +963,7 @@ public class ErrorCheckerService implements Runnable{
           errorWindow.setTitle("Problems - "
               + editor.getSketch().getName() + " " + info);
         }
-      }
+      }*/
 
     } catch (Exception e) {
       log("Exception at updateErrorTable() " + e);

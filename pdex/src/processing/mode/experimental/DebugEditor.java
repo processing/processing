@@ -567,7 +567,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         });
         debugMenu.add(item);
 
-        problemWindowMenuCB = new JCheckBoxMenuItem("Show Problem Window");
+        /*problemWindowMenuCB = new JCheckBoxMenuItem("Show Problem Window");
         // problemWindowMenuCB.setSelected(true);
         problemWindowMenuCB.addActionListener(new ActionListener() {
 
@@ -583,7 +583,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             showProblemListView(XQConsoleToggle.CONSOLE);
           }
         });
-        debugMenu.add(problemWindowMenuCB);
+        debugMenu.add(problemWindowMenuCB);*/
 
         showWarnings = new JCheckBoxMenuItem("Warnings Enabled");
         showWarnings.setSelected(ExperimentalMode.warningsEnabled);
