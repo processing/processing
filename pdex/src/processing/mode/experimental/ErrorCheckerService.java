@@ -39,7 +39,9 @@ import java.util.regex.Pattern;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
+import javax.swing.text.PlainDocument;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -738,6 +740,44 @@ public class ErrorCheckerService implements Runnable{
     }
     
     // log("Compilecheck, Done.");
+  }
+  
+  private void calcPDEOffsetsForProbList() {
+    PlainDocument javaSource = new PlainDocument();
+    try {
+      javaSource.insertString(0, sourceCode, null);
+      int pkgNameOffset = ("package " + className + ";\n").length();
+      for (Problem p : problemsList) {
+        int javaLineNumber = p.getIProblem().getSourceLineNumber();
+        Element lineElement = javaSource.getDefaultRootElement()
+            .getElement(javaLineNumber - 1);
+        if (lineElement == null) {
+          log("calcPDEOffsetsForProbList(): Couldn't fetch javalinenum "
+              + javaLineNumber);
+          continue;
+        }
+        String javaLine = javaSource
+            .getText(lineElement.getStartOffset(), lineElement.getEndOffset()
+                - lineElement.getStartOffset());
+        int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset, prbEnd = p
+            .getIProblem().getSourceEnd() - pkgNameOffset;
+
+        OffsetMatcher ofm = new OffsetMatcher(
+                                              astGenerator
+                                                  .getPDESourceCodeLine(javaLineNumber),
+                                              javaLine);
+        //log("");
+        int pdeOffset = ofm.getPdeOffForJavaOff(prbStart
+            - lineElement.getStartOffset(), (prbEnd - p
+            .getIProblem().getSourceStart()));
+//        astGenerator.highlightPDECode(p.getTabIndex(), p.getLineNumber(),
+//                                      pdeOffset, (prbEnd - prbStart + 1));
+        p.setPDEOffsets(pdeOffset, prbEnd - prbStart);
+      }
+    } catch (BadLocationException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
   
   public CompilationUnit getLastCorrectCU(){

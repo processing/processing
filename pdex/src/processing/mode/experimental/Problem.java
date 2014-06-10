@@ -49,6 +49,10 @@ public class Problem {
    * Line number(pde code) of the error
    */
   private int lineNumber;
+  
+  private int lineStartOffset;
+  
+  private int lineStopOffset;
 
   /**
    * Error Message. Processed form of IProblem.getMessage()
@@ -79,6 +83,11 @@ public class Problem {
     this.tabIndex = tabIndex;
     this.lineNumber = lineNumber;
     this.message = process(iProblem);
+  }
+  
+  public void setPDEOffsets(int startOffset, int stopOffset){
+    lineStartOffset = startOffset;
+    lineStopOffset = stopOffset;
   }
 
   public String toString() {
