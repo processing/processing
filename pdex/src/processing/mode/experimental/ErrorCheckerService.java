@@ -775,6 +775,9 @@ public class ErrorCheckerService implements Runnable{
         }
       }
       int pkgNameOffset = ("package " + className + ";\n").length();
+      // package name is added only during compile check
+      if(compilationUnitState != 2) pkgNameOffset = 0;
+      
       for (Problem p : problemsList) {
         int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset, prbEnd = p
             .getIProblem().getSourceEnd() - pkgNameOffset;
@@ -1086,7 +1089,7 @@ public class ErrorCheckerService implements Runnable{
     synchronized (editor.errorBar.errorPoints) {
       for (ErrorMarker emarker : editor.errorBar.errorPoints) {
         if (emarker.getProblem().getLineNumber() == editor.getTextArea()
-            .getCaretLine() + 1) {
+            .getCaretLine()) {
           if (emarker.getType() == ErrorMarker.Warning) {
               editor.statusMessage(emarker.getProblem().getMessage(),
                                    DebugEditor.STATUS_INFO);
