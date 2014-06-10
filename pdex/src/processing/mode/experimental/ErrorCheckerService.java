@@ -1010,7 +1010,8 @@ public class ErrorCheckerService implements Runnable{
         //+ " : " + errorMsgSimplifier.getIDName(problemsList.get(i).getIProblem().getID());
         errorData[i][1] = editor.getSketch()
             .getCode(problemsList.get(i).getTabIndex()).getPrettyName();
-        errorData[i][2] = problemsList.get(i).getLineNumber() + "";
+        errorData[i][2] = (problemsList.get(i).getLineNumber() + 1) + "";
+        // Added +1 because lineNumbers internally are 0-indexed
 
         //TODO: This is temporary
         if (tempErrorLog.size() < 200)
