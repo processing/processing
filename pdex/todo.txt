@@ -21,8 +21,12 @@ Normal Bugs
 -----------
 -[x] Sketch NOC 6_09: steer PVector, doesn't show completion. #68 
 
--[ ] Sketch NOC 6_09: Classname in Template, doesn't scroll to decl. This is 
+-[x] Sketch NOC 6_09: Classname in Template, doesn't scroll to decl. This is 
 happening due certain post processing offsets not being accounted for - "public void"
+
+-[x] New offset matching now used by Show Usage
+
+-[x] New offset matching now used by Refactoring 
 
 Enhancements/New Features
 -------------------------
