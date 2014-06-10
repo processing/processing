@@ -314,7 +314,8 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
 
     boolean notFound = true;
     boolean isWarning = false;
-
+    Problem problem = null;
+    
     // Check if current line contains an error. If it does, find if it's an
     // error or warning
     for (ErrorMarker emarker : errorCheckerService.getEditor().errorBar.errorPoints) {
@@ -323,6 +324,8 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
         if (emarker.getType() == ErrorMarker.Warning) {
           isWarning = true;
         }
+        problem = emarker.getProblem();
+        log(problem.toString());
         break;
       }
     }
@@ -337,15 +340,15 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
     int y = ta.lineToY(line);
     y += fm.getLeading() + fm.getMaxDescent();
     int height = fm.getHeight();
-    int start = ta.getLineStartOffset(line);
-
+    int start = ta.getLineStartOffset(line) + problem.getPDELineStartOffset();
+    int pLength = problem.getPDELineStopOffset() + 1
+        - problem.getPDELineStartOffset();
     try {
       String linetext = null;
 
       try {
-        linetext = ta.getDocument().getText(start,
-                                            ta.getLineStopOffset(line) - start
-                                                - 1);
+        linetext = ta.getDocument().getText(start, pLength);
+        log("paintErrorLine() LineText: " + linetext);
       } catch (BadLocationException bl) {
         // Error in the import statements or end of code.
         // System.out.print("BL caught. " + ta.getLineCount() + " ,"

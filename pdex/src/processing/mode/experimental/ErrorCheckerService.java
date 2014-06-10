@@ -715,6 +715,7 @@ public class ErrorCheckerService implements Runnable{
           }
           problemsList.add(p);
         }
+        calcPDEOffsetsForProbList();
       }
     } catch (ClassNotFoundException e) {
       System.err.println("Compiltation Checker files couldn't be found! "
@@ -742,15 +743,37 @@ public class ErrorCheckerService implements Runnable{
     // log("Compilecheck, Done.");
   }
   
+  /**
+   * Calculates PDE Offsets from Java Offsets for Problems
+   */
   private void calcPDEOffsetsForProbList() {
     PlainDocument javaSource = new PlainDocument();
-    try {
+    // Code in pde tabs stored as PlainDocument
+    PlainDocument pdeTabs[] = new PlainDocument[editor.getSketch()
+        .getCodeCount()];
+    
+    try {      
       javaSource.insertString(0, sourceCode, null);
+      for (int i = 0; i < pdeTabs.length; i++) {
+        SketchCode sc = editor.getSketch().getCode(i);
+        pdeTabs[i] = new PlainDocument();
+        if (editor.getSketch().getCurrentCode().equals(sc)) {
+          pdeTabs[i].insertString(0,
+                                  sc.getDocument().getText(0,
+                                                           sc.getDocument()
+                                                               .getLength()),
+                                  null);
+        } else {
+          pdeTabs[i].insertString(0,
+                                  sc.getProgram(),
+                                  null);
+        }
+      }
       int pkgNameOffset = ("package " + className + ";\n").length();
       for (Problem p : problemsList) {
         int javaLineNumber = p.getIProblem().getSourceLineNumber();
         Element lineElement = javaSource.getDefaultRootElement()
-            .getElement(javaLineNumber - 1);
+            .getElement(javaLineNumber - 2);
         if (lineElement == null) {
           log("calcPDEOffsetsForProbList(): Couldn't fetch javalinenum "
               + javaLineNumber);
@@ -761,11 +784,19 @@ public class ErrorCheckerService implements Runnable{
                 - lineElement.getStartOffset());
         int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset, prbEnd = p
             .getIProblem().getSourceEnd() - pkgNameOffset;
-
-        OffsetMatcher ofm = new OffsetMatcher(
-                                              astGenerator
-                                                  .getPDESourceCodeLine(javaLineNumber),
-                                              javaLine);
+        Element pdeLineElement = pdeTabs[p.getTabIndex()]
+            .getDefaultRootElement().getElement(p.getLineNumber()-1);
+        if (pdeLineElement == null) {
+          log("calcPDEOffsetsForProbList(): Couldn't fetch pdelinenum "
+              + javaLineNumber);
+          continue;
+        }
+        String pdeLine = pdeTabs[p.getTabIndex()]
+            .getText(pdeLineElement.getStartOffset(), pdeLineElement.getEndOffset()
+                - pdeLineElement.getStartOffset());
+        log("calcPDEOffsetsForProbList(): P " + pdeLine);
+        log("calcPDEOffsetsForProbList(): J " + javaLine);
+        OffsetMatcher ofm = new OffsetMatcher(pdeLine, javaLine);
         //log("");
         int pdeOffset = ofm.getPdeOffForJavaOff(prbStart
             - lineElement.getStartOffset(), (prbEnd - p

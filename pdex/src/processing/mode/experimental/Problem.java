@@ -89,10 +89,19 @@ public class Problem {
     lineStartOffset = startOffset;
     lineStopOffset = stopOffset;
   }
+  
+  public int getPDELineStartOffset(){
+    return lineStartOffset;
+  }
+  
+  public int getPDELineStopOffset(){
+    return lineStopOffset;
+  }
 
   public String toString() {
-    return new String("TAB " + tabIndex + ",LN " + lineNumber + ",PROB: "
-      + message);
+    return new String("TAB " + tabIndex + ",LN " + lineNumber + "LN START OFF: "
+        + lineStartOffset + ",LN STOP OFF: " + lineStopOffset + ",PROB: "
+        + message);
   }
 
   public boolean isError(){
