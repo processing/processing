@@ -23,6 +23,7 @@
 package processing.app.platform;
 
 import java.io.File;
+import java.awt.Toolkit;
 
 import processing.app.Base;
 import processing.app.Platform;
@@ -46,6 +47,20 @@ public class LinuxPlatform extends Platform {
         "likely to run into problems with sketch window size and\n" +
         "placement. For more background, please read the wiki:\n" +
         "http://wiki.processing.org/w/Supported_Platforms#Linux", null);
+    }
+    //Set x11 WM_CLASS property which is
+    //used as the application name by Gnome3
+    //and other window managers
+    try{
+      Toolkit xToolkit = Toolkit.getDefaultToolkit();
+      java.lang.reflect.Field awtAppClassNameField = 
+                        xToolkit.getClass().getDeclaredField("awtAppClassName");
+      awtAppClassNameField.setAccessible(true);
+      awtAppClassNameField.set(xToolkit, "Processing");
+    }
+    catch(Exception e){
+      //In case the implementation details change...
+      e.printStackTrace();
     }
   }
 
