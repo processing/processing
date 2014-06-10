@@ -751,7 +751,7 @@ public class ErrorCheckerService implements Runnable{
     // Code in pde tabs stored as PlainDocument
     PlainDocument pdeTabs[] = new PlainDocument[editor.getSketch()
         .getCodeCount()];
-    
+    log("calcPDEOffsetsForProbList() mco: " + mainClassOffset);
     try {      
       javaSource.insertString(0, sourceCode, null);
       for (int i = 0; i < pdeTabs.length; i++) {
@@ -803,7 +803,7 @@ public class ErrorCheckerService implements Runnable{
             .getIProblem().getSourceStart()));
 //        astGenerator.highlightPDECode(p.getTabIndex(), p.getLineNumber(),
 //                                      pdeOffset, (prbEnd - prbStart + 1));
-        p.setPDEOffsets(pdeOffset, prbEnd - prbStart);
+        p.setPDEOffsets(pdeOffset, pdeOffset + prbEnd - prbStart);
       }
     } catch (BadLocationException e) {
       // TODO Auto-generated catch block

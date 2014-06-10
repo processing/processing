@@ -325,7 +325,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
           isWarning = true;
         }
         problem = emarker.getProblem();
-        log(problem.toString());
+        //log(problem.toString());
         break;
       }
     }
@@ -343,12 +343,16 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
     int start = ta.getLineStartOffset(line) + problem.getPDELineStartOffset();
     int pLength = problem.getPDELineStopOffset() + 1
         - problem.getPDELineStartOffset();
+    
     try {
-      String linetext = null;
-
+      String badCode = null;
+      String goodCode = null;
       try {
-        linetext = ta.getDocument().getText(start, pLength);
-        log("paintErrorLine() LineText: " + linetext);
+        badCode = ta.getDocument().getText(start, pLength);
+        goodCode = ta.getDocument().getText(ta.getLineStartOffset(line),
+                                            problem.getPDELineStartOffset());
+        //log("paintErrorLine() LineText GC: " + goodCode);
+        //log("paintErrorLine() LineText BC: " + badCode);
       } catch (BadLocationException bl) {
         // Error in the import statements or end of code.
         // System.out.print("BL caught. " + ta.getLineCount() + " ,"
@@ -358,11 +362,12 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
       }
 
       // Take care of offsets
-      int aw = fm.stringWidth(trimRight(linetext)) + ta.getHorizontalOffset(); // apparent width. Whitespaces
+      int aw = fm.stringWidth(trimRight(badCode)) + ta.getHorizontalOffset(); // apparent width. Whitespaces
       // to the left of line + text
       // width
-      int rw = fm.stringWidth(linetext.trim()); // real width
-      int x1 = 0 + (aw - rw), y1 = y + fm.getHeight() - 2, x2 = x1 + rw;
+      int rw = fm.stringWidth(badCode.trim()); // real width
+      int x1 = fm.stringWidth(goodCode) + (aw - rw), y1 = y + fm.getHeight()
+          - 2, x2 = x1 + rw;
       // Adding offsets for the gutter
       x1 += ta.getGutterWidth();
       x2 += ta.getGutterWidth();
