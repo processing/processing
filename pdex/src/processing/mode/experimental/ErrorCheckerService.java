@@ -540,8 +540,7 @@ public class ErrorCheckerService implements Runnable{
       problemsList = new ArrayList<Problem>();
       for (int i = 0; i < problems.length; i++) {
         int a[] = calculateTabIndexAndLineNumber(problems[i].getSourceLineNumber());
-        Problem p = new Problem(problems[i], a[0], a[1] + 1);
-        //TODO: ^Why do cheeky stuff?
+        Problem p = new Problem(problems[i], a[0], a[1]);
         problemsList.add(p);
 //      log(problems[i].getMessage());
 //      for (String j : problems[i].getArguments()) {
@@ -777,7 +776,10 @@ public class ErrorCheckerService implements Runnable{
       }
       int pkgNameOffset = ("package " + className + ";\n").length();
       for (Problem p : problemsList) {
+        int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset, prbEnd = p
+            .getIProblem().getSourceEnd() - pkgNameOffset;
         log(p.toString());
+        log("IProblem Start " + prbStart + ", End " + prbEnd);
         int javaLineNumber = p.getIProblem().getSourceLineNumber() - 1;
         Element lineElement = javaSource.getDefaultRootElement()
             .getElement(javaLineNumber);
@@ -789,8 +791,7 @@ public class ErrorCheckerService implements Runnable{
         String javaLine = javaSource
             .getText(lineElement.getStartOffset(), lineElement.getEndOffset()
                 - lineElement.getStartOffset());
-        int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset, prbEnd = p
-            .getIProblem().getSourceEnd() - pkgNameOffset;
+       
         Element pdeLineElement = pdeTabs[p.getTabIndex()]
             .getDefaultRootElement().getElement(p.getLineNumber());
         if (pdeLineElement == null) {
@@ -806,8 +807,7 @@ public class ErrorCheckerService implements Runnable{
         OffsetMatcher ofm = new OffsetMatcher(pdeLine, javaLine);
         //log("");
         int pdeOffset = ofm.getPdeOffForJavaOff(prbStart
-            - lineElement.getStartOffset(), (prbEnd - p
-            .getIProblem().getSourceStart()));
+            - lineElement.getStartOffset(), (prbEnd - prbStart + 1));
 //        astGenerator.highlightPDECode(p.getTabIndex(), p.getLineNumber(),
 //                                      pdeOffset, (prbEnd - prbStart + 1));
         p.setPDEOffsets(pdeOffset, pdeOffset + prbEnd - prbStart);
