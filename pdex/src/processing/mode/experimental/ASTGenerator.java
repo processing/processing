@@ -240,7 +240,7 @@ public class ASTGenerator {
   /**
    * Toggle AST View window
    */
-  public static final boolean SHOWAST = !true;
+  public static final boolean SHOWAST = true;
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
@@ -2059,6 +2059,8 @@ public class ASTGenerator {
    */
   public void highlightPDECode(int tab, int lineNumber, int lineStartWSOffset,
                                int length) {
+    log("ASTGen.highlightPDECode: T " + tab + ",L: " + lineNumber + ",LSO: "
+        + lineStartWSOffset + ",Len: " + length);
     editor.toFront();
     editor.getSketch().setCurrentCode(tab);
     lineStartWSOffset += editor.ta.getLineStartOffset(lineNumber);

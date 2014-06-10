@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.Element;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -1404,7 +1405,7 @@ public class ErrorCheckerService implements Runnable{
     }
   }
   
-  public void scrollToErrorLine(Problem p) {
+  /*public void scrollToErrorLine(Problem p) {
     if (editor == null) {
       return;
     }
@@ -1421,6 +1422,44 @@ public class ErrorCheckerService implements Runnable{
                                 .getLineText(p.getLineNumber() - 1).trim().length(),
                         editor.getTextArea()
                             .getLineStartNonWhiteSpaceOffset(p.getLineNumber() - 1));
+      editor.getTextArea().scrollTo(p.getLineNumber() - 1, 0);
+      editor.repaint();
+    } catch (Exception e) {
+      System.err.println(e
+          + " : Error while selecting text in scrollToErrorLine()");
+      e.printStackTrace();
+    }
+    // log("---");
+  }*/
+  
+  public void scrollToErrorLine(Problem p) {
+    if (editor == null) {
+      return;
+    }
+    if (p == null)
+      return;
+    try {
+      int pkgNameOffset = ("package " + className + ";\n").length();
+      int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset, prbEnd = p
+          .getIProblem().getSourceEnd() - pkgNameOffset;
+      log("Scrolling to problem: " + p.toString());
+      log("P start: " + prbStart + " to "
+          + prbEnd + " pkgOffset " + pkgNameOffset);
+      int lineNumber = p
+          .getIProblem().getSourceLineNumber();
+      Element lineElement = astGenerator.getJavaSourceCodeElement(lineNumber);
+      log("Line element off " + lineElement.getStartOffset());
+      OffsetMatcher ofm = new OffsetMatcher(
+                                            astGenerator
+                                                .getPDESourceCodeLine(lineNumber),
+                                            astGenerator
+                                                .getJavaSourceCodeLine(lineNumber));
+      //log("");
+      int pdeOffset = ofm.getPdeOffForJavaOff(prbStart
+          - lineElement.getStartOffset(), (prbEnd - p
+          .getIProblem().getSourceStart()));
+      astGenerator.highlightPDECode(p.getTabIndex(), p.getLineNumber(),
+                                    pdeOffset, (prbEnd - prbStart + 1));
       editor.getTextArea().scrollTo(p.getLineNumber() - 1, 0);
       editor.repaint();
     } catch (Exception e) {
