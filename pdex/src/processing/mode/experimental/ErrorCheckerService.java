@@ -1503,7 +1503,7 @@ public class ErrorCheckerService implements Runnable{
     // log("---");
   }*/
   
-  public void scrollToErrorLine(Problem p) {
+  /*public void scrollToErrorLine(Problem p) {
     if (editor == null) {
       return;
     }
@@ -1517,7 +1517,7 @@ public class ErrorCheckerService implements Runnable{
       log("P start: " + prbStart + " to "
           + prbEnd + " pkgOffset " + pkgNameOffset);
       int lineNumber = p
-          .getIProblem().getSourceLineNumber();
+          .getIProblem().getSourceLineNumber()-1;
       Element lineElement = astGenerator.getJavaSourceCodeElement(lineNumber);
       log("Line element off " + lineElement.getStartOffset());
       OffsetMatcher ofm = new OffsetMatcher(
@@ -1529,8 +1529,30 @@ public class ErrorCheckerService implements Runnable{
       int pdeOffset = ofm.getPdeOffForJavaOff(prbStart
           - lineElement.getStartOffset(), (prbEnd - p
           .getIProblem().getSourceStart()));
-      astGenerator.highlightPDECode(p.getTabIndex(), p.getLineNumber(),
+      astGenerator.highlightPDECode(p.getTabIndex(), p.getLineNumber()-1,
                                     pdeOffset, (prbEnd - prbStart + 1));
+      editor.getTextArea().scrollTo(p.getLineNumber() - 1, 0);
+      editor.repaint();
+    } catch (Exception e) {
+      System.err.println(e
+          + " : Error while selecting text in scrollToErrorLine()");
+      e.printStackTrace();
+    }
+    // log("---");
+  }*/
+  
+  public void scrollToErrorLine(Problem p) {
+    if (editor == null) {
+      return;
+    }
+    if (p == null)
+      return;
+    try {
+      astGenerator.highlightPDECode(p.getTabIndex(),
+                                    p.getLineNumber() - 1,
+                                    p.getPDELineStartOffset(),
+                                    (p.getPDELineStopOffset()
+                                        - p.getPDELineStartOffset() + 1));
       editor.getTextArea().scrollTo(p.getLineNumber() - 1, 0);
       editor.repaint();
     } catch (Exception e) {
