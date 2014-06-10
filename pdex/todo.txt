@@ -31,6 +31,10 @@ happening due certain post processing offsets not being accounted for - "public 
 Enhancements/New Features
 -------------------------
 
+-[x] Precise error highlighting(PEH). Now working for one error per line. Hell yeah!
+ 
+-[ ] Gotta fix PEH for multiple errors per line. Will be slightly meticulous.
+
 -[ ] When viewing Outline View, instead of showing the beginning of the list, 
 it should select the current node element within which the cursor is presently 
 positioned.
@@ -42,3 +46,5 @@ positioned.
 -[ ] Preferences panel
 
 -[ ] Line Numbers
+
+
