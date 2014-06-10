@@ -319,7 +319,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter {
     // Check if current line contains an error. If it does, find if it's an
     // error or warning
     for (ErrorMarker emarker : errorCheckerService.getEditor().errorBar.errorPoints) {
-      if (emarker.getProblem().getLineNumber() == line + 1) {
+      if (emarker.getProblem().getLineNumber() == line) {
         notFound = false;
         if (emarker.getType() == ErrorMarker.Warning) {
           isWarning = true;

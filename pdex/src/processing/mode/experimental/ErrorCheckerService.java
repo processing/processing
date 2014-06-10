@@ -463,8 +463,10 @@ public class ErrorCheckerService implements Runnable{
         log(editor.getSketch().getName() + "2 MCO "
             + mainClassOffset);
       }
+      
       astGenerator.buildAST(cu);
       if(ExperimentalMode.errorCheckEnabled){
+        calcPDEOffsetsForProbList();
         updateErrorTable();
         editor.updateErrorBar(problemsList);
         updateEditorStatus();
@@ -686,7 +688,10 @@ public class ErrorCheckerService implements Runnable{
               ((Integer) errorList[i][4]).intValue(),
               ((Integer) errorList[i][5]).intValue(),
               ((Integer) errorList[i][6]).intValue(),
-              ((Integer) errorList[i][7]).intValue(), 0);
+              ((Integer) errorList[i][7]).intValue() - 1, 0);
+          // added a -1 to line number because in compile check code
+          // an extra package statement is added, so all line numbers
+          // are increased by 1
   
           // System.out
           // .println("ECS: " + problems[i].getMessage() + ","
@@ -715,7 +720,6 @@ public class ErrorCheckerService implements Runnable{
           }
           problemsList.add(p);
         }
-        calcPDEOffsetsForProbList();
       }
     } catch (ClassNotFoundException e) {
       System.err.println("Compiltation Checker files couldn't be found! "
@@ -747,12 +751,14 @@ public class ErrorCheckerService implements Runnable{
    * Calculates PDE Offsets from Java Offsets for Problems
    */
   private void calcPDEOffsetsForProbList() {
-    PlainDocument javaSource = new PlainDocument();
-    // Code in pde tabs stored as PlainDocument
-    PlainDocument pdeTabs[] = new PlainDocument[editor.getSketch()
-        .getCodeCount()];
-    log("calcPDEOffsetsForProbList() mco: " + mainClassOffset);
-    try {      
+    try {   
+      PlainDocument javaSource = new PlainDocument();
+      // Code in pde tabs stored as PlainDocument
+      PlainDocument pdeTabs[] = new PlainDocument[editor.getSketch()
+          .getCodeCount()];
+      log("calcPDEOffsetsForProbList() mco: " + mainClassOffset + " CU state: "
+          + compilationUnitState);
+
       javaSource.insertString(0, sourceCode, null);
       for (int i = 0; i < pdeTabs.length; i++) {
         SketchCode sc = editor.getSketch().getCode(i);
@@ -771,9 +777,10 @@ public class ErrorCheckerService implements Runnable{
       }
       int pkgNameOffset = ("package " + className + ";\n").length();
       for (Problem p : problemsList) {
-        int javaLineNumber = p.getIProblem().getSourceLineNumber();
+        log(p.toString());
+        int javaLineNumber = p.getIProblem().getSourceLineNumber() - 1;
         Element lineElement = javaSource.getDefaultRootElement()
-            .getElement(javaLineNumber - 2);
+            .getElement(javaLineNumber);
         if (lineElement == null) {
           log("calcPDEOffsetsForProbList(): Couldn't fetch javalinenum "
               + javaLineNumber);
@@ -785,7 +792,7 @@ public class ErrorCheckerService implements Runnable{
         int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset, prbEnd = p
             .getIProblem().getSourceEnd() - pkgNameOffset;
         Element pdeLineElement = pdeTabs[p.getTabIndex()]
-            .getDefaultRootElement().getElement(p.getLineNumber()-1);
+            .getDefaultRootElement().getElement(p.getLineNumber());
         if (pdeLineElement == null) {
           log("calcPDEOffsetsForProbList(): Couldn't fetch pdelinenum "
               + javaLineNumber);
@@ -794,8 +801,8 @@ public class ErrorCheckerService implements Runnable{
         String pdeLine = pdeTabs[p.getTabIndex()]
             .getText(pdeLineElement.getStartOffset(), pdeLineElement.getEndOffset()
                 - pdeLineElement.getStartOffset());
-        log("calcPDEOffsetsForProbList(): P " + pdeLine);
-        log("calcPDEOffsetsForProbList(): J " + javaLine);
+        //log("calcPDEOffsetsForProbList(): P " + pdeLine);
+        //log("calcPDEOffsetsForProbList(): J " + javaLine);
         OffsetMatcher ofm = new OffsetMatcher(pdeLine, javaLine);
         //log("");
         int pdeOffset = ofm.getPdeOffForJavaOff(prbStart
@@ -805,8 +812,9 @@ public class ErrorCheckerService implements Runnable{
 //                                      pdeOffset, (prbEnd - prbStart + 1));
         p.setPDEOffsets(pdeOffset, pdeOffset + prbEnd - prbStart);
       }
-    } catch (BadLocationException e) {
-      // TODO Auto-generated catch block
+    } catch (BadLocationException ble) {
+      ble.printStackTrace();
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
@@ -1549,11 +1557,11 @@ public class ErrorCheckerService implements Runnable{
       return;
     try {
       astGenerator.highlightPDECode(p.getTabIndex(),
-                                    p.getLineNumber() - 1,
+                                    p.getLineNumber(),
                                     p.getPDELineStartOffset(),
                                     (p.getPDELineStopOffset()
                                         - p.getPDELineStartOffset() + 1));
-      editor.getTextArea().scrollTo(p.getLineNumber() - 1, 0);
+      editor.getTextArea().scrollTo(p.getLineNumber(), 0);
       editor.repaint();
     } catch (Exception e) {
       System.err.println(e
