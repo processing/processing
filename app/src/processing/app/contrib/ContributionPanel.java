@@ -385,7 +385,11 @@ class ContributionPanel extends JPanel {
         // Already marked for deletion, see requiresRestart() notes below.
         versionText.append("To finish an update, reinstall this contribution after restarting.");
       } else {
-        versionText.append("New version available!");
+        String latestVersion = contribListing.getLatestVersion(contrib);
+        if (latestVersion != null)
+          versionText.append("New version (" + latestVersion + ") available!");
+        else
+          versionText.append("New version available!");
         if (contrib.getType().requiresRestart()) {
           // If a contribution can't be reinstalled in-place, the user may need
           // to remove the current version, restart Processing, then install.
