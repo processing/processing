@@ -22,7 +22,10 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,8 +45,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -51,6 +60,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableModel;
 import javax.swing.text.Document;
@@ -61,6 +71,7 @@ import processing.app.Base;
 import processing.app.EditorState;
 import processing.app.EditorToolbar;
 import processing.app.Mode;
+import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Toolkit;
@@ -1074,6 +1085,119 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         return ta;
     }
 
+    
+    /**
+     * Grab current contents of the sketch window, advance the console, stop any
+     * other running sketches, auto-save the user's code... not in that order.
+     */
+    @Override
+    public void prepareRun() {
+        autoSave();
+        super.prepareRun();
+    }
+
+    /**
+     * Displays a JDialog prompting the user to save when the user hits
+     * run/present/etc.
+     */
+    protected void autoSave() {
+        if (!ExperimentalMode.autoSaveEnabled)
+            return;
+
+        try {
+            // if (sketch.isUntitled() &&
+            // ExperimentalMode.untitledAutoSaveEnabled) {
+            // if (handleSave(true))
+            // statusTimedNotice("Saved. Running...", 5);
+            // else
+            // statusTimedNotice("Save Canceled. Running anyway...", 5);
+            // }
+            // else
+            if (sketch.isModified() && !sketch.isUntitled()) {
+                if (ExperimentalMode.autoSavePromptEnabled) {
+                    final JDialog autoSaveDialog = new JDialog(
+                            base.getActiveEditor(), this.getSketch().getName(),
+                            true);
+                    Container container = autoSaveDialog.getContentPane();
+
+                    JPanel panelMain = new JPanel();
+                    panelMain.setBorder(BorderFactory.createEmptyBorder(4, 0,
+                            2, 2));
+                    panelMain.setLayout(new BoxLayout(panelMain,
+                            BoxLayout.PAGE_AXIS));
+
+                    JPanel panelLabel = new JPanel(new FlowLayout(
+                            FlowLayout.LEFT));
+                    JLabel label = new JLabel(
+                            "<html><body>&nbsp;There are unsaved"
+                                    + " changes in your sketch.<br />"
+                                    + "&nbsp;&nbsp;&nbsp; Do you want to save it before"
+                                    + " running? </body></html>");
+                    label.setFont(new Font(label.getFont().getName(),
+                            Font.PLAIN, label.getFont().getSize() + 1));
+                    panelLabel.add(label);
+                    panelMain.add(panelLabel);
+                    final JCheckBox dontRedisplay = new JCheckBox(
+                            "Remember this decision");
+
+                    JPanel panelButtons = new JPanel(new FlowLayout(
+                            FlowLayout.CENTER, 8, 2));
+                    JButton btnRunSave = new JButton("Save and Run");
+                    btnRunSave.addActionListener(new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            handleSave(true);
+                            if (dontRedisplay.isSelected()) {
+                                ExperimentalMode.autoSavePromptEnabled = !dontRedisplay
+                                        .isSelected();
+                                ExperimentalMode.defaultAutoSaveEnabled = true;
+                                dmode.savePreferences();
+                            }
+                            autoSaveDialog.dispose();
+                        }
+                    });
+                    panelButtons.add(btnRunSave);
+                    JButton btnRunNoSave = new JButton("Run, Don't Save");
+                    btnRunNoSave.addActionListener(new ActionListener() {
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if (dontRedisplay.isSelected()) {
+                                ExperimentalMode.autoSavePromptEnabled = !dontRedisplay
+                                        .isSelected();
+                                ExperimentalMode.defaultAutoSaveEnabled = false;
+                                dmode.savePreferences();
+                            }
+                            autoSaveDialog.dispose();
+                        }
+                    });
+                    panelButtons.add(btnRunNoSave);
+                    panelMain.add(panelButtons);
+
+                    JPanel panelCheck = new JPanel();
+                    panelCheck
+                            .setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+                    panelCheck.add(dontRedisplay);
+                    panelMain.add(panelCheck);
+
+                    container.add(panelMain);
+
+                    autoSaveDialog.setResizable(false);
+                    autoSaveDialog.pack();
+                    autoSaveDialog
+                            .setLocationRelativeTo(base.getActiveEditor());
+                    autoSaveDialog.setVisible(true);
+
+                } else if (ExperimentalMode.defaultAutoSaveEnabled)
+                    handleSave(true);
+            }
+        } catch (Exception e) {
+            statusError(e);
+        }
+
+    }    
+    
     /**
      * Access variable inspector window.
      *
