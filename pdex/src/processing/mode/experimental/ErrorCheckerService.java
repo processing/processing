@@ -296,6 +296,9 @@ public class ErrorCheckerService implements Runnable{
     });
   }*/
   
+  /**
+   * Ensure user is running the minimum P5 version
+   */
   public void ensureMinP5Version(){
     // Processing 2.1.2 - Revision 0225
     if(Base.getRevision() < 225){
@@ -304,6 +307,14 @@ public class ErrorCheckerService implements Runnable{
     }
   }
 
+  /**
+   * The way the error checking happens is: DocumentListeners are added
+   * to each SketchCode object. Whenever the document is edited, it call
+   * runManualErrorCheck(). Internally, an atomic integer counter is incremented.
+   * The ECS thread checks the value of this counter evey sleepTime seconds.
+   * If the counter is non zero, error checking is done(in the ECS thread) 
+   * and the counter is reset.
+   */
   public void run() {
     stopThread.set(false);
     
@@ -1288,6 +1299,12 @@ public class ErrorCheckerService implements Runnable{
     return new int[] { codeIndex, x };
   }
   
+  /**
+   * Returns line number of corresponding java source
+   * @param tab
+   * @param pdeLineNum
+   * @return
+   */
   public int getJavaLineNumFromPDElineNum(int tab, int pdeLineNum){
     int jLineNum = programImports.size() + 1;
     for (int i = 0; i < tab; i++) {
