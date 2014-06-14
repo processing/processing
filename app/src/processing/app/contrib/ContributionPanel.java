@@ -28,6 +28,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Date;
+import java.text.DateFormat;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -371,6 +373,15 @@ class ContributionPanel extends JPanel {
         description.append(version);
       else
         description.append("v" + version);
+    }
+    
+    long lastUpdatedUTC = contrib.getLastUpdated();
+    if (lastUpdatedUTC != 0) {
+      DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM);
+      Date lastUpdatedDate = new Date(lastUpdatedUTC);
+      if (version != null && !version.isEmpty())
+        description.append(", ");
+      description.append("Last Updated on " + dateFormatter.format(lastUpdatedDate));
     }
     
     description.append("</body></html>");
