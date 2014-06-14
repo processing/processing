@@ -140,7 +140,8 @@ public class SketchOutline {
                 .getLastSelectedPathComponent();
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-              errorCheckerService.highlightNode(awrap);
+              awrap.highlightNode(errorCheckerService.astGenerator);
+              //errorCheckerService.highlightNode(awrap);
               close();
             }
           }
@@ -253,8 +254,9 @@ public class SketchOutline {
                 .getLastSelectedPathComponent();
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+              awrap.highlightNode(errorCheckerService.astGenerator);
               // log(awrap);
-              errorCheckerService.highlightNode(awrap);
+              //errorCheckerService.highlightNode(awrap);
             }
           }
         };

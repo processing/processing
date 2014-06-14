@@ -1459,11 +1459,12 @@ public class ErrorCheckerService implements Runnable{
   }
   
   /**
+   * Now defunct.
    * The super method that highlights any ASTNode in the pde editor =D
    * @param node
    * @return true - if highlighting happened correctly.
    */
-  public boolean highlightNode(ASTNodeWrapper awrap){
+  private boolean highlightNode(ASTNodeWrapper awrap){
     log("Highlighting: " + awrap);
     try {
       int pdeoffsets[] = awrap.getPDECodeOffsets(this);
