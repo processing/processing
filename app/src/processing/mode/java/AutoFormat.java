@@ -54,31 +54,30 @@ public class AutoFormat implements Formatter {
   /** Set when the end of the chars array is reached. */
   private boolean EOF;
 
+  private boolean inStatementFlag; // in a line of code
+  private boolean overflowFlag;   // line overrunning?
+  private boolean arrayFlag;     // in an array/after it in same statement?
   private boolean if_flg;
-  private boolean s_flag;
+  private boolean startFlag;    // No buf has yet been writen to this line. 
   private boolean elseFlag;
-  
+
   /** Number of ? entered without exiting at : of a?b:c structures. */
   private int conditionalLevel;
-  
+
+  /** chars[pos] is where we're at. */
   private int pos;
   private int level;
   private int[][] sp_flg;
   private int[][] s_ind;
   private int if_lev;
 
-  /** Is this statement (or whatever) unfinished? */
-  private boolean inStatementFlag;
-
-  /** Did the previous line overrun? */
-  private boolean continuationFlag;
-
-  /** Number of curly brackets entered and not exited. */
+  /** Number of curly brackets entered and not exited,
+      excluding arrays. */
   private int curlyLvl;
 
   /** Number of parentheses entered and not exited. */
   private int parenLevel;
-  
+
   private int[] ind;
   private int[] p_flg;
   private int[][] s_tabs;
@@ -94,17 +93,15 @@ public class AutoFormat implements Formatter {
 
 
   private void handleMultiLineComment() {
-    final boolean saved_s_flag = s_flag;
+    final boolean saved_startFlag = startFlag;
+    buf.append(nextChar()); // So /*/ isn't self-closing.
 
-    char ch;
-    buf.append(ch = nextChar()); // extra char
-    while (!EOF) {
-      buf.append(ch = nextChar());
+    for (char ch = nextChar(); !EOF; ch = nextChar()) {
+      buf.append(ch);
       while (ch != '/' && !EOF) {
         if (ch == '\n') {
-//        lineNumber++;
           writeIndentedComment();
-          s_flag = true;
+          startFlag = true;
         }
         buf.append(ch = nextChar());
       }
@@ -115,15 +112,15 @@ public class AutoFormat implements Formatter {
     }
 
     writeIndentedComment();
-    s_flag = saved_s_flag;
+    startFlag = saved_startFlag;
     jdoc_flag = false;
     return;
   }
 
 
   /**
-   * Pumps nextChar into buf until \n or EOF, then calls 
-   * writeIndentedLine() and set s_flag to true.
+   * Pumps nextChar into buf until \n or EOF, then calls
+   * writeIndentedLine() and sets startFlag to true.
    */
   private void handleSingleLineComment() {
     char ch = nextChar();
@@ -131,29 +128,28 @@ public class AutoFormat implements Formatter {
       buf.append(ch);
       ch = nextChar();
     }
-//  lineNumber++;
     writeIndentedLine();
-    s_flag = true;
+    startFlag = true;
   }
 
 
-  /**
-   * Prints correct indent and the contents of buf to result,
-   * and sets elseFlag and s_flag to new values.
-   * If buf is empty, prints nothing but can change flags.
-   */
   private void writeIndentedLine() {
+    System.out.print(buf);
     if (buf.length() == 0) {
-      if (s_flag) {
-        s_flag = elseFlag = false;
-      }
+      if (startFlag) startFlag = elseFlag = false;
       return;
     }
-    if (s_flag) {
-      if (continuationFlag) tabs++;
+    if (startFlag) {
+      // Indent suppressed at eg. if<nl>{ and when  
+      // buf is close-brackets only followed by ';'.
+      boolean indentMore = !buf.toString().matches("[\\s\\]\\}\\)]*;") 
+        && (arrayFlag || buf.charAt(0) != '{')
+        && overflowFlag;
+      System.out.println(indentMore + ", " + overflowFlag);
+      if (indentMore) tabs++;
       printIndentation();
-      s_flag = false;
-      if (continuationFlag) tabs--;
+      startFlag = false;
+      if (indentMore) tabs--;
     }
     if (elseFlag) {
       if (lastNonSpaceChar() == '}') {
@@ -192,12 +188,14 @@ public class AutoFormat implements Formatter {
     while (buf.charAt(firstNonSpace) == ' ') firstNonSpace++;
     if (lookup_com("/**")) jdoc_flag = true;
 
-    if (s_flag) printIndentation();
-    
+    if (startFlag) printIndentation();
+
     if (buf.charAt(firstNonSpace) == '/' && buf.charAt(firstNonSpace+1) == '*') {
-      if (s_flag && lastNonWhitespace != ';') {
+      if (startFlag && lastNonWhitespace != ';') {
         result.append(buf.substring(firstNonSpace));
-      } else { result.append(buf); }
+      } else { 
+        result.append(buf);
+      }
     } else {
       if (buf.charAt(firstNonSpace) == '*' || !jdoc_flag) {
         result.append(" " + buf.substring(firstNonSpace));
@@ -210,7 +208,7 @@ public class AutoFormat implements Formatter {
 
 
   /**
-   * Makes tabs >= 0 and appends <tt>tabs*indentValue</tt> 
+   * Makes tabs >= 0 and appends <tt>tabs*indentValue</tt>
    * spaces to result.
    */
   private void printIndentation() {
@@ -259,7 +257,7 @@ public class AutoFormat implements Formatter {
    * Does nothing and returns zero if EOF was set when it was called.
    */
   private char nextChar() {
-    if (EOF) return 0;   
+    if (EOF) return 0;
     pos++;
     if (pos == chars.length-1) EOF = true;
     if (pos >= chars.length) return 0;
@@ -303,13 +301,44 @@ public class AutoFormat implements Formatter {
     if (c == '\n') {
       // eat it
       nextChar();
-//      lineNumber++;
       tabs = savedTabs;
       return true;
     }
     return false;
   }
 
+  /**
+   * Called at '\n' in the main loop
+   * @returns whether the statement (or whatever) had ended.
+   */
+  private boolean isOverflowing() {
+    if (lastNonWhitespace == 0 || lastNonWhitespace == ';') {
+       return false; //start of file or end of statement
+    }
+    if (lastNonWhitespace != '{' && lastNonWhitespace != '}') {
+      return true; // evidently in a statement;
+    }
+    return arrayFlag; // there was an array, {} aren't blocks.
+    // If {} were blocks for an odd, valid reason... this will
+    // fail, but I reckon that anyone putting blocks in arrays
+    // is in a small minority.
+  }
+
+
+  /**
+   * @returns last non-wsp in result+buf, or 0 on error.
+   */
+  private char prevNonWhitespace() {
+    StringBuffer tot = new StringBuffer();
+    tot.append(result);
+    tot.append(buf);
+    for (int i = tot.length()-1; i >= 0; i--) {
+      if (!Character.isWhitespace(tot.charAt(i)))
+        return tot.charAt(i);
+    }
+    return 0;
+  }
+  
 
   /**
    * Sees if buf is of the form [optional whitespace][keyword][optional anything].
@@ -346,19 +375,18 @@ public class AutoFormat implements Formatter {
    */
   public String format(final String source) {
     final String normalizedText = source.replaceAll("\r", "");
-    final String cleanText = 
+    final String cleanText =
       normalizedText + (normalizedText.endsWith("\n") ? "" : "\n");
 
     result.setLength(0);
     indentValue = Preferences.getInteger("editor.tabs.size");
 
-//  lineNumber = 0;
     boolean forFlag = if_flg = false;
-    s_flag = true;
+    startFlag = true;
     int forParenthLevel = 0;
     conditionalLevel = parenLevel = curlyLvl = if_lev = level = 0;
     tabs = 0;
-    jdoc_flag = continuationFlag = inStatementFlag = false;
+    jdoc_flag = overflowFlag = inStatementFlag = false;
     char cc;
 
     int[] s_level = new int[10];
@@ -371,7 +399,6 @@ public class AutoFormat implements Formatter {
     s_tabs = new int[20][10];
     pos = -1;
     chars = cleanText.toCharArray();
-//    lineNumber = 1;
 
     EOF = false; // set in nextChar() when EOF
 
@@ -384,9 +411,9 @@ public class AutoFormat implements Formatter {
         break;
 
       case ',':
+        inStatementFlag = true;
         trimRight(buf);
-        buf.append(c);
-        buf.append(' ');
+        buf.append(", ");
         advanceToNonSpace();
         break;
 
@@ -395,28 +422,20 @@ public class AutoFormat implements Formatter {
         elseFlag = lookup("else");
         if (elseFlag) {
           gotElse();
-          if ((!s_flag) || buf.length() > 0) {
-            buf.append(c);
-          }
-
+          if (!startFlag || buf.length() > 0) buf.append(c);
           writeIndentedLine();
-          s_flag = false;
+          startFlag = false;
           break;
         }
-        if ((!s_flag) || buf.length() > 0) {
-          buf.append(c);
-        }
+        if (!startFlag || buf.length() > 0) buf.append(c);
         break;
 
       case '\n':
-//        lineNumber++;
-        if (EOF) {
-          writeIndentedLine();
-          break;
-        }
+        if (EOF) break;
+        
         elseFlag = lookup("else");
         if (elseFlag) gotElse();
-        
+
         if (lookup_com("//")) {
           if (buf.charAt(buf.length() - 1) == '\n') {
             buf.setLength(buf.length() - 1);
@@ -425,44 +444,50 @@ public class AutoFormat implements Formatter {
 
         writeIndentedLine();
         result.append("\n");
-        s_flag = true;
+        startFlag = true;
         if (elseFlag) {
           p_flg[level]++;
           tabs++;
-        }
-	continuationFlag = inStatementFlag;
+        } else overflowFlag = inStatementFlag;
         break;
 
       case '{':
-        inStatementFlag = false;
+        char prevChar = prevNonWhitespace();
+        if (prevChar == '=' || prevChar == ']') arrayFlag = true;
+        if (arrayFlag) {
+          buf.append(c);
+          break; // No special treatment. TODO: indents.
+        } else inStatementFlag = false; // eg class declaration ends
+
         elseFlag = lookup("else");
         if (elseFlag) gotElse();
-
         if (s_if_lev.length == curlyLvl) {
           s_if_lev = PApplet.expand(s_if_lev);
           s_if_flg = PApplet.expand(s_if_flg);
         }
+
         s_if_lev[curlyLvl] = if_lev;
         s_if_flg[curlyLvl] = if_flg;
         if_lev = 0;
         if_flg = false;
         curlyLvl++;
-        if (s_flag && p_flg[level] != 0) {
+        if (startFlag && p_flg[level] != 0) {
           p_flg[level]--;
           tabs--;
         }
         trimRight(buf);
-        if (buf.length() > 0 ||
-          (result.length() > 0 && !Character.isWhitespace(result.charAt(result.length() - 1))))
+        if (buf.length() > 0 || (result.length() > 0 &&
+              !Character.isWhitespace(result.charAt(result.length() - 1)))) {
           buf.append(" ");
+        }
         buf.append(c);
         writeIndentedLine();
         readForNewLine();
         writeIndentedLine();
-        
+
         result.append("\n");
         tabs++;
-        s_flag = true;
+        startFlag = true;
         if (p_flg[level] > 0) {
           ind[level] = 1;
           level++;
@@ -471,8 +496,12 @@ public class AutoFormat implements Formatter {
         break;
 
       case '}':
-        inStatementFlag = false;
-	curlyLvl--;
+        if (arrayFlag) {
+          buf.append(c);
+          break;
+        } else inStatementFlag = false;
+
+        curlyLvl--;
         if (curlyLvl < 0) {
           curlyLvl = 0;
           buf.append(c);
@@ -491,18 +520,18 @@ public class AutoFormat implements Formatter {
           result.append("\n");
           printIndentation();
           result.append(c);
-          if (peek() == ';') {
+          if (peek() == ';' || arrayFlag) {
+            //Now does commas etc.
+            if (peek() == ' ') advanceToNonSpace();
             result.append(nextChar());
           }
 
           readForNewLine();
           writeIndentedLine();
           result.append('\n');
-          s_flag = true;
-          if (curlyLvl < s_level[level]) {
-            if (level > 0) {
-              level--;
-            }
+          startFlag = true;
+          if (curlyLvl < s_level[level] && level > 0) {
+            level--;
           }
           if (ind[level] != 0) {
             tabs -= p_flg[level];
@@ -523,9 +552,8 @@ public class AutoFormat implements Formatter {
             buf.append(cc = nextChar());
           }
           if (cc == '\n') {
-//            lineNumber++;
             writeIndentedLine();
-            s_flag = true;
+            startFlag = true;
           }
           cc = nextChar();
         }
@@ -545,7 +573,6 @@ public class AutoFormat implements Formatter {
           advanceToNonSpace();
           break;
         }
-        inStatementFlag = false;
         buf.append(c);
         writeIndentedLine();
         if (p_flg[level] > 0 && ind[level] == 0) {
@@ -555,7 +582,7 @@ public class AutoFormat implements Formatter {
         readForNewLine();
         writeIndentedLine();
         result.append("\n");
-        s_flag = true;
+        startFlag = true;
         if (if_lev > 0) {
           if (if_flg) {
             if_lev--;
@@ -564,6 +591,10 @@ public class AutoFormat implements Formatter {
             if_lev = 0;
           }
         }
+        // Array behaviour ends at the end
+        // of a statement.
+        arrayFlag = false;
+        inStatementFlag = false;
         break;
 
       case '\\':
@@ -577,7 +608,7 @@ public class AutoFormat implements Formatter {
         break;
 
       case ':':
-        // Java 8 :: operator. 
+        // Java 8 :: operator.
         if (peek() == ':') {
           result.append(c).append(nextChar());
           break;
@@ -599,9 +630,10 @@ public class AutoFormat implements Formatter {
         }
 
         buf.append(c);
+        inStatementFlag = false;
 
         if (!lookup("default") && !lookup("case")) {
-          s_flag = false;
+          startFlag = false;
           writeIndentedLine();
         } else {
           tabs--;
@@ -614,7 +646,7 @@ public class AutoFormat implements Formatter {
         readForNewLine();
         writeIndentedLine();
         result.append('\n');
-        s_flag = true;
+        startFlag = true;
         break;
 
       case '/':
@@ -638,7 +670,7 @@ public class AutoFormat implements Formatter {
       case ')':
         final boolean isCast = castFlags.isEmpty() ? false : castFlags.pop();
         parenLevel--;
-	
+
         // If we're further back than the start of a for loop, we've
         // left it.
         if (forFlag && forParenthLevel > parenLevel) forFlag = false;
@@ -690,7 +722,7 @@ public class AutoFormat implements Formatter {
     } // end while not EOF
 
     if (buf.length() > 0) writeIndentedLine();
-    
+
     final String formatted = result.toString();
     return formatted.equals(cleanText) ? source : formatted;
   }
