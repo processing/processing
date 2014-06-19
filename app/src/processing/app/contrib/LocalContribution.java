@@ -329,14 +329,12 @@ public abstract class LocalContribution extends Contribution {
   }
   
   
-  void remove(final Editor editor,
-              final ProgressMonitor pm,
-              final StatusPanel status, 
-              final ContributionListing contribListing) {
+  void remove(final Editor editor, final ProgressMonitor pm,
+              final StatusPanel status, final ContributionListing contribListing) {
     pm.startTask("Removing", ProgressMonitor.UNKNOWN);
 
     boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
-    if (getType().requiresRestart()) {
+    if (getType().requiresRestart() && getType() != ContributionType.MODE) {
       if (!doBackup || (doBackup && backup(editor, false, status))) {
         if (setDeletionFlag(true)) {
           contribListing.replaceContribution(this, this);
@@ -344,6 +342,27 @@ public abstract class LocalContribution extends Contribution {
       }
     } else {
       boolean success = false;
+      if (getType() == ContributionType.MODE) {
+        boolean isModeActive = false;
+        ModeContribution m = (ModeContribution) this;
+        for (Editor e : editor.getBase().getEditors())
+          if (e.getMode().equals(m.getMode())) {
+            isModeActive = true;
+            break;
+          }
+        if (!isModeActive)
+          m.clearClassLoader(editor.getBase());
+        else {
+          if (!doBackup || (doBackup && backup(editor, false, status))) {
+            if (setDeletionFlag(true)) {
+              contribListing.replaceContribution(this, this);
+            }
+          }
+          ContributionManager.refreshInstalled(editor);
+          pm.finished();
+          return;
+        }
+      }
       if (doBackup) {
         success = backup(editor, true, status);
       } else {
@@ -352,8 +371,8 @@ public abstract class LocalContribution extends Contribution {
       }
 
       if (success) {
-        Contribution advertisedVersion =
-          contribListing.getAvailableContribution(this);
+        Contribution advertisedVersion = contribListing
+          .getAvailableContribution(this);
 
         if (advertisedVersion == null) {
           contribListing.removeContribution(this);
