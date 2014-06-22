@@ -97,29 +97,31 @@ public class ModeContribution extends LocalContribution {
    */
   public void clearClassLoader(Base base) {
     ArrayList<ModeContribution> contribModes = base.getModeContribs();
-    contribModes.remove(contribModes.indexOf(this));
-    List<Editor> editorList = base.getEditors();
-    for (Editor editor : editorList) {
-      Component[] j = editor.getModeMenu().getPopupMenu().getComponents();
-      for (Component component : j) {
-        JRadioButtonMenuItem cbmi = null;
-        if (component instanceof JRadioButtonMenuItem) {
-          cbmi = (JRadioButtonMenuItem) component;
-          if (cbmi.getText().equals(mode.toString()))
-            editor.getModeMenu().getPopupMenu().remove(component);
+    int botherToRemove = contribModes.indexOf(this);
+    if (botherToRemove != -1) { // The poor thing isn't even loaded, and we're trying to remove it...
+      contribModes.remove(botherToRemove);
+    /*  List<Editor> editorList = base.getEditors();
+      for (Editor editor : editorList) {
+        Component[] j = editor.getModeMenu().getPopupMenu().getComponents();
+        for (Component component : j) {
+          JRadioButtonMenuItem cbmi = null;
+          if (component instanceof JRadioButtonMenuItem) {
+            cbmi = (JRadioButtonMenuItem) component;
+            if (cbmi.getText().equals(mode.toString()))
+              editor.getModeMenu().getPopupMenu().remove(component);
+          }
         }
+      } */
+      try {
+        ((URLClassLoader) loader).close();
+        // The typecast should be safe, since the only case when loader is not of
+        // type URLClassLoader is when no archives were found in the first
+        // place...
+      } catch (IOException e) {
+        e.printStackTrace();
       }
     }
-    try {
-      ((URLClassLoader) loader).close();
-       // The typecast should be safe, since the only case when loader is not of
-       // type URLClassLoader is when no archives were found in the first
-       // place...
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
-
 
   static public void loadMissing(Base base) {
     File modesFolder = Base.getSketchbookModesFolder();

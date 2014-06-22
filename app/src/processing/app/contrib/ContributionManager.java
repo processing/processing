@@ -23,6 +23,8 @@ package processing.app.contrib;
 
 import java.io.*;
 import java.net.*;
+import java.util.List;
+import java.util.ArrayList;
 
 import processing.app.Base;
 import processing.app.Editor;
@@ -130,6 +132,10 @@ public class ContributionManager {
 
               if (contribution != null) {
                 contribListing.replaceContribution(ad, contribution);
+                if (contribution.getType() == ContributionType.MODE) {
+                  ArrayList<ModeContribution> contribModes = editor.getBase().getModeContribs();
+                  contribModes.add((ModeContribution)contribution);
+                }
                 refreshInstalled(editor);
               }
               installProgress.finished();
@@ -148,10 +154,14 @@ public class ContributionManager {
   }
 
 
-  static public void refreshInstalled(Editor editor) {
-    editor.getMode().rebuildImportMenu();
-    editor.getMode().resetExamples();
-    editor.rebuildToolMenu();
+  static public void refreshInstalled(Editor e) {
+    List<Editor> editor = e.getBase().getEditors();
+    for (Editor ed : editor) {
+      ed.getMode().rebuildImportMenu();
+      ed.getMode().resetExamples();
+      ed.rebuildToolMenu();
+      ed.rebuildModeMenu();
+    }
   }
 
 

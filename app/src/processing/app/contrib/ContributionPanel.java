@@ -208,23 +208,44 @@ class ContributionPanel extends JPanel {
     notificationBlock.setFont(new Font("Verdana", Font.ITALIC, 10));
 //    stripTextSelectionListeners(notificationBlock);
 
-      updateButton = new JButton("Update");
-      updateButton.setInheritsPopupMenu(true);
-      Dimension updateButtonDimensions = updateButton.getPreferredSize();
-      updateButtonDimensions.width = BUTTON_WIDTH;
-      updateButton.setMinimumSize(updateButtonDimensions);
-      updateButton.setPreferredSize(updateButtonDimensions);
-      updateButton.setOpaque(false);
-      updateButton.setVisible(false);
-      updateButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          listPanel.contribManager.status.clear();
+    updateButton = new JButton("Update");
+    updateButton.setInheritsPopupMenu(true);
+    Dimension updateButtonDimensions = updateButton.getPreferredSize();
+    updateButtonDimensions.width = BUTTON_WIDTH;
+    updateButton.setMinimumSize(updateButtonDimensions);
+    updateButton.setPreferredSize(updateButtonDimensions);
+    updateButton.setOpaque(false);
+    updateButton.setVisible(false);
+    updateButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        listPanel.contribManager.status.clear();
+        if (contrib.getType() == ContributionType.MODE) {
+          installRemoveButton.setEnabled(false);
+          installProgressBar.setVisible(true);
+          installProgressBar.setIndeterminate(true);
+
+          ((LocalContribution) contrib)
+            .removeContribution(listPanel.contribManager.editor,
+                                new JProgressMonitor(installProgressBar) {
+                                  public void finishedAction() {
+                                    // Finished uninstalling the library
+                                    resetInstallProgressBarState();
+                                    updateButton.setEnabled(false);
+                                    AvailableContribution ad = contribListing
+                                      .getAvailableContribution(contrib);
+                                    String url = ad.link;
+                                    installContribution(ad, url);
+                                  }
+                                }, listPanel.contribManager.status);
+        } else {
           updateButton.setEnabled(false);
-          AvailableContribution ad = contribListing.getAvailableContribution(contrib);
+          AvailableContribution ad = contribListing
+            .getAvailableContribution(contrib);
           String url = ad.link;
           installContribution(ad, url);
         }
-      });
+      }
+    });
 //      add(updateButton, c);
 //    }
     updateBox.add(updateButton);
@@ -424,7 +445,7 @@ class ContributionPanel extends JPanel {
     }
 
     updateButton.setEnabled(true);
-    if (contrib != null && !contrib.getType().requiresRestart()) {
+    if (contrib != null && contrib.getType() != ContributionType.TOOL) {
       updateButton.setVisible(isSelected() && contribListing.hasUpdates(contrib));
     }
 
@@ -536,7 +557,7 @@ class ContributionPanel extends JPanel {
     // now a hyperlink, it will be opened as the mouse is released.
     enableHyperlinks = alreadySelected;
 
-    if (contrib != null && !contrib.getType().requiresRestart()) {
+    if (contrib != null && contrib.getType() != ContributionType.TOOL) {
       updateButton.setVisible(isSelected() && contribListing.hasUpdates(contrib));
     }
     installRemoveButton.setVisible(isSelected() || installRemoveButton.getText().equals(Language.text("contributions.remove")));

@@ -143,6 +143,9 @@ class AvailableContribution extends Contribution {
           installedContrib.setRestartFlag();
           //status.setMessage("Restart Processing to finish the installation.");
         }
+//      else if (type == ContributionType.MODE) {
+//      
+//    }
         
         // 3. Delete the newContrib, do a garbage collection, hope and pray
         // that Java will unlock the temp folder on Windows now
