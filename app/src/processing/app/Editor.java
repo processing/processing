@@ -33,6 +33,7 @@ import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.Timer;
 
 import javax.swing.*;
@@ -383,20 +384,18 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   protected void initModeMenu() {
     modeMenu = new JMenu();
+    ButtonGroup modeGroup = new ButtonGroup();
     for (final Mode m : base.getModeList()) {
+      JRadioButtonMenuItem item = new JRadioButtonMenuItem(m.getTitle());
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          base.changeMode(m);
+        }
+      });
+      modeMenu.add(item);
+      modeGroup.add(item);
       if (mode == m) {
-        JRadioButtonMenuItem item = new JRadioButtonMenuItem(m.getTitle());
-        // doesn't need a listener, since it doesn't do anything
         item.setSelected(true);
-        modeMenu.add(item);
-      } else {
-        JMenuItem item = new JMenuItem(m.getTitle());
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            base.changeMode(m);
-          }
-        });
-        modeMenu.add(item);
       }
     }
 
@@ -894,6 +893,61 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
       });
     sketchMenu.add(item);
+
+    sketchMenu.addSeparator();
+
+//    final Editor editorName = this;
+    
+    sketchMenu.addMenuListener(new MenuListener() { 
+      // Menu Listener that populates the menu only when the menu is opened
+      List<JMenuItem> menuList = new ArrayList<JMenuItem>();
+
+      JMenu windowMenu = new JMenu("Window");
+
+      @Override
+      public void menuSelected(MenuEvent event) {
+        JMenuItem item;
+        for (final Editor editor : base.getEditors()) {
+          //if (Editor.this.getSketch().getName().trim().contains(editor2.getSketch().getName().trim()))
+          if (getSketch().getMainFilePath().equals(editor.getSketch().getMainFilePath())) {
+            item = new JCheckBoxMenuItem(editor.getSketch().getName());
+            item.setSelected(true);
+          } else {
+            item = new JMenuItem(editor.getSketch().getName());
+          }
+          item.setText(editor.getSketch().getName() + 
+                       " (" + editor.getMode().getTitle() + ")");
+
+          // Action listener to bring the appropriate sketch in front
+          item.addActionListener(new ActionListener() { 
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              editor.setState(Frame.NORMAL);
+              editor.setVisible(true);
+              editor.toFront();
+            }
+          });
+          windowMenu.add(item);
+          menuList.add(item);
+        }
+        sketchMenu.add(windowMenu);
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent event) {
+        for (JMenuItem item : menuList) {
+          windowMenu.remove(item);
+        }
+        menuList.clear();
+        sketchMenu.remove(windowMenu);
+      }
+
+      @Override
+      public void menuCanceled(MenuEvent event) {
+        menuDeselected(event);
+      }
+    });
 
     return sketchMenu;
   }

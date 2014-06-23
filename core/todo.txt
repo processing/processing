@@ -6,6 +6,11 @@ X   https://github.com/processing/processing/issues/257
 X   PVector discussion with Dan
 o   Jer and Dan will look at their code, plus toxiclibs
 
+applet removal
+_ remove Applet as base class
+_ performance issues on OS X (might be threading due to Applet)
+_   https://github.com/processing/processing/issues/2423
+
 _ bring back chaining in JSON (and add to XML)
 
 
