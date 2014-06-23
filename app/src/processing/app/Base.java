@@ -298,12 +298,12 @@ public class Base {
 //    try {
 //      Class.forName("processing.mode.java2.DebugMode");
     ModeContribution experimentalContrib =
-      ModeContribution.load(this, getContentFile("modes/experimental"), //$NON-NLS-1$
+      ModeContribution.load(this, getContentFile("modes/ExperimentalMode"), //$NON-NLS-1$
         "processing.mode.experimental.ExperimentalMode"); //$NON-NLS-1$
     if (experimentalContrib != null) {
       Mode experimentalMode = experimentalContrib.getMode();
       //coreModes = new Mode[] { javaMode, androidMode, experimentalMode };
-      coreModes = new Mode[] { javaMode, experimentalMode };
+      coreModes = new Mode[] { experimentalMode, javaMode };
     }
 //    } catch (ClassNotFoundException e) { }
 
