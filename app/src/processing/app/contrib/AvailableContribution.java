@@ -23,6 +23,7 @@ package processing.app.contrib;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 
 import processing.app.Base;
 import processing.app.Editor;
@@ -179,26 +180,82 @@ class AvailableContribution extends Contribution {
 
 
   /**
-   * We overwrite the properties file with the curated version from the 
-   * Processing site. This ensures that things have been cleaned up (for 
-   * instance, that the "sentence" is really a sentence) and that bad data 
-   * from the contrib's .properties file doesn't break the manager. 
+   * We overwrite those fields that aren't proper in the properties file with
+   * the curated version from the Processing site. This ensures that things have
+   * been cleaned up (for instance, that the "sentence" is really a sentence)
+   * and that bad data from the contrib's .properties file doesn't break the
+   * manager. However, it also ensures that valid fields in the properties file
+   * aren't overwritten, since the properties file may be more recent than the
+   * contributions.txt file.
+   * 
    * @param propFile
    * @return
    */
   public boolean writePropertiesFile(File propFile) {
     try {
+
+      HashMap<String, String> properties = Base.readSettings(propFile);
+
+      String name = properties.get("name");
+      if (name == null || name.isEmpty())
+        name = getName();
+
+      String category;
+      List<String> categoryList = parseCategories(properties.get("category"));
+      if (categoryList.size() == 1 && categoryList.get(0).equals("Unknown"))
+        category = getCategoryStr();
+      else {
+        StringBuilder sb = new StringBuilder();
+        for (String cat : categories) {
+          sb.append(cat);
+          sb.append(',');
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        category = sb.toString();
+      }
+
+      String authorList = properties.get("authorList");
+      if (authorList == null || authorList.isEmpty())
+        authorList = getAuthorList();
+
+      String url = properties.get("url");
+      if (url == null || url.isEmpty())
+        url = getUrl();
+
+      String sentence = properties.get("sentence");
+      if (sentence == null || sentence.isEmpty())
+        sentence = getSentence();
+
+      String paragraph = properties.get("paragraph");
+      if (paragraph == null || paragraph.isEmpty())
+        paragraph = getParagraph();
+
+      int version;
+      try {
+        version = Integer.parseInt(properties.get("version"));
+      } catch (NumberFormatException e) {
+        version = getVersion();
+        System.err.println("The version number for the “" + name
+          + "” library is not set properly.");
+        System.err
+          .println("Please contact the library author to fix it according to the guidelines.");
+      }
+
+      String prettyVersion = properties.get("prettyVersion");
+      if (prettyVersion == null || prettyVersion.isEmpty())
+        prettyVersion = getPrettyVersion();
+
       if (propFile.delete() && propFile.createNewFile() && propFile.setWritable(true)) {
         PrintWriter writer = PApplet.createWriter(propFile);
 
-        writer.println("name=" + getName());
-        writer.println("category=" + getCategoryStr());
-        writer.println("authorList=" + getAuthorList());
-        writer.println("url=" + getUrl());
-        writer.println("sentence=" + getSentence());
-        writer.println("paragraph=" + getParagraph());
-        writer.println("version=" + getVersion());
-        writer.println("prettyVersion=" + getPrettyVersion());
+        writer.println("name=" + name);
+        writer.println("category=" + category);
+        writer.println("authorList=" + authorList);
+        writer.println("url=" + url);
+        writer.println("sentence=" + sentence);
+        writer.println("paragraph=" + paragraph);
+        writer.println("version=" + version);
+        writer.println("prettyVersion=" + prettyVersion);
 
         writer.flush();
         writer.close();
