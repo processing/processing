@@ -6680,9 +6680,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   @Override
-  // TODO: deprecate this method, the kind arguments is not used anymore
   public void shader(PShader shader, int kind) {
-    shader(shader);
+    flush(); // Flushing geometry drawn with a different shader.
+
+    if (kind == TRIANGLES) polyShader = shader;
+    else if (kind == LINES) lineShader = shader;
+    else if (kind == POINTS) pointShader = shader;
+    else PGraphics.showWarning(UNKNOWN_SHADER_KIND_ERROR);
   }
 
 
