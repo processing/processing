@@ -94,15 +94,15 @@
 		<replaceregexp file="${bundle}/mode.properties" flags="g" match="@@version@@" replace="${release}" />
 		<replaceregexp file="${bundle}/mode.properties" flags="g" match="@@pretty-version@@" replace="${prettyVersion}" />
 
-		<property name="v" value="_v"/>
-		<property name="zipStr" value=".zip"/>
-		<zip destfile="${dist}/${lib.name}${v}${prettyVersion}${zipStr}"
-           basedir="${dist}/"
-           excludes="**/.DS_Store"
-        />
-        
-
 	</target>
+
+	<target name="package_zip" depends="package" description="Create zip file for distribution">
+	<property name="v" value="_v"/>
+	<property name="zipStr" value=".zip"/>
+	<zip destfile="${dist}/${lib.name}${v}${prettyVersion}${zipStr}"
+       basedir="${dist}/"
+       excludes="**/.DS_Store"/>
+	</target>		
 
 	<target name="full_install" depends="package" description="Full install to sketchbook">
 		<delete dir="${sketchbook.location}/modes/${lib.name}" />
