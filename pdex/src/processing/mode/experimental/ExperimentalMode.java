@@ -22,7 +22,6 @@
 package processing.mode.experimental;
 
 import galsasson.mode.tweak.SketchParser;
-import galsasson.mode.tweak.TweakEditor;
 
 import java.awt.Color;
 import java.io.File;
@@ -149,6 +148,10 @@ public class ExperimentalMode extends JavaMode {
       prefAutoSave = "pdex.autoSave.autoSaveEnabled", // prefUntitledAutoSave = "pdex.autoSave.untitledAutoSaveEnabled",
       prefAutoSavePrompt = "pdex.autoSave.promptDisplay", prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault";
 
+  // TweakMode code (Preferences)
+  volatile public static boolean enableTweak = false;
+  public static final String prefEnableTweak = "pdex.enableTweak";
+
   public void loadPreferences(){
     log("Load PDEX prefs");
     ensurePrefsExist();
@@ -162,6 +165,9 @@ public class ExperimentalMode extends JavaMode {
     autoSaveEnabled = Preferences.getBoolean(prefAutoSave);
     autoSavePromptEnabled = Preferences.getBoolean(prefAutoSavePrompt);
     defaultAutoSaveEnabled = Preferences.getBoolean(prefDefaultAutoSave);
+
+    // TweakMode code
+    enableTweak = Preferences.getBoolean(prefEnableTweak);
   }
 
   public void savePreferences(){
@@ -176,6 +182,9 @@ public class ExperimentalMode extends JavaMode {
     Preferences.setBoolean(prefAutoSave,autoSaveEnabled);
     Preferences.setBoolean(prefAutoSavePrompt, autoSavePromptEnabled);
     Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
+
+    // TweakMode code
+    Preferences.setBoolean(prefEnableTweak, enableTweak);
   }
 
   public void ensurePrefsExist(){
@@ -199,6 +208,11 @@ public class ExperimentalMode extends JavaMode {
         Preferences.setBoolean(prefAutoSavePrompt,autoSavePromptEnabled);
     if(Preferences.get(prefDefaultAutoSave) == null)
         Preferences.setBoolean(prefDefaultAutoSave,defaultAutoSaveEnabled);
+
+    // TweakMode code
+    if (Preferences.get(prefEnableTweak) == null) {
+    	Preferences.setBoolean(prefEnableTweak, enableTweak);
+    }
   }
 
 
@@ -312,16 +326,50 @@ public class ExperimentalMode extends JavaMode {
 	@Override
 	public Runner handleRun(Sketch sketch, RunnerListener listener) throws SketchException
 	{
-		return handlePresentOrRun(sketch, listener, false);
+		if (enableTweak) {
+			return handleTweakPresentOrRun(sketch, listener, false);
+		}
+		else {
+			/* Do the usual (JavaMode style) */
+		    JavaBuild build = new JavaBuild(sketch);
+		    String appletClassName = build.build(false);
+		    if (appletClassName != null) {
+		      final Runner runtime = new Runner(build, listener);
+		      new Thread(new Runnable() {
+		        public void run() {
+		          runtime.launch(false);  // this blocks until finished
+		        }
+		      }).start();
+		      return runtime;
+		    }
+		    return null;
+		}
 	}
 
 	@Override
 	public Runner handlePresent(Sketch sketch, RunnerListener listener) throws SketchException
 	{
-		return handlePresentOrRun(sketch, listener, true);
+		if (enableTweak) {
+			return handleTweakPresentOrRun(sketch, listener, true);
+		}
+		else {
+			/* Do the usual (JavaMode style) */
+		    JavaBuild build = new JavaBuild(sketch);
+		    String appletClassName = build.build(false);
+		    if (appletClassName != null) {
+		      final Runner runtime = new Runner(build, listener);
+		      new Thread(new Runnable() {
+		        public void run() {
+		          runtime.launch(true);
+		        }
+		      }).start();
+		      return runtime;
+		    }
+		    return null;
+		}
 	}
 
-	public Runner handlePresentOrRun(Sketch sketch, RunnerListener listener, boolean present) throws SketchException
+	public Runner handleTweakPresentOrRun(Sketch sketch, RunnerListener listener, boolean present) throws SketchException
 	{
 		final DebugEditor editor = (DebugEditor)listener;
 		final boolean toPresent = present;
