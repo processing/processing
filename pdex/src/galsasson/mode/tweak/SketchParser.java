@@ -10,38 +10,39 @@ import java.util.regex.Pattern;
 
 import processing.app.Sketch;
 
-public class SketchParser 
+public class SketchParser
 {
+	public ArrayList<ColorControlBox> colorBoxes[];
+	public ArrayList<Handle> allHandles[];
+
 	int intVarCount;
 	int floatVarCount;
 	final String varPrefix = "tweakmode";
-	
+
 	String[] codeTabs;
 	boolean requiresComment;
-	ArrayList<Handle> allHandles[];
 	ArrayList<ColorMode> colorModes;
-	ArrayList<ColorControlBox> colorBoxes[];
-	
+
 	ArrayList<Range> scientificNotations[];
-	
+
 	public SketchParser(String[] codeTabs, boolean requiresComment)
 	{
 		this.codeTabs = codeTabs;
 		this.requiresComment = requiresComment;
 		intVarCount=0;
 		floatVarCount=0;
-		
+
 		scientificNotations = getAllScientificNotations();
-		
+
 		// find, add, and sort all tweakable numbers in the sketch
 		addAllNumbers();
-		
+
 		// handle colors
 		colorModes = findAllColorModes();
 		colorBoxes = new ArrayList[codeTabs.length];
 		createColorBoxes();
 		createColorBoxesForLights();
-		
+
 		/* If there is more than one color mode per context,
 		 * allow only hex and webcolors in this context.
 		 * Currently there is no notion of order of execution so we
@@ -49,7 +50,7 @@ public class SketchParser
 		 */
 		handleMultipleColorModes();
 	}
-	
+
 	public void addAllNumbers()
 	{
 		allHandles = new ArrayList[codeTabs.length];
@@ -58,9 +59,9 @@ public class SketchParser
 		addAllWebColorNumbers();
 		for (int i=0; i<codeTabs.length; i++) {
 			Collections.sort(allHandles[i], new HandleComparator());
-		}		
+		}
 	}
-	
+
 	/**
 	 * Get a list of all the numbers in this sketch
 	 * @return
@@ -83,7 +84,7 @@ public class SketchParser
 				boolean forceFloat = false;
 				int start = m.start()+1;
 				int end = m.end();
-				
+
 				if (isInComment(start, codeTabs[i])) {
 					// ignore comments
 					continue;
@@ -113,7 +114,7 @@ public class SketchParser
 					forceFloat = true;
 					end++;
 				}
-				
+
 				// if its a negative, include the '-' sign
 				if (c.charAt(start-1) == '-') {
 					if (isNegativeSign(start-2, c)) {
@@ -149,11 +150,11 @@ public class SketchParser
         			String name = varPrefix + "_int[" + intVarCount +"]";
         			allHandles[i].add(new Handle("int", name, intVarCount, value, i, line, start, end, 0));
     				intVarCount++;
-    			}    			
+    			}
     		}
     	}
     }
-	
+
 	/**
 	 * Get a list of all the hexadecimal numbers in the code
 	 * @return
@@ -169,7 +170,7 @@ public class SketchParser
 		{
 			String c = codeTabs[i];
 			Matcher m = p.matcher(c);
-        
+
 			while (m.find())
 			{
 				int start = m.start()+1;
@@ -226,7 +227,7 @@ public class SketchParser
 		{
 			String c = codeTabs[i];
 			Matcher m = p.matcher(c);
-        
+
 			while (m.find())
 			{
 				int start = m.start();
@@ -274,14 +275,14 @@ public class SketchParser
 	private ArrayList<ColorMode> findAllColorModes()
 	{
 		ArrayList<ColorMode> modes = new ArrayList<ColorMode>();
-		
+
 		for (String tab : codeTabs)
 		{
 			int index = -1;
 			// search for a call to colorMode function
 			while ((index = tab.indexOf("colorMode", index+1)) > -1) {
 				// found colorMode at index
-				
+
 				if (isInComment(index, tab)) {
 					// ignore comments
 					continue;
@@ -292,22 +293,22 @@ public class SketchParser
 				if (parOpen < 0) {
 					continue;
 				}
-				
+
 				int parClose = tab.indexOf(')', parOpen+1);
 				if (parClose < 0) {
 					continue;
 				}
-				
+
 				// add this mode
 				String modeDesc = tab.substring(parOpen+1, parClose);
 				String context = getObject(index-9, tab);
 				modes.add(ColorMode.fromString(context, modeDesc));
 			}
 		}
-				
+
 		return modes;
 	}
-	
+
 	private void createColorBoxes()
 	{
 		// search tab for the functions: 'color', 'fill', 'stroke', 'background', 'tint'
@@ -317,11 +318,11 @@ public class SketchParser
 			colorBoxes[i] = new ArrayList<ColorControlBox>();
 			String tab = codeTabs[i];
 			Matcher m = p.matcher(tab);
-			
+
 			while (m.find())
 			{
 				ArrayList<Handle> colorHandles = new ArrayList<Handle>();
-				
+
 				// look for the '(' and ')' positions
 				int openPar = tab.indexOf("(", m.start());
 				int closePar = tab.indexOf(")", m.end());
@@ -329,7 +330,7 @@ public class SketchParser
 					// ignore this color
 					continue;
 				}
-				
+
 				if (isInComment(m.start(), tab)) {
 					// ignore colors in a comment
 					continue;
@@ -344,7 +345,7 @@ public class SketchParser
 						colorHandles.add(handle);
 					}
 				}
-				
+
 				if (colorHandles.size() > 0) {
 					/* make sure there is no other stuff between '()' like variables.
 					 * substract all handle values from string inside parenthesis and
@@ -364,16 +365,16 @@ public class SketchParser
 							garbage = true;
 						}
 					}
-					
+
 					// create a new color box
 					if (!garbage) {
 						// find the context of the color (e.g. this.fill() or <object>.fill())
 						String context = getObject(m.start(), tab);
 						ColorMode cmode = getColorModeForContext(context);
-						
+
 						// not adding color operations for modes we couldn't understand
 						ColorControlBox newCCB = new ColorControlBox(context, cmode, colorHandles);
-						
+
 						if (cmode.unrecognizedMode) {
 							// the color mode is unrecognizable add only if is a hex or webcolor
 							if (newCCB.isHex) {
@@ -388,7 +389,7 @@ public class SketchParser
 			}
 		}
 	}
-	
+
 	private void createColorBoxesForLights()
 	{
 		// search code for light color and material color functions.
@@ -399,11 +400,11 @@ public class SketchParser
 		{
 			String tab = codeTabs[i];
 			Matcher m = p.matcher(tab);
-			
+
 			while (m.find())
 			{
 				ArrayList<Handle> colorHandles = new ArrayList<Handle>();
-				
+
 				// look for the '(' and ')' positions
 				int openPar = tab.indexOf("(", m.start());
 				int closePar = tab.indexOf(")", m.end());
@@ -411,7 +412,7 @@ public class SketchParser
 					// ignore this color
 					continue;
 				}
-				
+
 				if (isInComment(m.start(), tab)) {
 					// ignore colors in a comment
 					continue;
@@ -428,7 +429,7 @@ public class SketchParser
 						break;
 					}
 				}
-				
+
 				for (Handle handle : allHandles[i])
 				{
 					if (handle.startChar > openPar &&
@@ -437,7 +438,7 @@ public class SketchParser
 						colorHandles.add(handle);
 					}
 				}
-				
+
 				if (colorHandles.size() > 0) {
 					/* make sure there is no other stuff between '()' like variables.
 					 * substract all handle values from string inside parenthesis and
@@ -457,16 +458,16 @@ public class SketchParser
 							garbage = true;
 						}
 					}
-					
+
 					// create a new color box
 					if (!garbage) {
 						// find the context of the color (e.g. this.fill() or <object>.fill())
 						String context = getObject(m.start(), tab);
 						ColorMode cmode = getColorModeForContext(context);
-						
+
 						// not adding color operations for modes we couldn't understand
 						ColorControlBox newCCB = new ColorControlBox(context, cmode, colorHandles);
-						
+
 						if (cmode.unrecognizedMode) {
 							// the color mode is unrecognizable add only if is a hex or webcolor
 							if (newCCB.isHex) {
@@ -489,11 +490,11 @@ public class SketchParser
 				return cm;
 			}
 		}
-		
+
 		// if non found, create the default color mode for this context and return it
 		ColorMode newCM = new ColorMode(context);
 		colorModes.add(newCM);
-		
+
 		return newCM;
 	}
 
@@ -536,11 +537,11 @@ public class SketchParser
 			colorBoxes[i].removeAll(toDelete);
 		}
 	}
-	
+
 	public ArrayList<Range>[] getAllScientificNotations()
 	{
 		ArrayList<Range> notations[] = new ArrayList[codeTabs.length];
-		
+
 		Pattern p = Pattern.compile("[+\\-]?(?:0|[1-9]\\d*)(?:\\.\\d*)?[eE][+\\-]?\\d+");
 		for (int i=0; i<codeTabs.length; i++)
 		{
@@ -550,11 +551,11 @@ public class SketchParser
 				notations[i].add(new Range(m.start(), m.end()));
 			}
 		}
-		
+
 		return notations;
 	}
 
-	
+
 	public static boolean containsTweakComment(String[] codeTabs)
 	{
 		for (String tab : codeTabs) {
@@ -562,22 +563,22 @@ public class SketchParser
 				return true;
 			}
 		}
-		
+
 		return false;
-		
+
 	}
-	
+
 	public static boolean lineHasTweakComment(int pos, String code)
 	{
 		int lineEnd = getEndOfLine(pos, code);
 		if (lineEnd < 0) {
 			return false;
 		}
-		
-		String line = code.substring(pos, lineEnd);		
+
+		String line = code.substring(pos, lineEnd);
 		return hasTweakComment(line);
 	}
-	
+
 	private static boolean hasTweakComment(String code)
 	{
 		Pattern p = Pattern.compile("\\/\\/.*tweak", Pattern.CASE_INSENSITIVE);
@@ -585,11 +586,11 @@ public class SketchParser
 		if (m.find()) {
 			return true;
 		}
-		
-		return false;		
+
+		return false;
 	}
-	
-	
+
+
 	private boolean isNegativeSign(int pos, String code)
 	{
 		// go back and look for ,{[(=?+-/*%<>:&|^!~
@@ -613,12 +614,12 @@ public class SketchParser
 
 		return false;
 	}
-	
+
 	private int getNumDigitsAfterPoint(String number)
 	{
 		Pattern p = Pattern.compile("\\.[0-9]+");
 		Matcher m = p.matcher(number);
-		
+
 		if (m.find()) {
 			return m.end() - m.start() - 1;
 		}
@@ -711,7 +712,7 @@ public class SketchParser
 
 		return false;
 	};
-	
+
 	private boolean isInComment(int pos, String code)
 	{
 		// look for one line comment
@@ -722,17 +723,17 @@ public class SketchParser
 		if (code.substring(lineStart, pos).indexOf("//") != -1) {
 			return true;
 		}
-		
+
 		// TODO: look for block comments
-		
+
 		return false;
 	}
-	
+
 	public static int getEndOfLine(int pos, String code)
 	{
 		return code.indexOf("\n", pos);
 	}
-	
+
 	public static int getStartOfLine(int pos, String code)
 	{
 		while (pos >= 0) {
@@ -741,12 +742,12 @@ public class SketchParser
 			}
 			pos--;
 		}
-		
+
 		return 0;
 	}
-	
+
 	/** returns the object of the function starting at 'pos'
-	 * 
+	 *
 	 * @param pos
 	 * @param code
 	 * @return
@@ -755,7 +756,7 @@ public class SketchParser
 	{
 		boolean readObject = false;
 		String obj = "this";
-		
+
 		while (pos-- >= 0) {
 			if (code.charAt(pos) == '.') {
 				if (!readObject) {
@@ -773,44 +774,44 @@ public class SketchParser
 				obj = code.charAt(pos) + obj;
 			}
 		}
-		
+
 		return obj;
 	}
-	
+
 	public static int getSetupStart(String code)
 	{
 		Pattern p = Pattern.compile("void[\\s\\t\\r\\n]*setup[\\s\\t]*\\(\\)[\\s\\t\\r\\n]*\\{");
 		Matcher m = p.matcher(code);
-		
+
 		if (m.find()) {
 			return m.end();
 		}
-		
+
 		return -1;
 	}
 
-	
+
 	private String replaceString(String str, int start, int end, String put)
 	{
 		return str.substring(0, start) + put + str.substring(end, str.length());
 	}
-	
+
 	class Range
 	{
 		int start;
 		int end;
-		
+
 		public Range(int s, int e) {
 			start = s;
 			end = e;
 		}
-		
+
 		public boolean contains(int v)
 		{
 			if (v>=start && v<end) {
 				return true;
 			}
-			
+
 			return false;
 		}
 	}
