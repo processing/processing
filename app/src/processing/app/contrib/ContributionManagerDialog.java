@@ -74,6 +74,10 @@ public class ContributionManagerDialog {
   }
 
 
+  public boolean hasUpdates(Base base) {
+    return contribListing.hasUpdates(base);
+  }
+  
   public void showFrame(Editor editor) {
     this.editor = editor;
 

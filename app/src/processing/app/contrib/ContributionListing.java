@@ -27,6 +27,8 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 import processing.app.Base;
+import processing.app.Editor;
+import processing.app.Library;
 import processing.core.PApplet;
 
 
@@ -379,14 +381,41 @@ public class ContributionListing {
     }
     return false;
   }
+  
+  boolean hasUpdates(Base base) {
+    System.out.println("here321");
+    try {
+    System.out.println((base/*.getModeContribs()*/==null) ? "Null :(" : "what?!");
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+    System.out.println("Here too?!");
+    for (ModeContribution m : base.getModeContribs())
+      if (m.isInstalled()) {
+        System.out.println(m.getName());
+        Contribution advertised = getAvailableContribution(m);
+        if (advertised == null) {
+        }
+        else {
+        System.out.println("Here2");
+        if (advertised.getVersion() > m.getVersion())
+          return true;
+        }
+      }
+    return false;
+  }
 
 
   boolean hasUpdates(Contribution contribution) {
     if (contribution.isInstalled()) {
+      System.out.println("Here");
       Contribution advertised = getAvailableContribution(contribution);
       if (advertised == null) {
         return false;
       }
+      System.out.println("Here2");
       return advertised.getVersion() > contribution.getVersion();
     }
     return false;

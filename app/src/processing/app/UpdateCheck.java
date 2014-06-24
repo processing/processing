@@ -50,7 +50,7 @@ public class UpdateCheck {
   Base base;
   String downloadURL = "http://processing.org/download/latest.txt";
 
-  static final long ONE_DAY = 24 * 60 * 60 * 1000;
+  static final long ONE_DAY = 0;//24 * 60 * 60 * 1000;
 
 
   public UpdateCheck(Base base) {
@@ -58,7 +58,7 @@ public class UpdateCheck {
     new Thread(new Runnable() {
       public void run() {
         try {
-          Thread.sleep(30 * 1000);  // give the PDE time to get rolling
+          Thread.sleep(10 * 1000);  // give the PDE time to get rolling
           updateCheck();
         } catch (Exception e) {
           // this can safely be ignored, too many instances where no net
@@ -122,13 +122,14 @@ public class UpdateCheck {
       if (offerToUpdateContributions) {
         // Wait for xml file to be downloaded and updates to come in.
         // (this should really be handled better).
+        base.rebuildContribModes();
         Thread.sleep(5 * 1000);
         if ((!base.libraryManagerFrame.hasAlreadyBeenOpened() &&
-             base.libraryManagerFrame.hasUpdates()) ||
+             base.libraryManagerFrame.hasUpdates(base)) ||
             (!base.toolManagerFrame.hasAlreadyBeenOpened() &&
-             base.toolManagerFrame.hasUpdates()) ||
+             base.toolManagerFrame.hasUpdates(base)) ||
             (!base.modeManagerFrame.hasAlreadyBeenOpened() &&
-             base.modeManagerFrame.hasUpdates())) {
+             base.modeManagerFrame.hasUpdates(base))) {
           promptToOpenContributionManager();
         }
       }
