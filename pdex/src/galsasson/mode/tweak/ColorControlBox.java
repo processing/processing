@@ -6,61 +6,64 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
+import processing.mode.experimental.TextAreaPainter;
+
 public class ColorControlBox {
-	
+
+	public boolean visible;
+
 	ArrayList<Handle> handles;
 	ColorMode colorMode;
 	Color color;
 	boolean ilegalColor = false;
 	boolean isBW;
 	boolean isHex;
-	
+
 	String drawContext;
-	
+
 	// interface
 	int x, y, width, height;
-	TweakTextAreaPainter painter;
-	boolean visible;
-	
+	TextAreaPainter painter;
+
 	public ColorControlBox(String context, ColorMode mode, ArrayList<Handle> handles)
 	{
 		this.drawContext = context;
 		this.colorMode = mode;
 		this.handles = handles;
-		
+
 		// add this box to the handles so they can update this color on change
 		for (Handle h : handles) {
 			h.setColorBox(this);
 		}
-		
+
 		isBW = isGrayScale();
 		isHex = isHexColor();
 		color = getCurrentColor();
-		
+
 		visible = Settings.alwaysShowColorBoxes;
 	}
-	
-	public void initInterface(TweakTextAreaPainter painter, int x, int y, int w, int h)
+
+	public void initInterface(TextAreaPainter textAreaPainter, int x, int y, int w, int h)
 	{
-		this.painter = painter;
+		this.painter = textAreaPainter;
 		this.x = x;
 		this.y = y;
 		this.width = w;
 		this.height = h;
 	}
-	
+
 	public void setPos(int x, int y)
 	{
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	public void draw(Graphics2D g2d)
 	{
 		if (!visible) {
 			return;
 		}
-		
+
 		AffineTransform trans = g2d.getTransform();
 		g2d.translate(x, y);
 
@@ -72,16 +75,16 @@ public class ColorControlBox {
 		g2d.setStroke(new BasicStroke(1));
 		g2d.setColor(Color.BLACK);
 		g2d.drawRoundRect(0, 0, width, height, 5, 5);
-		
+
 		if (ilegalColor) {
 			g2d.setColor(Color.RED);
 			g2d.setStroke(new BasicStroke(2));
 			g2d.drawLine(width-3, 3, 3, height-3);
 		}
-		
+
 		g2d.setTransform(trans);
 	}
-	
+
 	public boolean isGrayScale()
 	{
 		if (handles.size() <= 2) {
@@ -90,10 +93,10 @@ public class ColorControlBox {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Check if color is hex or webcolor
 	 * @return
@@ -107,10 +110,10 @@ public class ColorControlBox {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public Color getCurrentColor()
 	{
 		try {
@@ -119,7 +122,7 @@ public class ColorControlBox {
 				if (isBW) {
 					// treat as color(gray)
 					float gray = handles.get(0).newValue.floatValue();
-					return verifiedGrayColor(gray);					
+					return verifiedGrayColor(gray);
 				}
 				else {
 					// treat as color(argb)
@@ -132,13 +135,13 @@ public class ColorControlBox {
 				if (isBW) {
 					// color(gray, alpha)
 					float gray = handles.get(0).newValue.floatValue();
-					return verifiedGrayColor(gray);					
+					return verifiedGrayColor(gray);
 				}
 				else {
 					// treat as color(argb, a)
 					int argb = handles.get(0).newValue.intValue();
 					float a = handles.get(1).newValue.floatValue();
-					return verifiedHexColor(argb, a);					
+					return verifiedHexColor(argb, a);
 				}
 			}
 			else if (handles.size() == 3)
@@ -173,36 +176,36 @@ public class ColorControlBox {
 		}
 		catch (Exception e) {
 			System.out.println("error parsing color value: " + e.toString());
-			ilegalColor = true; 
+			ilegalColor = true;
 			return Color.WHITE;
 		}
-		
+
 		// couldn't figure out this color, return WHITE color
 		ilegalColor = true;
 		return Color.WHITE;
 	}
-	
+
 	private Color verifiedGrayColor(float gray)
 	{
 		if (gray < 0 || gray > colorMode.v1Max) {
 			return colorError();
 		}
-		
+
 		ilegalColor = false;
 		gray = gray/colorMode.v1Max * 255;
 		return new Color((int)gray, (int)gray, (int)gray, 255);
 	}
-	
+
 	private Color verifiedHexColor(int argb)
 	{
 		int r = (argb>>16)&0xff;
 		int g = (argb>>8)&0xff;
 		int b = (argb&0xff);
-		
+
 		ilegalColor = false;
-		return new Color(r, g, b, 255);		
+		return new Color(r, g, b, 255);
 	}
-	
+
 	private Color verifiedHexColor(int argb, float alpha)
 	{
 		int r = (argb>>16)&0xff;
@@ -212,10 +215,10 @@ public class ColorControlBox {
 		ilegalColor = false;
 		return new Color(r, g, b, 255);
 	}
-	
+
 	public Color verifiedRGBColor(float r, float g, float b, float a)
 	{
-		if (r < 0 || r > colorMode.v1Max || 
+		if (r < 0 || r > colorMode.v1Max ||
 			g < 0 || g > colorMode.v2Max ||
 			b < 0 || b > colorMode.v3Max) {
 			return colorError();
@@ -230,7 +233,7 @@ public class ColorControlBox {
 
 	public Color verifiedHSBColor(float h, float s, float b, float a)
 	{
-		if (h < 0 || h > colorMode.v1Max || 
+		if (h < 0 || h > colorMode.v1Max ||
 			s < 0 || s > colorMode.v2Max ||
 			b < 0 || b > colorMode.v3Max) {
 			return colorError();
@@ -240,7 +243,7 @@ public class ColorControlBox {
 		Color c = Color.getHSBColor(h/colorMode.v1Max, s/colorMode.v2Max, b/colorMode.v3Max);
 		return new Color(c.getRed(), c.getGreen(), c.getBlue(), 255);
 	}
-	
+
 	private Color colorError()
 	{
 		ilegalColor = true;
@@ -251,17 +254,17 @@ public class ColorControlBox {
 	{
 		color = getCurrentColor();
 	}
-	
+
 	public int getTabIndex()
 	{
 		return handles.get(0).tabIndex;
 	}
-	
+
 	public int getLine()
 	{
 		return handles.get(0).line;
 	}
-	
+
 	public int getCharIndex()
 	{
 		int lastHandle = handles.size()-1;
@@ -269,29 +272,29 @@ public class ColorControlBox {
 	}
 
 	/* Check if the point is in the box
-	 * 
+	 *
 	 */
 	public boolean pick(int mx, int my)
 	{
 		if (!visible) {
 			return false;
 		}
-		
+
 		if (mx>x && mx < x+width && my>y && my<y+height) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/* Only show the color box if mouse is on the same line
-	 * 
+	 *
 	 * return true if there was change
 	 */
 	public boolean setMouseY(int my)
 	{
 		boolean change = false;
-		
+
 		if (my>y && my<y+height) {
 			if (!visible) {
 				change = true;
@@ -304,13 +307,13 @@ public class ColorControlBox {
 			}
 			visible = false;
 		}
-		
+
 		return change;
 	}
-	
-	/* Update the color numbers with the new values that were selected 
+
+	/* Update the color numbers with the new values that were selected
 	 * in the color selector
-	 * 
+	 *
 	 *  hue, saturation and brightness parameters are always 0-255
 	 */
 	public void selectorChanged(int hue, int saturation, int brightness)
@@ -343,20 +346,20 @@ public class ColorControlBox {
 					// RGB
 					Color c = Color.getHSBColor((float)hue/255, (float)saturation/255, (float)brightness/255);
 					handles.get(0).setValue((float)c.getRed()/255*colorMode.v1Max);
-					handles.get(1).setValue((float)c.getGreen()/255*colorMode.v2Max);					
+					handles.get(1).setValue((float)c.getGreen()/255*colorMode.v2Max);
 					handles.get(2).setValue((float)c.getBlue()/255*colorMode.v3Max);
 				}
 			}
 		}
-		
+
 		// update our own color
 		color = getCurrentColor();
-		
+
 		// update code text painter so the user will see the changes
 		painter.updateCodeText();
 		painter.repaint();
 	}
-	
+
 	public String toString()
 	{
 		return handles.size() + " handles, color mode: " + colorMode.toString();
