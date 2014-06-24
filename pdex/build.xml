@@ -82,8 +82,9 @@
 	</target>
 
 
-	<target name="install" depends="build" description="Quick install to sketchbook">
-		<copy todir="${sketchbook.location}/modes/${lib.name}/mode">
+	<target name="install" depends="build" description="Quick install to mode folder">
+		<delete file="${target.path}/modes/${lib.name}/mode/${lib.name}.jar" />
+		<copy todir="${target.path}/modes/${lib.name}/mode">
 			<fileset file="mode/${lib.name}.jar" />
 		</copy>
 	</target>
