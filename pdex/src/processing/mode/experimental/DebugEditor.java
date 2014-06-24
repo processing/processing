@@ -20,7 +20,6 @@ import static processing.mode.experimental.ExperimentalMode.log;
 import galsasson.mode.tweak.ColorControlBox;
 import galsasson.mode.tweak.Handle;
 import galsasson.mode.tweak.SketchParser;
-import galsasson.mode.tweak.TweakToolbar;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -674,6 +673,22 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           }
         });
         debugMenu.add(writeErrorLog);
+
+        // TweakMode code
+        debugMenu.addSeparator();
+        enableTweakCB = new JCheckBoxMenuItem("Tweak Enabled");
+        enableTweakCB.setSelected(ExperimentalMode.enableTweak);
+        enableTweakCB.addActionListener(new ActionListener() {
+
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            ExperimentalMode.enableTweak = ((JCheckBoxMenuItem) e
+                .getSource()).isSelected();
+            dmode.savePreferences();
+          }
+        });
+        debugMenu.add(enableTweakCB);
+        // TweakMode code end
 
         debugMenu.addSeparator();
         JMenuItem jitem = new JMenuItem("PDE X on GitHub");
@@ -1686,7 +1701,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 	}
 
     // TweakMode code
-	protected JCheckBoxMenuItem enableTweakCB;
+    protected JCheckBoxMenuItem enableTweakCB;
 
 	String[] baseCode;
 

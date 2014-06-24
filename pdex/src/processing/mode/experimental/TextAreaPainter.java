@@ -21,7 +21,6 @@ import galsasson.mode.tweak.ColorControlBox;
 import galsasson.mode.tweak.ColorSelector;
 import galsasson.mode.tweak.Handle;
 import galsasson.mode.tweak.Settings;
-import galsasson.mode.tweak.TweakEditor;
 
 import java.awt.Color;
 import java.awt.Cursor;
