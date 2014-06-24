@@ -17,18 +17,21 @@ public class Handle {
 	public String strValue;
 	public String strNewValue;
 	public int varIndex;
+	public int startChar;
+	public int endChar;
+	public int newStartChar;
+	public int newEndChar;
+	public int line;
 	int tabIndex;
-	int startChar, endChar, line;
-	int newStartChar, newEndChar;
 	int decimalPlaces;		// number of digits after the decimal point
 	float incValue;
-	
+
 	java.lang.Number value, newValue;
 	String strDiff;
-	
+
 	// connect with color control box
 	ColorControlBox colorBox;
-	
+
 	// interface
 	int x, y, width, height;
 	int xCenter, xCurrent, xLast;
@@ -36,7 +39,7 @@ public class Handle {
 	String textFormat;
 
 	int oscPort;
-	
+
 	public Handle(String t, String n, int vi, String v, int ti, int l, int sc, int ec, int dp)
 	{
 		type = t;
@@ -48,7 +51,7 @@ public class Handle {
 		startChar = sc;
 		endChar = ec;
 		decimalPlaces = dp;
-		
+
 		incValue = (float)(1/Math.pow(10, decimalPlaces));
 
 		if (type == "int") {
@@ -74,46 +77,46 @@ public class Handle {
 			strNewValue = strValue;
 			textFormat = "%.0" + decimalPlaces + "f";
 		}
-		
+
 		newStartChar = startChar;
 		newEndChar = endChar;
 	}
-	
+
 	public void initInterface(int x, int y, int width, int height)
 	{
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		
+
 		// create drag ball
 		progBar = new HProgressBar(height, width);
 	}
-	
+
 	public void setCenterX(int mx)
 	{
 		xLast = xCurrent = xCenter = mx;
 	}
-	
+
 	public void setCurrentX(int mx)
 	{
 		xLast = xCurrent;
 		xCurrent = mx;
-		
+
 		progBar.setPos(xCurrent - xCenter);
-		
+
 		updateValue();
 	}
-	
+
 	public void resetProgress()
 	{
 		progBar.setPos(0);
 	}
-	
+
 	public void updateValue()
 	{
 		float change = getChange();
-		
+
 		if (type == "int") {
 			if (newValue.intValue() + (int)change > Integer.MAX_VALUE ||
 					newValue.intValue() + (int)change < Integer.MIN_VALUE) {
@@ -134,7 +137,7 @@ public class Handle {
 
 		updateColorBox();
 	}
-	
+
 	public void setValue(Number value)
 	{
 		if (type == "int") {
@@ -155,73 +158,73 @@ public class Handle {
 			BigDecimal bd = new BigDecimal(value.floatValue());
 			bd = bd.setScale(decimalPlaces, BigDecimal.ROUND_HALF_UP);
 			newValue = bd.floatValue();
-			strNewValue = String.format(Locale.US,textFormat, newValue.floatValue());			
+			strNewValue = String.format(Locale.US,textFormat, newValue.floatValue());
 		}
-		
+
 		// send new data to the server in the sketch
 		oscSendNewValue();
 	}
-	
+
 	public void updateColorBox()
 	{
 		if (colorBox != null)
 		{
 			colorBox.colorChanged();
-		}		
+		}
 	}
-	
+
 	private float getChange()
 	{
 		int pixels = xCurrent - xLast;
 		return (float)pixels*incValue;
 	}
-	
+
 	public void setPos(int nx, int ny)
 	{
 		x = nx;
 		y = ny;
 	}
-	
+
 	public void setWidth(int w)
 	{
 		width = w;
-		
+
 		progBar.setWidth(w);
 	}
-	
+
 	public void draw(Graphics2D g2d, boolean hasFocus)
 	{
 		AffineTransform prevTrans = g2d.getTransform();
 		g2d.translate(x, y);
-		
+
 		// draw underline on the number
 		g2d.setColor(ColorScheme.getInstance().progressFillColor);
 		g2d.drawLine(0, 0, width, 0);
-		
+
 		if (hasFocus) {
 			if (progBar != null) {
 				g2d.translate(width/2, 2);
 				progBar.draw(g2d);
 			}
 		}
-		
+
 		g2d.setTransform(prevTrans);
 	}
-	
+
 	public boolean pick(int mx, int my)
 	{
 		return pickText(mx, my);
 	}
-	
+
 	public boolean pickText(int mx, int my)
 	{
 		if (mx>x-2 && mx<x+width+2 && my>y-height && my<y) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public boolean valueChanged()
 	{
 		if (type == "int") {
@@ -237,17 +240,17 @@ public class Handle {
 			return (value.floatValue() != newValue.floatValue());
 		}
 	}
-	
+
 	public void setColorBox(ColorControlBox box)
 	{
 		colorBox = box;
 	}
-	
+
 	public void setOscPort(int port)
 	{
 		oscPort = port;
 	}
-	
+
 	public void oscSendNewValue()
 	{
 		int index = varIndex;
@@ -266,17 +269,17 @@ public class Handle {
 			}
 		} catch (Exception e) { System.out.println("error sending OSC message!"); }
 	}
-	
+
 	public String toString()
 	{
-		return type + " " + name + " = " + strValue + 
-				" (tab: " + tabIndex + ", line: " + line + 
-				", start: " + startChar + ", end: " + endChar + ")"; 
+		return type + " " + name + " = " + strValue +
+				" (tab: " + tabIndex + ", line: " + line +
+				", start: " + startChar + ", end: " + endChar + ")";
 	}
 }
 
 /*
- * Used for sorting the handles by order of occurrence inside each tab 
+ * Used for sorting the handles by order of occurrence inside each tab
  */
 class HandleComparator implements Comparator<Handle> {
     public int compare(Handle handle1, Handle handle2) {
