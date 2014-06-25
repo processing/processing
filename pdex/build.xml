@@ -22,15 +22,15 @@
 	</condition>
 
 	<!-- Figure out the platform-specific output directory. -->
-	<condition property="target.path" value="macosx/work/Processing.app/Contents/Java">
+	<condition property="target.path" value="../build/macosx/work/Processing.app/Contents/Java">
 		<os family="mac" />
 	</condition>
 
-	<condition property="target.path" value="linux/work">
+	<condition property="target.path" value="../build/linux/work">
 		<os family="unix" />
 	</condition>
 
-	<condition property="target.path" value="windows/work">
+	<condition property="target.path" value="../build/windows/work">
 		<os family="windows" />
 	</condition>
 
@@ -138,9 +138,9 @@
        excludes="**/.DS_Store"/>
 	</target>
 
-	<target name="full_install" depends="package" description="Full install to sketchbook">
-		<delete dir="${sketchbook.location}/modes/${lib.name}" />
-		<copy todir="${sketchbook.location}/modes/">
+	<target name="full_install" depends="package" description="Full install to mode folder">
+		<delete dir="${target.path}/modes/${lib.name}" />
+		<copy todir="${target.path}/modes/">
 			<fileset dir="dist" />
 		</copy>
 	</target>
