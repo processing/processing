@@ -218,7 +218,7 @@ public class ErrorCheckerService implements Runnable{
    */
   final Pattern FUNCTION_DECL = Pattern
     .compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*"
-      + "(void|int|float|double|String|char|byte)"
+      + "(void|int|float|double|String|char|byte|boolean)"
       + "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(", Pattern.MULTILINE);
   
   protected ErrorMessageSimplifier errorMsgSimplifier;
