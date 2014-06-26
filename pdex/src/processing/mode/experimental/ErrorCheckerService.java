@@ -476,19 +476,18 @@ public class ErrorCheckerService implements Runnable{
       }
       
       astGenerator.buildAST(cu);
-      if(ExperimentalMode.errorCheckEnabled){
-        calcPDEOffsetsForProbList();
-        updateErrorTable();
-        editor.updateErrorBar(problemsList);
-        updateEditorStatus();
-        editor.getTextArea().repaint();
-        updatePaintedThingys();
-        editor.updateErrorToggle();
+      if(!ExperimentalMode.errorCheckEnabled){
+    	  problemsList.clear();
+    	  log("Error Check disabled, so not updating UI.");
       }
-      else
-      {
-        log("Error Check disabled, so not updating UI.");
-      }
+      calcPDEOffsetsForProbList();
+      updateErrorTable();
+      editor.updateErrorBar(problemsList);
+      updateEditorStatus();
+      editor.getTextArea().repaint();
+      updatePaintedThingys();
+      editor.updateErrorToggle();
+      
       int x = textModified.get();
       //log("TM " + x);
       if (x >= 2) {

@@ -1609,8 +1609,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * at the bottom of the PDE
      */
     public void updateErrorToggle(){
-      btnShowErrors.updateMarker(errorCheckerService.hasErrors(),
-                               errorBar.errorColor);
+		btnShowErrors.updateMarker(ExperimentalMode.errorCheckEnabled
+				&& errorCheckerService.hasErrors(), errorBar.errorColor);
     }
     
     /**
@@ -1649,4 +1649,14 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         }
       }
     }
+    
+	protected void applyPreferences() {
+		super.applyPreferences();
+		if (dmode != null) {
+			dmode.loadPreferences();
+			log("Applying prefs");
+			// trigger it once to refresh UI
+			errorCheckerService.runManualErrorCheck();
+		}
+	}
 }

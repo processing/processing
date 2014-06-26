@@ -825,7 +825,11 @@ public class Preferences {
       setBoolean("platform.auto_file_type_associations", //$NON-NLS-1$
                  autoAssociateBox.isSelected());
     }
-
+    
+    setBoolean("pdex.errorCheckEnabled", errorCheckerBox.isSelected());
+    setBoolean("pdex.warningsEnabled", warningsCheckerBox.isSelected());
+    setBoolean("pdex.ccEnabled", codeCompletionBox.isSelected());
+    
     for (Editor editor : base.getEditors()) {
       editor.applyPreferences();
     }
