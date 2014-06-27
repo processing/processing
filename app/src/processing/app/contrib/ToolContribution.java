@@ -22,6 +22,7 @@
 package processing.app.contrib;
 
 import java.io.*;
+import java.net.URLClassLoader;
 //import java.net.*;
 import java.util.*;
 
@@ -58,6 +59,34 @@ public class ToolContribution extends LocalContribution implements Tool {
       Class<?> toolClass = loader.loadClass(className);
       tool = (Tool) toolClass.newInstance();
     }
+  }
+
+
+  /**
+   * Method to close the ClassLoader so that the archives are no longer "locked" and
+   * a tool can be removed without restart.
+   */
+  public void clearClassLoader(Base base) {
+//    ArrayList<ToolContribution> contribTools = base.getActiveEditor().contribTools;
+//    int botherToRemove = contribTools.indexOf(this);
+//    if (botherToRemove != -1) { // The poor thing doesn't even exist, and we're trying to remove it...
+//      contribTools.remove(botherToRemove);
+    ArrayList<ToolContribution> contribTools = base.getActiveEditor().contribTools;
+    for (ToolContribution toolContrib : contribTools)
+      if (toolContrib.getName().equals(this.name)) {
+        try {
+          System.out.println("Here  " + name);
+          ((URLClassLoader) this.loader).close();
+          ((URLClassLoader) toolContrib.loader).close();
+          // The typecast should be safe, since the only case when loader is not of
+          // type URLClassLoader is when no archives were found in the first
+          // place...
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+//        base.getActiveEditor().rebuildToolMenu();
+      }
+//    }
   }
 
 

@@ -336,13 +336,13 @@ public abstract class LocalContribution extends Contribution {
     pm.startTask("Removing", ProgressMonitor.UNKNOWN);
 
     boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
-    if (getType().requiresRestart() && getType() != ContributionType.MODE) {
-      if (!doBackup || (doBackup && backup(editor, false, status))) {
-        if (setDeletionFlag(true)) {
-          contribListing.replaceContribution(this, this);
-        }
-      }
-    } else {
+//    if (getType().requiresRestart() && getType() != ContributionType.MODE) {
+//      if (!doBackup || (doBackup && backup(editor, false, status))) {
+//        if (setDeletionFlag(true)) {
+//          contribListing.replaceContribution(this, this);
+//        }
+//      }
+//    } else {
       boolean success = false;
       if (getType() == ContributionType.MODE) {
         boolean isModeActive = false;
@@ -367,6 +367,11 @@ public abstract class LocalContribution extends Contribution {
           return;
         }
       }
+      if (getType() == ContributionType.TOOL) {
+        ToolContribution t = (ToolContribution) this;
+        editor.clearToolMenu();
+        t.clearClassLoader(editor.getBase());
+      }
       if (doBackup) {
         success = backup(editor, true, status);
       } else {
@@ -375,6 +380,10 @@ public abstract class LocalContribution extends Contribution {
       }
 
       if (success) {
+        if (getType() == ContributionType.TOOL) {
+          editor.removeTool((ToolContribution) this);
+        }
+        
         Contribution advertisedVersion =
           contribListing.getAvailableContribution(this);
 
@@ -389,7 +398,7 @@ public abstract class LocalContribution extends Contribution {
           status.setErrorMessage("Could not delete the contribution's files");
         }
       }
-    }
+//    }
     ContributionManager.refreshInstalled(editor);
     pm.finished();
   }
