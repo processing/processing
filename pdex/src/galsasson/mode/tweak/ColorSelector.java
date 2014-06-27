@@ -35,28 +35,22 @@ public class ColorSelector {
 	{
 		frame = new JFrame();
 		frame.setBackground(Color.BLACK);
-//		frame.setUndecorated(true);
 
 		Box box = Box.createHorizontalBox();
 		box.setBackground(Color.BLACK);
+
+		selectorSlider = new ColorSelectorSlider();
+		selectorSlider.init();
 
 		if (!colorBox.isBW) {
 			selectorBox = new ColorSelectorBox();
 			selectorBox.init();
 			box.add(selectorBox);
-//			topBar = new SelectorTopBar(285);
 		}
-		else {
-//			topBar = new SelectorTopBar(30);
-		}
-		selectorSlider = new ColorSelectorSlider();
-		selectorSlider.init();
+
 		box.add(Box.createHorizontalGlue());
 		box.add(selectorSlider, BorderLayout.CENTER);
 		box.add(Box.createHorizontalGlue());
-
-//		topBar.init();
-//		frame.getContentPane().add(topBar, BorderLayout.NORTH);
 
 		frame.getContentPane().add(box, BorderLayout.CENTER);
 		frame.pack();
@@ -68,6 +62,7 @@ public class ColorSelector {
 	{
 		frame.setLocation(x, y);
 		frame.setVisible(true);
+		frame.repaint();
 	}
 
 	public void hide()
