@@ -436,30 +436,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   public void rebuildModeMenu() {
-    modeMenu = new JMenu();
-    ButtonGroup modeGroup = new ButtonGroup();
-    for (final Mode m : base.getModeList()) {
-      JRadioButtonMenuItem item = new JRadioButtonMenuItem(m.getTitle());
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          base.changeMode(m);
-        }
-      });
-      modeMenu.add(item);
-      modeGroup.add(item);
-      if (mode == m) {
-        item.setSelected(true);
-      }
-    }
-
-    modeMenu.addSeparator();
-    JMenuItem addLib = new JMenuItem("Add Mode...");
-    addLib.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        base.handleOpenModeManager();
-      }
-    });
-    modeMenu.add(addLib);
+    initModeMenu();
   }
 
 

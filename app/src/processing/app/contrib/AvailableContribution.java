@@ -139,13 +139,10 @@ class AvailableContribution extends Contribution {
         // backup old if needed, then move things into place and reload.
         installedContrib = 
           newContrib.copyAndLoad(editor, confirmReplace, status);
-        if (newContrib != null && type.requiresRestart()) {
+        if (newContrib != null && type.requiresRestart() && type != ContributionType.MODE) {
           installedContrib.setRestartFlag();
           //status.setMessage("Restart Processing to finish the installation.");
         }
-//      else if (type == ContributionType.MODE) {
-//      
-//    }
         
         // 3. Delete the newContrib, do a garbage collection, hope and pray
         // that Java will unlock the temp folder on Windows now
@@ -154,10 +151,10 @@ class AvailableContribution extends Contribution {
         
         
         if (Base.isWindows()) {
-          // we'll even give it a second to finish up ... because file ops are
+          // we'll even give it 2 seconds to finish up ... because file ops are
           // just that flaky on Windows.
           try {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
           } catch (InterruptedException e) {
             e.printStackTrace();
           }

@@ -137,6 +137,13 @@ class ContributionPanel extends JPanel {
               resetInstallProgressBarState();
               installRemoveButton.setEnabled(true);
             }
+
+            public void cancel() {
+              super.cancel();
+              resetInstallProgressBarState();
+              updateButton.setEnabled(true);
+              installRemoveButton.setEnabled(true);
+            }
           },
           listPanel.contribManager.status);
         }
@@ -236,11 +243,18 @@ class ContributionPanel extends JPanel {
                                     String url = ad.link;
                                     installContribution(ad, url);
                                   }
+
+                                  @Override
+                                  public void cancel() {
+                                    super.cancel();
+                                    resetInstallProgressBarState();
+                                    installRemoveButton.setEnabled(true);
+                                  }
+                                  
                                 }, listPanel.contribManager.status);
         } else {
           updateButton.setEnabled(false);
-          AvailableContribution ad = contribListing
-            .getAvailableContribution(contrib);
+          AvailableContribution ad = contribListing.getAvailableContribution(contrib);
           String url = ad.link;
           installContribution(ad, url);
         }

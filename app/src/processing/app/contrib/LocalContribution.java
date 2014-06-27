@@ -329,8 +329,10 @@ public abstract class LocalContribution extends Contribution {
   }
   
   
-  void remove(final Editor editor, final ProgressMonitor pm,
-              final StatusPanel status, final ContributionListing contribListing) {
+  void remove(final Editor editor,
+              final ProgressMonitor pm,
+              final StatusPanel status, 
+              final ContributionListing contribListing) {
     pm.startTask("Removing", ProgressMonitor.UNKNOWN);
 
     boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
@@ -353,13 +355,15 @@ public abstract class LocalContribution extends Contribution {
         if (!isModeActive)
           m.clearClassLoader(editor.getBase());
         else {
-          if (!doBackup || (doBackup && backup(editor, false, status))) {
-            if (setDeletionFlag(true)) {
-              contribListing.replaceContribution(this, this);
-            }
-          }
-          ContributionManager.refreshInstalled(editor);
-          pm.finished();
+//          if (!doBackup || (doBackup && backup(editor, false, status))) {
+//            if (setDeletionFlag(true)) {
+//              contribListing.replaceContribution(this, this);
+//            }
+//          }
+          pm.cancel();
+          Base.showMessage("Mode Manager", "Please save your Sketch and change the Mode of all Editor\nwindows that have " 
+            + this.name + " as the active Mode.");
+//          ContributionManager.refreshInstalled(editor);
           return;
         }
       }
@@ -371,8 +375,8 @@ public abstract class LocalContribution extends Contribution {
       }
 
       if (success) {
-        Contribution advertisedVersion = contribListing
-          .getAvailableContribution(this);
+        Contribution advertisedVersion =
+          contribListing.getAvailableContribution(this);
 
         if (advertisedVersion == null) {
           contribListing.removeContribution(this);
