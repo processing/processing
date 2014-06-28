@@ -18,17 +18,17 @@ public class Delay implements SoundObject{
 		m_engine = new MethClaInterface();		
 	}
 	
-	public void play(SoundObject input, float maxDelayTime, float delayTime, float feedBack){
+	public void process(SoundObject input, float maxDelayTime, float delayTime, float feedBack){
 		m_maxDelayTime=maxDelayTime; m_delayTime=delayTime; m_feedBack=feedBack;
 		m_nodeId = m_engine.delayPlay(input.returnId(), m_maxDelayTime, m_delayTime, m_feedBack);
 	}
 	
-	public void play(SoundObject input, float maxDelayTime, float delayTime){
+	public void process(SoundObject input, float maxDelayTime, float delayTime){
 		m_maxDelayTime=maxDelayTime; m_delayTime=delayTime; 
 		m_nodeId = m_engine.delayPlay(input.returnId(), m_maxDelayTime, m_delayTime, m_feedBack);
 	}
 
-	public void play(SoundObject input, float maxDelayTime){
+	public void process(SoundObject input, float maxDelayTime){
 		m_maxDelayTime=maxDelayTime; 
 		m_nodeId = m_engine.delayPlay(input.returnId(), m_maxDelayTime, m_delayTime, m_feedBack);
 	}

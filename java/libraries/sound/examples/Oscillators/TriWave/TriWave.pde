@@ -10,7 +10,7 @@ Sound stream;
 TriOsc tri;
 
 void setup() {
-    size(350,350);
+    size(640,360);
     background(255);
     
     // Create and start the sound renderer and the sine oscillator.

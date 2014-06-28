@@ -17,12 +17,12 @@ public class LPF implements SoundObject{
 		m_engine = new MethClaInterface();		
 	}
 	
-	public void play(SoundObject input, float freq, float res){
+	public void process(SoundObject input, float freq, float res){
 		m_freq=freq; m_res=res;
 		m_nodeId = m_engine.lowPassPlay(input.returnId(), m_freq, m_res);
 	}
 	
-	public void play(SoundObject input, float freq){
+	public void process(SoundObject input, float freq){
 		m_freq=freq;
 		m_nodeId = m_engine.lowPassPlay(input.returnId(), m_freq, m_res);
 	}

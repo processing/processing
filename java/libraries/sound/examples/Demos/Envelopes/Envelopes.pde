@@ -34,7 +34,7 @@ int trigger = millis();
 int note=0; 
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   background(255);
   
   //Create and start the Sound renderer

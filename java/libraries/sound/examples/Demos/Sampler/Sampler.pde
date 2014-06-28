@@ -24,11 +24,11 @@ int[] playSound = {1,1,1,1,1};
 int trigger;
 
 // This array holds the pixel positions of the rectangles which are drawn each event
-int[] posx = {0, 100, 200, 300, 400};
+int[] posx = {0, 128, 256, 384, 512};
 
 
 void setup(){
-  size(500, 300);
+  size(640, 360);
   background(255);
   
   // Create a Sound renderer and an array of empty soundfiles
@@ -63,7 +63,7 @@ void draw(){
           fill(int(random(255)),int(random(255)),int(random(255)));
           noStroke();
           // Draw the rect in the positions we defined earlier in posx
-          rect(posx[i], 50, 100, 200);
+          rect(posx[i], 50, 128, 260);
           // Choose a random index of the octave array
           rate = octave[int(random(0,5))];
           // Play the soundfile from the array with the respective rate and loop set to false
@@ -72,7 +72,7 @@ void draw(){
       
       // Renew the indexes of playSound so that at the next event the order is different and randomized.
       playSound[i] = int(random(0,2));
-    };
+    }
     
     // Create a new triggertime in the future, with a random offset between 200 and 1000 milliseconds
     trigger = millis() + int(random(200,1000));

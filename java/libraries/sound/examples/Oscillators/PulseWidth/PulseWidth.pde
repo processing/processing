@@ -11,7 +11,7 @@ Sound stream;
 Pulse pulse;
 
 void setup() {
-    size(350,350);
+    size(640,360);
     background(255);
     
     // Create and start the sound renderer and the pulse wave oscillator
@@ -30,4 +30,3 @@ void draw() {
     // Map mouseY from 0.0 to 0.5 for amplitude
     pulse.width(map(mouseY, 0, height, 0.0, 1.0));
 }
-

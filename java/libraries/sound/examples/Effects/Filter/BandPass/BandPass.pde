@@ -12,7 +12,7 @@ BPF bandPass;
 float amp=0.0;
 
 void setup() {
-    size(350,350);
+    size(640,360);
     background(255);
     
     // Create and start the sound renderer and the noise generator
@@ -20,7 +20,7 @@ void setup() {
     noise = new WhiteNoise(this);
     bandPass = new BPF(this);
     noise.play(0.5);
-    bandPass.play(noise, 100);
+    bandPass.process(noise, 100);
 }      
 
 void draw() {

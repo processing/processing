@@ -16,7 +16,7 @@ int bands=512;
 float[] spec = new float[bands];
 
 public void setup() {
-    size(bands,350);
+    size(bands,360);
     background(255);
       
     // Create and start the sound renderer
@@ -35,7 +35,7 @@ public void setup() {
 public void draw() {
     background(255);
     
-    fft.process(spec);
+    fft.analyze(spec);
     
     for(int i = 0; i < bands; i++)
     {
@@ -44,4 +44,3 @@ public void draw() {
       line( i, height, i, height - spec[i]*height*5 );
     } 
 }
-

@@ -17,7 +17,7 @@ int value[] = {0,0,0};
 
 
 void setup(){
-  size(500, 500);
+  size(640, 360);
   background(255);
   
   // Create a Sound renderer and an array of empty soundfiles
@@ -43,9 +43,8 @@ void draw(){
 void keyPressed() {
   for (int i=0; i < 3; i++) {  
       value[i]=int(random(255));
-  };
-  
-
+  }
+ 
   switch(key){
   case 'a':
     file[0].play(0.5, 1.0);

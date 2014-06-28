@@ -13,7 +13,7 @@ Amplitude rms;
 int scale=1;
 
 public void setup() {
-    size(350,350);
+    size(640,360);
       
     // Create and start the sound renderer
     stream = new Sound(this, 44100, 512);
@@ -30,7 +30,7 @@ public void setup() {
 public void draw() {
     background(125,255,125);
     
-    // rms.process() return a value between 0 and 1. To adjust
+    // rms.analyze() return a value between 0 and 1. To adjust
     // the scaling and mapping of an ellipse we scale from 0 to 0.5
     scale=int(map(rms.process(), 0, 0.5, 1, 350));
     noStroke();

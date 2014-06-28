@@ -11,7 +11,7 @@ WhiteNoise noise;
 float amp=0.0;
 
 void setup() {
-    size(350,350);
+    size(640, 360);
     background(255);
     
     // Create and start the sound renderer and the noise generator
@@ -22,8 +22,8 @@ void setup() {
 
 void draw() {
     // Map mouseX from 0.0 to 1.0 for amplitude
-    noise.amp(map(mouseX, 0, 350, 0.0, 1.0));
+    noise.amp(map(mouseX, 0, width, 0.0, 1.0));
     
     // Map mouseY from -1.0 to 1.0 for left to right
-    noise.pan(map(mouseY, 0, 350, -1.0, 1.0));
+    noise.pan(map(mouseY, 0, width, -1.0, 1.0));
 }

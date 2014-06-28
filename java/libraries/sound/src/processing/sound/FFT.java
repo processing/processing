@@ -17,7 +17,7 @@ public class FFT {
 		ptr = m_engine.fft(input.returnId(), fftSize);
 	}
 	
-	public void process(float[] value){
+	public void analyze(float[] value){
 		float[] m_value = m_engine.poll_fft(ptr);
 		int num_samples = Math.min(value.length, m_value.length);
 		for(int i=0; i<num_samples; i++){

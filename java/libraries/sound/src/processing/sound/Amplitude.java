@@ -17,7 +17,7 @@ public class Amplitude {
 		ptr = m_engine.amplitude(input.returnId());
 	}
 	
-	public float process(){
+	public float analyze(){
 		return m_engine.poll_amplitude(ptr);
 	}
 	/*

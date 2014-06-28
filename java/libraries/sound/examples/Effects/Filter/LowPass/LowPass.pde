@@ -13,7 +13,7 @@ LPF lowPass;
 float amp=0.0;
 
 void setup() {
-    size(350,350);
+    size(640,360);
     background(255);
     
     // Create and start the sound renderer and the noise generator
@@ -21,10 +21,9 @@ void setup() {
     noise = new WhiteNoise(this);
     lowPass = new LPF(this);
     noise.play(0.5);
-    lowPass.play(noise, 100);
+    lowPass.process(noise, 100);
 }      
 
 void draw() {
-  
     lowPass.freq(map(mouseX, 0, 350, 20, 10000));
 }
