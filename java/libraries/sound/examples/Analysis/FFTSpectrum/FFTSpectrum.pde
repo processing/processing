@@ -41,6 +41,6 @@ public void draw() {
     {
       // The result of the FFT is normalized
       // draw the line for frequency band i scaling it up by 5 to get more amplitude.
-      line( i, height, i, height - spec[i]*height*5 );
+      line( i, height, i, height - spectrum[i]*height*5 );
     } 
 }

@@ -6,7 +6,7 @@ public class WhiteNoise implements SoundObject{
 	PApplet parent;
 	private MethClaInterface m_engine;
 	private int[] m_nodeId = {-1,-1};
-	private float m_amp=0.5;
+	private float m_amp=0.5f;
 	private float m_add=0;
 	private float m_pos=0;
 	
