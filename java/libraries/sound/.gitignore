@@ -1,0 +1,5 @@
+*.o
+*.class
+.DS_Store
+/distribution
+/bin
