@@ -369,7 +369,8 @@ public abstract class LocalContribution extends Contribution {
       }
       if (getType() == ContributionType.TOOL) {
         ToolContribution t = (ToolContribution) this;
-        editor.clearToolMenu();
+        for (Editor ed : editor.getBase().getEditors())
+          ed.clearToolMenu();
         t.clearClassLoader(editor.getBase());
       }
       if (doBackup) {

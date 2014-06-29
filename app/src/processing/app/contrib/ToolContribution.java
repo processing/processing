@@ -71,21 +71,29 @@ public class ToolContribution extends LocalContribution implements Tool {
 //    int botherToRemove = contribTools.indexOf(this);
 //    if (botherToRemove != -1) { // The poor thing doesn't even exist, and we're trying to remove it...
 //      contribTools.remove(botherToRemove);
-    ArrayList<ToolContribution> contribTools = base.getActiveEditor().contribTools;
-    for (ToolContribution toolContrib : contribTools)
-      if (toolContrib.getName().equals(this.name)) {
-        try {
-          System.out.println("Here  " + name);
-          ((URLClassLoader) this.loader).close();
-          ((URLClassLoader) toolContrib.loader).close();
-          // The typecast should be safe, since the only case when loader is not of
-          // type URLClassLoader is when no archives were found in the first
-          // place...
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
+    try {
+      ((URLClassLoader) this.loader).close();
+    } catch (IOException e1) {
+      e1.printStackTrace();
+    }
+    List<Editor> editors = base.getEditors();
+    for (Editor editor : editors) {
+      ArrayList<ToolContribution> contribTools = editor.contribTools;
+      for (ToolContribution toolContrib : contribTools)
+        if (toolContrib.getName().equals(this.name)) {
+          try {
+            System.out.println("Here  " + name);
+            ((URLClassLoader) toolContrib.loader).close();
+            System.out.println(contribTools.size());
+            editor.contribTools.remove(toolContrib);
+            System.out.println(contribTools.size());
+            break;
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
 //        base.getActiveEditor().rebuildToolMenu();
-      }
+        }
+    }
 //    }
   }
 
