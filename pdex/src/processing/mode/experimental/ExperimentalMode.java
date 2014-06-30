@@ -54,12 +54,12 @@ public class ExperimentalMode extends JavaMode {
 
     // use libraries folder from javamode. will make sketches using core libraries work, as well as import libraries and examples menus
     for (Mode m : base.getModeList()) {
-    	if (m.getClass() == JavaMode.class) {
-    		JavaMode jMode = (JavaMode) m;
-    		librariesFolder = jMode.getLibrariesFolder();
-    		rebuildLibraryList();
-    		break;
-    	}
+      if (m.getClass() == JavaMode.class) {
+        JavaMode jMode = (JavaMode) m;
+        librariesFolder = jMode.getLibrariesFolder();
+        rebuildLibraryList();
+        break;
+      }
     }
 
     // Fetch examples and reference from java mode
@@ -126,20 +126,26 @@ public class ExperimentalMode extends JavaMode {
     return new File(folder, path);
   }
   
-  volatile public static boolean errorCheckEnabled = true, warningsEnabled = true,
-      codeCompletionsEnabled = true, debugOutputEnabled = false, errorLogsEnabled = false,
-            autoSaveEnabled = true, autoSavePromptEnabled = true,
-            defaultAutoSaveEnabled = true; // ,untitledAutoSaveEnabled;
+  volatile public static boolean errorCheckEnabled = true,
+      warningsEnabled = true, codeCompletionsEnabled = true,
+      debugOutputEnabled = false, errorLogsEnabled = false,
+      autoSaveEnabled = true, autoSavePromptEnabled = true,
+      defaultAutoSaveEnabled = true, // ,untitledAutoSaveEnabled;
+      ccTriggerEnabled = false;
   public static int autoSaveInterval = 3; //in minutes
 
   public static final String prefErrorCheck = "pdex.errorCheckEnabled",
       prefWarnings = "pdex.warningsEnabled",
       prefCodeCompletionEnabled = "pdex.ccEnabled",
-      prefDebugOP = "pdex.dbgOutput", prefErrorLogs = "pdex.writeErrorLogs", prefAutoSaveInterval = "pdex.autoSaveInterval",
+      prefDebugOP = "pdex.dbgOutput",
+      prefErrorLogs = "pdex.writeErrorLogs",
+      prefAutoSaveInterval = "pdex.autoSaveInterval",
       prefAutoSave = "pdex.autoSave.autoSaveEnabled", // prefUntitledAutoSave = "pdex.autoSave.untitledAutoSaveEnabled", 
-      prefAutoSavePrompt = "pdex.autoSave.promptDisplay", prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault";
+      prefAutoSavePrompt = "pdex.autoSave.promptDisplay",
+      prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault",
+      prefCCTriggerEnabled = "pdex.ccTriggerEnabled";
   
-  public void loadPreferences(){
+  public void loadPreferences() {
     log("Load PDEX prefs");
     ensurePrefsExist();
     errorCheckEnabled = Preferences.getBoolean(prefErrorCheck);
@@ -152,43 +158,48 @@ public class ExperimentalMode extends JavaMode {
     autoSaveEnabled = Preferences.getBoolean(prefAutoSave);
     autoSavePromptEnabled = Preferences.getBoolean(prefAutoSavePrompt);
     defaultAutoSaveEnabled = Preferences.getBoolean(prefDefaultAutoSave);
+    ccTriggerEnabled = Preferences.getBoolean(prefCCTriggerEnabled);
   }
-  
-  public void savePreferences(){
+
+  public void savePreferences() {
     log("Saving PDEX prefs");
     Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
     Preferences.setBoolean(prefWarnings, warningsEnabled);
     Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);
     Preferences.setBoolean(prefDebugOP, DEBUG);
-    Preferences.setBoolean(prefErrorLogs,errorLogsEnabled);
-    Preferences.setInteger(prefAutoSaveInterval,autoSaveInterval);
+    Preferences.setBoolean(prefErrorLogs, errorLogsEnabled);
+    Preferences.setInteger(prefAutoSaveInterval, autoSaveInterval);
 //    Preferences.setBoolean(prefUntitledAutoSave,untitledAutoSaveEnabled);
-    Preferences.setBoolean(prefAutoSave,autoSaveEnabled);
+    Preferences.setBoolean(prefAutoSave, autoSaveEnabled);
     Preferences.setBoolean(prefAutoSavePrompt, autoSavePromptEnabled);
     Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
+    Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
   }
-  
-  public void ensurePrefsExist(){
-    if(Preferences.get(prefErrorCheck) == null) 
-      Preferences.setBoolean(prefErrorCheck,errorCheckEnabled);
-    if(Preferences.get(prefWarnings) == null) 
-      Preferences.setBoolean(prefWarnings,warningsEnabled);
-    if(Preferences.get(prefCodeCompletionEnabled) == null) 
-      Preferences.setBoolean(prefCodeCompletionEnabled,codeCompletionsEnabled);
-    if(Preferences.get(prefDebugOP) == null) 
-      Preferences.setBoolean(prefDebugOP,DEBUG);
-    if(Preferences.get(prefErrorLogs) == null) 
-      Preferences.setBoolean(prefErrorLogs,errorLogsEnabled);
-    if(Preferences.get(prefAutoSaveInterval) == null) 
-      Preferences.setInteger(prefAutoSaveInterval,autoSaveInterval);
+
+  public void ensurePrefsExist() {
+    //TODO: Need to do a better job of managing prefs. Think lists.
+    if (Preferences.get(prefErrorCheck) == null)
+      Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
+    if (Preferences.get(prefWarnings) == null)
+      Preferences.setBoolean(prefWarnings, warningsEnabled);
+    if (Preferences.get(prefCodeCompletionEnabled) == null)
+      Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);
+    if (Preferences.get(prefDebugOP) == null)
+      Preferences.setBoolean(prefDebugOP, DEBUG);
+    if (Preferences.get(prefErrorLogs) == null)
+      Preferences.setBoolean(prefErrorLogs, errorLogsEnabled);
+    if (Preferences.get(prefAutoSaveInterval) == null)
+      Preferences.setInteger(prefAutoSaveInterval, autoSaveInterval);
 //    if(Preferences.get(prefUntitledAutoSave) == null) 
 //      Preferences.setBoolean(prefUntitledAutoSave,untitledAutoSaveEnabled);
-    if(Preferences.get(prefAutoSave) == null) 
-      Preferences.setBoolean(prefAutoSave,autoSaveEnabled);
-    if(Preferences.get(prefAutoSavePrompt) == null) 
-        Preferences.setBoolean(prefAutoSavePrompt,autoSavePromptEnabled);
-    if(Preferences.get(prefDefaultAutoSave) == null) 
-        Preferences.setBoolean(prefDefaultAutoSave,defaultAutoSaveEnabled);
+    if (Preferences.get(prefAutoSave) == null)
+      Preferences.setBoolean(prefAutoSave, autoSaveEnabled);
+    if (Preferences.get(prefAutoSavePrompt) == null)
+      Preferences.setBoolean(prefAutoSavePrompt, autoSavePromptEnabled);
+    if (Preferences.get(prefDefaultAutoSave) == null)
+      Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
+    if (Preferences.get(prefCCTriggerEnabled) == null)
+      Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
   }
 
 
