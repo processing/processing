@@ -133,6 +133,11 @@ public class ExperimentalMode extends JavaMode {
       defaultAutoSaveEnabled = true, // ,untitledAutoSaveEnabled;
       ccTriggerEnabled = false;
   public static int autoSaveInterval = 3; //in minutes
+  
+  /**
+   * After how many typed characters, code completion is triggered
+   */
+  volatile public static int codeCompletionTriggerLength = 2;
 
   public static final String prefErrorCheck = "pdex.errorCheckEnabled",
       prefWarnings = "pdex.warningsEnabled",

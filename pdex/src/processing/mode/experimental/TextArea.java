@@ -378,17 +378,6 @@ public class TextArea extends JEditTextArea {
         break;
       }
 
-      //        if (x2 >= 0 && x2 < s.length()) {
-      //          if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
-      //              || s.charAt(x2) == '$')
-      //            word = word + s.charAt(x2++);
-      //          else
-      //            x2 = -1;
-      //        } else
-      //          x2 = -1;
-      
-      //        if (x1 < 0  )//&& x2 < 0
-      //          break;
       if (i > 200) {
         // time out!
         break;
@@ -402,13 +391,13 @@ public class TextArea extends JEditTextArea {
     //    if (word.endsWith("."))
     //      word = word.substring(0, word.length() - 1);
     int lineStartNonWSOffset = 0;
-    if(word.length() > 1)
-    errorCheckerService.getASTGenerator().preparePredictions(word, line
-        + errorCheckerService.mainClassOffset,lineStartNonWSOffset);
-    //showSuggestionLater();
+    if (word.length() >= ExperimentalMode.codeCompletionTriggerLength) {
+      errorCheckerService.getASTGenerator()
+          .preparePredictions(word, line + errorCheckerService.mainClassOffset,
+                              lineStartNonWSOffset);
+    }
     return word;
 
-    //}
   }
 
   /**
