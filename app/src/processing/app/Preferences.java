@@ -123,6 +123,7 @@ public class Preferences {
   JCheckBox warningsCheckerBox;
   JCheckBox codeCompletionBox;
   JCheckBox importSuggestionsBox;
+  JCheckBox codeCompletionTriggerBox;
   
   //JRadioButton bitsThirtyTwoButton;
   //JRadioButton bitsSixtyFourButton;
@@ -425,6 +426,16 @@ public class Preferences {
     pain.add(codeCompletionBox);
     d = codeCompletionBox.getPreferredSize();
     codeCompletionBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+    
+    // [ ] Toggle Code Completion Trigger - PDE X
+
+    codeCompletionTriggerBox =
+      new JCheckBox("Trigger code completion on Ctrl(Cmd) + Space");
+    pain.add(codeCompletionTriggerBox);
+    d = codeCompletionTriggerBox.getPreferredSize();
+    codeCompletionTriggerBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
@@ -829,7 +840,7 @@ public class Preferences {
     setBoolean("pdex.errorCheckEnabled", errorCheckerBox.isSelected());
     setBoolean("pdex.warningsEnabled", warningsCheckerBox.isSelected());
     setBoolean("pdex.ccEnabled", codeCompletionBox.isSelected());
-    
+    setBoolean("pdex.ccTriggerEnabled", codeCompletionTriggerBox.isSelected());
     for (Editor editor : base.getEditors()) {
       editor.applyPreferences();
     }
@@ -843,6 +854,7 @@ public class Preferences {
     errorCheckerBox.setSelected(getBoolean("pdex.errorCheckEnabled"));
     warningsCheckerBox.setSelected(getBoolean("pdex.warningsEnabled"));
     codeCompletionBox.setSelected(getBoolean("pdex.ccEnabled"));
+    codeCompletionTriggerBox.setSelected(getBoolean("pdex.ccTriggerEnabled"));
     // set all settings entry boxes to their actual status
 //    exportSeparateBox.
 //      setSelected(getBoolean("export.applet.separate_jar_files"));
