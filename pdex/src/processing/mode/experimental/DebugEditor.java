@@ -570,6 +570,21 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         debugMenu.add(toggleVariableInspectorMenuItem);
         debugMenu.addSeparator();
 
+        // TweakMode code
+        enableTweakCB = new JCheckBoxMenuItem("Tweak Enabled");
+        enableTweakCB.setSelected(ExperimentalMode.enableTweak);
+        enableTweakCB.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          ExperimentalMode.enableTweak = ((JCheckBoxMenuItem) e
+            .getSource()).isSelected();
+            dmode.savePreferences();
+          }
+        });
+        debugMenu.add(enableTweakCB);
+        // TweakMode code end
+
         // XQMode menu items
         /*
         JCheckBoxMenuItem item;
