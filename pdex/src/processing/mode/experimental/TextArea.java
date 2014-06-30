@@ -35,6 +35,7 @@ import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.text.BadLocationException;
 
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaDefaults;
@@ -189,28 +190,52 @@ public class TextArea extends JEditTextArea {
       }
     }
     super.processKeyEvent(evt);
-      
+
     if (evt.getID() == KeyEvent.KEY_TYPED) {
       
       char keyChar = evt.getKeyChar();
       if (keyChar == KeyEvent.VK_ENTER || keyChar == KeyEvent.VK_ESCAPE) {
         return;
-      } else if (keyChar == KeyEvent.VK_SPACE || keyChar == KeyEvent.VK_TAB
+      } else if (keyChar == KeyEvent.VK_TAB
           || keyChar == KeyEvent.CHAR_UNDEFINED) {
         return;
       }
-      if(evt.isAltDown() || evt.isControlDown() || evt.isMetaDown()){
+      final KeyEvent evt2 = evt;
+      if (evt.isAltDown() || evt.isControlDown() || evt.isMetaDown()) {
+        if (ExperimentalMode.ccTriggerEnabled && keyChar == KeyEvent.VK_SPACE
+            && (evt.isControlDown() || evt.isMetaDown())) {
+          SwingWorker worker = new SwingWorker() {
+            protected Object doInBackground() throws Exception {
+              // Provide completions only if it's enabled
+              if (ExperimentalMode.codeCompletionsEnabled
+                  && ExperimentalMode.ccTriggerEnabled) {
+                getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
+                log("[KeyEvent]" + evt2.getKeyChar()
+                    + "  |Prediction started: " + System.currentTimeMillis());
+                log("Typing: " + fetchPhrase(evt2) + " "
+                    + (evt2.getKeyChar() == KeyEvent.VK_ENTER) + " T: "
+                    + System.currentTimeMillis());
+              }
+              return null;
+            }
+          };
+          worker.execute();
+        }
         return;
       }
-      final KeyEvent evt2 = evt;      
+            
       SwingWorker worker = new SwingWorker() {
         protected Object doInBackground() throws Exception {
-          log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started: " + System.currentTimeMillis());
-          errorCheckerService.runManualErrorCheck();
+          // errorCheckerService.runManualErrorCheck();
           // Provide completions only if it's enabled
-          if(ExperimentalMode.codeCompletionsEnabled)
+          if (ExperimentalMode.codeCompletionsEnabled
+              && !ExperimentalMode.ccTriggerEnabled) {
+            log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started: "
+                + System.currentTimeMillis());
             log("Typing: " + fetchPhrase(evt2) + " "
-                + (evt2.getKeyChar() == KeyEvent.VK_ENTER) + " T: " + System.currentTimeMillis());
+                + (evt2.getKeyChar() == KeyEvent.VK_ENTER) + " T: "
+                + System.currentTimeMillis());
+          }
           return null;
         }
       };
