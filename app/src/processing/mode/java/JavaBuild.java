@@ -1446,6 +1446,10 @@ public class JavaBuild {
     }
     // https://github.com/processing/processing/issues/2239
     runOptions.add("-Djna.nosys=true");
+    // https://github.com/processing/processing/issues/2559
+    if (exportPlatform == PConstants.WINDOWS) {
+      runOptions.add("-Djava.library.path=\"%EXEDIR%\\lib;%PATH%\"");
+    }
     
 
     /// macosx: write out Info.plist (template for classpath, etc)
