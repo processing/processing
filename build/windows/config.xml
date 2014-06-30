@@ -35,7 +35,7 @@
     <!-- for 2.2, set a minimum version -->
     <minVersion>1.7.0_40</minVersion>
     <!-- increase available per PDE X request -->
-    <maxHeapSize>256m</maxHeapSize>
+    <maxHeapSize>256</maxHeapSize>
   </jre>
   <splash>
     <file>about.bmp</file>
