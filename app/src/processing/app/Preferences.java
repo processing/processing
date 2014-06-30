@@ -119,6 +119,11 @@ public class Preferences {
   JCheckBox inputMethodBox;
   JCheckBox autoAssociateBox;
   
+  JCheckBox errorCheckerBox;
+  JCheckBox warningsCheckerBox;
+  JCheckBox codeCompletionBox;
+  JCheckBox importSuggestionsBox;
+  
   //JRadioButton bitsThirtyTwoButton;
   //JRadioButton bitsSixtyFourButton;
   
@@ -390,6 +395,36 @@ public class Preferences {
     pain.add(inputMethodBox);
     d = inputMethodBox.getPreferredSize();
     inputMethodBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+    
+    // [ ] Enable Error Checking - PDE X
+
+    errorCheckerBox =
+      new JCheckBox("Enable error checking");
+    pain.add(errorCheckerBox);
+    d = errorCheckerBox.getPreferredSize();
+    errorCheckerBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+
+    // [ ] Enable Warnings - PDE X
+
+    warningsCheckerBox =
+      new JCheckBox("Enable warnings");
+    pain.add(warningsCheckerBox);
+    d = warningsCheckerBox.getPreferredSize();
+    warningsCheckerBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+
+    // [ ] Enable Code Completion - PDE X
+
+    codeCompletionBox =
+      new JCheckBox("Enable code completion");
+    pain.add(codeCompletionBox);
+    d = codeCompletionBox.getPreferredSize();
+    codeCompletionBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
@@ -790,17 +825,24 @@ public class Preferences {
       setBoolean("platform.auto_file_type_associations", //$NON-NLS-1$
                  autoAssociateBox.isSelected());
     }
-
+    
+    setBoolean("pdex.errorCheckEnabled", errorCheckerBox.isSelected());
+    setBoolean("pdex.warningsEnabled", warningsCheckerBox.isSelected());
+    setBoolean("pdex.ccEnabled", codeCompletionBox.isSelected());
+    
     for (Editor editor : base.getEditors()) {
       editor.applyPreferences();
     }
+    
   }
 
 
   protected void showFrame() {
     editorAntialiasBox.setSelected(getBoolean("editor.smooth")); //$NON-NLS-1$
     inputMethodBox.setSelected(getBoolean("editor.input_method_support")); //$NON-NLS-1$
-
+    errorCheckerBox.setSelected(getBoolean("pdex.errorCheckEnabled"));
+    warningsCheckerBox.setSelected(getBoolean("pdex.warningsEnabled"));
+    codeCompletionBox.setSelected(getBoolean("pdex.ccEnabled"));
     // set all settings entry boxes to their actual status
 //    exportSeparateBox.
 //      setSelected(getBoolean("export.applet.separate_jar_files"));

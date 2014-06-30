@@ -498,8 +498,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @return The debug menu
      */
     protected JMenu buildDebugMenu() {
-        //debugMenu = new JMenu("Debug");
-        debugMenu = new JMenu("PDE X");
+        debugMenu = new JMenu("Debug");
+        //debugMenu = new JMenu("PDE X");
 
         JCheckBoxMenuItem toggleDebugger = new JCheckBoxMenuItem("Show Debug Toolbar");
         toggleDebugger.setSelected(false);
@@ -563,7 +563,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         debugMenu.addSeparator();
         
         // XQMode menu items
-                
+        /*        
         JCheckBoxMenuItem item;
         item = new JCheckBoxMenuItem("Error Checker Enabled");
         item.setSelected(ExperimentalMode.errorCheckEnabled);
@@ -578,7 +578,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         });
         debugMenu.add(item);
 
-        /*problemWindowMenuCB = new JCheckBoxMenuItem("Show Problem Window");
+        problemWindowMenuCB = new JCheckBoxMenuItem("Show Problem Window");
         // problemWindowMenuCB.setSelected(true);
         problemWindowMenuCB.addActionListener(new ActionListener() {
 
@@ -594,7 +594,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             showProblemListView(XQConsoleToggle.CONSOLE);
           }
         });
-        debugMenu.add(problemWindowMenuCB);*/
+        debugMenu.add(problemWindowMenuCB);
 
         showWarnings = new JCheckBoxMenuItem("Warnings Enabled");
         showWarnings.setSelected(ExperimentalMode.warningsEnabled);
@@ -659,7 +659,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           }
         });
         debugMenu.add(jitem);
-
+        */
         return debugMenu;
     }
     
@@ -1609,8 +1609,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * at the bottom of the PDE
      */
     public void updateErrorToggle(){
-      btnShowErrors.updateMarker(errorCheckerService.hasErrors(),
-                               errorBar.errorColor);
+		btnShowErrors.updateMarker(ExperimentalMode.errorCheckEnabled
+				&& errorCheckerService.hasErrors(), errorBar.errorColor);
     }
     
     /**
@@ -1649,4 +1649,14 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         }
       }
     }
+    
+	protected void applyPreferences() {
+		super.applyPreferences();
+		if (dmode != null) {
+			dmode.loadPreferences();
+			log("Applying prefs");
+			// trigger it once to refresh UI
+			errorCheckerService.runManualErrorCheck();
+		}
+	}
 }

@@ -218,7 +218,7 @@ public class ErrorCheckerService implements Runnable{
    */
   final Pattern FUNCTION_DECL = Pattern
     .compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*"
-      + "(void|int|float|double|String|char|byte)"
+      + "(void|int|float|double|String|char|byte|boolean)"
       + "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(", Pattern.MULTILINE);
   
   protected ErrorMessageSimplifier errorMsgSimplifier;
@@ -476,19 +476,18 @@ public class ErrorCheckerService implements Runnable{
       }
       
       astGenerator.buildAST(cu);
-      if(ExperimentalMode.errorCheckEnabled){
-        calcPDEOffsetsForProbList();
-        updateErrorTable();
-        editor.updateErrorBar(problemsList);
-        updateEditorStatus();
-        editor.getTextArea().repaint();
-        updatePaintedThingys();
-        editor.updateErrorToggle();
+      if(!ExperimentalMode.errorCheckEnabled){
+    	  problemsList.clear();
+    	  log("Error Check disabled, so not updating UI.");
       }
-      else
-      {
-        log("Error Check disabled, so not updating UI.");
-      }
+      calcPDEOffsetsForProbList();
+      updateErrorTable();
+      editor.updateErrorBar(problemsList);
+      updateEditorStatus();
+      editor.getTextArea().repaint();
+      updatePaintedThingys();
+      editor.updateErrorToggle();
+      
       int x = textModified.get();
       //log("TM " + x);
       if (x >= 2) {
