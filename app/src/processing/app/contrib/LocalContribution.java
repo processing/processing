@@ -47,6 +47,8 @@ public abstract class LocalContribution extends Contribution {
   protected HashMap<String, String> properties;
   protected ClassLoader loader;
   
+  boolean isRemoveOnRestart = false;
+  
 
   public LocalContribution(File folder) {
     this.folder = folder;
@@ -328,11 +330,8 @@ public abstract class LocalContribution extends Contribution {
     }).start();
   }
   
-  
-  void remove(final Editor editor,
-              final ProgressMonitor pm,
-              final StatusPanel status, 
-              final ContributionListing contribListing) {
+  void remove(final Editor editor, final ProgressMonitor pm,
+              final StatusPanel status, final ContributionListing contribListing) {
     pm.startTask("Removing", ProgressMonitor.UNKNOWN);
 
     boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
@@ -343,62 +342,65 @@ public abstract class LocalContribution extends Contribution {
 //        }
 //      }
 //    } else {
-      boolean success = false;
-      if (getType() == ContributionType.MODE) {
-        boolean isModeActive = false;
-        ModeContribution m = (ModeContribution) this;
-        for (Editor e : editor.getBase().getEditors())
-          if (e.getMode().equals(m.getMode())) {
-            isModeActive = true;
-            break;
-          }
-        if (!isModeActive)
-          m.clearClassLoader(editor.getBase());
-        else {
-//          if (!doBackup || (doBackup && backup(editor, false, status))) {
-//            if (setDeletionFlag(true)) {
-//              contribListing.replaceContribution(this, this);
-//            }
-//          }
-          pm.cancel();
-          Base.showMessage("Mode Manager", "Please save your Sketch and change the Mode of all Editor\nwindows that have " 
-            + this.name + " as the active Mode.");
+    boolean success = false;
+    if (getType() == ContributionType.MODE) {
+      boolean isModeActive = false;
+      ModeContribution m = (ModeContribution) this;
+      for (Editor e : editor.getBase().getEditors())
+        if (e.getMode().equals(m.getMode())) {
+          isModeActive = true;
+          break;
+        }
+      if (!isModeActive)
+        m.clearClassLoader(editor.getBase());
+      else {
+        pm.cancel();
+        Base.showMessage("Mode Manager",
+                         "Please save your Sketch and change the Mode of all Editor\nwindows that have "
+                           + this.name + " as the active Mode.");
 //          ContributionManager.refreshInstalled(editor);
-          return;
-        }
+        return;
       }
+    }
+    if (getType() == ContributionType.TOOL) {
+      ToolContribution t = (ToolContribution) this;
+      for (Editor ed : editor.getBase().getEditors())
+        ed.clearToolMenu();
+      t.clearClassLoader(editor.getBase());
+    }
+    if (doBackup) {
+      success = backup(editor, true, status);
+    } else {
+      Base.removeDir(getFolder());
+      success = !getFolder().exists();
+    }
+
+    if (success) {
       if (getType() == ContributionType.TOOL) {
-        ToolContribution t = (ToolContribution) this;
-        for (Editor ed : editor.getBase().getEditors())
-          ed.clearToolMenu();
-        t.clearClassLoader(editor.getBase());
-      }
-      if (doBackup) {
-        success = backup(editor, true, status);
-      } else {
-        Base.removeDir(getFolder());
-        success = !getFolder().exists();
+        editor.removeTool((ToolContribution) this);
       }
 
-      if (success) {
-        if (getType() == ContributionType.TOOL) {
-          editor.removeTool((ToolContribution) this);
-        }
-        
-        Contribution advertisedVersion =
-          contribListing.getAvailableContribution(this);
+      Contribution advertisedVersion = contribListing
+        .getAvailableContribution(this);
 
-        if (advertisedVersion == null) {
-          contribListing.removeContribution(this);
-        } else {
-          contribListing.replaceContribution(this, advertisedVersion);
-        }
+      if (advertisedVersion == null) {
+        contribListing.removeContribution(this);
       } else {
-        // There was a failure backing up the folder
-        if (!doBackup) {
+        contribListing.replaceContribution(this, advertisedVersion);
+      }
+    } else {
+      // There was a failure backing up the folder
+        if (getType().requiresRestart()) {
+          if (!doBackup || (doBackup && backup(editor, false, status))) {
+            if (setDeletionFlag(true)) {
+              contribListing.replaceContribution(this, this);
+            }
+            isRemoveOnRestart = true;
+          }
+         else
           status.setErrorMessage("Could not delete the contribution's files");
-        }
       }
+    }
 //    }
     ContributionManager.refreshInstalled(editor);
     pm.finished();
