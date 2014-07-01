@@ -377,7 +377,7 @@ public abstract class LocalContribution extends Contribution {
 
     if (success) {
       if (getType() == ContributionType.TOOL) {
-        editor.removeTool((ToolContribution) this);
+        editor.removeTool();
       }
 
       Contribution advertisedVersion = contribListing

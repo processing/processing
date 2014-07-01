@@ -459,7 +459,7 @@ class ContributionPanel extends JPanel {
     }
 
     updateButton.setEnabled(true);
-    if (contrib != null && contrib.getType() != ContributionType.TOOL) {
+    if (contrib != null) {
       updateButton.setVisible(isSelected() && contribListing.hasUpdates(contrib));
     }
 
@@ -571,7 +571,7 @@ class ContributionPanel extends JPanel {
     // now a hyperlink, it will be opened as the mouse is released.
     enableHyperlinks = alreadySelected;
 
-    if (contrib != null && contrib.getType() != ContributionType.TOOL) {
+    if (contrib != null) {
       updateButton.setVisible(isSelected() && contribListing.hasUpdates(contrib));
     }
     installRemoveButton.setVisible(isSelected() || installRemoveButton.getText().equals(Language.text("contributions.remove")));

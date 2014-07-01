@@ -1038,28 +1038,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  public void removeTool(ToolContribution tool) {
-//    Component[] menuBarItems = this.getJMenuBar().getComponents();
-//    for (Component menuBarComponent : menuBarItems) {
-//      if (menuBarComponent instanceof JMenu) {
-//        if (((JMenu)menuBarComponent).getText().equals("Tools")) {
-//          System.out.println("Found tools!");
-//          Component[] toolMenuItems = ((JMenu)menuBarComponent).getMenuComponents();
-//          System.out.println(toolMenuItems.length);
-//          for (Component toolMenuComponent : toolMenuItems) {
-//            System.out.println(toolMenuComponent.toString());
-//            if (toolMenuComponent instanceof JMenuItem) {
-//              System.out.println("Found tools: " + ((JMenuItem)toolMenuComponent).getText());
-//              if (((JMenuItem)toolMenuComponent).getText().equals(tool.getMenuTitle())) {
-//                ((JMenu)menuBarComponent).remove(toolMenuComponent);
-//                break;
-//              }
-//            }
-//          }
-//          break;
-//        }
-//      }
-//    }
+  public void removeTool() {
     rebuildToolMenu();
   }
 

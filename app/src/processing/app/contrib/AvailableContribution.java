@@ -139,10 +139,12 @@ class AvailableContribution extends Contribution {
         // backup old if needed, then move things into place and reload.
         installedContrib = 
           newContrib.copyAndLoad(editor, confirmReplace, status);
-        if (newContrib != null && type.requiresRestart() && type != ContributionType.MODE) {
-          installedContrib.setRestartFlag();
-          //status.setMessage("Restart Processing to finish the installation.");
-        }
+        
+        // Restart no longer needed. Yay!
+//        if (newContrib != null && type.requiresRestart()) {
+//          installedContrib.setRestartFlag();
+//          //status.setMessage("Restart Processing to finish the installation.");
+//        }
         
         // 3. Delete the newContrib, do a garbage collection, hope and pray
         // that Java will unlock the temp folder on Windows now
