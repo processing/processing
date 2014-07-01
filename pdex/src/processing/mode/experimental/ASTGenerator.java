@@ -240,7 +240,7 @@ public class ASTGenerator {
   /**
    * Toggle AST View window
    */
-  public static final boolean SHOWAST = true;
+  public static final boolean SHOWAST = !true;
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
@@ -1840,6 +1840,7 @@ public class ASTGenerator {
   }
   
   final ASTGenerator thisASTGenerator = this;
+  
   protected void addListeners(){
     jtree.addTreeSelectionListener(new TreeSelectionListener() {
       
@@ -1862,7 +1863,8 @@ public class ASTGenerator {
                 .getLastSelectedPathComponent();    
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-              errorCheckerService.highlightNode(awrap);
+              awrap.highlightNode(thisASTGenerator);
+              // errorCheckerService.highlightNode(awrap);
               
               //--
               try {

@@ -95,8 +95,7 @@ public class OffsetMatcher {
               + offsetMatch.get(i).pdeOffset);
         }
         int pdeOff = offsetMatch.get(++i).pdeOffset;
-        while (offsetMatch.get(--i).pdeOffset == pdeOff)
-          ;
+        while (i > 0 && offsetMatch.get(--i).pdeOffset == pdeOff);
         int j = i + 1;
         if (j > -1 && j < offsetMatch.size())
           return offsetMatch.get(j).pdeOffset;
@@ -118,8 +117,7 @@ public class OffsetMatcher {
 //              + offsetMatch.get(i).pdeOffset); 
         }
         int javaOff = offsetMatch.get(++i).javaOffset;
-        while (offsetMatch.get(--i).javaOffset == javaOff)
-          ;
+        while (i > 0 && offsetMatch.get(--i).javaOffset == javaOff);
         int j = i + 1;
         if (j > -1 && j < offsetMatch.size())
           return offsetMatch.get(j).javaOffset;

@@ -4,7 +4,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.TreeMap;
 
+import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
+import static processing.mode.experimental.ExperimentalMode.log;
+import static processing.mode.experimental.ExperimentalMode.logE;
 
 public class ErrorMessageSimplifier {
 
@@ -17,7 +20,7 @@ public class ErrorMessageSimplifier {
    * identifying 8 digit int constants!
    * TODO: this is temporary
    */
-  private TreeMap<Integer, String> constantsMap;
+  private static TreeMap<Integer, String> constantsMap;
 
   public ErrorMessageSimplifier() {
 
@@ -28,7 +31,7 @@ public class ErrorMessageSimplifier {
     }.start();
   }
 
-  private void prepareConstantsList() {
+  private static void prepareConstantsList() {
     constantsMap = new TreeMap<Integer, String>();
     Class probClass = DefaultProblem.class;
     Field f[] = probClass.getFields();
@@ -41,7 +44,6 @@ public class ErrorMessageSimplifier {
             constantsMap.put((Integer) (val), field.getName());
           }
         } catch (Exception e) {
-          System.out.println("Here");
           e.printStackTrace();
           break;
         }
@@ -49,10 +51,41 @@ public class ErrorMessageSimplifier {
     //System.out.println("Total items: " + constantsMap.size());
   }
 
-  public String getIDName(int id) {
-    if (constantsMap == null)
-      return null;
+  public static String getIDName(int id) {
+    if (constantsMap == null){
+      prepareConstantsList();
+    }
     return constantsMap.get(id);
+  }
+  
+  public static String getSimplifiedErrorMessage(Problem problem){
+    if(problem == null) return null;
+    IProblem iprob = problem.getIProblem();
+    String args[] = iprob.getArguments();
+    log("Simplifying message: " + problem.getMessage() + " ID: "
+        + getIDName(iprob.getID()));
+    log("Arg count: " + args.length);
+    for (int i = 0; i < args.length; i++) {
+      log("Arg " + args[i]);
+    }
+    
+    String result = null;
+    switch (iprob.getID()) {
+    case IProblem.ParsingError:
+      if (args.length > 0) {
+        result = "Problem with code syntax: Consider removing \"" + args[0]
+            + "\"";
+        break;
+      }
+    case IProblem.ParsingErrorInsertToComplete:
+      if (args.length > 0) {
+        result = "Problem with code syntax: Consider adding \"" + args[0]
+            + "\"";
+        break;
+      }
+    }
+    log("Simplified Error Msg: " + result);
+    return result;
   }
 
 }

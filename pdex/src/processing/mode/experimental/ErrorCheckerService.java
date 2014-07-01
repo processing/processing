@@ -218,7 +218,7 @@ public class ErrorCheckerService implements Runnable{
    */
   final Pattern FUNCTION_DECL = Pattern
     .compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*"
-      + "(void|int|float|double|String|char|byte)"
+      + "(void|int|float|double|String|char|byte|boolean)"
       + "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(", Pattern.MULTILINE);
   
   protected ErrorMessageSimplifier errorMsgSimplifier;
@@ -296,6 +296,9 @@ public class ErrorCheckerService implements Runnable{
     });
   }*/
   
+  /**
+   * Ensure user is running the minimum P5 version
+   */
   public void ensureMinP5Version(){
     // Processing 2.1.2 - Revision 0225
     if(Base.getRevision() < 225){
@@ -304,6 +307,14 @@ public class ErrorCheckerService implements Runnable{
     }
   }
 
+  /**
+   * The way the error checking happens is: DocumentListeners are added
+   * to each SketchCode object. Whenever the document is edited, it call
+   * runManualErrorCheck(). Internally, an atomic integer counter is incremented.
+   * The ECS thread checks the value of this counter evey sleepTime seconds.
+   * If the counter is non zero, error checking is done(in the ECS thread) 
+   * and the counter is reset.
+   */
   public void run() {
     stopThread.set(false);
     
@@ -465,19 +476,18 @@ public class ErrorCheckerService implements Runnable{
       }
       
       astGenerator.buildAST(cu);
-      if(ExperimentalMode.errorCheckEnabled){
-        calcPDEOffsetsForProbList();
-        updateErrorTable();
-        editor.updateErrorBar(problemsList);
-        updateEditorStatus();
-        editor.getTextArea().repaint();
-        updatePaintedThingys();
-        editor.updateErrorToggle();
+      if(!ExperimentalMode.errorCheckEnabled){
+    	  problemsList.clear();
+    	  log("Error Check disabled, so not updating UI.");
       }
-      else
-      {
-        log("Error Check disabled, so not updating UI.");
-      }
+      calcPDEOffsetsForProbList();
+      updateErrorTable();
+      editor.updateErrorBar(problemsList);
+      updateEditorStatus();
+      editor.getTextArea().repaint();
+      updatePaintedThingys();
+      editor.updateErrorToggle();
+      
       int x = textModified.get();
       //log("TM " + x);
       if (x >= 2) {
@@ -1288,6 +1298,12 @@ public class ErrorCheckerService implements Runnable{
     return new int[] { codeIndex, x };
   }
   
+  /**
+   * Returns line number of corresponding java source
+   * @param tab
+   * @param pdeLineNum
+   * @return
+   */
   public int getJavaLineNumFromPDElineNum(int tab, int pdeLineNum){
     int jLineNum = programImports.size() + 1;
     for (int i = 0; i < tab; i++) {
@@ -1442,11 +1458,12 @@ public class ErrorCheckerService implements Runnable{
   }
   
   /**
+   * Now defunct.
    * The super method that highlights any ASTNode in the pde editor =D
    * @param node
    * @return true - if highlighting happened correctly.
    */
-  public boolean highlightNode(ASTNodeWrapper awrap){
+  private boolean highlightNode(ASTNodeWrapper awrap){
     log("Highlighting: " + awrap);
     try {
       int pdeoffsets[] = awrap.getPDECodeOffsets(this);

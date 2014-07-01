@@ -13290,6 +13290,7 @@ public class PApplet extends Applet
    * @webref transform
    * @see PGraphics#popMatrix()
    * @see PGraphics#translate(float, float, float)
+   * @see PGraphics#scale(float)
    * @see PGraphics#rotate(float)
    * @see PGraphics#rotateX(float)
    * @see PGraphics#rotateY(float)

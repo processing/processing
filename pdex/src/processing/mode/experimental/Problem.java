@@ -83,6 +83,7 @@ public class Problem {
     this.tabIndex = tabIndex;
     this.lineNumber = lineNumber;
     this.message = process(iProblem);
+    ErrorMessageSimplifier.getSimplifiedErrorMessage(this);
   }
   
   public void setPDEOffsets(int startOffset, int stopOffset){

@@ -227,6 +227,7 @@
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
+    <subant buildpath="../pdex" target="clean"/>
   </target>
   
   <target name="subprojects-build">
@@ -237,6 +238,7 @@
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
+    <subant buildpath="../pdex" target="package"/>
   </target>
   
 
@@ -282,7 +284,13 @@
 	<exclude name="__MACOSX/**" />
 	<exclude name="**/._*" />
       </patternset>
-    </unzip>    
+    </unzip>
+
+    <!-- copy PDE X mode folder-->
+    <copy todir="${target.path}/modes/">
+		<fileset dir="../pdex/dist" />
+	</copy>
+
   </target>
 
   <target name="version-clear">
