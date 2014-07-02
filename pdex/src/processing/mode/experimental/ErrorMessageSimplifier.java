@@ -95,7 +95,7 @@ public class ErrorMessageSimplifier {
           result = "I sense a missing opening square bracket \"(\"";
           break;
         case ')':
-          result = "Looks like you forgot to close your parentheses. \")\"";
+          result = "Looks like you forgot to close your parentheses \")\"";
           break;
         case '{':
           result = "I sense a missing opening curly brace \";\"";
@@ -106,12 +106,40 @@ public class ErrorMessageSimplifier {
         default:
           result = "Consider adding a \"" + args[0] + "\"";
         }
-
+        break;
+      }
+    case IProblem.ParsingErrorInsertTokenAfter:
+      if (args.length > 0) {
+        switch (args[1].charAt(0)) {
+        case ';':
+          result = "You're missing a semi-colon \";\"";
+          break;
+        case '[':
+          result = "I sense a missing opening square bracket \"[\"";
+          break;
+        case ']':
+          result = "Looks like you forgot to close your square bracket \"]\"";
+          break;
+        case '(':
+          result = "I sense a missing opening square bracket \"(\"";
+          break;
+        case ')':
+          result = "Looks like you forgot to close your parentheses \")\"";
+          break;
+        case '{':
+          result = "I sense a missing opening curly brace \";\"";
+          break;
+        case '}':
+          result = "Looks like you forgot to close your curly brace \";\"";
+          break;
+        default:
+          result = "Consider adding a \"" + args[1] + "\"";
+        }
         break;
       }
     case IProblem.UndefinedMethod:
-      if (args.length > 0) {
-        result = "I don't know the function \"" + args[0] + "\"";
+      if (args.length > 2) {
+        result = "I don't know the function \"" + args[args.length-2] + "\"";
       }
       break;
     }
