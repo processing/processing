@@ -58,8 +58,9 @@ public class ErrorMessageSimplifier {
     return constantsMap.get(id);
   }
   
-  public static String getSimplifiedErrorMessage(Problem problem){
-    if(problem == null) return null;
+  public static String getSimplifiedErrorMessage(Problem problem) {
+    if (problem == null)
+      return null;
     IProblem iprob = problem.getIProblem();
     String args[] = iprob.getArguments();
     log("Simplifying message: " + problem.getMessage() + " ID: "
@@ -68,7 +69,7 @@ public class ErrorMessageSimplifier {
     for (int i = 0; i < args.length; i++) {
       log("Arg " + args[i]);
     }
-    
+
     String result = null;
     switch (iprob.getID()) {
     case IProblem.ParsingError:
@@ -79,12 +80,44 @@ public class ErrorMessageSimplifier {
       }
     case IProblem.ParsingErrorInsertToComplete:
       if (args.length > 0) {
-        result = "Problem with code syntax: Consider adding \"" + args[0]
-            + "\"";
+
+        switch (args[0].charAt(0)) {
+        case ';':
+          result = "You're missing a semi-colon \";\"";
+          break;
+        case '[':
+          result = "I sense a missing opening square bracket \"[\"";
+          break;
+        case ']':
+          result = "Looks like you forgot to close your square bracket \"]\"";
+          break;
+        case '(':
+          result = "I sense a missing opening square bracket \"(\"";
+          break;
+        case ')':
+          result = "Looks like you forgot to close your parentheses. \")\"";
+          break;
+        case '{':
+          result = "I sense a missing opening curly brace \";\"";
+          break;
+        case '}':
+          result = "Looks like you forgot to close your curly brace \";\"";
+          break;
+        default:
+          result = "Consider adding a \"" + args[0] + "\"";
+        }
+
         break;
       }
+    case IProblem.UndefinedMethod:
+      if (args.length > 0) {
+        result = "I don't know the function \"" + args[0] + "\"";
+      }
+      break;
     }
     log("Simplified Error Msg: " + result);
+    if (result == null)
+      return problem.getMessage();
     return result;
   }
 
