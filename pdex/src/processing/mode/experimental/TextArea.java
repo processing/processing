@@ -44,7 +44,7 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaDefaults;
 /**
  * Customized text area. Adds support for line background colors.
- *
+ * 
  * @author Martin Leopold <m@martinleopold.com>
  */
 public class TextArea extends JEditTextArea {
@@ -135,7 +135,7 @@ public class TextArea extends JEditTextArea {
 
   /**
    * Sets ErrorCheckerService and loads theme for TextArea(XQMode)
-   *
+   * 
    * @param ecs
    * @param mode
    */
@@ -150,7 +150,7 @@ public class TextArea extends JEditTextArea {
    * Code completion begins from here.
    */
   public void processKeyEvent(KeyEvent evt) {
-
+    
     if(evt.getKeyCode() == KeyEvent.VK_ESCAPE){
       if(suggestion != null){
         if(suggestion.isVisible()){
@@ -165,15 +165,15 @@ public class TextArea extends JEditTextArea {
       if (suggestion != null) {
         if (suggestion.isVisible()) {
           if (suggestion.insertSelection()) {
-            hideSuggestion(); // Kill it!
+            hideSuggestion(); // Kill it!  
             evt.consume();
             return;
           }
         }
       }
     }
-
-
+    
+    
     if (evt.getID() == KeyEvent.KEY_PRESSED) {
       switch (evt.getKeyCode()) {
       case KeyEvent.VK_DOWN:
@@ -209,7 +209,7 @@ public class TextArea extends JEditTextArea {
     super.processKeyEvent(evt);
 
     if (evt.getID() == KeyEvent.KEY_TYPED) {
-
+      
       char keyChar = evt.getKeyChar();
       if (keyChar == KeyEvent.VK_ENTER || keyChar == KeyEvent.VK_ESCAPE) {
         return;
@@ -240,7 +240,7 @@ public class TextArea extends JEditTextArea {
         }
         return;
       }
-
+            
       SwingWorker worker = new SwingWorker() {
         protected Object doInBackground() throws Exception {
           // errorCheckerService.runManualErrorCheck();
@@ -259,12 +259,12 @@ public class TextArea extends JEditTextArea {
       worker.execute();
     }
 
-
+    
   }
-
+ 
   /**
    * Retrieves the word on which the mouse pointer is present
-   * @param evt - the MouseEvent which triggered this method
+   * @param evt - the MouseEvent which triggered this method 
    * @return
    */
   private String fetchPhrase(MouseEvent evt) {
@@ -327,16 +327,16 @@ public class TextArea extends JEditTextArea {
       return word.trim();
     }
   }
-
+  
   /**
    * Retrieves the current word typed just before the caret.
    * Then triggers code completion for that word.
-   *
-   * @param evt - the KeyEvent which triggered this method
+   * 
+   * @param evt - the KeyEvent which triggered this method 
    * @return
    */
   private String fetchPhrase(KeyEvent evt) {
-
+   
     int off = getCaretPosition();
     log2("off " + off);
     if (off < 0)
@@ -356,7 +356,7 @@ public class TextArea extends JEditTextArea {
     if(x >= s.length() || x < 0)
       return null; //TODO: Does this check cause problems? Verify.
     log2(" x char: " + s.charAt(x));
-    //int xLS = off - getLineStartNonWhiteSpaceOffset(line);
+    //int xLS = off - getLineStartNonWhiteSpaceOffset(line);    
 
     String word = (x < s.length() ? s.charAt(x) : "") + "";
     if (s.trim().length() == 1) {
@@ -366,7 +366,7 @@ public class TextArea extends JEditTextArea {
       word = word.trim();
       if (word.endsWith("."))
         word = word.substring(0, word.length() - 1);
-
+      
       errorCheckerService.getASTGenerator().preparePredictions(word, line
           + errorCheckerService.mainClassOffset,0);
       return word;
@@ -444,7 +444,7 @@ public class TextArea extends JEditTextArea {
 
   /**
    * Retrieve the total width of the gutter area.
-   *
+   * 
    * @return gutter width in pixels
    */
   protected int getGutterWidth() {
@@ -464,7 +464,7 @@ public class TextArea extends JEditTextArea {
   /**
    * Retrieve the width of margins applied to the left and right of the gutter
    * text.
-   *
+   * 
    * @return margins in pixels
    */
   protected int getGutterMargins() {
@@ -476,7 +476,7 @@ public class TextArea extends JEditTextArea {
 
   /**
    * Set the gutter text of a specific line.
-   *
+   * 
    * @param lineIdx
    *          the line index (0-based)
    * @param text
@@ -489,7 +489,7 @@ public class TextArea extends JEditTextArea {
 
   /**
    * Set the gutter text and color of a specific line.
-   *
+   * 
    * @param lineIdx
    *          the line index (0-based)
    * @param text
@@ -504,7 +504,7 @@ public class TextArea extends JEditTextArea {
 
   /**
    * Clear the gutter text of a specific line.
-   *
+   * 
    * @param lineIdx
    *          the line index (0-based)
    */
@@ -525,7 +525,7 @@ public class TextArea extends JEditTextArea {
 
   /**
    * Retrieve the gutter text of a specific line.
-   *
+   * 
    * @param lineIdx
    *          the line index (0-based)
    * @return the gutter text
@@ -536,7 +536,7 @@ public class TextArea extends JEditTextArea {
 
   /**
    * Retrieve the gutter text color for a specific line.
-   *
+   * 
    * @param lineIdx
    *          the line index
    * @return the gutter text color
@@ -547,7 +547,7 @@ public class TextArea extends JEditTextArea {
 
   /**
    * Set the background color of a line.
-   *
+   * 
    * @param lineIdx
    *          0-based line number
    * @param col
@@ -560,7 +560,7 @@ public class TextArea extends JEditTextArea {
 
   /**
    * Clear the background color of a line.
-   *
+   * 
    * @param lineIdx
    *          0-based line number
    */
@@ -581,7 +581,7 @@ public class TextArea extends JEditTextArea {
 
   /**
    * Get a lines background color.
-   *
+   * 
    * @param lineIdx
    *          0-based line number
    * @return the color or null if no color was set for the specified line
@@ -593,7 +593,7 @@ public class TextArea extends JEditTextArea {
   /**
    * Convert a character offset to a horizontal pixel position inside the text
    * area. Overridden to take gutter width into account.
-   *
+   * 
    * @param line
    *          the 0-based line number
    * @param offset
@@ -608,7 +608,7 @@ public class TextArea extends JEditTextArea {
   /**
    * Convert a horizontal pixel position to a character offset. Overridden to
    * take gutter width into account.
-   *
+   * 
    * @param line
    *          the 0-based line number
    * @param x
@@ -650,7 +650,7 @@ public class TextArea extends JEditTextArea {
         }
         return;
       }
-
+      
       if (me.getButton() == MouseEvent.BUTTON3) {
         fetchPhrase(me);
       }
@@ -756,8 +756,8 @@ public class TextArea extends JEditTextArea {
   }
 
   /**
-   * Calculates location of caret and displays the suggestion popup at the location.
-   *
+   * Calculates location of caret and displays the suggestion popup at the location. 
+   * 
    * @param defListModel
    * @param subWord
    */
@@ -788,7 +788,7 @@ public class TextArea extends JEditTextArea {
                       location,editor);
 //    else
 //      suggestion.updateList(defListModel, subWord, location, position);
-//
+//    
 //    suggestion.setVisible(true);
     requestFocusInWindow();
 //    SwingUtilities.invokeLater(new Runnable() {

@@ -49,7 +49,7 @@ import processing.app.syntax.TokenMarker;
 /**
  * Customized line painter. Adds support for background colors, left hand gutter
  * area with background color and text.
- *
+ * 
  * @author Martin Leopold <m@martinleopold.com>
  */
 public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
@@ -160,7 +160,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
       }
       if (Character.isDigit(word.charAt(0)))
         return;
-
+      
       log(errorCheckerService.mainClassOffset + line +
       "|" + line + "| offset " + xLS + word + " <= \n");
       errorCheckerService.getASTGenerator()
@@ -180,7 +180,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
   /**
    * Paint a line. Paints the gutter (with background color and text) then the
    * line (background color and text).
-   *
+   * 
    * @param gfx
    *          the graphics context
    * @param tokenMarker
@@ -193,7 +193,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
   protected void paintLine(Graphics gfx, TokenMarker tokenMarker, int line,
                            int x) {
     try {
-      //TODO: This line is causing NPE's randomly ever since I added the toggle for
+      //TODO: This line is causing NPE's randomly ever since I added the toggle for 
       //Java Mode/Debugger toolbar.
       super.paintLine(gfx, tokenMarker, line, x + ta.getGutterWidth());
     } catch (Exception e) {
@@ -202,22 +202,22 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     if(ta.editor.debugToolbarEnabled != null && ta.editor.debugToolbarEnabled.get()){
       // paint gutter
       paintGutterBg(gfx, line, x);
-
+  
       // disabled line background after P5 2.1, since it adds highlight by default
-      //paintLineBgColor(gfx, line, x + ta.getGutterWidth());
-
+      //paintLineBgColor(gfx, line, x + ta.getGutterWidth()); 
+  
       paintGutterLine(gfx, line, x);
-
+  
       // paint gutter symbol
       paintGutterText(gfx, line, x);
-
-    }
+      
+    }   
     paintErrorLine(gfx, line, x);
   }
 
   /**
    * Paint the gutter background (solid color).
-   *
+   * 
    * @param gfx
    *          the graphics context
    * @param line
@@ -233,7 +233,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 
   /**
    * Paint the vertical gutter separator line.
-   *
+   * 
    * @param gfx
    *          the graphics context
    * @param line
@@ -250,7 +250,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 
   /**
    * Paint the gutter text.
-   *
+   * 
    * @param gfx
    *          the graphics context
    * @param line
@@ -287,7 +287,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 
   /**
    * Paint the background color of a line.
-   *
+   * 
    * @param gfx
    *          the graphics context
    * @param line
@@ -314,7 +314,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 
   /**
    * Paints the underline for an error/warning line
-   *
+   * 
    * @param gfx
    *          the graphics context
    * @param tokenMarker
@@ -334,7 +334,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     boolean notFound = true;
     boolean isWarning = false;
     Problem problem = null;
-
+    
     // Check if current line contains an error. If it does, find if it's an
     // error or warning
     for (ErrorMarker emarker : errorCheckerService.getEditor().errorBar.errorPoints) {
@@ -362,7 +362,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     int start = ta.getLineStartOffset(line) + problem.getPDELineStartOffset();
     int pLength = problem.getPDELineStopOffset() + 1
         - problem.getPDELineStartOffset();
-
+    
     try {
       String badCode = null;
       String goodCode = null;
@@ -394,7 +394,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
       // gfx.fillRect(x1, y, rw, height);
 
       // Let the painting begin!
-
+      
       // Little rect at starting of a line containing errors - disabling it for now
 //      gfx.setColor(errorMarkerColor);
 //      if (isWarning) {
@@ -402,7 +402,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 //      }
 //      gfx.fillRect(1, y + 2, 3, height - 2);
 
-
+      
       gfx.setColor(errorColor);
       if (isWarning) {
         gfx.setColor(warningColor);
@@ -430,7 +430,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 
   /**
    * Trims out trailing whitespaces (to the right)
-   *
+   * 
    * @param string
    * @return - String
    */
@@ -447,7 +447,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 
   /**
    * Sets ErrorCheckerService and loads theme for TextAreaPainter(XQMode)
-   *
+   * 
    * @param ecs
    * @param mode
    */

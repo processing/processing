@@ -49,15 +49,15 @@ import processing.mode.java.runner.Runner;
 
 
 /**
- * Experimental Mode for Processing, combines Debug Mode and XQMode and
+ * Experimental Mode for Processing, combines Debug Mode and XQMode and 
  * starts us working toward our next generation editor/debugger setup.
  */
 public class ExperimentalMode extends JavaMode {
   public static final boolean VERBOSE_LOGGING = true;
-  //public static final boolean VERBOSE_LOGGING = false;
+  //public static final boolean VERBOSE_LOGGING = false;  
   public static final int LOG_SIZE = 512 * 1024; // max log file size (in bytes)
   public static boolean DEBUG = !true;
-
+  
   public ExperimentalMode(Base base, File folder) {
     super(base, folder);
 
@@ -118,14 +118,14 @@ public class ExperimentalMode extends JavaMode {
   public String getTitle() {
     return "PDE X";
   }
-
-
+  
+  
   public File[] getKeywordFiles() {
-    return new File[] {
-      Base.getContentFile("modes/java/keywords.txt")
+    return new File[] { 
+      Base.getContentFile("modes/java/keywords.txt") 
     };
   }
-
+  
   public File getContentFile(String path) {
     // workaround for #45
     if (path.startsWith("application" + File.separator)) {
@@ -134,7 +134,7 @@ public class ExperimentalMode extends JavaMode {
     }
     return new File(folder, path);
   }
-
+  
   volatile public static boolean errorCheckEnabled = true,
       warningsEnabled = true, codeCompletionsEnabled = true,
       debugOutputEnabled = false, errorLogsEnabled = false,
@@ -142,7 +142,7 @@ public class ExperimentalMode extends JavaMode {
       defaultAutoSaveEnabled = true, // ,untitledAutoSaveEnabled;
       ccTriggerEnabled = false;
   public static int autoSaveInterval = 3; //in minutes
-
+  
   /**
    * After how many typed characters, code completion is triggered
    */
@@ -154,7 +154,7 @@ public class ExperimentalMode extends JavaMode {
       prefDebugOP = "pdex.dbgOutput",
       prefErrorLogs = "pdex.writeErrorLogs",
       prefAutoSaveInterval = "pdex.autoSaveInterval",
-      prefAutoSave = "pdex.autoSave.autoSaveEnabled", // prefUntitledAutoSave = "pdex.autoSave.untitledAutoSaveEnabled",
+      prefAutoSave = "pdex.autoSave.autoSaveEnabled", // prefUntitledAutoSave = "pdex.autoSave.untitledAutoSaveEnabled", 
       prefAutoSavePrompt = "pdex.autoSave.promptDisplay",
       prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault",
       prefCCTriggerEnabled = "pdex.ccTriggerEnabled";
@@ -214,7 +214,7 @@ public class ExperimentalMode extends JavaMode {
       Preferences.setBoolean(prefErrorLogs, errorLogsEnabled);
     if (Preferences.get(prefAutoSaveInterval) == null)
       Preferences.setInteger(prefAutoSaveInterval, autoSaveInterval);
-//    if(Preferences.get(prefUntitledAutoSave) == null)
+//    if(Preferences.get(prefUntitledAutoSave) == null) 
 //      Preferences.setBoolean(prefUntitledAutoSave,untitledAutoSaveEnabled);
     if (Preferences.get(prefAutoSave) == null)
       Preferences.setBoolean(prefAutoSave, autoSaveEnabled);
@@ -257,7 +257,7 @@ public class ExperimentalMode extends JavaMode {
     Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error loading String: {0}", attribute);
     return defaultValue;
   }
-
+    
 
   /**
    * Load a Color value from theme.txt
@@ -276,7 +276,7 @@ public class ExperimentalMode extends JavaMode {
     Logger.getLogger(ExperimentalMode.class.getName()).log(Level.WARNING, "Error loading Color: {0}", attribute);
     return defaultValue;
   }
-
+  
   protected ImageIcon classIcon, fieldIcon, methodIcon, localVarIcon;
   protected void loadIcons(){
     String iconPath = getContentFile("data")
@@ -286,13 +286,13 @@ public class ExperimentalMode extends JavaMode {
     methodIcon = new ImageIcon(iconPath + File.separator
         + "methpub_obj.png");
     fieldIcon = new ImageIcon(iconPath + File.separator
-        + "field_protected_obj.png");
+        + "field_protected_obj.png"); 
     localVarIcon = new ImageIcon(iconPath + File.separator
                               + "field_default_obj.png");
     log("Icons loaded");
   }
 
-
+    
   public ClassLoader getJavaModeClassLoader() {
     for (Mode m : base.getModeList()) {
       if (m.getClass() == JavaMode.class) {
@@ -303,7 +303,7 @@ public class ExperimentalMode extends JavaMode {
     // badness
     return null;
   }
-
+  
   /**
    * System.out.println()
    */
@@ -311,7 +311,7 @@ public class ExperimentalMode extends JavaMode {
     if(ExperimentalMode.DEBUG)
       System.out.println(message);
   }
-
+  
   /**
    * System.err.println()
    */
@@ -319,7 +319,7 @@ public class ExperimentalMode extends JavaMode {
     if(ExperimentalMode.DEBUG)
       System.err.println(message);
   }
-
+  
   /**
    * System.out.print
    */
@@ -327,7 +327,7 @@ public class ExperimentalMode extends JavaMode {
     if(ExperimentalMode.DEBUG)
       System.out.print(message);
   }
-
+  
   public String[] getIgnorable() {
     return new String[] {
       "applet",
