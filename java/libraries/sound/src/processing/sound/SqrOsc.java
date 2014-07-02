@@ -5,7 +5,7 @@ import processing.core.PApplet;
 public class SqrOsc implements SoundObject {
 		
 	PApplet parent;
-	MethClaInterface m_engine;
+	private Engine m_engine;
 	private int[] m_nodeId = {-1,-1};
 	private float m_freq = 440;
 	private float m_amp = 0.5f;
@@ -15,7 +15,8 @@ public class SqrOsc implements SoundObject {
 	public SqrOsc(PApplet theParent) {
 		this.parent = theParent;
 		parent.registerMethod("dispose", this);
-		m_engine = new MethClaInterface();			
+		m_engine.setPreferences(theParent, 512, 44100);
+    	m_engine.start();		
 	}
 	
 	public void play(){

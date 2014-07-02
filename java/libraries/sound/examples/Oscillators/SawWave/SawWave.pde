@@ -6,17 +6,13 @@ the same time use .set(float freq, float amp, float add, float pan)
 
 import processing.sound.*;
 
-Sound stream;
 SawOsc saw;
 
 void setup() {
     size(640, 360);
     background(255);
     
-    // Create and start the sound renderer and the sine oscillator.
-    // Second and Third arguments are optional, default is 44100 / 512 
-    // for Sample Rate and Buffer Size
-    stream = new Sound(this, 44100, 256);
+    // Create the sine oscillator.
     saw = new SawOsc(this);
     
     //Start the Sine Oscillator. There will be no sound in the beginning

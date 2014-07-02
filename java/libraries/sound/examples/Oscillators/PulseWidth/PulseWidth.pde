@@ -7,15 +7,13 @@ If you want to set all of them at the same time use
 
 import processing.sound.*;
 
-Sound stream;
 Pulse pulse;
 
 void setup() {
     size(640,360);
     background(255);
     
-    // Create and start the sound renderer and the pulse wave oscillator
-    stream = new Sound(this);
+    // Create and start the pulse wave oscillator
     pulse = new Pulse(this);
     pulse.play();
 }

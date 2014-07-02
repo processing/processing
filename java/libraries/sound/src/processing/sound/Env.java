@@ -4,14 +4,15 @@ import processing.core.*;
 public class Env {
 	
 	PApplet parent;
-	MethClaInterface m_engine;
+	private Engine m_engine;
 	int m_nodeId;
 		
 	public Env (PApplet theParent) {	
 		this.parent = theParent;
 		parent.registerMethod("dispose", this);
-		m_engine = new MethClaInterface();
-	}
+		m_engine.setPreferences(theParent, 512, 44100);
+    	m_engine.start();
+   	}
 	
 	public void play(SoundObject input, float attackTime, float sustainTime, float sustainLevel, float releaseTime){
 		m_nodeId = m_engine.envelopePlay(input.returnId(), attackTime, sustainTime, sustainLevel, releaseTime);

@@ -7,7 +7,7 @@ Each time a sound is played a colored rect with a random color is displayed.
 
 import processing.sound.*;
 
-Sound stream;
+AudioDevice device;
 SoundFile[] file;
 
 // Define the number of samples 
@@ -15,13 +15,12 @@ int numsounds = 5;
 
 int value[] = {0,0,0};
 
-
 void setup(){
   size(640, 360);
   background(255);
   
   // Create a Sound renderer and an array of empty soundfiles
-  stream = new Sound(this, 44100, 32);
+  device = new AudioDevice(this, 48000, 32);
   file = new SoundFile[numsounds];
   
   // Load 5 soundfiles from a folder in a for loop. By naming the files 1., 2., 3., n.aif it is easy to iterate

@@ -7,7 +7,6 @@ frequency of the oscillator and X the detuning of the oscillator. The basic freq
 
 import processing.sound.*;
 
-Sound stream; 
 SinOsc[] sineWaves; 
 
 // The number of oscillators
@@ -20,9 +19,6 @@ void setup() {
   size(500, 500);
   background(255);
 
-  //Create and start the Sound renderer
-  stream = new Sound(this);
-  
   // Create the oscillators and amplitudes
   sineWaves = new SinOsc[numSines];
   sineVolume = new float[numSines]; 

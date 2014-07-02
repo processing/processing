@@ -5,7 +5,7 @@ import processing.core.PApplet;
 public class HPF implements SoundObject{
 	
 	PApplet parent;
-	private MethClaInterface m_engine;
+	private Engine m_engine;
 	private int m_nodeId;
 	private int[] m_m = {0,0};
 	private float m_freq = 100;
@@ -14,8 +14,9 @@ public class HPF implements SoundObject{
 	public HPF(PApplet theParent) {
 		this.parent = theParent;
 		parent.registerMethod("dispose", this);
-		m_engine = new MethClaInterface();		
-	}
+		m_engine.setPreferences(theParent, 512, 44100);
+    	m_engine.start();
+   	}
 	
 	public void process(SoundObject input, float freq, float res){
 		m_freq=freq; m_res=res;

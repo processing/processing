@@ -7,7 +7,6 @@ two times that size) and a float array with the same size.
 
 import processing.sound.*;
 
-Sound stream;
 SoundFile sample;
 FFT fft;
 
@@ -19,9 +18,6 @@ public void setup() {
     size(bands,360);
     background(255);
       
-    // Create and start the sound renderer
-    stream = new Sound(this, 44100, 256);
-
     //Load and play a soundfile and loop it. This has to be called 
     // before the FFT is created.
     sample = new SoundFile(this, "beat.aiff");

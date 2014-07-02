@@ -5,7 +5,7 @@ import processing.core.PApplet;
 public class Pulse implements SoundObject {
 		
 	PApplet parent;
-	MethClaInterface m_engine;
+	private Engine m_engine;
 	private int[] m_nodeId = {-1,-1};
 	private float m_freq = 440;
 	private float m_width = 0.5f;	
@@ -16,8 +16,9 @@ public class Pulse implements SoundObject {
 	public Pulse(PApplet theParent) {
 		this.parent = theParent;
 		parent.registerMethod("dispose", this);
-		m_engine = new MethClaInterface();			
-	}
+		m_engine.setPreferences(theParent, 512, 44100);
+    	m_engine.start();
+   	}
 	
 	public void play(){
 		m_nodeId = m_engine.pulsePlay(m_freq, m_width, m_amp, m_add, m_pos);

@@ -14,7 +14,6 @@ depending on pre defined time segments.
 
 import processing.sound.*;
 
-Sound stream;
 TriOsc triOsc;
 Env env; 
 
@@ -36,9 +35,6 @@ int note=0;
 void setup() {
   size(640, 360);
   background(255);
-  
-  //Create and start the Sound renderer
-  stream = new Sound(this);
   
   // Create triangle wave and start it
   triOsc = new TriOsc(this);

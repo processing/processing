@@ -5,7 +5,7 @@ import processing.core.PApplet;
 public class AudioIn {
 	
 	PApplet parent;
-	private MethClaInterface m_engine;
+	private Engine m_engine;
 	private int[] m_nodeId = {-1,-1};
 	private float m_freq = 0;
 	private float m_amp = 0;
@@ -15,8 +15,9 @@ public class AudioIn {
 	public AudioIn(PApplet theParent) {
 		this.parent = theParent;
 		parent.registerMethod("dispose", this);
-		m_engine = new MethClaInterface();		
-	}
+		m_engine.setPreferences(theParent, 512, 44100);
+    	m_engine.start();
+   	}
 	
 	public void play(float freq, float amp, float add, float pos){
 		m_freq=freq; m_amp=amp; m_add=add; m_pos=pos;
