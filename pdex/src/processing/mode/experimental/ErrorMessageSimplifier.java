@@ -2,6 +2,7 @@ package processing.mode.experimental;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -74,8 +75,14 @@ public class ErrorMessageSimplifier {
     switch (iprob.getID()) {
     case IProblem.ParsingError:
       if (args.length > 0) {
+        if (problem.getMessage().endsWith("expected")) {
+          result = "Probably a \"" + args[args.length - 1]
+              + "\" should go here";
+        }
+        else {
         result = "Problem with code syntax: Consider removing \"" + args[0]
             + "\"";
+        }
         break;
       }
     case IProblem.ParsingErrorInsertToComplete:
@@ -139,7 +146,20 @@ public class ErrorMessageSimplifier {
       }
     case IProblem.UndefinedMethod:
       if (args.length > 2) {
-        result = "I don't know the function \"" + args[args.length-2] + "\"";
+        result = "I don't know the function \"" + args[args.length - 2] + "\"";
+      }
+      break;
+    case IProblem.ParameterMismatch:
+      if (args.length > 3) {
+        // 2nd arg is method name, 3rd arg is correct param list
+        if (args[2].trim().length() == 0) {
+          // the case where no params are needed.
+          result = "The method \"" + args[1]
+              + "\" doesn't expect any parameters";
+        } else {
+          result = "The method \"" + args[1] + "\" expects parameters ("
+              + getSimpleName(args[2]) + ")";
+        }
       }
       break;
     }
@@ -147,6 +167,34 @@ public class ErrorMessageSimplifier {
     if (result == null)
       return problem.getMessage();
     return result;
+  }
+  
+  /**
+   * Converts java.lang.String into String, etc
+   * 
+   * @param inp
+   * @return
+   */
+  private static String getSimpleName(String inp) {
+    if (inp.indexOf('.') < 0)
+      return inp;
+    String res = "";
+    ArrayList<String> names = new ArrayList<String>();
+    if (inp.indexOf(',') >= 0) {
+      String arr[] = inp.split(",");
+      for (int i = 0; i < arr.length; i++) {
+        names.add(arr[i]);
+      }
+    } else
+      names.add(inp);
+    for (String n : names) {
+      int x = n.lastIndexOf('.');
+      if (x >= 0) {
+        n = n.substring(x + 1, n.length());
+      }
+      res = res + ", " + n;
+    }
+    return res.substring(2, res.length());
   }
 
 }
