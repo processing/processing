@@ -22,24 +22,75 @@
 
 package processing.app;
 
-import processing.app.contrib.ToolContribution;
-import processing.app.syntax.*;
-import processing.app.tools.*;
-import processing.core.*;
-
-import java.awt.*;
-import java.awt.datatransfer.*;
-import java.awt.event.*;
-import java.awt.print.*;
-import java.io.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.awt.Point;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 import java.util.Timer;
+import java.util.TimerTask;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import javax.swing.undo.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSplitPane;
+import javax.swing.TransferHandler;
+import javax.swing.WindowConstants;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.CompoundEdit;
+import javax.swing.undo.UndoManager;
+
+import processing.app.contrib.ToolContribution;
+import processing.app.syntax.JEditTextArea;
+import processing.app.syntax.PdeTextAreaDefaults;
+import processing.app.syntax.SyntaxDocument;
+import processing.app.tools.Tool;
+import processing.core.PApplet;
 
 /**
  * Main editor panel for the Processing Development Environment.
@@ -2330,6 +2381,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       Base.showWarning("Error", "Could not create the sketch.", e);
       return false;
     }
+    initFileChangeListener();
+    
     header.rebuild();
     updateTitle();
     // Disable untitled setting from previous document, if any
@@ -2348,6 +2401,79 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //      statusError(e);
 //      return false;
 //    }
+  }
+  
+
+  //true when the file is saved, before the next scan for updates
+  private boolean saved;
+
+  private void initFileChangeListener() {
+    WatchKey key = null;
+    try {
+      WatchService watchService = FileSystems.getDefault().newWatchService();
+      key = sketch.getFolder().toPath()
+        .register(watchService,
+//                  StandardWatchEventKinds.ENTRY_CREATE,
+//                  StandardWatchEventKinds.ENTRY_DELETE,
+                  StandardWatchEventKinds.ENTRY_MODIFY);
+    } catch (IOException e) {
+      //registring the watch failed, ignore it
+    }
+
+    final WatchKey finKey = key;
+
+    if (key != null) {
+      //the key can now be polled for changes in the files
+      Thread th = new Thread(new Runnable() {
+        @Override
+        public void run() {
+          //polls for changes to the directory
+          while (true) {
+            try {
+              //check every 5s if the file has changed
+              Thread.sleep(5000);
+            } catch (InterruptedException e) {
+            }
+            List<WatchEvent<?>> events = finKey.pollEvents();
+            processFileEvents(events);
+
+            //if the directory was deleted, then quit the loop
+            if (!finKey.isValid()) {
+              break;
+            }
+          }
+        }
+      });
+      th.start();
+    }
+  }
+
+  /**
+   * called when a file is changed
+   * 
+   * @param events
+   *          the list of events that have occured in the registered folder
+   *          (sketch.getFolder())
+   */
+  private void processFileEvents(List<WatchEvent<?>> events) {
+    for (WatchEvent<?> e : events) {
+      //if the file was saved, don't prompt anything
+      if (saved)
+        break;
+      if (e.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
+        int response = Base
+          .showYesNoQuestion(Editor.this, "File Modified",
+                             "A file has been modified externally",
+                             "Would you like to reload the sketch?");
+        if (response == 0) {
+          //reload the sketch
+          sketch.reload();
+        }
+      } else {
+        //for now, do nothing
+      }
+    }
+    saved = false;
   }
 
 
@@ -2403,6 +2529,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     statusNotice("Saving...");
     try {
       if (sketch.save()) {
+        saved = true;
         statusNotice("Done Saving.");
       } else {
         statusEmpty();
