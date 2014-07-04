@@ -98,7 +98,17 @@ public class Engine {
 	public static void pulseSet(float freq, float width, float amp, float add, float pos, int[] nodeId){
 		methCla.pulseSet(freq, width, amp, add, pos, nodeId);
 	}; 
-	  
+
+	// AudioIn
+
+	public static int[] audioInPlay(float amp, float add, float pos, boolean out){
+		return methCla.audioInPlay(amp, add, pos, out);
+	};
+
+  	public static void audioInSet(float amp, float add, float pos, int[] nodeId){
+  		methCla.audioInSet(amp, add, pos, nodeId);
+  	};
+	
 	// SoundFile
 	  
 	public static int[] soundFileInfo(String path){
@@ -121,7 +131,7 @@ public class Engine {
 		methCla.soundFileSetStereo(rate, amp, add, nodeId);
 	};  
 	  
-	// Noise
+	// White Noise
 	  
 	public static int[] whiteNoisePlay(float amp, float add, float pos){
 		return methCla.whiteNoisePlay(amp, add, pos);
@@ -130,6 +140,16 @@ public class Engine {
 	public static void whiteNoiseSet(float amp, float add, float pos, int[] nodeId){
 		methCla.whiteNoiseSet(amp, add, pos, nodeId);	
 	};
+
+  	// Pink Noise
+  
+  	public static int[] pinkNoisePlay(float amp, float add, float pos){
+  		return methCla.pinkNoisePlay(amp, add, pos);
+  	};
+  
+  	public static void pinkNoiseSet(float amp, float add, float pos, int[] nodeId){
+  		methCla.pinkNoiseSet(amp, add, pos, nodeId);
+  	};
 	  
 	// Envelope
 	    

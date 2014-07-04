@@ -48,6 +48,12 @@ public class MethClaInterface
   
   public native void pulseSet(float freq, float width, float amp, float add, float pos, int[] nodeId); 
   
+  // Audio In
+
+  public native int[] audioInPlay(float amp, float add, float pos, boolean out);
+
+  public native void audioInSet(float amp, float add, float pos, int[] nodeId);
+
   // SoundFile
   
   public native int[] soundFileInfo(String path);
@@ -60,11 +66,17 @@ public class MethClaInterface
   
   public native void soundFileSetStereo(float rate, float amp, float add, int[] nodeId);  
   
-  // Noise
+  // White Noise
   
   public native int[] whiteNoisePlay(float amp, float add, float pos);
   
   public native void whiteNoiseSet(float amp, float add, float pos, int[] nodeId);
+  
+  // Pink Noise
+  
+  public native int[] pinkNoisePlay(float amp, float add, float pos);
+  
+  public native void pinkNoiseSet(float amp, float add, float pos, int[] nodeId);
   
   // Envelope
     
