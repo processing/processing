@@ -52,6 +52,9 @@ class ContributionPanel extends JPanel {
 
   static public final String INSTALL_RESTART_MESSAGE =
     "<i>Please restart Processing to finish installing this item.</i>";
+  
+  static public final String UPDATE_RESTART_MESSAGE =
+    "<i>Please restart Processing to finish updating this item.</i>";
 
   private final ContributionListPanel listPanel;
   private final ContributionListing contribListing = ContributionListing.getInstance();
@@ -141,7 +144,6 @@ class ContributionPanel extends JPanel {
             public void cancel() {
               super.cancel();
               resetInstallProgressBarState();
-              updateButton.setEnabled(true);
               installRemoveButton.setEnabled(true);
             }
           },
@@ -225,9 +227,7 @@ class ContributionPanel extends JPanel {
     updateButton.setVisible(false);
     updateButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        listPanel.contribManager.status.clear();
-        if (contrib.getType() == ContributionType.MODE) {
-          installRemoveButton.setEnabled(false);
+        listPanel.contribManager.status.clear();        if (contrib.getType().requiresRestart()) {          installRemoveButton.setEnabled(false);
           installProgressBar.setVisible(true);
           installProgressBar.setIndeterminate(true);
 
@@ -249,6 +249,12 @@ class ContributionPanel extends JPanel {
                                     super.cancel();
                                     resetInstallProgressBarState();
                                     installRemoveButton.setEnabled(true);
+                                    if (contrib.isDeletionFlagged()) {
+                                      ((LocalContribution)contrib).setUpdateFlag(true);
+                                      ((LocalContribution)contrib).setDeletionFlag(false);
+                                      contribListing.replaceContribution(contrib,contrib);
+                                      updateButton.setVisible(false);
+                                    }
                                   }
                                   
                                 }, listPanel.contribManager.status);
@@ -394,7 +400,11 @@ class ContributionPanel extends JPanel {
       description.append(REMOVE_RESTART_MESSAGE);
     } else if (contrib.isRestartFlagged()) {
       description.append(INSTALL_RESTART_MESSAGE);
-    } else {
+    } 
+    else if (contrib.isUpdateFlagged()) { 
+      description.append(UPDATE_RESTART_MESSAGE);
+    } 
+    else {
       String sentence = contrib.getSentence();
       if (sentence == null || sentence.isEmpty()) {
         sentence = "<i>Description unavailable.</i>";
@@ -435,20 +445,21 @@ class ContributionPanel extends JPanel {
     if (contribListing.hasUpdates(contrib)) {
       StringBuilder versionText = new StringBuilder();
       versionText.append("<html><body><i>");
-      if (contrib.isDeletionFlagged()) {
+      if (contrib.isUpdateFlagged()) {
         // Already marked for deletion, see requiresRestart() notes below.
-        versionText.append("To finish an update, reinstall this contribution after restarting.");
+        // versionText.append("To finish an update, reinstall this contribution after restarting.");
+        ;
       } else {
         String latestVersion = contribListing.getLatestVersion(contrib);
         if (latestVersion != null)
           versionText.append("New version (" + latestVersion + ") available!");
         else
           versionText.append("New version available!");
-        if (contrib.getType().requiresRestart()) {
-          // If a contribution can't be reinstalled in-place, the user may need
-          // to remove the current version, restart Processing, then install.
-          versionText.append(" To update, first remove the current version.");
-        }
+//        if (contrib.getType().requiresRestart()) {
+//          // If a contribution can't be reinstalled in-place, the user may need
+//          // to remove the current version, restart Processing, then install.
+//          versionText.append(" To update, first remove the current version.");
+//        }
       }
       versionText.append("</i></body></html>");
       notificationBlock.setText(versionText.toString());
@@ -460,7 +471,7 @@ class ContributionPanel extends JPanel {
 
     updateButton.setEnabled(true);
     if (contrib != null) {
-      updateButton.setVisible(isSelected() && contribListing.hasUpdates(contrib));
+      updateButton.setVisible(isSelected() && contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
     }
 
     installRemoveButton.removeActionListener(installActionListener);
@@ -572,7 +583,7 @@ class ContributionPanel extends JPanel {
     enableHyperlinks = alreadySelected;
 
     if (contrib != null) {
-      updateButton.setVisible(isSelected() && contribListing.hasUpdates(contrib));
+      updateButton.setVisible(isSelected() && contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
     }
     installRemoveButton.setVisible(isSelected() || installRemoveButton.getText().equals(Language.text("contributions.remove")));
 

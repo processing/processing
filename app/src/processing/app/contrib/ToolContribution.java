@@ -82,11 +82,8 @@ public class ToolContribution extends LocalContribution implements Tool {
       for (ToolContribution toolContrib : contribTools)
         if (toolContrib.getName().equals(this.name)) {
           try {
-            System.out.println("Here  " + name);
             ((URLClassLoader) toolContrib.loader).close();
-            System.out.println(contribTools.size());
             editor.contribTools.remove(toolContrib);
-            System.out.println(contribTools.size());
             break;
           } catch (IOException e) {
             e.printStackTrace();

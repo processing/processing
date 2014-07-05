@@ -39,6 +39,7 @@ import processing.app.*;
  */
 public abstract class LocalContribution extends Contribution {
   static public final String DELETION_FLAG = "marked_for_deletion";
+  static public final String UPDATE_FLAGGED = "marked_for_update";
   static public final String RESTART_FLAG = "requires_restart";
   
   protected String id;          // 1 (unique id for this library)
@@ -46,8 +47,6 @@ public abstract class LocalContribution extends Contribution {
   protected File folder;
   protected HashMap<String, String> properties;
   protected ClassLoader loader;
-  
-  boolean isRemoveOnRestart = false;
   
 
   public LocalContribution(File folder) {
@@ -281,6 +280,44 @@ public abstract class LocalContribution extends Contribution {
   }
 
 
+  LocalContribution copyAndLoadOnStartup(Base base, StatusPanel status) {
+    
+    String contribFolderName = getFolder().getName();
+
+    File contribTypeFolder = getType().getSketchbookFolder();
+    File contribFolder = new File(contribTypeFolder, contribFolderName);
+
+    // This if should ideally never happen, since this function is to be called only when restarting on update
+    if (contribFolder.exists()) {
+      Base.removeDir(contribFolder);
+    }
+    
+
+    File oldFolder = getFolder();
+
+    try {
+      Base.copyDir(oldFolder,  contribFolder);
+    } catch (IOException e) {
+      status.setErrorMessage("Could not copy " + getTypeName() +
+                             " \"" + getName() + "\" to the sketchbook.");
+      e.printStackTrace();
+      return null;
+    }
+
+
+    /*
+    if (!getFolder().renameTo(contribFolder)) {
+      status.setErrorMessage("Could not move " + getTypeName() + 
+                                " \"" + getName() + "\" to the sketchbook.");
+      return null;
+    }
+    */
+    
+    return getType().load(base, contribFolder);
+  }
+
+
+
   /**
    * Moves the given contribution to a backup folder.
    * @param deleteOriginal
@@ -388,14 +425,15 @@ public abstract class LocalContribution extends Contribution {
       } else {
         contribListing.replaceContribution(this, advertisedVersion);
       }
-    } else {
+    } 
+    else {
       // There was a failure backing up the folder
         if (getType().requiresRestart()) {
           if (!doBackup || (doBackup && backup(editor, false, status))) {
+            status.setMessage("");
             if (setDeletionFlag(true)) {
               contribListing.replaceContribution(this, this);
             }
-            isRemoveOnRestart = true;
           }
          else
           status.setErrorMessage("Could not delete the contribution's files");
@@ -403,7 +441,10 @@ public abstract class LocalContribution extends Contribution {
     }
 //    }
     ContributionManager.refreshInstalled(editor);
-    pm.finished();
+    if (success)
+      pm.finished();
+    else
+      pm.cancel();
   }
 
   
@@ -500,6 +541,24 @@ public abstract class LocalContribution extends Contribution {
 
   static boolean isDeletionFlagged(File folder) {
     return isFlagged(folder, DELETION_FLAG);
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  boolean setUpdateFlag(boolean flag) {
+    return setFlag(UPDATE_FLAGGED, flag);
+  }
+  
+  
+  boolean isUpdateFlagged() {
+    return isUpdateFlagged(getFolder());
+  }
+
+
+  static boolean isUpdateFlagged(File folder) {
+    return isFlagged(folder, UPDATE_FLAGGED);
   }
   
   

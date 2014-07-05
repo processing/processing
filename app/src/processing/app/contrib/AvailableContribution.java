@@ -178,6 +178,90 @@ class AvailableContribution extends Contribution {
   }
   
   
+  /**
+   * @param contribArchive
+   *          a zip file containing the library to install
+   * @return
+   */
+  public LocalContribution installOnStartup(Base base, File contribArchive, StatusPanel status) {
+    // Unzip the file into the modes, tools, or libraries folder inside the 
+    // sketchbook. Unzipping to /tmp is problematic because it may be on 
+    // another file system, so move/rename operations will break.
+
+    File tempFolder = null; 
+    
+    try {
+      tempFolder = type.createTempFolder();
+    } catch (IOException e) {
+      status.setErrorMessage("Could not create a temporary folder to install.");
+      return null;
+    }
+    Base.unzip(contribArchive, tempFolder);
+
+    // Now go looking for a legit contrib inside what's been unpacked.
+    File contribFolder = null;
+    
+    // Sometimes contrib authors place all their folders in the base directory 
+    // of the .zip file instead of in single folder as the guidelines suggest. 
+    if (type.isCandidate(tempFolder)) {
+      status.setErrorMessage(getName() + " needs to be repackaged according to the " + type.getTitle() + " guidelines.");
+      return null;
+    }
+
+    contribFolder = type.findCandidate(tempFolder);
+    LocalContribution installedContrib = null;
+
+    if (contribFolder == null) {
+      status.setErrorMessage("Could not find a " + type + " in the downloaded file.");
+      
+    } else {
+      File propFile = new File(contribFolder, type + ".properties");
+      if (writePropertiesFile(propFile)) {        
+        // 1. contribFolder now has a legit contribution, load it to get info. 
+        LocalContribution newContrib =
+          type.load(base, contribFolder);
+        
+        // 1.1. get info we need to delete the newContrib folder later
+        File newContribFolder = newContrib.getFolder();
+        
+        // 2. Check to make sure nothing has the same name already, 
+        // backup old if needed, then move things into place and reload.
+        installedContrib = 
+          newContrib.copyAndLoadOnStartup(base, status);
+        
+        // 3. Delete the newContrib, do a garbage collection, hope and pray
+        // that Java will unlock the temp folder on Windows now
+        newContrib = null;
+        System.gc();
+        
+        
+        if (Base.isWindows()) {
+          // we'll even give it 2 seconds to finish up ... because file ops are
+          // just that flaky on Windows.
+          try {
+            Thread.sleep(2000);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        }
+
+        // 4. Okay, now actually delete that temp folder
+        Base.removeDir(newContribFolder);
+        
+      } else {
+        status.setErrorMessage("Error overwriting .properties file.");
+      }
+    }
+
+    // Remove any remaining ickies
+    if (tempFolder.exists()) {
+      Base.removeDir(tempFolder);
+    }
+    return installedContrib;
+  }
+
+  
+  
   public boolean isInstalled() {
     return false;
   }

@@ -23,8 +23,11 @@ package processing.app.contrib;
 
 import java.io.*;
 import java.net.*;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
+
+import javax.swing.JProgressBar;
 
 import processing.app.Base;
 import processing.app.Editor;
@@ -95,7 +98,52 @@ public class ContributionManager {
     return success;
   }
 
+
+  /**
+   * Blocks until the file is downloaded or an error occurs. 
+   * Returns true if the file was successfully downloaded, false otherwise.
+   * Used at startup for automatically downloading and installing.
+   * 
+   * @param source
+   *          the URL of the file to download
+   * @param dest
+   *          the file on the local system where the file will be written. This
+   *          must be a file (not a directory), and must already exist.
+   */
+  static boolean download(URL source, File dest) {
+    boolean success = false;
+    try {
+//      System.out.println("downloading file " + source);
+//      URLConnection conn = source.openConnection();
+      HttpURLConnection conn = (HttpURLConnection) source.openConnection();
+      HttpURLConnection.setFollowRedirects(true);
+      conn.setConnectTimeout(15 * 1000);
+      conn.setReadTimeout(60 * 1000);
+      conn.setRequestMethod("GET");
+      conn.connect();
   
+      InputStream in = conn.getInputStream();
+      FileOutputStream out = new FileOutputStream(dest);
+  
+      byte[] b = new byte[8192];
+      int amount;
+      while ((amount = in.read(b)) != -1) {
+        out.write(b, 0, amount);  
+      }
+      out.flush();
+      out.close();
+      success = true;
+      
+    } catch (SocketTimeoutException ste) {
+      // When there's no internet... 
+      // TODO: Will have to find a way to download later
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+    }
+    return success;
+  }
+
+
   /**
    * Non-blocking call to download and install a contribution in a new thread.
    *
@@ -148,6 +196,67 @@ public class ContributionManager {
           }
         } catch (IOException e) {
           status.setErrorMessage("Could not write to temporary directory.");
+        }
+      }
+    }).start();
+  }
+
+
+
+  /**
+   * Non-blocking call to download and install a contribution in a new thread.
+   * 
+   * @param url
+   *          Direct link to the contribution.
+   * @param ad
+   *          The AvailableContribution to be downloaded and installed. 
+   */
+  static void downloadAndInstallOnStartup(final Base base, final URL url,
+                                          final AvailableContribution ad) {
+
+    new Thread(new Runnable() {
+      public void run() {
+        String filename = url.getFile();
+        filename = filename.substring(filename.lastIndexOf('/') + 1);
+        try {
+          File contribZip = File.createTempFile("download", filename);
+          contribZip.setWritable(true); // necessary?
+
+          try {
+            download(url, contribZip);
+
+            StatusPanel status = new StatusPanel();
+            LocalContribution contribution = ad.installOnStartup(base,
+                                                                 contribZip,
+                                                                 status);
+
+            if (contribution != null) {
+              contribListing.replaceContribution(ad, contribution);
+              if (contribution.getType() == ContributionType.MODE) {
+                ArrayList<ModeContribution> contribModes = base
+                  .getModeContribs();
+                if (contribModes != null)
+                  contribModes.add((ModeContribution) contribution);
+              }
+              if (base.getActiveEditor() != null)
+                refreshInstalled(base.getActiveEditor());
+            }
+
+            System.out.println(status.getText());
+//            if (contribution != null) {
+//                contribListing.replaceContribution(ad, contribution);
+//              }
+            contribZip.delete();
+
+          } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error during download and install of "
+              + ad.getName());
+          }
+        } catch (IOException e) {
+          System.err
+            .println("Could not write to temporary directory during download and install of "
+              + ad.getName());
         }
       }
     }).start();
@@ -219,11 +328,16 @@ public class ContributionManager {
   /** 
    * Called by Base to clean up entries previously marked for deletion
    * and remove any "requires restart" flags.
+   * Also updates all entries previously marked for update.
    */
-  static public void cleanup() throws Exception {
+  static public void cleanup(Base base) throws Exception {
     deleteFlagged(Base.getSketchbookLibrariesFolder());
     deleteFlagged(Base.getSketchbookModesFolder());
     deleteFlagged(Base.getSketchbookToolsFolder());
+    
+    updateFlagged(base, Base.getSketchbookLibrariesFolder());
+    updateFlagged(base, Base.getSketchbookModesFolder());
+    updateFlagged(base, Base.getSketchbookToolsFolder());
     
     clearRestartFlags(Base.getSketchbookModesFolder());
     clearRestartFlags(Base.getSketchbookToolsFolder());
@@ -239,6 +353,51 @@ public class ContributionManager {
     });
     for (File folder : markedForDeletion) {
       Base.removeDir(folder);
+    }
+  }
+  
+  
+  static private void updateFlagged(Base base, File root) throws Exception {
+    File[] markedForUpdate = root.listFiles(new FileFilter() {
+      public boolean accept(File folder) {
+        return (folder.isDirectory() && 
+                LocalContribution.isUpdateFlagged(folder));
+      }
+    });
+    ArrayList<String> updateContribsNames = new ArrayList<String>();
+    LinkedList<AvailableContribution> updateContribsList = new LinkedList<AvailableContribution>();
+    for (File folder : markedForUpdate) {
+      updateContribsNames.add(folder.getName());
+      Base.removeDir(folder);
+    }
+    for (AvailableContribution availableContribs : contribListing.advertisedContributions) {
+      if(updateContribsNames.contains(availableContribs.getName())) {
+        updateContribsList.add(availableContribs);
+      }
+    }
+    for (AvailableContribution contribToUpdate : updateContribsList) {
+      installOnStartUp(base, contribToUpdate);
+      contribListing.replaceContribution(contribToUpdate, contribToUpdate);
+    }
+  }
+  
+  
+  static private void installOnStartUp(final Base base, final AvailableContribution availableContrib) {
+    if (availableContrib.link == null) {
+      Base.showWarning("Update on Restart of " + availableContrib.getName() + "failed",
+                       "Your operating system "
+                         + "doesn't appear to be supported. You should visit the "
+                         + availableContrib.getType() + "'s library for more info.");
+      return;
+    }
+    try {
+      URL downloadUrl = new URL(availableContrib.link);
+      
+      ContributionManager.downloadAndInstallOnStartup(base, downloadUrl, availableContrib);
+      
+    } catch (MalformedURLException e) {
+      Base.showWarning("Update on Restart of " + availableContrib.getName() + "failed",
+                       ContributionListPanel.MALFORMED_URL_MESSAGE, e);
     }
   }
   
