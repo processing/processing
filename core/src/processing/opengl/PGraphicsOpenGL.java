@@ -160,6 +160,11 @@ public class PGraphicsOpenGL extends PGraphics {
     PGraphicsOpenGL.class.getResource("ColorFrag.glsl");
   static protected URL defTextureShaderFragURL =
     PGraphicsOpenGL.class.getResource("TextureFrag.glsl");
+  static protected URL defLightShaderFragURL =
+    PGraphicsOpenGL.class.getResource("LightFrag.glsl");
+  static protected URL defTexlightShaderFragURL =
+    PGraphicsOpenGL.class.getResource("TexlightFrag.glsl");
+
   static protected URL defLineShaderVertURL =
     PGraphicsOpenGL.class.getResource("LineVert.glsl");
   static protected URL defLineShaderFragURL =
@@ -6740,7 +6745,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (useDefault || !polyShader.checkPolyType(PShader.TEXLIGHT)) {
           if (ppg.defTexlightShader == null) {
             String[] vertSource = pgl.loadVertexShader(defTexlightShaderVertURL, 120);
-            String[] fragSource = pgl.loadFragmentShader(defTextureShaderFragURL, 120);
+            String[] fragSource = pgl.loadFragmentShader(defTexlightShaderFragURL, 120);
             ppg.defTexlightShader = new PShader(parent, vertSource, fragSource);
           }
           shader = ppg.defTexlightShader;
@@ -6751,7 +6756,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (useDefault || !polyShader.checkPolyType(PShader.LIGHT)) {
           if (ppg.defLightShader == null) {
             String[] vertSource = pgl.loadVertexShader(defLightShaderVertURL, 120);
-            String[] fragSource = pgl.loadFragmentShader(defColorShaderFragURL, 120);
+            String[] fragSource = pgl.loadFragmentShader(defLightShaderFragURL, 120);
             ppg.defLightShader = new PShader(parent, vertSource, fragSource);
           }
           shader = ppg.defLightShader;
