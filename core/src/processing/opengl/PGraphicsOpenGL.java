@@ -1827,7 +1827,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.disable(PGL.SCISSOR_TEST);
     }
 
-    pgl.frontFace(PGL.CW);
+    pgl.frontFace(PGL.CCW);
     pgl.disable(PGL.CULL_FACE);
 
     pgl.activeTexture(PGL.TEXTURE0);
@@ -3242,7 +3242,9 @@ public class PGraphicsOpenGL extends PGraphics {
     normalMode = NORMAL_MODE_SHAPE;
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
-    inGeo.setNormal(normalX, normalY, normalZ);
+    // TODO: Arc should be drawn in CCW order (left-handed)
+    // Temp fix: invert arc normal
+    inGeo.setNormal(normalX, normalY, -normalZ);
     inGeo.addArc(x, y, w, h, start, stop, fill, stroke, mode);
     endShape();
   }
@@ -6536,16 +6538,21 @@ public class PGraphicsOpenGL extends PGraphics {
       lightSpecular(0, 0, 0);
     }
 
-    // Because y is flipped, the vertices that should be specified by
-    // the user in CCW order to define a front-facing facet, end up being CW.
-    pgl.frontFace(PGL.CW);
+    // Vertices should be specified by user in CCW order (left-handed)
+    // That is CW order (right-handed). Vertex shader inverts
+    // Y-axis and outputs vertices in CCW order (right-handed).
+    // Culling occurs after the vertex shader, so FRONT FACE
+    // has to be set to CCW (right-handed) for OpenGL to correctly
+    // recognize FRONT and BACK faces.
+    pgl.frontFace(PGL.CCW);
     pgl.disable(PGL.CULL_FACE);
 
     // Processing uses only one texture unit.
     pgl.activeTexture(PGL.TEXTURE0);
 
     // The current normal vector is set to be parallel to the Z axis.
-    normalX = normalY = normalZ = 0;
+    normalX = normalY = 0;
+    normalZ = 1;
 
     // Clear depth and stencil buffers.
     pgl.depthMask(true);
@@ -7830,12 +7837,14 @@ public class PGraphicsOpenGL extends PGraphics {
       float v10z = z0 - z1;
 
       // The automatic normal calculation in Processing assumes
-      // that vertices as given in CCW order so:
-      // n = v12 x v10
-      // so that the normal outwards.
-      float nx = v12y * v10z - v10y * v12z;
-      float ny = v12z * v10x - v10z * v12x;
-      float nz = v12x * v10y - v10x * v12y;
+      // that vertices are given by user in CCW order (left-handed),
+      // internally in CW order (right-handed) so:
+      // n = v10 x v12
+      // so that the normal extends outwards from the front face.
+      float nx = v10y * v12z - v12y * v10z;
+      float ny = v10z * v12x - v12z * v10x;
+      float nz = v10x * v12y - v12x * v10y;
+
       float d = PApplet.sqrt(nx * nx + ny * ny + nz * nz);
       nx /= d;
       ny /= d;
@@ -7881,14 +7890,14 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int i = 1; i < vertexCount - 1; i++) {
         int i1 = i;
         int i0, i2;
-        if (i % 2 == 0) {
-          // The even triangles (0, 2, 4...) should be CW
-          i0 = i + 1;
-          i2 = i - 1;
-        } else {
-          // The even triangles (1, 3, 5...) should be CCW
+        if (i % 2 == 1) {
+          // The odd triangles (1, 3, 5...) should be CCW (left-handed)
           i0 = i - 1;
           i2 = i + 1;
+        } else {
+          // The even triangles (2, 4, 6...) should be CW (left-handed)
+          i0 = i + 1;
+          i2 = i - 1;
         }
         calcTriangleNormal(i0, i1, i2);
       }
@@ -7913,8 +7922,14 @@ public class PGraphicsOpenGL extends PGraphics {
         int i2 = 2 * qd;
         int i3 = 2 * qd + 1;
 
-        calcTriangleNormal(i0, i3, i1);
-        calcTriangleNormal(i0, i2, i3);
+        // Vertices are ordered as:
+        // 0-2 ...
+        // |/| ...
+        // 1-3 ...
+        // thus (0, 1, 2) and (2, 1, 3) are triangles
+        // in CCW order (left-handed).
+        calcTriangleNormal(i0, i1, i2);
+        calcTriangleNormal(i2, i1, i3);
       }
     }
 
@@ -7988,26 +8003,20 @@ public class PGraphicsOpenGL extends PGraphics {
     void addRect(float a, float b, float c, float d,
                  boolean stroke) {
       addQuad(a, b, 0,
-              c, b, 0,
-              c, d, 0,
               a, d, 0,
+              c, d, 0,
+              c, b, 0,
               stroke);
     }
 
     void addRect(float a, float b, float c, float d,
                  float tl, float tr, float br, float bl,
                  boolean stroke) {
-      if (nonZero(tr)) {
-        addVertex(c-tr, b, VERTEX, true);
-        addQuadraticVertex(c, b, 0, c, b+tr, 0, false);
+      if (nonZero(tl)) {
+        addVertex(a, b+tl, VERTEX, false);
+        addQuadraticVertex(a, b, 0, a+tl, b, 0, false);
       } else {
-        addVertex(c, b, VERTEX, true);
-      }
-      if (nonZero(br)) {
-        addVertex(c, d-br, VERTEX, false);
-        addQuadraticVertex(c, d, 0, c-br, d, 0, false);
-      } else {
-        addVertex(c, d, VERTEX, false);
+        addVertex(a, b, VERTEX, false);
       }
       if (nonZero(bl)) {
         addVertex(a+bl, d, VERTEX, false);
@@ -8015,11 +8024,17 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         addVertex(a, d, VERTEX, false);
       }
-      if (nonZero(tl)) {
-        addVertex(a, b+tl, VERTEX, false);
-        addQuadraticVertex(a, b, 0, a+tl, b, 0, false);
+      if (nonZero(br)) {
+        addVertex(c, d-br, VERTEX, false);
+        addQuadraticVertex(c, d, 0, c-br, d, 0, false);
       } else {
-        addVertex(a, b, VERTEX, false);
+        addVertex(c, d, VERTEX, false);
+      }
+      if (nonZero(tr)) {
+        addVertex(c-tr, b, VERTEX, true);
+        addQuadraticVertex(c, b, 0, c, b+tr, 0, false);
+      } else {
+        addVertex(c, b, VERTEX, true);
       }
     }
 
@@ -8051,7 +8066,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float val = 0;
       for (int i = 0; i < accuracy; i++) {
         idx = addVertex(centerX + cosLUT[(int) val] * radiusH,
-                        centerY + sinLUT[(int) val] * radiusV,
+                        centerY - sinLUT[(int) val] * radiusV,
                         VERTEX, i == 0 && !fill);
         val = (val + inc) % SINCOS_LENGTH;
 
@@ -8136,6 +8151,18 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void addBox(float w, float h, float d,
                 boolean fill, boolean stroke) {
+
+      // Correct normals if some dimensions are negative so they always
+      // extend from front face. We could just take absolute value
+      // of dimensions, but that would affect texturing.
+      boolean invertNormX = (h > 0) != (d > 0);
+      boolean invertNormY = (w > 0) != (d > 0);
+      boolean invertNormZ = (w > 0) != (h > 0);
+
+      int normX = invertNormX ? -1 : 1;
+      int normY = invertNormY ? -1 : 1;
+      int normZ = invertNormZ ? -1 : 1;
+
       float x1 = -w/2f; float x2 = w/2f;
       float y1 = -h/2f; float y2 = h/2f;
       float z1 = -d/2f; float z2 = d/2f;
@@ -8143,7 +8170,7 @@ public class PGraphicsOpenGL extends PGraphics {
       int idx1 = 0, idx2 = 0, idx3 = 0, idx4 = 0;
       if (fill || stroke) {
         // back face
-        setNormal(0, 0, -1);
+        setNormal(0, 0, -normZ);
         idx1 = addVertex(x1, y1, z1, 0, 0, VERTEX, true);
         idx2 = addVertex(x2, y1, z1, 1, 0, VERTEX, false);
         idx3 = addVertex(x2, y2, z1, 1, 1, VERTEX, false);
@@ -8157,7 +8184,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
 
         // front face
-        setNormal(0, 0, 1);
+        setNormal(0, 0, normZ);
         idx1 = addVertex(x2, y1, z2, 0, 0, VERTEX, false);
         idx2 = addVertex(x1, y1, z2, 1, 0, VERTEX, false);
         idx3 = addVertex(x1, y2, z2, 1, 1, VERTEX, false);
@@ -8171,7 +8198,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
 
         // right face
-        setNormal(1, 0, 0);
+        setNormal(normX, 0, 0);
         idx1 = addVertex(x2, y1, z1, 0, 0, VERTEX, false);
         idx2 = addVertex(x2, y1, z2, 1, 0, VERTEX, false);
         idx3 = addVertex(x2, y2, z2, 1, 1, VERTEX, false);
@@ -8185,7 +8212,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
 
         // left face
-        setNormal(-1, 0, 0);
+        setNormal(-normX, 0, 0);
         idx1 = addVertex(x1, y1, z2, 0, 0, VERTEX, false);
         idx2 = addVertex(x1, y1, z1, 1, 0, VERTEX, false);
         idx3 = addVertex(x1, y2, z1, 1, 1, VERTEX, false);
@@ -8198,8 +8225,8 @@ public class PGraphicsOpenGL extends PGraphics {
           closeEdge(idx4, idx1);
         }
 
-        // bottom face
-        setNormal(0, -1, 0);
+        // top face
+        setNormal(0, -normY, 0);
         idx1 = addVertex(x1, y1, z2, 0, 0, VERTEX, false);
         idx2 = addVertex(x2, y1, z2, 1, 0, VERTEX, false);
         idx3 = addVertex(x2, y1, z1, 1, 1, VERTEX, false);
@@ -8212,8 +8239,8 @@ public class PGraphicsOpenGL extends PGraphics {
           closeEdge(idx4, idx1);
         }
 
-        // top face
-        setNormal(0, 1, 0);
+        // bottom face
+        setNormal(0, normY, 0);
         idx1 = addVertex(x1, y2, z1, 0, 0, VERTEX, false);
         idx2 = addVertex(x2, y2, z1, 1, 0, VERTEX, false);
         idx3 = addVertex(x2, y2, z2, 1, 1, VERTEX, false);
@@ -8274,8 +8301,8 @@ public class PGraphicsOpenGL extends PGraphics {
         int i1 = vert0 + i;
         int i0 = vert0 + i - detailU;
 
-        indices[3 * i + 0] = i1;
-        indices[3 * i + 1] = i0;
+        indices[3 * i + 0] = i0;
+        indices[3 * i + 1] = i1;
         indices[3 * i + 2] = i1 + 1;
 
         addEdge(i0, i1, true, true);
@@ -8308,13 +8335,13 @@ public class PGraphicsOpenGL extends PGraphics {
           int i1 = vert0 + i;
           int i0 = vert0 + i - detailU - 1;
 
-          indices[indCount + 6 * i + 0] = i1;
-          indices[indCount + 6 * i + 1] = i0;
+          indices[indCount + 6 * i + 0] = i0;
+          indices[indCount + 6 * i + 1] = i1;
           indices[indCount + 6 * i + 2] = i0 + 1;
 
           indices[indCount + 6 * i + 3] = i1;
-          indices[indCount + 6 * i + 4] = i0 + 1;
-          indices[indCount + 6 * i + 5] = i1 + 1;
+          indices[indCount + 6 * i + 4] = i1 + 1;
+          indices[indCount + 6 * i + 5] = i0 + 1;
 
           addEdge(i0, i1, true, true);
           addEdge(i1, i1 + 1, true, true);
@@ -9200,9 +9227,15 @@ public class PGraphicsOpenGL extends PGraphics {
       float v10y = y0 - y1;
       float v10z = z0 - z1;
 
-      float nx = v12y * v10z - v10y * v12z;
-      float ny = v12z * v10x - v10z * v12x;
-      float nz = v12x * v10y - v10x * v12y;
+      // The automatic normal calculation in Processing assumes
+      // that vertices are given by user in CCW order (left-handed),
+      // internally in CW order (right-handed) so:
+      // n = v10 x v12
+      // so that the normal extends outwards from the front face.
+      float nx = v10y * v12z - v12y * v10z;
+      float ny = v10z * v12x - v12z * v10x;
+      float nz = v10x * v12y - v12x * v10y;
+
       float d = PApplet.sqrt(nx * nx + ny * ny + nz * nz);
       nx /= d;
       ny /= d;
