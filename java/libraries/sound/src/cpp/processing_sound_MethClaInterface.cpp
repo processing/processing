@@ -19,6 +19,7 @@
 #include "methcla/plugins/sampler.h"
 #include "methcla/plugins/whitenoise.h"
 #include "methcla/plugins/pinknoise.h"
+#include "methcla/plugins/brownnoise.h"
 #include "methcla/plugins/node-control.h"
 #include "methcla/plugins/pan2.h"
 #include "methcla/plugins/soundfile_api_mpg123.h"
@@ -32,7 +33,7 @@
 #define OUTPUT_BUFFER_SIZE 1024
 #define SNDF_BUFFER_LEN 1024
 
-#define MAX_CHANNELS    2
+#define MAX_CHANNELS    4
 
 Methcla::Engine* m_engine;
 Methcla::Engine& engine() { return *m_engine; }
@@ -58,6 +59,7 @@ JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_engineNew (JNIEnv 
     
     Methcla::EngineOptions options;
     options.audioDriver.bufferSize = bufferSize;
+    options.audioDriver.numInputs = 2;
     options.realtimeMemorySize = 1024 * 1024 * 20;
     options.maxNumNodes = 1024 * 20;
     options.addLibrary(methcla_plugins_sine)
@@ -68,7 +70,8 @@ JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_engineNew (JNIEnv 
            .addLibrary(methcla_plugins_patch_cable)
            .addLibrary(methcla_plugins_sampler)
            .addLibrary(methcla_plugins_white_noise)
-           .addLibrary(methcla_plugins_pink_noise)           
+           .addLibrary(methcla_plugins_pink_noise)
+           .addLibrary(methcla_plugins_brown_noise)
            .addLibrary(methcla_plugins_node_control)
            .addLibrary(methcla_plugins_pan2)
            .addLibrary(methcla_plugins_amplitude_follower)
@@ -717,6 +720,61 @@ JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_pinkNoiseSet(JNIEn
     env->ReleaseIntArrayElements(nodeId, m_nodeId, 0);
 };
 
+JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_brownNoisePlay(JNIEnv *env, jobject object, jfloat amp, jfloat add, jfloat pos){
+    jintArray nodeId = env->NewIntArray(2);
+    jint *m_nodeId = env->GetIntArrayElements(nodeId, NULL);
+    
+    Methcla::AudioBusId bus = m_engine->audioBusId().alloc();
+    Methcla::Request request(engine());
+    
+    request.openBundle(Methcla::immediately);
+    
+    auto synth = request.synth(
+                               METHCLA_PLUGINS_BROWN_NOISE_URI,
+                               engine().root(),
+                               { amp, add },
+                               {}
+                               );
+    
+    auto pan = request.synth(
+                             METHCLA_PLUGINS_PAN2_URI,
+                             engine().root(),
+                             {pos, 1.f},
+                             {Methcla::Value(1.f)}
+                             );
+    
+    request.mapOutput(synth.id(), 0, bus);
+    request.mapInput(pan.id(), 0, bus);
+    request.mapOutput(pan.id(), 0, Methcla::AudioBusId(0), Methcla::kBusMappingExternal);
+    request.mapOutput(pan.id(), 1, Methcla::AudioBusId(1), Methcla::kBusMappingExternal);
+    
+    request.activate(synth.id());
+    request.activate(pan.id());
+    
+    request.closeBundle();
+    request.send();
+    
+    m_nodeId[0]=synth.id();
+    m_nodeId[1]=pan.id();
+    
+    env->ReleaseIntArrayElements(nodeId, m_nodeId, 0);
+    
+    return nodeId;
+};
+
+JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_brownNoiseSet(JNIEnv *env, jobject object, jfloat amp, jfloat add, jfloat pos, jintArray nodeId){
+    
+    jint* m_nodeId = env->GetIntArrayElements(nodeId, 0);
+    
+    Methcla::Request request(engine());
+    request.openBundle(Methcla::immediately);
+    request.set(m_nodeId[0], 0, amp);
+    request.set(m_nodeId[1], 0, pos);
+    request.closeBundle();
+    request.send(); 
+    
+    env->ReleaseIntArrayElements(nodeId, m_nodeId, 0);
+};
 
 
 JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_envelopePlay(JNIEnv *env, jobject object, jintArray nodeId, jfloat attackTime, jfloat sustainTime, jfloat sustainLevel, jfloat releaseTime){

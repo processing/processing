@@ -1,5 +1,5 @@
 /*
-This is a simple WhiteNoise generator. It can be started with .play(float amp).
+This is a simple white noise generator. It can be started with .play(float amp).
 In this example it is started and stopped by clicking into the renderer window.
 */
 

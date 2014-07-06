@@ -77,7 +77,13 @@ public class MethClaInterface
   public native int[] pinkNoisePlay(float amp, float add, float pos);
   
   public native void pinkNoiseSet(float amp, float add, float pos, int[] nodeId);
+
+  // Brown Noise
+    
+  public native int[] brownNoisePlay(float amp, float add, float pos);
   
+  public native void brownNoiseSet(float amp, float add, float pos, int[] nodeId);
+
   // Envelope
     
   public native int envelopePlay(int[] input, float attackTime, float sustainTime, float sustainLevel, float releaseTime);

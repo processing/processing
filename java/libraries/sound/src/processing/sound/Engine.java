@@ -151,6 +151,16 @@ public class Engine {
   		methCla.pinkNoiseSet(amp, add, pos, nodeId);
   	};
 	  
+  	// Brown Noise
+    
+  	public static int[] brownNoisePlay(float amp, float add, float pos){
+  		return methCla.brownNoisePlay(amp, add, pos);
+  	};
+    
+  	public static void brownNoiseSet(float amp, float add, float pos, int[] nodeId){
+  		methCla.brownNoiseSet(amp, add, pos, nodeId);
+  	};
+    
 	// Envelope
 	    
 	public static int envelopePlay(int[] input, float attackTime, float sustainTime, float sustainLevel, float releaseTime){

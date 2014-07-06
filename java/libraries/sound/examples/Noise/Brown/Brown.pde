@@ -1,11 +1,11 @@
 /*
-This is a simple pink noise generator. It can be started with .play(float amp).
+This is a simple brownian noise generator. It can be started with .play(float amp).
 In this example it is started and stopped by clicking into the renderer window.
 */
 
 import processing.sound.*;
 
-PinkNoise noise;
+BrownNoise noise;
 
 float amp=0.0;
 
@@ -13,8 +13,8 @@ void setup() {
     size(640, 360);
     background(255);
     
-    // Create and start noise generator
-    noise = new PinkNoise(this);
+    // Create the noise generator
+    noise = new BrownNoise(this);
     noise.play();
 }      
 
