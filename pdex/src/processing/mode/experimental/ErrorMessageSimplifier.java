@@ -99,7 +99,7 @@ public class ErrorMessageSimplifier {
           result = "Looks like you forgot to close your square bracket \"]\"";
           break;
         case '(':
-          result = "I sense a missing opening square bracket \"(\"";
+          result = "I sense a missing opening parentheses \"(\"";
           break;
         case ')':
           result = "Looks like you forgot to close your parentheses \")\"";
@@ -128,7 +128,7 @@ public class ErrorMessageSimplifier {
           result = "Looks like you forgot to close your square bracket \"]\"";
           break;
         case '(':
-          result = "I sense a missing opening square bracket \"(\"";
+          result = "I sense a missing opening parentheses \"(\"";
           break;
         case ')':
           result = "Looks like you forgot to close your parentheses \")\"";
