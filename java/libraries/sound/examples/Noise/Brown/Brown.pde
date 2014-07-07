@@ -1,11 +1,11 @@
 /*
-This is a simple white noise generator. It can be started with .play(float amp).
+This is a simple brownian noise generator. It can be started with .play(float amp).
 In this example it is started and stopped by clicking into the renderer window.
 */
 
 import processing.sound.*;
 
-WhiteNoise noise;
+BrownNoise noise;
 
 float amp=0.0;
 
@@ -14,7 +14,7 @@ void setup() {
     background(255);
     
     // Create the noise generator
-    noise = new WhiteNoise(this);
+    noise = new BrownNoise(this);
     noise.play();
 }      
 

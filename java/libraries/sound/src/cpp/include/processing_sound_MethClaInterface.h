@@ -105,6 +105,22 @@ JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_pulseSet
 
 /*
  * Class:     processing_sound_MethClaInterface
+ * Method:    audioInPlay
+ * Signature: (FFFZ)[I
+ */
+JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_audioInPlay
+  (JNIEnv *, jobject, jfloat, jfloat, jfloat, jboolean);
+
+/*
+ * Class:     processing_sound_MethClaInterface
+ * Method:    audioInSet
+ * Signature: (FFF[I)V
+ */
+JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_audioInSet
+  (JNIEnv *, jobject, jfloat, jfloat, jfloat, jintArray);
+
+/*
+ * Class:     processing_sound_MethClaInterface
  * Method:    soundFileInfo
  * Signature: (Ljava/lang/String;)[I
  */
@@ -157,6 +173,38 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_whiteNoisePla
  * Signature: (FFF[I)V
  */
 JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_whiteNoiseSet
+  (JNIEnv *, jobject, jfloat, jfloat, jfloat, jintArray);
+
+/*
+ * Class:     processing_sound_MethClaInterface
+ * Method:    pinkNoisePlay
+ * Signature: (FFF)[I
+ */
+JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_pinkNoisePlay
+  (JNIEnv *, jobject, jfloat, jfloat, jfloat);
+
+/*
+ * Class:     processing_sound_MethClaInterface
+ * Method:    pinkNoiseSet
+ * Signature: (FFF[I)V
+ */
+JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_pinkNoiseSet
+  (JNIEnv *, jobject, jfloat, jfloat, jfloat, jintArray);
+
+/*
+ * Class:     processing_sound_MethClaInterface
+ * Method:    brownNoisePlay
+ * Signature: (FFF)[I
+ */
+JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_brownNoisePlay
+  (JNIEnv *, jobject, jfloat, jfloat, jfloat);
+
+/*
+ * Class:     processing_sound_MethClaInterface
+ * Method:    brownNoiseSet
+ * Signature: (FFF[I)V
+ */
+JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_brownNoiseSet
   (JNIEnv *, jobject, jfloat, jfloat, jfloat, jintArray);
 
 /*
