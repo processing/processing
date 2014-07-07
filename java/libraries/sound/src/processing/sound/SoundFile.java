@@ -109,9 +109,25 @@ public class SoundFile implements SoundObject {
 		m_rate=rate;
 		this.loop();
 	}
+    
+    public void jump(float time){
+        
+        if(m_nodeId[0]>(-1)){
+            this.stop();
+        }
+        
+        m_cue = (int)time * m_info[1];
+        
+		if(this.channels() < 2){
+			m_nodeId = methCla.soundFilePlayMono(m_rate, m_pos, m_amp, m_add, false, m_filePath, this.duration()*(1/m_rate), m_cue);
+		}
+		else if(this.channels() == 2){
+			m_nodeId = methCla.soundFilePlayMulti(m_rate, m_amp, m_add, false, m_filePath, this.duration()*(1/m_rate), m_cue);
+		}
+	}
 	
-	public void cue(int cue){
-		m_cue = (int)cue * m_info[1];
+	public void cue(float time){
+		m_cue = (int)time * m_info[1];
 	}
 	
 	private void set(){
