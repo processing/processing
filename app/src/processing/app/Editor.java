@@ -2356,9 +2356,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   //true when the file is saved, before the next scan for updates
   private boolean saved;
+  
+  private boolean didReload;
+  
+  //the time between polls in ms
+  private final long FILE_CHECK_DELAY = 100;
+  
+  //the key which is being used to poll the fs for changes
+  private WatchKey key = null;
 
   private void initFileChangeListener() {
-    WatchKey key = null;
     try {
       WatchService watchService = FileSystems.getDefault().newWatchService();
       key = sketch.getFolder().toPath()
@@ -2372,7 +2379,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     final WatchKey finKey = key;
 
-    if (key != null) {
+    //if the key is null for some reason, don't bother attaching a listener to it, they can deal without one
+    if (finKey != null) {
       //the key can now be polled for changes in the files
       Thread th = new Thread(new Runnable() {
         @Override
@@ -2380,8 +2388,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
           //polls for changes to the directory
           while (true) {
             try {
-              //check every 5s if the file has changed
-              Thread.sleep(5000);
+              //check every .1s if the file has changed
+              Thread.sleep(FILE_CHECK_DELAY);
             } catch (InterruptedException e) {
             }
             List<WatchEvent<?>> events = finKey.pollEvents();
@@ -2406,11 +2414,24 @@ public abstract class Editor extends JFrame implements RunnerListener {
    *          (sketch.getFolder())
    */
   private void processFileEvents(List<WatchEvent<?>> events) {
+    didReload = false;
     for (WatchEvent<?> e : events) {
+      //the context is the name of the file inside the path
+      //due to some weird shit, if a file was editted in gedit, the context is .goutputstream-XXXXX
+      //this makes things.... complicated
+      //System.out.println(e.context());
+      
       //if the file was saved, don't prompt anything
       if (saved)
         break;
+      //if we already reloaded in this cycle, then don't reload again
+      if (didReload){
+        break;
+      }
       if (e.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
+//        Path p = (Path) e.context();
+//        Path root = (Path) key.watchable();
+//        Path path = root.resolve(p);
         int response = Base
           .showYesNoQuestion(Editor.this, "File Modified",
                              "A file has been modified externally",
@@ -2419,8 +2440,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
           //reload the sketch
           sketch.reload();
           header.rebuild();
+          didReload = true;
         }
       } else {
+        //called when a file is created or deleted
         //for now, do nothing
       }
     }
