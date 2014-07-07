@@ -143,6 +143,12 @@ public class ErrorMessageSimplifier {
         result = "I don't recognize the name \"" + args[0] + "\"";
       }
       break;
+    case IProblem.TypeMismatch:
+      if (args.length > 1) {
+        result = "You can't assign a \"" + getSimpleName(args[0])
+            + "\" type to a \"" + getSimpleName(args[1]) + "\" type";
+      }
+      break;
     }
     
     log("Simplified Error Msg: " + result);
