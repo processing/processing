@@ -86,15 +86,23 @@ public class ErrorMessageSimplifier {
       }
       break;
     case IProblem.ParsingErrorInsertToComplete:
-      if (args.length > 0) {        
-        result = getErrorMessageForBracket(args[0].charAt(0));
-        
+      if (args.length > 0) {
+        if (args[0].length() == 1) {
+          result = getErrorMessageForBracket(args[0].charAt(0));
+        }
+        else {
+          result = "Consider adding a \"" + args[0] + "\"";
+        }
       }
       break;
     case IProblem.ParsingErrorInsertTokenAfter:
-      if (args.length > 0) {        
-        result = getErrorMessageForBracket(args[1].charAt(0));
-        
+      if (args.length > 0) {
+        if (args[1].length() == 1) {
+          result = getErrorMessageForBracket(args[1].charAt(0));
+        }
+        else {
+          result = "Consider adding a \"" + args[1] + "\"";
+        }
       }
       break;
     case IProblem.UndefinedMethod:
@@ -115,7 +123,28 @@ public class ErrorMessageSimplifier {
         }
       }
       break;
+    case IProblem.UndefinedField:
+      if (args.length > 0) {
+        result = "I don't know the global variable \"" + args[0] + "\"";
+      }
+      break;
+    case IProblem.UndefinedType:
+      if (args.length > 0) {
+        result = "I don't know the class \"" + args[0] + "\"";
+      }
+      break;
+    case IProblem.UnresolvedVariable:
+      if (args.length > 0) {
+        result = "I can't recognize the variable \"" + args[0] + "\"";
+      }
+      break;
+    case IProblem.UndefinedName:
+      if (args.length > 0) {
+        result = "I don't recognize the name \"" + args[0] + "\"";
+      }
+      break;
     }
+    
     log("Simplified Error Msg: " + result);
     if (result == null)
       return problem.getMessage();
