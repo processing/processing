@@ -6,7 +6,6 @@ the mean as a float between 0 and 1.
 
 import processing.sound.*;
 
-Sound stream;
 SoundFile sample;
 Amplitude rms;
 
@@ -14,10 +13,7 @@ int scale=1;
 
 public void setup() {
     size(640,360);
-      
-    // Create and start the sound renderer
-    stream = new Sound(this, 44100, 512);
-    
+
     //Load and play a soundfile and loop it
     sample = new SoundFile(this, "beat.aiff");
     sample.loop();

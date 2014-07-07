@@ -4,14 +4,15 @@ import processing.core.*;
 public class FFT {
 	
 	PApplet parent;
-	private MethClaInterface m_engine;
+	private Engine m_engine;
 	private long ptr;
 	
 	public FFT(PApplet theParent) {
 		this.parent = theParent;
 		parent.registerMethod("dispose", this);
-		m_engine = new MethClaInterface();
-	}
+		m_engine.setPreferences(theParent, 512, 44100);
+    	m_engine.start();
+   	}
 	
 	public void input(SoundObject input, int fftSize){
 		ptr = m_engine.fft(input.returnId(), fftSize);

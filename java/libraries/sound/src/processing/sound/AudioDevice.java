@@ -18,47 +18,30 @@
  * Boston, MA  02111-1307  USA
  * 
  * @author      ##Wilm Thoben##
- * @modified    ##10/23/2013##
+ * 
  */
 
 package processing.sound;
-import processing.core.*;
+import processing.core.PApplet;
 
-public class Sound{
-	
-	// myParent is a reference to the parent sketch
+
+public class AudioDevice {
+
 	PApplet parent;
-	MethClaInterface methCla;
-	
-	public final static String VERSION = "##library.prettyVersion##";
-	
-	public Sound(PApplet parent, int sampleRate, int bufferSize) {
-		this.parent = parent;
-		parent.registerMethod("dispose", this);
-		welcome();
-		methCla = new MethClaInterface();
-		methCla.engineNew(sampleRate, bufferSize);
-		methCla.engineStart();
-	}
+	static int m_test;
+	private Engine m_engine;
 
-	public Sound(PApplet theParent) {
-		this(theParent, 44100, 512);	
-	}
-	
-	private void welcome() {
-		System.out.println("##library.name## ##library.prettyVersion## by ##author##");
-	}
+    public AudioDevice(PApplet theParent, int sampleRate, int bufferSize) {
+    	m_engine.setPreferences(theParent, bufferSize, sampleRate);
+    	m_engine.start();
+    }
 	
 	public void engineStop() {
-		methCla.engineStop();
-	}
-	
-	public static String version() {
-		return VERSION;
+		m_engine.engineStop();
 	}
 	
 	public void dispose() {
-		methCla.engineStop();
+		m_engine.engineStop();
 	}
-}
 
+}

@@ -5,7 +5,6 @@ In this example it is started and stopped by clicking into the renderer window.
 
 import processing.sound.*;
 
-Sound stream;
 WhiteNoise noise;
 BPF bandPass;
 
@@ -15,8 +14,7 @@ void setup() {
     size(640,360);
     background(255);
     
-    // Create and start the sound renderer and the noise generator
-    stream = new Sound(this);
+    // Create the noise generator + Filter
     noise = new WhiteNoise(this);
     bandPass = new BPF(this);
     noise.play(0.5);

@@ -21,6 +21,8 @@
 
 package processing.mode.experimental;
 
+import galsasson.mode.tweak.SketchParser;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -34,9 +36,16 @@ import javax.swing.ImageIcon;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorState;
+import processing.app.Library;
 import processing.app.Mode;
 import processing.app.Preferences;
+import processing.app.RunnerListener;
+import processing.app.Sketch;
+import processing.app.SketchCode;
+import processing.app.SketchException;
+import processing.mode.java.JavaBuild;
 import processing.mode.java.JavaMode;
+import processing.mode.java.runner.Runner;
 
 
 /**
@@ -54,12 +63,12 @@ public class ExperimentalMode extends JavaMode {
 
     // use libraries folder from javamode. will make sketches using core libraries work, as well as import libraries and examples menus
     for (Mode m : base.getModeList()) {
-    	if (m.getClass() == JavaMode.class) {
-    		JavaMode jMode = (JavaMode) m;
-    		librariesFolder = jMode.getLibrariesFolder();
-    		rebuildLibraryList();
-    		break;
-    	}
+      if (m.getClass() == JavaMode.class) {
+        JavaMode jMode = (JavaMode) m;
+        librariesFolder = jMode.getLibrariesFolder();
+        rebuildLibraryList();
+        break;
+      }
     }
 
     // Fetch examples and reference from java mode
@@ -126,20 +135,35 @@ public class ExperimentalMode extends JavaMode {
     return new File(folder, path);
   }
   
-  volatile public static boolean errorCheckEnabled = true, warningsEnabled = true,
-      codeCompletionsEnabled = true, debugOutputEnabled = false, errorLogsEnabled = false,
-            autoSaveEnabled = true, autoSavePromptEnabled = true,
-            defaultAutoSaveEnabled = true; // ,untitledAutoSaveEnabled;
+  volatile public static boolean errorCheckEnabled = true,
+      warningsEnabled = true, codeCompletionsEnabled = true,
+      debugOutputEnabled = false, errorLogsEnabled = false,
+      autoSaveEnabled = true, autoSavePromptEnabled = true,
+      defaultAutoSaveEnabled = true, // ,untitledAutoSaveEnabled;
+      ccTriggerEnabled = false;
   public static int autoSaveInterval = 3; //in minutes
+  
+  /**
+   * After how many typed characters, code completion is triggered
+   */
+  volatile public static int codeCompletionTriggerLength = 2;
 
   public static final String prefErrorCheck = "pdex.errorCheckEnabled",
       prefWarnings = "pdex.warningsEnabled",
       prefCodeCompletionEnabled = "pdex.ccEnabled",
-      prefDebugOP = "pdex.dbgOutput", prefErrorLogs = "pdex.writeErrorLogs", prefAutoSaveInterval = "pdex.autoSaveInterval",
+      prefDebugOP = "pdex.dbgOutput",
+      prefErrorLogs = "pdex.writeErrorLogs",
+      prefAutoSaveInterval = "pdex.autoSaveInterval",
       prefAutoSave = "pdex.autoSave.autoSaveEnabled", // prefUntitledAutoSave = "pdex.autoSave.untitledAutoSaveEnabled", 
-      prefAutoSavePrompt = "pdex.autoSave.promptDisplay", prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault";
-  
-  public void loadPreferences(){
+      prefAutoSavePrompt = "pdex.autoSave.promptDisplay",
+      prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault",
+      prefCCTriggerEnabled = "pdex.ccTriggerEnabled";
+
+  // TweakMode code (Preferences)
+  volatile public static boolean enableTweak = false;
+  public static final String prefEnableTweak = "pdex.enableTweak";
+
+  public void loadPreferences() {
     log("Load PDEX prefs");
     ensurePrefsExist();
     errorCheckEnabled = Preferences.getBoolean(prefErrorCheck);
@@ -152,43 +176,59 @@ public class ExperimentalMode extends JavaMode {
     autoSaveEnabled = Preferences.getBoolean(prefAutoSave);
     autoSavePromptEnabled = Preferences.getBoolean(prefAutoSavePrompt);
     defaultAutoSaveEnabled = Preferences.getBoolean(prefDefaultAutoSave);
+    ccTriggerEnabled = Preferences.getBoolean(prefCCTriggerEnabled);
+
+    // TweakMode code
+    enableTweak = Preferences.getBoolean(prefEnableTweak);
   }
-  
-  public void savePreferences(){
+
+  public void savePreferences() {
     log("Saving PDEX prefs");
     Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
     Preferences.setBoolean(prefWarnings, warningsEnabled);
     Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);
     Preferences.setBoolean(prefDebugOP, DEBUG);
-    Preferences.setBoolean(prefErrorLogs,errorLogsEnabled);
-    Preferences.setInteger(prefAutoSaveInterval,autoSaveInterval);
+    Preferences.setBoolean(prefErrorLogs, errorLogsEnabled);
+    Preferences.setInteger(prefAutoSaveInterval, autoSaveInterval);
 //    Preferences.setBoolean(prefUntitledAutoSave,untitledAutoSaveEnabled);
-    Preferences.setBoolean(prefAutoSave,autoSaveEnabled);
+    Preferences.setBoolean(prefAutoSave, autoSaveEnabled);
     Preferences.setBoolean(prefAutoSavePrompt, autoSavePromptEnabled);
     Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
+    Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
+
+    // TweakMode code
+    Preferences.setBoolean(prefEnableTweak, enableTweak);
   }
-  
-  public void ensurePrefsExist(){
-    if(Preferences.get(prefErrorCheck) == null) 
-      Preferences.setBoolean(prefErrorCheck,errorCheckEnabled);
-    if(Preferences.get(prefWarnings) == null) 
-      Preferences.setBoolean(prefWarnings,warningsEnabled);
-    if(Preferences.get(prefCodeCompletionEnabled) == null) 
-      Preferences.setBoolean(prefCodeCompletionEnabled,codeCompletionsEnabled);
-    if(Preferences.get(prefDebugOP) == null) 
-      Preferences.setBoolean(prefDebugOP,DEBUG);
-    if(Preferences.get(prefErrorLogs) == null) 
-      Preferences.setBoolean(prefErrorLogs,errorLogsEnabled);
-    if(Preferences.get(prefAutoSaveInterval) == null) 
-      Preferences.setInteger(prefAutoSaveInterval,autoSaveInterval);
+
+  public void ensurePrefsExist() {
+    //TODO: Need to do a better job of managing prefs. Think lists.
+    if (Preferences.get(prefErrorCheck) == null)
+      Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
+    if (Preferences.get(prefWarnings) == null)
+      Preferences.setBoolean(prefWarnings, warningsEnabled);
+    if (Preferences.get(prefCodeCompletionEnabled) == null)
+      Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);
+    if (Preferences.get(prefDebugOP) == null)
+      Preferences.setBoolean(prefDebugOP, DEBUG);
+    if (Preferences.get(prefErrorLogs) == null)
+      Preferences.setBoolean(prefErrorLogs, errorLogsEnabled);
+    if (Preferences.get(prefAutoSaveInterval) == null)
+      Preferences.setInteger(prefAutoSaveInterval, autoSaveInterval);
 //    if(Preferences.get(prefUntitledAutoSave) == null) 
 //      Preferences.setBoolean(prefUntitledAutoSave,untitledAutoSaveEnabled);
-    if(Preferences.get(prefAutoSave) == null) 
-      Preferences.setBoolean(prefAutoSave,autoSaveEnabled);
-    if(Preferences.get(prefAutoSavePrompt) == null) 
-        Preferences.setBoolean(prefAutoSavePrompt,autoSavePromptEnabled);
-    if(Preferences.get(prefDefaultAutoSave) == null) 
-        Preferences.setBoolean(prefDefaultAutoSave,defaultAutoSaveEnabled);
+    if (Preferences.get(prefAutoSave) == null)
+      Preferences.setBoolean(prefAutoSave, autoSaveEnabled);
+    if (Preferences.get(prefAutoSavePrompt) == null)
+      Preferences.setBoolean(prefAutoSavePrompt, autoSavePromptEnabled);
+    if (Preferences.get(prefDefaultAutoSave) == null)
+      Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
+    if (Preferences.get(prefCCTriggerEnabled) == null)
+      Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
+
+    // TweakMode code
+    if (Preferences.get(prefEnableTweak) == null) {
+    	Preferences.setBoolean(prefEnableTweak, enableTweak);
+    }
   }
 
 
@@ -297,4 +337,143 @@ public class ExperimentalMode extends JavaMode {
       "_autosave"
     };
   }
+
+  // TweakMode code
+	@Override
+	public Runner handleRun(Sketch sketch, RunnerListener listener) throws SketchException
+	{
+		if (enableTweak) {
+			return handleTweakPresentOrRun(sketch, listener, false);
+		}
+		else {
+			/* Do the usual (JavaMode style) */
+		    JavaBuild build = new JavaBuild(sketch);
+		    String appletClassName = build.build(false);
+		    if (appletClassName != null) {
+		      final Runner runtime = new Runner(build, listener);
+		      new Thread(new Runnable() {
+		        public void run() {
+		          runtime.launch(false);  // this blocks until finished
+		        }
+		      }).start();
+		      return runtime;
+		    }
+		    return null;
+		}
+	}
+
+	@Override
+	public Runner handlePresent(Sketch sketch, RunnerListener listener) throws SketchException
+	{
+		if (enableTweak) {
+			return handleTweakPresentOrRun(sketch, listener, true);
+		}
+		else {
+			/* Do the usual (JavaMode style) */
+		    JavaBuild build = new JavaBuild(sketch);
+		    String appletClassName = build.build(false);
+		    if (appletClassName != null) {
+		      final Runner runtime = new Runner(build, listener);
+		      new Thread(new Runnable() {
+		        public void run() {
+		          runtime.launch(true);
+		        }
+		      }).start();
+		      return runtime;
+		    }
+		    return null;
+		}
+	}
+
+	public Runner handleTweakPresentOrRun(Sketch sketch, RunnerListener listener, boolean present) throws SketchException
+	{
+		final DebugEditor editor = (DebugEditor)listener;
+		final boolean toPresent = present;
+
+		if (!verifyOscP5()) {
+			editor.deactivateRun();
+			return null;
+		}
+
+		boolean launchInteractive = false;
+
+		if (isSketchModified(sketch)) {
+			editor.deactivateRun();
+			Base.showMessage("Save", "Please save the sketch before running in Tweak Mode.");
+			return null;
+		}
+
+		/* first try to build the unmodified code */
+		JavaBuild build = new JavaBuild(sketch);
+		String appletClassName = build.build(false);
+		if (appletClassName == null) {
+			// unmodified build failed, so fail
+			return null;
+		}
+
+		/* if compilation passed, modify the code and build again */
+		editor.initBaseCode();
+		// check for "// tweak" comment in the sketch
+		boolean requiresTweak = SketchParser.containsTweakComment(editor.baseCode);
+		// parse the saved sketch to get all (or only with "//tweak" comment) numbers
+		final SketchParser parser = new SketchParser(editor.baseCode, requiresTweak);
+
+		// add our code to the sketch
+		launchInteractive = editor.automateSketch(sketch, parser.allHandles);
+
+		build = new JavaBuild(sketch);
+		appletClassName = build.build(false);
+
+		if (appletClassName != null) {
+			final Runner runtime = new Runner(build, listener);
+			new Thread(new Runnable() {
+				public void run() {
+					runtime.launch(toPresent);  // this blocks until finished
+
+					// executed when the sketch quits
+					editor.initEditorCode(parser.allHandles, false);
+					editor.stopInteractiveMode(parser.allHandles);
+				}
+
+			}).start();
+
+			if (launchInteractive) {
+
+				// replace editor code with baseCode
+				editor.initEditorCode(parser.allHandles, false);
+				editor.updateInterface(parser.allHandles, parser.colorBoxes);
+				editor.startInteractiveMode();
+			}
+
+			return runtime;
+		}
+
+		return null;
+	}
+
+	private boolean verifyOscP5()
+	{
+		for (Library l : contribLibraries) {
+			if (l.getName().equals("oscP5")) {
+				return true;
+			}
+		}
+
+		// could not find oscP5 library
+		Base.showWarning("Tweak Mode", "Tweak Mode needs the 'oscP5' library.\n"
+				+ "Please install this library by clicking \"Sketch --> Import Library --> Add Library ...\" and choose 'ocsP5'", null);
+
+		return false;
+	}
+
+	private boolean isSketchModified(Sketch sketch)
+	{
+		for (SketchCode sc : sketch.getCode()) {
+			if (sc.isModified()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

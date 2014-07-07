@@ -5,7 +5,7 @@ import processing.core.PApplet;
 public class Delay implements SoundObject{
 	
 	PApplet parent;
-	private MethClaInterface m_engine;
+	private Engine m_engine;
 	private int m_nodeId;
 	private int[] m_m = {0,0};
 	private float m_maxDelayTime = 2;
@@ -15,8 +15,9 @@ public class Delay implements SoundObject{
 	public Delay(PApplet theParent) {
 		this.parent = theParent;
 		parent.registerMethod("dispose", this);
-		m_engine = new MethClaInterface();		
-	}
+		m_engine.setPreferences(theParent, 512, 44100);
+    	m_engine.start();
+   	}
 	
 	public void process(SoundObject input, float maxDelayTime, float delayTime, float feedBack){
 		m_maxDelayTime=maxDelayTime; m_delayTime=delayTime; m_feedBack=feedBack;

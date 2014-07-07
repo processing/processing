@@ -4,7 +4,7 @@ import processing.core.*;
 public class WhiteNoise implements SoundObject{
 	
 	PApplet parent;
-	private MethClaInterface m_engine;
+	private Engine m_engine;
 	private int[] m_nodeId = {-1,-1};
 	private float m_amp=0.5f;
 	private float m_add=0;
@@ -13,7 +13,8 @@ public class WhiteNoise implements SoundObject{
 	public WhiteNoise(PApplet theParent) {
 		this.parent = theParent;
 		parent.registerMethod("dispose", this);
-		m_engine = new MethClaInterface();			
+		m_engine.setPreferences(theParent, 512, 44100);
+    	m_engine.start();			
 	}
 	
 	public void play(){
