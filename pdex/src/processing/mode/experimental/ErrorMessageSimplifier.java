@@ -82,19 +82,21 @@ public class ErrorMessageSimplifier {
         else {
         result = "Problem with code syntax: Consider removing \"" + args[0]
             + "\"";
-        }
-        break;
+        }        
       }
+      break;
     case IProblem.ParsingErrorInsertToComplete:
-      if (args.length > 0) {
+      if (args.length > 0) {        
         result = getErrorMessageForBracket(args[0].charAt(0));
-        break;
+        
       }
+      break;
     case IProblem.ParsingErrorInsertTokenAfter:
       if (args.length > 0) {        
         result = getErrorMessageForBracket(args[1].charAt(0));
-        break;
+        
       }
+      break;
     case IProblem.UndefinedMethod:
       if (args.length > 2) {
         result = "I don't know the function \"" + args[args.length - 2] + "\"";
