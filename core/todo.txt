@@ -6,6 +6,12 @@ X   https://github.com/processing/processing/issues/257
 X   PVector discussion with Dan
 o   Jer and Dan will look at their code, plus toxiclibs
 
+table
+X major performance improvements to 'newlines' parsing
+X debugging table parsing with header rows
+X bug fix for setting data type
+
+
 applet removal
 _ remove Applet as base class
 _ performance issues on OS X (might be threading due to Applet)
@@ -73,6 +79,8 @@ _   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
 _   hint(ENABLE_2X_PIXELS)?
 _   hidpi is Apple's name as well
 _ no high-res display support for OpenGL
+_   https://github.com/processing/processing/issues/2573
+_   https://jogamp.org/bugzilla/show_bug.cgi?id=741
 _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start
