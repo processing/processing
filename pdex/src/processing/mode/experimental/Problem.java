@@ -130,11 +130,14 @@ public class Problem {
     return lineNumber;
   }
   
-  public int getSourceLineNumber(){
-    // added a -1 to line number because in compile check code
-    // an extra package statement is added, so all line numbers
-    // are increased by 1
-    return iProblem.getSourceLineNumber() - 1;
+  /**
+   * Remember to subtract a -1 to line number because in compile check code an
+   * extra package statement is added, so all line numbers are increased by 1
+   * 
+   * @return
+   */
+  public int getSourceLineNumber(){    
+    return iProblem.getSourceLineNumber();
   }
 
   public void setType(int ProblemType){

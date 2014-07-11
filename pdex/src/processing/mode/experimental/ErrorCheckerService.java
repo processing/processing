@@ -727,7 +727,8 @@ public class ErrorCheckerService implements Runnable{
             .getIProblem().getSourceEnd() - pkgNameOffset;
         log(p.toString());
         log("IProblem Start " + prbStart + ", End " + prbEnd);
-        int javaLineNumber = p.getSourceLineNumber() - 1;
+        int javaLineNumber = p.getSourceLineNumber()
+            - ((compilationUnitState != 2) ? 1 : 2);
         Element lineElement = javaSource.getDefaultRootElement()
             .getElement(javaLineNumber);
         if (lineElement == null) {
