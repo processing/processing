@@ -165,7 +165,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Compilation Checker object.
    */
-  protected Object compilationChecker;
+  protected CompilationChecker compilationChecker;
 
   
   /**
@@ -624,80 +624,71 @@ public class ErrorCheckerService implements Runnable{
         // .println("Experimental Mode: Loading contributed libraries referenced by import statements.");
         
         // The folder SketchBook/modes/ExperimentalMode/mode
-        File f = editor.getMode().getContentFile("mode");
-        
-        if(!f.exists()) {
-        	System.err.println("Could not locate the files required for on-the-fly error checking. Bummer.");
-        	return;
-        }
-        
-        FileFilter fileFilter = new FileFilter() {
-          public boolean accept(File file) {
-            return (file.getName().endsWith(".jar") && !file
-                .getName().startsWith(editor.getMode().getClass().getSimpleName()));
-          }
-        };
+//        File f = editor.getMode().getContentFile("mode");
+//        
+//        if(!f.exists()) {
+//        	System.err.println("Could not locate the files required for on-the-fly error checking. Bummer.");
+//        	return;
+//        }
+//        
+//        FileFilter fileFilter = new FileFilter() {
+//          public boolean accept(File file) {
+//            return (file.getName().endsWith(".jar") && !file
+//                .getName().startsWith(editor.getMode().getClass().getSimpleName()));
+//          }
+//        };
 
-        File[] jarFiles = f.listFiles(fileFilter);
+        // File[] jarFiles = f.listFiles(fileFilter);
         // log( "Jar files found? " + (jarFiles != null));
         //for (File jarFile : jarFiles) {
           //classpathJars.add(jarFile.toURI().toURL());
         //}
         
-        classpath = new URL[classpathJars.size() + jarFiles.length]; 
+        classpath = new URL[classpathJars.size()]; 
         int ii = 0;
         for (; ii < classpathJars.size(); ii++) {
           classpath[ii] = classpathJars.get(ii);
         }
-        for (int i = 0; i < jarFiles.length; i++) {
-          classpath[ii++] = jarFiles[i].toURI().toURL();
-        }
+//        for (int i = 0; i < jarFiles.length; i++) {
+//          classpath[ii++] = jarFiles[i].toURI().toURL();
+//        }
         
         compilationChecker = null;
-        checkerClass = null;
+//        checkerClass = null;
         classLoader = null;
         System.gc();
         // log("CP Len -- " + classpath.length);
         classLoader = new URLClassLoader(classpath);
         // log("1.");
-        checkerClass = Class.forName("CompilationChecker", true,
-            classLoader);
-        // log("2.");
-        compilationChecker = checkerClass.newInstance();
         
+        // log("2.");
+        compilationChecker = new CompilationChecker();        
         loadCompClass = false;
       }
 
       if (compilerSettings == null) {
         prepareCompilerSetting();
       }
-      Method getErrors = checkerClass.getMethod("getErrorsAsObjArr",
-          new Class[] { String.class, String.class, Map.class });
+//      Method getErrors = checkerClass.getMethod("getErrorsAsObjArr",
+//          new Class[] { String.class, String.class, Map.class });
+//
+//      Object[][] errorList = (Object[][]) getErrors
+//          .invoke(compilationChecker, className, sourceCode,
+//              compilerSettings);
 
-      Object[][] errorList = (Object[][]) getErrors
-          .invoke(compilationChecker, className, sourceCode,
-              compilerSettings);
-
-      if (errorList == null) {
-        return;
-      }
       
       synchronized (problemsList) {
-        problems = new DefaultProblem[errorList.length];
-  
-        for (int i = 0; i < errorList.length; i++) {
+        problems = compilationChecker.getErrors(className, sourceCode, compilerSettings, classLoader);
+        if (problems == null) {
+          return;
+        }
+
+        for (int i = 0; i < problems.length; i++) {
   
           // for (int j = 0; j < errorList[i].length; j++)
           // System.out.print(errorList[i][j] + ", ");
   
-          problems[i] = new DefaultProblem((char[]) errorList[i][0],
-              (String) errorList[i][1],
-              ((Integer) errorList[i][2]).intValue(),
-              (String[]) errorList[i][3],
-              ((Integer) errorList[i][4]).intValue(),
-              ((Integer) errorList[i][5]).intValue(),
-              ((Integer) errorList[i][6]).intValue(),
-              ((Integer) errorList[i][7]).intValue() - 1, 0);
+         
           // added a -1 to line number because in compile check code
           // an extra package statement is added, so all line numbers
           // are increased by 1
@@ -714,12 +705,12 @@ public class ErrorCheckerService implements Runnable{
   //        }
           int a[] = calculateTabIndexAndLineNumber(problem.getSourceLineNumber());
           Problem p = new Problem(problem, a[0], a[1]);
-          if ((Boolean) errorList[i][8]) {
+          if (problem.isError()) {
             p.setType(Problem.ERROR);
             containsErrors.set(true); // set flag
           }
           
-          if ((Boolean) errorList[i][9]) {
+          if (problem.isWarning()) {
             p.setType(Problem.WARNING);
           }
   
@@ -730,15 +721,18 @@ public class ErrorCheckerService implements Runnable{
           problemsList.add(p);
         }
       }
-    } catch (ClassNotFoundException e) {
-      System.err.println("Compiltation Checker files couldn't be found! "
-          + e + " compileCheck() problem.");
-      pauseThread();
-    } catch (MalformedURLException e) {
-      System.err.println("Compiltation Checker files couldn't be found! "
-          + e + " compileCheck() problem.");
-      pauseThread();
-    } catch (Exception e) {
+    }
+//      catch (ClassNotFoundException e) {
+//      System.err.println("Compiltation Checker files couldn't be found! "
+//          + e + " compileCheck() problem.");
+//      pauseThread();
+//    } catch (MalformedURLException e) {
+//      System.err.println("Compiltation Checker files couldn't be found! "
+//          + e + " compileCheck() problem.");
+//      pauseThread();
+//    } 
+    
+    catch (Exception e) {
       System.err.println("compileCheck() problem." + e);
       e.printStackTrace();
       pauseThread();
