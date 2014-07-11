@@ -703,7 +703,12 @@ public class ErrorCheckerService implements Runnable{
   //        for (String j : problem.getArguments()) {
   //          log("arg " + j);
   //        }
-          int a[] = calculateTabIndexAndLineNumber(problem.getSourceLineNumber());
+          
+          // added a -1 to line number because in compile check code
+          // an extra package statement is added, so all line numbers
+          // are increased by 1
+          int a[] = calculateTabIndexAndLineNumber(problem.getSourceLineNumber() - 1);
+          
           Problem p = new Problem(problem, a[0], a[1]);
           if (problem.isError()) {
             p.setType(Problem.ERROR);
@@ -787,7 +792,7 @@ public class ErrorCheckerService implements Runnable{
             .getIProblem().getSourceEnd() - pkgNameOffset;
         log(p.toString());
         log("IProblem Start " + prbStart + ", End " + prbEnd);
-        int javaLineNumber = p.getIProblem().getSourceLineNumber() - 1;
+        int javaLineNumber = p.getSourceLineNumber() - 1;
         Element lineElement = javaSource.getDefaultRootElement()
             .getElement(javaLineNumber);
         if (lineElement == null) {
