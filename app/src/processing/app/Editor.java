@@ -2635,7 +2635,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Clear the status area.
    */
   public void statusEmpty() {
-    statusNotice(EMPTY);
+    status.empty();
   }
 
 
