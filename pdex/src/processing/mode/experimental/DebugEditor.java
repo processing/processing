@@ -657,9 +657,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         });
         debugMenu.add(debugMessagesEnabled);     
         
-        showOutline = Toolkit.newJMenuItem("Show Outline", KeyEvent.VK_L);
-        showOutline.addActionListener(this);
-        debugMenu.add(showOutline);
         
         writeErrorLog = new JCheckBoxMenuItem("Write Errors to Log");
         writeErrorLog.setSelected(ExperimentalMode.errorLogsEnabled);
@@ -683,6 +680,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         });
         debugMenu.add(jitem);
         */
+        showOutline = Toolkit.newJMenuItem("Show Outline", KeyEvent.VK_L);
+        showOutline.addActionListener(this);
+        debugMenu.add(showOutline);
+        
         return debugMenu;
     }
     

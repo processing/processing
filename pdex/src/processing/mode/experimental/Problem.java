@@ -129,6 +129,16 @@ public class Problem {
   public int getLineNumber(){
     return lineNumber;
   }
+  
+  /**
+   * Remember to subtract a -1 to line number because in compile check code an
+   * extra package statement is added, so all line numbers are increased by 1
+   * 
+   * @return
+   */
+  public int getSourceLineNumber(){    
+    return iProblem.getSourceLineNumber();
+  }
 
   public void setType(int ProblemType){
     if(ProblemType == ERROR)
