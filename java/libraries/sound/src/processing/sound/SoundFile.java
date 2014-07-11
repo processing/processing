@@ -137,8 +137,6 @@ public class SoundFile implements SoundObject {
 				m_nodeId = methCla.soundFilePlayMulti(m_rate, m_amp, m_add, false, m_filePath, this.duration()*(1/m_rate), m_cue);
 			}	
         }
-
-        m_cue = 0;
 	}
 	
 	public void cue(float time){

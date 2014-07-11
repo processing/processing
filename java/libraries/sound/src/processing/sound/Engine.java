@@ -198,7 +198,17 @@ public class Engine {
 	public static void delaySet(float delayTime, float feedBack, int nodeId){
 		methCla.delaySet(delayTime, feedBack, nodeId);
 	};
-	  
+	
+	// Reverb
+
+  	public static int reverbPlay(int[] input, float room, float damp, float wet){
+  		return methCla.reverbPlay(input, room, damp, wet);
+  	};
+  
+  	public static void reverbSet(float room, float damp, float wet, int nodeId){
+  		methCla.reverbSet(room, damp, wet, nodeId);
+  	};
+
 	// Amplitude Follower
 	  
 	public static long amplitude(int[] nodeId){

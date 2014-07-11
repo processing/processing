@@ -28,6 +28,7 @@
 #include "methcla/plugins/hpf.h"
 #include "methcla/plugins/lpf.h"
 #include "methcla/plugins/delay.h"
+#include "methcla/plugins/reverb.h"
 #include "methcla/plugins/audio_in.h"
 
 #define OUTPUT_BUFFER_SIZE 1024
@@ -78,6 +79,7 @@ JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_engineNew (JNIEnv 
            .addLibrary(methcla_plugins_hpf)
            .addLibrary(methcla_plugins_lpf)           
            .addLibrary(methcla_plugins_delay)
+           .addLibrary(methcla_plugins_reverb)
            .addLibrary(methcla_plugins_fft)
            .addLibrary(methcla_plugins_audioin);
 
@@ -114,8 +116,6 @@ JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_synthStop(JNIEnv *
     request.free(m_nodeId[1]);
 
     request.closeBundle();
-    engine().addNotificationHandler(engine().freeNodeIdHandler(m_nodeId[0]));
-    engine().addNotificationHandler(engine().freeNodeIdHandler(m_nodeId[1]));
     request.send();
 
     env->ReleaseIntArrayElements(nodeId, m_nodeId, 0);
@@ -163,6 +163,9 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_sinePlay(JNIE
             {pos, 1.f},
             {Methcla::Value(1.f)}
     );
+    
+    engine().addNotificationHandler(engine().freeNodeIdHandler(synth.id()));
+    engine().addNotificationHandler(engine().freeNodeIdHandler(pan.id()));
     
     request.mapOutput(synth.id(), 0, bus); 
     request.mapInput(pan.id(), 0, bus); 
@@ -494,6 +497,10 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_soundFilePlay
             { Methcla::Value(dur) }
     );
 
+    engine().addNotificationHandler(engine().freeNodeIdHandler(synth.id()));
+    engine().addNotificationHandler(engine().freeNodeIdHandler(pan.id()));
+    engine().addNotificationHandler(engine().freeNodeIdHandler(after.id()));
+                                    
     request.mapOutput(synth.id(), 0, bus);
     request.mapInput(pan.id(), 0, bus);
     request.mapOutput(pan.id(), 0, Methcla::AudioBusId(0), Methcla::kBusMappingExternal);
@@ -507,10 +514,6 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_soundFilePlay
         request.activate(after.id());
     }   
     request.closeBundle();
-    
-    engine().addNotificationHandler(engine().freeNodeIdHandler(synth.id()));
-    engine().addNotificationHandler(engine().freeNodeIdHandler(pan.id()));
-    engine().addNotificationHandler(engine().freeNodeIdHandler(after.id()));
   
     request.send();
 
@@ -952,7 +955,6 @@ JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_delayPlay(JNIEnv *
 
 
 JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_delaySet(JNIEnv *env, jobject object, jfloat delayTime, jfloat feedBack, jint nodeId){
-    
     Methcla::Request request(engine());
     request.openBundle(Methcla::immediately);
     request.set(nodeId, 0, delayTime);
@@ -961,7 +963,51 @@ JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_delaySet(JNIEnv *e
     request.send(); 
 };
 
+JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_reverbPlay(JNIEnv *env, jobject object, jintArray nodeId, jfloat room, jfloat damp, jfloat wet){
 
+    jint* m_nodeId = env->GetIntArrayElements(nodeId, 0); 
+
+    Methcla::AudioBusId in_bus = m_engine->audioBusId().alloc();
+    Methcla::AudioBusId out_bus = m_engine->audioBusId().alloc();
+    Methcla::Request request(engine());
+    
+    float dry = 1-wet;
+
+    request.openBundle(Methcla::immediately);
+    auto synth = request.synth(
+            METHCLA_PLUGINS_REVERB_URI,
+            Methcla::NodePlacement::after(m_nodeId[0]),
+            {room, damp, wet, dry},
+            {}
+    );
+
+    request.mapOutput(m_nodeId[0], 0, in_bus);
+    request.mapInput(synth.id(), 0, in_bus);
+    request.mapOutput(synth.id(), 0, out_bus);
+    request.mapInput(m_nodeId[1], 0, out_bus);
+
+    request.activate(synth.id());
+
+    request.closeBundle();
+    request.send();
+    
+    env->ReleaseIntArrayElements(nodeId, m_nodeId, 0);
+
+    return synth.id();
+};
+
+JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_reverbSet(JNIEnv *env, jobject object, jfloat room, jfloat damp, jfloat wet, jint nodeId){
+    Methcla::Request request(engine());
+    float dry = 1-wet;
+
+    request.openBundle(Methcla::immediately);
+    request.set(nodeId, 0, room);
+    request.set(nodeId, 1, damp);
+    request.set(nodeId, 2, wet);
+    request.set(nodeId, 3, dry);
+    request.closeBundle();
+    request.send(); 
+};
 
 
 JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_amplitude(JNIEnv *env, jobject object, jintArray nodeId){
