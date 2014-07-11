@@ -619,49 +619,17 @@ public class ErrorCheckerService implements Runnable{
       // If imports have changed, reload classes with new classpath.
       if (loadCompClass) {
 
-        // if (classpathJars.size() > 0)
-        // System.out
-        // .println("Experimental Mode: Loading contributed libraries referenced by import statements.");
-        
-        // The folder SketchBook/modes/ExperimentalMode/mode
-//        File f = editor.getMode().getContentFile("mode");
-//        
-//        if(!f.exists()) {
-//        	System.err.println("Could not locate the files required for on-the-fly error checking. Bummer.");
-//        	return;
-//        }
-//        
-//        FileFilter fileFilter = new FileFilter() {
-//          public boolean accept(File file) {
-//            return (file.getName().endsWith(".jar") && !file
-//                .getName().startsWith(editor.getMode().getClass().getSimpleName()));
-//          }
-//        };
-
-        // File[] jarFiles = f.listFiles(fileFilter);
-        // log( "Jar files found? " + (jarFiles != null));
-        //for (File jarFile : jarFiles) {
-          //classpathJars.add(jarFile.toURI().toURL());
-        //}
-        
         classpath = new URL[classpathJars.size()]; 
         int ii = 0;
         for (; ii < classpathJars.size(); ii++) {
           classpath[ii] = classpathJars.get(ii);
         }
-//        for (int i = 0; i < jarFiles.length; i++) {
-//          classpath[ii++] = jarFiles[i].toURI().toURL();
-//        }
         
         compilationChecker = null;
-//        checkerClass = null;
         classLoader = null;
         System.gc();
         // log("CP Len -- " + classpath.length);
         classLoader = new URLClassLoader(classpath);
-        // log("1.");
-        
-        // log("2.");
         compilationChecker = new CompilationChecker();        
         loadCompClass = false;
       }
@@ -669,13 +637,6 @@ public class ErrorCheckerService implements Runnable{
       if (compilerSettings == null) {
         prepareCompilerSetting();
       }
-//      Method getErrors = checkerClass.getMethod("getErrorsAsObjArr",
-//          new Class[] { String.class, String.class, Map.class });
-//
-//      Object[][] errorList = (Object[][]) getErrors
-//          .invoke(compilationChecker, className, sourceCode,
-//              compilerSettings);
-
       
       synchronized (problemsList) {
         problems = compilationChecker.getErrors(className, sourceCode, compilerSettings, classLoader);
@@ -685,25 +646,8 @@ public class ErrorCheckerService implements Runnable{
 
         for (int i = 0; i < problems.length; i++) {
   
-          // for (int j = 0; j < errorList[i].length; j++)
-          // System.out.print(errorList[i][j] + ", ");
-  
-         
-          // added a -1 to line number because in compile check code
-          // an extra package statement is added, so all line numbers
-          // are increased by 1
-  
-          // System.out
-          // .println("ECS: " + problems[i].getMessage() + ","
-          // + problems[i].isError() + ","
-          // + problems[i].isWarning());
-  
           IProblem problem = problems[i];
-  //        log(problem.getMessage());
-  //        for (String j : problem.getArguments()) {
-  //          log("arg " + j);
-  //        }
-          
+
           // added a -1 to line number because in compile check code
           // an extra package statement is added, so all line numbers
           // are increased by 1
@@ -727,15 +671,6 @@ public class ErrorCheckerService implements Runnable{
         }
       }
     }
-//      catch (ClassNotFoundException e) {
-//      System.err.println("Compiltation Checker files couldn't be found! "
-//          + e + " compileCheck() problem.");
-//      pauseThread();
-//    } catch (MalformedURLException e) {
-//      System.err.println("Compiltation Checker files couldn't be found! "
-//          + e + " compileCheck() problem.");
-//      pauseThread();
-//    } 
     
     catch (Exception e) {
       System.err.println("compileCheck() problem." + e);

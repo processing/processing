@@ -433,11 +433,13 @@ public class CompilationChecker {
       settings = compilerSettings;
     }
 
+    CompilerOptions cop = new CompilerOptions();
+    cop.set(settings);
     CompileRequestorImpl requestor = new CompileRequestorImpl();
     Compiler compiler = new Compiler(new NameEnvironmentImpl(unit),
                                      DefaultErrorHandlingPolicies
                                          .proceedWithAllProblems(),
-                                     new CompilerOptions(settings), requestor,
+                                     settings, requestor,
                                      new DefaultProblemFactory(Locale
                                          .getDefault()));
     compiler.compile(new ICompilationUnit[] { unit });
