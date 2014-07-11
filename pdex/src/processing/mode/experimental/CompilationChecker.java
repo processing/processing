@@ -96,7 +96,7 @@ public class CompilationChecker {
 
     @Override
     public boolean ignoreOptionalProblems() {
-      return true;
+      return false;
     }
   }
 
