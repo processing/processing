@@ -21,6 +21,8 @@
   - Pitchtracker
   - isPlaying method for Synths
   - helper functions (ampToDB, midiToFreq etc..)
+  - make non-bandlimited a pro option
+
 
   EYE ON THE FUTURE
   - Multichannel panning
