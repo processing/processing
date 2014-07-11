@@ -57,8 +57,8 @@
     <property environment="env" />
 
     <!-- need to stay at 1.6 until we update ecj.jar -->
-    <javac source="1.6" 
-	   target="1.6" 
+    <javac source="1.8"
+	   target="1.8"
 	   destdir="bin" 
 	   excludes="**/tools/format/**" 
 	   encoding="UTF-8" 

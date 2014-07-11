@@ -21,6 +21,7 @@
 
   <!-- Require Java 7 to bootstrap, otherwise there will be sadness. 
        Java 1.8 caused build problems (with ECJ?) so not supported. --> 
+<!--
   <fail message="Unsupported Java version: ${java.version}. Make sure that Java 7 (aka Java 1.7) is installed."> 
     <condition> 
       <not> 
@@ -30,6 +31,7 @@
       </not> 
     </condition> 
   </fail> 
+-->
 
   <!-- Figure out the JRE download location for Linux and Windows. -->
   <condition property="jre.file" value="jre-7u40-${platform}-i586.tgz"> 
@@ -151,8 +153,8 @@
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.update.macosx" value="60" />
-  <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_${jdk.update.macosx}.jdk" />
+  <property name="jdk.update.macosx" value="05" />
+  <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_${jdk.update.macosx}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
@@ -188,7 +190,7 @@
     <include name="app/lib/org-netbeans-swing-outline.jar" />
     <include name="app/lib/jdi.jar" />
     <include name="app/lib/jdimodel.jar" />
-    <include name="app/lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar" />
+    <include name="app/lib/org.eclipse.osgi_3.10.0.v20140606-1445.jar" />
     <include name="app/lib/com.ibm.icu_4.4.2.v20110823.jar" />
   </fileset>
 
@@ -404,7 +406,7 @@
       <classpath file="../app/lib/org-netbeans-swing-outline.jar" />
       <classpath file="../app/lib/jdi.jar" />
       <classpath file="../app/lib/jdimodel.jar" />
-      <classpath file="../app/lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar" />
+      <classpath file="../app/lib/org.eclipse.osgi_3.10.0.v20140606-1445.jar" />
       <classpath file="../app/lib/com.ibm.icu_4.4.2.v20110823.jar" />
 
       <!-- plus core.jar... note that this is no longer shared -->
@@ -476,7 +478,7 @@
     <!--
     Processing.app/Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/lib/fonts
     -->
-    <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/lib/fonts">
+    <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.8.0_${jdk.update.macosx}.jdk/Contents/Home/jre/lib/fonts">
       <fileset dir="shared/lib/fonts" includes="*" />
     </copy>
 
@@ -529,7 +531,7 @@
       <arg value="--force" />
       <arg value="--sign" />
       <arg value="Developer ID Application" />
-      <arg value="Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk" />
+      <arg value="Processing.app/Contents/PlugIns/jdk1.8.0_${jdk.update.macosx}.jdk" />
     </exec>
 
     <exec executable="/usr/bin/codesign" dir="macosx/work">
@@ -903,7 +905,7 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg line="core -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../core/library/jogl-all.jar:../core/bin:../core/library/gluegen-rt.jar" destdir="javadoc/core" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="false" use="false" version="false">
+    <javadoc access="public" author="false" classpath="../core/library/jogl-all.jar:../core/bin:../core/library/gluegen-rt.jar" destdir="javadoc/core" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.8" splitindex="false" use="false" version="false">
 
       <!-- provide links for java.* classes. 
 	   also suppresses the java.lang prefix in the text.  --> 
@@ -930,7 +932,7 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg line="everything -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../java/libraries/video/library/jna.jar:../java/libraries/serial/bin:lib/antlr.jar:../core/library/jogl-all.jar:../java/libraries/video/bin:lib/apple.jar:lib/jna.jar:lib/ant-launcher.jar:../java/libraries/pdf/bin:lib/ant.jar:../core/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/video/library/gstreamer-java.jar:lib/org-netbeans-swing-outline.jar:../java/libraries/dxf/bin:bin:../java/libraries/net/bin:../java/libraries/serial/library/jssc.jar:../core/library/gluegen-rt.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="false" use="false" version="false" noqualifier="all">
+    <javadoc access="public" author="false" classpath="../java/libraries/video/library/jna.jar:../java/libraries/serial/bin:lib/antlr.jar:../core/library/jogl-all.jar:../java/libraries/video/bin:lib/apple.jar:lib/jna.jar:lib/ant-launcher.jar:../java/libraries/pdf/bin:lib/ant.jar:../core/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/video/library/gstreamer-java.jar:lib/org-netbeans-swing-outline.jar:../java/libraries/dxf/bin:bin:../java/libraries/net/bin:../java/libraries/serial/library/jssc.jar:../core/library/gluegen-rt.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.8" splitindex="false" use="false" version="false" noqualifier="all">
 
       <arg value="-notimestamp" />
 
