@@ -3242,9 +3242,8 @@ public class PGraphicsOpenGL extends PGraphics {
     normalMode = NORMAL_MODE_SHAPE;
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
-    // TODO: Arc should be drawn in CCW order (left-handed)
-    // Temp fix: invert arc normal
-    inGeo.setNormal(normalX, normalY, -normalZ);
+
+    inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addArc(x, y, w, h, start, stop, fill, stroke, mode);
     endShape();
   }
@@ -8101,50 +8100,90 @@ public class PGraphicsOpenGL extends PGraphics {
       int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
       int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
 
-      int idx0 = addVertex(centerX, centerY, VERTEX, true);
+      // get length before wrapping indexes so (startLUT <= stopLUT);
+      int length = PApplet.constrain(stopLUT - startLUT, 0, SINCOS_LENGTH);
 
-      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
-      int pidx = 0, idx = 0;
-      for (int i = startLUT; i < stopLUT; i += increment) {
-        int ii = i % SINCOS_LENGTH;
-        // modulo won't make the value positive
+      boolean fullCircle = length == SINCOS_LENGTH;
+
+      if (fullCircle && arcMode == CHORD) {
+        // get rid of overlapping vertices,
+        // solves problem with closing edge in P3D
+        length -= 1;
+        stopLUT -= 1;
+      }
+
+      { // wrap indexes so they are safe to use in LUT
+        startLUT %= SINCOS_LENGTH;
+        if (startLUT < 0) startLUT += SINCOS_LENGTH;
+
+        stopLUT %= SINCOS_LENGTH;
+        if (stopLUT < 0) stopLUT += SINCOS_LENGTH;
+      }
+
+      int idx0;
+      if (arcMode == CHORD || arcMode == OPEN) {
+        // move center to the middle of flat side
+        // to properly display arcs smaller than PI
+        float relX = (cosLUT[startLUT] + cosLUT[stopLUT]) * 0.5f * hr;
+        float relY = (sinLUT[startLUT] + sinLUT[stopLUT]) * 0.5f * vr;
+        idx0 = addVertex(centerX + relX, centerY + relY, VERTEX, true);
+      } else {
+        idx0 = addVertex(centerX, centerY, VERTEX, true);
+      }
+
+      int inc;
+      { // initializes inc the same way ellipse does
+        float sx1 = pg.screenX(x, y);
+        float sy1 = pg.screenY(x, y);
+        float sx2 = pg.screenX(x + w, y + h);
+        float sy2 = pg.screenY(x + w, y + h);
+
+        int accuracy =
+          PApplet.min(MAX_POINT_ACCURACY, PApplet.max(MIN_POINT_ACCURACY,
+                      (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) /
+                      POINT_ACCURACY_FACTOR)));
+        inc = PApplet.max(1, SINCOS_LENGTH / accuracy);
+      }
+
+      int idx = idx0;
+      int pidx;
+
+      int i = -inc;
+      int ii;
+
+      // i:  (0 -> length) inclusive
+      // ii: (stopLUT -> startLUT) inclusive, going CCW (left-handed),
+      //     wrapping around end of LUT
+      do {
+        i += inc;
+        i = PApplet.min(i, length); // clamp so last vertex won't go over
+
+        ii = stopLUT - i; // ii is never smaller than -SINCOS_LENGTH
         if (ii < 0) ii += SINCOS_LENGTH;
+
+        pidx = idx;
         idx = addVertex(centerX + cosLUT[ii] * hr,
                         centerY + sinLUT[ii] * vr,
-                        VERTEX, i == startLUT && !fill);
+                        VERTEX, i == 0 && !fill);
 
         if (stroke) {
-          if (arcMode == PIE) {
-            addEdge(pidx, idx, i == startLUT, false);
-          } else if (startLUT < i) {
-            addEdge(pidx, idx, i == startLUT + 1, arcMode == 0 &&
-                               i == stopLUT - 1);
+          if (arcMode == CHORD || arcMode == PIE) {
+            addEdge(pidx, idx, i == 0, false);
+          } else if (0 < i) {
+            // when drawing full circle, the edge is closed later
+            addEdge(pidx, idx, i == inc, i == length && !fullCircle);
           }
         }
+      } while (i < length);
 
-        pidx = idx;
-      }
-      // draw last point explicitly for accuracy
-      idx = addVertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
-                      centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr,
-                      VERTEX, false);
+      // keeping last vertex as idx and second last vertex as pidx
+
       if (stroke) {
-        if (arcMode == PIE) {
+        if (arcMode == CHORD || arcMode == PIE) {
           addEdge(idx, idx0, false, false);
           closeEdge(idx, idx0);
-        }
-      }
-      if (arcMode == CHORD || arcMode == OPEN) {
-        // Add a last vertex coincident with the first along the perimeter
-        pidx = idx;
-        int i = startLUT;
-        int ii = i % SINCOS_LENGTH;
-        if (ii < 0) ii += SINCOS_LENGTH;
-        idx = addVertex(centerX + cosLUT[ii] * hr,
-                        centerY + sinLUT[ii] * vr,
-                        VERTEX, false);
-        if (stroke && arcMode == CHORD) {
-          addEdge(pidx, idx, false, true);
+        } else if (fullCircle) {
+          closeEdge(pidx, idx);
         }
       }
     }
