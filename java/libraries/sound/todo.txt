@@ -1,0 +1,32 @@
+// // // // // // // // // // // // // // // // // // // // //
+
+2.0 SOUND
+
+  FOR RELEASE
+  
+  Bugs:
+  - Fix FFT Crash
+  - Fix Low Pass Distortion
+  - Fix problem of passing effects to Analyzers 
+
+  Features:  
+  - Make oscillators modulatable
+  - Bandlimit oscillators
+  - Introduce wet/dry for Delay
+  - Interpolate control signals
+  - Overload Filter Functions
+  - If you loop a sample and use jump make it play from the beginning
+    
+  NICE
+  - Pitchtracker
+  - isPlaying method for Synths
+  - helper functions (ampToDB, midiToFreq etc..)
+  - make non-bandlimited a pro option
+
+
+  EYE ON THE FUTURE
+  - Multichannel panning
+  - More Descriptors (beat tracking etc.?)
+  - Separate audio scheduling loop
+  
+// // // // // // // // // // // // // // // // // // // // //

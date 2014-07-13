@@ -3,12 +3,19 @@ X increase heap size to 256m (-Xmx256) per Manindra request
 X use a ButtonGroup so that the current Mode cannot be de-selected
 X   https://github.com/processing/processing/issues/2545
 
-_ color selector for the pref
-_   https://github.com/processing/processing/pull/2568
 
 pulls
 X Implementation of a list of open sketches in the Sketch menu
 X   https://github.com/processing/processing/pull/2551
+_ color selector for the pref (not reading it properly)
+_   https://github.com/processing/processing/pull/2568
+
+_ look at the sound library https://github.com/wirsing/ProcessingSound
+
+_ moving p5 examples to the web repo
+all examples are out of "processing/java" and are now in "processing-docs/content/". The Book examples have been removed entirely from our repositories.
+_ remove reference.zip from main repo
+_ processing-web/java_generate/ReferenceGenerator
 
 _ try new syntax package
 _ possibility of libraries folder inside a particular sketch?
@@ -23,8 +30,6 @@ _ move examples into web repo
 _ make reference and examples build process part of dist
 _   separate ant targets, but only require them for dist
 _   as separate targets, folks can build explicitly if they'd like
-_ remove reference.zip from main repo
-_ processing-web/java_generate/ReferenceGenerator
 
 _ shouldn't write sketch.properties unless it's a non-default mode
 _   https://github.com/processing/processing/issues/2531

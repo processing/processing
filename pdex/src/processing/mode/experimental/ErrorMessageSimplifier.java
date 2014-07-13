@@ -82,68 +82,29 @@ public class ErrorMessageSimplifier {
         else {
         result = "Problem with code syntax: Consider removing \"" + args[0]
             + "\"";
-        }
-        break;
+        }        
       }
+      break;
     case IProblem.ParsingErrorInsertToComplete:
       if (args.length > 0) {
-
-        switch (args[0].charAt(0)) {
-        case ';':
-          result = "You're missing a semi-colon \";\"";
-          break;
-        case '[':
-          result = "I sense a missing opening square bracket \"[\"";
-          break;
-        case ']':
-          result = "Looks like you forgot to close your square bracket \"]\"";
-          break;
-        case '(':
-          result = "I sense a missing opening square bracket \"(\"";
-          break;
-        case ')':
-          result = "Looks like you forgot to close your parentheses \")\"";
-          break;
-        case '{':
-          result = "I sense a missing opening curly brace \";\"";
-          break;
-        case '}':
-          result = "Looks like you forgot to close your curly brace \";\"";
-          break;
-        default:
+        if (args[0].length() == 1) {
+          result = getErrorMessageForBracket(args[0].charAt(0));
+        }
+        else {
           result = "Consider adding a \"" + args[0] + "\"";
         }
-        break;
       }
+      break;
     case IProblem.ParsingErrorInsertTokenAfter:
       if (args.length > 0) {
-        switch (args[1].charAt(0)) {
-        case ';':
-          result = "You're missing a semi-colon \";\"";
-          break;
-        case '[':
-          result = "I sense a missing opening square bracket \"[\"";
-          break;
-        case ']':
-          result = "Looks like you forgot to close your square bracket \"]\"";
-          break;
-        case '(':
-          result = "I sense a missing opening square bracket \"(\"";
-          break;
-        case ')':
-          result = "Looks like you forgot to close your parentheses \")\"";
-          break;
-        case '{':
-          result = "I sense a missing opening curly brace \";\"";
-          break;
-        case '}':
-          result = "Looks like you forgot to close your curly brace \";\"";
-          break;
-        default:
+        if (args[1].length() == 1) {
+          result = getErrorMessageForBracket(args[1].charAt(0));
+        }
+        else {
           result = "Consider adding a \"" + args[1] + "\"";
         }
-        break;
       }
+      break;
     case IProblem.UndefinedMethod:
       if (args.length > 2) {
         result = "I don't know the function \"" + args[args.length - 2] + "\"";
@@ -162,7 +123,34 @@ public class ErrorMessageSimplifier {
         }
       }
       break;
+    case IProblem.UndefinedField:
+      if (args.length > 0) {
+        result = "I don't know the global variable \"" + args[0] + "\"";
+      }
+      break;
+    case IProblem.UndefinedType:
+      if (args.length > 0) {
+        result = "I don't know the class \"" + args[0] + "\"";
+      }
+      break;
+    case IProblem.UnresolvedVariable:
+      if (args.length > 0) {
+        result = "I can't recognize the variable \"" + args[0] + "\"";
+      }
+      break;
+    case IProblem.UndefinedName:
+      if (args.length > 0) {
+        result = "I don't recognize the name \"" + args[0] + "\"";
+      }
+      break;
+    case IProblem.TypeMismatch:
+      if (args.length > 1) {
+        result = "You can't assign a \"" + getSimpleName(args[0])
+            + "\" type to a \"" + getSimpleName(args[1]) + "\" type";
+      }
+      break;
     }
+    
     log("Simplified Error Msg: " + result);
     if (result == null)
       return problem.getMessage();
@@ -196,5 +184,37 @@ public class ErrorMessageSimplifier {
     }
     return res.substring(2, res.length());
   }
+  
+  private static String getErrorMessageForBracket(char c){
+    String result = null;
+    switch (c) {
+    case ';':
+      result = "You're missing a semi-colon \";\"";
+      break;
+    case '[':
+      result = "I sense a missing opening square bracket \"[\"";
+      break;
+    case ']':
+      result = "Looks like you forgot to close your square bracket \"]\"";
+      break;
+    case '(':
+      result = "I sense a missing opening parentheses \"(\"";
+      break;
+    case ')':
+      result = "Looks like you forgot to close your parentheses \")\"";
+      break;
+    case '{':
+      result = "I sense a missing opening curly brace \"{\"";
+      break;
+    case '}':
+      result = "Looks like you forgot to close your curly brace \"}\"";
+      break;
+    default:
+      result = "Consider adding a \"" + c + "\"";
+    }
+
+    return result;
+  }
+  
 
 }

@@ -159,6 +159,7 @@ public class Table {
     for (TableRow row : rows) {
       if (!typed) {
         setColumnTypes(row.getColumnTypes());
+        typed = true;
       }
       addRow(row);
     }
@@ -417,6 +418,10 @@ public class Table {
     char[] c = new char[100];
     int count = 0;
     boolean insideQuote = false;
+
+    int alloc = 100;
+    setRowCount(100);
+
     int row = 0;
     int col = 0;
     int ch;
@@ -462,14 +467,23 @@ public class Table {
           }
           setString(row, col, new String(c, 0, count));
           count = 0;
-          if (row == 0 && header) {
+          row++;
+          if (row == 1 && header) {
             // Use internal row removal (efficient because only one row).
             removeTitleRow();
             // Un-set the header variable so that next time around, we don't
             // just get stuck into a loop, removing the 0th row repeatedly.
             header = false;
+            // Reset the number of rows (removeTitleRow() won't reset our local 'row' counter)
+            row = 0;
           }
-          row++;
+//          if (row % 1000 == 0) {
+//            PApplet.println(PApplet.nfc(row));
+//          }
+          if (row == alloc) {
+            alloc *= 2;
+            setRowCount(alloc);
+          }
           col = 0;
 
         } else if (ch == ',') {
@@ -490,6 +504,9 @@ public class Table {
     // catch any leftovers
     if (count > 0) {
       setString(row, col, new String(c, 0, count));
+    }
+    if (alloc != row) {
+      setRowCount(row);  // shrink to the actual size
     }
   }
 

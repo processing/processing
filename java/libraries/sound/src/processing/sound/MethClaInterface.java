@@ -106,6 +106,12 @@ public class MethClaInterface
   
   public native void delaySet(float delayTime, float feedBack, int nodeId);
 
+  // Reverb
+
+  public native int reverbPlay(int[] input, float room, float damp, float wet);
+  
+  public native void reverbSet(float room, float damp, float wet, int nodeId);
+  
   // Patch cable
   
   //public native int out(int[] in, int[] out);

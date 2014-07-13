@@ -273,6 +273,22 @@ JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_delaySet
 
 /*
  * Class:     processing_sound_MethClaInterface
+ * Method:    reverbPlay
+ * Signature: ([IFFF)I
+ */
+JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_reverbPlay
+  (JNIEnv *, jobject, jintArray, jfloat, jfloat, jfloat);
+
+/*
+ * Class:     processing_sound_MethClaInterface
+ * Method:    reverbSet
+ * Signature: (FFFI)V
+ */
+JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_reverbSet
+  (JNIEnv *, jobject, jfloat, jfloat, jfloat, jint);
+
+/*
+ * Class:     processing_sound_MethClaInterface
  * Method:    amplitude
  * Signature: ([I)J
  */
