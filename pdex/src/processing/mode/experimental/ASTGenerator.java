@@ -2020,6 +2020,7 @@ public class ASTGenerator {
       pdeOffsets[i][2] = awrap.getPDECodeOffsetForSN(this);
     }
     
+    editor.startCompoundEdit();
     for (int i = 0; i < defCU.getChildCount(); i++) {
       ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
           .getChildAt(i))).getUserObject();
@@ -2043,6 +2044,7 @@ public class ASTGenerator {
       //int k = JOptionPane.showConfirmDialog(new JFrame(), "Rename?","", JOptionPane.INFORMATION_MESSAGE);
       editor.ta.setSelectedText(newName);
     }
+    editor.stopCompoundEdit();
     errorCheckerService.resumeThread();
     editor.getSketch().setModified(true);
     errorCheckerService.runManualErrorCheck();
