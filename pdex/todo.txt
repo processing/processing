@@ -12,9 +12,15 @@ Manindra Moharana (me@mkmoharana.com)
 Critical Bugs
 -------------
 
--[ ] Better memory management. #1
+-[x] Better memory management. #1
 
 -[ ] Breakpoints in classes. #47
+
+
+Misc Tasks
+----------
+
+-[ ] Trim CompilationChecker class
 
 
 Normal Bugs
@@ -35,16 +41,14 @@ Enhancements/New Features
  
 -[ ] Gotta fix PEH for multiple errors per line. Will be slightly meticulous.
 
+-[ ] Better comment/uncomment
+
 -[ ] When viewing Outline View, instead of showing the beginning of the list, 
 it should select the current node element within which the cursor is presently 
 positioned.
 
 -[ ] Begin work on code snippets.
 
--[ ] JUnit Testing?
-
 -[ ] Preferences panel
 
 -[ ] Line Numbers
-
-
