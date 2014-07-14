@@ -42,7 +42,7 @@ public class OffsetMatcher {
     if(pdeCodeLine.trim().equals(javaCodeLine.trim())){ //TODO: trim() needed here?
       matchingNeeded = false;
       offsetMatch = new ArrayList<OffsetMatcher.OffsetPair>();
-      log("Offset Matching not needed");
+      //log("Offset Matching not needed");
     }
     else 
     {
@@ -61,25 +61,25 @@ public class OffsetMatcher {
   }
 
   public int getPdeOffForJavaOff(int start, int length) {
-    log("PDE :" + pdeCodeLine + "\nJAVA:" + javaCodeLine);
+    // log("PDE :" + pdeCodeLine + "\nJAVA:" + javaCodeLine);
     if(!matchingNeeded) return start;
     int ans = getPdeOffForJavaOff(start), end = getPdeOffForJavaOff(start + length - 1); 
-    log(start + " java start off, pde start off "
-        + ans);
-    log((start + length - 1) + " java end off, pde end off "
-        + end);
-    log("J: " + javaCodeLine.substring(start, start + length) + "\nP: "
-        + pdeCodeLine.substring(ans, end + 1));
+//    log(start + " java start off, pde start off "
+//        + ans);
+//    log((start + length - 1) + " java end off, pde end off "
+//        + end);
+//    log("J: " + javaCodeLine.substring(start, start + length) + "\nP: "
+//        + pdeCodeLine.substring(ans, end + 1));
     return ans;
   }
 
   public int getJavaOffForPdeOff(int start, int length) {
     if(!matchingNeeded) return start;
     int ans = getJavaOffForPdeOff(start); 
-    log(start + " pde start off, java start off "
-        + getJavaOffForPdeOff(start));
-    log((start + length - 1) + " pde end off, java end off "
-        + getJavaOffForPdeOff(start + length - 1));
+//    log(start + " pde start off, java start off "
+//        + getJavaOffForPdeOff(start));
+//    log((start + length - 1) + " pde end off, java end off "
+//        + getJavaOffForPdeOff(start + length - 1));
     return ans;
   }
 
@@ -91,8 +91,8 @@ public class OffsetMatcher {
       } else if (offsetMatch.get(i).javaOffset == javaOff) {
 //        int j = i;
         while (offsetMatch.get(--i).javaOffset == javaOff) {
-          log("MP " + offsetMatch.get(i).javaOffset + " "
-              + offsetMatch.get(i).pdeOffset);
+//          log("MP " + offsetMatch.get(i).javaOffset + " "
+//              + offsetMatch.get(i).pdeOffset);
         }
         int pdeOff = offsetMatch.get(++i).pdeOffset;
         while (i > 0 && offsetMatch.get(--i).pdeOffset == pdeOff);
@@ -140,8 +140,8 @@ public class OffsetMatcher {
 //    word2 = reverse(word2);
     int len1 = pdeCodeLine.length();
     int len2 = javaCodeLine.length();
-    log(pdeCodeLine + " len: " + len1);
-    log(javaCodeLine + " len: " + len2);
+    // log(pdeCodeLine + " len: " + len1);
+    // log(javaCodeLine + " len: " + len2);
     // len1+1, len2+1, because finally return dp[len1][len2]
     int[][] dp = new int[len1 + 1][len2 + 1];
 

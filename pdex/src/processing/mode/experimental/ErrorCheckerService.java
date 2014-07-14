@@ -404,7 +404,7 @@ public class ErrorCheckerService implements Runnable{
    * Triggers error check
    */
   public void runManualErrorCheck() {
-    log("Error Check.");
+    // log("Error Check.");
     textModified.incrementAndGet();
   }
   
@@ -418,7 +418,7 @@ public class ErrorCheckerService implements Runnable{
     public void insertUpdate(DocumentEvent e) {
       if (ExperimentalMode.errorCheckEnabled){
         runManualErrorCheck();
-        log("doc insert update, man error check..");
+        //log("doc insert update, man error check..");
       }
     }
 
@@ -426,7 +426,7 @@ public class ErrorCheckerService implements Runnable{
     public void removeUpdate(DocumentEvent e) {
       if (ExperimentalMode.errorCheckEnabled){
         runManualErrorCheck();
-        log("doc remove update, man error check..");
+        //log("doc remove update, man error check..");
       }
     }
 
@@ -434,7 +434,7 @@ public class ErrorCheckerService implements Runnable{
     public void changedUpdate(DocumentEvent e) {
       if (ExperimentalMode.errorCheckEnabled){
         runManualErrorCheck();
-        log("doc changed update, man error check..");
+        //log("doc changed update, man error check..");
       }
     }
     
@@ -699,8 +699,8 @@ public class ErrorCheckerService implements Runnable{
       // Code in pde tabs stored as PlainDocument
       PlainDocument pdeTabs[] = new PlainDocument[editor.getSketch()
           .getCodeCount()];
-      log("calcPDEOffsetsForProbList() mco: " + mainClassOffset + " CU state: "
-          + compilationUnitState);
+//      log("calcPDEOffsetsForProbList() mco: " + mainClassOffset + " CU state: "
+//          + compilationUnitState);
 
       javaSource.insertString(0, sourceCode, null);
       for (int i = 0; i < pdeTabs.length; i++) {
@@ -725,8 +725,8 @@ public class ErrorCheckerService implements Runnable{
       for (Problem p : problemsList) {
         int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset, prbEnd = p
             .getIProblem().getSourceEnd() - pkgNameOffset;
-        log(p.toString());
-        log("IProblem Start " + prbStart + ", End " + prbEnd);
+        // log(p.toString());
+        // log("IProblem Start " + prbStart + ", End " + prbEnd);
         int javaLineNumber = p.getSourceLineNumber()
             - ((compilationUnitState != 2) ? 1 : 2);
         Element lineElement = javaSource.getDefaultRootElement()

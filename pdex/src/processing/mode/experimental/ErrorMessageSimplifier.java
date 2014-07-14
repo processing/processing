@@ -64,12 +64,12 @@ public class ErrorMessageSimplifier {
       return null;
     IProblem iprob = problem.getIProblem();
     String args[] = iprob.getArguments();
-    log("Simplifying message: " + problem.getMessage() + " ID: "
-        + getIDName(iprob.getID()));
-    log("Arg count: " + args.length);
-    for (int i = 0; i < args.length; i++) {
-      log("Arg " + args[i]);
-    }
+//    log("Simplifying message: " + problem.getMessage() + " ID: "
+//        + getIDName(iprob.getID()));
+//    log("Arg count: " + args.length);
+//    for (int i = 0; i < args.length; i++) {
+//      log("Arg " + args[i]);
+//    }
 
     String result = null;
     switch (iprob.getID()) {
@@ -151,7 +151,7 @@ public class ErrorMessageSimplifier {
       break;
     }
     
-    log("Simplified Error Msg: " + result);
+//    log("Simplified Error Msg: " + result);
     if (result == null)
       return problem.getMessage();
     return result;
