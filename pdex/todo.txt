@@ -24,6 +24,12 @@ Misc Tasks
 
 -[x] Refactoring should support single undo
 
+Import Suggestion
+-----------------
+
+-[ ] Ignore case while looking for classname
+
+-[ ] Prevent running into a suggestion loop
 
 Normal Bugs
 -----------
