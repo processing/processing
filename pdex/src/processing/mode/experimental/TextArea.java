@@ -246,7 +246,7 @@ public class TextArea extends JEditTextArea {
           // errorCheckerService.runManualErrorCheck();
           // Provide completions only if it's enabled
           if (ExperimentalMode.codeCompletionsEnabled
-              && !ExperimentalMode.ccTriggerEnabled) {
+              && (!ExperimentalMode.ccTriggerEnabled || suggestion.isVisible())) {
             log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started: "
                 + System.currentTimeMillis());
             log("Typing: " + fetchPhrase(evt2) + " "
