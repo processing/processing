@@ -41,7 +41,7 @@ Enhancements/New Features
  
 -[ ] Gotta fix PEH for multiple errors per line. Will be slightly meticulous.
 
--[ ] Better comment/uncomment
+-[x] Better comment/uncomment - ignores leading whitespaces, and more uniform // placement.
 
 -[ ] When viewing Outline View, instead of showing the beginning of the list, 
 it should select the current node element within which the cursor is presently 
