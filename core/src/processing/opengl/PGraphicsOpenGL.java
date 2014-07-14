@@ -379,8 +379,8 @@ public class PGraphicsOpenGL extends PGraphics {
   /** PImage that wraps filterTexture. */
   protected PImage filterImage;
 
-  /** Flag to indicate if the user is manipulating the
-   * pixels array through the set()/get() methods */
+  /** Flag to indicate that pixels array is up-to-date and
+   * ready to be manipulated through the set()/get() methods */
   protected boolean setgetPixels;
 
   // ........................................................
@@ -2132,6 +2132,9 @@ public class PGraphicsOpenGL extends PGraphics {
   public void beginShape(int kind) {
     shape = kind;
     inGeo.clear();
+
+    // We are going to draw, pixels won't be up-to-date anymore.
+    setgetPixels = false;
 
     curveVertexCount = 0;
     breakShape = false;
@@ -5447,6 +5450,9 @@ public class PGraphicsOpenGL extends PGraphics {
       readPixels();
     }
 
+    // Pixels are now up-to-date, set the flag.
+    setgetPixels = true;
+
     if (needEndDraw) {
       endDraw();
     }
@@ -5566,7 +5572,6 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public int get(int x, int y) {
     loadPixels();
-    setgetPixels = true;
     return super.get(x, y);
   }
 
@@ -5576,7 +5581,6 @@ public class PGraphicsOpenGL extends PGraphics {
                          int sourceWidth, int sourceHeight,
                          PImage target, int targetX, int targetY) {
     loadPixels();
-    setgetPixels = true;
     super.getImpl(sourceX, sourceY, sourceWidth, sourceHeight,
                   target, targetX, targetY);
   }
@@ -5585,7 +5589,6 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void set(int x, int y, int argb) {
     loadPixels();
-    setgetPixels = true;
     super.set(x, y, argb);
   }
 
@@ -5596,7 +5599,6 @@ public class PGraphicsOpenGL extends PGraphics {
                          int sourceWidth, int sourceHeight,
                          int targetX, int targetY) {
     loadPixels();
-    setgetPixels = true;
     super.setImpl(sourceImage, sourceX, sourceY, sourceWidth, sourceHeight,
                   targetX, targetY);
  // do we need this?
