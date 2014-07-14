@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2012-14 Martin Leopold <m@martinleopold.com> and Manindra Moharana <me@mkmoharana.com>
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
 package processing.mode.experimental;
 
 import java.io.BufferedReader;
@@ -42,6 +60,13 @@ import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
 import org.eclipse.jface.text.Document;
 
+/**
+ * 
+ * Provides compilation checking functionality
+ * 
+ * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
+ *
+ */
 public class CompilationChecker {
   /**
    * ICompilationUnit implementation
@@ -355,59 +380,6 @@ public class CompilationChecker {
     return null;
   }
 
-  private void compileAndRun(ICompilationUnit unit, boolean runIt) {
-
-    Map settings = new HashMap();
-    settings.put(CompilerOptions.OPTION_LineNumberAttribute,
-                 CompilerOptions.GENERATE);
-    settings.put(CompilerOptions.OPTION_SourceFileAttribute,
-                 CompilerOptions.GENERATE);
-
-    CompilerOptions ops = new CompilerOptions(settings);
-
-    CompileRequestorImpl requestor = new CompileRequestorImpl();
-    Compiler compiler = new Compiler(new NameEnvironmentImpl(unit),
-                                     DefaultErrorHandlingPolicies
-                                         .proceedWithAllProblems(), ops,
-                                     requestor,
-                                     new DefaultProblemFactory(Locale
-                                         .getDefault()));
-
-    compiler.compile(new ICompilationUnit[] { unit });
-    // System.out.println(unit.getContents());
-    List problems = requestor.getProblems();
-    boolean error = false;
-    for (Iterator it = problems.iterator(); it.hasNext();) {
-      IProblem problem = (IProblem) it.next();
-      StringBuffer buffer = new StringBuffer();
-      buffer.append(problem.getMessage());
-      buffer.append(" line: ");
-      buffer.append(problem.getSourceLineNumber());
-      String msg = buffer.toString();
-      if (problem.isError()) {
-        error = true;
-        msg = "Error:\n" + msg + " " + problem.toString();
-      } else if (problem.isWarning())
-        msg = "Warning:\n" + msg;
-
-      System.out.println(msg);
-    }
-
-    if (!error && runIt) {
-      try {
-        ClassLoader loader = new CustomClassLoader(getClass().getClassLoader(),
-                                                   requestor.getResults());
-        String className = CharOperation.toString(unit.getPackageName()) + "."
-            + new String(unit.getMainTypeName());
-        Class clazz = loader.loadClass(className);
-        Method m = clazz.getMethod("main", new Class[] { String[].class });
-        m.invoke(clazz, new Object[] { new String[0] });
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
   private void compileMeQuitely(ICompilationUnit unit, Map compilerSettings) {
 
     Map settings;
@@ -433,13 +405,13 @@ public class CompilationChecker {
       settings = compilerSettings;
     }
 
-    CompilerOptions cop = new CompilerOptions();
-    cop.set(settings);
+//    CompilerOptions cop = new CompilerOptions();
+//    cop.set(settings);
     CompileRequestorImpl requestor = new CompileRequestorImpl();
     Compiler compiler = new Compiler(new NameEnvironmentImpl(unit),
                                      DefaultErrorHandlingPolicies
                                          .proceedWithAllProblems(),
-                                     settings, requestor,
+                                         new CompilerOptions(settings), requestor,
                                      new DefaultProblemFactory(Locale
                                          .getDefault()));
     compiler.compile(new ICompilationUnit[] { unit });
@@ -526,6 +498,14 @@ public class CompilationChecker {
     return prob;
   }
 
+  /**
+   * Performs compiler error check.
+   * @param sourceName - name of the class 
+   * @param source - source code
+   * @param settings - compiler options
+   * @param classLoader - custom classloader which can load all dependencies
+   * @return IProblem[] - list of compiler errors and warnings
+   */
   public IProblem[] getErrors(String sourceName, String source, Map settings,
                               URLClassLoader classLoader) {
     fileName = sourceName;
@@ -536,21 +516,6 @@ public class CompilationChecker {
     compileMeQuitely(generateCompilationUnit(), settings);
     // System.out.println("getErrors(), Done.");
 
-//		if (prob.length > 0) {
-//			Object[][] data = new Object[prob.length][10];
-//			for (int i = 0; i < data.length; i++) {
-//				IProblem p = prob[i];
-//				// data[i] = new
-//				// Object[]{p.getMessage(),p.getSourceLineNumber(),p.isError(),p};
-//				data[i] = new Object[] { p.getOriginatingFileName(),
-//						p.getMessage(), p.getID(), p.getArguments(), 0,
-//						p.getSourceStart(), p.getSourceEnd(),
-//						p.getSourceLineNumber(), p.isError(), p.isWarning() };
-//
-//			}
-//
-//			return data;
-//		}
     return prob;
   }
 
