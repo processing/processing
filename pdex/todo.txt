@@ -20,7 +20,9 @@ Critical Bugs
 Misc Tasks
 ----------
 
--[ ] Trim CompilationChecker class
+-[x] Trim CompilationChecker class
+
+-[x] Refactoring should support single undo
 
 
 Normal Bugs
