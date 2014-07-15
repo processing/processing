@@ -312,10 +312,10 @@ public class TabOutline {
     return w;
   }
   
-  private int estimateFrameHeight(){
-    // Assuming each tree node height to be 20 pixels
-    int t = Math.max(4, editor.getSketch().getCodeCount() + 1);
-    return Math.min(20 * t, frmOutlineView.getHeight());
+  private int estimateFrameHeight() {
+    int textHeight = jsp.getGraphics().getFontMetrics().getHeight() + 2;
+    int t = Math.max(4, editor.getSketch().getCodeCount() + 3);
+    return Math.min(textHeight * t, frmOutlineView.getHeight());
   }
 
   public void show() {
