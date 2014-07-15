@@ -298,11 +298,9 @@ public class TabOutline {
   }
   
   private int estimateFrameHeight(){
-    // Assuming each tree node height to be 25 pixels
-    return Math.min(20 * (editor.getSketch().getCodeCount() + 1),
-                    frmOutlineView.getHeight());
-//    return Math.min(editor.ta.getHeight(),
-//                    frmOutlineView.getHeight());
+    // Assuming each tree node height to be 20 pixels
+    int t = Math.max(4, editor.getSketch().getCodeCount() + 1);
+    return Math.min(20 * t, frmOutlineView.getHeight());
   }
 
   public void show() {
