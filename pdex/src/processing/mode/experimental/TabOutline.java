@@ -1,6 +1,8 @@
 package processing.mode.experimental;
 
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -9,11 +11,13 @@ import java.awt.event.WindowFocusListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -60,12 +64,16 @@ public class TabOutline {
     minWidth = Math.min(minWidth, estimateFrameWidth());
     frmOutlineView.setLayout(new BoxLayout(frmOutlineView.getContentPane(),
                                            BoxLayout.Y_AXIS));
-    JPanel panelTop = new JPanel(), panelBottom = new JPanel();
-    panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
+    JPanel panelTop = new JPanel(), panelMiddle = new JPanel(), panelBottom = new JPanel();
+    panelTop.setLayout(new GridBagLayout());
+    panelMiddle.setLayout(new BoxLayout(panelMiddle, BoxLayout.Y_AXIS));
     panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.Y_AXIS));
+    JLabel label = new JLabel("Tabs List (type to filter)");
+    label.setAlignmentX(Component.LEFT_ALIGNMENT);
+    panelTop.add(label);
     searchField = new JTextField();
     searchField.setMinimumSize(new Dimension(minWidth, 25));
-    panelTop.add(searchField);
+    panelMiddle.add(searchField);
 
     jsp = new JScrollPane();
     populateTabTree();
@@ -77,6 +85,7 @@ public class TabOutline {
 
     panelBottom.add(jsp);
     frmOutlineView.add(panelTop);
+    frmOutlineView.add(panelMiddle);
     frmOutlineView.add(panelBottom);
     frmOutlineView.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frmOutlineView.pack();
