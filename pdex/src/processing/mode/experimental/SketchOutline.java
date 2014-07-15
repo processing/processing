@@ -52,10 +52,21 @@ public class SketchOutline {
   protected JTextField searchField;
 
   protected DebugEditor editor;
+  
+  protected boolean internalSelection = false;
 
   public SketchOutline(DefaultMutableTreeNode codeTree, ErrorCheckerService ecs) {
     errorCheckerService = ecs;
     editor = ecs.getEditor();
+    soNode = new DefaultMutableTreeNode();
+    generateSketchOutlineTree(soNode, codeTree);
+    soNode = (DefaultMutableTreeNode) soNode.getChildAt(0);
+    tempNode = soNode;
+    soTree = new JTree(soNode);
+    createGUI();
+  }
+  
+  private void createGUI(){
     frmOutlineView = new JFrame();
     frmOutlineView.setAlwaysOnTop(true);
     frmOutlineView.setUndecorated(true);
@@ -79,11 +90,7 @@ public class SketchOutline {
     panelTop.add(searchField);
 
     jsp = new JScrollPane();
-    soNode = new DefaultMutableTreeNode();
-    generateSketchOutlineTree(soNode, codeTree);
-    soNode = (DefaultMutableTreeNode) soNode.getChildAt(0);
-    tempNode = soNode;
-    soTree = new JTree(soNode);
+    
     soTree.getSelectionModel()
         .setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     soTree.setRootVisible(false);
@@ -117,10 +124,7 @@ public class SketchOutline {
                                    + (editor.ta.getHeight() - frmOutlineView
                                        .getHeight()) / 2);
     addListeners();
-
   }
-
-  protected boolean internalSelection = false;
 
   protected void addListeners() {
 
@@ -257,6 +261,7 @@ public class SketchOutline {
               awrap.highlightNode(errorCheckerService.astGenerator);
               // log(awrap);
               //errorCheckerService.highlightNode(awrap);
+              close();
             }
           }
         };

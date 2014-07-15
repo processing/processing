@@ -50,10 +50,10 @@ public class TabOutline {
   public TabOutline(ErrorCheckerService ecs) {
     errorCheckerService = ecs;
     editor = ecs.getEditor();
-    createAndShowGUI();
+    createGUI();
   }
 
-  private void createAndShowGUI() {
+  private void createGUI() {
     frmOutlineView = new JFrame();
     frmOutlineView.setAlwaysOnTop(true);
     frmOutlineView.setUndecorated(true);
