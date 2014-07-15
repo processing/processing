@@ -360,6 +360,9 @@ public class ErrorCheckerService implements Runnable{
   protected void updateSketchCodeListeners() {
     for (final SketchCode sc : editor.getSketch().getCode()) {
       boolean flag = false;
+      if (sc.getDocument() == null
+          || ((SyntaxDocument) sc.getDocument()).getDocumentListeners() == null)
+        continue;
       for (DocumentListener dl : ((SyntaxDocument)sc.getDocument()).getDocumentListeners()) {
         if(dl.equals(sketchChangedListener)){
           flag = true;
