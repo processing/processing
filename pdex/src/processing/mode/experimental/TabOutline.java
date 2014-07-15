@@ -2,6 +2,7 @@ package processing.mode.experimental;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
@@ -26,6 +27,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -42,6 +44,8 @@ public class TabOutline {
   protected JTree tabTree;
 
   protected JTextField searchField;
+  
+  protected JLabel lblCaption;
 
   protected DebugEditor editor;
 
@@ -60,19 +64,19 @@ public class TabOutline {
     frmOutlineView.setAlwaysOnTop(true);
     frmOutlineView.setUndecorated(true);
     Point tp = errorCheckerService.getEditor().ta.getLocationOnScreen();
-
-    int minWidth = (int) (editor.getMinimumSize().width * 0.7f), maxWidth = (int) (editor
+    lblCaption = new JLabel("Tabs List (type to filter)");
+//    int minWidth = (int) (editor.getMinimumSize().width * 0.7f), maxWidth = (int) (editor
+//        .getMinimumSize().width * 0.9f);
+    int minWidth = estimateFrameWidth(), maxWidth = (int) (editor
         .getMinimumSize().width * 0.9f);
-    minWidth = Math.min(minWidth, estimateFrameWidth());
     frmOutlineView.setLayout(new BoxLayout(frmOutlineView.getContentPane(),
                                            BoxLayout.Y_AXIS));
     JPanel panelTop = new JPanel(), panelMiddle = new JPanel(), panelBottom = new JPanel();
     panelTop.setLayout(new GridBagLayout());
     panelMiddle.setLayout(new BoxLayout(panelMiddle, BoxLayout.Y_AXIS));
     panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.Y_AXIS));
-    JLabel label = new JLabel("Tabs List (type to filter)");
-    label.setAlignmentX(Component.LEFT_ALIGNMENT);
-    panelTop.add(label);
+    lblCaption.setAlignmentX(Component.LEFT_ALIGNMENT);
+    panelTop.add(lblCaption);
     searchField = new JTextField();
     searchField.setMinimumSize(new Dimension(minWidth, 25));
     panelMiddle.add(searchField);
@@ -106,6 +110,10 @@ public class TabOutline {
                                frmOutlineView.getY()
                                    + (editor.ta.getHeight() - frmOutlineView
                                        .getHeight()) / 2);
+    DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tabTree.getCellRenderer();
+    renderer.setLeafIcon(null);
+    renderer.setClosedIcon(null);
+    renderer.setOpenIcon(null);
     addListeners();
   }
 
@@ -304,10 +312,11 @@ public class TabOutline {
   }
   
   private int estimateFrameWidth() {
-    int w = 100;
+    FontMetrics fm = editor.ta.getGraphics().getFontMetrics();
+    int w = fm.stringWidth(lblCaption.getText()) + 10;
     for (int i = 0; i < editor.getSketch().getCodeCount(); i++) {
-      w = Math.max(w,
-                   editor.getSketch().getCode(i).getPrettyName().length() * 10);
+      w = Math.max(w, fm.stringWidth(editor.getSketch().getCode(i)
+          .getPrettyName()) + 10);
     }
     return w;
   }
