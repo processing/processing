@@ -57,6 +57,7 @@ public class TabOutline {
 
     int minWidth = (int) (editor.getMinimumSize().width * 0.7f), maxWidth = (int) (editor
         .getMinimumSize().width * 0.9f);
+    minWidth = Math.min(minWidth, estimateFrameWidth());
     frmOutlineView.setLayout(new BoxLayout(frmOutlineView.getContentPane(),
                                            BoxLayout.Y_AXIS));
     JPanel panelTop = new JPanel(), panelBottom = new JPanel();
@@ -276,6 +277,15 @@ public class TabOutline {
       }
     }
     return found;
+  }
+  
+  private int estimateFrameWidth() {
+    int w = 100;
+    for (int i = 0; i < editor.getSketch().getCodeCount(); i++) {
+      w = Math.max(w,
+                   editor.getSketch().getCode(i).getPrettyName().length() * 10);
+    }
+    return w;
   }
   
   private int estimateFrameHeight(){
