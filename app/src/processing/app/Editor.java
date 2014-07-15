@@ -902,8 +902,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
       // Menu Listener that populates the menu only when the menu is opened
       List<JMenuItem> menuList = new ArrayList<JMenuItem>();
 
-      JMenu windowMenu = new JMenu("Window");
-
       @Override
       public void menuSelected(MenuEvent event) {
         JMenuItem item;
@@ -928,19 +926,18 @@ public abstract class Editor extends JFrame implements RunnerListener {
               editor.toFront();
             }
           });
-          windowMenu.add(item);
+          sketchMenu.add(item);
           menuList.add(item);
         }
-        sketchMenu.add(windowMenu);
+        // sketchMenu.add(windowMenu);
       }
 
       @Override
       public void menuDeselected(MenuEvent event) {
         for (JMenuItem item : menuList) {
-          windowMenu.remove(item);
+          sketchMenu.remove(item);
         }
         menuList.clear();
-        sketchMenu.remove(windowMenu);
       }
 
       @Override
