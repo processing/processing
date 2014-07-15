@@ -670,7 +670,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         showOutline.addActionListener(this);
         debugMenu.add(showOutline);
         
-        showTabOutline = Toolkit.newJMenuItem("Show Outline", KeyEvent.VK_SEMICOLON);
+        showTabOutline = Toolkit.newJMenuItem("Show Outline", KeyEvent.VK_Y);
         showTabOutline.addActionListener(this);
         debugMenu.add(showTabOutline);
         
