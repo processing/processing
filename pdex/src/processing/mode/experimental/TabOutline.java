@@ -111,7 +111,7 @@ public class TabOutline {
           if (tabTree.getLastSelectedPathComponent() != null) {
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) tabTree
                 .getLastSelectedPathComponent();
-            log("Enter Key, Tab: " + tnode);
+            //log("Enter Key, Tab: " + tnode);
             switchToTab(tnode.toString());
             close();
           }
@@ -197,7 +197,7 @@ public class TabOutline {
       public void valueChanged(TreeSelectionEvent e) {
 
         if (internalSelection) {
-          log("Internal selection");
+          //log("Internal selection");
           internalSelection = (false);
           return;
         }
@@ -214,7 +214,7 @@ public class TabOutline {
             }
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) tabTree
                 .getLastSelectedPathComponent();
-            log("Clicked " + tnode);
+            //log("Clicked " + tnode);
             switchToTab(tnode.toString());
             close();
           }

@@ -183,7 +183,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     /**
      * Show outline view
      */
-    protected JMenuItem showOutline;
+    protected JMenuItem showOutline, showTabOutline;
     
     /**
      * Enable/Disable error logging
@@ -670,6 +670,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         showOutline.addActionListener(this);
         debugMenu.add(showOutline);
         
+        showTabOutline = Toolkit.newJMenuItem("Show Outline", KeyEvent.VK_SEMICOLON);
+        showTabOutline.addActionListener(this);
+        debugMenu.add(showTabOutline);
+        
+        
         return debugMenu;
     }
     
@@ -773,9 +778,13 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             Logger.getLogger(DebugEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Variable Inspector' menu item");
             toggleVariableInspector();
         } else if (source.equals(showOutline)){
-            log("Show Outline :D");
+            log("Show Sketch Outline:");
             errorCheckerService.getASTGenerator().showSketchOutline();
         }
+        else if (source.equals(showTabOutline)){
+          log("Show Tab Outline:");
+          errorCheckerService.getASTGenerator().showTabOutline();
+      }
     }
 
 //    @Override

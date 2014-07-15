@@ -2327,8 +2327,11 @@ public class ASTGenerator {
   
   protected SketchOutline sketchOutline;
   protected void showSketchOutline(){
-    //sketchOutline = new SketchOutline(codeTree, errorCheckerService);
-    //sketchOutline.show();
+    sketchOutline = new SketchOutline(codeTree, errorCheckerService);
+    sketchOutline.show();
+  }
+  
+  protected void showTabOutline(){
     new TabOutline(errorCheckerService).show();
   }
   
