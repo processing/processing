@@ -82,6 +82,7 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
+import processing.mode.java.JavaToolbar;
 
 /**
  * Main View Class. Handles the editor window including tool bar and menu. Has
@@ -568,22 +569,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         debugMenu.add(printThreads);
         debugMenu.addSeparator();
         debugMenu.add(toggleVariableInspectorMenuItem);
-        debugMenu.addSeparator();
-
-        // TweakMode code
-        enableTweakCB = new JCheckBoxMenuItem("Tweak Enabled");
-        enableTweakCB.setSelected(ExperimentalMode.enableTweak);
-        enableTweakCB.addActionListener(new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          ExperimentalMode.enableTweak = ((JCheckBoxMenuItem) e
-            .getSource()).isSelected();
-            dmode.savePreferences();
-          }
-        });
-        debugMenu.add(enableTweakCB);
-        // TweakMode code end
+        // debugMenu.addSeparator();
 
         // XQMode menu items
         /*        
@@ -690,6 +676,45 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     @Override
     public JMenu buildModeMenu() {
         return buildDebugMenu();
+    }
+    
+    public JMenu buildSketchMenu() {
+      JMenuItem runItem = Toolkit.newJMenuItem(DebugToolbar
+          .getTitle(DebugToolbar.RUN, false), 'R');
+      runItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleRun();
+        }
+      });
+  
+      JMenuItem presentItem = Toolkit.newJMenuItemShift(DebugToolbar
+          .getTitle(DebugToolbar.RUN, true), 'R');
+      presentItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handlePresent();
+        }
+      });
+  
+      JMenuItem stopItem = new JMenuItem(DebugToolbar.getTitle(DebugToolbar.STOP,
+                                                               false));
+      stopItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleStop();
+        }
+      });
+  
+      JMenuItem enableTweak = Toolkit.newJMenuItemShift("Tweak", 'T');
+      enableTweak.setSelected(ExperimentalMode.enableTweak);
+      enableTweak.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          ExperimentalMode.enableTweak = true;
+          handleRun();
+        }
+      });
+  
+      return buildSketchMenu(new JMenuItem[] {
+        runItem, presentItem, enableTweak, stopItem });
     }
 
     /**
@@ -1761,7 +1786,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     /**
      * Show warnings menu item
      */
-    protected JCheckBoxMenuItem enableTweakCB;
+    //protected JCheckBoxMenuItem enableTweakCB;
 
 	String[] baseCode;
 
