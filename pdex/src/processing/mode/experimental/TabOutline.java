@@ -6,6 +6,8 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
@@ -230,6 +232,19 @@ public class TabOutline {
           }
         };
         worker.execute();
+      }
+    });
+    
+    tabTree.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent me) {
+        if (tabTree.getLastSelectedPathComponent() == null) {
+          return;
+        }
+        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) tabTree
+            .getLastSelectedPathComponent();
+        //log("Clicked " + tnode);
+        switchToTab(tnode.toString());
+        close();
       }
     });
 

@@ -7,6 +7,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
@@ -244,30 +246,40 @@ public class SketchOutline {
           return;
         }
         // log(e);
-        SwingWorker worker = new SwingWorker() {
-
-          protected Object doInBackground() throws Exception {
-            return null;
-          }
-
-          protected void done() {
-            if (soTree.getLastSelectedPathComponent() == null) {
-              return;
-            }
-            DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
-                .getLastSelectedPathComponent();
-            if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-              ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-              awrap.highlightNode(errorCheckerService.astGenerator);
-              // log(awrap);
-              //errorCheckerService.highlightNode(awrap);
-              close();
-            }
-          }
-        };
-        worker.execute();
+        scrollToNode();
       }
     });
+    
+    soTree.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent me) {
+        scrollToNode();
+      }
+    });
+  }
+  
+  private void scrollToNode(){
+    SwingWorker worker = new SwingWorker() {
+
+      protected Object doInBackground() throws Exception {
+        return null;
+      }
+
+      protected void done() {
+        if (soTree.getLastSelectedPathComponent() == null) {
+          return;
+        }
+        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
+            .getLastSelectedPathComponent();
+        if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+          ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+          awrap.highlightNode(errorCheckerService.astGenerator);
+          // log(awrap);
+          //errorCheckerService.highlightNode(awrap);
+          close();
+        }
+      }
+    };
+    worker.execute();
   }
 
   protected boolean filterTree(String prefix, DefaultMutableTreeNode tree,
