@@ -2496,7 +2496,7 @@ public class ASTGenerator {
     CompilationUnit root = (CompilationUnit) node.getRoot();
 //    log("Inside "+getNodeAsString(node) + " | " + root.getLineNumber(node.getStartPosition()));
     if (root.getLineNumber(node.getStartPosition()) == lineNumber) {
-      logE(3 + getNodeAsString(node) + " len " + node.getLength());      
+      // logE(3 + getNodeAsString(node) + " len " + node.getLength());      
       return node;
 //      if (offset < node.getLength())
 //        return node;
