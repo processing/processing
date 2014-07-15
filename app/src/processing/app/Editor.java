@@ -929,7 +929,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
           sketchMenu.add(item);
           menuList.add(item);
         }
-        // sketchMenu.add(windowMenu);
       }
 
       @Override
