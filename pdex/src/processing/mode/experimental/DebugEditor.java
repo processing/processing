@@ -195,6 +195,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     protected JCheckBoxMenuItem completionsEnabled;
     
+    /**
+     * UNUSED. Disbaled for now.
+     */
     protected AutoSaveUtil autosaver;
     
     public DebugEditor(Base base, String path, EditorState state, Mode mode) {
@@ -813,7 +816,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     @Override
     protected boolean handleOpenInternal(String path) {
-        log("handleOpenInternal, path: " + path);
+        // log("handleOpenInternal, path: " + path);
         boolean didOpen = super.handleOpenInternal(path);
         if (didOpen && dbg != null) {
             // should already been stopped (open calls handleStop)
@@ -822,10 +825,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             variableInspector().reset(); // clear contents of variable inspector
         }
         //if(didOpen){
-          autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval); // this is used instead of loadAutosaver(), temp measure
-          //loadAutoSaver();
-          viewingAutosaveBackup = autosaver.isAutoSaveBackup();
-          log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
+          // autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval); // this is used instead of loadAutosaver(), temp measure
+          // loadAutoSaver();
+          // viewingAutosaveBackup = autosaver.isAutoSaveBackup();
+          // log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
         //}
         return didOpen;
     }

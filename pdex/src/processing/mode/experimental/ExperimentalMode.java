@@ -289,7 +289,7 @@ public class ExperimentalMode extends JavaMode {
         + "field_protected_obj.png"); 
     localVarIcon = new ImageIcon(iconPath + File.separator
                               + "field_default_obj.png");
-    log("Icons loaded");
+    // log("Icons loaded");
   }
 
     

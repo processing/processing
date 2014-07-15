@@ -370,7 +370,7 @@ public class ErrorCheckerService implements Runnable{
         }
       }
       if(!flag){
-        log("Adding doc listener to " + sc.getPrettyName());
+        // log("Adding doc listener to " + sc.getPrettyName());
         sc.getDocument().addDocumentListener(sketchChangedListener);
       }
     }
@@ -446,15 +446,13 @@ public class ErrorCheckerService implements Runnable{
   public int compilationUnitState = 0;
   
   protected boolean checkCode() {
-    //log("checkCode() " + textModified.get() );
-    log("checkCode() " + textModified.get());
+    // log("checkCode() " + textModified.get());
     lastTimeStamp = System.currentTimeMillis();
     try {
       sourceCode = preprocessCode(editor.getSketch().getMainProgram());
       compilationUnitState = 0;
       syntaxCheck();
-      log(editor.getSketch().getName() + "1 MCO "
-          + mainClassOffset);
+      // log(editor.getSketch().getName() + "1 MCO " + mainClassOffset);
       // No syntax errors, proceed for compilation check, Stage 2.
       
       //if(hasSyntaxErrors()) astGenerator.buildAST(null);
@@ -474,8 +472,7 @@ public class ErrorCheckerService implements Runnable{
         //         log(sourceCode);
         //         log("--------------------------");
         compileCheck();        
-        log(editor.getSketch().getName() + "2 MCO "
-            + mainClassOffset);
+        // log(editor.getSketch().getName() + "2 MCO " + mainClassOffset);
       }
       
       astGenerator.buildAST(cu);
