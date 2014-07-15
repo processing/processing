@@ -100,7 +100,7 @@ public class TabOutline {
              frmOutlineView.getHeight())));
     frmOutlineView.setLocation(tp.x
                                    + errorCheckerService.getEditor().ta
-                                       .getWidth() - frmOutlineView.getWidth(),
+                                       .getWidth()/2 - frmOutlineView.getWidth()/2,
                                frmOutlineView.getY()
                                    + (editor.ta.getHeight() - frmOutlineView
                                        .getHeight()) / 2);
