@@ -669,11 +669,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         });
         debugMenu.add(jitem);
         */
-        showOutline = Toolkit.newJMenuItem("Show Outline", KeyEvent.VK_L);
+        showOutline = Toolkit.newJMenuItem("Show Sketch Outline", KeyEvent.VK_L);
         showOutline.addActionListener(this);
         debugMenu.add(showOutline);
         
-        showTabOutline = Toolkit.newJMenuItem("Show Outline", KeyEvent.VK_Y);
+        showTabOutline = Toolkit.newJMenuItem("Show Tabs List", KeyEvent.VK_Y);
         showTabOutline.addActionListener(this);
         debugMenu.add(showTabOutline);
         
