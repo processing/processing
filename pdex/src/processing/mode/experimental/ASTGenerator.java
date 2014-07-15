@@ -1264,7 +1264,7 @@ public class ASTGenerator {
     // First, see if the classname is a fully qualified name and loads straightaway
     tehClass = loadClass(className);
     if(tehClass instanceof Class){
-      log(tehClass.getName() + " located straightaway");
+      //log(tehClass.getName() + " located straightaway");
       return tehClass;
     }
     
@@ -1290,7 +1290,7 @@ public class ASTGenerator {
         return tehClass;
       }
 
-      log("Doesn't exist in package: " + impS.getImportName());
+      //log("Doesn't exist in package: " + impS.getImportName());
 
     }
     
@@ -1301,7 +1301,7 @@ public class ASTGenerator {
         log(tehClass.getName() + " located.");
         return tehClass;
       }
-      log("Doesn't exist in package: " + impS);
+      //log("Doesn't exist in package: " + impS);
     }
     
     for (String impS : p.getDefaultImports()) {
@@ -1311,7 +1311,7 @@ public class ASTGenerator {
           log(tehClass.getName() + " located.");
           return tehClass;
         }
-        log("Doesn't exist in package: " + impS);
+       // log("Doesn't exist in package: " + impS);
       }
     }
     
@@ -1322,7 +1322,7 @@ public class ASTGenerator {
       log(tehClass.getName() + " located.");
       return tehClass;
     }
-    log("Doesn't exist in java.lang");
+    //log("Doesn't exist in java.lang");
     
     return tehClass;
   }
@@ -1618,8 +1618,8 @@ public class ASTGenerator {
     
     // Convert tab based pde line number to actual line number
     int pdeLineNumber = lineNumber + errorCheckerService.mainClassOffset;
-    log("----getASTNodeAt---- CU State: "
-        + errorCheckerService.compilationUnitState);
+//    log("----getASTNodeAt---- CU State: "
+//        + errorCheckerService.compilationUnitState);
     if (errorCheckerService != null) {
       editor = errorCheckerService.getEditor();
       int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
@@ -1634,11 +1634,11 @@ public class ASTGenerator {
     }
 
     // Find closest ASTNode to the linenumber
-    log("getASTNodeAt: Node line number " + pdeLineNumber);
+//    log("getASTNodeAt: Node line number " + pdeLineNumber);
     ASTNode lineNode = findLineOfNode(compilationUnit, pdeLineNumber, offset,
                                       name);
 
-    log("Node text +> " + lineNode);
+//    log("Node text +> " + lineNode);
     ASTNode decl = null;
     String nodeLabel = null;
     String nameOfNode = null; // The node name which is to be scrolled to
@@ -1649,14 +1649,14 @@ public class ASTGenerator {
           .getSketch().getCurrentCodeIndex(), lineNumber);
       String javaCodeLine = getJavaSourceCodeLine(pdeLineNumber);
 
-      log(lineNumber + " Original Line num.\nPDE :" + pdeCodeLine);
-      log("JAVA:" + javaCodeLine);
-      log("Clicked on: " + name + " start offset: " + offset);
+//      log(lineNumber + " Original Line num.\nPDE :" + pdeCodeLine);
+//      log("JAVA:" + javaCodeLine);
+//      log("Clicked on: " + name + " start offset: " + offset);
       // Calculate expected java offset based on the pde line
       OffsetMatcher ofm = new OffsetMatcher(pdeCodeLine, javaCodeLine);
       int javaOffset = ofm.getJavaOffForPdeOff(offset, name.length())
           + lineNode.getStartPosition();
-      log("JAVA ast offset: " + (javaOffset));
+//      log("JAVA ast offset: " + (javaOffset));
       
       // Find the corresponding node in the AST
       ASTNode simpName = dfsLookForASTNode(errorCheckerService.getLatestCU(),
@@ -1683,22 +1683,22 @@ public class ASTGenerator {
       // SimpleName instance found, now find its declaration in code
       if (simpName instanceof SimpleName) {
         nameOfNode = simpName.toString();
-        log(getNodeAsString(simpName));
+        // log(getNodeAsString(simpName));
         decl = findDeclaration((SimpleName) simpName);
         if (decl != null) {
-          logE("DECLA: " + decl.getClass().getName());
+//          logE("DECLA: " + decl.getClass().getName());
           nodeLabel = getLabelIfType(new ASTNodeWrapper(decl),
                                      (SimpleName) simpName);
           //retLabelString = getNodeAsString(decl);
         } else {
-          logE("null");
+//          logE("null");
           if (scrollOnly) {
             editor.statusMessage(simpName + " is not defined in this sketch",
                                  DebugEditor.STATUS_ERR);
           }
         }
 
-        log(getNodeAsString(decl));
+//        log(getNodeAsString(decl));
 
         /*
         // - findDecl3 testing
@@ -1725,8 +1725,8 @@ public class ASTGenerator {
        * since it contains all the properties.
        */
       ASTNode simpName2 = getNodeName(decl, nameOfNode);
-      logE("FINAL String decl: " + getNodeAsString(decl));
-      logE("FINAL String label: " + getNodeAsString(simpName2));
+//      logE("FINAL String decl: " + getNodeAsString(decl));
+//      logE("FINAL String label: " + getNodeAsString(simpName2));
       //errorCheckerService.highlightNode(simpName2);
       ASTNodeWrapper declWrap = new ASTNodeWrapper(simpName2, nodeLabel);
       //errorCheckerService.highlightNode(declWrap);
@@ -2063,8 +2063,8 @@ public class ASTGenerator {
    */
   public void highlightPDECode(int tab, int lineNumber, int lineStartWSOffset,
                                int length) {
-    log("ASTGen.highlightPDECode: T " + tab + ",L: " + lineNumber + ",LSO: "
-        + lineStartWSOffset + ",Len: " + length);
+//    log("ASTGen.highlightPDECode: T " + tab + ",L: " + lineNumber + ",LSO: "
+//        + lineStartWSOffset + ",Len: " + length);
     editor.toFront();
     editor.getSketch().setCurrentCode(tab);
     lineStartWSOffset += editor.ta.getLineStartOffset(lineNumber);
@@ -2266,8 +2266,8 @@ public class ASTGenerator {
   
   public ASTNode dfsLookForASTNode(ASTNode root, String name, int startOffset,
                                    int endOffset) {
-    log("dfsLookForASTNode() lookin for " + name + " Offsets: " + startOffset
-        + "," + endOffset);
+//    log("dfsLookForASTNode() lookin for " + name + " Offsets: " + startOffset
+//        + "," + endOffset);
     Stack stack = new Stack<ASTNode>();
     stack.push(root);
 
@@ -2287,10 +2287,10 @@ public class ASTGenerator {
                 && (temp.getStartPosition() + temp.getLength()) >= endOffset) {
               if(temp instanceof SimpleName){
                 if(name.equals(temp.toString())){
-                  log("Found simplename: " + getNodeAsString(temp));
+//                  log("Found simplename: " + getNodeAsString(temp));
                   return temp;
                 }
-                log("Bummer, didn't match");
+//                log("Bummer, didn't match");
               }
               else
                 stack.push(temp);
@@ -2305,13 +2305,13 @@ public class ASTGenerator {
             if (temp.getStartPosition() <= startOffset
                 && (temp.getStartPosition() + temp.getLength()) >= endOffset) {
                 stack.push(temp);
-                log("Pushed onto stack: " + getNodeAsString(temp));
+//                log("Pushed onto stack: " + getNodeAsString(temp));
                 if(temp instanceof SimpleName){
                   if(name.equals(temp.toString())){
-                    log("Found simplename: " + getNodeAsString(temp));
+//                    log("Found simplename: " + getNodeAsString(temp));
                     return temp;
                   }
-                  log("Bummer, didn't match");
+//                  log("Bummer, didn't match");
                 }
                 else
                   stack.push(temp);
@@ -2321,7 +2321,7 @@ public class ASTGenerator {
         }
       }
     }
-    log("dfsLookForASTNode() not found " + name);
+//    log("dfsLookForASTNode() not found " + name);
     return null;
   }
   

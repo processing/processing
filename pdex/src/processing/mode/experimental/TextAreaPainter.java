@@ -513,8 +513,8 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
       String tooltipText = errorCheckerService.getASTGenerator()
           .getLabelForASTNode(line, word, xLS);
 
-      log(errorCheckerService.mainClassOffset + " MCO "
-      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
+//      log(errorCheckerService.mainClassOffset + " MCO "
+//      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
       if (tooltipText != null)
         return tooltipText;
       return word;
