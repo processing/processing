@@ -2327,8 +2327,9 @@ public class ASTGenerator {
   
   protected SketchOutline sketchOutline;
   protected void showSketchOutline(){
-    sketchOutline = new SketchOutline(codeTree, errorCheckerService);
-    sketchOutline.show();
+    //sketchOutline = new SketchOutline(codeTree, errorCheckerService);
+    //sketchOutline.show();
+    new TabOutline(errorCheckerService).show();
   }
   
   public int javaCodeOffsetToLineStartOffset(int line, int jOffset){
