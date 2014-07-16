@@ -5,7 +5,7 @@ public class Env {
 	
 	PApplet parent;
 	private Engine m_engine;
-	int m_nodeId;
+	int[] m_nodeId = {-1, -1};
 		
 	public Env (PApplet theParent) {	
 		this.parent = theParent;
@@ -18,11 +18,11 @@ public class Env {
 		m_nodeId = m_engine.envelopePlay(input.returnId(), attackTime, sustainTime, sustainLevel, releaseTime);
 	}
 
-	public int returnId(){
+	public int[] returnId(){
 		return m_nodeId;
 	}
 	
 	public void dispose(){
-		//m_engine.synthStop(m_nodeId);
+		m_engine.synthStop(m_nodeId);
 	}
 };

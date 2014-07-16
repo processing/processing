@@ -6,8 +6,7 @@ public class Reverb implements SoundObject{
 	
 	PApplet parent;
 	private Engine m_engine;
-	private int m_nodeId;
-	private int[] m_m = {0,0};
+	private int[] m_nodeId = {-1, -1};
 	private float m_room = 1;
 	private float m_damp = 0;
 	private float m_wet = 0.5f;
@@ -39,7 +38,7 @@ public class Reverb implements SoundObject{
 	}	
 	
 	private void set(){
-		m_engine.reverbSet(m_room, m_damp, m_wet, m_nodeId);
+		m_engine.reverbSet(m_room, m_damp, m_wet, m_nodeId[0]);
 	}
 	
 	public void set(float room, float damp, float wet){
@@ -63,14 +62,14 @@ public class Reverb implements SoundObject{
 	}
 
 	public int[] returnId(){
-		return m_m;
+		return m_nodeId;
 	}
 	
 	public void stop(){
-		//m_engine.synthStop(m_nodeId);
+		m_engine.synthStop(m_nodeId);
 	}
 
 	public void dispose() {
-		//m_engine.synthStop(m_nodeId);
+		m_engine.synthStop(m_nodeId);
 	}
 }

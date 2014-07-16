@@ -62,6 +62,10 @@ public class Engine {
 	public static void oscSet(float freq, float amp, float add, float pos, int[] nodeId){
 		methCla.oscSet(freq, amp, add, pos, nodeId);
 	};
+
+	public static void oscAudioSet(int[] freqId, int[] ampId, int[] addId, int[] posId, int[] nodeId){
+		methCla.oscAudioSet(freqId, ampId, addId, posId, nodeId);
+	};
 	  
 	// Sine Wave Oscillator
 	    
@@ -163,7 +167,7 @@ public class Engine {
     
 	// Envelope
 	    
-	public static int envelopePlay(int[] input, float attackTime, float sustainTime, float sustainLevel, float releaseTime){
+	public static int[] envelopePlay(int[] input, float attackTime, float sustainTime, float sustainLevel, float releaseTime){
 		return methCla.envelopePlay(input, attackTime, sustainTime, sustainLevel, releaseTime);
 	};
 	  
@@ -173,15 +177,15 @@ public class Engine {
 	    
 	// Filters
 	    
-	public static int highPassPlay(int[] input, float freq, float res){
+	public static int[] highPassPlay(int[] input, float freq, float res){
 		return methCla.highPassPlay(input, freq, res);
 	};
 
-	public static int lowPassPlay(int[] input, float freq, float res){
+	public static int[] lowPassPlay(int[] input, float freq, float res){
 		return methCla.lowPassPlay(input, freq, res);
 	};
 	  
-	public static int bandPassPlay(int[] input, float freq, float res){
+	public static int[] bandPassPlay(int[] input, float freq, float res){
 		return methCla.bandPassPlay(input, freq, res);
 	};
 
@@ -191,7 +195,7 @@ public class Engine {
 
 	// Delay
 
-	public static int delayPlay(int[] input, float maxDelayTime, float delayTime, float feedBack){
+	public static int[] delayPlay(int[] input, float maxDelayTime, float delayTime, float feedBack){
 		return methCla.delayPlay(input, maxDelayTime, delayTime, feedBack);
 	};
 	  
@@ -201,7 +205,7 @@ public class Engine {
 	
 	// Reverb
 
-  	public static int reverbPlay(int[] input, float room, float damp, float wet){
+  	public static int[] reverbPlay(int[] input, float room, float damp, float wet){
   		return methCla.reverbPlay(input, room, damp, wet);
   	};
   

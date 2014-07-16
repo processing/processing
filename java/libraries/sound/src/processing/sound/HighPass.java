@@ -6,8 +6,7 @@ public class HighPass implements SoundObject{
 	
 	PApplet parent;
 	private Engine m_engine;
-	private int m_nodeId;
-	private int[] m_m = {0,0};
+	private int[] m_nodeId = {-1,-1};
 	private float m_freq = 100;
 	private float m_res = 1;
 	
@@ -29,7 +28,7 @@ public class HighPass implements SoundObject{
 	}
 	
 	private void set(){
-		m_engine.filterSet(m_freq, m_res, m_nodeId);
+		m_engine.filterSet(m_freq, m_res, m_nodeId[0]);
 	}
 	
 	public void set(float freq, float res){
@@ -48,14 +47,14 @@ public class HighPass implements SoundObject{
 	}
 	
 	public int[] returnId(){
-		return m_m;
+		return m_nodeId;
 	}
 	
 	public void stop(){
-		//m_engine.synthStop(m_nodeId);
+		m_engine.synthStop(m_nodeId);
 	}
 
 	public void dispose() {
-		//m_engine.synthStop(m_nodeId);
+		m_engine.synthStop(m_nodeId);
 	}
 }

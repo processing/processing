@@ -3,11 +3,13 @@
 2.0 SOUND
 
   FOR RELEASE
-  
+
+  - Improve/make examples  
+
   Bugs:
   - Fix FFT Crash
   - Fix Low Pass Distortion
-  - Fix problem of passing effects to Analyzers 
+  + Fix problem of passing effects to Analyzers 
 
   Features:  
   - Make oscillators modulatable
