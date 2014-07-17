@@ -52,7 +52,7 @@ public class MethClaInterface
   
   // Audio In
 
-  public native int[] audioInPlay(float amp, float add, float pos, boolean out);
+  public native int[] audioInPlay(float amp, float add, float pos, int in);
 
   public native void audioInSet(float amp, float add, float pos, int[] nodeId);
 
@@ -120,7 +120,7 @@ public class MethClaInterface
   
   // Pan + Out
   
-  // public native int out(float pos, int nodeId);  
+  public native void out(int out, int[] nodeId);  
   
   // connect
   

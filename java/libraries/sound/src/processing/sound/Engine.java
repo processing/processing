@@ -105,8 +105,8 @@ public class Engine {
 
 	// AudioIn
 
-	public static int[] audioInPlay(float amp, float add, float pos, boolean out){
-		return methCla.audioInPlay(amp, add, pos, out);
+	public static int[] audioInPlay(float amp, float add, float pos, int in){
+		return methCla.audioInPlay(amp, add, pos, in);
 	};
 
   	public static void audioInSet(float amp, float add, float pos, int[] nodeId){
@@ -240,6 +240,13 @@ public class Engine {
 	public static void destroy_fft(long ptr){
 		methCla.destroy_fft(ptr);
 	};
+
+	// Out
+
+	public static void out(int out, int[] nodeId){
+		methCla.out(out, nodeId);
+	};  
+
 
 	public static void engineStop() {
 		methCla.engineStop();

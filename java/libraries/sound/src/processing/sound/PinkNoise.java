@@ -61,7 +61,11 @@ public class PinkNoise implements SoundObject{
 		m_pos=pos;
 		this.set();
 	}
-	
+/*
+	public void out(int out){
+		m_engine.out(out, m_nodeId);
+	}
+*/	
 	public void stop(){
 		m_engine.synthStop(m_nodeId);
 	}
