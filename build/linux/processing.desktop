@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=2.1 
+Name=Processing 
+Comment=graphics and animation language 
+Exec=processing %F
+Icon=/opt/processing/lib/icons/pde-256.png
+Terminal=false
+Type=Application
+Categories=AudioVideo;Video;Graphics;Developer;
+StartupWMClass=Processing
