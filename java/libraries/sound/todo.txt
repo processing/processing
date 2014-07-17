@@ -10,6 +10,7 @@
   - Fix FFT Crash
   - Fix Low Pass Distortion
   + Fix problem of passing effects to Analyzers 
+  + Make audio input work
 
   Features:  
   - Make oscillators modulatable
