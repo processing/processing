@@ -430,7 +430,6 @@ public abstract class LocalContribution extends Contribution {
       // There was a failure backing up the folder
         if (getType().requiresRestart()) {
           if (!doBackup || (doBackup && backup(editor, false, status))) {
-            status.setMessage("");
             if (setDeletionFlag(true)) {
               contribListing.replaceContribution(this, this);
             }

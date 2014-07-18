@@ -48,6 +48,7 @@ public class ContributionManagerDialog {
   ContributionListPanel contributionListPanel;
   StatusPanel status;
   FilterField filterField;
+  JButton restartButton;
 
   // the calling editor, so updates can be applied
   Editor editor;
@@ -84,6 +85,8 @@ public class ContributionManagerDialog {
     if (dialog == null) {
       dialog = new JFrame(title);
 
+      restartButton = new JButton("Restart Processing");
+      
       Toolkit.setIcon(dialog);
       createComponents();
       registerDisposeListeners();
@@ -204,8 +207,18 @@ public class ContributionManagerDialog {
       pane.add(Box.createHorizontalStrut(10), BorderLayout.EAST);
 
       status = new StatusPanel();
-      status.setBorder(new EmptyBorder(7, 7, 7, 7));
-      pane.add(status, BorderLayout.SOUTH);
+//      status.setBorder(new EmptyBorder(7, 7, 7, 7));
+      
+      JPanel statusRestartPane = new JPanel();
+      statusRestartPane.setLayout(new BorderLayout());
+      
+      statusRestartPane.setBorder(new EmptyBorder(7, 7, 7, 7));
+      statusRestartPane.setOpaque(false);
+      
+      statusRestartPane.add(status, BorderLayout.WEST);
+      statusRestartPane.add(restartButton, BorderLayout.EAST);
+      
+      pane.add(statusRestartPane, BorderLayout.SOUTH);
 
       
 //      status = new StatusPanel();
