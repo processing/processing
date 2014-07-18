@@ -25,6 +25,7 @@ package processing.core;
 import java.util.HashMap;
 
 import processing.core.PApplet;
+import processing.core.PGraphicsJava2D;
 
 
 /**
@@ -272,6 +273,97 @@ public class PShape implements PConstants {
  */
   public PShape(int family) {
     this.family = family;
+  }
+
+  public PShape(PGraphicsJava2D pg, int family) {
+//    this.g = pg;
+//    pgl = pg.pgl;
+//    context = pgl.createEmptyContext();
+
+//    glPolyVertex = 0;
+//    glPolyColor = 0;
+//    glPolyNormal = 0;
+//    glPolyTexcoord = 0;
+//    glPolyAmbient = 0;
+//    glPolySpecular = 0;
+//    glPolyEmissive = 0;
+//    glPolyShininess = 0;
+//    glPolyIndex = 0;
+//
+//    glLineVertex = 0;
+//    glLineColor = 0;
+//    glLineAttrib = 0;
+//    glLineIndex = 0;
+//
+//    glPointVertex = 0;
+//    glPointColor = 0;
+//    glPointAttrib = 0;
+//    glPointIndex = 0;
+//
+//    this.tessellator = PGraphicsOpenGL.tessellator;
+    this.family = family;
+//    this.root = this;
+    this.parent = null;
+//    this.tessellated = false;
+
+//    if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
+//      inGeo = PGraphicsOpenGL.newInGeometry(pg, PGraphicsOpenGL.RETAINED);
+//    }
+
+    // Style parameters are retrieved from the current values in the renderer.
+    textureMode = pg.textureMode;
+
+    colorMode(pg.colorMode,
+              pg.colorModeX, pg.colorModeY, pg.colorModeZ, pg.colorModeA);
+
+    // Initial values for fill, stroke and tint colors are also imported from
+    // the renderer. This is particular relevant for primitive shapes, since is
+    // not possible to set their color separately when creating them, and their
+    // input vertices are actually generated at rendering time, by which the
+    // color configuration of the renderer might have changed.
+    fill = pg.fill;
+    fillColor = pg.fillColor;
+
+    stroke = pg.stroke;
+    strokeColor = pg.strokeColor;
+    strokeWeight = pg.strokeWeight;
+    strokeCap = pg.strokeCap;
+    strokeJoin = pg.strokeJoin;
+
+    tint = pg.tint;
+    tintColor = pg.tintColor;
+
+    setAmbient = pg.setAmbient;
+    ambientColor = pg.ambientColor;
+    specularColor = pg.specularColor;
+    emissiveColor = pg.emissiveColor;
+    shininess = pg.shininess;
+
+    sphereDetailU = pg.sphereDetailU;
+    sphereDetailV = pg.sphereDetailV;
+
+//    bezierDetail = pg.bezierDetail;
+//    curveDetail = pg.curveDetail;
+//    curveTightness = pg.curveTightness;
+
+    // The rect and ellipse modes are set to CORNER since it is the expected
+    // mode for svg shapes.
+    rectMode = CORNER;
+    ellipseMode = CORNER;
+
+//    normalX = normalY = 0;
+//    normalZ = 1;
+//
+//    normalMode = NORMAL_MODE_AUTO;
+
+    // To make sure that the first vertex is marked as a break.
+    // Same behavior as in the immediate mode.
+//    breakShape = false;
+
+    if (family == GROUP) {
+      // GROUP shapes are always marked as ended.
+//      shapeCreated = true;
+    }
   }
 
 
