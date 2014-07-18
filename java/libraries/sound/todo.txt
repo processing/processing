@@ -7,7 +7,7 @@
   - Improve/make examples  
 
   Bugs:
-  - Fix FFT Crash
+  + Fix FFT Crash
   - Fix Low Pass Distortion
   + Fix problem of passing effects to Analyzers 
   + Make audio input work

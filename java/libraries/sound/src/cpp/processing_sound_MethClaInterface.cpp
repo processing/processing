@@ -38,21 +38,37 @@
 
 Methcla::Engine* m_engine;
 Methcla::Engine& engine() { return *m_engine; }
-std::mutex mutex;
+std::mutex mutex_fft_in;
+std::mutex mutex_fft_out;
+std::mutex mutex_amp_in;
+std::mutex mutex_amp_out;
+
 
 static Methcla_Time kLatency = 0.1;
 
-typedef struct data_v{
-        int id;
-        std::atomic<float> amp;
-} ServerValue, *ServerValuePtr;
+struct ServerValue{
+    ServerValue() :
+    amp(0),
+    id(-1)
+    {
+    
+    }
+    float amp;
+    int id;
+};
 
-typedef struct data_a{
-        int id;
-        int fftSize=512;
-        std::vector<float> fft;
-} ServerArray, *ServerArrayPtr;
-
+struct ServerArray{
+    ServerArray() :
+    fftSize(512),
+    fft(fftSize),
+    id(-1)
+    {
+    
+    }
+    int fftSize;
+    std::vector<float> fft;
+    int id;
+};
 
 // Engine
 
@@ -1126,7 +1142,7 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_amplitude(JNIEnv 
 
     Methcla::Request request(engine());
 
-    ServerValue *amp_ptr = (ServerValue *) malloc(sizeof(ServerValue));
+    ServerValue * amp_ptr = new ServerValue; 
 
     ptr = (jlong)amp_ptr;
 
@@ -1151,8 +1167,8 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_amplitude(JNIEnv 
     auto id = engine().addNotificationHandler([amp_ptr](const OSCPP::Server::Message& msg) {
         if (msg == "/amplitude") {
            OSCPP::Server::ArgStream args(msg.args());
-           while (!args.atEnd()) {
-               
+           std::lock_guard<std::mutex> guard(mutex_amp_in);
+           while (!args.atEnd()) {    
                 amp_ptr->amp = args.float32();
            }
            return false;
@@ -1167,9 +1183,8 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_amplitude(JNIEnv 
 };
 
 JNIEXPORT jfloat JNICALL Java_processing_sound_MethClaInterface_poll_1amplitude(JNIEnv * env, jobject object, jlong ptr){
-
     ServerValue *amp_ptr = (ServerValue*)ptr; 
-
+    std::lock_guard<std::mutex> guard(mutex_amp_out);
     return amp_ptr->amp;
 };
 
@@ -1177,20 +1192,18 @@ JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_destroy_1amplitude
 
     ServerValue *amp_ptr = (ServerValue*)ptr;
     engine().removeNotificationHandler(amp_ptr->id);
-    free(amp_ptr);
-
+    delete amp_ptr;
 };
 
 JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_fft(JNIEnv *env, jobject object, jintArray nodeId, jint fftSize){
 
     jlong ptr;
     jint* m_nodeId = env->GetIntArrayElements(nodeId, 0); 
-    ServerArray *fft_ptr = (ServerArray *) malloc(sizeof(ServerArray) + fftSize*(sizeof(std::vector<float>)));
-    
-    std::cout << "1" << std::endl;
+    //ServerArray *fft_ptr = (ServerArray *) malloc(sizeof(ServerArray));
 
-    fft_ptr->fft.resize(fftSize);
-    std::cout << "2" << std::endl;
+    ServerArray * fft_ptr = new ServerArray; 
+    
+    fft_ptr->fft.resize(fftSize, 0);
 
     fft_ptr->fftSize=fftSize;
     ptr = (jlong)fft_ptr;
@@ -1202,6 +1215,8 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_fft(JNIEnv *env, 
     
     Methcla::Request request(engine());
     request.openBundle(Methcla::immediately);
+
+    std::cout << fftSize << std::endl;
 
     auto synth = request.synth(
             METHCLA_PLUGINS_FFT_URI,
@@ -1223,12 +1238,14 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_fft(JNIEnv *env, 
         if (msg == "/fft") {
            OSCPP::Server::ArgStream args(msg.args());
            int i=0;
-           while (!args.atEnd()) { 
-              fft_ptr->fft[i] = args.float32();
-              std::lock_guard<std::mutex> guard(mutex);
-              i++;
-           }
-           return false;
+           {
+               std::lock_guard<std::mutex> guard(mutex_fft_in);
+               while (!args.atEnd()) { 
+                  fft_ptr->fft[i] = args.float32();
+                  i++;
+               }
+            }
+            return false;
         }
         return false;
     });
@@ -1243,12 +1260,10 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_fft(JNIEnv *env, 
 JNIEXPORT jfloatArray JNICALL Java_processing_sound_MethClaInterface_poll_1fft(JNIEnv *env, jobject object, jlong ptr){
     
     ServerArray *fft_ptr = (ServerArray*)ptr; 
-
     jfloatArray fft_mag = env->NewFloatArray(fft_ptr->fftSize);
-
-
     jfloat *m_fft_mag = env->GetFloatArrayElements(fft_mag, NULL);
 
+    std::lock_guard<std::mutex> guard(mutex_fft_out);
     for (int i = 0; i < fft_ptr->fftSize; ++i)
     {
         m_fft_mag[i]=fft_ptr->fft[i];
@@ -1260,9 +1275,9 @@ JNIEXPORT jfloatArray JNICALL Java_processing_sound_MethClaInterface_poll_1fft(J
 };
 
 JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_destroy_1fft(JNIEnv *env, jobject object, jlong ptr){
-    ServerArray *fft_ptr = (ServerArray*)ptr;
+    ServerArray * fft_ptr = (ServerArray*)ptr;
     engine().removeNotificationHandler(fft_ptr->id);
-    free(fft_ptr);  
+    delete fft_ptr;
 };
 
 /* OLD VARIABLE IN OUT FUNCTION
