@@ -26,6 +26,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Date;
@@ -132,6 +133,17 @@ class ContributionPanel extends JPanel {
           LocalContribution installed = (LocalContribution) contrib;
           installed.setDeletionFlag(false);
           contribListing.replaceContribution(contrib, contrib);  // ?? 
+          ArrayList<Contribution> contribsList = contribListing.allContributions;
+          boolean toBeRestarted = false;
+          for(Contribution contribElement : contribsList)
+            if (contrib.getType().equals(contribElement.getType())) {
+              if (contribElement.isDeletionFlagged() || contribElement.isUpdateFlagged())
+                {
+                  toBeRestarted = !toBeRestarted;
+                  break;
+                }
+            }
+          listPanel.contribManager.restartButton.setVisible(toBeRestarted);
         }
       }
     };
@@ -162,6 +174,7 @@ class ContributionPanel extends JPanel {
             public void cancel() {
               super.cancel();
               resetInstallProgressBarState();
+              listPanel.contribManager.restartButton.setVisible(true);
               isRemoveInProgress = false;
               installRemoveButton.setEnabled(true);
 //              ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, BUTTON_CONSTRAINT);
@@ -274,6 +287,7 @@ class ContributionPanel extends JPanel {
                                   public void cancel() {
                                     super.cancel();
                                     resetInstallProgressBarState();
+                                    listPanel.contribManager.status.setMessage("");
                                     isUpdateInProgress = false;
                                     installRemoveButton.setEnabled(true);
                                     if (contrib.isDeletionFlagged()) {
@@ -282,7 +296,7 @@ class ContributionPanel extends JPanel {
                                       contribListing.replaceContribution(contrib,contrib);
 //                                      updateButton.setVisible(false);
                                     }
-                                    listPanel.contribManager.status.setMessage("");
+                                    listPanel.contribManager.restartButton.setVisible(true);
                                   }
                                   
                                 }, listPanel.contribManager.status);
