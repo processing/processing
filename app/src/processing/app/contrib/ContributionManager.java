@@ -23,12 +23,11 @@ package processing.app.contrib;
 
 import java.io.*;
 import java.net.*;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
-
-import javax.swing.JProgressBar;
 
 import processing.app.Base;
 import processing.app.Editor;
@@ -183,7 +182,8 @@ public class ContributionManager {
                 contribListing.replaceContribution(ad, contribution);
                 if (contribution.getType() == ContributionType.MODE) {
                   ArrayList<ModeContribution> contribModes = editor.getBase().getModeContribs();
-                  contribModes.add((ModeContribution)contribution);
+                  if (!contribModes.contains(contribution))
+                    contribModes.add((ModeContribution) contribution);
                 }
                 refreshInstalled(editor);
               }
@@ -236,8 +236,16 @@ public class ContributionManager {
               if (contribution.getType() == ContributionType.MODE) {
                 ArrayList<ModeContribution> contribModes = base
                   .getModeContribs();
-                if (contribModes != null)
+                if (contribModes != null) {
                   contribModes.add((ModeContribution) contribution);
+                  if (contribution.getType() == ContributionType.MODE
+                    && base.getActiveEditor() != null) {
+                    ArrayList<ModeContribution> contribModesList = base
+                      .getModeContribs();
+                    if (!contribModesList.contains(contribution))
+                      contribModesList.add((ModeContribution) contribution);
+                  }
+                }
               }
               if (base.getActiveEditor() != null)
                 refreshInstalled(base.getActiveEditor());
@@ -384,10 +392,23 @@ public class ContributionManager {
                 LocalContribution.isUpdateFlagged(folder));
       }
     });
+    
     ArrayList<String> updateContribsNames = new ArrayList<String>();
     LinkedList<AvailableContribution> updateContribsList = new LinkedList<AvailableContribution>();
+    
+    String type = root.getName().substring(root.getName().lastIndexOf('/') + 1);
+    String propFileName = null;
+    
+    if (type.equalsIgnoreCase("tools"))
+      propFileName = "tool.properties";
+    else if (type.equalsIgnoreCase("modes"))
+      propFileName = "mode.properties";
+    else if (type.equalsIgnoreCase("libraries")) //putting this here, just in case
+      propFileName = "libraries.properties";
+    
     for (File folder : markedForUpdate) {
-      updateContribsNames.add(folder.getName());
+      HashMap<String, String> properties = Base.readSettings(new File(folder, propFileName));
+      updateContribsNames.add(properties.get("name"));
       Base.removeDir(folder);
     }
     for (AvailableContribution availableContribs : contribListing.advertisedContributions) {
