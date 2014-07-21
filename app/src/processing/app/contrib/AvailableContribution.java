@@ -146,17 +146,27 @@ class AvailableContribution extends Contribution {
 //          //status.setMessage("Restart Processing to finish the installation.");
 //        }
         
-        // 3. Delete the newContrib, do a garbage collection, hope and pray
+        // 3.1 Unlock all the jars if it is a mode or tool
+        if (newContrib.getType() == ContributionType.MODE) {
+          ((ModeContribution)newContrib).clearClassLoader(editor.getBase());
+          System.out.println("ismode");
+        }
+        else if (newContrib.getType() == ContributionType.TOOL) {
+          ((ToolContribution)newContrib).clearClassLoader(editor.getBase());
+          System.out.println("istool");
+        }
+        
+        // 3.2 Delete the newContrib, do a garbage collection, hope and pray
         // that Java will unlock the temp folder on Windows now
         newContrib = null;
         System.gc();
         
         
         if (Base.isWindows()) {
-          // we'll even give it 2 seconds to finish up ... because file ops are
+          // we'll even give it a second to finish up ... because file ops are
           // just that flaky on Windows.
           try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
           } catch (InterruptedException e) {
             e.printStackTrace();
           }
