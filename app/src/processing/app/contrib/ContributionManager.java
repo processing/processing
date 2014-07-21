@@ -23,6 +23,7 @@ package processing.app.contrib;
 
 import java.io.*;
 import java.net.*;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ArrayList;
@@ -331,6 +332,9 @@ public class ContributionManager {
    * Also updates all entries previously marked for update.
    */
   static public void cleanup(Base base) throws Exception {
+    deleteTemp(Base.getSketchbookModesFolder());
+    deleteTemp(Base.getSketchbookToolsFolder());
+    
     deleteFlagged(Base.getSketchbookLibrariesFolder());
     deleteFlagged(Base.getSketchbookModesFolder());
     deleteFlagged(Base.getSketchbookToolsFolder());
@@ -341,6 +345,22 @@ public class ContributionManager {
     
     clearRestartFlags(Base.getSketchbookModesFolder());
     clearRestartFlags(Base.getSketchbookToolsFolder());
+  }
+
+
+  static private void deleteTemp(File root) {
+    
+    LinkedList<File> deleteList = new LinkedList<File>();
+    
+    for (File f : root.listFiles())
+      if (f.getName().matches(root.getName().substring(0, 4) + "\\d*" + "tmp"))
+        deleteList.add(f);
+    
+    Iterator<File> folderIter = deleteList.iterator();
+    
+    while(folderIter.hasNext()) {
+      Base.removeDir(folderIter.next());
+    }
   }
 
   
