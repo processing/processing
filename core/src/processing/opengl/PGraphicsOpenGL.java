@@ -2133,9 +2133,6 @@ public class PGraphicsOpenGL extends PGraphics {
     shape = kind;
     inGeo.clear();
 
-    // We are going to draw, pixels won't be up-to-date anymore.
-    setgetPixels = false;
-
     curveVertexCount = 0;
     breakShape = false;
     defaultEdges = true;
@@ -2154,6 +2151,9 @@ public class PGraphicsOpenGL extends PGraphics {
     if ((flushMode == FLUSH_CONTINUOUSLY) ||
         (flushMode == FLUSH_WHEN_FULL && tessGeo.isFull())) {
       flush();
+    } else {
+      // pixels array is not up-to-date anymore
+      setgetPixels = false;
     }
   }
 
@@ -2169,6 +2169,9 @@ public class PGraphicsOpenGL extends PGraphics {
     if (flushMode == FLUSH_CONTINUOUSLY ||
         (flushMode == FLUSH_WHEN_FULL && tessGeo.isFull())) {
       flush();
+    } else {
+      // pixels array is not up-to-date anymore
+      setgetPixels = false;
     }
   }
 
