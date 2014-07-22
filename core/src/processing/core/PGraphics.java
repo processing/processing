@@ -2664,8 +2664,8 @@ public class PGraphics extends PImage implements PConstants {
         }
 
         if (stop - start > TWO_PI) {
-          start = 0;
-          stop = TWO_PI;
+          // don't change start, it is visible in PIE mode
+          stop = start + TWO_PI;
         }
         arcImpl(x, y, w, h, start, stop, mode);
       }
