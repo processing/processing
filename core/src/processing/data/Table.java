@@ -155,14 +155,30 @@ public class Table {
 
   public Table(Iterable<TableRow> rows) {
     init();
-    boolean firstRow = true;
-    for (TableRow row : rows) {
-      if (firstRow) {
-        setColumnTypes(row.getColumnTypes());
-        setColumnTitles(row.getColumnTitles());
-        firstRow = false;
+
+    int row = 0;
+    int alloc = 10;
+
+    for (TableRow incoming : rows) {
+      if (row == 0) {
+        setColumnTypes(incoming.getColumnTypes());
+        setColumnTitles(incoming.getColumnTitles());
+        // Do this after setting types, otherwise it'll attempt to parse the
+        // allocated but empty rows, and drive CATEGORY columns nutso.
+        setRowCount(alloc);
+
+      } else if (row == alloc) {
+        // Far more efficient than re-allocating all columns and doing a copy
+        alloc *= 2;
+        setRowCount(alloc);
       }
-      addRow(row);
+
+      //addRow(row);
+      setRow(row++, incoming);
+    }
+    // Shrink the table to only the rows that were used
+    if (row != alloc) {
+      setRowCount(row);
     }
   }
 
@@ -1837,7 +1853,11 @@ public class Table {
    * @param source a reference to the original row to be duplicated
    */
   public TableRow addRow(TableRow source) {
-    int row = rowCount;
+    return setRow(rowCount, source);
+  }
+
+
+  public TableRow setRow(int row, TableRow source) {
     // Make sure there are enough columns to add this data
     ensureBounds(row, source.getColumnCount() - 1);
 

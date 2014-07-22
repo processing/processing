@@ -15,6 +15,7 @@ X add getColumnTitle(int) and getColumnTitles() to TableRow interface
 X fixes for new Table(Iterable)
 X   category data types were not importing their dictionary
 X   column titles weren't set on the new table
+X   drastic performance improvements for addRow()
 X when using setColumnType(), replace nulls with missingInt, missingFloat, etc
 X   formerly, was throwing a NullPointerException
 
