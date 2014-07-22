@@ -1,7 +1,7 @@
 package processing.sound;
 import processing.core.*;
 
-public class PinkNoise implements SoundObject{
+public class PinkNoise implements Noise{
 	
 	PApplet parent;
 	private Engine m_engine;

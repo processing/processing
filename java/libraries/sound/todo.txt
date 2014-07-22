@@ -2,17 +2,19 @@
 
 2.0 SOUND
 
-  FOR RELEASE
+  FOR RELEASE (GSoC)
 
   - Improve/make examples  
 
-  Bugs:
+  Bugs (GSoC):
   + Fix FFT Crash
   - Fix Low Pass Distortion
   + Fix problem of passing effects to Analyzers 
   + Make audio input work
+  - Use Patch Cables for signal splitting for effects
 
-  Features:  
+  Features (GSoC):  
+  - Compile Windows Version
   - Make oscillators modulatable
   - Bandlimit oscillators
   - Introduce wet/dry for Delay
@@ -21,7 +23,7 @@
   - If you loop a sample and use jump make it play from the beginning
     
   NICE
-  - Pitchtracker
+  - Pitchtracker (GSoC optional)
   - isPlaying method for Synths
   - helper functions (ampToDB, midiToFreq etc..)
   - make non-bandlimited a pro option
