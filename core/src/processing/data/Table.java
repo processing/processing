@@ -155,11 +155,12 @@ public class Table {
 
   public Table(Iterable<TableRow> rows) {
     init();
-    boolean typed = false;
+    boolean firstRow = true;
     for (TableRow row : rows) {
-      if (!typed) {
+      if (firstRow) {
         setColumnTypes(row.getColumnTypes());
-        typed = true;
+        setColumnTitles(row.getColumnTitles());
+        firstRow = false;
       }
       addRow(row);
     }
@@ -505,6 +506,7 @@ public class Table {
     if (count > 0) {
       setString(row, col, new String(c, 0, count));
     }
+    row++;  // set row to row count (the current row index + 1)
     if (alloc != row) {
       setRowCount(row);  // shrink to the actual size
     }
@@ -1841,7 +1843,6 @@ public class Table {
 
     for (int col = 0; col < columns.length; col++) {
       switch (columnTypes[col]) {
-      case CATEGORY:
       case INT:
         setInt(row, col, source.getInt(col));
         break;
@@ -1857,6 +1858,14 @@ public class Table {
       case STRING:
         setString(row, col, source.getString(col));
         break;
+      case CATEGORY:
+        int index = source.getInt(col);
+        setInt(row, col, index);
+        if (columnCategories[col].hasCategory(index)) {
+          columnCategories[col].setCategory(index, source.getString(col));
+        }
+        break;
+
       default:
         throw new RuntimeException("no types");
       }
@@ -2288,6 +2297,14 @@ public class Table {
 
     public int[] getColumnTypes() {
       return table.getColumnTypes();
+    }
+
+    public String getColumnTitle(int column) {
+      return table.getColumnTitle(column);
+    }
+
+    public String[] getColumnTitles() {
+      return table.getColumnTitles();
     }
   }
 
@@ -3609,6 +3626,18 @@ public class Table {
       return indexToData.get(index);
     }
 
+    boolean hasCategory(int index) {
+      return index < size() && indexToData.get(index) != null;
+    }
+
+    void setCategory(int index, String name) {
+      while (indexToData.size() <= index) {
+        indexToData.add(null);
+      }
+      indexToData.set(index, name);
+      dataToIndex.put(name, index);
+    }
+
     int size() {
       return dataToIndex.size();
     }
@@ -3630,9 +3659,11 @@ public class Table {
 
     void read(DataInputStream input) throws IOException {
       int count = input.readInt();
+      System.out.println("found " + count + " entries in category map");
       dataToIndex = new HashMap<String, Integer>(count);
       for (int i = 0; i < count; i++) {
         String str = input.readUTF();
+        System.out.println(i + " " + str);
         dataToIndex.put(str, i);
         indexToData.add(str);
       }

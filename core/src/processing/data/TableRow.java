@@ -109,4 +109,7 @@ public interface TableRow {
   public int getColumnType(int column);
 
   public int[] getColumnTypes();
+
+  public String getColumnTitle(int column);
+  public String[] getColumnTitles();
 }

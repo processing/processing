@@ -8,8 +8,13 @@ o   Jer and Dan will look at their code, plus toxiclibs
 
 table
 X major performance improvements to 'newlines' parsing
-X debugging table parsing with header rows
-X bug fix for setting data type
+X last row was being skipped on tables with the 'newlines' option set
+X debug table parsing with header rows
+X bug fix for setting data types
+X add getColumnTitle(int) and getColumnTitles() to TableRow interface
+X fixes for new Table(Iterable)
+X   category data types were not importing their dictionary
+X   column titles weren't set on the new table
 
 
 applet removal
