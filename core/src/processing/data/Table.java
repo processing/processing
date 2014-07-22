@@ -1503,7 +1503,7 @@ public class Table {
         int[] intData = new int[rowCount];
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
-          intData[row] = PApplet.parseInt(s, missingInt);
+          intData[row] = (s == null) ? missingInt : PApplet.parseInt(s, missingInt);
         }
         columns[column] = intData;
         break;
@@ -1513,7 +1513,7 @@ public class Table {
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
           try {
-            longData[row] = Long.parseLong(s);
+            longData[row] = (s == null) ? missingLong : Long.parseLong(s);
           } catch (NumberFormatException nfe) {
             longData[row] = missingLong;
           }
@@ -1525,7 +1525,7 @@ public class Table {
         float[] floatData = new float[rowCount];
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
-          floatData[row] = PApplet.parseFloat(s, missingFloat);
+          floatData[row] = (s == null) ? missingFloat : PApplet.parseFloat(s, missingFloat);
         }
         columns[column] = floatData;
         break;
@@ -1535,7 +1535,7 @@ public class Table {
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
           try {
-            doubleData[row] = Double.parseDouble(s);
+            doubleData[row] = (s == null) ? missingDouble : Double.parseDouble(s);
           } catch (NumberFormatException nfe) {
             doubleData[row] = missingDouble;
           }
@@ -1861,7 +1861,7 @@ public class Table {
       case CATEGORY:
         int index = source.getInt(col);
         setInt(row, col, index);
-        if (columnCategories[col].hasCategory(index)) {
+        if (!columnCategories[col].hasCategory(index)) {
           columnCategories[col].setCategory(index, source.getString(col));
         }
         break;
@@ -3659,11 +3659,11 @@ public class Table {
 
     void read(DataInputStream input) throws IOException {
       int count = input.readInt();
-      System.out.println("found " + count + " entries in category map");
+      //System.out.println("found " + count + " entries in category map");
       dataToIndex = new HashMap<String, Integer>(count);
       for (int i = 0; i < count; i++) {
         String str = input.readUTF();
-        System.out.println(i + " " + str);
+        //System.out.println(i + " " + str);
         dataToIndex.put(str, i);
         indexToData.add(str);
       }
