@@ -384,9 +384,9 @@ public class PGraphicsOpenGL extends PGraphics {
   /** PImage that wraps filterTexture. */
   protected PImage filterImage;
 
-  /** Flag to indicate if the user is manipulating the
-   * pixels array through the set()/get() methods */
-  protected boolean setgetPixels;
+  /** Flag to indicate that pixels array is up-to-date and
+   * ready to be manipulated through the set()/get() methods */
+  protected boolean arePixelsUpToDate;
 
   // ........................................................
 
@@ -2156,6 +2156,9 @@ public class PGraphicsOpenGL extends PGraphics {
     if ((flushMode == FLUSH_CONTINUOUSLY) ||
         (flushMode == FLUSH_WHEN_FULL && tessGeo.isFull())) {
       flush();
+    } else {
+      // pixels array is not up-to-date anymore
+      arePixelsUpToDate = false;
     }
   }
 
@@ -2171,6 +2174,9 @@ public class PGraphicsOpenGL extends PGraphics {
     if (flushMode == FLUSH_CONTINUOUSLY ||
         (flushMode == FLUSH_WHEN_FULL && tessGeo.isFull())) {
       flush();
+    } else {
+      // pixels array is not up-to-date anymore
+      arePixelsUpToDate = false;
     }
   }
 
@@ -2448,7 +2454,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     tessGeo.clear();
     texCache.clear();
-    setgetPixels = false;
+    arePixelsUpToDate = false;
   }
 
 
@@ -5441,7 +5447,7 @@ public class PGraphicsOpenGL extends PGraphics {
       needEndDraw = true;
     }
 
-    if (!setgetPixels) {
+    if (!arePixelsUpToDate) {
       // Draws any remaining geometry in case the user is still not
       // setting/getting new pixels.
       flush();
@@ -5449,9 +5455,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
     allocatePixels();
 
-    if (!setgetPixels) {
+    if (!arePixelsUpToDate) {
       readPixels();
     }
+
+    // Pixels are now up-to-date, set the flag.
+    arePixelsUpToDate = true;
 
     if (needEndDraw) {
       endDraw();
@@ -5572,7 +5581,6 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public int get(int x, int y) {
     loadPixels();
-    setgetPixels = true;
     return super.get(x, y);
   }
 
@@ -5582,7 +5590,6 @@ public class PGraphicsOpenGL extends PGraphics {
                          int sourceWidth, int sourceHeight,
                          PImage target, int targetX, int targetY) {
     loadPixels();
-    setgetPixels = true;
     super.getImpl(sourceX, sourceY, sourceWidth, sourceHeight,
                   target, targetX, targetY);
   }
@@ -5591,7 +5598,6 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void set(int x, int y, int argb) {
     loadPixels();
-    setgetPixels = true;
     super.set(x, y, argb);
   }
 
@@ -5602,7 +5608,6 @@ public class PGraphicsOpenGL extends PGraphics {
                          int sourceWidth, int sourceHeight,
                          int targetX, int targetY) {
     loadPixels();
-    setgetPixels = true;
     super.setImpl(sourceImage, sourceX, sourceY, sourceWidth, sourceHeight,
                   targetX, targetY);
  // do we need this?
@@ -6580,7 +6585,7 @@ public class PGraphicsOpenGL extends PGraphics {
     clearColorBuffer = false;
 
     modified = false;
-    setgetPixels = false;
+    arePixelsUpToDate = false;
   }
 
 
