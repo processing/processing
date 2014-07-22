@@ -381,7 +381,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /** Flag to indicate that pixels array is up-to-date and
    * ready to be manipulated through the set()/get() methods */
-  protected boolean setgetPixels;
+  protected boolean arePixelsUpToDate;
 
   // ........................................................
 
@@ -2153,7 +2153,7 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
     } else {
       // pixels array is not up-to-date anymore
-      setgetPixels = false;
+      arePixelsUpToDate = false;
     }
   }
 
@@ -2171,7 +2171,7 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
     } else {
       // pixels array is not up-to-date anymore
-      setgetPixels = false;
+      arePixelsUpToDate = false;
     }
   }
 
@@ -2449,7 +2449,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     tessGeo.clear();
     texCache.clear();
-    setgetPixels = false;
+    arePixelsUpToDate = false;
   }
 
 
@@ -5441,7 +5441,7 @@ public class PGraphicsOpenGL extends PGraphics {
       needEndDraw = true;
     }
 
-    if (!setgetPixels) {
+    if (!arePixelsUpToDate) {
       // Draws any remaining geometry in case the user is still not
       // setting/getting new pixels.
       flush();
@@ -5449,12 +5449,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
     allocatePixels();
 
-    if (!setgetPixels) {
+    if (!arePixelsUpToDate) {
       readPixels();
     }
 
     // Pixels are now up-to-date, set the flag.
-    setgetPixels = true;
+    arePixelsUpToDate = true;
 
     if (needEndDraw) {
       endDraw();
@@ -6574,7 +6574,7 @@ public class PGraphicsOpenGL extends PGraphics {
     clearColorBuffer = false;
 
     modified = false;
-    setgetPixels = false;
+    arePixelsUpToDate = false;
   }
 
 
