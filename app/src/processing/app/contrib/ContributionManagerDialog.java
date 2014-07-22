@@ -95,7 +95,9 @@ public class ContributionManagerDialog {
         @Override
         public void actionPerformed(ActionEvent arg0) {
 
-          for (Editor ed : editor.getBase().getEditors())
+          Iterator<Editor> iter = editor.getBase().getEditors().iterator();
+          while (iter.hasNext()) {
+            Editor ed = iter.next();
             if (ed.getSketch().isModified() || ed.getSketch().isUntitled()) {
               int option = Base
                 .showYesNoQuestion(editor, title,
@@ -107,6 +109,7 @@ public class ContributionManagerDialog {
               else
                 break;
             }
+          }
 
           // Thanks to http://stackoverflow.com/a/4160543
           StringBuilder cmd = new StringBuilder();

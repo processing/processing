@@ -21,17 +21,13 @@
 */
 package processing.app.contrib;
 
-import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.URLClassLoader;
 import java.util.*;
 
-import javax.swing.JRadioButtonMenuItem;
-
 import processing.app.Base;
-import processing.app.Editor;
 import processing.app.Mode;
 
 
@@ -77,6 +73,7 @@ public class ModeContribution extends LocalContribution {
   private ModeContribution(Base base, File folder,
                            String className) throws Exception {
     super(folder);
+
     className = initLoader(className);
     if (className != null) {
       Class<?> modeClass = loader.loadClass(className);
@@ -90,26 +87,16 @@ public class ModeContribution extends LocalContribution {
   }
 
   /**
-   * Method to close the ClassLoader so that the archives are no longer "locked" and
-   * a mode can be removed without restart.
+   * Method to close the ClassLoader so that the archives are no longer "locked"
+   * and a mode can be removed without restart.
    */
   public void clearClassLoader(Base base) {
+    
     ArrayList<ModeContribution> contribModes = base.getModeContribs();
     int botherToRemove = contribModes.indexOf(this);
     if (botherToRemove != -1) { // The poor thing isn't even loaded, and we're trying to remove it...
       contribModes.remove(botherToRemove);
-    /*  List<Editor> editorList = base.getEditors();
-      for (Editor editor : editorList) {
-        Component[] j = editor.getModeMenu().getPopupMenu().getComponents();
-        for (Component component : j) {
-          JRadioButtonMenuItem cbmi = null;
-          if (component instanceof JRadioButtonMenuItem) {
-            cbmi = (JRadioButtonMenuItem) component;
-            if (cbmi.getText().equals(mode.toString()))
-              editor.getModeMenu().getPopupMenu().remove(component);
-          }
-        }
-      } */
+
       try {
         ((URLClassLoader) loader).close();
         // The typecast should be safe, since the only case when loader is not of

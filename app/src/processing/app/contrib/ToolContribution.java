@@ -76,8 +76,9 @@ public class ToolContribution extends LocalContribution implements Tool {
     } catch (IOException e1) {
       e1.printStackTrace();
     }
-    List<Editor> editors = base.getEditors();
-    for (Editor editor : editors) {
+    Iterator<Editor> editorIter = base.getEditors().iterator();
+    while (editorIter.hasNext()) {
+      Editor editor = editorIter.next();
       ArrayList<ToolContribution> contribTools = editor.contribTools;
       for (ToolContribution toolContrib : contribTools)
         if (toolContrib.getName().equals(this.name)) {

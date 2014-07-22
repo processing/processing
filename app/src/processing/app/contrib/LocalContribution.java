@@ -195,104 +195,90 @@ public abstract class LocalContribution extends Contribution {
 //  }
   
   
-  LocalContribution copyAndLoad(Editor editor, 
+  LocalContribution copyAndLoad(Base base, 
                                 boolean confirmReplace, 
                                 StatusPanel status) {
-    ArrayList<LocalContribution> oldContribs = 
-      getType().listContributions(editor);
+// NOTE: null status => function is called on startup when Editor objects, et al. aren't ready
     
     String contribFolderName = getFolder().getName();
 
     File contribTypeFolder = getType().getSketchbookFolder();
     File contribFolder = new File(contribTypeFolder, contribFolderName);
+    
+    if (status != null) { // when status != null, install is not occurring on startup
+    
+      Editor editor = base.getActiveEditor();
+      
+      ArrayList<LocalContribution> oldContribs = 
+        getType().listContributions(editor);
+    
+      // In case an update marker exists, and the user wants to install, delete the update marker
+      if (contribFolder.exists() && !contribFolder.isDirectory()) {
+        contribFolder.delete();
+        contribFolder = new File(contribTypeFolder, contribFolderName);
+      }
 
-    for (LocalContribution oldContrib : oldContribs) {
-      if ((oldContrib.getFolder().exists() && oldContrib.getFolder().equals(contribFolder)) ||
-          (oldContrib.getId() != null && oldContrib.getId().equals(getId()))) {
+      for (LocalContribution oldContrib : oldContribs) {
+        if ((oldContrib.getFolder().exists() && oldContrib.getFolder().equals(contribFolder)) ||
+            (oldContrib.getId() != null && oldContrib.getId().equals(getId()))) {
 
-        if (oldContrib.getType().requiresRestart()) {
-          // XXX: We can't replace stuff, soooooo.... do something different
-          if (!oldContrib.backup(editor, false, status)) {
-            return null;
-          }
-        } else {
-          int result = 0;
-          boolean doBackup = Preferences.getBoolean("contribution.backup.on_install");
-          if (confirmReplace) {
-            if (doBackup) {
-              result = Base.showYesNoQuestion(editor, "Replace",
-                     "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
-                     "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
-                     "has been found in your sketchbook. Clicking “Yes”<br>"+
-                     "will move the existing library to a backup folder<br>" +
-                     "in <i>libraries/old</i> before replacing it.");
-              if (result != JOptionPane.YES_OPTION || !oldContrib.backup(editor, true, status)) {
-                return null;
-              }
-            } else {
-              result = Base.showYesNoQuestion(editor, "Replace",
-                     "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
-                     "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
-                     "has been found in your sketchbook. Clicking “Yes”<br>"+
-                     "will permanently delete this library and all of its contents<br>"+
-                     "before replacing it.");
-              if (result != JOptionPane.YES_OPTION || !oldContrib.getFolder().delete()) {
-                return null;
-              }
+          if (oldContrib.getType().requiresRestart()) {
+            // XXX: We can't replace stuff, soooooo.... do something different
+            if (!oldContrib.backup(editor, false, status)) {
+              return null;
             }
           } else {
-            if ((doBackup && !oldContrib.backup(editor, true, status)) ||
-                (!doBackup && !oldContrib.getFolder().delete())) {
-              return null;
+            int result = 0;
+            boolean doBackup = Preferences.getBoolean("contribution.backup.on_install");
+            if (confirmReplace) {
+              if (doBackup) {
+                result = Base.showYesNoQuestion(editor, "Replace",
+                       "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
+                       "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
+                       "has been found in your sketchbook. Clicking “Yes”<br>"+
+                       "will move the existing library to a backup folder<br>" +
+                       "in <i>libraries/old</i> before replacing it.");
+                if (result != JOptionPane.YES_OPTION || !oldContrib.backup(editor, true, status)) {
+                  return null;
+                }
+              } else {
+                result = Base.showYesNoQuestion(editor, "Replace",
+                       "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
+                       "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
+                       "has been found in your sketchbook. Clicking “Yes”<br>"+
+                       "will permanently delete this library and all of its contents<br>"+
+                       "before replacing it.");
+                if (result != JOptionPane.YES_OPTION || !oldContrib.getFolder().delete()) {
+                  return null;
+                }
+              }
+            } else {
+              if ((doBackup && !oldContrib.backup(editor, true, status)) ||
+                  (!doBackup && !oldContrib.getFolder().delete())) {
+                return null;
+              }
             }
           }
         }
       }
-    }
 
-    // At this point it should be safe to replace this fella
-    if (contribFolder.exists()) {
-      Base.removeDir(contribFolder);
+      // At this point it should be safe to replace this fella
+      if (contribFolder.exists()) {
+        Base.removeDir(contribFolder);
+      }
+    
+    }
+    else {
+      // This if should ideally never happen, since this function is to be called only when restarting on update
+      if (contribFolder.exists() && contribFolder.isDirectory()) {
+        Base.removeDir(contribFolder);
+      }
+      else if (contribFolder.exists()) {
+        contribFolder.delete();
+        contribFolder = new File(contribTypeFolder, contribFolderName);
+      }
     }
     
-
-    File oldFolder = getFolder();
-
-    try {
-      Base.copyDir(oldFolder,  contribFolder);
-    } catch (IOException e) {
-      status.setErrorMessage("Could not copy " + getTypeName() +
-                             " \"" + getName() + "\" to the sketchbook.");
-      e.printStackTrace();
-      return null;
-    }
-
-
-    /*
-    if (!getFolder().renameTo(contribFolder)) {
-      status.setErrorMessage("Could not move " + getTypeName() + 
-                                " \"" + getName() + "\" to the sketchbook.");
-      return null;
-    }
-    */
-    
-    return getType().load(editor.getBase(), contribFolder);
-  }
-
-
-  LocalContribution copyAndLoadOnStartup(Base base, StatusPanel status) {
-    
-    String contribFolderName = getFolder().getName();
-
-    File contribTypeFolder = getType().getSketchbookFolder();
-    File contribFolder = new File(contribTypeFolder, contribFolderName);
-
-    // This if should ideally never happen, since this function is to be called only when restarting on update
-    if (contribFolder.exists()) {
-      Base.removeDir(contribFolder);
-    }
-    
-
     File oldFolder = getFolder();
 
     try {
@@ -315,7 +301,6 @@ public abstract class LocalContribution extends Contribution {
     
     return getType().load(base, contribFolder);
   }
-
 
 
   /**
@@ -367,8 +352,11 @@ public abstract class LocalContribution extends Contribution {
     }).start();
   }
   
-  void remove(final Editor editor, final ProgressMonitor pm,
-              final StatusPanel status, final ContributionListing contribListing) {
+  
+  void remove(final Editor editor,
+              final ProgressMonitor pm,
+              final StatusPanel status, 
+              final ContributionListing contribListing) {
     pm.startTask("Removing", ProgressMonitor.UNKNOWN);
 
     boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
@@ -383,11 +371,14 @@ public abstract class LocalContribution extends Contribution {
     if (getType() == ContributionType.MODE) {
       boolean isModeActive = false;
       ModeContribution m = (ModeContribution) this;
-      for (Editor e : editor.getBase().getEditors())
+      Iterator<Editor> iter = editor.getBase().getEditors().iterator();
+      while (iter.hasNext()) {
+        Editor e = iter.next();
         if (e.getMode().equals(m.getMode())) {
           isModeActive = true;
           break;
         }
+      }
       if (!isModeActive)
         m.clearClassLoader(editor.getBase());
       else {
@@ -401,8 +392,11 @@ public abstract class LocalContribution extends Contribution {
     }
     if (getType() == ContributionType.TOOL) {
       ToolContribution t = (ToolContribution) this;
-      for (Editor ed : editor.getBase().getEditors())
+      Iterator<Editor> iter = editor.getBase().getEditors().iterator();
+      while (iter.hasNext()) {
+        Editor ed = iter.next();
         ed.clearToolMenu();
+      }
       t.clearClassLoader(editor.getBase());
     }
     if (doBackup) {

@@ -26,7 +26,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Date;
@@ -133,9 +133,10 @@ class ContributionPanel extends JPanel {
           LocalContribution installed = (LocalContribution) contrib;
           installed.setDeletionFlag(false);
           contribListing.replaceContribution(contrib, contrib);  // ?? 
-          ArrayList<Contribution> contribsList = contribListing.allContributions;
+          Iterator<Contribution> contribsListIter = contribListing.allContributions.iterator();
           boolean toBeRestarted = false;
-          for(Contribution contribElement : contribsList)
+          while (contribsListIter.hasNext()) {
+            Contribution contribElement = contribsListIter.next();
             if (contrib.getType().equals(contribElement.getType())) {
               if (contribElement.isDeletionFlagged() || contribElement.isUpdateFlagged())
                 {
@@ -143,6 +144,7 @@ class ContributionPanel extends JPanel {
                   break;
                 }
             }
+          }
           listPanel.contribManager.restartButton.setVisible(toBeRestarted);
         }
       }
@@ -399,6 +401,7 @@ class ContributionPanel extends JPanel {
     
     JPanel updateBox = new JPanel();  
     updateBox.setLayout(new BorderLayout());
+    updateBox.setInheritsPopupMenu(true);
     updateBox.add(notificationBlock, BorderLayout.WEST);
     updateBox.setBorder(new EmptyBorder(4, 7, 7, 7));
     updateBox.setOpaque(false);
@@ -412,26 +415,24 @@ class ContributionPanel extends JPanel {
     add(rightPane, BorderLayout.EAST);
 
     
-    if (updateButton.isVisible() && !isRemoveInProgress && !contrib.isDeletionFlagged()) {//installRemoveButton.getText().equals("Remove") && 
+    if (updateButton.isVisible() && !isRemoveInProgress && !contrib.isDeletionFlagged()) { 
       JPanel updateRemovePanel = new JPanel();
       updateRemovePanel.setLayout(new FlowLayout());
       updateRemovePanel.setOpaque(false);
       updateRemovePanel.add(updateButton);
+      updateRemovePanel.setInheritsPopupMenu(true);
       updateRemovePanel.add(installRemoveButton);
       updateBox.add(updateRemovePanel, BorderLayout.EAST);
       
       JPanel barPane = new JPanel();
       barPane.setOpaque(false);
+      barPane.setInheritsPopupMenu(true);
       barPane.add(installProgressBar);
       rightPane.add(barPane);
       
       if (isUpdateInProgress)
         ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, PROGRESS_BAR_CONSTRAINT);
-      
-//      barButtonCardPane.removeAll();
-//      barButtonCardPane.add(barPane, PROGRESS_BAR_CONSTRAINT);
-//      ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, PROGRESS_BAR_CONSTRAINT);
-//      rightPane.add(barButtonCardPane);
+
     }
     else {
       updateBox.add(updateButton, BorderLayout.EAST);
@@ -439,10 +440,12 @@ class ContributionPanel extends JPanel {
       
       JPanel barPane = new JPanel();
       barPane.setOpaque(false);
+      barPane.setInheritsPopupMenu(true);
       barPane.add(installProgressBar);
 
       JPanel buttonPane = new JPanel();
       buttonPane.setOpaque(false);
+      buttonPane.setInheritsPopupMenu(true);
       buttonPane.add(installRemoveButton);
 
       barButtonCardPane.add(buttonPane, BUTTON_CONSTRAINT);
@@ -624,8 +627,6 @@ class ContributionPanel extends JPanel {
       installRemoveButton.setText(Language.text("contributions.install"));
     }
 
-//    reorganizePaneComponents();
-    
     contextMenu.removeAll();
 
     if (contrib.isInstalled()) {
