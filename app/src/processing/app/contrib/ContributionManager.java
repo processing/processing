@@ -25,6 +25,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import javax.swing.SwingWorker;
+
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Language;
@@ -189,7 +191,7 @@ public class ContributionManager {
 
           try {
             download(url, contribZip, null);
-
+            
             LocalContribution contribution = ad.install(base, contribZip,
                                                         false, null);
 
@@ -211,7 +213,8 @@ public class ContributionManager {
             handleUpdateFailedMarkers(ad, filename.substring(0, filename.lastIndexOf('.')));
 
           } catch (Exception e) {
-            e.printStackTrace();
+//            Chuck the stack trace. The user might have no idea why it is appearing, or what (s)he did wrong...
+//            e.printStackTrace();
             System.out.println("Error during download and install of "
               + ad.getName());
           }
@@ -235,16 +238,32 @@ public class ContributionManager {
  * The name of the folder in which the contribution is supposed to be stored.
  */
   static private void handleUpdateFailedMarkers(final AvailableContribution ac, String filename) {
-    
+
     File contribLocn = ac.getType().getSketchbookFolder();
 
-      try {
-        new File(contribLocn, ac.getName()).createNewFile();
-      } catch (IOException e) {
-        // File already exists...
-        //e.printStackTrace();
+    for (File contribDir : contribLocn.listFiles())
+      if (contribDir.isDirectory()) {
+        File[] contents = contribDir.listFiles(new FilenameFilter() {
+
+          @Override
+          public boolean accept(File dir, String file) {
+            return file.equals(ac.getType() + ".properties");
+          }
+        });
+        if (contents.length > 0 && Base.readSettings(contents[0]).get("name").equals(ac.getName())) {
+          return;
+        }
       }
-        
+
+    try {
+      new File(contribLocn, ac.getName()).createNewFile();
+    } catch (IOException e) {
+//      Again, forget about the stack trace. The user ain't done wrong
+//      e.printStackTrace();
+      System.err.println("The unupdated contribution marker seems to not like "
+        + ac.getName() + ". You may have to install it manually to update...");
+    }
+
   }
 
 
@@ -317,7 +336,7 @@ public class ContributionManager {
    * and remove any "requires restart" flags.
    * Also updates all entries previously marked for update.
    */
-  static public void cleanup(Base base) throws Exception {
+  static public void cleanup(final Base base) throws Exception {
     
     deleteTemp(Base.getSketchbookModesFolder());
     deleteTemp(Base.getSketchbookToolsFolder());
@@ -327,10 +346,26 @@ public class ContributionManager {
     deleteFlagged(Base.getSketchbookToolsFolder());
     
     installPreviouslyFailed(base, Base.getSketchbookModesFolder());
-    installPreviouslyFailed(base, Base.getSketchbookToolsFolder());
-    
     updateFlagged(base, Base.getSketchbookModesFolder());
+    
     updateFlagged(base, Base.getSketchbookToolsFolder());
+    
+    SwingWorker s = new SwingWorker<Void, Void>() {
+
+      @Override
+      protected Void doInBackground() throws Exception {
+        try {
+          Thread.sleep(1 * 1000);
+          installPreviouslyFailed(base, Base.getSketchbookToolsFolder());
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        return null;
+      }
+    };
+    s.execute();
+
+    
     
     clearRestartFlags(Base.getSketchbookModesFolder());
     clearRestartFlags(Base.getSketchbookToolsFolder());
@@ -399,6 +434,7 @@ public class ContributionManager {
       while (iter.hasNext()) {
         AvailableContribution availableContrib = iter.next();
         if (file.getName().equals(availableContrib.getName())) {
+          file.delete();
           installOnStartUp(base, availableContrib);
           contribListing
             .replaceContribution(availableContrib, availableContrib);

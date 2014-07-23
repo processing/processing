@@ -67,10 +67,6 @@ public class ToolContribution extends LocalContribution implements Tool {
    * a tool can be removed without restart.
    */
   public void clearClassLoader(Base base) {
-//    ArrayList<ToolContribution> contribTools = base.getActiveEditor().contribTools;
-//    int botherToRemove = contribTools.indexOf(this);
-//    if (botherToRemove != -1) { // The poor thing doesn't even exist, and we're trying to remove it...
-//      contribTools.remove(botherToRemove);
     try {
       ((URLClassLoader) this.loader).close();
     } catch (IOException e1) {
@@ -92,7 +88,6 @@ public class ToolContribution extends LocalContribution implements Tool {
 //        base.getActiveEditor().rebuildToolMenu();
         }
     }
-//    }
   }
 
 

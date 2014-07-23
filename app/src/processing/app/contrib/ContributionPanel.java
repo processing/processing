@@ -41,6 +41,7 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 
 import processing.app.Base;
+import processing.app.Editor;
 import processing.app.Language;
 
 
@@ -168,7 +169,7 @@ class ContributionPanel extends JPanel {
               resetInstallProgressBarState();
               isRemoveInProgress = false;
               installRemoveButton.setEnabled(true);
-//              ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, BUTTON_CONSTRAINT);
+
               reorganizePaneComponents();
               setSelected(true); // Needed for smooth working. Dunno why, though...
             }
@@ -176,12 +177,29 @@ class ContributionPanel extends JPanel {
             public void cancel() {
               super.cancel();
               resetInstallProgressBarState();
-              listPanel.contribManager.restartButton.setVisible(true);
               isRemoveInProgress = false;
               installRemoveButton.setEnabled(true);
-//              ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, BUTTON_CONSTRAINT);
+
               reorganizePaneComponents();
               setSelected(true);
+              
+              boolean isModeActive = false;
+              if (contrib.getType() == ContributionType.MODE) {
+                ModeContribution m = (ModeContribution) contrib;
+                Iterator<Editor> iter = listPanel.contribManager.editor.getBase().getEditors().iterator();
+                
+                while (iter.hasNext()) {
+                  Editor e = iter.next();
+                  if (e.getMode().equals(m.getMode())) {
+                    isModeActive = true;
+                    break;
+                  }
+                }
+              }
+              if(!isModeActive)
+                listPanel.contribManager.restartButton.setVisible(true);
+              else
+                updateButton.setEnabled(true);
             }
           },
           listPanel.contribManager.status);
@@ -296,14 +314,31 @@ class ContributionPanel extends JPanel {
                                       ((LocalContribution)contrib).setUpdateFlag(true);
                                       ((LocalContribution)contrib).setDeletionFlag(false);
                                       contribListing.replaceContribution(contrib,contrib);
-//                                      updateButton.setVisible(false);
                                     }
-                                    listPanel.contribManager.restartButton.setVisible(true);
+
+                                    boolean isModeActive = false;
+                                    if (contrib.getType() == ContributionType.MODE) {
+                                      ModeContribution m = (ModeContribution) contrib;
+                                      Iterator<Editor> iter = listPanel.contribManager.editor.getBase().getEditors().iterator();
+                                      
+                                      while (iter.hasNext()) {
+                                        Editor e = iter.next();
+                                        if (e.getMode().equals(m.getMode())) {
+                                          isModeActive = true;
+                                          break;
+                                        }
+                                      }
+                                    }
+                                    if(!isModeActive)
+                                      listPanel.contribManager.restartButton.setVisible(true);
+                                    else
+                                      updateButton.setEnabled(true);
                                   }
                                   
                                 }, listPanel.contribManager.status);
         } else {
           updateButton.setEnabled(false);
+          installRemoveButton.setEnabled(false);
           AvailableContribution ad = contribListing.getAvailableContribution(contrib);
           String url = ad.link;
           installContribution(ad, url);

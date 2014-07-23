@@ -360,7 +360,7 @@ public abstract class LocalContribution extends Contribution {
     pm.startTask("Removing", ProgressMonitor.UNKNOWN);
 
     boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
-//    if (getType().requiresRestart() && getType() != ContributionType.MODE) {
+//    if (getType().requiresRestart()) {
 //      if (!doBackup || (doBackup && backup(editor, false, status))) {
 //        if (setDeletionFlag(true)) {
 //          contribListing.replaceContribution(this, this);
@@ -386,10 +386,10 @@ public abstract class LocalContribution extends Contribution {
         Base.showMessage("Mode Manager",
                          "Please save your Sketch and change the Mode of all Editor\nwindows that have "
                            + this.name + " as the active Mode.");
-//          ContributionManager.refreshInstalled(editor);
         return;
       }
     }
+    
     if (getType() == ContributionType.TOOL) {
       ToolContribution t = (ToolContribution) this;
       Iterator<Editor> iter = editor.getBase().getEditors().iterator();
@@ -399,6 +399,7 @@ public abstract class LocalContribution extends Contribution {
       }
       t.clearClassLoader(editor.getBase());
     }
+    
     if (doBackup) {
       success = backup(editor, true, status);
     } else {
@@ -422,7 +423,6 @@ public abstract class LocalContribution extends Contribution {
     } 
     else {
       // There was a failure backing up the folder
-        if (getType().requiresRestart()) {
           if (!doBackup || (doBackup && backup(editor, false, status))) {
             if (setDeletionFlag(true)) {
               contribListing.replaceContribution(this, this);
@@ -430,7 +430,6 @@ public abstract class LocalContribution extends Contribution {
           }
          else
           status.setErrorMessage("Could not delete the contribution's files");
-      }
     }
 //    }
     ContributionManager.refreshInstalled(editor);

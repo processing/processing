@@ -98,7 +98,7 @@ public class ContributionManagerDialog {
           Iterator<Editor> iter = editor.getBase().getEditors().iterator();
           while (iter.hasNext()) {
             Editor ed = iter.next();
-            if (ed.getSketch().isModified() || ed.getSketch().isUntitled()) {
+            if (ed.getSketch().isModified()) {
               int option = Base
                 .showYesNoQuestion(editor, title,
                                    "Unsaved changes have been found",
