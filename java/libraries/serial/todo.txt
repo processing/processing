@@ -1,0 +1,6 @@
+Arduino Uno swallows the first 23 bytes, Arduino D. ca 6
+Switch reference over to printArray()
+Fix readBytes() reference
+Add JavaDoc
+Think about Arduino bootloader delay
+Add USB enumeration on Windows
