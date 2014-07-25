@@ -975,18 +975,6 @@ public class Runner implements MessageConsumer {
     // this eats the CRLFs on the lines.. oops.. do it later
     //if (s.trim().length() == 0) return;
 
-    // this is PApplet sending a message (via System.out.println)
-    // that signals that the applet has been quit.
-    if (s.indexOf(PApplet.EXTERNAL_STOP) == 0) {
-      //System.out.println("external: quit");
-      if (editor != null) {
-//        editor.internalCloseRunner();  // [091124]
-//        editor.handleStop();  // prior to 0192
-        editor.internalCloseRunner();  // 0192
-      }
-      return;
-    }
-
     // this is the PApplet sending us a message that the applet
     // is being moved to a new window location
     if (s.indexOf(PApplet.EXTERNAL_MOVE) == 0) {

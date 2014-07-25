@@ -861,13 +861,6 @@ public class PApplet extends Applet
   static public final String ARGS_SKETCH_FOLDER = "--sketch-path";
 
   /**
-   * When run externally to a PdeEditor,
-   * this is sent by the applet when it quits.
-   */
-  //static public final String EXTERNAL_QUIT = "__QUIT__";
-  static public final String EXTERNAL_STOP = "__STOP__";
-
-  /**
    * When run externally to a PDE Editor, this is sent by the applet
    * whenever the window is moved.
    * <p>
