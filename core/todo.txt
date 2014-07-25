@@ -19,6 +19,11 @@ X   drastic performance improvements for addRow()
 X when using setColumnType(), replace nulls with missingInt, missingFloat, etc
 X   formerly, was throwing a NullPointerException
 
+data types
+X if all data is NaN in a FloatDict, return NaN for maxValue() and minValue()
+X   formerly as AIOOBE -1 because -1 means "not found"
+X   but that was indexing directly into the data array
+_ add this handling for IntDict and others
 
 applet removal
 _ remove Applet as base class
