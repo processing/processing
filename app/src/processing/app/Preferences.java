@@ -28,6 +28,8 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
 
 import processing.core.*;
 
@@ -107,6 +109,8 @@ public class Preferences {
   int wide, high;
 
   JTextField sketchbookLocationField;
+  JTextField presentColor;
+  JTextField presentColorHex;
   JCheckBox editorAntialiasBox;
   JCheckBox deletePreviousBox;
   JCheckBox whinyBox;
@@ -118,6 +122,8 @@ public class Preferences {
   JComboBox consoleSizeField;
   JCheckBox inputMethodBox;
   JCheckBox autoAssociateBox;
+
+  ColorChooser selector;
   
   JCheckBox errorCheckerBox;
   JCheckBox warningsCheckerBox;
@@ -375,6 +381,131 @@ public class Preferences {
     top += d.height + GUI_BETWEEN;
     
     
+    Container colorBox = Box.createHorizontalBox();
+
+    label = new JLabel("Background color when Presenting: ");
+    colorBox.add(label);
+
+    final String colorTip = "<html>"
+        + "Select the background color used when using Present.<br/>"
+        + "Present is used to present a sketch in full-screen, <br/>"
+        + "accessible from the Sketch menu.";
+    label.setToolTipText(colorTip);
+
+    presentColor = new JTextField("      ");
+    presentColor.setOpaque(true);
+    presentColor.setEnabled(false);
+    presentColor.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(
+        1, 1, 0, 0, new Color(195, 195, 195)), BorderFactory.createMatteBorder(
+        0, 0, 1, 1, new Color(54, 54, 54))));
+    presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
+
+    presentColorHex = new JTextField(6);
+    presentColorHex
+        .setText(Preferences.get("run.present.bgcolor").substring(1));
+    presentColorHex.getDocument().addDocumentListener(new DocumentListener() {
+
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+        final String colorValue = presentColorHex.getText().toUpperCase();
+        if (colorValue.length() == 7 && (colorValue.startsWith("#")))
+          EventQueue.invokeLater(new Runnable() {
+            public void run() {
+              presentColorHex.setText(colorValue.substring(1));
+            }
+          });
+        if (colorValue.length() == 6
+            && colorValue.matches("[0123456789ABCDEF]*")) {
+          presentColor.setBackground(new Color(Integer.parseInt(
+              colorValue.substring(0, 2), 16), Integer.parseInt(
+              colorValue.substring(2, 4), 16), Integer.parseInt(
+              colorValue.substring(4, 6), 16)));
+          if (!colorValue.equals(presentColorHex.getText()))
+            EventQueue.invokeLater(new Runnable() {
+              public void run() {
+                presentColorHex.setText(colorValue);
+              }
+            });
+        }
+      }
+
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+        final String colorValue = presentColorHex.getText().toUpperCase();
+        if (colorValue.length() == 7 && (colorValue.startsWith("#")))
+          EventQueue.invokeLater(new Runnable() {
+            public void run() {
+              presentColorHex.setText(colorValue.substring(1));
+            }
+          });
+        if (colorValue.length() == 6
+            && colorValue.matches("[0123456789ABCDEF]*")) {
+          presentColor.setBackground(new Color(Integer.parseInt(
+              colorValue.substring(0, 2), 16), Integer.parseInt(
+              colorValue.substring(2, 4), 16), Integer.parseInt(
+              colorValue.substring(4, 6), 16)));
+          if (!colorValue.equals(presentColorHex.getText()))
+            EventQueue.invokeLater(new Runnable() {
+              public void run() {
+                presentColorHex.setText(colorValue);
+              }
+            });
+        }
+      }
+
+      @Override public void changedUpdate(DocumentEvent e) {}
+    });
+
+    selector = new ColorChooser(dialog, false,
+        Preferences.getColor("run.present.bgcolor"), "OK",
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            String colorValue = selector.getHexColor();
+            presentColorHex.setText(colorValue.substring(1));
+            presentColor.setBackground(new Color(Integer.parseInt(
+                colorValue.substring(1, 3), 16), Integer.parseInt(
+                colorValue.substring(3, 5), 16), Integer.parseInt(
+                colorValue.substring(5, 7), 16)));
+            selector.hide();
+          }
+        });
+
+    presentColor.addMouseListener(new MouseListener() {
+      @Override public void mouseReleased(MouseEvent e) {}
+      @Override public void mousePressed(MouseEvent e) {}
+      
+      @Override 
+      public void mouseExited(MouseEvent e) {
+        dialog.setCursor(Cursor.DEFAULT_CURSOR);
+      }
+
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        dialog.setCursor(Cursor.HAND_CURSOR);
+      }
+
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        selector.show();
+      }
+    });
+
+    label = new JLabel("#");
+    colorBox.add(label);
+
+    colorBox.add(presentColorHex);
+
+    colorBox.add(Box.createHorizontalStrut(GUI_SMALL + 2 / 3 * GUI_SMALL));
+
+    colorBox.add(presentColor);
+    
+    pain.add(colorBox);
+    d = colorBox.getPreferredSize();
+    colorBox.setBounds(left, top, d.width, d.height);
+
+    top += d.height + GUI_BETWEEN;
+
     // [ ] Use smooth text in editor window
 
     editorAntialiasBox = new JCheckBox("Use smooth text in editor window");
@@ -830,6 +961,8 @@ public class Preferences {
       consoleSizeField.setSelectedItem(getInteger("console.font.size"));
     }
     
+    setColor("run.present.bgcolor", presentColor.getBackground());
+    
     setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
 
     if (autoAssociateBox != null) {
@@ -896,6 +1029,9 @@ public class Preferences {
     fontSizeField.setSelectedItem(getInteger("editor.font.size"));
     consoleSizeField.setSelectedItem(getInteger("console.font.size"));
 
+    presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
+    presentColorHex.setText(Preferences.get("run.present.bgcolor").substring(1));
+    
     memoryOverrideBox.
       setSelected(getBoolean("run.options.memory")); //$NON-NLS-1$
     memoryField.
