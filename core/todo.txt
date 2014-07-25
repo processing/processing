@@ -5,6 +5,22 @@ X   http://code.google.com/p/processing/issues/detail?id=218
 X   https://github.com/processing/processing/issues/257
 X   PVector discussion with Dan
 o   Jer and Dan will look at their code, plus toxiclibs
+X blendMode() broken with default renderer
+X   fix from Jakub Valtar
+X   https://github.com/processing/processing/issues/2012
+X   may have been introduced between 2.0b7 and 2.0b8
+X   https://github.com/processing/processing/issues/2275
+X   https://github.com/processing/processing/issues/2276
+X   https://github.com/processing/processing/issues/2483
+X if all data is NaN in a FloatDict, return NaN for maxValue() and minValue()
+X   formerly as AIOOBE -1 because -1 means "not found"
+X   but that was indexing directly into the data array
+
+pulls
+X filter() not applying to images produced by saveframe() consistently
+X   https://github.com/processing/processing/issues/2619
+X drawLatch in PJOGL can be null after requesting frame rendering
+X   https://github.com/processing/processing/issues/2630
 
 table
 X major performance improvements to 'newlines' parsing
@@ -19,16 +35,18 @@ X   drastic performance improvements for addRow()
 X when using setColumnType(), replace nulls with missingInt, missingFloat, etc
 X   formerly, was throwing a NullPointerException
 
-data types
-X if all data is NaN in a FloatDict, return NaN for maxValue() and minValue()
-X   formerly as AIOOBE -1 because -1 means "not found"
-X   but that was indexing directly into the data array
-_ add this handling for IntDict and others
 
 applet removal
 _ remove Applet as base class
 _ performance issues on OS X (might be threading due to Applet)
 _   https://github.com/processing/processing/issues/2423
+
+_ fix for maxValue() and minValue() when all entries are bad
+_   on FloatDict it was NaN, check across the lists and other dict types
+
+_ better full screen mode for OS X
+_   https://github.com/processing/processing/issues/2641
+_   http://stackoverflow.com/questions/6873568/fullscreen-feature-for-java-apps-on-osx-lion
 
 _ bring back chaining in JSON (and add to XML)
 
@@ -66,12 +84,6 @@ _   image = gc.createCompatibleVolatileImage(source.width, source.height, Transp
 _   https://github.com/processing/processing/issues/1844
 _ 'collector' class.. Dict that points to a list
 _   String as a key, int/float/string list as values
-_ blendMode(ADD) is broken with default renderer
-_   https://github.com/processing/processing/issues/2012
-_   may have been introduced between 2.0b7 and 2.0b8
-_   https://github.com/processing/processing/issues/2275
-_   https://github.com/processing/processing/issues/2276
-_   https://github.com/processing/processing/issues/2483
 _ add option to have full screen span across screens
 _   display=all in cmd line
 _   sketchDisplay() -> 0 for all, or 1, 2, 3...

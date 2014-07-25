@@ -3,16 +3,51 @@ X increase heap size to 256m (-Xmx256) per Manindra request
 X use a ButtonGroup so that the current Mode cannot be de-selected
 X   https://github.com/processing/processing/issues/2545
 
-_ add a new pref for the 3.0 sketchbook location
-_ remove minim
-_ add the new sound library to the build process
+earlier
+X cpu usage when nothing happening (unmarked duplicate)
+X   https://github.com/processing/processing/issues/1074 
 
+gsoc
+X Line coloring incorrect for filtered contribution listings
+X   https://github.com/processing/processing/issues/2583
+X   https://github.com/processing/processing/pull/2598
+X Added Present's background color as an option to the Preferences window
+X   https://github.com/processing/processing/pull/2568
+X check for updates with contribs
+X   https://github.com/processing/processing/pull/2636
+X   shows update manager on startup
+X contrib properties files ignored in favor of contributions.txt from p5.org
+X   https://github.com/processing/processing/issues/2572
+X tweak mode integrated
+X   https://github.com/processing/processing/pull/2624
 
 pulls
 X Implementation of a list of open sketches in the Sketch menu
 X   https://github.com/processing/processing/pull/2551
-_ color selector for the pref (not reading it properly)
-_   https://github.com/processing/processing/pull/2568
+X color selector for the pref (not reading it properly)
+X   https://github.com/processing/processing/pull/2568
+X lighting issues with non-planar triangle strips or quad strips
+X   https://github.com/processing/processing/issues/2014
+X   https://github.com/processing/processing/issues/2018
+X   https://github.com/processing/processing/pull/2644
+X set application name on Linux
+X   https://github.com/processing/processing/issues/2534
+X   https://github.com/processing/processing/pull/2584
+X serial not working on export
+X   https://github.com/processing/processing/issues/2559
+X build error on Windows
+X   https://github.com/processing/processing/issues/2603
+X   https://github.com/processing/processing/pull/2610
+
+
+_ add a new pref for the 3.0 sketchbook location
+_ remove minim
+_ add the new sound library to the build process
+
+_ double-clicking a .pde file doesn't open properly on OS X
+_   https://github.com/processing/processing/issues/2639
+_ OS X export button not disabled on other platforms
+_   https://github.com/processing/processing/issues/2642
 
 _ look at the sound library https://github.com/wirsing/ProcessingSound
 
@@ -595,8 +630,6 @@ _   https://github.com/processing/processing/issues/943
 PDE / Manager
 
 _ something to set min/max versions that are supported by a library
-_ contrib properties files ignored in favor of contributions.txt from p5.org
-_   https://github.com/processing/processing/issues/2572
 _ ability to cancel a download/install
 _ we shouldn't use .properties extension for modes, et al
 _   because a .properties file is iso8859-1
