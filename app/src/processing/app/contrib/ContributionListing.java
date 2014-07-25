@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 import processing.app.Base;
+import processing.app.Library;
 import processing.core.PApplet;
 
 
@@ -377,6 +378,19 @@ public class ContributionListing {
         return true;
       }
     }
+    return false;
+  }
+  
+  boolean hasUpdates(Base base) {
+    for (ModeContribution m : base.getModeContribs())
+      if (hasUpdates(m))
+        return true;
+    for (Library l : base.getActiveEditor().getMode().contribLibraries)
+      if (hasUpdates(l))
+        return true;
+    for (ToolContribution t : base.getActiveEditor().contribTools)
+      if (hasUpdates(t))
+        return true;
     return false;
   }
 
