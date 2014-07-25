@@ -110,7 +110,7 @@ public class ContributionManagerDialog {
               status.setErrorMessage("Connection timed out while " +
                                      "downloading the contribution list.");
             } else {
-              status.setErrorMessage("Could not download the list" +
+              status.setErrorMessage("Could not download the list " +
                                      "of available contributions.");
             }
             exception.printStackTrace();
@@ -167,6 +167,7 @@ public class ContributionManagerDialog {
             category = null;
           }
           filterLibraries(category, filterField.filters);
+          contributionListPanel.updateColors();
         }
       });
       
@@ -423,6 +424,8 @@ public class ContributionManagerDialog {
       filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a^\\x3a]", " ");
       filters = Arrays.asList(filter.split(" "));
       filterLibraries(category, filters);
+
+      contributionListPanel.updateColors();
     }
 
     public String getFilterText() {
