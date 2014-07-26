@@ -226,6 +226,7 @@
     <subant buildpath="../java/libraries/net" target="clean"/>
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
+    <subant buildpath="../java/libraries/sound" target="clean"/>
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
     <subant buildpath="../pdex" target="clean"/>
   </target>
@@ -237,6 +238,7 @@
     <subant buildpath="../java/libraries/net" target="build"/>
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
+    <subant buildpath="../java/libraries/sound" target="build"/>
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
     <subant buildpath="../pdex" target="package"/>
   </target>
