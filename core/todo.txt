@@ -1,4 +1,4 @@
-0228 core
+0228 core (3.0a1)
 X add copy() method to PVector
 X modify PVector to include better methods for chaining operations
 X   http://code.google.com/p/processing/issues/detail?id=218
