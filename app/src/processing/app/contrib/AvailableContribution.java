@@ -242,8 +242,8 @@ class AvailableContribution extends Contribution {
         version = Integer.parseInt(properties.get("version"));
       } catch (NumberFormatException e) {
         version = getVersion();
-        System.err.println("The version number for the ì" + name
-          + "î library is not set properly.");
+        System.err.println("The version number for the ‚Äú" + name
+          + "‚Äù library is not set properly.");
         System.err
           .println("Please contact the library author to fix it according to the guidelines.");
       }
