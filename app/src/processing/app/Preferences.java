@@ -477,12 +477,12 @@ public class Preferences {
       
       @Override 
       public void mouseExited(MouseEvent e) {
-        dialog.setCursor(Cursor.DEFAULT_CURSOR);
+        dialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       }
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        dialog.setCursor(Cursor.HAND_CURSOR);
+        dialog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       }
 
       @Override
