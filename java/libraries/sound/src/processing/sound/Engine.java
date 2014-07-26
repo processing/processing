@@ -177,20 +177,24 @@ public class Engine {
 	    
 	// Filters
 	    
-	public static int[] highPassPlay(int[] input, float freq, float res){
-		return methCla.highPassPlay(input, freq, res);
+	public static int[] highPassPlay(int[] input, float freq){
+		return methCla.highPassPlay(input, freq);
 	};
 
-	public static int[] lowPassPlay(int[] input, float freq, float res){
-		return methCla.lowPassPlay(input, freq, res);
+	public static int[] lowPassPlay(int[] input, float freq){
+		return methCla.lowPassPlay(input, freq);
 	};
 	  
-	public static int[] bandPassPlay(int[] input, float freq, float res){
-		return methCla.bandPassPlay(input, freq, res);
+	public static int[] bandPassPlay(int[] input, float freq, float bw){
+		return methCla.bandPassPlay(input, freq, bw);
 	};
 
-	public static void filterSet(float freq, float res, int nodeId){
-		methCla.filterSet(freq, res, nodeId);
+	public static void filterSet(float freq, int nodeId){
+		methCla.filterSet(freq, nodeId);
+	};
+
+	public static void filterBwSet(float freq, float bw, int nodeId){
+		methCla.filterBwSet(freq, bw, nodeId);
 	};
 
 	// Delay

@@ -234,18 +234,18 @@ JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_doneAfter
 /*
  * Class:     processing_sound_MethClaInterface
  * Method:    highPassPlay
- * Signature: ([IFF)[I
+ * Signature: ([IF)[I
  */
 JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_highPassPlay
-  (JNIEnv *, jobject, jintArray, jfloat, jfloat);
+  (JNIEnv *, jobject, jintArray, jfloat);
 
 /*
  * Class:     processing_sound_MethClaInterface
  * Method:    lowPassPlay
- * Signature: ([IFF)[I
+ * Signature: ([IF)[I
  */
 JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_lowPassPlay
-  (JNIEnv *, jobject, jintArray, jfloat, jfloat);
+  (JNIEnv *, jobject, jintArray, jfloat);
 
 /*
  * Class:     processing_sound_MethClaInterface
@@ -258,9 +258,17 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_bandPassPlay
 /*
  * Class:     processing_sound_MethClaInterface
  * Method:    filterSet
- * Signature: (FFI)V
+ * Signature: (FI)V
  */
 JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_filterSet
+  (JNIEnv *, jobject, jfloat, jint);
+
+/*
+ * Class:     processing_sound_MethClaInterface
+ * Method:    filterBwSet
+ * Signature: (FFI)V
+ */
+JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_filterBwSet
   (JNIEnv *, jobject, jfloat, jfloat, jint);
 
 /*

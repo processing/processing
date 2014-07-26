@@ -94,13 +94,16 @@ public class MethClaInterface
     
   // Filters
     
-  public native int[] highPassPlay(int[] input, float freq, float res);
+  public native int[] highPassPlay(int[] input, float freq);
 
-  public native int[] lowPassPlay(int[] input, float freq, float res);
+  public native int[] lowPassPlay(int[] input, float freq);
   
-  public native int[] bandPassPlay(int[] input, float freq, float res);
+  public native int[] bandPassPlay(int[] input, float freq, float bw);
 
-  public native void filterSet(float freq, float res, int nodeId);
+  public native void filterSet(float freq, int nodeId);
+
+  public native void filterBwSet(float freq, float bw, int nodeId);
+
 
   // Delay
 
