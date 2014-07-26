@@ -98,6 +98,9 @@ Or better yet, helping us fix them and submitting pull requests.
 
 [ changes ] 
 
++ A new sound library has been added, and Minim has been removed. Minim
+  will now available via the Contributions Manager. 
+
 + Add copy() method to PVector
 
 + Major performance improvements to parsing w/ the 'newlines' option
