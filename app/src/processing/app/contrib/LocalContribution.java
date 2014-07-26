@@ -1,4 +1,4 @@
-/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+﻿/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -74,6 +74,13 @@ public abstract class LocalContribution extends Contribution {
         System.err.println("Please contact the library author to fix it according to the guidelines.");
       }
       prettyVersion = properties.get("prettyVersion");
+      try {
+        lastUpdated = Long.parseLong(properties.get("lastUpdated"));
+      } catch (NumberFormatException e) {
+        lastUpdated = 0;
+        System.err.println("The last updated timestamp for the “" + name + "” library is not set properly.");
+        System.err.println("Please contact the library author to fix it according to the guidelines.");
+      }
       
     } else {
       Base.log("No properties file at " + propertiesFile.getAbsolutePath());

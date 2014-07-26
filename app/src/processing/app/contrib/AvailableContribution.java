@@ -54,6 +54,13 @@ class AvailableContribution extends Contribution {
       version = PApplet.parseInt(versionStr, 0);
     }
     prettyVersion = params.get("prettyVersion");
+    String lastUpdatedStr = params.get("lastUpdated");
+    if (lastUpdatedStr != null)
+      try {
+        lastUpdated =  Long.parseLong(lastUpdatedStr);
+      } catch (NumberFormatException e) {
+        lastUpdated = 0;
+      }
   }
   
   
@@ -256,6 +263,7 @@ class AvailableContribution extends Contribution {
         writer.println("paragraph=" + paragraph);
         writer.println("version=" + version);
         writer.println("prettyVersion=" + prettyVersion);
+        writer.println("lastUpdated=" + getLastUpdated());
 
         writer.flush();
         writer.close();
