@@ -1867,7 +1867,7 @@ public class PGraphics extends PImage implements PConstants {
                                  "must be used before bezierVertex() or quadraticVertex()");
     }
     if (vertexCount == 0) {
-      throw new RuntimeException("vertex() must be used at least once" +
+      throw new RuntimeException("vertex() must be used at least once " +
                                  "before bezierVertex() or quadraticVertex()");
     }
   }

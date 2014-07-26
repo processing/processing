@@ -3056,6 +3056,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void bezierVertexImpl(float x2, float y2, float z2,
                                   float x3, float y3, float z3,
                                   float x4, float y4, float z4) {
+    bezierVertexCheck(shape, inGeo.vertexCount);
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -3083,6 +3084,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void quadraticVertexImpl(float cx, float cy, float cz,
                                      float x3, float y3, float z3) {
+    bezierVertexCheck(shape, inGeo.vertexCount);
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -3109,6 +3111,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void curveVertexImpl(float x, float y, float z) {
+    curveVertexCheck(shape);
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
