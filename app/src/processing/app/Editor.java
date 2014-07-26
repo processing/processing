@@ -390,6 +390,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.changeMode(m);
+          if (sketch.isModified()) {
+            for (Component c : modeMenu.getPopupMenu().getComponents()) {
+              if (c instanceof JRadioButtonMenuItem) {
+                if (((JRadioButtonMenuItem)c).getText() == mode.getTitle()) {
+                  ((JRadioButtonMenuItem)c).setSelected(true);
+                  break;
+                }
+              }
+            }
+          }
         }
       });
       modeMenu.add(item);
