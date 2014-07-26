@@ -98,6 +98,7 @@ public class Base {
   ContributionManagerDialog libraryManagerFrame;
   ContributionManagerDialog toolManagerFrame;
   ContributionManagerDialog modeManagerFrame;
+  ContributionManagerDialog exampleManagerFrame;
   ContributionManagerDialog updateManagerFrame;
 
   // set to true after the first time the menu is built.
@@ -385,6 +386,8 @@ public class Base {
       new ContributionManagerDialog(ContributionType.TOOL);
     modeManagerFrame =
       new ContributionManagerDialog(ContributionType.MODE);
+    exampleManagerFrame =
+      new ContributionManagerDialog(ContributionType.EXAMPLE);
     updateManagerFrame =
       new ContributionManagerDialog(null);
 
@@ -1651,6 +1654,14 @@ public class Base {
   }
 
 
+  /**
+   * Show the examples installer window.
+   */
+  public void handleOpenExampleManager() {
+    exampleManagerFrame.showFrame(activeEditor);
+  }
+
+
   public void handleShowUpdates() {
     updateManagerFrame.showFrame(activeEditor);
   }
@@ -1923,6 +1934,7 @@ public class Base {
     getSketchbookLibrariesFolder().mkdir();
     getSketchbookToolsFolder().mkdir();
     getSketchbookModesFolder().mkdir();
+    getSketchbookExamplesFolder().mkdir();
 //    System.err.println("sketchbook: " + sketchbookFolder);
   }
 
@@ -1951,6 +1963,11 @@ public class Base {
 
   static public File getSketchbookModesFolder() {
     return new File(sketchbookFolder, "modes");
+  }
+
+
+  static public File getSketchbookExamplesFolder() {
+    return new File(sketchbookFolder, "examples");
   }
 
 

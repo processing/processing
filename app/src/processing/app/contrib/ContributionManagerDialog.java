@@ -62,6 +62,7 @@ public class ContributionManagerDialog {
     if (type == null) {
       filter = ContributionType.createUpdateFilter();
     } else {
+
       filter = type.createFilter();    
     }
     contribListing = ContributionListing.getInstance();

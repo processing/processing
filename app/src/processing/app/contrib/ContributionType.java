@@ -31,7 +31,7 @@ import processing.app.Editor;
 import processing.app.Library;
 
 public enum ContributionType {
-  LIBRARY, TOOL, MODE;
+  LIBRARY, TOOL, MODE, EXAMPLE;
 
     
   public String toString() {
@@ -42,6 +42,8 @@ public enum ContributionType {
       return "tool";
     case MODE:
       return "mode";
+    case EXAMPLE:
+      return "example";
     }
     return null;  // should be unreachable
   };
@@ -65,6 +67,8 @@ public enum ContributionType {
       return "tools";
     case MODE:
       return "modes";
+    case EXAMPLE:
+      return "examples";
     }
     return null;  // should be unreachable
   }
@@ -106,6 +110,9 @@ public enum ContributionType {
       if ("mode".equalsIgnoreCase(s)) {
         return MODE;
       }
+      if ("example".equalsIgnoreCase(s)) {
+        return EXAMPLE;
+      }
     }
     return null;
   }
@@ -119,6 +126,8 @@ public enum ContributionType {
       return Base.getSketchbookToolsFolder();
     case MODE:
       return Base.getSketchbookModesFolder();
+    case EXAMPLE:
+      return Base.getSketchbookExamplesFolder();
     }
     return null;
   }
@@ -181,6 +190,9 @@ public enum ContributionType {
       return ToolContribution.load(folder);
     case MODE:
       return ModeContribution.load(base, folder);
+    case EXAMPLE:
+      //TODO: Fill this in if reqd
+      return null;
     }
     return null;
   }
@@ -197,6 +209,9 @@ public enum ContributionType {
       break;
     case MODE:
       contribs.addAll(editor.getBase().getModeContribs());
+      break;
+    case EXAMPLE:
+      //TODO: Fill this in if reqd
       break;
     }
     return contribs;
