@@ -67,6 +67,9 @@ in-progress Google Summer of Code projects and others:
   the change was canceled due to the sketch being modified
   https://github.com/processing/processing/issues/2615
 
++ Add date and time stamps to the Contribution Manager
+  https://github.com/processing/processing/pull/2651
+
 
 [ more bug fixes ] 
 

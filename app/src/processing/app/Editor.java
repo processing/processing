@@ -393,6 +393,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
             base.changeMode(m);
             
           } else {
+            Base.showWarning("Save",
+                             "Please save the sketch before changing the mode.",
+                             null);
+
             // Re-select the old checkbox, because it was automatically 
             // updated by Java, even though the Mode could not be changed.
             // https://github.com/processing/processing/issues/2615

@@ -605,12 +605,6 @@ public class Base {
   protected void changeMode(Mode mode) {
     if (activeEditor.getMode() != mode) {
       Sketch sketch = activeEditor.getSketch();
-      if (sketch.isModified()) {
-        Base.showWarning("Save",
-                         "Please save the sketch before changing the mode.",
-                         null);
-        return;
-      }
       nextMode = mode;
 
       // If the current editor contains file extensions that the new mode can handle, then
