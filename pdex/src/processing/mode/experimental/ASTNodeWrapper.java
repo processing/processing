@@ -43,7 +43,6 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 /**
  * Wrapper class for ASTNode objects
@@ -162,8 +161,7 @@ public class ASTNodeWrapper {
           .structuralPropertiesForType().iterator();
       boolean flag = true;
       while (it.hasNext()) {
-        StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
-            .next();
+        StructuralPropertyDescriptor prop = it.next();
         if (prop.isChildListProperty()) {
           List<ASTNode> nodelist = (List<ASTNode>) thisNode
               .getStructuralProperty(prop);

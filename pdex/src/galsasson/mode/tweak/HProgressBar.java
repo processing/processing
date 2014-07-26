@@ -1,6 +1,5 @@
 package galsasson.mode.tweak;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
@@ -20,10 +19,10 @@ public class HProgressBar {
 		setPos(0);
 		
 		
-		int xl[] = {0, 0, -(int)((float)size/1.5)};
+		int xl[] = {0, 0, -(int)(size/1.5)};
 		int yl[] = {-(int)((float)size/3), (int)((float)size/3), 0};
 		leftPoly = new Polygon(xl, yl, 3);
-		int xr[] = {0, (int)((float)size/1.5), 0};
+		int xr[] = {0, (int)(size/1.5), 0};
 		int yr[] = {-(int)((float)size/3), 0, (int)((float)size/3)};
 		rightPoly = new Polygon(xr, yr, 3);
 	}

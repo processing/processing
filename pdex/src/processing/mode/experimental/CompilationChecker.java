@@ -26,7 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -280,6 +279,7 @@ public class CompilationChecker {
   /**
    * ClassLoader implementation
    */
+  /*
   private class CustomClassLoader extends ClassLoader {
 
     private Map classMap;
@@ -301,6 +301,7 @@ public class CompilationChecker {
       return super.findClass(name);
     }
   };
+  */
 
   private ICompilationUnit generateCompilationUnit() {
     ASTParser parser = ASTParser.newParser(AST.JLS4);
@@ -432,13 +433,13 @@ public class CompilationChecker {
 
   static private String[] getSimpleNames(String qualifiedName) {
     StringTokenizer st = new StringTokenizer(qualifiedName, ".");
-    ArrayList list = new ArrayList();
+    ArrayList<String> list = new ArrayList<String>();
     while (st.hasMoreTokens()) {
       String name = st.nextToken().trim();
       if (!name.equals("*"))
         list.add(name);
     }
-    return (String[]) list.toArray(new String[list.size()]);
+    return list.toArray(new String[0]);
   }
 
   public static void main(String[] args) {

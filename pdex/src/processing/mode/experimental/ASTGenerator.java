@@ -1008,28 +1008,23 @@ public class ASTGenerator {
           ASTNode childExpr = getChildExpression(testnode);
           log("Parent expression : " + getParentExpression(testnode));
           log("Child expression : " + childExpr);
-          if (childExpr instanceof ASTNode) {
-            if (!noCompare) {
-              log("Original testnode "
-                  + getNodeAsString(testnode));
-              testnode = getParentExpression(testnode);
-              log("Corrected testnode "
-                  + getNodeAsString(testnode));
-            }
-            ClassMember expr = resolveExpression3rdParty(nearestNode, testnode,
-                                                         noCompare);
-            if (expr == null) {
-              log("Expr is null");
-            } else {
-              log("Expr is " + expr.toString());
-              candidates = getMembersForType(expr, childExpr.toString(),
-                                             noCompare, false);
-            }
+          
+          if (!noCompare) {
+            log("Original testnode "
+                + getNodeAsString(testnode));
+            testnode = getParentExpression(testnode);
+            log("Corrected testnode "
+                + getNodeAsString(testnode));
           }
-          else
-          {
-            log("ChildExpr is null");
-          }
+          ClassMember expr = resolveExpression3rdParty(nearestNode, testnode,
+                                                       noCompare);
+          if (expr == null) {
+            log("Expr is null");
+          } else {
+            log("Expr is " + expr.toString());
+            candidates = getMembersForType(expr, childExpr.toString(),
+                                           noCompare, false);
+          }          
         }
         
         showPredictions(word);
@@ -1263,7 +1258,9 @@ public class ASTGenerator {
     Class tehClass = null;
     // First, see if the classname is a fully qualified name and loads straightaway
     tehClass = loadClass(className);
-    if(tehClass instanceof Class){
+    
+    // do you mean to check for 'null' here? otherwise, this expression is always true [fry]
+    if (tehClass instanceof Class) {    
       //log(tehClass.getName() + " located straightaway");
       return tehClass;
     }
@@ -1458,8 +1455,7 @@ public class ASTGenerator {
         .structuralPropertiesForType().iterator();
     // logE("Props of " + node.getClass().getName());
     while (it.hasNext()) {
-      StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
-          .next();
+      StructuralPropertyDescriptor prop = it.next();
 
       if (prop.isChildProperty() || prop.isSimpleProperty()) {
         if (node.getStructuralProperty(prop) != null) {
@@ -1505,9 +1501,9 @@ public class ASTGenerator {
     }
     List<ASTNode> nodes = null;
     if (parent instanceof TypeDeclaration) {
-      nodes = (List<ASTNode>) ((TypeDeclaration) parent).bodyDeclarations();
+      nodes = ((TypeDeclaration) parent).bodyDeclarations();
     } else if (parent instanceof Block) {
-      nodes = (List<ASTNode>) ((Block) parent).statements();
+      nodes = ((Block) parent).statements();
     } else {
       System.err.println("THIS CONDITION SHOULD NOT OCCUR - findClosestNode "
           + getNodeAsString(parent));
@@ -2196,13 +2192,12 @@ public class ASTGenerator {
    * @param tnode
    */
   public static void visitRecur(ASTNode node, DefaultMutableTreeNode tnode) {
-    Iterator<StructuralPropertyDescriptor> it = node
-        .structuralPropertiesForType().iterator();
+    Iterator<StructuralPropertyDescriptor> it = 
+        node.structuralPropertiesForType().iterator();
     //logE("Props of " + node.getClass().getName());
     DefaultMutableTreeNode ctnode = null;
     while (it.hasNext()) {
-      StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
-          .next();
+      StructuralPropertyDescriptor prop = it.next();
 
       if (prop.isChildProperty() || prop.isSimpleProperty()) {
         if (node.getStructuralProperty(prop) != null) {
@@ -2274,11 +2269,10 @@ public class ASTGenerator {
     while (!stack.isEmpty()) {
       ASTNode node = (ASTNode) stack.pop();
       //log("Popped from stack: " + getNodeAsString(node));
-      Iterator<StructuralPropertyDescriptor> it = node
-          .structuralPropertiesForType().iterator();
+      Iterator<StructuralPropertyDescriptor> it = 
+          node.structuralPropertiesForType().iterator();
       while (it.hasNext()) {
-        StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
-            .next();
+        StructuralPropertyDescriptor prop = it.next();
 
         if (prop.isChildProperty() || prop.isSimpleProperty()) {
           if (node.getStructuralProperty(prop) instanceof ASTNode) {
@@ -2463,8 +2457,7 @@ public class ASTGenerator {
         .structuralPropertiesForType().iterator();
     //logE("Props of " + node.getClass().getName());
     while (it.hasNext()) {
-      StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) it
-          .next();
+      StructuralPropertyDescriptor prop = it.next();
 
       if (prop.isChildProperty() || prop.isSimpleProperty()) {
         if (node.getStructuralProperty(prop) != null) {

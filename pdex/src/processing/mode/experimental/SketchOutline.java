@@ -1,7 +1,5 @@
 package processing.mode.experimental;
 
-import static processing.mode.experimental.ExperimentalMode.log;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -11,11 +9,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.io.File;
 import java.util.List;
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -37,8 +33,6 @@ import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-
-import processing.app.Base;
 
 public class SketchOutline {
   protected JFrame frmOutlineView;

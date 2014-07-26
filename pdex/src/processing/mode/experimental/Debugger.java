@@ -960,7 +960,7 @@ public class Debugger implements VMEventListener {
      */
     protected List<VariableNode> getLocals(ThreadReference t, int depth) {
         //System.out.println("getting locals");
-        List<VariableNode> vars = new ArrayList();
+        List<VariableNode> vars = new ArrayList<VariableNode>();
         try {
             if (t.frameCount() > 0) {
                 StackFrame sf = t.frame(0);
@@ -1016,7 +1016,7 @@ public class Debugger implements VMEventListener {
      */
     protected List<VariableNode> getFields(Value value, int depth, int maxDepth, boolean includeInherited) {
         // remember: Value <- ObjectReference, ArrayReference
-        List<VariableNode> vars = new ArrayList();
+        List<VariableNode> vars = new ArrayList<VariableNode>();
         if (depth <= maxDepth) {
             if (value instanceof ArrayReference) {
                 return getArrayFields((ArrayReference) value);
@@ -1057,7 +1057,7 @@ public class Debugger implements VMEventListener {
      * @return list of array fields
      */
     protected List<VariableNode> getArrayFields(ArrayReference array) {
-        List<VariableNode> fields = new ArrayList();
+        List<VariableNode> fields = new ArrayList<VariableNode>();
         if (array != null) {
             String arrayType = array.type().name();
             if (arrayType.endsWith("[]")) {

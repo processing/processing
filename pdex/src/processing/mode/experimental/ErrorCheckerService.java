@@ -20,11 +20,7 @@ package processing.mode.experimental;
 import static processing.mode.experimental.ExperimentalMode.log;
 import static processing.mode.experimental.ExperimentalMode.logE;
 
-import java.awt.EventQueue;
 import java.io.File;
-import java.io.FileFilter;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -50,7 +46,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
-import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
 import processing.app.Base;
 import processing.app.Editor;

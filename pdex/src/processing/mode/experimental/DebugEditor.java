@@ -24,7 +24,6 @@ import galsasson.mode.tweak.SketchParser;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -42,8 +41,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,7 +60,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableModel;
 import javax.swing.text.Document;
@@ -74,7 +70,6 @@ import processing.app.Base;
 import processing.app.EditorState;
 import processing.app.EditorToolbar;
 import processing.app.Mode;
-import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Toolkit;
@@ -82,7 +77,6 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
-import processing.mode.java.JavaToolbar;
 
 /**
  * Main View Class. Handles the editor window including tool bar and menu. Has
@@ -392,7 +386,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         for (String errMsg : errorCheckerService.tempErrorLog.keySet()) {
           IProblem ip = errorCheckerService.tempErrorLog.get(errMsg);
           if(ip != null){
-            sbuff.append(errorCheckerService.errorMsgSimplifier.getIDName(ip.getID()));
+            sbuff.append(ErrorMessageSimplifier.getIDName(ip.getID()));
             sbuff.append(',');
             sbuff.append("{");
             for (int i = 0; i < ip.getArguments().length; i++) {

@@ -38,7 +38,6 @@ import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.text.BadLocationException;
 
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaDefaults;

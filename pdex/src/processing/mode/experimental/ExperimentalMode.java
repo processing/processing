@@ -116,7 +116,8 @@ public class ExperimentalMode extends JavaMode {
 
   @Override
   public String getTitle() {
-    return "PDE X";
+    //return "PDE X";
+    return "Java";
   }
   
   
