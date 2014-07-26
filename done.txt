@@ -1,3 +1,49 @@
+0228 pde (3.0a1)
+X increase heap size to 256m (-Xmx256) per Manindra request
+X use a ButtonGroup so that the current Mode cannot be de-selected
+X   https://github.com/processing/processing/issues/2545
+
+earlier
+X cpu usage when nothing happening (unmarked duplicate)
+X   https://github.com/processing/processing/issues/1074 
+
+gsoc
+X Line coloring incorrect for filtered contribution listings
+X   https://github.com/processing/processing/issues/2583
+X   https://github.com/processing/processing/pull/2598
+X Added Present's background color as an option to the Preferences window
+X   https://github.com/processing/processing/pull/2568
+X check for updates with contribs
+X   https://github.com/processing/processing/pull/2636
+X   shows update manager on startup
+X contrib properties files ignored in favor of contributions.txt from p5.org
+X   https://github.com/processing/processing/issues/2572
+X tweak mode integrated
+X   https://github.com/processing/processing/pull/2624
+X wrong mode selected if sketch is modified (checkbox changes)
+X   https://github.com/processing/processing/issues/2615
+X Add date and time stamps to the Contribution Manager
+X   https://github.com/processing/processing/pull/2651
+
+pulls
+X Implementation of a list of open sketches in the Sketch menu
+X   https://github.com/processing/processing/pull/2551
+X color selector for the pref (not reading it properly)
+X   https://github.com/processing/processing/pull/2568
+X lighting issues with non-planar triangle strips or quad strips
+X   https://github.com/processing/processing/issues/2014
+X   https://github.com/processing/processing/issues/2018
+X   https://github.com/processing/processing/pull/2644
+X set application name on Linux
+X   https://github.com/processing/processing/issues/2534
+X   https://github.com/processing/processing/pull/2584
+X serial not working on export
+X   https://github.com/processing/processing/issues/2559
+X build error on Windows
+X   https://github.com/processing/processing/issues/2603
+X   https://github.com/processing/processing/pull/2610
+
+
 0227 pde (2.2.1)
 X use mouseReleased() instead of mousePressed() in color selector
 X   otherwise it registers the release as a click in the color window
