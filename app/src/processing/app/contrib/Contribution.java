@@ -43,6 +43,7 @@ abstract public class Contribution {
   protected String paragraph;     // <paragraph length description for site>
   protected int version;          // 102
   protected String prettyVersion; // "1.0.2"
+  protected long lastUpdated;   //  1402805757
   
   
   // "Sound"
@@ -119,6 +120,11 @@ abstract public class Contribution {
   // "1.0.2"
   public String getPrettyVersion() {
     return prettyVersion;
+  }
+  
+  // 1402805757
+  public long getLastUpdated() {
+    return lastUpdated;
   }
 
 
