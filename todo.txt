@@ -20,6 +20,8 @@ X contrib properties files ignored in favor of contributions.txt from p5.org
 X   https://github.com/processing/processing/issues/2572
 X tweak mode integrated
 X   https://github.com/processing/processing/pull/2624
+X wrong mode selected if sketch is modified (checkbox changes)
+X   https://github.com/processing/processing/issues/2615
 
 pulls
 X Implementation of a list of open sketches in the Sketch menu

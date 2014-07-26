@@ -389,8 +389,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
       JRadioButtonMenuItem item = new JRadioButtonMenuItem(m.getTitle());
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          base.changeMode(m);
-          if (sketch.isModified()) {
+          if (!sketch.isModified()) {
+            base.changeMode(m);
+            
+          } else {
+            // Re-select the old checkbox, because it was automatically 
+            // updated by Java, even though the Mode could not be changed.
+            // https://github.com/processing/processing/issues/2615
             for (Component c : modeMenu.getPopupMenu().getComponents()) {
               if (c instanceof JRadioButtonMenuItem) {
                 if (((JRadioButtonMenuItem)c).getText() == mode.getTitle()) {
