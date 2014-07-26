@@ -1,11 +1,14 @@
-PROCESSING 3.0a1 (REV 0228) - 25 July 2014
+PROCESSING 3.0a1 (REV 0228) - 26 July 2014
 
 Kicking off the 3.0 release process. The focus for Processing 3 is improving
 the editor and the coding process, so we'll be integrating what was formerly
 PDE X as the main editor.
 
 This release also includes a number of bug fixes and changes, based on 
-in-progress Google Summer of Code projects and others:
+in-progress Google Summer of Code projects and a few helpful souls on Github.
+
+Please contribute to the Processing 3 release by testing and reporting bugs.
+Or better yet, helping us fix them and submitting pull requests.
 
 
 [ contributed fixes! ] 
