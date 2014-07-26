@@ -78,8 +78,10 @@ public abstract class LocalContribution extends Contribution {
         lastUpdated = Long.parseLong(properties.get("lastUpdated"));
       } catch (NumberFormatException e) {
         lastUpdated = 0;
-        System.err.println("The last updated timestamp for the “" + name + "” library is not set properly.");
-        System.err.println("Please contact the library author to fix it according to the guidelines.");
+
+      // Better comment these out till all contribs have a lastUpdated 
+//        System.err.println("The last updated timestamp for the “" + name + "” library is not set properly.");
+//        System.err.println("Please contact the library author to fix it according to the guidelines.");
       }
       
     } else {

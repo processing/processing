@@ -1,4 +1,4 @@
-/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+﻿/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -242,15 +242,28 @@ class AvailableContribution extends Contribution {
         version = Integer.parseInt(properties.get("version"));
       } catch (NumberFormatException e) {
         version = getVersion();
-        System.err.println("The version number for the �" + name
-          + "� library is not set properly.");
+        System.err.println("The version number for the “" + name
+          + "” contribution is not set properly.");
         System.err
-          .println("Please contact the library author to fix it according to the guidelines.");
+          .println("Please contact the author to fix it according to the guidelines.");
       }
 
       String prettyVersion = properties.get("prettyVersion");
       if (prettyVersion == null || prettyVersion.isEmpty())
         prettyVersion = getPrettyVersion();
+
+      long lastUpdated;
+      try {
+        lastUpdated = Long.parseLong(properties.get("lastUpdated"));
+      }
+      catch (NumberFormatException nfe) {
+        lastUpdated = getLastUpdated();
+      // Better comment these out till all contribs have a lastUpdated 
+//        System.err.println("The last updated date for the “" + name
+//                           + "” contribution is not set properly.");
+//        System.err
+//          .println("Please contact the author to fix it according to the guidelines.");
+      }
 
       if (propFile.delete() && propFile.createNewFile() && propFile.setWritable(true)) {
         PrintWriter writer = PApplet.createWriter(propFile);
@@ -263,7 +276,7 @@ class AvailableContribution extends Contribution {
         writer.println("paragraph=" + paragraph);
         writer.println("version=" + version);
         writer.println("prettyVersion=" + prettyVersion);
-        writer.println("lastUpdated=" + getLastUpdated());
+        writer.println("lastUpdated=" + lastUpdated);
 
         writer.flush();
         writer.close();
