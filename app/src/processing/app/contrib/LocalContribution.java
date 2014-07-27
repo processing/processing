@@ -74,15 +74,26 @@ public abstract class LocalContribution extends Contribution {
         System.err.println("The version number for the “" + name + "” library is not set properly.");
         System.err.println("Please contact the library author to fix it according to the guidelines.");
       }
+      
       prettyVersion = properties.get("prettyVersion");
+      
       try {
         lastUpdated = Long.parseLong(properties.get("lastUpdated"));
       } catch (NumberFormatException e) {
         lastUpdated = 0;
-
       // Better comment these out till all contribs have a lastUpdated 
 //        System.err.println("The last updated timestamp for the “" + name + "” library is not set properly.");
 //        System.err.println("Please contact the library author to fix it according to the guidelines.");
+      }
+      
+      try {
+        compatibleVersions = parseCompatibleVersions(properties.get("compatibleVersions"));
+      }
+      catch (NumberFormatException nfe) {
+        compatibleVersions = null;
+        System.err
+          .println("The format of the compatibleVersions field is incorrect for "
+            + name);
       }
       
     } else {

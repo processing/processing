@@ -238,7 +238,7 @@ public class ContributionManagerDialog {
         
         @Override
         public void itemStateChanged(ItemEvent arg0) {
-          System.out.println("Here");
+          System.out.println(Base.getRevision());
         }
       });
       filterPanel.add(compatibleContrib);

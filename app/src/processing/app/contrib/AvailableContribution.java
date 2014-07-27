@@ -1,4 +1,4 @@
-/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+﻿/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -61,6 +61,12 @@ class AvailableContribution extends Contribution {
       } catch (NumberFormatException e) {
         lastUpdated = 0;
       }
+    try {
+    compatibleVersions = parseCompatibleVersions(params.get("compatibleVersions"));
+    }
+    catch (NumberFormatException nfe) {
+      compatibleVersions = null;
+    }
   }
   
   
@@ -287,6 +293,18 @@ class AvailableContribution extends Contribution {
 //        System.err
 //          .println("Please contact the author to fix it according to the guidelines.");
       }
+      
+      String compatibleVersions = properties.get("compatibleVersions");
+      if (compatibleVersions != null && !compatibleVersions.isEmpty()) {
+        try {
+          parseCompatibleVersions(compatibleVersions);
+        }
+        catch (NumberFormatException nfe) {
+          compatibleVersions = getCompatibleVersionsStr();
+        }
+      }
+      else
+        compatibleVersions = getCompatibleVersionsStr();
 
       if (propFile.delete() && propFile.createNewFile() && propFile.setWritable(true)) {
         PrintWriter writer = PApplet.createWriter(propFile);
@@ -300,6 +318,7 @@ class AvailableContribution extends Contribution {
         writer.println("version=" + version);
         writer.println("prettyVersion=" + prettyVersion);
         writer.println("lastUpdated=" + lastUpdated);
+        writer.println("compatibleVersions=" + compatibleVersions);
         if (getType() == ContributionType.EXAMPLES_PACKAGE) {
           writer.println("compatibleModesList=" + compatibleContribsList);
         }
