@@ -8,12 +8,16 @@ _   https://github.com/processing/processing/issues/2423
 
 _ fix for maxValue() and minValue() when all entries are bad
 _   on FloatDict it was NaN, check across the lists and other dict types
+_ StringDict should always put NaN values at the end on sort
+_   same for the other list and dict classes
+_   (this is part of the point of having these easier versions)
 
 _ better full screen mode for OS X
 _   https://github.com/processing/processing/issues/2641
 _   http://stackoverflow.com/questions/6873568/fullscreen-feature-for-java-apps-on-osx-lion
 
 _ bring back chaining in JSON (and add to XML)
+_   maybe once we make the PVector change
 
 
 high
