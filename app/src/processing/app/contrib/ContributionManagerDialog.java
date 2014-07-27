@@ -226,6 +226,22 @@ public class ContributionManagerDialog {
 //      filterPanel.add(Box.createHorizontalGlue());
       filterField = new FilterField();
       filterPanel.add(filterField);
+      
+      filterPanel.add(Box.createHorizontalStrut(5));
+
+      String compatibleContribType = title.substring(0, title.indexOf(" "))
+        .equalsIgnoreCase("Library") ? "Libraries" : (title.substring(0, title
+        .indexOf(" ")) + "s");
+      
+      JCheckBox compatibleContrib = new JCheckBox("Show Only Compatible " + compatibleContribType);
+      compatibleContrib.addItemListener(new ItemListener() {
+        
+        @Override
+        public void itemStateChanged(ItemEvent arg0) {
+          System.out.println("Here");
+        }
+      });
+      filterPanel.add(compatibleContrib);
 //      filterPanel.add(Box.createHorizontalGlue());
 //    }
       //filterPanel.setBorder(new EmptyBorder(13, 13, 13, 13));
