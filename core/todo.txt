@@ -1,15 +1,4 @@
-0228 core
-X add copy() method to PVector
-X modify PVector to include better methods for chaining operations
-X   http://code.google.com/p/processing/issues/detail?id=218
-X   https://github.com/processing/processing/issues/257
-X   PVector discussion with Dan
-o   Jer and Dan will look at their code, plus toxiclibs
-
-table
-X major performance improvements to 'newlines' parsing
-X debugging table parsing with header rows
-X bug fix for setting data type
+0229 core (3.0a2)
 
 
 applet removal
@@ -17,7 +6,18 @@ _ remove Applet as base class
 _ performance issues on OS X (might be threading due to Applet)
 _   https://github.com/processing/processing/issues/2423
 
+_ fix for maxValue() and minValue() when all entries are bad
+_   on FloatDict it was NaN, check across the lists and other dict types
+_ StringDict should always put NaN values at the end on sort
+_   same for the other list and dict classes
+_   (this is part of the point of having these easier versions)
+
+_ better full screen mode for OS X
+_   https://github.com/processing/processing/issues/2641
+_   http://stackoverflow.com/questions/6873568/fullscreen-feature-for-java-apps-on-osx-lion
+
 _ bring back chaining in JSON (and add to XML)
+_   maybe once we make the PVector change
 
 
 high
@@ -53,12 +53,6 @@ _   image = gc.createCompatibleVolatileImage(source.width, source.height, Transp
 _   https://github.com/processing/processing/issues/1844
 _ 'collector' class.. Dict that points to a list
 _   String as a key, int/float/string list as values
-_ blendMode(ADD) is broken with default renderer
-_   https://github.com/processing/processing/issues/2012
-_   may have been introduced between 2.0b7 and 2.0b8
-_   https://github.com/processing/processing/issues/2275
-_   https://github.com/processing/processing/issues/2276
-_   https://github.com/processing/processing/issues/2483
 _ add option to have full screen span across screens
 _   display=all in cmd line
 _   sketchDisplay() -> 0 for all, or 1, 2, 3...

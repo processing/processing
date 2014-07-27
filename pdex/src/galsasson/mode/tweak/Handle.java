@@ -1,11 +1,6 @@
 package galsasson.mode.tweak;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -176,7 +171,7 @@ public class Handle {
 	private float getChange()
 	{
 		int pixels = xCurrent - xLast;
-		return (float)pixels*incValue;
+		return pixels*incValue;
 	}
 
 	public void setPos(int nx, int ny)

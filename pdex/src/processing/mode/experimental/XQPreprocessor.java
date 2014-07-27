@@ -107,14 +107,15 @@ public class XQPreprocessor {
 		// System.out.println("------------XQPreProc End-----------------");
 
 		// Calculate main class offset
-		int position = doc.get().indexOf("{") + 1;
-		int lines = 0;
-		for (int i = 0; i < position; i++) {
-			if (doc.get().charAt(i) == '\n') {
-				lines++;
-			}
-		}
-		lines += 2;
+		// removed unused 'lines' tabulation [fry 140726]
+//		int position = doc.get().indexOf("{") + 1;
+//		int lines = 0;
+//		for (int i = 0; i < position; i++) {
+//			if (doc.get().charAt(i) == '\n') {
+//				lines++;
+//			}
+//		}
+//		lines += 2;
 		// System.out.println("Lines: " + lines);
 
 		return doc.get();

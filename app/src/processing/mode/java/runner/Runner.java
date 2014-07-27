@@ -639,9 +639,6 @@ public class Runner implements MessageConsumer {
     //vm.setDebugTraceMode(debugTraceMode);
 //    vm.setDebugTraceMode(VirtualMachine.TRACE_ALL);
 //    vm.setDebugTraceMode(VirtualMachine.TRACE_NONE);  // formerly, seems to have no effect
-
-    // For internal debugging
-    PrintWriter writer = null;
     
     // Calling this seems to set something internally to make the 
     // Eclipse JDI wake up. Without it, an ObjectCollectedException
@@ -735,7 +732,6 @@ public class Runner implements MessageConsumer {
       // we don't interrupt
     }
     //System.out.println("and leaving");
-    if (writer != null) writer.close();
   }
 
 

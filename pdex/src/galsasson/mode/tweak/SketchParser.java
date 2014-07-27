@@ -8,8 +8,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import processing.app.Sketch;
-
 public class SketchParser
 {
 	public ArrayList<ColorControlBox> colorBoxes[];

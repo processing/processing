@@ -1,14 +1,16 @@
-0228 pde
-X increase heap size to 256m (-Xmx256) per Manindra request
-X use a ButtonGroup so that the current Mode cannot be de-selected
-X   https://github.com/processing/processing/issues/2545
+0229 pde (3.0a2)
 
 
-pulls
-X Implementation of a list of open sketches in the Sketch menu
-X   https://github.com/processing/processing/pull/2551
-_ color selector for the pref (not reading it properly)
-_   https://github.com/processing/processing/pull/2568
+_ "Platform is ${platform}" message during 'ant clean'
+
+_ add a new pref for the 3.0 sketchbook location
+_ remove minim
+_ add the new sound library to the build process
+
+_ double-clicking a .pde file doesn't open properly on OS X
+_   https://github.com/processing/processing/issues/2639
+_ OS X export button not disabled on other platforms
+_   https://github.com/processing/processing/issues/2642
 
 _ look at the sound library https://github.com/wirsing/ProcessingSound
 
@@ -590,8 +592,7 @@ _   https://github.com/processing/processing/issues/943
 
 PDE / Manager
 
-_ contrib properties files ignored in favor of contributions.txt from p5.org
-_   https://github.com/processing/processing/issues/2572
+_ something to set min/max versions that are supported by a library
 _ ability to cancel a download/install
 _ we shouldn't use .properties extension for modes, et al
 _   because a .properties file is iso8859-1

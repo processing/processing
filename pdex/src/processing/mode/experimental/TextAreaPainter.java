@@ -358,7 +358,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     // horizontalAdjustment);
     int y = ta.lineToY(line);
     y += fm.getLeading() + fm.getMaxDescent();
-    int height = fm.getHeight();
+//    int height = fm.getHeight();
     int start = ta.getLineStartOffset(line) + problem.getPDELineStartOffset();
     int pLength = problem.getPDELineStopOffset() + 1
         - problem.getPDELineStartOffset();
@@ -513,8 +513,8 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
       String tooltipText = errorCheckerService.getASTGenerator()
           .getLabelForASTNode(line, word, xLS);
 
-      log(errorCheckerService.mainClassOffset + " MCO "
-      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
+//      log(errorCheckerService.mainClassOffset + " MCO "
+//      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
       if (tooltipText != null)
         return tooltipText;
       return word;
@@ -623,7 +623,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 
 		for (int tab=0; tab<code.length; tab++)
 		{
-			String tabCode = ((DebugEditor)ta.editor).baseCode[tab];
+			String tabCode = ta.editor.baseCode[tab];
 			ta.setText(tabCode);
 			for (Handle n : handles[tab])
 			{
@@ -657,7 +657,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 		int charInc = 0;
 		int currentTab = ta.editor.getSketch().getCurrentCodeIndex();
 		SketchCode sc = ta.editor.getSketch().getCode(currentTab);
-		String code = ((DebugEditor)ta.editor).baseCode[currentTab];
+		String code = ta.editor.baseCode[currentTab];
 
 		for (Handle n : handles[currentTab])
 		{

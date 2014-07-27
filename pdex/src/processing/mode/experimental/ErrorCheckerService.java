@@ -20,11 +20,7 @@ package processing.mode.experimental;
 import static processing.mode.experimental.ExperimentalMode.log;
 import static processing.mode.experimental.ExperimentalMode.logE;
 
-import java.awt.EventQueue;
 import java.io.File;
-import java.io.FileFilter;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -50,7 +46,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
-import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
 import processing.app.Base;
 import processing.app.Editor;
@@ -360,6 +355,9 @@ public class ErrorCheckerService implements Runnable{
   protected void updateSketchCodeListeners() {
     for (final SketchCode sc : editor.getSketch().getCode()) {
       boolean flag = false;
+      if (sc.getDocument() == null
+          || ((SyntaxDocument) sc.getDocument()).getDocumentListeners() == null)
+        continue;
       for (DocumentListener dl : ((SyntaxDocument)sc.getDocument()).getDocumentListeners()) {
         if(dl.equals(sketchChangedListener)){
           flag = true;
@@ -367,7 +365,7 @@ public class ErrorCheckerService implements Runnable{
         }
       }
       if(!flag){
-        log("Adding doc listener to " + sc.getPrettyName());
+        // log("Adding doc listener to " + sc.getPrettyName());
         sc.getDocument().addDocumentListener(sketchChangedListener);
       }
     }
@@ -404,7 +402,7 @@ public class ErrorCheckerService implements Runnable{
    * Triggers error check
    */
   public void runManualErrorCheck() {
-    log("Error Check.");
+    // log("Error Check.");
     textModified.incrementAndGet();
   }
   
@@ -418,7 +416,7 @@ public class ErrorCheckerService implements Runnable{
     public void insertUpdate(DocumentEvent e) {
       if (ExperimentalMode.errorCheckEnabled){
         runManualErrorCheck();
-        log("doc insert update, man error check..");
+        //log("doc insert update, man error check..");
       }
     }
 
@@ -426,7 +424,7 @@ public class ErrorCheckerService implements Runnable{
     public void removeUpdate(DocumentEvent e) {
       if (ExperimentalMode.errorCheckEnabled){
         runManualErrorCheck();
-        log("doc remove update, man error check..");
+        //log("doc remove update, man error check..");
       }
     }
 
@@ -434,7 +432,7 @@ public class ErrorCheckerService implements Runnable{
     public void changedUpdate(DocumentEvent e) {
       if (ExperimentalMode.errorCheckEnabled){
         runManualErrorCheck();
-        log("doc changed update, man error check..");
+        //log("doc changed update, man error check..");
       }
     }
     
@@ -443,15 +441,13 @@ public class ErrorCheckerService implements Runnable{
   public int compilationUnitState = 0;
   
   protected boolean checkCode() {
-    //log("checkCode() " + textModified.get() );
-    log("checkCode() " + textModified.get());
+    // log("checkCode() " + textModified.get());
     lastTimeStamp = System.currentTimeMillis();
     try {
       sourceCode = preprocessCode(editor.getSketch().getMainProgram());
       compilationUnitState = 0;
       syntaxCheck();
-      log(editor.getSketch().getName() + "1 MCO "
-          + mainClassOffset);
+      // log(editor.getSketch().getName() + "1 MCO " + mainClassOffset);
       // No syntax errors, proceed for compilation check, Stage 2.
       
       //if(hasSyntaxErrors()) astGenerator.buildAST(null);
@@ -471,8 +467,7 @@ public class ErrorCheckerService implements Runnable{
         //         log(sourceCode);
         //         log("--------------------------");
         compileCheck();        
-        log(editor.getSketch().getName() + "2 MCO "
-            + mainClassOffset);
+        // log(editor.getSketch().getName() + "2 MCO " + mainClassOffset);
       }
       
       astGenerator.buildAST(cu);
@@ -699,8 +694,8 @@ public class ErrorCheckerService implements Runnable{
       // Code in pde tabs stored as PlainDocument
       PlainDocument pdeTabs[] = new PlainDocument[editor.getSketch()
           .getCodeCount()];
-      log("calcPDEOffsetsForProbList() mco: " + mainClassOffset + " CU state: "
-          + compilationUnitState);
+//      log("calcPDEOffsetsForProbList() mco: " + mainClassOffset + " CU state: "
+//          + compilationUnitState);
 
       javaSource.insertString(0, sourceCode, null);
       for (int i = 0; i < pdeTabs.length; i++) {
@@ -725,8 +720,8 @@ public class ErrorCheckerService implements Runnable{
       for (Problem p : problemsList) {
         int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset, prbEnd = p
             .getIProblem().getSourceEnd() - pkgNameOffset;
-        log(p.toString());
-        log("IProblem Start " + prbStart + ", End " + prbEnd);
+        // log(p.toString());
+        // log("IProblem Start " + prbStart + ", End " + prbEnd);
         int javaLineNumber = p.getSourceLineNumber()
             - ((compilationUnitState != 2) ? 1 : 2);
         Element lineElement = javaSource.getDefaultRootElement()

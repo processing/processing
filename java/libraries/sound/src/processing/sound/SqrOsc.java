@@ -20,7 +20,8 @@ public class SqrOsc implements SoundObject {
 	}
 	
 	public void play(){
-			m_nodeId = m_engine.sqrPlay(m_freq, m_amp, m_add-1, m_pos);
+		//m_nodeId = m_engine.pulsePlay(m_freq, 0.5f, m_amp*2, m_add-1, m_pos);
+		m_nodeId = m_engine.sqrPlay(m_freq, m_amp, m_add-1, m_pos);
 	};	
 	
 	public void play(float freq, float amp, float add, float pos){

@@ -103,7 +103,7 @@ public class JEditTextArea extends JComponent
     }
 
     // Initialize some misc. stuff
-    painter = new TextAreaPainter(this, defaults);
+    painter = createPainter(defaults);
     documentHandler = new DocumentHandler();
     eventListenerList = new EventListenerList();
     caretEvent = new MutableCaretEvent();
@@ -173,6 +173,16 @@ public class JEditTextArea extends JComponent
         }
       }
     });
+  }
+
+
+  /**
+   * Override this to provide your own painter for this {@link JEditTextArea}.
+   * @param defaults
+   * @return a newly constructed {@link TextAreaPainter}.
+   */
+  protected TextAreaPainter createPainter(final TextAreaDefaults defaults) {
+    return new TextAreaPainter(this, defaults);
   }
 
 

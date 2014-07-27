@@ -17,10 +17,11 @@ void setup() {
     // Create the noise generator + filter
     noise = new WhiteNoise(this);
     highPass = new HighPass(this);
+
     noise.play(0.5);
     highPass.process(noise, 100);
 }      
 
 void draw() {
-    highPass.freq(map(mouseX, 0, 350, 20, 10000));
+    highPass.freq(map(mouseX, 0, width, 80, 10000));
 }

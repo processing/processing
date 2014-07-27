@@ -12,10 +12,24 @@ Manindra Moharana (me@mkmoharana.com)
 Critical Bugs
 -------------
 
--[ ] Better memory management. #1
+-[x] Better memory management. #1
 
 -[ ] Breakpoints in classes. #47
 
+
+Misc Tasks
+----------
+
+-[x] Trim CompilationChecker class
+
+-[x] Refactoring should support single undo
+
+Import Suggestion
+-----------------
+
+-[ ] Ignore case while looking for classname
+
+-[ ] Prevent running into a suggestion loop
 
 Normal Bugs
 -----------
@@ -35,16 +49,14 @@ Enhancements/New Features
  
 -[ ] Gotta fix PEH for multiple errors per line. Will be slightly meticulous.
 
+-[x] Better comment/uncomment - ignores leading whitespaces, and more uniform // placement.
+
 -[ ] When viewing Outline View, instead of showing the beginning of the list, 
 it should select the current node element within which the cursor is presently 
 positioned.
 
 -[ ] Begin work on code snippets.
 
--[ ] JUnit Testing?
-
 -[ ] Preferences panel
 
 -[ ] Line Numbers
-
-

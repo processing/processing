@@ -7,8 +7,6 @@ import java.util.TreeMap;
 
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
-import static processing.mode.experimental.ExperimentalMode.log;
-import static processing.mode.experimental.ExperimentalMode.logE;
 
 public class ErrorMessageSimplifier {
 
@@ -64,14 +62,15 @@ public class ErrorMessageSimplifier {
       return null;
     IProblem iprob = problem.getIProblem();
     String args[] = iprob.getArguments();
-    log("Simplifying message: " + problem.getMessage() + " ID: "
-        + getIDName(iprob.getID()));
-    log("Arg count: " + args.length);
-    for (int i = 0; i < args.length; i++) {
-      log("Arg " + args[i]);
-    }
+//    log("Simplifying message: " + problem.getMessage() + " ID: "
+//        + getIDName(iprob.getID()));
+//    log("Arg count: " + args.length);
+//    for (int i = 0; i < args.length; i++) {
+//      log("Arg " + args[i]);
+//    }
 
     String result = null;
+    
     switch (iprob.getID()) {
     case IProblem.ParsingError:
       if (args.length > 0) {
@@ -107,7 +106,8 @@ public class ErrorMessageSimplifier {
       break;
     case IProblem.UndefinedMethod:
       if (args.length > 2) {
-        result = "I don't know the function \"" + args[args.length - 2] + "\"";
+        result = "The method \"" + args[args.length - 2] + "("
+            + getSimpleName(args[args.length - 1]) + ")\" doesn't exist";
       }
       break;
     case IProblem.ParameterMismatch:
@@ -118,42 +118,43 @@ public class ErrorMessageSimplifier {
           result = "The method \"" + args[1]
               + "\" doesn't expect any parameters";
         } else {
-          result = "The method \"" + args[1] + "\" expects parameters ("
+          result = "The method \"" + args[1]
+              + "\" expects parameters like this: " + args[1] + "("
               + getSimpleName(args[2]) + ")";
         }
       }
       break;
     case IProblem.UndefinedField:
       if (args.length > 0) {
-        result = "I don't know the global variable \"" + args[0] + "\"";
+        result = "The global variable \"" + args[0] + "\" doesn't exist";
       }
       break;
     case IProblem.UndefinedType:
       if (args.length > 0) {
-        result = "I don't know the class \"" + args[0] + "\"";
+        result = "The class \"" + args[0] + "\" doesn't exist";
       }
       break;
     case IProblem.UnresolvedVariable:
       if (args.length > 0) {
-        result = "I can't recognize the variable \"" + args[0] + "\"";
+        result = "The variable \"" + args[0] + "\" doesn't exist";
       }
       break;
     case IProblem.UndefinedName:
       if (args.length > 0) {
-        result = "I don't recognize the name \"" + args[0] + "\"";
+        result = "The name \"" + args[0] + "\" can't be recognized";
       }
       break;
     case IProblem.TypeMismatch:
       if (args.length > 1) {
-        result = "You can't assign a \"" + getSimpleName(args[0])
-            + "\" type to a \"" + getSimpleName(args[1]) + "\" type";
+        result = "Type mismatch, \"" + getSimpleName(args[0])
+            + "\" doesn't match with \"" + getSimpleName(args[1]) + "\"";
       }
       break;
     }
     
-    log("Simplified Error Msg: " + result);
+//    log("Simplified Error Msg: " + result);
     if (result == null)
-      return problem.getMessage();
+      result = problem.getMessage();
     return result;
   }
   
@@ -189,25 +190,25 @@ public class ErrorMessageSimplifier {
     String result = null;
     switch (c) {
     case ';':
-      result = "You're missing a semi-colon \";\"";
+      result = "Missing a semi-colon \";\"";
       break;
     case '[':
-      result = "I sense a missing opening square bracket \"[\"";
+      result = "Missing opening square bracket \"[\"";
       break;
     case ']':
-      result = "Looks like you forgot to close your square bracket \"]\"";
+      result = "Missing closing square bracket \"]\"";
       break;
     case '(':
-      result = "I sense a missing opening parentheses \"(\"";
+      result = "Missing opening parentheses \"(\"";
       break;
     case ')':
-      result = "Looks like you forgot to close your parentheses \")\"";
+      result = "Missing closing parentheses \")\"";
       break;
     case '{':
-      result = "I sense a missing opening curly brace \"{\"";
+      result = "Missing opening curly bracket \"{\"";
       break;
     case '}':
-      result = "Looks like you forgot to close your curly brace \"}\"";
+      result = "Missing closing curly bracket \"}\"";
       break;
     default:
       result = "Consider adding a \"" + c + "\"";

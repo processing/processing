@@ -155,13 +155,30 @@ public class Table {
 
   public Table(Iterable<TableRow> rows) {
     init();
-    boolean typed = false;
-    for (TableRow row : rows) {
-      if (!typed) {
-        setColumnTypes(row.getColumnTypes());
-        typed = true;
+
+    int row = 0;
+    int alloc = 10;
+
+    for (TableRow incoming : rows) {
+      if (row == 0) {
+        setColumnTypes(incoming.getColumnTypes());
+        setColumnTitles(incoming.getColumnTitles());
+        // Do this after setting types, otherwise it'll attempt to parse the
+        // allocated but empty rows, and drive CATEGORY columns nutso.
+        setRowCount(alloc);
+
+      } else if (row == alloc) {
+        // Far more efficient than re-allocating all columns and doing a copy
+        alloc *= 2;
+        setRowCount(alloc);
       }
-      addRow(row);
+
+      //addRow(row);
+      setRow(row++, incoming);
+    }
+    // Shrink the table to only the rows that were used
+    if (row != alloc) {
+      setRowCount(row);
     }
   }
 
@@ -505,6 +522,7 @@ public class Table {
     if (count > 0) {
       setString(row, col, new String(c, 0, count));
     }
+    row++;  // set row to row count (the current row index + 1)
     if (alloc != row) {
       setRowCount(row);  // shrink to the actual size
     }
@@ -1501,7 +1519,7 @@ public class Table {
         int[] intData = new int[rowCount];
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
-          intData[row] = PApplet.parseInt(s, missingInt);
+          intData[row] = (s == null) ? missingInt : PApplet.parseInt(s, missingInt);
         }
         columns[column] = intData;
         break;
@@ -1511,7 +1529,7 @@ public class Table {
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
           try {
-            longData[row] = Long.parseLong(s);
+            longData[row] = (s == null) ? missingLong : Long.parseLong(s);
           } catch (NumberFormatException nfe) {
             longData[row] = missingLong;
           }
@@ -1523,7 +1541,7 @@ public class Table {
         float[] floatData = new float[rowCount];
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
-          floatData[row] = PApplet.parseFloat(s, missingFloat);
+          floatData[row] = (s == null) ? missingFloat : PApplet.parseFloat(s, missingFloat);
         }
         columns[column] = floatData;
         break;
@@ -1533,7 +1551,7 @@ public class Table {
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
           try {
-            doubleData[row] = Double.parseDouble(s);
+            doubleData[row] = (s == null) ? missingDouble : Double.parseDouble(s);
           } catch (NumberFormatException nfe) {
             doubleData[row] = missingDouble;
           }
@@ -1835,13 +1853,16 @@ public class Table {
    * @param source a reference to the original row to be duplicated
    */
   public TableRow addRow(TableRow source) {
-    int row = rowCount;
+    return setRow(rowCount, source);
+  }
+
+
+  public TableRow setRow(int row, TableRow source) {
     // Make sure there are enough columns to add this data
     ensureBounds(row, source.getColumnCount() - 1);
 
     for (int col = 0; col < columns.length; col++) {
       switch (columnTypes[col]) {
-      case CATEGORY:
       case INT:
         setInt(row, col, source.getInt(col));
         break;
@@ -1857,6 +1878,14 @@ public class Table {
       case STRING:
         setString(row, col, source.getString(col));
         break;
+      case CATEGORY:
+        int index = source.getInt(col);
+        setInt(row, col, index);
+        if (!columnCategories[col].hasCategory(index)) {
+          columnCategories[col].setCategory(index, source.getString(col));
+        }
+        break;
+
       default:
         throw new RuntimeException("no types");
       }
@@ -2288,6 +2317,14 @@ public class Table {
 
     public int[] getColumnTypes() {
       return table.getColumnTypes();
+    }
+
+    public String getColumnTitle(int column) {
+      return table.getColumnTitle(column);
+    }
+
+    public String[] getColumnTitles() {
+      return table.getColumnTitles();
     }
   }
 
@@ -3609,6 +3646,18 @@ public class Table {
       return indexToData.get(index);
     }
 
+    boolean hasCategory(int index) {
+      return index < size() && indexToData.get(index) != null;
+    }
+
+    void setCategory(int index, String name) {
+      while (indexToData.size() <= index) {
+        indexToData.add(null);
+      }
+      indexToData.set(index, name);
+      dataToIndex.put(name, index);
+    }
+
     int size() {
       return dataToIndex.size();
     }
@@ -3630,9 +3679,11 @@ public class Table {
 
     void read(DataInputStream input) throws IOException {
       int count = input.readInt();
+      //System.out.println("found " + count + " entries in category map");
       dataToIndex = new HashMap<String, Integer>(count);
       for (int i = 0; i < count; i++) {
         String str = input.readUTF();
+        //System.out.println(i + " " + str);
         dataToIndex.put(str, i);
         indexToData.add(str);
       }

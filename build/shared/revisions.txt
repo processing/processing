@@ -1,3 +1,116 @@
+PROCESSING 3.0a1 (REV 0228) - 26 July 2014
+
+Kicking off the 3.0 release process. The focus for Processing 3 is improving
+the editor and the coding process, so we'll be integrating what was formerly
+PDE X as the main editor.
+
+This release also includes a number of bug fixes and changes, based on 
+in-progress Google Summer of Code projects and a few helpful souls on Github.
+
+Please contribute to the Processing 3 release by testing and reporting bugs.
+Or better yet, helping us fix them and submitting pull requests.
+
+
+[ contributed fixes! ] 
+
++ Fix blendMode() problems in the default renderer (thanks Jakub Valtar!)
+  https://github.com/processing/processing/issues/2012
+  https://github.com/processing/processing/issues/2275
+  https://github.com/processing/processing/issues/2276
+  https://github.com/processing/processing/issues/2483
+
++ Lighting issues with non-planar triangle strips or quad strips
+  https://github.com/processing/processing/issues/2014
+  https://github.com/processing/processing/issues/2018
+  https://github.com/processing/processing/pull/2644
+
++ Set the application name on Linux
+  https://github.com/processing/processing/issues/2534
+  https://github.com/processing/processing/pull/2584
+
++ Serial library not working on export
+  https://github.com/processing/processing/issues/2559
+
++ Fix build problems on Windows
+  https://github.com/processing/processing/issues/2603
+  https://github.com/processing/processing/pull/2610
+
++ filter() not applying to images produced by saveframe() consistently
+  https://github.com/processing/processing/issues/2619
+
++ drawLatch in PJOGL can be null after requesting frame rendering
+  https://github.com/processing/processing/issues/2630
+
+
+[ summer of code ] 
+
++ Line coloring incorrect for filtered contribution listings
+  https://github.com/processing/processing/issues/2583
+  https://github.com/processing/processing/pull/2598
+
++ Added Present's background color as an option to the Preferences window
+  https://github.com/processing/processing/pull/2568
+
++ Check for updates on startup
+  https://github.com/processing/processing/pull/2636
+
++ Avoid problems with out-of-date contribution list
+  https://github.com/processing/processing/issues/2572
+
++ Integrate tweak mode into the new editor
+  https://github.com/processing/processing/pull/2624
+
++ Implementation of a list of open sketches in the Sketch menu
+  https://github.com/processing/processing/pull/2551
+
++ Add preference to set the present color
+  https://github.com/processing/processing/pull/2568
+
++ Fix a problem where mode menu selection would change even if 
+  the change was canceled due to the sketch being modified
+  https://github.com/processing/processing/issues/2615
+
++ Add date and time stamps to the Contribution Manager
+  https://github.com/processing/processing/pull/2651
+
+
+[ more bug fixes ] 
+
++ Prevent the current Mode from being de-selected
+  https://github.com/processing/processing/issues/2545
+
++ Prevent ArrayIndexOutOfBoundsException when calling min/maxValue() 
+  on a FloatDict that only contains NaN values
+
++ Last row was being skipped on tables with the 'newlines' option set
+
++ Debug table parsing with header rows
+
++ Bug fix for setting Table data types
+
++ Fixes for new Table(Iterable). Category data types were not importing
+  their dictionary, column titles weren't set, and performance improvements
+  were badly needed.
+
++ When using setColumnType(), replace nulls with missingInt, missingFloat, etc
+  Formerly, this was throwing a NullPointerException.
+
+
+[ changes ] 
+
++ A new sound library has been added, and Minim has been removed. Minim
+  will now available via the Contributions Manager. 
+
++ Add copy() method to PVector
+
++ Major performance improvements to parsing w/ the 'newlines' option
+
++ add getColumnTitle(int) and getColumnTitles() to TableRow interface
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.2.1 (REV 0227) - 19 May 2014
 
 A handful of bug fixes, the most prominent rolls back a change that broke

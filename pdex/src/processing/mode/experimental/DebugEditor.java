@@ -24,7 +24,6 @@ import galsasson.mode.tweak.SketchParser;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -42,8 +41,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,7 +60,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableModel;
 import javax.swing.text.Document;
@@ -74,7 +70,6 @@ import processing.app.Base;
 import processing.app.EditorState;
 import processing.app.EditorToolbar;
 import processing.app.Mode;
-import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Toolkit;
@@ -182,7 +177,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     /**
      * Show outline view
      */
-    protected JMenuItem showOutline;
+    protected JMenuItem showOutline, showTabOutline;
     
     /**
      * Enable/Disable error logging
@@ -194,6 +189,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     protected JCheckBoxMenuItem completionsEnabled;
     
+    /**
+     * UNUSED. Disbaled for now.
+     */
     protected AutoSaveUtil autosaver;
     
     public DebugEditor(Base base, String path, EditorState state, Mode mode) {
@@ -388,7 +386,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         for (String errMsg : errorCheckerService.tempErrorLog.keySet()) {
           IProblem ip = errorCheckerService.tempErrorLog.get(errMsg);
           if(ip != null){
-            sbuff.append(errorCheckerService.errorMsgSimplifier.getIDName(ip.getID()));
+            sbuff.append(ErrorMessageSimplifier.getIDName(ip.getID()));
             sbuff.append(',');
             sbuff.append("{");
             for (int i = 0; i < ip.getArguments().length; i++) {
@@ -568,22 +566,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         debugMenu.add(printThreads);
         debugMenu.addSeparator();
         debugMenu.add(toggleVariableInspectorMenuItem);
-        debugMenu.addSeparator();
-
-        // TweakMode code
-        enableTweakCB = new JCheckBoxMenuItem("Tweak Enabled");
-        enableTweakCB.setSelected(ExperimentalMode.enableTweak);
-        enableTweakCB.addActionListener(new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          ExperimentalMode.enableTweak = ((JCheckBoxMenuItem) e
-            .getSource()).isSelected();
-            dmode.savePreferences();
-          }
-        });
-        debugMenu.add(enableTweakCB);
-        // TweakMode code end
+        // debugMenu.addSeparator();
 
         // XQMode menu items
         /*        
@@ -680,9 +663,14 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         });
         debugMenu.add(jitem);
         */
-        showOutline = Toolkit.newJMenuItem("Show Outline", KeyEvent.VK_L);
+        showOutline = Toolkit.newJMenuItem("Show Sketch Outline", KeyEvent.VK_L);
         showOutline.addActionListener(this);
         debugMenu.add(showOutline);
+        
+        showTabOutline = Toolkit.newJMenuItem("Show Tabs List", KeyEvent.VK_Y);
+        showTabOutline.addActionListener(this);
+        debugMenu.add(showTabOutline);
+        
         
         return debugMenu;
     }
@@ -690,6 +678,45 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     @Override
     public JMenu buildModeMenu() {
         return buildDebugMenu();
+    }
+    
+    public JMenu buildSketchMenu() {
+      JMenuItem runItem = Toolkit.newJMenuItem(DebugToolbar
+          .getTitle(DebugToolbar.RUN, false), 'R');
+      runItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleRun();
+        }
+      });
+  
+      JMenuItem presentItem = Toolkit.newJMenuItemShift(DebugToolbar
+          .getTitle(DebugToolbar.RUN, true), 'R');
+      presentItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handlePresent();
+        }
+      });
+  
+      JMenuItem stopItem = new JMenuItem(DebugToolbar.getTitle(DebugToolbar.STOP,
+                                                               false));
+      stopItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleStop();
+        }
+      });
+  
+      JMenuItem enableTweak = Toolkit.newJMenuItemShift("Tweak", 'T');
+      enableTweak.setSelected(ExperimentalMode.enableTweak);
+      enableTweak.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          ExperimentalMode.enableTweak = true;
+          handleRun();
+        }
+      });
+  
+      return buildSketchMenu(new JMenuItem[] {
+        runItem, presentItem, enableTweak, stopItem });
     }
 
     /**
@@ -748,9 +775,13 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             Logger.getLogger(DebugEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Variable Inspector' menu item");
             toggleVariableInspector();
         } else if (source.equals(showOutline)){
-            log("Show Outline :D");
+            log("Show Sketch Outline:");
             errorCheckerService.getASTGenerator().showSketchOutline();
         }
+        else if (source.equals(showTabOutline)){
+          log("Show Tab Outline:");
+          errorCheckerService.getASTGenerator().showTabOutline();
+      }
     }
 
 //    @Override
@@ -779,7 +810,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     @Override
     protected boolean handleOpenInternal(String path) {
-        log("handleOpenInternal, path: " + path);
+        // log("handleOpenInternal, path: " + path);
         boolean didOpen = super.handleOpenInternal(path);
         if (didOpen && dbg != null) {
             // should already been stopped (open calls handleStop)
@@ -788,10 +819,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             variableInspector().reset(); // clear contents of variable inspector
         }
         //if(didOpen){
-          autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval); // this is used instead of loadAutosaver(), temp measure
-          //loadAutoSaver();
-          viewingAutosaveBackup = autosaver.isAutoSaveBackup();
-          log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
+          // autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval); // this is used instead of loadAutosaver(), temp measure
+          // loadAutoSaver();
+          // viewingAutosaveBackup = autosaver.isAutoSaveBackup();
+          // log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
         //}
         return didOpen;
     }
@@ -1683,12 +1714,85 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 			errorCheckerService.runManualErrorCheck();
 		}
 	}
+	
+  /**
+   * Handles toggle comment. Slightly improved from the default implementation
+   * in {@link processing.app.Editor}
+   */
+  protected void handleCommentUncomment() {
+    // log("Entering handleCommentUncomment()");
+    startCompoundEdit();
+
+    String prefix = getCommentPrefix();
+    int prefixLen = prefix.length();
+
+    int startLine = textarea.getSelectionStartLine();
+    int stopLine = textarea.getSelectionStopLine();
+
+    int lastLineStart = textarea.getLineStartOffset(stopLine);
+    int selectionStop = textarea.getSelectionStop();
+    // If the selection ends at the beginning of the last line,
+    // then don't (un)comment that line.
+    if (selectionStop == lastLineStart) {
+      // Though if there's no selection, don't do that
+      if (textarea.isSelectionActive()) {
+        stopLine--;
+      }
+    }
+
+    // If the text is empty, ignore the user.
+    // Also ensure that all lines are commented (not just the first)
+    // when determining whether to comment or uncomment.
+    boolean commented = true;
+    for (int i = startLine; commented && (i <= stopLine); i++) {
+      String lineText = textarea.getLineText(i).trim();
+      if (lineText.length() == 0)
+        continue; //ignore blank lines
+      commented = lineText.startsWith(prefix);
+    }
+
+    // log("Commented: " + commented);
+
+    // This is the line start offset of the first line, which is added to
+    // all other lines while adding a comment. Required when commenting 
+    // lines which have uneven whitespaces in the beginning. Makes the 
+    // commented lines look more uniform.    
+    int lso = Math.abs(textarea.getLineStartNonWhiteSpaceOffset(startLine)
+        - textarea.getLineStartOffset(startLine));
+
+    for (int line = startLine; line <= stopLine; line++) {
+      int location = textarea.getLineStartNonWhiteSpaceOffset(line);
+      String lineText = textarea.getLineText(line);
+      if (lineText.trim().length() == 0)
+        continue; //ignore blank lines
+      if (commented) {
+        // remove a comment
+        if (lineText.trim().startsWith(prefix + " ")) {
+          textarea.select(location, location + prefixLen + 1);
+        } else {
+          textarea.select(location, location + prefixLen);
+        }
+        textarea.setSelectedText("");
+      } else {
+        // add a comment
+        location = textarea.getLineStartOffset(line) + lso;
+        textarea.select(location, location);
+        textarea.setSelectedText(prefix + " "); //Add a '// '
+      }
+    }
+    // Subtract one from the end, otherwise selects past the current line.
+    // (Which causes subsequent calls to keep expanding the selection)
+    textarea.select(textarea.getLineStartOffset(startLine),
+                    textarea.getLineStopOffset(stopLine) - 1);
+    stopCompoundEdit();
+    sketch.setModified(true);
+  }
 
     // TweakMode code
     /**
      * Show warnings menu item
      */
-    protected JCheckBoxMenuItem enableTweakCB;
+    //protected JCheckBoxMenuItem enableTweakCB;
 
 	String[] baseCode;
 

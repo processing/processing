@@ -23,9 +23,9 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import processing.app.Base;
 import processing.app.Editor;
-import processing.app.Preferences;
 import processing.app.Toolkit;
 import processing.mode.java.JavaToolbar;
 

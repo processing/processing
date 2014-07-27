@@ -8,3 +8,4 @@ clean:
 
 install:
 	cp libMethClaInterface.jnilib ../../library/macosx
+	cp libMethClaInterface.jnilib /Users/wirsing/Documents/Processing/libraries/sound/library/macosx/	

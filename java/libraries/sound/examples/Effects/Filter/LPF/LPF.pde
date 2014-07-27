@@ -6,7 +6,7 @@ In this example it is started and stopped by clicking into the renderer window.
 import processing.sound.*;
 
 WhiteNoise noise;
-LowPass lPass;
+LowPass lowPass;
 
 float amp=0.0;
 
@@ -16,11 +16,11 @@ void setup() {
     
     // Create the noise generator + filter
     noise = new WhiteNoise(this);
-    lPass = new LowPass(this);
+    lowPass = new LowPass(this);
     noise.play(0.2);
-    lPass.process(noise, 800);
+    lowPass.process(noise, 800);
 }      
 
 void draw() {
-    lPass.freq(map(mouseX, 0, 350, 800, 10000));
+    lowPass.freq(map(mouseX, 0, width, 80, 10000));
 }

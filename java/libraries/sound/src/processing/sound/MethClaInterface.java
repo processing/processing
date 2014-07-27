@@ -23,6 +23,8 @@ public class MethClaInterface
   // general Oscillator methods
     
   public native void oscSet(float freq, float amp, float add, float pos, int[] nodeId);
+
+  public native void oscAudioSet(int[] freqId, int[] ampId, int[] addId, int[] posId, int[] nodeId);
   
   // Sine Wave Oscillator
     
@@ -50,7 +52,7 @@ public class MethClaInterface
   
   // Audio In
 
-  public native int[] audioInPlay(float amp, float add, float pos, boolean out);
+  public native int[] audioInPlay(float amp, float add, float pos, int in);
 
   public native void audioInSet(float amp, float add, float pos, int[] nodeId);
 
@@ -86,29 +88,32 @@ public class MethClaInterface
 
   // Envelope
     
-  public native int envelopePlay(int[] input, float attackTime, float sustainTime, float sustainLevel, float releaseTime);
+  public native int[] envelopePlay(int[] input, float attackTime, float sustainTime, float sustainLevel, float releaseTime);
   
   public native int doneAfter(float seconds);
     
   // Filters
     
-  public native int highPassPlay(int[] input, float freq, float res);
+  public native int[] highPassPlay(int[] input, float freq);
 
-  public native int lowPassPlay(int[] input, float freq, float res);
+  public native int[] lowPassPlay(int[] input, float freq);
   
-  public native int bandPassPlay(int[] input, float freq, float res);
+  public native int[] bandPassPlay(int[] input, float freq, float bw);
 
-  public native void filterSet(float freq, float res, int nodeId);
+  public native void filterSet(float freq, int nodeId);
+
+  public native void filterBwSet(float freq, float bw, int nodeId);
+
 
   // Delay
 
-  public native int delayPlay(int[] input, float maxDelayTime, float delayTime, float feedBack);
+  public native int[] delayPlay(int[] input, float maxDelayTime, float delayTime, float feedBack);
   
   public native void delaySet(float delayTime, float feedBack, int nodeId);
 
   // Reverb
 
-  public native int reverbPlay(int[] input, float room, float damp, float wet);
+  public native int[] reverbPlay(int[] input, float room, float damp, float wet);
   
   public native void reverbSet(float room, float damp, float wet, int nodeId);
   
@@ -118,7 +123,7 @@ public class MethClaInterface
   
   // Pan + Out
   
-  // public native int out(float pos, int nodeId);  
+  public native void out(int out, int[] nodeId);  
   
   // connect
   

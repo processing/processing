@@ -389,7 +389,26 @@ public abstract class Editor extends JFrame implements RunnerListener {
       JRadioButtonMenuItem item = new JRadioButtonMenuItem(m.getTitle());
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          base.changeMode(m);
+          if (!sketch.isModified()) {
+            base.changeMode(m);
+            
+          } else {
+            Base.showWarning("Save",
+                             "Please save the sketch before changing the mode.",
+                             null);
+
+            // Re-select the old checkbox, because it was automatically 
+            // updated by Java, even though the Mode could not be changed.
+            // https://github.com/processing/processing/issues/2615
+            for (Component c : modeMenu.getPopupMenu().getComponents()) {
+              if (c instanceof JRadioButtonMenuItem) {
+                if (((JRadioButtonMenuItem)c).getText() == mode.getTitle()) {
+                  ((JRadioButtonMenuItem)c).setSelected(true);
+                  break;
+                }
+              }
+            }
+          }
         }
       });
       modeMenu.add(item);
@@ -902,8 +921,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
       // Menu Listener that populates the menu only when the menu is opened
       List<JMenuItem> menuList = new ArrayList<JMenuItem>();
 
-      JMenu windowMenu = new JMenu("Window");
-
       @Override
       public void menuSelected(MenuEvent event) {
         JMenuItem item;
@@ -928,19 +945,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
               editor.toFront();
             }
           });
-          windowMenu.add(item);
+          sketchMenu.add(item);
           menuList.add(item);
         }
-        sketchMenu.add(windowMenu);
       }
 
       @Override
       public void menuDeselected(MenuEvent event) {
         for (JMenuItem item : menuList) {
-          windowMenu.remove(item);
+          sketchMenu.remove(item);
         }
         menuList.clear();
-        sketchMenu.remove(windowMenu);
       }
 
       @Override

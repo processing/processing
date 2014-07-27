@@ -106,7 +106,7 @@ public class CompletionPanel {
     textarea.requestFocusInWindow();
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
         + location.y);
-    log("Suggestion shown: " + System.currentTimeMillis());
+    //log("Suggestion shown: " + System.currentTimeMillis());
   }
 
   public boolean isVisible() {
@@ -114,7 +114,7 @@ public class CompletionPanel {
   }
   
   public void setVisible(boolean v){
-    log("Pred popup visible.");
+    //log("Pred popup visible.");
     popupMenu.setVisible(v);
   }
   
@@ -243,7 +243,7 @@ public class CompletionPanel {
           textarea.setCaretPosition(insertionPosition
               + selectedSuggestion.length());
         }
-        log("Suggestion inserted: " + System.currentTimeMillis());
+        //log("Suggestion inserted: " + System.currentTimeMillis());
         return true;
       } catch (BadLocationException e1) {
         e1.printStackTrace();

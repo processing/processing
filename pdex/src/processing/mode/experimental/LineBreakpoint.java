@@ -17,17 +17,16 @@
  */
 package processing.mode.experimental;
 
-import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.Location;
-import com.sun.jdi.ReferenceType;
-import com.sun.jdi.request.BreakpointRequest;
+import static processing.mode.experimental.ExperimentalMode.log;
+
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static processing.mode.experimental.ExperimentalMode.log;
-import static processing.mode.experimental.ExperimentalMode.logE;
-import static processing.mode.experimental.ExperimentalMode.log2;
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.Location;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.request.BreakpointRequest;
 
 /**
  * Model/Controller of a line breakpoint. Can be set before or while debugging.

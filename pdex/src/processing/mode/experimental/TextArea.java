@@ -38,7 +38,6 @@ import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.text.BadLocationException;
 
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaDefaults;
@@ -246,7 +245,7 @@ public class TextArea extends JEditTextArea {
           // errorCheckerService.runManualErrorCheck();
           // Provide completions only if it's enabled
           if (ExperimentalMode.codeCompletionsEnabled
-              && !ExperimentalMode.ccTriggerEnabled) {
+              && (!ExperimentalMode.ccTriggerEnabled || suggestion.isVisible())) {
             log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started: "
                 + System.currentTimeMillis());
             log("Typing: " + fetchPhrase(evt2) + " "
@@ -774,7 +773,7 @@ public class TextArea extends JEditTextArea {
           - getLineStartOffset(getCaretLine()));
       location.y = lineToY(getCaretLine())
           + getPainter().getFontMetrics().getHeight() + getPainter().getFontMetrics().getDescent();
-      log("TA position: " + location);
+      //log("TA position: " + location);
     } catch (Exception e2) {
       e2.printStackTrace();
       return;
@@ -805,7 +804,7 @@ public class TextArea extends JEditTextArea {
   protected void hideSuggestion() {
     if (suggestion != null) {
       suggestion.hide();
-      log("Suggestion hidden.");
+      //log("Suggestion hidden.");
       suggestion = null;
     }
   }

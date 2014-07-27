@@ -2,14 +2,11 @@ package galsasson.mode.tweak;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 
 import javax.swing.Box;
 import javax.swing.JFrame;
-import javax.swing.border.EmptyBorder;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;

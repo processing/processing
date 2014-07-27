@@ -28,6 +28,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Date;
+import java.text.DateFormat;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -359,6 +361,29 @@ class ContributionPanel extends JPanel {
       }
       description.append(sentence);
     }
+    
+    String version = contrib.getPrettyVersion();
+
+    if (version != null && !version.isEmpty()) {
+      description.append("<br/>");
+      if (version.toLowerCase().startsWith("build")) // For Python mode
+        description.append("v"
+            + version.substring(5, version.indexOf(',')).trim());
+      else if (version.toLowerCase().startsWith("v")) // For ketai library
+        description.append(version);
+      else
+        description.append("v" + version);
+    }
+    
+    long lastUpdatedUTC = contrib.getLastUpdated();
+    if (lastUpdatedUTC != 0) {
+      DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM);
+      Date lastUpdatedDate = new Date(lastUpdatedUTC);
+      if (version != null && !version.isEmpty())
+        description.append(", ");
+      description.append("Last Updated on " + dateFormatter.format(lastUpdatedDate));
+    }
+    
     description.append("</body></html>");
     //descriptionText.setText(description.toString());
     descriptionBlock.setText(description.toString());
@@ -371,7 +396,11 @@ class ContributionPanel extends JPanel {
         // Already marked for deletion, see requiresRestart() notes below.
         versionText.append("To finish an update, reinstall this contribution after restarting.");
       } else {
-        versionText.append("New version available!");
+        String latestVersion = contribListing.getLatestVersion(contrib);
+        if (latestVersion != null)
+          versionText.append("New version (" + latestVersion + ") available!");
+        else
+          versionText.append("New version available!");
         if (contrib.getType().requiresRestart()) {
           // If a contribution can't be reinstalled in-place, the user may need
           // to remove the current version, restart Processing, then install.
