@@ -137,9 +137,8 @@ abstract public class Contribution {
     if (compatibleVersions == null)
       return "";
     StringBuilder sb = new StringBuilder();
-    sb.append("");
     for (Map.Entry<Integer, Integer> range : compatibleVersions.entrySet()) {
-      if (range.getKey() == range.getValue()) {
+      if (range.getKey().equals(range.getValue())) {
         sb.append(range.getKey());
         sb.append(",");
       }
@@ -147,6 +146,7 @@ abstract public class Contribution {
         sb.append(range.getKey());
         sb.append("-");
         sb.append(range.getValue());
+        sb.append(",");
       }
     }
     sb.deleteCharAt(sb.length()-1);  // delete last comma
@@ -161,9 +161,9 @@ abstract public class Contribution {
 
   public boolean isCompatible(int versionNum) {
     if (compatibleVersions != null) {
-      if (compatibleVersions.ceilingEntry(versionNum) != null
-        && versionNum <= compatibleVersions.ceilingEntry(versionNum).getValue())
-        return true;
+      if (compatibleVersions.floorEntry(versionNum) != null
+        && versionNum <= compatibleVersions.floorEntry(versionNum).getValue()) {
+        return true; }
     }
     return false;
   }

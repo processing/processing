@@ -57,6 +57,7 @@ public class ContributionManagerDialog {
   // the calling editor, so updates can be applied
   Editor editor;
   String category;
+  boolean isCompatibilityFilter;
   ContributionListing contribListing;
 
 
@@ -217,7 +218,7 @@ public class ContributionManagerDialog {
           if (ContributionManagerDialog.ANY_CATEGORY.equals(category)) {
             category = null;
           }
-          filterLibraries(category, filterField.filters);
+          filterLibraries(category, filterField.filters, isCompatibilityFilter);
           contributionListPanel.updateColors();
         }
       });
@@ -233,12 +234,14 @@ public class ContributionManagerDialog {
         .equalsIgnoreCase("Library") ? "Libraries" : (title.substring(0, title
         .indexOf(" ")) + "s");
       
-      JCheckBox compatibleContrib = new JCheckBox("Show Only Compatible " + compatibleContribType);
+      final JCheckBox compatibleContrib = new JCheckBox("Show Only Compatible " + compatibleContribType);
       compatibleContrib.addItemListener(new ItemListener() {
         
         @Override
         public void itemStateChanged(ItemEvent arg0) {
-          System.out.println(Base.getRevision());
+          isCompatibilityFilter = compatibleContrib.isSelected();
+          filterLibraries(category, filterField.filters, isCompatibilityFilter);
+          contributionListPanel.updateColors();
         }
       });
       filterPanel.add(compatibleContrib);
@@ -403,6 +406,14 @@ public class ContributionManagerDialog {
     contributionListPanel.filterLibraries(filteredLibraries);
   }
 
+
+  protected void filterLibraries(String category, List<String> filters, boolean isCompatibilityFilter) {
+    List<Contribution> filteredLibraries = 
+      contribListing.getFilteredLibraryList(category, filters);
+    filteredLibraries = contribListing.getCompatibleContributionList(filteredLibraries, isCompatibilityFilter);
+    contributionListPanel.filterLibraries(filteredLibraries);
+  }
+
   
   protected void updateContributionListing() {
     if (editor != null) {
@@ -539,7 +550,7 @@ public class ContributionManagerDialog {
       // Replace anything but 0-9, a-z, or : with a space
       filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a^\\x3a]", " ");
       filters = Arrays.asList(filter.split(" "));
-      filterLibraries(category, filters);
+      filterLibraries(category, filters, isCompatibilityFilter);
 
       contributionListPanel.updateColors();
     }
