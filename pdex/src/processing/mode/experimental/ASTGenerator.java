@@ -268,7 +268,7 @@ public class ASTGenerator {
       logE("No CU found!");
     }
     visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
-    SwingWorker worker = new SwingWorker() {
+    SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
       @Override
       protected Object doInBackground() throws Exception {
@@ -1040,7 +1040,7 @@ public class ASTGenerator {
       if (sketchOutline.isVisible()) return;
     Collections.sort(candidates);
 //    CompletionCandidate[][] candi = new CompletionCandidate[candidates.size()][1];
-    DefaultListModel defListModel = new DefaultListModel();
+    DefaultListModel<CompletionCandidate> defListModel = new DefaultListModel<CompletionCandidate>();
 
     for (int i = 0; i < candidates.size(); i++) {
 //      candi[i][0] = candidates.get(i);
@@ -2261,11 +2261,11 @@ public class ASTGenerator {
                                    int endOffset) {
 //    log("dfsLookForASTNode() lookin for " + name + " Offsets: " + startOffset
 //        + "," + endOffset);
-    Stack stack = new Stack<ASTNode>();
+    Stack<ASTNode> stack = new Stack<ASTNode>();
     stack.push(root);
 
     while (!stack.isEmpty()) {
-      ASTNode node = (ASTNode) stack.pop();
+      ASTNode node = stack.pop();
       //log("Popped from stack: " + getNodeAsString(node));
       Iterator<StructuralPropertyDescriptor> it = 
           node.structuralPropertiesForType().iterator();

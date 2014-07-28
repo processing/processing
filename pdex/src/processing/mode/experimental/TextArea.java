@@ -53,7 +53,7 @@ public class TextArea extends JEditTextArea {
   protected DebugEditor editor; // the editor
 
   // line properties
-  protected Map<Integer, Color> lineColors = new HashMap(); // contains line background colors
+  protected Map<Integer, Color> lineColors = new HashMap<Integer, Color>(); // contains line background colors
 
   // left-hand gutter properties
   protected int gutterPadding = 3; // [px] space added to the left and right of gutter chars
@@ -66,9 +66,9 @@ public class TextArea extends JEditTextArea {
 
   protected String currentLineMarker = "->"; // the text marker for highlighting the current line in the gutter
 
-  protected Map<Integer, String> gutterText = new HashMap(); // maps line index to gutter text
+  protected Map<Integer, String> gutterText = new HashMap<Integer, String>(); // maps line index to gutter text
 
-  protected Map<Integer, Color> gutterTextColors = new HashMap(); // maps line index to gutter text color
+  protected Map<Integer, Color> gutterTextColors = new HashMap<Integer, Color>(); // maps line index to gutter text color
 
   protected TextAreaPainter customPainter;
 
@@ -220,7 +220,7 @@ public class TextArea extends JEditTextArea {
       if (evt.isAltDown() || evt.isControlDown() || evt.isMetaDown()) {
         if (ExperimentalMode.ccTriggerEnabled && keyChar == KeyEvent.VK_SPACE
             && (evt.isControlDown() || evt.isMetaDown())) {
-          SwingWorker worker = new SwingWorker() {
+          SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
             protected Object doInBackground() throws Exception {
               // Provide completions only if it's enabled
               if (ExperimentalMode.codeCompletionsEnabled
@@ -240,7 +240,7 @@ public class TextArea extends JEditTextArea {
         return;
       }
             
-      SwingWorker worker = new SwingWorker() {
+      SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
         protected Object doInBackground() throws Exception {
           // errorCheckerService.runManualErrorCheck();
           // Provide completions only if it's enabled
@@ -351,7 +351,7 @@ public class TextArea extends JEditTextArea {
 //    else {
     //log2(s + " len " + s.length());
 
-    int x = getCaretPosition() - getLineStartOffset(line) - 1, x2 = x + 1, x1 = x - 1;
+    int x = getCaretPosition() - getLineStartOffset(line) - 1, x1 = x - 1;
     if(x >= s.length() || x < 0)
       return null; //TODO: Does this check cause problems? Verify.
     log2(" x char: " + s.charAt(x));
