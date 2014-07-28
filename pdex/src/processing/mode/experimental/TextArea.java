@@ -652,7 +652,9 @@ public class TextArea extends JEditTextArea {
       }
       
       if (me.getButton() == MouseEvent.BUTTON3) {
-        fetchPhrase(me);
+        if(!editor.hasJavaTabs){ // tooltips, etc disabled for java tabs
+          fetchPhrase(me);
+        }
       }
 
       // forward to standard listeners

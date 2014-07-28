@@ -87,7 +87,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     ta = textArea;
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent evt) {
-//        		log( " Meta,Ctrl "+ (evt.getModifiers() & ctrlMask));
+        if(ta.editor.hasJavaTabs) return; // Ctrl + Click disabled for java tabs
         if (evt.getButton() == MouseEvent.BUTTON1) {
           if (evt.isControlDown() || evt.isMetaDown())
             handleCtrlClick(evt);
@@ -457,6 +457,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
   }
 
   public String getToolTipText(java.awt.event.MouseEvent evt) {
+    if(ta.editor.hasJavaTabs) return null; // disabled for java tabs
     int off = ta.xyToOffset(evt.getX(), evt.getY());
     if (off < 0)
       return null;
