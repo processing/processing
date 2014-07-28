@@ -207,6 +207,7 @@ public class TextArea extends JEditTextArea {
     }
     super.processKeyEvent(evt);
 
+    if(editor.hasJavaTabs) return; // code completion disabled if java tabs
     if (evt.getID() == KeyEvent.KEY_TYPED) {
       
       char keyChar = evt.getKeyChar();

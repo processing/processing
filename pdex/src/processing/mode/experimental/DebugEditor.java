@@ -190,6 +190,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     protected JCheckBoxMenuItem completionsEnabled;
     
     /**
+     * If sketch contains java tabs, some editor features are disabled
+     */
+    protected boolean hasJavaTabs;
+    
+    /**
      * UNUSED. Disbaled for now.
      */
     protected AutoSaveUtil autosaver;
@@ -1687,19 +1692,20 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     }
     
     /**
-     * Checks if the sketch contains java tabs. If it does, XQMode ain't built
-     * for it, yet. Also, user should really start looking at Eclipse. Disable
-     * compilation check.
+     * Checks if the sketch contains java tabs. If it does, the editor ain't built
+     * for it, yet. Also, user should really start looking at more powerful IDEs 
+     * likeEclipse. Disable compilation check and some more features.
      */
     private void checkForJavaTabs() {
+      hasJavaTabs = false;
       for (int i = 0; i < this.getSketch().getCodeCount(); i++) {
         if (this.getSketch().getCode(i).getExtension().equals("java")) {
           compilationCheckEnabled = false;
+          hasJavaTabs = true;
           JOptionPane.showMessageDialog(new Frame(), this
               .getSketch().getName()
-              + " contains .java tabs. Live compilation error checking isn't "
-              + "supported for java tabs. Only "
-              + "syntax errors will be reported for .pde tabs.");
+              + " contains .java tabs. Some editor features are not supported " +
+              "for .java tabs and will be disabled.");
           break;
         }
       }

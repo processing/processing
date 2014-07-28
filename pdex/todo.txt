@@ -22,7 +22,7 @@ Misc Tasks
 
 -[ ] New sketchbook layout
 
--[ ] Better compatibility java tabs
+-[ ] Better compatibility with java tabs
 
 -[x] Trim CompilationChecker class
 
