@@ -51,13 +51,13 @@ public class Debugger implements VMEventListener {
     protected ThreadReference currentThread; // thread the last breakpoint or step occured in
     protected String mainClassName; // name of the main class that's currently being debugged
     protected ReferenceType mainClass; // the debuggee's main class
-    protected Set<ReferenceType> classes = new HashSet(); // holds all loaded classes in the debuggee VM
-    protected List<ClassLoadListener> classLoadListeners = new ArrayList(); // listeners for class load events
+    protected Set<ReferenceType> classes = new HashSet<ReferenceType>(); // holds all loaded classes in the debuggee VM
+    protected List<ClassLoadListener> classLoadListeners = new ArrayList<ClassLoadListener>(); // listeners for class load events
     protected String srcPath; // path to the src folder of the current build
-    protected List<LineBreakpoint> breakpoints = new ArrayList(); // list of current breakpoints
+    protected List<LineBreakpoint> breakpoints = new ArrayList<LineBreakpoint>(); // list of current breakpoints
     protected StepRequest requestedStep; // the step request we are currently in, or null if not in a step
-    protected Map<LineID, LineID> runtimeLineChanges = new HashMap(); // maps line number changes at runtime (orig -> changed)
-    protected Set<String> runtimeTabsTracked = new HashSet(); // contains tab filenames which already have been tracked for runtime changes
+    protected Map<LineID, LineID> runtimeLineChanges = new HashMap<LineID, LineID>(); // maps line number changes at runtime (orig -> changed)
+    protected Set<String> runtimeTabsTracked = new HashSet<String>(); // contains tab filenames which already have been tracked for runtime changes
 
     /**
      * Construct a Debugger object.
@@ -514,7 +514,7 @@ public class Debugger implements VMEventListener {
      * @return the list of breakpoints in the given tab
      */
     public synchronized List<LineBreakpoint> getBreakpoints(String tabFilename) {
-        List<LineBreakpoint> list = new ArrayList();
+        List<LineBreakpoint> list = new ArrayList<LineBreakpoint>();
         for (LineBreakpoint bp : breakpoints) {
             if (bp.lineID().fileName().equals(tabFilename)) {
                 list.add(bp);
@@ -1002,7 +1002,7 @@ public class Debugger implements VMEventListener {
         } catch (IncompatibleThreadStateException ex) {
             Logger.getLogger(Debugger.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return new ArrayList();
+        return new ArrayList<VariableNode>();
     }
 
     /**
@@ -1081,7 +1081,7 @@ public class Debugger implements VMEventListener {
      * @return call stack as list of {@link DefaultMutableTreeNode}s
      */
     protected List<DefaultMutableTreeNode> getStackTrace(ThreadReference t) {
-        List<DefaultMutableTreeNode> stack = new ArrayList();
+        List<DefaultMutableTreeNode> stack = new ArrayList<DefaultMutableTreeNode>();
         try {
 //            int i = 0;
             for (StackFrame f : t.frames()) {
