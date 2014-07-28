@@ -31,7 +31,7 @@ import processing.app.Sketch;
 /**
  * Autosave utility for saving sketch backups in the background after
  * certain intervals
- * 
+ * NOTE: This was developed as an experiment, but disabled for now.
  * @author Manindra Moharana <me@mkmoharana.com>
  *
  */
