@@ -99,7 +99,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     protected Color currentLineColor = new Color(255, 255, 150); // the background color for highlighting lines
     protected Color breakpointMarkerColor = new Color(74, 84, 94); // the color of breakpoint gutter markers
     protected Color currentLineMarkerColor = new Color(226, 117, 0); // the color of current line gutter markers
-    protected List<LineHighlight> breakpointedLines = new ArrayList(); // breakpointed lines
+    protected List<LineHighlight> breakpointedLines = new ArrayList<LineHighlight>(); // breakpointed lines
     protected LineHighlight currentLine; // line the debugger is currently suspended at
     protected final String breakpointMarkerComment = " //<>//"; // breakpoint marker comment
     // menus
@@ -837,7 +837,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * removed from.
      */
     protected List<LineID> stripBreakpointComments() {
-        List<LineID> bps = new ArrayList();
+        List<LineID> bps = new ArrayList<LineID>();
         // iterate over all tabs
         Sketch sketch = getSketch();
         for (int i = 0; i < sketch.getCodeCount(); i++) {
@@ -934,7 +934,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         }
       
         // note modified tabs
-        final List<String> modified = new ArrayList();
+        final List<String> modified = new ArrayList<String>();
         for (int i = 0; i < getSketch().getCodeCount(); i++) {
             SketchCode tab = getSketch().getCode(i);
             if (tab.isModified()) {
@@ -1586,9 +1586,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       if(type == STATUS_COMPILER_ERR) return;
       
       // Clear the message after a delay
-      SwingWorker s = new SwingWorker<Void, Void>() {
+      SwingWorker<Object, Object> s = new SwingWorker<Object, Object>() {
         @Override
-        protected Void doInBackground() throws Exception {
+        protected Object doInBackground() throws Exception {
           try {
             Thread.sleep(2 * 1000);
           } catch (InterruptedException e) {

@@ -117,7 +117,6 @@ public class XQErrorTable extends JTable {
 	 * @param tableModel - TableModel
 	 * @return boolean - If table data was updated
 	 */
-	@SuppressWarnings("rawtypes")
 	synchronized public boolean updateTable(final TableModel tableModel) {
 
 		// If problems list is not visible, no need to update
@@ -125,7 +124,7 @@ public class XQErrorTable extends JTable {
 			return false;
 		}
 
-		SwingWorker worker = new SwingWorker() {
+		SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
 			protected Object doInBackground() throws Exception {
 				return null;
