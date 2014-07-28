@@ -1,4 +1,16 @@
 0229 pde (3.0a2)
+X new tab/rename dialog box
+X   https://github.com/processing/processing/issues/2431
+
+pulls
+X insert tabs properly when prefs set for tabs mode
+X   https://github.com/processing/processing/pull/2607
+
+
+_ fix the build scripts to include the examples
+_   https://github.com/processing/processing/issues/2652
+_ reference wasn't included either
+_   https://github.com/processing/processing/issues/2656
 
 
 _ "Platform is ${platform}" message during 'ant clean'
