@@ -495,7 +495,7 @@ public class StringList implements Iterable<String> {
 
   /**
    * @webref stringlist:method
-   * @brief To come...
+   * @brief Reverse the order of the list elements
    */
   public void reverse() {
     int ii = count - 1;

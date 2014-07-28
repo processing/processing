@@ -569,7 +569,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref intlist:method
-   * @brief Reverse sort, orders values by first digit
+   * @brief Reverse the order of the list elements
    */
   public void reverse() {
     int ii = count - 1;
