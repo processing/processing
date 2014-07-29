@@ -161,7 +161,7 @@ public class CompilationChecker {
     }
 
     List<ClassFile> getResults() {
-      System.out.println("Calling get results");
+      //System.out.println("Calling get results");
       return this.classes;
     }
   }
@@ -268,12 +268,11 @@ public class CompilationChecker {
       try {
         urls[i] = jarList.get(i).toURI().toURL();
       } catch (MalformedURLException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
     urlClassLoader = new URLClassLoader(urls);
-    System.out.println("URL Classloader ready");
+    //System.out.println("URL Classloader ready");
   }
 
   /**

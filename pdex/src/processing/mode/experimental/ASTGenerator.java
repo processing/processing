@@ -268,7 +268,7 @@ public class ASTGenerator {
       logE("No CU found!");
     }
     visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
-    SwingWorker worker = new SwingWorker() {
+    SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
       @Override
       protected Object doInBackground() throws Exception {
@@ -895,7 +895,7 @@ public class ASTGenerator {
         logE("Typed: " + word2 + "|" + " temp Node type: " + testnode.getClass().getSimpleName());
         if(testnode instanceof MethodInvocation){
           MethodInvocation mi = (MethodInvocation)testnode;
-          System.out.println(mi.getName() + "," + mi.getExpression() + "," + mi.typeArguments().size());
+          log(mi.getName() + "," + mi.getExpression() + "," + mi.typeArguments().size());
         }
         
         // find nearest ASTNode
@@ -1040,7 +1040,7 @@ public class ASTGenerator {
       if (sketchOutline.isVisible()) return;
     Collections.sort(candidates);
 //    CompletionCandidate[][] candi = new CompletionCandidate[candidates.size()][1];
-    DefaultListModel defListModel = new DefaultListModel();
+    DefaultListModel<CompletionCandidate> defListModel = new DefaultListModel<CompletionCandidate>();
 
     for (int i = 0; i < candidates.size(); i++) {
 //      candi[i][0] = candidates.get(i);
@@ -1259,8 +1259,7 @@ public class ASTGenerator {
     // First, see if the classname is a fully qualified name and loads straightaway
     tehClass = loadClass(className);
     
-    // do you mean to check for 'null' here? otherwise, this expression is always true [fry]
-    if (tehClass instanceof Class) {    
+    if (tehClass != null) {    
       //log(tehClass.getName() + " located straightaway");
       return tehClass;
     }
@@ -1282,7 +1281,7 @@ public class ASTGenerator {
         }
       }
       tehClass = loadClass(temp);
-      if (tehClass instanceof Class) {
+      if (tehClass != null) {
         log(tehClass.getName() + " located.");
         return tehClass;
       }
@@ -1294,7 +1293,7 @@ public class ASTGenerator {
     PdePreprocessor p = new PdePreprocessor(null);
     for (String impS : p.getCoreImports()) {
       tehClass = loadClass(impS.substring(0,impS.length()-1) + className);
-      if (tehClass instanceof Class) {
+      if (tehClass != null) {
         log(tehClass.getName() + " located.");
         return tehClass;
       }
@@ -1304,7 +1303,7 @@ public class ASTGenerator {
     for (String impS : p.getDefaultImports()) {
       if(className.equals(impS) || impS.endsWith(className)){
         tehClass = loadClass(impS);                    
-        if (tehClass instanceof Class) {
+        if (tehClass != null) {
           log(tehClass.getName() + " located.");
           return tehClass;
         }
@@ -1315,7 +1314,7 @@ public class ASTGenerator {
     // And finally, the daddy
     String daddy = "java.lang." + className;
     tehClass = loadClass(daddy);                    
-    if (tehClass instanceof Class) {
+    if (tehClass != null) {
       log(tehClass.getName() + " located.");
       return tehClass;
     }
@@ -1886,7 +1885,6 @@ public class ASTGenerator {
                     + lineElement.getEndOffset());
                 log("PL " + pdeLine);
               } catch (BadLocationException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
               }
             }
@@ -2068,6 +2066,7 @@ public class ASTGenerator {
   }
   
   public void handleShowUsage(){
+    if(editor.hasJavaTabs) return; // show usage disabled if java tabs
     log("Last clicked word:" + lastClickedWord);
     if(lastClickedWord == null && editor.ta.getSelectedText() == null){
       editor.statusMessage("Highlight the class/function/variable name first"
@@ -2263,11 +2262,11 @@ public class ASTGenerator {
                                    int endOffset) {
 //    log("dfsLookForASTNode() lookin for " + name + " Offsets: " + startOffset
 //        + "," + endOffset);
-    Stack stack = new Stack<ASTNode>();
+    Stack<ASTNode> stack = new Stack<ASTNode>();
     stack.push(root);
 
     while (!stack.isEmpty()) {
-      ASTNode node = (ASTNode) stack.pop();
+      ASTNode node = stack.pop();
       //log("Popped from stack: " + getNodeAsString(node));
       Iterator<StructuralPropertyDescriptor> it = 
           node.structuralPropertiesForType().iterator();
@@ -2321,6 +2320,7 @@ public class ASTGenerator {
   
   protected SketchOutline sketchOutline;
   protected void showSketchOutline(){
+    if(editor.hasJavaTabs) return; // sketch outline disabled if java tabs
     sketchOutline = new SketchOutline(codeTree, errorCheckerService);
     sketchOutline.show();
   }
@@ -2405,6 +2405,7 @@ public class ASTGenerator {
   }
   
   public void handleRefactor(){
+    if(editor.hasJavaTabs) return; // refactoring disabled if java tabs
     log("Last clicked word:" + lastClickedWord);
     if(lastClickedWord == null && editor.ta.getSelectedText() == null){
       editor.statusMessage("Highlight the class/function/variable name first",
@@ -3011,7 +3012,7 @@ public class ASTGenerator {
   /**
    * A wrapper for java.lang.reflect types.
    * Will have to see if the usage turns out to be internal only here or not
-   * and then accordingly decide where to place this class. TODO
+   * and then accordingly decide where to place this class.
    * @author quarkninja
    *
    */

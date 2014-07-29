@@ -200,7 +200,7 @@ public class SketchOutline {
       }
       
       private void updateSelection(){
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
           protected Object doInBackground() throws Exception {
             String text = searchField.getText().toLowerCase();
             tempNode = new DefaultMutableTreeNode();
@@ -252,7 +252,7 @@ public class SketchOutline {
   }
   
   private void scrollToNode(){
-    SwingWorker worker = new SwingWorker() {
+    SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
       protected Object doInBackground() throws Exception {
         return null;

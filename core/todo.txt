@@ -1,6 +1,14 @@
 0229 core (3.0a2)
 
 
+pulls
+X implement A and a (elliptical arcs)
+X   https://github.com/processing/processing/issues/169
+X   http://code.google.com/p/processing/issues/detail?id=130
+X   https://github.com/processing/processing/pull/2659
+X   done with an approximation, if re-saving this will destroy data (docs)
+
+
 applet removal
 _ remove Applet as base class
 _ performance issues on OS X (might be threading due to Applet)
@@ -418,8 +426,6 @@ _ for PShape, need to be able to set the origin (flash people)
 
 CORE / PShapeSVG
 
-_ implement A and a (elliptical arcs)
-_   http://code.google.com/p/processing/issues/detail?id=130
 _ implement support for SVG gradients from Inkscape
 _   http://code.google.com/p/processing/issues/detail?id=1142
 _ need to handle <!ENTITY tags in XML for SVG documents

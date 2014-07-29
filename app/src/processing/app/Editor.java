@@ -1232,6 +1232,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   public void showReference(String filename) {
     File file = new File(mode.getReferenceFolder(), filename);
+    try {
+      file = file.getCanonicalFile();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     // Prepend with file:// and also encode spaces & other characters
     Base.openURL(file.toURI().toString());
   }

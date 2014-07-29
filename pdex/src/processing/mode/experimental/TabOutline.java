@@ -188,7 +188,7 @@ public class TabOutline {
       }
 
       private void updateSelection() {
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
           protected Object doInBackground() throws Exception {
             String text = searchField.getText().toLowerCase();
             tempNode = new DefaultMutableTreeNode();
@@ -220,7 +220,7 @@ public class TabOutline {
           return;
         }
         // log(e);
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           protected Object doInBackground() throws Exception {
             return null;

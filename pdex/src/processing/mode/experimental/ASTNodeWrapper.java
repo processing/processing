@@ -155,9 +155,10 @@ public class ASTNodeWrapper {
       //nodeOffset = ((VariableDeclarationFragment)(fd.fragments().get(0))).getName().getStartPosition();
     } 
     
-    if(jd == null){
+    if (jd == null) {
       log("Visiting children of node " + getNodeAsString(thisNode));
-      Iterator<StructuralPropertyDescriptor> it = thisNode
+      Iterator<StructuralPropertyDescriptor> it = 
+          (Iterator<StructuralPropertyDescriptor>) thisNode
           .structuralPropertiesForType().iterator();
       boolean flag = true;
       while (it.hasNext()) {
@@ -213,7 +214,7 @@ public class ASTNodeWrapper {
    * @return
    */
   private int getJavadocOffset(FieldDeclaration fd){
-    List<ASTNode> list= fd.modifiers();
+    List<ASTNode> list= (List<ASTNode>)fd.modifiers();
     SimpleName sn = (SimpleName) getNode();
     
     Type tp = fd.getType();
@@ -247,7 +248,7 @@ public class ASTNodeWrapper {
    * @return
    */
   private int getJavadocOffset(MethodDeclaration md) {
-    List<ASTNode> list = md.modifiers();
+    List<ASTNode> list = (List<ASTNode>)md.modifiers();
     SimpleName sn = (SimpleName) getNode();
     int lineNum = getLineNumber(sn);
     log("SN " + sn + ", " + lineNum);
@@ -282,8 +283,7 @@ public class ASTNodeWrapper {
    */
   private int getJavadocOffset(TypeDeclaration td){
     // TODO: This isn't perfect yet. Class \n \n \n className still breaks it.. :'(
-    List<ASTNode> list= td.modifiers();
-    list = td.modifiers();
+    List<ASTNode> list= (List<ASTNode>)td.modifiers();
     SimpleName sn = (SimpleName) getNode();
     
     int lineNum = getLineNumber(sn);

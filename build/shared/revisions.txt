@@ -1,3 +1,25 @@
+PROCESSING 3.0a2 (REV 0229) - ?? August 2014
+
+
+[ fixes ] 
+
++ The Examples and Reference weren't included in 3.0a1. Oops.
+  https://github.com/processing/processing/issues/2652
+
+
+[ changes ] 
+
++ Neglected to mention with the previous release that the video library has
+  been removed from the default download. This decreases the size of the
+  Processing download by about 20%. In addition, it was only the video 
+  library for the platform being downloaded, and with the return of cross-
+  platform application export, that could cause sadness. To use the video
+  library, use the "Add Library..." menu and select it from the list.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 3.0a1 (REV 0228) - 26 July 2014
 
 Kicking off the 3.0 release process. The focus for Processing 3 is improving

@@ -26,6 +26,9 @@ package processing.app;
 import processing.core.*;
 
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.*;
 
 import javax.swing.*;
@@ -286,7 +289,8 @@ public class Sketch {
     }
 
     renamingCode = false;
-    editor.status.edit("Name for new file:", "");
+    // editor.status.edit("Name for new file:", "");
+    promptForTabName("Name for new file:", "");
   }
 
 
@@ -326,8 +330,99 @@ public class Sketch {
       "New name for sketch:" : "New name for file:";
     String oldName = (current.isExtension(mode.getDefaultExtension())) ?
       current.getPrettyName() : current.getFileName();
-    editor.status.edit(prompt, oldName);
+    // editor.status.edit(prompt, oldName);
+    promptForTabName(prompt, oldName);
   }
+  
+  /**
+   * Displays a dialog for renaming or creating a new tab
+   * @param prompt - msg to display
+   * @param oldName
+   */
+  protected void promptForTabName(String prompt, String oldName) {
+    final JTextField txtTabName = new JTextField();
+    txtTabName.addKeyListener(new KeyAdapter() {
+      // Forget ESC, the JDialog should handle it.
+
+      // Use keyTyped to catch when the feller is actually
+      // added to the text field. With keyTyped, as opposed to
+      // keyPressed, the keyCode will be zero, even if it's
+      // enter or backspace or whatever, so the keychar should
+      // be used instead. Grr.
+      public void keyTyped(KeyEvent event) {
+        //System.out.println("got event " + event);
+        char ch = event.getKeyChar();
+        if ((ch == '_') || (ch == '.') || // allow.pde and .java 
+          (('A' <= ch) && (ch <= 'Z')) || (('a' <= ch) && (ch <= 'z'))) {
+          // These events are allowed straight through.
+        } else if (ch == ' ') {
+          String t = txtTabName.getText();
+          int start = txtTabName.getSelectionStart();
+          int end = txtTabName.getSelectionEnd();
+          txtTabName.setText(t.substring(0, start) + "_" + t.substring(end));
+          txtTabName.setCaretPosition(start + 1);
+          event.consume();
+        } else if ((ch >= '0') && (ch <= '9')) {
+          // getCaretPosition == 0 means that it's the first char
+          // and the field is empty.
+          // getSelectionStart means that it *will be* the first
+          // char, because the selection is about to be replaced
+          // with whatever is typed.
+          if ((txtTabName.getCaretPosition() == 0)
+            || (txtTabName.getSelectionStart() == 0)) {
+            // number not allowed as first digit
+            //System.out.println("bad number bad");
+            event.consume();
+          }
+        } else if (ch == KeyEvent.VK_ENTER) {
+          // Slightly ugly hack that ensures OK button of the dialog 
+          // consumes the Enter key event. Since the text field is the
+          // default component in the dialog(see below), OK button doesn't 
+          // consume Enter key event, by default.
+          Container parent = txtTabName.getParent();
+          while (!(parent instanceof JOptionPane)) {
+            parent = parent.getParent();
+          }
+          JOptionPane pane = (JOptionPane) parent;
+          final JPanel pnlBottom = (JPanel) pane.getComponent(pane
+            .getComponentCount() - 1);
+          for (int i = 0; i < pnlBottom.getComponents().length; i++) {
+            Component component = pnlBottom.getComponents()[i];
+            if (component instanceof JButton) {
+              final JButton okButton = ((JButton) component);
+              if (okButton.getText().equalsIgnoreCase("OK")) {
+                ActionListener[] actionListeners = okButton
+                  .getActionListeners();
+                if (actionListeners.length > 0) {
+                  actionListeners[0].actionPerformed(null);
+                  event.consume();
+                }
+              }
+            }
+          }
+        }
+        else {
+          event.consume();
+        }
+      }
+    });
+
+    int userReply = JOptionPane.showOptionDialog(editor, new Object[] {
+                                                   prompt, txtTabName },
+                                                 "Tab Name",
+                                                 JOptionPane.OK_CANCEL_OPTION,
+                                                 JOptionPane.PLAIN_MESSAGE,
+                                                 null, new Object[] {
+                                                   Preferences.PROMPT_OK,
+                                                   Preferences.PROMPT_CANCEL },
+                                                 txtTabName);
+
+    if (userReply == JOptionPane.OK_OPTION) {
+      String answer = txtTabName.getText();
+      nameCode(answer);
+    }
+  }
+
 
 
   /**
@@ -382,7 +477,7 @@ public class Sketch {
         if (current == code[0]) {  // If this is the main tab, disallow
           Base.showWarning("Problem with rename",
                            "The first tab cannot be a ." + newExtension + " file.\n" +
-                           "(It may be time for your to graduate to a\n" +
+                           "(It may be time for you to graduate to a\n" +
                            "\"real\" programming environment, hotshot.)");
           return;
         }
