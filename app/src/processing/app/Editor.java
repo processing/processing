@@ -607,7 +607,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     fileMenu.add(base.getSketchbookMenu());
     
-    JMenuItem sbMenu = new JMenuItem("Sketchbook Tree");
+    JMenuItem sbMenu = Toolkit.newJMenuItemShift("Sketchbook Tree", 'K');
     sbMenu.addActionListener(new ActionListener() {      
       @Override
       public void actionPerformed(ActionEvent e) {

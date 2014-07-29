@@ -880,7 +880,6 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   public DefaultMutableTreeNode buildSketchbookTree(){
-    //JMenuItem sbMenu = new JMenuItem("SB Tree");
     DefaultMutableTreeNode sbNode = new DefaultMutableTreeNode("Sketchbook");
     try {
       base.addSketches(sbNode, Base.getSketchbookFolder());
