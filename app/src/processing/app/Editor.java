@@ -37,11 +37,8 @@ import java.util.List;
 import java.util.Timer;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import javax.swing.text.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeSelectionModel;
 import javax.swing.undo.*;
 
 /**
