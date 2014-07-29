@@ -1216,7 +1216,7 @@ public class JavaBuild {
         File jdkFolder = new File(Base.getJavaHome(), "../../..");
         String jdkFolderName = jdkFolder.getCanonicalFile().getName();
         jvmRuntime = "<key>JVMRuntime</key>\n    <string>" + jdkFolderName + "</string>";
-        jdkPath = new File(dotAppFolder, "Contents/PlugIns/" + jdkFolderName + ".jdk").getAbsolutePath();
+        jdkPath = new File(dotAppFolder, "Contents/PlugIns/" + jdkFolderName).getAbsolutePath();
       }
 
       File contentsFolder = new File(dotAppFolder, "Contents");
