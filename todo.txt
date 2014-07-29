@@ -1,6 +1,8 @@
 0229 pde (3.0a2)
 X new tab/rename dialog box
 X   https://github.com/processing/processing/issues/2431
+X fix issue where the browser wasn't opening the reference properly
+X   https://github.com/processing/processing/pull/2657
 
 pulls
 X insert tabs properly when prefs set for tabs mode
