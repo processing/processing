@@ -37,8 +37,11 @@ import java.util.List;
 import java.util.Timer;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import javax.swing.text.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 import javax.swing.undo.*;
 
 /**
@@ -606,6 +609,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
     fileMenu.add(item);
 
     fileMenu.add(base.getSketchbookMenu());
+    
+    JMenuItem sbMenu = new JMenuItem("Sketchbook Tree");
+    sbMenu.addActionListener(new ActionListener() {      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mode.showSketchbookFrame();
+      }
+    });
+    
+    fileMenu.add(sbMenu);
 
 //    fileMenu.add(mode.getExamplesMenu());
     item = Toolkit.newJMenuItemShift("Examples...", 'O');
