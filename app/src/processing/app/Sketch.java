@@ -816,7 +816,7 @@ public class Sketch {
       FileDialog fd = new FileDialog(editor, PROMPT, FileDialog.SAVE);
       if (isReadOnly() || isUntitled()) {
         // default to the sketchbook folder
-        fd.setDirectory(Preferences.get("sketchbook.path"));
+        fd.setDirectory(Preferences.getSketchbookPath());
       } else {
         // default to the parent folder of where this was
         fd.setDirectory(folder.getParent());
@@ -831,7 +831,7 @@ public class Sketch {
       fc.setDialogTitle(PROMPT);
       if (isReadOnly() || isUntitled()) {
         // default to the sketchbook folder
-        fc.setCurrentDirectory(new File(Preferences.get("sketchbook.path")));
+        fc.setCurrentDirectory(new File(Preferences.getSketchbookPath()));
       } else {
         // default to the parent folder of where this was
         fc.setCurrentDirectory(folder.getParentFile());

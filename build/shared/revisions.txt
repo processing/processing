@@ -3,11 +3,19 @@ PROCESSING 3.0a2 (REV 0229) - ?? August 2014
 
 [ fixes ] 
 
-+ The Examples and Reference weren't included in 3.0a1. Oops.
++ The Examples weren't included in 3.0a1. Oops.
   https://github.com/processing/processing/issues/2652
 
 
 [ changes ] 
+
++ Added a new sketchbook location, so that you can have separate sketchbooks
+  with 2.0 and 3.0 releases. The downside is that they won't stay in sync, 
+  but the upside is that sketches that haven't been updated, or conflicting
+  Libraries, Modes, or Tools won't cause trouble with the other version. 
+  The new preference is called sketchbook.location.three (the old preference
+  was sketchbook.location). If you already have a 2.0 sketchbook, that will
+  be used by default with 3.0 until you change it in the Preferences window.
 
 + Neglected to mention with the previous release that the video library has
   been removed from the default download. This decreases the size of the

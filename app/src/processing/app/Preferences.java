@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2004-14 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -100,7 +100,7 @@ public class Preferences {
   // and linux is all over the map
 
   static final int GUI_BIG     = 13;
-  static final int GUI_BETWEEN = 10;
+  static final int GUI_BETWEEN = 8;
   static final int GUI_SMALL   = 6;
 
   // gui elements
@@ -185,17 +185,10 @@ public class Preferences {
 
     // other things that have to be set explicitly for the defaults
     setColor("run.window.bgcolor", SystemColor.control); //$NON-NLS-1$
-
+    
     // next load user preferences file
     preferencesFile = Base.getSettingsFile(PREFS_FILE);
-    if (!preferencesFile.exists()) {
-      // create a new preferences file if none exists
-      // saves the defaults out to the file
-      save();
-
-    } else {
-      // load the previous preferences file
-
+    if (preferencesFile.exists()) {
       try {
         load(new FileInputStream(preferencesFile));
 
@@ -206,6 +199,12 @@ public class Preferences {
                        preferencesFile.getAbsolutePath() +
                        " and restart Processing.", ex);
       }
+    } 
+    
+    if (checkSketchbookPref() || !preferencesFile.exists()) {
+      // create a new preferences file if none exists
+      // saves the defaults out to the file
+      save();
     }
 
     PApplet.useNativeSelect = 
@@ -485,24 +484,25 @@ public class Preferences {
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
     
-    // [ ] Enable Error Checking - PDE X
+    // [ ] Continuously check for errors - PDE X
 
     errorCheckerBox =
-      new JCheckBox("Enable error checking");
+      new JCheckBox("Continuously check for errors");
     pain.add(errorCheckerBox);
     d = errorCheckerBox.getPreferredSize();
     errorCheckerBox.setBounds(left, top, d.width + 10, d.height);
-    right = Math.max(right, left + d.width);
-    top += d.height + GUI_BETWEEN;
+    //right = Math.max(right, left + d.width);
+    //top += d.height + GUI_BETWEEN;
+    int warningLeft = left + d.width; 
 
-    // [ ] Enable Warnings - PDE X
+    // [ ] Show Warnings - PDE X
 
     warningsCheckerBox =
-      new JCheckBox("Enable warnings");
+      new JCheckBox("Show warnings");
     pain.add(warningsCheckerBox);
     d = warningsCheckerBox.getPreferredSize();
-    warningsCheckerBox.setBounds(left, top, d.width + 10, d.height);
-    right = Math.max(right, left + d.width);
+    warningsCheckerBox.setBounds(warningLeft, top, d.width + 10, d.height);
+    right = Math.max(right, warningLeft + d.width);
     top += d.height + GUI_BETWEEN;
 
     // [ ] Enable Code Completion - PDE X
@@ -512,17 +512,17 @@ public class Preferences {
     pain.add(codeCompletionBox);
     d = codeCompletionBox.getPreferredSize();
     codeCompletionBox.setBounds(left, top, d.width + 10, d.height);
-    right = Math.max(right, left + d.width);
-    top += d.height + GUI_BETWEEN;
+    int toggleLeft = left + d.width;
     
     // [ ] Toggle Code Completion Trigger - PDE X
 
+    final String modifier = Base.isMacOS() ? "\u2318" : "Ctrl";
     codeCompletionTriggerBox =
-      new JCheckBox("Trigger code completion on Ctrl(Cmd) + Space");
+      new JCheckBox("Trigger with " + modifier + "-space");
     pain.add(codeCompletionTriggerBox);
     d = codeCompletionTriggerBox.getPreferredSize();
-    codeCompletionTriggerBox.setBounds(left, top, d.width + 10, d.height);
-    right = Math.max(right, left + d.width);
+    codeCompletionTriggerBox.setBounds(toggleLeft, top, d.width + 10, d.height);
+    right = Math.max(right, toggleLeft + d.width);
     top += d.height + GUI_BETWEEN;
 
 
@@ -762,7 +762,7 @@ public class Preferences {
     // each platform, and nobody wants to debug/support that.
 
     // if the sketchbook path has changed, rebuild the menus
-    String oldPath = get("sketchbook.path"); //$NON-NLS-1$
+    String oldPath = getSketchbookPath();
     String newPath = sketchbookLocationField.getText();
     if (!newPath.equals(oldPath)) {
       base.setSketchbookFolder(new File(newPath));
@@ -859,10 +859,8 @@ public class Preferences {
     deletePreviousBox.
       setSelected(getBoolean("export.delete_target_folder")); //$NON-NLS-1$
 
-    sketchbookLocationField.
-      setText(get("sketchbook.path")); //$NON-NLS-1$
-    checkUpdatesBox.
-      setSelected(getBoolean("update.check")); //$NON-NLS-1$
+    sketchbookLocationField.setText(getSketchbookPath());
+    checkUpdatesBox.setSelected(getBoolean("update.check")); //$NON-NLS-1$
 
     whinyBox.setSelected(getBoolean("header.hide.image") || //$NON-NLS-1$
                          getBoolean("buttons.hide.image")); //$NON-NLS-1$
@@ -1142,5 +1140,38 @@ public class Preferences {
       Base.log("Error with font " + get(attr) + " for attribute " + attr); 
     }
     return new Font("Dialog", Font.PLAIN, 12);
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+
+  /**
+   * Check for a 3.0 sketchbook location, and if none exists, 
+   * try to grab it from the 2.0 sketchbook location.  
+   * @return true if a location was found and the pref didn't exist
+   */
+  static protected boolean checkSketchbookPref() {
+    // If a 3.0 sketchbook location has never been inited
+    if (getSketchbookPath() == null) {
+      String twoPath = get("sketchbook.path");
+      // If they've run the 2.0 version, start with that location
+      if (twoPath != null) {
+        setSketchbookPath(twoPath);
+        return true;  // save the sketchbook right away
+      }
+      // Otherwise it'll be null, and reset properly by Base
+    }
+    return false;
+  }
+  
+  
+  static protected String getSketchbookPath() {
+    return get("sketchbook.path.three"); //$NON-NLS-1$
+  }
+  
+  
+  static protected void setSketchbookPath(String path) {
+    set("sketchbook.path.three", path); //$NON-NLS-1$
   }
 }
