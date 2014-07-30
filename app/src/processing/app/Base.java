@@ -921,14 +921,18 @@ public class Base {
         return null;
       }
 
-      //  System.err.println("  editors: " + editors);
       // Cycle through open windows to make sure that it's not already open.
       for (Editor editor : editors) {
-        if (editor.getSketch().getMainFile().equals(file)) {
-          editor.toFront();
-          // move back to the top of the recent list
-          handleRecent(editor);
-          return editor;
+        // User may have double-clicked any PDE in the sketch folder,  
+        // so we have to check each open tab (not just the main one).
+        // https://github.com/processing/processing/issues/2506
+        for (SketchCode tab : editor.getSketch().getCode()) {
+          if (tab.getFile().equals(file)) {
+            editor.toFront();
+            // move back to the top of the recent list
+            handleRecent(editor);
+            return editor;
+          }
         }
       }
 
@@ -951,8 +955,6 @@ public class Base {
 //    Editor.State state = new Editor.State(editors);
       Editor editor = nextMode.createEditor(this, path, state);
       if (editor == null) {
-        // if it's the last editor window
-//      if (editors.size() == 0 && defaultFileMenu == null) {
         // if it's not mode[0] already, then don't go into an infinite loop
         // trying to recreate a window with the default mode.
         if (nextMode == coreModes[0]) {
@@ -965,15 +967,14 @@ public class Base {
           editor = coreModes[0].createEditor(this, path, state);
         }
       }
-
+      
       // Make sure that the sketch actually loaded
-      if (editor.getSketch() == null) {
-//      System.err.println("sketch was null, getting out of handleOpen");
+      Sketch sketch = editor.getSketch();
+      if (sketch == null) {
         return null;  // Just walk away quietly
       }
 
-//    editor.untitled = untitled;
-      editor.getSketch().setUntitled(untitled);
+      sketch.setUntitled(untitled);
       editors.add(editor);
       handleRecent(editor);
 

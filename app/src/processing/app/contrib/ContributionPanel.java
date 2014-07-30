@@ -185,6 +185,9 @@ class ContributionPanel extends JPanel {
     descriptionBlock.setContentType("text/html");
     setTextStyle(descriptionBlock);
     descriptionBlock.setOpaque(false);
+    if (UIManager.getLookAndFeel().getID().equals("Nimbus")) {
+      descriptionBlock.setBackground(new Color(0, 0, 0, 0));
+    }
 //    stripTextSelectionListeners(descriptionBlock);
 
     descriptionBlock.setBorder(new EmptyBorder(4, 7, 7, 7));

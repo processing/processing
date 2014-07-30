@@ -2,6 +2,11 @@
 X add copy() method to Table
 X return null from getString() on NaN float and double values
 X   affects how saveTable() works (writes blank entries instead of NaN)
+X get(5) with an empty Int/Float/StringList was returning 0
+X   https://github.com/processing/processing/pull/2343
+X PImage resize() causes images to not draw
+X   https://github.com/processing/processing/issues/2228
+X   https://github.com/processing/processing/pull/2324
 
 _ need a better method for "missing" data in Table
 _   if missing int is zero, can't just remove those values from saving a table
@@ -14,6 +19,8 @@ X   https://github.com/processing/processing/issues/169
 X   http://code.google.com/p/processing/issues/detail?id=130
 X   https://github.com/processing/processing/pull/2659
 X   done with an approximation, if re-saving this will destroy data (docs)
+X fix typo in StringList.insert()
+X   https://github.com/processing/processing/pull/2672
 
 
 applet removal
@@ -26,6 +33,10 @@ _   on FloatDict it was NaN, check across the lists and other dict types
 _ StringDict should always put NaN values at the end on sort
 _   same for the other list and dict classes
 _   (this is part of the point of having these easier versions)
+_ get() methods in List/Dict shouldn't allow you to get bad values
+_   but set() methods can automatically resize the arrays
+_   though that means insert() should allow you to insert past the end
+_ should we allow negative indices so that we can work relative to the end?
 
 _ better full screen mode for OS X
 _   https://github.com/processing/processing/issues/2641
