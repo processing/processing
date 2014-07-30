@@ -1,5 +1,7 @@
 0229 core (3.0a2)
 X add copy() method to Table
+X return null from getString() on NaN float and double values
+X   affects how saveTable() works (writes blank entries instead of NaN)
 
 _ need a better method for "missing" data in Table
 _   if missing int is zero, can't just remove those values from saving a table
