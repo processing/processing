@@ -32,7 +32,7 @@ public class Engine {
 	private static int m_bufferSize=512;
 
     private Engine() {
-    	welcome();
+    	//welcome();
     	methCla = new MethClaInterface();
 		methCla.engineNew(m_sampleRate, m_bufferSize);
 		methCla.engineStart();
