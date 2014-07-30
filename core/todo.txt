@@ -1,6 +1,10 @@
 0229 core (3.0a2)
 X add copy() method to Table
 
+_ need a better method for "missing" data in Table
+_   if missing int is zero, can't just remove those values from saving a table
+_   but for NaN values, it's a necessity
+
 
 pulls
 X implement A and a (elliptical arcs)
