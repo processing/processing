@@ -275,7 +275,7 @@
       </fileset>
     </copy>
 
-    <delete dir="${target.path}/modes/java/examples">
+    <delete dir="${target.path}/modes/java/examples" failonerror="true">
       <include name="**/applet/**" />
     </delete>
 
@@ -471,7 +471,7 @@
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
       <!--<fileset dir="shared" includes="launch4j/**" />-->
-      <fileset dir="shared" includes="lib/**" />
+      <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
 
@@ -500,7 +500,7 @@
     <chmod perm="ugo+x" file="${launch4j.dir}/bin/ld" />
 
     <!-- remove the others -->
-    <delete>
+    <delete failonerror="true">
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
@@ -599,7 +599,7 @@
     <copy todir="linux/work">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
-      <fileset dir="shared" includes="lib/**" />
+      <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
@@ -621,7 +621,7 @@
     <chmod perm="ugo+x" file="${launch4j.dir}/bin/ld" />
 
     <!-- remove the others -->
-    <delete>
+    <delete failonerror="true">
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
@@ -768,7 +768,7 @@
     <copy todir="windows/work">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
-      <fileset dir="shared" includes="lib/**" />
+      <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
@@ -788,7 +788,7 @@
           tofile="${launch4j.dir}/bin/ld.exe" />
 
     <!-- remove the others -->
-    <delete>
+    <delete failonerror="true">
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
@@ -949,7 +949,9 @@ remove the spaces for depth since it should be double dash, but screws up commen
 
       <packageset dir="../core/src">
         <include name="processing/**" />
+	<!--
         <include name="japplemenubar/**" />
+	-->
       </packageset>
     </javadoc>
 
