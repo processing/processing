@@ -101,6 +101,7 @@ class ContributionPanel extends JPanel {
 
     installActionListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        listPanel.contribManager.status.clear();
         if (contrib instanceof AvailableContribution) {
           installContribution((AvailableContribution) contrib);
           contribListing.replaceContribution(contrib, contrib);
@@ -110,6 +111,7 @@ class ContributionPanel extends JPanel {
 
     undoActionListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        listPanel.contribManager.status.clear();
         if (contrib instanceof LocalContribution) {
           LocalContribution installed = (LocalContribution) contrib;
           installed.setDeletionFlag(false);
@@ -120,6 +122,7 @@ class ContributionPanel extends JPanel {
 
     removeActionListener = new ActionListener() {
       public void actionPerformed(ActionEvent arg) {
+        listPanel.contribManager.status.clear();
         if (contrib.isInstalled() && contrib instanceof LocalContribution) {
           updateButton.setEnabled(false);
           installRemoveButton.setEnabled(false);
@@ -211,6 +214,7 @@ class ContributionPanel extends JPanel {
       updateButton.setVisible(false);
       updateButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          listPanel.contribManager.status.clear();
           updateButton.setEnabled(false);
           AvailableContribution ad = contribListing.getAvailableContribution(contrib);
           String url = ad.link;
