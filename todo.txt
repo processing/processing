@@ -7,6 +7,13 @@ X fix "No such file or directory" error when exporting an application on OSX
 X   this also resulted in the application not being signed at all
 X   https://github.com/processing/processing/issues/2614
 X   this is a fairly major issue...
+X  user opens non-main pde of already open sketch, it'll open again
+X   https://github.com/processing/processing/issues/2506
+
+gsoc
+X clear status messages in the Contribution Manager
+X   https://github.com/processing/processing/pull/2667
+X   https://github.com/processing/processing/issues/2599
 
 pulls
 X insert tabs properly when prefs set for tabs mode
@@ -15,30 +22,31 @@ X   https://github.com/processing/processing/pull/2607
 earlier
 X maxHeapSize typo in the build scripts
 X   https://github.com/processing/processing/issues/2603
-
-_ fix the build scripts to include the examples
-_   https://github.com/processing/processing/issues/2652
-_ reference wasn't included either
-_   https://github.com/processing/processing/issues/2656
-
-
-_ "Platform is ${platform}" message during 'ant clean'
+X remove minim
+X add the new sound library to the build process
+X for() loop with nothing inside parens crashes Auto Format
+X   https://github.com/processing/processing/issues/2141
+o double-clicking a .pde file doesn't open properly on OS X
+o   https://github.com/processing/processing/issues/2639
+X moving p5 examples to the web repo
+X remove reference.zip from main repo
 
 _ add a new pref for the 3.0 sketchbook location
-_ remove minim
-_ add the new sound library to the build process
+_ fix the build scripts to include the examples
+_   https://github.com/processing/processing/issues/2652
+_   all examples are out of "processing/java" and are now in "processing-docs/content/". The Book examples have been removed entirely from our repositories.
+_ reference wasn't included either
+_   https://github.com/processing/processing/issues/2656
+_   processing-web/java_generate/ReferenceGenerator
 
-_ double-clicking a .pde file doesn't open properly on OS X
-_   https://github.com/processing/processing/issues/2639
+_ make ant fail when trying to delete JRE files that don't exist
+_   some aren't being removed properly
+_ "Platform is ${platform}" message during 'ant clean'
+
 _ OS X export button not disabled on other platforms
 _   https://github.com/processing/processing/issues/2642
 
 _ look at the sound library https://github.com/wirsing/ProcessingSound
-
-_ moving p5 examples to the web repo
-all examples are out of "processing/java" and are now in "processing-docs/content/". The Book examples have been removed entirely from our repositories.
-_ remove reference.zip from main repo
-_ processing-web/java_generate/ReferenceGenerator
 
 _ try new syntax package
 _ possibility of libraries folder inside a particular sketch?
@@ -54,16 +62,8 @@ _ make reference and examples build process part of dist
 _   separate ant targets, but only require them for dist
 _   as separate targets, folks can build explicitly if they'd like
 
-_ shouldn't write sketch.properties unless it's a non-default mode
-_   https://github.com/processing/processing/issues/2531
 _ huge i18n patch
 _   https://github.com/processing/processing/pull/2084
-_ make ant fail when trying to delete JRE files that don't exist
-_   some aren't being removed properly
-
-earlier
-X for() loop with nothing inside parens crashes Auto Format
-X   https://github.com/processing/processing/issues/2141
 
 gsoc
 _ `return` keyword not treated as such when followed by a bracket
@@ -72,13 +72,15 @@ _ IllegalArgumentException when clicking between editor windows
 _   https://github.com/processing/processing/issues/2530
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
+_ shouldn't write sketch.properties unless it's a non-default mode
+_   https://github.com/processing/processing/issues/2531
+_ closing the color selector makes things freeze (only Linux and Windows?)
+_   https://github.com/processing/processing/issues/2381
 
 medium
 _ possible to open a sketch multiple times 
 _   by double-clicking one of its files instead of the main pde file
 _   https://github.com/processing/processing/issues/2506
-_ closing the color selector makes things freeze (only Linux and Windows?)
-_   https://github.com/processing/processing/issues/2381
 _ check on why 2x core.jar inside the Java folder
 _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 _ display "1" is not correct in 2.1.2
