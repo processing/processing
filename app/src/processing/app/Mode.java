@@ -69,6 +69,8 @@ public abstract class Mode {
   protected File examplesFolder;
   protected File librariesFolder;
   protected File referenceFolder;
+  
+  protected File examplesContribFolder;
 
   public ArrayList<Library> coreLibraries;
   public ArrayList<Library> contribLibraries;
@@ -100,6 +102,9 @@ public abstract class Mode {
     examplesFolder = new File(folder, "examples");
     librariesFolder = new File(folder, "libraries");
     referenceFolder = new File(folder, "reference");
+    
+    // Get path to the contributed examples compatible with this mode
+    examplesContribFolder = Base.getSketchbookExamplesFolder();
 
 //    rebuildToolbarMenu();
     rebuildLibraryList();
@@ -588,6 +593,15 @@ public abstract class Mode {
   }
 
 
+  public File[] getContributedExampleCategoryFolders() {
+    return examplesContribFolder.listFiles(new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        return dir.isDirectory() && name.charAt(0) != '.';
+      }
+    });
+  }
+
+
   public JTree buildExamplesTree() {
     DefaultMutableTreeNode node = new DefaultMutableTreeNode("Examples");
 
@@ -665,6 +679,40 @@ public abstract class Mode {
   }
 
 
+  public JTree buildContributedExamplesTrees() {
+    DefaultMutableTreeNode node = new DefaultMutableTreeNode("Contributed Examples");
+
+    JTree examplesTree = new JTree(node);
+
+    try {
+      // break down the examples folder for examples
+      File[] subfolders = getContributedExampleCategoryFolders();
+
+      for (File sub : subfolders) {
+        DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
+        if (base.addSketches(subNode, sub)) {
+          node.add(subNode);
+          int exampleNodeNumber = -1;
+          for (int y = 0; y < subNode.getChildCount(); y++)
+            if (subNode.getChildAt(y).toString().equals("example"))
+              exampleNodeNumber = y;
+          if (exampleNodeNumber == -1)
+            continue;
+          TreeNode exampleNode = subNode.getChildAt(exampleNodeNumber);
+          subNode.remove(exampleNodeNumber);
+          int count = exampleNode.getChildCount();
+          for (int x = 0; x < count; x++) {
+            subNode.add((DefaultMutableTreeNode) exampleNode.getChildAt(0));
+          }
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return examplesTree;
+  }
+
+
   public void resetExamples() {
     if (examplesFrame != null) {
       boolean visible = examplesFrame.isVisible();
@@ -724,83 +772,34 @@ public abstract class Mode {
       });
       
       final JTree tree = buildExamplesTree();
-      tree.setOpaque(true);
-      tree.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-      tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-      tree.setShowsRootHandles(true);
-//      tree.setToggleClickCount(2);
-      // expand the root
-      tree.expandRow(0);
-      // now hide the root
-      tree.setRootVisible(false);
-
-      // After 2.0a7, no longer expanding each of the categories at Casey's
-      // request. He felt that the window was too complicated too quickly.
-//      for (int row = tree.getRowCount()-1; row >= 0; --row) {
-//        tree.expandRow(row);
-//      }
-
-      tree.addMouseListener(new MouseAdapter() {
-        public void mouseClicked(MouseEvent e) {
-          if (e.getClickCount() == 2) {
-            DefaultMutableTreeNode node =
-              (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-
-            int selRow = tree.getRowForLocation(e.getX(), e.getY());
-            //TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-            //if (node != null && node.isLeaf() && node.getPath().equals(selPath)) {
-            if (node != null && node.isLeaf() && selRow != -1) {
-              SketchReference sketch = (SketchReference) node.getUserObject();
-              base.handleOpen(sketch.getPath());
-            }
-          }
-        }
-      });
-      tree.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
-          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {  // doesn't fire keyTyped()
-            examplesFrame.setVisible(false);
-          }
-        }
-        public void keyTyped(KeyEvent e) {
-          if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-            DefaultMutableTreeNode node =
-              (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-            if (node != null && node.isLeaf()) {
-              SketchReference sketch = (SketchReference) node.getUserObject();
-              base.handleOpen(sketch.getPath());
-            }
-          }
-        }
-      });
-
-      tree.addTreeExpansionListener(new TreeExpansionListener() {
-        @Override
-        public void treeExpanded(TreeExpansionEvent event) {
-          updateExpanded(tree);
-        }
-
-        @Override
-        public void treeCollapsed(TreeExpansionEvent event) {
-          updateExpanded(tree);
-        }
-      });
-
-      tree.setBorder(new EmptyBorder(5, 5, 5, 5));
-      if (Base.isMacOS()) {
-        tree.setToggleClickCount(2);
-      } else {
-        tree.setToggleClickCount(1);
-      }
+      setupExamplesTree(tree);
+  
       JScrollPane treePane = new JScrollPane(tree);
-      treePane.setPreferredSize(new Dimension(250, 450));
-      treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
+      treePane.setPreferredSize(new Dimension(250, 300));
+      treePane.setBorder(new EmptyBorder(5, 0, 0, 0));
       treePane.setOpaque(true);
+      treePane.setBackground(Color.WHITE);
       treePane.setAlignmentX(Component.LEFT_ALIGNMENT);
+      
+      JLabel contribExLabel = new JLabel("Contributed Examples");
+      contribExLabel.setOpaque(false);
+      contribExLabel.setBorder(new EmptyBorder(10, 6, 1, 5));
+      contribExLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+      
+      final JTree tree2 = buildContributedExamplesTrees();
+      setupExamplesTree(tree2);
+      
+      JScrollPane treePane2 = new JScrollPane(tree2);
+      treePane2.setPreferredSize(new Dimension(250, 300));
+      treePane2.setBorder(new EmptyBorder(0, 0, 10, 0));
+      treePane2.setOpaque(true);
+      treePane2.setBackground(Color.WHITE);
+      treePane2.setAlignmentX(Component.LEFT_ALIGNMENT);
       
       examplesPanel.add(openExamplesManagerLabel);
       examplesPanel.add(treePane);
+      examplesPanel.add(contribExLabel);
+      examplesPanel.add(treePane2);
       examplesFrame.getContentPane().add(examplesPanel);
       examplesFrame.pack();
 
@@ -823,6 +822,78 @@ public abstract class Mode {
   }
 
 
+  private void setupExamplesTree(final JTree tree) {
+    tree.setOpaque(true);
+    tree.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+    tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+    tree.setShowsRootHandles(true);
+//    tree.setToggleClickCount(2);
+    // expand the root
+    tree.expandRow(0);
+    // now hide the root
+    tree.setRootVisible(false);
+
+    // After 2.0a7, no longer expanding each of the categories at Casey's
+    // request. He felt that the window was too complicated too quickly.
+//    for (int row = tree.getRowCount()-1; row >= 0; --row) {
+//      tree.expandRow(row);
+//    }
+
+    tree.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+          DefaultMutableTreeNode node =
+            (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+
+          int selRow = tree.getRowForLocation(e.getX(), e.getY());
+          //TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+          //if (node != null && node.isLeaf() && node.getPath().equals(selPath)) {
+          if (node != null && node.isLeaf() && selRow != -1) {
+            SketchReference sketch = (SketchReference) node.getUserObject();
+            base.handleOpen(sketch.getPath());
+          }
+        }
+      }
+    });
+    tree.addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {  // doesn't fire keyTyped()
+          examplesFrame.setVisible(false);
+        }
+      }
+      public void keyTyped(KeyEvent e) {
+        if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+          DefaultMutableTreeNode node =
+            (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+          if (node != null && node.isLeaf()) {
+            SketchReference sketch = (SketchReference) node.getUserObject();
+            base.handleOpen(sketch.getPath());
+          }
+        }
+      }
+    });
+
+    tree.addTreeExpansionListener(new TreeExpansionListener() {
+      @Override
+      public void treeExpanded(TreeExpansionEvent event) {
+        updateExpanded(tree);
+      }
+
+      @Override
+      public void treeCollapsed(TreeExpansionEvent event) {
+        updateExpanded(tree);
+      }
+    });
+
+    tree.setBorder(new EmptyBorder(5, 5, 5, 5));
+    if (Base.isMacOS()) {
+      tree.setToggleClickCount(2);
+    } else {
+      tree.setToggleClickCount(1);
+    }
+  }
+  
   protected void updateExpanded(JTree tree) {
     Enumeration en = tree.getExpandedDescendants(new TreePath(tree.getModel().getRoot()));
     //en.nextElement();  // skip the root "Examples" node
