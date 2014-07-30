@@ -692,7 +692,40 @@ public abstract class Mode {
         }
       });
       
+      JPanel examplesPanel = new JPanel();
+      examplesPanel.setLayout(new BoxLayout(examplesPanel, BoxLayout.PAGE_AXIS));
+      examplesPanel.setBackground(Color.WHITE);
+      
+      final JLabel openExamplesManagerLabel = new JLabel("<html><u>Add Example...</u></html>");
+      openExamplesManagerLabel.setOpaque(false);
+      openExamplesManagerLabel.setBorder(new EmptyBorder(10, 6, 1, 5));
+      openExamplesManagerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+      openExamplesManagerLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+      openExamplesManagerLabel.setForeground(new Color(0, 0, 238));
+      openExamplesManagerLabel.addMouseListener(new MouseListener() {
+        
+        @Override
+        public void mouseReleased(MouseEvent e) {}
+        
+        @Override
+        public void mousePressed(MouseEvent e) {}
+        
+        @Override
+        public void mouseExited(MouseEvent e) {}
+        
+        @Override
+        public void mouseEntered(MouseEvent e) {}
+        
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          base.handleOpenExampleManager();
+          openExamplesManagerLabel.setForeground(new Color(85, 26, 139));
+        }
+      });
+      
       final JTree tree = buildExamplesTree();
+      tree.setOpaque(true);
+      tree.setAlignmentX(Component.LEFT_ALIGNMENT);
 
       tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
       tree.setShowsRootHandles(true);
@@ -763,7 +796,12 @@ public abstract class Mode {
       JScrollPane treePane = new JScrollPane(tree);
       treePane.setPreferredSize(new Dimension(250, 450));
       treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
-      examplesFrame.getContentPane().add(treePane);
+      treePane.setOpaque(true);
+      treePane.setAlignmentX(Component.LEFT_ALIGNMENT);
+      
+      examplesPanel.add(openExamplesManagerLabel);
+      examplesPanel.add(treePane);
+      examplesFrame.getContentPane().add(examplesPanel);
       examplesFrame.pack();
 
       restoreExpanded(tree);
