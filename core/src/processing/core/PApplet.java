@@ -1,4 +1,4 @@
-/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+﻿/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -29,7 +29,6 @@ import processing.event.*;
 import processing.event.Event;
 import processing.opengl.*;
 
-import java.applet.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -54,6 +53,7 @@ import java.util.regex.*;
 import java.util.zip.*;
 
 import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileSystemView;
@@ -156,7 +156,7 @@ import javax.swing.filechooser.FileSystemView;
  * </PRE>
  * @usage Web &amp; Application
  */
-public class PApplet extends Applet
+public class PApplet extends JComponent
   implements PConstants, Runnable,
              MouseListener, MouseWheelListener, MouseMotionListener, KeyListener, FocusListener
 {
@@ -899,7 +899,6 @@ public class PApplet extends Applet
    * Applet initialization. This can do GUI work because the components have
    * not been 'realized' yet: things aren't visible, displayed, etc.
    */
-  @Override
   public void init() {
 //    println("init() called " + Integer.toHexString(hashCode()));
     // using a local version here since the class variable is deprecated
@@ -943,12 +942,7 @@ public class PApplet extends Applet
 //    keyEventMethods = new RegisteredMethods();
 //    disposeMethods = new RegisteredMethods();
 
-    try {
-      getAppletContext();
-      online = true;
-    } catch (NullPointerException e) {
-      online = false;
-    }
+    online = false;
 
     // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
     // inside runSketch(), but if this sketch takes care of calls  to init()
@@ -1111,7 +1105,6 @@ public class PApplet extends Applet
    * Called explicitly via the first call to PApplet.paint(), because
    * PAppletGL needs to have a usable screen before getting things rolling.
    */
-  @Override
   public void start() {
     debug("start() called");
 //    new Exception().printStackTrace(System.out);
@@ -1141,7 +1134,6 @@ public class PApplet extends Applet
    * when or if stop() will be called (i.e. on browser quit,
    * or when moving between web pages), and it's not always called.
    */
-  @Override
   public void stop() {
     // this used to shut down the sketch, but that code has
     // been moved to destroy/dispose()
@@ -1202,7 +1194,6 @@ public class PApplet extends Applet
    * no guarantees on when they're run (on browser quit, or
    * when moving between pages), though.
    */
-  @Override
   public void destroy() {
     this.dispose();
   }
@@ -3814,12 +3805,7 @@ public class PApplet extends Applet
    * @deprecated no more applet support
    */
   public String param(String name) {
-    if (online) {
-      return getParameter(name);
-
-    } else {
-      System.err.println("param() only works inside a web browser");
-    }
+    System.err.println("param() only works inside a web browser");
     return null;
   }
 
@@ -3833,12 +3819,7 @@ public class PApplet extends Applet
    * @deprecated no more applet support
    */
   public void status(String value) {
-    if (online) {
-      showStatus(value);
-
-    } else {
-      System.out.println(value);  // something more interesting?
-    }
+    System.out.println(value);
   }
 
 
@@ -7323,34 +7304,6 @@ public class PApplet extends Applet
         return stream;
       }
     }
-
-    // Finally, something special for the Internet Explorer users. Turns out
-    // that we can't get files that are part of the same folder using the
-    // methods above when using IE, so we have to resort to the old skool
-    // getDocumentBase() from teh applet dayz. 1996, my brotha.
-    try {
-      URL base = getDocumentBase();
-      if (base != null) {
-        URL url = new URL(base, filename);
-        URLConnection conn = url.openConnection();
-        return conn.getInputStream();
-//      if (conn instanceof HttpURLConnection) {
-//      HttpURLConnection httpConnection = (HttpURLConnection) conn;
-//      // test for 401 result (HTTP only)
-//      int responseCode = httpConnection.getResponseCode();
-//    }
-      }
-    } catch (Exception e) { }  // IO or NPE or...
-
-    // Now try it with a 'data' subfolder. getting kinda desperate for data...
-    try {
-      URL base = getDocumentBase();
-      if (base != null) {
-        URL url = new URL(base, "data/" + filename);
-        URLConnection conn = url.openConnection();
-        return conn.getInputStream();
-      }
-    } catch (Exception e) { }
 
     try {
       // attempt to load from a local file, used when running as
