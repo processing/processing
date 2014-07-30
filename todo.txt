@@ -21,6 +21,12 @@ X   was storing our fonts in both ./lib/fonts and jre/lib/fonts
 X   now gets the jre folder and loads from there
 X make ant fail when trying to delete JRE files that don't exist
 X   some aren't being removed properly
+X fix the build scripts to include the examples
+X   https://github.com/processing/processing/issues/2652
+X   all examples are out of "processing/java" and are now in "processing-docs/content/". The Book examples have been removed entirely from our repositories.
+o "Platform is ${platform}" message during 'ant clean' 
+o   on OS X, but not Windows (haven't checked Linux)
+X   this was in pdex/build.xml
 
 gsoc
 X clear status messages in the Contribution Manager
@@ -55,15 +61,10 @@ _ add a new pref for the 3.0 sketchbook location
 _ make reference and examples build process part of dist
 _   separate ant targets, but only require them for dist
 _   as separate targets, folks can build explicitly if they'd like
-_ remove reference.zip from main repo
-_ fix the build scripts to include the examples
-_   https://github.com/processing/processing/issues/2652
-_   all examples are out of "processing/java" and are now in "processing-docs/content/". The Book examples have been removed entirely from our repositories.
 _ reference wasn't included either
 _   https://github.com/processing/processing/issues/2656
 _   processing-web/java_generate/ReferenceGenerator
-_ "Platform is ${platform}" message during 'ant clean' 
-_   on OS X, but not Windows (haven't checked Linux)
+_   remove reference.zip from main repo
 
 
 pending
