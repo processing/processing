@@ -9,7 +9,6 @@ X   https://github.com/processing/processing/issues/2228
 X   https://github.com/processing/processing/pull/2324
 X move to native OS X full screen (gets rid of native code)
 X   https://github.com/processing/processing/issues/2641
-_   sometimes causes placement to temporarily be in the wrong spot
 
 
 pulls
@@ -27,6 +26,7 @@ _ remove Applet as base class
 _ performance issues on OS X (might be threading due to Applet)
 _   https://github.com/processing/processing/issues/2423
 _ play with improvements to full screen here
+_ new full screen sometimes causes sketch to temporarily be in the wrong spot
 
 
 processing.data

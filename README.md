@@ -24,7 +24,7 @@ The instructions for building the source [are here](https://github.com/processin
 
 Someday we'll also write code style guidelines, fix all these bugs, 
 throw together hundreds of unit tests, 
-and get rich off all this volunteer work.
+and get rich off all this stuff that we're giving away for free.
 
 But in the meantime, I ask for your patience, 
 [participation](https://github.com/processing/processing/wiki/Project-List), 
