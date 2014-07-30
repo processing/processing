@@ -41,6 +41,14 @@ o   https://github.com/processing/processing/issues/2639
 X moving p5 examples to the web repo
 X remove reference.zip from main repo
 
+_ SOCKS proxy not working: 
+_   https://github.com/processing/processing/issues/2643
+_ detect proxy settings?
+_   old issue: https://github.com/processing/processing/issues/1476
+_   http://docs.oracle.com/javase/7/docs/technotes/guides/net/proxies.html
+_   http://docs.oracle.com/javase/1.5.0/docs/guide/net/proxies.html
+_   http://stackoverflow.com/questions/4933677/detecting-windows-ie-proxy-setting-using-java
+_   http://www.java2s.com/Code/Java/Network-Protocol/DetectProxySettingsforInternetConnection.htm
 
 _ huge i18n patch
 _   https://github.com/processing/processing/pull/2084
