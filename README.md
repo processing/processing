@@ -17,18 +17,18 @@ changes made by [processing-bugs](https://github.com/processing-bugs), it may be
 Over time this will clean itself up as bugs are fixed and new issues are added from within Github.
 Help speed this process along by helping us!
 
-The [processing-web](https://github.com/processing/processing-web/) repository 
-contains reference, examples, and the site. 
+The [processing-docs](https://github.com/processing/processing-docs/) repository contains reference, examples, and the site. 
 (Please use that link to file issues regarding the web site, the examples, or the reference.)
 
 The instructions for building the source [are here](https://github.com/processing/processing/wiki/Build-Instructions).
 
 Someday we'll also write code style guidelines, fix all these bugs, 
-throw together hundreds of unit tests, and solve the Israeli-Palestinian conflict. 
+throw together hundreds of unit tests, 
+and get rich off all this volunteer work.
 
 But in the meantime, I ask for your patience, 
 [participation](https://github.com/processing/processing/wiki/Project-List), 
 and [patches](https://github.com/processing/processing/pulls).
 
 Ben Fry, 3 February 2013  
-Last updated 8 June 2014
+Last updated 30 July 2014
