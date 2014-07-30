@@ -807,6 +807,8 @@ public class Sketch {
   protected boolean saveAs() throws IOException {
     String newParentDir = null;
     String newName = null;
+	
+    final String oldName2 = folder.getName();
     // TODO rewrite this to use shared version from PApplet
     final String PROMPT = "Save sketch folder as...";
     if (Preferences.getBoolean("chooser.files.native")) {
@@ -941,15 +943,21 @@ public class Sketch {
         return true;
       }
     });
-    // now copy over the items that make sense
-    for (File copyable : copyItems) {
-      if (copyable.isDirectory()) {
-        Base.copyDir(copyable, new File(newFolder, copyable.getName()));
-      } else {
-        Base.copyFile(copyable, new File(newFolder, copyable.getName()));
-      }
-    }
+	
 
+    final File newFolder2 = newFolder;
+    final File[] copyItems2 = copyItems;
+    final String newName2 = newName; 
+    
+    // Create a new event dispatch thread- to display ProgressBar
+    // while Saving As
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new ProgressFrame(copyItems2, newFolder2, oldName2, newName2, editor);
+      }
+    });
+    
+	
     // save the other tabs to their new location
     for (int i = 1; i < codeCount; i++) {
       File newFile = new File(newFolder, code[i].getFileName());
@@ -978,6 +986,7 @@ public class Sketch {
     // let Editor know that the save was successful
     return true;
   }
+
 
 
   /**
@@ -1046,7 +1055,8 @@ public class Sketch {
     boolean result = addFile(sourceFile);
 
     if (result) {
-      editor.statusNotice("One file added to the sketch.");
+//      editor.statusNotice("One file added to the sketch.");
+    	//Done from within TaskAddFile inner class when copying is completed
     }
   }
 
@@ -1139,16 +1149,17 @@ public class Sketch {
 
     // in case the user is "adding" the code in an attempt
     // to update the sketch's tabs
-    if (!sourceFile.equals(destFile)) {
-      try {
-        Base.copyFile(sourceFile, destFile);
-
-      } catch (IOException e) {
-        Base.showWarning("Error adding file",
-                         "Could not add '" + filename + "' to the sketch.", e);
-        return false;
+	if (!sourceFile.equals(destFile)) {
+		final File sourceFile2 = sourceFile;
+		final File destFile2 = destFile;
+	    // Create a new event dispatch thread- to display ProgressBar
+	    // while Saving As
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new ProgressFrame(sourceFile2, destFile2, editor);
       }
-    }
+    });
+	}
 
     if (codeExtension != null) {
       SketchCode newCode = new SketchCode(destFile, codeExtension);
