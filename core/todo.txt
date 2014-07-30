@@ -11,10 +11,6 @@ X move to native OS X full screen (gets rid of native code)
 X   https://github.com/processing/processing/issues/2641
 _   sometimes causes placement to temporarily be in the wrong spot
 
-_ need a better method for "missing" data in Table
-_   if missing int is zero, can't just remove those values from saving a table
-_   but for NaN values, it's a necessity
-
 
 pulls
 X implement A and a (elliptical arcs)
@@ -30,7 +26,13 @@ applet removal
 _ remove Applet as base class
 _ performance issues on OS X (might be threading due to Applet)
 _   https://github.com/processing/processing/issues/2423
+_ play with improvements to full screen here
 
+
+processing.data
+_ need a better method for "missing" data in Table
+_   if missing int is zero, can't just remove those values from saving a table
+_   but for NaN values, it's a necessity
 _ fix for maxValue() and minValue() when all entries are bad
 _   on FloatDict it was NaN, check across the lists and other dict types
 _ StringDict should always put NaN values at the end on sort
@@ -40,11 +42,21 @@ _ get() methods in List/Dict shouldn't allow you to get bad values
 _   but set() methods can automatically resize the arrays
 _   though that means insert() should allow you to insert past the end
 _ should we allow negative indices so that we can work relative to the end?
+_ add print() method to other data types (not just IntList)
+_ 'collector' class.. Dict that points to a list
+_   String as a key, int/float/string list as values
+_ addRow() is not efficient, probably need to do the doubling
+o   or have a setIncrement() function?
+_   it would default to 1 on tables loaded from a file
+_   and default to doubling when created with "new Table"
+_   row count and array size are combined.. need to break apart
+_ match and iterators
+_   add match version that returns table that's only a pointer to original
+_   save the constructor for the version that actually copies data
+_   the table pointer version will be speedy and allow chaining 
 
-_ better full screen mode for OS X
-_   https://github.com/processing/processing/issues/2641
-_   http://stackoverflow.com/questions/6873568/fullscreen-feature-for-java-apps-on-osx-lion
 
+later
 _ bring back chaining in JSON (and add to XML)
 _   maybe once we make the PVector change
 
@@ -54,8 +66,6 @@ _ Closing opengl sketch from the PDE doesn't stop java process on windows
 _   https://github.com/processing/processing/issues/2335
 _ StingList.insert() error (should be an easy fix)
 _   https://github.com/processing/processing/issues/2548
-_ pull for image resize and alpha issues
-_   https://github.com/processing/processing/pull/2324
 _ dataPath() not working when app is not run from app dir on Linux
 _   https://github.com/processing/processing/issues/2195
 _ "Buffers have not been created" error for sketches w/o draw()
@@ -66,6 +76,7 @@ _   some sort of threading issue happening here
 _   https://github.com/processing/processing/issues/1672
 _   https://github.com/processing/processing/issues/2039 (dupe)
 _   https://github.com/processing/processing/issues/2294 (dupe)
+_   also check this out with the new full screen code on OS X
 _ point() rendering differently in 2.0.3 and 2.1
 _   https://github.com/processing/processing/issues/2278
 _   internally, we probably have to call set() if it's a 1 pixel point
@@ -75,13 +86,10 @@ _   https://github.com/processing/processing/issues/2428
 _ default font fixes 
 _   https://github.com/processing/processing/issues/2331
 _   https://github.com/processing/processing/pull/2338
-_ add print() method to other data types (not just IntList)
 _ Sort out blending differences with P2D/P3D
 _   might be that compatible images not setting alpha mode correctly
 _   image = gc.createCompatibleVolatileImage(source.width, source.height, Transparency.TRANSLUCENT);
 _   https://github.com/processing/processing/issues/1844
-_ 'collector' class.. Dict that points to a list
-_   String as a key, int/float/string list as values
 _ add option to have full screen span across screens
 _   display=all in cmd line
 _   sketchDisplay() -> 0 for all, or 1, 2, 3...
@@ -92,6 +100,7 @@ _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
 _ TGA files writing strangely
 _   https://github.com/processing/processing/issues/2096
+
 
 hidpi
 _ saveFrame() with retina render is making black images
@@ -109,21 +118,13 @@ _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start
 _   https://github.com/processing/processing/issues/2357
 
+
 cantfix
 _ crash on startup when "Mirror Displays" selected
 _   suspect that this is a specific chipset since Oracle didn't reproduce
 _   https://github.com/processing/processing/issues/2186
+_   test with JG's 13" retina laptop
 
-table
-_ addRow() is not efficient, probably need to do the doubling
-_   or have a setIncrement() function?
-_   it would default to 1 on tables loaded from a file
-_   and default to doubling when created with "new Table"
-_   row count and array size are combined.. need to break apart
-_ match and iterators
-_   add match version that returns table that's only a pointer to original
-_   save the constructor for the version that actually copies data
-_   the table pointer version will be speedy and allow chaining 
 
 decisions/misc
 _ make join() work with Iterable?
