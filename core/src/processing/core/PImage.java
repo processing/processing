@@ -289,7 +289,7 @@ public class PImage implements PConstants, Cloneable {
         format = ARGB;
       } else if (type == BufferedImage.TYPE_INT_RGB) {
         for (int i = 0; i < pixels.length; i++) {
-          pixels[i] = (255 << 24) | pixels[i];
+          pixels[i] = 0xFF000000 | pixels[i];
         }
       }
 

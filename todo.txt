@@ -7,13 +7,21 @@ X fix "No such file or directory" error when exporting an application on OSX
 X   this also resulted in the application not being signed at all
 X   https://github.com/processing/processing/issues/2614
 X   this is a fairly major issue...
-X  user opens non-main pde of already open sketch, it'll open again
+X possible to open a sketch multiple times 
+X   by double-clicking one of its files instead of the main pde file
+X   user opens non-main pde of already open sketch, it'll open again
 X   https://github.com/processing/processing/issues/2506
 
 gsoc
 X clear status messages in the Contribution Manager
 X   https://github.com/processing/processing/pull/2667
 X   https://github.com/processing/processing/issues/2599
+X may need a progress bar for "save as"
+X   or just the file copy function in general
+X   since it may take a long time (i.e. 1000s of screen grabs)
+X   http://code.google.com/p/processing/issues/detail?id=31
+X   https://github.com/processing/processing/issues/70
+X   https://github.com/processing/processing/pull/2370
 
 pulls
 X insert tabs properly when prefs set for tabs mode
@@ -33,6 +41,9 @@ o   https://github.com/processing/processing/issues/2639
 X moving p5 examples to the web repo
 X remove reference.zip from main repo
 
+
+_ huge i18n patch
+_   https://github.com/processing/processing/pull/2084
 
 _ add a new pref for the 3.0 sketchbook location
 _ fix the build scripts to include the examples
@@ -66,10 +77,7 @@ _ make reference and examples build process part of dist
 _   separate ant targets, but only require them for dist
 _   as separate targets, folks can build explicitly if they'd like
 
-_ huge i18n patch
-_   https://github.com/processing/processing/pull/2084
-
-gsoc
+gsoc/help me
 _ `return` keyword not treated as such when followed by a bracket
 _   https://github.com/processing/processing/issues/2099
 _ IllegalArgumentException when clicking between editor windows
@@ -82,9 +90,6 @@ _ closing the color selector makes things freeze (only Linux and Windows?)
 _   https://github.com/processing/processing/issues/2381
 
 medium
-_ possible to open a sketch multiple times 
-_   by double-clicking one of its files instead of the main pde file
-_   https://github.com/processing/processing/issues/2506
 _ check on why 2x core.jar inside the Java folder
 _   maybe OS X Java can't look in subfolders? (just auto-adds things)
 _ display "1" is not correct in 2.1.2
@@ -131,15 +136,6 @@ _ add minimum version required (or max version?) to libraries/modes/etc
 _ no high-res display support for the PDE
 _ PDE and sketches are 2x smaller on high-res Windows 8 machines
 _   https://github.com/processing/processing/issues/2411
-
-
-pulls
-_ may need a progress bar for "save as"
-_   or just the file copy function in general
-_   since it may take a long time (i.e. 1000s of screen grabs)
-_   http://code.google.com/p/processing/issues/detail?id=31
-_   https://github.com/processing/processing/issues/70
-_   https://github.com/processing/processing/pull/2370
 
 
 post 2.1 cleaning
