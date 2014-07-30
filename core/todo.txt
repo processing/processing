@@ -1,4 +1,5 @@
 0229 core (3.0a2)
+X add copy() method to Table
 
 
 pulls
