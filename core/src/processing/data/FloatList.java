@@ -566,7 +566,20 @@ public class FloatList implements Iterable<Float> {
     new Sort() {
       @Override
       public int size() {
-        return count;
+        // move NaN values to the end of the list and don't sort them
+        int right = count - 1;
+        while (data[right] != data[right]) {
+          right--;
+        }
+        for (int i = right; i >= 0; --i) {
+          float v = data[i];
+          if (v != v) {
+            data[i] = data[right];
+            data[right] = v;
+            --right;
+          }
+        }
+        return right + 1;
       }
 
       @Override

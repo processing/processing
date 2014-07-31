@@ -31,6 +31,7 @@ X remove welcome message from the sound library
 X URL opening problem fixed by use of getCanonicalPath() on Windows
 X   https://github.com/processing/processing/issues/2656
 X add a new pref for the 3.0 sketchbook location
+_ when renaming a tab, include the previous name to be edited
 
 gsoc
 X clear status messages in the Contribution Manager

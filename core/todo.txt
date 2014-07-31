@@ -1,15 +1,22 @@
 0229 core (3.0a2)
-X add copy() method to Table
-X return null from getString() on NaN float and double values
-X   affects how saveTable() works (writes blank entries instead of NaN)
-X get(5) with an empty Int/Float/StringList was returning 0
-X   https://github.com/processing/processing/pull/2343
 X PImage resize() causes images to not draw
 X   https://github.com/processing/processing/issues/2228
 X   https://github.com/processing/processing/pull/2324
 X move to native OS X full screen (gets rid of native code)
 X   https://github.com/processing/processing/issues/2641
 
+data
+X add copy() method to Table
+X return null from getString() on NaN float and double values
+X   affects how saveTable() works (writes blank entries instead of NaN)
+X get(5) with an empty Int/Float/StringList was returning 0
+X   https://github.com/processing/processing/pull/2343
+o fix for maxValue() and minValue() when all entries are bad
+o   on FloatDict it was NaN, check across the lists and other dict types
+X   nothing else to do here
+X FloatDict and FloatList should always put NaN values at the end on sort
+X   same for the other list and dict classes
+X   (this is part of the point of having these easier versions)
 
 pulls
 X implement A and a (elliptical arcs)
@@ -33,11 +40,6 @@ processing.data
 _ need a better method for "missing" data in Table
 _   if missing int is zero, can't just remove those values from saving a table
 _   but for NaN values, it's a necessity
-_ fix for maxValue() and minValue() when all entries are bad
-_   on FloatDict it was NaN, check across the lists and other dict types
-_ StringDict should always put NaN values at the end on sort
-_   same for the other list and dict classes
-_   (this is part of the point of having these easier versions)
 _ get() methods in List/Dict shouldn't allow you to get bad values
 _   but set() methods can automatically resize the arrays
 _   though that means insert() should allow you to insert past the end
@@ -54,6 +56,7 @@ _ match and iterators
 _   add match version that returns table that's only a pointer to original
 _   save the constructor for the version that actually copies data
 _   the table pointer version will be speedy and allow chaining 
+_ add Double and Long versions of the classes?
 
 
 later
