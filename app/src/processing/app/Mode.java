@@ -423,13 +423,13 @@ public abstract class Mode {
 
   public void rebuildImportMenu() {  //JMenu importMenu) {
     if (importMenu == null) {
-      importMenu = new JMenu("Import Library...");
+      importMenu = new JMenu(Language.text("menu.library"));
     } else {
       //System.out.println("rebuilding import menu");
       importMenu.removeAll();
     }
 
-    JMenuItem addLib = new JMenuItem("Add Library...");
+    JMenuItem addLib = new JMenuItem(Language.text("menu.library.add_library"));
     addLib.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         base.handleOpenLibraryManager();
@@ -453,7 +453,7 @@ public abstract class Mode {
 //    }
 
     if (coreLibraries.size() == 0) {
-      JMenuItem item = new JMenuItem(getTitle() + " mode has no core libraries");
+      JMenuItem item = new JMenuItem(getTitle() + " " + Language.text("menu.library.no_core_libraries"));
       item.setEnabled(false);
       importMenu.add(item);
     } else {
@@ -467,7 +467,7 @@ public abstract class Mode {
 
     if (contribLibraries.size() != 0) {
       importMenu.addSeparator();
-      JMenuItem contrib = new JMenuItem("Contributed");
+      JMenuItem contrib = new JMenuItem(Language.text("menu.library.contributed"));
       contrib.setEnabled(false);
       importMenu.add(contrib);
 
@@ -674,7 +674,7 @@ public abstract class Mode {
 
   public void showExamplesFrame() {
     if (examplesFrame == null) {
-      examplesFrame = new JFrame(getTitle() + " Examples");
+      examplesFrame = new JFrame(getTitle() + " "+Language.text("menu.file.examples"));
       Toolkit.setIcon(examplesFrame);
       Toolkit.registerWindowCloseKeys(examplesFrame.getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent e) {

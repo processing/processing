@@ -60,7 +60,7 @@ public class ContributionManagerDialog {
       title = "Update Manager";
       filter = ContributionType.createUpdateFilter();
     } else {
-      title = type.getTitle() + " Manager";
+      // title = type.getTitle() + " Manager";
       filter = type.createFilter();    
     }
     contribListing = ContributionListing.getInstance();
@@ -151,7 +151,7 @@ public class ContributionManagerDialog {
 
       filterPanel.add(Box.createHorizontalStrut(6));
 
-      JLabel categoryLabel = new JLabel("Category:");
+      JLabel categoryLabel = new JLabel(Language.text("library.category"));
       filterPanel.add(categoryLabel);
 
       filterPanel.add(Box.createHorizontalStrut(5));
@@ -374,12 +374,13 @@ public class ContributionManagerDialog {
   
 
   class FilterField extends JTextField {
-    final static String filterHint = "Filter your search...";
+    String filterHint;
     boolean showingHint;
     List<String> filters;
 
     public FilterField () {
-      super(filterHint);
+      super(Language.text("library.filter_your_search"));
+      filterHint = Language.text("library.filter_your_search");
       
       showingHint = true;
       filters = new ArrayList<String>();

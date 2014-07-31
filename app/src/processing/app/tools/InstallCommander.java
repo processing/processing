@@ -29,6 +29,7 @@ import javax.swing.JOptionPane;
 
 import processing.app.Base;
 import processing.app.Editor;
+import processing.app.Language;
 import processing.core.PApplet;
 
 
@@ -37,7 +38,7 @@ public class InstallCommander implements Tool {
 
 
   public String getMenuTitle() {
-    return "Install “processing-java”";
+    return Language.text("menu.tools.install_processing_java");
   }
 
 
