@@ -37,6 +37,8 @@ o check on why 2x core.jar inside the Java folder
 o   maybe OS X Java can't look in subfolders? (just auto-adds things)
 o   https://github.com/processing/processing/issues/2344
 X   one is used by the PDE, the other is used as a library
+X get 'modified' indicator working on document windows again
+X   https://github.com/processing/processing/issues/2194
 _ changing the mode on an untitled, unmodified sketch removes untitled status
 _ when renaming a tab, include the previous name to be edited
 
