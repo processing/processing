@@ -68,7 +68,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Error check happens every sleepTime milliseconds
    */
-  public static final int sleepTime = 1000;
+  public static final int sleepTime = 4000;
 
   /**
    * The amazing eclipse ast parser
