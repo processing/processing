@@ -2353,6 +2353,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    }
   }
   
+  //set to true when the sketch is saved from inside processing
+  private boolean saved;
 
   private boolean didReload;
   
@@ -2422,6 +2424,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
       //this makes things.... complicated
       //System.out.println(e.context());
       
+      //don't ask to reload a file we saved
+      if(saved){
+        break;
+      }
       //if we already reloaded in this cycle, then don't reload again
       if (didReload){
         break;
@@ -2445,6 +2451,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         //for now, do nothing
       }
     }
+    saved = false;
   }
 
 
@@ -2478,6 +2485,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public boolean handleSave(boolean immediately) {
 //    handleStop();  // 0136
 
+    saved = true;
     if (sketch.isUntitled()) {
       return handleSaveAs();
       // need to get the name, user might also cancel here
