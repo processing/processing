@@ -10916,7 +10916,7 @@ public class PApplet extends Applet
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent e) {
-              System.exit(0);
+              applet.exit();
             }
           });
         frame.add(label);
