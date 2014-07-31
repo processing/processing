@@ -41,8 +41,8 @@ X get 'modified' indicator working on document windows again
 X   https://github.com/processing/processing/issues/2194
 X remove default menu bar hack when 7u60 arrives
 X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
+X when renaming a tab, include the previous name to be edited
 _ changing the mode on an untitled, unmodified sketch removes untitled status
-_ when renaming a tab, include the previous name to be edited
 
 gsoc
 X clear status messages in the Contribution Manager

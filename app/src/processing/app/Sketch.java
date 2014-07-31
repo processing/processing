@@ -340,27 +340,26 @@ public class Sketch {
    * @param oldName
    */
   protected void promptForTabName(String prompt, String oldName) {
-    final JTextField txtTabName = new JTextField();
-    txtTabName.addKeyListener(new KeyAdapter() {
+    final JTextField field = new JTextField(oldName);
+    
+    field.addKeyListener(new KeyAdapter() {
       // Forget ESC, the JDialog should handle it.
-
-      // Use keyTyped to catch when the feller is actually
-      // added to the text field. With keyTyped, as opposed to
-      // keyPressed, the keyCode will be zero, even if it's
-      // enter or backspace or whatever, so the keychar should
-      // be used instead. Grr.
+      // Use keyTyped to catch when the feller is actually added to the text 
+      // field. With keyTyped, as opposed to keyPressed, the keyCode will be 
+      // zero, even if it's enter or backspace or whatever, so the keychar 
+      // should be used instead. Grr.
       public void keyTyped(KeyEvent event) {
         //System.out.println("got event " + event);
         char ch = event.getKeyChar();
         if ((ch == '_') || (ch == '.') || // allow.pde and .java 
-          (('A' <= ch) && (ch <= 'Z')) || (('a' <= ch) && (ch <= 'z'))) {
+            (('A' <= ch) && (ch <= 'Z')) || (('a' <= ch) && (ch <= 'z'))) {
           // These events are allowed straight through.
         } else if (ch == ' ') {
-          String t = txtTabName.getText();
-          int start = txtTabName.getSelectionStart();
-          int end = txtTabName.getSelectionEnd();
-          txtTabName.setText(t.substring(0, start) + "_" + t.substring(end));
-          txtTabName.setCaretPosition(start + 1);
+          String t = field.getText();
+          int start = field.getSelectionStart();
+          int end = field.getSelectionEnd();
+          field.setText(t.substring(0, start) + "_" + t.substring(end));
+          field.setCaretPosition(start + 1);
           event.consume();
         } else if ((ch >= '0') && (ch <= '9')) {
           // getCaretPosition == 0 means that it's the first char
@@ -368,31 +367,29 @@ public class Sketch {
           // getSelectionStart means that it *will be* the first
           // char, because the selection is about to be replaced
           // with whatever is typed.
-          if ((txtTabName.getCaretPosition() == 0)
-            || (txtTabName.getSelectionStart() == 0)) {
+          if (field.getCaretPosition() == 0 || 
+              field.getSelectionStart() == 0) {
             // number not allowed as first digit
-            //System.out.println("bad number bad");
             event.consume();
           }
         } else if (ch == KeyEvent.VK_ENTER) {
-          // Slightly ugly hack that ensures OK button of the dialog 
-          // consumes the Enter key event. Since the text field is the
-          // default component in the dialog(see below), OK button doesn't 
-          // consume Enter key event, by default.
-          Container parent = txtTabName.getParent();
+          // Slightly ugly hack that ensures OK button of the dialog consumes 
+          // the Enter key event. Since the text field is the default component
+          // in the dialog, OK doesn't consume Enter key event, by default.
+          Container parent = field.getParent();
           while (!(parent instanceof JOptionPane)) {
             parent = parent.getParent();
           }
           JOptionPane pane = (JOptionPane) parent;
-          final JPanel pnlBottom = (JPanel) pane.getComponent(pane
-            .getComponentCount() - 1);
+          final JPanel pnlBottom = (JPanel) 
+            pane.getComponent(pane.getComponentCount() - 1);
           for (int i = 0; i < pnlBottom.getComponents().length; i++) {
             Component component = pnlBottom.getComponents()[i];
             if (component instanceof JButton) {
-              final JButton okButton = ((JButton) component);
+              final JButton okButton = (JButton) component;
               if (okButton.getText().equalsIgnoreCase("OK")) {
-                ActionListener[] actionListeners = okButton
-                  .getActionListeners();
+                ActionListener[] actionListeners = 
+                  okButton.getActionListeners();
                 if (actionListeners.length > 0) {
                   actionListeners[0].actionPerformed(null);
                   event.consume();
@@ -400,26 +397,24 @@ public class Sketch {
               }
             }
           }
-        }
-        else {
+        } else {
           event.consume();
         }
       }
     });
 
     int userReply = JOptionPane.showOptionDialog(editor, new Object[] {
-                                                   prompt, txtTabName },
-                                                 "Tab Name",
+                                                 prompt, field },
+                                                 "New Name",
                                                  JOptionPane.OK_CANCEL_OPTION,
                                                  JOptionPane.PLAIN_MESSAGE,
                                                  null, new Object[] {
-                                                   Preferences.PROMPT_OK,
-                                                   Preferences.PROMPT_CANCEL },
-                                                 txtTabName);
+                                                 Preferences.PROMPT_OK,
+                                                 Preferences.PROMPT_CANCEL },
+                                                 field);
 
     if (userReply == JOptionPane.OK_OPTION) {
-      String answer = txtTabName.getText();
-      nameCode(answer);
+      nameCode(field.getText());
     }
   }
 
