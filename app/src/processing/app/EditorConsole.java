@@ -212,7 +212,13 @@ public class EditorConsole extends JScrollPane {
     StyleConstants.setBold(errStyle, font.isBold());
     StyleConstants.setItalic(errStyle, font.isItalic());
 
-    consoleTextPane.setBackground(bgColor);
+    if (UIManager.getLookAndFeel().getID().equals("Nimbus")) {
+      getViewport().setBackground(bgColor);
+      consoleTextPane.setOpaque(false);
+      consoleTextPane.setBackground(new Color(0, 0, 0, 0));
+    } else {
+      consoleTextPane.setBackground(bgColor);
+    }
 
     // calculate height of a line of text in pixels
     // and size window accordingly

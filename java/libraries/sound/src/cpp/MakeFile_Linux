@@ -1,0 +1,12 @@
+all: 	
+
+	gcc -fPIC -I/usr/local/java/jdk1.7.0_60/include/linux -I./include -I/usr/local/java/jdk1.7.0_60/include -std=c++11 -g -c processing_sound_MethClaInterface.cpp;       
+	gcc -shared -o libMethClaInterface.so *.o -lmethcla;
+
+clean:
+	rm *.o
+	rm *.jnilib
+
+install:
+	cp libMethClaInterface.so ../../library/linux
+

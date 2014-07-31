@@ -2065,7 +2065,12 @@ public class PShape implements PConstants {
 
     vertices[index][X] = vec.x;
     vertices[index][Y] = vec.y;
-    vertices[index][Z] = vec.z;
+
+    if (vertices[index].length > 2) {
+      vertices[index][Z] = vec.z;
+    } else if (vec.z != 0 && vec.z == vec.z) {
+      throw new IllegalArgumentException("Cannot set a z-coordinate on a 2D shape");
+    }
   }
 
 

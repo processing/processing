@@ -1,3 +1,41 @@
+0228 core (3.0a1)
+X add copy() method to PVector
+X modify PVector to include better methods for chaining operations
+X   http://code.google.com/p/processing/issues/detail?id=218
+X   https://github.com/processing/processing/issues/257
+X   PVector discussion with Dan
+o   Jer and Dan will look at their code, plus toxiclibs
+X blendMode() broken with default renderer
+X   fix from Jakub Valtar
+X   https://github.com/processing/processing/issues/2012
+X   may have been introduced between 2.0b7 and 2.0b8
+X   https://github.com/processing/processing/issues/2275
+X   https://github.com/processing/processing/issues/2276
+X   https://github.com/processing/processing/issues/2483
+X if all data is NaN in a FloatDict, return NaN for maxValue() and minValue()
+X   formerly as AIOOBE -1 because -1 means "not found"
+X   but that was indexing directly into the data array
+
+pulls
+X filter() not applying to images produced by saveframe() consistently
+X   https://github.com/processing/processing/issues/2619
+X drawLatch in PJOGL can be null after requesting frame rendering
+X   https://github.com/processing/processing/issues/2630
+
+table
+X major performance improvements to 'newlines' parsing
+X last row was being skipped on tables with the 'newlines' option set
+X debug table parsing with header rows
+X bug fix for setting data types
+X add getColumnTitle(int) and getColumnTitles() to TableRow interface
+X fixes for new Table(Iterable)
+X   category data types were not importing their dictionary
+X   column titles weren't set on the new table
+X   drastic performance improvements for addRow()
+X when using setColumnType(), replace nulls with missingInt, missingFloat, etc
+X   formerly, was throwing a NullPointerException
+
+
 0227 core (2.2.1)
 X Permit mouse PRESS to set mouseX/mouseY
 X   https://github.com/processing/processing/pull/2509

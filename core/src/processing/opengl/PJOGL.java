@@ -167,7 +167,7 @@ public class PJOGL extends PGL {
 
   /** This countdown latch is used to maintain the synchronization between
    * Processing's drawing thread and JOGL's rendering thread */
-  protected CountDownLatch drawLatch;
+  protected CountDownLatch drawLatch = new CountDownLatch(0);
 
   /** Flag used to do request final display() call to make sure that the
    * buffers are properly swapped.

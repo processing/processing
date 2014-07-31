@@ -289,6 +289,11 @@ public class JavaEditor extends Editor {
       }
     });
 
+    // Only possible to export OS X applications on OS X
+    if (!Base.isMacOS()) {
+      // Make sure they don't have a previous 'true' setting for this
+      Preferences.setBoolean("export.application.platform.macosx", false);
+    }
     final JCheckBox macosxButton = new JCheckBox("Mac OS X");
     macosxButton.setSelected(Preferences.getBoolean("export.application.platform.macosx"));
     macosxButton.addItemListener(new ItemListener() {
@@ -296,6 +301,10 @@ public class JavaEditor extends Editor {
         Preferences.setBoolean("export.application.platform.macosx", macosxButton.isSelected());
       }
     });
+    if (!Base.isMacOS()) {
+      macosxButton.setEnabled(false);
+      macosxButton.setToolTipText("Mac OS X export is only available on Mac OS X");
+    }
 
     final JCheckBox linuxButton = new JCheckBox("Linux");
     //linuxButton.setMnemonic(KeyEvent.VK_L);

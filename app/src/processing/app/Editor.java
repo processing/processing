@@ -33,6 +33,7 @@ import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.Timer;
 
 import javax.swing.*;
@@ -383,20 +384,37 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   protected void initModeMenu() {
     modeMenu = new JMenu();
+    ButtonGroup modeGroup = new ButtonGroup();
     for (final Mode m : base.getModeList()) {
-      if (mode == m) {
-        JRadioButtonMenuItem item = new JRadioButtonMenuItem(m.getTitle());
-        // doesn't need a listener, since it doesn't do anything
-        item.setSelected(true);
-        modeMenu.add(item);
-      } else {
-        JMenuItem item = new JMenuItem(m.getTitle());
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
+      JRadioButtonMenuItem item = new JRadioButtonMenuItem(m.getTitle());
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          if (!sketch.isModified()) {
             base.changeMode(m);
+            
+          } else {
+            Base.showWarning("Save",
+                             "Please save the sketch before changing the mode.",
+                             null);
+
+            // Re-select the old checkbox, because it was automatically 
+            // updated by Java, even though the Mode could not be changed.
+            // https://github.com/processing/processing/issues/2615
+            for (Component c : modeMenu.getPopupMenu().getComponents()) {
+              if (c instanceof JRadioButtonMenuItem) {
+                if (((JRadioButtonMenuItem)c).getText() == mode.getTitle()) {
+                  ((JRadioButtonMenuItem)c).setSelected(true);
+                  break;
+                }
+              }
+            }
           }
-        });
-        modeMenu.add(item);
+        }
+      });
+      modeMenu.add(item);
+      modeGroup.add(item);
+      if (mode == m) {
+        item.setSelected(true);
       }
     }
 
@@ -588,6 +606,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
     fileMenu.add(item);
 
     fileMenu.add(base.getSketchbookMenu());
+    
+    JMenuItem sbMenu = Toolkit.newJMenuItemShift("Sketchbook Tree", 'K');
+    sbMenu.addActionListener(new ActionListener() {      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mode.showSketchbookFrame();
+      }
+    });
+    
+    fileMenu.add(sbMenu);
 
 //    fileMenu.add(mode.getExamplesMenu());
     item = Toolkit.newJMenuItemShift(Language.text("menu.file.examples"), 'O');
@@ -895,6 +923,57 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     sketchMenu.add(item);
 
+    sketchMenu.addSeparator();
+
+//    final Editor editorName = this;
+    
+    sketchMenu.addMenuListener(new MenuListener() { 
+      // Menu Listener that populates the menu only when the menu is opened
+      List<JMenuItem> menuList = new ArrayList<JMenuItem>();
+
+      @Override
+      public void menuSelected(MenuEvent event) {
+        JMenuItem item;
+        for (final Editor editor : base.getEditors()) {
+          //if (Editor.this.getSketch().getName().trim().contains(editor2.getSketch().getName().trim()))
+          if (getSketch().getMainFilePath().equals(editor.getSketch().getMainFilePath())) {
+            item = new JCheckBoxMenuItem(editor.getSketch().getName());
+            item.setSelected(true);
+          } else {
+            item = new JMenuItem(editor.getSketch().getName());
+          }
+          item.setText(editor.getSketch().getName() + 
+                       " (" + editor.getMode().getTitle() + ")");
+
+          // Action listener to bring the appropriate sketch in front
+          item.addActionListener(new ActionListener() { 
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              editor.setState(Frame.NORMAL);
+              editor.setVisible(true);
+              editor.toFront();
+            }
+          });
+          sketchMenu.add(item);
+          menuList.add(item);
+        }
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent event) {
+        for (JMenuItem item : menuList) {
+          sketchMenu.remove(item);
+        }
+        menuList.clear();
+      }
+
+      @Override
+      public void menuCanceled(MenuEvent event) {
+        menuDeselected(event);
+      }
+    });
+
     return sketchMenu;
   }
 
@@ -1163,6 +1242,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   public void showReference(String filename) {
     File file = new File(mode.getReferenceFolder(), filename);
+    try {
+      file = file.getCanonicalFile();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     // Prepend with file:// and also encode spaces & other characters
     Base.openURL(file.toURI().toString());
   }
@@ -2369,7 +2453,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
     statusNotice("Saving...");
     try {
       if (sketch.saveAs()) {
-        statusNotice("Done Saving.");
+        // statusNotice("Done Saving.");
+    	// status is now printed from Sketch so that "Done Saving."
+    	// is only printed after Save As when progress bar is shown.  
+    	  
         // Disabling this for 0125, instead rebuild the menu inside
         // the Save As method of the Sketch object, since that's the
         // only one who knows whether something was renamed.
