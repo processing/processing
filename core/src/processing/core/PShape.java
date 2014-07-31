@@ -547,7 +547,7 @@ public class PShape implements PConstants {
 
   protected void beginContourImpl() {
     if (vertexCodes.length == vertexCodeCount) {
-      vertexCodes = PApplet.expand(vertexCodes);
+      vertexCodes = PUtil.expand(vertexCodes);
     }
     vertexCodes[vertexCodeCount++] = BREAK;
   }
@@ -586,14 +586,14 @@ public class PShape implements PConstants {
     if (vertices == null) {
       vertices = new float[10][2];
     } else if (vertices.length == vertexCount) {
-      vertices = (float[][]) PApplet.expand(vertices);
+      vertices = (float[][]) PUtil.expand(vertices);
     }
     vertices[vertexCount++] = new float[] { x, y };
 
     if (vertexCodes == null) {
       vertexCodes = new int[10];
     } else if (vertexCodes.length == vertexCodeCount) {
-      vertexCodes = PApplet.expand(vertexCodes);
+      vertexCodes = PUtil.expand(vertexCodes);
     }
     vertexCodes[vertexCodeCount++] = VERTEX;
 
@@ -1133,7 +1133,7 @@ public class PShape implements PConstants {
     if (vertices == null) {
       vertices = new float[10][];
     } else if (vertexCount + 2 >= vertices.length) {
-      vertices = (float[][]) PApplet.expand(vertices);
+      vertices = (float[][]) PUtil.expand(vertices);
     }
     vertices[vertexCount++] = new float[] { x2, y2 };
     vertices[vertexCount++] = new float[] { x3, y3 };
@@ -1141,7 +1141,7 @@ public class PShape implements PConstants {
 
     // vertexCodes must be allocated because a vertex() call is required
     if (vertexCodes.length == vertexCodeCount) {
-      vertexCodes = PApplet.expand(vertexCodes);
+      vertexCodes = PUtil.expand(vertexCodes);
     }
     vertexCodes[vertexCodeCount++] = BEZIER_VERTEX;
 
@@ -1165,14 +1165,14 @@ public class PShape implements PConstants {
     if (vertices == null) {
       vertices = new float[10][];
     } else if (vertexCount + 1 >= vertices.length) {
-      vertices = (float[][]) PApplet.expand(vertices);
+      vertices = (float[][]) PUtil.expand(vertices);
     }
     vertices[vertexCount++] = new float[] { cx, cy };
     vertices[vertexCount++] = new float[] { x3, y3 };
 
     // vertexCodes must be allocated because a vertex() call is required
     if (vertexCodes.length == vertexCodeCount) {
-      vertexCodes = PApplet.expand(vertexCodes);
+      vertexCodes = PUtil.expand(vertexCodes);
     }
     vertexCodes[vertexCodeCount++] = QUADRATIC_VERTEX;
 
@@ -1270,7 +1270,7 @@ public class PShape implements PConstants {
     }
 
     if (fill) {
-      //System.out.println("filling " + PApplet.hex(fillColor));
+      //System.out.println("filling " + PUtil.hex(fillColor));
       g.fill(fillColor);
     } else {
       g.noFill();
@@ -1376,7 +1376,7 @@ public class PShape implements PConstants {
 //        dest.emissive(vert[PGraphics.ER] * 255, vert[PGraphics.EG] * 255, vert[PGraphics.EB] * 255);
 //        dest.shininess(vert[PGraphics.SHINE]);
 
-        if (0 < PApplet.dist(vert[PGraphics.NX],
+        if (0 < PUtil.dist(vert[PGraphics.NX],
                              vert[PGraphics.NY],
                              vert[PGraphics.NZ], 0, 0, 0)) {
           dest.normal(vert[PGraphics.NX],
@@ -1806,7 +1806,7 @@ public class PShape implements PConstants {
       children = new PShape[1];
     }
     if (childCount == children.length) {
-      children = (PShape[]) PApplet.expand(children);
+      children = (PShape[]) PUtil.expand(children);
     }
     children[childCount++] = who;
     who.parent = this;
@@ -1824,7 +1824,7 @@ public class PShape implements PConstants {
   public void addChild(PShape who, int idx) {
     if (idx < childCount) {
       if (childCount == children.length) {
-        children = (PShape[]) PApplet.expand(children);
+        children = (PShape[]) PUtil.expand(children);
       }
 
       // Copy [idx, childCount - 1] to [idx + 1, childCount]
@@ -1920,7 +1920,7 @@ public class PShape implements PConstants {
     if (target == null || target.length != params.length) {
       target = new float[params.length];
     }
-    PApplet.arrayCopy(params, target);
+    PUtil.arrayCopy(params, target);
     return target;
   }
 
@@ -1938,7 +1938,7 @@ public class PShape implements PConstants {
       PGraphics.showWarning("Wrong number of parameters");
       return;
     }
-    PApplet.arrayCopy(source, params);
+    PUtil.arrayCopy(source, params);
   }
 
 
@@ -1955,13 +1955,13 @@ public class PShape implements PConstants {
     vertexCount = vcount;
     vertices = new float[vertexCount][ndim];
     for (int i = 0; i < vertexCount; i++) {
-      PApplet.arrayCopy(verts[i], vertices[i]);
+      PUtil.arrayCopy(verts[i], vertices[i]);
     }
 
     vertexCodeCount = ccount;
     if (0 < vertexCodeCount) {
       vertexCodes = new int[vertexCodeCount];
-      PApplet.arrayCopy(codes, vertexCodes, vertexCodeCount);
+      PUtil.arrayCopy(codes, vertexCodes, vertexCodeCount);
     }
   }
 
@@ -2477,7 +2477,7 @@ public class PShape implements PConstants {
       return null;
     }
     if (vertexCodes.length != vertexCodeCount) {
-      vertexCodes = PApplet.subset(vertexCodes, 0, vertexCodeCount);
+      vertexCodes = PUtil.subset(vertexCodes, 0, vertexCodeCount);
     }
     return vertexCodes;
   }
@@ -2713,7 +2713,7 @@ public class PShape implements PConstants {
     float norm2 = v0 * v0 + v1 * v1 + v2 * v2;
     if (Math.abs(norm2 - 1) > EPSILON) {
       // The rotation vector is not normalized.
-      float norm = PApplet.sqrt(norm2);
+      float norm = PUtil.sqrt(norm2);
       v0 /= norm;
       v1 /= norm;
       v2 /= norm;

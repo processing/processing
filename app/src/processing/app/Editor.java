@@ -337,7 +337,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           // Some platforms (Mac OS X and Linux, when this began) preferred
           // this method of moving files.
           String data = (String)transferable.getTransferData(uriListFlavor);
-          String[] pieces = PApplet.splitTokens(data, "\r\n");
+          String[] pieces = PUtil.splitTokens(data, "\r\n");
           for (int i = 0; i < pieces.length; i++) {
             if (pieces[i].startsWith("#")) continue;
 
@@ -391,13 +391,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
         public void actionPerformed(ActionEvent e) {
           if (!sketch.isModified()) {
             base.changeMode(m);
-            
+
           } else {
             Base.showWarning("Save",
                              "Please save the sketch before changing the mode.",
                              null);
 
-            // Re-select the old checkbox, because it was automatically 
+            // Re-select the old checkbox, because it was automatically
             // updated by Java, even though the Mode could not be changed.
             // https://github.com/processing/processing/issues/2615
             for (Component c : modeMenu.getPopupMenu().getComponents()) {
@@ -493,10 +493,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // Update fonts and other items controllable from the prefs
     textarea.getPainter().updateAppearance();
     textarea.repaint();
-    
+
     console.updateAppearance();
-    
-    // All of this code was specific to using an external editor.  
+
+    // All of this code was specific to using an external editor.
     /*
 //    // apply the setting for 'use external editor'
 //    boolean external = Preferences.getBoolean("editor.external");
@@ -606,15 +606,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
     fileMenu.add(item);
 
     fileMenu.add(base.getSketchbookMenu());
-    
+
     JMenuItem sbMenu = Toolkit.newJMenuItemShift("Sketchbook Tree", 'K');
-    sbMenu.addActionListener(new ActionListener() {      
+    sbMenu.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         mode.showSketchbookFrame();
       }
     });
-    
+
     fileMenu.add(sbMenu);
 
 //    fileMenu.add(mode.getExamplesMenu());
@@ -926,8 +926,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     sketchMenu.addSeparator();
 
 //    final Editor editorName = this;
-    
-    sketchMenu.addMenuListener(new MenuListener() { 
+
+    sketchMenu.addMenuListener(new MenuListener() {
       // Menu Listener that populates the menu only when the menu is opened
       List<JMenuItem> menuList = new ArrayList<JMenuItem>();
 
@@ -942,11 +942,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
           } else {
             item = new JMenuItem(editor.getSketch().getName());
           }
-          item.setText(editor.getSketch().getName() + 
+          item.setText(editor.getSketch().getName() +
                        " (" + editor.getMode().getTitle() + ")");
 
           // Action listener to bring the appropriate sketch in front
-          item.addActionListener(new ActionListener() { 
+          item.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1036,13 +1036,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //        tool.run();
 //      }
 //      return true;
-//      
+//
 //    } catch (NoSuchMethodError nsme) {
 //      System.out.println("tool is " + tool + " ");
 //      statusError("\"" + tool.getMenuTitle() + "\" " +
 //                  "is not compatible with this version of Processing");
 //      nsme.printStackTrace();
-//      
+//
 //    } catch (Exception ex) {
 //      statusError("An error occurred inside \"" + tool.getMenuTitle() + "\"");
 //      ex.printStackTrace();
@@ -1052,8 +1052,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    }
 //    return false;
 //  }
-  
-  
+
+
   void addToolItem(final Tool tool, HashMap<String, JMenuItem> toolItems) {
     String title = tool.getMenuTitle();
     final JMenuItem item = new JMenuItem(title);
@@ -1074,14 +1074,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
           statusError("An error occurred inside \"" + tool.getMenuTitle() + "\"");
           ex.printStackTrace();
           item.setEnabled(false);
-        }          
+        }
       }
     });
     //menu.add(item);
     toolItems.put(title, item);
   }
 
-  
+
   protected void addTools(JMenu menu, ArrayList<ToolContribution> tools) {
     HashMap<String, JMenuItem> toolItems = new HashMap<String, JMenuItem>();
 
@@ -1090,13 +1090,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
         tool.init(Editor.this);
         // If init() fails, the item won't be added to the menu
         addToolItem(tool, toolItems);
-        
-        // With the exceptions, we can't call statusError because the window 
+
+        // With the exceptions, we can't call statusError because the window
         // isn't completely set up yet. Also not gonna pop up a warning because
-        // people may still be running different versions of Processing. 
+        // people may still be running different versions of Processing.
         // TODO Once the dust settles on 2.x, change this to Base.showError()
         // and open the Tools folder instead of showing System.err.println().
-        
+
       } catch (NoSuchMethodError nsme) {
         System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
                            "compatible with this version of Processing");
@@ -1474,8 +1474,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   public void setSelection(int start, int stop) {
     // make sure that a tool isn't asking for a bad location
-    start = PApplet.constrain(start, 0, textarea.getDocumentLength());
-    stop = PApplet.constrain(stop, 0, textarea.getDocumentLength());
+    start = PUtil.constrain(start, 0, textarea.getDocumentLength());
+    stop = PUtil.constrain(stop, 0, textarea.getDocumentLength());
 
     textarea.select(start, stop);
   }
@@ -1840,9 +1840,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
       final String formattedText = createFormatter().format(source);
       // save current (rough) selection point
       int selectionEnd = getSelectionStop();
-      
-//      boolean wasVisible = 
-//        textarea.getSelectionStopLine() >= textarea.getFirstLine() && 
+
+//      boolean wasVisible =
+//        textarea.getSelectionStopLine() >= textarea.getFirstLine() &&
 //        textarea.getSelectionStopLine() < textarea.getLastLine();
 
       // make sure the caret would be past the end of the text
@@ -1858,18 +1858,18 @@ public abstract class Editor extends JFrame implements RunnerListener {
         int scrollPos = textarea.getVerticalScrollPosition();
         setText(formattedText);
         setSelection(selectionEnd, selectionEnd);
-        
+
         // Put the scrollbar position back, otherwise it jumps on each format.
-        // Since we're not doing a good job of maintaining position anyway, 
+        // Since we're not doing a good job of maintaining position anyway,
         // a more complicated workaround here is fairly pointless.
         // http://code.google.com/p/processing/issues/detail?id=1533
         if (scrollPos != textarea.getVerticalScrollPosition()) {
-//          boolean wouldBeVisible = 
-//            scrollPos >= textarea.getFirstLine() && 
+//          boolean wouldBeVisible =
+//            scrollPos >= textarea.getFirstLine() &&
 //            scrollPos < textarea.getLastLine();
 //
 //          // if it was visible, and now it's not, then allow the scroll
-//          if (!(wasVisible && !wouldBeVisible)) {   
+//          if (!(wasVisible && !wouldBeVisible)) {
           textarea.setVerticalScrollPosition(scrollPos);
 //          }
         }
@@ -2030,7 +2030,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         break;
 
       default:
-//      System.out.println("defaulting because " + array[index] + " " + PApplet.hex(array[index]));
+//      System.out.println("defaulting because " + array[index] + " " + PUtil.hex(array[index]));
         return false;
       }
     }
@@ -2038,14 +2038,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
     return false;
   }
 
-  
+
   protected boolean functionable(char c) {
     return (c == '_') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
   }
-  
+
 
   /**
-   * Check the current selection for reference. If no selection is active, 
+   * Check the current selection for reference. If no selection is active,
    * expand the current selection.
    * @return
    */
@@ -2058,7 +2058,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       start = temp;
     }
     char[] c = textarea.getText().toCharArray();
-    
+
 //    System.out.println("checking reference");
     if (start == stop) {
       while (start > 0 && functionable(c[start - 1])) {
@@ -2080,8 +2080,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     return ref;
   }
-  
-  
+
+
   protected void handleFindReference() {
     String ref = referenceCheck(true);
     if (ref != null) {
@@ -2095,8 +2095,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     }
   }
-  
-  
+
+
   /*
   protected void handleFindReference() {
     String text = textarea.getSelectedText().trim();
@@ -2120,8 +2120,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     }
   }
-  
-  
+
+
   protected void handleFindReference() {
     String text = textarea.getSelectedText().trim();
 
@@ -2179,7 +2179,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // With Java 7u40 on OS X, need to bring the window forward.
     toFront();
-    
+
     String prompt = "Save changes to " + sketch.getName() + "?  ";
 
     if (!Base.isMacOS()) {
@@ -2302,7 +2302,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     } else {
       final String properParent =
         file.getName().substring(0, file.getName().lastIndexOf('.'));
-      
+
       Object[] options = { "OK", "Cancel" };
       String prompt =
         "The file \"" + file.getName() + "\" needs to be inside\n" +
@@ -2456,8 +2456,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       if (sketch.saveAs()) {
         // statusNotice("Done Saving.");
     	// status is now printed from Sketch so that "Done Saving."
-    	// is only printed after Save As when progress bar is shown.  
-    	  
+    	// is only printed after Save As when progress bar is shown.
+
         // Disabling this for 0125, instead rebuild the menu inside
         // the Save As method of the Sketch object, since that's the
         // only one who knows whether something was renamed.
@@ -2647,22 +2647,22 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
   }
 
-  
+
   /**
    * Returns the current notice message in the editor status bar.
    */
   public String getStatusMessage(){
     return status.message;
   }
-  
-  
+
+
   /**
-   * Returns the current mode of the editor status bar: NOTICE, ERR or EDIT. 
+   * Returns the current mode of the editor status bar: NOTICE, ERR or EDIT.
    */
   public int getStatusMode(){
     return status.mode;
   }
-  
+
 
   /**
    * Clear the status area.
@@ -2791,7 +2791,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //        cutItem.setEnabled(true);
 //        copyItem.setEnabled(true);
 //        discourseItem.setEnabled(true);
-//        
+//
 ////        String sel = textarea.getSelectedText().trim();
 ////        String referenceFile = mode.lookupReference(sel);
 ////        referenceItem.setEnabled(referenceFile != null);
@@ -2806,7 +2806,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       cutItem.setEnabled(active);
       copyItem.setEnabled(active);
       discourseItem.setEnabled(active);
-      
+
       referenceItem.setEnabled(referenceCheck(false) != null);
       super.show(component, x, y);
     }

@@ -35,6 +35,7 @@ import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 
 import processing.core.PApplet;
+import processing.core.PUtil;
 
 
 /**
@@ -447,7 +448,7 @@ public class XML implements Serializable {
       throw new IllegalArgumentException("getChild() should not begin with a slash");
     }
     if (name.indexOf('/') != -1) {
-      return getChildRecursive(PApplet.split(name, '/'), 0);
+      return getChildRecursive(PUtil.split(name, '/'), 0);
     }
     int childCount = getChildCount();
     for (int i = 0; i < childCount; i++) {
@@ -508,7 +509,7 @@ public class XML implements Serializable {
       throw new IllegalArgumentException("getChildren() should not begin with a slash");
     }
     if (name.indexOf('/') != -1) {
-      return getChildrenRecursive(PApplet.split(name, '/'), 0);
+      return getChildrenRecursive(PUtil.split(name, '/'), 0);
     }
     // if it's a number, do an index instead
     // (returns a single element array, since this will be a single match
@@ -525,7 +526,7 @@ public class XML implements Serializable {
         matches[matchCount++] = kid;
       }
     }
-    return (XML[]) PApplet.subset(matches, 0, matchCount);
+    return (XML[]) PUtil.subset(matches, 0, matchCount);
   }
 
 
@@ -537,7 +538,7 @@ public class XML implements Serializable {
     XML[] outgoing = new XML[0];
     for (int i = 0; i < matches.length; i++) {
       XML[] kidMatches = matches[i].getChildrenRecursive(items, offset+1);
-      outgoing = (XML[]) PApplet.concat(outgoing, kidMatches);
+      outgoing = (XML[]) PUtil.concat(outgoing, kidMatches);
     }
     return outgoing;
   }
@@ -566,7 +567,7 @@ public class XML implements Serializable {
     node.appendChild(newNode);
     XML newbie = new XML(this, newNode);
     if (children != null) {
-      children = (XML[]) PApplet.concat(children, new XML[] { newbie });
+      children = (XML[]) PUtil.concat(children, new XML[] { newbie });
     }
     return newbie;
   }
@@ -607,7 +608,7 @@ public class XML implements Serializable {
 //      }
 //    }
 //    if (index != children.length) {
-//      children = (XML[]) PApplet.subset(children, 0, index);
+//      children = (XML[]) PUtil.subset(children, 0, index);
 //    }
 //
 //    // possibility, but would have to re-parse the object
@@ -864,7 +865,7 @@ public class XML implements Serializable {
    * @param defaultValue the default value of the attribute
    */
   public int getIntContent(int defaultValue) {
-    return PApplet.parseInt(node.getTextContent(), defaultValue);
+    return PUtil.parseInt(node.getTextContent(), defaultValue);
   }
 
 
@@ -884,7 +885,7 @@ public class XML implements Serializable {
    * @param defaultValue the default value of the attribute
    */
   public float getFloatContent(float defaultValue) {
-    return PApplet.parseFloat(node.getTextContent(), defaultValue);
+    return PUtil.parseFloat(node.getTextContent(), defaultValue);
   }
 
 
@@ -1025,24 +1026,24 @@ public class XML implements Serializable {
       StringWriter tempWriter = new StringWriter();
       StreamResult tempResult = new StreamResult(tempWriter);
       transformer.transform(new DOMSource(node), tempResult);
-      String[] tempLines = PApplet.split(tempWriter.toString(), sep);
-//      PApplet.println(tempLines);
+      String[] tempLines = PUtil.split(tempWriter.toString(), sep);
+//      PUtil.println(tempLines);
       if (tempLines[0].startsWith("<?xml")) {
         // Remove XML declaration from the top before slamming into one line
         int declEnd = tempLines[0].indexOf("?>") + 2;
         //if (tempLines[0].length() == decl.length()) {
         if (tempLines[0].length() == declEnd) {
           // If it's all the XML declaration, remove it
-//          PApplet.println("removing first line");
-          tempLines = PApplet.subset(tempLines, 1);
+//          PUtil.println("removing first line");
+          tempLines = PUtil.subset(tempLines, 1);
         } else {
-//          PApplet.println("removing part of first line");
+//          PUtil.println("removing part of first line");
           // If the first node has been moved to this line, be more careful
           //tempLines[0] = tempLines[0].substring(decl.length());
           tempLines[0] = tempLines[0].substring(declEnd);
         }
       }
-      String singleLine = PApplet.join(PApplet.trim(tempLines), "");
+      String singleLine = PUtil.join(PUtil.trim(tempLines), "");
       if (indent == -1) {
         return singleLine;
       }

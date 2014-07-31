@@ -34,18 +34,18 @@ import java.net.*;
 
 /**
  * ( begin auto-generated from Server.xml )
- * 
- * A server sends and receives data to and from its associated clients 
- * (other programs connected to it). When a server is started, it begins 
- * listening for connections on the port specified by the <b>port</b> 
- * parameter. Computers have many ports for transferring data and some are 
- * commonly used so be sure to not select one of these. For example, web 
+ *
+ * A server sends and receives data to and from its associated clients
+ * (other programs connected to it). When a server is started, it begins
+ * listening for connections on the port specified by the <b>port</b>
+ * parameter. Computers have many ports for transferring data and some are
+ * commonly used so be sure to not select one of these. For example, web
  * servers usually use port 80 and POP mail uses port 110.
- * 
+ *
  * ( end auto-generated )
  * @webref net
  * @usage application
- * @brief The server class is used to create server objects which send and receives data to and from its associated clients (other programs connected to it). 
+ * @brief The server class is used to create server objects which send and receives data to and from its associated clients (other programs connected to it).
  * @instanceName server  	any variable of type Server
  */
 public class Server implements Runnable {
@@ -55,13 +55,13 @@ public class Server implements Runnable {
   Thread thread;
   ServerSocket server;
   int port;
-  
+
   /** Number of clients currently connected. */
   public int clientCount;
   /** Array of client objects, useful length is determined by clientCount. */
   public Client[] clients;
 
-  
+
   /**
    * @param parent typically use "this"
    * @param port port used to transfer data
@@ -69,12 +69,12 @@ public class Server implements Runnable {
   public Server(PApplet parent, int port) {
     this(parent, port, null);
   }
-    
-    
+
+
   /**
    * @param parent typically use "this"
    * @param port port used to transfer data
-   * @param host when multiple NICs are in use, the ip (or name) to bind from 
+   * @param host when multiple NICs are in use, the ip (or name) to bind from
    */
   public Server(PApplet parent, int port, String host) {
     this.parent = parent;
@@ -117,9 +117,9 @@ public class Server implements Runnable {
 
   /**
    * ( begin auto-generated from Server_disconnect.xml )
-   * 
+   *
    * Disconnect a particular client.
-   * 
+   *
    * ( end auto-generated )
    * @brief Disconnect a particular client.
    * @webref server:server
@@ -132,8 +132,8 @@ public class Server implements Runnable {
       removeIndex(index);
     }
   }
-  
-  
+
+
   protected void removeIndex(int index) {
     clientCount--;
     // shift down the remaining clients
@@ -143,8 +143,8 @@ public class Server implements Runnable {
     // mark last empty var for garbage collection
     clients[clientCount] = null;
   }
-  
-  
+
+
   protected void disconnectAll() {
     synchronized (clients) {
       for (int i = 0; i < clientCount; i++) {
@@ -158,16 +158,16 @@ public class Server implements Runnable {
       clientCount = 0;
     }
   }
-  
-  
+
+
   protected void addClient(Client client) {
     if (clientCount == clients.length) {
-      clients = (Client[]) PApplet.expand(clients);
+      clients = (Client[]) PUtil.expand(clients);
     }
     clients[clientCount++] = client;
   }
-  
-  
+
+
   protected int clientIndex(Client client) {
     for (int i = 0; i < clientCount; i++) {
       if (clients[i] == client) {
@@ -177,7 +177,7 @@ public class Server implements Runnable {
     return -1;
   }
 
-  
+
   static public String ip() {
     try {
       return InetAddress.getLocalHost().getHostAddress();
@@ -195,9 +195,9 @@ public class Server implements Runnable {
 
   /**
    * ( begin auto-generated from Server_available.xml )
-   * 
+   *
    * Returns the next client in line with a new message.
-   * 
+   *
    * ( end auto-generated )
    * @brief Returns the next client in line with a new message.
    * @webref server
@@ -223,14 +223,14 @@ public class Server implements Runnable {
 
   /**
    * ( begin auto-generated from Server_stop.xml )
-   * 
+   *
    * Disconnects all clients and stops the server.
-   * 
+   *
    * ( end auto-generated )
    * <h3>Advanced</h3>
-   * Use this to shut down the server if you finish using it while your applet 
-   * is still running. Otherwise, it will be automatically be shut down by the 
-   * host PApplet using dispose(), which is identical. 
+   * Use this to shut down the server if you finish using it while your applet
+   * is still running. Otherwise, it will be automatically be shut down by the
+   * host PApplet using dispose(), which is identical.
    * @brief Disconnects all clients and stops the server.
    * @webref server
    * @usage application
@@ -298,10 +298,10 @@ public class Server implements Runnable {
 
   /**
    * ( begin auto-generated from Server_write.xml )
-   * 
-   * Writes a value to all the connected clients. It sends bytes out from the 
+   *
+   * Writes a value to all the connected clients. It sends bytes out from the
    * Server object.
-   * 
+   *
    * ( end auto-generated )
    * @webref server
    * @brief Writes data to all connected clients
@@ -318,7 +318,7 @@ public class Server implements Runnable {
       }
     }
   }
-  
+
 
   public void write(byte data[]) {
     int index = 0;
@@ -331,7 +331,7 @@ public class Server implements Runnable {
       }
     }
   }
-  
+
 
   public void write(String data) {
     int index = 0;

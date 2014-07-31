@@ -35,6 +35,7 @@ import javax.media.opengl.glu.GLU;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
+import processing.core.PUtil;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
@@ -97,7 +98,7 @@ public class PJOGL extends PGL {
   protected static int EVENTS_TOOLKIT;
   protected static boolean USE_JOGL_FBOLAYER;
   static {
-    if (PApplet.platform == PConstants.WINDOWS) {
+    if (PUtil.platform == PConstants.WINDOWS) {
       // Using AWT on Windows because NEWT displays a black background while
       // initializing, and the cursor functions don't work. GLWindow has some
       // functions for basic cursor handling (hide/show):
@@ -108,18 +109,18 @@ public class PJOGL extends PGL {
       EVENTS_TOOLKIT = AWT;
       USE_FBOLAYER_BY_DEFAULT = false;
       USE_JOGL_FBOLAYER = false;
-    } else if (PApplet.platform == PConstants.MACOSX) {
+    } else if (PUtil.platform == PConstants.MACOSX) {
       // Note: The JOGL FBO layer (in 2.0.2) seems incompatible with NEWT.
       WINDOW_TOOLKIT = AWT;
       EVENTS_TOOLKIT = AWT;
       USE_FBOLAYER_BY_DEFAULT = true;
       USE_JOGL_FBOLAYER = true;
-    } else if (PApplet.platform == PConstants.LINUX) {
+    } else if (PUtil.platform == PConstants.LINUX) {
       WINDOW_TOOLKIT = AWT;
       EVENTS_TOOLKIT = AWT;
       USE_FBOLAYER_BY_DEFAULT = false;
       USE_JOGL_FBOLAYER = false;
-    } else if (PApplet.platform == PConstants.OTHER) {
+    } else if (PUtil.platform == PConstants.OTHER) {
       WINDOW_TOOLKIT = NEWT; // NEWT works on the Raspberry pi?
       EVENTS_TOOLKIT = NEWT;
       USE_FBOLAYER_BY_DEFAULT = false;
@@ -880,7 +881,7 @@ public class PJOGL extends PGL {
       }
       if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
         int maxs = maxSamples();
-        numSamples = PApplet.min(capabilities.getNumSamples(), maxs);
+        numSamples = PUtil.min(capabilities.getNumSamples(), maxs);
       }
     }
 
@@ -928,7 +929,7 @@ public class PJOGL extends PGL {
       peButton = PConstants.RIGHT;
     }
 
-    if (PApplet.platform == PConstants.MACOSX) {
+    if (PUtil.platform == PConstants.MACOSX) {
       //if (nativeEvent.isPopupTrigger()) {
       if ((modifiers & InputEvent.CTRL_MASK) != 0) {
         peButton = PConstants.RIGHT;

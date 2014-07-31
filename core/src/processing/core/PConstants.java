@@ -39,6 +39,9 @@ import java.awt.event.KeyEvent;
  */
 public interface PConstants {
 
+  static final boolean DEBUG = false;
+  //  static final boolean DEBUG = true;
+
   static public final int X = 0;
   static public final int Y = 1;
   static public final int Z = 2;
@@ -54,7 +57,7 @@ public interface PConstants {
   static final String PDF    = "processing.pdf.PGraphicsPDF";
   static final String DXF    = "processing.dxf.RawDXF";
 
-  // platform IDs for PApplet.platform
+  // platform IDs for PUtil.platform
 
   static final int OTHER   = 0;
   static final int WINDOWS = 1;

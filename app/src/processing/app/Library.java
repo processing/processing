@@ -120,18 +120,18 @@ public class Library extends LocalContribution {
     // get the list of files just in the library root
     String[] baseList = libraryFolder.list(standardFilter);
 //    System.out.println("Loading " + name + "...");
-//    PApplet.println(baseList);
+//    PUtil.println(baseList);
 
     String appletExportStr = exportTable.get("applet");
     if (appletExportStr != null) {
-      appletExportList = PApplet.splitTokens(appletExportStr, ", ");
+      appletExportList = PUtil.splitTokens(appletExportStr, ", ");
     } else {
       appletExportList = baseList;
     }
 
     String androidExportStr = exportTable.get("android");
     if (androidExportStr != null) {
-      androidExportList = PApplet.splitTokens(androidExportStr, ", ");
+      androidExportList = PUtil.splitTokens(androidExportStr, ", ");
     } else {
       androidExportList = baseList;
     }
@@ -165,11 +165,11 @@ public class Library extends LocalContribution {
       // First check for things like 'application.macosx=' or 'application.windows32' in the export.txt file.
       // These will override anything in the platform-specific subfolders.
       String platformAll = exportTable.get("application." + platformName);
-      String[] platformList = platformAll == null ? null : PApplet.splitTokens(platformAll, ", ");
+      String[] platformList = platformAll == null ? null : PUtil.splitTokens(platformAll, ", ");
       String platform32 = exportTable.get("application." + platformName + "32");
-      String[] platformList32 = platform32 == null ? null : PApplet.splitTokens(platform32, ", ");
+      String[] platformList32 = platform32 == null ? null : PUtil.splitTokens(platform32, ", ");
       String platform64 = exportTable.get("application." + platformName + "64");
-      String[] platformList64 = platform64 == null ? null : PApplet.splitTokens(platform64, ", ");
+      String[] platformList64 = platform64 == null ? null : PUtil.splitTokens(platform64, ", ");
 
       // If nothing specified in the export.txt entries, look for the platform-specific folders.
       if (platformAll == null) {
@@ -207,7 +207,7 @@ public class Library extends LocalContribution {
     }
 //    for (String p : exportList.keySet()) {
 //      System.out.println(p + " -> ");
-//      PApplet.println(exportList.get(p));
+//      PUtil.println(exportList.get(p));
 //    }
 
     // get the path for all .jar files in this code folder
@@ -245,10 +245,10 @@ public class Library extends LocalContribution {
    */
 //  public void addPackageList(HashMap<String,Library> importToLibraryTable) {
   public void addPackageList(HashMap<String,ArrayList<Library>> importToLibraryTable) {
-//    PApplet.println(packages);
+//    PUtil.println(packages);
     for (String pkg : packageList) {
 //          pw.println(pkg + "\t" + libraryFolder.getAbsolutePath());
-//      PApplet.println(pkg + "\t" + getName());
+//      PUtil.println(pkg + "\t" + getName());
 //      Library library = importToLibraryTable.get(pkg);
       ArrayList<Library> libraries = importToLibraryTable.get(pkg);
       if (libraries == null) {
@@ -309,8 +309,8 @@ public class Library extends LocalContribution {
   public String getClassPath() {
     StringBuilder cp = new StringBuilder();
 
-//    PApplet.println(libraryFolder.getAbsolutePath());
-//    PApplet.println(libraryFolder.list());
+//    PUtil.println(libraryFolder.getAbsolutePath());
+//    PUtil.println(libraryFolder.list());
     String[] jarHeads = libraryFolder.list(jarFilter);
     for (String jar : jarHeads) {
       cp.append(File.pathSeparatorChar);
@@ -327,7 +327,7 @@ public class Library extends LocalContribution {
 
 
   public String getNativePath() {
-//    PApplet.println("native lib folder " + nativeLibraryPath);
+//    PUtil.println("native lib folder " + nativeLibraryPath);
     return nativeLibraryPath;
   }
 

@@ -699,7 +699,7 @@ public class PdeEmitter implements PdeTokenTypes {
       final AST terminalTypeNode = child1.getFirstChild();
       final AST exprToCast = child2;
       final String pooType = terminalTypeNode.getText();
-      out.print("PApplet.parse" + Character.toUpperCase(pooType.charAt(0))
+      out.print("PUtil.parse" + Character.toUpperCase(pooType.charAt(0))
           + pooType.substring(1));
       dumpHiddenAfter(terminalTypeNode); // the left paren
       print(exprToCast);

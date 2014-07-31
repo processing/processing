@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 import processing.app.Formatter;
 import processing.app.Preferences;
-import processing.core.PApplet;
+import processing.core.PUtil;
 
 /**
  * Handler for dealing with auto format.
@@ -51,10 +51,10 @@ public class AutoFormat implements Formatter {
   private int indentValue;
   private boolean EOF;
   private boolean a_flg, if_flg, s_flag, elseFlag;
-  
+
   /** Number of ? entered without exiting at : of a?b:c structures. */
   private int conditionalLevel;
-  
+
   private int pos;
   private int c_level;
   private int[][] sp_flg;
@@ -66,7 +66,7 @@ public class AutoFormat implements Formatter {
 
   /** Number of parentheses entered and not exited. */
   private int parenLevel;
-  
+
   private int[] ind;
   private int[] p_flg;
   private char l_char;
@@ -107,7 +107,7 @@ public class AutoFormat implements Formatter {
     return;
   }
 
-  
+
   private void handleSingleLineComment() {
     char ch = nextChar();
     while (ch != '\n') {
@@ -119,7 +119,7 @@ public class AutoFormat implements Formatter {
     s_flag = true;
   }
 
-  
+
 //  /**
 //   * Transfers buf to result until a character is reached that
 //   * is neither \, \n, or in a string. \n is not written, but
@@ -159,7 +159,7 @@ public class AutoFormat implements Formatter {
       return;
     }
     if (s_flag) {
-      final boolean shouldIndent = 
+      final boolean shouldIndent =
         (tabs > 0) && (buf.charAt(0) != '{') && a_flg;
       if (shouldIndent) {
         tabs++;
@@ -181,7 +181,7 @@ public class AutoFormat implements Formatter {
     result.append(buf);
     buf.setLength(0);
   }
-  
+
 
   private char lastNonSpaceChar() {
     for (int i = result.length() - 1; i >= 0; i--) {
@@ -347,7 +347,7 @@ public class AutoFormat implements Formatter {
 
   public String format(final String source) {
     final String normalizedText = source.replaceAll("\r", "");
-    final String cleanText = 
+    final String cleanText =
       normalizedText + (normalizedText.endsWith("\n") ? "" : "\n");
 
     result.setLength(0);
@@ -440,8 +440,8 @@ public class AutoFormat implements Formatter {
         if (elseFlag) gotElse();
 
         if (s_if_lev.length == c_level) {
-          s_if_lev = PApplet.expand(s_if_lev);
-          s_if_flg = PApplet.expand(s_if_flg);
+          s_if_lev = PUtil.expand(s_if_lev);
+          s_if_flg = PUtil.expand(s_if_flg);
         }
         s_if_lev[c_level] = if_lev;
         s_if_flg[c_level] = if_flg;
@@ -460,7 +460,7 @@ public class AutoFormat implements Formatter {
         writeIndentedLine();
         readUntilNewLine();
         writeIndentedLine();
-        
+
         result.append("\n");
         tabs++;
         s_flag = true;
@@ -577,7 +577,7 @@ public class AutoFormat implements Formatter {
         break;
 
       case ':':
-        // Java 8 :: operator. 
+        // Java 8 :: operator.
         if (peek() == ':') {
           writeIndentedLine();
           result.append(c).append(nextChar());
@@ -641,7 +641,7 @@ public class AutoFormat implements Formatter {
         final boolean isCast = castFlags.isEmpty() ? false : castFlags.pop();
 
         parenLevel--;
-	
+
         // If we're further back than the start of a for loop, we've
         // left it.
         if (forFlag && forParenthLevel > parenLevel) {

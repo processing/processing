@@ -40,7 +40,7 @@ import javax.swing.text.*;
 
 /**
  * Generic color selector frame, pulled from the Tool object. API not really
- * worked out here (what should the constructor be? how flexible?) So use with 
+ * worked out here (what should the constructor be? how flexible?) So use with
  * caution and be ready for it to break in future releases.
  */
 public class ColorChooser {  //extends JFrame implements DocumentListener {
@@ -58,7 +58,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 
   JPanel colorPanel;
   DocumentListener colorListener;
-  
+
   JDialog window;
 
 
@@ -98,9 +98,9 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 //    System.out.println("1: " + hexField.getInsets());
 
     box.add(Box.createHorizontalStrut(10));
-    
+
 //    System.out.println("2: " + hexField.getInsets());
-    
+
     window.getContentPane().add(box, BorderLayout.CENTER);
 //    System.out.println(hexField);
 //    System.out.println("3: " + hexField.getInsets());
@@ -137,43 +137,43 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     greenField.getDocument().addDocumentListener(colorListener);
     blueField.getDocument().addDocumentListener(colorListener);
     hexField.getDocument().addDocumentListener(colorListener);
-    
+
     setColor(initialColor);
 //    System.out.println("4: " + hexField.getInsets());
   }
 
-  
+
   //hexField.setText("#FFFFFF");
 
-  
+
   public void show() {
     window.setVisible(true);
     window.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
   }
-  
-  
+
+
   public void hide() {
     window.setVisible(false);
   }
-  
-  
+
+
   public Color getColor() {
     return new Color(red, green, blue);
   }
   
-  
+
   public void setColor(Color color) {
     updateRGB(color.getRGB());
   }
-  
-  
+
+
   public String getHexColor() {
-    return "#" + PApplet.hex(red, 2) + PApplet.hex(green, 2) + PApplet.hex(blue, 2);
+    return "#" + PUtil.hex(red, 2) + PUtil.hex(green, 2) + PUtil.hex(blue, 2);
   }
 
 
   public class ColorListener implements DocumentListener {
-    
+
     public void changedUpdate(DocumentEvent e) {
       //System.out.println("changed");
     }
@@ -418,17 +418,17 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     box.add(Box.createVerticalStrut(GAP));
 
     //
-    
+
 //    // Not great, because the insets make things weird anyway
-//    //Dimension dim = new Dimension(hexField.getPreferredSize()); 
+//    //Dimension dim = new Dimension(hexField.getPreferredSize());
 //    Dimension dim = new Dimension(70, 20);
 //    colorPanel.setMinimumSize(dim);
 //    colorPanel.setMaximumSize(dim);
 //    colorPanel.setPreferredSize(dim);
 ////    colorPanel.setBorder(new EmptyBorder(hexField.getInsets()));
 
-    // 
-    
+    //
+
     row = Box.createHorizontalBox();
     if (Base.isMacOS()) {
       row.add(Box.createHorizontalStrut(11));
@@ -441,7 +441,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     row.add(button);
     row.add(Box.createHorizontalGlue());
     box.add(row);
-    
+
     row = Box.createHorizontalBox();
     if (Base.isMacOS()) {
       row.add(Box.createHorizontalStrut(11));
@@ -460,7 +460,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     row.add(Box.createHorizontalGlue());
     box.add(row);
     //
-    
+
     box.add(Box.createVerticalGlue());
     return box;
   }

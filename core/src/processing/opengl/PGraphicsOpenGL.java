@@ -2075,9 +2075,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void hint(int which) {
-    boolean oldValue = hints[PApplet.abs(which)];
+    boolean oldValue = hints[PUtil.abs(which)];
     super.hint(which);
-    boolean newValue = hints[PApplet.abs(which)];
+    boolean newValue = hints[PUtil.abs(which)];
 
     if (oldValue == newValue) {
       return;
@@ -2575,16 +2575,16 @@ public class PGraphicsOpenGL extends PGraphics {
             // expand array
             int newSize = sortedTriangleCount << 1;
             Triangle[] temp = new Triangle[newSize];
-            PApplet.arrayCopy(sortedPolyTriangles, 0, temp, 0, newSize);
+            PUtil.arrayCopy(sortedPolyTriangles, 0, temp, 0, newSize);
             sortedPolyTriangles = temp;
           }
 
           int i0 = voffset + indices[3 * tr + 0];
           int i1 = voffset + indices[3 * tr + 1];
           int i2 = voffset + indices[3 * tr + 2];
-          PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
-          PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);
-          PApplet.arrayCopy(vertices, 4 * i2, src2, 0, 4);
+          PUtil.arrayCopy(vertices, 4 * i0, src0, 0, 4);
+          PUtil.arrayCopy(vertices, 4 * i1, src1, 0, 4);
+          PUtil.arrayCopy(vertices, 4 * i2, src2, 0, 4);
           modelview.mult(src0, pt0);
           modelview.mult(src1, pt1);
           modelview.mult(src2, pt2);
@@ -2596,7 +2596,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
           // pt0, pt1 and pt2 are in eye coordinates since they have been
           // multiplied by the modelview matrix.
-          float d = PApplet.dist(0f, 0f, 0f, pos[0], pos[1], pos[2]);
+          float d = PUtil.dist(0f, 0f, 0f, pos[0], pos[1], pos[2]);
 
           Triangle tri = new Triangle(i0, i1, i2, textureImage, d);
           sortedPolyTriangles[sortedTriangleCount] = tri;
@@ -2677,16 +2677,16 @@ public class PGraphicsOpenGL extends PGraphics {
         float[] src0 = {0, 0, 0, 0};
         float[] src1 = {0, 0, 0, 0};
         float[] src2 = {0, 0, 0, 0};
-        PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i2, src2, 0, 4);
+        PUtil.arrayCopy(vertices, 4 * i0, src0, 0, 4);
+        PUtil.arrayCopy(vertices, 4 * i1, src1, 0, 4);
+        PUtil.arrayCopy(vertices, 4 * i2, src2, 0, 4);
         modelview.mult(src0, pt0);
         modelview.mult(src1, pt1);
         modelview.mult(src2, pt2);
       } else {
-        PApplet.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i1, pt1, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i2, pt2, 0, 4);
+        PUtil.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
+        PUtil.arrayCopy(vertices, 4 * i1, pt1, 0, 4);
+        PUtil.arrayCopy(vertices, 4 * i2, pt2, 0, 4);
       }
 
       if (tex != null) {
@@ -2770,16 +2770,16 @@ public class PGraphicsOpenGL extends PGraphics {
             float[] src0 = {0, 0, 0, 0};
             float[] src1 = {0, 0, 0, 0};
             float[] src2 = {0, 0, 0, 0};
-            PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
-            PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);
-            PApplet.arrayCopy(vertices, 4 * i2, src2, 0, 4);
+            PUtil.arrayCopy(vertices, 4 * i0, src0, 0, 4);
+            PUtil.arrayCopy(vertices, 4 * i1, src1, 0, 4);
+            PUtil.arrayCopy(vertices, 4 * i2, src2, 0, 4);
             modelview.mult(src0, pt0);
             modelview.mult(src1, pt1);
             modelview.mult(src2, pt2);
           } else {
-            PApplet.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
-            PApplet.arrayCopy(vertices, 4 * i1, pt1, 0, 4);
-            PApplet.arrayCopy(vertices, 4 * i2, pt2, 0, 4);
+            PUtil.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
+            PUtil.arrayCopy(vertices, 4 * i1, pt1, 0, 4);
+            PUtil.arrayCopy(vertices, 4 * i2, pt2, 0, 4);
           }
 
           if (textureImage != null) {
@@ -2903,13 +2903,13 @@ public class PGraphicsOpenGL extends PGraphics {
         if (flushMode == FLUSH_CONTINUOUSLY) {
           float[] src0 = {0, 0, 0, 0};
           float[] src1 = {0, 0, 0, 0};
-          PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
-          PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);
+          PUtil.arrayCopy(vertices, 4 * i0, src0, 0, 4);
+          PUtil.arrayCopy(vertices, 4 * i1, src1, 0, 4);
           modelview.mult(src0, pt0);
           modelview.mult(src1, pt1);
         } else {
-          PApplet.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
-          PApplet.arrayCopy(vertices, 4 * i1, pt1, 0, 4);
+          PUtil.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
+          PUtil.arrayCopy(vertices, 4 * i1, pt1, 0, 4);
         }
 
         if (raw.is3D()) {
@@ -2989,7 +2989,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int perim;
         if (0 < size) { // round point
           weight = +size / 0.5f;
-          perim = PApplet.min(MAX_POINT_ACCURACY, PApplet.max(MIN_POINT_ACCURACY,
+          perim = PUtil.min(MAX_POINT_ACCURACY, PUtil.max(MIN_POINT_ACCURACY,
                               (int) (TWO_PI * weight / POINT_ACCURACY_FACTOR))) + 1;
         } else {        // Square point
           weight = -size / 0.5f;
@@ -3002,10 +3002,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
         if (flushMode == FLUSH_CONTINUOUSLY) {
           float[] src0 = {0, 0, 0, 0};
-          PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
+          PUtil.arrayCopy(vertices, 4 * i0, src0, 0, 4);
           modelview.mult(src0, pt0);
         } else {
-          PApplet.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
+          PUtil.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
         }
 
         if (raw.is3D()) {
@@ -3506,7 +3506,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public PShape loadShape(String filename) {
-    String ext = PApplet.getExtension(filename);
+    String ext = PUtil.getExtension(filename);
     if (PGraphics2D.isSupportedExtension(ext)) {
       return PGraphics2D.loadShapeImpl(this, filename, ext);
     } if (PGraphics3D.isSupportedExtension(ext)) {
@@ -3913,7 +3913,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (diff(norm2, 1)) {
       // The rotation vector is not normalized.
-      float norm = PApplet.sqrt(norm2);
+      float norm = PUtil.sqrt(norm2);
       v0 /= norm;
       v1 /= norm;
       v2 /= norm;
@@ -3927,8 +3927,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   static private void invRotate(PMatrix3D matrix, float angle,
                                 float v0, float v1, float v2) {
-    float c = PApplet.cos(-angle);
-    float s = PApplet.sin(-angle);
+    float c = PUtil.cos(-angle);
+    float s = PUtil.sin(-angle);
     float t = 1.0f - c;
 
     matrix.preApply((t*v0*v0) + c, (t*v0*v1) - (s*v2), (t*v0*v2) + (s*v1), 0,
@@ -4437,7 +4437,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float z0 = eyeX - centerX;
     float z1 = eyeY - centerY;
     float z2 = eyeZ - centerZ;
-    float mag = PApplet.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+    float mag = PUtil.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
     if (nonZero(mag)) {
       z0 /= mag;
       z1 /= mag;
@@ -4464,14 +4464,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
     // Cross product gives area of parallelogram, which is < 1.0 for
     // non-perpendicular unit-length vectors; so normalize x, y here:
-    mag = PApplet.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
+    mag = PUtil.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
     if (nonZero(mag)) {
       x0 /= mag;
       x1 /= mag;
       x2 /= mag;
     }
 
-    mag = PApplet.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+    mag = PUtil.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
     if (nonZero(mag)) {
       y0 /= mag;
       y1 /= mag;
@@ -5242,7 +5242,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float nz =
       dx*modelviewInv.m02 + dy*modelviewInv.m12 + dz*modelviewInv.m22;
 
-    float invn = 1.0f / PApplet.dist(0, 0, 0, nx, ny, nz);
+    float invn = 1.0f / PUtil.dist(0, 0, 0, nx, ny, nz);
     lightNormal[3 * num + 0] = invn * nx;
     lightNormal[3 * num + 1] = invn * ny;
     lightNormal[3 * num + 2] = invn * nz;
@@ -5308,7 +5308,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void lightSpot(int num, float angle, float exponent) {
-    lightSpotParameters[2 * num + 0] = Math.max(0, PApplet.cos(angle));
+    lightSpotParameters[2 * num + 0] = Math.max(0, PUtil.cos(angle));
     lightSpotParameters[2 * num + 1] = exponent;
   }
 
@@ -5531,7 +5531,7 @@ public class PGraphicsOpenGL extends PGraphics {
           offset1 += w;
         }
       } else {
-        PApplet.arrayCopy(pixels, 0, nativePixels, 0, len);
+        PUtil.arrayCopy(pixels, 0, nativePixels, 0, len);
       }
       PGL.javaToNativeARGB(nativePixels, w, h);
     } catch (ArrayIndexOutOfBoundsException e) {
@@ -5556,8 +5556,8 @@ public class PGraphicsOpenGL extends PGraphics {
       // (off)screen buffer.
       // First, copy the pixels to the texture. We don't need to invert the
       // pixel copy because the texture will be drawn inverted.
-      int tw = PApplet.min(texture.glWidth - x, w);
-      int th = PApplet.min(texture.glHeight - y, h);
+      int tw = PUtil.min(texture.glWidth - x, w);
+      int th = PUtil.min(texture.glHeight - y, h);
       pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
                         x, y, tw, th, nativePixelBuffer);
       beginPixelsOp(OP_WRITE);
@@ -6975,31 +6975,31 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void expandTextures(int n) {
       PImage[] temp = new PImage[n];
-      PApplet.arrayCopy(textures, 0, temp, 0, size);
+      PUtil.arrayCopy(textures, 0, temp, 0, size);
       textures = temp;
     }
 
     void expandFirstIndex(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(firstIndex, 0, temp, 0, size);
+      PUtil.arrayCopy(firstIndex, 0, temp, 0, size);
       firstIndex = temp;
     }
 
     void expandLastIndex(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(lastIndex, 0, temp, 0, size);
+      PUtil.arrayCopy(lastIndex, 0, temp, 0, size);
       lastIndex = temp;
     }
 
     void expandFirstCache(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(firstCache, 0, temp, 0, size);
+      PUtil.arrayCopy(firstCache, 0, temp, 0, size);
       firstCache = temp;
     }
 
     void expandLastCache(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(lastCache, 0, temp, 0, size);
+      PUtil.arrayCopy(lastCache, 0, temp, 0, size);
       lastCache = temp;
     }
   }
@@ -7087,25 +7087,25 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void expandIndexCount(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(indexCount, 0, temp, 0, size);
+      PUtil.arrayCopy(indexCount, 0, temp, 0, size);
       indexCount = temp;
     }
 
     void expandIndexOffset(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(indexOffset, 0, temp, 0, size);
+      PUtil.arrayCopy(indexOffset, 0, temp, 0, size);
       indexOffset = temp;
     }
 
     void expandVertexCount(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(vertexCount, 0, temp, 0, size);
+      PUtil.arrayCopy(vertexCount, 0, temp, 0, size);
       vertexCount = temp;
     }
 
     void expandVertexOffset(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(vertexOffset, 0, temp, 0, size);
+      PUtil.arrayCopy(vertexOffset, 0, temp, 0, size);
       vertexOffset = temp;
     }
   }
@@ -7289,9 +7289,9 @@ public class PGraphicsOpenGL extends PGraphics {
       int index;
       for (int i = 0; i < vertexCount; i++) {
         index = 4 * i;
-        v.x = PApplet.min(v.x, vertices[index++]);
-        v.y = PApplet.min(v.y, vertices[index++]);
-        v.z = PApplet.min(v.z, vertices[index  ]);
+        v.x = PUtil.min(v.x, vertices[index++]);
+        v.y = PUtil.min(v.y, vertices[index++]);
+        v.z = PUtil.min(v.z, vertices[index  ]);
       }
     }
 
@@ -7299,9 +7299,9 @@ public class PGraphicsOpenGL extends PGraphics {
       int index;
       for (int i = 0; i < vertexCount; i++) {
         index = 4 * i;
-        v.x = PApplet.max(v.x, vertices[index++]);
-        v.y = PApplet.max(v.y, vertices[index++]);
-        v.z = PApplet.max(v.z, vertices[index  ]);
+        v.x = PUtil.max(v.x, vertices[index++]);
+        v.y = PUtil.max(v.y, vertices[index++]);
+        v.z = PUtil.max(v.z, vertices[index  ]);
       }
     }
 
@@ -7322,73 +7322,73 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void expandVertices(int n) {
       float temp[] = new float[3 * n];
-      PApplet.arrayCopy(vertices, 0, temp, 0, 3 * vertexCount);
+      PUtil.arrayCopy(vertices, 0, temp, 0, 3 * vertexCount);
       vertices = temp;
     }
 
     void expandColors(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(colors, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(colors, 0, temp, 0, vertexCount);
       colors = temp;
     }
 
     void expandNormals(int n) {
       float temp[] = new float[3 * n];
-      PApplet.arrayCopy(normals, 0, temp, 0, 3 * vertexCount);
+      PUtil.arrayCopy(normals, 0, temp, 0, 3 * vertexCount);
       normals = temp;
     }
 
     void expandTexCoords(int n) {
       float temp[] = new float[2 * n];
-      PApplet.arrayCopy(texcoords, 0, temp, 0, 2 * vertexCount);
+      PUtil.arrayCopy(texcoords, 0, temp, 0, 2 * vertexCount);
       texcoords = temp;
     }
 
     void expandStrokeColors(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(strokeColors, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(strokeColors, 0, temp, 0, vertexCount);
       strokeColors = temp;
     }
 
     void expandStrokeWeights(int n) {
       float temp[] = new float[n];
-      PApplet.arrayCopy(strokeWeights, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(strokeWeights, 0, temp, 0, vertexCount);
       strokeWeights = temp;
     }
 
     void expandAmbient(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(ambient, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(ambient, 0, temp, 0, vertexCount);
       ambient = temp;
     }
 
     void expandSpecular(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(specular, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(specular, 0, temp, 0, vertexCount);
       specular = temp;
     }
 
     void expandEmissive(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(emissive, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(emissive, 0, temp, 0, vertexCount);
       emissive = temp;
     }
 
     void expandShininess(int n) {
       float temp[] = new float[n];
-      PApplet.arrayCopy(shininess, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(shininess, 0, temp, 0, vertexCount);
       shininess = temp;
     }
 
     void expandCodes(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(codes, 0, temp, 0, codeCount);
+      PUtil.arrayCopy(codes, 0, temp, 0, codeCount);
       codes = temp;
     }
 
     void expandEdges(int n) {
       int temp[][] = new int[n][3];
-      PApplet.arrayCopy(edges, 0, temp, 0, edgeCount);
+      PUtil.arrayCopy(edges, 0, temp, 0, edgeCount);
       edges = temp;
     }
 
@@ -7421,73 +7421,73 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void trimVertices() {
       float temp[] = new float[3 * vertexCount];
-      PApplet.arrayCopy(vertices, 0, temp, 0, 3 * vertexCount);
+      PUtil.arrayCopy(vertices, 0, temp, 0, 3 * vertexCount);
       vertices = temp;
     }
 
     void trimColors() {
       int temp[] = new int[vertexCount];
-      PApplet.arrayCopy(colors, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(colors, 0, temp, 0, vertexCount);
       colors = temp;
     }
 
     void trimNormals() {
       float temp[] = new float[3 * vertexCount];
-      PApplet.arrayCopy(normals, 0, temp, 0, 3 * vertexCount);
+      PUtil.arrayCopy(normals, 0, temp, 0, 3 * vertexCount);
       normals = temp;
     }
 
     void trimTexCoords() {
       float temp[] = new float[2 * vertexCount];
-      PApplet.arrayCopy(texcoords, 0, temp, 0, 2 * vertexCount);
+      PUtil.arrayCopy(texcoords, 0, temp, 0, 2 * vertexCount);
       texcoords = temp;
     }
 
     void trimStrokeColors() {
       int temp[] = new int[vertexCount];
-      PApplet.arrayCopy(strokeColors, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(strokeColors, 0, temp, 0, vertexCount);
       strokeColors = temp;
     }
 
     void trimStrokeWeights() {
       float temp[] = new float[vertexCount];
-      PApplet.arrayCopy(strokeWeights, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(strokeWeights, 0, temp, 0, vertexCount);
       strokeWeights = temp;
     }
 
     void trimAmbient() {
       int temp[] = new int[vertexCount];
-      PApplet.arrayCopy(ambient, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(ambient, 0, temp, 0, vertexCount);
       ambient = temp;
     }
 
     void trimSpecular() {
       int temp[] = new int[vertexCount];
-      PApplet.arrayCopy(specular, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(specular, 0, temp, 0, vertexCount);
       specular = temp;
     }
 
     void trimEmissive() {
       int temp[] = new int[vertexCount];
-      PApplet.arrayCopy(emissive, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(emissive, 0, temp, 0, vertexCount);
       emissive = temp;
     }
 
     void trimShininess() {
       float temp[] = new float[vertexCount];
-      PApplet.arrayCopy(shininess, 0, temp, 0, vertexCount);
+      PUtil.arrayCopy(shininess, 0, temp, 0, vertexCount);
       shininess = temp;
     }
 
     void trimCodes() {
       int temp[] = new int[codeCount];
-      PApplet.arrayCopy(codes, 0, temp, 0, codeCount);
+      PUtil.arrayCopy(codes, 0, temp, 0, codeCount);
       codes = temp;
     }
 
     void trimEdges() {
       int temp[][] = new int[edgeCount][3];
-      PApplet.arrayCopy(edges, 0, temp, 0, edgeCount);
+      PUtil.arrayCopy(edges, 0, temp, 0, edgeCount);
       edges = temp;
     }
 
@@ -7604,7 +7604,7 @@ public class PGraphicsOpenGL extends PGraphics {
           code == QUADRATIC_VERTEX ||
           code == CURVE_VERTEX) {
         if (codes == null) {
-          codes = new int[PApplet.max(PGL.DEFAULT_IN_VERTICES, vertexCount)];
+          codes = new int[PUtil.max(PGL.DEFAULT_IN_VERTICES, vertexCount)];
           Arrays.fill(codes, 0, vertexCount, VERTEX);
           codeCount = vertexCount;
         }
@@ -7848,7 +7848,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float nx = v12y * v10z - v10y * v12z;
       float ny = v12z * v10x - v10z * v12x;
       float nz = v12x * v10y - v10x * v12y;
-      float d = PApplet.sqrt(nx * nx + ny * ny + nz * nz);
+      float d = PUtil.sqrt(nx * nx + ny * ny + nz * nz);
       nx /= d;
       ny /= d;
       nz /= d;
@@ -8060,8 +8060,8 @@ public class PGraphicsOpenGL extends PGraphics {
       float sy2 = pg.screenY(x + w, y + h);
 
       int accuracy =
-        PApplet.min(MAX_POINT_ACCURACY, PApplet.max(MIN_POINT_ACCURACY,
-                    (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) /
+        PUtil.min(MAX_POINT_ACCURACY, PUtil.max(MIN_POINT_ACCURACY,
+                    (int) (TWO_PI * PUtil.dist(sx1, sy1, sx2, sy2) /
                     POINT_ACCURACY_FACTOR)));
       float inc = (float) SINCOS_LENGTH / accuracy;
 
@@ -8109,7 +8109,7 @@ public class PGraphicsOpenGL extends PGraphics {
       int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
 
       // get length before wrapping indexes so (startLUT <= stopLUT);
-      int length = PApplet.constrain(stopLUT - startLUT, 0, SINCOS_LENGTH);
+      int length = PUtil.constrain(stopLUT - startLUT, 0, SINCOS_LENGTH);
 
       boolean fullCircle = length == SINCOS_LENGTH;
 
@@ -8147,10 +8147,10 @@ public class PGraphicsOpenGL extends PGraphics {
         float sy2 = pg.screenY(x + w, y + h);
 
         int accuracy =
-          PApplet.min(MAX_POINT_ACCURACY, PApplet.max(MIN_POINT_ACCURACY,
-                      (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) /
+          PUtil.min(MAX_POINT_ACCURACY, PUtil.max(MIN_POINT_ACCURACY,
+                      (int) (TWO_PI * PUtil.dist(sx1, sy1, sx2, sy2) /
                       POINT_ACCURACY_FACTOR)));
-        inc = PApplet.max(1, SINCOS_LENGTH / accuracy);
+        inc = PUtil.max(1, SINCOS_LENGTH / accuracy);
       }
 
       int idx = idx0;
@@ -8164,7 +8164,7 @@ public class PGraphicsOpenGL extends PGraphics {
       //     wrapping around end of LUT
       do {
         i += inc;
-        i = PApplet.min(i, length); // clamp so last vertex won't go over
+        i = PUtil.min(i, length); // clamp so last vertex won't go over
 
         ii = startLUT + i; // ii from 0 to (2 * SINCOS_LENGTH - 1)
         if (ii >= SINCOS_LENGTH) ii -= SINCOS_LENGTH;
@@ -8711,54 +8711,54 @@ public class PGraphicsOpenGL extends PGraphics {
     void getPolyVertexMin(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x = PApplet.min(v.x, polyVertices[index++]);
-        v.y = PApplet.min(v.y, polyVertices[index++]);
-        v.z = PApplet.min(v.z, polyVertices[index  ]);
+        v.x = PUtil.min(v.x, polyVertices[index++]);
+        v.y = PUtil.min(v.y, polyVertices[index++]);
+        v.z = PUtil.min(v.z, polyVertices[index  ]);
       }
     }
 
     void getLineVertexMin(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x = PApplet.min(v.x, lineVertices[index++]);
-        v.y = PApplet.min(v.y, lineVertices[index++]);
-        v.z = PApplet.min(v.z, lineVertices[index  ]);
+        v.x = PUtil.min(v.x, lineVertices[index++]);
+        v.y = PUtil.min(v.y, lineVertices[index++]);
+        v.z = PUtil.min(v.z, lineVertices[index  ]);
       }
     }
 
     void getPointVertexMin(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x = PApplet.min(v.x, pointVertices[index++]);
-        v.y = PApplet.min(v.y, pointVertices[index++]);
-        v.z = PApplet.min(v.z, pointVertices[index  ]);
+        v.x = PUtil.min(v.x, pointVertices[index++]);
+        v.y = PUtil.min(v.y, pointVertices[index++]);
+        v.z = PUtil.min(v.z, pointVertices[index  ]);
       }
     }
 
     void getPolyVertexMax(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x = PApplet.max(v.x, polyVertices[index++]);
-        v.y = PApplet.max(v.y, polyVertices[index++]);
-        v.z = PApplet.max(v.z, polyVertices[index  ]);
+        v.x = PUtil.max(v.x, polyVertices[index++]);
+        v.y = PUtil.max(v.y, polyVertices[index++]);
+        v.z = PUtil.max(v.z, polyVertices[index  ]);
       }
     }
 
     void getLineVertexMax(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x = PApplet.max(v.x, lineVertices[index++]);
-        v.y = PApplet.max(v.y, lineVertices[index++]);
-        v.z = PApplet.max(v.z, lineVertices[index  ]);
+        v.x = PUtil.max(v.x, lineVertices[index++]);
+        v.y = PUtil.max(v.y, lineVertices[index++]);
+        v.z = PUtil.max(v.z, lineVertices[index  ]);
       }
     }
 
     void getPointVertexMax(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x = PApplet.max(v.x, pointVertices[index++]);
-        v.y = PApplet.max(v.y, pointVertices[index++]);
-        v.z = PApplet.max(v.z, pointVertices[index  ]);
+        v.x = PUtil.max(v.x, pointVertices[index++]);
+        v.y = PUtil.max(v.y, pointVertices[index++]);
+        v.z = PUtil.max(v.z, pointVertices[index  ]);
       }
     }
 
@@ -8945,119 +8945,119 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void expandPolyVertices(int n) {
       float temp[] = new float[4 * n];
-      PApplet.arrayCopy(polyVertices, 0, temp, 0, 4 * polyVertexCount);
+      PUtil.arrayCopy(polyVertices, 0, temp, 0, 4 * polyVertexCount);
       polyVertices = temp;
       polyVerticesBuffer = PGL.allocateFloatBuffer(polyVertices);
     }
 
     void expandPolyColors(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(polyColors, 0, temp, 0, polyVertexCount);
+      PUtil.arrayCopy(polyColors, 0, temp, 0, polyVertexCount);
       polyColors = temp;
       polyColorsBuffer = PGL.allocateIntBuffer(polyColors);
     }
 
     void expandPolyNormals(int n) {
       float temp[] = new float[3 * n];
-      PApplet.arrayCopy(polyNormals, 0, temp, 0, 3 * polyVertexCount);
+      PUtil.arrayCopy(polyNormals, 0, temp, 0, 3 * polyVertexCount);
       polyNormals = temp;
       polyNormalsBuffer = PGL.allocateFloatBuffer(polyNormals);
     }
 
     void expandPolyTexCoords(int n) {
       float temp[] = new float[2 * n];
-      PApplet.arrayCopy(polyTexCoords, 0, temp, 0, 2 * polyVertexCount);
+      PUtil.arrayCopy(polyTexCoords, 0, temp, 0, 2 * polyVertexCount);
       polyTexCoords = temp;
       polyTexCoordsBuffer = PGL.allocateFloatBuffer(polyTexCoords);
     }
 
     void expandPolyAmbient(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(polyAmbient, 0, temp, 0, polyVertexCount);
+      PUtil.arrayCopy(polyAmbient, 0, temp, 0, polyVertexCount);
       polyAmbient = temp;
       polyAmbientBuffer = PGL.allocateIntBuffer(polyAmbient);
     }
 
     void expandPolySpecular(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(polySpecular, 0, temp, 0, polyVertexCount);
+      PUtil.arrayCopy(polySpecular, 0, temp, 0, polyVertexCount);
       polySpecular = temp;
       polySpecularBuffer = PGL.allocateIntBuffer(polySpecular);
     }
 
     void expandPolyEmissive(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(polyEmissive, 0, temp, 0, polyVertexCount);
+      PUtil.arrayCopy(polyEmissive, 0, temp, 0, polyVertexCount);
       polyEmissive = temp;
       polyEmissiveBuffer = PGL.allocateIntBuffer(polyEmissive);
     }
 
     void expandPolyShininess(int n) {
       float temp[] = new float[n];
-      PApplet.arrayCopy(polyShininess, 0, temp, 0, polyVertexCount);
+      PUtil.arrayCopy(polyShininess, 0, temp, 0, polyVertexCount);
       polyShininess = temp;
       polyShininessBuffer = PGL.allocateFloatBuffer(polyShininess);
     }
 
     void expandPolyIndices(int n) {
       short temp[] = new short[n];
-      PApplet.arrayCopy(polyIndices, 0, temp, 0, polyIndexCount);
+      PUtil.arrayCopy(polyIndices, 0, temp, 0, polyIndexCount);
       polyIndices = temp;
       polyIndicesBuffer = PGL.allocateShortBuffer(polyIndices);
     }
 
     void expandLineVertices(int n) {
       float temp[] = new float[4 * n];
-      PApplet.arrayCopy(lineVertices, 0, temp, 0, 4 * lineVertexCount);
+      PUtil.arrayCopy(lineVertices, 0, temp, 0, 4 * lineVertexCount);
       lineVertices = temp;
       lineVerticesBuffer = PGL.allocateFloatBuffer(lineVertices);
     }
 
     void expandLineColors(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(lineColors, 0, temp, 0, lineVertexCount);
+      PUtil.arrayCopy(lineColors, 0, temp, 0, lineVertexCount);
       lineColors = temp;
       lineColorsBuffer = PGL.allocateIntBuffer(lineColors);
     }
 
     void expandLineDirections(int n) {
       float temp[] = new float[4 * n];
-      PApplet.arrayCopy(lineDirections, 0, temp, 0, 4 * lineVertexCount);
+      PUtil.arrayCopy(lineDirections, 0, temp, 0, 4 * lineVertexCount);
       lineDirections = temp;
       lineDirectionsBuffer = PGL.allocateFloatBuffer(lineDirections);
     }
 
     void expandLineIndices(int n) {
       short temp[] = new short[n];
-      PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
+      PUtil.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
       lineIndices = temp;
       lineIndicesBuffer = PGL.allocateShortBuffer(lineIndices);
     }
 
     void expandPointVertices(int n) {
       float temp[] = new float[4 * n];
-      PApplet.arrayCopy(pointVertices, 0, temp, 0, 4 * pointVertexCount);
+      PUtil.arrayCopy(pointVertices, 0, temp, 0, 4 * pointVertexCount);
       pointVertices = temp;
       pointVerticesBuffer = PGL.allocateFloatBuffer(pointVertices);
     }
 
     void expandPointColors(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(pointColors, 0, temp, 0, pointVertexCount);
+      PUtil.arrayCopy(pointColors, 0, temp, 0, pointVertexCount);
       pointColors = temp;
       pointColorsBuffer = PGL.allocateIntBuffer(pointColors);
     }
 
     void expandPointOffsets(int n) {
       float temp[] = new float[2 * n];
-      PApplet.arrayCopy(pointOffsets, 0, temp, 0, 2 * pointVertexCount);
+      PUtil.arrayCopy(pointOffsets, 0, temp, 0, 2 * pointVertexCount);
       pointOffsets = temp;
       pointOffsetsBuffer = PGL.allocateFloatBuffer(pointOffsets);
     }
 
     void expandPointIndices(int n) {
       short temp[] = new short[n];
-      PApplet.arrayCopy(pointIndices, 0, temp, 0, pointIndexCount);
+      PUtil.arrayCopy(pointIndices, 0, temp, 0, pointIndexCount);
       pointIndices = temp;
       pointIndicesBuffer = PGL.allocateShortBuffer(pointIndices);
     }
@@ -9105,119 +9105,119 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void trimPolyVertices() {
       float temp[] = new float[4 * polyVertexCount];
-      PApplet.arrayCopy(polyVertices, 0, temp, 0, 4 * polyVertexCount);
+      PUtil.arrayCopy(polyVertices, 0, temp, 0, 4 * polyVertexCount);
       polyVertices = temp;
       polyVerticesBuffer = PGL.allocateFloatBuffer(polyVertices);
     }
 
     void trimPolyColors() {
       int temp[] = new int[polyVertexCount];
-      PApplet.arrayCopy(polyColors, 0, temp, 0, polyVertexCount);
+      PUtil.arrayCopy(polyColors, 0, temp, 0, polyVertexCount);
       polyColors = temp;
       polyColorsBuffer = PGL.allocateIntBuffer(polyColors);
     }
 
     void trimPolyNormals() {
       float temp[] = new float[3 * polyVertexCount];
-      PApplet.arrayCopy(polyNormals, 0, temp, 0, 3 * polyVertexCount);
+      PUtil.arrayCopy(polyNormals, 0, temp, 0, 3 * polyVertexCount);
       polyNormals = temp;
       polyNormalsBuffer = PGL.allocateFloatBuffer(polyNormals);
     }
 
     void trimPolyTexCoords() {
       float temp[] = new float[2 * polyVertexCount];
-      PApplet.arrayCopy(polyTexCoords, 0, temp, 0, 2 * polyVertexCount);
+      PUtil.arrayCopy(polyTexCoords, 0, temp, 0, 2 * polyVertexCount);
       polyTexCoords = temp;
       polyTexCoordsBuffer = PGL.allocateFloatBuffer(polyTexCoords);
     }
 
     void trimPolyAmbient() {
       int temp[] = new int[polyVertexCount];
-      PApplet.arrayCopy(polyAmbient, 0, temp, 0, polyVertexCount);
+      PUtil.arrayCopy(polyAmbient, 0, temp, 0, polyVertexCount);
       polyAmbient = temp;
       polyAmbientBuffer = PGL.allocateIntBuffer(polyAmbient);
     }
 
     void trimPolySpecular() {
       int temp[] = new int[polyVertexCount];
-      PApplet.arrayCopy(polySpecular, 0, temp, 0, polyVertexCount);
+      PUtil.arrayCopy(polySpecular, 0, temp, 0, polyVertexCount);
       polySpecular = temp;
       polySpecularBuffer = PGL.allocateIntBuffer(polySpecular);
     }
 
     void trimPolyEmissive() {
       int temp[] = new int[polyVertexCount];
-      PApplet.arrayCopy(polyEmissive, 0, temp, 0, polyVertexCount);
+      PUtil.arrayCopy(polyEmissive, 0, temp, 0, polyVertexCount);
       polyEmissive = temp;
       polyEmissiveBuffer = PGL.allocateIntBuffer(polyEmissive);
     }
 
     void trimPolyShininess() {
       float temp[] = new float[polyVertexCount];
-      PApplet.arrayCopy(polyShininess, 0, temp, 0, polyVertexCount);
+      PUtil.arrayCopy(polyShininess, 0, temp, 0, polyVertexCount);
       polyShininess = temp;
       polyShininessBuffer = PGL.allocateFloatBuffer(polyShininess);
     }
 
     void trimPolyIndices() {
       short temp[] = new short[polyIndexCount];
-      PApplet.arrayCopy(polyIndices, 0, temp, 0, polyIndexCount);
+      PUtil.arrayCopy(polyIndices, 0, temp, 0, polyIndexCount);
       polyIndices = temp;
       polyIndicesBuffer = PGL.allocateShortBuffer(polyIndices);
     }
 
     void trimLineVertices() {
       float temp[] = new float[4 * lineVertexCount];
-      PApplet.arrayCopy(lineVertices, 0, temp, 0, 4 * lineVertexCount);
+      PUtil.arrayCopy(lineVertices, 0, temp, 0, 4 * lineVertexCount);
       lineVertices = temp;
       lineVerticesBuffer = PGL.allocateFloatBuffer(lineVertices);
     }
 
     void trimLineColors() {
       int temp[] = new int[lineVertexCount];
-      PApplet.arrayCopy(lineColors, 0, temp, 0, lineVertexCount);
+      PUtil.arrayCopy(lineColors, 0, temp, 0, lineVertexCount);
       lineColors = temp;
       lineColorsBuffer = PGL.allocateIntBuffer(lineColors);
     }
 
     void trimLineDirections() {
       float temp[] = new float[4 * lineVertexCount];
-      PApplet.arrayCopy(lineDirections, 0, temp, 0, 4 * lineVertexCount);
+      PUtil.arrayCopy(lineDirections, 0, temp, 0, 4 * lineVertexCount);
       lineDirections = temp;
       lineDirectionsBuffer = PGL.allocateFloatBuffer(lineDirections);
     }
 
     void trimLineIndices() {
       short temp[] = new short[lineIndexCount];
-      PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
+      PUtil.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
       lineIndices = temp;
       lineIndicesBuffer = PGL.allocateShortBuffer(lineIndices);
     }
 
     void trimPointVertices() {
       float temp[] = new float[4 * pointVertexCount];
-      PApplet.arrayCopy(pointVertices, 0, temp, 0, 4 * pointVertexCount);
+      PUtil.arrayCopy(pointVertices, 0, temp, 0, 4 * pointVertexCount);
       pointVertices = temp;
       pointVerticesBuffer = PGL.allocateFloatBuffer(pointVertices);
     }
 
     void trimPointColors() {
       int temp[] = new int[pointVertexCount];
-      PApplet.arrayCopy(pointColors, 0, temp, 0, pointVertexCount);
+      PUtil.arrayCopy(pointColors, 0, temp, 0, pointVertexCount);
       pointColors = temp;
       pointColorsBuffer = PGL.allocateIntBuffer(pointColors);
     }
 
     void trimPointOffsets() {
       float temp[] = new float[2 * pointVertexCount];
-      PApplet.arrayCopy(pointOffsets, 0, temp, 0, 2 * pointVertexCount);
+      PUtil.arrayCopy(pointOffsets, 0, temp, 0, 2 * pointVertexCount);
       pointOffsets = temp;
       pointOffsetsBuffer = PGL.allocateFloatBuffer(pointOffsets);
     }
 
     void trimPointIndices() {
       short temp[] = new short[pointIndexCount];
-      PApplet.arrayCopy(pointIndices, 0, temp, 0, pointIndexCount);
+      PUtil.arrayCopy(pointIndices, 0, temp, 0, pointIndexCount);
       pointIndices = temp;
       pointIndicesBuffer = PGL.allocateShortBuffer(pointIndices);
     }
@@ -9278,7 +9278,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float nx = v12y * v10z - v10y * v12z;
       float ny = v12z * v10x - v10z * v12x;
       float nz = v12x * v10y - v10x * v12y;
-      float d = PApplet.sqrt(nx * nx + ny * ny + nz * nz);
+      float d = PUtil.sqrt(nx * nx + ny * ny + nz * nz);
       nx /= d;
       ny /= d;
       nz /= d;
@@ -9462,9 +9462,9 @@ public class PGraphicsOpenGL extends PGraphics {
         if (clampXY) {
           // ceil emulates the behavior of JAVA2D
           polyVertices[index++] =
-            PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
+            PUtil.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
           polyVertices[index++] =
-            PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
+            PUtil.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
         } else {
           polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
           polyVertices[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
@@ -9537,9 +9537,9 @@ public class PGraphicsOpenGL extends PGraphics {
           if (clampXY) {
             // ceil emulates the behavior of JAVA2D
             polyVertices[index++] =
-              PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
+              PUtil.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
             polyVertices[index++] =
-              PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
+              PUtil.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
           } else {
             polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
             polyVertices[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
@@ -9585,11 +9585,11 @@ public class PGraphicsOpenGL extends PGraphics {
           for (int i = 0; i < nvert; i++) {
             int inIdx = i0 + i;
             int tessIdx = firstPolyVertex + i;
-            PApplet.arrayCopy(in.vertices, 3 * inIdx,
+            PUtil.arrayCopy(in.vertices, 3 * inIdx,
                               polyVertices, 4 * tessIdx, 3);
             polyVertices[4 * tessIdx + 3] = 1;
           }
-          PApplet.arrayCopy(in.normals, 3 * i0,
+          PUtil.arrayCopy(in.normals, 3 * i0,
                             polyNormals, 3 * firstPolyVertex, 3 * nvert);
         }
       }
@@ -9615,17 +9615,17 @@ public class PGraphicsOpenGL extends PGraphics {
           polyShininess[tessIdx] = in.shininess[inIdx];
         }
       } else {
-        PApplet.arrayCopy(in.colors, i0,
+        PUtil.arrayCopy(in.colors, i0,
                           polyColors, firstPolyVertex, nvert);
-        PApplet.arrayCopy(in.texcoords, 2 * i0,
+        PUtil.arrayCopy(in.texcoords, 2 * i0,
                           polyTexCoords, 2 * firstPolyVertex, 2 * nvert);
-        PApplet.arrayCopy(in.ambient, i0,
+        PUtil.arrayCopy(in.ambient, i0,
                           polyAmbient, firstPolyVertex, nvert);
-        PApplet.arrayCopy(in.specular, i0,
+        PUtil.arrayCopy(in.specular, i0,
                           polySpecular, firstPolyVertex, nvert);
-        PApplet.arrayCopy(in.emissive, i0,
+        PUtil.arrayCopy(in.emissive, i0,
                           polyEmissive, firstPolyVertex, nvert);
-        PApplet.arrayCopy(in.shininess, i0,
+        PUtil.arrayCopy(in.shininess, i0,
                           polyShininess, firstPolyVertex, nvert);
       }
     }
@@ -9968,7 +9968,7 @@ public class PGraphicsOpenGL extends PGraphics {
         // The number of triangles of each fan depends on the
         // stroke weight of the point.
         int nPtVert =
-          PApplet.min(MAX_POINT_ACCURACY, PApplet.max(MIN_POINT_ACCURACY,
+          PUtil.min(MAX_POINT_ACCURACY, PUtil.max(MIN_POINT_ACCURACY,
                       (int) (TWO_PI * strokeWeight /
                       POINT_ACCURACY_FACTOR))) + 1;
         if (PGL.MAX_VERTEX_INDEX1 <= nPtVert) {
@@ -10779,7 +10779,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // Calculating direction and normal of the line.
       float dirx = x1 - x0;
       float diry = y1 - y0;
-      float llen = PApplet.sqrt(dirx * dirx + diry * diry);
+      float llen = PUtil.sqrt(dirx * dirx + diry * diry);
       float normx = 0, normy = 0;
       float dirdx = 0, dirdy = 0;
       if (nonZero(llen)) {
@@ -10791,8 +10791,8 @@ public class PGraphicsOpenGL extends PGraphics {
         // links:
         // http://stackoverflow.com/questions/10040961/opengl-pixel-perfect-2d-drawing
         // http://msdn.microsoft.com/en-us/library/dd374282(VS.85)
-        dirdx = (dirx / llen) * PApplet.min(0.75f, weight/2);
-        dirdy = (diry / llen) * PApplet.min(0.75f, weight/2);
+        dirdx = (dirx / llen) * PUtil.min(0.75f, weight/2);
+        dirdy = (diry / llen) * PUtil.min(0.75f, weight/2);
       }
 
       float normdx = normx * weight/2;
@@ -10875,7 +10875,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     boolean subPixelStroke(float weight) {
       float sw = transformScale() * weight;
-      return PApplet.abs(sw - (int)sw) > 0;
+      return PUtil.abs(sw - (int)sw) > 0;
     }
 
     boolean noCapsJoins() {
@@ -10967,7 +10967,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (fill && 3 <= nInVert) {
         int nInInd = indices.length;
         setRawSize(nInInd);
-        PApplet.arrayCopy(indices, rawIndices, nInInd);
+        PUtil.arrayCopy(indices, rawIndices, nInInd);
         boolean clamp = clampTriangles(indices);
         splitRawIndices(clamp);
       }
@@ -11239,10 +11239,10 @@ public class PGraphicsOpenGL extends PGraphics {
         tess.polyIndices[offset + 3 * tr + 2] = (short) ri2;
 
         inInd1 = 3 * tr + 2;
-        inMaxVert1 = PApplet.max(inMaxVert1, PApplet.max(i0, i1, i2));
-        inMaxVert0 = PApplet.min(inMaxVert0, PApplet.min(i0, i1, i2));
+        inMaxVert1 = PUtil.max(inMaxVert1, PUtil.max(i0, i1, i2));
+        inMaxVert0 = PUtil.min(inMaxVert0, PUtil.min(i0, i1, i2));
 
-        inMaxVertRel = PApplet.max(inMaxVertRel, PApplet.max(ri0, ri1, ri2));
+        inMaxVertRel = PUtil.max(inMaxVertRel, PUtil.max(ri0, ri1, ri2));
 
         if ((PGL.MAX_VERTEX_INDEX1 - 3 <= inMaxVertRel + dupCount &&
              inMaxVertRel + dupCount < PGL.MAX_VERTEX_INDEX1) ||
@@ -11303,7 +11303,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int n = dupCount << 1;
 
         int temp[] = new int[n];
-        PApplet.arrayCopy(dupIndices, 0, temp, 0, dupCount);
+        PUtil.arrayCopy(dupIndices, 0, temp, 0, dupCount);
         dupIndices = temp;
       }
 
@@ -11350,7 +11350,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void expandRawIndices(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(rawIndices, 0, temp, 0, rawSize);
+      PUtil.arrayCopy(rawIndices, 0, temp, 0, rawSize);
       rawIndices = temp;
     }
 
@@ -11379,7 +11379,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void setFirstTexIndex(int firstIndex, int firstCache) {
       if (texCache != null) {
         firstTexIndex = firstIndex;
-        firstTexCache = PApplet.max(0, firstCache);
+        firstTexCache = PUtil.max(0, firstCache);
       }
     }
 
@@ -11894,15 +11894,15 @@ public class PGraphicsOpenGL extends PGraphics {
         int newSize = pathVertexCount << 1;
 
         float vtemp[] = new float[3 * newSize];
-        PApplet.arrayCopy(pathVertices, 0, vtemp, 0, 3 * pathVertexCount);
+        PUtil.arrayCopy(pathVertices, 0, vtemp, 0, 3 * pathVertexCount);
         pathVertices = vtemp;
 
         int ctemp[] = new int[newSize];
-        PApplet.arrayCopy(pathColors, 0, ctemp, 0, pathVertexCount);
+        PUtil.arrayCopy(pathColors, 0, ctemp, 0, pathVertexCount);
         pathColors = ctemp;
 
         float wtemp[] = new float[newSize];
-        PApplet.arrayCopy(pathWeights, 0, wtemp, 0, pathVertexCount);
+        PUtil.arrayCopy(pathWeights, 0, wtemp, 0, pathVertexCount);
         pathWeights = wtemp;
       }
 

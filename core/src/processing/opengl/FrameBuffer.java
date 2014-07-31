@@ -25,6 +25,7 @@ package processing.opengl;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PUtil;
 
 import java.nio.IntBuffer;
 
@@ -275,7 +276,7 @@ public class FrameBuffer implements PConstants {
   public void setColorBuffers(Texture[] textures, int n) {
     if (screenFb) return;
 
-    if (numColorBuffers != PApplet.min(n, textures.length)) {
+    if (numColorBuffers != PUtil.min(n, textures.length)) {
       throw new RuntimeException("Wrong number of textures to set the color " +
                                  "buffers.");
     }

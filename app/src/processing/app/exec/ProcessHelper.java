@@ -21,7 +21,7 @@ package processing.app.exec;
 
 import java.io.*;
 
-import processing.core.PApplet;
+import processing.core.PUtil;
 
 /**
  * Class to handle calling Runtime.exec() and stuffing output and error streams
@@ -41,12 +41,12 @@ public class ProcessHelper {
     this.dir = null;
   }
 
-  
+
   public ProcessHelper(File dir, final String... cmd) {
     this.cmd = cmd;
     this.dir = dir;
   }
-  
+
 
   @Override
   public String toString() {
@@ -60,11 +60,11 @@ public class ProcessHelper {
     }
     return buffer.toString();
     */
-//    return exe + " " + PApplet.join(args, " ");
-    return PApplet.join(cmd, " ");
+//    return exe + " " + PUtil.join(args, " ");
+    return PUtil.join(cmd, " ");
   }
 
-  
+
   /**
    * Blocking execution.
    * @return exit value of process
@@ -74,8 +74,8 @@ public class ProcessHelper {
   public ProcessResult execute() throws InterruptedException, IOException {
     return execute(null);
   }
-  
-  
+
+
   /**
    * Blocks execution, also passes a single line to the command's input stream.
    * @return exit value of process
@@ -91,11 +91,11 @@ public class ProcessHelper {
     //    System.err.println("ProcessHelper: >>>>> " + Thread.currentThread().getId()
     //        + " " + prettyCommand);
 //    final Process process = Runtime.getRuntime().exec(cmd);
-    final Process process = dir == null ? 
+    final Process process = dir == null ?
       Runtime.getRuntime().exec(cmd) :
       Runtime.getRuntime().exec(cmd, new String[] { }, dir);
     ProcessRegistry.watch(process);
-    
+
     // Write a single line of output to the app... used to write 'no' to 'create avd'
     if (outgoing != null) {
       OutputStream os = process.getOutputStream();
@@ -126,8 +126,8 @@ public class ProcessHelper {
       ProcessRegistry.unwatch(process);
     }
   }
-  
-  
+
+
   static public boolean ffs(final String... cmd) {
     try {
       ProcessHelper helper = new ProcessHelper(cmd);
@@ -137,7 +137,7 @@ public class ProcessHelper {
       }
       System.out.println(result.getStdout());
       System.err.println(result.getStderr());
-      
+
     } catch (Exception e) {
       e.printStackTrace();
     }

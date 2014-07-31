@@ -36,6 +36,7 @@ import javax.swing.tree.*;
 
 import processing.app.syntax.*;
 import processing.core.PApplet;
+import processing.core.PUtil;
 
 
 public abstract class Mode {
@@ -44,9 +45,9 @@ public abstract class Mode {
   protected File folder;
 
   protected TokenMarker tokenMarker;
-  protected HashMap<String, String> keywordToReference = 
+  protected HashMap<String, String> keywordToReference =
     new HashMap<String, String>();
-  
+
   protected Settings theme;
 //  protected Formatter formatter;
 //  protected Tool formatter;
@@ -75,16 +76,16 @@ public abstract class Mode {
 
   /** Library folder for core. (Used for OpenGL in particular.) */
   protected Library coreLibrary;
-  
-  /** 
+
+  /**
    * ClassLoader used to retrieve classes for this mode. Useful if you want
-   * to grab any additional classes that subclass what's in the mode folder. 
+   * to grab any additional classes that subclass what's in the mode folder.
    */
   protected ClassLoader classLoader;
 
   static final int BACKGROUND_WIDTH = 1025;
   static final int BACKGROUND_HEIGHT = 65;
-  protected Image backgroundImage;  
+  protected Image backgroundImage;
 
 //  public Mode(Base base, File folder) {
 //    this(base, folder, base.getSketchbookLibrariesFolder());
@@ -104,7 +105,7 @@ public abstract class Mode {
 //    rebuildToolbarMenu();
     rebuildLibraryList();
 //    rebuildExamplesMenu();
-    
+
     try {
       for (File file : getKeywordFiles()) {
         loadKeywords(file);
@@ -114,8 +115,8 @@ public abstract class Mode {
                        "Could not load keywords file for " + getTitle() + " mode.", e);
     }
   }
-  
-  
+
+
   /**
    * To add additional keywords, or to grab them from another mode, override
    * this function. If your mode has no keywords, return a zero length array.
@@ -124,23 +125,23 @@ public abstract class Mode {
     return new File[] { new File(folder, "keywords.txt") };
   }
 
-  
+
   protected void loadKeywords(File keywordFile) throws IOException {
-    // overridden for Python, where # is an actual keyword 
+    // overridden for Python, where # is an actual keyword
     loadKeywords(keywordFile, "#");
   }
-  
-  
-  protected void loadKeywords(File keywordFile, 
+
+
+  protected void loadKeywords(File keywordFile,
                               String commentPrefix) throws IOException {
     BufferedReader reader = PApplet.createReader(keywordFile);
     String line = null;
     while ((line = reader.readLine()) != null) {
       if (!line.trim().startsWith(commentPrefix)) {
-        // Was difficult to make sure that mode authors were properly doing 
-        // tab-separated values. By definition, there can't be additional 
-        // spaces inside a keyword (or filename), so just splitting on tokens. 
-        String[] pieces = PApplet.splitTokens(line);
+        // Was difficult to make sure that mode authors were properly doing
+        // tab-separated values. By definition, there can't be additional
+        // spaces inside a keyword (or filename), so just splitting on tokens.
+        String[] pieces = PUtil.splitTokens(line);
         if (pieces.length >= 2) {
           String keyword = pieces[0];
           String coloring = pieces[1];
@@ -151,7 +152,7 @@ public abstract class Mode {
           if (pieces.length == 3) {
             String htmlFilename = pieces[2];
             if (htmlFilename.length() > 0) {
-              // if the file is for the version with parens, 
+              // if the file is for the version with parens,
               // add a paren to the keyword
               if (htmlFilename.endsWith("_")) {
                 keyword += "_";
@@ -163,13 +164,13 @@ public abstract class Mode {
       }
     }
   }
-  
-  
+
+
   public void setClassLoader(ClassLoader loader) {
     this.classLoader = loader;
   }
-  
-  
+
+
   public ClassLoader getClassLoader() {
     return classLoader;
   }
@@ -178,16 +179,16 @@ public abstract class Mode {
   /**
    * Setup additional elements that are only required when running with a GUI,
    * rather than from the command-line. Note that this will not be called when
-   * the Mode is used from the command line (because Base will be null).  
+   * the Mode is used from the command line (because Base will be null).
    */
   public void setupGUI() {
     try {
-      // First load the default theme data for the whole PDE. 
+      // First load the default theme data for the whole PDE.
       theme = new Settings(Base.getContentFile("lib/theme.txt"));
-      
-      // The mode-specific theme.txt file should only contain additions, 
-      // and in extremely rare cases, it might override entries from the 
-      // main theme. Do not override for style changes unless they are 
+
+      // The mode-specific theme.txt file should only contain additions,
+      // and in extremely rare cases, it might override entries from the
+      // main theme. Do not override for style changes unless they are
       // objectively necessary for your Mode.
       File modeTheme = new File(folder, "theme/theme.txt");
       if (modeTheme.exists()) {
@@ -205,8 +206,8 @@ public abstract class Mode {
                      "Could not load theme.txt, please re-install Processing", e);
     }
   }
-  
-  
+
+
   protected void loadBackground() {
     String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
     backgroundImage = loadImage("theme/mode" + suffix);
@@ -218,8 +219,8 @@ public abstract class Mode {
       backgroundImage = loadImage("theme/mode" + suffix);
     }
   }
-  
-  
+
+
   public void drawBackground(Graphics g, int offset) {
     if (backgroundImage != null) {
       if (!Toolkit.highResDisplay()) {
@@ -231,7 +232,7 @@ public abstract class Mode {
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                             RenderingHints.VALUE_INTERPOLATION_BICUBIC);
       }
-      g.drawImage(backgroundImage, 0, -offset, 
+      g.drawImage(backgroundImage, 0, -offset,
                   BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
     }
   }
@@ -681,7 +682,7 @@ public abstract class Mode {
           examplesFrame.setVisible(false);
         }
       });
-      
+
       final JTree tree = buildExamplesTree();
 
       tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -808,10 +809,10 @@ public abstract class Mode {
     String pref = "examples." + getClass().getName() + ".visible";
     String value = Preferences.get(pref);
     if (value != null) {
-      String[] paths = PApplet.split(value, File.pathSeparator);
+      String[] paths = PUtil.split(value, File.pathSeparator);
       for (String path : paths) {
 //        System.out.println("trying to expand " + path);
-        String[] items = PApplet.split(path, File.separator);
+        String[] items = PUtil.split(path, File.separator);
         DefaultMutableTreeNode[] nodes = new DefaultMutableTreeNode[items.length];
         expandTree(tree, null, items, nodes, 0);
       }
@@ -844,7 +845,7 @@ public abstract class Mode {
         }
       }
     } else {  // last one
-//      PApplet.println(nodes);
+//      PUtil.println(nodes);
       tree.expandPath(new TreePath(nodes));
     }
   }
@@ -888,9 +889,9 @@ public abstract class Mode {
     }
     return sbNode;
   }
-  
+
   protected JFrame sketchbookFrame;
-  
+
   public void showSketchbookFrame() {
     if (sketchbookFrame == null) {
       sketchbookFrame = new JFrame("Processing Sketchbook");
@@ -1011,7 +1012,7 @@ public abstract class Mode {
   public TokenMarker getTokenMarker() {
     return tokenMarker;
   }
-  
+
   protected TokenMarker createTokenMarker() {
     return new PdeKeywords();
   }
@@ -1124,7 +1125,7 @@ public abstract class Mode {
     }
     return validExtension(f.getName().substring(dot + 1));
   }
-  
+
   /**
    * Check this extension (no dots, please) against the list of valid
    * extensions.
@@ -1148,7 +1149,7 @@ public abstract class Mode {
    * Returns the appropriate file extension to use for auxilliary source files in a sketch.
    * For example, in a Java-mode sketch, auxilliary files should be name "Foo.java"; in
    * Python mode, they should be named "foo.py".
-   * 
+   *
    * <p>Modes that do not override this function will get the default behavior of returning the
    * default extension.
    */
@@ -1197,7 +1198,7 @@ public abstract class Mode {
 //  public void handleNewReplace() {
 //    base.handleNewReplace();
 //  }
-  
+
   @Override
   public String toString() {
     return getTitle();

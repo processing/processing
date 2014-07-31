@@ -30,6 +30,7 @@ import processing.core.PMatrix;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
+import processing.core.PUtil;
 import processing.core.PVector;
 import processing.opengl.PGraphicsOpenGL.IndexCache;
 import processing.opengl.PGraphicsOpenGL.InGeometry;
@@ -870,8 +871,8 @@ public class PShapeOpenGL extends PShape {
     for (int i = 0; i < inGeo.vertexCount; i++) {
       float u = inGeo.texcoords[2 * i + 0];
       float v = inGeo.texcoords[2 * i + 1];
-      inGeo.texcoords[2 * i + 0] = PApplet.min(1, u * uFactor);
-      inGeo.texcoords[2 * i + 1] = PApplet.min(1, v * uFactor);
+      inGeo.texcoords[2 * i + 0] = PUtil.min(1, u * uFactor);
+      inGeo.texcoords[2 * i + 1] = PUtil.min(1, v * uFactor);
     }
 
     if (shapeCreated && tessellated && hasPolys) {
@@ -886,8 +887,8 @@ public class PShapeOpenGL extends PShape {
       for (int i = firstLineVertex; i < last1; i++) {
         float u = tessGeo.polyTexCoords[2 * i + 0];
         float v = tessGeo.polyTexCoords[2 * i + 1];
-        tessGeo.polyTexCoords[2 * i + 0] = PApplet.min(1, u * uFactor);
-        tessGeo.polyTexCoords[2 * i + 1] = PApplet.min(1, v * uFactor);
+        tessGeo.polyTexCoords[2 * i + 0] = PUtil.min(1, u * uFactor);
+        tessGeo.polyTexCoords[2 * i + 1] = PUtil.min(1, v * uFactor);
       }
       root.setModifiedPolyTexCoords(firstPolyVertex, last1 - 1);
     }
@@ -2983,7 +2984,7 @@ public class PShapeOpenGL extends PShape {
       float temp = b; b = d; d = temp;
     }
 
-    float maxRounding = PApplet.min((c - a) / 2, (d - b) / 2);
+    float maxRounding = PUtil.min((c - a) / 2, (d - b) / 2);
     if (tl > maxRounding) tl = maxRounding;
     if (tr > maxRounding) tr = maxRounding;
     if (br > maxRounding) br = maxRounding;
@@ -3482,10 +3483,10 @@ public class PShapeOpenGL extends PShape {
           if (firstPolyVertex == -1) {
             firstPolyVertex = Integer.MAX_VALUE;
           }
-          firstPolyVertex = PApplet.min(firstPolyVertex, child.firstPolyVertex);
+          firstPolyVertex = PUtil.min(firstPolyVertex, child.firstPolyVertex);
         }
         if (-1 < child.lastPolyVertex) {
-          lastPolyVertex = PApplet.max(lastPolyVertex, child.lastPolyVertex);
+          lastPolyVertex = PUtil.max(lastPolyVertex, child.lastPolyVertex);
         }
       }
       lastPolyIndexCache = gindex;
@@ -3588,10 +3589,10 @@ public class PShapeOpenGL extends PShape {
         // Updating the first and last line vertices for this group shape.
         if (-1 < child.firstLineVertex) {
           if (firstLineVertex == -1) firstLineVertex = Integer.MAX_VALUE;
-          firstLineVertex = PApplet.min(firstLineVertex, child.firstLineVertex);
+          firstLineVertex = PUtil.min(firstLineVertex, child.firstLineVertex);
         }
         if (-1 < child.lastLineVertex) {
-          lastLineVertex = PApplet.max(lastLineVertex, child.lastLineVertex);
+          lastLineVertex = PUtil.max(lastLineVertex, child.lastLineVertex);
         }
       }
       lastLineIndexCache = gindex;
@@ -3656,11 +3657,11 @@ public class PShapeOpenGL extends PShape {
         // Updating the first and last point vertices for this group shape.
         if (-1 < child.firstPointVertex) {
           if (firstPointVertex == -1) firstPointVertex = Integer.MAX_VALUE;
-          firstPointVertex = PApplet.min(firstPointVertex,
+          firstPointVertex = PUtil.min(firstPointVertex,
                                          child.firstPointVertex);
         }
         if (-1 < child.lastPointVertex) {
-          lastPointVertex = PApplet.max(lastPointVertex, child.lastPointVertex);
+          lastPointVertex = PUtil.max(lastPointVertex, child.lastPointVertex);
         }
       }
       lastPointIndexCache = gindex;
@@ -4798,9 +4799,9 @@ public class PShapeOpenGL extends PShape {
         int argb1 = PGL.nativeToJavaARGB(color[i1]);
         int argb2 = PGL.nativeToJavaARGB(color[i2]);
 
-        PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i2, src2, 0, 4);
+        PUtil.arrayCopy(vertices, 4 * i0, src0, 0, 4);
+        PUtil.arrayCopy(vertices, 4 * i1, src1, 0, 4);
+        PUtil.arrayCopy(vertices, 4 * i2, src2, 0, 4);
         // Applying any transformation is currently stored in the
         // modelview matrix of the renderer.
         g.modelview.mult(src0, pt0);
@@ -4924,8 +4925,8 @@ public class PShapeOpenGL extends PShape {
         int argb0 = PGL.nativeToJavaARGB(color[i0]);
         int argb1 = PGL.nativeToJavaARGB(color[i1]);
 
-        PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);
+        PUtil.arrayCopy(vertices, 4 * i0, src0, 0, 4);
+        PUtil.arrayCopy(vertices, 4 * i1, src1, 0, 4);
         // Applying any transformation is currently stored in the
         // modelview matrix of the renderer.
         g.modelview.mult(src0, pt0);
@@ -5007,8 +5008,8 @@ public class PShapeOpenGL extends PShape {
         int perim;
         if (0 < size) { // round point
           weight = +size / 0.5f;
-          perim = PApplet.min(PGraphicsOpenGL.MAX_POINT_ACCURACY,
-                  PApplet.max(PGraphicsOpenGL.MIN_POINT_ACCURACY,
+          perim = PUtil.min(PGraphicsOpenGL.MAX_POINT_ACCURACY,
+                  PUtil.max(PGraphicsOpenGL.MIN_POINT_ACCURACY,
                               (int) (TWO_PI * weight /
                               PGraphicsOpenGL.POINT_ACCURACY_FACTOR))) + 1;
         } else {        // Square point
@@ -5021,7 +5022,7 @@ public class PShapeOpenGL extends PShape {
         float[] pt0 = {0, 0, 0, 0};
 
         float[] src0 = {0, 0, 0, 0};
-        PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
+        PUtil.arrayCopy(vertices, 4 * i0, src0, 0, 4);
         g.modelview.mult(src0, pt0);
 
         if (raw.is3D()) {

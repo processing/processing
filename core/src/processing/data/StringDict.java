@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import processing.core.PApplet;
+import processing.core.PUtil;
 
 
 /**
@@ -59,7 +60,7 @@ public class StringDict {
     values = new String[lines.length];
 
     for (int i = 0; i < lines.length; i++) {
-      String[] pieces = PApplet.split(lines[i], '\t');
+      String[] pieces = PUtil.split(lines[i], '\t');
       if (pieces.length == 2) {
         keys[count] = pieces[0];
         values[count] = pieces[1];
@@ -112,8 +113,8 @@ public class StringDict {
 
   protected void crop() {
     if (count != keys.length) {
-      keys = PApplet.subset(keys, 0, count);
-      values = PApplet.subset(values, 0, count);
+      keys = PUtil.subset(keys, 0, count);
+      values = PUtil.subset(values, 0, count);
     }
   }
 
@@ -276,8 +277,8 @@ public class StringDict {
 
   protected void create(String key, String value) {
     if (count == keys.length) {
-      keys = PApplet.expand(keys);
-      values = PApplet.expand(values);
+      keys = PUtil.expand(keys);
+      values = PUtil.expand(values);
     }
     indices.put(key, new Integer(count));
     keys[count] = key;

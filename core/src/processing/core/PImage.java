@@ -536,28 +536,28 @@ public class PImage implements PConstants, Cloneable {
     int y2 = y + h;
 
     if (!modified) {
-      mx1 = PApplet.max(0, x);
-      //mx2 = PApplet.min(width - 1, x2);
-      mx2 = PApplet.min(width, x2);
-      my1 = PApplet.max(0, y);
-      //my2 = PApplet.min(height - 1, y2);
-      my2 = PApplet.min(height, y2);
+      mx1 = PUtil.max(0, x);
+      //mx2 = PUtil.min(width - 1, x2);
+      mx2 = PUtil.min(width, x2);
+      my1 = PUtil.max(0, y);
+      //my2 = PUtil.min(height - 1, y2);
+      my2 = PUtil.min(height, y2);
       modified = true;
 
     } else {
-      if (x < mx1) mx1 = PApplet.max(0, x);
-      //if (x > mx2) mx2 = PApplet.min(width - 1, x);
-      if (x > mx2) mx2 = PApplet.min(width, x);
-      if (y < my1) my1 = PApplet.max(0, y);
+      if (x < mx1) mx1 = PUtil.max(0, x);
+      //if (x > mx2) mx2 = PUtil.min(width - 1, x);
+      if (x > mx2) mx2 = PUtil.min(width, x);
+      if (y < my1) my1 = PUtil.max(0, y);
       //if (y > my2) my2 = y;
-      if (y > my2) my2 = PApplet.min(height, y);
+      if (y > my2) my2 = PUtil.min(height, y);
 
-      if (x2 < mx1) mx1 = PApplet.max(0, x2);
-      //if (x2 > mx2) mx2 = PApplet.min(width - 1, x2);
-      if (x2 > mx2) mx2 = PApplet.min(width, x2);
-      if (y2 < my1) my1 = PApplet.max(0, y2);
-      //if (y2 > my2) my2 = PApplet.min(height - 1, y2);
-      if (y2 > my2) my2 = PApplet.min(height, y2);
+      if (x2 < mx1) mx1 = PUtil.max(0, x2);
+      //if (x2 > mx2) mx2 = PUtil.min(width - 1, x2);
+      if (x2 > mx2) mx2 = PUtil.min(width, x2);
+      if (y2 < my1) my1 = PUtil.max(0, y2);
+      //if (y2 > my2) my2 = PUtil.min(height - 1, y2);
+      if (y2 > my2) my2 = PUtil.min(height, y2);
     }
   }
 
@@ -3331,4 +3331,3 @@ public class PImage implements PConstants, Cloneable {
     return success;
   }
 }
-

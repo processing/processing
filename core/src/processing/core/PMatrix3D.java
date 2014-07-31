@@ -236,7 +236,7 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
 
     if (Math.abs(norm2 - 1) > PConstants.EPSILON) {
       // The rotation vector is not normalized.
-      float norm = PApplet.sqrt(norm2);
+      float norm = PUtil.sqrt(norm2);
       v0 /= norm;
       v1 /= norm;
       v2 /= norm;
@@ -757,25 +757,25 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
       while ((big /= 10) != 0) digits++;  // cheap log()
     }
 
-    System.out.println(PApplet.nfs(m00, digits, 4) + " " +
-                       PApplet.nfs(m01, digits, 4) + " " +
-                       PApplet.nfs(m02, digits, 4) + " " +
-                       PApplet.nfs(m03, digits, 4));
+    System.out.println(PUtil.nfs(m00, digits, 4) + " " +
+                       PUtil.nfs(m01, digits, 4) + " " +
+                       PUtil.nfs(m02, digits, 4) + " " +
+                       PUtil.nfs(m03, digits, 4));
 
-    System.out.println(PApplet.nfs(m10, digits, 4) + " " +
-                       PApplet.nfs(m11, digits, 4) + " " +
-                       PApplet.nfs(m12, digits, 4) + " " +
-                       PApplet.nfs(m13, digits, 4));
+    System.out.println(PUtil.nfs(m10, digits, 4) + " " +
+                       PUtil.nfs(m11, digits, 4) + " " +
+                       PUtil.nfs(m12, digits, 4) + " " +
+                       PUtil.nfs(m13, digits, 4));
 
-    System.out.println(PApplet.nfs(m20, digits, 4) + " " +
-                       PApplet.nfs(m21, digits, 4) + " " +
-                       PApplet.nfs(m22, digits, 4) + " " +
-                       PApplet.nfs(m23, digits, 4));
+    System.out.println(PUtil.nfs(m20, digits, 4) + " " +
+                       PUtil.nfs(m21, digits, 4) + " " +
+                       PUtil.nfs(m22, digits, 4) + " " +
+                       PUtil.nfs(m23, digits, 4));
 
-    System.out.println(PApplet.nfs(m30, digits, 4) + " " +
-                       PApplet.nfs(m31, digits, 4) + " " +
-                       PApplet.nfs(m32, digits, 4) + " " +
-                       PApplet.nfs(m33, digits, 4));
+    System.out.println(PUtil.nfs(m30, digits, 4) + " " +
+                       PUtil.nfs(m31, digits, 4) + " " +
+                       PUtil.nfs(m32, digits, 4) + " " +
+                       PUtil.nfs(m33, digits, 4));
 
     System.out.println();
   }

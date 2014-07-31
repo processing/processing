@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import processing.core.PApplet;
+import processing.core.PUtil;
 
 
 /**
@@ -63,7 +64,7 @@ public class FloatList implements Iterable<Float> {
    */
   private void crop() {
     if (count != data.length) {
-      data = PApplet.subset(data, 0, count);
+      data = PUtil.subset(data, 0, count);
     }
   }
 
@@ -127,7 +128,7 @@ public class FloatList implements Iterable<Float> {
    */
   public void set(int index, float what) {
     if (index >= count) {
-      data = PApplet.expand(data, index+1);
+      data = PUtil.expand(data, index+1);
       for (int i = count; i < index; i++) {
         data[i] = 0;
       }
@@ -249,7 +250,7 @@ public class FloatList implements Iterable<Float> {
    */
   public void append(float value) {
     if (count == data.length) {
-      data = PApplet.expand(data);
+      data = PUtil.expand(data);
     }
     data[count++] = value;
   }
@@ -275,7 +276,7 @@ public class FloatList implements Iterable<Float> {
 //    }
 //  }
 //    if (index >= data.length) {
-//      data = PApplet.expand(data, index+1);
+//      data = PUtil.expand(data, index+1);
 //      data[index] = value;
 //      count = index+1;
 //

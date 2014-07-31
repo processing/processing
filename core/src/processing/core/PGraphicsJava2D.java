@@ -158,10 +158,10 @@ public class PGraphicsJava2D extends PGraphics {
 //        parent.doLayout();
 
         if (canvas.getWidth() != width || canvas.getHeight() != height) {
-          PApplet.debug("PGraphicsJava2D comp size being set to " + width + "x" + height);
+          PUtil.debug("PGraphicsJava2D comp size being set to " + width + "x" + height);
           canvas.setSize(width, height);
         } else {
-          PApplet.debug("PGraphicsJava2D comp size already " + width + "x" + height);
+          PUtil.debug("PGraphicsJava2D comp size already " + width + "x" + height);
         }
 
         parent.addListeners(canvas);
@@ -266,7 +266,7 @@ public class PGraphicsJava2D extends PGraphics {
         if (image == null) {
           GraphicsConfiguration gc = parent.getGraphicsConfiguration();
           image = gc.createCompatibleImage(width, height);
-          PApplet.debug("created new image, type is " + image);
+          PUtil.debug("created new image, type is " + image);
           g2 = (Graphics2D) image.getGraphics();
           reapplySettings = true;
         }
@@ -282,10 +282,10 @@ public class PGraphicsJava2D extends PGraphics {
       if (parent.frameCount == 0) {
         canvas.createBufferStrategy(2);
         strategy = canvas.getBufferStrategy();
-        PApplet.debug("PGraphicsJava2D.beginDraw() strategy is " + strategy);
+        PUtil.debug("PGraphicsJava2D.beginDraw() strategy is " + strategy);
         BufferCapabilities caps = strategy.getCapabilities();
         caps = strategy.getCapabilities();
-        PApplet.debug("PGraphicsJava2D.beginDraw() caps are " +
+        PUtil.debug("PGraphicsJava2D.beginDraw() caps are " +
                       " flipping: " + caps.isPageFlipping() +
                       " front/back accel: " + caps.getFrontBufferCapabilities().isAccelerated() + " " +
                       "/" + caps.getBackBufferCapabilities().isAccelerated());
@@ -299,7 +299,7 @@ public class PGraphicsJava2D extends PGraphics {
       if (bimage == null ||
           bimage.getWidth() != width ||
           bimage.getHeight() != height) {
-        PApplet.debug("PGraphicsJava2D creating new image");
+        PUtil.debug("PGraphicsJava2D creating new image");
         bimage = gc.createCompatibleImage(width, height);
 //        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         g2 = bimage.createGraphics();
@@ -370,10 +370,10 @@ public class PGraphicsJava2D extends PGraphics {
     // only need this check if the validate() call will use redraw()
 //    if (strategy == null) return;
     do {
-      PApplet.debug("PGraphicsJava2D.redraw() top of outer do { } block");
+      PUtil.debug("PGraphicsJava2D.redraw() top of outer do { } block");
       do {
-        PApplet.debug("PGraphicsJava2D.redraw() top of inner do { } block");
-        PApplet.debug("strategy is " + strategy);
+        PUtil.debug("PGraphicsJava2D.redraw() top of inner do { } block");
+        PUtil.debug("strategy is " + strategy);
         Graphics bsg = strategy.getDrawGraphics();
         if (vimage != null) {
           bsg.drawImage(vimage, 0, 0, null);
@@ -402,11 +402,11 @@ public class PGraphicsJava2D extends PGraphics {
 //    }
       } while (strategy.contentsRestored());
 
-      PApplet.debug("PGraphicsJava2D.redraw() showing strategy");
+      PUtil.debug("PGraphicsJava2D.redraw() showing strategy");
       strategy.show();
 
     } while (strategy.contentsLost());
-    PApplet.debug("PGraphicsJava2D.redraw() out of do { } block");
+    PUtil.debug("PGraphicsJava2D.redraw() out of do { } block");
   }
 
 
@@ -1538,7 +1538,7 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   public PShape loadShape(String filename, String options) {
-    String extension = PApplet.getExtension(filename);
+    String extension = PUtil.getExtension(filename);
 
     PShapeSVG svg = null;
 

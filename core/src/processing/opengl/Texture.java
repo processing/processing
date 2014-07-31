@@ -24,6 +24,7 @@ package processing.opengl;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
+import processing.core.PUtil;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -393,8 +394,8 @@ public class Texture implements PConstants {
           // and if the width and height are different, there will be a few 1D
           // texture levels just before.
           // This update formula also allows for NPOT resolutions.
-          w0 = PApplet.max(1, PApplet.floor((float)glWidth / denom));
-          h0 = PApplet.max(1, PApplet.floor((float)glHeight / denom));
+          w0 = PUtil.max(1, PUtil.floor((float)glWidth / denom));
+          h0 = PUtil.max(1, PUtil.floor((float)glHeight / denom));
           // (see getScaledInstance in AWT Image)
           Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap, w0, h0, true);
 
@@ -800,22 +801,22 @@ public class Texture implements PConstants {
     int y2 = y + h;
 
     if (!modified) {
-      mx1 = PApplet.max(0, x);
-      mx2 = PApplet.min(width - 1, x2);
-      my1 = PApplet.max(0, y);
-      my2 = PApplet.min(height - 1, y2);
+      mx1 = PUtil.max(0, x);
+      mx2 = PUtil.min(width - 1, x2);
+      my1 = PUtil.max(0, y);
+      my2 = PUtil.min(height - 1, y2);
       modified = true;
 
     } else {
-      if (x < mx1) mx1 = PApplet.max(0, x);
-      if (x > mx2) mx2 = PApplet.min(width - 1, x);
-      if (y < my1) my1 = PApplet.max(0, y);
+      if (x < mx1) mx1 = PUtil.max(0, x);
+      if (x > mx2) mx2 = PUtil.min(width - 1, x);
+      if (y < my1) my1 = PUtil.max(0, y);
       if (y > my2) my2 = y;
 
-      if (x2 < mx1) mx1 = PApplet.max(0, x2);
-      if (x2 > mx2) mx2 = PApplet.min(width - 1, x2);
-      if (y2 < my1) my1 = PApplet.max(0, y2);
-      if (y2 > my2) my2 = PApplet.min(height - 1, y2);
+      if (x2 < mx1) mx1 = PUtil.max(0, x2);
+      if (x2 > mx2) mx2 = PUtil.min(width - 1, x2);
+      if (y2 < my1) my1 = PUtil.max(0, y2);
+      if (y2 > my2) my2 = PUtil.min(height - 1, y2);
     }
   }
 

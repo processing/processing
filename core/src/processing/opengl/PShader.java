@@ -971,7 +971,7 @@ public class PShader implements PConstants {
   protected boolean compileVertexShader() {
     glVertex = PGraphicsOpenGL.createGLSLVertShaderObject(context, pgl);
 
-    pgl.shaderSource(glVertex, PApplet.join(vertexShaderSource, "\n"));
+    pgl.shaderSource(glVertex, PUtil.join(vertexShaderSource, "\n"));
     pgl.compileShader(glVertex);
 
     pgl.getShaderiv(glVertex, PGL.COMPILE_STATUS, intBuffer);
@@ -992,7 +992,7 @@ public class PShader implements PConstants {
   protected boolean compileFragmentShader() {
     glFragment = PGraphicsOpenGL.createGLSLFragShaderObject(context, pgl);
 
-    pgl.shaderSource(glFragment, PApplet.join(fragmentShaderSource, "\n"));
+    pgl.shaderSource(glFragment, PUtil.join(fragmentShaderSource, "\n"));
     pgl.compileShader(glFragment);
 
     pgl.getShaderiv(glFragment, PGL.COMPILE_STATUS, intBuffer);
@@ -1025,27 +1025,27 @@ public class PShader implements PConstants {
   static protected int getShaderType(String[] source, int defaultType) {
     for (int i = 0; i < source.length; i++) {
       String line = source[i].trim();
-      if (PApplet.match(line, pointShaderAttrRegexp) != null)
+      if (PUtil.match(line, pointShaderAttrRegexp) != null)
         return PShader.POINT;
-      else if (PApplet.match(line, lineShaderAttrRegexp) != null)
+      else if (PUtil.match(line, lineShaderAttrRegexp) != null)
         return PShader.LINE;
-      else if (PApplet.match(line, pointShaderDefRegexp) != null)
+      else if (PUtil.match(line, pointShaderDefRegexp) != null)
         return PShader.POINT;
-      else if (PApplet.match(line, lineShaderDefRegexp) != null)
+      else if (PUtil.match(line, lineShaderDefRegexp) != null)
         return PShader.LINE;
-      else if (PApplet.match(line, colorShaderDefRegexp) != null)
+      else if (PUtil.match(line, colorShaderDefRegexp) != null)
         return PShader.COLOR;
-      else if (PApplet.match(line, lightShaderDefRegexp) != null)
+      else if (PUtil.match(line, lightShaderDefRegexp) != null)
         return PShader.LIGHT;
-      else if (PApplet.match(line, texShaderDefRegexp) != null)
+      else if (PUtil.match(line, texShaderDefRegexp) != null)
         return PShader.TEXTURE;
-      else if (PApplet.match(line, texlightShaderDefRegexp) != null)
+      else if (PUtil.match(line, texlightShaderDefRegexp) != null)
         return PShader.TEXLIGHT;
-      else if (PApplet.match(line, polyShaderDefRegexp) != null)
+      else if (PUtil.match(line, polyShaderDefRegexp) != null)
         return PShader.POLY;
-      else if (PApplet.match(line, triShaderAttrRegexp) != null)
+      else if (PUtil.match(line, triShaderAttrRegexp) != null)
         return PShader.POLY;
-      else if (PApplet.match(line, quadShaderAttrRegexp) != null)
+      else if (PUtil.match(line, quadShaderAttrRegexp) != null)
         return PShader.POLY;
     }
     return defaultType;

@@ -892,8 +892,8 @@ public class PVector implements Serializable {
   public void rotate(float theta) {
     float temp = x;
     // Might need to check for rounding errors like with angleBetween function?
-    x = x*PApplet.cos(theta) - y*PApplet.sin(theta);
-    y = temp*PApplet.sin(theta) + y*PApplet.cos(theta);
+    x = x*PUtil.cos(theta) - y*PUtil.sin(theta);
+    y = temp*PUtil.sin(theta) + y*PUtil.cos(theta);
   }
 
 
@@ -912,9 +912,9 @@ public class PVector implements Serializable {
    * @see PApplet#lerp(float, float, float)
    */
   public void lerp(PVector v, float amt) {
-    x = PApplet.lerp(x, v.x, amt);
-    y = PApplet.lerp(y, v.y, amt);
-    z = PApplet.lerp(z, v.z, amt);
+    x = PUtil.lerp(x, v.x, amt);
+    y = PUtil.lerp(y, v.y, amt);
+    z = PUtil.lerp(z, v.z, amt);
   }
 
 
@@ -937,9 +937,9 @@ public class PVector implements Serializable {
    * @param z the z component to lerp to
    */
   public void lerp(float x, float y, float z, float amt) {
-    this.x = PApplet.lerp(this.x, x, amt);
-    this.y = PApplet.lerp(this.y, y, amt);
-    this.z = PApplet.lerp(this.z, z, amt);
+    this.x = PUtil.lerp(this.x, x, amt);
+    this.y = PUtil.lerp(this.y, y, amt);
+    this.z = PUtil.lerp(this.z, z, amt);
   }
 
 

@@ -320,7 +320,7 @@ public class JavaBuild {
       if (msg.contains("expecting LCURLY")) {
         System.err.println(msg);
         String suffix = ".";
-        String[] m = PApplet.match(msg, "found ('.*')");
+        String[] m = PUtil.match(msg, "found ('.*')");
         if (m != null) {
           suffix = ", not " + m[1] + ".";
         }
@@ -368,7 +368,7 @@ public class JavaBuild {
       // TODO not tested since removing ORO matcher.. ^ could be a problem
       String mess = "^line (\\d+):(\\d+):\\s";
 
-      String[] matches = PApplet.match(tsre.toString(), mess);
+      String[] matches = PUtil.match(tsre.toString(), mess);
       if (matches != null) {
         int errorLine = Integer.parseInt(matches[1]) - 1;
         int errorColumn = Integer.parseInt(matches[2]);
@@ -461,7 +461,7 @@ public class JavaBuild {
         }
       }
     }
-//    PApplet.println(PApplet.split(libraryPath, File.pathSeparatorChar));
+//    PUtil.println(PUtil.split(libraryPath, File.pathSeparatorChar));
 
     // Finally, add the regular Java CLASSPATH. This contains everything
     // imported by the PDE itself (core.jar, pde.jar, quaqua.jar) which may
@@ -476,7 +476,7 @@ public class JavaBuild {
     // But make sure that there isn't anything in there that's missing,
     // otherwise ECJ will complain and die. For instance, Java 1.7 (or maybe
     // it's appbundler?) adds Java/Classes to the path, which kills us.
-    //String[] classPieces = PApplet.split(classPath, File.pathSeparator);
+    //String[] classPieces = PUtil.split(classPath, File.pathSeparator);
     // Nah, nevermind... we'll just create the @!#$! folder until they fix it.
 
 
@@ -499,7 +499,7 @@ public class JavaBuild {
         String filename = sc.getFileName();
         try {
           String javaCode = sc.getProgram();
-          String[] packageMatch = PApplet.match(javaCode, PACKAGE_REGEX);
+          String[] packageMatch = PUtil.match(javaCode, PACKAGE_REGEX);
           // if no package, and a default package is being used
           // (i.e. on Android) we'll have to add one
 
@@ -828,7 +828,7 @@ public class JavaBuild {
 //    String renderer = "";
 //
 //    String scrubbed = PdePreprocessor.scrubComments(sketch.getCode(0).getProgram());
-//    String[] matches = PApplet.match(scrubbed, PdePreprocessor.SIZE_REGEX);
+//    String[] matches = PUtil.match(scrubbed, PdePreprocessor.SIZE_REGEX);
 //
 //    if (matches != null) {
 //      try {
@@ -858,14 +858,14 @@ public class JavaBuild {
     // If there are multiple closings, need to catch the first,
     // which is what the (.*?) will do for us.
     // http://code.google.com/p/processing/issues/detail?id=877
-    String[] javadoc = PApplet.match(sketch.getCode(0).getProgram(), "/\\*{2,}(.*?)\\*+/");
+    String[] javadoc = PUtil.match(sketch.getCode(0).getProgram(), "/\\*{2,}(.*?)\\*+/");
     if (javadoc != null) {
       StringBuffer dbuffer = new StringBuffer();
       String found = javadoc[1];
-      String[] pieces = PApplet.split(found, '\n');
+      String[] pieces = PUtil.split(found, '\n');
       for (String line : pieces) {
         // if this line starts with * characters, remove 'em
-        String[] m = PApplet.match(line, "^\\s*\\*+(.*)");
+        String[] m = PUtil.match(line, "^\\s*\\*+(.*)");
         dbuffer.append(m != null ? m[1] : line);
         // insert the new line into the html to help w/ line breaks
         dbuffer.append('\n');
@@ -1115,7 +1115,7 @@ public class JavaBuild {
       int platform = Base.getPlatformIndex(platformName);
 
       // Can only embed Java on the native platform
-      boolean embedJava = (platform == PApplet.platform) &&
+      boolean embedJava = (platform == PUtil.platform) &&
         Preferences.getBoolean("export.application.embed_java");
 
       if (Preferences.getBoolean("export.application.platform." + platformName)) {
@@ -1143,23 +1143,23 @@ public class JavaBuild {
     File folder = null;
     String platformName = Base.getPlatformName();
     boolean embedJava = Preferences.getBoolean("export.application.embed_java");
-    if (Library.hasMultipleArch(PApplet.platform, importedLibraries)) {
+    if (Library.hasMultipleArch(PUtil.platform, importedLibraries)) {
       if (Base.getNativeBits() == 32) {
         // export the 32-bit version
         folder = new File(sketch.getFolder(), "application." + platformName + "32");
-        if (!exportApplication(folder, PApplet.platform, 32, embedJava)) {
+        if (!exportApplication(folder, PUtil.platform, 32, embedJava)) {
           return false;
         }
       } else if (Base.getNativeBits() == 64) {
         // export the 64-bit version
         folder = new File(sketch.getFolder(), "application." + platformName + "64");
-        if (!exportApplication(folder, PApplet.platform, 64, embedJava)) {
+        if (!exportApplication(folder, PUtil.platform, 64, embedJava)) {
           return false;
         }
       }
     } else { // just make a single one for this platform
       folder = new File(sketch.getFolder(), "application." + platformName);
-      if (!exportApplication(folder, PApplet.platform, 0, embedJava)) {
+      if (!exportApplication(folder, PUtil.platform, 0, embedJava)) {
         return false;
       }
     }
@@ -1365,7 +1365,7 @@ public class JavaBuild {
     if (sketch.hasCodeFolder()) {
       String includes = Base.contentsToClassPath(sketch.getCodeFolder());
       // Use tokens to get rid of extra blanks, which causes huge exports
-      String[] codeList = PApplet.splitTokens(includes, File.pathSeparator);
+      String[] codeList = PUtil.splitTokens(includes, File.pathSeparator);
       for (int i = 0; i < codeList.length; i++) {
         if (codeList[i].toLowerCase().endsWith(".jar") ||
             codeList[i].toLowerCase().endsWith(".zip")) {
@@ -1574,7 +1574,7 @@ public class JavaBuild {
       }
       XML jre = config.addChild("jre");
       jre.setString("minVersion", "1.7.0_40");
-      //PApplet.join(runOptions.toArray(new String[0]), " ")
+      //PUtil.join(runOptions.toArray(new String[0]), " ")
       for (String opt : runOptions) {
         jre.addChild("opt").setContent(opt);
       }
@@ -1605,7 +1605,7 @@ public class JavaBuild {
         pw.print("$APPDIR/java/bin/");
       }
       String runOptionsStr =
-        PApplet.join(runOptions.toArray(new String[0]), " ");
+        PUtil.join(runOptions.toArray(new String[0]), " ");
       pw.print("java " + runOptionsStr +
                " -Djava.library.path=\"$APPDIR:$APPDIR/lib\"" +
                " -cp \"" + exportClassPath + "\"" +
@@ -1787,7 +1787,7 @@ public class JavaBuild {
                                           ZipOutputStream zos,
                                           HashMap<String,Object> zipFileContents)
     throws IOException {
-    String[] pieces = PApplet.split(path, File.pathSeparatorChar);
+    String[] pieces = PUtil.split(path, File.pathSeparatorChar);
 
     for (int i = 0; i < pieces.length; i++) {
       if (pieces[i].length() == 0) continue;

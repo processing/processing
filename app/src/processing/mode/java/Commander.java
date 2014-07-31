@@ -29,7 +29,7 @@ import java.io.UnsupportedEncodingException;
 
 import processing.app.*;
 import processing.app.contrib.ModeContribution;
-import processing.core.PApplet;
+import processing.core.PUtil;
 import processing.mode.java.runner.*;
 
 
@@ -88,7 +88,7 @@ public class Commander implements RunnerListener {
     File outputFolder = null;
     boolean force = false;  // replace that no good output folder
 //    String preferencesPath = null;
-    int platform = PApplet.platform; // default to this platform
+    int platform = PUtil.platform; // default to this platform
 //    int platformBits = 0;
     int platformBits = Base.getNativeBits();
     int task = HELP;

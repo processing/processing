@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import processing.core.PApplet;
+import processing.core.PUtil;
 
 /**
  * Helper class for a list of Strings. Lists are designed to have some of the
@@ -66,7 +67,7 @@ public class StringList implements Iterable<String> {
    */
   private void crop() {
     if (count != data.length) {
-      data = PApplet.subset(data, 0, count);
+      data = PUtil.subset(data, 0, count);
     }
   }
 
@@ -130,7 +131,7 @@ public class StringList implements Iterable<String> {
    */
   public void set(int index, String what) {
     if (index >= count) {
-      data = PApplet.expand(data, index+1);
+      data = PUtil.expand(data, index+1);
       for (int i = count; i < index; i++) {
         data[i] = null;
       }
@@ -257,7 +258,7 @@ public class StringList implements Iterable<String> {
    */
   public void append(String value) {
     if (count == data.length) {
-      data = PApplet.expand(data);
+      data = PUtil.expand(data);
     }
     data[count++] = value;
   }
@@ -283,7 +284,7 @@ public class StringList implements Iterable<String> {
 //    }
 //  }
 //    if (index >= data.length) {
-//      data = PApplet.expand(data, index+1);
+//      data = PUtil.expand(data, index+1);
 //      data[index] = value;
 //      count = index+1;
 //

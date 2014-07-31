@@ -30,7 +30,7 @@ import java.util.Random;
 
 import javax.swing.JOptionPane;
 
-import processing.core.PApplet;
+import processing.core.PUtil;
 
 
 /**
@@ -87,8 +87,8 @@ public class UpdateCheck {
       Preferences.set("update.id", String.valueOf(id));
     }
 
-    String info = PApplet.urlEncode(id + "\t" +
-                                    PApplet.nf(Base.getRevision(), 4) + "\t" +
+    String info = PUtil.urlEncode(id + "\t" +
+                                    PUtil.nf(Base.getRevision(), 4) + "\t" +
                                     System.getProperty("java.version") + "\t" +
                                     System.getProperty("java.vendor") + "\t" +
                                     System.getProperty("os.name") + "\t" +

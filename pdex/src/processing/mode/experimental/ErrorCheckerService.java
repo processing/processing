@@ -54,16 +54,17 @@ import processing.app.Library;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
 import processing.core.PApplet;
+import processing.core.PUtil;
 import processing.mode.java.preproc.PdePreprocessor;
 
 /**
  * The main error checking service
- * 
+ *
  * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
  *
  */
 public class ErrorCheckerService implements Runnable{
-  
+
   protected DebugEditor editor;
   /**
    * Error check happens every sleepTime milliseconds
@@ -74,7 +75,7 @@ public class ErrorCheckerService implements Runnable{
    * The amazing eclipse ast parser
    */
   protected ASTParser parser;
- 
+
   /**
    * Used to indirectly stop the Error Checker Thread
    */
@@ -124,7 +125,7 @@ public class ErrorCheckerService implements Runnable{
    * Fixed p5 offsets for all sketches
    */
   public int defaultImportsOffset;
-  
+
   /**
    * Is the sketch running in static mode or active mode?
    */
@@ -133,17 +134,17 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Compilation Unit for current sketch
    */
-  protected CompilationUnit cu; 
-  
+  protected CompilationUnit cu;
+
   /**
    * The Compilation Unit generated during compile check
    */
   protected CompilationUnit compileCheckCU;
-  
+
   /**
    * This Compilation Unit points to the last error free CU
    */
-  protected CompilationUnit lastCorrectCU; 
+  protected CompilationUnit lastCorrectCU;
 
   /**
    * If true, compilation checker will be reloaded with updated classpath
@@ -162,7 +163,7 @@ public class ErrorCheckerService implements Runnable{
    */
   protected CompilationChecker compilationChecker;
 
-  
+
   /**
    * List of jar files to be present in compilation checker's classpath
    */
@@ -207,7 +208,7 @@ public class ErrorCheckerService implements Runnable{
    * Regexp for import statements. (Used from Processing source)
    */
   final public String importRegexp = "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
-  
+
   /**
    * Regexp for function declarations. (Used from Processing source)
    */
@@ -215,23 +216,23 @@ public class ErrorCheckerService implements Runnable{
     .compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*"
       + "(void|int|float|double|String|char|byte|boolean)"
       + "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(", Pattern.MULTILINE);
-  
+
   protected ErrorMessageSimplifier errorMsgSimplifier;
-  
+
   public ErrorCheckerService(DebugEditor debugEditor) {
     ensureMinP5Version();
     this.editor = debugEditor;
     stopThread = new AtomicBoolean(false);
     pauseThread = new AtomicBoolean(false);
-    
+
     problemsList = new ArrayList<Problem>();
     classpathJars = new ArrayList<URL>();
-    
+
     initParser();
     //initializeErrorWindow();
     xqpreproc = new XQPreprocessor();
     PdePreprocessor pdePrepoc = new PdePreprocessor(null);
-    defaultImportsOffset = pdePrepoc.getCoreImports().length + 
+    defaultImportsOffset = pdePrepoc.getCoreImports().length +
         pdePrepoc.getDefaultImports().length + 1;
     astGenerator = new ASTGenerator(this);
     syntaxErrors = new AtomicBoolean(true);
@@ -243,7 +244,7 @@ public class ErrorCheckerService implements Runnable{
 //      sc.getDocument().addDocumentListener(sketchChangedListener);
 //    }
   }
-  
+
   /**
    * Initializes ASTParser
    */
@@ -260,16 +261,16 @@ public class ErrorCheckerService implements Runnable{
       pauseThread();
     }
   }
-  
+
   /**
    * Initialiazes the Error Window
    */
   /*public void initializeErrorWindow() {
-    
+
     if (editor == null) {
       return;
     }
-    
+
     if (errorWindow != null) {
       return;
     }
@@ -290,7 +291,7 @@ public class ErrorCheckerService implements Runnable{
       }
     });
   }*/
-  
+
   /**
    * Ensure user is running the minimum P5 version
    */
@@ -307,12 +308,12 @@ public class ErrorCheckerService implements Runnable{
    * to each SketchCode object. Whenever the document is edited, it call
    * runManualErrorCheck(). Internally, an atomic integer counter is incremented.
    * The ECS thread checks the value of this counter evey sleepTime seconds.
-   * If the counter is non zero, error checking is done(in the ECS thread) 
+   * If the counter is non zero, error checking is done(in the ECS thread)
    * and the counter is reset.
    */
   public void run() {
     stopThread.set(false);
-    
+
     checkCode();
     if(!hasSyntaxErrors())
       editor.showProblemListView(XQConsoleToggle.CONSOLE);
@@ -320,7 +321,7 @@ public class ErrorCheckerService implements Runnable{
     // This is when the loaded sketch already has syntax errors.
     // Completion wouldn't be complete, but it'd be still something
     // better than nothing
-    astGenerator.buildAST(cu); 
+    astGenerator.buildAST(cu);
     handleErrorCheckingToggle();
     while (!stopThread.get()) {
       try {
@@ -330,7 +331,7 @@ public class ErrorCheckerService implements Runnable{
         log("Oops! [ErrorCheckerThreaded]: " + e);
         // e.printStackTrace();
       }
-      
+
       updatePaintedThingys();
       updateEditorStatus();
       updateSketchCodeListeners();
@@ -342,7 +343,7 @@ public class ErrorCheckerService implements Runnable{
       checkCode();
       checkForMissingImports();
     }
-    
+
     astGenerator.disposeAllWindows();
     compilationChecker = null;
     checkerClass = null;
@@ -351,7 +352,7 @@ public class ErrorCheckerService implements Runnable{
     logE("Thread stopped: " + editor.getSketch().getName());
     System.gc();
   }
-  
+
   protected void updateSketchCodeListeners() {
     for (final SketchCode sc : editor.getSketch().getCode()) {
       boolean flag = false;
@@ -385,7 +386,7 @@ public class ErrorCheckerService implements Runnable{
   }
 
   protected ASTGenerator astGenerator;
-  
+
   public ASTGenerator getASTGenerator() {
     return astGenerator;
   }
@@ -397,7 +398,7 @@ public class ErrorCheckerService implements Runnable{
    * It's thread safe to avoid any mess.
    */
   protected AtomicInteger textModified = new AtomicInteger();
-  
+
   /**
    * Triggers error check
    */
@@ -405,10 +406,10 @@ public class ErrorCheckerService implements Runnable{
     // log("Error Check.");
     textModified.incrementAndGet();
   }
-  
+
   protected SketchChangedListener sketchChangedListener;
   protected class SketchChangedListener implements DocumentListener{
-    
+
     private SketchChangedListener(){
     }
 
@@ -435,11 +436,11 @@ public class ErrorCheckerService implements Runnable{
         //log("doc changed update, man error check..");
       }
     }
-    
+
   }
 
   public int compilationUnitState = 0;
-  
+
   protected boolean checkCode() {
     // log("checkCode() " + textModified.get());
     lastTimeStamp = System.currentTimeMillis();
@@ -449,14 +450,14 @@ public class ErrorCheckerService implements Runnable{
       syntaxCheck();
       // log(editor.getSketch().getName() + "1 MCO " + mainClassOffset);
       // No syntax errors, proceed for compilation check, Stage 2.
-      
+
       //if(hasSyntaxErrors()) astGenerator.buildAST(null);
       if (!hasSyntaxErrors()) {
-             
+
       }
       if (problems.length == 0 && editor.compilationCheckEnabled) {
         //mainClassOffset++; // just a hack.
-        
+
         sourceCode = xqpreproc.doYourThing(sourceCode, programImports);
         prepareCompilerClasspath();
 //        mainClassOffset = xqpreproc.mainClassOffset; // tiny, but
@@ -466,10 +467,10 @@ public class ErrorCheckerService implements Runnable{
 //        }
         //         log(sourceCode);
         //         log("--------------------------");
-        compileCheck();        
+        compileCheck();
         // log(editor.getSketch().getName() + "2 MCO " + mainClassOffset);
       }
-      
+
       astGenerator.buildAST(cu);
       if(!ExperimentalMode.errorCheckEnabled){
     	  problemsList.clear();
@@ -482,7 +483,7 @@ public class ErrorCheckerService implements Runnable{
       editor.getTextArea().repaint();
       updatePaintedThingys();
       editor.updateErrorToggle();
-      
+
       int x = textModified.get();
       //log("TM " + x);
       if (x >= 2) {
@@ -502,17 +503,17 @@ public class ErrorCheckerService implements Runnable{
     }
     return false;
   }
-  
+
   protected AtomicBoolean syntaxErrors, containsErrors;
-  
+
   public boolean hasSyntaxErrors(){
     return syntaxErrors.get();
   }
-  
+
   public boolean hasErrors(){
     return containsErrors.get();
   }
-  
+
   protected TreeMap<String, IProblem> tempErrorLog;
 
   protected void syntaxCheck() {
@@ -527,7 +528,7 @@ public class ErrorCheckerService implements Runnable{
     options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
     options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
     parser.setCompilerOptions(options);
-    
+
     if (cu == null)
       cu = (CompilationUnit) parser.createAST(null);
     else {
@@ -537,7 +538,7 @@ public class ErrorCheckerService implements Runnable{
     }
     compilationUnitState = 1;
     synchronized (problemsList) {
-      
+
       // Store errors returned by the ast parser
       problems = cu.getProblems();
       // log("Problem Count: " + problems.length);
@@ -558,24 +559,24 @@ public class ErrorCheckerService implements Runnable{
         syntaxErrors.set(false);
         containsErrors.set(false);
         parser.setSource(sourceCode.toCharArray());
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);        
+        parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setCompilerOptions(options);
-        lastCorrectCU = (CompilationUnit) parser.createAST(null);  
+        lastCorrectCU = (CompilationUnit) parser.createAST(null);
       } else {
         syntaxErrors.set(true);
         containsErrors.set(true);
       }
     }
   }
-  
+
   protected URLClassLoader classLoader;
-  
+
   protected void compileCheck() {
-    
-    // CU needs to be updated coz before compileCheck xqpreprocessor is run on 
+
+    // CU needs to be updated coz before compileCheck xqpreprocessor is run on
     // the source code which makes some further changes
-    //TODO Check if this breaks things 
-    
+    //TODO Check if this breaks things
+
     parser.setSource(sourceCode.toCharArray());
     parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
@@ -585,7 +586,7 @@ public class ErrorCheckerService implements Runnable{
     options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
     options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
     parser.setCompilerOptions(options);
-    
+
     if (compileCheckCU == null)
       compileCheckCU = (CompilationUnit) parser.createAST(null);
     else {
@@ -596,7 +597,7 @@ public class ErrorCheckerService implements Runnable{
     if(!hasSyntaxErrors())
       lastCorrectCU = compileCheckCU;
     cu = compileCheckCU;
-    
+
     compilationUnitState = 2;
     // Currently (Sept, 2012) I'm using Java's reflection api to load the
     // CompilationChecker class(from CompilationChecker.jar) that houses the
@@ -614,25 +615,25 @@ public class ErrorCheckerService implements Runnable{
       // If imports have changed, reload classes with new classpath.
       if (loadCompClass) {
 
-        classpath = new URL[classpathJars.size()]; 
+        classpath = new URL[classpathJars.size()];
         int ii = 0;
         for (; ii < classpathJars.size(); ii++) {
           classpath[ii] = classpathJars.get(ii);
         }
-        
+
         compilationChecker = null;
         classLoader = null;
         System.gc();
         // log("CP Len -- " + classpath.length);
         classLoader = new URLClassLoader(classpath);
-        compilationChecker = new CompilationChecker();        
+        compilationChecker = new CompilationChecker();
         loadCompClass = false;
       }
 
       if (compilerSettings == null) {
         prepareCompilerSetting();
       }
-      
+
       synchronized (problemsList) {
         problems = compilationChecker.getErrors(className, sourceCode, compilerSettings, classLoader);
         if (problems == null) {
@@ -640,24 +641,24 @@ public class ErrorCheckerService implements Runnable{
         }
 
         for (int i = 0; i < problems.length; i++) {
-  
+
           IProblem problem = problems[i];
 
           // added a -1 to line number because in compile check code
           // an extra package statement is added, so all line numbers
           // are increased by 1
           int a[] = calculateTabIndexAndLineNumber(problem.getSourceLineNumber() - 1);
-          
+
           Problem p = new Problem(problem, a[0], a[1]);
           if (problem.isError()) {
             p.setType(Problem.ERROR);
             containsErrors.set(true); // set flag
           }
-          
+
           if (problem.isWarning()) {
             p.setType(Problem.WARNING);
           }
-  
+
           // If warnings are disabled, skip 'em
           if (p.isWarning() && !ExperimentalMode.warningsEnabled) {
             continue;
@@ -666,7 +667,7 @@ public class ErrorCheckerService implements Runnable{
         }
       }
     }
-    
+
     catch (Exception e) {
       System.err.println("compileCheck() problem." + e);
       e.printStackTrace();
@@ -681,15 +682,15 @@ public class ErrorCheckerService implements Runnable{
     " windows and then reopen this sketch.");
       pauseThread();
     }
-    
+
     // log("Compilecheck, Done.");
   }
-  
+
   /**
    * Calculates PDE Offsets from Java Offsets for Problems
    */
   private void calcPDEOffsetsForProbList() {
-    try {   
+    try {
       PlainDocument javaSource = new PlainDocument();
       // Code in pde tabs stored as PlainDocument
       PlainDocument pdeTabs[] = new PlainDocument[editor.getSketch()
@@ -716,7 +717,7 @@ public class ErrorCheckerService implements Runnable{
       int pkgNameOffset = ("package " + className + ";\n").length();
       // package name is added only during compile check
       if(compilationUnitState != 2) pkgNameOffset = 0;
-      
+
       for (Problem p : problemsList) {
         int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset, prbEnd = p
             .getIProblem().getSourceEnd() - pkgNameOffset;
@@ -735,7 +736,7 @@ public class ErrorCheckerService implements Runnable{
         String javaLine = javaSource
             .getText(lineElement.getStartOffset(), lineElement.getEndOffset()
                 - lineElement.getStartOffset());
-       
+
         Element pdeLineElement = pdeTabs[p.getTabIndex()]
             .getDefaultRootElement().getElement(p.getLineNumber());
         if (pdeLineElement == null) {
@@ -763,15 +764,15 @@ public class ErrorCheckerService implements Runnable{
       e.printStackTrace();
     }
   }
-  
+
   public CompilationUnit getLastCorrectCU(){
     return lastCorrectCU;
   }
-  
+
   public CompilationUnit getLatestCU(){
     return compileCheckCU;
   }
-  
+
   private int loadClassCounter = 0;
   public URLClassLoader getSketchClassLoader() {
     loadClassCounter++;
@@ -789,13 +790,13 @@ public class ErrorCheckerService implements Runnable{
    * libraries. This would be needed for compilation check. Also, adds
    * stuff(jar files, class files, candy) from the code folder. And it looks
    * messed up.
-   * 
+   *
    */
   protected void prepareCompilerClasspath() {
     if (!loadCompClass) {
       return;
     }
-    
+
     synchronized (classpathJars) {
       // log("1..");
       classpathJars = new ArrayList<URL>();
@@ -805,7 +806,7 @@ public class ErrorCheckerService implements Runnable{
         String item = impstat.getImportName();
         int dot = item.lastIndexOf('.');
         entry = (dot == -1) ? item : item.substring(0, dot);
-  
+
         entry = entry.substring(6).trim();
         // log("Entry--" + entry);
         if (ignorableImport(entry)) {
@@ -813,12 +814,12 @@ public class ErrorCheckerService implements Runnable{
           continue;
         }
         Library library = null;
-  
+
         // Try to get the library classpath and add it to the list
         try {
           library = editor.getMode().getLibrary(entry);
           // log("lib->" + library.getClassPath() + "<-");
-          String libraryPath[] = PApplet.split(library.getClassPath()
+          String libraryPath[] = PUtil.split(library.getClassPath()
               .substring(1).trim(), File.pathSeparatorChar);
           for (int i = 0; i < libraryPath.length; i++) {
             // log(entry + " ::"
@@ -836,7 +837,7 @@ public class ErrorCheckerService implements Runnable{
             // Look around in the code folder for jar files
             if (editor.getSketch().hasCodeFolder()) {
               File codeFolder = editor.getSketch().getCodeFolder();
-  
+
               // get a list of .jar files in the "code" folder
               // (class files in subfolders should also be picked up)
               String codeFolderClassPath = Base
@@ -853,9 +854,9 @@ public class ErrorCheckerService implements Runnable{
                 System.out
                     .println("Please make sure that the library is present in <sketchbook "
                         + "folder>/libraries folder or in the code folder of your sketch");
-  
+
               }
-              String codeFolderPath[] = PApplet.split(
+              String codeFolderPath[] = PUtil.split(
                   codeFolderClassPath.substring(1).trim(),
                   File.pathSeparatorChar);
               try {
@@ -863,7 +864,7 @@ public class ErrorCheckerService implements Runnable{
                   classpathJars.add(new File(codeFolderPath[i])
                       .toURI().toURL());
                 }
-  
+
               } catch (Exception e2) {
                 System.out
                     .println("Yikes! codefolder, prepareImports(): "
@@ -881,25 +882,25 @@ public class ErrorCheckerService implements Runnable{
                   .println("Please make sure that the library is present in <sketchbook "
                       + "folder>/libraries folder or in the code folder of your sketch");
             }
-  
+
           } else {
             System.err
                 .println("Yikes! There was some problem in prepareImports(): "
                     + e);
             System.err.println("I was processing: " + entry);
-  
+
             // e.printStackTrace();
           }
         }
-  
+
       }
     }
-    astGenerator.loadJars(); // update jar file for completion lookup  
+    astGenerator.loadJars(); // update jar file for completion lookup
   }
-  
+
   /**
    * Ignore processing packages, java.*.*. etc.
-   * 
+   *
    * @param packageName
    * @return boolean
    */
@@ -942,7 +943,7 @@ public class ErrorCheckerService implements Runnable{
         CompilerOptions.IGNORE);
   }
 
-  
+
   /**
    * Updates the error table in the Error Window.
    */
@@ -968,13 +969,13 @@ public class ErrorCheckerService implements Runnable{
                                                    XQErrorTable.columnNames);
       // Update error table in the editor
       editor.updateTable(tm);
-      
+
       /*
       if (errorWindow != null) {
         if (errorWindow.isVisible()) {
           errorWindow.updateTable(tm);
         }
-        
+
         // A rotating slash animation on the title bar to show
         // that error checker thread is running
 
@@ -998,11 +999,11 @@ public class ErrorCheckerService implements Runnable{
     }
 
   }
-  
+
   /**
    * Repaints the textarea if required
    */
-  public void updatePaintedThingys() {    
+  public void updatePaintedThingys() {
     currentTab = editor.getSketch().getCodeIndex(
         editor.getSketch().getCurrentCode());
     //log("Tab changed " + currentTab + " LT " + lastTab);
@@ -1015,15 +1016,15 @@ public class ErrorCheckerService implements Runnable{
     }
 
   }
-  
+
   protected int lastCaretLine = -1;
-  
+
   /**
    * Updates editor status bar, depending on whether the caret is on an error
    * line or not
    */
   public void updateEditorStatus() {
-    
+
     if(editor.getStatusMode() == EditorStatus.EDIT) return;
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
@@ -1047,7 +1048,7 @@ public class ErrorCheckerService implements Runnable{
         }
       }
     }
-    
+
     // This line isn't an error line anymore, so probably just clear it
     if (editor.statusMessageType == DebugEditor.STATUS_COMPILER_ERR) {
       editor.statusEmpty();
@@ -1058,10 +1059,10 @@ public class ErrorCheckerService implements Runnable{
 //      lastCaretLine = editor.ta.getCaretLine();
 //    }
   }
-  
+
   /**
    * Maps offset from java code to pde code. Returns a bunch of offsets as array
-   * 
+   *
    * @param line
    *          - line number in java code
    * @param offset
@@ -1141,23 +1142,23 @@ public class ErrorCheckerService implements Runnable{
     }
     return new int[] { codeIndex, x };
   }
-  
+
   public String getPDECodeAtLine(int tab, int linenumber){
     if(linenumber < 0) return null;
     editor.getSketch().setCurrentCode(tab);
     return editor.ta.getLineText(linenumber);
   }
-  
+
   /**
    * Calculates the tab number and line number of the error in that particular
    * tab. Provides mapping between pure java and pde code.
-   * 
+   *
    * @param problem
    *            - IProblem
    * @return int[0] - tab number, int[1] - line number
    */
   public int[] calculateTabIndexAndLineNumber(int javalineNumber) {
-    // String[] lines = {};// = PApplet.split(sourceString, '\n');
+    // String[] lines = {};// = PUtil.split(sourceString, '\n');
     int codeIndex = 0;
 
     int x = javalineNumber - mainClassOffset;
@@ -1229,7 +1230,7 @@ public class ErrorCheckerService implements Runnable{
 
     return new int[] { codeIndex, x };
   }
-  
+
   /**
    * Returns line number of corresponding java source
    * @param tab
@@ -1251,21 +1252,21 @@ public class ErrorCheckerService implements Runnable{
    * java source. And there's a difference between parsable and compilable.
    * XQPrerocessor.java makes this code compilable. <br>
    * Handles: <li>Removal of import statements <li>Conversion of int(),
-   * char(), etc to PApplet.parseInt(), etc. <li>Replacing '#' with 0xff for
+   * char(), etc to PUtil.parseInt(), etc. <li>Replacing '#' with 0xff for
    * color representation<li>Converts all 'color' datatypes to int
    * (experimental) <li>Appends class declaration statement after determining
    * the mode the sketch is in - ACTIVE or STATIC
-   * 
+   *
    * @return String - Pure java representation of PDE code. Note that this
    *         code is not yet compile ready.
-   */ 
+   */
 
   protected String preprocessCode(String pdeCode) {
-    
+
     programImports = new ArrayList<ImportStatement>();
-    
+
     StringBuffer rawCode = new StringBuffer();
-    
+
     try {
 
       for (SketchCode sc : editor.getSketch().getCode()) {
@@ -1303,7 +1304,7 @@ public class ErrorCheckerService implements Runnable{
     // Replace comments with whitespaces
     // sourceAlt = scrubComments(sourceAlt);
 
-    // Find all int(*), replace with PApplet.parseInt(*)
+    // Find all int(*), replace with PUtil.parseInt(*)
 
     // \bint\s*\(\s*\b , i.e all exclusive "int("
 
@@ -1319,7 +1320,7 @@ public class ErrorCheckerService implements Runnable{
       // log(" End index: " + matcher.end() + " ");
       // log("-->" + matcher.group() + "<--");
       // }
-      sourceAlt = matcher.replaceAll("PApplet.parse"
+      sourceAlt = matcher.replaceAll("PUtil.parse"
         + Character.toUpperCase(dataType.charAt(0))
         + dataType.substring(1) + "(");
 
@@ -1351,7 +1352,7 @@ public class ErrorCheckerService implements Runnable{
     className = (editor == null) ? "DefaultClass" : editor.getSketch()
       .getName();
 
-    
+
     // Check whether the code is being written in STATIC mode(no function
     // declarations) - append class declaration and void setup() declaration
     Matcher matcher = FUNCTION_DECL.matcher(sourceAlt);
@@ -1359,14 +1360,14 @@ public class ErrorCheckerService implements Runnable{
       sourceAlt = xqpreproc.prepareImports(programImports) + "public class " + className + " extends PApplet {\n"
         + "public void setup() {\n" + sourceAlt
         + "\nnoLoop();\n}\n" + "\n}\n";
-      staticMode = true;           
+      staticMode = true;
 
     } else {
       sourceAlt = xqpreproc.prepareImports(programImports) + "public class " + className + " extends PApplet {\n"
         + sourceAlt + "\n}";
-      staticMode = false;     
+      staticMode = false;
     }
-    
+
     int position = sourceAlt.indexOf("{") + 1;
     mainClassOffset = 1;
     for (int i = 0; i <= position; i++) {
@@ -1385,10 +1386,10 @@ public class ErrorCheckerService implements Runnable{
 //     log("PDE code processed - "
 //     + editor.getSketch().getName());
     sourceCode = sourceAlt;
-    return sourceAlt;  
+    return sourceAlt;
 
   }
-  
+
   /**
    * Now defunct.
    * The super method that highlights any ASTNode in the pde editor =D
@@ -1413,16 +1414,16 @@ public class ErrorCheckerService implements Runnable{
     }
     return false;
   }
-  
+
   public boolean highlightNode(ASTNode node){
     ASTNodeWrapper awrap = new ASTNodeWrapper(node);
     return highlightNode(awrap);
   }
-  
+
   /**
    * Scrolls to the error source in code. And selects the line text. Used by
    * XQErrorTable and ErrorBar
-   * 
+   *
    * @param errorIndex
    *            - index of error
    */
@@ -1430,13 +1431,13 @@ public class ErrorCheckerService implements Runnable{
     if (editor == null) {
       return;
     }
-    
+
     if (errorIndex < problemsList.size() && errorIndex >= 0) {
       Problem p = problemsList.get(errorIndex);
       scrollToErrorLine(p);
     }
   }
-  
+
   public void scrollToErrorLine(Problem p) {
     if (editor == null) {
       return;
@@ -1456,7 +1457,7 @@ public class ErrorCheckerService implements Runnable{
                                       (p.getPDELineStopOffset()
                                           - p.getPDELineStartOffset() + 1));
       }
-      
+
       // scroll, but within boundaries
       // It's also a bit silly that if parameters to scrollTo() are out of range,
       // a BadLocation Exception is thrown internally and caught in JTextArea AND
@@ -1473,11 +1474,11 @@ public class ErrorCheckerService implements Runnable{
     }
     // log("---");
   }
-  
+
   /**
    * Static method for scroll to a particular line in the PDE. Also highlights
    * the length of the text. Requires the editor instance as arguement.
-   * 
+   *
    * @param edt
    * @param tabIndex
    * @param lineNoInTab
@@ -1509,7 +1510,7 @@ public class ErrorCheckerService implements Runnable{
     }
     return true;
   }
-  
+
   /**
    * Checks if import statements in the sketch have changed. If they have,
    * compiler classpath needs to be updated.
@@ -1537,7 +1538,7 @@ public class ErrorCheckerService implements Runnable{
   }
 
   protected int pdeImportsCount;
-  
+
   public int getPdeImportsCount() {
     return pdeImportsCount;
   }
@@ -1545,7 +1546,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Removes import statements from tabSource, replaces each with white spaces
    * and adds the import to the list of program imports
-   * 
+   *
    * @param tabProgram
    *            - Code in a tab
    * @param tabNumber
@@ -1558,7 +1559,7 @@ public class ErrorCheckerService implements Runnable{
     String tabSource = new String(tabProgram);
     do {
       // log("-->\n" + sourceAlt + "\n<--");
-      String[] pieces = PApplet.match(tabSource, importRegexp);
+      String[] pieces = PUtil.match(tabSource, importRegexp);
 
       // Stop the loop if we've removed all the import lines
       if (pieces == null) {
@@ -1596,7 +1597,7 @@ public class ErrorCheckerService implements Runnable{
    * Replaces non-ascii characters with their unicode escape sequences and
    * stuff. Used as it is from
    * processing.src.processing.mode.java.preproc.PdePreprocessor
-   * 
+   *
    * @param program
    *            - Input String containing non ascii characters
    * @return String - Converted String
@@ -1639,7 +1640,7 @@ public class ErrorCheckerService implements Runnable{
     }
     return new String(p2, 0, index);
   }
-  
+
   public void handleErrorCheckingToggle(){
     if (!ExperimentalMode.errorCheckEnabled) {
       // unticked Menu Item
@@ -1659,7 +1660,7 @@ public class ErrorCheckerService implements Runnable{
       runManualErrorCheck();
     }
   }
-  
+
   /**
    * Stops the Error Checker Service thread
    */
@@ -1685,12 +1686,12 @@ public class ErrorCheckerService implements Runnable{
   public DebugEditor getEditor() {
     return editor;
   }
-  
+
 //  public static void log(String message){
 //    if(ExperimentalMode.DEBUG)
 //      log(message);
 //  }
-//  
+//
 //  public static void log2(String message){
 //    if(ExperimentalMode.DEBUG)
 //      System.out.print(message);

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import processing.core.PApplet;
+import processing.core.PUtil;
 
 
 // splice, slice, subset, concat, reverse
@@ -83,7 +84,7 @@ public class IntList implements Iterable<Integer> {
    */
   private void crop() {
     if (count != data.length) {
-      data = PApplet.subset(data, 0, count);
+      data = PUtil.subset(data, 0, count);
     }
   }
 
@@ -147,7 +148,7 @@ public class IntList implements Iterable<Integer> {
    */
   public void set(int index, int what) {
     if (index >= count) {
-      data = PApplet.expand(data, index+1);
+      data = PUtil.expand(data, index+1);
       for (int i = count; i < index; i++) {
         data[i] = 0;
       }
@@ -218,7 +219,7 @@ public class IntList implements Iterable<Integer> {
    */
   public void append(int value) {
     if (count == data.length) {
-      data = PApplet.expand(data);
+      data = PUtil.expand(data);
     }
     data[count++] = value;
   }
@@ -244,7 +245,7 @@ public class IntList implements Iterable<Integer> {
 //    }
 //  }
 //    if (index >= data.length) {
-//      data = PApplet.expand(data, index+1);
+//      data = PUtil.expand(data, index+1);
 //      data[index] = value;
 //      count = index+1;
 //
