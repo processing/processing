@@ -806,7 +806,7 @@ public class Sketch {
 	
     final String oldName2 = folder.getName();
     // TODO rewrite this to use shared version from PApplet
-    final String PROMPT = "Save sketch folder as...";
+    final String PROMPT = Language.text("save");
     if (Preferences.getBoolean("chooser.files.native")) {
       // get new name for folder
       FileDialog fd = new FileDialog(editor, PROMPT, FileDialog.SAVE);
@@ -1033,8 +1033,7 @@ public class Sketch {
     }
 
     // get a dialog, select a file to add to the sketch
-    String prompt =
-      "Select an image or other data file to copy to your sketch";
+    String prompt = Language.text("file");
     //FileDialog fd = new FileDialog(new Frame(), prompt, FileDialog.LOAD);
     FileDialog fd = new FileDialog(editor, prompt, FileDialog.LOAD);
     fd.setVisible(true);
