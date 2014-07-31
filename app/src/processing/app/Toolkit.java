@@ -40,8 +40,8 @@ import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -453,9 +453,16 @@ public class Toolkit {
   }
 
 
+  /** 
+   * Get a font from the JRE lib/fonts folder. Our default fonts are also 
+   * installed there so that the monospace (and others) can be used by other
+   * font listing calls (i.e. it appears in the list of monospace fonts in 
+   * the Preferences window). 
+   */
   static private Font createFont(String filename, int size) throws IOException, FontFormatException {
-    InputStream is = Base.getLibStream("fonts/" + filename);
-    BufferedInputStream input = new BufferedInputStream(is);
+    //InputStream is = Base.getLibStream("fonts/" + filename);
+    File fontFile = new File(System.getProperty("java.home"), "lib/fonts/" + filename);
+    BufferedInputStream input = new BufferedInputStream(new FileInputStream(fontFile));
     Font font = Font.createFont(Font.TRUETYPE_FONT, input);
     input.close();
     return font.deriveFont((float) size);

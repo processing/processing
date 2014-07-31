@@ -1301,6 +1301,12 @@ public class PGraphicsJava2D extends PGraphics {
     }
 
     if (who.modified) {
+      if (who.pixels == null) {
+        // This might be a PGraphics that hasn't been drawn to yet.
+        // Can't just bail because the cache has been created above.
+        // https://github.com/processing/processing/issues/2208
+        who.pixels = new int[who.width * who.height];
+      }
       cash.update(who, tint, tintColor);
       who.modified = false;
     }

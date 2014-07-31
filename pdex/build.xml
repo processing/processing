@@ -37,7 +37,7 @@
 	<target name="clean" description="Clean the build directories">
 		<delete dir="bin" />
 		<delete file="mode/${lib.name}.jar" />
-		<echo message="Platform is ${platform}." />
+		<!--<echo message="Platform is ${platform}." />-->
 	</target>
 
 

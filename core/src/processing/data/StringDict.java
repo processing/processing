@@ -428,6 +428,13 @@ public class StringDict {
   }
 
 
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.println(keys[i] + " = " + values[i]);
+    }
+  }
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

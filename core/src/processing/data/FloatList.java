@@ -110,6 +110,9 @@ public class FloatList implements Iterable<Float> {
    * @brief Get an entry at a particular index
    */
   public float get(int index) {
+    if (index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return data[index];
   }
 
@@ -563,7 +566,20 @@ public class FloatList implements Iterable<Float> {
     new Sort() {
       @Override
       public int size() {
-        return count;
+        // move NaN values to the end of the list and don't sort them
+        int right = count - 1;
+        while (data[right] != data[right]) {
+          right--;
+        }
+        for (int i = right; i >= 0; --i) {
+          float v = data[i];
+          if (v != v) {
+            data[i] = data[right];
+            data[right] = v;
+            --right;
+          }
+        }
+        return right + 1;
       }
 
       @Override
@@ -760,6 +776,13 @@ public class FloatList implements Iterable<Float> {
       sb.append(data[i]);
     }
     return sb.toString();
+  }
+
+
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.format("[%d] %f%n", i, data[i]);
+    }
   }
 
 
