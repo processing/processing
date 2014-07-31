@@ -6,6 +6,8 @@ X move to native OS X full screen (gets rid of native code)
 X   https://github.com/processing/processing/issues/2641
 X do bounds check on setVertex(PVector)
 X   https://github.com/processing/processing/issues/2556
+X using createGraphics() w/o begin/endDraw(), don't attempt drawing w/ image()
+X   https://github.com/processing/processing/issues/2208
 
 data
 X add copy() method to Table

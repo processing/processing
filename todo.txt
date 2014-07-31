@@ -33,6 +33,11 @@ X   https://github.com/processing/processing/issues/2656
 X add a new pref for the 3.0 sketchbook location
 X if Server constructor fails, throw an exception
 X   https://github.com/processing/processing/issues/2604
+o check on why 2x core.jar inside the Java folder
+o   maybe OS X Java can't look in subfolders? (just auto-adds things)
+o   https://github.com/processing/processing/issues/2344
+X   one is used by the PDE, the other is used as a library
+_ changing the mode on an untitled, unmodified sketch removes untitled status
 _ when renaming a tab, include the previous name to be edited
 
 gsoc
@@ -109,8 +114,6 @@ _   http://www.java2s.com/Code/Java/Network-Protocol/DetectProxySettingsforInter
 
 medium
 _ possibility of libraries folder inside a particular sketch?
-_ check on why 2x core.jar inside the Java folder
-_   maybe OS X Java can't look in subfolders? (just auto-adds things)
 _ display "1" is not correct in 2.1.2
 _   https://github.com/processing/processing/issues/2502
 _ re/move things from Google Code downloads

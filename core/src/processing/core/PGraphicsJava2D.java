@@ -1301,6 +1301,11 @@ public class PGraphicsJava2D extends PGraphics {
     }
 
     if (who.modified) {
+      if (who.pixels == null) {
+        // This might be a PGraphics that hasn't been drawn to yet, bail out.
+        // https://github.com/processing/processing/issues/2208
+        return;
+      }
       cash.update(who, tint, tintColor);
       who.modified = false;
     }
