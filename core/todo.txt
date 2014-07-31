@@ -1,7 +1,15 @@
 0230 core (3.0a3)
 
+earlier
+X PShape disableStyle() does not work with createShape()
+X   https://github.com/processing/processing/issues/1523
 X multisampled offscreen PGraphics don't clear the screen properly
 X   https://github.com/processing/processing/issues/2679
+X   this was done midway through the 3.0a2 release process
+
+pull requests
+X call applet.exit() instead of System.exit() from Present Mode's 'stop'
+X   https://github.com/processing/processing/pull/2680
 
 
 applet/component

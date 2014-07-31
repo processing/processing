@@ -4,11 +4,13 @@ pulls
 X Add polling to detect file system changes
 X   https://github.com/processing/processing/issues/1939
 X   https://github.com/processing/processing/pull/2628
+X huge i18n patch
+X   https://github.com/processing/processing/issues/632
+X   https://github.com/processing/processing/pull/2084
+X   http://code.google.com/p/processing/issues/detail?id=593
 
 
 pending
-_ huge i18n patch
-_   https://github.com/processing/processing/pull/2084
 _ look at the sound library https://github.com/wirsing/ProcessingSound
 _   sound is not yet supported on Windows
 _ glw? lwjgl? retina jogl?
@@ -915,15 +917,6 @@ _ add proper copyright and license information for all included projects
 _   http://code.google.com/p/processing/issues/detail?id=185
 _   list of license issues
 _   http://code.google.com/p/processing/issues/detail?id=575
-_ Internationalization
-_   http://code.google.com/p/processing/issues/detail?id=593
-_   l10n, i18n of environment/core
-_   http://docs.oracle.com/javase/tutorial/i18n/format/messageintro.html
-_   http://docs.oracle.com/javase/tutorial/i18n/format/numberFormat.html
-_   http://docs.oracle.com/javase/tutorial/i18n/format/choiceFormat.html
-_   http://docs.oracle.com/javase/tutorial/i18n/format/messageFormat.html
-_   http://docs.oracle.com/javase/7/docs/api/java/text/MessageFormat.html
-_   http://docs.oracle.com/javase/tutorial/i18n/intro/checklist.html
 _ write up code guidelines for project
 _   make proper Eclipse style prefs to reinforce
 _ write up guidelines for modes
