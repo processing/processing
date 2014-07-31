@@ -2400,7 +2400,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
         @Override
         public void windowLostFocus(WindowEvent arg0){
-          //do nothing
+          List<WatchEvent<?>> events = finKey.pollEvents();
+          //don't ask to reload a file we saved
+          if(!saved){
+            processFileEvents(events);
+          }
+          saved = false;
         }
       };
       //the key can now be polled for changes in the files
@@ -2424,10 +2429,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       //this makes things.... complicated
       //System.out.println(e.context());
       
-      //don't ask to reload a file we saved
-      if(saved){
-        break;
-      }
+
       //if we already reloaded in this cycle, then don't reload again
       if (didReload){
         break;
