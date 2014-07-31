@@ -58,7 +58,7 @@ public class UpdateCheck {
     new Thread(new Runnable() {
       public void run() {
         try {
-          Thread.sleep(30 * 1000);  // give the PDE time to get rolling
+          Thread.sleep(20 * 1000);  // give the PDE time to get rolling
           updateCheck();
         } catch (Exception e) {
           // this can safely be ignored, too many instances where no net
@@ -124,11 +124,11 @@ public class UpdateCheck {
         // (this should really be handled better).
         Thread.sleep(5 * 1000);
         if ((!base.libraryManagerFrame.hasAlreadyBeenOpened() &&
-             base.libraryManagerFrame.hasUpdates()) ||
+             base.libraryManagerFrame.hasUpdates(base)) ||
             (!base.toolManagerFrame.hasAlreadyBeenOpened() &&
-             base.toolManagerFrame.hasUpdates()) ||
+             base.toolManagerFrame.hasUpdates(base)) ||
             (!base.modeManagerFrame.hasAlreadyBeenOpened() &&
-             base.modeManagerFrame.hasUpdates())) {
+             base.modeManagerFrame.hasUpdates(base))) {
           promptToOpenContributionManager();
         }
       }

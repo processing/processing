@@ -422,7 +422,7 @@ public class JavaBuild {
       String entry = (dot == -1) ? item : item.substring(0, dot);
 //      System.out.print(entry + " => ");
 
-      if (item.startsWith("static ")) { 
+      if (item.startsWith("static ")) {
         // import static - https://github.com/processing/processing/issues/8
         // Remove more stuff.
         int dot2 = item.lastIndexOf('.');
@@ -472,8 +472,8 @@ public class JavaBuild {
       javaClassPath = javaClassPath.substring(1, javaClassPath.length() - 1);
     }
     classPath += File.pathSeparator + javaClassPath;
-    
-    // But make sure that there isn't anything in there that's missing, 
+
+    // But make sure that there isn't anything in there that's missing,
     // otherwise ECJ will complain and die. For instance, Java 1.7 (or maybe
     // it's appbundler?) adds Java/Classes to the path, which kills us.
     //String[] classPieces = PApplet.split(classPath, File.pathSeparator);
@@ -549,7 +549,7 @@ public class JavaBuild {
     if (pkg.startsWith("processing.data.")) return true;
     if (pkg.startsWith("processing.event.")) return true;
     if (pkg.startsWith("processing.opengl.")) return true;
-    
+
 //    if (pkg.startsWith("com.jogamp.")) return true;
 
 //    // ignore core, data, and opengl packages
@@ -1113,11 +1113,11 @@ public class JavaBuild {
     File folder = null;
     for (String platformName : PConstants.platformNames) {
       int platform = Base.getPlatformIndex(platformName);
-      
+
       // Can only embed Java on the native platform
-      boolean embedJava = (platform == PApplet.platform) && 
+      boolean embedJava = (platform == PApplet.platform) &&
         Preferences.getBoolean("export.application.embed_java");
-      
+
       if (Preferences.getBoolean("export.application.platform." + platformName)) {
         if (Library.hasMultipleArch(platform, importedLibraries)) {
           // export the 32-bit version
@@ -1216,41 +1216,41 @@ public class JavaBuild {
         File jdkFolder = new File(Base.getJavaHome(), "../../..");
         String jdkFolderName = jdkFolder.getCanonicalFile().getName();
         jvmRuntime = "<key>JVMRuntime</key>\n    <string>" + jdkFolderName + "</string>";
-        jdkPath = new File(dotAppFolder, "Contents/PlugIns/" + jdkFolderName + ".jdk").getAbsolutePath();
+        jdkPath = new File(dotAppFolder, "Contents/PlugIns/" + jdkFolderName).getAbsolutePath();
       }
 
       File contentsFolder = new File(dotAppFolder, "Contents");
       contentsFolder.mkdirs();
 
       // Info.plist will be written later
-      
+
       // set the jar folder to a different location than windows/linux
       //jarFolder = new File(dotAppFolder, "Contents/Resources/Java");
       jarFolder = new File(contentsFolder, "Java");
 
       File macosFolder = new File(contentsFolder, "MacOS");
       macosFolder.mkdirs();
-      Base.copyFile(new File(contentsOrig, "MacOS/Processing"), 
+      Base.copyFile(new File(contentsOrig, "MacOS/Processing"),
                     new File(contentsFolder, "MacOS/" + sketch.getName()));
-      
+
       File pkgInfo = new File(contentsFolder, "PkgInfo");
       PrintWriter writer = PApplet.createWriter(pkgInfo);
       writer.println("APPL????");
       writer.flush();
       writer.close();
-      
+
       // Use faster(?) native copy here (also to do sym links)
       if (embedJava) {
         Base.copyDirNative(new File(contentsOrig, "PlugIns"),
                            new File(contentsFolder, "PlugIns"));
       }
-      
+
       File resourcesFolder = new File(contentsFolder, "Resources");
-      Base.copyDir(new File(contentsOrig, "Resources/en.lproj"), 
+      Base.copyDir(new File(contentsOrig, "Resources/en.lproj"),
                    new File(resourcesFolder, "en.lproj"));
       Base.copyFile(mode.getContentFile("application/sketch.icns"),
                     new File(resourcesFolder, "sketch.icns"));
-      
+
       /*
       String stubName = "Contents/MacOS/JavaApplicationStub";
       // need to set the stub to executable
@@ -1279,7 +1279,7 @@ public class JavaBuild {
       if (embedJava) {
         Base.copyDirNative(Base.getJavaHome(), new File(destFolder, "java"));
       }
-      
+
     } else if (exportPlatform == PConstants.WINDOWS) {
       if (embedJava) {
         Base.copyDir(Base.getJavaHome(), new File(destFolder, "java"));
@@ -1312,7 +1312,7 @@ public class JavaBuild {
     }
     */
 
-    
+
     /// start copying all jar files
 
     Vector<String> jarListVector = new Vector<String>();
@@ -1446,7 +1446,11 @@ public class JavaBuild {
     }
     // https://github.com/processing/processing/issues/2239
     runOptions.add("-Djna.nosys=true");
-    
+    // https://github.com/processing/processing/issues/2559
+    if (exportPlatform == PConstants.WINDOWS) {
+      runOptions.add("-Djava.library.path=\"%EXEDIR%\\lib\"");
+    }
+
 
     /// macosx: write out Info.plist (template for classpath, etc)
 
@@ -1457,7 +1461,7 @@ public class JavaBuild {
         runOptionsXML.append(opt);
         runOptionsXML.append("</string>");
         runOptionsXML.append('\n');
-      }      
+      }
 
       String PLIST_TEMPLATE = "Info.plist.tmpl";
       File plistTemplate = new File(sketch.getFolder(), PLIST_TEMPLATE);
@@ -1500,10 +1504,10 @@ public class JavaBuild {
       // attempt to code sign if the Xcode tools appear to be installed
       if (Base.isMacOS() && new File("/usr/bin/codesign_allocate").exists()) {
         if (embedJava) {
-          ProcessHelper.ffs("codesign", "--force", "--sign", "-", jdkPath); 
+          ProcessHelper.ffs("codesign", "--force", "--sign", "-", jdkPath);
         }
         String appPath = dotAppFolder.getAbsolutePath();
-        ProcessHelper.ffs("codesign", "--force", "--sign", "-", appPath); 
+        ProcessHelper.ffs("codesign", "--force", "--sign", "-", appPath);
       }
 
     } else if (exportPlatform == PConstants.WINDOWS) {
@@ -1513,27 +1517,27 @@ public class JavaBuild {
       XML project = new XML("project");
       XML target = project.addChild("target");
       target.setString("name", "windows");
-      
+
       XML taskdef = target.addChild("taskdef");
       taskdef.setString("name", "launch4j");
       taskdef.setString("classname", "net.sf.launch4j.ant.Launch4jTask");
       String launchPath = mode.getContentFile("application/launch4j").getAbsolutePath();
       taskdef.setString("classpath", launchPath + "/launch4j.jar:" + launchPath + "/lib/xstream.jar");
-      
+
       XML launch4j = target.addChild("launch4j");
       // not all launch4j options are available when embedded inside the ant
       // build file (i.e. the icon param doesn't work), so use a config file
       //<launch4j configFile="windows/work/config.xml" />
       launch4j.setString("configFile", configFile.getAbsolutePath());
-      
+
       XML config = new XML("launch4jConfig");
       config.addChild("headerType").setContent("gui");
       config.addChild("dontWrapJar").setContent("true");
       config.addChild("downloadUrl").setContent("http://java.com/download");
-      
+
       File exeFile = new File(destFolder, sketch.getName() + ".exe");
       config.addChild("outfile").setContent(exeFile.getAbsolutePath());
-      
+
       File iconFile = mode.getContentFile("application/sketch.ico");
       config.addChild("icon").setContent(iconFile.getAbsolutePath());
 
@@ -1550,7 +1554,7 @@ public class JavaBuild {
       for (String opt : runOptions) {
         jre.addChild("opt").setContent(opt);
       }
-      
+
       /*
       XML config = launch4j.addChild("config");
       config.setString("headerType", "gui");
@@ -1558,10 +1562,10 @@ public class JavaBuild {
       config.setString("outfile", exeFile.getAbsolutePath());
       config.setString("dontWrapJar", "true");
       config.setString("jarPath", "lib\\" + jarList[0]);
-      
+
       File iconFile = mode.getContentFile("application/sketch.ico");
       config.addChild("icon").setContent(iconFile.getAbsolutePath());
-      
+
       XML clazzPath = config.addChild("classPath");
       clazzPath.setString("mainClass", sketch.getName());
       for (int i = 1; i < jarList.length; i++) {
@@ -1575,11 +1579,11 @@ public class JavaBuild {
         jre.addChild("opt").setContent(opt);
       }
       */
-      
+
       config.save(configFile);
       project.save(buildFile);
       if (!buildWindowsLauncher(buildFile, "windows")) {
-        // don't delete the build file, might be useful for debugging 
+        // don't delete the build file, might be useful for debugging
         return false;
       }
       configFile.delete();
@@ -1597,10 +1601,10 @@ public class JavaBuild {
       // another fix for bug #234, LD_LIBRARY_PATH ignored on some platforms
       //ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
       if (embedJava) {
-        // https://github.com/processing/processing/issues/2349        
+        // https://github.com/processing/processing/issues/2349
         pw.print("$APPDIR/java/bin/");
       }
-      String runOptionsStr = 
+      String runOptionsStr =
         PApplet.join(runOptions.toArray(new String[0]), " ");
       pw.print("java " + runOptionsStr +
                " -Djava.library.path=\"$APPDIR:$APPDIR/lib\"" +
@@ -1646,7 +1650,7 @@ public class JavaBuild {
   }
 
 
-  /** 
+  /**
    * Run the launch4j build.xml file through ant to create the exe.
    * Most of this code was lifted from Android mode.
    */

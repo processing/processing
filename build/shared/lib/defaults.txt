@@ -339,3 +339,14 @@ run.present.stop.color = #cccccc
 #proxy.port=8080
 proxy.host=
 proxy.port=
+
+# PDE X
+pdex.autoSave.autoSaveByDefault=true
+pdex.autoSave.autoSaveEnabled=false
+pdex.autoSave.promptDisplay=true
+pdex.autoSaveInterval=5
+pdex.ccEnabled=true
+pdex.dbgOutput=false
+pdex.errorCheckEnabled=true
+pdex.warningsEnabled=true
+pdex.writeErrorLogs=false

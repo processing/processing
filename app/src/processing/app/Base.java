@@ -46,9 +46,9 @@ import processing.mode.java.JavaMode;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 228;
+  static private final int REVISION = 229;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0228"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0229"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 //  static private boolean RELEASE = false;
 
@@ -298,12 +298,12 @@ public class Base {
 //    try {
 //      Class.forName("processing.mode.java2.DebugMode");
     ModeContribution experimentalContrib =
-      ModeContribution.load(this, getContentFile("modes/experimental"), //$NON-NLS-1$
+      ModeContribution.load(this, getContentFile("modes/ExperimentalMode"), //$NON-NLS-1$
         "processing.mode.experimental.ExperimentalMode"); //$NON-NLS-1$
     if (experimentalContrib != null) {
       Mode experimentalMode = experimentalContrib.getMode();
       //coreModes = new Mode[] { javaMode, androidMode, experimentalMode };
-      coreModes = new Mode[] { javaMode, experimentalMode };
+      coreModes = new Mode[] { experimentalMode, javaMode };
     }
 //    } catch (ClassNotFoundException e) { }
 
@@ -602,38 +602,37 @@ public class Base {
   }
 
 
+  /** 
+   * The call has already checked to make sure this sketch is not modified, 
+   * now change the mode. 
+   */ 
   protected void changeMode(Mode mode) {
     if (activeEditor.getMode() != mode) {
       Sketch sketch = activeEditor.getSketch();
-      if (sketch.isModified()) {
-        Base.showWarning("Save",
-                         "Please save the sketch before changing the mode.",
-                         null);
-        return;
-      }
       nextMode = mode;
-
-      // If the current editor contains file extensions that the new mode can handle, then
-      // write a sketch.properties file with the new mode specified, and reopen.
-      boolean newModeCanHandleCurrentSource = true;
-      for (final SketchCode code: sketch.getCode()) {
-        if (!mode.validExtension(code.getExtension())) {
-          newModeCanHandleCurrentSource = false;
-          break;
-        }
-      }
-      if (newModeCanHandleCurrentSource) {
-        final File props = new File(sketch.getCodeFolder(), "sketch.properties");
-        saveModeSettings(props, nextMode);
+      
+      if (sketch.isUntitled()) {
+        // If no changes have been made, just close and start fresh.
+        // (Otherwise the editor would lose its 'untitled' status.)
         handleClose(activeEditor, true);
-        handleOpen(sketch.getMainFilePath());
-      } else {
-        // If you're changing modes, and there's nothing in the current sketch, you probably
-        // don't intend to keep the old, wrong-mode editor around.
-        if (sketch.isUntitled()) {
-          handleClose(activeEditor, true);
-        }
         handleNew();
+        
+      } else {
+        // If the current editor contains file extensions that the new mode can handle, then
+        // write a sketch.properties file with the new mode specified, and reopen.
+        boolean newModeCanHandleCurrentSource = true;
+        for (final SketchCode code: sketch.getCode()) {
+          if (!mode.validExtension(code.getExtension())) {
+            newModeCanHandleCurrentSource = false;
+            break;
+          }
+        }
+        if (newModeCanHandleCurrentSource) {
+          final File props = new File(sketch.getCodeFolder(), "sketch.properties");
+          saveModeSettings(props, nextMode);
+          handleClose(activeEditor, true);
+          handleOpen(sketch.getMainFilePath());
+        }
       }
     }
   }
@@ -927,14 +926,18 @@ public class Base {
         return null;
       }
 
-      //  System.err.println("  editors: " + editors);
       // Cycle through open windows to make sure that it's not already open.
       for (Editor editor : editors) {
-        if (editor.getSketch().getMainFile().equals(file)) {
-          editor.toFront();
-          // move back to the top of the recent list
-          handleRecent(editor);
-          return editor;
+        // User may have double-clicked any PDE in the sketch folder,  
+        // so we have to check each open tab (not just the main one).
+        // https://github.com/processing/processing/issues/2506
+        for (SketchCode tab : editor.getSketch().getCode()) {
+          if (tab.getFile().equals(file)) {
+            editor.toFront();
+            // move back to the top of the recent list
+            handleRecent(editor);
+            return editor;
+          }
         }
       }
 
@@ -957,8 +960,6 @@ public class Base {
 //    Editor.State state = new Editor.State(editors);
       Editor editor = nextMode.createEditor(this, path, state);
       if (editor == null) {
-        // if it's the last editor window
-//      if (editors.size() == 0 && defaultFileMenu == null) {
         // if it's not mode[0] already, then don't go into an infinite loop
         // trying to recreate a window with the default mode.
         if (nextMode == coreModes[0]) {
@@ -971,15 +972,14 @@ public class Base {
           editor = coreModes[0].createEditor(this, path, state);
         }
       }
-
+      
       // Make sure that the sketch actually loaded
-      if (editor.getSketch() == null) {
-//      System.err.println("sketch was null, getting out of handleOpen");
+      Sketch sketch = editor.getSketch();
+      if (sketch == null) {
         return null;  // Just walk away quietly
       }
 
-//    editor.untitled = untitled;
-      editor.getSketch().setUntitled(untitled);
+      sketch.setUntitled(untitled);
       editors.add(editor);
       handleRecent(editor);
 
@@ -1864,41 +1864,15 @@ public class Base {
   }
 
 
-//  static public String getExamplesPath() {
-//    return examplesFolder.getAbsolutePath();
-//  }
-
-//  public File getExamplesFolder() {
-//    return examplesFolder;
-//  }
-
-
-//  static public String getLibrariesPath() {
-//    return librariesFolder.getAbsolutePath();
-//  }
-
-
-//  public File getLibrariesFolder() {
-//    return librariesFolder;
-//  }
-
-
-//  static public File getToolsFolder() {
   static public File getToolsFolder() {
-//    return toolsFolder;
     return getContentFile("tools");
   }
-
-
-//  static public String getToolsPath() {
-//    return toolsFolder.getAbsolutePath();
-//  }
 
 
   static public void locateSketchbookFolder() {
     // If a value is at least set, first check to see if the folder exists.
     // If it doesn't, warn the user that the sketchbook folder is being reset.
-    String sketchbookPath = Preferences.get("sketchbook.path"); //$NON-NLS-1$
+    String sketchbookPath = Preferences.getSketchbookPath();
     if (sketchbookPath != null) {
       sketchbookFolder = new File(sketchbookPath);
       if (!sketchbookFolder.exists()) {
@@ -1915,7 +1889,7 @@ public class Base {
     // If no path is set, get the default sketchbook folder for this platform
     if (sketchbookFolder == null) {
       sketchbookFolder = getDefaultSketchbookFolder();
-      Preferences.set("sketchbook.path", sketchbookFolder.getAbsolutePath());
+      Preferences.setSketchbookPath(sketchbookFolder.getAbsolutePath());
       if (!sketchbookFolder.exists()) {
         sketchbookFolder.mkdirs();
       }
@@ -1930,19 +1904,17 @@ public class Base {
 
   public void setSketchbookFolder(File folder) {
     sketchbookFolder = folder;
-    Preferences.set("sketchbook.path", folder.getAbsolutePath());
+    Preferences.setSketchbookPath(folder.getAbsolutePath());
     rebuildSketchbookMenus();
   }
 
 
   static public File getSketchbookFolder() {
-//    return new File(Preferences.get("sketchbook.path"));
     return sketchbookFolder;
   }
 
 
   static public File getSketchbookLibrariesFolder() {
-//    return new File(getSketchbookFolder(), "libraries");
     return new File(sketchbookFolder, "libraries");
   }
 

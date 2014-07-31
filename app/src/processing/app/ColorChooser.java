@@ -442,6 +442,23 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     row.add(Box.createHorizontalGlue());
     box.add(row);
     
+    row = Box.createHorizontalBox();
+    if (Base.isMacOS()) {
+      row.add(Box.createHorizontalStrut(11));
+    } else {
+      row.add(createFixedLabel(""));
+    }
+    button = new JButton("Cancel");
+    button.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ColorChooser.this.hide();
+      }
+    });
+    row.add(button);
+    row.add(Box.createHorizontalGlue());
+    box.add(row);
     //
     
     box.add(Box.createVerticalGlue());

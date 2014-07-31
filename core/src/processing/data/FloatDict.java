@@ -411,13 +411,21 @@ public class FloatDict {
 
   public String minKey() {
     checkMinMax("minKey");
-    return keys[minIndex()];
+    int index = minIndex();
+    if (index == -1) {
+      return null;
+    }
+    return keys[index];
   }
 
 
   public float minValue() {
     checkMinMax("minValue");
-    return values[minIndex()];
+    int index = minIndex();
+    if (index == -1) {
+      return Float.NaN;
+    }
+    return values[index];
   }
 
 
@@ -452,17 +460,25 @@ public class FloatDict {
   }
 
 
-  /** The key for a max value. */
+  /** The key for a max value, or null if everything is NaN (no max). */
   public String maxKey() {
     checkMinMax("maxKey");
-    return keys[maxIndex()];
+    int index = maxIndex();
+    if (index == -1) {
+      return null;
+    }
+    return keys[index];
   }
 
 
-  /** The max value. */
+  /** The max value. (Or NaN if they're all NaN.) */
   public float maxValue() {
     checkMinMax("maxValue");
-    return values[maxIndex()];
+    int index = maxIndex();
+    if (index == -1) {
+      return Float.NaN;
+    }
+    return values[index];
   }
 
 
@@ -652,7 +668,22 @@ public class FloatDict {
     Sort s = new Sort() {
       @Override
       public int size() {
-        return count;
+        if (useKeys) {
+          return count;  // don't worry about NaN values
+
+        } else {  // first move NaN values to the end of the list
+          int right = count - 1;
+          while (values[right] != values[right]) {
+            right--;
+          }
+          for (int i = right; i >= 0; --i) {
+            if (Float.isNaN(values[i])) {
+              swap(i, right);
+              --right;
+            }
+          }
+          return right + 1;
+        }
       }
 
       @Override
@@ -713,12 +744,11 @@ public class FloatDict {
   }
 
 
-//  /**
-//   * Write tab-delimited entries out to the console.
-//   */
-//  public void print() {
-//    write(new PrintWriter(System.out));
-//  }
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.println(keys[i] + " = " + values[i]);
+    }
+  }
 
 
   /**

@@ -130,6 +130,9 @@ public class IntList implements Iterable<Integer> {
    * @brief Get an entry at a particular index
    */
   public int get(int index) {
+    if (index >= this.count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return data[index];
   }
 
@@ -569,7 +572,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref intlist:method
-   * @brief Reverse sort, orders values by first digit
+   * @brief Reverse the order of the list elements
    */
   public void reverse() {
     int ii = count - 1;

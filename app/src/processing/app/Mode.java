@@ -879,6 +879,104 @@ public abstract class Mode {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  public DefaultMutableTreeNode buildSketchbookTree(){
+    DefaultMutableTreeNode sbNode = new DefaultMutableTreeNode("Sketchbook");
+    try {
+      base.addSketches(sbNode, Base.getSketchbookFolder());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return sbNode;
+  }
+  
+  protected JFrame sketchbookFrame;
+  
+  public void showSketchbookFrame() {
+    if (sketchbookFrame == null) {
+      sketchbookFrame = new JFrame("Processing Sketchbook");
+      Toolkit.setIcon(sketchbookFrame);
+      Toolkit.registerWindowCloseKeys(sketchbookFrame.getRootPane(),
+                                      new ActionListener() {
+                                        public void actionPerformed(ActionEvent e) {
+                                          sketchbookFrame.setVisible(false);
+                                        }
+                                      });
+
+      final JTree tree = new JTree(buildSketchbookTree());
+      tree.getSelectionModel()
+        .setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+      tree.setShowsRootHandles(true);
+      tree.expandRow(0);
+      tree.setRootVisible(false);
+
+      tree.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+          if (e.getClickCount() == 2) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+              .getLastSelectedPathComponent();
+
+            int selRow = tree.getRowForLocation(e.getX(), e.getY());
+            //TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+            //if (node != null && node.isLeaf() && node.getPath().equals(selPath)) {
+            if (node != null && node.isLeaf() && selRow != -1) {
+              SketchReference sketch = (SketchReference) node.getUserObject();
+              base.handleOpen(sketch.getPath());
+            }
+          }
+        }
+      });
+
+      tree.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) { // doesn't fire keyTyped()
+            sketchbookFrame.setVisible(false);
+          }
+        }
+
+        public void keyTyped(KeyEvent e) {
+          if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+              .getLastSelectedPathComponent();
+            if (node != null && node.isLeaf()) {
+              SketchReference sketch = (SketchReference) node.getUserObject();
+              base.handleOpen(sketch.getPath());
+            }
+          }
+        }
+      });
+
+      tree.setBorder(new EmptyBorder(5, 5, 5, 5));
+      if (Base.isMacOS()) {
+        tree.setToggleClickCount(2);
+      } else {
+        tree.setToggleClickCount(1);
+      }
+      JScrollPane treePane = new JScrollPane(tree);
+      treePane.setPreferredSize(new Dimension(250, 450));
+      treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
+      sketchbookFrame.getContentPane().add(treePane);
+      sketchbookFrame.pack();
+    }
+
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        // Space for the editor plus a li'l gap
+        int roughWidth = sketchbookFrame.getWidth() + 20;
+        Point p = null;
+        // If no window open, or the editor is at the edge of the screen
+        if (base.activeEditor == null
+          || (p = base.activeEditor.getLocation()).x < roughWidth) {
+          // Center the window on the screen
+          sketchbookFrame.setLocationRelativeTo(null);
+        } else {
+          // Open the window relative to the editor
+          sketchbookFrame.setLocation(p.x - roughWidth, p.y);
+        }
+        sketchbookFrame.setVisible(true);
+      }
+    });
+  }
 
 /**
    * Get an image object from the theme folder.

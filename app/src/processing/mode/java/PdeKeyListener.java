@@ -194,6 +194,9 @@ public class PdeKeyListener {
         textarea.setSelectedText(spaces(tabSize));
         event.consume();
         return true;
+      } else if (!Preferences.getBoolean("editor.tabs.expand")) {
+        textarea.setSelectedText("\t");
+        event.consume();
       }
       break;
 

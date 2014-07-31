@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2004-14 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,8 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
 
 import processing.core.*;
 
@@ -98,7 +100,7 @@ public class Preferences {
   // and linux is all over the map
 
   static final int GUI_BIG     = 13;
-  static final int GUI_BETWEEN = 10;
+  static final int GUI_BETWEEN = 8;
   static final int GUI_SMALL   = 6;
 
   // gui elements
@@ -107,25 +109,30 @@ public class Preferences {
   int wide, high;
 
   JTextField sketchbookLocationField;
+  JTextField presentColor;
+  JTextField presentColorHex;
   JCheckBox editorAntialiasBox;
   JCheckBox deletePreviousBox;
   JCheckBox whinyBox;
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
   JCheckBox checkUpdatesBox;
-  //JTextField fontSizeField;
   JComboBox fontSizeField;
   JComboBox consoleSizeField;
   JCheckBox inputMethodBox;
   JCheckBox autoAssociateBox;
+
+  ColorChooser selector;
   
-  //JRadioButton bitsThirtyTwoButton;
-  //JRadioButton bitsSixtyFourButton;
+  JCheckBox errorCheckerBox;
+  JCheckBox warningsCheckerBox;
+  JCheckBox codeCompletionBox;
+  JCheckBox importSuggestionsBox;
+  JCheckBox codeCompletionTriggerBox;
   
   JComboBox displaySelectionBox;
   int displayCount;
   
-  //Font[] monoFontList;
   String[] monoFontFamilies;
   JComboBox fontSelectionBox;
 
@@ -156,16 +163,6 @@ public class Preferences {
     // check for platform-specific properties in the defaults
     String platformExt = "." + PConstants.platformNames[PApplet.platform]; //$NON-NLS-1$
     int platformExtLength = platformExt.length();
-//    Enumeration e = table.keys();
-//    while (e.hasMoreElements()) {
-//      String key = (String) e.nextElement();
-//      if (key.endsWith(platformExt)) {
-//        // this is a key specific to a particular platform
-//        String actualKey = key.substring(0, key.length() - platformExtLength);
-//        String value = get(key);
-//        table.put(actualKey, value);
-//      }
-//    }
 
     // Get a list of keys that are specific to this platform
     ArrayList<String> platformKeys = new ArrayList<String>();
@@ -188,28 +185,10 @@ public class Preferences {
 
     // other things that have to be set explicitly for the defaults
     setColor("run.window.bgcolor", SystemColor.control); //$NON-NLS-1$
-
-    // Load a prefs file if specified on the command line
-//    if (commandLinePrefs != null) {
-//      try {
-//        load(new FileInputStream(commandLinePrefs));
-//
-//      } catch (Exception poe) {
-//        Base.showError("Error",
-//                       "Could not read preferences from " +
-//                       commandLinePrefs, poe);
-//      }
-//    } else if (!Base.isCommandLine()) {
+    
     // next load user preferences file
     preferencesFile = Base.getSettingsFile(PREFS_FILE);
-    if (!preferencesFile.exists()) {
-      // create a new preferences file if none exists
-      // saves the defaults out to the file
-      save();
-
-    } else {
-      // load the previous preferences file
-
+    if (preferencesFile.exists()) {
       try {
         load(new FileInputStream(preferencesFile));
 
@@ -220,7 +199,12 @@ public class Preferences {
                        preferencesFile.getAbsolutePath() +
                        " and restart Processing.", ex);
       }
-//      }
+    } 
+    
+    if (checkSketchbookPref() || !preferencesFile.exists()) {
+      // create a new preferences file if none exists
+      // saves the defaults out to the file
+      save();
     }
 
     PApplet.useNativeSelect = 
@@ -245,11 +229,6 @@ public class Preferences {
     dialog = new JFrame("Preferences");
     dialog.setResizable(false);
 
-//    GroupLayout layout = new GroupLayout(getContentPane());
-//    dialog.getContentPane().setLayout(layout);
-//    layout.setAutoCreateGaps(true);
-//    layout.setAutoCreateContainerGaps(true);
-    
     Container pain = dialog.getContentPane();
     pain.setLayout(null);
 
@@ -284,11 +263,6 @@ public class Preferences {
           PApplet.selectFolder("Select new sketchbook location",
                                "sketchbookCallback", dflt,
                                Preferences.this, dialog);
-//          File file =
-//            Base.selectFolder("Select new sketchbook location", dflt, dialog);
-//          if (file != null) {
-//            sketchbookLocationField.setText(file.getAbsolutePath());
-//          }
         }
       });
     pain.add(button);
@@ -345,12 +319,9 @@ public class Preferences {
     
     label = new JLabel("Editor font size: ");
     box.add(label);
-    //fontSizeField = new JTextField(4);
     fontSizeField = new JComboBox<Integer>(FONT_SIZES);
     fontSizeField.setEditable(true);
     box.add(fontSizeField);
-//    label = new JLabel("  (requires restart of Processing)");
-//    box.add(label);
     box.add(Box.createHorizontalStrut(GUI_BETWEEN));
 
     label = new JLabel("Console font size: ");
@@ -362,18 +333,138 @@ public class Preferences {
     pain.add(box);
     d = box.getPreferredSize();
     box.setBounds(left, top, d.width, d.height);
-//    Font editorFont = Preferences.getFont("editor.font");
-    //fontSizeField.setText(String.valueOf(editorFont.getSize()));
-//    fontSizeField.setSelectedItem(editorFont.getSize());
     fontSizeField.setSelectedItem(Preferences.getFont("editor.font.size"));
     top += d.height + GUI_BETWEEN;
     
     
+    Container colorBox = Box.createHorizontalBox();
+
+    label = new JLabel("Background color when Presenting: ");
+    colorBox.add(label);
+
+    final String colorTip = "<html>"
+        + "Select the background color used when using Present.<br/>"
+        + "Present is used to present a sketch in full-screen, <br/>"
+        + "accessible from the Sketch menu.";
+    label.setToolTipText(colorTip);
+
+    presentColor = new JTextField("      ");
+    presentColor.setOpaque(true);
+    presentColor.setEnabled(false);
+    presentColor.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(
+        1, 1, 0, 0, new Color(195, 195, 195)), BorderFactory.createMatteBorder(
+        0, 0, 1, 1, new Color(54, 54, 54))));
+    presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
+
+    presentColorHex = new JTextField(6);
+    presentColorHex
+        .setText(Preferences.get("run.present.bgcolor").substring(1));
+    presentColorHex.getDocument().addDocumentListener(new DocumentListener() {
+
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+        final String colorValue = presentColorHex.getText().toUpperCase();
+        if (colorValue.length() == 7 && (colorValue.startsWith("#")))
+          EventQueue.invokeLater(new Runnable() {
+            public void run() {
+              presentColorHex.setText(colorValue.substring(1));
+            }
+          });
+        if (colorValue.length() == 6
+            && colorValue.matches("[0123456789ABCDEF]*")) {
+          presentColor.setBackground(new Color(Integer.parseInt(
+              colorValue.substring(0, 2), 16), Integer.parseInt(
+              colorValue.substring(2, 4), 16), Integer.parseInt(
+              colorValue.substring(4, 6), 16)));
+          if (!colorValue.equals(presentColorHex.getText()))
+            EventQueue.invokeLater(new Runnable() {
+              public void run() {
+                presentColorHex.setText(colorValue);
+              }
+            });
+        }
+      }
+
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+        final String colorValue = presentColorHex.getText().toUpperCase();
+        if (colorValue.length() == 7 && (colorValue.startsWith("#")))
+          EventQueue.invokeLater(new Runnable() {
+            public void run() {
+              presentColorHex.setText(colorValue.substring(1));
+            }
+          });
+        if (colorValue.length() == 6
+            && colorValue.matches("[0123456789ABCDEF]*")) {
+          presentColor.setBackground(new Color(Integer.parseInt(
+              colorValue.substring(0, 2), 16), Integer.parseInt(
+              colorValue.substring(2, 4), 16), Integer.parseInt(
+              colorValue.substring(4, 6), 16)));
+          if (!colorValue.equals(presentColorHex.getText()))
+            EventQueue.invokeLater(new Runnable() {
+              public void run() {
+                presentColorHex.setText(colorValue);
+              }
+            });
+        }
+      }
+
+      @Override public void changedUpdate(DocumentEvent e) {}
+    });
+
+    selector = new ColorChooser(dialog, false,
+        Preferences.getColor("run.present.bgcolor"), "OK",
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            String colorValue = selector.getHexColor();
+            presentColorHex.setText(colorValue.substring(1));
+            presentColor.setBackground(new Color(Integer.parseInt(
+                colorValue.substring(1, 3), 16), Integer.parseInt(
+                colorValue.substring(3, 5), 16), Integer.parseInt(
+                colorValue.substring(5, 7), 16)));
+            selector.hide();
+          }
+        });
+
+    presentColor.addMouseListener(new MouseListener() {
+      @Override public void mouseReleased(MouseEvent e) {}
+      @Override public void mousePressed(MouseEvent e) {}
+      
+      @Override 
+      public void mouseExited(MouseEvent e) {
+        dialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      }
+
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        dialog.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      }
+
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        selector.show();
+      }
+    });
+
+    label = new JLabel("#");
+    colorBox.add(label);
+
+    colorBox.add(presentColorHex);
+
+    colorBox.add(Box.createHorizontalStrut(GUI_SMALL + 2 / 3 * GUI_SMALL));
+
+    colorBox.add(presentColor);
+    
+    pain.add(colorBox);
+    d = colorBox.getPreferredSize();
+    colorBox.setBounds(left, top, d.width, d.height);
+
+    top += d.height + GUI_BETWEEN;
+
     // [ ] Use smooth text in editor window
 
     editorAntialiasBox = new JCheckBox("Use smooth text in editor window");
-//      new JCheckBox("Use smooth text in editor window " +
-//                    "(requires restart of Processing)");
     pain.add(editorAntialiasBox);
     d = editorAntialiasBox.getPreferredSize();
     // adding +10 because ubuntu + jre 1.5 truncating items
@@ -392,6 +483,47 @@ public class Preferences {
     inputMethodBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
+    
+    // [ ] Continuously check for errors - PDE X
+
+    errorCheckerBox =
+      new JCheckBox("Continuously check for errors");
+    pain.add(errorCheckerBox);
+    d = errorCheckerBox.getPreferredSize();
+    errorCheckerBox.setBounds(left, top, d.width + 10, d.height);
+    //right = Math.max(right, left + d.width);
+    //top += d.height + GUI_BETWEEN;
+    int warningLeft = left + d.width; 
+
+    // [ ] Show Warnings - PDE X
+
+    warningsCheckerBox =
+      new JCheckBox("Show warnings");
+    pain.add(warningsCheckerBox);
+    d = warningsCheckerBox.getPreferredSize();
+    warningsCheckerBox.setBounds(warningLeft, top, d.width + 10, d.height);
+    right = Math.max(right, warningLeft + d.width);
+    top += d.height + GUI_BETWEEN;
+
+    // [ ] Enable Code Completion - PDE X
+
+    codeCompletionBox =
+      new JCheckBox("Enable code completion");
+    pain.add(codeCompletionBox);
+    d = codeCompletionBox.getPreferredSize();
+    codeCompletionBox.setBounds(left, top, d.width + 10, d.height);
+    int toggleLeft = left + d.width;
+    
+    // [ ] Toggle Code Completion Trigger - PDE X
+
+    final String modifier = Base.isMacOS() ? "\u2318" : "Ctrl";
+    codeCompletionTriggerBox =
+      new JCheckBox("Trigger with " + modifier + "-space");
+    pain.add(codeCompletionTriggerBox);
+    d = codeCompletionTriggerBox.getPreferredSize();
+    codeCompletionTriggerBox.setBounds(toggleLeft, top, d.width + 10, d.height);
+    right = Math.max(right, toggleLeft + d.width);
+    top += d.height + GUI_BETWEEN;
 
 
     // [ ] Increase maximum available memory to [______] MB
@@ -408,19 +540,6 @@ public class Preferences {
     top += d.height + GUI_BETWEEN;
 
 
-//    // [ ] Use multiple .jar files when exporting applets
-//
-//    exportSeparateBox =
-//      new JCheckBox("Use multiple .jar files when exporting applets " +
-//                    "(ignored when using libraries)");
-//    pain.add(exportSeparateBox);
-//    d = exportSeparateBox.getPreferredSize();
-//    // adding +10 because ubuntu + jre 1.5 truncating items
-//    exportSeparateBox.setBounds(left, top, d.width + 10, d.height);
-//    right = Math.max(right, left + d.width);
-//    top += d.height + GUI_BETWEEN;
-
-
     // [ ] Delete previous application folder on export
 
     deletePreviousBox =
@@ -432,17 +551,7 @@ public class Preferences {
     top += d.height + GUI_BETWEEN;
     
     
-//    // [ ] Use external editor
-//
-//    externalEditorBox = new JCheckBox("Use external editor");
-//    pain.add(externalEditorBox);
-//    d = externalEditorBox.getPreferredSize();
-//    externalEditorBox.setBounds(left, top, d.width + 10, d.height);
-//    right = Math.max(right, left + d.width);
-//    top += d.height + GUI_BETWEEN;
-
-    
-    // [ ] Use external editor
+    // [ ] Hide tab/toolbar background image
 
     whinyBox = new JCheckBox("Hide tab/toolbar background image (requires restart)");
     pain.add(whinyBox);
@@ -493,30 +602,6 @@ public class Preferences {
       right = Math.max(right, left + d.width);
       top += d.height + GUI_BETWEEN;
     }
-
-
-    // Launch programs as [ ] 32-bit [ ] 64-bit (Mac OS X only)
-
-    /*
-    if (Base.isMacOS()) {
-      box = Box.createHorizontalBox();
-      label = new JLabel("Launch programs in  ");
-      box.add(label);
-      bitsThirtyTwoButton = new JRadioButton("32-bit mode  ");
-      box.add(bitsThirtyTwoButton);
-      bitsSixtyFourButton = new JRadioButton("64-bit mode");
-      box.add(bitsSixtyFourButton);
-
-      ButtonGroup bg = new ButtonGroup();
-      bg.add(bitsThirtyTwoButton);
-      bg.add(bitsSixtyFourButton);
-
-      pain.add(box);
-      d = box.getPreferredSize();
-      box.setBounds(left, top, d.width, d.height);
-      top += d.height + GUI_BETWEEN;
-    }
-    */
 
 
     // More preferences are in the ...
@@ -677,7 +762,7 @@ public class Preferences {
     // each platform, and nobody wants to debug/support that.
 
     // if the sketchbook path has changed, rebuild the menus
-    String oldPath = get("sketchbook.path"); //$NON-NLS-1$
+    String oldPath = getSketchbookPath();
     String newPath = sketchbookLocationField.getText();
     if (!newPath.equals(oldPath)) {
       base.setSketchbookFolder(new File(newPath));
@@ -712,52 +797,12 @@ public class Preferences {
       System.err.println("Ignoring bad memory setting");
     }
 
-    /*
-      // was gonna use this to check memory settings,
-      // but it quickly gets much too messy
-    if (getBoolean("run.options.memory")) {
-      Process process = Runtime.getRuntime().exec(new String[] {
-          "java", "-Xms" + memoryMin + "m", "-Xmx" + memoryMax + "m"
-        });
-      processInput = new SystemOutSiphon(process.getInputStream());
-      processError = new MessageSiphon(process.getErrorStream(), this);
-    }
-    */
-
-    /*
-    // If a change has been made between 32- and 64-bit, the libraries need
-    // to be reloaded so that their native paths are set correctly.
-    if (Base.isMacOS()) {
-      String oldBits = get("run.options.bits"); //$NON-NLS-1$
-      String newBits = bitsThirtyTwoButton.isSelected() ? "32" : "64"; //$NON-NLS-1$ //$NON-NLS-2$
-      if (!oldBits.equals(newBits)) {
-        set("run.options.bits", newBits); //$NON-NLS-1$
-        for (Mode m : base.getModeList()) {
-          m.rebuildLibraryList();
-        }
-      }
-    }
-    */
-
     // Don't change anything if the user closes the window before fonts load
     if (fontSelectionBox.isEnabled()) {
       String fontFamily = (String) fontSelectionBox.getSelectedItem();
       set("editor.font.family", fontFamily);
     }
 
-    /*
-    String newSizeText = fontSizeField.getText();
-    try {
-      int newSize = Integer.parseInt(newSizeText.trim());
-      //String pieces[] = PApplet.split(get("editor.font"), ','); //$NON-NLS-1$
-      //pieces[2] = String.valueOf(newSize);
-      //set("editor.font", PApplet.join(pieces, ',')); //$NON-NLS-1$
-      set("editor.font.size", String.valueOf(newSize));
-
-    } catch (Exception e) {
-      Base.log("Ignoring invalid font size " + newSizeText); //$NON-NLS-1$
-    }
-    */
     try {
       Object selection = fontSizeField.getSelectedItem();
       if (selection instanceof String) {
@@ -784,51 +829,45 @@ public class Preferences {
       consoleSizeField.setSelectedItem(getInteger("console.font.size"));
     }
     
+    setColor("run.present.bgcolor", presentColor.getBackground());
+    
     setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
 
     if (autoAssociateBox != null) {
       setBoolean("platform.auto_file_type_associations", //$NON-NLS-1$
                  autoAssociateBox.isSelected());
     }
-
+    
+    setBoolean("pdex.errorCheckEnabled", errorCheckerBox.isSelected());
+    setBoolean("pdex.warningsEnabled", warningsCheckerBox.isSelected());
+    setBoolean("pdex.ccEnabled", codeCompletionBox.isSelected());
+    setBoolean("pdex.ccTriggerEnabled", codeCompletionTriggerBox.isSelected());
     for (Editor editor : base.getEditors()) {
       editor.applyPreferences();
     }
+    
   }
 
 
   protected void showFrame() {
     editorAntialiasBox.setSelected(getBoolean("editor.smooth")); //$NON-NLS-1$
     inputMethodBox.setSelected(getBoolean("editor.input_method_support")); //$NON-NLS-1$
-
-    // set all settings entry boxes to their actual status
-//    exportSeparateBox.
-//      setSelected(getBoolean("export.applet.separate_jar_files"));
+    errorCheckerBox.setSelected(getBoolean("pdex.errorCheckEnabled"));
+    warningsCheckerBox.setSelected(getBoolean("pdex.warningsEnabled"));
+    codeCompletionBox.setSelected(getBoolean("pdex.ccEnabled"));
+    codeCompletionTriggerBox.setSelected(getBoolean("pdex.ccTriggerEnabled"));
     deletePreviousBox.
       setSelected(getBoolean("export.delete_target_folder")); //$NON-NLS-1$
 
-    //closingLastQuitsBox.
-    //  setSelected(getBoolean("sketchbook.closing_last_window_quits"));
-    //sketchPromptBox.
-    //  setSelected(getBoolean("sketchbook.prompt"));
-    //sketchCleanBox.
-    //  setSelected(getBoolean("sketchbook.auto_clean"));
-
-    sketchbookLocationField.
-      setText(get("sketchbook.path")); //$NON-NLS-1$
-//    externalEditorBox.
-//      setSelected(getBoolean("editor.external"));
-    checkUpdatesBox.
-      setSelected(getBoolean("update.check")); //$NON-NLS-1$
+    sketchbookLocationField.setText(getSketchbookPath());
+    checkUpdatesBox.setSelected(getBoolean("update.check")); //$NON-NLS-1$
 
     whinyBox.setSelected(getBoolean("header.hide.image") || //$NON-NLS-1$
                          getBoolean("buttons.hide.image")); //$NON-NLS-1$
 
     updateDisplayList();
     int displayNum = getInteger("run.display"); //$NON-NLS-1$
-//    System.out.println("display is " + displayNum + ", d count is " + displayCount);
     if (displayNum >= 0 && displayNum < displayCount) {
-//      System.out.println("setting num to " + displayNum);
       displaySelectionBox.setSelectedIndex(displayNum);
     }
     
@@ -842,26 +881,13 @@ public class Preferences {
     fontSizeField.setSelectedItem(getInteger("editor.font.size"));
     consoleSizeField.setSelectedItem(getInteger("console.font.size"));
 
+    presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
+    presentColorHex.setText(Preferences.get("run.present.bgcolor").substring(1));
+    
     memoryOverrideBox.
       setSelected(getBoolean("run.options.memory")); //$NON-NLS-1$
     memoryField.
       setText(get("run.options.memory.maximum")); //$NON-NLS-1$
-
-    /*
-    if (Base.isMacOS()) {
-      String bits = Preferences.get("run.options.bits"); //$NON-NLS-1$
-      if (bits.equals("32")) { //$NON-NLS-1$
-        bitsThirtyTwoButton.setSelected(true);
-      } else if (bits.equals("64")) { //$NON-NLS-1$
-        bitsSixtyFourButton.setSelected(true);
-      }
-      // in case we go back and support OS X 10.5...
-      if (System.getProperty("os.version").startsWith("10.5")) { //$NON-NLS-1$ //$NON-NLS-2$
-        bitsSixtyFourButton.setSelected(true);
-        bitsThirtyTwoButton.setEnabled(false);
-      }
-    }
-    */
 
     if (autoAssociateBox != null) {
       autoAssociateBox.
@@ -890,37 +916,11 @@ public class Preferences {
   
 
   void initFontList() {
-    /*
-    if (monoFontList == null) {
-      monoFontList = Toolkit.getMonoFontList().toArray(new Font[0]);
-      fontSelectionBox.setModel(new DefaultComboBoxModel(monoFontList));
-      fontSelectionBox.setRenderer(new FontNamer());
-      
-      // Preferred size just makes it extend to the container
-      //fontSelectionBox.setSize(fontSelectionBox.getPreferredSize());
-      // Minimum size is better, but cuts things off (on OS X), so we add 20
-      //Dimension minSize = fontSelectionBox.getMinimumSize();
-      //Dimension minSize = fontSelectionBox.getPreferredSize();
-      //fontSelectionBox.setSize(minSize.width + 20, minSize.height);
-      fontSelectionBox.setEnabled(true);
-    }
-    */
     if (monoFontFamilies == null) {
       monoFontFamilies = Toolkit.getMonoFontFamilies();
       fontSelectionBox.setModel(new DefaultComboBoxModel(monoFontFamilies));
       String family = get("editor.font.family");
-//      System.out.println("family is " + family);
-//      System.out.println("font sel items = " + fontSelectionBox.getItemCount());
-//      for (int i = 0; i < fontSelectionBox.getItemCount(); i++) {
-//        String item = (String) fontSelectionBox.getItemAt(i);
-//        if (fontSelectionBox.getItemAt(i) == family) {
-//          System.out.println("found at index " + i);
-//        } else if (item.equals(family)) {
-//          System.out.println("equals at index " + i);
-//        } else {
-//          System.out.println("nothing doing: " + item);
-//        }
-//      }
+
       // Set a reasonable default, in case selecting the family fails 
       fontSelectionBox.setSelectedItem("Monospaced");
       fontSelectionBox.setSelectedItem(family);
@@ -942,22 +942,6 @@ public class Preferences {
     displaySelectionBox.setModel(new DefaultComboBoxModel(items));
 //    displaySelectionBox = new JComboBox(items);
   }
-
-
-  // Workaround for Apple bullsh*t caused by their not releasing a 32-bit
-  // version of Java for Mac OS X 10.5.
-//  static public String checkBits() {
-//    String bits = Preferences.get("run.options.bits");
-//    if (bits == null) {
-//      if (System.getProperty("os.version").startsWith("10.5")) {
-//        bits = "64";
-//      } else {
-//        bits = "32";
-//      }
-//      Preferences.set("run.options.bits", bits);
-//    }
-//    return bits;
-//  }
 
 
   // .................................................................
@@ -1018,20 +1002,8 @@ public class Preferences {
 
   // all the information from preferences.txt
 
-  //static public String get(String attribute) {
-  //return get(attribute, null);
-  //}
-
   static public String get(String attribute /*, String defaultValue */) {
     return table.get(attribute);
-    /*
-    //String value = (properties != null) ?
-    //properties.getProperty(attribute) : applet.getParameter(attribute);
-    String value = properties.getProperty(attribute);
-
-    return (value == null) ?
-      defaultValue : value;
-    */
   }
 
 
@@ -1169,28 +1141,37 @@ public class Preferences {
     }
     return new Font("Dialog", Font.PLAIN, 12);
   }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
 
-
-  /*
-  static public SyntaxStyle getStyle(String what) {
-    String str = get("editor." + what + ".style"); //, dflt); //$NON-NLS-1$ //$NON-NLS-2$
-
-    StringTokenizer st = new StringTokenizer(str, ","); //$NON-NLS-1$
-
-    String s = st.nextToken();
-    if (s.indexOf("#") == 0) s = s.substring(1); //$NON-NLS-1$
-    Color color = Color.DARK_GRAY;
-    try {
-      color = new Color(Integer.parseInt(s, 16));
-    } catch (Exception e) { }
-
-    s = st.nextToken();
-    boolean bold = (s.indexOf("bold") != -1); //$NON-NLS-1$
-//    boolean italic = (s.indexOf("italic") != -1); //$NON-NLS-1$
-    //System.out.println(what + " = " + str + " " + bold + " " + italic);
-
-//    return new SyntaxStyle(color, italic, bold);
-    return new SyntaxStyle(color, bold);
+  /**
+   * Check for a 3.0 sketchbook location, and if none exists, 
+   * try to grab it from the 2.0 sketchbook location.  
+   * @return true if a location was found and the pref didn't exist
+   */
+  static protected boolean checkSketchbookPref() {
+    // If a 3.0 sketchbook location has never been inited
+    if (getSketchbookPath() == null) {
+      String twoPath = get("sketchbook.path");
+      // If they've run the 2.0 version, start with that location
+      if (twoPath != null) {
+        setSketchbookPath(twoPath);
+        return true;  // save the sketchbook right away
+      }
+      // Otherwise it'll be null, and reset properly by Base
+    }
+    return false;
   }
-  */
+  
+  
+  static protected String getSketchbookPath() {
+    return get("sketchbook.path.three"); //$NON-NLS-1$
+  }
+  
+  
+  static protected void setSketchbookPath(String path) {
+    set("sketchbook.path.three", path); //$NON-NLS-1$
+  }
 }

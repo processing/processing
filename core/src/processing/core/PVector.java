@@ -119,6 +119,7 @@ public class PVector implements Serializable {
   /** Array so that this can be temporarily used in an array context */
   transient protected float[] array;
 
+
   /**
    * Constructor for an empty vector: x, y, and z are set to 0.
    */
@@ -149,6 +150,7 @@ public class PVector implements Serializable {
     this.z = 0;
   }
 
+
   /**
    * ( begin auto-generated from PVector_set.xml )
    *
@@ -169,6 +171,7 @@ public class PVector implements Serializable {
     this.z = z;
   }
 
+
   /**
    * @param x the x component of the vector
    * @param y the y component of the vector
@@ -177,6 +180,7 @@ public class PVector implements Serializable {
     this.x = x;
     this.y = y;
   }
+
 
   /**
    * @param v any variable of type PVector
@@ -217,8 +221,9 @@ public class PVector implements Serializable {
    * @see PVector#random3D()
    */
   static public PVector random2D() {
-    return random2D(null,null);
+    return random2D(null, null);
   }
+
 
   /**
    * Make a new 2D unit vector with a random direction
@@ -227,7 +232,7 @@ public class PVector implements Serializable {
    * @return the random PVector
    */
   static public PVector random2D(PApplet parent) {
-    return random2D(null,parent);
+    return random2D(null, parent);
   }
 
   /**
@@ -236,17 +241,22 @@ public class PVector implements Serializable {
    * @return the random PVector
    */
   static public PVector random2D(PVector target) {
-    return random2D(target,null);
+    return random2D(target, null);
   }
 
+
   /**
-   * Make a new 2D unit vector with a random direction
+   * Make a new 2D unit vector with a random direction. Pass in the parent
+   * PApplet if you want randomSeed() to work (and be predictable). Or leave
+   * it null and be... random.
    * @return the random PVector
    */
   static public PVector random2D(PVector target, PApplet parent) {
-    if (parent == null) return fromAngle((float)(Math.random()*Math.PI*2),target);
-    else                return fromAngle(parent.random(PConstants.TWO_PI),target);
+    return (parent == null) ?
+      fromAngle((float) (Math.random() * Math.PI*2), target) :
+      fromAngle(parent.random(PConstants.TAU), target);
   }
+
 
   /**
    * ( begin auto-generated from PVector_random3D.xml )
@@ -262,8 +272,9 @@ public class PVector implements Serializable {
    * @see PVector#random2D()
    */
   static public PVector random3D() {
-    return random3D(null,null);
+    return random3D(null, null);
   }
+
 
   /**
    * Make a new 3D unit vector with a random direction
@@ -272,8 +283,9 @@ public class PVector implements Serializable {
    * @return the random PVector
    */
   static public PVector random3D(PApplet parent) {
-    return random3D(null,parent);
+    return random3D(null, parent);
   }
+
 
   /**
    * Set a 3D vector to a random unit vector with a random direction
@@ -281,8 +293,9 @@ public class PVector implements Serializable {
    * @return the random PVector
    */
   static public PVector random3D(PVector target) {
-    return random3D(target,null);
+    return random3D(target, null);
   }
+
 
   /**
    * Make a new 3D unit vector with a random direction
@@ -308,6 +321,7 @@ public class PVector implements Serializable {
     }
     return target;
   }
+
 
   /**
    * ( begin auto-generated from PVector_sub.xml )
@@ -342,6 +356,12 @@ public class PVector implements Serializable {
     return target;
   }
 
+
+  public PVector copy() {
+    return new PVector(x, y, z);
+  }
+
+
   /**
    * ( begin auto-generated from PVector_get.xml )
    *
@@ -353,9 +373,11 @@ public class PVector implements Serializable {
    * @usage web_application
    * @brief Get a copy of the vector
    */
+  @Deprecated
   public PVector get() {
-    return new PVector(x, y, z);
+    return copy();
   }
+
 
   /**
    * @param target
@@ -393,6 +415,7 @@ public class PVector implements Serializable {
     return (float) Math.sqrt(x*x + y*y + z*z);
   }
 
+
   /**
    * ( begin auto-generated from PVector_mag.xml )
    *
@@ -412,6 +435,7 @@ public class PVector implements Serializable {
   public float magSq() {
     return (x*x + y*y + z*z);
   }
+
 
   /**
    * ( begin auto-generated from PVector_add.xml )
@@ -434,6 +458,7 @@ public class PVector implements Serializable {
     y += v.y;
     z += v.z;
   }
+
 
   /**
    * @param x x component of the vector
@@ -492,6 +517,7 @@ public class PVector implements Serializable {
     y -= v.y;
     z -= v.z;
   }
+
 
   /**
    * @param x the x component of the vector
@@ -571,7 +597,6 @@ public class PVector implements Serializable {
   }
 
 
-
   /**
    * ( begin auto-generated from PVector_div.xml )
    *
@@ -599,6 +624,7 @@ public class PVector implements Serializable {
   static public PVector div(PVector v, float n) {
     return div(v, n, null);
   }
+
 
   /**
    * Divide a vector by a scalar and store the result in another vector.
@@ -665,6 +691,7 @@ public class PVector implements Serializable {
     return x*v.x + y*v.y + z*v.z;
   }
 
+
   /**
    * @param x x component of the vector
    * @param y y component of the vector
@@ -673,6 +700,7 @@ public class PVector implements Serializable {
   public float dot(float x, float y, float z) {
     return this.x*x + this.y*y + this.z*z;
   }
+
 
   /**
    * @param v1 any variable of type PVector
@@ -716,6 +744,7 @@ public class PVector implements Serializable {
     }
     return target;
   }
+
 
   /**
    * @param v1 any variable of type PVector
@@ -792,6 +821,7 @@ public class PVector implements Serializable {
     }
   }
 
+
   /**
    * ( begin auto-generated from PVector_setMag.xml )
    *
@@ -809,6 +839,7 @@ public class PVector implements Serializable {
     mult(len);
   }
 
+
   /**
    * Sets the magnitude of this vector, storing the result in another vector.
    * @param target Set to null to create a new vector
@@ -820,6 +851,7 @@ public class PVector implements Serializable {
     target.mult(len);
     return target;
   }
+
 
   /**
    * ( begin auto-generated from PVector_setMag.xml )
@@ -858,10 +890,10 @@ public class PVector implements Serializable {
    * @param theta the angle of rotation
    */
   public void rotate(float theta) {
-    float xTemp = x;
+    float temp = x;
     // Might need to check for rounding errors like with angleBetween function?
     x = x*PApplet.cos(theta) - y*PApplet.sin(theta);
-    y = xTemp*PApplet.sin(theta) + y*PApplet.cos(theta);
+    y = temp*PApplet.sin(theta) + y*PApplet.cos(theta);
   }
 
 
@@ -880,10 +912,11 @@ public class PVector implements Serializable {
    * @see PApplet#lerp(float, float, float)
    */
   public void lerp(PVector v, float amt) {
-    x = PApplet.lerp(x,v.x,amt);
-    y = PApplet.lerp(y,v.y,amt);
-    z = PApplet.lerp(z,v.z,amt);
+    x = PApplet.lerp(x, v.x, amt);
+    y = PApplet.lerp(y, v.y, amt);
+    z = PApplet.lerp(z, v.z, amt);
   }
+
 
   /**
    * Linear interpolate between two vectors (returns a new PVector object)
@@ -891,10 +924,11 @@ public class PVector implements Serializable {
    * @param v2 the vector to lerp to
    */
   public static PVector lerp(PVector v1, PVector v2, float amt) {
-    PVector v = v1.get();
+    PVector v = v1.copy();
     v.lerp(v2, amt);
     return v;
   }
+
 
   /**
    * Linear interpolate the vector to x,y,z values
@@ -903,10 +937,11 @@ public class PVector implements Serializable {
    * @param z the z component to lerp to
    */
   public void lerp(float x, float y, float z, float amt) {
-    this.x = PApplet.lerp(this.x,x,amt);
-    this.y = PApplet.lerp(this.y,y,amt);
-    this.z = PApplet.lerp(this.z,z,amt);
+    this.x = PApplet.lerp(this.x, x, amt);
+    this.y = PApplet.lerp(this.y, y, amt);
+    this.z = PApplet.lerp(this.z, z, amt);
   }
+
 
   /**
    * ( begin auto-generated from PVector_angleBetween.xml )
@@ -976,13 +1011,16 @@ public class PVector implements Serializable {
     return array;
   }
 
+
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof PVector))
+    if (!(obj instanceof PVector)) {
       return false;
+    }
     final PVector p = (PVector) obj;
     return x == p.x && y == p.y && z == p.z;
   }
+
 
   @Override
   public int hashCode() {
