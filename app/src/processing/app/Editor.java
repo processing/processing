@@ -2356,10 +2356,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   private boolean didReload;
   
+  //TODO  set to the appropriate value
+  private boolean reloadEnabled = true;
+  
   //the key which is being used to poll the fs for changes
   private WatchKey key = null;
 
   private void initFileChangeListener() {
+    if(!reloadEnabled){
+      return;
+    }
     try {
       WatchService watchService = FileSystems.getDefault().newWatchService();
       key = sketch.getFolder().toPath()
@@ -2375,15 +2381,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     //if the key is null for some reason, don't bother attaching a listener to it, they can deal without one
     if (finKey != null) {
-      //the key can now be polled for changes in the files
-      addFocusListener(new FocusListener() {
+      WindowFocusListener fl = new WindowFocusListener() {
         @Override
-        public void focusLost(FocusEvent e) {
-          //do nothing
-        }
-        
-        @Override
-        public void focusGained(FocusEvent e) {
+        public void windowGainedFocus(WindowEvent arg0) {
+          if (!reloadEnabled) {
+            return;
+          }
           //if the directory was deleted, then don't scan
           if (!finKey.isValid()) {
             return;
@@ -2392,7 +2395,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
           List<WatchEvent<?>> events = finKey.pollEvents();
           processFileEvents(events);
         }
-      });
+
+        @Override
+        public void windowLostFocus(WindowEvent arg0){
+          //do nothing
+        }
+      };
+      //the key can now be polled for changes in the files
+      this.addWindowFocusListener(fl);
      
     }
   }
