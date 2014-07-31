@@ -39,6 +39,8 @@ o   https://github.com/processing/processing/issues/2344
 X   one is used by the PDE, the other is used as a library
 X get 'modified' indicator working on document windows again
 X   https://github.com/processing/processing/issues/2194
+X remove default menu bar hack when 7u60 arrives
+X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
 _ changing the mode on an untitled, unmodified sketch removes untitled status
 _ when renaming a tab, include the previous name to be edited
 
@@ -70,7 +72,7 @@ o double-clicking a .pde file doesn't open properly on OS X
 o   https://github.com/processing/processing/issues/2639
 X moving p5 examples to the web repo
 X move examples into web repo 
-
+o OS X not opening a sketch at all on pde double-click? (though opening the app)
 
 pending
 _ huge i18n patch
@@ -879,14 +881,13 @@ _   http://code.google.com/p/processing/issues/detail?id=632
 
 DIST / Mac OS X
 
+_ more OS X-specific hackery for improved appearance
+_   https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html
 _ possible better option for doing retina?
 _   g.getFontRenderContext().getTransform().equals(AffineTransform.getScaleInstance(2.0, 2.0))
 _ appbundler improvements
 _   don't re-copy JRE into work folder if already exists
 _   implement a splash screen
-_ remove default menu bar hack when 7u60 arrives
-_   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
-_ OS X not opening a sketch at all on pde double-click? (though opening the app)
 _ LWJGL forum discussion 
 _   http://lwjgl.org/forum/index.php/topic,4711.225.html
 _ change cmd line for OS X to use symlink? 
