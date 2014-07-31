@@ -602,32 +602,37 @@ public class Base {
   }
 
 
+  /** 
+   * The call has already checked to make sure this sketch is not modified, 
+   * now change the mode. 
+   */ 
   protected void changeMode(Mode mode) {
     if (activeEditor.getMode() != mode) {
       Sketch sketch = activeEditor.getSketch();
       nextMode = mode;
-
-      // If the current editor contains file extensions that the new mode can handle, then
-      // write a sketch.properties file with the new mode specified, and reopen.
-      boolean newModeCanHandleCurrentSource = true;
-      for (final SketchCode code: sketch.getCode()) {
-        if (!mode.validExtension(code.getExtension())) {
-          newModeCanHandleCurrentSource = false;
-          break;
-        }
-      }
-      if (newModeCanHandleCurrentSource) {
-        final File props = new File(sketch.getCodeFolder(), "sketch.properties");
-        saveModeSettings(props, nextMode);
+      
+      if (sketch.isUntitled()) {
+        // If no changes have been made, just close and start fresh.
+        // (Otherwise the editor would lose its 'untitled' status.)
         handleClose(activeEditor, true);
-        handleOpen(sketch.getMainFilePath());
-      } else {
-        // If you're changing modes, and there's nothing in the current sketch, you probably
-        // don't intend to keep the old, wrong-mode editor around.
-        if (sketch.isUntitled()) {
-          handleClose(activeEditor, true);
-        }
         handleNew();
+        
+      } else {
+        // If the current editor contains file extensions that the new mode can handle, then
+        // write a sketch.properties file with the new mode specified, and reopen.
+        boolean newModeCanHandleCurrentSource = true;
+        for (final SketchCode code: sketch.getCode()) {
+          if (!mode.validExtension(code.getExtension())) {
+            newModeCanHandleCurrentSource = false;
+            break;
+          }
+        }
+        if (newModeCanHandleCurrentSource) {
+          final File props = new File(sketch.getCodeFolder(), "sketch.properties");
+          saveModeSettings(props, nextMode);
+          handleClose(activeEditor, true);
+          handleOpen(sketch.getMainFilePath());
+        }
       }
     }
   }

@@ -42,7 +42,7 @@ X   https://github.com/processing/processing/issues/2194
 X remove default menu bar hack when 7u60 arrives
 X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
 X when renaming a tab, include the previous name to be edited
-_ changing the mode on an untitled, unmodified sketch removes untitled status
+X changing the mode on an untitled, unmodified sketch removes untitled status
 
 gsoc
 X clear status messages in the Contribution Manager
