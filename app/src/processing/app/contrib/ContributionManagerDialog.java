@@ -125,6 +125,7 @@ public class ContributionManagerDialog {
    * Close the window after an OK or Cancel.
    */
   protected void disposeFrame() {
+    status.clear();
     dialog.dispose();
     editor = null;
   }

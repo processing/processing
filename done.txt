@@ -22,6 +22,7 @@ X tweak mode integrated
 X   https://github.com/processing/processing/pull/2624
 X wrong mode selected if sketch is modified (checkbox changes)
 X   https://github.com/processing/processing/issues/2615
+X   https://github.com/processing/processing/issues/2586
 X Add date and time stamps to the Contribution Manager
 X   https://github.com/processing/processing/pull/2651
 

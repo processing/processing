@@ -2984,10 +2984,18 @@ public class Table {
         return missingString;
       }
       return columnCategories[column].key(cat);
-    } else {
-      return String.valueOf(Array.get(columns[column], row));
+    } else if (columnTypes[column] == FLOAT) {
+      if (Float.isNaN(getFloat(row, column))) {
+        return null;
+      }
+    } else if (columnTypes[column] == DOUBLE) {
+      if (Double.isNaN(getFloat(row, column))) {
+        return null;
+      }
     }
+    return String.valueOf(Array.get(columns[column], row));
   }
+
 
   /**
    * @param columnName title of the column to reference
@@ -3443,9 +3451,9 @@ public class Table {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public void replaceAll(String orig, String replacement) {
+  public void replaceAll(String regex, String replacement) {
     for (int col = 0; col < columns.length; col++) {
-      replaceAll(orig, replacement, col);
+      replaceAll(regex, replacement, col);
     }
   }
 
@@ -4284,4 +4292,10 @@ public class Table {
     }
   }
   */
+
+
+  /** Make a copy of the current table */
+  public Table copy() {
+    return new Table(rows());
+  }
 }

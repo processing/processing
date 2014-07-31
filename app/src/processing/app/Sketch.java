@@ -340,27 +340,26 @@ public class Sketch {
    * @param oldName
    */
   protected void promptForTabName(String prompt, String oldName) {
-    final JTextField txtTabName = new JTextField();
-    txtTabName.addKeyListener(new KeyAdapter() {
+    final JTextField field = new JTextField(oldName);
+    
+    field.addKeyListener(new KeyAdapter() {
       // Forget ESC, the JDialog should handle it.
-
-      // Use keyTyped to catch when the feller is actually
-      // added to the text field. With keyTyped, as opposed to
-      // keyPressed, the keyCode will be zero, even if it's
-      // enter or backspace or whatever, so the keychar should
-      // be used instead. Grr.
+      // Use keyTyped to catch when the feller is actually added to the text 
+      // field. With keyTyped, as opposed to keyPressed, the keyCode will be 
+      // zero, even if it's enter or backspace or whatever, so the keychar 
+      // should be used instead. Grr.
       public void keyTyped(KeyEvent event) {
         //System.out.println("got event " + event);
         char ch = event.getKeyChar();
         if ((ch == '_') || (ch == '.') || // allow.pde and .java 
-          (('A' <= ch) && (ch <= 'Z')) || (('a' <= ch) && (ch <= 'z'))) {
+            (('A' <= ch) && (ch <= 'Z')) || (('a' <= ch) && (ch <= 'z'))) {
           // These events are allowed straight through.
         } else if (ch == ' ') {
-          String t = txtTabName.getText();
-          int start = txtTabName.getSelectionStart();
-          int end = txtTabName.getSelectionEnd();
-          txtTabName.setText(t.substring(0, start) + "_" + t.substring(end));
-          txtTabName.setCaretPosition(start + 1);
+          String t = field.getText();
+          int start = field.getSelectionStart();
+          int end = field.getSelectionEnd();
+          field.setText(t.substring(0, start) + "_" + t.substring(end));
+          field.setCaretPosition(start + 1);
           event.consume();
         } else if ((ch >= '0') && (ch <= '9')) {
           // getCaretPosition == 0 means that it's the first char
@@ -368,31 +367,29 @@ public class Sketch {
           // getSelectionStart means that it *will be* the first
           // char, because the selection is about to be replaced
           // with whatever is typed.
-          if ((txtTabName.getCaretPosition() == 0)
-            || (txtTabName.getSelectionStart() == 0)) {
+          if (field.getCaretPosition() == 0 || 
+              field.getSelectionStart() == 0) {
             // number not allowed as first digit
-            //System.out.println("bad number bad");
             event.consume();
           }
         } else if (ch == KeyEvent.VK_ENTER) {
-          // Slightly ugly hack that ensures OK button of the dialog 
-          // consumes the Enter key event. Since the text field is the
-          // default component in the dialog(see below), OK button doesn't 
-          // consume Enter key event, by default.
-          Container parent = txtTabName.getParent();
+          // Slightly ugly hack that ensures OK button of the dialog consumes 
+          // the Enter key event. Since the text field is the default component
+          // in the dialog, OK doesn't consume Enter key event, by default.
+          Container parent = field.getParent();
           while (!(parent instanceof JOptionPane)) {
             parent = parent.getParent();
           }
           JOptionPane pane = (JOptionPane) parent;
-          final JPanel pnlBottom = (JPanel) pane.getComponent(pane
-            .getComponentCount() - 1);
+          final JPanel pnlBottom = (JPanel) 
+            pane.getComponent(pane.getComponentCount() - 1);
           for (int i = 0; i < pnlBottom.getComponents().length; i++) {
             Component component = pnlBottom.getComponents()[i];
             if (component instanceof JButton) {
-              final JButton okButton = ((JButton) component);
+              final JButton okButton = (JButton) component;
               if (okButton.getText().equalsIgnoreCase("OK")) {
-                ActionListener[] actionListeners = okButton
-                  .getActionListeners();
+                ActionListener[] actionListeners = 
+                  okButton.getActionListeners();
                 if (actionListeners.length > 0) {
                   actionListeners[0].actionPerformed(null);
                   event.consume();
@@ -400,26 +397,24 @@ public class Sketch {
               }
             }
           }
-        }
-        else {
+        } else {
           event.consume();
         }
       }
     });
 
     int userReply = JOptionPane.showOptionDialog(editor, new Object[] {
-                                                   prompt, txtTabName },
-                                                 "Tab Name",
+                                                 prompt, field },
+                                                 "New Name",
                                                  JOptionPane.OK_CANCEL_OPTION,
                                                  JOptionPane.PLAIN_MESSAGE,
                                                  null, new Object[] {
-                                                   Preferences.PROMPT_OK,
-                                                   Preferences.PROMPT_CANCEL },
-                                                 txtTabName);
+                                                 Preferences.PROMPT_OK,
+                                                 Preferences.PROMPT_CANCEL },
+                                                 field);
 
     if (userReply == JOptionPane.OK_OPTION) {
-      String answer = txtTabName.getText();
-      nameCode(answer);
+      nameCode(field.getText());
     }
   }
 
@@ -749,7 +744,8 @@ public class Sketch {
     if (Base.isMacOS()) {
       // http://developer.apple.com/qa/qa2001/qa1146.html
       Object modifiedParam = modified ? Boolean.TRUE : Boolean.FALSE;
-      editor.getRootPane().putClientProperty("windowModified", modifiedParam);
+      // https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html#WINDOW_DOCUMENTMODIFIED
+      editor.getRootPane().putClientProperty("Window.documentModified", modifiedParam);
     }
   }
 
@@ -807,6 +803,8 @@ public class Sketch {
   protected boolean saveAs() throws IOException {
     String newParentDir = null;
     String newName = null;
+	
+    final String oldName2 = folder.getName();
     // TODO rewrite this to use shared version from PApplet
     final String PROMPT = "Save sketch folder as...";
     if (Preferences.getBoolean("chooser.files.native")) {
@@ -814,7 +812,7 @@ public class Sketch {
       FileDialog fd = new FileDialog(editor, PROMPT, FileDialog.SAVE);
       if (isReadOnly() || isUntitled()) {
         // default to the sketchbook folder
-        fd.setDirectory(Preferences.get("sketchbook.path"));
+        fd.setDirectory(Preferences.getSketchbookPath());
       } else {
         // default to the parent folder of where this was
         fd.setDirectory(folder.getParent());
@@ -829,7 +827,7 @@ public class Sketch {
       fc.setDialogTitle(PROMPT);
       if (isReadOnly() || isUntitled()) {
         // default to the sketchbook folder
-        fc.setCurrentDirectory(new File(Preferences.get("sketchbook.path")));
+        fc.setCurrentDirectory(new File(Preferences.getSketchbookPath()));
       } else {
         // default to the parent folder of where this was
         fc.setCurrentDirectory(folder.getParentFile());
@@ -941,15 +939,21 @@ public class Sketch {
         return true;
       }
     });
-    // now copy over the items that make sense
-    for (File copyable : copyItems) {
-      if (copyable.isDirectory()) {
-        Base.copyDir(copyable, new File(newFolder, copyable.getName()));
-      } else {
-        Base.copyFile(copyable, new File(newFolder, copyable.getName()));
-      }
-    }
+	
 
+    final File newFolder2 = newFolder;
+    final File[] copyItems2 = copyItems;
+    final String newName2 = newName; 
+    
+    // Create a new event dispatch thread- to display ProgressBar
+    // while Saving As
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new ProgressFrame(copyItems2, newFolder2, oldName2, newName2, editor);
+      }
+    });
+    
+	
     // save the other tabs to their new location
     for (int i = 1; i < codeCount; i++) {
       File newFile = new File(newFolder, code[i].getFileName());
@@ -978,6 +982,7 @@ public class Sketch {
     // let Editor know that the save was successful
     return true;
   }
+
 
 
   /**
@@ -1046,7 +1051,8 @@ public class Sketch {
     boolean result = addFile(sourceFile);
 
     if (result) {
-      editor.statusNotice("One file added to the sketch.");
+//      editor.statusNotice("One file added to the sketch.");
+    	//Done from within TaskAddFile inner class when copying is completed
     }
   }
 
@@ -1139,16 +1145,17 @@ public class Sketch {
 
     // in case the user is "adding" the code in an attempt
     // to update the sketch's tabs
-    if (!sourceFile.equals(destFile)) {
-      try {
-        Base.copyFile(sourceFile, destFile);
-
-      } catch (IOException e) {
-        Base.showWarning("Error adding file",
-                         "Could not add '" + filename + "' to the sketch.", e);
-        return false;
+	if (!sourceFile.equals(destFile)) {
+		final File sourceFile2 = sourceFile;
+		final File destFile2 = destFile;
+	    // Create a new event dispatch thread- to display ProgressBar
+	    // while Saving As
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new ProgressFrame(sourceFile2, destFile2, editor);
       }
-    }
+    });
+	}
 
     if (codeExtension != null) {
       SketchCode newCode = new SketchCode(destFile, codeExtension);
