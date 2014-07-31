@@ -1909,6 +1909,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 	public void deactivateRun()
 	{
 //		toolbar.deactivate(TweakToolbar.RUN);
+	  if(toolbar instanceof DebugToolbar){
+	    toolbar.deactivate(DebugToolbar.RUN);
+	  } else {
+	    super.deactivateRun();
+	  }
 	}
 
 	private boolean[] getModifiedTabs(ArrayList<Handle> handles[])
