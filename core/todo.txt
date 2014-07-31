@@ -30,14 +30,26 @@ X   https://github.com/processing/processing/pull/2659
 X   done with an approximation, if re-saving this will destroy data (docs)
 X fix typo in StringList.insert()
 X   https://github.com/processing/processing/pull/2672
+X StingList.insert() error (should be an easy fix)
+X   https://github.com/processing/processing/issues/2548
+
+earlier
+X default font fixes (merged for 2.2.1 or earlier)
+X   https://github.com/processing/processing/issues/2331
+X   https://github.com/processing/processing/pull/2338
 
 
-applet removal
+applet/component
 _ remove Applet as base class
 _ performance issues on OS X (might be threading due to Applet)
 _   https://github.com/processing/processing/issues/2423
 _ play with improvements to full screen here
 _ new full screen sometimes causes sketch to temporarily be in the wrong spot
+_ add option to have full screen span across screens
+_   display=all in cmd line
+_   sketchDisplay() -> 0 for all, or 1, 2, 3...
+_ clean up requestFocus() stuff
+_   make sure it works with retina/canvas/strategy as well
 
 
 processing.data
@@ -66,8 +78,6 @@ _   maybe once we make the PVector change
 high
 _ Closing opengl sketch from the PDE doesn't stop java process on windows
 _   https://github.com/processing/processing/issues/2335
-_ StingList.insert() error (should be an easy fix)
-_   https://github.com/processing/processing/issues/2548
 _ dataPath() not working when app is not run from app dir on Linux
 _   https://github.com/processing/processing/issues/2195
 _ "Buffers have not been created" error for sketches w/o draw()
@@ -85,23 +95,13 @@ _   internally, we probably have to call set() if it's a 1 pixel point
 _     but that's going to be a mess.. need to first check the CTM
 _ tint() not working in PDF (regression between 2.0.3 and 2.1)
 _   https://github.com/processing/processing/issues/2428
-_ default font fixes 
-_   https://github.com/processing/processing/issues/2331
-_   https://github.com/processing/processing/pull/2338
 _ Sort out blending differences with P2D/P3D
 _   might be that compatible images not setting alpha mode correctly
 _   image = gc.createCompatibleVolatileImage(source.width, source.height, Transparency.TRANSLUCENT);
 _   https://github.com/processing/processing/issues/1844
-_ add option to have full screen span across screens
-_   display=all in cmd line
-_   sketchDisplay() -> 0 for all, or 1, 2, 3...
-_ clean up requestFocus() stuff
-_   make sure it works with retina/canvas/strategy as well
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
-_ TGA files writing strangely
-_   https://github.com/processing/processing/issues/2096
 
 
 hidpi
@@ -365,6 +365,9 @@ _   https://github.com/processing/processing/issues/1727
 
 
 CORE / PImage
+
+_ TGA files writing strangely
+_   https://github.com/processing/processing/issues/2096
 
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
