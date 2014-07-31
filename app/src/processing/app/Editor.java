@@ -2361,7 +2361,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
       Base.showWarning("Error", "Could not create the sketch.", e);
       return false;
     }
-    initFileChangeListener();
+    if (Preferences.getBoolean("editor.watcher")) {
+      initFileChangeListener();
+    }
     
     header.rebuild();
     updateTitle();
@@ -2370,7 +2372,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // Store information on who's open and running
     // (in case there's a crash or something that can't be recovered)
-//    base.storeSketches();
+    // TODO this probably need not be here because of the Recent menu, right?
     Preferences.save();
 
     // opening was successful
@@ -2383,107 +2385,94 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    }
   }
   
-  //set to true when the sketch is saved from inside processing
-  private boolean saved;
-
-  private boolean didReload;
   
-  //TODO  set to the appropriate value
-  private boolean reloadEnabled = true;
+  //set to true when the sketch is saved from inside processing
+  private boolean watcherSave;
+  private boolean watcherReloaded;
   
   //the key which is being used to poll the fs for changes
-  private WatchKey key = null;
+  private WatchKey watcherKey = null;
 
   private void initFileChangeListener() {
-    if(!reloadEnabled){
-      return;
-    }
     try {
       WatchService watchService = FileSystems.getDefault().newWatchService();
-      key = sketch.getFolder().toPath()
-        .register(watchService,
-//                  StandardWatchEventKinds.ENTRY_CREATE,
-//                  StandardWatchEventKinds.ENTRY_DELETE,
-                  StandardWatchEventKinds.ENTRY_MODIFY);
+      Path folderPath = sketch.getFolder().toPath(); 
+      watcherKey = folderPath.register(watchService,
+//                              StandardWatchEventKinds.ENTRY_CREATE,
+//                              StandardWatchEventKinds.ENTRY_DELETE,
+                                StandardWatchEventKinds.ENTRY_MODIFY);
     } catch (IOException e) {
-      //registring the watch failed, ignore it
+      e.printStackTrace();
     }
 
-    final WatchKey finKey = key;
+    final WatchKey finKey = watcherKey;
 
-    //if the key is null for some reason, don't bother attaching a listener to it, they can deal without one
+    // if the key is null for some reason, don't bother attaching 
+    // a listener to it, they can deal without one
     if (finKey != null) {
-      WindowFocusListener fl = new WindowFocusListener() {
+      // the key can now be polled for changes in the files
+      addWindowFocusListener(new WindowFocusListener() {
         @Override
         public void windowGainedFocus(WindowEvent arg0) {
-          if (!reloadEnabled) {
-            return;
-          }
+          // check preference here for enabled or not?
+
           //if the directory was deleted, then don't scan
-          if (!finKey.isValid()) {
-            return;
+          if (finKey.isValid()) {
+            List<WatchEvent<?>> events = finKey.pollEvents();
+            processFileEvents(events);
           }
-          
-          List<WatchEvent<?>> events = finKey.pollEvents();
-          processFileEvents(events);
         }
 
         @Override
         public void windowLostFocus(WindowEvent arg0){
           List<WatchEvent<?>> events = finKey.pollEvents();
           //don't ask to reload a file we saved
-          if(!saved){
+          if (!watcherSave) {
             processFileEvents(events);
           }
-          saved = false;
+          watcherSave = false;
         }
-      };
-      //the key can now be polled for changes in the files
-      this.addWindowFocusListener(fl);
-     
+      });
     }
   }
 
+  
   /**
-   * called when a file is changed
-   * 
-   * @param events
-   *          the list of events that have occured in the registered folder
-   *          (sketch.getFolder())
+   * Called when a file is changed.
+   * @param events the list of events that have occured in the sketch folder
    */
   private void processFileEvents(List<WatchEvent<?>> events) {
-    didReload = false;
+    watcherReloaded = false;
     for (WatchEvent<?> e : events) {
       //the context is the name of the file inside the path
       //due to some weird shit, if a file was editted in gedit, the context is .goutputstream-XXXXX
       //this makes things.... complicated
-      //System.out.println(e.context());
-      
+      //System.out.println(e.context());      
 
       //if we already reloaded in this cycle, then don't reload again
-      if (didReload){
+      if (watcherReloaded){
         break;
       }
       if (e.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
 //        Path p = (Path) e.context();
 //        Path root = (Path) key.watchable();
 //        Path path = root.resolve(p);
-        int response = Base
-          .showYesNoQuestion(Editor.this, "File Modified",
-                             "A file has been modified externally",
-                             "Would you like to reload the sketch?");
+        int response = 
+          Base.showYesNoQuestion(Editor.this, "File Modified",
+                                 "A file has been modified externally",
+                                 "Would you like to reload the sketch?");
         if (response == 0) {
-          //reload the sketch
+          // reload the sketch
           sketch.reload();
           header.rebuild();
-          didReload = true;
+          watcherReloaded = true;
         }
       } else {
-        //called when a file is created or deleted
-        //for now, do nothing
+        // called when a file is created or deleted
+        // for now, do nothing
       }
     }
-    saved = false;
+    watcherSave = false;
   }
 
 
@@ -2517,7 +2506,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public boolean handleSave(boolean immediately) {
 //    handleStop();  // 0136
 
-    saved = true;
+    watcherSave = true;
     if (sketch.isUntitled()) {
       return handleSaveAs();
       // need to get the name, user might also cancel here

@@ -159,6 +159,9 @@ editor.divider.size = 0
 # but keeps it from being annoyingly obtrusive
 editor.divider.size.windows = 2
 
+# Whether to automatically reload modified tabs
+editor.watcher = true
+
 # Hide the background image. Gross because this is a pref that
 # really lives over in theme.txt but it's split here.
 buttons.hide.image = false

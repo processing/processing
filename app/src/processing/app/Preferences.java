@@ -65,6 +65,8 @@ public class Preferences {
   static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 }; 
   // what to call the feller
 
+  // had to rename this file because people were editing it
+  static final String DEFAULTS_FILE = "defaults.txt"; //$NON-NLS-1$
   static final String PREFS_FILE = "preferences.txt"; //$NON-NLS-1$
 
 
@@ -142,8 +144,8 @@ public class Preferences {
 
   // data model
 
-  static HashMap<String,String> defaults;
-  static HashMap<String,String> table = new HashMap<String,String>();
+  static HashMap<String, String> defaults;
+  static HashMap<String, String> table = new HashMap<String,String>();
   static File preferencesFile;
 
 
@@ -154,7 +156,7 @@ public class Preferences {
     try {
       // Name changed for 2.1b2 to avoid problems with users modifying or 
       // replacing the file after doing a search for "preferences.txt".
-      load(Base.getLibStream("defaults.txt")); //$NON-NLS-1$
+      load(Base.getLibStream(DEFAULTS_FILE));
     } catch (Exception e) {
       Base.showError(null, "Could not read default settings.\n" +
                            "You'll need to reinstall Processing.", e);

@@ -1,5 +1,10 @@
 0230 pde (3.0a3)
 
+pulls
+X Add polling to detect file system changes
+X   https://github.com/processing/processing/issues/1939
+X   https://github.com/processing/processing/pull/2628
+
 
 pending
 _ huge i18n patch
