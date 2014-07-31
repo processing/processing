@@ -371,7 +371,7 @@ public class Preferences {
     
     Container colorBox = Box.createHorizontalBox();
 
-    label = new JLabel("Background color when Presenting: ");
+    label = new JLabel(Language.text("preferences.background_color")+": ");
     colorBox.add(label);
 
     final String colorTip = "<html>"
@@ -519,7 +519,8 @@ public class Preferences {
     // [ ] Continuously check for errors - PDE X
 
     errorCheckerBox =
-      new JCheckBox("Continuously check for errors");
+      new JCheckBox(Language.text("preferences.continuously_check"));
+    
     pain.add(errorCheckerBox);
     d = errorCheckerBox.getPreferredSize();
     errorCheckerBox.setBounds(left, top, d.width + 10, d.height);
@@ -531,7 +532,7 @@ public class Preferences {
     // [ ] Show Warnings - PDE X
 
     warningsCheckerBox =
-      new JCheckBox("Show warnings");
+      new JCheckBox(Language.text("preferences.show_warnings"));
     pain.add(warningsCheckerBox);
     d = warningsCheckerBox.getPreferredSize();
     warningsCheckerBox.setBounds(warningLeft, top, d.width + 10, d.height);
@@ -542,7 +543,7 @@ public class Preferences {
     // [ ] Enable Code Completion - PDE X
 
     codeCompletionBox =
-      new JCheckBox("Enable code completion");
+      new JCheckBox(Language.text("preferences.code_completion"));
     pain.add(codeCompletionBox);
     d = codeCompletionBox.getPreferredSize();
     codeCompletionBox.setBounds(left, top, d.width + 10, d.height);
@@ -553,7 +554,7 @@ public class Preferences {
 
     final String modifier = Base.isMacOS() ? "\u2318" : "Ctrl";
     codeCompletionTriggerBox =
-      new JCheckBox("Trigger with " + modifier + "-space");
+      new JCheckBox(Language.text("preferences.trigger_with")+" " + modifier + "-"+Language.text("preferences.cmd_space"));
     pain.add(codeCompletionTriggerBox);
     d = codeCompletionTriggerBox.getPreferredSize();
     codeCompletionTriggerBox.setBounds(toggleLeft, top, d.width + 10, d.height);
