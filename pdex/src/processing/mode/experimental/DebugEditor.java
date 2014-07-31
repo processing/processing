@@ -17,6 +17,7 @@
  */
 package processing.mode.experimental;
 import static processing.mode.experimental.ExperimentalMode.log;
+import static processing.mode.experimental.ExperimentalMode.logE;
 import galsasson.mode.tweak.ColorControlBox;
 import galsasson.mode.tweak.Handle;
 import galsasson.mode.tweak.SketchParser;
@@ -882,6 +883,13 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     protected void addBreakpointComments(String tabFilename) {
         SketchCode tab = getTab(tabFilename);
+        if(tab == null) {
+          // this method gets called twice when saving sketch for the first time
+          // once with new name and another with old(causing NPE). Keep an eye out 
+          // for potential issues. See #2675. TODO:
+          logE("Illegal tab name to addBreakpointComments() " + tabFilename);          
+          return;
+        }
         List<LineBreakpoint> bps = dbg.getBreakpoints(tab.getFileName());
 
         // load the source file
@@ -907,7 +915,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     public boolean handleSave(boolean immediately) {
         //System.out.println("handleSave " + immediately);
       
-        log("handleSave, viewing autosave? " + viewingAutosaveBackup);
+        //log("handleSave, viewing autosave? " + viewingAutosaveBackup);
         /* If user wants to save a backup, the backup sketch should get
          * copied to the main sketch directory, simply reload the main sketch. 
          */
