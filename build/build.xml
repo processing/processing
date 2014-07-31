@@ -277,8 +277,8 @@
       </fileset>
     </copy>
 
-    <!-- get the examples folder -->
-    <copy todir="${target.path}/modes/java/examples">
+    <!-- get the examples folder, but don't require it to buid -->
+    <copy todir="${target.path}/modes/java/examples" failonerror="false">
       <fileset dir="${examples.dir}" />
     </copy>
 
