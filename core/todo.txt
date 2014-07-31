@@ -41,6 +41,9 @@ earlier
 X default font fixes (merged for 2.2.1 or earlier)
 X   https://github.com/processing/processing/issues/2331
 X   https://github.com/processing/processing/pull/2338
+X image resize() takes oddly long time
+X   https://github.com/processing/processing/issues/5
+X   the problem was confirmed to have fixed itself
 
 
 applet/component
