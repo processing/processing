@@ -779,6 +779,13 @@ public class FloatList implements Iterable<Float> {
   }
 
 
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.format("[%d] %f%n", i, data[i]);
+    }
+  }
+
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

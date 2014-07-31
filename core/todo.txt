@@ -17,6 +17,10 @@ X   nothing else to do here
 X FloatDict and FloatList should always put NaN values at the end on sort
 X   same for the other list and dict classes
 X   (this is part of the point of having these easier versions)
+o 'collector' class.. Dict that points to a list
+o   String as a key, int/float/string list as values
+X   seems too much like a better place for HashMap
+X add print() method to other data types (not just IntList)
 
 pulls
 X implement A and a (elliptical arcs)
@@ -43,10 +47,6 @@ _   but for NaN values, it's a necessity
 _ get() methods in List/Dict shouldn't allow you to get bad values
 _   but set() methods can automatically resize the arrays
 _   though that means insert() should allow you to insert past the end
-_ should we allow negative indices so that we can work relative to the end?
-_ add print() method to other data types (not just IntList)
-_ 'collector' class.. Dict that points to a list
-_   String as a key, int/float/string list as values
 _ addRow() is not efficient, probably need to do the doubling
 o   or have a setIncrement() function?
 _   it would default to 1 on tables loaded from a file
@@ -56,7 +56,6 @@ _ match and iterators
 _   add match version that returns table that's only a pointer to original
 _   save the constructor for the version that actually copies data
 _   the table pointer version will be speedy and allow chaining 
-_ add Double and Long versions of the classes?
 
 
 later
@@ -225,6 +224,8 @@ _   is this still true?
 _ decide how disconnectEvent should actually be handled (and name?)
 _   was disconnect always there? 
 _   will need documentation
+_ negative indices so that we can work relative to the end in data classes?
+_ add Double and Long versions of the classes?
 
 
 

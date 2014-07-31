@@ -744,12 +744,11 @@ public class FloatDict {
   }
 
 
-//  /**
-//   * Write tab-delimited entries out to the console.
-//   */
-//  public void print() {
-//    write(new PrintWriter(System.out));
-//  }
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.println(keys[i] + " = " + values[i]);
+    }
+  }
 
 
   /**
