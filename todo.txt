@@ -54,6 +54,10 @@ X   since it may take a long time (i.e. 1000s of screen grabs)
 X   http://code.google.com/p/processing/issues/detail?id=31
 X   https://github.com/processing/processing/issues/70
 X   https://github.com/processing/processing/pull/2370
+X NullPointerException in addBreakpointComments() when saving sketch
+X   https://github.com/processing/processing/issues/2675
+X run button seems to stay highlighted permanently
+X   https://github.com/processing/processing/issues/2676
 
 pulls
 X insert tabs properly when prefs set for tabs mode
