@@ -549,7 +549,7 @@ public class ASTGenerator {
                                           ASTNode astNode, boolean noCompare) {
     log("Resolve 3rdParty expr-- " + getNodeAsString(astNode)
         + " nearest node " + getNodeAsString(nearestNode));
-    
+    if(astNode == null) return null;
     ClassMember scopeParent = null;
     SimpleType stp = null;
     if(astNode instanceof SimpleName){
@@ -1008,22 +1008,27 @@ public class ASTGenerator {
           ASTNode childExpr = getChildExpression(testnode);
           log("Parent expression : " + getParentExpression(testnode));
           log("Child expression : " + childExpr);
-          
-          if (!noCompare) {
-            log("Original testnode "
-                + getNodeAsString(testnode));
-            testnode = getParentExpression(testnode);
-            log("Corrected testnode "
-                + getNodeAsString(testnode));
+          if (childExpr != null) {
+            if (!noCompare) {
+              log("Original testnode "
+                  + getNodeAsString(testnode));
+              testnode = getParentExpression(testnode);
+              log("Corrected testnode "
+                  + getNodeAsString(testnode));
+            }
+            ClassMember expr = resolveExpression3rdParty(nearestNode, testnode,
+                                                         noCompare);
+            if (expr == null) {
+              log("Expr is null");
+            } else {
+              log("Expr is " + expr.toString());
+              candidates = getMembersForType(expr, childExpr.toString(),
+                                             noCompare, false);
+            }
           }
-          ClassMember expr = resolveExpression3rdParty(nearestNode, testnode,
-                                                       noCompare);
-          if (expr == null) {
-            log("Expr is null");
-          } else {
-            log("Expr is " + expr.toString());
-            candidates = getMembersForType(expr, childExpr.toString(),
-                                           noCompare, false);
+          else
+          {
+            log("ChildExpr is null");
           }          
         }
         
