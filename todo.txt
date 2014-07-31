@@ -8,6 +8,7 @@ X huge i18n patch
 X   https://github.com/processing/processing/issues/632
 X   https://github.com/processing/processing/pull/2084
 X   http://code.google.com/p/processing/issues/detail?id=593
+_   need to make sure the .properties files are read properly as UTF-8
 
 
 pending
