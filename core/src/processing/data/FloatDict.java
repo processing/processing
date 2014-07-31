@@ -668,7 +668,22 @@ public class FloatDict {
     Sort s = new Sort() {
       @Override
       public int size() {
-        return count;
+        if (useKeys) {
+          return count;  // don't worry about NaN values
+
+        } else {  // first move NaN values to the end of the list
+          int right = count - 1;
+          while (values[right] != values[right]) {
+            right--;
+          }
+          for (int i = right; i >= 0; --i) {
+            if (Float.isNaN(values[i])) {
+              swap(i, right);
+              --right;
+            }
+          }
+          return right + 1;
+        }
       }
 
       @Override
@@ -729,12 +744,11 @@ public class FloatDict {
   }
 
 
-//  /**
-//   * Write tab-delimited entries out to the console.
-//   */
-//  public void print() {
-//    write(new PrintWriter(System.out));
-//  }
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.println(keys[i] + " = " + values[i]);
+    }
+  }
 
 
   /**

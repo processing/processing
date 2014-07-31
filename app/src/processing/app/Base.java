@@ -602,32 +602,37 @@ public class Base {
   }
 
 
+  /** 
+   * The call has already checked to make sure this sketch is not modified, 
+   * now change the mode. 
+   */ 
   protected void changeMode(Mode mode) {
     if (activeEditor.getMode() != mode) {
       Sketch sketch = activeEditor.getSketch();
       nextMode = mode;
-
-      // If the current editor contains file extensions that the new mode can handle, then
-      // write a sketch.properties file with the new mode specified, and reopen.
-      boolean newModeCanHandleCurrentSource = true;
-      for (final SketchCode code: sketch.getCode()) {
-        if (!mode.validExtension(code.getExtension())) {
-          newModeCanHandleCurrentSource = false;
-          break;
-        }
-      }
-      if (newModeCanHandleCurrentSource) {
-        final File props = new File(sketch.getCodeFolder(), "sketch.properties");
-        saveModeSettings(props, nextMode);
+      
+      if (sketch.isUntitled()) {
+        // If no changes have been made, just close and start fresh.
+        // (Otherwise the editor would lose its 'untitled' status.)
         handleClose(activeEditor, true);
-        handleOpen(sketch.getMainFilePath());
-      } else {
-        // If you're changing modes, and there's nothing in the current sketch, you probably
-        // don't intend to keep the old, wrong-mode editor around.
-        if (sketch.isUntitled()) {
-          handleClose(activeEditor, true);
-        }
         handleNew();
+        
+      } else {
+        // If the current editor contains file extensions that the new mode can handle, then
+        // write a sketch.properties file with the new mode specified, and reopen.
+        boolean newModeCanHandleCurrentSource = true;
+        for (final SketchCode code: sketch.getCode()) {
+          if (!mode.validExtension(code.getExtension())) {
+            newModeCanHandleCurrentSource = false;
+            break;
+          }
+        }
+        if (newModeCanHandleCurrentSource) {
+          final File props = new File(sketch.getCodeFolder(), "sketch.properties");
+          saveModeSettings(props, nextMode);
+          handleClose(activeEditor, true);
+          handleOpen(sketch.getMainFilePath());
+        }
       }
     }
   }
@@ -1859,41 +1864,15 @@ public class Base {
   }
 
 
-//  static public String getExamplesPath() {
-//    return examplesFolder.getAbsolutePath();
-//  }
-
-//  public File getExamplesFolder() {
-//    return examplesFolder;
-//  }
-
-
-//  static public String getLibrariesPath() {
-//    return librariesFolder.getAbsolutePath();
-//  }
-
-
-//  public File getLibrariesFolder() {
-//    return librariesFolder;
-//  }
-
-
-//  static public File getToolsFolder() {
   static public File getToolsFolder() {
-//    return toolsFolder;
     return getContentFile("tools");
   }
-
-
-//  static public String getToolsPath() {
-//    return toolsFolder.getAbsolutePath();
-//  }
 
 
   static public void locateSketchbookFolder() {
     // If a value is at least set, first check to see if the folder exists.
     // If it doesn't, warn the user that the sketchbook folder is being reset.
-    String sketchbookPath = Preferences.get("sketchbook.path"); //$NON-NLS-1$
+    String sketchbookPath = Preferences.getSketchbookPath();
     if (sketchbookPath != null) {
       sketchbookFolder = new File(sketchbookPath);
       if (!sketchbookFolder.exists()) {
@@ -1910,7 +1889,7 @@ public class Base {
     // If no path is set, get the default sketchbook folder for this platform
     if (sketchbookFolder == null) {
       sketchbookFolder = getDefaultSketchbookFolder();
-      Preferences.set("sketchbook.path", sketchbookFolder.getAbsolutePath());
+      Preferences.setSketchbookPath(sketchbookFolder.getAbsolutePath());
       if (!sketchbookFolder.exists()) {
         sketchbookFolder.mkdirs();
       }
@@ -1925,19 +1904,17 @@ public class Base {
 
   public void setSketchbookFolder(File folder) {
     sketchbookFolder = folder;
-    Preferences.set("sketchbook.path", folder.getAbsolutePath());
+    Preferences.setSketchbookPath(folder.getAbsolutePath());
     rebuildSketchbookMenus();
   }
 
 
   static public File getSketchbookFolder() {
-//    return new File(Preferences.get("sketchbook.path"));
     return sketchbookFolder;
   }
 
 
   static public File getSketchbookLibrariesFolder() {
-//    return new File(getSketchbookFolder(), "libraries");
     return new File(sketchbookFolder, "libraries");
   }
 

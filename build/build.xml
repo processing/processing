@@ -31,6 +31,9 @@
     </condition> 
   </fail> 
 
+  <property name="examples.dir" 
+	    value="../../processing-docs/content/examples" />
+
   <!-- Figure out the JRE download location for Linux and Windows. -->
   <condition property="jre.file" value="jre-7u40-${platform}-i586.tgz"> 
     <equals arg1="${sun.arch.data.model}" arg2="32" />
@@ -205,6 +208,10 @@
     <input message="Enter version number:" 
            addproperty="version"
            defaultvalue="${revision}" />
+
+    <available file="${examples.dir}" property="examples.exist" />
+    <fail unless="examples.exist" message="To do a distribution, the processing-docs repo must be checked out at the same level as the processing repo." />
+
     <antcall target="${platform}-dist" />
   </target>
 
@@ -229,6 +236,9 @@
     <subant buildpath="../java/libraries/sound" target="clean"/>
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
     <subant buildpath="../pdex" target="clean"/>
+
+    <!-- make sure this isn't around from an old build 140730 -->
+    <delete dir="../java/examples" />
   </target>
   
   <target name="subprojects-build">
@@ -261,23 +271,16 @@
       <fileset dir="../java">
         <!-- don't include LWJGL, it's not operational -->
         <exclude name="libraries/lwjgl/**" />
-<!--
-        <exclude name="**/bin/*" />
-        <exclude name="**/src/*" />
-        <exclude name="examples" />
-        <exclude name="**/cmd/**" />
--->
+
         <exclude name="reference.zip" />
         <exclude name="**/._*" />
-
-        <!-- probably not necessary anymore -->
-        <exclude name="examples/**/applet/**" />
       </fileset>
     </copy>
 
-    <delete dir="${target.path}/modes/java/examples">
-      <include name="**/applet/**" />
-    </delete>
+    <!-- get the examples folder -->
+    <copy todir="${target.path}/modes/java/examples">
+      <fileset dir="${examples.dir}" />
+    </copy>
 
     <unzip dest="${target.path}/modes/java" 
            src="../java/reference.zip" 
@@ -471,7 +474,7 @@
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
       <!--<fileset dir="shared" includes="launch4j/**" />-->
-      <fileset dir="shared" includes="lib/**" />
+      <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
 
@@ -500,7 +503,7 @@
     <chmod perm="ugo+x" file="${launch4j.dir}/bin/ld" />
 
     <!-- remove the others -->
-    <delete>
+    <delete failonerror="true">
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
@@ -599,7 +602,7 @@
     <copy todir="linux/work">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
-      <fileset dir="shared" includes="lib/**" />
+      <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
@@ -621,7 +624,7 @@
     <chmod perm="ugo+x" file="${launch4j.dir}/bin/ld" />
 
     <!-- remove the others -->
-    <delete>
+    <delete failonerror="true">
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
@@ -768,7 +771,7 @@
     <copy todir="windows/work">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
-      <fileset dir="shared" includes="lib/**" />
+      <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
@@ -788,7 +791,7 @@
           tofile="${launch4j.dir}/bin/ld.exe" />
 
     <!-- remove the others -->
-    <delete>
+    <delete failonerror="true">
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
@@ -949,7 +952,9 @@ remove the spaces for depth since it should be double dash, but screws up commen
 
       <packageset dir="../core/src">
         <include name="processing/**" />
+	<!--
         <include name="japplemenubar/**" />
+	-->
       </packageset>
     </javadoc>
 

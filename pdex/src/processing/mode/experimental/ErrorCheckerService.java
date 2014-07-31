@@ -68,7 +68,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Error check happens every sleepTime milliseconds
    */
-  public static final int sleepTime = 1000;
+  public static final int sleepTime = 4000;
 
   /**
    * The amazing eclipse ast parser
@@ -728,7 +728,8 @@ public class ErrorCheckerService implements Runnable{
             .getElement(javaLineNumber);
         if (lineElement == null) {
           log("calcPDEOffsetsForProbList(): Couldn't fetch javalinenum "
-              + javaLineNumber);
+              + javaLineNumber + "\nProblem: " + p);
+          p.setPDEOffsets(-1,-1);
           continue;
         }
         String javaLine = javaSource
@@ -739,7 +740,8 @@ public class ErrorCheckerService implements Runnable{
             .getDefaultRootElement().getElement(p.getLineNumber());
         if (pdeLineElement == null) {
           log("calcPDEOffsetsForProbList(): Couldn't fetch pdelinenum "
-              + javaLineNumber);
+              + javaLineNumber + "\nProblem: " + p);
+          p.setPDEOffsets(-1,-1);
           continue;
         }
         String pdeLine = pdeTabs[p.getTabIndex()]
@@ -1442,17 +1444,32 @@ public class ErrorCheckerService implements Runnable{
     if (p == null)
       return;
     try {
-      astGenerator.highlightPDECode(p.getTabIndex(),
-                                    p.getLineNumber(),
-                                    p.getPDELineStartOffset(),
-                                    (p.getPDELineStopOffset()
-                                        - p.getPDELineStartOffset() + 1));
-      editor.getTextArea().scrollTo(p.getLineNumber(), 0);
+      if(p.getPDELineStartOffset() == -1 || p.getPDELineStopOffset() == -1){
+        // bad offsets, don't highlight, just scroll.
+        editor.toFront();
+        editor.getSketch().setCurrentCode(p.getTabIndex());
+      }
+      else {
+        astGenerator.highlightPDECode(p.getTabIndex(),
+                                      p.getLineNumber(),
+                                      p.getPDELineStartOffset(),
+                                      (p.getPDELineStopOffset()
+                                          - p.getPDELineStartOffset() + 1));
+      }
+      
+      // scroll, but within boundaries
+      // It's also a bit silly that if parameters to scrollTo() are out of range,
+      // a BadLocation Exception is thrown internally and caught in JTextArea AND
+      // even the stack trace gets printed! W/o letting me catch it later! SMH
+      if (p.getLineNumber() < Base.countLines(editor.textArea().getDocument()
+          .getText(0, editor.textArea().getDocument().getLength()))
+          && p.getLineNumber() >= 0) {
+        editor.getTextArea().scrollTo(p.getLineNumber(), 0);
+      }
       editor.repaint();
     } catch (Exception e) {
-      System.err.println(e
-          + " : Error while selecting text in scrollToErrorLine()");
-      e.printStackTrace();
+      logE(e
+          + " : Error while selecting text in scrollToErrorLine(), for problem: " + p);
     }
     // log("---");
   }

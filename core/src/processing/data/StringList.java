@@ -705,10 +705,11 @@ public class StringList implements Iterable<String> {
   }
 
 
-//  static public StringList split(String value, char delim) {
-//    String[] array = PApplet.split(value, delim);
-//    return new StringList(array);
-//  }
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.format("[%d] %s%n", i, data[i]);
+    }
+  }
 
 
   @Override

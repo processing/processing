@@ -107,8 +107,9 @@ public class Server implements Runnable {
       }
 
     } catch (IOException e) {
-      e.printStackTrace();
+      //e.printStackTrace();
       thread = null;
+      throw new RuntimeException(e);
       //errorMessage("<init>", e);
     }
   }

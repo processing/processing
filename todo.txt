@@ -11,6 +11,38 @@ X possible to open a sketch multiple times
 X   by double-clicking one of its files instead of the main pde file
 X   user opens non-main pde of already open sketch, it'll open again
 X   https://github.com/processing/processing/issues/2506
+X remove the prefs for 32/64-bit from Preferences
+X   also remove the extra OS X cruft inside Runner.java
+X OS X export button not disabled on other platforms
+X   https://github.com/processing/processing/issues/2642
+o try new syntax package
+X exclude 'fonts' folder from build (since it's going into the JRE)
+X   was storing our fonts in both ./lib/fonts and jre/lib/fonts
+X   now gets the jre folder and loads from there
+X make ant fail when trying to delete JRE files that don't exist
+X   some aren't being removed properly
+X fix the build scripts to include the examples
+X   https://github.com/processing/processing/issues/2652
+X   all examples are out of "processing/java" and are now in "processing-docs/content/". The Book examples have been removed entirely from our repositories.
+o "Platform is ${platform}" message during 'ant clean' 
+o   on OS X, but not Windows (haven't checked Linux)
+X   this was in pdex/build.xml
+X remove welcome message from the sound library
+X URL opening problem fixed by use of getCanonicalPath() on Windows
+X   https://github.com/processing/processing/issues/2656
+X add a new pref for the 3.0 sketchbook location
+X if Server constructor fails, throw an exception
+X   https://github.com/processing/processing/issues/2604
+o check on why 2x core.jar inside the Java folder
+o   maybe OS X Java can't look in subfolders? (just auto-adds things)
+o   https://github.com/processing/processing/issues/2344
+X   one is used by the PDE, the other is used as a library
+X get 'modified' indicator working on document windows again
+X   https://github.com/processing/processing/issues/2194
+X remove default menu bar hack when 7u60 arrives
+X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
+X when renaming a tab, include the previous name to be edited
+X changing the mode on an untitled, unmodified sketch removes untitled status
 
 gsoc
 X clear status messages in the Contribution Manager
@@ -39,43 +71,31 @@ X   https://github.com/processing/processing/issues/2141
 o double-clicking a .pde file doesn't open properly on OS X
 o   https://github.com/processing/processing/issues/2639
 X moving p5 examples to the web repo
-X remove reference.zip from main repo
+X move examples into web repo 
+o OS X not opening a sketch at all on pde double-click? (though opening the app)
+X Chinese text is overlapped in Processing 2.1 editor
+X   https://github.com/processing/processing/issues/2173
+o type cut off in dialog boxes on OS X retina machines
+o   https://github.com/processing/processing/issues/2116
+o   add spaces to the end of the text?
+X   seems to have fixed itself in newer Java releases
+X implement Windows menu in the PDE
+X   https://github.com/processing/processing/issues/584
 
 
+pending
 _ huge i18n patch
 _   https://github.com/processing/processing/pull/2084
-
-_ add a new pref for the 3.0 sketchbook location
-_ fix the build scripts to include the examples
-_   https://github.com/processing/processing/issues/2652
-_   all examples are out of "processing/java" and are now in "processing-docs/content/". The Book examples have been removed entirely from our repositories.
-_ reference wasn't included either
-_   https://github.com/processing/processing/issues/2656
-_   processing-web/java_generate/ReferenceGenerator
-
-_ make ant fail when trying to delete JRE files that don't exist
-_   some aren't being removed properly
-_ "Platform is ${platform}" message during 'ant clean'
-
-_ OS X export button not disabled on other platforms
-_   https://github.com/processing/processing/issues/2642
-
 _ look at the sound library https://github.com/wirsing/ProcessingSound
-_   appears that sound is not yet supported on Windows
-
-_ try new syntax package
-_ possibility of libraries folder inside a particular sketch?
-_ incorporate new preproc
-_   https://github.com/fjenett/processing-preprocessor-antlr4
+_   sound is not yet supported on Windows
 _ glw? lwjgl? retina jogl?
-_ move sketchbook into its own window
-_ move recent into the sketchbook menu
-_   needs to recognize the p5 app folder
-_   also should recognize the user's home dir
-_ move examples into web repo 
-_ make reference and examples build process part of dist
-_   separate ant targets, but only require them for dist
+_ make reference build process part of dist
+_   https://github.com/processing/processing-docs/issues/85
+_   separate ant target, but only require them for dist
 _   as separate targets, folks can build explicitly if they'd like
+_   processing-docs/java_generate/ReferenceGenerator/processingrefBuild.sh
+_   remove reference.zip from main repo
+
 
 gsoc/help me
 _ `return` keyword not treated as such when followed by a bracket
@@ -88,10 +108,27 @@ _ shouldn't write sketch.properties unless it's a non-default mode
 _   https://github.com/processing/processing/issues/2531
 _ closing the color selector makes things freeze (only Linux and Windows?)
 _   https://github.com/processing/processing/issues/2381
+_ move sketchbook into its own window
+_ move recent into the sketchbook menu
+_   needs to recognize the p5 app folder
+_   also should recognize the user's home dir
+_ incorporate new preproc
+_   https://github.com/fjenett/processing-preprocessor-antlr4
+_ SOCKS proxy not working: 
+_   https://github.com/processing/processing/issues/2643
+_   the current code that gets/sets the pref is in Preferences
+_   instead of current implementation, can we auto-detect proxy settings?
+_   old issue: https://github.com/processing/processing/issues/1476
+_   http://docs.oracle.com/javase/7/docs/technotes/guides/net/proxies.html
+_   http://docs.oracle.com/javase/1.5.0/docs/guide/net/proxies.html
+_   http://stackoverflow.com/questions/4933677/detecting-windows-ie-proxy-setting-using-java
+_   http://www.java2s.com/Code/Java/Network-Protocol/DetectProxySettingsforInternetConnection.htm
+_ problems with non-US keyboards and some shortcuts
+_   https://github.com/processing/processing/issues/2199
+
 
 medium
-_ check on why 2x core.jar inside the Java folder
-_   maybe OS X Java can't look in subfolders? (just auto-adds things)
+_ possibility of libraries folder inside a particular sketch?
 _ display "1" is not correct in 2.1.2
 _   https://github.com/processing/processing/issues/2502
 _ re/move things from Google Code downloads
@@ -136,12 +173,6 @@ _ add minimum version required (or max version?) to libraries/modes/etc
 _ no high-res display support for the PDE
 _ PDE and sketches are 2x smaller on high-res Windows 8 machines
 _   https://github.com/processing/processing/issues/2411
-
-
-post 2.1 cleaning
-_ remove the prefs for 32/64-bit from Preferences
-_ remove the extra OS X cruft inside Runner.java
-_ exclude 'fonts' folder from build (since it's going into the JRE)
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -321,9 +352,6 @@ PDE - Processing Development Environment
 
 PDE / Dialogs
 
-_ type cut off in dialog boxes on OS X retina machines
-_   https://github.com/processing/processing/issues/2116
-_   add spaces to the end of the text?
 _ dialog box icon is fuzzy on OS X retina machines
 _   https://github.com/processing/processing/issues/2117
 _ solution might be our own dialog boxes
@@ -861,14 +889,13 @@ _   http://code.google.com/p/processing/issues/detail?id=632
 
 DIST / Mac OS X
 
+_ more OS X-specific hackery for improved appearance
+_   https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html
 _ possible better option for doing retina?
 _   g.getFontRenderContext().getTransform().equals(AffineTransform.getScaleInstance(2.0, 2.0))
 _ appbundler improvements
 _   don't re-copy JRE into work folder if already exists
 _   implement a splash screen
-_ remove default menu bar hack when 7u60 arrives
-_   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
-_ OS X not opening a sketch at all on pde double-click? (though opening the app)
 _ LWJGL forum discussion 
 _   http://lwjgl.org/forum/index.php/topic,4711.225.html
 _ change cmd line for OS X to use symlink? 
