@@ -46,9 +46,9 @@ import processing.mode.java.JavaMode;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 229;
+  static private final int REVISION = 230;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0229"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0230"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 //  static private boolean RELEASE = false;
 
@@ -602,21 +602,21 @@ public class Base {
   }
 
 
-  /** 
-   * The call has already checked to make sure this sketch is not modified, 
-   * now change the mode. 
-   */ 
+  /**
+   * The call has already checked to make sure this sketch is not modified,
+   * now change the mode.
+   */
   protected void changeMode(Mode mode) {
     if (activeEditor.getMode() != mode) {
       Sketch sketch = activeEditor.getSketch();
       nextMode = mode;
-      
+
       if (sketch.isUntitled()) {
         // If no changes have been made, just close and start fresh.
         // (Otherwise the editor would lose its 'untitled' status.)
         handleClose(activeEditor, true);
         handleNew();
-        
+
       } else {
         // If the current editor contains file extensions that the new mode can handle, then
         // write a sketch.properties file with the new mode specified, and reopen.
@@ -928,7 +928,7 @@ public class Base {
 
       // Cycle through open windows to make sure that it's not already open.
       for (Editor editor : editors) {
-        // User may have double-clicked any PDE in the sketch folder,  
+        // User may have double-clicked any PDE in the sketch folder,
         // so we have to check each open tab (not just the main one).
         // https://github.com/processing/processing/issues/2506
         for (SketchCode tab : editor.getSketch().getCode()) {
@@ -972,7 +972,7 @@ public class Base {
           editor = coreModes[0].createEditor(this, path, state);
         }
       }
-      
+
       // Make sure that the sketch actually loaded
       Sketch sketch = editor.getSketch();
       if (sketch == null) {
