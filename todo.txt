@@ -1,8 +1,4 @@
 0229 pde (3.0a2)
-X new tab/rename dialog box
-X   https://github.com/processing/processing/issues/2431
-X fix issue where the browser wasn't opening the reference properly
-X   https://github.com/processing/processing/pull/2657
 X fix "No such file or directory" error when exporting an application on OSX
 X   this also resulted in the application not being signed at all
 X   https://github.com/processing/processing/issues/2614
@@ -58,6 +54,10 @@ X NullPointerException in addBreakpointComments() when saving sketch
 X   https://github.com/processing/processing/issues/2675
 X run button seems to stay highlighted permanently
 X   https://github.com/processing/processing/issues/2676
+X new tab/rename dialog box
+X   https://github.com/processing/processing/issues/2431
+X fix issue where the browser wasn't opening the reference properly
+X   https://github.com/processing/processing/pull/2657
 
 pulls
 X insert tabs properly when prefs set for tabs mode
