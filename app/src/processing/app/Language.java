@@ -42,6 +42,8 @@ public class Language {
 		this.languages.put(Locale.ENGLISH.getLanguage(), Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH));
 		// de, German, Deutsch
 		this.languages.put(Locale.GERMAN.getLanguage(), Locale.GERMAN.getDisplayLanguage(Locale.GERMAN));
+		// ja, Japanese
+		this.languages.put(Locale.JAPANESE.getLanguage(), Locale.JAPANESE.getDisplayLanguage(Locale.JAPANESE));
 
 		// Set default language
 		if (!this.languages.containsKey(this.language)) {
