@@ -15,7 +15,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License along 
+  You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
@@ -25,13 +25,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import processing.core.PApplet;
+import processing.core.PUtil;
 
 
 abstract public class Contribution {
-  static final List validCategories = 
-    Arrays.asList("3D", "Animation", "Data", "Geometry", "GUI", "Hardware", 
-                  "I/O", "Math", "Simulation", "Sound", "Typography", 
+  static final List validCategories =
+    Arrays.asList("3D", "Animation", "Data", "Geometry", "GUI", "Hardware",
+                  "I/O", "Math", "Simulation", "Sound", "Typography",
                   "Utilities", "Video & Vision", "Other");
 
   //protected String category;      // "Sound"
@@ -44,20 +44,20 @@ abstract public class Contribution {
   protected int version;          // 102
   protected String prettyVersion; // "1.0.2"
   protected long lastUpdated;   //  1402805757
-  
-  
+
+
   // "Sound"
 //  public String getCategory() {
 //    return category;
 //  }
 
-  
+
   // "Sound", "Utilities"... see valid list in ContributionListing
   protected List<String> getCategories() {
     return categories;
   }
-  
-  
+
+
   protected String getCategoryStr() {
     StringBuilder sb = new StringBuilder();
     for (String category : categories) {
@@ -67,8 +67,8 @@ abstract public class Contribution {
     sb.deleteCharAt(sb.length()-1);  // delete last comma
     return sb.toString();
   }
-  
-  
+
+
   protected boolean hasCategory(String category) {
     if (category != null) {
       for (String c : categories) {
@@ -121,7 +121,7 @@ abstract public class Contribution {
   public String getPrettyVersion() {
     return prettyVersion;
   }
-  
+
   // 1402805757
   public long getLastUpdated() {
     return lastUpdated;
@@ -129,37 +129,37 @@ abstract public class Contribution {
 
 
   abstract public ContributionType getType();
-  
-  
+
+
   public String getTypeName() {
     return getType().toString();
   }
-  
-  
+
+
   abstract public boolean isInstalled();
-  
-  
-//  /** 
+
+
+//  /**
 //   * Returns true if the type of contribution requires the PDE to restart
-//   * when being added or removed. 
+//   * when being added or removed.
 //   */
 //  public boolean requiresRestart() {
 //    return getType() == ContributionType.TOOL || getType() == ContributionType.MODE;
 //  }
-  
+
 
   boolean isRestartFlagged() {
     return false;
   }
-  
-  
+
+
   /** Overridden by LocalContribution. */
   boolean isDeletionFlagged() {
     return false;
   }
 
 
-  /** 
+  /**
    * @return a single element list with "Unknown" as the category.
    */
   static List<String> defaultCategory() {
@@ -167,17 +167,17 @@ abstract public class Contribution {
     outgoing.add("Unknown");
     return outgoing;
   }
-  
-  
+
+
   /**
    * @return the list of categories that this contribution is part of
    *         (e.g. "Typography / Geometry"). "Unknown" if the category null.
    */
   static List<String> parseCategories(String categoryStr) {
     List<String> outgoing = new ArrayList<String>();
-    
+
     if (categoryStr != null) {
-      String[] listing = PApplet.trim(PApplet.split(categoryStr, ','));
+      String[] listing = PUtil.trim(PUtil.split(categoryStr, ','));
       for (String category : listing) {
         if (validCategories.contains(category)) {
           outgoing.add(category);

@@ -38,7 +38,7 @@ import processing.app.Base;
 import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.platform.WindowsRegistry.REGISTRY_ROOT_KEY;
-import processing.core.PApplet;
+import processing.core.PUtil;
 
 
 /**
@@ -225,7 +225,7 @@ public class WindowsPlatform extends Platform {
    */
   protected void checkPath() {
     String path = System.getProperty("java.library.path");
-    String[] pieces = PApplet.split(path, File.pathSeparatorChar);
+    String[] pieces = PUtil.split(path, File.pathSeparatorChar);
     String[] legit = new String[pieces.length];
     int legitCount = 0;
     for (String item : pieces) {
@@ -247,8 +247,8 @@ public class WindowsPlatform extends Platform {
       }
       legit[legitCount++] = item;
     }
-    legit = PApplet.subset(legit, 0, legitCount);
-    String newPath = PApplet.join(legit, File.pathSeparator);
+    legit = PUtil.subset(legit, 0, legitCount);
+    String newPath = PUtil.join(legit, File.pathSeparator);
     if (!newPath.equals(path)) {
       System.setProperty("java.library.path", newPath);
     }

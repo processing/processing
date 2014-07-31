@@ -51,18 +51,18 @@ import processing.core.*;
  * being lectured by strangers who feel that it doesn't look like what they
  * learned in CS class.
  * <p>
- * We don't use the Java Preferences API because it would entail writing to 
- * the registry (on Windows), or an obscure file location (on Mac OS X) and 
- * make it far more difficult (impossible) to remove the preferences.txt to 
- * reset them (when they become corrupt), or to find the the file to make 
+ * We don't use the Java Preferences API because it would entail writing to
+ * the registry (on Windows), or an obscure file location (on Mac OS X) and
+ * make it far more difficult (impossible) to remove the preferences.txt to
+ * reset them (when they become corrupt), or to find the the file to make
  * edits for numerous obscure preferences that are not part of the preferences
- * window. If we added a generic editor (e.g. about:config in Mozilla) for 
+ * window. If we added a generic editor (e.g. about:config in Mozilla) for
  * such things, we could start using the Java Preferences API. But wow, that
- * sounds like a lot of work. Not unlike writing this paragraph. 
+ * sounds like a lot of work. Not unlike writing this paragraph.
  */
 public class Preferences {
 
-  static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 }; 
+  static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 };
   // what to call the feller
 
   // had to rename this file because people were editing it
@@ -92,7 +92,7 @@ public class Preferences {
    * inside a static block.
    */
   static public int BUTTON_HEIGHT = 24;
-  
+
   /** height of the EditorHeader, EditorToolbar, and EditorStatus */
   static final int GRID_SIZE = 32;
   //static final int GRID_SIZE = 33;
@@ -125,16 +125,16 @@ public class Preferences {
   JCheckBox autoAssociateBox;
 
   ColorChooser selector;
-  
+
   JCheckBox errorCheckerBox;
   JCheckBox warningsCheckerBox;
   JCheckBox codeCompletionBox;
   JCheckBox importSuggestionsBox;
   JCheckBox codeCompletionTriggerBox;
-  
+
   JComboBox displaySelectionBox;
   int displayCount;
-  
+
   String[] monoFontFamilies;
   JComboBox fontSelectionBox;
 
@@ -154,7 +154,7 @@ public class Preferences {
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
     try {
-      // Name changed for 2.1b2 to avoid problems with users modifying or 
+      // Name changed for 2.1b2 to avoid problems with users modifying or
       // replacing the file after doing a search for "preferences.txt".
       load(Base.getLibStream(DEFAULTS_FILE));
     } catch (Exception e) {
@@ -163,7 +163,7 @@ public class Preferences {
     }
 
     // check for platform-specific properties in the defaults
-    String platformExt = "." + PConstants.platformNames[PApplet.platform]; //$NON-NLS-1$
+    String platformExt = "." + PConstants.platformNames[PUtil.platform]; //$NON-NLS-1$
     int platformExtLength = platformExt.length();
 
     // Get a list of keys that are specific to this platform
@@ -173,7 +173,7 @@ public class Preferences {
         platformKeys.add(key);
       }
     }
-    
+
     // Use those platform-specific keys to override
     for (String key : platformKeys) {
       // this is a key specific to a particular platform
@@ -187,7 +187,7 @@ public class Preferences {
 
     // other things that have to be set explicitly for the defaults
     setColor("run.window.bgcolor", SystemColor.control); //$NON-NLS-1$
-    
+
     // next load user preferences file
     preferencesFile = Base.getSettingsFile(PREFS_FILE);
     if (preferencesFile.exists()) {
@@ -201,18 +201,18 @@ public class Preferences {
                        preferencesFile.getAbsolutePath() +
                        " and restart Processing.", ex);
       }
-    } 
-    
+    }
+
     if (checkSketchbookPref() || !preferencesFile.exists()) {
       // create a new preferences file if none exists
       // saves the defaults out to the file
       save();
     }
 
-    PApplet.useNativeSelect = 
+    PUtil.useNativeSelect =
       Preferences.getBoolean("chooser.files.native"); //$NON-NLS-1$
-    
-    // Set http proxy for folks that require it. 
+
+    // Set http proxy for folks that require it.
     // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
     String proxyHost = get("proxy.host");
     String proxyPort = get("proxy.port");
@@ -284,12 +284,12 @@ public class Preferences {
 
     // Editor and console font [ Source Code Pro ]
 
-    // Nevermind on this for now.. Java doesn't seem to have a method for 
-    // enumerating only the fixed-width (monospaced) fonts. To do this 
-    // properly, we'd need to list the fonts, and compare the metrics of 
-    // i and M for each. When they're identical (and not degenerate), 
-    // we'd call that font fixed width. That's all a very expensive set of 
-    // operations, so it should also probably be cached between runs and 
+    // Nevermind on this for now.. Java doesn't seem to have a method for
+    // enumerating only the fixed-width (monospaced) fonts. To do this
+    // properly, we'd need to list the fonts, and compare the metrics of
+    // i and M for each. When they're identical (and not degenerate),
+    // we'd call that font fixed width. That's all a very expensive set of
+    // operations, so it should also probably be cached between runs and
     // updated in the background.
 
     Container fontBox = Box.createHorizontalBox();
@@ -304,7 +304,7 @@ public class Preferences {
     fontSelectionBox = new JComboBox(new Object[] { Toolkit.getMonoFontName() });
     fontSelectionBox.setToolTipText(fontTip);
 //    fontSelectionBox.addItem(Toolkit.getMonoFont(size, style));
-    //updateDisplayList();  
+    //updateDisplayList();
     fontSelectionBox.setEnabled(false);  // don't enable until fonts are loaded
     fontBox.add(fontSelectionBox);
 //    fontBox.add(Box.createHorizontalGlue());
@@ -313,12 +313,12 @@ public class Preferences {
     fontBox.setBounds(left, top, d.width + 150, d.height);
 //    fontBox.setBounds(left, top, dialog.getWidth() - left*2, d.height);
     top += d.height + GUI_BETWEEN;
-    
-    
+
+
     // Editor font size [ 12 ]  Console font size [ 10 ]
 
     Container box = Box.createHorizontalBox();
-    
+
     label = new JLabel("Editor font size: ");
     box.add(label);
     fontSizeField = new JComboBox<Integer>(FONT_SIZES);
@@ -331,14 +331,14 @@ public class Preferences {
     consoleSizeField = new JComboBox<Integer>(FONT_SIZES);
     consoleSizeField.setEditable(true);
     box.add(consoleSizeField);
-    
+
     pain.add(box);
     d = box.getPreferredSize();
     box.setBounds(left, top, d.width, d.height);
     fontSizeField.setSelectedItem(Preferences.getFont("editor.font.size"));
     top += d.height + GUI_BETWEEN;
-    
-    
+
+
     Container colorBox = Box.createHorizontalBox();
 
     label = new JLabel("Background color when Presenting: ");
@@ -432,8 +432,8 @@ public class Preferences {
     presentColor.addMouseListener(new MouseListener() {
       @Override public void mouseReleased(MouseEvent e) {}
       @Override public void mousePressed(MouseEvent e) {}
-      
-      @Override 
+
+      @Override
       public void mouseExited(MouseEvent e) {
         dialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       }
@@ -457,7 +457,7 @@ public class Preferences {
     colorBox.add(Box.createHorizontalStrut(GUI_SMALL + 2 / 3 * GUI_SMALL));
 
     colorBox.add(presentColor);
-    
+
     pain.add(colorBox);
     d = colorBox.getPreferredSize();
     colorBox.setBounds(left, top, d.width, d.height);
@@ -485,7 +485,7 @@ public class Preferences {
     inputMethodBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
-    
+
     // [ ] Continuously check for errors - PDE X
 
     errorCheckerBox =
@@ -495,7 +495,7 @@ public class Preferences {
     errorCheckerBox.setBounds(left, top, d.width + 10, d.height);
     //right = Math.max(right, left + d.width);
     //top += d.height + GUI_BETWEEN;
-    int warningLeft = left + d.width; 
+    int warningLeft = left + d.width;
 
     // [ ] Show Warnings - PDE X
 
@@ -515,7 +515,7 @@ public class Preferences {
     d = codeCompletionBox.getPreferredSize();
     codeCompletionBox.setBounds(left, top, d.width + 10, d.height);
     int toggleLeft = left + d.width;
-    
+
     // [ ] Toggle Code Completion Trigger - PDE X
 
     final String modifier = Base.isMacOS() ? "\u2318" : "Ctrl";
@@ -551,8 +551,8 @@ public class Preferences {
     deletePreviousBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
-    
-    
+
+
     // [ ] Hide tab/toolbar background image
 
     whinyBox = new JCheckBox("Hide tab/toolbar background image (requires restart)");
@@ -759,7 +759,7 @@ public class Preferences {
     boolean wine = whinyBox.isSelected();
     setBoolean("header.hide.image", wine); //$NON-NLS-1$
     setBoolean("buttons.hide.image", wine); //$NON-NLS-1$
-    // Could iterate through editors here and repaint them all, but probably 
+    // Could iterate through editors here and repaint them all, but probably
     // requires a doLayout() call, and that may have different effects on
     // each platform, and nobody wants to debug/support that.
 
@@ -817,7 +817,7 @@ public class Preferences {
       Base.log("Ignoring invalid font size " + fontSizeField); //$NON-NLS-1$
       fontSizeField.setSelectedItem(getInteger("editor.font.size"));
     }
-    
+
     try {
       Object selection = consoleSizeField.getSelectedItem();
       if (selection instanceof String) {
@@ -830,16 +830,16 @@ public class Preferences {
       Base.log("Ignoring invalid font size " + consoleSizeField); //$NON-NLS-1$
       consoleSizeField.setSelectedItem(getInteger("console.font.size"));
     }
-    
+
     setColor("run.present.bgcolor", presentColor.getBackground());
-    
+
     setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
 
     if (autoAssociateBox != null) {
       setBoolean("platform.auto_file_type_associations", //$NON-NLS-1$
                  autoAssociateBox.isSelected());
     }
-    
+
     setBoolean("pdex.errorCheckEnabled", errorCheckerBox.isSelected());
     setBoolean("pdex.warningsEnabled", warningsCheckerBox.isSelected());
     setBoolean("pdex.ccEnabled", codeCompletionBox.isSelected());
@@ -847,7 +847,7 @@ public class Preferences {
     for (Editor editor : base.getEditors()) {
       editor.applyPreferences();
     }
-    
+
   }
 
 
@@ -872,20 +872,20 @@ public class Preferences {
     if (displayNum >= 0 && displayNum < displayCount) {
       displaySelectionBox.setSelectedIndex(displayNum);
     }
-    
+
     // This takes a while to load, so run it from a separate thread
     new Thread(new Runnable() {
       public void run() {
         initFontList();
       }
     }).start();
-    
+
     fontSizeField.setSelectedItem(getInteger("editor.font.size"));
     consoleSizeField.setSelectedItem(getInteger("console.font.size"));
 
     presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
     presentColorHex.setText(Preferences.get("run.present.bgcolor").substring(1));
-    
+
     memoryOverrideBox.
       setSelected(getBoolean("run.options.memory")); //$NON-NLS-1$
     memoryField.
@@ -900,7 +900,7 @@ public class Preferences {
   }
 
 
-  /** 
+  /**
    * I have some ideas on how we could make Swing even more obtuse for the
    * most basic usage scenarios. Is there someone on the team I can contact?
    * Oracle, are you listening?
@@ -915,7 +915,7 @@ public class Preferences {
       return this;
     }
   }
-  
+
 
   void initFontList() {
     if (monoFontFamilies == null) {
@@ -923,14 +923,14 @@ public class Preferences {
       fontSelectionBox.setModel(new DefaultComboBoxModel(monoFontFamilies));
       String family = get("editor.font.family");
 
-      // Set a reasonable default, in case selecting the family fails 
+      // Set a reasonable default, in case selecting the family fails
       fontSelectionBox.setSelectedItem("Monospaced");
       fontSelectionBox.setSelectedItem(family);
       fontSelectionBox.setEnabled(true);
     }
   }
-  
-  
+
+
   void updateDisplayList() {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     displayCount = ge.getScreenDevices().length;
@@ -940,7 +940,7 @@ public class Preferences {
       items[i] = String.valueOf(i + 1);
 //      displaySelectionBox.add(String.valueOf(i + 1));
     }
-//    PApplet.println(items);
+//    PUtil.println(items);
     displaySelectionBox.setModel(new DefaultComboBoxModel(items));
 //    displaySelectionBox = new JComboBox(items);
   }
@@ -985,7 +985,7 @@ public class Preferences {
 //      writer.println(key + "=" + ((String) table.get(key)));
 //    }
     String[] keyList = table.keySet().toArray(new String[table.size()]);
-    keyList = PApplet.sort(keyList);
+    keyList = PUtil.sort(keyList);
     for (String key : keyList) {
       writer.println(key + "=" + table.get(key)); //$NON-NLS-1$
     }
@@ -1087,7 +1087,7 @@ public class Preferences {
 
 
   static public void setColor(String attr, Color what) {
-    set(attr, "#" + PApplet.hex(what.getRGB() & 0xffffff, 6)); //$NON-NLS-1$
+    set(attr, "#" + PUtil.hex(what.getRGB() & 0xffffff, 6)); //$NON-NLS-1$
   }
 
 
@@ -1102,11 +1102,11 @@ public class Preferences {
         replace = true;
       }
 
-      String[] pieces = PApplet.split(value, ',');
+      String[] pieces = PUtil.split(value, ',');
 
       if (pieces.length != 3) {
         value = getDefault(attr);
-        pieces = PApplet.split(value, ',');
+        pieces = PUtil.split(value, ',');
         replace = true;
       }
 
@@ -1118,8 +1118,8 @@ public class Preferences {
       if (pieces[1].indexOf("italic") != -1) { //$NON-NLS-1$
         style |= Font.ITALIC;
       }
-      int size = PApplet.parseInt(pieces[2], 12);
-      
+      int size = PUtil.parseInt(pieces[2], 12);
+
       // replace bad font with the default from lib/preferences.txt
       if (replace) {
         set(attr, value);
@@ -1137,20 +1137,20 @@ public class Preferences {
       }
 
     } catch (Exception e) {
-      // Adding try/catch block because this may be where 
-      // a lot of startup crashes are happening. 
-      Base.log("Error with font " + get(attr) + " for attribute " + attr); 
+      // Adding try/catch block because this may be where
+      // a lot of startup crashes are happening.
+      Base.log("Error with font " + get(attr) + " for attribute " + attr);
     }
     return new Font("Dialog", Font.PLAIN, 12);
   }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
+
 
   /**
-   * Check for a 3.0 sketchbook location, and if none exists, 
-   * try to grab it from the 2.0 sketchbook location.  
+   * Check for a 3.0 sketchbook location, and if none exists,
+   * try to grab it from the 2.0 sketchbook location.
    * @return true if a location was found and the pref didn't exist
    */
   static protected boolean checkSketchbookPref() {
@@ -1166,13 +1166,13 @@ public class Preferences {
     }
     return false;
   }
-  
-  
+
+
   static protected String getSketchbookPath() {
     return get("sketchbook.path.three"); //$NON-NLS-1$
   }
-  
-  
+
+
   static protected void setSketchbookPath(String path) {
     set("sketchbook.path.three", path); //$NON-NLS-1$
   }

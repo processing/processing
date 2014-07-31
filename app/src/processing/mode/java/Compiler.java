@@ -45,8 +45,8 @@ public class Compiler {
     importSuggestions.put("Frame", "java.awt.Frame");
     importSuggestions.put("Iterator", "java.util.Iterator");
   }
-  
-  
+
+
 //  public Compiler() { }
 
   /**
@@ -78,7 +78,7 @@ public class Compiler {
       "-nowarn", // we're not currently interested in warnings (works in ecj)
       "-d", build.getBinFolder().getAbsolutePath() // output the classes in the buildPath
     };
-    //PApplet.println(baseCommand);
+    //PUtil.println(baseCommand);
 
     // make list of code files that need to be compiled
 //    String[] sourceFiles = new String[sketch.getCodeCount()];
@@ -98,9 +98,9 @@ public class Compiler {
 //    System.arraycopy(baseCommand, 0, command, 0, baseCommand.length);
 //    // append each of the files to the command string
 //    System.arraycopy(sourceFiles, 0, command, baseCommand.length, sourceCount);
-    String[] command = PApplet.concat(baseCommand, sourceFiles);
+    String[] command = PUtil.concat(baseCommand, sourceFiles);
 
-//    PApplet.println(command);
+//    PUtil.println(command);
 
     try {
       // Load errors into a local StringBuffer
@@ -120,31 +120,31 @@ public class Compiler {
       PrintWriter writer = new PrintWriter(internalWriter);
 
       //result = com.sun.tools.javac.Main.compile(command, writer);
-      
+
       PrintWriter outWriter = new PrintWriter(System.out);
-      
+
       // Version that's not dynamically loaded
       //CompilationProgress progress = null;
       //success = BatchCompiler.compile(command, outWriter, writer, progress);
-      
+
       // Version that *is* dynamically loaded. First gets the mode class loader
       // so that it can grab the compiler JAR files from it.
       ClassLoader loader = build.mode.getClassLoader();
       try {
-        Class batchClass = 
+        Class batchClass =
           Class.forName("org.eclipse.jdt.core.compiler.batch.BatchCompiler", false, loader);
-        Class progressClass = 
+        Class progressClass =
           Class.forName("org.eclipse.jdt.core.compiler.CompilationProgress", false, loader);
-        Class[] compileArgs = 
+        Class[] compileArgs =
           new Class[] { String[].class, PrintWriter.class, PrintWriter.class, progressClass };
         Method compileMethod = batchClass.getMethod("compile", compileArgs);
-        success = (Boolean) 
+        success = (Boolean)
           compileMethod.invoke(null, new Object[] { command, outWriter, writer, null });
       } catch (Exception e) {
         e.printStackTrace();
         throw new SketchException("Unknown error inside the compiler.");
       }
-      
+
       // Close out the stream for good measure
       writer.flush();
       writer.close();
@@ -164,8 +164,8 @@ public class Compiler {
         // get first line, which contains file name, line number,
         // and at least the first line of the error message
         String errorFormat = "([\\w\\d_]+.java):(\\d+):\\s*(.*):\\s*(.*)\\s*";
-        String[] pieces = PApplet.match(line, errorFormat);
-        //PApplet.println(pieces);
+        String[] pieces = PUtil.match(line, errorFormat);
+        //PUtil.println(pieces);
 
         // if it's something unexpected, die and print the mess to the console
         if (pieces == null) {
@@ -183,7 +183,7 @@ public class Compiler {
         // location inside a source file or tab in the environment.
         String dotJavaFilename = pieces[1];
         // Line numbers are 1-indexed from javac
-        int dotJavaLineIndex = PApplet.parseInt(pieces[2]) - 1;
+        int dotJavaLineIndex = PUtil.parseInt(pieces[2]) - 1;
         String errorMessage = pieces[4];
 
         exception = build.placeException(errorMessage,
@@ -255,7 +255,7 @@ public class Compiler {
           // The import poo cannot be resolved
           //import poo.shoe.blah.*;
           //String what = errorMessage.substring("The import ".length());
-          String[] m = PApplet.match(errorMessage, "The import (.*) cannot be resolved");
+          String[] m = PUtil.match(errorMessage, "The import (.*) cannot be resolved");
           //what = what.substring(0, what.indexOf(' '));
           if (m != null) {
 //            System.out.println("'" + m[1] + "'");
@@ -299,7 +299,7 @@ public class Compiler {
           } else {
             exception.setMessage("Cannot find a class or type " +
                                  "named \u201C" + what + "\u201D");
-            
+
             String suggestion = importSuggestions.get(what);
             if (suggestion != null) {
               System.err.println("You may need to add \"import " + suggestion + ";\" to the top of your sketch.");
@@ -355,7 +355,7 @@ public class Compiler {
           //PApplet.sub("ding");
           String undefined =
             "The method (\\S+\\(.*\\)) is undefined for the type (.*)";
-          parts = PApplet.match(errorMessage, undefined);
+          parts = PUtil.match(errorMessage, undefined);
           if (parts != null) {
             if (parts[1].equals("framerate(int)")) {
               exception.setMessage("framerate() no longer exists, use frameRate() instead.");
@@ -416,7 +416,7 @@ public class Compiler {
 //      "-nowarn", // we're not currently interested in warnings (ignored?)
 //      "-d", buildPath // output the classes in the buildPath
 //    };
-//    //PApplet.println(baseCommand);
+//    //PUtil.println(baseCommand);
 //
 //    // make list of code files that need to be compiled
 //    // (some files are skipped if they contain no class)
@@ -434,7 +434,7 @@ public class Compiler {
 //      command[baseCommand.length + i] =
 //        buildPath + File.separator + preprocNames[i];
 //    }
-//    //PApplet.println(command);
+//    //PUtil.println(command);
 //
 //    int result = -1;  // needs to be set bad by default, in case hits IOE below
 //
@@ -471,7 +471,7 @@ public class Compiler {
 ////      while (mp.getIndex() < m.length()) {  // reading messages
 //      String line = null;
 //      int lineIndex = 0;
-//      String[] lines = PApplet.split(errorBuffer.toString(), '\n');
+//      String[] lines = PUtil.split(errorBuffer.toString(), '\n');
 //      int lineCount = lines.length;
 //      while (lineIndex < lineCount) {
 //      //while ((line = reader.readLine()) != null) {
@@ -488,8 +488,8 @@ public class Compiler {
 //    {0} warnings
 //         */
 //        // Check to see if this is the last line.
-////        if ((PApplet.match(line, "\\d+ error[s]?") != null) ||
-////            (PApplet.match(line, "\\d+ warning[s]?") != null)) {
+////        if ((PUtil.match(line, "\\d+ error[s]?") != null) ||
+////            (PUtil.match(line, "\\d+ warning[s]?") != null)) {
 ////          break;
 ////        }
 //        if (isCompilerMatch(line, "compiler.misc.count.error") ||
@@ -534,7 +534,7 @@ public class Compiler {
 //        // get first line, which contains file name, line number,
 //        // and at least the first line of the error message
 //        String errorFormat = "([\\w\\d_]+.java):(\\d+):\\s*(.*)\\s*";
-//        String[] pieces = PApplet.match(line, errorFormat);
+//        String[] pieces = PUtil.match(line, errorFormat);
 //
 //        // if it's something unexpected, die and print the mess to the console
 //        if (pieces == null) {
@@ -553,7 +553,7 @@ public class Compiler {
 //        // location inside a source file or tab in the environment.
 //        String dotJavaFilename = pieces[0];
 //        // Line numbers are 1-indexed from javac
-//        int dotJavaLineIndex = PApplet.parseInt(pieces[1]) - 1;
+//        int dotJavaLineIndex = PUtil.parseInt(pieces[1]) - 1;
 //        String errorMessage = pieces[2];
 //
 //        int codeIndex = -1;
@@ -681,7 +681,7 @@ public class Compiler {
 //    rex.setCodeColumn(caretColumn(caretLine));
 //
 //    String[] pieces =
-//      PApplet.match(symbolLine, "symbol\\s*:\\s*(\\w+)\\s+(.*)");
+//      PUtil.match(symbolLine, "symbol\\s*:\\s*(\\w+)\\s+(.*)");
 //    if (pieces != null) {
 //      if (pieces[0].equals("class") ||
 //          pieces[0].equals("variable")) {

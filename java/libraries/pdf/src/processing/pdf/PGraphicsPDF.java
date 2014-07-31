@@ -141,7 +141,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //      g2 = template.createGraphics(width, height, mapper);
     }
 //    System.out.println("beginDraw " + (System.currentTimeMillis() - t0));
-    
+
     // super in Java2D now creates an image buffer, don't do that
 //    super.beginDraw();
     checkSettings();
@@ -159,7 +159,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //      long t = System.currentTimeMillis();
       mapper = new DefaultFontMapper();
 
-      if (PApplet.platform == PConstants.MACOSX) {
+      if (PUtil.platform == PConstants.MACOSX) {
         try {
           String homeLibraryFonts =
             System.getProperty("user.home") + "/Library/Fonts";
@@ -172,7 +172,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
         mapper.insertDirectory("/System/Library/Fonts");
         mapper.insertDirectory("/Library/Fonts");
 
-      } else if (PApplet.platform == PConstants.WINDOWS) {
+      } else if (PUtil.platform == PConstants.WINDOWS) {
         // how to get the windows fonts directory?
         // could be c:\winnt\fonts or c:\windows\fonts or not even c:
         // maybe do a Runtime.exec() on echo %WINDIR% ?
@@ -205,7 +205,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
           }
         }
 
-      } else if (PApplet.platform == PConstants.LINUX) {
+      } else if (PUtil.platform == PConstants.LINUX) {
         checkDir("/usr/share/fonts/", mapper);
         checkDir("/usr/local/share/fonts/", mapper);
         checkDir(System.getProperty("user.home") + "/.fonts", mapper);
@@ -657,7 +657,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //        //System.out.println(entry.getKey() + "-->" + entry.getValue());
 //        fontList[count++] = (String) entry.getKey();
 //      }
-      fontList = PApplet.sort(fontList);
+      fontList = PUtil.sort(fontList);
     }
     return fontList;
   }

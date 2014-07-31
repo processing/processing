@@ -975,7 +975,7 @@ public class PGraphics extends PImage implements PConstants {
 
     colorMode(colorMode, colorModeX, colorModeY, colorModeZ);
     if (fill) {
-//      PApplet.println("  fill " + PApplet.hex(fillColor));
+//      PUtil.println("  fill " + PUtil.hex(fillColor));
       fill(fillColor);
     } else {
       noFill();
@@ -1350,7 +1350,7 @@ public class PGraphics extends PImage implements PConstants {
       } else {
         if (Math.abs(norm2 - 1) > EPSILON) {
           // The normal vector is not normalized.
-          float norm = PApplet.sqrt(norm2);
+          float norm = PUtil.sqrt(norm2);
           normalX /= norm;
           normalY /= norm;
           normalZ /= norm;
@@ -1454,7 +1454,7 @@ public class PGraphics extends PImage implements PConstants {
       } else {
         if (Math.abs(norm2 - 1) > EPSILON) {
           // The normal vector is not normalized.
-          float norm = PApplet.sqrt(norm2);
+          float norm = PUtil.sqrt(norm2);
           normalX /= norm;
           normalY /= norm;
           normalZ /= norm;
@@ -2018,7 +2018,7 @@ public class PGraphics extends PImage implements PConstants {
     }
 
     if (curveVertexCount == curveVertices.length) {
-      // Can't use PApplet.expand() cuz it doesn't do the copy properly
+      // Can't use PUtil.expand() cuz it doesn't do the copy properly
       float[][] temp = new float[curveVertexCount << 1][3];
       System.arraycopy(curveVertices, 0, temp, 0, curveVertexCount);
       curveVertices = temp;
@@ -2471,7 +2471,7 @@ public class PGraphics extends PImage implements PConstants {
       float temp = b; b = d; d = temp;
     }
 
-    float maxRounding = PApplet.min((c - a) / 2, (d - b) / 2);
+    float maxRounding = PUtil.min((c - a) / 2, (d - b) / 2);
     if (tl > maxRounding) tl = maxRounding;
     if (tr > maxRounding) tr = maxRounding;
     if (br > maxRounding) br = maxRounding;
@@ -4482,12 +4482,12 @@ public class PGraphics extends PImage implements PConstants {
     }
 
     float boxHeight = y2 - y1;
-    //int lineFitCount = 1 + PApplet.floor((boxHeight - textAscent()) / textLeading);
+    //int lineFitCount = 1 + PUtil.floor((boxHeight - textAscent()) / textLeading);
     // incorporate textAscent() for the top (baseline will be y1 + ascent)
     // and textDescent() for the bottom, so that lower parts of letters aren't
     // outside the box. [0151]
     float topAndBottom = textAscent() + textDescent();
-    int lineFitCount = 1 + PApplet.floor((boxHeight - topAndBottom) / textLeading);
+    int lineFitCount = 1 + PUtil.floor((boxHeight - topAndBottom) / textLeading);
     int lineCount = Math.min(textBreakCount, lineFitCount);
 
     if (textAlignY == CENTER) {
@@ -4587,8 +4587,8 @@ public class PGraphics extends PImage implements PConstants {
 
   protected void textSentenceBreak(int start, int stop) {
     if (textBreakCount == textBreakStart.length) {
-      textBreakStart = PApplet.expand(textBreakStart);
-      textBreakStop = PApplet.expand(textBreakStop);
+      textBreakStart = PUtil.expand(textBreakStart);
+      textBreakStop = PUtil.expand(textBreakStop);
     }
     textBreakStart[textBreakCount] = start;
     textBreakStop[textBreakCount] = stop;
@@ -4626,12 +4626,12 @@ public class PGraphics extends PImage implements PConstants {
    * @param num the numeric value to be displayed
    */
   public void text(float num, float x, float y) {
-    text(PApplet.nfs(num, 0, 3), x, y);
+    text(PUtil.nfs(num, 0, 3), x, y);
   }
 
 
   public void text(float num, float x, float y, float z) {
-    text(PApplet.nfs(num, 0, 3), x, y, z);
+    text(PUtil.nfs(num, 0, 3), x, y, z);
   }
 
 
@@ -4696,7 +4696,7 @@ public class PGraphics extends PImage implements PConstants {
                           glyph.width, glyph.height);
       }
     } else if (ch != ' ' && ch != 127) {
-      showWarning("No glyph found for the " + ch + " (\\u" + PApplet.hex(ch, 4) + ") character");
+      showWarning("No glyph found for the " + ch + " (\\u" + PUtil.hex(ch, 4) + ") character");
     }
   }
 
@@ -5772,7 +5772,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void pushStyle() {
     if (styleStackDepth == styleStack.length) {
-      styleStack = (PStyle[]) PApplet.expand(styleStack);
+      styleStack = (PStyle[]) PUtil.expand(styleStack);
     }
     if (styleStack[styleStackDepth] == null) {
       styleStack[styleStackDepth] = new PStyle();
@@ -7296,7 +7296,7 @@ public class PGraphics extends PImage implements PConstants {
       calcAi = (argb >> 24) & 0xff;
       calcColor = argb;
     } else {
-      calcAi = (int) (((argb >> 24) & 0xff) * PApplet.constrain((alpha / colorModeA), 0, 1));
+      calcAi = (int) (((argb >> 24) & 0xff) * PUtil.constrain((alpha / colorModeA), 0, 1));
       calcColor = (calcAi << 24) | (argb & 0xFFFFFF);
     }
     calcRi = (argb >> 16) & 0xff;
@@ -7710,11 +7710,11 @@ public class PGraphics extends PImage implements PConstants {
           h1 += 1;
         }
       }
-      float ho = (PApplet.lerp(lerpColorHSB1[0], lerpColorHSB2[0], amt)) % 1.0f;
+      float ho = (PUtil.lerp(lerpColorHSB1[0], lerpColorHSB2[0], amt)) % 1.0f;
       */
-      float ho = PApplet.lerp(lerpColorHSB1[0], lerpColorHSB2[0], amt);
-      float so = PApplet.lerp(lerpColorHSB1[1], lerpColorHSB2[1], amt);
-      float bo = PApplet.lerp(lerpColorHSB1[2], lerpColorHSB2[2], amt);
+      float ho = PUtil.lerp(lerpColorHSB1[0], lerpColorHSB2[0], amt);
+      float so = PUtil.lerp(lerpColorHSB1[1], lerpColorHSB2[1], amt);
+      float bo = PUtil.lerp(lerpColorHSB1[2], lerpColorHSB2[2], amt);
 
       return alfa | (Color.HSBtoRGB(ho, so, bo) & 0xFFFFFF);
     }

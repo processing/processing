@@ -41,6 +41,7 @@ import org.xml.sax.SAXException;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PUtil;
 
 
 /**
@@ -326,7 +327,7 @@ public class Table {
 
     String[] opts = null;
     if (options != null) {
-      opts = PApplet.trim(PApplet.split(options, ','));
+      opts = PUtil.trim(PUtil.split(options, ','));
       for (String opt : opts) {
         if (opt.equals("tsv")) {
           extension = "tsv";
@@ -389,10 +390,10 @@ public class Table {
           setRowCount(row << 1);
         }
         if (row == 0 && header) {
-          setColumnTitles(tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+          setColumnTitles(tsv ? PUtil.split(line, '\t') : splitLineCSV(line));
           header = false;
         } else {
-          setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+          setRow(row, tsv ? PUtil.split(line, '\t') : splitLineCSV(line));
           row++;
         }
 
@@ -450,7 +451,7 @@ public class Table {
           if (reader.read() == '\"') {
             // it's "", which means a quote character
             if (count == c.length) {
-              c = PApplet.expand(c);
+              c = PUtil.expand(c);
             }
             c[count++] = '\"';
           } else {
@@ -466,7 +467,7 @@ public class Table {
           }
         } else {  // inside a quote, but the character isn't a quote
           if (count == c.length) {
-            c = PApplet.expand(c);
+            c = PUtil.expand(c);
           }
           c[count++] = (char) ch;
         }
@@ -495,7 +496,7 @@ public class Table {
             row = 0;
           }
 //          if (row % 1000 == 0) {
-//            PApplet.println(PApplet.nfc(row));
+//            PUtil.println(PUtil.nfc(row));
 //          }
           if (row == alloc) {
             alloc *= 2;
@@ -512,7 +513,7 @@ public class Table {
 
         } else {  // just a regular character, add it
           if (count == c.length) {
-            c = PApplet.expand(c);
+            c = PUtil.expand(c);
           }
           c[count++] = (char) ch;
         }
@@ -806,7 +807,7 @@ public class Table {
 //      Class sketchClass = sketch.getClass();
       Class<?> sketchClass = enclosingObject.getClass();
       targetField = sketchClass.getDeclaredField(fieldName);
-//      PApplet.println("found " + targetField);
+//      PUtil.println("found " + targetField);
       Class<?> targetArray = targetField.getType();
       if (!targetArray.isArray()) {
         // fieldName is not an array
@@ -821,17 +822,17 @@ public class Table {
     }
 
 //    Object enclosingObject = sketch;
-//    PApplet.println("enclosing obj is " + enclosingObject);
+//    PUtil.println("enclosing obj is " + enclosingObject);
     Class<?> enclosingClass = target.getEnclosingClass();
     Constructor<?> con = null;
 
     try {
       if (enclosingClass == null) {
         con = target.getDeclaredConstructor();  //new Class[] { });
-//        PApplet.println("no enclosing class");
+//        PUtil.println("no enclosing class");
       } else {
         con = target.getDeclaredConstructor(new Class[] { enclosingClass });
-//        PApplet.println("enclosed by " + enclosingClass.getName());
+//        PUtil.println("enclosed by " + enclosingClass.getName());
       }
       if (!con.isAccessible()) {
 //        System.out.println("setting constructor to public");
@@ -850,7 +851,7 @@ public class Table {
       if (getColumnIndex(name, false) != -1) {
 //        System.out.println("found field " + name);
         if (!field.isAccessible()) {
-//          PApplet.println("  changing field access");
+//          PUtil.println("  changing field access");
           field.setAccessible(true);
         }
         inuse.add(field);
@@ -872,7 +873,7 @@ public class Table {
         //Object item = defaultCons.newInstance(new Object[] { });
         for (Field field : inuse) {
           String name = field.getName();
-          //PApplet.println("gonna set field " + name);
+          //PUtil.println("gonna set field " + name);
 
           if (field.getType() == String.class) {
             field.set(item, row.getString(name));
@@ -920,7 +921,7 @@ public class Table {
         Array.set(outgoing, index++, item);
       }
       if (!targetField.isAccessible()) {
-//        PApplet.println("setting target field to public");
+//        PUtil.println("setting target field to public");
         targetField.setAccessible(true);
       }
       // Set the array in the sketch
@@ -952,7 +953,7 @@ public class Table {
       throw new IllegalArgumentException("No extension specified for saving this Table");
     }
 
-    String[] opts = PApplet.trim(PApplet.split(options, ','));
+    String[] opts = PUtil.trim(PUtil.split(options, ','));
     // Only option for save is the extension, so we can safely grab the last
     extension = opts[opts.length - 1];
     boolean found = false;
@@ -1221,7 +1222,7 @@ public class Table {
 
     int magic = input.readInt();
     if (magic != 0x9007AB1E) {
-      throw new IOException("Not a compatible binary table (magic was " + PApplet.hex(magic) + ")");
+      throw new IOException("Not a compatible binary table (magic was " + PUtil.hex(magic) + ")");
     }
     int rowCount = input.readInt();
     setRowCount(rowCount);
@@ -1359,13 +1360,13 @@ public class Table {
       columnTitles = new String[columns.length];
     }
     if (columnTitles != null) {
-      columnTitles = PApplet.splice(columnTitles, title, index);
+      columnTitles = PUtil.splice(columnTitles, title, index);
       columnIndices = null;
     }
-    columnTypes = PApplet.splice(columnTypes, type, index);
+    columnTypes = PUtil.splice(columnTypes, type, index);
 
 //    columnCategories = (HashMapBlows[])
-//      PApplet.splice(columnCategories, new HashMapBlows(), index);
+//      PUtil.splice(columnCategories, new HashMapBlows(), index);
     HashMapBlows[] catTemp = new HashMapBlows[columns.length + 1];
     // Faster than arrayCopy for a dozen or so entries
     for (int i = 0; i < index; i++) {
@@ -1455,18 +1456,18 @@ public class Table {
   public void setColumnCount(int newCount) {
     int oldCount = columns.length;
     if (oldCount != newCount) {
-      columns = (Object[]) PApplet.expand(columns, newCount);
+      columns = (Object[]) PUtil.expand(columns, newCount);
       // create new columns, default to String as the data type
       for (int c = oldCount; c < newCount; c++) {
         columns[c] = new String[rowCount];
       }
 
       if (columnTitles != null) {
-        columnTitles = PApplet.expand(columnTitles, newCount);
+        columnTitles = PUtil.expand(columnTitles, newCount);
       }
-      columnTypes = PApplet.expand(columnTypes, newCount);
+      columnTypes = PUtil.expand(columnTypes, newCount);
       columnCategories = (HashMapBlows[])
-        PApplet.expand(columnCategories, newCount);
+        PUtil.expand(columnCategories, newCount);
     }
   }
 
@@ -1519,7 +1520,7 @@ public class Table {
         int[] intData = new int[rowCount];
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
-          intData[row] = (s == null) ? missingInt : PApplet.parseInt(s, missingInt);
+          intData[row] = (s == null) ? missingInt : PUtil.parseInt(s, missingInt);
         }
         columns[column] = intData;
         break;
@@ -1541,7 +1542,7 @@ public class Table {
         float[] floatData = new float[rowCount];
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
-          floatData[row] = (s == null) ? missingFloat : PApplet.parseFloat(s, missingFloat);
+          floatData[row] = (s == null) ? missingFloat : PUtil.parseFloat(s, missingFloat);
         }
         columns[column] = floatData;
         break;
@@ -1807,17 +1808,17 @@ public class Table {
   public void setRowCount(int newCount) {
     if (newCount != rowCount) {
       if (newCount > 1000000) {
-        System.out.print("Note: setting maximum row count to " + PApplet.nfc(newCount));
+        System.out.print("Note: setting maximum row count to " + PUtil.nfc(newCount));
       }
       long t = System.currentTimeMillis();
       for (int col = 0; col < columns.length; col++) {
         switch (columnTypes[col]) {
-          case INT: columns[col] = PApplet.expand((int[]) columns[col], newCount); break;
-          case LONG: columns[col] = PApplet.expand((long[]) columns[col], newCount); break;
-          case FLOAT: columns[col] = PApplet.expand((float[]) columns[col], newCount); break;
-          case DOUBLE: columns[col] = PApplet.expand((double[]) columns[col], newCount); break;
-          case STRING: columns[col] = PApplet.expand((String[]) columns[col], newCount); break;
-          case CATEGORY: columns[col] = PApplet.expand((int[]) columns[col], newCount); break;
+          case INT: columns[col] = PUtil.expand((int[]) columns[col], newCount); break;
+          case LONG: columns[col] = PUtil.expand((long[]) columns[col], newCount); break;
+          case FLOAT: columns[col] = PUtil.expand((float[]) columns[col], newCount); break;
+          case DOUBLE: columns[col] = PUtil.expand((double[]) columns[col], newCount); break;
+          case STRING: columns[col] = PUtil.expand((String[]) columns[col], newCount); break;
+          case CATEGORY: columns[col] = PUtil.expand((int[]) columns[col], newCount); break;
         }
         if (newCount > 1000000) {
           try {
@@ -1829,7 +1830,7 @@ public class Table {
       }
       if (newCount > 1000000) {
         int ms = (int) (System.currentTimeMillis() - t);
-        System.out.println(" (resize took " + PApplet.nfc(ms) + " ms)");
+        System.out.println(" (resize took " + PUtil.nfc(ms) + " ms)");
       }
     }
     rowCount = newCount;
@@ -2029,7 +2030,7 @@ public class Table {
       break;
     case INT:
       int[] intData = (int[]) columns[col];
-      intData[row] = PApplet.parseInt(piece, missingInt);
+      intData[row] = PUtil.parseInt(piece, missingInt);
       break;
     case LONG:
       long[] longData = (long[]) columns[col];
@@ -2041,7 +2042,7 @@ public class Table {
       break;
     case FLOAT:
       float[] floatData = (float[]) columns[col];
-      floatData[row] = PApplet.parseFloat(piece, missingFloat);
+      floatData[row] = PUtil.parseFloat(piece, missingFloat);
       break;
     case DOUBLE:
       double[] doubleData = (double[]) columns[col];
@@ -2086,13 +2087,13 @@ public class Table {
         break;
       case INT:
         int[] intData = (int[]) columns[col];
-        //intData[row] = PApplet.parseInt(piece, missingInt);
+        //intData[row] = PUtil.parseInt(piece, missingInt);
         if (piece == null) {
           intData[row] = missingInt;
         } else if (piece instanceof Integer) {
           intData[row] = (Integer) piece;
         } else {
-          intData[row] = PApplet.parseInt(String.valueOf(piece), missingInt);
+          intData[row] = PUtil.parseInt(String.valueOf(piece), missingInt);
         }
         break;
       case LONG:
@@ -2116,7 +2117,7 @@ public class Table {
         } else if (piece instanceof Float) {
           floatData[row] = (Float) piece;
         } else {
-          floatData[row] = PApplet.parseFloat(String.valueOf(piece), missingFloat);
+          floatData[row] = PUtil.parseFloat(String.valueOf(piece), missingFloat);
         }
         break;
       case DOUBLE:
@@ -2569,7 +2570,7 @@ public class Table {
     }
     String str = getString(row, column);
     return (str == null || str.equals(missingString)) ?
-      missingInt : PApplet.parseInt(str, missingInt);
+      missingInt : PUtil.parseInt(str, missingInt);
   }
 
   /**
@@ -2750,7 +2751,7 @@ public class Table {
     if (str == null || str.equals(missingString)) {
       return missingFloat;
     }
-    return PApplet.parseFloat(str, missingFloat);
+    return PUtil.parseFloat(str, missingFloat);
   }
 
   /**
@@ -3168,7 +3169,7 @@ public class Table {
         }
       }
     }
-    return PApplet.subset(outgoing, 0, count);
+    return PUtil.subset(outgoing, 0, count);
   }
 
 
@@ -3270,7 +3271,7 @@ public class Table {
       String[] stringData = (String[]) columns[column];
       for (int row = 0; row < rowCount; row++) {
         if (stringData[row] != null &&
-            PApplet.match(stringData[row], regexp) != null) {
+            PUtil.match(stringData[row], regexp) != null) {
           return row;
         }
       }
@@ -3278,7 +3279,7 @@ public class Table {
       for (int row = 0; row < rowCount; row++) {
         String str = getString(row, column);
         if (str != null &&
-            PApplet.match(str, regexp) != null) {
+            PUtil.match(str, regexp) != null) {
           return row;
         }
       }
@@ -3312,7 +3313,7 @@ public class Table {
       String[] stringData = (String[]) columns[column];
       for (int row = 0; row < rowCount; row++) {
         if (stringData[row] != null &&
-            PApplet.match(stringData[row], regexp) != null) {
+            PUtil.match(stringData[row], regexp) != null) {
           outgoing[count++] = row;
         }
       }
@@ -3320,12 +3321,12 @@ public class Table {
       for (int row = 0; row < rowCount; row++) {
         String str = getString(row, column);
         if (str != null &&
-            PApplet.match(str, regexp) != null) {
+            PUtil.match(str, regexp) != null) {
           outgoing[count++] = row;
         }
       }
     }
-    return PApplet.subset(outgoing, 0, count);
+    return PUtil.subset(outgoing, 0, count);
   }
 
 
@@ -3561,7 +3562,7 @@ public class Table {
       String[] stringData = (String[]) columns[column];
       for (int row = 0; row < rowCount; row++) {
         if (stringData[row] != null) {
-          stringData[row] = PApplet.trim(stringData[row]);
+          stringData[row] = PUtil.trim(stringData[row]);
         }
       }
     }
@@ -4139,7 +4140,7 @@ public class Table {
     int prev = -1;
     int row = 0;
     while ((line = reader.readLine()) != null) {
-      convertRow(output, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+      convertRow(output, tsv ? PUtil.split(line, '\t') : splitLineCSV(line));
       row++;
 
       if (row % 10000 == 0) {
@@ -4192,7 +4193,7 @@ public class Table {
   protected void convertRow(DataOutputStream output, String[] pieces) throws IOException {
     if (pieces.length > getColumnCount()) {
       throw new IllegalArgumentException("Row with too many columns: " +
-                                         PApplet.join(pieces, ","));
+                                         PUtil.join(pieces, ","));
     }
     // pieces.length may be less than columns.length, so loop over pieces
     for (int col = 0; col < pieces.length; col++) {
@@ -4201,7 +4202,7 @@ public class Table {
         output.writeUTF(pieces[col]);
         break;
       case INT:
-        output.writeInt(PApplet.parseInt(pieces[col], missingInt));
+        output.writeInt(PUtil.parseInt(pieces[col], missingInt));
         break;
       case LONG:
         try {
@@ -4211,7 +4212,7 @@ public class Table {
         }
         break;
       case FLOAT:
-        output.writeFloat(PApplet.parseFloat(pieces[col], missingFloat));
+        output.writeFloat(PUtil.parseFloat(pieces[col], missingFloat));
         break;
       case DOUBLE:
         try {
@@ -4265,7 +4266,7 @@ public class Table {
         break;
       case INT:
         int[] intData = (int[]) columns[col];
-        intData[row] = PApplet.parseInt(piece, missingInt);
+        intData[row] = PUtil.parseInt(piece, missingInt);
         break;
       case LONG:
         long[] longData = (long[]) columns[col];
@@ -4277,7 +4278,7 @@ public class Table {
         break;
       case FLOAT:
         float[] floatData = (float[]) columns[col];
-        floatData[row] = PApplet.parseFloat(piece, missingFloat);
+        floatData[row] = PUtil.parseFloat(piece, missingFloat);
         break;
       case DOUBLE:
         double[] doubleData = (double[]) columns[col];

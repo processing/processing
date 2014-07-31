@@ -704,7 +704,7 @@ public class Base {
         Calendar cal = Calendar.getInstance();
         int day = cal.get(Calendar.DAY_OF_MONTH);  // 1..31
         int month = cal.get(Calendar.MONTH);  // 0..11
-        suffix = months[month] + PApplet.nf(day, 2);
+        suffix = months[month] + PUtil.nf(day, 2);
       } else {
         //SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
         //SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
@@ -1662,7 +1662,7 @@ public class Base {
 
 
   static public String getPlatformName() {
-    return PConstants.platformNames[PApplet.platform];
+    return PConstants.platformNames[PUtil.platform];
   }
 
 
@@ -1749,11 +1749,11 @@ public class Base {
       if (Base.isMacOS() &&
           System.getProperty("java.vendor").contains("Oracle")) {
         String version = System.getProperty("java.version");  // 1.7.0_40
-        String[] m = PApplet.match(version, "1.(\\d).*_(\\d+)");
+        String[] m = PUtil.match(version, "1.(\\d).*_(\\d+)");
 
         if (m != null &&
-          PApplet.parseInt(m[1]) >= 7 &&
-          PApplet.parseInt(m[2]) >= 40) {
+          PUtil.parseInt(m[1]) >= 7 &&
+          PUtil.parseInt(m[2]) >= 40) {
           usableOracleJava = true;
         }
       }
@@ -2442,7 +2442,7 @@ public class Base {
       // Get the path to the .jar file that contains Base.class
       String path = Base.class.getProtectionDomain().getCodeSource().getLocation().getPath();
       // Path may have URL encoding, so remove it
-      String decodedPath = PApplet.urlDecode(path);
+      String decodedPath = PUtil.urlDecode(path);
 
       if (decodedPath.contains("/app/bin")) {
         if (Base.isMacOS()) {
@@ -2527,7 +2527,7 @@ public class Base {
           return name.endsWith(".jdk") && dir.isDirectory();
         }
       });
-      //PApplet.printArray(plugins);
+      //PUtil.printArray(plugins);
       File javaBinary = new File(plugins[0], "Contents/Home/jre/bin/java");
       //return getContentFile(plugins[0].getAbsolutePath() + "/Contents/Home/jre/bin/java").getAbsolutePath();
       //return getContentFile("../PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java").getAbsolutePath();
@@ -2693,7 +2693,7 @@ public class Base {
   static public String loadFile(File file) throws IOException {
     String[] contents = PApplet.loadStrings(file);
     if (contents == null) return null;
-    return PApplet.join(contents, "\n");
+    return PUtil.join(contents, "\n");
   }
 
 
@@ -3011,7 +3011,7 @@ public class Base {
   static public String[] packageListFromClassPath(String path) {
     Hashtable table = new Hashtable();
     String pieces[] =
-      PApplet.split(path, File.pathSeparatorChar);
+      PUtil.split(path, File.pathSeparatorChar);
 
     for (int i = 0; i < pieces.length; i++) {
       //System.out.println("checking piece '" + pieces[i] + "'");

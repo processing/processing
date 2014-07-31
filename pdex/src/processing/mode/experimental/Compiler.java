@@ -21,7 +21,7 @@ import java.io.*;
 import java.lang.reflect.Method;
 import processing.app.Base;
 import processing.app.SketchException;
-import processing.core.PApplet;
+import processing.core.PUtil;
 
 /**
  * Copied from processing.mode.java.Compiler, just added -g switch to generate
@@ -58,7 +58,7 @@ public class Compiler extends processing.mode.java.Compiler {
       "-nowarn", // we're not currently interested in warnings (works in ecj)
       "-d", build.getBinFolder().getAbsolutePath() // output the classes in the buildPath
     };
-    //PApplet.println(baseCommand);
+    //PUtil.println(baseCommand);
 
     // make list of code files that need to be compiled
 //    String[] sourceFiles = new String[sketch.getCodeCount()];
@@ -78,9 +78,9 @@ public class Compiler extends processing.mode.java.Compiler {
 //    System.arraycopy(baseCommand, 0, command, 0, baseCommand.length);
 //    // append each of the files to the command string
 //    System.arraycopy(sourceFiles, 0, command, baseCommand.length, sourceCount);
-    String[] command = PApplet.concat(baseCommand, sourceFiles);
+    String[] command = PUtil.concat(baseCommand, sourceFiles);
 
-    //PApplet.println(command);
+    //PUtil.println(command);
 
     try {
       // Load errors into a local StringBuffer
@@ -141,8 +141,8 @@ public class Compiler extends processing.mode.java.Compiler {
         // get first line, which contains file name, line number,
         // and at least the first line of the error message
         String errorFormat = "([\\w\\d_]+.java):(\\d+):\\s*(.*):\\s*(.*)\\s*";
-        String[] pieces = PApplet.match(line, errorFormat);
-        //PApplet.println(pieces);
+        String[] pieces = PUtil.match(line, errorFormat);
+        //PUtil.println(pieces);
 
         // if it's something unexpected, die and print the mess to the console
         if (pieces == null) {
@@ -160,7 +160,7 @@ public class Compiler extends processing.mode.java.Compiler {
         // location inside a source file or tab in the environment.
         String dotJavaFilename = pieces[1];
         // Line numbers are 1-indexed from javac
-        int dotJavaLineIndex = PApplet.parseInt(pieces[2]) - 1;
+        int dotJavaLineIndex = PUtil.parseInt(pieces[2]) - 1;
         String errorMessage = pieces[4];
 
         exception = build.placeException(errorMessage,
@@ -232,7 +232,7 @@ public class Compiler extends processing.mode.java.Compiler {
           // The import poo cannot be resolved
           //import poo.shoe.blah.*;
           //String what = errorMessage.substring("The import ".length());
-          String[] m = PApplet.match(errorMessage, "The import (.*) cannot be resolved");
+          String[] m = PUtil.match(errorMessage, "The import (.*) cannot be resolved");
           //what = what.substring(0, what.indexOf(' '));
           if (m != null) {
 //            System.out.println("'" + m[1] + "'");
@@ -321,11 +321,11 @@ public class Compiler extends processing.mode.java.Compiler {
           //xxx("blah");
           // The method xxx(String, int) is undefined for the type Temporary_XXXX_XXXX
           //xxx("blah", 34);
-          // The method xxx(String, int) is undefined for the type PApplet
-          //PApplet.sub("ding");
+          // The method xxx(String, int) is undefined for the type PUtil
+          //PUtil.sub("ding");
           String undefined =
             "The method (\\S+\\(.*\\)) is undefined for the type (.*)";
-          parts = PApplet.match(errorMessage, undefined);
+          parts = PUtil.match(errorMessage, undefined);
           if (parts != null) {
             if (parts[1].equals("framerate(int)")) {
               exception.setMessage("framerate() no longer exists, use frameRate() instead.");

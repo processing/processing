@@ -28,6 +28,7 @@ import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
+import processing.core.PUtil;
 
 import java.util.HashMap;
 
@@ -90,10 +91,10 @@ class FontTexture implements PConstants {
     lastTex = -1;
 
     int spow = PGL.nextPowerOfTwo(font.getSize());
-    minSize = PApplet.min(PGraphicsOpenGL.maxTextureSize,
-                          PApplet.max(PGL.MIN_FONT_TEX_SIZE, spow));
-    maxSize = PApplet.min(PGraphicsOpenGL.maxTextureSize,
-                          PApplet.max(PGL.MAX_FONT_TEX_SIZE, 2 * spow));
+    minSize = PUtil.min(PGraphicsOpenGL.maxTextureSize,
+                          PUtil.max(PGL.MIN_FONT_TEX_SIZE, spow));
+    maxSize = PUtil.min(PGraphicsOpenGL.maxTextureSize,
+                          PUtil.max(PGL.MAX_FONT_TEX_SIZE, 2 * spow));
 
     if (maxSize < spow) {
       PGraphics.showWarning("The font size is too large to be properly " +
@@ -120,7 +121,7 @@ class FontTexture implements PConstants {
     if (-1 < currentTex && textures[currentTex].glHeight < maxSize) {
       // The height of the current texture is less than the maximum, this
       // means we can replace it with a larger texture.
-      h = PApplet.min(2 * textures[currentTex].glHeight, maxSize);
+      h = PUtil.min(2 * textures[currentTex].glHeight, maxSize);
       resize = true;
     } else {
       h = minSize;
@@ -163,13 +164,13 @@ class FontTexture implements PConstants {
       // Adding new texture to the list.
       Texture[] tempTex = textures;
       textures = new Texture[textures.length + 1];
-      PApplet.arrayCopy(tempTex, textures, tempTex.length);
+      PUtil.arrayCopy(tempTex, textures, tempTex.length);
       textures[tempTex.length] = tex;
       currentTex = textures.length - 1;
 
       PImage[] tempImg = images;
       images = new PImage[textures.length];
-      PApplet.arrayCopy(tempImg, images, tempImg.length);
+      PUtil.arrayCopy(tempImg, images, tempImg.length);
       images[tempImg.length] = pg.wrapTexture(tex);
     }
     lastTex = currentTex;

@@ -25,6 +25,7 @@ package processing.opengl;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
+import processing.core.PUtil;
 
 import java.io.IOException;
 import java.net.URL;
@@ -645,15 +646,15 @@ public abstract class PGL {
 
     int maxs = maxSamples();
     if (-1 < ext.indexOf("_framebuffer_multisample") && 1 < maxs) {
-      numSamples = PApplet.min(reqNumSamples, maxs);
+      numSamples = PUtil.min(reqNumSamples, maxs);
     } else {
       numSamples = 1;
     }
     boolean multisample = 1 < numSamples;
 
     boolean packed = ext.indexOf("packed_depth_stencil") != -1;
-    int depthBits = PApplet.min(REQUESTED_DEPTH_BITS, getDepthBits());
-    int stencilBits = PApplet.min(REQUESTED_STENCIL_BITS, getStencilBits());
+    int depthBits = PUtil.min(REQUESTED_DEPTH_BITS, getDepthBits());
+    int stencilBits = PUtil.min(REQUESTED_STENCIL_BITS, getStencilBits());
 
     genTextures(2, glColorTex);
     for (int i = 0; i < 2; i++) {
@@ -856,9 +857,9 @@ public abstract class PGL {
     texels.put(glcolor);
     texels.rewind();
     for (int y = 0; y < height; y += 16) {
-      int h = PApplet.min(16, height - y);
+      int h = PUtil.min(16, height - y);
       for (int x = 0; x < width; x += 16) {
-        int w = PApplet.min(16, width - x);
+        int w = PUtil.min(16, width - x);
         texSubImage2D(target, 0, x, y, w, h, format, UNSIGNED_BYTE, texels);
       }
     }
@@ -915,8 +916,8 @@ public abstract class PGL {
     PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
 
     if (!ppgl.loadedTex2DShader || ppgl.tex2DShaderContext != ppgl.glContext) {
-      String vertSource = PApplet.join(texVertShaderSource, "\n");
-      String fragSource = PApplet.join(tex2DFragShaderSource, "\n");
+      String vertSource = PUtil.join(texVertShaderSource, "\n");
+      String fragSource = PUtil.join(tex2DFragShaderSource, "\n");
       ppgl.tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
       ppgl.tex2DFragShader = createShader(FRAGMENT_SHADER, fragSource);
       if (0 < ppgl.tex2DVertShader && 0 < ppgl.tex2DFragShader) {
@@ -1044,8 +1045,8 @@ public abstract class PGL {
     PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
 
     if (!ppgl.loadedTexRectShader || ppgl.texRectShaderContext != ppgl.glContext) {
-      String vertSource = PApplet.join(texVertShaderSource, "\n");
-      String fragSource = PApplet.join(texRectFragShaderSource, "\n");
+      String vertSource = PUtil.join(texVertShaderSource, "\n");
+      String fragSource = PUtil.join(texRectFragShaderSource, "\n");
       ppgl.texRectVertShader = createShader(VERTEX_SHADER, vertSource);
       ppgl.texRectFragShader = createShader(FRAGMENT_SHADER, fragSource);
       if (0 < ppgl.texRectVertShader && 0 < ppgl.texRectFragShader) {
@@ -1752,7 +1753,7 @@ public abstract class PGL {
 
 
   protected static ByteBuffer allocateDirectByteBuffer(int size) {
-    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_BYTE;
+    int bytes = PUtil.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_BYTE;
     return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder());
   }
 
@@ -1840,7 +1841,7 @@ public abstract class PGL {
 
 
   protected static ShortBuffer allocateDirectShortBuffer(int size) {
-    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_SHORT;
+    int bytes = PUtil.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_SHORT;
     return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder()).
            asShortBuffer();
   }
@@ -1929,7 +1930,7 @@ public abstract class PGL {
 
 
   protected static IntBuffer allocateDirectIntBuffer(int size) {
-    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_INT;
+    int bytes = PUtil.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_INT;
     return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder()).
            asIntBuffer();
   }
@@ -2017,7 +2018,7 @@ public abstract class PGL {
 
 
   protected static FloatBuffer allocateDirectFloatBuffer(int size) {
-    int bytes = PApplet.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_FLOAT;
+    int bytes = PUtil.max(MIN_DIRECT_BUFFER_SIZE, size) * SIZEOF_FLOAT;
     return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder()).
            asFloatBuffer();
   }

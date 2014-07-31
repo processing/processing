@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.core.PApplet;
+import processing.core.PUtil;
 
 
 public class InstallCommander implements Tool {
@@ -93,14 +94,14 @@ public class InstallCommander implements Tool {
         "jdimodel.jar",
         "org.eclipse.osgi_3.8.1.v20120830-144521.jar",
 
-        "core/library/core.jar"        
+        "core/library/core.jar"
       };
-      String classPath = PApplet.join(jarList, ":");
+      String classPath = PUtil.join(jarList, ":");
 
       //String javaRoot = System.getProperty("javaroot");
       String javaRoot = Base.getContentFile(".").getCanonicalPath();
       writer.println("cd \"" + javaRoot + "\" && " +
-                     Base.getJavaPath() + 
+                     Base.getJavaPath() +
                      " -Djna.nosys=true" +
       		           " -cp \"" + classPath + "\"" +
       		           " processing.mode.java.Commander \"$@\"");
@@ -114,7 +115,7 @@ public class InstallCommander implements Tool {
         String shellScript = "/bin/mv " + sourcePath + " " + targetPath;
         String appleScript =
           "do shell script \"" + shellScript + "\" with administrator privileges";
-        PApplet.exec(new String[] { "osascript", "-e", appleScript });
+        PUtil.exec(new String[] { "osascript", "-e", appleScript });
 
       } else if (result == JOptionPane.NO_OPTION) {
         File targetFile = new File(System.getProperty("user.home"), "processing-java");
@@ -125,7 +126,7 @@ public class InstallCommander implements Tool {
                            targetPath + "\n" +
                            "Please remove it and try again.", null);
         } else {
-          PApplet.exec(new String[] { "mv", sourcePath, targetPath });
+          PUtil.exec(new String[] { "mv", sourcePath, targetPath });
         }
       }
       editor.statusNotice("Finished.");

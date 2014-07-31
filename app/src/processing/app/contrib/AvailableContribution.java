@@ -15,7 +15,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License along 
+  You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
@@ -28,20 +28,21 @@ import java.util.List;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.core.PApplet;
+import processing.core.PUtil;
 
 
 /**
- * A class to hold information about a Contribution that can be downloaded. 
+ * A class to hold information about a Contribution that can be downloaded.
  */
 class AvailableContribution extends Contribution {
   protected final ContributionType type;   // Library, tool, etc.
   protected final String link;             // Direct link to download the file
 
-  
+
   public AvailableContribution(ContributionType type, HashMap<String, String> params) {
     this.type = type;
     this.link = params.get("download");
-    
+
     //category = ContributionListing.getCategory(params.get("category"));
     categories = parseCategories(params.get("category"));
     name = params.get("name");
@@ -51,7 +52,7 @@ class AvailableContribution extends Contribution {
     paragraph = params.get("paragraph");
     String versionStr = params.get("version");
     if (versionStr != null) {
-      version = PApplet.parseInt(versionStr, 0);
+      version = PUtil.parseInt(versionStr, 0);
     }
     prettyVersion = params.get("prettyVersion");
     String lastUpdatedStr = params.get("lastUpdated");
@@ -62,8 +63,8 @@ class AvailableContribution extends Contribution {
         lastUpdated = 0;
       }
   }
-  
-  
+
+
   /**
    * @param contribArchive
    *          a zip file containing the library to install
@@ -74,12 +75,12 @@ class AvailableContribution extends Contribution {
    */
   public LocalContribution install(Editor editor, File contribArchive,
                                    boolean confirmReplace, StatusPanel status) {
-    // Unzip the file into the modes, tools, or libraries folder inside the 
-    // sketchbook. Unzipping to /tmp is problematic because it may be on 
+    // Unzip the file into the modes, tools, or libraries folder inside the
+    // sketchbook. Unzipping to /tmp is problematic because it may be on
     // another file system, so move/rename operations will break.
 //    File sketchbookContribFolder = type.getSketchbookFolder();
-    File tempFolder = null; 
-    
+    File tempFolder = null;
+
     try {
       tempFolder = type.createTempFolder();
     } catch (IOException e) {
@@ -92,15 +93,15 @@ class AvailableContribution extends Contribution {
 
     // Now go looking for a legit contrib inside what's been unpacked.
     File contribFolder = null;
-    
-    // Sometimes contrib authors place all their folders in the base directory 
-    // of the .zip file instead of in single folder as the guidelines suggest. 
+
+    // Sometimes contrib authors place all their folders in the base directory
+    // of the .zip file instead of in single folder as the guidelines suggest.
     if (type.isCandidate(tempFolder)) {
       /*
       // Can't just rename the temp folder, because a contrib with this name
-      // may already exist. Instead, create a new temp folder, and rename the 
+      // may already exist. Instead, create a new temp folder, and rename the
       // old one to be the correct folder.
-      File enclosingFolder = null;  
+      File enclosingFolder = null;
       try {
         enclosingFolder = Base.createTempFolder(type.toString(), "tmp", sketchbookContribFolder);
       } catch (IOException e) {
@@ -124,32 +125,32 @@ class AvailableContribution extends Contribution {
 
     if (contribFolder == null) {
       status.setErrorMessage("Could not find a " + type + " in the downloaded file.");
-      
+
     } else {
       File propFile = new File(contribFolder, type + ".properties");
-      if (writePropertiesFile(propFile)) {        
-        // 1. contribFolder now has a legit contribution, load it to get info. 
+      if (writePropertiesFile(propFile)) {
+        // 1. contribFolder now has a legit contribution, load it to get info.
         LocalContribution newContrib =
           type.load(editor.getBase(), contribFolder);
-        
+
         // 1.1. get info we need to delete the newContrib folder later
         File newContribFolder = newContrib.getFolder();
-        
-        // 2. Check to make sure nothing has the same name already, 
+
+        // 2. Check to make sure nothing has the same name already,
         // backup old if needed, then move things into place and reload.
-        installedContrib = 
+        installedContrib =
           newContrib.copyAndLoad(editor, confirmReplace, status);
         if (newContrib != null && type.requiresRestart()) {
           installedContrib.setRestartFlag();
           //status.setMessage("Restart Processing to finish the installation.");
         }
-        
+
         // 3. Delete the newContrib, do a garbage collection, hope and pray
         // that Java will unlock the temp folder on Windows now
         newContrib = null;
         System.gc();
-        
-        
+
+
         if (Base.isWindows()) {
           // we'll even give it a second to finish up ... because file ops are
           // just that flaky on Windows.
@@ -162,7 +163,7 @@ class AvailableContribution extends Contribution {
 
         // 4. Okay, now actually delete that temp folder
         Base.removeDir(newContribFolder);
-        
+
       } else {
         status.setErrorMessage("Error overwriting .properties file.");
       }
@@ -174,13 +175,13 @@ class AvailableContribution extends Contribution {
     }
     return installedContrib;
   }
-  
-  
+
+
   public boolean isInstalled() {
     return false;
   }
 
-  
+
   public ContributionType getType() {
     return type;
   }
@@ -194,7 +195,7 @@ class AvailableContribution extends Contribution {
    * manager. However, it also ensures that valid fields in the properties file
    * aren't overwritten, since the properties file may be more recent than the
    * contributions.txt file.
-   * 
+   *
    * @param propFile
    * @return
    */
@@ -258,7 +259,7 @@ class AvailableContribution extends Contribution {
       }
       catch (NumberFormatException nfe) {
         lastUpdated = getLastUpdated();
-      // Better comment these out till all contribs have a lastUpdated 
+      // Better comment these out till all contribs have a lastUpdated
 //        System.err.println("The last updated date for the “" + name
 //                           + "” contribution is not set properly.");
 //        System.err

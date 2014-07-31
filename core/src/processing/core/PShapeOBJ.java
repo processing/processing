@@ -141,7 +141,7 @@ public class PShapeOBJ extends PShape {
       // Getting current material.
       if (mtlIdxCur != face.matIdx || face.matIdx == -1) {
         // To make sure that at least we get the default material
-        mtlIdxCur = PApplet.max(0, face.matIdx);
+        mtlIdxCur = PUtil.max(0, face.matIdx);
         mtl = materials.get(mtlIdxCur);
       }
 

@@ -112,12 +112,12 @@ public class CreateFont extends JFrame implements Tool {
     // also ignore dialog, dialoginput, monospaced, serif, sansserif
 
     // getFontList is deprecated in 1.4, so this has to be used
-    //long t = System.currentTimeMillis(); 
+    //long t = System.currentTimeMillis();
     GraphicsEnvironment ge =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
     Font[] fonts = ge.getAllFonts();
     //System.out.println("font startup took " + (System.currentTimeMillis() - t) + " ms");
-    
+
     if (false) {
       ArrayList<Font> fontList = new ArrayList<Font>();
       File folderList = new File("/Users/fry/coconut/sys/fonts/web");
@@ -137,7 +137,7 @@ public class CreateFont extends JFrame implements Tool {
               Font font = Font.createFont(Font.TRUETYPE_FONT, input);
               input.close();
               fontList.add(font);
-              
+
             } catch (Exception e) {
               System.out.println("Ignoring " + fontFile.getName());
             }
@@ -637,7 +637,7 @@ class CharacterSelector extends JFrame {
           }
         }
       }
-      charset = PApplet.subset(charset, 0, index);
+      charset = PUtil.subset(charset, 0, index);
     }
     //System.out.println("Creating font with " + charset.length + " characters.");
     return charset;
@@ -808,12 +808,12 @@ class CharacterSelector extends JFrame {
     blockStop = new int[count];
     for (int i = 0; i < count; i++) {
       String line = BLOCKS[i];
-      blockStart[i] = PApplet.unhex(line.substring(0, 4));
-      blockStop[i] = PApplet.unhex(line.substring(6, 10));
+      blockStart[i] = PUtil.unhex(line.substring(0, 4));
+      blockStop[i] = PUtil.unhex(line.substring(6, 10));
       blockNames[i] = line.substring(12);
     }
-//    PApplet.println(codePointStop);
-//    PApplet.println(codePoints);
+//    PUtil.println(codePointStop);
+//    PUtil.println(codePoints);
   }
 }
 

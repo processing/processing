@@ -29,9 +29,9 @@ import java.awt.Rectangle;
 import java.io.*;
 import java.util.List;
 
-import processing.core.PApplet;
+import processing.core.PUtil;
 
-//import processing.core.PApplet;
+//import processing.core.PUtil;
 
 
 // scenarios:
@@ -44,7 +44,7 @@ import processing.core.PApplet;
 
 
 public class EditorState {
-  // path to the main .pde file for the sketch 
+  // path to the main .pde file for the sketch
 //    String path;
   // placement of the window
 //    int windowX, windowY, windowW, windowH;
@@ -73,18 +73,18 @@ public class EditorState {
 //  EditorState(String[] pieces) throws IOException {
   EditorState(String info) throws IOException {
 //      String line = reader.readLine();
-//      String[] pieces = PApplet.split(line, '\t');
-      String[] pieces = PApplet.split(info, ',');
+//      String[] pieces = PUtil.split(line, '\t');
+      String[] pieces = PUtil.split(info, ',');
 //      path = pieces[0];
 
     editorBounds = new Rectangle(Integer.parseInt(pieces[0]),
-                                 Integer.parseInt(pieces[1]), 
-                                 Integer.parseInt(pieces[2]), 
+                                 Integer.parseInt(pieces[1]),
+                                 Integer.parseInt(pieces[2]),
                                  Integer.parseInt(pieces[3]));
 
     dividerLocation = Integer.parseInt(pieces[4]);
 
-    deviceBounds = new Rectangle(Integer.parseInt(pieces[5]), 
+    deviceBounds = new Rectangle(Integer.parseInt(pieces[5]),
                                  Integer.parseInt(pieces[6]),
                                  Integer.parseInt(pieces[7]),
                                  Integer.parseInt(pieces[8]));
@@ -97,14 +97,14 @@ public class EditorState {
 //      displayW = Integer.parseInt(pieces[5]);
 //      displayH = Integer.parseInt(pieces[6]);
   }
-  
-  
+
+
   public String toString() {
     return (editorBounds.x + "," +
             editorBounds.y + "," +
             editorBounds.width + "," +
             editorBounds.height + "," +
-            dividerLocation + "," + 
+            dividerLocation + "," +
             deviceBounds.x + "," +
             deviceBounds.y + "," +
             deviceBounds.width + "," +
@@ -113,20 +113,20 @@ public class EditorState {
 
 
   /**
-   * Returns a GraphicsConfiguration so that a new Editor Frame can be 
+   * Returns a GraphicsConfiguration so that a new Editor Frame can be
    * constructed. First tries to match the bounds for this state information
    * to an existing config (nominally, a display) and if that doesn't work,
-   * then returns the default configuration/default display. 
+   * then returns the default configuration/default display.
    */
   GraphicsConfiguration checkConfig() {
     if (deviceBounds != null) {
-      GraphicsEnvironment graphicsEnvironment = 
+      GraphicsEnvironment graphicsEnvironment =
         GraphicsEnvironment.getLocalGraphicsEnvironment();
       GraphicsDevice[] screenDevices = graphicsEnvironment.getScreenDevices();
       for (GraphicsDevice device : screenDevices) {
         GraphicsConfiguration[] configurations = device.getConfigurations();
         for (GraphicsConfiguration config : configurations) {
-//          if (config.getDevice().getIDstring().equals(deviceName)) { 
+//          if (config.getDevice().getIDstring().equals(deviceName)) {
           if (config.getBounds().equals(deviceBounds)) {
             return config;
           }
@@ -150,7 +150,7 @@ public class EditorState {
 
   /**
    * Figure out the next location by sizing up the last editor in the list.
-   * If no editors are opened, it'll just open on the main screen. 
+   * If no editors are opened, it'll just open on the main screen.
    * @param editors List of editors currently opened
    */
   void defaultLocation(List<Editor> editors) {
@@ -159,13 +159,13 @@ public class EditorState {
 
     if (editors.size() == 0) {
       // If no current active editor, use default placement.
-      // Center the window on ths screen, taking into account that the 
-      // upper-left corner of the device may have a non (0, 0) origin. 
-      int editorX = 
+      // Center the window on ths screen, taking into account that the
+      // upper-left corner of the device may have a non (0, 0) origin.
+      int editorX =
         deviceBounds.x + (deviceBounds.width - defaultWidth) / 2;
-      int editorY = 
+      int editorY =
         deviceBounds.y + (deviceBounds.height - defaultHeight) / 2;
-      editorBounds = 
+      editorBounds =
         new Rectangle(editorX, editorY, defaultWidth, defaultHeight);
       dividerLocation = 0;
 
@@ -183,9 +183,9 @@ public class EditorState {
 
         if (!deviceBounds.contains(editorBounds)) {
           // Warp the next window to a randomish location on screen.
-          editorBounds.x = deviceBounds.x + 
+          editorBounds.x = deviceBounds.x +
             (int) (Math.random() * (deviceBounds.width - defaultWidth));
-          editorBounds.y = deviceBounds.y + 
+          editorBounds.y = deviceBounds.y +
             (int) (Math.random() * (deviceBounds.height - defaultHeight));
         }
         if (isMaximized) {

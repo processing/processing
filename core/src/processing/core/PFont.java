@@ -270,7 +270,7 @@ public class PFont implements PConstants {
 
       // shorten the array if necessary
       if (glyphCount != charset.length) {
-        glyphs = (Glyph[]) PApplet.subset(glyphs, 0, glyphCount);
+        glyphs = (Glyph[]) PUtil.subset(glyphs, 0, glyphCount);
       }
 
       // foreign font, so just make ascent the max topExtent
@@ -445,7 +445,7 @@ public class PFont implements PConstants {
     Glyph glyph = new Glyph(c);
 
     if (glyphCount == glyphs.length) {
-      glyphs = (Glyph[]) PApplet.expand(glyphs);
+      glyphs = (Glyph[]) PUtil.expand(glyphs);
     }
     if (glyphCount == 0) {
       glyph.index = 0;
@@ -737,20 +737,20 @@ public class PFont implements PConstants {
 
       case PathIterator.SEG_LINETO:   // 1 point
 //        System.out.println("lineto");
-//        PApplet.println(PApplet.subset(iterPoints, 0, 2));
+//        PUtil.println(PUtil.subset(iterPoints, 0, 2));
         s.vertex(iterPoints[0], iterPoints[1]);
         break;
 
       case PathIterator.SEG_QUADTO:   // 2 points
 //        System.out.println("quadto");
-//        PApplet.println(PApplet.subset(iterPoints, 0, 4));
+//        PUtil.println(PUtil.subset(iterPoints, 0, 4));
         s.quadraticVertex(iterPoints[0], iterPoints[1],
                           iterPoints[2], iterPoints[3]);
         break;
 
       case PathIterator.SEG_CUBICTO:  // 3 points
 //        System.out.println("cubicto");
-//        PApplet.println(iterPoints);
+//        PUtil.println(iterPoints);
         s.quadraticVertex(iterPoints[0], iterPoints[1],
                           iterPoints[2], iterPoints[3],
                           iterPoints[4], iterPoints[5]);
@@ -767,7 +767,7 @@ public class PFont implements PConstants {
         }
         break;
       }
-//      PApplet.println(iterPoints);
+//      PUtil.println(iterPoints);
       iter.next();
     }
     s.endShape(CLOSE);
@@ -867,7 +867,7 @@ public class PFont implements PConstants {
       GraphicsEnvironment ge =
         GraphicsEnvironment.getLocalGraphicsEnvironment();
       fonts = ge.getAllFonts();
-      if (PApplet.platform == PConstants.MACOSX) {
+      if (PUtil.platform == PConstants.MACOSX) {
         fontDifferent = new HashMap<String,Font>();
         for (Font font : fonts) {
           // getName() returns the PostScript name on OS X 10.6 w/ Java 6.
@@ -886,7 +886,7 @@ public class PFont implements PConstants {
    */
   static public Font findFont(String name) {
     loadFonts();
-    if (PApplet.platform == PConstants.MACOSX) {
+    if (PUtil.platform == PConstants.MACOSX) {
       Font maybe = fontDifferent.get(name);
       if (maybe != null) {
         return maybe;
