@@ -90,12 +90,16 @@ public class OffsetMatcher {
         continue;
       } else if (offsetMatch.get(i).javaOffset == javaOff) {
 //        int j = i;
-        while (offsetMatch.get(--i).javaOffset == javaOff) {
+//        while (offsetMatch.get(--i).javaOffset == javaOff) {
 //          log("MP " + offsetMatch.get(i).javaOffset + " "
 //              + offsetMatch.get(i).pdeOffset);
+//        }
+
+        if (i > 0) {
+            int pdeOff = offsetMatch.get(i++).pdeOffset;
+            while (i > 0 && offsetMatch.get(--i).pdeOffset == pdeOff);            
         }
-        int pdeOff = offsetMatch.get(++i).pdeOffset;
-        while (i > 0 && offsetMatch.get(--i).pdeOffset == pdeOff);
+
         int j = i + 1;
         if (j > -1 && j < offsetMatch.size())
           return offsetMatch.get(j).pdeOffset;
