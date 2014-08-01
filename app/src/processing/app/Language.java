@@ -51,7 +51,21 @@ public class Language {
     // Language code:
     // http://en.wikipedia.org/wiki/ISO_639-1
     // http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-
+    
+    // List of languages in alphabetical order. New additions go here.
+    final String[] SUPPORTED = {
+      "de", // de, German, Deutsch
+      "en", // en, English, English
+      "es", // es, Spanish
+      "ja", // ja, Japanese
+      "nl", // nl, Dutch, Nederlands
+    };
+    
+    for (String code : SUPPORTED) {
+      languages.put(code, Locale.forLanguageTag(code).getDisplayLanguage(Locale.forLanguageTag(code)));
+    }
+    
+    /*
     // en, English, English
     this.languages.put(Locale.ENGLISH.getLanguage(), Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH));
     // de, German, Deutsch
@@ -62,6 +76,7 @@ public class Language {
     this.languages.put("es", Locale.forLanguageTag("es").getDisplayLanguage(Locale.forLanguageTag("es")));
     // nl, Dutch, Nederlands
     this.languages.put("nl", Locale.forLanguageTag("nl").getDisplayLanguage(Locale.forLanguageTag("nl")));
+    */
 
     // Set default language
     if (!this.languages.containsKey(this.language)) {
