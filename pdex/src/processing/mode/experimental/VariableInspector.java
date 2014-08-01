@@ -74,7 +74,7 @@ public class VariableInspector extends javax.swing.JFrame {
     protected List<VariableNode> declaredThisFields; // declared i.e. non-inherited fields of this
     protected DebugEditor editor; // the editor
     protected Debugger dbg; // the debugger
-    protected List<TreePath> expandedNodes = new ArrayList<>(); // list of expanded tree paths. (using list to maintain the order of expansion)
+    protected List<TreePath> expandedNodes = new ArrayList<TreePath>(); // list of expanded tree paths. (using list to maintain the order of expansion)
     protected boolean p5mode = true; // processing / "advanced" mode flag (currently not used
 
     /**
@@ -515,7 +515,7 @@ public class VariableInspector extends javax.swing.JFrame {
             // first remove all children of collapsed path
             // this makes sure children do not appear before parents in the list.
             // (children can't be expanded before their parents)
-            List<TreePath> removalList = new ArrayList<>();
+            List<TreePath> removalList = new ArrayList<TreePath>();
             for (TreePath path : expandedNodes) {
                 if (path.getParentPath().equals(tee.getPath())) {
                     removalList.add(path);
