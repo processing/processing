@@ -123,6 +123,20 @@ public class Language {
     return init().bundle.getString(text);
   }
 
+  static public String interpolate(String text, Object... arguments) {
+    return String.format(init().bundle.getString(text), arguments);
+  }
+
+  static public String pluralize(String text, int count) {
+    ResourceBundle bundle = init().bundle;
+
+    String fmt = text + ".%s";
+
+    if (bundle.containsKey(String.format(fmt, count))) {
+      return interpolate(String.format(fmt, count), count);
+    }
+    return interpolate(String.format(fmt, "n"), count);
+  }
 
   /** Get all available languages */
   static public Map<String, String> getLanguages() {
