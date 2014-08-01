@@ -22,7 +22,7 @@ package processing.mode.java;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JPopupMenu;
+//import javax.swing.JPopupMenu;
 
 import processing.app.Base;
 import processing.app.Editor;
@@ -31,26 +31,13 @@ import processing.app.Language;
 
 
 public class JavaToolbar extends EditorToolbar {
-  /** Rollover titles for each button. */
-//  static final String title[] = {
-//    "Run", "Stop", "New", "Open", "Save", "Export"
-//  };
-
-  /** Titles for each button when the shift key is pressed. */
-//  static final String titleShift[] = {
-//    "Present", "Stop", "New Editor Window", "Open in Another Window", "Save", "Export to Application"
-//  };
-
   static protected final int RUN    = 0;
   static protected final int STOP   = 1;
 
-  static protected final int NEW    = 2;
-  static protected final int OPEN   = 3;
-  static protected final int SAVE   = 4;
-  static protected final int EXPORT = 5;
-
-//  JPopupMenu popup;
-//  JMenu menu;
+//  static protected final int NEW    = 2;
+//  static protected final int OPEN   = 3;
+//  static protected final int SAVE   = 4;
+//  static protected final int EXPORT = 5;
 
 
   public JavaToolbar(Editor editor, Base base) {
@@ -60,8 +47,10 @@ public class JavaToolbar extends EditorToolbar {
 
   public void init() {
     Image[][] images = loadImages();
-    for (int i = 0; i < 6; i++) {
-      addButton(getTitle(i, false), getTitle(i, true), images[i], i == NEW);
+//    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 2; i++) {
+//      addButton(getTitle(i, false), getTitle(i, true), images[i], i == NEW);
+      addButton(getTitle(i, false), getTitle(i, true), images[i], false);
     }
   }
 
@@ -70,11 +59,10 @@ public class JavaToolbar extends EditorToolbar {
     switch (index) {
     case RUN:    return !shift ? Language.text("toolbar.run") : Language.text("toolbar.present");
     case STOP:   return Language.text("toolbar.stop");
-    case NEW:    return Language.text("toolbar.new");
-    case OPEN:   return Language.text("toolbar.open");
-    case SAVE:   return Language.text("toolbar.save");
-//    case EXPORT: return !shift ? "Export Application" : "Export Applet";
-    case EXPORT: return Language.text("toolbar.export_application");
+//    case NEW:    return Language.text("toolbar.new");
+//    case OPEN:   return Language.text("toolbar.open");
+//    case SAVE:   return Language.text("toolbar.save");
+//    case EXPORT: return Language.text("toolbar.export_application");
     }
     return null;
   }
@@ -97,6 +85,7 @@ public class JavaToolbar extends EditorToolbar {
       jeditor.handleStop();
       break;
 
+      /*
     case OPEN:
 //      popup = menu.getPopupMenu();
       // TODO I think we need a longer chain of accessors here.
@@ -123,6 +112,7 @@ public class JavaToolbar extends EditorToolbar {
       jeditor.handleExportApplication();
 //      }
       break;
+       */
     }
   }
 }

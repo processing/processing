@@ -36,7 +36,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.DefaultListModel;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import processing.app.syntax.JEditTextArea;
@@ -195,6 +194,7 @@ public class TextArea extends JEditTextArea {
         log("BK Key");
         break;
       case KeyEvent.VK_SPACE:
+        System.out.println("space: " + evt);
         if (suggestion != null)
           if (suggestion.isVisible()) {
             log("Space bar, hide completion list");
@@ -207,20 +207,22 @@ public class TextArea extends JEditTextArea {
     }
     super.processKeyEvent(evt);
 
-    if(editor.hasJavaTabs) return; // code completion disabled if java tabs
+    if (editor.hasJavaTabs) return; // code completion disabled if java tabs
+    
     if (evt.getID() == KeyEvent.KEY_TYPED) {
-      
       char keyChar = evt.getKeyChar();
-      if (keyChar == KeyEvent.VK_ENTER || keyChar == KeyEvent.VK_ESCAPE) {
-        return;
-      } else if (keyChar == KeyEvent.VK_TAB
-          || keyChar == KeyEvent.CHAR_UNDEFINED) {
+      if (keyChar == KeyEvent.VK_ENTER || 
+          keyChar == KeyEvent.VK_ESCAPE ||
+          keyChar == KeyEvent.VK_TAB ||
+          keyChar == KeyEvent.CHAR_UNDEFINED) {
         return;
       }
       final KeyEvent evt2 = evt;
+      System.out.println("type: " + evt);
       if (evt.isAltDown() || evt.isControlDown() || evt.isMetaDown()) {
-        if (ExperimentalMode.ccTriggerEnabled && keyChar == KeyEvent.VK_SPACE
-            && (evt.isControlDown() || evt.isMetaDown())) {
+        if (ExperimentalMode.ccTriggerEnabled && 
+            keyChar == KeyEvent.VK_SPACE && 
+            (evt.isControlDown() || evt.isMetaDown())) {
           SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
             protected Object doInBackground() throws Exception {
               // Provide completions only if it's enabled
@@ -747,6 +749,9 @@ public class TextArea extends JEditTextArea {
     });
   }*/
 
+  
+  // appears unused, removed when looking to change completion trigger [fry 140801]
+  /*
   public void showSuggestionLater(final DefaultListModel defListModel, final String word) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -756,6 +761,7 @@ public class TextArea extends JEditTextArea {
 
     });
   }
+  */
 
   /**
    * Calculates location of caret and displays the suggestion popup at the location. 

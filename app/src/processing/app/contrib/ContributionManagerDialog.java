@@ -27,6 +27,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.SocketTimeoutException;
 import java.util.*;
 
@@ -48,6 +51,7 @@ public class ContributionManagerDialog {
   ContributionListPanel contributionListPanel;
   StatusPanel status;
   FilterField filterField;
+  JButton restartButton;
 
   // the calling editor, so updates can be applied
   Editor editor;
@@ -78,12 +82,59 @@ public class ContributionManagerDialog {
     return contribListing.hasUpdates(base);
   }
   
-  public void showFrame(Editor editor) {
+  public void showFrame(final Editor editor) {
     this.editor = editor;
 
     if (dialog == null) {
       dialog = new JFrame(title);
 
+      restartButton = new JButton("Restart Processing");
+      restartButton.setVisible(false);
+      restartButton.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+
+          Iterator<Editor> iter = editor.getBase().getEditors().iterator();
+          while (iter.hasNext()) {
+            Editor ed = iter.next();
+            if (ed.getSketch().isModified()) {
+              int option = Base
+                .showYesNoQuestion(editor, title,
+                                   "Unsaved changes have been found",
+                                   "Are you sure you want to restart Processing without saving first?");
+
+              if (option == JOptionPane.NO_OPTION)
+                return;
+              else
+                break;
+            }
+          }
+
+          // Thanks to http://stackoverflow.com/a/4160543
+          StringBuilder cmd = new StringBuilder();
+          cmd.append(System.getProperty("java.home") + File.separator + "bin"
+            + File.separator + "java ");
+          for (String jvmArg : ManagementFactory.getRuntimeMXBean()
+            .getInputArguments()) {
+            cmd.append(jvmArg + " ");
+          }
+          cmd.append("-cp ")
+            .append(ManagementFactory.getRuntimeMXBean().getClassPath())
+            .append(" ");
+          cmd.append(Base.class.getName());
+
+          try {
+            Runtime.getRuntime().exec(cmd.toString());
+            System.exit(0);
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+
+        }
+
+      });
+      
       Toolkit.setIcon(dialog);
       createComponents();
       registerDisposeListeners();
@@ -204,8 +255,18 @@ public class ContributionManagerDialog {
       pane.add(Box.createHorizontalStrut(10), BorderLayout.EAST);
 
       status = new StatusPanel();
-      status.setBorder(new EmptyBorder(7, 7, 7, 7));
-      pane.add(status, BorderLayout.SOUTH);
+//      status.setBorder(new EmptyBorder(7, 7, 7, 7));
+      
+      JPanel statusRestartPane = new JPanel();
+      statusRestartPane.setLayout(new BorderLayout());
+      
+      statusRestartPane.setBorder(new EmptyBorder(7, 7, 7, 7));
+      statusRestartPane.setOpaque(false);
+      
+      statusRestartPane.add(status, BorderLayout.WEST);
+      statusRestartPane.add(restartButton, BorderLayout.EAST);
+      
+      pane.add(statusRestartPane, BorderLayout.SOUTH);
 
       
 //      status = new StatusPanel();

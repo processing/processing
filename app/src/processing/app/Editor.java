@@ -428,6 +428,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  public void rebuildModeMenu() {
+    initModeMenu();
+  }
+
+
   public JMenu getModeMenu() {
     return modeMenu;
   }
@@ -1017,6 +1022,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     });
     toolsMenu.add(item);
+  }
+
+
+  public void clearToolMenu() {
+    toolsMenu.removeAll();
+    System.gc();
+  }
+
+
+  public void removeTool() {
+    rebuildToolMenu();
   }
 
 

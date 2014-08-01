@@ -22,6 +22,7 @@
 package processing.app.contrib;
 
 import java.io.*;
+import java.net.URLClassLoader;
 //import java.net.*;
 import java.util.*;
 
@@ -57,6 +58,35 @@ public class ToolContribution extends LocalContribution implements Tool {
     if (className != null) {
       Class<?> toolClass = loader.loadClass(className);
       tool = (Tool) toolClass.newInstance();
+    }
+  }
+
+
+  /**
+   * Method to close the ClassLoader so that the archives are no longer "locked" and
+   * a tool can be removed without restart.
+   */
+  public void clearClassLoader(Base base) {
+    try {
+      ((URLClassLoader) this.loader).close();
+    } catch (IOException e1) {
+      e1.printStackTrace();
+    }
+    Iterator<Editor> editorIter = base.getEditors().iterator();
+    while (editorIter.hasNext()) {
+      Editor editor = editorIter.next();
+      ArrayList<ToolContribution> contribTools = editor.contribTools;
+      for (ToolContribution toolContrib : contribTools)
+        if (toolContrib.getName().equals(this.name)) {
+          try {
+            ((URLClassLoader) toolContrib.loader).close();
+            editor.contribTools.remove(toolContrib);
+            break;
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+//        base.getActiveEditor().rebuildToolMenu();
+        }
     }
   }
 

@@ -34,11 +34,19 @@ import processing.core.PApplet;
  * @author Darius Morawiec
  */
 public class Language {
-  static private Language instance = null;
-  private String language;
-  private HashMap<String, String> languages;
-  private ResourceBundle bundle;
   static private final String FILE = "processing.app.languages.PDE";
+  static private final String LISTING = "processing/app/languages/languages.txt";
+  
+  /** Single instance of this Language class */
+  static private Language instance = null;
+  
+  /** The system language */
+  private String language;
+  
+  /** Available languages */
+  private HashMap<String, String> languages;
+  
+  private ResourceBundle bundle;
 
 
   private Language() {
@@ -46,46 +54,14 @@ public class Language {
     this.language = Locale.getDefault().getLanguage();
 
     // Set available languages
-    this.languages = new HashMap<String, String>();
-
-    // Language code:
-    // http://en.wikipedia.org/wiki/ISO_639-1
-    // http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-    
-    // List of languages in alphabetical order. New additions go here.
-    final String[] SUPPORTED = {
-      "de", // de, German, Deutsch
-      "en", // en, English, English
-      "es", // es, Spanish
-      "fr", // fr, French, Français, Langue française
-      "ja", // ja, Japanese
-      "nl", // nl, Dutch, Nederlands
-      "pt", //pt, Portuguese
-    };
-    
-    for (String code : SUPPORTED) {
+    languages = new HashMap<String, String>();
+    for (String code : listSupported()) {
       languages.put(code, Locale.forLanguageTag(code).getDisplayLanguage(Locale.forLanguageTag(code)));
     }
     
-    /*
-    // en, English, English
-    this.languages.put(Locale.ENGLISH.getLanguage(), Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH));
-    // de, German, Deutsch
-    this.languages.put(Locale.GERMAN.getLanguage(), Locale.GERMAN.getDisplayLanguage(Locale.GERMAN));
-    // ja, Japanese
-    this.languages.put(Locale.JAPANESE.getLanguage(), Locale.JAPANESE.getDisplayLanguage(Locale.JAPANESE));
-    // es, Spanish
-    this.languages.put("es", Locale.forLanguageTag("es").getDisplayLanguage(Locale.forLanguageTag("es")));
-    // nl, Dutch, Nederlands
-    this.languages.put("nl", Locale.forLanguageTag("nl").getDisplayLanguage(Locale.forLanguageTag("nl")));
-    // pt, Portuguese
-    this.languages.put("pt", Locale.forLanguageTag("pt").getDisplayLanguage(Locale.forLanguageTag("pt")));
-
-    */
-
     // Set default language
-    if (!this.languages.containsKey(this.language)) {
-      this.language = "en";
+    if (!languages.containsKey(language)) {
+      language = "en";
     }
 
     // Get saved language
@@ -105,7 +81,35 @@ public class Language {
     }
 
     // Get bundle with translations (processing.app.language.PDE)
-    this.bundle = ResourceBundle.getBundle(Language.FILE, new Locale(this.language), new UTF8Control());
+    bundle = ResourceBundle.getBundle(Language.FILE, new Locale(this.language), new UTF8Control());
+  }
+  
+  
+  String[] listSupported() {    
+//    // List of languages in alphabetical order. New additions go here.
+//    final String[] SUPPORTED = {
+//      "de", // de, German, Deutsch
+//      "en", // en, English, English
+//      "el", // el, Greek
+//      "es", // es, Spanish
+//      "fr", // fr, French, Français, Langue française
+//      "ja", // ja, Japanese
+//      "nl", // nl, Dutch, Nederlands
+//      "pt", // pt, Portuguese
+//    };
+
+    InputStream input = getClass().getResourceAsStream(LISTING);
+    String[] lines = PApplet.loadStrings(input);
+    ArrayList<String> list = new ArrayList<String>();
+    for (String line : lines) {
+      int index = line.indexOf('#');
+      if (index != -1) {
+        line = line.substring(0, index);
+      }
+      line = line.trim();
+      list.add(line);
+    }
+    return list.toArray(new String[0]);
   }
 
 
@@ -162,7 +166,7 @@ public class Language {
 
 
   /**
-   * Custom Control class for consitent encoding.
+   * Custom 'Control' class for consistent encoding.
    * http://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle
    */
   class UTF8Control extends ResourceBundle.Control {
@@ -186,8 +190,7 @@ public class Language {
       }
       if (stream != null) {
         try {
-          // Only this line is changed to make it to read properties
-          // files as UTF-8.
+          // Only line changed from the original source:
           bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
         } finally {
           stream.close();

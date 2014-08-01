@@ -52,16 +52,16 @@ public class DebugToolbar extends JavaToolbar {
 
   static protected final int STOP   = JavaToolbar.STOP;
 
-  static protected final int NEW    = JavaToolbar.NEW;
-  static protected final int OPEN   = JavaToolbar.OPEN;
-  static protected final int SAVE   = JavaToolbar.SAVE;
-  static protected final int EXPORT = JavaToolbar.EXPORT;
+//  static protected final int NEW    = JavaToolbar.NEW;
+//  static protected final int OPEN   = JavaToolbar.OPEN;
+//  static protected final int SAVE   = JavaToolbar.SAVE;
+//  static protected final int EXPORT = JavaToolbar.EXPORT;
 
 
   // the sequence of button ids. (this maps button position = index to button ids)
   static protected final int[] buttonSequence = {
-    DEBUG, CONTINUE, STEP, STOP, TOGGLE_BREAKPOINT, TOGGLE_VAR_INSPECTOR, 
-    NEW, OPEN, SAVE, EXPORT
+    DEBUG, CONTINUE, STEP, STOP, TOGGLE_BREAKPOINT, TOGGLE_VAR_INSPECTOR 
+//    NEW, OPEN, SAVE, EXPORT
   }; 
 
   
@@ -118,6 +118,7 @@ public class DebugToolbar extends JavaToolbar {
     return buttonImages;
   }
   
+  
   /**
    * Initialize buttons. Loads images and adds the buttons to the toolbar.
    */
@@ -126,7 +127,8 @@ public class DebugToolbar extends JavaToolbar {
     Image[][] images = loadDebugImages();
     for (int idx = 0; idx < buttonSequence.length; idx++) {
       int id = buttonId(idx);
-      addButton(getTitle(id, false), getTitle(id, true), images[idx], id == NEW || id == TOGGLE_BREAKPOINT);
+      //addButton(getTitle(id, false), getTitle(id, true), images[idx], id == NEW || id == TOGGLE_BREAKPOINT);
+      addButton(getTitle(id, false), getTitle(id, true), images[idx], id == TOGGLE_BREAKPOINT);
     }
   }
 
@@ -144,14 +146,14 @@ public class DebugToolbar extends JavaToolbar {
       return JavaToolbar.getTitle(JavaToolbar.RUN, shift);
     case STOP:
       return JavaToolbar.getTitle(JavaToolbar.STOP, shift);
-    case NEW:
-      return JavaToolbar.getTitle(JavaToolbar.NEW, shift);
-    case OPEN:
-      return JavaToolbar.getTitle(JavaToolbar.OPEN, shift);
-    case SAVE:
-      return JavaToolbar.getTitle(JavaToolbar.SAVE, shift);
-    case EXPORT:
-      return JavaToolbar.getTitle(JavaToolbar.EXPORT, shift);
+//    case NEW:
+//      return JavaToolbar.getTitle(JavaToolbar.NEW, shift);
+//    case OPEN:
+//      return JavaToolbar.getTitle(JavaToolbar.OPEN, shift);
+//    case SAVE:
+//      return JavaToolbar.getTitle(JavaToolbar.SAVE, shift);
+//    case EXPORT:
+//      return JavaToolbar.getTitle(JavaToolbar.EXPORT, shift);
     case DEBUG:
       if (shift) {
         return "Run";
@@ -194,22 +196,22 @@ public class DebugToolbar extends JavaToolbar {
       Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Stop' toolbar button");
       super.handlePressed(e, JavaToolbar.STOP);
       break;
-    case NEW:
-      Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'New' toolbar button");
-      super.handlePressed(e, JavaToolbar.NEW);
-      break;
-    case OPEN:
-      Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Open' toolbar button");
-      super.handlePressed(e, JavaToolbar.OPEN);
-      break;
-    case SAVE:
-      Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Save' toolbar button");
-      super.handlePressed(e, JavaToolbar.SAVE);
-      break;
-    case EXPORT:
-      Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Export' toolbar button");
-      super.handlePressed(e, JavaToolbar.EXPORT);
-      break;
+//    case NEW:
+//      Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'New' toolbar button");
+//      super.handlePressed(e, JavaToolbar.NEW);
+//      break;
+//    case OPEN:
+//      Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Open' toolbar button");
+//      super.handlePressed(e, JavaToolbar.OPEN);
+//      break;
+//    case SAVE:
+//      Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Save' toolbar button");
+//      super.handlePressed(e, JavaToolbar.SAVE);
+//      break;
+//    case EXPORT:
+//      Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Export' toolbar button");
+//      super.handlePressed(e, JavaToolbar.EXPORT);
+//      break;
     case DEBUG:
       deditor.handleStop(); // Close any running sketches
       deditor.showProblemListView(XQConsoleToggle.CONSOLE);

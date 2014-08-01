@@ -158,6 +158,11 @@ abstract public class Contribution {
     return false;
   }
 
+  
+  boolean isUpdateFlagged() {
+    return false;
+  }
+
 
   /** 
    * @return a single element list with "Unknown" as the category.
