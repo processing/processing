@@ -313,15 +313,20 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * "Sketch &rarr; Add File" for each file.
    */
   class FileDropHandler extends TransferHandler {
-    public boolean canImport(JComponent dest, DataFlavor[] flavors) {
-      return true;
+    public boolean canImport(TransferHandler.TransferSupport support) {
+      return !sketch.isReadOnly();
     }
 
     @SuppressWarnings("unchecked")
-    public boolean importData(JComponent src, Transferable transferable) {
+    public boolean importData(TransferHandler.TransferSupport support) {
       int successful = 0;
 
+      if (!canImport(support)) {
+        return false;
+      }
+
       try {
+        Transferable transferable = support.getTransferable();
         DataFlavor uriListFlavor =
           new DataFlavor("text/uri-list;class=java.lang.String");
 
