@@ -20,6 +20,10 @@ X   https://github.com/processing/processing/issues/2004
 X   https://github.com/processing/processing/pull/2690
 X support for Japanese
 X   https://github.com/processing/processing/pull/2688
+X support for Spanish
+X   https://github.com/processing/processing/pull/2691
+X support for Dutch
+X   https://github.com/processing/processing/pull/2694
 
 
 pending

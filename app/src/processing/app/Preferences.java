@@ -293,7 +293,7 @@ public class Preferences {
     languageBox.add(languageLabel);
     languageSelectionBox = new JComboBox();
     
-    HashMap<String, String> languages = Language.getLanguages();
+    Map<String, String> languages = Language.getLanguages();
     String[] languageSelection = new String[languages.size()];
     languageSelection[0] = languages.get(Language.getLanguage());
     int i = 1;
@@ -807,15 +807,15 @@ public class Preferences {
     setBoolean("update.check", checkUpdatesBox.isSelected()); //$NON-NLS-1$
     
     // Save Language
-    HashMap<String, String> languages = Language.getLanguages();
+    Map<String, String> languages = Language.getLanguages();
     String language = "";
     for (Map.Entry<String, String> lang : languages.entrySet()) {
-      if( lang.getValue().equals( String.valueOf(languageSelectionBox.getSelectedItem()) ) ){
+      if (lang.getValue().equals( String.valueOf(languageSelectionBox.getSelectedItem()))) {
         language = lang.getKey().trim().toLowerCase();
         break;
       }
     }
-    if(!language.equals(Language.getLanguage()) && !language.equals("")){
+    if (!language.equals(Language.getLanguage()) && !language.equals("")) {
       Language.setLanguage(language);
     }
     
