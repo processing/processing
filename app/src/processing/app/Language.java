@@ -57,6 +57,7 @@ public class Language {
       "de", // de, German, Deutsch
       "en", // en, English, English
       "es", // es, Spanish
+      "fr", // fr, French, Français, Langue française
       "ja", // ja, Japanese
       "nl", // nl, Dutch, Nederlands
     };

@@ -24,6 +24,8 @@ X support for Spanish
 X   https://github.com/processing/processing/pull/2691
 X support for Dutch
 X   https://github.com/processing/processing/pull/2694
+X support for French
+X   https://github.com/processing/processing/pull/2695
 
 
 pending
