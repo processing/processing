@@ -166,7 +166,9 @@ public class ContributionListing {
 
 
   protected AvailableContribution getAvailableContribution(Contribution info) {
-    for (AvailableContribution advertised : advertisedContributions) {
+    Iterator<AvailableContribution> iter = advertisedContributions.iterator();
+    while(iter.hasNext()) {
+      AvailableContribution advertised = iter.next();
       if (advertised.getType() == info.getType() &&
           advertised.getName().equals(info.getName())) {
         return advertised;

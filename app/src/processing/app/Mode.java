@@ -162,6 +162,7 @@ public abstract class Mode {
         }
       }
     }
+    reader.close();
   }
   
   
