@@ -457,7 +457,7 @@ class ContributionPanel extends JPanel {
 
   private void installContribution(AvailableContribution info) {
     if (info.link == null) {
-      listPanel.contribManager.status.setErrorMessage(String.format(Language.text("contributions.unsupported_operating_system"), info.getType()));
+      listPanel.contribManager.status.setErrorMessage(Language.interpolate("contributions.unsupported_operating_system", info.getType()));
     } else {
       installContribution(info, info.link);
     }
