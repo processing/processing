@@ -26,7 +26,11 @@ X support for Dutch
 X   https://github.com/processing/processing/pull/2694
 X support for French
 X   https://github.com/processing/processing/pull/2695
-
+X Localize status messages and contributions panel
+X   https://github.com/processing/processing/pull/2696
+X prevent adding files to read-only sketches
+X   https://github.com/processing/processing/issues/2459
+X   https://github.com/processing/processing/pull/2697
 
 pending
 _ look at the sound library https://github.com/wirsing/ProcessingSound
