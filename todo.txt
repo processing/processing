@@ -32,6 +32,12 @@ X prevent adding files to read-only sketches
 X   https://github.com/processing/processing/issues/2459
 X   https://github.com/processing/processing/pull/2697
 
+
+high
+_ export application ubuntu -> windows not working (2.2.1)
+_   https://github.com/processing/processing/issues/2698
+
+
 pending
 _ look at the sound library https://github.com/wirsing/ProcessingSound
 _   sound is not yet supported on Windows

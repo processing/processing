@@ -274,6 +274,15 @@ public abstract class Mode {
   //abstract public Editor createEditor(Base base, String path, int[] location);
 
 
+  /**
+   * Get the folder where this mode is stored. 
+   * @since 3.0a3
+   */
+  public File getFolder() {
+    return folder;
+  }
+  
+  
   public File getExamplesFolder() {
     return examplesFolder;
   }
