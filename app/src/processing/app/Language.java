@@ -44,7 +44,7 @@ public class Language {
 		this.languages.put(Locale.GERMAN.getLanguage(), Locale.GERMAN.getDisplayLanguage(Locale.GERMAN));
 		// ja, Japanese
 		this.languages.put(Locale.JAPANESE.getLanguage(), Locale.JAPANESE.getDisplayLanguage(Locale.JAPANESE));
-    // nl, Dutch, Nederlands
+		// nl, Dutch, Nederlands
 		this.languages.put("nl", Locale.forLanguageTag("nl").getDisplayLanguage(Locale.forLanguageTag("nl")));
 		
 		// Set default language
