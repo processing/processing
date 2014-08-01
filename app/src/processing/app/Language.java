@@ -60,6 +60,8 @@ public class Language {
     this.languages.put(Locale.JAPANESE.getLanguage(), Locale.JAPANESE.getDisplayLanguage(Locale.JAPANESE));
     // es, Spanish
     this.languages.put("es", Locale.forLanguageTag("es").getDisplayLanguage(Locale.forLanguageTag("es")));
+    // nl, Dutch, Nederlands
+    this.languages.put("nl", Locale.forLanguageTag("nl").getDisplayLanguage(Locale.forLanguageTag("nl")));
 
     // Set default language
     if (!this.languages.containsKey(this.language)) {
@@ -161,3 +163,4 @@ public class Language {
     }
   }
 }
+
