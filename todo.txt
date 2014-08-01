@@ -1,10 +1,14 @@
 0230 pde (3.0a3)
 
-earlier
-X repo cleanup
-X   remove non-web stuff from web
-X   remove non-android stuff from android
-X   remove web and android from the main repo
+gsoc
+X fixes for mode/tool installation
+X   https://github.com/processing/processing/pull/2705
+X fix mode updating to work properly
+X   https://github.com/processing/processing/issues/2579
+X temp folders not always deleting
+X   https://github.com/processing/processing/issues/2606
+X problem when removing a mode
+X   https://github.com/processing/processing/issues/2507
 
 pulls
 X Add polling to detect file system changes
@@ -14,7 +18,7 @@ X huge i18n patch
 X   https://github.com/processing/processing/issues/632
 X   https://github.com/processing/processing/pull/2084
 X   http://code.google.com/p/processing/issues/detail?id=593
-_   need to make sure the .properties files are read properly as UTF-8
+X   need to make sure the .properties files are read properly as UTF-8
 X Indent breaks when hitting enter before spaces
 X   https://github.com/processing/processing/issues/2004
 X   https://github.com/processing/processing/pull/2690
@@ -31,10 +35,19 @@ X Dutch https://github.com/processing/processing/pull/2694
 X French https://github.com/processing/processing/pull/2695
 X Portugese https://github.com/processing/processing/pull/2701
 
+earlier
+X repo cleanup
+X   remove non-web stuff from web
+X   remove non-android stuff from android
+X   remove web and android from the main repo
+X separate prefs and sketch state info?
+X   this would mean prefs being rewritten far less
+
 
 high
 _ export application ubuntu -> windows not working (2.2.1)
 _   https://github.com/processing/processing/issues/2698
+_   might be something with libraries (native or otherwise)
 
 
 pending
@@ -651,15 +664,14 @@ _   when are prefs saved? could instead save whenever changes are made
 _   and then if the file gets modified, it'll put up an error message
 _   also, this may be part of why other sketches aren't reloading properly
 _ simple prefs implementation to set key/value pairs using a JTable
-_ separate prefs and sketch state info?
-_   this would mean prefs being rewritten far less
 _ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
 _   don't bother having a "cancel" for the prefs window
-_ rewrite preferences window to use proper layout?
-_   is there already a bug for this?
+_ rewrite preferences window to use proper layout
+_   https://github.com/processing/processing/issues/67
+_   https://github.com/processing/processing/issues/2708
 _ make prefs dialog modal?
 _ split Preferences and PreferencesFrame?
-_   http://code.google.com/p/processing/issues/detail?id=29
+X   http://code.google.com/p/processing/issues/detail?id=29
 _ preferences window has been hit with the ugly stick
 _   redo panel to use proper Box layout etc
 _   also needs to look good across all platforms

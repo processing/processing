@@ -213,7 +213,7 @@ public class ASTNodeWrapper {
    * @return
    */
   private int getJavadocOffset(FieldDeclaration fd){
-    List<ASTNode> list= (List<ASTNode>)fd.modifiers();
+    List<ASTNode> list = (List<ASTNode>) fd.modifiers();
     SimpleName sn = (SimpleName) getNode();
     
     Type tp = fd.getType();
@@ -247,7 +247,7 @@ public class ASTNodeWrapper {
    * @return
    */
   private int getJavadocOffset(MethodDeclaration md) {
-    List<ASTNode> list = (List<ASTNode>)md.modifiers();
+    List<ASTNode> list = (List<ASTNode>) md.modifiers();
     SimpleName sn = (SimpleName) getNode();
     int lineNum = getLineNumber(sn);
     log("SN " + sn + ", " + lineNum);
