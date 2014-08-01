@@ -40,6 +40,7 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 
 import processing.app.Base;
+import processing.app.Language;
 
 
 /**
@@ -433,14 +434,14 @@ class ContributionPanel extends JPanel {
 
     if (contrib.isDeletionFlagged()) {
       installRemoveButton.addActionListener(undoActionListener);
-      installRemoveButton.setText("Undo");
+      installRemoveButton.setText(Language.text("contributions.undo"));
     } else if (contrib.isInstalled()) {
       installRemoveButton.addActionListener(removeActionListener);
-      installRemoveButton.setText("Remove");
+      installRemoveButton.setText(Language.text("contributions.remove"));
       installRemoveButton.setVisible(true);
     } else {
       installRemoveButton.addActionListener(installActionListener);
-      installRemoveButton.setText("Install");
+      installRemoveButton.setText(Language.text("contributions.install"));
     }
 
     contextMenu.removeAll();
@@ -456,9 +457,7 @@ class ContributionPanel extends JPanel {
 
   private void installContribution(AvailableContribution info) {
     if (info.link == null) {
-      listPanel.contribManager.status.setErrorMessage("Your operating system "
-        + "doesn't appear to be supported. You should visit the "
-        + info.getType() + "'s library for more info.");
+      listPanel.contribManager.status.setErrorMessage(String.format(Language.text("contributions.unsupported_operating_system"), info.getType()));
     } else {
       installContribution(info, info.link);
     }
@@ -485,7 +484,7 @@ class ContributionPanel extends JPanel {
           installRemoveButton.setEnabled(true);
 
           if (isError()) {
-            listPanel.contribManager.status.setErrorMessage("An error occured while downloading the contribution.");
+            listPanel.contribManager.status.setErrorMessage(Language.text("contributions.download_error"));
           }
         }
       };
@@ -520,7 +519,7 @@ class ContributionPanel extends JPanel {
   
 
   protected void resetInstallProgressBarState() {
-    installProgressBar.setString("Starting");
+    installProgressBar.setString(Language.text("contributions.progress.starting"));
     installProgressBar.setIndeterminate(false);
     installProgressBar.setValue(0);
     installProgressBar.setVisible(false);
@@ -540,7 +539,7 @@ class ContributionPanel extends JPanel {
     if (contrib != null && !contrib.getType().requiresRestart()) {
       updateButton.setVisible(isSelected() && contribListing.hasUpdates(contrib));
     }
-    installRemoveButton.setVisible(isSelected() || installRemoveButton.getText().equals("Remove"));
+    installRemoveButton.setVisible(isSelected() || installRemoveButton.getText().equals(Language.text("contributions.remove")));
 
 //    for (JTextPane textPane : headerPaneSet) {
     { 

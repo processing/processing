@@ -26,6 +26,7 @@ import java.net.*;
 
 import processing.app.Base;
 import processing.app.Editor;
+import processing.app.Language;
 
 
 public class ContributionManager {
@@ -64,7 +65,7 @@ public class ContributionManager {
       // TODO this is often -1, may need to set progress to indeterminate
       int fileSize = conn.getContentLength();
 //      System.out.println("file size is " + fileSize);
-      progress.startTask("Downloading", fileSize);
+      progress.startTask(Language.text("contributions.progress.downloading"), fileSize);
   
       InputStream in = conn.getInputStream();
       FileOutputStream out = new FileOutputStream(dest);

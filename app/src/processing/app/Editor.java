@@ -360,13 +360,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
 
       if (successful == 0) {
-        statusError("No files were added to the sketch.");
+        statusError(Language.text("editor.status.drag_and_drop.no_files_added"));
 
       } else if (successful == 1) {
-        statusNotice("One file added to the sketch.");
+        statusNotice(Language.text("editor.status.drag_and_drop.one_file_added"));
 
       } else {
-        statusNotice(successful + " files added to the sketch.");
+        statusNotice(String.format(Language.text("editor.status.drag_and_drop.n_files_added"), successful));
       }
       return true;
     }
@@ -1852,7 +1852,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
 
       if (formattedText.equals(source)) {
-        statusNotice("No changes necessary for Auto Format.");
+        statusNotice(Language.text("editor.status.autoformat.no_changes"));
       } else {
         // replace with new bootiful text
         // selectionEnd hopefully at least in the neighborhood
@@ -1876,7 +1876,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
         getSketch().setModified(true);
         // mark as finished
-        statusNotice("Auto Format finished.");
+        statusNotice(Language.text("editor.status.autoformat.finished"));
       }
 
     } catch (final Exception e) {
@@ -2090,9 +2090,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     } else {
       String text = textarea.getSelectedText().trim();
       if (text.length() == 0) {
-        statusNotice("First select a word to find in the reference.");
+        statusNotice(Language.text("editor.status.find_reference.select_word_first"));
       } else {
-        statusNotice("No reference available for \"" + text + "\"");
+        statusNotice(String.format(Language.text("editor.status.find_reference.not_available"), text));
       }
     }
   }
@@ -2525,10 +2525,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   protected void handleSaveImpl() {
-    statusNotice("Saving...");
+    statusNotice(Language.text("editor.status.saving"));
     try {
       if (sketch.save()) {
-        statusNotice("Done Saving.");
+        statusNotice(Language.text("editor.status.saving.done"));
       } else {
         statusEmpty();
       }
@@ -2546,7 +2546,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   public boolean handleSaveAs() {
-    statusNotice("Saving...");
+    statusNotice(Language.text("editor.status.saving"));
     try {
       if (sketch.saveAs()) {
         // statusNotice("Done Saving.");
@@ -2558,7 +2558,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         // only one who knows whether something was renamed.
         //sketchbook.rebuildMenusAsync();
       } else {
-        statusNotice("Save Canceled.");
+        statusNotice(Language.text("editor.status.saving.canceled"));
         return false;
       }
     } catch (Exception e) {
@@ -2589,7 +2589,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Handler for File &rarr; Print.
    */
   public void handlePrint() {
-    statusNotice("Printing...");
+    statusNotice(Language.text("editor.status.printing"));
     //printerJob = null;
     if (printerJob == null) {
       printerJob = PrinterJob.getPrinterJob();
@@ -2606,14 +2606,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
     if (printerJob.printDialog()) {
       try {
         printerJob.print();
-        statusNotice("Done printing.");
+        statusNotice(Language.text("editor.status.printing.done"));
 
       } catch (PrinterException pe) {
-        statusError("Error while printing.");
+        statusError(Language.text("editor.status.printing.error"));
         pe.printStackTrace();
       }
     } else {
-      statusNotice("Printing canceled.");
+      statusNotice(Language.text("editor.status.printing.canceled"));
     }
     //printerJob = null;  // clear this out?
   }
