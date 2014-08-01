@@ -18,19 +18,18 @@ _   need to make sure the .properties files are read properly as UTF-8
 X Indent breaks when hitting enter before spaces
 X   https://github.com/processing/processing/issues/2004
 X   https://github.com/processing/processing/pull/2690
-X support for Japanese
-X   https://github.com/processing/processing/pull/2688
-X support for Spanish
-X   https://github.com/processing/processing/pull/2691
-X support for Dutch
-X   https://github.com/processing/processing/pull/2694
-X support for French
-X   https://github.com/processing/processing/pull/2695
 X Localize status messages and contributions panel
 X   https://github.com/processing/processing/pull/2696
 X prevent adding files to read-only sketches
 X   https://github.com/processing/processing/issues/2459
 X   https://github.com/processing/processing/pull/2697
+
+languages
+X Japanese https://github.com/processing/processing/pull/2688
+X Spanish https://github.com/processing/processing/pull/2691
+X Dutch https://github.com/processing/processing/pull/2694
+X French https://github.com/processing/processing/pull/2695
+X Portugese https://github.com/processing/processing/pull/2701
 
 
 high
