@@ -213,7 +213,7 @@ public class Utils {
   }
 
   public void minDistInGrid(int g[][], int i, int j, int fi, int fj,
-                                   char s1[], char s2[], ArrayList set) {
+                                   char s1[], char s2[], ArrayList<OfsSetTemp> set) {
 //    if(i < s1.length)System.out.print(s1[i] + " <->");
 //    if(j < s2.length)System.out.print(s2[j]);
     if (i < s1.length && j < s2.length) {

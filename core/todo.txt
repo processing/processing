@@ -92,6 +92,7 @@ _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start
 _   https://github.com/processing/processing/issues/2357
+_ glw? lwjgl? retina jogl?
 
 
 cantfix

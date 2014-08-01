@@ -561,7 +561,7 @@ public class ASTGenerator {
       }
       else {
         // or in a predefined class?
-        Class tehClass = findClassIfExists(((SimpleName) astNode).toString());
+        Class<?> tehClass = findClassIfExists(((SimpleName) astNode).toString());
         if (tehClass != null) {
           return new ClassMember(tehClass);
         }
@@ -587,7 +587,7 @@ public class ASTGenerator {
             /*The type wasn't found in local code, so it might be something like
              * log(), or maybe belonging to super class, etc.
              */
-            Class tehClass = findClassIfExists(((SimpleName)fa.getExpression()).toString());
+            Class<?> tehClass = findClassIfExists(((SimpleName)fa.getExpression()).toString());
             if (tehClass != null) {
               // Method Expression is a simple name and wasn't located locally, but found in a class
               // so look for method in this class.

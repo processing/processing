@@ -1116,7 +1116,7 @@ public class Debugger implements VMEventListener {
                     for (Field f : type.visibleFields()) {
                         System.out.println(f.typeName() + " " + f.name() + " = " + thisObject.getValue(f));
                     }
-                } else {
+                } else {  // TODO [this is not reachable - fry]
                     System.out.println("can't get this (in native or static method)");
                 }
             }
