@@ -1,4 +1,5 @@
 0230 pde (3.0a3)
+X remove toolbar buttons except for start/stop
 
 gsoc
 X fixes for mode/tool installation

@@ -56,11 +56,12 @@ public class Language {
     final String[] SUPPORTED = {
       "de", // de, German, Deutsch
       "en", // en, English, English
+      "el", // el, Greek
       "es", // es, Spanish
       "fr", // fr, French, Français, Langue française
       "ja", // ja, Japanese
       "nl", // nl, Dutch, Nederlands
-      "pt", //pt, Portuguese
+      "pt", // pt, Portuguese
     };
     
     for (String code : SUPPORTED) {
