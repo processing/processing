@@ -15,7 +15,7 @@ import processing.core.PApplet;
 
 /**
  * Internationalization (i18n)
- * 
+ *
  * @author Darius Morawiec
  */
 public class Language {
@@ -44,6 +44,8 @@ public class Language {
 		this.languages.put(Locale.GERMAN.getLanguage(), Locale.GERMAN.getDisplayLanguage(Locale.GERMAN));
 		// ja, Japanese
 		this.languages.put(Locale.JAPANESE.getLanguage(), Locale.JAPANESE.getDisplayLanguage(Locale.JAPANESE));
+		// fr, French, Français, Langue française
+		this.languages.put(Locale.FRENCH.getLanguage(), Locale.FRENCH.getDisplayLanguage(Locale.FRENCH));
 
 		// Set default language
 		if (!this.languages.containsKey(this.language)) {
@@ -72,7 +74,7 @@ public class Language {
 
 	/**
 	 * Singleton constructor
-	 * 
+	 *
 	 * @return
 	 */
 	public static synchronized Language init() {
@@ -84,7 +86,7 @@ public class Language {
 
 	/**
 	 * Get translation from bundles.
-	 * 
+	 *
 	 * @param text
 	 * @return
 	 */
@@ -94,7 +96,7 @@ public class Language {
 
 	/**
 	 * Get all available languages
-	 * 
+	 *
 	 * @return
 	 */
 	public static HashMap<String, String> getLanguages() {
@@ -103,7 +105,7 @@ public class Language {
 
 	/**
 	 * Get current language
-	 * 
+	 *
 	 * @return
 	 */
 	public static String getLanguage() {
@@ -112,7 +114,7 @@ public class Language {
 
 	/**
 	 * Set new language
-	 * 
+	 *
 	 * @param language
 	 */
 	public static void setLanguage(String language) {
@@ -123,7 +125,7 @@ public class Language {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Custom Control class for consitent encoding.
 	 * http://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle
