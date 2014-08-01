@@ -49,6 +49,8 @@ high
 _ export application ubuntu -> windows not working (2.2.1)
 _   https://github.com/processing/processing/issues/2698
 _   might be something with libraries (native or otherwise)
+_ move the language stuff to the settings folder
+_   that way people can modify and test w/o recompiling
 
 
 pending
