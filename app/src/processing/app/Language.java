@@ -60,6 +60,7 @@ public class Language {
       "fr", // fr, French, Français, Langue française
       "ja", // ja, Japanese
       "nl", // nl, Dutch, Nederlands
+      "pt", //pt, Portuguese
     };
     
     for (String code : SUPPORTED) {
@@ -77,6 +78,9 @@ public class Language {
     this.languages.put("es", Locale.forLanguageTag("es").getDisplayLanguage(Locale.forLanguageTag("es")));
     // nl, Dutch, Nederlands
     this.languages.put("nl", Locale.forLanguageTag("nl").getDisplayLanguage(Locale.forLanguageTag("nl")));
+    // pt, Portuguese
+    this.languages.put("pt", Locale.forLanguageTag("pt").getDisplayLanguage(Locale.forLanguageTag("pt")));
+
     */
 
     // Set default language
