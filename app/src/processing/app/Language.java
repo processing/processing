@@ -36,6 +36,7 @@ import processing.core.PApplet;
 public class Language {
   static private final String FILE = "processing.app.languages.PDE";
   static private final String LISTING = "processing/app/languages/languages.txt";
+  static protected final String PREF = "language";
   
   /** Single instance of this Language class */
   static private Language instance = null;
@@ -50,9 +51,15 @@ public class Language {
 
 
   private Language() {
-    // Get system language
-    this.language = Locale.getDefault().getLanguage();
-
+    String systemLanguage = Locale.getDefault().getLanguage();
+    String language = Preferences.get(PREF);
+    boolean writePrefs = false;
+    
+    if (language == null) {
+      language = systemLanguage;
+      writePrefs = true;
+    }
+    
     // Set available languages
     languages = new HashMap<String, String>();
     for (String code : listSupported()) {
@@ -62,22 +69,27 @@ public class Language {
     // Set default language
     if (!languages.containsKey(language)) {
       language = "en";
+      writePrefs = true;
     }
 
-    // Get saved language
-    try {
-      File file = Base.getContentFile("lib/language.txt");
-      if (file.exists()) {
-        String language = PApplet.loadStrings(file)[0];
-        language = language.trim().toLowerCase();
-        if (!language.equals("")) {
-          this.language = language;
-        } else {
-          Base.saveFile(this.language, file);
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
+//    // Get saved language
+//    try {
+//      File file = Base.getSettingsFile("language.txt");
+//      if (file.exists()) {
+//        String language = PApplet.loadStrings(file)[0];
+//        language = language.trim().toLowerCase();
+//        if (!language.equals("")) {
+//          this.language = language;
+//        } else {
+//          Base.saveFile(this.language, file);
+//        }
+//      }
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+    
+    if (writePrefs) {
+      Preferences.save();
     }
 
     // Get bundle with translations (processing.app.language.PDE)
@@ -86,7 +98,7 @@ public class Language {
   
   
   String[] listSupported() {    
-//    // List of languages in alphabetical order. New additions go here.
+//    // Old list of languages in alphabetical order. 
 //    final String[] SUPPORTED = {
 //      "de", // de, German, Deutsch
 //      "en", // en, English, English
@@ -140,15 +152,15 @@ public class Language {
   }
 
 
-  /** Set new language */
-  static public void setLanguage(String language) {
-    try {
-      File file = Base.getContentFile("lib/language.txt");
-      Base.saveFile(language, file);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
+//  /** Set new language */
+//  static public void setLanguage(String language) {
+//    try {
+//      File file = Base.getContentFile("lib/language.txt");
+//      Base.saveFile(language, file);
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+//  }
 
 
   /**

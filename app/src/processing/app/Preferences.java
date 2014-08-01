@@ -810,13 +810,14 @@ public class Preferences {
     Map<String, String> languages = Language.getLanguages();
     String language = "";
     for (Map.Entry<String, String> lang : languages.entrySet()) {
-      if (lang.getValue().equals( String.valueOf(languageSelectionBox.getSelectedItem()))) {
+      if (lang.getValue().equals(String.valueOf(languageSelectionBox.getSelectedItem()))) {
         language = lang.getKey().trim().toLowerCase();
         break;
       }
     }
     if (!language.equals(Language.getLanguage()) && !language.equals("")) {
-      Language.setLanguage(language);
+      //Language.setLanguage(language);
+      set(Language.PREF, language);
     }
     
     int oldDisplayIndex = getInteger("run.display"); //$NON-NLS-1$
