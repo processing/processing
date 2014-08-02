@@ -566,6 +566,10 @@ public class FloatList implements Iterable<Float> {
     new Sort() {
       @Override
       public int size() {
+        // if empty, don't even mess with the NaN check, it'll AIOOBE
+        if (count == 0) {
+          return 0;
+        }
         // move NaN values to the end of the list and don't sort them
         int right = count - 1;
         while (data[right] != data[right]) {
