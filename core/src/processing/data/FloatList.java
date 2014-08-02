@@ -570,6 +570,9 @@ public class FloatList implements Iterable<Float> {
         int right = count - 1;
         while (data[right] != data[right]) {
           right--;
+          if (right == -1) {  // all values are NaN
+            return 0;
+          }
         }
         for (int i = right; i >= 0; --i) {
           float v = data[i];

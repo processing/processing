@@ -1,4 +1,6 @@
 0230 core (3.0a3)
+X add another NaN check when sorting FloatList/Dict classes
+X   if all values were NaN, an ArrayIndexOutOfBoundsException was thrown
 
 earlier
 X PShape disableStyle() does not work with createShape()

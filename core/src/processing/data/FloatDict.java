@@ -675,6 +675,9 @@ public class FloatDict {
           int right = count - 1;
           while (values[right] != values[right]) {
             right--;
+            if (right == -1) {
+              return 0;  // all values are NaN
+            }
           }
           for (int i = right; i >= 0; --i) {
             if (Float.isNaN(values[i])) {
