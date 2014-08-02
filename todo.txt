@@ -30,6 +30,8 @@ X   https://github.com/processing/processing/pull/2696
 X prevent adding files to read-only sketches
 X   https://github.com/processing/processing/issues/2459
 X   https://github.com/processing/processing/pull/2697
+X Added some helper methods to Language
+X   https://github.com/processing/processing/pull/2704
 
 languages
 X Japanese https://github.com/processing/processing/pull/2688
