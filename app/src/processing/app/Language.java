@@ -86,16 +86,17 @@ public class Language {
   
   
   static private String[] listSupported() {
-    // List of languages in alphabetical order. 
+    // List of languages in alphabetical order. (Add yours here.)
     final String[] SUPPORTED = {
-      "de", // de, German, Deutsch
-      "en", // en, English, English
-      "el", // el, Greek
-      "es", // es, Spanish
-      "fr", // fr, French, Français, Langue française
-      "ja", // ja, Japanese
-      "nl", // nl, Dutch, Nederlands
-      "pt", // pt, Portuguese
+      "de", // German, Deutsch
+      "en", // English
+      "el", // Greek
+      "es", // Spanish
+      "fr", // French, Français
+      "ja", // Japanese
+      "nl", // Dutch, Nederlands
+      "pt", // Portuguese
+      "tr"  // Turkish
     };
     return SUPPORTED;
 
