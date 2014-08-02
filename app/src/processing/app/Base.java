@@ -1784,24 +1784,29 @@ public class Base {
   }
 
 
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /** 
+   * Get the directory that can store settings. (Library on OS X, App Data or
+   * something similar on Windows, a dot folder on Linux.) Removed this as a
+   * preference for 3.0a3 because we need this to be stable.
+   */
   static public File getSettingsFolder() {
     File settingsFolder = null;
 
-    String preferencesPath = Preferences.get("settings.path"); //$NON-NLS-1$
-    if (preferencesPath != null) {
-      settingsFolder = new File(preferencesPath);
-
-    } else {
-      try {
-        settingsFolder = platform.getSettingsFolder();
-      } catch (Exception e) {
-        showError("Problem getting data folder",
-                  "Error getting the Processing data folder.", e);
-      }
+//    String preferencesPath = Preferences.get("settings.path"); //$NON-NLS-1$
+//    if (preferencesPath != null) {
+//      settingsFolder = new File(preferencesPath);
+//
+//    } else {
+    try {
+      settingsFolder = platform.getSettingsFolder();
+    } catch (Exception e) {
+      showError("Problem getting the settings folder",
+                "Error getting the Processing the settings folder.", e);
     }
+//    }
 
     // create the folder if it doesn't exist already
     if (!settingsFolder.exists()) {

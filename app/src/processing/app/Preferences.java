@@ -816,8 +816,7 @@ public class Preferences {
       }
     }
     if (!language.equals(Language.getLanguage()) && !language.equals("")) {
-      //Language.setLanguage(language);
-      set(Language.PREF, language);
+      Language.saveLanguage(language);
     }
     
     int oldDisplayIndex = getInteger("run.display"); //$NON-NLS-1$

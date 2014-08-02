@@ -35,8 +35,12 @@ import processing.core.PApplet;
  */
 public class Language {
   static private final String FILE = "processing.app.languages.PDE";
-  static private final String LISTING = "processing/app/languages/languages.txt";
-  static protected final String PREF = "language";
+  //static private final String LISTING = "processing/app/languages/languages.txt";
+  
+  // Store the language information in a file separate from the preferences,
+  // because preferences need the language on load time.
+  static protected final String PREF_FILE = "language.txt";
+  static protected final File prefFile = Base.getSettingsFile(PREF_FILE);
   
   /** Single instance of this Language class */
   static private Language instance = null;
@@ -52,7 +56,7 @@ public class Language {
 
   private Language() {
     String systemLanguage = Locale.getDefault().getLanguage();
-    String language = Preferences.get(PREF);
+    language = loadLanguage();
     boolean writePrefs = false;
     
     if (language == null) {
@@ -72,24 +76,8 @@ public class Language {
       writePrefs = true;
     }
 
-//    // Get saved language
-//    try {
-//      File file = Base.getSettingsFile("language.txt");
-//      if (file.exists()) {
-//        String language = PApplet.loadStrings(file)[0];
-//        language = language.trim().toLowerCase();
-//        if (!language.equals("")) {
-//          this.language = language;
-//        } else {
-//          Base.saveFile(this.language, file);
-//        }
-//      }
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//    }
-    
     if (writePrefs) {
-      Preferences.save();
+      saveLanguage(language);
     }
 
     // Get bundle with translations (processing.app.language.PDE)
@@ -97,19 +85,22 @@ public class Language {
   }
   
   
-  String[] listSupported() {    
-//    // Old list of languages in alphabetical order. 
-//    final String[] SUPPORTED = {
-//      "de", // de, German, Deutsch
-//      "en", // en, English, English
-//      "el", // el, Greek
-//      "es", // es, Spanish
-//      "fr", // fr, French, Français, Langue française
-//      "ja", // ja, Japanese
-//      "nl", // nl, Dutch, Nederlands
-//      "pt", // pt, Portuguese
-//    };
+  static private String[] listSupported() {
+    // List of languages in alphabetical order. 
+    final String[] SUPPORTED = {
+      "de", // de, German, Deutsch
+      "en", // en, English, English
+      "el", // el, Greek
+      "es", // es, Spanish
+      "fr", // fr, French, Français, Langue française
+      "ja", // ja, Japanese
+      "nl", // nl, Dutch, Nederlands
+      "pt", // pt, Portuguese
+    };
+    return SUPPORTED;
 
+    /*
+    // come back to this when bundles are placed outside the JAR
     InputStream input = getClass().getResourceAsStream(LISTING);
     String[] lines = PApplet.loadStrings(input);
     ArrayList<String> list = new ArrayList<String>();
@@ -122,9 +113,40 @@ public class Language {
       list.add(line);
     }
     return list.toArray(new String[0]);
+    */
   }
 
 
+  /** Read the saved language */
+  static private String loadLanguage() { 
+    try {
+      if (prefFile.exists()) {
+        String language = PApplet.loadStrings(prefFile)[0];
+        language = language.trim().toLowerCase();
+        if (!language.equals("")) {
+          return language;
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+  
+  
+  /**
+   * Save the language directly to a settings file. This is 'save' and not 
+   * 'set' because a language change requires a restart of Processing. 
+   */
+  static public void saveLanguage(String language) {
+    try {
+      Base.saveFile(language, prefFile);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+  
+  
   /** Singleton constructor */
   static public synchronized Language init() {
     if (instance == null) {
@@ -152,8 +174,10 @@ public class Language {
   }
 
 
-//  /** Set new language */
+//  /** Set new language (called by Preferences) */
 //  static public void setLanguage(String language) {
+//    this.language = language;
+//    
 //    try {
 //      File file = Base.getContentFile("lib/language.txt");
 //      Base.saveFile(language, file);
