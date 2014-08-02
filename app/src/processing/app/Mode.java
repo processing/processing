@@ -684,7 +684,7 @@ public abstract class Mode {
 
   public void showExamplesFrame() {
     if (examplesFrame == null) {
-      examplesFrame = new JFrame(getTitle() + " "+Language.text("menu.file.examples"));
+      examplesFrame = new JFrame(getTitle() + " " + Language.text("editor.window.examples"));
       Toolkit.setIcon(examplesFrame);
       Toolkit.registerWindowCloseKeys(examplesFrame.getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -903,7 +903,7 @@ public abstract class Mode {
   
   public void showSketchbookFrame() {
     if (sketchbookFrame == null) {
-      sketchbookFrame = new JFrame("Processing Sketchbook");
+      sketchbookFrame = new JFrame(Language.text("editor.window.sketchbook"));
       Toolkit.setIcon(sketchbookFrame);
       Toolkit.registerWindowCloseKeys(sketchbookFrame.getRootPane(),
                                       new ActionListener() {

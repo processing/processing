@@ -1,5 +1,7 @@
 0230 pde (3.0a3)
 X remove toolbar buttons except for start/stop
+X rename sketchbook tree name, re-order menu, add language hooks
+_ remove toolbar menu references and code to rebuild
 
 gsoc
 X fixes for mode/tool installation

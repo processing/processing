@@ -142,8 +142,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //          EditorConsole.systemOut.println("editor window activated");
           base.handleActivated(Editor.this);
 //          mode.handleActivated(Editor.this);
-          fileMenu.insert(base.getSketchbookMenu(), 2);
-          fileMenu.insert(base.getRecentMenu(), 3);
+//          fileMenu.insert(base.getSketchbookMenu(), 2);
+          fileMenu.insert(base.getRecentMenu(), 2);
 //          fileMenu.insert(mode.getExamplesMenu(), 3);
           sketchMenu.insert(mode.getImportMenu(), 4);
           mode.insertToolbarRecentMenu();
@@ -154,7 +154,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         public void windowDeactivated(WindowEvent e) {
 //          EditorConsole.systemErr.println("editor window deactivated");
 //          mode.handleDeactivated(Editor.this);
-          fileMenu.remove(base.getSketchbookMenu());
+//          fileMenu.remove(base.getSketchbookMenu());
           fileMenu.remove(base.getRecentMenu());
 //          fileMenu.remove(mode.getExamplesMenu());
           sketchMenu.remove(mode.getImportMenu());
@@ -616,20 +616,18 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     fileMenu.add(item);
 
-    fileMenu.add(base.getSketchbookMenu());
+//    fileMenu.add(base.getSketchbookMenu());
     
-    JMenuItem sbMenu = Toolkit.newJMenuItemShift("Sketchbook Tree", 'K');
-    sbMenu.addActionListener(new ActionListener() {      
+    item = Toolkit.newJMenuItemShift(Language.text("menu.file.sketchbook"), 'K');
+    item.addActionListener(new ActionListener() {      
       @Override
       public void actionPerformed(ActionEvent e) {
         mode.showSketchbookFrame();
       }
     });
-    
-    fileMenu.add(sbMenu);
+    fileMenu.add(item);
 
-//    fileMenu.add(mode.getExamplesMenu());
-    item = Toolkit.newJMenuItemShift(Language.text("menu.file.examples"), 'O');
+    item = Toolkit.newJMenuItemShift(Language.text("editor.window.examples"), 'O');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mode.showExamplesFrame();
