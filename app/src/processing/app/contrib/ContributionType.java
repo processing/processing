@@ -145,7 +145,7 @@ public enum ContributionType {
    * contribution type. For instance, a list of folders that have a 'mode'
    * subfolder if this is a ModeContribution.
    */
-  File[] listCandidates(File folder) {
+  public File[] listCandidates(File folder) {
     return folder.listFiles(new FileFilter() {
       public boolean accept(File potential) {
         return isCandidate(potential);
@@ -191,8 +191,7 @@ public enum ContributionType {
     case MODE:
       return ModeContribution.load(base, folder);
     case EXAMPLE:
-      //TODO: Fill this in if reqd
-      return null;
+      return ExampleContribution.load(folder);
     }
     return null;
   }
@@ -211,7 +210,7 @@ public enum ContributionType {
       contribs.addAll(editor.getBase().getModeContribs());
       break;
     case EXAMPLE:
-      //TODO: Fill this in if reqd
+      contribs.addAll(editor.getBase().getExampleContribs());
       break;
     }
     return contribs;

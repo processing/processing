@@ -34,6 +34,7 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.*;
 
+import processing.app.contrib.ContributionType;
 import processing.app.syntax.*;
 import processing.core.PApplet;
 
@@ -593,15 +594,6 @@ public abstract class Mode {
   }
 
 
-  public File[] getContributedExampleCategoryFolders() {
-    return examplesContribFolder.listFiles(new FilenameFilter() {
-      public boolean accept(File dir, String name) {
-        return dir.isDirectory() && name.charAt(0) != '.';
-      }
-    });
-  }
-
-
   public JTree buildExamplesTree() {
     DefaultMutableTreeNode node = new DefaultMutableTreeNode("Examples");
 
@@ -685,9 +677,10 @@ public abstract class Mode {
     JTree examplesTree = new JTree(node);
 
     try {
-      // break down the examples folder for examples
-      File[] subfolders = getContributedExampleCategoryFolders();
-
+      File[] subfolders = ContributionType.EXAMPLE.listCandidates(examplesContribFolder);
+      if (subfolders == null) {
+        subfolders = new File[0]; //empty array
+      }
       for (File sub : subfolders) {
         DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
         if (base.addSketches(subNode, sub)) {

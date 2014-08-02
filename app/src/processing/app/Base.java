@@ -124,6 +124,8 @@ public class Base {
   private Mode[] coreModes;
   //public List<ModeContribution> contribModes;
   protected ArrayList<ModeContribution> modeContribs;
+  
+  protected ArrayList<ExampleContribution> exampleContribs;
 
   private JMenu sketchbookMenu;
 
@@ -340,6 +342,19 @@ public class Base {
   }
 
 
+  /**
+   * Instantiates and adds new contributed modes to the contribModes list.
+   * Checks for duplicates so the same mode isn't instantiates twice. Does not
+   * remove modes because modes can't be removed once they are instantiated.
+   */
+  void rebuildContribExamples() {
+    if (exampleContribs == null) {
+      exampleContribs = new ArrayList<ExampleContribution>();
+    }
+    ExampleContribution.loadMissing(this);
+  }
+
+
   public Base(String[] args) throws Exception {
 //    // Get the sketchbook path, and make sure it's set properly
 //    determineSketchbookFolder();
@@ -357,6 +372,8 @@ public class Base {
     ContributionManager.cleanup(this);
     buildCoreModes();
     rebuildContribModes();
+    
+    rebuildContribExamples();
 
     // Needs to happen after the sketchbook folder has been located.
     // Also relies on the modes to be loaded so it knows what can be
@@ -658,6 +675,11 @@ public class Base {
       }
     }
     return allModes;
+  }
+
+
+  public ArrayList<ExampleContribution> getExampleContribs() {
+    return exampleContribs;
   }
 
 
