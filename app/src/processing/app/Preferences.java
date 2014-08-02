@@ -570,6 +570,12 @@ public class Preferences {
     memoryOverrideBox = new JCheckBox(Language.text("preferences.increase_max_memory")+": ");
     memoryBox.add(memoryOverrideBox);
     memoryField = new JTextField(4);
+    memoryOverrideBox.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        memoryField.setEnabled(memoryOverrideBox.isSelected());
+      }
+    });
     memoryBox.add(memoryField);
     memoryBox.add(new JLabel(" MB"));
     pain.add(memoryBox);
@@ -936,6 +942,7 @@ public class Preferences {
       setSelected(getBoolean("run.options.memory")); //$NON-NLS-1$
     memoryField.
       setText(get("run.options.memory.maximum")); //$NON-NLS-1$
+    memoryField.setEnabled(memoryOverrideBox.isSelected());
 
     if (autoAssociateBox != null) {
       autoAssociateBox.
