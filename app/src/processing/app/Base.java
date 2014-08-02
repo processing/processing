@@ -92,7 +92,7 @@ public class Base {
   static private boolean commandLine;
 
   // A single instance of the preferences window
-  Preferences preferencesFrame;
+  PreferencesFrame preferencesFrame;
 
   // A single instance of the library manager window
   ContributionManagerDialog libraryManagerFrame;
@@ -1605,7 +1605,7 @@ public class Base {
    */
   public void handlePrefs() {
     if (preferencesFrame == null) {
-      preferencesFrame = new Preferences(this);
+      preferencesFrame = new PreferencesFrame(this);
     }
     preferencesFrame.showFrame();
   }

@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-14 Ben Fry and Casey Reas
+  Copyright (c) 2012-14 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -37,80 +38,18 @@ import processing.core.*;
 
 
 /**
- * Storage class for user preferences and environment settings.
+ * Window for modifying preferences.
  * <P>
- * This class no longer uses the Properties class, since
- * properties files are iso8859-1, which is highly likely to
- * be a problem when trying to save sketch folders and locations.
- * <p>
- * The GUI portion in here is really ugly, as it uses exact layout. This was
- * done in frustration one evening (and pre-Swing), but that's long since past,
- * and it should all be moved to a proper swing layout like BoxLayout.
- * <p>
- * This is very poorly put together, that the preferences panel and the actual
- * preferences i/o is part of the same code. But there hasn't yet been a
- * compelling reason to bother with the separation aside from concern about
- * being lectured by strangers who feel that it doesn't look like what they
- * learned in CS class.
- * <p>
- * We don't use the Java Preferences API because it would entail writing to 
- * the registry (on Windows), or an obscure file location (on Mac OS X) and 
- * make it far more difficult (impossible) to remove the preferences.txt to 
- * reset them (when they become corrupt), or to find the the file to make 
- * edits for numerous obscure preferences that are not part of the preferences
- * window. If we added a generic editor (e.g. about:config in Mozilla) for 
- * such things, we could start using the Java Preferences API. But wow, that
- * sounds like a lot of work. Not unlike writing this paragraph. 
+ * This is ugly GUI code that uses exact layout. This was done in frustration
+ * one evening (and pre-Swing), but that's long since past, and the code  
+ * should instead be ported to a proper Swing layout like Group or BoxLayout.
+ * <A HREF="https://github.com/processing/processing/issues/67">See here</A>.
  */
-public class Preferences {
-
-  static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 }; 
-  // what to call the feller
-
-  // had to rename this file because people were editing it
-  static final String DEFAULTS_FILE = "defaults.txt"; //$NON-NLS-1$
-  static final String PREFS_FILE = "preferences.txt"; //$NON-NLS-1$
-
-
-  // prompt text stuff
-
-  static final String PROMPT_YES     = Language.text("prompt.yes");
-  static final String PROMPT_NO      = Language.text("prompt.no");
-  static final String PROMPT_CANCEL  = Language.text("prompt.cancel");
-  static final String PROMPT_OK      = Language.text("prompt.ok");
-  static final String PROMPT_BROWSE  = Language.text("prompt.browse");
-
-  /**
-   * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
-   * Windows XP needs 66, and my Ubuntu machine needs 80+, so 80 seems proper.
-   */
-  static public int BUTTON_WIDTH  = Integer.valueOf(Language.text("preferences.button.width"));
-
-  /**
-   * Standardized button height. Mac OS X 10.3 (Java 1.4) wants 29,
-   * presumably because it now includes the blue border, where it didn't
-   * in Java 1.3. Windows XP only wants 23 (not sure what default Linux
-   * would be). Because of the disparity, on Mac OS X, it will be set
-   * inside a static block.
-   */
-  static public int BUTTON_HEIGHT = 24;
-  
-  /** height of the EditorHeader, EditorToolbar, and EditorStatus */
-  static final int GRID_SIZE = 32;
-  //static final int GRID_SIZE = 33;
-
-  // indents and spacing standards. these probably need to be modified
-  // per platform as well, since macosx is so huge, windows is smaller,
-  // and linux is all over the map
-
-  static final int GUI_BIG     = 13;
-  static final int GUI_BETWEEN = 8;
-  static final int GUI_SMALL   = 6;
-
-  // gui elements
-
+public class PreferencesFrame {
   JFrame dialog;
   int wide, high;
+
+  static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 }; 
 
   JTextField sketchbookLocationField;
   JTextField presentColor;
@@ -146,90 +85,7 @@ public class Preferences {
   Base base;
 
 
-  // data model
-
-  static HashMap<String, String> defaults;
-  static HashMap<String, String> table = new HashMap<String,String>();
-  static File preferencesFile;
-
-
-//  static public void init(String commandLinePrefs) {
-  static public void init() {
-    // start by loading the defaults, in case something
-    // important was deleted from the user prefs
-    try {
-      // Name changed for 2.1b2 to avoid problems with users modifying or 
-      // replacing the file after doing a search for "preferences.txt".
-      load(Base.getLibStream(DEFAULTS_FILE));
-    } catch (Exception e) {
-      Base.showError(null, "Could not read default settings.\n" +
-                           "You'll need to reinstall Processing.", e);
-    }
-
-    // check for platform-specific properties in the defaults
-    String platformExt = "." + PConstants.platformNames[PApplet.platform]; //$NON-NLS-1$
-    int platformExtLength = platformExt.length();
-
-    // Get a list of keys that are specific to this platform
-    ArrayList<String> platformKeys = new ArrayList<String>();
-    for (String key : table.keySet()) {
-      if (key.endsWith(platformExt)) {
-        platformKeys.add(key);
-      }
-    }
-    
-    // Use those platform-specific keys to override
-    for (String key : platformKeys) {
-      // this is a key specific to a particular platform
-      String actualKey = key.substring(0, key.length() - platformExtLength);
-      String value = get(key);
-      set(actualKey, value);
-    }
-
-    // clone the hash table
-    defaults = (HashMap<String, String>) table.clone();
-
-    // other things that have to be set explicitly for the defaults
-    setColor("run.window.bgcolor", SystemColor.control); //$NON-NLS-1$
-    
-    // next load user preferences file
-    preferencesFile = Base.getSettingsFile(PREFS_FILE);
-    if (preferencesFile.exists()) {
-      try {
-        load(new FileInputStream(preferencesFile));
-
-      } catch (Exception ex) {
-        Base.showError("Error reading preferences",
-                       "Error reading the preferences file. " +
-                       "Please delete (or move)\n" +
-                       preferencesFile.getAbsolutePath() +
-                       " and restart Processing.", ex);
-      }
-    } 
-    
-    if (checkSketchbookPref() || !preferencesFile.exists()) {
-      // create a new preferences file if none exists
-      // saves the defaults out to the file
-      save();
-    }
-
-    PApplet.useNativeSelect = 
-      Preferences.getBoolean("chooser.files.native"); //$NON-NLS-1$
-    
-    // Set http proxy for folks that require it. 
-    // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
-    String proxyHost = get("proxy.host");
-    String proxyPort = get("proxy.port");
-    if (proxyHost != null && proxyHost.trim().length() != 0 &&
-        proxyPort != null && proxyPort.trim().length() != 0) {
-      System.setProperty("http.proxyHost", proxyHost);
-      System.setProperty("http.proxyPort", proxyPort);
-    }
-  }
-
-
-  // setup dialog for the prefs
-  public Preferences(Base base) {
+  public PreferencesFrame(Base base) {
     this.base = base;
     //dialog = new JDialog(editor, "Preferences", true);
     dialog = new JFrame(Language.text("preferences"));
@@ -238,6 +94,11 @@ public class Preferences {
     Container pain = dialog.getContentPane();
     pain.setLayout(null);
 
+    final int GUI_BETWEEN = Preferences.GUI_BETWEEN;
+    final int GUI_BIG = Preferences.GUI_BIG;
+    final int GUI_SMALL = Preferences.GUI_SMALL;
+    final int BUTTON_WIDTH = Preferences.BUTTON_WIDTH;
+    
     int top = GUI_BIG;
     int left = GUI_BIG;
     int right = 0;
@@ -262,13 +123,13 @@ public class Preferences {
     pain.add(sketchbookLocationField);
     d = sketchbookLocationField.getPreferredSize();
 
-    button = new JButton(PROMPT_BROWSE);
+    button = new JButton(Preferences.PROMPT_BROWSE);
     button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           File dflt = new File(sketchbookLocationField.getText());
           PApplet.selectFolder(Language.text("preferences.sketchbook_location.popup"),
                                "sketchbookCallback", dflt,
-                               Preferences.this, dialog);
+                               PreferencesFrame.this, dialog);
         }
       });
     pain.add(button);
@@ -655,7 +516,7 @@ public class Preferences {
     right = Math.max(right, left + d.width);
     top += d.height; // + GUI_SMALL;
 
-    label = new JLabel(preferencesFile.getAbsolutePath());
+    label = new JLabel(Preferences.getSketchbookPath());
     final JLabel clickable = label;
     label.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
@@ -687,7 +548,7 @@ public class Preferences {
 
     // [  OK  ] [ Cancel ]  maybe these should be next to the message?
 
-    button = new JButton(PROMPT_OK);
+    button = new JButton(Preferences.PROMPT_OK);
     button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           applyFrame();
@@ -696,13 +557,13 @@ public class Preferences {
       });
     pain.add(button);
     d2 = button.getPreferredSize();
-    BUTTON_HEIGHT = d2.height;
+    int BUTTON_HEIGHT = d2.height;
 
     h = right - (BUTTON_WIDTH + GUI_SMALL + BUTTON_WIDTH);
     button.setBounds(h, top, BUTTON_WIDTH, BUTTON_HEIGHT);
     h += BUTTON_WIDTH + GUI_SMALL;
 
-    button = new JButton(PROMPT_CANCEL);
+    button = new JButton(Preferences.PROMPT_CANCEL);
     button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           disposeFrame();
@@ -789,28 +650,28 @@ public class Preferences {
    * then send a message to the editor saying that it's time to do the same.
    */
   protected void applyFrame() {
-    setBoolean("editor.smooth", //$NON-NLS-1$
-               editorAntialiasBox.isSelected());
+    Preferences.setBoolean("editor.smooth", //$NON-NLS-1$
+                           editorAntialiasBox.isSelected());
 
-    setBoolean("export.delete_target_folder", //$NON-NLS-1$
-               deletePreviousBox.isSelected());
+    Preferences.setBoolean("export.delete_target_folder", //$NON-NLS-1$
+                           deletePreviousBox.isSelected());
 
     boolean wine = whinyBox.isSelected();
-    setBoolean("header.hide.image", wine); //$NON-NLS-1$
-    setBoolean("buttons.hide.image", wine); //$NON-NLS-1$
+    Preferences.setBoolean("header.hide.image", wine); //$NON-NLS-1$
+    Preferences.setBoolean("buttons.hide.image", wine); //$NON-NLS-1$
     // Could iterate through editors here and repaint them all, but probably 
     // requires a doLayout() call, and that may have different effects on
     // each platform, and nobody wants to debug/support that.
 
     // if the sketchbook path has changed, rebuild the menus
-    String oldPath = getSketchbookPath();
+    String oldPath = Preferences.getSketchbookPath();
     String newPath = sketchbookLocationField.getText();
     if (!newPath.equals(oldPath)) {
       base.setSketchbookFolder(new File(newPath));
     }
 
 //    setBoolean("editor.external", externalEditorBox.isSelected());
-    setBoolean("update.check", checkUpdatesBox.isSelected()); //$NON-NLS-1$
+    Preferences.setBoolean("update.check", checkUpdatesBox.isSelected()); //$NON-NLS-1$
     
     // Save Language
     Map<String, String> languages = Language.getLanguages();
@@ -825,7 +686,7 @@ public class Preferences {
       Language.saveLanguage(language);
     }
     
-    int oldDisplayIndex = getInteger("run.display"); //$NON-NLS-1$
+    int oldDisplayIndex = Preferences.getInteger("run.display"); //$NON-NLS-1$
     int displayIndex = 0;
     for (int d = 0; d < displaySelectionBox.getItemCount(); d++) {
       if (displaySelectionBox.getSelectedIndex() == d) {
@@ -833,20 +694,20 @@ public class Preferences {
       }
     }
     if (oldDisplayIndex != displayIndex) {
-      setInteger("run.display", displayIndex); //$NON-NLS-1$
+      Preferences.setInteger("run.display", displayIndex); //$NON-NLS-1$
       for (Editor editor : base.getEditors()) {
         editor.setSketchLocation(null);
       }
     }
 
-    setBoolean("run.options.memory", memoryOverrideBox.isSelected()); //$NON-NLS-1$
+    Preferences.setBoolean("run.options.memory", memoryOverrideBox.isSelected()); //$NON-NLS-1$
     int memoryMin = Preferences.getInteger("run.options.memory.initial"); //$NON-NLS-1$
     int memoryMax = Preferences.getInteger("run.options.memory.maximum"); //$NON-NLS-1$
     try {
       memoryMax = Integer.parseInt(memoryField.getText().trim());
       // make sure memory setting isn't too small
       if (memoryMax < memoryMin) memoryMax = memoryMin;
-      setInteger("run.options.memory.maximum", memoryMax); //$NON-NLS-1$
+      Preferences.setInteger("run.options.memory.maximum", memoryMax); //$NON-NLS-1$
     } catch (NumberFormatException e) {
       System.err.println("Ignoring bad memory setting");
     }
@@ -854,7 +715,7 @@ public class Preferences {
     // Don't change anything if the user closes the window before fonts load
     if (fontSelectionBox.isEnabled()) {
       String fontFamily = (String) fontSelectionBox.getSelectedItem();
-      set("editor.font.family", fontFamily);
+      Preferences.set("editor.font.family", fontFamily);
     }
 
     try {
@@ -863,11 +724,11 @@ public class Preferences {
         // Replace with Integer version
         selection = Integer.parseInt((String) selection);
       }
-      set("editor.font.size", String.valueOf(selection));
+      Preferences.set("editor.font.size", String.valueOf(selection));
 
     } catch (NumberFormatException e) {
       Base.log("Ignoring invalid font size " + fontSizeField); //$NON-NLS-1$
-      fontSizeField.setSelectedItem(getInteger("editor.font.size"));
+      fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
     }
     
     try {
@@ -876,51 +737,50 @@ public class Preferences {
         // Replace with Integer version
         selection = Integer.parseInt((String) selection);
       }
-      set("console.font.size", String.valueOf(selection));
+      Preferences.set("console.font.size", String.valueOf(selection));
 
     } catch (NumberFormatException e) {
       Base.log("Ignoring invalid font size " + consoleSizeField); //$NON-NLS-1$
-      consoleSizeField.setSelectedItem(getInteger("console.font.size"));
+      consoleSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
     }
     
-    setColor("run.present.bgcolor", presentColor.getBackground());
+    Preferences.setColor("run.present.bgcolor", presentColor.getBackground());
     
-    setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
+    Preferences.setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
 
     if (autoAssociateBox != null) {
-      setBoolean("platform.auto_file_type_associations", //$NON-NLS-1$
-                 autoAssociateBox.isSelected());
+      Preferences.setBoolean("platform.auto_file_type_associations", //$NON-NLS-1$
+                             autoAssociateBox.isSelected());
     }
     
-    setBoolean("pdex.errorCheckEnabled", errorCheckerBox.isSelected());
-    setBoolean("pdex.warningsEnabled", warningsCheckerBox.isSelected());
-    setBoolean("pdex.ccEnabled", codeCompletionBox.isSelected());
-    setBoolean("pdex.ccTriggerEnabled", codeCompletionTriggerBox.isSelected());
+    Preferences.setBoolean("pdex.errorCheckEnabled", errorCheckerBox.isSelected());
+    Preferences.setBoolean("pdex.warningsEnabled", warningsCheckerBox.isSelected());
+    Preferences.setBoolean("pdex.ccEnabled", codeCompletionBox.isSelected());
+    Preferences.setBoolean("pdex.ccTriggerEnabled", codeCompletionTriggerBox.isSelected());
     for (Editor editor : base.getEditors()) {
       editor.applyPreferences();
     }
-    
   }
 
 
   protected void showFrame() {
-    editorAntialiasBox.setSelected(getBoolean("editor.smooth")); //$NON-NLS-1$
-    inputMethodBox.setSelected(getBoolean("editor.input_method_support")); //$NON-NLS-1$
-    errorCheckerBox.setSelected(getBoolean("pdex.errorCheckEnabled"));
-    warningsCheckerBox.setSelected(getBoolean("pdex.warningsEnabled"));
-    codeCompletionBox.setSelected(getBoolean("pdex.ccEnabled"));
-    codeCompletionTriggerBox.setSelected(getBoolean("pdex.ccTriggerEnabled"));
+    editorAntialiasBox.setSelected(Preferences.getBoolean("editor.smooth")); //$NON-NLS-1$
+    inputMethodBox.setSelected(Preferences.getBoolean("editor.input_method_support")); //$NON-NLS-1$
+    errorCheckerBox.setSelected(Preferences.getBoolean("pdex.errorCheckEnabled"));
+    warningsCheckerBox.setSelected(Preferences.getBoolean("pdex.warningsEnabled"));
+    codeCompletionBox.setSelected(Preferences.getBoolean("pdex.ccEnabled"));
+    codeCompletionTriggerBox.setSelected(Preferences.getBoolean("pdex.ccTriggerEnabled"));
     deletePreviousBox.
-      setSelected(getBoolean("export.delete_target_folder")); //$NON-NLS-1$
+      setSelected(Preferences.getBoolean("export.delete_target_folder")); //$NON-NLS-1$
 
-    sketchbookLocationField.setText(getSketchbookPath());
-    checkUpdatesBox.setSelected(getBoolean("update.check")); //$NON-NLS-1$
+    sketchbookLocationField.setText(Preferences.getSketchbookPath());
+    checkUpdatesBox.setSelected(Preferences.getBoolean("update.check")); //$NON-NLS-1$
 
-    whinyBox.setSelected(getBoolean("header.hide.image") || //$NON-NLS-1$
-                         getBoolean("buttons.hide.image")); //$NON-NLS-1$
+    whinyBox.setSelected(Preferences.getBoolean("header.hide.image") || //$NON-NLS-1$
+                         Preferences.getBoolean("buttons.hide.image")); //$NON-NLS-1$
 
     updateDisplayList();
-    int displayNum = getInteger("run.display"); //$NON-NLS-1$
+    int displayNum = Preferences.getInteger("run.display"); //$NON-NLS-1$
     if (displayNum >= 0 && displayNum < displayCount) {
       displaySelectionBox.setSelectedIndex(displayNum);
     }
@@ -932,21 +792,21 @@ public class Preferences {
       }
     }).start();
     
-    fontSizeField.setSelectedItem(getInteger("editor.font.size"));
-    consoleSizeField.setSelectedItem(getInteger("console.font.size"));
+    fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
+    consoleSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
 
     presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
     presentColorHex.setText(Preferences.get("run.present.bgcolor").substring(1));
     
     memoryOverrideBox.
-      setSelected(getBoolean("run.options.memory")); //$NON-NLS-1$
+      setSelected(Preferences.getBoolean("run.options.memory")); //$NON-NLS-1$
     memoryField.
-      setText(get("run.options.memory.maximum")); //$NON-NLS-1$
+      setText(Preferences.get("run.options.memory.maximum")); //$NON-NLS-1$
     memoryField.setEnabled(memoryOverrideBox.isSelected());
 
     if (autoAssociateBox != null) {
       autoAssociateBox.
-        setSelected(getBoolean("platform.auto_file_type_associations")); //$NON-NLS-1$
+        setSelected(Preferences.getBoolean("platform.auto_file_type_associations")); //$NON-NLS-1$
     }
 
     dialog.setVisible(true);
@@ -974,7 +834,7 @@ public class Preferences {
     if (monoFontFamilies == null) {
       monoFontFamilies = Toolkit.getMonoFontFamilies();
       fontSelectionBox.setModel(new DefaultComboBoxModel(monoFontFamilies));
-      String family = get("editor.font.family");
+      String family = Preferences.get("editor.font.family");
 
       // Set a reasonable default, in case selecting the family fails 
       fontSelectionBox.setSelectedItem("Monospaced");
@@ -996,237 +856,5 @@ public class Preferences {
 //    PApplet.println(items);
     displaySelectionBox.setModel(new DefaultComboBoxModel(items));
 //    displaySelectionBox = new JComboBox(items);
-  }
-
-
-  // .................................................................
-
-
-  static public void load(InputStream input) throws IOException {
-    String[] lines = PApplet.loadStrings(input);  // Reads as UTF-8
-    for (String line : lines) {
-      if ((line.length() == 0) ||
-          (line.charAt(0) == '#')) continue;
-
-      // this won't properly handle = signs being in the text
-      int equals = line.indexOf('=');
-      if (equals != -1) {
-        String key = line.substring(0, equals).trim();
-        String value = line.substring(equals + 1).trim();
-        table.put(key, value);
-      }
-    }
-  }
-
-
-  // .................................................................
-
-
-  static protected void save() {
-//    try {
-    // on startup, don't worry about it
-    // this is trying to update the prefs for who is open
-    // before Preferences.init() has been called.
-    if (preferencesFile == null) return;
-
-    // Fix for 0163 to properly use Unicode when writing preferences.txt
-    PrintWriter writer = PApplet.createWriter(preferencesFile);
-
-//    Enumeration e = table.keys(); //properties.propertyNames();
-//    while (e.hasMoreElements()) {
-//      String key = (String) e.nextElement();
-//      writer.println(key + "=" + ((String) table.get(key)));
-//    }
-    String[] keyList = table.keySet().toArray(new String[table.size()]);
-    keyList = PApplet.sort(keyList);
-    for (String key : keyList) {
-      writer.println(key + "=" + table.get(key)); //$NON-NLS-1$
-    }
-
-    writer.flush();
-    writer.close();
-
-//    } catch (Exception ex) {
-//      Base.showWarning(null, "Error while saving the settings file", ex);
-//    }
-  }
-
-
-  // .................................................................
-
-
-  // all the information from preferences.txt
-
-  static public String get(String attribute /*, String defaultValue */) {
-    return table.get(attribute);
-  }
-
-
-  static public String getDefault(String attribute) {
-    return defaults.get(attribute);
-  }
-
-
-  static public void set(String attribute, String value) {
-    table.put(attribute, value);
-  }
-
-
-  static public void unset(String attribute) {
-    table.remove(attribute);
-  }
-
-
-  static public boolean getBoolean(String attribute) {
-    String value = get(attribute); //, null);
-    return (new Boolean(value)).booleanValue();
-
-    /*
-      supposedly not needed, because anything besides 'true'
-      (ignoring case) will just be false.. so if malformed -> false
-    if (value == null) return defaultValue;
-
-    try {
-      return (new Boolean(value)).booleanValue();
-    } catch (NumberFormatException e) {
-      System.err.println("expecting an integer: " + attribute + " = " + value);
-    }
-    return defaultValue;
-    */
-  }
-
-
-  static public void setBoolean(String attribute, boolean value) {
-    set(attribute, value ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-  }
-
-
-  static public int getInteger(String attribute /*, int defaultValue*/) {
-    return Integer.parseInt(get(attribute));
-
-    /*
-    String value = get(attribute, null);
-    if (value == null) return defaultValue;
-
-    try {
-      return Integer.parseInt(value);
-    } catch (NumberFormatException e) {
-      // ignored will just fall through to returning the default
-      System.err.println("expecting an integer: " + attribute + " = " + value);
-    }
-    return defaultValue;
-    //if (value == null) return defaultValue;
-    //return (value == null) ? defaultValue :
-    //Integer.parseInt(value);
-    */
-  }
-
-
-  static public void setInteger(String key, int value) {
-    set(key, String.valueOf(value));
-  }
-
-
-  static public Color getColor(String name) {
-    Color parsed = Color.GRAY;  // set a default
-    String s = get(name);
-    if ((s != null) && (s.indexOf("#") == 0)) { //$NON-NLS-1$
-      try {
-        parsed = new Color(Integer.parseInt(s.substring(1), 16));
-      } catch (Exception e) { }
-    }
-    return parsed;
-  }
-
-
-  static public void setColor(String attr, Color what) {
-    set(attr, "#" + PApplet.hex(what.getRGB() & 0xffffff, 6)); //$NON-NLS-1$
-  }
-
-
-  // Identical version found in Settings.java
-  static public Font getFont(String attr) {
-    try {
-      boolean replace = false;
-      String value = get(attr);
-      if (value == null) {
-        // use the default font instead
-        value = getDefault(attr);
-        replace = true;
-      }
-
-      String[] pieces = PApplet.split(value, ',');
-
-      if (pieces.length != 3) {
-        value = getDefault(attr);
-        pieces = PApplet.split(value, ',');
-        replace = true;
-      }
-
-      String name = pieces[0];
-      int style = Font.PLAIN;  // equals zero
-      if (pieces[1].indexOf("bold") != -1) { //$NON-NLS-1$
-        style |= Font.BOLD;
-      }
-      if (pieces[1].indexOf("italic") != -1) { //$NON-NLS-1$
-        style |= Font.ITALIC;
-      }
-      int size = PApplet.parseInt(pieces[2], 12);
-      
-      // replace bad font with the default from lib/preferences.txt
-      if (replace) {
-        set(attr, value);
-      }
-
-      if (!name.startsWith("processing.")) {
-        return new Font(name, style, size);
-
-      } else {
-        if (pieces[0].equals("processing.sans")) {
-          return Toolkit.getSansFont(size, style);
-        } else if (pieces[0].equals("processing.mono")) {
-          return Toolkit.getMonoFont(size, style);
-        }
-      }
-
-    } catch (Exception e) {
-      // Adding try/catch block because this may be where 
-      // a lot of startup crashes are happening. 
-      Base.log("Error with font " + get(attr) + " for attribute " + attr); 
-    }
-    return new Font("Dialog", Font.PLAIN, 12);
-  }
-  
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
-
-  /**
-   * Check for a 3.0 sketchbook location, and if none exists, 
-   * try to grab it from the 2.0 sketchbook location.  
-   * @return true if a location was found and the pref didn't exist
-   */
-  static protected boolean checkSketchbookPref() {
-    // If a 3.0 sketchbook location has never been inited
-    if (getSketchbookPath() == null) {
-      String twoPath = get("sketchbook.path");
-      // If they've run the 2.0 version, start with that location
-      if (twoPath != null) {
-        setSketchbookPath(twoPath);
-        return true;  // save the sketchbook right away
-      }
-      // Otherwise it'll be null, and reset properly by Base
-    }
-    return false;
-  }
-  
-  
-  static protected String getSketchbookPath() {
-    return get("sketchbook.path.three"); //$NON-NLS-1$
-  }
-  
-  
-  static protected void setSketchbookPath(String path) {
-    set("sketchbook.path.three", path); //$NON-NLS-1$
   }
 }

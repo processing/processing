@@ -1,6 +1,11 @@
 0230 pde (3.0a3)
 X remove toolbar buttons except for start/stop
 X rename sketchbook tree name, re-order menu, add language hooks
+X split Preferences and PreferencesFrame
+X   https://github.com/processing/processing/issues/68
+X   http://code.google.com/p/processing/issues/detail?id=29
+X   https://github.com/processing/processing/pull/2716
+
 _ remove toolbar menu references and code to rebuild
 
 gsoc
@@ -677,8 +682,6 @@ _ rewrite preferences window to use proper layout
 _   https://github.com/processing/processing/issues/67
 _   https://github.com/processing/processing/issues/2708
 _ make prefs dialog modal?
-_ split Preferences and PreferencesFrame?
-X   http://code.google.com/p/processing/issues/detail?id=29
 _ preferences window has been hit with the ugly stick
 _   redo panel to use proper Box layout etc
 _   also needs to look good across all platforms
