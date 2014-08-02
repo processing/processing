@@ -22,19 +22,31 @@ import static processing.mode.experimental.ExperimentalMode.log2;
 import static processing.mode.experimental.ExperimentalMode.logE;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.Painter;
 import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+import javax.swing.plaf.InsetsUIResource;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.text.BadLocationException;
 
 import processing.app.syntax.JEditTextArea;
@@ -98,6 +110,19 @@ public class CompletionPanel {
     popupMenu.setOpaque(false);
     popupMenu.setBorder(null);
     scrollPane = new JScrollPane();
+    if (UIManager.getLookAndFeel().getID().equals("Nimbus")) {
+      UIDefaults defaults = new UIDefaults();
+      defaults.put("PopupMenu.contentMargins", new InsetsUIResource(0, 0, 0, 0));
+      defaults.put("ScrollPane[Enabled].borderPainter", new Painter<JComponent>() {
+        public void paint(Graphics2D g, JComponent t, int w, int h) {}
+      });
+      popupMenu.putClientProperty("Nimbus.Overrides", defaults);
+      scrollPane.putClientProperty("Nimbus.Overrides", defaults);
+      scrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(Integer.MAX_VALUE, 8));
+      scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(8, Integer.MAX_VALUE));
+      scrollPane.getHorizontalScrollBar().setUI(new CompletionScrollBarUI());
+      scrollPane.getVerticalScrollBar().setUI(new CompletionScrollBarUI());
+    }
     scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
     popupMenu.setPopupSize(280, setHeight(items.getSize())); //TODO: Eradicate this evil
@@ -107,6 +132,33 @@ public class CompletionPanel {
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
         + location.y);
     //log("Suggestion shown: " + System.currentTimeMillis());
+  }
+
+  public static class CompletionScrollBarUI extends BasicScrollBarUI {
+
+    @Override
+    protected void paintThumb(Graphics g, JComponent c, Rectangle trackBounds) {
+      g.setColor((Color) UIManager.get("nimbusBlueGrey"));
+      g.fillRect(trackBounds.x, trackBounds.y, trackBounds.width, trackBounds.height);
+    }
+
+    @Override
+    protected JButton createDecreaseButton(int orientation) {
+      return createZeroButton();
+    }
+
+    @Override
+    protected JButton createIncreaseButton(int orientation) {
+      return createZeroButton();
+    }
+
+    private JButton createZeroButton() {
+      JButton jbutton = new JButton();
+      jbutton.setPreferredSize(new Dimension(0, 0));
+      jbutton.setMinimumSize(new Dimension(0, 0));
+      jbutton.setMaximumSize(new Dimension(0, 0));
+      return jbutton;
+    }
   }
 
   public boolean isVisible() {
