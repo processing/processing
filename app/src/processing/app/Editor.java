@@ -364,15 +364,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
         return false;
       }
 
-      if (successful == 0) {
-        statusError(Language.text("editor.status.drag_and_drop.no_files_added"));
+      statusNotice(Language.pluralize("editor.status.drag_and_drop.files_added", successful));
 
-      } else if (successful == 1) {
-        statusNotice(Language.text("editor.status.drag_and_drop.one_file_added"));
-
-      } else {
-        statusNotice(String.format(Language.text("editor.status.drag_and_drop.n_files_added"), successful));
-      }
       return true;
     }
   }
@@ -2111,7 +2104,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       if (text.length() == 0) {
         statusNotice(Language.text("editor.status.find_reference.select_word_first"));
       } else {
-        statusNotice(String.format(Language.text("editor.status.find_reference.not_available"), text));
+        statusNotice(Language.interpolate("editor.status.find_reference.not_available", text));
       }
     }
   }
