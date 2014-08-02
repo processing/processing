@@ -43,7 +43,7 @@ public class Language {
   static protected final File prefFile = Base.getSettingsFile(PREF_FILE);
   
   /** Single instance of this Language class */
-  static private Language instance = null;
+  static private volatile Language instance;
   
   /** The system language */
   private String language;
@@ -149,9 +149,13 @@ public class Language {
   
   
   /** Singleton constructor */
-  static public synchronized Language init() {
+  static public Language init() {
     if (instance == null) {
-      instance = new Language();
+      synchronized(Language.class) {
+        if (instance == null) {
+          instance = new Language();
+        }
+      }
     }
     return instance;
   }
