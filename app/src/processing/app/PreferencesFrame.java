@@ -185,10 +185,7 @@ public class PreferencesFrame {
 
     Container fontBox = Box.createHorizontalBox();
     JLabel fontLabel = new JLabel(Language.text("preferences.editor_and_console_font")+": ");
-    final String fontTip = "<html>" +
-      "Select the font used in the Editor and the Console.<br/>" +
-      "Only monospaced (fixed-width) fonts may be used, <br/>" +
-      "though the list may be imperfect.";
+    final String fontTip = "<html>" + Language.text("preferences.editor_and_console_font.tip");
     fontLabel.setToolTipText(fontTip);
     fontBox.add(fontLabel);
     // get a wide name in there before getPreferredSize() is called
@@ -236,11 +233,8 @@ public class PreferencesFrame {
 
     label = new JLabel(Language.text("preferences.background_color")+": ");
     colorBox.add(label);
-
-    final String colorTip = "<html>"
-        + "Select the background color used when using Present.<br/>"
-        + "Present is used to present a sketch in full-screen, <br/>"
-        + "accessible from the Sketch menu.";
+    
+    final String colorTip = "<html>" + Language.text("preferences.background_color.tip");
     label.setToolTipText(colorTip);
 
     presentColor = new JTextField("      ");
