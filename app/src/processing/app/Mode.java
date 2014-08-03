@@ -890,7 +890,7 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   public DefaultMutableTreeNode buildSketchbookTree(){
-    DefaultMutableTreeNode sbNode = new DefaultMutableTreeNode("Sketchbook");
+    DefaultMutableTreeNode sbNode = new DefaultMutableTreeNode(Language.text("editor.window.sketchbook_tree"));
     try {
       base.addSketches(sbNode, Base.getSketchbookFolder());
     } catch (IOException e) {
