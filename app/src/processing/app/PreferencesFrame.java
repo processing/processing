@@ -302,7 +302,7 @@ public class PreferencesFrame {
     });
 
     selector = new ColorChooser(dialog, false,
-        Preferences.getColor("run.present.bgcolor"), Language.text("prompt.okay"),
+        Preferences.getColor("run.present.bgcolor"), Language.text("prompt.ok"),
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
