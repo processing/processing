@@ -1331,7 +1331,7 @@ public class Base {
 
   public JMenu getSketchbookMenu() {
     if (sketchbookMenu == null) {
-      sketchbookMenu = new JMenu("Sketchbook");
+      sketchbookMenu = new JMenu(Language.text("editor.window.sketchbook"));
       rebuildSketchbookMenu();
     }
     return sketchbookMenu;
