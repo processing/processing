@@ -620,7 +620,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     fileMenu.add(item);
 
-    item = Toolkit.newJMenuItemShift(Language.text("editor.window.examples"), 'O');
+    item = Toolkit.newJMenuItemShift(Language.text("menu.file.examples"), 'O');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mode.showExamplesFrame();
