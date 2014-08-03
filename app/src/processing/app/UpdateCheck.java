@@ -71,7 +71,7 @@ public class UpdateCheck {
 //          }
         }
       }
-    }).start();
+    }, "Update Checker").start();
   }
 
 

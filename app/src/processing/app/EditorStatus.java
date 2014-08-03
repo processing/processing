@@ -162,6 +162,7 @@ public class EditorStatus extends JPanel {
         }
       }
     };
+    thread.setName("Editor Status");
     thread.start();
   }
 

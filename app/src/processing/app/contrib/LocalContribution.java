@@ -349,7 +349,7 @@ public abstract class LocalContribution extends Contribution {
                status, 
                ContributionListing.getInstance()); 
       }
-    }).start();
+    }, "Contribution Uninstaller").start();
   }
   
   
