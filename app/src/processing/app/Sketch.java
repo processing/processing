@@ -633,7 +633,7 @@ public class Sketch {
     }
     
     // confirm deletion with user, yes/no
-    Object[] options = { "OK", "Cancel" };
+    Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
     String prompt = (currentIndex == 0) ?
       Language.text("warn.delete.sketch") :
       Language.interpolate("warn.delete.file", current.getPrettyName());
@@ -1103,7 +1103,7 @@ public class Sketch {
 
     // check whether this file already exists
     if (destFile.exists()) {
-      Object[] options = { "OK", "Cancel" };
+      Object[] options = { Language.text("prompt.okay"), Language.text("prompt.cancel") };
       String prompt = "Replace the existing version of " + filename + "?";
       int result = JOptionPane.showOptionDialog(editor,
                                                 prompt,

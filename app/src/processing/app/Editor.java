@@ -2315,7 +2315,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       final String properParent =
         file.getName().substring(0, file.getName().lastIndexOf('.'));
       
-      Object[] options = { "OK", "Cancel" };
+      Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
       String prompt =
         "The file \"" + file.getName() + "\" needs to be inside\n" +
         "a sketch folder named \"" + properParent + "\".\n" +

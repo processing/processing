@@ -233,7 +233,7 @@ public class PreferencesFrame {
 
     label = new JLabel(Language.text("preferences.background_color")+": ");
     colorBox.add(label);
-    
+
     final String colorTip = "<html>" + Language.text("preferences.background_color.tip");
     label.setToolTipText(colorTip);
 
@@ -302,7 +302,7 @@ public class PreferencesFrame {
     });
 
     selector = new ColorChooser(dialog, false,
-        Preferences.getColor("run.present.bgcolor"), "OK",
+        Preferences.getColor("run.present.bgcolor"), Language.text("prompt.okay"),
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
