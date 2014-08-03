@@ -94,6 +94,7 @@ public class Language {
       "es", // Spanish
       "fr", // French, Français
       "ja", // Japanese
+      "ko", // Korean      
       "nl", // Dutch, Nederlands
       "pt", // Portuguese
       "tr"  // Turkish

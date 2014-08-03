@@ -11,5 +11,6 @@ el  # Greek
 es  # Spanish
 fr  # French, Français, Langue française
 ja  # Japanese
+ko  # Korean
 nl  # Dutch, Nederlands
 pt  # Portuguese
