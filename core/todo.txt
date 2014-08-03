@@ -1,49 +1,17 @@
-0229 core (3.0a2)
-X PImage resize() causes images to not draw
-X   https://github.com/processing/processing/issues/2228
-X   https://github.com/processing/processing/pull/2324
-X move to native OS X full screen (gets rid of native code)
-X   https://github.com/processing/processing/issues/2641
-X do bounds check on setVertex(PVector)
-X   https://github.com/processing/processing/issues/2556
-X using createGraphics() w/o begin/endDraw(), don't attempt drawing w/ image()
-X   https://github.com/processing/processing/issues/2208
-
-data
-X add copy() method to Table
-X return null from getString() on NaN float and double values
-X   affects how saveTable() works (writes blank entries instead of NaN)
-X get(5) with an empty Int/Float/StringList was returning 0
-X   https://github.com/processing/processing/pull/2343
-o fix for maxValue() and minValue() when all entries are bad
-o   on FloatDict it was NaN, check across the lists and other dict types
-X   nothing else to do here
-X FloatDict and FloatList should always put NaN values at the end on sort
-X   same for the other list and dict classes
-X   (this is part of the point of having these easier versions)
-o 'collector' class.. Dict that points to a list
-o   String as a key, int/float/string list as values
-X   seems too much like a better place for HashMap
-X add print() method to other data types (not just IntList)
-
-pulls
-X implement A and a (elliptical arcs)
-X   https://github.com/processing/processing/issues/169
-X   http://code.google.com/p/processing/issues/detail?id=130
-X   https://github.com/processing/processing/pull/2659
-X   done with an approximation, if re-saving this will destroy data (docs)
-X fix typo in StringList.insert()
-X   https://github.com/processing/processing/pull/2672
-X StingList.insert() error (should be an easy fix)
-X   https://github.com/processing/processing/issues/2548
+0230 core (3.0a3)
+X add another NaN check when sorting FloatList/Dict classes
+X   if all values were NaN, an ArrayIndexOutOfBoundsException was thrown
 
 earlier
-X default font fixes (merged for 2.2.1 or earlier)
-X   https://github.com/processing/processing/issues/2331
-X   https://github.com/processing/processing/pull/2338
-X image resize() takes oddly long time
-X   https://github.com/processing/processing/issues/5
-X   the problem was confirmed to have fixed itself
+X PShape disableStyle() does not work with createShape()
+X   https://github.com/processing/processing/issues/1523
+X multisampled offscreen PGraphics don't clear the screen properly
+X   https://github.com/processing/processing/issues/2679
+X   this was done midway through the 3.0a2 release process
+
+pull requests
+X call applet.exit() instead of System.exit() from Present Mode's 'stop'
+X   https://github.com/processing/processing/pull/2680
 
 
 applet/component
@@ -126,6 +94,7 @@ _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start
 _   https://github.com/processing/processing/issues/2357
+_ glw? lwjgl? retina jogl?
 
 
 cantfix

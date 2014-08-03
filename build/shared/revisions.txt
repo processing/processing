@@ -1,10 +1,6 @@
-PROCESSING 3.0a2 (REV 0229) - ?? August 2014
+PROCESSING 3.0a2 (REV 0229) - 31 July 2014
 
-
-[ fixes ] 
-
-+ The Examples weren't included in 3.0a1. Oops.
-  https://github.com/processing/processing/issues/2652
+The 3.0 train gains steam and continues to hurtle down the track.
 
 
 [ changes ] 
@@ -23,6 +19,136 @@ PROCESSING 3.0a2 (REV 0229) - ?? August 2014
   library for the platform being downloaded, and with the return of cross-
   platform application export, that could cause sadness. To use the video
   library, use the "Add Library..." menu and select it from the list.
+
++ Added a new preference for the 3.0 sketchbook location, so that a separate
+  sketchbook (and with it, different Modes, Tools, and Libraries) can be 
+  used with Processing 3.0 versus older versions of 2.x.
+
++ Remove default menu bar hack for OS X
+  http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
+
++ Move to native OS X full screen (supported in 10.7 and later)
+  https://github.com/processing/processing/issues/2641
+  This allows us to remove native code for hiding the menu bar. 
+  But it may introduce more quirks, we'll have to test it out.
+
+
+[ fixes ] 
+
++ The Examples weren't included in 3.0a1. Oops.
+  https://github.com/processing/processing/issues/2652
+
++ Fix "No such file or directory" error when exporting on Mac OS X.
+  This bug actually meant that OS X apps weren't signed
+  https://github.com/processing/processing/issues/2614
+
++ Prevent opening sketches multiple times
+  https://github.com/processing/processing/issues/2506
+
++ Disable Mac OS X export button on other platforms
+  https://github.com/processing/processing/issues/2642
+
++ Removed duplicate 'fonts' folder in the download
+
++ Removed welcome message from the sound library
+
++ Get the 'modified' indicator working on OS X document windows again
+  https://github.com/processing/processing/issues/2194
+
++ Do bounds check on setVertex(PVector)
+  https://github.com/processing/processing/issues/2556
+
++ Using createGraphics() w/o begin/endDraw(), don't attempt drawing w/ image()
+  https://github.com/processing/processing/issues/2208
+
+
+[ the data classes ] 
+
++ Add copy() method to Table
+
++ Return null from getString() with float and double values that are NaN.
+  Fixes how saveTable() works (writes blank entries instead of NaN).
+
++ get(5) with an empty Int/Float/StringList was returning 0
+  https://github.com/processing/processing/pull/2343
+
++ FloatDict and FloatList should always put NaN values at the end on sort.
+
++ Add print() method to the various data types.
+
+
+[ summer of code ]
+
++ URL opening problem fixed by use of getCanonicalPath() on Windows
+  https://github.com/processing/processing/issues/2656
+
++ If Server constructor fails, throw an exception
+  https://github.com/processing/processing/issues/2604
+
++ Clear status messages in the Contribution Manager
+  https://github.com/processing/processing/pull/2667
+  https://github.com/processing/processing/issues/2599
+
++ Add a progress bar for slow "Save As" (and "Add File") operations
+  http://code.google.com/p/processing/issues/detail?id=31
+  https://github.com/processing/processing/issues/70
+  https://github.com/processing/processing/pull/2370
+
++ NullPointerException in addBreakpointComments() when saving sketch
+  https://github.com/processing/processing/issues/2675
+
++ Run button was staying highlighted permanently
+  https://github.com/processing/processing/issues/2676
+
++ Dialog box for new tab/rename tab/sketch
+  https://github.com/processing/processing/issues/2431
+
+X Fixed issue where the browser wasn't opening the reference properly
+  https://github.com/processing/processing/pull/2657
+
+
+[ you request, we pull ] 
+
++ Insert tabs properly when prefs set for tabs mode
+  https://github.com/processing/processing/pull/2607
+
++ Improve the appearance when using the Nimbus LAF 
+  https://github.com/processing/processing/pull/2671
+
++ Implement A and a (elliptical arcs)
+  https://github.com/processing/processing/issues/169
+  http://code.google.com/p/processing/issues/detail?id=130
+  https://github.com/processing/processing/pull/2659
+
++ Fix typo in StringList.insert()
+  https://github.com/processing/processing/pull/2672
+  https://github.com/processing/processing/issues/2548
+
++ PImage resize() causes images to not draw
+  https://github.com/processing/processing/issues/2228
+  https://github.com/processing/processing/pull/2324
+
+
+[ fixed in earlier releases ] 
+
++ maxHeapSize typo in the build scripts
+  https://github.com/processing/processing/issues/2603
+
++ for() loop with nothing inside parens crashes Auto Format
+  https://github.com/processing/processing/issues/2141
+
++ Chinese text is overlapped in Processing 2.1 editor
+  https://github.com/processing/processing/issues/2173
+
++ Implement Windows menu in the PDE
+  https://github.com/processing/processing/issues/584
+
++ Default font fixes (merged for 2.2.1 or earlier)
+  https://github.com/processing/processing/issues/2331
+  https://github.com/processing/processing/pull/2338
+
++ image resize() takes oddly long time
+  https://github.com/processing/processing/issues/5
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

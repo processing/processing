@@ -46,9 +46,9 @@ import processing.mode.java.JavaMode;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 229;
+  static private final int REVISION = 230;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0229"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0230"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 //  static private boolean RELEASE = false;
 
@@ -92,7 +92,7 @@ public class Base {
   static private boolean commandLine;
 
   // A single instance of the preferences window
-  Preferences preferencesFrame;
+  PreferencesFrame preferencesFrame;
 
   // A single instance of the library manager window
   ContributionManagerDialog libraryManagerFrame;
@@ -170,7 +170,10 @@ public class Base {
 
     // Make sure a full JDK is installed
     initRequirements();
-
+    
+    // Load the languages
+    Language.init();
+    
     // run static initialization that grabs all the prefs
     Preferences.init();
 
@@ -350,7 +353,7 @@ public class Base {
 //        removeDir(contrib.getFolder());
 //      }
 //    }
-    ContributionManager.cleanup();
+    ContributionManager.cleanup(this);
     buildCoreModes();
     rebuildContribModes();
 
@@ -602,21 +605,21 @@ public class Base {
   }
 
 
-  /** 
-   * The call has already checked to make sure this sketch is not modified, 
-   * now change the mode. 
-   */ 
+  /**
+   * The call has already checked to make sure this sketch is not modified,
+   * now change the mode.
+   */
   protected void changeMode(Mode mode) {
     if (activeEditor.getMode() != mode) {
       Sketch sketch = activeEditor.getSketch();
       nextMode = mode;
-      
+
       if (sketch.isUntitled()) {
         // If no changes have been made, just close and start fresh.
         // (Otherwise the editor would lose its 'untitled' status.)
         handleClose(activeEditor, true);
         handleNew();
-        
+
       } else {
         // If the current editor contains file extensions that the new mode can handle, then
         // write a sketch.properties file with the new mode specified, and reopen.
@@ -833,7 +836,8 @@ public class Base {
       extensions.add(mode.getDefaultExtension());
     }
 
-    final String prompt = "Open a Processing sketch...";
+
+    final String prompt = Language.text("open");
 
     // don't use native dialogs on Linux (or anyone else w/ override)
     if (Preferences.getBoolean("chooser.files.native")) {  //$NON-NLS-1$
@@ -928,7 +932,7 @@ public class Base {
 
       // Cycle through open windows to make sure that it's not already open.
       for (Editor editor : editors) {
-        // User may have double-clicked any PDE in the sketch folder,  
+        // User may have double-clicked any PDE in the sketch folder,
         // so we have to check each open tab (not just the main one).
         // https://github.com/processing/processing/issues/2506
         for (SketchCode tab : editor.getSketch().getCode()) {
@@ -972,7 +976,7 @@ public class Base {
           editor = coreModes[0].createEditor(this, path, state);
         }
       }
-      
+
       // Make sure that the sketch actually loaded
       Sketch sketch = editor.getSketch();
       if (sketch == null) {
@@ -1601,7 +1605,7 @@ public class Base {
    */
   public void handlePrefs() {
     if (preferencesFrame == null) {
-      preferencesFrame = new Preferences(this);
+      preferencesFrame = new PreferencesFrame(this);
     }
     preferencesFrame.showFrame();
   }
@@ -1780,24 +1784,29 @@ public class Base {
   }
 
 
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /** 
+   * Get the directory that can store settings. (Library on OS X, App Data or
+   * something similar on Windows, a dot folder on Linux.) Removed this as a
+   * preference for 3.0a3 because we need this to be stable.
+   */
   static public File getSettingsFolder() {
     File settingsFolder = null;
 
-    String preferencesPath = Preferences.get("settings.path"); //$NON-NLS-1$
-    if (preferencesPath != null) {
-      settingsFolder = new File(preferencesPath);
-
-    } else {
-      try {
-        settingsFolder = platform.getSettingsFolder();
-      } catch (Exception e) {
-        showError("Problem getting data folder",
-                  "Error getting the Processing data folder.", e);
-      }
+//    String preferencesPath = Preferences.get("settings.path"); //$NON-NLS-1$
+//    if (preferencesPath != null) {
+//      settingsFolder = new File(preferencesPath);
+//
+//    } else {
+    try {
+      settingsFolder = platform.getSettingsFolder();
+    } catch (Exception e) {
+      showError("Problem getting the settings folder",
+                "Error getting the Processing the settings folder.", e);
     }
+//    }
 
     // create the folder if it doesn't exist already
     if (!settingsFolder.exists()) {
@@ -2302,13 +2311,12 @@ public class Base {
                         "b { font: 13pt \"Lucida Grande\" }"+
                         "p { font: 11pt \"Lucida Grande\"; margin-top: 8px; width: 300px }"+
                         "</style> </head>" +
-                        "<b>Do you want to save changes to this sketch<BR>" +
-                        " before closing?</b>" +
-                        "<p>If you don't save, your changes will be lost.",
+                        "<b>" + Language.text("save.title") + "</b>" +
+                        "<p>" + Language.text("save.hint") + "</p>",
                         JOptionPane.QUESTION_MESSAGE);
 
       String[] options = new String[] {
-          "Save", "Cancel", "Don't Save"
+          Language.text("save.btn.save"), Language.text("prompt.cancel"), Language.text("save.btn.dont_save")
       };
       pane.setOptions(options);
 

@@ -44,6 +44,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -380,7 +381,9 @@ public class Toolkit {
     for (Font font : getMonoFontList()) {
       families.add(font.getFamily());
     }
-    return families.toArray(new String[0]);
+    String[] names = families.toArray(new String[0]);
+    Arrays.sort(names);
+    return names;
   }
 
 

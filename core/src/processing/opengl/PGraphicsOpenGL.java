@@ -6440,19 +6440,22 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void endOffscreenDraw() {
+    if (offscreenMultisample) {
+      multisampleFramebuffer.copyColor(offscreenFramebuffer);
+    }
+
+    popFramebuffer();
+
     if (backgroundA == 1) {
-      // Set alpha channel to opaque in order to match behavior of JAVA2D:
+      // Set alpha channel to opaque in order to match behavior of JAVA2D, not
+      // on the multisampled FBO because it leads to wrong background color
+      // on some Macbooks with AMD graphics.
       pgl.colorMask(false, false, false, true);
       pgl.clearColor(0, 0, 0, backgroundA);
       pgl.clear(PGL.COLOR_BUFFER_BIT);
       pgl.colorMask(true, true, true, true);
     }
 
-    if (offscreenMultisample) {
-      multisampleFramebuffer.copyColor(offscreenFramebuffer);
-    }
-
-    popFramebuffer();
     texture.updateTexels(); // Mark all texels in screen texture as modified.
 
     getPrimaryPG().restoreGL();

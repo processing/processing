@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import processing.app.Base;
-import processing.app.Editor;
 import processing.core.PApplet;
 
 
@@ -70,9 +69,12 @@ class AvailableContribution extends Contribution {
    * @param confirmReplace
    *          true to open a dialog asking the user to confirm removing/moving
    *          the library when a library by the same name already exists
+   * @param status
+   *          the StatusPanel. Pass null if this function is called for an
+   *          install-on-startup
    * @return
    */
-  public LocalContribution install(Editor editor, File contribArchive,
+  public LocalContribution install(Base base, File contribArchive,
                                    boolean confirmReplace, StatusPanel status) {
     // Unzip the file into the modes, tools, or libraries folder inside the 
     // sketchbook. Unzipping to /tmp is problematic because it may be on 
@@ -83,7 +85,8 @@ class AvailableContribution extends Contribution {
     try {
       tempFolder = type.createTempFolder();
     } catch (IOException e) {
-      status.setErrorMessage("Could not create a temporary folder to install.");
+      if (status != null)
+        status.setErrorMessage("Could not create a temporary folder to install.");
       return null;
     }
     Base.unzip(contribArchive, tempFolder);
@@ -111,7 +114,8 @@ class AvailableContribution extends Contribution {
       tempFolder.renameTo(contribFolder);
       tempFolder = enclosingFolder;
       */
-      status.setErrorMessage(getName() + " needs to be repackaged according to the " + type.getTitle() + " guidelines.");
+      if (status != null)
+        status.setErrorMessage(getName() + " needs to be repackaged according to the " + type.getTitle() + " guidelines.");
       //status.setErrorMessage("This " + type + " needs to be repackaged according to the guidelines.");
       return null;
     }
@@ -123,14 +127,15 @@ class AvailableContribution extends Contribution {
     LocalContribution installedContrib = null;
 
     if (contribFolder == null) {
-      status.setErrorMessage("Could not find a " + type + " in the downloaded file.");
+      if (status != null)
+        status.setErrorMessage("Could not find a " + type + " in the downloaded file.");
       
     } else {
       File propFile = new File(contribFolder, type + ".properties");
       if (writePropertiesFile(propFile)) {        
         // 1. contribFolder now has a legit contribution, load it to get info. 
         LocalContribution newContrib =
-          type.load(editor.getBase(), contribFolder);
+          type.load(base, contribFolder);
         
         // 1.1. get info we need to delete the newContrib folder later
         File newContribFolder = newContrib.getFolder();
@@ -138,13 +143,23 @@ class AvailableContribution extends Contribution {
         // 2. Check to make sure nothing has the same name already, 
         // backup old if needed, then move things into place and reload.
         installedContrib = 
-          newContrib.copyAndLoad(editor, confirmReplace, status);
-        if (newContrib != null && type.requiresRestart()) {
-          installedContrib.setRestartFlag();
-          //status.setMessage("Restart Processing to finish the installation.");
+          newContrib.copyAndLoad(base, confirmReplace, status);
+        
+        // Restart no longer needed. Yay!
+//        if (newContrib != null && type.requiresRestart()) {
+//          installedContrib.setRestartFlag();
+//          //status.setMessage("Restart Processing to finish the installation.");
+//        }
+        
+        // 3.1 Unlock all the jars if it is a mode or tool
+        if (newContrib.getType() == ContributionType.MODE) {
+          ((ModeContribution)newContrib).clearClassLoader(base);
+        }
+        else if (newContrib.getType() == ContributionType.TOOL) {
+          ((ToolContribution)newContrib).clearClassLoader(base);
         }
         
-        // 3. Delete the newContrib, do a garbage collection, hope and pray
+        // 3.2 Delete the newContrib, do a garbage collection, hope and pray
         // that Java will unlock the temp folder on Windows now
         newContrib = null;
         System.gc();
@@ -164,7 +179,8 @@ class AvailableContribution extends Contribution {
         Base.removeDir(newContribFolder);
         
       } else {
-        status.setErrorMessage("Error overwriting .properties file.");
+        if (status != null)
+          status.setErrorMessage("Error overwriting .properties file.");
       }
     }
 
