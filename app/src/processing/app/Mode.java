@@ -35,6 +35,7 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.*;
 
 import processing.app.contrib.ContributionType;
+import processing.app.contrib.ExampleContribution;
 import processing.app.syntax.*;
 import processing.core.PApplet;
 
@@ -682,6 +683,8 @@ public abstract class Mode {
         subfolders = new File[0]; //empty array
       }
       for (File sub : subfolders) {
+        if (!ExampleContribution.isExampleCompatible(base, sub))
+          continue;
         DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
         if (base.addSketches(subNode, sub)) {
           node.add(subNode);

@@ -1,4 +1,4 @@
-﻿/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
   Part of the Processing project - http://processing.org
@@ -268,6 +268,12 @@ class AvailableContribution extends Contribution {
       String prettyVersion = properties.get("prettyVersion");
       if (prettyVersion == null || prettyVersion.isEmpty())
         prettyVersion = getPrettyVersion();
+      
+      String compatibleContribsList = null;
+      
+      if (getType() == ContributionType.EXAMPLE) {
+      compatibleContribsList = properties.get("compatibleModesList");
+      }
 
       long lastUpdated;
       try {
@@ -294,6 +300,9 @@ class AvailableContribution extends Contribution {
         writer.println("version=" + version);
         writer.println("prettyVersion=" + prettyVersion);
         writer.println("lastUpdated=" + lastUpdated);
+        if (getType() == ContributionType.EXAMPLE) {
+          writer.println("compatibleModesList=" + compatibleContribsList);
+        }
 
         writer.flush();
         writer.close();

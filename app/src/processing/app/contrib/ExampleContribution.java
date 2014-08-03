@@ -8,14 +8,53 @@ import processing.app.Base;
 
 public class ExampleContribution extends LocalContribution {
 
+  private ArrayList<String> compatibleModesList;
+
   static public ExampleContribution load(File folder) {
     return new ExampleContribution(folder);
   }
 
   private ExampleContribution(File folder) {
     super(folder);
+    compatibleModesList = parseCompatibleModesList(properties
+      .get("compatibleModesList"));
   }
 
+  private static ArrayList<String> parseCompatibleModesList(String unparsedModes) {
+    ArrayList<String> modesList = new ArrayList<String>();
+    if (unparsedModes == null || unparsedModes.isEmpty())
+      return modesList;
+    String[] splitStr = unparsedModes.split(",");
+    for (String mode : splitStr)
+      modesList.add(mode.trim());
+    return modesList;
+  }
+
+  /**
+   * Function to determine whether or not the example present in the
+   * exampleLocation directory is compatible with the present mode.
+   * 
+   * @param base
+   * @param exampleLocationFolder
+   * @return true if the example is compatible with the mode of the currently
+   *         active editor
+   */
+  public static boolean isExampleCompatible(Base base,
+                                            File exampleLocationFolder) {
+    File propertiesFile = new File(exampleLocationFolder,
+                                   ContributionType.EXAMPLE.toString()
+                                     + ".properties");
+    if (propertiesFile.exists()) {
+      ArrayList<String> compModesList = parseCompatibleModesList(Base
+        .readSettings(propertiesFile).get("compatibleModesList"));
+      for (String c : compModesList) {
+        if (c.equalsIgnoreCase(base.getActiveEditor().getMode().getIdentifier())) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   static public void loadMissing(Base base) {
     File examplesFolder = Base.getSketchbookExamplesFolder();
@@ -37,10 +76,13 @@ public class ExampleContribution extends LocalContribution {
     }
   }
 
-
   @Override
   public ContributionType getType() {
     return ContributionType.EXAMPLE;
+  }
+
+  public ArrayList<String> getCompatibleModesList() {
+    return compatibleModesList;
   }
 
 }
