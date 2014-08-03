@@ -42,6 +42,7 @@ import javax.swing.text.html.StyleSheet;
 
 import processing.app.Base;
 import processing.app.Editor;
+import processing.app.Toolkit;
 import processing.app.Language;
 
 
@@ -515,6 +516,16 @@ class ContributionPanel extends JPanel {
   
   public void setContribution(Contribution contrib) {
     this.contrib = contrib;
+    
+    
+    if (contrib.isSpecial()) {
+      ImageIcon processingIcon = new ImageIcon(Toolkit.getLibImage("icons/pde-"
+        + "48" + ".png"));
+      JLabel iconLabel = new JLabel(processingIcon);
+      iconLabel.setBorder(new EmptyBorder(4, 7, 7, 7));
+      iconLabel.setVerticalAlignment(SwingConstants.TOP);
+      add(iconLabel, BorderLayout.WEST);
+    }
 
 //    StringBuilder nameText = new StringBuilder();
 //    nameText.append("<html><body><b>");
