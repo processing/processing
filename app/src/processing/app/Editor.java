@@ -825,7 +825,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.increase_indent"), ']');
+    item = Toolkit.newJMenuItem("\u2192 "+Language.text("menu.edit.increase_indent"), ']');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(true);
@@ -833,7 +833,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.decrease_indent"), '[');
+    item = Toolkit.newJMenuItem("\u2190 "+Language.text("menu.edit.decrease_indent"), '[');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(false);
@@ -2865,7 +2865,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
       this.add(item);
 
-      item = new JMenuItem(Language.text("menu.edit.increase_indent"));
+      item = new JMenuItem("\u2192 "+Language.text("menu.edit.increase_indent"));
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleIndentOutdent(true);
@@ -2873,7 +2873,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
       this.add(item);
 
-      item = new JMenuItem(Language.text("menu.edit.decrease_indent"));
+      item = new JMenuItem("\u2190 "+Language.text("menu.edit.decrease_indent"));
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleIndentOutdent(false);
