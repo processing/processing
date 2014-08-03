@@ -1322,7 +1322,7 @@ public class Base {
                        "An error occurred while trying to list the sketchbook.", e);
     }
     if (!found) {
-      JMenuItem empty = new JMenuItem("Empty Sketchbook");
+      JMenuItem empty = new JMenuItem(Language.text("menu.file.sketchbook.empty"));
       empty.setEnabled(false);
       menu.add(empty);
     }
@@ -1331,7 +1331,7 @@ public class Base {
 
   public JMenu getSketchbookMenu() {
     if (sketchbookMenu == null) {
-      sketchbookMenu = new JMenu(Language.text("sketchbook"));
+      sketchbookMenu = new JMenu(Language.text("menu.file.sketchbook"));
       rebuildSketchbookMenu();
     }
     return sketchbookMenu;
