@@ -29,6 +29,7 @@ import javax.swing.*;
 import processing.app.About;
 import processing.app.Base;
 import processing.app.Toolkit;
+import processing.app.Language;
 
 import com.apple.eawt.*;
 
@@ -116,9 +117,9 @@ public class ThinkDifferent implements ApplicationListener {
    */
   static protected JMenu buildFileMenu(final Base base) {
     JMenuItem item;
-    JMenu fileMenu = new JMenu("File");
+    JMenu fileMenu = new JMenu(Language.text("menu.file"));
 
-    item = Toolkit.newJMenuItem("New", 'N');
+    item = Toolkit.newJMenuItem(Language.text("menu.file.new"), 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handleNew();
@@ -126,7 +127,7 @@ public class ThinkDifferent implements ApplicationListener {
       });
     fileMenu.add(item);
 
-    item = Toolkit.newJMenuItem("Open...", 'O');
+    item = Toolkit.newJMenuItem(Language.text("menu.file.open"), 'O');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handleOpenPrompt();
@@ -136,7 +137,7 @@ public class ThinkDifferent implements ApplicationListener {
 
     fileMenu.add(base.getSketchbookMenu());
 
-    item = Toolkit.newJMenuItemShift("Examples...", 'O');
+    item = Toolkit.newJMenuItemShift(Language.text("menu.file.examples"), 'O');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         base.thinkDifferentExamples();
