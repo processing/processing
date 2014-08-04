@@ -800,11 +800,11 @@ public class PreferencesFrame {
     }
     
     // This takes a while to load, so run it from a separate thread
-    new Thread(new Runnable() {
+    EventQueue.invokeLater(new Runnable() {
       public void run() {
         initFontList();
       }
-    }).start();
+    });
     
     fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
     consoleSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
