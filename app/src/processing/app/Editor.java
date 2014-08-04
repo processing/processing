@@ -620,7 +620,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     fileMenu.add(item);
 
-    item = Toolkit.newJMenuItemShift(Language.text("editor.window.examples"), 'O');
+    item = Toolkit.newJMenuItemShift(Language.text("menu.file.examples"), 'O');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mode.showExamplesFrame();
@@ -825,7 +825,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.increase_indent"), ']');
+    item = Toolkit.newJMenuItem("\u2192 "+Language.text("menu.edit.increase_indent"), ']');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(true);
@@ -833,7 +833,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.decrease_indent"), '[');
+    item = Toolkit.newJMenuItem("\u2190 "+Language.text("menu.edit.decrease_indent"), '[');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(false);
@@ -2315,7 +2315,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       final String properParent =
         file.getName().substring(0, file.getName().lastIndexOf('.'));
       
-      Object[] options = { "OK", "Cancel" };
+      Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
       String prompt =
         "The file \"" + file.getName() + "\" needs to be inside\n" +
         "a sketch folder named \"" + properParent + "\".\n" +
@@ -2865,7 +2865,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
       this.add(item);
 
-      item = new JMenuItem(Language.text("menu.edit.increase_indent"));
+      item = new JMenuItem("\u2192 "+Language.text("menu.edit.increase_indent"));
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleIndentOutdent(true);
@@ -2873,7 +2873,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
       this.add(item);
 
-      item = new JMenuItem(Language.text("menu.edit.decrease_indent"));
+      item = new JMenuItem("\u2190 "+Language.text("menu.edit.decrease_indent"));
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleIndentOutdent(false);

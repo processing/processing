@@ -1126,7 +1126,7 @@ public class Base {
         // If the central menubar isn't supported on this OS X JVM,
         // we have to do the old behavior. Yuck!
         if (defaultFileMenu == null) {
-          Object[] options = { "OK", "Cancel" };
+          Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
           String prompt =
             "<html> " +
             "<head> <style type=\"text/css\">"+
@@ -1331,7 +1331,7 @@ public class Base {
 
   public JMenu getSketchbookMenu() {
     if (sketchbookMenu == null) {
-      sketchbookMenu = new JMenu("Sketchbook");
+      sketchbookMenu = new JMenu(Language.text("sketchbook"));
       rebuildSketchbookMenu();
     }
     return sketchbookMenu;

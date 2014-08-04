@@ -677,7 +677,7 @@ public class JavaEditor extends Editor {
    */
   protected boolean handleExportCheckModified() {
     if (sketch.isModified()) {
-      Object[] options = { "OK", "Cancel" };
+      Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
       int result = JOptionPane.showOptionDialog(this,
                                                 "Save changes before export?",
                                                 "Save",

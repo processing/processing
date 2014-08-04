@@ -890,7 +890,7 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   public DefaultMutableTreeNode buildSketchbookTree(){
-    DefaultMutableTreeNode sbNode = new DefaultMutableTreeNode("Sketchbook");
+    DefaultMutableTreeNode sbNode = new DefaultMutableTreeNode(Language.text("sketchbook.tree"));
     try {
       base.addSketches(sbNode, Base.getSketchbookFolder());
     } catch (IOException e) {
@@ -903,7 +903,7 @@ public abstract class Mode {
   
   public void showSketchbookFrame() {
     if (sketchbookFrame == null) {
-      sketchbookFrame = new JFrame(Language.text("editor.window.sketchbook"));
+      sketchbookFrame = new JFrame(Language.text("sketchbook"));
       Toolkit.setIcon(sketchbookFrame);
       Toolkit.registerWindowCloseKeys(sketchbookFrame.getRootPane(),
                                       new ActionListener() {
