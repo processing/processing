@@ -115,7 +115,7 @@ public class SingleInstance {
             }
           }
         }
-      }).start();
+      }, "SingleInstance Server").start();
 
     } catch (IOException e) {
       Base.log("Could not create single instance server.", e);

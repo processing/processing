@@ -370,7 +370,7 @@ public class ContributionListing {
         }
         downloadingListingLock.unlock();
       }
-    }).start();
+    }, "Contribution List Downloader").start();
   }
 
 

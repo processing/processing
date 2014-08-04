@@ -165,7 +165,7 @@ public class ContributionManager {
           status.setErrorMessage("Could not write to temporary directory.");
         }
       }
-    }).start();
+    }, "Contribution Installer").start();
   }
 
 
@@ -224,7 +224,7 @@ public class ContributionManager {
               + ad.getName());
         }
       }
-    }).start();
+    }, "Contribution Installer").start();
   }
 
 
