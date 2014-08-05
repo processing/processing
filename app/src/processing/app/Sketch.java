@@ -1103,7 +1103,7 @@ public class Sketch {
 
     // check whether this file already exists
     if (destFile.exists()) {
-      Object[] options = { Language.text("prompt.okay"), Language.text("prompt.cancel") };
+      Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
       String prompt = "Replace the existing version of " + filename + "?";
       int result = JOptionPane.showOptionDialog(editor,
                                                 prompt,
