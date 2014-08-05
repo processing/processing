@@ -50,16 +50,16 @@ import processing.app.Language;
  */
 class ContributionPanel extends JPanel {
   static public final String REMOVE_RESTART_MESSAGE =
-    "<i>Please restart Processing to finish removing this item.</i>";
+    String.format("<i>%s</i>", Language.text("contributions.messages.remove_restart"));
 
   static public final String INSTALL_RESTART_MESSAGE =
-    "<i>Please restart Processing to finish installing this item.</i>";
-  
+    String.format("<i>%s</i>", Language.text("contributions.messages.install_restart"));
+
   static public final String UPDATE_RESTART_MESSAGE =
-    "<i>Please restart Processing to finish updating this item.</i>";
+    String.format("<i>%s</i>", Language.text("contributions.messages.update_restart"));
 
   static public final String PROGRESS_BAR_CONSTRAINT = "Install/Remove Progress Bar Panel";
-  
+
   static public final String BUTTON_CONSTRAINT = "Install/Remvoe Button Panel";
 
   private final ContributionListPanel listPanel;
@@ -570,14 +570,13 @@ class ContributionPanel extends JPanel {
       description.append(REMOVE_RESTART_MESSAGE);
     } else if (contrib.isRestartFlagged()) {
       description.append(INSTALL_RESTART_MESSAGE);
-    } 
-    else if (contrib.isUpdateFlagged()) { 
+    } else if (contrib.isUpdateFlagged()) {
       description.append(UPDATE_RESTART_MESSAGE);
-    } 
-    else {
+    } else {
+
       String sentence = contrib.getSentence();
       if (sentence == null || sentence.isEmpty()) {
-        sentence = "<i>Description unavailable.</i>";
+        sentence = String.format("<i>%s</i>", Language.text("contributions.errors.description_unavailable"));
       } else {
         sentence = sanitizeHtmlTags(sentence);
         sentence = toHtmlLinks(sentence);
@@ -719,8 +718,8 @@ class ContributionPanel extends JPanel {
                                              listPanel.contribManager.status);
 
     } catch (MalformedURLException e) {
-      Base.showWarning(ContributionListPanel.INSTALL_FAILURE_TITLE,
-                       ContributionListPanel.MALFORMED_URL_MESSAGE, e);
+      Base.showWarning(Language.text("contributions.errors.install_failed"),
+                       Language.text("contributions.errors.malformed_url"), e);
       // not sure why we'd re-enable the button if it had an error...
 //      installRemoveButton.setEnabled(true);
     }
