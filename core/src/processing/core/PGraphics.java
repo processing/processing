@@ -3898,6 +3898,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
    */
   public void textAlign(int alignX, int alignY) {
     textAlign = alignX;
@@ -3974,6 +3975,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
    */
   public void textFont(PFont which) {
     if (which != null) {
@@ -4037,6 +4039,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public void textLeading(float leading) {
     textLeading = leading;
@@ -4153,6 +4156,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public float textWidth(String str) {
     if (textFont == null) {

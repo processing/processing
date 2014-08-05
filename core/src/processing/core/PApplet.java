@@ -12956,6 +12956,7 @@ public class PApplet extends Applet
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
    */
   public void textAlign(int alignX, int alignY) {
     if (recorder != null) recorder.textAlign(alignX, alignY);
@@ -13026,6 +13027,7 @@ public class PApplet extends Applet
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
    */
   public void textFont(PFont which) {
     if (recorder != null) recorder.textFont(which);
@@ -13056,6 +13058,7 @@ public class PApplet extends Applet
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public void textLeading(float leading) {
     if (recorder != null) recorder.textLeading(leading);
@@ -13143,6 +13146,7 @@ public class PApplet extends Applet
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public float textWidth(String str) {
     return g.textWidth(str);
