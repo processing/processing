@@ -164,13 +164,16 @@ public class Language {
 
   /** Get translation from bundles. */
   static public String text(String text) {
-    return init().bundle.getString(text);
+    String result = init().bundle.getString(text);
+    return (result == null) ? text : result;
   }
 
+  
   static public String interpolate(String text, Object... arguments) {
     return String.format(init().bundle.getString(text), arguments);
   }
 
+  
   static public String pluralize(String text, int count) {
     ResourceBundle bundle = init().bundle;
 
@@ -181,6 +184,7 @@ public class Language {
     }
     return interpolate(String.format(fmt, "n"), count);
   }
+  
 
   /** Get all available languages */
   static public Map<String, String> getLanguages() {

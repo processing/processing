@@ -6,6 +6,7 @@ X   https://github.com/processing/processing/issues/68
 X   http://code.google.com/p/processing/issues/detail?id=29
 X   https://github.com/processing/processing/pull/2716
 
+_ Fix OS X menu to be the same order as the other File menu
 _ remove toolbar menu references and code to rebuild
 
 gsoc
@@ -17,6 +18,8 @@ X temp folders not always deleting
 X   https://github.com/processing/processing/issues/2606
 X problem when removing a mode
 X   https://github.com/processing/processing/issues/2507
+_ remove dependency on oscp5 library for tweak mode
+_   https://github.com/processing/processing/issues/2730
 
 pulls
 X Add polling to detect file system changes
@@ -37,6 +40,12 @@ X   https://github.com/processing/processing/issues/2459
 X   https://github.com/processing/processing/pull/2697
 X Added some helper methods to Language
 X   https://github.com/processing/processing/pull/2704
+X More i18n updates
+X   https://github.com/processing/processing/pull/2725
+X Add thread names for easier debugging and profiling
+X   https://github.com/processing/processing/pull/2729
+X Add missing translations for OS X menu
+X   https://github.com/processing/processing/pull/2726
 
 languages
 X Japanese https://github.com/processing/processing/pull/2688
@@ -44,6 +53,8 @@ X Spanish https://github.com/processing/processing/pull/2691
 X Dutch https://github.com/processing/processing/pull/2694
 X French https://github.com/processing/processing/pull/2695
 X Portugese https://github.com/processing/processing/pull/2701
+X Korean https://github.com/processing/processing/commit/7b60e2ded9ca81f6a5a08a818aaf84ee4bb029e3
+X Turkish https://github.com/processing/processing/pull/2740
 
 earlier
 X repo cleanup
@@ -439,7 +450,6 @@ _   appears to be a synchronization problem with the loading
 _ blank sketch opened even if another opened by double-click
 _   add a 150 ms or more lag before opening the untitled window
 _   https://github.com/processing/processing/issues/218
-_   https://github.com/processing/processing/issues/1745
 _ editors opening up at the same time on load?
 _   either synchronize the open (at a minimum)
 _   or wait for mac handlers to register an open event
