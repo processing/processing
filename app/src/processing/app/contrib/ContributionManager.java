@@ -140,7 +140,7 @@ public class ContributionManager {
             download(url, contribZip, downloadProgress);
             
             if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
-              installProgress.startTask("Installing...", ProgressMonitor.UNKNOWN);
+              installProgress.startTask(Language.text("contributions.progress.installing"), ProgressMonitor.UNKNOWN);
               LocalContribution contribution = 
                 ad.install(editor.getBase(), contribZip, false, status);
 
@@ -159,10 +159,10 @@ public class ContributionManager {
 
           } catch (Exception e) {
             e.printStackTrace();
-            status.setErrorMessage("Error during download and install.");
+            status.setErrorMessage(Language.text("contributions.errors.download_and_install"));
           }
         } catch (IOException e) {
-          status.setErrorMessage("Could not write to temporary directory.");
+          status.setErrorMessage(Language.text("contributions.errors.temporary_directory"));
         }
       }
     }, "Contribution Installer").start();
@@ -498,10 +498,8 @@ public class ContributionManager {
   
   static private void installOnStartUp(final Base base, final AvailableContribution availableContrib) {
     if (availableContrib.link == null) {
-      Base.showWarning("Update on Restart of " + availableContrib.getName() + "failed",
-                       "Your operating system "
-                         + "doesn't appear to be supported. You should visit the "
-                         + availableContrib.getType() + "'s library for more info.");
+      Base.showWarning(Language.interpolate("contributions.errors.update_on_restart_failed", availableContrib.getName()),
+                       Language.text("contributions.unsupported_operating_system"));
       return;
     }
     try {
@@ -510,8 +508,8 @@ public class ContributionManager {
       ContributionManager.downloadAndInstallOnStartup(base, downloadUrl, availableContrib);
       
     } catch (MalformedURLException e) {
-      Base.showWarning("Update on Restart of " + availableContrib.getName() + "failed",
-                       ContributionListPanel.MALFORMED_URL_MESSAGE, e);
+      Base.showWarning(Language.interpolate("contributions.errors.update_on_restart_failed", availableContrib.getName()),
+                       Language.text("contributions.errors.malformed_url"), e);
     }
   }
   

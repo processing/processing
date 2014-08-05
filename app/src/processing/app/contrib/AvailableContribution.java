@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import processing.app.Base;
+import processing.app.Language;
 import processing.core.PApplet;
 
 
@@ -86,7 +87,7 @@ class AvailableContribution extends Contribution {
       tempFolder = type.createTempFolder();
     } catch (IOException e) {
       if (status != null)
-        status.setErrorMessage("Could not create a temporary folder to install.");
+        status.setErrorMessage(Language.text("contributions.errors.temporary_directory"));
       return null;
     }
     Base.unzip(contribArchive, tempFolder);
@@ -115,7 +116,7 @@ class AvailableContribution extends Contribution {
       tempFolder = enclosingFolder;
       */
       if (status != null)
-        status.setErrorMessage(getName() + " needs to be repackaged according to the " + type.getTitle() + " guidelines.");
+        status.setErrorMessage(Language.interpolate("contributions.errors.needs_repackage", getName(), type.getTitle()));
       //status.setErrorMessage("This " + type + " needs to be repackaged according to the guidelines.");
       return null;
     }
@@ -128,7 +129,7 @@ class AvailableContribution extends Contribution {
 
     if (contribFolder == null) {
       if (status != null)
-        status.setErrorMessage("Could not find a " + type + " in the downloaded file.");
+        status.setErrorMessage(Language.interpolate("contributions.errors.no_contribution_found", type));
       
     } else {
       File propFile = new File(contribFolder, type + ".properties");
@@ -180,7 +181,7 @@ class AvailableContribution extends Contribution {
         
       } else {
         if (status != null)
-          status.setErrorMessage("Error overwriting .properties file.");
+          status.setErrorMessage(Language.text("contributions.errors.overwriting_properties"));
       }
     }
 

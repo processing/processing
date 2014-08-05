@@ -41,7 +41,7 @@ import processing.app.*;
 
 
 public class ContributionManagerDialog {
-  static final String ANY_CATEGORY = "All";
+  static final String ANY_CATEGORY = Language.text("contributions.all");
 
   JFrame dialog;
   String title;
@@ -61,10 +61,8 @@ public class ContributionManagerDialog {
 
   public ContributionManagerDialog(ContributionType type) {
     if (type == null) {
-      title = "Update Manager";
       filter = ContributionType.createUpdateFilter();
     } else {
-      // title = type.getTitle() + " Manager";
       filter = type.createFilter();    
     }
     contribListing = ContributionListing.getInstance();
@@ -86,9 +84,9 @@ public class ContributionManagerDialog {
     this.editor = editor;
 
     if (dialog == null) {
-      dialog = new JFrame(title);
+      dialog = new JFrame(Language.text("contributions"));
 
-      restartButton = new JButton("Restart Processing");
+      restartButton = new JButton(Language.text("contributions.restart"));
       restartButton.setVisible(false);
       restartButton.addActionListener(new ActionListener() {
 
@@ -101,8 +99,8 @@ public class ContributionManagerDialog {
             if (ed.getSketch().isModified()) {
               int option = Base
                 .showYesNoQuestion(editor, title,
-                                   "Unsaved changes have been found",
-                                   "Are you sure you want to restart Processing without saving first?");
+                                   Language.text("contributions.unsaved_changes"),
+                                   Language.text("contributions.unsaved_changes.prompt"));
 
               if (option == JOptionPane.NO_OPTION)
                 return;
@@ -158,11 +156,9 @@ public class ContributionManagerDialog {
           updateCategoryChooser();
           if (error) {
             if (exception instanceof SocketTimeoutException) {
-              status.setErrorMessage("Connection timed out while " +
-                                     "downloading the contribution list.");
+              status.setErrorMessage(Language.text("contributions.errors.list_download.timeout"));
             } else {
-              status.setErrorMessage("Could not download the list " +
-                                     "of available contributions.");
+              status.setErrorMessage(Language.text("contributions.errors.list_download"));
             }
             exception.printStackTrace();
           }
