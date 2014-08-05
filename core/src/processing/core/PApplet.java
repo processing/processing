@@ -769,6 +769,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate(float)
+   * @see PApplet#frameCount
    */
   public float frameRate = 10;
   /** Last time in nanoseconds that frameRate was checked */
@@ -793,6 +794,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate(float)
+   * @see PApplet#frameRate
    */
   public int frameCount;
 
