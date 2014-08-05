@@ -154,7 +154,7 @@
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.update.macosx" value="65" />
+  <property name="jdk.update.macosx" value="67" />
   <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_${jdk.update.macosx}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
@@ -476,7 +476,6 @@
 	 most of the time that appbundler is used, keytool isn't needed. -->
     <copy file="${jdk.path.macosx}/Contents/Home/bin/keytool"
 	  todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/bin" />
-
 
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
