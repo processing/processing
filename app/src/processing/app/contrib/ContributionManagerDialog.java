@@ -198,7 +198,7 @@ public class ContributionManagerDialog {
 
       filterPanel.add(Box.createHorizontalStrut(6));
 
-      JLabel categoryLabel = new JLabel(Language.text("library.category"));
+      JLabel categoryLabel = new JLabel(Language.text("contrib.category"));
       filterPanel.add(categoryLabel);
 
       filterPanel.add(Box.createHorizontalStrut(5));
@@ -436,8 +436,8 @@ public class ContributionManagerDialog {
     List<String> filters;
 
     public FilterField () {
-      super(Language.text("library.filter_your_search"));
-      filterHint = Language.text("library.filter_your_search");
+      super(Language.text("contrib.filter_your_search"));
+      filterHint = Language.text("contrib.filter_your_search");
       
       showingHint = true;
       filters = new ArrayList<String>();
