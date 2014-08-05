@@ -41,7 +41,7 @@ import processing.app.*;
 
 
 public class ContributionManagerDialog {
-  static final String ANY_CATEGORY = Language.text("contributions.all");
+  static final String ANY_CATEGORY = Language.text("contrib.all");
 
   JFrame dialog;
   String title;
@@ -86,7 +86,7 @@ public class ContributionManagerDialog {
     if (dialog == null) {
       dialog = new JFrame(Language.text("contributions"));
 
-      restartButton = new JButton(Language.text("contributions.restart"));
+      restartButton = new JButton(Language.text("contrib.restart"));
       restartButton.setVisible(false);
       restartButton.addActionListener(new ActionListener() {
 
@@ -99,8 +99,8 @@ public class ContributionManagerDialog {
             if (ed.getSketch().isModified()) {
               int option = Base
                 .showYesNoQuestion(editor, title,
-                                   Language.text("contributions.unsaved_changes"),
-                                   Language.text("contributions.unsaved_changes.prompt"));
+                                   Language.text("contrib.unsaved_changes"),
+                                   Language.text("contrib.unsaved_changes.prompt"));
 
               if (option == JOptionPane.NO_OPTION)
                 return;
@@ -156,9 +156,9 @@ public class ContributionManagerDialog {
           updateCategoryChooser();
           if (error) {
             if (exception instanceof SocketTimeoutException) {
-              status.setErrorMessage(Language.text("contributions.errors.list_download.timeout"));
+              status.setErrorMessage(Language.text("contrib.errors.list_download.timeout"));
             } else {
-              status.setErrorMessage(Language.text("contributions.errors.list_download"));
+              status.setErrorMessage(Language.text("contrib.errors.list_download"));
             }
             exception.printStackTrace();
           }

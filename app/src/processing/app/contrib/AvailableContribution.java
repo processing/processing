@@ -87,7 +87,7 @@ class AvailableContribution extends Contribution {
       tempFolder = type.createTempFolder();
     } catch (IOException e) {
       if (status != null)
-        status.setErrorMessage(Language.text("contributions.errors.temporary_directory"));
+        status.setErrorMessage(Language.text("contrib.errors.temporary_directory"));
       return null;
     }
     Base.unzip(contribArchive, tempFolder);
@@ -116,7 +116,7 @@ class AvailableContribution extends Contribution {
       tempFolder = enclosingFolder;
       */
       if (status != null)
-        status.setErrorMessage(Language.interpolate("contributions.errors.needs_repackage", getName(), type.getTitle()));
+        status.setErrorMessage(Language.interpolate("contrib.errors.needs_repackage", getName(), type.getTitle()));
       //status.setErrorMessage("This " + type + " needs to be repackaged according to the guidelines.");
       return null;
     }
@@ -129,7 +129,7 @@ class AvailableContribution extends Contribution {
 
     if (contribFolder == null) {
       if (status != null)
-        status.setErrorMessage(Language.interpolate("contributions.errors.no_contribution_found", type));
+        status.setErrorMessage(Language.interpolate("contrib.errors.no_contribution_found", type));
       
     } else {
       File propFile = new File(contribFolder, type + ".properties");
@@ -181,7 +181,7 @@ class AvailableContribution extends Contribution {
         
       } else {
         if (status != null)
-          status.setErrorMessage(Language.text("contributions.errors.overwriting_properties"));
+          status.setErrorMessage(Language.text("contrib.errors.overwriting_properties"));
       }
     }
 

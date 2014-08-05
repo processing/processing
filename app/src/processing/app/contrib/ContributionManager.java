@@ -72,7 +72,7 @@ public class ContributionManager {
         // TODO this is often -1, may need to set progress to indeterminate
         int fileSize = conn.getContentLength();
 //      System.out.println("file size is " + fileSize);
-        progress.startTask(Language.text("contributions.progress.downloading"), fileSize); 
+        progress.startTask(Language.text("contrib.progress.downloading"), fileSize); 
       }
   
       InputStream in = conn.getInputStream();
@@ -140,7 +140,7 @@ public class ContributionManager {
             download(url, contribZip, downloadProgress);
             
             if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
-              installProgress.startTask(Language.text("contributions.progress.installing"), ProgressMonitor.UNKNOWN);
+              installProgress.startTask(Language.text("contrib.progress.installing"), ProgressMonitor.UNKNOWN);
               LocalContribution contribution = 
                 ad.install(editor.getBase(), contribZip, false, status);
 
@@ -159,10 +159,10 @@ public class ContributionManager {
 
           } catch (Exception e) {
             e.printStackTrace();
-            status.setErrorMessage(Language.text("contributions.errors.download_and_install"));
+            status.setErrorMessage(Language.text("contrib.errors.download_and_install"));
           }
         } catch (IOException e) {
-          status.setErrorMessage(Language.text("contributions.errors.temporary_directory"));
+          status.setErrorMessage(Language.text("contrib.errors.temporary_directory"));
         }
       }
     }, "Contribution Installer").start();
@@ -498,8 +498,8 @@ public class ContributionManager {
   
   static private void installOnStartUp(final Base base, final AvailableContribution availableContrib) {
     if (availableContrib.link == null) {
-      Base.showWarning(Language.interpolate("contributions.errors.update_on_restart_failed", availableContrib.getName()),
-                       Language.text("contributions.unsupported_operating_system"));
+      Base.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
+                       Language.text("contrib.unsupported_operating_system"));
       return;
     }
     try {
@@ -508,8 +508,8 @@ public class ContributionManager {
       ContributionManager.downloadAndInstallOnStartup(base, downloadUrl, availableContrib);
       
     } catch (MalformedURLException e) {
-      Base.showWarning(Language.interpolate("contributions.errors.update_on_restart_failed", availableContrib.getName()),
-                       Language.text("contributions.errors.malformed_url"), e);
+      Base.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
+                       Language.text("contrib.errors.malformed_url"), e);
     }
   }
   
