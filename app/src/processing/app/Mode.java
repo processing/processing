@@ -595,10 +595,10 @@ public abstract class Mode {
   }
 
 
-  public JTree buildExamplesTree() {
+  public DefaultMutableTreeNode buildExamplesTree() {
     DefaultMutableTreeNode node = new DefaultMutableTreeNode("Examples");
 
-    JTree examplesTree = new JTree(node);
+//    JTree examplesTree = new JTree(node);
 //    rebuildExamplesTree(node);
 //  }
 
@@ -617,30 +617,28 @@ public abstract class Mode {
 //      });
       File[] subfolders = getExampleCategoryFolders();
 
-//      DefaultMutableTreeNode examplesParent = new DefaultMutableTreeNode("Examples");
+      DefaultMutableTreeNode modeExParent = new DefaultMutableTreeNode("Mode Examples");
+      
       for (File sub : subfolders) {
         DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
         if (base.addSketches(subNode, sub)) {
 //          examplesParent.add(subNode);
-          node.add(subNode);
+          modeExParent.add(subNode);
         }
       }
-//      node.add(examplesParent);
-//      examplesTree.expandPath(new TreePath(examplesParent));
-
+ 
       // get library examples
       boolean any = false;
-      DefaultMutableTreeNode libParent = new DefaultMutableTreeNode("Libraries");
       for (Library lib : coreLibraries) {
         if (lib.hasExamples()) {
           DefaultMutableTreeNode libNode = new DefaultMutableTreeNode(lib.getName());
-          any |= base.addSketches(libNode, lib.getExamplesFolder());
-          libParent.add(libNode);
+          if (base.addSketches(libNode, lib.getExamplesFolder()))
+            modeExParent.add(libNode);
         }
       }
-      if (any) {
-        node.add(libParent);
-      }
+      
+      if (modeExParent.getChildCount() > 0)
+        node.add(modeExParent);
 
       // get contrib library examples
       any = false;
@@ -651,7 +649,7 @@ public abstract class Mode {
       }
       if (any) {
 //        menu.addSeparator();
-        DefaultMutableTreeNode contribParent = new DefaultMutableTreeNode("Contributed Libraries");
+        DefaultMutableTreeNode contribParent = new DefaultMutableTreeNode("Library Examples");
 //        Base.addDisabledItem(menu, "Contributed");
         for (Library lib : contribLibraries) {
           if (lib.hasExamples()) {
@@ -668,14 +666,16 @@ public abstract class Mode {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return examplesTree;
+    
+    DefaultMutableTreeNode contribExampleNode = buildContributedExamplesTrees();
+    if (contribExampleNode.getChildCount() > 0)
+      node.add(contribExampleNode);
+    return node;
   }
 
 
-  public JTree buildContributedExamplesTrees() {
+  public DefaultMutableTreeNode buildContributedExamplesTrees() {
     DefaultMutableTreeNode node = new DefaultMutableTreeNode("Contributed Examples");
-
-    JTree examplesTree = new JTree(node);
 
     try {
       File[] subfolders = ContributionType.EXAMPLE.listCandidates(examplesContribFolder);
@@ -688,6 +688,7 @@ public abstract class Mode {
         DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
         if (base.addSketches(subNode, sub)) {
           node.add(subNode);
+          System.out.println(subNode);
           int exampleNodeNumber = -1;
           for (int y = 0; y < subNode.getChildCount(); y++)
             if (subNode.getChildAt(y).toString().equals("example"))
@@ -699,13 +700,14 @@ public abstract class Mode {
           int count = exampleNode.getChildCount();
           for (int x = 0; x < count; x++) {
             subNode.add((DefaultMutableTreeNode) exampleNode.getChildAt(0));
+            System.out.println(subNode);
           }
         }
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return examplesTree;
+    return node;//examplesTree;
   }
 
 
@@ -767,8 +769,78 @@ public abstract class Mode {
         }
       });
       
-      final JTree tree = buildExamplesTree();
-      setupExamplesTree(tree);
+      final JTree tree = new JTree(buildExamplesTree());
+      
+      
+      tree.setOpaque(true);
+      tree.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+      tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+      tree.setShowsRootHandles(true);
+//      tree.setToggleClickCount(2);
+      // expand the root
+      tree.expandRow(0);
+      // now hide the root
+      tree.setRootVisible(false);
+
+      // After 2.0a7, no longer expanding each of the categories at Casey's
+      // request. He felt that the window was too complicated too quickly.
+//      for (int row = tree.getRowCount()-1; row >= 0; --row) {
+//        tree.expandRow(row);
+//      }
+
+      tree.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+          if (e.getClickCount() == 2) {
+            DefaultMutableTreeNode node =
+              (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+
+            int selRow = tree.getRowForLocation(e.getX(), e.getY());
+            //TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+            //if (node != null && node.isLeaf() && node.getPath().equals(selPath)) {
+            if (node != null && node.isLeaf() && selRow != -1) {
+              SketchReference sketch = (SketchReference) node.getUserObject();
+              base.handleOpen(sketch.getPath());
+            }
+          }
+        }
+      });
+      tree.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {  // doesn't fire keyTyped()
+            examplesFrame.setVisible(false);
+          }
+        }
+        public void keyTyped(KeyEvent e) {
+          if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+            DefaultMutableTreeNode node =
+              (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+            if (node != null && node.isLeaf()) {
+              SketchReference sketch = (SketchReference) node.getUserObject();
+              base.handleOpen(sketch.getPath());
+            }
+          }
+        }
+      });
+
+      tree.addTreeExpansionListener(new TreeExpansionListener() {
+        @Override
+        public void treeExpanded(TreeExpansionEvent event) {
+          updateExpanded(tree);
+        }
+
+        @Override
+        public void treeCollapsed(TreeExpansionEvent event) {
+          updateExpanded(tree);
+        }
+      });
+
+      tree.setBorder(new EmptyBorder(5, 5, 5, 5));
+      if (Base.isMacOS()) {
+        tree.setToggleClickCount(2);
+      } else {
+        tree.setToggleClickCount(1);
+      }
   
       JScrollPane treePane = new JScrollPane(tree);
       treePane.setPreferredSize(new Dimension(250, 300));
@@ -777,25 +849,8 @@ public abstract class Mode {
       treePane.setBackground(Color.WHITE);
       treePane.setAlignmentX(Component.LEFT_ALIGNMENT);
       
-      JLabel contribExLabel = new JLabel("Contributed Examples");
-      contribExLabel.setOpaque(false);
-      contribExLabel.setBorder(new EmptyBorder(10, 6, 1, 5));
-      contribExLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-      
-      final JTree tree2 = buildContributedExamplesTrees();
-      setupExamplesTree(tree2);
-      
-      JScrollPane treePane2 = new JScrollPane(tree2);
-      treePane2.setPreferredSize(new Dimension(250, 300));
-      treePane2.setBorder(new EmptyBorder(0, 0, 10, 0));
-      treePane2.setOpaque(true);
-      treePane2.setBackground(Color.WHITE);
-      treePane2.setAlignmentX(Component.LEFT_ALIGNMENT);
-      
       examplesPanel.add(openExamplesManagerLabel);
       examplesPanel.add(treePane);
-      examplesPanel.add(contribExLabel);
-      examplesPanel.add(treePane2);
       examplesFrame.getContentPane().add(examplesPanel);
       examplesFrame.pack();
 
@@ -818,78 +873,6 @@ public abstract class Mode {
   }
 
 
-  private void setupExamplesTree(final JTree tree) {
-    tree.setOpaque(true);
-    tree.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-    tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-    tree.setShowsRootHandles(true);
-//    tree.setToggleClickCount(2);
-    // expand the root
-    tree.expandRow(0);
-    // now hide the root
-    tree.setRootVisible(false);
-
-    // After 2.0a7, no longer expanding each of the categories at Casey's
-    // request. He felt that the window was too complicated too quickly.
-//    for (int row = tree.getRowCount()-1; row >= 0; --row) {
-//      tree.expandRow(row);
-//    }
-
-    tree.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-          DefaultMutableTreeNode node =
-            (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-
-          int selRow = tree.getRowForLocation(e.getX(), e.getY());
-          //TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-          //if (node != null && node.isLeaf() && node.getPath().equals(selPath)) {
-          if (node != null && node.isLeaf() && selRow != -1) {
-            SketchReference sketch = (SketchReference) node.getUserObject();
-            base.handleOpen(sketch.getPath());
-          }
-        }
-      }
-    });
-    tree.addKeyListener(new KeyAdapter() {
-      public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {  // doesn't fire keyTyped()
-          examplesFrame.setVisible(false);
-        }
-      }
-      public void keyTyped(KeyEvent e) {
-        if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-          DefaultMutableTreeNode node =
-            (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-          if (node != null && node.isLeaf()) {
-            SketchReference sketch = (SketchReference) node.getUserObject();
-            base.handleOpen(sketch.getPath());
-          }
-        }
-      }
-    });
-
-    tree.addTreeExpansionListener(new TreeExpansionListener() {
-      @Override
-      public void treeExpanded(TreeExpansionEvent event) {
-        updateExpanded(tree);
-      }
-
-      @Override
-      public void treeCollapsed(TreeExpansionEvent event) {
-        updateExpanded(tree);
-      }
-    });
-
-    tree.setBorder(new EmptyBorder(5, 5, 5, 5));
-    if (Base.isMacOS()) {
-      tree.setToggleClickCount(2);
-    } else {
-      tree.setToggleClickCount(1);
-    }
-  }
-  
   protected void updateExpanded(JTree tree) {
     Enumeration en = tree.getExpandedDescendants(new TreePath(tree.getModel().getRoot()));
     //en.nextElement();  // skip the root "Examples" node

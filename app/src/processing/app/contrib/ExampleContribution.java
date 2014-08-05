@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import processing.app.Base;
+import processing.core.PApplet;
 
 public class ExampleContribution extends LocalContribution {
 
@@ -24,7 +25,7 @@ public class ExampleContribution extends LocalContribution {
     ArrayList<String> modesList = new ArrayList<String>();
     if (unparsedModes == null || unparsedModes.isEmpty())
       return modesList;
-    String[] splitStr = unparsedModes.split(",");
+    String[] splitStr = PApplet.trim(PApplet.split(unparsedModes, ','));//unparsedModes.split(",");
     for (String mode : splitStr)
       modesList.add(mode.trim());
     return modesList;
