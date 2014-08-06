@@ -3376,7 +3376,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void smooth(int level) {
-    if (smoothDisabled) return;
+    if (smoothDisabled || PGL.MAX_SAMPLES == -1) return;
 
     smooth = true;
 
