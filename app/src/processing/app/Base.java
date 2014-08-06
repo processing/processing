@@ -749,9 +749,11 @@ public class Base {
         throw new IOException(newbieFile + " already exists.");
       }
 
-      // Create sketch properties.
-      saveModeSettings(new File(newbieDir, "sketch.properties"), nextMode);
-
+      // Create sketch properties file if it's not a default mode.
+      if (!isDefaultMode(nextMode)) {
+        saveModeSettings(new File(newbieDir, "sketch.properties"), nextMode);
+      }
+      
       String path = newbieFile.getAbsolutePath();
       /*Editor editor =*/ handleOpen(path, true);
 
@@ -772,6 +774,20 @@ public class Base {
     } catch (IOException e) {
       System.err.println("While creating " + sketchProps + ": " + e.getMessage());
     }
+  }
+  
+  /**
+   * Is it a default mode?
+   * @param mode
+   * @return
+   */
+  public boolean isDefaultMode(Mode mode) {
+    for (int i = 0; i < coreModes.length; i++) {
+      if (mode.equals(coreModes[i])) {
+        return true;
+      }
+    }
+    return false;
   }
 
 
