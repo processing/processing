@@ -159,7 +159,7 @@ public class TextArea extends JEditTextArea {
         }
       }
     }
-    if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+    else if(evt.getKeyCode() == KeyEvent.VK_ENTER){
       if (suggestion != null) {
         if (suggestion.isVisible()) {
           if (suggestion.insertSelection()) {
@@ -170,7 +170,6 @@ public class TextArea extends JEditTextArea {
         }
       }
     }
-    
     
     if (evt.getID() == KeyEvent.KEY_PRESSED) {
       switch (evt.getKeyCode()) {
@@ -217,12 +216,15 @@ public class TextArea extends JEditTextArea {
           keyChar == KeyEvent.CHAR_UNDEFINED) {
         return;
       }
+      else if (keyChar == ')') {
+        hideSuggestion(); // See #2741 
+        return;
+      }
+      
       final KeyEvent evt2 = evt;
-      System.out.println("type: " + evt);
-      if (evt.isAltDown() || evt.isControlDown() || evt.isMetaDown()) {
-        if (ExperimentalMode.ccTriggerEnabled && 
-            keyChar == KeyEvent.VK_SPACE && 
-            (evt.isControlDown() || evt.isMetaDown())) {
+      if (keyChar == ' ') {
+        if (ExperimentalMode.ccTriggerEnabled &&
+        (evt.isControlDown() || evt.isMetaDown())) {
           SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
             protected Object doInBackground() throws Exception {
               // Provide completions only if it's enabled
@@ -239,6 +241,8 @@ public class TextArea extends JEditTextArea {
             }
           };
           worker.execute();
+        } else {
+          hideSuggestion(); // hide on spacebar
         }
         return;
       }
