@@ -5,6 +5,8 @@ X split Preferences and PreferencesFrame
 X   https://github.com/processing/processing/issues/68
 X   http://code.google.com/p/processing/issues/detail?id=29
 X   https://github.com/processing/processing/pull/2716
+X shouldn't write sketch.properties unless it's a non-default mode
+X   https://github.com/processing/processing/issues/2531
 
 _ Fix OS X menu to be the same order as the other File menu
 _ remove toolbar menu references and code to rebuild
@@ -18,6 +20,10 @@ X temp folders not always deleting
 X   https://github.com/processing/processing/issues/2606
 X problem when removing a mode
 X   https://github.com/processing/processing/issues/2507
+X autocompletion dialog box sticking
+X   https://github.com/processing/processing/issues/2741
+X Line warning indicators next to scrollbar break after moving around text
+X   https://github.com/processing/processing/issues/2655
 _ remove dependency on oscp5 library for tweak mode
 _   https://github.com/processing/processing/issues/2730
 
@@ -46,6 +52,11 @@ X Add thread names for easier debugging and profiling
 X   https://github.com/processing/processing/pull/2729
 X Add missing translations for OS X menu
 X   https://github.com/processing/processing/pull/2726
+X fix firstLine when modifying lines above it
+X   https://github.com/processing/processing/issues/2654
+X   https://github.com/processing/processing/pull/2674
+X Style completion panel when using Nimbus LAF
+X   https://github.com/processing/processing/pull/2718
 
 languages
 X Japanese https://github.com/processing/processing/pull/2688
@@ -55,6 +66,7 @@ X French https://github.com/processing/processing/pull/2695
 X Portugese https://github.com/processing/processing/pull/2701
 X Korean https://github.com/processing/processing/commit/7b60e2ded9ca81f6a5a08a818aaf84ee4bb029e3
 X Turkish https://github.com/processing/processing/pull/2740
+X Chinese https://github.com/processing/processing/pull/2748
 
 earlier
 X repo cleanup
@@ -93,8 +105,6 @@ _ IllegalArgumentException when clicking between editor windows
 _   https://github.com/processing/processing/issues/2530
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
-_ shouldn't write sketch.properties unless it's a non-default mode
-_   https://github.com/processing/processing/issues/2531
 _ closing the color selector makes things freeze (only Linux and Windows?)
 _   https://github.com/processing/processing/issues/2381
 _ move sketchbook into its own window
