@@ -97,7 +97,8 @@ public class Language {
       "ko", // Korean      
       "nl", // Dutch, Nederlands
       "pt", // Portuguese
-      "tr"  // Turkish
+      "tr", // Turkish
+	  "zh" // chinese
     };
     return SUPPORTED;
 
