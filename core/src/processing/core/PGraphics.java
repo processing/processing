@@ -1867,7 +1867,7 @@ public class PGraphics extends PImage implements PConstants {
                                  "must be used before bezierVertex() or quadraticVertex()");
     }
     if (vertexCount == 0) {
-      throw new RuntimeException("vertex() must be used at least once" +
+      throw new RuntimeException("vertex() must be used at least once " +
                                  "before bezierVertex() or quadraticVertex()");
     }
   }
@@ -3898,6 +3898,9 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
+   * @see PGraphics#textAscent()
+   * @see PGraphics#textDescent()
    */
   public void textAlign(int alignX, int alignY) {
     textAlign = alignX;
@@ -3974,6 +3977,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
    */
   public void textFont(PFont which) {
     if (which != null) {
@@ -4037,6 +4041,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public void textLeading(float leading) {
     textLeading = leading;
@@ -4153,6 +4158,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public float textWidth(String str) {
     if (textFont == null) {
@@ -4237,6 +4243,10 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#textFont(PFont)
    * @see PGraphics#textMode(int)
    * @see PGraphics#textSize(float)
+   * @see PGraphics#textLeading(float)
+   * @see PGraphics#textWidth(String)
+   * @see PGraphics#textAscent()
+   * @see PGraphics#textDescent()
    * @see PGraphics#rectMode(int)
    * @see PGraphics#fill(int, float)
    * @see_external String

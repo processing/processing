@@ -769,6 +769,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate(float)
+   * @see PApplet#frameCount
    */
   public float frameRate = 10;
   /** Last time in nanoseconds that frameRate was checked */
@@ -793,6 +794,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate(float)
+   * @see PApplet#frameRate
    */
   public int frameCount;
 
@@ -10916,7 +10918,7 @@ public class PApplet extends Applet
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent e) {
-              System.exit(0);
+              applet.exit();
             }
           });
         frame.add(label);
@@ -12954,6 +12956,9 @@ public class PApplet extends Applet
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
+   * @see PGraphics#textAscent()
+   * @see PGraphics#textDescent()
    */
   public void textAlign(int alignX, int alignY) {
     if (recorder != null) recorder.textAlign(alignX, alignY);
@@ -13024,6 +13029,7 @@ public class PApplet extends Applet
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
    */
   public void textFont(PFont which) {
     if (recorder != null) recorder.textFont(which);
@@ -13054,6 +13060,7 @@ public class PApplet extends Applet
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public void textLeading(float leading) {
     if (recorder != null) recorder.textLeading(leading);
@@ -13141,6 +13148,7 @@ public class PApplet extends Applet
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public float textWidth(String str) {
     return g.textWidth(str);
@@ -13182,6 +13190,10 @@ public class PApplet extends Applet
    * @see PGraphics#textFont(PFont)
    * @see PGraphics#textMode(int)
    * @see PGraphics#textSize(float)
+   * @see PGraphics#textLeading(float)
+   * @see PGraphics#textWidth(String)
+   * @see PGraphics#textAscent()
+   * @see PGraphics#textDescent()
    * @see PGraphics#rectMode(int)
    * @see PGraphics#fill(int, float)
    * @see_external String

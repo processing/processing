@@ -561,7 +561,7 @@ public class ASTGenerator {
       }
       else {
         // or in a predefined class?
-        Class tehClass = findClassIfExists(((SimpleName) astNode).toString());
+        Class<?> tehClass = findClassIfExists(((SimpleName) astNode).toString());
         if (tehClass != null) {
           return new ClassMember(tehClass);
         }
@@ -587,7 +587,7 @@ public class ASTGenerator {
             /*The type wasn't found in local code, so it might be something like
              * log(), or maybe belonging to super class, etc.
              */
-            Class tehClass = findClassIfExists(((SimpleName)fa.getExpression()).toString());
+            Class<?> tehClass = findClassIfExists(((SimpleName)fa.getExpression()).toString());
             if (tehClass != null) {
               // Method Expression is a simple name and wasn't located locally, but found in a class
               // so look for method in this class.
@@ -1128,7 +1128,7 @@ public class ASTGenerator {
       }
       
       ArrayList<CompletionCandidate> superClassCandidates = new ArrayList<CompletionCandidate>();
-      if(td.getSuperclassType() instanceof Type){
+      if(td.getSuperclassType() != null){
         log(getNodeAsString(td.getSuperclassType()) + " <-Looking into superclass of " + tehClass);
         superClassCandidates = getMembersForType(new ClassMember(td
                                                      .getSuperclassType()),
@@ -1330,7 +1330,7 @@ public class ASTGenerator {
   
   protected Class loadClass(String className){
     Class tehClass = null;
-    if(className instanceof String){
+    if (className != null) {
       try {
         tehClass = Class.forName(className, false,
                                  errorCheckerService.getSketchClassLoader());
@@ -1360,12 +1360,12 @@ public class ASTGenerator {
     log("definedIn3rdPartyClass-> Looking for " + memberName
         + " in " + tehClass);
     String memberNameL = memberName.toLowerCase();
-    if(tehClass.getDeclaringNode() instanceof TypeDeclaration){
+    if (tehClass.getDeclaringNode() instanceof TypeDeclaration) {
       
       TypeDeclaration td = (TypeDeclaration) tehClass.getDeclaringNode();
       for (int i = 0; i < td.getFields().length; i++) {
-        List<VariableDeclarationFragment> vdfs = td.getFields()[i]
-            .fragments();
+        List<VariableDeclarationFragment> vdfs = 
+          td.getFields()[i].fragments();
         for (VariableDeclarationFragment vdf : vdfs) {
           if (vdf.getName().toString().toLowerCase()
               .startsWith(memberNameL))
@@ -1378,23 +1378,19 @@ public class ASTGenerator {
             .startsWith(memberNameL))
          return new ClassMember(td.getMethods()[i]);
       }
-      if(td.getSuperclassType() instanceof Type){
+      if (td.getSuperclassType() != null) {
         log(getNodeAsString(td.getSuperclassType()) + " <-Looking into superclass of " + tehClass);
         return definedIn3rdPartyClass(new ClassMember(td
                                                      .getSuperclassType()),memberName);        
-      }
-      else
-      {
+      } else {
         return definedIn3rdPartyClass(new ClassMember(Object.class),memberName);
       }
     }
     
     Class probableClass = null;
-    if(tehClass.getClass_() != null){
+    if (tehClass.getClass_() != null) {
       probableClass = tehClass.getClass_();
-    }
-    else
-    {
+    } else {
       probableClass = findClassIfExists(tehClass.getTypeAsString());
       log("Loaded " + probableClass.toString());
     }

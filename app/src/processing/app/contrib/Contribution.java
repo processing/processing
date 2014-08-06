@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import processing.app.Language;
 import processing.core.PApplet;
 
 
@@ -155,6 +156,11 @@ abstract public class Contribution {
   
   /** Overridden by LocalContribution. */
   boolean isDeletionFlagged() {
+    return false;
+  }
+
+  
+  boolean isUpdateFlagged() {
     return false;
   }
 

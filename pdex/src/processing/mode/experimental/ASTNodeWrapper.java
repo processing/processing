@@ -157,15 +157,14 @@ public class ASTNodeWrapper {
     
     if (jd == null) {
       log("Visiting children of node " + getNodeAsString(thisNode));
-      Iterator<StructuralPropertyDescriptor> it = 
-          (Iterator<StructuralPropertyDescriptor>) thisNode
-          .structuralPropertiesForType().iterator();
+      Iterator<StructuralPropertyDescriptor> it = (Iterator<StructuralPropertyDescriptor>) 
+          thisNode.structuralPropertiesForType().iterator();
       boolean flag = true;
       while (it.hasNext()) {
         StructuralPropertyDescriptor prop = it.next();
         if (prop.isChildListProperty()) {
-          List<ASTNode> nodelist = (List<ASTNode>) thisNode
-              .getStructuralProperty(prop);
+          List<ASTNode> nodelist = (List<ASTNode>) 
+            thisNode.getStructuralProperty(prop);
           log("prop " + prop);
           for (ASTNode cnode : nodelist) {
             log("Visiting node " + getNodeAsString(cnode));
@@ -214,7 +213,7 @@ public class ASTNodeWrapper {
    * @return
    */
   private int getJavadocOffset(FieldDeclaration fd){
-    List<ASTNode> list= (List<ASTNode>)fd.modifiers();
+    List<ASTNode> list = (List<ASTNode>) fd.modifiers();
     SimpleName sn = (SimpleName) getNode();
     
     Type tp = fd.getType();
@@ -248,7 +247,7 @@ public class ASTNodeWrapper {
    * @return
    */
   private int getJavadocOffset(MethodDeclaration md) {
-    List<ASTNode> list = (List<ASTNode>)md.modifiers();
+    List<ASTNode> list = (List<ASTNode>) md.modifiers();
     SimpleName sn = (SimpleName) getNode();
     int lineNum = getLineNumber(sn);
     log("SN " + sn + ", " + lineNum);

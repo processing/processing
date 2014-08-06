@@ -290,7 +290,7 @@ public class Sketch {
 
     renamingCode = false;
     // editor.status.edit("Name for new file:", "");
-    promptForTabName("Name for new file:", "");
+    promptForTabName(Language.text("editor.tab.rename.description")+":", "");
   }
 
 
@@ -327,11 +327,11 @@ public class Sketch {
     // TODO maybe just popup a text area?
     renamingCode = true;
     String prompt = (currentIndex == 0) ?
-      "New name for sketch:" : "New name for file:";
+      Language.text("editor.sketch.rename.description") : Language.text("editor.tab.rename.description");
     String oldName = (current.isExtension(mode.getDefaultExtension())) ?
       current.getPrettyName() : current.getFileName();
     // editor.status.edit(prompt, oldName);
-    promptForTabName(prompt, oldName);
+    promptForTabName(prompt+":", oldName);
   }
   
   /**
@@ -405,7 +405,7 @@ public class Sketch {
 
     int userReply = JOptionPane.showOptionDialog(editor, new Object[] {
                                                  prompt, field },
-                                                 "New Name",
+                                                 Language.text("editor.tab.new"),
                                                  JOptionPane.OK_CANCEL_OPTION,
                                                  JOptionPane.PLAIN_MESSAGE,
                                                  null, new Object[] {
@@ -633,13 +633,13 @@ public class Sketch {
     }
     
     // confirm deletion with user, yes/no
-    Object[] options = { "OK", "Cancel" };
+    Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
     String prompt = (currentIndex == 0) ?
-      "Are you sure you want to delete this sketch?" :
-      "Are you sure you want to delete \"" + current.getPrettyName() + "\"?";
+      Language.text("warn.delete.sketch") :
+      Language.interpolate("warn.delete.file", current.getPrettyName());
     int result = JOptionPane.showOptionDialog(editor,
                                               prompt,
-                                              "Delete",
+                                              Language.text("warn.delete"),
                                               JOptionPane.YES_NO_OPTION,
                                               JOptionPane.QUESTION_MESSAGE,
                                               null,
@@ -806,7 +806,7 @@ public class Sketch {
 	
     final String oldName2 = folder.getName();
     // TODO rewrite this to use shared version from PApplet
-    final String PROMPT = "Save sketch folder as...";
+    final String PROMPT = Language.text("save");
     if (Preferences.getBoolean("chooser.files.native")) {
       // get new name for folder
       FileDialog fd = new FileDialog(editor, PROMPT, FileDialog.SAVE);
@@ -1033,8 +1033,7 @@ public class Sketch {
     }
 
     // get a dialog, select a file to add to the sketch
-    String prompt =
-      "Select an image or other data file to copy to your sketch";
+    String prompt = Language.text("file");
     //FileDialog fd = new FileDialog(new Frame(), prompt, FileDialog.LOAD);
     FileDialog fd = new FileDialog(editor, prompt, FileDialog.LOAD);
     fd.setVisible(true);
@@ -1104,7 +1103,7 @@ public class Sketch {
 
     // check whether this file already exists
     if (destFile.exists()) {
-      Object[] options = { "OK", "Cancel" };
+      Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
       String prompt = "Replace the existing version of " + filename + "?";
       int result = JOptionPane.showOptionDialog(editor,
                                                 prompt,

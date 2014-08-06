@@ -71,7 +71,7 @@ public class UpdateCheck {
 //          }
         }
       }
-    }).start();
+    }, "Update Checker").start();
   }
 
 
@@ -137,14 +137,12 @@ public class UpdateCheck {
 
 
   protected boolean promptToVisitDownloadPage() {
-    String prompt =
-      "A new version of Processing is available,\n" +
-      "would you like to visit the Processing download page?";
+    String prompt = Language.text("update_check.updates_available.core");
 
-    Object[] options = { "Yes", "No" };
+    Object[] options = { Language.text("prompt.yes"), Language.text("prompt.no") };
     int result = JOptionPane.showOptionDialog(base.activeEditor,
                                               prompt,
-                                              "Update",
+                                              Language.text("update_check"),
                                               JOptionPane.YES_NO_OPTION,
                                               JOptionPane.QUESTION_MESSAGE,
                                               null,
@@ -160,14 +158,12 @@ public class UpdateCheck {
 
 
   protected boolean promptToOpenContributionManager() {
-    String contributionPrompt =
-      "There are updates available for some of the installed contributions,\n" +
-      "would you like to open the the Contribution Manager now?";
+    String contributionPrompt = Language.text("update_check.updates_available.contributions");
 
-    Object[] options = { "Yes", "No" };
+    Object[] options = { Language.text("prompt.yes"), Language.text("prompt.no") };
     int result = JOptionPane.showOptionDialog(base.activeEditor,
                                               contributionPrompt,
-                                              "Update",
+                                              Language.text("update_check"),
                                               JOptionPane.YES_NO_OPTION,
                                               JOptionPane.QUESTION_MESSAGE,
                                               null,

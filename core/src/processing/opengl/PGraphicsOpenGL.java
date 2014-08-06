@@ -3056,6 +3056,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void bezierVertexImpl(float x2, float y2, float z2,
                                   float x3, float y3, float z3,
                                   float x4, float y4, float z4) {
+    bezierVertexCheck(shape, inGeo.vertexCount);
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -3083,6 +3084,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void quadraticVertexImpl(float cx, float cy, float cz,
                                      float x3, float y3, float z3) {
+    bezierVertexCheck(shape, inGeo.vertexCount);
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -3109,6 +3111,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void curveVertexImpl(float x, float y, float z) {
+    curveVertexCheck(shape);
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -6440,19 +6443,22 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void endOffscreenDraw() {
+    if (offscreenMultisample) {
+      multisampleFramebuffer.copyColor(offscreenFramebuffer);
+    }
+
+    popFramebuffer();
+
     if (backgroundA == 1) {
-      // Set alpha channel to opaque in order to match behavior of JAVA2D:
+      // Set alpha channel to opaque in order to match behavior of JAVA2D, not
+      // on the multisampled FBO because it leads to wrong background color
+      // on some Macbooks with AMD graphics.
       pgl.colorMask(false, false, false, true);
       pgl.clearColor(0, 0, 0, backgroundA);
       pgl.clear(PGL.COLOR_BUFFER_BIT);
       pgl.colorMask(true, true, true, true);
     }
 
-    if (offscreenMultisample) {
-      multisampleFramebuffer.copyColor(offscreenFramebuffer);
-    }
-
-    popFramebuffer();
     texture.updateTexels(); // Mark all texels in screen texture as modified.
 
     getPrimaryPG().restoreGL();
@@ -11579,7 +11585,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void addQuadraticVertex(int i) {
       pg.curveVertexCount = 0;
       pg.bezierInitCheck();
-      pg.bezierVertexCheck(pg.shape, i);
+      pg.bezierVertexCheck(POLYGON, i);
 
       PMatrix3D draw = pg.bezierDrawMatrix;
 

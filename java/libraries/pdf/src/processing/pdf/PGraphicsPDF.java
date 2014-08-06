@@ -647,8 +647,10 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //      fontList = new String[entries.size()];
       fontList = new String[map.size()];
       int count = 0;
-      for (Object entry : map.entrySet()) {
-        fontList[count++] = (String) ((Map.Entry) entry).getKey();
+      for (Object key : map.keySet()) {
+//      for (Object entry : map.entrySet()) {
+//        fontList[count++] = (String) ((Map.Entry) entry).getKey();
+        fontList[count++] = (String) key;
       }
 //      Iterator it = entries.iterator();
 //      int count = 0;

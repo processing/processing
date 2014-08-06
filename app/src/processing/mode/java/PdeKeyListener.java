@@ -304,9 +304,11 @@ public class PdeKeyListener {
           //textarea.setSelectionStart(origIndex + 1);
           textarea.setSelectionEnd(textarea.getSelectionStop() - spaceCount);
           textarea.setSelectedText("\n");
+          textarea.setCaretPosition(textarea.getCaretPosition() + extraCount + spaceCount);
         } else {
           String insertion = "\n" + spaces(spaceCount);
           textarea.setSelectedText(insertion);
+          textarea.setCaretPosition(textarea.getCaretPosition() + extraCount);
         }
 
         // not gonna bother handling more than one brace

@@ -162,6 +162,7 @@ public abstract class Mode {
         }
       }
     }
+    reader.close();
   }
   
   
@@ -274,6 +275,15 @@ public abstract class Mode {
   //abstract public Editor createEditor(Base base, String path, int[] location);
 
 
+  /**
+   * Get the folder where this mode is stored. 
+   * @since 3.0a3
+   */
+  public File getFolder() {
+    return folder;
+  }
+  
+  
   public File getExamplesFolder() {
     return examplesFolder;
   }
@@ -423,13 +433,13 @@ public abstract class Mode {
 
   public void rebuildImportMenu() {  //JMenu importMenu) {
     if (importMenu == null) {
-      importMenu = new JMenu("Import Library...");
+      importMenu = new JMenu(Language.text("menu.library"));
     } else {
       //System.out.println("rebuilding import menu");
       importMenu.removeAll();
     }
 
-    JMenuItem addLib = new JMenuItem("Add Library...");
+    JMenuItem addLib = new JMenuItem(Language.text("menu.library.add_library"));
     addLib.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         base.handleOpenLibraryManager();
@@ -453,7 +463,7 @@ public abstract class Mode {
 //    }
 
     if (coreLibraries.size() == 0) {
-      JMenuItem item = new JMenuItem(getTitle() + " mode has no core libraries");
+      JMenuItem item = new JMenuItem(getTitle() + " " + Language.text("menu.library.no_core_libraries"));
       item.setEnabled(false);
       importMenu.add(item);
     } else {
@@ -467,7 +477,7 @@ public abstract class Mode {
 
     if (contribLibraries.size() != 0) {
       importMenu.addSeparator();
-      JMenuItem contrib = new JMenuItem("Contributed");
+      JMenuItem contrib = new JMenuItem(Language.text("menu.library.contributed"));
       contrib.setEnabled(false);
       importMenu.add(contrib);
 
@@ -674,7 +684,7 @@ public abstract class Mode {
 
   public void showExamplesFrame() {
     if (examplesFrame == null) {
-      examplesFrame = new JFrame(getTitle() + " Examples");
+      examplesFrame = new JFrame(getTitle() + " " + Language.text("examples"));
       Toolkit.setIcon(examplesFrame);
       Toolkit.registerWindowCloseKeys(examplesFrame.getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -880,7 +890,7 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   public DefaultMutableTreeNode buildSketchbookTree(){
-    DefaultMutableTreeNode sbNode = new DefaultMutableTreeNode("Sketchbook");
+    DefaultMutableTreeNode sbNode = new DefaultMutableTreeNode(Language.text("sketchbook.tree"));
     try {
       base.addSketches(sbNode, Base.getSketchbookFolder());
     } catch (IOException e) {
@@ -893,7 +903,7 @@ public abstract class Mode {
   
   public void showSketchbookFrame() {
     if (sketchbookFrame == null) {
-      sketchbookFrame = new JFrame("Processing Sketchbook");
+      sketchbookFrame = new JFrame(Language.text("sketchbook"));
       Toolkit.setIcon(sketchbookFrame);
       Toolkit.registerWindowCloseKeys(sketchbookFrame.getRootPane(),
                                       new ActionListener() {
