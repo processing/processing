@@ -1300,7 +1300,7 @@ public class Base {
    * (and the examples window) are rebuilt.
    */
   protected void rebuildSketchbookMenus() {
-    rebuildSketchbookMenu();
+    // rebuildSketchbookMenu(); // no need to rebuild sketchbook post 3.0
     for (Mode mode : getModeList()) {
       //mode.rebuildLibraryList();
       mode.rebuildImportMenu();  // calls rebuildLibraryList
