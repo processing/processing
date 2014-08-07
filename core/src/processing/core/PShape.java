@@ -1547,7 +1547,9 @@ public class PShape implements PConstants {
     } else if (family == PRIMITIVE) {
       drawPrimitive(g);
     } else if (family == GEOMETRY) {
-      drawGeometry(g);
+      // same as path
+      drawPath(g);
+//      drawGeometry(g);
     } else if (family == PATH) {
       drawPath(g);
     }
