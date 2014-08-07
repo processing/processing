@@ -357,8 +357,9 @@ public class TextArea extends JEditTextArea {
     
     log2(" x char: " + s.charAt(x));
     
-    if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_')) {
-      log("Char before caret isn't a letter/digit/_ so no predictions");
+    if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_'
+        || s.charAt(x) == '(' || s.charAt(x) == '.')) {
+      log("Char before caret isn't a letter/digit/_(. so no predictions");
       return null;
     }
     
