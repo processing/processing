@@ -31,6 +31,7 @@ import processing.opengl.*;
 
 import java.applet.*;
 import java.awt.*;
+import java.awt.event.WindowStateListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
@@ -10360,6 +10361,25 @@ public class PApplet extends Applet
    * in cases where frame.setResizable(true) is called.
    */
   public void setupFrameResizeListener() {
+    frame.addWindowStateListener(new WindowStateListener() {
+      @Override
+      // Detecting when the frame is resized in order to handle the frame
+      // maximization bug in OSX:
+      // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=8036935
+      public void windowStateChanged(WindowEvent e) {
+        if (Frame.MAXIMIZED_BOTH == e.getNewState()) {
+          // Supposedly, sending the frame to back and then front is a
+          // workaround for this bug:
+          // http://stackoverflow.com/a/23897602
+          // but is not working for me...
+          //frame.toBack();
+          //frame.toFront();
+          // but either packing the frame does!
+          frame.pack();
+        }
+      }
+    });
+
     frame.addComponentListener(new ComponentAdapter() {
 
         @Override
