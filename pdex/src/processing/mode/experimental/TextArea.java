@@ -774,7 +774,7 @@ public class TextArea extends JEditTextArea {
    * @param defListModel
    * @param subWord
    */
-  protected void showSuggestion(DefaultListModel defListModel,String subWord) {
+  protected void showSuggestion(DefaultListModel<CompletionCandidate> defListModel,String subWord) {
     hideSuggestion();
     if (defListModel.size() == 0) {
       log("TextArea: No suggestions to show.");

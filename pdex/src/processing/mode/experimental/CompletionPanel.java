@@ -97,7 +97,7 @@ public class CompletionPanel {
    * @param dedit
    */
   public CompletionPanel(final JEditTextArea textarea, int position, String subWord,
-                         DefaultListModel items, final Point location, DebugEditor dedit) {
+                         DefaultListModel<CompletionCandidate> items, final Point location, DebugEditor dedit) {
     this.textarea = (TextArea) textarea;
     editor = dedit;
     this.insertionPosition = position;
