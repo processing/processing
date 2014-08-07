@@ -1045,13 +1045,14 @@ public class ASTGenerator {
       if (sketchOutline.isVisible()) return;
     Collections.sort(candidates);
 //    CompletionCandidate[][] candi = new CompletionCandidate[candidates.size()][1];
-    DefaultListModel<CompletionCandidate> defListModel = new DefaultListModel<CompletionCandidate>();
-
-    for (int i = 0; i < candidates.size(); i++) {
-//      candi[i][0] = candidates.get(i);
-      defListModel.addElement(candidates.get(i));
-    }
-    log("Total preds = " + candidates.size());
+//    DefaultListModel<CompletionCandidate> defListModel = new DefaultListModel<CompletionCandidate>();
+//
+//    for (int i = 0; i < candidates.size(); i++) {
+////      candi[i][0] = candidates.get(i);
+//      defListModel.addElement(candidates.get(i));
+//    }
+//    log("Total preds = " + candidates.size());
+    DefaultListModel<CompletionCandidate> defListModel = filterPredictions();
 //    DefaultTableModel tm = new DefaultTableModel(candi,
 //                                                 new String[] { "Suggestions" });
 //    if (tableAuto.isVisible()) {
@@ -1061,6 +1062,44 @@ public class ASTGenerator {
 //    }
     errorCheckerService.getEditor().textArea()
         .showSuggestion(defListModel, word);
+  }
+
+  private DefaultListModel<CompletionCandidate> filterPredictions(){
+    DefaultListModel<CompletionCandidate> defListModel = new DefaultListModel<CompletionCandidate>();
+    if (candidates.isEmpty())
+      return defListModel;
+    // check if first & last CompCandidate are the same methods, only then show all overloaded methods
+    if (candidates.get(0).getElementName()
+        .equals(candidates.get(candidates.size() - 1).getElementName())) {
+      log("All CC are methods only: " + candidates.get(0).getElementName());
+      for (int i = 0; i < candidates.size(); i++) {
+        candidates.get(i).regenerateCompletionString();
+        defListModel.addElement(candidates.get(i));
+      }
+    }
+    else {
+      boolean ignoredSome = false;
+      for (int i = 0; i < candidates.size(); i++) {
+        if(i > 0 && (candidates.get(i).getElementName()
+            .equals(candidates.get(i - 1).getElementName()))){
+          if (candidates.get(i).getType() == CompletionCandidate.LOCAL_METHOD
+              || candidates.get(i).getType() == CompletionCandidate.PREDEF_METHOD) {
+            CompletionCandidate cc = candidates.get(i - 1);
+            String label = cc.getLabel();
+            int x = label.lastIndexOf(')');
+            cc.setLabel(cc.getElementName() + "(...)" + label.substring(x + 1));
+            cc.setCompletionString(cc.getElementName());
+            ignoredSome = true;
+            continue;
+          }
+        }
+        defListModel.addElement(candidates.get(i));
+      }
+      if (ignoredSome) {
+        log("Some suggestions hidden");
+      }
+    }
+    return defListModel;
   }
 
   /**
