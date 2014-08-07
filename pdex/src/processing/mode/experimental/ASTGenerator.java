@@ -629,7 +629,7 @@ public class ASTGenerator {
             /*The type wasn't found in local code, so it might be something like
              * System.console()., or maybe belonging to super class, etc.
              */
-            Class tehClass = findClassIfExists(((SimpleName)mi.getExpression()).toString());
+            Class<?> tehClass = findClassIfExists(((SimpleName)mi.getExpression()).toString());
             if (tehClass != null) {
               // Method Expression is a simple name and wasn't located locally, but found in a class
               // so look for method in this class.
@@ -643,7 +643,7 @@ public class ASTGenerator {
           ASTNode typeDec = findDeclaration2(stp.getName(),nearestNode);
           if(typeDec == null){
             log(stp.getName() + " couldn't be found locally..");
-            Class tehClass = findClassIfExists(stp.getName().toString());
+            Class<?> tehClass = findClassIfExists(stp.getName().toString());
             if (tehClass != null) {
               // Method Expression is a simple name and wasn't located locally, but found in a class
               // so look for method in this class.
@@ -684,7 +684,7 @@ public class ASTGenerator {
             /*The type wasn't found in local code, so it might be something like
              * log(), or maybe belonging to super class, etc.
              */
-            Class tehClass = findClassIfExists(qn.getQualifier().toString());
+            Class<?> tehClass = findClassIfExists(qn.getQualifier().toString());
             if (tehClass != null) {
               // note how similar thing is called on line 690. Check check.
               return definedIn3rdPartyClass(new ClassMember(tehClass), qn
@@ -699,7 +699,7 @@ public class ASTGenerator {
           if(typeDec == null){
             log(stp.getName() + " couldn't be found locally..");
             
-            Class tehClass = findClassIfExists(stp.getName().toString());
+            Class<?> tehClass = findClassIfExists(stp.getName().toString());
             if (tehClass != null) {
               // note how similar thing is called on line 690. Check check.
               return definedIn3rdPartyClass(new ClassMember(tehClass), qn
@@ -1295,11 +1295,11 @@ public class ASTGenerator {
    * @param className
    * @return
    */
-  protected Class findClassIfExists(String className){
+  protected Class<?> findClassIfExists(String className){
     if(className == null){
       return null;
     }
-    Class tehClass = null;
+    Class<?> tehClass = null;
     // First, see if the classname is a fully qualified name and loads straightaway
     tehClass = loadClass(className);
     
@@ -1367,8 +1367,8 @@ public class ASTGenerator {
     return tehClass;
   }
   
-  protected Class loadClass(String className){
-    Class tehClass = null;
+  protected Class<?> loadClass(String className){
+    Class<?> tehClass = null;
     if (className != null) {
       try {
         tehClass = Class.forName(className, false,
@@ -1882,7 +1882,7 @@ public class ASTGenerator {
       @Override
       public void valueChanged(TreeSelectionEvent e) {
         log(e);
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           @Override
           protected Object doInBackground() throws Exception {
@@ -1940,7 +1940,7 @@ public class ASTGenerator {
       public void actionPerformed(ActionEvent e) {       
         if(txtRenameField.getText().length() == 0)
           return;
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           @Override
           protected Object doInBackground() throws Exception {
@@ -1959,7 +1959,7 @@ public class ASTGenerator {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           @Override
           protected Object doInBackground() throws Exception {
@@ -1979,7 +1979,7 @@ public class ASTGenerator {
       @Override
       public void valueChanged(TreeSelectionEvent e) {
         log(e);
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           @Override
           protected Object doInBackground() throws Exception {
@@ -2274,13 +2274,13 @@ public class ASTGenerator {
   }
   
   public void dfsNameOnly(DefaultMutableTreeNode tnode,ASTNode decl, String name) {
-    Stack temp = new Stack<DefaultMutableTreeNode>();
+    Stack<DefaultMutableTreeNode> temp = new Stack<DefaultMutableTreeNode>();
     temp.push(codeTree);
     
     while(!temp.isEmpty()){
       DefaultMutableTreeNode cnode = (DefaultMutableTreeNode) temp.pop();
       for (int i = 0; i < cnode.getChildCount(); i++) {
-        temp.push(cnode.getChildAt(i));
+        temp.push((DefaultMutableTreeNode) cnode.getChildAt(i));
       }
       
       if(!(cnode.getUserObject() instanceof ASTNodeWrapper))
@@ -2373,13 +2373,13 @@ public class ASTGenerator {
     // Find the first node with this line number, return its offset - jOffset
     line = pdeLineNumToJavaLineNum(line);
     log("Looking for line: " + line + ", jOff " + jOffset);
-    Stack temp = new Stack<DefaultMutableTreeNode>();
+    Stack<DefaultMutableTreeNode> temp = new Stack<DefaultMutableTreeNode>();
     temp.push(codeTree);
 
     while (!temp.isEmpty()) {
       DefaultMutableTreeNode cnode = (DefaultMutableTreeNode) temp.pop();
       for (int i = 0; i < cnode.getChildCount(); i++) {
-        temp.push(cnode.getChildAt(i));
+        temp.push((DefaultMutableTreeNode) cnode.getChildAt(i));
       }
 
       if (!(cnode.getUserObject() instanceof ASTNodeWrapper))
@@ -3061,9 +3061,9 @@ public class ASTGenerator {
 
     private Method method;
 
-    private Constructor cons;
+    private Constructor<?> cons;
 
-    private Class thisclass;
+    private Class<?> thisclass;
 
     private String stringVal;
     
@@ -3073,7 +3073,7 @@ public class ASTGenerator {
     
     private ASTNode declaringNode;
 
-    public ClassMember(Class m) {
+    public ClassMember(Class<?> m) {
       thisclass = m;
       stringVal = "Predefined Class " + m.getName();
       classType = m.getName();
@@ -3093,7 +3093,7 @@ public class ASTGenerator {
       classType = m.getType().getName();
     }
 
-    public ClassMember(Constructor m) {
+    public ClassMember(Constructor<?> m) {
       cons = m;
       stringVal = "Cons " + " " + m.getName() + " defined in "
           + m.getDeclaringClass().getName();
@@ -3126,7 +3126,7 @@ public class ASTGenerator {
       }
     }
 
-    public Class getClass_() {
+    public Class<?> getClass_() {
       return thisclass;
     }
     
@@ -3142,7 +3142,7 @@ public class ASTGenerator {
       return method;
     }
 
-    public Constructor getCons() {
+    public Constructor<?> getCons() {
       return cons;
     }
     
@@ -3360,7 +3360,7 @@ public class ASTGenerator {
           .substring(0, candidates.get(i).length() - 6);
     }
     if (resources.length >= 1) {
-      final JList classList = new JList(resources);
+      final JList<String> classList = new JList<String>(resources);
       classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       frmImportSuggest = new JFrame();
       frmImportSuggest.setSize(350, 200);
