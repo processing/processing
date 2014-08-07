@@ -193,7 +193,6 @@ public class TextArea extends JEditTextArea {
         log("BK Key");
         break;
       case KeyEvent.VK_SPACE:
-        System.out.println("space: " + evt);
         if (suggestion != null)
           if (suggestion.isVisible()) {
             log("Space bar, hide completion list");
@@ -231,11 +230,8 @@ public class TextArea extends JEditTextArea {
               if (ExperimentalMode.codeCompletionsEnabled
                   && ExperimentalMode.ccTriggerEnabled) {
                 getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
-                log("[KeyEvent]" + evt2.getKeyChar()
-                    + "  |Prediction started: " + System.currentTimeMillis());
-                log("Typing: " + fetchPhrase(evt2) + " "
-                    + (evt2.getKeyChar() == KeyEvent.VK_ENTER) + " T: "
-                    + System.currentTimeMillis());
+                log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started");
+                log("Typing: " + fetchPhrase(evt2));
               }
               return null;
             }
@@ -253,11 +249,8 @@ public class TextArea extends JEditTextArea {
           // Provide completions only if it's enabled
           if (ExperimentalMode.codeCompletionsEnabled
               && (!ExperimentalMode.ccTriggerEnabled || suggestion.isVisible())) {
-            log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started: "
-                + System.currentTimeMillis());
-            log("Typing: " + fetchPhrase(evt2) + " "
-                + (evt2.getKeyChar() == KeyEvent.VK_ENTER) + " T: "
-                + System.currentTimeMillis());
+            log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started");
+            log("Typing: " + fetchPhrase(evt2));
           }
           return null;
         }
@@ -361,7 +354,14 @@ public class TextArea extends JEditTextArea {
     int x = getCaretPosition() - getLineStartOffset(line) - 1, x1 = x - 1;
     if(x >= s.length() || x < 0)
       return null; //TODO: Does this check cause problems? Verify.
+    
     log2(" x char: " + s.charAt(x));
+    
+    if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_')) {
+      log("Char before caret isn't a letter/digit/_ so no predictions");
+      return null;
+    }
+    
     //int xLS = off - getLineStartNonWhiteSpaceOffset(line);    
 
     String word = (x < s.length() ? s.charAt(x) : "") + "";
