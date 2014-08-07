@@ -44,7 +44,6 @@ public class ContributionManagerDialog {
   static final String ANY_CATEGORY = Language.text("contrib.all");
 
   JFrame dialog;
-  String title;
   ContributionFilter filter;
   JComboBox categoryChooser;
   JScrollPane scrollPane;
@@ -98,9 +97,9 @@ public class ContributionManagerDialog {
             Editor ed = iter.next();
             if (ed.getSketch().isModified()) {
               int option = Base
-                .showYesNoQuestion(editor, title,
-                                   Language.text("contrib.unsaved_changes"),
-                                   Language.text("contrib.unsaved_changes.prompt"));
+                .showYesNoQuestion(editor, Language.text("contributions"),
+                                   Language.text("contributions.unsaved_changes"),
+                                   Language.text("contributions.unsaved_changes.prompt"));
 
               if (option == JOptionPane.NO_OPTION)
                 return;
