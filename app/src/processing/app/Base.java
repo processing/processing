@@ -125,7 +125,7 @@ public class Base {
   //public List<ModeContribution> contribModes;
   protected ArrayList<ModeContribution> modeContribs;
   
-  protected ArrayList<ExampleContribution> exampleContribs;
+  protected ArrayList<ExamplesPackageContribution> exampleContribs;
 
   private JMenu sketchbookMenu;
 
@@ -349,9 +349,9 @@ public class Base {
    */
   void rebuildContribExamples() {
     if (exampleContribs == null) {
-      exampleContribs = new ArrayList<ExampleContribution>();
+      exampleContribs = new ArrayList<ExamplesPackageContribution>();
     }
-    ExampleContribution.loadMissing(this);
+    ExamplesPackageContribution.loadMissing(this);
   }
 
 
@@ -404,7 +404,7 @@ public class Base {
     modeManagerFrame =
       new ContributionManagerDialog(ContributionType.MODE);
     exampleManagerFrame =
-      new ContributionManagerDialog(ContributionType.EXAMPLE);
+      new ContributionManagerDialog(ContributionType.EXAMPLES_PACKAGE);
     updateManagerFrame =
       new ContributionManagerDialog(null);
 
@@ -678,7 +678,7 @@ public class Base {
   }
 
 
-  public ArrayList<ExampleContribution> getExampleContribs() {
+  public ArrayList<ExamplesPackageContribution> getExampleContribs() {
     return exampleContribs;
   }
 
@@ -1956,7 +1956,7 @@ public class Base {
     getSketchbookLibrariesFolder().mkdir();
     getSketchbookToolsFolder().mkdir();
     getSketchbookModesFolder().mkdir();
-    getSketchbookExamplesFolder().mkdir();
+    getSketchbookExamplesPackagesFolder().mkdir();
 //    System.err.println("sketchbook: " + sketchbookFolder);
   }
 
@@ -1988,8 +1988,8 @@ public class Base {
   }
 
 
-  static public File getSketchbookExamplesFolder() {
-    return new File(sketchbookFolder, "examples");
+  static public File getSketchbookExamplesPackagesFolder() {
+    return new File(sketchbookFolder, "examples-packages");
   }
 
 

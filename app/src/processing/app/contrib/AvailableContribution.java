@@ -271,7 +271,7 @@ class AvailableContribution extends Contribution {
       
       String compatibleContribsList = null;
       
-      if (getType() == ContributionType.EXAMPLE) {
+      if (getType() == ContributionType.EXAMPLES_PACKAGE) {
       compatibleContribsList = properties.get("compatibleModesList");
       }
 
@@ -300,7 +300,7 @@ class AvailableContribution extends Contribution {
         writer.println("version=" + version);
         writer.println("prettyVersion=" + prettyVersion);
         writer.println("lastUpdated=" + lastUpdated);
-        if (getType() == ContributionType.EXAMPLE) {
+        if (getType() == ContributionType.EXAMPLES_PACKAGE) {
           writer.println("compatibleModesList=" + compatibleContribsList);
         }
 

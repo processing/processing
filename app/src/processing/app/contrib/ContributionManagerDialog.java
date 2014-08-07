@@ -62,7 +62,6 @@ public class ContributionManagerDialog {
     if (type == null) {
       filter = ContributionType.createUpdateFilter();
     } else {
-
       filter = type.createFilter();    
     }
     contribListing = ContributionListing.getInstance();
@@ -395,7 +394,7 @@ public class ContributionManagerDialog {
       ArrayList<ModeContribution> modes = editor.getBase().getModeContribs();
       contributions.addAll(modes);
       
-      ArrayList<ExampleContribution> examples = editor.getBase().getExampleContribs();
+      ArrayList<ExamplesPackageContribution> examples = editor.getBase().getExampleContribs();
       contributions.addAll(examples);
       
 //    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);

@@ -35,7 +35,7 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.*;
 
 import processing.app.contrib.ContributionType;
-import processing.app.contrib.ExampleContribution;
+import processing.app.contrib.ExamplesPackageContribution;
 import processing.app.syntax.*;
 import processing.core.PApplet;
 
@@ -106,7 +106,7 @@ public abstract class Mode {
     referenceFolder = new File(folder, "reference");
     
     // Get path to the contributed examples compatible with this mode
-    examplesContribFolder = Base.getSketchbookExamplesFolder();
+    examplesContribFolder = Base.getSketchbookExamplesPackagesFolder();
 
 //    rebuildToolbarMenu();
     rebuildLibraryList();
@@ -675,15 +675,15 @@ public abstract class Mode {
 
 
   public DefaultMutableTreeNode buildContributedExamplesTrees() {
-    DefaultMutableTreeNode node = new DefaultMutableTreeNode("Contributed Examples");
+    DefaultMutableTreeNode node = new DefaultMutableTreeNode("Contributed Examples-Packages");
 
     try {
-      File[] subfolders = ContributionType.EXAMPLE.listCandidates(examplesContribFolder);
+      File[] subfolders = ContributionType.EXAMPLES_PACKAGE.listCandidates(examplesContribFolder);
       if (subfolders == null) {
         subfolders = new File[0]; //empty array
       }
       for (File sub : subfolders) {
-        if (!ExampleContribution.isExampleCompatible(base, sub))
+        if (!ExamplesPackageContribution.isExamplesPackageCompatible(base, sub))
           continue;
         DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
         if (base.addSketches(subNode, sub)) {
@@ -691,7 +691,7 @@ public abstract class Mode {
           System.out.println(subNode);
           int exampleNodeNumber = -1;
           for (int y = 0; y < subNode.getChildCount(); y++)
-            if (subNode.getChildAt(y).toString().equals("example"))
+            if (subNode.getChildAt(y).toString().equals("examples-package"))
               exampleNodeNumber = y;
           if (exampleNodeNumber == -1)
             continue;

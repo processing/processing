@@ -7,15 +7,15 @@ import java.util.HashMap;
 import processing.app.Base;
 import processing.core.PApplet;
 
-public class ExampleContribution extends LocalContribution {
+public class ExamplesPackageContribution extends LocalContribution {
 
   private ArrayList<String> compatibleModesList;
 
-  static public ExampleContribution load(File folder) {
-    return new ExampleContribution(folder);
+  static public ExamplesPackageContribution load(File folder) {
+    return new ExamplesPackageContribution(folder);
   }
 
-  private ExampleContribution(File folder) {
+  private ExamplesPackageContribution(File folder) {
     super(folder);
     compatibleModesList = parseCompatibleModesList(properties
       .get("compatibleModesList"));
@@ -40,10 +40,10 @@ public class ExampleContribution extends LocalContribution {
    * @return true if the example is compatible with the mode of the currently
    *         active editor
    */
-  public static boolean isExampleCompatible(Base base,
+  public static boolean isExamplesPackageCompatible(Base base,
                                             File exampleLocationFolder) {
     File propertiesFile = new File(exampleLocationFolder,
-                                   ContributionType.EXAMPLE.toString()
+                                   ContributionType.EXAMPLES_PACKAGE.toString()
                                      + ".properties");
     if (propertiesFile.exists()) {
       ArrayList<String> compModesList = parseCompatibleModesList(Base
@@ -58,20 +58,20 @@ public class ExampleContribution extends LocalContribution {
   }
 
   static public void loadMissing(Base base) {
-    File examplesFolder = Base.getSketchbookExamplesFolder();
-    ArrayList<ExampleContribution> contribExamples = base.getExampleContribs();
+    File examplesFolder = Base.getSketchbookExamplesPackagesFolder();
+    ArrayList<ExamplesPackageContribution> contribExamples = base.getExampleContribs();
 
-    HashMap<File, ExampleContribution> existing = new HashMap<File, ExampleContribution>();
-    for (ExampleContribution contrib : contribExamples) {
+    HashMap<File, ExamplesPackageContribution> existing = new HashMap<File, ExamplesPackageContribution>();
+    for (ExamplesPackageContribution contrib : contribExamples) {
       existing.put(contrib.getFolder(), contrib);
     }
-    File[] potential = ContributionType.EXAMPLE.listCandidates(examplesFolder);
+    File[] potential = ContributionType.EXAMPLES_PACKAGE.listCandidates(examplesFolder);
     // If modesFolder does not exist or is inaccessible (folks might like to 
     // mess with folders then report it as a bug) 'potential' will be null.
     if (potential != null) {
       for (File folder : potential) {
         if (!existing.containsKey(folder)) {
-          contribExamples.add(new ExampleContribution(folder));
+          contribExamples.add(new ExamplesPackageContribution(folder));
         }
       }
     }
@@ -79,7 +79,7 @@ public class ExampleContribution extends LocalContribution {
 
   @Override
   public ContributionType getType() {
-    return ContributionType.EXAMPLE;
+    return ContributionType.EXAMPLES_PACKAGE;
   }
 
   public ArrayList<String> getCompatibleModesList() {
