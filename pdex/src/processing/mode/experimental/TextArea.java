@@ -159,12 +159,14 @@ public class TextArea extends JEditTextArea {
         }
       }
     }
-    else if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+    else if(evt.getKeyCode() == KeyEvent.VK_ENTER && evt.getID() == KeyEvent.KEY_PRESSED){
       if (suggestion != null) {
         if (suggestion.isVisible()) {
           if (suggestion.insertSelection()) {
-            hideSuggestion(); // Kill it!  
+            //hideSuggestion(); // Kill it!  
             evt.consume();
+            // Still try to show suggestions after inserting, coz #2755
+            prepareSuggestions(evt);
             return;
           }
         }
@@ -243,22 +245,27 @@ public class TextArea extends JEditTextArea {
         return;
       }
             
-      SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
-        protected Object doInBackground() throws Exception {
-          // errorCheckerService.runManualErrorCheck();
-          // Provide completions only if it's enabled
-          if (ExperimentalMode.codeCompletionsEnabled
-              && (!ExperimentalMode.ccTriggerEnabled || suggestion.isVisible())) {
-            log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started");
-            log("Typing: " + fetchPhrase(evt2));
-          }
-          return null;
-        }
-      };
-      worker.execute();
+      prepareSuggestions(evt2);
     }
+  }
 
-    
+  /**
+   * Kickstart auto-complete suggestions
+   * @param evt - KeyEvent
+   */
+  private void prepareSuggestions(final KeyEvent evt){
+    SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+      protected Object doInBackground() throws Exception {
+        // Provide completions only if it's enabled
+        if (ExperimentalMode.codeCompletionsEnabled
+            && (!ExperimentalMode.ccTriggerEnabled || suggestion.isVisible())) {
+          log("[KeyEvent]" + evt.getKeyChar() + "  |Prediction started");
+          log("Typing: " + fetchPhrase(evt));
+        }
+        return null;
+      }
+    };
+    worker.execute();
   }
  
   /**
@@ -360,6 +367,7 @@ public class TextArea extends JEditTextArea {
     if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_'
         || s.charAt(x) == '(' || s.charAt(x) == '.')) {
       log("Char before caret isn't a letter/digit/_(. so no predictions");
+      hideSuggestion();
       return null;
     }
     

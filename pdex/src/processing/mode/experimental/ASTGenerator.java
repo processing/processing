@@ -1088,7 +1088,7 @@ public class ASTGenerator {
             String label = cc.getLabel();
             int x = label.lastIndexOf(')');
             cc.setLabel(cc.getElementName() + "(...)" + label.substring(x + 1));
-            cc.setCompletionString(cc.getElementName());
+            cc.setCompletionString(cc.getElementName() + "(");
             ignoredSome = true;
             continue;
           }

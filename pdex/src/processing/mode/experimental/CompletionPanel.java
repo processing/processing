@@ -214,7 +214,7 @@ public class CompletionPanel {
       public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
           insertSelection();
-          hide();
+          //hide();
         }
       }
     });
@@ -295,12 +295,19 @@ public class CompletionPanel {
           textarea.setCaretPosition(insertionPosition
               + selectedSuggestion.length());
         }
-        //log("Suggestion inserted: " + System.currentTimeMillis());
+        log("Suggestion inserted: " + System.currentTimeMillis());
+        if (((CompletionCandidate) completionList.getSelectedValue())
+            .getLabel().contains("...")) {
+          // log("No hide"); 
+          // Why not hide it? Coz this is the case of
+          // overloaded methods. See #2755
+        } else {
+          hide();
+        }
         return true;
       } catch (BadLocationException e1) {
         e1.printStackTrace();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
       hide();
