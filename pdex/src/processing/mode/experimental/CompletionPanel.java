@@ -125,7 +125,7 @@ public class CompletionPanel {
     }
     scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
-    popupMenu.setPopupSize(280, setHeight(items.getSize())); //TODO: Eradicate this evil
+    popupMenu.setPopupSize(calcWidth(), setHeight(items.getSize())); //TODO: Eradicate this evil
     this.textarea.errorCheckerService.getASTGenerator()
         .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
     textarea.requestFocusInWindow();
@@ -170,6 +170,11 @@ public class CompletionPanel {
     popupMenu.setVisible(v);
   }
   
+  /**
+   * Dynamic height of completion panel depending on item count
+   * @param itemCount
+   * @return
+   */
   private int setHeight(int itemCount){
     FontMetrics fm = textarea.getFontMetrics(textarea.getFont());
     float h = (fm.getHeight() + (fm.getDescent()) * 0.5f) * (itemCount);
@@ -182,19 +187,26 @@ public class CompletionPanel {
     return Math.min(250, (int) h); // popup menu height
   }
   
-  /*TODO: Make width dynamic
-   protected int setWidth(){
-    if(scrollPane.getVerticalScrollBar().isVisible()) return 280;
-    float min = 280;
-    FontMetrics fm = textarea.getFontMetrics(textarea.getFont()); 
+  /*TODO: Make width dynamic*/
+  private int calcWidth() {
+    int maxWidth = 300;
+    //if(scrollPane.getVerticalScrollBar().isVisible()) return 280;
+    float min = 0;
+    FontMetrics fm = textarea.getGraphics().getFontMetrics();
     for (int i = 0; i < completionList.getModel().getSize(); i++) {
-      float h = fm.stringWidth(completionList.getModel().getElementAt(i).toString());
-      min = Math.min(min, h);
+      float h = fm.stringWidth(((CompletionCandidate) completionList.getModel()
+          .getElementAt(i)).getLabel());
+      System.out.println("H " + h);
+      min = Math.max(min, h);
+      //max = Math.max(max, h);
     }
-    min += fm.stringWidth("             ");
-    log("popup width " + Math.min(280,min));
-    return Math.min(280,(int)min); // popup menu height
-  }*/
+    System.out.println("MIN " + min);
+    int w = Math.min((int) min, maxWidth);
+    w += editor.dmode.localVarIcon.getIconWidth(); // add icon width too!
+    w += fm.stringWidth("         "); // a bit of offset
+    log("popup width " + w);
+    return w; // popup menu width
+  }
 
   /**
    * Created the popup list to be displayed 
@@ -237,7 +249,7 @@ public class CompletionPanel {
         completionList.setModel(items);
         completionList.setSelectedIndex(0);
         scrollPane.setViewportView(completionList);
-        popupMenu.setPopupSize(popupMenu.getSize().width, setHeight(items.getSize()));
+        popupMenu.setPopupSize(calcWidth(), setHeight(items.getSize()));
         //log("Suggestion updated" + System.nanoTime());
         textarea.requestFocusInWindow();
         popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
