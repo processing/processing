@@ -189,6 +189,9 @@ public class CompletionPanel {
 
     float h = itemHeight * (itemCount);
 
+    if (itemCount >= 4)
+    	h += itemHeight * 0.3; // a bit of offset
+
     return Math.min(maxHeight, (int) h); // popup menu height
   }
   
