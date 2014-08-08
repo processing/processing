@@ -68,7 +68,7 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Error check happens every sleepTime milliseconds
    */
-  public static final int sleepTime = 3000;
+  public static final int sleepTime = 1000;
 
   /**
    * The amazing eclipse ast parser
@@ -295,17 +295,24 @@ public class ErrorCheckerService implements Runnable{
    * Ensure user is running the minimum P5 version
    */
   public void ensureMinP5Version(){
+    //TODO: Now defunct?
     // Processing 2.1.2 - Revision 0225
     if(Base.getRevision() < 225){
 //      System.err.println("ERROR: PDE X requires Processing 2.1.2 or higher.");
       Base.showWarning("Error", "ERROR: PDE X requires Processing 2.1.2 or higher.", null);
     }
   }
+  
+  /**
+   * Error checking doesn't happen before this interval has ellapsed since the
+   * last runManualErrorCheck() call.
+   */
+  private final static long errorCheckInterval = 2000;
 
   /**
    * The way the error checking happens is: DocumentListeners are added
-   * to each SketchCode object. Whenever the document is edited, it call
-   * runManualErrorCheck(). Internally, an atomic integer counter is incremented.
+   * to each SketchCode object. Whenever the document is edited, runManualErrorCheck()
+   * is called. Internally, an atomic integer counter is incremented.
    * The ECS thread checks the value of this counter evey sleepTime seconds.
    * If the counter is non zero, error checking is done(in the ECS thread) 
    * and the counter is reset.
@@ -314,6 +321,8 @@ public class ErrorCheckerService implements Runnable{
     stopThread.set(false);
     
     checkCode();
+    lastErrorCheckCall = System.currentTimeMillis();
+    
     if(!hasSyntaxErrors())
       editor.showProblemListView(XQConsoleToggle.CONSOLE);
     // Make sure astGen has at least one CU to start with
@@ -338,8 +347,12 @@ public class ErrorCheckerService implements Runnable{
         continue;
       if(textModified.get() == 0)
     	  continue;
-      // Check every x seconds
-      checkCode();
+      // Check if a certain interval has passed after the call. Only then
+      // begin error check. Helps prevent unnecessary flickering. See #2677
+      if (System.currentTimeMillis() - lastErrorCheckCall > errorCheckInterval) {
+        log("Interval passed, starting error check");
+        checkCode();
+      }
       checkForMissingImports();
     }
     
@@ -399,11 +412,17 @@ public class ErrorCheckerService implements Runnable{
   protected AtomicInteger textModified = new AtomicInteger();
   
   /**
+   * Time stamp of last runManualErrorCheck() call.
+   */
+  private volatile long lastErrorCheckCall = 0;
+  
+  /**
    * Triggers error check
    */
   public void runManualErrorCheck() {
     // log("Error Check.");
     textModified.incrementAndGet();
+    lastErrorCheckCall = System.currentTimeMillis();
   }
   
   protected SketchChangedListener sketchChangedListener;
@@ -437,7 +456,11 @@ public class ErrorCheckerService implements Runnable{
     }
     
   }
-
+  
+  /**
+   * state = 1 > syntax check done<br>
+   * state = 2 > compilation check done
+   */
   public int compilationUnitState = 0;
   
   protected boolean checkCode() {
