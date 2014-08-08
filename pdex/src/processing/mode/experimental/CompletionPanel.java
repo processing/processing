@@ -125,7 +125,7 @@ public class CompletionPanel {
     }
     scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
-    popupMenu.setPopupSize(calcWidth(), setHeight(items.getSize())); //TODO: Eradicate this evil
+    popupMenu.setPopupSize(calcWidth(), calcHeight(items.getSize())); //TODO: Eradicate this evil
     this.textarea.errorCheckerService.getASTGenerator()
         .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
     textarea.requestFocusInWindow();
@@ -175,8 +175,8 @@ public class CompletionPanel {
    * @param itemCount
    * @return
    */
-  private int setHeight(int itemCount){
-    FontMetrics fm = textarea.getFontMetrics(textarea.getFont());
+  private int calcHeight(int itemCount){
+    FontMetrics fm = textarea.getGraphics().getFontMetrics();
     float h = (fm.getHeight() + (fm.getDescent()) * 0.5f) * (itemCount);
     if (scrollPane.getHorizontalScrollBar().isVisible())
       h += scrollPane.getHorizontalScrollBar().getHeight() + fm.getHeight()
@@ -196,11 +196,9 @@ public class CompletionPanel {
     for (int i = 0; i < completionList.getModel().getSize(); i++) {
       float h = fm.stringWidth(((CompletionCandidate) completionList.getModel()
           .getElementAt(i)).getLabel());
-      System.out.println("H " + h);
       min = Math.max(min, h);
       //max = Math.max(max, h);
     }
-    System.out.println("MIN " + min);
     int w = Math.min((int) min, maxWidth);
     w += editor.dmode.localVarIcon.getIconWidth(); // add icon width too!
     w += fm.stringWidth("         "); // a bit of offset
@@ -249,7 +247,7 @@ public class CompletionPanel {
         completionList.setModel(items);
         completionList.setSelectedIndex(0);
         scrollPane.setViewportView(completionList);
-        popupMenu.setPopupSize(calcWidth(), setHeight(items.getSize()));
+        popupMenu.setPopupSize(calcWidth(), calcHeight(items.getSize()));
         //log("Suggestion updated" + System.nanoTime());
         textarea.requestFocusInWindow();
         popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
