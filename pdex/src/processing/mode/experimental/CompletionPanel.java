@@ -173,36 +173,47 @@ public class CompletionPanel {
   /**
    * Dynamic height of completion panel depending on item count
    * @param itemCount
-   * @return
+   * @return - height
    */
-  private int calcHeight(int itemCount){
+  private int calcHeight(int itemCount) {
+    int maxHeight = 250;
     FontMetrics fm = textarea.getGraphics().getFontMetrics();
-    float h = (fm.getHeight() + (fm.getDescent()) * 0.5f) * (itemCount);
-    if (scrollPane.getHorizontalScrollBar().isVisible())
-      h += scrollPane.getHorizontalScrollBar().getHeight() + fm.getHeight()
-          + (fm.getDescent() + fm.getAscent()) * 0.8f;
-    // 0.5f and 0.8f scaling give respectable results.
-    //log("popup height " + Math.min(250,h) 
-    //+ scrollPane.getHorizontalScrollBar().isVisible());
-    return Math.min(250, (int) h); // popup menu height
+    float itemHeight = Math.max((fm.getHeight() + (fm.getDescent()) * 0.5f),
+                                editor.dmode.classIcon.getIconHeight() * 1.2f);
+    
+    if (horizontalScrollBarVisible)
+      itemCount++;
+
+    if (itemCount < 4)
+      itemHeight *= 1.3f; //Sorry, but it works.
+
+    float h = itemHeight * (itemCount);
+
+    return Math.min(maxHeight, (int) h); // popup menu height
   }
   
-  /*TODO: Make width dynamic*/
+  private boolean horizontalScrollBarVisible = false;
+  
+  /**
+   * Dynamic width of completion panel
+   * @return - width
+   */
   private int calcWidth() {
+    horizontalScrollBarVisible = false;
     int maxWidth = 300;
-    //if(scrollPane.getVerticalScrollBar().isVisible()) return 280;
     float min = 0;
     FontMetrics fm = textarea.getGraphics().getFontMetrics();
     for (int i = 0; i < completionList.getModel().getSize(); i++) {
       float h = fm.stringWidth(((CompletionCandidate) completionList.getModel()
           .getElementAt(i)).getLabel());
       min = Math.max(min, h);
-      //max = Math.max(max, h);
     }
     int w = Math.min((int) min, maxWidth);
-    w += editor.dmode.localVarIcon.getIconWidth(); // add icon width too!
+    if(w == maxWidth) 
+      horizontalScrollBarVisible = true;
+    w += editor.dmode.classIcon.getIconWidth(); // add icon width too!
     w += fm.stringWidth("         "); // a bit of offset
-    log("popup width " + w);
+    //log("popup width " + w);
     return w; // popup menu width
   }
 
