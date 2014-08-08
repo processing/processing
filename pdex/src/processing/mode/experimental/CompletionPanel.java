@@ -212,7 +212,7 @@ public class CompletionPanel {
     if(w == maxWidth) 
       horizontalScrollBarVisible = true;
     w += editor.dmode.classIcon.getIconWidth(); // add icon width too!
-    w += fm.stringWidth("         "); // a bit of offset
+    w += fm.stringWidth("           "); // a bit of offset
     //log("popup width " + w);
     return w; // popup menu width
   }
