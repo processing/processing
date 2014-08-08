@@ -165,8 +165,10 @@ public class TextArea extends JEditTextArea {
           if (suggestion.insertSelection()) {
             //hideSuggestion(); // Kill it!  
             evt.consume();
-            // Still try to show suggestions after inserting, coz #2755
-            prepareSuggestions(evt);
+            // Still try to show suggestions after inserting if it's
+            // the case of overloaded methods. See #2755
+            if(suggestion.isVisible())
+              prepareSuggestions(evt);
             return;
           }
         }
