@@ -9795,7 +9795,7 @@ public class PApplet extends Applet
  * @param num the number(s) to format
  * @see PApplet#nf(float, int, int)
  * @see PApplet#nfp(float, int, int)
- * @see PApplet#nfc(float, int)
+ * @see PApplet#nfs(float, int)
  */
   static public String[] nfc(int num[]) {
     String formatted[] = new String[num.length];
