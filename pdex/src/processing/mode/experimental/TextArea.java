@@ -371,6 +371,11 @@ public class TextArea extends JEditTextArea {
       log("Char before caret isn't a letter/digit/_(. so no predictions");
       hideSuggestion();
       return null;
+    } else if (x > 0 && (s.charAt(x - 1) == ' ' || s.charAt(x - 1) == '(')
+        && Character.isDigit(s.charAt(x))) {
+      log("Char before caret isn't a letter, but ' ' or '(', so no predictions");
+      hideSuggestion(); // See #2755, Option 2 comment
+      return null;
     }
     
     //int xLS = off - getLineStartNonWhiteSpaceOffset(line);    
