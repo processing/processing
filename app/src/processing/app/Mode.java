@@ -412,6 +412,14 @@ public abstract class Mode {
       }
     });
     toolbarMenu.add(item);
+    
+    item = new JMenuItem("Add Examples...");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        base.handleOpenExampleManager();
+      }
+    });
+    toolbarMenu.add(item);
 
     // Add a list of all sketches and subfolders
     toolbarMenu.addSeparator();
