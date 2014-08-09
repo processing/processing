@@ -110,19 +110,7 @@ public class CompletionPanel {
     popupMenu.setOpaque(false);
     popupMenu.setBorder(null);
     scrollPane = new JScrollPane();
-    if (UIManager.getLookAndFeel().getID().equals("Nimbus")) {
-      UIDefaults defaults = new UIDefaults();
-      defaults.put("PopupMenu.contentMargins", new InsetsUIResource(0, 0, 0, 0));
-      defaults.put("ScrollPane[Enabled].borderPainter", new Painter<JComponent>() {
-        public void paint(Graphics2D g, JComponent t, int w, int h) {}
-      });
-      popupMenu.putClientProperty("Nimbus.Overrides", defaults);
-      scrollPane.putClientProperty("Nimbus.Overrides", defaults);
-      scrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(Integer.MAX_VALUE, 8));
-      scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(8, Integer.MAX_VALUE));
-      scrollPane.getHorizontalScrollBar().setUI(new CompletionScrollBarUI());
-      scrollPane.getVerticalScrollBar().setUI(new CompletionScrollBarUI());
-    }
+    styleScrollPane();
     scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
     popupMenu.setPopupSize(calcWidth(), calcHeight(items.getSize())); //TODO: Eradicate this evil
@@ -134,11 +122,40 @@ public class CompletionPanel {
     //log("Suggestion shown: " + System.currentTimeMillis());
   }
 
+  private void styleScrollPane() {
+    String laf = UIManager.getLookAndFeel().getID();
+    if (!laf.equals("Nimbus") && !laf.equals("Windows")) return;
+
+    String thumbColor = null;
+    if (laf.equals("Nimbus")) {
+      UIDefaults defaults = new UIDefaults();
+      defaults.put("PopupMenu.contentMargins", new InsetsUIResource(0, 0, 0, 0));
+      defaults.put("ScrollPane[Enabled].borderPainter", new Painter<JComponent>() {
+        public void paint(Graphics2D g, JComponent t, int w, int h) {}
+      });
+      popupMenu.putClientProperty("Nimbus.Overrides", defaults);
+      scrollPane.putClientProperty("Nimbus.Overrides", defaults);
+      thumbColor = "nimbusBlueGrey";
+    } else if (laf.equals("Windows")) {
+      thumbColor = "ScrollBar.thumbShadow";
+    }
+
+    scrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(Integer.MAX_VALUE, 8));
+    scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(8, Integer.MAX_VALUE));
+    scrollPane.getHorizontalScrollBar().setUI(new CompletionScrollBarUI(thumbColor));
+    scrollPane.getVerticalScrollBar().setUI(new CompletionScrollBarUI(thumbColor));
+  }
+
   public static class CompletionScrollBarUI extends BasicScrollBarUI {
+    private String thumbColorName;
+
+    protected CompletionScrollBarUI(String thumbColorName) {
+      this.thumbColorName = thumbColorName;
+    }
 
     @Override
     protected void paintThumb(Graphics g, JComponent c, Rectangle trackBounds) {
-      g.setColor((Color) UIManager.get("nimbusBlueGrey"));
+      g.setColor((Color) UIManager.get(thumbColorName));
       g.fillRect(trackBounds.x, trackBounds.y, trackBounds.width, trackBounds.height);
     }
 
