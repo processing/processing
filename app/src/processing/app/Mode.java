@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
@@ -739,16 +740,22 @@ public abstract class Mode {
       });
       
       JPanel examplesPanel = new JPanel();
-      examplesPanel.setLayout(new BoxLayout(examplesPanel, BoxLayout.PAGE_AXIS));
+      examplesPanel.setLayout(new BorderLayout());
       examplesPanel.setBackground(Color.WHITE);
       
-      final JLabel openExamplesManagerLabel = new JLabel("<html><u>Add Example...</u></html>");
-      openExamplesManagerLabel.setOpaque(false);
-      openExamplesManagerLabel.setBorder(new EmptyBorder(10, 6, 1, 5));
-      openExamplesManagerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-      openExamplesManagerLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-      openExamplesManagerLabel.setForeground(new Color(0, 0, 238));
-      openExamplesManagerLabel.addMouseListener(new MouseListener() {
+      final JPanel openExamplesManagerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      JLabel openExamplesManagerLabel = new JLabel("Add Examples...");
+//      openExamplesManagerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+      openExamplesManagerPanel.add(openExamplesManagerLabel);
+      openExamplesManagerPanel.setOpaque(false);
+      Border lineBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK);
+      Border paddingBorder = BorderFactory.createEmptyBorder(3, 5, 1, 4);
+      openExamplesManagerPanel.setBorder(BorderFactory.createCompoundBorder(lineBorder, paddingBorder));
+//      openExamplesManagerLabel.set
+      openExamplesManagerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+      openExamplesManagerPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//      openExamplesManagerLabel.setForeground(new Color(0, 0, 238));
+      openExamplesManagerPanel.addMouseListener(new MouseListener() {
         
         @Override
         public void mouseReleased(MouseEvent e) {}
@@ -765,7 +772,7 @@ public abstract class Mode {
         @Override
         public void mouseClicked(MouseEvent e) {
           base.handleOpenExampleManager();
-          openExamplesManagerLabel.setForeground(new Color(85, 26, 139));
+//          openExamplesManagerLabel.setForeground(new Color(85, 26, 139));
         }
       });
       
@@ -835,7 +842,7 @@ public abstract class Mode {
         }
       });
 
-      tree.setBorder(new EmptyBorder(5, 5, 5, 5));
+      tree.setBorder(new EmptyBorder(0, 5, 5, 5));
       if (Base.isMacOS()) {
         tree.setToggleClickCount(2);
       } else {
@@ -844,13 +851,13 @@ public abstract class Mode {
   
       JScrollPane treePane = new JScrollPane(tree);
       treePane.setPreferredSize(new Dimension(250, 300));
-      treePane.setBorder(new EmptyBorder(5, 0, 0, 0));
+      treePane.setBorder(new EmptyBorder(2, 0, 0, 0));
       treePane.setOpaque(true);
       treePane.setBackground(Color.WHITE);
       treePane.setAlignmentX(Component.LEFT_ALIGNMENT);
       
-      examplesPanel.add(openExamplesManagerLabel);
-      examplesPanel.add(treePane);
+      examplesPanel.add(openExamplesManagerPanel,BorderLayout.PAGE_START);
+      examplesPanel.add(treePane, BorderLayout.CENTER);
       examplesFrame.getContentPane().add(examplesPanel);
       examplesFrame.pack();
 
