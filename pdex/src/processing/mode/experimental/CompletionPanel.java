@@ -313,6 +313,17 @@ public class CompletionPanel {
           currentSubword = "";
         }
         
+        String completionString = ((CompletionCandidate) completionList
+            .getSelectedValue()).getCompletionString();
+        if (selectedSuggestion.equals(" )")) { // the case of single param methods
+          selectedSuggestion = ")";
+          if (completionString.endsWith(" )")) {
+            completionString = completionString.substring(0, completionString
+                .length() - 2)
+                + ")";
+          }
+        }
+        
         logE(subWord + " <= subword, Inserting suggestion=> "
             + selectedSuggestion + " Current sub: " + currentSubword);
         if (currentSubword.length() > 0) {
@@ -322,16 +333,12 @@ public class CompletionPanel {
         
         textarea.getDocument()
             .insertString(insertionPosition - currentSubwordLen,
-                          ((CompletionCandidate) completionList
-                              .getSelectedValue()).getCompletionString(), null);
-        if (selectedSuggestion.endsWith(")")) {
-          if (!selectedSuggestion.endsWith("()")) {
-            int x = selectedSuggestion.indexOf('(');
-            if (x != -1) {
-              //log("X................... " + x);
-              textarea.setCaretPosition(insertionPosition + (x + 1));
-            }
-          }
+                          completionString, null);
+        if (selectedSuggestion.endsWith(")") && !selectedSuggestion.endsWith("()")) {
+          // place the caret between '( and first ','
+          int x = selectedSuggestion.indexOf(',');
+          if(x == -1) x = 0; // the case of single param methods, no ','
+          textarea.setCaretPosition(insertionPosition + x);
         } else {
           textarea.setCaretPosition(insertionPosition
               + selectedSuggestion.length());
