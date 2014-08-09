@@ -1508,7 +1508,7 @@ public class Base {
           JMenu submenu = new JMenu(name);
           // needs to be separate var otherwise would set ifound to false
           boolean anything = addSketches(submenu, subfolder, replaceExisting);
-          if (anything) {
+          if (anything && !name.equals("old")) { //Don't add old contributions
             menu.add(submenu);
             found = true;
           }
