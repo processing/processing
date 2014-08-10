@@ -33,6 +33,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.*;
 
 import processing.app.contrib.ContributionType;
@@ -684,7 +685,7 @@ public abstract class Mode {
 
 
   public DefaultMutableTreeNode buildContributedExamplesTrees() {
-    DefaultMutableTreeNode node = new DefaultMutableTreeNode("Contributed Examples-Packages");
+    DefaultMutableTreeNode node = new DefaultMutableTreeNode("Contributed Examples");
 
     try {
       File[] subfolders = ContributionType.EXAMPLES_PACKAGE.listCandidates(examplesContribFolder);
@@ -697,7 +698,6 @@ public abstract class Mode {
         DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
         if (base.addSketches(subNode, sub)) {
           node.add(subNode);
-          System.out.println(subNode);
           int exampleNodeNumber = -1;
           for (int y = 0; y < subNode.getChildCount(); y++)
             if (subNode.getChildAt(y).toString().equals("examples-package"))
@@ -709,7 +709,6 @@ public abstract class Mode {
           int count = exampleNode.getChildCount();
           for (int x = 0; x < count; x++) {
             subNode.add((DefaultMutableTreeNode) exampleNode.getChildAt(0));
-            System.out.println(subNode);
           }
         }
       }
@@ -734,6 +733,98 @@ public abstract class Mode {
         examplesFrame.setBounds(bounds);
       }
     }
+  }
+
+
+  /**
+   * Function to give a JTree a pretty alternating gray-white colouring for
+   * its rows.
+   * 
+   * @param tree
+   */
+  private void colourizeTreeRows(JTree tree) {
+    // Code in this function adapted from:
+    // http://mateuszstankiewicz.eu/?p=263
+    tree.setCellRenderer(new DefaultTreeCellRenderer() {
+
+      @Override
+      public Component getTreeCellRendererComponent(JTree tree, Object value,
+                                                    boolean sel,
+                                                    boolean expanded,
+                                                    boolean leaf, int row,
+                                                    boolean hasFocus) {
+        JComponent c = (JComponent) super
+          .getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row,
+                                        hasFocus);
+
+        if (!tree.isRowSelected(row)) {
+          if (row % 2 == 0) {
+
+            // Need to set this, else the gray from the odd 
+            // rows colours this gray as well.
+            c.setBackground(new Color(255, 255, 255));
+
+            setBackgroundSelectionColor(new Color(0, 0, 255));
+            setTextSelectionColor(Color.WHITE);
+            setBorderSelectionColor(new Color(0, 0, 255));
+          } else {
+
+            // Set background for entire component (including the image).
+            // Using transparency messes things up, probably since the 
+            // transparent colour is not good friends with the images background colour.
+            c.setBackground(new Color(240, 240, 240));
+
+            // Can't use setBackgroundSelectionColor() directly, since then, the 
+            // image's background isn't affected.
+            // The setUI() doesn't fix the image's background because the 
+            // transparency likely interferes with its normal background, 
+            // making its background lighter than the rest. 
+//            setBackgroundNonSelectionColor(new Color(190, 190, 190));
+
+            setBackgroundSelectionColor(new Color(0, 0, 255));
+            setTextSelectionColor(Color.WHITE);
+            setBorderSelectionColor(new Color(0, 0, 255));
+          }
+        } else {// Transparent blue if selected
+          c.setBackground(new Color(127, 127, 255));
+        }
+
+        c.setOpaque(true);
+        return c;
+      }
+
+    });
+
+    tree.setUI(new BasicTreeUI() {
+
+      @Override
+      protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets,
+                              Rectangle bounds, TreePath path, int row,
+                              boolean isExpanded, boolean hasBeenExpanded,
+                              boolean isLeaf) {
+        Graphics g2 = g.create();
+
+        if (!tree.isRowSelected(row)) {
+          if (row % 2 == 0) {
+            // Need to set this, else the gray from the odd rows 
+            // affects the even rows too.
+            g2.setColor(new Color(255, 255, 255, 128));
+          } else {
+            // Transparent light-gray
+            g2.setColor(new Color(226, 226, 226, 128));
+          }
+        } else
+          // Transparent blue if selected
+          g2.setColor(new Color(0, 0, 255, 128));
+
+        g2.fillRect(0, bounds.y, tree.getWidth(), bounds.height);
+
+        g2.dispose();
+
+        super.paintRow(g, clipBounds, insets, bounds, path, row, isExpanded,
+                       hasBeenExpanded, isLeaf);
+      }
+    });
   }
 
 
@@ -786,6 +877,7 @@ public abstract class Mode {
       
       final JTree tree = new JTree(buildExamplesTree());
       
+      colourizeTreeRows(tree);
       
       tree.setOpaque(true);
       tree.setAlignmentX(Component.LEFT_ALIGNMENT);
