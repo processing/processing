@@ -85,6 +85,8 @@ o   add spaces to the end of the text?
 X   seems to have fixed itself in newer Java releases
 X implement Windows menu in the PDE
 X   https://github.com/processing/processing/issues/584
+X Auto Format: Switch block cases not indented
+X   https://github.com/processing/processing/issues/1042
 
 
 0228 pde (3.0a1)

@@ -31,6 +31,7 @@ import processing.opengl.*;
 
 import java.applet.*;
 import java.awt.*;
+import java.awt.event.WindowStateListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
@@ -769,6 +770,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate(float)
+   * @see PApplet#frameCount
    */
   public float frameRate = 10;
   /** Last time in nanoseconds that frameRate was checked */
@@ -793,6 +795,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate(float)
+   * @see PApplet#frameRate
    */
   public int frameCount;
 
@@ -9792,7 +9795,7 @@ public class PApplet extends Applet
  * @param num the number(s) to format
  * @see PApplet#nf(float, int, int)
  * @see PApplet#nfp(float, int, int)
- * @see PApplet#nfc(float, int)
+ * @see PApplet#nfs(float, int, int)
  */
   static public String[] nfc(int num[]) {
     String formatted[] = new String[num.length];
@@ -10358,6 +10361,25 @@ public class PApplet extends Applet
    * in cases where frame.setResizable(true) is called.
    */
   public void setupFrameResizeListener() {
+    frame.addWindowStateListener(new WindowStateListener() {
+      @Override
+      // Detecting when the frame is resized in order to handle the frame
+      // maximization bug in OSX:
+      // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=8036935
+      public void windowStateChanged(WindowEvent e) {
+        if (Frame.MAXIMIZED_BOTH == e.getNewState()) {
+          // Supposedly, sending the frame to back and then front is a
+          // workaround for this bug:
+          // http://stackoverflow.com/a/23897602
+          // but is not working for me...
+          //frame.toBack();
+          //frame.toFront();
+          // but either packing the frame does!
+          frame.pack();
+        }
+      }
+    });
+
     frame.addComponentListener(new ComponentAdapter() {
 
         @Override
@@ -12954,6 +12976,9 @@ public class PApplet extends Applet
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
+   * @see PGraphics#textAscent()
+   * @see PGraphics#textDescent()
    */
   public void textAlign(int alignX, int alignY) {
     if (recorder != null) recorder.textAlign(alignX, alignY);
@@ -13024,6 +13049,7 @@ public class PApplet extends Applet
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
    */
   public void textFont(PFont which) {
     if (recorder != null) recorder.textFont(which);
@@ -13054,6 +13080,7 @@ public class PApplet extends Applet
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public void textLeading(float leading) {
     if (recorder != null) recorder.textLeading(leading);
@@ -13141,6 +13168,7 @@ public class PApplet extends Applet
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public float textWidth(String str) {
     return g.textWidth(str);
@@ -13182,6 +13210,10 @@ public class PApplet extends Applet
    * @see PGraphics#textFont(PFont)
    * @see PGraphics#textMode(int)
    * @see PGraphics#textSize(float)
+   * @see PGraphics#textLeading(float)
+   * @see PGraphics#textWidth(String)
+   * @see PGraphics#textAscent()
+   * @see PGraphics#textDescent()
    * @see PGraphics#rectMode(int)
    * @see PGraphics#fill(int, float)
    * @see_external String

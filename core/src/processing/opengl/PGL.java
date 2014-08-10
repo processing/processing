@@ -800,7 +800,6 @@ public abstract class PGL {
 
 
   protected void enableTexturing(int target) {
-    enable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = true;
     } else if (target == TEXTURE_RECTANGLE) {
@@ -810,7 +809,6 @@ public abstract class PGL {
 
 
   protected void disableTexturing(int target) {
-    disable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = false;
     } else if (target == TEXTURE_RECTANGLE) {

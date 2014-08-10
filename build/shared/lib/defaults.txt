@@ -48,10 +48,6 @@
 # has gone missing, and that it should instead use the default.
 #sketchbook.path=
 
-# if you don't want settings to go into "application data" on windows
-# and "library" on macosx, set this to the alternate location.
-#settings.path=data
-
 # By default, no sketches currently open
 last.sketch.count=0
 

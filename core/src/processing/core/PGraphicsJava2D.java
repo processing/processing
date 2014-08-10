@@ -470,7 +470,118 @@ public class PGraphicsJava2D extends PGraphics {
   // SHAPES
 
 
-  //public void beginShape(int kind)
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE CREATION
+
+
+//  @Override
+//  public PShape createShape(PShape source) {
+//    return PShapeOpenGL.createShape2D(this, source);
+//  }
+
+
+  @Override
+  public PShape createShape() {
+    return createShape(PShape.GEOMETRY);
+  }
+
+
+  @Override
+  public PShape createShape(int type) {
+    return createShapeImpl(this, type);
+  }
+
+
+  @Override
+  public PShape createShape(int kind, float... p) {
+    return createShapeImpl(this, kind, p);
+  }
+
+
+  static protected PShape createShapeImpl(PGraphicsJava2D pg, int type) {
+    PShape shape = null;
+    if (type == PConstants.GROUP) {
+      shape = new PShape(pg, PConstants.GROUP);
+    } else if (type == PShape.PATH) {
+      shape = new PShape(pg, PShape.PATH);
+    } else if (type == PShape.GEOMETRY) {
+      shape = new PShape(pg, PShape.GEOMETRY);
+    }
+    shape.is3D(false);
+    return shape;
+  }
+
+
+  static protected PShape createShapeImpl(PGraphicsJava2D pg,
+                                                int kind, float... p) {
+    PShape shape = null;
+    int len = p.length;
+
+    if (kind == POINT) {
+      if (len != 2) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(POINT);
+    } else if (kind == LINE) {
+      if (len != 4) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(LINE);
+    } else if (kind == TRIANGLE) {
+      if (len != 6) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(TRIANGLE);
+    } else if (kind == QUAD) {
+      if (len != 8) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(QUAD);
+    } else if (kind == RECT) {
+      if (len != 4 && len != 5 && len != 8 && len != 9) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(RECT);
+    } else if (kind == ELLIPSE) {
+      if (len != 4 && len != 5) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(ELLIPSE);
+    } else if (kind == ARC) {
+      if (len != 6 && len != 7) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(ARC);
+    } else if (kind == BOX) {
+      showWarning("Primitive not supported in 2D");
+    } else if (kind == SPHERE) {
+      showWarning("Primitive not supported in 2D");
+    } else {
+      showWarning("Unrecognized primitive type");
+    }
+
+    if (shape != null) {
+      shape.setParams(p);
+    }
+
+    shape.is3D(false);
+    return shape;
+  }
 
 
   @Override

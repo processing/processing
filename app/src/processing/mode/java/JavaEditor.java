@@ -48,7 +48,8 @@ public class JavaEditor extends Editor {
 
 
   public JMenu buildFileMenu() {
-    String appTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, false);
+    //String appTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, false);
+    String appTitle = Language.text("toolbar.export_application");
     JMenuItem exportApplication = Toolkit.newJMenuItem(appTitle, 'E');
     exportApplication.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -94,9 +95,7 @@ public class JavaEditor extends Editor {
 
 
   public JMenu buildHelpMenu() {
-    // To deal with a Mac OS X 10.5 bug, add an extra space after the name
-    // so that the OS doesn't try to insert its slow help menu.
-    JMenu menu = new JMenu(Language.text("menu.help")+" ");
+    JMenu menu = new JMenu(Language.text("menu.help"));
     JMenuItem item;
 
     // macosx already has its own about menu
@@ -231,7 +230,7 @@ public class JavaEditor extends Editor {
    * Handler for Sketch &rarr; Export Application
    */
   public void handleExportApplication() {
-    toolbar.activate(JavaToolbar.EXPORT);
+//    toolbar.activate(JavaToolbar.EXPORT);
 
     if (handleExportCheckModified()) {
       statusNotice("Exporting application...");
@@ -248,7 +247,7 @@ public class JavaEditor extends Editor {
         e.printStackTrace();
       }
     }
-    toolbar.deactivate(JavaToolbar.EXPORT);
+//    toolbar.deactivate(JavaToolbar.EXPORT);
   }
 
   
@@ -678,7 +677,7 @@ public class JavaEditor extends Editor {
    */
   protected boolean handleExportCheckModified() {
     if (sketch.isModified()) {
-      Object[] options = { "OK", "Cancel" };
+      Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
       int result = JOptionPane.showOptionDialog(this,
                                                 "Save changes before export?",
                                                 "Save",
@@ -759,18 +758,16 @@ public class JavaEditor extends Editor {
 
 
   public void handleSave() {
-    toolbar.activate(JavaToolbar.SAVE);
-    //handleStop();
+//    toolbar.activate(JavaToolbar.SAVE);
     super.handleSave(true);
-    toolbar.deactivate(JavaToolbar.SAVE);
+//    toolbar.deactivate(JavaToolbar.SAVE);
   }
 
 
   public boolean handleSaveAs() {
-    toolbar.activate(JavaToolbar.SAVE);
-    //handleStop();
+//    toolbar.activate(JavaToolbar.SAVE);
     boolean result = super.handleSaveAs();
-    toolbar.deactivate(JavaToolbar.SAVE);
+//    toolbar.deactivate(JavaToolbar.SAVE);
     return result;
   }
 
@@ -826,9 +823,9 @@ public class JavaEditor extends Editor {
   }
 
 
-  public void deactivateExport() {
-    toolbar.deactivate(JavaToolbar.EXPORT);
-  }
+//  public void deactivateExport() {
+//    toolbar.deactivate(JavaToolbar.EXPORT);
+//  }
 
 
   public void internalCloseRunner() {

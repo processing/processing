@@ -70,7 +70,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
   public ColorChooser(Frame owner, boolean modal, Color initialColor,
                       String buttonName, ActionListener buttonListener) {
     //super("Color Selector");
-    window = new JDialog(owner, "Color Selector", modal);
+    window = new JDialog(owner, Language.text("color_chooser"), modal);
     window.getContentPane().setLayout(new BorderLayout());
 
     Box box = Box.createHorizontalBox();

@@ -24,6 +24,7 @@ package processing.app;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
+
 import javax.swing.*;
 
 import processing.core.PApplet;
@@ -53,8 +54,8 @@ public class Recent {
     this.base = base;
     remember = Preferences.getInteger("recent.count");
     file = Base.getSettingsFile(FILENAME);
-    mainMenu = new JMenu("Recent");
-    toolbarMenu = new JMenu("Recent");
+    mainMenu = new JMenu(Language.text("menu.file.recent"));
+    toolbarMenu = new JMenu(Language.text("menu.file.open"));
 
     try {
       load();

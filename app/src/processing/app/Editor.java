@@ -142,8 +142,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //          EditorConsole.systemOut.println("editor window activated");
           base.handleActivated(Editor.this);
 //          mode.handleActivated(Editor.this);
-          fileMenu.insert(base.getSketchbookMenu(), 2);
-          fileMenu.insert(base.getRecentMenu(), 3);
+//          fileMenu.insert(base.getSketchbookMenu(), 2);
+          fileMenu.insert(base.getRecentMenu(), 2);
 //          fileMenu.insert(mode.getExamplesMenu(), 3);
           sketchMenu.insert(mode.getImportMenu(), 4);
           mode.insertToolbarRecentMenu();
@@ -154,7 +154,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         public void windowDeactivated(WindowEvent e) {
 //          EditorConsole.systemErr.println("editor window deactivated");
 //          mode.handleDeactivated(Editor.this);
-          fileMenu.remove(base.getSketchbookMenu());
+//          fileMenu.remove(base.getSketchbookMenu());
           fileMenu.remove(base.getRecentMenu());
 //          fileMenu.remove(mode.getExamplesMenu());
           sketchMenu.remove(mode.getImportMenu());
@@ -313,15 +313,20 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * "Sketch &rarr; Add File" for each file.
    */
   class FileDropHandler extends TransferHandler {
-    public boolean canImport(JComponent dest, DataFlavor[] flavors) {
-      return true;
+    public boolean canImport(TransferHandler.TransferSupport support) {
+      return !sketch.isReadOnly();
     }
 
     @SuppressWarnings("unchecked")
-    public boolean importData(JComponent src, Transferable transferable) {
+    public boolean importData(TransferHandler.TransferSupport support) {
       int successful = 0;
 
+      if (!canImport(support)) {
+        return false;
+      }
+
       try {
+        Transferable transferable = support.getTransferable();
         DataFlavor uriListFlavor =
           new DataFlavor("text/uri-list;class=java.lang.String");
 
@@ -359,15 +364,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
         return false;
       }
 
-      if (successful == 0) {
-        statusError("No files were added to the sketch.");
+      statusNotice(Language.pluralize("editor.status.drag_and_drop.files_added", successful));
 
-      } else if (successful == 1) {
-        statusNotice("One file added to the sketch.");
-
-      } else {
-        statusNotice(successful + " files added to the sketch.");
-      }
       return true;
     }
   }
@@ -427,6 +425,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     });
     modeMenu.add(addLib);
+  }
+
+
+  public void rebuildModeMenu() {
+    initModeMenu();
   }
 
 
@@ -606,19 +609,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     fileMenu.add(item);
 
-    fileMenu.add(base.getSketchbookMenu());
+//    fileMenu.add(base.getSketchbookMenu());
     
-    JMenuItem sbMenu = Toolkit.newJMenuItemShift("Sketchbook Tree", 'K');
-    sbMenu.addActionListener(new ActionListener() {      
+    item = Toolkit.newJMenuItemShift(Language.text("menu.file.sketchbook"), 'K');
+    item.addActionListener(new ActionListener() {      
       @Override
       public void actionPerformed(ActionEvent e) {
         mode.showSketchbookFrame();
       }
     });
-    
-    fileMenu.add(sbMenu);
+    fileMenu.add(item);
 
-//    fileMenu.add(mode.getExamplesMenu());
     item = Toolkit.newJMenuItemShift(Language.text("menu.file.examples"), 'O');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -824,7 +825,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.increase_indent"), ']');
+    item = Toolkit.newJMenuItem("\u2192 "+Language.text("menu.edit.increase_indent"), ']');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(true);
@@ -832,7 +833,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.decrease_indent"), '[');
+    item = Toolkit.newJMenuItem("\u2190 "+Language.text("menu.edit.decrease_indent"), '[');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(false);
@@ -1019,6 +1020,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     });
     toolsMenu.add(item);
+  }
+
+
+  public void clearToolMenu() {
+    toolsMenu.removeAll();
+    System.gc();
+  }
+
+
+  public void removeTool() {
+    rebuildToolMenu();
   }
 
 
@@ -1852,7 +1864,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
 
       if (formattedText.equals(source)) {
-        statusNotice("No changes necessary for Auto Format.");
+        statusNotice(Language.text("editor.status.autoformat.no_changes"));
       } else {
         // replace with new bootiful text
         // selectionEnd hopefully at least in the neighborhood
@@ -1876,7 +1888,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
         getSketch().setModified(true);
         // mark as finished
-        statusNotice("Auto Format finished.");
+        statusNotice(Language.text("editor.status.autoformat.finished"));
       }
 
     } catch (final Exception e) {
@@ -2090,9 +2102,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     } else {
       String text = textarea.getSelectedText().trim();
       if (text.length() == 0) {
-        statusNotice("First select a word to find in the reference.");
+        statusNotice(Language.text("editor.status.find_reference.select_word_first"));
       } else {
-        statusNotice("No reference available for \"" + text + "\"");
+        statusNotice(Language.interpolate("editor.status.find_reference.not_available", text));
       }
     }
   }
@@ -2303,7 +2315,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       final String properParent =
         file.getName().substring(0, file.getName().lastIndexOf('.'));
       
-      Object[] options = { "OK", "Cancel" };
+      Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
       String prompt =
         "The file \"" + file.getName() + "\" needs to be inside\n" +
         "a sketch folder named \"" + properParent + "\".\n" +
@@ -2525,10 +2537,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   protected void handleSaveImpl() {
-    statusNotice("Saving...");
+    statusNotice(Language.text("editor.status.saving"));
     try {
       if (sketch.save()) {
-        statusNotice("Done Saving.");
+        statusNotice(Language.text("editor.status.saving.done"));
       } else {
         statusEmpty();
       }
@@ -2546,7 +2558,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   public boolean handleSaveAs() {
-    statusNotice("Saving...");
+    statusNotice(Language.text("editor.status.saving"));
     try {
       if (sketch.saveAs()) {
         // statusNotice("Done Saving.");
@@ -2558,7 +2570,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         // only one who knows whether something was renamed.
         //sketchbook.rebuildMenusAsync();
       } else {
-        statusNotice("Save Canceled.");
+        statusNotice(Language.text("editor.status.saving.canceled"));
         return false;
       }
     } catch (Exception e) {
@@ -2589,7 +2601,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Handler for File &rarr; Print.
    */
   public void handlePrint() {
-    statusNotice("Printing...");
+    statusNotice(Language.text("editor.status.printing"));
     //printerJob = null;
     if (printerJob == null) {
       printerJob = PrinterJob.getPrinterJob();
@@ -2606,14 +2618,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
     if (printerJob.printDialog()) {
       try {
         printerJob.print();
-        statusNotice("Done printing.");
+        statusNotice(Language.text("editor.status.printing.done"));
 
       } catch (PrinterException pe) {
-        statusError("Error while printing.");
+        statusError(Language.text("editor.status.printing.error"));
         pe.printStackTrace();
       }
     } else {
-      statusNotice("Printing canceled.");
+      statusNotice(Language.text("editor.status.printing.canceled"));
     }
     //printerJob = null;  // clear this out?
   }
@@ -2853,7 +2865,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
       this.add(item);
 
-      item = new JMenuItem(Language.text("menu.edit.increase_indent"));
+      item = new JMenuItem("\u2192 "+Language.text("menu.edit.increase_indent"));
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleIndentOutdent(true);
@@ -2861,7 +2873,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
       this.add(item);
 
-      item = new JMenuItem(Language.text("menu.edit.decrease_indent"));
+      item = new JMenuItem("\u2190 "+Language.text("menu.edit.decrease_indent"));
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleIndentOutdent(false);

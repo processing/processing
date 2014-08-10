@@ -32,7 +32,7 @@ public class ErrorMessageSimplifier {
 
   private static void prepareConstantsList() {
     constantsMap = new TreeMap<Integer, String>();
-    Class probClass = DefaultProblem.class;
+    Class<DefaultProblem> probClass = DefaultProblem.class;
     Field f[] = probClass.getFields();
     for (Field field : f) {
       if (Modifier.isStatic(field.getModifiers()))

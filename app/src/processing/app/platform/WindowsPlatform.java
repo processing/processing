@@ -23,6 +23,7 @@
 package processing.app.platform;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import com.sun.jna.Library;
@@ -261,7 +262,7 @@ public class WindowsPlatform extends Platform {
     if (appData != null) {
       return new File(appData, APP_NAME);
     }
-    return null;
+    throw new IOException("Could not get the Application Data folder");
   }
 
 

@@ -671,10 +671,16 @@ public class FloatDict {
         if (useKeys) {
           return count;  // don't worry about NaN values
 
+        } else if (count == 0) {  // skip the NaN check, it'll AIOOBE
+          return 0;
+
         } else {  // first move NaN values to the end of the list
           int right = count - 1;
           while (values[right] != values[right]) {
             right--;
+            if (right == -1) {
+              return 0;  // all values are NaN
+            }
           }
           for (int i = right; i >= 0; --i) {
             if (Float.isNaN(values[i])) {

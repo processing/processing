@@ -92,7 +92,7 @@ public class Base {
   static private boolean commandLine;
 
   // A single instance of the preferences window
-  Preferences preferencesFrame;
+  PreferencesFrame preferencesFrame;
 
   // A single instance of the library manager window
   ContributionManagerDialog libraryManagerFrame;
@@ -353,7 +353,7 @@ public class Base {
 //        removeDir(contrib.getFolder());
 //      }
 //    }
-    ContributionManager.cleanup();
+    ContributionManager.cleanup(this);
     buildCoreModes();
     rebuildContribModes();
 
@@ -749,9 +749,11 @@ public class Base {
         throw new IOException(newbieFile + " already exists.");
       }
 
-      // Create sketch properties.
-      saveModeSettings(new File(newbieDir, "sketch.properties"), nextMode);
-
+      // Create sketch properties file if it's not a default mode.
+      if (!isDefaultMode(nextMode)) {
+        saveModeSettings(new File(newbieDir, "sketch.properties"), nextMode);
+      }
+      
       String path = newbieFile.getAbsolutePath();
       /*Editor editor =*/ handleOpen(path, true);
 
@@ -772,6 +774,20 @@ public class Base {
     } catch (IOException e) {
       System.err.println("While creating " + sketchProps + ": " + e.getMessage());
     }
+  }
+  
+  /**
+   * Is it a default mode?
+   * @param mode
+   * @return
+   */
+  public boolean isDefaultMode(Mode mode) {
+    for (int i = 0; i < coreModes.length; i++) {
+      if (mode.equals(coreModes[i])) {
+        return true;
+      }
+    }
+    return false;
   }
 
 
@@ -1126,7 +1142,7 @@ public class Base {
         // If the central menubar isn't supported on this OS X JVM,
         // we have to do the old behavior. Yuck!
         if (defaultFileMenu == null) {
-          Object[] options = { "OK", "Cancel" };
+          Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
           String prompt =
             "<html> " +
             "<head> <style type=\"text/css\">"+
@@ -1284,7 +1300,7 @@ public class Base {
    * (and the examples window) are rebuilt.
    */
   protected void rebuildSketchbookMenus() {
-    rebuildSketchbookMenu();
+    // rebuildSketchbookMenu(); // no need to rebuild sketchbook post 3.0
     for (Mode mode : getModeList()) {
       //mode.rebuildLibraryList();
       mode.rebuildImportMenu();  // calls rebuildLibraryList
@@ -1322,7 +1338,7 @@ public class Base {
                        "An error occurred while trying to list the sketchbook.", e);
     }
     if (!found) {
-      JMenuItem empty = new JMenuItem("Empty Sketchbook");
+      JMenuItem empty = new JMenuItem(Language.text("menu.file.sketchbook.empty"));
       empty.setEnabled(false);
       menu.add(empty);
     }
@@ -1331,7 +1347,7 @@ public class Base {
 
   public JMenu getSketchbookMenu() {
     if (sketchbookMenu == null) {
-      sketchbookMenu = new JMenu("Sketchbook");
+      sketchbookMenu = new JMenu(Language.text("menu.file.sketchbook"));
       rebuildSketchbookMenu();
     }
     return sketchbookMenu;
@@ -1605,7 +1621,7 @@ public class Base {
    */
   public void handlePrefs() {
     if (preferencesFrame == null) {
-      preferencesFrame = new Preferences(this);
+      preferencesFrame = new PreferencesFrame(this);
     }
     preferencesFrame.showFrame();
   }
@@ -1784,24 +1800,29 @@ public class Base {
   }
 
 
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /** 
+   * Get the directory that can store settings. (Library on OS X, App Data or
+   * something similar on Windows, a dot folder on Linux.) Removed this as a
+   * preference for 3.0a3 because we need this to be stable.
+   */
   static public File getSettingsFolder() {
     File settingsFolder = null;
 
-    String preferencesPath = Preferences.get("settings.path"); //$NON-NLS-1$
-    if (preferencesPath != null) {
-      settingsFolder = new File(preferencesPath);
-
-    } else {
-      try {
-        settingsFolder = platform.getSettingsFolder();
-      } catch (Exception e) {
-        showError("Problem getting data folder",
-                  "Error getting the Processing data folder.", e);
-      }
+//    String preferencesPath = Preferences.get("settings.path"); //$NON-NLS-1$
+//    if (preferencesPath != null) {
+//      settingsFolder = new File(preferencesPath);
+//
+//    } else {
+    try {
+      settingsFolder = platform.getSettingsFolder();
+    } catch (Exception e) {
+      showError("Problem getting the settings folder",
+                "Error getting the Processing the settings folder.", e);
     }
+//    }
 
     // create the folder if it doesn't exist already
     if (!settingsFolder.exists()) {

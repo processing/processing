@@ -36,7 +36,7 @@ public class ContributionListing {
   static final String LISTING_URL =
     "http://download.processing.org/contributions.txt";
 
-  static ContributionListing singleInstance;
+  static volatile ContributionListing singleInstance;
 
   File listingFile;
   ArrayList<ContributionChangeListener> listeners;
@@ -64,7 +64,11 @@ public class ContributionListing {
 
   static ContributionListing getInstance() {
     if (singleInstance == null) {
-      singleInstance = new ContributionListing();
+      synchronized (ContributionListing.class) {
+        if (singleInstance == null) {
+          singleInstance = new ContributionListing();
+        }
+      }
     }
     return singleInstance;
   }
@@ -166,7 +170,9 @@ public class ContributionListing {
 
 
   protected AvailableContribution getAvailableContribution(Contribution info) {
-    for (AvailableContribution advertised : advertisedContributions) {
+    Iterator<AvailableContribution> iter = advertisedContributions.iterator();
+    while(iter.hasNext()) {
+      AvailableContribution advertised = iter.next();
       if (advertised.getType() == info.getType() &&
           advertised.getName().equals(info.getName())) {
         return advertised;
@@ -368,7 +374,7 @@ public class ContributionListing {
         }
         downloadingListingLock.unlock();
       }
-    }).start();
+    }, "Contribution List Downloader").start();
   }
 
 

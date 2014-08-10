@@ -50,7 +50,7 @@
     <include name="bin/klist.exe" />
     <include name="bin/ktab.exe" />
 
-    <include name="bin/keytool" />
+    <!--<include name="bin/keytool" />-->
     <include name="bin/orbd" />
     <include name="bin/policytool" />
     <include name="bin/rmid" />
@@ -66,7 +66,7 @@
   </fileset>
 
   <fileset dir="linux/work/java" id="jre-optional-linux">
-    <include name="bin/keytool" />
+    <!--<include name="bin/keytool" />-->
     <include name="bin/orbd" />
     <include name="bin/policytool" />
     <include name="bin/rmid" />
@@ -154,7 +154,7 @@
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.update.macosx" value="65" />
+  <property name="jdk.update.macosx" value="67" />
   <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_${jdk.update.macosx}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
@@ -470,6 +470,12 @@
         <string>true</string>
 -->
     </bundleapp>
+
+    <!-- The 'keytool' file is deleted by our appbundler. Add it back so that
+	 Android signing works properly. (Not modifying our appbundler since
+	 most of the time that appbundler is used, keytool isn't needed. -->
+    <copy file="${jdk.path.macosx}/Contents/Home/bin/keytool"
+	  todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/bin" />
 
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" /> <!-- why this? -->

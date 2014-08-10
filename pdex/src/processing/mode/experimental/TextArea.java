@@ -36,7 +36,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.DefaultListModel;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import processing.app.syntax.JEditTextArea;
@@ -160,18 +159,21 @@ public class TextArea extends JEditTextArea {
         }
       }
     }
-    if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+    else if(evt.getKeyCode() == KeyEvent.VK_ENTER && evt.getID() == KeyEvent.KEY_PRESSED){
       if (suggestion != null) {
         if (suggestion.isVisible()) {
           if (suggestion.insertSelection()) {
-            hideSuggestion(); // Kill it!  
+            //hideSuggestion(); // Kill it!  
             evt.consume();
+            // Still try to show suggestions after inserting if it's
+            // the case of overloaded methods. See #2755
+            if(suggestion.isVisible())
+              prepareSuggestions(evt);
             return;
           }
         }
       }
     }
-    
     
     if (evt.getID() == KeyEvent.KEY_PRESSED) {
       switch (evt.getKeyCode()) {
@@ -207,59 +209,65 @@ public class TextArea extends JEditTextArea {
     }
     super.processKeyEvent(evt);
 
-    if(editor.hasJavaTabs) return; // code completion disabled if java tabs
+    if (editor.hasJavaTabs) return; // code completion disabled if java tabs
+    
     if (evt.getID() == KeyEvent.KEY_TYPED) {
-      
       char keyChar = evt.getKeyChar();
-      if (keyChar == KeyEvent.VK_ENTER || keyChar == KeyEvent.VK_ESCAPE) {
-        return;
-      } else if (keyChar == KeyEvent.VK_TAB
-          || keyChar == KeyEvent.CHAR_UNDEFINED) {
+      if (keyChar == KeyEvent.VK_ENTER || 
+          keyChar == KeyEvent.VK_ESCAPE ||
+          keyChar == KeyEvent.VK_TAB ||
+          keyChar == KeyEvent.CHAR_UNDEFINED) {
         return;
       }
+      else if (keyChar == ')') {
+        hideSuggestion(); // See #2741 
+        return;
+      }
+      
       final KeyEvent evt2 = evt;
-      if (evt.isAltDown() || evt.isControlDown() || evt.isMetaDown()) {
-        if (ExperimentalMode.ccTriggerEnabled && keyChar == KeyEvent.VK_SPACE
-            && (evt.isControlDown() || evt.isMetaDown())) {
+      if (keyChar == ' ') {
+        if (ExperimentalMode.ccTriggerEnabled &&
+        (evt.isControlDown() || evt.isMetaDown())) {
           SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
             protected Object doInBackground() throws Exception {
               // Provide completions only if it's enabled
               if (ExperimentalMode.codeCompletionsEnabled
                   && ExperimentalMode.ccTriggerEnabled) {
                 getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
-                log("[KeyEvent]" + evt2.getKeyChar()
-                    + "  |Prediction started: " + System.currentTimeMillis());
-                log("Typing: " + fetchPhrase(evt2) + " "
-                    + (evt2.getKeyChar() == KeyEvent.VK_ENTER) + " T: "
-                    + System.currentTimeMillis());
+                log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started");
+                log("Typing: " + fetchPhrase(evt2));
               }
               return null;
             }
           };
           worker.execute();
+        } else {
+          hideSuggestion(); // hide on spacebar
         }
         return;
       }
             
-      SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
-        protected Object doInBackground() throws Exception {
-          // errorCheckerService.runManualErrorCheck();
-          // Provide completions only if it's enabled
-          if (ExperimentalMode.codeCompletionsEnabled
-              && (!ExperimentalMode.ccTriggerEnabled || suggestion.isVisible())) {
-            log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started: "
-                + System.currentTimeMillis());
-            log("Typing: " + fetchPhrase(evt2) + " "
-                + (evt2.getKeyChar() == KeyEvent.VK_ENTER) + " T: "
-                + System.currentTimeMillis());
-          }
-          return null;
-        }
-      };
-      worker.execute();
+      prepareSuggestions(evt2);
     }
+  }
 
-    
+  /**
+   * Kickstart auto-complete suggestions
+   * @param evt - KeyEvent
+   */
+  private void prepareSuggestions(final KeyEvent evt){
+    SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+      protected Object doInBackground() throws Exception {
+        // Provide completions only if it's enabled
+        if (ExperimentalMode.codeCompletionsEnabled
+            && (!ExperimentalMode.ccTriggerEnabled || suggestion.isVisible())) {
+          log("[KeyEvent]" + evt.getKeyChar() + "  |Prediction started");
+          log("Typing: " + fetchPhrase(evt));
+        }
+        return null;
+      }
+    };
+    worker.execute();
   }
  
   /**
@@ -355,7 +363,21 @@ public class TextArea extends JEditTextArea {
     int x = getCaretPosition() - getLineStartOffset(line) - 1, x1 = x - 1;
     if(x >= s.length() || x < 0)
       return null; //TODO: Does this check cause problems? Verify.
+    
     log2(" x char: " + s.charAt(x));
+    
+    if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_'
+        || s.charAt(x) == '(' || s.charAt(x) == '.')) {
+      log("Char before caret isn't a letter/digit/_(. so no predictions");
+      hideSuggestion();
+      return null;
+    } else if (x > 0 && (s.charAt(x - 1) == ' ' || s.charAt(x - 1) == '(')
+        && Character.isDigit(s.charAt(x))) {
+      log("Char before caret isn't a letter, but ' ' or '(', so no predictions");
+      hideSuggestion(); // See #2755, Option 2 comment
+      return null;
+    }
+    
     //int xLS = off - getLineStartNonWhiteSpaceOffset(line);    
 
     String word = (x < s.length() ? s.charAt(x) : "") + "";
@@ -747,6 +769,9 @@ public class TextArea extends JEditTextArea {
     });
   }*/
 
+  
+  // appears unused, removed when looking to change completion trigger [fry 140801]
+  /*
   public void showSuggestionLater(final DefaultListModel defListModel, final String word) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -756,6 +781,7 @@ public class TextArea extends JEditTextArea {
 
     });
   }
+  */
 
   /**
    * Calculates location of caret and displays the suggestion popup at the location. 
@@ -763,7 +789,7 @@ public class TextArea extends JEditTextArea {
    * @param defListModel
    * @param subWord
    */
-  protected void showSuggestion(DefaultListModel defListModel,String subWord) {
+  protected void showSuggestion(DefaultListModel<CompletionCandidate> defListModel,String subWord) {
     hideSuggestion();
     if (defListModel.size() == 0) {
       log("TextArea: No suggestions to show.");

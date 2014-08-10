@@ -3056,6 +3056,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void bezierVertexImpl(float x2, float y2, float z2,
                                   float x3, float y3, float z3,
                                   float x4, float y4, float z4) {
+    bezierVertexCheck(shape, inGeo.vertexCount);
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -3083,6 +3084,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void quadraticVertexImpl(float cx, float cy, float cz,
                                      float x3, float y3, float z3) {
+    bezierVertexCheck(shape, inGeo.vertexCount);
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -3109,6 +3111,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void curveVertexImpl(float x, float y, float z) {
+    curveVertexCheck(shape);
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -3373,7 +3376,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void smooth(int level) {
-    if (smoothDisabled) return;
+    if (smoothDisabled || PGL.MAX_SAMPLES == -1) return;
 
     smooth = true;
 
@@ -11582,7 +11585,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void addQuadraticVertex(int i) {
       pg.curveVertexCount = 0;
       pg.bezierInitCheck();
-      pg.bezierVertexCheck(pg.shape, i);
+      pg.bezierVertexCheck(POLYGON, i);
 
       PMatrix3D draw = pg.bezierDrawMatrix;
 

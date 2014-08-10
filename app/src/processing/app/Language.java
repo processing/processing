@@ -1,163 +1,249 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  Part of the Processing project - http://processing.org
+
+  Copyright (c) 2014 The Processing Foundation
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  version 2, as published by the Free Software Foundation.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 package processing.app;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import processing.core.PApplet;
 
+
 /**
  * Internationalization (i18n)
- * 
  * @author Darius Morawiec
  */
 public class Language {
+  static private final String FILE = "processing.app.languages.PDE";
+  //static private final String LISTING = "processing/app/languages/languages.txt";
+  
+  // Store the language information in a file separate from the preferences,
+  // because preferences need the language on load time.
+  static protected final String PREF_FILE = "language.txt";
+  static protected final File prefFile = Base.getSettingsFile(PREF_FILE);
+  
+  /** Single instance of this Language class */
+  static private volatile Language instance;
+  
+  /** The system language */
+  private String language;
+  
+  /** Available languages */
+  private HashMap<String, String> languages;
+  
+  private ResourceBundle bundle;
 
-	private static Language instance = null;
-	private String language;
-	private HashMap<String, String> languages;
-	private ResourceBundle bundle;
-	private static final String FILE = "processing.app.languages.PDE";
 
-	private Language() {
+  private Language() {
+    String systemLanguage = Locale.getDefault().getLanguage();
+    language = loadLanguage();
+    boolean writePrefs = false;
+    
+    if (language == null) {
+      language = systemLanguage;
+      writePrefs = true;
+    }
+    
+    // Set available languages
+    languages = new HashMap<String, String>();
+    for (String code : listSupported()) {
+      languages.put(code, Locale.forLanguageTag(code).getDisplayLanguage(Locale.forLanguageTag(code)));
+    }
+    
+    // Set default language
+    if (!languages.containsKey(language)) {
+      language = "en";
+      writePrefs = true;
+    }
 
-		// Get system language
-		this.language = Locale.getDefault().getLanguage();
+    if (writePrefs) {
+      saveLanguage(language);
+    }
 
-		// Set available languages
-		this.languages = new HashMap<String, String>();
+    // Get bundle with translations (processing.app.language.PDE)
+    bundle = ResourceBundle.getBundle(Language.FILE, new Locale(this.language), new UTF8Control());
+  }
+  
+  
+  static private String[] listSupported() {
+    // List of languages in alphabetical order. (Add yours here.)
+    final String[] SUPPORTED = {
+      "de", // German, Deutsch
+      "en", // English
+      "el", // Greek
+      "es", // Spanish
+      "fr", // French, Français
+      "ja", // Japanese
+      "ko", // Korean      
+      "nl", // Dutch, Nederlands
+      "pt", // Portuguese
+      "tr", // Turkish
+	  "zh" // chinese
+    };
+    return SUPPORTED;
 
-		// Language code:
-		// http://en.wikipedia.org/wiki/ISO_639-1
-		// http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+    /*
+    // come back to this when bundles are placed outside the JAR
+    InputStream input = getClass().getResourceAsStream(LISTING);
+    String[] lines = PApplet.loadStrings(input);
+    ArrayList<String> list = new ArrayList<String>();
+    for (String line : lines) {
+      int index = line.indexOf('#');
+      if (index != -1) {
+        line = line.substring(0, index);
+      }
+      line = line.trim();
+      list.add(line);
+    }
+    return list.toArray(new String[0]);
+    */
+  }
 
-		// en, English, English
-		this.languages.put(Locale.ENGLISH.getLanguage(), Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH));
-		// de, German, Deutsch
-		this.languages.put(Locale.GERMAN.getLanguage(), Locale.GERMAN.getDisplayLanguage(Locale.GERMAN));
-		// ja, Japanese
-		this.languages.put(Locale.JAPANESE.getLanguage(), Locale.JAPANESE.getDisplayLanguage(Locale.JAPANESE));
 
-		// Set default language
-		if (!this.languages.containsKey(this.language)) {
-			this.language = "en";
-		}
+  /** Read the saved language */
+  static private String loadLanguage() { 
+    try {
+      if (prefFile.exists()) {
+        String language = PApplet.loadStrings(prefFile)[0];
+        language = language.trim().toLowerCase();
+        if (!language.equals("")) {
+          return language;
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+  
+  
+  /**
+   * Save the language directly to a settings file. This is 'save' and not 
+   * 'set' because a language change requires a restart of Processing. 
+   */
+  static public void saveLanguage(String language) {
+    try {
+      Base.saveFile(language, prefFile);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+  
+  
+  /** Singleton constructor */
+  static public Language init() {
+    if (instance == null) {
+      synchronized(Language.class) {
+        if (instance == null) {
+          instance = new Language();
+        }
+      }
+    }
+    return instance;
+  }
 
-		// Get saved language
-		try {
-			File file = Base.getContentFile("lib/language.txt");
-			if (file.exists()) {
-				String language = PApplet.loadStrings(file)[0];
-				language = language.trim().toLowerCase();
-				if (!language.equals("")) {
-					this.language = language;
-				} else {
-					Base.saveFile(this.language, file);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
-		// Get bundle with translations (processing.app.language.PDE)
-		this.bundle = ResourceBundle.getBundle(Language.FILE, new Locale(this.language), new UTF8Control());
-	}
+  /** Get translation from bundles. */
+  static public String text(String text) {
+    String result = init().bundle.getString(text);
+    return (result == null) ? text : result;
+  }
 
-	/**
-	 * Singleton constructor
-	 * 
-	 * @return
-	 */
-	public static synchronized Language init() {
-		if (instance == null) {
-			instance = new Language();
-		}
-		return instance;
-	}
+  
+  static public String interpolate(String text, Object... arguments) {
+    return String.format(init().bundle.getString(text), arguments);
+  }
 
-	/**
-	 * Get translation from bundles.
-	 * 
-	 * @param text
-	 * @return
-	 */
-	public static String text(String text) {
-		return init().bundle.getString(text);
-	}
+  
+  static public String pluralize(String text, int count) {
+    ResourceBundle bundle = init().bundle;
 
-	/**
-	 * Get all available languages
-	 * 
-	 * @return
-	 */
-	public static HashMap<String, String> getLanguages() {
-		return init().languages;
-	}
+    String fmt = text + ".%s";
 
-	/**
-	 * Get current language
-	 * 
-	 * @return
-	 */
-	public static String getLanguage() {
-		return init().language;
-	}
+    if (bundle.containsKey(String.format(fmt, count))) {
+      return interpolate(String.format(fmt, count), count);
+    }
+    return interpolate(String.format(fmt, "n"), count);
+  }
+  
 
-	/**
-	 * Set new language
-	 * 
-	 * @param language
-	 */
-	public static void setLanguage(String language) {
-		try {
-			File file = Base.getContentFile("lib/language.txt");
-			Base.saveFile(language, file);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * Custom Control class for consitent encoding.
-	 * http://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle
-	 */
-	public class UTF8Control extends ResourceBundle.Control {
-		public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload) throws IllegalAccessException, InstantiationException,IOException {
-			// The below is a copy of the default implementation.
-			String bundleName = toBundleName(baseName, locale);
-			String resourceName = toResourceName(bundleName, "properties");
-			ResourceBundle bundle = null;
-			InputStream stream = null;
-			if (reload) {
-				URL url = loader.getResource(resourceName);
-				if (url != null) {
-					URLConnection connection = url.openConnection();
-					if (connection != null) {
-						connection.setUseCaches(false);
-						stream = connection.getInputStream();
-					}
-				}
-			} else {
-				stream = loader.getResourceAsStream(resourceName);
-			}
-			if (stream != null) {
-				try {
-					// Only this line is changed to make it to read properties
-					// files as UTF-8.
-					bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
-				} finally {
-					stream.close();
-				}
-			}
-			return bundle;
-		}
-	}
+  /** Get all available languages */
+  static public Map<String, String> getLanguages() {
+    return init().languages;
+  }
 
+
+  /** Get current language */
+  static public String getLanguage() {
+    return init().language;
+  }
+
+
+//  /** Set new language (called by Preferences) */
+//  static public void setLanguage(String language) {
+//    this.language = language;
+//    
+//    try {
+//      File file = Base.getContentFile("lib/language.txt");
+//      Base.saveFile(language, file);
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+//  }
+
+
+  /**
+   * Custom 'Control' class for consistent encoding.
+   * http://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle
+   */
+  class UTF8Control extends ResourceBundle.Control {
+    public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload) throws IllegalAccessException, InstantiationException,IOException {
+      // The below is a copy of the default implementation.
+      String bundleName = toBundleName(baseName, locale);
+      String resourceName = toResourceName(bundleName, "properties");
+      ResourceBundle bundle = null;
+      InputStream stream = null;
+      if (reload) {
+        URL url = loader.getResource(resourceName);
+        if (url != null) {
+          URLConnection connection = url.openConnection();
+          if (connection != null) {
+            connection.setUseCaches(false);
+            stream = connection.getInputStream();
+          }
+        }
+      } else {
+        stream = loader.getResourceAsStream(resourceName);
+      }
+      if (stream != null) {
+        try {
+          // Only line changed from the original source:
+          bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
+        } finally {
+          stream.close();
+        }
+      }
+      return bundle;
+    }
+  }
 }

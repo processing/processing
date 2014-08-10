@@ -1,4 +1,6 @@
 0230 core (3.0a3)
+X add another NaN check when sorting FloatList/Dict classes
+X   if all values were NaN, an ArrayIndexOutOfBoundsException was thrown
 
 earlier
 X PShape disableStyle() does not work with createShape()
@@ -10,6 +12,10 @@ X   this was done midway through the 3.0a2 release process
 pull requests
 X call applet.exit() instead of System.exit() from Present Mode's 'stop'
 X   https://github.com/processing/processing/pull/2680
+X Drawing RECT PShape with rounded corners crashes the sketch
+X   https://github.com/processing/processing/issues/2648
+X Corrected a typo in Tessellator#addQuadraticVertex()
+X   https://github.com/processing/processing/pull/2649
 
 
 applet/component
@@ -78,6 +84,8 @@ _   draw(s) doesn't work on the returned PShape
 
 
 hidpi
+_ Text is half size in PGraphicsRetina2D
+_   https://github.com/processing/processing/issues/2738
 _ saveFrame() with retina render is making black images
 _ zero alpha values still a problem with retina renderer
 _   https://github.com/processing/processing/issues/2030
@@ -92,6 +100,9 @@ _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start
 _   https://github.com/processing/processing/issues/2357
+_ glw? lwjgl? retina jogl?
+_ Text looks blurry in GL Retina
+_   https://github.com/processing/processing/issues/2739
 
 
 cantfix

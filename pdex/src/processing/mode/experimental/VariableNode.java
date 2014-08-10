@@ -53,7 +53,7 @@ public class VariableNode implements MutableTreeNode {
     protected String type;
     protected String name;
     protected Value value;
-    protected List<MutableTreeNode> children = new ArrayList();
+    protected List<MutableTreeNode> children = new ArrayList<MutableTreeNode>();
     protected MutableTreeNode parent;
 
     /**

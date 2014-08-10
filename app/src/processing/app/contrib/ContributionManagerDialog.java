@@ -27,6 +27,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.SocketTimeoutException;
 import java.util.*;
 
@@ -38,16 +41,16 @@ import processing.app.*;
 
 
 public class ContributionManagerDialog {
-  static final String ANY_CATEGORY = "All";
+  static final String ANY_CATEGORY = Language.text("contrib.all");
 
   JFrame dialog;
-  String title;
   ContributionFilter filter;
   JComboBox categoryChooser;
   JScrollPane scrollPane;
   ContributionListPanel contributionListPanel;
   StatusPanel status;
   FilterField filterField;
+  JButton restartButton;
 
   // the calling editor, so updates can be applied
   Editor editor;
@@ -57,10 +60,8 @@ public class ContributionManagerDialog {
 
   public ContributionManagerDialog(ContributionType type) {
     if (type == null) {
-      title = "Update Manager";
       filter = ContributionType.createUpdateFilter();
     } else {
-      // title = type.getTitle() + " Manager";
       filter = type.createFilter();    
     }
     contribListing = ContributionListing.getInstance();
@@ -78,12 +79,59 @@ public class ContributionManagerDialog {
     return contribListing.hasUpdates(base);
   }
   
-  public void showFrame(Editor editor) {
+  public void showFrame(final Editor editor) {
     this.editor = editor;
 
     if (dialog == null) {
-      dialog = new JFrame(title);
+      dialog = new JFrame(Language.text("contributions"));
 
+      restartButton = new JButton(Language.text("contrib.restart"));
+      restartButton.setVisible(false);
+      restartButton.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+
+          Iterator<Editor> iter = editor.getBase().getEditors().iterator();
+          while (iter.hasNext()) {
+            Editor ed = iter.next();
+            if (ed.getSketch().isModified()) {
+              int option = Base
+                .showYesNoQuestion(editor, Language.text("contributions"),
+                                   Language.text("contributions.unsaved_changes"),
+                                   Language.text("contributions.unsaved_changes.prompt"));
+
+              if (option == JOptionPane.NO_OPTION)
+                return;
+              else
+                break;
+            }
+          }
+
+          // Thanks to http://stackoverflow.com/a/4160543
+          StringBuilder cmd = new StringBuilder();
+          cmd.append(System.getProperty("java.home") + File.separator + "bin"
+            + File.separator + "java ");
+          for (String jvmArg : ManagementFactory.getRuntimeMXBean()
+            .getInputArguments()) {
+            cmd.append(jvmArg + " ");
+          }
+          cmd.append("-cp ")
+            .append(ManagementFactory.getRuntimeMXBean().getClassPath())
+            .append(" ");
+          cmd.append(Base.class.getName());
+
+          try {
+            Runtime.getRuntime().exec(cmd.toString());
+            System.exit(0);
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+
+        }
+
+      });
+      
       Toolkit.setIcon(dialog);
       createComponents();
       registerDisposeListeners();
@@ -107,11 +155,9 @@ public class ContributionManagerDialog {
           updateCategoryChooser();
           if (error) {
             if (exception instanceof SocketTimeoutException) {
-              status.setErrorMessage("Connection timed out while " +
-                                     "downloading the contribution list.");
+              status.setErrorMessage(Language.text("contrib.errors.list_download.timeout"));
             } else {
-              status.setErrorMessage("Could not download the list " +
-                                     "of available contributions.");
+              status.setErrorMessage(Language.text("contrib.errors.list_download"));
             }
             exception.printStackTrace();
           }
@@ -151,7 +197,7 @@ public class ContributionManagerDialog {
 
       filterPanel.add(Box.createHorizontalStrut(6));
 
-      JLabel categoryLabel = new JLabel(Language.text("library.category"));
+      JLabel categoryLabel = new JLabel(Language.text("contrib.category"));
       filterPanel.add(categoryLabel);
 
       filterPanel.add(Box.createHorizontalStrut(5));
@@ -204,8 +250,18 @@ public class ContributionManagerDialog {
       pane.add(Box.createHorizontalStrut(10), BorderLayout.EAST);
 
       status = new StatusPanel();
-      status.setBorder(new EmptyBorder(7, 7, 7, 7));
-      pane.add(status, BorderLayout.SOUTH);
+//      status.setBorder(new EmptyBorder(7, 7, 7, 7));
+      
+      JPanel statusRestartPane = new JPanel();
+      statusRestartPane.setLayout(new BorderLayout());
+      
+      statusRestartPane.setBorder(new EmptyBorder(7, 7, 7, 7));
+      statusRestartPane.setOpaque(false);
+      
+      statusRestartPane.add(status, BorderLayout.WEST);
+      statusRestartPane.add(restartButton, BorderLayout.EAST);
+      
+      pane.add(statusRestartPane, BorderLayout.SOUTH);
 
       
 //      status = new StatusPanel();
@@ -379,8 +435,8 @@ public class ContributionManagerDialog {
     List<String> filters;
 
     public FilterField () {
-      super(Language.text("library.filter_your_search"));
-      filterHint = Language.text("library.filter_your_search");
+      super(Language.text("contrib.filter_your_search"));
+      filterHint = Language.text("contrib.filter_your_search");
       
       showingHint = true;
       filters = new ArrayList<String>();
