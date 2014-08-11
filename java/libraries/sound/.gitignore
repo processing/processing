@@ -1,5 +1,6 @@
 *.o
 *.class
+*.jar
 .DS_Store
 /distribution
 /bin
