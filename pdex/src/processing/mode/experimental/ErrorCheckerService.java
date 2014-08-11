@@ -386,11 +386,11 @@ public class ErrorCheckerService implements Runnable{
 
   protected void checkForMissingImports() {
     for (Problem p : problemsList) {
-      if(p.getMessage().endsWith(" cannot be resolved to a type"));{
-        int idx = p.getMessage().indexOf(" cannot be resolved to a type");
-        if(idx > 1){
-          String missingClass = p.getMessage().substring(0, idx);
-          //log("Will suggest for type:" + missingClass);
+      if(p.getIProblem().getID() == IProblem.UndefinedType) {
+        String args[] = p.getIProblem().getArguments();        
+        if (args.length > 0) {
+          String missingClass = args[0];
+          log("Will suggest for type:" + missingClass);
           astGenerator.suggestImports(missingClass);
         }
       }

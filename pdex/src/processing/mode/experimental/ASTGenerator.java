@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -3312,7 +3313,17 @@ public class ASTGenerator {
     return null;
   }
   protected JFrame frmImportSuggest;
+  private TreeSet<String> ignoredImportSuggestions;
+  
   public void suggestImports(final String className){
+    if(ignoredImportSuggestions == null) {
+      ignoredImportSuggestions = new TreeSet<>();
+    } else {
+      if(ignoredImportSuggestions.contains(className)) {
+        log("Ignoring import suggestions for " + className);
+        return;
+      }
+    }
     if(frmImportSuggest != null)
       if(frmImportSuggest.isVisible())
       return;
@@ -3417,7 +3428,17 @@ public class ASTGenerator {
       panelBottom.add(Box.createHorizontalGlue());
       panelBottom.add(btnInsertImport);
       panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
-      panelBottom.add(btnCancel);    
+      panelBottom.add(btnCancel);
+      JButton btnIgnore = new JButton("Ignore \"" + className + "\"");
+      btnIgnore.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          ignoredImportSuggestions.add(className);
+          frmImportSuggest.setVisible(false);
+        }
+      });
+      panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
+      panelBottom.add(btnIgnore);
 
 //      frmImportSuggest.add(lbl);
 //      frmImportSuggest.add(jsp);
