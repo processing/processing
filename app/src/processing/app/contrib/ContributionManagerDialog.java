@@ -44,6 +44,7 @@ public class ContributionManagerDialog {
   static final String ANY_CATEGORY = Language.text("contrib.all");
 
   JFrame dialog;
+  String title;
   ContributionFilter filter;
   JComboBox categoryChooser;
   JScrollPane scrollPane;
@@ -60,8 +61,16 @@ public class ContributionManagerDialog {
 
   public ContributionManagerDialog(ContributionType type) {
     if (type == null) {
+      title = Language.text("contrib.manager_title.update");
       filter = ContributionType.createUpdateFilter();
     } else {
+      if (type == ContributionType.MODE)
+        title = Language.text("contrib.manager_title.mode");
+      else if (type == ContributionType.TOOL)
+        title = Language.text("contrib.manager_title.tool");
+      else if (type == ContributionType.LIBRARY)
+        title = Language.text("contrib.manager_title.library");
+      
       filter = type.createFilter();    
     }
     contribListing = ContributionListing.getInstance();
@@ -83,7 +92,7 @@ public class ContributionManagerDialog {
     this.editor = editor;
 
     if (dialog == null) {
-      dialog = new JFrame(Language.text("contrib"));
+      dialog = new JFrame(title);
 
       restartButton = new JButton(Language.text("contrib.restart"));
       restartButton.setVisible(false);
@@ -97,7 +106,7 @@ public class ContributionManagerDialog {
             Editor ed = iter.next();
             if (ed.getSketch().isModified()) {
               int option = Base
-                .showYesNoQuestion(editor, Language.text("contrib"),
+                .showYesNoQuestion(editor, title,
                                    Language.text("contrib.unsaved_changes"),
                                    Language.text("contrib.unsaved_changes.prompt"));
 
