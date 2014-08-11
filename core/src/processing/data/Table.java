@@ -1108,7 +1108,7 @@ public class Table {
     writer.println("  </table>");
     writer.println("</body>");
 
-    writer.println("</hmtl>");
+    writer.println("</html>");
     writer.flush();
   }
 
