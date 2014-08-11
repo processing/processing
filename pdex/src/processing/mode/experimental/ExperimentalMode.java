@@ -141,7 +141,7 @@ public class ExperimentalMode extends JavaMode {
       debugOutputEnabled = false, errorLogsEnabled = false,
       autoSaveEnabled = true, autoSavePromptEnabled = true,
       defaultAutoSaveEnabled = true, // ,untitledAutoSaveEnabled;
-      ccTriggerEnabled = false;
+      ccTriggerEnabled = false, importSuggestEnabled = true;
   public static int autoSaveInterval = 3; //in minutes
   
   /**
@@ -158,7 +158,8 @@ public class ExperimentalMode extends JavaMode {
       prefAutoSave = "pdex.autoSave.autoSaveEnabled", // prefUntitledAutoSave = "pdex.autoSave.untitledAutoSaveEnabled", 
       prefAutoSavePrompt = "pdex.autoSave.promptDisplay",
       prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault",
-      prefCCTriggerEnabled = "pdex.ccTriggerEnabled";
+      prefCCTriggerEnabled = "pdex.ccTriggerEnabled",
+      prefImportSuggestEnabled = "pdex.importSuggestEnabled";
 
   // TweakMode code (Preferences)
   volatile public static boolean enableTweak = false;
@@ -178,7 +179,7 @@ public class ExperimentalMode extends JavaMode {
     autoSavePromptEnabled = Preferences.getBoolean(prefAutoSavePrompt);
     defaultAutoSaveEnabled = Preferences.getBoolean(prefDefaultAutoSave);
     ccTriggerEnabled = Preferences.getBoolean(prefCCTriggerEnabled);
-
+    importSuggestEnabled = Preferences.getBoolean(prefImportSuggestEnabled);
     // TweakMode code - not a sticky preference anymore
     // enableTweak = Preferences.getBoolean(prefEnableTweak);
   }
@@ -196,7 +197,7 @@ public class ExperimentalMode extends JavaMode {
     Preferences.setBoolean(prefAutoSavePrompt, autoSavePromptEnabled);
     Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
     Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
-
+    Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
     // TweakMode code - not a sticky preference anymore
     // Preferences.setBoolean(prefEnableTweak, enableTweak);
   }
@@ -225,6 +226,8 @@ public class ExperimentalMode extends JavaMode {
       Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
     if (Preferences.get(prefCCTriggerEnabled) == null)
       Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
+    if (Preferences.get(prefImportSuggestEnabled) == null)
+      Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
 
     // TweakMode code - not a sticky preference anymore
 //    if (Preferences.get(prefEnableTweak) == null) {

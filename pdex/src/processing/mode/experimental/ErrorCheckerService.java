@@ -385,6 +385,7 @@ public class ErrorCheckerService implements Runnable{
   }
 
   protected void checkForMissingImports() {
+    if(!ExperimentalMode.importSuggestEnabled) return;
     for (Problem p : problemsList) {
       if(p.getIProblem().getID() == IProblem.UndefinedType) {
         String args[] = p.getIProblem().getArguments();        
