@@ -3453,6 +3453,7 @@ public class ASTGenerator {
                             + (editor.getHeight() - frmImportSuggest.getHeight())
                             / 2);
       editor.ta.hideSuggestion();
+      classList.setSelectedIndex(0);
       frmImportSuggest.setVisible(true);
     }
 

@@ -352,8 +352,8 @@ public class ErrorCheckerService implements Runnable{
       if (System.currentTimeMillis() - lastErrorCheckCall > errorCheckInterval) {
         log("Interval passed, starting error check");
         checkCode();
+        checkForMissingImports();
       }
-      checkForMissingImports();
     }
     
     astGenerator.disposeAllWindows();
