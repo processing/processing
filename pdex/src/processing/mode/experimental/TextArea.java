@@ -354,27 +354,31 @@ public class TextArea extends JEditTextArea {
       return null;
     String s = getLineText(line);
     log2("lin " + line);
-    /*
-     * if (s == null) return null; else if (s.length() == 0) return null;
-     */
-//    else {
+
     //log2(s + " len " + s.length());
 
     int x = getCaretPosition() - getLineStartOffset(line) - 1, x1 = x - 1;
-    if(x >= s.length() || x < 0)
+    if(x >= s.length() || x < 0) {
+      //log("X is " + x + ". Returning null");
+      hideSuggestion();
       return null; //TODO: Does this check cause problems? Verify.
+    }
     
     log2(" x char: " + s.charAt(x));
     
     if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_'
         || s.charAt(x) == '(' || s.charAt(x) == '.')) {
-      log("Char before caret isn't a letter/digit/_(. so no predictions");
+      //log("Char before caret isn't a letter/digit/_(. so no predictions");
       hideSuggestion();
       return null;
     } else if (x > 0 && (s.charAt(x - 1) == ' ' || s.charAt(x - 1) == '(')
         && Character.isDigit(s.charAt(x))) {
-      log("Char before caret isn't a letter, but ' ' or '(', so no predictions");
+      //log("Char before caret isn't a letter, but ' ' or '(', so no predictions");
       hideSuggestion(); // See #2755, Option 2 comment
+      return null;
+    } else if (x == 0){
+      //log("X is zero");
+      hideSuggestion();
       return null;
     }
     
@@ -393,10 +397,7 @@ public class TextArea extends JEditTextArea {
           + errorCheckerService.mainClassOffset,0);
       return word;
     }
-//    if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
-//      ; // accepted these keys
-//    else if (!(Character.isLetterOrDigit(keyChar) || keyChar == '_' || keyChar == '$'))
-//      return null;
+
     int i = 0;
     int closeB = 0;
 
@@ -447,7 +448,6 @@ public class TextArea extends JEditTextArea {
         break;
       }
     }
-    //    if (keyChar != KeyEvent.CHAR_UNDEFINED)
 
     if (Character.isDigit(word.charAt(0)))
       return null;
