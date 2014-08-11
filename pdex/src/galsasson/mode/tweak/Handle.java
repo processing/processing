@@ -33,7 +33,8 @@ public class Handle {
 	HProgressBar progBar = null;
 	String textFormat;
 
-	int oscPort;
+	// the client that sends the changes
+	UDPTweakClient tweakClient;
 
 	public Handle(String t, String n, int vi, String v, int ti, int l, int sc, int ec, int dp)
 	{
@@ -241,9 +242,9 @@ public class Handle {
 		colorBox = box;
 	}
 
-	public void setOscPort(int port)
+	public void setTweakClient(UDPTweakClient client)
 	{
-		oscPort = port;
+		tweakClient = client;
 	}
 
 	public void oscSendNewValue()
@@ -251,16 +252,16 @@ public class Handle {
 		int index = varIndex;
 		try {
 			if (type == "int") {
-				OSCSender.sendInt(index, newValue.intValue(), oscPort);
+				tweakClient.sendInt(index, newValue.intValue());
 			}
 			else if (type == "hex") {
-				OSCSender.sendInt(index, newValue.intValue(), oscPort);
+				tweakClient.sendInt(index, newValue.intValue());
 			}
 			else if (type == "webcolor") {
-				OSCSender.sendInt(index, newValue.intValue(), oscPort);
+				tweakClient.sendInt(index, newValue.intValue());
 			}
 			else if (type == "float") {
-				OSCSender.sendFloat(index, newValue.floatValue(), oscPort);
+				tweakClient.sendFloat(index, newValue.floatValue());
 			}
 		} catch (Exception e) { System.out.println("error sending OSC message!"); }
 	}

@@ -418,6 +418,7 @@ public class ExperimentalMode extends JavaMode {
 		}
 
 		/* if compilation passed, modify the code and build again */
+		// save the original sketch code of the user
 		editor.initBaseCode();
 		// check for "// tweak" comment in the sketch
 		boolean requiresTweak = SketchParser.containsTweakComment(editor.baseCode);
