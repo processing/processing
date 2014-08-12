@@ -307,7 +307,7 @@ public class ErrorCheckerService implements Runnable{
    * Error checking doesn't happen before this interval has ellapsed since the
    * last runManualErrorCheck() call.
    */
-  private final static long errorCheckInterval = 1100;
+  private final static long errorCheckInterval = 500;
 
   /**
    * The way the error checking happens is: DocumentListeners are added
