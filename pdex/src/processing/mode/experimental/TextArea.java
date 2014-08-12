@@ -38,6 +38,7 @@ import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;
 
+import processing.app.Base;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaDefaults;
 /**
@@ -148,7 +149,7 @@ public class TextArea extends JEditTextArea {
    * Code completion begins from here.
    */
   public void processKeyEvent(KeyEvent evt) {
-    
+    if(Base.isMacOS() && evt.isControlDown()) System.out.println("Ctrl down: " + evt);
     if(evt.getKeyCode() == KeyEvent.VK_ESCAPE){
       if(suggestion != null){
         if(suggestion.isVisible()){
