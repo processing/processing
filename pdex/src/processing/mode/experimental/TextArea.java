@@ -226,7 +226,7 @@ public class TextArea extends JEditTextArea {
       }
       
       final KeyEvent evt2 = evt;
-      if (keyChar == ' ') {
+      if (keyChar == ' ' && !Base.isMacOS()) {
         if (ExperimentalMode.ccTriggerEnabled &&
         (evt.isControlDown() || evt.isMetaDown())) {
           SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
@@ -245,10 +245,26 @@ public class TextArea extends JEditTextArea {
         } else {
           hideSuggestion(); // hide on spacebar
         }
-        return;
+      } else {
+        prepareSuggestions(evt2);
       }
-            
-      prepareSuggestions(evt2);
+    }
+    
+    else if (Base.isMacOS() && evt.getID() == KeyEvent.KEY_RELEASED
+        && evt.getKeyCode() == KeyEvent.VK_SPACE && evt.isControlDown()) {
+      final KeyEvent evt2 = evt;
+      SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+        protected Object doInBackground() throws Exception {
+          // Provide completions only if it's enabled
+          if (ExperimentalMode.codeCompletionsEnabled
+              && ExperimentalMode.ccTriggerEnabled) {
+            log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
+            log("Typing: " + fetchPhrase(evt2));
+          }
+          return null;
+        }
+      };
+      worker.execute();
     }
   }
 
