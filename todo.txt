@@ -16,7 +16,7 @@ X fixes for mode/tool installation
 X   https://github.com/processing/processing/pull/2705
 X fix mode updating to work properly
 X   https://github.com/processing/processing/issues/2579
-X temp folders not always deleting
+X contrib manager temp folders not always deleting
 X   https://github.com/processing/processing/issues/2606
 X problem when removing a mode
 X   https://github.com/processing/processing/issues/2507
@@ -24,6 +24,12 @@ X autocompletion dialog box sticking
 X   https://github.com/processing/processing/issues/2741
 X Line warning indicators next to scrollbar break after moving around text
 X   https://github.com/processing/processing/issues/2655
+X Code completion generates wrong code
+X   https://github.com/processing/processing/issues/2753
+X Code completion: Hide overloaded methods unless inside parentheses
+X   https://github.com/processing/processing/issues/2755
+X Close auto-completion suggestion box when deleting/backspacing code
+X   https://github.com/processing/processing/issues/2757
 _ remove dependency on oscp5 library for tweak mode
 _   https://github.com/processing/processing/issues/2730
 
@@ -57,6 +63,28 @@ X   https://github.com/processing/processing/issues/2654
 X   https://github.com/processing/processing/pull/2674
 X Style completion panel when using Nimbus LAF
 X   https://github.com/processing/processing/pull/2718
+X enums not supported properly
+X   https://github.com/processing/processing/issues/1390
+X   http://code.google.com/p/processing/issues/detail?id=1352
+X   https://github.com/processing/processing/pull/2774
+X combining char/int/etc casts in one statement causes preproc trouble
+X   https://github.com/processing/processing/issues/1936
+X   https://github.com/processing/processing/pull/2772
+X Update contributions.* strings to contrib
+X   https://github.com/processing/processing/pull/2770
+X Style completion panel on windows
+X   https://github.com/processing/processing/pull/2762
+X Update Spanish language strings
+X   https://github.com/processing/processing/pull/2769
+X make --output optional in the command line version
+X   https://github.com/processing/processing/pull/1866
+X   https://github.com/processing/processing/issues/1855
+X   https://github.com/processing/processing/issues/1816
+X Fix unneeded scroll bar display in code completion suggestion box
+X   https://github.com/processing/processing/pull/2763
+
+_ PDE erroneously detects changes in non-sketch files
+_   https://github.com/processing/processing/issues/2759
 
 languages
 X Japanese https://github.com/processing/processing/pull/2688
@@ -388,13 +416,8 @@ _   it's never useful. students can use { } if they want an empty block
 _ missing brackets, unmatched brackets
 _   examples added to the bug report
 _   http://code.google.com/p/processing/issues/detail?id=6
-_ enums not supported properly
-_   https://github.com/processing/processing/issues/1390
-X   http://code.google.com/p/processing/issues/detail?id=1352
 
 low (features)
-_ combining char/int/etc casts in one statement causes preproc trouble
-_   https://github.com/processing/processing/issues/1936
 _ copy running code from /tmp/buildXXxxx on crash of p5
 _   should probably make a way to save/recover code
 _   make the buildXxxx folders relate to time/date?
@@ -429,6 +452,8 @@ _   http://code.google.com/p/processing/issues/detail?id=8
 
 PDE / Editor
 
+_ clean up /tmp folders used during build
+_   https://github.com/processing/processing/issues/1896
 _ 'recent' menu doesn't respect examples folder of other p5 versions
 _   could write that into the file, that it's an example
 _   or write the path as shown in the PDE to the file as simpler

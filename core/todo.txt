@@ -1,6 +1,13 @@
 0230 core (3.0a3)
 X add another NaN check when sorting FloatList/Dict classes
 X   if all values were NaN, an ArrayIndexOutOfBoundsException was thrown
+X PShape for JAVA2D 
+X   https://github.com/processing/processing/pull/2756
+X add trim() method to the XML library
+
+andres
+X maximizing window leads to erroneous mouse coordinates
+X   https://github.com/processing/processing/issues/2562
 
 earlier
 X PShape disableStyle() does not work with createShape()
@@ -16,7 +23,8 @@ X Drawing RECT PShape with rounded corners crashes the sketch
 X   https://github.com/processing/processing/issues/2648
 X Corrected a typo in Tessellator#addQuadraticVertex()
 X   https://github.com/processing/processing/pull/2649
-
+X fix tiny typo in Table writeHTML()
+X   https://github.com/processing/processing/pull/2773
 
 applet/component
 _ remove Applet as base class
@@ -32,6 +40,7 @@ _   make sure it works with retina/canvas/strategy as well
 
 
 processing.data
+_ lots of 'data' changes down below
 _ need a better method for "missing" data in Table
 _   if missing int is zero, can't just remove those values from saving a table
 _   but for NaN values, it's a necessity
@@ -86,6 +95,8 @@ _   draw(s) doesn't work on the returned PShape
 hidpi
 _ Text is half size in PGraphicsRetina2D
 _   https://github.com/processing/processing/issues/2738
+_ text not getting the correct font in Retina2D
+_   https://github.com/processing/processing/issues/2617
 _ saveFrame() with retina render is making black images
 _ zero alpha values still a problem with retina renderer
 _   https://github.com/processing/processing/issues/2030
@@ -100,7 +111,6 @@ _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start
 _   https://github.com/processing/processing/issues/2357
-_ glw? lwjgl? retina jogl?
 _ Text looks blurry in GL Retina
 _   https://github.com/processing/processing/issues/2739
 
