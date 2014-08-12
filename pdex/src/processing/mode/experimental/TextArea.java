@@ -226,8 +226,8 @@ public class TextArea extends JEditTextArea {
       }
       
       final KeyEvent evt2 = evt;
-      if (keyChar == ' ' && !Base.isMacOS()) {
-        if (ExperimentalMode.ccTriggerEnabled &&
+      if (keyChar == ' ') {
+        if (!Base.isMacOS() && ExperimentalMode.ccTriggerEnabled &&
         (evt.isControlDown() || evt.isMetaDown())) {
           SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
             protected Object doInBackground() throws Exception {
@@ -249,7 +249,7 @@ public class TextArea extends JEditTextArea {
         prepareSuggestions(evt2);
       }
     }
-    
+    // #2699 - Special case for OS X, where Ctrl-Space is not detected as Key_Typed -_-
     else if (Base.isMacOS() && evt.getID() == KeyEvent.KEY_RELEASED
         && evt.getKeyCode() == KeyEvent.VK_SPACE && evt.isControlDown()) {
       final KeyEvent evt2 = evt;
