@@ -83,7 +83,7 @@ public class ContributionManagerDialog {
     this.editor = editor;
 
     if (dialog == null) {
-      dialog = new JFrame(Language.text("contributions"));
+      dialog = new JFrame(Language.text("contrib"));
 
       restartButton = new JButton(Language.text("contrib.restart"));
       restartButton.setVisible(false);
@@ -97,9 +97,9 @@ public class ContributionManagerDialog {
             Editor ed = iter.next();
             if (ed.getSketch().isModified()) {
               int option = Base
-                .showYesNoQuestion(editor, Language.text("contributions"),
-                                   Language.text("contributions.unsaved_changes"),
-                                   Language.text("contributions.unsaved_changes.prompt"));
+                .showYesNoQuestion(editor, Language.text("contrib"),
+                                   Language.text("contrib.unsaved_changes"),
+                                   Language.text("contrib.unsaved_changes.prompt"));
 
               if (option == JOptionPane.NO_OPTION)
                 return;
