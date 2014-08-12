@@ -3317,7 +3317,7 @@ public class ASTGenerator {
   
   public void suggestImports(final String className){
     if(ignoredImportSuggestions == null) {
-      ignoredImportSuggestions = new TreeSet<>();
+      ignoredImportSuggestions = new TreeSet<String>();
     } else {
       if(ignoredImportSuggestions.contains(className)) {
         log("Ignoring import suggestions for " + className);
