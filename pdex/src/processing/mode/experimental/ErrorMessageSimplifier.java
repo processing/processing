@@ -8,6 +8,8 @@ import java.util.TreeMap;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
+import static processing.mode.experimental.ExperimentalMode.log;
+
 public class ErrorMessageSimplifier {
 
 //  private ErrorCheckerService errorCheckerService;
@@ -102,6 +104,13 @@ public class ErrorMessageSimplifier {
           else {
             result = "Consider adding a \"" + args[0] + "\"";
           }
+        }
+      }
+      break;
+    case IProblem.ParsingErrorInvalidToken:
+      if (args.length > 0) {
+        if (args[0].equals("int") && args[1].equals("VariableDeclaratorId")) {
+          result = "\"color\", \"int\" can't be used as variable names.";
         }
       }
       break;
