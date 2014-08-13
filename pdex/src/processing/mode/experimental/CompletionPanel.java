@@ -255,7 +255,7 @@ public class CompletionPanel {
       public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
           insertSelection();
-          //hide();
+          hide();
         }
       }
     });
