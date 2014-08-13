@@ -2459,7 +2459,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //        Path path = root.resolve(p);
         int response = Base
           .showYesNoQuestion(Editor.this, "File Modified",
-                             "A file has been modified externally",
+                             "Your sketch has been modified externally",
                              "Would you like to reload the sketch?");
         if (response == 0) {
           //reload the sketch
