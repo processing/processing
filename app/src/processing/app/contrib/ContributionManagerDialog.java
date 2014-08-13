@@ -57,6 +57,7 @@ public class ContributionManagerDialog {
   // the calling editor, so updates can be applied
   Editor editor;
   String category;
+  String compatibleContribType;
   boolean isCompatibilityFilter;
   ContributionListing contribListing;
 
@@ -65,6 +66,7 @@ public class ContributionManagerDialog {
     if (type == null) {
       title = Language.text("contrib.manager_title.update");
       filter = ContributionType.createUpdateFilter();
+      compatibleContribType = "Updates";
     } else {
       if (type == ContributionType.MODE)
         title = Language.text("contrib.manager_title.mode");
@@ -74,6 +76,11 @@ public class ContributionManagerDialog {
         title = Language.text("contrib.manager_title.library");
       
       filter = type.createFilter();    
+      
+      if (type == ContributionType.LIBRARY)
+        compatibleContribType = "Libraries";
+      else
+        compatibleContribType = type.getTitle() + "s";
     }
     contribListing = ContributionListing.getInstance();
     contributionListPanel = new ContributionListPanel(this, filter);
@@ -229,10 +236,6 @@ public class ContributionManagerDialog {
       filterPanel.add(filterField);
       
       filterPanel.add(Box.createHorizontalStrut(5));
-
-      String compatibleContribType = title.substring(0, title.indexOf(" "))
-        .equalsIgnoreCase("Library") ? "Libraries" : (title.substring(0, title
-        .indexOf(" ")) + "s");
       
       final JCheckBox compatibleContrib = new JCheckBox("Show Only Compatible " + compatibleContribType);
       compatibleContrib.addItemListener(new ItemListener() {

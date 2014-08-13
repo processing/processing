@@ -24,11 +24,8 @@ package processing.app.contrib;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import processing.app.Language;
-import processing.app.Base;
 import processing.core.PApplet;
 
 
@@ -47,8 +44,9 @@ abstract public class Contribution {
   protected String paragraph;     // <paragraph length description for site>
   protected int version;          // 102
   protected String prettyVersion; // "1.0.2"
-  protected long lastUpdated;     //  1402805757
-  protected TreeMap<Integer, Integer> compatibleVersions; // 216,220,226-229
+  protected long lastUpdated;   //  1402805757
+  protected int minRevision;    //  0
+  protected int maxRevision;    //  227
   
   
   // "Sound"
@@ -132,40 +130,19 @@ abstract public class Contribution {
     return lastUpdated;
   }
 
-
-  public String getCompatibleVersionsStr() {
-    if (compatibleVersions == null)
-      return "";
-    StringBuilder sb = new StringBuilder();
-    for (Map.Entry<Integer, Integer> range : compatibleVersions.entrySet()) {
-      if (range.getKey().equals(range.getValue())) {
-        sb.append(range.getKey());
-        sb.append(",");
-      }
-      else {
-        sb.append(range.getKey());
-        sb.append("-");
-        sb.append(range.getValue());
-        sb.append(",");
-      }
-    }
-    sb.deleteCharAt(sb.length()-1);  // delete last comma
-    return sb.toString();
+  // 0
+  public int getMinRevision() {
+    return minRevision;
   }
 
-
-  public TreeMap<Integer, Integer> getCompatibleVersions() {
-    return compatibleVersions;
+  // 227
+  public int getMaxRevision() {
+    return maxRevision;
   }
 
 
   public boolean isCompatible(int versionNum) {
-    if (compatibleVersions != null) {
-      if (compatibleVersions.floorEntry(versionNum) != null
-        && versionNum <= compatibleVersions.floorEntry(versionNum).getValue()) {
-        return true; }
-    }
-    return false;
+    return ((maxRevision == 0 || versionNum < maxRevision) && versionNum > minRevision);
   }
 
 
@@ -234,47 +211,5 @@ abstract public class Contribution {
       return defaultCategory();
     }
     return outgoing;
-  }
-
-
-  /**
-   * @param compVerStr
-   *          </br>A string consisting of a comma separated list of numbers.
-   *          Ranges may be indicated by hyphens between 2 numbers. Open ranges
-   *          may be indicated by leaving the right side of the last hyphen
-   *          blank. 
-   *          </br>&emsp;&emsp;&emsp;For example, "222,225,227-229,230-"
-   *          is valid.
-   * @return A TreeMap consisting of integer-integer key-value pairs that
-   *         represent ranges for which the contribution has been
-   *         tested.</br>&emsp;&emsp;&emsp;The example above would return a
-   *         TreeMap with the <key,value> pairs 
-   *         <222,222>, <225,225>, <227,229>, 
-   *         </br>&emsp;&emsp;&emsp;<230,(present_release_number)>.
-   */
-  static TreeMap<Integer, Integer> parseCompatibleVersions(String compVerStr)
-    throws NumberFormatException {
-    if (compVerStr == null || compVerStr.equals(""))
-      return null;
-    String[] ranges = compVerStr.split(",");
-    TreeMap<Integer, Integer> compatibleTM = new TreeMap<Integer, Integer>();
-    for (String range : ranges) {
-      range = range.trim();
-      if (range.indexOf("-") != -1) {
-        int key = Integer.parseInt(range.substring(0, range.indexOf("-"))
-          .trim());
-        int value;
-        if (((range.indexOf("-") + 1) >= range.length())
-          || range.substring(range.indexOf("-") + 1).trim().isEmpty()) {
-          value = Base.getRevision();
-        }
-        else
-          value = Integer.parseInt(range.substring(range.indexOf("-") + 1)
-            .trim());
-        compatibleTM.put(key, value);
-      } else
-        compatibleTM.put(Integer.parseInt(range), Integer.parseInt(range));
-    }
-    return compatibleTM;
   }
 }
