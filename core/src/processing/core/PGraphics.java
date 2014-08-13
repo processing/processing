@@ -1096,7 +1096,7 @@ public class PGraphics extends PImage implements PConstants {
     if (which == ENABLE_NATIVE_FONTS ||
         which == DISABLE_NATIVE_FONTS) {
       showWarning("hint(ENABLE_NATIVE_FONTS) no longer supported. " +
-      		        "Use createFont() instead.");
+                  "Use createFont() instead.");
     }
     if (which > 0) {
       hints[which] = true;
@@ -2664,8 +2664,8 @@ public class PGraphics extends PImage implements PConstants {
         }
 
         if (stop - start > TWO_PI) {
-          start = 0;
-          stop = TWO_PI;
+          // don't change start, it is visible in PIE mode
+          stop = start + TWO_PI;
         }
         arcImpl(x, y, w, h, start, stop, mode);
       }
@@ -4234,9 +4234,9 @@ public class PGraphics extends PImage implements PConstants {
    * @param x x-coordinate of text
    * @param y y-coordinate of text
    * @see PGraphics#textAlign(int, int)
-   * @see PGraphics#textMode(int)
-   * @see PApplet#loadFont(String)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textMode(int)
+   * @see PGraphics#textSize(float)
    * @see PGraphics#rectMode(int)
    * @see PGraphics#fill(int, float)
    * @see_external String
@@ -4808,6 +4808,7 @@ public class PGraphics extends PImage implements PConstants {
    * @webref transform
    * @see PGraphics#popMatrix()
    * @see PGraphics#translate(float, float, float)
+   * @see PGraphics#scale(float)
    * @see PGraphics#rotate(float)
    * @see PGraphics#rotateX(float)
    * @see PGraphics#rotateY(float)
@@ -7287,14 +7288,15 @@ public class PGraphics extends PImage implements PConstants {
    * Strangely the old version of this code ignored the alpha
    * value. not sure if that was a bug or what.
    * <P>
-   * Note, no need for a bounds check since it's a 32 bit number.
+   * Note, no need for a bounds check for 'argb' since it's a 32 bit number.
+   * Bounds now checked on alpha, however (rev 0225).
    */
   protected void colorCalcARGB(int argb, float alpha) {
     if (alpha == colorModeA) {
       calcAi = (argb >> 24) & 0xff;
       calcColor = argb;
     } else {
-      calcAi = (int) (((argb >> 24) & 0xff) * (alpha / colorModeA));
+      calcAi = (int) (((argb >> 24) & 0xff) * PApplet.constrain((alpha / colorModeA), 0, 1));
       calcColor = (calcAi << 24) | (argb & 0xFFFFFF);
     }
     calcRi = (argb >> 16) & 0xff;
@@ -7637,6 +7639,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param amt between 0.0 and 1.0
    * @see PImage#blendColor(int, int, int)
    * @see PGraphics#color(float, float, float, float)
+   * @see PApplet#lerp(float, float, float)
    */
   public int lerpColor(int c1, int c2, float amt) {
     return lerpColor(c1, c2, amt, colorMode);

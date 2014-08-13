@@ -24,7 +24,7 @@
 package processing.app;
 
 import java.awt.*;
-import java.awt.event.*;
+//import java.awt.event.*;
 
 import javax.swing.*;
 
@@ -36,11 +36,12 @@ public class EditorStatus extends JPanel {
   Color[] bgcolor;
   Color[] fgcolor;
 
-  static final int NOTICE = 0;
-  static final int ERR    = 1;
-  //static final int PROMPT = 2;
-  //static final int EDIT   = 3;
-  static final int EDIT   = 2;
+  @Deprecated
+  static final int BUTTON_HEIGHT = 24;
+
+  static public final int NOTICE = 0;
+  static public final int ERR    = 1;
+  static public final int EDIT   = 2;
 
   static final int YES    = 1;
   static final int NO     = 2;
@@ -61,9 +62,9 @@ public class EditorStatus extends JPanel {
   Image offscreen;
   int sizeW, sizeH;
 
-  JButton cancelButton;
-  JButton okButton;
-  JTextField editField;
+//  JButton cancelButton;
+//  JButton okButton;
+//  JTextField editField;
 
   int response;
 
@@ -124,29 +125,29 @@ public class EditorStatus extends JPanel {
   }
 
 
-  public void edit(String message, String dflt) {
-    mode = EDIT;
-    this.message = message;
+//  public void edit(String message, String dflt) {
+//    mode = EDIT;
+//    this.message = message;
+//
+//    response = 0;
+//    okButton.setVisible(true);
+//    cancelButton.setVisible(true);
+//    editField.setVisible(true);
+//    editField.setText(dflt);
+//    editField.selectAll();
+//    editField.requestFocusInWindow();
+//
+//    repaint();
+//  }
 
-    response = 0;
-    okButton.setVisible(true);
-    cancelButton.setVisible(true);
-    editField.setVisible(true);
-    editField.setText(dflt);
-    editField.selectAll();
-    editField.requestFocusInWindow();
 
-    repaint();
-  }
-
-
-  public void unedit() {
-    okButton.setVisible(false);
-    cancelButton.setVisible(false);
-    editField.setVisible(false);
-    editor.textarea.requestFocusInWindow();
-    empty();
-  }
+//  public void unedit() {
+//    okButton.setVisible(false);
+//    cancelButton.setVisible(false);
+//    editField.setVisible(false);
+//    editor.textarea.requestFocusInWindow();
+//    empty();
+//  }
 
 
   public void startIndeterminate() {
@@ -161,6 +162,7 @@ public class EditorStatus extends JPanel {
         }
       }
     };
+    thread.setName("Editor Status");
     thread.start();
   }
 
@@ -173,7 +175,7 @@ public class EditorStatus extends JPanel {
 
 
   public void paintComponent(Graphics screen) {
-    if (okButton == null) setup();
+//    if (okButton == null) setup();
 
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
@@ -184,7 +186,7 @@ public class EditorStatus extends JPanel {
     if (offscreen == null) {
       sizeW = size.width;
       sizeH = size.height;
-      setButtonBounds();
+//      setButtonBounds();
       if (Toolkit.highResDisplay()) {
         offscreen = createImage(sizeW*2, sizeH*2);
       } else {
@@ -213,8 +215,6 @@ public class EditorStatus extends JPanel {
       ascent = metrics.getAscent();
     }
 
-    //setBackground(bgcolor[mode]);  // does nothing
-
     g.setColor(bgcolor[mode]);
     g.fillRect(0, 0, sizeW, sizeH);
 
@@ -223,14 +223,12 @@ public class EditorStatus extends JPanel {
     g.drawString(message, Preferences.GUI_SMALL, (sizeH + ascent) / 2);
 
     if (indeterminate) {
-      int x = cancelButton.getX();
-      int w = cancelButton.getWidth();
+      //int x = cancelButton.getX();
+      //int w = cancelButton.getWidth();
+      int w = Preferences.BUTTON_WIDTH;
+      int x = getWidth() - Preferences.GUI_SMALL - w;
       int y = getHeight() / 3;
       int h = getHeight() / 3;
-//      int y = cancelButton.getY();
-//      int h = cancelButton.getHeight();
-//      g.setColor(fgcolor[mode]);
-//      g.setColor(Color.DARK_GRAY);
       g.setColor(new Color(0x80000000, true));
       g.drawRect(x, y, w, h);
       for (int i = 0; i < 10; i++) {
@@ -243,6 +241,7 @@ public class EditorStatus extends JPanel {
   }
 
 
+  /*
   protected void setup() {
     if (okButton == null) {
       cancelButton = new JButton(Preferences.PROMPT_CANCEL);
@@ -327,12 +326,10 @@ public class EditorStatus extends JPanel {
                        (c == KeyEvent.VK_SHIFT)) {
               // these events are ignored
 
-              /*
-            } else if (c == KeyEvent.VK_ESCAPE) {
-              unedit();
-              editor.toolbar.clear();
-              event.consume();
-              */
+//            } else if (c == KeyEvent.VK_ESCAPE) {
+//              unedit();
+//              editor.toolbar.clear();
+//              event.consume();
 
             } else if (c == KeyEvent.VK_SPACE) {
               String t = editField.getText();
@@ -373,8 +370,8 @@ public class EditorStatus extends JPanel {
   }
 
 
-  protected void setButtonBounds() {
-    int top = (sizeH - Preferences.BUTTON_HEIGHT) / 2;
+  private void setButtonBounds() {
+    int top = (sizeH - BUTTON_HEIGHT) / 2;
     int eachButton = Preferences.GUI_SMALL + Preferences.BUTTON_WIDTH;
 
     int cancelLeft = sizeW      - eachButton;
@@ -388,8 +385,8 @@ public class EditorStatus extends JPanel {
 
     //yesButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
     //noButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
-    cancelButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
-    okButton.setSize(Preferences.BUTTON_WIDTH, Preferences.BUTTON_HEIGHT);
+    cancelButton.setSize(Preferences.BUTTON_WIDTH, BUTTON_HEIGHT);
+    okButton.setSize(Preferences.BUTTON_WIDTH, BUTTON_HEIGHT);
 
     // edit field height is awkward, and very different between mac and pc,
     // so use at least the preferred height for now.
@@ -399,6 +396,7 @@ public class EditorStatus extends JPanel {
     editField.setBounds(yesLeft - Preferences.BUTTON_WIDTH, editTop,
                         editWidth, editHeight);
   }
+  */
 
 
   public Dimension getPreferredSize() {
@@ -416,6 +414,7 @@ public class EditorStatus extends JPanel {
   }
 
 
+  /*
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() == cancelButton) {
       if (mode == EDIT) unedit();
@@ -430,4 +429,5 @@ public class EditorStatus extends JPanel {
       }
     }
   }
+  */
 }

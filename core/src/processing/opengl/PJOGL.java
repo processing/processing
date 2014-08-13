@@ -13,6 +13,7 @@ import java.nio.IntBuffer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import javax.media.nativewindow.ScalableSurface;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GL2ES1;
@@ -56,6 +57,9 @@ import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 public class PJOGL extends PGL {
   // OpenGL profile to use (2, 3 or 4)
   public static int PROFILE = 2;
+
+  // Enables/disables Retina support on OSX
+  public static boolean RETINA = false;
 
   // The two windowing toolkits available to use in JOGL:
   public static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
@@ -150,14 +154,8 @@ public class PJOGL extends PGL {
   /** The AWT-OpenGL canvas */
   protected GLCanvas canvasAWT;
 
-  /** The shared AWT-OpenGL canvas */
-//  protected static GLCanvas sharedCanvasAWT;
-
   /** The NEWT window */
   protected GLWindow windowNEWT;
-
-  /** The shared NEWT window */
-//  protected static GLWindow sharedWindowNEWT;
 
   /** The NEWT-OpenGL canvas */
   protected NewtCanvasAWT canvasNEWT;
@@ -167,7 +165,7 @@ public class PJOGL extends PGL {
 
   /** This countdown latch is used to maintain the synchronization between
    * Processing's drawing thread and JOGL's rendering thread */
-  protected CountDownLatch drawLatch;
+  protected CountDownLatch drawLatch = new CountDownLatch(0);
 
   /** Flag used to do request final display() call to make sure that the
    * buffers are properly swapped.
@@ -189,6 +187,12 @@ public class PJOGL extends PGL {
 
   protected boolean changedFrontTex = false;
   protected boolean changedBackTex = false;
+
+  // ........................................................
+
+  // Retina support
+
+  int retf = 1;
 
   // ........................................................
 
@@ -281,12 +285,10 @@ public class PJOGL extends PGL {
     if (canvasAWT != null || canvasNEWT != null) {
       // Restarting...
       if (canvasAWT != null) {
-//        sharedCanvasAWT = null;
         canvasAWT.removeGLEventListener(listener);
         pg.parent.removeListeners(canvasAWT);
         pg.parent.remove(canvasAWT);
       } else if (canvasNEWT != null) {
-//        sharedWindowNEWT = null;
         windowNEWT.removeGLEventListener(listener);
         pg.parent.remove(canvasNEWT);
       }
@@ -334,11 +336,16 @@ public class PJOGL extends PGL {
 
     if (WINDOW_TOOLKIT == AWT) {
       canvasAWT = new GLCanvas(caps);
-//      if (sharedCanvasAWT == null) {
-//        sharedCanvasAWT = canvasAWT;
-//      } else {
-//        canvasAWT.setSharedAutoDrawable(sharedCanvasAWT);
-//      }
+
+      if (RETINA) {
+        canvasAWT.setSurfaceScale(new int[] { ScalableSurface.AUTOMAX_PIXELSCALE,
+                                              ScalableSurface.AUTOMAX_PIXELSCALE });
+        retf = 2;
+      } else {
+        canvasAWT.setSurfaceScale(new int[] { ScalableSurface.IDENTITY_PIXELSCALE,
+                                              ScalableSurface.IDENTITY_PIXELSCALE });
+      }
+
       canvasAWT.setBounds(0, 0, pg.width, pg.height);
       canvasAWT.setBackground(new Color(pg.backgroundColor, true));
       canvasAWT.setFocusable(true);
@@ -347,15 +354,12 @@ public class PJOGL extends PGL {
       pg.parent.add(canvasAWT, BorderLayout.CENTER);
       canvasAWT.requestFocusInWindow();
 
+
+
       canvas = canvasAWT;
       canvasNEWT = null;
     } else if (WINDOW_TOOLKIT == NEWT) {
       windowNEWT = GLWindow.create(caps);
-//      if (sharedWindowNEWT == null) {
-//        sharedWindowNEWT = windowNEWT;
-//      } else {
-//        windowNEWT.setSharedAutoDrawable(sharedWindowNEWT);
-//      }
       canvasNEWT = new NewtCanvasAWT(windowNEWT);
       canvasNEWT.setBounds(0, 0, pg.width, pg.height);
       canvasNEWT.setBackground(new Color(pg.backgroundColor, true));
@@ -365,10 +369,14 @@ public class PJOGL extends PGL {
       pg.parent.add(canvasNEWT, BorderLayout.CENTER);
       canvasNEWT.requestFocusInWindow();
 
+      int[] reqSurfacePixelScale = new int[] { ScalableSurface.AUTOMAX_PIXELSCALE, ScalableSurface.AUTOMAX_PIXELSCALE };
+      windowNEWT.setSurfaceScale(reqSurfacePixelScale);
+
       canvas = canvasNEWT;
       canvasAWT = null;
     }
 
+    pg.parent.defaultSize = false;
     registerListeners();
 
     fboLayerCreated = false;
@@ -384,13 +392,13 @@ public class PJOGL extends PGL {
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = true;
+    pg.parent.defaultSize = false;
   }
 
 
   @Override
   protected void registerListeners() {
     if (WINDOW_TOOLKIT == AWT) {
-      pg.parent.removeListeners(pg.parent);
       pg.parent.addListeners(canvasAWT);
 
       listener = new PGLListener();
@@ -404,7 +412,6 @@ public class PJOGL extends PGL {
         NEWTWindowListener winListener = new NEWTWindowListener();
         windowNEWT.addWindowListener(winListener);
       } else if (EVENTS_TOOLKIT == AWT) {
-        pg.parent.removeListeners(canvasNEWT);
         pg.parent.addListeners(canvasNEWT);
       }
 
@@ -428,7 +435,6 @@ public class PJOGL extends PGL {
     } else if (canvasNEWT != null) {
       windowNEWT.removeGLEventListener(listener);
     }
-    GLProfile.shutdown();
   }
 
 
@@ -593,7 +599,7 @@ public class PJOGL extends PGL {
   protected void syncBackTexture() {
     if (USE_JOGL_FBOLAYER) {
       if (usingFrontTex) needSepFrontTex = true;
-      if (1 < numSamples) {
+      if (1 < numSamples && backFBO != null) {
         backFBO.syncSamplingSink(gl);
         backFBO.bind(gl);
       }
@@ -613,7 +619,8 @@ public class PJOGL extends PGL {
   protected void endDraw(boolean clear0) {
     if (isFBOBacked()) {
       if (USE_JOGL_FBOLAYER) {
-        if (!clear0 && isFBOBacked() && !isMultisampled()) {
+        if (!clear0 && isFBOBacked() && !isMultisampled() &&
+            frontFBO != null && backFBO != null) {
           // Draw the back texture into the front texture, which will be used as
           // back texture in the next frame. Otherwise flickering will occur if
           // the sketch uses "incremental drawing" (background() not called).
@@ -852,9 +859,8 @@ public class PJOGL extends PGL {
           } else {
             // w/out multisampling, rendering is done on the back buffer.
             frontFBO = fboDrawable.getFBObject(GL.GL_FRONT);
-
-            backTexAttach  = fboDrawable.getTextureBuffer(GL.GL_BACK);
-            frontTexAttach = fboDrawable.getTextureBuffer(GL.GL_FRONT);
+            backTexAttach  = (FBObject.TextureAttachment) backFBO.getColorbuffer(0);
+            frontTexAttach = (FBObject.TextureAttachment) frontFBO.getColorbuffer(0);
           }
         }
       }
@@ -1776,7 +1782,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void viewport(int x, int y, int w, int h) {
-    gl.glViewport(x, y, w, h);
+    gl.glViewport(retf * x, retf * y, retf * w, retf * h);
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -2298,7 +2304,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void scissor(int x, int y, int w, int h) {
-    gl.glScissor(x, y, w, h);
+    gl.glScissor(retf * x, retf * y, retf * w, retf * h);
   }
 
   @Override
@@ -2414,7 +2420,7 @@ public class PJOGL extends PGL {
   // Framebuffers Objects
 
   @Override
-  public void bindFramebuffer(int target, int framebuffer) {
+  protected void bindFramebufferImpl(int target, int framebuffer) {
     gl.glBindFramebuffer(target, framebuffer);
   }
 

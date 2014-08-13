@@ -327,7 +327,7 @@ public class PApplet extends Applet
   public String[] args;
 
   /** Path to sketch folder */
-  public String sketchPath; //folder;
+  public String sketchPath;
 
   static final boolean DEBUG = false;
 //  static final boolean DEBUG = true;
@@ -444,11 +444,16 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    *
    *
    */
@@ -463,11 +468,16 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    *
    */
   public int mouseY;
@@ -496,9 +506,17 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref input:mouse
-   * @see PApplet#pmouseY
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public int pmouseX;
 
@@ -512,9 +530,17 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref input:mouse
-   * @see PApplet#pmouseX
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public int pmouseY;
 
@@ -564,10 +590,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public int mouseButton;
 
@@ -582,9 +613,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public boolean mousePressed;
 
@@ -776,6 +813,11 @@ public class PApplet extends Applet
   Object pauseObject = new Object();
   Thread thread;
 
+  // Background default needs to be different from the default value in
+  // PGraphics.backgroundColor, otherwise size(100, 100) bg spills over.
+  // https://github.com/processing/processing/issues/2297
+  static final Color WINDOW_BGCOLOR = new Color(0xDD, 0xDD, 0xDD);
+
   // messages to send if attached as an external vm
 
   /**
@@ -784,6 +826,8 @@ public class PApplet extends Applet
    */
   static public final String ARGS_EDITOR_LOCATION = "--editor-location";
 
+  static public final String ARGS_EXTERNAL = "--external";
+
   /**
    * Location for where to position the applet window on screen.
    * <p>
@@ -791,8 +835,6 @@ public class PApplet extends Applet
    * location, or could be used by other classes to launch at a
    * specific position on-screen.
    */
-  static public final String ARGS_EXTERNAL = "--external";
-
   static public final String ARGS_LOCATION = "--location";
 
   static public final String ARGS_DISPLAY = "--display";
@@ -908,11 +950,13 @@ public class PApplet extends Applet
       online = false;
     }
 
-    try {
-      if (sketchPath == null) {
-        sketchPath = System.getProperty("user.dir");
-      }
-    } catch (Exception e) { }  // may be a security problem
+    // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
+    // inside runSketch(), but if this sketch takes care of calls  to init()
+    // and setup() itself (i.e. it's in a larger Java application), it'll
+    // still need to be set here so that fonts, etc can be retrieved.
+    if (sketchPath == null) {
+      sketchPath = calcSketchPath();
+    }
 
     // Figure out the available display width and height.
     // No major problem if this fails, we have to try again anyway in
@@ -1591,6 +1635,7 @@ public class PApplet extends Applet
  * @see PApplet#noLoop()
  * @see PApplet#redraw()
  * @see PApplet#frameRate(float)
+ * @see PGraphics#background(float, float, float, float)
  */
   public void draw() {
     // if no draw method, then shut things down
@@ -2369,7 +2414,9 @@ public class PApplet extends Applet
           render();
         } else {
           Graphics screen = getGraphics();
-          screen.drawImage(g.image, 0, 0, width, height, null);
+          if (screen != null) {
+            screen.drawImage(g.image, 0, 0, width, height, null);
+          }
         }
       } else {
         repaint();
@@ -2726,10 +2773,14 @@ public class PApplet extends Applet
     // also prevents mouseExited() on the mac from hosing the mouse
     // position, because x/y are bizarre values on the exit event.
     // see also the id check below.. both of these go together.
-    // Not necessary to set mouseX/Y on PRESS or RELEASE events because the
-    // actual position will have been set by a MOVE or DRAG event.
-    if (event.getAction() == MouseEvent.DRAG ||
-        event.getAction() == MouseEvent.MOVE) {
+    // Not necessary to set mouseX/Y on RELEASE events because the
+    // actual position will have been set by a PRESS or DRAG event.
+    // However, PRESS events might come without a preceeding move,
+    // if the sketch window gains focus on that PRESS.
+    final int action = event.getAction();
+    if (action == MouseEvent.DRAG ||
+        action == MouseEvent.MOVE ||
+        action == MouseEvent.PRESS) {
       pmouseX = emouseX;
       pmouseY = emouseY;
       mouseX = event.getX();
@@ -2763,7 +2814,7 @@ public class PApplet extends Applet
     // Do this up here in case a registered method relies on the
     // boolean for mousePressed.
 
-    switch (event.getAction()) {
+    switch (action) {
     case MouseEvent.PRESS:
       mousePressed = true;
       break;
@@ -2774,7 +2825,7 @@ public class PApplet extends Applet
 
     handleMethods("mouseEvent", new Object[] { event });
 
-    switch (event.getAction()) {
+    switch (action) {
     case MouseEvent.PRESS:
 //      mousePressed = true;
       mousePressed(event);
@@ -2803,8 +2854,8 @@ public class PApplet extends Applet
       break;
     }
 
-    if ((event.getAction() == MouseEvent.DRAG) ||
-        (event.getAction() == MouseEvent.MOVE)) {
+    if ((action == MouseEvent.DRAG) ||
+        (action == MouseEvent.MOVE)) {
       emouseX = mouseX;
       emouseY = mouseY;
     }
@@ -3017,11 +3068,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
-   * @see PApplet#mouseButton
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mousePressed() { }
 
@@ -3041,11 +3096,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
-   * @see PApplet#mouseButton
    * @see PApplet#mousePressed()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseReleased() { }
 
@@ -3069,11 +3128,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
-   * @see PApplet#mouseButton
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseClicked() { }
 
@@ -3093,10 +3156,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseMoved()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseDragged() { }
 
@@ -3116,10 +3184,15 @@ public class PApplet extends Applet
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
    * @see PApplet#mousePressed
    * @see PApplet#mousePressed()
    * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
    * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
    */
   public void mouseMoved() { }
 
@@ -3156,6 +3229,17 @@ public class PApplet extends Applet
    *
    * @webref input:mouse
    * @param event the MouseEvent
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
    */
   public void mouseWheel(MouseEvent event) {
     mouseWheel();
@@ -4027,8 +4111,12 @@ public class PApplet extends Applet
     }
   }
 
-
-  void exitActual() {
+  /**
+   * Some subclasses (I'm looking at you, processing.py) might wish to do something
+   * other than actually terminate the JVM. This gives them a chance to do whatever
+   * they have in mind when cleaning up.
+   */
+  protected void exitActual() {
     try {
       System.exit(0);
     } catch (SecurityException e) {
@@ -4187,6 +4275,7 @@ public class PApplet extends Applet
    * @webref output:image
    * @see PApplet#save(String)
    * @see PApplet#createGraphics(int, int, String, String)
+   * @see PApplet#frameCount
    * @param filename any sequence of letters or numbers that ends with either ".tif", ".tga", ".jpg", or ".png"
    */
   public void saveFrame(String filename) {
@@ -4239,6 +4328,11 @@ public class PApplet extends Applet
    * @param kind either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT
    */
   public void cursor(int kind) {
+    // Swap the HAND cursor because MOVE doesn't seem to be available on OS X
+    // https://github.com/processing/processing/issues/2358
+    if (platform == MACOSX && kind == MOVE) {
+      kind = HAND;
+    }
     setCursor(Cursor.getPredefinedCursor(kind));
     cursorVisible = true;
     this.cursorType = kind;
@@ -5255,6 +5349,8 @@ public class PApplet extends Applet
    * @param amt float between 0.0 and 1.0
    * @see PGraphics#curvePoint(float, float, float, float, float)
    * @see PGraphics#bezierPoint(float, float, float, float, float)
+   * @see PVector#lerp(PVector, float)
+   * @see PGraphics#lerpColor(int, int, float)
    */
   static public final float lerp(float start, float stop, float amt) {
     return start + (stop-start) * amt;
@@ -8522,19 +8618,20 @@ public class PApplet extends Applet
   }
 
   static final public Object splice(Object list, Object value, int index) {
-    Object[] outgoing = null;
+    Class<?> type = list.getClass().getComponentType();
+    Object outgoing = null;
     int length = Array.getLength(list);
 
     // check whether item being spliced in is an array
     if (value.getClass().getName().charAt(0) == '[') {
       int vlength = Array.getLength(value);
-      outgoing = new Object[length + vlength];
+      outgoing = Array.newInstance(type, length + vlength);
       System.arraycopy(list, 0, outgoing, 0, index);
       System.arraycopy(value, 0, outgoing, index, vlength);
       System.arraycopy(list, index, outgoing, index + vlength, length - index);
 
     } else {
-      outgoing = new Object[length + 1];
+      outgoing = Array.newInstance(type, length + 1);
       System.arraycopy(list, 0, outgoing, 0, index);
       Array.set(outgoing, index, value);
       System.arraycopy(list, index, outgoing, index + 1, length - index);
@@ -10299,7 +10396,7 @@ public class PApplet extends Applet
                 //revalidate();   // let the layout manager do its work
                 if (revalidateMethod != null) {
                   try {
-                    revalidateMethod.invoke(this);
+                    revalidateMethod.invoke(PApplet.this);
                   } catch (Exception ex) {
                     ex.printStackTrace();
                     revalidateMethod = null;
@@ -10311,25 +10408,6 @@ public class PApplet extends Applet
         }
       });
   }
-
-
-//  /**
-//   * GIF image of the Processing logo.
-//   */
-//  static public final byte[] ICON_IMAGE = {
-//    71, 73, 70, 56, 57, 97, 16, 0, 16, 0, -77, 0, 0, 0, 0, 0, -1, -1, -1, 12,
-//    12, 13, -15, -15, -14, 45, 57, 74, 54, 80, 111, 47, 71, 97, 62, 88, 117,
-//    1, 14, 27, 7, 41, 73, 15, 52, 85, 2, 31, 55, 4, 54, 94, 18, 69, 109, 37,
-//    87, 126, -1, -1, -1, 33, -7, 4, 1, 0, 0, 15, 0, 44, 0, 0, 0, 0, 16, 0, 16,
-//    0, 0, 4, 122, -16, -107, 114, -86, -67, 83, 30, -42, 26, -17, -100, -45,
-//    56, -57, -108, 48, 40, 122, -90, 104, 67, -91, -51, 32, -53, 77, -78, -100,
-//    47, -86, 12, 76, -110, -20, -74, -101, 97, -93, 27, 40, 20, -65, 65, 48,
-//    -111, 99, -20, -112, -117, -123, -47, -105, 24, 114, -112, 74, 69, 84, 25,
-//    93, 88, -75, 9, 46, 2, 49, 88, -116, -67, 7, -19, -83, 60, 38, 3, -34, 2,
-//    66, -95, 27, -98, 13, 4, -17, 55, 33, 109, 11, 11, -2, -128, 121, 123, 62,
-//    91, 120, -128, 127, 122, 115, 102, 2, 119, 0, -116, -113, -119, 6, 102,
-//    121, -108, -126, 5, 18, 6, 4, -102, -101, -100, 114, 15, 17, 0, 59
-//  };
 
 
   static ArrayList<Image> iconImages;
@@ -10360,18 +10438,46 @@ public class PApplet extends Applet
   }
 
 
-  // Not gonna do this dynamically, only on startup. Too much headache.
-//  public void fullscreen() {
-//    if (frame != null) {
-//      if (PApplet.platform == MACOSX) {
-//        japplemenubar.JAppleMenuBar.hide();
-//      }
-//      GraphicsConfiguration gc = frame.getGraphicsConfiguration();
-//      Rectangle rect = gc.getBounds();
-////      GraphicsDevice device = gc.getDevice();
-//      frame.setBounds(rect.x, rect.y, rect.width, rect.height);
-//    }
-//  }
+  /**
+   * Use reflection to call
+   * <code>com.apple.eawt.FullScreenUtilities.setWindowCanFullScreen(window, true);</code>
+   */
+  static private void macosxFullScreenEnable(Window window) {
+    try {
+      Class<?> util = Class.forName("com.apple.eawt.FullScreenUtilities");
+      Class params[] = new Class[] { Window.class, Boolean.TYPE };
+      Method method = util.getMethod("setWindowCanFullScreen", params);
+      method.invoke(util, window, true);
+
+    } catch (ClassNotFoundException cnfe) {
+      // ignored
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  /**
+   * Use reflection to call
+   * <code>com.apple.eawt.Application.getApplication().requestToggleFullScreen(window);</code>
+   */
+  static private void macosxFullScreenToggle(Window window) {
+    try {
+      Class<?> appClass = Class.forName("com.apple.eawt.Application");
+
+      Method getAppMethod = appClass.getMethod("getApplication");
+      Object app = getAppMethod.invoke(null, new Object[0]);
+
+      Method requestMethod =
+        appClass.getMethod("requestToggleFullScreen", Window.class);
+      requestMethod.invoke(app, window);
+
+    } catch (ClassNotFoundException cnfe) {
+      // ignored
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
 
   /**
@@ -10505,14 +10611,7 @@ public class PApplet extends Applet
     boolean hideStop = false;
 
     String param = null, value = null;
-
-    // try to get the user folder. if running under java web start,
-    // this may cause a security exception if the code is not signed.
-    // http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1159386274
-    String folder = null;
-    try {
-      folder = System.getProperty("user.dir");
-    } catch (Exception e) { }
+    String folder = calcSketchPath();
 
     int argIndex = 0;
     while (argIndex < args.length) {
@@ -10608,8 +10707,7 @@ public class PApplet extends Applet
     Frame frame = new JFrame(displayDevice.getDefaultConfiguration());
     // Default Processing gray, which will be replaced below if another
     // color is specified on the command line (i.e. in the prefs).
-    final Color defaultGray = new Color(0xCC, 0xCC, 0xCC);
-    ((JFrame) frame).getContentPane().setBackground(defaultGray);
+    ((JFrame) frame).getContentPane().setBackground(WINDOW_BGCOLOR);
     // Cannot call setResizable(false) until later due to OS X (issue #467)
 
     final PApplet applet;
@@ -10779,11 +10877,21 @@ public class PApplet extends Applet
 //    // or cmd/ctrl-shift-R in the PDE.
 
     if (present) {
-      if (platform == MACOSX) {
-        // Call some native code to remove the menu bar on OS X. Not necessary
-        // on Linux and Windows, who are happy to make full screen windows.
-        japplemenubar.JAppleMenuBar.hide();
-      }
+//      if (platform == MACOSX) {
+//        println("before");
+//        println(screenRect);
+//        println(frame.getBounds());
+//
+//        // Call some native code to remove the menu bar on OS X. Not necessary
+//        // on Linux and Windows, who are happy to make full screen windows.
+////        japplemenubar.JAppleMenuBar.hide();
+//        toggleFullScreen(frame);
+//        println("after");
+//        println(screenRect);
+//        println(frame.getBounds());
+//
+//        println(applet.width + " " + applet.height);
+//      }
 
       // After the pack(), the screen bounds are gonna be 0s
       frame.setBounds(screenRect);
@@ -10791,13 +10899,24 @@ public class PApplet extends Applet
                        (screenRect.height - applet.height) / 2,
                        applet.width, applet.height);
 
+      if (platform == MACOSX) {
+        macosxFullScreenEnable(frame);
+        macosxFullScreenToggle(frame);
+
+//        toggleFullScreen(frame);
+//        println("after");
+//        println(screenRect);
+//        println(frame.getBounds());
+//        println(applet.width + " " + applet.height);
+      }
+
       if (!hideStop) {
         Label label = new Label("stop");
         label.setForeground(stopColor);
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent e) {
-              System.exit(0);
+              applet.exit();
             }
           });
         frame.add(label);
@@ -10955,6 +11074,34 @@ public class PApplet extends Applet
 
   protected void runSketch() {
     runSketch(new String[0]);
+  }
+
+
+  static protected String calcSketchPath() {
+    // try to get the user folder. if running under java web start,
+    // this may cause a security exception if the code is not signed.
+    // http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1159386274
+    String folder = null;
+    try {
+      folder = System.getProperty("user.dir");
+
+      // Workaround for bug in Java for OS X from Oracle (7u51)
+      // https://github.com/processing/processing/issues/2181
+      if (platform == MACOSX) {
+        String jarPath =
+          PApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        // The jarPath from above will be URL encoded (%20 for spaces)
+        jarPath = urlDecode(jarPath);
+        if (jarPath.contains("Contents/Java/")) {
+          String appPath = jarPath.substring(0, jarPath.indexOf(".app") + 4);
+          File containingFolder = new File(appPath).getParentFile();
+          folder = containingFolder.getAbsolutePath();
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return folder;
   }
 
 
@@ -13032,9 +13179,9 @@ public class PApplet extends Applet
    * @param x x-coordinate of text
    * @param y y-coordinate of text
    * @see PGraphics#textAlign(int, int)
-   * @see PGraphics#textMode(int)
-   * @see PApplet#loadFont(String)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textMode(int)
+   * @see PGraphics#textSize(float)
    * @see PGraphics#rectMode(int)
    * @see PGraphics#fill(int, float)
    * @see_external String
@@ -13173,6 +13320,7 @@ public class PApplet extends Applet
    * @webref transform
    * @see PGraphics#popMatrix()
    * @see PGraphics#translate(float, float, float)
+   * @see PGraphics#scale(float)
    * @see PGraphics#rotate(float)
    * @see PGraphics#rotateX(float)
    * @see PGraphics#rotateY(float)
@@ -15328,6 +15476,7 @@ public class PApplet extends Applet
    * @param amt between 0.0 and 1.0
    * @see PImage#blendColor(int, int, int)
    * @see PGraphics#color(float, float, float, float)
+   * @see PApplet#lerp(float, float, float)
    */
   public int lerpColor(int c1, int c2, float amt) {
     return g.lerpColor(c1, c2, amt);

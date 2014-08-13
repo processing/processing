@@ -31,6 +31,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,8 +41,8 @@ import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -132,6 +133,7 @@ public class Toolkit {
     menu.add(item);
   }
 
+
   /**
    * Removes all mnemonics, then sets a mnemonic for each menu and menu item 
    * recursively by these rules:
@@ -195,23 +197,29 @@ public class Toolkit {
       kdePreDefPats[i] = Pattern.compile(kdePreDefStrs[i].replace("&",""));
     
     final Pattern nonAAlpha = Pattern.compile("[^A-Za-z]");
-    final FontMetrics fm = menu[0].getFontMetrics(menu[0].getFont());
+    FontMetrics fmTmp = null;
+    for (JMenuItem m : menu) {
+      if (m != null) fmTmp = m.getFontMetrics(menu[0].getFont());
+    }
+    if (fmTmp == null) return; // All null menuitems.
+    final FontMetrics fm = fmTmp;
+
     final Comparator<Character> charComparator = new Comparator<Character>() {
-      char[] baddies = "qypgjaeiouQYPGJAEIOU".toCharArray();
+      char[] baddies = "qypgjaeiouQYPGJAEIOU".toCharArray(); 
       public int compare(Character ch1, Character ch2) {
         // Descriminates against decenders for readability, per MS
 	// Human Interface Guide, and vowels per MS and Gnome.
         float w1 = fm.charWidth(ch1), w2 = fm.charWidth(ch2);
         for (char bad : baddies) {
-          if (bad == ch1) w1 *= 0.66;
-          if (bad == ch2) w2 *= 0.66;
+          if (bad == ch1) w1 *= 0.66f;
+          if (bad == ch2) w2 *= 0.66f;
 	}
         return (int)Math.signum(w2 - w1);
       }
     };
-    // taken holds only [0-9a-z], not uppercase.
-    // Prevents uppercase letters != lowercase letters, so
-    // "Save" and "Save As" aren't both given 'a'.
+
+    // Holds only [0-9a-z], not uppercase.
+    // Prevents X != x, so "Save" and "Save As" aren't both given 'a'.
     final List<Character> taken = new ArrayList<Character>(menu.length);
     char firstChar;
     char[] cleanChars;
@@ -376,17 +384,22 @@ public class Toolkit {
 
   static ArrayList<Image> iconImages;
 
+  
+  // Deprecated version of the function, but can't get rid of it without 
+  // breaking tools and modes (they'd only require a recompile, but they would 
+  // no longer be backwards compatible. 
+  static public void setIcon(Frame frame) {
+    setIcon((Window) frame);
+  }
+
+  
   /**
    * Give this Frame the Processing icon set. Ignored on OS X, because they
    * thought different and made this function set the minified image of the
    * window, not the window icon for the dock or cmd-tab.
    */
-  static public void setIcon(Frame frame) {
+  static public void setIcon(Window window) {
     if (!Base.isMacOS()) {
-//    // too low-res, prepping for nicer icons in 2.0 timeframe
-//    Image image = awtToolkit.createImage(PApplet.ICON_IMAGE);
-//    frame.setIconImage(image);
-
       if (iconImages == null) {
         iconImages = new ArrayList<Image>();
         final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
@@ -394,7 +407,7 @@ public class Toolkit {
           iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png"));
         }
       }
-      frame.setIconImages(iconImages);
+      window.setIconImages(iconImages);
     }
   }
 
@@ -599,7 +612,9 @@ public class Toolkit {
     for (Font font : getMonoFontList()) {
       families.add(font.getFamily());
     }
-    return families.toArray(new String[0]);
+    String[] names = families.toArray(new String[0]);
+    Arrays.sort(names);
+    return names;
   }
 
 
@@ -672,9 +687,16 @@ public class Toolkit {
   }
 
 
+  /** 
+   * Get a font from the JRE lib/fonts folder. Our default fonts are also 
+   * installed there so that the monospace (and others) can be used by other
+   * font listing calls (i.e. it appears in the list of monospace fonts in 
+   * the Preferences window). 
+   */
   static private Font createFont(String filename, int size) throws IOException, FontFormatException {
-    InputStream is = Base.getLibStream("fonts/" + filename);
-    BufferedInputStream input = new BufferedInputStream(is);
+    //InputStream is = Base.getLibStream("fonts/" + filename);
+    File fontFile = new File(System.getProperty("java.home"), "lib/fonts/" + filename);
+    BufferedInputStream input = new BufferedInputStream(new FileInputStream(fontFile));
     Font font = Font.createFont(Font.TRUETYPE_FONT, input);
     input.close();
     return font.deriveFont((float) size);

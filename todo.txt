@@ -1,34 +1,120 @@
-0225 pde
-_ add font fixes to the rest of the API
+0230 pde (3.0a3)
+X remove toolbar buttons except for start/stop
+X rename sketchbook tree name, re-order menu, add language hooks
+X split Preferences and PreferencesFrame
+X   https://github.com/processing/processing/issues/68
+X   http://code.google.com/p/processing/issues/detail?id=29
+X   https://github.com/processing/processing/pull/2716
+
+_ remove toolbar menu references and code to rebuild
+
+gsoc
+X fixes for mode/tool installation
+X   https://github.com/processing/processing/pull/2705
+X fix mode updating to work properly
+X   https://github.com/processing/processing/issues/2579
+X temp folders not always deleting
+X   https://github.com/processing/processing/issues/2606
+X problem when removing a mode
+X   https://github.com/processing/processing/issues/2507
+
+pulls
+X Add polling to detect file system changes
+X   https://github.com/processing/processing/issues/1939
+X   https://github.com/processing/processing/pull/2628
+X huge i18n patch
+X   https://github.com/processing/processing/issues/632
+X   https://github.com/processing/processing/pull/2084
+X   http://code.google.com/p/processing/issues/detail?id=593
+X   need to make sure the .properties files are read properly as UTF-8
+X Indent breaks when hitting enter before spaces
+X   https://github.com/processing/processing/issues/2004
+X   https://github.com/processing/processing/pull/2690
+X Localize status messages and contributions panel
+X   https://github.com/processing/processing/pull/2696
+X prevent adding files to read-only sketches
+X   https://github.com/processing/processing/issues/2459
+X   https://github.com/processing/processing/pull/2697
+X Added some helper methods to Language
+X   https://github.com/processing/processing/pull/2704
+
+languages
+X Japanese https://github.com/processing/processing/pull/2688
+X Spanish https://github.com/processing/processing/pull/2691
+X Dutch https://github.com/processing/processing/pull/2694
+X French https://github.com/processing/processing/pull/2695
+X Portugese https://github.com/processing/processing/pull/2701
+
+earlier
+X repo cleanup
+X   remove non-web stuff from web
+X   remove non-android stuff from android
+X   remove web and android from the main repo
+X separate prefs and sketch state info?
+X   this would mean prefs being rewritten far less
 
 
 high
-_ use --deep for codesign to work?
-_   http://furbo.org/2013/10/17/code-signing-and-mavericks/
-_ exported apps reporting as "damaged" on OS X
-_   https://github.com/processing/processing/issues/2095
-_ sketchPath() returns user.home in exported apps on OSX
-_   https://github.com/processing/processing/issues/2181
-_ QuickReference tool was able to bring down the environment
-_   https://github.com/processing/processing/issues/2229
-_ tab characters not recognized/drawn in the editor (2.1)
-_   https://github.com/processing/processing/issues/2180
-_   https://github.com/processing/processing/issues/2183
-_   udp library has tabs in the text
-_   decision to be made on nextTabStop() inside TextAreaPainter
-_ Chinese text is overlapped in Processing 2.1 editor
-_   https://github.com/processing/processing/issues/2173
-_   https://github.com/processing/processing/pull/2318
-_   https://github.com/processing/processing/pull/2323
-_ check on why 2x core.jar inside the Java folder
-_   maybe OS X Java can't look in subfolders? (just auto-adds things)
+_ export application ubuntu -> windows not working (2.2.1)
+_   https://github.com/processing/processing/issues/2698
+_   might be something with libraries (native or otherwise)
+_ move the language stuff to the settings folder
+_   that way people can modify and test w/o recompiling
+
+
+pending
+_ look at the sound library https://github.com/wirsing/ProcessingSound
+_   sound is not yet supported on Windows
+_ make reference build process part of dist
+_   https://github.com/processing/processing-docs/issues/85
+_   separate ant target, but only require them for dist
+_   as separate targets, folks can build explicitly if they'd like
+_   processing-docs/java_generate/ReferenceGenerator/processingrefBuild.sh
+_   remove reference.zip from main repo
+_ clean out the repo
+_   https://github.com/processing/processing/issues/1898
+
+
+gsoc/help me
+_ `return` keyword not treated as such when followed by a bracket
+_   https://github.com/processing/processing/issues/2099
+_ IllegalArgumentException when clicking between editor windows
+_   https://github.com/processing/processing/issues/2530
+_ "String index out of range" error
+_   https://github.com/processing/processing/issues/1940
+_ shouldn't write sketch.properties unless it's a non-default mode
+_   https://github.com/processing/processing/issues/2531
+_ closing the color selector makes things freeze (only Linux and Windows?)
+_   https://github.com/processing/processing/issues/2381
+_ move sketchbook into its own window
+_ move recent into the sketchbook menu
+_   needs to recognize the p5 app folder
+_   also should recognize the user's home dir
+_ incorporate new preproc
+_   https://github.com/fjenett/processing-preprocessor-antlr4
+_ SOCKS proxy not working: 
+_   https://github.com/processing/processing/issues/2643
+_   the current code that gets/sets the pref is in Preferences
+_   instead of current implementation, can we auto-detect proxy settings?
+_   old issue: https://github.com/processing/processing/issues/1476
+_   http://docs.oracle.com/javase/7/docs/technotes/guides/net/proxies.html
+_   http://docs.oracle.com/javase/1.5.0/docs/guide/net/proxies.html
+_   http://stackoverflow.com/questions/4933677/detecting-windows-ie-proxy-setting-using-java
+_   http://www.java2s.com/Code/Java/Network-Protocol/DetectProxySettingsforInternetConnection.htm
+_ problems with non-US keyboards and some shortcuts
+_   https://github.com/processing/processing/issues/2199
 
 
 medium
-_ JNA conflicts can be avoided with a -D option
-_   https://github.com/processing/processing/issues/2239
-_ dataPath() not working when app is not run from app dir
-_   https://github.com/processing/processing/issues/2195
+_ possibility of libraries folder inside a particular sketch?
+_ display "1" is not correct in 2.1.2
+_   https://github.com/processing/processing/issues/2502
+_ re/move things from Google Code downloads
+_   https://code.google.com/p/support/wiki/DownloadsFAQ
+_ add font fixes to the rest of the API
+_   https://github.com/processing/processing/commit/eaff673d173b2d27f276cf5c59e3abf6c0fab86b
+_   g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+_                       RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 _ should default to the local Java on Windows and Linux
 _   have export apps default to the local JRE
 _   Linux is probably using the system JRE if available
@@ -36,6 +122,7 @@ _   launch4j may be all set, but double-check
 _ try installing 10.7.3 on Mac Mini and check whether things run
 _   make sure it's only running on 64-bit machines? 
 _ use platformDelete() to remove untitled sketches?
+_   would allow us to use the /tmp folder
 _ change to using platformDelete() instead of Base.removeDir() where possible
 _   verify that the OS X version uses the real call
 _   and doesn't just look for .Trash
@@ -47,20 +134,14 @@ _   the Find window (also the save windows) also have the same problem
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
 _   and/or start bundling separate source downloads
-_ "String index out of range" error
-_   https://github.com/processing/processing/issues/1940
 _ look through all isPopupTrigger() code 
 _   make sure both press/release are implemented
-_ change Windows export to use launch4j instead of the launcher.cpp file
-_   actually call ant from inside p5?
 _ emacs style errors in commander aren't quite right
 _   https://github.com/processing/processing/issues/2158
-
-post 2.1 cleaning
-_ remove video for macosx32 from the repo permanently
-_ remove the prefs for 32/64-bit from Preferences
-_ remove the extra OS X cruft inside Runner.java
-_ exclude 'fonts' folder from build (since it's going into the JRE)
+_ add documentation for how to run mode development from Eclipse
+_   implementation/changes from JDF
+_ modes are being loaded multiple times, which can cause trouble
+_ add minimum version required (or max version?) to libraries/modes/etc
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -240,9 +321,6 @@ PDE - Processing Development Environment
 
 PDE / Dialogs
 
-_ type cut off in dialog boxes on OS X retina machines
-_   https://github.com/processing/processing/issues/2116
-_   add spaces to the end of the text?
 _ dialog box icon is fuzzy on OS X retina machines
 _   https://github.com/processing/processing/issues/2117
 _ solution might be our own dialog boxes
@@ -349,8 +427,6 @@ _ active editor not being set null
 _   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
 _   instead of (activeEditor == null), but that's papering over a problem
 _   where the active editor is not being set null
-_ the PDE uses 15% of CPU while just sitting idle
-_   https://github.com/processing/processing/issues/1561
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
 _ improve update check message "a new release (1.0.1) is available"
 _   be more descriptive, use a second line in latest.txt
@@ -360,10 +436,9 @@ _ deal with isManagingFocus() warning in the editor src
 _ strange NullPointerException problem prevents launch
 _   some kind of NPE in handleOpenInternal and friends
 _   appears to be a synchronization problem with the loading
-_ when opening from double-click on the mac, doesn't replace untitled
-_   or in general, issues between opening new window and another launching
-_   probably need to synchronize the file open methods inside Base
-_   (could in fact cause nastiness with editors[] access)
+_ blank sketch opened even if another opened by double-click
+_   add a 150 ms or more lag before opening the untitled window
+_   https://github.com/processing/processing/issues/218
 _   https://github.com/processing/processing/issues/1745
 _ editors opening up at the same time on load?
 _   either synchronize the open (at a minimum)
@@ -423,9 +498,6 @@ _   http://code.google.com/p/processing/issues/detail?id=746
 
 PDE / Export
 
-_ use launch4j for export and p5 app itself
-_   perhaps even calling it through an ant task
-_   windows exported exe problems (pcho)
 _ if the lib folder goes missing from export, give an error
 _   also any .jar files that are missing, give an error
 _   showing more debug messages (command line?)
@@ -463,6 +535,7 @@ _   but don't do this with untitled, cuz it kinda stinks
 _   this is too weird--just put examples into individual zip files
 _   mark example files as untitled
 _   though will that require the sketch to be saved before export?
+_   https://github.com/processing/processing/issues/2459
 _ examples window sketches should load in proper environment
 _ write build.xml file to automatically update the examples
 _ sketch.isReadOnly returns false for examples coming from multiple modes
@@ -539,6 +612,8 @@ _   https://github.com/processing/processing/issues/943
 
 PDE / Manager
 
+_ something to set min/max versions that are supported by a library
+_ ability to cancel a download/install
 _ we shouldn't use .properties extension for modes, et al
 _   because a .properties file is iso8859-1
 _ make note that .properties file *must* be utf-8
@@ -601,27 +676,17 @@ _   when are prefs saved? could instead save whenever changes are made
 _   and then if the file gets modified, it'll put up an error message
 _   also, this may be part of why other sketches aren't reloading properly
 _ simple prefs implementation to set key/value pairs using a JTable
-_ separate prefs and sketch state info?
-_   this would mean prefs being rewritten far less
 _ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
 _   don't bother having a "cancel" for the prefs window
-_ rewrite preferences window to use proper layout?
-_   is there already a bug for this?
+_ rewrite preferences window to use proper layout
+_   https://github.com/processing/processing/issues/67
+_   https://github.com/processing/processing/issues/2708
 _ make prefs dialog modal?
-_ split Preferences and PreferencesFrame?
-_   http://code.google.com/p/processing/issues/detail?id=29
 _ preferences window has been hit with the ugly stick
 _   redo panel to use proper Box layout etc
 _   also needs to look good across all platforms
 _   http://code.google.com/p/processing/issues/detail?id=28
 _   https://github.com/processing/processing/issues/67
-_ make available the background colors for present mode, stop button color
-_   isolate color chooser into a simpler/smaller class outside tools
-_   then can also use from inside processing applications as well
-_   http://code.google.com/p/processing/issues/detail?id=30
-_ maybe user prefs should only cover things that've changed?
-_   how to balance colors/etc being stored elsewhere
-_   ton of work to maintain this...
 
 
 PDE / Runner 
@@ -650,10 +715,6 @@ _   because there's a dash in the name
 _   and instead only loads StemCell.pde
 _ show progress dialog during export and save
 _ hitting ESC on "create this, move file, continue" opened anyway
-_ may need a progress bar for "save as"
-_   or just the file copy function in general
-_   since it may take a long time (i.e. 1000s of screen grabs)
-_   http://code.google.com/p/processing/issues/detail?id=31
 _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
 _   http://code.google.com/p/processing/issues/detail?id=34
@@ -698,8 +759,6 @@ _   update will update classes from shared in the current folder
 
 TOOLS / Auto Format
 
-_ for() loop with nothing inside parens crashes Auto Format
-_   https://github.com/processing/processing/issues/2141
 _ extra indent found
 _   https://github.com/processing/processing/issues/1041
 _ Switch block cases not indented
@@ -720,6 +779,13 @@ LIBRARIES / General
 
 _ need to unpack InvocationTargetException in xxxxxxEvent calls
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1116850328#3
+
+
+LIBRARIES / Net
+
+_ modernize Client/Server code to use synchronized lists
+_   do we let people use the public vars in Server and Client?
+_   are they documented?
 
 
 
@@ -776,15 +842,12 @@ _   avoid some confusion for when describing the libraries folder to users
 
 DIST / Windows
 
+_ PDE and sketches are 2x smaller on high-res Windows 8 machines
+_   https://github.com/processing/processing/issues/2411
 _ processing-java output as UTF-8 makes Windows unhappy
 _   https://github.com/processing/processing/issues/1633
-_ updated launch4j 3.1 beta
-_   http://sourceforge.net/projects/launch4j/files/launch4j-3/
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
 _   how can we provide an error message here?
-_ exe instead of bat to make exported apps run in 64-bit
-_   http://code.google.com/p/processing/issues/detail?id=885
-_   might not be necessary with new launch4j!
 _ how to handle double-clicked files on windows?
 _   big deal for psk and others
 _   this may already work with SingleInstance stuff
@@ -794,17 +857,13 @@ _   http://code.google.com/p/processing/issues/detail?id=632
 
 DIST / Mac OS X
 
+_ more OS X-specific hackery for improved appearance
+_   https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html
 _ possible better option for doing retina?
 _   g.getFontRenderContext().getTransform().equals(AffineTransform.getScaleInstance(2.0, 2.0))
 _ appbundler improvements
 _   don't re-copy JRE into work folder if already exists
 _   implement a splash screen
-_ remove default menu bar hack when 7u60 arrives
-_   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
-_ blank sketch opened even if another opened by double-click
-_   add a 150 ms or more lag before opening the untitled window (on os x)
-_   https://github.com/processing/processing/issues/218
-_ OS X not opening a sketch at all on pde double-click? (though opening the app)
 _ LWJGL forum discussion 
 _   http://lwjgl.org/forum/index.php/topic,4711.225.html
 _ change cmd line for OS X to use symlink? 
@@ -868,6 +927,8 @@ find YOUR_APP/Contents/ -type f \
 
 DIST / Linux
 
+_ Processing is named processing-app-Base in Gnome 3
+_   https://github.com/processing/processing/issues/2534
 _ how to run "headless" from user Batuff
 _   sudo apt-get install xvfb
 _   Xvfb :2 -screen 0 1024x768x24 &
@@ -899,15 +960,6 @@ _ add proper copyright and license information for all included projects
 _   http://code.google.com/p/processing/issues/detail?id=185
 _   list of license issues
 _   http://code.google.com/p/processing/issues/detail?id=575
-_ Internationalization
-_   http://code.google.com/p/processing/issues/detail?id=593
-_   l10n, i18n of environment/core
-_   http://docs.oracle.com/javase/tutorial/i18n/format/messageintro.html
-_   http://docs.oracle.com/javase/tutorial/i18n/format/numberFormat.html
-_   http://docs.oracle.com/javase/tutorial/i18n/format/choiceFormat.html
-_   http://docs.oracle.com/javase/tutorial/i18n/format/messageFormat.html
-_   http://docs.oracle.com/javase/7/docs/api/java/text/MessageFormat.html
-_   http://docs.oracle.com/javase/tutorial/i18n/intro/checklist.html
 _ write up code guidelines for project
 _   make proper Eclipse style prefs to reinforce
 _ write up guidelines for modes

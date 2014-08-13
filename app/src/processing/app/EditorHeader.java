@@ -508,7 +508,7 @@ public class EditorHeader extends JComponent {
     */
 
     //item = new JMenuItem("New Tab");
-    item = Toolkit.newJMenuItemShift("New Tab", 'N');
+    item = Toolkit.newJMenuItemShift(Language.text("editor.header.new_tab"), 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.getSketch().handleNewCode();
@@ -516,7 +516,7 @@ public class EditorHeader extends JComponent {
       });
     menu.add(item);
 
-    item = new JMenuItem("Rename");
+    item = new JMenuItem(Language.text("editor.header.rename"));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.getSketch().handleRenameCode();
@@ -530,16 +530,15 @@ public class EditorHeader extends JComponent {
       });
     menu.add(item);
 
-    item = new JMenuItem("Delete");
+    item = new JMenuItem(Language.text("editor.header.delete"));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Sketch sketch = editor.getSketch();
           if (!Base.isMacOS() &&  // ok on OS X
               editor.base.editors.size() == 1 &&  // mmm! accessor
               sketch.getCurrentCodeIndex() == 0) {
-              Base.showWarning("Yeah, no." ,
-                               "You can't delete the last tab " +
-                               "of the last open sketch.", null);
+              Base.showWarning(Language.text("editor.header.delete.warning.title"),
+                               Language.text("editor.header.delete.warning.text"), null);
           } else {
             editor.getSketch().handleDeleteCode();
           }
@@ -551,7 +550,7 @@ public class EditorHeader extends JComponent {
 
     //  KeyEvent.VK_LEFT and VK_RIGHT will make Windows beep
 
-    item = new JMenuItem("Previous Tab");
+    item = new JMenuItem(Language.text("editor.header.previous_tab"));
     KeyStroke ctrlAltLeft =
       KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
     item.setAccelerator(ctrlAltLeft);
@@ -565,7 +564,7 @@ public class EditorHeader extends JComponent {
     */
     menu.add(item);
 
-    item = new JMenuItem("Next Tab");
+    item = new JMenuItem(Language.text("editor.header.next_tab"));
     KeyStroke ctrlAltRight =
       KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
     item.setAccelerator(ctrlAltRight);
@@ -593,7 +592,6 @@ public class EditorHeader extends JComponent {
         menu.add(item);
       }
     }
-    Toolkit.setMenuMnemonics(menu);
   }
 
 

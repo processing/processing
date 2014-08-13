@@ -743,11 +743,14 @@ public class PGraphicsJava2D extends PGraphics {
       int[] srcPixels = new int[width];
       int[] dstPixels = new int[width];
 
+      // Java won't set the high bits when RGB, returns 0 for alpha
+      int alphaFiller = (dstIn.getNumBands() == 3) ? (0xFF << 24) : 0x00;
+
       for (int y = 0; y < height; y++) {
         src.getDataElements(0, y, width, 1, srcPixels);
         dstIn.getDataElements(0, y, width, 1, dstPixels);
         for (int x = 0; x < width; x++) {
-          dstPixels[x] = blendColor(srcPixels[x], dstPixels[x], mode);
+          dstPixels[x] = blendColor(srcPixels[x], alphaFiller | dstPixels[x], mode);
         }
         dstOut.setDataElements(0, y, width, 1, dstPixels);
       }
@@ -1298,6 +1301,12 @@ public class PGraphicsJava2D extends PGraphics {
     }
 
     if (who.modified) {
+      if (who.pixels == null) {
+        // This might be a PGraphics that hasn't been drawn to yet.
+        // Can't just bail because the cache has been created above.
+        // https://github.com/processing/processing/issues/2208
+        who.pixels = new int[who.width * who.height];
+      }
       cash.update(who, tint, tintColor);
       who.modified = false;
     }
@@ -1487,8 +1496,8 @@ public class PGraphicsJava2D extends PGraphics {
       this.tintedColor = tintColor;
 
 //      GraphicsConfiguration gc = parent.getGraphicsConfiguration();
-//      compat = gc.createCompatibleImage(image.getWidth(), 
-//                                        image.getHeight(), 
+//      compat = gc.createCompatibleImage(image.getWidth(),
+//                                        image.getHeight(),
 //                                        Transparency.TRANSLUCENT);
 //
 //      Graphics2D g = compat.createGraphics();
@@ -1582,7 +1591,7 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public float textDescent() {
     if (textFont == null) {
-      defaultFontOrDeath("textAscent");
+      defaultFontOrDeath("textDescent");
     }
     Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
@@ -1621,7 +1630,7 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public void textSize(float size) {
     if (textFont == null) {
-      defaultFontOrDeath("textAscent", size);
+      defaultFontOrDeath("textSize", size);
     }
 
     // if a native version available, derive this font
@@ -1668,6 +1677,10 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   protected float textWidthImpl(char buffer[], int start, int stop) {
+    if (textFont == null) {
+      defaultFontOrDeath("textWidth");
+    }
+
     Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {

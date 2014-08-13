@@ -74,12 +74,12 @@ public class CreateFont extends JFrame implements Tool {
 
 
   public CreateFont() {
-    super("Create Font");
+    super(Language.text("create_font"));
   }
 
 
   public String getMenuTitle() {
-    return "Create Font...";
+    return Language.text("menu.tools.create_font");
   }
 
 
@@ -251,13 +251,13 @@ public class CreateFont extends JFrame implements Tool {
     pain.add(filestuff);
 
     JPanel buttons = new JPanel();
-    JButton cancelButton = new JButton("Cancel");
+    JButton cancelButton = new JButton(Language.text("prompt.cancel"));
     cancelButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           setVisible(false);
         }
       });
-    okButton = new JButton("OK");
+    okButton = new JButton(Language.text("prompt.ok"));
     okButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           build();
@@ -587,7 +587,7 @@ class CharacterSelector extends JFrame {
     pain.add(Box.createVerticalStrut(8));
 
     JPanel buttons = new JPanel();
-    JButton okButton = new JButton("OK");
+    JButton okButton = new JButton(Language.text("prompt.ok"));
     okButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           setVisible(false);

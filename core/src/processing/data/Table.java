@@ -155,12 +155,30 @@ public class Table {
 
   public Table(Iterable<TableRow> rows) {
     init();
-    boolean typed = false;
-    for (TableRow row : rows) {
-      if (!typed) {
-        setColumnTypes(row.getColumnTypes());
+
+    int row = 0;
+    int alloc = 10;
+
+    for (TableRow incoming : rows) {
+      if (row == 0) {
+        setColumnTypes(incoming.getColumnTypes());
+        setColumnTitles(incoming.getColumnTitles());
+        // Do this after setting types, otherwise it'll attempt to parse the
+        // allocated but empty rows, and drive CATEGORY columns nutso.
+        setRowCount(alloc);
+
+      } else if (row == alloc) {
+        // Far more efficient than re-allocating all columns and doing a copy
+        alloc *= 2;
+        setRowCount(alloc);
       }
-      addRow(row);
+
+      //addRow(row);
+      setRow(row++, incoming);
+    }
+    // Shrink the table to only the rows that were used
+    if (row != alloc) {
+      setRowCount(row);
     }
   }
 
@@ -417,6 +435,10 @@ public class Table {
     char[] c = new char[100];
     int count = 0;
     boolean insideQuote = false;
+
+    int alloc = 100;
+    setRowCount(100);
+
     int row = 0;
     int col = 0;
     int ch;
@@ -462,14 +484,23 @@ public class Table {
           }
           setString(row, col, new String(c, 0, count));
           count = 0;
-          if (row == 0 && header) {
+          row++;
+          if (row == 1 && header) {
             // Use internal row removal (efficient because only one row).
             removeTitleRow();
             // Un-set the header variable so that next time around, we don't
             // just get stuck into a loop, removing the 0th row repeatedly.
             header = false;
+            // Reset the number of rows (removeTitleRow() won't reset our local 'row' counter)
+            row = 0;
           }
-          row++;
+//          if (row % 1000 == 0) {
+//            PApplet.println(PApplet.nfc(row));
+//          }
+          if (row == alloc) {
+            alloc *= 2;
+            setRowCount(alloc);
+          }
           col = 0;
 
         } else if (ch == ',') {
@@ -490,6 +521,10 @@ public class Table {
     // catch any leftovers
     if (count > 0) {
       setString(row, col, new String(c, 0, count));
+    }
+    row++;  // set row to row count (the current row index + 1)
+    if (alloc != row) {
+      setRowCount(row);  // shrink to the actual size
     }
   }
 
@@ -1165,7 +1200,12 @@ public class Table {
           output.writeDouble(row.getDouble(col));
           break;
         case CATEGORY:
-          output.writeInt(columnCategories[col].index(row.getString(col)));
+          String peace = row.getString(col);
+          if (peace.equals(missingString)) {
+            output.writeInt(missingCategory);
+          } else {
+            output.writeInt(columnCategories[col].index(peace));
+          }
           break;
         }
       }
@@ -1479,7 +1519,7 @@ public class Table {
         int[] intData = new int[rowCount];
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
-          intData[row] = PApplet.parseInt(s, missingInt);
+          intData[row] = (s == null) ? missingInt : PApplet.parseInt(s, missingInt);
         }
         columns[column] = intData;
         break;
@@ -1489,7 +1529,7 @@ public class Table {
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
           try {
-            longData[row] = Long.parseLong(s);
+            longData[row] = (s == null) ? missingLong : Long.parseLong(s);
           } catch (NumberFormatException nfe) {
             longData[row] = missingLong;
           }
@@ -1501,7 +1541,7 @@ public class Table {
         float[] floatData = new float[rowCount];
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
-          floatData[row] = PApplet.parseFloat(s, missingFloat);
+          floatData[row] = (s == null) ? missingFloat : PApplet.parseFloat(s, missingFloat);
         }
         columns[column] = floatData;
         break;
@@ -1511,7 +1551,7 @@ public class Table {
         for (int row = 0; row < rowCount; row++) {
           String s = getString(row, column);
           try {
-            doubleData[row] = Double.parseDouble(s);
+            doubleData[row] = (s == null) ? missingDouble : Double.parseDouble(s);
           } catch (NumberFormatException nfe) {
             doubleData[row] = missingDouble;
           }
@@ -1813,13 +1853,16 @@ public class Table {
    * @param source a reference to the original row to be duplicated
    */
   public TableRow addRow(TableRow source) {
-    int row = rowCount;
+    return setRow(rowCount, source);
+  }
+
+
+  public TableRow setRow(int row, TableRow source) {
     // Make sure there are enough columns to add this data
     ensureBounds(row, source.getColumnCount() - 1);
 
     for (int col = 0; col < columns.length; col++) {
       switch (columnTypes[col]) {
-      case CATEGORY:
       case INT:
         setInt(row, col, source.getInt(col));
         break;
@@ -1835,6 +1878,14 @@ public class Table {
       case STRING:
         setString(row, col, source.getString(col));
         break;
+      case CATEGORY:
+        int index = source.getInt(col);
+        setInt(row, col, index);
+        if (!columnCategories[col].hasCategory(index)) {
+          columnCategories[col].setCategory(index, source.getString(col));
+        }
+        break;
+
       default:
         throw new RuntimeException("no types");
       }
@@ -2087,7 +2138,12 @@ public class Table {
         if (piece == null) {
           indexData[row] = missingCategory;
         } else {
-          indexData[row] = columnCategories[col].index(String.valueOf(piece));
+          String peace = String.valueOf(piece);
+          if (peace.equals(missingString)) {  // missingString might be null
+            indexData[row] = missingCategory;
+          } else {
+            indexData[row] = columnCategories[col].index(peace);
+          }
         }
         break;
       default:
@@ -2261,6 +2317,14 @@ public class Table {
 
     public int[] getColumnTypes() {
       return table.getColumnTypes();
+    }
+
+    public String getColumnTitle(int column) {
+      return table.getColumnTitle(column);
+    }
+
+    public String[] getColumnTitles() {
+      return table.getColumnTitles();
     }
   }
 
@@ -2920,10 +2984,18 @@ public class Table {
         return missingString;
       }
       return columnCategories[column].key(cat);
-    } else {
-      return String.valueOf(Array.get(columns[column], row));
+    } else if (columnTypes[column] == FLOAT) {
+      if (Float.isNaN(getFloat(row, column))) {
+        return null;
+      }
+    } else if (columnTypes[column] == DOUBLE) {
+      if (Double.isNaN(getFloat(row, column))) {
+        return null;
+      }
     }
+    return String.valueOf(Array.get(columns[column], row));
   }
+
 
   /**
    * @param columnName title of the column to reference
@@ -2933,6 +3005,9 @@ public class Table {
   }
 
 
+  /**
+   * Treat entries with this string as "missing". Also used for categorial.
+   */
   public void setMissingString(String value) {
     missingString = value;
   }
@@ -3376,9 +3451,9 @@ public class Table {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public void replaceAll(String orig, String replacement) {
+  public void replaceAll(String regex, String replacement) {
     for (int col = 0; col < columns.length; col++) {
-      replaceAll(orig, replacement, col);
+      replaceAll(regex, replacement, col);
     }
   }
 
@@ -3562,6 +3637,7 @@ public class Table {
       read(input);
     }
 
+    /** gets the index, and creates one if it doesn't already exist. */
     int index(String key) {
       Integer value = dataToIndex.get(key);
       if (value != null) {
@@ -3576,6 +3652,18 @@ public class Table {
 
     String key(int index) {
       return indexToData.get(index);
+    }
+
+    boolean hasCategory(int index) {
+      return index < size() && indexToData.get(index) != null;
+    }
+
+    void setCategory(int index, String name) {
+      while (indexToData.size() <= index) {
+        indexToData.add(null);
+      }
+      indexToData.set(index, name);
+      dataToIndex.put(name, index);
     }
 
     int size() {
@@ -3599,9 +3687,11 @@ public class Table {
 
     void read(DataInputStream input) throws IOException {
       int count = input.readInt();
+      //System.out.println("found " + count + " entries in category map");
       dataToIndex = new HashMap<String, Integer>(count);
       for (int i = 0; i < count; i++) {
         String str = input.readUTF();
+        //System.out.println(i + " " + str);
         dataToIndex.put(str, i);
         indexToData.add(str);
       }
@@ -4131,7 +4221,12 @@ public class Table {
         }
         break;
       case CATEGORY:
-        output.writeInt(columnCategories[col].index(pieces[col]));
+        String peace = pieces[col];
+        if (peace.equals(missingString)) {
+          output.writeInt(missingCategory);
+        } else {
+          output.writeInt(columnCategories[col].index(peace));
+        }
         break;
       }
     }
@@ -4197,4 +4292,10 @@ public class Table {
     }
   }
   */
+
+
+  /** Make a copy of the current table */
+  public Table copy() {
+    return new Table(rows());
+  }
 }

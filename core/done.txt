@@ -1,3 +1,197 @@
+0229 core (3.0a2)
+X PImage resize() causes images to not draw
+X   https://github.com/processing/processing/issues/2228
+X   https://github.com/processing/processing/pull/2324
+X move to native OS X full screen (gets rid of native code)
+X   https://github.com/processing/processing/issues/2641
+X do bounds check on setVertex(PVector)
+X   https://github.com/processing/processing/issues/2556
+X using createGraphics() w/o begin/endDraw(), don't attempt drawing w/ image()
+X   https://github.com/processing/processing/issues/2208
+
+data
+X add copy() method to Table
+X return null from getString() on NaN float and double values
+X   affects how saveTable() works (writes blank entries instead of NaN)
+X get(5) with an empty Int/Float/StringList was returning 0
+X   https://github.com/processing/processing/pull/2343
+o fix for maxValue() and minValue() when all entries are bad
+o   on FloatDict it was NaN, check across the lists and other dict types
+X   nothing else to do here
+X FloatDict and FloatList should always put NaN values at the end on sort
+X   same for the other list and dict classes
+X   (this is part of the point of having these easier versions)
+o 'collector' class.. Dict that points to a list
+o   String as a key, int/float/string list as values
+X   seems too much like a better place for HashMap
+X add print() method to other data types (not just IntList)
+
+pulls
+X implement A and a (elliptical arcs)
+X   https://github.com/processing/processing/issues/169
+X   http://code.google.com/p/processing/issues/detail?id=130
+X   https://github.com/processing/processing/pull/2659
+X   done with an approximation, if re-saving this will destroy data (docs)
+X fix typo in StringList.insert()
+X   https://github.com/processing/processing/pull/2672
+X StingList.insert() error (should be an easy fix)
+X   https://github.com/processing/processing/issues/2548
+
+earlier
+X default font fixes (merged for 2.2.1 or earlier)
+X   https://github.com/processing/processing/issues/2331
+X   https://github.com/processing/processing/pull/2338
+X image resize() takes oddly long time
+X   https://github.com/processing/processing/issues/5
+X   the problem was confirmed to have fixed itself
+
+
+0228 core (3.0a1)
+X add copy() method to PVector
+X modify PVector to include better methods for chaining operations
+X   http://code.google.com/p/processing/issues/detail?id=218
+X   https://github.com/processing/processing/issues/257
+X   PVector discussion with Dan
+o   Jer and Dan will look at their code, plus toxiclibs
+X blendMode() broken with default renderer
+X   fix from Jakub Valtar
+X   https://github.com/processing/processing/issues/2012
+X   may have been introduced between 2.0b7 and 2.0b8
+X   https://github.com/processing/processing/issues/2275
+X   https://github.com/processing/processing/issues/2276
+X   https://github.com/processing/processing/issues/2483
+X if all data is NaN in a FloatDict, return NaN for maxValue() and minValue()
+X   formerly as AIOOBE -1 because -1 means "not found"
+X   but that was indexing directly into the data array
+
+pulls
+X filter() not applying to images produced by saveframe() consistently
+X   https://github.com/processing/processing/issues/2619
+X drawLatch in PJOGL can be null after requesting frame rendering
+X   https://github.com/processing/processing/issues/2630
+
+table
+X major performance improvements to 'newlines' parsing
+X last row was being skipped on tables with the 'newlines' option set
+X debug table parsing with header rows
+X bug fix for setting data types
+X add getColumnTitle(int) and getColumnTitles() to TableRow interface
+X fixes for new Table(Iterable)
+X   category data types were not importing their dictionary
+X   column titles weren't set on the new table
+X   drastic performance improvements for addRow()
+X when using setColumnType(), replace nulls with missingInt, missingFloat, etc
+X   formerly, was throwing a NullPointerException
+
+
+0227 core (2.2.1)
+X Permit mouse PRESS to set mouseX/mouseY
+X   https://github.com/processing/processing/pull/2509
+A Fix for video, loop() broken in 2.2
+A   https://github.com/processing/processing/issues/2524
+
+
+0226 core (2.2)
+X fix parsing with missing categorical values
+X fix for splice() throwing a ClassCastException with other object types
+X   https://github.com/processing/processing/issues/1445
+X   https://github.com/processing/processing/pull/2461
+X add candDraw() method to the retina renderer
+X fix sketchPath() issue when used in another environment
+X XML.getChildren() throwing NPE when getInt() called on non-existent var
+X   https://github.com/processing/processing/issues/2367
+X   need to sort out with docs what's happening here
+X   just a reference issue
+X substitute MOVE cursor with HAND on OS X
+X   https://github.com/processing/processing/issues/2358
+X Allow textWidth() with the default font
+X   https://github.com/processing/processing/issues/2331
+X   https://github.com/processing/processing/pull/2338
+X bug in relative moveto commands for SVG
+X   https://github.com/processing/processing/issues/2377
+X Add a constructor to bind Server to a specific address 
+X   https://github.com/processing/processing/issues/2356
+X add disconnectEvent() to Server
+X   https://github.com/processing/processing/pull/2466
+X   https://github.com/processing/processing/issues/2133
+X   don't document for now
+
+cleaning
+o how much of com.benfry.* should go in? 
+o   Table? StringIntPairs? JSON? MD5? Integrator? ColorIntegrator?
+o   decision: depends on if we can think of a good name
+X   finished these up in the 2.x series
+o check on DXFWriter, since it used to subclass P3D
+o   at least implement is3D? 
+X   should be working, barring recent regression
+o sleep time needs to be set *much* higher for dormant applets
+o   10s should be fine--no need to keep spinning (bad for android too)
+o   just call interrupt() when it's time to get back to work
+X   applets removed
+X test PGraphicsRetina2D w/ 7u40 
+X make sure that 7u40 doesn't reintroduce starvation issue on retina Macs
+X createGraphics() with no renderer param to point to JAVA2D
+X docs: P2D and P3D are now OpenGL variations
+X shader support - make decisions, Andres email, etc
+X antialias -> smoothMode(), smoothQuality(), quality()
+o   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
+X   setAntiAlias() should instead just use parent.smooth
+X final decision on pg.setQuality(sketchQuality())
+X   should probably be setQuality(parent.sketchQuality())
+
+andres
+X Fonts from loadFont() show up as blocks in P3D (regression)
+X   https://github.com/processing/processing/issues/2465
+X loadPixels problem in OpenGL
+X   https://github.com/processing/processing/issues/2493
+
+
+0225 core (2.1.2)
+X bug with StringDict(Reader) that wasn't setting the indices hashmap
+X   check this with other versions of this class
+X call revalidate() via reflection
+X text looks lousy compared to the Apple JVM
+X   mess with rendering hints? (notes in PGraphicsJava2D)
+X   improvements made, but still not amazing.. just at level of Windows/Linux
+X PGraphics.colorCalcARGB(int, float) doesn't cap alpha
+X   https://github.com/processing/processing/issues/2439
+X run window border color changed in 2.1
+X   https://github.com/processing/processing/issues/2297
+X simple NPE issue that needs workaround
+X   https://github.com/processing/processing/issues/2354
+
+fixed in 2.1
+X draw() called again before finishing on OS X (retina issue)
+X   https://github.com/processing/processing/issues/1709
+X get() not always setting alpha channel when used with point()
+X   https://github.com/processing/processing/issues/1756
+A support for geometry and tessellation shaders (on desktop)
+A   https://github.com/processing/processing/issues/2252
+
+andres
+X copy() under OPENGL uses upside-down coordinates for cropping
+X   https://github.com/processing/processing/issues/2345
+X video on windows causes exception
+X   https://github.com/processing/processing/issues/2327
+X Shape Font Rendering was broken with the OpenGL Renderer
+X   https://github.com/processing/processing/issues/2375
+A depth buffer shouldn't be cleared when depth mask is disabled
+A   https://github.com/processing/processing/issues/2296
+A set pixels transparent by default in P2D/P3D
+A   https://github.com/processing/processing/issues/2207
+A unwind depth sorting because it was breaking DXF export
+A   https://github.com/processing/processing/issues/2404
+A Sketch hangs if sketchRenderer() returns an OpenGL renderer
+A   https://github.com/processing/processing/issues/2363
+A "buffer" uniform triggers shader compilation error
+A   https://github.com/processing/processing/issues/2325
+A   buffer has been renamed to ppixels for shaders
+A noLoop clears screen on Windows 8
+A   https://github.com/processing/processing/issues/2416
+A fix pixels[] array for video capture
+A   https://github.com/processing/processing/issues/2424
+
+
 0224 core (2.1.1)
 X PImage resize() causes PImage not to be rendered in JAVA2D
 X   https://github.com/processing/processing/issues/2179

@@ -27,6 +27,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.SocketTimeoutException;
 import java.util.*;
 
@@ -48,6 +51,7 @@ public class ContributionManagerDialog {
   ContributionListPanel contributionListPanel;
   StatusPanel status;
   FilterField filterField;
+  JButton restartButton;
 
   // the calling editor, so updates can be applied
   Editor editor;
@@ -60,7 +64,7 @@ public class ContributionManagerDialog {
       title = "Update Manager";
       filter = ContributionType.createUpdateFilter();
     } else {
-      title = type.getTitle() + " Manager";
+      // title = type.getTitle() + " Manager";
       filter = type.createFilter();    
     }
     contribListing = ContributionListing.getInstance();
@@ -74,12 +78,63 @@ public class ContributionManagerDialog {
   }
 
 
-  public void showFrame(Editor editor) {
+  public boolean hasUpdates(Base base) {
+    return contribListing.hasUpdates(base);
+  }
+  
+  public void showFrame(final Editor editor) {
     this.editor = editor;
 
     if (dialog == null) {
       dialog = new JFrame(title);
 
+      restartButton = new JButton("Restart Processing");
+      restartButton.setVisible(false);
+      restartButton.addActionListener(new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+
+          Iterator<Editor> iter = editor.getBase().getEditors().iterator();
+          while (iter.hasNext()) {
+            Editor ed = iter.next();
+            if (ed.getSketch().isModified()) {
+              int option = Base
+                .showYesNoQuestion(editor, title,
+                                   "Unsaved changes have been found",
+                                   "Are you sure you want to restart Processing without saving first?");
+
+              if (option == JOptionPane.NO_OPTION)
+                return;
+              else
+                break;
+            }
+          }
+
+          // Thanks to http://stackoverflow.com/a/4160543
+          StringBuilder cmd = new StringBuilder();
+          cmd.append(System.getProperty("java.home") + File.separator + "bin"
+            + File.separator + "java ");
+          for (String jvmArg : ManagementFactory.getRuntimeMXBean()
+            .getInputArguments()) {
+            cmd.append(jvmArg + " ");
+          }
+          cmd.append("-cp ")
+            .append(ManagementFactory.getRuntimeMXBean().getClassPath())
+            .append(" ");
+          cmd.append(Base.class.getName());
+
+          try {
+            Runtime.getRuntime().exec(cmd.toString());
+            System.exit(0);
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+
+        }
+
+      });
+      
       Toolkit.setIcon(dialog);
       createComponents();
       registerDisposeListeners();
@@ -106,7 +161,7 @@ public class ContributionManagerDialog {
               status.setErrorMessage("Connection timed out while " +
                                      "downloading the contribution list.");
             } else {
-              status.setErrorMessage("Could not download the list" +
+              status.setErrorMessage("Could not download the list " +
                                      "of available contributions.");
             }
             exception.printStackTrace();
@@ -121,6 +176,7 @@ public class ContributionManagerDialog {
    * Close the window after an OK or Cancel.
    */
   protected void disposeFrame() {
+    status.clear();
     dialog.dispose();
     editor = null;
   }
@@ -146,7 +202,7 @@ public class ContributionManagerDialog {
 
       filterPanel.add(Box.createHorizontalStrut(6));
 
-      JLabel categoryLabel = new JLabel("Category:");
+      JLabel categoryLabel = new JLabel(Language.text("library.category"));
       filterPanel.add(categoryLabel);
 
       filterPanel.add(Box.createHorizontalStrut(5));
@@ -163,6 +219,7 @@ public class ContributionManagerDialog {
             category = null;
           }
           filterLibraries(category, filterField.filters);
+          contributionListPanel.updateColors();
         }
       });
       
@@ -198,8 +255,18 @@ public class ContributionManagerDialog {
       pane.add(Box.createHorizontalStrut(10), BorderLayout.EAST);
 
       status = new StatusPanel();
-      status.setBorder(new EmptyBorder(7, 7, 7, 7));
-      pane.add(status, BorderLayout.SOUTH);
+//      status.setBorder(new EmptyBorder(7, 7, 7, 7));
+      
+      JPanel statusRestartPane = new JPanel();
+      statusRestartPane.setLayout(new BorderLayout());
+      
+      statusRestartPane.setBorder(new EmptyBorder(7, 7, 7, 7));
+      statusRestartPane.setOpaque(false);
+      
+      statusRestartPane.add(status, BorderLayout.WEST);
+      statusRestartPane.add(restartButton, BorderLayout.EAST);
+      
+      pane.add(statusRestartPane, BorderLayout.SOUTH);
 
       
 //      status = new StatusPanel();
@@ -368,12 +435,13 @@ public class ContributionManagerDialog {
   
 
   class FilterField extends JTextField {
-    final static String filterHint = "Filter your search...";
+    String filterHint;
     boolean showingHint;
     List<String> filters;
 
     public FilterField () {
-      super(filterHint);
+      super(Language.text("library.filter_your_search"));
+      filterHint = Language.text("library.filter_your_search");
       
       showingHint = true;
       filters = new ArrayList<String>();
@@ -419,6 +487,8 @@ public class ContributionManagerDialog {
       filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a^\\x3a]", " ");
       filters = Arrays.asList(filter.split(" "));
       filterLibraries(category, filters);
+
+      contributionListPanel.updateColors();
     }
 
     public String getFilterText() {

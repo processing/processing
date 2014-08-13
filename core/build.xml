@@ -12,17 +12,17 @@
 	     classpath="methods/methods.jar" />
     <methods dir="${basedir}/src/processing/core" recorder="true" />
 
-    <!-- So that the core can be built independently of the PDE, 
-	 use javac if ecj is not present. -->
-    <property name="build.compiler" value="modern" />
-
-    <!-- But check for ecj.jar, since this might be a PDE build. Using ECJ
-	 allows us to build the PDE with only a JRE on Windows and Linux. -->
+    <!-- Check for ecj.jar, since this is likely a PDE build. Using ECJ
+	 allows us to build the PDE with only a JRE on Windows and Linux.
+	 So that the core can be built independently of the PDE, 
+	 use javac (the "modern" compiler) if ecj is not present. -->
     <property name="ecj.jar" value="../java/mode/ecj.jar" />
     <condition property="build.compiler" 
-	       value="org.eclipse.jdt.core.JDTCompilerAdapter">
+	       value="org.eclipse.jdt.core.JDTCompilerAdapter"
+	       else="modern">
       <available file="${ecj.jar}" />
     </condition>
+    <!--<echo message="compiler is ${build.compiler}" />-->
 
     <mkdir dir="bin" />
     <javac source="1.7"
@@ -38,8 +38,10 @@
     </javac>
     
     <!-- Copy the jnilib to the bin folder so it's included. -->
+    <!--
     <copy todir="bin/japplemenubar" 
 	  file="src/japplemenubar/libjAppleMenuBar.jnilib" />
+    -->
 
     <!-- Copy shaders to bin. (Eclipse does this automatically.) -->
     <copy todir="bin">

@@ -117,4 +117,33 @@ public class MouseEvent extends Event {
 //  public void setClickCount(int clickCount) {
 //    this.clickCount = clickCount;
 //  }
+
+  private String actionString() {
+    switch (action) {
+    default:
+      return "UNKNOWN";
+    case CLICK:
+      return "CLICK";
+    case DRAG:
+      return "DRAG";
+    case ENTER:
+      return "ENTER";
+    case EXIT:
+      return "EXIT";
+    case MOVE:
+      return "MOVE";
+    case PRESS:
+      return "PRESS";
+    case RELEASE:
+      return "RELEASE";
+    case WHEEL:
+      return "WHEEL";
+    }
+  }
+
+  @Override
+  public String toString() {
+    return String.format("<MouseEvent %s@%d,%d count:%d button:%d>",
+                         actionString(), x, y, count, button);
+  }
 }

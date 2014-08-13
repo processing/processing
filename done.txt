@@ -1,3 +1,299 @@
+0229 pde (3.0a2)
+X fix "No such file or directory" error when exporting an application on OSX
+X   this also resulted in the application not being signed at all
+X   https://github.com/processing/processing/issues/2614
+X   this is a fairly major issue...
+X possible to open a sketch multiple times 
+X   by double-clicking one of its files instead of the main pde file
+X   user opens non-main pde of already open sketch, it'll open again
+X   https://github.com/processing/processing/issues/2506
+X remove the prefs for 32/64-bit from Preferences
+X   also remove the extra OS X cruft inside Runner.java
+X OS X export button not disabled on other platforms
+X   https://github.com/processing/processing/issues/2642
+o try new syntax package
+X exclude 'fonts' folder from build (since it's going into the JRE)
+X   was storing our fonts in both ./lib/fonts and jre/lib/fonts
+X   now gets the jre folder and loads from there
+X make ant fail when trying to delete JRE files that don't exist
+X   some aren't being removed properly
+X fix the build scripts to include the examples
+X   https://github.com/processing/processing/issues/2652
+X   all examples are out of "processing/java" and are now in "processing-docs/content/". The Book examples have been removed entirely from our repositories.
+o "Platform is ${platform}" message during 'ant clean' 
+o   on OS X, but not Windows (haven't checked Linux)
+X   this was in pdex/build.xml
+X remove welcome message from the sound library
+X URL opening problem fixed by use of getCanonicalPath() on Windows
+X   https://github.com/processing/processing/issues/2656
+X add a new pref for the 3.0 sketchbook location
+X if Server constructor fails, throw an exception
+X   https://github.com/processing/processing/issues/2604
+o check on why 2x core.jar inside the Java folder
+o   maybe OS X Java can't look in subfolders? (just auto-adds things)
+o   https://github.com/processing/processing/issues/2344
+X   one is used by the PDE, the other is used as a library
+X get 'modified' indicator working on document windows again
+X   https://github.com/processing/processing/issues/2194
+X remove default menu bar hack when 7u60 arrives
+X   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
+X when renaming a tab, include the previous name to be edited
+X changing the mode on an untitled, unmodified sketch removes untitled status
+
+gsoc
+X clear status messages in the Contribution Manager
+X   https://github.com/processing/processing/pull/2667
+X   https://github.com/processing/processing/issues/2599
+X may need a progress bar for "save as"
+X   or just the file copy function in general
+X   since it may take a long time (i.e. 1000s of screen grabs)
+X   http://code.google.com/p/processing/issues/detail?id=31
+X   https://github.com/processing/processing/issues/70
+X   https://github.com/processing/processing/pull/2370
+X NullPointerException in addBreakpointComments() when saving sketch
+X   https://github.com/processing/processing/issues/2675
+X run button seems to stay highlighted permanently
+X   https://github.com/processing/processing/issues/2676
+X new tab/rename dialog box
+X   https://github.com/processing/processing/issues/2431
+X fix issue where the browser wasn't opening the reference properly
+X   https://github.com/processing/processing/pull/2657
+
+pulls
+X insert tabs properly when prefs set for tabs mode
+X   https://github.com/processing/processing/pull/2607
+X improve look of Nimbus LAF 
+X   https://github.com/processing/processing/pull/2671
+
+earlier
+X maxHeapSize typo in the build scripts
+X   https://github.com/processing/processing/issues/2603
+X remove minim
+X add the new sound library to the build process
+X for() loop with nothing inside parens crashes Auto Format
+X   https://github.com/processing/processing/issues/2141
+o double-clicking a .pde file doesn't open properly on OS X
+o   https://github.com/processing/processing/issues/2639
+X moving p5 examples to the web repo
+X move examples into web repo 
+o OS X not opening a sketch at all on pde double-click? (though opening the app)
+X Chinese text is overlapped in Processing 2.1 editor
+X   https://github.com/processing/processing/issues/2173
+o type cut off in dialog boxes on OS X retina machines
+o   https://github.com/processing/processing/issues/2116
+o   add spaces to the end of the text?
+X   seems to have fixed itself in newer Java releases
+X implement Windows menu in the PDE
+X   https://github.com/processing/processing/issues/584
+X Auto Format: Switch block cases not indented
+X   https://github.com/processing/processing/issues/1042
+
+
+0228 pde (3.0a1)
+X increase heap size to 256m (-Xmx256) per Manindra request
+X use a ButtonGroup so that the current Mode cannot be de-selected
+X   https://github.com/processing/processing/issues/2545
+
+earlier
+X cpu usage when nothing happening (unmarked duplicate)
+X   https://github.com/processing/processing/issues/1074 
+
+gsoc
+X Line coloring incorrect for filtered contribution listings
+X   https://github.com/processing/processing/issues/2583
+X   https://github.com/processing/processing/pull/2598
+X Added Present's background color as an option to the Preferences window
+X   https://github.com/processing/processing/pull/2568
+X check for updates with contribs
+X   https://github.com/processing/processing/pull/2636
+X   shows update manager on startup
+X contrib properties files ignored in favor of contributions.txt from p5.org
+X   https://github.com/processing/processing/issues/2572
+X tweak mode integrated
+X   https://github.com/processing/processing/pull/2624
+X wrong mode selected if sketch is modified (checkbox changes)
+X   https://github.com/processing/processing/issues/2615
+X   https://github.com/processing/processing/issues/2586
+X Add date and time stamps to the Contribution Manager
+X   https://github.com/processing/processing/pull/2651
+
+pulls
+X Implementation of a list of open sketches in the Sketch menu
+X   https://github.com/processing/processing/pull/2551
+X color selector for the pref (not reading it properly)
+X   https://github.com/processing/processing/pull/2568
+X lighting issues with non-planar triangle strips or quad strips
+X   https://github.com/processing/processing/issues/2014
+X   https://github.com/processing/processing/issues/2018
+X   https://github.com/processing/processing/pull/2644
+X set application name on Linux
+X   https://github.com/processing/processing/issues/2534
+X   https://github.com/processing/processing/pull/2584
+X serial not working on export
+X   https://github.com/processing/processing/issues/2559
+X build error on Windows
+X   https://github.com/processing/processing/issues/2603
+X   https://github.com/processing/processing/pull/2610
+
+
+0227 pde (2.2.1)
+X use mouseReleased() instead of mousePressed() in color selector
+X   otherwise it registers the release as a click in the color window
+X   https://github.com/processing/processing/issues/2514
+X missing 'version' in contrib causes NPE
+X   https://github.com/processing/processing/issues/2517
+X bring back setIcon(Frame) for PDE X and others
+X   https://github.com/processing/processing-experimental/issues/64
+X how was PDE X able to crash 2.2? 
+X   add additional code to rework how this is handled
+X Auto Format patch mess
+X   https://github.com/processing/processing/pull/2271
+X why is the JDK path showing up as a ._ feller in OS X?
+X   https://github.com/processing/processing/issues/2520
+X "Archive Sketch" Tool doesn't force a .zip file extension
+X   https://github.com/processing/processing/issues/2526
+
+python
+J modifications for captureEvent and Python
+J   https://github.com/processing/processing/pull/2527
+J Permit implementing movieEvent without having to link to Movie at build time
+J   https://github.com/processing/processing/pull/2528
+J implement serial events without having to link to Serial at build time
+J   https://github.com/processing/processing/pull/2529
+
+
+0226 pde (2.2)
+X sketches only starting once, or half-starting and hanging
+X   https://github.com/processing/processing/issues/2402
+X   https://github.com/processing/processing/pull/2455
+X reopen current sketch in new mode editor if file extension is compatible
+X   https://github.com/processing/processing/pull/2457
+X   https://github.com/processing/processing/issues/2456
+X crash in the 'recent' menu on startup
+X   https://github.com/processing/processing/issues/2463
+X   sketchbook location is set to an actual sketch (huh?)
+X sketch sometimes simply does not launch
+X   https://github.com/processing/processing/issues/2402
+X   https://github.com/processing/processing/pull/2455
+X   helpful fix contributed by David Fokkema
+X remove the google code uploader
+X JNA conflicts can be avoided with "-Djna.nosys=true"
+X   https://github.com/processing/processing/issues/2239
+X   fix for Windows launchers
+X   fix for Windows export
+X   fix for Windows export 64-bit
+X   fix for Windows command line
+X   fix for Linux launcher
+X   fix for Linux export
+X   fix for Linux command line
+X   fix for OS X launcher 
+X   fix for OS X export
+X   fix for OS X command line
+X import static causes exception (with fix)
+X   https://github.com/processing/processing/issues/8
+o   https://github.com/processing/processing/pull/2273
+X improve handling of tool loading
+X   QuickReference tool was able to bring down the environment
+X   https://github.com/processing/processing/issues/2229
+X save the previous open dialog so that we return to the directory
+X   https://github.com/processing/processing/pull/2366
+X "if-else" block formatting doesn't follow Processing conventions
+X   https://github.com/processing/processing/issues/364
+X   https://github.com/processing/processing/pull/2477
+X tab characters not recognized/drawn in the editor (2.1)
+X   https://github.com/processing/processing/issues/2180
+X   https://github.com/processing/processing/issues/2183
+o   udp library has tabs in the text
+X   decision to be made on nextTabStop() inside TextAreaPainter
+X Chinese text is overlapped in Processing 2.1 editor
+X   https://github.com/processing/processing/issues/2173
+X   https://github.com/processing/processing/pull/2318
+X   https://github.com/processing/processing/pull/2323
+o maybe user prefs should only cover things that've changed?
+o   how to balance colors/etc being stored elsewhere
+o   ton of work to maintain this...
+X   yeah, no
+X remove video for macosx32 from the repo permanently
+o fix for various net issues
+o   https://github.com/processing/processing/pull/2475
+X   incorporates other unrelated code, had to close
+
+earlier (2.1.2)
+X added get/set methods for status lines (Manindra)
+X   https://github.com/processing/processing/issues/2430
+X   https://github.com/processing/processing/pull/2433
+X allow non-pde file extensions (JDF)
+X   https://github.com/processing/processing/issues/2420
+
+export
+X exported apps on Windows 64 not working?
+X   https://github.com/processing/processing/issues/2468
+X   just needed to add the local path for Java
+X when exporting with local Java embedded, use that version
+X   https://github.com/processing/processing/issues/2349
+X   (we can do this now since we're actually doing the embedding)
+o export application folder location (for Manindra)
+X   https://github.com/processing/processing/issues/2399
+X incorporate new launch4j 3.4
+X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.4/
+X change Windows export to use launch4j instead of the launcher.cpp file
+X   actually call ant from inside p5?
+X re-implement an icon for exported applications on Windows
+X make sure that Windows export uses the local Java
+X   double-checked with a clean XP install
+X make sure Windows export includes library DLLs
+X remove build/windows/export from repo
+o make sure launch4j export isn't printing to console unless trouble
+X   OS X is doing this, though Windows is pushing some stuff through
+X bring back multi-platform export?
+X   embed Java only works for the current platform
+o   OS X applications can only be exported from OS X
+X     actually it's just the embedding, which is a problem on any platform
+X add all sorts of language to the export dialog
+X make available the background colors for present mode, stop button color
+X   isolate color chooser into a simpler/smaller class outside tools
+X   then can also use from inside processing applications as well
+X   http://code.google.com/p/processing/issues/detail?id=30
+X   https://github.com/processing/processing/issues/69
+X exported apps reporting as "damaged" on OS X
+X   https://github.com/processing/processing/issues/2095
+X   implement a call to codesign, and a message box re: installing Xcode
+X use launch4j for export and p5 app itself
+X   perhaps even calling it through an ant task
+X   windows exported exe problems (pcho)
+o updated launch4j 3.1 beta
+o   http://sourceforge.net/projects/launch4j/files/launch4j-3/
+X exe instead of bat to make exported apps run in 64-bit
+X   http://code.google.com/p/processing/issues/detail?id=885
+X   https://github.com/processing/processing/issues/923
+
+
+0225 pde (2.1.2)
+X Fix exception caused by Runner when it can't find location
+X   https://github.com/processing/processing/issues/2346
+X   https://github.com/processing/processing/pull/2359
+G Serial: Update to latest upstream (fixes potential port handle leak)
+G   https://github.com/processing/processing/pull/2361
+J add affordance for mode developers to run from Eclipse
+J   https://github.com/processing/processing/pull/2422
+J non-pde extensions for modes cause a crash
+J   https://github.com/processing/processing/issues/2419
+J some hardcoding for .pde still exists
+J   https://github.com/processing/processing/issues/2420
+X the PDE uses 15% of CPU while just sitting idle (thx to David Fokkema)
+X   https://github.com/processing/processing/issues/1561
+X   https://github.com/processing/processing/pull/2451
+X Update code signing for Processing.app for Mavericks changes
+X   https://github.com/processing/processing/issues/2453
+o   use --deep for codesign to work? (nope)
+o   http://furbo.org/2013/10/17/code-signing-and-mavericks/
+o   http://brockerhoff.net/RB/AppCheckerLite/
+J permit modes to specify alternate extension (.py for .pyde stuff)
+J   https://github.com/processing/processing/pull/2452
+X sketchPath() returns user.home in exported apps on OSX
+X   https://github.com/processing/processing/issues/2181
+
+
 0224 pde (2.1.1)
 M fix infinite loop in Find/Replace
 M   https://github.com/processing/processing/issues/2082

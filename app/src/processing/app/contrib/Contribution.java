@@ -43,6 +43,7 @@ abstract public class Contribution {
   protected String paragraph;     // <paragraph length description for site>
   protected int version;          // 102
   protected String prettyVersion; // "1.0.2"
+  protected long lastUpdated;   //  1402805757
   
   
   // "Sound"
@@ -120,6 +121,11 @@ abstract public class Contribution {
   public String getPrettyVersion() {
     return prettyVersion;
   }
+  
+  // 1402805757
+  public long getLastUpdated() {
+    return lastUpdated;
+  }
 
 
   abstract public ContributionType getType();
@@ -149,6 +155,11 @@ abstract public class Contribution {
   
   /** Overridden by LocalContribution. */
   boolean isDeletionFlagged() {
+    return false;
+  }
+
+  
+  boolean isUpdateFlagged() {
     return false;
   }
 

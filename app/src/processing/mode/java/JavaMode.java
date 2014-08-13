@@ -46,7 +46,7 @@ public class JavaMode extends Mode {
 
 
   public String getTitle() {
-    return "Java";
+    return "Java (2.0)";
   }
 
 

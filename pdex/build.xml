@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<project name="PDE X" default="build">
+
+  <property file="build.properties" />
+
+  <!-- Figure out the platform. Needed for quick install path. -->
+  <condition property="platform" value="macosx">
+    <os family="mac" />
+  </condition>
+
+  <condition property="platform" value="windows">
+    <os family="windows" />
+  </condition>
+
+  <condition property="platform" value="linux">
+    <and>
+      <os family="unix" />
+      <not>
+        <os family="mac" />
+      </not>
+    </and>
+  </condition>
+
+  <!-- Figure out the platform-specific output directory. -->
+  <condition property="target.path" value="../build/macosx/work/Processing.app/Contents/Java">
+    <os family="mac" />
+  </condition>
+
+  <condition property="target.path" value="../build/linux/work">
+    <os family="unix" />
+  </condition>
+
+  <condition property="target.path" value="../build/windows/work">
+    <os family="windows" />
+  </condition>
+
+  <target name="clean" description="Clean the build directories">
+    <delete dir="bin" />
+    <delete file="mode/${lib.name}.jar" />
+    <!--<echo message="Platform is ${platform}." />-->
+  </target>
+
+
+  <target name="compile" description="Compile sources">
+    <condition property="core-built">
+      <available file="${core.library.location}/core.jar" />
+    </condition>
+    <fail unless="core-built" message="Please build the core library first and make sure it sits in ../core/library/core.jar" />
+
+    <mkdir dir="bin" />
+
+    <javac source="1.7" 
+	   target="1.7" 
+	   destdir="bin" 
+	   encoding="UTF-8" 
+	   debug="off"
+	   includeAntRuntime="false" 
+	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter"
+	   classpath="${core.library.location}/core.jar; ${env.JAVA_HOME}/lib/tools.jar; ${app.library.location}/lib/ant.jar; ${app.library.location}/lib/ant-launcher.jar; ${app.library.location}/lib/antlr.jar; ${app.library.location}/lib/apple.jar; ${app.library.location}/lib/jdt-core.jar; ${app.library.location}/lib/jna.jar; ${app.library.location}/lib/org-netbeans-swing-outline.jar; ${app.library.location}/pde.jar; mode/com.ibm.icu_4.4.2.v20110823.jar; mode/jdi.jar; mode/jdimodel.jar; mode/org.eclipse.core.contenttype_3.4.200.v20120523-2004.jar; mode/org.eclipse.core.jobs_3.5.300.v20120622-204750.jar; mode/org.eclipse.core.resources_3.8.1.v20120802-154922.jar; mode/org.eclipse.core.runtime_3.8.0.v20120521-2346.jar; mode/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar; mode/org.eclipse.equinox.preferences_3.5.0.v20120522-1841.jar; mode/org.eclipse.jdt.core_3.8.2.v20120814-155456.jar; mode/org.eclipse.jdt.debug_3.7.101.v20120725-115645.jar; mode/org.eclipse.osgi_3.8.1.v20120830-144521.jar; mode/org.eclipse.text_3.5.200.v20120523-1310.jar;mode/classpath-explorer-1.0.jar; mode/jsoup-1.7.1.jar;">
+      <src path="src" />
+      <compilerclasspath path="../java/mode/ecj.jar" />
+    </javac>
+  </target>
+
+
+  <target name="build" depends="compile" description="Build the 3.0 editor">
+    <jar basedir="bin" destfile="mode/${lib.name}.jar" />
+  </target>
+
+  <target name="install" depends="build" description="Install to mode folder">
+    <delete file="${target.path}/modes/${lib.name}/mode/${lib.name}.jar" />
+    <copy todir="${target.path}/modes/${lib.name}/mode">
+      <fileset file="mode/${lib.name}.jar" />
+    </copy>
+  </target>
+
+  <target name="package" depends="build" description="Package PDE X">
+    <delete dir="${dist}" />
+    <property name="bundle" value="${dist}/${lib.name}" />
+    <mkdir dir="${bundle}" />
+
+    <mkdir dir="${bundle}/mode" />
+    <copy todir="${bundle}/mode">
+      <fileset dir="mode" />
+    </copy>
+
+    <mkdir dir="${bundle}/src" />
+    <copy todir="${bundle}/src">
+      <fileset dir="src" />
+    </copy>
+
+    <mkdir dir="${bundle}/data" />
+    <copy todir="${bundle}/data">
+      <fileset dir="data" />
+    </copy>
+
+    <mkdir dir="${bundle}/application" />
+    <copy todir="${bundle}/application">
+      <fileset dir="application" />
+    </copy>
+
+    <mkdir dir="${bundle}/theme" />
+    <copy todir="${bundle}/theme">
+      <fileset dir="theme" />
+    </copy>
+
+    <copy todir="${bundle}">
+      <fileset file="keywords.txt" />
+    </copy>
+    <copy todir="${bundle}">
+      <fileset file="mode.properties" />
+    </copy>
+    <replaceregexp file="${bundle}/mode.properties" flags="g" match="@@version@@" replace="${release}" />
+    <replaceregexp file="${bundle}/mode.properties" flags="g" match="@@pretty-version@@" replace="${prettyVersion}" />
+  </target>
+
+  <target name="full_install" depends="package" 
+    description="Full install to mode folder">
+    <delete dir="${target.path}/modes/${lib.name}" />
+    <copy todir="${target.path}/modes/">
+      <fileset dir="dist" />
+    </copy>
+  </target>
+
+</project>

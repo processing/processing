@@ -44,7 +44,7 @@ public class Archiver implements Tool {
 
 
   public String getMenuTitle() {
-    return "Archive Sketch";
+    return Language.text("menu.tools.archive_sketch");
   }
 
 
@@ -95,13 +95,18 @@ public class Archiver implements Tool {
     } while (newbie.exists());
 
     // open up a prompt for where to save this fella
-    PApplet.selectOutput("Archive sketch as...", "fileSelected", newbie, this, editor);
+    PApplet.selectOutput(Language.text("archive_sketch"), "fileSelected", newbie, this, editor);
   }
 
 
   public void fileSelected(File newbie) {
     if (newbie != null) {
       try {
+        // Force a .zip extension
+        // https://github.com/processing/processing/issues/2526
+        if (!newbie.getName().toLowerCase().endsWith(".zip")) {
+          newbie = new File(newbie.getAbsolutePath() + ".zip");
+        }
         //System.out.println(newbie);
         FileOutputStream zipOutputFile = new FileOutputStream(newbie);
         ZipOutputStream zos = new ZipOutputStream(zipOutputFile);

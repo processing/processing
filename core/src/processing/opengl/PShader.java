@@ -116,8 +116,8 @@ public class PShader implements PConstants {
   protected int transformMatLoc;
   protected int modelviewMatLoc;
   protected int projectionMatLoc;
-  protected int bufferLoc;
-  protected int bufferUnit;
+  protected int ppixelsLoc;
+  protected int ppixelsUnit;
   protected int viewportLoc;
 
   // Uniforms only for lines and points
@@ -1158,7 +1158,7 @@ public class PShader implements PConstants {
       projectionMatLoc = getUniformLoc("projectionMatrix");
 
     viewportLoc = getUniformLoc("viewport");
-    bufferLoc = getUniformLoc("buffer");
+    ppixelsLoc = getUniformLoc("ppixels");
 
     normalMatLoc = getUniformLoc("normalMatrix");
 
@@ -1209,13 +1209,13 @@ public class PShader implements PConstants {
       setUniformValue(viewportLoc, x, y, w, h);
     }
 
-    if (-1 < bufferLoc) {
-      bufferUnit = getLastTexUnit() + 1;
-      setUniformValue(bufferLoc, bufferUnit);
-      pgl.activeTexture(PGL.TEXTURE0 + bufferUnit);
+    if (-1 < ppixelsLoc) {
+      ppixelsUnit = getLastTexUnit() + 1;
+      setUniformValue(ppixelsLoc, ppixelsUnit);
+      pgl.activeTexture(PGL.TEXTURE0 + ppixelsUnit);
       currentPG.bindFrontTexture();
     } else {
-      bufferUnit = -1;
+      ppixelsUnit = -1;
     }
   }
 
@@ -1304,9 +1304,9 @@ public class PShader implements PConstants {
     if (-1 < texCoordLoc) pgl.disableVertexAttribArray(texCoordLoc);
     if (-1 < normalLoc) pgl.disableVertexAttribArray(normalLoc);
 
-    if (-1 < bufferLoc) {
+    if (-1 < ppixelsLoc) {
       pgl.requestFBOLayer();
-      pgl.activeTexture(PGL.TEXTURE0 + bufferUnit);
+      pgl.activeTexture(PGL.TEXTURE0 + ppixelsUnit);
       currentPG.unbindFrontTexture();
       pgl.activeTexture(PGL.TEXTURE0);
     }
@@ -1341,7 +1341,7 @@ public class PShader implements PConstants {
       setUniformValue(texOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
 
       if (-1 < textureLoc) {
-        texUnit =  -1 < bufferUnit ? bufferUnit + 1 : getLastTexUnit() + 1;
+        texUnit =  -1 < ppixelsUnit ? ppixelsUnit + 1 : getLastTexUnit() + 1;
         setUniformValue(textureLoc, texUnit);
         pgl.activeTexture(PGL.TEXTURE0 + texUnit);
         tex.bind();

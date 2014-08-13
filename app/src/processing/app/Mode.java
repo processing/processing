@@ -43,7 +43,7 @@ public abstract class Mode {
 
   protected File folder;
 
-  protected PdeKeywords tokenMarker = new PdeKeywords();
+  protected TokenMarker tokenMarker;
   protected HashMap<String, String> keywordToReference = 
     new HashMap<String, String>();
   
@@ -94,6 +94,7 @@ public abstract class Mode {
   public Mode(Base base, File folder) {
     this.base = base;
     this.folder = folder;
+    tokenMarker = createTokenMarker();
 
     // Get paths for the libraries and examples in the mode folder
     examplesFolder = new File(folder, "examples");
@@ -125,31 +126,43 @@ public abstract class Mode {
 
   
   protected void loadKeywords(File keywordFile) throws IOException {
+    // overridden for Python, where # is an actual keyword 
+    loadKeywords(keywordFile, "#");
+  }
+  
+  
+  protected void loadKeywords(File keywordFile, 
+                              String commentPrefix) throws IOException {
     BufferedReader reader = PApplet.createReader(keywordFile);
     String line = null;
     while ((line = reader.readLine()) != null) {
-//      String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
-      String[] pieces = PApplet.splitTokens(line);
-      if (pieces.length >= 2) {
-        String keyword = pieces[0];
-        String coloring = pieces[1];
+      if (!line.trim().startsWith(commentPrefix)) {
+        // Was difficult to make sure that mode authors were properly doing 
+        // tab-separated values. By definition, there can't be additional 
+        // spaces inside a keyword (or filename), so just splitting on tokens. 
+        String[] pieces = PApplet.splitTokens(line);
+        if (pieces.length >= 2) {
+          String keyword = pieces[0];
+          String coloring = pieces[1];
 
-        if (coloring.length() > 0) {
-          tokenMarker.addColoring(keyword, coloring);
-        }
-        if (pieces.length == 3) {
-          String htmlFilename = pieces[2];
-          if (htmlFilename.length() > 0) {
-            // if the file is for the version with parens, 
-            // add a paren to the keyword
-            if (htmlFilename.endsWith("_")) {
-              keyword += "_";
+          if (coloring.length() > 0) {
+            tokenMarker.addColoring(keyword, coloring);
+          }
+          if (pieces.length == 3) {
+            String htmlFilename = pieces[2];
+            if (htmlFilename.length() > 0) {
+              // if the file is for the version with parens, 
+              // add a paren to the keyword
+              if (htmlFilename.endsWith("_")) {
+                keyword += "_";
+              }
+              keywordToReference.put(keyword, htmlFilename);
             }
-            keywordToReference.put(keyword, htmlFilename);
           }
         }
       }
     }
+    reader.close();
   }
   
   
@@ -262,6 +275,15 @@ public abstract class Mode {
   //abstract public Editor createEditor(Base base, String path, int[] location);
 
 
+  /**
+   * Get the folder where this mode is stored. 
+   * @since 3.0a3
+   */
+  public File getFolder() {
+    return folder;
+  }
+  
+  
   public File getExamplesFolder() {
     return examplesFolder;
   }
@@ -386,9 +408,6 @@ public abstract class Mode {
     // Add a list of all sketches and subfolders
     toolbarMenu.addSeparator();
     base.populateSketchbookMenu(toolbarMenu);
-
-    Toolkit.setMenuMnemonics(toolbarMenu);
-
 //    boolean found = false;
 //    try {
 //      found = base.addSketches(toolbarMenu, base.getSketchbookFolder(), true);
@@ -414,13 +433,13 @@ public abstract class Mode {
 
   public void rebuildImportMenu() {  //JMenu importMenu) {
     if (importMenu == null) {
-      importMenu = new JMenu("Import Library...");
+      importMenu = new JMenu(Language.text("menu.library"));
     } else {
       //System.out.println("rebuilding import menu");
       importMenu.removeAll();
     }
 
-    JMenuItem addLib = new JMenuItem("Add Library...");
+    JMenuItem addLib = new JMenuItem(Language.text("menu.library.add_library"));
     addLib.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         base.handleOpenLibraryManager();
@@ -444,7 +463,7 @@ public abstract class Mode {
 //    }
 
     if (coreLibraries.size() == 0) {
-      JMenuItem item = new JMenuItem(getTitle() + " mode has no core libraries");
+      JMenuItem item = new JMenuItem(getTitle() + " " + Language.text("menu.library.no_core_libraries"));
       item.setEnabled(false);
       importMenu.add(item);
     } else {
@@ -458,7 +477,7 @@ public abstract class Mode {
 
     if (contribLibraries.size() != 0) {
       importMenu.addSeparator();
-      JMenuItem contrib = new JMenuItem("Contributed");
+      JMenuItem contrib = new JMenuItem(Language.text("menu.library.contributed"));
       contrib.setEnabled(false);
       importMenu.add(contrib);
 
@@ -665,7 +684,7 @@ public abstract class Mode {
 
   public void showExamplesFrame() {
     if (examplesFrame == null) {
-      examplesFrame = new JFrame(getTitle() + " Examples");
+      examplesFrame = new JFrame(getTitle() + " " + Language.text("editor.window.examples"));
       Toolkit.setIcon(examplesFrame);
       Toolkit.registerWindowCloseKeys(examplesFrame.getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -870,6 +889,104 @@ public abstract class Mode {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  public DefaultMutableTreeNode buildSketchbookTree(){
+    DefaultMutableTreeNode sbNode = new DefaultMutableTreeNode(Language.text("sketchbook.tree"));
+    try {
+      base.addSketches(sbNode, Base.getSketchbookFolder());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return sbNode;
+  }
+  
+  protected JFrame sketchbookFrame;
+  
+  public void showSketchbookFrame() {
+    if (sketchbookFrame == null) {
+      sketchbookFrame = new JFrame(Language.text("sketchbook"));
+      Toolkit.setIcon(sketchbookFrame);
+      Toolkit.registerWindowCloseKeys(sketchbookFrame.getRootPane(),
+                                      new ActionListener() {
+                                        public void actionPerformed(ActionEvent e) {
+                                          sketchbookFrame.setVisible(false);
+                                        }
+                                      });
+
+      final JTree tree = new JTree(buildSketchbookTree());
+      tree.getSelectionModel()
+        .setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+      tree.setShowsRootHandles(true);
+      tree.expandRow(0);
+      tree.setRootVisible(false);
+
+      tree.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+          if (e.getClickCount() == 2) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+              .getLastSelectedPathComponent();
+
+            int selRow = tree.getRowForLocation(e.getX(), e.getY());
+            //TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+            //if (node != null && node.isLeaf() && node.getPath().equals(selPath)) {
+            if (node != null && node.isLeaf() && selRow != -1) {
+              SketchReference sketch = (SketchReference) node.getUserObject();
+              base.handleOpen(sketch.getPath());
+            }
+          }
+        }
+      });
+
+      tree.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) { // doesn't fire keyTyped()
+            sketchbookFrame.setVisible(false);
+          }
+        }
+
+        public void keyTyped(KeyEvent e) {
+          if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+              .getLastSelectedPathComponent();
+            if (node != null && node.isLeaf()) {
+              SketchReference sketch = (SketchReference) node.getUserObject();
+              base.handleOpen(sketch.getPath());
+            }
+          }
+        }
+      });
+
+      tree.setBorder(new EmptyBorder(5, 5, 5, 5));
+      if (Base.isMacOS()) {
+        tree.setToggleClickCount(2);
+      } else {
+        tree.setToggleClickCount(1);
+      }
+      JScrollPane treePane = new JScrollPane(tree);
+      treePane.setPreferredSize(new Dimension(250, 450));
+      treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
+      sketchbookFrame.getContentPane().add(treePane);
+      sketchbookFrame.pack();
+    }
+
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        // Space for the editor plus a li'l gap
+        int roughWidth = sketchbookFrame.getWidth() + 20;
+        Point p = null;
+        // If no window open, or the editor is at the edge of the screen
+        if (base.activeEditor == null
+          || (p = base.activeEditor.getLocation()).x < roughWidth) {
+          // Center the window on the screen
+          sketchbookFrame.setLocationRelativeTo(null);
+        } else {
+          // Open the window relative to the editor
+          sketchbookFrame.setLocation(p.x - roughWidth, p.y);
+        }
+        sketchbookFrame.setVisible(true);
+      }
+    });
+  }
 
 /**
    * Get an image object from the theme folder.
@@ -903,6 +1020,10 @@ public abstract class Mode {
   //}
   public TokenMarker getTokenMarker() {
     return tokenMarker;
+  }
+  
+  protected TokenMarker createTokenMarker() {
+    return new PdeKeywords();
   }
 
 
@@ -1003,6 +1124,18 @@ public abstract class Mode {
 
 
   /**
+   * @param f File to be checked against this mode's accepted extensions.
+   * @return Whether or not the given file name features an extension supported by this mode.
+   */
+  public boolean canEdit(final File f) {
+    final int dot = f.getName().lastIndexOf('.');
+    if (dot < 0) {
+      return false;
+    }
+    return validExtension(f.getName().substring(dot + 1));
+  }
+  
+  /**
    * Check this extension (no dots, please) against the list of valid
    * extensions.
    */
@@ -1020,6 +1153,18 @@ public abstract class Mode {
    */
   abstract public String getDefaultExtension();
 
+
+  /**
+   * Returns the appropriate file extension to use for auxilliary source files in a sketch.
+   * For example, in a Java-mode sketch, auxilliary files should be name "Foo.java"; in
+   * Python mode, they should be named "foo.py".
+   * 
+   * <p>Modes that do not override this function will get the default behavior of returning the
+   * default extension.
+   */
+  public String getModuleExtension() {
+    return getDefaultExtension();
+  }
 
 
   /**
@@ -1062,4 +1207,9 @@ public abstract class Mode {
 //  public void handleNewReplace() {
 //    base.handleNewReplace();
 //  }
+  
+  @Override
+  public String toString() {
+    return getTitle();
+  }
 }
