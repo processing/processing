@@ -771,6 +771,7 @@ public class PreferencesFrame {
     warningsCheckerBox.setSelected(Preferences.getBoolean("pdex.warningsEnabled"));
     codeCompletionBox.setSelected(Preferences.getBoolean("pdex.ccEnabled"));
     codeCompletionTriggerBox.setSelected(Preferences.getBoolean("pdex.ccTriggerEnabled"));
+    codeCompletionTriggerBox.setEnabled(codeCompletionBox.isSelected());
     deletePreviousBox.
       setSelected(Preferences.getBoolean("export.delete_target_folder")); //$NON-NLS-1$
 
