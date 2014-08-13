@@ -109,8 +109,14 @@ public class ErrorMessageSimplifier {
       break;
     case IProblem.ParsingErrorInvalidToken:
       if (args.length > 0) {
-        if (args[0].equals("int") && args[1].equals("VariableDeclaratorId")) {
-          result = "\"color\", \"int\" can't be used as variable names.";
+        if (args[1].equals("VariableDeclaratorId")) {
+          if(args[0].equals("int")) {
+            result = "\"color\" and \"int\" are reserved words & can't be used as variable names";
+          }
+          else {
+            result = "\"" + args[0]
+                + "\" is a reserved word, it can't be used as a variable name";
+          }
         }
       }
       break;
