@@ -404,14 +404,21 @@ public class PreferencesFrame {
     pain.add(codeCompletionBox);
     d = codeCompletionBox.getPreferredSize();
     codeCompletionBox.setBounds(left, top, d.width + 10, d.height);
-    int toggleLeft = left + d.width;
+    codeCompletionBox.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // Disble code completion trigger option if CC is disabled
+        codeCompletionTriggerBox.setEnabled(codeCompletionBox.isSelected());
+      }
+    });
     
+    int toggleLeft = left + d.width;    
     
     // [ ] Toggle Code Completion Trigger - PDE X
 
-    final String modifier = Base.isMacOS() ? "\u2318" : "Ctrl";
     codeCompletionTriggerBox =
-      new JCheckBox(Language.text("preferences.trigger_with")+" " + modifier + "-"+Language.text("preferences.cmd_space"));
+      new JCheckBox(Language.text("preferences.trigger_with")+" Ctrl-"+Language.text("preferences.cmd_space"));
     pain.add(codeCompletionTriggerBox);
     d = codeCompletionTriggerBox.getPreferredSize();
     codeCompletionTriggerBox.setBounds(toggleLeft, top, d.width + 10, d.height);
