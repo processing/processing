@@ -57,6 +57,12 @@ public class ErrorMessageSimplifier {
     return constantsMap.get(id);
   }
   
+  /**
+   * Tones down the jargon in the ecj reported errors. 
+   * 
+   * @param problem
+   * @return
+   */
   public static String getSimplifiedErrorMessage(Problem problem) {
     if (problem == null)
       return null;
@@ -90,7 +96,12 @@ public class ErrorMessageSimplifier {
           result = getErrorMessageForBracket(args[0].charAt(0));
         }
         else {
-          result = "Consider adding a \"" + args[0] + "\"";
+          if(args[0].equals("AssignmentOperator Expression")){
+            result = "Consider adding a \"=\"";
+          }
+          else {
+            result = "Consider adding a \"" + args[0] + "\"";
+          }
         }
       }
       break;
