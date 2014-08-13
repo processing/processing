@@ -2428,8 +2428,27 @@ public abstract class Editor extends JFrame implements RunnerListener {
       //due to some weird shit, if a file was editted in gedit, the context is .goutputstream-XXXXX
       //this makes things.... complicated
       //System.out.println(e.context());
-      
 
+      System.out.println(e.context());
+      boolean openedFile = false;
+      if (((Path)e.context()).getFileName().toString().startsWith(".goutputstream")){
+        openedFile = true;
+      }
+      if (!openedFile) {
+        for (SketchCode sc: sketch.getCode()){
+          System.err.println("Code: \t\'"+sc.getFileName()+"\'\t\t\'"+e.context()+"\'");
+          //if a gedit edit or an edit of one of the files in the sketch
+          if (sc.getFileName().equals(((Path)e.context()).getFileName().toString())){
+            openedFile = true;
+            break;
+          }
+        }
+      }
+      //if the file is not open in the sketch, then don't ask to reload
+      if(!openedFile){
+        continue;
+      }
+      
       //if we already reloaded in this cycle, then don't reload again
       if (didReload){
         break;
