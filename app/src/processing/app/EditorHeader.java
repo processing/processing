@@ -533,6 +533,7 @@ public class EditorHeader extends JComponent {
     item = new JMenuItem(Language.text("editor.header.delete"));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          System.out.println("here high");
           Sketch sketch = editor.getSketch();
           if (!Base.isMacOS() &&  // ok on OS X
               editor.base.editors.size() == 1 &&  // mmm! accessor

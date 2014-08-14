@@ -2396,7 +2396,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    }
   }
   
-  
   //set to true when the sketch is saved from inside processing
   private boolean watcherSave;
   private boolean watcherReloaded;
@@ -2435,7 +2434,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
 
         @Override
-        public void windowLostFocus(WindowEvent arg0){
+        public void windowLostFocus(WindowEvent arg0) {
+          //we switched locations (saveAs), ignore old things
+          if (key != finKey) {
+            return;
+          }
           List<WatchEvent<?>> events = finKey.pollEvents();
           //don't ask to reload a file we saved
           if (!watcherSave) {
@@ -2485,7 +2488,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     watcherSave = false;
   }
-
 
   /**
    * Set the title of the PDE window based on the current sketch, i.e.
