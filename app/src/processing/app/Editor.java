@@ -2354,26 +2354,30 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
   
   //set to true when the sketch is saved from inside processing
-  private boolean saved;
+  private boolean changed;
 
-  private boolean didReload;
-  
+  //used to prevent the fileChangeListener from asking for reloads after internal changes
+  public void setChanged() {
+    changed = true;
+  }
+
   //TODO  set to the appropriate value
   private boolean reloadEnabled = true;
-  
+
   //the key which is being used to poll the fs for changes
   private WatchKey key = null;
 
   private void initFileChangeListener() {
-    if(!reloadEnabled){
+    if (!reloadEnabled) {
       return;
     }
     try {
       WatchService watchService = FileSystems.getDefault().newWatchService();
-      key = sketch.getFolder().toPath()
-        .register(watchService,
-//                  StandardWatchEventKinds.ENTRY_CREATE,
-//                  StandardWatchEventKinds.ENTRY_DELETE,
+      key = sketch
+        .getFolder()
+        .toPath()
+        .register(watchService, StandardWatchEventKinds.ENTRY_CREATE,
+                  StandardWatchEventKinds.ENTRY_DELETE,
                   StandardWatchEventKinds.ENTRY_MODIFY);
     } catch (IOException e) {
       //registring the watch failed, ignore it
@@ -2381,11 +2385,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     final WatchKey finKey = key;
 
-    //if the key is null for some reason, don't bother attaching a listener to it, they can deal without one
+    //if the key is null for some reason, don't bother attaching a listener to it
     if (finKey != null) {
       WindowFocusListener fl = new WindowFocusListener() {
         @Override
         public void windowGainedFocus(WindowEvent arg0) {
+          //we switched locations (saveAs), ignore old things
+          if (key != finKey) {
+            return;
+          }
           if (!reloadEnabled) {
             return;
           }
@@ -2393,24 +2401,28 @@ public abstract class Editor extends JFrame implements RunnerListener {
           if (!finKey.isValid()) {
             return;
           }
-          
+
           List<WatchEvent<?>> events = finKey.pollEvents();
-          processFileEvents(events);
+          if (!changed)
+            processFileEvents(events);
         }
 
         @Override
-        public void windowLostFocus(WindowEvent arg0){
+        public void windowLostFocus(WindowEvent arg0) {
+          //we switched locations (saveAs), ignore old things
+          if (key != finKey) {
+            return;
+          }
           List<WatchEvent<?>> events = finKey.pollEvents();
           //don't ask to reload a file we saved
-          if(!saved){
+          if (!changed) {
             processFileEvents(events);
           }
-          saved = false;
+          changed = false;
         }
       };
       //the key can now be polled for changes in the files
       this.addWindowFocusListener(fl);
-     
     }
   }
 
@@ -2422,59 +2434,61 @@ public abstract class Editor extends JFrame implements RunnerListener {
    *          (sketch.getFolder())
    */
   private void processFileEvents(List<WatchEvent<?>> events) {
-    didReload = false;
     for (WatchEvent<?> e : events) {
-      //the context is the name of the file inside the path
-      //due to some weird shit, if a file was editted in gedit, the context is .goutputstream-XXXXX
-      //this makes things.... complicated
-      //System.out.println(e.context());
-
-      //System.out.println(e.context());
-      boolean openedFile = false;
-      if (((Path)e.context()).getFileName().toString().startsWith(".goutputstream")){
-        openedFile = true;
-      }
-      if (!openedFile) {
-        for (SketchCode sc: sketch.getCode()){
-          //System.err.println("Code: \t\'"+sc.getFileName()+"\'\t\t\'"+e.context()+"\'");
-          //if a gedit edit or an edit of one of the files in the sketch
-          if (sc.getFileName().equals(((Path)e.context()).getFileName().toString())){
-            openedFile = true;
-            break;
-          }
+      boolean sketchFile = false;
+      Path file = ((Path) e.context()).getFileName();
+      for (String s : getMode().getExtensions()) {
+        //if it is a change to a file with a known extension
+        if (file.toString().endsWith(s)) {
+          sketchFile = true;
+          break;
         }
       }
-      //if the file is not open in the sketch, then don't ask to reload
-      if(!openedFile){
+      //if the file is not a known type, then go the the next event
+      if (!sketchFile) {
         continue;
       }
-      
-      //if we already reloaded in this cycle, then don't reload again
-      if (didReload){
-        break;
-      }
-      if (e.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
-//        Path p = (Path) e.context();
-//        Path root = (Path) key.watchable();
-//        Path path = root.resolve(p);
-        int response = Base
-          .showYesNoQuestion(Editor.this, "File Modified",
-                             "Your sketch has been modified externally",
-                             "Would you like to reload the sketch?");
-        if (response == 0) {
-          //reload the sketch
+
+      int response = Base
+        .showYesNoQuestion(Editor.this,
+                           "File Modified",
+                           "Your sketch has been modified externally",
+                           "Would you like to reload the sketch?");
+      if (response == 0) {
+        //grab the 'main' code in case this reload tries to delete everything
+        File sc = sketch.getMainFile();
+        //reload the sketch
+        try {
           sketch.reload();
           header.rebuild();
-          didReload = true;
+        } catch (Exception f) {
+          if (sketch.getCodeCount() < 1) {
+            Base
+              .showWarning("Canceling Reload",
+                           "You cannot delete the last code file in a sketch!");
+            //if they deleted the last file, re-save the SketchCode
+            try {
+              //make a blank file
+              sc.createNewFile();
+            } catch (IOException e1) {
+              //if that didn't work, tell them it's un-recoverable
+              Base.showError("Reload failed",
+                             "The sketch contians no code files", e1);
+              //don't try to reload again after the double fail
+              //this editor is probably trashed by this point, but a save-as might be possible
+              break;
+            }
+            //don't ask for another reload after this save
+            changed = true;
+            return;
+          }
         }
-      } else {
-        //called when a file is created or deleted
-        //for now, do nothing
+        //now that we've reloaded once, don't try to reload again
+        break;
       }
     }
-    saved = false;
+    changed = false;
   }
-
 
   /**
    * Set the title of the PDE window based on the current sketch, i.e.
@@ -2506,7 +2520,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public boolean handleSave(boolean immediately) {
 //    handleStop();  // 0136
 
-    saved = true;
+    setChanged();
     if (sketch.isUntitled()) {
       return handleSaveAs();
       // need to get the name, user might also cancel here
@@ -2550,6 +2564,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     statusNotice("Saving...");
     try {
       if (sketch.saveAs()) {
+        //a saveAs moves where the files are, so a listener must be attached to the new location
+        initFileChangeListener();
         statusNotice("Done Saving.");
         // Disabling this for 0125, instead rebuild the menu inside
         // the Save As method of the Sketch object, since that's the

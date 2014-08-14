@@ -511,6 +511,8 @@ public class EditorHeader extends JComponent {
     item = Toolkit.newJMenuItemShift("New Tab", 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          //prevent reload request
+          editor.setChanged();
           editor.getSketch().handleNewCode();
         }
       });
@@ -533,6 +535,7 @@ public class EditorHeader extends JComponent {
     item = new JMenuItem("Delete");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          System.out.println("here high");
           Sketch sketch = editor.getSketch();
           if (!Base.isMacOS() &&  // ok on OS X
               editor.base.editors.size() == 1 &&  // mmm! accessor
@@ -542,6 +545,8 @@ public class EditorHeader extends JComponent {
                                "of the last open sketch.", null);
           } else {
             editor.getSketch().handleDeleteCode();
+            //prevent reload request
+            editor.setChanged();
           }
         }
       });
