@@ -511,8 +511,6 @@ public class EditorHeader extends JComponent {
     item = Toolkit.newJMenuItemShift(Language.text("editor.header.new_tab"), 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          //prevent reload request
-          editor.setChanged();
           editor.getSketch().handleNewCode();
         }
       });
@@ -544,8 +542,6 @@ public class EditorHeader extends JComponent {
                                Language.text("editor.header.delete.warning.text"), null);
           } else {
             editor.getSketch().handleDeleteCode();
-            //prevent reload request
-            editor.setChanged();
           }
         }
       });

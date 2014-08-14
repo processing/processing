@@ -2563,16 +2563,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
     statusNotice(Language.text("editor.status.saving"));
     try {
       if (sketch.saveAs()) {
-<<<<<<< HEAD
-        //a saveAs moves where the files are, so a listener must be attached to the new location
-        initFileChangeListener();
-        statusNotice("Done Saving.");
-=======
         // statusNotice("Done Saving.");
     	// status is now printed from Sketch so that "Done Saving."
     	// is only printed after Save As when progress bar is shown.  
     	  
->>>>>>> upstream/master
         // Disabling this for 0125, instead rebuild the menu inside
         // the Save As method of the Sketch object, since that's the
         // only one who knows whether something was renamed.
