@@ -20,9 +20,9 @@ Critical Bugs
 Misc Tasks
 ----------
 
--[ ] New sketchbook layout
+-[x] New sketchbook layout
 
--[ ] Better compatibility with java tabs
+-[x] Better compatibility with java tabs
 
 -[x] Trim CompilationChecker class
 
@@ -33,7 +33,7 @@ Import Suggestion
 
 -[ ] Ignore case while looking for classname
 
--[ ] Prevent running into a suggestion loop
+-[x] Prevent running into a suggestion loop
 
 Normal Bugs
 -----------
