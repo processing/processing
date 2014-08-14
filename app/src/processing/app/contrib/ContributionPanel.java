@@ -62,6 +62,9 @@ class ContributionPanel extends JPanel {
 
   static public final String BUTTON_CONSTRAINT = "Install/Remvoe Button Panel";
 
+  static public final String INCOMPATIBILITY_BLUR = "This contribution is not compatible with "
+    + "the current revision of Processing";
+
   private final ContributionListPanel listPanel;
   private final ContributionListing contribListing = ContributionListing.getInstance();
 
@@ -229,7 +232,11 @@ class ContributionPanel extends JPanel {
 
     setExpandListener(this, new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        listPanel.setSelectedPanel(ContributionPanel.this);
+        if (contrib.isCompatible(Base.getRevision()))
+          listPanel.setSelectedPanel(ContributionPanel.this);
+        else
+          listPanel.contribManager.status.setErrorMessage(contrib.getName()
+            + " is not compatible with this revision of Processing");
       }
     });
   }
@@ -512,6 +519,19 @@ class ContributionPanel extends JPanel {
     }
   }
 
+
+  private void blurContributionPanel(Component component) {
+    component.setFocusable(false);
+    component.setEnabled(false);
+    if (component instanceof JComponent)
+      ((JComponent) component).setToolTipText(INCOMPATIBILITY_BLUR);
+    if (component instanceof Container) {
+      for (Component child : ((Container) component).getComponents()) {
+        blurContributionPanel(child);
+      }
+    }
+  }
+
   
   public void setContribution(Contribution contrib) {
     this.contrib = contrib;
@@ -670,6 +690,9 @@ class ContributionPanel extends JPanel {
       setComponentPopupMenu(null);
     }
 
+    if (!contrib.isCompatible(Base.getRevision())) {
+      blurContributionPanel(this);
+    }
   }
 
   private void installContribution(AvailableContribution info) {
