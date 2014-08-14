@@ -29,6 +29,7 @@ import java.util.*;
 
 import processing.app.Base;
 import processing.app.Mode;
+import processing.app.logging.Logger;
 
 
 public class ModeContribution extends LocalContribution {
@@ -46,7 +47,7 @@ public class ModeContribution extends LocalContribution {
       return new ModeContribution(base, folder, searchName);
       
     } catch (IgnorableException ig) {
-      Base.log(ig.getMessage());
+      Logger.log(ig.getMessage());
       
     } catch (Throwable err) {  
       // Throwable to catch Exceptions or UnsupportedClassVersionError et al
@@ -56,7 +57,7 @@ public class ModeContribution extends LocalContribution {
         // For the built-in modes, don't print the exception, just log it
         // for debugging. This should be impossible for most users to reach,
         // but it helps us load experimental mode when it's available.
-        Base.log("ModeContribution.load() failed for " + searchName, err);
+        Logger.log("ModeContribution.load() failed for " + searchName, err);
       }
     }
     return null;
@@ -125,7 +126,7 @@ public class ModeContribution extends LocalContribution {
           try {
             contribModes.add(new ModeContribution(base, folder, null));
           } catch (IgnorableException ig) {
-            Base.log(ig.getMessage());
+            Logger.log(ig.getMessage());
           } catch (Throwable e) {
             e.printStackTrace();
           }

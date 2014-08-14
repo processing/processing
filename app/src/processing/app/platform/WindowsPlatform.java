@@ -39,6 +39,7 @@ import processing.app.Base;
 import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.platform.WindowsRegistry.REGISTRY_ROOT_KEY;
+import processing.app.logging.Logger;
 import processing.core.PApplet;
 
 
@@ -215,7 +216,7 @@ public class WindowsPlatform extends Platform {
       // hooray!
 
     } else {
-      Base.log("Could not associate files, turning off auto-associate pref.");
+      Logger.log("Could not associate files, turning off auto-associate pref.");
       Preferences.setBoolean("platform.auto_file_type_associations", false);
     }
   }
@@ -359,7 +360,7 @@ public class WindowsPlatform extends Platform {
 //      moveToTrash(new File[] { file });
 //    } catch (IOException e) {
 //      e.printStackTrace();
-//      Base.log("Could not move " + file.getAbsolutePath() + " to the trash.", e);
+//      Logger.log("Could not move " + file.getAbsolutePath() + " to the trash.", e);
 //      return false;
 //    }
 //    return true;

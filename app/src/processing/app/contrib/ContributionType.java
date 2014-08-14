@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Library;
+import processing.app.logging.Logger;
 
 public enum ContributionType {
   LIBRARY, TOOL, MODE;
@@ -157,7 +158,7 @@ public enum ContributionType {
       return null;
 
     } else if (folders.length > 1) {
-      Base.log("More than one " + toString() + " found inside " + folder.getAbsolutePath());
+      Logger.log("More than one " + toString() + " found inside " + folder.getAbsolutePath());
     }
     return folders[0];
   }

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
+import processing.app.logging.Logger;
 import processing.core.PApplet;
 
 
@@ -80,7 +81,7 @@ public class Recent {
           if (new File(line).exists()) {  // don't add ghost entries
             records.add(new Record(line));
           } else {
-            Base.log(this, "ghost file: " + line);
+            Logger.log(this, "ghost file: " + line);
           }
         }
       }
@@ -229,7 +230,7 @@ public class Recent {
 //      rec.path = newPath;
 //      save();
 //    } else {
-//      Base.log(this, "Could not find " + oldPath +
+//      Logger.log(this, "Could not find " + oldPath +
 //               " in list of recent sketches to replace with " + newPath);
 //    }
 //  }
