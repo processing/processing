@@ -33,6 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import processing.app.Base;
+import processing.app.Messages;
 import processing.app.Preferences;
 import processing.app.SketchException;
 import processing.core.PApplet;
@@ -237,7 +238,7 @@ public class PdePreprocessor {
           "The screenWidth and screenHeight variables\n" +
           "are named displayWidth and displayHeight\n" +
           "in this release of Processing.";
-        Base.showWarning("Time for a quick update", message, null);
+        Messages.showWarning("Time for a quick update", message, null);
         return null;
       }
 
@@ -259,7 +260,7 @@ public class PdePreprocessor {
           "be determined from your code. Use only numeric\n" +
           "values (not variables) for the size() command.\n" +
           "See the size() reference for an explanation.";
-        Base.showWarning("Could not find sketch size", message, null);
+        Messages.showWarning("Could not find sketch size", message, null);
 //        new Exception().printStackTrace(System.out);
         return null;
       }

@@ -93,7 +93,7 @@ public class PresentMode {
   static public JFrame create() {
     int deviceIndex = PrePreferences.getInteger("run.present.display") - 1;
     if ((deviceIndex < 0) || (deviceIndex >= devices.length)) {
-      Base.showWarning("Display doesn't exist",
+      Messages.showWarning("Display doesn't exist",
                           "Present Mode is set to use display " +
                           (deviceIndex+1) +
                           " but that doesn't seem to exist.    \n" +

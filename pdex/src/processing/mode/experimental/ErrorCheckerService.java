@@ -51,6 +51,7 @@ import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorStatus;
 import processing.app.Library;
+import processing.app.Messages;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
 import processing.core.PApplet;
@@ -299,7 +300,7 @@ public class ErrorCheckerService implements Runnable{
     // Processing 2.1.2 - Revision 0225
     if(Base.getRevision() < 225){
 //      System.err.println("ERROR: PDE X requires Processing 2.1.2 or higher.");
-      Base.showWarning("Error", "ERROR: PDE X requires Processing 2.1.2 or higher.", null);
+      Messages.showWarning("Error", "ERROR: PDE X requires Processing 2.1.2 or higher.", null);
     }
   }
   

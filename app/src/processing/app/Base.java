@@ -199,7 +199,7 @@ public class Base {
         untitledFolder = Base.createTempFolder("untitled", "sketches", null);
         untitledFolder.deleteOnExit();
       } catch (IOException e) {
-        Base.showError("Trouble without a name",
+        Messages.showError("Trouble without a name",
                        "Could not create a place to store untitled sketches.\n" +
                        "That's gonna prevent us from continuing.", e);
       }
@@ -213,8 +213,8 @@ public class Base {
       } catch (Throwable t) {
         // Catch-all to hopefully pick up some of the weirdness we've been
         // running into lately.
-        showBadnessTrace("We're off on the wrong foot",
-                         "An error occurred during startup.", t, true);
+        Messages.showBadnessTrace("We're off on the wrong foot",
+                       "An error occurred during startup.", t, true);
       }
       log("done creating base..."); //$NON-NLS-1$
     }
@@ -243,7 +243,7 @@ public class Base {
       }
       platform = (Platform) platformClass.newInstance();
     } catch (Exception e) {
-      Base.showError("Problem Setting the Platform",
+      Messages.showError("Problem Setting the Platform",
                      "An unknown error occurred while trying to load\n" +
                      "platform-specific code for your machine.", e);
     }
@@ -258,14 +258,14 @@ public class Base {
 //      String cp = System.getProperty("sun.boot.class.path").replace(File.pathSeparatorChar, '\n');
 
       Base.openURL("http://wiki.processing.org/w/Supported_Platforms");
-//      Base.showError("Please install JDK 1.6 or later",
+//      Messages.showError("Please install JDK 1.6 or later",
 //                     "Processing requires a full JDK (not just a JRE)\n" +
 //                     "to run. Please install JDK 1.6 or later.\n" +
 //                     "More information can be found on the Wiki." +
 //                     "\n\nJAVA_HOME is currently\n" +
 //                     System.getProperty("java.home") + "\n" +
 //                     "And the CLASSPATH contains\n" + cp, cnfe);
-      Base.showError("Missing required files",
+      Messages.showError("Missing required files",
                      "Processing requires a JRE with tools.jar (or a\n" +
                      "full JDK) installed in (or linked to) a folder\n" +
                      "named “java” next to the Processing application.\n" +
@@ -719,12 +719,12 @@ public class Base {
         if (index == 26) {
           // In 0159, avoid running past z by sending people outdoors.
           if (!breakTime) {
-            Base.showWarning("Time for a Break",
+            Messages.showWarning("Time for a Break",
                              "You've reached the limit for auto naming of new sketches\n" +
                              "for the day. How about going for a walk instead?", null);
             breakTime = true;
           } else {
-            Base.showWarning("Sunshine",
+            Messages.showWarning("Sunshine",
                              "No really, time for some fresh air for you.", null);
           }
           return;
@@ -758,7 +758,7 @@ public class Base {
       /*Editor editor =*/ handleOpen(path, true);
 
     } catch (IOException e) {
-      Base.showWarning("That's new to me",
+      Messages.showWarning("That's new to me",
                        "A strange and unexplainable error occurred\n" +
                        "while trying to create a new sketch.", e);
     }
@@ -962,7 +962,7 @@ public class Base {
       }
 
       if (!Sketch.isSanitaryName(file.getName())) {
-        Base.showWarning("You're tricky, but not tricky enough",
+        Messages.showWarning("You're tricky, but not tricky enough",
                          file.getName() + " is not a valid name for a sketch.\n" +
                          "Better to stick to ASCII, no spaces, and make sure\n" +
                          "it doesn't start with a number.", null);
@@ -983,7 +983,7 @@ public class Base {
         // if it's not mode[0] already, then don't go into an infinite loop
         // trying to recreate a window with the default mode.
         if (nextMode == coreModes[0]) {
-          Base.showError("Editor Problems",
+          Messages.showError("Editor Problems",
                          "An error occurred while trying to change modes.\n" +
                            "We'll have to quit for now because it's an\n" +
                            "unfortunate bit of indigestion.",
@@ -1010,7 +1010,7 @@ public class Base {
       return editor;
 
     } catch (Throwable t) {
-      showBadnessTrace("Terrible News",
+      Messages.showBadnessTrace("Terrible News",
                        "A serious error occurred while " +
                        "trying to create a new editor window.", t, false);
       nextMode = coreModes[0];
@@ -1069,13 +1069,13 @@ public class Base {
     }
     if (possibleModes.size() == 0) {
       if (preferredMode == null) {
-        Base.showWarning("Modeless Dialog",
+        Messages.showWarning("Modeless Dialog",
                          "I don't know how to open a sketch with the \""
                          + extension
                          + "\"\nfile extension. You'll have to install a different"
                          + "\nProcessing mode for that.");
       } else {
-        Base.showWarning("Modeless Dialog", "You'll have to install "
+        Messages.showWarning("Modeless Dialog", "You'll have to install "
           + preferredMode.title + " Mode " + "\nin order to open that sketch.");
       }
       return null;
@@ -1318,7 +1318,7 @@ public class Base {
 //    try {
 //      found = addSketches(sketchbookMenu, sketchbookFolder, false);
 //    } catch (IOException e) {
-//      Base.showWarning("Sketchbook Menu Error",
+//      Messages.showWarning("Sketchbook Menu Error",
 //                       "An error occurred while trying to list the sketchbook.", e);
 //    }
 //    if (!found) {
@@ -1334,7 +1334,7 @@ public class Base {
     try {
       found = addSketches(menu, sketchbookFolder, false);
     } catch (IOException e) {
-      Base.showWarning("Sketchbook Menu Error",
+      Messages.showWarning("Sketchbook Menu Error",
                        "An error occurred while trying to list the sketchbook.", e);
     }
     if (!found) {
@@ -1428,7 +1428,7 @@ public class Base {
             handleOpen(path);
 //            }
           } else {
-            showWarning("Sketch Disappeared",
+            Messages.showWarning("Sketch Disappeared",
                         "The selected sketch no longer exists.\n" +
                         "You may need to restart Processing to update\n" +
                         "the sketchbook menu.", null);
@@ -1467,7 +1467,7 @@ public class Base {
 //              "and it cannot start with a number).\n" +
 //              "To get rid of this message, remove the sketch from\n" +
 //              entry.getAbsolutePath();
-//            Base.showMessage("Ignoring sketch with bad name", complaining);
+//            Messages.showMessage("Ignoring sketch with bad name", complaining);
 //          }
 //          continue;
 //        }
@@ -1519,7 +1519,7 @@ public class Base {
 //          if (new File(path).exists()) {
 //            handleOpen(path);
 //          } else {
-//            showWarning("Sketch Disappeared",
+//            Messages.showWarning("Sketch Disappeared",
 //                        "The selected sketch no longer exists.\n" +
 //                        "You may need to restart Processing to update\n" +
 //                        "the sketchbook menu.", null);
@@ -1595,7 +1595,7 @@ public class Base {
             "and it cannot start with a number).\n" +
             "To get rid of this message, remove the sketch from\n" +
             entry.getAbsolutePath();
-          Base.showMessage("Ignoring sketch with bad name", complaining);
+          Messages.showMessage("Ignoring sketch with bad name", complaining);
         }
         continue;
       }
@@ -1819,7 +1819,7 @@ public class Base {
     try {
       settingsFolder = platform.getSettingsFolder();
     } catch (Exception e) {
-      showError("Problem getting the settings folder",
+      Messages.showError("Problem getting the settings folder",
                 "Error getting the Processing the settings folder.", e);
     }
 //    }
@@ -1827,7 +1827,7 @@ public class Base {
     // create the folder if it doesn't exist already
     if (!settingsFolder.exists()) {
       if (!settingsFolder.mkdirs()) {
-        showError("Settings issues",
+        Messages.showError("Settings issues",
                   "Processing cannot run because it could not\n" +
                   "create a folder to store your settings.", null);
       }
@@ -1901,7 +1901,7 @@ public class Base {
     if (sketchbookPath != null) {
       sketchbookFolder = new File(sketchbookPath);
       if (!sketchbookFolder.exists()) {
-        Base.showWarning("Sketchbook folder disappeared",
+        Messages.showWarning("Sketchbook folder disappeared",
                          "The sketchbook folder no longer exists.\n" +
                          "Processing will switch to the default sketchbook\n" +
                          "location, and create a new sketchbook folder if\n" +
@@ -1961,7 +1961,7 @@ public class Base {
     } catch (Exception e) { }
 
     if (sketchbookFolder == null) {
-      showError("No sketchbook",
+      Messages.showError("No sketchbook",
                 "Problem while trying to get the sketchbook", null);
     }
 
@@ -1972,7 +1972,7 @@ public class Base {
     }
 
     if (!result) {
-      showError("You forgot your sketchbook",
+      Messages.showError("You forgot your sketchbook",
                 "Processing cannot run because it could not\n" +
                 "create a folder to store your sketchbook.", null);
     }
@@ -2027,7 +2027,7 @@ public class Base {
       platform.openURL(url);
 
     } catch (Exception e) {
-      showWarning("Problem Opening URL",
+      Messages.showWarning("Problem Opening URL",
                   "Could not open the URL\n" + url, e);
     }
   }
@@ -2051,7 +2051,7 @@ public class Base {
       platform.openFolder(file);
 
     } catch (Exception e) {
-      showWarning("Problem Opening Folder",
+      Messages.showWarning("Problem Opening Folder",
                   "Could not open the folder\n" + file.getAbsolutePath(), e);
     }
   }
@@ -2139,283 +2139,6 @@ public class Base {
 //  static public File selectFolder(String prompt, File folder, Frame frame) {
 //    return new FolderSelector(prompt, folder, frame).getFolder();
 //  }
-
-
-  // .................................................................
-
-
-  /**
-   * "No cookie for you" type messages. Nothing fatal or all that
-   * much of a bummer, but something to notify the user about.
-   */
-  static public void showMessage(String title, String message) {
-    if (title == null) title = "Message";
-
-    if (commandLine) {
-      System.out.println(title + ": " + message);
-
-    } else {
-      JOptionPane.showMessageDialog(new Frame(), message, title,
-                                    JOptionPane.INFORMATION_MESSAGE);
-    }
-  }
-
-
-  /**
-   * Non-fatal error message.
-   */
-  static public void showWarning(String title, String message) {
-    showWarning(title, message, null);
-  }
-
-  /**
-   * Non-fatal error message with optional stack trace side dish.
-   */
-  static public void showWarning(String title, String message, Throwable e) {
-    if (title == null) title = "Warning";
-
-    if (commandLine) {
-      System.out.println(title + ": " + message);
-
-    } else {
-      JOptionPane.showMessageDialog(new Frame(), message, title,
-                                    JOptionPane.WARNING_MESSAGE);
-    }
-    if (e != null) e.printStackTrace();
-  }
-
-
-  /**
-   * Non-fatal error message with optional stack trace side dish.
-   */
-  static public void showWarningTiered(String title,
-                                       String primary, String secondary,
-                                       Throwable e) {
-    if (title == null) title = "Warning";
-
-    final String message = primary + "\n" + secondary;
-    if (commandLine) {
-      System.out.println(title + ": " + message);
-
-    } else {
-//      JOptionPane.showMessageDialog(new Frame(), message,
-//                                    title, JOptionPane.WARNING_MESSAGE);
-      if (!Base.isMacOS()) {
-        JOptionPane.showMessageDialog(new JFrame(),
-                                      "<html><body>" +
-                                      "<b>" + primary + "</b>" +
-                                      "<br>" + secondary, title,
-                                      JOptionPane.WARNING_MESSAGE);
-      } else {
-        // Pane formatting adapted from the Quaqua guide
-        // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
-        JOptionPane pane =
-          new JOptionPane("<html> " +
-                          "<head> <style type=\"text/css\">"+
-                          "b { font: 13pt \"Lucida Grande\" }"+
-                          "p { font: 11pt \"Lucida Grande\"; margin-top: 8px; width: 300px }"+
-                          "</style> </head>" +
-                          "<b>" + primary + "</b>" +
-                          "<p>" + secondary + "</p>",
-                          JOptionPane.WARNING_MESSAGE);
-
-//        String[] options = new String[] {
-//            "Yes", "No"
-//        };
-//        pane.setOptions(options);
-
-        // highlight the safest option ala apple hig
-//        pane.setInitialValue(options[0]);
-
-        JDialog dialog = pane.createDialog(new JFrame(), null);
-        dialog.setVisible(true);
-
-//        Object result = pane.getValue();
-//        if (result == options[0]) {
-//          return JOptionPane.YES_OPTION;
-//        } else if (result == options[1]) {
-//          return JOptionPane.NO_OPTION;
-//        } else {
-//          return JOptionPane.CLOSED_OPTION;
-//        }
-      }
-    }
-    if (e != null) e.printStackTrace();
-  }
-
-
-  /**
-   * Show an error message that's actually fatal to the program.
-   * This is an error that can't be recovered. Use showWarning()
-   * for errors that allow P5 to continue running.
-   */
-  static public void showError(String title, String message, Throwable e) {
-    if (title == null) title = "Error";
-
-    if (commandLine) {
-      System.err.println(title + ": " + message);
-
-    } else {
-      JOptionPane.showMessageDialog(new Frame(), message, title,
-                                    JOptionPane.ERROR_MESSAGE);
-    }
-    if (e != null) e.printStackTrace();
-    System.exit(1);
-  }
-
-
-  /**
-   * Testing a new warning window that includes the stack trace.
-   */
-  static private void showBadnessTrace(String title, String message,
-                                       Throwable t, boolean fatal) {
-    if (title == null) title = fatal ? "Error" : "Warning";
-
-    if (commandLine) {
-      System.err.println(title + ": " + message);
-      if (t != null) {
-        t.printStackTrace();
-      }
-
-    } else {
-      StringWriter sw = new StringWriter();
-      t.printStackTrace(new PrintWriter(sw));
-      // Necessary to replace \n with <br/> (even if pre) otherwise Java
-      // treats it as a closed tag and reverts to plain formatting.
-      message = "<html>" + message + "<br/><font size=2><br/>" +
-        sw.toString().replaceAll("\n", "<br/>");
-
-      JOptionPane.showMessageDialog(new Frame(), message, title,
-                                    fatal ?
-                                    JOptionPane.ERROR_MESSAGE :
-                                    JOptionPane.WARNING_MESSAGE);
-    }
-  }
-
-
-  // ...................................................................
-
-
-
-  // incomplete
-  static public int showYesNoCancelQuestion(Editor editor, String title,
-                                            String primary, String secondary) {
-    if (!Base.isMacOS()) {
-      int result =
-        JOptionPane.showConfirmDialog(null, primary + "\n" + secondary, title,
-                                      JOptionPane.YES_NO_CANCEL_OPTION,
-                                      JOptionPane.QUESTION_MESSAGE);
-      return result;
-//    if (result == JOptionPane.YES_OPTION) {
-//
-//    } else if (result == JOptionPane.NO_OPTION) {
-//      return true;  // ok to continue
-//
-//    } else if (result == JOptionPane.CANCEL_OPTION) {
-//      return false;
-//
-//    } else {
-//      throw new IllegalStateException();
-//    }
-
-    } else {
-      // Pane formatting adapted from the Quaqua guide
-      // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
-      JOptionPane pane =
-        new JOptionPane("<html> " +
-                        "<head> <style type=\"text/css\">"+
-                        "b { font: 13pt \"Lucida Grande\" }"+
-                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px; width: 300px }"+
-                        "</style> </head>" +
-                        "<b>" + Language.text("save.title") + "</b>" +
-                        "<p>" + Language.text("save.hint") + "</p>",
-                        JOptionPane.QUESTION_MESSAGE);
-
-      String[] options = new String[] {
-          Language.text("save.btn.save"), Language.text("prompt.cancel"), Language.text("save.btn.dont_save")
-      };
-      pane.setOptions(options);
-
-      // highlight the safest option ala apple hig
-      pane.setInitialValue(options[0]);
-
-      // on macosx, setting the destructive property places this option
-      // away from the others at the lefthand side
-      pane.putClientProperty("Quaqua.OptionPane.destructiveOption",
-                             new Integer(2));
-
-      JDialog dialog = pane.createDialog(editor, null);
-      dialog.setVisible(true);
-
-      Object result = pane.getValue();
-      if (result == options[0]) {
-        return JOptionPane.YES_OPTION;
-      } else if (result == options[1]) {
-        return JOptionPane.CANCEL_OPTION;
-      } else if (result == options[2]) {
-        return JOptionPane.NO_OPTION;
-      } else {
-        return JOptionPane.CLOSED_OPTION;
-      }
-    }
-  }
-
-
-//if (result == JOptionPane.YES_OPTION) {
-  //
-//      } else if (result == JOptionPane.NO_OPTION) {
-//        return true;  // ok to continue
-  //
-//      } else if (result == JOptionPane.CANCEL_OPTION) {
-//        return false;
-  //
-//      } else {
-//        throw new IllegalStateException();
-//      }
-
-  static public int showYesNoQuestion(Frame editor, String title,
-                                      String primary, String secondary) {
-    if (!Base.isMacOS()) {
-      return JOptionPane.showConfirmDialog(editor,
-                                           "<html><body>" +
-                                           "<b>" + primary + "</b>" +
-                                           "<br>" + secondary, title,
-                                           JOptionPane.YES_NO_OPTION,
-                                           JOptionPane.QUESTION_MESSAGE);
-    } else {
-      // Pane formatting adapted from the Quaqua guide
-      // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
-      JOptionPane pane =
-        new JOptionPane("<html> " +
-                        "<head> <style type=\"text/css\">"+
-                        "b { font: 13pt \"Lucida Grande\" }"+
-                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px; width: 300px }"+
-                        "</style> </head>" +
-                        "<b>" + primary + "</b>" +
-                        "<p>" + secondary + "</p>",
-                        JOptionPane.QUESTION_MESSAGE);
-
-      String[] options = new String[] {
-          "Yes", "No"
-      };
-      pane.setOptions(options);
-
-      // highlight the safest option ala apple hig
-      pane.setInitialValue(options[0]);
-
-      JDialog dialog = pane.createDialog(editor, null);
-      dialog.setVisible(true);
-
-      Object result = pane.getValue();
-      if (result == options[0]) {
-        return JOptionPane.YES_OPTION;
-      } else if (result == options[1]) {
-        return JOptionPane.NO_OPTION;
-      } else {
-        return JOptionPane.CLOSED_OPTION;
-      }
-    }
-  }
 
 
   /**

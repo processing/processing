@@ -359,7 +359,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           }
         }
       } catch (Exception e) {
-        Base.showWarning("Drag & Drop Problem",
+        Messages.showWarning("Drag & Drop Problem",
                          "An error occurred while trying to add files to the sketch.", e);
         return false;
       }
@@ -392,7 +392,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
             base.changeMode(m);
             
           } else {
-            Base.showWarning("Save",
+            Messages.showWarning("Save",
                              "Please save the sketch before changing the mode.",
                              null);
 
@@ -1107,7 +1107,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         // With the exceptions, we can't call statusError because the window 
         // isn't completely set up yet. Also not gonna pop up a warning because
         // people may still be running different versions of Processing. 
-        // TODO Once the dust settles on 2.x, change this to Base.showError()
+        // TODO Once the dust settles on 2.x, change this to Messages.showError()
         // and open the Tools folder instead of showing System.err.println().
         
       } catch (NoSuchMethodError nsme) {
@@ -2306,8 +2306,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     } else if (!mode.canEdit(file)) {
       final String modeName = (mode.getTitle().equals("Java")) ? "Processing"
         : mode.getTitle();
-      Base
-        .showWarning("Bad file selected", modeName
+      Messages.showWarning("Bad file selected", modeName
           + " can only open its own sketches\nand other files ending in "
           + mode.getDefaultExtension(), null);
       return false;
@@ -2334,14 +2333,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
         // create properly named folder
         File properFolder = new File(file.getParent(), properParent);
         if (properFolder.exists()) {
-          Base.showWarning("Error",
+          Messages.showWarning("Error",
                            "A folder named \"" + properParent + "\" " +
                            "already exists. Can't open sketch.", null);
           return false;
         }
         if (!properFolder.mkdirs()) {
           //throw new IOException("Couldn't create sketch folder");
-          Base.showWarning("Error",
+          Messages.showWarning("Error",
                            "Could not create the sketch folder.", null);
           return false;
         }
@@ -2351,7 +2350,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         try {
           Base.copyFile(origPdeFile, properPdeFile);
         } catch (IOException e) {
-          Base.showWarning("Error", "Could not copy to a proper location.", e);
+          Messages.showWarning("Error", "Could not copy to a proper location.", e);
           return false;
         }
 
@@ -2369,7 +2368,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     try {
       sketch = new Sketch(path, this);
     } catch (IOException e) {
-      Base.showWarning("Error", "Could not create the sketch.", e);
+      Messages.showWarning("Error", "Could not create the sketch.", e);
       return false;
     }
     if (Preferences.getBoolean("editor.watcher")) {
@@ -2469,7 +2468,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //        Path root = (Path) key.watchable();
 //        Path path = root.resolve(p);
         int response = 
-          Base.showYesNoQuestion(Editor.this, "File Modified",
+          Messages.showYesNoQuestion(Editor.this, "File Modified",
                                  "A file has been modified externally",
                                  "Would you like to reload the sketch?");
         if (response == 0) {

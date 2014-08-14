@@ -232,7 +232,7 @@ public abstract class LocalContribution extends Contribution {
             boolean doBackup = Preferences.getBoolean("contribution.backup.on_install");
             if (confirmReplace) {
               if (doBackup) {
-                result = Base.showYesNoQuestion(editor, "Replace",
+                result = Messages.showYesNoQuestion(editor, "Replace",
                        "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
                        "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
                        "has been found in your sketchbook. Clicking “Yes”<br>"+
@@ -242,7 +242,7 @@ public abstract class LocalContribution extends Contribution {
                   return null;
                 }
               } else {
-                result = Base.showYesNoQuestion(editor, "Replace",
+                result = Messages.showYesNoQuestion(editor, "Replace",
                        "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
                        "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
                        "has been found in your sketchbook. Clicking “Yes”<br>"+
@@ -383,7 +383,7 @@ public abstract class LocalContribution extends Contribution {
         m.clearClassLoader(editor.getBase());
       else {
         pm.cancel();
-        Base.showMessage("Mode Manager",
+        Messages.showMessage("Mode Manager",
                          "Please save your Sketch and change the Mode of all Editor\nwindows that have "
                            + this.name + " as the active Mode.");
         return;

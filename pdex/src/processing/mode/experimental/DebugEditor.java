@@ -70,6 +70,7 @@ import org.eclipse.jdt.core.compiler.IProblem;
 import processing.app.Base;
 import processing.app.EditorState;
 import processing.app.EditorToolbar;
+import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.Sketch;
 import processing.app.SketchCode;
@@ -1022,8 +1023,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         return;
       }
       File pastSave = autosaver.getPastSave();
-      int response = Base
-        .showYesNoQuestion(this,
+      int response = Messages.showYesNoQuestion(this,
                            "Unsaved backup found!",
                            "An automatic backup of \""
                                + pastSave.getParentFile().getName()
@@ -1032,7 +1032,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
                            "Select YES to view it or NO to delete the backup.");
       if(response == JOptionPane.YES_OPTION){
         handleOpenInternal(pastSave.getAbsolutePath());        
-        // Base.showMessage("Save it..", "Remember to save the backup sketch to a specific location if you want to.");
+        // Messages.showMessage("Save it..", "Remember to save the backup sketch to a specific location if you want to.");
         //log(getSketch().getMainFilePath());
         log("loadAutoSaver, viewing autosave? " + viewingAutosaveBackup);
         return;
@@ -1838,7 +1838,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
 		if (modified) {
 			// ask to keep the values
-			int ret = Base.showYesNoQuestion(this, "Tweak Mode",
+			int ret = Messages.showYesNoQuestion(this, "Tweak Mode",
 									"Keep the changes?",
 									"You changed some values in your sketch. Would you like to keep the changes?");
 			if (ret == 1) {
@@ -1874,7 +1874,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 					sketch.save();
 				}
 				catch (IOException e) {
-					Base.showWarning("Tweak Mode", "Could not save the modified sketch!", e);
+					Messages.showWarning("Tweak Mode", "Could not save the modified sketch!", e);
 				}
 
 				// repaint the editor header (show the modified tabs)

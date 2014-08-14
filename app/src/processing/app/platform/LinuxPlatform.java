@@ -26,6 +26,7 @@ import java.io.File;
 import java.awt.Toolkit;
 
 import processing.app.Base;
+import processing.app.Messages;
 import processing.app.Platform;
 import processing.app.Preferences;
 
@@ -40,7 +41,7 @@ public class LinuxPlatform extends Platform {
     if (javaVendor == null ||
         (!javaVendor.contains("Sun") && !javaVendor.contains("Oracle")) ||
         javaVM == null || !javaVM.contains("Java")) {
-      Base.showWarning("Not fond of this Java VM",
+      Messages.showWarning("Not fond of this Java VM",
         "Processing requires Java 6 from Sun (i.e. the sun-java-jdk\n" +
         "package on Ubuntu). Other versions such as OpenJDK, IcedTea,\n" +
         "and GCJ are strongly discouraged. Among other things, you're\n" +

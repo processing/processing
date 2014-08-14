@@ -209,7 +209,7 @@ public class Platform {
 
   /*
   protected void showLauncherWarning() {
-    Base.showWarning("No launcher available",
+    Messages.showWarning("No launcher available",
                      "Unspecified platform, no launcher available.\n" +
                      "To enable opening URLs or folders, add a \n" +
                      "\"launcher=/path/to/app\" line to preferences.txt",

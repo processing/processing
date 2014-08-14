@@ -110,7 +110,7 @@ public class EditorConsole extends JScrollPane {
 //      stderrFile = null;
 //
 //      e.printStackTrace();
-//      Base.showWarning("Console Error",
+//      Messages.showWarning("Console Error",
 //                       "A problem occurred while trying to open the\n" +
 //                       "files used to store the console output.", e);
     } catch (Exception e) {

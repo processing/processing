@@ -86,7 +86,7 @@ public class Preferences {
       // replacing the file after doing a search for "preferences.txt".
       load(Base.getLibStream(DEFAULTS_FILE));
     } catch (Exception e) {
-      Base.showError(null, "Could not read default settings.\n" +
+      Messages.showError(null, "Could not read default settings.\n" +
                            "You'll need to reinstall Processing.", e);
     }
 
@@ -123,7 +123,7 @@ public class Preferences {
         load(new FileInputStream(preferencesFile));
 
       } catch (Exception ex) {
-        Base.showError("Error reading preferences",
+        Messages.showError("Error reading preferences",
                        "Error reading the preferences file. " +
                        "Please delete (or move)\n" +
                        preferencesFile.getAbsolutePath() +
@@ -200,7 +200,7 @@ public class Preferences {
     writer.close();
 
 //    } catch (Exception ex) {
-//      Base.showWarning(null, "Error while saving the settings file", ex);
+//      Messages.showWarning(null, "Error while saving the settings file", ex);
 //    }
   }
 
