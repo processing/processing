@@ -31,8 +31,8 @@ public abstract class Sort implements Runnable {
   protected int partition(int left, int right) {
     int pivot = right;
     do {
-      while (compare(++left, pivot) < 0) ;
-      while ((right != 0) && (compare(--right, pivot) > 0)) ;
+      while (compare(++left, pivot) < 0) { }
+      while ((right != 0) && (compare(--right, pivot) > 0)) { }
       swap(left, right);
     } while (left < right);
     swap(left, right);

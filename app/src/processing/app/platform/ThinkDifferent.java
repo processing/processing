@@ -22,7 +22,6 @@
 
 package processing.app.platform;
 
-import java.awt.Dimension;
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -30,7 +29,7 @@ import javax.swing.*;
 import processing.app.About;
 import processing.app.Base;
 import processing.app.Toolkit;
-import processing.core.PApplet;
+import processing.app.Language;
 
 import com.apple.eawt.*;
 
@@ -84,27 +83,27 @@ public class ThinkDifferent implements ApplicationListener {
     // This is kind of a gross way to do this, but the alternatives? Hrm.
     Base.defaultFileMenu = fileMenu;
 
-    if (PApplet.javaVersion <= 1.6f) {  // doesn't work on Oracle's Java
-      try {
-        application.setDefaultMenuBar(defaultMenuBar);
-        
-      } catch (Exception e) {
-        e.printStackTrace();  // oh well nevermind
-      }
-    } else {
-      // The douchebags at Oracle didn't feel that a working f*king menubar 
-      // on OS X was important enough to make it into the 7u40 release. 
-      //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
-      // It languished in the JDK 8 source and has been backported for 7u60:
-      //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
-      
-      JFrame offscreen = new JFrame();
-      offscreen.setUndecorated(true);
-      offscreen.setJMenuBar(defaultMenuBar);
-      Dimension screen = Toolkit.getScreenSize();
-      offscreen.setLocation(screen.width, screen.height);
-      offscreen.setVisible(true);
+//    if (PApplet.javaVersion <= 1.6f) {  // doesn't work on Oracle's Java
+    try {
+      application.setDefaultMenuBar(defaultMenuBar);
+
+    } catch (Exception e) {
+      e.printStackTrace();  // oh well, never mind
     }
+//    } else {
+//      // The douchebags at Oracle didn't feel that a working f*king menubar 
+//      // on OS X was important enough to make it into the 7u40 release. 
+//      //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8007267
+//      // It languished in the JDK 8 source and has been backported for 7u60:
+//      //http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=8022667
+//      
+//      JFrame offscreen = new JFrame();
+//      offscreen.setUndecorated(true);
+//      offscreen.setJMenuBar(defaultMenuBar);
+//      Dimension screen = Toolkit.getScreenSize();
+//      offscreen.setLocation(screen.width, screen.height);
+//      offscreen.setVisible(true);
+//    }
   }
   
 
@@ -118,9 +117,9 @@ public class ThinkDifferent implements ApplicationListener {
    */
   static protected JMenu buildFileMenu(final Base base) {
     JMenuItem item;
-    JMenu fileMenu = new JMenu("File");
+    JMenu fileMenu = new JMenu(Language.text("menu.file"));
 
-    item = Toolkit.newJMenuItem("New", 'N');
+    item = Toolkit.newJMenuItem(Language.text("menu.file.new"), 'N');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handleNew();
@@ -128,7 +127,7 @@ public class ThinkDifferent implements ApplicationListener {
       });
     fileMenu.add(item);
 
-    item = Toolkit.newJMenuItem("Open...", 'O');
+    item = Toolkit.newJMenuItem(Language.text("menu.file.open"), 'O');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           base.handleOpenPrompt();
@@ -138,7 +137,7 @@ public class ThinkDifferent implements ApplicationListener {
 
     fileMenu.add(base.getSketchbookMenu());
 
-    item = Toolkit.newJMenuItemShift("Examples...", 'O');
+    item = Toolkit.newJMenuItemShift(Language.text("menu.file.examples"), 'O');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         base.thinkDifferentExamples();

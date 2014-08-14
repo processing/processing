@@ -1,7 +1,7 @@
 package processing.sound;
 import processing.core.*;
 
-public class WhiteNoise implements SoundObject{
+public class WhiteNoise implements Noise{
 	
 	PApplet parent;
 	private Engine m_engine;

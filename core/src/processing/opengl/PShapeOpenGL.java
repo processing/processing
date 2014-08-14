@@ -58,6 +58,13 @@ import java.util.Stack;
  * DXF: http://en.wikipedia.org/wiki/AutoCAD_DXF
  */
 public class PShapeOpenGL extends PShape {
+  // Testing these constants, not use as they might go away...
+  static public final int POSITION  = 0;
+  static public final int NORMAL    = 1;
+  static public final int TEXCOORD  = 2;
+  static public final int DIRECTION = 3;
+  static public final int OFFSET    = 4;
+
   static protected final int TRANSLATE = 0;
   static protected final int ROTATE    = 1;
   static protected final int SCALE     = 2;
@@ -107,6 +114,9 @@ public class PShapeOpenGL extends PShape {
   public int glPointColor;
   public int glPointAttrib;
   public int glPointIndex;
+
+  // Testing this field, not use as it might go away...
+  public int glUsage = PGL.STATIC_DRAW;
 
   // ........................................................
 
@@ -2493,6 +2503,73 @@ public class PShapeOpenGL extends PShape {
     return tess;
   }
 
+  // Testing this method, not use as it might go away...
+  public float[] getTessellation(int kind, int data) {
+    updateTessellation();
+
+    if (kind == TRIANGLES) {
+      if (data == POSITION) {
+        if (is3D()) {
+          root.setModifiedPolyVertices(firstPolyVertex, lastPolyVertex);
+        } else if (is2D()) {
+          int last1 = lastPolyVertex + 1;
+          if (-1 < firstLineVertex) last1 = firstLineVertex;
+          if (-1 < firstPointVertex) last1 = firstPointVertex;
+          root.setModifiedPolyVertices(firstPolyVertex, last1 - 1);
+        }
+        return tessGeo.polyVertices;
+      } else if (data == NORMAL) {
+        if (is3D()) {
+          root.setModifiedPolyNormals(firstPolyVertex, lastPolyVertex);
+        } else if (is2D()) {
+          int last1 = lastPolyVertex + 1;
+          if (-1 < firstLineVertex) last1 = firstLineVertex;
+          if (-1 < firstPointVertex) last1 = firstPointVertex;
+          root.setModifiedPolyNormals(firstPolyVertex, last1 - 1);
+        }
+        return tessGeo.polyNormals;
+      } else if (data == TEXCOORD) {
+        if (is3D()) {
+          root.setModifiedPolyTexCoords(firstPolyVertex, lastPolyVertex);
+        } else if (is2D()) {
+          int last1 = lastPolyVertex + 1;
+          if (-1 < firstLineVertex) last1 = firstLineVertex;
+          if (-1 < firstPointVertex) last1 = firstPointVertex;
+          root.setModifiedPolyTexCoords(firstPolyVertex, last1 - 1);
+        }
+        return tessGeo.polyTexCoords;
+      }
+    } else if (kind == LINES) {
+      if (data == POSITION) {
+        if (is3D()) {
+          root.setModifiedLineVertices(firstLineVertex, lastLineVertex);
+        } else if (is2D()) {
+          root.setModifiedPolyVertices(firstLineVertex, lastLineVertex);
+        }
+        return tessGeo.lineVertices;
+      } else if (data == DIRECTION) {
+        if (is2D()) {
+          root.setModifiedLineAttributes(firstLineVertex, lastLineVertex);
+        }
+        return tessGeo.lineDirections;
+      }
+    } else if (kind == POINTS) {
+      if (data == POSITION) {
+        if (is3D()) {
+          root.setModifiedPointVertices(firstPointVertex, lastPointVertex);
+        } else if (is2D()) {
+          root.setModifiedPolyVertices(firstPointVertex, lastPointVertex);
+        }
+        return tessGeo.pointVertices;
+      } else if (data == OFFSET) {
+        if (is2D()) {
+          root.setModifiedPointAttributes(firstPointVertex, lastPointVertex);
+        }
+        return tessGeo.pointOffsets;
+      }
+    }
+    return null;
+  }
 
   ///////////////////////////////////////////////////////////
 
@@ -3652,56 +3729,56 @@ public class PShapeOpenGL extends PShape {
       glPolyVertex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyVertex);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
-                   tessGeo.polyVerticesBuffer, PGL.STATIC_DRAW);
+                   tessGeo.polyVerticesBuffer, glUsage);
 
     tessGeo.updatePolyColorsBuffer();
     if (glPolyColor == 0)
       glPolyColor = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyColor);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
-                   tessGeo.polyColorsBuffer, PGL.STATIC_DRAW);
+                   tessGeo.polyColorsBuffer, glUsage);
 
     tessGeo.updatePolyNormalsBuffer();
     if (glPolyNormal == 0)
       glPolyNormal = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyNormal);
     pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef,
-                   tessGeo.polyNormalsBuffer, PGL.STATIC_DRAW);
+                   tessGeo.polyNormalsBuffer, glUsage);
 
     tessGeo.updatePolyTexCoordsBuffer();
     if (glPolyTexcoord == 0)
       glPolyTexcoord = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyTexcoord);
     pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef,
-                   tessGeo.polyTexCoordsBuffer, PGL.STATIC_DRAW);
+                   tessGeo.polyTexCoordsBuffer, glUsage);
 
     tessGeo.updatePolyAmbientBuffer();
     if (glPolyAmbient == 0)
       glPolyAmbient = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyAmbient);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
-                   tessGeo.polyAmbientBuffer, PGL.STATIC_DRAW);
+                   tessGeo.polyAmbientBuffer, glUsage);
 
     tessGeo.updatePolySpecularBuffer();
     if (glPolySpecular == 0)
       glPolySpecular = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolySpecular);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
-                   tessGeo.polySpecularBuffer, PGL.STATIC_DRAW);
+                   tessGeo.polySpecularBuffer, glUsage);
 
     tessGeo.updatePolyEmissiveBuffer();
     if (glPolyEmissive == 0)
       glPolyEmissive = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyEmissive);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
-                   tessGeo.polyEmissiveBuffer, PGL.STATIC_DRAW);
+                   tessGeo.polyEmissiveBuffer, glUsage);
 
     tessGeo.updatePolyShininessBuffer();
     if (glPolyShininess == 0)
       glPolyShininess = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyShininess);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizef,
-                   tessGeo.polyShininessBuffer, PGL.STATIC_DRAW);
+                   tessGeo.polyShininessBuffer, glUsage);
 
     pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
@@ -3711,7 +3788,7 @@ public class PShapeOpenGL extends PShape {
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPolyIndex);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
                    tessGeo.polyIndexCount * PGL.SIZEOF_INDEX,
-                   tessGeo.polyIndicesBuffer, PGL.STATIC_DRAW);
+                   tessGeo.polyIndicesBuffer, glUsage);
 
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
   }
@@ -3727,21 +3804,21 @@ public class PShapeOpenGL extends PShape {
       glLineVertex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineVertex);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
-                   tessGeo.lineVerticesBuffer, PGL.STATIC_DRAW);
+                   tessGeo.lineVerticesBuffer, glUsage);
 
     tessGeo.updateLineColorsBuffer();
     if (glLineColor == 0)
       glLineColor = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineColor);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
-                   tessGeo.lineColorsBuffer, PGL.STATIC_DRAW);
+                   tessGeo.lineColorsBuffer, glUsage);
 
     tessGeo.updateLineDirectionsBuffer();
     if (glLineAttrib == 0)
       glLineAttrib = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineAttrib);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
-                   tessGeo.lineDirectionsBuffer, PGL.STATIC_DRAW);
+                   tessGeo.lineDirectionsBuffer, glUsage);
 
     pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
@@ -3751,7 +3828,7 @@ public class PShapeOpenGL extends PShape {
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glLineIndex);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
                    tessGeo.lineIndexCount * PGL.SIZEOF_INDEX,
-                   tessGeo.lineIndicesBuffer, PGL.STATIC_DRAW);
+                   tessGeo.lineIndicesBuffer, glUsage);
 
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
   }
@@ -3767,21 +3844,21 @@ public class PShapeOpenGL extends PShape {
       glPointVertex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointVertex);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
-                   tessGeo.pointVerticesBuffer, PGL.STATIC_DRAW);
+                   tessGeo.pointVerticesBuffer, glUsage);
 
     tessGeo.updatePointColorsBuffer();
     if (glPointColor == 0)
       glPointColor = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointColor);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
-                   tessGeo.pointColorsBuffer, PGL.STATIC_DRAW);
+                   tessGeo.pointColorsBuffer, glUsage);
 
     tessGeo.updatePointOffsetsBuffer();
     if (glPointAttrib == 0)
       glPointAttrib = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glPointAttrib);
     pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef,
-                   tessGeo.pointOffsetsBuffer, PGL.STATIC_DRAW);
+                   tessGeo.pointOffsetsBuffer, glUsage);
 
     pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
@@ -3791,7 +3868,7 @@ public class PShapeOpenGL extends PShape {
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPointIndex);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
                    tessGeo.pointIndexCount * PGL.SIZEOF_INDEX,
-                   tessGeo.pointIndicesBuffer, PGL.STATIC_DRAW);
+                   tessGeo.pointIndicesBuffer, glUsage);
 
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
   }

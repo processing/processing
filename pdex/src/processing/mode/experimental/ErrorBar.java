@@ -149,9 +149,10 @@ public class ErrorBar extends JPanel {
 
 		// NOTE TO SELF: ErrorMarkers are calculated for the present tab only
 		// Error Marker index in the arraylist is LOCALIZED for current tab.
-		// Also, need to do the update in the UI thread to prevent concurrency issues. 
+		// Also, need to do the update in the UI thread via SwingWorker to prevent
+	  // concurrency issues. 
 		final int fheight = this.getHeight();
-		SwingWorker worker = new SwingWorker() {
+		SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
       protected Object doInBackground() throws Exception {
         SketchCode sc = editor.getSketch().getCurrentCode();
@@ -178,7 +179,7 @@ public class ErrorBar extends JPanel {
             for (Problem problem : problems) {
               if (problem.getTabIndex() == currentTab) {
                 // Ratio of error line to total lines
-                float y = (problem.getLineNumber() - errorCheckerService.defaultImportsOffset)
+                float y = (problem.getLineNumber() + 1)
                     / ((float) totalLines);
                 // Ratio multiplied by height of the error bar
                 y *= fheight - 15; // -15 is just a vertical offset
@@ -242,10 +243,9 @@ public class ErrorBar extends JPanel {
 
 			// Find out which error/warning the user has clicked
 			// and then scroll to that
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void mouseClicked(final MouseEvent e) {
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           protected Object doInBackground() throws Exception {
             for (ErrorMarker eMarker : errorPoints) {
@@ -275,11 +275,10 @@ public class ErrorBar extends JPanel {
 		// Tooltip on hover
 		this.addMouseMotionListener(new MouseMotionListener() {
 
-			@SuppressWarnings("rawtypes")
 			@Override
 			public void mouseMoved(final MouseEvent evt) {
         // System.out.println(e);
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           protected Object doInBackground() throws Exception {
             for (ErrorMarker eMarker : errorPoints) {

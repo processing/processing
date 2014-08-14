@@ -1,19 +1,17 @@
 package processing.mode.experimental;
 
-import static processing.mode.experimental.ExperimentalMode.log;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.io.File;
 import java.util.List;
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -36,8 +34,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-import processing.app.Base;
-
 public class SketchOutline {
   protected JFrame frmOutlineView;
 
@@ -52,10 +48,21 @@ public class SketchOutline {
   protected JTextField searchField;
 
   protected DebugEditor editor;
+  
+  protected boolean internalSelection = false;
 
   public SketchOutline(DefaultMutableTreeNode codeTree, ErrorCheckerService ecs) {
     errorCheckerService = ecs;
     editor = ecs.getEditor();
+    soNode = new DefaultMutableTreeNode();
+    generateSketchOutlineTree(soNode, codeTree);
+    soNode = (DefaultMutableTreeNode) soNode.getChildAt(0);
+    tempNode = soNode;
+    soTree = new JTree(soNode);
+    createGUI();
+  }
+  
+  private void createGUI(){
     frmOutlineView = new JFrame();
     frmOutlineView.setAlwaysOnTop(true);
     frmOutlineView.setUndecorated(true);
@@ -79,11 +86,7 @@ public class SketchOutline {
     panelTop.add(searchField);
 
     jsp = new JScrollPane();
-    soNode = new DefaultMutableTreeNode();
-    generateSketchOutlineTree(soNode, codeTree);
-    soNode = (DefaultMutableTreeNode) soNode.getChildAt(0);
-    tempNode = soNode;
-    soTree = new JTree(soNode);
+    
     soTree.getSelectionModel()
         .setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     soTree.setRootVisible(false);
@@ -112,15 +115,12 @@ public class SketchOutline {
         .min(errorCheckerService.getEditor().ta.getHeight(), frmOutlineView.getHeight())));    
     frmOutlineView.setLocation(tp.x
                                    + errorCheckerService.getEditor().ta
-                                       .getWidth() - frmOutlineView.getWidth(),
+                                       .getWidth()/2 - frmOutlineView.getWidth()/2,
                                frmOutlineView.getY()
                                    + (editor.ta.getHeight() - frmOutlineView
                                        .getHeight()) / 2);
     addListeners();
-
   }
-
-  protected boolean internalSelection = false;
 
   protected void addListeners() {
 
@@ -200,7 +200,7 @@ public class SketchOutline {
       }
       
       private void updateSelection(){
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
           protected Object doInBackground() throws Exception {
             String text = searchField.getText().toLowerCase();
             tempNode = new DefaultMutableTreeNode();
@@ -240,29 +240,40 @@ public class SketchOutline {
           return;
         }
         // log(e);
-        SwingWorker worker = new SwingWorker() {
-
-          protected Object doInBackground() throws Exception {
-            return null;
-          }
-
-          protected void done() {
-            if (soTree.getLastSelectedPathComponent() == null) {
-              return;
-            }
-            DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
-                .getLastSelectedPathComponent();
-            if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-              ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-              awrap.highlightNode(errorCheckerService.astGenerator);
-              // log(awrap);
-              //errorCheckerService.highlightNode(awrap);
-            }
-          }
-        };
-        worker.execute();
+        scrollToNode();
       }
     });
+    
+    soTree.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent me) {
+        scrollToNode();
+      }
+    });
+  }
+  
+  private void scrollToNode(){
+    SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+
+      protected Object doInBackground() throws Exception {
+        return null;
+      }
+
+      protected void done() {
+        if (soTree.getLastSelectedPathComponent() == null) {
+          return;
+        }
+        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
+            .getLastSelectedPathComponent();
+        if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+          ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+          awrap.highlightNode(errorCheckerService.astGenerator);
+          // log(awrap);
+          //errorCheckerService.highlightNode(awrap);
+          close();
+        }
+      }
+    };
+    worker.execute();
   }
 
   protected boolean filterTree(String prefix, DefaultMutableTreeNode tree,

@@ -23,6 +23,8 @@ public class MethClaInterface
   // general Oscillator methods
     
   public native void oscSet(float freq, float amp, float add, float pos, int[] nodeId);
+
+  public native void oscAudioSet(int[] freqId, int[] ampId, int[] addId, int[] posId, int[] nodeId);
   
   // Sine Wave Oscillator
     
@@ -48,6 +50,12 @@ public class MethClaInterface
   
   public native void pulseSet(float freq, float width, float amp, float add, float pos, int[] nodeId); 
   
+  // Audio In
+
+  public native int[] audioInPlay(float amp, float add, float pos, int in);
+
+  public native void audioInSet(float amp, float add, float pos, int[] nodeId);
+
   // SoundFile
   
   public native int[] soundFileInfo(String path);
@@ -60,41 +68,62 @@ public class MethClaInterface
   
   public native void soundFileSetStereo(float rate, float amp, float add, int[] nodeId);  
   
-  // Noise
+  // White Noise
   
   public native int[] whiteNoisePlay(float amp, float add, float pos);
   
   public native void whiteNoiseSet(float amp, float add, float pos, int[] nodeId);
   
+  // Pink Noise
+  
+  public native int[] pinkNoisePlay(float amp, float add, float pos);
+  
+  public native void pinkNoiseSet(float amp, float add, float pos, int[] nodeId);
+
+  // Brown Noise
+    
+  public native int[] brownNoisePlay(float amp, float add, float pos);
+  
+  public native void brownNoiseSet(float amp, float add, float pos, int[] nodeId);
+
   // Envelope
     
-  public native int envelopePlay(int[] input, float attackTime, float sustainTime, float sustainLevel, float releaseTime);
+  public native int[] envelopePlay(int[] input, float attackTime, float sustainTime, float sustainLevel, float releaseTime);
   
   public native int doneAfter(float seconds);
     
   // Filters
     
-  public native int highPassPlay(int[] input, float freq, float res);
+  public native int[] highPassPlay(int[] input, float freq);
 
-  public native int lowPassPlay(int[] input, float freq, float res);
+  public native int[] lowPassPlay(int[] input, float freq);
   
-  public native int bandPassPlay(int[] input, float freq, float res);
+  public native int[] bandPassPlay(int[] input, float freq, float bw);
 
-  public native void filterSet(float freq, float res, int nodeId);
+  public native void filterSet(float freq, int nodeId);
+
+  public native void filterBwSet(float freq, float bw, int nodeId);
+
 
   // Delay
 
-  public native int delayPlay(int[] input, float maxDelayTime, float delayTime, float feedBack);
+  public native int[] delayPlay(int[] input, float maxDelayTime, float delayTime, float feedBack);
   
   public native void delaySet(float delayTime, float feedBack, int nodeId);
 
+  // Reverb
+
+  public native int[] reverbPlay(int[] input, float room, float damp, float wet);
+  
+  public native void reverbSet(float room, float damp, float wet, int nodeId);
+  
   // Patch cable
   
   //public native int out(int[] in, int[] out);
   
   // Pan + Out
   
-  // public native int out(float pos, int nodeId);  
+  public native void out(int out, int[] nodeId);  
   
   // connect
   

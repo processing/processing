@@ -36,10 +36,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.DefaultListModel;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.text.BadLocationException;
 
+import processing.app.Base;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaDefaults;
 /**
@@ -54,7 +53,7 @@ public class TextArea extends JEditTextArea {
   protected DebugEditor editor; // the editor
 
   // line properties
-  protected Map<Integer, Color> lineColors = new HashMap(); // contains line background colors
+  protected Map<Integer, Color> lineColors = new HashMap<Integer, Color>(); // contains line background colors
 
   // left-hand gutter properties
   protected int gutterPadding = 3; // [px] space added to the left and right of gutter chars
@@ -67,9 +66,9 @@ public class TextArea extends JEditTextArea {
 
   protected String currentLineMarker = "->"; // the text marker for highlighting the current line in the gutter
 
-  protected Map<Integer, String> gutterText = new HashMap(); // maps line index to gutter text
+  protected Map<Integer, String> gutterText = new HashMap<Integer, String>(); // maps line index to gutter text
 
-  protected Map<Integer, Color> gutterTextColors = new HashMap(); // maps line index to gutter text color
+  protected Map<Integer, Color> gutterTextColors = new HashMap<Integer, Color>(); // maps line index to gutter text color
 
   protected TextAreaPainter customPainter;
 
@@ -150,7 +149,7 @@ public class TextArea extends JEditTextArea {
    * Code completion begins from here.
    */
   public void processKeyEvent(KeyEvent evt) {
-    
+    if(Base.isMacOS() && evt.isControlDown()) System.out.println("Ctrl down: " + evt);
     if(evt.getKeyCode() == KeyEvent.VK_ESCAPE){
       if(suggestion != null){
         if(suggestion.isVisible()){
@@ -161,18 +160,21 @@ public class TextArea extends JEditTextArea {
         }
       }
     }
-    if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+    else if(evt.getKeyCode() == KeyEvent.VK_ENTER && evt.getID() == KeyEvent.KEY_PRESSED){
       if (suggestion != null) {
         if (suggestion.isVisible()) {
           if (suggestion.insertSelection()) {
-            hideSuggestion(); // Kill it!  
+            //hideSuggestion(); // Kill it!  
             evt.consume();
+            // Still try to show suggestions after inserting if it's
+            // the case of overloaded methods. See #2755
+            if(suggestion.isVisible())
+              prepareSuggestions(evt);
             return;
           }
         }
       }
     }
-    
     
     if (evt.getID() == KeyEvent.KEY_PRESSED) {
       switch (evt.getKeyCode()) {
@@ -208,58 +210,81 @@ public class TextArea extends JEditTextArea {
     }
     super.processKeyEvent(evt);
 
+    if (editor.hasJavaTabs) return; // code completion disabled if java tabs
+    
     if (evt.getID() == KeyEvent.KEY_TYPED) {
-      
       char keyChar = evt.getKeyChar();
-      if (keyChar == KeyEvent.VK_ENTER || keyChar == KeyEvent.VK_ESCAPE) {
-        return;
-      } else if (keyChar == KeyEvent.VK_TAB
-          || keyChar == KeyEvent.CHAR_UNDEFINED) {
+      if (keyChar == KeyEvent.VK_ENTER || 
+          keyChar == KeyEvent.VK_ESCAPE ||
+          keyChar == KeyEvent.VK_TAB ||
+          keyChar == KeyEvent.CHAR_UNDEFINED) {
         return;
       }
+      else if (keyChar == ')') {
+        hideSuggestion(); // See #2741 
+        return;
+      }
+      
       final KeyEvent evt2 = evt;
-      if (evt.isAltDown() || evt.isControlDown() || evt.isMetaDown()) {
-        if (ExperimentalMode.ccTriggerEnabled && keyChar == KeyEvent.VK_SPACE
-            && (evt.isControlDown() || evt.isMetaDown())) {
-          SwingWorker worker = new SwingWorker() {
+      if (keyChar == ' ') {
+        if (!Base.isMacOS() && ExperimentalMode.ccTriggerEnabled &&
+        (evt.isControlDown() || evt.isMetaDown())) {
+          SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
             protected Object doInBackground() throws Exception {
               // Provide completions only if it's enabled
               if (ExperimentalMode.codeCompletionsEnabled
                   && ExperimentalMode.ccTriggerEnabled) {
                 getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
-                log("[KeyEvent]" + evt2.getKeyChar()
-                    + "  |Prediction started: " + System.currentTimeMillis());
-                log("Typing: " + fetchPhrase(evt2) + " "
-                    + (evt2.getKeyChar() == KeyEvent.VK_ENTER) + " T: "
-                    + System.currentTimeMillis());
+                log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started");
+                log("Typing: " + fetchPhrase(evt2));
               }
               return null;
             }
           };
           worker.execute();
+        } else {
+          hideSuggestion(); // hide on spacebar
         }
-        return;
+      } else {
+        prepareSuggestions(evt2);
       }
-            
-      SwingWorker worker = new SwingWorker() {
+    }
+    // #2699 - Special case for OS X, where Ctrl-Space is not detected as Key_Typed -_-
+    else if (Base.isMacOS() && evt.getID() == KeyEvent.KEY_RELEASED
+        && evt.getKeyCode() == KeyEvent.VK_SPACE && evt.isControlDown()) {
+      final KeyEvent evt2 = evt;
+      SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
         protected Object doInBackground() throws Exception {
-          // errorCheckerService.runManualErrorCheck();
           // Provide completions only if it's enabled
           if (ExperimentalMode.codeCompletionsEnabled
-              && !ExperimentalMode.ccTriggerEnabled) {
-            log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started: "
-                + System.currentTimeMillis());
-            log("Typing: " + fetchPhrase(evt2) + " "
-                + (evt2.getKeyChar() == KeyEvent.VK_ENTER) + " T: "
-                + System.currentTimeMillis());
+              && ExperimentalMode.ccTriggerEnabled) {
+            log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
+            log("Typing: " + fetchPhrase(evt2));
           }
           return null;
         }
       };
       worker.execute();
     }
+  }
 
-    
+  /**
+   * Kickstart auto-complete suggestions
+   * @param evt - KeyEvent
+   */
+  private void prepareSuggestions(final KeyEvent evt){
+    SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+      protected Object doInBackground() throws Exception {
+        // Provide completions only if it's enabled
+        if (ExperimentalMode.codeCompletionsEnabled
+            && (!ExperimentalMode.ccTriggerEnabled || suggestion.isVisible())) {
+          log("[KeyEvent]" + evt.getKeyChar() + "  |Prediction started");
+          log("Typing: " + fetchPhrase(evt));
+        }
+        return null;
+      }
+    };
+    worker.execute();
   }
  
   /**
@@ -346,16 +371,34 @@ public class TextArea extends JEditTextArea {
       return null;
     String s = getLineText(line);
     log2("lin " + line);
-    /*
-     * if (s == null) return null; else if (s.length() == 0) return null;
-     */
-//    else {
+
     //log2(s + " len " + s.length());
 
-    int x = getCaretPosition() - getLineStartOffset(line) - 1, x2 = x + 1, x1 = x - 1;
-    if(x >= s.length() || x < 0)
+    int x = getCaretPosition() - getLineStartOffset(line) - 1, x1 = x - 1;
+    if(x >= s.length() || x < 0) {
+      //log("X is " + x + ". Returning null");
+      hideSuggestion();
       return null; //TODO: Does this check cause problems? Verify.
+    }
+    
     log2(" x char: " + s.charAt(x));
+    
+    if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_'
+        || s.charAt(x) == '(' || s.charAt(x) == '.')) {
+      //log("Char before caret isn't a letter/digit/_(. so no predictions");
+      hideSuggestion();
+      return null;
+    } else if (x > 0 && (s.charAt(x - 1) == ' ' || s.charAt(x - 1) == '(')
+        && Character.isDigit(s.charAt(x))) {
+      //log("Char before caret isn't a letter, but ' ' or '(', so no predictions");
+      hideSuggestion(); // See #2755, Option 2 comment
+      return null;
+    } else if (x == 0){
+      //log("X is zero");
+      hideSuggestion();
+      return null;
+    }
+    
     //int xLS = off - getLineStartNonWhiteSpaceOffset(line);    
 
     String word = (x < s.length() ? s.charAt(x) : "") + "";
@@ -371,10 +414,7 @@ public class TextArea extends JEditTextArea {
           + errorCheckerService.mainClassOffset,0);
       return word;
     }
-//    if (keyChar == KeyEvent.VK_BACK_SPACE || keyChar == KeyEvent.VK_DELETE)
-//      ; // accepted these keys
-//    else if (!(Character.isLetterOrDigit(keyChar) || keyChar == '_' || keyChar == '$'))
-//      return null;
+
     int i = 0;
     int closeB = 0;
 
@@ -425,7 +465,6 @@ public class TextArea extends JEditTextArea {
         break;
       }
     }
-    //    if (keyChar != KeyEvent.CHAR_UNDEFINED)
 
     if (Character.isDigit(word.charAt(0)))
       return null;
@@ -652,7 +691,9 @@ public class TextArea extends JEditTextArea {
       }
       
       if (me.getButton() == MouseEvent.BUTTON3) {
-        fetchPhrase(me);
+        if(!editor.hasJavaTabs){ // tooltips, etc disabled for java tabs
+          fetchPhrase(me);
+        }
       }
 
       // forward to standard listeners
@@ -745,6 +786,9 @@ public class TextArea extends JEditTextArea {
     });
   }*/
 
+  
+  // appears unused, removed when looking to change completion trigger [fry 140801]
+  /*
   public void showSuggestionLater(final DefaultListModel defListModel, final String word) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -754,6 +798,7 @@ public class TextArea extends JEditTextArea {
 
     });
   }
+  */
 
   /**
    * Calculates location of caret and displays the suggestion popup at the location. 
@@ -761,7 +806,7 @@ public class TextArea extends JEditTextArea {
    * @param defListModel
    * @param subWord
    */
-  protected void showSuggestion(DefaultListModel defListModel,String subWord) {
+  protected void showSuggestion(DefaultListModel<CompletionCandidate> defListModel,String subWord) {
     hideSuggestion();
     if (defListModel.size() == 0) {
       log("TextArea: No suggestions to show.");
@@ -774,7 +819,7 @@ public class TextArea extends JEditTextArea {
           - getLineStartOffset(getCaretLine()));
       location.y = lineToY(getCaretLine())
           + getPainter().getFontMetrics().getHeight() + getPainter().getFontMetrics().getDescent();
-      log("TA position: " + location);
+      //log("TA position: " + location);
     } catch (Exception e2) {
       e2.printStackTrace();
       return;
@@ -805,7 +850,7 @@ public class TextArea extends JEditTextArea {
   protected void hideSuggestion() {
     if (suggestion != null) {
       suggestion.hide();
-      log("Suggestion hidden.");
+      //log("Suggestion hidden.");
       suggestion = null;
     }
   }

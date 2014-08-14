@@ -1,6 +1,6 @@
 package processing.sound;
 
-public interface SoundObject {
+interface SoundObject {
 	
 	//public int numBusses=128;
 	//public int topBus=0;

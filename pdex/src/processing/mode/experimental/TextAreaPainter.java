@@ -87,7 +87,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     ta = textArea;
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent evt) {
-//        		log( " Meta,Ctrl "+ (evt.getModifiers() & ctrlMask));
+        if(ta.editor.hasJavaTabs) return; // Ctrl + Click disabled for java tabs
         if (evt.getButton() == MouseEvent.BUTTON1) {
           if (evt.isControlDown() || evt.isMetaDown())
             handleCtrlClick(evt);
@@ -358,7 +358,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     // horizontalAdjustment);
     int y = ta.lineToY(line);
     y += fm.getLeading() + fm.getMaxDescent();
-    int height = fm.getHeight();
+//    int height = fm.getHeight();
     int start = ta.getLineStartOffset(line) + problem.getPDELineStartOffset();
     int pLength = problem.getPDELineStopOffset() + 1
         - problem.getPDELineStartOffset();
@@ -457,6 +457,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
   }
 
   public String getToolTipText(java.awt.event.MouseEvent evt) {
+    if(ta.editor.hasJavaTabs) return null; // disabled for java tabs
     int off = ta.xyToOffset(evt.getX(), evt.getY());
     if (off < 0)
       return null;
@@ -513,8 +514,8 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
       String tooltipText = errorCheckerService.getASTGenerator()
           .getLabelForASTNode(line, word, xLS);
 
-      log(errorCheckerService.mainClassOffset + " MCO "
-      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
+//      log(errorCheckerService.mainClassOffset + " MCO "
+//      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
       if (tooltipText != null)
         return tooltipText;
       return word;
@@ -623,7 +624,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 
 		for (int tab=0; tab<code.length; tab++)
 		{
-			String tabCode = ((DebugEditor)ta.editor).baseCode[tab];
+			String tabCode = ta.editor.baseCode[tab];
 			ta.setText(tabCode);
 			for (Handle n : handles[tab])
 			{
@@ -657,7 +658,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 		int charInc = 0;
 		int currentTab = ta.editor.getSketch().getCurrentCodeIndex();
 		SketchCode sc = ta.editor.getSketch().getCode(currentTab);
-		String code = ((DebugEditor)ta.editor).baseCode[currentTab];
+		String code = ta.editor.baseCode[currentTab];
 
 		for (Handle n : handles[currentTab])
 		{

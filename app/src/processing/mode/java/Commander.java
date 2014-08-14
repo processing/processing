@@ -86,6 +86,7 @@ public class Commander implements RunnerListener {
     String pdePath = null;  // path to the .pde file
     String outputPath = null;
     File outputFolder = null;
+    boolean outputSet = false;  // set an output folder
     boolean force = false;  // replace that no good output folder
 //    String preferencesPath = null;
     int platform = PApplet.platform; // default to this platform
@@ -172,6 +173,7 @@ public class Commander implements RunnerListener {
 //        preferencesPath = arg.substring(preferencesArg.length());
 
       } else if (arg.startsWith(outputArg)) {
+        outputSet = true;
         outputPath = arg.substring(outputArg.length());
 
       } else if (arg.equals(forceArg)) {
@@ -194,22 +196,24 @@ public class Commander implements RunnerListener {
       System.exit(0);
     }
 
-    if (outputPath == null) {
-      complainAndQuit("An output path must be specified.", true);
-    }
-
-    outputFolder = new File(outputPath);
-    if (outputFolder.exists()) {
-      if (force) {
-        Base.removeDir(outputFolder);
-      } else {
-        complainAndQuit("The output folder already exists. " +
-                                    "Use --force to remove it.", false);
+    if (outputSet) {
+      if (outputPath == null) {
+        complainAndQuit("An output path must be specified.", true);
       }
-    }
 
-    if (!outputFolder.mkdirs()) {
-      complainAndQuit("Could not create the output folder.", false);
+      outputFolder = new File(outputPath);
+      if (outputFolder.exists()) {
+        if (force) {
+          Base.removeDir(outputFolder);
+        } else {
+          complainAndQuit("The output folder already exists. " +
+                          "Use --force to remove it.", false);
+        }
+      }
+
+      if (!outputFolder.mkdirs()) {
+        complainAndQuit("Could not create the output folder.", false);
+      }
     }
 
 //    // run static initialization that grabs all the prefs
@@ -224,13 +228,17 @@ public class Commander implements RunnerListener {
     if (sketchPath == null) {
       complainAndQuit("No sketch path specified.", true);
 
-    } else if (outputPath.equals(sketchPath)) {
-      complainAndQuit("The sketch path and output path cannot be identical.", false);
-
 //    } else if (!pdePath.toLowerCase().endsWith(".pde")) {
 //      complainAndQuit("Sketch path must point to the main .pde file.", false);
 
     } else {
+
+      if (outputSet) {
+        if (outputPath.equals(sketchPath)) {
+          complainAndQuit("The sketch path and output path cannot be identical.", false);
+        }
+      }
+
       boolean success = false;
 
 //      JavaMode javaMode =
@@ -240,6 +248,11 @@ public class Commander implements RunnerListener {
                               "processing.mode.java.JavaMode").getMode();
       try {
         sketch = new Sketch(pdePath, javaMode);
+
+        if (!outputSet) {
+          outputFolder = sketch.makeTempFolder();
+        }
+
         if (task == BUILD || task == RUN || task == PRESENT) {
           JavaBuild build = new JavaBuild(sketch);
           File srcFolder = new File(outputFolder, "source");
@@ -346,7 +359,7 @@ public class Commander implements RunnerListener {
     out.println("--help               Show this help text. Congratulations.");
     out.println();
     out.println("--sketch=<name>      Specify the sketch folder (required)");
-    out.println("--output=<name>      Specify the output folder (required and");
+    out.println("--output=<name>      Specify the output folder (optional and");
     out.println("                     cannot be the same as the sketch folder.)");
     out.println();
     out.println("--force              The sketch will not build if the output");

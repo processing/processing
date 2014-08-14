@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 import processing.app.Base;
+import processing.app.Library;
 import processing.core.PApplet;
 
 
@@ -35,7 +36,7 @@ public class ContributionListing {
   static final String LISTING_URL =
     "http://download.processing.org/contributions.txt";
 
-  static ContributionListing singleInstance;
+  static volatile ContributionListing singleInstance;
 
   File listingFile;
   ArrayList<ContributionChangeListener> listeners;
@@ -63,7 +64,11 @@ public class ContributionListing {
 
   static ContributionListing getInstance() {
     if (singleInstance == null) {
-      singleInstance = new ContributionListing();
+      synchronized (ContributionListing.class) {
+        if (singleInstance == null) {
+          singleInstance = new ContributionListing();
+        }
+      }
     }
     return singleInstance;
   }
@@ -165,7 +170,9 @@ public class ContributionListing {
 
 
   protected AvailableContribution getAvailableContribution(Contribution info) {
-    for (AvailableContribution advertised : advertisedContributions) {
+    Iterator<AvailableContribution> iter = advertisedContributions.iterator();
+    while(iter.hasNext()) {
+      AvailableContribution advertised = iter.next();
       if (advertised.getType() == info.getType() &&
           advertised.getName().equals(info.getName())) {
         return advertised;
@@ -367,7 +374,7 @@ public class ContributionListing {
         }
         downloadingListingLock.unlock();
       }
-    }).start();
+    }, "Contribution List Downloader").start();
   }
 
 
@@ -377,6 +384,19 @@ public class ContributionListing {
         return true;
       }
     }
+    return false;
+  }
+  
+  boolean hasUpdates(Base base) {
+    for (ModeContribution m : base.getModeContribs())
+      if (hasUpdates(m))
+        return true;
+    for (Library l : base.getActiveEditor().getMode().contribLibraries)
+      if (hasUpdates(l))
+        return true;
+    for (ToolContribution t : base.getActiveEditor().contribTools)
+      if (hasUpdates(t))
+        return true;
     return false;
   }
 
@@ -391,6 +411,24 @@ public class ContributionListing {
     }
     return false;
   }
+
+
+  String getLatestVersion(Contribution contribution) {
+    Contribution newestContrib = getAvailableContribution(contribution);
+    String latestVersion = newestContrib.getPrettyVersion();
+    if (latestVersion != null && !latestVersion.isEmpty()) {
+      if (latestVersion.toLowerCase().startsWith("build")) // For Python mode
+        return ("v" + latestVersion.substring(5, latestVersion.indexOf(','))
+            .trim());
+      else if (latestVersion.toLowerCase().startsWith("v")) // For ketai library
+        return latestVersion;
+      else
+        return ("v" + latestVersion);
+    }
+    else
+      return null;
+  }
+  
 
 
   boolean hasDownloadedLatestList() {

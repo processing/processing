@@ -35,7 +35,7 @@ public class LineHighlight implements LineListener {
     protected String marker; //
     protected Color markerColor;
     protected int priority = 0;
-    protected static Set<LineHighlight> allHighlights = new HashSet();
+    protected static Set<LineHighlight> allHighlights = new HashSet<LineHighlight>();
 
     protected static boolean isHighestPriority(LineHighlight hl) {
         for (LineHighlight check : allHighlights) {

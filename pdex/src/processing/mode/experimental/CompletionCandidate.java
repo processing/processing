@@ -1,5 +1,4 @@
 package processing.mode.experimental;
-import static processing.mode.experimental.ExperimentalMode.log;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -64,7 +63,8 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
       type = LOCAL_FIELD;
     else
       type = LOCAL_VAR;
-    label = svd.getName() + " : " + svd.getType();    
+    label = svd.getName() + " : " + svd.getType();
+    wrappedObject = svd;
   }
   
   public CompletionCandidate(VariableDeclarationFragment  vdf) {
@@ -75,6 +75,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     else
       type = LOCAL_VAR;
     label = vdf.getName() + " : " + ASTGenerator.extracTypeInfo2(vdf);
+    wrappedObject = vdf;
   }
   
   public CompletionCandidate(MethodDeclaration method) {
@@ -101,6 +102,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     cstr.append(")");
     this.label = label.toString();
     this.completionString = cstr.toString();
+    wrappedObject = method;
   }
 
   public CompletionCandidate(TypeDeclaration td){
@@ -108,6 +110,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     elementName = td.getName().toString();
     label = elementName;
     completionString = elementName;
+    wrappedObject = td;
   }
 
   public CompletionCandidate(Field f) {
@@ -149,12 +152,72 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
   public int getType() {
     return type;
   }
+  
+  public String getLabel() {
+    return label;
+  }
+
+  public void setLabel(String label) {
+    this.label = label;
+  }
+
+  public void setCompletionString(String completionString) {
+    this.completionString = completionString;
+  }
 
   public int compareTo(CompletionCandidate cc) {
     if(type != cc.getType()){
       return cc.getType() - type;
     }
     return (elementName.compareTo(cc.getElementName()));
+  }
+  
+  public void regenerateCompletionString(){
+    if(wrappedObject instanceof MethodDeclaration) {
+      MethodDeclaration method = (MethodDeclaration)wrappedObject;
+      List<ASTNode> params = (List<ASTNode>) method
+          .getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
+      StringBuffer label = new StringBuffer(elementName + "(");
+      StringBuffer cstr = new StringBuffer(method.getName() + "(");
+      for (int i = 0; i < params.size(); i++) {
+        label.append(params.get(i).toString());
+        if (i < params.size() - 1) {
+          label.append(",");
+          cstr.append(",");
+        }
+      }
+      if (params.size() == 1) {
+        cstr.append(' ');
+      }
+      label.append(")");
+      if (method.getReturnType2() != null)
+        label.append(" : " + method.getReturnType2());
+      cstr.append(")");
+      this.label = label.toString();
+      this.completionString = cstr.toString();
+    }
+   else if (wrappedObject instanceof Method) {
+     Method method = (Method)wrappedObject;
+     StringBuffer label = new StringBuffer(method.getName() + "(");
+     StringBuffer cstr = new StringBuffer(method.getName() + "(");
+     for (int i = 0; i < method.getParameterTypes().length; i++) {
+       label.append(method.getParameterTypes()[i].getSimpleName());
+       if (i < method.getParameterTypes().length - 1) {
+         label.append(",");
+         cstr.append(",");
+       }
+     }
+     if(method.getParameterTypes().length == 1) {
+       cstr.append(' ');
+     }
+     label.append(")");
+     if(method.getReturnType() != null)
+       label.append(" : " + method.getReturnType().getSimpleName());
+     label.append(" - " + method.getDeclaringClass().getSimpleName());
+     cstr.append(")");
+     this.label = label.toString();
+     this.completionString = cstr.toString();
+   }
   }
 
 }

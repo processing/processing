@@ -498,7 +498,7 @@ public class Library extends LocalContribution {
       for (String subfolderName : list) {
         File subfolder = new File(folder, subfolderName);
 
-        if (!libraries.contains(subfolder)) {
+        if (!librariesFolders.contains(subfolder)) {
           ArrayList<File> discoveredLibFolders = new ArrayList<File>();
           discover(subfolder, discoveredLibFolders);
 

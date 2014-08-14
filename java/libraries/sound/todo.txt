@@ -1,0 +1,42 @@
+// // // // // // // // // // // // // // // // // // // // //
+
+2.0 SOUND
+
+  FOR RELEASE (GSoC)
+
+  - Improve/make examples  
+
+  Bugs (GSoC):
+  + Fix FFT Crash
+  + Fix Low Pass Distortion
+  + Review Filter Algorithms, exclude Resonance, introduce Bandwith for BPass
+  + Fix problem of passing effects to Analyzers 
+  + Make audio input work
+  - Use Patch Cables for signal splitting for effects
+
+  Features (GSoC):  
+  - Compile Windows Version
+  - Make oscillators modulatable
+  - Bandlimit oscillators
+  - Introduce wet/dry for Delay
+  - Interpolate control signals
+  + Overload Filter Functions
+  - If you loop a sample and use jump make it play from the beginning
+  
+  Documentation:
+  - Write reference for Sound for Processing website
+  - Review Processing Book 
+  
+  NICE
+  - Pitchtracker (GSoC optional)
+  - isPlaying method for Synths
+  - helper functions (ampToDB, midiToFreq etc..)
+  - make non-bandlimited a pro option
+
+
+  EYE ON THE FUTURE
+  - Multichannel panning
+  - More Descriptors (beat tracking etc.?)
+  - Separate audio scheduling loop
+  
+// // // // // // // // // // // // // // // // // // // // //

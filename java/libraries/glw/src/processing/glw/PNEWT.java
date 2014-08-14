@@ -174,7 +174,7 @@ public class PNEWT extends PJOGL {
   }
 
   
-  private void displayWindows() {
+  static private void displayWindows() {
     int totalCount = 0;
     int realizedCount = 0;
     for (GLWindow win: GLW.windows.values()) {

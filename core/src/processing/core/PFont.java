@@ -56,8 +56,8 @@ import java.util.HashMap;
  * </PRE>
  * @webref typography
  * @see PApplet#loadFont(String)
+ * @see PApplet#createFont(String, float, boolean, char[])
  * @see PGraphics#textFont(PFont)
- * @see PGraphics#text(char, float, float)
  */
 public class PFont implements PConstants {
 

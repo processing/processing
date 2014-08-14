@@ -103,7 +103,7 @@ public class JEditTextArea extends JComponent
     }
 
     // Initialize some misc. stuff
-    painter = new TextAreaPainter(this, defaults);
+    painter = createPainter(defaults);
     documentHandler = new DocumentHandler();
     eventListenerList = new EventListenerList();
     caretEvent = new MutableCaretEvent();
@@ -173,6 +173,16 @@ public class JEditTextArea extends JComponent
         }
       }
     });
+  }
+
+
+  /**
+   * Override this to provide your own painter for this {@link JEditTextArea}.
+   * @param defaults
+   * @return a newly constructed {@link TextAreaPainter}.
+   */
+  protected TextAreaPainter createPainter(final TextAreaDefaults defaults) {
+    return new TextAreaPainter(this, defaults);
   }
 
 
@@ -404,6 +414,11 @@ public class JEditTextArea extends JComponent
    * updating the scroll bars.
    */
   public void setFirstLine(int firstLine) {
+    if(firstLine < 0 || firstLine > getLineCount()) {
+      throw new IllegalArgumentException("First line out of range: "
+        + firstLine + " [0, " + getLineCount() + "]");
+    }
+
     if (firstLine == this.firstLine) return;
 
     this.firstLine = firstLine;
@@ -2076,7 +2091,7 @@ public class JEditTextArea extends JComponent
     // do magic stuff
     else if(line < firstLine)
     {
-      setFirstLine(firstLine + count);
+      setFirstLine(line);
     }
     // end of magic stuff
     else

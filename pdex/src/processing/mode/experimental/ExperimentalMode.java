@@ -116,7 +116,8 @@ public class ExperimentalMode extends JavaMode {
 
   @Override
   public String getTitle() {
-    return "PDE X";
+    //return "PDE X";
+    return "Java";
   }
   
   
@@ -140,7 +141,7 @@ public class ExperimentalMode extends JavaMode {
       debugOutputEnabled = false, errorLogsEnabled = false,
       autoSaveEnabled = true, autoSavePromptEnabled = true,
       defaultAutoSaveEnabled = true, // ,untitledAutoSaveEnabled;
-      ccTriggerEnabled = false;
+      ccTriggerEnabled = false, importSuggestEnabled = true;
   public static int autoSaveInterval = 3; //in minutes
   
   /**
@@ -157,7 +158,8 @@ public class ExperimentalMode extends JavaMode {
       prefAutoSave = "pdex.autoSave.autoSaveEnabled", // prefUntitledAutoSave = "pdex.autoSave.untitledAutoSaveEnabled", 
       prefAutoSavePrompt = "pdex.autoSave.promptDisplay",
       prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault",
-      prefCCTriggerEnabled = "pdex.ccTriggerEnabled";
+      prefCCTriggerEnabled = "pdex.ccTriggerEnabled",
+      prefImportSuggestEnabled = "pdex.importSuggestEnabled";
 
   // TweakMode code (Preferences)
   volatile public static boolean enableTweak = false;
@@ -177,9 +179,9 @@ public class ExperimentalMode extends JavaMode {
     autoSavePromptEnabled = Preferences.getBoolean(prefAutoSavePrompt);
     defaultAutoSaveEnabled = Preferences.getBoolean(prefDefaultAutoSave);
     ccTriggerEnabled = Preferences.getBoolean(prefCCTriggerEnabled);
-
-    // TweakMode code
-    enableTweak = Preferences.getBoolean(prefEnableTweak);
+    importSuggestEnabled = Preferences.getBoolean(prefImportSuggestEnabled);
+    // TweakMode code - not a sticky preference anymore
+    // enableTweak = Preferences.getBoolean(prefEnableTweak);
   }
 
   public void savePreferences() {
@@ -195,9 +197,9 @@ public class ExperimentalMode extends JavaMode {
     Preferences.setBoolean(prefAutoSavePrompt, autoSavePromptEnabled);
     Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
     Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
-
-    // TweakMode code
-    Preferences.setBoolean(prefEnableTweak, enableTweak);
+    Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
+    // TweakMode code - not a sticky preference anymore
+    // Preferences.setBoolean(prefEnableTweak, enableTweak);
   }
 
   public void ensurePrefsExist() {
@@ -224,11 +226,13 @@ public class ExperimentalMode extends JavaMode {
       Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
     if (Preferences.get(prefCCTriggerEnabled) == null)
       Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
+    if (Preferences.get(prefImportSuggestEnabled) == null)
+      Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
 
-    // TweakMode code
-    if (Preferences.get(prefEnableTweak) == null) {
-    	Preferences.setBoolean(prefEnableTweak, enableTweak);
-    }
+    // TweakMode code - not a sticky preference anymore
+//    if (Preferences.get(prefEnableTweak) == null) {
+//    	Preferences.setBoolean(prefEnableTweak, enableTweak);
+//    }
   }
 
 
@@ -289,7 +293,7 @@ public class ExperimentalMode extends JavaMode {
         + "field_protected_obj.png"); 
     localVarIcon = new ImageIcon(iconPath + File.separator
                               + "field_default_obj.png");
-    log("Icons loaded");
+    // log("Icons loaded");
   }
 
     
@@ -343,6 +347,7 @@ public class ExperimentalMode extends JavaMode {
 	public Runner handleRun(Sketch sketch, RunnerListener listener) throws SketchException
 	{
 		if (enableTweak) {
+		  enableTweak = false;
 			return handleTweakPresentOrRun(sketch, listener, false);
 		}
 		else {
@@ -366,6 +371,7 @@ public class ExperimentalMode extends JavaMode {
 	public Runner handlePresent(Sketch sketch, RunnerListener listener) throws SketchException
 	{
 		if (enableTweak) {
+		  enableTweak = false;
 			return handleTweakPresentOrRun(sketch, listener, true);
 		}
 		else {

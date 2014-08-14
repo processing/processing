@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="mode/com.ibm.icu_4.4.2.v20110823.jar"/>
-	<classpathentry kind="lib" path="mode/CompilationChecker.jar"/>
 	<classpathentry kind="lib" path="mode/jdi.jar"/>
 	<classpathentry kind="lib" path="mode/jdimodel.jar"/>
 	<classpathentry kind="lib" path="mode/org.eclipse.core.contenttype_3.4.200.v20120523-2004.jar"/>

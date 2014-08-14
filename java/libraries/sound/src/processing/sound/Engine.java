@@ -32,7 +32,7 @@ public class Engine {
 	private static int m_bufferSize=512;
 
     private Engine() {
-    	welcome();
+    	//welcome();
     	methCla = new MethClaInterface();
 		methCla.engineNew(m_sampleRate, m_bufferSize);
 		methCla.engineStart();
@@ -61,6 +61,10 @@ public class Engine {
 	    
 	public static void oscSet(float freq, float amp, float add, float pos, int[] nodeId){
 		methCla.oscSet(freq, amp, add, pos, nodeId);
+	};
+
+	public static void oscAudioSet(int[] freqId, int[] ampId, int[] addId, int[] posId, int[] nodeId){
+		methCla.oscAudioSet(freqId, ampId, addId, posId, nodeId);
 	};
 	  
 	// Sine Wave Oscillator
@@ -98,7 +102,17 @@ public class Engine {
 	public static void pulseSet(float freq, float width, float amp, float add, float pos, int[] nodeId){
 		methCla.pulseSet(freq, width, amp, add, pos, nodeId);
 	}; 
-	  
+
+	// AudioIn
+
+	public static int[] audioInPlay(float amp, float add, float pos, int in){
+		return methCla.audioInPlay(amp, add, pos, in);
+	};
+
+  	public static void audioInSet(float amp, float add, float pos, int[] nodeId){
+  		methCla.audioInSet(amp, add, pos, nodeId);
+  	};
+	
 	// SoundFile
 	  
 	public static int[] soundFileInfo(String path){
@@ -121,7 +135,7 @@ public class Engine {
 		methCla.soundFileSetStereo(rate, amp, add, nodeId);
 	};  
 	  
-	// Noise
+	// White Noise
 	  
 	public static int[] whiteNoisePlay(float amp, float add, float pos){
 		return methCla.whiteNoisePlay(amp, add, pos);
@@ -130,10 +144,30 @@ public class Engine {
 	public static void whiteNoiseSet(float amp, float add, float pos, int[] nodeId){
 		methCla.whiteNoiseSet(amp, add, pos, nodeId);	
 	};
+
+  	// Pink Noise
+  
+  	public static int[] pinkNoisePlay(float amp, float add, float pos){
+  		return methCla.pinkNoisePlay(amp, add, pos);
+  	};
+  
+  	public static void pinkNoiseSet(float amp, float add, float pos, int[] nodeId){
+  		methCla.pinkNoiseSet(amp, add, pos, nodeId);
+  	};
 	  
+  	// Brown Noise
+    
+  	public static int[] brownNoisePlay(float amp, float add, float pos){
+  		return methCla.brownNoisePlay(amp, add, pos);
+  	};
+    
+  	public static void brownNoiseSet(float amp, float add, float pos, int[] nodeId){
+  		methCla.brownNoiseSet(amp, add, pos, nodeId);
+  	};
+    
 	// Envelope
 	    
-	public static int envelopePlay(int[] input, float attackTime, float sustainTime, float sustainLevel, float releaseTime){
+	public static int[] envelopePlay(int[] input, float attackTime, float sustainTime, float sustainLevel, float releaseTime){
 		return methCla.envelopePlay(input, attackTime, sustainTime, sustainLevel, releaseTime);
 	};
 	  
@@ -143,32 +177,46 @@ public class Engine {
 	    
 	// Filters
 	    
-	public static int highPassPlay(int[] input, float freq, float res){
-		return methCla.highPassPlay(input, freq, res);
+	public static int[] highPassPlay(int[] input, float freq){
+		return methCla.highPassPlay(input, freq);
 	};
 
-	public static int lowPassPlay(int[] input, float freq, float res){
-		return methCla.lowPassPlay(input, freq, res);
+	public static int[] lowPassPlay(int[] input, float freq){
+		return methCla.lowPassPlay(input, freq);
 	};
 	  
-	public static int bandPassPlay(int[] input, float freq, float res){
-		return methCla.bandPassPlay(input, freq, res);
+	public static int[] bandPassPlay(int[] input, float freq, float bw){
+		return methCla.bandPassPlay(input, freq, bw);
 	};
 
-	public static void filterSet(float freq, float res, int nodeId){
-		methCla.filterSet(freq, res, nodeId);
+	public static void filterSet(float freq, int nodeId){
+		methCla.filterSet(freq, nodeId);
+	};
+
+	public static void filterBwSet(float freq, float bw, int nodeId){
+		methCla.filterBwSet(freq, bw, nodeId);
 	};
 
 	// Delay
 
-	public static int delayPlay(int[] input, float maxDelayTime, float delayTime, float feedBack){
+	public static int[] delayPlay(int[] input, float maxDelayTime, float delayTime, float feedBack){
 		return methCla.delayPlay(input, maxDelayTime, delayTime, feedBack);
 	};
 	  
 	public static void delaySet(float delayTime, float feedBack, int nodeId){
 		methCla.delaySet(delayTime, feedBack, nodeId);
 	};
-	  
+	
+	// Reverb
+
+  	public static int[] reverbPlay(int[] input, float room, float damp, float wet){
+  		return methCla.reverbPlay(input, room, damp, wet);
+  	};
+  
+  	public static void reverbSet(float room, float damp, float wet, int nodeId){
+  		methCla.reverbSet(room, damp, wet, nodeId);
+  	};
+
 	// Amplitude Follower
 	  
 	public static long amplitude(int[] nodeId){
@@ -196,6 +244,13 @@ public class Engine {
 	public static void destroy_fft(long ptr){
 		methCla.destroy_fft(ptr);
 	};
+
+	// Out
+
+	public static void out(int out, int[] nodeId){
+		methCla.out(out, nodeId);
+	};  
+
 
 	public static void engineStop() {
 		methCla.engineStop();

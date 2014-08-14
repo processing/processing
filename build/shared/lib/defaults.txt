@@ -48,10 +48,6 @@
 # has gone missing, and that it should instead use the default.
 #sketchbook.path=
 
-# if you don't want settings to go into "application data" on windows
-# and "library" on macosx, set this to the alternate location.
-#settings.path=data
-
 # By default, no sketches currently open
 last.sketch.count=0
 
@@ -158,6 +154,9 @@ editor.divider.size = 0
 # this makes it large enough to see (mouse changes) and use, 
 # but keeps it from being annoyingly obtrusive
 editor.divider.size.windows = 2
+
+# Whether to automatically reload modified tabs
+editor.watcher = true
 
 # Hide the background image. Gross because this is a pref that
 # really lives over in theme.txt but it's split here.

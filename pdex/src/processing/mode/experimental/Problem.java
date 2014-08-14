@@ -83,7 +83,8 @@ public class Problem {
     this.tabIndex = tabIndex;
     this.lineNumber = lineNumber;
     this.message = process(iProblem);
-    ErrorMessageSimplifier.getSimplifiedErrorMessage(this);
+    this.message = ErrorMessageSimplifier.getSimplifiedErrorMessage(this);
+    //ErrorMessageSimplifier.getSimplifiedErrorMessage(this);
   }
   
   public void setPDEOffsets(int startOffset, int stopOffset){
@@ -127,6 +128,16 @@ public class Problem {
   
   public int getLineNumber(){
     return lineNumber;
+  }
+  
+  /**
+   * Remember to subtract a -1 to line number because in compile check code an
+   * extra package statement is added, so all line numbers are increased by 1
+   * 
+   * @return
+   */
+  public int getSourceLineNumber(){    
+    return iProblem.getSourceLineNumber();
   }
 
   public void setType(int ProblemType){

@@ -58,7 +58,7 @@ public class UpdateCheck {
     new Thread(new Runnable() {
       public void run() {
         try {
-          Thread.sleep(30 * 1000);  // give the PDE time to get rolling
+          Thread.sleep(20 * 1000);  // give the PDE time to get rolling
           updateCheck();
         } catch (Exception e) {
           // this can safely be ignored, too many instances where no net
@@ -71,7 +71,7 @@ public class UpdateCheck {
 //          }
         }
       }
-    }).start();
+    }, "Update Checker").start();
   }
 
 
@@ -124,11 +124,11 @@ public class UpdateCheck {
         // (this should really be handled better).
         Thread.sleep(5 * 1000);
         if ((!base.libraryManagerFrame.hasAlreadyBeenOpened() &&
-             base.libraryManagerFrame.hasUpdates()) ||
+             base.libraryManagerFrame.hasUpdates(base)) ||
             (!base.toolManagerFrame.hasAlreadyBeenOpened() &&
-             base.toolManagerFrame.hasUpdates()) ||
+             base.toolManagerFrame.hasUpdates(base)) ||
             (!base.modeManagerFrame.hasAlreadyBeenOpened() &&
-             base.modeManagerFrame.hasUpdates())) {
+             base.modeManagerFrame.hasUpdates(base))) {
           promptToOpenContributionManager();
         }
       }
@@ -137,14 +137,12 @@ public class UpdateCheck {
 
 
   protected boolean promptToVisitDownloadPage() {
-    String prompt =
-      "A new version of Processing is available,\n" +
-      "would you like to visit the Processing download page?";
+    String prompt = Language.text("update_check.updates_available.core");
 
-    Object[] options = { "Yes", "No" };
+    Object[] options = { Language.text("prompt.yes"), Language.text("prompt.no") };
     int result = JOptionPane.showOptionDialog(base.activeEditor,
                                               prompt,
-                                              "Update",
+                                              Language.text("update_check"),
                                               JOptionPane.YES_NO_OPTION,
                                               JOptionPane.QUESTION_MESSAGE,
                                               null,
@@ -160,14 +158,12 @@ public class UpdateCheck {
 
 
   protected boolean promptToOpenContributionManager() {
-    String contributionPrompt =
-      "There are updates available for some of the installed contributions,\n" +
-      "would you like to open the the Contribution Manager now?";
+    String contributionPrompt = Language.text("update_check.updates_available.contributions");
 
-    Object[] options = { "Yes", "No" };
+    Object[] options = { Language.text("prompt.yes"), Language.text("prompt.no") };
     int result = JOptionPane.showOptionDialog(base.activeEditor,
                                               contributionPrompt,
-                                              "Update",
+                                              Language.text("update_check"),
                                               JOptionPane.YES_NO_OPTION,
                                               JOptionPane.QUESTION_MESSAGE,
                                               null,
