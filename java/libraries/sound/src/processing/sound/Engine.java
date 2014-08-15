@@ -217,6 +217,12 @@ public class Engine {
   		methCla.reverbSet(room, damp, wet, nodeId);
   	};
 
+	// Mix
+
+  	public static int[] mixPlay(int[] input, float[] amp){
+  		return methCla.mixPlay(input, amp);
+  	};
+  
 	// Amplitude Follower
 	  
 	public static long amplitude(int[] nodeId){
