@@ -102,7 +102,8 @@ public class ContributionManager {
     } catch (IOException ioe) {
       if (progress != null)
         progress.error(ioe);
-      ioe.printStackTrace();
+      // Hiding stack trace. An error has been shown where needed. 
+//      ioe.printStackTrace();
     }
     if (progress != null)
       progress.finished();
@@ -155,11 +156,26 @@ public class ContributionManager {
               }
               installProgress.finished();
             }
+            else {
+              if (downloadProgress.exception instanceof SocketTimeoutException) {
+                status.setErrorMessage(Language
+                  .interpolate("contrib.errors.contrib_download.timeout",
+                               ad.getName()));
+              } else {
+                status.setErrorMessage(Language
+                  .interpolate("contrib.errors.download_and_install",
+                               ad.getName()));
+              }
+            }
             contribZip.delete();
 
           } catch (Exception e) {
-            e.printStackTrace();
-            status.setErrorMessage(Language.text("contrib.errors.download_and_install"));
+            // Hiding stack trace. The error message ought to suffice.
+//            e.printStackTrace();
+            status
+              .setErrorMessage(Language
+                .interpolate("contrib.errors.download_and_install",
+                             ad.getName()));
           }
         } catch (IOException e) {
           status.setErrorMessage(Language.text("contrib.errors.temporary_directory"));

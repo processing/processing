@@ -411,7 +411,6 @@ public class ContributionManagerDialog {
     }
   }
 
-  
   protected void setFilterText(String filter) {
     if (filter == null || filter.isEmpty()) {
       filterField.setText("");
