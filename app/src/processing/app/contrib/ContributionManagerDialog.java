@@ -51,6 +51,7 @@ public class ContributionManagerDialog {
   StatusPanel status;
   FilterField filterField;
   JButton restartButton;
+  JButton retryConnectingButton;
 
   // the calling editor, so updates can be applied
   Editor editor;
@@ -132,6 +133,16 @@ public class ContributionManagerDialog {
 
       });
       
+      retryConnectingButton = new JButton("Retry");
+      retryConnectingButton.setVisible(false);
+      retryConnectingButton.addActionListener(new ActionListener() {
+        
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+          downloadAndUpdateContributionListing();     
+        }
+      });
+      
       Toolkit.setIcon(dialog);
       createComponents();
       registerDisposeListeners();
@@ -146,23 +157,7 @@ public class ContributionManagerDialog {
       updateContributionListing();
 
     } else {
-      contribListing.downloadAvailableList(new ProgressMonitor() {
-        
-        public void finished() {
-          super.finished();
-          
-          updateContributionListing();
-          updateCategoryChooser();
-          if (error) {
-            if (exception instanceof SocketTimeoutException) {
-              status.setErrorMessage(Language.text("contrib.errors.list_download.timeout"));
-            } else {
-              status.setErrorMessage(Language.text("contrib.errors.list_download"));
-            }
-            exception.printStackTrace();
-          }
-        }
-      });
+      downloadAndUpdateContributionListing();
     }
   }
 
@@ -259,7 +254,11 @@ public class ContributionManagerDialog {
       statusRestartPane.setOpaque(false);
       
       statusRestartPane.add(status, BorderLayout.WEST);
+      
+    // Adding both of these to EAST shouldn't pose too much of a problem,
+    // since they can never get added together.
       statusRestartPane.add(restartButton, BorderLayout.EAST);
+      statusRestartPane.add(retryConnectingButton, BorderLayout.EAST);
       
       pane.add(statusRestartPane, BorderLayout.SOUTH);
 
@@ -410,6 +409,38 @@ public class ContributionManagerDialog {
       contribListing.updateInstalledList(contributions);
     }
   }
+
+
+  protected void downloadAndUpdateContributionListing() {
+    status.setMessage("Downloading contribution list...");
+    retryConnectingButton.setEnabled(false);
+    contribListing.downloadAvailableList(new ProgressMonitor() {
+      
+      public void finished() {
+        super.finished();
+        
+        updateContributionListing();
+        updateCategoryChooser();
+        
+        retryConnectingButton.setEnabled(true);
+        
+        if (error) {
+          if (exception instanceof SocketTimeoutException) {
+            status.setErrorMessage(Language.text("contrib.errors.list_download.timeout"));
+          } else {
+            status.setErrorMessage(Language.text("contrib.errors.list_download"));
+          }
+          exception.printStackTrace();
+          retryConnectingButton.setVisible(true);
+        }
+        else {
+          status.setMessage("Done.");
+          retryConnectingButton.setVisible(false);
+        }
+      }
+    });
+  }
+
 
   protected void setFilterText(String filter) {
     if (filter == null || filter.isEmpty()) {

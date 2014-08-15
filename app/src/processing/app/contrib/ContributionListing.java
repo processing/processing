@@ -370,6 +370,7 @@ public class ContributionListing {
           ContributionManager.download(url, listingFile, progress);
           if (!progress.isCanceled() && !progress.isError()) {
             hasDownloadedLatestList = true;
+            hasListDownloadFailed = false;
             setAdvertisedList(listingFile);
           }
           else
