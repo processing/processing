@@ -4,12 +4,17 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 
 import processing.app.*;
 import processing.app.Toolkit;
+import processing.app.contrib.ToolContribution;
 import processing.mode.java.runner.Runner;
 
 
@@ -134,6 +139,100 @@ public class JavaEditor extends Editor {
       }
     });
     menu.add(item);
+    
+    menu.addSeparator();
+    
+    final JMenu libRefSubmenu = new JMenu(Language.text("menu.help.libraries_reference"));
+    // Populate only when sub-menu is opened, to avoid having spurious menu 
+    // options if a library is deleted, or a missing menu option if a library is added
+    libRefSubmenu.addMenuListener(new MenuListener() {
+      
+      @Override
+      public void menuSelected(MenuEvent e) {
+        boolean isCoreLibMenuItemAdded = false;
+        boolean isContribLibMenuItemAdded = false;
+        
+        // Adding this in case references are included in a core library,
+        // or other core libraries are incuded in future
+        isCoreLibMenuItemAdded = addLibReferencesToSubMenu(mode.coreLibraries, libRefSubmenu);
+        
+        if (isCoreLibMenuItemAdded && !mode.contribLibraries.isEmpty())
+          libRefSubmenu.addSeparator();
+        
+        isContribLibMenuItemAdded = addLibReferencesToSubMenu(mode.contribLibraries, libRefSubmenu);
+        
+        if (!isContribLibMenuItemAdded && !isCoreLibMenuItemAdded) {
+          JMenuItem emptyMenuItem = new JMenuItem(Language.text("menu.help.empty"));
+          emptyMenuItem.setEnabled(false);
+          emptyMenuItem.setFocusable(false);
+          emptyMenuItem.setFocusPainted(false);
+          libRefSubmenu.add(emptyMenuItem);
+        }
+        else if (!isContribLibMenuItemAdded && !mode.coreLibraries.isEmpty()) {
+          //re-populate the menu to get rid of terminal separator
+          libRefSubmenu.removeAll();
+          addLibReferencesToSubMenu(mode.coreLibraries, libRefSubmenu);
+        }
+      }
+      
+      @Override
+      public void menuDeselected(MenuEvent e) {
+        libRefSubmenu.removeAll();
+      }
+      
+      @Override
+      public void menuCanceled(MenuEvent e) {
+        menuDeselected(e);
+      }
+    });
+    menu.add(libRefSubmenu);
+    
+    final JMenu toolRefSubmenu = new JMenu(Language.text("menu.help.tools_reference"));
+    // Populate only when sub-menu is opened, to avoid having spurious menu 
+    // options if a tool is deleted, or a missing menu option if a library is added
+    toolRefSubmenu.addMenuListener(new MenuListener() {
+      
+      @Override
+      public void menuSelected(MenuEvent e) {
+        boolean isCoreToolMenuItemAdded = false;
+        boolean isContribToolMenuItemAdded = false;
+        
+        // Adding this in in case a reference folder is added for MovieMaker, or in case
+        // other core tools are introduced later
+        isCoreToolMenuItemAdded = addToolReferencesToSubMenu(getCoreTools(), toolRefSubmenu);
+        
+        if (isCoreToolMenuItemAdded && !contribTools.isEmpty())
+          toolRefSubmenu.addSeparator();
+        
+        isContribToolMenuItemAdded = addToolReferencesToSubMenu(contribTools, toolRefSubmenu);
+        
+        if (!isContribToolMenuItemAdded && !isCoreToolMenuItemAdded) {
+          toolRefSubmenu.removeAll(); // in case a separator was added
+          final JMenuItem emptyMenuItem = new JMenuItem(Language.text("menu.help.empty"));
+          emptyMenuItem.setEnabled(false);
+          emptyMenuItem.setBorderPainted(false);
+          emptyMenuItem.setFocusable(false);
+          emptyMenuItem.setFocusPainted(false);
+          toolRefSubmenu.add(emptyMenuItem);
+        }
+        else if (!isContribToolMenuItemAdded && !contribTools.isEmpty()) {
+          // re-populate the menu to get rid of terminal separator
+          toolRefSubmenu.removeAll();
+          addToolReferencesToSubMenu(getCoreTools(), toolRefSubmenu);
+        }
+      }
+      
+      @Override
+      public void menuDeselected(MenuEvent e) {
+        toolRefSubmenu.removeAll();
+      }
+      
+      @Override
+      public void menuCanceled(MenuEvent e) {
+        menuDeselected(e);
+      }
+    });
+    menu.add(toolRefSubmenu);
 
     menu.addSeparator();
     item = new JMenuItem(Language.text("menu.help.online"));
@@ -181,6 +280,54 @@ public class JavaEditor extends Editor {
     menu.add(item);
 
     return menu;
+  }
+
+
+  //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  private boolean addLibReferencesToSubMenu(ArrayList<Library> libsList, JMenu subMenu) {
+    boolean isItemAdded = false;
+    Iterator<Library> iter = libsList.iterator();
+    while (iter.hasNext()) {
+      final Library libContrib = iter.next();
+      if (libContrib.hasReference()) {
+        JMenuItem libRefItem = new JMenuItem(libContrib.getName());
+        libRefItem.addActionListener(new ActionListener() {
+
+          @Override
+          public void actionPerformed(ActionEvent arg0) {
+            showReferenceFile(libContrib.getReferenceIndexFile());
+          }
+        });
+        subMenu.add(libRefItem);
+        isItemAdded = true;
+      }
+    }
+    return isItemAdded;
+  }
+
+
+  private boolean addToolReferencesToSubMenu(ArrayList<ToolContribution> toolsList, JMenu subMenu) {
+    boolean isItemAdded = false;
+    Iterator<ToolContribution> iter = toolsList.iterator();
+    while (iter.hasNext()) {
+      final ToolContribution toolContrib = iter.next();
+      final File toolRef = new File(toolContrib.getFolder(), "reference/index.html");
+      if (toolRef.exists()) {
+        JMenuItem libRefItem = new JMenuItem(toolContrib.getName());
+        libRefItem.addActionListener(new ActionListener() {
+
+          @Override
+          public void actionPerformed(ActionEvent arg0) {
+            showReferenceFile(toolRef);
+          }
+        });
+        subMenu.add(libRefItem);
+        isItemAdded = true;
+      }
+    }
+    return isItemAdded;
   }
 
 

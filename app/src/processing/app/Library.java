@@ -284,6 +284,16 @@ public class Library extends LocalContribution {
   }
 
 
+  public boolean hasReference() {
+    return referenceFile.exists();
+  }
+
+
+  public File getReferenceIndexFile() {
+    return referenceFile;
+  }
+
+
   public String getGroup() {
     return group;
   }
