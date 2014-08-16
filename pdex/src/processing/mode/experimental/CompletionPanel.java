@@ -317,8 +317,8 @@ public class CompletionPanel {
         
         String completionString = ((CompletionCandidate) completionList
             .getSelectedValue()).getCompletionString();
-        if (selectedSuggestion.equals(" )")) { // the case of single param methods
-          selectedSuggestion = ")";
+        if (selectedSuggestion.endsWith(" )")) { // the case of single param methods
+          // selectedSuggestion = ")";
           if (completionString.endsWith(" )")) {
             completionString = completionString.substring(0, completionString
                 .length() - 2)
@@ -346,8 +346,18 @@ public class CompletionPanel {
         if (selectedSuggestion.endsWith(")") && !selectedSuggestion.endsWith("()")) {
           // place the caret between '( and first ','
           int x = selectedSuggestion.indexOf(',');
-          if(x == -1) x = 0; // the case of single param methods, no ','
-          textarea.setCaretPosition(insertionPosition + x);
+          if(x == -1) {
+            if(subWord.endsWith("(")) {
+              // the case of single param methods with overloads shown initially, containing no ','
+              textarea.setCaretPosition(insertionPosition);
+            }
+            else {
+              // the case of single param methods with no overloads, containing no ','
+              textarea.setCaretPosition(textarea.getCaretPosition() - 1);
+            }
+          } else {
+            textarea.setCaretPosition(insertionPosition + x);
+          }
         } else {
           textarea.setCaretPosition(insertionPosition
               + selectedSuggestion.length());
