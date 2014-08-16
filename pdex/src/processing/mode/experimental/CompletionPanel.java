@@ -295,8 +295,8 @@ public class CompletionPanel {
 
   /**
    * Inserts the CompletionCandidate chosen from the suggestion list
-   * 
-   * @return
+   * @param completionSource - whether being completed via keypress or mouse click.
+   * @return true if code was successfully inserted at the caret position
    */
   public boolean insertSelection(int completionSource) {
     if (completionList.getSelectedValue() != null) {
