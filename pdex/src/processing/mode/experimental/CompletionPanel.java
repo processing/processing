@@ -327,9 +327,11 @@ public class CompletionPanel {
         }
         
         if (completionSource == MOUSE_COMPLETION) {
+          // The case of overloaded methods, displayed as 'foo(...)'
+          // They have completion strings as 'foo('. See #2755
           if (completionString.endsWith("(")) {
             completionString = completionString.substring(0, completionString
-                .length() - 2);
+                .length() - 1);
           }
         }
         
