@@ -352,10 +352,8 @@ public class CompletionPanel {
           } else {
             textarea.setCaretPosition(insertionPosition + x);
           }
-        } else {
-          textarea.setCaretPosition(insertionPosition
-              + selectedSuggestion.length());
         }
+        
         log("Suggestion inserted: " + System.currentTimeMillis());
         if (((CompletionCandidate) completionList.getSelectedValue())
             .getLabel().contains("...")) {
