@@ -86,6 +86,8 @@ public class CompletionPanel {
   private JScrollPane scrollPane;
   
   protected DebugEditor editor;
+  
+  public static final int MOUSE_COMPLETION = 10, KEYBOARD_COMPLETION = 20;
 
   /**
    * Triggers the completion popup
@@ -254,7 +256,7 @@ public class CompletionPanel {
       @Override
       public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
-          insertSelection();
+          insertSelection(MOUSE_COMPLETION);
           hide();
         }
       }
@@ -296,7 +298,7 @@ public class CompletionPanel {
    * 
    * @return
    */
-  public boolean insertSelection() {
+  public boolean insertSelection(int completionSource) {
     if (completionList.getSelectedValue() != null) {
       try {
         // If user types 'abc.', subword becomes '.' and null is returned
@@ -321,6 +323,13 @@ public class CompletionPanel {
             completionString = completionString.substring(0, completionString
                 .length() - 2)
                 + ")";
+          }
+        }
+        
+        if (completionSource == MOUSE_COMPLETION) {
+          if (completionString.endsWith("(")) {
+            completionString = completionString.substring(0, completionString
+                .length() - 2);
           }
         }
         
