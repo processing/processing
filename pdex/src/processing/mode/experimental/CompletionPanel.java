@@ -347,14 +347,8 @@ public class CompletionPanel {
           // place the caret between '( and first ','
           int x = selectedSuggestion.indexOf(',');
           if(x == -1) {
-            if(subWord.endsWith("(")) {
-              // the case of single param methods with overloads shown initially, containing no ','
-              textarea.setCaretPosition(insertionPosition);
-            }
-            else {
-              // the case of single param methods with no overloads, containing no ','
-              textarea.setCaretPosition(textarea.getCaretPosition() - 1);
-            }
+            // the case of single param methods, containing no ','
+            textarea.setCaretPosition(textarea.getCaretPosition() - 1); // just before ')'
           } else {
             textarea.setCaretPosition(insertionPosition + x);
           }
