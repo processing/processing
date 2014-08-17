@@ -165,7 +165,9 @@ public class PFont implements PConstants {
   /** for subclasses that need to store metadata about the font */
 //  protected HashMap<PGraphics, Object> cacheMap;
 
-
+  /**
+   * @nowebref
+   */
   public PFont() { }  // for subclasses
 
 
@@ -186,7 +188,7 @@ public class PFont implements PConstants {
    *
    * ( end auto-generated )
    *
-   * @webref typography:pfont
+   * @nowebref
    * @param font font the font object to create from
    * @param smooth smooth true to enable smoothing/anti-aliasing
    */
@@ -199,6 +201,7 @@ public class PFont implements PConstants {
    * Create a new image-based font on the fly. If charset is set to null,
    * the characters will only be created as bitmaps when they're drawn.
    *
+   * @nowebref
    * @param charset array of all unicode chars that should be included
    */
   public PFont(Font font, boolean smooth, char charset[]) {
@@ -323,15 +326,18 @@ public class PFont implements PConstants {
   /**
    * Adds an additional parameter that indicates the font came from a file,
    * not a built-in OS font.
+   *
+   * @nowebref
    */
   public PFont(Font font, boolean smooth, char charset[], boolean stream) {
     this(font, smooth, charset);
     this.stream = stream;
   }
 
-/**
- * @param input InputStream
- */
+  /**
+   * @nowebref
+   * @param input InputStream
+   */
   public PFont(InputStream input) throws IOException {
     DataInputStream is = new DataInputStream(input);
 
