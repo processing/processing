@@ -313,8 +313,8 @@ public class JavaEditor extends Editor {
     Iterator<ToolContribution> iter = toolsList.iterator();
     while (iter.hasNext()) {
       final ToolContribution toolContrib = iter.next();
-      final File toolRef = new File(toolContrib.getFolder(), "reference/index.html");
-      if (toolRef.exists()) {
+      if (toolContrib.hasReference()) {
+        final File toolRef = toolContrib.getReferenceIndexFile();
         JMenuItem libRefItem = new JMenuItem(toolContrib.getName());
         libRefItem.addActionListener(new ActionListener() {
 
