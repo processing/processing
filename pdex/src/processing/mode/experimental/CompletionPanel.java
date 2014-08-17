@@ -43,6 +43,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.Painter;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.plaf.InsetsUIResource;
@@ -326,12 +327,12 @@ public class CompletionPanel {
           }
         }
         
+        boolean mouseClickOnOverloadedMethods = false;
         if (completionSource == MOUSE_COMPLETION) {
           // The case of overloaded methods, displayed as 'foo(...)'
           // They have completion strings as 'foo('. See #2755
           if (completionString.endsWith("(")) {
-            completionString = completionString.substring(0, completionString
-                .length() - 1);
+            mouseClickOnOverloadedMethods = true;
           }
         }
         
@@ -365,6 +366,18 @@ public class CompletionPanel {
         } else {
           hide();
         }
+        
+        if(mouseClickOnOverloadedMethods) {
+          // See #2755
+          SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+            protected Object doInBackground() throws Exception {
+              editor.ta.fetchPhrase(null); 
+              return null;
+            }
+          };
+          worker.execute();
+        }
+        
         return true;
       } catch (BadLocationException e1) {
         e1.printStackTrace();

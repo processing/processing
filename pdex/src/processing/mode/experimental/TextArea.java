@@ -360,7 +360,7 @@ public class TextArea extends JEditTextArea {
    * @param evt - the KeyEvent which triggered this method 
    * @return
    */
-  private String fetchPhrase(KeyEvent evt) {
+  public String fetchPhrase(KeyEvent evt) {
    
     int off = getCaretPosition();
     log2("off " + off);
