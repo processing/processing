@@ -268,17 +268,23 @@ public class PShape implements PConstants {
 //  public float px;
 //  public float py;
 
+  /**
+   * @nowebref
+   */
   public PShape() {
     this.family = GROUP;
   }
 
-/**
- * @nowebref
- */
+  /**
+   * @nowebref
+   */
   public PShape(int family) {
     this.family = family;
   }
 
+  /**
+   * @nowebref
+   */
   public PShape(PGraphicsJava2D pg, int family) {
     this.g = pg;
     this.family = family;
