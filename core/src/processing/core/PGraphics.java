@@ -1635,7 +1635,9 @@ public class PGraphics extends PImage implements PConstants {
     return loadShape(filename, null);
   }
 
-
+  /**
+   * @nowebref
+   */
   public PShape loadShape(String filename, String options) {
     showMissingWarning("loadShape");
     return null;

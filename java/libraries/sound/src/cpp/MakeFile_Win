@@ -1,11 +1,11 @@
 all: 	
 
-	g++ -Ic:/Java/jdk1.7.0_60/include -Ic:/Java/jdk1.7.0_60/include/win32 -I./include -std=c++11 -g -c processing_sound_MethClaInterface.cpp;			
-	g++ -dynamiclib -lmethcla -L../../library/macosx/ -o libMethClaInterface.jnilib *.o;
+	g++ -Ic:/Java/jdk1.8.0_11/include -Ic:/Java/jdk1.8.0_11/include/win32 -I./include -std=c++11 -g -c processing_sound_MethClaInterface.cpp;			
+	g++ -dynamiclib -lmethcla -L../../library/windows32/ -o libMethClaInterface.dll *.o;
 
 clean:
 	rm *.o
-	rm *.jnilib
+	rm *.dll
 
 install:
-	cp libMethClaInterface.jnilib ../../lib/macosx
+	cp libMethClaInterface.dll ../../lib/windows32

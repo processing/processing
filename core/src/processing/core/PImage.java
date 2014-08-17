@@ -194,7 +194,7 @@ public class PImage implements PConstants, Cloneable {
    * To create a new image, use the <b>createImage()</b> function (do not use
    * <b>new PImage()</b>).
    * ( end auto-generated )
-   * @webref image:pimage
+   * @nowebref
    * @usage web_application
    * @see PApplet#loadImage(String, String)
    * @see PApplet#imageMode(int)
@@ -207,6 +207,7 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
+   * @nowebref
    * @param width image width
    * @param height image height
    */
@@ -224,7 +225,7 @@ public class PImage implements PConstants, Cloneable {
   }
 
   /**
-   *
+   * @nowebref
    * @param format Either RGB, ARGB, ALPHA (grayscale alpha channel)
    */
   public PImage(int width, int height, int format) {
@@ -273,6 +274,7 @@ public class PImage implements PConstants, Cloneable {
    * that you've done the work of making sure a MediaTracker has been used
    * to fully download the data and that the img is valid.
    *
+   * @nowebref
    * @param img assumes a MediaTracker has been used to fully download
    * the data and the img is valid
    */

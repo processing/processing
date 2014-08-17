@@ -163,7 +163,7 @@ public class TextArea extends JEditTextArea {
     else if(evt.getKeyCode() == KeyEvent.VK_ENTER && evt.getID() == KeyEvent.KEY_PRESSED){
       if (suggestion != null) {
         if (suggestion.isVisible()) {
-          if (suggestion.insertSelection()) {
+          if (suggestion.insertSelection(CompletionPanel.KEYBOARD_COMPLETION)) {
             //hideSuggestion(); // Kill it!  
             evt.consume();
             // Still try to show suggestions after inserting if it's

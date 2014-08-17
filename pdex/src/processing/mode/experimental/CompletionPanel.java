@@ -86,6 +86,8 @@ public class CompletionPanel {
   private JScrollPane scrollPane;
   
   protected DebugEditor editor;
+  
+  public static final int MOUSE_COMPLETION = 10, KEYBOARD_COMPLETION = 20;
 
   /**
    * Triggers the completion popup
@@ -254,8 +256,8 @@ public class CompletionPanel {
       @Override
       public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
-          insertSelection();
-          //hide();
+          insertSelection(MOUSE_COMPLETION);
+          hide();
         }
       }
     });
@@ -293,10 +295,10 @@ public class CompletionPanel {
 
   /**
    * Inserts the CompletionCandidate chosen from the suggestion list
-   * 
-   * @return
+   * @param completionSource - whether being completed via keypress or mouse click.
+   * @return true - if code was successfully inserted at the caret position
    */
-  public boolean insertSelection() {
+  public boolean insertSelection(int completionSource) {
     if (completionList.getSelectedValue() != null) {
       try {
         // If user types 'abc.', subword becomes '.' and null is returned
@@ -315,12 +317,21 @@ public class CompletionPanel {
         
         String completionString = ((CompletionCandidate) completionList
             .getSelectedValue()).getCompletionString();
-        if (selectedSuggestion.equals(" )")) { // the case of single param methods
-          selectedSuggestion = ")";
+        if (selectedSuggestion.endsWith(" )")) { // the case of single param methods
+          // selectedSuggestion = ")";
           if (completionString.endsWith(" )")) {
             completionString = completionString.substring(0, completionString
                 .length() - 2)
                 + ")";
+          }
+        }
+        
+        if (completionSource == MOUSE_COMPLETION) {
+          // The case of overloaded methods, displayed as 'foo(...)'
+          // They have completion strings as 'foo('. See #2755
+          if (completionString.endsWith("(")) {
+            completionString = completionString.substring(0, completionString
+                .length() - 1);
           }
         }
         
@@ -337,12 +348,14 @@ public class CompletionPanel {
         if (selectedSuggestion.endsWith(")") && !selectedSuggestion.endsWith("()")) {
           // place the caret between '( and first ','
           int x = selectedSuggestion.indexOf(',');
-          if(x == -1) x = 0; // the case of single param methods, no ','
-          textarea.setCaretPosition(insertionPosition + x);
-        } else {
-          textarea.setCaretPosition(insertionPosition
-              + selectedSuggestion.length());
+          if(x == -1) {
+            // the case of single param methods, containing no ','
+            textarea.setCaretPosition(textarea.getCaretPosition() - 1); // just before ')'
+          } else {
+            textarea.setCaretPosition(insertionPosition + x);
+          }
         }
+        
         log("Suggestion inserted: " + System.currentTimeMillis());
         if (((CompletionCandidate) completionList.getSelectedValue())
             .getLabel().contains("...")) {

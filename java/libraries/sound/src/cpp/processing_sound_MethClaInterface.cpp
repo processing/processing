@@ -562,7 +562,7 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_soundFilePlay
             { amp, rate },
             { Methcla::Value(str),
               Methcla::Value(loop),
-              Methcla::Value(cue) }
+              Methcla::Value(int(cue)) }
     );
     
     auto pan = request.synth(
@@ -627,7 +627,7 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_soundFilePlay
             { amp, rate },
             { Methcla::Value(str),
               Methcla::Value(loop),
-              Methcla::Value(cue) }
+              Methcla::Value(int(cue)) }
     );
     
     auto after = request.synth(
@@ -1228,7 +1228,7 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_fft(JNIEnv *env, 
             METHCLA_PLUGINS_FFT_URI,
             Methcla::NodePlacement::after(m_nodeId[0]),
             {},
-            {Methcla::Value(fftSize)}
+            {Methcla::Value(int(fftSize))}
     );
 
     request.mapOutput(m_nodeId[0], 0, in_bus);

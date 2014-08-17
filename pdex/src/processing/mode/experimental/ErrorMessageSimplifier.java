@@ -8,6 +8,8 @@ import java.util.TreeMap;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
+import static processing.mode.experimental.ExperimentalMode.log;
+
 public class ErrorMessageSimplifier {
 
 //  private ErrorCheckerService errorCheckerService;
@@ -57,6 +59,12 @@ public class ErrorMessageSimplifier {
     return constantsMap.get(id);
   }
   
+  /**
+   * Tones down the jargon in the ecj reported errors. 
+   * 
+   * @param problem
+   * @return
+   */
   public static String getSimplifiedErrorMessage(Problem problem) {
     if (problem == null)
       return null;
@@ -90,7 +98,25 @@ public class ErrorMessageSimplifier {
           result = getErrorMessageForBracket(args[0].charAt(0));
         }
         else {
-          result = "Consider adding a \"" + args[0] + "\"";
+          if(args[0].equals("AssignmentOperator Expression")){
+            result = "Consider adding a \"=\"";
+          }
+          else {
+            result = "Consider adding a \"" + args[0] + "\"";
+          }
+        }
+      }
+      break;
+    case IProblem.ParsingErrorInvalidToken:
+      if (args.length > 0) {
+        if (args[1].equals("VariableDeclaratorId")) {
+          if(args[0].equals("int")) {
+            result = "\"color\" and \"int\" are reserved words & can't be used as variable names";
+          }
+          else {
+            result = "\"" + args[0]
+                + "\" is a reserved word, it can't be used as a variable name";
+          }
         }
       }
       break;

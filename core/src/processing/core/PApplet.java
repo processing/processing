@@ -11704,6 +11704,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @nowebref
+   */
   public PShape loadShape(String filename, String options) {
     return g.loadShape(filename, options);
   }
