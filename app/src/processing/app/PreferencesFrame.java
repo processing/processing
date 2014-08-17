@@ -362,8 +362,9 @@ public class PreferencesFrame {
 
     // [ ] Automatically associate .pde files with Processing
 
-    if (Base.isWindows()) {
-      autoAssociateBox = new JCheckBox(Language.text("preferences.automatically_associate_pde_files"));
+    autoAssociateBox = new JCheckBox(Language.text("preferences.automatically_associate_pde_files"));
+    if (!Base.isWindows()) {
+      autoAssociateBox.setVisible(false);
     }
 
     // More preferences are in the ...
