@@ -425,7 +425,16 @@ public class PreferencesFrame {
     right = Math.max(right, toggleLeft + d.width);
     top += d.height + GUI_BETWEEN;
 
+    // [ ] Show import suggestions - PDE X
 
+    importSuggestionsBox =
+      new JCheckBox(Language.text("preferences.suggest_imports"));
+    pain.add(importSuggestionsBox);
+    d = importSuggestionsBox.getPreferredSize();
+    importSuggestionsBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+    
     // [ ] Increase maximum available memory to [______] MB
 
     Container memoryBox = Box.createHorizontalBox();
@@ -758,6 +767,8 @@ public class PreferencesFrame {
     Preferences.setBoolean("pdex.warningsEnabled", warningsCheckerBox.isSelected());
     Preferences.setBoolean("pdex.ccEnabled", codeCompletionBox.isSelected());
     Preferences.setBoolean("pdex.ccTriggerEnabled", codeCompletionTriggerBox.isSelected());
+    Preferences.setBoolean("pdex.importSuggestEnabled", importSuggestionsBox.isSelected());
+    
     for (Editor editor : base.getEditors()) {
       editor.applyPreferences();
     }
@@ -772,6 +783,7 @@ public class PreferencesFrame {
     codeCompletionBox.setSelected(Preferences.getBoolean("pdex.ccEnabled"));
     codeCompletionTriggerBox.setSelected(Preferences.getBoolean("pdex.ccTriggerEnabled"));
     codeCompletionTriggerBox.setEnabled(codeCompletionBox.isSelected());
+    importSuggestionsBox.setSelected(Preferences.getBoolean("pdex.importSuggestEnabled"));
     deletePreviousBox.
       setSelected(Preferences.getBoolean("export.delete_target_folder")); //$NON-NLS-1$
 
