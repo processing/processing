@@ -7,13 +7,15 @@ import processing.app.contrib.*;
 import processing.core.*;
 
 
-public class Library extends LocalContribution {
+public class Library extends LocalContribWithReference {
   static final String[] platformNames = PConstants.platformNames;
 
   //protected File folder;          // /path/to/shortname
   protected File libraryFolder;   // shortname/library
   protected File examplesFolder;  // shortname/examples
-  protected File referenceFile;   // shortname/reference/index.html is one possible path
+
+  // Shifted to LocalContribWithReference
+//  protected File referenceFile;   // shortname/reference/index.html is one possible path
 
   /**
    * Subfolder for grouping libraries in a menu. Basic subfolder support
@@ -110,7 +112,9 @@ public class Library extends LocalContribution {
 
     libraryFolder = new File(folder, "library");
     examplesFolder = new File(folder, "examples");
-    referenceFile = loadReferenceIndexFile(folder);
+    
+    // Now done in LocalContribWithReference's ctor
+    // referenceFile = loadReferenceIndexFile(folder);
 
     File exportSettings = new File(libraryFolder, "export.txt");
     HashMap<String,String> exportTable = Base.readSettings(exportSettings);
@@ -281,32 +285,6 @@ public class Library extends LocalContribution {
 
   public File getExamplesFolder() {
     return examplesFolder;
-  }
-
-
-  private File loadReferenceIndexFile(File folder) {
-    final String potentialFileList[] = {
-      "reference/index.html", "reference/index.htm",
-      "documentation/index.html", "documentation/index.htm", "docs/index.html",
-      "docs/index.htm", "documentation.html", "documentation.htm",
-      "reference.html", "reference.htm", "docs.html", "docs.htm", "readme.txt" };
-
-    int i = 0;
-    File potentialRef = new File(folder, potentialFileList[i]);
-    while (!potentialRef.exists() && ++i < potentialFileList.length) {
-      potentialRef = new File(folder, potentialFileList[i]);
-    }
-    return potentialRef;
-  }
-
-
-  public boolean hasReference() {
-    return referenceFile.exists();
-  }
-
-
-  public File getReferenceIndexFile() {
-    return referenceFile;
   }
 
 

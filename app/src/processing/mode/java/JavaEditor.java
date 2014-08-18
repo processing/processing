@@ -286,6 +286,19 @@ public class JavaEditor extends Editor {
   //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /**
+   * Populates the JMenu with JMenuItems, one for each Library that has a
+   * reference accompanying it. The JMenuItems open the index.htm/index.html
+   * file of the reference in the user's default browser, or the readme.txt in
+   * the user's default text editor.
+   * 
+   * @param libsList
+   *          A list of the Libraries to be added
+   * @param subMenu
+   *          The JMenu to which the JMenuItems corresponding to the Libraries
+   *          are to be added
+   * @return true if and only if any JMenuItems were added; false otherwise
+   */
   private boolean addLibReferencesToSubMenu(ArrayList<Library> libsList, JMenu subMenu) {
     boolean isItemAdded = false;
     Iterator<Library> iter = libsList.iterator();
@@ -308,6 +321,20 @@ public class JavaEditor extends Editor {
   }
 
 
+  /**
+   * 
+   * Populates the JMenu with JMenuItems, one for each Tool that has a reference
+   * accompanying it. The JMenuItems open the index.htm/index.html file of the
+   * reference in the user's default browser, or the readme.txt in the user's
+   * default text editor.
+   * 
+   * @param toolsList
+   *          A list of Tools to be added
+   * @param subMenu
+   *          The JMenu to which the JMenuItems corresponding to the Tools are
+   *          to be added
+   * @return true if and only if any JMenuItems were added; false otherwise
+   */
   private boolean addToolReferencesToSubMenu(ArrayList<ToolContribution> toolsList, JMenu subMenu) {
     boolean isItemAdded = false;
     Iterator<ToolContribution> iter = toolsList.iterator();

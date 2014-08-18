@@ -32,11 +32,10 @@ import processing.app.Editor;
 import processing.app.tools.Tool;
 
 
-public class ToolContribution extends LocalContribution implements Tool {
+public class ToolContribution extends LocalContribWithReference implements Tool {
   private Tool tool;
 
-  protected File referenceFile;   // shortname/reference/index.html is one possible path
-  
+
   static public ToolContribution load(File folder) {
     try {
       return new ToolContribution(folder);
@@ -54,7 +53,6 @@ public class ToolContribution extends LocalContribution implements Tool {
 
   private ToolContribution(File folder) throws Exception {
     super(folder);
-    referenceFile = loadReferenceIndexFile();
 
     String className = initLoader(null);
     if (className != null) {
@@ -154,30 +152,5 @@ public class ToolContribution extends LocalContribution implements Tool {
 
   public ContributionType getType() {
     return ContributionType.TOOL;
-  }
-  
-  public File loadReferenceIndexFile() {
-    final String potentialFileList[] = {
-      "reference/index.html", "reference/index.htm",
-      "documentation/index.html", "documentation/index.htm", "docs/index.html",
-      "docs/index.htm", "documentation.html", "documentation.htm",
-      "reference.html", "reference.htm", "docs.html", "docs.htm", "readme.txt" };
-
-    int i = 0;
-    File potentialRef = new File(folder, potentialFileList[i]);
-    while (!potentialRef.exists() && ++i < potentialFileList.length) {
-      potentialRef = new File(folder, potentialFileList[i]);
-    }
-    return potentialRef;
-  }
-
-
-  public File getReferenceIndexFile() {
-    return referenceFile;
-  }
-
-
-  public boolean hasReference() {
-    return referenceFile.exists();
   }
 }
