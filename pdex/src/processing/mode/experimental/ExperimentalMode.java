@@ -37,6 +37,7 @@ import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorState;
 import processing.app.Library;
+import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.Preferences;
 import processing.app.RunnerListener;
@@ -405,7 +406,7 @@ public class ExperimentalMode extends JavaMode {
 
 		if (isSketchModified(sketch)) {
 			editor.deactivateRun();
-			Base.showMessage("Save", "Please save the sketch before running in Tweak Mode.");
+			Messages.showMessage("Save", "Please save the sketch before running in Tweak Mode.");
 			return null;
 		}
 
@@ -466,7 +467,7 @@ public class ExperimentalMode extends JavaMode {
 		}
 
 		// could not find oscP5 library
-		Base.showWarning("Tweak Mode", "Tweak Mode needs the 'oscP5' library.\n"
+		Messages.showWarning("Tweak Mode", "Tweak Mode needs the 'oscP5' library.\n"
 				+ "Please install this library by clicking \"Sketch --> Import Library --> Add Library ...\" and choose 'ocsP5'", null);
 
 		return false;

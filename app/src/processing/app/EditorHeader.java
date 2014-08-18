@@ -537,7 +537,7 @@ public class EditorHeader extends JComponent {
           if (!Base.isMacOS() &&  // ok on OS X
               editor.base.editors.size() == 1 &&  // mmm! accessor
               sketch.getCurrentCodeIndex() == 0) {
-              Base.showWarning(Language.text("editor.header.delete.warning.title"),
+              Messages.showWarning(Language.text("editor.header.delete.warning.title"),
                                Language.text("editor.header.delete.warning.text"), null);
           } else {
             editor.getSketch().handleDeleteCode();

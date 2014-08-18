@@ -43,6 +43,7 @@ import javax.swing.text.html.StyleSheet;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Language;
+import processing.app.Messages;
 
 
 /**
@@ -718,7 +719,7 @@ class ContributionPanel extends JPanel {
                                              listPanel.contribManager.status);
 
     } catch (MalformedURLException e) {
-      Base.showWarning(Language.text("contrib.errors.install_failed"),
+      Messages.showWarning(Language.text("contrib.errors.install_failed"),
                        Language.text("contrib.errors.malformed_url"), e);
       // not sure why we'd re-enable the button if it had an error...
 //      installRemoveButton.setEnabled(true);

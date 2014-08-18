@@ -773,7 +773,7 @@ public class JavaBuild {
     // If name != exportSketchName, then that's weirdness
     // BUG unfortunately, that can also be a bug in the preproc :(
     if (!sketch.getName().equals(foundName)) {
-      Base.showWarning("Error during export",
+      Messages.showWarning("Error during export",
                        "Sketch name is " + sketch.getName() + " but the\n" +
                        "name found in the code was " + foundName + ".", null);
       return false;
@@ -813,7 +813,7 @@ public class JavaBuild {
         "HTML file to set the size of the applet.\n" +
         "Use only numeric values (not variables) for the size()\n" +
         "command. See the size() reference for an explanation.";
-      Base.showWarning("Could not find applet size", message, null);
+      Messages.showWarning("Could not find applet size", message, null);
     }
 
 //      // If the renderer is set to the built-in OpenGL library,
@@ -849,7 +849,7 @@ public class JavaBuild {
 //          "Use only numeric values (not variables) for the size()\n" +
 //          "command. See the size() reference for an explanation.";
 //
-//        Base.showWarning("Could not find applet size", message, null);
+//        Messages.showWarning("Could not find applet size", message, null);
 //      }
 //    }  // else no size() command found
 
@@ -1104,7 +1104,7 @@ public class JavaBuild {
     // if name != exportSketchName, then that's weirdness
     // BUG unfortunately, that can also be a bug in the preproc :(
     if (!sketch.getName().equals(foundName)) {
-      Base.showWarning("Error during export",
+      Messages.showWarning("Error during export",
                        "Sketch name is " + sketch.getName() + " but the sketch\n" +
                        "name in the code was " + foundName, null);
       return false;
@@ -1181,7 +1181,7 @@ public class JavaBuild {
     for (Library library : importedLibraries) {
       if (!library.supportsArch(exportPlatform, exportBits)) {
         String pn = PConstants.platformNames[exportPlatform];
-        Base.showWarning("Quibbles 'n Bits",
+        Messages.showWarning("Quibbles 'n Bits",
                          "The application." + pn + exportBits +
                          " folder will not be created\n" +
                          "because no " + exportBits + "-bit version of " +

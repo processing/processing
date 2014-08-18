@@ -110,7 +110,7 @@ public abstract class Mode {
         loadKeywords(file);
       }
     } catch (IOException e) {
-      Base.showWarning("Problem loading keywords",
+      Messages.showWarning("Problem loading keywords",
                        "Could not load keywords file for " + getTitle() + " mode.", e);
     }
   }
@@ -202,7 +202,7 @@ public abstract class Mode {
       loadBackground();
 
     } catch (IOException e) {
-      Base.showError("Problem loading theme.txt",
+      Messages.showError("Problem loading theme.txt",
                      "Could not load theme.txt, please re-install Processing", e);
     }
   }
@@ -339,7 +339,7 @@ public abstract class Mode {
         secondary += "<b>" + library.getName() + "</b> (" + location + ")<br>";
       }
       secondary += "Extra libraries need to be removed before this sketch can be used.";
-      Base.showWarningTiered("Duplicate Library Problem", primary, secondary, null);
+      Messages.showWarningTiered("Duplicate Library Problem", primary, secondary, null);
       throw new SketchException("Duplicate libraries found for " + pkgName + ".");
 
     } else {
@@ -412,7 +412,7 @@ public abstract class Mode {
 //    try {
 //      found = base.addSketches(toolbarMenu, base.getSketchbookFolder(), true);
 //    } catch (IOException e) {
-//      Base.showWarning("Sketchbook Toolbar Error",
+//      Messages.showWarning("Sketchbook Toolbar Error",
 //                       "An error occurred while trying to list the sketchbook.", e);
 //    }
 //    if (!found) {

@@ -383,7 +383,7 @@ public class Runner implements MessageConsumer {
             
             if (errorStrings != null && errorStrings.length > 1) {
               if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
-                Base.showWarning("Way Too High",
+                Messages.showWarning("Way Too High",
                                  "Please lower the value for \u201Cmaximum available memory\u201D in the\n" +
                                  "Preferences window. For more information, read Help \u2192 Troubleshooting.", null);
               } else {
@@ -545,7 +545,7 @@ public class Runner implements MessageConsumer {
         return connector;
       }
     }
-    Base.showError("Compiler Error", 
+    Messages.showError("Compiler Error",
                    "findConnector() failed to find " + 
                     connectorName + " inside Runner", null);
     return null; // Not reachable

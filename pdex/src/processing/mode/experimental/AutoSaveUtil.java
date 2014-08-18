@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Timer;
 
 import processing.app.Base;
+import processing.app.Messages;
 import processing.app.Sketch;
 
 /**
@@ -211,7 +212,7 @@ public class AutoSaveUtil {
     String sanitaryName = Sketch.checkName(newName);
     File newFolder = new File(newParentDir, sanitaryName);
     if (!sanitaryName.equals(newName) && newFolder.exists()) {
-      Base.showMessage("Cannot Save",
+      Messages.showMessage("Cannot Save",
                        "A sketch with the cleaned name\n" +
                        "“" + sanitaryName + "” already exists.");
       isSaving = false;
@@ -231,7 +232,7 @@ public class AutoSaveUtil {
     // resaved (with the same name) to another location/folder.
     for (int i = 1; i < sc.getCodeCount(); i++) {
       if (newName.equalsIgnoreCase(sc.getCode()[i].getPrettyName())) {
-        Base.showMessage("Nope",
+        Messages.showMessage("Nope",
                          "You can't save the sketch as \"" + newName + "\"\n" +
                          "because the sketch already has a tab with that name.");
         isSaving = false;
