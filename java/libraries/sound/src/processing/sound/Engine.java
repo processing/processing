@@ -220,7 +220,7 @@ public class Engine {
 	// Mix
 
   	public static int[] mixPlay(int[] input, float[] amp){
-  		// return methCla.mixPlay(input, amp);
+  		return methCla.mixPlay(input, amp);
   	};
   
 	// Amplitude Follower
