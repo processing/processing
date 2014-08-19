@@ -30,9 +30,10 @@ import processing.core.PApplet;
 
 
 abstract public class Contribution {
+  static final String SPECIAL_CATEGORY_NAME = "Starred";
   static final List validCategories = 
     Arrays.asList("3D", "Animation", "Data", "Geometry", "GUI", "Hardware", 
-                  "I/O", "Math", "Simulation", "Sound", "Typography", 
+                  "I/O", "Math", "Simulation", "Sound", SPECIAL_CATEGORY_NAME, "Typography", 
                   "Utilities", "Video & Vision", "Other");
 
   //protected String category;      // "Sound"
@@ -161,6 +162,19 @@ abstract public class Contribution {
 
   
   boolean isUpdateFlagged() {
+    return false;
+  }
+
+
+  /**
+   * Returns true if the contribution is a starred/recommended contribution, or
+   * is by the Processing Foundation.
+   * 
+   * @return
+   */
+  boolean isSpecial() {
+    if (authorList.indexOf("The Processing Foundation") != -1 || categories.contains(SPECIAL_CATEGORY_NAME))
+      return true;
     return false;
   }
 
