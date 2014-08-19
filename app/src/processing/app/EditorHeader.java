@@ -512,6 +512,7 @@ public class EditorHeader extends JComponent {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           editor.getSketch().handleNewCode();
+          editor.setWatcherSave();
         }
       });
     menu.add(item);
@@ -541,6 +542,7 @@ public class EditorHeader extends JComponent {
                                Language.text("editor.header.delete.warning.text"), null);
           } else {
             editor.getSketch().handleDeleteCode();
+            editor.setWatcherSave();
           }
         }
       });
