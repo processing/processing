@@ -98,6 +98,7 @@ public class Base {
   ContributionManagerDialog libraryManagerFrame;
   ContributionManagerDialog toolManagerFrame;
   ContributionManagerDialog modeManagerFrame;
+  ContributionManagerDialog exampleManagerFrame;
   ContributionManagerDialog updateManagerFrame;
 
   // set to true after the first time the menu is built.
@@ -123,6 +124,8 @@ public class Base {
   private Mode[] coreModes;
   //public List<ModeContribution> contribModes;
   protected ArrayList<ModeContribution> modeContribs;
+  
+  protected ArrayList<ExamplesPackageContribution> exampleContribs;
 
   private JMenu sketchbookMenu;
 
@@ -339,6 +342,19 @@ public class Base {
   }
 
 
+  /**
+   * Instantiates and adds new contributed modes to the contribModes list.
+   * Checks for duplicates so the same mode isn't instantiates twice. Does not
+   * remove modes because modes can't be removed once they are instantiated.
+   */
+  void rebuildContribExamples() {
+    if (exampleContribs == null) {
+      exampleContribs = new ArrayList<ExamplesPackageContribution>();
+    }
+    ExamplesPackageContribution.loadMissing(this);
+  }
+
+
   public Base(String[] args) throws Exception {
 //    // Get the sketchbook path, and make sure it's set properly
 //    determineSketchbookFolder();
@@ -356,6 +372,8 @@ public class Base {
     ContributionManager.cleanup(this);
     buildCoreModes();
     rebuildContribModes();
+    
+    rebuildContribExamples();
 
     // Needs to happen after the sketchbook folder has been located.
     // Also relies on the modes to be loaded so it knows what can be
@@ -385,6 +403,8 @@ public class Base {
       new ContributionManagerDialog(ContributionType.TOOL);
     modeManagerFrame =
       new ContributionManagerDialog(ContributionType.MODE);
+    exampleManagerFrame =
+      new ContributionManagerDialog(ContributionType.EXAMPLES_PACKAGE);
     updateManagerFrame =
       new ContributionManagerDialog(null);
 
@@ -655,6 +675,11 @@ public class Base {
       }
     }
     return allModes;
+  }
+
+
+  public ArrayList<ExamplesPackageContribution> getExampleContribs() {
+    return exampleContribs;
   }
 
 
@@ -1483,7 +1508,7 @@ public class Base {
           JMenu submenu = new JMenu(name);
           // needs to be separate var otherwise would set ifound to false
           boolean anything = addSketches(submenu, subfolder, replaceExisting);
-          if (anything) {
+          if (anything && !name.equals("old")) { //Don't add old contributions
             menu.add(submenu);
             found = true;
           }
@@ -1648,6 +1673,14 @@ public class Base {
    */
   public void handleOpenModeManager() {
     modeManagerFrame.showFrame(activeEditor);
+  }
+
+
+  /**
+   * Show the examples installer window.
+   */
+  public void handleOpenExampleManager() {
+    exampleManagerFrame.showFrame(activeEditor);
   }
 
 
@@ -1923,6 +1956,7 @@ public class Base {
     getSketchbookLibrariesFolder().mkdir();
     getSketchbookToolsFolder().mkdir();
     getSketchbookModesFolder().mkdir();
+    getSketchbookExamplesPackagesFolder().mkdir();
 //    System.err.println("sketchbook: " + sketchbookFolder);
   }
 
@@ -1951,6 +1985,11 @@ public class Base {
 
   static public File getSketchbookModesFolder() {
     return new File(sketchbookFolder, "modes");
+  }
+
+
+  static public File getSketchbookExamplesPackagesFolder() {
+    return new File(sketchbookFolder, "examples-packages");
   }
 
 

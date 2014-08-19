@@ -392,7 +392,10 @@ public class ContributionManagerDialog {
       
       ArrayList<ModeContribution> modes = editor.getBase().getModeContribs();
       contributions.addAll(modes);
-
+      
+      ArrayList<ExamplesPackageContribution> examples = editor.getBase().getExampleContribs();
+      contributions.addAll(examples);
+      
 //    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
 //
 //    // Remove libraries from the list that are part of a compilations
