@@ -31,6 +31,7 @@ import java.util.zip.*;
 import javax.swing.JOptionPane;
 
 import processing.app.*;
+import processing.app.logging.Logger;
 
 
 /** 
@@ -86,7 +87,7 @@ public abstract class LocalContribution extends Contribution {
       }
       
     } else {
-      Base.log("No properties file at " + propertiesFile.getAbsolutePath());
+      Logger.log("No properties file at " + propertiesFile.getAbsolutePath());
       // We'll need this to be set at a minimum.
       name = folder.getName();
       categories = defaultCategory();
@@ -110,7 +111,7 @@ public abstract class LocalContribution extends Contribution {
   public String initLoader(String className) throws Exception {
     File modeDirectory = new File(folder, getTypeName());
     if (modeDirectory.exists()) {
-      Base.log("checking mode folder regarding " + className);
+      Logger.log("checking mode folder regarding " + className);
       // If no class name specified, search the main <modename>.jar for the
       // full name package and mode name.
       if (className == null) {
@@ -133,12 +134,12 @@ public abstract class LocalContribution extends Contribution {
       if (archives != null && archives.length > 0) {
         URL[] urlList = new URL[archives.length];
         for (int j = 0; j < urlList.length; j++) {
-          Base.log("Found archive " + archives[j] + " for " + getName());
+          Logger.log("Found archive " + archives[j] + " for " + getName());
           urlList[j] = archives[j].toURI().toURL();
         }
 //        loader = new URLClassLoader(urlList, Thread.currentThread().getContextClassLoader());
         loader = new URLClassLoader(urlList);
-        Base.log("loading above JARs with loader " + loader);
+        Logger.log("loading above JARs with loader " + loader);
 //        System.out.println("listing classes for loader " + loader);
 //        listClasses(loader);
       }
@@ -202,7 +203,7 @@ public abstract class LocalContribution extends Contribution {
 //      return null;
 //    
 //    } else if (folders.length > 1) {
-//      Base.log("More than one " + type.toString() + " found inside " + folder.getAbsolutePath());
+//      Logger.log("More than one " + type.toString() + " found inside " + folder.getAbsolutePath());
 //    }
 //    return folders[0];
 //  }

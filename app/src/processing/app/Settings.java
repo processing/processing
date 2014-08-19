@@ -27,6 +27,7 @@ import java.awt.*;
 import java.io.*;
 import java.util.*;
 
+import processing.app.logging.Logger;
 import processing.core.*;
 
 
@@ -224,7 +225,7 @@ public class Settings {
     } catch (Exception e) {
       // Adding try/catch block because this may be where 
       // a lot of startup crashes are happening. 
-      Base.log("Error with font " + get(attr) + " for attribute " + attr); 
+      Logger.log("Error with font " + get(attr) + " for attribute " + attr);
     }
     return new Font("Dialog", Font.PLAIN, 12);
   }

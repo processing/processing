@@ -34,6 +34,7 @@ import javax.swing.*;
 import javax.swing.tree.*;
 
 import processing.app.contrib.*;
+import processing.app.logging.*;
 import processing.core.*;
 import processing.mode.java.JavaMode;
 
@@ -193,7 +194,7 @@ public class Base {
       } catch (Exception e) {
 //        String mess = e.getMessage();
 //        if (!mess.contains("ch.randelshofer.quaqua.QuaquaLookAndFeel")) {
-        log("Could not set the Look & Feel", e); //$NON-NLS-1$
+        Logger.log("Could not set the Look & Feel", e); //$NON-NLS-1$
 //        }
       }
 
@@ -207,7 +208,7 @@ public class Base {
                        "That's gonna prevent us from continuing.", e);
       }
 
-      log("about to create base..."); //$NON-NLS-1$
+      Logger.log("about to create base..."); //$NON-NLS-1$
       try {
         Base base = new Base(args);
         // Prevent more than one copy of the PDE from running.
@@ -219,7 +220,7 @@ public class Base {
         showBadnessTrace("We're off on the wrong foot",
                          "An error occurred during startup.", t, true);
       }
-      log("done creating base..."); //$NON-NLS-1$
+      Logger.log("done creating base..."); //$NON-NLS-1$
     }
   }
 
@@ -383,17 +384,17 @@ public class Base {
     String lastModeIdentifier = Preferences.get("last.sketch.mode"); //$NON-NLS-1$
     if (lastModeIdentifier == null) {
       nextMode = coreModes[0];
-      log("Nothing set for last.sketch.mode, using coreMode[0]."); //$NON-NLS-1$
+      Logger.log("Nothing set for last.sketch.mode, using coreMode[0]."); //$NON-NLS-1$
     } else {
       for (Mode m : getModeList()) {
         if (m.getIdentifier().equals(lastModeIdentifier)) {
-          logf("Setting next mode to %s.", lastModeIdentifier); //$NON-NLS-1$
+          Logger.logf("Setting next mode to %s.", lastModeIdentifier); //$NON-NLS-1$
           nextMode = m;
         }
       }
       if (nextMode == null) {
         nextMode = coreModes[0];
-        logf("Could not find mode %s, using default.", lastModeIdentifier); //$NON-NLS-1$
+        Logger.logf("Could not find mode %s, using default.", lastModeIdentifier); //$NON-NLS-1$
       }
     }
 
@@ -3209,34 +3210,5 @@ public class Base {
     }
     out.flush();
     out.close();
-  }
-
-
-  static public void log(Object from, String message) {
-    if (DEBUG) {
-      System.out.println(from.getClass().getName() + ": " + message);
-    }
-  }
-
-
-  static public void log(String message) {
-    if (DEBUG) {
-      System.out.println(message);
-    }
-  }
-
-
-  static public void logf(String message, Object... args) {
-    if (DEBUG) {
-      System.out.println(String.format(message, args));
-    }
-  }
-
-
-  static public void log(String message, Throwable e) {
-    if (DEBUG) {
-      System.out.println(message);
-      e.printStackTrace();
-    }
   }
 }

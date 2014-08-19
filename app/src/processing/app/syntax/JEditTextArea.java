@@ -29,6 +29,7 @@ import java.awt.im.InputMethodRequests;
 import java.awt.print.Printable;
 
 import processing.app.syntax.im.InputMethodSupport;
+import processing.app.logging.Logger;
 import processing.core.PApplet;
 
 /**
@@ -2352,7 +2353,7 @@ public class JEditTextArea extends JComponent
         try {
           select(getMarkPosition(), xyToOffset(evt.getX(), evt.getY()));
         } catch (ArrayIndexOutOfBoundsException e) {
-          Base.log("xToOffset problem", e);
+          Logger.log("xToOffset problem", e);
         }
       } else {
         int line = yToLine(evt.getY());

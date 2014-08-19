@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import processing.app.contrib.*;
+import processing.app.logging.Logger;
 import processing.core.*;
 
 
@@ -88,7 +89,7 @@ public class Library extends LocalContribution {
     try {
       return new Library(folder);
 //    } catch (IgnorableException ig) {
-//      Base.log(ig.getMessage());
+//      Logger.log(ig.getMessage());
     } catch (Error err) {
       // Handles UnsupportedClassVersionError and others
       err.printStackTrace();

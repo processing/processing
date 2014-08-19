@@ -29,6 +29,7 @@ import java.util.*;
 import processing.app.Base;
 //import processing.app.Base;
 import processing.app.Editor;
+import processing.app.logging.Logger;
 import processing.app.tools.Tool;
 
 
@@ -40,7 +41,7 @@ public class ToolContribution extends LocalContribution implements Tool {
     try {
       return new ToolContribution(folder);
     } catch (IgnorableException ig) {
-      Base.log(ig.getMessage());
+      Logger.log(ig.getMessage());
     } catch (Error err) {
       // Handles UnsupportedClassVersionError and others
       err.printStackTrace();

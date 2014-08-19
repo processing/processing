@@ -29,6 +29,7 @@ import java.net.Socket;
 
 import javax.swing.SwingUtilities;
 
+import processing.app.logging.Logger;
 import processing.core.PApplet;
 
 
@@ -74,28 +75,28 @@ public class SingleInstance {
               Socket s = ss.accept();  // blocks (sleeps) until connection
               final BufferedReader reader = PApplet.createReader(s.getInputStream());
               String receivedKey = reader.readLine();
-              Base.log(this, "key is " + key + ", received is " + receivedKey);
-//              Base.log(this, "platform base is " + platform.base);
+              Logger.log(this, "key is " + key + ", received is " + receivedKey);
+//              Logger.log(this, "platform base is " + platform.base);
 
 //              if (platform.base != null) {
               if (key.equals(receivedKey)) {
                 SwingUtilities.invokeLater(new Runnable() {
                   public void run() {
                     try {
-                      Base.log(this, "about to read line");
+                      Logger.log(this, "about to read line");
                       String path = reader.readLine();
                       if (path == null) {
                         // Because an attempt was made to launch the PDE again,
                         // throw the user a bone by at least opening a new
                         // Untitled window for them.
-                        Base.log(this, "opening new empty sketch");
+                        Logger.log(this, "opening new empty sketch");
 //                        platform.base.handleNew();
                         base.handleNew();
 
                       } else {
                         // loop through the sketches that were passed in
                         do {
-                          Base.log(this, "calling open with " + path);
+                          Logger.log(this, "calling open with " + path);
 //                        platform.base.handleOpen(filename);
                           base.handleOpen(path);
                           path = reader.readLine();
@@ -107,18 +108,18 @@ public class SingleInstance {
                   }
                 });
               } else {
-                Base.log(this, "keys do not match");
+                Logger.log(this, "keys do not match");
               }
 //              }
             } catch (IOException e) {
-              Base.log("SingleInstance error while listening", e);
+              Logger.log("SingleInstance error while listening", e);
             }
           }
         }
       }, "SingleInstance Server").start();
 
     } catch (IOException e) {
-      Base.log("Could not create single instance server.", e);
+      Logger.log("Could not create single instance server.", e);
     }
   }
 
