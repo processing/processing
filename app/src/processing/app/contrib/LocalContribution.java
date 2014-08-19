@@ -31,6 +31,7 @@ import java.util.zip.*;
 import javax.swing.JOptionPane;
 
 import processing.app.*;
+import processing.core.PApplet;
 
 
 /** 
@@ -74,7 +75,9 @@ public abstract class LocalContribution extends Contribution {
         System.err.println("The version number for the “" + name + "” library is not set properly.");
         System.err.println("Please contact the library author to fix it according to the guidelines.");
       }
+      
       prettyVersion = properties.get("prettyVersion");
+      
       try {
         lastUpdated = Long.parseLong(properties.get("lastUpdated"));
       } catch (NumberFormatException e) {
@@ -83,6 +86,16 @@ public abstract class LocalContribution extends Contribution {
       // Better comment these out till all contribs have a lastUpdated 
 //        System.err.println("The last updated timestamp for the “" + name + "” library is not set properly.");
 //        System.err.println("Please contact the library author to fix it according to the guidelines.");
+      }
+
+      String minRev = properties.get("minRevision");
+      if (minRev != null) {
+        minRevision = PApplet.parseInt(minRev, 0);
+      }
+      
+      String maxRev = properties.get("maxRevision");
+      if (maxRev != null) {
+        maxRevision = PApplet.parseInt(maxRev, 0);
       }
       
     } else {

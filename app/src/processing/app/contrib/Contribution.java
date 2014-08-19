@@ -46,6 +46,8 @@ abstract public class Contribution {
   protected int version;          // 102
   protected String prettyVersion; // "1.0.2"
   protected long lastUpdated;   //  1402805757
+  protected int minRevision;    //  0
+  protected int maxRevision;    //  227
   
   
   // "Sound"
@@ -127,6 +129,21 @@ abstract public class Contribution {
   // 1402805757
   public long getLastUpdated() {
     return lastUpdated;
+  }
+
+  // 0
+  public int getMinRevision() {
+    return minRevision;
+  }
+
+  // 227
+  public int getMaxRevision() {
+    return maxRevision;
+  }
+
+
+  public boolean isCompatible(int versionNum) {
+    return ((maxRevision == 0 || versionNum < maxRevision) && versionNum > minRevision);
   }
 
 

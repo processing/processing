@@ -308,6 +308,24 @@ public class ContributionListing {
   }
 
 
+  protected List<Contribution> getCompatibleContributionList(List<Contribution> filteredLibraries, boolean filter) {
+    ArrayList<Contribution> filteredList = 
+      new ArrayList<Contribution>(filteredLibraries);
+    
+    if (!filter)
+      return filteredList;
+
+    Iterator<Contribution> it = filteredList.iterator();
+    while (it.hasNext()) {
+      Contribution libInfo = it.next();
+      if (!libInfo.isCompatible(Base.getRevision())) {
+        it.remove();
+      }
+    }
+    return filteredList;
+  }
+
+
   private void notifyRemove(Contribution contribution) {
     for (ContributionChangeListener listener : listeners) {
       listener.contributionRemoved(contribution);
