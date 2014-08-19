@@ -680,6 +680,7 @@ public class PGraphics extends PImage implements PConstants {
    * as the first line of a subclass' constructor to properly set
    * the internal fields and defaults.
    *
+   * @nowebref
    */
   public PGraphics() {
   }
