@@ -761,8 +761,10 @@ class ContributionPanel extends JPanel {
 
     if (contrib != null) {
       updateButton.setVisible((contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged() && !contrib.isDeletionFlagged()) || isUpdateInProgress);
+      updateButton.setEnabled(!contribListing.hasListDownloadFailed());
     }
     installRemoveButton.setVisible(isSelected() || installRemoveButton.getText().equals(Language.text("contrib.remove")) || isUpdateInProgress);
+    installRemoveButton.setEnabled(installRemoveButton.getText().equals(Language.text("contrib.remove")) ||!contribListing.hasListDownloadFailed());
     reorganizePaneComponents();
 
 //    for (JTextPane textPane : headerPaneSet) {

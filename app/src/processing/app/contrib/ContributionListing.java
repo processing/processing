@@ -44,6 +44,7 @@ public class ContributionListing {
   Map<String, List<Contribution>> librariesByCategory;
   ArrayList<Contribution> allContributions;
   boolean hasDownloadedLatestList;
+  boolean hasListDownloadFailed;
   ReentrantLock downloadingListingLock;
 
 
@@ -369,8 +370,11 @@ public class ContributionListing {
           ContributionManager.download(url, listingFile, progress);
           if (!progress.isCanceled() && !progress.isError()) {
             hasDownloadedLatestList = true;
+            hasListDownloadFailed = false;
             setAdvertisedList(listingFile);
           }
+          else
+            hasListDownloadFailed = true;
         }
         downloadingListingLock.unlock();
       }
@@ -433,6 +437,11 @@ public class ContributionListing {
 
   boolean hasDownloadedLatestList() {
     return hasDownloadedLatestList;
+  }
+
+
+  boolean hasListDownloadFailed() {
+    return hasListDownloadFailed;
   }
 
 
