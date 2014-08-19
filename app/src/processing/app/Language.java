@@ -165,8 +165,13 @@ public class Language {
 
   /** Get translation from bundles. */
   static public String text(String text) {
-    String result = init().bundle.getString(text);
-    return (result == null) ? text : result;
+    ResourceBundle bundle = init().bundle;
+
+    try {
+      return bundle.getString(text);
+    } catch (MissingResourceException e) {
+      return text;
+    }
   }
 
   
