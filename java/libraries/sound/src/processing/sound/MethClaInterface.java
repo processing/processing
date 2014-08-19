@@ -7,6 +7,9 @@ public class MethClaInterface
 	  System.loadLibrary("MethClaInterface");
   }
   // Functions I want
+
+  public native int[] mixPlay(int[] input, float[] amp);
+
   
   // Engine 
     
