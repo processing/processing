@@ -161,9 +161,8 @@ public class ExperimentalMode extends JavaMode {
       prefCCTriggerEnabled = "pdex.ccTriggerEnabled",
       prefImportSuggestEnabled = "pdex.importSuggestEnabled";
 
-  // TweakMode code (Preferences)
+//  // TweakMode code (Preferences)
   volatile public static boolean enableTweak = false;
-  public static final String prefEnableTweak = "pdex.enableTweak";
 
   public void loadPreferences() {
     log("Load PDEX prefs");
@@ -180,8 +179,6 @@ public class ExperimentalMode extends JavaMode {
     defaultAutoSaveEnabled = Preferences.getBoolean(prefDefaultAutoSave);
     ccTriggerEnabled = Preferences.getBoolean(prefCCTriggerEnabled);
     importSuggestEnabled = Preferences.getBoolean(prefImportSuggestEnabled);
-    // TweakMode code - not a sticky preference anymore
-    // enableTweak = Preferences.getBoolean(prefEnableTweak);
   }
 
   public void savePreferences() {
@@ -198,8 +195,6 @@ public class ExperimentalMode extends JavaMode {
     Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
     Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
     Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
-    // TweakMode code - not a sticky preference anymore
-    // Preferences.setBoolean(prefEnableTweak, enableTweak);
   }
 
   public void ensurePrefsExist() {
@@ -229,10 +224,6 @@ public class ExperimentalMode extends JavaMode {
     if (Preferences.get(prefImportSuggestEnabled) == null)
       Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
 
-    // TweakMode code - not a sticky preference anymore
-//    if (Preferences.get(prefEnableTweak) == null) {
-//    	Preferences.setBoolean(prefEnableTweak, enableTweak);
-//    }
   }
 
 
