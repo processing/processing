@@ -72,6 +72,7 @@ import processing.app.Base;
 import processing.app.EditorState;
 import processing.app.EditorToolbar;
 import processing.app.Mode;
+import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Toolkit;
@@ -1804,6 +1805,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     //protected JCheckBoxMenuItem enableTweakCB;
 
+  public static final String prefTweakPort = "tweak.port";
+  public static final String prefTweakShowCode = "tweak.showcode";
+
 	String[] baseCode;
 
 	final static int SPACE_AMOUNT = 0;
@@ -2036,9 +2040,23 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     		return false;
     	}
 
+    	// get port number from preferences.txt
+    	int port;
+    	String portStr = Preferences.get(prefTweakPort);
+    	if (portStr == null) {
+    		Preferences.set(prefTweakPort, "auto");
+    		portStr = "auto";
+    	}
+    	
+    	if (portStr.equals("auto")) {
+            // random port for udp (0xc000 - 0xffff)
+    		port = (int)(Math.random()*0x3fff) + 0xc000;   		
+    	}
+    	else {
+    		port = Preferences.getInteger(prefTweakPort);
+    	}
+    	
     	/* create the client that will send the new values to the sketch */
-        // random port for udp (0xff0 - 0xfff0)
-		int port = (int)(Math.random()*0xf000) + 0xff0;
 		tweakClient = new UDPTweakClient(port);
 		// update handles with a reference to the client object
 		for (int tab=0; tab<code.length; tab++) {
@@ -2096,31 +2114,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     	header += "TweakModeServer tweakmode_Server;\n";
     			
 
-    	/* add the class for the OSC event handler that will respond to our messages */
-//    	header += "public class TweakMode_OscHandler {\n" +
-//    			  "  public void oscEvent(OscMessage msg) {\n" +
-//                  "    String type = msg.addrPattern();\n";
-//        if (numOfInts > 0) {
-//        	header += "    if (type.contains(\"/tm_change_int\")) {\n" +
-//                      "      int index = msg.get(0).intValue();\n" +
-//                      "      int value = msg.get(1).intValue();\n" +
-//                      "      tweakmode_int[index] = value;\n" +
-//                      "    }\n";
-//        	if (numOfFloats > 0) {
-//        		header += "    else ";
-//        	}
-//        }
-//        if (numOfFloats > 0) {
-//            header += "if (type.contains(\"/tm_change_float\")) {\n" +
-//                      "      int index = msg.get(0).intValue();\n" +
-//                      "      float value = msg.get(1).floatValue();\n" +
-//                      "      tweakmode_float[index] = value;\n" +
-//                      "    }\n";
-//        }
-//        header += "  }\n" +
-//                  "}\n";
-//    	header += "TweakMode_OscHandler tweakmode_oscHandler = new TweakMode_OscHandler();\n";
-
     	header += "void tweakmode_initAllVars() {\n";
     	for (int i=0; i<handles.length; i++) {
     		for (Handle n : handles[i])
@@ -2133,7 +2126,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     	header += "	tweakmode_Server = new TweakModeServer();\n";
     	header += "	tweakmode_Server.setup();\n";
     	header += "	tweakmode_Server.start();\n";
-//    	header += "  tweakmode_oscP5 = new OscP5(tweakmode_oscHandler,"+oscPort+");\n";
     	header += "}\n";
 
     	header += "\n\n\n\n\n";
@@ -2149,14 +2141,20 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     	code[0].setProgram(header + c);
 
     	/* print out modified code */
-//    	if (tweakMode.dumpModifiedCode) {
-    		System.out.println("\nModified code:\n");
+    	String showModCode = Preferences.get(prefTweakShowCode);
+    	if (showModCode == null) {
+    		Preferences.setBoolean(prefTweakShowCode, false);
+    	}
+    	
+    	if (Preferences.getBoolean(prefTweakShowCode)) {
+    		System.out.println("\nTweakMode modified code:\n");
     		for (int i=0; i<code.length; i++)
     		{
-    			System.out.println("file " + i + "\n=========");
+    			System.out.println("tab " + i + "\n");
+    			System.out.println("=======================================================\n");
     			System.out.println(code[i].getProgram());
     		}
-//    	}
+    	}
 
     	return true;
     }
