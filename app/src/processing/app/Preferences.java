@@ -151,6 +151,10 @@ public class Preferences {
     }
   }
 
+  static public File getPreferencesFile() {
+    return preferencesFile;
+  }
+
 
   // .................................................................
 
