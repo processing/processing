@@ -45,7 +45,7 @@ import processing.core.*;
  * sounds like a lot of work. Not unlike writing this paragraph. 
  */
 public class Preferences {
-  // had to rename this file because people were editing it
+  // had to rename the defaults file because people were editing it
   static final String DEFAULTS_FILE = "defaults.txt"; //$NON-NLS-1$
   static final String PREFS_FILE = "preferences.txt"; //$NON-NLS-1$
 
@@ -151,8 +151,9 @@ public class Preferences {
     }
   }
 
-  static public File getPreferencesFile() {
-    return preferencesFile;
+  
+  static protected String getPreferencesPath() {
+    return preferencesFile.getAbsolutePath();
   }
 
 

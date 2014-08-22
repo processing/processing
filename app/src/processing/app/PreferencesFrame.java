@@ -526,7 +526,7 @@ public class PreferencesFrame {
     right = Math.max(right, left + d.width);
     top += d.height; // + GUI_SMALL;
 
-    label = new JLabel(Preferences.getPreferencesFile().getAbsolutePath());
+    label = new JLabel(Preferences.getPreferencesPath());
     final JLabel clickable = label;
     label.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
