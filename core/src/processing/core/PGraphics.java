@@ -7680,10 +7680,10 @@ public class PGraphics extends PImage implements PConstants {
       float g2 = (c2 >> 8) & 0xff;
       float b2 = c2 & 0xff;
 
-      return (((int) (a1 + (a2-a1)*amt) << 24) |
-              ((int) (r1 + (r2-r1)*amt) << 16) |
-              ((int) (g1 + (g2-g1)*amt) << 8) |
-              ((int) (b1 + (b2-b1)*amt)));
+      return ((Math.round(a1 + (a2-a1)*amt) << 24) |
+              (Math.round(r1 + (r2-r1)*amt) << 16) |
+              (Math.round(g1 + (g2-g1)*amt) << 8) |
+              (Math.round(b1 + (b2-b1)*amt)));
 
     } else if (mode == HSB) {
       if (lerpColorHSB1 == null) {
@@ -7693,7 +7693,7 @@ public class PGraphics extends PImage implements PConstants {
 
       float a1 = (c1 >> 24) & 0xff;
       float a2 = (c2 >> 24) & 0xff;
-      int alfa = ((int) (a1 + (a2-a1)*amt)) << 24;
+      int alfa = (Math.round(a1 + (a2-a1)*amt)) << 24;
 
       Color.RGBtoHSB((c1 >> 16) & 0xff, (c1 >> 8) & 0xff, c1 & 0xff,
                      lerpColorHSB1);
