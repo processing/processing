@@ -123,6 +123,8 @@ _   test with JG's 13" retina laptop
 
 
 decisions/misc
+_ use enums for constants
+_   https://github.com/processing/processing/issues/2778
 _ make join() work with Iterable?
 _   will this collide with the current String[] version?
 _ add options for image.save() (or saveImage?)

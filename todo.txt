@@ -12,6 +12,9 @@ _ Fix OS X menu to be the same order as the other File menu
 _ remove toolbar menu references and code to rebuild
 
 gsoc
+X remove dependency on oscp5 library for tweak mode
+_   https://github.com/processing/processing/issues/2730
+X   https://github.com/processing/processing/pull/2808
 X fixes for mode/tool installation
 X   https://github.com/processing/processing/pull/2705
 X fix mode updating to work properly
@@ -30,8 +33,32 @@ X Code completion: Hide overloaded methods unless inside parentheses
 X   https://github.com/processing/processing/issues/2755
 X Close auto-completion suggestion box when deleting/backspacing code
 X   https://github.com/processing/processing/issues/2757
-_ remove dependency on oscp5 library for tweak mode
-_   https://github.com/processing/processing/issues/2730
+X error checking too aggressive in the current alpha
+X   https://github.com/processing/processing/issues/2677
+X if 'void' left out before loop or setup, cryptic message about
+X   'constructor loop must be named Temporary_23498_2343'
+X   add a better handler for this specific thing?
+X   http://code.google.com/p/processing/issues/detail?id=8
+X   https://github.com/processing/processing/issues/47
+X Improve how the Contributions Manager handles no internet connection
+X   https://github.com/processing/processing/pull/2800
+X Added examples-package as a new contribution type
+X   https://github.com/processing/processing/pull/2795
+X   https://github.com/processing/processing/issues/2444
+X   https://github.com/processing/processing/issues/2582
+X Contributions Managers now show specific titles
+X   https://github.com/processing/processing/pull/2777
+X Add rank (starred / recommended) to contributions manager items
+X   https://github.com/processing/processing/issues/2580
+o Improve detection and handling of missing semicolons
+o   http://code.google.com/p/processing/issues/detail?id=136
+X   should be fixed with PDE X (closed by Dan
+X   https://github.com/processing/processing/issues/175
+X missing brackets, unmatched brackets
+X   examples added to the bug report
+X   http://code.google.com/p/processing/issues/detail?id=6
+X   closed by Shiffman, working better now
+X   https://github.com/processing/processing/issues/45
 
 pulls
 X Add polling to detect file system changes
@@ -82,9 +109,11 @@ X   https://github.com/processing/processing/issues/1855
 X   https://github.com/processing/processing/issues/1816
 X Fix unneeded scroll bar display in code completion suggestion box
 X   https://github.com/processing/processing/pull/2763
-
-_ PDE erroneously detects changes in non-sketch files
-_   https://github.com/processing/processing/issues/2759
+X PDE erroneously detects changes in non-sketch files
+X   https://github.com/processing/processing/pull/2794
+X   https://github.com/processing/processing/issues/2759
+X Catch MissingResourceException when language key is missing
+X   https://github.com/processing/processing/pull/2780
 
 languages
 X Japanese https://github.com/processing/processing/pull/2688
@@ -396,10 +425,6 @@ _     http://www.javalobby.org/java/forums/t19012.html
 
 PDE / Compiler & Preprocessor
 
-need examples
-_ Improve detection and handling of missing semicolons
-_   http://code.google.com/p/processing/issues/detail?id=136
-
 medium (bugs/features)
 _ modify build to insert these after antlr run:
 _   @SuppressWarnings({"unused", "cast"})
@@ -413,9 +438,6 @@ _   e.g. no setup()/draw() block
 _ don't allow "for (blah; blah; blah) ;"
 _   or if (blah blah blah) ;
 _   it's never useful. students can use { } if they want an empty block
-_ missing brackets, unmatched brackets
-_   examples added to the bug report
-_   http://code.google.com/p/processing/issues/detail?id=6
 
 low (features)
 _ copy running code from /tmp/buildXXxxx on crash of p5
@@ -444,10 +466,6 @@ _   http://code.google.com/p/processing/issues/detail?id=494
 low (better error messages)
 _ single line of code with no semicolon dies with "unexpected token: null"
 _   http://code.google.com/p/processing/issues/detail?id=1312
-_ if 'void' left out before loop or setup, cryptic message about
-_   'constructor loop must be named Temporary_23498_2343'
-_   add a better handler for this specific thing?
-_   http://code.google.com/p/processing/issues/detail?id=8
 
 
 PDE / Editor
