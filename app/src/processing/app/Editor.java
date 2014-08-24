@@ -393,7 +393,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
         public void actionPerformed(ActionEvent e) {
           if (!sketch.isModified()) {
             base.changeMode(m);
-            
           } else {
             Base.showWarning("Save",
                              "Please save the sketch before changing the mode.",
@@ -428,6 +427,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     });
     modeMenu.add(addLib);
+
+    Toolkit.setMenuMnemonics(modeMenu);
   }
 
 
@@ -2825,6 +2826,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       referenceItem;
 
     public TextAreaPopup() {
+      JMenuItem item;
+
       cutItem = new JMenuItem(Language.text("menu.edit.cut"));
       cutItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -2849,47 +2852,47 @@ public abstract class Editor extends JFrame implements RunnerListener {
         });
       this.add(discourseItem);
 
-      pasteItem = new JMenuItem(Language.text("menu.edit.paste"));
-      pasteItem.addActionListener(new ActionListener() {
+      item = new JMenuItem(Language.text("menu.edit.paste"));
+      item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handlePaste();
           }
         });
-      this.add(pasteItem);
+      this.add(item);
 
-      selectAllItem = new JMenuItem(Language.text("menu.edit.select_all"));
-      selectAllItem.addActionListener(new ActionListener() {
+      item = new JMenuItem(Language.text("menu.edit.select_all"));
+      item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleSelectAll();
         }
       });
-      this.add(selectAllItem);
+      this.add(item);
 
       this.addSeparator();
 
-      commUncommItem = new JMenuItem(Language.text("menu.edit.comment_uncomment"));
-      commUncommItem.addActionListener(new ActionListener() {
+      item = new JMenuItem(Language.text("menu.edit.comment_uncomment"));
+      item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleCommentUncomment();
           }
       });
-      this.add(commUncommItem);
+      this.add(item);
 
-      incIndItem = new JMenuItem("\u2192 " + Language.text("menu.edit.increase_indent"));
-      incIndItem.addActionListener(new ActionListener() {
+      item = new JMenuItem("\u2192 " + Language.text("menu.edit.increase_indent"));
+      item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleIndentOutdent(true);
           }
       });
-      this.add(incIndItem);
+      this.add(item);
 
-      decIndItem = new JMenuItem("\u2190 "+Language.text("menu.edit.decrease_indent"));
-      decIndItem.addActionListener(new ActionListener() {
+      item = new JMenuItem("\u2190 " + Language.text("menu.edit.decrease_indent"));
+      item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleIndentOutdent(false);
           }
       });
-      this.add(decIndItem);
+      this.add(item);
 
       this.addSeparator();
 
@@ -2900,10 +2903,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
           }
         });
       this.add(referenceItem);
-
-      Toolkit.setMenuMnemonics(cutItem, copyItem, discourseItem,
-        pasteItem, selectAllItem, commUncommItem, incIndItem,
-        decIndItem, referenceItem);
+      
+      Toolkit.setMenuMnemonics(this);
     }
 
     // if no text is selected, disable copy and cut menu items

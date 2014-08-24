@@ -247,6 +247,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 //            }
 //        });
 
+        Toolkit.setMenuMnemonics(ta.getRightClickPopup());
+
         // load settings from theme.txt
         ExperimentalMode theme = dmode;
         breakpointColor = theme.getThemeColor("breakpoint.bgcolor", breakpointColor);
@@ -380,25 +382,26 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * For analytics purposes only.
      */
     private void writeErrorsToFile(){
-    if (errorCheckerService.tempErrorLog.size() == 0)
-      return;
-      try {
-        System.out.println("Writing errors");
-        StringBuffer sbuff = new StringBuffer();
+    if (errorCheckerService.tempErrorLog.size() == 0) return;
+
+    try {
+      System.out.println("Writing errors");
+      StringBuffer sbuff = new StringBuffer();
       sbuff.append("Sketch: " + getSketch().getFolder() + ", "
           + new java.sql.Timestamp(new java.util.Date().getTime())
-              + "\nComma in error msg is substituted with ^ symbol\nFor separating arguments in error args | symbol is used\n");
+          + "\nComma in error msg is substituted with ^ symbol\nFor separating arguments in error args | symbol is used\n");
       sbuff.append("ERROR TYPE, ERROR ARGS, ERROR MSG\n");
-        for (String errMsg : errorCheckerService.tempErrorLog.keySet()) {
-          IProblem ip = errorCheckerService.tempErrorLog.get(errMsg);
-          if(ip != null){
-            sbuff.append(ErrorMessageSimplifier.getIDName(ip.getID()));
-            sbuff.append(',');
-            sbuff.append("{");
-            for (int i = 0; i < ip.getArguments().length; i++) {
-              sbuff.append(ip.getArguments()[i]);
-              if(i < ip.getArguments().length - 1)
-                sbuff.append("| ");
+      
+      for (String errMsg : errorCheckerService.tempErrorLog.keySet()) {
+        IProblem ip = errorCheckerService.tempErrorLog.get(errMsg);
+        if (ip != null) {
+          sbuff.append(ErrorMessageSimplifier.getIDName(ip.getID()));
+          sbuff.append(',');
+          sbuff.append("{");
+          for (int i = 0; i < ip.getArguments().length; i++) {
+            sbuff.append(ip.getArguments()[i]);
+            if (i < ip.getArguments().length - 1)
+              sbuff.append("| ");
             }
             sbuff.append("}");
             sbuff.append(',');

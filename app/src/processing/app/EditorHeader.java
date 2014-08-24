@@ -592,6 +592,8 @@ public class EditorHeader extends JComponent {
         menu.add(item);
       }
     }
+    
+    Toolkit.setMenuMnemonics(menu);
   }
 
 

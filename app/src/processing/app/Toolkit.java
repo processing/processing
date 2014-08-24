@@ -21,6 +21,7 @@
 
 package processing.app;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -57,6 +58,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
@@ -145,7 +147,7 @@ public class Toolkit {
    *  that is not taken. This is to try to be relevant, by using a letter well-associated 
    *  with the command. (MS guidelines) </li>
    * <li> Ditto, but with lowercase. </li>
-   * <li> Next, it tries the second ASCII character, if its width >= half the width of
+   * <li> Next, it tries the second ASCII character, if its width &gt;= half the width of
    *  'A'. </li>
    * <li> If the first letters are all taken/non-ASCII, then it loops through the
    *  ASCII letters in the item, widest to narrowest, seeing if any of them is not taken.
@@ -199,10 +201,10 @@ public class Toolkit {
     final Pattern nonAAlpha = Pattern.compile("[^A-Za-z]");
     FontMetrics fmTmp = null;
     for (JMenuItem m : menu) {
-      if (m != null) fmTmp = m.getFontMetrics(menu[0].getFont());
+      if (m != null) fmTmp = m.getFontMetrics(m.getFont());
     }
-    if (fmTmp == null) return; // All null menuitems.
-    final FontMetrics fm = fmTmp;
+    if (fmTmp == null) return; // All null menuitems; comparator would fail.
+    final FontMetrics fm = fmTmp; // Hack for accessing variable in comparator.
 
     final Comparator<Character> charComparator = new Comparator<Character>() {
       char[] baddies = "qypgjaeiouQYPGJAEIOU".toCharArray(); 
@@ -231,8 +233,9 @@ public class Toolkit {
       if (jmi.getText() == null) continue;
       jmi.setMnemonic(0); // Reset.
       for (int i = 0; i < kdePreDefStrs.length; i++) {
-        String cleanName = nonAAlpha.matcher(jmi.getText()).replaceAll("").toLowerCase();
-	if (kdePreDefPats[i].matcher(cleanName).matches()) {
+        // To ASCII lowercase letters.
+        String lASCIIName = nonAAlpha.matcher(jmi.getText()).replaceAll("").toLowerCase();
+	if (kdePreDefPats[i].matcher(lASCIIName).matches()) {
           char mnem = kdePreDefStrs[i].charAt(1+kdePreDefStrs[i].indexOf("&"));
           jmi.setMnemonic(mnem);
 	  taken.add(mnem);
@@ -242,7 +245,7 @@ public class Toolkit {
     }
     
     // Where KDE defaults fail, use an algorithm.
-    algorithmicAssaignment:
+    algorithmicAssignment:
     for (JMenuItem jmi : menu) {
       if (jmi == null) continue;
       if (jmi.getText() == null) continue;
@@ -278,7 +281,7 @@ public class Toolkit {
         if ('A' <= firstChar && firstChar <= 'Z') {
           jmi.setMnemonic(firstChar);
           taken.add((char)(firstChar | 32)); // tolowercase
-          continue algorithmicAssaignment;
+          continue algorithmicAssignment;
         }
       }
 
@@ -291,25 +294,24 @@ public class Toolkit {
         if ('a' <= firstChar && firstChar <= 'z') {
           jmi.setMnemonic(firstChar);
           taken.add(firstChar); // is lowercase
-          continue algorithmicAssaignment;
+          continue algorithmicAssignment;
         }
       }
 
-      // METHOD 4: Second ASCII letter.
+      // METHOD 4: Second wide-enough ASCII letter.
       cleanString = nonAAlpha.matcher(jmi.getText()).replaceAll(""); 
       if (cleanString.length() >= 2) {
-        if (!taken.contains((char)(cleanString.charAt(1)|32))) {
-	  if (!banned.contains((char)(cleanString.charAt(1)|32))) {
-	    if (fm.charWidth('A') <= 2*fm.charWidth(cleanString.charAt(1))) {
-              jmi.setMnemonic(cleanString.charAt(1));
-              taken.add((char)(cleanString.charAt(1)|32));
-              continue algorithmicAssaignment;
-	    }
-	  }
-        }
+        char ascii2nd = cleanString.charAt(1);
+        if (!taken.contains((char)(ascii2nd|32)) &&
+	    !banned.contains((char)(ascii2nd|32)) &&
+	    fm.charWidth('A') <= 2*fm.charWidth(ascii2nd)) {
+          jmi.setMnemonic(ascii2nd);
+          taken.add((char)(ascii2nd|32));
+          continue algorithmicAssignment;
+	}
       }
 
-      // METHOD 5: charComparator.
+      // METHOD 5: charComparator over all ASCII letters.
       cleanChars  = cleanString.toCharArray();
       cleanCharas = new Character[cleanChars.length];
       for (int i = 0; i < cleanChars.length; i++) {
@@ -322,16 +324,16 @@ public class Toolkit {
         // NB: setMnemonic(char) doesn't want [^A-Za-z]
         jmi.setMnemonic(mnem);
         taken.add(Character.toLowerCase(mnem));
-        continue algorithmicAssaignment;
+        continue algorithmicAssignment;
       }
 
-      // METHOD 6: Digits
+      // METHOD 6: Digits as last resort.
       for (char digit : jmi.getText().replaceAll("[^0-9]", "").toCharArray()) {
         if (taken.contains(digit)) continue;
         if (banned.contains(digit)) continue;
-        jmi.setMnemonic(KeyEvent.VK_0 + (digit - '0'));
+        jmi.setMnemonic(KeyEvent.VK_0 + digit - '0');
 	taken.add(digit);
-	continue algorithmicAssaignment;
+	continue algorithmicAssignment;
       }
     }
 
@@ -358,6 +360,19 @@ public class Toolkit {
       items[i] = menubar.getMenu(i);
     }
     setMenuMnemonics(items);
+  }
+  
+  
+  /**
+   * As setMenuMnemonics(JMenuItem...).
+   */
+  public static void setMenuMnemonics(JPopupMenu menu) {
+    ArrayList<JMenuItem> items = new ArrayList<JMenuItem>();
+    
+    for (Component c : menu.getComponents()) {
+      if (c instanceof JMenuItem) items.add((JMenuItem)c);
+    }
+    setMenuMnemonics(items.toArray(new JMenuItem[items.size()]));
   }
 
 
