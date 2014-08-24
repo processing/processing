@@ -88,9 +88,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   private Point sketchWindowLocation;
 
   // undo fellers
-  private JMenuItem undoItem, redoItem;
+  private JMenuItem undoItem, redoItem, copyItem, cutItem;
   protected UndoAction undoAction;
   protected RedoAction redoAction;
+  protected CopyAction copyAction;
+  protected CutAction cutAction;
   /** the currently selected tab's undo manager */
   private UndoManager undo;
   // used internally for every edit. Groups hotkey-event text manipulations and
@@ -734,23 +736,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     menu.addSeparator();
 
-    // TODO "cut" and "copy" should really only be enabled
-    // if some text is currently selected
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.cut"), 'X');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleCut();
-        }
-      });
-    menu.add(item);
+    cutItem = Toolkit.newJMenuItem("Cut", 'X');
+    cutItem.addActionListener(cutAction = new CutAction());
+    menu.add(cutItem);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.copy"), 'C');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          textarea.copy();
-        }
-      });
-    menu.add(item);
+    copyItem = Toolkit.newJMenuItem("Copy", 'C');
+    copyItem.addActionListener(copyAction = new CopyAction());
+    menu.add(copyItem);
 
     item = Toolkit.newJMenuItemShift(Language.text("menu.edit.copy_as_html"), 'C');
     item.addActionListener(new ActionListener() {
@@ -888,6 +880,26 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
       });
     menu.add(item);
+ // Listener to the Edit menu item
+    menu.addMenuListener(new MenuListener() {
+    
+      @Override
+      public void menuCanceled(MenuEvent e) {
+      }
+    
+      @Override
+      public void menuDeselected(MenuEvent e) {
+      }
+    
+      /* Updating the copy and cut JMenuItems
+       * as soon as the Edit menu is selected
+       */
+      @Override
+      public void menuSelected(MenuEvent e) {
+        copyAction.updateCopyState();
+        cutAction.updateCutState();
+      }
+    });
 
     return menu;
   }
@@ -1276,6 +1288,53 @@ public abstract class Editor extends JFrame implements RunnerListener {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  class CutAction extends AbstractAction {
+    public CutAction() {
+      super("Cut");
+      this.setEnabled(false);
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+      System.out.println(e.getActionCommand());
+      handleCut();
+    }
+    
+    public void updateCutState() {
+      if (canCut()) {
+        cutItem.setEnabled(true);
+      } else {
+        cutItem.setEnabled(false);
+      }
+    }
+    
+    public boolean canCut() {
+      return textarea.isSelectionActive();
+    }
+  }
+    
+   class CopyAction extends AbstractAction {
+     public CopyAction() {
+       super("Copy");
+       this.setEnabled(false);
+     }
+    
+    public void actionPerformed(ActionEvent e) {
+      textarea.copy();
+    }
+    
+    public void updateCopyState() {
+      if (canCopy()) {
+        copyItem.setEnabled(true);
+      } else {
+        copyItem.setEnabled(false);
+      }
+    }
+    
+    public boolean canCopy() {
+      return textarea.isSelectionActive();
+    }
+   }
+    
   class UndoAction extends AbstractAction {
     public UndoAction() {
       super(Language.text("menu.edit.undo"));
