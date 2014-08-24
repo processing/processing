@@ -1199,7 +1199,8 @@ public class Sketch {
 //      System.out.println(current.visited);
 //    }
     // if current is null, then this is the first setCurrent(0)
-    if ((currentIndex == which) && (current != null)) {
+    if (((currentIndex == which) && (current != null))
+      || which >= codeCount || which < 0) {
       return;
     }
 
