@@ -129,64 +129,62 @@ public class ContributionManager {
   static void downloadAndInstall(final Editor editor,
                                  final URL url,
                                  final AvailableContribution ad,
-                                 final JProgressMonitor downloadProgress,
-                                 final JProgressMonitor installProgress,
+                                 final ProgressMonitor downloadProgress,
+                                 final ProgressMonitor installProgress,
                                  final StatusPanel status) {
 
     new Thread(new Runnable() {
       public void run() {
         String filename = url.getFile();
         filename = filename.substring(filename.lastIndexOf('/') + 1);
+
+        File contribZip;
         try {
-          File contribZip = File.createTempFile("download", filename);
+          contribZip = File.createTempFile("download", filename);
           contribZip.setWritable(true);  // necessary?
-
-          try {
-            download(url, contribZip, downloadProgress);
-            
-            if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
-              installProgress.startTask(Language.text("contrib.progress.installing"), ProgressMonitor.UNKNOWN);
-              LocalContribution contribution = 
-                ad.install(editor.getBase(), contribZip, false, status);
-
-              if (contribution != null) {
-                contribListing.replaceContribution(ad, contribution);
-                if (contribution.getType() == ContributionType.MODE) {
-                  ArrayList<ModeContribution> contribModes = editor.getBase().getModeContribs();
-                  if (!contribModes.contains(contribution))
-                    contribModes.add((ModeContribution) contribution);
-                }
-                refreshInstalled(editor);
-              }
-              installProgress.finished();
-            }
-            else {
-              if (downloadProgress.exception instanceof SocketTimeoutException) {
-                status.setErrorMessage(Language
-                  .interpolate("contrib.errors.contrib_download.timeout",
-                               ad.getName()));
-              } else {
-                status.setErrorMessage(Language
-                  .interpolate("contrib.errors.download_and_install",
-                               ad.getName()));
-              }
-            }
-            contribZip.delete();
-
-          } catch (Exception e) {
-            // Hiding stack trace. The error message ought to suffice.
-//            e.printStackTrace();
-            status
-              .setErrorMessage(Language
-                .interpolate("contrib.errors.download_and_install",
-                             ad.getName()));
-            downloadProgress.cancel();
-            installProgress.cancel();
-          }
         } catch (IOException e) {
           status.setErrorMessage(Language.text("contrib.errors.temporary_directory"));
-          downloadProgress.cancel();
-          installProgress.cancel();
+          return;
+        }
+
+        try {
+          download(url, contribZip, downloadProgress);
+
+          if (downloadProgress.isCanceled() || downloadProgress.isError()) {
+            String message;
+            if (downloadProgress.exception instanceof SocketTimeoutException) {
+              message = Language.interpolate("contrib.errors.contrib_download.timeout", ad.getName());
+            } else {
+              message = Language.interpolate("contrib.errors.download_and_install", ad.getName());
+            }
+            status.setErrorMessage(message);
+            return;
+          }
+
+          installProgress.startTask(
+              Language.text("contrib.progress.installing"), ProgressMonitor.UNKNOWN);
+
+          LocalContribution contribution = ad.install(
+              editor.getBase(), contribZip, false, status);
+
+          if (contribution != null) {
+            contribListing.replaceContribution(ad, contribution);
+            if (contribution.getType() == ContributionType.MODE) {
+              ArrayList<ModeContribution> contribModes = editor.getBase().getModeContribs();
+              if (!contribModes.contains(contribution))
+                contribModes.add((ModeContribution) contribution);
+            }
+            refreshInstalled(editor);
+          }
+
+          installProgress.finished();
+          contribZip.delete();
+
+        } catch (Exception e) {
+          status.setErrorMessage(
+              Language.interpolate("contrib.errors.download_and_install", ad.getName()));
+            downloadProgress.cancel();
+            installProgress.cancel();
         }
       }
     }, "Contribution Installer").start();
@@ -209,43 +207,45 @@ public class ContributionManager {
       public void run() {
         String filename = url.getFile();
         filename = filename.substring(filename.lastIndexOf('/') + 1);
+
+        File contribZip;
         try {
-          File contribZip = File.createTempFile("download", filename);
+          contribZip = File.createTempFile("download", filename);
           contribZip.setWritable(true); // necessary?
+        } catch (IOException e) {
+          System.err.println("Could not write to temporary directory during download and install of "
+              + ad.getName());
+          return;
+        }
 
-          try {
-            download(url, contribZip, null);
-            
-            LocalContribution contribution = ad.install(base, contribZip,
-                                                        false, null);
+        try {
+          download(url, contribZip, null);
+          
+          LocalContribution contribution = ad.install(base, contribZip,
+                                                      false, null);
 
-            if (contribution != null) {
-              contribListing.replaceContribution(ad, contribution);
-              if (contribution.getType() == ContributionType.MODE) {
-                ArrayList<ModeContribution> contribModes = base
-                  .getModeContribs();
-                if (contribModes != null && !contribModes.contains(contribution)) {
-                  contribModes.add((ModeContribution) contribution);
-                }
+          if (contribution != null) {
+            contribListing.replaceContribution(ad, contribution);
+            if (contribution.getType() == ContributionType.MODE) {
+              ArrayList<ModeContribution> contribModes = base
+                .getModeContribs();
+              if (contribModes != null && !contribModes.contains(contribution)) {
+                contribModes.add((ModeContribution) contribution);
               }
-              if (base.getActiveEditor() != null)
-                refreshInstalled(base.getActiveEditor());
             }
+            if (base.getActiveEditor() != null)
+              refreshInstalled(base.getActiveEditor());
+          }
 
-            contribZip.delete();
-            
-            handleUpdateFailedMarkers(ad, filename.substring(0, filename.lastIndexOf('.')));
+          contribZip.delete();
 
-          } catch (Exception e) {
+          handleUpdateFailedMarkers(ad, filename.substring(0, filename.lastIndexOf('.')));
+
+        } catch (Exception e) {
 //            Chuck the stack trace. The user might have no idea why it is appearing, or what (s)he did wrong...
 //            e.printStackTrace();
-            System.out.println("Error during download and install of "
-              + ad.getName());
-          }
-        } catch (IOException e) {
-          System.err
-            .println("Could not write to temporary directory during download and install of "
-              + ad.getName());
+          System.out.println("Error during download and install of "
+            + ad.getName());
         }
       }
     }, "Contribution Installer").start();
