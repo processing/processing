@@ -711,7 +711,7 @@ public class Table {
               cellData = textpContent;  // nothing fancy, the text is in the text:p element
             } else {
               XML[] textpKids = textp.getChildren();
-              StringBuffer cellBuffer = new StringBuffer();
+              StringBuilder cellBuffer = new StringBuilder();
               for (XML kid : textpKids) {
                 String kidName = kid.getName();
                 if (kidName == null) {
@@ -770,7 +770,7 @@ public class Table {
   }
 
 
-  private void odsAppendNotNull(XML kid, StringBuffer buffer) {
+  private void odsAppendNotNull(XML kid, StringBuilder buffer) {
     String content = kid.getContent();
     if (content != null) {
       buffer.append(content);

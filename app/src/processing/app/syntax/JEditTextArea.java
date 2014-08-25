@@ -1397,7 +1397,7 @@ public class JEditTextArea extends JComponent
         start = tmp;
       }
 
-      StringBuffer buf = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       Segment seg = new Segment();
 
       for(int i = selectionStartLine; i <= selectionEndLine; i++)
@@ -1411,13 +1411,13 @@ public class JEditTextArea extends JComponent
         lineLen = Math.min(end - start,lineEnd - lineStart);
 
         getText(lineStart,lineLen,seg);
-        buf.append(seg.array,seg.offset,seg.count);
+        sb.append(seg.array,seg.offset,seg.count);
 
         if(i != selectionEndLine)
-          buf.append('\n');
+          sb.append('\n');
       }
 
-      return buf.toString();
+      return sb.toString();
     }
     else
     {
@@ -1691,11 +1691,11 @@ public class JEditTextArea extends JComponent
       String selection = getSelectedText();
 
       int repeatCount = inputHandler.getRepeatCount();
-      StringBuffer buf = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       for(int i = 0; i < repeatCount; i++)
-        buf.append(selection);
+        sb.append(selection);
 
-      clipboard.setContents(new StringSelection(buf.toString()),null);
+      clipboard.setContents(new StringSelection(sb.toString()), null);
     }
   }
 
@@ -1721,7 +1721,7 @@ public class JEditTextArea extends JComponent
    * specific to any language or version of the PDE.
    */
   public void copyAsHTML() {
-    StringBuffer cf = new StringBuffer("<html><body><pre>\n");
+    StringBuilder cf = new StringBuilder("<html><body><pre>\n");
 
     int selStart = getSelectionStart();
     int selStop = getSelectionStop();
@@ -1758,7 +1758,7 @@ public class JEditTextArea extends JComponent
   }
 
 
-  private void emitAsHTML(StringBuffer cf, int line) {
+  private void emitAsHTML(StringBuilder cf, int line) {
     Segment segment = new Segment();
     getLineText(line, segment);
 
@@ -1839,7 +1839,7 @@ public class JEditTextArea extends JComponent
   /**
    * Handle encoding HTML entities for lt, gt, and anything non-ASCII.
    */
-  private void appendAsHTML(StringBuffer buffer, char c) {
+  private void appendAsHTML(StringBuilder buffer, char c) {
     if (c == '<') {
       buffer.append("&lt;");
     } else if (c == '>') {
@@ -1903,11 +1903,11 @@ public class JEditTextArea extends JComponent
         }
 
         int repeatCount = inputHandler.getRepeatCount();
-        StringBuffer buf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < repeatCount; i++) {
-          buf.append(selection);
+          sb.append(selection);
         }
-        selection = buf.toString();
+        selection = sb.toString();
         setSelectedText(selection);
 
       } catch (Exception e) {

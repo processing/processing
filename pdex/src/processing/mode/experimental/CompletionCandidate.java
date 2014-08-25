@@ -29,8 +29,8 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
   public CompletionCandidate(Method method) {
     method.getDeclaringClass().getName();
     elementName = method.getName();
-    StringBuffer label = new StringBuffer(method.getName() + "(");
-    StringBuffer cstr = new StringBuffer(method.getName() + "(");
+    StringBuilder label = new StringBuilder(method.getName() + "(");
+    StringBuilder cstr = new StringBuilder(method.getName() + "(");
     for (int i = 0; i < method.getParameterTypes().length; i++) {
       label.append(method.getParameterTypes()[i].getSimpleName());
       if (i < method.getParameterTypes().length - 1) {
@@ -84,8 +84,8 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     type = LOCAL_METHOD;
     List<ASTNode> params = (List<ASTNode>) method
         .getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
-    StringBuffer label = new StringBuffer(elementName + "(");
-    StringBuffer cstr = new StringBuffer(method.getName() + "(");
+    StringBuilder label = new StringBuilder(elementName + "(");
+    StringBuilder cstr = new StringBuilder(method.getName() + "(");
     for (int i = 0; i < params.size(); i++) {
       label.append(params.get(i).toString());
       if (i < params.size() - 1) {
@@ -177,8 +177,8 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
       MethodDeclaration method = (MethodDeclaration)wrappedObject;
       List<ASTNode> params = (List<ASTNode>) method
           .getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
-      StringBuffer label = new StringBuffer(elementName + "(");
-      StringBuffer cstr = new StringBuffer(method.getName() + "(");
+      StringBuilder label = new StringBuilder(elementName + "(");
+      StringBuilder cstr = new StringBuilder(method.getName() + "(");
       for (int i = 0; i < params.size(); i++) {
         label.append(params.get(i).toString());
         if (i < params.size() - 1) {
@@ -198,8 +198,8 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     }
    else if (wrappedObject instanceof Method) {
      Method method = (Method)wrappedObject;
-     StringBuffer label = new StringBuffer(method.getName() + "(");
-     StringBuffer cstr = new StringBuffer(method.getName() + "(");
+     StringBuilder label = new StringBuilder(method.getName() + "(");
+     StringBuilder cstr = new StringBuilder(method.getName() + "(");
      for (int i = 0; i < method.getParameterTypes().length; i++) {
        label.append(method.getParameterTypes()[i].getSimpleName());
        if (i < method.getParameterTypes().length - 1) {

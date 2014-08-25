@@ -457,11 +457,11 @@ public class CompilationChecker {
       IProblem problem = prob[i];
       if (problem == null)
         continue;
-      StringBuffer buffer = new StringBuffer();
-      buffer.append(problem.getMessage());
-      buffer.append(" | line: ");
-      buffer.append(problem.getSourceLineNumber());
-      String msg = buffer.toString();
+      StringBuilder sb = new StringBuilder();
+      sb.append(problem.getMessage());
+      sb.append(" | line: ");
+      sb.append(problem.getSourceLineNumber());
+      String msg = sb.toString();
       if (problem.isError()) {
         error = true;
         msg = "Error: " + msg;

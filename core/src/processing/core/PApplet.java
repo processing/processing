@@ -8949,12 +8949,12 @@ public class PApplet extends Applet
 
 
   static public String join(String[] list, String separator) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     for (int i = 0; i < list.length; i++) {
-      if (i != 0) buffer.append(separator);
-      buffer.append(list[i]);
+      if (i != 0) sb.append(separator);
+      sb.append(list[i]);
     }
-    return buffer.toString();
+    return sb.toString();
   }
 
 

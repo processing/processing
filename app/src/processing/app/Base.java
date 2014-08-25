@@ -2780,17 +2780,12 @@ public class Base {
   static public String contentsToClassPath(File folder) {
     if (folder == null) return "";
 
-    StringBuffer abuffer = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     String sep = System.getProperty("path.separator");
 
     try {
       String path = folder.getCanonicalPath();
 
-//    disabled as of 0136
-      // add the folder itself in case any unzipped files
-//      abuffer.append(sep);
-//      abuffer.append(path);
-//
       // When getting the name of this folder, make sure it has a slash
       // after it, so that the names of sub-items can be added.
       if (!path.endsWith(File.separator)) {
@@ -2805,17 +2800,15 @@ public class Base {
 
         if (list[i].toLowerCase().endsWith(".jar") ||
             list[i].toLowerCase().endsWith(".zip")) {
-          abuffer.append(sep);
-          abuffer.append(path);
-          abuffer.append(list[i]);
+          sb.append(sep);
+          sb.append(path);
+          sb.append(list[i]);
         }
       }
     } catch (IOException e) {
       e.printStackTrace();  // this would be odd
     }
-    //System.out.println("included path is " + abuffer.toString());
-    //packageListFromClassPath(abuffer.toString());  // WHY?
-    return abuffer.toString();
+    return sb.toString();
   }
 
 
