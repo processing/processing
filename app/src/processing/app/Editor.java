@@ -65,8 +65,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
   private PageFormat pageFormat;
   private PrinterJob printerJob;
 
-  // Used to reset mnemonics.
-  private JMenuBar menubar;
   // File and sketch menus for re-inserting items
   private JMenu fileMenu;
 //  private JMenuItem saveMenuItem;
@@ -147,9 +145,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //          fileMenu.insert(base.getSketchbookMenu(), 2);
           fileMenu.insert(base.getRecentMenu(), 2);
 //          fileMenu.insert(mode.getExamplesMenu(), 3);
+          Toolkit.setMenuMnemsInside(fileMenu);
+
           sketchMenu.insert(mode.getImportMenu(), 4);
+          Toolkit.setMenuMnemsInside(sketchMenu);
           mode.insertToolbarRecentMenu();
-          resetMenuMnemonics();
         }
 
         // added for 1.0.5
@@ -428,7 +428,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     modeMenu.add(addLib);
 
-    Toolkit.setMenuMnemonics(modeMenu);
+    Toolkit.setMenuMnemsInside(modeMenu);
   }
 
 
@@ -547,7 +547,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   protected void buildMenuBar() {
-    menubar = new JMenuBar();
+    JMenuBar menubar = new JMenuBar();
     fileMenu = buildFileMenu();
     menubar.add(fileMenu);
     menubar.add(buildEditMenu());
@@ -576,17 +576,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    }
 
     menubar.add(buildHelpMenu());
-    resetMenuMnemonics();
-    setJMenuBar(menubar);
-  }
-
-
-  /**
-   * The reason for this is to avoid conflicting mnemonics. The code won't work properly
-   * if you run it on little bits at a time.
-   */
-  public void resetMenuMnemonics() {
     Toolkit.setMenuMnemonics(menubar);
+    setJMenuBar(menubar);
   }
 
 
@@ -964,7 +955,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
           // Action listener to bring the appropriate sketch in front
           item.addActionListener(new ActionListener() { 
-
             @Override
             public void actionPerformed(ActionEvent e) {
               editor.setState(Frame.NORMAL);
@@ -974,6 +964,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           });
           sketchMenu.add(item);
           menuList.add(item);
+          Toolkit.setMenuMnemsInside(sketchMenu);
         }
       }
 

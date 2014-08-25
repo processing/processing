@@ -339,14 +339,7 @@ public class Toolkit {
 
     // Finally, RECURSION.
     for (JMenuItem jmi : menu) {
-      if (jmi instanceof JMenu) {
-        JMenu jm = (JMenu) jmi;
-        JMenuItem[] items = new JMenuItem[jm.getItemCount()];
-        for (int i = 0; i < items.length; i++) {
-          items[i] = jm.getItem(i);
-        }
-        setMenuMnemonics(items);
-      }
+      if (jmi instanceof JMenu) setMenuMnemsInside((JMenu) jmi);
     }
   }
 
@@ -373,6 +366,18 @@ public class Toolkit {
       if (c instanceof JMenuItem) items.add((JMenuItem)c);
     }
     setMenuMnemonics(items.toArray(new JMenuItem[items.size()]));
+  }
+
+
+  /**
+   * Calls setMenuMnemonics(JMenuItem...) on the sub-elements only.
+   */
+  public static void setMenuMnemsInside(JMenu menu) {
+    JMenuItem[] items = new JMenuItem[menu.getItemCount()];
+    for (int i = 0; i < items.length; i++) {
+      items[i] = menu.getItem(i);
+    }
+    setMenuMnemonics(items);
   }
 
 
