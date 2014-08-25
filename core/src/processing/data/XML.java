@@ -33,6 +33,9 @@ import org.xml.sax.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import processing.core.PApplet;
 
@@ -579,6 +582,25 @@ public class XML implements Serializable {
   public void removeChild(XML kid) {
     node.removeChild(kid.node);
     children = null;  // TODO not efficient
+  }
+
+
+  public void trim() {
+    try {
+      XPathFactory xpathFactory = XPathFactory.newInstance();
+      XPathExpression xpathExp =
+        xpathFactory.newXPath().compile("//text()[normalize-space(.) = '']");
+      NodeList emptyTextNodes = (NodeList)
+        xpathExp.evaluate(node, XPathConstants.NODESET);
+
+      // Remove each empty text node from document.
+      for (int i = 0; i < emptyTextNodes.getLength(); i++) {
+        Node emptyTextNode = emptyTextNodes.item(i);
+        emptyTextNode.getParentNode().removeChild(emptyTextNode);
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
 

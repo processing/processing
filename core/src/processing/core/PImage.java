@@ -194,7 +194,7 @@ public class PImage implements PConstants, Cloneable {
    * To create a new image, use the <b>createImage()</b> function (do not use
    * <b>new PImage()</b>).
    * ( end auto-generated )
-   * @webref image:pimage
+   * @nowebref
    * @usage web_application
    * @see PApplet#loadImage(String, String)
    * @see PApplet#imageMode(int)
@@ -207,6 +207,7 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
+   * @nowebref
    * @param width image width
    * @param height image height
    */
@@ -224,7 +225,7 @@ public class PImage implements PConstants, Cloneable {
   }
 
   /**
-   *
+   * @nowebref
    * @param format Either RGB, ARGB, ALPHA (grayscale alpha channel)
    */
   public PImage(int width, int height, int format) {
@@ -273,6 +274,7 @@ public class PImage implements PConstants, Cloneable {
    * that you've done the work of making sure a MediaTracker has been used
    * to fully download the data and that the img is valid.
    *
+   * @nowebref
    * @param img assumes a MediaTracker has been used to fully download
    * the data and the img is valid
    */
@@ -283,10 +285,14 @@ public class PImage implements PConstants, Cloneable {
       width = bi.getWidth();
       height = bi.getHeight();
       pixels = new int[width * height];
-      WritableRaster raster = bi.getRaster();
-      raster.getDataElements(0, 0, width, height, pixels);
-      if (bi.getType() == BufferedImage.TYPE_INT_ARGB) {
+      pixels = ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
+      int type = bi.getType();
+      if (type == BufferedImage.TYPE_INT_ARGB) {
         format = ARGB;
+      } else if (type == BufferedImage.TYPE_INT_RGB) {
+        for (int i = 0; i < pixels.length; i++) {
+          pixels[i] = 0xFF000000 | pixels[i];
+        }
       }
 
     } else {  // go the old school java 1.0 route

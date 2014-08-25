@@ -45,6 +45,7 @@ attribute vec4 emissive;
 attribute float shininess;
 
 varying vec4 vertColor;
+varying vec4 backVertColor;
 varying vec4 vertTexCoord;
 
 const float zero_float = 0.0;
@@ -85,17 +86,17 @@ void main() {
   
   // Normal vector in eye coordinates
   vec3 ecNormal = normalize(normalMatrix * normal);
-  
-  if (dot(-one_float * ecVertex, ecNormal) < zero_float) {
-    // If normal is away from camera, choose its opposite.
-    // If we add backface culling, this will be backfacing  
-    ecNormal *= -one_float;
-  }
+  vec3 ecNormalInv = ecNormal * -one_float;
   
   // Light calculations
   vec3 totalAmbient = vec3(0, 0, 0);
-  vec3 totalDiffuse = vec3(0, 0, 0);
-  vec3 totalSpecular = vec3(0, 0, 0);
+  
+  vec3 totalFrontDiffuse = vec3(0, 0, 0);
+  vec3 totalFrontSpecular = vec3(0, 0, 0);
+  
+  vec3 totalBackDiffuse = vec3(0, 0, 0);
+  vec3 totalBackSpecular = vec3(0, 0, 0);
+  
   for (int i = 0; i < 8; i++) {
     if (lightCount == i) break;
     
@@ -121,27 +122,36 @@ void main() {
                                  : one_float;
     
     if (any(greaterThan(lightAmbient[i], zero_vec3))) {
-      totalAmbient  += lightAmbient[i] * falloff;
+      totalAmbient       += lightAmbient[i] * falloff;
     }
     
     if (any(greaterThan(lightDiffuse[i], zero_vec3))) {
-      totalDiffuse  += lightDiffuse[i] * falloff * spotf * 
-                       lambertFactor(lightDir, ecNormal);
+      totalFrontDiffuse  += lightDiffuse[i] * falloff * spotf * 
+                            lambertFactor(lightDir, ecNormal);
+      totalBackDiffuse   += lightDiffuse[i] * falloff * spotf * 
+                            lambertFactor(lightDir, ecNormalInv);
     }
     
     if (any(greaterThan(lightSpecular[i], zero_vec3))) {
-      totalSpecular += lightSpecular[i] * falloff * spotf * 
-                       blinnPhongFactor(lightDir, ecVertex, ecNormal, shininess);
-    }   
+      totalFrontSpecular += lightSpecular[i] * falloff * spotf * 
+                            blinnPhongFactor(lightDir, ecVertex, ecNormal, shininess);
+      totalBackSpecular  += lightSpecular[i] * falloff * spotf * 
+                            blinnPhongFactor(lightDir, ecVertex, ecNormalInv, shininess);
+    }     
   }    
   
   // Calculating final color as result of all lights (plus emissive term).
   // Transparency is determined exclusively by the diffuse component.
-  vertColor = vec4(totalAmbient, 0) * ambient + 
-              vec4(totalDiffuse, 1) * color + 
-              vec4(totalSpecular, 0) * specular + 
-              vec4(emissive.rgb, 0); 
+  vertColor =     vec4(totalAmbient, 0) * ambient + 
+                  vec4(totalFrontDiffuse, 1) * color + 
+                  vec4(totalFrontSpecular, 0) * specular + 
+                  vec4(emissive.rgb, 0);
               
+  backVertColor = vec4(totalAmbient, 0) * ambient + 
+                  vec4(totalBackDiffuse, 1) * color + 
+                  vec4(totalBackSpecular, 0) * specular + 
+                  vec4(emissive.rgb, 0);
+                  
   // Calculating texture coordinates, with r and q set both to one
   vertTexCoord = texMatrix * vec4(texCoord, 1.0, 1.0);        
 }

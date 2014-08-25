@@ -25,6 +25,7 @@
 	<include name="*.txt" />
 	<include name="*.g" />
 	<include name="*.smap" />
+	<include name="*.properties" />
       </fileset>
     </delete>
   </target>
@@ -49,6 +50,14 @@
 	  message="Please build the core library first and make sure it sits in ../core/library/core.jar" />
 
     <mkdir dir="bin" />
+    
+    <!-- copy languages files -->
+    <copy todir="bin">
+      <fileset dir="src">
+        <include name="processing/app/languages/*.properties" />
+      </fileset>
+    </copy>
+    
     <!-- in some cases, pde.jar was not getting built
 	 https://github.com/processing/processing/issues/1792 -->
     <delete file="pde.jar" />

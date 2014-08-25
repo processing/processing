@@ -110,6 +110,9 @@ public class FloatList implements Iterable<Float> {
    * @brief Get an entry at a particular index
    */
   public float get(int index) {
+    if (index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return data[index];
   }
 
@@ -563,7 +566,27 @@ public class FloatList implements Iterable<Float> {
     new Sort() {
       @Override
       public int size() {
-        return count;
+        // if empty, don't even mess with the NaN check, it'll AIOOBE
+        if (count == 0) {
+          return 0;
+        }
+        // move NaN values to the end of the list and don't sort them
+        int right = count - 1;
+        while (data[right] != data[right]) {
+          right--;
+          if (right == -1) {  // all values are NaN
+            return 0;
+          }
+        }
+        for (int i = right; i >= 0; --i) {
+          float v = data[i];
+          if (v != v) {
+            data[i] = data[right];
+            data[right] = v;
+            --right;
+          }
+        }
+        return right + 1;
       }
 
       @Override
@@ -601,7 +624,7 @@ public class FloatList implements Iterable<Float> {
 
   /**
    * @webref floatlist:method
-   * @brief Reverse sort, orders values by first digit
+   * @brief Reverse the order of the list elements
    */
   public void reverse() {
     int ii = count - 1;
@@ -760,6 +783,13 @@ public class FloatList implements Iterable<Float> {
       sb.append(data[i]);
     }
     return sb.toString();
+  }
+
+
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.format("[%d] %f%n", i, data[i]);
+    }
   }
 
 

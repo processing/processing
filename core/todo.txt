@@ -1,9 +1,71 @@
-0228 core
+0230 core (3.0a3)
+X add another NaN check when sorting FloatList/Dict classes
+X   if all values were NaN, an ArrayIndexOutOfBoundsException was thrown
+X PShape for JAVA2D 
+X   https://github.com/processing/processing/pull/2756
+X add trim() method to the XML library
+
+andres
+X maximizing window leads to erroneous mouse coordinates
+X   https://github.com/processing/processing/issues/2562
+
+earlier
+X PShape disableStyle() does not work with createShape()
+X   https://github.com/processing/processing/issues/1523
+X multisampled offscreen PGraphics don't clear the screen properly
+X   https://github.com/processing/processing/issues/2679
+X   this was done midway through the 3.0a2 release process
+
+pull requests
+X call applet.exit() instead of System.exit() from Present Mode's 'stop'
+X   https://github.com/processing/processing/pull/2680
+X Drawing RECT PShape with rounded corners crashes the sketch
+X   https://github.com/processing/processing/issues/2648
+X Corrected a typo in Tessellator#addQuadraticVertex()
+X   https://github.com/processing/processing/pull/2649
+X fix tiny typo in Table writeHTML()
+X   https://github.com/processing/processing/pull/2773
+
+applet/component
+_ remove Applet as base class
+_ performance issues on OS X (might be threading due to Applet)
+_   https://github.com/processing/processing/issues/2423
+_ play with improvements to full screen here
+_ new full screen sometimes causes sketch to temporarily be in the wrong spot
+_ add option to have full screen span across screens
+_   display=all in cmd line
+_   sketchDisplay() -> 0 for all, or 1, 2, 3...
+_ clean up requestFocus() stuff
+_   make sure it works with retina/canvas/strategy as well
+
+
+processing.data
+_ lots of 'data' changes down below
+_ need a better method for "missing" data in Table
+_   if missing int is zero, can't just remove those values from saving a table
+_   but for NaN values, it's a necessity
+_ get() methods in List/Dict shouldn't allow you to get bad values
+_   but set() methods can automatically resize the arrays
+_   though that means insert() should allow you to insert past the end
+_ addRow() is not efficient, probably need to do the doubling
+o   or have a setIncrement() function?
+_   it would default to 1 on tables loaded from a file
+_   and default to doubling when created with "new Table"
+_   row count and array size are combined.. need to break apart
+_ match and iterators
+_   add match version that returns table that's only a pointer to original
+_   save the constructor for the version that actually copies data
+_   the table pointer version will be speedy and allow chaining 
+
+
+later
+_ bring back chaining in JSON (and add to XML)
+_   maybe once we make the PVector change
 
 
 high
-_ pull for image resize and alpha issues
-_   https://github.com/processing/processing/pull/2324
+_ Closing opengl sketch from the PDE doesn't stop java process on windows
+_   https://github.com/processing/processing/issues/2335
 _ dataPath() not working when app is not run from app dir on Linux
 _   https://github.com/processing/processing/issues/2195
 _ "Buffers have not been created" error for sketches w/o draw()
@@ -14,40 +76,27 @@ _   some sort of threading issue happening here
 _   https://github.com/processing/processing/issues/1672
 _   https://github.com/processing/processing/issues/2039 (dupe)
 _   https://github.com/processing/processing/issues/2294 (dupe)
+_   also check this out with the new full screen code on OS X
 _ point() rendering differently in 2.0.3 and 2.1
 _   https://github.com/processing/processing/issues/2278
 _   internally, we probably have to call set() if it's a 1 pixel point
 _     but that's going to be a mess.. need to first check the CTM
 _ tint() not working in PDF (regression between 2.0.3 and 2.1)
 _   https://github.com/processing/processing/issues/2428
-_ default font fixes 
-_   https://github.com/processing/processing/issues/2331
-_   https://github.com/processing/processing/pull/2338
-_ add print() method to other data types (not just IntList)
 _ Sort out blending differences with P2D/P3D
 _   might be that compatible images not setting alpha mode correctly
 _   image = gc.createCompatibleVolatileImage(source.width, source.height, Transparency.TRANSLUCENT);
 _   https://github.com/processing/processing/issues/1844
-_ 'collector' class.. Dict that points to a list
-_   String as a key, int/float/string list as values
-_ blendMode(ADD) is broken with default renderer
-_   https://github.com/processing/processing/issues/2012
-_   may have been introduced between 2.0b7 and 2.0b8
-_   https://github.com/processing/processing/issues/2275
-_   https://github.com/processing/processing/issues/2276
-_   https://github.com/processing/processing/issues/2483
-_ add option to have full screen span across screens
-_   display=all in cmd line
-_   sketchDisplay() -> 0 for all, or 1, 2, 3...
-_ clean up requestFocus() stuff
-_   make sure it works with retina/canvas/strategy as well
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
-_ TGA files writing strangely
-_   https://github.com/processing/processing/issues/2096
+
 
 hidpi
+_ Text is half size in PGraphicsRetina2D
+_   https://github.com/processing/processing/issues/2738
+_ text not getting the correct font in Retina2D
+_   https://github.com/processing/processing/issues/2617
 _ saveFrame() with retina render is making black images
 _ zero alpha values still a problem with retina renderer
 _   https://github.com/processing/processing/issues/2030
@@ -56,28 +105,26 @@ _   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
 _   hint(ENABLE_2X_PIXELS)?
 _   hidpi is Apple's name as well
 _ no high-res display support for OpenGL
+_   https://github.com/processing/processing/issues/2573
+_   https://jogamp.org/bugzilla/show_bug.cgi?id=741
 _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start
 _   https://github.com/processing/processing/issues/2357
+_ Text looks blurry in GL Retina
+_   https://github.com/processing/processing/issues/2739
+
 
 cantfix
 _ crash on startup when "Mirror Displays" selected
 _   suspect that this is a specific chipset since Oracle didn't reproduce
 _   https://github.com/processing/processing/issues/2186
+_   test with JG's 13" retina laptop
 
-table
-_ addRow() is not efficient, probably need to do the doubling
-_   or have a setIncrement() function?
-_   it would default to 1 on tables loaded from a file
-_   and default to doubling when created with "new Table"
-_   row count and array size are combined.. need to break apart
-_ match and iterators
-_   add match version that returns table that's only a pointer to original
-_   save the constructor for the version that actually copies data
-_   the table pointer version will be speedy and allow chaining 
 
 decisions/misc
+_ use enums for constants
+_   https://github.com/processing/processing/issues/2778
 _ make join() work with Iterable?
 _   will this collide with the current String[] version?
 _ add options for image.save() (or saveImage?)
@@ -173,6 +220,8 @@ _   is this still true?
 _ decide how disconnectEvent should actually be handled (and name?)
 _   was disconnect always there? 
 _   will need documentation
+_ negative indices so that we can work relative to the end in data classes?
+_ add Double and Long versions of the classes?
 
 
 
@@ -313,6 +362,9 @@ _   https://github.com/processing/processing/issues/1727
 
 CORE / PImage
 
+_ TGA files writing strangely
+_   https://github.com/processing/processing/issues/2096
+
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
@@ -399,8 +451,6 @@ _ for PShape, need to be able to set the origin (flash people)
 
 CORE / PShapeSVG
 
-_ implement A and a (elliptical arcs)
-_   http://code.google.com/p/processing/issues/detail?id=130
 _ implement support for SVG gradients from Inkscape
 _   http://code.google.com/p/processing/issues/detail?id=1142
 _ need to handle <!ENTITY tags in XML for SVG documents
@@ -430,13 +480,8 @@ _   https://github.com/processing/processing/issues/1596
 
 CORE / PVector
 
-_ PVector discussion with Dan
-_   Jer and Dan will look at their code, plus toxiclibs
-_ modify PVector to include better methods for chaining operations
-_   http://code.google.com/p/processing/issues/detail?id=218
 _ add screen(PVector), model(PVector) and world(PVector)?
 _   maybe screenVec()? or screenXYZ()?
-_ PVector chaining -> Dan looking into this
 
 
 CORE / OpenGL (Andres)

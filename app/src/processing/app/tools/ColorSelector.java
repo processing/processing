@@ -47,11 +47,14 @@ public class ColorSelector implements Tool {
 
   
   public String getMenuTitle() {
-    return "Color Selector";
+    return Language.text("menu.tools.color_selector");
   }
 
 
   public void init(Editor editor) {
+    
+    // Language.text("color_selector")
+    
     if (selector == null) {
       selector = new ColorChooser(editor, false, Color.WHITE, 
                                   "Copy", new ActionListener() {

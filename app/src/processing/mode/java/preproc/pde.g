@@ -194,13 +194,14 @@ constructorCast!
         // if this is a string literal, make sure the type we're trying to cast
         // to is one of the supported ones
         //
-        { #e.getType() != STRING_LITERAL ||
-            ( #t.getType() == LITERAL_byte ||
+        { (#e == null) ||
+          ( (#e.getType() != STRING_LITERAL) ||
+            ( #t.getType() == LITERAL_boolean ||
               #t.getType() == LITERAL_double ||
               #t.getType() == LITERAL_float ||
               #t.getType() == LITERAL_int ||
               #t.getType() == LITERAL_long ||
-              #t.getType() == LITERAL_short ) }?
+              #t.getType() == LITERAL_short )) }?
         // create the node
         //
         {#constructorCast = #(#[CONSTRUCTOR_CAST,"CONSTRUCTOR_CAST"], t, e);}
