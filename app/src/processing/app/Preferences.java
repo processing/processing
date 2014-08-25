@@ -237,7 +237,7 @@ public class Preferences {
 
   static public boolean getBoolean(String attribute) {
     String value = get(attribute); //, null);
-    return (new Boolean(value)).booleanValue();
+    return Boolean.parseBoolean(value);
 
     /*
       supposedly not needed, because anything besides 'true'

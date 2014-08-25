@@ -279,7 +279,7 @@ public class StringDict {
       keys = PApplet.expand(keys);
       values = PApplet.expand(values);
     }
-    indices.put(key, new Integer(count));
+    indices.put(key, Integer.valueOf(count));
     keys[count] = key;
     values[count] = value;
     count++;
@@ -325,8 +325,8 @@ public class StringDict {
     keys[b] = tkey;
     values[b] = tvalue;
 
-    indices.put(keys[a], new Integer(a));
-    indices.put(keys[b], new Integer(b));
+    indices.put(keys[a], Integer.valueOf(a));
+    indices.put(keys[b], Integer.valueOf(b));
   }
 
 

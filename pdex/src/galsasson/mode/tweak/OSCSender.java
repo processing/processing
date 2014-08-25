@@ -11,8 +11,8 @@ public class OSCSender {
 	{
 		OSCPortOut sender = new OSCPortOut(InetAddress.getByName("localhost"), port);
 		ArrayList<Object> args = new ArrayList<Object>();
-		args.add(new Integer(index));
-		args.add(new Float(val));
+		args.add(Integer.valueOf(index));
+		args.add(Float.valueOf(val));
 		OSCMessage msg = new OSCMessage("/tm_change_float", args);
 		 try {
 			sender.send(msg);
@@ -25,8 +25,8 @@ public class OSCSender {
 	{
 		OSCPortOut sender = new OSCPortOut(InetAddress.getByName("localhost"), port);
 		ArrayList<Object> args = new ArrayList<Object>();
-		args.add(new Integer(index));
-		args.add(new Integer(val));
+		args.add(Integer.valueOf(index));
+		args.add(Integer.valueOf(val));
 		OSCMessage msg = new OSCMessage("/tm_change_int", args);
 		 try {
 			sender.send(msg);
@@ -40,8 +40,8 @@ public class OSCSender {
 	{
 		OSCPortOut sender = new OSCPortOut(InetAddress.getByName("localhost"), port);
 		ArrayList<Object> args = new ArrayList<Object>();
-		args.add(new Integer(index));
-		args.add(new Long(val));
+		args.add(Integer.valueOf(index));
+		args.add(Long.valueOf(val));
 		OSCMessage msg = new OSCMessage("/tm_change_long", args);
 		 try {
 			sender.send(msg);

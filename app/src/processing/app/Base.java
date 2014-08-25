@@ -2381,7 +2381,7 @@ public class Base {
       // on macosx, setting the destructive property places this option
       // away from the others at the lefthand side
       pane.putClientProperty("Quaqua.OptionPane.destructiveOption",
-                             new Integer(2));
+                             Integer.valueOf(2));
 
       JDialog dialog = pane.createDialog(editor, null);
       dialog.setVisible(true);
