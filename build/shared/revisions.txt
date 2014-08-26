@@ -1,3 +1,193 @@
+PROCESSING 3.0a3 (REV 0230) - 26 August 2014
+
+The 3.0 process continues as we've wrapped up a very successful 
+Google Summer of Code, and have also been integrating contributions
+(internationalization!) from some helpful community members. 
+
+In particular, Jakub Valtar, Darius M, and Frederico Bond are my heroes:
+https://github.com/processing/processing/commits/master?author=jakubvaltar
+https://github.com/processing/processing/commits/master?author=federicobond
+https://github.com/processing/processing/commits/master?author=voidplus
+
+
+[ changes ]
+
++ Removed toolbar buttons except for start/stop. This is part of a larger
+  set of GUI changes for 3.0. At the moment it makes the design really
+  awkward, but we needed to take the step in preparation for the larger
+  changes to come.
+
+
+[ fixes and updates ]
+
++ The sound library is now available for 64-bit Windows and Linux. 
+  32-bit versions are still in the works.
+
++ Don't write sketch.properties unless it's a non-default mode
+  https://github.com/processing/processing/issues/2531
+
++ Add another NaN check when sorting FloatList/Dict classes.
+  If all values were NaN, an ArrayIndexOutOfBoundsException was thrown.
+
++ PShape for JAVA2D (in progress)
+  https://github.com/processing/processing/pull/2756
+
++ Add trim() method to the XML library to remove whitespace #text.
+
++ Maximizing window leads to erroneous mouse coordinates
+  https://github.com/processing/processing/issues/2562
+
+
+[ summer of code ]
+
++ Fixes for mode/tool installation
+  https://github.com/processing/processing/pull/2705
+
++ Fix mode updating to work properly
+  https://github.com/processing/processing/issues/2579
+
++ Contribution manager temp folders weren't always deleting
+  https://github.com/processing/processing/issues/2606
+
++ Problems when deleting a mode
+  https://github.com/processing/processing/issues/2507
+
++ Autocompletion dialog box sticking
+  https://github.com/processing/processing/issues/2741
+
++ Line warning indicators next to scrollbar break after moving around text
+  https://github.com/processing/processing/issues/2655
+
++ Code completion generates wrong code
+  https://github.com/processing/processing/issues/2753
+
++ Code completion: Hide overloaded methods unless inside parentheses
+  https://github.com/processing/processing/issues/2755
+
++ Close auto-completion suggestion box when deleting/backspacing code
+  https://github.com/processing/processing/issues/2757
+
++ Error checking too aggressive in the current alpha
+  https://github.com/processing/processing/issues/2677
+
++ If 'void' left out before setup or draw, cryptic error message ensues
+  http://code.google.com/p/processing/issues/detail?id=8
+  https://github.com/processing/processing/issues/47
+
++ Improve how the Contributions Manager handles no internet connection
+  https://github.com/processing/processing/pull/2800
+
++ Added examples-package as a new contribution type
+  https://github.com/processing/processing/pull/2795
+  https://github.com/processing/processing/issues/2444
+  https://github.com/processing/processing/issues/2582
+
++ Contributions Managers now show specific titles
+  https://github.com/processing/processing/pull/2777
+
++ Add rank (starred / recommended) to contributions manager items
+  https://github.com/processing/processing/issues/2580
+
+
+[ contributions ]
+
++ Add internationalization (support for other languages)
+  https://github.com/processing/processing/issues/632
+  https://github.com/processing/processing/pull/2084
+  http://code.google.com/p/processing/issues/detail?id=593
+  https://github.com/processing/processing/pull/2704
+  https://github.com/processing/processing/pull/2725
+  https://github.com/processing/processing/pull/2726
+  https://github.com/processing/processing/pull/2770
+  https://github.com/processing/processing/pull/2780
+
++ Add localizations (support for individual languages)
+  Japanese https://github.com/processing/processing/pull/2688
+  Spanish https://github.com/processing/processing/pull/2691
+  and https://github.com/processing/processing/pull/2769
+  Dutch https://github.com/processing/processing/pull/2694
+  French https://github.com/processing/processing/pull/2695
+  Portugese https://github.com/processing/processing/pull/2701
+  Korean https://github.com/processing/processing/commit/7b60e2ded9ca81f6a5a08a818aaf84ee4bb029e3
+  Turkish https://github.com/processing/processing/pull/2740
+  Chinese https://github.com/processing/processing/pull/2748
+
++ Add polling to detect file system changes
+  https://github.com/processing/processing/issues/1939
+  https://github.com/processing/processing/pull/2628
+  https://github.com/processing/processing/pull/2794
+  https://github.com/processing/processing/issues/2759
+
++ Indent breaks when hitting enter before spaces
+  https://github.com/processing/processing/issues/2004
+  https://github.com/processing/processing/pull/2690
+
++ Localize status messages and contributions panel
+  https://github.com/processing/processing/pull/2696
+
++ Prevent adding files to read-only sketches
+  https://github.com/processing/processing/issues/2459
+  https://github.com/processing/processing/pull/2697
+
++ Add thread names for easier debugging and profiling
+  https://github.com/processing/processing/pull/2729
+
++ Fix firstLine when modifying lines above it
+  https://github.com/processing/processing/issues/2654
+  https://github.com/processing/processing/pull/2674
+
++ Clean up completion panel styling when using Nimbus LAF
+  https://github.com/processing/processing/pull/2718
+  https://github.com/processing/processing/pull/2762
+
++ Implement support for enums
+  https://github.com/processing/processing/issues/1390
+  http://code.google.com/p/processing/issues/detail?id=1352
+  https://github.com/processing/processing/pull/2774
+
++ Combining char/int/etc casts in one statement causes preproc trouble
+  https://github.com/processing/processing/issues/1936
+  https://github.com/processing/processing/pull/2772
+
++ Make --output optional in the command line version
+  https://github.com/processing/processing/pull/1866
+  https://github.com/processing/processing/issues/1855
+  https://github.com/processing/processing/issues/1816
+
++ Fix unneeded scroll bar display in code completion suggestion box
+  https://github.com/processing/processing/pull/2763
+
++ Replace Thread with invokeLater in PreferencesFrame
+  https://github.com/processing/processing/pull/2811
+
++ Initialize the ColorSelector tool on demand
+  https://github.com/processing/processing/pull/2823
+
++ Call applet.exit() instead of System.exit() from Present Mode's 'stop'
+  https://github.com/processing/processing/pull/2680
+  
++ Drawing RECT PShape with rounded corners crashes the sketch
+  https://github.com/processing/processing/issues/2648
+
++ Corrected a typo in Tessellator#addQuadraticVertex()
+  https://github.com/processing/processing/pull/2649
+
++ Fix tiny typo in Table writeHTML()
+  https://github.com/processing/processing/pull/2773
+
+
+[ fixed earlier but un-noted ]
+
++ PShape disableStyle() does not work with createShape()
+  https://github.com/processing/processing/issues/1523
+
++ Multisampled offscreen PGraphics don't clear the screen properly
+  https://github.com/processing/processing/issues/2679
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 3.0a2 (REV 0229) - 31 July 2014
 
 The 3.0 train gains steam and continues to hurtle down the track.

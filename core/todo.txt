@@ -26,6 +26,9 @@ X   https://github.com/processing/processing/pull/2649
 X fix tiny typo in Table writeHTML()
 X   https://github.com/processing/processing/pull/2773
 
+
+0231 core (3.0a4 or 3.0b1)
+
 applet/component
 _ remove Applet as base class
 _ performance issues on OS X (might be threading due to Applet)

@@ -8,13 +8,7 @@ X   https://github.com/processing/processing/pull/2716
 X shouldn't write sketch.properties unless it's a non-default mode
 X   https://github.com/processing/processing/issues/2531
 
-_ Fix OS X menu to be the same order as the other File menu
-_ remove toolbar menu references and code to rebuild
-
 gsoc
-X remove dependency on oscp5 library for tweak mode
-_   https://github.com/processing/processing/issues/2730
-X   https://github.com/processing/processing/pull/2808
 X fixes for mode/tool installation
 X   https://github.com/processing/processing/pull/2705
 X fix mode updating to work properly
@@ -59,6 +53,7 @@ X   examples added to the bug report
 X   http://code.google.com/p/processing/issues/detail?id=6
 X   closed by Shiffman, working better now
 X   https://github.com/processing/processing/issues/45
+X 64-bit versions of sound available on Windows and Linux
 
 pulls
 X Add polling to detect file system changes
@@ -114,6 +109,10 @@ X   https://github.com/processing/processing/pull/2794
 X   https://github.com/processing/processing/issues/2759
 X Catch MissingResourceException when language key is missing
 X   https://github.com/processing/processing/pull/2780
+X Replace Thread with invokeLater in PreferencesFrame
+X   https://github.com/processing/processing/pull/2811
+X Initialize the ColorSelector tool on demand
+X   https://github.com/processing/processing/pull/2823
 
 languages
 X Japanese https://github.com/processing/processing/pull/2688
@@ -132,6 +131,19 @@ X   remove non-android stuff from android
 X   remove web and android from the main repo
 X separate prefs and sketch state info?
 X   this would mean prefs being rewritten far less
+
+
+0231 pde (3.0a4)
+
+_ Fix OS X menu to be the same order as the other File menu
+_ remove toolbar menu references and code to rebuild
+_ check on pull for mnemonics
+_   https://github.com/processing/processing/pull/2382
+
+gsoc
+X remove dependency on oscp5 library for tweak mode
+_   https://github.com/processing/processing/issues/2730
+X   https://github.com/processing/processing/pull/2808
 
 
 high
