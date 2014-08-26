@@ -2437,7 +2437,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
           //if the directory was deleted, then don't scan
           if (finKey.isValid()) {
             List<WatchEvent<?>> events = finKey.pollEvents();
-            processFileEvents(events);
+            if (!watcherSave) {
+              processFileEvents(events);
+            }
           }
 
           List<WatchEvent<?>> events = finKey.pollEvents();
