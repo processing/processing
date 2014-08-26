@@ -2821,7 +2821,7 @@ public class Base {
    * @return array of possible package names
    */
   static public String[] packageListFromClassPath(String path) {
-    Hashtable table = new Hashtable();
+    Map<String, Object> map = new HashMap<String, Object>();
     String pieces[] =
       PApplet.split(path, File.pathSeparatorChar);
 
@@ -2832,24 +2832,24 @@ public class Base {
       if (pieces[i].toLowerCase().endsWith(".jar") ||
           pieces[i].toLowerCase().endsWith(".zip")) {
         //System.out.println("checking " + pieces[i]);
-        packageListFromZip(pieces[i], table);
+        packageListFromZip(pieces[i], map);
 
       } else {  // it's another type of file or directory
         File dir = new File(pieces[i]);
         if (dir.exists() && dir.isDirectory()) {
-          packageListFromFolder(dir, null, table);
+          packageListFromFolder(dir, null, map);
           //importCount = magicImportsRecursive(dir, null,
-          //                                  table);
+          //                                  map);
                                               //imports, importCount);
         }
       }
     }
-    int tableCount = table.size();
-    String output[] = new String[tableCount];
+    int mapCount = map.size();
+    String output[] = new String[mapCount];
     int index = 0;
-    Enumeration e = table.keys();
-    while (e.hasMoreElements()) {
-      output[index++] = ((String) e.nextElement()).replace('/', '.');
+    Set<String> set = map.keySet();
+    for (String s : set) {
+      output[index++] = s.replace('/', '.');
     }
     //System.arraycopy(imports, 0, output, 0, importCount);
     //PApplet.printarr(output);
@@ -2857,7 +2857,7 @@ public class Base {
   }
 
 
-  static private void packageListFromZip(String filename, Hashtable table) {
+  static private void packageListFromZip(String filename, Map<String, Object> map) {
     try {
       ZipFile file = new ZipFile(filename);
       Enumeration entries = file.entries();
@@ -2872,8 +2872,8 @@ public class Base {
             if (slash == -1) continue;
 
             String pname = name.substring(0, slash);
-            if (table.get(pname) == null) {
-              table.put(pname, new Object());
+            if (map.get(pname) == null) {
+              map.put(pname, new Object());
             }
           }
         }
@@ -2893,7 +2893,7 @@ public class Base {
    * walk down into that folder and continue.
    */
   static private void packageListFromFolder(File dir, String sofar,
-                                            Hashtable table) {
+                                            Map<String, Object> map) {
                                           //String imports[],
                                           //int importCount) {
     //System.err.println("checking dir '" + dir + "'");
@@ -2907,7 +2907,7 @@ public class Base {
       if (sub.isDirectory()) {
         String nowfar =
           (sofar == null) ? files[i] : (sofar + "." + files[i]);
-        packageListFromFolder(sub, nowfar, table);
+        packageListFromFolder(sub, nowfar, map);
         //System.out.println(nowfar);
         //imports[importCount++] = nowfar;
         //importCount = magicImportsRecursive(sub, nowfar,
@@ -2915,7 +2915,7 @@ public class Base {
       } else if (!foundClass) {  // if no classes found in this folder yet
         if (files[i].endsWith(".class")) {
           //System.out.println("unique class: " + files[i] + " for " + sofar);
-          table.put(sofar, new Object());
+          map.put(sofar, new Object());
           foundClass = true;
         }
       }

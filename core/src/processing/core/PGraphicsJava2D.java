@@ -30,7 +30,7 @@ import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -1754,7 +1754,7 @@ public class PGraphicsJava2D extends PGraphics {
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
       Map<TextAttribute, Object> map =
-        new Hashtable<TextAttribute, Object>();
+        new HashMap<TextAttribute, Object>();
       map.put(TextAttribute.SIZE, size);
       map.put(TextAttribute.KERNING,
               TextAttribute.KERNING_ON);

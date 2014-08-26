@@ -3,7 +3,8 @@ package processing.core;
 import java.io.BufferedReader;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is not part of the Processing API and should not be used
@@ -159,7 +160,7 @@ public class PShapeOBJ extends PShape {
                                  ArrayList<PVector> coords,
                                  ArrayList<PVector> normals,
                                  ArrayList<PVector> texcoords) {
-    Hashtable<String, Integer> mtlTable  = new Hashtable<String, Integer>();
+    Map<String, Integer> mtlTable  = new HashMap<String, Integer>();
     int mtlIdxCur = -1;
     boolean readv, readvn, readvt;
     try {
@@ -321,7 +322,7 @@ public class PShapeOBJ extends PShape {
   static protected void parseMTL(PApplet parent, String path,
                                  BufferedReader reader,
                                  ArrayList<OBJMaterial> materials,
-                                 Hashtable<String, Integer> materialsHash) {
+                                 Map<String, Integer> materialsHash) {
     try {
       String line;
       OBJMaterial currentMtl = null;
