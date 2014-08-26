@@ -45,6 +45,8 @@ public class ColorSelector implements Tool {
    */
   static ColorChooser selector;
 
+  private Editor editor;
+
   
   public String getMenuTitle() {
     return Language.text("menu.tools.color_selector");
@@ -52,24 +54,26 @@ public class ColorSelector implements Tool {
 
 
   public void init(Editor editor) {
-    
-    // Language.text("color_selector")
-    
-    if (selector == null) {
-      selector = new ColorChooser(editor, false, Color.WHITE, 
-                                  "Copy", new ActionListener() {
-        
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          Clipboard clipboard = Toolkit.getSystemClipboard();
-          clipboard.setContents(new StringSelection(selector.getHexColor()), null);
-        }
-      });
-    }
+    this.editor = editor;
   }
 
 
   public void run() {
+    if (selector == null) {
+      synchronized(ColorSelector.class) {
+        if (selector == null) {
+          selector = new ColorChooser(editor, false, Color.WHITE,
+              "Copy", new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              Clipboard clipboard = Toolkit.getSystemClipboard();
+              clipboard.setContents(new StringSelection(selector.getHexColor()), null);
+            }
+          });
+        }
+      }
+    }
     selector.show();
   }
 }
