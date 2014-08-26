@@ -561,13 +561,8 @@ public class IntDict {
 
 
   /**
-<<<<<<< HEAD
-   * Sort by values in descending order (largest value will be at [0]).
-   *
-=======
    * Sort by values in ascending order. The smallest value will be at [0].
    *
->>>>>>> cd467dc12a42d588638aaab06746bebdfb333cc4
    * @webref intdict:method
    * @brief Sort by values in ascending order
    */
