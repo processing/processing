@@ -67,6 +67,8 @@ public class Runner implements MessageConsumer {
   protected Editor editor;
   protected JavaBuild build;
   protected Process process;
+
+  protected PrintStream sketchErr;
   
 
   public Runner(JavaBuild build, RunnerListener listener) throws SketchException {
@@ -76,15 +78,16 @@ public class Runner implements MessageConsumer {
 
     if (listener instanceof Editor) {
       this.editor = (Editor) listener;
-//    } else {
-//      System.out.println("actually it's a " + listener.getClass().getName());
+      sketchErr = editor.getConsole().getErr();
+    } else {
+      sketchErr = System.err;
     }
 
     // Make sure all the imported libraries will actually run with this setup.
     int bits = Base.getNativeBits();
     for (Library library : build.getImportedLibraries()) {
       if (!library.supportsArch(PApplet.platform, bits)) {
-        System.err.println(library.getName() + " does not run in " + bits + "-bit mode.");
+        sketchErr.println(library.getName() + " does not run in " + bits + "-bit mode.");
         int opposite = (bits == 32) ? 64 : 32;
         if (Base.isMacOS()) {
           //if (library.supportsArch(PConstants.MACOSX, opposite)) {  // should always be true
@@ -173,7 +176,7 @@ public class Runner implements MessageConsumer {
           try {
             Thread.sleep(100);
           } catch (InterruptedException e1) {
-            e1.printStackTrace();
+            e1.printStackTrace(sketchErr);
           }
         }
       }
@@ -388,18 +391,18 @@ public class Runner implements MessageConsumer {
                                  "Preferences window. For more information, read Help \u2192 Troubleshooting.", null);
               } else {
                 for (String err : errorStrings) {
-                  System.err.println(err);
+                  sketchErr.println(err);
                 }
-                System.err.println("Using startup command: " + PApplet.join(args, " "));
+                sketchErr.println("Using startup command: " + PApplet.join(args, " "));
               }
             } else {
               //exc.printStackTrace();
-              System.err.println("Could not run the sketch (Target VM failed to initialize).");
+              sketchErr.println("Could not run the sketch (Target VM failed to initialize).");
               if (Preferences.getBoolean("run.options.memory")) {
                 // Only mention this if they've even altered the memory setup
-                System.err.println("Make sure that you haven't set the maximum available memory too high.");
+                sketchErr.println("Make sure that you haven't set the maximum available memory too high.");
               }
-              System.err.println("For more information, read revisions.txt and Help \u2192 Troubleshooting.");
+              sketchErr.println("For more information, read revisions.txt and Help \u2192 Troubleshooting.");
             }
             // changing this to separate editor and listener [091124]
             //if (editor != null) {
@@ -491,7 +494,7 @@ public class Runner implements MessageConsumer {
 
     outThread = new StreamRedirectThread("JVM stdout Reader",
                                          process.getInputStream(),
-                                         System.out);
+                                         editor.getConsole().getOut());
     errThread.start();
     outThread.start();
 
@@ -578,7 +581,7 @@ public class Runner implements MessageConsumer {
     // First just report the exception and its placement
     reportException(message, or, event.thread());
     // Then try to pretty it up with a better message
-    handleCommonErrors(exceptionName, message, listener);
+    handleCommonErrors(exceptionName, message, listener, sketchErr);
     
     if (editor != null) {
       editor.deactivateRun();
@@ -598,41 +601,42 @@ public class Runner implements MessageConsumer {
    */
   public static boolean handleCommonErrors(final String exceptionClass,
                                            final String message,
-                                           final RunnerListener listener) {
+                                           final RunnerListener listener,
+                                           final PrintStream err) {
     if (exceptionClass.equals("java.lang.OutOfMemoryError")) {
       if (message.contains("exceeds VM budget")) {
         // TODO this is a kludge for Android, since there's no memory preference
         listener.statusError("OutOfMemoryError: This code attempts to use more memory than available.");
-        System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
-        System.err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
-        System.err.println("loading thousands of images), or simply that it's trying to use more memory");
-        System.err.println("than what is supported by the current device.");
+        err.println("An OutOfMemoryError means that your code is either using up too much memory");
+        err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
+        err.println("loading thousands of images), or simply that it's trying to use more memory");
+        err.println("than what is supported by the current device.");
       } else {
         listener.statusError("OutOfMemoryError: You may need to increase the memory setting in Preferences.");
-        System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
-        System.err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
-        System.err.println("loading thousands of images), or that your sketch may need more memory to run.");
-        System.err.println("If your sketch uses a lot of memory (for instance if it loads a lot of data files)");
-        System.err.println("you can increase the memory available to your sketch using the Preferences window.");
+        err.println("An OutOfMemoryError means that your code is either using up too much memory");
+        err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
+        err.println("loading thousands of images), or that your sketch may need more memory to run.");
+        err.println("If your sketch uses a lot of memory (for instance if it loads a lot of data files)");
+        err.println("you can increase the memory available to your sketch using the Preferences window.");
       }
     } else if (exceptionClass.equals("java.lang.UnsatisfiedLinkError")) {
       listener.statusError("A library used by this sketch is not installed properly.");
-      System.err.println("A library relies on native code that's not available.");
-      System.err.println("Or only works properly when the sketch is run as a " + 
+      err.println("A library relies on native code that's not available.");
+      err.println("Or only works properly when the sketch is run as a " + 
         ((Base.getNativeBits() == 32) ? "64-bit " : "32-bit ") + " application.");
 
     } else if (exceptionClass.equals("java.lang.StackOverflowError")) {
       listener.statusError("StackOverflowError: This sketch is attempting too much recursion.");
-      System.err.println("A StackOverflowError means that you have a bug that's causing a function");
-      System.err.println("to be called recursively (it's calling itself and going in circles),");
-      System.err.println("or you're intentionally calling a recursive function too much,");
-      System.err.println("and your code should be rewritten in a more efficient manner.");
+      err.println("A StackOverflowError means that you have a bug that's causing a function");
+      err.println("to be called recursively (it's calling itself and going in circles),");
+      err.println("or you're intentionally calling a recursive function too much,");
+      err.println("and your code should be rewritten in a more efficient manner.");
 
     } else if (exceptionClass.equals("java.lang.UnsupportedClassVersionError")) {
       listener.statusError("UnsupportedClassVersionError: A library is using code compiled with an unsupported version of Java.");
-      System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.6 or earlier.");
-      System.err.println("A library used by this sketch was compiled for Java 1.7 or later, ");
-      System.err.println("and needs to be recompiled to be compatible with Java 1.6.");
+      err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.6 or earlier.");
+      err.println("A library used by this sketch was compiled for Java 1.7 or later, ");
+      err.println("and needs to be recompiled to be compatible with Java 1.6.");
 
     } else if (exceptionClass.equals("java.lang.NoSuchMethodError") ||
                exceptionClass.equals("java.lang.NoSuchFieldError")) {
@@ -692,7 +696,7 @@ public class Runner implements MessageConsumer {
     } catch (IncompatibleThreadStateException e) {
       // This shouldn't happen, but if it does, print the exception in case
       // it's something that needs to be debugged separately.
-      e.printStackTrace();
+      e.printStackTrace(sketchErr);
     }
     // before giving up, try to extract from the throwable object itself
     // since sometimes exceptions are re-thrown from a different context
@@ -724,7 +728,7 @@ public class Runner implements MessageConsumer {
       or.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
       
     } catch (Exception e) {
-      e.printStackTrace();
+      e.printStackTrace(sketchErr);
     }
     // Give up, nothing found inside the pile of stack frames
     SketchException rex = new SketchException(message);
@@ -795,8 +799,8 @@ public class Runner implements MessageConsumer {
 
     // always shove out the message, since it might not fall under
     // the same setup as we're expecting
-    System.err.print(s);
+    sketchErr.print(s);
     //System.err.println("[" + s.length() + "] " + s);
-    System.err.flush();
+    sketchErr.flush();
   }
 }
