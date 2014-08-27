@@ -69,6 +69,7 @@ public class Runner implements MessageConsumer {
   protected Process process;
 
   protected PrintStream sketchErr;
+  protected PrintStream sketchOut;
   
 
   public Runner(JavaBuild build, RunnerListener listener) throws SketchException {
@@ -79,8 +80,10 @@ public class Runner implements MessageConsumer {
     if (listener instanceof Editor) {
       this.editor = (Editor) listener;
       sketchErr = editor.getConsole().getErr();
+      sketchOut = editor.getConsole().getOut();
     } else {
       sketchErr = System.err;
+      sketchOut = System.out;
     }
 
     // Make sure all the imported libraries will actually run with this setup.
@@ -494,7 +497,7 @@ public class Runner implements MessageConsumer {
 
     outThread = new StreamRedirectThread("JVM stdout Reader",
                                          process.getInputStream(),
-                                         editor.getConsole().getOut());
+                                         sketchOut);
     errThread.start();
     outThread.start();
 
