@@ -1,3 +1,32 @@
+0230 core (3.0a3)
+X add another NaN check when sorting FloatList/Dict classes
+X   if all values were NaN, an ArrayIndexOutOfBoundsException was thrown
+X PShape for JAVA2D 
+X   https://github.com/processing/processing/pull/2756
+X add trim() method to the XML library
+
+andres
+X maximizing window leads to erroneous mouse coordinates
+X   https://github.com/processing/processing/issues/2562
+
+earlier
+X PShape disableStyle() does not work with createShape()
+X   https://github.com/processing/processing/issues/1523
+X multisampled offscreen PGraphics don't clear the screen properly
+X   https://github.com/processing/processing/issues/2679
+X   this was done midway through the 3.0a2 release process
+
+pull requests
+X call applet.exit() instead of System.exit() from Present Mode's 'stop'
+X   https://github.com/processing/processing/pull/2680
+X Drawing RECT PShape with rounded corners crashes the sketch
+X   https://github.com/processing/processing/issues/2648
+X Corrected a typo in Tessellator#addQuadraticVertex()
+X   https://github.com/processing/processing/pull/2649
+X fix tiny typo in Table writeHTML()
+X   https://github.com/processing/processing/pull/2773
+
+
 0229 core (3.0a2)
 X PImage resize() causes images to not draw
 X   https://github.com/processing/processing/issues/2228
