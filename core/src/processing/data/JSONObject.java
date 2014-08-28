@@ -1168,7 +1168,7 @@ public class JSONObject {
    * @see JSONObject#setBoolean(String, boolean)
    */
   public JSONObject setInt(String key, int value) {
-    this.put(key, new Integer(value));
+    this.put(key, Integer.valueOf(value));
     return this;
   }
 
@@ -1182,7 +1182,7 @@ public class JSONObject {
    * @throws JSONException If the key is null.
    */
   public JSONObject setLong(String key, long value) {
-    this.put(key, new Long(value));
+    this.put(key, Long.valueOf(value));
     return this;
   }
 
@@ -1494,7 +1494,7 @@ public class JSONObject {
         } else {
           Long myLong = new Long(string);
           if (myLong.longValue() == myLong.intValue()) {
-            return new Integer(myLong.intValue());
+            return Integer.valueOf(myLong.intValue());
           } else {
             return myLong;
           }

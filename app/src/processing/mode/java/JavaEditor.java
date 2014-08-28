@@ -577,7 +577,7 @@ public class JavaEditor extends Editor {
     Object value = optionPane.getValue();
     if (value.equals(options[0])) {
       return jmode.handleExportApplication(sketch);
-    } else if (value.equals(options[1]) || value.equals(new Integer(-1))) {
+    } else if (value.equals(options[1]) || value.equals(Integer.valueOf(-1))) {
       // closed window by hitting Cancel or ESC
       statusNotice("Export to Application canceled.");
     }

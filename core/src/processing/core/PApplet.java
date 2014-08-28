@@ -9260,7 +9260,7 @@ public class PApplet extends Applet
    * @return true if 'what' is "true" or "TRUE", false otherwise
    */
   static final public boolean parseBoolean(String what) {
-    return new Boolean(what).booleanValue();
+    return Boolean.parseBoolean(what);
   }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -9320,7 +9320,7 @@ public class PApplet extends Applet
   static final public boolean[] parseBoolean(String what[]) {
     boolean outgoing[] = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
-      outgoing[i] = new Boolean(what[i]).booleanValue();
+      outgoing[i] = Boolean.parseBoolean(what[i]);
     }
     return outgoing;
   }

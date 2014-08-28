@@ -335,7 +335,7 @@ public class PShapeOBJ extends PShape {
             // Starting new material.
             String mtlname = parts[1];
             currentMtl = new OBJMaterial(mtlname);
-            materialsHash.put(mtlname, new Integer(materials.size()));
+            materialsHash.put(mtlname, Integer.valueOf(materials.size()));
             materials.add(currentMtl);
           } else if (parts[0].equals("map_Kd") && parts.length > 1) {
             // Loading texture map.
