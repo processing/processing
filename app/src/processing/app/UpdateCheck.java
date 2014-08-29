@@ -25,6 +25,7 @@ package processing.app;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
 
@@ -60,22 +61,16 @@ public class UpdateCheck {
         try {
           Thread.sleep(20 * 1000);  // give the PDE time to get rolling
           updateCheck();
-        } catch (Exception e) {
+        } catch (IOException e) {
           // this can safely be ignored, too many instances where no net
           // connection is available, so we'll leave it well alone.
-//          String msg = e.getMessage();
-//          if (msg.contains("UnknownHostException")) {
-//            // nah, do nothing.. this happens when not connected to the net
-//          } else {
-//            e.printStackTrace();
-//          }
-        }
+        } catch (InterruptedException e) {}
       }
     }, "Update Checker").start();
   }
 
 
-  public void updateCheck() throws Exception {
+  public void updateCheck() throws IOException, InterruptedException {
     // generate a random id in case none exists yet
     Random r = new Random();
     long id = r.nextLong();
@@ -178,7 +173,7 @@ public class UpdateCheck {
   }
 
 
-  protected int readInt(String filename) throws Exception {
+  protected int readInt(String filename) throws IOException {
     URL url = new URL(filename);
     InputStream stream = url.openStream();
     InputStreamReader isr = new InputStreamReader(stream);
