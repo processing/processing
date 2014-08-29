@@ -48,10 +48,12 @@ import processing.core.PApplet;
  * proposals and that kind of thing so that we can keep Processing free.
  */
 public class UpdateCheck {
-  Base base;
-  String downloadURL = "http://processing.org/download/latest.txt";
+  private final Base base;
 
-  static final long ONE_DAY = 24 * 60 * 60 * 1000;
+  private static final String DOWNLOAD_URL = "http://processing.org/download/";
+  private static final String LATEST_URL = "http://processing.org/download/latest.txt";
+
+  private static final long ONE_DAY = 24 * 60 * 60 * 1000;
 
 
   public UpdateCheck(Base base) {
@@ -90,7 +92,7 @@ public class UpdateCheck {
                                     System.getProperty("os.version") + "\t" +
                                     System.getProperty("os.arch"));
 
-    int latest = readInt(downloadURL + "?" + info);
+    int latest = readInt(LATEST_URL + "?" + info);
 
     String lastString = Preferences.get("update.last");
     long now = System.currentTimeMillis();
@@ -144,7 +146,7 @@ public class UpdateCheck {
                                               options,
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
-      Base.openURL("http://processing.org/download/");
+      Base.openURL(DOWNLOAD_URL);
       return true;
     }
 
