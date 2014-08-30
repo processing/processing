@@ -776,7 +776,8 @@ public class JavaEditor extends Editor {
    * Add import statements to the current tab for all of packages inside
    * the specified jar file.
    */
-  public void handleImportLibrary(String jarPath) {
+  public void handleImportLibrary(String libraryName) {
+
     // make sure the user didn't hide the sketch folder
     sketch.ensureExistence();
 
@@ -786,11 +787,23 @@ public class JavaEditor extends Editor {
     if (mode.isDefaultExtension(sketch.getCurrentCode())) {
       sketch.setCurrentCode(0);
     }
+    
+    Library lib = mode.findLibraryByName(libraryName);
+    if (lib == null) {
+      statusError("Unable to locate library: "+libraryName);
+      return;
+    }
 
     // could also scan the text in the file to see if each import
     // statement is already in there, but if the user has the import
     // commented out, then this will be a problem.
-    String[] list = Base.packageListFromClassPath(jarPath);
+    String[] list = lib.getSpecifiedImports(); // ask the library for its imports 
+    if (list == null) {
+      
+      // Default to old behavior and load each package in the primary jar
+      list = Base.packageListFromClassPath(lib.getJarPath());
+    }
+
     StringBuffer buffer = new StringBuffer();
     for (int i = 0; i < list.length; i++) {
       buffer.append("import ");
