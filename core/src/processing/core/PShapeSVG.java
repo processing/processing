@@ -1431,7 +1431,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  class LinearGradient extends Gradient {
+  static class LinearGradient extends Gradient {
     float x1, y1, x2, y2;
 
     public LinearGradient(PShapeSVG parent, XML properties) {
@@ -1461,7 +1461,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  class RadialGradient extends Gradient {
+  static class RadialGradient extends Gradient {
     float cx, cy, r;
 
     public RadialGradient(PShapeSVG parent, XML properties) {
@@ -1490,7 +1490,7 @@ public class PShapeSVG extends PShape {
 
 
 
-  class LinearGradientPaint implements Paint {
+  static class LinearGradientPaint implements Paint {
     float x1, y1, x2, y2;
     float[] offset;
     int[] color;
@@ -1615,7 +1615,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  class RadialGradientPaint implements Paint {
+  static class RadialGradientPaint implements Paint {
     float cx, cy, radius;
     float[] offset;
     int[] color;
@@ -1773,7 +1773,7 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public class Font extends PShapeSVG {
+  public static class Font extends PShapeSVG {
     public FontFace face;
 
     public HashMap<String,FontGlyph> namedGlyphs;
@@ -1887,7 +1887,7 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  class FontFace extends PShapeSVG {
+  static class FontFace extends PShapeSVG {
     int horizOriginX;  // dflt 0
     int horizOriginY;  // dflt 0
 //    int horizAdvX;     // no dflt?
@@ -1924,7 +1924,7 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public class FontGlyph extends PShapeSVG {  // extends Path
+  public static class FontGlyph extends PShapeSVG {  // extends Path
     public String name;
     char unicode;
     int horizAdvX;

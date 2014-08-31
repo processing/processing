@@ -832,7 +832,7 @@ public class PreferencesFrame {
    * most basic usage scenarios. Is there someone on the team I can contact?
    * Oracle, are you listening?
    */
-  class FontNamer extends JLabel implements ListCellRenderer<Font> {
+  static class FontNamer extends JLabel implements ListCellRenderer<Font> {
     public Component getListCellRendererComponent(JList<? extends Font> list,
                                                   Font value, int index,
                                                   boolean isSelected,

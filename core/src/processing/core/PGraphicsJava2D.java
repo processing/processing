@@ -1450,7 +1450,7 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
-  class ImageCache {
+  static class ImageCache {
     boolean tinted;
     int tintedColor;
     int[] tintedTemp;  // one row of tinted pixels

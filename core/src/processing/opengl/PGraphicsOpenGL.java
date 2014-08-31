@@ -2527,7 +2527,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  class Triangle {
+  static class Triangle {
     int i0, i1, i2;
     PImage tex;
     float dist;
