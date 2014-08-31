@@ -414,7 +414,7 @@ public abstract class Mode {
     });
     toolbarMenu.add(item);
     
-    item = new JMenuItem("Add Examples...");
+    item = new JMenuItem(Language.text("examples.add_examples"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         base.handleOpenExampleManager();
@@ -843,7 +843,7 @@ public abstract class Mode {
       examplesPanel.setBackground(Color.WHITE);
       
       final JPanel openExamplesManagerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-      JLabel openExamplesManagerLabel = new JLabel("Add Examples...");
+      JLabel openExamplesManagerLabel = new JLabel(Language.text("examples.add_examples"));
 //      openExamplesManagerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
       openExamplesManagerPanel.add(openExamplesManagerLabel);
       openExamplesManagerPanel.setOpaque(false);
