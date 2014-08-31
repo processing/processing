@@ -97,11 +97,15 @@ public class ContributionManager {
       success = true;
       
     } catch (SocketTimeoutException ste) {
-      if (progress != null)
+      if (progress != null) {
         progress.error(ste);
+        progress.cancel();
+      }
     } catch (IOException ioe) {
-      if (progress != null)
+      if (progress != null) {
         progress.error(ioe);
+        progress.cancel();
+      }
       // Hiding stack trace. An error has been shown where needed. 
 //      ioe.printStackTrace();
     }
@@ -176,9 +180,13 @@ public class ContributionManager {
               .setErrorMessage(Language
                 .interpolate("contrib.errors.download_and_install",
                              ad.getName()));
+            downloadProgress.cancel();
+            installProgress.cancel();
           }
         } catch (IOException e) {
           status.setErrorMessage(Language.text("contrib.errors.temporary_directory"));
+          downloadProgress.cancel();
+          installProgress.cancel();
         }
       }
     }, "Contribution Installer").start();
