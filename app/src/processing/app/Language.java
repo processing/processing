@@ -87,6 +87,7 @@ public class Language {
   
   static private String[] listSupported() {
     // List of languages in alphabetical order. (Add yours here.)
+    // Also remember to add it to the corresponding build/build.xml rule.
     final String[] SUPPORTED = {
       "de", // German, Deutsch
       "en", // English
@@ -147,6 +148,7 @@ public class Language {
     } catch (Exception e) {
       e.printStackTrace();
     }
+    Base.getPlatform().saveLanguage(language);
   }
   
   

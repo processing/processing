@@ -496,6 +496,8 @@
              value="macosx/work/Processing.app/Contents/Java" />
     </antcall>
 
+    <exec executable="macosx/language_gen.py" />
+
     <property name="launch4j.dir" value="macosx/work/Processing.app/Contents/Java/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
