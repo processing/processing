@@ -33,4 +33,4 @@ But in the meantime, I ask for your patience,
 and [patches](https://github.com/processing/processing/pulls).
 
 Ben Fry, 3 February 2013  
-Last updated 30 July 2014
+Last updated 8 September 2014
