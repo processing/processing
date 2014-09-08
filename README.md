@@ -5,7 +5,8 @@ This is the official source code for the [Processing](http://processing.org) Dev
 the “core” and the libraries that are included with the [download](http://processing.org/download). 
 
 > Development of Processing 3 has started, so major changes are underway inside this repository. **If you need a stable version of the source, use the tag processing-0227-2.2.1.** Do not expect this code to be stable. Major changes include severe things like breaking libraries (due to chaining operations in PVector) or the removal of `Applet` as the base class for PApplet. Some of these will be sorted out before the release, others are simply being tested or are developments that are in-progress.
-> Update 8 September 2014: Applet is being removed as the base class. You can use [the 3.0a3 tag](https://github.com/processing/processing/releases/tag/processing-0230-3.0a3) if you'd like the last “stable” alpha release.
+
+> Update 8 September 2014: java.awt.Applet is no longer the base class, which means lots of things may break (especially while we sort out the mess). You can use [the 3.0a3 tag](https://github.com/processing/processing/releases/tag/processing-0230-3.0a3) if you'd like the last “stable” alpha release.
 
 If you have found a bug in the Processing software, you can file it here under the [“issues” tab](https://github.com/processing/processing/issues). 
 If it relates to the [JavaScript](http://processingjs.org) version, please use [their issue tracker](https://processing-js.lighthouseapp.com/).
