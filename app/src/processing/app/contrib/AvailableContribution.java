@@ -58,13 +58,13 @@ class AvailableContribution extends Contribution {
     prettyVersion = params.get("prettyVersion");
     
     String lastUpdatedStr = params.get("lastUpdated");
-    if (lastUpdatedStr != null)
+    if (lastUpdatedStr != null) {
       try {
         lastUpdated =  Long.parseLong(lastUpdatedStr);
       } catch (NumberFormatException e) {
         lastUpdated = 0;
       }
-
+    }
     String minRev = params.get("minRevision");
     if (minRev != null) {
       minRevision = PApplet.parseInt(minRev, 0);
@@ -128,9 +128,9 @@ class AvailableContribution extends Contribution {
       tempFolder.renameTo(contribFolder);
       tempFolder = enclosingFolder;
       */
-      if (status != null)
+      if (status != null) {
         status.setErrorMessage(Language.interpolate("contrib.errors.needs_repackage", getName(), type.getTitle()));
-      //status.setErrorMessage("This " + type + " needs to be repackaged according to the guidelines.");
+      }
       return null;
     }
 
@@ -141,15 +141,15 @@ class AvailableContribution extends Contribution {
     LocalContribution installedContrib = null;
 
     if (contribFolder == null) {
-      if (status != null)
+      if (status != null) {
         status.setErrorMessage(Language.interpolate("contrib.errors.no_contribution_found", type));
+      }
       
     } else {
       File propFile = new File(contribFolder, type + ".properties");
       if (writePropertiesFile(propFile)) {        
         // 1. contribFolder now has a legit contribution, load it to get info. 
-        LocalContribution newContrib =
-          type.load(base, contribFolder);
+        LocalContribution newContrib = type.load(base, contribFolder);
         
         // 1.1. get info we need to delete the newContrib folder later
         File newContribFolder = newContrib.getFolder();
@@ -193,8 +193,9 @@ class AvailableContribution extends Contribution {
         Base.removeDir(newContribFolder);
         
       } else {
-        if (status != null)
+        if (status != null) {
           status.setErrorMessage(Language.text("contrib.errors.overwriting_properties"));
+        }
       }
     }
 
@@ -230,7 +231,6 @@ class AvailableContribution extends Contribution {
    */
   public boolean writePropertiesFile(File propFile) {
     try {
-
       HashMap<String, String> properties = Base.readSettings(propFile);
 
       String name = properties.get("name");
@@ -239,9 +239,9 @@ class AvailableContribution extends Contribution {
 
       String category;
       List<String> categoryList = parseCategories(properties.get("category"));
-      if (categoryList.size() == 1 && categoryList.get(0).equals("Unknown"))
+      if (categoryList.size() == 1 && categoryList.get(0).equals("Unknown")) {
         category = getCategoryStr();
-      else {
+      } else {
         StringBuilder sb = new StringBuilder();
         for (String cat : categories) {
           sb.append(cat);
@@ -252,20 +252,24 @@ class AvailableContribution extends Contribution {
       }
 
       String authorList = properties.get("authorList");
-      if (authorList == null || authorList.isEmpty())
+      if (authorList == null || authorList.isEmpty()) {
         authorList = getAuthorList();
+      }
 
       String url = properties.get("url");
-      if (url == null || url.isEmpty())
+      if (url == null || url.isEmpty()) {
         url = getUrl();
+      }
 
       String sentence = properties.get("sentence");
-      if (sentence == null || sentence.isEmpty())
+      if (sentence == null || sentence.isEmpty()) {
         sentence = getSentence();
+      }
 
       String paragraph = properties.get("paragraph");
-      if (paragraph == null || paragraph.isEmpty())
+      if (paragraph == null || paragraph.isEmpty()) {
         paragraph = getParagraph();
+      }
 
       int version;
       try {
@@ -285,14 +289,13 @@ class AvailableContribution extends Contribution {
       String compatibleContribsList = null;
       
       if (getType() == ContributionType.EXAMPLES_PACKAGE) {
-      compatibleContribsList = properties.get("compatibleModesList");
+        compatibleContribsList = properties.get("compatibleModesList");
       }
 
       long lastUpdated;
       try {
         lastUpdated = Long.parseLong(properties.get("lastUpdated"));
-      }
-      catch (NumberFormatException nfe) {
+      } catch (NumberFormatException nfe) {
         lastUpdated = getLastUpdated();
       // Better comment these out till all contribs have a lastUpdated 
 //        System.err.println("The last updated date for the “" + name
