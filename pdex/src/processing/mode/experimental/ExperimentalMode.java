@@ -49,15 +49,15 @@ import processing.mode.java.runner.Runner;
 
 
 /**
- * Experimental Mode for Processing, combines Debug Mode and XQMode and 
+ * Experimental Mode for Processing, combines Debug Mode and XQMode and
  * starts us working toward our next generation editor/debugger setup.
  */
 public class ExperimentalMode extends JavaMode {
   public static final boolean VERBOSE_LOGGING = true;
-  //public static final boolean VERBOSE_LOGGING = false;  
+  //public static final boolean VERBOSE_LOGGING = false;
   public static final int LOG_SIZE = 512 * 1024; // max log file size (in bytes)
   public static boolean DEBUG = !true;
-  
+
   public ExperimentalMode(Base base, File folder) {
     super(base, folder);
 
@@ -119,23 +119,23 @@ public class ExperimentalMode extends JavaMode {
     //return "PDE X";
     return "Java";
   }
-  
-  
+
+
   public File[] getKeywordFiles() {
-    return new File[] { 
-      Base.getContentFile("modes/java/keywords.txt") 
+    return new File[] {
+      Base.getContentFile("modes/java/keywords.txt")
     };
   }
-  
+
   public File getContentFile(String path) {
-    // workaround for #45
-    if (path.startsWith("application" + File.separator)) {
-      return new File(Base.getContentFile("modes" + File.separator + "java")
-          .getAbsolutePath() + File.separator + path);
+    File file = new File(folder, path);
+    if (!file.exists()) {
+      // check to see if it's part of the parent Java Mode
+      file = new File(Base.getContentFile("modes/java"), path);
     }
-    return new File(folder, path);
+    return file;
   }
-  
+
   volatile public static boolean errorCheckEnabled = true,
       warningsEnabled = true, codeCompletionsEnabled = true,
       debugOutputEnabled = false, errorLogsEnabled = false,
@@ -143,7 +143,7 @@ public class ExperimentalMode extends JavaMode {
       defaultAutoSaveEnabled = true, // ,untitledAutoSaveEnabled;
       ccTriggerEnabled = false, importSuggestEnabled = true;
   public static int autoSaveInterval = 3; //in minutes
-  
+
   /**
    * After how many typed characters, code completion is triggered
    */
@@ -155,7 +155,7 @@ public class ExperimentalMode extends JavaMode {
       prefDebugOP = "pdex.dbgOutput",
       prefErrorLogs = "pdex.writeErrorLogs",
       prefAutoSaveInterval = "pdex.autoSaveInterval",
-      prefAutoSave = "pdex.autoSave.autoSaveEnabled", // prefUntitledAutoSave = "pdex.autoSave.untitledAutoSaveEnabled", 
+      prefAutoSave = "pdex.autoSave.autoSaveEnabled", // prefUntitledAutoSave = "pdex.autoSave.untitledAutoSaveEnabled",
       prefAutoSavePrompt = "pdex.autoSave.promptDisplay",
       prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault",
       prefCCTriggerEnabled = "pdex.ccTriggerEnabled",
@@ -211,7 +211,7 @@ public class ExperimentalMode extends JavaMode {
       Preferences.setBoolean(prefErrorLogs, errorLogsEnabled);
     if (Preferences.get(prefAutoSaveInterval) == null)
       Preferences.setInteger(prefAutoSaveInterval, autoSaveInterval);
-//    if(Preferences.get(prefUntitledAutoSave) == null) 
+//    if(Preferences.get(prefUntitledAutoSave) == null)
 //      Preferences.setBoolean(prefUntitledAutoSave,untitledAutoSaveEnabled);
     if (Preferences.get(prefAutoSave) == null)
       Preferences.setBoolean(prefAutoSave, autoSaveEnabled);
@@ -252,7 +252,7 @@ public class ExperimentalMode extends JavaMode {
     Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error loading String: {0}", attribute);
     return defaultValue;
   }
-    
+
 
   /**
    * Load a Color value from theme.txt
@@ -271,7 +271,7 @@ public class ExperimentalMode extends JavaMode {
     Logger.getLogger(ExperimentalMode.class.getName()).log(Level.WARNING, "Error loading Color: {0}", attribute);
     return defaultValue;
   }
-  
+
   protected ImageIcon classIcon, fieldIcon, methodIcon, localVarIcon;
   protected void loadIcons(){
     String iconPath = getContentFile("data")
@@ -281,13 +281,13 @@ public class ExperimentalMode extends JavaMode {
     methodIcon = new ImageIcon(iconPath + File.separator
         + "methpub_obj.png");
     fieldIcon = new ImageIcon(iconPath + File.separator
-        + "field_protected_obj.png"); 
+        + "field_protected_obj.png");
     localVarIcon = new ImageIcon(iconPath + File.separator
                               + "field_default_obj.png");
     // log("Icons loaded");
   }
 
-    
+
   public ClassLoader getJavaModeClassLoader() {
     for (Mode m : base.getModeList()) {
       if (m.getClass() == JavaMode.class) {
@@ -298,7 +298,7 @@ public class ExperimentalMode extends JavaMode {
     // badness
     return null;
   }
-  
+
   /**
    * System.out.println()
    */
@@ -306,7 +306,7 @@ public class ExperimentalMode extends JavaMode {
     if(ExperimentalMode.DEBUG)
       System.out.println(message);
   }
-  
+
   /**
    * System.err.println()
    */
@@ -314,7 +314,7 @@ public class ExperimentalMode extends JavaMode {
     if(ExperimentalMode.DEBUG)
       System.err.println(message);
   }
-  
+
   /**
    * System.out.print
    */
@@ -322,7 +322,7 @@ public class ExperimentalMode extends JavaMode {
     if(ExperimentalMode.DEBUG)
       System.out.print(message);
   }
-  
+
   public String[] getIgnorable() {
     return new String[] {
       "applet",
@@ -334,144 +334,144 @@ public class ExperimentalMode extends JavaMode {
   }
 
   // TweakMode code
-	@Override
-	public Runner handleRun(Sketch sketch, RunnerListener listener) throws SketchException
-	{
-		if (enableTweak) {
-		  enableTweak = false;
-			return handleTweakPresentOrRun(sketch, listener, false);
-		}
-		else {
-			/* Do the usual (JavaMode style) */
-		    JavaBuild build = new JavaBuild(sketch);
-		    String appletClassName = build.build(false);
-		    if (appletClassName != null) {
-		      final Runner runtime = new Runner(build, listener);
-		      new Thread(new Runnable() {
-		        public void run() {
-		          runtime.launch(false);  // this blocks until finished
-		        }
-		      }).start();
-		      return runtime;
-		    }
-		    return null;
-		}
-	}
+        @Override
+        public Runner handleRun(Sketch sketch, RunnerListener listener) throws SketchException
+        {
+                if (enableTweak) {
+                  enableTweak = false;
+                        return handleTweakPresentOrRun(sketch, listener, false);
+                }
+                else {
+                        /* Do the usual (JavaMode style) */
+                    JavaBuild build = new JavaBuild(sketch);
+                    String appletClassName = build.build(false);
+                    if (appletClassName != null) {
+                      final Runner runtime = new Runner(build, listener);
+                      new Thread(new Runnable() {
+                        public void run() {
+                          runtime.launch(false);  // this blocks until finished
+                        }
+                      }).start();
+                      return runtime;
+                    }
+                    return null;
+                }
+        }
 
-	@Override
-	public Runner handlePresent(Sketch sketch, RunnerListener listener) throws SketchException
-	{
-		if (enableTweak) {
-		  enableTweak = false;
-			return handleTweakPresentOrRun(sketch, listener, true);
-		}
-		else {
-			/* Do the usual (JavaMode style) */
-		    JavaBuild build = new JavaBuild(sketch);
-		    String appletClassName = build.build(false);
-		    if (appletClassName != null) {
-		      final Runner runtime = new Runner(build, listener);
-		      new Thread(new Runnable() {
-		        public void run() {
-		          runtime.launch(true);
-		        }
-		      }).start();
-		      return runtime;
-		    }
-		    return null;
-		}
-	}
+        @Override
+        public Runner handlePresent(Sketch sketch, RunnerListener listener) throws SketchException
+        {
+                if (enableTweak) {
+                  enableTweak = false;
+                        return handleTweakPresentOrRun(sketch, listener, true);
+                }
+                else {
+                        /* Do the usual (JavaMode style) */
+                    JavaBuild build = new JavaBuild(sketch);
+                    String appletClassName = build.build(false);
+                    if (appletClassName != null) {
+                      final Runner runtime = new Runner(build, listener);
+                      new Thread(new Runnable() {
+                        public void run() {
+                          runtime.launch(true);
+                        }
+                      }).start();
+                      return runtime;
+                    }
+                    return null;
+                }
+        }
 
-	public Runner handleTweakPresentOrRun(Sketch sketch, RunnerListener listener, boolean present) throws SketchException
-	{
-		final DebugEditor editor = (DebugEditor)listener;
-		final boolean toPresent = present;
+        public Runner handleTweakPresentOrRun(Sketch sketch, RunnerListener listener, boolean present) throws SketchException
+        {
+                final DebugEditor editor = (DebugEditor)listener;
+                final boolean toPresent = present;
 
-		if (!verifyOscP5()) {
-			editor.deactivateRun();
-			return null;
-		}
+                if (!verifyOscP5()) {
+                        editor.deactivateRun();
+                        return null;
+                }
 
-		boolean launchInteractive = false;
+                boolean launchInteractive = false;
 
-		if (isSketchModified(sketch)) {
-			editor.deactivateRun();
-			Base.showMessage("Save", "Please save the sketch before running in Tweak Mode.");
-			return null;
-		}
+                if (isSketchModified(sketch)) {
+                        editor.deactivateRun();
+                        Base.showMessage("Save", "Please save the sketch before running in Tweak Mode.");
+                        return null;
+                }
 
-		/* first try to build the unmodified code */
-		JavaBuild build = new JavaBuild(sketch);
-		String appletClassName = build.build(false);
-		if (appletClassName == null) {
-			// unmodified build failed, so fail
-			return null;
-		}
+                /* first try to build the unmodified code */
+                JavaBuild build = new JavaBuild(sketch);
+                String appletClassName = build.build(false);
+                if (appletClassName == null) {
+                        // unmodified build failed, so fail
+                        return null;
+                }
 
-		/* if compilation passed, modify the code and build again */
-		// save the original sketch code of the user
-		editor.initBaseCode();
-		// check for "// tweak" comment in the sketch
-		boolean requiresTweak = SketchParser.containsTweakComment(editor.baseCode);
-		// parse the saved sketch to get all (or only with "//tweak" comment) numbers
-		final SketchParser parser = new SketchParser(editor.baseCode, requiresTweak);
+                /* if compilation passed, modify the code and build again */
+                // save the original sketch code of the user
+                editor.initBaseCode();
+                // check for "// tweak" comment in the sketch
+                boolean requiresTweak = SketchParser.containsTweakComment(editor.baseCode);
+                // parse the saved sketch to get all (or only with "//tweak" comment) numbers
+                final SketchParser parser = new SketchParser(editor.baseCode, requiresTweak);
 
-		// add our code to the sketch
-		launchInteractive = editor.automateSketch(sketch, parser.allHandles);
+                // add our code to the sketch
+                launchInteractive = editor.automateSketch(sketch, parser.allHandles);
 
-		build = new JavaBuild(sketch);
-		appletClassName = build.build(false);
+                build = new JavaBuild(sketch);
+                appletClassName = build.build(false);
 
-		if (appletClassName != null) {
-			final Runner runtime = new Runner(build, listener);
-			new Thread(new Runnable() {
-				public void run() {
-					runtime.launch(toPresent);  // this blocks until finished
+                if (appletClassName != null) {
+                        final Runner runtime = new Runner(build, listener);
+                        new Thread(new Runnable() {
+                                public void run() {
+                                        runtime.launch(toPresent);  // this blocks until finished
 
-					// executed when the sketch quits
-					editor.initEditorCode(parser.allHandles, false);
-					editor.stopInteractiveMode(parser.allHandles);
-				}
+                                        // executed when the sketch quits
+                                        editor.initEditorCode(parser.allHandles, false);
+                                        editor.stopInteractiveMode(parser.allHandles);
+                                }
 
-			}).start();
+                        }).start();
 
-			if (launchInteractive) {
+                        if (launchInteractive) {
 
-				// replace editor code with baseCode
-				editor.initEditorCode(parser.allHandles, false);
-				editor.updateInterface(parser.allHandles, parser.colorBoxes);
-				editor.startInteractiveMode();
-			}
+                                // replace editor code with baseCode
+                                editor.initEditorCode(parser.allHandles, false);
+                                editor.updateInterface(parser.allHandles, parser.colorBoxes);
+                                editor.startInteractiveMode();
+                        }
 
-			return runtime;
-		}
+                        return runtime;
+                }
 
-		return null;
-	}
+                return null;
+        }
 
-	private boolean verifyOscP5()
-	{
-		for (Library l : contribLibraries) {
-			if (l.getName().equals("oscP5")) {
-				return true;
-			}
-		}
+        private boolean verifyOscP5()
+        {
+                for (Library l : contribLibraries) {
+                        if (l.getName().equals("oscP5")) {
+                                return true;
+                        }
+                }
 
-		// could not find oscP5 library
-		Base.showWarning("Tweak Mode", "Tweak Mode needs the 'oscP5' library.\n"
-				+ "Please install this library by clicking \"Sketch --> Import Library --> Add Library ...\" and choose 'ocsP5'", null);
+                // could not find oscP5 library
+                Base.showWarning("Tweak Mode", "Tweak Mode needs the 'oscP5' library.\n"
+                                + "Please install this library by clicking \"Sketch --> Import Library --> Add Library ...\" and choose 'ocsP5'", null);
 
-		return false;
-	}
+                return false;
+        }
 
-	private boolean isSketchModified(Sketch sketch)
-	{
-		for (SketchCode sc : sketch.getCode()) {
-			if (sc.isModified()) {
-				return true;
-			}
-		}
-		return false;
-	}
+        private boolean isSketchModified(Sketch sketch)
+        {
+                for (SketchCode sc : sketch.getCode()) {
+                        if (sc.isModified()) {
+                                return true;
+                        }
+                }
+                return false;
+        }
 
 }
