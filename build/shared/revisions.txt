@@ -1,3 +1,47 @@
+PROCESSING 3.0a4 (REV 0231) - 1X September 2014
+
+Another release to deal with a handful of bugs found in the last alpha.
+The next alpha release will contain major changes and break a few libraries
+and tools, so this is an attempt at a final "stable" alpha that can be used
+until all those issues are sorted out.
+
+[ changes ] 
+
++ Contributions (Libraries, Modes, Tools) are now read from their own
+  listing that's specific to Processing 3.
+  https://github.com/processing/processing/issues/2850
+  https://github.com/processing/processing/issues/2849
+
++ Made the new editor the default. 
+
++ The OS X default File menu (shown when no windows are open) now has the
+  order/naming changes found in the sketch window File menu. 
+
+
+[ bug fixes ] 
+
++ TGAs from saveFrame() create transparent/black movies with Movie Maker
+  https://github.com/processing/processing/issues/2851
+
++ Fix export problem on Windows when using the new editor
+  https://github.com/processing/processing/issues/2806
+
+
+[ internal tweaks ] 
+
++ Optimize creation of boxed primitives
+  https://github.com/processing/processing/pull/2826
+
++ Add static modifier to inner classes that don't access parent
+  https://github.com/processing/processing/pull/2839
+
++ Fix localization in OS X (requires writing property files)
+  https://github.com/processing/processing/pull/2844
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 3.0a3 (REV 0230) - 26 August 2014
 
 The 3.0 process continues as we've wrapped up a very successful 
