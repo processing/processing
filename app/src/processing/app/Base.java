@@ -121,8 +121,8 @@ public class Base {
    */
   private Mode nextMode;
 
+  /** The built-in modes. coreModes[0] will be considered the 'default'. */
   private Mode[] coreModes;
-  //public List<ModeContribution> contribModes;
   protected ArrayList<ModeContribution> modeContribs;
   
   protected ArrayList<ExamplesPackageContribution> exampleContribs;
@@ -278,44 +278,20 @@ public class Base {
 
 
   private void buildCoreModes() {
-//    Mode javaMode =
-//      ModeContribution.getCoreMode(this, "processing.mode.java.JavaMode",
-//                                   getContentFile("modes/java"));
-//    Mode androidMode =
-//      ModeContribution.getCoreMode(this, "processing.mode.android.AndroidMode",
-//                                   getContentFile("modes/android"));
-//    Mode javaScriptMode =
-//      ModeContribution.getCoreMode(this, "processing.mode.javascript.JavaScriptMode",
-//                                   getContentFile("modes/javascript"));
     Mode javaMode =
       ModeContribution.load(this, getContentFile("modes/java"), //$NON-NLS-1$
                             "processing.mode.java.JavaMode").getMode(); //$NON-NLS-1$
-//    Mode androidMode =
-//      ModeContribution.load(this, getContentFile("modes/android"),
-//                            "processing.mode.android.AndroidMode").getMode();
-    // Mode javaScriptMode =
-    //   ModeContribution.load(this, getContentFile("modes/javascript"),
-    //                         "processing.mode.javascript.JavaScriptMode").getMode();
 
-    //coreModes = new Mode[] { javaMode, androidMode };
+    // PDE X calls getModeList() while it's loading, so coreModes must be set 
     coreModes = new Mode[] { javaMode };
-
-    // check for the new mode in case it's available
-//    try {
-//      Class.forName("processing.mode.java2.DebugMode");
-    ModeContribution experimentalContrib =
+    
+    Mode pdexMode = 
       ModeContribution.load(this, getContentFile("modes/ExperimentalMode"), //$NON-NLS-1$
-        "processing.mode.experimental.ExperimentalMode"); //$NON-NLS-1$
-    if (experimentalContrib != null) {
-      Mode experimentalMode = experimentalContrib.getMode();
-      //coreModes = new Mode[] { javaMode, androidMode, experimentalMode };
-      coreModes = new Mode[] { experimentalMode, javaMode };
-    }
-//    } catch (ClassNotFoundException e) { }
+                            "processing.mode.experimental.ExperimentalMode").getMode(); //$NON-NLS-1$
 
-//    for (Mode mode : coreModes) {  // already called by load() above
-//      mode.setupGUI();
-//    }
+    // Safe to remove the old Java mode here? 
+    //coreModes = new Mode[] { pdexMode };
+    coreModes = new Mode[] { pdexMode, javaMode };
   }
 
 
@@ -380,10 +356,10 @@ public class Base {
     // marked as an example.
     recent = new Recent(this);
 
-    String lastModeIdentifier = Preferences.get("last.sketch.mode"); //$NON-NLS-1$
+    String lastModeIdentifier = Preferences.get("mode.last"); //$NON-NLS-1$
     if (lastModeIdentifier == null) {
-      nextMode = coreModes[0];
-      log("Nothing set for last.sketch.mode, using coreMode[0]."); //$NON-NLS-1$
+      nextMode = getDefaultMode();
+      log("Nothing set for last.sketch.mode, using default."); //$NON-NLS-1$
     } else {
       for (Mode m : getModeList()) {
         if (m.getIdentifier().equals(lastModeIdentifier)) {
@@ -392,7 +368,7 @@ public class Base {
         }
       }
       if (nextMode == null) {
-        nextMode = coreModes[0];
+        nextMode = getDefaultMode();
         logf("Could not find mode %s, using default.", lastModeIdentifier); //$NON-NLS-1$
       }
     }
@@ -454,160 +430,6 @@ public class Base {
       new UpdateCheck(this);
     }
   }
-
-
-  /**
-   * Single location for the default extension, rather than hardwiring .pde
-   * all over the place. While it may seem like fun to send the Arduino guys
-   * on a treasure hunt, it gets old after a while.
-   */
-//  static protected String getExtension() {
-//    return ".pde";
-//  }
-
-
-//  public Mode getDefaultMode() {
-//    return defaultMode;
-//  }
-
-
-//  /**
-//   * Post-constructor setup for the editor area. Loads the last
-//   * sketch that was used (if any), and restores other Editor settings.
-//   * The complement to "storePreferences", this is called when the
-//   * application is first launched.
-//   */
-//  protected boolean restoreSketches() {
-////    String lastMode = Preferences.get("last.sketch.mode");
-////    log("setting mode to " + lastMode);
-////    if (lastMode != null) {
-////      for (Mode m : getModeList()) {
-////        if (m.getClass().getName().equals(lastMode)) {
-////          defaultMode = m;
-////        }
-////      }
-////    }
-////    log("default mode set to " + defaultMode.getClass().getName());
-//
-//    if (Preferences.getBoolean("last.sketch.restore")) {
-//      return false;
-//    }
-//
-//    return true;
-//
-////    // figure out window placement
-////    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-////    boolean windowPositionValid = true;
-////
-////    if (Preferences.get("last.screen.height") != null) {
-////      // if screen size has changed, the window coordinates no longer
-////      // make sense, so don't use them unless they're identical
-////      int screenW = Preferences.getInteger("last.screen.width");
-////      int screenH = Preferences.getInteger("last.screen.height");
-////
-////      if ((screen.width != screenW) || (screen.height != screenH)) {
-////        windowPositionValid = false;
-////      }
-////      /*
-////      int windowX = Preferences.getInteger("last.window.x");
-////      int windowY = Preferences.getInteger("last.window.y");
-////      if ((windowX < 0) || (windowY < 0) ||
-////          (windowX > screenW) || (windowY > screenH)) {
-////        windowPositionValid = false;
-////      }
-////      */
-////    } else {
-////      windowPositionValid = false;
-////    }
-////
-////    // Iterate through all sketches that were open last time p5 was running.
-////    // If !windowPositionValid, then ignore the coordinates found for each.
-////
-////    // Save the sketch path and window placement for each open sketch
-////    int count = Preferences.getInteger("last.sketch.count");
-////    int opened = 0;
-////    for (int i = 0; i < count; i++) {
-////      String path = Preferences.get("last.sketch" + i + ".path");
-////      int[] location;
-////      if (windowPositionValid) {
-////        String locationStr = Preferences.get("last.sketch" + i + ".location");
-////        location = PApplet.parseInt(PApplet.split(locationStr, ','));
-////      } else {
-////        location = nextEditorLocation();
-////      }
-////      // If file did not exist, null will be returned for the Editor
-////      if (handleOpen(path, location) != null) {
-////        opened++;
-////      }
-////    }
-////    return (opened > 0);
-//  }
-
-
-//  /**
-//   * Store list of sketches that are currently open.
-//   * Called when the application is quitting and documents are still open.
-//   */
-//  protected void storeSketches() {
-//    // Save the width and height of the screen
-//    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-//    Preferences.setInteger("last.screen.width", screen.width);
-//    Preferences.setInteger("last.screen.height", screen.height);
-//
-//    String untitledPath = untitledFolder.getAbsolutePath();
-//
-//    // Save the sketch path and window placement for each open sketch
-//    int index = 0;
-//    for (Editor editor : editors) {
-//      String path = editor.getSketch().getMainFilePath();
-//      // In case of a crash, save untitled sketches if they contain changes.
-//      // (Added this for release 0158, may not be a good idea.)
-//      if (path.startsWith(untitledPath) &&
-//          !editor.getSketch().isModified()) {
-//        continue;
-//      }
-//      Preferences.set("last.sketch" + index + ".path", path);
-//
-//      int[] location = editor.getPlacement();
-//      String locationStr = PApplet.join(PApplet.str(location), ",");
-//      Preferences.set("last.sketch" + index + ".location", locationStr);
-//      index++;
-//    }
-//    Preferences.setInteger("last.sketch.count", index);
-//    Preferences.set("last.sketch.mode", defaultMode.getClass().getName());
-//  }
-//
-//
-//  // If a sketch is untitled on quit, may need to store the new name
-//  // rather than the location from the temp folder.
-//  protected void storeSketchPath(Editor editor, int index) {
-//    String path = editor.getSketch().getMainFilePath();
-//    String untitledPath = untitledFolder.getAbsolutePath();
-//    if (path.startsWith(untitledPath)) {
-//      path = "";
-//    }
-//    Preferences.set("last.sketch" + index + ".path", path);
-//  }
-
-
-  /*
-  public void storeSketch(Editor editor) {
-    int index = -1;
-    for (int i = 0; i < editorCount; i++) {
-      if (editors[i] == editor) {
-        index = i;
-        break;
-      }
-    }
-    if (index == -1) {
-      System.err.println("Problem storing sketch " + editor.sketch.name);
-    } else {
-      String path = editor.sketch.getMainFilePath();
-      Preferences.set("last.sketch" + index + ".path", path);
-    }
-  }
-  */
-
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -774,8 +596,8 @@ public class Base {
         throw new IOException(newbieFile + " already exists.");
       }
 
-      // Create sketch properties file if it's not a default mode.
-      if (!isDefaultMode(nextMode)) {
+      // Create sketch properties file if it's not the default mode.
+      if (!nextMode.equals(getDefaultMode())) {
         saveModeSettings(new File(newbieDir, "sketch.properties"), nextMode);
       }
       
@@ -801,71 +623,10 @@ public class Base {
     }
   }
   
-  /**
-   * Is it a default mode?
-   * @param mode
-   * @return
-   */
-  public boolean isDefaultMode(Mode mode) {
-    for (int i = 0; i < coreModes.length; i++) {
-      if (mode.equals(coreModes[i])) {
-        return true;
-      }
-    }
-    return false;
+  
+  public Mode getDefaultMode() {
+    return coreModes[0];
   }
-
-
-//  /**
-//   * Replace the sketch in the current window with a new untitled document.
-//   */
-//  public void handleNewReplace() {
-//    if (!activeEditor.checkModified()) {
-//      return;  // sketch was modified, and user canceled
-//    }
-//    // Close the running window, avoid window boogers with multiple sketches
-//    activeEditor.internalCloseRunner();
-//
-//    // Actually replace things
-//    handleNewReplaceImpl();
-//  }
-
-
-//  protected void handleNewReplaceImpl() {
-//    try {
-//      String path = createNewUntitled();
-//      if (path != null) {
-//        activeEditor.handleOpenInternal(path);
-//        activeEditor.untitled = true;
-//      }
-////      return true;
-//
-//    } catch (IOException e) {
-//      activeEditor.statusError(e);
-////      return false;
-//    }
-//  }
-
-
-//  /**
-//   * Open a sketch, replacing the sketch in the current window.
-//   * @param path Location of the primary pde file for the sketch.
-//   */
-//  public void handleOpenReplace(String path) {
-//    if (!activeEditor.checkModified()) {
-//      return;  // sketch was modified, and user canceled
-//    }
-//    // Close the running window, avoid window boogers with multiple sketches
-//    activeEditor.internalCloseRunner();
-//
-//    boolean loaded = activeEditor.handleOpenInternal(path);
-//    if (!loaded) {
-//      // replace the document without checking if that's ok
-//      handleNewReplaceImpl();
-//    } else {
-//      handleRecent(activeEditor);
-//    }
-//  }
 
 
   /**
@@ -1007,14 +768,15 @@ public class Base {
       if (editor == null) {
         // if it's not mode[0] already, then don't go into an infinite loop
         // trying to recreate a window with the default mode.
-        if (nextMode == coreModes[0]) {
+        Mode defaultMode = getDefaultMode();
+        if (nextMode == defaultMode) {
           Base.showError("Editor Problems",
                          "An error occurred while trying to change modes.\n" +
-                           "We'll have to quit for now because it's an\n" +
-                           "unfortunate bit of indigestion.",
-                           null);
+                         "We'll have to quit for now because it's an\n" +
+                         "unfortunate bit of indigestion.",
+                         null);
         } else {
-          editor = coreModes[0].createEditor(this, path, state);
+          editor = defaultMode.createEditor(this, path, state);
         }
       }
 
@@ -1038,7 +800,7 @@ public class Base {
       showBadnessTrace("Terrible News",
                        "A serious error occurred while " +
                        "trying to create a new editor window.", t, false);
-      nextMode = coreModes[0];
+      nextMode = getDefaultMode();
       return null;
     }
   }

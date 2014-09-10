@@ -1,10 +1,12 @@
 0231 pde (3.0a4)
 X add new download redirect for contribs.txt
 X   https://github.com/processing/processing/issues/2850
-_ contribs for 3.0 need to come from a different location
-_   https://github.com/processing/processing/issues/2849
-_   add the separate contribs.txt link on download.processing.org
-_   change ContributionListing.java to use http://download.processing.org/contribs.txt. 
+X contribs for 3.0 need to come from a different location
+X   https://github.com/processing/processing/issues/2849
+X   add the separate contribs.txt link on download.processing.org
+X   fix inside ContributionListing.java
+X change default mode handling to use experimental as the default
+X remove isDefaultMode(), since it was doing the wrong thing
 _ make a new preference setting for the default mode
 _   this will set folks to the PDE X mode, and prevent conflicts w/ 2.0
 _ hide the old Java mode
