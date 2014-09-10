@@ -549,28 +549,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menubar.add(fileMenu);
     menubar.add(buildEditMenu());
     menubar.add(buildSketchMenu());
-//    rebuildToolList();
-    rebuildToolMenu();
-    menubar.add(getToolMenu());
 
+    // For 3.0a4 move mode menu to the left of the Tool menu
     JMenu modeMenu = buildModeMenu();
     if (modeMenu != null) {
       menubar.add(modeMenu);
     }
 
-//    // These are temporary entries while Android mode is being worked out.
-//    // The mode will not be in the tools menu, and won't involve a cmd-key
-//    if (!Base.RELEASE) {
-//      try {
-//        Class clazz = Class.forName("processing.app.tools.android.AndroidMode");
-//        Object mode = clazz.newInstance();
-//        Method m = clazz.getMethod("init", new Class[] { Editor.class, JMenuBar.class });
-//        //String libraryPath = (String) m.invoke(null, new Object[] { });
-//        m.invoke(mode, new Object[] { this, menubar });
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//      }
-//    }
+    rebuildToolMenu();
+    menubar.add(getToolMenu());
 
     menubar.add(buildHelpMenu());
     setJMenuBar(menubar);
