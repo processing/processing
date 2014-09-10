@@ -24,6 +24,7 @@ package processing.app.platform;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import com.apple.eio.FileManager;
 
@@ -47,6 +48,18 @@ public class MacPlatform extends Platform {
   }
   */
 
+  public void saveLanguage(String language) {
+    String[] cmdarray = new String[]{
+      "defaults", "write",
+      System.getProperty("user.home") + "/Library/Preferences/org.processing.app",
+      "AppleLanguages", "-array", language
+    };
+    try {
+      Runtime.getRuntime().exec(cmdarray);
+    } catch (IOException e) {
+      Base.log("Error saving platform language: " + e.getMessage());
+    }
+  }
 
   public void init(Base base) {
     super.init(base);

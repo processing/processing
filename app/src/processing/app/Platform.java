@@ -74,6 +74,7 @@ public class Platform {
     }
   }
 
+  public void saveLanguage(String languageCode) {}
 
   public void init(Base base) {
     this.base = base;
