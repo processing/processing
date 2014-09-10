@@ -1,14 +1,40 @@
 0231 pde (3.0a4)
+_ contribs need to come from a different location
+_   add the separate contribs.txt link on download.processing.org
+_   change ContributionListing.java to use http://download.processing.org/contribs.txt. 
+_ make a new preference setting for the default mode
+_   this will set folks to the PDE X mode, and prevent conflicts w/ 2.0
+_ hide the old Java mode
 
-_ Fix OS X menu to be the same order as the other File menu
-_ remove toolbar menu references and code to rebuild
+
+cleaning
+X single line of code with no semicolon dies with "unexpected token: null"
+X   http://code.google.com/p/processing/issues/detail?id=1312
+X   https://github.com/processing/processing/issues/1350
+X   closed by Dan post-3.0a3
+
+
+pulls
+X Optimize creation of boxed primitives
+X   https://github.com/processing/processing/pull/2826
+X Add static modifier to inner classes that don't access parent
+X   https://github.com/processing/processing/pull/2839
+X Fix localization in OS X (requires writing property files)
+X   https://github.com/processing/processing/pull/2844
+_ Add support for localizing contributions
+_   https://github.com/processing/processing/pull/2833
+_ Fix renaming from RGB to Rgb.java and others
+_   https://github.com/processing/processing/pull/2825
 _ check on pull for mnemonics
 _   https://github.com/processing/processing/pull/2382
 
-gsoc
-X remove dependency on oscp5 library for tweak mode
-_   https://github.com/processing/processing/issues/2730
-X   https://github.com/processing/processing/pull/2808
+_ Fix OS X menu to be the same order as the other File menu
+_ move sketchbook into its own window
+_ move recent into the sketchbook menu
+_   needs to recognize the p5 app folder
+_   also should recognize the user's home dir
+
+_ remove toolbar menu references and code to rebuild
 
 
 high
@@ -33,6 +59,9 @@ _   https://github.com/processing/processing/issues/1898
 
 
 gsoc/help me
+X remove dependency on oscp5 library for tweak mode
+_   https://github.com/processing/processing/issues/2730
+X   https://github.com/processing/processing/pull/2808
 _ `return` keyword not treated as such when followed by a bracket
 _   https://github.com/processing/processing/issues/2099
 _ IllegalArgumentException when clicking between editor windows
@@ -41,10 +70,6 @@ _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 _ closing the color selector makes things freeze (only Linux and Windows?)
 _   https://github.com/processing/processing/issues/2381
-_ move sketchbook into its own window
-_ move recent into the sketchbook menu
-_   needs to recognize the p5 app folder
-_   also should recognize the user's home dir
 _ incorporate new preproc
 _   https://github.com/fjenett/processing-preprocessor-antlr4
 _ SOCKS proxy not working: 
@@ -339,10 +364,6 @@ _ using a keyword as a variable name gives unhelpful error message
 _   http://code.google.com/p/processing/issues/detail?id=54
 _ "unexpected token" on anonymous instance of parameterized Comparator
 _   http://code.google.com/p/processing/issues/detail?id=494
-
-low (better error messages)
-_ single line of code with no semicolon dies with "unexpected token: null"
-_   http://code.google.com/p/processing/issues/detail?id=1312
 
 
 PDE / Editor
