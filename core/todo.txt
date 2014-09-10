@@ -1,6 +1,4 @@
 0231 core (3.0a4 or 3.0b1)
-_ TGAs created with saveFrame() have an alpha channel, which breaks Movie Maker
-_   https://github.com/processing/processing/issues/2851
 
 
 applet/component

@@ -11,6 +11,8 @@ X make a new preference setting for the default mode
 X   this will set folks to the PDE X mode, and prevent conflicts w/ 2.0
 X   change last.sketch.mode to mode.last
 X fix OS X default File menu to be the same order as the other File menu
+X TGAs from saveFrame() create transparent/black movies with Movie Maker
+X   https://github.com/processing/processing/issues/2851
 
 
 before launch
@@ -41,10 +43,9 @@ _ check on pull for mnemonics
 _   https://github.com/processing/processing/pull/2382
 
 
-_ remove toolbar menu references and code to rebuild
-
-
 high
+_ "Your sketch has been modified externally" appear without reason
+_   https://github.com/processing/processing/issues/2852
 _ export application ubuntu -> windows not working (2.2.1)
 _   https://github.com/processing/processing/issues/2698
 _   might be something with libraries (native or otherwise)
@@ -93,6 +94,9 @@ _   https://github.com/processing/processing/issues/2199
 
 
 medium
+_ remove toolbar menu references and code to rebuild
+_ fix single instance server on OS X to load double-clicked files
+_   when run from Eclipse, the single instance thing punts
 _ 'recent' menu needs to recognize the p5 app folder
 _   also should recognize the user's home dir
 _ possibility of libraries folder inside a particular sketch?
