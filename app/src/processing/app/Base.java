@@ -517,7 +517,7 @@ public class Base {
 
     // make this the next mode to be loaded
     nextMode = whichEditor.getMode();
-    Preferences.set("last.sketch.mode", nextMode.getIdentifier()); //$NON-NLS-1$
+    Preferences.set("mode.last", nextMode.getIdentifier()); //$NON-NLS-1$
   }
 
 
@@ -626,6 +626,12 @@ public class Base {
   
   public Mode getDefaultMode() {
     return coreModes[0];
+  }
+  
+  
+  /** Used by ThinkDifferent so that it can have a Sketchbook menu. */
+  public Mode getNextMode() {
+    return nextMode;
   }
 
 
@@ -976,12 +982,10 @@ public class Base {
           // Since this wasn't an actual Quit event, call System.exit()
           System.exit(0);
         }
-      } else {
+      } else {  // on OS X, update the default file menu
         editor.setVisible(false);
         editor.dispose();
-        defaultFileMenu.insert(sketchbookMenu, 2);
-        defaultFileMenu.insert(getRecentMenu(), 3);
-//        defaultFileMenu.insert(defaultMode.getExamplesMenu(), 3);
+        defaultFileMenu.insert(getRecentMenu(), 2);
         activeEditor = null;
         editors.remove(editor);
       }
@@ -991,16 +995,6 @@ public class Base {
       // proceed with closing the current window.
       editor.setVisible(false);
       editor.dispose();
-//      for (int i = 0; i < editorCount; i++) {
-//        if (editor == editors[i]) {
-//          for (int j = i; j < editorCount-1; j++) {
-//            editors[j] = editors[j+1];
-//          }
-//          editorCount--;
-//          // Set to null so that garbage collection occurs
-//          editors[editorCount] = null;
-//        }
-//      }
       editors.remove(editor);
     }
     return true;
@@ -1132,13 +1126,13 @@ public class Base {
   }
 
 
-  public JMenu getSketchbookMenu() {
-    if (sketchbookMenu == null) {
-      sketchbookMenu = new JMenu(Language.text("menu.file.sketchbook"));
-      rebuildSketchbookMenu();
-    }
-    return sketchbookMenu;
-  }
+//  public JMenu getSketchbookMenu() {
+//    if (sketchbookMenu == null) {
+//      sketchbookMenu = new JMenu(Language.text("menu.file.sketchbook"));
+//      rebuildSketchbookMenu();
+//    }
+//    return sketchbookMenu;
+//  }
 
 
 //  public JMenu getRecentMenu() {

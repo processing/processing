@@ -7,9 +7,14 @@ X   add the separate contribs.txt link on download.processing.org
 X   fix inside ContributionListing.java
 X change default mode handling to use experimental as the default
 X remove isDefaultMode(), since it was doing the wrong thing
-_ make a new preference setting for the default mode
-_   this will set folks to the PDE X mode, and prevent conflicts w/ 2.0
-_ hide the old Java mode
+X make a new preference setting for the default mode
+X   this will set folks to the PDE X mode, and prevent conflicts w/ 2.0
+X   change last.sketch.mode to mode.last
+X fix OS X default File menu to be the same order as the other File menu
+
+
+before launch
+_ hide the old Java mode (?)
 
 
 cleaning
@@ -17,6 +22,8 @@ X single line of code with no semicolon dies with "unexpected token: null"
 X   http://code.google.com/p/processing/issues/detail?id=1312
 X   https://github.com/processing/processing/issues/1350
 X   closed by Dan post-3.0a3
+X move sketchbook into its own window
+X move recent into the sketchbook menu
 
 
 pulls
@@ -33,11 +40,6 @@ _   https://github.com/processing/processing/pull/2825
 _ check on pull for mnemonics
 _   https://github.com/processing/processing/pull/2382
 
-_ Fix OS X menu to be the same order as the other File menu
-_ move sketchbook into its own window
-_ move recent into the sketchbook menu
-_   needs to recognize the p5 app folder
-_   also should recognize the user's home dir
 
 _ remove toolbar menu references and code to rebuild
 
@@ -91,6 +93,8 @@ _   https://github.com/processing/processing/issues/2199
 
 
 medium
+_ 'recent' menu needs to recognize the p5 app folder
+_   also should recognize the user's home dir
 _ possibility of libraries folder inside a particular sketch?
 _ display "1" is not correct in 2.1.2
 _   https://github.com/processing/processing/issues/2502

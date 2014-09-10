@@ -135,7 +135,14 @@ public class ThinkDifferent implements ApplicationListener {
       });
     fileMenu.add(item);
 
-    fileMenu.add(base.getSketchbookMenu());
+    item = Toolkit.newJMenuItemShift(Language.text("menu.file.sketchbook"), 'K');
+    item.addActionListener(new ActionListener() {      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        base.getNextMode().showSketchbookFrame();
+      }
+    });
+    fileMenu.add(item);
 
     item = Toolkit.newJMenuItemShift(Language.text("menu.file.examples"), 'O');
     item.addActionListener(new ActionListener() {
