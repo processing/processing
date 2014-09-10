@@ -189,9 +189,12 @@ abstract public class Contribution {
    * @return
    */
   boolean isSpecial() {
-    if (authorList.indexOf("The Processing Foundation") != -1 || categories.contains(SPECIAL_CATEGORY_NAME))
-      return true;
-    return false;
+    try {
+      return (authorList.indexOf("The Processing Foundation") != -1 || 
+              categories.contains(SPECIAL_CATEGORY_NAME));
+    } catch (NullPointerException npe) {
+      return false;
+    }
   }
 
 
