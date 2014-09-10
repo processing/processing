@@ -1,5 +1,8 @@
 0231 pde (3.0a4)
-_ contribs need to come from a different location
+X add new download redirect for contribs.txt
+X   https://github.com/processing/processing/issues/2850
+_ contribs for 3.0 need to come from a different location
+_   https://github.com/processing/processing/issues/2849
 _   add the separate contribs.txt link on download.processing.org
 _   change ContributionListing.java to use http://download.processing.org/contribs.txt. 
 _ make a new preference setting for the default mode

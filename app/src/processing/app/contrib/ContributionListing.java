@@ -34,7 +34,7 @@ import processing.core.PApplet;
 public class ContributionListing {
   // Stable URL that will redirect to wherever we're hosting the file
   static final String LISTING_URL =
-    "http://download.processing.org/contributions.txt";
+    "http://download.processing.org/contribs.txt";
 
   static volatile ContributionListing singleInstance;
 
