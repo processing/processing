@@ -13,20 +13,8 @@ X   change last.sketch.mode to mode.last
 X fix OS X default File menu to be the same order as the other File menu
 X TGAs from saveFrame() create transparent/black movies with Movie Maker
 X   https://github.com/processing/processing/issues/2851
-
-
-before launch
-_ hide the old Java mode (?)
-
-
-cleaning
-X single line of code with no semicolon dies with "unexpected token: null"
-X   http://code.google.com/p/processing/issues/detail?id=1312
-X   https://github.com/processing/processing/issues/1350
-X   closed by Dan post-3.0a3
-X move sketchbook into its own window
-X move recent into the sketchbook menu
-
+X fix export problem on Windows with PDE X
+X   https://github.com/processing/processing/issues/2806
 
 pulls
 X Optimize creation of boxed primitives
@@ -35,6 +23,19 @@ X Add static modifier to inner classes that don't access parent
 X   https://github.com/processing/processing/pull/2839
 X Fix localization in OS X (requires writing property files)
 X   https://github.com/processing/processing/pull/2844
+
+cleaning
+X single line of code with no semicolon dies with "unexpected token: null"
+X   http://code.google.com/p/processing/issues/detail?id=1312
+X   https://github.com/processing/processing/issues/1350
+X   closed by Dan post-3.0a3
+X move sketchbook into its own window
+X move recent into the sketchbook menu
+X try installing 10.7.3 on Mac Mini and check whether things run
+X   make sure it's only running on 64-bit machines? 
+
+
+pulls
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
 _ Fix renaming from RGB to Rgb.java and others
@@ -112,8 +113,6 @@ _ should default to the local Java on Windows and Linux
 _   have export apps default to the local JRE
 _   Linux is probably using the system JRE if available
 _   launch4j may be all set, but double-check
-_ try installing 10.7.3 on Mac Mini and check whether things run
-_   make sure it's only running on 64-bit machines? 
 _ use platformDelete() to remove untitled sketches?
 _   would allow us to use the /tmp folder
 _ change to using platformDelete() instead of Base.removeDir() where possible
