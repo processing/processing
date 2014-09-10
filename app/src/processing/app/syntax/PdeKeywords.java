@@ -54,7 +54,7 @@ public class PdeKeywords extends TokenMarker {
     switch (coloring.charAt(0)) {
       case 'K': id = Token.KEYWORD1 + num; break;
       case 'L': id = Token.LITERAL1 + num; break;
-      case 'F': id = Token.FUNCTION1 + num; paren = true; break;
+      case 'F': id = (num == 4 ? Token.KEYWORD1 : Token.FUNCTION1 + num); paren = true; break;
     }
     keywordColoring.add(keyword, (byte) id, paren);
   }

@@ -215,6 +215,15 @@ void	KEYWORD1	void
 volatile	KEYWORD1
 
 
+# Keywords which can be followed by a parenthesis
+assert	FUNCTION5
+case	FUNCTION5
+return	FUNCTION5
+super	FUNCTION5
+this	FUNCTION5
+throw	FUNCTION5
+
+
 # Datatypes
 
 Array	KEYWORD5	Array
