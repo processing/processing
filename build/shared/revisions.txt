@@ -26,6 +26,14 @@ until all those issues are sorted out.
 + Fix export problem on Windows when using the new editor
   https://github.com/processing/processing/issues/2806
 
++ Fix black outline around scaled fonts with the OpenGL renderer
+  https://github.com/processing/processing/issues/2845
+  https://github.com/processing/processing/pull/2856
+
++ Several fixes to the contributions manager:
+  https://github.com/processing/processing/issues/2798
+  https://github.com/processing/processing/issues/2831
+
 
 [ internal tweaks ] 
 

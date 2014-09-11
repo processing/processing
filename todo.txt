@@ -23,6 +23,9 @@ X Add static modifier to inner classes that don't access parent
 X   https://github.com/processing/processing/pull/2839
 X Fix localization in OS X (requires writing property files)
 X   https://github.com/processing/processing/pull/2844
+X black font outline appears with large VLW font and OpenGL renderer
+X   https://github.com/processing/processing/issues/2845
+X   https://github.com/processing/processing/pull/2856
 
 cleaning
 X single line of code with no semicolon dies with "unexpected token: null"
@@ -33,6 +36,15 @@ X move sketchbook into its own window
 X move recent into the sketchbook menu
 X try installing 10.7.3 on Mac Mini and check whether things run
 X   make sure it's only running on 64-bit machines? 
+
+gsoc
+X remove dependency on oscp5 library for tweak mode
+X   https://github.com/processing/processing/issues/2730
+X   https://github.com/processing/processing/pull/2808
+X   https://github.com/processing/processing/pull/2855
+X A few fixes for Contributions Manager
+X   https://github.com/processing/processing/issues/2798
+X   https://github.com/processing/processing/issues/2831
 
 
 pulls
@@ -68,9 +80,6 @@ _   https://github.com/processing/processing/issues/1898
 
 
 gsoc/help me
-X remove dependency on oscp5 library for tweak mode
-_   https://github.com/processing/processing/issues/2730
-X   https://github.com/processing/processing/pull/2808
 _ `return` keyword not treated as such when followed by a bracket
 _   https://github.com/processing/processing/issues/2099
 _ IllegalArgumentException when clicking between editor windows
