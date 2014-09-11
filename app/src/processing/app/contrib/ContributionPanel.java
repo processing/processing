@@ -726,6 +726,19 @@ class ContributionPanel extends JPanel {
         public void finishedAction() {
           // Finished downloading library
         }
+
+        public void cancel() {
+          // Finished installing library
+          resetInstallProgressBarState();
+          installRemoveButton.setEnabled(!contrib.isUpdateFlagged());
+
+          ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, BUTTON_CONSTRAINT);
+          isInstallInProgress = false;
+          if(isUpdateInProgress)
+            isUpdateInProgress = !isUpdateInProgress;
+          updateButton.setVisible(contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
+          setSelected(true);
+        }
       };
 
       JProgressMonitor installProgress = new JProgressMonitor(installProgressBar) {
@@ -743,6 +756,10 @@ class ContributionPanel extends JPanel {
             isUpdateInProgress = !isUpdateInProgress;
           updateButton.setVisible(contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
           setSelected(true);
+        }
+
+        public void cancel() {
+          finishedAction();
         }
       };
 

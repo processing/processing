@@ -309,8 +309,8 @@ class AvailableContribution extends Contribution {
         minRev = Integer.parseInt(properties.get("minRevision"));
       } catch (NumberFormatException e) {
         minRev = getMinRevision();
-        System.err.println("The minimum compatible revision for the “" + name
-          + "” contribution is not set properly. Assuming minimum revision 0.");
+//        System.err.println("The minimum compatible revision for the “" + name
+//          + "” contribution is not set properly. Assuming minimum revision 0.");
       }
 
       int maxRev;
@@ -318,8 +318,8 @@ class AvailableContribution extends Contribution {
         maxRev = Integer.parseInt(properties.get("maxRevision"));
       } catch (NumberFormatException e) {
         maxRev = getMaxRevision();
-        System.err.println("The maximum compatible revision for the “" + name
-                           + "” contribution is not set properly. Assuming maximum revision INF.");
+//        System.err.println("The maximum compatible revision for the “" + name
+//                           + "” contribution is not set properly. Assuming maximum revision INF.");
       } 
 
       if (propFile.delete() && propFile.createNewFile() && propFile.setWritable(true)) {

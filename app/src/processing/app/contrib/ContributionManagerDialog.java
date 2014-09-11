@@ -57,7 +57,7 @@ public class ContributionManagerDialog {
   // the calling editor, so updates can be applied
   Editor editor;
   String category;
-  String compatibleContribType;
+  String compatibleCheckboxLabel;
   boolean isCompatibilityFilter;
   ContributionListing contribListing;
 
@@ -66,21 +66,26 @@ public class ContributionManagerDialog {
     if (type == null) {
       title = Language.text("contrib.manager_title.update");
       filter = ContributionType.createUpdateFilter();
-      compatibleContribType = "Updates";
+      compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.update");
     } else {
-      if (type == ContributionType.MODE)
+      if (type == ContributionType.MODE) {
         title = Language.text("contrib.manager_title.mode");
-      else if (type == ContributionType.TOOL)
+        compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.mode");
+      }
+      else if (type == ContributionType.TOOL) {
         title = Language.text("contrib.manager_title.tool");
-      else if (type == ContributionType.LIBRARY)
+        compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.tool");
+      }
+      else if (type == ContributionType.LIBRARY) {
         title = Language.text("contrib.manager_title.library");
+        compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.library");
+      }
+      else if (type == ContributionType.EXAMPLES_PACKAGE) {
+        title = Language.text("contrib.manager_title.examples-package");
+        compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.examples-package");
+      }
       
-      filter = type.createFilter();    
-      
-      if (type == ContributionType.LIBRARY)
-        compatibleContribType = "Libraries";
-      else
-        compatibleContribType = type.getTitle() + "s";
+      filter = type.createFilter();
     }
     contribListing = ContributionListing.getInstance();
     contributionListPanel = new ContributionListPanel(this, filter);
@@ -237,7 +242,7 @@ public class ContributionManagerDialog {
       
       filterPanel.add(Box.createHorizontalStrut(5));
       
-      final JCheckBox compatibleContrib = new JCheckBox("Show Only Compatible " + compatibleContribType);
+      final JCheckBox compatibleContrib = new JCheckBox(compatibleCheckboxLabel);
       compatibleContrib.addItemListener(new ItemListener() {
         
         @Override
