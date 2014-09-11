@@ -200,23 +200,15 @@ public class MovieMaker extends JFrame implements Tool {
     heightLabel = new JLabel();
     heightField = new JTextField();
     compressionLabel = new JLabel();
-    compressionBox = new JComboBox();
+    compressionBox = new JComboBox<String>();
     fpsLabel = new JLabel();
     fpsField = new JTextField();
     originalSizeCheckBox = new JCheckBox();
-//    streamingLabel = new JLabel();
-//    streamingGroup = new ButtonGroup();
-//    noPreparationRadio = new JRadioButton();
-//    fastStartRadio = new JRadioButton();
-//    fastStartCompressedRadio = new JRadioButton();
-
-//    FormListener formListener = new FormListener();
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         setVisible(false);
-//        System.exit(0);
       }
     });
     registerWindowCloseKeys(getRootPane(), new ActionListener() {
@@ -345,7 +337,7 @@ public class MovieMaker extends JFrame implements Tool {
     compressionLabel.setText("Compression:");
     compressionBox.setFont(font);
     //compressionBox.setModel(new DefaultComboBoxModel(new String[] { "None", "Animation", "JPEG", "PNG" }));
-    compressionBox.setModel(new DefaultComboBoxModel(new String[] { "Animation", "JPEG", "PNG" }));
+    compressionBox.setModel(new DefaultComboBoxModel<String>(new String[] { "Animation", "JPEG", "PNG" }));
 
     fpsLabel.setFont(font);
     fpsLabel.setText("Frame Rate:");
@@ -635,9 +627,6 @@ public class MovieMaker extends JFrame implements Tool {
 
           // Check on first image, if we can actually do pass through
           if (originalSize) {
-            // This was using ImageIcon, which can't handle some file types.
-            // For 2.1, switching to ImageIO (which is used for movie 
-            // generation anyway) [fry 131008]
             BufferedImage temp = readImage(imgFiles[0]);
             if (temp == null) {
               return new RuntimeException("Coult not read " + imgFiles[0].getAbsolutePath());
@@ -690,6 +679,11 @@ public class MovieMaker extends JFrame implements Tool {
   }//GEN-LAST:event_createMovie
   
   
+  /** 
+   * Read an image from a file. ImageIcon doesn't don't do well with some file
+   * types, so we use ImageIO. ImageIO doesn't handle TGA files created by
+   * Processing, so this calls our own loadImageTGA().
+   */
   private BufferedImage readImage(File file) throws IOException {
     // Make sure that we're using a ClassLoader that's aware of the ImageIO jar
     //Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
@@ -709,87 +703,21 @@ public class MovieMaker extends JFrame implements Tool {
       }
     }
     */
-    
+
     if (image == null) {
       String path = file.getAbsolutePath();
+      String pathLower = path.toLowerCase();
       // Might be an incompatible TGA or TIFF created by Processing
-      if (path.toLowerCase().endsWith(".tga")) {
+      if (pathLower.endsWith(".tga")) {
         return loadImageTGA(file);
         
-      } else if (path.toLowerCase().endsWith(".tif")) {
+      } else if (pathLower.endsWith(".tif") || pathLower.endsWith(".tiff")) {
         throw new IOException("Try TGA or PNG images instead of TIFF.");
       }
     }
     return image;
   }
   
-  
-  /*
-  static public void selectFolder(final Frame parentFrame, 
-                                  final String prompt,
-//                                  final String callbackMethod,
-                                  final File defaultSelection,
-//                                  final Object callbackObject,
-                                  final SelectCallback callback) {
-//    EventQueue.invokeLater(new Runnable() {
-//      public void run() {
-    File selectedFile = null;
-
-    if (System.getProperty("os.name").contains("Mac")) {
-      FileDialog fileDialog =
-          new FileDialog(parentFrame, prompt, FileDialog.LOAD);
-      System.setProperty("apple.awt.fileDialogForDirectories", "true");
-      fileDialog.setVisible(true);
-      System.setProperty("apple.awt.fileDialogForDirectories", "false");
-      String filename = fileDialog.getFile();
-      if (filename != null) {
-        selectedFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
-      }
-    } else {
-      JFileChooser fileChooser = new JFileChooser();
-      fileChooser.setDialogTitle(prompt);
-      fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-      if (defaultSelection != null) {
-        fileChooser.setSelectedFile(defaultSelection);
-      }
-
-      int result = fileChooser.showOpenDialog(parentFrame);
-      if (result == JFileChooser.APPROVE_OPTION) {
-        selectedFile = fileChooser.getSelectedFile();
-      }
-    }
-    //selectCallback(selectedFile, callbackMethod, callbackObject);
-    callback.select(selectedFile);
-//      }
-//    });
-  }
-  */
-  
-  
-//  static private void selectCallback(File selectedFile,
-//                                     String callbackMethod,
-//                                     Object callbackObject) {
-//    try {
-//      Class<?> callbackClass = callbackObject.getClass();
-//      Method selectMethod =
-//        callbackClass.getMethod(callbackMethod, new Class[] { File.class });
-//      selectMethod.invoke(callbackObject, new Object[] { selectedFile });
-//
-//    } catch (IllegalAccessException iae) {
-//      System.err.println(callbackMethod + "() must be public");
-//
-//    } catch (InvocationTargetException ite) {
-//      ite.printStackTrace();
-//
-//    } catch (NoSuchMethodException nsme) {
-//      System.err.println(callbackMethod + "() could not be found");
-//    }
-//  }
-  
-
-//  private void streamingRadioPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_streamingRadioPerformed
-//    prefs.put("movie.streaming", evt.getActionCommand());
-//  }//GEN-LAST:event_streamingRadioPerformed
 
   /** variable frame rate. */
   private void writeVideoOnlyVFR(File movieFile, File[] imgFiles, int width, int height, double fps, QuickTimeWriter.VideoFormat videoFormat, /*boolean passThrough,*/ String streaming) throws IOException {
@@ -831,7 +759,8 @@ public class MovieMaker extends JFrame implements Tool {
         if (false) {
           qtOut.writeSample(0, f, duration);
         } else {
-          BufferedImage fImg = ImageIO.read(f);
+          //BufferedImage fImg = ImageIO.read(f);
+          BufferedImage fImg = readImage(f);
           g.drawImage(fImg, 0, 0, width, height, null);
           if (i != 0 && Arrays.equals(data, prevData)) {
             prevImgDuration += duration;
@@ -870,65 +799,6 @@ public class MovieMaker extends JFrame implements Tool {
     }
   }
 
-  /** fixed framerate. */
-  /*
-    private void writeVideoOnlyFFR(File movieFile, File[] imgFiles, int width, int height, double fps, QuickTimeWriter.VideoFormat videoFormat, boolean passThrough, String streaming) throws IOException {
-        File tmpFile = streaming.equals("none") ? movieFile : new File(movieFile.getPath() + ".tmp");
-        ProgressMonitor p = new ProgressMonitor(MovieMaker.this, "Creating " + movieFile.getName(), "Creating Output File...", 0, imgFiles.length);
-        Graphics2D g = null;
-        BufferedImage imgBuffer = null;
-        QuickTimeWriter qtOut = null;
-
-        try {
-            int timeScale = (int) (fps * 100.0);
-            int duration = 100;
-            qtOut = new QuickTimeWriter(videoFormat == QuickTimeWriter.VideoFormat.RAW ? movieFile : tmpFile);
-            qtOut.addVideoTrack(videoFormat, timeScale, width, height);
-            //qtOut.setSyncInterval(0,0);
-            if (!passThrough) {
-                imgBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-                g = imgBuffer.createGraphics();
-                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            }
-            for (int i = 0; i < imgFiles.length && !p.isCanceled(); i++) {
-                File f = imgFiles[i];
-                p.setNote("Processing " + f.getName());
-                p.setProgress(i);
-
-                if (passThrough) {
-                    qtOut.writeSample(0, f, duration);
-                } else {
-                    BufferedImage fImg = ImageIO.read(f);
-                    if (fImg == null) {
-                        continue;
-                    }
-                    g.drawImage(fImg, 0, 0, width, height, null);
-                    qtOut.writeFrame(0, imgBuffer, duration);
-                }
-            }
-            if (streaming.equals("fastStart")) {
-                qtOut.toWebOptimizedMovie(movieFile, false);
-                tmpFile.delete();
-            } else if (streaming.equals("fastStartCompressed")) {
-                qtOut.toWebOptimizedMovie(movieFile, true);
-                tmpFile.delete();
-            }
-                qtOut.close();
-                qtOut = null;
-        } finally {
-            p.close();
-            if (g != null) {
-                g.dispose();
-            }
-            if (imgBuffer != null) {
-                imgBuffer.flush();
-            }
-            if (qtOut != null) {
-                qtOut.close();
-            }
-        }
-    }
-   */
 
   private void writeAudioOnly(File movieFile, File audioFile, String streaming) throws IOException {
     File tmpFile = streaming.equals("none") ? movieFile : new File(movieFile.getPath() + ".tmp");
@@ -1085,7 +955,8 @@ public class MovieMaker extends JFrame implements Tool {
           if (false) {
             qtOut.writeSample(1, imgFiles[imgIndex], vsDuration);
           } else {
-            BufferedImage fImg = ImageIO.read(imgFiles[imgIndex]);
+            //BufferedImage fImg = ImageIO.read(imgFiles[imgIndex]);
+            BufferedImage fImg = readImage(imgFiles[imgIndex]);
             if (fImg == null) {
               continue;
             }
@@ -1268,12 +1139,11 @@ public class MovieMaker extends JFrame implements Tool {
               break;
             case RGB:
               pixel = 0xFF000000 |
-              is.read() | (is.read() << 8) | (is.read() << 16);
-              //(is.read() << 16) | (is.read() << 8) | is.read();
+                is.read() | (is.read() << 8) | (is.read() << 16);
               break;
             case ARGB:
               pixel = is.read() |
-              (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
+                (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
               break;
             }
             for (int i = 0; i < num; i++) {
@@ -1291,13 +1161,13 @@ public class MovieMaker extends JFrame implements Tool {
             case RGB:
               for (int i = 0; i < num; i++) {
                 pixels[index++] = 0xFF000000 |
-                    is.read() | (is.read() << 8) | (is.read() << 16);
+                  is.read() | (is.read() << 8) | (is.read() << 16);
               }
               break;
             case ARGB:
               for (int i = 0; i < num; i++) {
                 pixels[index++] = is.read() | 
-                    (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
+                  (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
               }
               break;
             }
@@ -1347,7 +1217,7 @@ public class MovieMaker extends JFrame implements Tool {
   private JLabel aboutLabel;
   private JButton chooseImageFolderButton;
   private JButton chooseSoundFileButton;
-  private JComboBox<?> compressionBox;
+  private JComboBox<String> compressionBox;
   private JLabel compressionLabel;
 //  private JRadioButton fastStartCompressedRadio;
 //  private JRadioButton fastStartRadio;

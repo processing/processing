@@ -526,7 +526,7 @@ public class PreferencesFrame {
     right = Math.max(right, left + d.width);
     top += d.height; // + GUI_SMALL;
 
-    label = new JLabel(Preferences.getSketchbookPath());
+    label = new JLabel(Preferences.getPreferencesPath());
     final JLabel clickable = label;
     label.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
@@ -800,11 +800,11 @@ public class PreferencesFrame {
     }
     
     // This takes a while to load, so run it from a separate thread
-    new Thread(new Runnable() {
+    EventQueue.invokeLater(new Runnable() {
       public void run() {
         initFontList();
       }
-    }).start();
+    });
     
     fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
     consoleSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
@@ -832,7 +832,7 @@ public class PreferencesFrame {
    * most basic usage scenarios. Is there someone on the team I can contact?
    * Oracle, are you listening?
    */
-  class FontNamer extends JLabel implements ListCellRenderer<Font> {
+  static class FontNamer extends JLabel implements ListCellRenderer<Font> {
     public Component getListCellRendererComponent(JList<? extends Font> list,
                                                   Font value, int index,
                                                   boolean isSelected,

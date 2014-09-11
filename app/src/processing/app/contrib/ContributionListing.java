@@ -34,7 +34,7 @@ import processing.core.PApplet;
 public class ContributionListing {
   // Stable URL that will redirect to wherever we're hosting the file
   static final String LISTING_URL =
-    "http://download.processing.org/contributions.txt";
+    "http://download.processing.org/contribs.txt";
 
   static volatile ContributionListing singleInstance;
 
@@ -305,6 +305,24 @@ public class ContributionListing {
 //    }
 
     return false;
+  }
+
+
+  protected List<Contribution> getCompatibleContributionList(List<Contribution> filteredLibraries, boolean filter) {
+    ArrayList<Contribution> filteredList = 
+      new ArrayList<Contribution>(filteredLibraries);
+    
+    if (!filter)
+      return filteredList;
+
+    Iterator<Contribution> it = filteredList.iterator();
+    while (it.hasNext()) {
+      Contribution libInfo = it.next();
+      if (!libInfo.isCompatible(Base.getRevision())) {
+        it.remove();
+      }
+    }
+    return filteredList;
   }
 
 

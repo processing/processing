@@ -87,6 +87,7 @@ public class Language {
   
   static private String[] listSupported() {
     // List of languages in alphabetical order. (Add yours here.)
+    // Also remember to add it to the corresponding build/build.xml rule.
     final String[] SUPPORTED = {
       "de", // German, Deutsch
       "en", // English
@@ -147,6 +148,7 @@ public class Language {
     } catch (Exception e) {
       e.printStackTrace();
     }
+    Base.getPlatform().saveLanguage(language);
   }
   
   
@@ -221,7 +223,7 @@ public class Language {
    * Custom 'Control' class for consistent encoding.
    * http://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle
    */
-  class UTF8Control extends ResourceBundle.Control {
+  static class UTF8Control extends ResourceBundle.Control {
     public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload) throws IllegalAccessException, InstantiationException,IOException {
       // The below is a copy of the default implementation.
       String bundleName = toBundleName(baseName, locale);

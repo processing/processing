@@ -21,6 +21,7 @@ import static processing.mode.experimental.ExperimentalMode.logE;
 import galsasson.mode.tweak.ColorControlBox;
 import galsasson.mode.tweak.Handle;
 import galsasson.mode.tweak.SketchParser;
+import galsasson.mode.tweak.UDPTweakClient;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -71,6 +72,7 @@ import processing.app.Base;
 import processing.app.EditorState;
 import processing.app.EditorToolbar;
 import processing.app.Mode;
+import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Toolkit;
@@ -267,11 +269,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         addXQModeUI();    
         debugToolbarEnabled = new AtomicBoolean(false);
         //log("Sketch Path: " + path);
-
-        // TweakMode code
-
-        // random port for OSC (0xff0 - 0xfff0)
-		oscPort = (int)(Math.random()*0xf000) + 0xff0;
     }
     
     private void addXQModeUI(){
@@ -1808,11 +1805,14 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     //protected JCheckBoxMenuItem enableTweakCB;
 
+  public static final String prefTweakPort = "tweak.port";
+  public static final String prefTweakShowCode = "tweak.showcode";
+
 	String[] baseCode;
 
 	final static int SPACE_AMOUNT = 0;
 
-	int oscPort;
+	UDPTweakClient tweakClient;
 
 	public void startInteractiveMode()
 	{
@@ -1821,6 +1821,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
 	public void stopInteractiveMode(ArrayList<Handle> handles[])
 	{
+		tweakClient.shutdown();
 		ta.stopInteractiveMode();
 
 		// remove space from the code (before and after)
@@ -1893,11 +1894,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 	public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[])
 	{
 		// set OSC port of handles
-		for (int i=0; i<handles.length; i++) {
-			for (Handle h : handles[i]) {
-				h.setOscPort(oscPort);
-			}
-		}
+//		for (int i=0; i<handles.length; i++) {
+//			for (Handle h : handles[i]) {
+//				h.setOscPort(oscPort);
+//			}
+//		}
 
 		ta.updateInterface(handles, colorBoxes);
 	}
@@ -2016,7 +2017,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 	}
 
     /**
-     * Replace all numbers with variables and add code to initialize these variables and handle OSC messages.
+     * Replace all numbers with variables and add code to initialize these variables and handle update messages.
      * @param sketch
      * 	the sketch to work on
      * @param handles
@@ -2038,6 +2039,32 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     	if (setupStartPos < 0) {
     		return false;
     	}
+
+    	// get port number from preferences.txt
+    	int port;
+    	String portStr = Preferences.get(prefTweakPort);
+    	if (portStr == null) {
+    		Preferences.set(prefTweakPort, "auto");
+    		portStr = "auto";
+    	}
+    	
+    	if (portStr.equals("auto")) {
+            // random port for udp (0xc000 - 0xffff)
+    		port = (int)(Math.random()*0x3fff) + 0xc000;   		
+    	}
+    	else {
+    		port = Preferences.getInteger(prefTweakPort);
+    	}
+    	
+    	/* create the client that will send the new values to the sketch */
+		tweakClient = new UDPTweakClient(port);
+		// update handles with a reference to the client object
+		for (int tab=0; tab<code.length; tab++) {
+			for (Handle h : handles[tab]) {
+				h.setTweakClient(tweakClient);
+			}
+		}
+		
 
 		// Copy current program to interactive program
 
@@ -2068,9 +2095,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     		 "\n\n";
 
     	// add needed OSC imports and the global OSC object
-    	header += "import oscP5.*;\n";
-    	header += "import netP5.*;\n\n";
-    	header += "OscP5 tweakmode_oscP5;\n\n";
+    	header += "import java.net.*;\n";
+    	header += "import java.io.*;\n";
+    	header += "import java.nio.*;\n\n";
 
     	// write a declaration for int and float arrays
     	int numOfInts = howManyInts(handles);
@@ -2081,31 +2108,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     	if (numOfFloats > 0) {
     		header += "float[] tweakmode_float = new float["+numOfFloats+"];\n\n";
     	}
-
-    	/* add the class for the OSC event handler that will respond to our messages */
-    	header += "public class TweakMode_OscHandler {\n" +
-    			  "  public void oscEvent(OscMessage msg) {\n" +
-                  "    String type = msg.addrPattern();\n";
-        if (numOfInts > 0) {
-        	header += "    if (type.contains(\"/tm_change_int\")) {\n" +
-                      "      int index = msg.get(0).intValue();\n" +
-                      "      int value = msg.get(1).intValue();\n" +
-                      "      tweakmode_int[index] = value;\n" +
-                      "    }\n";
-        	if (numOfFloats > 0) {
-        		header += "    else ";
-        	}
-        }
-        if (numOfFloats > 0) {
-            header += "if (type.contains(\"/tm_change_float\")) {\n" +
-                      "      int index = msg.get(0).intValue();\n" +
-                      "      float value = msg.get(1).floatValue();\n" +
-                      "      tweakmode_float[index] = value;\n" +
-                      "    }\n";
-        }
-        header += "  }\n" +
-                  "}\n";
-    	header += "TweakMode_OscHandler tweakmode_oscHandler = new TweakMode_OscHandler();\n";
+    	
+    	/* add the server code that will receive the value change messages */
+    	header += UDPTweakClient.getServerCode(port, numOfInts>0, numOfFloats>0);
+    	header += "TweakModeServer tweakmode_Server;\n";
+    			
 
     	header += "void tweakmode_initAllVars() {\n";
     	for (int i=0; i<handles.length; i++) {
@@ -2115,28 +2122,39 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     		}
     	}
     	header += "}\n\n";
-    	header += "void tweakmode_initOSC() {\n";
-    	header += "  tweakmode_oscP5 = new OscP5(tweakmode_oscHandler,"+oscPort+");\n";
+    	header += "void tweakmode_initCommunication() {\n";
+    	header += "	tweakmode_Server = new TweakModeServer();\n";
+    	header += "	tweakmode_Server.setup();\n";
+    	header += "	tweakmode_Server.start();\n";
     	header += "}\n";
 
     	header += "\n\n\n\n\n";
 
     	// add call to our initAllVars and initOSC functions from the setup() function.
-    	String addToSetup = "\n  tweakmode_initAllVars();\n  tweakmode_initOSC();\n\n";
+    	String addToSetup = "\n"+
+    						"	tweakmode_initAllVars();\n"+
+    						"	tweakmode_initCommunication();\n\n";
+    	
     	setupStartPos = SketchParser.getSetupStart(c);
     	c = replaceString(c, setupStartPos, setupStartPos, addToSetup);
 
     	code[0].setProgram(header + c);
 
     	/* print out modified code */
-//    	if (tweakMode.dumpModifiedCode) {
-//    		System.out.println("\nModified code:\n");
-//    		for (int i=0; i<code.length; i++)
-//    		{
-//    			System.out.println("file " + i + "\n=========");
-//    			System.out.println(code[i].getProgram());
-//    		}
-//    	}
+    	String showModCode = Preferences.get(prefTweakShowCode);
+    	if (showModCode == null) {
+    		Preferences.setBoolean(prefTweakShowCode, false);
+    	}
+    	
+    	if (Preferences.getBoolean(prefTweakShowCode)) {
+    		System.out.println("\nTweakMode modified code:\n");
+    		for (int i=0; i<code.length; i++)
+    		{
+    			System.out.println("tab " + i + "\n");
+    			System.out.println("=======================================================\n");
+    			System.out.println(code[i].getProgram());
+    		}
+    	}
 
     	return true;
     }

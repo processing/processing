@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import processing.app.Language;
 import processing.core.PApplet;
 
 
@@ -46,6 +45,8 @@ abstract public class Contribution {
   protected int version;          // 102
   protected String prettyVersion; // "1.0.2"
   protected long lastUpdated;   //  1402805757
+  protected int minRevision;    //  0
+  protected int maxRevision;    //  227
   
   
   // "Sound"
@@ -129,6 +130,21 @@ abstract public class Contribution {
     return lastUpdated;
   }
 
+  // 0
+  public int getMinRevision() {
+    return minRevision;
+  }
+
+  // 227
+  public int getMaxRevision() {
+    return maxRevision;
+  }
+
+
+  public boolean isCompatible(int versionNum) {
+    return ((maxRevision == 0 || versionNum < maxRevision) && versionNum > minRevision);
+  }
+
 
   abstract public ContributionType getType();
   
@@ -173,9 +189,12 @@ abstract public class Contribution {
    * @return
    */
   boolean isSpecial() {
-    if (authorList.indexOf("The Processing Foundation") != -1 || categories.contains(SPECIAL_CATEGORY_NAME))
-      return true;
-    return false;
+    try {
+      return (authorList.indexOf("The Processing Foundation") != -1 || 
+              categories.contains(SPECIAL_CATEGORY_NAME));
+    } catch (NullPointerException npe) {
+      return false;
+    }
   }
 
 

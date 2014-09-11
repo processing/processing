@@ -2,17 +2,32 @@ package processing.sound;
 
 public class MethClaInterface
 { 
+
   // load Library
   static {
-	  System.loadLibrary("MethClaInterface");
+    String osName = System.getProperty("os.name");
+    String arch = System.getProperty("os.arch");
+
+    if (osName.startsWith("Win")){
+      System.loadLibrary("LIBWINPTHREAD-1");
+      System.loadLibrary("LIBSNDFILE-1");
+      System.loadLibrary("LIBMPG123-0");
+      System.loadLibrary("LIBMETHCLA");
+      System.loadLibrary("LIBMETHCLAINTERFACE");  
+    }  
+    else if (osName.startsWith("Mac")){
+      System.loadLibrary("MethClaInterface");
+    }
+    else if (osName.equals("Linux")){
+      System.loadLibrary("MethClaInterface");
+    }
   }
   // Functions I want
-
-  public native int[] mixPlay(int[] input, float[] amp);
-
   
   // Engine 
-    
+  
+  public native int[] mixPlay(int[] input, float[] amp);
+
   public native int engineNew(int sampleRate, int bufferSize );
   
   public native void engineStart();

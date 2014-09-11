@@ -1,11 +1,11 @@
 all: 	
 
 	g++ -Ic:/Java/jdk1.8.0_11/include -Ic:/Java/jdk1.8.0_11/include/win32 -I./include -std=c++11 -g -c processing_sound_MethClaInterface.cpp;			
-	g++ -dynamiclib -lmethcla -L../../library/windows32/ -o libMethClaInterface.dll *.o;
+	g++ -shared -lmethcla -L../../library/windows64/ -static-libgcc -static-libstdc++ -o libMethClaInterface.dll *.o;
 
 clean:
 	rm *.o
 	rm *.dll
 
 install:
-	cp libMethClaInterface.dll ../../lib/windows32
+	cp libMethClaInterface.dll ../../lib/windows64

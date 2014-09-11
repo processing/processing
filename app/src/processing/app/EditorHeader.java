@@ -626,7 +626,7 @@ public class EditorHeader extends JComponent {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  class Tab implements Comparable {
+  static class Tab implements Comparable {
     int index;
     int left;
     int right;

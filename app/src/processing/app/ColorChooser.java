@@ -639,7 +639,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
   /**
    * Extension of JTextField that only allows numbers
    */
-  class NumberField extends JTextField {
+  static class NumberField extends JTextField {
 
     public boolean allowHex;
 
@@ -672,7 +672,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
   /**
    * Document model to go with JTextField that only allows numbers.
    */
-  class NumberDocument extends PlainDocument {
+  static class NumberDocument extends PlainDocument {
 
     NumberField parentField;
 

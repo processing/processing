@@ -2527,7 +2527,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  class Triangle {
+  static class Triangle {
     int i0, i1, i2;
     PImage tex;
     float dist;
@@ -8185,7 +8185,8 @@ public class PGraphicsOpenGL extends PGraphics {
             addEdge(pidx, idx, i == 0, false);
           } else if (0 < i) {
             // when drawing full circle, the edge is closed later
-            addEdge(pidx, idx, i == inc, i == length && !fullCircle);
+            addEdge(pidx, idx, i == PApplet.min(inc, length),
+                               i == length && !fullCircle);
           }
         }
       } while (i < length);

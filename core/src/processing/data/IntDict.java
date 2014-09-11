@@ -486,7 +486,7 @@ public class IntDict {
       keys = PApplet.expand(keys);
       values = PApplet.expand(values);
     }
-    indices.put(what, new Integer(count));
+    indices.put(what, Integer.valueOf(count));
     keys[count] = what;
     values[count] = much;
     count++;
@@ -532,8 +532,8 @@ public class IntDict {
     keys[b] = tkey;
     values[b] = tvalue;
 
-    indices.put(keys[a], new Integer(a));
-    indices.put(keys[b], new Integer(b));
+    indices.put(keys[a], Integer.valueOf(a));
+    indices.put(keys[b], Integer.valueOf(b));
   }
 
 
@@ -561,13 +561,8 @@ public class IntDict {
 
 
   /**
-<<<<<<< HEAD
-   * Sort by values in descending order (largest value will be at [0]).
-   *
-=======
    * Sort by values in ascending order. The smallest value will be at [0].
    *
->>>>>>> cd467dc12a42d588638aaab06746bebdfb333cc4
    * @webref intdict:method
    * @brief Sort by values in ascending order
    */

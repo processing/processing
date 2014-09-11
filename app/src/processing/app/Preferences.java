@@ -45,7 +45,7 @@ import processing.core.*;
  * sounds like a lot of work. Not unlike writing this paragraph. 
  */
 public class Preferences {
-  // had to rename this file because people were editing it
+  // had to rename the defaults file because people were editing it
   static final String DEFAULTS_FILE = "defaults.txt"; //$NON-NLS-1$
   static final String PREFS_FILE = "preferences.txt"; //$NON-NLS-1$
 
@@ -151,6 +151,11 @@ public class Preferences {
     }
   }
 
+  
+  static protected String getPreferencesPath() {
+    return preferencesFile.getAbsolutePath();
+  }
+
 
   // .................................................................
 
@@ -232,7 +237,7 @@ public class Preferences {
 
   static public boolean getBoolean(String attribute) {
     String value = get(attribute); //, null);
-    return (new Boolean(value)).booleanValue();
+    return Boolean.parseBoolean(value);
 
     /*
       supposedly not needed, because anything besides 'true'

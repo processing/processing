@@ -1,3 +1,138 @@
+0230 pde (3.0a3)
+X remove toolbar buttons except for start/stop
+X rename sketchbook tree name, re-order menu, add language hooks
+X split Preferences and PreferencesFrame
+X   https://github.com/processing/processing/issues/68
+X   http://code.google.com/p/processing/issues/detail?id=29
+X   https://github.com/processing/processing/pull/2716
+X shouldn't write sketch.properties unless it's a non-default mode
+X   https://github.com/processing/processing/issues/2531
+
+gsoc
+X fixes for mode/tool installation
+X   https://github.com/processing/processing/pull/2705
+X fix mode updating to work properly
+X   https://github.com/processing/processing/issues/2579
+X contrib manager temp folders not always deleting
+X   https://github.com/processing/processing/issues/2606
+X problem when removing a mode
+X   https://github.com/processing/processing/issues/2507
+X autocompletion dialog box sticking
+X   https://github.com/processing/processing/issues/2741
+X Line warning indicators next to scrollbar break after moving around text
+X   https://github.com/processing/processing/issues/2655
+X Code completion generates wrong code
+X   https://github.com/processing/processing/issues/2753
+X Code completion: Hide overloaded methods unless inside parentheses
+X   https://github.com/processing/processing/issues/2755
+X Close auto-completion suggestion box when deleting/backspacing code
+X   https://github.com/processing/processing/issues/2757
+X error checking too aggressive in the current alpha
+X   https://github.com/processing/processing/issues/2677
+X if 'void' left out before loop or setup, cryptic message about
+X   'constructor loop must be named Temporary_23498_2343'
+X   add a better handler for this specific thing?
+X   http://code.google.com/p/processing/issues/detail?id=8
+X   https://github.com/processing/processing/issues/47
+X Improve how the Contributions Manager handles no internet connection
+X   https://github.com/processing/processing/pull/2800
+X Added examples-package as a new contribution type
+X   https://github.com/processing/processing/pull/2795
+X   https://github.com/processing/processing/issues/2444
+X   https://github.com/processing/processing/issues/2582
+X Contributions Managers now show specific titles
+X   https://github.com/processing/processing/pull/2777
+X Add rank (starred / recommended) to contributions manager items
+X   https://github.com/processing/processing/issues/2580
+o Improve detection and handling of missing semicolons
+o   http://code.google.com/p/processing/issues/detail?id=136
+X   should be fixed with PDE X (closed by Dan
+X   https://github.com/processing/processing/issues/175
+X missing brackets, unmatched brackets
+X   examples added to the bug report
+X   http://code.google.com/p/processing/issues/detail?id=6
+X   closed by Shiffman, working better now
+X   https://github.com/processing/processing/issues/45
+X 64-bit versions of sound available on Windows and Linux
+
+pulls
+X Add polling to detect file system changes
+X   https://github.com/processing/processing/issues/1939
+X   https://github.com/processing/processing/pull/2628
+X huge i18n patch
+X   https://github.com/processing/processing/issues/632
+X   https://github.com/processing/processing/pull/2084
+X   http://code.google.com/p/processing/issues/detail?id=593
+X   need to make sure the .properties files are read properly as UTF-8
+X Indent breaks when hitting enter before spaces
+X   https://github.com/processing/processing/issues/2004
+X   https://github.com/processing/processing/pull/2690
+X Localize status messages and contributions panel
+X   https://github.com/processing/processing/pull/2696
+X prevent adding files to read-only sketches
+X   https://github.com/processing/processing/issues/2459
+X   https://github.com/processing/processing/pull/2697
+X Added some helper methods to Language
+X   https://github.com/processing/processing/pull/2704
+X More i18n updates
+X   https://github.com/processing/processing/pull/2725
+X Add thread names for easier debugging and profiling
+X   https://github.com/processing/processing/pull/2729
+X Add missing translations for OS X menu
+X   https://github.com/processing/processing/pull/2726
+X fix firstLine when modifying lines above it
+X   https://github.com/processing/processing/issues/2654
+X   https://github.com/processing/processing/pull/2674
+X Style completion panel when using Nimbus LAF
+X   https://github.com/processing/processing/pull/2718
+X enums not supported properly
+X   https://github.com/processing/processing/issues/1390
+X   http://code.google.com/p/processing/issues/detail?id=1352
+X   https://github.com/processing/processing/pull/2774
+X combining char/int/etc casts in one statement causes preproc trouble
+X   https://github.com/processing/processing/issues/1936
+X   https://github.com/processing/processing/pull/2772
+X Update contributions.* strings to contrib
+X   https://github.com/processing/processing/pull/2770
+X Style completion panel on windows
+X   https://github.com/processing/processing/pull/2762
+X Update Spanish language strings
+X   https://github.com/processing/processing/pull/2769
+X make --output optional in the command line version
+X   https://github.com/processing/processing/pull/1866
+X   https://github.com/processing/processing/issues/1855
+X   https://github.com/processing/processing/issues/1816
+X Fix unneeded scroll bar display in code completion suggestion box
+X   https://github.com/processing/processing/pull/2763
+X PDE erroneously detects changes in non-sketch files
+X   https://github.com/processing/processing/pull/2794
+X   https://github.com/processing/processing/issues/2759
+X Catch MissingResourceException when language key is missing
+X   https://github.com/processing/processing/pull/2780
+X Replace Thread with invokeLater in PreferencesFrame
+X   https://github.com/processing/processing/pull/2811
+X Initialize the ColorSelector tool on demand
+X   https://github.com/processing/processing/pull/2823
+
+languages
+X Japanese https://github.com/processing/processing/pull/2688
+X Spanish https://github.com/processing/processing/pull/2691
+X Dutch https://github.com/processing/processing/pull/2694
+X French https://github.com/processing/processing/pull/2695
+X Portugese https://github.com/processing/processing/pull/2701
+X Korean https://github.com/processing/processing/commit/7b60e2ded9ca81f6a5a08a818aaf84ee4bb029e3
+X Turkish https://github.com/processing/processing/pull/2740
+X Chinese https://github.com/processing/processing/pull/2748
+
+earlier
+X repo cleanup
+X   remove non-web stuff from web
+X   remove non-android stuff from android
+X   remove web and android from the main repo
+X separate prefs and sketch state info?
+X   this would mean prefs being rewritten far less
+
+
 0229 pde (3.0a2)
 X fix "No such file or directory" error when exporting an application on OSX
 X   this also resulted in the application not being signed at all

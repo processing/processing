@@ -549,28 +549,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menubar.add(fileMenu);
     menubar.add(buildEditMenu());
     menubar.add(buildSketchMenu());
-//    rebuildToolList();
-    rebuildToolMenu();
-    menubar.add(getToolMenu());
 
+    // For 3.0a4 move mode menu to the left of the Tool menu
     JMenu modeMenu = buildModeMenu();
     if (modeMenu != null) {
       menubar.add(modeMenu);
     }
 
-//    // These are temporary entries while Android mode is being worked out.
-//    // The mode will not be in the tools menu, and won't involve a cmd-key
-//    if (!Base.RELEASE) {
-//      try {
-//        Class clazz = Class.forName("processing.app.tools.android.AndroidMode");
-//        Object mode = clazz.newInstance();
-//        Method m = clazz.getMethod("init", new Class[] { Editor.class, JMenuBar.class });
-//        //String libraryPath = (String) m.invoke(null, new Object[] { });
-//        m.invoke(mode, new Object[] { this, menubar });
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//      }
-//    }
+    rebuildToolMenu();
+    menubar.add(getToolMenu());
 
     menubar.add(buildHelpMenu());
     setJMenuBar(menubar);
@@ -2372,7 +2359,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       Base.showWarning("Error", "Could not create the sketch.", e);
       return false;
     }
-    if (Preferences.getBoolean("editor.watcher")) {
+    // Disabling for 3.0a4
+    if (false && Preferences.getBoolean("editor.watcher")) {
       initFileChangeListener();
     }
     
@@ -2410,12 +2398,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   private void initFileChangeListener() {
     try {
       WatchService watchService = FileSystems.getDefault().newWatchService();
-      watcherKey = sketch
-        .getFolder()
-        .toPath()
-        .register(watchService, StandardWatchEventKinds.ENTRY_CREATE,
-                  StandardWatchEventKinds.ENTRY_DELETE,
-                  StandardWatchEventKinds.ENTRY_MODIFY);
+      Path sp = sketch.getFolder().toPath();
+      watcherKey = sp.register(watchService, 
+                               StandardWatchEventKinds.ENTRY_CREATE,
+                               StandardWatchEventKinds.ENTRY_DELETE,
+                               StandardWatchEventKinds.ENTRY_MODIFY);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -2437,7 +2424,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
           //if the directory was deleted, then don't scan
           if (finKey.isValid()) {
             List<WatchEvent<?>> events = finKey.pollEvents();
-            processFileEvents(events);
+            if (!watcherSave) {
+              processFileEvents(events);
+            }
           }
 
           List<WatchEvent<?>> events = finKey.pollEvents();
@@ -2471,8 +2460,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     for (WatchEvent<?> e : events) {
       boolean sketchFile = false;
       Path file = ((Path) e.context()).getFileName();
+      System.out.println(file);
       for (String s : getMode().getExtensions()) {
-        //if it is a change to a file with a known extension
+        // if it is a change to a file with a known extension
         if (file.toString().endsWith(s)) {
           sketchFile = true;
           break;
@@ -2483,11 +2473,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
         continue;
       }
 
-      int response = Base
-        .showYesNoQuestion(Editor.this,
-                           "File Modified",
-                           "Your sketch has been modified externally",
-                           "Would you like to reload the sketch?");
+      int response = 
+        Base.showYesNoQuestion(Editor.this,
+                               "File Modified",
+                               "Your sketch has been modified externally",
+                               "Would you like to reload the sketch?");
       if (response == 0) {
         //grab the 'main' code in case this reload tries to delete everything
         File sc = sketch.getMainFile();
@@ -2497,17 +2487,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
           header.rebuild();
         } catch (Exception f) {
           if (sketch.getCodeCount() < 1) {
-            Base
-              .showWarning("Canceling Reload",
-                           "You cannot delete the last code file in a sketch!");
+            Base.showWarning("Canceling Reload",
+                             "You cannot delete the last code file in a sketch.");
             //if they deleted the last file, re-save the SketchCode
             try {
               //make a blank file
               sc.createNewFile();
             } catch (IOException e1) {
               //if that didn't work, tell them it's un-recoverable
-              Base.showError("Reload failed",
-                             "The sketch contians no code files", e1);
+              Base.showError("Reload failed", "The sketch contains no code files", e1);
               //don't try to reload again after the double fail
               //this editor is probably trashed by this point, but a save-as might be possible
               break;

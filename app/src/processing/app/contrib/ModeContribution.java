@@ -134,13 +134,13 @@ public class ModeContribution extends LocalContribution {
     }
     
     // This allows you to build and test your Mode code from Eclipse.
-    // -Dusemode=com.foo.FrobMode:/path/to/FrobMode/resources
-    final String usemode = System.getProperty("usemode");
-    if (usemode != null) {
-      final String[] modeinfo = usemode.split(":", 2);
-      final String modeClass = modeinfo[0];
-      final String modeResourcePath = modeinfo[1];
-      System.err.println("Attempting to load " + modeClass + " with resources at " + modeResourcePath);
+    // -Dusemode=com.foo.FrobMode:/path/to/FrobMode
+    final String useMode = System.getProperty("usemode");
+    if (useMode != null) {
+      final String[] modeInfo = useMode.split(":", 2);
+      final String modeClass = modeInfo[0];
+      final String modeResourcePath = modeInfo[1];
+      System.out.println("Attempting to load " + modeClass + " with resources at " + modeResourcePath);
       contribModes.add(ModeContribution.load(base, new File(modeResourcePath), modeClass));
     }
   }
