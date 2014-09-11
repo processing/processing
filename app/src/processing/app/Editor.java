@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2012-14 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -2586,16 +2587,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
     statusNotice(Language.text("editor.status.saving"));
     try {
       if (sketch.saveAs()) {
-        //a saveAs moves where the files are, so a listener must be attached to the new location
-        initFileChangeListener();
+        // Disabling for 3.0a4
+        if (false && Preferences.getBoolean("editor.watcher")) {  
+          // "Save As" moves where the files are, so a listener must be 
+          // attached to the new location.
+          // TODO shouldn't this remove the old listener?
+          initFileChangeListener();
+        }
         // statusNotice("Done Saving.");
-    	// status is now printed from Sketch so that "Done Saving."
-    	// is only printed after Save As when progress bar is shown.  
-    	  
-        // Disabling this for 0125, instead rebuild the menu inside
-        // the Save As method of the Sketch object, since that's the
-        // only one who knows whether something was renamed.
-        //sketchbook.rebuildMenusAsync();
+        // status is now printed from Sketch so that "Done Saving."
+        // is only printed after Save As when progress bar is shown. 
       } else {
         statusNotice(Language.text("editor.status.saving.canceled"));
         return false;

@@ -17,6 +17,9 @@ until all those issues are sorted out.
 + The OS X default File menu (shown when no windows are open) now has the
   order/naming changes found in the sketch window File menu. 
 
++ Turning off file watching because of errant "this sketch has changed"
+  messages. Hopefully this will return soon.
+  https://github.com/processing/processing/issues/2852
 
 [ bug fixes ] 
 
