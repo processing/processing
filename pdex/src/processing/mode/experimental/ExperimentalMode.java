@@ -387,11 +387,6 @@ public class ExperimentalMode extends JavaMode {
                 final DebugEditor editor = (DebugEditor)listener;
                 final boolean toPresent = present;
 
-                if (!verifyOscP5()) {
-                        editor.deactivateRun();
-                        return null;
-                }
-
                 boolean launchInteractive = false;
 
                 if (isSketchModified(sketch)) {
@@ -447,21 +442,6 @@ public class ExperimentalMode extends JavaMode {
                 }
 
                 return null;
-        }
-
-        private boolean verifyOscP5()
-        {
-                for (Library l : contribLibraries) {
-                        if (l.getName().equals("oscP5")) {
-                                return true;
-                        }
-                }
-
-                // could not find oscP5 library
-                Base.showWarning("Tweak Mode", "Tweak Mode needs the 'oscP5' library.\n"
-                                + "Please install this library by clicking \"Sketch --> Import Library --> Add Library ...\" and choose 'ocsP5'", null);
-
-                return false;
         }
 
         private boolean isSketchModified(Sketch sketch)
