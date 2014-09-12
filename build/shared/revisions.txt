@@ -21,6 +21,9 @@ until all those issues are sorted out.
   messages. Hopefully this will return soon.
   https://github.com/processing/processing/issues/2852
 
++ Turned off code completion by default and reset its preference name.
+
+
 [ bug fixes ] 
 
 + TGAs from saveFrame() create transparent/black movies with Movie Maker

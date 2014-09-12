@@ -8,12 +8,8 @@ import java.util.TreeMap;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
-import static processing.mode.experimental.ExperimentalMode.log;
 
 public class ErrorMessageSimplifier {
-
-//  private ErrorCheckerService errorCheckerService;
-
   /**
    * Mapping between ProblemID constant and the constant name. Holds about 650
    * of them. Also, this is just temporary, will be used to find the common

@@ -15,6 +15,7 @@ X TGAs from saveFrame() create transparent/black movies with Movie Maker
 X   https://github.com/processing/processing/issues/2851
 X fix export problem on Windows with PDE X
 X   https://github.com/processing/processing/issues/2806
+X turn off code completion by default (and reset the preference)
 
 pulls
 X Optimize creation of boxed primitives
@@ -26,6 +27,8 @@ X   https://github.com/processing/processing/pull/2844
 X black font outline appears with large VLW font and OpenGL renderer
 X   https://github.com/processing/processing/issues/2845
 X   https://github.com/processing/processing/pull/2856
+X updates to Spanish translation
+X   https://github.com/processing/processing/pull/2857
 
 cleaning
 X single line of code with no semicolon dies with "unexpected token: null"

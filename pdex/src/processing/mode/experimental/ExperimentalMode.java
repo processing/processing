@@ -36,7 +36,6 @@ import javax.swing.ImageIcon;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorState;
-import processing.app.Library;
 import processing.app.Mode;
 import processing.app.Preferences;
 import processing.app.RunnerListener;
@@ -149,20 +148,19 @@ public class ExperimentalMode extends JavaMode {
    */
   volatile public static int codeCompletionTriggerLength = 2;
 
-  public static final String prefErrorCheck = "pdex.errorCheckEnabled",
-      prefWarnings = "pdex.warningsEnabled",
-      prefCodeCompletionEnabled = "pdex.ccEnabled",
-      prefDebugOP = "pdex.dbgOutput",
-      prefErrorLogs = "pdex.writeErrorLogs",
-      prefAutoSaveInterval = "pdex.autoSaveInterval",
-      prefAutoSave = "pdex.autoSave.autoSaveEnabled", // prefUntitledAutoSave = "pdex.autoSave.untitledAutoSaveEnabled",
-      prefAutoSavePrompt = "pdex.autoSave.promptDisplay",
-      prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault",
-      prefCCTriggerEnabled = "pdex.ccTriggerEnabled",
-      prefImportSuggestEnabled = "pdex.importSuggestEnabled";
+  static public final String prefErrorCheck = "pdex.errorCheckEnabled";
+  static public final String prefWarnings = "pdex.warningsEnabled";
+  static public final String prefCodeCompletionEnabled = "pdex.completion";
+  static public final String prefCCTriggerEnabled = "pdex.completion.trigger";
+  static public final String prefDebugOP = "pdex.dbgOutput";
+  static public final String prefErrorLogs = "pdex.writeErrorLogs";
+  static public final String prefAutoSaveInterval = "pdex.autoSaveInterval";
+  static public final String prefAutoSave = "pdex.autoSave.autoSaveEnabled";
+  static public final String prefAutoSavePrompt = "pdex.autoSave.promptDisplay";
+  static public final String prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault";
+  static public final String prefImportSuggestEnabled = "pdex.importSuggestEnabled";
 
-//  // TweakMode code (Preferences)
-  volatile public static boolean enableTweak = false;
+  static volatile public boolean enableTweak = false;
 
   public void loadPreferences() {
     log("Load PDEX prefs");
