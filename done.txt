@@ -1,3 +1,55 @@
+0231 pde (3.0a4)
+X add new download redirect for contribs.txt
+X   https://github.com/processing/processing/issues/2850
+X contribs for 3.0 need to come from a different location
+X   https://github.com/processing/processing/issues/2849
+X   add the separate contribs.txt link on download.processing.org
+X   fix inside ContributionListing.java
+X change default mode handling to use experimental as the default
+X remove isDefaultMode(), since it was doing the wrong thing
+X make a new preference setting for the default mode
+X   this will set folks to the PDE X mode, and prevent conflicts w/ 2.0
+X   change last.sketch.mode to mode.last
+X fix OS X default File menu to be the same order as the other File menu
+X TGAs from saveFrame() create transparent/black movies with Movie Maker
+X   https://github.com/processing/processing/issues/2851
+X fix export problem on Windows with PDE X
+X   https://github.com/processing/processing/issues/2806
+X turn off code completion by default (and reset the preference)
+
+pulls
+X Optimize creation of boxed primitives
+X   https://github.com/processing/processing/pull/2826
+X Add static modifier to inner classes that don't access parent
+X   https://github.com/processing/processing/pull/2839
+X Fix localization in OS X (requires writing property files)
+X   https://github.com/processing/processing/pull/2844
+X black font outline appears with large VLW font and OpenGL renderer
+X   https://github.com/processing/processing/issues/2845
+X   https://github.com/processing/processing/pull/2856
+X updates to Spanish translation
+X   https://github.com/processing/processing/pull/2857
+
+cleaning
+X single line of code with no semicolon dies with "unexpected token: null"
+X   http://code.google.com/p/processing/issues/detail?id=1312
+X   https://github.com/processing/processing/issues/1350
+X   closed by Dan post-3.0a3
+X move sketchbook into its own window
+X move recent into the sketchbook menu
+X try installing 10.7.3 on Mac Mini and check whether things run
+X   make sure it's only running on 64-bit machines? 
+
+gsoc
+X remove dependency on oscp5 library for tweak mode
+X   https://github.com/processing/processing/issues/2730
+X   https://github.com/processing/processing/pull/2808
+X   https://github.com/processing/processing/pull/2855
+X A few fixes for Contributions Manager
+X   https://github.com/processing/processing/issues/2798
+X   https://github.com/processing/processing/issues/2831
+
+
 0230 pde (3.0a3)
 X remove toolbar buttons except for start/stop
 X rename sketchbook tree name, re-order menu, add language hooks

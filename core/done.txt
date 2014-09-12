@@ -1,3 +1,9 @@
+0231 core (3.0a4)
+X RuntimeException thrown for open arcs under specific parameters in P2D
+X   https://github.com/processing/processing/issues/2854
+X update to new version of JOGL (Andres)
+
+
 0230 core (3.0a3)
 X add another NaN check when sorting FloatList/Dict classes
 X   if all values were NaN, an ArrayIndexOutOfBoundsException was thrown

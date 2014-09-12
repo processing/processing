@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-13 Ben Fry and Casey Reas
+  Copyright (c) 2004-14 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or
@@ -46,9 +46,9 @@ import processing.mode.java.JavaMode;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 231;
+  static private final int REVISION = 232;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0231"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0232"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 //  static private boolean RELEASE = false;
 
@@ -124,7 +124,7 @@ public class Base {
   /** The built-in modes. coreModes[0] will be considered the 'default'. */
   private Mode[] coreModes;
   protected ArrayList<ModeContribution> modeContribs;
-  
+
   protected ArrayList<ExamplesPackageContribution> exampleContribs;
 
   private JMenu sketchbookMenu;
@@ -173,10 +173,10 @@ public class Base {
 
     // Make sure a full JDK is installed
     initRequirements();
-    
+
     // Load the languages
     Language.init();
-    
+
     // run static initialization that grabs all the prefs
     Preferences.init();
 
@@ -282,14 +282,14 @@ public class Base {
       ModeContribution.load(this, getContentFile("modes/java"), //$NON-NLS-1$
                             "processing.mode.java.JavaMode").getMode(); //$NON-NLS-1$
 
-    // PDE X calls getModeList() while it's loading, so coreModes must be set 
+    // PDE X calls getModeList() while it's loading, so coreModes must be set
     coreModes = new Mode[] { javaMode };
-    
-    Mode pdexMode = 
+
+    Mode pdexMode =
       ModeContribution.load(this, getContentFile("modes/ExperimentalMode"), //$NON-NLS-1$
                             "processing.mode.experimental.ExperimentalMode").getMode(); //$NON-NLS-1$
 
-    // Safe to remove the old Java mode here? 
+    // Safe to remove the old Java mode here?
     //coreModes = new Mode[] { pdexMode };
     coreModes = new Mode[] { pdexMode, javaMode };
   }
@@ -348,7 +348,7 @@ public class Base {
     ContributionManager.cleanup(this);
     buildCoreModes();
     rebuildContribModes();
-    
+
     rebuildContribExamples();
 
     // Needs to happen after the sketchbook folder has been located.
@@ -600,7 +600,7 @@ public class Base {
       if (!nextMode.equals(getDefaultMode())) {
         saveModeSettings(new File(newbieDir, "sketch.properties"), nextMode);
       }
-      
+
       String path = newbieFile.getAbsolutePath();
       /*Editor editor =*/ handleOpen(path, true);
 
@@ -622,13 +622,13 @@ public class Base {
       System.err.println("While creating " + sketchProps + ": " + e.getMessage());
     }
   }
-  
-  
+
+
   public Mode getDefaultMode() {
     return coreModes[0];
   }
-  
-  
+
+
   /** Used by ThinkDifferent so that it can have a Sketchbook menu. */
   public Mode getNextMode() {
     return nextMode;
@@ -1592,7 +1592,7 @@ public class Base {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  /** 
+  /**
    * Get the directory that can store settings. (Library on OS X, App Data or
    * something similar on Windows, a dot folder on Linux.) Removed this as a
    * preference for 3.0a3 because we need this to be stable.

@@ -1,7 +1,4 @@
-0231 core (3.0a4 or 3.0b1)
-X RuntimeException thrown for open arcs under specific parameters in P2D
-X   https://github.com/processing/processing/issues/2854
-X update to new version of JOGL (Andres)
+0232 core (3.0a5) 
 
 
 applet/component
