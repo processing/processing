@@ -1,4 +1,4 @@
-PROCESSING 3.0a4 (REV 0231) - 1X September 2014
+PROCESSING 3.0a4 (REV 0231) - 12 September 2014
 
 Another release to deal with a handful of bugs found in the last alpha.
 The next alpha release will contain major changes and break a few libraries
