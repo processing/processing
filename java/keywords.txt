@@ -231,6 +231,7 @@ HashMap	KEYWORD5	HashMap
 PrintWriter	KEYWORD5	PrintWriter
 String	KEYWORD5	String
 StringBuffer	KEYWORD5	
+StringBuilder	KEYWORD5
 Thread	KEYWORD5
 boolean	KEYWORD5	boolean
 byte	KEYWORD5	byte

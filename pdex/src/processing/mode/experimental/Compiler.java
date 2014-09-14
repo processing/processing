@@ -83,8 +83,8 @@ public class Compiler extends processing.mode.java.Compiler {
     //PApplet.println(command);
 
     try {
-      // Load errors into a local StringBuffer
-      final StringBuffer errorBuffer = new StringBuffer();
+      // Load errors into a local StringBuilder
+      final StringBuilder errorBuffer = new StringBuilder();
 
       // Create single method dummy writer class to slurp errors from ecj
       Writer internalWriter = new Writer() {

@@ -1288,7 +1288,7 @@ public class ErrorCheckerService implements Runnable{
     
     programImports = new ArrayList<ImportStatement>();
     
-    StringBuffer rawCode = new StringBuffer();
+    StringBuilder rawCode = new StringBuilder();
     
     try {
 

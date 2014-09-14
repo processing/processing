@@ -50,17 +50,6 @@ public class ProcessHelper {
 
   @Override
   public String toString() {
-    /*
-    final StringBuffer buffer = new StringBuffer();
-    for (int i = 0; i < cmd.length; i++) {
-      if (i != 0) {
-        buffer.append(' ');
-      }
-      buffer.append(cmd[i]);
-    }
-    return buffer.toString();
-    */
-//    return exe + " " + PApplet.join(args, " ");
     return PApplet.join(cmd, " ");
   }
 

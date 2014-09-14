@@ -503,7 +503,7 @@ public class PShapeSVG extends PShape {
     }
     char[] pathDataChars = pathData.toCharArray();
 
-    StringBuffer pathBuffer = new StringBuffer();
+    StringBuilder pathBuffer = new StringBuilder();
     boolean lastSeparate = false;
 
     for (int i = 0; i < pathDataChars.length; i++) {

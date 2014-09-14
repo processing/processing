@@ -342,7 +342,7 @@ public class ASTGenerator {
         try {
           factory = new ClassPathFactory();
 
-          StringBuffer tehPath = new StringBuffer(System
+          StringBuilder tehPath = new StringBuilder(System
               .getProperty("java.class.path"));
           if(Base.isMacOS()){
             // rt.jar equivalent on OS X is JAVA_HOME/bundle/Classes/classes.jar
@@ -1203,7 +1203,7 @@ public class ASTGenerator {
         continue;
       }
 
-      StringBuffer label = new StringBuffer(method.getName() + "(");
+      StringBuilder label = new StringBuilder(method.getName() + "(");
       for (int i = 0; i < method.getParameterTypes().length; i++) {
         label.append(method.getParameterTypes()[i].getSimpleName());
         if (i < method.getParameterTypes().length - 1)
@@ -1576,7 +1576,7 @@ public class ASTGenerator {
   protected String getLabelIfType(ASTNodeWrapper node, SimpleName sn){
     ASTNode current = node.getNode().getParent();
     String type = "";
-    StringBuffer fullName = new StringBuffer();
+    StringBuilder fullName = new StringBuilder();
     Stack<String> parents = new Stack<String>();
     String simpleName = (sn == null) ? node.getNode().toString() : sn.toString();
     switch (node.getNodeType()) {

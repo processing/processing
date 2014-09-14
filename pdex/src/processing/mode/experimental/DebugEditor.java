@@ -381,32 +381,32 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       return;
       try {
         System.out.println("Writing errors");
-        StringBuffer sbuff = new StringBuffer();
-      sbuff.append("Sketch: " + getSketch().getFolder() + ", "
+        StringBuilder sb = new StringBuilder();
+      sb.append("Sketch: " + getSketch().getFolder() + ", "
           + new java.sql.Timestamp(new java.util.Date().getTime())
               + "\nComma in error msg is substituted with ^ symbol\nFor separating arguments in error args | symbol is used\n");
-      sbuff.append("ERROR TYPE, ERROR ARGS, ERROR MSG\n");
+      sb.append("ERROR TYPE, ERROR ARGS, ERROR MSG\n");
         for (String errMsg : errorCheckerService.tempErrorLog.keySet()) {
           IProblem ip = errorCheckerService.tempErrorLog.get(errMsg);
           if(ip != null){
-            sbuff.append(ErrorMessageSimplifier.getIDName(ip.getID()));
-            sbuff.append(',');
-            sbuff.append("{");
+            sb.append(ErrorMessageSimplifier.getIDName(ip.getID()));
+            sb.append(',');
+            sb.append("{");
             for (int i = 0; i < ip.getArguments().length; i++) {
-              sbuff.append(ip.getArguments()[i]);
+              sb.append(ip.getArguments()[i]);
               if(i < ip.getArguments().length - 1)
-                sbuff.append("| ");
+                sb.append("| ");
             }
-            sbuff.append("}");
-            sbuff.append(',');
-            sbuff.append(ip.getMessage().replace(',', '^'));
-            sbuff.append("\n");
+            sb.append("}");
+            sb.append(',');
+            sb.append(ip.getMessage().replace(',', '^'));
+            sb.append("\n");
           }
         }
-        System.out.println(sbuff);
+        System.out.println(sb);
         File opFile = new File(getSketch().getFolder(), "ErrorLogs"
           + File.separator + "ErrorLog_" + System.currentTimeMillis() + ".csv");
-        PApplet.saveStream(opFile, new ByteArrayInputStream(sbuff.toString()
+        PApplet.saveStream(opFile, new ByteArrayInputStream(sb.toString()
           .getBytes(Charset.defaultCharset())));
       } catch (Exception e) {
         System.err.println("Failed to save log file for sketch " + getSketch().getName());
