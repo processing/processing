@@ -3627,7 +3627,7 @@ public class Table {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  class HashMapBlows {
+  static class HashMapBlows {
     HashMap<String,Integer> dataToIndex = new HashMap<String, Integer>();
     ArrayList<String> indexToData = new ArrayList<String>();
 

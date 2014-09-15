@@ -2637,7 +2637,7 @@ public class PApplet extends Applet
 //  protected int eventCount;
 
 
-  class InternalEventQueue {
+  static class InternalEventQueue {
     protected Event queue[] = new Event[10];
     protected int offset;
     protected int count;
