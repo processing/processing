@@ -401,6 +401,7 @@ class ContributionPanel extends JPanel {
     installProgressBar.setAlignmentX(CENTER_ALIGNMENT);
 
     installRemoveButton = new JButton(" ");
+    installRemoveButton.putClientProperty("JButton.buttonType", "roundRect");
     installRemoveButton.setInheritsPopupMenu(true);
 
     Dimension installButtonDimensions = installRemoveButton.getPreferredSize();
