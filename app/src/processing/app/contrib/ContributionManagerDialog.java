@@ -459,7 +459,7 @@ public class ContributionManagerDialog {
 
 
   protected void downloadAndUpdateContributionListing() {
-    status.setMessage("Downloading contribution list...");
+    status.setMessage(Language.text("contrib.status.downloading_list"));
     retryConnectingButton.setEnabled(false);
     contribListing.downloadAvailableList(new ProgressMonitor() {
       
@@ -481,7 +481,7 @@ public class ContributionManagerDialog {
           retryConnectingButton.setVisible(true);
         }
         else {
-          status.setMessage("Done.");
+          status.setMessage(Language.text("contrib.status.done"));
           retryConnectingButton.setVisible(false);
         }
       }
