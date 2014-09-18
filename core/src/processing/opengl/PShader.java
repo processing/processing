@@ -754,7 +754,7 @@ public class PShader implements PConstants {
     } else {
       PGraphics.showWarning("The shader doesn't have a uniform called \"" +
                             name + "\" OR the uniform was removed during" +
-                            "compilation because it was unsued.");
+                            "compilation because it was unused.");
     }
   }
 
