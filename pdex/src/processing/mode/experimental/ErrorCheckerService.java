@@ -308,6 +308,12 @@ public class ErrorCheckerService implements Runnable{
    * last runManualErrorCheck() call.
    */
   private final static long errorCheckInterval = 500;
+  
+  /**
+   * Bypass sleep time
+   */
+  
+  private volatile boolean noSleep = false;
 
   /**
    * The way the error checking happens is: DocumentListeners are added
@@ -334,7 +340,13 @@ public class ErrorCheckerService implements Runnable{
     while (!stopThread.get()) {
       try {
         // Take a nap.
-        Thread.sleep(sleepTime);
+        if(!noSleep) {
+          Thread.sleep(sleepTime);
+        }
+        else {
+          noSleep = false;
+          log("Didn't sleep!");
+        }
       } catch (Exception e) {
         log("Oops! [ErrorCheckerThreaded]: " + e);
         // e.printStackTrace();
@@ -424,6 +436,12 @@ public class ErrorCheckerService implements Runnable{
     // log("Error Check.");
     textModified.incrementAndGet();
     lastErrorCheckCall = System.currentTimeMillis();
+  }
+  
+  public void quickErrorCheck() {
+    //TODO: Experimental, lookout for threading related issues
+    noSleep = true;
+    log("quickErrorCheck()");
   }
   
   protected SketchChangedListener sketchChangedListener;

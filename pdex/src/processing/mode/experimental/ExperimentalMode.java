@@ -335,6 +335,8 @@ public class ExperimentalMode extends JavaMode {
         @Override
         public Runner handleRun(Sketch sketch, RunnerListener listener) throws SketchException
         {
+          final DebugEditor editor = (DebugEditor)listener;
+          editor.errorCheckerService.quickErrorCheck();
                 if (enableTweak) {
                   enableTweak = false;
                         return handleTweakPresentOrRun(sketch, listener, false);
@@ -359,6 +361,8 @@ public class ExperimentalMode extends JavaMode {
         @Override
         public Runner handlePresent(Sketch sketch, RunnerListener listener) throws SketchException
         {
+                final DebugEditor editor = (DebugEditor)listener;
+                editor.errorCheckerService.quickErrorCheck();
                 if (enableTweak) {
                   enableTweak = false;
                         return handleTweakPresentOrRun(sketch, listener, true);
