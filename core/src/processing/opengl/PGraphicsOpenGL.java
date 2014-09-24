@@ -6681,7 +6681,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (fragFilename == null || fragFilename.equals("")) {
       PGraphics.showWarning(MISSING_FRAGMENT_SHADER);
       return null;
-    } else if (fragFilename == null || fragFilename.equals("")) {
+    } else if (vertFilename == null || vertFilename.equals("")) {
       PGraphics.showWarning(MISSING_VERTEX_SHADER);
       return null;
     } else {
