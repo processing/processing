@@ -9,11 +9,21 @@ public class MethClaInterface
     String arch = System.getProperty("os.arch");
 
     if (osName.startsWith("Win")){
-      System.loadLibrary("LIBWINPTHREAD-1");
-      System.loadLibrary("LIBSNDFILE-1");
-      System.loadLibrary("LIBMPG123-0");
-      System.loadLibrary("LIBMETHCLA");
-      System.loadLibrary("LIBMETHCLAINTERFACE");  
+      if (arch.equals("x86")){
+        System.loadLibrary("LIBWINPTHREAD-1");
+        System.loadLibrary("LIBSNDFILE-1");
+        System.loadLibrary("LIBGCC_S_SJLJ-1");
+        System.loadLibrary("LIBMPG123-0");
+        System.loadLibrary("LIBMETHCLA");
+        System.loadLibrary("LIBMETHCLAINTERFACE"); 
+      }
+      else {
+        System.loadLibrary("LIBWINPTHREAD-1");
+        System.loadLibrary("LIBSNDFILE-1");
+        System.loadLibrary("LIBMPG123-0");
+        System.loadLibrary("LIBMETHCLA");
+        System.loadLibrary("LIBMETHCLAINTERFACE");  
+      }
     }  
     else if (osName.startsWith("Mac")){
       System.loadLibrary("MethClaInterface");
