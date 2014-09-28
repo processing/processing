@@ -56,20 +56,17 @@ public class AutoFormat implements Formatter {
 
   private boolean inStatementFlag; // in a line of code
   private boolean overflowFlag;   // line overrunning?
-  private boolean arrayFlag;     // in an array/after it in same statement?
-  private boolean if_flg;
-  private boolean startFlag;    // No buf has yet been writen to this line. 
-  private boolean elseFlag;
+  private boolean startFlag;     // No buf has yet been writen to this line. 
+
+  /** -1 if not in array or just after it, otherwise increases from 0. */
+  private int arrayLevel;
+  private int arrayIndent; // Lowest value of the above for this line. 
 
   /** Number of ? entered without exiting at : of a?b:c structures. */
   private int conditionalLevel;
 
   /** chars[pos] is where we're at. */
   private int pos;
-  private int level;
-  private int[][] sp_flg;
-  private int[][] s_ind;
-  private int if_lev;
 
   /** Number of curly brackets entered and not exited,
       excluding arrays. */
@@ -78,9 +75,6 @@ public class AutoFormat implements Formatter {
   /** Number of parentheses entered and not exited. */
   private int parenLevel;
 
-  private int[] ind;
-  private int[] p_flg;
-  private int[][] s_tabs;
   private boolean jdoc_flag;
 
   /** The number of times to indent at a given point */
@@ -89,11 +83,9 @@ public class AutoFormat implements Formatter {
   /** The last non-space seen by nextChar(). */
   private char lastNonWhitespace = 0;
 
-  private final Stack<Boolean> castFlags = new Stack<Boolean>();
-
 
   private void handleMultiLineComment() {
-    final boolean saved_startFlag = startFlag;
+    final boolean savedStartFlag = startFlag;
     buf.append(nextChar()); // So /*/ isn't self-closing.
 
     for (char ch = nextChar(); !EOF; ch = nextChar()) {
@@ -112,7 +104,7 @@ public class AutoFormat implements Formatter {
     }
 
     writeIndentedComment();
-    startFlag = saved_startFlag;
+    startFlag = savedStartFlag;
     jdoc_flag = false;
     return;
   }
@@ -134,31 +126,36 @@ public class AutoFormat implements Formatter {
 
 
   private void writeIndentedLine() {
-    System.out.print(buf);
     if (buf.length() == 0) {
-      if (startFlag) startFlag = elseFlag = false;
+      startFlag = false;
       return;
     }
     if (startFlag) {
       // Indent suppressed at eg. if<nl>{ and when  
       // buf is close-brackets only followed by ';'.
-      boolean indentMore = !buf.toString().matches("[\\s\\]\\}\\)]*;") 
-        && (arrayFlag || buf.charAt(0) != '{')
+      boolean indentMore = !buf.toString().matches("[\\s\\]\\}\\)]*;") &&
+        (buf.charAt(0) != '{' | arrayLevel >= 0)
         && overflowFlag;
-      System.out.println(indentMore + ", " + overflowFlag);
-      if (indentMore) tabs++;
+      if (indentMore) {
+        tabs++;
+        if (arrayIndent > 0) tabs += arrayIndent;
+      }
       printIndentation();
       startFlag = false;
-      if (indentMore) tabs--;
-    }
-    if (elseFlag) {
-      if (lastNonSpaceChar() == '}') {
-        trimRight(result);
-        result.append(' ');
+      if (indentMore) {
+        tabs--;
+        if (arrayIndent > 0) tabs -= arrayIndent;
       }
-      elseFlag = false;
     }
+    if (lastNonSpaceChar() == '}' && (bufStarts("else") ||
+    bufStarts("while"))) { 
+      result.append(' ');
+    }    
+    // If we're still in a statement at \n, that's overflow.
+    overflowFlag = inStatementFlag;
+    arrayIndent = arrayLevel;
     result.append(buf);
+
     buf.setLength(0);
   }
 
@@ -208,7 +205,7 @@ public class AutoFormat implements Formatter {
 
 
   /**
-   * Makes tabs >= 0 and appends <tt>tabs*indentValue</tt>
+   * Makes tabs &gt;= 0 and appends <tt>tabs*indentValue</tt>
    * spaces to result.
    */
   private void printIndentation() {
@@ -254,7 +251,7 @@ public class AutoFormat implements Formatter {
    * Increments pos, sets EOF if needed, and returns the new
    * chars[pos] or zero if out-of-bounds.
    * Sets lastNonWhitespace if chars[pos] isn't whitespace.
-   * Does nothing and returns zero if EOF was set when it was called.
+   * Does nothing and returns zero if already at EOF.
    */
   private char nextChar() {
     if (EOF) return 0;
@@ -265,14 +262,6 @@ public class AutoFormat implements Formatter {
     char retVal = chars[pos];
     if (!Character.isWhitespace(retVal)) lastNonWhitespace = retVal;
     return retVal;
-  }
-
-
-  private void gotElse() {
-    tabs = s_tabs[curlyLvl][if_lev];
-    p_flg[level] = sp_flg[curlyLvl][if_lev];
-    ind[level] = s_ind[curlyLvl][if_lev];
-    if_flg = true;
   }
 
 
@@ -307,26 +296,9 @@ public class AutoFormat implements Formatter {
     return false;
   }
 
-  /**
-   * Called at '\n' in the main loop
-   * @returns whether the statement (or whatever) had ended.
-   */
-  private boolean isOverflowing() {
-    if (lastNonWhitespace == 0 || lastNonWhitespace == ';') {
-       return false; //start of file or end of statement
-    }
-    if (lastNonWhitespace != '{' && lastNonWhitespace != '}') {
-      return true; // evidently in a statement;
-    }
-    return arrayFlag; // there was an array, {} aren't blocks.
-    // If {} were blocks for an odd, valid reason... this will
-    // fail, but I reckon that anyone putting blocks in arrays
-    // is in a small minority.
-  }
-
 
   /**
-   * @returns last non-wsp in result+buf, or 0 on error.
+   * @return last non-wsp in result+buf, or 0 on error.
    */
   private char prevNonWhitespace() {
     StringBuffer tot = new StringBuffer();
@@ -342,17 +314,28 @@ public class AutoFormat implements Formatter {
 
   /**
    * Sees if buf is of the form [optional whitespace][keyword][optional anything].
-   * It won't allow keyword to be directly followed by an alphanumeric, _, or &.
+   * It won't allow keyword to be directly followed by an alphanumeric, _, or &amp;.
    * Will be different if keyword contains regex codes.
    */
-  private boolean lookup(final String keyword) {
+  private boolean bufStarts(final String keyword) {
     return Pattern.matches("^\\s*" + keyword + "(?![a-zA-Z0-9_&]).*$", buf);
+  }
+  
+
+
+  /**
+   * Sees if buf is of the form [optional anything][keyword][optional whitespace].
+   * It won't allow keyword to be directly preceded by an alphanumeric, _, or &amp;.
+   * Will be different if keyword contains regex codes.
+   */
+  private boolean bufEnds(final String keyword) {
+    return Pattern.matches("^.*(?<![a-zA-Z0-9_&])" + keyword + "\\s*$", buf);
   }
 
 
   /**
    * Sees if buf is of the form [optional whitespace][keyword][optional anything].
-   * It *will* allow keyword to be directly followed by an alphanumeric, _, or &.
+   * It *will* allow keyword to be directly followed by an alphanumeric, _, or &amp;.
    * Will be different if keyword contains regex codes (except *, which is fine).
    */
   private boolean lookup_com(final String keyword) {
@@ -381,23 +364,15 @@ public class AutoFormat implements Formatter {
     result.setLength(0);
     indentValue = Preferences.getInteger("editor.tabs.size");
 
-    boolean forFlag = if_flg = false;
+    boolean forFlag = false;
     startFlag = true;
     int forParenthLevel = 0;
-    conditionalLevel = parenLevel = curlyLvl = if_lev = level = 0;
+    conditionalLevel = parenLevel = curlyLvl = 0;
     tabs = 0;
-    jdoc_flag = overflowFlag = inStatementFlag = false;
+    jdoc_flag = inStatementFlag = false;
     char cc;
 
-    int[] s_level = new int[10];
-    sp_flg = new int[20][10];
-    s_ind = new int[20][10];
-    int[] s_if_lev = new int[10];
-    boolean[] s_if_flg = new boolean[10];
-    ind = new int[10];
-    p_flg = new int[10];
-    s_tabs = new int[20][10];
-    pos = -1;
+    pos = arrayLevel = -1;
     chars = cleanText.toCharArray();
 
     EOF = false; // set in nextChar() when EOF
@@ -419,62 +394,37 @@ public class AutoFormat implements Formatter {
 
       case ' ':
       case '\t':
-        elseFlag = lookup("else");
-        if (elseFlag) {
-          gotElse();
-          if (!startFlag || buf.length() > 0) buf.append(c);
-          writeIndentedLine();
-          startFlag = false;
-          break;
-        }
+        // Nuke old indent.
         if (!startFlag || buf.length() > 0) buf.append(c);
         break;
 
       case '\n':
         if (EOF) break;
         
-        elseFlag = lookup("else");
-        if (elseFlag) gotElse();
-
         if (lookup_com("//")) {
           if (buf.charAt(buf.length() - 1) == '\n') {
             buf.setLength(buf.length() - 1);
           }
         }
-
+        
         writeIndentedLine();
+
         result.append("\n");
         startFlag = true;
-        if (elseFlag) {
-          p_flg[level]++;
-          tabs++;
-        } else overflowFlag = inStatementFlag;
         break;
 
       case '{':
         char prevChar = prevNonWhitespace();
-        if (prevChar == '=' || prevChar == ']') arrayFlag = true;
-        if (arrayFlag) {
+        if (arrayLevel >= 0 || prevChar == '=' || prevChar == ']') {
+          // If we're already in an array (lvl >= 0), increment level.
+          // Otherwise, the presence of a = or ] indicates an array is starting
+          // and we should start counting (set lvl=0).
+          arrayLevel++;
           buf.append(c);
-          break; // No special treatment. TODO: indents.
-        } else inStatementFlag = false; // eg class declaration ends
+          break; // Nothing fancy.
+        } else inStatementFlag = false; // eg. class declaration ends
 
-        elseFlag = lookup("else");
-        if (elseFlag) gotElse();
-        if (s_if_lev.length == curlyLvl) {
-          s_if_lev = PApplet.expand(s_if_lev);
-          s_if_flg = PApplet.expand(s_if_flg);
-        }
-
-        s_if_lev[curlyLvl] = if_lev;
-        s_if_flg[curlyLvl] = if_flg;
-        if_lev = 0;
-        if_flg = false;
         curlyLvl++;
-        if (startFlag && p_flg[level] != 0) {
-          p_flg[level]--;
-          tabs--;
-        }
         trimRight(buf);
         if (buf.length() > 0 || (result.length() > 0 &&
               !Character.isWhitespace(result.charAt(result.length() - 1)))) {
@@ -485,18 +435,17 @@ public class AutoFormat implements Formatter {
         readForNewLine();
         writeIndentedLine();
 
-        result.append("\n");
+        result.append('\n');
         tabs++;
         startFlag = true;
-        if (p_flg[level] > 0) {
-          ind[level] = 1;
-          level++;
-          s_level[level] = curlyLvl;
-        }
         break;
 
       case '}':
-        if (arrayFlag) {
+        if (arrayLevel >= 0) {
+          // Even less fancy. Note that }s cannot end array behaviour;
+          // a semicolon is needed.
+          if (arrayLevel > 0) arrayLevel--;
+          if (arrayIndent > arrayLevel) arrayIndent = arrayLevel;
           buf.append(c);
           break;
         } else inStatementFlag = false;
@@ -507,37 +456,20 @@ public class AutoFormat implements Formatter {
           buf.append(c);
           writeIndentedLine();
         } else {
-          if_lev = s_if_lev[curlyLvl] - 1;
-          if (if_lev < 0) {
-            if_lev = 0;
-          }
-          if_flg = s_if_flg[curlyLvl];
           trimRight(buf);
           writeIndentedLine();
           tabs--;
 
           trimRight(result);
-          result.append("\n");
+          result.append('\n');
           printIndentation();
           result.append(c);
-          if (peek() == ';' || arrayFlag) {
-            //Now does commas etc.
-            if (peek() == ' ') advanceToNonSpace();
-            result.append(nextChar());
-          }
-
+          if (peek() == ';') result.append(nextChar());
+          
           readForNewLine();
           writeIndentedLine();
           result.append('\n');
           startFlag = true;
-          if (curlyLvl < s_level[level] && level > 0) {
-            level--;
-          }
-          if (ind[level] != 0) {
-            tabs -= p_flg[level];
-            p_flg[level] = 0;
-            ind[level] = 0;
-          }
         }
         break;
 
@@ -574,27 +506,14 @@ public class AutoFormat implements Formatter {
           break;
         }
         buf.append(c);
+        inStatementFlag = false;
         writeIndentedLine();
-        if (p_flg[level] > 0 && ind[level] == 0) {
-          tabs -= p_flg[level];
-          p_flg[level] = 0;
-        }
         readForNewLine();
         writeIndentedLine();
         result.append("\n");
         startFlag = true;
-        if (if_lev > 0) {
-          if (if_flg) {
-            if_lev--;
-            if_flg = false;
-          } else {
-            if_lev = 0;
-          }
-        }
-        // Array behaviour ends at the end
-        // of a statement.
-        arrayFlag = false;
-        inStatementFlag = false;
+        // Array behaviour ends at the end of a statement.
+        arrayLevel = -1;
         break;
 
       case '\\':
@@ -632,17 +551,17 @@ public class AutoFormat implements Formatter {
         buf.append(c);
         inStatementFlag = false;
 
-        if (!lookup("default") && !lookup("case")) {
-          startFlag = false;
-          writeIndentedLine();
-        } else {
+        if (bufEnds("default") || bufEnds("case")) {
           tabs--;
           writeIndentedLine();
           tabs++;
+        } else {
+          startFlag = false;  // Label; zero indent.
+          writeIndentedLine();
         }
-        if (peek() == ';') {
-          result.append(nextChar());
-        }
+
+        if (peek() == ';') result.append(nextChar());
+        
         readForNewLine();
         writeIndentedLine();
         result.append('\n');
@@ -658,7 +577,7 @@ public class AutoFormat implements Formatter {
           result.append("\n");
         } else if (next == '*') {
           if (buf.length() > 0) {
-            writeIndentedLine();
+            writeIndentedLine();  // TODO
           }
           buf.append(c).append(nextChar());
           handleMultiLineComment();
@@ -668,7 +587,6 @@ public class AutoFormat implements Formatter {
         break;
 
       case ')':
-        final boolean isCast = castFlags.isEmpty() ? false : castFlags.pop();
         parenLevel--;
 
         // If we're further back than the start of a for loop, we've
@@ -678,24 +596,13 @@ public class AutoFormat implements Formatter {
         if (parenLevel < 0) parenLevel = 0;
 
         buf.append(c);
-        writeIndentedLine();
-        if (readForNewLine()) {
-          chars[pos--] = '\n';
-          if (parenLevel == 0 && tabs > 0 && !isCast) {
-            p_flg[level]++;
-            tabs++;
-            ind[level] = 0;
-          }
-        }
         break;
 
       case '(':
-        castFlags.push(Pattern.matches("^.*?(?:int|color|float)\\s*$", buf));
+        final boolean isFor = bufEnds("for");
+        final boolean isIf = bufEnds("if");
 
-        final boolean isFor = lookup("for");
-        final boolean isIf = lookup("if");
-
-        if (isFor || isIf || lookup("while")) {
+        if (isFor || isIf || bufEnds("while")) {
           if (!Character.isWhitespace(buf.charAt(buf.length() - 1))) {
             buf.append(' ');
           }
@@ -710,13 +617,6 @@ public class AutoFormat implements Formatter {
         if (isFor && !forFlag) {
           forParenthLevel = parenLevel;
           forFlag = true;
-        } else if (isIf) {
-          writeIndentedLine();
-          s_tabs[curlyLvl][if_lev] = tabs;
-          sp_flg[curlyLvl][if_lev] = p_flg[level];
-          s_ind[curlyLvl][if_lev] = ind[level];
-          if_lev++;
-          if_flg = true;
         }
       } // end switch
     } // end while not EOF
