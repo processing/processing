@@ -316,9 +316,7 @@ public class PreferencesFrame {
           }
         });
 
-    presentColor.addMouseListener(new MouseListener() {
-      @Override public void mouseReleased(MouseEvent e) {}
-      @Override public void mousePressed(MouseEvent e) {}
+    presentColor.addMouseListener(new MouseAdapter() {
 
       @Override
       public void mouseExited(MouseEvent e) {

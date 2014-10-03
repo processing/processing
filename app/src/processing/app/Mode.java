@@ -854,19 +854,7 @@ public abstract class Mode {
       openExamplesManagerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
       openExamplesManagerPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 //      openExamplesManagerLabel.setForeground(new Color(0, 0, 238));
-      openExamplesManagerPanel.addMouseListener(new MouseListener() {
-        
-        @Override
-        public void mouseReleased(MouseEvent e) {}
-        
-        @Override
-        public void mousePressed(MouseEvent e) {}
-        
-        @Override
-        public void mouseExited(MouseEvent e) {}
-        
-        @Override
-        public void mouseEntered(MouseEvent e) {}
+      openExamplesManagerPanel.addMouseListener(new MouseAdapter() {
         
         @Override
         public void mouseClicked(MouseEvent e) {
