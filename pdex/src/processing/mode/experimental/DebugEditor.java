@@ -530,11 +530,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         listBreakpointsMenuItem = new JMenuItem("List Breakpoints");
         listBreakpointsMenuItem.addActionListener(this);
 
-        stepOverMenuItem = Toolkit.newJMenuItem("Step", KeyEvent.VK_H);
+        stepOverMenuItem = Toolkit.newJMenuItem("Step", KeyEvent.VK_J);
         stepOverMenuItem.addActionListener(this);
-        stepIntoMenuItem = Toolkit.newJMenuItemShift("Step Into", KeyEvent.VK_H);
+        stepIntoMenuItem = Toolkit.newJMenuItemShift("Step Into", KeyEvent.VK_J);
         stepIntoMenuItem.addActionListener(this);
-        stepOutMenuItem = Toolkit.newJMenuItemAlt("Step Out", KeyEvent.VK_H);
+        stepOutMenuItem = Toolkit.newJMenuItemAlt("Step Out", KeyEvent.VK_J);
         stepOutMenuItem.addActionListener(this);
 
         printStackTraceMenuItem = new JMenuItem("Print Stack Trace");
