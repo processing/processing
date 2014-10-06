@@ -2,9 +2,17 @@
 X remove debug message printed to the console when the ctrl key is down in PDE X
 
 
+python has to use launch() instead of open()
+map() is bad for Python (and JavaScript?)
+
+
 pulls
+X Cmd + H runs sketch instead of hiding the PDE (OS X)
+X   https://github.com/processing/processing/issues/2881
 X Migrate to unsynchronized data structures
 X   https://github.com/processing/processing/pull/2863
+X improve contrib manager localization
+X   https://github.com/processing/processing/pull/2870
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
 _ Fix renaming from RGB to Rgb.java and others
@@ -14,6 +22,7 @@ _   https://github.com/processing/processing/pull/2382
 
 
 high
+_ dist needs to do a git pull on processing-docs
 _ "Your sketch has been modified externally" appear without reason
 _   https://github.com/processing/processing/issues/2852
 _ export application ubuntu -> windows not working (2.2.1)
@@ -333,8 +342,7 @@ _   make them final? just improve the error messages?
 _   http://code.google.com/p/processing/issues/detail?id=1020
 _   https://github.com/processing/processing/issues/1058
 _ Processing chokes if a sketch defines a class with same name as the sketch
-_   http://code.google.com/p/processing/issues/detail?id=157
-_   http://code.google.com/p/processing/issues/detail?id=168
+_   https://github.com/processing/processing/issues/196
 _ don't allow goofy case versions of reserved words
 _   keypressed should maybe throw an error
 _   http://code.google.com/p/processing/issues/detail?id=5
@@ -467,7 +475,7 @@ _   maybe even pull these directly from the zip file?
 _ load examples from zip files
 _   http://code.google.com/p/processing/issues/detail?id=143
 _ don't make examples read-only
-_   just do them from psk files
+_   just do them from psk filess
 _ disallow add file to sketch, export, export application
 _   pretty much anything inside the sketch?
 _   but don't do this with untitled, cuz it kinda stinks

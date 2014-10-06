@@ -1,6 +1,18 @@
 0232 core (3.0a5) 
 
 
+pulls
+X Fix check in loadShader()
+X   https://github.com/processing/processing/pull/2867
+X Refined PShader uniform missing message fixes
+X   https://github.com/processing/processing/pull/2869
+
+
+andres
+A Confusing message: The shader doesn't have a uniform called "foo"
+A   https://github.com/processing/processing/issues/2593
+
+
 applet/component
 _ remove Applet as base class
 _ performance issues on OS X (might be threading due to Applet)
