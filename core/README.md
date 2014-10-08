@@ -4,9 +4,10 @@
 We're removing Applet as the base class for PApplet and redoing the entire rendering and threading model for Processing sketches.
 
 #### Why?
-1. The changes will improve performance--greatly, in some cases--and reduce flicker and quirkiness in others. Using AWT objects like (Applet subclasses Component) cause (sometimes major) performance restrictions or other visual glitches like flicker.
-2. The design of 'core' is 13 years old, and the graphics models available (OpenGL, VolatileImage, BufferStrategy, etc) have changed drastically since then. I've papered over these changes and done my best to keep performance on-pace so that we don't break a lot of old code (or libraries), but now is the time for a clean break.
-3. With the death of applets, keeping it is anachronistic.
+1. The changes will improve performance--greatly, in some cases--and reduce flicker and quirkiness in others. Using AWT objects like Applet (which subclasses Component) cause (sometimes major) performance restrictions or other visual glitches like flicker. 
+2. The code to mitigate the issues from #1 is very difficult to debug and make work properly across the many platforms we support (Macs, Macs with retina displays, Windows 7, Windows 8, 32- and 64-bit machines, Linux who-knows-what, and so on)
+3. The design of `core` is 13 years old, and the graphics models available (OpenGL, VolatileImage, BufferStrategy, etc) have changed drastically since then. I've papered over these changes and done my best to keep performance on-pace so that we don't break a lot of old code (or libraries), but now is the time for a clean break.
+4. With the death of applets, keeping the Applet base class is anachronistic. However, we're keeping the name `PApplet` because with any luck, these changes will only require a recompile of any sketch (or library) code. 
 
 #### What else?
 1. A new "Surface" object has been added that acts as the layer between PApplet and PGraphics. It will handle interaction with the OS (creation of a window, placement on screen, getting events) as well as the animation thread (because OpenGL's animation thread is very different from an AWT animation thread).
