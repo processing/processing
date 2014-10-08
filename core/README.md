@@ -1,7 +1,7 @@
 ## Major destruction of 'core' has started for Processing 3.
 
 #### What?
-We're removing Applet as the base class for PApplet and redoing the entire rendering and threading model for Processing sketches.
+We're removing `Applet` as the base class for `PApplet` and redoing the entire rendering and threading model for Processing sketches.
 
 #### Why?
 1. The changes will improve performance--greatly, in some cases--and reduce flicker and quirkiness in others. Using AWT objects like Applet (which subclasses Component) cause (sometimes major) performance restrictions or other visual glitches like flicker. 
@@ -10,12 +10,12 @@ We're removing Applet as the base class for PApplet and redoing the entire rende
 4. With the death of applets, keeping the Applet base class is anachronistic. However, we're keeping the name `PApplet` because with any luck, these changes will only require a recompile of any sketch (or library) code. 
 
 #### What else?
-1. A new "Surface" object has been added that acts as the layer between PApplet and PGraphics. It will handle interaction with the OS (creation of a window, placement on screen, getting events) as well as the animation thread (because OpenGL's animation thread is very different from an AWT animation thread).
+1. A new `PSurface` object has been added that acts as the layer between `PApplet` and `PGraphics`. It will handle interaction with the OS (creation of a window, placement on screen, getting events) as well as the animation thread (because OpenGL's animation thread is very different from an AWT animation thread).
 2. Many deprecated functions (notably, the pre-2.0 only method registration mechanism used by libraries) are being removed. (Not a final decision.) 
 3. Undocumented features (such as the 'image' object in PGraphics) may disappear and break code from advanced users.
 
 #### But what about...? 
-1. One downside is that you'll no longer be able to just drop a Processing sketch into other Java code, because PApplet will no longer subclass Applet (and therefore, Component). This is a huge downside for a tiny number of users. For the majority of users, re-read the "why" section.
+1. One downside is that you'll no longer be able to just drop a Processing sketch into other Java code, because `PApplet` will no longer subclass `Applet` (and therefore, `Component`). This is a huge downside for a tiny number of users. For the majority of users, re-read the "why" section. We'll try to figure out ways to continue embedding in other Java code, however, since we use this in our own work, and even within Processing itself (the Color Selector). 
 2. We're still determining how much code we're willing to break due to API changes. Stay tuned.
 
 ## The Mess
