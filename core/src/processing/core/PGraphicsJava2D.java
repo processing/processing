@@ -221,6 +221,10 @@ public class PGraphicsJava2D extends PGraphics {
   //public void dispose()
 
 
+  static public PSurface createSurface() {
+    return new PSurfaceAWT();
+  }
+
 
   //////////////////////////////////////////////////////////////
 
@@ -233,14 +237,14 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
-  @Override
-  public void requestDraw() {
-//    EventQueue.invokeLater(new Runnable() {
-//      public void run() {
-    parent.handleDraw();
-//      }
-//    });
-  }
+//  @Override
+//  public void requestDraw() {
+////    EventQueue.invokeLater(new Runnable() {
+////      public void run() {
+//    parent.handleDraw();
+////      }
+////    });
+//  }
 
 
 //  Graphics2D g2old;
@@ -1692,7 +1696,7 @@ public class PGraphicsJava2D extends PGraphics {
     Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
-      FontMetrics metrics = parent.getFontMetrics(font);
+      FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics(font);
       return metrics.getAscent();
     }
     return super.textAscent();
