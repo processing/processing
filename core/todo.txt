@@ -1,4 +1,6 @@
 0232 core (3.0a5) 
+X roll back full screen changes
+X   https://github.com/processing/processing/issues/2641
 
 
 pulls

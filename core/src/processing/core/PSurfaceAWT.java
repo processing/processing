@@ -287,13 +287,13 @@ public class PSurfaceAWT implements PSurface {
       if (useStrategy) {
         render();
       } else {
-        Graphics screen = getGraphics();
+        Graphics screen = canvas.getGraphics();
         if (screen != null) {
           screen.drawImage(g.image, 0, 0, width, height, null);
         }
       }
     } else {
-      repaint();
+      canvas.repaint();
     }
 //  getToolkit().sync();  // force repaint now (proper method)
   }
@@ -397,37 +397,7 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
-  public void placeSketch() {
-//  // If 'present' wasn't already set, but the applet initializes
-//  // to full screen, attempt to make things full screen anyway.
-//  if (!present &&
-//      applet.width == screenRect.width &&
-//      applet.height == screenRect.height) {
-//    // bounds will be set below, but can't change to setUndecorated() now
-//    present = true;
-//  }
-//  // Opting not to do this, because we can't remove the decorations on the
-//  // window at this point. And re-opening a new winodw is a lot of mess.
-//  // Better all around to just encourage the use of sketchFullScreen()
-//  // or cmd/ctrl-shift-R in the PDE.
-
-  if (present) {
-//    if (platform == MACOSX) {
-//      println("before");
-//      println(screenRect);
-//      println(frame.getBounds());
-//
-//      // Call some native code to remove the menu bar on OS X. Not necessary
-//      // on Linux and Windows, who are happy to make full screen windows.
-////      japplemenubar.JAppleMenuBar.hide();
-//      toggleFullScreen(frame);
-//      println("after");
-//      println(screenRect);
-//      println(frame.getBounds());
-//
-//      println(applet.width + " " + applet.height);
-//    }
-
+  public void placeFullScreen() {
     // After the pack(), the screen bounds are gonna be 0s
     frame.setBounds(screenRect);
     applet.setBounds((screenRect.width - applet.width) / 2,
@@ -437,13 +407,6 @@ public class PSurfaceAWT implements PSurface {
     if (platform == MACOSX) {
       macosxFullScreenEnable(frame);
       macosxFullScreenToggle(frame);
-
-//      toggleFullScreen(frame);
-//      println("after");
-//      println(screenRect);
-//      println(frame.getBounds());
-//      println(applet.width + " " + applet.height);
-    }
 
     if (!hideStop) {
       Label label = new Label("stop");
@@ -468,8 +431,10 @@ public class PSurfaceAWT implements PSurface {
     if (external) {
       applet.setupExternalMessages();
     }
+  }
 
-  } else {  // if not presenting
+
+  public void placeWindow() {
     // can't do pack earlier cuz present mode don't like it
     // (can't go full screen with a frame after calling pack)
     //        frame.pack();

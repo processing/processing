@@ -13,7 +13,9 @@ public interface PSurface {
   public Frame initFrame(int width, int height, Color backgroundColor,
                          int deviceIndex, boolean fullScreen, boolean spanDisplays);
 
-  public void placeSketch();
+  public void placeWindow();
+
+  public void placeFullScreen();
 
   // sets displayWidth/Height inside PApplet
   public void checkDisplaySize();

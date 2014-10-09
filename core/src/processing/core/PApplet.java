@@ -9339,7 +9339,11 @@ public class PApplet implements PConstants {
       }
     }
 
-    surface.placeSketch();
+    if (present) {
+      surface.placeFullScreen();
+    } else {
+      surface.placeWindow();
+    }
   }
 
 

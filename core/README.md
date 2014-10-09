@@ -4,7 +4,7 @@
 We're removing `Applet` as the base class for `PApplet` and redoing the entire rendering and threading model for Processing sketches.
 
 #### Why?
-1. The changes will improve performance--greatly, in some cases--and reduce flicker and quirkiness in others. Using AWT objects like Applet (which subclasses Component) cause (sometimes major) performance restrictions or other visual glitches like flicker. 
+1. The changes will improve performance--greatly, in some cases--and reduce flicker and quirkiness in others. Using AWT objects like `Applet` (which subclasses `Component`) cause (sometimes major) performance restrictions or other visual glitches like flicker. 
 2. The code to mitigate the issues from #1 is very difficult to debug and make work properly across the many platforms we support (Macs, Macs with retina displays, Windows 7, Windows 8, 32- and 64-bit machines, Linux who-knows-what, and so on)
 3. The design of `core` is 13 years old, and the graphics features available (OpenGL, VolatileImage, BufferStrategy, etc) have changed drastically since then. I've papered over these changes and done my best to keep performance on-pace so that we don't break a lot of old code (or libraries), but now is the time for a clean break.
 4. With the death of applets, keeping the Applet base class is anachronistic. However, we're keeping the name `PApplet` because with any luck, these changes will only require a recompile of any sketch (or library) code. 
@@ -13,6 +13,8 @@ We're removing `Applet` as the base class for `PApplet` and redoing the entire r
 1. A new `PSurface` object has been added that acts as the layer between `PApplet` and `PGraphics`. It will handle interaction with the OS (creation of a window, placement on screen, getting events) as well as the animation thread (because OpenGL's animation thread is very different from an AWT animation thread).
 2. Many deprecated functions (notably, the pre-2.0 only method registration mechanism used by libraries) are being removed. (Not a final decision.) 
 3. Undocumented features (such as the `image` object in `PGraphics`) may disappear and break code from advanced users.
+4. We're working to add the ability to span multiple screens in "full screen" mode.
+5. In 3.0a2 we introduced a change on OS X to use Apple's "official" full screen mode. With this comes a dorky animation and the inability to span multiple screens. We've rolled that back.
 
 #### But what about...? 
 1. One downside is that you'll no longer be able to just drop a Processing sketch into other Java code, because `PApplet` will no longer subclass `Applet` (and therefore, `Component`). This is a huge downside for a tiny number of users. For the majority of users, re-read the "why" section. We'll try to figure out ways to continue embedding in other Java code, however, since we use this in our own work, and even within Processing itself (the Color Selector). 
