@@ -27,16 +27,34 @@ The rest of this document are my notes while I'm making changes.
 #### Modes on startup
 1. nothing displayed (isDisplayable returns false, i.e. PDF)
 2. sketch in a window (most usage, from the PDE)
-3. present (sketch is smaller, color the rest of the screen)
-4. full screen
-5. all screens
+3. present (sketch is smaller, color the rest of the screen; does not work with multiple screens at once)
+4. full screen (sketch same as screen size)
+5. all screens (sketch spans all screens)
+
+resize events: 
+Frame > Canvas > PGraphics > PApplet
+
+user-driven Frame resize events follow that order
+
+PApplet.size() calls setSize() in PSurface, and in surface:
+  - Mode 2: resize the frame, which will resize the canvas, etc
+  - Mode 3: resizes and places of Canvas
+  - Mode 4 and 5: no resize, always full display
+
 
 #### To Document
-sketchRenderer() is required
-the renderer class/package is used to call a static method on the PGraphics
-  that returns the class type for the rendering surface
+- sketchRenderer() is required
+- the renderer class/package is used to call a static method on the PGraphics that returns the class type for the rendering surface
 
 inside main, will know the screen that's being used for the app
+
+#### Questions/To Do
+- Does init() need to go away, because it's not going to work in any other setting? Because a surface must first be created, the init() method on its own will be a mess.
+- If Frame/Canvas are moved to another display, will the display object update?
+- Does sun.awt.noerasebackground (in PApplet) help flicker?
+- The size() JavaDoc in PApplet is comically old
+- Does createFont() need to run through PGraphics?
+- Need to fix sketch placement issues (default size with long setup(), etc) Actually, the default size with long setup() is probably that defaultSize is set false, but the initial render doesn't finish before width/height are set to something useful.
 
 #### Removed functions (not final, just notes)
 param() 

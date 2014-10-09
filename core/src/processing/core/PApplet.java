@@ -35,7 +35,10 @@ import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.MediaTracker;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Rectangle2D;
@@ -48,7 +51,10 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.zip.*;
 
+// used by loadImage() functions
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
 import javax.swing.JFrame;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileSystemView;
@@ -169,16 +175,6 @@ public class PApplet implements PConstants {
   /** Default width and height for applet when not specified */
   static public final int DEFAULT_WIDTH = 100;
   static public final int DEFAULT_HEIGHT = 100;
-
-  /**
-   * Minimum dimensions for the window holding an applet. This varies between
-   * platforms, Mac OS X 10.3 (confirmed with 10.7 and Java 6) can do any
-   * height but requires at least 128 pixels width. Windows XP has another
-   * set of limitations. And for all I know, Linux probably allows window
-   * sizes to be negative numbers.
-   */
-  static public final int MIN_WINDOW_WIDTH = 128;
-  static public final int MIN_WINDOW_HEIGHT = 128;
 
 //  /**
 //   * Exception thrown when size() is called the first time.
@@ -700,7 +696,7 @@ public class PApplet implements PConstants {
   public Frame frame;
 
 
-  private Frame getFrame() {
+  public Frame getFrame() {
     return frame;
   }
 
@@ -728,21 +724,22 @@ public class PApplet implements PConstants {
 
     // this will be cleared by draw() if it is not overridden
     looping = true;
-    redraw = true;  // draw this guy once
+    redraw = true;  // draw this guy at least once
     firstMouse = true;
 
     // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
-    // inside runSketch(), but if this sketch takes care of calls  to init()
-    // and setup() itself (i.e. it's in a larger Java application), it'll
-    // still need to be set here so that fonts, etc can be retrieved.
+    // inside runSketch(), but if this sketch takes care of calls to init()
+    // when PApplet.main() is not used (i.e. it's in a Java application).
+    // THe path needs to be set here so that loadXxxx() functions work.
     if (sketchPath == null) {
       sketchPath = calcSketchPath();
     }
 
-    // Figure out the available display width and height.
-    // No major problem if this fails, we have to try again anyway in
-    // handleDraw() on the first (== 0) frame.
-    checkDisplaySize();
+    // set during Surface.initFrame()
+//    // Figure out the available display width and height.
+//    // No major problem if this fails, we have to try again anyway in
+//    // handleDraw() on the first (== 0) frame.
+//    checkDisplaySize();
 
     // Set the default size, until the user specifies otherwise
     int w = sketchWidth();
@@ -757,6 +754,7 @@ public class PApplet implements PConstants {
     width = g.width;
     height = g.height;
 
+    // prior to 3a5, thread was started here
   }
 
 
@@ -1423,7 +1421,8 @@ public class PApplet implements PConstants {
    * @see PApplet#height
    */
   public void size(int w, int h) {
-    size(w, h, JAVA2D, null);
+    //size(w, h, JAVA2D, null);
+    size(w, h, sketchRenderer(), null);
   }
 
   /**
@@ -1452,11 +1451,14 @@ public class PApplet implements PConstants {
 
     String currentRenderer = g.getClass().getName();
     if (currentRenderer.equals(renderer)) {
-      // Avoid infinite loop of throwing exception to reset renderer
-      resizeRenderer(w, h);
-      //redraw();  // will only be called insize draw()
+//      // Avoid infinite loop of throwing exception to reset renderer
+//      resizeRenderer(w, h);
+      surface.setSize(w, h);
 
-    } else {  // renderer is being changed
+    } else {  // renderer change attempted
+      // no longer kosher with 3.0a5
+      throw new RuntimeException("Y'all need to implement sketchRenderer()");
+      /*
       // otherwise ok to fall through and create renderer below
       // the renderer is changing, so need to create a new object
       g = makeGraphics(w, h, renderer, path, true);
@@ -1474,6 +1476,7 @@ public class PApplet implements PConstants {
       // this is for opengl, which needs a valid, properly sized
       // display before calling anything inside setup().
       throw new RendererChangeException();
+      */
     }
   }
 
@@ -3109,25 +3112,12 @@ public class PApplet implements PConstants {
   //
 
 
-  int cursorType = ARROW; // cursor type
-  boolean cursorVisible = true; // cursor visibility flag
-//  PImage invisibleCursor;
-  Cursor invisibleCursor;
-
-
   /**
    * Set the cursor type
    * @param kind either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT
    */
   public void cursor(int kind) {
-    // Swap the HAND cursor because MOVE doesn't seem to be available on OS X
-    // https://github.com/processing/processing/issues/2358
-    if (platform == MACOSX && kind == MOVE) {
-      kind = HAND;
-    }
-    setCursor(Cursor.getPredefinedCursor(kind));
-    cursorVisible = true;
-    this.cursorType = kind;
+    surface.setCursor(kind);
   }
 
 
@@ -3169,17 +3159,7 @@ public class PApplet implements PConstants {
    * @param y the vertical active spot of the cursor
    */
   public void cursor(PImage img, int x, int y) {
-    // don't set this as cursor type, instead use cursor_type
-    // to save the last cursor used in case cursor() is called
-    //cursor_type = Cursor.CUSTOM_CURSOR;
-    Image jimage =
-      createImage(new MemoryImageSource(img.width, img.height,
-                                        img.pixels, 0, img.width));
-    Point hotspot = new Point(x, y);
-    Toolkit tk = Toolkit.getDefaultToolkit();
-    Cursor cursor = tk.createCustomCursor(jimage, hotspot, "Custom Cursor");
-    setCursor(cursor);
-    cursorVisible = true;
+    surface.setCursor(img, x, y);
   }
 
 
@@ -3188,14 +3168,7 @@ public class PApplet implements PConstants {
    * Notice that the program remembers the last set cursor type
    */
   public void cursor() {
-    // maybe should always set here? seems dangerous, since
-    // it's likely that java will set the cursor to something
-    // else on its own, and the applet will be stuck b/c bagel
-    // thinks that the cursor is set to one particular thing
-    if (!cursorVisible) {
-      cursorVisible = true;
-      setCursor(Cursor.getPredefinedCursor(cursorType));
-    }
+    surface.showCursor();
   }
 
 
@@ -3214,20 +3187,7 @@ public class PApplet implements PConstants {
    * @usage Application
    */
   public void noCursor() {
-    // in 0216, just re-hide it?
-//    if (!cursorVisible) return;  // don't hide if already hidden.
-
-    if (invisibleCursor == null) {
-      BufferedImage cursorImg =
-        new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-      invisibleCursor =
-        getToolkit().createCustomCursor(cursorImg, new Point(8, 8), "blank");
-    }
-    // was formerly 16x16, but the 0x0 was added by jdf as a fix
-    // for macosx, which wasn't honoring the invisible cursor
-//    cursor(invisibleCursor, 8, 8);
-    setCursor(invisibleCursor);
-    cursorVisible = false;
+    surface.hideCursor();
   }
 
 
@@ -4660,8 +4620,12 @@ public class PApplet implements PConstants {
         if (bytes == null) {
           return null;
         } else {
-          Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
-          PImage image = loadImageMT(awtImage);
+          //Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
+          //PImage image = loadImageMT(awtImage);
+          Image awtImage = new ImageIcon(bytes).getImage();
+          PImage image = new PImage(awtImage);
+          image.parent = this;
+
           if (image.width == -1) {
             System.err.println("The file " + filename +
                                " contains bad image data, or may not be an image.");
@@ -4803,23 +4767,24 @@ public class PApplet implements PConstants {
   }
 
 
-  /**
-   * Load an AWT image synchronously by setting up a MediaTracker for
-   * a single image, and blocking until it has loaded.
-   */
-  protected PImage loadImageMT(Image awtImage) {
-    MediaTracker tracker = new MediaTracker(this);
-    tracker.addImage(awtImage, 0);
-    try {
-      tracker.waitForAll();
-    } catch (InterruptedException e) {
-      //e.printStackTrace();  // non-fatal, right?
-    }
-
-    PImage image = new PImage(awtImage);
-    image.parent = this;
-    return image;
-  }
+  // done internally by ImageIcon
+//  /**
+//   * Load an AWT image synchronously by setting up a MediaTracker for
+//   * a single image, and blocking until it has loaded.
+//   */
+//  protected PImage loadImageMT(Image awtImage) {
+//    MediaTracker tracker = new MediaTracker(this);
+//    tracker.addImage(awtImage, 0);
+//    try {
+//      tracker.waitForAll();
+//    } catch (InterruptedException e) {
+//      //e.printStackTrace();  // non-fatal, right?
+//    }
+//
+//    PImage image = new PImage(awtImage);
+//    image.parent = this;
+//    return image;
+//  }
 
 
   /**
@@ -9196,8 +9161,11 @@ public class PApplet implements PConstants {
 
 
   static public void runSketch(final String args[], final PApplet constructedApplet) {
-    // Doesn't seem to do much to help avoid flicker
+    // Supposed to help with flicker, but no effect on OS X.
+    // TODO IIRC this helped on Windows, but need to double check.
     System.setProperty("sun.awt.noerasebackground", "true");
+    // Call validate() while resize events are in progress
+    Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
     if (args.length < 1) {
       System.err.println("Usage: PApplet <appletname>");
@@ -9305,7 +9273,6 @@ public class PApplet implements PConstants {
     PSurface surface = (PSurface) surfaceMethod.invoke(null, new Object[] { });
 
     // A handful of things that need to be set before init/start.
-//    applet.frame = frame;
     applet.sketchPath = folder;
     // If the applet doesn't call for full screen, but the command line does,
     // enable it. Conversely, if the command line does not, don't disable it.
@@ -9316,13 +9283,19 @@ public class PApplet implements PConstants {
     applet.args = PApplet.subset(args, argIndex + 1);
     applet.external = external;
 
-    //frame.setTitle(name);
+    // For backwards compatability, initFrame() returns an AWT Frame object,
+    // whether or not one is actually used. There's lots of code that uses
+    // frame.setTitle() and frame.setResizable() out there...
     Frame frame =
-      surface.initFrame(applet.sketchWidth(), applet.sketchHeight(),
-                        backgroundColor,
+      surface.initFrame(applet, backgroundColor,
                         displayIndex, present, spanDisplays);
+    applet.frame = frame;
+    frame.setTitle(name);
 
     applet.init();
+    // TODO this used to be inside init()... does it need to stay there for
+    // other external things like Python or embedding in Java apps?
+    surface.startThread();
 //    applet.start();
 
     // Wait until the applet has figured out its width.
@@ -9340,9 +9313,27 @@ public class PApplet implements PConstants {
     }
 
     if (present) {
-      surface.placeFullScreen();
+      //surface.placeFullScreen(hideStop);
+      if (hideStop) {
+        stopColor = null;  // they'll get the hint
+      }
+      surface.placePresent(stopColor);
     } else {
       surface.placeWindow();
+    }
+    // not always running externally when in present mode
+    if (external) {
+      surface.setupExternalMessages();
+    }
+  }
+
+
+  /** Convenience method, should only be called by PSurface subclasses. */
+  static public void hideMenuBar() {
+    if (PApplet.platform == PConstants.MACOSX) {
+      // Call some native code to remove the menu bar on OS X. Not necessary
+      // on Linux and Windows, who are happy to make full screen windows.
+      japplemenubar.JAppleMenuBar.hide();
     }
   }
 
@@ -9627,6 +9618,11 @@ public class PApplet implements PConstants {
   // the PImage and PGraphics source code files.
 
   // public functions for processing.core
+
+
+  static public PSurface createSurface() {
+    return PGraphics.createSurface();
+  }
 
 
   /**
