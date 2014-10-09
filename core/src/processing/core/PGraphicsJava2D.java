@@ -60,6 +60,13 @@ public class PGraphicsJava2D extends PGraphics {
 //  boolean useOffscreen = true;  // ~40fps
   boolean useOffscreen = false;
 
+  /**
+   * Java AWT Image object associated with this renderer. For the 1.0 version
+   * of P2D and P3D, this was be associated with their MemoryImageSource.
+   * For PGraphicsJava2D, it will be the offscreen drawing buffer.
+   */
+  public Image image;  // moved from PGraphics, not sure about this yet
+
   public Graphics2D g2;
   protected BufferedImage offscreen;
 
@@ -199,22 +206,13 @@ public class PGraphicsJava2D extends PGraphics {
           g2 = (Graphics2D) image.getGraphics();
         }
       }
-    } else {
+    } else {  // not the primary surface
       // Since this buffer's offscreen anyway, no need for the extra offscreen
       // buffer. However, unlike the primary surface, this feller needs to be
       // ARGB so that blending ("alpha" compositing) will work properly.
       image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       g2 = (Graphics2D) image.getGraphics();
     }
-//    if (!useCanvas) {
-//      defaultComposite = g2.getComposite();
-//    }
-
-    // can't un-set this because this may be only a resize
-    // http://dev.processing.org/bugs/show_bug.cgi?id=463
-    //defaultsInited = false;
-    //checkSettings();
-    //reapplySettings = true;
   }
 
 
@@ -1694,7 +1692,6 @@ public class PGraphicsJava2D extends PGraphics {
     }
 
     Font font = (Font) textFont.getNative();
-    //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
       FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics(font);
       return metrics.getAscent();

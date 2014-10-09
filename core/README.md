@@ -55,6 +55,8 @@ inside main, will know the screen that's being used for the app
 - The size() JavaDoc in PApplet is comically old
 - Does createFont() need to run through PGraphics?
 - Need to fix sketch placement issues (default size with long setup(), etc) Actually, the default size with long setup() is probably that defaultSize is set false, but the initial render doesn't finish before width/height are set to something useful.
+- selectInput(), selectOutput(), selectFolder() now passing 'null' as parent Window. Should just leave them un-anchored, but need to test to make this doesn't break anything else.
+- do we need sketchOutputPath() and sketchOutputStream()?
 
 #### Removed functions (not final, just notes)
 param() 

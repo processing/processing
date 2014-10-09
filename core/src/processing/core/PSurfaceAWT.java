@@ -44,13 +44,6 @@ public class PSurfaceAWT implements PSurface {
   boolean useStrategy = false;
   Canvas canvas;
 
-  /**
-   * Java AWT Image object associated with this renderer. For the 1.0 version
-   * of P2D and P3D, this was be associated with their MemoryImageSource.
-   * For PGraphicsJava2D, it will be the offscreen drawing buffer.
-   */
-  public Image image;
-
   PApplet sketch;
 
   Thread thread;
@@ -390,11 +383,19 @@ public class PSurfaceAWT implements PSurface {
     sketch.displayWidth = screenRect.width;
     sketch.displayHeight = screenRect.height;
 
+    int sketchWidth = sketch.sketchWidth();
+    int sketchHeight = sketch.sketchHeight();
+
     // Sketch has already requested to be the same as the screen's
     // width and height, so let's roll with full screen mode.
-    if (screenRect.width == sketch.sketchWidth() &&
-        screenRect.height == sketch.sketchHeight()) {
+    if (screenRect.width == sketchWidth &&
+        screenRect.height == sketchHeight) {
       fullScreen = true;
+    }
+
+    if (fullScreen || spanDisplays) {
+      sketchWidth = screenRect.width;
+      sketchHeight = screenRect.height;
     }
 
     // Using a JFrame fixes a Windows problem with Present mode. This might
@@ -432,11 +433,17 @@ public class PSurfaceAWT implements PSurface {
       if (backgroundColor != null) {
         ((JFrame) frame).getContentPane().setBackground(backgroundColor);
       }
+      // this may be the bounds of all screens
       frame.setBounds(screenRect);
       frame.setVisible(true);
     }
     frame.setLayout(null);
-    frame.add(applet);
+    //frame.add(applet);
+
+    // Need to pass back our new sketchWidth/Height here, because it may have
+    // been overridden by numbers we calculated above if fullScreen and/or
+    // spanScreens was in use.
+    sketch.makePrimaryGraphics(sketchWidth, sketchHeight);
 
     if (fullScreen) {
       frame.invalidate();
@@ -603,6 +610,7 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
+  // needs to resize the frame, which will resize the canvas, and so on...
   public void setSize(int width, int height) {
     throw new RuntimeException("implement me, see readme.md");
   }
@@ -705,7 +713,7 @@ public class PSurfaceAWT implements PSurface {
 //          System.err.println(PApplet.EXTERNAL_QUIT);
 //          System.err.flush();  // important
 //          System.exit(0);
-          exit();  // don't quit, need to just shut everything down (0133)
+          sketch.exit();  // don't quit, need to just shut everything down (0133)
         }
       });
   }
@@ -760,17 +768,17 @@ public class PSurfaceAWT implements PSurface {
                 new Rectangle(0, 0, //insets.left, insets.top,
                               windowSize.width - insets.left - insets.right,
                               windowSize.height - insets.top - insets.bottom);
-              Rectangle oldBounds = getBounds();
+              Rectangle oldBounds = canvas.getBounds();
               if (!newBounds.equals(oldBounds)) {
                 // the ComponentListener in PApplet will handle calling size()
-                setBounds(newBounds);
+                canvas.setBounds(newBounds);
 
                 // In 0225, calling this via reflection so that we can still
                 // compile in Java 1.6. This is a trap since we really need
                 // to move to 1.7 and cannot support 1.6, but things like text
                 // are still a little wonky on 1.7, especially on OS X.
                 // This gives us a way to at least test against older VMs.
-                revalidate();   // let the layout manager do its work
+                canvas.revalidate();   // let the layout manager do its work
                 /*
                 if (revalidateMethod != null) {
                   try {
@@ -1213,8 +1221,8 @@ public class PSurfaceAWT implements PSurface {
 
       // If the user called the exit() function, the window should close,
       // rather than the sketch just halting.
-      if (exitCalled) {
-        exitActual();
+      if (sketch.exitCalled) {
+        sketch.exitActual();
       }
     }
   }

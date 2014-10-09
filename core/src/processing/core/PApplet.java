@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.FileDialog;
+import java.awt.Font;
 // for the Frame object (deprecate?)
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
@@ -54,7 +55,6 @@ import java.util.zip.*;
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-
 import javax.swing.JFrame;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileSystemView;
@@ -788,6 +788,16 @@ public class PApplet implements PConstants {
   }
 
 
+  public String sketchOutputPath() {
+    return null;
+  }
+
+
+  public OutputStream sketchOutputStream() {
+    return null;
+  }
+
+
   public void orientation(int which) {
     // ignore calls to the orientation command
   }
@@ -1336,6 +1346,7 @@ public class PApplet implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
+  /*
   protected void resizeRenderer(int newWidth, int newHeight) {
     debug("resizeRenderer request for " + newWidth + " " + newHeight);
     if (width != newWidth || height != newHeight) {
@@ -1345,6 +1356,7 @@ public class PApplet implements PConstants {
       height = newHeight;
     }
   }
+  */
 
 
   /**
@@ -1435,49 +1447,58 @@ public class PApplet implements PConstants {
 /**
  * @nowebref
  */
-  public void size(final int w, final int h,
-                   String renderer, String path) {
-    // Run this from the EDT, just cuz it's AWT stuff (or maybe later Swing)
-   EventQueue.invokeLater(new Runnable() {
-     public void run() {
-    // Set the preferred size so that the layout managers can handle it
-    setPreferredSize(new Dimension(w, h));
-    setSize(w, h);
-     }
-   });
-
-    // ensure that this is an absolute path
-    if (path != null) path = savePath(path);
-
-    String currentRenderer = g.getClass().getName();
-    if (currentRenderer.equals(renderer)) {
-//      // Avoid infinite loop of throwing exception to reset renderer
-//      resizeRenderer(w, h);
-      surface.setSize(w, h);
-
-    } else {  // renderer change attempted
-      // no longer kosher with 3.0a5
-      throw new RuntimeException("Y'all need to implement sketchRenderer()");
-      /*
-      // otherwise ok to fall through and create renderer below
-      // the renderer is changing, so need to create a new object
-      g = makeGraphics(w, h, renderer, path, true);
-      this.width = w;
-      this.height = h;
-
-      // fire resize event to make sure the applet is the proper size
-//      setSize(iwidth, iheight);
-      // this is the function that will run if the user does their own
-      // size() command inside setup, so set defaultSize to false.
-      defaultSize = false;
-
-      // throw an exception so that setup() is called again
-      // but with a properly sized render
-      // this is for opengl, which needs a valid, properly sized
-      // display before calling anything inside setup().
-      throw new RendererChangeException();
-      */
+  public void size(final int w, final int h, String renderer, String path) {
+    if (!renderer.equals(sketchRenderer())) {
+      System.err.println("Because you're not running from the PDE, add this to your code:");
+      System.err.println("public String sketchRenderer() {");
+      System.err.println("  return " + renderer + ";");
+      System.err.println("}");
+      throw new RuntimeException("The sketchRenderer() method is not implemented.");
     }
+    surface.setSize(w, h);
+    g.setPath(path);  // finally, a path
+
+//    // Run this from the EDT, just cuz it's AWT stuff (or maybe later Swing)
+//   EventQueue.invokeLater(new Runnable() {
+//     public void run() {
+//    // Set the preferred size so that the layout managers can handle it
+//    setPreferredSize(new Dimension(w, h));
+//    setSize(w, h);
+//     }
+//   });
+//
+//    // ensure that this is an absolute path
+//    if (path != null) path = savePath(path);
+//
+//    String currentRenderer = g.getClass().getName();
+//    if (currentRenderer.equals(renderer)) {
+////      // Avoid infinite loop of throwing exception to reset renderer
+////      resizeRenderer(w, h);
+//      surface.setSize(w, h);
+//
+//    } else {  // renderer change attempted
+//      // no longer kosher with 3.0a5
+//      throw new RuntimeException("Y'all need to implement sketchRenderer()");
+//      /*
+//      // otherwise ok to fall through and create renderer below
+//      // the renderer is changing, so need to create a new object
+//      g = makeGraphics(w, h, renderer, path, true);
+//      this.width = w;
+//      this.height = h;
+//
+//      // fire resize event to make sure the applet is the proper size
+////      setSize(iwidth, iheight);
+//      // this is the function that will run if the user does their own
+//      // size() command inside setup, so set defaultSize to false.
+//      defaultSize = false;
+//
+//      // throw an exception so that setup() is called again
+//      // but with a properly sized render
+//      // this is for opengl, which needs a valid, properly sized
+//      // display before calling anything inside setup().
+//      throw new RendererChangeException();
+//      */
+//    }
   }
 
 
@@ -1585,17 +1606,22 @@ public class PApplet implements PConstants {
   }
 
 
-  /**
-   * Version of createGraphics() used internally.
-   */
+  public PGraphics makePrimaryGraphics(int wide, int high) {
+    return makeGraphics(wide, high, sketchRenderer(), null, true);
+  }
+
+
+  /** Version of createGraphics() used internally. */
   protected PGraphics makeGraphics(int w, int h,
                                    String renderer, String path,
                                    boolean primary) {
-    String openglError = external ?
-      "Before using OpenGL, first select " +
-      "Import Library > OpenGL from the Sketch menu." :
-      "The Java classpath and native library path is not " +  // welcome to Java programming!
-      "properly set for using the OpenGL library.";
+//    String openglError = external ?
+//      // This first one should no longer be possible
+//      "Before using OpenGL, first select " +
+//      "Import Library > OpenGL from the Sketch menu." :
+//       // Welcome to Java programming! The training wheels are off.
+//      "The Java classpath and native library path is not " +
+//      "properly set for using the OpenGL library.";
 
     if (!primary && !g.isGL()) {
       if (renderer.equals(P2D)) {
@@ -1625,26 +1651,30 @@ public class PApplet implements PConstants {
       String msg = ite.getTargetException().getMessage();
       if ((msg != null) &&
           (msg.indexOf("no jogl in java.library.path") != -1)) {
-        throw new RuntimeException(openglError +
-                                   " (The native library is missing.)");
+        // Is this true anymore, since the JARs contain the native libs?
+        throw new RuntimeException("The jogl library folder needs to be " +
+          "specified with -Djava.library.path=/path/to/jogl");
+
       } else {
         ite.getTargetException().printStackTrace();
         Throwable target = ite.getTargetException();
-        if (platform == MACOSX) target.printStackTrace(System.out);  // bug
-        // neither of these help, or work
-        //target.printStackTrace(System.err);
-        //System.err.flush();
-        //System.out.println(System.err);  // and the object isn't null
+        if (platform == MACOSX) {
+          target.printStackTrace(System.out);  // OS X bug (still true?)
+        }
         throw new RuntimeException(target.getMessage());
       }
 
     } catch (ClassNotFoundException cnfe) {
-      if (cnfe.getMessage().indexOf("processing.opengl.PGraphicsOpenGL") != -1) {
-        throw new RuntimeException(openglError +
-                                   " (The library .jar file is missing.)");
-      } else {
+//      if (cnfe.getMessage().indexOf("processing.opengl.PGraphicsOpenGL") != -1) {
+//        throw new RuntimeException(openglError +
+//                                   " (The library .jar file is missing.)");
+//      } else {
+      if (external) {
         throw new RuntimeException("You need to use \"Import Library\" " +
                                    "to add " + renderer + " to your sketch.");
+      } else {
+        throw new RuntimeException("The " + renderer +
+                                   " renderer is not in the class path.");
       }
 
     } catch (Exception e) {
@@ -1663,7 +1693,9 @@ public class PApplet implements PConstants {
           throw new RuntimeException(msg);
         }
       } else {
-        if (platform == MACOSX) e.printStackTrace(System.out);
+        if (platform == MACOSX) {
+          e.printStackTrace(System.out);  // OS X bug (still true?)
+        }
         throw new RuntimeException(e.getMessage());
       }
     }
@@ -1732,7 +1764,8 @@ public class PApplet implements PConstants {
       long now = System.nanoTime();
 
       if (frameCount == 0) {
-        surface.checkDisplaySize();
+        // 3.0a5 should be no longer needed; handled by PSurface
+        //surface.checkDisplaySize();
 
 //        try {
         //println("Calling setup()");
@@ -5466,6 +5499,7 @@ public class PApplet implements PConstants {
   // FILE/FOLDER SELECTION
 
 
+  /*
   private Frame selectFrame;
 
   private Frame selectFrame() {
@@ -5488,6 +5522,7 @@ public class PApplet implements PConstants {
     }
     return selectFrame;
   }
+  */
 
 
   /**
@@ -5531,7 +5566,7 @@ public class PApplet implements PConstants {
 
   public void selectInput(String prompt, String callback,
                           File file, Object callbackObject) {
-    selectInput(prompt, callback, file, callbackObject, selectFrame());
+    selectInput(prompt, callback, file, callbackObject, null);  //selectFrame());
   }
 
 
@@ -5559,7 +5594,7 @@ public class PApplet implements PConstants {
 
   public void selectOutput(String prompt, String callback,
                            File file, Object callbackObject) {
-    selectOutput(prompt, callback, file, callbackObject, selectFrame());
+    selectOutput(prompt, callback, file, callbackObject, null); //selectFrame());
   }
 
 
@@ -5634,7 +5669,7 @@ public class PApplet implements PConstants {
 
   public void selectFolder(String prompt, String callback,
                            File file, Object callbackObject) {
-    selectFolder(prompt, callback, file, callbackObject, selectFrame());
+    selectFolder(prompt, callback, file, callbackObject, null); //selectFrame());
   }
 
 
@@ -6080,34 +6115,6 @@ public class PApplet implements PConstants {
         return stream;
       }
     }
-
-    // Finally, something special for the Internet Explorer users. Turns out
-    // that we can't get files that are part of the same folder using the
-    // methods above when using IE, so we have to resort to the old skool
-    // getDocumentBase() from teh applet dayz. 1996, my brotha.
-    try {
-      URL base = getDocumentBase();
-      if (base != null) {
-        URL url = new URL(base, filename);
-        URLConnection conn = url.openConnection();
-        return conn.getInputStream();
-//      if (conn instanceof HttpURLConnection) {
-//      HttpURLConnection httpConnection = (HttpURLConnection) conn;
-//      // test for 401 result (HTTP only)
-//      int responseCode = httpConnection.getResponseCode();
-//    }
-      }
-    } catch (Exception e) { }  // IO or NPE or...
-
-    // Now try it with a 'data' subfolder. getting kinda desperate for data...
-    try {
-      URL base = getDocumentBase();
-      if (base != null) {
-        URL url = new URL(base, "data/" + filename);
-        URLConnection conn = url.openConnection();
-        return conn.getInputStream();
-      }
-    } catch (Exception e) { }
 
     try {
       // attempt to load from a local file, used when running as
@@ -9266,11 +9273,15 @@ public class PApplet implements PConstants {
       }
     }
 
-    String renderer = applet.sketchRenderer();
-    Class<?> rendererClass =
-      Thread.currentThread().getContextClassLoader().loadClass(renderer);
-    Method surfaceMethod = rendererClass.getMethod("createSurface");
-    PSurface surface = (PSurface) surfaceMethod.invoke(null, new Object[] { });
+    try {
+      String renderer = applet.sketchRenderer();
+      Class<?> rendererClass =
+        Thread.currentThread().getContextClassLoader().loadClass(renderer);
+      Method surfaceMethod = rendererClass.getMethod("createSurface");
+      PSurface surface = (PSurface) surfaceMethod.invoke(null, new Object[] { });
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
 
     // A handful of things that need to be set before init/start.
     applet.sketchPath = folder;
@@ -9319,7 +9330,7 @@ public class PApplet implements PConstants {
       }
       surface.placePresent(stopColor);
     } else {
-      surface.placeWindow();
+      surface.placeWindow(external, location, editorLocation);
     }
     // not always running externally when in present mode
     if (external) {

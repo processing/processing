@@ -33,7 +33,7 @@ import processing.core.*;
 
 
 /**
- * Thin wrapper for the iText PDF library, that handles writing PDF files.
+ * Thin wrapper for the iText PDF library that handles writing PDF files.
  * The majority of the work in this library is done by
  * <a href="http://www.lowagie.com/iText/">iText</a>.
  * <br /> <br />
