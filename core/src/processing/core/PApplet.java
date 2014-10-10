@@ -10592,7 +10592,7 @@ public class PApplet extends Applet
    * @param extraArgs sketch configuration strings
    */
   static public void main(String mainClass, String[] passedArgs, String... extraArgs) {
-    extraArgs = extraArgs==null? new String[] { mainClass } : append(extraArgs, mainClass);
+    extraArgs = extraArgs != null? append(extraArgs, mainClass) : new String[] { mainClass };
     if (passedArgs != null)  extraArgs = concat(extraArgs, passedArgs);
     runSketch(extraArgs, null);
   }
