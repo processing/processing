@@ -10583,6 +10583,21 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Convenience method so that extra String args like "--full-screen",
+   * "--location=x,y", "--display=n", etc. can be passed 1-by-1
+   * via Java's varargs feature.
+   * @param mainClass name of the class to load (with package if any)
+   * @param passedArgs command line arguments to pass to the sketch
+   * @param extraArgs sketch configuration strings
+   */
+  static public void main(String mainClass, String[] passedArgs, String... extraArgs) {
+    extraArgs = extraArgs != null? append(extraArgs, mainClass) : new String[] { mainClass };
+    if (passedArgs != null)  extraArgs = concat(extraArgs, passedArgs);
+    runSketch(extraArgs, null);
+  }
+
+
   static public void runSketch(final String args[], final PApplet constructedApplet) {
     // Disable abyssmally slow Sun renderer on OS X 10.5.
     if (platform == MACOSX) {
