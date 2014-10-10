@@ -3765,7 +3765,7 @@ public class PApplet extends Applet
    * or a sketch that needs to wait a few milliseconds before reading from
    * the serial port).
    */
-  public void delay(int napTime) {
+  static public final void delay(int napTime) {
     //if (frameCount != 0) {
     //if (napTime > 0) {
     try {
