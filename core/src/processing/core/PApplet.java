@@ -4824,6 +4824,7 @@ public class PApplet extends Applet
    * @webref math:calculation
    * @param n number to cube
    * @see PApplet#cbrt(float)
+   * @see PApplet#sq(float)
    */
   static public final float cb(float n) {
     return n*n*n;
