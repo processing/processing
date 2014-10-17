@@ -1,5 +1,6 @@
 package processing.sound;
 import processing.core.*;
+import java.io.File;
 
 public class SoundFile implements SoundObject {
 	
@@ -14,8 +15,7 @@ public class SoundFile implements SoundObject {
 	float m_add=0; 
 	int m_cue=0;
 	float m_pos=0; 
-	boolean m_loop;
-	
+	boolean m_loop;	
 	
 	public SoundFile(PApplet theParent, String path) {
 		this.parent = theParent;
@@ -24,7 +24,13 @@ public class SoundFile implements SoundObject {
     	m_engine.start();
     	methCla = new MethClaInterface();
 		m_filePath=theParent.dataPath(path);
-		m_info = m_engine.soundFileInfo(m_filePath);
+		File sample = new File(m_filePath);
+		if(sample.isFile() == true){
+			m_info = m_engine.soundFileInfo(m_filePath);
+		}
+		else {
+			System.out.println("Error: Soundfile doesn't exist. Pleae check path");
+		}
 	}
 	
 	public int frames(){

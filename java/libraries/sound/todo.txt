@@ -13,6 +13,7 @@
   + Fix problem of passing effects to Analyzers 
   + Make audio input work
   - Use Patch Cables for signal splitting for effects
+  + Fix MP3 thing
 
   Features:  
   + Compile Windows Version
