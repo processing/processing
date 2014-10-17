@@ -8297,6 +8297,16 @@ public class PApplet extends Applet
     return temp;
   }
 
+  static public short[] expand(short list[]) {
+    return expand(list, list.length << 1);
+  }
+
+  static public short[] expand(short list[], int newSize) {
+    short temp[] = new short[newSize];
+    System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+    return temp;
+  }
+
   static public char[] expand(char list[]) {
     return expand(list, list.length << 1);
   }
@@ -8347,6 +8357,14 @@ public class PApplet extends Applet
     return temp;
   }
 
+  static public <T> T[] expand(T list[]) {
+    return expand(list, list.length << 1);
+  }
+
+  static public <T> T[] expand(T list[], int newSize) {
+    return Arrays.copyOf(list, newSize);
+  }
+  /*
   static public String[] expand(String list[]) {
     return expand(list, list.length << 1);
   }
@@ -8357,11 +8375,11 @@ public class PApplet extends Applet
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
-
+  */
  /**
   * @nowebref
   */
-  static public Object expand(Object array) {
+  /*static public Object expand(Object array) {
     return expand(array, Array.getLength(array) << 1);
   }
 
@@ -8372,7 +8390,7 @@ public class PApplet extends Applet
                      Math.min(Array.getLength(list), newSize));
     return temp;
   }
-
+  */
   // contract() has been removed in revision 0124, use subset() instead.
   // (expand() is also functionally equivalent)
 
@@ -8395,7 +8413,19 @@ public class PApplet extends Applet
    * @see PApplet#shorten(boolean[])
    * @see PApplet#expand(boolean[])
    */
+  static public boolean[] append(boolean array[], boolean value) {
+    array = expand(array, array.length + 1);
+    array[array.length-1] = value;
+    return array;
+  }
+
   static public byte[] append(byte array[], byte value) {
+    array = expand(array, array.length + 1);
+    array[array.length-1] = value;
+    return array;
+  }
+
+  static public short[] append(short array[], short value) {
     array = expand(array, array.length + 1);
     array[array.length-1] = value;
     return array;
@@ -8413,12 +8443,30 @@ public class PApplet extends Applet
     return array;
   }
 
+  static public long[] append(long array[], long value) {
+    array = expand(array, array.length + 1);
+    array[array.length-1] = value;
+    return array;
+  }
+
   static public float[] append(float array[], float value) {
     array = expand(array, array.length + 1);
     array[array.length-1] = value;
     return array;
   }
 
+  static public double[] append(double array[], double value) {
+    array = expand(array, array.length + 1);
+    array[array.length-1] = value;
+    return array;
+  }
+
+  static public <T> T[] append(T array[], T value) {
+    array = expand(array, array.length + 1);
+    array[array.length-1] = value;
+    return array;
+  }
+  /*
   static public String[] append(String array[], String value) {
     array = expand(array, array.length + 1);
     array[array.length-1] = value;
@@ -8431,7 +8479,7 @@ public class PApplet extends Applet
     Array.set(array, length, value);
     return array;
   }
-
+  */
 
  /**
    * ( begin auto-generated from shorten.xml )
@@ -8457,6 +8505,10 @@ public class PApplet extends Applet
     return subset(list, 0, list.length-1);
   }
 
+  static public short[] shorten(short list[]) {
+    return subset(list, 0, list.length-1);
+  }
+
   static public char[] shorten(char list[]) {
     return subset(list, 0, list.length-1);
   }
@@ -8465,10 +8517,22 @@ public class PApplet extends Applet
     return subset(list, 0, list.length-1);
   }
 
+  static public long[] shorten(long list[]) {
+    return subset(list, 0, list.length-1);
+  }
+
   static public float[] shorten(float list[]) {
     return subset(list, 0, list.length-1);
   }
 
+  static public double[] shorten(double list[]) {
+    return subset(list, 0, list.length-1);
+  }
+
+  static public <T> T[] shorten(T list[]) {
+    return expand(list, list.length-1);
+  }
+  /*
   static public String[] shorten(String list[]) {
     return subset(list, 0, list.length-1);
   }
@@ -8477,7 +8541,7 @@ public class PApplet extends Applet
     int length = Array.getLength(list);
     return subset(list, 0, length - 1);
   }
-
+  */
 
   /**
    * ( begin auto-generated from splice.xml )
@@ -8499,8 +8563,7 @@ public class PApplet extends Applet
    * @see PApplet#concat(boolean[], boolean[])
    * @see PApplet#subset(boolean[], int, int)
    */
-  static final public boolean[] splice(boolean list[],
-                                       boolean value, int index) {
+  static public boolean[] splice(boolean list[], boolean value, int index) {
     boolean outgoing[] = new boolean[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = value;
@@ -8509,8 +8572,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public boolean[] splice(boolean list[],
-                                       boolean value[], int index) {
+  static public boolean[] splice(boolean list[], boolean value[], int index) {
     boolean outgoing[] = new boolean[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(value, 0, outgoing, index, value.length);
@@ -8519,8 +8581,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public byte[] splice(byte list[],
-                                    byte value, int index) {
+  static public byte[] splice(byte list[], byte value, int index) {
     byte outgoing[] = new byte[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = value;
@@ -8529,8 +8590,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public byte[] splice(byte list[],
-                                    byte value[], int index) {
+  static public byte[] splice(byte list[], byte value[], int index) {
     byte outgoing[] = new byte[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(value, 0, outgoing, index, value.length);
@@ -8539,9 +8599,25 @@ public class PApplet extends Applet
     return outgoing;
   }
 
+  static public short[] splice(short list[], short value, int index) {
+    short outgoing[] = new short[list.length + 1];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    outgoing[index] = value;
+    System.arraycopy(list, index, outgoing, index + 1,
+                     list.length - index);
+    return outgoing;
+  }
 
-  static final public char[] splice(char list[],
-                                    char value, int index) {
+  static public short[] splice(short list[], short value[], int index) {
+    short outgoing[] = new short[list.length + value.length];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    System.arraycopy(value, 0, outgoing, index, value.length);
+    System.arraycopy(list, index, outgoing, index + value.length,
+                     list.length - index);
+    return outgoing;
+  }
+
+  static public char[] splice(char list[], char value, int index) {
     char outgoing[] = new char[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = value;
@@ -8550,8 +8626,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public char[] splice(char list[],
-                                    char value[], int index) {
+  static public char[] splice(char list[], char value[], int index) {
     char outgoing[] = new char[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(value, 0, outgoing, index, value.length);
@@ -8560,8 +8635,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public int[] splice(int list[],
-                                   int value, int index) {
+  static public int[] splice(int list[], int value, int index) {
     int outgoing[] = new int[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = value;
@@ -8570,8 +8644,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public int[] splice(int list[],
-                                   int value[], int index) {
+  static public int[] splice(int list[], int value[], int index) {
     int outgoing[] = new int[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(value, 0, outgoing, index, value.length);
@@ -8580,8 +8653,25 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public float[] splice(float list[],
-                                     float value, int index) {
+  static public long[] splice(long list[], long value, int index) {
+    long outgoing[] = new long[list.length + 1];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    outgoing[index] = value;
+    System.arraycopy(list, index, outgoing, index + 1,
+                     list.length - index);
+    return outgoing;
+  }
+
+  static public long[] splice(long list[], long value[], int index) {
+    long outgoing[] = new long[list.length + value.length];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    System.arraycopy(value, 0, outgoing, index, value.length);
+    System.arraycopy(list, index, outgoing, index + value.length,
+                     list.length - index);
+    return outgoing;
+  }
+
+  static public float[] splice(float list[], float value, int index) {
     float outgoing[] = new float[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = value;
@@ -8590,8 +8680,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-  static final public float[] splice(float list[],
-                                     float value[], int index) {
+  static public float[] splice(float list[], float value[], int index) {
     float outgoing[] = new float[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(value, 0, outgoing, index, value.length);
@@ -8600,6 +8689,44 @@ public class PApplet extends Applet
     return outgoing;
   }
 
+  static public double[] splice(double list[], double value, int index) {
+    double outgoing[] = new double[list.length + 1];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    outgoing[index] = value;
+    System.arraycopy(list, index, outgoing, index + 1,
+                     list.length - index);
+    return outgoing;
+  }
+
+  static public double[] splice(double list[], double value[], int index) {
+    double outgoing[] = new double[list.length + value.length];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    System.arraycopy(value, 0, outgoing, index, value.length);
+    System.arraycopy(list, index, outgoing, index + value.length,
+                     list.length - index);
+    return outgoing;
+  }
+
+  static public <T> T[] splice(T list[], T value, int index) {
+    T outgoing[] = (T[]) Array.newInstance(list.getClass()
+                           .getComponentType(), list.length + 1);
+    System.arraycopy(list, 0, outgoing, 0, index);
+    outgoing[index] = value;
+    System.arraycopy(list, index, outgoing, index + 1,
+                     list.length - index);
+    return outgoing;
+  }
+
+  static public <T> T[] splice(T list[], T value[], int index) {
+    T outgoing[] = (T[]) Array.newInstance(list.getClass()
+                           .getComponentType(), list.length + value.length);
+    System.arraycopy(list, 0, outgoing, 0, index);
+    System.arraycopy(value, 0, outgoing, index, value.length);
+    System.arraycopy(list, index, outgoing, index + value.length,
+                     list.length - index);
+    return outgoing;
+  }
+  /*
   static final public String[] splice(String list[],
                                       String value, int index) {
     String outgoing[] = new String[list.length + 1];
@@ -8641,10 +8768,7 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
-
-  static public boolean[] subset(boolean list[], int start) {
-    return subset(list, start, list.length - start);
-  }
+  */
 
  /**
    * ( begin auto-generated from subset.xml )
@@ -8668,6 +8792,10 @@ public class PApplet extends Applet
   * @param count number of values to extract
   * @see PApplet#splice(boolean[], boolean, int)
   */
+  static public boolean[] subset(boolean list[], int start) {
+    return subset(list, start, list.length - start);
+  }
+
   static public boolean[] subset(boolean list[], int start, int count) {
     boolean output[] = new boolean[count];
     System.arraycopy(list, start, output, 0, count);
@@ -8684,6 +8812,15 @@ public class PApplet extends Applet
     return output;
   }
 
+  static public short[] subset(short list[], int start) {
+    return subset(list, start, list.length - start);
+  }
+
+  static public short[] subset(short list[], int start, int count) {
+    short output[] = new short[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
 
   static public char[] subset(char list[], int start) {
     return subset(list, start, list.length - start);
@@ -8705,6 +8842,16 @@ public class PApplet extends Applet
     return output;
   }
 
+  static public long[] subset(long list[], int start) {
+    return subset(list, start, list.length - start);
+  }
+
+  static public long[] subset(long list[], int start, int count) {
+    long output[] = new long[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
   static public float[] subset(float list[], int start) {
     return subset(list, start, list.length - start);
   }
@@ -8715,7 +8862,24 @@ public class PApplet extends Applet
     return output;
   }
 
+  static public double[] subset(double list[], int start) {
+    return subset(list, start, list.length - start);
+  }
 
+  static public double[] subset(double list[], int start, int count) {
+    double output[] = new double[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+  static public <T> T[] subset(T list[], int start) {
+    return subset(list, start, list.length - start);
+  }
+
+  static public <T> T[] subset(T list[], int start, int count) {
+    return Arrays.copyOfRange(list, start, start + count);
+  }
+  /*
   static public String[] subset(String list[], int start) {
     return subset(list, start, list.length - start);
   }
@@ -8738,7 +8902,7 @@ public class PApplet extends Applet
     System.arraycopy(list, start, outgoing, 0, count);
     return outgoing;
   }
-
+  */
 
  /**
    * ( begin auto-generated from concat.xml )
@@ -8758,41 +8922,68 @@ public class PApplet extends Applet
   * @see PApplet#splice(boolean[], boolean, int)
   * @see PApplet#arrayCopy(Object, int, Object, int, int)
   */
-  static public boolean[] concat(boolean a[], boolean b[]) {
+  static public boolean[] concat(boolean a[], boolean... b) {
     boolean c[] = new boolean[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
 
-  static public byte[] concat(byte a[], byte b[]) {
+  static public byte[] concat(byte a[], byte... b) {
     byte c[] = new byte[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
 
-  static public char[] concat(char a[], char b[]) {
+  static public short[] concat(short a[], short... b) {
+    short c[] = new short[a.length + b.length];
+    System.arraycopy(a, 0, c, 0, a.length);
+    System.arraycopy(b, 0, c, a.length, b.length);
+    return c;
+  }
+
+  static public char[] concat(char a[], char... b) {
     char c[] = new char[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
 
-  static public int[] concat(int a[], int b[]) {
+  static public int[] concat(int a[], int... b) {
     int c[] = new int[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
 
-  static public float[] concat(float a[], float b[]) {
+  static public long[] concat(long a[], long... b) {
+    long c[] = new long[a.length + b.length];
+    System.arraycopy(a, 0, c, 0, a.length);
+    System.arraycopy(b, 0, c, a.length, b.length);
+    return c;
+  }
+
+  static public float[] concat(float a[], float... b) {
     float c[] = new float[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
 
+  static public double[] concat(double a[], double... b) {
+    double c[] = new double[a.length + b.length];
+    System.arraycopy(a, 0, c, 0, a.length);
+    System.arraycopy(b, 0, c, a.length, b.length);
+    return c;
+  }
+
+  static public <T> T[] concat(T a[], T... b) {
+    T c[] = expand(a, a.length + b.length);
+    System.arraycopy(b, 0, c, a.length, b.length);
+    return c;
+  }
+  /*
   static public String[] concat(String a[], String b[]) {
     String c[] = new String[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
@@ -8809,7 +9000,7 @@ public class PApplet extends Applet
     System.arraycopy(b, 0, outgoing, alength, blength);
     return outgoing;
   }
-
+  */
   //
 
 
@@ -8841,6 +9032,15 @@ public class PApplet extends Applet
     return outgoing;
   }
 
+  static public short[] reverse(short list[]) {
+    short outgoing[] = new short[list.length];
+    int length1 = list.length - 1;
+    for (int i = 0; i < list.length; i++) {
+      outgoing[i] = list[length1 - i];
+    }
+    return outgoing;
+  }
+
   static public char[] reverse(char list[]) {
     char outgoing[] = new char[list.length];
     int length1 = list.length - 1;
@@ -8859,6 +9059,15 @@ public class PApplet extends Applet
     return outgoing;
   }
 
+  static public long[] reverse(long list[]) {
+    long outgoing[] = new long[list.length];
+    int length1 = list.length - 1;
+    for (int i = 0; i < list.length; i++) {
+      outgoing[i] = list[length1 - i];
+    }
+    return outgoing;
+  }
+
   static public float[] reverse(float list[]) {
     float outgoing[] = new float[list.length];
     int length1 = list.length - 1;
@@ -8868,6 +9077,23 @@ public class PApplet extends Applet
     return outgoing;
   }
 
+  static public double[] reverse(double list[]) {
+    double outgoing[] = new double[list.length];
+    int length1 = list.length - 1;
+    for (int i = 0; i < list.length; i++) {
+      outgoing[i] = list[length1 - i];
+    }
+    return outgoing;
+  }
+
+  static public <T> T[] reverse(T list[]) {
+    int i = 0, len = list.length;
+    T outgoing[] = (T[]) Array.newInstance(
+                           list.getClass().getComponentType(), len);
+    while (i != len)  outgoing[i++] = list[len - i];
+    return outgoing;
+  }
+  /*
   static public String[] reverse(String list[]) {
     String outgoing[] = new String[list.length];
     int length1 = list.length - 1;
@@ -8886,7 +9112,7 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
-
+  */
 
 
   //////////////////////////////////////////////////////////////
