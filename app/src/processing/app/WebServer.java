@@ -370,7 +370,7 @@ outerloop:
               int ind = name.lastIndexOf('.');
               String ct = null;
               if (ind > 0) {
-                  ct = (String) map.get(name.substring(ind));
+                  ct = map.get(name.substring(ind));
               }
               if (ct == null) {
                 //System.err.println("unknown content type " + name.substring(ind));
@@ -417,7 +417,7 @@ outerloop:
                 int ind = name.lastIndexOf('.');
                 String ct = null;
                 if (ind > 0) {
-                    ct = (String) map.get(name.substring(ind));
+                    ct = map.get(name.substring(ind));
                 }
                 if (ct == null) {
                     ct = "unknown/unknown";
