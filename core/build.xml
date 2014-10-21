@@ -26,7 +26,7 @@
 
     <mkdir dir="bin" />
     <javac source="1.7"
-	   target="1.7" 
+	   target="1.7"
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   debug="true"
