@@ -49,8 +49,8 @@
 
     <mkdir dir="bin" />
 
-    <javac source="1.7" 
-	   target="1.7" 
+    <javac source="1.7"
+	   target="1.7"
 	   destdir="bin" 
 	   encoding="UTF-8" 
 	   debug="off"
