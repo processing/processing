@@ -13,6 +13,10 @@ X Migrate to unsynchronized data structures
 X   https://github.com/processing/processing/pull/2863
 X improve contrib manager localization
 X   https://github.com/processing/processing/pull/2870
+X Fix typo in spanish translation
+X   https://github.com/processing/processing/pull/2906
+X Update ECJ, use 1.7 as source and target Java version
+X   https://github.com/processing/processing/pull/2907
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
 _ Fix renaming from RGB to Rgb.java and others
