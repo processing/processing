@@ -1479,11 +1479,12 @@ public class Table {
   /**
    * Set the data type for a column so that using it is more efficient.
    * @param column the column to change
-   * @param columnType One of int, long, float, double, or String.
+   * @param columnType One of int, long, float, double, string, or category.
    */
   public void setColumnType(int column, String columnType) {
+    columnType = columnType.toLowerCase();
     int type = -1;
-    if (columnType.equals("String")) {
+    if (columnType.equals("string")) {
       type = STRING;
     } else if (columnType.equals("int")) {
       type = INT;
