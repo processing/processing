@@ -13,6 +13,8 @@ X Migrate to unsynchronized data structures
 X   https://github.com/processing/processing/pull/2863
 X improve contrib manager localization
 X   https://github.com/processing/processing/pull/2870
+X Fix infinite recursion in sound library
+X   https://github.com/processing/processing/pull/2897
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
 _ Fix renaming from RGB to Rgb.java and others
