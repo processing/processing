@@ -81,6 +81,7 @@ JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_engineNew (JNIEnv 
            .addLibrary(methcla_plugins_tri)
            .addLibrary(methcla_plugins_pulse)
            .addLibrary(methcla_soundfile_api_libsndfile)
+           .addLibrary(methcla_soundfile_api_mpg123)
            .addLibrary(methcla_plugins_patch_cable)
            .addLibrary(methcla_plugins_sampler)
            .addLibrary(methcla_plugins_white_noise)

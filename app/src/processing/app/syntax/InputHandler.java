@@ -140,7 +140,7 @@ public abstract class InputHandler extends KeyAdapter
          */
         public static ActionListener getAction(String name)
         {
-                return (ActionListener)actions.get(name);
+                return actions.get(name);
         }
 
         /**

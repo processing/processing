@@ -65,9 +65,8 @@
     <!-- env used to set classpath below -->
     <property environment="env" />
 
-    <!-- need to stay at 1.6 until we update ecj.jar -->
-    <javac source="1.6" 
-	   target="1.6" 
+    <javac source="1.7"
+	   target="1.7"
 	   destdir="bin" 
 	   excludes="**/tools/format/**" 
 	   encoding="UTF-8" 

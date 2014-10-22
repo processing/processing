@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-2013 The Processing Foundation
+  Copyright (c) 2012-2014 The Processing Foundation
   Copyright (c) 2007-2012 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or
@@ -23,32 +23,28 @@
 package processing.app.platform;
 
 import java.awt.event.*;
+import java.io.File;
 
 import javax.swing.*;
 
-import processing.app.About;
-import processing.app.Base;
-import processing.app.Toolkit;
-import processing.app.Language;
-
 import com.apple.eawt.*;
+import com.apple.eawt.AppEvent.*;
+
+import processing.app.*;
 
 
 /**
  * Deal with issues related to thinking differently. This handles the basic
  * Mac OS X menu commands (and apple events) for open, about, prefs, etc.
  *
- * Based on OSXAdapter.java from Apple DTS.
- *
  * As of 0140, this code need not be built on platforms other than OS X,
  * because of the new platform structure which isolates through reflection.
  *
- * This suppresses deprecation warnings because to use the new code, all users
- * would be forced to use Java Update 3 on OS X 10.6, and Java Update 8 on
- * OS X 10.5, which doesn't seem likely at the moment.
+ * Rewritten for 0232 to remove deprecation issues, per the message
+ * <a href="http://lists.apple.com/archives/java-dev/2012/Jan/msg00101.html">here</a>.
+ * (We're able to do this now because we're dropping older Java versions.)
  */
-@SuppressWarnings("deprecation")
-public class ThinkDifferent implements ApplicationListener {
+public class ThinkDifferent {
 
   // pseudo-singleton model; no point in making multiple instances
   // of the EAWT application or our adapter
@@ -57,26 +53,54 @@ public class ThinkDifferent implements ApplicationListener {
   private static Application application;
 
   // reference to the app where the existing quit, about, prefs code is
-  private Base base;
+  //private Base base;
 
 
-  static protected void init(Base base) {
+  static protected void init(final Base base) {
     if (application == null) {
-      //application = new com.apple.eawt.Application();
       application = Application.getApplication();
     }
     if (adapter == null) {
-      adapter = new ThinkDifferent(base);
+      adapter = new ThinkDifferent();  //base);
     }
-    application.addApplicationListener(adapter);
-    application.setEnabledAboutMenu(true);
-    application.setEnabledPreferencesMenu(true);
-
-    // Set the menubar to be used when nothing else is open. http://j.mp/dkZmka
-    // Only available since Java for Mac OS X 10.6 Update 1, but removed
-    // dynamic loading code because that should be installed in 10.6.8, and
-    // we may be dropped 10.6 really soon anyway
     
+    application.setAboutHandler(new AboutHandler() {
+      public void handleAbout(AboutEvent ae) {
+        new About(null);
+      }
+    });
+    
+    application.setPreferencesHandler(new PreferencesHandler() {
+      public void handlePreferences(PreferencesEvent arg0) {
+        base.handlePrefs();
+      }
+    });
+
+    application.setOpenFileHandler(new OpenFilesHandler() {
+      public void openFiles(OpenFilesEvent event) {
+        for (File file : event.getFiles()) {
+          base.handleOpen(file.getAbsolutePath());
+        }
+      }
+    });
+    
+    application.setPrintFileHandler(new PrintFilesHandler() {
+      public void printFiles(PrintFilesEvent event) {
+        // TODO not yet implemented
+      }
+    });
+    
+    application.setQuitHandler(new QuitHandler() {
+      public void handleQuitRequestWith(QuitEvent event, QuitResponse response) {
+        if (base.handleQuit()) {
+          response.performQuit();
+        } else {
+          response.cancelQuit();
+        }
+      }
+    });
+
+    // Set the menubar to be used when nothing else is open. 
     JMenuBar defaultMenuBar = new JMenuBar();
     JMenu fileMenu = buildFileMenu(base);
     defaultMenuBar.add(fileMenu);
@@ -107,9 +131,9 @@ public class ThinkDifferent implements ApplicationListener {
   }
   
 
-  public ThinkDifferent(Base base) {
-    this.base = base;
-  }
+//  public ThinkDifferent(Base base) {
+//    this.base = base;
+//  }
 
 
   /**
@@ -153,65 +177,5 @@ public class ThinkDifferent implements ApplicationListener {
     fileMenu.add(item);
 
     return fileMenu;
-  }
-
-
-  // implemented handler methods.  These are basically hooks into existing
-  // functionality from the main app, as if it came over from another platform.
-  public void handleAbout(ApplicationEvent ae) {
-    if (base != null) {
-      ae.setHandled(true);
-      new About(null);
-    } else {
-      throw new IllegalStateException("handleAbout: Base instance detached from listener");
-    }
-  }
-
-
-  public void handlePreferences(ApplicationEvent ae) {
-    if (base != null) {
-      base.handlePrefs();
-      ae.setHandled(true);
-    } else {
-      throw new IllegalStateException("handlePreferences: Base instance detached from listener");
-    }
-  }
-
-
-  public void handleOpenApplication(ApplicationEvent ae) {
-  }
-
-
-  public void handleOpenFile(ApplicationEvent ae) {
-//    System.out.println("got open file event " + ae.getFilename());
-    String filename = ae.getFilename();
-    base.handleOpen(filename);
-    ae.setHandled(true);
-  }
-
-
-  public void handlePrintFile(ApplicationEvent ae) {
-    // TODO implement os x print handler here (open app, call handlePrint, quit)
-  }
-
-
-  public void handleQuit(ApplicationEvent ae) {
-    if (base != null) {
-      /*
-      / You MUST setHandled(false) if you want to delay or cancel the quit.
-      / This is important for cross-platform development -- have a universal quit
-      / routine that chooses whether or not to quit, so the functionality is identical
-      / on all platforms.  This example simply cancels the AppleEvent-based quit and
-      / defers to that universal method.
-      */
-      boolean result = base.handleQuit();
-      ae.setHandled(result);
-    } else {
-      throw new IllegalStateException("handleQuit: Base instance detached from listener");
-    }
-  }
-
-
-  public void handleReOpenApplication(ApplicationEvent arg0) {
   }
 }

@@ -300,7 +300,7 @@ public class FloatList implements Iterable<Float> {
 
 
   // same as splice
-  public void insert(int index, int[] values) {
+  public void insert(int index, float[] values) {
     if (index < 0) {
       throw new IllegalArgumentException("insert() index cannot be negative: it was " + index);
     }
@@ -328,7 +328,7 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  public void insert(int index, IntList list) {
+  public void insert(int index, FloatList list) {
     insert(index, list.values());
   }
 

@@ -120,7 +120,7 @@ public class Engine {
 	};
 	    
 	public static int[] soundFilePlayMono(float rate, float pos, float amp, float add, boolean loop, String path, float dur, int cue){
-		return soundFilePlayMono(rate, pos, amp, add, loop, path, dur, cue);
+		return methCla.soundFilePlayMono(rate, pos, amp, add, loop, path, dur, cue);
 	};
 	  
 	public static int[] soundFilePlayMulti(float rate, float amp, float add, boolean loop, String path, float dur, int cue){

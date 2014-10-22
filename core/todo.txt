@@ -8,6 +8,8 @@ X Fix check in loadShader()
 X   https://github.com/processing/processing/pull/2867
 X Refined PShader uniform missing message fixes
 X   https://github.com/processing/processing/pull/2869
+X Use correct parameter types in FloatList methods
+X   https://github.com/processing/processing/pull/2902
 
 
 andres
