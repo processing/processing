@@ -2708,24 +2708,6 @@ public class PGraphicsJava2D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // MASK
-
-
-  @Override
-  public void mask(int alpha[]) {
-    showMethodWarning("mask");
-  }
-
-
-  @Override
-  public void mask(PImage alpha) {
-    showMethodWarning("mask");
-  }
-
-
-
-  //////////////////////////////////////////////////////////////
-
   // FILTER
 
   // Because the PImage versions call loadPixels() and
