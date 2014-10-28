@@ -3435,9 +3435,18 @@ public class Table {
   public void replace(String orig, String replacement, int col) {
     if (columnTypes[col] == STRING) {
       String[] stringData = (String[]) columns[col];
-      for (int row = 0; row < rowCount; row++) {
-        if (stringData[row].equals(orig)) {
-          stringData[row] = replacement;
+
+      if (orig != null) {
+        for (int row = 0; row < rowCount; row++) {
+          if (orig.equals(stringData[row])) {
+            stringData[row] = replacement;
+          }
+        }
+      } else {  // null is a special case (and faster anyway)
+        for (int row = 0; row < rowCount; row++) {
+          if (stringData[row] == null) {
+            stringData[row] = replacement;
+          }
         }
       }
     }
