@@ -26,29 +26,6 @@ public class IntDict {
   private HashMap<String, Integer> indices = new HashMap<String, Integer>();
 
 
-//  /**
-//   * Create a new object by counting the number of times each unique entry
-//   * shows up in the specified String array.
-//   */
-//  static public IntHash fromTally(String[] list) {
-//    IntHash outgoing = new IntHash();
-//    for (String s : list) {
-//      outgoing.inc(s);
-//    }
-//    outgoing.crop();
-//    return outgoing;
-//  }
-//
-//
-//  static public IntHash fromOrder(String[] list) {
-//    IntHash outgoing = new IntHash();
-//    for (int i = 0; i < list.length; i++) {
-//      outgoing.set(list[i], i);
-//    }
-//    return outgoing;
-//  }
-
-
   public IntDict() {
     count = 0;
     keys = new String[10];
