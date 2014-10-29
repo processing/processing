@@ -7991,6 +7991,9 @@ public class PApplet extends Applet
    * folder wrapped into the JAR file. To read data from the data folder that
    * works with an applet, you should use other methods such as createInput(),
    * createReader(), or loadStrings().
+   * <p>
+   * dataPath() can fail if sketchPath is null, so call it in or after setup(),
+   * not in the main body of the class.
    */
   public String dataPath(String where) {
     return dataFile(where).getAbsolutePath();
@@ -8016,7 +8019,11 @@ public class PApplet extends Applet
       File dataFolder = new File(containingFolder, "data");
       return new File(dataFolder, where);
     }
+
     // Windows, Linux, or when not using a Mac OS X .app file
+    if (sketchPath == null) throw new NullPointerException(
+      "Error in dataPath: sketchPath == null, so paths cannot be produced relative to it. Call dataPath in or after setup()."
+    );
     return new File(sketchPath + File.separator + "data" + File.separator + where);
   }
 
