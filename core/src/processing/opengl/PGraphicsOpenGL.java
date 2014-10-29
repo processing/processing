@@ -10064,6 +10064,7 @@ public class PGraphicsOpenGL extends PGraphics {
       IndexCache cache = tess.polyIndexCache;
       int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
       firstPointIndexCache = index;
+      if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
       for (int i = 0; i < in.vertexCount; i++) {
         int count = cache.vertexCount[index];
         if (PGL.MAX_VERTEX_INDEX1 <= count + nPtVert) {
@@ -10192,6 +10193,7 @@ public class PGraphicsOpenGL extends PGraphics {
       IndexCache cache = tess.polyIndexCache;
       int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
       firstPointIndexCache = index;
+      if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
       for (int i = 0; i < in.vertexCount; i++) {
         int nvert = 5;
         int count = cache.vertexCount[index];
