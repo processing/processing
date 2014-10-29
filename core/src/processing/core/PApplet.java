@@ -8021,7 +8021,7 @@ public class PApplet extends Applet
     }
 
     // Windows, Linux, or when not using a Mac OS X .app file
-    if (sketchPath == null) throw new NullPointerException(
+    if (sketchPath == null) throw new IllegalStateException(
       "Error in dataPath: sketchPath == null, so paths cannot be produced relative to it. Call dataPath in or after setup()."
     );
     return new File(sketchPath + File.separator + "data" + File.separator + where);
