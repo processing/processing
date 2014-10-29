@@ -1,7 +1,10 @@
 0232 core (3.0a5) 
+X fix how nulls are handled with Table.replace()
+X add (simple) ODS writer to Table
+
+graphics
 X roll back full screen changes
 X   https://github.com/processing/processing/issues/2641
-
 
 pulls
 X Fix check in loadShader()
