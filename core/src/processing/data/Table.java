@@ -1301,22 +1301,24 @@ public class Table {
     // save us from having to create the entire document in memory again before
     // writing to the file. So while it's dorky, the outcome is still useful.
     StringBuilder sanitized = new StringBuilder();
-    char[] array = text.toCharArray();
-    for (char c : array) {
-      if (c == '&') {
-        sanitized.append("&amp;");
-      } else if (c == '\'') {
-        sanitized.append("&apos;");
-      } else if (c == '"') {
-        sanitized.append("&quot;");
-      } else if (c == '<') {
-        sanitized.append("&lt;");
-      } else if (c == '>') {
-        sanitized.append("&rt;");
-      } else if (c < 32 || c > 127) {
-        sanitized.append("&#" + ((int) c) + ";");
-      } else {
-        sanitized.append(c);
+    if (text != null) {
+      char[] array = text.toCharArray();
+      for (char c : array) {
+        if (c == '&') {
+          sanitized.append("&amp;");
+        } else if (c == '\'') {
+          sanitized.append("&apos;");
+        } else if (c == '"') {
+          sanitized.append("&quot;");
+        } else if (c == '<') {
+          sanitized.append("&lt;");
+        } else if (c == '>') {
+          sanitized.append("&rt;");
+        } else if (c < 32 || c > 127) {
+          sanitized.append("&#" + ((int) c) + ";");
+        } else {
+          sanitized.append(c);
+        }
       }
     }
 
