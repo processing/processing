@@ -2114,6 +2114,15 @@ public class Table {
   }
 
 
+  public void addRows(Table source) {
+    int index = getRowCount();
+    setRowCount(index + source.getRowCount());
+    for (TableRow row : source.rows()) {
+      setRow(index++, row);
+    }
+  }
+
+
   public void insertRow(int insert, Object[] columnData) {
     for (int col = 0; col < columns.length; col++) {
       switch (columnTypes[col]) {
