@@ -1,6 +1,9 @@
 0232 core (3.0a5) 
+
+table
 X fix how nulls are handled with Table.replace()
 X add (simple) ODS writer to Table
+X add addRows(Table) method (more efficient, one resize)
 
 graphics
 X roll back full screen changes
