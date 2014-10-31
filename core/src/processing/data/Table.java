@@ -362,7 +362,7 @@ public class Table {
       loadBinary(input);
 
     } else if (extension.equals("ods")) {
-      odsParse(input, worksheet);
+      odsParse(input, worksheet, header);
 
     } else {
       BufferedReader reader = PApplet.createReader(input);
@@ -617,7 +617,7 @@ public class Table {
   }
 
 
-  protected void odsParse(InputStream input, String worksheet) {
+  protected void odsParse(InputStream input, String worksheet, boolean header) {
     try {
       InputStream contentStream = odsFindContentXML(input);
       XML xml = new XML(contentStream);
@@ -633,7 +633,7 @@ public class Table {
       for (XML sheet : sheets) {
 //        System.out.println(sheet.getAttribute("table:name"));
         if (worksheet == null || worksheet.equals(sheet.getString("table:name"))) {
-          odsParseSheet(sheet);
+          odsParseSheet(sheet, header);
           found = true;
           if (worksheet == null) {
             break;  // only read the first sheet
@@ -664,7 +664,7 @@ public class Table {
    * Parses a single sheet of XML from this file.
    * @param The XML object for a single worksheet from the ODS file
    */
-  private void odsParseSheet(XML sheet) {
+  private void odsParseSheet(XML sheet, boolean header) {
     // Extra <p> or <a> tags inside the text tag for the cell will be stripped.
     // Different from showing formulas, and not quite the same as 'save as
     // displayed' option when saving from inside OpenOffice. Only time we
@@ -761,13 +761,19 @@ public class Table {
           }
         }
       }
-      if (rowNotNull && rowRepeat > 1) {
-        String[] rowStrings = getStringRow(rowIndex);
-        for (int r = 1; r < rowRepeat; r++) {
-          addRow(rowStrings);
+      if (header) {
+        removeTitleRow();  // efficient enough on the first row
+        header = false;  // avoid infinite loop
+
+      } else {
+        if (rowNotNull && rowRepeat > 1) {
+          String[] rowStrings = getStringRow(rowIndex);
+          for (int r = 1; r < rowRepeat; r++) {
+            addRow(rowStrings);
+          }
         }
+        rowIndex += rowRepeat;
       }
-      rowIndex += rowRepeat;
     }
   }
 
