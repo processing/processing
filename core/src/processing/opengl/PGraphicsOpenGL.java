@@ -6056,7 +6056,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_ADD);
       }
-      pgl.blendFunc(PGL.DST_COLOR, PGL.SRC_COLOR);
+      pgl.blendFunc(PGL.ZERO, PGL.SRC_COLOR);
 
     } else if (blendMode == SCREEN) {
       if (blendEqSupported) {
