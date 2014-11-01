@@ -6033,7 +6033,6 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (blendMode == LIGHTEST) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_MAX);
-        pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
       } else {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "LIGHTEST");
       }
@@ -6041,7 +6040,6 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (blendMode == DARKEST) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_MIN);
-        pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
       } else {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "DARKEST");
       }
