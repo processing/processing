@@ -6025,7 +6025,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (blendMode == SUBTRACT) {
       if (blendEqSupported) {
         pgl.blendEquation(PGL.FUNC_REVERSE_SUBTRACT);
-        pgl.blendFunc(PGL.ONE, PGL.SRC_ALPHA);
+        pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE);
       } else {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "SUBTRACT");
       }
