@@ -51,7 +51,6 @@ public class Client implements Runnable {
 
   Thread thread;
   Socket socket;
-  String ip;
   int port;
   String host;
 
@@ -77,7 +76,6 @@ public class Client implements Runnable {
       socket = new Socket(this.host, this.port);
       input = socket.getInputStream();
       output = socket.getOutputStream();
-      ip = socket.getInetAddress().getHostAddress();
 
       thread = new Thread(this);
       thread.start();
@@ -124,7 +122,6 @@ public class Client implements Runnable {
 
     input = socket.getInputStream();
     output = socket.getOutputStream();
-    ip = socket.getInetAddress().getHostAddress();
 
     thread = new Thread(this);
     thread.start();
@@ -276,7 +273,10 @@ public class Client implements Runnable {
    * @brief Returns the IP address of the machine as a String
    */
   public String ip() {
-    return ip;
+    if (socket != null){
+      return socket.getInetAddress().getHostAddress();
+    }
+    return null;
   }
 
 
