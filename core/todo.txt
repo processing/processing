@@ -1,9 +1,22 @@
 0232 core (3.0a5) 
+_ size(640,360 , P3D) doesn't work properly
+_   https://github.com/processing/processing/issues/2924
+_ why doesn't p5 punt when loadFont() is used on an otf?
+_   is this a GL problem? 
+
+data
+X fix XML.getString() with a default when no attrs are present at all
+X   was causing a NullPointerException
+X   also fixes getInt() et al
+_ fix how dict works to not return '0' values
+_   add optional second param
 
 table
 X fix how nulls are handled with Table.replace()
 X add (simple) ODS writer to Table
 X add addRows(Table) method (more efficient, one resize)
+X support "header" option with ODS files
+_ handling of 'missing' values in Table needs serious work
 
 graphics
 X roll back full screen changes
@@ -16,7 +29,20 @@ X Refined PShader uniform missing message fixes
 X   https://github.com/processing/processing/pull/2869
 X Use correct parameter types in FloatList methods
 X   https://github.com/processing/processing/pull/2902
-
+X Pass correct offset to glCopyTexSubImage2D
+X   https://github.com/processing/processing/pull/2898
+X beginShape(POINTS) not working for PShape
+X   https://github.com/processing/processing/issues/2912
+X   https://github.com/processing/processing/pull/2915
+X Multiple blending fixes & improvements
+X   https://github.com/processing/processing/pull/2921
+X   https://github.com/processing/processing/issues/2807
+X   https://github.com/processing/processing/issues/1224
+o Sort out blending differences with P2D/P3D
+o   might be that compatible images not setting alpha mode correctly
+o   image = gc.createCompatibleVolatileImage(source.width, source.height, Transparency.TRANSLUCENT);
+o   https://github.com/processing/processing/issues/1844
+X 
 
 andres
 A Confusing message: The shader doesn't have a uniform called "foo"
@@ -58,6 +84,8 @@ _   the table pointer version will be speedy and allow chaining
 later
 _ bring back chaining in JSON (and add to XML)
 _   maybe once we make the PVector change
+_ bezierSegment() function to do equal-length segments
+_   https://github.com/processing/processing/issues/2919
 
 
 high
@@ -80,10 +108,6 @@ _   internally, we probably have to call set() if it's a 1 pixel point
 _     but that's going to be a mess.. need to first check the CTM
 _ tint() not working in PDF (regression between 2.0.3 and 2.1)
 _   https://github.com/processing/processing/issues/2428
-_ Sort out blending differences with P2D/P3D
-_   might be that compatible images not setting alpha mode correctly
-_   image = gc.createCompatibleVolatileImage(source.width, source.height, Transparency.TRANSLUCENT);
-_   https://github.com/processing/processing/issues/1844
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
