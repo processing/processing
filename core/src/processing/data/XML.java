@@ -724,8 +724,14 @@ public class XML implements Serializable {
 
 
   public String getString(String name, String defaultValue) {
-    Node attr = node.getAttributes().getNamedItem(name);
-    return (attr == null) ? defaultValue : attr.getNodeValue();
+    NamedNodeMap attrs = node.getAttributes();
+    if (attrs != null) {
+      Node attr = attrs.getNamedItem(name);
+      if (attr != null) {
+        return attr.getNodeValue();
+      }
+    }
+    return defaultValue;
   }
 
 

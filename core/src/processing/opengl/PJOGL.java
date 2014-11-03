@@ -1935,7 +1935,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void copyTexSubImage2D(int target, int level, int xOffset, int yOffset, int x, int y, int width, int height) {
-    gl.glCopyTexSubImage2D(target, level, x, y, xOffset, xOffset, width, height);
+    gl.glCopyTexSubImage2D(target, level, x, y, xOffset, yOffset, width, height);
   }
 
   @Override

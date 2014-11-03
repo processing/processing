@@ -6012,57 +6012,73 @@ public class PGraphicsOpenGL extends PGraphics {
 
     } else if (blendMode == BLEND) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_ADD);
+        pgl.blendEquationSeparate(PGL.FUNC_ADD,
+                                  PGL.FUNC_ADD);
       }
-      pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE_MINUS_SRC_ALPHA);
+      pgl.blendFuncSeparate(PGL.SRC_ALPHA, PGL.ONE_MINUS_SRC_ALPHA,
+                            PGL.ONE,       PGL.ONE);
 
     } else if (blendMode == ADD) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_ADD);
+        pgl.blendEquationSeparate(PGL.FUNC_ADD,
+                                  PGL.FUNC_ADD);
       }
-      pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE);
+      pgl.blendFuncSeparate(PGL.SRC_ALPHA, PGL.ONE,
+                            PGL.ONE,       PGL.ONE);
 
     } else if (blendMode == SUBTRACT) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_REVERSE_SUBTRACT);
-        pgl.blendFunc(PGL.ONE, PGL.SRC_ALPHA);
+        pgl.blendEquationSeparate(PGL.FUNC_REVERSE_SUBTRACT,
+                                  PGL.FUNC_ADD);
+        pgl.blendFuncSeparate(PGL.SRC_ALPHA, PGL.ONE,
+                              PGL.ONE,       PGL.ONE);
       } else {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "SUBTRACT");
       }
 
     } else if (blendMode == LIGHTEST) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_MAX);
-        pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
+        pgl.blendEquationSeparate(PGL.FUNC_MAX,
+                                  PGL.FUNC_ADD);
+        pgl.blendFuncSeparate(PGL.ONE, PGL.ONE,
+                              PGL.ONE, PGL.ONE);
       } else {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "LIGHTEST");
       }
 
     } else if (blendMode == DARKEST) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_MIN);
-        pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
+        pgl.blendEquationSeparate(PGL.FUNC_MIN,
+                                  PGL.FUNC_ADD);
+        pgl.blendFuncSeparate(PGL.ONE, PGL.ONE,
+                              PGL.ONE, PGL.ONE);
       } else {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "DARKEST");
       }
 
     } else if (blendMode == EXCLUSION) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_ADD);
+        pgl.blendEquationSeparate(PGL.FUNC_ADD,
+                                  PGL.FUNC_ADD);
       }
-      pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE_MINUS_SRC_COLOR);
+      pgl.blendFuncSeparate(PGL.ONE_MINUS_DST_COLOR, PGL.ONE_MINUS_SRC_COLOR,
+                            PGL.ONE,                 PGL.ONE);
 
     } else if (blendMode == MULTIPLY) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_ADD);
+        pgl.blendEquationSeparate(PGL.FUNC_ADD,
+                                  PGL.FUNC_ADD);
       }
-      pgl.blendFunc(PGL.DST_COLOR, PGL.SRC_COLOR);
+      pgl.blendFuncSeparate(PGL.ZERO, PGL.SRC_COLOR,
+                            PGL.ONE,  PGL.ONE);
 
     } else if (blendMode == SCREEN) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_ADD);
+        pgl.blendEquationSeparate(PGL.FUNC_ADD,
+                                  PGL.FUNC_ADD);
       }
-      pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE);
+      pgl.blendFuncSeparate(PGL.ONE_MINUS_DST_COLOR, PGL.ONE,
+                            PGL.ONE,                 PGL.ONE);
 
     } else if (blendMode == DIFFERENCE) {
       PGraphics.showWarning(BLEND_RENDERER_ERROR, "DIFFERENCE");
@@ -10064,6 +10080,7 @@ public class PGraphicsOpenGL extends PGraphics {
       IndexCache cache = tess.polyIndexCache;
       int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
       firstPointIndexCache = index;
+      if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
       for (int i = 0; i < in.vertexCount; i++) {
         int count = cache.vertexCount[index];
         if (PGL.MAX_VERTEX_INDEX1 <= count + nPtVert) {
@@ -10192,6 +10209,7 @@ public class PGraphicsOpenGL extends PGraphics {
       IndexCache cache = tess.polyIndexCache;
       int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
       firstPointIndexCache = index;
+      if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
       for (int i = 0; i < in.vertexCount; i++) {
         int nvert = 5;
         int count = cache.vertexCount[index];

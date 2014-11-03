@@ -25,6 +25,7 @@ package processing.data;
 
 import java.io.*;
 import java.lang.reflect.*;
+import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -34,6 +35,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -292,7 +294,7 @@ public class Table {
 
 
   static final String[] loadExtensions = { "csv", "tsv", "ods", "bin" };
-  static final String[] saveExtensions = { "csv", "tsv", "html", "bin" };
+  static final String[] saveExtensions = { "csv", "tsv", "ods", "bin", "html" };
 
   static public String extensionOptions(boolean loading, String filename, String options) {
     String extension = PApplet.checkExtension(filename);
@@ -360,7 +362,7 @@ public class Table {
       loadBinary(input);
 
     } else if (extension.equals("ods")) {
-      odsParse(input, worksheet);
+      odsParse(input, worksheet, header);
 
     } else {
       BufferedReader reader = PApplet.createReader(input);
@@ -615,7 +617,7 @@ public class Table {
   }
 
 
-  protected void odsParse(InputStream input, String worksheet) {
+  protected void odsParse(InputStream input, String worksheet, boolean header) {
     try {
       InputStream contentStream = odsFindContentXML(input);
       XML xml = new XML(contentStream);
@@ -631,7 +633,7 @@ public class Table {
       for (XML sheet : sheets) {
 //        System.out.println(sheet.getAttribute("table:name"));
         if (worksheet == null || worksheet.equals(sheet.getString("table:name"))) {
-          odsParseSheet(sheet);
+          odsParseSheet(sheet, header);
           found = true;
           if (worksheet == null) {
             break;  // only read the first sheet
@@ -662,7 +664,7 @@ public class Table {
    * Parses a single sheet of XML from this file.
    * @param The XML object for a single worksheet from the ODS file
    */
-  private void odsParseSheet(XML sheet) {
+  private void odsParseSheet(XML sheet, boolean header) {
     // Extra <p> or <a> tags inside the text tag for the cell will be stripped.
     // Different from showing formulas, and not quite the same as 'save as
     // displayed' option when saving from inside OpenOffice. Only time we
@@ -759,13 +761,19 @@ public class Table {
           }
         }
       }
-      if (rowNotNull && rowRepeat > 1) {
-        String[] rowStrings = getStringRow(rowIndex);
-        for (int r = 1; r < rowRepeat; r++) {
-          addRow(rowStrings);
+      if (header) {
+        removeTitleRow();  // efficient enough on the first row
+        header = false;  // avoid infinite loop
+
+      } else {
+        if (rowNotNull && rowRepeat > 1) {
+          String[] rowStrings = getStringRow(rowIndex);
+          for (int r = 1; r < rowRepeat; r++) {
+            addRow(rowStrings);
+          }
         }
+        rowIndex += rowRepeat;
       }
-      rowIndex += rowRepeat;
     }
   }
 
@@ -971,6 +979,13 @@ public class Table {
       writeCSV(writer);
     } else if (extension.equals("tsv")) {
       writeTSV(writer);
+    } else if (extension.equals("ods")) {
+      try {
+        saveODS(output);
+      } catch (IOException e) {
+        e.printStackTrace();
+        return false;
+      }
     } else if (extension.equals("html")) {
       writeHTML(writer);
     } else if (extension.equals("bin")) {
@@ -1136,6 +1151,207 @@ public class Table {
       } else {
         writer.print(c);
       }
+    }
+  }
+
+
+  protected void saveODS(OutputStream os) throws IOException {
+    ZipOutputStream zos = new ZipOutputStream(os);
+
+    final String xmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+
+    ZipEntry entry = new ZipEntry("META-INF/manifest.xml");
+    String[] lines = new String[] {
+      xmlHeader,
+      "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">",
+      "  <manifest:file-entry manifest:media-type=\"application/vnd.oasis.opendocument.spreadsheet\" manifest:version=\"1.2\" manifest:full-path=\"/\"/>",
+      "  <manifest:file-entry manifest:media-type=\"text/xml\" manifest:full-path=\"content.xml\"/>",
+      "  <manifest:file-entry manifest:media-type=\"text/xml\" manifest:full-path=\"styles.xml\"/>",
+      "  <manifest:file-entry manifest:media-type=\"text/xml\" manifest:full-path=\"meta.xml\"/>",
+      "  <manifest:file-entry manifest:media-type=\"text/xml\" manifest:full-path=\"settings.xml\"/>",
+      "</manifest:manifest>"
+    };
+    zos.putNextEntry(entry);
+    zos.write(PApplet.join(lines, "\n").getBytes());
+    zos.closeEntry();
+
+    /*
+    entry = new ZipEntry("meta.xml");
+    lines = new String[] {
+      xmlHeader,
+      "<office:document-meta office:version=\"1.0\"" +
+      " xmlns:office=\"urn:oasis:names:tc:opendocument:xmlns:office:1.0\" />"
+    };
+    zos.putNextEntry(entry);
+    zos.write(PApplet.join(lines, "\n").getBytes());
+    zos.closeEntry();
+
+    entry = new ZipEntry("meta.xml");
+    lines = new String[] {
+      xmlHeader,
+      "<office:document-settings office:version=\"1.0\"" +
+      " xmlns:config=\"urn:oasis:names:tc:opendocument:xmlns:config:1.0\"" +
+      " xmlns:office=\"urn:oasis:names:tc:opendocument:xmlns:office:1.0\"" +
+      " xmlns:ooo=\"http://openoffice.org/2004/office\"" +
+      " xmlns:xlink=\"http://www.w3.org/1999/xlink\" />"
+    };
+    zos.putNextEntry(entry);
+    zos.write(PApplet.join(lines, "\n").getBytes());
+    zos.closeEntry();
+
+    entry = new ZipEntry("settings.xml");
+    lines = new String[] {
+      xmlHeader,
+      "<office:document-settings office:version=\"1.0\"" +
+      " xmlns:config=\"urn:oasis:names:tc:opendocument:xmlns:config:1.0\"" +
+      " xmlns:office=\"urn:oasis:names:tc:opendocument:xmlns:office:1.0\"" +
+      " xmlns:ooo=\"http://openoffice.org/2004/office\"" +
+      " xmlns:xlink=\"http://www.w3.org/1999/xlink\" />"
+    };
+    zos.putNextEntry(entry);
+    zos.write(PApplet.join(lines, "\n").getBytes());
+    zos.closeEntry();
+
+    entry = new ZipEntry("styles.xml");
+    lines = new String[] {
+      xmlHeader,
+      "<office:document-styles office:version=\"1.0\"" +
+      " xmlns:office=\"urn:oasis:names:tc:opendocument:xmlns:office:1.0\" />"
+    };
+    zos.putNextEntry(entry);
+    zos.write(PApplet.join(lines, "\n").getBytes());
+    zos.closeEntry();
+    */
+
+    final String[] dummyFiles = new String[] {
+      "meta.xml", "settings.xml", "styles.xml"
+    };
+    lines = new String[] {
+      xmlHeader,
+      "<office:document-meta office:version=\"1.0\"" +
+      " xmlns:office=\"urn:oasis:names:tc:opendocument:xmlns:office:1.0\" />"
+    };
+    byte[] dummyBytes = PApplet.join(lines, "\n").getBytes();
+    for (String filename : dummyFiles) {
+      entry = new ZipEntry(filename);
+      zos.putNextEntry(entry);
+      zos.write(dummyBytes);
+      zos.closeEntry();
+    }
+
+    //
+
+    entry = new ZipEntry("mimetype");
+    zos.putNextEntry(entry);
+    zos.write("application/vnd.oasis.opendocument.spreadsheet".getBytes());
+    zos.closeEntry();
+
+    //
+
+    entry = new ZipEntry("content.xml");
+    zos.putNextEntry(entry);
+    //lines = new String[] {
+    writeUTF(zos, new String[] {
+      xmlHeader,
+      "<office:document-content" +
+        " xmlns:office=\"urn:oasis:names:tc:opendocument:xmlns:office:1.0\"" +
+        " xmlns:text=\"urn:oasis:names:tc:opendocument:xmlns:text:1.0\"" +
+        " xmlns:table=\"urn:oasis:names:tc:opendocument:xmlns:table:1.0\"" +
+        " office:version=\"1.2\">",
+     "  <office:body>",
+     "    <office:spreadsheet>",
+     "      <table:table table:name=\"Sheet1\" table:print=\"false\">"
+    });
+    //zos.write(PApplet.join(lines, "\n").getBytes());
+
+    byte[] rowStart = "        <table:table-row>\n".getBytes();
+    byte[] rowStop = "        </table:table-row>\n".getBytes();
+
+    if (hasColumnTitles()) {
+      zos.write(rowStart);
+      for (int i = 0; i < getColumnCount(); i++) {
+        saveStringODS(zos, columnTitles[i]);
+      }
+      zos.write(rowStop);
+    }
+
+    for (TableRow row : rows()) {
+      zos.write(rowStart);
+      for (int i = 0; i < getColumnCount(); i++) {
+        if (columnTypes[i] == STRING || columnTypes[i] == CATEGORY) {
+          saveStringODS(zos, row.getString(i));
+        } else {
+          saveNumberODS(zos, row.getString(i));
+        }
+      }
+      zos.write(rowStop);
+    }
+
+    //lines = new String[] {
+    writeUTF(zos, new String[] {
+      "      </table:table>",
+      "    </office:spreadsheet>",
+      "  </office:body>",
+      "</office:document-content>"
+    });
+    //zos.write(PApplet.join(lines, "\n").getBytes());
+    zos.closeEntry();
+
+    zos.flush();
+    zos.close();
+  }
+
+
+  void saveStringODS(OutputStream output, String text) throws IOException {
+    // At this point, I should have just used the XML library. But this does
+    // save us from having to create the entire document in memory again before
+    // writing to the file. So while it's dorky, the outcome is still useful.
+    StringBuilder sanitized = new StringBuilder();
+    if (text != null) {
+      char[] array = text.toCharArray();
+      for (char c : array) {
+        if (c == '&') {
+          sanitized.append("&amp;");
+        } else if (c == '\'') {
+          sanitized.append("&apos;");
+        } else if (c == '"') {
+          sanitized.append("&quot;");
+        } else if (c == '<') {
+          sanitized.append("&lt;");
+        } else if (c == '>') {
+          sanitized.append("&rt;");
+        } else if (c < 32 || c > 127) {
+          sanitized.append("&#" + ((int) c) + ";");
+        } else {
+          sanitized.append(c);
+        }
+      }
+    }
+
+    writeUTF(output,
+             "          <table:table-cell office:value-type=\"string\">",
+             "            <text:p>" + sanitized + "</text:p>",
+             "          </table:table-cell>");
+  }
+
+
+  void saveNumberODS(OutputStream output, String text) throws IOException {
+    writeUTF(output,
+             "          <table:table-cell office:value-type=\"float\" office:value=\"" + text + "\">",
+             "            <text:p>" + text + "</text:p>",
+             "          </table:table-cell>");
+  }
+
+
+  static Charset utf8;
+
+  static void writeUTF(OutputStream output, String... lines) throws IOException {
+    if (utf8 == null) {
+      utf8 = Charset.forName("UTF-8");
+    }
+    for (String str : lines) {
+      output.write(str.getBytes(utf8));
+      output.write('\n');
     }
   }
 
@@ -1901,6 +2117,15 @@ public class Table {
   public TableRow addRow(Object[] columnData) {
     setRow(getRowCount(), columnData);
     return new RowPointer(this, rowCount - 1);
+  }
+
+
+  public void addRows(Table source) {
+    int index = getRowCount();
+    setRowCount(index + source.getRowCount());
+    for (TableRow row : source.rows()) {
+      setRow(index++, row);
+    }
   }
 
 
@@ -3435,9 +3660,18 @@ public class Table {
   public void replace(String orig, String replacement, int col) {
     if (columnTypes[col] == STRING) {
       String[] stringData = (String[]) columns[col];
-      for (int row = 0; row < rowCount; row++) {
-        if (stringData[row].equals(orig)) {
-          stringData[row] = replacement;
+
+      if (orig != null) {
+        for (int row = 0; row < rowCount; row++) {
+          if (orig.equals(stringData[row])) {
+            stringData[row] = replacement;
+          }
+        }
+      } else {  // null is a special case (and faster anyway)
+        for (int row = 0; row < rowCount; row++) {
+          if (stringData[row] == null) {
+            stringData[row] = replacement;
+          }
         }
       }
     }

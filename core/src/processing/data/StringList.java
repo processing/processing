@@ -683,14 +683,6 @@ public class StringList implements Iterable<String> {
   }
 
 
-//  public void println() {
-//    for (int i = 0; i < count; i++) {
-//      System.out.println("[" + i + "] " + data[i]);
-//    }
-//    System.out.flush();
-//  }
-
-
   public String join(String separator) {
     if (count == 0) {
       return "";
