@@ -618,7 +618,9 @@ public class PShape implements PConstants {
 
 
   protected void beginContourImpl() {
-    if (vertexCodes.length == vertexCodeCount) {
+    if (vertexCodes == null) {
+      vertexCodes = new int[10];
+    } else if (vertexCodes.length == vertexCodeCount) {
       vertexCodes = PApplet.expand(vertexCodes);
     }
     vertexCodes[vertexCodeCount++] = BREAK;
