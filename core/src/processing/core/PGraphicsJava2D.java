@@ -133,15 +133,12 @@ public class PGraphicsJava2D extends PGraphics {
   public void setSize(int iwidth, int iheight) {  // ignore
     width = iwidth;
     height = iheight;
-//    width1 = width - 1;
-//    height1 = height - 1;
 
     allocate();
     reapplySettings();
   }
 
 
-  // broken out because of subclassing for opengl
   @Override
   protected void allocate() {
     // Tried this with RGB instead of ARGB for the primarySurface version,
@@ -194,7 +191,7 @@ public class PGraphicsJava2D extends PGraphics {
 //          System.out.println("hopefully faster " + width + " " + height);
 //          new Exception().printStackTrace(System.out);
 
-          GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+          GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
           // If not realized (off-screen, i.e the Color Selector Tool),
           // gc will be null.
           if (gc == null) {
@@ -219,7 +216,8 @@ public class PGraphicsJava2D extends PGraphics {
   //public void dispose()
 
 
-  static public PSurface createSurface() {
+  @Override
+  public PSurface createSurface() {
     return new PSurfaceAWT();
   }
 

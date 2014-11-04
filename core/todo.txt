@@ -21,6 +21,10 @@ _ handling of 'missing' values in Table needs serious work
 graphics
 X roll back full screen changes
 X   https://github.com/processing/processing/issues/2641
+X remove isGL(), is2D(), is3D(), displayable() from PApplet
+X   these were auto-imported from PGraphics
+X remove pause variable from PApplet (was not documented)
+_ remove sketch path hack from PApplet
 
 pulls
 X Fix check in loadShader()
@@ -38,11 +42,11 @@ X Multiple blending fixes & improvements
 X   https://github.com/processing/processing/pull/2921
 X   https://github.com/processing/processing/issues/2807
 X   https://github.com/processing/processing/issues/1224
+o   https://github.com/processing/processing/pull/2601
 o Sort out blending differences with P2D/P3D
 o   might be that compatible images not setting alpha mode correctly
 o   image = gc.createCompatibleVolatileImage(source.width, source.height, Transparency.TRANSLUCENT);
 o   https://github.com/processing/processing/issues/1844
-X 
 
 andres
 A Confusing message: The shader doesn't have a uniform called "foo"

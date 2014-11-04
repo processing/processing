@@ -32,7 +32,8 @@ import processing.event.MouseEvent;
 public class PSurfaceAWT implements PSurface {
   GraphicsDevice displayDevice;
 
-  Frame frame;
+  // Internally, we know it's always a JFrame (not just a Frame)
+  JFrame frame;
 
   // Note that x and y may not be zero, depending on the display configuration
   Rectangle screenRect;
@@ -47,7 +48,7 @@ public class PSurfaceAWT implements PSurface {
   PApplet sketch;
 
   Thread thread;
-
+  boolean paused;
   Object pauseObject = new Object();
 
   /** As of release 0116, frameRate(60) is called as a default */
@@ -163,7 +164,8 @@ public class PSurfaceAWT implements PSurface {
     }
 
 
-    protected synchronized void render_orig() {
+    /*
+    protected synchronized void render_example() {
       System.out.println("render(), bounds are " + getBounds());
       if (getBufferStrategy() == null) {  // whole block [121222]
         System.out.println("creating a strategy");
@@ -224,10 +226,10 @@ public class PSurfaceAWT implements PSurface {
         System.out.println();
       } while (strategy.contentsLost());
     }
+    */
 
 
     protected synchronized void render() {
-
       if (canvas == null) {
         removeListeners(this);
         canvas = new Canvas();
@@ -238,7 +240,7 @@ public class PSurfaceAWT implements PSurface {
 //        add(canvas, BorderLayout.CENTER);
 //        doLayout();
       }
-      canvas.setBounds(0, 0, width, height);
+      canvas.setBounds(0, 0, sketch.width, sketch.height);
 //      System.out.println("render(), canvas bounds are " + canvas.getBounds());
       if (canvas.getBufferStrategy() == null) {  // whole block [121222]
 //        System.out.println("creating a strategy");
@@ -254,7 +256,7 @@ public class PSurfaceAWT implements PSurface {
         // are consistent in case the underlying surface was recreated
         do {
           Graphics draw = strategy.getDrawGraphics();
-          draw.drawImage(g.image, 0, 0, width, height, null);
+          draw.drawImage(g.image, 0, 0, sketch.width, sketch.height, null);
           draw.dispose();
 
           // Repeat the rendering if the drawing buffer contents
@@ -339,7 +341,7 @@ public class PSurfaceAWT implements PSurface {
       } else {
         Graphics screen = canvas.getGraphics();
         if (screen != null) {
-          screen.drawImage(g.image, 0, 0, width, height, null);
+          screen.drawImage(g.image, 0, 0, sketch.width, sketch.height, null);
         }
       }
     } else {
@@ -347,6 +349,21 @@ public class PSurfaceAWT implements PSurface {
     }
 //  getToolkit().sync();  // force repaint now (proper method)
   }
+
+
+  // what needs to happen here?
+  public void initOffscreen() {
+
+  }
+
+  /*
+  public Frame initOffscreen() {
+    Frame dummy = new Frame();
+    dummy.pack();  // get legit AWT graphics
+    // but don't show it
+    return dummy;
+  }
+  */
 
 
   public Frame initFrame(PApplet sketch, Color backgroundColor,
@@ -359,10 +376,10 @@ public class PSurfaceAWT implements PSurface {
     if ((deviceIndex >= 0) && (deviceIndex < devices.length)) {
       displayDevice = devices[deviceIndex];
     } else {
-      System.err.println("Display " + deviceIndex + " does not exist, " +
-                         "using the default display instead.");
+      System.err.format("Display %d does not exist, " +
+                         "using the default display instead.", deviceIndex);
       for (int i = 0; i < devices.length; i++) {
-        System.err.println("Display " + i + " is " + devices[i]);
+        System.err.format("Display %d is %s\n", i, devices[i]);
       }
     }
 
@@ -403,10 +420,17 @@ public class PSurfaceAWT implements PSurface {
     // OS X. It's time for a turnaround: Redmond is thinking different too!
     // https://github.com/processing/processing/issues/1955
     frame = new JFrame(displayDevice.getDefaultConfiguration());
-    // Default Processing gray, which will be replaced below if another
-    // color is specified on the command line (i.e. in the prefs).
-    ((JFrame) frame).getContentPane().setBackground(WINDOW_BGCOLOR);
-    // Cannot call setResizable(false) until later due to OS X (issue #467)
+//    // Default Processing gray, which will be replaced below if another
+//    // color is specified on the command line (i.e. in the prefs).
+//    ((JFrame) frame).getContentPane().setBackground(WINDOW_BGCOLOR);
+//    // Cannot call setResizable(false) until later due to OS X (issue #467)
+
+    // Removed code above, also removed from what's now in the placeXxxx()
+    // methods. Not sure why it was being double-set; hopefully anachronistic.
+    if (backgroundColor == null) {
+      backgroundColor = WINDOW_BGCOLOR;
+    }
+    frame.getContentPane().setBackground(backgroundColor);
 
     // Set the trimmings around the image
     setIconImage(frame);
@@ -430,9 +454,10 @@ public class PSurfaceAWT implements PSurface {
       //frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 
       frame.setUndecorated(true);
-      if (backgroundColor != null) {
-        ((JFrame) frame).getContentPane().setBackground(backgroundColor);
-      }
+      // another duplicate?
+//      if (backgroundColor != null) {
+//        frame.getContentPane().setBackground(backgroundColor);
+//      }
       // this may be the bounds of all screens
       frame.setBounds(screenRect);
       frame.setVisible(true);
@@ -443,7 +468,8 @@ public class PSurfaceAWT implements PSurface {
     // Need to pass back our new sketchWidth/Height here, because it may have
     // been overridden by numbers we calculated above if fullScreen and/or
     // spanScreens was in use.
-    sketch.makePrimaryGraphics(sketchWidth, sketchHeight);
+    //sketch.makePrimaryGraphics(sketchWidth, sketchHeight);
+    sketch.makePrimaryGraphics();
 
     if (fullScreen) {
       frame.invalidate();
@@ -459,6 +485,36 @@ public class PSurfaceAWT implements PSurface {
     frame.setResizable(false);
 
     return frame;
+  }
+
+
+  /** Set the window (and dock, or whatever necessary) title. */
+  public void setTitle(String title) {
+    frame.setTitle(title);
+  }
+
+
+  /** Set true if we want to resize things (default is not resizable) */
+  public void setResizable(boolean resizable) {
+    frame.setResizable(resizable);
+  }
+
+
+  public void setVisible(boolean visible) {
+    frame.setVisible(visible);
+
+    if (visible && PApplet.platform == PConstants.LINUX) {
+      // Linux doesn't deal with insets the same way. We get fake insets
+      // earlier, and then the window manager will slap its own insets
+      // onto things once the frame is realized on the screen. Awzm.
+      if (PApplet.platform == PConstants.LINUX) {
+        Insets insets = frame.getInsets();
+        frame.setSize(Math.max(sketch.width, MIN_WINDOW_WIDTH) +
+                      insets.left + insets.right,
+                      Math.max(sketch.height, MIN_WINDOW_HEIGHT) +
+                      insets.top + insets.bottom);
+      }
+    }
   }
 
 
@@ -496,51 +552,17 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
-  public void placeWindow(boolean external, int[] location, int[] editorLocation) {
-    // can't do pack earlier cuz present mode don't like it
-    // (can't go full screen with a frame after calling pack)
-    //        frame.pack();
-
-    // get insets. get more.
-    Insets insets = frame.getInsets();
-    int windowW = Math.max(sketch.width, MIN_WINDOW_WIDTH) +
-      insets.left + insets.right;
-    int windowH = Math.max(sketch.height, MIN_WINDOW_HEIGHT) +
-      insets.top + insets.bottom;
+  public void placeWindow(int[] location) {
+    setFrameSize();
 
     int contentW = Math.max(sketch.width, MIN_WINDOW_WIDTH);
     int contentH = Math.max(sketch.height, MIN_WINDOW_HEIGHT);
-
-    frame.setSize(windowW, windowH);
 
     if (location != null) {
       // a specific location was received from the Runner
       // (applet has been run more than once, user placed window)
       frame.setLocation(location[0], location[1]);
 
-    } else if (external && editorLocation != null) {
-      int locationX = editorLocation[0] - 20;
-      int locationY = editorLocation[1];
-
-      if (locationX - windowW > 10) {
-        // if it fits to the left of the window
-        frame.setLocation(locationX - windowW, locationY);
-
-      } else {  // doesn't fit
-        // if it fits inside the editor window,
-        // offset slightly from upper lefthand corner
-        // so that it's plunked inside the text area
-        locationX = editorLocation[0] + 66;
-        locationY = editorLocation[1] + 66;
-
-        if ((locationX + windowW > sketch.displayWidth - 33) ||
-            (locationY + windowH > sketch.displayHeight - 33)) {
-          // otherwise center on screen
-          locationX = (sketch.displayWidth - windowW) / 2;
-          locationY = (sketch.displayHeight - windowH) / 2;
-        }
-        frame.setLocation(locationX, locationY);
-      }
     } else {  // just center on screen
       // Can't use frame.setLocationRelativeTo(null) because it sends the
       // frame to the main display, which undermines the --display setting.
@@ -554,52 +576,112 @@ public class PSurfaceAWT implements PSurface {
       frame.setLocation(frameLoc.x, 30);
     }
 
-    if (backgroundColor != null) {
-//    if (backgroundColor == Color.black) {  //BLACK) {
-//      // this means no bg color unless specified
-//      backgroundColor = SystemColor.control;
+//    if (backgroundColor != null) {
+//      ((JFrame) frame).getContentPane().setBackground(backgroundColor);
 //    }
-      ((JFrame) frame).getContentPane().setBackground(backgroundColor);
-    }
 
     canvas.setBounds((contentW - sketch.width)/2,
                      (contentH - sketch.height)/2,
                      sketch.width, sketch.height);
 
-//    if (external) {
-//      applet.setupExternalMessages();
-//
-//    } else {  // !external
-    if (!external) {
-      frame.addWindowListener(new WindowAdapter() {
-          @Override
-          public void windowClosing(java.awt.event.WindowEvent e) {
-            System.exit(0);
-          }
-        });
-    }
+    frame.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+        System.exit(0);
+      }
+    });
 
     // handle frame resizing events
     setupFrameResizeListener();
 
     // all set for rockin
-    if (sketch.displayable()) {
-      frame.setVisible(true);
+    if (sketch.getGraphics().displayable()) {
+      setVisible(true);
+    }
+  }
 
-      // Linux doesn't deal with insets the same way. We get fake insets
-      // earlier, and then the window manager will slap its own insets
-      // onto things once the frame is realized on the screen. Awzm.
-      if (PApplet.platform == PConstants.LINUX) {
-        Insets irlInsets = frame.getInsets();
-        if (!irlInsets.equals(insets)) {
-          insets = irlInsets;
-          windowW = Math.max(sketch.width, MIN_WINDOW_WIDTH) +
-            insets.left + insets.right;
-          windowH = Math.max(sketch.height, MIN_WINDOW_HEIGHT) +
-            insets.top + insets.bottom;
-          frame.setSize(windowW, windowH);
+
+  private Dimension setFrameSize() {
+    Insets insets = frame.getInsets();
+    int windowW = Math.max(sketch.width, MIN_WINDOW_WIDTH) +
+      insets.left + insets.right;
+    int windowH = Math.max(sketch.height, MIN_WINDOW_HEIGHT) +
+      insets.top + insets.bottom;
+    frame.setSize(windowW, windowH);
+    return new Dimension(windowW, windowH);
+  }
+
+
+  private void setFrameCentered() {
+    // Can't use frame.setLocationRelativeTo(null) because it sends the
+    // frame to the main display, which undermines the --display setting.
+    frame.setLocation(screenRect.x + (screenRect.width - sketch.width) / 2,
+                      screenRect.y + (screenRect.height - sketch.height) / 2);
+  }
+
+
+  public void placeWindow(int[] location, int[] editorLocation) {
+    Dimension window = setFrameSize();
+
+    int contentW = Math.max(sketch.width, MIN_WINDOW_WIDTH);
+    int contentH = Math.max(sketch.height, MIN_WINDOW_HEIGHT);
+
+    if (location != null) {
+      // a specific location was received from the Runner
+      // (applet has been run more than once, user placed window)
+      frame.setLocation(location[0], location[1]);
+
+    } else if (editorLocation != null) {
+      int locationX = editorLocation[0] - 20;
+      int locationY = editorLocation[1];
+
+      if (locationX - window.width > 10) {
+        // if it fits to the left of the window
+        frame.setLocation(locationX - window.width, locationY);
+
+      } else {  // doesn't fit
+        // if it fits inside the editor window,
+        // offset slightly from upper lefthand corner
+        // so that it's plunked inside the text area
+        locationX = editorLocation[0] + 66;
+        locationY = editorLocation[1] + 66;
+
+        if ((locationX + window.width > sketch.displayWidth - 33) ||
+            (locationY + window.height > sketch.displayHeight - 33)) {
+          // otherwise center on screen
+          locationX = (sketch.displayWidth - window.width) / 2;
+          locationY = (sketch.displayHeight - window.height) / 2;
         }
+        frame.setLocation(locationX, locationY);
       }
+    } else {  // just center on screen
+      setFrameCentered();
+    }
+    Point frameLoc = frame.getLocation();
+    if (frameLoc.y < 0) {
+      // Windows actually allows you to place frames where they can't be
+      // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
+      frame.setLocation(frameLoc.x, 30);
+    }
+
+//    if (backgroundColor != null) {
+////    if (backgroundColor == Color.black) {  //BLACK) {
+////      // this means no bg color unless specified
+////      backgroundColor = SystemColor.control;
+////    }
+//      ((JFrame) frame).getContentPane().setBackground(backgroundColor);
+//    }
+
+    canvas.setBounds((contentW - sketch.width)/2,
+                     (contentH - sketch.height)/2,
+                     sketch.width, sketch.height);
+
+    // handle frame resizing events
+    setupFrameResizeListener();
+
+    // TODO this is much too late... why even create the enormous frame for PDF?
+    if (sketch.getGraphics().displayable()) {
+      setVisible(true);
     }
   }
 
@@ -607,6 +689,51 @@ public class PSurfaceAWT implements PSurface {
   public void startThread() {
     thread = new AnimationThread();
     thread.start();
+  }
+
+
+  public boolean stopThread() {
+    if (thread == null) {
+      return false;
+    }
+    thread = null;
+    return true;
+  }
+
+
+  public boolean isStopped() {
+    return thread == null;
+  }
+
+
+  // sets a flag to pause the thread when ready
+  public void pauseThread() {
+    PApplet.debug("PApplet.run() paused, calling object wait...");
+    paused = true;
+  }
+
+
+  // halts the animation thread if the pause flag is set
+  protected void checkPause() {
+    if (paused) {
+      synchronized (pauseObject) {
+        try {
+          pauseObject.wait();
+          PApplet.debug("out of wait");
+        } catch (InterruptedException e) {
+          // waiting for this interrupt on a start() (resume) call
+        }
+      }
+    }
+    PApplet.debug("done with pause");
+  }
+
+
+  public void resumeThread() {
+    paused = false;
+    synchronized (pauseObject) {
+      pauseObject.notifyAll();  // wake up the animation thread
+    }
   }
 
 
@@ -658,7 +785,7 @@ public class PSurfaceAWT implements PSurface {
 
 
   // get the bounds for all displays
-  public Rectangle getDisplaySpan() {
+  static Rectangle getDisplaySpan() {
     Rectangle bounds = new Rectangle();
     GraphicsEnvironment environment =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -744,7 +871,6 @@ public class PSurfaceAWT implements PSurface {
     });
 
     frame.addComponentListener(new ComponentAdapter() {
-
         @Override
         public void componentResized(ComponentEvent e) {
           // Ignore bad resize events fired during setup to fix
@@ -1156,31 +1282,22 @@ public class PSurfaceAWT implements PSurface {
       // un-pause the sketch and get rolling
       start();
 
-      while ((Thread.currentThread() == this) && !sketch.finished) {
-        if (sketch.paused) {
-          PApplet.debug("PApplet.run() paused, calling object wait...");
-          synchronized (pauseObject) {
-            try {
-              pauseObject.wait();
-              PApplet.debug("out of wait");
-            } catch (InterruptedException e) {
-              // waiting for this interrupt on a start() (resume) call
-            }
-          }
-        }
-        PApplet.debug("done with pause");
+      while ((Thread.currentThread() == thread) && !sketch.finished) {
+        checkPause();
 
         // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
         // otherwise it may attempt a resize mid-render.
-        if (g != null) {
-          Dimension currentSize = getSize();
-          if (currentSize.width != g.width || currentSize.height != g.height) {
-            resizeRenderer(currentSize.width, currentSize.height);
-          }
+//        if (g != null) {
+        Dimension currentSize = getSize();
+        if (currentSize.width != g.width || currentSize.height != g.height) {
+          resizeRenderer(currentSize.width, currentSize.height);
         }
+//        }
 
         // render a single frame
-        if (g != null) sketch.handleDraw();
+//        if (g != null) {
+        sketch.handleDraw();
+//        }
 
         if (sketch.frameCount == 1) {
           requestFocus();

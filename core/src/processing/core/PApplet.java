@@ -33,16 +33,8 @@ import java.awt.FileDialog;
 import java.awt.Font;
 // for the Frame object (deprecate?)
 import java.awt.Frame;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
-import java.awt.MediaTracker;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.*;
@@ -55,8 +47,9 @@ import java.util.zip.*;
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JFileChooser;
+
+// used by desktopFile() method
 import javax.swing.filechooser.FileSystemView;
 
 import processing.data.*;
@@ -166,8 +159,12 @@ public class PApplet implements PConstants {
    */
   public String[] args;
 
-  /** Path to sketch folder */
-  public String sketchPath;
+  /**
+   * Path to sketch folder. Previously undocumented, made private in 3.0a5
+   * so that people use the sketchPath() method and it's inited properly.
+   */
+  private String sketchPath;
+//  public String sketchPath;
 
   static final boolean DEBUG = false;
 //  static final boolean DEBUG = true;
@@ -613,10 +610,11 @@ public class PApplet implements PConstants {
   /** true if the sketch has stopped permanently. */
   public volatile boolean finished;
 
-  /**
-   * true if the animation thread is paused.
-   */
-  public volatile boolean paused;
+  // public, but undocumented.. removing for 3.0a5
+//  /**
+//   * true if the animation thread is paused.
+//   */
+//  public volatile boolean paused;
 
   /**
    * true if exit() has been called so that things shut down
@@ -727,13 +725,14 @@ public class PApplet implements PConstants {
     redraw = true;  // draw this guy at least once
     firstMouse = true;
 
-    // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
-    // inside runSketch(), but if this sketch takes care of calls to init()
-    // when PApplet.main() is not used (i.e. it's in a Java application).
-    // THe path needs to be set here so that loadXxxx() functions work.
-    if (sketchPath == null) {
-      sketchPath = calcSketchPath();
-    }
+    // calculated dynamically on first call
+//    // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
+//    // inside runSketch(), but if this sketch takes care of calls to init()
+//    // when PApplet.main() is not used (i.e. it's in a Java application).
+//    // THe path needs to be set here so that loadXxxx() functions work.
+//    if (sketchPath == null) {
+//      sketchPath = calcSketchPath();
+//    }
 
     // set during Surface.initFrame()
 //    // Figure out the available display width and height.
@@ -741,18 +740,18 @@ public class PApplet implements PConstants {
 //    // handleDraw() on the first (== 0) frame.
 //    checkDisplaySize();
 
-    // Set the default size, until the user specifies otherwise
-    int w = sketchWidth();
-    int h = sketchHeight();
-    defaultSize = (w == DEFAULT_WIDTH) && (h == DEFAULT_HEIGHT);
-
-    g = makeGraphics(w, h, sketchRenderer(), null, true);
-    // Fire component resize event
-    setSize(w, h);
-    setPreferredSize(new Dimension(w, h));
-
-    width = g.width;
-    height = g.height;
+//    // Set the default size, until the user specifies otherwise
+//    int w = sketchWidth();
+//    int h = sketchHeight();
+//    defaultSize = (w == DEFAULT_WIDTH) && (h == DEFAULT_HEIGHT);
+//
+//    g = makeGraphics(w, h, sketchRenderer(), null, true);
+//    // Fire component resize event
+//    setSize(w, h);
+//    setPreferredSize(new Dimension(w, h));
+//
+//    width = g.width;
+//    height = g.height;
 
     // prior to 3a5, thread was started here
   }
@@ -798,6 +797,11 @@ public class PApplet implements PConstants {
   }
 
 
+  public PGraphics getGraphics() {
+    return g;
+  }
+
+
   public void orientation(int which) {
     // ignore calls to the orientation command
   }
@@ -812,23 +816,11 @@ public class PApplet implements PConstants {
    * PAppletGL needs to have a usable screen before getting things rolling.
    */
   public void start() {
-    debug("start() called");
-//    new Exception().printStackTrace(System.out);
-
-    paused = false; // unpause the thread
+//    paused = false; // unpause the thread  // removing for 3.0a5, don't think we want this here
 
     resume();
-//    resumeMethods.handle();
     handleMethods("resume");
-
-    debug("un-pausing thread");
-    synchronized (pauseObject) {
-      debug("start() calling pauseObject.notifyAll()");
-//      try {
-      pauseObject.notifyAll();  // wake up the animation thread
-      debug("un-pausing thread 3");
-//      } catch (InterruptedException e) { }
-    }
+    surface.resumeThread();
   }
 
 
@@ -854,11 +846,12 @@ public class PApplet implements PConstants {
 //      }
 //    }
 
-    // on the next trip through the animation thread, things will go sleepy-by
-    paused = true; // causes animation thread to sleep
-
+    //paused = true; // causes animation thread to sleep  // 3.0a5
     pause();
     handleMethods("pause");
+    // calling this down here, since it's another thread it's safer to call
+    // pause() and the registered pause methods first.
+    surface.pauseThread();
 
     // actual pause will happen in the run() method
 
@@ -1606,8 +1599,13 @@ public class PApplet implements PConstants {
   }
 
 
-  public PGraphics makePrimaryGraphics(int wide, int high) {
-    return makeGraphics(wide, high, sketchRenderer(), null, true);
+//  public PGraphics makePrimaryGraphics(int wide, int high) {
+//    return makeGraphics(wide, high, sketchRenderer(), null, true);
+//  }
+
+
+  public PGraphics makePrimaryGraphics() {
+    return makeGraphics(sketchWidth(), sketchHeight(), sketchRenderer(), null, true);
   }
 
 
@@ -2916,7 +2914,7 @@ public class PApplet implements PConstants {
    * @webref structure
    */
   public void exit() {
-    if (thread == null) {
+    if (surface.isStopped()) {
       // exit immediately, dispose() has already been called,
       // meaning that the main thread has long since exited
       exitActual();
@@ -2965,8 +2963,7 @@ public class PApplet implements PConstants {
     finished = true;  // let the sketch know it is shut down time
 
     // don't run the disposers twice
-    if (thread != null) {
-      thread = null;
+    if (surface.stopThread()) {
 
       // shut down renderer
       if (g != null) {
@@ -6645,6 +6642,42 @@ public class PApplet implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
+  static protected String calcSketchPath() {
+    // try to get the user folder. if running under java web start,
+    // this may cause a security exception if the code is not signed.
+    // http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1159386274
+    String folder = null;
+    try {
+      folder = System.getProperty("user.dir");
+
+      // Workaround for bug in Java for OS X from Oracle (7u51)
+      // https://github.com/processing/processing/issues/2181
+      if (platform == MACOSX) {
+        String jarPath =
+          PApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        // The jarPath from above will be URL encoded (%20 for spaces)
+        jarPath = urlDecode(jarPath);
+        if (jarPath.contains("Contents/Java/")) {
+          String appPath = jarPath.substring(0, jarPath.indexOf(".app") + 4);
+          File containingFolder = new File(appPath).getParentFile();
+          folder = containingFolder.getAbsolutePath();
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return folder;
+  }
+
+
+  public String sketchPath() {
+    if (sketchPath == null) {
+      sketchPath = calcSketchPath();
+    }
+    return sketchPath;
+  }
+
+
   /**
    * Prepend the sketch folder path to the filename (or path) that is
    * passed in. External libraries should use this function to save to
@@ -6660,11 +6693,8 @@ public class PApplet implements PConstants {
    * see the examples in the main description text for PApplet.
    */
   public String sketchPath(String where) {
-    if (sketchPath == null) {
+    if (sketchPath() == null) {
       return where;
-//      throw new RuntimeException("The applet was not inited properly, " +
-//                                 "or security restrictions prevented " +
-//                                 "it from determining its path.");
     }
     // isAbsolute() could throw an access exception, but so will writing
     // to the local disk using the sketch path, so this is safe here.
@@ -6673,7 +6703,7 @@ public class PApplet implements PConstants {
       if (new File(where).isAbsolute()) return where;
     } catch (Exception e) { }
 
-    return sketchPath + File.separator + where;
+    return sketchPath() + File.separator + where;
   }
 
 
@@ -9249,6 +9279,7 @@ public class PApplet implements PConstants {
     // it's not set in the above loop(the above loop breaks after
     // finding sketch name). So setting sketch path here.
     // https://github.com/processing/processing/commit/0a14835e6f5f4766b022e73a8fe562318636727c
+    // TODO this is a hack added for PDE X and needs to be removed [fry 141104]
     for (int i = 0; i < args.length; i++) {
       if (args[i].startsWith(ARGS_SKETCH_FOLDER)){
         folder = args[i].substring(args[i].indexOf('=') + 1);
@@ -9273,15 +9304,15 @@ public class PApplet implements PConstants {
       }
     }
 
-    try {
-      String renderer = applet.sketchRenderer();
-      Class<?> rendererClass =
-        Thread.currentThread().getContextClassLoader().loadClass(renderer);
-      Method surfaceMethod = rendererClass.getMethod("createSurface");
-      PSurface surface = (PSurface) surfaceMethod.invoke(null, new Object[] { });
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+//    try {
+//      String renderer = applet.sketchRenderer();
+//      Class<?> rendererClass =
+//        Thread.currentThread().getContextClassLoader().loadClass(renderer);
+//      Method surfaceMethod = rendererClass.getMethod("createSurface");
+//      PSurface surface = (PSurface) surfaceMethod.invoke(null, new Object[] { });
+//    } catch (Exception e) {
+//      throw new RuntimeException(e);
+//    }
 
     // A handful of things that need to be set before init/start.
     applet.sketchPath = folder;
@@ -9297,31 +9328,34 @@ public class PApplet implements PConstants {
     // For backwards compatability, initFrame() returns an AWT Frame object,
     // whether or not one is actually used. There's lots of code that uses
     // frame.setTitle() and frame.setResizable() out there...
-    Frame frame =
-      surface.initFrame(applet, backgroundColor,
-                        displayIndex, present, spanDisplays);
-    applet.frame = frame;
-    frame.setTitle(name);
+//    Frame frame =
+//      surface.initFrame(applet, backgroundColor,
+//                        displayIndex, present, spanDisplays);
+    PSurface surface =
+      applet.initSurface(backgroundColor, displayIndex, present, spanDisplays);
 
-    applet.init();
-    // TODO this used to be inside init()... does it need to stay there for
-    // other external things like Python or embedding in Java apps?
-    surface.startThread();
-//    applet.start();
-
-    // Wait until the applet has figured out its width.
-    // In a static mode app, this will be after setup() has completed,
-    // and the empty draw() has set "finished" to true.
-    // TODO make sure this won't hang if the applet has an exception.
-    while (applet.defaultSize && !applet.finished) {
-      //System.out.println("default size");
-      try {
-        Thread.sleep(5);
-
-      } catch (InterruptedException e) {
-        //System.out.println("interrupt");
-      }
-    }
+//    applet.frame = frame;
+//    frame.setTitle(name);
+//
+//    applet.init();
+//    // TODO this used to be inside init()... does it need to stay there for
+//    // other external things like Python or embedding in Java apps?
+//    surface.startThread();
+////    applet.start();
+//
+//    // Wait until the applet has figured out its width.
+//    // In a static mode app, this will be after setup() has completed,
+//    // and the empty draw() has set "finished" to true.
+//    // TODO make sure this won't hang if the applet has an exception.
+//    while (applet.defaultSize && !applet.finished) {
+//      //System.out.println("default size");
+//      try {
+//        Thread.sleep(5);
+//
+//      } catch (InterruptedException e) {
+//        //System.out.println("interrupt");
+//      }
+//    }
 
     if (present) {
       //surface.placeFullScreen(hideStop);
@@ -9330,12 +9364,56 @@ public class PApplet implements PConstants {
       }
       surface.placePresent(stopColor);
     } else {
-      surface.placeWindow(external, location, editorLocation);
+      surface.placeWindow(location, editorLocation);
     }
     // not always running externally when in present mode
     if (external) {
       surface.setupExternalMessages();
     }
+  }
+
+
+  protected PSurface initSurface(Color backgroundColor, int displayIndex,
+                                 boolean present, boolean spanDisplays) {
+//    try {
+//      String renderer = applet.sketchRenderer();
+//      Class<?> rendererClass =
+//        Thread.currentThread().getContextClassLoader().loadClass(renderer);
+//      Method surfaceMethod = rendererClass.getMethod("createSurface");
+//      PSurface surface = (PSurface) surfaceMethod.invoke(null, new Object[] { });
+//    } catch (Exception e) {
+//      throw new RuntimeException(e);
+//    }
+    g = makePrimaryGraphics();
+    surface = g.createSurface();
+
+    frame = surface.initFrame(this, backgroundColor, displayIndex, present, spanDisplays);
+
+    surface.setTitle(getClass().getName());
+
+    // do we need this method anymore?
+    init();
+
+    // TODO this used to be inside init()... does it need to stay there for
+    // other external things like Python or embedding in Java apps?
+    surface.startThread();
+    //applet.start();
+
+    // Wait until the applet has figured out its width.
+    // In a static mode app, this will be after setup() has completed,
+    // and the empty draw() has set "finished" to true.
+    // TODO make sure this won't hang if the applet has an exception.
+    while (defaultSize && !finished) {
+      //System.out.println("default size");
+      try {
+        Thread.sleep(5);
+
+      } catch (InterruptedException e) {
+        //System.out.println("interrupt");
+      }
+    }
+    // convenience to avoid another 'get' from the static main() method
+    return surface;
   }
 
 
@@ -9372,34 +9450,6 @@ public class PApplet implements PConstants {
 
   protected void runSketch() {
     runSketch(new String[0]);
-  }
-
-
-  static protected String calcSketchPath() {
-    // try to get the user folder. if running under java web start,
-    // this may cause a security exception if the code is not signed.
-    // http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Integrate;action=display;num=1159386274
-    String folder = null;
-    try {
-      folder = System.getProperty("user.dir");
-
-      // Workaround for bug in Java for OS X from Oracle (7u51)
-      // https://github.com/processing/processing/issues/2181
-      if (platform == MACOSX) {
-        String jarPath =
-          PApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        // The jarPath from above will be URL encoded (%20 for spaces)
-        jarPath = urlDecode(jarPath);
-        if (jarPath.contains("Contents/Java/")) {
-          String appPath = jarPath.substring(0, jarPath.indexOf(".app") + 4);
-          File containingFolder = new File(appPath).getParentFile();
-          folder = containingFolder.getAbsolutePath();
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return folder;
   }
 
 
@@ -9629,11 +9679,6 @@ public class PApplet implements PConstants {
   // the PImage and PGraphics source code files.
 
   // public functions for processing.core
-
-
-  static public PSurface createSurface() {
-    return PGraphics.createSurface();
-  }
 
 
   /**
@@ -13853,27 +13898,6 @@ public class PApplet implements PConstants {
    */
   static public void showMissingWarning(String method) {
     PGraphics.showMissingWarning(method);
-  }
-
-
-  /**
-   * Return true if this renderer should be drawn to the screen. Defaults to
-   * returning true, since nearly all renderers are on-screen beasts. But can
-   * be overridden for subclasses like PDF so that a window doesn't open up.
-   * <br/> <br/>
-   * A better name? showFrame, displayable, isVisible, visible, shouldDisplay,
-   * what to call this?
-   */
-  public boolean displayable() {
-    return g.displayable();
-  }
-
-
-  /**
-   * Return true if this renderer does rendering through OpenGL. Defaults to false.
-   */
-  public boolean isGL() {
-    return g.isGL();
   }
 
 

@@ -20,10 +20,24 @@ public interface PSurface {
   // https://github.com/processing/processing/issues/2297
   static final Color WINDOW_BGCOLOR = new Color(0xDD, 0xDD, 0xDD);
 
+  // renderer that doesn't draw to the screen
+  public void initOffscreen();
+
   public Frame initFrame(PApplet sketch, Color backgroundColor,
                          int deviceIndex, boolean fullScreen, boolean spanDisplays);
 
-  public void placeWindow(boolean external, int[] location, int[] editorLocation);
+  /** Set the window (and dock, or whatever necessary) title. */
+  public void setTitle(String title);
+
+  /** Show or hide the window. */
+  public void setVisible(boolean visible);
+
+  /** Set true if we want to resize things (default is not resizable) */
+  public void setResizable(boolean resizable);
+
+  public void placeWindow(int[] location);
+
+  public void placeWindow(int[] location, int[] editorLocation);
 
   //public void placeFullScreen(boolean hideStop);
   public void placePresent(Color stopColor);
@@ -31,8 +45,25 @@ public interface PSurface {
   // Sketch is running from the PDE, set up messaging back to the PDE
   public void setupExternalMessages();
 
-  // start the animation thread
+  /** Start the animation thread */
   public void startThread();
+
+  /**
+   * On the next trip through the animation thread, things should go sleepy-bye.
+   * Does not pause the thread immediately because that needs to happen on the
+   * animation thread itself, so fires on the next trip through draw().
+   */
+  public void pauseThread();
+
+  public void resumeThread();
+
+  /**
+   * Stop the animation thread (set it null)
+   * @return false if already stopped
+   */
+  public boolean stopThread();
+
+  public boolean isStopped();
 
   // sets displayWidth/Height inside PApplet
   //public void checkDisplaySize();

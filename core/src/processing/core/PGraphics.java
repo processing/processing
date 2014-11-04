@@ -761,7 +761,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  static public PSurface createSurface() {
+  public PSurface createSurface() {  // ignore
     return null;
   }
 
@@ -7897,7 +7897,7 @@ public class PGraphics extends PImage implements PConstants {
    * A better name? showFrame, displayable, isVisible, visible, shouldDisplay,
    * what to call this?
    */
-  public boolean displayable() {
+  public boolean displayable() {  // ignore
     return true;
   }
 
@@ -7905,7 +7905,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Return true if this renderer supports 2D drawing. Defaults to true.
    */
-  public boolean is2D() {
+  public boolean is2D() {  // ignore
     return true;
   }
 
@@ -7913,7 +7913,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Return true if this renderer supports 3D drawing. Defaults to false.
    */
-  public boolean is3D() {
+  public boolean is3D() {  // ignore
     return false;
   }
 
@@ -7921,7 +7921,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Return true if this renderer does rendering through OpenGL. Defaults to false.
    */
-  public boolean isGL() {
+  public boolean isGL() {  // ignore
     return false;
   }
 }

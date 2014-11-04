@@ -1,7 +1,8 @@
 0232 pde (3.0a5)
 X remove debug message printed to the console when the ctrl key is down in PDE X
-_ size(640,360 , P3D) doesn't work properly
-_   https://github.com/processing/processing/issues/2924
+X size(640,360 , P3D) doesn't work properly
+X   https://github.com/processing/processing/issues/2924
+X   https://github.com/processing/processing/pull/2925
 _ any problems with new code signing crap? 
 _   issues raised around the symlink (just replace with a copy of the binary?)
 _   https://developer.apple.com/library/prerelease/mac/technotes/tn2206/_index.html#//apple_ref/doc/uid/DTS40007919-CH1-TNTAG205
