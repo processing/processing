@@ -2363,7 +2363,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (normalMode == NORMAL_MODE_AUTO) inGeo.calcQuadStripNormals();
       tessellator.tessellateQuadStrip();
     } else if (shape == POLYGON) {
-      tessellator.tessellatePolygon(false, mode == CLOSE,
+      tessellator.tessellatePolygon(true, mode == CLOSE,
                                     normalMode == NORMAL_MODE_AUTO);
     }
   }
