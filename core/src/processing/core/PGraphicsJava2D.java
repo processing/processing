@@ -66,7 +66,11 @@ public class PGraphicsJava2D extends PGraphics {
   Composite defaultComposite;
 
   GeneralPath gpath;
+
+  // path for contours so gpath can be closed
   GeneralPath auxPath;
+
+  boolean openContour;
 
   /// break the shape at the next vertex (next vertex() call is a moveto())
   boolean breakShape;
@@ -754,8 +758,12 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   public void beginContour() {
-    // draw contours to auxiliary path so
-    // main path can be closed later
+    if (openContour) {
+      PGraphics.showWarning("Already called beginContour()");
+      return;
+    }
+
+    // draw contours to auxiliary path so main path can be closed later
     GeneralPath contourPath = auxPath;
     auxPath = gpath;
     gpath = contourPath;
@@ -763,11 +771,18 @@ public class PGraphicsJava2D extends PGraphics {
     if (contourPath != null) {  // first contour does not break
       breakShape = true;
     }
+
+    openContour = true;
   }
 
 
   @Override
   public void endContour() {
+    if (!openContour) {
+      PGraphics.showWarning("Need to call beginContour() first");
+      return;
+    }
+
     // close this contour
     if (gpath != null) gpath.closePath();
 
@@ -775,11 +790,17 @@ public class PGraphicsJava2D extends PGraphics {
     GeneralPath contourPath = gpath;
     gpath = auxPath;
     auxPath = contourPath;
+
+    openContour = false;
   }
 
 
   @Override
   public void endShape(int mode) {
+    if (openContour) { // correct automagically, notify user
+      endContour();
+      PGraphics.showWarning("Missing endContour() before endShape()");
+    }
     if (gpath != null) {  // make sure something has been drawn
       if (shape == POLYGON) {
         if (mode == CLOSE) {
