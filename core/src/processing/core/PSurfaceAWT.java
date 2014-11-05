@@ -1,25 +1,32 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  Part of the Processing project - http://processing.org
+
+  Copyright (c) 2014 The Processing Foundation
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation, version 2.1.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General
+  Public License along with this library; if not, write to the
+  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+  Boston, MA  02111-1307  USA
+*/
+
 package processing.core;
 
-import java.applet.*;
 import java.awt.*;
-import java.awt.event.WindowStateListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -46,6 +53,7 @@ public class PSurfaceAWT implements PSurface {
   Canvas canvas;
 
   PApplet sketch;
+  PGraphics pg;
 
   Thread thread;
   boolean paused;
@@ -65,11 +73,14 @@ public class PSurfaceAWT implements PSurface {
       useActive = false;
     }
 
+    createCanvas();
+    addListeners();
   }
 
 
   void createCanvas() {
     canvas = new SmoothCanvas();
+    //canvas.setIgnoreRepaint(true);  // ??
   }
 
 
@@ -123,6 +134,7 @@ public class PSurfaceAWT implements PSurface {
   class SmoothCanvas extends Canvas {
     private Dimension oldSize = new Dimension(0, 0);
     private Dimension newSize = new Dimension(0, 0);
+
 
     @Override
     public void validate() {
@@ -230,16 +242,16 @@ public class PSurfaceAWT implements PSurface {
 
 
     protected synchronized void render() {
-      if (canvas == null) {
-        removeListeners(this);
-        canvas = new Canvas();
-        add(canvas);
-        setIgnoreRepaint(true);
-        canvas.setIgnoreRepaint(true);
-        addListeners(canvas);
-//        add(canvas, BorderLayout.CENTER);
-//        doLayout();
-      }
+//      if (canvas == null) {
+//        removeListeners(this);
+//        canvas = new Canvas();
+//        add(canvas);
+//        setIgnoreRepaint(true);
+//        canvas.setIgnoreRepaint(true);
+//        addListeners(canvas);
+////        add(canvas, BorderLayout.CENTER);
+////        doLayout();
+//      }
       canvas.setBounds(0, 0, sketch.width, sketch.height);
 //      System.out.println("render(), canvas bounds are " + canvas.getBounds());
       if (canvas.getBufferStrategy() == null) {  // whole block [121222]
@@ -256,7 +268,7 @@ public class PSurfaceAWT implements PSurface {
         // are consistent in case the underlying surface was recreated
         do {
           Graphics draw = strategy.getDrawGraphics();
-          draw.drawImage(g.image, 0, 0, sketch.width, sketch.height, null);
+          draw.drawImage(pg.image, 0, 0, sketch.width, sketch.height, null);
           draw.dispose();
 
           // Repeat the rendering if the drawing buffer contents
@@ -328,6 +340,8 @@ public class PSurfaceAWT implements PSurface {
 
 
   public void blit() {
+    canvas.repaint();
+    /*
     if (canvas.getGraphicsConfiguration() != null) {
       GraphicsDevice device = canvas.getGraphicsConfiguration().getDevice();
       if (device != displayDevice) {
@@ -348,6 +362,7 @@ public class PSurfaceAWT implements PSurface {
       canvas.repaint();
     }
 //  getToolkit().sync();  // force repaint now (proper method)
+    */
   }
 
 
@@ -469,7 +484,7 @@ public class PSurfaceAWT implements PSurface {
     // been overridden by numbers we calculated above if fullScreen and/or
     // spanScreens was in use.
     //sketch.makePrimaryGraphics(sketchWidth, sketchHeight);
-    sketch.makePrimaryGraphics();
+    pg = sketch.makePrimaryGraphics();
 
     if (fullScreen) {
       frame.invalidate();
@@ -526,10 +541,10 @@ public class PSurfaceAWT implements PSurface {
                      (screenRect.height - sketch.height) / 2,
                      sketch.width, sketch.height);
 
-    if (PApplet.platform == PConstants.MACOSX) {
-      macosxFullScreenEnable(frame);
-      macosxFullScreenToggle(frame);
-    }
+//    if (PApplet.platform == PConstants.MACOSX) {
+//      macosxFullScreenEnable(frame);
+//      macosxFullScreenToggle(frame);
+//    }
 
     if (stopColor != null) {
       Label label = new Label("stop");
@@ -945,53 +960,52 @@ public class PSurfaceAWT implements PSurface {
           }
         }
         frame.setIconImages(iconImages);
-      } catch (Exception e) {
-        //e.printStackTrace();  // more or less harmless; don't spew errors
-      }
+
+      } catch (Exception e) { }  // harmless; keep this to ourselves
     }
   }
 
 
-  /**
-   * (No longer in use) Use reflection to call
-   * <code>com.apple.eawt.FullScreenUtilities.setWindowCanFullScreen(window, true);</code>
-   */
-  static void macosxFullScreenEnable(Window window) {
-    try {
-      Class<?> util = Class.forName("com.apple.eawt.FullScreenUtilities");
-      Class params[] = new Class[] { Window.class, Boolean.TYPE };
-      Method method = util.getMethod("setWindowCanFullScreen", params);
-      method.invoke(util, window, true);
-
-    } catch (ClassNotFoundException cnfe) {
-      // ignored
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  /**
-   * (No longer in use) Use reflection to call
-   * <code>com.apple.eawt.Application.getApplication().requestToggleFullScreen(window);</code>
-   */
-  static void macosxFullScreenToggle(Window window) {
-    try {
-      Class<?> appClass = Class.forName("com.apple.eawt.Application");
-
-      Method getAppMethod = appClass.getMethod("getApplication");
-      Object app = getAppMethod.invoke(null, new Object[0]);
-
-      Method requestMethod =
-        appClass.getMethod("requestToggleFullScreen", Window.class);
-      requestMethod.invoke(app, window);
-
-    } catch (ClassNotFoundException cnfe) {
-      // ignored
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
+//  /**
+//   * (No longer in use) Use reflection to call
+//   * <code>com.apple.eawt.FullScreenUtilities.setWindowCanFullScreen(window, true);</code>
+//   */
+//  static void macosxFullScreenEnable(Window window) {
+//    try {
+//      Class<?> util = Class.forName("com.apple.eawt.FullScreenUtilities");
+//      Class params[] = new Class[] { Window.class, Boolean.TYPE };
+//      Method method = util.getMethod("setWindowCanFullScreen", params);
+//      method.invoke(util, window, true);
+//
+//    } catch (ClassNotFoundException cnfe) {
+//      // ignored
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+//  }
+//
+//
+//  /**
+//   * (No longer in use) Use reflection to call
+//   * <code>com.apple.eawt.Application.getApplication().requestToggleFullScreen(window);</code>
+//   */
+//  static void macosxFullScreenToggle(Window window) {
+//    try {
+//      Class<?> appClass = Class.forName("com.apple.eawt.Application");
+//
+//      Method getAppMethod = appClass.getMethod("getApplication");
+//      Object app = getAppMethod.invoke(null, new Object[0]);
+//
+//      Method requestMethod =
+//        appClass.getMethod("requestToggleFullScreen", Window.class);
+//      requestMethod.invoke(app, window);
+//
+//    } catch (ClassNotFoundException cnfe) {
+//      // ignored
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -1147,8 +1161,8 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
-  public void addListeners() {
-    // lots of listeners, for all my men!
+  // listeners, for all my men!
+  protected void addListeners() {
 
     canvas.addMouseListener(new MouseListener() {
 
@@ -1288,9 +1302,10 @@ public class PSurfaceAWT implements PSurface {
         // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
         // otherwise it may attempt a resize mid-render.
 //        if (g != null) {
-        Dimension currentSize = getSize();
-        if (currentSize.width != g.width || currentSize.height != g.height) {
-          resizeRenderer(currentSize.width, currentSize.height);
+        Dimension currentSize = canvas.getSize();
+        if (currentSize.width != pg.width || currentSize.height != pg.height) {
+          //resizeRenderer(currentSize.width, currentSize.height);
+          System.err.format("need to resize from %s to %d, %d", currentSize, pg.width, pg.height);
         }
 //        }
 

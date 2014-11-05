@@ -52,20 +52,13 @@ import processing.data.XML;
 public class PGraphicsJava2D extends PGraphics {
   BufferStrategy strategy;
   BufferedImage bimage;
-  VolatileImage vimage;
+//  VolatileImage vimage;
   Canvas canvas;
 //  boolean useCanvas = true;
   boolean useCanvas = false;
 //  boolean useRetina = true;
 //  boolean useOffscreen = true;  // ~40fps
   boolean useOffscreen = false;
-
-  /**
-   * Java AWT Image object associated with this renderer. For the 1.0 version
-   * of P2D and P3D, this was be associated with their MemoryImageSource.
-   * For PGraphicsJava2D, it will be the offscreen drawing buffer.
-   */
-  public Image image;  // moved from PGraphics, not sure about this yet
 
   public Graphics2D g2;
   protected BufferedImage offscreen;
@@ -255,8 +248,8 @@ public class PGraphicsJava2D extends PGraphics {
     // and 2) minimal overhead, however. Instinct suggests #1 may be true,
     // but #2 seems a problem.
     if (primarySurface && !useOffscreen) {
+      GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
       if (false) {
-        GraphicsConfiguration gc = parent.getGraphicsConfiguration();
         if (image == null || ((VolatileImage) image).validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
           image = gc.createCompatibleVolatileImage(width, height);
           g2 = (Graphics2D) image.getGraphics();
@@ -264,18 +257,12 @@ public class PGraphicsJava2D extends PGraphics {
         }
       } else {
         if (image == null) {
-          GraphicsConfiguration gc = parent.getGraphicsConfiguration();
           image = gc.createCompatibleImage(width, height);
           PApplet.debug("created new image, type is " + image);
           g2 = (Graphics2D) image.getGraphics();
           reapplySettings = true;
         }
       }
-      //g2 = (Graphics2D) image.getGraphics();
-//      if (g2 != g2old) {
-//        System.out.println("new g2: " + g2);
-//        g2old = g2;
-//      }
     }
 
     if (useCanvas && primarySurface) {
@@ -291,10 +278,6 @@ public class PGraphicsJava2D extends PGraphics {
                       "/" + caps.getBackBufferCapabilities().isAccelerated());
       }
       GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
-//      if (vimage == null || vimage.validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
-//        vimage = gc.createCompatibleVolatileImage(width, height);
-//      }
-//      g2 = (Graphics2D) vimage.getGraphics();
 
       if (bimage == null ||
           bimage.getWidth() != width ||
@@ -375,10 +358,10 @@ public class PGraphicsJava2D extends PGraphics {
         PApplet.debug("PGraphicsJava2D.redraw() top of inner do { } block");
         PApplet.debug("strategy is " + strategy);
         Graphics bsg = strategy.getDrawGraphics();
-        if (vimage != null) {
-          bsg.drawImage(vimage, 0, 0, null);
-        } else {
-          bsg.drawImage(bimage, 0, 0, null);
+//        if (vimage != null) {
+//          bsg.drawImage(vimage, 0, 0, null);
+//        } else {
+        bsg.drawImage(bimage, 0, 0, null);
 //      if (parent.frameCount == 0) {
 //        try {
 //          ImageIO.write(image, "jpg", new java.io.File("/Users/fry/Desktop/buff.jpg"));
@@ -386,7 +369,7 @@ public class PGraphicsJava2D extends PGraphics {
 //          e.printStackTrace();
 //        }
 //      }
-        }
+//        }
         bsg.dispose();
 
         // the strategy version
@@ -1691,7 +1674,7 @@ public class PGraphicsJava2D extends PGraphics {
 
     Font font = (Font) textFont.getNative();
     if (font != null) {
-      FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics(font);
+      FontMetrics metrics = canvas.getFontMetrics(font);
       return metrics.getAscent();
     }
     return super.textAscent();
@@ -1706,7 +1689,7 @@ public class PGraphicsJava2D extends PGraphics {
     Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
-      FontMetrics metrics = parent.getFontMetrics(font);
+      FontMetrics metrics = canvas.getFontMetrics(font);
       return metrics.getDescent();
     }
     return super.textDescent();

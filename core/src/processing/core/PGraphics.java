@@ -25,8 +25,8 @@
 
 package processing.core;
 
-//import java.awt.*;
 import java.awt.Color;
+import java.awt.Image;
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
@@ -501,12 +501,12 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-//  /**
-//   * Java AWT Image object associated with this renderer. For the 1.0 version
-//   * of P2D and P3D, this was be associated with their MemoryImageSource.
-//   * For PGraphicsJava2D, it will be the offscreen drawing buffer.
-//   */
-//  public Image image;
+  /**
+   * Java AWT Image object associated with this renderer. For the 1.0 version
+   * of P2D and P3D, this was associated with their MemoryImageSource.
+   * For PGraphicsJava2D, it will be the offscreen drawing buffer.
+   */
+  public Image image;
 
   // ........................................................
 
