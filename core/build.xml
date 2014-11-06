@@ -26,7 +26,7 @@
 
     <mkdir dir="bin" />
     <javac source="1.7"
-	   target="1.7" 
+	   target="1.7"
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   debug="true"
@@ -38,8 +38,10 @@
     </javac>
     
     <!-- Copy the jnilib to the bin folder so it's included. -->
+    <!--
     <copy todir="bin/japplemenubar" 
 	  file="src/japplemenubar/libjAppleMenuBar.jnilib" />
+    -->
 
     <!-- Copy shaders to bin. (Eclipse does this automatically.) -->
     <copy todir="bin">

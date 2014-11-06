@@ -2,14 +2,42 @@ package processing.sound;
 
 public class MethClaInterface
 { 
+
   // load Library
   static {
-	  System.loadLibrary("MethClaInterface");
+    String osName = System.getProperty("os.name");
+    String arch = System.getProperty("os.arch");
+
+    if (osName.startsWith("Win")){
+      if (arch.equals("x86")){
+        System.loadLibrary("LIBWINPTHREAD-1");
+        System.loadLibrary("LIBSNDFILE-1");
+        System.loadLibrary("LIBGCC_S_SJLJ-1");
+        System.loadLibrary("LIBMPG123-0");
+        System.loadLibrary("LIBMETHCLA");
+        System.loadLibrary("LIBMETHCLAINTERFACE"); 
+      }
+      else {
+        System.loadLibrary("LIBWINPTHREAD-1");
+        System.loadLibrary("LIBSNDFILE-1");
+        System.loadLibrary("LIBMPG123-0");
+        System.loadLibrary("LIBMETHCLA");
+        System.loadLibrary("LIBMETHCLAINTERFACE");  
+      }
+    }  
+    else if (osName.startsWith("Mac")){
+      System.loadLibrary("MethClaInterface");
+    }
+    else if (osName.equals("Linux")){
+      System.loadLibrary("MethClaInterface");
+    }
   }
   // Functions I want
   
   // Engine 
-    
+  
+  public native int[] mixPlay(int[] input, float[] amp);
+
   public native int engineNew(int sampleRate, int bufferSize );
   
   public native void engineStart();
@@ -52,7 +80,7 @@ public class MethClaInterface
   
   // Audio In
 
-  public native int[] audioInPlay(float amp, float add, float pos, boolean out);
+  public native int[] audioInPlay(float amp, float add, float pos, int in);
 
   public native void audioInSet(float amp, float add, float pos, int[] nodeId);
 
@@ -94,13 +122,16 @@ public class MethClaInterface
     
   // Filters
     
-  public native int[] highPassPlay(int[] input, float freq, float res);
+  public native int[] highPassPlay(int[] input, float freq);
 
-  public native int[] lowPassPlay(int[] input, float freq, float res);
+  public native int[] lowPassPlay(int[] input, float freq);
   
-  public native int[] bandPassPlay(int[] input, float freq, float res);
+  public native int[] bandPassPlay(int[] input, float freq, float bw);
 
-  public native void filterSet(float freq, float res, int nodeId);
+  public native void filterSet(float freq, int nodeId);
+
+  public native void filterBwSet(float freq, float bw, int nodeId);
+
 
   // Delay
 
@@ -120,7 +151,7 @@ public class MethClaInterface
   
   // Pan + Out
   
-  // public native int out(float pos, int nodeId);  
+  public native void out(int out, int[] nodeId);  
   
   // connect
   

@@ -94,7 +94,7 @@ public class CompositionTextManager {
     CompositionTextPainter compositionPainter = textArea.getPainter().getCompositionTextpainter();
     compositionPainter.setComposedTextLayout(getTextLayout(text, committed_count), layoutCaretPosition);
     int textLength = text.getEndIndex() - text.getBeginIndex() - committed_count;
-    StringBuffer unCommitedStringBuf = new StringBuffer(textLength);
+    StringBuilder unCommitedStringBuf = new StringBuilder(textLength);
     char c;
     for (c = text.setIndex(committed_count); c != CharacterIterator.DONE
         && textLength > 0; c = text.next(), --textLength) {

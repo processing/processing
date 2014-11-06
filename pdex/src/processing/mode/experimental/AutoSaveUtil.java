@@ -18,21 +18,20 @@
 
 package processing.mode.experimental;
 
+import static processing.mode.experimental.ExperimentalMode.log;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import processing.app.Base;
 import processing.app.Sketch;
 
-import static processing.mode.experimental.ExperimentalMode.log;
-
 /**
  * Autosave utility for saving sketch backups in the background after
  * certain intervals
- * 
+ * NOTE: This was developed as an experiment, but disabled for now.
  * @author Manindra Moharana <me@mkmoharana.com>
  *
  */
@@ -42,7 +41,7 @@ public class AutoSaveUtil {
   
   private Timer timer;
   
-  private int saveTime;
+//  private int saveTime;
   
   private File autosaveDir, pastSave;
   
@@ -334,6 +333,7 @@ public class AutoSaveUtil {
    * @author quarkninja
    *
    */
+  /*
   private class SaveTask extends TimerTask{
 
     @Override
@@ -348,5 +348,6 @@ public class AutoSaveUtil {
     }
     
   }
+  */
 
 }

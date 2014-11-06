@@ -201,6 +201,11 @@ public class ParserTests {
   public void bug1362() {
     expectGood("bug1362");
   }
+  
+  @Test
+  public void bug1390() {
+    expectGood("bug1390");
+  }
 
   @Test
   public void bug1442() {
@@ -270,6 +275,11 @@ public class ParserTests {
   @Test
   public void bug1534() {
     expectGood("bug1534");
+  }
+  
+  @Test
+  public void bug1936() {
+    expectGood("bug1936");
   }
 
   @Test

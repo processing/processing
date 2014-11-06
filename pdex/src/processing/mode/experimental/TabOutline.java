@@ -20,7 +20,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -32,7 +31,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import processing.app.SketchCode;
-import static processing.mode.experimental.ExperimentalMode.log;
 
 public class TabOutline {
   protected JFrame frmOutlineView;
@@ -190,7 +188,7 @@ public class TabOutline {
       }
 
       private void updateSelection() {
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
           protected Object doInBackground() throws Exception {
             String text = searchField.getText().toLowerCase();
             tempNode = new DefaultMutableTreeNode();
@@ -222,7 +220,7 @@ public class TabOutline {
           return;
         }
         // log(e);
-        SwingWorker worker = new SwingWorker() {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           protected Object doInBackground() throws Exception {
             return null;

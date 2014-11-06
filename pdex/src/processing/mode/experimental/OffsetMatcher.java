@@ -51,25 +51,32 @@ public class OffsetMatcher {
     }
     
 //    log("PDE <-> Java");
-    for (int i = 0; i < offsetMatch.size(); i++) {
+//    for (int i = 0; i < offsetMatch.size(); i++) {
 //      log(offsetMatch.get(i).pdeOffset + " <-> "
 //          + offsetMatch.get(i).javaOffset +
-//          ", " + word1.charAt(offsetMatch.get(i).pdeOffset)
-//          + " <-> " + word2.charAt(offsetMatch.get(i).javaOffset));
-    }
+//          ", " + pdeCodeLine.charAt(offsetMatch.get(i).pdeOffset)
+//          + " <-> " + javaCodeLine.charAt(offsetMatch.get(i).javaOffset));
+//    }
 //    log("Length " + offsetMatch.size());
   }
 
   public int getPdeOffForJavaOff(int start, int length) {
-    // log("PDE :" + pdeCodeLine + "\nJAVA:" + javaCodeLine);
+//    log("PDE :" + pdeCodeLine + "\nJAVA:" + javaCodeLine);
+//    log("getPdeOffForJavaOff() start:" + start + ", len " + length);
     if(!matchingNeeded) return start;
-    int ans = getPdeOffForJavaOff(start), end = getPdeOffForJavaOff(start + length - 1); 
-//    log(start + " java start off, pde start off "
-//        + ans);
-//    log((start + length - 1) + " java end off, pde end off "
-//        + end);
-//    log("J: " + javaCodeLine.substring(start, start + length) + "\nP: "
-//        + pdeCodeLine.substring(ans, end + 1));
+    int ans = getPdeOffForJavaOff(start); 
+    int end = getPdeOffForJavaOff(start + length - 1);
+    if(ans == -1 || end == -1){
+//      log("ans: " + ans + " end: " + end);
+    }
+    else {
+//      log(start + " java start off, pde start off "
+//          + ans);
+//      log((start + length - 1) + " java end off, pde end off "
+//          + end);
+//      log("J: " + javaCodeLine.substring(start, start + length) + "\nP: "
+//          + pdeCodeLine.substring(ans, end + 1));
+    }
     return ans;
   }
 
@@ -84,18 +91,25 @@ public class OffsetMatcher {
   }
 
   public int getPdeOffForJavaOff(int javaOff) {
-    if(!matchingNeeded) return javaOff;
+    if (!matchingNeeded)
+      return javaOff;
     for (int i = offsetMatch.size() - 1; i >= 0; i--) {
       if (offsetMatch.get(i).javaOffset < javaOff) {
         continue;
       } else if (offsetMatch.get(i).javaOffset == javaOff) {
 //        int j = i;
-        while (offsetMatch.get(--i).javaOffset == javaOff) {
+        
+        // sometimes there are multiple repeated j offsets for a single pde offset
+        // so go to the last one, with bound check
+        while (i > 0 && offsetMatch.get(--i).javaOffset == javaOff) {
 //          log("MP " + offsetMatch.get(i).javaOffset + " "
 //              + offsetMatch.get(i).pdeOffset);
         }
-        int pdeOff = offsetMatch.get(++i).pdeOffset;
-        while (i > 0 && offsetMatch.get(--i).pdeOffset == pdeOff);
+        if (i + 1 < offsetMatch.size()) { // bounds check, see #2664
+          int pdeOff = offsetMatch.get(++i).pdeOffset;
+          while (i > 0 && offsetMatch.get(--i).pdeOffset == pdeOff) {
+          }
+        }
         int j = i + 1;
         if (j > -1 && j < offsetMatch.size())
           return offsetMatch.get(j).pdeOffset;
@@ -112,12 +126,15 @@ public class OffsetMatcher {
         continue;
       } else if (offsetMatch.get(i).pdeOffset == pdeOff) {
 //        int j = i;
-        while (offsetMatch.get(--i).pdeOffset == pdeOff) {
+        while (i > 0 && offsetMatch.get(--i).pdeOffset == pdeOff) {
 //          log("MP " + offsetMatch.get(i).javaOffset + " "
 //              + offsetMatch.get(i).pdeOffset); 
         }
-        int javaOff = offsetMatch.get(++i).javaOffset;
-        while (i > 0 && offsetMatch.get(--i).javaOffset == javaOff);
+        if (i + 1 < offsetMatch.size()) { // bounds check, see #2664
+          int javaOff = offsetMatch.get(++i).javaOffset;
+          while (i > 0 && offsetMatch.get(--i).javaOffset == javaOff) {            
+          }
+        }
         int j = i + 1;
         if (j > -1 && j < offsetMatch.size())
           return offsetMatch.get(j).javaOffset;
@@ -187,7 +204,7 @@ public class OffsetMatcher {
   }
 
   private void minDistInGrid(int g[][], int i, int j, int fi, int fj,
-                             char s1[], char s2[], ArrayList set) {
+                             char s1[], char s2[], ArrayList<OffsetPair> set) {
 //    if(i < s1.length)System.out.print(s1[i] + " <->");
 //    if(j < s2.length)System.out.print(s2[j]);
     if (i < s1.length && j < s2.length) {
@@ -242,12 +259,14 @@ public class OffsetMatcher {
 //    a.getJavaOffForPdeOff(12, 3);
 //    minDistance("static void main(){;", "public static void main(){;");
 //      minDistance("#bb00aa", "0xffbb00aa");
-    a = new OffsetMatcher("void test(ArrayList<Boid> boids){", 
-    "public void test(ArrayList<Boid> boids){");
-    a.getJavaOffForPdeOff(20,4);
+//    a = new OffsetMatcher("void test(ArrayList<Boid> boids){", 
+//    "public void test(ArrayList<Boid> boids){");
+//    a.getJavaOffForPdeOff(20,4);
+    a = new OffsetMatcher("}", "\n");
+    a.getPdeOffForJavaOff(0,1);
     log("--");
-//    a = new OffsetMatcher("color abc = #qwerty;", "int abc = 0xffqwerty;");
-//    a.getPdeOffForJavaOff(4, 3);
+    a = new OffsetMatcher("color abc = #qwerty;", "int abc = 0xffqwerty;");
+    a.getPdeOffForJavaOff(4, 3);
 //    a.getJavaOffForPdeOff(6, 3);
 //    distance("c = #bb00aa;", "c = 0xffbb00aa;");
   }

@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2012-14 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -54,7 +55,6 @@ public class SingleInstance {
    */
   static boolean alreadyRunning(String[] args) {
     return Preferences.get(SERVER_PORT) != null && sendArguments(args);
-//            sendArguments(args, 5000));
   }
 
 
@@ -115,7 +115,7 @@ public class SingleInstance {
             }
           }
         }
-      }).start();
+      }, "SingleInstance Server").start();
 
     } catch (IOException e) {
       Base.log("Could not create single instance server.", e);
@@ -125,25 +125,9 @@ public class SingleInstance {
 
   static boolean sendArguments(String[] args) {  //, long timeout) {
     try {
-      //int port = Integer.parseInt(Preferences.get("server.port"));
-      //String key = Preferences.get("server.key");
       int port = Preferences.getInteger(SERVER_PORT);
       String key = Preferences.get(SERVER_KEY);
 
-//      long endTime = System.currentTimeMillis() + timeout;
-//
-//      Socket socket = null;
-//      while (socket == null && System.currentTimeMillis() < endTime) {
-//        try {
-//          socket = new Socket(InetAddress.getByName(null), port);
-//        } catch (Exception ioe) {
-//          try {
-//            Thread.sleep(50);
-//          } catch (InterruptedException ie) {
-//            Thread.yield();
-//          }
-//        }
-//      }
       Socket socket = null;
       try {
         socket = new Socket(InetAddress.getByName(null), port);
@@ -151,15 +135,10 @@ public class SingleInstance {
 
       if (socket != null) {
         PrintWriter writer = PApplet.createWriter(socket.getOutputStream());
-//        bw.write(key + "\n");
         writer.println(key);
         for (String arg : args) {
-//        if (filename != null) {
-////          bw.write(filename + "\n");
-//          writer.println(filename);
           writer.println(arg);
         }
-//        bw.close();
         writer.flush();
         writer.close();
         return true;

@@ -503,7 +503,7 @@ public class PShapeSVG extends PShape {
     }
     char[] pathDataChars = pathData.toCharArray();
 
-    StringBuffer pathBuffer = new StringBuffer();
+    StringBuilder pathBuffer = new StringBuilder();
     boolean lastSeparate = false;
 
     for (int i = 0; i < pathDataChars.length; i++) {
@@ -518,7 +518,7 @@ public class PShapeSVG extends PShape {
           c == 'S' || c == 's' ||
           c == 'Q' || c == 'q' ||  // quadratic beziers
           c == 'T' || c == 't' ||
-//          c == 'A' || c == 'a' ||  // elliptical arc
+          c == 'A' || c == 'a' ||  // elliptical arc
           c == 'Z' || c == 'z' ||  // closepath
           c == ',') {
         separate = true;
@@ -816,6 +816,40 @@ public class PShapeSVG extends PShape {
       }
         break;
 
+      // A - elliptical arc to (absolute)
+      case 'A': {
+        float rx = PApplet.parseFloat(pathTokens[i + 1]);
+        float ry = PApplet.parseFloat(pathTokens[i + 2]);
+        float angle = PApplet.parseFloat(pathTokens[i + 3]);
+        boolean fa = PApplet.parseFloat(pathTokens[i + 4]) != 0;
+        boolean fs = PApplet.parseFloat(pathTokens[i + 5]) != 0;
+        float endX = PApplet.parseFloat(pathTokens[i + 6]);
+        float endY = PApplet.parseFloat(pathTokens[i + 7]);
+        parsePathArcto(cx, cy, rx, ry, angle, fa, fs, endX, endY);
+        cx = endX;
+        cy = endY;
+        i += 8;
+        prevCurve = true;
+      }
+      break;
+
+      // a - elliptical arc to (relative)
+      case 'a': {
+        float rx = PApplet.parseFloat(pathTokens[i + 1]);
+        float ry = PApplet.parseFloat(pathTokens[i + 2]);
+        float angle = PApplet.parseFloat(pathTokens[i + 3]);
+        boolean fa = PApplet.parseFloat(pathTokens[i + 4]) != 0;
+        boolean fs = PApplet.parseFloat(pathTokens[i + 5]) != 0;
+        float endX = cx + PApplet.parseFloat(pathTokens[i + 6]);
+        float endY = cy + PApplet.parseFloat(pathTokens[i + 7]);
+        parsePathArcto(cx, cy, rx, ry, angle, fa, fs, endX, endY);
+        cx = endX;
+        cy = endY;
+        i += 8;
+        prevCurve = true;
+      }
+      break;
+
       case 'Z':
       case 'z':
         // since closing the path, the 'current' point needs
@@ -921,6 +955,93 @@ public class PShapeSVG extends PShape {
     // x1/y1 already covered by last moveto, lineto, or curveto
     parsePathVertex(cx, cy);
     parsePathVertex(x2, y2);
+  }
+
+
+  // Approximates elliptical arc by several bezier segments.
+  // Meets SVG standard requirements from:
+  //   http://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
+  //   http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
+  // Based on arc to bezier curve equations from:
+  //   http://www.spaceroots.org/documents/ellipse/node22.html
+  private void parsePathArcto(float x1,    float y1,
+                              float rx,    float ry,
+                              float angle,
+                              boolean fa,  boolean fs,
+                              float x2,    float y2) {
+    if (x1 == x2 && y1 == y2) return;
+    if (rx == 0 || ry == 0) { parsePathLineto(x2, y2);  return; }
+
+    rx = PApplet.abs(rx);  ry = PApplet.abs(ry);
+
+    float phi = PApplet.radians(((angle % 360) + 360) % 360);
+    float cosPhi = PApplet.cos(phi),  sinPhi = PApplet.sin(phi);
+
+    float x1r = ( cosPhi * (x1 - x2) + sinPhi * (y1 - y2)) / 2;
+    float y1r = (-sinPhi * (x1 - x2) + cosPhi * (y1 - y2)) / 2;
+
+    float cxr, cyr;
+    {
+      float A = (x1r*x1r) / (rx*rx) + (y1r*y1r) / (ry*ry);
+      if (A > 1) {
+        // No solution, scale ellipse up according to SVG standard
+        float sqrtA = PApplet.sqrt(A);
+        rx *= sqrtA;  cxr = 0;
+        ry *= sqrtA;  cyr = 0;
+      } else {
+        float k = ((fa == fs) ? -1f : 1f) *
+          PApplet.sqrt((rx*rx * ry*ry) / ((rx*rx * y1r*y1r) + (ry*ry * x1r*x1r)) - 1f);
+        cxr =  k * rx * y1r / ry;
+        cyr = -k * ry * x1r / rx;
+      }
+    }
+
+    float cx = cosPhi * cxr - sinPhi * cyr + (x1 + x2) / 2;
+    float cy = sinPhi * cxr + cosPhi * cyr + (y1 + y2) / 2;
+
+    float phi1, phiDelta;
+    {
+      float sx = ( x1r - cxr) / rx,  sy = ( y1r - cyr) / ry;
+      float tx = (-x1r - cxr) / rx,  ty = (-y1r - cyr) / ry;
+      phi1 = PApplet.atan2(sy, sx);
+      phiDelta = (((PApplet.atan2(ty, tx) - phi1) % TWO_PI) + TWO_PI) % TWO_PI;
+      if (!fs) phiDelta -= TWO_PI;
+    }
+
+    // One segment can not cover more that PI, less than PI/2 is
+    // recommended to avoid visible inaccuracies caused by rounding errors
+    int segmentCount = PApplet.ceil(PApplet.abs(phiDelta) / TWO_PI * 4);
+
+    float inc = phiDelta / segmentCount;
+    float a = PApplet.sin(inc) *
+      (PApplet.sqrt(4 + 3 * PApplet.sq(PApplet.tan(inc / 2))) - 1) / 3;
+
+    float sinPhi1 = PApplet.sin(phi1),  cosPhi1 = PApplet.cos(phi1);
+
+    float p1x = x1;
+    float p1y = y1;
+    float relq1x = a * (-rx * cosPhi * sinPhi1 - ry * sinPhi * cosPhi1);
+    float relq1y = a * (-rx * sinPhi * sinPhi1 + ry * cosPhi * cosPhi1);
+
+    for (int i = 0; i < segmentCount; i++) {
+      float eta = phi1 + (i + 1) * inc;
+      float sinEta = PApplet.sin(eta),  cosEta = PApplet.cos(eta);
+
+      float p2x = cx + rx * cosPhi * cosEta - ry * sinPhi * sinEta;
+      float p2y = cy + rx * sinPhi * cosEta + ry * cosPhi * sinEta;
+      float relq2x = a * (-rx * cosPhi * sinEta - ry * sinPhi * cosEta);
+      float relq2y = a * (-rx * sinPhi * sinEta + ry * cosPhi * cosEta);
+
+      if (i == segmentCount - 1) { p2x = x2;  p2y = y2; }
+
+      parsePathCode(BEZIER_VERTEX);
+      parsePathVertex(p1x + relq1x, p1y + relq1y);
+      parsePathVertex(p2x - relq2x, p2y - relq2y);
+      parsePathVertex(p2x, p2y);
+
+      p1x = p2x;  relq1x = relq2x;
+      p1y = p2y;  relq1y = relq2y;
+    }
   }
 
 
@@ -1310,7 +1431,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  class LinearGradient extends Gradient {
+  static class LinearGradient extends Gradient {
     float x1, y1, x2, y2;
 
     public LinearGradient(PShapeSVG parent, XML properties) {
@@ -1340,7 +1461,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  class RadialGradient extends Gradient {
+  static class RadialGradient extends Gradient {
     float cx, cy, r;
 
     public RadialGradient(PShapeSVG parent, XML properties) {
@@ -1369,7 +1490,7 @@ public class PShapeSVG extends PShape {
 
 
 
-  class LinearGradientPaint implements Paint {
+  static class LinearGradientPaint implements Paint {
     float x1, y1, x2, y2;
     float[] offset;
     int[] color;
@@ -1494,7 +1615,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  class RadialGradientPaint implements Paint {
+  static class RadialGradientPaint implements Paint {
     float cx, cy, radius;
     float[] offset;
     int[] color;
@@ -1652,7 +1773,7 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public class Font extends PShapeSVG {
+  public static class Font extends PShapeSVG {
     public FontFace face;
 
     public HashMap<String,FontGlyph> namedGlyphs;
@@ -1766,7 +1887,7 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  class FontFace extends PShapeSVG {
+  static class FontFace extends PShapeSVG {
     int horizOriginX;  // dflt 0
     int horizOriginY;  // dflt 0
 //    int horizAdvX;     // no dflt?
@@ -1803,7 +1924,7 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public class FontGlyph extends PShapeSVG {  // extends Path
+  public static class FontGlyph extends PShapeSVG {  // extends Path
     public String name;
     char unicode;
     int horizAdvX;

@@ -103,7 +103,7 @@ public class JEditTextArea extends JComponent
     }
 
     // Initialize some misc. stuff
-    painter = new TextAreaPainter(this, defaults);
+    painter = createPainter(defaults);
     documentHandler = new DocumentHandler();
     eventListenerList = new EventListenerList();
     caretEvent = new MutableCaretEvent();
@@ -173,6 +173,16 @@ public class JEditTextArea extends JComponent
         }
       }
     });
+  }
+
+
+  /**
+   * Override this to provide your own painter for this {@link JEditTextArea}.
+   * @param defaults
+   * @return a newly constructed {@link TextAreaPainter}.
+   */
+  protected TextAreaPainter createPainter(final TextAreaDefaults defaults) {
+    return new TextAreaPainter(this, defaults);
   }
 
 
@@ -404,6 +414,11 @@ public class JEditTextArea extends JComponent
    * updating the scroll bars.
    */
   public void setFirstLine(int firstLine) {
+    if(firstLine < 0 || firstLine > getLineCount()) {
+      throw new IllegalArgumentException("First line out of range: "
+        + firstLine + " [0, " + getLineCount() + "]");
+    }
+
     if (firstLine == this.firstLine) return;
 
     this.firstLine = firstLine;
@@ -1382,7 +1397,7 @@ public class JEditTextArea extends JComponent
         start = tmp;
       }
 
-      StringBuffer buf = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       Segment seg = new Segment();
 
       for(int i = selectionStartLine; i <= selectionEndLine; i++)
@@ -1396,13 +1411,13 @@ public class JEditTextArea extends JComponent
         lineLen = Math.min(end - start,lineEnd - lineStart);
 
         getText(lineStart,lineLen,seg);
-        buf.append(seg.array,seg.offset,seg.count);
+        sb.append(seg.array,seg.offset,seg.count);
 
         if(i != selectionEndLine)
-          buf.append('\n');
+          sb.append('\n');
       }
 
-      return buf.toString();
+      return sb.toString();
     }
     else
     {
@@ -1676,11 +1691,11 @@ public class JEditTextArea extends JComponent
       String selection = getSelectedText();
 
       int repeatCount = inputHandler.getRepeatCount();
-      StringBuffer buf = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       for(int i = 0; i < repeatCount; i++)
-        buf.append(selection);
+        sb.append(selection);
 
-      clipboard.setContents(new StringSelection(buf.toString()),null);
+      clipboard.setContents(new StringSelection(sb.toString()), null);
     }
   }
 
@@ -1706,7 +1721,7 @@ public class JEditTextArea extends JComponent
    * specific to any language or version of the PDE.
    */
   public void copyAsHTML() {
-    StringBuffer cf = new StringBuffer("<html><body><pre>\n");
+    StringBuilder cf = new StringBuilder("<html><body><pre>\n");
 
     int selStart = getSelectionStart();
     int selStop = getSelectionStop();
@@ -1743,7 +1758,7 @@ public class JEditTextArea extends JComponent
   }
 
 
-  private void emitAsHTML(StringBuffer cf, int line) {
+  private void emitAsHTML(StringBuilder cf, int line) {
     Segment segment = new Segment();
     getLineText(line, segment);
 
@@ -1824,7 +1839,7 @@ public class JEditTextArea extends JComponent
   /**
    * Handle encoding HTML entities for lt, gt, and anything non-ASCII.
    */
-  private void appendAsHTML(StringBuffer buffer, char c) {
+  private void appendAsHTML(StringBuilder buffer, char c) {
     if (c == '<') {
       buffer.append("&lt;");
     } else if (c == '>') {
@@ -1888,11 +1903,11 @@ public class JEditTextArea extends JComponent
         }
 
         int repeatCount = inputHandler.getRepeatCount();
-        StringBuffer buf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < repeatCount; i++) {
-          buf.append(selection);
+          sb.append(selection);
         }
-        selection = buf.toString();
+        selection = sb.toString();
         setSelectedText(selection);
 
       } catch (Exception e) {
@@ -2076,7 +2091,7 @@ public class JEditTextArea extends JComponent
     // do magic stuff
     else if(line < firstLine)
     {
-      setFirstLine(firstLine + count);
+      setFirstLine(line);
     }
     // end of magic stuff
     else

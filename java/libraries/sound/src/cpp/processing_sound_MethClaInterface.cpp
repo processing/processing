@@ -27,6 +27,7 @@
 #include "methcla/plugins/fft.h"
 #include "methcla/plugins/hpf.h"
 #include "methcla/plugins/lpf.h"
+#include "methcla/plugins/bpf.h"
 #include "methcla/plugins/delay.h"
 #include "methcla/plugins/reverb.h"
 #include "methcla/plugins/audio_in.h"
@@ -38,21 +39,33 @@
 
 Methcla::Engine* m_engine;
 Methcla::Engine& engine() { return *m_engine; }
-std::mutex mutex;
+std::mutex mutex_fft_in;
+std::mutex mutex_fft_out;
+std::mutex mutex_amp_in;
+std::mutex mutex_amp_out;
+
 
 static Methcla_Time kLatency = 0.1;
 
-typedef struct data_v{
-        int id;
-        std::atomic<float> amp;
-} ServerValue, *ServerValuePtr;
+struct ServerValue{
+    ServerValue() :
+    amp(0),
+    id(-1)
+    {}
+    float amp;
+    int id;
+};
 
-typedef struct data_a{
-        int id;
-        int fftSize=512;
-        std::vector<float> fft;
-} ServerArray, *ServerArrayPtr;
-
+struct ServerArray{
+    ServerArray() :
+    fftSize(512),
+    fft(fftSize),
+    id(-1)
+    {}
+    int fftSize;
+    std::vector<float> fft;
+    int id;
+};
 
 // Engine
 
@@ -68,6 +81,7 @@ JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_engineNew (JNIEnv 
            .addLibrary(methcla_plugins_tri)
            .addLibrary(methcla_plugins_pulse)
            .addLibrary(methcla_soundfile_api_libsndfile)
+           .addLibrary(methcla_soundfile_api_mpg123)
            .addLibrary(methcla_plugins_patch_cable)
            .addLibrary(methcla_plugins_sampler)
            .addLibrary(methcla_plugins_white_noise)
@@ -77,7 +91,8 @@ JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_engineNew (JNIEnv 
            .addLibrary(methcla_plugins_pan2)
            .addLibrary(methcla_plugins_amplitude_follower)
            .addLibrary(methcla_plugins_hpf)
-           .addLibrary(methcla_plugins_lpf)           
+           .addLibrary(methcla_plugins_lpf)
+           .addLibrary(methcla_plugins_bpf)                      
            .addLibrary(methcla_plugins_delay)
            .addLibrary(methcla_plugins_reverb)
            .addLibrary(methcla_plugins_fft)
@@ -154,8 +169,8 @@ JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_oscAudioSet(JNIEnv
     if (m_freq[0] != -1)
     {
         Methcla::AudioBusId freq_bus = m_engine->audioBusId().alloc();
-        request.set(m_nodeId[0], 0 , 0);
-        request.free(m_freq[1]);
+        //request.set(m_nodeId[0], 0 , 0);
+        //request.free(m_freq[1]);
         request.mapOutput(m_freq[0], 0, freq_bus);
         request.mapInput(m_nodeId[0], 0, freq_bus);
 
@@ -163,15 +178,12 @@ JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_oscAudioSet(JNIEnv
     }
     
     if (m_amp[0] != -1)
-    {
+    { 
         
         Methcla::AudioBusId amp_bus = m_engine->audioBusId().alloc();
         //request.set(m_nodeId[0], 1 , 0);
         //request.free(m_amp[1]);
         request.mapOutput(m_amp[0], 0, amp_bus);
-        std::cout << m_amp[0] << std::endl;
-        request.set(m_amp[0], 0, 200);
-
         request.mapInput(m_nodeId[0], 1, amp_bus);
 
         std::cout << "amp" << std::endl;
@@ -256,7 +268,6 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_sinePlay(JNIE
 };
 
 JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_sawPlay(JNIEnv *env, jobject object, jfloat freq, jfloat amp, jfloat add, jfloat pos){
-    
     jintArray nodeId = env->NewIntArray(2);
     jint *m_nodeId = env->GetIntArrayElements(nodeId, NULL);
 
@@ -276,6 +287,9 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_sawPlay(JNIEn
             {pos, 1.f},
             {Methcla::Value(1.f)}
     );
+    
+    engine().addNotificationHandler(engine().freeNodeIdHandler(synth.id()));
+    engine().addNotificationHandler(engine().freeNodeIdHandler(pan.id()));
     
     request.mapOutput(synth.id(), 0, bus); 
     request.mapInput(pan.id(), 0, bus); 
@@ -451,13 +465,12 @@ JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_pulseSet(JNIEnv *e
     env->ReleaseIntArrayElements(nodeId, m_nodeId, 0);
 };
 
-JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_audioInPlay(JNIEnv *env, jobject object, jfloat amp, jfloat add, jfloat pos, jboolean out){
+JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_audioInPlay(JNIEnv *env, jobject object, jfloat amp, jfloat add, jfloat pos, jint in){
 
     jintArray nodeId = env->NewIntArray(2);
     jint *m_nodeId = env->GetIntArrayElements(nodeId, NULL);
 
     Methcla::AudioBusId bus = m_engine->audioBusId().alloc();
-    Methcla::AudioBusId in = m_engine->audioBusId().alloc();
 
     Methcla::Request request(engine());
     request.openBundle(Methcla::immediately);
@@ -471,11 +484,11 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_audioInPlay(J
     auto pan = request.synth(
             METHCLA_PLUGINS_PAN2_URI, 
             engine().root(), 
-            {pos, 0},
+            {pos, 1.f},
             {Methcla::Value(1.f)}
     );
 
-    request.mapInput(synth.id(), 0, in, Methcla::kBusMappingExternal);
+    request.mapInput(synth.id(), 0, Methcla::AudioBusId(in), Methcla::kBusMappingExternal);
     request.mapOutput(synth.id(), 0, bus); 
     request.mapInput(pan.id(), 0, bus); 
     
@@ -490,7 +503,7 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_audioInPlay(J
     request.send();
             
     m_nodeId[0]=synth.id();
-    m_nodeId[1]=pan.id();
+    m_nodeId[1]= pan.id();
 
     env->ReleaseIntArrayElements(nodeId, m_nodeId, 0);
 
@@ -550,7 +563,7 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_soundFilePlay
             { amp, rate },
             { Methcla::Value(str),
               Methcla::Value(loop),
-              Methcla::Value(cue) }
+              Methcla::Value(int(cue)) }
     );
     
     auto pan = request.synth(
@@ -615,7 +628,7 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_soundFilePlay
             { amp, rate },
             { Methcla::Value(str),
               Methcla::Value(loop),
-              Methcla::Value(cue) }
+              Methcla::Value(int(cue)) }
     );
     
     auto after = request.synth(
@@ -895,7 +908,7 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_envelopePlay(
     return returnId;
 };
 
-JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_highPassPlay(JNIEnv *env, jobject object, jintArray nodeId, jfloat freq, jfloat res){
+JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_highPassPlay(JNIEnv *env, jobject object, jintArray nodeId, jfloat freq){
   
     jint* m_nodeId = env->GetIntArrayElements(nodeId, 0); 
     jintArray returnId = env->NewIntArray(2);
@@ -909,7 +922,7 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_highPassPlay(
     auto synth = request.synth(
             METHCLA_PLUGINS_HPF_URI,
             Methcla::NodePlacement::after(m_nodeId[0]),
-            {freq, res},
+            {freq},
             {}
     );
 
@@ -932,7 +945,7 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_highPassPlay(
     return returnId;
 };
 
-JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_lowPassPlay(JNIEnv *env, jobject object, jintArray nodeId, jfloat freq, jfloat res){
+JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_lowPassPlay(JNIEnv *env, jobject object, jintArray nodeId, jfloat freq){
   
     jint* m_nodeId = env->GetIntArrayElements(nodeId, 0); 
     jintArray returnId = env->NewIntArray(2);
@@ -946,7 +959,7 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_lowPassPlay(J
     auto synth = request.synth(
             METHCLA_PLUGINS_LPF_URI,
             Methcla::NodePlacement::after(m_nodeId[0]),
-            {freq, res},
+            {freq},
             {}
     );
 
@@ -969,7 +982,7 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_lowPassPlay(J
     return returnId;
 };
 
-JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_bandPassPlay(JNIEnv *env, jobject object, jintArray nodeId, jfloat freq, jfloat res){
+JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_bandPassPlay(JNIEnv *env, jobject object, jintArray nodeId, jfloat freq, jfloat bw){
   
     jint* m_nodeId = env->GetIntArrayElements(nodeId, 0); 
     jintArray returnId = env->NewIntArray(2);
@@ -981,9 +994,9 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_bandPassPlay(
     Methcla::Request request(engine());
     request.openBundle(Methcla::immediately);
     auto synth = request.synth(
-            METHCLA_PLUGINS_HPF_URI,
+            METHCLA_PLUGINS_BPF_URI,
             Methcla::NodePlacement::after(m_nodeId[0]),
-            {freq, res},
+            {freq, bw},
             {}
     );
 
@@ -1006,12 +1019,21 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_bandPassPlay(
     return returnId;
 };
 
-JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_filterSet(JNIEnv *env, jobject object, jfloat freq, jfloat res, jint nodeId){
+JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_filterSet(JNIEnv *env, jobject object, jfloat freq, jint nodeId){
 
     Methcla::Request request(engine());
     request.openBundle(Methcla::immediately);
     request.set(nodeId, 0, freq);
-    request.set(nodeId, 1, res);
+    request.closeBundle();
+    request.send(); 
+};
+
+JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_filterBwSet(JNIEnv *env, jobject object, jfloat freq, jfloat bw, jint nodeId){
+
+    Methcla::Request request(engine());
+    request.openBundle(Methcla::immediately);
+    request.set(nodeId, 0, freq);
+    request.set(nodeId, 1, bw);    
     request.closeBundle();
     request.send(); 
 };
@@ -1027,6 +1049,7 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_delayPlay(JNI
     
     Methcla::Request request(engine());
     request.openBundle(Methcla::immediately);
+    
     auto synth = request.synth(
             METHCLA_PLUGINS_DELAY_URI,
             Methcla::NodePlacement::after(m_nodeId[0]),
@@ -1052,7 +1075,6 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_delayPlay(JNI
 
     return returnId;
 };
-
 
 JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_delaySet(JNIEnv *env, jobject object, jfloat delayTime, jfloat feedBack, jint nodeId){
     Methcla::Request request(engine());
@@ -1127,7 +1149,7 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_amplitude(JNIEnv 
 
     Methcla::Request request(engine());
 
-    ServerValue *amp_ptr = (ServerValue *) malloc(sizeof(ServerValue));
+    ServerValue * amp_ptr = new ServerValue; 
 
     ptr = (jlong)amp_ptr;
 
@@ -1152,8 +1174,8 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_amplitude(JNIEnv 
     auto id = engine().addNotificationHandler([amp_ptr](const OSCPP::Server::Message& msg) {
         if (msg == "/amplitude") {
            OSCPP::Server::ArgStream args(msg.args());
-           while (!args.atEnd()) {
-               
+           std::lock_guard<std::mutex> guard(mutex_amp_in);
+           while (!args.atEnd()) {    
                 amp_ptr->amp = args.float32();
            }
            return false;
@@ -1168,9 +1190,8 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_amplitude(JNIEnv 
 };
 
 JNIEXPORT jfloat JNICALL Java_processing_sound_MethClaInterface_poll_1amplitude(JNIEnv * env, jobject object, jlong ptr){
-
     ServerValue *amp_ptr = (ServerValue*)ptr; 
-
+    std::lock_guard<std::mutex> guard(mutex_amp_out);
     return amp_ptr->amp;
 };
 
@@ -1178,20 +1199,18 @@ JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_destroy_1amplitude
 
     ServerValue *amp_ptr = (ServerValue*)ptr;
     engine().removeNotificationHandler(amp_ptr->id);
-    free(amp_ptr);
-
+    delete amp_ptr;
 };
 
 JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_fft(JNIEnv *env, jobject object, jintArray nodeId, jint fftSize){
 
     jlong ptr;
     jint* m_nodeId = env->GetIntArrayElements(nodeId, 0); 
-    ServerArray *fft_ptr = (ServerArray *) malloc(sizeof(ServerArray) + fftSize*(sizeof(std::vector<float>)));
-    
-    std::cout << "1" << std::endl;
+    //ServerArray *fft_ptr = (ServerArray *) malloc(sizeof(ServerArray));
 
-    fft_ptr->fft.resize(fftSize);
-    std::cout << "2" << std::endl;
+    ServerArray * fft_ptr = new ServerArray; 
+    
+    fft_ptr->fft.resize(fftSize, 0);
 
     fft_ptr->fftSize=fftSize;
     ptr = (jlong)fft_ptr;
@@ -1204,11 +1223,13 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_fft(JNIEnv *env, 
     Methcla::Request request(engine());
     request.openBundle(Methcla::immediately);
 
+    std::cout << fftSize << std::endl;
+
     auto synth = request.synth(
             METHCLA_PLUGINS_FFT_URI,
             Methcla::NodePlacement::after(m_nodeId[0]),
             {},
-            {Methcla::Value(fftSize)}
+            {Methcla::Value(int(fftSize))}
     );
 
     request.mapOutput(m_nodeId[0], 0, in_bus);
@@ -1224,12 +1245,14 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_fft(JNIEnv *env, 
         if (msg == "/fft") {
            OSCPP::Server::ArgStream args(msg.args());
            int i=0;
-           while (!args.atEnd()) { 
-              fft_ptr->fft[i] = args.float32();
-              std::lock_guard<std::mutex> guard(mutex);
-              i++;
-           }
-           return false;
+           {
+               std::lock_guard<std::mutex> guard(mutex_fft_in);
+               while (!args.atEnd()) { 
+                  fft_ptr->fft[i] = args.float32();
+                  i++;
+               }
+            }
+            return false;
         }
         return false;
     });
@@ -1244,12 +1267,10 @@ JNIEXPORT jlong JNICALL Java_processing_sound_MethClaInterface_fft(JNIEnv *env, 
 JNIEXPORT jfloatArray JNICALL Java_processing_sound_MethClaInterface_poll_1fft(JNIEnv *env, jobject object, jlong ptr){
     
     ServerArray *fft_ptr = (ServerArray*)ptr; 
-
     jfloatArray fft_mag = env->NewFloatArray(fft_ptr->fftSize);
-
-
     jfloat *m_fft_mag = env->GetFloatArrayElements(fft_mag, NULL);
 
+    std::lock_guard<std::mutex> guard(mutex_fft_out);
     for (int i = 0; i < fft_ptr->fftSize; ++i)
     {
         m_fft_mag[i]=fft_ptr->fft[i];
@@ -1261,9 +1282,9 @@ JNIEXPORT jfloatArray JNICALL Java_processing_sound_MethClaInterface_poll_1fft(J
 };
 
 JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_destroy_1fft(JNIEnv *env, jobject object, jlong ptr){
-    ServerArray *fft_ptr = (ServerArray*)ptr;
+    ServerArray * fft_ptr = (ServerArray*)ptr;
     engine().removeNotificationHandler(fft_ptr->id);
-    free(fft_ptr);  
+    delete fft_ptr;
 };
 
 /* OLD VARIABLE IN OUT FUNCTION
@@ -1292,4 +1313,19 @@ JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_out(JNIEnv *env, j
     return synth.id();
 };
 */
+
+JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_out(JNIEnv *env, jobject object, jint out, jintArray nodeId){
+
+    jint* m_nodeId = env->GetIntArrayElements(nodeId, 0); 
+    
+    Methcla::Request request(engine());
+    request.openBundle(Methcla::immediately);
+
+    request.mapOutput(m_nodeId[0], 0, Methcla::AudioBusId(out), Methcla::kBusMappingExternal);
+
+    request.closeBundle();
+    request.send();
+
+    env->ReleaseIntArrayElements(nodeId, m_nodeId, 0);  
+};
 

@@ -17,14 +17,15 @@
  */
 package processing.mode.experimental;
 import static processing.mode.experimental.ExperimentalMode.log;
+import static processing.mode.experimental.ExperimentalMode.logE;
 import galsasson.mode.tweak.ColorControlBox;
 import galsasson.mode.tweak.Handle;
 import galsasson.mode.tweak.SketchParser;
+import galsasson.mode.tweak.UDPTweakClient;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -42,8 +43,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,7 +62,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableModel;
 import javax.swing.text.Document;
@@ -82,7 +80,6 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
-import processing.mode.java.JavaToolbar;
 
 /**
  * Main View Class. Handles the editor window including tool bar and menu. Has
@@ -105,7 +102,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     protected Color currentLineColor = new Color(255, 255, 150); // the background color for highlighting lines
     protected Color breakpointMarkerColor = new Color(74, 84, 94); // the color of breakpoint gutter markers
     protected Color currentLineMarkerColor = new Color(226, 117, 0); // the color of current line gutter markers
-    protected List<LineHighlight> breakpointedLines = new ArrayList(); // breakpointed lines
+    protected List<LineHighlight> breakpointedLines = new ArrayList<LineHighlight>(); // breakpointed lines
     protected LineHighlight currentLine; // line the debugger is currently suspended at
     protected final String breakpointMarkerComment = " //<>//"; // breakpoint marker comment
     // menus
@@ -196,6 +193,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     protected JCheckBoxMenuItem completionsEnabled;
     
     /**
+     * If sketch contains java tabs, some editor features are disabled
+     */
+    protected boolean hasJavaTabs;
+    
+    /**
      * UNUSED. Disbaled for now.
      */
     protected AutoSaveUtil autosaver;
@@ -267,11 +269,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         addXQModeUI();    
         debugToolbarEnabled = new AtomicBoolean(false);
         //log("Sketch Path: " + path);
-
-        // TweakMode code
-
-        // random port for OSC (0xff0 - 0xfff0)
-		oscPort = (int)(Math.random()*0xf000) + 0xff0;
     }
     
     private void addXQModeUI(){
@@ -384,32 +381,32 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       return;
       try {
         System.out.println("Writing errors");
-        StringBuffer sbuff = new StringBuffer();
-      sbuff.append("Sketch: " + getSketch().getFolder() + ", "
+        StringBuilder sb = new StringBuilder();
+      sb.append("Sketch: " + getSketch().getFolder() + ", "
           + new java.sql.Timestamp(new java.util.Date().getTime())
               + "\nComma in error msg is substituted with ^ symbol\nFor separating arguments in error args | symbol is used\n");
-      sbuff.append("ERROR TYPE, ERROR ARGS, ERROR MSG\n");
+      sb.append("ERROR TYPE, ERROR ARGS, ERROR MSG\n");
         for (String errMsg : errorCheckerService.tempErrorLog.keySet()) {
           IProblem ip = errorCheckerService.tempErrorLog.get(errMsg);
           if(ip != null){
-            sbuff.append(errorCheckerService.errorMsgSimplifier.getIDName(ip.getID()));
-            sbuff.append(',');
-            sbuff.append("{");
+            sb.append(ErrorMessageSimplifier.getIDName(ip.getID()));
+            sb.append(',');
+            sb.append("{");
             for (int i = 0; i < ip.getArguments().length; i++) {
-              sbuff.append(ip.getArguments()[i]);
+              sb.append(ip.getArguments()[i]);
               if(i < ip.getArguments().length - 1)
-                sbuff.append("| ");
+                sb.append("| ");
             }
-            sbuff.append("}");
-            sbuff.append(',');
-            sbuff.append(ip.getMessage().replace(',', '^'));
-            sbuff.append("\n");
+            sb.append("}");
+            sb.append(',');
+            sb.append(ip.getMessage().replace(',', '^'));
+            sb.append("\n");
           }
         }
-        System.out.println(sbuff);
+        System.out.println(sb);
         File opFile = new File(getSketch().getFolder(), "ErrorLogs"
           + File.separator + "ErrorLog_" + System.currentTimeMillis() + ".csv");
-        PApplet.saveStream(opFile, new ByteArrayInputStream(sbuff.toString()
+        PApplet.saveStream(opFile, new ByteArrayInputStream(sb.toString()
           .getBytes(Charset.defaultCharset())));
       } catch (Exception e) {
         System.err.println("Failed to save log file for sketch " + getSketch().getName());
@@ -533,11 +530,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         listBreakpointsMenuItem = new JMenuItem("List Breakpoints");
         listBreakpointsMenuItem.addActionListener(this);
 
-        stepOverMenuItem = Toolkit.newJMenuItem("Step", KeyEvent.VK_H);
+        stepOverMenuItem = Toolkit.newJMenuItem("Step", KeyEvent.VK_J);
         stepOverMenuItem.addActionListener(this);
-        stepIntoMenuItem = Toolkit.newJMenuItemShift("Step Into", KeyEvent.VK_H);
+        stepIntoMenuItem = Toolkit.newJMenuItemShift("Step Into", KeyEvent.VK_J);
         stepIntoMenuItem.addActionListener(this);
-        stepOutMenuItem = Toolkit.newJMenuItemAlt("Step Out", KeyEvent.VK_H);
+        stepOutMenuItem = Toolkit.newJMenuItemAlt("Step Out", KeyEvent.VK_J);
         stepOutMenuItem.addActionListener(this);
 
         printStackTraceMenuItem = new JMenuItem("Print Stack Trace");
@@ -843,7 +840,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * removed from.
      */
     protected List<LineID> stripBreakpointComments() {
-        List<LineID> bps = new ArrayList();
+        List<LineID> bps = new ArrayList<LineID>();
         // iterate over all tabs
         Sketch sketch = getSketch();
         for (int i = 0; i < sketch.getCodeCount(); i++) {
@@ -883,6 +880,13 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     protected void addBreakpointComments(String tabFilename) {
         SketchCode tab = getTab(tabFilename);
+        if(tab == null) {
+          // this method gets called twice when saving sketch for the first time
+          // once with new name and another with old(causing NPE). Keep an eye out 
+          // for potential issues. See #2675. TODO:
+          logE("Illegal tab name to addBreakpointComments() " + tabFilename);          
+          return;
+        }
         List<LineBreakpoint> bps = dbg.getBreakpoints(tab.getFileName());
 
         // load the source file
@@ -908,7 +912,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     public boolean handleSave(boolean immediately) {
         //System.out.println("handleSave " + immediately);
       
-        log("handleSave, viewing autosave? " + viewingAutosaveBackup);
+        //log("handleSave, viewing autosave? " + viewingAutosaveBackup);
         /* If user wants to save a backup, the backup sketch should get
          * copied to the main sketch directory, simply reload the main sketch. 
          */
@@ -940,7 +944,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         }
       
         // note modified tabs
-        final List<String> modified = new ArrayList();
+        final List<String> modified = new ArrayList<String>();
         for (int i = 0; i < getSketch().getCodeCount(); i++) {
             SketchCode tab = getSketch().getCode(i);
             if (tab.isModified()) {
@@ -1592,9 +1596,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       if(type == STATUS_COMPILER_ERR) return;
       
       // Clear the message after a delay
-      SwingWorker s = new SwingWorker<Void, Void>() {
+      SwingWorker<Object, Object> s = new SwingWorker<Object, Object>() {
         @Override
-        protected Void doInBackground() throws Exception {
+        protected Object doInBackground() throws Exception {
           try {
             Thread.sleep(2 * 1000);
           } catch (InterruptedException e) {
@@ -1693,19 +1697,20 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     }
     
     /**
-     * Checks if the sketch contains java tabs. If it does, XQMode ain't built
-     * for it, yet. Also, user should really start looking at Eclipse. Disable
-     * compilation check.
+     * Checks if the sketch contains java tabs. If it does, the editor ain't built
+     * for it, yet. Also, user should really start looking at more powerful IDEs 
+     * likeEclipse. Disable compilation check and some more features.
      */
     private void checkForJavaTabs() {
+      hasJavaTabs = false;
       for (int i = 0; i < this.getSketch().getCodeCount(); i++) {
         if (this.getSketch().getCode(i).getExtension().equals("java")) {
           compilationCheckEnabled = false;
+          hasJavaTabs = true;
           JOptionPane.showMessageDialog(new Frame(), this
               .getSketch().getName()
-              + " contains .java tabs. Live compilation error checking isn't "
-              + "supported for java tabs. Only "
-              + "syntax errors will be reported for .pde tabs.");
+              + " contains .java tabs. Some editor features are not supported " +
+              "for .java tabs and will be disabled.");
           break;
         }
       }
@@ -1800,11 +1805,14 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     //protected JCheckBoxMenuItem enableTweakCB;
 
+  public static final String prefTweakPort = "tweak.port";
+  public static final String prefTweakShowCode = "tweak.showcode";
+
 	String[] baseCode;
 
 	final static int SPACE_AMOUNT = 0;
 
-	int oscPort;
+	UDPTweakClient tweakClient;
 
 	public void startInteractiveMode()
 	{
@@ -1813,6 +1821,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
 	public void stopInteractiveMode(ArrayList<Handle> handles[])
 	{
+		tweakClient.shutdown();
 		ta.stopInteractiveMode();
 
 		// remove space from the code (before and after)
@@ -1885,11 +1894,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 	public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[])
 	{
 		// set OSC port of handles
-		for (int i=0; i<handles.length; i++) {
-			for (Handle h : handles[i]) {
-				h.setOscPort(oscPort);
-			}
-		}
+//		for (int i=0; i<handles.length; i++) {
+//			for (Handle h : handles[i]) {
+//				h.setOscPort(oscPort);
+//			}
+//		}
 
 		ta.updateInterface(handles, colorBoxes);
 	}
@@ -1901,6 +1910,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 	public void deactivateRun()
 	{
 //		toolbar.deactivate(TweakToolbar.RUN);
+	  if(toolbar instanceof DebugToolbar){
+	    toolbar.deactivate(DebugToolbar.RUN);
+	  } else {
+	    super.deactivateRun();
+	  }
 	}
 
 	private boolean[] getModifiedTabs(ArrayList<Handle> handles[])
@@ -2003,7 +2017,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 	}
 
     /**
-     * Replace all numbers with variables and add code to initialize these variables and handle OSC messages.
+     * Replace all numbers with variables and add code to initialize these variables and handle update messages.
      * @param sketch
      * 	the sketch to work on
      * @param handles
@@ -2025,6 +2039,32 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     	if (setupStartPos < 0) {
     		return false;
     	}
+
+    	// get port number from preferences.txt
+    	int port;
+    	String portStr = Preferences.get(prefTweakPort);
+    	if (portStr == null) {
+    		Preferences.set(prefTweakPort, "auto");
+    		portStr = "auto";
+    	}
+    	
+    	if (portStr.equals("auto")) {
+            // random port for udp (0xc000 - 0xffff)
+    		port = (int)(Math.random()*0x3fff) + 0xc000;   		
+    	}
+    	else {
+    		port = Preferences.getInteger(prefTweakPort);
+    	}
+    	
+    	/* create the client that will send the new values to the sketch */
+		tweakClient = new UDPTweakClient(port);
+		// update handles with a reference to the client object
+		for (int tab=0; tab<code.length; tab++) {
+			for (Handle h : handles[tab]) {
+				h.setTweakClient(tweakClient);
+			}
+		}
+		
 
 		// Copy current program to interactive program
 
@@ -2055,9 +2095,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     		 "\n\n";
 
     	// add needed OSC imports and the global OSC object
-    	header += "import oscP5.*;\n";
-    	header += "import netP5.*;\n\n";
-    	header += "OscP5 tweakmode_oscP5;\n\n";
+    	header += "import java.net.*;\n";
+    	header += "import java.io.*;\n";
+    	header += "import java.nio.*;\n\n";
 
     	// write a declaration for int and float arrays
     	int numOfInts = howManyInts(handles);
@@ -2068,31 +2108,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     	if (numOfFloats > 0) {
     		header += "float[] tweakmode_float = new float["+numOfFloats+"];\n\n";
     	}
-
-    	/* add the class for the OSC event handler that will respond to our messages */
-    	header += "public class TweakMode_OscHandler {\n" +
-    			  "  public void oscEvent(OscMessage msg) {\n" +
-                  "    String type = msg.addrPattern();\n";
-        if (numOfInts > 0) {
-        	header += "    if (type.contains(\"/tm_change_int\")) {\n" +
-                      "      int index = msg.get(0).intValue();\n" +
-                      "      int value = msg.get(1).intValue();\n" +
-                      "      tweakmode_int[index] = value;\n" +
-                      "    }\n";
-        	if (numOfFloats > 0) {
-        		header += "    else ";
-        	}
-        }
-        if (numOfFloats > 0) {
-            header += "if (type.contains(\"/tm_change_float\")) {\n" +
-                      "      int index = msg.get(0).intValue();\n" +
-                      "      float value = msg.get(1).floatValue();\n" +
-                      "      tweakmode_float[index] = value;\n" +
-                      "    }\n";
-        }
-        header += "  }\n" +
-                  "}\n";
-    	header += "TweakMode_OscHandler tweakmode_oscHandler = new TweakMode_OscHandler();\n";
+    	
+    	/* add the server code that will receive the value change messages */
+    	header += UDPTweakClient.getServerCode(port, numOfInts>0, numOfFloats>0);
+    	header += "TweakModeServer tweakmode_Server;\n";
+    			
 
     	header += "void tweakmode_initAllVars() {\n";
     	for (int i=0; i<handles.length; i++) {
@@ -2102,28 +2122,39 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     		}
     	}
     	header += "}\n\n";
-    	header += "void tweakmode_initOSC() {\n";
-    	header += "  tweakmode_oscP5 = new OscP5(tweakmode_oscHandler,"+oscPort+");\n";
+    	header += "void tweakmode_initCommunication() {\n";
+    	header += "	tweakmode_Server = new TweakModeServer();\n";
+    	header += "	tweakmode_Server.setup();\n";
+    	header += "	tweakmode_Server.start();\n";
     	header += "}\n";
 
     	header += "\n\n\n\n\n";
 
     	// add call to our initAllVars and initOSC functions from the setup() function.
-    	String addToSetup = "\n  tweakmode_initAllVars();\n  tweakmode_initOSC();\n\n";
+    	String addToSetup = "\n"+
+    						"	tweakmode_initAllVars();\n"+
+    						"	tweakmode_initCommunication();\n\n";
+    	
     	setupStartPos = SketchParser.getSetupStart(c);
     	c = replaceString(c, setupStartPos, setupStartPos, addToSetup);
 
     	code[0].setProgram(header + c);
 
     	/* print out modified code */
-//    	if (tweakMode.dumpModifiedCode) {
-//    		System.out.println("\nModified code:\n");
-//    		for (int i=0; i<code.length; i++)
-//    		{
-//    			System.out.println("file " + i + "\n=========");
-//    			System.out.println(code[i].getProgram());
-//    		}
-//    	}
+    	String showModCode = Preferences.get(prefTweakShowCode);
+    	if (showModCode == null) {
+    		Preferences.setBoolean(prefTweakShowCode, false);
+    	}
+    	
+    	if (Preferences.getBoolean(prefTweakShowCode)) {
+    		System.out.println("\nTweakMode modified code:\n");
+    		for (int i=0; i<code.length; i++)
+    		{
+    			System.out.println("tab " + i + "\n");
+    			System.out.println("=======================================================\n");
+    			System.out.println(code[i].getProgram());
+    		}
+    	}
 
     	return true;
     }

@@ -2,25 +2,26 @@ package processing.sound;
 
 import processing.core.PApplet;
 
-public class AudioIn {
+public class AudioIn implements SoundObject{
 	
 	PApplet parent;
 	private Engine m_engine;
 	private int[] m_nodeId = {-1,-1};
 	private float m_amp = 1.f;
 	private float m_add = 0;
-	private boolean m_out = true;
+	private int m_in = 0;
 	private float m_pos = 0;
 	
-	public AudioIn(PApplet theParent) {
+	public AudioIn (PApplet theParent, int in) {
 		this.parent = theParent;
 		parent.registerMethod("dispose", this);
 		m_engine.setPreferences(theParent, 512, 44100);
     	m_engine.start();
+    	m_in = in;
    	}
 	
 	public void play(){
-		m_nodeId = m_engine.audioInPlay(m_amp, m_add, m_pos, m_out);
+		m_nodeId = m_engine.audioInPlay(m_amp, m_add, m_pos, m_in);
 	}
 
 	public void play(float amp, float add, float pos){

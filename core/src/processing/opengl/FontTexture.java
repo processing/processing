@@ -151,9 +151,15 @@ class FontTexture implements PConstants {
     } else if (resize) {
       // Replacing old smaller texture with larger one.
       // But first we must copy the contents of the older
-      // texture into the new one.
+      // texture into the new one. Setting blend mode to
+      // REPLACE to preserve color of transparent pixels.
       Texture tex0 = textures[currentTex];
+
+      tex.pg.pushStyle();
+      tex.pg.blendMode(REPLACE);
       tex.put(tex0);
+      tex.pg.popStyle();
+
       textures[currentTex] = tex;
 
       pg.setCache(images[currentTex], tex);

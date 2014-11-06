@@ -26,7 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -162,7 +161,7 @@ public class CompilationChecker {
     }
 
     List<ClassFile> getResults() {
-      System.out.println("Calling get results");
+      //System.out.println("Calling get results");
       return this.classes;
     }
   }
@@ -269,17 +268,17 @@ public class CompilationChecker {
       try {
         urls[i] = jarList.get(i).toURI().toURL();
       } catch (MalformedURLException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
     urlClassLoader = new URLClassLoader(urls);
-    System.out.println("URL Classloader ready");
+    //System.out.println("URL Classloader ready");
   }
 
   /**
    * ClassLoader implementation
    */
+  /*
   private class CustomClassLoader extends ClassLoader {
 
     private Map classMap;
@@ -301,6 +300,7 @@ public class CompilationChecker {
       return super.findClass(name);
     }
   };
+  */
 
   private ICompilationUnit generateCompilationUnit() {
     ASTParser parser = ASTParser.newParser(AST.JLS4);
@@ -432,13 +432,13 @@ public class CompilationChecker {
 
   static private String[] getSimpleNames(String qualifiedName) {
     StringTokenizer st = new StringTokenizer(qualifiedName, ".");
-    ArrayList list = new ArrayList();
+    ArrayList<String> list = new ArrayList<String>();
     while (st.hasMoreTokens()) {
       String name = st.nextToken().trim();
       if (!name.equals("*"))
         list.add(name);
     }
-    return (String[]) list.toArray(new String[list.size()]);
+    return list.toArray(new String[0]);
   }
 
   public static void main(String[] args) {
@@ -457,11 +457,11 @@ public class CompilationChecker {
       IProblem problem = prob[i];
       if (problem == null)
         continue;
-      StringBuffer buffer = new StringBuffer();
-      buffer.append(problem.getMessage());
-      buffer.append(" | line: ");
-      buffer.append(problem.getSourceLineNumber());
-      String msg = buffer.toString();
+      StringBuilder sb = new StringBuilder();
+      sb.append(problem.getMessage());
+      sb.append(" | line: ");
+      sb.append(problem.getSourceLineNumber());
+      String msg = sb.toString();
       if (problem.isError()) {
         error = true;
         msg = "Error: " + msg;

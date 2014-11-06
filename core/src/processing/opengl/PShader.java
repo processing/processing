@@ -753,7 +753,8 @@ public class PShader implements PConstants {
       uniformValues.put(loc, new UniformValue(type, value));
     } else {
       PGraphics.showWarning("The shader doesn't have a uniform called \"" +
-                            name + "\"");
+                            name + "\" OR the uniform was removed during" +
+                            "compilation because it was unused.");
     }
   }
 

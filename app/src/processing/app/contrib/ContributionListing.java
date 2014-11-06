@@ -27,15 +27,16 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 import processing.app.Base;
+import processing.app.Library;
 import processing.core.PApplet;
 
 
 public class ContributionListing {
   // Stable URL that will redirect to wherever we're hosting the file
   static final String LISTING_URL =
-    "http://download.processing.org/contributions.txt";
+    "http://download.processing.org/contribs.txt";
 
-  static ContributionListing singleInstance;
+  static volatile ContributionListing singleInstance;
 
   File listingFile;
   ArrayList<ContributionChangeListener> listeners;
@@ -43,6 +44,7 @@ public class ContributionListing {
   Map<String, List<Contribution>> librariesByCategory;
   ArrayList<Contribution> allContributions;
   boolean hasDownloadedLatestList;
+  boolean hasListDownloadFailed;
   ReentrantLock downloadingListingLock;
 
 
@@ -63,7 +65,11 @@ public class ContributionListing {
 
   static ContributionListing getInstance() {
     if (singleInstance == null) {
-      singleInstance = new ContributionListing();
+      synchronized (ContributionListing.class) {
+        if (singleInstance == null) {
+          singleInstance = new ContributionListing();
+        }
+      }
     }
     return singleInstance;
   }
@@ -165,7 +171,9 @@ public class ContributionListing {
 
 
   protected AvailableContribution getAvailableContribution(Contribution info) {
-    for (AvailableContribution advertised : advertisedContributions) {
+    Iterator<AvailableContribution> iter = advertisedContributions.iterator();
+    while(iter.hasNext()) {
+      AvailableContribution advertised = iter.next();
       if (advertised.getType() == info.getType() &&
           advertised.getName().equals(info.getName())) {
         return advertised;
@@ -300,6 +308,24 @@ public class ContributionListing {
   }
 
 
+  protected List<Contribution> getCompatibleContributionList(List<Contribution> filteredLibraries, boolean filter) {
+    ArrayList<Contribution> filteredList = 
+      new ArrayList<Contribution>(filteredLibraries);
+    
+    if (!filter)
+      return filteredList;
+
+    Iterator<Contribution> it = filteredList.iterator();
+    while (it.hasNext()) {
+      Contribution libInfo = it.next();
+      if (!libInfo.isCompatible(Base.getRevision())) {
+        it.remove();
+      }
+    }
+    return filteredList;
+  }
+
+
   private void notifyRemove(Contribution contribution) {
     for (ContributionChangeListener listener : listeners) {
       listener.contributionRemoved(contribution);
@@ -362,12 +388,15 @@ public class ContributionListing {
           ContributionManager.download(url, listingFile, progress);
           if (!progress.isCanceled() && !progress.isError()) {
             hasDownloadedLatestList = true;
+            hasListDownloadFailed = false;
             setAdvertisedList(listingFile);
           }
+          else
+            hasListDownloadFailed = true;
         }
         downloadingListingLock.unlock();
       }
-    }).start();
+    }, "Contribution List Downloader").start();
   }
 
 
@@ -377,6 +406,19 @@ public class ContributionListing {
         return true;
       }
     }
+    return false;
+  }
+  
+  boolean hasUpdates(Base base) {
+    for (ModeContribution m : base.getModeContribs())
+      if (hasUpdates(m))
+        return true;
+    for (Library l : base.getActiveEditor().getMode().contribLibraries)
+      if (hasUpdates(l))
+        return true;
+    for (ToolContribution t : base.getActiveEditor().contribTools)
+      if (hasUpdates(t))
+        return true;
     return false;
   }
 
@@ -393,8 +435,31 @@ public class ContributionListing {
   }
 
 
+  String getLatestVersion(Contribution contribution) {
+    Contribution newestContrib = getAvailableContribution(contribution);
+    String latestVersion = newestContrib.getPrettyVersion();
+    if (latestVersion != null && !latestVersion.isEmpty()) {
+      if (latestVersion.toLowerCase().startsWith("build")) // For Python mode
+        return ("v" + latestVersion.substring(5, latestVersion.indexOf(','))
+            .trim());
+      else if (latestVersion.toLowerCase().startsWith("v")) // For ketai library
+        return latestVersion;
+      else
+        return ("v" + latestVersion);
+    }
+    else
+      return null;
+  }
+  
+
+
   boolean hasDownloadedLatestList() {
     return hasDownloadedLatestList;
+  }
+
+
+  boolean hasListDownloadFailed() {
+    return hasListDownloadFailed;
   }
 
 

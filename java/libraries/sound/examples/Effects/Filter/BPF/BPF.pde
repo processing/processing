@@ -6,7 +6,7 @@ In this example it is started and stopped by clicking into the renderer window.
 import processing.sound.*;
 
 WhiteNoise noise;
-BandPass bPass;
+BandPass bandPass;
 
 float amp=0.0;
 
@@ -16,14 +16,15 @@ void setup() {
     
     // Create the noise generator + Filter
     noise = new WhiteNoise(this);
-    bPass = new BandPass(this);
+    bandPass = new BandPass(this);
+    
     noise.play(0.5);
-    bPass.process(noise, 100);
+    bandPass.process(noise, 100);
 }      
 
 void draw() {
 
-    bPass.freq(map(mouseX, 0, 350, 20, 10000));
+    bandPass.freq(map(mouseX, 0, width, 20, 10000));
     
-    bPass.res(map(mouseY, 0, 350, 0.05, 1.0));
+    bandPass.bw(map(mouseY, 0, height, 100, 1000));
 }

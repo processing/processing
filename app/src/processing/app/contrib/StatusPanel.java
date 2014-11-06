@@ -45,6 +45,11 @@ class StatusPanel extends JLabel {
     setText(message);
     repaint();
   }
+  
+  void clear() {
+    setText("");
+    repaint();
+  }
 }
 
 

@@ -155,13 +155,13 @@ public class OSCBundle extends OSCPacket {
 	 */
 	protected void computeTimeTagByteArray(OSCJavaToByteArrayConverter stream) {
 		if ((null == timestamp) || (timestamp == TIMESTAMP_IMMEDIATE)) {
-			stream.write((int) 0);
-			stream.write((int) 1);
+			stream.write(0);
+			stream.write(1);
 			return;
 		}
 
 		long millisecs = timestamp.getTime();
-		long secsSince1970 = (long) (millisecs / 1000);
+		long secsSince1970 = millisecs / 1000;
 		long secs = secsSince1970 + SECONDS_FROM_1900_TO_1970.longValue();
 
 		// this line was cribbed from jakarta commons-net's NTP TimeStamp code

@@ -22,7 +22,9 @@
 package processing.app.contrib;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.net.URLClassLoader;
 import java.util.*;
 
 import processing.app.Base;
@@ -84,6 +86,27 @@ public class ModeContribution extends LocalContribution {
     }
   }
 
+  /**
+   * Method to close the ClassLoader so that the archives are no longer "locked"
+   * and a mode can be removed without restart.
+   */
+  public void clearClassLoader(Base base) {
+    
+    ArrayList<ModeContribution> contribModes = base.getModeContribs();
+    int botherToRemove = contribModes.indexOf(this);
+    if (botherToRemove != -1) { // The poor thing isn't even loaded, and we're trying to remove it...
+      contribModes.remove(botherToRemove);
+
+      try {
+        ((URLClassLoader) loader).close();
+        // The typecast should be safe, since the only case when loader is not of
+        // type URLClassLoader is when no archives were found in the first
+        // place...
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
 
   static public void loadMissing(Base base) {
     File modesFolder = Base.getSketchbookModesFolder();
@@ -111,13 +134,13 @@ public class ModeContribution extends LocalContribution {
     }
     
     // This allows you to build and test your Mode code from Eclipse.
-    // -Dusemode=com.foo.FrobMode:/path/to/FrobMode/resources
-    final String usemode = System.getProperty("usemode");
-    if (usemode != null) {
-      final String[] modeinfo = usemode.split(":", 2);
-      final String modeClass = modeinfo[0];
-      final String modeResourcePath = modeinfo[1];
-      System.err.println("Attempting to load " + modeClass + " with resources at " + modeResourcePath);
+    // -Dusemode=com.foo.FrobMode:/path/to/FrobMode
+    final String useMode = System.getProperty("usemode");
+    if (useMode != null) {
+      final String[] modeInfo = useMode.split(":", 2);
+      final String modeClass = modeInfo[0];
+      final String modeResourcePath = modeInfo[1];
+      System.out.println("Attempting to load " + modeClass + " with resources at " + modeResourcePath);
       contribModes.add(ModeContribution.load(base, new File(modeResourcePath), modeClass));
     }
   }

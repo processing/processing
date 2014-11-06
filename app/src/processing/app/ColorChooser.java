@@ -70,7 +70,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
   public ColorChooser(Frame owner, boolean modal, Color initialColor,
                       String buttonName, ActionListener buttonListener) {
     //super("Color Selector");
-    window = new JDialog(owner, "Color Selector", modal);
+    window = new JDialog(owner, Language.text("color_chooser"), modal);
     window.getContentPane().setLayout(new BorderLayout());
 
     Box box = Box.createHorizontalBox();
@@ -442,6 +442,23 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     row.add(Box.createHorizontalGlue());
     box.add(row);
     
+    row = Box.createHorizontalBox();
+    if (Base.isMacOS()) {
+      row.add(Box.createHorizontalStrut(11));
+    } else {
+      row.add(createFixedLabel(""));
+    }
+    button = new JButton("Cancel");
+    button.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ColorChooser.this.hide();
+      }
+    });
+    row.add(button);
+    row.add(Box.createHorizontalGlue());
+    box.add(row);
     //
     
     box.add(Box.createVerticalGlue());
@@ -622,7 +639,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
   /**
    * Extension of JTextField that only allows numbers
    */
-  class NumberField extends JTextField {
+  static class NumberField extends JTextField {
 
     public boolean allowHex;
 
@@ -655,7 +672,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
   /**
    * Document model to go with JTextField that only allows numbers.
    */
-  class NumberDocument extends PlainDocument {
+  static class NumberDocument extends PlainDocument {
 
     NumberField parentField;
 

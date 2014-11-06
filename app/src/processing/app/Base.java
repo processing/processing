@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-13 Ben Fry and Casey Reas
+  Copyright (c) 2004-14 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or
@@ -46,9 +46,9 @@ import processing.mode.java.JavaMode;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 228;
+  static private final int REVISION = 232;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0228"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0232"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 //  static private boolean RELEASE = false;
 
@@ -92,12 +92,13 @@ public class Base {
   static private boolean commandLine;
 
   // A single instance of the preferences window
-  Preferences preferencesFrame;
+  PreferencesFrame preferencesFrame;
 
   // A single instance of the library manager window
   ContributionManagerDialog libraryManagerFrame;
   ContributionManagerDialog toolManagerFrame;
   ContributionManagerDialog modeManagerFrame;
+  ContributionManagerDialog exampleManagerFrame;
   ContributionManagerDialog updateManagerFrame;
 
   // set to true after the first time the menu is built.
@@ -120,9 +121,11 @@ public class Base {
    */
   private Mode nextMode;
 
+  /** The built-in modes. coreModes[0] will be considered the 'default'. */
   private Mode[] coreModes;
-  //public List<ModeContribution> contribModes;
   protected ArrayList<ModeContribution> modeContribs;
+
+  protected ArrayList<ExamplesPackageContribution> exampleContribs;
 
   private JMenu sketchbookMenu;
 
@@ -170,6 +173,9 @@ public class Base {
 
     // Make sure a full JDK is installed
     initRequirements();
+
+    // Load the languages
+    Language.init();
 
     // run static initialization that grabs all the prefs
     Preferences.init();
@@ -272,44 +278,20 @@ public class Base {
 
 
   private void buildCoreModes() {
-//    Mode javaMode =
-//      ModeContribution.getCoreMode(this, "processing.mode.java.JavaMode",
-//                                   getContentFile("modes/java"));
-//    Mode androidMode =
-//      ModeContribution.getCoreMode(this, "processing.mode.android.AndroidMode",
-//                                   getContentFile("modes/android"));
-//    Mode javaScriptMode =
-//      ModeContribution.getCoreMode(this, "processing.mode.javascript.JavaScriptMode",
-//                                   getContentFile("modes/javascript"));
     Mode javaMode =
       ModeContribution.load(this, getContentFile("modes/java"), //$NON-NLS-1$
                             "processing.mode.java.JavaMode").getMode(); //$NON-NLS-1$
-//    Mode androidMode =
-//      ModeContribution.load(this, getContentFile("modes/android"),
-//                            "processing.mode.android.AndroidMode").getMode();
-    // Mode javaScriptMode =
-    //   ModeContribution.load(this, getContentFile("modes/javascript"),
-    //                         "processing.mode.javascript.JavaScriptMode").getMode();
 
-    //coreModes = new Mode[] { javaMode, androidMode };
+    // PDE X calls getModeList() while it's loading, so coreModes must be set
     coreModes = new Mode[] { javaMode };
 
-    // check for the new mode in case it's available
-//    try {
-//      Class.forName("processing.mode.java2.DebugMode");
-    ModeContribution experimentalContrib =
+    Mode pdexMode =
       ModeContribution.load(this, getContentFile("modes/ExperimentalMode"), //$NON-NLS-1$
-        "processing.mode.experimental.ExperimentalMode"); //$NON-NLS-1$
-    if (experimentalContrib != null) {
-      Mode experimentalMode = experimentalContrib.getMode();
-      //coreModes = new Mode[] { javaMode, androidMode, experimentalMode };
-      coreModes = new Mode[] { experimentalMode, javaMode };
-    }
-//    } catch (ClassNotFoundException e) { }
+                            "processing.mode.experimental.ExperimentalMode").getMode(); //$NON-NLS-1$
 
-//    for (Mode mode : coreModes) {  // already called by load() above
-//      mode.setupGUI();
-//    }
+    // Safe to remove the old Java mode here?
+    //coreModes = new Mode[] { pdexMode };
+    coreModes = new Mode[] { pdexMode, javaMode };
   }
 
 
@@ -336,6 +318,19 @@ public class Base {
   }
 
 
+  /**
+   * Instantiates and adds new contributed modes to the contribModes list.
+   * Checks for duplicates so the same mode isn't instantiates twice. Does not
+   * remove modes because modes can't be removed once they are instantiated.
+   */
+  void rebuildContribExamples() {
+    if (exampleContribs == null) {
+      exampleContribs = new ArrayList<ExamplesPackageContribution>();
+    }
+    ExamplesPackageContribution.loadMissing(this);
+  }
+
+
   public Base(String[] args) throws Exception {
 //    // Get the sketchbook path, and make sure it's set properly
 //    determineSketchbookFolder();
@@ -350,19 +345,21 @@ public class Base {
 //        removeDir(contrib.getFolder());
 //      }
 //    }
-    ContributionManager.cleanup();
+    ContributionManager.cleanup(this);
     buildCoreModes();
     rebuildContribModes();
+
+    rebuildContribExamples();
 
     // Needs to happen after the sketchbook folder has been located.
     // Also relies on the modes to be loaded so it knows what can be
     // marked as an example.
     recent = new Recent(this);
 
-    String lastModeIdentifier = Preferences.get("last.sketch.mode"); //$NON-NLS-1$
+    String lastModeIdentifier = Preferences.get("mode.last"); //$NON-NLS-1$
     if (lastModeIdentifier == null) {
-      nextMode = coreModes[0];
-      log("Nothing set for last.sketch.mode, using coreMode[0]."); //$NON-NLS-1$
+      nextMode = getDefaultMode();
+      log("Nothing set for last.sketch.mode, using default."); //$NON-NLS-1$
     } else {
       for (Mode m : getModeList()) {
         if (m.getIdentifier().equals(lastModeIdentifier)) {
@@ -371,7 +368,7 @@ public class Base {
         }
       }
       if (nextMode == null) {
-        nextMode = coreModes[0];
+        nextMode = getDefaultMode();
         logf("Could not find mode %s, using default.", lastModeIdentifier); //$NON-NLS-1$
       }
     }
@@ -382,6 +379,8 @@ public class Base {
       new ContributionManagerDialog(ContributionType.TOOL);
     modeManagerFrame =
       new ContributionManagerDialog(ContributionType.MODE);
+    exampleManagerFrame =
+      new ContributionManagerDialog(ContributionType.EXAMPLES_PACKAGE);
     updateManagerFrame =
       new ContributionManagerDialog(null);
 
@@ -433,160 +432,6 @@ public class Base {
   }
 
 
-  /**
-   * Single location for the default extension, rather than hardwiring .pde
-   * all over the place. While it may seem like fun to send the Arduino guys
-   * on a treasure hunt, it gets old after a while.
-   */
-//  static protected String getExtension() {
-//    return ".pde";
-//  }
-
-
-//  public Mode getDefaultMode() {
-//    return defaultMode;
-//  }
-
-
-//  /**
-//   * Post-constructor setup for the editor area. Loads the last
-//   * sketch that was used (if any), and restores other Editor settings.
-//   * The complement to "storePreferences", this is called when the
-//   * application is first launched.
-//   */
-//  protected boolean restoreSketches() {
-////    String lastMode = Preferences.get("last.sketch.mode");
-////    log("setting mode to " + lastMode);
-////    if (lastMode != null) {
-////      for (Mode m : getModeList()) {
-////        if (m.getClass().getName().equals(lastMode)) {
-////          defaultMode = m;
-////        }
-////      }
-////    }
-////    log("default mode set to " + defaultMode.getClass().getName());
-//
-//    if (Preferences.getBoolean("last.sketch.restore")) {
-//      return false;
-//    }
-//
-//    return true;
-//
-////    // figure out window placement
-////    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-////    boolean windowPositionValid = true;
-////
-////    if (Preferences.get("last.screen.height") != null) {
-////      // if screen size has changed, the window coordinates no longer
-////      // make sense, so don't use them unless they're identical
-////      int screenW = Preferences.getInteger("last.screen.width");
-////      int screenH = Preferences.getInteger("last.screen.height");
-////
-////      if ((screen.width != screenW) || (screen.height != screenH)) {
-////        windowPositionValid = false;
-////      }
-////      /*
-////      int windowX = Preferences.getInteger("last.window.x");
-////      int windowY = Preferences.getInteger("last.window.y");
-////      if ((windowX < 0) || (windowY < 0) ||
-////          (windowX > screenW) || (windowY > screenH)) {
-////        windowPositionValid = false;
-////      }
-////      */
-////    } else {
-////      windowPositionValid = false;
-////    }
-////
-////    // Iterate through all sketches that were open last time p5 was running.
-////    // If !windowPositionValid, then ignore the coordinates found for each.
-////
-////    // Save the sketch path and window placement for each open sketch
-////    int count = Preferences.getInteger("last.sketch.count");
-////    int opened = 0;
-////    for (int i = 0; i < count; i++) {
-////      String path = Preferences.get("last.sketch" + i + ".path");
-////      int[] location;
-////      if (windowPositionValid) {
-////        String locationStr = Preferences.get("last.sketch" + i + ".location");
-////        location = PApplet.parseInt(PApplet.split(locationStr, ','));
-////      } else {
-////        location = nextEditorLocation();
-////      }
-////      // If file did not exist, null will be returned for the Editor
-////      if (handleOpen(path, location) != null) {
-////        opened++;
-////      }
-////    }
-////    return (opened > 0);
-//  }
-
-
-//  /**
-//   * Store list of sketches that are currently open.
-//   * Called when the application is quitting and documents are still open.
-//   */
-//  protected void storeSketches() {
-//    // Save the width and height of the screen
-//    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-//    Preferences.setInteger("last.screen.width", screen.width);
-//    Preferences.setInteger("last.screen.height", screen.height);
-//
-//    String untitledPath = untitledFolder.getAbsolutePath();
-//
-//    // Save the sketch path and window placement for each open sketch
-//    int index = 0;
-//    for (Editor editor : editors) {
-//      String path = editor.getSketch().getMainFilePath();
-//      // In case of a crash, save untitled sketches if they contain changes.
-//      // (Added this for release 0158, may not be a good idea.)
-//      if (path.startsWith(untitledPath) &&
-//          !editor.getSketch().isModified()) {
-//        continue;
-//      }
-//      Preferences.set("last.sketch" + index + ".path", path);
-//
-//      int[] location = editor.getPlacement();
-//      String locationStr = PApplet.join(PApplet.str(location), ",");
-//      Preferences.set("last.sketch" + index + ".location", locationStr);
-//      index++;
-//    }
-//    Preferences.setInteger("last.sketch.count", index);
-//    Preferences.set("last.sketch.mode", defaultMode.getClass().getName());
-//  }
-//
-//
-//  // If a sketch is untitled on quit, may need to store the new name
-//  // rather than the location from the temp folder.
-//  protected void storeSketchPath(Editor editor, int index) {
-//    String path = editor.getSketch().getMainFilePath();
-//    String untitledPath = untitledFolder.getAbsolutePath();
-//    if (path.startsWith(untitledPath)) {
-//      path = "";
-//    }
-//    Preferences.set("last.sketch" + index + ".path", path);
-//  }
-
-
-  /*
-  public void storeSketch(Editor editor) {
-    int index = -1;
-    for (int i = 0; i < editorCount; i++) {
-      if (editors[i] == editor) {
-        index = i;
-        break;
-      }
-    }
-    if (index == -1) {
-      System.err.println("Problem storing sketch " + editor.sketch.name);
-    } else {
-      String path = editor.sketch.getMainFilePath();
-      Preferences.set("last.sketch" + index + ".path", path);
-    }
-  }
-  */
-
-
-
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -602,38 +447,37 @@ public class Base {
   }
 
 
+  /**
+   * The call has already checked to make sure this sketch is not modified,
+   * now change the mode.
+   */
   protected void changeMode(Mode mode) {
     if (activeEditor.getMode() != mode) {
       Sketch sketch = activeEditor.getSketch();
-      if (sketch.isModified()) {
-        Base.showWarning("Save",
-                         "Please save the sketch before changing the mode.",
-                         null);
-        return;
-      }
       nextMode = mode;
 
-      // If the current editor contains file extensions that the new mode can handle, then
-      // write a sketch.properties file with the new mode specified, and reopen.
-      boolean newModeCanHandleCurrentSource = true;
-      for (final SketchCode code: sketch.getCode()) {
-        if (!mode.validExtension(code.getExtension())) {
-          newModeCanHandleCurrentSource = false;
-          break;
-        }
-      }
-      if (newModeCanHandleCurrentSource) {
-        final File props = new File(sketch.getCodeFolder(), "sketch.properties");
-        saveModeSettings(props, nextMode);
+      if (sketch.isUntitled()) {
+        // If no changes have been made, just close and start fresh.
+        // (Otherwise the editor would lose its 'untitled' status.)
         handleClose(activeEditor, true);
-        handleOpen(sketch.getMainFilePath());
-      } else {
-        // If you're changing modes, and there's nothing in the current sketch, you probably
-        // don't intend to keep the old, wrong-mode editor around.
-        if (sketch.isUntitled()) {
-          handleClose(activeEditor, true);
-        }
         handleNew();
+
+      } else {
+        // If the current editor contains file extensions that the new mode can handle, then
+        // write a sketch.properties file with the new mode specified, and reopen.
+        boolean newModeCanHandleCurrentSource = true;
+        for (final SketchCode code: sketch.getCode()) {
+          if (!mode.validExtension(code.getExtension())) {
+            newModeCanHandleCurrentSource = false;
+            break;
+          }
+        }
+        if (newModeCanHandleCurrentSource) {
+          final File props = new File(sketch.getCodeFolder(), "sketch.properties");
+          saveModeSettings(props, nextMode);
+          handleClose(activeEditor, true);
+          handleOpen(sketch.getMainFilePath());
+        }
       }
     }
   }
@@ -656,6 +500,11 @@ public class Base {
   }
 
 
+  public ArrayList<ExamplesPackageContribution> getExampleContribs() {
+    return exampleContribs;
+  }
+
+
   // Because of variations in native windowing systems, no guarantees about
   // changes to the focused and active Windows can be made. Developers must
   // never assume that this Window is the focused or active Window until this
@@ -668,7 +517,7 @@ public class Base {
 
     // make this the next mode to be loaded
     nextMode = whichEditor.getMode();
-    Preferences.set("last.sketch.mode", nextMode.getIdentifier()); //$NON-NLS-1$
+    Preferences.set("mode.last", nextMode.getIdentifier()); //$NON-NLS-1$
   }
 
 
@@ -747,8 +596,10 @@ public class Base {
         throw new IOException(newbieFile + " already exists.");
       }
 
-      // Create sketch properties.
-      saveModeSettings(new File(newbieDir, "sketch.properties"), nextMode);
+      // Create sketch properties file if it's not the default mode.
+      if (!nextMode.equals(getDefaultMode())) {
+        saveModeSettings(new File(newbieDir, "sketch.properties"), nextMode);
+      }
 
       String path = newbieFile.getAbsolutePath();
       /*Editor editor =*/ handleOpen(path, true);
@@ -773,56 +624,15 @@ public class Base {
   }
 
 
-//  /**
-//   * Replace the sketch in the current window with a new untitled document.
-//   */
-//  public void handleNewReplace() {
-//    if (!activeEditor.checkModified()) {
-//      return;  // sketch was modified, and user canceled
-//    }
-//    // Close the running window, avoid window boogers with multiple sketches
-//    activeEditor.internalCloseRunner();
-//
-//    // Actually replace things
-//    handleNewReplaceImpl();
-//  }
+  public Mode getDefaultMode() {
+    return coreModes[0];
+  }
 
 
-//  protected void handleNewReplaceImpl() {
-//    try {
-//      String path = createNewUntitled();
-//      if (path != null) {
-//        activeEditor.handleOpenInternal(path);
-//        activeEditor.untitled = true;
-//      }
-////      return true;
-//
-//    } catch (IOException e) {
-//      activeEditor.statusError(e);
-////      return false;
-//    }
-//  }
-
-
-//  /**
-//   * Open a sketch, replacing the sketch in the current window.
-//   * @param path Location of the primary pde file for the sketch.
-//   */
-//  public void handleOpenReplace(String path) {
-//    if (!activeEditor.checkModified()) {
-//      return;  // sketch was modified, and user canceled
-//    }
-//    // Close the running window, avoid window boogers with multiple sketches
-//    activeEditor.internalCloseRunner();
-//
-//    boolean loaded = activeEditor.handleOpenInternal(path);
-//    if (!loaded) {
-//      // replace the document without checking if that's ok
-//      handleNewReplaceImpl();
-//    } else {
-//      handleRecent(activeEditor);
-//    }
-//  }
+  /** Used by ThinkDifferent so that it can have a Sketchbook menu. */
+  public Mode getNextMode() {
+    return nextMode;
+  }
 
 
   /**
@@ -834,7 +644,8 @@ public class Base {
       extensions.add(mode.getDefaultExtension());
     }
 
-    final String prompt = "Open a Processing sketch...";
+
+    final String prompt = Language.text("open");
 
     // don't use native dialogs on Linux (or anyone else w/ override)
     if (Preferences.getBoolean("chooser.files.native")) {  //$NON-NLS-1$
@@ -927,14 +738,18 @@ public class Base {
         return null;
       }
 
-      //  System.err.println("  editors: " + editors);
       // Cycle through open windows to make sure that it's not already open.
       for (Editor editor : editors) {
-        if (editor.getSketch().getMainFile().equals(file)) {
-          editor.toFront();
-          // move back to the top of the recent list
-          handleRecent(editor);
-          return editor;
+        // User may have double-clicked any PDE in the sketch folder,
+        // so we have to check each open tab (not just the main one).
+        // https://github.com/processing/processing/issues/2506
+        for (SketchCode tab : editor.getSketch().getCode()) {
+          if (tab.getFile().equals(file)) {
+            editor.toFront();
+            // move back to the top of the recent list
+            handleRecent(editor);
+            return editor;
+          }
         }
       }
 
@@ -957,29 +772,27 @@ public class Base {
 //    Editor.State state = new Editor.State(editors);
       Editor editor = nextMode.createEditor(this, path, state);
       if (editor == null) {
-        // if it's the last editor window
-//      if (editors.size() == 0 && defaultFileMenu == null) {
         // if it's not mode[0] already, then don't go into an infinite loop
         // trying to recreate a window with the default mode.
-        if (nextMode == coreModes[0]) {
+        Mode defaultMode = getDefaultMode();
+        if (nextMode == defaultMode) {
           Base.showError("Editor Problems",
                          "An error occurred while trying to change modes.\n" +
-                           "We'll have to quit for now because it's an\n" +
-                           "unfortunate bit of indigestion.",
-                           null);
+                         "We'll have to quit for now because it's an\n" +
+                         "unfortunate bit of indigestion.",
+                         null);
         } else {
-          editor = coreModes[0].createEditor(this, path, state);
+          editor = defaultMode.createEditor(this, path, state);
         }
       }
 
       // Make sure that the sketch actually loaded
-      if (editor.getSketch() == null) {
-//      System.err.println("sketch was null, getting out of handleOpen");
+      Sketch sketch = editor.getSketch();
+      if (sketch == null) {
         return null;  // Just walk away quietly
       }
 
-//    editor.untitled = untitled;
-      editor.getSketch().setUntitled(untitled);
+      sketch.setUntitled(untitled);
       editors.add(editor);
       handleRecent(editor);
 
@@ -993,7 +806,7 @@ public class Base {
       showBadnessTrace("Terrible News",
                        "A serious error occurred while " +
                        "trying to create a new editor window.", t, false);
-      nextMode = coreModes[0];
+      nextMode = getDefaultMode();
       return null;
     }
   }
@@ -1122,7 +935,7 @@ public class Base {
         // If the central menubar isn't supported on this OS X JVM,
         // we have to do the old behavior. Yuck!
         if (defaultFileMenu == null) {
-          Object[] options = { "OK", "Cancel" };
+          Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
           String prompt =
             "<html> " +
             "<head> <style type=\"text/css\">"+
@@ -1169,12 +982,10 @@ public class Base {
           // Since this wasn't an actual Quit event, call System.exit()
           System.exit(0);
         }
-      } else {
+      } else {  // on OS X, update the default file menu
         editor.setVisible(false);
         editor.dispose();
-        defaultFileMenu.insert(sketchbookMenu, 2);
-        defaultFileMenu.insert(getRecentMenu(), 3);
-//        defaultFileMenu.insert(defaultMode.getExamplesMenu(), 3);
+        defaultFileMenu.insert(getRecentMenu(), 2);
         activeEditor = null;
         editors.remove(editor);
       }
@@ -1184,16 +995,6 @@ public class Base {
       // proceed with closing the current window.
       editor.setVisible(false);
       editor.dispose();
-//      for (int i = 0; i < editorCount; i++) {
-//        if (editor == editors[i]) {
-//          for (int j = i; j < editorCount-1; j++) {
-//            editors[j] = editors[j+1];
-//          }
-//          editorCount--;
-//          // Set to null so that garbage collection occurs
-//          editors[editorCount] = null;
-//        }
-//      }
       editors.remove(editor);
     }
     return true;
@@ -1280,7 +1081,7 @@ public class Base {
    * (and the examples window) are rebuilt.
    */
   protected void rebuildSketchbookMenus() {
-    rebuildSketchbookMenu();
+    // rebuildSketchbookMenu(); // no need to rebuild sketchbook post 3.0
     for (Mode mode : getModeList()) {
       //mode.rebuildLibraryList();
       mode.rebuildImportMenu();  // calls rebuildLibraryList
@@ -1318,20 +1119,20 @@ public class Base {
                        "An error occurred while trying to list the sketchbook.", e);
     }
     if (!found) {
-      JMenuItem empty = new JMenuItem("Empty Sketchbook");
+      JMenuItem empty = new JMenuItem(Language.text("menu.file.sketchbook.empty"));
       empty.setEnabled(false);
       menu.add(empty);
     }
   }
 
 
-  public JMenu getSketchbookMenu() {
-    if (sketchbookMenu == null) {
-      sketchbookMenu = new JMenu("Sketchbook");
-      rebuildSketchbookMenu();
-    }
-    return sketchbookMenu;
-  }
+//  public JMenu getSketchbookMenu() {
+//    if (sketchbookMenu == null) {
+//      sketchbookMenu = new JMenu(Language.text("menu.file.sketchbook"));
+//      rebuildSketchbookMenu();
+//    }
+//    return sketchbookMenu;
+//  }
 
 
 //  public JMenu getRecentMenu() {
@@ -1463,7 +1264,7 @@ public class Base {
           JMenu submenu = new JMenu(name);
           // needs to be separate var otherwise would set ifound to false
           boolean anything = addSketches(submenu, subfolder, replaceExisting);
-          if (anything) {
+          if (anything && !name.equals("old")) { //Don't add old contributions
             menu.add(submenu);
             found = true;
           }
@@ -1601,7 +1402,7 @@ public class Base {
    */
   public void handlePrefs() {
     if (preferencesFrame == null) {
-      preferencesFrame = new Preferences(this);
+      preferencesFrame = new PreferencesFrame(this);
     }
     preferencesFrame.showFrame();
   }
@@ -1628,6 +1429,14 @@ public class Base {
    */
   public void handleOpenModeManager() {
     modeManagerFrame.showFrame(activeEditor);
+  }
+
+
+  /**
+   * Show the examples installer window.
+   */
+  public void handleOpenExampleManager() {
+    exampleManagerFrame.showFrame(activeEditor);
   }
 
 
@@ -1780,24 +1589,29 @@ public class Base {
   }
 
 
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /**
+   * Get the directory that can store settings. (Library on OS X, App Data or
+   * something similar on Windows, a dot folder on Linux.) Removed this as a
+   * preference for 3.0a3 because we need this to be stable.
+   */
   static public File getSettingsFolder() {
     File settingsFolder = null;
 
-    String preferencesPath = Preferences.get("settings.path"); //$NON-NLS-1$
-    if (preferencesPath != null) {
-      settingsFolder = new File(preferencesPath);
-
-    } else {
-      try {
-        settingsFolder = platform.getSettingsFolder();
-      } catch (Exception e) {
-        showError("Problem getting data folder",
-                  "Error getting the Processing data folder.", e);
-      }
+//    String preferencesPath = Preferences.get("settings.path"); //$NON-NLS-1$
+//    if (preferencesPath != null) {
+//      settingsFolder = new File(preferencesPath);
+//
+//    } else {
+    try {
+      settingsFolder = platform.getSettingsFolder();
+    } catch (Exception e) {
+      showError("Problem getting the settings folder",
+                "Error getting the Processing the settings folder.", e);
     }
+//    }
 
     // create the folder if it doesn't exist already
     if (!settingsFolder.exists()) {
@@ -1864,41 +1678,15 @@ public class Base {
   }
 
 
-//  static public String getExamplesPath() {
-//    return examplesFolder.getAbsolutePath();
-//  }
-
-//  public File getExamplesFolder() {
-//    return examplesFolder;
-//  }
-
-
-//  static public String getLibrariesPath() {
-//    return librariesFolder.getAbsolutePath();
-//  }
-
-
-//  public File getLibrariesFolder() {
-//    return librariesFolder;
-//  }
-
-
-//  static public File getToolsFolder() {
   static public File getToolsFolder() {
-//    return toolsFolder;
     return getContentFile("tools");
   }
-
-
-//  static public String getToolsPath() {
-//    return toolsFolder.getAbsolutePath();
-//  }
 
 
   static public void locateSketchbookFolder() {
     // If a value is at least set, first check to see if the folder exists.
     // If it doesn't, warn the user that the sketchbook folder is being reset.
-    String sketchbookPath = Preferences.get("sketchbook.path"); //$NON-NLS-1$
+    String sketchbookPath = Preferences.getSketchbookPath();
     if (sketchbookPath != null) {
       sketchbookFolder = new File(sketchbookPath);
       if (!sketchbookFolder.exists()) {
@@ -1915,7 +1703,7 @@ public class Base {
     // If no path is set, get the default sketchbook folder for this platform
     if (sketchbookFolder == null) {
       sketchbookFolder = getDefaultSketchbookFolder();
-      Preferences.set("sketchbook.path", sketchbookFolder.getAbsolutePath());
+      Preferences.setSketchbookPath(sketchbookFolder.getAbsolutePath());
       if (!sketchbookFolder.exists()) {
         sketchbookFolder.mkdirs();
       }
@@ -1924,25 +1712,24 @@ public class Base {
     getSketchbookLibrariesFolder().mkdir();
     getSketchbookToolsFolder().mkdir();
     getSketchbookModesFolder().mkdir();
+    getSketchbookExamplesPackagesFolder().mkdir();
 //    System.err.println("sketchbook: " + sketchbookFolder);
   }
 
 
   public void setSketchbookFolder(File folder) {
     sketchbookFolder = folder;
-    Preferences.set("sketchbook.path", folder.getAbsolutePath());
+    Preferences.setSketchbookPath(folder.getAbsolutePath());
     rebuildSketchbookMenus();
   }
 
 
   static public File getSketchbookFolder() {
-//    return new File(Preferences.get("sketchbook.path"));
     return sketchbookFolder;
   }
 
 
   static public File getSketchbookLibrariesFolder() {
-//    return new File(getSketchbookFolder(), "libraries");
     return new File(sketchbookFolder, "libraries");
   }
 
@@ -1954,6 +1741,11 @@ public class Base {
 
   static public File getSketchbookModesFolder() {
     return new File(sketchbookFolder, "modes");
+  }
+
+
+  static public File getSketchbookExamplesPackagesFolder() {
+    return new File(sketchbookFolder, "examples-packages");
   }
 
 
@@ -2330,13 +2122,12 @@ public class Base {
                         "b { font: 13pt \"Lucida Grande\" }"+
                         "p { font: 11pt \"Lucida Grande\"; margin-top: 8px; width: 300px }"+
                         "</style> </head>" +
-                        "<b>Do you want to save changes to this sketch<BR>" +
-                        " before closing?</b>" +
-                        "<p>If you don't save, your changes will be lost.",
+                        "<b>" + Language.text("save.title") + "</b>" +
+                        "<p>" + Language.text("save.hint") + "</p>",
                         JOptionPane.QUESTION_MESSAGE);
 
       String[] options = new String[] {
-          "Save", "Cancel", "Don't Save"
+          Language.text("save.btn.save"), Language.text("prompt.cancel"), Language.text("save.btn.dont_save")
       };
       pane.setOptions(options);
 
@@ -2346,7 +2137,7 @@ public class Base {
       // on macosx, setting the destructive property places this option
       // away from the others at the lefthand side
       pane.putClientProperty("Quaqua.OptionPane.destructiveOption",
-                             new Integer(2));
+                             Integer.valueOf(2));
 
       JDialog dialog = pane.createDialog(editor, null);
       dialog.setVisible(true);
@@ -2989,17 +2780,12 @@ public class Base {
   static public String contentsToClassPath(File folder) {
     if (folder == null) return "";
 
-    StringBuffer abuffer = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     String sep = System.getProperty("path.separator");
 
     try {
       String path = folder.getCanonicalPath();
 
-//    disabled as of 0136
-      // add the folder itself in case any unzipped files
-//      abuffer.append(sep);
-//      abuffer.append(path);
-//
       // When getting the name of this folder, make sure it has a slash
       // after it, so that the names of sub-items can be added.
       if (!path.endsWith(File.separator)) {
@@ -3014,17 +2800,15 @@ public class Base {
 
         if (list[i].toLowerCase().endsWith(".jar") ||
             list[i].toLowerCase().endsWith(".zip")) {
-          abuffer.append(sep);
-          abuffer.append(path);
-          abuffer.append(list[i]);
+          sb.append(sep);
+          sb.append(path);
+          sb.append(list[i]);
         }
       }
     } catch (IOException e) {
       e.printStackTrace();  // this would be odd
     }
-    //System.out.println("included path is " + abuffer.toString());
-    //packageListFromClassPath(abuffer.toString());  // WHY?
-    return abuffer.toString();
+    return sb.toString();
   }
 
 
@@ -3037,7 +2821,7 @@ public class Base {
    * @return array of possible package names
    */
   static public String[] packageListFromClassPath(String path) {
-    Hashtable table = new Hashtable();
+    Map<String, Object> map = new HashMap<String, Object>();
     String pieces[] =
       PApplet.split(path, File.pathSeparatorChar);
 
@@ -3048,24 +2832,24 @@ public class Base {
       if (pieces[i].toLowerCase().endsWith(".jar") ||
           pieces[i].toLowerCase().endsWith(".zip")) {
         //System.out.println("checking " + pieces[i]);
-        packageListFromZip(pieces[i], table);
+        packageListFromZip(pieces[i], map);
 
       } else {  // it's another type of file or directory
         File dir = new File(pieces[i]);
         if (dir.exists() && dir.isDirectory()) {
-          packageListFromFolder(dir, null, table);
+          packageListFromFolder(dir, null, map);
           //importCount = magicImportsRecursive(dir, null,
-          //                                  table);
+          //                                  map);
                                               //imports, importCount);
         }
       }
     }
-    int tableCount = table.size();
-    String output[] = new String[tableCount];
+    int mapCount = map.size();
+    String output[] = new String[mapCount];
     int index = 0;
-    Enumeration e = table.keys();
-    while (e.hasMoreElements()) {
-      output[index++] = ((String) e.nextElement()).replace('/', '.');
+    Set<String> set = map.keySet();
+    for (String s : set) {
+      output[index++] = s.replace('/', '.');
     }
     //System.arraycopy(imports, 0, output, 0, importCount);
     //PApplet.printarr(output);
@@ -3073,7 +2857,7 @@ public class Base {
   }
 
 
-  static private void packageListFromZip(String filename, Hashtable table) {
+  static private void packageListFromZip(String filename, Map<String, Object> map) {
     try {
       ZipFile file = new ZipFile(filename);
       Enumeration entries = file.entries();
@@ -3088,8 +2872,8 @@ public class Base {
             if (slash == -1) continue;
 
             String pname = name.substring(0, slash);
-            if (table.get(pname) == null) {
-              table.put(pname, new Object());
+            if (map.get(pname) == null) {
+              map.put(pname, new Object());
             }
           }
         }
@@ -3109,7 +2893,7 @@ public class Base {
    * walk down into that folder and continue.
    */
   static private void packageListFromFolder(File dir, String sofar,
-                                            Hashtable table) {
+                                            Map<String, Object> map) {
                                           //String imports[],
                                           //int importCount) {
     //System.err.println("checking dir '" + dir + "'");
@@ -3123,7 +2907,7 @@ public class Base {
       if (sub.isDirectory()) {
         String nowfar =
           (sofar == null) ? files[i] : (sofar + "." + files[i]);
-        packageListFromFolder(sub, nowfar, table);
+        packageListFromFolder(sub, nowfar, map);
         //System.out.println(nowfar);
         //imports[importCount++] = nowfar;
         //importCount = magicImportsRecursive(sub, nowfar,
@@ -3131,7 +2915,7 @@ public class Base {
       } else if (!foundClass) {  // if no classes found in this folder yet
         if (files[i].endsWith(".class")) {
           //System.out.println("unique class: " + files[i] + " for " + sofar);
-          table.put(sofar, new Object());
+          map.put(sofar, new Object());
           foundClass = true;
         }
       }

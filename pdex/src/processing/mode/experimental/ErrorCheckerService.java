@@ -20,11 +20,7 @@ package processing.mode.experimental;
 import static processing.mode.experimental.ExperimentalMode.log;
 import static processing.mode.experimental.ExperimentalMode.logE;
 
-import java.awt.EventQueue;
 import java.io.File;
-import java.io.FileFilter;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -50,7 +46,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
-import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
 import processing.app.Base;
 import processing.app.Editor;
@@ -300,17 +295,30 @@ public class ErrorCheckerService implements Runnable{
    * Ensure user is running the minimum P5 version
    */
   public void ensureMinP5Version(){
+    //TODO: Now defunct?
     // Processing 2.1.2 - Revision 0225
     if(Base.getRevision() < 225){
 //      System.err.println("ERROR: PDE X requires Processing 2.1.2 or higher.");
       Base.showWarning("Error", "ERROR: PDE X requires Processing 2.1.2 or higher.", null);
     }
   }
+  
+  /**
+   * Error checking doesn't happen before this interval has ellapsed since the
+   * last runManualErrorCheck() call.
+   */
+  private final static long errorCheckInterval = 500;
+  
+  /**
+   * Bypass sleep time
+   */
+  
+  private volatile boolean noSleep = false;
 
   /**
    * The way the error checking happens is: DocumentListeners are added
-   * to each SketchCode object. Whenever the document is edited, it call
-   * runManualErrorCheck(). Internally, an atomic integer counter is incremented.
+   * to each SketchCode object. Whenever the document is edited, runManualErrorCheck()
+   * is called. Internally, an atomic integer counter is incremented.
    * The ECS thread checks the value of this counter evey sleepTime seconds.
    * If the counter is non zero, error checking is done(in the ECS thread) 
    * and the counter is reset.
@@ -319,6 +327,8 @@ public class ErrorCheckerService implements Runnable{
     stopThread.set(false);
     
     checkCode();
+    lastErrorCheckCall = System.currentTimeMillis();
+    
     if(!hasSyntaxErrors())
       editor.showProblemListView(XQConsoleToggle.CONSOLE);
     // Make sure astGen has at least one CU to start with
@@ -330,7 +340,13 @@ public class ErrorCheckerService implements Runnable{
     while (!stopThread.get()) {
       try {
         // Take a nap.
-        Thread.sleep(sleepTime);
+        if(!noSleep) {
+          Thread.sleep(sleepTime);
+        }
+        else {
+          noSleep = false;
+          log("Didn't sleep!");
+        }
       } catch (Exception e) {
         log("Oops! [ErrorCheckerThreaded]: " + e);
         // e.printStackTrace();
@@ -343,9 +359,13 @@ public class ErrorCheckerService implements Runnable{
         continue;
       if(textModified.get() == 0)
     	  continue;
-      // Check every x seconds
-      checkCode();
-      checkForMissingImports();
+      // Check if a certain interval has passed after the call. Only then
+      // begin error check. Helps prevent unnecessary flickering. See #2677
+      if (System.currentTimeMillis() - lastErrorCheckCall > errorCheckInterval) {
+        log("Interval passed, starting error check");
+        checkCode();
+        checkForMissingImports();
+      }
     }
     
     astGenerator.disposeAllWindows();
@@ -377,12 +397,13 @@ public class ErrorCheckerService implements Runnable{
   }
 
   protected void checkForMissingImports() {
+    if(!ExperimentalMode.importSuggestEnabled) return;
     for (Problem p : problemsList) {
-      if(p.getMessage().endsWith(" cannot be resolved to a type"));{
-        int idx = p.getMessage().indexOf(" cannot be resolved to a type");
-        if(idx > 1){
-          String missingClass = p.getMessage().substring(0, idx);
-          //log("Will suggest for type:" + missingClass);
+      if(p.getIProblem().getID() == IProblem.UndefinedType) {
+        String args[] = p.getIProblem().getArguments();        
+        if (args.length > 0) {
+          String missingClass = args[0];
+          log("Will suggest for type:" + missingClass);
           astGenerator.suggestImports(missingClass);
         }
       }
@@ -404,11 +425,23 @@ public class ErrorCheckerService implements Runnable{
   protected AtomicInteger textModified = new AtomicInteger();
   
   /**
+   * Time stamp of last runManualErrorCheck() call.
+   */
+  private volatile long lastErrorCheckCall = 0;
+  
+  /**
    * Triggers error check
    */
   public void runManualErrorCheck() {
     // log("Error Check.");
     textModified.incrementAndGet();
+    lastErrorCheckCall = System.currentTimeMillis();
+  }
+  
+  public void quickErrorCheck() {
+    //TODO: Experimental, lookout for threading related issues
+    noSleep = true;
+    log("quickErrorCheck()");
   }
   
   protected SketchChangedListener sketchChangedListener;
@@ -442,7 +475,11 @@ public class ErrorCheckerService implements Runnable{
     }
     
   }
-
+  
+  /**
+   * state = 1 > syntax check done<br>
+   * state = 2 > compilation check done
+   */
   public int compilationUnitState = 0;
   
   protected boolean checkCode() {
@@ -733,7 +770,8 @@ public class ErrorCheckerService implements Runnable{
             .getElement(javaLineNumber);
         if (lineElement == null) {
           log("calcPDEOffsetsForProbList(): Couldn't fetch javalinenum "
-              + javaLineNumber);
+              + javaLineNumber + "\nProblem: " + p);
+          p.setPDEOffsets(-1,-1);
           continue;
         }
         String javaLine = javaSource
@@ -744,7 +782,8 @@ public class ErrorCheckerService implements Runnable{
             .getDefaultRootElement().getElement(p.getLineNumber());
         if (pdeLineElement == null) {
           log("calcPDEOffsetsForProbList(): Couldn't fetch pdelinenum "
-              + javaLineNumber);
+              + javaLineNumber + "\nProblem: " + p);
+          p.setPDEOffsets(-1,-1);
           continue;
         }
         String pdeLine = pdeTabs[p.getTabIndex()]
@@ -1267,7 +1306,7 @@ public class ErrorCheckerService implements Runnable{
     
     programImports = new ArrayList<ImportStatement>();
     
-    StringBuffer rawCode = new StringBuffer();
+    StringBuilder rawCode = new StringBuilder();
     
     try {
 
@@ -1447,17 +1486,32 @@ public class ErrorCheckerService implements Runnable{
     if (p == null)
       return;
     try {
-      astGenerator.highlightPDECode(p.getTabIndex(),
-                                    p.getLineNumber(),
-                                    p.getPDELineStartOffset(),
-                                    (p.getPDELineStopOffset()
-                                        - p.getPDELineStartOffset() + 1));
-      editor.getTextArea().scrollTo(p.getLineNumber(), 0);
+      if(p.getPDELineStartOffset() == -1 || p.getPDELineStopOffset() == -1){
+        // bad offsets, don't highlight, just scroll.
+        editor.toFront();
+        editor.getSketch().setCurrentCode(p.getTabIndex());
+      }
+      else {
+        astGenerator.highlightPDECode(p.getTabIndex(),
+                                      p.getLineNumber(),
+                                      p.getPDELineStartOffset(),
+                                      (p.getPDELineStopOffset()
+                                          - p.getPDELineStartOffset() + 1));
+      }
+      
+      // scroll, but within boundaries
+      // It's also a bit silly that if parameters to scrollTo() are out of range,
+      // a BadLocation Exception is thrown internally and caught in JTextArea AND
+      // even the stack trace gets printed! W/o letting me catch it later! SMH
+      if (p.getLineNumber() < Base.countLines(editor.textArea().getDocument()
+          .getText(0, editor.textArea().getDocument().getLength()))
+          && p.getLineNumber() >= 0) {
+        editor.getTextArea().scrollTo(p.getLineNumber(), 0);
+      }
       editor.repaint();
     } catch (Exception e) {
-      System.err.println(e
-          + " : Error while selecting text in scrollToErrorLine()");
-      e.printStackTrace();
+      logE(e
+          + " : Error while selecting text in scrollToErrorLine(), for problem: " + p);
     }
     // log("---");
   }

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="Processing Serial Library" default="build">
+<project name="Processing Sound Library" default="build">
   
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
@@ -13,8 +13,8 @@
     <fail unless="core-built" message="Please build the core library first and make sure it sits in ../../../core/library/core.jar" />
 
     <mkdir dir="bin" />
-    <javac source="1.6"
-	   target="1.6" 
+    <javac source="1.7"
+	   target="1.7"
 	   srcdir="src" destdir="bin" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"

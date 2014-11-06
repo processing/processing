@@ -114,10 +114,10 @@ JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_pulseSet
 /*
  * Class:     processing_sound_MethClaInterface
  * Method:    audioInPlay
- * Signature: (FFFZ)[I
+ * Signature: (FFFI)[I
  */
 JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_audioInPlay
-  (JNIEnv *, jobject, jfloat, jfloat, jfloat, jboolean);
+  (JNIEnv *, jobject, jfloat, jfloat, jfloat, jint);
 
 /*
  * Class:     processing_sound_MethClaInterface
@@ -234,18 +234,18 @@ JNIEXPORT jint JNICALL Java_processing_sound_MethClaInterface_doneAfter
 /*
  * Class:     processing_sound_MethClaInterface
  * Method:    highPassPlay
- * Signature: ([IFF)[I
+ * Signature: ([IF)[I
  */
 JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_highPassPlay
-  (JNIEnv *, jobject, jintArray, jfloat, jfloat);
+  (JNIEnv *, jobject, jintArray, jfloat);
 
 /*
  * Class:     processing_sound_MethClaInterface
  * Method:    lowPassPlay
- * Signature: ([IFF)[I
+ * Signature: ([IF)[I
  */
 JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_lowPassPlay
-  (JNIEnv *, jobject, jintArray, jfloat, jfloat);
+  (JNIEnv *, jobject, jintArray, jfloat);
 
 /*
  * Class:     processing_sound_MethClaInterface
@@ -258,9 +258,17 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_bandPassPlay
 /*
  * Class:     processing_sound_MethClaInterface
  * Method:    filterSet
- * Signature: (FFI)V
+ * Signature: (FI)V
  */
 JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_filterSet
+  (JNIEnv *, jobject, jfloat, jint);
+
+/*
+ * Class:     processing_sound_MethClaInterface
+ * Method:    filterBwSet
+ * Signature: (FFI)V
+ */
+JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_filterBwSet
   (JNIEnv *, jobject, jfloat, jfloat, jint);
 
 /*
@@ -294,6 +302,14 @@ JNIEXPORT jintArray JNICALL Java_processing_sound_MethClaInterface_reverbPlay
  */
 JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_reverbSet
   (JNIEnv *, jobject, jfloat, jfloat, jfloat, jint);
+
+/*
+ * Class:     processing_sound_MethClaInterface
+ * Method:    out
+ * Signature: (I[I)V
+ */
+JNIEXPORT void JNICALL Java_processing_sound_MethClaInterface_out
+  (JNIEnv *, jobject, jint, jintArray);
 
 /*
  * Class:     processing_sound_MethClaInterface
