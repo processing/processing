@@ -276,7 +276,18 @@ public class FloatDict {
    */
   public float get(String key) {
     int index = index(key);
-    if (index == -1) return 0;
+    if (index == -1) {
+      throw new IllegalArgumentException("No key named '" + key + "'");
+    }
+    return values[index];
+  }
+
+
+  public float get(String key, float alternate) {
+    int index = index(key);
+    if (index == -1) {
+      return alternate;
+    }
     return values[index];
   }
 
