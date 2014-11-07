@@ -457,29 +457,29 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
   }
 
   public String getToolTipText(java.awt.event.MouseEvent evt) {
-    if(ta.editor.hasJavaTabs) return null; // disabled for java tabs
+    if(ta.editor.hasJavaTabs) return ""; // disabled for java tabs
     int off = ta.xyToOffset(evt.getX(), evt.getY());
     if (off < 0)
-      return null;
+      return "";
     int line = ta.getLineOfOffset(off);
     if (line < 0)
-      return null;
+      return "";
     String s = ta.getLineText(line);
-    if (s == null)
+    if (s == "")
       return evt.toString();
     else if (s.length() == 0)
-      return null;
+      return "";
     else {
       int x = ta.xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
       int xLS = off - ta.getLineStartNonWhiteSpaceOffset(line);
       if (x < 0 || x >= s.length())
-        return null;
+        return "";
       String word = s.charAt(x) + "";
       if (s.charAt(x) == ' ')
-        return null;
+        return "";
       if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_' || s
           .charAt(x) == '$'))
-        return null;
+        return "";
       int i = 0;
       while (true) {
         i++;
@@ -510,7 +510,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
         }
       }
       if (Character.isDigit(word.charAt(0)))
-        return null;
+        return "";
       String tooltipText = errorCheckerService.getASTGenerator()
           .getLabelForASTNode(line, word, xLS);
 
@@ -518,7 +518,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 //      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
       if (tooltipText != null)
         return tooltipText;
-      return word;
+      return "";
     }
 
   }
