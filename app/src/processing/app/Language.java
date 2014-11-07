@@ -35,12 +35,13 @@ import processing.core.PApplet;
  */
 public class Language {
   static private final String FILE = "processing.app.languages.PDE";
-  //static private final String LISTING = "processing/app/languages/languages.txt";
+  static private final String DEFAULT_DOMAIN = "processing.app";
   
   // Store the language information in a file separate from the preferences,
   // because preferences need the language on load time.
   static protected final String PREF_FILE = "language.txt";
   static protected final File prefFile = Base.getSettingsFile(PREF_FILE);
+
   
   /** Single instance of this Language class */
   static private volatile Language instance;
@@ -51,7 +52,7 @@ public class Language {
   /** Available languages */
   private HashMap<String, String> languages;
   
-  private ResourceBundle bundle;
+  private final Map<String, ResourceBundle> bundles = new HashMap<String, ResourceBundle>();
 
 
   private Language() {
@@ -80,8 +81,9 @@ public class Language {
       saveLanguage(language);
     }
 
-    // Get bundle with translations (processing.app.language.PDE)
-    bundle = ResourceBundle.getBundle(Language.FILE, new Locale(this.language), new UTF8Control());
+    Locale.setDefault(Locale.forLanguageTag(language));
+
+    registerBundle(DEFAULT_DOMAIN, Language.FILE, this.getClass());
   }
   
   
@@ -164,26 +166,59 @@ public class Language {
     return instance;
   }
 
+  /**
+   * Register a contribution in the internationalization system.
+   */
+  static public void registerContribution(String domain, Object o) {
+    Class klass = o.getClass();
+    String bundleBase = klass.getCanonicalName().replace("." + klass.getSimpleName(), "");
+    String bundleName = bundleBase + ".languages." + klass.getSimpleName();
+    init().registerBundle(domain, bundleName, klass);
+  }
+
+  private void registerBundle(String domain, String bundleName, Class klass) {
+    Locale locale = new Locale(language);
+    ResourceBundle bundle = ResourceBundle.getBundle(bundleName, locale, klass.getClassLoader(), new UTF8Control());
+    bundles.put(domain, bundle);
+  }
+
+  private ResourceBundle getBundle(String domain) {
+    return bundles.get(domain);
+  }
 
   /** Get translation from bundles. */
   static public String text(String text) {
-    ResourceBundle bundle = init().bundle;
+    return text(text, DEFAULT_DOMAIN);
+  }
 
+  static public String text(String text, String domain) {
     try {
+      ResourceBundle bundle = init().getBundle(domain);
       return bundle.getString(text);
     } catch (MissingResourceException e) {
       return text;
     }
   }
-
   
   static public String interpolate(String text, Object... arguments) {
-    return String.format(init().bundle.getString(text), arguments);
+    return interpolate(text, arguments);
   }
 
-  
+  static public String interpolate(String text, String domain, Object... arguments) {
+    return String.format(text(text, domain), arguments);
+  }
+
   static public String pluralize(String text, int count) {
-    ResourceBundle bundle = init().bundle;
+    return pluralize(text, DEFAULT_DOMAIN, count);
+  }
+
+  static public String pluralize(String text, String domain, int count) {
+    ResourceBundle bundle;
+    try {
+      bundle = init().getBundle(domain);
+    } catch (MissingResourceException e) {
+      return text;
+    }
 
     String fmt = text + ".%s";
 
