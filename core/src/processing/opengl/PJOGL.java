@@ -834,7 +834,7 @@ public class PJOGL extends PGL {
               if (frontFBO == null) {
                 // init
                 frontFBO = new FBObject();
-                frontFBO.reset(gl, pg.width, pg.height);
+                frontFBO.reset(gl, pg.width, pg.height, numSamples);
                 frontFBO.attachTexture2D(gl, 0, true);
                 sinkFBO = backFBO.getSamplingSinkFBO();
                 changedFrontTex = changedBackTex = true;
