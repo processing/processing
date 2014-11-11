@@ -746,6 +746,9 @@
   <target name="linux-dist" depends="linux-dist-tar" 
 	  description="Build .deb of linux version">
 
+   <!-- start with a clean debian folder -->
+   <delete dir="linux/debian" quiet="true" />
+
    <!-- setup the file structure -->
    <mkdir dir="linux/debian/opt" />
    <mkdir dir="linux/debian/usr/bin" />
@@ -779,8 +782,7 @@
    <script language="javascript">
      <![CDATA[
         var length_bytes = project.getProperty("deb.bsize");
-        var length_kbytes = Math.round((length_bytes / 1024) * Math.pow(10,2))
-                          / Math.pow(10,2);
+        var length_kbytes = Math.ceil(length_bytes / 1024);
         project.setNewProperty("deb.kbsize", length_kbytes);
      ]]>
    </script>
