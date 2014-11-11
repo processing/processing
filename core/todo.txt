@@ -8,8 +8,13 @@ data
 X fix XML.getString() with a default when no attrs are present at all
 X   was causing a NullPointerException
 X   also fixes getInt() et al
-_ fix how dict works to not return '0' values
-_   add optional second param
+X fix how dict works to not return '0' values
+X   add optional second param
+X   fixed for FloatDict and IntDict
+X   StringDict won't throw an exception, but optional second param added
+X add insert() with a single item to StringList, IntList, FloatList
+_ add fromOrder() and others? otherwise need temp object:
+_   categoryIndexLookup = new StringList(flavors).getOrder();
 
 table
 X fix how nulls are handled with Table.replace()
