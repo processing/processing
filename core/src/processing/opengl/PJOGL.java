@@ -172,6 +172,9 @@ public class PJOGL extends PGL {
    */
   protected boolean prevCanDraw = false;
 
+  /** Stores exceptions that ocurred during drawing */
+  protected Exception drawException;
+
   // ........................................................
 
   // JOGL's FBO-layer
@@ -687,31 +690,32 @@ public class PJOGL extends PGL {
 
   @Override
   protected void requestDraw() {
+    drawException = null;
     boolean canDraw = pg.parent.canDraw();
     if (pg.initialized && (canDraw || prevCanDraw)) {
+      drawLatch = new CountDownLatch(1);
+      if (WINDOW_TOOLKIT == AWT) {
+        canvasAWT.display();
+      } else if (WINDOW_TOOLKIT == NEWT) {
+        windowNEWT.display();
+      }
       try {
-        drawLatch = new CountDownLatch(1);
-        if (WINDOW_TOOLKIT == AWT) {
-          canvasAWT.display();
-        } else if (WINDOW_TOOLKIT == NEWT) {
-          windowNEWT.display();
-        }
-        try {
-          drawLatch.await(DRAW_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
+        drawLatch.await(DRAW_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
 
-        if (canDraw) prevCanDraw = true;
-        else prevCanDraw = false;
-      } catch (GLException e) {
-        // Unwrap GLException so that only the causing exception is shown.
-        Throwable tr = e.getCause();
-        if (tr instanceof RuntimeException) {
-          throw (RuntimeException)tr;
-        } else {
-          throw new RuntimeException(tr);
-        }
+      if (canDraw) prevCanDraw = true;
+      else prevCanDraw = false;
+    }
+
+    // Throw wherever exception happened during drawing outside the GL thread
+    // to it is properly picked up by the PDE.
+    if (drawException != null) {
+      if (drawException instanceof RuntimeException) {
+        throw (RuntimeException)drawException;
+      } else {
+        throw new RuntimeException(drawException);
       }
     }
   }
@@ -865,7 +869,11 @@ public class PJOGL extends PGL {
         }
       }
 
-      pg.parent.handleDraw();
+      try {
+        pg.parent.handleDraw();
+      } catch (Exception ex) {
+        drawException = ex;
+      }
       drawLatch.countDown();
     }
 
