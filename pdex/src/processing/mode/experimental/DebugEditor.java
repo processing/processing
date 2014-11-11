@@ -71,6 +71,7 @@ import org.eclipse.jdt.core.compiler.IProblem;
 import processing.app.Base;
 import processing.app.EditorState;
 import processing.app.EditorToolbar;
+import processing.app.Language;
 import processing.app.Mode;
 import processing.app.Preferences;
 import processing.app.Sketch;
@@ -507,10 +508,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @return The debug menu
      */
     protected JMenu buildDebugMenu() {
-        debugMenu = new JMenu("Debug");
+        debugMenu = new JMenu(Language.text("menu.debug"));
         //debugMenu = new JMenu("PDE X");
 
-        JCheckBoxMenuItem toggleDebugger = new JCheckBoxMenuItem("Show Debug Toolbar");
+        JCheckBoxMenuItem toggleDebugger = new JCheckBoxMenuItem(Language.text("menu.debug.show_debug_toolbar"));
         toggleDebugger.setSelected(false);
         toggleDebugger.addActionListener(new ActionListener() {          
           public void actionPerformed(ActionEvent e) {
@@ -518,37 +519,37 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           }
         });
         debugMenu.add(toggleDebugger);
-        debugMenuItem = Toolkit.newJMenuItemAlt("Debug", KeyEvent.VK_R);
+        debugMenuItem = Toolkit.newJMenuItemAlt(Language.text("menu.debug.debug"), KeyEvent.VK_R);
         debugMenuItem.addActionListener(this);
-        continueMenuItem = Toolkit.newJMenuItem("Continue", KeyEvent.VK_U);
+        continueMenuItem = Toolkit.newJMenuItem(Language.text("menu.debug.continue"), KeyEvent.VK_U);
         continueMenuItem.addActionListener(this);
-        stopMenuItem = new JMenuItem("Stop");
+        stopMenuItem = new JMenuItem(Language.text("menu.debug.stop"));
         stopMenuItem.addActionListener(this);
 
-        toggleBreakpointMenuItem = Toolkit.newJMenuItem("Toggle Breakpoint", KeyEvent.VK_B);
+        toggleBreakpointMenuItem = Toolkit.newJMenuItem(Language.text("menu.debug.toggle_breakpoint"), KeyEvent.VK_B);
         toggleBreakpointMenuItem.addActionListener(this);
-        listBreakpointsMenuItem = new JMenuItem("List Breakpoints");
+        listBreakpointsMenuItem = new JMenuItem(Language.text("menu.debug.list_breakpoints"));
         listBreakpointsMenuItem.addActionListener(this);
 
-        stepOverMenuItem = Toolkit.newJMenuItem("Step", KeyEvent.VK_J);
+        stepOverMenuItem = Toolkit.newJMenuItem(Language.text("menu.debug.step"), KeyEvent.VK_J);
         stepOverMenuItem.addActionListener(this);
-        stepIntoMenuItem = Toolkit.newJMenuItemShift("Step Into", KeyEvent.VK_J);
+        stepIntoMenuItem = Toolkit.newJMenuItemShift(Language.text("menu.debug.step_into"), KeyEvent.VK_J);
         stepIntoMenuItem.addActionListener(this);
-        stepOutMenuItem = Toolkit.newJMenuItemAlt("Step Out", KeyEvent.VK_J);
+        stepOutMenuItem = Toolkit.newJMenuItemAlt(Language.text("menu.debug.step_out"), KeyEvent.VK_J);
         stepOutMenuItem.addActionListener(this);
 
-        printStackTraceMenuItem = new JMenuItem("Print Stack Trace");
+        printStackTraceMenuItem = new JMenuItem(Language.text("menu.debug.print_stack_trace"));
         printStackTraceMenuItem.addActionListener(this);
-        printLocalsMenuItem = new JMenuItem("Print Locals");
+        printLocalsMenuItem = new JMenuItem(Language.text("menu.debug.print_locals"));
         printLocalsMenuItem.addActionListener(this);
-        printThisMenuItem = new JMenuItem("Print Fields");
+        printThisMenuItem = new JMenuItem(Language.text("menu.debug.print_fields"));
         printThisMenuItem.addActionListener(this);
-        printSourceMenuItem = new JMenuItem("Print Source Location");
+        printSourceMenuItem = new JMenuItem(Language.text("menu.debug.print_source_location"));
         printSourceMenuItem.addActionListener(this);
-        printThreads = new JMenuItem("Print Threads");
+        printThreads = new JMenuItem(Language.text("menu.debug.print_threads"));
         printThreads.addActionListener(this);
 
-        toggleVariableInspectorMenuItem = Toolkit.newJMenuItem("Toggle Variable Inspector", KeyEvent.VK_I);
+        toggleVariableInspectorMenuItem = Toolkit.newJMenuItem(Language.text("menu.debug.toggle_variable_inspector"), KeyEvent.VK_I);
         toggleVariableInspectorMenuItem.addActionListener(this);
 
         debugMenu.add(debugMenuItem);
@@ -666,11 +667,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         });
         debugMenu.add(jitem);
         */
-        showOutline = Toolkit.newJMenuItem("Show Sketch Outline", KeyEvent.VK_L);
+        showOutline = Toolkit.newJMenuItem(Language.text("menu.debug.show_sketch_outline"), KeyEvent.VK_L);
         showOutline.addActionListener(this);
         debugMenu.add(showOutline);
         
-        showTabOutline = Toolkit.newJMenuItem("Show Tabs List", KeyEvent.VK_Y);
+        showTabOutline = Toolkit.newJMenuItem(Language.text("menu.debug.show_tabs_list"), KeyEvent.VK_Y);
         showTabOutline.addActionListener(this);
         debugMenu.add(showTabOutline);
         
@@ -708,7 +709,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         }
       });
   
-      JMenuItem enableTweak = Toolkit.newJMenuItemShift("Tweak", 'T');
+      JMenuItem enableTweak = Toolkit.newJMenuItemShift(Language.text("menu.sketch.tweak"), 'T');
       enableTweak.setSelected(ExperimentalMode.enableTweak);
       enableTweak.addActionListener(new ActionListener() {
         @Override

@@ -30,6 +30,8 @@ import javax.swing.SwingWorker;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 
+import processing.app.Language;
+
 /**
  * Custom JTable implementation for XQMode. Minor tweaks and addtions.
  * 
@@ -41,7 +43,7 @@ public class XQErrorTable extends JTable {
 	/**
 	 * Column Names of JTable
 	 */
-	public static final String[] columnNames = { "Problem", "Tab", "Line" };
+	public static final String[] columnNames = { Language.text("editor.footer.errors.problem"), Language.text("editor.footer.errors.tab"), Language.text("editor.footer.errors.line") };
 
 	/**
 	 * Column Widths of JTable.
