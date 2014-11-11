@@ -298,9 +298,19 @@ public class IntDict {
    */
   public int get(String key) {
     int index = index(key);
-    if (index == -1) return 0;
+    if (index == -1) {
+      throw new IllegalArgumentException("No key named '" + key + "'");
+    }
     return values[index];
   }
+
+
+  public int get(String key, int alternate) {
+    int index = index(key);
+    if (index == -1) return alternate;
+    return values[index];
+  }
+
 
   /**
    * Create a new key/value pair or change the value of one.

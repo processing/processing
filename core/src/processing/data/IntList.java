@@ -268,6 +268,11 @@ public class IntList implements Iterable<Integer> {
 //  }
 
 
+  public void insert(int index, int value) {
+    insert(index, new int[] { value });
+  }
+
+
   // same as splice
   public void insert(int index, int[] values) {
     if (index < 0) {
@@ -673,7 +678,8 @@ public class IntList implements Iterable<Integer> {
 
 
   /**
-   * Copy as many values as possible into the specified array.
+   * Copy values into the specified array. If the specified array is null or
+   * not the same size, a new array will be allocated.
    * @param array
    */
   public int[] array(int[] array) {

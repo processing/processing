@@ -412,6 +412,9 @@ public class PShapeSVG extends PShape {
     } else if (name.equals("sodipodi:namedview")) {
       // these are always in Inkscape files, the warnings get tedious
 
+    } else if (name.equals("title")) {
+      // harmless
+
     } else if (!name.startsWith("#")) {
       PGraphics.showWarning("Ignoring <" + name + "> tag.");
 //      new Exception().printStackTrace();

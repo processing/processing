@@ -246,6 +246,14 @@ public class StringDict {
     return values[index];
   }
 
+
+  public String get(String key, String alternate) {
+    int index = index(key);
+    if (index == -1) return alternate;
+    return values[index];
+  }
+
+
   /**
    * @webref stringdict:method
    * @brief Create a new key/value pair or change the value of one
