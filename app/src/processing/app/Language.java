@@ -149,8 +149,8 @@ public class Language {
     String javaPath = new File(Base.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParentFile().getAbsolutePath();
     try {    
       copyDirectory(
-        new File(javaPath+"/lib/languages"),   // from shared library
-        Base.getSettingsFile("languages")      // to editable library location
+        new File(javaPath+"/lib/languages"),  // from shared library folder
+        langFiles                             // to editable settings folder
       );
       return true;
     } catch (IOException e) {
