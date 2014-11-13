@@ -1,5 +1,5 @@
 [Desktop Entry]
-Version=2.1 
+Version=@version@ 
 Name=Processing 
 Comment=graphics and animation language 
 Exec=processing %F

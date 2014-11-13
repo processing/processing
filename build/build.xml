@@ -759,7 +759,13 @@
    <symlink link="linux/debian/usr/bin/processing" resource="../../opt/processing/processing" />
 
    <!-- place .desktop and .sharedmimeinfo file -->
-   <copy file="linux/processing.desktop" tofile="linux/debian/usr/share/applications/processing.desktop" />
+   <copy file="linux/processing.desktop" tofile="linux/debian/usr/share/applications/processing.desktop" >
+       <filterchain>
+           <replacetokens >
+               <token key="version" value="${version}" />
+           </replacetokens>
+       </filterchain >
+   </copy >
    <copy file="linux/processing.sharedmimeinfo" tofile="linux/debian/usr/share/mime/packages/processing.xml" />
 
    <!-- Set properties for DEBIAN/control file -->
@@ -772,9 +778,6 @@
      <equals arg1="${sun.arch.data.model}" arg2="64" />
    </condition>
 
-   <!--
-   <exec command="du -ks linux/debian | cut -f 1" outputproperty="deb.size" />
-   -->
    <length property="deb.bsize" >
      <fileset dir="linux/debian" />
    </length>
@@ -787,18 +790,17 @@
      ]]>
    </script>
 
+  <!-- place DEBIAN/control file. -->
    <mkdir dir="linux/debian/DEBIAN" />
-  <!-- Create DEBIAN/control file. The spacing matters.-->
-  <echo file="linux/debian/DEBIAN/control" >Package: processing
-Version: ${version}
-Section: devel
-Priority: optional
-Installed-Size: ${deb.kbsize}
-Architecture: ${deb.arch}
-Maintainer: Kyle Feuz &lt;kylefeuz@weber.edu&gt;
-Description: Processing programming language and IDE
- Processing is a programming language, development environment, and online community. Since 2001, Processing has promoted software literacy within the visual arts and visual literacy within technology. Initially created to serve as a software sketchbook and to teach computer programming fundamentals within a visual context, Processing evolved into a development tool for professionals. Today, there are tens of thousands of students, artists, designers, researchers, and hobbyists who use Processing for learning, prototyping, and production.
-</echo>
+   <copy file="linux/control" tofile="linux/debian/DEBIAN/control" >
+       <filterchain>
+           <replacetokens >
+               <token key="version" value="${version}" />
+               <token key="size" value="${deb.kbsize}" />
+               <token key="arch" value="${deb.arch}" />
+           </replacetokens>
+       </filterchain >
+   </copy >
 
    <!-- Create .deb file -->
    <exec executable="fakeroot" dir="linux" failonerror="true">
