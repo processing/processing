@@ -26,6 +26,14 @@ X moved the language stuff to the settings folder
 X   https://github.com/processing/processing/pull/2941
 X Some minor UpdateChecker refactorings
 X   https://github.com/processing/processing/pull/2830
+X Minor improvements to the Contribution Manager's updates check
+X   https://github.com/processing/processing/pull/2861
+X make Cut and Copy in the edit menu active only if some text is selected
+X   https://github.com/processing/processing/pull/2834
+X Fix the shortcut keybindings in editor tab popup menu
+X   https://github.com/processing/processing/pull/2821
+X Fix renaming from RGB to Rgb.java and others
+X   https://github.com/processing/processing/pull/2825
 
 pulls (net)
 X NullPointerException message when Server writes to a disconnected client
