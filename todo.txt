@@ -34,6 +34,10 @@ X Fix the shortcut keybindings in editor tab popup menu
 X   https://github.com/processing/processing/pull/2821
 X Fix renaming from RGB to Rgb.java and others
 X   https://github.com/processing/processing/pull/2825
+X sketches should only write to the console of their editor window
+X   https://github.com/processing/processing/issues/153
+X   https://github.com/processing/processing/issues/2858
+X   https://github.com/processing/processing/pull/2827
 
 pulls (net)
 X NullPointerException message when Server writes to a disconnected client
