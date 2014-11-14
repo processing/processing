@@ -441,6 +441,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  public EditorConsole getConsole() {
+    return console;
+  }
+
+
 
 //  public Settings getTheme() {
 //    return mode.getTheme();

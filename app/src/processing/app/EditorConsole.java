@@ -59,6 +59,9 @@ public class EditorConsole extends JScrollPane {
 
   int maxLineCount;
 
+  PrintStream sketchOut;
+  PrintStream sketchErr;
+
   // Single static instance shared because there's only one real System.out.
   // Within the input handlers, the currentConsole variable will be used to
   // echo things to the correct location.
@@ -99,8 +102,8 @@ public class EditorConsole extends JScrollPane {
       File errFile = new File(consoleDir, stamp + ".err");
       stderrFile = new FileOutputStream(errFile);
 
-      consoleOut = new PrintStream(new EditorConsoleStream(false));
-      consoleErr = new PrintStream(new EditorConsoleStream(true));
+      consoleOut = new PrintStream(new EditorConsoleStream(false, null));
+      consoleErr = new PrintStream(new EditorConsoleStream(true, null));
 
       System.setOut(consoleOut);
       System.setErr(consoleErr);
@@ -148,6 +151,9 @@ public class EditorConsole extends JScrollPane {
       setBorder(null);
     }
 
+    sketchOut = new PrintStream(new EditorConsoleStream(false, this));
+    sketchErr = new PrintStream(new EditorConsoleStream(true, this));
+
     // periodically post buffered messages to the console
     // should the interval come from the preferences file?
     new javax.swing.Timer(250, new ActionListener() {
@@ -161,6 +167,14 @@ public class EditorConsole extends JScrollPane {
         }
       }
     }).start();
+  }
+
+  public PrintStream getOut() {
+    return sketchOut;
+  }
+
+  public PrintStream getErr() {
+    return sketchErr;
   }
 
 
@@ -244,7 +258,7 @@ public class EditorConsole extends JScrollPane {
    * folder itself is deleted, which can't be guaranteed when using
    * the deleteOnExit() method.
    */
-  public void handleQuit() {
+  public static void handleQuit() {
     // replace original streams to remove references to console's streams
     System.setOut(systemOut);
     System.setErr(systemErr);
@@ -312,12 +326,13 @@ public class EditorConsole extends JScrollPane {
 
 
   private static class EditorConsoleStream extends OutputStream {
-    //static EditorConsole current;
     final boolean err; // whether stderr or stdout
     final byte single[] = new byte[1];
+    EditorConsole console;
 
-    public EditorConsoleStream(boolean err) {
+    public EditorConsoleStream(boolean err, EditorConsole console) {
       this.err = err;
+      this.console = console;
     }
 
     public void close() { }
@@ -329,19 +344,10 @@ public class EditorConsole extends JScrollPane {
     }
 
     public void write(byte b[], int offset, int length) {
-      if (currentConsole != null) {
-        //currentConsole.write(b, offset, length, err);
-//        currentConsole.message(new String(b, offset, length), err, false);
+      if (console != null)
+        console.message(new String(b, offset, length), err);
+      else if (currentConsole != null)
         currentConsole.message(new String(b, offset, length), err);
-      } else {
-        try {
-          if (err) {
-            systemErr.write(b);
-          } else {
-            systemOut.write(b);
-          }
-        } catch (IOException e) { }  // just ignore, where would we write?
-      }
 
       final OutputStream echo = err ? stderrFile : stdoutFile;
       if (echo != null) {
