@@ -24,6 +24,8 @@ X   https://github.com/processing/processing/pull/2578
 X Prevent lerpColor from always rounding down
 X   https://github.com/processing/processing/issues/2812
 X   https://github.com/processing/processing/pull/2813
+X Allow mask() with PGraphicsJava2D
+X   https://github.com/processing/processing/pull/2910
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
 _ Fix renaming from RGB to Rgb.java and others

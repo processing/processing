@@ -2711,15 +2711,30 @@ public class PGraphicsJava2D extends PGraphics {
   // MASK
 
 
+  static final String MASK_WARNING =
+    "mask() cannot be used on the main drawing surface";
+
+
   @Override
-  public void mask(int alpha[]) {
-    showMethodWarning("mask");
+  @SuppressWarnings("deprecation")
+  public void mask(int[] alpha) {
+    if (primarySurface) {
+      showWarning(MASK_WARNING);
+
+    } else {
+      super.mask(alpha);
+    }
   }
 
 
   @Override
   public void mask(PImage alpha) {
-    showMethodWarning("mask");
+    if (primarySurface) {
+      showWarning(MASK_WARNING);
+
+    } else {
+      super.mask(alpha);
+    }
   }
 
 
