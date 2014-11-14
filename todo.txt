@@ -18,6 +18,12 @@ X improve contrib manager localization
 X   https://github.com/processing/processing/pull/2870
 X Fix infinite recursion in sound library
 X   https://github.com/processing/processing/pull/2897
+X NullPointerException message when Server writes to a disconnected client
+X   https://github.com/processing/processing/issues/2577
+X   https://github.com/processing/processing/pull/2578
+X Prevent lerpColor from always rounding down
+X   https://github.com/processing/processing/issues/2812
+X   https://github.com/processing/processing/pull/2813
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
 _ Fix renaming from RGB to Rgb.java and others
@@ -72,6 +78,8 @@ _   http://stackoverflow.com/questions/4933677/detecting-windows-ie-proxy-settin
 _   http://www.java2s.com/Code/Java/Network-Protocol/DetectProxySettingsforInternetConnection.htm
 _ problems with non-US keyboards and some shortcuts
 _   https://github.com/processing/processing/issues/2199
+_ improve start time by populating sketchbook/libraries on threads
+_   https://github.com/processing/processing/issues/2945
 
 
 medium
