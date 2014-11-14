@@ -76,6 +76,8 @@ public class Toolkit {
   /** Command-Option on Mac OS X, Ctrl-Alt on Windows and Linux */
   static final int SHORTCUT_ALT_KEY_MASK = ActionEvent.ALT_MASK |
     awtToolkit.getMenuShortcutKeyMask();
+  static final int SHORTCUT_SHIFT_KEY_MASK = ActionEvent.SHIFT_MASK |
+    SHORTCUT_KEY_MASK;
 
 
   /**
