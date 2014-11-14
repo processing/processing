@@ -1,4 +1,5 @@
 0232 core (3.0a5) 
+_ args[] should be null if none passed (otherwise args == null checks are weird)
 _ size(640,360 , P3D) doesn't work properly
 _   https://github.com/processing/processing/issues/2924
 _ why doesn't p5 punt when loadFont() is used on an otf?
@@ -52,6 +53,9 @@ o Sort out blending differences with P2D/P3D
 o   might be that compatible images not setting alpha mode correctly
 o   image = gc.createCompatibleVolatileImage(source.width, source.height, Transparency.TRANSLUCENT);
 o   https://github.com/processing/processing/issues/1844
+_ check into contour winding fixes
+_   https://github.com/processing/processing/issues/2665
+_   https://github.com/processing/processing/pull/2927
 
 andres
 A Confusing message: The shader doesn't have a uniform called "foo"
