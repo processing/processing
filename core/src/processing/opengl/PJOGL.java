@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.FontMetrics;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.Buffer;
@@ -1110,8 +1111,10 @@ public class PJOGL extends PGL {
 
 
   @Override
-  protected int getFontAscent(Object font) {
-    FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
+  protected int getFontAscent(Font font) {
+    //FontMetrics metrics = pg.parent.getFontMetrics(font);
+    @SuppressWarnings("deprecation")
+    FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics(font);
     return metrics.getAscent();
   }
 

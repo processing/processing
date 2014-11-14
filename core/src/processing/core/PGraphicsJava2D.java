@@ -50,18 +50,18 @@ import processing.data.XML;
  * Advanced <a href="http://docs.oracle.com/javase/7/docs/webnotes/tsg/TSG-Desktop/html/java2d.html">debugging notes</a> for Java2D.
  */
 public class PGraphicsJava2D extends PGraphics {
-  BufferStrategy strategy;
-  BufferedImage bimage;
-//  VolatileImage vimage;
-  Canvas canvas;
-//  boolean useCanvas = true;
-  boolean useCanvas = false;
-//  boolean useRetina = true;
-//  boolean useOffscreen = true;  // ~40fps
-  boolean useOffscreen = false;
+////  BufferStrategy strategy;
+////  BufferedImage bimage;
+////  VolatileImage vimage;
+//  Canvas canvas;
+////  boolean useCanvas = true;
+//  boolean useCanvas = false;
+////  boolean useRetina = true;
+////  boolean useOffscreen = true;  // ~40fps
+//  boolean useOffscreen = false;
 
   public Graphics2D g2;
-  protected BufferedImage offscreen;
+//  protected BufferedImage offscreen;
 
   Composite defaultComposite;
 
@@ -134,6 +134,7 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   protected void allocate() {
+    /*
     // Tried this with RGB instead of ARGB for the primarySurface version,
     // but didn't see any performance difference (OS X 10.6, Java 6u24).
     // For 0196, also attempted RGB instead of ARGB, but that causes
@@ -203,6 +204,28 @@ public class PGraphicsJava2D extends PGraphics {
       image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       g2 = (Graphics2D) image.getGraphics();
     }
+    */
+
+    /*
+    if (primarySurface) {
+      Canvas canvas = ((PSurfaceAWT) surface).canvas;
+
+      GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
+      // If not realized (off-screen, i.e the Color Selector Tool),
+      // gc will be null.
+      if (gc == null) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+      }
+
+      image = gc.createCompatibleImage(width, height);
+      g2 = (Graphics2D) image.getGraphics();
+
+    } else {
+
+    }
+    g2 = (Graphics2D) image.getGraphics();
+    */
   }
 
 
@@ -211,6 +234,7 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   public PSurface createSurface() {
+    //return (surface = new PSurfaceAWT());
     return new PSurfaceAWT();
   }
 
@@ -240,6 +264,9 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   public void beginDraw() {
+    g2 = (Graphics2D) image.getGraphics();
+
+    /*
     // NOTE: Calling image.getGraphics() will create a new Graphics context,
     // even if it's for the same image that's already had a context created.
     // Seems like a speed/memory issue, and also requires that all smoothing,
@@ -290,6 +317,7 @@ public class PGraphicsJava2D extends PGraphics {
         reapplySettings = true;
       }
     }
+    */
 
     checkSettings();
     resetMatrix(); // reset model matrix
@@ -304,6 +332,7 @@ public class PGraphicsJava2D extends PGraphics {
     //updatePixels();
 
     if (primarySurface) {
+      /*
       //if (canvas != null) {
       if (useCanvas) {
         //System.out.println(canvas);
@@ -331,6 +360,7 @@ public class PGraphicsJava2D extends PGraphics {
 //        g2.dispose();
 //        System.out.println("not doing anything special in endDraw()");
       }
+      */
     } else {
       // TODO this is probably overkill for most tasks...
       loadPixels();
@@ -349,6 +379,7 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
+  /*
   private void redraw() {
     // only need this check if the validate() call will use redraw()
 //    if (strategy == null) return;
@@ -391,6 +422,7 @@ public class PGraphicsJava2D extends PGraphics {
     } while (strategy.contentsLost());
     PApplet.debug("PGraphicsJava2D.redraw() out of do { } block");
   }
+  */
 
 
 
@@ -404,17 +436,17 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   protected void defaultSettings() {
-    if (!useCanvas) {
-      // Papered over another threading issue...
-      // See if this comes back now that the other issue is fixed.
-//      while (g2 == null) {
-//        try {
-//          System.out.println("sleeping until g2 is available");
-//          Thread.sleep(5);
-//        } catch (InterruptedException e) { }
-//      }
-      defaultComposite = g2.getComposite();
-    }
+//    if (!useCanvas) {
+//      // Papered over another threading issue...
+//      // See if this comes back now that the other issue is fixed.
+////      while (g2 == null) {
+////        try {
+////          System.out.println("sleeping until g2 is available");
+////          Thread.sleep(5);
+////        } catch (InterruptedException e) { }
+////      }
+    defaultComposite = g2.getComposite();
+//    }
     super.defaultSettings();
   }
 
@@ -1674,7 +1706,8 @@ public class PGraphicsJava2D extends PGraphics {
 
     Font font = (Font) textFont.getNative();
     if (font != null) {
-      FontMetrics metrics = canvas.getFontMetrics(font);
+      @SuppressWarnings("deprecation")
+      FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics(font);
       return metrics.getAscent();
     }
     return super.textAscent();
@@ -1687,9 +1720,9 @@ public class PGraphicsJava2D extends PGraphics {
       defaultFontOrDeath("textDescent");
     }
     Font font = (Font) textFont.getNative();
-    //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
-      FontMetrics metrics = canvas.getFontMetrics(font);
+      @SuppressWarnings("deprecation")
+      FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics(font);
       return metrics.getDescent();
     }
     return super.textDescent();
@@ -2480,10 +2513,11 @@ public class PGraphicsJava2D extends PGraphics {
   protected WritableRaster getRaster() {
     WritableRaster raster = null;
     if (primarySurface) {
+      /*
       // 'offscreen' will probably be removed in the next release
       if (useOffscreen) {
         raster = offscreen.getRaster();
-      } else if (image instanceof VolatileImage) {
+      } else*/ if (image instanceof VolatileImage) {
         // when possible, we'll try VolatileImage
         raster = ((VolatileImage) image).getSnapshot().getRaster();
       }

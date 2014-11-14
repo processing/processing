@@ -754,6 +754,7 @@ public class PApplet implements PConstants {
 //    height = g.height;
 
     // prior to 3a5, thread was started here
+    surface.startThread();
   }
 
 
@@ -1604,7 +1605,8 @@ public class PApplet implements PConstants {
 //  }
 
 
-  public PGraphics makePrimaryGraphics() {
+  /** Create default renderer, likely to be resized, but needed for surface init. */
+  protected PGraphics makePrimaryGraphics() {
     return makeGraphics(sketchWidth(), sketchHeight(), sketchRenderer(), null, true);
   }
 
@@ -9197,7 +9199,7 @@ public class PApplet implements PConstants {
   }
 
 
-  static public void runSketch(final String args[], final PApplet constructedApplet) {
+  static public void runSketch(final String[] args, final PApplet constructedApplet) {
     // Supposed to help with flicker, but no effect on OS X.
     // TODO IIRC this helped on Windows, but need to double check.
     System.setProperty("sun.awt.noerasebackground", "true");
@@ -9386,17 +9388,15 @@ public class PApplet implements PConstants {
 //    }
     g = makePrimaryGraphics();
     surface = g.createSurface();
-
     frame = surface.initFrame(this, backgroundColor, displayIndex, present, spanDisplays);
-
     surface.setTitle(getClass().getName());
 
-    // do we need this method anymore?
     init();
 
     // TODO this used to be inside init()... does it need to stay there for
     // other external things like Python or embedding in Java apps?
-    surface.startThread();
+    //surface.startThread();
+    // moving it to init() 141114
     //applet.start();
 
     // Wait until the applet has figured out its width.

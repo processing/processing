@@ -64,7 +64,6 @@ public class PSurfaceAWT implements PSurface {
   protected long frameRatePeriod = 1000000000L / 60L;
 
 
-
   public PSurfaceAWT() {
     if (checkRetina()) {
       // The active-mode rendering seems to be 2x slower, so disable it
@@ -81,6 +80,11 @@ public class PSurfaceAWT implements PSurface {
   void createCanvas() {
     canvas = new SmoothCanvas();
     //canvas.setIgnoreRepaint(true);  // ??
+  }
+
+
+  Canvas getCanvas() {
+    return canvas;
   }
 
 
@@ -252,7 +256,10 @@ public class PSurfaceAWT implements PSurface {
 ////        add(canvas, BorderLayout.CENTER);
 ////        doLayout();
 //      }
-      canvas.setBounds(0, 0, sketch.width, sketch.height);
+
+      // not sure why this was here, can't be good
+      //canvas.setBounds(0, 0, sketch.width, sketch.height);
+
 //      System.out.println("render(), canvas bounds are " + canvas.getBounds());
       if (canvas.getBufferStrategy() == null) {  // whole block [121222]
 //        System.out.println("creating a strategy");
@@ -387,7 +394,7 @@ public class PSurfaceAWT implements PSurface {
       GraphicsEnvironment.getLocalGraphicsEnvironment();
     //GraphicsDevice displayDevice = null;
 
-    GraphicsDevice devices[] = environment.getScreenDevices();
+    GraphicsDevice[] devices = environment.getScreenDevices();
     if ((deviceIndex >= 0) && (deviceIndex < devices.length)) {
       displayDevice = devices[deviceIndex];
     } else {
@@ -483,8 +490,10 @@ public class PSurfaceAWT implements PSurface {
     // Need to pass back our new sketchWidth/Height here, because it may have
     // been overridden by numbers we calculated above if fullScreen and/or
     // spanScreens was in use.
-    //sketch.makePrimaryGraphics(sketchWidth, sketchHeight);
-    pg = sketch.makePrimaryGraphics();
+//    pg = sketch.makePrimaryGraphics(sketchWidth, sketchHeight);
+//    pg = sketch.makePrimaryGraphics();
+
+    // resize sketch to sketchWidth/sketchHeight here
 
     if (fullScreen) {
       frame.invalidate();
@@ -568,7 +577,7 @@ public class PSurfaceAWT implements PSurface {
 
 
   public void placeWindow(int[] location) {
-    setFrameSize();
+    calcFrameSize();
 
     int contentW = Math.max(sketch.width, MIN_WINDOW_WIDTH);
     int contentH = Math.max(sketch.height, MIN_WINDOW_HEIGHT);
@@ -616,7 +625,7 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
-  private Dimension setFrameSize() {
+  private Dimension calcFrameSize() {
     Insets insets = frame.getInsets();
     int windowW = Math.max(sketch.width, MIN_WINDOW_WIDTH) +
       insets.left + insets.right;
@@ -636,7 +645,7 @@ public class PSurfaceAWT implements PSurface {
 
 
   public void placeWindow(int[] location, int[] editorLocation) {
-    Dimension window = setFrameSize();
+    Dimension window = calcFrameSize();
 
     int contentW = Math.max(sketch.width, MIN_WINDOW_WIDTH);
     int contentH = Math.max(sketch.height, MIN_WINDOW_HEIGHT);
@@ -753,7 +762,19 @@ public class PSurfaceAWT implements PSurface {
 
 
   // needs to resize the frame, which will resize the canvas, and so on...
-  public void setSize(int width, int height) {
+  public void setSize(int wide, int high) {
+    GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
+    // If not realized (off-screen, i.e the Color Selector Tool), gc will be null.
+    if (gc == null) {
+      System.err.println("GraphicsConfiguration null in setSize()");
+      GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+    }
+
+    // Formerly this was broken into separate versions based on offscreen or
+    // not, but we may as well create a compatible image; it won't hurt, right?
+    pg.image = gc.createCompatibleImage(wide, high);
+
     throw new RuntimeException("implement me, see readme.md");
   }
 

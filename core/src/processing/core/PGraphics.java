@@ -183,6 +183,10 @@ public class PGraphics extends PImage implements PConstants {
    */
   protected boolean primarySurface;
 
+//  // TODO nervous about leaving this here since it seems likely to create
+//  // back-references where we don't want them
+//  protected PSurface surface;
+
   // ........................................................
 
   /**

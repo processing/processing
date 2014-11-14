@@ -33,13 +33,20 @@ The rest of this document are my notes while I'm making changes.
 
 resize events: 
 Frame > Canvas > PGraphics > PApplet
-
 user-driven Frame resize events follow that order
+all resize events happen on the surface
+applet sends message to the surface, which notifies the renderer itself
+resize of component is handled in thread-safe way from PSurface
 
 PApplet.size() calls setSize() in PSurface, and in surface:
   - Mode 2: resize the frame, which will resize the canvas, etc
   - Mode 3: resizes and places of Canvas
   - Mode 4 and 5: no resize, always full display
+
+
+PSurfaceAWT is a simple Canvas-based surface that blits a BufferedImage
+provides most compatibility with previous renderers
+another PSurfaceAWT variant could allow direct rendering to the canvas (no loadPixels) through the whole strategy setup
 
 
 #### To Document
@@ -49,6 +56,9 @@ PApplet.size() calls setSize() in PSurface, and in surface:
 inside main, will know the screen that's being used for the app
 
 #### Questions/To Do
+- bad idea, or worst idea, to have 'surface' var in PGraphics?
+_ do we need canDraw() anymore?
+- Can we remove while() loop that waits until defaultSize is set false?
 - Does init() need to go away, because it's not going to work in any other setting? Because a surface must first be created, the init() method on its own will be a mess.
 - If Frame/Canvas are moved to another display, will the display object update?
 - Does sun.awt.noerasebackground (in PApplet) help flicker?

@@ -24,6 +24,7 @@ package processing.opengl;
 
 import processing.core.*;
 
+import java.awt.Font;
 import java.net.URL;
 import java.nio.*;
 import java.util.*;
@@ -3563,7 +3564,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public float textAscent() {
     if (textFont == null) defaultFontOrDeath("textAscent");
-    Object font = textFont.getNative();
+    Font font = (Font) textFont.getNative();
     float ascent = 0;
     if (font != null) ascent = pgl.getFontAscent(font);
     if (ascent == 0) ascent = super.textAscent();
@@ -3574,7 +3575,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public float textDescent() {
     if (textFont == null) defaultFontOrDeath("textAscent");
-    Object font = textFont.getNative();
+    Font font = (Font) textFont.getNative();
     float descent = 0;
     if (font != null) descent = pgl.getFontDescent(font);
     if (descent == 0) descent = super.textDescent();
@@ -3584,7 +3585,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   protected float textWidthImpl(char buffer[], int start, int stop) {
-    Object font = textFont.getNative();
+    Font font = (Font) textFont.getNative();
     float twidth = 0;
     if (font != null) twidth = pgl.getTextWidth(font, buffer, start, stop);
     if (twidth == 0) twidth = super.textWidthImpl(buffer, start, stop);
@@ -3595,7 +3596,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void textSize(float size) {
     if (textFont == null) defaultFontOrDeath("textSize", size);
-    Object font = textFont.getNative();
+    Font font = (Font) textFont.getNative();
     if (font != null) {
       Object dfont = pgl.getDerivedFont(font, size);
       textFont.setNative(dfont);

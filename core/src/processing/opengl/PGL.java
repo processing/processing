@@ -26,6 +26,7 @@ package processing.opengl;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 
+import java.awt.Font;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.Buffer;
@@ -2105,22 +2106,22 @@ public abstract class PGL {
 
   // TODO: the next three functions shouldn't be here...
 
-  protected int getFontAscent(Object font) {
+  protected int getFontAscent(Font font) {
     return 0;
   }
 
 
-  protected int getFontDescent(Object font) {
+  protected int getFontDescent(Font font) {
     return 0;
   }
 
 
-  protected int getTextWidth(Object font, char buffer[], int start, int stop) {
+  protected int getTextWidth(Font font, char buffer[], int start, int stop) {
     return 0;
   }
 
 
-  protected Object getDerivedFont(Object font, float size) {
+  protected Font getDerivedFont(Font font, float size) {
     return null;
   }
 
