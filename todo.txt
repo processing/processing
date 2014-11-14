@@ -47,6 +47,8 @@ _   might be something with libraries (native or otherwise)
 _ move the language stuff to the settings folder
 _   that way people can modify and test w/o recompiling
 _   https://github.com/processing/processing/issues/2938
+_ sketchbook window doesn't update when sketches are added, renamed, etc
+_   https://github.com/processing/processing/issues/2944
 
 
 pending
