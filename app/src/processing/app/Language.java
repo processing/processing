@@ -99,8 +99,10 @@ public class Language {
       "nl", // Dutch, Nederlands
       "pt", // Portuguese
       "tr", // Turkish
-	  "zh" // chinese
+      "zh"  // Chinese
     };
+    Arrays.sort(SUPPORTED);
+    
     return SUPPORTED;
 
     /*
@@ -155,7 +157,7 @@ public class Language {
   /** Singleton constructor */
   static public Language init() {
     if (instance == null) {
-      synchronized(Language.class) {
+      synchronized (Language.class) {
         if (instance == null) {
           instance = new Language();
         }
