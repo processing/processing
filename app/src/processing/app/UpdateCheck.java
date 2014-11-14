@@ -122,12 +122,14 @@ public class UpdateCheck {
         // Wait for xml file to be downloaded and updates to come in.
         // (this should really be handled better).
         Thread.sleep(5 * 1000);
-        if ((!base.libraryManagerFrame.hasAlreadyBeenOpened() &&
-             base.libraryManagerFrame.hasUpdates(base)) ||
-            (!base.toolManagerFrame.hasAlreadyBeenOpened() &&
-             base.toolManagerFrame.hasUpdates(base)) ||
-            (!base.modeManagerFrame.hasAlreadyBeenOpened() &&
-             base.modeManagerFrame.hasUpdates(base))) {
+        if ((!base.libraryManagerFrame.hasAlreadyBeenOpened()
+              && !base.toolManagerFrame.hasAlreadyBeenOpened()
+              && !base.modeManagerFrame.hasAlreadyBeenOpened()
+              && !base.exampleManagerFrame.hasAlreadyBeenOpened())
+          && (base.libraryManagerFrame.hasUpdates(base)
+              || base.toolManagerFrame.hasUpdates(base)
+              || base.modeManagerFrame.hasUpdates(base)
+              || base.exampleManagerFrame.hasUpdates(base))) {
           promptToOpenContributionManager();
         }
       }
