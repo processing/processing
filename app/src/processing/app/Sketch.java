@@ -493,9 +493,10 @@ public class Sketch {
     // A regression introduced by Florian's bug report (below) years earlier.
     if (!(renamingCode && sanitaryName.equals(current.getPrettyName()))) {
       // Make sure no .pde *and* no .java files with the same name already exist
+      // (other than the one we are currently attempting to rename)
       // http://processing.org/bugs/bugzilla/543.html
       for (SketchCode c : code) {
-        if (sanitaryName.equalsIgnoreCase(c.getPrettyName())) {
+        if (c != current && sanitaryName.equalsIgnoreCase(c.getPrettyName())) {
           Base.showMessage("Nope",
                            "A file named \"" + c.getFileName() + "\" already exists at\n" +
                              "\"" + folder.getAbsolutePath() + "\"");
@@ -1199,7 +1200,8 @@ public class Sketch {
 //      System.out.println(current.visited);
 //    }
     // if current is null, then this is the first setCurrent(0)
-    if ((currentIndex == which) && (current != null)) {
+    if (((currentIndex == which) && (current != null))
+      || which >= codeCount || which < 0) {
       return;
     }
 

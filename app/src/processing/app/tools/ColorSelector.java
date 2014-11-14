@@ -43,7 +43,7 @@ public class ColorSelector implements Tool {
    * Only create one instance, otherwise we'll have dozens of animation
    * threads going if you open/close a lot of editor windows.
    */
-  static ColorChooser selector;
+  private static volatile ColorChooser selector;
 
   private Editor editor;
 

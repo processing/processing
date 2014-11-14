@@ -1206,7 +1206,7 @@ public class PJOGL extends PGL {
   }
 
 
-  protected class Tessellator implements PGL.Tessellator {
+  protected static class Tessellator implements PGL.Tessellator {
     protected GLUtessellator tess;
     protected TessellatorCallback callback;
     protected GLUCallback gluCallback;

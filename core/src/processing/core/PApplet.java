@@ -35,6 +35,7 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.*;
@@ -1937,7 +1938,7 @@ public class PApplet implements PConstants {
   InternalEventQueue eventQueue = new InternalEventQueue();
 
 
-  class InternalEventQueue {
+  static class InternalEventQueue {
     protected Event queue[] = new Event[10];
     protected int offset;
     protected int count;
@@ -4653,7 +4654,6 @@ public class PApplet implements PConstants {
           return null;
         } else {
           //Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
-          //PImage image = loadImageMT(awtImage);
           Image awtImage = new ImageIcon(bytes).getImage();
 
           if (awtImage instanceof BufferedImage) {
@@ -4678,12 +4678,11 @@ public class PApplet implements PConstants {
           }
 
           PImage image = new PImage(awtImage);
-          image.parent = this;
-
           if (image.width == -1) {
             System.err.println("The file " + filename +
                                " contains bad image data, or may not be an image.");
           }
+
           // if it's a .gif image, test to see if it has transparency
           if (extension.equals("gif") || extension.equals("png")) {
             image.checkAlpha();
@@ -7864,7 +7863,7 @@ public class PApplet implements PConstants {
     //}
     if (splitCount == 0) {
       String splits[] = new String[1];
-      splits[0] = new String(value);
+      splits[0] = value;
       return splits;
     }
     //int pieceCount = splitCount + 1;

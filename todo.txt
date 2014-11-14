@@ -4,6 +4,10 @@ X size(640,360 , P3D) doesn't work properly
 X   https://github.com/processing/processing/issues/2924
 X   https://github.com/processing/processing/pull/2925
 X remove sound library, have it installed separately like video
+X Fix the shortcut keybindings in editor tab popup menu
+X   https://github.com/processing/processing/issues/179
+X   https://github.com/processing/processing/pull/2821
+
 _ any problems with new code signing crap? 
 _   issues raised around the symlink (just replace with a copy of the binary?)
 _   https://developer.apple.com/library/prerelease/mac/technotes/tn2206/_index.html#//apple_ref/doc/uid/DTS40007919-CH1-TNTAG205
@@ -12,9 +16,11 @@ deb questions: https://github.com/processing/processing/issues/114
 better Linux packaging...
 http://askubuntu.com/questions/396857/how-can-i-add-processing-to-the-unity-launcher
 
-python has to use launch() instead of open()
-map() is bad for Python (and JavaScript?)
+_ add script to download JRE and JDK from Oracle
 
+manindra
+X ToolTipManager error
+X   https://github.com/processing/processing/issues/2926
 
 pulls
 X Cmd + H runs sketch instead of hiding the PDE (OS X)
@@ -29,6 +35,35 @@ X Update ECJ, use 1.7 as source and target Java version
 X   https://github.com/processing/processing/pull/2907
 X Fix infinite recursion in sound library
 X   https://github.com/processing/processing/pull/2897
+X Add missing generic type parameters
+X   https://github.com/processing/processing/pull/2899
+X Remove unused Base.builtOnce instance variable
+X   https://github.com/processing/processing/pull/2864
+X miscellaneous fixes
+X   https://github.com/processing/processing/pull/2865
+X moved the language stuff to the settings folder
+X   https://github.com/processing/processing/pull/2941
+X Some minor UpdateChecker refactorings
+X   https://github.com/processing/processing/pull/2830
+X Minor improvements to the Contribution Manager's updates check
+X   https://github.com/processing/processing/pull/2861
+X make Cut and Copy in the edit menu active only if some text is selected
+X   https://github.com/processing/processing/pull/2834
+X Fix renaming from RGB to Rgb.java and others
+X   https://github.com/processing/processing/pull/2825
+X sketches should only write to the console of their editor window
+X   https://github.com/processing/processing/issues/153
+X   https://github.com/processing/processing/issues/2858
+X   https://github.com/processing/processing/pull/2827
+
+pulls (net)
+X NullPointerException message when Server writes to a disconnected client
+X   https://github.com/processing/processing/issues/2577
+X   https://github.com/processing/processing/pull/2578
+X Implement the active() method for Serial and Server 
+X   https://github.com/processing/processing/issues/2364
+X   https://github.com/processing/processing/pull/2588
+
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
 _ Fix renaming from RGB to Rgb.java and others
@@ -88,6 +123,8 @@ _   http://stackoverflow.com/questions/4933677/detecting-windows-ie-proxy-settin
 _   http://www.java2s.com/Code/Java/Network-Protocol/DetectProxySettingsforInternetConnection.htm
 _ problems with non-US keyboards and some shortcuts
 _   https://github.com/processing/processing/issues/2199
+_ improve start time by populating sketchbook/libraries on threads
+_   https://github.com/processing/processing/issues/2945
 
 
 medium

@@ -89,10 +89,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
   private Point sketchWindowLocation;
 
   // undo fellers
-  private JMenuItem undoItem, redoItem;
+  private JMenuItem undoItem, redoItem, copyItems, cutItems;
   protected UndoAction undoAction;
   protected RedoAction redoAction;
   /** the currently selected tab's undo manager */
+  protected CopyAction copyAction;
+  protected CutAction cutAction;
   private UndoManager undo;
   // used internally for every edit. Groups hotkey-event text manipulations and
   // groups  multi-character inputs into a single undos.
@@ -439,6 +441,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  public EditorConsole getConsole() {
+    return console;
+  }
+
+
 
 //  public Settings getTheme() {
 //    return mode.getTheme();
@@ -722,23 +729,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     menu.addSeparator();
 
-    // TODO "cut" and "copy" should really only be enabled
-    // if some text is currently selected
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.cut"), 'X');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleCut();
-        }
-      });
-    menu.add(item);
+    cutItems = Toolkit.newJMenuItem("Cut", 'X');
+    cutItems.addActionListener(cutAction = new CutAction());
+    menu.add(cutItems);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.copy"), 'C');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          textarea.copy();
-        }
-      });
-    menu.add(item);
+    copyItems = Toolkit.newJMenuItem("Copy", 'C');
+    copyItems.addActionListener(copyAction = new CopyAction());
+    menu.add(copyItems);
 
     item = Toolkit.newJMenuItemShift(Language.text("menu.edit.copy_as_html"), 'C');
     item.addActionListener(new ActionListener() {
@@ -876,7 +873,25 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
       });
     menu.add(item);
-
+ // Listener to the Edit menu item
+    menu.addMenuListener(new MenuListener() {
+    
+      @Override
+      public void menuCanceled(MenuEvent e) {
+      }
+    
+      @Override
+      public void menuDeselected(MenuEvent e) {
+      }
+        /* Updating the copy and cut JMenuItems
+         * as soon as the Edit menu is selected
+        */
+      @Override
+      public void menuSelected(MenuEvent e) {
+        copyAction.updateCopyState();
+        cutAction.updateCutState();
+      }
+    });
     return menu;
   }
 
@@ -1263,6 +1278,52 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  class CutAction extends AbstractAction {
+    public CutAction() {
+      super("Cut");
+      this.setEnabled(false);
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+      System.out.println(e.getActionCommand());
+      handleCut();
+    }
+    
+    public void updateCutState() {
+      if (canCut()) {
+        cutItems.setEnabled(true);
+      } else {
+        cutItems.setEnabled(false);
+      }
+    }
+    
+    public boolean canCut() {
+      return textarea.isSelectionActive();
+    }
+  }
+    
+  class CopyAction extends AbstractAction {
+    public CopyAction() {
+      super("Copy");
+      this.setEnabled(false);
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+      textarea.copy();
+    }
+    
+    public void updateCopyState() {
+      if (canCopy()) {
+        copyItems.setEnabled(true);
+      } else {
+        copyItems.setEnabled(false);
+      }
+    }
+    
+    public boolean canCopy() {
+      return textarea.isSelectionActive();
+    }
+  }
 
   class UndoAction extends AbstractAction {
     public UndoAction() {
@@ -1889,6 +1950,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   protected void handleCommentUncomment() {
+    // log("Entering handleCommentUncomment()");
     startCompoundEdit();
 
     String prefix = getCommentPrefix();
@@ -1911,32 +1973,41 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // If the text is empty, ignore the user.
     // Also ensure that all lines are commented (not just the first)
     // when determining whether to comment or uncomment.
-    int length = textarea.getDocumentLength();
     boolean commented = true;
     for (int i = startLine; commented && (i <= stopLine); i++) {
-      int pos = textarea.getLineStartOffset(i);
-      if (pos + prefixLen > length) {
-        commented = false;
-      } else {
-        // Check the first characters to see if it's already a comment.
-        String begin = textarea.getText(pos, prefixLen);
-        //System.out.println("begin is '" + begin + "'");
-        commented = begin.equals(prefix);
-      }
+      String lineText = textarea.getLineText(i).trim();
+      if (lineText.length() == 0)
+        continue; //ignore blank lines
+      commented = lineText.startsWith(prefix);
     }
 
+    // log("Commented: " + commented);
+
+    // This is the line start offset of the first line, which is added to
+    // all other lines while adding a comment. Required when commenting 
+    // lines which have uneven whitespaces in the beginning. Makes the 
+    // commented lines look more uniform.    
+    int lso = Math.abs(textarea.getLineStartNonWhiteSpaceOffset(startLine)
+        - textarea.getLineStartOffset(startLine));
+
     for (int line = startLine; line <= stopLine; line++) {
-      int location = textarea.getLineStartOffset(line);
+      int location = textarea.getLineStartNonWhiteSpaceOffset(line);
+      String lineText = textarea.getLineText(line);
+      if (lineText.trim().length() == 0)
+        continue; //ignore blank lines
       if (commented) {
         // remove a comment
-        textarea.select(location, location + prefixLen);
-        if (textarea.getSelectedText().equals(prefix)) {
-          textarea.setSelectedText("");
+        if (lineText.trim().startsWith(prefix + " ")) {
+          textarea.select(location, location + prefixLen + 1);
+        } else {
+          textarea.select(location, location + prefixLen);
         }
+        textarea.setSelectedText("");
       } else {
         // add a comment
+        location = textarea.getLineStartOffset(line) + lso;
         textarea.select(location, location);
-        textarea.setSelectedText(prefix);
+        textarea.setSelectedText(prefix + " "); //Add a '// '
       }
     }
     // Subtract one from the end, otherwise selects past the current line.

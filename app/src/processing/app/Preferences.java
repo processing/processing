@@ -63,8 +63,8 @@ public class Preferences {
    * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
    * Windows XP needs 66, and my Ubuntu machine needs 80+, so 80 seems proper.
    */
-  static public int BUTTON_WIDTH =
-    Integer.valueOf(Language.text("preferences.button.width"));
+  static public int BUTTON_WIDTH = 
+    Integer.parseInt(Language.text("preferences.button.width"));
 
   /** height of the EditorHeader, EditorToolbar, and EditorStatus */
   static final int GRID_SIZE = 32;

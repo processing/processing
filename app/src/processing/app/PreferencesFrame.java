@@ -60,8 +60,8 @@ public class PreferencesFrame {
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
   JCheckBox checkUpdatesBox;
-  JComboBox fontSizeField;
-  JComboBox consoleSizeField;
+  JComboBox<Integer> fontSizeField;
+  JComboBox<Integer> consoleSizeField;
   JCheckBox inputMethodBox;
   JCheckBox autoAssociateBox;
 
@@ -73,13 +73,13 @@ public class PreferencesFrame {
   JCheckBox importSuggestionsBox;
   JCheckBox codeCompletionTriggerBox;
 
-  JComboBox displaySelectionBox;
-  JComboBox languageSelectionBox;
+  JComboBox<String> displaySelectionBox;
+  JComboBox<String> languageSelectionBox;
 
   int displayCount;
 
   String[] monoFontFamilies;
-  JComboBox fontSelectionBox;
+  JComboBox<String> fontSelectionBox;
 
   /** Base object so that updates can be applied to the list of editors. */
   Base base;
@@ -152,7 +152,7 @@ public class PreferencesFrame {
     Container languageBox = Box.createHorizontalBox();
     JLabel languageLabel = new JLabel(Language.text("preferences.language")+": ");
     languageBox.add(languageLabel);
-    languageSelectionBox = new JComboBox();
+    languageSelectionBox = new JComboBox<String>();
 
     Map<String, String> languages = Language.getLanguages();
     String[] languageSelection = new String[languages.size()];
@@ -163,7 +163,7 @@ public class PreferencesFrame {
         languageSelection[i++] = lang.getValue();
       }
     }
-    languageSelectionBox.setModel(new DefaultComboBoxModel(languageSelection));
+    languageSelectionBox.setModel(new DefaultComboBoxModel<String>(languageSelection));
     languageBox.add(languageSelectionBox);
     label = new JLabel(" ("+Language.text("preferences.requires_restart")+")");
     languageBox.add(label);
@@ -189,7 +189,7 @@ public class PreferencesFrame {
     fontLabel.setToolTipText(fontTip);
     fontBox.add(fontLabel);
     // get a wide name in there before getPreferredSize() is called
-    fontSelectionBox = new JComboBox(new Object[] { Toolkit.getMonoFontName() });
+    fontSelectionBox = new JComboBox<String>(new String[] { Toolkit.getMonoFontName() });
     fontSelectionBox.setToolTipText(fontTip);
 //    fontSelectionBox.addItem(Toolkit.getMonoFont(size, style));
     //updateDisplayList();
@@ -492,7 +492,7 @@ public class PreferencesFrame {
     final String tip = "<html>" + Language.text("preferences.run_sketches_on_display.tip");
     displayLabel.setToolTipText(tip);
     displayBox.add(displayLabel);
-    displaySelectionBox = new JComboBox();
+    displaySelectionBox = new JComboBox<String>();
     updateDisplayList();  // needs to happen here for getPreferredSize()
     displayBox.add(displaySelectionBox);
     pain.add(displayBox);
@@ -845,7 +845,7 @@ public class PreferencesFrame {
   void initFontList() {
     if (monoFontFamilies == null) {
       monoFontFamilies = Toolkit.getMonoFontFamilies();
-      fontSelectionBox.setModel(new DefaultComboBoxModel(monoFontFamilies));
+      fontSelectionBox.setModel(new DefaultComboBoxModel<String>(monoFontFamilies));
       String family = Preferences.get("editor.font.family");
 
       // Set a reasonable default, in case selecting the family fails
@@ -866,7 +866,7 @@ public class PreferencesFrame {
 //      displaySelectionBox.add(String.valueOf(i + 1));
     }
 //    PApplet.println(items);
-    displaySelectionBox.setModel(new DefaultComboBoxModel(items));
+    displaySelectionBox.setModel(new DefaultComboBoxModel<String>(items));
 //    displaySelectionBox = new JComboBox(items);
   }
 }

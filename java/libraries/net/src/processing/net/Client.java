@@ -51,7 +51,6 @@ public class Client implements Runnable {
 
   Thread thread;
   Socket socket;
-  String ip;
   int port;
   String host;
 
@@ -274,7 +273,10 @@ public class Client implements Runnable {
    * @brief Returns the IP address of the machine as a String
    */
   public String ip() {
-    return socket.getInetAddress().getHostAddress();
+    if (socket != null){
+      return socket.getInetAddress().getHostAddress();
+    }
+    return null;
   }
 
 

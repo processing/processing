@@ -1,4 +1,10 @@
 0232 core (3.0a5) 
+X detect CMYK JPEG images and return null
+X   https://community.oracle.com/thread/1272045?start=0&tstart=0
+
+python has to use launch() instead of open()
+map() is bad for Python (and JavaScript?)
+
 _ args[] should be null if none passed (otherwise args == null checks are weird)
 _ size(640,360 , P3D) doesn't work properly
 _   https://github.com/processing/processing/issues/2924
@@ -53,9 +59,17 @@ o Sort out blending differences with P2D/P3D
 o   might be that compatible images not setting alpha mode correctly
 o   image = gc.createCompatibleVolatileImage(source.width, source.height, Transparency.TRANSLUCENT);
 o   https://github.com/processing/processing/issues/1844
-_ check into contour winding fixes
-_   https://github.com/processing/processing/issues/2665
-_   https://github.com/processing/processing/pull/2927
+X Prevent lerpColor from always rounding down
+X   https://github.com/processing/processing/issues/2812
+X   https://github.com/processing/processing/pull/2813
+X Allow mask() with PGraphicsJava2D
+X   https://github.com/processing/processing/pull/2910
+X OpenGL renderers ignore vertex winding in contours
+X   https://github.com/processing/processing/issues/2665
+X   https://github.com/processing/processing/pull/2927
+X NPE when calling Client.ip() after the connection has been closed
+X   https://github.com/processing/processing/issues/2576
+X   https://github.com/processing/processing/pull/2922
 
 andres
 A Confusing message: The shader doesn't have a uniform called "foo"

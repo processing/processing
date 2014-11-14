@@ -154,7 +154,7 @@
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.update.macosx" value="67" />
+  <property name="jdk.update.macosx" value="72" />
   <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_${jdk.update.macosx}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />

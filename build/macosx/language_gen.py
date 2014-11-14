@@ -5,7 +5,7 @@ import os, re
 BASEDIR = os.path.dirname(os.path.realpath(__file__))
 
 def supported_languages():
-    path = "../../app/src/processing/app/languages/languages.txt"
+    path = "../../build/shared/lib/languages/languages.txt"
     with open(os.path.join(BASEDIR, path)) as f:
         lines = f.read().splitlines()
 
