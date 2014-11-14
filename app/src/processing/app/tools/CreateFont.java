@@ -836,8 +836,7 @@ class CheckBoxList extends JList<JCheckBox> {
           int index = locationToIndex(e.getPoint());
 
           if (index != -1) {
-            JCheckBox checkbox = (JCheckBox)
-            getModel().getElementAt(index);
+            JCheckBox checkbox = getModel().getElementAt(index);
             checkbox.setSelected(!checkbox.isSelected());
             repaint();
           }

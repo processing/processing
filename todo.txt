@@ -5,9 +5,7 @@ deb questions: https://github.com/processing/processing/issues/114
 better Linux packaging...
 http://askubuntu.com/questions/396857/how-can-i-add-processing-to-the-unity-launcher
 
-python has to use launch() instead of open()
-map() is bad for Python (and JavaScript?)
-
+_ add script to download JRE and JDK from Oracle
 
 pulls
 X Cmd + H runs sketch instead of hiding the PDE (OS X)
@@ -18,14 +16,23 @@ X improve contrib manager localization
 X   https://github.com/processing/processing/pull/2870
 X Fix infinite recursion in sound library
 X   https://github.com/processing/processing/pull/2897
+X Add missing generic type parameters
+X   https://github.com/processing/processing/pull/2899
+X Remove unused Base.builtOnce instance variable
+X   https://github.com/processing/processing/pull/2864
+X miscellaneous fixes
+X   https://github.com/processing/processing/pull/2865
+X moved the language stuff to the settings folder
+X   https://github.com/processing/processing/pull/2941
+
+pulls (net)
 X NullPointerException message when Server writes to a disconnected client
 X   https://github.com/processing/processing/issues/2577
 X   https://github.com/processing/processing/pull/2578
-X Prevent lerpColor from always rounding down
-X   https://github.com/processing/processing/issues/2812
-X   https://github.com/processing/processing/pull/2813
-X Allow mask() with PGraphicsJava2D
-X   https://github.com/processing/processing/pull/2910
+X Implement the active() method for Serial and Server 
+X   https://github.com/processing/processing/issues/2364
+X   https://github.com/processing/processing/pull/2588
+
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
 _ Fix renaming from RGB to Rgb.java and others
