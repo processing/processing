@@ -179,7 +179,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   
   public void filterLibraries(List<Contribution> filteredContributions) {
     synchronized (panelByContribution) {
-      Set<Contribution> hiddenPanels = new TreeSet(contribListing.getComparator());
+      Set<Contribution> hiddenPanels = new TreeSet<Contribution>(contribListing.getComparator());
       hiddenPanels.addAll(panelByContribution.keySet());
 
       for (Contribution info : filteredContributions) {

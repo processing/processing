@@ -46,7 +46,7 @@ public class ContributionManagerDialog {
   JFrame dialog;
   String title;
   ContributionFilter filter;
-  JComboBox categoryChooser;
+  JComboBox<String> categoryChooser;
   JScrollPane scrollPane;
   ContributionListPanel contributionListPanel;
   StatusPanel status;
@@ -219,7 +219,7 @@ public class ContributionManagerDialog {
 
       filterPanel.add(Box.createHorizontalStrut(5));
 
-      categoryChooser = new JComboBox();
+      categoryChooser = new JComboBox<String>();
       categoryChooser.setMaximumRowCount(20);
       updateCategoryChooser();
 //      filterPanel.add(categoryChooser, c);
