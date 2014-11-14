@@ -7,6 +7,10 @@ http://askubuntu.com/questions/396857/how-can-i-add-processing-to-the-unity-laun
 
 _ add script to download JRE and JDK from Oracle
 
+manindra
+X ToolTipManager error
+X   https://github.com/processing/processing/issues/2926
+
 pulls
 X Cmd + H runs sketch instead of hiding the PDE (OS X)
 X   https://github.com/processing/processing/issues/2881

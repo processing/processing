@@ -1,19 +1,10 @@
 0232 core (3.0a5) 
+X detect CMYK JPEG images and return null
+X   https://community.oracle.com/thread/1272045?start=0&tstart=0
 
 python has to use launch() instead of open()
 map() is bad for Python (and JavaScript?)
 
-_ simple to detect CMYK JPEG images? 
-_   https://community.oracle.com/thread/1272045?start=0&tstart=0
-_   int colorSpace = img.getColorModel().getColorSpace().getType();
-int colorSpace = img.getColorModel().getColorSpace().getType();
-if(colorSpace == ColorSpace.TYPE_CMYK) {
-    BufferedImage dst = new BufferedImage(img.getWidth(),
-            img.getHeight(),BufferedImage.TYPE_3BYTE_BGR);
-    ColorConvertOp op = new ColorConvertOp(null);
-    op.filter(img, dst);
-    img = dst;
-}
 
 pulls
 X Fix check in loadShader()
