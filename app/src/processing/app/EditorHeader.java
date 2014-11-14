@@ -568,12 +568,13 @@ public class EditorHeader extends JComponent {
     menu.addSeparator();
 
     //  KeyEvent.VK_LEFT and VK_RIGHT will make Windows beep
-    item = Toolkit.newJMenuItemShift(Language.text("editor.header.previous_tab"), KeyEvent.VK_LEFT);
+    item = Toolkit.newJMenuItemAlt(Language.text("editor.header.previous_tab"), KeyEvent.VK_LEFT);
     action = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        Sketch sketch = editor.getSketch();
-        sketch.setCurrentCode(sketch.getCurrentCodeIndex() - 1);
+//        Sketch sketch = editor.getSketch();
+//        sketch.setCurrentCode(sketch.getCurrentCodeIndex() - 1);
+        editor.getSketch().handlePrevCode();
       }
     };
     mapKey = "editor.header.previous_tab";
@@ -583,12 +584,13 @@ public class EditorHeader extends JComponent {
     item.addActionListener(action);
     menu.add(item);
 
-    item = Toolkit.newJMenuItemShift(Language.text("editor.header.next_tab"), KeyEvent.VK_RIGHT);
+    item = Toolkit.newJMenuItemAlt(Language.text("editor.header.next_tab"), KeyEvent.VK_RIGHT);
     action = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        Sketch sketch = editor.getSketch();
-        sketch.setCurrentCode(sketch.getCurrentCodeIndex() + 1);
+//        Sketch sketch = editor.getSketch();
+//        sketch.setCurrentCode(sketch.getCurrentCodeIndex() + 1);
+        editor.getSketch().handleNextCode();
       }
     };
     mapKey = "editor.header.next_tab";
@@ -603,10 +605,10 @@ public class EditorHeader extends JComponent {
       menu.addSeparator();
 
       ActionListener jumpListener = new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            editor.getSketch().setCurrentCode(e.getActionCommand());
-          }
-        };
+        public void actionPerformed(ActionEvent e) {
+          editor.getSketch().setCurrentCode(e.getActionCommand());
+        }
+      };
       for (SketchCode code : sketch.getCode()) {
         item = new JMenuItem(code.getPrettyName());
         item.addActionListener(jumpListener);
