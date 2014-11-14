@@ -140,7 +140,7 @@ public class Serial implements SerialPortEventListener {
    * into any trouble.
    */
   public boolean active() {
-    return (port.isOpened());
+    return port.isOpened();
   }
 
 

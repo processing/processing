@@ -177,13 +177,15 @@ public class Server implements Runnable {
     return -1;
   }
 
+  
   /**
    * Return true if this server is still active and hasn't run
    * into any trouble.
    */
   public boolean active() {
-    return (thread != null);
+    return thread != null;
   }
+  
   
   static public String ip() {
     try {
