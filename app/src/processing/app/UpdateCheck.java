@@ -50,10 +50,10 @@ import processing.core.PApplet;
 public class UpdateCheck {
   private final Base base;
 
-  private static final String DOWNLOAD_URL = "http://processing.org/download/";
-  private static final String LATEST_URL = "http://processing.org/download/latest.txt";
+  static private final String DOWNLOAD_URL = "http://processing.org/download/";
+  static private final String LATEST_URL = "http://processing.org/download/latest.txt";
 
-  private static final long ONE_DAY = 24 * 60 * 60 * 1000;
+  static private final long ONE_DAY = 24 * 60 * 60 * 1000;
 
 
   public UpdateCheck(Base base) {
@@ -63,10 +63,12 @@ public class UpdateCheck {
         try {
           Thread.sleep(20 * 1000);  // give the PDE time to get rolling
           updateCheck();
-        } catch (IOException e) {
-          // this can safely be ignored, too many instances where no net
-          // connection is available, so we'll leave it well alone.
-        } catch (InterruptedException e) {}
+
+        } catch (Exception e) {
+          // This can safely be ignored, too many situations where no net
+          // connection is available that behave in strange ways.
+          // Covers likely IOException, InterruptedException, and any others. 
+        } 
       }
     }, "Update Checker").start();
   }

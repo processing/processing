@@ -24,6 +24,8 @@ X miscellaneous fixes
 X   https://github.com/processing/processing/pull/2865
 X moved the language stuff to the settings folder
 X   https://github.com/processing/processing/pull/2941
+X Some minor UpdateChecker refactorings
+X   https://github.com/processing/processing/pull/2830
 
 pulls (net)
 X NullPointerException message when Server writes to a disconnected client
