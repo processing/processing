@@ -31,10 +31,8 @@ import java.util.*;
 
 /**
  * Internationalization (i18n)
- * @author Darius Morawiec
  */
-public class Language {
-  
+public class Language {  
   /**
    * Store the language information in a file separate from the preferences,
    * because preferences need the language on load time.
@@ -45,7 +43,7 @@ public class Language {
   static private final String LANG_FILES = "languages";
   
   /** Definition of package for fallback */
-  static private final String LANG_PACKAGE = "processing.app.languages";
+  //static private final String LANG_PACKAGE = "processing.app.languages";
   static private final String LANG_BASE_NAME = "PDE";
 
   static private Properties props;
@@ -69,7 +67,6 @@ public class Language {
 
   
   private Language() {
-    
     // Set default language
     language = "en";
     
@@ -136,6 +133,7 @@ public class Language {
     }
   }
   
+  
   private static boolean updateLangFiles() {
     // Delete old languages
     if(langFiles.exists()){
@@ -147,8 +145,8 @@ public class Language {
     }
     // Copy new languages
     String javaPath = new File(Base.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParentFile().getAbsolutePath();
-    try {    
-      copyDirectory(
+    try {
+      Base.copyDir(
         new File(javaPath+"/lib/languages"),  // from shared library folder
         langFiles                             // to editable settings folder
       );
@@ -158,6 +156,7 @@ public class Language {
       return false;
     }
   }
+  
   
   static private String[] listSupported() {
     // List of languages in alphabetical order. (Add yours here.)
@@ -196,6 +195,7 @@ public class Language {
     */
   }
 
+  
   /** Load properties of language.properties */
   static private boolean loadProps(){
     if (props == null) {
@@ -231,6 +231,7 @@ public class Language {
     return true;
   }
   
+  
   /** Save changes in language.properties */
   static private boolean updateProps(){
     if (props != null) { 
@@ -248,6 +249,7 @@ public class Language {
     return true;
   }
   
+  
   /**
    * Save the language directly to a settings file. This is 'save' and not 
    * 'set' because a language change requires a restart of Processing. 
@@ -261,6 +263,7 @@ public class Language {
     }
   }
   
+  
   /** Singleton constructor */
   static public Language init() {
     if (instance == null) {
@@ -273,16 +276,10 @@ public class Language {
     return instance;
   }
 
+  
   /** Get translation from bundles. */
   static public String text(String text) {
-    ResourceBundle bundle = init().bundle;
-//    System.out.println(prefDir.toString());
-//    try {
-//      System.out.println(prefDir.toURI().toURL().toString());
-//    } catch (MalformedURLException e1) {
-//      // TODO Auto-generated catch block
-//      e1.printStackTrace();
-//    }
+    init();
     try {
       return bundle.getString(text);
     } catch (MissingResourceException e) {
@@ -290,66 +287,39 @@ public class Language {
     }
   }
   
+  
   static public String interpolate(String text, Object... arguments) {
-    return String.format(init().bundle.getString(text), arguments);
+    init();
+    return String.format(bundle.getString(text), arguments);
   }
 
+  
   static public String pluralize(String text, int count) {
-    ResourceBundle bundle = init().bundle;
-
+    init();
     String fmt = text + ".%s";
-
     if (bundle.containsKey(String.format(fmt, count))) {
       return interpolate(String.format(fmt, count), count);
     }
     return interpolate(String.format(fmt, "n"), count);
   }
 
+  
   /** Get all available languages */
   static public Map<String, String> getLanguages() {
     return init().languages;
   }
 
+  
   /** Get current language */
   static public String getLanguage() {
     return init().language;
   }
 
-  // Copy files without dependencies (Java >= 7)
-  // http://stackoverflow.com/a/5368745/1293700
-  static private void copy(File sourceLocation, File targetLocation)
-    throws IOException {
-    if (sourceLocation.isDirectory()) {
-      copyDirectory(sourceLocation, targetLocation);
-    } else {
-      copyFile(sourceLocation, targetLocation);
-    }
-  }
-  static private void copyDirectory(File source, File target)
-    throws IOException {
-    if (!target.exists()) {
-      target.mkdir();
-    }
-    for (String f : source.list()) {
-      copy(new File(source, f), new File(target, f));
-    }
-  }
-  static private void copyFile(File source, File target) throws IOException {
-    try (InputStream in = new FileInputStream(source);
-      OutputStream out = new FileOutputStream(target)) {
-      byte[] buf = new byte[1024];
-      int length;
-      while ((length = in.read(buf)) > 0) {
-        out.write(buf, 0, length);
-      }
-    }
-  }
 
   /**
    * Custom 'Control' class for consistent encoding.
    * http://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle
    */
-
   static private class UTF8Control extends ResourceBundle.Control {
     public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload) throws IllegalAccessException, InstantiationException,IOException {
       // The below is a copy of the default implementation.
