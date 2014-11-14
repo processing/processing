@@ -1908,33 +1908,28 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     }
 
-    // If the text is empty, ignore the user.
-    // Also ensure that all lines are commented (not just the first)
+    // ensure that all lines are commented (not just the first)
     // when determining whether to comment or uncomment.
-    int length = textarea.getDocumentLength();
     boolean commented = true;
+    String commentPattern = "^\\s*//.*"; 
     for (int i = startLine; commented && (i <= stopLine); i++) {
-      int pos = textarea.getLineStartOffset(i);
-      if (pos + prefixLen > length) {
-        commented = false;
-      } else {
-        // Check the first characters to see if it's already a comment.
-        String begin = textarea.getText(pos, prefixLen);
-        //System.out.println("begin is '" + begin + "'");
-        commented = begin.equals(prefix);
-      }
+      String lineText = textarea.getLineText(i);
+      commented = lineText.matches(commentPattern);
     }
 
     for (int line = startLine; line <= stopLine; line++) {
+      String lineText = textarea.getLineText(line);
       int location = textarea.getLineStartOffset(line);
       if (commented) {
         // remove a comment
+        location += lineText.indexOf(prefix);
         textarea.select(location, location + prefixLen);
         if (textarea.getSelectedText().equals(prefix)) {
           textarea.setSelectedText("");
         }
       } else {
-        // add a comment
+        // add a comment (after leading whitespace)
+        location += lineText.indexOf(lineText.trim());
         textarea.select(location, location);
         textarea.setSelectedText(prefix);
       }
