@@ -25,6 +25,7 @@ package processing.app;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Random;
 
@@ -47,10 +48,12 @@ import processing.core.PApplet;
  * proposals and that kind of thing so that we can keep Processing free.
  */
 public class UpdateCheck {
-  Base base;
-  String downloadURL = "http://processing.org/download/latest.txt";
+  private final Base base;
 
-  static final long ONE_DAY = 24 * 60 * 60 * 1000;
+  private static final String DOWNLOAD_URL = "http://processing.org/download/";
+  private static final String LATEST_URL = "http://processing.org/download/latest.txt";
+
+  private static final long ONE_DAY = 24 * 60 * 60 * 1000;
 
 
   public UpdateCheck(Base base) {
@@ -60,22 +63,16 @@ public class UpdateCheck {
         try {
           Thread.sleep(20 * 1000);  // give the PDE time to get rolling
           updateCheck();
-        } catch (Exception e) {
+        } catch (IOException e) {
           // this can safely be ignored, too many instances where no net
           // connection is available, so we'll leave it well alone.
-//          String msg = e.getMessage();
-//          if (msg.contains("UnknownHostException")) {
-//            // nah, do nothing.. this happens when not connected to the net
-//          } else {
-//            e.printStackTrace();
-//          }
-        }
+        } catch (InterruptedException e) {}
       }
     }, "Update Checker").start();
   }
 
 
-  public void updateCheck() throws Exception {
+  public void updateCheck() throws IOException, InterruptedException {
     // generate a random id in case none exists yet
     Random r = new Random();
     long id = r.nextLong();
@@ -95,7 +92,7 @@ public class UpdateCheck {
                                     System.getProperty("os.version") + "\t" +
                                     System.getProperty("os.arch"));
 
-    int latest = readInt(downloadURL + "?" + info);
+    int latest = readInt(LATEST_URL + "?" + info);
 
     String lastString = Preferences.get("update.last");
     long now = System.currentTimeMillis();
@@ -149,7 +146,7 @@ public class UpdateCheck {
                                               options,
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
-      Base.openURL("http://processing.org/download/");
+      Base.openURL(DOWNLOAD_URL);
       return true;
     }
 
@@ -178,7 +175,7 @@ public class UpdateCheck {
   }
 
 
-  protected int readInt(String filename) throws Exception {
+  protected int readInt(String filename) throws IOException {
     URL url = new URL(filename);
     InputStream stream = url.openStream();
     InputStreamReader isr = new InputStreamReader(stream);
