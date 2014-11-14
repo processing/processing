@@ -520,7 +520,7 @@ public class EditorHeader extends JComponent {
       }
     };
     mapKey = "editor.header.new_tab";
-    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.SHORTCUT_SHIFT_KEY_MASK);
+    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.SHORTCUT_ALT_KEY_MASK);
     mInputMap.put(keyStroke, mapKey);
     mActionMap.put(mapKey, action);
     item.addActionListener(action);
@@ -559,7 +559,7 @@ public class EditorHeader extends JComponent {
       }
     };
     mapKey = "editor.header.delete";
-    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.SHORTCUT_SHIFT_KEY_MASK);
+    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.SHORTCUT_ALT_KEY_MASK);
     mInputMap.put(keyStroke, mapKey);
     mActionMap.put(mapKey, action);
     item.addActionListener(action);
@@ -577,7 +577,7 @@ public class EditorHeader extends JComponent {
       }
     };
     mapKey = "editor.header.previous_tab";
-    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_SHIFT_KEY_MASK);
+    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
     mInputMap.put(keyStroke, mapKey);
     mActionMap.put(mapKey, action);
     item.addActionListener(action);
@@ -592,7 +592,7 @@ public class EditorHeader extends JComponent {
       }
     };
     mapKey = "editor.header.next_tab";
-    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_SHIFT_KEY_MASK);
+    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
     mInputMap.put(keyStroke, mapKey);
     mActionMap.put(mapKey, action);
     item.addActionListener(action);
