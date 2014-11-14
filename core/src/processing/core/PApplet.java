@@ -2637,7 +2637,7 @@ public class PApplet extends Applet
 //  protected int eventCount;
 
 
-  class InternalEventQueue {
+  static class InternalEventQueue {
     protected Event queue[] = new Event[10];
     protected int offset;
     protected int count;
@@ -9049,7 +9049,7 @@ public class PApplet extends Applet
     //}
     if (splitCount == 0) {
       String splits[] = new String[1];
-      splits[0] = new String(value);
+      splits[0] = value;
       return splits;
     }
     //int pieceCount = splitCount + 1;

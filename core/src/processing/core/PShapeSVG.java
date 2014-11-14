@@ -1814,7 +1814,7 @@ public class PShapeSVG extends PShape {
               namedGlyphs.put(fg.name, fg);
             }
             if (fg.unicode != 0) {
-              unicodeGlyphs.put(new Character(fg.unicode), fg);
+              unicodeGlyphs.put(Character.valueOf(fg.unicode), fg);
             }
           }
           glyphs[glyphCount++] = fg;
@@ -1848,7 +1848,7 @@ public class PShapeSVG extends PShape {
       char[] c = str.toCharArray();
       for (int i = 0; i < c.length; i++) {
         // call draw on each char (pulling it w/ the unicode table)
-        FontGlyph fg = unicodeGlyphs.get(new Character(c[i]));
+        FontGlyph fg = unicodeGlyphs.get(Character.valueOf(c[i]));
         if (fg != null) {
           fg.draw(g);
           // add horizAdvX/unitsPerEm to the x coordinate along the way
@@ -1866,7 +1866,7 @@ public class PShapeSVG extends PShape {
       float s =  size / face.unitsPerEm;
       g.translate(x, y);
       g.scale(s, -s);
-      FontGlyph fg = unicodeGlyphs.get(new Character(c));
+      FontGlyph fg = unicodeGlyphs.get(Character.valueOf(c));
       if (fg != null) g.shape(fg);
       g.popMatrix();
     }
@@ -1877,7 +1877,7 @@ public class PShapeSVG extends PShape {
       char[] c = str.toCharArray();
       for (int i = 0; i < c.length; i++) {
         // call draw on each char (pulling it w/ the unicode table)
-        FontGlyph fg = unicodeGlyphs.get(new Character(c[i]));
+        FontGlyph fg = unicodeGlyphs.get(Character.valueOf(c[i]));
         if (fg != null) {
           w += (float) fg.horizAdvX / face.unitsPerEm;
         }
