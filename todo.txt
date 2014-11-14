@@ -1,6 +1,9 @@
 0232 pde (3.0a5)
 X remove debug message printed to the console when the ctrl key is down in PDE X
 
+deb questions: https://github.com/processing/processing/issues/114
+better Linux packaging...
+http://askubuntu.com/questions/396857/how-can-i-add-processing-to-the-unity-launcher
 
 python has to use launch() instead of open()
 map() is bad for Python (and JavaScript?)

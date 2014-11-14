@@ -13,6 +13,8 @@ X   https://github.com/processing/processing/pull/2902
 andres
 A Confusing message: The shader doesn't have a uniform called "foo"
 A   https://github.com/processing/processing/issues/2593
+A Exceptions in P3D / P2D not showing up properly
+A   https://github.com/processing/processing/issues/2930
 
 
 applet/component
