@@ -3,7 +3,7 @@ package processing.core;
 import java.awt.*;
 
 
-public class PGraphicsRetina2D extends PGraphicsJava2D {
+public class PGraphicsJava2D2X extends PGraphicsJava2D {
 //  PImage retina;
 //  int retinaWidth;
 //  int retinaHeight;
@@ -14,7 +14,7 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   // INTERNAL
 
 
-  public PGraphicsRetina2D() {
+  public PGraphicsJava2D2X() {
     pixelFactor = 2;
 //    retina = new PImage();
 //    retina.format = RGB;
