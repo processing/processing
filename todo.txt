@@ -7,10 +7,10 @@ X answer deb questions
 X   https://github.com/processing/processing/issues/114
 X change how languages are loaded
 X   add local override (needs documentation)
+X   figure out copyDir() problems before pull
+o moving window to a new location is broken due to the pull
 
 _ add script to download JRE and JDK from Oracle
-_ figure out copyDir() problems before pull
-_ moving window to a new location is broken due to the pull
 
 manindra
 X ToolTipManager error
