@@ -45,6 +45,8 @@ public class PSurfaceNEWT implements PSurface {
   int sketchWidth;
   int sketchHeight;
 
+  MonitorDevice displayDevice;
+
   public PSurfaceNEWT(PGraphics graphics) {
     this.graphics = graphics;
     this.pgl = (PJOGL) ((PGraphicsOpenGL)graphics).pgl;
@@ -67,17 +69,6 @@ public class PSurfaceNEWT implements PSurface {
     int screenWidth = screen.getWidth();
     int screenHeight = screen.getHeight();
 
-
-
-    if (deviceIndex >= 0) {  // if -1, use the default device
-
-
-    }
-    System.out.println("deviceIndex: " + deviceIndex);
-
-
-    System.out.println("Screen res " + screenWidth + "x" + screenHeight);
-
     ArrayList<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
     for (int i = 0; i < screen.getMonitorDevices().size(); i++) {
       MonitorDevice monitor = screen.getMonitorDevices().get(i);
@@ -89,6 +80,18 @@ public class PSurfaceNEWT implements PSurface {
       monitors.add(monitor);
     }
     System.out.println("*******************************");
+
+    if (deviceIndex >= 0) {  // if -1, use the default device
+      if (deviceIndex < monitors.size()) {
+        displayDevice = monitors.get(deviceIndex);
+      } else {
+        System.err.format("Display %d does not exist, " +
+          "using the default display instead.", deviceIndex);
+        for (int i = 0; i < monitors.size(); i++) {
+          System.err.format("Display %d is %s\n", i, monitors.get(i));
+        }
+      }
+    }
 
     if (profile == null) {
       if (PJOGL.PROFILE == 2) {
@@ -129,17 +132,31 @@ public class PSurfaceNEWT implements PSurface {
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
     pgl.capabilities = caps;
+    window = GLWindow.create(screen, caps);
+
 
     sketchWidth = sketch.sketchWidth();
     sketchHeight = sketch.sketchHeight();
 
-    window = GLWindow.create(screen, caps);
-    window.setPosition(0, 0);
-    window.setSize(sketchWidth, sketchHeight);
+    if (displayDevice == null) {
+      displayDevice = window.getMainMonitor();
+    }
+    int sketchX = displayDevice.getViewportInWindowUnits().getX();
+    int sketchY = displayDevice.getViewportInWindowUnits().getY();
+
 
 //    window..setBackground(new Color(backgroundColor, true));
-    window.setVisible(true);
+    window.setPosition(sketchX, sketchY);
+    window.setSize(sketchWidth, sketchHeight);
 
+
+
+
+    System.out.println("deviceIndex: " + deviceIndex);
+    System.out.println(displayDevice);
+    System.out.println("Screen res " + screenWidth + "x" + screenHeight);
+
+    window.setVisible(true);
 
     // Retina
 //    int[] reqSurfacePixelScale = new int[] { ScalableSurface.AUTOMAX_PIXELSCALE,
