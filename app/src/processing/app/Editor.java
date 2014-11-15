@@ -1358,8 +1358,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
       if (undo.canUndo() || compoundEdit != null && compoundEdit.isInProgress()) {
         this.setEnabled(true);
         undoItem.setEnabled(true);
-        undoItem.setText(undo.getUndoPresentationName());
-        putValue(Action.NAME, undo.getUndoPresentationName());
+        String newUndoPresentationName = Language.text("menu.edit.undo");
+        if (undo.getUndoPresentationName().equals("Undo addition")) {
+          newUndoPresentationName += " "+Language.text("menu.edit.action.addition");
+        } else if (undo.getUndoPresentationName().equals("Undo deletion")) {
+          newUndoPresentationName += " "+Language.text("menu.edit.action.deletion");
+        }
+        undoItem.setText(newUndoPresentationName);
+        putValue(Action.NAME, newUndoPresentationName);
 //        if (sketch != null) {
 //          sketch.setModified(true);  // 0107, removed for 0196
 //        }
@@ -1407,8 +1413,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
     protected void updateRedoState() {
       if (undo.canRedo()) {
         redoItem.setEnabled(true);
-        redoItem.setText(undo.getRedoPresentationName());
-        putValue(Action.NAME, undo.getRedoPresentationName());
+        String newRedoPresentationName = Language.text("menu.edit.redo");
+        if (undo.getRedoPresentationName().equals("Redo addition")) {
+          newRedoPresentationName += " "+Language.text("menu.edit.action.addition");
+        } else if (undo.getRedoPresentationName().equals("Redo deletion")) {
+          newRedoPresentationName += " "+Language.text("menu.edit.action.deletion");
+        }
+        redoItem.setText(newRedoPresentationName);
+        putValue(Action.NAME, newRedoPresentationName);
       } else {
         this.setEnabled(false);
         redoItem.setEnabled(false);

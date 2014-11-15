@@ -233,17 +233,17 @@ public class JavaEditor extends Editor {
 //    toolbar.activate(JavaToolbar.EXPORT);
 
     if (handleExportCheckModified()) {
-      statusNotice("Exporting application...");
+      statusNotice(Language.text("export.notice.exporting"));
       try {
         if (exportApplicationPrompt()) {
           Base.openFolder(sketch.getFolder());
-          statusNotice("Done exporting.");
+          statusNotice(Language.text("export.notice.exporting.done"));
         } else {
           // error message will already be visible
           // or there was no error, in which case it was canceled.
         }
       } catch (Exception e) {
-        statusNotice("Error during export.");
+        statusNotice(Language.text("export.notice.exporting.error"));
         e.printStackTrace();
       }
     }
@@ -302,7 +302,7 @@ public class JavaEditor extends Editor {
     });
     if (!Base.isMacOS()) {
       macosxButton.setEnabled(false);
-      macosxButton.setToolTipText("Mac OS X export is only available on Mac OS X");
+      macosxButton.setToolTipText(Language.text("export.tooltip.macosx"));
     }
 
     final JCheckBox linuxButton = new JCheckBox("Linux");
@@ -399,7 +399,7 @@ public class JavaEditor extends Editor {
     //presentPanel.add(showStopButton);
 //    presentPanel.add(Box.createHorizontalStrut(10));
 //    presentPanel.add(Box.createHorizontalGlue());
-    presentPanel.setBorder(new TitledBorder("Full Screen"));
+    presentPanel.setBorder(new TitledBorder(Language.text("export.full_screen")));
 //    wide = Math.max(wide, platformPanel.getPreferredSize().width);
     presentPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     panel.add(presentPanel);
@@ -448,7 +448,7 @@ public class JavaEditor extends Editor {
     warningLabel.setBorder(new EmptyBorder(3, 13 + indent, 3, 13));
 
     final JCheckBox embedJavaButton = 
-      new JCheckBox("Embed Java for " + platformName);
+      new JCheckBox(Language.text("export.embed_java.for") + " " + platformName);
     embedJavaButton.setSelected(embed);
     embedJavaButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -465,7 +465,7 @@ public class JavaEditor extends Editor {
     
     embedPanel.add(embedJavaButton);
     embedPanel.add(warningLabel);
-    embedPanel.setBorder(new TitledBorder("Embed Java"));
+    embedPanel.setBorder(new TitledBorder(Language.text("export.embed_java")));
     panel.add(embedPanel);
     
     //
@@ -473,7 +473,7 @@ public class JavaEditor extends Editor {
     if (Base.isMacOS()) {
       JPanel signPanel = new JPanel();
       signPanel.setLayout(new BoxLayout(signPanel, BoxLayout.Y_AXIS));
-      signPanel.setBorder(new TitledBorder("Code Signing"));
+      signPanel.setBorder(new TitledBorder(Language.text("export.code_signing")));
       
       // gatekeeper: http://support.apple.com/kb/ht5290
       // for developers: https://developer.apple.com/developer-id/
@@ -579,7 +579,7 @@ public class JavaEditor extends Editor {
       return jmode.handleExportApplication(sketch);
     } else if (value.equals(options[1]) || value.equals(Integer.valueOf(-1))) {
       // closed window by hitting Cancel or ESC
-      statusNotice("Export to Application canceled.");
+      statusNotice(Language.text("export.notice.exporting.cancel"));
     }
     return false;
   }
@@ -633,7 +633,7 @@ public class JavaEditor extends Editor {
       addMouseListener(new MouseAdapter() {
         public void mouseReleased(MouseEvent e) {
           Color color = Preferences.getColor(prefName);
-          chooser = new ColorChooser(JavaEditor.this, true, color, "Select", ColorPreference.this);
+          chooser = new ColorChooser(JavaEditor.this, true, color, Language.text("color_chooser.select"), ColorPreference.this);
           chooser.show();
         }
       });
@@ -679,8 +679,8 @@ public class JavaEditor extends Editor {
     if (sketch.isModified()) {
       Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
       int result = JOptionPane.showOptionDialog(this,
-                                                "Save changes before export?",
-                                                "Save",
+                                                Language.text("export.unsaved_changes"),
+                                                Language.text("menu.file.save"),
                                                 JOptionPane.OK_CANCEL_OPTION,
                                                 JOptionPane.QUESTION_MESSAGE,
                                                 null,
@@ -694,7 +694,7 @@ public class JavaEditor extends Editor {
         // why it's not CANCEL_OPTION is beyond me (at least on the mac)
         // but f-- it.. let's get this shite done..
         //} else if (result == JOptionPane.CANCEL_OPTION) {
-        statusNotice("Export canceled, changes must first be saved.");
+        statusNotice(Language.text("export.notice.cancel.unsaved_changes"));
         //toolbar.clear();
         return false;
       }
