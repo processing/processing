@@ -3017,6 +3017,13 @@ public class PApplet implements PConstants {
    * Note that the function being called must be public. Inside the PDE,
    * 'public' is automatically added, but when used without the preprocessor,
    * (like from Eclipse) you'll have to do it yourself.
+   *
+   * @webref structure
+   * @usage Application
+   * @see PApplet#setup()
+   * @see PApplet#draw()
+   * @see PApplet#loop()
+   * @see PApplet#noLoop()
    */
   public void thread(final String name) {
     Thread later = new Thread() {
