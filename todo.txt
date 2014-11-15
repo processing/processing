@@ -1,5 +1,8 @@
 0232 pde (3.0a5)
 X remove debug message printed to the console when the ctrl key is down in PDE X
+X Fix the shortcut keybindings in editor tab popup menu
+X   https://github.com/processing/processing/issues/179
+X   https://github.com/processing/processing/pull/2821
 
 deb questions: https://github.com/processing/processing/issues/114
 better Linux packaging...
@@ -34,8 +37,6 @@ X Minor improvements to the Contribution Manager's updates check
 X   https://github.com/processing/processing/pull/2861
 X make Cut and Copy in the edit menu active only if some text is selected
 X   https://github.com/processing/processing/pull/2834
-X Fix the shortcut keybindings in editor tab popup menu
-X   https://github.com/processing/processing/pull/2821
 X Fix renaming from RGB to Rgb.java and others
 X   https://github.com/processing/processing/pull/2825
 X sketches should only write to the console of their editor window
