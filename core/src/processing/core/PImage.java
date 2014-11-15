@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-11 Ben Fry and Casey Reas
+  Copyright (c) 2004-14 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -94,6 +94,13 @@ public class PImage implements PConstants, Cloneable {
    */
   public int[] pixels;
 
+  /** 1 for most images, 2 for hi-dpi/retina */
+  public int pixelFactor;
+
+  /** Actual dimensions of pixels array, taking into account the 2x setting. */
+  public int pixelWidth;
+  public int pixelHeight;
+
   /**
    * ( begin auto-generated from PImage_width.xml )
    *
@@ -105,6 +112,7 @@ public class PImage implements PConstants, Cloneable {
    * @brief     Image width
    */
   public int width;
+
   /**
    * ( begin auto-generated from PImage_height.xml )
    *
@@ -212,7 +220,7 @@ public class PImage implements PConstants, Cloneable {
    * @param height image height
    */
   public PImage(int width, int height) {
-    init(width, height, RGB);
+    init(width, height, RGB, 1);
 
     // toxi: is it maybe better to init the image with max alpha enabled?
     //for(int i=0; i<pixels.length; i++) pixels[i]=0xffffffff;
@@ -224,12 +232,18 @@ public class PImage implements PConstants, Cloneable {
     // toxi: agreed and same reasons why i left it out ;)
   }
 
+
   /**
    * @nowebref
    * @param format Either RGB, ARGB, ALPHA (grayscale alpha channel)
    */
   public PImage(int width, int height, int format) {
-    init(width, height, format);
+    init(width, height, format, 1);
+  }
+
+
+  public PImage(int width, int height, int format, int factor) {
+    init(width, height, format, factor);
   }
 
 
@@ -240,12 +254,15 @@ public class PImage implements PConstants, Cloneable {
    * because the width/height will not be known when super() is called.
    * (Leave this public so that other libraries can do the same.)
    */
-  public void init(int width, int height, int format) {  // ignore
+  public void init(int width, int height, int format, int factor) {  // ignore
     this.width = width;
     this.height = height;
-    this.pixels = new int[width*height];
     this.format = format;
-//    this.cache = null;
+    this.pixelFactor = factor;
+
+    pixelWidth = width * pixelFactor;
+    pixelHeight = height * pixelFactor;
+    this.pixels = new int[pixelWidth * pixelHeight];
   }
 
 
@@ -305,6 +322,9 @@ public class PImage implements PConstants, Cloneable {
         pg.grabPixels();
       } catch (InterruptedException e) { }
     }
+    pixelFactor = 1;
+    pixelWidth = width;
+    pixelHeight = height;
   }
 
 
@@ -325,9 +345,9 @@ public class PImage implements PConstants, Cloneable {
     loadPixels();
     int type = (format == RGB) ?
       BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-    BufferedImage image = new BufferedImage(width, height, type);
+    BufferedImage image = new BufferedImage(pixelWidth, pixelHeight, type);
     WritableRaster wr = image.getRaster();
-    wr.setDataElements(0, 0, width, height, pixels);
+    wr.setDataElements(0, 0, pixelWidth, pixelHeight, pixels);
     return image;
   }
 
@@ -424,8 +444,8 @@ public class PImage implements PConstants, Cloneable {
     modified = true;
     mx1 = 0;
     my1 = 0;
-    mx2 = width;
-    my2 = height;
+    mx2 = pixelWidth;
+    my2 = pixelHeight;
   }
 
 
@@ -480,16 +500,15 @@ public class PImage implements PConstants, Cloneable {
    * @usage web_application
    */
   public void loadPixels() {  // ignore
-    if (pixels == null || pixels.length != width*height) {
-      pixels = new int[width*height];
+    if (pixels == null || pixels.length != pixelWidth*pixelHeight) {
+      pixels = new int[pixelWidth*pixelHeight];
     }
     setLoaded();
   }
 
 
   public void updatePixels() {  // ignore
-//    updatePixelsImpl(0, 0, width, height);
-    updatePixels(0, 0, width, height);
+    updatePixels(0, 0, pixelWidth, pixelHeight);
   }
 
 
@@ -525,41 +544,26 @@ public class PImage implements PConstants, Cloneable {
    * @param h height
    */
   public void updatePixels(int x, int y, int w, int h) {  // ignore
-//    updatePixelsImpl(x, y, w, h);
-//  }
-//
-//
-//  /**
-//   * Broken out as separate impl to signify that the w/y/w/h numbers have
-//   * already been tested and their bounds set properly.
-//   */
-//  protected void updatePixelsImpl(int x, int y, int w, int h) {
     int x2 = x + w;
     int y2 = y + h;
 
     if (!modified) {
       mx1 = PApplet.max(0, x);
-      //mx2 = PApplet.min(width - 1, x2);
-      mx2 = PApplet.min(width, x2);
+      mx2 = PApplet.min(pixelWidth, x2);
       my1 = PApplet.max(0, y);
-      //my2 = PApplet.min(height - 1, y2);
-      my2 = PApplet.min(height, y2);
+      my2 = PApplet.min(pixelHeight, y2);
       modified = true;
 
     } else {
       if (x < mx1) mx1 = PApplet.max(0, x);
-      //if (x > mx2) mx2 = PApplet.min(width - 1, x);
-      if (x > mx2) mx2 = PApplet.min(width, x);
+      if (x > mx2) mx2 = PApplet.min(pixelWidth, x);
       if (y < my1) my1 = PApplet.max(0, y);
-      //if (y > my2) my2 = y;
-      if (y > my2) my2 = PApplet.min(height, y);
+      if (y > my2) my2 = PApplet.min(pixelHeight, y);
 
       if (x2 < mx1) mx1 = PApplet.max(0, x2);
-      //if (x2 > mx2) mx2 = PApplet.min(width - 1, x2);
-      if (x2 > mx2) mx2 = PApplet.min(width, x2);
+      if (x2 > mx2) mx2 = PApplet.min(pixelWidth, x2);
       if (y2 < my1) my1 = PApplet.max(0, y2);
-      //if (y2 > my2) my2 = PApplet.min(height - 1, y2);
-      if (y2 > my2) my2 = PApplet.min(height, y2);
+      if (y2 > my2) my2 = PApplet.min(pixelHeight, y2);
     }
   }
 
@@ -619,20 +623,18 @@ public class PImage implements PConstants, Cloneable {
       h = (int) (height * diff);
     }
 
-    BufferedImage img = shrinkImage((BufferedImage) getNative(), w, h);
-//    BufferedImage img = null;
-//    if (w < width && h < height) {
-//      img = shrinkImage((BufferedImage) getNative(), w, h);
-//    } else {
-//      img = resampleImage((BufferedImage) getNative(), w, h);
-//    }
+    BufferedImage img =
+      shrinkImage((BufferedImage) getNative(), w*pixelFactor, h*pixelFactor);
 
     PImage temp = new PImage(img);
-    this.width = temp.width;
-    this.height = temp.height;
+    this.pixelWidth = temp.width;
+    this.pixelHeight = temp.height;
 
     // Get the resized pixel array
     this.pixels = temp.pixels;
+
+    this.width = pixelWidth / pixelFactor;
+    this.height = pixelHeight / pixelFactor;
 
     // Mark the pixels array as altered
     updatePixels();
@@ -787,17 +789,17 @@ public class PImage implements PConstants, Cloneable {
    * @see PApplet#copy(PImage, int, int, int, int, int, int, int, int)
    */
   public int get(int x, int y) {
-    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
+    if ((x < 0) || (y < 0) || (x >= pixelWidth) || (y >= pixelHeight)) return 0;
 
     switch (format) {
       case RGB:
-        return pixels[y*width + x] | 0xff000000;
+        return pixels[y*pixelWidth + x] | 0xff000000;
 
       case ARGB:
-        return pixels[y*width + x];
+        return pixels[y*pixelWidth + x];
 
       case ALPHA:
-        return (pixels[y*width + x] << 24) | 0xffffff;
+        return (pixels[y*pixelWidth + x] << 24) | 0xffffff;
     }
     return 0;
   }
@@ -827,12 +829,12 @@ public class PImage implements PConstants, Cloneable {
       y = 0;
     }
 
-    if (x + w > width) {
-      w = width - x;
+    if (x + w > pixelWidth) {
+      w = pixelWidth - x;
       cropped = true;
     }
-    if (y + h > height) {
-      h = height - y;
+    if (y + h > pixelHeight) {
+      h = pixelHeight - y;
       cropped = true;
     }
 
@@ -848,7 +850,9 @@ public class PImage implements PConstants, Cloneable {
       targetFormat = ARGB;
     }
 
-    PImage target = new PImage(targetWidth, targetHeight, targetFormat);
+    PImage target = new PImage(targetWidth / pixelFactor,
+                               targetHeight / pixelFactor,
+                               targetFormat, pixelFactor);
     target.parent = parent;  // parent may be null so can't use createImage()
     if (w > 0 && h > 0) {
       getImpl(x, y, w, h, target, targetX, targetY);
@@ -859,11 +863,17 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Returns a copy of this PImage. Equivalent to get(0, 0, width, height).
+   * Deprecated, just use copy() instead.
    */
   public PImage get() {
     // Formerly this used clone(), which caused memory problems.
     // http://code.google.com/p/processing/issues/detail?id=42
-    return get(0, 0, width, height);
+    return get(0, 0, pixelWidth, pixelHeight);
+  }
+
+
+  public PImage copy() {
+    return get(0, 0, pixelWidth, pixelHeight);
   }
 
 
@@ -876,12 +886,12 @@ public class PImage implements PConstants, Cloneable {
   protected void getImpl(int sourceX, int sourceY,
                          int sourceWidth, int sourceHeight,
                          PImage target, int targetX, int targetY) {
-    int sourceIndex = sourceY*width + sourceX;
-    int targetIndex = targetY*target.width + targetX;
+    int sourceIndex = sourceY*pixelWidth + sourceX;
+    int targetIndex = targetY*target.pixelWidth + targetX;
     for (int row = 0; row < sourceHeight; row++) {
       System.arraycopy(pixels, sourceIndex, target.pixels, targetIndex, sourceWidth);
-      sourceIndex += width;
-      targetIndex += target.width;
+      sourceIndex += pixelWidth;
+      targetIndex += target.pixelWidth;
     }
   }
 
@@ -918,10 +928,9 @@ public class PImage implements PConstants, Cloneable {
    * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
    */
   public void set(int x, int y, int c) {
-    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
-    pixels[y*width + x] = c;
-    //updatePixelsImpl(x, y, 1, 1);  // slow?
-    updatePixels(x, y, 1, 1);  // slow?
+    if ((x < 0) || (y < 0) || (x >= pixelWidth) || (y >= pixelHeight)) return;
+    pixels[y*pixelWidth + x] = c;
+    updatePixels(x, y, 1, 1);  // slow...
   }
 
 
@@ -936,8 +945,8 @@ public class PImage implements PConstants, Cloneable {
   public void set(int x, int y, PImage img) {
     int sx = 0;
     int sy = 0;
-    int sw = img.width;
-    int sh = img.height;
+    int sw = img.pixelWidth;
+    int sh = img.pixelHeight;
 
     if (x < 0) {  // off left edge
       sx -= x;
@@ -949,11 +958,11 @@ public class PImage implements PConstants, Cloneable {
       sh += y;
       y = 0;
     }
-    if (x + sw > width) {  // off right edge
-      sw = width - x;
+    if (x + sw > pixelWidth) {  // off right edge
+      sw = pixelWidth - x;
     }
-    if (y + sh > height) {  // off bottom edge
-      sh = height - y;
+    if (y + sh > pixelHeight) {  // off bottom edge
+      sh = pixelHeight - y;
     }
 
     // this could be nonexistent
@@ -971,13 +980,13 @@ public class PImage implements PConstants, Cloneable {
                          int sourceX, int sourceY,
                          int sourceWidth, int sourceHeight,
                          int targetX, int targetY) {
-    int sourceOffset = sourceY * sourceImage.width + sourceX;
-    int targetOffset = targetY * width + targetX;
+    int sourceOffset = sourceY * sourceImage.pixelWidth + sourceX;
+    int targetOffset = targetY * pixelWidth + targetX;
 
     for (int y = sourceY; y < sourceY + sourceHeight; y++) {
       System.arraycopy(sourceImage.pixels, sourceOffset, pixels, targetOffset, sourceWidth);
-      sourceOffset += sourceImage.width;
-      targetOffset += width;
+      sourceOffset += sourceImage.pixelWidth;
+      targetOffset += pixelWidth;
     }
 
     //updatePixelsImpl(targetX, targetY, sourceWidth, sourceHeight);
@@ -996,7 +1005,7 @@ public class PImage implements PConstants, Cloneable {
     loadPixels();
     // don't execute if mask image is different size
     if (maskArray.length != pixels.length) {
-      throw new RuntimeException("mask() can only be used with an image that's the same size.");
+      throw new IllegalArgumentException("mask() can only be used with an image that's the same size.");
     }
     for (int i = 0; i < pixels.length; i++) {
       pixels[i] = ((maskArray[i] & 0xff) << 24) | (pixels[i] & 0xffffff);
@@ -1111,13 +1120,13 @@ public class PImage implements PConstants, Cloneable {
         filter(THRESHOLD, 0.5f);
         break;
 
-        // [toxi20050728] added new filters
+        // [toxi 050728] added new filters
       case ERODE:
-        dilate(true);
+        erode();  // former dilate(true);
         break;
 
       case DILATE:
-        dilate(false);
+        dilate();  // former dilate(false);
         break;
     }
     updatePixels();  // mark as modified
@@ -1288,8 +1297,8 @@ public class PImage implements PConstants, Cloneable {
 
     buildBlurKernel(r);
 
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
+    for (int y = 0; y < pixelHeight; y++) {
+      for (int x = 0; x < pixelWidth; x++) {
         //cb = cg = cr = sum = 0;
         cb = sum = 0;
         read = x - blurRadius;
@@ -1297,15 +1306,15 @@ public class PImage implements PConstants, Cloneable {
           bk0=-read;
           read=0;
         } else {
-          if (read >= width)
+          if (read >= pixelWidth)
             break;
           bk0=0;
         }
         for (int i = bk0; i < blurKernelSize; i++) {
-          if (read >= width)
+          if (read >= pixelWidth)
             break;
           int c = pixels[read + yi];
-          int[] bm=blurMult[i];
+          int[] bm = blurMult[i];
           cb += bm[c & BLUE_MASK];
           sum += blurKernel[i];
           read++;
@@ -1313,40 +1322,39 @@ public class PImage implements PConstants, Cloneable {
         ri = yi + x;
         b2[ri] = cb / sum;
       }
-      yi += width;
+      yi += pixelWidth;
     }
 
     yi = 0;
-    ym=-blurRadius;
-    ymi=ym*width;
+    ym = -blurRadius;
+    ymi = ym * pixelWidth;
 
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
-        //cb = cg = cr = sum = 0;
+    for (int y = 0; y < pixelHeight; y++) {
+      for (int x = 0; x < pixelWidth; x++) {
         cb = sum = 0;
-        if (ym<0) {
+        if (ym < 0) {
           bk0 = ri = -ym;
           read = x;
         } else {
-          if (ym >= height)
+          if (ym >= pixelHeight)
             break;
           bk0 = 0;
           ri = ym;
           read = x + ymi;
         }
         for (int i = bk0; i < blurKernelSize; i++) {
-          if (ri >= height)
+          if (ri >= pixelHeight)
             break;
-          int[] bm=blurMult[i];
+          int[] bm = blurMult[i];
           cb += bm[b2[read]];
           sum += blurKernel[i];
           ri++;
-          read += width;
+          read += pixelWidth;
         }
         pixels[x+yi] = (cb/sum);
       }
-      yi += width;
-      ymi += width;
+      yi += pixelWidth;
+      ymi += pixelWidth;
       ym++;
     }
   }
@@ -1362,23 +1370,25 @@ public class PImage implements PConstants, Cloneable {
 
     buildBlurKernel(r);
 
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
+    for (int y = 0; y < pixelHeight; y++) {
+      for (int x = 0; x < pixelWidth; x++) {
         cb = cg = cr = sum = 0;
         read = x - blurRadius;
-        if (read<0) {
-          bk0=-read;
-          read=0;
+        if (read < 0) {
+          bk0 = -read;
+          read = 0;
         } else {
-          if (read >= width)
+          if (read >= pixelWidth) {
             break;
-          bk0=0;
+          }
+          bk0 = 0;
         }
         for (int i = bk0; i < blurKernelSize; i++) {
-          if (read >= width)
+          if (read >= pixelWidth) {
             break;
+          }
           int c = pixels[read + yi];
-          int[] bm=blurMult[i];
+          int[] bm = blurMult[i];
           cr += bm[(c & RED_MASK) >> 16];
           cg += bm[(c & GREEN_MASK) >> 8];
           cb += bm[c & BLUE_MASK];
@@ -1390,41 +1400,43 @@ public class PImage implements PConstants, Cloneable {
         g2[ri] = cg / sum;
         b2[ri] = cb / sum;
       }
-      yi += width;
+      yi += pixelWidth;
     }
 
     yi = 0;
-    ym=-blurRadius;
-    ymi=ym*width;
+    ym = -blurRadius;
+    ymi = ym * pixelWidth;
 
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
+    for (int y = 0; y < pixelHeight; y++) {
+      for (int x = 0; x < pixelWidth; x++) {
         cb = cg = cr = sum = 0;
-        if (ym<0) {
+        if (ym < 0) {
           bk0 = ri = -ym;
           read = x;
         } else {
-          if (ym >= height)
+          if (ym >= pixelHeight) {
             break;
+          }
           bk0 = 0;
           ri = ym;
           read = x + ymi;
         }
         for (int i = bk0; i < blurKernelSize; i++) {
-          if (ri >= height)
+          if (ri >= pixelHeight) {
             break;
-          int[] bm=blurMult[i];
+          }
+          int[] bm = blurMult[i];
           cr += bm[r2[read]];
           cg += bm[g2[read]];
           cb += bm[b2[read]];
           sum += blurKernel[i];
           ri++;
-          read += width;
+          read += pixelWidth;
         }
         pixels[x+yi] = 0xff000000 | (cr/sum)<<16 | (cg/sum)<<8 | (cb/sum);
       }
-      yi += width;
-      ymi += width;
+      yi += pixelWidth;
+      ymi += pixelWidth;
       ym++;
     }
   }
@@ -1442,21 +1454,23 @@ public class PImage implements PConstants, Cloneable {
 
     buildBlurKernel(r);
 
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
+    for (int y = 0; y < pixelHeight; y++) {
+      for (int x = 0; x < pixelWidth; x++) {
         cb = cg = cr = ca = sum = 0;
         read = x - blurRadius;
-        if (read<0) {
-          bk0=-read;
-          read=0;
+        if (read < 0) {
+          bk0 = -read;
+          read = 0;
         } else {
-          if (read >= width)
+          if (read >= pixelWidth) {
             break;
+          }
           bk0=0;
         }
         for (int i = bk0; i < blurKernelSize; i++) {
-          if (read >= width)
+          if (read >= pixelWidth) {
             break;
+          }
           int c = pixels[read + yi];
           int[] bm=blurMult[i];
           ca += bm[(c & ALPHA_MASK) >>> 24];
@@ -1472,29 +1486,31 @@ public class PImage implements PConstants, Cloneable {
         g2[ri] = cg / sum;
         b2[ri] = cb / sum;
       }
-      yi += width;
+      yi += pixelWidth;
     }
 
     yi = 0;
-    ym=-blurRadius;
-    ymi=ym*width;
+    ym = -blurRadius;
+    ymi = ym * pixelWidth;
 
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
+    for (int y = 0; y < pixelHeight; y++) {
+      for (int x = 0; x < pixelWidth; x++) {
         cb = cg = cr = ca = sum = 0;
-        if (ym<0) {
+        if (ym < 0) {
           bk0 = ri = -ym;
           read = x;
         } else {
-          if (ym >= height)
+          if (ym >= pixelHeight) {
             break;
+          }
           bk0 = 0;
           ri = ym;
           read = x + ymi;
         }
         for (int i = bk0; i < blurKernelSize; i++) {
-          if (ri >= height)
+          if (ri >= pixelHeight) {
             break;
+          }
           int[] bm=blurMult[i];
           ca += bm[a2[read]];
           cr += bm[r2[read]];
@@ -1502,12 +1518,12 @@ public class PImage implements PConstants, Cloneable {
           cb += bm[b2[read]];
           sum += blurKernel[i];
           ri++;
-          read += width;
+          read += pixelWidth;
         }
         pixels[x+yi] = (ca/sum)<<24 | (cr/sum)<<16 | (cg/sum)<<8 | (cb/sum);
       }
-      yi += width;
-      ymi += width;
+      yi += pixelWidth;
+      ymi += pixelWidth;
       ym++;
     }
   }
@@ -1517,127 +1533,141 @@ public class PImage implements PConstants, Cloneable {
    * Generic dilate/erode filter using luminance values
    * as decision factor. [toxi 050728]
    */
-  protected void dilate(boolean isInverted) {
-    int currIdx=0;
-    int maxIdx=pixels.length;
-    int[] out=new int[maxIdx];
+  protected void dilate() {  // formerly dilate(false)
+    int index = 0;
+    int maxIndex = pixels.length;
+    int[] outgoing = new int[maxIndex];
 
-    if (!isInverted) {
-      // erosion (grow light areas)
-      while (currIdx<maxIdx) {
-        int currRowIdx=currIdx;
-        int maxRowIdx=currIdx+width;
-        while (currIdx<maxRowIdx) {
-          int colOrig,colOut;
-          colOrig=colOut=pixels[currIdx];
-          int idxLeft=currIdx-1;
-          int idxRight=currIdx+1;
-          int idxUp=currIdx-width;
-          int idxDown=currIdx+width;
-          if (idxLeft<currRowIdx)
-            idxLeft=currIdx;
-          if (idxRight>=maxRowIdx)
-            idxRight=currIdx;
-          if (idxUp<0)
-            idxUp=currIdx;
-          if (idxDown>=maxIdx)
-            idxDown=currIdx;
-
-          int colUp=pixels[idxUp];
-          int colLeft=pixels[idxLeft];
-          int colDown=pixels[idxDown];
-          int colRight=pixels[idxRight];
-
-          // compute luminance
-          int currLum =
-            77*(colOrig>>16&0xff) + 151*(colOrig>>8&0xff) + 28*(colOrig&0xff);
-          int lumLeft =
-            77*(colLeft>>16&0xff) + 151*(colLeft>>8&0xff) + 28*(colLeft&0xff);
-          int lumRight =
-            77*(colRight>>16&0xff) + 151*(colRight>>8&0xff) + 28*(colRight&0xff);
-          int lumUp =
-            77*(colUp>>16&0xff) + 151*(colUp>>8&0xff) + 28*(colUp&0xff);
-          int lumDown =
-            77*(colDown>>16&0xff) + 151*(colDown>>8&0xff) + 28*(colDown&0xff);
-
-          if (lumLeft>currLum) {
-            colOut=colLeft;
-            currLum=lumLeft;
-          }
-          if (lumRight>currLum) {
-            colOut=colRight;
-            currLum=lumRight;
-          }
-          if (lumUp>currLum) {
-            colOut=colUp;
-            currLum=lumUp;
-          }
-          if (lumDown>currLum) {
-            colOut=colDown;
-            currLum=lumDown;
-          }
-          out[currIdx++]=colOut;
+    // erosion (grow light areas)
+    while (index < maxIndex) {
+      int curRowIndex = index;
+      int maxRowIndex = index + pixelWidth;
+      while (index < maxRowIndex) {
+        int orig = pixels[index];
+        int result = orig;
+        int idxLeft = index - 1;
+        int idxRight = index + 1;
+        int idxUp = index - pixelWidth;
+        int idxDown = index + pixelWidth;
+        if (idxLeft < curRowIndex) {
+          idxLeft = index;
         }
-      }
-    } else {
-      // dilate (grow dark areas)
-      while (currIdx<maxIdx) {
-        int currRowIdx=currIdx;
-        int maxRowIdx=currIdx+width;
-        while (currIdx<maxRowIdx) {
-          int colOrig,colOut;
-          colOrig=colOut=pixels[currIdx];
-          int idxLeft=currIdx-1;
-          int idxRight=currIdx+1;
-          int idxUp=currIdx-width;
-          int idxDown=currIdx+width;
-          if (idxLeft<currRowIdx)
-            idxLeft=currIdx;
-          if (idxRight>=maxRowIdx)
-            idxRight=currIdx;
-          if (idxUp<0)
-            idxUp=currIdx;
-          if (idxDown>=maxIdx)
-            idxDown=currIdx;
-
-          int colUp=pixels[idxUp];
-          int colLeft=pixels[idxLeft];
-          int colDown=pixels[idxDown];
-          int colRight=pixels[idxRight];
-
-          // compute luminance
-          int currLum =
-            77*(colOrig>>16&0xff) + 151*(colOrig>>8&0xff) + 28*(colOrig&0xff);
-          int lumLeft =
-            77*(colLeft>>16&0xff) + 151*(colLeft>>8&0xff) + 28*(colLeft&0xff);
-          int lumRight =
-            77*(colRight>>16&0xff) + 151*(colRight>>8&0xff) + 28*(colRight&0xff);
-          int lumUp =
-            77*(colUp>>16&0xff) + 151*(colUp>>8&0xff) + 28*(colUp&0xff);
-          int lumDown =
-            77*(colDown>>16&0xff) + 151*(colDown>>8&0xff) + 28*(colDown&0xff);
-
-          if (lumLeft<currLum) {
-            colOut=colLeft;
-            currLum=lumLeft;
-          }
-          if (lumRight<currLum) {
-            colOut=colRight;
-            currLum=lumRight;
-          }
-          if (lumUp<currLum) {
-            colOut=colUp;
-            currLum=lumUp;
-          }
-          if (lumDown<currLum) {
-            colOut=colDown;
-            currLum=lumDown;
-          }
-          out[currIdx++]=colOut;
+        if (idxRight >= maxRowIndex) {
+          idxRight = index;
         }
+        if (idxUp < 0) {
+          idxUp = index;
+        }
+        if (idxDown >= maxIndex) {
+          idxDown = index;
+        }
+
+        int colUp = pixels[idxUp];
+        int colLeft = pixels[idxLeft];
+        int colDown = pixels[idxDown];
+        int colRight = pixels[idxRight];
+
+        // compute luminance
+        int currLum =
+          77*(orig>>16&0xff) + 151*(orig>>8&0xff) + 28*(orig&0xff);
+        int lumLeft =
+          77*(colLeft>>16&0xff) + 151*(colLeft>>8&0xff) + 28*(colLeft&0xff);
+        int lumRight =
+          77*(colRight>>16&0xff) + 151*(colRight>>8&0xff) + 28*(colRight&0xff);
+        int lumUp =
+          77*(colUp>>16&0xff) + 151*(colUp>>8&0xff) + 28*(colUp&0xff);
+        int lumDown =
+          77*(colDown>>16&0xff) + 151*(colDown>>8&0xff) + 28*(colDown&0xff);
+
+        if (lumLeft > currLum) {
+          result = colLeft;
+          currLum = lumLeft;
+        }
+        if (lumRight > currLum) {
+          result = colRight;
+          currLum = lumRight;
+        }
+        if (lumUp > currLum) {
+          result = colUp;
+          currLum = lumUp;
+        }
+        if (lumDown > currLum) {
+          result = colDown;
+          currLum = lumDown;
+        }
+        outgoing[index++] = result;
       }
     }
-    System.arraycopy(out,0,pixels,0,maxIdx);
+    System.arraycopy(outgoing, 0, pixels, 0, maxIndex);
+  }
+
+
+  protected void erode() {  // formerly dilate(true)
+    int index = 0;
+    int maxIndex = pixels.length;
+    int[] outgoing = new int[maxIndex];
+
+    // dilate (grow dark areas)
+    while (index < maxIndex) {
+      int curRowIndex = index;
+      int maxRowIndex = index + pixelWidth;
+      while (index < maxRowIndex) {
+        int orig = pixels[index];
+        int result = orig;
+        int idxLeft = index - 1;
+        int idxRight = index + 1;
+        int idxUp = index - pixelWidth;
+        int idxDown = index + pixelWidth;
+        if (idxLeft < curRowIndex) {
+          idxLeft = index;
+        }
+        if (idxRight >= maxRowIndex) {
+          idxRight = index;
+        }
+        if (idxUp < 0) {
+          idxUp = index;
+        }
+        if (idxDown >= maxIndex) {
+          idxDown = index;
+        }
+
+        int colUp = pixels[idxUp];
+        int colLeft = pixels[idxLeft];
+        int colDown = pixels[idxDown];
+        int colRight = pixels[idxRight];
+
+        // compute luminance
+        int currLum =
+          77*(orig>>16&0xff) + 151*(orig>>8&0xff) + 28*(orig&0xff);
+        int lumLeft =
+          77*(colLeft>>16&0xff) + 151*(colLeft>>8&0xff) + 28*(colLeft&0xff);
+        int lumRight =
+          77*(colRight>>16&0xff) + 151*(colRight>>8&0xff) + 28*(colRight&0xff);
+        int lumUp =
+          77*(colUp>>16&0xff) + 151*(colUp>>8&0xff) + 28*(colUp&0xff);
+        int lumDown =
+          77*(colDown>>16&0xff) + 151*(colDown>>8&0xff) + 28*(colDown&0xff);
+
+        if (lumLeft < currLum) {
+          result = colLeft;
+          currLum = lumLeft;
+        }
+        if (lumRight < currLum) {
+          result = colRight;
+          currLum = lumRight;
+        }
+        if (lumUp < currLum) {
+          result = colUp;
+          currLum = lumUp;
+        }
+        if (lumDown < currLum) {
+          result = colDown;
+          currLum = lumDown;
+        }
+        outgoing[index++] = result;
+      }
+    }
+    System.arraycopy(outgoing, 0, pixels, 0, maxIndex);
   }
 
 
@@ -1908,16 +1938,16 @@ public class PImage implements PConstants, Cloneable {
       if (intersect(sx, sy, sx2, sy2, dx, dy, dx2, dy2)) {
         blit_resize(get(sx, sy, sx2 - sx, sy2 - sy),
                     0, 0, sx2 - sx - 1, sy2 - sy - 1,
-                    pixels, width, height, dx, dy, dx2, dy2, mode);
+                    pixels, pixelWidth, pixelHeight, dx, dy, dx2, dy2, mode);
       } else {
         // same as below, except skip the loadPixels() because it'd be redundant
         blit_resize(src, sx, sy, sx2, sy2,
-                    pixels, width, height, dx, dy, dx2, dy2, mode);
+                    pixels, pixelWidth, pixelHeight, dx, dy, dx2, dy2, mode);
       }
     } else {
       src.loadPixels();
       blit_resize(src, sx, sy, sx2, sy2,
-                  pixels, width, height, dx, dy, dx2, dy2, mode);
+                  pixels, pixelWidth, pixelHeight, dx, dy, dx2, dy2, mode);
       //src.updatePixels();
     }
     updatePixels();
@@ -1975,8 +2005,8 @@ public class PImage implements PConstants, Cloneable {
                            int mode) {
     if (srcX1 < 0) srcX1 = 0;
     if (srcY1 < 0) srcY1 = 0;
-    if (srcX2 > img.width) srcX2 = img.width;
-    if (srcY2 > img.height) srcY2 = img.height;
+    if (srcX2 > img.pixelWidth) srcX2 = img.pixelWidth;
+    if (srcY2 > img.pixelHeight) srcY2 = img.pixelHeight;
 
     int srcW = srcX2 - srcX1;
     int srcH = srcY2 - srcY1;
@@ -1992,7 +2022,7 @@ public class PImage implements PConstants, Cloneable {
     if (destW <= 0 || destH <= 0 ||
         srcW <= 0 || srcH <= 0 ||
         destX1 >= screenW || destY1 >= screenH ||
-        srcX1 >= img.width || srcY1 >= img.height) {
+        srcX1 >= img.pixelWidth || srcY1 >= img.pixelHeight) {
       return;
     }
 
@@ -2019,9 +2049,9 @@ public class PImage implements PConstants, Cloneable {
 
     if (smooth) {
       // use bilinear filtering
-      iw = img.width;
-      iw1 = img.width - 1;
-      ih1 = img.height - 1;
+      iw = img.pixelWidth;
+      iw1 = img.pixelWidth - 1;
+      ih1 = img.pixelHeight - 1;
 
       switch (mode) {
 
@@ -2230,12 +2260,12 @@ public class PImage implements PConstants, Cloneable {
       case BLEND:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             // davbol - renamed old blend_multiply to blend_blend
             destPixels[destOffset + x] =
               blend_blend(destPixels[destOffset + x],
-                             srcBuffer[sY + (sX >> PRECISIONB)]);
+                          srcBuffer[sY + (sX >> PRECISIONB)]);
             sX += dx;
           }
           destOffset += screenW;
@@ -2246,7 +2276,7 @@ public class PImage implements PConstants, Cloneable {
       case ADD:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_add_pin(destPixels[destOffset + x],
@@ -2261,7 +2291,7 @@ public class PImage implements PConstants, Cloneable {
       case SUBTRACT:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_sub_pin(destPixels[destOffset + x],
@@ -2276,7 +2306,7 @@ public class PImage implements PConstants, Cloneable {
       case LIGHTEST:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_lightest(destPixels[destOffset + x],
@@ -2291,7 +2321,7 @@ public class PImage implements PConstants, Cloneable {
       case DARKEST:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_darkest(destPixels[destOffset + x],
@@ -2306,7 +2336,7 @@ public class PImage implements PConstants, Cloneable {
       case REPLACE:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] = srcBuffer[sY + (sX >> PRECISIONB)];
             sX += dx;
@@ -2319,7 +2349,7 @@ public class PImage implements PConstants, Cloneable {
       case DIFFERENCE:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_difference(destPixels[destOffset + x],
@@ -2334,7 +2364,7 @@ public class PImage implements PConstants, Cloneable {
       case EXCLUSION:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_exclusion(destPixels[destOffset + x],
@@ -2349,7 +2379,7 @@ public class PImage implements PConstants, Cloneable {
       case MULTIPLY:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_multiply(destPixels[destOffset + x],
@@ -2364,7 +2394,7 @@ public class PImage implements PConstants, Cloneable {
       case SCREEN:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_screen(destPixels[destOffset + x],
@@ -2379,7 +2409,7 @@ public class PImage implements PConstants, Cloneable {
       case OVERLAY:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_overlay(destPixels[destOffset + x],
@@ -2394,7 +2424,7 @@ public class PImage implements PConstants, Cloneable {
       case HARD_LIGHT:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_hard_light(destPixels[destOffset + x],
@@ -2409,7 +2439,7 @@ public class PImage implements PConstants, Cloneable {
       case SOFT_LIGHT:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_soft_light(destPixels[destOffset + x],
@@ -2425,7 +2455,7 @@ public class PImage implements PConstants, Cloneable {
       case DODGE:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_dodge(destPixels[destOffset + x],
@@ -2440,7 +2470,7 @@ public class PImage implements PConstants, Cloneable {
       case BURN:
         for (int y = 0; y < destH; y++) {
           sX = srcXOffset;
-          sY = (srcYOffset >> PRECISIONB) * img.width;
+          sY = (srcYOffset >> PRECISIONB) * img.pixelWidth;
           for (int x = 0; x < destW; x++) {
             destPixels[destOffset + x] =
               blend_burn(destPixels[destOffset + x],
@@ -2916,12 +2946,12 @@ public class PImage implements PConstants, Cloneable {
       byte tiff[] = new byte[768];
       System.arraycopy(TIFF_HEADER, 0, tiff, 0, TIFF_HEADER.length);
 
-      tiff[30] = (byte) ((width >> 8) & 0xff);
-      tiff[31] = (byte) ((width) & 0xff);
-      tiff[42] = tiff[102] = (byte) ((height >> 8) & 0xff);
-      tiff[43] = tiff[103] = (byte) ((height) & 0xff);
+      tiff[30] = (byte) ((pixelWidth >> 8) & 0xff);
+      tiff[31] = (byte) ((pixelWidth) & 0xff);
+      tiff[42] = tiff[102] = (byte) ((pixelHeight >> 8) & 0xff);
+      tiff[43] = tiff[103] = (byte) ((pixelHeight) & 0xff);
 
-      int count = width*height*3;
+      int count = pixelWidth*pixelHeight*3;
       tiff[114] = (byte) ((count >> 24) & 0xff);
       tiff[115] = (byte) ((count >> 16) & 0xff);
       tiff[116] = (byte) ((count >> 8) & 0xff);
@@ -2985,15 +3015,15 @@ public class PImage implements PConstants, Cloneable {
        throw new RuntimeException("Image format not recognized inside save()");
      }
      // set image dimensions lo-hi byte order
-     header[12] = (byte) (width & 0xff);
-     header[13] = (byte) (width >> 8);
-     header[14] = (byte) (height & 0xff);
-     header[15] = (byte) (height >> 8);
+     header[12] = (byte) (pixelWidth & 0xff);
+     header[13] = (byte) (pixelWidth >> 8);
+     header[14] = (byte) (pixelHeight & 0xff);
+     header[15] = (byte) (pixelHeight >> 8);
 
      try {
        output.write(header);
 
-       int maxLen = height * width;
+       int maxLen = pixelHeight * pixelWidth;
        int index = 0;
        int col; //, prevCol;
        int[] currChunk = new int[128];
@@ -3120,8 +3150,8 @@ public class PImage implements PConstants, Cloneable {
         outputFormat = BufferedImage.TYPE_INT_RGB;
       }
 
-      BufferedImage bimage = new BufferedImage(width, height, outputFormat);
-      bimage.setRGB(0, 0, width, height, pixels, 0, width);
+      BufferedImage bimage = new BufferedImage(pixelWidth, pixelHeight, outputFormat);
+      bimage.setRGB(0, 0, pixelWidth, pixelHeight, pixels, 0, pixelWidth);
 
       File file = new File(path);
 
@@ -3333,4 +3363,3 @@ public class PImage implements PConstants, Cloneable {
     return success;
   }
 }
-

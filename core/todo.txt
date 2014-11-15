@@ -2,6 +2,8 @@
 X detect CMYK JPEG images and return null
 X   https://community.oracle.com/thread/1272045?start=0&tstart=0
 
+_ remove sketch path hack from PApplet
+
 python has to use launch() instead of open()
 map() is bad for Python (and JavaScript?)
 
@@ -10,6 +12,9 @@ _ size(640,360 , P3D) doesn't work properly
 _   https://github.com/processing/processing/issues/2924
 _ why doesn't p5 punt when loadFont() is used on an otf?
 _   is this a GL problem? 
+
+_ show warning when display spanning is turned off
+_   defaults read com.apple.spaces spans-displays
 
 data
 X fix XML.getString() with a default when no attrs are present at all
@@ -36,7 +41,7 @@ X   https://github.com/processing/processing/issues/2641
 X remove isGL(), is2D(), is3D(), displayable() from PApplet
 X   these were auto-imported from PGraphics
 X remove pause variable from PApplet (was not documented)
-_ remove sketch path hack from PApplet
+X added copy() to PImage (to work like get(), ala PVector)
 
 pulls
 X Fix check in loadShader()
