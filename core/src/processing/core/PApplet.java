@@ -4196,6 +4196,7 @@ public class PApplet extends Applet
    *
    * @webref structure
    * @usage Application
+   * @param name name of the function to be executed in a separate thread
    * @see PApplet#setup()
    * @see PApplet#draw()
    * @see PApplet#loop()
