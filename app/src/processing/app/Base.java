@@ -101,10 +101,6 @@ public class Base {
   ContributionManagerDialog exampleManagerFrame;
   ContributionManagerDialog updateManagerFrame;
 
-  // set to true after the first time the menu is built.
-  // so that the errors while building don't show up again.
-  boolean builtOnce;
-
   // Location for untitled items
   static File untitledFolder;
 
@@ -1234,25 +1230,6 @@ public class Base {
         File entry = checkSketchFolder(subfolder, name);
         if (entry != null) {
 
-//      File entry = new File(subfolder, list[i] + getExtension());
-//      // if a .pde file of the same prefix as the folder exists..
-//      if (entry.exists()) {
-//        //String sanityCheck = sanitizedName(list[i]);
-//        //if (!sanityCheck.equals(list[i])) {
-//        if (!Sketch.isSanitaryName(list[i])) {
-//          if (!builtOnce) {
-//            String complaining =
-//              "The sketch \"" + list[i] + "\" cannot be used.\n" +
-//              "Sketch names must contain only basic letters and numbers\n" +
-//              "(ASCII-only with no spaces, " +
-//              "and it cannot start with a number).\n" +
-//              "To get rid of this message, remove the sketch from\n" +
-//              entry.getAbsolutePath();
-//            Base.showMessage("Ignoring sketch with bad name", complaining);
-//          }
-//          continue;
-//        }
-
           JMenuItem item = new JMenuItem(name);
           item.addActionListener(listener);
           item.setActionCommand(entry.getAbsolutePath());
@@ -1365,22 +1342,6 @@ public class Base {
       if (entry.exists()) {
         return entry;
       }
-      // for the new releases, don't bother lecturing.. just ignore the sketch
-      /*
-      if (!Sketch.isSanitaryName(list[i])) {
-        if (!builtOnce) {
-          String complaining =
-            "The sketch \"" + list[i] + "\" cannot be used.\n" +
-            "Sketch names must contain only basic letters and numbers\n" +
-            "(ASCII-only with no spaces, " +
-            "and it cannot start with a number).\n" +
-            "To get rid of this message, remove the sketch from\n" +
-            entry.getAbsolutePath();
-          Base.showMessage("Ignoring sketch with bad name", complaining);
-        }
-        continue;
-      }
-      */
     }
     return null;
   }

@@ -1,4 +1,9 @@
 0232 core (3.0a5) 
+X detect CMYK JPEG images and return null
+X   https://community.oracle.com/thread/1272045?start=0&tstart=0
+
+python has to use launch() instead of open()
+map() is bad for Python (and JavaScript?)
 
 
 pulls
@@ -8,11 +13,24 @@ X Refined PShader uniform missing message fixes
 X   https://github.com/processing/processing/pull/2869
 X Use correct parameter types in FloatList methods
 X   https://github.com/processing/processing/pull/2902
+X Prevent lerpColor from always rounding down
+X   https://github.com/processing/processing/issues/2812
+X   https://github.com/processing/processing/pull/2813
+X Allow mask() with PGraphicsJava2D
+X   https://github.com/processing/processing/pull/2910
+X OpenGL renderers ignore vertex winding in contours
+X   https://github.com/processing/processing/issues/2665
+X   https://github.com/processing/processing/pull/2927
+X NPE when calling Client.ip() after the connection has been closed
+X   https://github.com/processing/processing/issues/2576
+X   https://github.com/processing/processing/pull/2922
 
 
 andres
 A Confusing message: The shader doesn't have a uniform called "foo"
 A   https://github.com/processing/processing/issues/2593
+A Exceptions in P3D / P2D not showing up properly
+A   https://github.com/processing/processing/issues/2930
 
 
 applet/component

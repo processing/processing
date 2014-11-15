@@ -31,6 +31,7 @@ import processing.opengl.*;
 
 import java.applet.*;
 import java.awt.*;
+import java.awt.color.ColorSpace;
 import java.awt.event.WindowStateListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -2637,7 +2638,7 @@ public class PApplet extends Applet
 //  protected int eventCount;
 
 
-  class InternalEventQueue {
+  static class InternalEventQueue {
     protected Event queue[] = new Event[10];
     protected int offset;
     protected int count;
@@ -4192,6 +4193,13 @@ public class PApplet extends Applet
    * Note that the function being called must be public. Inside the PDE,
    * 'public' is automatically added, but when used without the preprocessor,
    * (like from Eclipse) you'll have to do it yourself.
+   *
+   * @webref structure
+   * @usage Application
+   * @see PApplet#setup()
+   * @see PApplet#draw()
+   * @see PApplet#loop()
+   * @see PApplet#noLoop()
    */
   public void thread(final String name) {
     Thread later = new Thread() {
@@ -5873,6 +5881,28 @@ public class PApplet extends Applet
         } else {
           Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
           PImage image = loadImageMT(awtImage);
+
+          if (awtImage instanceof BufferedImage) {
+            BufferedImage buffImage = (BufferedImage) awtImage;
+            int space = buffImage.getColorModel().getColorSpace().getType();
+            if (space == ColorSpace.TYPE_CMYK) {
+              System.err.println(filename + " is a CMYK image, " +
+                                 "only RGB images are supported.");
+              return null;
+              /*
+              // wishful thinking, appears to not be supported
+              // https://community.oracle.com/thread/1272045?start=0&tstart=0
+              BufferedImage destImage =
+                new BufferedImage(buffImage.getWidth(),
+                                  buffImage.getHeight(),
+                                  BufferedImage.TYPE_3BYTE_BGR);
+              ColorConvertOp op = new ColorConvertOp(null);
+              op.filter(buffImage, destImage);
+              image = new PImage(destImage);
+              */
+            }
+          }
+
           if (image.width == -1) {
             System.err.println("The file " + filename +
                                " contains bad image data, or may not be an image.");
@@ -9049,7 +9079,7 @@ public class PApplet extends Applet
     //}
     if (splitCount == 0) {
       String splits[] = new String[1];
-      splits[0] = new String(value);
+      splits[0] = value;
       return splits;
     }
     //int pieceCount = splitCount + 1;
