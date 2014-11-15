@@ -226,7 +226,13 @@ public class TextArea extends JEditTextArea {
       }
 
       final KeyEvent evt2 = evt;
-      if (keyChar == ' ') {
+      
+      if (keyChar == '.') {
+        if (ExperimentalMode.codeCompletionsEnabled && ExperimentalMode.ccTriggerEnabled) {
+          log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
+          log("Typing: " + fetchPhrase(evt2));
+        }
+      } else if (keyChar == ' ') { // Trigger on Ctrl-Space
         if (!Base.isMacOS() && ExperimentalMode.ccTriggerEnabled &&
         (evt.isControlDown() || evt.isMetaDown())) {
           SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
