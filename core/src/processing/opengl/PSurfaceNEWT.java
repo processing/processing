@@ -2,9 +2,9 @@ package processing.opengl;
 
 import java.awt.Color;
 import java.awt.Frame;
-import java.net.URL;
 import java.util.ArrayList;
 
+import javax.media.nativewindow.ScalableSurface;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
@@ -61,11 +61,21 @@ public class PSurfaceNEWT implements PSurface {
     this.sketch = sketch;
 
     Display display = NewtFactory.createDisplay(null);
-    display.addReference(); // trigger creation
+    display.addReference();
     Screen screen = NewtFactory.createScreen(display, 0);
     screen.addReference();
     int screenWidth = screen.getWidth();
     int screenHeight = screen.getHeight();
+
+
+
+    if (deviceIndex >= 0) {  // if -1, use the default device
+
+
+    }
+    System.out.println("deviceIndex: " + deviceIndex);
+
+
     System.out.println("Screen res " + screenWidth + "x" + screenHeight);
 
     ArrayList<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
@@ -113,6 +123,9 @@ public class PSurfaceNEWT implements PSurface {
     caps.setAlphaBits(PGL.REQUESTED_ALPHA_BITS);
     caps.setDepthBits(PGL.REQUESTED_DEPTH_BITS);
     caps.setStencilBits(PGL.REQUESTED_STENCIL_BITS);
+
+    caps.setSampleBuffers(true);
+    caps.setNumSamples(2);
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
     pgl.capabilities = caps;
@@ -123,15 +136,30 @@ public class PSurfaceNEWT implements PSurface {
     window = GLWindow.create(screen, caps);
     window.setPosition(0, 0);
     window.setSize(sketchWidth, sketchHeight);
+
+//    window..setBackground(new Color(backgroundColor, true));
     window.setVisible(true);
+
+
+    // Retina
+//    int[] reqSurfacePixelScale = new int[] { ScalableSurface.AUTOMAX_PIXELSCALE,
+//                                             ScalableSurface.AUTOMAX_PIXELSCALE };
+
+
+    // Non-retina
+    int[] reqSurfacePixelScale = new int[] { ScalableSurface.IDENTITY_PIXELSCALE,
+                                             ScalableSurface.IDENTITY_PIXELSCALE };
+    window.setSurfaceScale(reqSurfacePixelScale);
+
+
 
 
     NEWTMouseListener mouseListener = new NEWTMouseListener();
     window.addMouseListener(mouseListener);
     NEWTKeyListener keyListener = new NEWTKeyListener();
     window.addKeyListener(keyListener);
-//    NEWTWindowListener winListener = new NEWTWindowListener();
-//    window.addWindowListener(winListener);
+    NEWTWindowListener winListener = new NEWTWindowListener();
+    window.addWindowListener(winListener);
 
     DrawListener drawlistener = new DrawListener();
     window.addGLEventListener(drawlistener);
@@ -232,8 +260,9 @@ public class PSurfaceNEWT implements PSurface {
   }
 
   public void setSize(int width, int height) {
-    // TODO Auto-generated method stub
-
+    sketchWidth = sketch.width = width;
+    sketchHeight = sketch.height = height;
+//    System.err.println("resize to " + width + ", " + height);
   }
 
   public void setFrameRate(float fps) {
@@ -257,7 +286,6 @@ public class PSurfaceNEWT implements PSurface {
 
   class DrawListener implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
-      System.out.println("yea");
       pgl.getGL(drawable);
       pgl.getBuffers(window);
       sketch.handleDraw();
@@ -278,7 +306,9 @@ public class PSurfaceNEWT implements PSurface {
     }
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
       pgl.getGL(drawable);
-
+      if (animator.isStarted()) {
+        setSize(w, h);
+      }
     }
   }
 
