@@ -32,6 +32,8 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
 
+import processing.app.Language;
+
 /**
  * Toggle Button displayed in the editor line status panel for toggling bewtween
  * console and problems list. Glorified JPanel.
@@ -41,7 +43,7 @@ import javax.swing.JPanel;
  */
 
 public class XQConsoleToggle extends JPanel implements MouseListener {
-	public static final String CONSOLE = "Console", ERRORSLIST = "Errors" ;
+	public static final String CONSOLE = Language.text("editor.footer.console"), ERRORSLIST = Language.text("editor.footer.errors") ;
 	
 	private boolean toggleText = true;
 	private boolean toggleBG = true;

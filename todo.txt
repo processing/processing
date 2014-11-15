@@ -101,7 +101,7 @@ _ clean out the repo
 _   https://github.com/processing/processing/issues/1898
 
 
-gsoc/help me
+help me
 _ `return` keyword not treated as such when followed by a bracket
 _   https://github.com/processing/processing/issues/2099
 _ IllegalArgumentException when clicking between editor windows
@@ -125,6 +125,10 @@ _ problems with non-US keyboards and some shortcuts
 _   https://github.com/processing/processing/issues/2199
 _ improve start time by populating sketchbook/libraries on threads
 _   https://github.com/processing/processing/issues/2945
+_ clean up 'ant doc' target to remove warnings
+_   https://github.com/processing/processing/issues/1492
+_ fix encodings, line endings, and mime types in the repo
+_   https://github.com/processing/processing/issues/2955
 
 
 medium

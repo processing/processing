@@ -140,7 +140,7 @@ public class ExperimentalMode extends JavaMode {
       debugOutputEnabled = false, errorLogsEnabled = false,
       autoSaveEnabled = true, autoSavePromptEnabled = true,
       defaultAutoSaveEnabled = true, // ,untitledAutoSaveEnabled;
-      ccTriggerEnabled = false, importSuggestEnabled = true;
+      ccTriggerEnabled = true, importSuggestEnabled = true;
   public static int autoSaveInterval = 3; //in minutes
 
   /**

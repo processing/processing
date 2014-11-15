@@ -448,7 +448,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     } else {
       row.add(createFixedLabel(""));
     }
-    button = new JButton("Cancel");
+    button = new JButton(Language.text("prompt.cancel"));
     button.addActionListener(new ActionListener() {
 
       @Override

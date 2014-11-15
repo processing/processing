@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 
 import processing.app.Base;
 import processing.app.Editor;
+import processing.app.Language;
 import processing.app.Toolkit;
 import processing.mode.java.JavaToolbar;
 
@@ -156,22 +157,22 @@ public class DebugToolbar extends JavaToolbar {
 //      return JavaToolbar.getTitle(JavaToolbar.EXPORT, shift);
     case DEBUG:
       if (shift) {
-        return "Run";
+        return Language.text("toolbar.run");
       } else {
-        return "Debug";
+        return Language.text("toolbar.debug.debug");
       }
     case CONTINUE:
-      return "Continue";
+      return Language.text("toolbar.debug.continue");
     case TOGGLE_BREAKPOINT:
-      return "Toggle Breakpoint";
+      return Language.text("toolbar.debug.toggle_breakpoints");
     case STEP:
       if (shift) {
-        return "Step Into";
+        return Language.text("toolbar.debug.step_into");
       } else {
-        return "Step";
+        return Language.text("toolbar.debug.step");
       }
     case TOGGLE_VAR_INSPECTOR:
-      return "Variable Inspector";
+      return Language.text("toolbar.debug.variable_inspector");
     }
     return null;
   }

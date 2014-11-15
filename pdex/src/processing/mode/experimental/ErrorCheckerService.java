@@ -897,19 +897,21 @@ public class ErrorCheckerService implements Runnable{
                         + "folder>/libraries folder or in the code folder of your sketch");
   
               }
-              String codeFolderPath[] = PApplet.split(
-                  codeFolderClassPath.substring(1).trim(),
-                  File.pathSeparatorChar);
-              try {
-                for (int i = 0; i < codeFolderPath.length; i++) {
-                  classpathJars.add(new File(codeFolderPath[i])
-                      .toURI().toURL());
+              else {
+                String codeFolderPath[] = PApplet.split(
+                    codeFolderClassPath.substring(1).trim(),
+                    File.pathSeparatorChar);
+                try {
+                  for (int i = 0; i < codeFolderPath.length; i++) {
+                    classpathJars.add(new File(codeFolderPath[i])
+                        .toURI().toURL());
+                  }
+    
+                } catch (Exception e2) {
+                  System.out
+                      .println("Yikes! codefolder, prepareImports(): "
+                          + e2);
                 }
-  
-              } catch (Exception e2) {
-                System.out
-                    .println("Yikes! codefolder, prepareImports(): "
-                        + e2);
               }
             } else {
               System.err.println("Experimental Mode: Yikes! Can't find \""

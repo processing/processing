@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
 <li>
 <ul class="inheritance">
 <li><a href="../../processing/event/Event.html" title="class in processing.event">Event</a></li>
@@ -172,7 +172,7 @@ extends <a href="../../processing/event/Event.html" title="class in processing.e
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../processing/event/MouseEvent.html#MouseEvent(java.lang.Object, long, int, int, int, int, int, int)">MouseEvent</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;nativeObject,
+<td class="colOne"><code><strong><a href="../../processing/event/MouseEvent.html#MouseEvent(java.lang.Object,%20long,%20int,%20int,%20int,%20int,%20int,%20int)">MouseEvent</a></strong>(Object&nbsp;nativeObject,
           long&nbsp;millis,
           int&nbsp;action,
           int&nbsp;modifiers,
@@ -229,6 +229,10 @@ extends <a href="../../processing/event/Event.html" title="class in processing.e
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/event/MouseEvent.html#getY()">getY</a></strong>()</code>&nbsp;</td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>String</code></td>
+<td class="colLast"><code><strong><a href="../../processing/event/MouseEvent.html#toString()">toString</a></strong>()</code>&nbsp;</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_Event">
@@ -241,8 +245,8 @@ extends <a href="../../processing/event/Event.html" title="class in processing.e
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -352,7 +356,7 @@ extends <a href="../../processing/event/Event.html" title="class in processing.e
 <ul class="blockListLast">
 <li class="blockList">
 <h4>MouseEvent</h4>
-<pre>public&nbsp;MouseEvent(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;nativeObject,
+<pre>public&nbsp;MouseEvent(Object&nbsp;nativeObject,
           long&nbsp;millis,
           int&nbsp;action,
           int&nbsp;modifiers,
@@ -404,7 +408,7 @@ extends <a href="../../processing/event/Event.html" title="class in processing.e
 <ul class="blockList">
 <li class="blockList">
 <h4>getClickCount</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+<pre>@Deprecated
 public&nbsp;int&nbsp;getClickCount()</pre>
 <div class="block"><span class="strong">Deprecated.</span>&nbsp;</div>
 <div class="block">Do not use, getCount() is the correct method.</div>
@@ -416,7 +420,7 @@ public&nbsp;int&nbsp;getClickCount()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getAmount</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+<pre>@Deprecated
 public&nbsp;float&nbsp;getAmount()</pre>
 <div class="block"><span class="strong">Deprecated.</span>&nbsp;</div>
 <div class="block">Do not use, getCount() is the correct method.</div>
@@ -425,7 +429,7 @@ public&nbsp;float&nbsp;getAmount()</pre>
 <a name="getCount()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getCount</h4>
 <pre>public&nbsp;int&nbsp;getCount()</pre>
@@ -436,6 +440,19 @@ public&nbsp;float&nbsp;getAmount()</pre>
  up or away from the user" and positive values in the other direction.
  On Mac OS X, this will be reversed when "natural" scrolling is enabled
  in System Preferences &rarr Mouse.</div>
+</li>
+</ul>
+<a name="toString()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;String&nbsp;toString()</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>toString</code>&nbsp;in class&nbsp;<code>Object</code></dd>
+</dl>
 </li>
 </ul>
 </li>

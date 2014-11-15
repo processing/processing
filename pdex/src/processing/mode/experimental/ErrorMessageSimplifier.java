@@ -83,9 +83,14 @@ public class ErrorMessageSimplifier {
               + "\" should go here";
         }
         else {
-        result = "Problem with code syntax: Consider removing \"" + args[0]
+        result = "Code error on \"" + args[0]
             + "\"";
         }        
+      }
+      break;
+    case IProblem.ParsingErrorDeleteToken:
+      if (args.length > 0) {
+        result = "Code error on \"" + args[0] + "\"";
       }
       break;
     case IProblem.ParsingErrorInsertToComplete:
@@ -110,8 +115,7 @@ public class ErrorMessageSimplifier {
             result = "\"color\" and \"int\" are reserved words & can't be used as variable names";
           }
           else {
-            result = "\"" + args[0]
-                + "\" is a reserved word, it can't be used as a variable name";
+            result = "Code error on \"" + args[0] + "\"";
           }
         }
       }

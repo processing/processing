@@ -81,7 +81,10 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
+<li>
+<ul class="inheritance">
+<li>TokenStreamBasicFilter</li>
 <li>
 <ul class="inheritance">
 <li>TokenStreamHiddenTokenFilter</li>
@@ -93,13 +96,20 @@
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>IASDebugStream, TokenStream</dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="strong">TokenStreamCopyingHiddenTokenFilter</span>
-extends TokenStreamHiddenTokenFilter</pre>
+extends TokenStreamHiddenTokenFilter
+implements TokenStream</pre>
 <div class="block">This class provides TokenStreamHiddenTokenFilters with the concept of
  tokens which can be copied so that they are seen by both the hidden token
  stream as well as the parser itself.  This is useful when one wants to use
@@ -126,7 +136,7 @@ extends TokenStreamHiddenTokenFilter</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../antlr/TokenStreamCopyingHiddenTokenFilter.html#TokenStreamCopyingHiddenTokenFilter(TokenStream)">TokenStreamCopyingHiddenTokenFilter</a></strong>(TokenStream&nbsp;input)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../antlr/TokenStreamCopyingHiddenTokenFilter.html#TokenStreamCopyingHiddenTokenFilter(antlr.TokenStream)">TokenStreamCopyingHiddenTokenFilter</a></strong>(TokenStream&nbsp;input)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -151,7 +161,7 @@ extends TokenStreamHiddenTokenFilter</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../antlr/TokenStreamCopyingHiddenTokenFilter.html#linkAndCopyToken(CommonHiddenStreamToken, CommonHiddenStreamToken)">linkAndCopyToken</a></strong>(CommonHiddenStreamToken&nbsp;prev,
+<td class="colLast"><code><strong><a href="../antlr/TokenStreamCopyingHiddenTokenFilter.html#linkAndCopyToken(antlr.CommonHiddenStreamToken,%20antlr.CommonHiddenStreamToken)">linkAndCopyToken</a></strong>(CommonHiddenStreamToken&nbsp;prev,
                 CommonHiddenStreamToken&nbsp;monitored)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
@@ -162,17 +172,31 @@ extends TokenStreamHiddenTokenFilter</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>CommonHiddenStreamToken</code></td>
-<td class="colLast"><code><strong><a href="../antlr/TokenStreamCopyingHiddenTokenFilter.html#partialCloneToken(CommonHiddenStreamToken)">partialCloneToken</a></strong>(CommonHiddenStreamToken&nbsp;t)</code>
+<td class="colLast"><code><strong><a href="../antlr/TokenStreamCopyingHiddenTokenFilter.html#partialCloneToken(antlr.CommonHiddenStreamToken)">partialCloneToken</a></strong>(CommonHiddenStreamToken&nbsp;t)</code>
 <div class="block">Create a clone of the important parts of the given token.</div>
 </td>
 </tr>
 </table>
 <ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_TokenStreamHiddenTokenFilter">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;TokenStreamHiddenTokenFilter</h3>
+<code>getDiscardMask, getHiddenAfter, getHiddenBefore, getHideMask, getInitialHiddenToken, hide, hide</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_TokenStreamBasicFilter">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;TokenStreamBasicFilter</h3>
+<code>discard, discard, getEntireText, getOffsetInfo</code></li>
+</ul>
+<ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -188,7 +212,7 @@ extends TokenStreamHiddenTokenFilter</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="TokenStreamCopyingHiddenTokenFilter(TokenStream)">
+<a name="TokenStreamCopyingHiddenTokenFilter(antlr.TokenStream)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -218,7 +242,7 @@ extends TokenStreamHiddenTokenFilter</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>tokenType</code> - integer representing the token type to copied</dd></dl>
 </li>
 </ul>
-<a name="partialCloneToken(CommonHiddenStreamToken)">
+<a name="partialCloneToken(antlr.CommonHiddenStreamToken)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -231,7 +255,7 @@ extends TokenStreamHiddenTokenFilter</pre>
 <dt><span class="strong">Returns:</span></dt><dd>newly created partial clone</dd></dl>
 </li>
 </ul>
-<a name="linkAndCopyToken(CommonHiddenStreamToken, CommonHiddenStreamToken)">
+<a name="linkAndCopyToken(antlr.CommonHiddenStreamToken, antlr.CommonHiddenStreamToken)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -258,7 +282,12 @@ extends TokenStreamHiddenTokenFilter</pre>
   channel token, add it to the monitored token.
 
   Note: EOF must be a monitored Token.</div>
-<dl><dt><span class="strong">Throws:</span></dt>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code>nextToken</code>&nbsp;in interface&nbsp;<code>TokenStream</code></dd>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>nextToken</code>&nbsp;in class&nbsp;<code>TokenStreamHiddenTokenFilter</code></dd>
+<dt><span class="strong">Throws:</span></dt>
 <dd><code>TokenStreamException</code></dd></dl>
 </li>
 </ul>

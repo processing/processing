@@ -81,13 +81,18 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
+<li>
+<ul class="inheritance">
+<li>Parser</li>
 <li>
 <ul class="inheritance">
 <li>LLkParser</li>
 <li>
 <ul class="inheritance">
 <li>JavaRecognizer</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -298,7 +303,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
+<td class="colFirst"><code>static String[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#_tokenNames">_tokenNames</a></strong></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -519,13 +524,13 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#JavaRecognizer(ParserSharedInputState)">JavaRecognizer</a></strong>(ParserSharedInputState&nbsp;state)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#JavaRecognizer(antlr.ParserSharedInputState)">JavaRecognizer</a></strong>(ParserSharedInputState&nbsp;state)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#JavaRecognizer(TokenBuffer)">JavaRecognizer</a></strong>(TokenBuffer&nbsp;tokenBuf)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#JavaRecognizer(antlr.TokenBuffer)">JavaRecognizer</a></strong>(TokenBuffer&nbsp;tokenBuf)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#JavaRecognizer(TokenStream)">JavaRecognizer</a></strong>(TokenStream&nbsp;lexer)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#JavaRecognizer(antlr.TokenStream)">JavaRecognizer</a></strong>(TokenStream&nbsp;lexer)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -568,7 +573,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#annotationDefinition(AST)">annotationDefinition</a></strong>(AST&nbsp;modifiers)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#annotationDefinition(antlr.collections.AST)">annotationDefinition</a></strong>(AST&nbsp;modifiers)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -636,7 +641,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#classDefinition(AST)">classDefinition</a></strong>(AST&nbsp;modifiers)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#classDefinition(antlr.collections.AST)">classDefinition</a></strong>(AST&nbsp;modifiers)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -680,7 +685,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#declaratorBrackets(AST)">declaratorBrackets</a></strong>(AST&nbsp;typ)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#declaratorBrackets(antlr.collections.AST)">declaratorBrackets</a></strong>(AST&nbsp;typ)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -700,7 +705,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#enumDefinition(AST)">enumDefinition</a></strong>(AST&nbsp;modifiers)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#enumDefinition(antlr.collections.AST)">enumDefinition</a></strong>(AST&nbsp;modifiers)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -789,7 +794,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#interfaceDefinition(AST)">interfaceDefinition</a></strong>(AST&nbsp;modifiers)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#interfaceDefinition(antlr.collections.AST)">interfaceDefinition</a></strong>(AST&nbsp;modifiers)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -931,14 +936,14 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#variableDeclarator(AST, AST)">variableDeclarator</a></strong>(AST&nbsp;mods,
+<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#variableDeclarator(antlr.collections.AST,%20antlr.collections.AST)">variableDeclarator</a></strong>(AST&nbsp;mods,
                   AST&nbsp;t)</code>
 <div class="block">Declaration of a variable.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#variableDefinitions(AST, AST)">variableDefinitions</a></strong>(AST&nbsp;mods,
+<td class="colLast"><code><strong><a href="../../../../processing/mode/java/preproc/JavaRecognizer.html#variableDefinitions(antlr.collections.AST,%20antlr.collections.AST)">variableDefinitions</a></strong>(AST&nbsp;mods,
                    AST&nbsp;t)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -955,11 +960,25 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 </tr>
 </table>
 <ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_LLkParser">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;LLkParser</h3>
+<code>consume, LA, LT, traceIn, traceOut</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_Parser">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;Parser</h3>
+<code>addMessageListener, addParserListener, addParserMatchListener, addParserTokenListener, addSemanticPredicateListener, addSyntacticPredicateListener, addTraceListener, consumeUntil, consumeUntil, getAST, getASTFactory, getFilename, getInputState, getTokenName, getTokenNames, getTokenTypeToASTClassMap, isDebugMode, mark, match, match, matchNot, panic, recover, removeMessageListener, removeParserListener, removeParserMatchListener, removeParserTokenListener, removeSemanticPredicateListener, removeSyntacticPredicateListener, removeTraceListener, reportError, reportError, reportWarning, rewind, setASTFactory, setASTNodeClass, setASTNodeType, setDebugMode, setFilename, setIgnoreInvalidDebugCalls, setInputState, setTokenBuffer, traceIndent</code></li>
+</ul>
+<ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -981,7 +1000,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <ul class="blockList">
 <li class="blockList">
 <h4>_tokenNames</h4>
-<pre>public static final&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[] _tokenNames</pre>
+<pre>public static final&nbsp;String[] _tokenNames</pre>
 </li>
 </ul>
 <a name="_tokenSet_0">
@@ -1433,7 +1452,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="JavaRecognizer(TokenBuffer)">
+<a name="JavaRecognizer(antlr.TokenBuffer)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -1442,7 +1461,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <pre>public&nbsp;JavaRecognizer(TokenBuffer&nbsp;tokenBuf)</pre>
 </li>
 </ul>
-<a name="JavaRecognizer(TokenStream)">
+<a name="JavaRecognizer(antlr.TokenStream)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -1451,7 +1470,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <pre>public&nbsp;JavaRecognizer(TokenStream&nbsp;lexer)</pre>
 </li>
 </ul>
-<a name="JavaRecognizer(ParserSharedInputState)">
+<a name="JavaRecognizer(antlr.ParserSharedInputState)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -1580,7 +1599,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <dd><code>TokenStreamException</code></dd></dl>
 </li>
 </ul>
-<a name="classDefinition(AST)">
+<a name="classDefinition(antlr.collections.AST)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -1594,7 +1613,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <dd><code>TokenStreamException</code></dd></dl>
 </li>
 </ul>
-<a name="interfaceDefinition(AST)">
+<a name="interfaceDefinition(antlr.collections.AST)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -1608,7 +1627,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <dd><code>TokenStreamException</code></dd></dl>
 </li>
 </ul>
-<a name="enumDefinition(AST)">
+<a name="enumDefinition(antlr.collections.AST)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -1622,7 +1641,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <dd><code>TokenStreamException</code></dd></dl>
 </li>
 </ul>
-<a name="annotationDefinition(AST)">
+<a name="annotationDefinition(antlr.collections.AST)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -1664,7 +1683,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <dd><code>TokenStreamException</code></dd></dl>
 </li>
 </ul>
-<a name="variableDefinitions(AST, AST)">
+<a name="variableDefinitions(antlr.collections.AST, antlr.collections.AST)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -2155,7 +2174,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <dd><code>TokenStreamException</code></dd></dl>
 </li>
 </ul>
-<a name="declaratorBrackets(AST)">
+<a name="declaratorBrackets(antlr.collections.AST)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -2310,7 +2329,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <dd><code>TokenStreamException</code></dd></dl>
 </li>
 </ul>
-<a name="variableDeclarator(AST, AST)">
+<a name="variableDeclarator(antlr.collections.AST, antlr.collections.AST)">
 <!--   -->
 </a>
 <ul class="blockList">
