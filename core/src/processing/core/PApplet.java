@@ -9263,9 +9263,6 @@ public class PApplet implements PConstants {
         } else if (param.equals(ARGS_DISPLAY)) {
           displayIndex = parseInt(value, -1);
 
-        } else if (param.equals(ARGS_SPAN_SCREENS)) {
-          spanDisplays = true;
-
         } else if (param.equals(ARGS_BGCOLOR)) {
           if (value.charAt(0) == '#') value = value.substring(1);
           backgroundColor = new Color(Integer.parseInt(value, 16));
@@ -9284,6 +9281,9 @@ public class PApplet implements PConstants {
       } else {
         if (args[argIndex].equals(ARGS_FULL_SCREEN)) {
           fullScreen = true;
+
+        } else if (args[argIndex].equals(ARGS_SPAN_SCREENS)) {
+          spanDisplays = true;
 
         } else if (args[argIndex].equals(ARGS_HIDE_STOP)) {
           hideStop = true;
