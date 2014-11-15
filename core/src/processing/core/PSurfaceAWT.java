@@ -785,8 +785,8 @@ public class PSurfaceAWT implements PSurface {
 
     // Formerly this was broken into separate versions based on offscreen or
     // not, but we may as well create a compatible image; it won't hurt, right?
-    graphics.image = gc.createCompatibleImage(wide, high);
-//    System.out.println(graphics.image);
+    int factor = graphics.pixelFactor;
+    graphics.image = gc.createCompatibleImage(wide * factor, high * factor);
 
     //throw new RuntimeException("implement me, see readme.md");
     sketchWidth = sketch.width = wide;

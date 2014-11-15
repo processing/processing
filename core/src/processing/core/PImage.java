@@ -210,7 +210,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage() {
     format = ARGB;  // default to ARGB images for release 0116
-//    cache = null;
+    pixelFactor = 1;
   }
 
 
