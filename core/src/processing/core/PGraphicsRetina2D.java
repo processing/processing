@@ -4,7 +4,7 @@ import java.awt.*;
 
 
 public class PGraphicsRetina2D extends PGraphicsJava2D {
-  PImage retina;
+//  PImage retina;
 //  int retinaWidth;
 //  int retinaHeight;
 
@@ -14,21 +14,21 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   // INTERNAL
 
 
-  public PGraphicsRetina2D() {
-    retina = new PImage();
-    retina.format = RGB;
-  }
+//  public PGraphicsRetina2D() {
+//    retina = new PImage();
+//    retina.format = RGB;
+//  }
 
 
-  @Override
-  public void setParent(PApplet parent) {
-    super.setParent(parent);
-    retina.parent = parent;
-  }
+//  @Override
+//  public void setParent(PApplet parent) {
+//    super.setParent(parent);
+//    retina.parent = parent;
+//  }
 
 
-  @Override
-  protected void allocate() {
+//  @Override
+//  protected void allocate() {
 //    parent.setIgnoreRepaint(true);
 //    g2 = (Graphics2D) parent.getGraphics();
 
@@ -80,7 +80,7 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
       g2 = (Graphics2D) image.getGraphics();
     }
     */
-  }
+//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -88,38 +88,22 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   // FRAME
 
 
-  @Override
-  public boolean canDraw() {
-    return parent.getGraphicsConfiguration() != null;
-  }
+//  @Override
+//  public boolean canDraw() {
+//    return parent.getGraphicsConfiguration() != null;
+//  }
 
 
   @Override
   public void beginDraw() {
-//    g2 = (Graphics2D) parent.getGraphics();
-
     GraphicsConfiguration gc = parent.getGraphicsConfiguration();
 
-//    if (false) {
-//      if (image == null || ((VolatileImage) image).validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
-//        image = gc.createCompatibleVolatileImage(width*2, height*2);
-//      }
-//    } else {
     if (image == null) {
       retina.width = width * 2;
       retina.height = height * 2;
       image = gc.createCompatibleImage(retina.width, retina.height);
-//        System.out.println("image type is " + image);
     }
-//    }
     g2 = (Graphics2D) image.getGraphics();
-//    g2.scale(2, 2);
-
-//  if (bimage == null ||
-//      bimage.getWidth() != width ||
-//      bimage.getHeight() != height) {
-//    PApplet.debug("PGraphicsJava2D creating new image");
-//    bimage = gc.createCompatibleImage(width, height);
 
     checkSettings();
     resetMatrix(); // reset model matrix
@@ -651,5 +635,11 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
     } else {
       return super.save(filename);
     }
+  }
+
+
+  @Override
+  public boolean is2X() {
+    return true;
   }
 }

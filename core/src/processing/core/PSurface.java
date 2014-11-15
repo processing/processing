@@ -48,6 +48,8 @@ public interface PSurface {
   public Frame initFrame(PApplet sketch, Color backgroundColor,
                          int deviceIndex, boolean fullScreen, boolean spanDisplays);
 
+  //
+
   /** Set the window (and dock, or whatever necessary) title. */
   public void setTitle(String title);
 
@@ -56,6 +58,8 @@ public interface PSurface {
 
   /** Set true if we want to resize things (default is not resizable) */
   public void setResizable(boolean resizable);
+
+  //
 
   public void placeWindow(int[] location);
 
@@ -66,6 +70,8 @@ public interface PSurface {
 
   // Sketch is running from the PDE, set up messaging back to the PDE
   public void setupExternalMessages();
+
+  //
 
   /** Start the animation thread */
   public void startThread();
@@ -87,6 +93,8 @@ public interface PSurface {
 
   public boolean isStopped();
 
+  //
+
   // sets displayWidth/Height inside PApplet
   //public void checkDisplaySize();
 
@@ -98,7 +106,7 @@ public interface PSurface {
   // receive key and mouse events
   public void requestFocus();
 
-  // finish rendering to the screen
+  // finish rendering to the screen (called by PApplet)
   public void blit();
 
   //

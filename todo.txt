@@ -55,6 +55,8 @@ X sketches should only write to the console of their editor window
 X   https://github.com/processing/processing/issues/153
 X   https://github.com/processing/processing/issues/2858
 X   https://github.com/processing/processing/pull/2827
+X extend translations and update German language
+X   https://github.com/processing/processing/pull/2949
 
 pulls (net)
 X NullPointerException message when Server writes to a disconnected client
@@ -66,8 +68,6 @@ X   https://github.com/processing/processing/pull/2588
 
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
-_ Fix renaming from RGB to Rgb.java and others
-_   https://github.com/processing/processing/pull/2825
 _ check on pull for mnemonics
 _   https://github.com/processing/processing/pull/2382
 

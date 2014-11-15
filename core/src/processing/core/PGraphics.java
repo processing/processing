@@ -7928,4 +7928,9 @@ public class PGraphics extends PImage implements PConstants {
   public boolean isGL() {  // ignore
     return false;
   }
+
+
+  public boolean is2X() {
+    return pixelFactor == 2;
+  }
 }
