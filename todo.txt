@@ -3,12 +3,14 @@ X remove debug message printed to the console when the ctrl key is down in PDE X
 X Fix the shortcut keybindings in editor tab popup menu
 X   https://github.com/processing/processing/issues/179
 X   https://github.com/processing/processing/pull/2821
-
-deb questions: https://github.com/processing/processing/issues/114
-better Linux packaging...
-http://askubuntu.com/questions/396857/how-can-i-add-processing-to-the-unity-launcher
+X answer deb questions
+X   https://github.com/processing/processing/issues/114
+X change how languages are loaded
+X   add local override (needs documentation)
 
 _ add script to download JRE and JDK from Oracle
+_ figure out copyDir() problems before pull
+_ moving window to a new location is broken due to the pull
 
 manindra
 X ToolTipManager error
