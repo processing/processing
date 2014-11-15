@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
 <li>
 <ul class="inheritance">
 <li><a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a></li>
@@ -103,7 +103,7 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html?is-external=true" title="class or interface in java.lang">Runnable</a>, <a href="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a></dd>
+<dd>Runnable, <a href="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a></dd>
 </dl>
 <hr>
 <br>
@@ -127,7 +127,7 @@ implements <a href="../../../processing/app/tools/Tool.html" title="interface in
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;<a href="../../../processing/app/contrib/LocalContribution.html" title="class in processing.app.contrib">LocalContribution</a></h3>
-<code><a href="../../../processing/app/contrib/LocalContribution.html#DELETION_FLAG">DELETION_FLAG</a>, <a href="../../../processing/app/contrib/LocalContribution.html#RESTART_FLAG">RESTART_FLAG</a></code></li>
+<code><a href="../../../processing/app/contrib/LocalContribution.html#DELETION_FLAG">DELETION_FLAG</a>, <a href="../../../processing/app/contrib/LocalContribution.html#RESTART_FLAG">RESTART_FLAG</a>, <a href="../../../processing/app/contrib/LocalContribution.html#UPDATE_FLAGGED">UPDATE_FLAGGED</a></code></li>
 </ul>
 </li>
 </ul>
@@ -144,26 +144,33 @@ implements <a href="../../../processing/app/tools/Tool.html" title="interface in
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ToolContribution.html#getMenuTitle()">getMenuTitle</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ToolContribution.html#clearClassLoader(processing.app.Base)">clearClassLoader</a></strong>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</code>
+<div class="block">Method to close the ClassLoader so that the archives are no longer "locked" and
+ a tool can be removed without restart.</div>
+</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>String</code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ToolContribution.html#getMenuTitle()">getMenuTitle</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../processing/app/contrib/ContributionType.html" title="enum in processing.app.contrib">ContributionType</a></code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/contrib/ToolContribution.html#getType()">getType</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/contrib/ToolContribution.html#init(processing.app.Editor)">init</a></strong>(<a href="../../../processing/app/Editor.html" title="class in processing.app">Editor</a>&nbsp;editor)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../processing/app/contrib/ToolContribution.html" title="class in processing.app.contrib">ToolContribution</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ToolContribution.html#load(java.io.File)">load</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;folder)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ToolContribution.html#load(java.io.File)">load</a></strong>(File&nbsp;folder)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static ArrayList&lt;<a href="../../../processing/app/contrib/ToolContribution.html" title="class in processing.app.contrib">ToolContribution</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ToolContribution.html#loadAll(java.io.File)">loadAll</a></strong>(File&nbsp;toolsFolder)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="../../../processing/app/contrib/ToolContribution.html" title="class in processing.app.contrib">ToolContribution</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/contrib/ToolContribution.html#loadAll(java.io.File)">loadAll</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;toolsFolder)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/contrib/ToolContribution.html#run()">run</a></strong>()</code>&nbsp;</td>
 </tr>
@@ -180,14 +187,14 @@ implements <a href="../../../processing/app/tools/Tool.html" title="interface in
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a></h3>
-<code><a href="../../../processing/app/contrib/Contribution.html#getAuthorList()">getAuthorList</a>, <a href="../../../processing/app/contrib/Contribution.html#getName()">getName</a>, <a href="../../../processing/app/contrib/Contribution.html#getParagraph()">getParagraph</a>, <a href="../../../processing/app/contrib/Contribution.html#getPrettyVersion()">getPrettyVersion</a>, <a href="../../../processing/app/contrib/Contribution.html#getSentence()">getSentence</a>, <a href="../../../processing/app/contrib/Contribution.html#getTypeName()">getTypeName</a>, <a href="../../../processing/app/contrib/Contribution.html#getUrl()">getUrl</a>, <a href="../../../processing/app/contrib/Contribution.html#getVersion()">getVersion</a></code></li>
+<code><a href="../../../processing/app/contrib/Contribution.html#getAuthorList()">getAuthorList</a>, <a href="../../../processing/app/contrib/Contribution.html#getLastUpdated()">getLastUpdated</a>, <a href="../../../processing/app/contrib/Contribution.html#getMaxRevision()">getMaxRevision</a>, <a href="../../../processing/app/contrib/Contribution.html#getMinRevision()">getMinRevision</a>, <a href="../../../processing/app/contrib/Contribution.html#getName()">getName</a>, <a href="../../../processing/app/contrib/Contribution.html#getParagraph()">getParagraph</a>, <a href="../../../processing/app/contrib/Contribution.html#getPrettyVersion()">getPrettyVersion</a>, <a href="../../../processing/app/contrib/Contribution.html#getSentence()">getSentence</a>, <a href="../../../processing/app/contrib/Contribution.html#getTypeName()">getTypeName</a>, <a href="../../../processing/app/contrib/Contribution.html#getUrl()">getUrl</a>, <a href="../../../processing/app/contrib/Contribution.html#getVersion()">getVersion</a>, <a href="../../../processing/app/contrib/Contribution.html#isCompatible(int)">isCompatible</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -209,7 +216,18 @@ implements <a href="../../../processing/app/tools/Tool.html" title="interface in
 <ul class="blockList">
 <li class="blockList">
 <h4>load</h4>
-<pre>public static&nbsp;<a href="../../../processing/app/contrib/ToolContribution.html" title="class in processing.app.contrib">ToolContribution</a>&nbsp;load(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;folder)</pre>
+<pre>public static&nbsp;<a href="../../../processing/app/contrib/ToolContribution.html" title="class in processing.app.contrib">ToolContribution</a>&nbsp;load(File&nbsp;folder)</pre>
+</li>
+</ul>
+<a name="clearClassLoader(processing.app.Base)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clearClassLoader</h4>
+<pre>public&nbsp;void&nbsp;clearClassLoader(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</pre>
+<div class="block">Method to close the ClassLoader so that the archives are no longer "locked" and
+ a tool can be removed without restart.</div>
 </li>
 </ul>
 <a name="loadAll(java.io.File)">
@@ -218,7 +236,7 @@ implements <a href="../../../processing/app/tools/Tool.html" title="interface in
 <ul class="blockList">
 <li class="blockList">
 <h4>loadAll</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="../../../processing/app/contrib/ToolContribution.html" title="class in processing.app.contrib">ToolContribution</a>&gt;&nbsp;loadAll(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;toolsFolder)</pre>
+<pre>public static&nbsp;ArrayList&lt;<a href="../../../processing/app/contrib/ToolContribution.html" title="class in processing.app.contrib">ToolContribution</a>&gt;&nbsp;loadAll(File&nbsp;toolsFolder)</pre>
 </li>
 </ul>
 <a name="init(processing.app.Editor)">
@@ -243,7 +261,7 @@ implements <a href="../../../processing/app/tools/Tool.html" title="interface in
 <pre>public&nbsp;void&nbsp;run()</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html?is-external=true#run()" title="class or interface in java.lang">run</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html?is-external=true" title="class or interface in java.lang">Runnable</a></code></dd>
+<dd><code>run</code>&nbsp;in interface&nbsp;<code>Runnable</code></dd>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../processing/app/tools/Tool.html#run()">run</a></code>&nbsp;in interface&nbsp;<code><a href="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a></code></dd>
 </dl>
@@ -255,7 +273,7 @@ implements <a href="../../../processing/app/tools/Tool.html" title="interface in
 <ul class="blockList">
 <li class="blockList">
 <h4>getMenuTitle</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getMenuTitle()</pre>
+<pre>public&nbsp;String&nbsp;getMenuTitle()</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../processing/app/tools/Tool.html#getMenuTitle()">getMenuTitle</a></code>&nbsp;in interface&nbsp;<code><a href="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a></code></dd>

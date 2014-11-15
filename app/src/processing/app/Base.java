@@ -2355,10 +2355,18 @@ public class Base {
 
 
   /**
+   * Return a File from inside the Processing 'lib' folder.
+   */
+  static public File getLibFile(String filename) throws IOException {
+    return new File(getContentFile("lib"), filename);
+  }
+  
+  
+  /**
    * Return an InputStream for a file inside the Processing lib folder.
    */
   static public InputStream getLibStream(String filename) throws IOException {
-    return new FileInputStream(new File(getContentFile("lib"), filename));
+    return new FileInputStream(getLibFile(filename));
   }
 
 

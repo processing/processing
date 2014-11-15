@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
 <li>
 <ul class="inheritance">
 <li>CharScanner</li>
@@ -98,13 +98,13 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html" title="interface in processing.mode.java.preproc">JavaTokenTypes</a></dd>
+<dd>TokenStream, <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html" title="interface in processing.mode.java.preproc">JavaTokenTypes</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="strong">JavaLexer</span>
 extends CharScanner
-implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html" title="interface in processing.mode.java.preproc">JavaTokenTypes</a></pre>
+implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html" title="interface in processing.mode.java.preproc">JavaTokenTypes</a>, TokenStream</pre>
 </li>
 </ul>
 </div>
@@ -145,6 +145,13 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 </tr>
 </table>
 <ul class="blockList">
+<li class="blockList"><a name="fields_inherited_from_class_CharScanner">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;CharScanner</h3>
+<code>EOF_CHAR</code></li>
+</ul>
+<ul class="blockList">
 <li class="blockList"><a name="fields_inherited_from_class_JavaTokenTypes">
 <!--   -->
 </a>
@@ -165,16 +172,16 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaLexer.html#JavaLexer(InputBuffer)">JavaLexer</a></strong>(InputBuffer&nbsp;ib)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaLexer.html#JavaLexer(antlr.InputBuffer)">JavaLexer</a></strong>(InputBuffer&nbsp;ib)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaLexer.html#JavaLexer(java.io.InputStream)">JavaLexer</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;in)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaLexer.html#JavaLexer(java.io.InputStream)">JavaLexer</a></strong>(InputStream&nbsp;in)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaLexer.html#JavaLexer(LexerSharedInputState)">JavaLexer</a></strong>(LexerSharedInputState&nbsp;state)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaLexer.html#JavaLexer(antlr.LexerSharedInputState)">JavaLexer</a></strong>(LexerSharedInputState&nbsp;state)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaLexer.html#JavaLexer(java.io.Reader)">JavaLexer</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/Reader.html?is-external=true" title="class or interface in java.io">Reader</a>&nbsp;in)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../processing/mode/java/preproc/JavaLexer.html#JavaLexer(java.io.Reader)">JavaLexer</a></strong>(Reader&nbsp;in)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -433,11 +440,18 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 </tr>
 </table>
 <ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_CharScanner">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;CharScanner</h3>
+<code>append, append, commit, consume, consumeUntil, consumeUntil, getCaseSensitive, getCaseSensitiveLiterals, getColumn, getCommitToPath, getFilename, getInputBuffer, getInputState, getLine, getTabSize, getText, getTokenObject, LA, mark, match, match, match, matchNot, matchRange, newline, panic, panic, reportError, reportError, reportWarning, resetText, rewind, setCaseSensitive, setColumn, setCommitToPath, setFilename, setInputState, setLine, setTabSize, setText, setTokenObjectClass, tab, testLiteralsTable, testLiteralsTable, toLower, traceIn, traceIndent, traceOut, uponEOF</code></li>
+</ul>
+<ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -512,7 +526,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <ul class="blockList">
 <li class="blockList">
 <h4>JavaLexer</h4>
-<pre>public&nbsp;JavaLexer(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;in)</pre>
+<pre>public&nbsp;JavaLexer(InputStream&nbsp;in)</pre>
 </li>
 </ul>
 <a name="JavaLexer(java.io.Reader)">
@@ -521,10 +535,10 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <ul class="blockList">
 <li class="blockList">
 <h4>JavaLexer</h4>
-<pre>public&nbsp;JavaLexer(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/Reader.html?is-external=true" title="class or interface in java.io">Reader</a>&nbsp;in)</pre>
+<pre>public&nbsp;JavaLexer(Reader&nbsp;in)</pre>
 </li>
 </ul>
-<a name="JavaLexer(InputBuffer)">
+<a name="JavaLexer(antlr.InputBuffer)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -533,7 +547,7 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <pre>public&nbsp;JavaLexer(InputBuffer&nbsp;ib)</pre>
 </li>
 </ul>
-<a name="JavaLexer(LexerSharedInputState)">
+<a name="JavaLexer(antlr.LexerSharedInputState)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -598,7 +612,10 @@ implements <a href="../../../../processing/mode/java/preproc/JavaTokenTypes.html
 <h4>nextToken</h4>
 <pre>public&nbsp;Token&nbsp;nextToken()
                 throws TokenStreamException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code>nextToken</code>&nbsp;in interface&nbsp;<code>TokenStream</code></dd>
+<dt><span class="strong">Throws:</span></dt>
 <dd><code>TokenStreamException</code></dd></dl>
 </li>
 </ul>

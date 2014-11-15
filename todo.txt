@@ -3,12 +3,14 @@ X remove debug message printed to the console when the ctrl key is down in PDE X
 X Fix the shortcut keybindings in editor tab popup menu
 X   https://github.com/processing/processing/issues/179
 X   https://github.com/processing/processing/pull/2821
-
-deb questions: https://github.com/processing/processing/issues/114
-better Linux packaging...
-http://askubuntu.com/questions/396857/how-can-i-add-processing-to-the-unity-launcher
+X answer deb questions
+X   https://github.com/processing/processing/issues/114
+X change how languages are loaded
+X   add local override (needs documentation)
 
 _ add script to download JRE and JDK from Oracle
+_ figure out copyDir() problems before pull
+_ moving window to a new location is broken due to the pull
 
 manindra
 X ToolTipManager error
@@ -84,7 +86,7 @@ _ clean out the repo
 _   https://github.com/processing/processing/issues/1898
 
 
-gsoc/help me
+help me
 _ `return` keyword not treated as such when followed by a bracket
 _   https://github.com/processing/processing/issues/2099
 _ IllegalArgumentException when clicking between editor windows
@@ -108,6 +110,10 @@ _ problems with non-US keyboards and some shortcuts
 _   https://github.com/processing/processing/issues/2199
 _ improve start time by populating sketchbook/libraries on threads
 _   https://github.com/processing/processing/issues/2945
+_ clean up 'ant doc' target to remove warnings
+_   https://github.com/processing/processing/issues/1492
+_ fix encodings, line endings, and mime types in the repo
+_   https://github.com/processing/processing/issues/2955
 
 
 medium
