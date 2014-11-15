@@ -281,10 +281,8 @@ public class Sketch {
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage("Sketch is Read-Only",
-                       "Some files are marked \"read-only\", so you'll\n" +
-                       "need to re-save the sketch in another location,\n" +
-                       "and try again.");
+      Base.showMessage(Language.text("new.messages.is_read_only"),
+                       Language.text("new.messages.is_read_only.description"));
       return;
     }
 
@@ -302,24 +300,22 @@ public class Sketch {
     ensureExistence();
 
     if (currentIndex == 0 && isUntitled()) {
-      Base.showMessage("Sketch is Untitled",
-                       "How about saving the sketch first \n" +
-                       "before trying to rename it?");
+      Base.showMessage(Language.text("rename.messages.is_untitled"),
+                       Language.text("rename.messages.is_untitled.description"));
       return;
     }
 
     if (isModified()) {
-      Base.showMessage("Save", "Please save the sketch before renaming.");
+      Base.showMessage(Language.text("menu.file.save"),
+                       Language.text("rename.messages.is_modified"));
       return;
     }
 
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage("Sketch is Read-Only",
-                       "Some files are marked \"read-only\", so you'll\n" +
-                       "need to re-save the sketch in another location,\n" +
-                       "and try again.");
+      Base.showMessage(Language.text("rename.messages.is_read_only"),
+                       Language.text("rename.messages.is_read_only.description"));
       return;
     }
 
@@ -619,17 +615,15 @@ public class Sketch {
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage("Sketch is Read-Only",
-                       "Some files are marked \"read-only\", so you'll\n" +
-                       "need to re-save the sketch in another location,\n" +
-                       "and try again.");
+      Base.showMessage(Language.text("delete.messages.is_read_only"),
+                       Language.text("delete.messages.is_read_only.description"));
       return;
     }
 
     // don't allow if untitled
     if (currentIndex == 0 && isUntitled()) {  
-      Base.showMessage("Cannot Delete",
-                       "You can't delete a sketch that has not been saved.");
+      Base.showMessage(Language.text("delete.messages.cannot_delete"),
+                       Language.text("delete.messages.cannot_delete.description"));
       return;
     }
     
@@ -665,8 +659,8 @@ public class Sketch {
       } else {
         // delete the file
         if (!current.deleteFile()) {
-          Base.showMessage("Couldn't do it",
-                           "Could not delete \"" +
+          Base.showMessage(Language.text("delete.messages.cannot_delete.file"),
+                           Language.text("delete.messages.cannot_delete.file.description")+" \"" +
                            current.getFileName() + "\".");
           return;
         }

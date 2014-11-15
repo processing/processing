@@ -1,0 +1,31 @@
+<project name="methods" default="task-lib">
+
+  <target name="compile">
+    <mkdir dir="bin" />
+
+    <javac target="1.7" 
+	   srcdir="src" destdir="bin" 
+	   debug="true" 
+	   includeantruntime="true"
+	   nowarn="true"
+	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
+      <compilerclasspath path="../../java/mode/ecj.jar" />
+    </javac>
+  </target>
+  
+  <target name="task-lib" depends="compile">
+    <jar basedir="bin" destfile="downloader.jar" />
+  </target>
+  
+  <target name="demo">
+    <taskdef name="downloader" 
+	     classname="Downloader"
+	     classpath="downloader.jar" />
+    <preproc dir="demo"/>
+  </target>
+  
+  <target name="clean">
+    <delete dir="bin" />
+    <delete file="downloader.jar" />
+  </target>
+</project>
