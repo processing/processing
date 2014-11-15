@@ -201,7 +201,7 @@ public class PJOGL extends PGL {
 
   // Retina support
 
-  int retf = 1;
+  int pixel_scale = 1;
 
   // ........................................................
 
@@ -1867,7 +1867,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void viewport(int x, int y, int w, int h) {
-    gl.glViewport(retf * x, retf * y, retf * w, retf * h);
+    gl.glViewport(pixel_scale * x, pixel_scale * y, pixel_scale * w, pixel_scale * h);
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -2389,7 +2389,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void scissor(int x, int y, int w, int h) {
-    gl.glScissor(retf * x, retf * y, retf * w, retf * h);
+    gl.glScissor(pixel_scale * x, pixel_scale * y, pixel_scale * w, pixel_scale * h);
   }
 
   @Override
