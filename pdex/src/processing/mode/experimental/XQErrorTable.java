@@ -22,15 +22,31 @@ package processing.mode.experimental;
  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.ToolTipManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
+import javax.swing.text.BadLocationException;
 
 import processing.app.Language;
+import static processing.mode.experimental.ExperimentalMode.log;
 
 /**
  * Custom JTable implementation for XQMode. Minor tweaks and addtions.
@@ -76,7 +92,7 @@ public class XQErrorTable extends JTable {
 
 		this.addMouseListener(new MouseAdapter() {
 			@Override
-			synchronized public void mouseReleased(MouseEvent e) {
+			synchronized public void mouseClicked(MouseEvent e) {
 				try {
 					errorCheckerService.scrollToErrorLine(((XQErrorTable) e
 							.getSource()).getSelectedRow());
@@ -87,7 +103,60 @@ public class XQErrorTable extends JTable {
 							+ e);
 				}
 			}
+			
+//			public void mouseMoved(MouseEvent evt) {
+//		    log(evt);
+////		    String tip = null;
+////		    java.awt.Point p = evt.getPoint();
+//		    int rowIndex = rowAtPoint(evt.getPoint());
+//		    int colIndex = columnAtPoint(evt.getPoint());
+//		    synchronized (errorCheckerService.problemsList) {
+//		      if (rowIndex < errorCheckerService.problemsList.size()) {
+//		        Problem p = errorCheckerService.problemsList.get(rowIndex);
+//		        if (p.getImportSuggestions() != null
+//		            && p.getImportSuggestions().length > 0) {
+//		          log("Import Suggestions available");
+//		        }
+//		      }
+//		    }
+////		    return super.getToolTipText(evt);
+//		  }
 		});
+		
+		final XQErrorTable thisTable = this; 
+		
+		this.addMouseMotionListener(new MouseMotionListener() {
+      
+      @Override
+      public void mouseMoved(MouseEvent evt) {
+//        log(evt);
+//      String tip = null;
+//      java.awt.Point p = evt.getPoint();
+        int rowIndex = rowAtPoint(evt.getPoint());
+        int colIndex = columnAtPoint(evt.getPoint());
+        synchronized (errorCheckerService.problemsList) {
+          if (rowIndex < errorCheckerService.problemsList.size()) {
+            Problem p = errorCheckerService.problemsList.get(rowIndex);
+            if (p.getImportSuggestions() != null
+                && p.getImportSuggestions().length > 0) {
+              String[] list = p.getImportSuggestions();
+              String className = list[0].substring(list[0].lastIndexOf('.') + 1);
+              String[] temp = new String[list.length];
+              for (int i = 0; i < list.length; i++) {
+                temp[i] = "<html>Import '" +  className + "' <font color=#777777>(" + list[i] + ")</font></html>";
+              }
+              showImportSuggestion(temp, evt.getXOnScreen(), evt.getYOnScreen() - 3 * thisTable.getFont().getSize());
+            }
+          }
+
+        }
+      }
+      
+      @Override
+      public void mouseDragged(MouseEvent e) {
+        
+      }
+    });
 
 		// Handles the resizing of columns. When mouse press is detected on
 		// table header, Stop updating the table, store new values of column
@@ -111,8 +180,9 @@ public class XQErrorTable extends JTable {
 				}
 			}
 		});
+		
+		ToolTipManager.sharedInstance().registerComponent(this);
 	}
-
 	
 	/**
 	 * Updates table contents with new data
@@ -163,5 +233,79 @@ public class XQErrorTable extends JTable {
 		}
 		return true;
 	}
+	JFrame frmImportSuggest;
+	private void showImportSuggestion(String list[], int x, int y){
+	  if(frmImportSuggest != null) {
+//	    frmImportSuggest.setVisible(false);
+//	    frmImportSuggest = null;
+	    return;
+	  }
+	  final JList<String> classList = new JList<String>(list);
+    classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    frmImportSuggest = new JFrame();
+    
+    frmImportSuggest.setUndecorated(true);
+    frmImportSuggest.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    panel.setBackground(Color.WHITE);
+    frmImportSuggest.setBackground(Color.WHITE);
+    panel.add(classList);
+    JLabel label = new JLabel("<html><div ><font size = \"2\"><br>(Click to insert)</font></div></html>");
+    label.setBackground(Color.WHITE);
+    label.setHorizontalTextPosition(SwingConstants.CENTER);
+    panel.add(label);
+    panel.validate();
+    frmImportSuggest.getContentPane().add(panel);
+    frmImportSuggest.pack();
+    
+    final DebugEditor editor = errorCheckerService.getEditor();
+    classList.addListSelectionListener(new ListSelectionListener() {
+      
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        if (classList.getSelectedValue() != null) {
+          try {
+            String t = classList.getSelectedValue().trim();
+            log(t);
+            int x = t.indexOf('(');
+            String impString = "import " + t.substring(x + 1, t.indexOf(')')) + ";\n";
+            int ct = editor.getSketch().getCurrentCodeIndex();
+            editor.getSketch().setCurrentCode(0);
+            editor.textArea().getDocument().insertString(0, impString, null);
+            editor.getSketch().setCurrentCode(ct);
+          } catch (BadLocationException ble) {
+            log("Failed to insert import");
+            ble.printStackTrace();
+          }
+        }
+        frmImportSuggest.setVisible(false);
+        frmImportSuggest.dispose();
+        frmImportSuggest = null;
+      }
+    });
+    
+    frmImportSuggest.addWindowFocusListener(new WindowFocusListener() {
+      
+      @Override
+      public void windowLostFocus(WindowEvent e) {
+        if (frmImportSuggest != null) {
+          frmImportSuggest.dispose();
+          frmImportSuggest = null;
+        }
+      }
+      
+      @Override
+      public void windowGainedFocus(WindowEvent e) {
+        
+      }
+    });
 
+    frmImportSuggest.setLocation(x, y);
+    frmImportSuggest.setBounds(x, y, 250, 100);
+    frmImportSuggest.pack();
+    frmImportSuggest.setVisible(true);
+    
+	}
+	
 }

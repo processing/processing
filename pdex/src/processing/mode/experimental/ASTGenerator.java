@@ -980,18 +980,18 @@ public class ASTGenerator {
             String[] resources = classPath.findResources("",
                                                          regExpResourceFilter);
             for (String matchedClass2 : resources) {
-              matchedClass2 = matchedClass2.replace('/', '.');
+              matchedClass2 = matchedClass2.replace('/', '.'); //package name
               String matchedClass = matchedClass2.substring(0, matchedClass2
                   .length() - 6);
               int d = matchedClass.lastIndexOf('.');
               if (ignorableImport(matchedClass2,matchedClass.substring(d + 1)))
                 continue;
               
-              matchedClass = matchedClass.substring(d + 1);
-              candidates
-                  .add(new CompletionCandidate(matchedClass, matchedClass
-                      + " : " + matchedClass2.substring(0, d), matchedClass,
-                                               CompletionCandidate.PREDEF_CLASS));
+              matchedClass = matchedClass.substring(d + 1); //class name
+              candidates.add(new CompletionCandidate(matchedClass, "<html>"
+                  + matchedClass + " : " + "<font color=#777777>"
+                  + matchedClass2.substring(0, d) + "</font>", matchedClass
+                  + "</html>", CompletionCandidate.PREDEF_CLASS)); // display package name in grey
               //log("-> " + className);
             }
           }
@@ -3306,6 +3306,68 @@ public class ASTGenerator {
       }
     }
     return null;
+  }
+  
+  public String[] getSuggestImports(final String className){
+    if(ignoredImportSuggestions == null) {
+      ignoredImportSuggestions = new TreeSet<String>();
+    } else {
+      if(ignoredImportSuggestions.contains(className)) {
+        log("Ignoring import suggestions for " + className);
+        return null;
+      }
+    }
+
+    log("Looking for class " + className);
+    RegExpResourceFilter regf = new RegExpResourceFilter(
+                                                         Pattern.compile(".*"),
+                                                         Pattern
+                                                             .compile(className
+                                                                          + ".class",
+                                                                      Pattern.CASE_INSENSITIVE));
+    String[] resources = classPath
+        .findResources("", regf);
+    ArrayList<String> candidates = new ArrayList<String>();
+    for (String res : resources) {
+      candidates.add(res);
+    }
+    
+    // log("Couldn't find import for class " + className);
+
+    for (Library lib : editor.dmode.contribLibraries) {
+      ClassPath cp = factory.createFromPath(lib.getClassPath());
+      resources = cp.findResources("", regf);
+      for (String res : resources) {
+        candidates.add(res);
+        log("Res: " + res);
+      }
+    }
+    
+    if (editor.getSketch().hasCodeFolder()) {
+      File codeFolder = editor.getSketch().getCodeFolder();
+      // get a list of .jar files in the "code" folder
+      // (class files in subfolders should also be picked up)
+      ClassPath cp = factory.createFromPath(Base
+                                            .contentsToClassPath(codeFolder));
+      resources = cp.findResources("", regf);
+      for (String res : resources) {
+        candidates.add(res);
+        log("Res: " + res);
+      }
+    }
+
+    resources = new String[candidates.size()];
+    for (int i = 0; i < resources.length; i++) {
+      resources[i] = candidates.get(i).replace('/', '.')
+          .substring(0, candidates.get(i).length() - 6);
+    }
+    
+//    ArrayList<String> ans = new ArrayList<String>();
+//    for (int i = 0; i < resources.length; i++) {
+//      ans.add(resources[i]);
+//    }
+    
+    return resources;
   }
   protected JFrame frmImportSuggest;
   private TreeSet<String> ignoredImportSuggestions;
