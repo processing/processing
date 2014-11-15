@@ -240,7 +240,7 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public PSurface createSurface() {
     //return (surface = new PSurfaceAWT());
-    return new PSurfaceAWT();
+    return new PSurfaceAWT(this);
   }
 
 

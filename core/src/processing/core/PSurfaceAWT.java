@@ -53,7 +53,10 @@ public class PSurfaceAWT implements PSurface {
   Canvas canvas;
 
   PApplet sketch;
-  PGraphics pg;
+  PGraphics graphics;
+
+  int sketchWidth;
+  int sketchHeight;
 
   Thread thread;
   boolean paused;
@@ -64,7 +67,9 @@ public class PSurfaceAWT implements PSurface {
   protected long frameRatePeriod = 1000000000L / 60L;
 
 
-  public PSurfaceAWT() {
+  public PSurfaceAWT(PGraphics graphics) {
+    this.graphics = graphics;
+
     if (checkRetina()) {
       // The active-mode rendering seems to be 2x slower, so disable it
       // with retina. On a non-retina machine, however, useActive seems
@@ -149,7 +154,7 @@ public class PSurfaceAWT implements PSurface {
         System.out.println("validate() return " + oldSize);
         return;
       } else {
-        System.out.println("validate() render old=" + oldSize + " -> new=" + newSize);
+//        System.out.println("validate() render old=" + oldSize + " -> new=" + newSize);
         oldSize = newSize;
         render();
       }
@@ -158,14 +163,14 @@ public class PSurfaceAWT implements PSurface {
 
     @Override
     public void update(Graphics g) {
-      System.out.println("updating");
+//      System.out.println("updating");
       paint(g);
     }
 
 
     @Override
     public void paint(Graphics g) {
-      System.out.println("painting");
+//      System.out.println("painting");
 //    validate();
       render();
     }
@@ -173,7 +178,7 @@ public class PSurfaceAWT implements PSurface {
 
     @Override
     public void addNotify() {
-      System.out.println("adding notify");
+//      System.out.println("adding notify");
       super.addNotify();
       // prior to Java 7 on OS X, this no longer works [121222]
 //    createBufferStrategy(2);
@@ -275,7 +280,9 @@ public class PSurfaceAWT implements PSurface {
         // are consistent in case the underlying surface was recreated
         do {
           Graphics draw = strategy.getDrawGraphics();
-          draw.drawImage(pg.image, 0, 0, sketch.width, sketch.height, null);
+          //draw.drawImage(pg.image, 0, 0, sketch.width, sketch.height, null);
+          // draw to width/height, since this may be a 2x image
+          draw.drawImage(graphics.image, 0, 0, sketchWidth, sketchHeight, null);
           draw.dispose();
 
           // Repeat the rendering if the drawing buffer contents
@@ -390,21 +397,23 @@ public class PSurfaceAWT implements PSurface {
 
   public Frame initFrame(PApplet sketch, Color backgroundColor,
                          int deviceIndex, boolean fullScreen, boolean spanDisplays) {
+    this.sketch = sketch;
+
     GraphicsEnvironment environment =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
-    //GraphicsDevice displayDevice = null;
 
-    GraphicsDevice[] devices = environment.getScreenDevices();
-    if ((deviceIndex >= 0) && (deviceIndex < devices.length)) {
-      displayDevice = devices[deviceIndex];
-    } else {
-      System.err.format("Display %d does not exist, " +
-                         "using the default display instead.", deviceIndex);
-      for (int i = 0; i < devices.length; i++) {
-        System.err.format("Display %d is %s\n", i, devices[i]);
+    if (deviceIndex >= 0) {  // if -1, use the default device
+      GraphicsDevice[] devices = environment.getScreenDevices();
+      if (deviceIndex < devices.length) {
+        displayDevice = devices[deviceIndex];
+      } else {
+        System.err.format("Display %d does not exist, " +
+          "using the default display instead.", deviceIndex);
+        for (int i = 0; i < devices.length; i++) {
+          System.err.format("Display %d is %s\n", i, devices[i]);
+        }
       }
     }
-
     if (displayDevice == null) {
       displayDevice = environment.getDefaultScreenDevice();
     }
@@ -422,8 +431,8 @@ public class PSurfaceAWT implements PSurface {
     sketch.displayWidth = screenRect.width;
     sketch.displayHeight = screenRect.height;
 
-    int sketchWidth = sketch.sketchWidth();
-    int sketchHeight = sketch.sketchHeight();
+    sketchWidth = sketch.sketchWidth();
+    sketchHeight = sketch.sketchHeight();
 
     // Sketch has already requested to be the same as the screen's
     // width and height, so let's roll with full screen mode.
@@ -464,6 +473,9 @@ public class PSurfaceAWT implements PSurface {
     // and launches the Thread that will kick off setup().
     // http://dev.processing.org/bugs/show_bug.cgi?id=891
     // http://dev.processing.org/bugs/show_bug.cgi?id=908
+
+    frame.add(canvas);
+    setSize(sketchWidth, sketchHeight);
 
     if (fullScreen) {
       // Called here because the graphics device is needed before we can
@@ -533,9 +545,9 @@ public class PSurfaceAWT implements PSurface {
       // onto things once the frame is realized on the screen. Awzm.
       if (PApplet.platform == PConstants.LINUX) {
         Insets insets = frame.getInsets();
-        frame.setSize(Math.max(sketch.width, MIN_WINDOW_WIDTH) +
+        frame.setSize(Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
                       insets.left + insets.right,
-                      Math.max(sketch.height, MIN_WINDOW_HEIGHT) +
+                      Math.max(sketchHeight, MIN_WINDOW_HEIGHT) +
                       insets.top + insets.bottom);
       }
     }
@@ -546,9 +558,9 @@ public class PSurfaceAWT implements PSurface {
   public void placePresent(Color stopColor) {
     // After the pack(), the screen bounds are gonna be 0s
     frame.setBounds(screenRect);
-    canvas.setBounds((screenRect.width - sketch.width) / 2,
-                     (screenRect.height - sketch.height) / 2,
-                     sketch.width, sketch.height);
+    canvas.setBounds((screenRect.width - sketchWidth) / 2,
+                     (screenRect.height - sketchHeight) / 2,
+                     sketchWidth, sketchHeight);
 
 //    if (PApplet.platform == PConstants.MACOSX) {
 //      macosxFullScreenEnable(frame);
@@ -577,10 +589,10 @@ public class PSurfaceAWT implements PSurface {
 
 
   public void placeWindow(int[] location) {
-    calcFrameSize();
+    calcFrameSize(sketchWidth, sketchHeight);
 
-    int contentW = Math.max(sketch.width, MIN_WINDOW_WIDTH);
-    int contentH = Math.max(sketch.height, MIN_WINDOW_HEIGHT);
+    int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
+    int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
 
     if (location != null) {
       // a specific location was received from the Runner
@@ -590,8 +602,8 @@ public class PSurfaceAWT implements PSurface {
     } else {  // just center on screen
       // Can't use frame.setLocationRelativeTo(null) because it sends the
       // frame to the main display, which undermines the --display setting.
-      frame.setLocation(screenRect.x + (screenRect.width - sketch.width) / 2,
-                        screenRect.y + (screenRect.height - sketch.height) / 2);
+      frame.setLocation(screenRect.x + (screenRect.width - sketchWidth) / 2,
+                        screenRect.y + (screenRect.height - sketchHeight) / 2);
     }
     Point frameLoc = frame.getLocation();
     if (frameLoc.y < 0) {
@@ -604,9 +616,9 @@ public class PSurfaceAWT implements PSurface {
 //      ((JFrame) frame).getContentPane().setBackground(backgroundColor);
 //    }
 
-    canvas.setBounds((contentW - sketch.width)/2,
-                     (contentH - sketch.height)/2,
-                     sketch.width, sketch.height);
+    canvas.setBounds((contentW - sketchWidth)/2,
+                     (contentH - sketchHeight)/2,
+                     sketchWidth, sketchHeight);
 
     frame.addWindowListener(new WindowAdapter() {
       @Override
@@ -625,11 +637,11 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
-  private Dimension calcFrameSize() {
+  private Dimension calcFrameSize(int sketchWidth, int sketchHeight) {
     Insets insets = frame.getInsets();
-    int windowW = Math.max(sketch.width, MIN_WINDOW_WIDTH) +
+    int windowW = Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
       insets.left + insets.right;
-    int windowH = Math.max(sketch.height, MIN_WINDOW_HEIGHT) +
+    int windowH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT) +
       insets.top + insets.bottom;
     frame.setSize(windowW, windowH);
     return new Dimension(windowW, windowH);
@@ -639,16 +651,16 @@ public class PSurfaceAWT implements PSurface {
   private void setFrameCentered() {
     // Can't use frame.setLocationRelativeTo(null) because it sends the
     // frame to the main display, which undermines the --display setting.
-    frame.setLocation(screenRect.x + (screenRect.width - sketch.width) / 2,
-                      screenRect.y + (screenRect.height - sketch.height) / 2);
+    frame.setLocation(screenRect.x + (screenRect.width - sketchWidth) / 2,
+                      screenRect.y + (screenRect.height - sketchHeight) / 2);
   }
 
 
   public void placeWindow(int[] location, int[] editorLocation) {
-    Dimension window = calcFrameSize();
+    Dimension window = calcFrameSize(sketchWidth, sketchHeight);
 
-    int contentW = Math.max(sketch.width, MIN_WINDOW_WIDTH);
-    int contentH = Math.max(sketch.height, MIN_WINDOW_HEIGHT);
+    int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
+    int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
 
     if (location != null) {
       // a specific location was received from the Runner
@@ -696,9 +708,9 @@ public class PSurfaceAWT implements PSurface {
 //      ((JFrame) frame).getContentPane().setBackground(backgroundColor);
 //    }
 
-    canvas.setBounds((contentW - sketch.width)/2,
-                     (contentH - sketch.height)/2,
-                     sketch.width, sketch.height);
+    canvas.setBounds((contentW - sketchWidth)/2,
+                     (contentH - sketchHeight)/2,
+                     sketchWidth, sketchHeight);
 
     // handle frame resizing events
     setupFrameResizeListener();
@@ -773,9 +785,12 @@ public class PSurfaceAWT implements PSurface {
 
     // Formerly this was broken into separate versions based on offscreen or
     // not, but we may as well create a compatible image; it won't hurt, right?
-    pg.image = gc.createCompatibleImage(wide, high);
+    graphics.image = gc.createCompatibleImage(wide, high);
+    System.out.println(graphics.image);
 
-    throw new RuntimeException("implement me, see readme.md");
+    //throw new RuntimeException("implement me, see readme.md");
+    sketchWidth = sketch.width = wide;
+    sketchHeight = sketch.height = high;
   }
 
 
@@ -1315,7 +1330,7 @@ public class PSurfaceAWT implements PSurface {
       final int NO_DELAYS_PER_YIELD = 15;
 
       // un-pause the sketch and get rolling
-      start();
+      sketch.start();
 
       while ((Thread.currentThread() == thread) && !sketch.finished) {
         checkPause();
@@ -1324,9 +1339,10 @@ public class PSurfaceAWT implements PSurface {
         // otherwise it may attempt a resize mid-render.
 //        if (g != null) {
         Dimension currentSize = canvas.getSize();
-        if (currentSize.width != pg.width || currentSize.height != pg.height) {
+        if (currentSize.width != sketchWidth || currentSize.height != sketchHeight) {
           //resizeRenderer(currentSize.width, currentSize.height);
-          System.err.format("need to resize from %s to %d, %d", currentSize, pg.width, pg.height);
+          //System.err.format("need to resize from %s to %d, %d", currentSize, graphics.width, graphics.height);
+          System.err.format("need to resize from %s to %d, %d", currentSize, sketchWidth, sketchHeight);
         }
 //        }
 

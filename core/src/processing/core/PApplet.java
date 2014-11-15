@@ -9238,12 +9238,13 @@ public class PApplet implements PConstants {
     int[] editorLocation = null;
 
     String name = null;
-    boolean present = false;
     Color backgroundColor = null;
     Color stopColor = Color.GRAY;
-    int displayIndex = -1;
-    boolean spanDisplays = false;
     boolean hideStop = false;
+
+    int displayIndex = -1;  // -1 means use default, b/c numbered from 0
+    boolean fullScreen = false;
+    boolean spanDisplays = false;
 
     String param = null, value = null;
     String folder = calcSketchPath();
@@ -9282,7 +9283,7 @@ public class PApplet implements PConstants {
 
       } else {
         if (args[argIndex].equals(ARGS_FULL_SCREEN)) {
-          present = true;
+          fullScreen = true;
 
         } else if (args[argIndex].equals(ARGS_HIDE_STOP)) {
           hideStop = true;
@@ -9342,7 +9343,7 @@ public class PApplet implements PConstants {
     // If the applet doesn't call for full screen, but the command line does,
     // enable it. Conversely, if the command line does not, don't disable it.
     // Query the applet to see if it wants to be full screen all the time.
-    present |= applet.sketchFullScreen();
+    fullScreen |= applet.sketchFullScreen();
     // pass everything after the class name in as args to the sketch itself
     // (fixed for 2.0a5, this was just subsetting by 1, which didn't skip opts)
     applet.args = PApplet.subset(args, argIndex + 1);
@@ -9355,7 +9356,7 @@ public class PApplet implements PConstants {
 //      surface.initFrame(applet, backgroundColor,
 //                        displayIndex, present, spanDisplays);
     PSurface surface =
-      applet.initSurface(backgroundColor, displayIndex, present, spanDisplays);
+      applet.initSurface(backgroundColor, displayIndex, fullScreen, spanDisplays);
 
 //    applet.frame = frame;
 //    frame.setTitle(name);
@@ -9380,7 +9381,7 @@ public class PApplet implements PConstants {
 //      }
 //    }
 
-    if (present) {
+    if (fullScreen) {
       //surface.placeFullScreen(hideStop);
       if (hideStop) {
         stopColor = null;  // they'll get the hint
