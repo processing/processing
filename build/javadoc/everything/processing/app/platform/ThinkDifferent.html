@@ -61,13 +61,13 @@
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_summary">Method</a></li>
+<li><a href="#methods_inherited_from_class_Object">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_detail">Method</a></li>
+<li>Method</li>
 </ul>
 </div>
 <a name="skip-navbar_top">
@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
 <li>
 <ul class="inheritance">
 <li>ThinkDifferent</li>
@@ -91,26 +91,19 @@
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>All Implemented Interfaces:</dt>
-<dd>ApplicationListener, <a href="http://docs.oracle.com/javase/7/docs/api/java/util/EventListener.html?is-external=true" title="class or interface in java.util">EventListener</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="strong">ThinkDifferent</span>
-extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
-implements ApplicationListener</pre>
+extends Object</pre>
 <div class="block">Deal with issues related to thinking differently. This handles the basic
  Mac OS X menu commands (and apple events) for open, about, prefs, etc.
-
- Based on OSXAdapter.java from Apple DTS.
 
  As of 0140, this code need not be built on platforms other than OS X,
  because of the new platform structure which isolates through reflection.
 
- This suppresses deprecation warnings because to use the new code, all users
- would be forced to use Java Update 3 on OS X 10.6, and Java Update 8 on
- OS X 10.5, which doesn't seem likely at the moment.</div>
+ Rewritten for 0232 to remove deprecation issues, per the message
+ <a href="http://lists.apple.com/archives/java-dev/2012/Jan/msg00101.html">here</a>.
+ (We're able to do this now because we're dropping older Java versions.)</div>
 </li>
 </ul>
 </div>
@@ -129,7 +122,7 @@ implements ApplicationListener</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../processing/app/platform/ThinkDifferent.html#ThinkDifferent(processing.app.Base)">ThinkDifferent</a></strong>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../processing/app/platform/ThinkDifferent.html#ThinkDifferent()">ThinkDifferent</a></strong>()</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -140,47 +133,12 @@ implements ApplicationListener</pre>
 <!--   -->
 </a>
 <h3>Method Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/platform/ThinkDifferent.html#handleAbout(com.apple.eawt.ApplicationEvent)">handleAbout</a></strong>(ApplicationEvent&nbsp;ae)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/platform/ThinkDifferent.html#handleOpenApplication(com.apple.eawt.ApplicationEvent)">handleOpenApplication</a></strong>(ApplicationEvent&nbsp;ae)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/platform/ThinkDifferent.html#handleOpenFile(com.apple.eawt.ApplicationEvent)">handleOpenFile</a></strong>(ApplicationEvent&nbsp;ae)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/platform/ThinkDifferent.html#handlePreferences(com.apple.eawt.ApplicationEvent)">handlePreferences</a></strong>(ApplicationEvent&nbsp;ae)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/platform/ThinkDifferent.html#handlePrintFile(com.apple.eawt.ApplicationEvent)">handlePrintFile</a></strong>(ApplicationEvent&nbsp;ae)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/platform/ThinkDifferent.html#handleQuit(com.apple.eawt.ApplicationEvent)">handleQuit</a></strong>(ApplicationEvent&nbsp;ae)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/platform/ThinkDifferent.html#handleReOpenApplication(com.apple.eawt.ApplicationEvent)">handleReOpenApplication</a></strong>(ApplicationEvent&nbsp;arg0)</code>&nbsp;</td>
-</tr>
-</table>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -196,112 +154,13 @@ implements ApplicationListener</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ThinkDifferent(processing.app.Base)">
+<a name="ThinkDifferent()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ThinkDifferent</h4>
-<pre>public&nbsp;ThinkDifferent(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</pre>
-</li>
-</ul>
-</li>
-</ul>
-<!-- ============ METHOD DETAIL ========== -->
-<ul class="blockList">
-<li class="blockList"><a name="method_detail">
-<!--   -->
-</a>
-<h3>Method Detail</h3>
-<a name="handleAbout(com.apple.eawt.ApplicationEvent)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>handleAbout</h4>
-<pre>public&nbsp;void&nbsp;handleAbout(ApplicationEvent&nbsp;ae)</pre>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>handleAbout</code>&nbsp;in interface&nbsp;<code>ApplicationListener</code></dd>
-</dl>
-</li>
-</ul>
-<a name="handlePreferences(com.apple.eawt.ApplicationEvent)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>handlePreferences</h4>
-<pre>public&nbsp;void&nbsp;handlePreferences(ApplicationEvent&nbsp;ae)</pre>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>handlePreferences</code>&nbsp;in interface&nbsp;<code>ApplicationListener</code></dd>
-</dl>
-</li>
-</ul>
-<a name="handleOpenApplication(com.apple.eawt.ApplicationEvent)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>handleOpenApplication</h4>
-<pre>public&nbsp;void&nbsp;handleOpenApplication(ApplicationEvent&nbsp;ae)</pre>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>handleOpenApplication</code>&nbsp;in interface&nbsp;<code>ApplicationListener</code></dd>
-</dl>
-</li>
-</ul>
-<a name="handleOpenFile(com.apple.eawt.ApplicationEvent)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>handleOpenFile</h4>
-<pre>public&nbsp;void&nbsp;handleOpenFile(ApplicationEvent&nbsp;ae)</pre>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>handleOpenFile</code>&nbsp;in interface&nbsp;<code>ApplicationListener</code></dd>
-</dl>
-</li>
-</ul>
-<a name="handlePrintFile(com.apple.eawt.ApplicationEvent)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>handlePrintFile</h4>
-<pre>public&nbsp;void&nbsp;handlePrintFile(ApplicationEvent&nbsp;ae)</pre>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>handlePrintFile</code>&nbsp;in interface&nbsp;<code>ApplicationListener</code></dd>
-</dl>
-</li>
-</ul>
-<a name="handleQuit(com.apple.eawt.ApplicationEvent)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>handleQuit</h4>
-<pre>public&nbsp;void&nbsp;handleQuit(ApplicationEvent&nbsp;ae)</pre>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>handleQuit</code>&nbsp;in interface&nbsp;<code>ApplicationListener</code></dd>
-</dl>
-</li>
-</ul>
-<a name="handleReOpenApplication(com.apple.eawt.ApplicationEvent)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>handleReOpenApplication</h4>
-<pre>public&nbsp;void&nbsp;handleReOpenApplication(ApplicationEvent&nbsp;arg0)</pre>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>handleReOpenApplication</code>&nbsp;in interface&nbsp;<code>ApplicationListener</code></dd>
-</dl>
+<pre>public&nbsp;ThinkDifferent()</pre>
 </li>
 </ul>
 </li>
@@ -357,13 +216,13 @@ implements ApplicationListener</pre>
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_summary">Method</a></li>
+<li><a href="#methods_inherited_from_class_Object">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_detail">Method</a></li>
+<li>Method</li>
 </ul>
 </div>
 <a name="skip-navbar_bottom">

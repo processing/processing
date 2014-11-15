@@ -81,7 +81,13 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
+<li>
+<ul class="inheritance">
+<li>BaseAST</li>
+<li>
+<ul class="inheritance">
+<li>CommonAST</li>
 <li>
 <ul class="inheritance">
 <li>CommonASTWithHiddenTokens</li>
@@ -93,15 +99,24 @@
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+</li>
+</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>AST, Serializable</dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="strong">ExtendedCommonASTWithHiddenTokens</span>
 extends CommonASTWithHiddenTokens</pre>
 <div class="block">A CommonAST whose initialization copies hidden token
   information from the Token used to create a node.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../serialized-form.html#antlr.ExtendedCommonASTWithHiddenTokens">Serialized Form</a></dd></dl>
 </li>
 </ul>
 </div>
@@ -123,7 +138,7 @@ extends CommonASTWithHiddenTokens</pre>
 <td class="colOne"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#ExtendedCommonASTWithHiddenTokens()">ExtendedCommonASTWithHiddenTokens</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#ExtendedCommonASTWithHiddenTokens(Token)">ExtendedCommonASTWithHiddenTokens</a></strong>(Token&nbsp;tok)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#ExtendedCommonASTWithHiddenTokens(antlr.Token)">ExtendedCommonASTWithHiddenTokens</a></strong>(Token&nbsp;tok)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -141,40 +156,61 @@ extends CommonASTWithHiddenTokens</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colFirst"><code>String</code></td>
 <td class="colLast"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#getHiddenAfterString()">getHiddenAfterString</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colFirst"><code>String</code></td>
 <td class="colLast"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#getHiddenBeforeString()">getHiddenBeforeString</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#initialize(AST)">initialize</a></strong>(AST&nbsp;ast)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#initialize(antlr.collections.AST)">initialize</a></strong>(AST&nbsp;ast)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#xmlSerialize(java.io.Writer)">xmlSerialize</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/Writer.html?is-external=true" title="class or interface in java.io">Writer</a>&nbsp;out)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#xmlSerialize(java.io.Writer)">xmlSerialize</a></strong>(Writer&nbsp;out)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#xmlSerializeNode(java.io.Writer)">xmlSerializeNode</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/Writer.html?is-external=true" title="class or interface in java.io">Writer</a>&nbsp;out)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#xmlSerializeNode(java.io.Writer)">xmlSerializeNode</a></strong>(Writer&nbsp;out)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#xmlSerializeRootClose(java.io.Writer)">xmlSerializeRootClose</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/Writer.html?is-external=true" title="class or interface in java.io">Writer</a>&nbsp;out)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#xmlSerializeRootClose(java.io.Writer)">xmlSerializeRootClose</a></strong>(Writer&nbsp;out)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#xmlSerializeRootOpen(java.io.Writer)">xmlSerializeRootOpen</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/Writer.html?is-external=true" title="class or interface in java.io">Writer</a>&nbsp;out)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../antlr/ExtendedCommonASTWithHiddenTokens.html#xmlSerializeRootOpen(java.io.Writer)">xmlSerializeRootOpen</a></strong>(Writer&nbsp;out)</code>&nbsp;</td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_CommonASTWithHiddenTokens">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;CommonASTWithHiddenTokens</h3>
+<code>getHiddenAfter, getHiddenBefore, initialize</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_CommonAST">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;CommonAST</h3>
+<code>getText, getType, initialize, setText, setType</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_BaseAST">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;BaseAST</h3>
+<code>addChild, decode, encode, equals, equalsList, equalsListPartial, equalsTree, equalsTreePartial, findAll, findAllPartial, getColumn, getFirstChild, getLine, getNextSibling, getNumberOfChildren, getTokenNames, removeChildren, setFirstChild, setNextSibling, setVerboseStringConversion, toString, toStringList, toStringTree</code></li>
+</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -199,7 +235,7 @@ extends CommonASTWithHiddenTokens</pre>
 <pre>public&nbsp;ExtendedCommonASTWithHiddenTokens()</pre>
 </li>
 </ul>
-<a name="ExtendedCommonASTWithHiddenTokens(Token)">
+<a name="ExtendedCommonASTWithHiddenTokens(antlr.Token)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -216,13 +252,19 @@ extends CommonASTWithHiddenTokens</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="initialize(AST)">
+<a name="initialize(antlr.collections.AST)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>initialize</h4>
 <pre>public&nbsp;void&nbsp;initialize(AST&nbsp;ast)</pre>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code>initialize</code>&nbsp;in interface&nbsp;<code>AST</code></dd>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>initialize</code>&nbsp;in class&nbsp;<code>CommonASTWithHiddenTokens</code></dd>
+</dl>
 </li>
 </ul>
 <a name="getHiddenAfterString()">
@@ -231,7 +273,7 @@ extends CommonASTWithHiddenTokens</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getHiddenAfterString</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getHiddenAfterString()</pre>
+<pre>public&nbsp;String&nbsp;getHiddenAfterString()</pre>
 </li>
 </ul>
 <a name="getHiddenBeforeString()">
@@ -240,7 +282,7 @@ extends CommonASTWithHiddenTokens</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getHiddenBeforeString</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getHiddenBeforeString()</pre>
+<pre>public&nbsp;String&nbsp;getHiddenBeforeString()</pre>
 </li>
 </ul>
 <a name="xmlSerializeNode(java.io.Writer)">
@@ -249,10 +291,13 @@ extends CommonASTWithHiddenTokens</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>xmlSerializeNode</h4>
-<pre>public&nbsp;void&nbsp;xmlSerializeNode(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/Writer.html?is-external=true" title="class or interface in java.io">Writer</a>&nbsp;out)
-                      throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
+<pre>public&nbsp;void&nbsp;xmlSerializeNode(Writer&nbsp;out)
+                      throws IOException</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>xmlSerializeNode</code>&nbsp;in class&nbsp;<code>BaseAST</code></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>IOException</code></dd></dl>
 </li>
 </ul>
 <a name="xmlSerializeRootOpen(java.io.Writer)">
@@ -261,10 +306,13 @@ extends CommonASTWithHiddenTokens</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>xmlSerializeRootOpen</h4>
-<pre>public&nbsp;void&nbsp;xmlSerializeRootOpen(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/Writer.html?is-external=true" title="class or interface in java.io">Writer</a>&nbsp;out)
-                          throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
+<pre>public&nbsp;void&nbsp;xmlSerializeRootOpen(Writer&nbsp;out)
+                          throws IOException</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>xmlSerializeRootOpen</code>&nbsp;in class&nbsp;<code>BaseAST</code></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>IOException</code></dd></dl>
 </li>
 </ul>
 <a name="xmlSerializeRootClose(java.io.Writer)">
@@ -273,10 +321,13 @@ extends CommonASTWithHiddenTokens</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>xmlSerializeRootClose</h4>
-<pre>public&nbsp;void&nbsp;xmlSerializeRootClose(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/Writer.html?is-external=true" title="class or interface in java.io">Writer</a>&nbsp;out)
-                           throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
+<pre>public&nbsp;void&nbsp;xmlSerializeRootClose(Writer&nbsp;out)
+                           throws IOException</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>xmlSerializeRootClose</code>&nbsp;in class&nbsp;<code>BaseAST</code></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>IOException</code></dd></dl>
 </li>
 </ul>
 <a name="xmlSerialize(java.io.Writer)">
@@ -285,10 +336,13 @@ extends CommonASTWithHiddenTokens</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>xmlSerialize</h4>
-<pre>public&nbsp;void&nbsp;xmlSerialize(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/Writer.html?is-external=true" title="class or interface in java.io">Writer</a>&nbsp;out)
-                  throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
+<pre>public&nbsp;void&nbsp;xmlSerialize(Writer&nbsp;out)
+                  throws IOException</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>xmlSerialize</code>&nbsp;in class&nbsp;<code>BaseAST</code></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>IOException</code></dd></dl>
 </li>
 </ul>
 </li>

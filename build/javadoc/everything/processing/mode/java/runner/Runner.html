@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
 <li>
 <ul class="inheritance">
 <li>Runner</li>
@@ -98,7 +98,7 @@
 <hr>
 <br>
 <pre>public class <span class="strong">Runner</span>
-extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
+extends Object
 implements <a href="../../../../processing/mode/java/runner/MessageConsumer.html" title="interface in processing.mode.java.runner">MessageConsumer</a></pre>
 <div class="block">Runs a compiled sketch. As of release 0136, all sketches are run externally
  to the environment so that a debugging interface can be used. This opens up
@@ -125,7 +125,7 @@ implements <a href="../../../../processing/mode/java/runner/MessageConsumer.html
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../processing/mode/java/runner/Runner.html#Runner(processing.mode.java.JavaBuild, processing.app.RunnerListener)">Runner</a></strong>(<a href="../../../../processing/mode/java/JavaBuild.html" title="class in processing.mode.java">JavaBuild</a>&nbsp;build,
+<td class="colOne"><code><strong><a href="../../../../processing/mode/java/runner/Runner.html#Runner(processing.mode.java.JavaBuild,%20processing.app.RunnerListener)">Runner</a></strong>(<a href="../../../../processing/mode/java/JavaBuild.html" title="class in processing.mode.java">JavaBuild</a>&nbsp;build,
       <a href="../../../../processing/app/RunnerListener.html" title="interface in processing.app">RunnerListener</a>&nbsp;listener)</code>&nbsp;</td>
 </tr>
 </table>
@@ -153,9 +153,10 @@ implements <a href="../../../../processing/mode/java/runner/MessageConsumer.html
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/mode/java/runner/Runner.html#handleCommonErrors(java.lang.String, java.lang.String, processing.app.RunnerListener)">handleCommonErrors</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;exceptionClass,
-                  <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message,
-                  <a href="../../../../processing/app/RunnerListener.html" title="interface in processing.app">RunnerListener</a>&nbsp;listener)</code>
+<td class="colLast"><code><strong><a href="../../../../processing/mode/java/runner/Runner.html#handleCommonErrors(java.lang.String,%20java.lang.String,%20processing.app.RunnerListener,%20java.io.PrintStream)">handleCommonErrors</a></strong>(String&nbsp;exceptionClass,
+                  String&nbsp;message,
+                  <a href="../../../../processing/app/RunnerListener.html" title="interface in processing.app">RunnerListener</a>&nbsp;listener,
+                  PrintStream&nbsp;err)</code>
 <div class="block">Provide more useful explanations of common error messages, perhaps with 
  a short message in the status area, and (if necessary) a longer message 
  in the console.</div>
@@ -171,15 +172,15 @@ implements <a href="../../../../processing/mode/java/runner/MessageConsumer.html
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/mode/java/runner/Runner.html#message(java.lang.String)">message</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../processing/mode/java/runner/Runner.html#message(java.lang.String)">message</a></strong>(String&nbsp;s)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -243,15 +244,16 @@ implements <a href="../../../../processing/mode/java/runner/MessageConsumer.html
 <pre>public&nbsp;void&nbsp;exceptionEvent(ExceptionEvent&nbsp;event)</pre>
 </li>
 </ul>
-<a name="handleCommonErrors(java.lang.String, java.lang.String, processing.app.RunnerListener)">
+<a name="handleCommonErrors(java.lang.String, java.lang.String, processing.app.RunnerListener, java.io.PrintStream)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>handleCommonErrors</h4>
-<pre>public static&nbsp;boolean&nbsp;handleCommonErrors(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;exceptionClass,
-                         <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;message,
-                         <a href="../../../../processing/app/RunnerListener.html" title="interface in processing.app">RunnerListener</a>&nbsp;listener)</pre>
+<pre>public static&nbsp;boolean&nbsp;handleCommonErrors(String&nbsp;exceptionClass,
+                         String&nbsp;message,
+                         <a href="../../../../processing/app/RunnerListener.html" title="interface in processing.app">RunnerListener</a>&nbsp;listener,
+                         PrintStream&nbsp;err)</pre>
 <div class="block">Provide more useful explanations of common error messages, perhaps with 
  a short message in the status area, and (if necessary) a longer message 
  in the console.</div>
@@ -274,7 +276,7 @@ implements <a href="../../../../processing/mode/java/runner/MessageConsumer.html
 <ul class="blockListLast">
 <li class="blockList">
 <h4>message</h4>
-<pre>public&nbsp;void&nbsp;message(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;s)</pre>
+<pre>public&nbsp;void&nbsp;message(String&nbsp;s)</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../processing/mode/java/runner/MessageConsumer.html#message(java.lang.String)">message</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../processing/mode/java/runner/MessageConsumer.html" title="interface in processing.mode.java.runner">MessageConsumer</a></code></dd>

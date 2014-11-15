@@ -70,7 +70,7 @@
 <li class="blockList"><a name="processing.core.PApplet">
 <!--   -->
 </a>
-<h3>Class <a href="processing/core/PApplet.html" title="class in processing.core">processing.core.PApplet</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/java/applet/Applet.html?is-external=true" title="class or interface in java.applet">Applet</a> implements Serializable</h3>
+<h3>Class <a href="processing/core/PApplet.html" title="class in processing.core">processing.core.PApplet</a> extends java.applet.Applet implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -84,7 +84,7 @@
 </li>
 <li class="blockList">
 <h4>frame</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Frame.html?is-external=true" title="class or interface in java.awt">Frame</a> frame</pre>
+<pre>java.awt.Frame frame</pre>
 <div class="block">The frame containing this applet (if any)</div>
 </li>
 <li class="blockList">
@@ -97,7 +97,11 @@
 </li>
 <li class="blockList">
 <h4>canvas</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Canvas.html?is-external=true" title="class or interface in java.awt">Canvas</a> canvas</pre>
+<pre>java.awt.Canvas canvas</pre>
+</li>
+<li class="blockList">
+<h4>revalidateMethod</h4>
+<pre>java.lang.reflect.Method revalidateMethod</pre>
 </li>
 <li class="blockList">
 <h4>displayWidth</h4>
@@ -140,14 +144,14 @@
 </li>
 <li class="blockList">
 <h4>args</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[] args</pre>
+<pre>java.lang.String[] args</pre>
 <div class="block">Command line options passed in from main().
  <p>
  This does not include the arguments passed in to PApplet itself.</div>
 </li>
 <li class="blockList">
 <h4>sketchPath</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> sketchPath</pre>
+<pre>java.lang.String sketchPath</pre>
 <div class="block">Path to sketch folder</div>
 </li>
 <li class="blockList">
@@ -158,7 +162,7 @@
 </li>
 <li class="blockList">
 <h4>currentSize</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Dimension.html?is-external=true" title="class or interface in java.awt">Dimension</a> currentSize</pre>
+<pre>java.awt.Dimension currentSize</pre>
 <div class="block">Storage for the current renderer size to avoid re-allocation.</div>
 </li>
 <li class="blockList">
@@ -184,8 +188,8 @@
  ( end auto-generated )</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#loadPixels()"><code>PApplet.loadPixels()</code></a>, 
 <a href="processing/core/PApplet.html#updatePixels()"><code>PApplet.updatePixels()</code></a>, 
-<a href="processing/core/PApplet.html#get(int, int, int, int)"><code>PApplet.get(int, int, int, int)</code></a>, 
-<a href="processing/core/PApplet.html#set(int, int, int)"><code>PApplet.set(int, int, int)</code></a>, 
+<a href="processing/core/PApplet.html#get(int,%20int,%20int,%20int)"><code>PApplet.get(int, int, int, int)</code></a>, 
+<a href="processing/core/PApplet.html#set(int,%20int,%20int)"><code>PApplet.set(int, int, int)</code></a>, 
 <a href="processing/core/PImage.html" title="class in processing.core"><code>PImage</code></a></dd></dl>
 </li>
 <li class="blockList">
@@ -200,6 +204,8 @@
  <b>size()</b> is called.
 
  ( end auto-generated )</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#height"><code>PApplet.height</code></a>, 
+<a href="processing/core/PApplet.html#size(int,%20int)"><code>PApplet.size(int, int)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>height</h4>
@@ -213,6 +219,8 @@
  <b>size()</b> is called.
 
  ( end auto-generated )</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#width"><code>PApplet.width</code></a>, 
+<a href="processing/core/PApplet.html#size(int,%20int)"><code>PApplet.size(int, int)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>mouseX</h4>
@@ -224,11 +232,16 @@
 
  ( end auto-generated )</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a>, 
+<a href="processing/core/PApplet.html#pmouseX"><code>PApplet.pmouseX</code></a>, 
+<a href="processing/core/PApplet.html#pmouseY"><code>PApplet.pmouseY</code></a>, 
 <a href="processing/core/PApplet.html#mousePressed"><code>PApplet.mousePressed</code></a>, 
 <a href="processing/core/PApplet.html#mousePressed()"><code>PApplet.mousePressed()</code></a>, 
 <a href="processing/core/PApplet.html#mouseReleased()"><code>PApplet.mouseReleased()</code></a>, 
+<a href="processing/core/PApplet.html#mouseClicked()"><code>PApplet.mouseClicked()</code></a>, 
 <a href="processing/core/PApplet.html#mouseMoved()"><code>PApplet.mouseMoved()</code></a>, 
-<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a></dd></dl>
+<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a>, 
+<a href="processing/core/PApplet.html#mouseButton"><code>PApplet.mouseButton</code></a>, 
+<a href="processing/core/PApplet.html#mouseWheel(processing.event.MouseEvent)"><code>PApplet.mouseWheel(MouseEvent)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>mouseY</h4>
@@ -240,11 +253,16 @@
 
  ( end auto-generated )</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
+<a href="processing/core/PApplet.html#pmouseX"><code>PApplet.pmouseX</code></a>, 
+<a href="processing/core/PApplet.html#pmouseY"><code>PApplet.pmouseY</code></a>, 
 <a href="processing/core/PApplet.html#mousePressed"><code>PApplet.mousePressed</code></a>, 
 <a href="processing/core/PApplet.html#mousePressed()"><code>PApplet.mousePressed()</code></a>, 
 <a href="processing/core/PApplet.html#mouseReleased()"><code>PApplet.mouseReleased()</code></a>, 
+<a href="processing/core/PApplet.html#mouseClicked()"><code>PApplet.mouseClicked()</code></a>, 
 <a href="processing/core/PApplet.html#mouseMoved()"><code>PApplet.mouseMoved()</code></a>, 
-<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a></dd></dl>
+<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a>, 
+<a href="processing/core/PApplet.html#mouseButton"><code>PApplet.mouseButton</code></a>, 
+<a href="processing/core/PApplet.html#mouseWheel(processing.event.MouseEvent)"><code>PApplet.mouseWheel(MouseEvent)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>pmouseX</h4>
@@ -271,9 +289,17 @@
  functions if you want continuous response.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#pmouseY"><code>PApplet.pmouseY</code></a>, 
-<a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
-<a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a></dd></dl>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
+<a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a>, 
+<a href="processing/core/PApplet.html#pmouseY"><code>PApplet.pmouseY</code></a>, 
+<a href="processing/core/PApplet.html#mousePressed"><code>PApplet.mousePressed</code></a>, 
+<a href="processing/core/PApplet.html#mousePressed()"><code>PApplet.mousePressed()</code></a>, 
+<a href="processing/core/PApplet.html#mouseReleased()"><code>PApplet.mouseReleased()</code></a>, 
+<a href="processing/core/PApplet.html#mouseClicked()"><code>PApplet.mouseClicked()</code></a>, 
+<a href="processing/core/PApplet.html#mouseMoved()"><code>PApplet.mouseMoved()</code></a>, 
+<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a>, 
+<a href="processing/core/PApplet.html#mouseButton"><code>PApplet.mouseButton</code></a>, 
+<a href="processing/core/PApplet.html#mouseWheel(processing.event.MouseEvent)"><code>PApplet.mouseWheel(MouseEvent)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>pmouseY</h4>
@@ -286,9 +312,17 @@
  and mouse events is explained in the reference for <b>pmouseX</b>.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#pmouseX"><code>PApplet.pmouseX</code></a>, 
-<a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
-<a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a></dd></dl>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
+<a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a>, 
+<a href="processing/core/PApplet.html#pmouseX"><code>PApplet.pmouseX</code></a>, 
+<a href="processing/core/PApplet.html#mousePressed"><code>PApplet.mousePressed</code></a>, 
+<a href="processing/core/PApplet.html#mousePressed()"><code>PApplet.mousePressed()</code></a>, 
+<a href="processing/core/PApplet.html#mouseReleased()"><code>PApplet.mouseReleased()</code></a>, 
+<a href="processing/core/PApplet.html#mouseClicked()"><code>PApplet.mouseClicked()</code></a>, 
+<a href="processing/core/PApplet.html#mouseMoved()"><code>PApplet.mouseMoved()</code></a>, 
+<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a>, 
+<a href="processing/core/PApplet.html#mouseButton"><code>PApplet.mouseButton</code></a>, 
+<a href="processing/core/PApplet.html#mouseWheel(processing.event.MouseEvent)"><code>PApplet.mouseWheel(MouseEvent)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>dmouseX</h4>
@@ -351,10 +385,15 @@
  mouse button (unlike Java, which reports it as the left mouse).</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
 <a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a>, 
+<a href="processing/core/PApplet.html#pmouseX"><code>PApplet.pmouseX</code></a>, 
+<a href="processing/core/PApplet.html#pmouseY"><code>PApplet.pmouseY</code></a>, 
+<a href="processing/core/PApplet.html#mousePressed"><code>PApplet.mousePressed</code></a>, 
 <a href="processing/core/PApplet.html#mousePressed()"><code>PApplet.mousePressed()</code></a>, 
 <a href="processing/core/PApplet.html#mouseReleased()"><code>PApplet.mouseReleased()</code></a>, 
+<a href="processing/core/PApplet.html#mouseClicked()"><code>PApplet.mouseClicked()</code></a>, 
 <a href="processing/core/PApplet.html#mouseMoved()"><code>PApplet.mouseMoved()</code></a>, 
-<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a></dd></dl>
+<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a>, 
+<a href="processing/core/PApplet.html#mouseWheel(processing.event.MouseEvent)"><code>PApplet.mouseWheel(MouseEvent)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>mousePressed</h4>
@@ -368,9 +407,15 @@
  ( end auto-generated )</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
 <a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a>, 
+<a href="processing/core/PApplet.html#pmouseX"><code>PApplet.pmouseX</code></a>, 
+<a href="processing/core/PApplet.html#pmouseY"><code>PApplet.pmouseY</code></a>, 
+<a href="processing/core/PApplet.html#mousePressed()"><code>PApplet.mousePressed()</code></a>, 
 <a href="processing/core/PApplet.html#mouseReleased()"><code>PApplet.mouseReleased()</code></a>, 
+<a href="processing/core/PApplet.html#mouseClicked()"><code>PApplet.mouseClicked()</code></a>, 
 <a href="processing/core/PApplet.html#mouseMoved()"><code>PApplet.mouseMoved()</code></a>, 
-<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a></dd></dl>
+<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a>, 
+<a href="processing/core/PApplet.html#mouseButton"><code>PApplet.mouseButton</code></a>, 
+<a href="processing/core/PApplet.html#mouseWheel(processing.event.MouseEvent)"><code>PApplet.mouseWheel(MouseEvent)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>mouseEvent</h4>
@@ -502,7 +547,8 @@
  frames. As such, this value won't be valid until after 5-10 frames.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#frameRate(float)"><code>PApplet.frameRate(float)</code></a></dd></dl>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#frameRate(float)"><code>PApplet.frameRate(float)</code></a>, 
+<a href="processing/core/PApplet.html#frameCount"><code>PApplet.frameCount</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>frameRateLastNanos</h4>
@@ -537,7 +583,8 @@
  0 and and after the first iteration of draw it is 1, etc.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#frameRate(float)"><code>PApplet.frameRate(float)</code></a></dd></dl>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#frameRate(float)"><code>PApplet.frameRate(float)</code></a>, 
+<a href="processing/core/PApplet.html#frameRate"><code>PApplet.frameRate</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>finished</h4>
@@ -557,11 +604,11 @@
 </li>
 <li class="blockList">
 <h4>pauseObject</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a> pauseObject</pre>
+<pre>java.lang.Object pauseObject</pre>
 </li>
 <li class="blockList">
 <h4>thread</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html?is-external=true" title="class or interface in java.lang">Thread</a> thread</pre>
+<pre>java.lang.Thread thread</pre>
 </li>
 <li class="blockList">
 <h4>external</h4>
@@ -575,7 +622,7 @@
 </li>
 <li class="blockList">
 <h4>registerMap</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html?is-external=true" title="class or interface in java.util">HashMap</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html?is-external=true" title="class or interface in java.util">K</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html?is-external=true" title="class or interface in java.util">V</a>&gt; registerMap</pre>
+<pre>java.util.HashMap&lt;K,V&gt; registerMap</pre>
 <div class="block">Map of registered methods, stored by name.</div>
 </li>
 <li class="blockList">
@@ -604,11 +651,11 @@
 </li>
 <li class="blockList">
 <h4>invisibleCursor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Cursor.html?is-external=true" title="class or interface in java.awt">Cursor</a> invisibleCursor</pre>
+<pre>java.awt.Cursor invisibleCursor</pre>
 </li>
 <li class="blockList">
 <h4>internalRandom</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Random.html?is-external=true" title="class or interface in java.util">Random</a> internalRandom</pre>
+<pre>java.util.Random internalRandom</pre>
 </li>
 <li class="blockList">
 <h4>perlin_octaves</h4>
@@ -636,11 +683,11 @@
 </li>
 <li class="blockList">
 <h4>perlinRandom</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Random.html?is-external=true" title="class or interface in java.util">Random</a> perlinRandom</pre>
+<pre>java.util.Random perlinRandom</pre>
 </li>
 <li class="blockList">
 <h4>loadImageFormats</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[] loadImageFormats</pre>
+<pre>java.lang.String[] loadImageFormats</pre>
 </li>
 <li class="blockList">
 <h4>requestImageMax</h4>
@@ -659,7 +706,7 @@
 </li>
 <li class="blockListLast">
 <h4>selectFrame</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Frame.html?is-external=true" title="class or interface in java.awt">Frame</a> selectFrame</pre>
+<pre>java.awt.Frame selectFrame</pre>
 </li>
 </ul>
 </li>
@@ -668,12 +715,12 @@
 <li class="blockList"><a name="processing.core.PApplet.RendererChangeException">
 <!--   -->
 </a>
-<h3>Class <a href="processing/core/PApplet.RendererChangeException.html" title="class in processing.core">processing.core.PApplet.RendererChangeException</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/RuntimeException.html?is-external=true" title="class or interface in java.lang">RuntimeException</a> implements Serializable</h3>
+<h3>Class <a href="processing/core/PApplet.RendererChangeException.html" title="class in processing.core">processing.core.PApplet.RendererChangeException</a> extends java.lang.RuntimeException implements Serializable</h3>
 </li>
 <li class="blockList"><a name="processing.core.PVector">
 <!--   -->
 </a>
-<h3>Class <a href="processing/core/PVector.html" title="class in processing.core">processing.core.PVector</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a> implements Serializable</h3>
+<h3>Class <a href="processing/core/PVector.html" title="class in processing.core">processing.core.PVector</a> extends java.lang.Object implements Serializable</h3>
 <dl class="nameValue">
 <dt>serialVersionUID:</dt>
 <dd>-6717872085945400694L</dd>
@@ -726,7 +773,7 @@
 <li class="blockList"><a name="processing.data.XML">
 <!--   -->
 </a>
-<h3>Class <a href="processing/data/XML.html" title="class in processing.data">processing.data.XML</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a> implements Serializable</h3>
+<h3>Class <a href="processing/data/XML.html" title="class in processing.data">processing.data.XML</a> extends java.lang.Object implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -735,7 +782,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>node</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/org/w3c/dom/Node.html?is-external=true" title="class or interface in org.w3c.dom">Node</a> node</pre>
+<pre>org.w3c.dom.Node node</pre>
 <div class="block">The internal representation, a DOM node.</div>
 </li>
 <li class="blockList">

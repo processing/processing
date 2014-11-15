@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
 <li>processing.core.PFont</li>
@@ -98,7 +98,7 @@
 <hr>
 <br>
 <pre>public class <span class="strong">PFont</span>
-extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
+extends java.lang.Object
 implements <a href="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</a></pre>
 <div class="block">Grayscale bitmap font class used by Processing.
  <P>
@@ -121,8 +121,8 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
    ^^^^^^^^^^^^^^ setWidth (width displaced by char)
  </PRE></div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#loadFont(java.lang.String)"><code>PApplet.loadFont(String)</code></a>, 
-<a href="../../processing/core/PGraphics.html#textFont(processing.core.PFont)"><code>PGraphics.textFont(PFont)</code></a>, 
-<a href="../../processing/core/PGraphics.html#text(char, float, float)"><code>PGraphics.text(char, float, float)</code></a></dd></dl>
+<a href="../../processing/core/PApplet.html#createFont(java.lang.String,%20float,%20boolean,%20char[])"><code>PApplet.createFont(String, float, boolean, char[])</code></a>, 
+<a href="../../processing/core/PGraphics.html#textFont(processing.core.PFont)"><code>PGraphics.textFont(PFont)</code></a></dd></dl>
 </li>
 </ul>
 </div>
@@ -190,12 +190,10 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../processing/core/PFont.html#PFont()">PFont</a></strong>()</code>
-<div class="block">for subclasses that need to store metadata about the font</div>
-</td>
+<td class="colOne"><code><strong><a href="../../processing/core/PFont.html#PFont()">PFont</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../processing/core/PFont.html#PFont(java.awt.Font, boolean)">PFont</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font,
+<td class="colOne"><code><strong><a href="../../processing/core/PFont.html#PFont(java.awt.Font,%20boolean)">PFont</a></strong>(java.awt.Font&nbsp;font,
      boolean&nbsp;smooth)</code>
 <div class="block">( begin auto-generated from PFont.xml )
 
@@ -203,14 +201,14 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../processing/core/PFont.html#PFont(java.awt.Font, boolean, char[])">PFont</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font,
+<td class="colOne"><code><strong><a href="../../processing/core/PFont.html#PFont(java.awt.Font,%20boolean,%20char[])">PFont</a></strong>(java.awt.Font&nbsp;font,
      boolean&nbsp;smooth,
      char[]&nbsp;charset)</code>
 <div class="block">Create a new image-based font on the fly.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../processing/core/PFont.html#PFont(java.awt.Font, boolean, char[], boolean)">PFont</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font,
+<td class="colOne"><code><strong><a href="../../processing/core/PFont.html#PFont(java.awt.Font,%20boolean,%20char[],%20boolean)">PFont</a></strong>(java.awt.Font&nbsp;font,
      boolean&nbsp;smooth,
      char[]&nbsp;charset,
      boolean&nbsp;stream)</code>
@@ -219,7 +217,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../processing/core/PFont.html#PFont(java.io.InputStream)">PFont</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;input)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../processing/core/PFont.html#PFont(java.io.InputStream)">PFont</a></strong>(java.io.InputStream&nbsp;input)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -249,19 +247,19 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a></code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PFont.html#findFont(java.lang.String)">findFont</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name)</code>
+<td class="colFirst"><code>static java.awt.Font</code></td>
+<td class="colLast"><code><strong><a href="../../processing/core/PFont.html#findFont(java.lang.String)">findFont</a></strong>(java.lang.String&nbsp;name)</code>
 <div class="block">Starting with Java 1.5, Apple broke the ability to specify most fonts.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
+<td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PFont.html#findNative()">findNative</a></strong>()</code>
 <div class="block">Attempt to find the native version of this font.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a></code></td>
+<td class="colFirst"><code>java.awt.Font</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PFont.html#getFont()">getFont</a></strong>()</code>
 <div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
@@ -279,17 +277,17 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <td class="colLast"><code><strong><a href="../../processing/core/PFont.html#getGlyphCount()">getGlyphCount</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PFont.html#getName()">getName</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
+<td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PFont.html#getNative()">getNative</a></strong>()</code>
 <div class="block">Return the native java.awt.Font associated with this PFont (if any).</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PFont.html#getPostScriptName()">getPostScriptName</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -298,7 +296,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../processing/core/PShape.html" title="class in processing.core">PShape</a></code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PFont.html#getShape(char, float)">getShape</a></strong>(char&nbsp;ch,
+<td class="colLast"><code><strong><a href="../../processing/core/PFont.html#getShape(char,%20float)">getShape</a></strong>(char&nbsp;ch,
         float&nbsp;detail)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -313,14 +311,14 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>float</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PFont.html#kern(char, char)">kern</a></strong>(char&nbsp;a,
+<td class="colLast"><code><strong><a href="../../processing/core/PFont.html#kern(char,%20char)">kern</a></strong>(char&nbsp;a,
     char&nbsp;b)</code>
 <div class="block">Currently un-implemented for .vlw fonts,
  but honored for layout in case subclasses use it.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
+<td class="colFirst"><code>static java.lang.String[]</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PFont.html#list()">list</a></strong>()</code>
 <div class="block">( begin auto-generated from PFont_list.xml )
 
@@ -333,13 +331,13 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PFont.html#save(java.io.OutputStream)">save</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/OutputStream.html?is-external=true" title="class or interface in java.io">OutputStream</a>&nbsp;output)</code>
+<td class="colLast"><code><strong><a href="../../processing/core/PFont.html#save(java.io.OutputStream)">save</a></strong>(java.io.OutputStream&nbsp;output)</code>
 <div class="block">Write this PFont to an OutputStream.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PFont.html#setNative(java.lang.Object)">setNative</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;font)</code>
+<td class="colLast"><code><strong><a href="../../processing/core/PFont.html#setNative(java.lang.Object)">setNative</a></strong>(java.lang.Object&nbsp;font)</code>
 <div class="block">Set the native complement of this font.</div>
 </td>
 </tr>
@@ -358,8 +356,8 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -411,7 +409,6 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <li class="blockList">
 <h4>PFont</h4>
 <pre>public&nbsp;PFont()</pre>
-<div class="block">for subclasses that need to store metadata about the font</div>
 </li>
 </ul>
 <a name="PFont(java.awt.Font, boolean)">
@@ -420,7 +417,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>PFont</h4>
-<pre>public&nbsp;PFont(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font,
+<pre>public&nbsp;PFont(java.awt.Font&nbsp;font,
      boolean&nbsp;smooth)</pre>
 <div class="block">( begin auto-generated from PFont.xml )
 
@@ -446,7 +443,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>PFont</h4>
-<pre>public&nbsp;PFont(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font,
+<pre>public&nbsp;PFont(java.awt.Font&nbsp;font,
      boolean&nbsp;smooth,
      char[]&nbsp;charset)</pre>
 <div class="block">Create a new image-based font on the fly. If charset is set to null,
@@ -460,7 +457,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>PFont</h4>
-<pre>public&nbsp;PFont(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font,
+<pre>public&nbsp;PFont(java.awt.Font&nbsp;font,
      boolean&nbsp;smooth,
      char[]&nbsp;charset,
      boolean&nbsp;stream)</pre>
@@ -474,11 +471,11 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockListLast">
 <li class="blockList">
 <h4>PFont</h4>
-<pre>public&nbsp;PFont(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a>&nbsp;input)
-      throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
+<pre>public&nbsp;PFont(java.io.InputStream&nbsp;input)
+      throws java.io.IOException</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>input</code> - InputStream</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 </li>
@@ -495,8 +492,8 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>save</h4>
-<pre>public&nbsp;void&nbsp;save(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/OutputStream.html?is-external=true" title="class or interface in java.io">OutputStream</a>&nbsp;output)
-          throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
+<pre>public&nbsp;void&nbsp;save(java.io.OutputStream&nbsp;output)
+          throws java.io.IOException</pre>
 <div class="block">Write this PFont to an OutputStream.
  <p>
  This is used by the Create Font tool, or whatever anyone else dreams
@@ -505,7 +502,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
  It is assumed that the calling class will handle closing
  the stream when finished.</div>
 <dl><dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 <a name="getName()">
@@ -514,7 +511,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>getName</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getName()</pre>
+<pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
 </li>
 </ul>
 <a name="getPostScriptName()">
@@ -523,7 +520,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>getPostScriptName</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;getPostScriptName()</pre>
+<pre>public&nbsp;java.lang.String&nbsp;getPostScriptName()</pre>
 </li>
 </ul>
 <a name="setNative(java.lang.Object)">
@@ -532,7 +529,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>setNative</h4>
-<pre>public&nbsp;void&nbsp;setNative(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;font)</pre>
+<pre>public&nbsp;void&nbsp;setNative(java.lang.Object&nbsp;font)</pre>
 <div class="block">Set the native complement of this font. Might be set internally via the
  findFont() function, or externally by a deriveFont() call if the font
  is resized by PGraphicsJava2D.</div>
@@ -544,8 +541,8 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>getFont</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
-public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;getFont()</pre>
+<pre>@Deprecated
+public&nbsp;java.awt.Font&nbsp;getFont()</pre>
 <div class="block"><span class="strong">Deprecated.</span>&nbsp;</div>
 <div class="block">Use the getNative() method instead, which allows library interfaces to be
  written in a cross-platform fashion for desktop, Android, and others.</div>
@@ -557,7 +554,7 @@ public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html
 <ul class="blockList">
 <li class="blockList">
 <h4>getNative</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;getNative()</pre>
+<pre>public&nbsp;java.lang.Object&nbsp;getNative()</pre>
 <div class="block">Return the native java.awt.Font associated with this PFont (if any).</div>
 </li>
 </ul>
@@ -595,7 +592,7 @@ public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html
 <ul class="blockList">
 <li class="blockList">
 <h4>findNative</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;findNative()</pre>
+<pre>public&nbsp;java.lang.Object&nbsp;findNative()</pre>
 <div class="block">Attempt to find the native version of this font.
  (Public so that it can be used by OpenGL or other renderers.)</div>
 </li>
@@ -696,7 +693,7 @@ public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html
 <ul class="blockList">
 <li class="blockList">
 <h4>list</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;list()</pre>
+<pre>public static&nbsp;java.lang.String[]&nbsp;list()</pre>
 <div class="block">( begin auto-generated from PFont_list.xml )
 
  Gets a list of the fonts installed on the system. The data is returned
@@ -723,7 +720,7 @@ public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html
 <ul class="blockListLast">
 <li class="blockList">
 <h4>findFont</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;findFont(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name)</pre>
+<pre>public static&nbsp;java.awt.Font&nbsp;findFont(java.lang.String&nbsp;name)</pre>
 <div class="block">Starting with Java 1.5, Apple broke the ability to specify most fonts.
  This bug was filed years ago as #4769141 at bugreporter.apple.com. More:
  <a href="http://dev.processing.org/bugs/show_bug.cgi?id=407">Bug 407</a>.</div>

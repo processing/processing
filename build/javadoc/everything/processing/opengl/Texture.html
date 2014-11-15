@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
 <li>
 <ul class="inheritance">
 <li>Texture</li>
@@ -98,7 +98,7 @@
 <hr>
 <br>
 <pre>public class <span class="strong">Texture</span>
-extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
+extends Object
 implements <a href="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</a></pre>
 <div class="block">This class wraps an OpenGL texture.
  By Andres Colubri</div>
@@ -212,18 +212,20 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../processing/opengl/Texture.html#Texture()">Texture</a></strong>()</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../processing/opengl/Texture.html#Texture(processing.opengl.PGraphicsOpenGL)">Texture</a></strong>(<a href="../../processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a>&nbsp;pg)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../processing/opengl/Texture.html#Texture(int, int)">Texture</a></strong>(int&nbsp;width,
+<td class="colOne"><code><strong><a href="../../processing/opengl/Texture.html#Texture(processing.opengl.PGraphicsOpenGL,%20int,%20int)">Texture</a></strong>(<a href="../../processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a>&nbsp;pg,
+       int&nbsp;width,
        int&nbsp;height)</code>
 <div class="block">Creates an instance of PTexture with size width x height.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../processing/opengl/Texture.html#Texture(int, int, java.lang.Object)">Texture</a></strong>(int&nbsp;width,
+<td class="colOne"><code><strong><a href="../../processing/opengl/Texture.html#Texture(processing.opengl.PGraphicsOpenGL,%20int,%20int,%20java.lang.Object)">Texture</a></strong>(<a href="../../processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a>&nbsp;pg,
+       int&nbsp;width,
        int&nbsp;height,
-       <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;params)</code>
+       Object&nbsp;params)</code>
 <div class="block">Creates an instance of PTexture with size width x height and with the
  specified parameters.</div>
 </td>
@@ -267,8 +269,8 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#copyBufferFromSource(java.lang.Object, java.nio.ByteBuffer, int, int)">copyBufferFromSource</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;natRef,
-                    <a href="http://docs.oracle.com/javase/7/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</a>&nbsp;byteBuf,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#copyBufferFromSource(java.lang.Object,%20java.nio.ByteBuffer,%20int,%20int)">copyBufferFromSource</a></strong>(Object&nbsp;natRef,
+                    ByteBuffer&nbsp;byteBuf,
                     int&nbsp;w,
                     int&nbsp;h)</code>&nbsp;</td>
 </tr>
@@ -316,14 +318,14 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#init(int, int)">init</a></strong>(int&nbsp;width,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#init(int,%20int)">init</a></strong>(int&nbsp;width,
     int&nbsp;height)</code>
 <div class="block">Sets the size of the image and texture to width x height.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#init(int, int, int, int, int, int, int, int, int, int, int)">init</a></strong>(int&nbsp;width,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#init(int,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int)">init</a></strong>(int&nbsp;width,
     int&nbsp;height,
     int&nbsp;glName,
     int&nbsp;glTarget,
@@ -339,7 +341,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#init(int, int, processing.opengl.Texture.Parameters)">init</a></strong>(int&nbsp;width,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#init(int,%20int,%20processing.opengl.Texture.Parameters)">init</a></strong>(int&nbsp;width,
     int&nbsp;height,
     <a href="../../processing/opengl/Texture.Parameters.html" title="class in processing.opengl">Texture.Parameters</a>&nbsp;params)</code>
 <div class="block">Sets the size of the image and texture to width x height, and the
@@ -389,7 +391,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#put(int, int, int, int, int, int)">put</a></strong>(int&nbsp;texTarget,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#put(int,%20int,%20int,%20int,%20int,%20int)">put</a></strong>(int&nbsp;texTarget,
    int&nbsp;texName,
    int&nbsp;texWidth,
    int&nbsp;texHeight,
@@ -398,7 +400,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#put(int, int, int, int, int, int, int, int, int, int)">put</a></strong>(int&nbsp;texTarget,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#put(int,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int)">put</a></strong>(int&nbsp;texTarget,
    int&nbsp;texName,
    int&nbsp;texWidth,
    int&nbsp;texHeight,
@@ -415,7 +417,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#put(processing.opengl.Texture, int, int, int, int)">put</a></strong>(<a href="../../processing/opengl/Texture.html" title="class in processing.opengl">Texture</a>&nbsp;tex,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#put(processing.opengl.Texture,%20int,%20int,%20int,%20int)">put</a></strong>(<a href="../../processing/opengl/Texture.html" title="class in processing.opengl">Texture</a>&nbsp;tex,
    int&nbsp;x,
    int&nbsp;y,
    int&nbsp;w,
@@ -423,7 +425,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#resize(int, int)">resize</a></strong>(int&nbsp;wide,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#resize(int,%20int)">resize</a></strong>(int&nbsp;wide,
       int&nbsp;high)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -432,12 +434,12 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#set(int[], int)">set</a></strong>(int[]&nbsp;pixels,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#set(int[],%20int)">set</a></strong>(int[]&nbsp;pixels,
    int&nbsp;format)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#set(int[], int, int, int, int)">set</a></strong>(int[]&nbsp;pixels,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#set(int[],%20int,%20int,%20int,%20int)">set</a></strong>(int[]&nbsp;pixels,
    int&nbsp;x,
    int&nbsp;y,
    int&nbsp;w,
@@ -445,7 +447,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#set(int[], int, int, int, int, int)">set</a></strong>(int[]&nbsp;pixels,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#set(int[],%20int,%20int,%20int,%20int,%20int)">set</a></strong>(int[]&nbsp;pixels,
    int&nbsp;x,
    int&nbsp;y,
    int&nbsp;w,
@@ -454,7 +456,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#set(int, int, int, int, int, int)">set</a></strong>(int&nbsp;texTarget,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#set(int,%20int,%20int,%20int,%20int,%20int)">set</a></strong>(int&nbsp;texTarget,
    int&nbsp;texName,
    int&nbsp;texWidth,
    int&nbsp;texHeight,
@@ -463,7 +465,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#set(int, int, int, int, int, int, int, int, int, int)">set</a></strong>(int&nbsp;texTarget,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#set(int,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int)">set</a></strong>(int&nbsp;texTarget,
    int&nbsp;texName,
    int&nbsp;texWidth,
    int&nbsp;texHeight,
@@ -480,7 +482,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#set(processing.opengl.Texture, int, int, int, int)">set</a></strong>(<a href="../../processing/opengl/Texture.html" title="class in processing.opengl">Texture</a>&nbsp;tex,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#set(processing.opengl.Texture,%20int,%20int,%20int,%20int)">set</a></strong>(<a href="../../processing/opengl/Texture.html" title="class in processing.opengl">Texture</a>&nbsp;tex,
    int&nbsp;x,
    int&nbsp;y,
    int&nbsp;w,
@@ -488,7 +490,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#setBufferSource(java.lang.Object)">setBufferSource</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;source)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#setBufferSource(java.lang.Object)">setBufferSource</a></strong>(Object&nbsp;source)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -504,7 +506,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#setNative(int[], int, int, int, int)">setNative</a></strong>(int[]&nbsp;pixels,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#setNative(int[],%20int,%20int,%20int,%20int)">setNative</a></strong>(int[]&nbsp;pixels,
          int&nbsp;x,
          int&nbsp;y,
          int&nbsp;w,
@@ -512,7 +514,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#setNative(java.nio.IntBuffer, int, int, int, int)">setNative</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/nio/IntBuffer.html?is-external=true" title="class or interface in java.nio">IntBuffer</a>&nbsp;pixBuf,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#setNative(java.nio.IntBuffer,%20int,%20int,%20int,%20int)">setNative</a></strong>(IntBuffer&nbsp;pixBuf,
          int&nbsp;x,
          int&nbsp;y,
          int&nbsp;w,
@@ -528,7 +530,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#updateTexels(int, int, int, int)">updateTexels</a></strong>(int&nbsp;x,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#updateTexels(int,%20int,%20int,%20int)">updateTexels</a></strong>(int&nbsp;x,
             int&nbsp;y,
             int&nbsp;w,
             int&nbsp;h)</code>&nbsp;</td>
@@ -541,7 +543,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#usingMipmaps(boolean, int)">usingMipmaps</a></strong>(boolean&nbsp;mipmaps,
+<td class="colLast"><code><strong><a href="../../processing/opengl/Texture.html#usingMipmaps(boolean,%20int)">usingMipmaps</a></strong>(boolean&nbsp;mipmaps,
             int&nbsp;sampling)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
@@ -560,8 +562,8 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -694,37 +696,39 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="Texture()">
+<a name="Texture(processing.opengl.PGraphicsOpenGL)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>Texture</h4>
-<pre>public&nbsp;Texture()</pre>
+<pre>public&nbsp;Texture(<a href="../../processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a>&nbsp;pg)</pre>
 </li>
 </ul>
-<a name="Texture(int, int)">
+<a name="Texture(processing.opengl.PGraphicsOpenGL, int, int)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>Texture</h4>
-<pre>public&nbsp;Texture(int&nbsp;width,
+<pre>public&nbsp;Texture(<a href="../../processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a>&nbsp;pg,
+       int&nbsp;width,
        int&nbsp;height)</pre>
 <div class="block">Creates an instance of PTexture with size width x height. The texture is
  initialized (empty) to that size.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>width</code> - int</dd><dd><code>height</code> - int</dd></dl>
 </li>
 </ul>
-<a name="Texture(int, int, java.lang.Object)">
+<a name="Texture(processing.opengl.PGraphicsOpenGL, int, int, java.lang.Object)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Texture</h4>
-<pre>public&nbsp;Texture(int&nbsp;width,
+<pre>public&nbsp;Texture(<a href="../../processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a>&nbsp;pg,
+       int&nbsp;width,
        int&nbsp;height,
-       <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;params)</pre>
+       Object&nbsp;params)</pre>
 <div class="block">Creates an instance of PTexture with size width x height and with the
  specified parameters. The texture is initialized (empty) to that size.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>width</code> - int</dd><dd><code>height</code> - int</dd><dd><code>params</code> - Parameters</dd></dl>
@@ -937,7 +941,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>setNative</h4>
-<pre>public&nbsp;void&nbsp;setNative(<a href="http://docs.oracle.com/javase/7/docs/api/java/nio/IntBuffer.html?is-external=true" title="class or interface in java.nio">IntBuffer</a>&nbsp;pixBuf,
+<pre>public&nbsp;void&nbsp;setNative(IntBuffer&nbsp;pixBuf,
              int&nbsp;x,
              int&nbsp;y,
              int&nbsp;w,
@@ -1234,7 +1238,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>setBufferSource</h4>
-<pre>public&nbsp;void&nbsp;setBufferSource(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;source)</pre>
+<pre>public&nbsp;void&nbsp;setBufferSource(Object&nbsp;source)</pre>
 </li>
 </ul>
 <a name="copyBufferFromSource(java.lang.Object, java.nio.ByteBuffer, int, int)">
@@ -1243,8 +1247,8 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>copyBufferFromSource</h4>
-<pre>public&nbsp;void&nbsp;copyBufferFromSource(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;natRef,
-                        <a href="http://docs.oracle.com/javase/7/docs/api/java/nio/ByteBuffer.html?is-external=true" title="class or interface in java.nio">ByteBuffer</a>&nbsp;byteBuf,
+<pre>public&nbsp;void&nbsp;copyBufferFromSource(Object&nbsp;natRef,
+                        ByteBuffer&nbsp;byteBuf,
                         int&nbsp;w,
                         int&nbsp;h)</pre>
 </li>
