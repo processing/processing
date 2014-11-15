@@ -630,7 +630,8 @@ public abstract class PGL {
   private boolean needFBOLayer(boolean clear0) {
     // TODO: need to revise this, on windows we might not want to use FBO layer
     // even with anti-aliasing enabled...
-    return !clear0 || fboLayerRequested || 1 < numSamples;
+//    return !clear0 || fboLayerRequested || 1 < numSamples;
+    return false;
   }
 
 

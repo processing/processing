@@ -560,10 +560,10 @@ public class PGraphicsOpenGL extends PGraphics {
   //public void setAntiAlias(int samples)  // PGraphics
 
 
-  @Override
-  public void setFrameRate(float frameRate) {
-    pgl.setFps(frameRate);
-  }
+//  @Override
+//  public void setFrameRate(float frameRate) {
+//    pgl.setFps(frameRate);
+//  }
 
 
   @Override
@@ -683,6 +683,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void setFlushMode(int mode) {
     flushMode = mode;
+  }
+
+
+  @Override
+  public PSurface createSurface() {  // ignore
+    return new PSurfaceNEWT(this);
   }
 
 
@@ -1633,10 +1639,10 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  @Override
-  public void requestFocus() {  // ignore
-    pgl.requestFocus();
-  }
+//  @Override
+//  public void requestFocus() {
+//    pgl.requestFocus();
+//  }
 
 
   /**
@@ -1649,8 +1655,21 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+//  @Override
+//  public void requestDraw() {
+//    if (primarySurface) {
+//      if (initialized) {
+//        if (sized) pgl.reinitSurface();
+//        if (parent.canDraw()) pgl.requestDraw();
+//      } else {
+//        initPrimary();
+//      }
+//    }
+//  }
+
+
   @Override
-  public void requestDraw() {
+  public void beginDraw() {
     if (primarySurface) {
       if (initialized) {
         if (sized) pgl.reinitSurface();
@@ -1658,13 +1677,7 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         initPrimary();
       }
-    }
-  }
 
-
-  @Override
-  public void beginDraw() {
-    if (primarySurface) {
       setCurrentPG(this);
     } else {
       pgl.getGL(getPrimaryPGL());
