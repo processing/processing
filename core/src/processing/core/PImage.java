@@ -865,7 +865,6 @@ public class PImage implements PConstants, Cloneable {
    * Returns a copy of this PImage. Equivalent to get(0, 0, width, height).
    * Deprecated, just use copy() instead.
    */
-  @Deprecated
   public PImage get() {
     // Formerly this used clone(), which caused memory problems.
     // http://code.google.com/p/processing/issues/detail?id=42

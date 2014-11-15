@@ -13,6 +13,9 @@ _   https://github.com/processing/processing/issues/2924
 _ why doesn't p5 punt when loadFont() is used on an otf?
 _   is this a GL problem? 
 
+_ show warning when display spanning is turned off
+_   defaults read com.apple.spaces spans-displays
+
 data
 X fix XML.getString() with a default when no attrs are present at all
 X   was causing a NullPointerException
