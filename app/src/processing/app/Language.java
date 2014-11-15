@@ -76,6 +76,8 @@ public class Language {
       languages.put(code, Locale.forLanguageTag(code).getDisplayLanguage(Locale.forLanguageTag(code)));
     }
     
+    boolean copiedLangFiles = false;
+    
     if(loadProps()){
 
       boolean updateProps = false;
@@ -92,7 +94,7 @@ public class Language {
       
       // Copy new language properties
       if(updateLangFiles){
-        if(updateLangFiles()){
+        if(copiedLangFiles = updateLangFiles()){
           props.setProperty("version", version);
           updateProps = true;
         }
@@ -113,6 +115,15 @@ public class Language {
       if(updateProps){
         updateProps();
       }
+      
+    } else {
+      // Fallback: No access to the property file
+      copiedLangFiles = updateLangFiles();
+    }
+    
+    // Developing
+    if (Base.DEBUG && copiedLangFiles == false) {
+      updateLangFiles();
     }
     
     try {
