@@ -14,10 +14,11 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   // INTERNAL
 
 
-//  public PGraphicsRetina2D() {
+  public PGraphicsRetina2D() {
+    pixelFactor = 2;
 //    retina = new PImage();
 //    retina.format = RGB;
-//  }
+  }
 
 
 //  @Override
@@ -96,13 +97,13 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
 
   @Override
   public void beginDraw() {
-    GraphicsConfiguration gc = parent.getGraphicsConfiguration();
-
-    if (image == null) {
-      retina.width = width * 2;
-      retina.height = height * 2;
-      image = gc.createCompatibleImage(retina.width, retina.height);
-    }
+//    GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+//
+//    if (image == null) {
+//      retina.width = width * 2;
+//      retina.height = height * 2;
+//      image = gc.createCompatibleImage(retina.width, retina.height);
+//    }
     g2 = (Graphics2D) image.getGraphics();
 
     checkSettings();
@@ -196,8 +197,7 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   //////////////////////////////////////////////////////////////
 
 
-//  int[] retinaPixels;
-
+  /*
   @Override
   public void loadPixels() {
     if ((retina.pixels == null) || (retina.pixels.length != retina.width * retina.height)) {
@@ -265,12 +265,6 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   }
 
 
-  /**
-   * Update the pixels[] buffer to the PGraphics image.
-   * <P>
-   * Unlike in PImage, where updatePixels() only requests that the
-   * update happens, in PGraphicsJava2D, this will happen immediately.
-   */
   @Override
   public void updatePixels(int ux, int uy, int uw, int uh) {
     int wide = hints[ENABLE_RETINA_PIXELS] ? retina.width : width;
@@ -636,10 +630,5 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
       return super.save(filename);
     }
   }
-
-
-  @Override
-  public boolean is2X() {
-    return true;
-  }
+    */
 }

@@ -13997,9 +13997,15 @@ public class PApplet implements PConstants {
 
   /**
    * Returns a copy of this PImage. Equivalent to get(0, 0, width, height).
+   * Deprecated, just use copy() instead.
    */
   public PImage get() {
     return g.get();
+  }
+
+
+  public PImage copy() {
+    return g.copy();
   }
 
 
