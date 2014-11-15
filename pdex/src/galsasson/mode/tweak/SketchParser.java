@@ -1,17 +1,13 @@
 package galsasson.mode.tweak;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SketchParser
-{
-	public ArrayList<ColorControlBox> colorBoxes[];
-	public ArrayList<Handle> allHandles[];
+
+public class SketchParser {
+	public ArrayList<ColorControlBox>[] colorBoxes;
+	public ArrayList<Handle>[] allHandles;
 
 	int intVarCount;
 	int floatVarCount;
@@ -21,10 +17,10 @@ public class SketchParser
 	boolean requiresComment;
 	ArrayList<ColorMode> colorModes;
 
-	ArrayList<Range> scientificNotations[];
+	ArrayList<Range>[] scientificNotations;
 
-	public SketchParser(String[] codeTabs, boolean requiresComment)
-	{
+	
+	public SketchParser(String[] codeTabs, boolean requiresComment) {
 		this.codeTabs = codeTabs;
 		this.requiresComment = requiresComment;
 		intVarCount=0;
@@ -49,8 +45,8 @@ public class SketchParser
 		handleMultipleColorModes();
 	}
 
-	public void addAllNumbers()
-	{
+	
+	public void addAllNumbers() {
 		allHandles = new ArrayList[codeTabs.length];
 		addAllDecimalNumbers();
 		addAllHexNumbers();
@@ -60,25 +56,23 @@ public class SketchParser
 		}
 	}
 
+	
 	/**
 	 * Get a list of all the numbers in this sketch
 	 * @return
 	 * list of all numbers in the sketch (excluding hexadecimals)
 	 */
-	private void addAllDecimalNumbers()
-	{
-		/* for every number found:
-		 * save its type (int/float), name, value and position in code.
-		 */
+	private void addAllDecimalNumbers() {
+		// for every number found:
+		// save its type (int/float), name, value and position in code.
+	  
 		Pattern p = Pattern.compile("[\\[\\{<>(),\\t\\s\\+\\-\\/\\*^%!|&=?:~]\\d+\\.?\\d*");
-		for (int i=0; i<codeTabs.length; i++)
-		{
+		for (int i = 0; i < codeTabs.length; i++) {
 			allHandles[i] = new ArrayList<Handle>();
 			String c = codeTabs[i];
 			Matcher m = p.matcher(c);
 
-			while (m.find())
-			{
+			while (m.find()) {
 				boolean forceFloat = false;
 				int start = m.start()+1;
 				int end = m.end();
@@ -536,8 +530,8 @@ public class SketchParser
 		}
 	}
 
-	public ArrayList<Range>[] getAllScientificNotations()
-	{
+	
+	public ArrayList<Range>[] getAllScientificNotations() {
 		ArrayList<Range> notations[] = new ArrayList[codeTabs.length];
 
 		Pattern p = Pattern.compile("[+\\-]?(?:0|[1-9]\\d*)(?:\\.\\d*)?[eE][+\\-]?\\d+");
@@ -554,20 +548,17 @@ public class SketchParser
 	}
 
 
-	public static boolean containsTweakComment(String[] codeTabs)
-	{
+	public static boolean containsTweakComment(String[] codeTabs) {
 		for (String tab : codeTabs) {
 			if (hasTweakComment(tab)) {
 				return true;
 			}
 		}
-
 		return false;
-
 	}
+	
 
-	public static boolean lineHasTweakComment(int pos, String code)
-	{
+	static public boolean lineHasTweakComment(int pos, String code) {
 		int lineEnd = getEndOfLine(pos, code);
 		if (lineEnd < 0) {
 			return false;
@@ -576,62 +567,48 @@ public class SketchParser
 		String line = code.substring(pos, lineEnd);
 		return hasTweakComment(line);
 	}
+	
 
-	private static boolean hasTweakComment(String code)
-	{
+	static private boolean hasTweakComment(String code) {
 		Pattern p = Pattern.compile("\\/\\/.*tweak", Pattern.CASE_INSENSITIVE);
 		Matcher m = p.matcher(code);
-		if (m.find()) {
-			return true;
-		}
-
-		return false;
+		return m.find();
 	}
 
 
-	private boolean isNegativeSign(int pos, String code)
-	{
+	static private boolean isNegativeSign(int pos, String code) {
 		// go back and look for ,{[(=?+-/*%<>:&|^!~
-		for (int i=pos; i>=0; i--)
-		{
+		for (int i = pos; i >= 0; i--) {
 			char c = code.charAt(i);
-			if (c == ' ' || c == '\t') {
-				continue;
-			}
-			if (c==',' || c=='{' || c=='[' || c=='(' ||
-					c=='=' || c=='?' || c=='+' || c=='-' ||
-					c=='/' || c=='*' || c=='%' || c=='<' ||
-					c=='>' || c==':' || c=='&' || c=='|' ||
-					c=='^' || c=='!' || c=='~') {
-				return true;
-			}
-			else {
-				return false;
+			if (c != ' ' && c != '\t') {
+			  return (c==',' || c=='{' || c=='[' || c=='(' ||
+				      	c=='=' || c=='?' || c=='+' || c=='-' ||
+		            c=='/' || c=='*' || c=='%' || c=='<' ||
+		            c=='>' || c==':' || c=='&' || c=='|' ||
+		            c=='^' || c=='!' || c=='~');
 			}
 		}
-
 		return false;
 	}
 
-	private int getNumDigitsAfterPoint(String number)
-	{
+	
+	static private int getNumDigitsAfterPoint(String number) {
 		Pattern p = Pattern.compile("\\.[0-9]+");
 		Matcher m = p.matcher(number);
 
 		if (m.find()) {
 			return m.end() - m.start() - 1;
 		}
-		else {
-			return 0;
-		}
+		return 0;
 	}
 
-	private int countLines(String str)
-	{
+	
+	static private int countLines(String str) {
 		String[] lines = str.split("\r\n|\n\r|\n|\r");
 		return lines.length;
 	}
 
+	
 	/**
 	* Are we inside a string? (TODO: ignore comments in the code)
 	* @param pos
@@ -640,12 +617,10 @@ public class SketchParser
 	* the code
 	* @return
 	*/
-	private boolean isInsideString(int pos, String code)
-	{
+	static private boolean isInsideString(int pos, String code) {
 		int quoteNum = 0;	// count '"'
 
-		for (int c = pos; c>=0 && code.charAt(c) != '\n'; c--)
-		{
+		for (int c = pos; c>=0 && code.charAt(c) != '\n'; c--) {
 			if (code.charAt(c) == '"') {
 				quoteNum++;
 			}
@@ -665,8 +640,7 @@ public class SketchParser
 	* @return
 	* true if the position 'pos' is in global scope in the code 'code'
  	*/
-	private boolean isGlobal(int pos, String code)
-	{
+	static private boolean isGlobal(int pos, String code) {
 		int curlyScope = 0;	// count '{-}'
 
 		for (int c=pos; c>=0; c--)
@@ -711,8 +685,7 @@ public class SketchParser
 		return false;
 	};
 
-	private boolean isInComment(int pos, String code)
-	{
+	static private boolean isInComment(int pos, String code) {
 		// look for one line comment
 		int lineStart = getStartOfLine(pos, code);
 		if (lineStart < 0) {
@@ -723,17 +696,16 @@ public class SketchParser
 		}
 
 		// TODO: look for block comments
-
 		return false;
 	}
 
-	public static int getEndOfLine(int pos, String code)
-	{
+	
+	static private int getEndOfLine(int pos, String code) {
 		return code.indexOf("\n", pos);
 	}
 
-	public static int getStartOfLine(int pos, String code)
-	{
+	
+	static private int getStartOfLine(int pos, String code) {
 		while (pos >= 0) {
 			if (code.charAt(pos) == '\n') {
 				return pos+1;
@@ -744,14 +716,14 @@ public class SketchParser
 		return 0;
 	}
 
+	
 	/** returns the object of the function starting at 'pos'
 	 *
 	 * @param pos
 	 * @param code
 	 * @return
 	 */
-	private String getObject(int pos, String code)
-	{
+	static private String getObject(int pos, String code) {
 		boolean readObject = false;
 		String obj = "this";
 
@@ -772,30 +744,28 @@ public class SketchParser
 				obj = code.charAt(pos) + obj;
 			}
 		}
-
 		return obj;
 	}
 
-	public static int getSetupStart(String code)
-	{
-		Pattern p = Pattern.compile("void[\\s\\t\\r\\n]*setup[\\s\\t]*\\(\\)[\\s\\t\\r\\n]*\\{");
-		Matcher m = p.matcher(code);
+	
+//	static private int getSetupStart(String code) {
+//		Pattern p = Pattern.compile("void[\\s\\t\\r\\n]*setup[\\s\\t]*\\(\\)[\\s\\t\\r\\n]*\\{");
+//		Matcher m = p.matcher(code);
+//
+//		if (m.find()) {
+//			return m.end();
+//		}
+//
+//		return -1;
+//	}
 
-		if (m.find()) {
-			return m.end();
-		}
 
-		return -1;
-	}
+//	private String replaceString(String str, int start, int end, String put) {
+//		return str.substring(0, start) + put + str.substring(end, str.length());
+//	}
 
-
-	private String replaceString(String str, int start, int end, String put)
-	{
-		return str.substring(0, start) + put + str.substring(end, str.length());
-	}
-
-	class Range
-	{
+	
+	class Range {
 		int start;
 		int end;
 
@@ -804,13 +774,8 @@ public class SketchParser
 			end = e;
 		}
 
-		public boolean contains(int v)
-		{
-			if (v>=start && v<end) {
-				return true;
-			}
-
-			return false;
+		public boolean contains(int v) {
+			return v >= start && v < end;
 		}
 	}
 }
