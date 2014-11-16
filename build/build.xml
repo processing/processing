@@ -51,7 +51,7 @@
   </condition>
   <!-- JDK location for Mac OS X -->
   <condition property="jdk.file" value="jdk-${jdk.stuff}-macosx-x64.dmg">
-    <equals arg1="platform" arg2="macosx" />
+    <equals arg1="${platform}" arg2="macosx" />
   </condition>
 
   <fileset dir="windows/work/java" id="jre-optional-windows">
@@ -166,12 +166,13 @@
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.${jdk.version}.0_${jdk.update}.jdk" />
+  <property name="jdk.path.macosx" 
+            value="/Library/Java/JavaVirtualMachines/jdk${jdk.esoteric}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
   <fail if="macosx" unless="macosx_jdk_found"
-        message="JDK ${jdk.stuff} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.stuff} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}You can also find a copy at http://download.processing.org/java/${jdk.file}${line.separator}Note that only ${jdk.stuff} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
+        message="JDK ${jdk.stuff} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.stuff} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}or http://download.processing.org/java/${jdk.file}${line.separator}Note that only ${jdk.stuff} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
   <!--
   <fail if="linux" unless="java_tools_found" 
         message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
