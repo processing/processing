@@ -1017,10 +1017,6 @@ public class ErrorCheckerService implements Runnable{
             //astGenerator.suggestImports(missingClass);
             String[] si = astGenerator.getSuggestImports(missingClass);
             if(si != null && si.length > 0){
-//              log("Suggested imps");
-//              for (int j = 0; j < si.length; j++) {
-//                log(si[j]);
-//              }
               p.setImportSuggestions(si);
               errorData[i][0] = "<html>"
                   + problemsList.get(i).getMessage()
