@@ -136,9 +136,15 @@ public class XQErrorTable extends JTable {
         int colIndex = columnAtPoint(evt.getPoint());
         synchronized (errorCheckerService.problemsList) {
           if (rowIndex < errorCheckerService.problemsList.size()) {
+            
             Problem p = errorCheckerService.problemsList.get(rowIndex);
             if (p.getImportSuggestions() != null
                 && p.getImportSuggestions().length > 0) {
+              String t = p.getMessage() + "(Import Suggestions available)";
+              int x1 = thisTable.getFontMetrics(thisTable.getFont())
+                  .stringWidth(p.getMessage()), x2 = thisTable
+                  .getFontMetrics(thisTable.getFont()).stringWidth(t);
+              if(evt.getX() < x1 || evt.getX() > x2) return;
               String[] list = p.getImportSuggestions();
               String className = list[0].substring(list[0].lastIndexOf('.') + 1);
               String[] temp = new String[list.length];
@@ -251,9 +257,9 @@ public class XQErrorTable extends JTable {
     panel.setBackground(Color.WHITE);
     frmImportSuggest.setBackground(Color.WHITE);
     panel.add(classList);
-    JLabel label = new JLabel("<html><div ><font size = \"2\"><br>(Click to insert)</font></div></html>");
+    JLabel label = new JLabel("<html><div alight = \"left\"><font size = \"2\"><br>(Click to insert)</font></div></html>");
     label.setBackground(Color.WHITE);
-    label.setHorizontalTextPosition(SwingConstants.CENTER);
+    label.setHorizontalTextPosition(SwingConstants.LEFT);
     panel.add(label);
     panel.validate();
     frmImportSuggest.getContentPane().add(panel);
