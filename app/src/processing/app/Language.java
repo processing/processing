@@ -300,6 +300,11 @@ public class Language {
         if (equals != -1) {
           String key = line.substring(0, equals).trim();
           String value = line.substring(equals + 1).trim();
+          
+          // fix \n and \'
+          value = value.replaceAll("\\\\n", "\n");
+          value = value.replaceAll("\\\\'", "'");
+
           table.put(key, value);
         }
       }

@@ -35,14 +35,6 @@ X add addRows(Table) method (more efficient, one resize)
 X support "header" option with ODS files
 _ handling of 'missing' values in Table needs serious work
 
-graphics
-X roll back full screen changes
-X   https://github.com/processing/processing/issues/2641
-X remove isGL(), is2D(), is3D(), displayable() from PApplet
-X   these were auto-imported from PGraphics
-X remove pause variable from PApplet (was not documented)
-X added copy() to PImage (to work like get(), ala PVector)
-
 pulls
 X Fix check in loadShader()
 X   https://github.com/processing/processing/pull/2867
@@ -82,6 +74,14 @@ A   https://github.com/processing/processing/issues/2593
 A Exceptions in P3D / P2D not showing up properly
 A   https://github.com/processing/processing/issues/2930
 
+
+graphics
+X roll back full screen changes
+X   https://github.com/processing/processing/issues/2641
+X remove isGL(), is2D(), is3D(), displayable() from PApplet
+X   these were auto-imported from PGraphics
+X remove pause variable from PApplet (was not documented)
+X added copy() to PImage (to work like get(), ala PVector)
 
 applet/component
 _ remove Applet as base class
