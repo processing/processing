@@ -404,7 +404,7 @@ public class ErrorCheckerService implements Runnable{
         if (args.length > 0) {
           String missingClass = args[0];
           log("Will suggest for type:" + missingClass);
-          astGenerator.suggestImports(missingClass);
+          //astGenerator.suggestImports(missingClass);
         }
       }
     }
@@ -1006,6 +1006,30 @@ public class ErrorCheckerService implements Runnable{
         if (tempErrorLog.size() < 200)
           tempErrorLog.put(problemsList.get(i).getMessage(), problemsList
               .get(i).getIProblem());
+        
+        if(!ExperimentalMode.importSuggestEnabled) continue;
+        Problem p = problemsList.get(i);
+        if(p.getIProblem().getID() == IProblem.UndefinedType) {
+          String args[] = p.getIProblem().getArguments();        
+          if (args.length > 0) {
+            String missingClass = args[0];
+//            log("Will suggest for type:" + missingClass);
+            //astGenerator.suggestImports(missingClass);
+            String[] si = astGenerator.getSuggestImports(missingClass);
+            if(si != null && si.length > 0){
+//              log("Suggested imps");
+//              for (int j = 0; j < si.length; j++) {
+//                log(si[j]);
+//              }
+              p.setImportSuggestions(si);
+              errorData[i][0] = "<html>"
+                  + problemsList.get(i).getMessage()
+                  + " (<font color=#0000ff><u>Import Suggestions available</u></font>)</html>";
+            }
+            
+          }
+        }
+        
       }
 
       DefaultTableModel tm = new DefaultTableModel(errorData,
