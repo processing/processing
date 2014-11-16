@@ -19,6 +19,7 @@ X   https://github.com/processing/processing/issues/2099
 X   https://github.com/processing/processing/pull/2958
 X ToolTipManager error fix from Manindra
 X   https://github.com/processing/processing/issues/2926
+X Change code completion preferences a bit
 
 pulls
 X Cmd + H runs sketch instead of hiding the PDE (OS X)

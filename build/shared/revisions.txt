@@ -1,7 +1,9 @@
 PROCESSING 3.0a5 (REV 0232) - 16 November 2014
 
-Hello from the University of Denver! This release has tons of bug fixing 
-and incorporating various pull requests.
+Hello from the University of Denver! I'm here with Casey, Dan, Andres, 
+and Manindra working on 3.0. Chris Coleman and Laleh Mehran have been 
+hosting us on behalf of the EDP program. It all looks a bit like this:
+https://twitter.com/digitalcoleman/status/533784122179596288
 
 
 [ changes ]
@@ -37,6 +39,9 @@ and incorporating various pull requests.
 + Show a warning when calling getVertexCount() on GROUP or PRIMITIVE shapes
   https://github.com/processing/processing/issues/2873
   https://github.com/processing/processing-docs/issues/167
+
++ Change code completion preferences a bit. It's still turned off by
+  default, but enable it and help us test!
 
 
 [ bug fixes ]
