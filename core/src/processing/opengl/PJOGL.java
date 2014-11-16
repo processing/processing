@@ -802,7 +802,9 @@ public class PJOGL extends PGL {
 
 
   protected void getBuffers(GLWindow glWindow) {
-    if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
+    if (false) {
+//    if (capabilities.isFBO()) {
+//    if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
       // The onscreen drawing surface is backed by an FBO layer.
       GLFBODrawable fboDrawable = null;
       fboDrawable = (GLFBODrawable)glWindow.getDelegatedDrawable();

@@ -127,6 +127,9 @@ public class PSurfaceNEWT implements PSurface {
     caps.setDepthBits(PGL.REQUESTED_DEPTH_BITS);
     caps.setStencilBits(PGL.REQUESTED_STENCIL_BITS);
 
+    caps.setPBuffer(false);
+    caps.setFBO(true);
+
     caps.setSampleBuffers(true);
     caps.setNumSamples(2);
     caps.setBackgroundOpaque(true);
@@ -309,12 +312,11 @@ public class PSurfaceNEWT implements PSurface {
   }
 
   public void setFrameRate(float fps) {
-    // TODO Auto-generated method stub
-
+    animator.setFPS((int)fps);
   }
 
   public void requestFocus() {
-    // TODO Auto-generated method stub
+    window.requestFocus();
 
   }
 
