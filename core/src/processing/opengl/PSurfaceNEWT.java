@@ -2,8 +2,10 @@ package processing.opengl;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Rectangle;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import javax.media.nativewindow.ScalableSurface;
@@ -145,6 +147,7 @@ public class PSurfaceNEWT implements PSurface {
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
     pgl.capabilities = caps;
+    System.err.println("0. create window");
     window = GLWindow.create(screen, caps);
 
 
@@ -194,8 +197,6 @@ public class PSurfaceNEWT implements PSurface {
       }
     }
 
-    window.setVisible(true);
-
     int[] reqSurfacePixelScale;
     if (graphics.is2X()) {
        // Retina
@@ -220,8 +221,8 @@ public class PSurfaceNEWT implements PSurface {
     DrawListener drawlistener = new DrawListener();
     window.addGLEventListener(drawlistener);
 
+    System.err.println("0. create animator");
     animator = new FPSAnimator(window, 60);
-
 
     window.addWindowListener(new WindowAdapter() {
       @Override
@@ -229,6 +230,22 @@ public class PSurfaceNEWT implements PSurface {
         animator.stop();
       }
     });
+
+//  window.setVisible(true);
+    try {
+      EventQueue.invokeAndWait(new Runnable() {
+        public void run() {
+          window.setVisible(true);
+          System.err.println("1. set visible");
+      }});
+    } catch (InvocationTargetException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    } catch (InterruptedException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+
 
     frame = new DummyFrame();
     return frame;
@@ -238,20 +255,15 @@ public class PSurfaceNEWT implements PSurface {
 
     public DummyFrame() {
       super();
-//      setVisible(false);
     }
 
     @Override
     public void setResizable(boolean resizable) {
-      super.setResizable(resizable);
-
-      // call NEWT function to make the window resizable
+//      super.setResizable(resizable);
     }
 
     @Override
     public void setVisible(boolean visible) {
-      // don't call super.setVisible()
-      // make the NEWT window visible/invisible
       window.setVisible(visible);
     }
 
@@ -297,6 +309,7 @@ public class PSurfaceNEWT implements PSurface {
 
   public void startThread() {
     if (animator != null) {
+      System.err.println("2. start animator");
       animator.start();
     }
   }
@@ -314,17 +327,27 @@ public class PSurfaceNEWT implements PSurface {
   }
 
   public boolean stopThread() {
-    return animator.stop();
+    if (animator != null) {
+      return animator.stop();
+    } else {
+      return false;
+    }
   }
 
   public boolean isStopped() {
-    return !animator.isAnimating();
+    if (animator != null) {
+      return !animator.isAnimating();
+    } else {
+      return true;
+    }
   }
 
   public void setSize(int width, int height) {
-    sketchWidth = sketch.width = width;
-    sketchHeight = sketch.height = height;
-//    System.err.println("resize to " + width + ", " + height);
+    if (frame != null) {
+      System.err.println("3. set size");
+      sketchWidth = sketch.width = width;
+      sketchHeight = sketch.height = height;
+    }
   }
 
   public void setFrameRate(float fps) {
@@ -338,18 +361,20 @@ public class PSurfaceNEWT implements PSurface {
 
   public void blit() {
     // TODO Auto-generated method stub
-
   }
-
-
-
-
 
   class DrawListener implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
       pgl.getGL(drawable);
-      pgl.getBuffers(window);
-      sketch.handleDraw();
+//      pgl.getBuffers(window);
+
+      try {
+        sketch.handleDraw();
+      } catch (Exception ex) {
+//        drawException = ex;
+      }
+
+
       if (sketch.frameCount == 1) {
         requestFocus();
       }
@@ -367,9 +392,7 @@ public class PSurfaceNEWT implements PSurface {
     }
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
       pgl.getGL(drawable);
-      if (animator != null && animator.isStarted()) {
-        setSize(w, h);
-      }
+      setSize(w, h);
     }
   }
 

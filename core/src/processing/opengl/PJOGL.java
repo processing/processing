@@ -15,7 +15,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.concurrent.CountDownLatch;
+//import java.util.concurrent.CountDownLatch;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -27,10 +27,10 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilitiesImmutable;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawable;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLFBODrawable;
+//import javax.media.opengl.GLEventListener;
+//import javax.media.opengl.GLFBODrawable;
 import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLCanvas;
+//import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.fixedfunc.GLMatrixFunc;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
@@ -39,9 +39,9 @@ import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 
-import com.jogamp.newt.awt.NewtCanvasAWT;
-import com.jogamp.newt.opengl.GLWindow;
-import com.jogamp.opengl.FBObject;
+//import com.jogamp.newt.awt.NewtCanvasAWT;
+//import com.jogamp.newt.opengl.GLWindow;
+//import com.jogamp.opengl.FBObject;
 
 
 public class PJOGL extends PGL {
@@ -123,8 +123,8 @@ public class PJOGL extends PGL {
   }
 */
 
-  protected static boolean USE_FBOLAYER_BY_DEFAULT = false;
-  protected static boolean USE_JOGL_FBOLAYER = false;
+//  protected static boolean USE_FBOLAYER_BY_DEFAULT = false;
+//  protected static boolean USE_JOGL_FBOLAYER = false;
 
   // ........................................................
 
@@ -147,25 +147,25 @@ public class PJOGL extends PGL {
   protected GL2 gl2x;
 
   /** The AWT-OpenGL canvas */
-  protected GLCanvas canvasAWT;
+//  protected GLCanvas canvasAWT;
 
   /** The NEWT window */
-  protected GLWindow windowNEWT;
+//  protected GLWindow windowNEWT;
 
   /** The NEWT-OpenGL canvas */
-  protected NewtCanvasAWT canvasNEWT;
+//  protected NewtCanvasAWT canvasNEWT;
 
   /** The listener that fires the frame rendering in Processing */
-  protected PGLListener listener;
+//  protected PGLListener listener;
 
   /** This countdown latch is used to maintain the synchronization between
    * Processing's drawing thread and JOGL's rendering thread */
-  protected CountDownLatch drawLatch = new CountDownLatch(0);
+//  protected CountDownLatch drawLatch = new CountDownLatch(0);
 
   /** Flag used to do request final display() call to make sure that the
    * buffers are properly swapped.
    */
-  protected boolean prevCanDraw = false;
+//  protected boolean prevCanDraw = false;
 
   /** Stores exceptions that ocurred during drawing */
   protected Exception drawException;
@@ -175,16 +175,16 @@ public class PJOGL extends PGL {
   // JOGL's FBO-layer
 
   /** Back (== draw, current frame) buffer */
-  protected FBObject backFBO;
+//  protected FBObject backFBO;
   /** Sink buffer, used in the multisampled case */
-  protected FBObject sinkFBO;
+//  protected FBObject sinkFBO;
   /** Front (== read, previous frame) buffer */
-  protected FBObject frontFBO;
-  protected FBObject.TextureAttachment backTexAttach;
-  protected FBObject.TextureAttachment frontTexAttach;
+//  protected FBObject frontFBO;
+//  protected FBObject.TextureAttachment backTexAttach;
+//  protected FBObject.TextureAttachment frontTexAttach;
 
-  protected boolean changedFrontTex = false;
-  protected boolean changedBackTex = false;
+//  protected boolean changedFrontTex = false;
+//  protected boolean changedBackTex = false;
 
   // ........................................................
 
@@ -805,7 +805,7 @@ public class PJOGL extends PGL {
 
   // JOGL event listeners
 
-
+/*
   protected void getBuffers(GLWindow glWindow) {
     if (false) {
 //    if (capabilities.isFBO()) {
@@ -865,6 +865,7 @@ public class PJOGL extends PGL {
 
     }
   }
+*/
 
   protected void init(GLAutoDrawable glDrawable) {
     capabilities = glDrawable.getChosenGLCapabilities();
@@ -874,18 +875,19 @@ public class PJOGL extends PGL {
     if (!hasShaders()) {
       throw new RuntimeException(MISSING_GLSL_ERROR);
     }
-    if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
-      int maxs = maxSamples();
-      numSamples = PApplet.min(capabilities.getNumSamples(), maxs);
-    }
+//    if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
+//      int maxs = maxSamples();
+//      numSamples = PApplet.min(capabilities.getNumSamples(), maxs);
+//    }
   }
 
+  /*
   protected class PGLListener implements GLEventListener {
     public PGLListener() {}
 
     @Override
     public void display(GLAutoDrawable glDrawable) {
-      /*
+
       getGL(glDrawable);
 
       if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
@@ -956,7 +958,6 @@ public class PJOGL extends PGL {
         drawException = ex;
       }
       drawLatch.countDown();
-      */
     }
 
     @Override
@@ -1005,6 +1006,7 @@ public class PJOGL extends PGL {
 //      }
 //    }
   }
+  */
 
   /*
   protected void nativeMouseEvent(com.jogamp.newt.event.MouseEvent nativeEvent,
