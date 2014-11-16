@@ -238,8 +238,7 @@ public class TextArea extends JEditTextArea {
           SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
             protected Object doInBackground() throws Exception {
               // Provide completions only if it's enabled
-              if (ExperimentalMode.codeCompletionsEnabled
-                  && ExperimentalMode.ccTriggerEnabled) {
+              if (ExperimentalMode.codeCompletionsEnabled) {
                 getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
                 log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started");
                 log("Typing: " + fetchPhrase(evt2));
