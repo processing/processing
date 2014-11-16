@@ -513,7 +513,7 @@ public class PGraphicsJava2D extends PGraphics {
     } else if (type == PShape.GEOMETRY) {
       shape = new PShape(pg, PShape.GEOMETRY);
     }
-    shape.is3D(false);
+    shape.set3D(false);
     return shape;
   }
 
@@ -584,7 +584,7 @@ public class PGraphicsJava2D extends PGraphics {
       shape.setParams(p);
     }
 
-    shape.is3D(false);
+    shape.set3D(false);
     return shape;
   }
 

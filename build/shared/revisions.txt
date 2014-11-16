@@ -6,12 +6,12 @@ and incorporating various pull requests.
 
 [ changes ]
 
-+ Removed the sound library, it's now available as its own library 
++ Removed the sound library. It's now available as its own library 
   from the Library Manager.
 
 + Change how languages are loaded, adding a local override.
 
-+ Update to use JRE/JDK 7u72 .
++ Update to use JRE/JDK 7u72
 
 + Implement the active() method for Serial and Server 
   https://github.com/processing/processing/issues/2364
@@ -33,6 +33,10 @@ and incorporating various pull requests.
 + Add addRows(Table) method (more efficient, one resize)
 
 + Support "header" option with ODS files
+
++ Show a warning when calling getVertexCount() on GROUP or PRIMITIVE shapes
+  https://github.com/processing/processing/issues/2873
+  https://github.com/processing/processing-docs/issues/167
 
 
 [ bug fixes ]
@@ -151,6 +155,10 @@ and incorporating various pull requests.
 + NPE when calling Client.ip() after the connection has been closed
   https://github.com/processing/processing/issues/2576
   https://github.com/processing/processing/pull/2922
+
++ 'return' keyword not treated as such when followed by a bracket
+  https://github.com/processing/processing/issues/2099
+  https://github.com/processing/processing/pull/2958
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
