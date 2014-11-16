@@ -117,6 +117,10 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     f.getDeclaringClass().getName();
     elementName = f.getName();
     type = PREDEF_FIELD;
+//    "<html>"
+//    + matchedClass + " : " + "<font color=#777777>"
+//    + matchedClass2.substring(0, d) + "</font>", matchedClass
+//    + "</html>"
     label = f.getName() + " : " + f.getType().getSimpleName()
         + " - " + f.getDeclaringClass().getSimpleName();
     completionString = elementName;

@@ -1,6 +1,10 @@
 0232 core (3.0a5) 
 X detect CMYK JPEG images and return null
 X   https://community.oracle.com/thread/1272045?start=0&tstart=0
+X show a warning when calling getVertexCount() on GROUP or PRIMITIVE shapes
+X   https://github.com/processing/processing/issues/2873
+X   https://github.com/processing/processing-docs/issues/167
+X replace is3D(boolean) with set3D() 
 
 data
 X fix XML.getString() with a default when no attrs are present at all

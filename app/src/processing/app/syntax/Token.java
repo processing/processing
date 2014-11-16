@@ -56,32 +56,35 @@ public class Token {
 
   /** Datatypes (int, boolean, etc.) */
   public static final byte KEYWORD5 = 10;
+  
+  /** Keywords which can be followed by parenthesis */
+  public static final byte KEYWORD6 = 11;
 
   /** Functions */
-  public static final byte FUNCTION1 = 11;
+  public static final byte FUNCTION1 = 12;
 
   /** Methods (functions inside a class) */
-  public static final byte FUNCTION2 = 12;
+  public static final byte FUNCTION2 = 13;
 
   /** Loop/function-like blocks (for, while, etc.) */
-  public static final byte FUNCTION3 = 13;
+  public static final byte FUNCTION3 = 14;
 
   /** Built-in Processing functions (setup, draw, mouseDragged). */
-  public static final byte FUNCTION4 = 14;
+  public static final byte FUNCTION4 = 15;
 
   /**
    * Operator token id. This can be used to mark an
    * operator. (eg, SQL mode marks +, -, etc with this
    * token type)
    */
-  public static final byte OPERATOR = 15;
+  public static final byte OPERATOR = 16;
 
   /**
    * Invalid token id. This can be used to mark invalid
    * or incomplete tokens, so the user can easily spot
    * syntax errors.
    */
-  public static final byte INVALID = 16;
+  public static final byte INVALID = 17;
 
   /** The total number of defined token ids. */
   public static final byte ID_COUNT = INVALID + 1;

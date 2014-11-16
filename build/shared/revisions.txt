@@ -1,3 +1,169 @@
+PROCESSING 3.0a5 (REV 0232) - 16 November 2014
+
+Hello from the University of Denver! This release has tons of bug fixing 
+and incorporating various pull requests.
+
+
+[ changes ]
+
++ Removed the sound library. It's now available as its own library 
+  from the Library Manager.
+
++ Change how languages are loaded, adding a local override.
+
++ Update to use JRE/JDK 7u72
+
++ Implement the active() method for Serial and Server 
+  https://github.com/processing/processing/issues/2364
+  https://github.com/processing/processing/pull/2588
+
++ Detect CMYK JPEG images and return null
+  https://community.oracle.com/thread/1272045?start=0&tstart=0
+
++ Fix XML.getString() with a default when no attrs are present at all.
+  It was causing a NullPointerException; this also fixes getInt(), et al.
+
++ Fix how dictionary classes return '0' for missing values. Add optional
+  second parameter so that it's possible to avoid the exceptions.
+
++ Fix how nulls are handled with Table.replace()
+
++ Add (simple) ODS writer to Table
+
++ Add addRows(Table) method (more efficient, one resize)
+
++ Support "header" option with ODS files
+
++ Show a warning when calling getVertexCount() on GROUP or PRIMITIVE shapes
+  https://github.com/processing/processing/issues/2873
+  https://github.com/processing/processing-docs/issues/167
+
+
+[ bug fixes ]
+
++ Remove debug message printed to the console when the control key 
+  is pressed, when using the new editor.
+
++ size(640,360 , P3D) doesn't work properly (strange spacing)
+  https://github.com/processing/processing/issues/2924
+  https://github.com/processing/processing/pull/2925
+
++ Fix the shortcut keybindings in editor tab popup menu
+  https://github.com/processing/processing/issues/179
+  https://github.com/processing/processing/pull/2821
+
++ Fix for ToolTipManager error
+  https://github.com/processing/processing/issues/2926
+
++ Confusing message: The shader doesn't have a uniform called "foo"
+  https://github.com/processing/processing/issues/2593
+
++ Exceptions in P3D / P2D not showing up properly
+  https://github.com/processing/processing/issues/2930
+
+
+[ contributed fixes ] 
+
++ Cmd + H runs sketch instead of hiding the PDE (OS X)
+  https://github.com/processing/processing/issues/2881
+
++ Migrate to unsynchronized data structures
+  https://github.com/processing/processing/pull/2863
+
++ Improve contrib manager localization
+  https://github.com/processing/processing/pull/2870
+
++ Fix typo in spanish translation
+  https://github.com/processing/processing/pull/2906
+
++ Update ECJ, use 1.7 as source and target Java version
+  https://github.com/processing/processing/pull/2907
+
++ Fix infinite recursion in sound library
+  https://github.com/processing/processing/pull/2897
+
++ Add missing generic type parameters
+  https://github.com/processing/processing/pull/2899
+
++ Remove unused Base.builtOnce instance variable
+  https://github.com/processing/processing/pull/2864
+
++ Other miscellaneous fixes
+  https://github.com/processing/processing/pull/2865
+
++ Moved the language stuff to its own separate folder
+  https://github.com/processing/processing/pull/2941
+
++ Some minor UpdateChecker refactorings
+  https://github.com/processing/processing/pull/2830
+
++ Minor improvements to the Contribution Manager's updates check
+  https://github.com/processing/processing/pull/2861
+
++ Make Cut and Copy in the edit menu active only if some text is selected
+  https://github.com/processing/processing/pull/2834
+
++ Fix renaming from RGB to Rgb.java and others
+  https://github.com/processing/processing/pull/2825
+
++ Sketches should only write to the console of their editor window
+  https://github.com/processing/processing/issues/153
+  https://github.com/processing/processing/issues/2858
+  https://github.com/processing/processing/pull/2827
+
++ Extend translations and update German language
+  https://github.com/processing/processing/pull/2949
+
++ NullPointerException message when Server writes to a disconnected client
+  https://github.com/processing/processing/issues/2577
+  https://github.com/processing/processing/pull/2578
+
++ Fix check in loadShader()
+  https://github.com/processing/processing/pull/2867
+
++ Refined PShader uniform missing message fixes
+  https://github.com/processing/processing/pull/2869
+
++ Use correct parameter types in FloatList methods
+  https://github.com/processing/processing/pull/2902
+
++ Pass correct offset to glCopyTexSubImage2D
+  https://github.com/processing/processing/pull/2898
+
++ beginShape(POINTS) not working for PShape
+  https://github.com/processing/processing/issues/2912
+  https://github.com/processing/processing/pull/2915
+
++ Multiple blending fixes & improvements
+  https://github.com/processing/processing/pull/2921
+  https://github.com/processing/processing/issues/2807
+  https://github.com/processing/processing/issues/1224
+  https://github.com/processing/processing/pull/2601
+  https://github.com/processing/processing/issues/1844
+
++ Prevent lerpColor from always rounding down
+  https://github.com/processing/processing/issues/2812
+  https://github.com/processing/processing/pull/2813
+
++ Allow mask() with PGraphicsJava2D
+  https://github.com/processing/processing/pull/2910
+
++ OpenGL renderers ignore vertex winding in contours
+  https://github.com/processing/processing/issues/2665
+  https://github.com/processing/processing/pull/2927
+
++ NPE when calling Client.ip() after the connection has been closed
+  https://github.com/processing/processing/issues/2576
+  https://github.com/processing/processing/pull/2922
+
++ 'return' keyword not treated as such when followed by a bracket
+  https://github.com/processing/processing/issues/2099
+  https://github.com/processing/processing/pull/2958
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 3.0a4 (REV 0231) - 12 September 2014
 
 Another release to deal with a handful of bugs found in the last alpha.

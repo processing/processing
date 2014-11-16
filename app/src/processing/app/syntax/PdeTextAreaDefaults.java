@@ -215,6 +215,7 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     styles[Token.KEYWORD3] = mode.getStyle("keyword3");
     styles[Token.KEYWORD4] = mode.getStyle("keyword4");
     styles[Token.KEYWORD5] = mode.getStyle("keyword5");
+    styles[Token.KEYWORD6] = mode.getStyle("keyword6");
 
     styles[Token.FUNCTION1] = mode.getStyle("function1");
     styles[Token.FUNCTION2] = mode.getStyle("function2");
