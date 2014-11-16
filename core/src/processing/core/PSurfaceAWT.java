@@ -413,6 +413,8 @@ public class PSurfaceAWT implements PSurface {
     sketchWidth = sketch.sketchWidth();
     sketchHeight = sketch.sketchHeight();
 
+    setSize(sketchWidth, sketchHeight);
+
     return canvas;
   }
 
