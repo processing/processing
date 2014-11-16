@@ -146,7 +146,7 @@ public class ExperimentalMode extends JavaMode {
   /**
    * After how many typed characters, code completion is triggered
    */
-  volatile public static int codeCompletionTriggerLength = 2;
+  volatile public static int codeCompletionTriggerLength = 1;
 
   static public final String prefErrorCheck = "pdex.errorCheckEnabled";
   static public final String prefWarnings = "pdex.warningsEnabled";
