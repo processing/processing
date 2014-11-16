@@ -9,8 +9,10 @@ X change how languages are loaded
 X   add local override (needs documentation)
 X   figure out copyDir() problems before pull
 o moving window to a new location is broken due to the pull
+X update to use new 7u72 version of JRE (and JDK) stuff
 
-_ add script to download JRE and JDK from Oracle
+_ finish Ant task to download JRE and JDK from Oracle
+_   add method to prompt user to download the JDK update
 
 manindra
 X ToolTipManager error
