@@ -490,6 +490,14 @@
       <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/bin"/>
     </exec>
 
+    <!-- Replace libjli.dylib symlink with actual file. 
+         Deals with code signing issues on OS X 10.9.5+ -->
+    <property name="jli.path" value="macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/MacOS/libjli.dylib" />
+    <delete file="${jli.path}" />
+    <exec executable="cp">
+      <arg line="${jdk.path.macosx}/Contents/Home/jre/lib/jli/libjli.dylib ${jli.path}"/>
+    </exec>
+
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
       <!--<fileset dir="shared" includes="launch4j/**" />-->
