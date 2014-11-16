@@ -2,20 +2,6 @@
 X detect CMYK JPEG images and return null
 X   https://community.oracle.com/thread/1272045?start=0&tstart=0
 
-_ remove sketch path hack from PApplet
-
-python has to use launch() instead of open()
-map() is bad for Python (and JavaScript?)
-
-_ args[] should be null if none passed (otherwise args == null checks are weird)
-_ size(640,360 , P3D) doesn't work properly
-_   https://github.com/processing/processing/issues/2924
-_ why doesn't p5 punt when loadFont() is used on an otf?
-_   is this a GL problem? 
-
-_ show warning when display spanning is turned off
-_   defaults read com.apple.spaces spans-displays
-
 data
 X fix XML.getString() with a default when no attrs are present at all
 X   was causing a NullPointerException
@@ -25,15 +11,12 @@ X   add optional second param
 X   fixed for FloatDict and IntDict
 X   StringDict won't throw an exception, but optional second param added
 X add insert() with a single item to StringList, IntList, FloatList
-_ add fromOrder() and others? otherwise need temp object:
-_   categoryIndexLookup = new StringList(flavors).getOrder();
 
 table
 X fix how nulls are handled with Table.replace()
 X add (simple) ODS writer to Table
 X add addRows(Table) method (more efficient, one resize)
 X support "header" option with ODS files
-_ handling of 'missing' values in Table needs serious work
 
 pulls
 X Fix check in loadShader()
@@ -75,6 +58,8 @@ A Exceptions in P3D / P2D not showing up properly
 A   https://github.com/processing/processing/issues/2930
 
 
+0233 (3.0a6)
+
 graphics
 X roll back full screen changes
 X   https://github.com/processing/processing/issues/2641
@@ -82,6 +67,20 @@ X remove isGL(), is2D(), is3D(), displayable() from PApplet
 X   these were auto-imported from PGraphics
 X remove pause variable from PApplet (was not documented)
 X added copy() to PImage (to work like get(), ala PVector)
+
+_ remove sketch path hack from PApplet
+
+python has to use launch() instead of open()
+map() is bad for Python (and JavaScript?)
+
+_ args[] should be null if none passed (otherwise args == null checks are weird)
+_ size(640,360 , P3D) doesn't work properly
+_   https://github.com/processing/processing/issues/2924
+_ why doesn't p5 punt when loadFont() is used on an otf?
+_   is this a GL problem? 
+
+_ show warning when display spanning is turned off
+_   defaults read com.apple.spaces spans-displays
 
 applet/component
 _ remove Applet as base class
@@ -97,8 +96,9 @@ _   make sure it works with retina/canvas/strategy as well
 
 
 processing.data
-_ lots of 'data' changes down below
-_ need a better method for "missing" data in Table
+_ add fromOrder() and others? otherwise need temp object:
+_   categoryIndexLookup = new StringList(flavors).getOrder();
+_ handling of 'missing' values in Table needs serious work
 _   if missing int is zero, can't just remove those values from saving a table
 _   but for NaN values, it's a necessity
 _ get() methods in List/Dict shouldn't allow you to get bad values
