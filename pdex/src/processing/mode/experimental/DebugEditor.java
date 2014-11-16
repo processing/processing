@@ -1747,8 +1747,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 		ta.startInteractiveMode();
 	}
 
-	public void stopInteractiveMode(ArrayList<Handle> handles[])
-	{
+	//public void stopInteractiveMode(ArrayList<Handle> handles[]) {
+	public void stopInteractiveMode(List<List<Handle>> handles) {
 		tweakClient.shutdown();
 		ta.stopInteractiveMode();
 
@@ -1819,8 +1819,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 		}
 	}
 
-	public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[])
-	{
+	public void updateInterface(List<List<Handle>> handles, List<List<ColorControlBox>> colorBoxes) {
 		// set OSC port of handles
 //		for (int i=0; i<handles.length; i++) {
 //			for (Handle h : handles[i]) {
@@ -1831,12 +1830,12 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 		ta.updateInterface(handles, colorBoxes);
 	}
 
+	
 	/**
 	* Deactivate run button
 	* Do this because when Mode.handleRun returns null the play button stays on.
 	*/
-	public void deactivateRun()
-	{
+	public void deactivateRun() {
 //		toolbar.deactivate(TweakToolbar.RUN);
 	  if(toolbar instanceof DebugToolbar){
 	    toolbar.deactivate(DebugToolbar.RUN);
@@ -1845,40 +1844,40 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 	  }
 	}
 
-	private boolean[] getModifiedTabs(ArrayList<Handle> handles[])
-	{
-		boolean[] modifiedTabs = new boolean[handles.length];
+	
+	//private boolean[] getModifiedTabs(ArrayList<Handle> handles[]) {
+	private boolean[] getModifiedTabs(List<List<Handle>> handles) {
+		boolean[] modifiedTabs = new boolean[handles.size()];
 
-		for (int i=0; i<handles.length; i++) {
-			for (Handle h : handles[i]) {
+		for (int i = 0; i < handles.size(); i++) {
+			for (Handle h : handles.get(i)) {
 				if (h.valueChanged()) {
 					modifiedTabs[i] = true;
 				}
 			}
 		}
-
 		return modifiedTabs;
 	}
 
-	public void initBaseCode()
-	{
-    	SketchCode[] code = sketch.getCode();
+	
+	public void initBaseCode() {
+	  SketchCode[] code = sketch.getCode();
 
-    	String space = new String();
+	  String space = new String();
 
-    	for (int i=0; i<SPACE_AMOUNT; i++) {
-    		space += "\n";
-    	}
+	  for (int i=0; i<SPACE_AMOUNT; i++) {
+	    space += "\n";
+	  }
 
-    	baseCode = new String[code.length];
-		for (int i=0; i<code.length; i++)
-		{
-			baseCode[i] = new String(code[i].getSavedProgram());
-			baseCode[i] = space + baseCode[i] + space;
-		}
+	  baseCode = new String[code.length];
+	  for (int i = 0; i < code.length; i++) {
+	    baseCode[i] = new String(code[i].getSavedProgram());
+	    baseCode[i] = space + baseCode[i] + space;
+	  }
 	}
+	
 
-	public void initEditorCode(ArrayList<Handle> handles[], boolean withSpaces)
+	public void initEditorCode(List<List<Handle>> handles, boolean withSpaces)
 	{
 		SketchCode[] sketchCode = sketch.getCode();
 		for (int tab=0; tab<baseCode.length; tab++) {
@@ -1886,8 +1885,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 				int charInc = 0;
 				String code = baseCode[tab];
 
-				for (Handle n : handles[tab])
-				{
+				for (Handle n : handles.get(tab)) {
 					int s = n.startChar + charInc;
 					int e = n.endChar + charInc;
 					String newStr = n.strNewValue;
@@ -1953,14 +1951,14 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @return
      *  true on success
      */
-    public boolean automateSketch(Sketch sketch, ArrayList<Handle> handles[])
-    {
+    //public boolean automateSketch(Sketch sketch, ArrayList<Handle> handles[])
+	  public boolean automateSketch(Sketch sketch, List<List<Handle>> handles) {
     	SketchCode[] code = sketch.getCode();
 
     	if (code.length<1)
     		return false;
 
-    	if (handles.length == 0)
+    	if (handles.size() == 0)
     		return false;
 
     	int setupStartPos = SketchParser.getSetupStart(baseCode[0]);
@@ -1988,7 +1986,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 		tweakClient = new UDPTweakClient(port);
 		// update handles with a reference to the client object
 		for (int tab=0; tab<code.length; tab++) {
-			for (Handle h : handles[tab]) {
+			for (Handle h : handles.get(tab)) {
 				h.setTweakClient(tweakClient);
 			}
 		}
@@ -2002,7 +2000,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     	{
     		int charInc = 0;
 			String c = baseCode[tab];
-			for (Handle n : handles[tab])
+			for (Handle n : handles.get(tab))
     		{
     			// replace number value with a variable
     			c = replaceString(c, n.startChar + charInc, n.endChar + charInc, n.name);
@@ -2043,9 +2041,10 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     			
 
     	header += "void tweakmode_initAllVars() {\n";
-    	for (int i=0; i<handles.length; i++) {
-    		for (Handle n : handles[i])
-    		{
+    	//for (int i=0; i<handles.length; i++) {
+    	for (List<Handle> list : handles) {
+    		//for (Handle n : handles[i]) {
+    	  for (Handle n : list) {
     			header += "  " + n.name + " = " + n.strValue + ";\n";
     		}
     	}
@@ -2087,33 +2086,37 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     	return true;
     }
 
-	private String replaceString(String str, int start, int end, String put)
-	{
+	private String replaceString(String str, int start, int end, String put) {
 		return str.substring(0, start) + put + str.substring(end, str.length());
 	}
 
-	private int howManyInts(ArrayList<Handle> handles[])
-	{
+	//private int howManyInts(ArrayList<Handle> handles[])
+	private int howManyInts(List<List<Handle>> handles) {
 		int count = 0;
-		for (int i=0; i<handles.length; i++) {
-			for (Handle n : handles[i]) {
-				if (n.type == "int" || n.type == "hex" || n.type == "webcolor")
+		//for (int i=0; i<handles.length; i++) {
+		for (List<Handle> list : handles) {
+			//for (Handle n : handles[i]) {
+		  for (Handle n : list) {
+				if (n.type == "int" || n.type == "hex" || n.type == "webcolor") {
 					count++;
+				}
 			}
 		}
 		return count;
 	}
 
-	private int howManyFloats(ArrayList<Handle> handles[])
-	{
+	//private int howManyFloats(ArrayList<Handle> handles[])
+	private int howManyFloats(List<List<Handle>> handles) {
 		int count = 0;
-		for (int i=0; i<handles.length; i++) {
-			for (Handle n : handles[i]) {
-				if (n.type == "float")
+		//for (int i=0; i<handles.length; i++) {
+		for (List<Handle> list : handles) {
+			//for (Handle n : handles[i]) {
+		  for (Handle n : list) {
+				if (n.type == "float") {
 					count++;
+				}
 			}
 		}
 		return count;
 	}
-
 }
