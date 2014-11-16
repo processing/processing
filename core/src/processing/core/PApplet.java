@@ -281,7 +281,7 @@ public class PApplet extends Applet
 //  public int displayY;
 
   /**
-   * ( begin auto-generated from screenWidth.xml )
+   * ( begin auto-generated from displayWidth.xml )
    *
    * System variable which stores the width of the computer screen. For
    * example, if the current screen resolution is 1024x768,
@@ -299,11 +299,11 @@ public class PApplet extends Applet
   public int displayWidth;
 
   /**
-   * ( begin auto-generated from screenHeight.xml )
+   * ( begin auto-generated from displayHeight.xml )
    *
    * System variable that stores the height of the computer screen. For
    * example, if the current screen resolution is 1024x768,
-   * <b>screenWidth</b> is 1024 and <b>screenHeight</b> is 768. These
+   * <b>displayWidth</b> is 1024 and <b>displayHeight</b> is 768. These
    * dimensions are useful when exporting full-screen applications.
    * <br /><br />
    * To ensure that the sketch takes over the entire screen, use "Present"
