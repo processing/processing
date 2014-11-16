@@ -186,19 +186,19 @@ public class PSurfaceNEWT implements PSurface {
 
     window.setVisible(true);
 
-    // Retina
-//    int[] reqSurfacePixelScale = new int[] { ScalableSurface.AUTOMAX_PIXELSCALE,
-//                                             ScalableSurface.AUTOMAX_PIXELSCALE };
-//    pgl.pixel_scale = 2;
-
-    // Non-retina
-    int[] reqSurfacePixelScale = new int[] { ScalableSurface.IDENTITY_PIXELSCALE,
-                                             ScalableSurface.IDENTITY_PIXELSCALE };
+    int[] reqSurfacePixelScale;
+    if (graphics.is2X()) {
+       // Retina
+       reqSurfacePixelScale = new int[] { ScalableSurface.AUTOMAX_PIXELSCALE,
+                                          ScalableSurface.AUTOMAX_PIXELSCALE };
+       pgl.pixel_scale = 2;
+    } else {
+      // Non-retina
+      reqSurfacePixelScale = new int[] { ScalableSurface.IDENTITY_PIXELSCALE,
+                                         ScalableSurface.IDENTITY_PIXELSCALE };
+      pgl.pixel_scale = 1;
+    }
     window.setSurfaceScale(reqSurfacePixelScale);
-    pgl.pixel_scale = 1;
-
-
-
 
     NEWTMouseListener mouseListener = new NEWTMouseListener();
     window.addMouseListener(mouseListener);
