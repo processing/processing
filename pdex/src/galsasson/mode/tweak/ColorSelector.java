@@ -37,22 +37,23 @@ public class ColorSelector {
 		box.setBackground(Color.BLACK);
 
 		selectorSlider = new ColorSelectorSlider();
-		selectorSlider.init();
 
 		if (!colorBox.isBW) {
 			selectorBox = new ColorSelectorBox();
-			selectorBox.init();
-			box.add(selectorBox);
+			box.add(selectorBox.getCanvas());
 		}
 
 		box.add(Box.createHorizontalGlue());
-		box.add(selectorSlider, BorderLayout.CENTER);
+		box.add(selectorSlider.getCanvas(), BorderLayout.CENTER);
 		box.add(Box.createHorizontalGlue());
 
 		frame.getContentPane().add(box, BorderLayout.CENTER);
 		frame.pack();
 		frame.setResizable(false);
 		frame.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+		
+    selectorBox.init();
+    selectorSlider.init();
 	}
 
 	public void show(int x, int y)
@@ -112,14 +113,15 @@ public class ColorSelector {
 	 * PApplets for the interactive color fields
 	 */
 
-	public class ColorSelectorBox extends PApplet
-	{
+	public class ColorSelectorBox extends PApplet {
 		int lastX, lastY;
 		PImage backImg;
 
-		public void setup()
-		{
-			size(255, 255);
+		public int sketchWidth() { return 255; }
+		
+		public int sketchHeight() { return 255; }
+		
+		public void setup() {
 			noLoop();
 			colorMode(HSB, 255, 255, 255);
 			noFill();
@@ -131,8 +133,7 @@ public class ColorSelector {
 			renderBack();
 		}
 
-		public void draw()
-		{
+		public void draw() {
 			image(backImg, 0, 0);
 
 			stroke((lastY<128) ? 0 : 255);
@@ -147,8 +148,7 @@ public class ColorSelector {
 			popMatrix();
 		}
 
-		public void renderBack()
-		{
+		public void renderBack() {
 			PGraphics buf = createGraphics(255, 255);
 			buf.colorMode(HSB, 255, 255, 255);
 			buf.beginDraw();
@@ -165,8 +165,7 @@ public class ColorSelector {
 			backImg = buf.get();
 		}
 
-		public void setToColor(Color c)
-		{
+		public void setToColor(Color c) {
 			// set selector color
 			float hsb[] = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
 			saturation = (int)(hsb[1]*255);
@@ -197,8 +196,7 @@ public class ColorSelector {
 			updateColor();
 		}
 
-		public void updateColor()
-		{
+		public void updateColor() {
 			saturation = lastX;
 			brightness = 255 - lastY;
 
@@ -206,6 +204,7 @@ public class ColorSelector {
 			colorBox.selectorChanged(hue, saturation, brightness);
 		}
 
+		/*
 		public Dimension getPreferredSize() {
 			return new Dimension(255, 255);
 		}
@@ -217,15 +216,15 @@ public class ColorSelector {
 		public Dimension getMaximumSize() {
 			return new Dimension(255, 255);
 		}
+		*/
 	}
 
-	public class ColorSelectorSlider extends PApplet
-	{
+	
+	public class ColorSelectorSlider extends PApplet {
 		PImage backImg;
 		int lastY;
 
-		public void setup()
-		{
+		public void setup() {
 			size(30, 255);
 			noLoop();
 			colorMode(HSB, 255, 255, 255);
@@ -240,8 +239,7 @@ public class ColorSelector {
 			renderBack();
 		}
 
-		public void draw()
-		{
+		public void draw() {
 			image(backImg, 0, 0);
 			if (colorBox.isBW) {
 				stroke(lastY<128 ? 0 : 255);
@@ -284,8 +282,7 @@ public class ColorSelector {
 			}
 		}
 
-		public void renderBack()
-		{
+		public void renderBack() {
 			PGraphics buf = createGraphics(30, 255);
 			buf.beginDraw();
 			buf.loadPixels();
