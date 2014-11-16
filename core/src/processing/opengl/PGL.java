@@ -351,23 +351,20 @@ public abstract class PGL {
   }
 
 
-  /**
-   * Return the native canvas the OpenGL context associated to this PGL object
-   * is rendering to (if any).
-   */
-  public abstract Object getCanvas();
 
-
-  protected abstract void setFps(float fps);
-
-
-  protected abstract void initSurface(int antialias);
-
-
-  protected abstract void reinitSurface();
-
-
-  protected abstract void registerListeners();
+//  public abstract Object getCanvas();
+//
+//
+//  protected abstract void setFps(float fps);
+//
+//
+//  protected abstract void initSurface(int antialias);
+//
+//
+//  protected abstract void reinitSurface();
+//
+//
+//  protected abstract void registerListeners();
 
 
   protected void deleteSurface() {
@@ -569,7 +566,7 @@ public abstract class PGL {
       // The result of this assignment is the following: if the user requested
       // at some point the use of the FBO layer, but subsequently didn't
       // request it again, then the rendering won't render to the FBO layer if
-      // not needed by the condif, since it is slower than simple onscreen
+      // not needed by the config, since it is slower than simple onscreen
       // rendering.
       fboLayerRequested = false;
     }
@@ -602,18 +599,18 @@ public abstract class PGL {
 
 
   protected abstract void getGL(PGL pgl);
-
-
-  protected abstract boolean canDraw();
-
-
-  protected abstract void requestFocus();
-
-
-  protected abstract void requestDraw();
-
-
-  protected abstract void swapBuffers();
+//
+//
+//  protected abstract boolean canDraw();
+//
+//
+//  protected abstract void requestFocus();
+//
+//
+//  protected abstract void requestDraw();
+//
+//
+//  protected abstract void swapBuffers();
 
 
   protected boolean threadIsCurrent()  {
@@ -630,10 +627,10 @@ public abstract class PGL {
   private boolean needFBOLayer(boolean clear0) {
     // TODO: need to revise this, on windows we might not want to use FBO layer
     // even with anti-aliasing enabled...
-    boolean res = !clear0 || fboLayerRequested || 1 < numSamples;
+//    boolean res = !clear0 || fboLayerRequested || 1 < numSamples;
 //    System.err.println(res + " " + clear0 + " " + fboLayerRequested + " " + numSamples);
 //    return res;
-    return false;
+    return fboLayerRequested;
   }
 
 

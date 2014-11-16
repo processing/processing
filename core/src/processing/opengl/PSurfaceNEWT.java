@@ -128,7 +128,7 @@ public class PSurfaceNEWT implements PSurface {
     caps.setStencilBits(PGL.REQUESTED_STENCIL_BITS);
 
     caps.setPBuffer(false);
-    caps.setFBO(true);
+    caps.setFBO(false);
 
     caps.setSampleBuffers(true);
     caps.setNumSamples(2);
@@ -286,15 +286,21 @@ public class PSurfaceNEWT implements PSurface {
   }
 
   public void startThread() {
-    animator.start();
+    if (animator != null) {
+      animator.start();
+    }
   }
 
   public void pauseThread() {
-    animator.pause();
+    if (animator != null) {
+      animator.pause();
+    }
   }
 
   public void resumeThread() {
-    animator.resume();
+    if (animator != null) {
+      animator.resume();
+    }
   }
 
   public boolean stopThread() {
@@ -351,7 +357,7 @@ public class PSurfaceNEWT implements PSurface {
     }
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
       pgl.getGL(drawable);
-      if (animator.isStarted()) {
+      if (animator != null && animator.isStarted()) {
         setSize(w, h);
       }
     }

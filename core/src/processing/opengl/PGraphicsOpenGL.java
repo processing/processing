@@ -632,7 +632,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // render only 1 frame, so no enough rendering
       // iterations have been conducted so far to properly
       // initialize all the buffers.
-      pgl.swapBuffers();
+//      pgl.swapBuffers();
     }
 
     finalizePolyBuffers();
@@ -1649,10 +1649,10 @@ public class PGraphicsOpenGL extends PGraphics {
    * OpenGL cannot draw until a proper native peer is available, so this
    * returns the value of PApplet.isDisplayable() (inherited from Component).
    */
-  @Override
-  public boolean canDraw() {
-    return pgl.canDraw();
-  }
+//  @Override
+//  public boolean canDraw() {
+//    return pgl.canDraw();
+//  }
 
 
 //  @Override
@@ -1671,10 +1671,14 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void beginDraw() {
     if (primarySurface) {
-      if (initialized) {
-        if (sized) pgl.reinitSurface();
-        if (parent.canDraw()) pgl.requestDraw();
-      } else {
+//      if (initialized) {
+//        if (sized) pgl.reinitSurface();
+//        if (parent.canDraw()) pgl.requestDraw();
+//      } else {
+        initPrimary();
+//      }
+
+      if (!initialized) {
         initPrimary();
       }
 
@@ -6351,7 +6355,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void initPrimary() {
-    pgl.initSurface(quality);
+//    pgl.initSurface(quality);
     if (texture != null) {
       removeCache(this);
       texture = ptexture = null;
