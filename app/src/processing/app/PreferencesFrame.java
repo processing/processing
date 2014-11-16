@@ -71,7 +71,7 @@ public class PreferencesFrame {
   JCheckBox warningsCheckerBox;
   JCheckBox codeCompletionBox;
   JCheckBox importSuggestionsBox;
-  JCheckBox codeCompletionTriggerBox;
+  //JCheckBox codeCompletionTriggerBox;
 
   JComboBox<String> displaySelectionBox;
   JComboBox<String> languageSelectionBox;
@@ -398,29 +398,29 @@ public class PreferencesFrame {
     // [ ] Enable Code Completion - PDE X
 
     codeCompletionBox =
-      new JCheckBox(Language.text("preferences.code_completion"));
+      new JCheckBox(Language.text("preferences.code_completion") + " Ctrl-" + Language.text("preferences.cmd_space"));
     pain.add(codeCompletionBox);
     d = codeCompletionBox.getPreferredSize();
     codeCompletionBox.setBounds(left, top, d.width + 10, d.height);
-    codeCompletionBox.addActionListener(new ActionListener() {
+//    codeCompletionBox.addActionListener(new ActionListener() {
+//
+//      @Override
+//      public void actionPerformed(ActionEvent e) {
+//        // Disble code completion trigger option if completion is disabled
+//        codeCompletionTriggerBox.setEnabled(codeCompletionBox.isSelected());
+//      }
+//    });
 
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        // Disble code completion trigger option if completion is disabled
-        codeCompletionTriggerBox.setEnabled(codeCompletionBox.isSelected());
-      }
-    });
+//    int toggleLeft = left + d.width;
 
-    int toggleLeft = left + d.width;
+    // [ ] Toggle Code Completion Trigger - PDE X. No longer needed (Manindra)
 
-    // [ ] Toggle Code Completion Trigger - PDE X
-
-    codeCompletionTriggerBox =
-      new JCheckBox(Language.text("preferences.trigger_with")+" Ctrl-"+Language.text("preferences.cmd_space"));
-    pain.add(codeCompletionTriggerBox);
-    d = codeCompletionTriggerBox.getPreferredSize();
-    codeCompletionTriggerBox.setBounds(toggleLeft, top, d.width + 10, d.height);
-    right = Math.max(right, toggleLeft + d.width);
+//    codeCompletionTriggerBox =
+//      new JCheckBox(Language.text("preferences.trigger_with")+" Ctrl-"+Language.text("preferences.cmd_space"));
+//    pain.add(codeCompletionTriggerBox);
+//    d = codeCompletionTriggerBox.getPreferredSize();
+//    codeCompletionTriggerBox.setBounds(toggleLeft, top, d.width + 10, d.height);
+//    right = Math.max(right, toggleLeft + d.width);
     top += d.height + GUI_BETWEEN;
 
     // [ ] Show import suggestions - PDE X
@@ -764,7 +764,7 @@ public class PreferencesFrame {
     Preferences.setBoolean("pdex.errorCheckEnabled", errorCheckerBox.isSelected());
     Preferences.setBoolean("pdex.warningsEnabled", warningsCheckerBox.isSelected());
     Preferences.setBoolean("pdex.completion", codeCompletionBox.isSelected());
-    Preferences.setBoolean("pdex.completion.trigger", codeCompletionTriggerBox.isSelected());
+    //Preferences.setBoolean("pdex.completion.trigger", codeCompletionTriggerBox.isSelected());
     Preferences.setBoolean("pdex.importSuggestEnabled", importSuggestionsBox.isSelected());
 
     for (Editor editor : base.getEditors()) {
@@ -779,8 +779,8 @@ public class PreferencesFrame {
     errorCheckerBox.setSelected(Preferences.getBoolean("pdex.errorCheckEnabled"));
     warningsCheckerBox.setSelected(Preferences.getBoolean("pdex.warningsEnabled"));
     codeCompletionBox.setSelected(Preferences.getBoolean("pdex.completion"));
-    codeCompletionTriggerBox.setSelected(Preferences.getBoolean("pdex.completion.trigger"));
-    codeCompletionTriggerBox.setEnabled(codeCompletionBox.isSelected());
+    //codeCompletionTriggerBox.setSelected(Preferences.getBoolean("pdex.completion.trigger"));
+    //codeCompletionTriggerBox.setEnabled(codeCompletionBox.isSelected());
     importSuggestionsBox.setSelected(Preferences.getBoolean("pdex.importSuggestEnabled"));
     deletePreviousBox.
       setSelected(Preferences.getBoolean("export.delete_target_folder")); //$NON-NLS-1$

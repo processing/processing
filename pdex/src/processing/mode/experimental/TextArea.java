@@ -228,12 +228,12 @@ public class TextArea extends JEditTextArea {
       final KeyEvent evt2 = evt;
       
       if (keyChar == '.') {
-        if (ExperimentalMode.codeCompletionsEnabled && ExperimentalMode.ccTriggerEnabled) {
+        if (ExperimentalMode.codeCompletionsEnabled) {
           log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
           log("Typing: " + fetchPhrase(evt2));
         }
       } else if (keyChar == ' ') { // Trigger on Ctrl-Space
-        if (!Base.isMacOS() && ExperimentalMode.ccTriggerEnabled &&
+        if (!Base.isMacOS() && ExperimentalMode.codeCompletionsEnabled &&
         (evt.isControlDown() || evt.isMetaDown())) {
           SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
             protected Object doInBackground() throws Exception {
@@ -252,7 +252,9 @@ public class TextArea extends JEditTextArea {
           hideSuggestion(); // hide on spacebar
         }
       } else {
-        prepareSuggestions(evt2);
+        if(ExperimentalMode.codeCompletionsEnabled) {
+          prepareSuggestions(evt2);
+        }
       }
     }
     // #2699 - Special case for OS X, where Ctrl-Space is not detected as Key_Typed -_-
@@ -262,8 +264,7 @@ public class TextArea extends JEditTextArea {
       SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
         protected Object doInBackground() throws Exception {
           // Provide completions only if it's enabled
-          if (ExperimentalMode.codeCompletionsEnabled
-              && ExperimentalMode.ccTriggerEnabled) {
+          if (ExperimentalMode.codeCompletionsEnabled) {
             log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
             log("Typing: " + fetchPhrase(evt2));
           }
@@ -283,7 +284,7 @@ public class TextArea extends JEditTextArea {
       protected Object doInBackground() throws Exception {
         // Provide completions only if it's enabled
         if (ExperimentalMode.codeCompletionsEnabled
-            && (!ExperimentalMode.ccTriggerEnabled || suggestion.isVisible())) {
+            && (ExperimentalMode.ccTriggerEnabled || suggestion.isVisible())) {
           log("[KeyEvent]" + evt.getKeyChar() + "  |Prediction started");
           log("Typing: " + fetchPhrase(evt));
         }
