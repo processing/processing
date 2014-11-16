@@ -96,7 +96,7 @@ public class ErrorMessageSimplifier {
             result = "Consider adding a \"=\"";
           }
           else {
-            result = "Consider adding a \"" + args[0] + "\"";
+            result = "Error on \"" + args[0] + "\"";
           }
         }
       }
@@ -122,7 +122,7 @@ public class ErrorMessageSimplifier {
           result = getErrorMessageForBracket(args[1].charAt(0));
         }
         else {
-          result = "Consider adding a \"" + args[1] + "\"";
+          result = "Error on \"" + args[0] + "\"Consider adding a \"" + args[1] + "\"";
         }
       }
       break;
