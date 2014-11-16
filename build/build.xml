@@ -34,12 +34,24 @@
   <property name="examples.dir" 
 	    value="../../processing-docs/content/examples" />
 
+  <property name="jdk.version" value="7" />
+  <property name="jdk.update" value="72" />
+  <property name="jdk.build" value="14" />
+  <property name="jdk.stuff" value="${jdk.version}u${jdk.update}" />
+  <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
+
   <!-- Figure out the JRE download location for Linux and Windows. -->
-  <condition property="jre.file" value="jre-7u40-${platform}-i586.tgz"> 
+  <condition property="jre.file" 
+             value="jre-${jdk.stuff}-${platform}-i586.tar.gz"> 
     <equals arg1="${sun.arch.data.model}" arg2="32" />
   </condition>
-  <condition property="jre.file" value="jre-7u40-${platform}-x64.tgz"> 
+  <condition property="jre.file" 
+             value="jre-${jdk.stuff}-${platform}-x64.tar.gz"> 
     <equals arg1="${sun.arch.data.model}" arg2="64" />
+  </condition>
+  <!-- JDK location for Mac OS X -->
+  <condition property="jdk.file" value="jdk-${jdk.stuff}-macosx-x64.dmg">
+    <equals arg1="${platform}" arg2="macosx" />
   </condition>
 
   <fileset dir="windows/work/java" id="jre-optional-windows">
@@ -154,13 +166,13 @@
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.update.macosx" value="72" />
-  <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_${jdk.update.macosx}.jdk" />
+  <property name="jdk.path.macosx" 
+            value="/Library/Java/JavaVirtualMachines/jdk${jdk.esoteric}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
   <fail if="macosx" unless="macosx_jdk_found"
-        message="JDK 7u${jdk.update.macosx} required.${line.separator}To build on OS X, you must install Oracle's JDK 7u${jdk.update.macosx} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only 7u${jdk.update.macosx} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
+        message="JDK ${jdk.stuff} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.stuff} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}or http://download.processing.org/java/${jdk.file}${line.separator}Note that only ${jdk.stuff} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
   <!--
   <fail if="linux" unless="java_tools_found" 
         message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
@@ -475,7 +487,7 @@
 	  Also, because Ant's copy task does not retain file permissions on Unix systems, 
 	  we need to use <exec executable="cp" ... > instead -->
     <exec executable="cp">
-      <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/bin"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/bin"/>
     </exec>
 
     <copy todir="macosx/work/Processing.app/Contents/Java">
@@ -488,7 +500,7 @@
     <!--
     Processing.app/Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/lib/fonts
     -->
-    <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/lib/fonts">
+    <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/lib/fonts">
       <fileset dir="shared/lib/fonts" includes="*" />
     </copy>
 
@@ -543,7 +555,7 @@
       <arg value="--force" />
       <arg value="--sign" />
       <arg value="Developer ID Application" />
-      <arg value="Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk" />
+      <arg value="Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk" />
     </exec>
 
     <exec executable="/usr/bin/codesign" dir="macosx/work">
@@ -649,12 +661,7 @@
     <copy file="linux/processing" tofile="linux/work/processing-java" />
     <chmod perm="ugo+x" file="linux/work/processing-java" />
 
-    <!--
-    <property name="jre.file" 
-              value="jre-tools-6u37-linux${sun.arch.data.model}.tgz" />
-    -->
-
-    <get src="http://processing.googlecode.com/files/${jre.file}" 
+    <get src="http://download.processing.org/java/${jre.file}" 
          dest="linux/jre.tgz" 
          usetimestamp="true" />
 
@@ -687,10 +694,10 @@
     <exec executable="rsync" dir="linux">
       <arg value="-a" />
       <arg value="--delete" />
-      <arg value="jre1.7.0_40/" />
+      <arg value="jre${jdk.esoteric}/" />
       <arg value="work/java" />
     </exec>
-    <delete dir="linux/jre1.7.0_40" />
+    <delete dir="linux/jre${jdk.esoteric}" />
 
     <!-- Remove unused JRE bloat. -->
     <delete failonerror="true"> 
@@ -820,7 +827,7 @@
     </chmod>
 
     <!-- starting with 2.0a7, require the local JRE + tools.jar -->
-    <get src="http://processing.googlecode.com/files/${jre.file}" 
+    <get src="http://download.processing.org/java/${jre.file}" 
          dest="windows/jre.tgz" 
          usetimestamp="true" />
 
@@ -833,7 +840,8 @@
            dest="windows/work" 
            src="windows/jre.tgz" 
            overwrite="false" />
-    <move file="windows/work/jre1.7.0_40" tofile="windows/work/java" />
+    <move file="windows/work/jre${jdk.esoteric}" 
+          tofile="windows/work/java" />
 
     <!-- Remove space-wasting JavaFX garbage. -->
     <delete failonerror="true">

@@ -1,5 +1,9 @@
 0232 pde (3.0a5)
 X remove debug message printed to the console when the ctrl key is down in PDE X
+X size(640,360 , P3D) doesn't work properly
+X   https://github.com/processing/processing/issues/2924
+X   https://github.com/processing/processing/pull/2925
+X remove sound library, have it installed separately like video
 X Fix the shortcut keybindings in editor tab popup menu
 X   https://github.com/processing/processing/issues/179
 X   https://github.com/processing/processing/pull/2821
@@ -9,8 +13,7 @@ X change how languages are loaded
 X   add local override (needs documentation)
 X   figure out copyDir() problems before pull
 o moving window to a new location is broken due to the pull
-
-_ add script to download JRE and JDK from Oracle
+X update to use new 7u72 version of JRE (and JDK) stuff
 
 manindra
 X ToolTipManager error
@@ -23,6 +26,10 @@ X Migrate to unsynchronized data structures
 X   https://github.com/processing/processing/pull/2863
 X improve contrib manager localization
 X   https://github.com/processing/processing/pull/2870
+X Fix typo in spanish translation
+X   https://github.com/processing/processing/pull/2906
+X Update ECJ, use 1.7 as source and target Java version
+X   https://github.com/processing/processing/pull/2907
 X Fix infinite recursion in sound library
 X   https://github.com/processing/processing/pull/2897
 X Add missing generic type parameters
@@ -45,6 +52,8 @@ X sketches should only write to the console of their editor window
 X   https://github.com/processing/processing/issues/153
 X   https://github.com/processing/processing/issues/2858
 X   https://github.com/processing/processing/pull/2827
+X extend translations and update German language
+X   https://github.com/processing/processing/pull/2949
 
 pulls (net)
 X NullPointerException message when Server writes to a disconnected client
@@ -54,10 +63,23 @@ X Implement the active() method for Serial and Server
 X   https://github.com/processing/processing/issues/2364
 X   https://github.com/processing/processing/pull/2588
 
+
+0233 (3.0a6)
+
+_ any problems with new code signing crap? 
+_   issues raised around the symlink (just replace with a copy of the binary?)
+_   https://developer.apple.com/library/prerelease/mac/technotes/tn2206/_index.html#//apple_ref/doc/uid/DTS40007919-CH1-TNTAG205
+
+_ add script to download JRE and JDK from Oracle
+
+_ post a note about the "help" stuff
+_   https://github.com/processing/processing/labels/help
+
+_ finish Ant task to download JRE and JDK from Oracle
+_   add method to prompt user to download the JDK update
+
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
-_ Fix renaming from RGB to Rgb.java and others
-_   https://github.com/processing/processing/pull/2825
 _ check on pull for mnemonics
 _   https://github.com/processing/processing/pull/2382
 
@@ -71,9 +93,14 @@ _   https://github.com/processing/processing/issues/2698
 _   might be something with libraries (native or otherwise)
 _ move the language stuff to the settings folder
 _   that way people can modify and test w/o recompiling
+_   https://github.com/processing/processing/issues/2938
+_ sketchbook window doesn't update when sketches are added, renamed, etc
+_   https://github.com/processing/processing/issues/2944
 
 
 pending
+_ bug in getCaretLocation of CompositionTextPainter class
+_   https://github.com/processing/processing/issues/2934
 _ look at the sound library https://github.com/wirsing/ProcessingSound
 _   sound is not yet supported on Windows
 _ make reference build process part of dist
