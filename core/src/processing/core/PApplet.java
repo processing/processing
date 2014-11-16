@@ -4910,6 +4910,7 @@ public class PApplet implements PConstants {
       // with the old method.
       outgoing.checkAlpha();
 
+      stream.close();
       // return the image
       return outgoing;
 
@@ -5120,7 +5121,7 @@ public class PApplet implements PConstants {
         }
       }
     }
-
+    is.close();
     return outgoing;
   }
 
@@ -6300,7 +6301,13 @@ public class PApplet implements PConstants {
    */
   static public byte[] loadBytes(File file) {
     InputStream is = createInput(file);
-    return loadBytes(is);
+    byte[] byteArr = loadBytes(is);
+    try {
+      is.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return byteArr;
   }
 
   /**
@@ -6366,7 +6373,15 @@ public class PApplet implements PConstants {
    */
   public String[] loadStrings(String filename) {
     InputStream is = createInput(filename);
-    if (is != null) return loadStrings(is);
+    if (is != null) {
+      String[] strArr = loadStrings(is);
+      try {
+        is.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      return strArr;
+    }
 
     System.err.println("The file \"" + filename + "\" " +
                        "is missing or inaccessible, make sure " +

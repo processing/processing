@@ -84,6 +84,7 @@ public class Recent {
           }
         }
       }
+      reader.close();
     }
     updateMenu(mainMenu);
     updateMenu(toolbarMenu);

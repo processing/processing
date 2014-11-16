@@ -232,6 +232,7 @@ public class PShapeOBJ extends PShape {
               BufferedReader mreader = parent.createReader(fn);
               if (mreader != null) {
                 parseMTL(parent, path, mreader, materials, mtlTable);
+                mreader.close();
               }
             }
           } else if (parts[0].equals("g")) {
