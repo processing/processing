@@ -14,9 +14,10 @@ X   add local override (needs documentation)
 X   figure out copyDir() problems before pull
 o moving window to a new location is broken due to the pull
 X update to use new 7u72 version of JRE (and JDK) stuff
-
-manindra
-X ToolTipManager error
+X `return` keyword not treated as such when followed by a bracket
+X   https://github.com/processing/processing/issues/2099
+X   https://github.com/processing/processing/pull/2958
+X ToolTipManager error fix from Manindra
 X   https://github.com/processing/processing/issues/2926
 
 pulls
@@ -114,8 +115,6 @@ _   https://github.com/processing/processing/issues/1898
 
 
 help me
-_ `return` keyword not treated as such when followed by a bracket
-_   https://github.com/processing/processing/issues/2099
 _ IllegalArgumentException when clicking between editor windows
 _   https://github.com/processing/processing/issues/2530
 _ "String index out of range" error

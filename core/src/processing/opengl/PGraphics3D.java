@@ -191,7 +191,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
     } else if (type == PShape.GEOMETRY) {
       shape = new PShapeOpenGL(pg, PShape.GEOMETRY);
     }
-    shape.is3D(true);
+    shape.set3D(true);
     return shape;
   }
 
@@ -272,7 +272,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
       shape.setParams(p);
     }
 
-    shape.is3D(true);
+    shape.set3D(true);
     return shape;
   }
 }
