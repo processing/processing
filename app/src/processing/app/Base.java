@@ -46,9 +46,9 @@ import processing.mode.java.JavaMode;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 232;
+  static private final int REVISION = 233;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0232"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0233"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 //  static private boolean RELEASE = false;
 
@@ -2360,8 +2360,8 @@ public class Base {
   static public File getLibFile(String filename) throws IOException {
     return new File(getContentFile("lib"), filename);
   }
-  
-  
+
+
   /**
    * Return an InputStream for a file inside the Processing lib folder.
    */

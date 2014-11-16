@@ -29,7 +29,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
   public CompletionCandidate(Method method) {
     method.getDeclaringClass().getName();
     elementName = method.getName();
-    StringBuilder label = new StringBuilder(method.getName() + "(");
+    StringBuilder label = new StringBuilder("<html>"+method.getName() + "(");
     StringBuilder cstr = new StringBuilder(method.getName() + "(");
     for (int i = 0; i < method.getParameterTypes().length; i++) {
       label.append(method.getParameterTypes()[i].getSimpleName());
@@ -44,7 +44,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     label.append(")");
     if(method.getReturnType() != null)
       label.append(" : " + method.getReturnType().getSimpleName());
-    label.append(" - " + method.getDeclaringClass().getSimpleName());
+    label.append(" - <font color=#777777>" + method.getDeclaringClass().getSimpleName() + "</font></html>");
     cstr.append(")");
     this.label = label.toString();
     this.completionString = cstr.toString();
@@ -121,8 +121,8 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
 //    + matchedClass + " : " + "<font color=#777777>"
 //    + matchedClass2.substring(0, d) + "</font>", matchedClass
 //    + "</html>"
-    label = f.getName() + " : " + f.getType().getSimpleName()
-        + " - " + f.getDeclaringClass().getSimpleName();
+    label = "<html>" + f.getName() + " : " + f.getType().getSimpleName()
+        + " - <font color=#777777>" + f.getDeclaringClass().getSimpleName() + "</font></html>";
     completionString = elementName;
     wrappedObject = f;
   }
@@ -159,6 +159,23 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
   
   public String getLabel() {
     return label;
+  }
+  
+  public String getNoHtmlLabel(){
+    if(!label.contains("<html>")) {
+      return label;
+    }
+    else {
+      StringBuilder ans = new StringBuilder(label);
+      while(ans.indexOf("<") > -1) {
+        int a = ans.indexOf("<"), b = ans.indexOf(">");
+        if(a > b) break;
+        ans.replace(a, b+1, "");
+//        System.out.println(ans.replace(a, b+1, ""));
+//        System.out.println(ans + "--");
+      }
+      return ans.toString();
+    }
   }
 
   public void setLabel(String label) {
@@ -202,7 +219,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     }
    else if (wrappedObject instanceof Method) {
      Method method = (Method)wrappedObject;
-     StringBuilder label = new StringBuilder(method.getName() + "(");
+     StringBuilder label = new StringBuilder("<html>" + method.getName() + "(");
      StringBuilder cstr = new StringBuilder(method.getName() + "(");
      for (int i = 0; i < method.getParameterTypes().length; i++) {
        label.append(method.getParameterTypes()[i].getSimpleName());
@@ -217,10 +234,28 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
      label.append(")");
      if(method.getReturnType() != null)
        label.append(" : " + method.getReturnType().getSimpleName());
-     label.append(" - " + method.getDeclaringClass().getSimpleName());
+     label.append(" - <font color=#777777>" + method.getDeclaringClass().getSimpleName() + "</font></html>");
      cstr.append(")");
      this.label = label.toString();
      this.completionString = cstr.toString();
+     /*
+      * StringBuilder label = new StringBuilder("<html>"+method.getName() + "(");
+    StringBuilder cstr = new StringBuilder(method.getName() + "(");
+    for (int i = 0; i < method.getParameterTypes().length; i++) {
+      label.append(method.getParameterTypes()[i].getSimpleName());
+      if (i < method.getParameterTypes().length - 1) {
+        label.append(",");
+        cstr.append(",");
+      }
+    }
+    if(method.getParameterTypes().length == 1) {
+      cstr.append(' ');
+    }
+    label.append(")");
+    if(method.getReturnType() != null)
+      label.append(" : " + method.getReturnType().getSimpleName());
+    label.append(" - <font color=#777777>" + method.getDeclaringClass().getSimpleName() + "</font></html>");
+      * */
    }
   }
 

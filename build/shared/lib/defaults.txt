@@ -350,5 +350,7 @@ pdex.errorCheckEnabled=true
 pdex.warningsEnabled=true
 pdex.writeErrorLogs=false
 
+# Enable auto-completion when hitting ctrl-space
 pdex.completion = false
+# Trigger happy version of completion that fires more often
 pdex.completion.trigger = false

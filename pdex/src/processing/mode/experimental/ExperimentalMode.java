@@ -140,13 +140,13 @@ public class ExperimentalMode extends JavaMode {
       debugOutputEnabled = false, errorLogsEnabled = false,
       autoSaveEnabled = true, autoSavePromptEnabled = true,
       defaultAutoSaveEnabled = true, // ,untitledAutoSaveEnabled;
-      ccTriggerEnabled = true, importSuggestEnabled = true;
+      ccTriggerEnabled = false, importSuggestEnabled = true;
   public static int autoSaveInterval = 3; //in minutes
 
   /**
    * After how many typed characters, code completion is triggered
    */
-  volatile public static int codeCompletionTriggerLength = 2;
+  volatile public static int codeCompletionTriggerLength = 1;
 
   static public final String prefErrorCheck = "pdex.errorCheckEnabled";
   static public final String prefWarnings = "pdex.warningsEnabled";

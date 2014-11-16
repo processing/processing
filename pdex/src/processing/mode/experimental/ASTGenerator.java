@@ -771,8 +771,7 @@ public class ASTGenerator {
     ArrayList<CompletionCandidate> newCandidate = new ArrayList<CompletionCandidate>();
     newWord = newWord.toLowerCase();
     for (CompletionCandidate comp : candidates) {
-      if(comp.toString().toLowerCase().startsWith(newWord)){
-        // log("Adding " + comp);
+      if(comp.getNoHtmlLabel().toLowerCase().startsWith(newWord)){
         newCandidate.add(comp);
       }
     }
@@ -988,9 +987,12 @@ public class ASTGenerator {
                 continue;
               
               matchedClass = matchedClass.substring(d + 1); //class name
-              candidates.add(new CompletionCandidate(matchedClass, 
-                  matchedClass + " : "
-                  + matchedClass2.substring(0, d) , matchedClass, CompletionCandidate.PREDEF_CLASS)); // display package name in grey
+              candidates
+                  .add(new CompletionCandidate(matchedClass, "<html>"
+                      + matchedClass + " : <font color=#777777>"
+                      + matchedClass2.substring(0, d) + "</font></html>",
+                                               matchedClass,
+                                               CompletionCandidate.PREDEF_CLASS)); // display package name in grey
               //log("-> " + className);
             }
           }
@@ -1081,10 +1083,14 @@ public class ASTGenerator {
               || candidates.get(i).getType() == CompletionCandidate.PREDEF_METHOD) {
             CompletionCandidate cc = candidates.get(i - 1);
             String label = cc.getLabel();
-            log(label);
             int x = label.lastIndexOf(')');
-            cc.setLabel((cc.getLabel().contains("<html>") ? "" : "")
-                + cc.getElementName() + "(...)" + label.substring(x + 1));
+            if(candidates.get(i).getType() == CompletionCandidate.PREDEF_METHOD) {
+              cc.setLabel((cc.getLabel().contains("<html>") ? "<html>" : "")
+                          + cc.getElementName() + "(...)" + label.substring(x + 1));
+            }
+            else {
+              cc.setLabel(cc.getElementName() + "(...)" + label.substring(x + 1));
+            }
             cc.setCompletionString(cc.getElementName() + "(");
             ignoredSome = true;
             continue;
