@@ -7,7 +7,7 @@ import java.util.TreeMap;
 
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
-
+import static processing.mode.experimental.ExperimentalMode.log;
 
 public class ErrorMessageSimplifier {
   /**
@@ -78,14 +78,7 @@ public class ErrorMessageSimplifier {
     switch (iprob.getID()) {
     case IProblem.ParsingError:
       if (args.length > 0) {
-        if (problem.getMessage().endsWith("expected")) {
-          result = "Probably a \"" + args[args.length - 1]
-              + "\" should go here";
-        }
-        else {
-        result = "Error on \"" + args[0]
-            + "\"";
-        }        
+        result = "Error on \"" + args[0] + "\"";
       }
       break;
     case IProblem.ParsingErrorDeleteToken:
@@ -117,6 +110,9 @@ public class ErrorMessageSimplifier {
           else {
             result = "Error on \"" + args[0] + "\"";
           }
+        }
+        else {
+          result = "Error on \"" + args[0] + "\""; 
         }
       }
       break;
