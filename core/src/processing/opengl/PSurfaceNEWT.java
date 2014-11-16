@@ -2,6 +2,7 @@ package processing.opengl;
 
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import javax.media.nativewindow.ScalableSurface;
@@ -38,6 +39,7 @@ public class PSurfaceNEWT implements PSurface {
   GLWindow window;
   Frame frame;
   FPSAnimator animator;
+  Rectangle screenRect;
 
   PApplet sketch;
   PGraphics graphics;
@@ -66,8 +68,6 @@ public class PSurfaceNEWT implements PSurface {
     display.addReference();
     Screen screen = NewtFactory.createScreen(display, 0);
     screen.addReference();
-    int screenWidth = screen.getWidth();
-    int screenHeight = screen.getHeight();
 
     ArrayList<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
     for (int i = 0; i < screen.getMonitorDevices().size(); i++) {
@@ -127,6 +127,9 @@ public class PSurfaceNEWT implements PSurface {
     caps.setDepthBits(PGL.REQUESTED_DEPTH_BITS);
     caps.setStencilBits(PGL.REQUESTED_STENCIL_BITS);
 
+    caps.setPBuffer(false);
+    caps.setFBO(false);
+
     caps.setSampleBuffers(true);
     caps.setNumSamples(2);
     caps.setBackgroundOpaque(true);
@@ -144,29 +147,55 @@ public class PSurfaceNEWT implements PSurface {
     int sketchX = displayDevice.getViewportInWindowUnits().getX();
     int sketchY = displayDevice.getViewportInWindowUnits().getY();
 
+    int screenWidth = screen.getWidth();
+    int screenHeight = screen.getHeight();
+
+    screenRect = spanDisplays ? new Rectangle(0, 0, screen.getWidth(), screen.getHeight()) :
+                                new Rectangle(0, 0, displayDevice.getViewportInWindowUnits().getWidth(),
+                                                    displayDevice.getViewportInWindowUnits().getHeight());
+
+    // Sketch has already requested to be the same as the screen's
+    // width and height, so let's roll with full screen mode.
+    if (screenRect.width == sketchWidth &&
+        screenRect.height == sketchHeight) {
+      fullScreen = true;
+    }
+
+    if (fullScreen || spanDisplays) {
+      sketchWidth = screenRect.width;
+      sketchHeight = screenRect.height;
+    }
 
 //    window..setBackground(new Color(backgroundColor, true));
     window.setPosition(sketchX, sketchY);
     window.setSize(sketchWidth, sketchHeight);
 
-
-
-
     System.out.println("deviceIndex: " + deviceIndex);
     System.out.println(displayDevice);
     System.out.println("Screen res " + screenWidth + "x" + screenHeight);
+
+    // This example could be useful:
+    // com.jogamp.opengl.test.junit.newt.mm.TestScreenMode01cNEWT
+    if (fullScreen) {
+      if (spanDisplays) {
+        window.setFullscreen(monitors);
+      } else {
+        window.setFullscreen(true);
+      }
+    }
 
     window.setVisible(true);
 
     // Retina
 //    int[] reqSurfacePixelScale = new int[] { ScalableSurface.AUTOMAX_PIXELSCALE,
 //                                             ScalableSurface.AUTOMAX_PIXELSCALE };
-
+//    pgl.pixel_scale = 2;
 
     // Non-retina
     int[] reqSurfacePixelScale = new int[] { ScalableSurface.IDENTITY_PIXELSCALE,
                                              ScalableSurface.IDENTITY_PIXELSCALE };
     window.setSurfaceScale(reqSurfacePixelScale);
+    pgl.pixel_scale = 1;
 
 
 
@@ -257,15 +286,21 @@ public class PSurfaceNEWT implements PSurface {
   }
 
   public void startThread() {
-    animator.start();
+    if (animator != null) {
+      animator.start();
+    }
   }
 
   public void pauseThread() {
-    animator.pause();
+    if (animator != null) {
+      animator.pause();
+    }
   }
 
   public void resumeThread() {
-    animator.resume();
+    if (animator != null) {
+      animator.resume();
+    }
   }
 
   public boolean stopThread() {
@@ -283,12 +318,11 @@ public class PSurfaceNEWT implements PSurface {
   }
 
   public void setFrameRate(float fps) {
-    // TODO Auto-generated method stub
-
+    animator.setFPS((int)fps);
   }
 
   public void requestFocus() {
-    // TODO Auto-generated method stub
+    window.requestFocus();
 
   }
 
@@ -323,7 +357,7 @@ public class PSurfaceNEWT implements PSurface {
     }
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
       pgl.getGL(drawable);
-      if (animator.isStarted()) {
+      if (animator != null && animator.isStarted()) {
         setSize(w, h);
       }
     }

@@ -190,7 +190,7 @@ public class PJOGL extends PGL {
 
   // Retina support
 
-  int retf = 1;
+  int pixel_scale = 1;
 
   // ........................................................
 
@@ -221,6 +221,7 @@ public class PJOGL extends PGL {
   }
 
 
+  /*
   @Override
   public Canvas getCanvas() {
     return canvas;
@@ -242,11 +243,12 @@ public class PJOGL extends PGL {
       setFps = true;
     }
   }
+*/
 
-
+  /*
   @Override
   protected void initSurface(int antialias) {
-    /*
+
     if (profile == null) {
       if (PROFILE == 2) {
         try {
@@ -377,15 +379,16 @@ public class PJOGL extends PGL {
 
     pg.parent.defaultSize = false;
     registerListeners();
-    */
+
 
     fboLayerCreated = false;
     fboLayerInUse = false;
     firstFrame = true;
     setFps = false;
   }
+    */
 
-
+/*
   @Override
   protected void reinitSurface() {
     sinkFBO = backFBO = frontFBO = null;
@@ -394,10 +397,10 @@ public class PJOGL extends PGL {
     firstFrame = true;
     pg.parent.defaultSize = false;
   }
+*/
 
-
-  @Override
-  protected void registerListeners() {
+//  @Override
+//  protected void registerListeners() {
 //    if (WINDOW_TOOLKIT == AWT) {
 //      pg.parent.addListeners(canvasAWT);
 //
@@ -422,11 +425,11 @@ public class PJOGL extends PGL {
 //    if (canvas != null) {
 //      canvas.setFocusTraversalKeysEnabled(false);
 //    }
-  }
+//  }
 
 
-  @Override
-  protected void deleteSurface() {
+//  @Override
+//  protected void deleteSurface() {
 //    super.deleteSurface();
 //
 //    if (canvasAWT != null) {
@@ -435,9 +438,9 @@ public class PJOGL extends PGL {
 //    } else if (canvasNEWT != null) {
 //      windowNEWT.removeGLEventListener(listener);
 //    }
-  }
+//  }
 
-
+/*
   @Override
   protected int getReadFramebuffer() {
     if (fboLayerInUse) {
@@ -637,7 +640,7 @@ public class PJOGL extends PGL {
       }
     }
   }
-
+*/
 
   @Override
   protected void getGL(PGL pgl) {
@@ -675,6 +678,8 @@ public class PJOGL extends PGL {
   }
 
 
+
+  /*
   @Override
   protected boolean canDraw() {
     return true;
@@ -689,7 +694,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected void requestDraw() {
-    /*
+
     drawException = null;
     boolean canDraw = pg.parent.canDraw();
     if (pg.initialized && (canDraw || prevCanDraw)) {
@@ -718,18 +723,18 @@ public class PJOGL extends PGL {
         throw new RuntimeException(drawException);
       }
     }
-    */
   }
 
 
   @Override
   protected void swapBuffers() {
-//    if (WINDOW_TOOLKIT == AWT) {
-//      canvasAWT.swapBuffers();
-//    } else if (WINDOW_TOOLKIT == NEWT) {
-//      windowNEWT.swapBuffers();
-//    }
+    if (WINDOW_TOOLKIT == AWT) {
+      canvasAWT.swapBuffers();
+    } else if (WINDOW_TOOLKIT == NEWT) {
+      windowNEWT.swapBuffers();
+    }
   }
+ */
 
 
   @Override
@@ -802,7 +807,9 @@ public class PJOGL extends PGL {
 
 
   protected void getBuffers(GLWindow glWindow) {
-    if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
+    if (false) {
+//    if (capabilities.isFBO()) {
+//    if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
       // The onscreen drawing surface is backed by an FBO layer.
       GLFBODrawable fboDrawable = null;
       fboDrawable = (GLFBODrawable)glWindow.getDelegatedDrawable();
@@ -856,6 +863,20 @@ public class PJOGL extends PGL {
         }
       }
 
+    }
+  }
+
+  protected void init(GLAutoDrawable glDrawable) {
+    capabilities = glDrawable.getChosenGLCapabilities();
+    if (!hasFBOs()) {
+      throw new RuntimeException(MISSING_FBO_ERROR);
+    }
+    if (!hasShaders()) {
+      throw new RuntimeException(MISSING_GLSL_ERROR);
+    }
+    if (USE_JOGL_FBOLAYER && capabilities.isFBO()) {
+      int maxs = maxSamples();
+      numSamples = PApplet.min(capabilities.getNumSamples(), maxs);
     }
   }
 
@@ -1376,9 +1397,7 @@ public class PJOGL extends PGL {
 
     public FontOutline(char ch, Object font) {
       char textArray[] = new char[] { ch };
-      // ???????????????
-//      Graphics2D graphics = (Graphics2D) pg.parent.getGraphics();
-      Graphics2D graphics = null;
+      Graphics2D graphics = (Graphics2D) pg.parent.frame.getGraphics();
       FontRenderContext frc = graphics.getFontRenderContext();
       GlyphVector gv = ((Font)font).createGlyphVector(frc, textArray);
       Shape shp = gv.getOutline();
@@ -1856,7 +1875,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void viewport(int x, int y, int w, int h) {
-    gl.glViewport(retf * x, retf * y, retf * w, retf * h);
+    gl.glViewport(pixel_scale * x, pixel_scale * y, pixel_scale * w, pixel_scale * h);
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -2378,7 +2397,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void scissor(int x, int y, int w, int h) {
-    gl.glScissor(retf * x, retf * y, retf * w, retf * h);
+    gl.glScissor(pixel_scale * x, pixel_scale * y, pixel_scale * w, pixel_scale * h);
   }
 
   @Override
