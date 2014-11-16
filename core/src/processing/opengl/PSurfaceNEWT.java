@@ -1,5 +1,6 @@
 package processing.opengl;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Rectangle;
@@ -57,6 +58,15 @@ public class PSurfaceNEWT implements PSurface {
   public void initOffscreen() {
     // TODO Auto-generated method stub
 
+  }
+
+  public Canvas initCanvas(PApplet sketch) {
+    this.sketch = sketch;
+
+    sketchWidth = sketch.sketchWidth();
+    sketchHeight = sketch.sketchHeight();
+
+    return null;
   }
 
   public Frame initFrame(PApplet sketch, Color backgroundColor,
