@@ -77,20 +77,18 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     box.setBorder(new EmptyBorder(12, 12, 12, 12));
 
     range = new ColorRange();
-    range.init();
     Box rangeBox = new Box(BoxLayout.Y_AXIS);
     rangeBox.setAlignmentY(0);
     rangeBox.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    rangeBox.add(range);
+    rangeBox.add(range.getCanvas());
     box.add(rangeBox);
     box.add(Box.createHorizontalStrut(10));
 
     slider = new ColorSlider();
-    slider.init();
     Box sliderBox = new Box(BoxLayout.Y_AXIS);
     sliderBox.setAlignmentY(0);
     sliderBox.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    sliderBox.add(slider);
+    sliderBox.add(slider.getCanvas());
     box.add(sliderBox);
     box.add(Box.createHorizontalStrut(10));
 
@@ -108,6 +106,10 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 
     window.pack();
     window.setResizable(false);
+    
+    // initialize once the components exist
+    range.init();
+    slider.init();
 
 //    Dimension size = getSize();
 //    Dimension screen = Toolkit.getScreenSize();
@@ -492,8 +494,15 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     int lastX, lastY;
 
 
+    public int sketchWidth() { 
+      return WIDE; 
+    }
+    
+    public int sketchHeight() { 
+      return HIGH; 
+    }
+    
     public void setup() {
-      size(WIDE, HIGH); //, P3D);
       noLoop();
 
       colorMode(HSB, 360, 256, 256);
@@ -504,22 +513,18 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     }
 
     public void draw() {
-//      if ((g == null) || (g.pixels == null)) return;
-      if ((width != WIDE) || (height < HIGH)) {
-        //System.out.println("bad size " + width + " " + height);
-        return;
-      }
-
-      int index = 0;
-      for (int j = 0; j < 256; j++) {
-        for (int i = 0; i < 256; i++) {
-          pixels[index++] = color(hue, i, 255 - j);
+      if (width == WIDE && height == HIGH) {
+        int index = 0;
+        for (int j = 0; j < 256; j++) {
+          for (int i = 0; i < 256; i++) {
+            pixels[index++] = color(hue, i, 255 - j);
+          }
         }
-      }
 
-      updatePixels();
-      stroke((brightness > 50) ? 0 : 255);
-      rect(lastX, lastY, 9, 9);
+        updatePixels();
+        stroke((brightness > 50) ? 0 : 255);
+        rect(lastX, lastY, 9, 9);
+      }
     }
 
     public void mousePressed() {
@@ -571,8 +576,15 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     static final int WIDE = 20;
     static final int HIGH = 256;
 
+    public int sketchWidth() {
+      return WIDE;
+    }
+    
+    public int sketchHeight() {
+      return HIGH;
+    }
+    
     public void setup() {
-      size(WIDE, HIGH); //, P3D);
       colorMode(HSB, 255, 100, 100);
       noLoop();
       loadPixels();

@@ -25,6 +25,7 @@
 package processing.core;
 
 // used for setting bg colors and whatnot
+import java.awt.Canvas;
 import java.awt.Color;
 // use for the link() command (and maybe open()?)
 import java.awt.Desktop;
@@ -9385,6 +9386,8 @@ public class PApplet implements PConstants {
     // enable it. Conversely, if the command line does not, don't disable it.
     // Query the applet to see if it wants to be full screen all the time.
     fullScreen |= applet.sketchFullScreen();
+    // If spanning screens, that means we're also full screen.
+    fullScreen |= applet.sketchSpanScreens();
     // pass everything after the class name in as args to the sketch itself
     // (fixed for 2.0a5, this was just subsetting by 1, which didn't skip opts)
     applet.args = PApplet.subset(args, argIndex + 1);
@@ -9477,6 +9480,23 @@ public class PApplet implements PConstants {
     }
     // convenience to avoid another 'get' from the static main() method
     return surface;
+  }
+
+
+  /**
+   * Return a Canvas object that can be embedded into other Java GUIs.
+   * This is necessary because PApplet no longer subclasses Component.
+   *
+   * <pre>
+   * PApplet sketch = new EmbedSketch();
+   * Canvas canvas = sketch.getCanvas();
+   * // add the canvas object to your project and validate() it
+   * sketch.init()  // start the animation thread
+   */
+  public Canvas getCanvas() {
+    g = makePrimaryGraphics();
+    surface = g.createSurface();
+    return surface.initCanvas(this);
   }
 
 

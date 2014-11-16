@@ -309,7 +309,7 @@ public class PGraphics2D2X extends PGraphicsOpenGL {
     } else if (type == PShape.GEOMETRY) {
       shape = new PShapeOpenGL(pg, PShape.GEOMETRY);
     }
-    shape.is3D(false);
+    shape.set3D(false);
     return shape;
   }
 
@@ -380,7 +380,7 @@ public class PGraphics2D2X extends PGraphicsOpenGL {
       shape.setParams(p);
     }
 
-    shape.is3D(false);
+    shape.set3D(false);
     return shape;
   }
 

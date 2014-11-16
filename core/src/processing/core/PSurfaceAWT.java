@@ -39,6 +39,9 @@ import processing.event.MouseEvent;
 public class PSurfaceAWT implements PSurface {
   GraphicsDevice displayDevice;
 
+  // used for canvas to determine whether resizable or not
+  boolean resizable;  // default is false
+
   // Internally, we know it's always a JFrame (not just a Frame)
   JFrame frame;
 
@@ -85,15 +88,7 @@ public class PSurfaceAWT implements PSurface {
   void createCanvas() {
     canvas = new SmoothCanvas();
     //canvas.setIgnoreRepaint(true);  // ??
-  }
 
-
-  Canvas getCanvas() {
-    return canvas;
-  }
-
-
-  void initCanvas() {
     // send tab keys through to the PApplet
     canvas.setFocusTraversalKeysEnabled(false);
 
@@ -143,6 +138,24 @@ public class PSurfaceAWT implements PSurface {
   class SmoothCanvas extends Canvas {
     private Dimension oldSize = new Dimension(0, 0);
     private Dimension newSize = new Dimension(0, 0);
+
+
+    @Override
+    public Dimension getPreferredSize() {
+      return new Dimension(sketchWidth, sketchHeight);
+    }
+
+
+    @Override
+    public Dimension getMinimumSize() {
+      return getPreferredSize();
+    }
+
+
+    @Override
+    public Dimension getMaximumSize() {
+      return resizable ? super.getMaximumSize() : getPreferredSize();
+    }
 
 
     @Override
@@ -394,6 +407,15 @@ public class PSurfaceAWT implements PSurface {
   }
   */
 
+  public Canvas initCanvas(PApplet sketch) {
+    this.sketch = sketch;
+
+    sketchWidth = sketch.sketchWidth();
+    sketchHeight = sketch.sketchHeight();
+
+    return canvas;
+  }
+
 
   public Frame initFrame(PApplet sketch, Color backgroundColor,
                          int deviceIndex, boolean fullScreen, boolean spanDisplays) {
@@ -532,7 +554,11 @@ public class PSurfaceAWT implements PSurface {
 
   /** Set true if we want to resize things (default is not resizable) */
   public void setResizable(boolean resizable) {
-    frame.setResizable(resizable);
+    this.resizable = resizable;  // really only used for canvas
+
+    if (frame != null) {
+      frame.setResizable(resizable);
+    }
   }
 
 

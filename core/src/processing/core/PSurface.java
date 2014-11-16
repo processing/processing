@@ -22,6 +22,7 @@
 
 package processing.core;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Frame;
 
@@ -44,6 +45,8 @@ public interface PSurface {
 
   // renderer that doesn't draw to the screen
   public void initOffscreen();
+
+  public Canvas initCanvas(PApplet sketch);
 
   public Frame initFrame(PApplet sketch, Color backgroundColor,
                          int deviceIndex, boolean fullScreen, boolean spanDisplays);
