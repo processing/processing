@@ -1397,9 +1397,7 @@ public class PJOGL extends PGL {
 
     public FontOutline(char ch, Object font) {
       char textArray[] = new char[] { ch };
-      // ???????????????
-//      Graphics2D graphics = (Graphics2D) pg.parent.getGraphics();
-      Graphics2D graphics = null;
+      Graphics2D graphics = (Graphics2D) pg.parent.frame.getGraphics();
       FontRenderContext frc = graphics.getFontRenderContext();
       GlyphVector gv = ((Font)font).createGlyphVector(frc, textArray);
       Shape shp = gv.getOutline();
