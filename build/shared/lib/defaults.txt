@@ -248,6 +248,7 @@ editor.token.keyword2.style = #33997e,plain
 editor.token.keyword3.style = #669900,plain
 editor.token.keyword4.style = #d94a7a,plain
 editor.token.keyword5.style = #e2661a,plain
+editor.token.keyword6.style = #33997e,plain
 
 editor.token.literal1.style = #7D4793,plain
 editor.token.literal2.style = #718a62,plain
