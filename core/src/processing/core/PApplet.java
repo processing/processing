@@ -147,7 +147,40 @@ public class PApplet implements PConstants {
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
 
+  /**
+   * ( begin auto-generated from displayWidth.xml )
+   *
+   * System variable which stores the width of the computer screen. For
+   * example, if the current screen resolution is 1024x768,
+   * <b>displayWidth</b> is 1024 and <b>displayHeight</b> is 768. These
+   * dimensions are useful when exporting full-screen applications.
+   * <br /><br />
+   * To ensure that the sketch takes over the entire screen, use "Present"
+   * instead of "Run". Otherwise the window will still have a frame border
+   * around it and not be placed in the upper corner of the screen. On Mac OS
+   * X, the menu bar will remain present unless "Present" mode is used.
+   *
+   * ( end auto-generated )
+   * @webref environment
+   */
   public int displayWidth;
+
+  /**
+   * ( begin auto-generated from displayHeight.xml )
+   *
+   * System variable that stores the height of the computer screen. For
+   * example, if the current screen resolution is 1024x768,
+   * <b>displayWidth</b> is 1024 and <b>displayHeight</b> is 768. These
+   * dimensions are useful when exporting full-screen applications.
+   * <br /><br />
+   * To ensure that the sketch takes over the entire screen, use "Present"
+   * instead of "Run". Otherwise the window will still have a frame border
+   * around it and not be placed in the upper corner of the screen. On Mac OS
+   * X, the menu bar will remain present unless "Present" mode is used.
+   *
+   * ( end auto-generated )
+   * @webref environment
+   */
   public int displayHeight;
 
   /** A leech graphics object that is echoing all events. */
@@ -3020,6 +3053,7 @@ public class PApplet implements PConstants {
    *
    * @webref structure
    * @usage Application
+   * @param name name of the function to be executed in a separate thread
    * @see PApplet#setup()
    * @see PApplet#draw()
    * @see PApplet#loop()

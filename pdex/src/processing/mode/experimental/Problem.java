@@ -22,6 +22,7 @@
 
 package processing.mode.experimental;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,6 +64,11 @@ public class Problem {
    * The type of error - WARNING or ERROR.
    */
   private int type;
+  
+  /**
+   * If the error is a 'cannot find type' contains the list of suggested imports
+   */
+  private String[] importSuggestions;
 
   public static final int ERROR = 1, WARNING = 2;
 
@@ -146,6 +152,14 @@ public class Problem {
     else if(ProblemType == WARNING)
       type = WARNING;
     else throw new IllegalArgumentException("Illegal Problem type passed to Problem.setType(int)");
+  }
+  
+  public String[] getImportSuggestions() {
+    return importSuggestions;
+  }
+  
+  public void setImportSuggestions(String[] a) {
+    importSuggestions = a;
   }
 
   private static Pattern pattern;

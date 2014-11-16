@@ -7,14 +7,17 @@ X remove sound library, have it installed separately like video
 X Fix the shortcut keybindings in editor tab popup menu
 X   https://github.com/processing/processing/issues/179
 X   https://github.com/processing/processing/pull/2821
+X answer deb questions
+X   https://github.com/processing/processing/issues/114
+X change how languages are loaded
+X   add local override (needs documentation)
+X   figure out copyDir() problems before pull
+o moving window to a new location is broken due to the pull
+X update to use new 7u72 version of JRE (and JDK) stuff
 
 _ any problems with new code signing crap? 
 _   issues raised around the symlink (just replace with a copy of the binary?)
 _   https://developer.apple.com/library/prerelease/mac/technotes/tn2206/_index.html#//apple_ref/doc/uid/DTS40007919-CH1-TNTAG205
-
-deb questions: https://github.com/processing/processing/issues/114
-better Linux packaging...
-http://askubuntu.com/questions/396857/how-can-i-add-processing-to-the-unity-launcher
 
 _ add script to download JRE and JDK from Oracle
 
@@ -65,6 +68,13 @@ X   https://github.com/processing/processing/pull/2578
 X Implement the active() method for Serial and Server 
 X   https://github.com/processing/processing/issues/2364
 X   https://github.com/processing/processing/pull/2588
+
+
+_ post a note about the "help" stuff
+_   https://github.com/processing/processing/labels/help
+
+_ finish Ant task to download JRE and JDK from Oracle
+_   add method to prompt user to download the JDK update
 
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
