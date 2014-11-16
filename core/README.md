@@ -20,6 +20,8 @@ We're removing `Applet` as the base class for `PApplet` and redoing the entire r
 1. One downside is that you'll no longer be able to just drop a Processing sketch into other Java code, because `PApplet` will no longer subclass `Applet` (and therefore, `Component`). This is a huge downside for a tiny number of users. For the majority of users, re-read the "why" section. We'll try to figure out ways to continue embedding in other Java code, however, since we use this in our own work, and even within Processing itself (the Color Selector). 
 2. We're still determining how much code we're willing to break due to API changes. Stay tuned.
 
+#### Retina/HiDPI/2x drawing and displays
+* Documentation changes [here](https://github.com/processing/processing-docs/issues/170)
 ## The Mess
 
 The rest of this document are my notes while I'm making changes.
