@@ -1279,12 +1279,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       e.printStackTrace();
     }
 
-    if (file.toString().endsWith(".txt"))
-      // To enable readme.txt files to open as well
-      Base.openFolder(file);
-    else
-      // Prepend with file:// and also encode spaces & other characters
-      Base.openURL(file.toURI().toString());
+    // Prepend with file:// and also encode spaces & other characters
+    Base.openURL(file.toURI().toString());
   }
 
 

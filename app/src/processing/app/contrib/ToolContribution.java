@@ -35,7 +35,7 @@ import processing.app.tools.Tool;
 public class ToolContribution extends LocalContribution implements Tool {
   private Tool tool;
 
-  private File referenceFile; // shortname/reference/index.html is one possible path
+  private File referenceFile; // shortname/reference/index.html
 
   static public ToolContribution load(File folder) {
     try {
@@ -61,7 +61,7 @@ public class ToolContribution extends LocalContribution implements Tool {
       tool = (Tool) toolClass.newInstance();
     }
 
-    referenceFile = loadReferenceIndexFile(folder);
+    referenceFile = new File(folder, "reference/index.html");
   }
 
 
@@ -155,27 +155,6 @@ public class ToolContribution extends LocalContribution implements Tool {
 
   public ContributionType getType() {
     return ContributionType.TOOL;
-  }
-
-
-  /**
-   * @param folder
-   *          The file object representing the base folder of the contribution
-   * @return Returns a file object representing the index file of the reference
-   */
-  protected File loadReferenceIndexFile(File folder) {
-    final String potentialFileList[] = {
-      "reference/index.html", "reference/index.htm",
-      "documentation/index.html", "documentation/index.htm", "docs/index.html",
-      "docs/index.htm", "documentation.html", "documentation.htm",
-      "reference.html", "reference.htm", "docs.html", "docs.htm", "readme.txt" };
-
-    int i = 0;
-    File potentialRef = new File(folder, potentialFileList[i]);
-    while (!potentialRef.exists() && ++i < potentialFileList.length) {
-      potentialRef = new File(folder, potentialFileList[i]);
-    }
-    return potentialRef;
   }
 
 

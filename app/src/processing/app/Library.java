@@ -13,7 +13,7 @@ public class Library extends LocalContribution {
   //protected File folder;          // /path/to/shortname
   protected File libraryFolder;   // shortname/library
   protected File examplesFolder;  // shortname/examples
-  protected File referenceFile;   // shortname/reference/index.html is one possible path
+  protected File referenceFile;   // shortname/reference/index.html
 
   /**
    * Subfolder for grouping libraries in a menu. Basic subfolder support
@@ -212,8 +212,6 @@ public class Library extends LocalContribution {
 
     // get the path for all .jar files in this code folder
     packageList = Base.packageListFromClassPath(getClassPath());
-    
-    referenceFile = loadReferenceIndexFile(folder);
   }
 
 
@@ -515,27 +513,6 @@ public class Library extends LocalContribution {
 
   public ContributionType getType() {
     return ContributionType.LIBRARY;
-  }
-
-
-  /**
-   * @param folder
-   *          The file object representing the base folder of the contribution
-   * @return Returns a file object representing the index file of the reference
-   */
-  protected File loadReferenceIndexFile(File folder) {
-    final String potentialFileList[] = {
-      "reference/index.html", "reference/index.htm",
-      "documentation/index.html", "documentation/index.htm", "docs/index.html",
-      "docs/index.htm", "documentation.html", "documentation.htm",
-      "reference.html", "reference.htm", "docs.html", "docs.htm", "readme.txt" };
-
-    int i = 0;
-    File potentialRef = new File(folder, potentialFileList[i]);
-    while (!potentialRef.exists() && ++i < potentialFileList.length) {
-      potentialRef = new File(folder, potentialFileList[i]);
-    }
-    return potentialRef;
   }
 
 
