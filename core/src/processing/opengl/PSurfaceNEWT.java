@@ -417,7 +417,12 @@ public class PSurfaceNEWT implements PSurface {
   }
 
   public void setFrameRate(float fps) {
-    animator.setFPS((int)fps);
+    if (animator != null) {
+      animator.stop();
+      animator.setFPS((int)fps);
+      pgl.setFps(fps);
+      animator.start();
+    }
   }
 
   public void requestFocus() {

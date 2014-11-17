@@ -143,7 +143,7 @@ public class PJOGL extends PGL {
   protected GL2GL3 gl3;
 
   /** GL2 desktop functionality (blit framebuffer, map buffer range,
-   * multisampled renerbuffers) */
+   * multisampled renderbuffers) */
   protected GL2 gl2x;
 
   /** The AWT-OpenGL canvas */
@@ -226,9 +226,9 @@ public class PJOGL extends PGL {
   public Canvas getCanvas() {
     return canvas;
   }
+*/
 
 
-  @Override
   protected void setFps(float fps) {
     if (!setFps || targetFps != fps) {
       if (60 < fps) {
@@ -243,7 +243,7 @@ public class PJOGL extends PGL {
       setFps = true;
     }
   }
-*/
+
 
   /*
   @Override
