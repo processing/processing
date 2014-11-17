@@ -3,7 +3,6 @@ package processing.opengl;
 import java.awt.Canvas;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
@@ -143,7 +142,7 @@ public class PJOGL extends PGL {
   protected GL2GL3 gl3;
 
   /** GL2 desktop functionality (blit framebuffer, map buffer range,
-   * multisampled renerbuffers) */
+   * multisampled renderbuffers) */
   protected GL2 gl2x;
 
   /** The AWT-OpenGL canvas */
@@ -226,9 +225,9 @@ public class PJOGL extends PGL {
   public Canvas getCanvas() {
     return canvas;
   }
+*/
 
 
-  @Override
   protected void setFps(float fps) {
     if (!setFps || targetFps != fps) {
       if (60 < fps) {
@@ -243,7 +242,7 @@ public class PJOGL extends PGL {
       setFps = true;
     }
   }
-*/
+
 
   /*
   @Override
@@ -1196,7 +1195,6 @@ public class PJOGL extends PGL {
 
   @Override
   protected int getFontAscent(Font font) {
-    //FontMetrics metrics = pg.parent.getFontMetrics(font);
     @SuppressWarnings("deprecation")
     FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics(font);
     return metrics.getAscent();
@@ -1204,18 +1202,18 @@ public class PJOGL extends PGL {
 
 
   protected int getFontDescent(Object font) {
+    FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics((Font)font);
 //    FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
-//    return metrics.getDescent();
-    return 0;
+    return metrics.getDescent();
   }
 
 
   protected int getTextWidth(Object font, char buffer[], int start, int stop) {
     // maybe should use one of the newer/fancier functions for this?
-//    int length = stop - start;
+    int length = stop - start;
 //    FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
-//    return metrics.charsWidth(buffer, start, length);
-    return 0;
+    FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics((Font)font);
+    return metrics.charsWidth(buffer, start, length);
   }
 
 
@@ -1399,8 +1397,8 @@ public class PJOGL extends PGL {
 
     public FontOutline(char ch, Object font) {
       char textArray[] = new char[] { ch };
-      Graphics2D graphics = (Graphics2D) pg.parent.frame.getGraphics();
-      FontRenderContext frc = graphics.getFontRenderContext();
+//      Graphics2D graphics = (Graphics2D) pg.parent.frame.getGraphics();
+      FontRenderContext frc = pg.getFontRenderContext((Font)font);
       GlyphVector gv = ((Font)font).createGlyphVector(frc, textArray);
       Shape shp = gv.getOutline();
       iter = shp.getPathIterator(null);
