@@ -37,6 +37,7 @@ import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
+import java.awt.font.FontRenderContext;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.*;
