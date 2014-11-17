@@ -5,10 +5,11 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Rectangle;
-import java.lang.reflect.InvocationTargetException;
+//import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import javax.media.nativewindow.ScalableSurface;
+import javax.media.opengl.GLAnimatorControl;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
@@ -19,6 +20,7 @@ import com.jogamp.newt.Display;
 import com.jogamp.newt.MonitorDevice;
 import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Screen;
+import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.event.InputEvent;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
@@ -51,6 +53,8 @@ public class PSurfaceNEWT implements PSurface {
   int sketchHeight;
 
   MonitorDevice displayDevice;
+  Throwable drawException;
+  Object waitObject = new Object();
 
   public PSurfaceNEWT(PGraphics graphics) {
     this.graphics = graphics;
@@ -67,6 +71,15 @@ public class PSurfaceNEWT implements PSurface {
 
     sketchWidth = sketch.sketchWidth();
     sketchHeight = sketch.sketchHeight();
+
+    if (window != null) {
+      NewtCanvasAWT canvas = new NewtCanvasAWT(window);
+      canvas.setBounds(0, 0, window.getWidth(), window.getHeight());
+//      canvas.setBackground(new Color(pg.backgroundColor, true));
+      canvas.setFocusable(true);
+
+      return canvas;
+    }
 
     return null;
   }
@@ -223,6 +236,62 @@ public class PSurfaceNEWT implements PSurface {
 
     System.err.println("0. create animator");
     animator = new FPSAnimator(window, 60);
+    drawException = null;
+    animator.setUncaughtExceptionHandler(new GLAnimatorControl.UncaughtExceptionHandler() {
+      @Override
+      public void uncaughtException(final GLAnimatorControl animator,
+                                    final GLAutoDrawable drawable,
+                                    final Throwable cause) {
+        synchronized (waitObject) {
+//          System.err.println("Caught exception: " + cause.getMessage());
+          drawException = cause;
+          waitObject.notify();
+        }
+      }
+    });
+
+    (new Thread(new Runnable() {
+      public void run() {
+        synchronized (waitObject) {
+          try {
+            if (drawException == null) waitObject.wait();
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          System.err.println("Caught exception: " + drawException.getMessage());
+          if (drawException instanceof RuntimeException) {
+            throw (RuntimeException)drawException;
+          } else {
+            throw new RuntimeException(drawException);
+          }
+        }
+      }
+    }
+    )).start();
+
+
+    /*
+    try {
+      EventQueue.invokeAndWait(new Runnable() {
+        public void run() {
+          while (true) {
+            try {
+              if (drawException != null) {
+                if (drawException instanceof RuntimeException) {
+                  throw (RuntimeException)drawException;
+                } else {
+                  throw new RuntimeException(drawException);
+                }
+              } else {
+                Thread.sleep(100);
+              }
+            } catch (InterruptedException e) { }
+          }
+      }});
+    } catch (Exception ex) {
+    }
+*/
+
 
     window.addWindowListener(new WindowAdapter() {
       @Override
@@ -231,6 +300,7 @@ public class PSurfaceNEWT implements PSurface {
       }
     });
 
+
 //  window.setVisible(true);
     try {
       EventQueue.invokeAndWait(new Runnable() {
@@ -238,14 +308,9 @@ public class PSurfaceNEWT implements PSurface {
           window.setVisible(true);
           System.err.println("1. set visible");
       }});
-    } catch (InvocationTargetException e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
-    } catch (InterruptedException e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
+    } catch (Exception ex) {
+      // error setting the window visible, should quit...
     }
-
 
     frame = new DummyFrame();
     return frame;
@@ -311,6 +376,7 @@ public class PSurfaceNEWT implements PSurface {
     if (animator != null) {
       System.err.println("2. start animator");
       animator.start();
+      animator.getThread().setName("Processing-GL-draw");
     }
   }
 
@@ -366,14 +432,8 @@ public class PSurfaceNEWT implements PSurface {
   class DrawListener implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
       pgl.getGL(drawable);
-//      pgl.getBuffers(window);
 
-      try {
-        sketch.handleDraw();
-      } catch (Exception ex) {
-//        drawException = ex;
-      }
-
+      sketch.handleDraw();
 
       if (sketch.frameCount == 1) {
         requestFocus();
