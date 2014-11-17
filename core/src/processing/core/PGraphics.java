@@ -770,7 +770,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public PSurface createSurface() {  // ignore
-    return null;
+    return new PSurfaceAWT(this);
   }
 
 

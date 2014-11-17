@@ -753,6 +753,7 @@ public class PApplet implements PConstants {
 //    screenWidth = screen.width;
 //    screenHeight = screen.height;
 
+    defaultSize = true;
     finished = false; // just for clarity
 
     // this will be cleared by draw() if it is not overridden
@@ -1480,7 +1481,7 @@ public class PApplet implements PConstants {
     if (!renderer.equals(sketchRenderer())) {
       System.err.println("Because you're not running from the PDE, add this to your code:");
       System.err.println("public String sketchRenderer() {");
-      System.err.println("  return " + renderer + ";");
+      System.err.println("  return \"" + renderer + "\";");
       System.err.println("}");
       throw new RuntimeException("The sketchRenderer() method is not implemented.");
     }
@@ -1811,7 +1812,7 @@ public class PApplet implements PConstants {
 //          // Give up, instead set the new renderer and re-attempt setup()
 //          return;
 //        }
-        this.defaultSize = false;
+        defaultSize = false;
 
       } else {  // frameCount > 0, meaning an actual draw()
         // update the current frameRate
@@ -9470,7 +9471,7 @@ public class PApplet implements PConstants {
     // and the empty draw() has set "finished" to true.
     // TODO make sure this won't hang if the applet has an exception.
     while (defaultSize && !finished) {
-      //System.out.println("default size");
+//      System.out.println("default size");
       try {
         Thread.sleep(5);
 
@@ -9478,9 +9479,20 @@ public class PApplet implements PConstants {
         //System.out.println("interrupt");
       }
     }
+    System.out.println("out of default size loop, " + width + " " + height);
     // convenience to avoid another 'get' from the static main() method
     return surface;
   }
+
+
+//  protected void createSurface() {
+//    surface = g.createSurface();
+//    if (surface == null) {
+//      System.err.println("This renderer needs to be updated for Processing 3");
+//      System.err.println("The createSurface() method returned null.");
+//      System.exit(1);
+//    }
+//  }
 
 
   /**

@@ -533,7 +533,7 @@ public class PSurfaceAWT implements PSurface {
     if (fullScreen) {
       frame.invalidate();
     } else {
-      frame.pack();
+//      frame.pack();
     }
 
     // insufficient, places the 100x100 sketches offset strangely
@@ -616,10 +616,7 @@ public class PSurfaceAWT implements PSurface {
 
 
   public void placeWindow(int[] location) {
-    calcFrameSize(sketchWidth, sketchHeight);
-
-    int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
-    int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
+    setFrameSize(); //sketchWidth, sketchHeight);
 
     if (location != null) {
       // a specific location was received from the Runner
@@ -643,9 +640,7 @@ public class PSurfaceAWT implements PSurface {
 //      ((JFrame) frame).getContentPane().setBackground(backgroundColor);
 //    }
 
-    canvas.setBounds((contentW - sketchWidth)/2,
-                     (contentH - sketchHeight)/2,
-                     sketchWidth, sketchHeight);
+    setCanvasSize(); //sketchWidth, sketchHeight);
 
     frame.addWindowListener(new WindowAdapter() {
       @Override
@@ -664,7 +659,20 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
-  private Dimension calcFrameSize(int sketchWidth, int sketchHeight) {
+  private void setCanvasSize() {
+    int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
+    int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
+
+    canvas.setBounds((contentW - sketchWidth)/2,
+                     (contentH - sketchHeight)/2,
+                     sketchWidth, sketchHeight);
+  }
+
+
+  /** Resize frame for these sketch (canvas) dimensions. */
+  private Dimension setFrameSize() {  //int sketchWidth, int sketchHeight) {
+    System.out.format("setting frame size %d %d %n", sketchWidth, sketchHeight);
+    new Exception().printStackTrace(System.out);
     Insets insets = frame.getInsets();
     int windowW = Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
       insets.left + insets.right;
@@ -684,7 +692,8 @@ public class PSurfaceAWT implements PSurface {
 
 
   public void placeWindow(int[] location, int[] editorLocation) {
-    Dimension window = calcFrameSize(sketchWidth, sketchHeight);
+    //Dimension window = setFrameSize(sketchWidth, sketchHeight);
+    Dimension window = setFrameSize(); //sketchWidth, sketchHeight);
 
     int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
     int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
@@ -806,6 +815,18 @@ public class PSurfaceAWT implements PSurface {
 
   // needs to resize the frame, which will resize the canvas, and so on...
   public void setSize(int wide, int high) {
+    System.out.format("frame visible %b, setSize(%d, %d) %n", frame.isVisible(), wide, high);
+    new Exception().printStackTrace(System.out);
+
+    sketchWidth = wide;
+    sketchHeight = high;
+
+//    canvas.setSize(wide, high);
+//    frame.setSize(wide, high);
+    setFrameSize(); //wide, high);
+    setCanvasSize();
+    frame.setLocationRelativeTo(null);
+
     GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
     // If not realized (off-screen, i.e the Color Selector Tool), gc will be null.
     if (gc == null) {
@@ -820,8 +841,8 @@ public class PSurfaceAWT implements PSurface {
     graphics.image = gc.createCompatibleImage(wide * factor, high * factor);
 
     //throw new RuntimeException("implement me, see readme.md");
-    sketchWidth = sketch.width = wide;
-    sketchHeight = sketch.height = high;
+    sketch.width = wide;
+    sketch.height = high;
 
     // sets internal variables for width/height/pixelWidth/pixelHeight
     graphics.setSize(wide, high);
@@ -1498,5 +1519,10 @@ public class PSurfaceAWT implements PSurface {
 //  cursor(invisibleCursor, 8, 8);
     canvas.setCursor(invisibleCursor);
     cursorVisible = false;
+  }
+
+
+  void debug(String format, Object ... args) {
+    System.out.format(format + "%n", args);
   }
 }
