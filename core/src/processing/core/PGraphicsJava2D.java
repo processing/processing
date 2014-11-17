@@ -2626,7 +2626,7 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public void updatePixels(int x, int y, int c, int d) {
     //if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
-    System.err.format("%d %d %d %d .. w/h = %d %d .. pw/ph = %d %d %n", x, y, c, d, width, height, pixelWidth, pixelHeight);
+//    System.err.format("%d %d %d %d .. w/h = %d %d .. pw/ph = %d %d %n", x, y, c, d, width, height, pixelWidth, pixelHeight);
     if ((x != 0) || (y != 0) || (c != pixelWidth) || (d != pixelHeight)) {
       // Show a warning message, but continue anyway.
       showVariationWarning("updatePixels(x, y, w, h)");
