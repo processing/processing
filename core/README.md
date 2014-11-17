@@ -58,6 +58,7 @@ another PSurfaceAWT variant could allow direct rendering to the canvas (no loadP
 inside main, will know the screen that's being used for the app
 
 #### Questions/To Do
+- change size() command to check through renderer constants and give better error message when using one of the built-in renderers
 - bad idea, or worst idea, to have 'surface' var in PGraphics?
 - move getFontRenderContext(font) to PApplet? surface? elsewhere? 
 _ do we need canDraw() anymore?
