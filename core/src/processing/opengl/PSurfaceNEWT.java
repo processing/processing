@@ -152,8 +152,8 @@ public class PSurfaceNEWT implements PSurface {
     caps.setDepthBits(PGL.REQUESTED_DEPTH_BITS);
     caps.setStencilBits(PGL.REQUESTED_STENCIL_BITS);
 
-    caps.setPBuffer(false);
-    caps.setFBO(false);
+//    caps.setPBuffer(false);
+//    caps.setFBO(false);
 
     caps.setSampleBuffers(true);
     caps.setNumSamples(2);
@@ -258,11 +258,11 @@ public class PSurfaceNEWT implements PSurface {
           } catch (InterruptedException e) {
             e.printStackTrace();
           }
-          System.err.println("Caught exception: " + drawException.getMessage());
+//          System.err.println("Caught exception: " + drawException.getMessage());
           if (drawException instanceof RuntimeException) {
-            throw (RuntimeException)drawException;
+            throw (RuntimeException)drawException.getCause();
           } else {
-            throw new RuntimeException(drawException);
+            throw new RuntimeException(drawException.getCause());
           }
         }
       }
