@@ -1746,9 +1746,7 @@ public class PGraphicsJava2D extends PGraphics {
 
     Font font = (Font) textFont.getNative();
     if (font != null) {
-      @SuppressWarnings("deprecation")
-      FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics(font);
-      return metrics.getAscent();
+      return getFontMetrics(font).getAscent();
     }
     return super.textAscent();
   }
@@ -1761,9 +1759,7 @@ public class PGraphicsJava2D extends PGraphics {
     }
     Font font = (Font) textFont.getNative();
     if (font != null) {
-      @SuppressWarnings("deprecation")
-      FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics(font);
-      return metrics.getDescent();
+      return getFontMetrics(font).getDescent();
     }
     return super.textDescent();
   }
@@ -1852,7 +1848,7 @@ public class PGraphicsJava2D extends PGraphics {
     if (font != null) {
       // maybe should use one of the newer/fancier functions for this?
       int length = stop - start;
-      FontMetrics metrics = g2.getFontMetrics(font);
+      FontMetrics metrics = getFontMetrics(font);
       // Using fractional metrics makes the measurement worse, not better,
       // at least on OS X 10.6 (November, 2010).
       // TextLayout returns the same value as charsWidth().
@@ -1963,6 +1959,11 @@ public class PGraphicsJava2D extends PGraphics {
     }
   }
 
+
+  @Override
+  public FontMetrics getFontMetrics(Font font) {
+    return (g2 != null) ? g2.getFontMetrics(font) : super.getFontMetrics(font);
+  }
 
 
   //////////////////////////////////////////////////////////////
