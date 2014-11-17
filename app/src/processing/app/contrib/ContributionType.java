@@ -31,7 +31,7 @@ import processing.app.Editor;
 import processing.app.Library;
 
 public enum ContributionType {
-  LIBRARY, TOOL, MODE, EXAMPLES_PACKAGE;
+  LIBRARY, TOOL, MODE, EXAMPLES;
 
     
   public String toString() {
@@ -42,8 +42,8 @@ public enum ContributionType {
       return "tool";
     case MODE:
       return "mode";
-    case EXAMPLES_PACKAGE:
-      return "examples-package";
+    case EXAMPLES:
+      return "examples";
     }
     return null;  // should be unreachable
   };
@@ -55,7 +55,7 @@ public enum ContributionType {
    */
   public String getTitle() {
     String s = toString();
-    if (this == EXAMPLES_PACKAGE)
+    if (this == EXAMPLES)
       return Character.toUpperCase(s.charAt(0))
         + s.substring(1, s.indexOf('-') + 1)
         + Character.toUpperCase(s.charAt(s.indexOf('-') + 1))
@@ -73,8 +73,8 @@ public enum ContributionType {
       return "tools";
     case MODE:
       return "modes";
-    case EXAMPLES_PACKAGE:
-      return "examples-package";
+    case EXAMPLES:
+      return "examples";
     }
     return null;  // should be unreachable
   }
@@ -116,8 +116,8 @@ public enum ContributionType {
       if ("mode".equalsIgnoreCase(s)) {
         return MODE;
       }
-      if ("examples-package".equalsIgnoreCase(s)) {
-        return EXAMPLES_PACKAGE;
+      if ("examples".equalsIgnoreCase(s)) {
+        return EXAMPLES;
       }
     }
     return null;
@@ -132,8 +132,8 @@ public enum ContributionType {
       return Base.getSketchbookToolsFolder();
     case MODE:
       return Base.getSketchbookModesFolder();
-    case EXAMPLES_PACKAGE:
-      return Base.getSketchbookExamplesPackagesFolder();
+    case EXAMPLES:
+      return Base.getSketchbookExamplesFolder();
     }
     return null;
   }
@@ -196,8 +196,8 @@ public enum ContributionType {
       return ToolContribution.load(folder);
     case MODE:
       return ModeContribution.load(base, folder);
-    case EXAMPLES_PACKAGE:
-      return ExamplesPackageContribution.load(folder);
+    case EXAMPLES:
+      return ExamplesContribution.load(folder);
     }
     return null;
   }
@@ -215,7 +215,7 @@ public enum ContributionType {
     case MODE:
       contribs.addAll(editor.getBase().getModeContribs());
       break;
-    case EXAMPLES_PACKAGE:
+    case EXAMPLES:
       contribs.addAll(editor.getBase().getExampleContribs());
       break;
     }
