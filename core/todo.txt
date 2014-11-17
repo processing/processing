@@ -8,6 +8,9 @@ X remove isGL(), is2D(), is3D(), displayable() from PApplet
 X   these were auto-imported from PGraphics
 X remove pause variable from PApplet (was not documented)
 X added copy() to PImage (to work like get(), ala PVector)
+_ add attrib() method
+_   https://github.com/processing/processing/issues/2963
+_   assign this to DXF as well?
 
 _ remove sketch path hack from PApplet
 
