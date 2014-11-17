@@ -1113,6 +1113,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
         // TODO Once the dust settles on 2.x, change this to Base.showError()
         // and open the Tools folder instead of showing System.err.println().
         
+      } catch (VerifyError ve) {
+        System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
+                           "compatible with this version of Processing");
+        
       } catch (NoSuchMethodError nsme) {
         System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
                            "compatible with this version of Processing");
