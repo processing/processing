@@ -237,8 +237,6 @@ public class PGraphicsOpenGL extends PGraphics {
   // Useful to have around.
   static protected PMatrix3D identity = new PMatrix3D();
 
-  protected boolean matricesAllocated = false;
-
   /**
    * Marks when changes to the size have occurred, so that the camera
    * will be reset in beginDraw().
@@ -311,8 +309,6 @@ public class PGraphicsOpenGL extends PGraphics {
   public float currentLightFalloffConstant;
   public float currentLightFalloffLinear;
   public float currentLightFalloffQuadratic;
-
-  protected boolean lightsAllocated = false;
 
   // ........................................................
 
@@ -538,6 +534,23 @@ public class PGraphicsOpenGL extends PGraphics {
     tessGeo = newTessGeometry(this, IMMEDIATE);
     texCache = newTexCache(this);
 
+    projection = new PMatrix3D();
+    camera = new PMatrix3D();
+    cameraInv = new PMatrix3D();
+    modelview = new PMatrix3D();
+    modelviewInv = new PMatrix3D();
+    projmodelview = new PMatrix3D();
+
+    lightType = new int[PGL.MAX_LIGHTS];
+    lightPosition = new float[4 * PGL.MAX_LIGHTS];
+    lightNormal = new float[3 * PGL.MAX_LIGHTS];
+    lightAmbient = new float[3 * PGL.MAX_LIGHTS];
+    lightDiffuse = new float[3 * PGL.MAX_LIGHTS];
+    lightSpecular = new float[3 * PGL.MAX_LIGHTS];
+    lightFalloffCoefficients = new float[3 * PGL.MAX_LIGHTS];
+    lightSpotParameters = new float[2 * PGL.MAX_LIGHTS];
+    currentLightSpecular = new float[3];
+
     initialized = false;
   }
 
@@ -571,8 +584,6 @@ public class PGraphicsOpenGL extends PGraphics {
     width = iwidth;
     height = iheight;
 
-    allocate();
-
     // init perspective projection based on new dimensions
     cameraFOV = 60 * DEG_TO_RAD; // at least for now
     cameraX = width / 2.0f;
@@ -583,41 +594,6 @@ public class PGraphicsOpenGL extends PGraphics {
     cameraAspect = (float) width / (float) height;
 
     sized = true;
-  }
-
-
-  /**
-   * Called by resize(), this handles creating the actual GLCanvas the
-   * first time around, or simply resizing it on subsequent calls.
-   * There is no pixel array to allocate for an OpenGL canvas
-   * because OpenGL's pixel buffer is all handled internally.
-   */
-  @Override
-  protected void allocate() {
-    super.allocate();
-
-    if (!matricesAllocated) {
-      projection = new PMatrix3D();
-      camera = new PMatrix3D();
-      cameraInv = new PMatrix3D();
-      modelview = new PMatrix3D();
-      modelviewInv = new PMatrix3D();
-      projmodelview = new PMatrix3D();
-      matricesAllocated = true;
-    }
-
-    if (!lightsAllocated) {
-      lightType = new int[PGL.MAX_LIGHTS];
-      lightPosition = new float[4 * PGL.MAX_LIGHTS];
-      lightNormal = new float[3 * PGL.MAX_LIGHTS];
-      lightAmbient = new float[3 * PGL.MAX_LIGHTS];
-      lightDiffuse = new float[3 * PGL.MAX_LIGHTS];
-      lightSpecular = new float[3 * PGL.MAX_LIGHTS];
-      lightFalloffCoefficients = new float[3 * PGL.MAX_LIGHTS];
-      lightSpotParameters = new float[2 * PGL.MAX_LIGHTS];
-      currentLightSpecular = new float[3];
-      lightsAllocated = true;
-    }
   }
 
 
