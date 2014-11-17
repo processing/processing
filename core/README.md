@@ -59,6 +59,7 @@ inside main, will know the screen that's being used for the app
 
 #### Questions/To Do
 - bad idea, or worst idea, to have 'surface' var in PGraphics?
+- move getFontRenderContext(font) to PApplet? surface? elsewhere? 
 _ do we need canDraw() anymore?
 - Can we remove while() loop that waits until defaultSize is set false?
 - Does init() need to go away, because it's not going to work in any other setting? Because a surface must first be created, the init() method on its own will be a mess.
