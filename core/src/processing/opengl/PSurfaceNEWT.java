@@ -2,11 +2,14 @@ package processing.opengl;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Rectangle;
+//import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import javax.media.nativewindow.ScalableSurface;
+import javax.media.opengl.GLAnimatorControl;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
@@ -17,6 +20,7 @@ import com.jogamp.newt.Display;
 import com.jogamp.newt.MonitorDevice;
 import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Screen;
+import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.event.InputEvent;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
@@ -49,6 +53,8 @@ public class PSurfaceNEWT implements PSurface {
   int sketchHeight;
 
   MonitorDevice displayDevice;
+  Throwable drawException;
+  Object waitObject = new Object();
 
   public PSurfaceNEWT(PGraphics graphics) {
     this.graphics = graphics;
@@ -65,6 +71,15 @@ public class PSurfaceNEWT implements PSurface {
 
     sketchWidth = sketch.sketchWidth();
     sketchHeight = sketch.sketchHeight();
+
+    if (window != null) {
+      NewtCanvasAWT canvas = new NewtCanvasAWT(window);
+      canvas.setBounds(0, 0, window.getWidth(), window.getHeight());
+//      canvas.setBackground(new Color(pg.backgroundColor, true));
+      canvas.setFocusable(true);
+
+      return canvas;
+    }
 
     return null;
   }
@@ -145,6 +160,7 @@ public class PSurfaceNEWT implements PSurface {
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
     pgl.capabilities = caps;
+    System.err.println("0. create window");
     window = GLWindow.create(screen, caps);
 
 
@@ -194,8 +210,6 @@ public class PSurfaceNEWT implements PSurface {
       }
     }
 
-    window.setVisible(true);
-
     int[] reqSurfacePixelScale;
     if (graphics.is2X()) {
        // Retina
@@ -220,7 +234,63 @@ public class PSurfaceNEWT implements PSurface {
     DrawListener drawlistener = new DrawListener();
     window.addGLEventListener(drawlistener);
 
+    System.err.println("0. create animator");
     animator = new FPSAnimator(window, 60);
+    drawException = null;
+    animator.setUncaughtExceptionHandler(new GLAnimatorControl.UncaughtExceptionHandler() {
+      @Override
+      public void uncaughtException(final GLAnimatorControl animator,
+                                    final GLAutoDrawable drawable,
+                                    final Throwable cause) {
+        synchronized (waitObject) {
+//          System.err.println("Caught exception: " + cause.getMessage());
+          drawException = cause;
+          waitObject.notify();
+        }
+      }
+    });
+
+    (new Thread(new Runnable() {
+      public void run() {
+        synchronized (waitObject) {
+          try {
+            if (drawException == null) waitObject.wait();
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          System.err.println("Caught exception: " + drawException.getMessage());
+          if (drawException instanceof RuntimeException) {
+            throw (RuntimeException)drawException;
+          } else {
+            throw new RuntimeException(drawException);
+          }
+        }
+      }
+    }
+    )).start();
+
+
+    /*
+    try {
+      EventQueue.invokeAndWait(new Runnable() {
+        public void run() {
+          while (true) {
+            try {
+              if (drawException != null) {
+                if (drawException instanceof RuntimeException) {
+                  throw (RuntimeException)drawException;
+                } else {
+                  throw new RuntimeException(drawException);
+                }
+              } else {
+                Thread.sleep(100);
+              }
+            } catch (InterruptedException e) { }
+          }
+      }});
+    } catch (Exception ex) {
+    }
+*/
 
 
     window.addWindowListener(new WindowAdapter() {
@@ -230,6 +300,18 @@ public class PSurfaceNEWT implements PSurface {
       }
     });
 
+
+//  window.setVisible(true);
+    try {
+      EventQueue.invokeAndWait(new Runnable() {
+        public void run() {
+          window.setVisible(true);
+          System.err.println("1. set visible");
+      }});
+    } catch (Exception ex) {
+      // error setting the window visible, should quit...
+    }
+
     frame = new DummyFrame();
     return frame;
   }
@@ -238,20 +320,15 @@ public class PSurfaceNEWT implements PSurface {
 
     public DummyFrame() {
       super();
-//      setVisible(false);
     }
 
     @Override
     public void setResizable(boolean resizable) {
-      super.setResizable(resizable);
-
-      // call NEWT function to make the window resizable
+//      super.setResizable(resizable);
     }
 
     @Override
     public void setVisible(boolean visible) {
-      // don't call super.setVisible()
-      // make the NEWT window visible/invisible
       window.setVisible(visible);
     }
 
@@ -297,7 +374,9 @@ public class PSurfaceNEWT implements PSurface {
 
   public void startThread() {
     if (animator != null) {
+      System.err.println("2. start animator");
       animator.start();
+      animator.getThread().setName("Processing-GL-draw");
     }
   }
 
@@ -314,17 +393,27 @@ public class PSurfaceNEWT implements PSurface {
   }
 
   public boolean stopThread() {
-    return animator.stop();
+    if (animator != null) {
+      return animator.stop();
+    } else {
+      return false;
+    }
   }
 
   public boolean isStopped() {
-    return !animator.isAnimating();
+    if (animator != null) {
+      return !animator.isAnimating();
+    } else {
+      return true;
+    }
   }
 
   public void setSize(int width, int height) {
-    sketchWidth = sketch.width = width;
-    sketchHeight = sketch.height = height;
-//    System.err.println("resize to " + width + ", " + height);
+    if (frame != null) {
+      System.err.println("3. set size");
+      sketchWidth = sketch.width = width;
+      sketchHeight = sketch.height = height;
+    }
   }
 
   public void setFrameRate(float fps) {
@@ -338,18 +427,14 @@ public class PSurfaceNEWT implements PSurface {
 
   public void blit() {
     // TODO Auto-generated method stub
-
   }
-
-
-
-
 
   class DrawListener implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
       pgl.getGL(drawable);
-      pgl.getBuffers(window);
+
       sketch.handleDraw();
+
       if (sketch.frameCount == 1) {
         requestFocus();
       }
@@ -367,9 +452,7 @@ public class PSurfaceNEWT implements PSurface {
     }
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
       pgl.getGL(drawable);
-      if (animator != null && animator.isStarted()) {
-        setSize(w, h);
-      }
+      setSize(w, h);
     }
   }
 
