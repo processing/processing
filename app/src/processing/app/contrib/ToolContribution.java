@@ -32,9 +32,10 @@ import processing.app.Editor;
 import processing.app.tools.Tool;
 
 
-public class ToolContribution extends LocalContribWithReference implements Tool {
+public class ToolContribution extends LocalContribution implements Tool {
   private Tool tool;
 
+  private File referenceFile; // shortname/reference/index.html is one possible path
 
   static public ToolContribution load(File folder) {
     try {
@@ -59,6 +60,8 @@ public class ToolContribution extends LocalContribWithReference implements Tool 
       Class<?> toolClass = loader.loadClass(className);
       tool = (Tool) toolClass.newInstance();
     }
+
+    referenceFile = loadReferenceIndexFile(folder);
   }
 
 
@@ -152,5 +155,48 @@ public class ToolContribution extends LocalContribWithReference implements Tool 
 
   public ContributionType getType() {
     return ContributionType.TOOL;
+  }
+
+
+  /**
+   * @param folder
+   *          The file object representing the base folder of the contribution
+   * @return Returns a file object representing the index file of the reference
+   */
+  protected File loadReferenceIndexFile(File folder) {
+    final String potentialFileList[] = {
+      "reference/index.html", "reference/index.htm",
+      "documentation/index.html", "documentation/index.htm", "docs/index.html",
+      "docs/index.htm", "documentation.html", "documentation.htm",
+      "reference.html", "reference.htm", "docs.html", "docs.htm", "readme.txt" };
+
+    int i = 0;
+    File potentialRef = new File(folder, potentialFileList[i]);
+    while (!potentialRef.exists() && ++i < potentialFileList.length) {
+      potentialRef = new File(folder, potentialFileList[i]);
+    }
+    return potentialRef;
+  }
+
+
+  /**
+   * Returns the object stored in the referenceFile field, which contains an
+   * instance of the file object representing the index file of the reference
+   * 
+   * @return referenceFile
+   */
+  public File getReferenceIndexFile() {
+    return referenceFile;
+  }
+
+
+  /**
+   * Tests whether the reference's index file indicated by referenceFile exists.
+   * 
+   * @return true if and only if the file denoted by referenceFile exists; false
+   *         otherwise.
+   */
+  public boolean hasReference() {
+    return referenceFile.exists();
   }
 }

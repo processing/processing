@@ -7,15 +7,13 @@ import processing.app.contrib.*;
 import processing.core.*;
 
 
-public class Library extends LocalContribWithReference {
+public class Library extends LocalContribution {
   static final String[] platformNames = PConstants.platformNames;
 
   //protected File folder;          // /path/to/shortname
   protected File libraryFolder;   // shortname/library
   protected File examplesFolder;  // shortname/examples
-
-  // Shifted to LocalContribWithReference
-//  protected File referenceFile;   // shortname/reference/index.html is one possible path
+  protected File referenceFile;   // shortname/reference/index.html is one possible path
 
   /**
    * Subfolder for grouping libraries in a menu. Basic subfolder support
@@ -112,9 +110,7 @@ public class Library extends LocalContribWithReference {
 
     libraryFolder = new File(folder, "library");
     examplesFolder = new File(folder, "examples");
-    
-    // Now done in LocalContribWithReference's ctor
-    // referenceFile = loadReferenceIndexFile(folder);
+    referenceFile = new File(folder, "reference/index.html");
 
     File exportSettings = new File(libraryFolder, "export.txt");
     HashMap<String,String> exportTable = Base.readSettings(exportSettings);
@@ -216,6 +212,8 @@ public class Library extends LocalContribWithReference {
 
     // get the path for all .jar files in this code folder
     packageList = Base.packageListFromClassPath(getClassPath());
+    
+    referenceFile = loadReferenceIndexFile(folder);
   }
 
 
@@ -517,5 +515,48 @@ public class Library extends LocalContribWithReference {
 
   public ContributionType getType() {
     return ContributionType.LIBRARY;
+  }
+
+
+  /**
+   * @param folder
+   *          The file object representing the base folder of the contribution
+   * @return Returns a file object representing the index file of the reference
+   */
+  protected File loadReferenceIndexFile(File folder) {
+    final String potentialFileList[] = {
+      "reference/index.html", "reference/index.htm",
+      "documentation/index.html", "documentation/index.htm", "docs/index.html",
+      "docs/index.htm", "documentation.html", "documentation.htm",
+      "reference.html", "reference.htm", "docs.html", "docs.htm", "readme.txt" };
+
+    int i = 0;
+    File potentialRef = new File(folder, potentialFileList[i]);
+    while (!potentialRef.exists() && ++i < potentialFileList.length) {
+      potentialRef = new File(folder, potentialFileList[i]);
+    }
+    return potentialRef;
+  }
+
+
+  /**
+   * Returns the object stored in the referenceFile field, which contains an
+   * instance of the file object representing the index file of the reference
+   * 
+   * @return referenceFile
+   */
+  public File getReferenceIndexFile() {
+    return referenceFile;
+  }
+
+
+  /**
+   * Tests whether the reference's index file indicated by referenceFile exists.
+   * 
+   * @return true if and only if the file denoted by referenceFile exists; false
+   *         otherwise.
+   */
+  public boolean hasReference() {
+    return referenceFile.exists();
   }
 }
