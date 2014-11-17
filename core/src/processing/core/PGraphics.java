@@ -4804,7 +4804,7 @@ public class PGraphics extends PImage implements PConstants {
    * Convenience method to jump through some Java2D hoops and get an FRC.
    */
   @SuppressWarnings("deprecation")
-  public FontRenderContext getFontRenderContext(Font font) {
+  public FontRenderContext getFontRenderContext(Font font) {  // ignore
     return Toolkit.getDefaultToolkit().getFontMetrics(font).getFontRenderContext();
   }
 
