@@ -26,7 +26,10 @@
 package processing.core;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.font.FontRenderContext;
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
@@ -4794,6 +4797,15 @@ public class PGraphics extends PImage implements PConstants {
            (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
       }
     }
+  }
+
+
+  /**
+   * Convenience method to jump through some Java2D hoops and get an FRC.
+   */
+  @SuppressWarnings("deprecation")
+  public FontRenderContext getFontRenderContext(Font font) {
+    return Toolkit.getDefaultToolkit().getFontMetrics(font).getFontRenderContext();
   }
 
 
