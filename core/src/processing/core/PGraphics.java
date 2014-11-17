@@ -739,19 +739,20 @@ public class PGraphics extends PImage implements PConstants {
   public void setSize(int w, int h) {  // ignore
     width = w;
     height = h;
-//    width1 = width - 1;
-//    height1 = height - 1;
 
-    allocate();
+    pixelWidth = width * pixelFactor;
+    pixelHeight = height * pixelFactor;
+
+//    allocate();
     reapplySettings();
   }
 
 
-  /**
-   * Allocate memory for this renderer. Generally will need to be implemented
-   * for all renderers.
-   */
-  protected void allocate() { }
+//  /**
+//   * Allocate memory for this renderer. Generally will need to be implemented
+//   * for all renderers.
+//   */
+//  protected void allocate() { }
 
 
   /**

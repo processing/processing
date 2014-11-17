@@ -31,8 +31,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.DefaultListModel;
@@ -954,8 +954,8 @@ public class TextArea extends JEditTextArea {
                 }
         }
 
-        public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[])
-        {
+        //public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[]) {
+        public void updateInterface(List<List<Handle>> handles, List<List<ColorControlBox>> colorBoxes) {
                 customPainter.updateInterface(handles, colorBoxes);
         }
 

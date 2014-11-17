@@ -36,7 +36,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Segment;
@@ -45,6 +45,7 @@ import javax.swing.text.Utilities;
 import processing.app.SketchCode;
 import processing.app.syntax.TextAreaDefaults;
 import processing.app.syntax.TokenMarker;
+
 
 /**
  * Customized line painter. Adds support for background colors, left hand gutter
@@ -214,6 +215,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     }   
     paintErrorLine(gfx, line, x);
   }
+  
 
   /**
    * Paint the gutter background (solid color).
@@ -231,6 +233,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     gfx.fillRect(0, y, ta.getGutterWidth(), fm.getHeight());
   }
 
+  
   /**
    * Paint the vertical gutter separator line.
    * 
@@ -248,6 +251,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
                  y + fm.getHeight());
   }
 
+  
   /**
    * Paint the gutter text.
    * 
@@ -284,6 +288,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
                              ta.getGutterMargins() + 1, y + 1, gfx, this, 0);
   }
+  
 
   /**
    * Paint the background color of a line.
@@ -311,6 +316,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     gfx.setColor(col);
     gfx.fillRect(0, y, getWidth(), height);
   }
+  
 
   /**
    * Paints the underline for an error/warning line
@@ -428,6 +434,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     // gfx.fillRect(2, y, 3, height);
   }
 
+  
   /**
    * Trims out trailing whitespaces (to the right)
    * 
@@ -445,6 +452,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     return newString;
   }
 
+  
   /**
    * Sets ErrorCheckerService and loads theme for TextAreaPainter(XQMode)
    * 
@@ -456,6 +464,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
     loadTheme(mode);
   }
 
+  
   public String getToolTipText(java.awt.event.MouseEvent evt) {
     if (ta.editor.hasJavaTabs) { // disabled for java tabs
       setToolTipText(null);
@@ -543,8 +552,10 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 	protected int horizontalAdjustment = 0;
 
 	public boolean interactiveMode = false;
-	public ArrayList<Handle> handles[];
-	public ArrayList<ColorControlBox> colorBoxes[];
+//	public ArrayList<Handle> handles[];
+//	public ArrayList<ColorControlBox> colorBoxes[];
+	public List<List<Handle>> handles;
+	public List<List<ColorControlBox>> colorBoxes;
 
 	public Handle mouseHandle = null;
 	public ColorSelector colorSelector;
@@ -574,8 +585,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 				RenderingHints.VALUE_ANTIALIAS_ON);
 
-			for (Handle n : handles[currentTab])
-			{
+			for (Handle n : handles.get(currentTab)) {
 				// update n position and width, and draw it
 				int lineStartChar = ta.getLineStartOffset(n.line);
 				int x = ta.offsetToX(n.line, n.newStartChar - lineStartChar);
@@ -587,8 +597,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 			}
 
 			// draw color boxes
-			for (ColorControlBox cBox: colorBoxes[currentTab])
-			{
+			for (ColorControlBox cBox: colorBoxes.get(currentTab)) {
 				int lineStartChar = ta.getLineStartOffset(cBox.getLine());
 				int x = ta.offsetToX(cBox.getLine(), cBox.getCharIndex() - lineStartChar);
 				int y = ta.lineToY(cBox.getLine()) + fm.getDescent();
@@ -618,8 +627,8 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 	}
 
 	// Update the interface
-	public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[])
-	{
+	//public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[]) {
+	public void updateInterface(List<List<Handle>> handles, List<List<ColorControlBox>> colorBoxes) {
 		this.handles = handles;
 		this.colorBoxes = colorBoxes;
 
@@ -632,18 +641,15 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 	* synchronize this method to prevent the execution of 'paint' in the middle.
 	* (don't paint while we make changes to the text of the editor)
 	*/
-	public synchronized void initInterfacePositions()
-	{
+	public synchronized void initInterfacePositions() {
 		SketchCode[] code = ta.editor.getSketch().getCode();
 		int prevScroll = ta.getVerticalScrollPosition();
 		String prevText = ta.getText();
 
-		for (int tab=0; tab<code.length; tab++)
-		{
+		for (int tab=0; tab<code.length; tab++) {
 			String tabCode = ta.editor.baseCode[tab];
 			ta.setText(tabCode);
-			for (Handle n : handles[tab])
-			{
+			for (Handle n : handles.get(tab)) {
 				int lineStartChar = ta.getLineStartOffset(n.line);
 				int x = ta.offsetToX(n.line, n.newStartChar - lineStartChar);
 				int end = ta.offsetToX(n.line, n.newEndChar - lineStartChar);
@@ -651,8 +657,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 				n.initInterface(x, y, end-x, fm.getHeight());
 			}
 
-			for (ColorControlBox cBox : colorBoxes[tab])
-			{
+			for (ColorControlBox cBox : colorBoxes.get(tab)) {
 				int lineStartChar = ta.getLineStartOffset(cBox.getLine());
 				int x = ta.offsetToX(cBox.getLine(), cBox.getCharIndex() - lineStartChar);
 				int y = ta.lineToY(cBox.getLine()) + fm.getDescent();
@@ -676,8 +681,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 		SketchCode sc = ta.editor.getSketch().getCode(currentTab);
 		String code = ta.editor.baseCode[currentTab];
 
-		for (Handle n : handles[currentTab])
-		{
+		for (Handle n : handles.get(currentTab)) {
 			int s = n.startChar + charInc;
 			int e = n.endChar + charInc;
 			code = replaceString(code, s, e, n.strNewValue);
@@ -710,8 +714,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 	public void updateCursor(int mouseX, int mouseY)
 	{
 		int currentTab = ta.editor.getSketch().getCurrentCodeIndex();
-		for (Handle n : handles[currentTab])
-		{
+		for (Handle n : handles.get(currentTab)) {
 			if (n.pick(mouseX, mouseY))
 			{
 				cursorType = Cursor.W_RESIZE_CURSOR;
@@ -720,8 +723,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 			}
 		}
 
-		for (ColorControlBox colorBox : colorBoxes[currentTab])
-		{
+		for (ColorControlBox colorBox : colorBoxes.get(currentTab)) {
 			if (colorBox.pick(mouseX, mouseY))
 			{
 				cursorType = Cursor.HAND_CURSOR;
@@ -748,7 +750,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 		int currentTab = ta.editor.getSketch().getCurrentCodeIndex();
 
 		boolean change = false;
-		for (ColorControlBox box : colorBoxes[currentTab]) {
+		for (ColorControlBox box : colorBoxes.get(currentTab)) {
 			if (box.setMouseY(y)) {
 				change = true;
 			}
@@ -788,10 +790,8 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 	public void mousePressed(MouseEvent e) {
 		int currentTab = ta.editor.getSketch().getCurrentCodeIndex();
 		// check for clicks on number handles
-		for (Handle n : handles[currentTab])
-		{
-			if (n.pick(e.getX(), e.getY()))
-			{
+		for (Handle n : handles.get(currentTab)) {
+			if (n.pick(e.getX(), e.getY())) {
 				cursorType = -1;
 				this.setCursor(blankCursor);
 				mouseHandle = n;
@@ -802,8 +802,7 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 		}
 
 		// check for clicks on color boxes
-		for (ColorControlBox box : colorBoxes[currentTab])
-		{
+		for (ColorControlBox box : colorBoxes.get(currentTab)) {
 			if (box.pick(e.getX(), e.getY()))
 			{
 				if (colorSelector != null) {

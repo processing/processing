@@ -120,26 +120,26 @@ public class PGraphicsJava2D extends PGraphics {
   //public void setPath(String path)
 
 
-  /**
-   * Called in response to a resize event, handles setting the
-   * new width and height internally, as well as re-allocating
-   * the pixel buffer for the new size.
-   *
-   * Note that this will nuke any cameraMode() settings.
-   */
-  @Override
-  public void setSize(int iwidth, int iheight) {  // ignore
-    width = iwidth;
-    height = iheight;
+//  /**
+//   * Called in response to a resize event, handles setting the
+//   * new width and height internally, as well as re-allocating
+//   * the pixel buffer for the new size.
+//   *
+//   * Note that this will nuke any cameraMode() settings.
+//   */
+//  @Override
+//  public void setSize(int iwidth, int iheight) {  // ignore
+//    width = iwidth;
+//    height = iheight;
+//
+//    allocate();
+//    reapplySettings();
+//  }
 
-    allocate();
-    reapplySettings();
-  }
 
-
+  /*
   @Override
   protected void allocate() {
-    /*
     // Tried this with RGB instead of ARGB for the primarySurface version,
     // but didn't see any performance difference (OS X 10.6, Java 6u24).
     // For 0196, also attempted RGB instead of ARGB, but that causes
@@ -230,8 +230,8 @@ public class PGraphicsJava2D extends PGraphics {
 
     }
     g2 = (Graphics2D) image.getGraphics();
-    */
   }
+     */
 
 
   //public void dispose()
@@ -2626,9 +2626,11 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public void updatePixels(int x, int y, int c, int d) {
     //if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
-    if ((x != 0) || (y != 0) || (c != width) || (d != height)) {
+    System.err.format("%d %d %d %d .. w/h = %d %d .. pw/ph = %d %d %n", x, y, c, d, width, height, pixelWidth, pixelHeight);
+    if ((x != 0) || (y != 0) || (c != pixelWidth) || (d != pixelHeight)) {
       // Show a warning message, but continue anyway.
       showVariationWarning("updatePixels(x, y, w, h)");
+//      new Exception().printStackTrace(System.out);
     }
 //    updatePixels();
     if (pixels != null) {
