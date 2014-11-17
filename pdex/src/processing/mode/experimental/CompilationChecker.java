@@ -380,11 +380,11 @@ public class CompilationChecker {
     return null;
   }
 
-  private void compileMeQuitely(ICompilationUnit unit, Map compilerSettings) {
+  private void compileMeQuitely(ICompilationUnit unit, Map<String, String> compilerSettings) {
 
-    Map settings;
+    Map<String, String> settings;
     if (compilerSettings == null) {
-      settings = new HashMap();
+      settings = new HashMap<>();
 
       settings.put(CompilerOptions.OPTION_LineNumberAttribute,
                    CompilerOptions.GENERATE);
@@ -423,7 +423,6 @@ public class CompilationChecker {
       IProblem problem = (IProblem) it.next();
       prob[count++] = problem;
     }
-
   }
 
   private void compileMeQuitely(ICompilationUnit unit) {
@@ -506,7 +505,7 @@ public class CompilationChecker {
    * @param classLoader - custom classloader which can load all dependencies
    * @return IProblem[] - list of compiler errors and warnings
    */
-  public IProblem[] getErrors(String sourceName, String source, Map settings,
+  public IProblem[] getErrors(String sourceName, String source, Map<String, String> settings,
                               URLClassLoader classLoader) {
     fileName = sourceName;
     readFromFile = false;
@@ -528,7 +527,7 @@ public class CompilationChecker {
   }
 
   @SuppressWarnings("rawtypes")
-  public IProblem[] getErrors(String sourceName, String source, Map settings) {
+  public IProblem[] getErrors(String sourceName, String source, Map<String, String> settings) {
     fileName = sourceName;
     readFromFile = false;
     sourceText = "package " + fileName + ";\n" + source;

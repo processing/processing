@@ -2281,7 +2281,7 @@ public class ASTGenerator {
     temp.push(codeTree);
     
     while(!temp.isEmpty()){
-      DefaultMutableTreeNode cnode = (DefaultMutableTreeNode) temp.pop();
+      DefaultMutableTreeNode cnode = temp.pop();
       for (int i = 0; i < cnode.getChildCount(); i++) {
         temp.push((DefaultMutableTreeNode) cnode.getChildAt(i));
       }
@@ -2380,7 +2380,7 @@ public class ASTGenerator {
     temp.push(codeTree);
 
     while (!temp.isEmpty()) {
-      DefaultMutableTreeNode cnode = (DefaultMutableTreeNode) temp.pop();
+      DefaultMutableTreeNode cnode = temp.pop();
       for (int i = 0; i < cnode.getChildCount(); i++) {
         temp.push((DefaultMutableTreeNode) cnode.getChildAt(i));
       }

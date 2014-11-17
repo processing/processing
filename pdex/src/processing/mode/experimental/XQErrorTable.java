@@ -133,7 +133,7 @@ public class XQErrorTable extends JTable {
 //      String tip = null;
 //      java.awt.Point p = evt.getPoint();
         int rowIndex = rowAtPoint(evt.getPoint());
-        int colIndex = columnAtPoint(evt.getPoint());
+//        int colIndex = columnAtPoint(evt.getPoint());
         synchronized (errorCheckerService.problemsList) {
           if (rowIndex < errorCheckerService.problemsList.size()) {
             
