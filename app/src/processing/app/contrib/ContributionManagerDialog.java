@@ -80,9 +80,9 @@ public class ContributionManagerDialog {
         title = Language.text("contrib.manager_title.library");
         compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.library");
       }
-      else if (type == ContributionType.EXAMPLES_PACKAGE) {
-        title = Language.text("contrib.manager_title.examples-package");
-        compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.examples-package");
+      else if (type == ContributionType.EXAMPLES) {
+        title = Language.text("contrib.manager_title.examples");
+        compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.examples");
       }
       
       filter = type.createFilter();
@@ -437,7 +437,7 @@ public class ContributionManagerDialog {
       ArrayList<ModeContribution> modes = editor.getBase().getModeContribs();
       contributions.addAll(modes);
       
-      ArrayList<ExamplesPackageContribution> examples = editor.getBase().getExampleContribs();
+      ArrayList<ExamplesContribution> examples = editor.getBase().getExampleContribs();
       contributions.addAll(examples);
       
 //    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
