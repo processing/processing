@@ -164,7 +164,7 @@ public class PSurfaceAWT implements PSurface {
       newSize.width = getWidth();
       newSize.height = getHeight();
       if (oldSize.equals(newSize)) {
-        System.out.println("validate() return " + oldSize);
+//        System.out.println("validate() return " + oldSize);
         return;
       } else {
 //        System.out.println("validate() render old=" + oldSize + " -> new=" + newSize);
@@ -410,10 +410,9 @@ public class PSurfaceAWT implements PSurface {
   public Canvas initCanvas(PApplet sketch) {
     this.sketch = sketch;
 
+    // needed for getPreferredSize() et al
     sketchWidth = sketch.sketchWidth();
     sketchHeight = sketch.sketchHeight();
-
-    setSize(sketchWidth, sketchHeight);
 
     return canvas;
   }
@@ -751,8 +750,12 @@ public class PSurfaceAWT implements PSurface {
 
 
   public void startThread() {
-    thread = new AnimationThread();
-    thread.start();
+    if (thread == null) {
+      thread = new AnimationThread();
+      thread.start();
+    } else {
+      throw new IllegalStateException("Thread already started in PSurfaceAWT");
+    }
   }
 
 
@@ -819,6 +822,9 @@ public class PSurfaceAWT implements PSurface {
     //throw new RuntimeException("implement me, see readme.md");
     sketchWidth = sketch.width = wide;
     sketchHeight = sketch.height = high;
+
+    // sets internal variables for width/height/pixelWidth/pixelHeight
+    graphics.setSize(wide, high);
   }
 
 
@@ -1357,6 +1363,14 @@ public class PSurfaceAWT implements PSurface {
       // animation thread yields to other running threads.
       final int NO_DELAYS_PER_YIELD = 15;
 
+      // If size un-initialized, might be a Canvas. Call setSize() here since
+      // we now have a parent object that this Canvas can use as a peer.
+      if (graphics.image == null) {
+//        System.out.format("it's null, sketchW/H already set to %d %d%n", sketchWidth, sketchHeight);
+        setSize(sketchWidth, sketchHeight);
+//        System.out.format("  but now, sketchW/H changed to %d %d%n", sketchWidth, sketchHeight);
+      }
+
       // un-pause the sketch and get rolling
       sketch.start();
 
@@ -1370,7 +1384,7 @@ public class PSurfaceAWT implements PSurface {
         if (currentSize.width != sketchWidth || currentSize.height != sketchHeight) {
           //resizeRenderer(currentSize.width, currentSize.height);
           //System.err.format("need to resize from %s to %d, %d", currentSize, graphics.width, graphics.height);
-          System.err.format("need to resize from %s to %d, %d", currentSize, sketchWidth, sketchHeight);
+          System.err.format("need to resize from %s to %d, %d%n", currentSize, sketchWidth, sketchHeight);
         }
 //        }
 
