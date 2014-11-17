@@ -4,7 +4,6 @@ import java.awt.Canvas;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Shape;
-import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.PathIterator;
@@ -1194,32 +1193,29 @@ public class PJOGL extends PGL {
 
 
   @Override
-  protected int getFontAscent(Font font) {
-    @SuppressWarnings("deprecation")
-    FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics(font);
-    return metrics.getAscent();
+  protected int getFontAscent(Object font) {
+    return pg.getFontMetrics((Font) font).getAscent();
   }
 
 
+  @Override
   protected int getFontDescent(Object font) {
-    FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics((Font)font);
-//    FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
-    return metrics.getDescent();
+    return pg.getFontMetrics((Font) font).getDescent();
   }
 
 
-  protected int getTextWidth(Object font, char buffer[], int start, int stop) {
+  @Override
+  protected int getTextWidth(Object font, char[] buffer, int start, int stop) {
     // maybe should use one of the newer/fancier functions for this?
     int length = stop - start;
-//    FontMetrics metrics = pg.parent.getFontMetrics((Font)font);
-    FontMetrics metrics = Toolkit.getDefaultToolkit().getFontMetrics((Font)font);
+    FontMetrics metrics = pg.getFontMetrics((Font) font);
     return metrics.charsWidth(buffer, start, length);
   }
 
 
+  @Override
   protected Object getDerivedFont(Object font, float size) {
-    return ((Font)font).deriveFont(size);
-
+    return ((Font) font).deriveFont(size);
   }
 
 
@@ -1388,18 +1384,17 @@ public class PJOGL extends PGL {
 
   @Override
   protected FontOutline createFontOutline(char ch, Object font) {
-    return new FontOutline(ch, font);
+    return new FontOutline(ch, (Font) font);
   }
 
 
   protected class FontOutline implements PGL.FontOutline {
     PathIterator iter;
 
-    public FontOutline(char ch, Object font) {
+    public FontOutline(char ch, Font font) {
       char textArray[] = new char[] { ch };
-//      Graphics2D graphics = (Graphics2D) pg.parent.frame.getGraphics();
-      FontRenderContext frc = pg.getFontRenderContext((Font)font);
-      GlyphVector gv = ((Font)font).createGlyphVector(frc, textArray);
+      FontRenderContext frc = pg.getFontRenderContext(font);
+      GlyphVector gv = font.createGlyphVector(frc, textArray);
       Shape shp = gv.getOutline();
       iter = shp.getPathIterator(null);
     }
