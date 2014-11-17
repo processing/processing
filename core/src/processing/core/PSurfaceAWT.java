@@ -1379,13 +1379,9 @@ public class PSurfaceAWT implements PSurface {
 
         // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
         // otherwise it may attempt a resize mid-render.
-//        if (g != null) {
-        Dimension currentSize = canvas.getSize();
-        if (currentSize.width != sketchWidth || currentSize.height != sketchHeight) {
-          //resizeRenderer(currentSize.width, currentSize.height);
-          //System.err.format("need to resize from %s to %d, %d", currentSize, graphics.width, graphics.height);
-          System.err.format("need to resize from %s to %d, %d%n", currentSize, sketchWidth, sketchHeight);
-        }
+//        Dimension currentSize = canvas.getSize();
+//        if (currentSize.width != sketchWidth || currentSize.height != sketchHeight) {
+//          System.err.format("need to resize from %s to %d, %d%n", currentSize, sketchWidth, sketchHeight);
 //        }
 
         // render a single frame
