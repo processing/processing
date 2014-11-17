@@ -37,7 +37,7 @@ import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.*;
 
 import processing.app.contrib.ContributionType;
-import processing.app.contrib.ExamplesPackageContribution;
+import processing.app.contrib.ExamplesContribution;
 import processing.app.syntax.*;
 import processing.core.PApplet;
 
@@ -108,7 +108,7 @@ public abstract class Mode {
     referenceFolder = new File(folder, "reference");
     
     // Get path to the contributed examples compatible with this mode
-    examplesContribFolder = Base.getSketchbookExamplesPackagesFolder();
+    examplesContribFolder = Base.getSketchbookExamplesFolder();
 
 //    rebuildToolbarMenu();
     rebuildLibraryList();
@@ -688,19 +688,19 @@ public abstract class Mode {
     DefaultMutableTreeNode node = new DefaultMutableTreeNode("Contributed Examples");
 
     try {
-      File[] subfolders = ContributionType.EXAMPLES_PACKAGE.listCandidates(examplesContribFolder);
+      File[] subfolders = ContributionType.EXAMPLES.listCandidates(examplesContribFolder);
       if (subfolders == null) {
         subfolders = new File[0]; //empty array
       }
       for (File sub : subfolders) {
-        if (!ExamplesPackageContribution.isExamplesPackageCompatible(base, sub))
+        if (!ExamplesContribution.isExamplesCompatible(base, sub))
           continue;
         DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
         if (base.addSketches(subNode, sub)) {
           node.add(subNode);
           int exampleNodeNumber = -1;
           for (int y = 0; y < subNode.getChildCount(); y++)
-            if (subNode.getChildAt(y).toString().equals("examples-package"))
+            if (subNode.getChildAt(y).toString().equals("examples"))
               exampleNodeNumber = y;
           if (exampleNodeNumber == -1)
             continue;
