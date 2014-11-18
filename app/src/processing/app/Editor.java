@@ -51,8 +51,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected EditorState state;
   protected Mode mode;
 
-  // otherwise, if the window is resized with the message label
-  // set to blank, it's preferredSize() will be fukered
+  // Otherwise, if the window is resized with the message label
+  // set to blank, its preferredSize() will be fuckered
   static protected final String EMPTY =
     "                                                                     " +
     "                                                                     " +
@@ -66,7 +66,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   private PageFormat pageFormat;
   private PrinterJob printerJob;
 
-  // file and sketch menus for re-inserting items
+  // File and sketch menus for re-inserting items
   private JMenu fileMenu;
 //  private JMenuItem saveMenuItem;
 //  private JMenuItem saveAsMenuItem;
@@ -148,7 +148,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //          fileMenu.insert(base.getSketchbookMenu(), 2);
           fileMenu.insert(base.getRecentMenu(), 2);
 //          fileMenu.insert(mode.getExamplesMenu(), 3);
+          Toolkit.setMenuMnemsInside(fileMenu);
+
           sketchMenu.insert(mode.getImportMenu(), 4);
+          Toolkit.setMenuMnemsInside(sketchMenu);
           mode.insertToolbarRecentMenu();
         }
 
@@ -398,7 +401,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
         public void actionPerformed(ActionEvent e) {
           if (!sketch.isModified()) {
             base.changeMode(m);
-            
           } else {
             Base.showWarning("Save",
                              "Please save the sketch before changing the mode.",
@@ -433,6 +435,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     });
     modeMenu.add(addLib);
+
+    Toolkit.setMenuMnemsInside(modeMenu);
   }
 
 
@@ -557,7 +561,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   protected void buildMenuBar() {
     JMenuBar menubar = new JMenuBar();
-    menubar = new JMenuBar();
     fileMenu = buildFileMenu();
     menubar.add(fileMenu);
     menubar.add(buildEditMenu());
@@ -573,6 +576,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menubar.add(getToolMenu());
 
     menubar.add(buildHelpMenu());
+    Toolkit.setMenuMnemonics(menubar);
     setJMenuBar(menubar);
   }
 
@@ -734,11 +738,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     menu.addSeparator();
 
-    cutItems = Toolkit.newJMenuItem("Cut", 'X');
+    cutItems = Toolkit.newJMenuItem(Language.text("menu.edit.cut"), 'X');
     cutItems.addActionListener(cutAction = new CutAction());
     menu.add(cutItems);
 
-    copyItems = Toolkit.newJMenuItem("Copy", 'C');
+    copyItems = Toolkit.newJMenuItem(Language.text("menu.edit.copy"), 'C');
     copyItems.addActionListener(copyAction = new CopyAction());
     menu.add(copyItems);
 
@@ -933,7 +937,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     sketchMenu.add(item);
 
-    sketchMenu.addSeparator();
+    if (runItems != null && runItems.length != 0) {
+      sketchMenu.addSeparator();
+    }
 
 //    final Editor editorName = this;
     
@@ -957,7 +963,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
           // Action listener to bring the appropriate sketch in front
           item.addActionListener(new ActionListener() { 
-
             @Override
             public void actionPerformed(ActionEvent e) {
               editor.setState(Frame.NORMAL);
@@ -967,6 +972,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           });
           sketchMenu.add(item);
           menuList.add(item);
+          Toolkit.setMenuMnemsInside(sketchMenu);
         }
       }
 
@@ -1300,7 +1306,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   class CutAction extends AbstractAction {
     public CutAction() {
-      super("Cut");
+      super(Language.text("menu.edit.cut"));
       this.setEnabled(false);
     }
     
@@ -1310,11 +1316,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     
     public void updateCutState() {
-      if (canCut()) {
-        cutItems.setEnabled(true);
-      } else {
-        cutItems.setEnabled(false);
-      }
+      cutItems.setEnabled(canCut());
     }
     
     public boolean canCut() {
@@ -1324,7 +1326,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     
   class CopyAction extends AbstractAction {
     public CopyAction() {
-      super("Copy");
+      super(Language.text("menu.edit.copy"));
       this.setEnabled(false);
     }
     
@@ -1333,11 +1335,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     
     public void updateCopyState() {
-      if (canCopy()) {
-        copyItems.setEnabled(true);
-      } else {
-        copyItems.setEnabled(false);
-      }
+      copyItems.setEnabled(canCopy());
     }
     
     public boolean canCopy() {
@@ -2937,11 +2935,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Returns the edit popup menu.
    */
   class TextAreaPopup extends JPopupMenu {
-    JMenuItem cutItem;
-    JMenuItem copyItem;
-    JMenuItem discourseItem;
-    JMenuItem referenceItem;
-
+    JMenuItem cutItem, copyItem, discourseItem, pasteItem,
+      selectAllItem, commUncommItem, incIndItem, decIndItem,
+      referenceItem;
 
     public TextAreaPopup() {
       JMenuItem item;
@@ -2996,7 +2992,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
       this.add(item);
 
-      item = new JMenuItem("\u2192 "+Language.text("menu.edit.increase_indent"));
+      item = new JMenuItem("\u2192 " + Language.text("menu.edit.increase_indent"));
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleIndentOutdent(true);
@@ -3004,7 +3000,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
       this.add(item);
 
-      item = new JMenuItem("\u2190 "+Language.text("menu.edit.decrease_indent"));
+      item = new JMenuItem("\u2190 " + Language.text("menu.edit.decrease_indent"));
       item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handleIndentOutdent(false);
@@ -3021,6 +3017,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
           }
         });
       this.add(referenceItem);
+      
+      Toolkit.setMenuMnemonics(this);
     }
 
     // if no text is selected, disable copy and cut menu items
