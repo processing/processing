@@ -34,9 +34,9 @@ import processing.core.PApplet;
 public class ContributionListing {
   // Stable URL that will redirect to wherever we're hosting the file
   static final String LISTING_URL =
-    "http://download.processing.org/contributions.txt";
+    "http://download.processing.org/contribs.txt";
 
-  static ContributionListing singleInstance;
+  static volatile ContributionListing singleInstance;
 
   File listingFile;
   ArrayList<ContributionChangeListener> listeners;
@@ -44,6 +44,7 @@ public class ContributionListing {
   Map<String, List<Contribution>> librariesByCategory;
   ArrayList<Contribution> allContributions;
   boolean hasDownloadedLatestList;
+  boolean hasListDownloadFailed;
   ReentrantLock downloadingListingLock;
 
 
@@ -64,7 +65,11 @@ public class ContributionListing {
 
   static ContributionListing getInstance() {
     if (singleInstance == null) {
-      singleInstance = new ContributionListing();
+      synchronized (ContributionListing.class) {
+        if (singleInstance == null) {
+          singleInstance = new ContributionListing();
+        }
+      }
     }
     return singleInstance;
   }
@@ -303,6 +308,24 @@ public class ContributionListing {
   }
 
 
+  protected List<Contribution> getCompatibleContributionList(List<Contribution> filteredLibraries, boolean filter) {
+    ArrayList<Contribution> filteredList = 
+      new ArrayList<Contribution>(filteredLibraries);
+    
+    if (!filter)
+      return filteredList;
+
+    Iterator<Contribution> it = filteredList.iterator();
+    while (it.hasNext()) {
+      Contribution libInfo = it.next();
+      if (!libInfo.isCompatible(Base.getRevision())) {
+        it.remove();
+      }
+    }
+    return filteredList;
+  }
+
+
   private void notifyRemove(Contribution contribution) {
     for (ContributionChangeListener listener : listeners) {
       listener.contributionRemoved(contribution);
@@ -365,8 +388,11 @@ public class ContributionListing {
           ContributionManager.download(url, listingFile, progress);
           if (!progress.isCanceled() && !progress.isError()) {
             hasDownloadedLatestList = true;
+            hasListDownloadFailed = false;
             setAdvertisedList(listingFile);
           }
+          else
+            hasListDownloadFailed = true;
         }
         downloadingListingLock.unlock();
       }
@@ -429,6 +455,11 @@ public class ContributionListing {
 
   boolean hasDownloadedLatestList() {
     return hasDownloadedLatestList;
+  }
+
+
+  boolean hasListDownloadFailed() {
+    return hasListDownloadFailed;
   }
 
 

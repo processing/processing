@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import processing.app.Base;
+import processing.app.Language;
 import processing.core.PApplet;
 
 
@@ -48,18 +49,31 @@ class AvailableContribution extends Contribution {
     url = params.get("url");
     sentence = params.get("sentence");
     paragraph = params.get("paragraph");
+    
     String versionStr = params.get("version");
     if (versionStr != null) {
       version = PApplet.parseInt(versionStr, 0);
     }
+    
     prettyVersion = params.get("prettyVersion");
+    
     String lastUpdatedStr = params.get("lastUpdated");
-    if (lastUpdatedStr != null)
+    if (lastUpdatedStr != null) {
       try {
         lastUpdated =  Long.parseLong(lastUpdatedStr);
       } catch (NumberFormatException e) {
         lastUpdated = 0;
       }
+    }
+    String minRev = params.get("minRevision");
+    if (minRev != null) {
+      minRevision = PApplet.parseInt(minRev, 0);
+    }
+    
+    String maxRev = params.get("maxRevision");
+    if (maxRev != null) {
+      maxRevision = PApplet.parseInt(maxRev, 0);
+    }
   }
   
   
@@ -86,7 +100,7 @@ class AvailableContribution extends Contribution {
       tempFolder = type.createTempFolder();
     } catch (IOException e) {
       if (status != null)
-        status.setErrorMessage("Could not create a temporary folder to install.");
+        status.setErrorMessage(Language.text("contrib.errors.temporary_directory"));
       return null;
     }
     Base.unzip(contribArchive, tempFolder);
@@ -114,9 +128,9 @@ class AvailableContribution extends Contribution {
       tempFolder.renameTo(contribFolder);
       tempFolder = enclosingFolder;
       */
-      if (status != null)
-        status.setErrorMessage(getName() + " needs to be repackaged according to the " + type.getTitle() + " guidelines.");
-      //status.setErrorMessage("This " + type + " needs to be repackaged according to the guidelines.");
+      if (status != null) {
+        status.setErrorMessage(Language.interpolate("contrib.errors.needs_repackage", getName(), type.getTitle()));
+      }
       return null;
     }
 
@@ -127,15 +141,15 @@ class AvailableContribution extends Contribution {
     LocalContribution installedContrib = null;
 
     if (contribFolder == null) {
-      if (status != null)
-        status.setErrorMessage("Could not find a " + type + " in the downloaded file.");
+      if (status != null) {
+        status.setErrorMessage(Language.interpolate("contrib.errors.no_contribution_found", type));
+      }
       
     } else {
       File propFile = new File(contribFolder, type + ".properties");
       if (writePropertiesFile(propFile)) {        
         // 1. contribFolder now has a legit contribution, load it to get info. 
-        LocalContribution newContrib =
-          type.load(base, contribFolder);
+        LocalContribution newContrib = type.load(base, contribFolder);
         
         // 1.1. get info we need to delete the newContrib folder later
         File newContribFolder = newContrib.getFolder();
@@ -179,8 +193,9 @@ class AvailableContribution extends Contribution {
         Base.removeDir(newContribFolder);
         
       } else {
-        if (status != null)
-          status.setErrorMessage("Error overwriting .properties file.");
+        if (status != null) {
+          status.setErrorMessage(Language.text("contrib.errors.overwriting_properties"));
+        }
       }
     }
 
@@ -216,7 +231,6 @@ class AvailableContribution extends Contribution {
    */
   public boolean writePropertiesFile(File propFile) {
     try {
-
       HashMap<String, String> properties = Base.readSettings(propFile);
 
       String name = properties.get("name");
@@ -225,9 +239,9 @@ class AvailableContribution extends Contribution {
 
       String category;
       List<String> categoryList = parseCategories(properties.get("category"));
-      if (categoryList.size() == 1 && categoryList.get(0).equals("Unknown"))
+      if (categoryList.size() == 1 && categoryList.get(0).equals("Unknown")) {
         category = getCategoryStr();
-      else {
+      } else {
         StringBuilder sb = new StringBuilder();
         for (String cat : categories) {
           sb.append(cat);
@@ -238,20 +252,24 @@ class AvailableContribution extends Contribution {
       }
 
       String authorList = properties.get("authorList");
-      if (authorList == null || authorList.isEmpty())
+      if (authorList == null || authorList.isEmpty()) {
         authorList = getAuthorList();
+      }
 
       String url = properties.get("url");
-      if (url == null || url.isEmpty())
+      if (url == null || url.isEmpty()) {
         url = getUrl();
+      }
 
       String sentence = properties.get("sentence");
-      if (sentence == null || sentence.isEmpty())
+      if (sentence == null || sentence.isEmpty()) {
         sentence = getSentence();
+      }
 
       String paragraph = properties.get("paragraph");
-      if (paragraph == null || paragraph.isEmpty())
+      if (paragraph == null || paragraph.isEmpty()) {
         paragraph = getParagraph();
+      }
 
       int version;
       try {
@@ -267,12 +285,17 @@ class AvailableContribution extends Contribution {
       String prettyVersion = properties.get("prettyVersion");
       if (prettyVersion == null || prettyVersion.isEmpty())
         prettyVersion = getPrettyVersion();
+      
+      String compatibleContribsList = null;
+      
+      if (getType() == ContributionType.EXAMPLES_PACKAGE) {
+        compatibleContribsList = properties.get("compatibleModesList");
+      }
 
       long lastUpdated;
       try {
         lastUpdated = Long.parseLong(properties.get("lastUpdated"));
-      }
-      catch (NumberFormatException nfe) {
+      } catch (NumberFormatException nfe) {
         lastUpdated = getLastUpdated();
       // Better comment these out till all contribs have a lastUpdated 
 //        System.err.println("The last updated date for the “" + name
@@ -280,6 +303,24 @@ class AvailableContribution extends Contribution {
 //        System.err
 //          .println("Please contact the author to fix it according to the guidelines.");
       }
+
+      int minRev;
+      try {
+        minRev = Integer.parseInt(properties.get("minRevision"));
+      } catch (NumberFormatException e) {
+        minRev = getMinRevision();
+//        System.err.println("The minimum compatible revision for the “" + name
+//          + "” contribution is not set properly. Assuming minimum revision 0.");
+      }
+
+      int maxRev;
+      try {
+        maxRev = Integer.parseInt(properties.get("maxRevision"));
+      } catch (NumberFormatException e) {
+        maxRev = getMaxRevision();
+//        System.err.println("The maximum compatible revision for the “" + name
+//                           + "” contribution is not set properly. Assuming maximum revision INF.");
+      } 
 
       if (propFile.delete() && propFile.createNewFile() && propFile.setWritable(true)) {
         PrintWriter writer = PApplet.createWriter(propFile);
@@ -293,6 +334,11 @@ class AvailableContribution extends Contribution {
         writer.println("version=" + version);
         writer.println("prettyVersion=" + prettyVersion);
         writer.println("lastUpdated=" + lastUpdated);
+        writer.println("minRevision=" + minRev);
+        writer.println("maxRevision=" + maxRev);
+        if (getType() == ContributionType.EXAMPLES_PACKAGE) {
+          writer.println("compatibleModesList=" + compatibleContribsList);
+        }
 
         writer.flush();
         writer.close();

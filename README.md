@@ -6,6 +6,8 @@ the “core” and the libraries that are included with the [download](http://pr
 
 > Development of Processing 3 has started, so major changes are underway inside this repository. **If you need a stable version of the source, use the tag processing-0227-2.2.1.** Do not expect this code to be stable. Major changes include severe things like breaking libraries (due to chaining operations in PVector) or the removal of `Applet` as the base class for PApplet. Some of these will be sorted out before the release, others are simply being tested or are developments that are in-progress.
 
+> Update September 2014: java.awt.Applet is no longer the base class, which means lots of things may break (especially while we sort out the mess). You can use [the 3.0a4 tag](https://github.com/processing/processing/releases/tag/processing-0231-3.0a4) if you'd like the last “stable” alpha release.
+
 If you have found a bug in the Processing software, you can file it here under the [“issues” tab](https://github.com/processing/processing/issues). 
 If it relates to the [JavaScript](http://processingjs.org) version, please use [their issue tracker](https://processing-js.lighthouseapp.com/).
 All Android-related development has moved to its own repository [here](https://github.com/processing/processing-android), 
@@ -31,4 +33,4 @@ But in the meantime, I ask for your patience,
 and [patches](https://github.com/processing/processing/pulls).
 
 Ben Fry, 3 February 2013  
-Last updated 30 July 2014
+Last updated 14 September 2014

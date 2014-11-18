@@ -457,29 +457,43 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
   }
 
   public String getToolTipText(java.awt.event.MouseEvent evt) {
-    if(ta.editor.hasJavaTabs) return null; // disabled for java tabs
+    if (ta.editor.hasJavaTabs) { // disabled for java tabs
+      setToolTipText(null);
+      return super.getToolTipText(evt);
+    }
     int off = ta.xyToOffset(evt.getX(), evt.getY());
-    if (off < 0)
-      return null;
+    if (off < 0) {
+      setToolTipText(null);
+      return super.getToolTipText(evt);
+    }
     int line = ta.getLineOfOffset(off);
-    if (line < 0)
-      return null;
+    if (line < 0) {
+      setToolTipText(null);
+      return super.getToolTipText(evt);
+    }
     String s = ta.getLineText(line);
-    if (s == null)
+    if (s == "")
       return evt.toString();
-    else if (s.length() == 0)
-      return null;
-    else {
+    else if (s.length() == 0) {
+      setToolTipText(null);
+      return super.getToolTipText(evt);
+    } else {
       int x = ta.xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
       int xLS = off - ta.getLineStartNonWhiteSpaceOffset(line);
-      if (x < 0 || x >= s.length())
-        return null;
+      if (x < 0 || x >= s.length()) {
+        setToolTipText(null);
+        return super.getToolTipText(evt);
+      }
       String word = s.charAt(x) + "";
-      if (s.charAt(x) == ' ')
-        return null;
+      if (s.charAt(x) == ' ') {
+        setToolTipText(null);
+        return super.getToolTipText(evt);
+      }
       if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_' || s
-          .charAt(x) == '$'))
-        return null;
+          .charAt(x) == '$')) {
+        setToolTipText(null);
+        return super.getToolTipText(evt);
+      }
       int i = 0;
       while (true) {
         i++;
@@ -509,8 +523,10 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
           break;
         }
       }
-      if (Character.isDigit(word.charAt(0)))
-        return null;
+      if (Character.isDigit(word.charAt(0))) {
+        setToolTipText(null);
+        return super.getToolTipText(evt);
+      }
       String tooltipText = errorCheckerService.getASTGenerator()
           .getLabelForASTNode(line, word, xLS);
 
@@ -518,9 +534,9 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
 //      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
       if (tooltipText != null)
         return tooltipText;
-      return word;
     }
-
+    setToolTipText(null);
+    return super.getToolTipText(evt);
   }
 
   // TweakMode code

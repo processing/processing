@@ -42,6 +42,7 @@ import javax.swing.text.html.StyleSheet;
 
 import processing.app.Base;
 import processing.app.Editor;
+import processing.app.Toolkit;
 import processing.app.Language;
 
 
@@ -50,17 +51,20 @@ import processing.app.Language;
  */
 class ContributionPanel extends JPanel {
   static public final String REMOVE_RESTART_MESSAGE =
-    "<i>Please restart Processing to finish removing this item.</i>";
+    String.format("<i>%s</i>", Language.text("contrib.messages.remove_restart"));
 
   static public final String INSTALL_RESTART_MESSAGE =
-    "<i>Please restart Processing to finish installing this item.</i>";
-  
+    String.format("<i>%s</i>", Language.text("contrib.messages.install_restart"));
+
   static public final String UPDATE_RESTART_MESSAGE =
-    "<i>Please restart Processing to finish updating this item.</i>";
+    String.format("<i>%s</i>", Language.text("contrib.messages.update_restart"));
 
   static public final String PROGRESS_BAR_CONSTRAINT = "Install/Remove Progress Bar Panel";
-  
+
   static public final String BUTTON_CONSTRAINT = "Install/Remvoe Button Panel";
+
+  static public final String INCOMPATIBILITY_BLUR = "This contribution is not compatible with "
+    + "the current revision of Processing";
 
   private final ContributionListPanel listPanel;
   private final ContributionListing contribListing = ContributionListing.getInstance();
@@ -229,7 +233,11 @@ class ContributionPanel extends JPanel {
 
     setExpandListener(this, new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        listPanel.setSelectedPanel(ContributionPanel.this);
+        if (contrib.isCompatible(Base.getRevision()))
+          listPanel.setSelectedPanel(ContributionPanel.this);
+        else
+          listPanel.contribManager.status.setErrorMessage(contrib.getName()
+            + " is not compatible with this revision of Processing");
       }
     });
   }
@@ -512,9 +520,32 @@ class ContributionPanel extends JPanel {
     }
   }
 
+
+  private void blurContributionPanel(Component component) {
+    component.setFocusable(false);
+    component.setEnabled(false);
+    if (component instanceof JComponent)
+      ((JComponent) component).setToolTipText(INCOMPATIBILITY_BLUR);
+    if (component instanceof Container) {
+      for (Component child : ((Container) component).getComponents()) {
+        blurContributionPanel(child);
+      }
+    }
+  }
+
   
   public void setContribution(Contribution contrib) {
     this.contrib = contrib;
+    
+    
+    if (contrib.isSpecial()) {
+      ImageIcon processingIcon = new ImageIcon(Toolkit.getLibImage("icons/pde-"
+        + "48" + ".png"));
+      JLabel iconLabel = new JLabel(processingIcon);
+      iconLabel.setBorder(new EmptyBorder(4, 7, 7, 7));
+      iconLabel.setVerticalAlignment(SwingConstants.TOP);
+      add(iconLabel, BorderLayout.WEST);
+    }
 
 //    StringBuilder nameText = new StringBuilder();
 //    nameText.append("<html><body><b>");
@@ -570,14 +601,13 @@ class ContributionPanel extends JPanel {
       description.append(REMOVE_RESTART_MESSAGE);
     } else if (contrib.isRestartFlagged()) {
       description.append(INSTALL_RESTART_MESSAGE);
-    } 
-    else if (contrib.isUpdateFlagged()) { 
+    } else if (contrib.isUpdateFlagged()) {
       description.append(UPDATE_RESTART_MESSAGE);
-    } 
-    else {
+    } else {
+
       String sentence = contrib.getSentence();
       if (sentence == null || sentence.isEmpty()) {
-        sentence = "<i>Description unavailable.</i>";
+        sentence = String.format("<i>%s</i>", Language.text("contrib.errors.description_unavailable"));
       } else {
         sentence = sanitizeHtmlTags(sentence);
         sentence = toHtmlLinks(sentence);
@@ -650,16 +680,16 @@ class ContributionPanel extends JPanel {
 
     if (contrib.isDeletionFlagged()) {
       installRemoveButton.addActionListener(undoActionListener);
-      installRemoveButton.setText(Language.text("contributions.undo"));
+      installRemoveButton.setText(Language.text("contrib.undo"));
     } else if (contrib.isInstalled()) {
       installRemoveButton.addActionListener(removeActionListener);
-      installRemoveButton.setText(Language.text("contributions.remove"));
+      installRemoveButton.setText(Language.text("contrib.remove"));
       installRemoveButton.setVisible(true);
       installRemoveButton.setEnabled(!contrib.isUpdateFlagged());
       reorganizePaneComponents();
     } else {
       installRemoveButton.addActionListener(installActionListener);
-      installRemoveButton.setText(Language.text("contributions.install"));
+      installRemoveButton.setText(Language.text("contrib.install"));
     }
 
     contextMenu.removeAll();
@@ -671,11 +701,14 @@ class ContributionPanel extends JPanel {
       setComponentPopupMenu(null);
     }
 
+    if (!contrib.isCompatible(Base.getRevision())) {
+      blurContributionPanel(this);
+    }
   }
 
   private void installContribution(AvailableContribution info) {
     if (info.link == null) {
-      listPanel.contribManager.status.setErrorMessage(Language.interpolate("contributions.unsupported_operating_system", info.getType()));
+      listPanel.contribManager.status.setErrorMessage(Language.interpolate("contrib.unsupported_operating_system", info.getType()));
     } else {
       installContribution(info, info.link);
     }
@@ -693,17 +726,12 @@ class ContributionPanel extends JPanel {
         public void finishedAction() {
           // Finished downloading library
         }
-      };
 
-      JProgressMonitor installProgress = new JProgressMonitor(installProgressBar) {
-        public void finishedAction() {
+        public void cancel() {
           // Finished installing library
           resetInstallProgressBarState();
           installRemoveButton.setEnabled(!contrib.isUpdateFlagged());
 
-          if (isError()) {
-            listPanel.contribManager.status.setErrorMessage(Language.text("contributions.download_error"));
-          }
           ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, BUTTON_CONSTRAINT);
           isInstallInProgress = false;
           if(isUpdateInProgress)
@@ -713,14 +741,36 @@ class ContributionPanel extends JPanel {
         }
       };
 
+      JProgressMonitor installProgress = new JProgressMonitor(installProgressBar) {
+        public void finishedAction() {
+          // Finished installing library
+          resetInstallProgressBarState();
+          installRemoveButton.setEnabled(!contrib.isUpdateFlagged());
+
+          if (isError()) {
+            listPanel.contribManager.status.setErrorMessage(Language.text("contrib.download_error"));
+          }
+          ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, BUTTON_CONSTRAINT);
+          isInstallInProgress = false;
+          if(isUpdateInProgress)
+            isUpdateInProgress = !isUpdateInProgress;
+          updateButton.setVisible(contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
+          setSelected(true);
+        }
+
+        public void cancel() {
+          finishedAction();
+        }
+      };
+
       ContributionManager.downloadAndInstall(listPanel.contribManager.editor,
                                              downloadUrl, ad, 
                                              downloadProgress, installProgress,
                                              listPanel.contribManager.status);
 
     } catch (MalformedURLException e) {
-      Base.showWarning(ContributionListPanel.INSTALL_FAILURE_TITLE,
-                       ContributionListPanel.MALFORMED_URL_MESSAGE, e);
+      Base.showWarning(Language.text("contrib.errors.install_failed"),
+                       Language.text("contrib.errors.malformed_url"), e);
       // not sure why we'd re-enable the button if it had an error...
 //      installRemoveButton.setEnabled(true);
     }
@@ -743,7 +793,7 @@ class ContributionPanel extends JPanel {
   
 
   protected void resetInstallProgressBarState() {
-    installProgressBar.setString(Language.text("contributions.progress.starting"));
+    installProgressBar.setString(Language.text("contrib.progress.starting"));
     installProgressBar.setIndeterminate(false);
     installProgressBar.setValue(0);
     installProgressBar.setVisible(false);
@@ -762,8 +812,10 @@ class ContributionPanel extends JPanel {
 
     if (contrib != null) {
       updateButton.setVisible((contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged() && !contrib.isDeletionFlagged()) || isUpdateInProgress);
+      updateButton.setEnabled(!contribListing.hasListDownloadFailed());
     }
-    installRemoveButton.setVisible(isSelected() || installRemoveButton.getText().equals(Language.text("contributions.remove")) || isUpdateInProgress);
+    installRemoveButton.setVisible(isSelected() || installRemoveButton.getText().equals(Language.text("contrib.remove")) || isUpdateInProgress);
+    installRemoveButton.setEnabled(installRemoveButton.getText().equals(Language.text("contrib.remove")) ||!contribListing.hasListDownloadFailed());
     reorganizePaneComponents();
 
 //    for (JTextPane textPane : headerPaneSet) {

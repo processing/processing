@@ -103,8 +103,8 @@ public class Compiler {
 //    PApplet.println(command);
 
     try {
-      // Load errors into a local StringBuffer
-      final StringBuffer errorBuffer = new StringBuffer();
+      // Load errors into a local StringBuilder
+      final StringBuilder errorBuffer = new StringBuilder();
 
       // Create single method dummy writer class to slurp errors from ecj
       Writer internalWriter = new Writer() {
@@ -131,12 +131,12 @@ public class Compiler {
       // so that it can grab the compiler JAR files from it.
       ClassLoader loader = build.mode.getClassLoader();
       try {
-        Class batchClass = 
+        Class<?> batchClass =
           Class.forName("org.eclipse.jdt.core.compiler.batch.BatchCompiler", false, loader);
-        Class progressClass = 
+        Class<?> progressClass =
           Class.forName("org.eclipse.jdt.core.compiler.CompilationProgress", false, loader);
-        Class[] compileArgs = 
-          new Class[] { String[].class, PrintWriter.class, PrintWriter.class, progressClass };
+        Class<?>[] compileArgs =
+          new Class<?>[] { String[].class, PrintWriter.class, PrintWriter.class, progressClass };
         Method compileMethod = batchClass.getMethod("compile", compileArgs);
         success = (Boolean) 
           compileMethod.invoke(null, new Object[] { command, outWriter, writer, null });

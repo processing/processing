@@ -299,8 +299,13 @@ public class FloatList implements Iterable<Float> {
 //  }
 
 
+  public void insert(int index, float value) {
+    insert(index, new float[] { value });
+  }
+
+
   // same as splice
-  public void insert(int index, int[] values) {
+  public void insert(int index, float[] values) {
     if (index < 0) {
       throw new IllegalArgumentException("insert() index cannot be negative: it was " + index);
     }
@@ -328,7 +333,7 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  public void insert(int index, IntList list) {
+  public void insert(int index, FloatList list) {
     insert(index, list.values());
   }
 
@@ -728,7 +733,8 @@ public class FloatList implements Iterable<Float> {
 
 
   /**
-   * Copy as many values as possible into the specified array.
+   * Copy values into the specified array. If the specified array is null or
+   * not the same size, a new array will be allocated.
    * @param array
    */
   public float[] array(float[] array) {

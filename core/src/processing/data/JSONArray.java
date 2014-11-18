@@ -168,7 +168,7 @@ public class JSONArray {
   public JSONArray(IntList list) {
     myArrayList = new ArrayList<Object>();
     for (int item : list.values()) {
-      myArrayList.add(new Integer(item));
+      myArrayList.add(Integer.valueOf(item));
     }
   }
 
@@ -718,7 +718,7 @@ public class JSONArray {
    * @return this.
    */
   public JSONArray append(int value) {
-    this.append(new Integer(value));
+    this.append(Integer.valueOf(value));
     return this;
   }
 
@@ -731,7 +731,7 @@ public class JSONArray {
    * @return this.
    */
   public JSONArray append(long value) {
-    this.append(new Long(value));
+    this.append(Long.valueOf(value));
     return this;
   }
 
@@ -758,7 +758,7 @@ public class JSONArray {
    * @return this.
    */
   public JSONArray append(double value) {
-    Double d = new Double(value);
+    Double d = value;
     JSONObject.testValidity(d);
     this.append(d);
     return this;
@@ -884,7 +884,7 @@ public class JSONArray {
    * @see JSONArray#setBoolean(int, boolean)
    */
   public JSONArray setInt(int index, int value) {
-    this.set(index, new Integer(value));
+    this.set(index, Integer.valueOf(value));
     return this;
   }
 
@@ -899,7 +899,7 @@ public class JSONArray {
    * @throws JSONException If the index is negative.
    */
   public JSONArray setLong(int index, long value) {
-    return set(index, new Long(value));
+    return set(index, Long.valueOf(value));
   }
 
 
@@ -936,7 +936,7 @@ public class JSONArray {
    * not finite.
    */
   public JSONArray setDouble(int index, double value) {
-    return set(index, new Double(value));
+    return set(index, Double.valueOf(value));
   }
 
 
@@ -1224,7 +1224,7 @@ public class JSONArray {
    */
   public String join(String separator) {
     int len = this.size();
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
 
     for (int i = 0; i < len; i += 1) {
       if (i > 0) {

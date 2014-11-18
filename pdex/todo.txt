@@ -64,3 +64,5 @@ positioned.
 -[ ] Preferences panel
 
 -[ ] Line Numbers
+
+-[ ] Scroll to definition - right click menu popup

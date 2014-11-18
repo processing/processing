@@ -412,6 +412,9 @@ public class PShapeSVG extends PShape {
     } else if (name.equals("sodipodi:namedview")) {
       // these are always in Inkscape files, the warnings get tedious
 
+    } else if (name.equals("title")) {
+      // harmless
+
     } else if (!name.startsWith("#")) {
       PGraphics.showWarning("Ignoring <" + name + "> tag.");
 //      new Exception().printStackTrace();
@@ -503,7 +506,7 @@ public class PShapeSVG extends PShape {
     }
     char[] pathDataChars = pathData.toCharArray();
 
-    StringBuffer pathBuffer = new StringBuffer();
+    StringBuilder pathBuffer = new StringBuilder();
     boolean lastSeparate = false;
 
     for (int i = 0; i < pathDataChars.length; i++) {
@@ -1431,7 +1434,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  class LinearGradient extends Gradient {
+  static class LinearGradient extends Gradient {
     float x1, y1, x2, y2;
 
     public LinearGradient(PShapeSVG parent, XML properties) {
@@ -1461,7 +1464,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  class RadialGradient extends Gradient {
+  static class RadialGradient extends Gradient {
     float cx, cy, r;
 
     public RadialGradient(PShapeSVG parent, XML properties) {
@@ -1490,7 +1493,7 @@ public class PShapeSVG extends PShape {
 
 
 
-  class LinearGradientPaint implements Paint {
+  static class LinearGradientPaint implements Paint {
     float x1, y1, x2, y2;
     float[] offset;
     int[] color;
@@ -1615,7 +1618,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  class RadialGradientPaint implements Paint {
+  static class RadialGradientPaint implements Paint {
     float cx, cy, radius;
     float[] offset;
     int[] color;
@@ -1773,7 +1776,7 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public class Font extends PShapeSVG {
+  public static class Font extends PShapeSVG {
     public FontFace face;
 
     public HashMap<String,FontGlyph> namedGlyphs;
@@ -1811,7 +1814,7 @@ public class PShapeSVG extends PShape {
               namedGlyphs.put(fg.name, fg);
             }
             if (fg.unicode != 0) {
-              unicodeGlyphs.put(new Character(fg.unicode), fg);
+              unicodeGlyphs.put(Character.valueOf(fg.unicode), fg);
             }
           }
           glyphs[glyphCount++] = fg;
@@ -1845,7 +1848,7 @@ public class PShapeSVG extends PShape {
       char[] c = str.toCharArray();
       for (int i = 0; i < c.length; i++) {
         // call draw on each char (pulling it w/ the unicode table)
-        FontGlyph fg = unicodeGlyphs.get(new Character(c[i]));
+        FontGlyph fg = unicodeGlyphs.get(Character.valueOf(c[i]));
         if (fg != null) {
           fg.draw(g);
           // add horizAdvX/unitsPerEm to the x coordinate along the way
@@ -1863,7 +1866,7 @@ public class PShapeSVG extends PShape {
       float s =  size / face.unitsPerEm;
       g.translate(x, y);
       g.scale(s, -s);
-      FontGlyph fg = unicodeGlyphs.get(new Character(c));
+      FontGlyph fg = unicodeGlyphs.get(Character.valueOf(c));
       if (fg != null) g.shape(fg);
       g.popMatrix();
     }
@@ -1874,7 +1877,7 @@ public class PShapeSVG extends PShape {
       char[] c = str.toCharArray();
       for (int i = 0; i < c.length; i++) {
         // call draw on each char (pulling it w/ the unicode table)
-        FontGlyph fg = unicodeGlyphs.get(new Character(c[i]));
+        FontGlyph fg = unicodeGlyphs.get(Character.valueOf(c[i]));
         if (fg != null) {
           w += (float) fg.horizAdvX / face.unitsPerEm;
         }
@@ -1887,7 +1890,7 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  class FontFace extends PShapeSVG {
+  static class FontFace extends PShapeSVG {
     int horizOriginX;  // dflt 0
     int horizOriginY;  // dflt 0
 //    int horizAdvX;     // no dflt?
@@ -1924,7 +1927,7 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public class FontGlyph extends PShapeSVG {  // extends Path
+  public static class FontGlyph extends PShapeSVG {  // extends Path
     public String name;
     char unicode;
     int horizAdvX;

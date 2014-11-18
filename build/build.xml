@@ -50,7 +50,7 @@
     <include name="bin/klist.exe" />
     <include name="bin/ktab.exe" />
 
-    <include name="bin/keytool" />
+    <!--<include name="bin/keytool" />-->
     <include name="bin/orbd" />
     <include name="bin/policytool" />
     <include name="bin/rmid" />
@@ -66,7 +66,7 @@
   </fileset>
 
   <fileset dir="linux/work/java" id="jre-optional-linux">
-    <include name="bin/keytool" />
+    <!--<include name="bin/keytool" />-->
     <include name="bin/orbd" />
     <include name="bin/policytool" />
     <include name="bin/rmid" />
@@ -154,7 +154,7 @@
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.update.macosx" value="65" />
+  <property name="jdk.update.macosx" value="72" />
   <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_${jdk.update.macosx}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
@@ -233,7 +233,6 @@
     <subant buildpath="../java/libraries/net" target="clean"/>
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
-    <subant buildpath="../java/libraries/sound" target="clean"/>
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
     <subant buildpath="../pdex" target="clean"/>
 
@@ -248,7 +247,6 @@
     <subant buildpath="../java/libraries/net" target="build"/>
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
-    <subant buildpath="../java/libraries/sound" target="build"/>
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
     <subant buildpath="../pdex" target="package"/>
   </target>
@@ -471,6 +469,15 @@
 -->
     </bundleapp>
 
+    <!-- The 'keytool' file is deleted by our appbundler. Add it back so that
+	  Android signing works properly. (Not modifying our appbundler since
+	  most of the time that appbundler is used, keytool isn't needed). 
+	  Also, because Ant's copy task does not retain file permissions on Unix systems, 
+	  we need to use <exec executable="cp" ... > instead -->
+    <exec executable="cp">
+      <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/bin"/>
+    </exec>
+
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
       <!--<fileset dir="shared" includes="launch4j/**" />-->
@@ -489,6 +496,8 @@
       <param name="target.path" 
              value="macosx/work/Processing.app/Contents/Java" />
     </antcall>
+
+    <exec executable="macosx/language_gen.py" />
 
     <property name="launch4j.dir" value="macosx/work/Processing.app/Contents/Java/modes/java/application/launch4j" />
 
@@ -908,7 +917,7 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg line="core -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../core/library/jogl-all.jar:../core/bin:../core/library/gluegen-rt.jar" destdir="javadoc/core" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="false" use="false" version="false">
+    <javadoc access="public" author="false" classpath="../core/library/jogl-all.jar:../core/bin:../core/library/gluegen-rt.jar" destdir="javadoc/core" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" splitindex="false" use="false" version="false">
 
       <!-- provide links for java.* classes. 
            also suppresses the java.lang prefix in the text.  --> 
@@ -935,7 +944,7 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg line="everything -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../java/libraries/video/library/jna.jar:../java/libraries/serial/bin:lib/antlr.jar:../core/library/jogl-all.jar:../java/libraries/video/bin:lib/apple.jar:lib/jna.jar:lib/ant-launcher.jar:../java/libraries/pdf/bin:lib/ant.jar:../core/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/video/library/gstreamer-java.jar:lib/org-netbeans-swing-outline.jar:../java/libraries/dxf/bin:bin:../java/libraries/net/bin:../java/libraries/serial/library/jssc.jar:../core/library/gluegen-rt.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="false" use="false" version="false" noqualifier="all">
+    <javadoc access="public" author="false" classpath="../java/libraries/video/library/jna.jar:../java/libraries/serial/bin:lib/antlr.jar:../core/library/jogl-all.jar:../java/libraries/video/bin:lib/apple.jar:lib/jna.jar:lib/ant-launcher.jar:../java/libraries/pdf/bin:lib/ant.jar:../core/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/video/library/gstreamer-java.jar:lib/org-netbeans-swing-outline.jar:../java/libraries/dxf/bin:bin:../java/libraries/net/bin:../java/libraries/serial/library/jssc.jar:../core/library/gluegen-rt.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" splitindex="false" use="false" version="false" noqualifier="all">
 
       <arg value="-notimestamp" />
 

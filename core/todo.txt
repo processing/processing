@@ -1,17 +1,36 @@
-0230 core (3.0a3)
-X add another NaN check when sorting FloatList/Dict classes
-X   if all values were NaN, an ArrayIndexOutOfBoundsException was thrown
+0232 core (3.0a5) 
+X detect CMYK JPEG images and return null
+X   https://community.oracle.com/thread/1272045?start=0&tstart=0
 
-earlier
-X PShape disableStyle() does not work with createShape()
-X   https://github.com/processing/processing/issues/1523
-X multisampled offscreen PGraphics don't clear the screen properly
-X   https://github.com/processing/processing/issues/2679
-X   this was done midway through the 3.0a2 release process
+python has to use launch() instead of open()
+map() is bad for Python (and JavaScript?)
 
-pull requests
-X call applet.exit() instead of System.exit() from Present Mode's 'stop'
-X   https://github.com/processing/processing/pull/2680
+
+pulls
+X Fix check in loadShader()
+X   https://github.com/processing/processing/pull/2867
+X Refined PShader uniform missing message fixes
+X   https://github.com/processing/processing/pull/2869
+X Use correct parameter types in FloatList methods
+X   https://github.com/processing/processing/pull/2902
+X Prevent lerpColor from always rounding down
+X   https://github.com/processing/processing/issues/2812
+X   https://github.com/processing/processing/pull/2813
+X Allow mask() with PGraphicsJava2D
+X   https://github.com/processing/processing/pull/2910
+X OpenGL renderers ignore vertex winding in contours
+X   https://github.com/processing/processing/issues/2665
+X   https://github.com/processing/processing/pull/2927
+X NPE when calling Client.ip() after the connection has been closed
+X   https://github.com/processing/processing/issues/2576
+X   https://github.com/processing/processing/pull/2922
+
+
+andres
+A Confusing message: The shader doesn't have a uniform called "foo"
+A   https://github.com/processing/processing/issues/2593
+A Exceptions in P3D / P2D not showing up properly
+A   https://github.com/processing/processing/issues/2930
 
 
 applet/component
@@ -28,6 +47,7 @@ _   make sure it works with retina/canvas/strategy as well
 
 
 processing.data
+_ lots of 'data' changes down below
 _ need a better method for "missing" data in Table
 _   if missing int is zero, can't just remove those values from saving a table
 _   but for NaN values, it's a necessity
@@ -80,6 +100,10 @@ _   draw(s) doesn't work on the returned PShape
 
 
 hidpi
+_ Text is half size in PGraphicsRetina2D
+_   https://github.com/processing/processing/issues/2738
+_ text not getting the correct font in Retina2D
+_   https://github.com/processing/processing/issues/2617
 _ saveFrame() with retina render is making black images
 _ zero alpha values still a problem with retina renderer
 _   https://github.com/processing/processing/issues/2030
@@ -94,7 +118,8 @@ _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start
 _   https://github.com/processing/processing/issues/2357
-_ glw? lwjgl? retina jogl?
+_ Text looks blurry in GL Retina
+_   https://github.com/processing/processing/issues/2739
 
 
 cantfix
@@ -105,6 +130,8 @@ _   test with JG's 13" retina laptop
 
 
 decisions/misc
+_ use enums for constants
+_   https://github.com/processing/processing/issues/2778
 _ make join() work with Iterable?
 _   will this collide with the current String[] version?
 _ add options for image.save() (or saveImage?)

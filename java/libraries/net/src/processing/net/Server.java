@@ -178,6 +178,15 @@ public class Server implements Runnable {
   }
 
   
+  /**
+   * Return true if this server is still active and hasn't run
+   * into any trouble.
+   */
+  public boolean active() {
+    return thread != null;
+  }
+  
+  
   static public String ip() {
     try {
       return InetAddress.getLocalHost().getHostAddress();
@@ -310,8 +319,8 @@ public class Server implements Runnable {
   public void write(int data) {  // will also cover char
     int index = 0;
     while (index < clientCount) {
-      clients[index].write(data);
       if (clients[index].active()) {
+        clients[index].write(data);
         index++;
       } else {
         removeIndex(index);
@@ -323,8 +332,8 @@ public class Server implements Runnable {
   public void write(byte data[]) {
     int index = 0;
     while (index < clientCount) {
-      clients[index].write(data);
       if (clients[index].active()) {
+        clients[index].write(data);
         index++;
       } else {
         removeIndex(index);
@@ -336,8 +345,8 @@ public class Server implements Runnable {
   public void write(String data) {
     int index = 0;
     while (index < clientCount) {
-      clients[index].write(data);
       if (clients[index].active()) {
+        clients[index].write(data);
         index++;
       } else {
         removeIndex(index);

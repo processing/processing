@@ -1528,7 +1528,7 @@ public class PLWJGL extends PGL {
   }
 
   public void copyTexSubImage2D(int target, int level, int xOffset, int yOffset, int x, int y, int width, int height) {
-    GL11.glCopyTexSubImage2D(target, level, x, y, xOffset, xOffset, width, height);
+    GL11.glCopyTexSubImage2D(target, level, x, y, xOffset, yOffset, width, height);
   }
 
   public void compressedTexImage2D(int target, int level, int internalFormat, int width, int height, int border, int imageSize, Buffer data) {

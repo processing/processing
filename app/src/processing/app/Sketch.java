@@ -493,9 +493,10 @@ public class Sketch {
     // A regression introduced by Florian's bug report (below) years earlier.
     if (!(renamingCode && sanitaryName.equals(current.getPrettyName()))) {
       // Make sure no .pde *and* no .java files with the same name already exist
+      // (other than the one we are currently attempting to rename)
       // http://processing.org/bugs/bugzilla/543.html
       for (SketchCode c : code) {
-        if (sanitaryName.equalsIgnoreCase(c.getPrettyName())) {
+        if (c != current && sanitaryName.equalsIgnoreCase(c.getPrettyName())) {
           Base.showMessage("Nope",
                            "A file named \"" + c.getFileName() + "\" already exists at\n" +
                              "\"" + folder.getAbsolutePath() + "\"");
@@ -1103,7 +1104,7 @@ public class Sketch {
 
     // check whether this file already exists
     if (destFile.exists()) {
-      Object[] options = { Language.text("prompt.okay"), Language.text("prompt.cancel") };
+      Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
       String prompt = "Replace the existing version of " + filename + "?";
       int result = JOptionPane.showOptionDialog(editor,
                                                 prompt,
@@ -1199,7 +1200,8 @@ public class Sketch {
 //      System.out.println(current.visited);
 //    }
     // if current is null, then this is the first setCurrent(0)
-    if ((currentIndex == which) && (current != null)) {
+    if (((currentIndex == which) && (current != null))
+      || which >= codeCount || which < 0) {
       return;
     }
 
@@ -1570,24 +1572,24 @@ public class Sketch {
    */
   static public String sanitizeName(String origName) {
     char orig[] = origName.toCharArray();
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
 
     // Can't lead with a digit (or anything besides a letter), so prefix with
     // "sketch_". In 1.x this prefixed with an underscore, but those get shaved
     // off later, since you can't start a sketch name with underscore anymore.
     if (!asciiLetter(orig[0])) {
-      buffer.append("sketch_");
+      sb.append("sketch_");
     }
 //    for (int i = 0; i < orig.length; i++) {
     for (char c : orig) {
       if (asciiLetter(c) || (c >= '0' && c <= '9')) {
-        buffer.append(c);
+        sb.append(c);
 
       } else {
         // Tempting to only add if prev char is not underscore, but that
         // might be more confusing if lots of chars are converted and the
         // result is a very short string thats nothing like the original.
-        buffer.append('_');
+        sb.append('_');
       }
     }
     // Let's not be ridiculous about the length of filenames.
@@ -1596,22 +1598,22 @@ public class Sketch {
     // Limiting to that for sketches would mean setting the
     // upper-bound on the character limit here to 25 characters
     // (to handle the base name + ".class")
-    if (buffer.length() > 63) {
-      buffer.setLength(63);
+    if (sb.length() > 63) {
+      sb.setLength(63);
     }
     // Remove underscores from the beginning, these seem to be a reserved
     // thing on Android, plus it sometimes causes trouble elsewhere.
     int underscore = 0;
-    while (underscore < buffer.length() && buffer.charAt(underscore) == '_') {
+    while (underscore < sb.length() && sb.charAt(underscore) == '_') {
       underscore++;
     }
-    if (underscore == buffer.length()) {
+    if (underscore == sb.length()) {
       return "bad_sketch_name_please_fix";
 
     } else if (underscore != 0) {
-      return buffer.substring(underscore);
+      return sb.substring(underscore);
     }
-    return buffer.toString();
+    return sb.toString();
   }
 
 

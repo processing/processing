@@ -29,9 +29,10 @@ import processing.core.PApplet;
 
 
 abstract public class Contribution {
+  static final String SPECIAL_CATEGORY_NAME = "Starred";
   static final List validCategories = 
     Arrays.asList("3D", "Animation", "Data", "Geometry", "GUI", "Hardware", 
-                  "I/O", "Math", "Simulation", "Sound", "Typography", 
+                  "I/O", "Math", "Simulation", "Sound", SPECIAL_CATEGORY_NAME, "Typography", 
                   "Utilities", "Video & Vision", "Other");
 
   //protected String category;      // "Sound"
@@ -44,6 +45,8 @@ abstract public class Contribution {
   protected int version;          // 102
   protected String prettyVersion; // "1.0.2"
   protected long lastUpdated;   //  1402805757
+  protected int minRevision;    //  0
+  protected int maxRevision;    //  227
   
   
   // "Sound"
@@ -127,6 +130,21 @@ abstract public class Contribution {
     return lastUpdated;
   }
 
+  // 0
+  public int getMinRevision() {
+    return minRevision;
+  }
+
+  // 227
+  public int getMaxRevision() {
+    return maxRevision;
+  }
+
+
+  public boolean isCompatible(int versionNum) {
+    return ((maxRevision == 0 || versionNum < maxRevision) && versionNum > minRevision);
+  }
+
 
   abstract public ContributionType getType();
   
@@ -161,6 +179,22 @@ abstract public class Contribution {
   
   boolean isUpdateFlagged() {
     return false;
+  }
+
+
+  /**
+   * Returns true if the contribution is a starred/recommended contribution, or
+   * is by the Processing Foundation.
+   * 
+   * @return
+   */
+  boolean isSpecial() {
+    try {
+      return (authorList.indexOf("The Processing Foundation") != -1 || 
+              categories.contains(SPECIAL_CATEGORY_NAME));
+    } catch (NullPointerException npe) {
+      return false;
+    }
   }
 
 

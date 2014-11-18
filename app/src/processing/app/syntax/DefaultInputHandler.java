@@ -12,7 +12,8 @@ package processing.app.syntax;
 import javax.swing.KeyStroke;
 import java.awt.event.*;
 import java.awt.Toolkit;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 /**
@@ -28,7 +29,7 @@ public class DefaultInputHandler extends InputHandler
          */
         public DefaultInputHandler()
         {
-                bindings = currentBindings = new Hashtable();
+                bindings = currentBindings = new HashMap();
         }
 
         /**
@@ -88,7 +89,7 @@ public class DefaultInputHandler extends InputHandler
          */
         public void addKeyBinding(String keyBinding, ActionListener action)
         {
-                Hashtable current = bindings;
+                Map current = bindings;
 
                 StringTokenizer st = new StringTokenizer(keyBinding);
                 while(st.hasMoreTokens())
@@ -100,13 +101,13 @@ public class DefaultInputHandler extends InputHandler
                         if(st.hasMoreTokens())
                         {
                                 Object o = current.get(keyStroke);
-                                if(o instanceof Hashtable)
-                                        current = (Hashtable)o;
+                                if(o instanceof Map)
+                                        current = (Map)o;
                                 else
                                 {
-                                        o = new Hashtable();
+                                        o = new HashMap();
                                         current.put(keyStroke,o);
-                                        current = (Hashtable)o;
+                                        current = (Map)o;
                                 }
                         }
                         else
@@ -222,9 +223,9 @@ public class DefaultInputHandler extends InputHandler
                                 evt.consume();
                                 return;
                         }
-                        else if(o instanceof Hashtable)
+                        else if(o instanceof Map)
                         {
-                                currentBindings = (Hashtable)o;
+                                currentBindings = (Map)o;
                                 evt.consume();
                                 return;
                         }
@@ -257,9 +258,9 @@ public class DefaultInputHandler extends InputHandler
                                         Character.toUpperCase(c));
                                 Object o = currentBindings.get(keyStroke);
 
-                                if(o instanceof Hashtable)
+                                if(o instanceof Map)
                                 {
-                                        currentBindings = (Hashtable)o;
+                                        currentBindings = (Map)o;
                                         return;
                                 }
                                 else if(o instanceof ActionListener)
@@ -368,8 +369,8 @@ public class DefaultInputHandler extends InputHandler
         }
 
         // private members
-        private Hashtable bindings;
-        private Hashtable currentBindings;
+        private Map bindings;
+        private Map currentBindings;
 
         private DefaultInputHandler(DefaultInputHandler copy)
         {

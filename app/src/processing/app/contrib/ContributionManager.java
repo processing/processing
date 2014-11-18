@@ -72,7 +72,7 @@ public class ContributionManager {
         // TODO this is often -1, may need to set progress to indeterminate
         int fileSize = conn.getContentLength();
 //      System.out.println("file size is " + fileSize);
-        progress.startTask(Language.text("contributions.progress.downloading"), fileSize); 
+        progress.startTask(Language.text("contrib.progress.downloading"), fileSize); 
       }
   
       InputStream in = conn.getInputStream();
@@ -97,12 +97,17 @@ public class ContributionManager {
       success = true;
       
     } catch (SocketTimeoutException ste) {
-      if (progress != null)
+      if (progress != null) {
         progress.error(ste);
+        progress.cancel();
+      }
     } catch (IOException ioe) {
-      if (progress != null)
+      if (progress != null) {
         progress.error(ioe);
-      ioe.printStackTrace();
+        progress.cancel();
+      }
+      // Hiding stack trace. An error has been shown where needed. 
+//      ioe.printStackTrace();
     }
     if (progress != null)
       progress.finished();
@@ -140,7 +145,7 @@ public class ContributionManager {
             download(url, contribZip, downloadProgress);
             
             if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
-              installProgress.startTask("Installing...", ProgressMonitor.UNKNOWN);
+              installProgress.startTask(Language.text("contrib.progress.installing"), ProgressMonitor.UNKNOWN);
               LocalContribution contribution = 
                 ad.install(editor.getBase(), contribZip, false, status);
 
@@ -155,14 +160,33 @@ public class ContributionManager {
               }
               installProgress.finished();
             }
+            else {
+              if (downloadProgress.exception instanceof SocketTimeoutException) {
+                status.setErrorMessage(Language
+                  .interpolate("contrib.errors.contrib_download.timeout",
+                               ad.getName()));
+              } else {
+                status.setErrorMessage(Language
+                  .interpolate("contrib.errors.download_and_install",
+                               ad.getName()));
+              }
+            }
             contribZip.delete();
 
           } catch (Exception e) {
-            e.printStackTrace();
-            status.setErrorMessage("Error during download and install.");
+            // Hiding stack trace. The error message ought to suffice.
+//            e.printStackTrace();
+            status
+              .setErrorMessage(Language
+                .interpolate("contrib.errors.download_and_install",
+                             ad.getName()));
+            downloadProgress.cancel();
+            installProgress.cancel();
           }
         } catch (IOException e) {
-          status.setErrorMessage("Could not write to temporary directory.");
+          status.setErrorMessage(Language.text("contrib.errors.temporary_directory"));
+          downloadProgress.cancel();
+          installProgress.cancel();
         }
       }
     }, "Contribution Installer").start();
@@ -498,10 +522,8 @@ public class ContributionManager {
   
   static private void installOnStartUp(final Base base, final AvailableContribution availableContrib) {
     if (availableContrib.link == null) {
-      Base.showWarning("Update on Restart of " + availableContrib.getName() + "failed",
-                       "Your operating system "
-                         + "doesn't appear to be supported. You should visit the "
-                         + availableContrib.getType() + "'s library for more info.");
+      Base.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
+                       Language.text("contrib.unsupported_operating_system"));
       return;
     }
     try {
@@ -510,8 +532,8 @@ public class ContributionManager {
       ContributionManager.downloadAndInstallOnStartup(base, downloadUrl, availableContrib);
       
     } catch (MalformedURLException e) {
-      Base.showWarning("Update on Restart of " + availableContrib.getName() + "failed",
-                       ContributionListPanel.MALFORMED_URL_MESSAGE, e);
+      Base.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
+                       Language.text("contrib.errors.malformed_url"), e);
     }
   }
   

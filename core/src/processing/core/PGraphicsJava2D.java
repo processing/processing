@@ -30,7 +30,7 @@ import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -66,6 +66,11 @@ public class PGraphicsJava2D extends PGraphics {
   Composite defaultComposite;
 
   GeneralPath gpath;
+
+  // path for contours so gpath can be closed
+  GeneralPath auxPath;
+
+  boolean openContour;
 
   /// break the shape at the next vertex (next vertex() call is a moveto())
   boolean breakShape;
@@ -470,7 +475,118 @@ public class PGraphicsJava2D extends PGraphics {
   // SHAPES
 
 
-  //public void beginShape(int kind)
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE CREATION
+
+
+//  @Override
+//  public PShape createShape(PShape source) {
+//    return PShapeOpenGL.createShape2D(this, source);
+//  }
+
+
+  @Override
+  public PShape createShape() {
+    return createShape(PShape.GEOMETRY);
+  }
+
+
+  @Override
+  public PShape createShape(int type) {
+    return createShapeImpl(this, type);
+  }
+
+
+  @Override
+  public PShape createShape(int kind, float... p) {
+    return createShapeImpl(this, kind, p);
+  }
+
+
+  static protected PShape createShapeImpl(PGraphicsJava2D pg, int type) {
+    PShape shape = null;
+    if (type == PConstants.GROUP) {
+      shape = new PShape(pg, PConstants.GROUP);
+    } else if (type == PShape.PATH) {
+      shape = new PShape(pg, PShape.PATH);
+    } else if (type == PShape.GEOMETRY) {
+      shape = new PShape(pg, PShape.GEOMETRY);
+    }
+    shape.is3D(false);
+    return shape;
+  }
+
+
+  static protected PShape createShapeImpl(PGraphicsJava2D pg,
+                                                int kind, float... p) {
+    PShape shape = null;
+    int len = p.length;
+
+    if (kind == POINT) {
+      if (len != 2) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(POINT);
+    } else if (kind == LINE) {
+      if (len != 4) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(LINE);
+    } else if (kind == TRIANGLE) {
+      if (len != 6) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(TRIANGLE);
+    } else if (kind == QUAD) {
+      if (len != 8) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(QUAD);
+    } else if (kind == RECT) {
+      if (len != 4 && len != 5 && len != 8 && len != 9) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(RECT);
+    } else if (kind == ELLIPSE) {
+      if (len != 4 && len != 5) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(ELLIPSE);
+    } else if (kind == ARC) {
+      if (len != 6 && len != 7) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(ARC);
+    } else if (kind == BOX) {
+      showWarning("Primitive not supported in 2D");
+    } else if (kind == SPHERE) {
+      showWarning("Primitive not supported in 2D");
+    } else {
+      showWarning("Unrecognized primitive type");
+    }
+
+    if (shape != null) {
+      shape.setParams(p);
+    }
+
+    shape.is3D(false);
+    return shape;
+  }
 
 
   @Override
@@ -486,6 +602,7 @@ public class PGraphicsJava2D extends PGraphics {
     // this way, just check to see if gpath is null, and if it isn't
     // then just use it to continue the shape.
     gpath = null;
+    auxPath = null;
   }
 
 
@@ -641,30 +758,62 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   public void beginContour() {
-    breakShape = true;
+    if (openContour) {
+      PGraphics.showWarning("Already called beginContour()");
+      return;
+    }
+
+    // draw contours to auxiliary path so main path can be closed later
+    GeneralPath contourPath = auxPath;
+    auxPath = gpath;
+    gpath = contourPath;
+
+    if (contourPath != null) {  // first contour does not break
+      breakShape = true;
+    }
+
+    openContour = true;
   }
 
 
   @Override
   public void endContour() {
-    // does nothing, just need the break in beginContour()
+    if (!openContour) {
+      PGraphics.showWarning("Need to call beginContour() first");
+      return;
+    }
+
+    // close this contour
+    if (gpath != null) gpath.closePath();
+
+    // switch back to main path
+    GeneralPath contourPath = gpath;
+    gpath = auxPath;
+    auxPath = contourPath;
+
+    openContour = false;
   }
 
 
   @Override
   public void endShape(int mode) {
+    if (openContour) { // correct automagically, notify user
+      endContour();
+      PGraphics.showWarning("Missing endContour() before endShape()");
+    }
     if (gpath != null) {  // make sure something has been drawn
       if (shape == POLYGON) {
         if (mode == CLOSE) {
           gpath.closePath();
+        }
+        if (auxPath != null) {
+          gpath.append(auxPath, false);
         }
         drawShape(gpath);
       }
     }
     shape = 0;
   }
-
-
 
   //////////////////////////////////////////////////////////////
 
@@ -750,7 +899,7 @@ public class PGraphicsJava2D extends PGraphics {
         src.getDataElements(0, y, width, 1, srcPixels);
         dstIn.getDataElements(0, y, width, 1, dstPixels);
         for (int x = 0; x < width; x++) {
-          dstPixels[x] = blendColor(srcPixels[x], alphaFiller | dstPixels[x], mode);
+          dstPixels[x] = blendColor(alphaFiller | dstPixels[x], srcPixels[x], mode);
         }
         dstOut.setDataElements(0, y, width, 1, dstPixels);
       }
@@ -1339,7 +1488,7 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
-  class ImageCache {
+  static class ImageCache {
     boolean tinted;
     int tintedColor;
     int[] tintedTemp;  // one row of tinted pixels
@@ -1643,7 +1792,7 @@ public class PGraphicsJava2D extends PGraphics {
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
       Map<TextAttribute, Object> map =
-        new Hashtable<TextAttribute, Object>();
+        new HashMap<TextAttribute, Object>();
       map.put(TextAttribute.SIZE, size);
       map.put(TextAttribute.KERNING,
               TextAttribute.KERNING_ON);
@@ -2600,15 +2749,30 @@ public class PGraphicsJava2D extends PGraphics {
   // MASK
 
 
+  static final String MASK_WARNING =
+    "mask() cannot be used on the main drawing surface";
+
+
   @Override
-  public void mask(int alpha[]) {
-    showMethodWarning("mask");
+  @SuppressWarnings("deprecation")
+  public void mask(int[] alpha) {
+    if (primarySurface) {
+      showWarning(MASK_WARNING);
+
+    } else {
+      super.mask(alpha);
+    }
   }
 
 
   @Override
   public void mask(PImage alpha) {
-    showMethodWarning("mask");
+    if (primarySurface) {
+      showWarning(MASK_WARNING);
+
+    } else {
+      super.mask(alpha);
+    }
   }
 
 

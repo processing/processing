@@ -80,6 +80,7 @@ public class PdeKeyListener {
 
     Sketch sketch = editor.getSketch();
 
+    /*
     if ((event.getModifiers() & CTRL_ALT) == CTRL_ALT) {
       if (code == KeyEvent.VK_LEFT) {
         sketch.handlePrevCode();
@@ -89,6 +90,7 @@ public class PdeKeyListener {
         return true;
       }
     }
+    */
 
     if ((event.getModifiers() & InputEvent.META_MASK) != 0) {
       //event.consume();  // does nothing

@@ -577,7 +577,7 @@ public class JavaEditor extends Editor {
     Object value = optionPane.getValue();
     if (value.equals(options[0])) {
       return jmode.handleExportApplication(sketch);
-    } else if (value.equals(options[1]) || value.equals(new Integer(-1))) {
+    } else if (value.equals(options[1]) || value.equals(Integer.valueOf(-1))) {
       // closed window by hitting Cancel or ESC
       statusNotice("Export to Application canceled.");
     }
@@ -791,15 +791,15 @@ public class JavaEditor extends Editor {
     // statement is already in there, but if the user has the import
     // commented out, then this will be a problem.
     String[] list = Base.packageListFromClassPath(jarPath);
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     for (int i = 0; i < list.length; i++) {
-      buffer.append("import ");
-      buffer.append(list[i]);
-      buffer.append(".*;\n");
+      sb.append("import ");
+      sb.append(list[i]);
+      sb.append(".*;\n");
     }
-    buffer.append('\n');
-    buffer.append(getText());
-    setText(buffer.toString());
+    sb.append('\n');
+    sb.append(getText());
+    setText(sb.toString());
     setSelection(0, 0);  // scroll to start
     sketch.setModified(true);
   }

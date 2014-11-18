@@ -1,60 +1,69 @@
-0230 pde (3.0a3)
-X remove toolbar buttons except for start/stop
-X rename sketchbook tree name, re-order menu, add language hooks
-X split Preferences and PreferencesFrame
-X   https://github.com/processing/processing/issues/68
-X   http://code.google.com/p/processing/issues/detail?id=29
-X   https://github.com/processing/processing/pull/2716
+0232 pde (3.0a5)
+X remove debug message printed to the console when the ctrl key is down in PDE X
+X Fix the shortcut keybindings in editor tab popup menu
+X   https://github.com/processing/processing/issues/179
+X   https://github.com/processing/processing/pull/2821
 
-_ remove toolbar menu references and code to rebuild
+deb questions: https://github.com/processing/processing/issues/114
+better Linux packaging...
+http://askubuntu.com/questions/396857/how-can-i-add-processing-to-the-unity-launcher
 
-gsoc
-X fixes for mode/tool installation
-X   https://github.com/processing/processing/pull/2705
-X fix mode updating to work properly
-X   https://github.com/processing/processing/issues/2579
-X temp folders not always deleting
-X   https://github.com/processing/processing/issues/2606
-X problem when removing a mode
-X   https://github.com/processing/processing/issues/2507
+_ add script to download JRE and JDK from Oracle
+
+manindra
+X ToolTipManager error
+X   https://github.com/processing/processing/issues/2926
 
 pulls
-X Add polling to detect file system changes
-X   https://github.com/processing/processing/issues/1939
-X   https://github.com/processing/processing/pull/2628
-X huge i18n patch
-X   https://github.com/processing/processing/issues/632
-X   https://github.com/processing/processing/pull/2084
-X   http://code.google.com/p/processing/issues/detail?id=593
-X   need to make sure the .properties files are read properly as UTF-8
-X Indent breaks when hitting enter before spaces
-X   https://github.com/processing/processing/issues/2004
-X   https://github.com/processing/processing/pull/2690
-X Localize status messages and contributions panel
-X   https://github.com/processing/processing/pull/2696
-X prevent adding files to read-only sketches
-X   https://github.com/processing/processing/issues/2459
-X   https://github.com/processing/processing/pull/2697
-X Added some helper methods to Language
-X   https://github.com/processing/processing/pull/2704
+X Cmd + H runs sketch instead of hiding the PDE (OS X)
+X   https://github.com/processing/processing/issues/2881
+X Migrate to unsynchronized data structures
+X   https://github.com/processing/processing/pull/2863
+X improve contrib manager localization
+X   https://github.com/processing/processing/pull/2870
+X Fix infinite recursion in sound library
+X   https://github.com/processing/processing/pull/2897
+X Add missing generic type parameters
+X   https://github.com/processing/processing/pull/2899
+X Remove unused Base.builtOnce instance variable
+X   https://github.com/processing/processing/pull/2864
+X miscellaneous fixes
+X   https://github.com/processing/processing/pull/2865
+X moved the language stuff to the settings folder
+X   https://github.com/processing/processing/pull/2941
+X Some minor UpdateChecker refactorings
+X   https://github.com/processing/processing/pull/2830
+X Minor improvements to the Contribution Manager's updates check
+X   https://github.com/processing/processing/pull/2861
+X make Cut and Copy in the edit menu active only if some text is selected
+X   https://github.com/processing/processing/pull/2834
+X Fix renaming from RGB to Rgb.java and others
+X   https://github.com/processing/processing/pull/2825
+X sketches should only write to the console of their editor window
+X   https://github.com/processing/processing/issues/153
+X   https://github.com/processing/processing/issues/2858
+X   https://github.com/processing/processing/pull/2827
 
-languages
-X Japanese https://github.com/processing/processing/pull/2688
-X Spanish https://github.com/processing/processing/pull/2691
-X Dutch https://github.com/processing/processing/pull/2694
-X French https://github.com/processing/processing/pull/2695
-X Portugese https://github.com/processing/processing/pull/2701
+pulls (net)
+X NullPointerException message when Server writes to a disconnected client
+X   https://github.com/processing/processing/issues/2577
+X   https://github.com/processing/processing/pull/2578
+X Implement the active() method for Serial and Server 
+X   https://github.com/processing/processing/issues/2364
+X   https://github.com/processing/processing/pull/2588
 
-earlier
-X repo cleanup
-X   remove non-web stuff from web
-X   remove non-android stuff from android
-X   remove web and android from the main repo
-X separate prefs and sketch state info?
-X   this would mean prefs being rewritten far less
+_ Add support for localizing contributions
+_   https://github.com/processing/processing/pull/2833
+_ Fix renaming from RGB to Rgb.java and others
+_   https://github.com/processing/processing/pull/2825
+_ check on pull for mnemonics
+_   https://github.com/processing/processing/pull/2382
 
 
 high
+_ dist needs to do a git pull on processing-docs
+_ "Your sketch has been modified externally" appear without reason
+_   https://github.com/processing/processing/issues/2852
 _ export application ubuntu -> windows not working (2.2.1)
 _   https://github.com/processing/processing/issues/2698
 _   might be something with libraries (native or otherwise)
@@ -82,14 +91,8 @@ _ IllegalArgumentException when clicking between editor windows
 _   https://github.com/processing/processing/issues/2530
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
-_ shouldn't write sketch.properties unless it's a non-default mode
-_   https://github.com/processing/processing/issues/2531
 _ closing the color selector makes things freeze (only Linux and Windows?)
 _   https://github.com/processing/processing/issues/2381
-_ move sketchbook into its own window
-_ move recent into the sketchbook menu
-_   needs to recognize the p5 app folder
-_   also should recognize the user's home dir
 _ incorporate new preproc
 _   https://github.com/fjenett/processing-preprocessor-antlr4
 _ SOCKS proxy not working: 
@@ -103,9 +106,16 @@ _   http://stackoverflow.com/questions/4933677/detecting-windows-ie-proxy-settin
 _   http://www.java2s.com/Code/Java/Network-Protocol/DetectProxySettingsforInternetConnection.htm
 _ problems with non-US keyboards and some shortcuts
 _   https://github.com/processing/processing/issues/2199
+_ improve start time by populating sketchbook/libraries on threads
+_   https://github.com/processing/processing/issues/2945
 
 
 medium
+_ remove toolbar menu references and code to rebuild
+_ fix single instance server on OS X to load double-clicked files
+_   when run from Eclipse, the single instance thing punts
+_ 'recent' menu needs to recognize the p5 app folder
+_   also should recognize the user's home dir
 _ possibility of libraries folder inside a particular sketch?
 _ display "1" is not correct in 2.1.2
 _   https://github.com/processing/processing/issues/2502
@@ -119,8 +129,6 @@ _ should default to the local Java on Windows and Linux
 _   have export apps default to the local JRE
 _   Linux is probably using the system JRE if available
 _   launch4j may be all set, but double-check
-_ try installing 10.7.3 on Mac Mini and check whether things run
-_   make sure it's only running on 64-bit machines? 
 _ use platformDelete() to remove untitled sketches?
 _   would allow us to use the /tmp folder
 _ change to using platformDelete() instead of Base.removeDir() where possible
@@ -347,10 +355,6 @@ _     http://www.javalobby.org/java/forums/t19012.html
 
 PDE / Compiler & Preprocessor
 
-need examples
-_ Improve detection and handling of missing semicolons
-_   http://code.google.com/p/processing/issues/detail?id=136
-
 medium (bugs/features)
 _ modify build to insert these after antlr run:
 _   @SuppressWarnings({"unused", "cast"})
@@ -364,16 +368,8 @@ _   e.g. no setup()/draw() block
 _ don't allow "for (blah; blah; blah) ;"
 _   or if (blah blah blah) ;
 _   it's never useful. students can use { } if they want an empty block
-_ missing brackets, unmatched brackets
-_   examples added to the bug report
-_   http://code.google.com/p/processing/issues/detail?id=6
-_ enums not supported properly
-_   https://github.com/processing/processing/issues/1390
-X   http://code.google.com/p/processing/issues/detail?id=1352
 
 low (features)
-_ combining char/int/etc casts in one statement causes preproc trouble
-_   https://github.com/processing/processing/issues/1936
 _ copy running code from /tmp/buildXXxxx on crash of p5
 _   should probably make a way to save/recover code
 _   make the buildXxxx folders relate to time/date?
@@ -387,8 +383,7 @@ _   make them final? just improve the error messages?
 _   http://code.google.com/p/processing/issues/detail?id=1020
 _   https://github.com/processing/processing/issues/1058
 _ Processing chokes if a sketch defines a class with same name as the sketch
-_   http://code.google.com/p/processing/issues/detail?id=157
-_   http://code.google.com/p/processing/issues/detail?id=168
+_   https://github.com/processing/processing/issues/196
 _ don't allow goofy case versions of reserved words
 _   keypressed should maybe throw an error
 _   http://code.google.com/p/processing/issues/detail?id=5
@@ -397,17 +392,11 @@ _   http://code.google.com/p/processing/issues/detail?id=54
 _ "unexpected token" on anonymous instance of parameterized Comparator
 _   http://code.google.com/p/processing/issues/detail?id=494
 
-low (better error messages)
-_ single line of code with no semicolon dies with "unexpected token: null"
-_   http://code.google.com/p/processing/issues/detail?id=1312
-_ if 'void' left out before loop or setup, cryptic message about
-_   'constructor loop must be named Temporary_23498_2343'
-_   add a better handler for this specific thing?
-_   http://code.google.com/p/processing/issues/detail?id=8
-
 
 PDE / Editor
 
+_ clean up /tmp folders used during build
+_   https://github.com/processing/processing/issues/1896
 _ 'recent' menu doesn't respect examples folder of other p5 versions
 _   could write that into the file, that it's an example
 _   or write the path as shown in the PDE to the file as simpler
@@ -439,7 +428,6 @@ _   appears to be a synchronization problem with the loading
 _ blank sketch opened even if another opened by double-click
 _   add a 150 ms or more lag before opening the untitled window
 _   https://github.com/processing/processing/issues/218
-_   https://github.com/processing/processing/issues/1745
 _ editors opening up at the same time on load?
 _   either synchronize the open (at a minimum)
 _   or wait for mac handlers to register an open event
@@ -528,7 +516,7 @@ _   maybe even pull these directly from the zip file?
 _ load examples from zip files
 _   http://code.google.com/p/processing/issues/detail?id=143
 _ don't make examples read-only
-_   just do them from psk files
+_   just do them from psk filess
 _ disallow add file to sketch, export, export application
 _   pretty much anything inside the sketch?
 _   but don't do this with untitled, cuz it kinda stinks

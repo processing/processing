@@ -234,7 +234,7 @@ public class JavaBuild {
     // 1. concatenate all .pde files to the 'main' pde
     //    store line number for starting point of each code bit
 
-    StringBuffer bigCode = new StringBuffer();
+    StringBuilder bigCode = new StringBuilder();
     int bigCount = 0;
     for (SketchCode sc : sketch.getCode()) {
       if (sc.isExtension("pde")) {
@@ -1417,7 +1417,7 @@ public class JavaBuild {
 
     String jarList[] = new String[jarListVector.size()];
     jarListVector.copyInto(jarList);
-    StringBuffer exportClassPath = new StringBuffer();
+    StringBuilder exportClassPath = new StringBuilder();
 
     if (exportPlatform == PConstants.MACOSX) {
       for (int i = 0; i < jarList.length; i++) {
@@ -1474,7 +1474,7 @@ public class JavaBuild {
       String lines[] = PApplet.loadStrings(plistTemplate);
       for (int i = 0; i < lines.length; i++) {
         if (lines[i].indexOf("@@") != -1) {
-          StringBuffer sb = new StringBuffer(lines[i]);
+          StringBuilder sb = new StringBuilder(lines[i]);
           int index = 0;
           while ((index = sb.indexOf("@@jvm_runtime@@")) != -1) {
             sb.replace(index, index + "@@jvm_runtime@@".length(),

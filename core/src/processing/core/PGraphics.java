@@ -680,6 +680,7 @@ public class PGraphics extends PImage implements PConstants {
    * as the first line of a subclass' constructor to properly set
    * the internal fields and defaults.
    *
+   * @nowebref
    */
   public PGraphics() {
   }
@@ -1635,7 +1636,9 @@ public class PGraphics extends PImage implements PConstants {
     return loadShape(filename, null);
   }
 
-
+  /**
+   * @nowebref
+   */
   public PShape loadShape(String filename, String options) {
     showMissingWarning("loadShape");
     return null;
@@ -1867,7 +1870,7 @@ public class PGraphics extends PImage implements PConstants {
                                  "must be used before bezierVertex() or quadraticVertex()");
     }
     if (vertexCount == 0) {
-      throw new RuntimeException("vertex() must be used at least once" +
+      throw new RuntimeException("vertex() must be used at least once " +
                                  "before bezierVertex() or quadraticVertex()");
     }
   }
@@ -3898,6 +3901,9 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
+   * @see PGraphics#textAscent()
+   * @see PGraphics#textDescent()
    */
   public void textAlign(int alignX, int alignY) {
     textAlign = alignX;
@@ -3974,6 +3980,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
    */
   public void textFont(PFont which) {
     if (which != null) {
@@ -4037,6 +4044,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public void textLeading(float leading) {
     textLeading = leading;
@@ -4153,6 +4161,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public float textWidth(String str) {
     if (textFont == null) {
@@ -4237,6 +4246,10 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#textFont(PFont)
    * @see PGraphics#textMode(int)
    * @see PGraphics#textSize(float)
+   * @see PGraphics#textLeading(float)
+   * @see PGraphics#textWidth(String)
+   * @see PGraphics#textAscent()
+   * @see PGraphics#textDescent()
    * @see PGraphics#rectMode(int)
    * @see PGraphics#fill(int, float)
    * @see_external String
@@ -7667,10 +7680,10 @@ public class PGraphics extends PImage implements PConstants {
       float g2 = (c2 >> 8) & 0xff;
       float b2 = c2 & 0xff;
 
-      return (((int) (a1 + (a2-a1)*amt) << 24) |
-              ((int) (r1 + (r2-r1)*amt) << 16) |
-              ((int) (g1 + (g2-g1)*amt) << 8) |
-              ((int) (b1 + (b2-b1)*amt)));
+      return ((PApplet.round(a1 + (a2-a1)*amt) << 24) |
+              (PApplet.round(r1 + (r2-r1)*amt) << 16) |
+              (PApplet.round(g1 + (g2-g1)*amt) << 8) |
+              (PApplet.round(b1 + (b2-b1)*amt)));
 
     } else if (mode == HSB) {
       if (lerpColorHSB1 == null) {
@@ -7680,7 +7693,7 @@ public class PGraphics extends PImage implements PConstants {
 
       float a1 = (c1 >> 24) & 0xff;
       float a2 = (c2 >> 24) & 0xff;
-      int alfa = ((int) (a1 + (a2-a1)*amt)) << 24;
+      int alfa = (PApplet.round(a1 + (a2-a1)*amt)) << 24;
 
       Color.RGBtoHSB((c1 >> 16) & 0xff, (c1 >> 8) & 0xff, c1 & 0xff,
                      lerpColorHSB1);

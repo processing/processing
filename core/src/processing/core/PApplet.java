@@ -31,6 +31,8 @@ import processing.opengl.*;
 
 import java.applet.*;
 import java.awt.*;
+import java.awt.color.ColorSpace;
+import java.awt.event.WindowStateListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
@@ -769,6 +771,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate(float)
+   * @see PApplet#frameCount
    */
   public float frameRate = 10;
   /** Last time in nanoseconds that frameRate was checked */
@@ -793,6 +796,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate(float)
+   * @see PApplet#frameRate
    */
   public int frameCount;
 
@@ -2634,7 +2638,7 @@ public class PApplet extends Applet
 //  protected int eventCount;
 
 
-  class InternalEventQueue {
+  static class InternalEventQueue {
     protected Event queue[] = new Event[10];
     protected int offset;
     protected int count;
@@ -4189,6 +4193,13 @@ public class PApplet extends Applet
    * Note that the function being called must be public. Inside the PDE,
    * 'public' is automatically added, but when used without the preprocessor,
    * (like from Eclipse) you'll have to do it yourself.
+   *
+   * @webref structure
+   * @usage Application
+   * @see PApplet#setup()
+   * @see PApplet#draw()
+   * @see PApplet#loop()
+   * @see PApplet#noLoop()
    */
   public void thread(final String name) {
     Thread later = new Thread() {
@@ -5870,6 +5881,28 @@ public class PApplet extends Applet
         } else {
           Image awtImage = Toolkit.getDefaultToolkit().createImage(bytes);
           PImage image = loadImageMT(awtImage);
+
+          if (awtImage instanceof BufferedImage) {
+            BufferedImage buffImage = (BufferedImage) awtImage;
+            int space = buffImage.getColorModel().getColorSpace().getType();
+            if (space == ColorSpace.TYPE_CMYK) {
+              System.err.println(filename + " is a CMYK image, " +
+                                 "only RGB images are supported.");
+              return null;
+              /*
+              // wishful thinking, appears to not be supported
+              // https://community.oracle.com/thread/1272045?start=0&tstart=0
+              BufferedImage destImage =
+                new BufferedImage(buffImage.getWidth(),
+                                  buffImage.getHeight(),
+                                  BufferedImage.TYPE_3BYTE_BGR);
+              ColorConvertOp op = new ColorConvertOp(null);
+              op.filter(buffImage, destImage);
+              image = new PImage(destImage);
+              */
+            }
+          }
+
           if (image.width == -1) {
             System.err.println("The file " + filename +
                                " contains bad image data, or may not be an image.");
@@ -8946,12 +8979,12 @@ public class PApplet extends Applet
 
 
   static public String join(String[] list, String separator) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     for (int i = 0; i < list.length; i++) {
-      if (i != 0) buffer.append(separator);
-      buffer.append(list[i]);
+      if (i != 0) sb.append(separator);
+      sb.append(list[i]);
     }
-    return buffer.toString();
+    return sb.toString();
   }
 
 
@@ -9046,7 +9079,7 @@ public class PApplet extends Applet
     //}
     if (splitCount == 0) {
       String splits[] = new String[1];
-      splits[0] = new String(value);
+      splits[0] = value;
       return splits;
     }
     //int pieceCount = splitCount + 1;
@@ -9257,7 +9290,7 @@ public class PApplet extends Applet
    * @return true if 'what' is "true" or "TRUE", false otherwise
    */
   static final public boolean parseBoolean(String what) {
-    return new Boolean(what).booleanValue();
+    return Boolean.parseBoolean(what);
   }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -9317,7 +9350,7 @@ public class PApplet extends Applet
   static final public boolean[] parseBoolean(String what[]) {
     boolean outgoing[] = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
-      outgoing[i] = new Boolean(what[i]).booleanValue();
+      outgoing[i] = Boolean.parseBoolean(what[i]);
     }
     return outgoing;
   }
@@ -9632,7 +9665,7 @@ public class PApplet extends Applet
   }
   */
 
-  static final public float[] parseByte(byte what[]) {
+  static final public float[] parseFloat(byte what[]) {
     float floaties[] = new float[what.length];
     for (int i = 0; i < what.length; i++) {
       floaties[i] = what[i];
@@ -9792,7 +9825,7 @@ public class PApplet extends Applet
  * @param num the number(s) to format
  * @see PApplet#nf(float, int, int)
  * @see PApplet#nfp(float, int, int)
- * @see PApplet#nfc(float, int)
+ * @see PApplet#nfs(float, int, int)
  */
   static public String[] nfc(int num[]) {
     String formatted[] = new String[num.length];
@@ -10358,6 +10391,25 @@ public class PApplet extends Applet
    * in cases where frame.setResizable(true) is called.
    */
   public void setupFrameResizeListener() {
+    frame.addWindowStateListener(new WindowStateListener() {
+      @Override
+      // Detecting when the frame is resized in order to handle the frame
+      // maximization bug in OSX:
+      // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=8036935
+      public void windowStateChanged(WindowEvent e) {
+        if (Frame.MAXIMIZED_BOTH == e.getNewState()) {
+          // Supposedly, sending the frame to back and then front is a
+          // workaround for this bug:
+          // http://stackoverflow.com/a/23897602
+          // but is not working for me...
+          //frame.toBack();
+          //frame.toFront();
+          // but either packing the frame does!
+          frame.pack();
+        }
+      }
+    });
+
     frame.addComponentListener(new ComponentAdapter() {
 
         @Override
@@ -11682,6 +11734,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @nowebref
+   */
   public PShape loadShape(String filename, String options) {
     return g.loadShape(filename, options);
   }
@@ -12954,6 +13009,9 @@ public class PApplet extends Applet
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
+   * @see PGraphics#textAscent()
+   * @see PGraphics#textDescent()
    */
   public void textAlign(int alignX, int alignY) {
     if (recorder != null) recorder.textAlign(alignX, alignY);
@@ -13024,6 +13082,7 @@ public class PApplet extends Applet
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
    */
   public void textFont(PFont which) {
     if (recorder != null) recorder.textFont(which);
@@ -13054,6 +13113,7 @@ public class PApplet extends Applet
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public void textLeading(float leading) {
     if (recorder != null) recorder.textLeading(leading);
@@ -13141,6 +13201,7 @@ public class PApplet extends Applet
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public float textWidth(String str) {
     return g.textWidth(str);
@@ -13182,6 +13243,10 @@ public class PApplet extends Applet
    * @see PGraphics#textFont(PFont)
    * @see PGraphics#textMode(int)
    * @see PGraphics#textSize(float)
+   * @see PGraphics#textLeading(float)
+   * @see PGraphics#textWidth(String)
+   * @see PGraphics#textAscent()
+   * @see PGraphics#textDescent()
    * @see PGraphics#rectMode(int)
    * @see PGraphics#fill(int, float)
    * @see_external String

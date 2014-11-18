@@ -41,7 +41,7 @@ import processing.core.*;
  * Window for modifying preferences.
  * <P>
  * This is ugly GUI code that uses exact layout. This was done in frustration
- * one evening (and pre-Swing), but that's long since past, and the code  
+ * one evening (and pre-Swing), but that's long since past, and the code
  * should instead be ported to a proper Swing layout like Group or BoxLayout.
  * <A HREF="https://github.com/processing/processing/issues/67">See here</A>.
  */
@@ -49,7 +49,7 @@ public class PreferencesFrame {
   JFrame dialog;
   int wide, high;
 
-  static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 }; 
+  static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 };
 
   JTextField sketchbookLocationField;
   JTextField presentColor;
@@ -60,26 +60,26 @@ public class PreferencesFrame {
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
   JCheckBox checkUpdatesBox;
-  JComboBox fontSizeField;
-  JComboBox consoleSizeField;
+  JComboBox<Integer> fontSizeField;
+  JComboBox<Integer> consoleSizeField;
   JCheckBox inputMethodBox;
   JCheckBox autoAssociateBox;
 
   ColorChooser selector;
-  
+
   JCheckBox errorCheckerBox;
   JCheckBox warningsCheckerBox;
   JCheckBox codeCompletionBox;
   JCheckBox importSuggestionsBox;
   JCheckBox codeCompletionTriggerBox;
-  
-  JComboBox displaySelectionBox;
-  JComboBox languageSelectionBox;
+
+  JComboBox<String> displaySelectionBox;
+  JComboBox<String> languageSelectionBox;
 
   int displayCount;
-  
+
   String[] monoFontFamilies;
-  JComboBox fontSelectionBox;
+  JComboBox<String> fontSelectionBox;
 
   /** Base object so that updates can be applied to the list of editors. */
   Base base;
@@ -98,7 +98,7 @@ public class PreferencesFrame {
     final int GUI_BIG = Preferences.GUI_BIG;
     final int GUI_SMALL = Preferences.GUI_SMALL;
     final int BUTTON_WIDTH = Preferences.BUTTON_WIDTH;
-    
+
     int top = GUI_BIG;
     int left = GUI_BIG;
     int right = 0;
@@ -146,14 +146,14 @@ public class PreferencesFrame {
     right = Math.max(right, h + d2.width + GUI_BIG);
     top += vmax + GUI_BETWEEN;
 
-    
+
     // Language: [ English ] (requires restart of Processing)
-    
+
     Container languageBox = Box.createHorizontalBox();
     JLabel languageLabel = new JLabel(Language.text("preferences.language")+": ");
     languageBox.add(languageLabel);
-    languageSelectionBox = new JComboBox();
-    
+    languageSelectionBox = new JComboBox<String>();
+
     Map<String, String> languages = Language.getLanguages();
     String[] languageSelection = new String[languages.size()];
     languageSelection[0] = languages.get(Language.getLanguage());
@@ -163,7 +163,7 @@ public class PreferencesFrame {
         languageSelection[i++] = lang.getValue();
       }
     }
-    languageSelectionBox.setModel(new DefaultComboBoxModel(languageSelection));
+    languageSelectionBox.setModel(new DefaultComboBoxModel<String>(languageSelection));
     languageBox.add(languageSelectionBox);
     label = new JLabel(" ("+Language.text("preferences.requires_restart")+")");
     languageBox.add(label);
@@ -171,16 +171,16 @@ public class PreferencesFrame {
     d = languageBox.getPreferredSize();
     languageBox.setBounds(left, top, d.width, d.height);
     top += d.height + GUI_BETWEEN;
-    
+
 
     // Editor and console font [ Source Code Pro ]
 
-    // Nevermind on this for now.. Java doesn't seem to have a method for 
-    // enumerating only the fixed-width (monospaced) fonts. To do this 
-    // properly, we'd need to list the fonts, and compare the metrics of 
-    // i and M for each. When they're identical (and not degenerate), 
-    // we'd call that font fixed width. That's all a very expensive set of 
-    // operations, so it should also probably be cached between runs and 
+    // Nevermind on this for now.. Java doesn't seem to have a method for
+    // enumerating only the fixed-width (monospaced) fonts. To do this
+    // properly, we'd need to list the fonts, and compare the metrics of
+    // i and M for each. When they're identical (and not degenerate),
+    // we'd call that font fixed width. That's all a very expensive set of
+    // operations, so it should also probably be cached between runs and
     // updated in the background.
 
     Container fontBox = Box.createHorizontalBox();
@@ -189,10 +189,10 @@ public class PreferencesFrame {
     fontLabel.setToolTipText(fontTip);
     fontBox.add(fontLabel);
     // get a wide name in there before getPreferredSize() is called
-    fontSelectionBox = new JComboBox(new Object[] { Toolkit.getMonoFontName() });
+    fontSelectionBox = new JComboBox<String>(new String[] { Toolkit.getMonoFontName() });
     fontSelectionBox.setToolTipText(fontTip);
 //    fontSelectionBox.addItem(Toolkit.getMonoFont(size, style));
-    //updateDisplayList();  
+    //updateDisplayList();
     fontSelectionBox.setEnabled(false);  // don't enable until fonts are loaded
     fontBox.add(fontSelectionBox);
 //    fontBox.add(Box.createHorizontalGlue());
@@ -201,8 +201,8 @@ public class PreferencesFrame {
     fontBox.setBounds(left, top, d.width + 150, d.height);
 //    fontBox.setBounds(left, top, dialog.getWidth() - left*2, d.height);
     top += d.height + GUI_BETWEEN;
-    
-    
+
+
     // Editor font size [ 12 ]  Console font size [ 10 ]
 
     Container box = Box.createHorizontalBox();
@@ -215,20 +215,20 @@ public class PreferencesFrame {
     box.add(Box.createHorizontalStrut(GUI_BETWEEN));
 
     label = new JLabel(Language.text("preferences.console_font_size")+": ");
-    
+
     box.add(label);
 //    consoleSizeField = new JComboBox<Integer>(FONT_SIZES);
     consoleSizeField = new JComboBox<Integer>(FONT_SIZES);
     consoleSizeField.setEditable(true);
     box.add(consoleSizeField);
-    
+
     pain.add(box);
     d = box.getPreferredSize();
     box.setBounds(left, top, d.width, d.height);
     fontSizeField.setSelectedItem(Preferences.getFont("editor.font.size"));
     top += d.height + GUI_BETWEEN;
-    
-    
+
+
     Container colorBox = Box.createHorizontalBox();
 
     label = new JLabel(Language.text("preferences.background_color")+": ");
@@ -316,11 +316,9 @@ public class PreferencesFrame {
           }
         });
 
-    presentColor.addMouseListener(new MouseListener() {
-      @Override public void mouseReleased(MouseEvent e) {}
-      @Override public void mousePressed(MouseEvent e) {}
-      
-      @Override 
+    presentColor.addMouseListener(new MouseAdapter() {
+
+      @Override
       public void mouseExited(MouseEvent e) {
         dialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       }
@@ -341,16 +339,16 @@ public class PreferencesFrame {
     colorBox.add(presentColorHex);
     colorBox.add(Box.createHorizontalStrut(GUI_SMALL + 2 / 3 * GUI_SMALL));
     colorBox.add(presentColor);
-    
+
     pain.add(colorBox);
     d = colorBox.getPreferredSize();
     colorBox.setBounds(left, top, d.width, d.height);
 
     top += d.height + GUI_BETWEEN;
 
-    
+
     // [ ] Use smooth text in editor window
-    
+
     editorAntialiasBox = new JCheckBox(Language.text("preferences.use_smooth_text"));
     pain.add(editorAntialiasBox);
     d = editorAntialiasBox.getPreferredSize();
@@ -359,7 +357,7 @@ public class PreferencesFrame {
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
 
-    
+
     // [ ] Enable complex text input (for Japanese et al, requires restart)
 
     inputMethodBox =
@@ -371,21 +369,21 @@ public class PreferencesFrame {
     inputMethodBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
-    
-    
+
+
     // [ ] Continuously check for errors - PDE X
 
     errorCheckerBox =
       new JCheckBox(Language.text("preferences.continuously_check"));
-    
+
     pain.add(errorCheckerBox);
     d = errorCheckerBox.getPreferredSize();
     errorCheckerBox.setBounds(left, top, d.width + 10, d.height);
     //right = Math.max(right, left + d.width);
     //top += d.height + GUI_BETWEEN;
-    int warningLeft = left + d.width; 
+    int warningLeft = left + d.width;
 
-    
+
     // [ ] Show Warnings - PDE X
 
     warningsCheckerBox =
@@ -396,7 +394,7 @@ public class PreferencesFrame {
     right = Math.max(right, warningLeft + d.width);
     top += d.height + GUI_BETWEEN;
 
-    
+
     // [ ] Enable Code Completion - PDE X
 
     codeCompletionBox =
@@ -404,20 +402,36 @@ public class PreferencesFrame {
     pain.add(codeCompletionBox);
     d = codeCompletionBox.getPreferredSize();
     codeCompletionBox.setBounds(left, top, d.width + 10, d.height);
+    codeCompletionBox.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // Disble code completion trigger option if completion is disabled
+        codeCompletionTriggerBox.setEnabled(codeCompletionBox.isSelected());
+      }
+    });
+
     int toggleLeft = left + d.width;
-    
-    
+
     // [ ] Toggle Code Completion Trigger - PDE X
 
-    final String modifier = Base.isMacOS() ? "\u2318" : "Ctrl";
     codeCompletionTriggerBox =
-      new JCheckBox(Language.text("preferences.trigger_with")+" " + modifier + "-"+Language.text("preferences.cmd_space"));
+      new JCheckBox(Language.text("preferences.trigger_with")+" Ctrl-"+Language.text("preferences.cmd_space"));
     pain.add(codeCompletionTriggerBox);
     d = codeCompletionTriggerBox.getPreferredSize();
     codeCompletionTriggerBox.setBounds(toggleLeft, top, d.width + 10, d.height);
     right = Math.max(right, toggleLeft + d.width);
     top += d.height + GUI_BETWEEN;
 
+    // [ ] Show import suggestions - PDE X
+
+    importSuggestionsBox =
+      new JCheckBox(Language.text("preferences.suggest_imports"));
+    pain.add(importSuggestionsBox);
+    d = importSuggestionsBox.getPreferredSize();
+    importSuggestionsBox.setBounds(left, top, d.width + 10, d.height);
+    right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
 
     // [ ] Increase maximum available memory to [______] MB
 
@@ -448,8 +462,8 @@ public class PreferencesFrame {
     deletePreviousBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
     top += d.height + GUI_BETWEEN;
-    
-    
+
+
     // [ ] Hide tab/toolbar background image
 
     whinyBox = new JCheckBox(Language.text("preferences.hide_toolbar_background_image")+
@@ -478,14 +492,14 @@ public class PreferencesFrame {
     final String tip = "<html>" + Language.text("preferences.run_sketches_on_display.tip");
     displayLabel.setToolTipText(tip);
     displayBox.add(displayLabel);
-    displaySelectionBox = new JComboBox();
+    displaySelectionBox = new JComboBox<String>();
     updateDisplayList();  // needs to happen here for getPreferredSize()
     displayBox.add(displaySelectionBox);
     pain.add(displayBox);
     d = displayBox.getPreferredSize();
     displayBox.setBounds(left, top, d.width, d.height);
     top += d.height + GUI_BETWEEN;
-    
+
 
     // [ ] Automatically associate .pde files with Processing
 
@@ -510,7 +524,7 @@ public class PreferencesFrame {
     right = Math.max(right, left + d.width);
     top += d.height; // + GUI_SMALL;
 
-    label = new JLabel(Preferences.getSketchbookPath());
+    label = new JLabel(Preferences.getPreferencesPath());
     final JLabel clickable = label;
     label.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
@@ -653,7 +667,7 @@ public class PreferencesFrame {
     boolean wine = whinyBox.isSelected();
     Preferences.setBoolean("header.hide.image", wine); //$NON-NLS-1$
     Preferences.setBoolean("buttons.hide.image", wine); //$NON-NLS-1$
-    // Could iterate through editors here and repaint them all, but probably 
+    // Could iterate through editors here and repaint them all, but probably
     // requires a doLayout() call, and that may have different effects on
     // each platform, and nobody wants to debug/support that.
 
@@ -666,7 +680,7 @@ public class PreferencesFrame {
 
 //    setBoolean("editor.external", externalEditorBox.isSelected());
     Preferences.setBoolean("update.check", checkUpdatesBox.isSelected()); //$NON-NLS-1$
-    
+
     // Save Language
     Map<String, String> languages = Language.getLanguages();
     String language = "";
@@ -679,7 +693,7 @@ public class PreferencesFrame {
     if (!language.equals(Language.getLanguage()) && !language.equals("")) {
       Language.saveLanguage(language);
     }
-    
+
     int oldDisplayIndex = Preferences.getInteger("run.display"); //$NON-NLS-1$
     int displayIndex = 0;
     for (int d = 0; d < displaySelectionBox.getItemCount(); d++) {
@@ -724,7 +738,7 @@ public class PreferencesFrame {
       Base.log("Ignoring invalid font size " + fontSizeField); //$NON-NLS-1$
       fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
     }
-    
+
     try {
       Object selection = consoleSizeField.getSelectedItem();
       if (selection instanceof String) {
@@ -737,20 +751,22 @@ public class PreferencesFrame {
       Base.log("Ignoring invalid font size " + consoleSizeField); //$NON-NLS-1$
       consoleSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
     }
-    
+
     Preferences.setColor("run.present.bgcolor", presentColor.getBackground());
-    
+
     Preferences.setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
 
     if (autoAssociateBox != null) {
       Preferences.setBoolean("platform.auto_file_type_associations", //$NON-NLS-1$
                              autoAssociateBox.isSelected());
     }
-    
+
     Preferences.setBoolean("pdex.errorCheckEnabled", errorCheckerBox.isSelected());
     Preferences.setBoolean("pdex.warningsEnabled", warningsCheckerBox.isSelected());
-    Preferences.setBoolean("pdex.ccEnabled", codeCompletionBox.isSelected());
-    Preferences.setBoolean("pdex.ccTriggerEnabled", codeCompletionTriggerBox.isSelected());
+    Preferences.setBoolean("pdex.completion", codeCompletionBox.isSelected());
+    Preferences.setBoolean("pdex.completion.trigger", codeCompletionTriggerBox.isSelected());
+    Preferences.setBoolean("pdex.importSuggestEnabled", importSuggestionsBox.isSelected());
+
     for (Editor editor : base.getEditors()) {
       editor.applyPreferences();
     }
@@ -762,8 +778,10 @@ public class PreferencesFrame {
     inputMethodBox.setSelected(Preferences.getBoolean("editor.input_method_support")); //$NON-NLS-1$
     errorCheckerBox.setSelected(Preferences.getBoolean("pdex.errorCheckEnabled"));
     warningsCheckerBox.setSelected(Preferences.getBoolean("pdex.warningsEnabled"));
-    codeCompletionBox.setSelected(Preferences.getBoolean("pdex.ccEnabled"));
-    codeCompletionTriggerBox.setSelected(Preferences.getBoolean("pdex.ccTriggerEnabled"));
+    codeCompletionBox.setSelected(Preferences.getBoolean("pdex.completion"));
+    codeCompletionTriggerBox.setSelected(Preferences.getBoolean("pdex.completion.trigger"));
+    codeCompletionTriggerBox.setEnabled(codeCompletionBox.isSelected());
+    importSuggestionsBox.setSelected(Preferences.getBoolean("pdex.importSuggestEnabled"));
     deletePreviousBox.
       setSelected(Preferences.getBoolean("export.delete_target_folder")); //$NON-NLS-1$
 
@@ -778,20 +796,20 @@ public class PreferencesFrame {
     if (displayNum >= 0 && displayNum < displayCount) {
       displaySelectionBox.setSelectedIndex(displayNum);
     }
-    
+
     // This takes a while to load, so run it from a separate thread
-    new Thread(new Runnable() {
+    EventQueue.invokeLater(new Runnable() {
       public void run() {
         initFontList();
       }
-    }).start();
-    
+    });
+
     fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
     consoleSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
 
     presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
     presentColorHex.setText(Preferences.get("run.present.bgcolor").substring(1));
-    
+
     memoryOverrideBox.
       setSelected(Preferences.getBoolean("run.options.memory")); //$NON-NLS-1$
     memoryField.
@@ -807,12 +825,12 @@ public class PreferencesFrame {
   }
 
 
-  /** 
+  /**
    * I have some ideas on how we could make Swing even more obtuse for the
    * most basic usage scenarios. Is there someone on the team I can contact?
    * Oracle, are you listening?
    */
-  class FontNamer extends JLabel implements ListCellRenderer<Font> {
+  static class FontNamer extends JLabel implements ListCellRenderer<Font> {
     public Component getListCellRendererComponent(JList<? extends Font> list,
                                                   Font value, int index,
                                                   boolean isSelected,
@@ -822,22 +840,22 @@ public class PreferencesFrame {
       return this;
     }
   }
-  
+
 
   void initFontList() {
     if (monoFontFamilies == null) {
       monoFontFamilies = Toolkit.getMonoFontFamilies();
-      fontSelectionBox.setModel(new DefaultComboBoxModel(monoFontFamilies));
+      fontSelectionBox.setModel(new DefaultComboBoxModel<String>(monoFontFamilies));
       String family = Preferences.get("editor.font.family");
 
-      // Set a reasonable default, in case selecting the family fails 
+      // Set a reasonable default, in case selecting the family fails
       fontSelectionBox.setSelectedItem("Monospaced");
       fontSelectionBox.setSelectedItem(family);
       fontSelectionBox.setEnabled(true);
     }
   }
-  
-  
+
+
   void updateDisplayList() {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     displayCount = ge.getScreenDevices().length;
@@ -848,7 +866,7 @@ public class PreferencesFrame {
 //      displaySelectionBox.add(String.valueOf(i + 1));
     }
 //    PApplet.println(items);
-    displaySelectionBox.setModel(new DefaultComboBoxModel(items));
+    displaySelectionBox.setModel(new DefaultComboBoxModel<String>(items));
 //    displaySelectionBox = new JComboBox(items);
   }
 }

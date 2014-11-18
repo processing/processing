@@ -310,7 +310,7 @@ public class Recent {
 //  }
 
 
-  class Record {
+  static class Record {
     String path;  // if not loaded, this is non-null
 //    EditorState state;  // if not loaded, this is non-null
 

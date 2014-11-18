@@ -307,6 +307,11 @@ public class StringList implements Iterable<String> {
 //  }
 
 
+  public void insert(int index, String value) {
+    insert(index, new String[] { value });
+  }
+
+
   // same as splice
   public void insert(int index, String[] values) {
     if (index < 0) {
@@ -633,7 +638,8 @@ public class StringList implements Iterable<String> {
 
 
   /**
-   * Copy as many values as possible into the specified array.
+   * Copy values into the specified array. If the specified array is null or
+   * not the same size, a new array will be allocated.
    * @param array
    */
   public String[] array(String[] array) {
@@ -681,14 +687,6 @@ public class StringList implements Iterable<String> {
     }
     return outgoing;
   }
-
-
-//  public void println() {
-//    for (int i = 0; i < count; i++) {
-//      System.out.println("[" + i + "] " + data[i]);
-//    }
-//    System.out.flush();
-//  }
 
 
   public String join(String separator) {

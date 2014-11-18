@@ -29,11 +29,15 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.*;
 
+import processing.app.contrib.ContributionType;
+import processing.app.contrib.ExamplesPackageContribution;
 import processing.app.syntax.*;
 import processing.core.PApplet;
 
@@ -69,6 +73,8 @@ public abstract class Mode {
   protected File examplesFolder;
   protected File librariesFolder;
   protected File referenceFolder;
+  
+  protected File examplesContribFolder;
 
   public ArrayList<Library> coreLibraries;
   public ArrayList<Library> contribLibraries;
@@ -100,6 +106,9 @@ public abstract class Mode {
     examplesFolder = new File(folder, "examples");
     librariesFolder = new File(folder, "libraries");
     referenceFolder = new File(folder, "reference");
+    
+    // Get path to the contributed examples compatible with this mode
+    examplesContribFolder = Base.getSketchbookExamplesPackagesFolder();
 
 //    rebuildToolbarMenu();
     rebuildLibraryList();
@@ -404,6 +413,14 @@ public abstract class Mode {
       }
     });
     toolbarMenu.add(item);
+    
+    item = new JMenuItem(Language.text("examples.add_examples"));
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        base.handleOpenExampleManager();
+      }
+    });
+    toolbarMenu.add(item);
 
     // Add a list of all sketches and subfolders
     toolbarMenu.addSeparator();
@@ -588,10 +605,10 @@ public abstract class Mode {
   }
 
 
-  public JTree buildExamplesTree() {
+  public DefaultMutableTreeNode buildExamplesTree() {
     DefaultMutableTreeNode node = new DefaultMutableTreeNode("Examples");
 
-    JTree examplesTree = new JTree(node);
+//    JTree examplesTree = new JTree(node);
 //    rebuildExamplesTree(node);
 //  }
 
@@ -610,30 +627,28 @@ public abstract class Mode {
 //      });
       File[] subfolders = getExampleCategoryFolders();
 
-//      DefaultMutableTreeNode examplesParent = new DefaultMutableTreeNode("Examples");
+      DefaultMutableTreeNode modeExParent = new DefaultMutableTreeNode("Mode Examples");
+      
       for (File sub : subfolders) {
         DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
         if (base.addSketches(subNode, sub)) {
 //          examplesParent.add(subNode);
-          node.add(subNode);
+          modeExParent.add(subNode);
         }
       }
-//      node.add(examplesParent);
-//      examplesTree.expandPath(new TreePath(examplesParent));
-
+ 
       // get library examples
       boolean any = false;
-      DefaultMutableTreeNode libParent = new DefaultMutableTreeNode("Libraries");
       for (Library lib : coreLibraries) {
         if (lib.hasExamples()) {
           DefaultMutableTreeNode libNode = new DefaultMutableTreeNode(lib.getName());
-          any |= base.addSketches(libNode, lib.getExamplesFolder());
-          libParent.add(libNode);
+          if (base.addSketches(libNode, lib.getExamplesFolder()))
+            modeExParent.add(libNode);
         }
       }
-      if (any) {
-        node.add(libParent);
-      }
+      
+      if (modeExParent.getChildCount() > 0)
+        node.add(modeExParent);
 
       // get contrib library examples
       any = false;
@@ -644,7 +659,7 @@ public abstract class Mode {
       }
       if (any) {
 //        menu.addSeparator();
-        DefaultMutableTreeNode contribParent = new DefaultMutableTreeNode("Contributed Libraries");
+        DefaultMutableTreeNode contribParent = new DefaultMutableTreeNode("Library Examples");
 //        Base.addDisabledItem(menu, "Contributed");
         for (Library lib : contribLibraries) {
           if (lib.hasExamples()) {
@@ -661,7 +676,46 @@ public abstract class Mode {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return examplesTree;
+    
+    DefaultMutableTreeNode contribExampleNode = buildContributedExamplesTrees();
+    if (contribExampleNode.getChildCount() > 0)
+      node.add(contribExampleNode);
+    return node;
+  }
+
+
+  public DefaultMutableTreeNode buildContributedExamplesTrees() {
+    DefaultMutableTreeNode node = new DefaultMutableTreeNode("Contributed Examples");
+
+    try {
+      File[] subfolders = ContributionType.EXAMPLES_PACKAGE.listCandidates(examplesContribFolder);
+      if (subfolders == null) {
+        subfolders = new File[0]; //empty array
+      }
+      for (File sub : subfolders) {
+        if (!ExamplesPackageContribution.isExamplesPackageCompatible(base, sub))
+          continue;
+        DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
+        if (base.addSketches(subNode, sub)) {
+          node.add(subNode);
+          int exampleNodeNumber = -1;
+          for (int y = 0; y < subNode.getChildCount(); y++)
+            if (subNode.getChildAt(y).toString().equals("examples-package"))
+              exampleNodeNumber = y;
+          if (exampleNodeNumber == -1)
+            continue;
+          TreeNode exampleNode = subNode.getChildAt(exampleNodeNumber);
+          subNode.remove(exampleNodeNumber);
+          int count = exampleNode.getChildCount();
+          for (int x = 0; x < count; x++) {
+            subNode.add((DefaultMutableTreeNode) exampleNode.getChildAt(0));
+          }
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return node;//examplesTree;
   }
 
 
@@ -682,9 +736,101 @@ public abstract class Mode {
   }
 
 
+  /**
+   * Function to give a JTree a pretty alternating gray-white colouring for
+   * its rows.
+   * 
+   * @param tree
+   */
+  private void colourizeTreeRows(JTree tree) {
+    // Code in this function adapted from:
+    // http://mateuszstankiewicz.eu/?p=263
+    tree.setCellRenderer(new DefaultTreeCellRenderer() {
+
+      @Override
+      public Component getTreeCellRendererComponent(JTree tree, Object value,
+                                                    boolean sel,
+                                                    boolean expanded,
+                                                    boolean leaf, int row,
+                                                    boolean hasFocus) {
+        JComponent c = (JComponent) super
+          .getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row,
+                                        hasFocus);
+
+        if (!tree.isRowSelected(row)) {
+          if (row % 2 == 0) {
+
+            // Need to set this, else the gray from the odd 
+            // rows colours this gray as well.
+            c.setBackground(new Color(255, 255, 255));
+
+            setBackgroundSelectionColor(new Color(0, 0, 255));
+            setTextSelectionColor(Color.WHITE);
+            setBorderSelectionColor(new Color(0, 0, 255));
+          } else {
+
+            // Set background for entire component (including the image).
+            // Using transparency messes things up, probably since the 
+            // transparent colour is not good friends with the images background colour.
+            c.setBackground(new Color(240, 240, 240));
+
+            // Can't use setBackgroundSelectionColor() directly, since then, the 
+            // image's background isn't affected.
+            // The setUI() doesn't fix the image's background because the 
+            // transparency likely interferes with its normal background, 
+            // making its background lighter than the rest. 
+//            setBackgroundNonSelectionColor(new Color(190, 190, 190));
+
+            setBackgroundSelectionColor(new Color(0, 0, 255));
+            setTextSelectionColor(Color.WHITE);
+            setBorderSelectionColor(new Color(0, 0, 255));
+          }
+        } else {// Transparent blue if selected
+          c.setBackground(new Color(127, 127, 255));
+        }
+
+        c.setOpaque(true);
+        return c;
+      }
+
+    });
+
+    tree.setUI(new BasicTreeUI() {
+
+      @Override
+      protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets,
+                              Rectangle bounds, TreePath path, int row,
+                              boolean isExpanded, boolean hasBeenExpanded,
+                              boolean isLeaf) {
+        Graphics g2 = g.create();
+
+        if (!tree.isRowSelected(row)) {
+          if (row % 2 == 0) {
+            // Need to set this, else the gray from the odd rows 
+            // affects the even rows too.
+            g2.setColor(new Color(255, 255, 255, 128));
+          } else {
+            // Transparent light-gray
+            g2.setColor(new Color(226, 226, 226, 128));
+          }
+        } else
+          // Transparent blue if selected
+          g2.setColor(new Color(0, 0, 255, 128));
+
+        g2.fillRect(0, bounds.y, tree.getWidth(), bounds.height);
+
+        g2.dispose();
+
+        super.paintRow(g, clipBounds, insets, bounds, path, row, isExpanded,
+                       hasBeenExpanded, isLeaf);
+      }
+    });
+  }
+
+
   public void showExamplesFrame() {
     if (examplesFrame == null) {
-      examplesFrame = new JFrame(getTitle() + " " + Language.text("editor.window.examples"));
+      examplesFrame = new JFrame(getTitle() + " " + Language.text("examples"));
       Toolkit.setIcon(examplesFrame);
       Toolkit.registerWindowCloseKeys(examplesFrame.getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -692,7 +838,37 @@ public abstract class Mode {
         }
       });
       
-      final JTree tree = buildExamplesTree();
+      JPanel examplesPanel = new JPanel();
+      examplesPanel.setLayout(new BorderLayout());
+      examplesPanel.setBackground(Color.WHITE);
+      
+      final JPanel openExamplesManagerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      JLabel openExamplesManagerLabel = new JLabel(Language.text("examples.add_examples"));
+//      openExamplesManagerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+      openExamplesManagerPanel.add(openExamplesManagerLabel);
+      openExamplesManagerPanel.setOpaque(false);
+      Border lineBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK);
+      Border paddingBorder = BorderFactory.createEmptyBorder(3, 5, 1, 4);
+      openExamplesManagerPanel.setBorder(BorderFactory.createCompoundBorder(lineBorder, paddingBorder));
+//      openExamplesManagerLabel.set
+      openExamplesManagerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+      openExamplesManagerPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//      openExamplesManagerLabel.setForeground(new Color(0, 0, 238));
+      openExamplesManagerPanel.addMouseListener(new MouseAdapter() {
+        
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          base.handleOpenExampleManager();
+//          openExamplesManagerLabel.setForeground(new Color(85, 26, 139));
+        }
+      });
+      
+      final JTree tree = new JTree(buildExamplesTree());
+      
+      colourizeTreeRows(tree);
+      
+      tree.setOpaque(true);
+      tree.setAlignmentX(Component.LEFT_ALIGNMENT);
 
       tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
       tree.setShowsRootHandles(true);
@@ -754,16 +930,23 @@ public abstract class Mode {
         }
       });
 
-      tree.setBorder(new EmptyBorder(5, 5, 5, 5));
+      tree.setBorder(new EmptyBorder(0, 5, 5, 5));
       if (Base.isMacOS()) {
         tree.setToggleClickCount(2);
       } else {
         tree.setToggleClickCount(1);
       }
+  
       JScrollPane treePane = new JScrollPane(tree);
-      treePane.setPreferredSize(new Dimension(250, 450));
-      treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
-      examplesFrame.getContentPane().add(treePane);
+      treePane.setPreferredSize(new Dimension(250, 300));
+      treePane.setBorder(new EmptyBorder(2, 0, 0, 0));
+      treePane.setOpaque(true);
+      treePane.setBackground(Color.WHITE);
+      treePane.setAlignmentX(Component.LEFT_ALIGNMENT);
+      
+      examplesPanel.add(openExamplesManagerPanel,BorderLayout.PAGE_START);
+      examplesPanel.add(treePane, BorderLayout.CENTER);
+      examplesFrame.getContentPane().add(examplesPanel);
       examplesFrame.pack();
 
       restoreExpanded(tree);

@@ -248,7 +248,7 @@ public class OSCByteArrayToJavaConverter {
 		intBytes[2] = bytes[streamPosition++];
 		intBytes[3] = bytes[streamPosition++];
 		BigInteger intBits = new BigInteger(intBytes);
-		return new Integer(intBits.intValue());
+		return Integer.valueOf(intBits.intValue());
 	}
 
 	/**

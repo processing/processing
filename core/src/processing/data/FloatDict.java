@@ -276,7 +276,18 @@ public class FloatDict {
    */
   public float get(String key) {
     int index = index(key);
-    if (index == -1) return 0;
+    if (index == -1) {
+      throw new IllegalArgumentException("No key named '" + key + "'");
+    }
+    return values[index];
+  }
+
+
+  public float get(String key, float alternate) {
+    int index = index(key);
+    if (index == -1) {
+      return alternate;
+    }
     return values[index];
   }
 
@@ -493,7 +504,7 @@ public class FloatDict {
       keys = PApplet.expand(keys);
       values = PApplet.expand(values);
     }
-    indices.put(what, new Integer(count));
+    indices.put(what, Integer.valueOf(count));
     keys[count] = what;
     values[count] = much;
     count++;
@@ -540,8 +551,8 @@ public class FloatDict {
     keys[b] = tkey;
     values[b] = tvalue;
 
-    indices.put(keys[a], new Integer(a));
-    indices.put(keys[b], new Integer(b));
+    indices.put(keys[a], Integer.valueOf(a));
+    indices.put(keys[b], Integer.valueOf(b));
   }
 
 

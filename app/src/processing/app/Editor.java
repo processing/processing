@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2012-14 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -88,10 +89,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
   private Point sketchWindowLocation;
 
   // undo fellers
-  private JMenuItem undoItem, redoItem;
+  private JMenuItem undoItem, redoItem, copyItems, cutItems;
   protected UndoAction undoAction;
   protected RedoAction redoAction;
   /** the currently selected tab's undo manager */
+  protected CopyAction copyAction;
+  protected CutAction cutAction;
   private UndoManager undo;
   // used internally for every edit. Groups hotkey-event text manipulations and
   // groups  multi-character inputs into a single undos.
@@ -442,6 +445,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  public EditorConsole getConsole() {
+    return console;
+  }
+
+
 
 //  public Settings getTheme() {
 //    return mode.getTheme();
@@ -552,28 +560,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menubar.add(fileMenu);
     menubar.add(buildEditMenu());
     menubar.add(buildSketchMenu());
-//    rebuildToolList();
-    rebuildToolMenu();
-    menubar.add(getToolMenu());
 
+    // For 3.0a4 move mode menu to the left of the Tool menu
     JMenu modeMenu = buildModeMenu();
     if (modeMenu != null) {
       menubar.add(modeMenu);
     }
 
-//    // These are temporary entries while Android mode is being worked out.
-//    // The mode will not be in the tools menu, and won't involve a cmd-key
-//    if (!Base.RELEASE) {
-//      try {
-//        Class clazz = Class.forName("processing.app.tools.android.AndroidMode");
-//        Object mode = clazz.newInstance();
-//        Method m = clazz.getMethod("init", new Class[] { Editor.class, JMenuBar.class });
-//        //String libraryPath = (String) m.invoke(null, new Object[] { });
-//        m.invoke(mode, new Object[] { this, menubar });
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//      }
-//    }
+    rebuildToolMenu();
+    menubar.add(getToolMenu());
 
     menubar.add(buildHelpMenu());
     Toolkit.setMenuMnemonics(menubar);
@@ -738,23 +733,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     menu.addSeparator();
 
-    // TODO "cut" and "copy" should really only be enabled
-    // if some text is currently selected
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.cut"), 'X');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleCut();
-        }
-      });
-    menu.add(item);
+    cutItems = Toolkit.newJMenuItem("Cut", 'X');
+    cutItems.addActionListener(cutAction = new CutAction());
+    menu.add(cutItems);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.copy"), 'C');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          textarea.copy();
-        }
-      });
-    menu.add(item);
+    copyItems = Toolkit.newJMenuItem("Copy", 'C');
+    copyItems.addActionListener(copyAction = new CopyAction());
+    menu.add(copyItems);
 
     item = Toolkit.newJMenuItemShift(Language.text("menu.edit.copy_as_html"), 'C');
     item.addActionListener(new ActionListener() {
@@ -892,7 +877,25 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
       });
     menu.add(item);
-
+ // Listener to the Edit menu item
+    menu.addMenuListener(new MenuListener() {
+    
+      @Override
+      public void menuCanceled(MenuEvent e) {
+      }
+    
+      @Override
+      public void menuDeselected(MenuEvent e) {
+      }
+        /* Updating the copy and cut JMenuItems
+         * as soon as the Edit menu is selected
+        */
+      @Override
+      public void menuSelected(MenuEvent e) {
+        copyAction.updateCopyState();
+        cutAction.updateCutState();
+      }
+    });
     return menu;
   }
 
@@ -1281,6 +1284,52 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  class CutAction extends AbstractAction {
+    public CutAction() {
+      super("Cut");
+      this.setEnabled(false);
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+      System.out.println(e.getActionCommand());
+      handleCut();
+    }
+    
+    public void updateCutState() {
+      if (canCut()) {
+        cutItems.setEnabled(true);
+      } else {
+        cutItems.setEnabled(false);
+      }
+    }
+    
+    public boolean canCut() {
+      return textarea.isSelectionActive();
+    }
+  }
+    
+  class CopyAction extends AbstractAction {
+    public CopyAction() {
+      super("Copy");
+      this.setEnabled(false);
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+      textarea.copy();
+    }
+    
+    public void updateCopyState() {
+      if (canCopy()) {
+        copyItems.setEnabled(true);
+      } else {
+        copyItems.setEnabled(false);
+      }
+    }
+    
+    public boolean canCopy() {
+      return textarea.isSelectionActive();
+    }
+  }
 
   class UndoAction extends AbstractAction {
     public UndoAction() {
@@ -1907,6 +1956,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   protected void handleCommentUncomment() {
+    // log("Entering handleCommentUncomment()");
     startCompoundEdit();
 
     String prefix = getCommentPrefix();
@@ -1929,32 +1979,41 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // If the text is empty, ignore the user.
     // Also ensure that all lines are commented (not just the first)
     // when determining whether to comment or uncomment.
-    int length = textarea.getDocumentLength();
     boolean commented = true;
     for (int i = startLine; commented && (i <= stopLine); i++) {
-      int pos = textarea.getLineStartOffset(i);
-      if (pos + prefixLen > length) {
-        commented = false;
-      } else {
-        // Check the first characters to see if it's already a comment.
-        String begin = textarea.getText(pos, prefixLen);
-        //System.out.println("begin is '" + begin + "'");
-        commented = begin.equals(prefix);
-      }
+      String lineText = textarea.getLineText(i).trim();
+      if (lineText.length() == 0)
+        continue; //ignore blank lines
+      commented = lineText.startsWith(prefix);
     }
 
+    // log("Commented: " + commented);
+
+    // This is the line start offset of the first line, which is added to
+    // all other lines while adding a comment. Required when commenting 
+    // lines which have uneven whitespaces in the beginning. Makes the 
+    // commented lines look more uniform.    
+    int lso = Math.abs(textarea.getLineStartNonWhiteSpaceOffset(startLine)
+        - textarea.getLineStartOffset(startLine));
+
     for (int line = startLine; line <= stopLine; line++) {
-      int location = textarea.getLineStartOffset(line);
+      int location = textarea.getLineStartNonWhiteSpaceOffset(line);
+      String lineText = textarea.getLineText(line);
+      if (lineText.trim().length() == 0)
+        continue; //ignore blank lines
       if (commented) {
         // remove a comment
-        textarea.select(location, location + prefixLen);
-        if (textarea.getSelectedText().equals(prefix)) {
-          textarea.setSelectedText("");
+        if (lineText.trim().startsWith(prefix + " ")) {
+          textarea.select(location, location + prefixLen + 1);
+        } else {
+          textarea.select(location, location + prefixLen);
         }
+        textarea.setSelectedText("");
       } else {
         // add a comment
+        location = textarea.getLineStartOffset(line) + lso;
         textarea.select(location, location);
-        textarea.setSelectedText(prefix);
+        textarea.setSelectedText(prefix + " "); //Add a '// '
       }
     }
     // Subtract one from the end, otherwise selects past the current line.
@@ -2378,7 +2437,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       Base.showWarning("Error", "Could not create the sketch.", e);
       return false;
     }
-    if (Preferences.getBoolean("editor.watcher")) {
+    // Disabling for 3.0a4
+    if (false && Preferences.getBoolean("editor.watcher")) {
       initFileChangeListener();
     }
     
@@ -2402,46 +2462,62 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    }
   }
   
+  //used to prevent the fileChangeListener from asking for reloads after internal changes
+  public void setWatcherSave() {
+    watcherSave = true;
+  }
   
   //set to true when the sketch is saved from inside processing
   private boolean watcherSave;
-  private boolean watcherReloaded;
-  
+
   //the key which is being used to poll the fs for changes
   private WatchKey watcherKey = null;
 
   private void initFileChangeListener() {
     try {
       WatchService watchService = FileSystems.getDefault().newWatchService();
-      Path folderPath = sketch.getFolder().toPath(); 
-      watcherKey = folderPath.register(watchService,
-//                              StandardWatchEventKinds.ENTRY_CREATE,
-//                              StandardWatchEventKinds.ENTRY_DELETE,
-                                StandardWatchEventKinds.ENTRY_MODIFY);
+      Path sp = sketch.getFolder().toPath();
+      watcherKey = sp.register(watchService, 
+                               StandardWatchEventKinds.ENTRY_CREATE,
+                               StandardWatchEventKinds.ENTRY_DELETE,
+                               StandardWatchEventKinds.ENTRY_MODIFY);
     } catch (IOException e) {
       e.printStackTrace();
     }
 
     final WatchKey finKey = watcherKey;
 
-    // if the key is null for some reason, don't bother attaching 
-    // a listener to it, they can deal without one
+    //if the key is null for some reason, don't bother attaching a listener to it
     if (finKey != null) {
       // the key can now be polled for changes in the files
       addWindowFocusListener(new WindowFocusListener() {
         @Override
         public void windowGainedFocus(WindowEvent arg0) {
+          //we switched locations (saveAs), ignore old things
+          if (watcherKey != finKey) {
+            return;
+          }
           // check preference here for enabled or not?
 
           //if the directory was deleted, then don't scan
           if (finKey.isValid()) {
             List<WatchEvent<?>> events = finKey.pollEvents();
-            processFileEvents(events);
+            if (!watcherSave) {
+              processFileEvents(events);
+            }
           }
+
+          List<WatchEvent<?>> events = finKey.pollEvents();
+          if (!watcherSave)
+            processFileEvents(events);
         }
 
         @Override
-        public void windowLostFocus(WindowEvent arg0){
+        public void windowLostFocus(WindowEvent arg0) {
+          //we switched locations (saveAs), ignore old things
+          if (watcherKey != finKey) {
+            return;
+          }
           List<WatchEvent<?>> events = finKey.pollEvents();
           //don't ask to reload a file we saved
           if (!watcherSave) {
@@ -2459,39 +2535,60 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * @param events the list of events that have occured in the sketch folder
    */
   private void processFileEvents(List<WatchEvent<?>> events) {
-    watcherReloaded = false;
     for (WatchEvent<?> e : events) {
-      //the context is the name of the file inside the path
-      //due to some weird shit, if a file was editted in gedit, the context is .goutputstream-XXXXX
-      //this makes things.... complicated
-      //System.out.println(e.context());      
-
-      //if we already reloaded in this cycle, then don't reload again
-      if (watcherReloaded){
-        break;
+      boolean sketchFile = false;
+      Path file = ((Path) e.context()).getFileName();
+      System.out.println(file);
+      for (String s : getMode().getExtensions()) {
+        // if it is a change to a file with a known extension
+        if (file.toString().endsWith(s)) {
+          sketchFile = true;
+          break;
+        }
       }
-      if (e.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
-//        Path p = (Path) e.context();
-//        Path root = (Path) key.watchable();
-//        Path path = root.resolve(p);
-        int response = 
-          Base.showYesNoQuestion(Editor.this, "File Modified",
-                                 "A file has been modified externally",
-                                 "Would you like to reload the sketch?");
-        if (response == 0) {
-          // reload the sketch
+      //if the file is not a known type, then go the the next event
+      if (!sketchFile) {
+        continue;
+      }
+
+      int response = 
+        Base.showYesNoQuestion(Editor.this,
+                               "File Modified",
+                               "Your sketch has been modified externally",
+                               "Would you like to reload the sketch?");
+      if (response == 0) {
+        //grab the 'main' code in case this reload tries to delete everything
+        File sc = sketch.getMainFile();
+        //reload the sketch
+        try {
           sketch.reload();
           header.rebuild();
-          watcherReloaded = true;
+        } catch (Exception f) {
+          if (sketch.getCodeCount() < 1) {
+            Base.showWarning("Canceling Reload",
+                             "You cannot delete the last code file in a sketch.");
+            //if they deleted the last file, re-save the SketchCode
+            try {
+              //make a blank file
+              sc.createNewFile();
+            } catch (IOException e1) {
+              //if that didn't work, tell them it's un-recoverable
+              Base.showError("Reload failed", "The sketch contains no code files", e1);
+              //don't try to reload again after the double fail
+              //this editor is probably trashed by this point, but a save-as might be possible
+              break;
+            }
+            //don't ask for another reload after this save
+            watcherSave = true;
+            return;
+          }
         }
-      } else {
-        // called when a file is created or deleted
-        // for now, do nothing
+        //now that we've reloaded once, don't try to reload again
+        break;
       }
     }
     watcherSave = false;
   }
-
 
   /**
    * Set the title of the PDE window based on the current sketch, i.e.
@@ -2523,7 +2620,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public boolean handleSave(boolean immediately) {
 //    handleStop();  // 0136
 
-    watcherSave = true;
+    setWatcherSave();
     if (sketch.isUntitled()) {
       return handleSaveAs();
       // need to get the name, user might also cancel here
@@ -2567,14 +2664,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
     statusNotice(Language.text("editor.status.saving"));
     try {
       if (sketch.saveAs()) {
+        // Disabling for 3.0a4
+        if (false && Preferences.getBoolean("editor.watcher")) {  
+          // "Save As" moves where the files are, so a listener must be 
+          // attached to the new location.
+          // TODO shouldn't this remove the old listener?
+          initFileChangeListener();
+        }
         // statusNotice("Done Saving.");
-    	// status is now printed from Sketch so that "Done Saving."
-    	// is only printed after Save As when progress bar is shown.  
-    	  
-        // Disabling this for 0125, instead rebuild the menu inside
-        // the Save As method of the Sketch object, since that's the
-        // only one who knows whether something was renamed.
-        //sketchbook.rebuildMenusAsync();
+        // status is now printed from Sketch so that "Done Saving."
+        // is only printed after Save As when progress bar is shown. 
       } else {
         statusNotice(Language.text("editor.status.saving.canceled"));
         return false;

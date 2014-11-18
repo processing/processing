@@ -2363,7 +2363,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (normalMode == NORMAL_MODE_AUTO) inGeo.calcQuadStripNormals();
       tessellator.tessellateQuadStrip();
     } else if (shape == POLYGON) {
-      tessellator.tessellatePolygon(false, mode == CLOSE,
+      tessellator.tessellatePolygon(true, mode == CLOSE,
                                     normalMode == NORMAL_MODE_AUTO);
     }
   }
@@ -2527,7 +2527,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  class Triangle {
+  static class Triangle {
     int i0, i1, i2;
     PImage tex;
     float dist;
@@ -3056,6 +3056,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void bezierVertexImpl(float x2, float y2, float z2,
                                   float x3, float y3, float z3,
                                   float x4, float y4, float z4) {
+    bezierVertexCheck(shape, inGeo.vertexCount);
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -3083,6 +3084,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void quadraticVertexImpl(float cx, float cy, float cz,
                                      float x3, float y3, float z3) {
+    bezierVertexCheck(shape, inGeo.vertexCount);
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -3109,6 +3111,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void curveVertexImpl(float x, float y, float z) {
+    curveVertexCheck(shape);
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -3373,7 +3376,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void smooth(int level) {
-    if (smoothDisabled) return;
+    if (smoothDisabled || PGL.MAX_SAMPLES == -1) return;
 
     smooth = true;
 
@@ -6009,57 +6012,73 @@ public class PGraphicsOpenGL extends PGraphics {
 
     } else if (blendMode == BLEND) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_ADD);
+        pgl.blendEquationSeparate(PGL.FUNC_ADD,
+                                  PGL.FUNC_ADD);
       }
-      pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE_MINUS_SRC_ALPHA);
+      pgl.blendFuncSeparate(PGL.SRC_ALPHA, PGL.ONE_MINUS_SRC_ALPHA,
+                            PGL.ONE,       PGL.ONE);
 
     } else if (blendMode == ADD) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_ADD);
+        pgl.blendEquationSeparate(PGL.FUNC_ADD,
+                                  PGL.FUNC_ADD);
       }
-      pgl.blendFunc(PGL.SRC_ALPHA, PGL.ONE);
+      pgl.blendFuncSeparate(PGL.SRC_ALPHA, PGL.ONE,
+                            PGL.ONE,       PGL.ONE);
 
     } else if (blendMode == SUBTRACT) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_REVERSE_SUBTRACT);
-        pgl.blendFunc(PGL.ONE, PGL.SRC_ALPHA);
+        pgl.blendEquationSeparate(PGL.FUNC_REVERSE_SUBTRACT,
+                                  PGL.FUNC_ADD);
+        pgl.blendFuncSeparate(PGL.SRC_ALPHA, PGL.ONE,
+                              PGL.ONE,       PGL.ONE);
       } else {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "SUBTRACT");
       }
 
     } else if (blendMode == LIGHTEST) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_MAX);
-        pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
+        pgl.blendEquationSeparate(PGL.FUNC_MAX,
+                                  PGL.FUNC_ADD);
+        pgl.blendFuncSeparate(PGL.ONE, PGL.ONE,
+                              PGL.ONE, PGL.ONE);
       } else {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "LIGHTEST");
       }
 
     } else if (blendMode == DARKEST) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_MIN);
-        pgl.blendFunc(PGL.SRC_ALPHA, PGL.DST_ALPHA);
+        pgl.blendEquationSeparate(PGL.FUNC_MIN,
+                                  PGL.FUNC_ADD);
+        pgl.blendFuncSeparate(PGL.ONE, PGL.ONE,
+                              PGL.ONE, PGL.ONE);
       } else {
         PGraphics.showWarning(BLEND_DRIVER_ERROR, "DARKEST");
       }
 
     } else if (blendMode == EXCLUSION) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_ADD);
+        pgl.blendEquationSeparate(PGL.FUNC_ADD,
+                                  PGL.FUNC_ADD);
       }
-      pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE_MINUS_SRC_COLOR);
+      pgl.blendFuncSeparate(PGL.ONE_MINUS_DST_COLOR, PGL.ONE_MINUS_SRC_COLOR,
+                            PGL.ONE,                 PGL.ONE);
 
     } else if (blendMode == MULTIPLY) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_ADD);
+        pgl.blendEquationSeparate(PGL.FUNC_ADD,
+                                  PGL.FUNC_ADD);
       }
-      pgl.blendFunc(PGL.DST_COLOR, PGL.SRC_COLOR);
+      pgl.blendFuncSeparate(PGL.ZERO, PGL.SRC_COLOR,
+                            PGL.ONE,  PGL.ONE);
 
     } else if (blendMode == SCREEN) {
       if (blendEqSupported) {
-        pgl.blendEquation(PGL.FUNC_ADD);
+        pgl.blendEquationSeparate(PGL.FUNC_ADD,
+                                  PGL.FUNC_ADD);
       }
-      pgl.blendFunc(PGL.ONE_MINUS_DST_COLOR, PGL.ONE);
+      pgl.blendFuncSeparate(PGL.ONE_MINUS_DST_COLOR, PGL.ONE,
+                            PGL.ONE,                 PGL.ONE);
 
     } else if (blendMode == DIFFERENCE) {
       PGraphics.showWarning(BLEND_RENDERER_ERROR, "DIFFERENCE");
@@ -6678,7 +6697,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (fragFilename == null || fragFilename.equals("")) {
       PGraphics.showWarning(MISSING_FRAGMENT_SHADER);
       return null;
-    } else if (fragFilename == null || fragFilename.equals("")) {
+    } else if (vertFilename == null || vertFilename.equals("")) {
       PGraphics.showWarning(MISSING_VERTEX_SHADER);
       return null;
     } else {
@@ -8182,7 +8201,8 @@ public class PGraphicsOpenGL extends PGraphics {
             addEdge(pidx, idx, i == 0, false);
           } else if (0 < i) {
             // when drawing full circle, the edge is closed later
-            addEdge(pidx, idx, i == inc, i == length && !fullCircle);
+            addEdge(pidx, idx, i == PApplet.min(inc, length),
+                               i == length && !fullCircle);
           }
         }
       } while (i < length);
@@ -10060,6 +10080,7 @@ public class PGraphicsOpenGL extends PGraphics {
       IndexCache cache = tess.polyIndexCache;
       int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
       firstPointIndexCache = index;
+      if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
       for (int i = 0; i < in.vertexCount; i++) {
         int count = cache.vertexCount[index];
         if (PGL.MAX_VERTEX_INDEX1 <= count + nPtVert) {
@@ -10188,6 +10209,7 @@ public class PGraphicsOpenGL extends PGraphics {
       IndexCache cache = tess.polyIndexCache;
       int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
       firstPointIndexCache = index;
+      if (firstPolyIndexCache == -1) firstPolyIndexCache = index; // If the geometry has no fill, needs the first poly index.
       for (int i = 0; i < in.vertexCount; i++) {
         int nvert = 5;
         int count = cache.vertexCount[index];
@@ -11582,7 +11604,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void addQuadraticVertex(int i) {
       pg.curveVertexCount = 0;
       pg.bezierInitCheck();
-      pg.bezierVertexCheck(pg.shape, i);
+      pg.bezierVertexCheck(POLYGON, i);
 
       PMatrix3D draw = pg.bezierDrawMatrix;
 
