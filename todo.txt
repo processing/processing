@@ -9,6 +9,12 @@ manindra
 X Fix for "Probably a ++ should go here" messages
 X   https://github.com/processing/processing/issues/2956
 
+pulls
+X add mnemonics for menus (alt-f to open 'file')
+X   http://code.google.com/p/processing/issues/detail?id=12
+X   https://github.com/processing/processing/issues/51
+X   https://github.com/processing/processing/pull/2382
+
 
 _ any problems with new code signing crap? 
 _   issues raised around the symlink (just replace with a copy of the binary?)
@@ -25,8 +31,6 @@ _   add method to prompt user to download the JDK update
 
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
-_ check on pull for mnemonics
-_   https://github.com/processing/processing/pull/2382
 
 
 high
@@ -411,9 +415,6 @@ _   can also cause problems with opening multiple copies of same sketch
 _ after fixing name of sketch, ensure sketch of that name does not exist
 _ add auto-save to the editor
 _   http://code.google.com/p/processing/issues/detail?id=92
-_ add mnemonics for menus (alt-f to open 'file')
-_   http://code.google.com/p/processing/issues/detail?id=12
-_   https://github.com/processing/processing/issues/51
 _ option to just print all code in project
 _   http://code.google.com/p/processing/issues/detail?id=11
 _   https://github.com/processing/processing/issues/50
