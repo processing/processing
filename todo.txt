@@ -1,5 +1,9 @@
 0233 (3.0a6)
 
+joel
+X Add reference for installed tools and libraries to the Help menu
+X   https://github.com/processing/processing/issues/943
+X   https://github.com/processing/processing/pull/2804
 
 manindra
 X Fix for "Probably a ++ should go here" messages
@@ -565,9 +569,6 @@ _ could have library developers update compatability note
 _   so they would need to test library and say "compatible with 0110"
 _   before it would automatically update or show as an update
 _ need an "install library" option to deal with urls..
-_ support the reference folder of contributed libraries
-_   add reference for contributed libraries to the Help menu
-_   https://github.com/processing/processing/issues/943
 
 
 PDE / Manager
