@@ -35,6 +35,7 @@ import processing.app.tools.Tool;
 public class ToolContribution extends LocalContribution implements Tool {
   private Tool tool;
 
+  private File referenceFile; // shortname/reference/index.html
 
   static public ToolContribution load(File folder) {
     try {
@@ -59,6 +60,8 @@ public class ToolContribution extends LocalContribution implements Tool {
       Class<?> toolClass = loader.loadClass(className);
       tool = (Tool) toolClass.newInstance();
     }
+
+    referenceFile = new File(folder, "reference/index.html");
   }
 
 
@@ -152,5 +155,27 @@ public class ToolContribution extends LocalContribution implements Tool {
 
   public ContributionType getType() {
     return ContributionType.TOOL;
+  }
+
+
+  /**
+   * Returns the object stored in the referenceFile field, which contains an
+   * instance of the file object representing the index file of the reference
+   * 
+   * @return referenceFile
+   */
+  public File getReferenceIndexFile() {
+    return referenceFile;
+  }
+
+
+  /**
+   * Tests whether the reference's index file indicated by referenceFile exists.
+   * 
+   * @return true if and only if the file denoted by referenceFile exists; false
+   *         otherwise.
+   */
+  public boolean hasReference() {
+    return referenceFile.exists();
   }
 }
