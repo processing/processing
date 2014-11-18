@@ -286,6 +286,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  protected ArrayList<ToolContribution> getCoreTools() {
+    return coreTools;
+  }
+
+
   /**
    * Broken out to get modes working for GSOC, but this needs a longer-term
    * solution where the listeners are handled properly.
@@ -1262,11 +1267,22 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   public void showReference(String filename) {
     File file = new File(mode.getReferenceFolder(), filename);
+    showReferenceFile(file);
+  }
+
+
+  /**
+   * Given the .html file, displays it in the default browser.
+   * 
+   * @param file
+   */
+  public void showReferenceFile(File file) {
     try {
       file = file.getCanonicalFile();
     } catch (IOException e) {
       e.printStackTrace();
     }
+
     // Prepend with file:// and also encode spaces & other characters
     Base.openURL(file.toURI().toString());
   }
