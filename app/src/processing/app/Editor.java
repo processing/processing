@@ -733,11 +733,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     menu.addSeparator();
 
-    cutItems = Toolkit.newJMenuItem("Cut", 'X');
+    cutItems = Toolkit.newJMenuItem(Language.text("menu.edit.cut"), 'X');
     cutItems.addActionListener(cutAction = new CutAction());
     menu.add(cutItems);
 
-    copyItems = Toolkit.newJMenuItem("Copy", 'C');
+    copyItems = Toolkit.newJMenuItem(Language.text("menu.edit.copy"), 'C');
     copyItems.addActionListener(copyAction = new CopyAction());
     menu.add(copyItems);
 
@@ -1286,7 +1286,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   class CutAction extends AbstractAction {
     public CutAction() {
-      super("Cut");
+      super(Language.text("menu.edit.cut"));
       this.setEnabled(false);
     }
     
@@ -1296,11 +1296,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     
     public void updateCutState() {
-      if (canCut()) {
-        cutItems.setEnabled(true);
-      } else {
-        cutItems.setEnabled(false);
-      }
+      cutItems.setEnabled(canCut());
     }
     
     public boolean canCut() {
@@ -1310,7 +1306,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     
   class CopyAction extends AbstractAction {
     public CopyAction() {
-      super("Copy");
+      super(Language.text("menu.edit.copy"));
       this.setEnabled(false);
     }
     
@@ -1319,11 +1315,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     
     public void updateCopyState() {
-      if (canCopy()) {
-        copyItems.setEnabled(true);
-      } else {
-        copyItems.setEnabled(false);
-      }
+      copyItems.setEnabled(canCopy());
     }
     
     public boolean canCopy() {
