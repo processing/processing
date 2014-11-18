@@ -193,7 +193,7 @@ public class Toolkit {
       "&forward", "&gotopage", "&bookmarks", "&addbookmark", "bookmark&tabsasfolder", 
       "&editbookmarks", "&newbookmarksfolder", "&tools", "&settings", "&toolbars",
       "configure&shortcuts", "configuretool&bars", "&configure*", "&help", ".+&handbook", 
-      "&whatsthis", "report&bug", "&aboutprocessing", "about&kde" };
+      "&whatsthis", "report&bug", "&aboutprocessing", "about&kde", "&beenden" };
     Pattern[] kdePreDefPats = new Pattern[kdePreDefStrs.length];
     for (int i = 0; i < kdePreDefStrs.length; i++)
       kdePreDefPats[i] = Pattern.compile(kdePreDefStrs[i].replace("&",""));
