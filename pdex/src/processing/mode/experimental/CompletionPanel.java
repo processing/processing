@@ -117,8 +117,7 @@ public class CompletionPanel {
     scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
     popupMenu.setPopupSize(calcWidth(), calcHeight(items.getSize())); //TODO: Eradicate this evil
-    this.textarea.errorCheckerService.getASTGenerator()
-        .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
+    this.textarea.errorCheckerService.getASTGenerator().updateJavaDoc(completionList.getSelectedValue());
     textarea.requestFocusInWindow();
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
         + location.y);
@@ -227,8 +226,7 @@ public class CompletionPanel {
     float min = 0;
     FontMetrics fm = textarea.getGraphics().getFontMetrics();
     for (int i = 0; i < completionList.getModel().getSize(); i++) {
-      float h = fm.stringWidth(((CompletionCandidate) completionList.getModel()
-          .getElementAt(i)).getLabel());
+      float h = fm.stringWidth(completionList.getModel().getElementAt(i).getLabel());
       min = Math.max(min, h);
     }
     int w = Math.min((int) min, maxWidth);
@@ -307,8 +305,8 @@ public class CompletionPanel {
         int currentSubwordLen = currentSubword == null ? 0 : currentSubword
             .length();
         //logE(currentSubword + " <= subword,len => " + currentSubword.length());
-        String selectedSuggestion = ((CompletionCandidate) completionList
-            .getSelectedValue()).getCompletionString();
+        String selectedSuggestion = 
+          completionList.getSelectedValue().getCompletionString();
         
         if (currentSubword != null) {
           selectedSuggestion = selectedSuggestion.substring(currentSubwordLen);
@@ -316,8 +314,8 @@ public class CompletionPanel {
           currentSubword = "";
         }
         
-        String completionString = ((CompletionCandidate) completionList
-            .getSelectedValue()).getCompletionString();
+        String completionString = 
+            completionList.getSelectedValue().getCompletionString();
         if (selectedSuggestion.endsWith(" )")) { // the case of single param methods
           // selectedSuggestion = ")";
           if (completionString.endsWith(" )")) {
@@ -358,8 +356,7 @@ public class CompletionPanel {
         }
         
         log("Suggestion inserted: " + System.currentTimeMillis());
-        if (((CompletionCandidate) completionList.getSelectedValue())
-            .getLabel().contains("...")) {
+        if (completionList.getSelectedValue().getLabel().contains("...")) {
           // log("No hide"); 
           // Why not hide it? Coz this is the case of
           // overloaded methods. See #2755
@@ -488,8 +485,7 @@ public class CompletionPanel {
                                                    .getVerticalScrollBar()
                                                    .getValue()
                                                    - step);
-    textarea.errorCheckerService.getASTGenerator()
-        .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
+    textarea.errorCheckerService.getASTGenerator().updateJavaDoc(completionList.getSelectedValue());
 
   }
 
@@ -506,8 +502,7 @@ public class CompletionPanel {
           .getSize() - 1);
       selectIndex(index);
     }
-    textarea.errorCheckerService.getASTGenerator()
-        .updateJavaDoc((CompletionCandidate) completionList.getSelectedValue());
+    textarea.errorCheckerService.getASTGenerator().updateJavaDoc(completionList.getSelectedValue());
     int step = scrollPane.getVerticalScrollBar().getMaximum()
         / completionList.getModel().getSize();
     scrollPane.getVerticalScrollBar().setValue(scrollPane

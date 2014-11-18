@@ -42,17 +42,18 @@ public class ToolContribution extends LocalContribution implements Tool {
       return new ToolContribution(folder);
     } catch (IgnorableException ig) {
       Base.log(ig.getMessage());
-    } catch (Error err) {
-      // Handles UnsupportedClassVersionError and others
-      err.printStackTrace();
-    } catch (Exception ex) {
-      ex.printStackTrace();
+
+    } catch (VerifyError ve) {  // incompatible
+      // avoid the excessive error spew that happens here
+
+    } catch (Throwable e) {  // unknown error
+      e.printStackTrace();
     }
     return null;
   }
 
 
-  private ToolContribution(File folder) throws Exception {
+  private ToolContribution(File folder) throws Throwable {
     super(folder);
 
     String className = initLoader(null);

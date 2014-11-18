@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-11 Ben Fry and Casey Reas
+  Copyright (c) 2013-14 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -24,7 +25,12 @@
 
 package processing.core;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.font.FontRenderContext;
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
@@ -134,8 +140,8 @@ import processing.opengl.PShader;
    */
 public class PGraphics extends PImage implements PConstants {
 
-  /// Canvas object that covers rendering this graphics on screen.
-  public Canvas canvas;
+//  /// Canvas object that covers rendering this graphics on screen.
+//  public Canvas canvas;
 
   // ........................................................
 
@@ -180,6 +186,10 @@ public class PGraphics extends PImage implements PConstants {
    * are also added to the sketch.
    */
   protected boolean primarySurface;
+
+//  // TODO nervous about leaving this here since it seems likely to create
+//  // back-references where we don't want them
+//  protected PSurface surface;
 
   // ........................................................
 
@@ -501,7 +511,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Java AWT Image object associated with this renderer. For the 1.0 version
-   * of P2D and P3D, this was be associated with their MemoryImageSource.
+   * of P2D and P3D, this was associated with their MemoryImageSource.
    * For PGraphicsJava2D, it will be the offscreen drawing buffer.
    */
   public Image image;
@@ -719,10 +729,6 @@ public class PGraphics extends PImage implements PConstants {
 //  }
 
 
-  public void setFrameRate(float frameRate) {  // ignore
-  }
-
-
   /**
    * The final step in setting up a renderer, set its size of this renderer.
    * This was formerly handled by the constructor, but instead it's been broken
@@ -737,19 +743,20 @@ public class PGraphics extends PImage implements PConstants {
   public void setSize(int w, int h) {  // ignore
     width = w;
     height = h;
-//    width1 = width - 1;
-//    height1 = height - 1;
 
-    allocate();
+    pixelWidth = width * pixelFactor;
+    pixelHeight = height * pixelFactor;
+
+//    allocate();
     reapplySettings();
   }
 
 
-  /**
-   * Allocate memory for this renderer. Generally will need to be implemented
-   * for all renderers.
-   */
-  protected void allocate() { }
+//  /**
+//   * Allocate memory for this renderer. Generally will need to be implemented
+//   * for all renderers.
+//   */
+//  protected void allocate() { }
 
 
   /**
@@ -760,6 +767,11 @@ public class PGraphics extends PImage implements PConstants {
    * endRaw(), in order to shut things off.
    */
   public void dispose() {  // ignore
+  }
+
+
+  public PSurface createSurface() {  // ignore
+    return new PSurfaceAWT(this);
   }
 
 
@@ -811,17 +823,6 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Handle grabbing the focus from the parent applet. Other renderers can
-   * override this if handling needs to be different.
-   */
-  public void requestFocus() {  // ignore
-    if (parent != null) {
-      parent.requestFocusInWindow();
-    }
-  }
-
-
-  /**
    * Some renderers have requirements re: when they are ready to draw.
    */
   public boolean canDraw() {  // ignore
@@ -829,12 +830,14 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /**
-   * Try to draw, or put a draw request on the queue.
-   */
-  public void requestDraw() {  // ignore
-    parent.handleDraw();
-  }
+  // removing because renderers will have their own animation threads and
+  // can handle this however they wish
+//  /**
+//   * Try to draw, or put a draw request on the queue.
+//   */
+//  public void requestDraw() {  // ignore
+//    parent.handleDraw();
+//  }
 
 
   /**
@@ -4798,6 +4801,25 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Convenience method to get a legit FontMetrics object. Where possible,
+   * override this any renderer subclass so that you're not using what's
+   * returned by getDefaultToolkit() to get your metrics.
+   */
+  @SuppressWarnings("deprecation")
+  public FontMetrics getFontMetrics(Font font) {  // ignore
+    return Toolkit.getDefaultToolkit().getFontMetrics(font);
+  }
+
+
+  /**
+   * Convenience method to jump through some Java2D hoops and get an FRC.
+   */
+  public FontRenderContext getFontRenderContext(Font font) {  // ignore
+    return getFontMetrics(font).getFontRenderContext();
+  }
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -7903,7 +7925,7 @@ public class PGraphics extends PImage implements PConstants {
    * A better name? showFrame, displayable, isVisible, visible, shouldDisplay,
    * what to call this?
    */
-  public boolean displayable() {
+  public boolean displayable() {  // ignore
     return true;
   }
 
@@ -7911,7 +7933,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Return true if this renderer supports 2D drawing. Defaults to true.
    */
-  public boolean is2D() {
+  public boolean is2D() {  // ignore
     return true;
   }
 
@@ -7919,7 +7941,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Return true if this renderer supports 3D drawing. Defaults to false.
    */
-  public boolean is3D() {
+  public boolean is3D() {  // ignore
     return false;
   }
 
@@ -7927,7 +7949,12 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Return true if this renderer does rendering through OpenGL. Defaults to false.
    */
-  public boolean isGL() {
+  public boolean isGL() {  // ignore
     return false;
+  }
+
+
+  public boolean is2X() {
+    return pixelFactor == 2;
   }
 }

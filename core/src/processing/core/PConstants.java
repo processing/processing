@@ -46,13 +46,17 @@ public interface PConstants {
 
   // renderers known to processing.core
 
-  static final String JAVA2D = "processing.core.PGraphicsJava2D";
+  static final String JAVA2D    = "processing.core.PGraphicsJava2D";
+  static final String JAVA2D_2X = "processing.core.PGraphicsJava2D2X";
+
   static final String P2D    = "processing.opengl.PGraphics2D";
+  static final String P2D_2X = "processing.opengl.PGraphics2D2X";
   static final String P3D    = "processing.opengl.PGraphics3D";
+  static final String P3D_2X = "processing.opengl.PGraphics3D2X";
   static final String OPENGL = P3D;
 
-  static final String PDF    = "processing.pdf.PGraphicsPDF";
-  static final String DXF    = "processing.dxf.RawDXF";
+  static final String PDF = "processing.pdf.PGraphicsPDF";
+  static final String DXF = "processing.dxf.RawDXF";
 
   // platform IDs for PApplet.platform
 

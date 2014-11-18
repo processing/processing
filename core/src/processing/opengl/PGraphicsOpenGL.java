@@ -24,6 +24,7 @@ package processing.opengl;
 
 import processing.core.*;
 
+import java.awt.Font;
 import java.net.URL;
 import java.nio.*;
 import java.util.*;
@@ -236,8 +237,6 @@ public class PGraphicsOpenGL extends PGraphics {
   // Useful to have around.
   static protected PMatrix3D identity = new PMatrix3D();
 
-  protected boolean matricesAllocated = false;
-
   /**
    * Marks when changes to the size have occurred, so that the camera
    * will be reset in beginDraw().
@@ -310,8 +309,6 @@ public class PGraphicsOpenGL extends PGraphics {
   public float currentLightFalloffConstant;
   public float currentLightFalloffLinear;
   public float currentLightFalloffQuadratic;
-
-  protected boolean lightsAllocated = false;
 
   // ........................................................
 
@@ -537,6 +534,23 @@ public class PGraphicsOpenGL extends PGraphics {
     tessGeo = newTessGeometry(this, IMMEDIATE);
     texCache = newTexCache(this);
 
+    projection = new PMatrix3D();
+    camera = new PMatrix3D();
+    cameraInv = new PMatrix3D();
+    modelview = new PMatrix3D();
+    modelviewInv = new PMatrix3D();
+    projmodelview = new PMatrix3D();
+
+    lightType = new int[PGL.MAX_LIGHTS];
+    lightPosition = new float[4 * PGL.MAX_LIGHTS];
+    lightNormal = new float[3 * PGL.MAX_LIGHTS];
+    lightAmbient = new float[3 * PGL.MAX_LIGHTS];
+    lightDiffuse = new float[3 * PGL.MAX_LIGHTS];
+    lightSpecular = new float[3 * PGL.MAX_LIGHTS];
+    lightFalloffCoefficients = new float[3 * PGL.MAX_LIGHTS];
+    lightSpotParameters = new float[2 * PGL.MAX_LIGHTS];
+    currentLightSpecular = new float[3];
+
     initialized = false;
   }
 
@@ -559,18 +573,16 @@ public class PGraphicsOpenGL extends PGraphics {
   //public void setAntiAlias(int samples)  // PGraphics
 
 
-  @Override
-  public void setFrameRate(float frameRate) {
-    pgl.setFps(frameRate);
-  }
+//  @Override
+//  public void setFrameRate(float frameRate) {
+//    pgl.setFps(frameRate);
+//  }
 
 
   @Override
   public void setSize(int iwidth, int iheight) {
     width = iwidth;
     height = iheight;
-
-    allocate();
 
     // init perspective projection based on new dimensions
     cameraFOV = 60 * DEG_TO_RAD; // at least for now
@@ -585,41 +597,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  /**
-   * Called by resize(), this handles creating the actual GLCanvas the
-   * first time around, or simply resizing it on subsequent calls.
-   * There is no pixel array to allocate for an OpenGL canvas
-   * because OpenGL's pixel buffer is all handled internally.
-   */
-  @Override
-  protected void allocate() {
-    super.allocate();
-
-    if (!matricesAllocated) {
-      projection = new PMatrix3D();
-      camera = new PMatrix3D();
-      cameraInv = new PMatrix3D();
-      modelview = new PMatrix3D();
-      modelviewInv = new PMatrix3D();
-      projmodelview = new PMatrix3D();
-      matricesAllocated = true;
-    }
-
-    if (!lightsAllocated) {
-      lightType = new int[PGL.MAX_LIGHTS];
-      lightPosition = new float[4 * PGL.MAX_LIGHTS];
-      lightNormal = new float[3 * PGL.MAX_LIGHTS];
-      lightAmbient = new float[3 * PGL.MAX_LIGHTS];
-      lightDiffuse = new float[3 * PGL.MAX_LIGHTS];
-      lightSpecular = new float[3 * PGL.MAX_LIGHTS];
-      lightFalloffCoefficients = new float[3 * PGL.MAX_LIGHTS];
-      lightSpotParameters = new float[2 * PGL.MAX_LIGHTS];
-      currentLightSpecular = new float[3];
-      lightsAllocated = true;
-    }
-  }
-
-
   @Override
   public void dispose() { // PGraphics
     super.dispose();
@@ -631,7 +608,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // render only 1 frame, so no enough rendering
       // iterations have been conducted so far to properly
       // initialize all the buffers.
-      pgl.swapBuffers();
+//      pgl.swapBuffers();
     }
 
     finalizePolyBuffers();
@@ -682,6 +659,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void setFlushMode(int mode) {
     flushMode = mode;
+  }
+
+
+  @Override
+  public PSurface createSurface() {  // ignore
+    return new PSurfaceNEWT(this);
   }
 
 
@@ -1632,38 +1615,49 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  @Override
-  public void requestFocus() {  // ignore
-    pgl.requestFocus();
-  }
+//  @Override
+//  public void requestFocus() {
+//    pgl.requestFocus();
+//  }
 
 
   /**
    * OpenGL cannot draw until a proper native peer is available, so this
    * returns the value of PApplet.isDisplayable() (inherited from Component).
    */
-  @Override
-  public boolean canDraw() {
-    return pgl.canDraw();
-  }
+//  @Override
+//  public boolean canDraw() {
+//    return pgl.canDraw();
+//  }
 
 
-  @Override
-  public void requestDraw() {
-    if (primarySurface) {
-      if (initialized) {
-        if (sized) pgl.reinitSurface();
-        if (parent.canDraw()) pgl.requestDraw();
-      } else {
-        initPrimary();
-      }
-    }
-  }
+//  @Override
+//  public void requestDraw() {
+//    if (primarySurface) {
+//      if (initialized) {
+//        if (sized) pgl.reinitSurface();
+//        if (parent.canDraw()) pgl.requestDraw();
+//      } else {
+//        initPrimary();
+//      }
+//    }
+//  }
 
 
   @Override
   public void beginDraw() {
     if (primarySurface) {
+//      if (initialized) {
+//        if (sized) pgl.reinitSurface();
+//        if (parent.canDraw()) pgl.requestDraw();
+//      } else {
+        initPrimary();
+//      }
+
+      if (!initialized) {
+        initPrimary();
+      }
+
       setCurrentPG(this);
     } else {
       pgl.getGL(getPrimaryPGL());
@@ -3563,7 +3557,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public float textAscent() {
     if (textFont == null) defaultFontOrDeath("textAscent");
-    Object font = textFont.getNative();
+    Font font = (Font) textFont.getNative();
     float ascent = 0;
     if (font != null) ascent = pgl.getFontAscent(font);
     if (ascent == 0) ascent = super.textAscent();
@@ -3574,7 +3568,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public float textDescent() {
     if (textFont == null) defaultFontOrDeath("textAscent");
-    Object font = textFont.getNative();
+    Font font = (Font) textFont.getNative();
     float descent = 0;
     if (font != null) descent = pgl.getFontDescent(font);
     if (descent == 0) descent = super.textDescent();
@@ -3584,7 +3578,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   protected float textWidthImpl(char buffer[], int start, int stop) {
-    Object font = textFont.getNative();
+    Font font = (Font) textFont.getNative();
     float twidth = 0;
     if (font != null) twidth = pgl.getTextWidth(font, buffer, start, stop);
     if (twidth == 0) twidth = super.textWidthImpl(buffer, start, stop);
@@ -3595,7 +3589,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void textSize(float size) {
     if (textFont == null) defaultFontOrDeath("textSize", size);
-    Object font = textFont.getNative();
+    Font font = (Font) textFont.getNative();
     if (font != null) {
       Object dfont = pgl.getDerivedFont(font, size);
       textFont.setNative(dfont);
@@ -6337,7 +6331,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void initPrimary() {
-    pgl.initSurface(quality);
+//    pgl.initSurface(quality);
     if (texture != null) {
       removeCache(this);
       texture = ptexture = null;

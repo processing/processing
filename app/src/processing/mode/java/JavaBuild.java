@@ -252,7 +252,7 @@ public class JavaBuild {
 //    // if this fella is OpenGL, and if so, to add the import. It's messy and
 //    // gross and someday we'll just always include OpenGL.
 //    String[] sizeInfo =
-//      preprocessor.initSketchSize(sketch.getMainProgram(), sizeWarning);
+      preprocessor.initSketchSize(sketch.getMainProgram(), sizeWarning);
 //      //PdePreprocessor.parseSketchSize(sketch.getMainProgram(), false);
 //    if (sizeInfo != null) {
 //      String sketchRenderer = sizeInfo[3];

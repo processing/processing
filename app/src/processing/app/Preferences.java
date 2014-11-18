@@ -4,7 +4,7 @@
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2014 The Processing Foundation
-  
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
   as published by the Free Software Foundation.
@@ -35,14 +35,14 @@ import processing.core.*;
  * ISO 8859-1 encoding, which is highly likely to be a problem when trying to
  * save sketch folders and locations. Like the rest of Processing, we use UTF8.
  * <p>
- * We don't use the Java Preferences API because it would entail writing to 
- * the registry (on Windows), or an obscure file location (on Mac OS X) and 
- * make it far more difficult (impossible) to remove the preferences.txt to 
- * reset them (when they become corrupt), or to find the the file to make 
+ * We don't use the Java Preferences API because it would entail writing to
+ * the registry (on Windows), or an obscure file location (on Mac OS X) and
+ * make it far more difficult (impossible) to remove the preferences.txt to
+ * reset them (when they become corrupt), or to find the the file to make
  * edits for numerous obscure preferences that are not part of the preferences
- * window. If we added a generic editor (e.g. about:config in Mozilla) for 
+ * window. If we added a generic editor (e.g. about:config in Mozilla) for
  * such things, we could start using the Java Preferences API. But wow, that
- * sounds like a lot of work. Not unlike writing this paragraph. 
+ * sounds like a lot of work. Not unlike writing this paragraph.
  */
 public class Preferences {
   // had to rename the defaults file because people were editing it
@@ -82,7 +82,7 @@ public class Preferences {
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
     try {
-      // Name changed for 2.1b2 to avoid problems with users modifying or 
+      // Name changed for 2.1b2 to avoid problems with users modifying or
       // replacing the file after doing a search for "preferences.txt".
       load(Base.getLibStream(DEFAULTS_FILE));
     } catch (Exception e) {
@@ -101,7 +101,7 @@ public class Preferences {
         platformKeys.add(key);
       }
     }
-    
+
     // Use those platform-specific keys to override
     for (String key : platformKeys) {
       // this is a key specific to a particular platform
@@ -111,11 +111,12 @@ public class Preferences {
     }
 
     // clone the hash table
-    defaults = (HashMap<String, String>) table.clone();
+    //defaults = (HashMap<String, String>) table.clone();
+    defaults = new HashMap<String, String>(table);
 
     // other things that have to be set explicitly for the defaults
     setColor("run.window.bgcolor", SystemColor.control); //$NON-NLS-1$
-    
+
     // next load user preferences file
     preferencesFile = Base.getSettingsFile(PREFS_FILE);
     if (preferencesFile.exists()) {
@@ -129,18 +130,18 @@ public class Preferences {
                        preferencesFile.getAbsolutePath() +
                        " and restart Processing.", ex);
       }
-    } 
-    
+    }
+
     if (checkSketchbookPref() || !preferencesFile.exists()) {
       // create a new preferences file if none exists
       // saves the defaults out to the file
       save();
     }
 
-    PApplet.useNativeSelect = 
+    PApplet.useNativeSelect =
       Preferences.getBoolean("chooser.files.native"); //$NON-NLS-1$
-    
-    // Set http proxy for folks that require it. 
+
+    // Set http proxy for folks that require it.
     // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
     String proxyHost = get("proxy.host");
     String proxyPort = get("proxy.port");
@@ -151,7 +152,7 @@ public class Preferences {
     }
   }
 
-  
+
   static protected String getPreferencesPath() {
     return preferencesFile.getAbsolutePath();
   }
@@ -330,7 +331,7 @@ public class Preferences {
         style |= Font.ITALIC;
       }
       int size = PApplet.parseInt(pieces[2], 12);
-      
+
       // replace bad font with the default from lib/preferences.txt
       if (replace) {
         set(attr, value);
@@ -348,20 +349,20 @@ public class Preferences {
       }
 
     } catch (Exception e) {
-      // Adding try/catch block because this may be where 
-      // a lot of startup crashes are happening. 
-      Base.log("Error with font " + get(attr) + " for attribute " + attr); 
+      // Adding try/catch block because this may be where
+      // a lot of startup crashes are happening.
+      Base.log("Error with font " + get(attr) + " for attribute " + attr);
     }
     return new Font("Dialog", Font.PLAIN, 12);
   }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
+
 
   /**
-   * Check for a 3.0 sketchbook location, and if none exists, 
-   * try to grab it from the 2.0 sketchbook location.  
+   * Check for a 3.0 sketchbook location, and if none exists,
+   * try to grab it from the 2.0 sketchbook location.
    * @return true if a location was found and the pref didn't exist
    */
   static protected boolean checkSketchbookPref() {
@@ -377,13 +378,13 @@ public class Preferences {
     }
     return false;
   }
-  
-  
+
+
   static protected String getSketchbookPath() {
     return get("sketchbook.path.three"); //$NON-NLS-1$
   }
-  
-  
+
+
   static protected void setSketchbookPath(String path) {
     set("sketchbook.path.three", path); //$NON-NLS-1$
   }

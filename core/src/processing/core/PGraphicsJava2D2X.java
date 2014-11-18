@@ -3,8 +3,8 @@ package processing.core;
 import java.awt.*;
 
 
-public class PGraphicsRetina2D extends PGraphicsJava2D {
-  PImage retina;
+public class PGraphicsJava2D2X extends PGraphicsJava2D {
+//  PImage retina;
 //  int retinaWidth;
 //  int retinaHeight;
 
@@ -14,21 +14,22 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   // INTERNAL
 
 
-  public PGraphicsRetina2D() {
-    retina = new PImage();
-    retina.format = RGB;
+  public PGraphicsJava2D2X() {
+    pixelFactor = 2;
+//    retina = new PImage();
+//    retina.format = RGB;
   }
 
 
-  @Override
-  public void setParent(PApplet parent) {
-    super.setParent(parent);
-    retina.parent = parent;
-  }
+//  @Override
+//  public void setParent(PApplet parent) {
+//    super.setParent(parent);
+//    retina.parent = parent;
+//  }
 
 
-  @Override
-  protected void allocate() {
+//  @Override
+//  protected void allocate() {
 //    parent.setIgnoreRepaint(true);
 //    g2 = (Graphics2D) parent.getGraphics();
 
@@ -80,7 +81,7 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
       g2 = (Graphics2D) image.getGraphics();
     }
     */
-  }
+//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -88,38 +89,22 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   // FRAME
 
 
-  @Override
-  public boolean canDraw() {
-    return parent.getGraphicsConfiguration() != null;
-  }
+//  @Override
+//  public boolean canDraw() {
+//    return parent.getGraphicsConfiguration() != null;
+//  }
 
 
   @Override
   public void beginDraw() {
-//    g2 = (Graphics2D) parent.getGraphics();
-
-    GraphicsConfiguration gc = parent.getGraphicsConfiguration();
-
-//    if (false) {
-//      if (image == null || ((VolatileImage) image).validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
-//        image = gc.createCompatibleVolatileImage(width*2, height*2);
-//      }
-//    } else {
-    if (image == null) {
-      retina.width = width * 2;
-      retina.height = height * 2;
-      image = gc.createCompatibleImage(retina.width, retina.height);
-//        System.out.println("image type is " + image);
-    }
+//    GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+//
+//    if (image == null) {
+//      retina.width = width * 2;
+//      retina.height = height * 2;
+//      image = gc.createCompatibleImage(retina.width, retina.height);
 //    }
     g2 = (Graphics2D) image.getGraphics();
-//    g2.scale(2, 2);
-
-//  if (bimage == null ||
-//      bimage.getWidth() != width ||
-//      bimage.getHeight() != height) {
-//    PApplet.debug("PGraphicsJava2D creating new image");
-//    bimage = gc.createCompatibleImage(width, height);
 
     checkSettings();
     resetMatrix(); // reset model matrix
@@ -212,8 +197,7 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   //////////////////////////////////////////////////////////////
 
 
-//  int[] retinaPixels;
-
+  /*
   @Override
   public void loadPixels() {
     if ((retina.pixels == null) || (retina.pixels.length != retina.width * retina.height)) {
@@ -281,12 +265,6 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
   }
 
 
-  /**
-   * Update the pixels[] buffer to the PGraphics image.
-   * <P>
-   * Unlike in PImage, where updatePixels() only requests that the
-   * update happens, in PGraphicsJava2D, this will happen immediately.
-   */
   @Override
   public void updatePixels(int ux, int uy, int uw, int uh) {
     int wide = hints[ENABLE_RETINA_PIXELS] ? retina.width : width;
@@ -652,4 +630,5 @@ public class PGraphicsRetina2D extends PGraphicsJava2D {
       return super.save(filename);
     }
   }
+    */
 }

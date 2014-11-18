@@ -20,6 +20,7 @@ package processing.mode.experimental;
 import static processing.mode.experimental.ExperimentalMode.log;
 import static processing.mode.experimental.ExperimentalMode.logE;
 import static processing.mode.experimental.ExperimentalMode.log2;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
@@ -157,7 +158,8 @@ public class ASTNodeWrapper {
     
     if (jd == null) {
       log("Visiting children of node " + getNodeAsString(thisNode));
-      Iterator<StructuralPropertyDescriptor> it = (Iterator<StructuralPropertyDescriptor>) 
+      @SuppressWarnings("unchecked")
+      Iterator<StructuralPropertyDescriptor> it = 
           thisNode.structuralPropertiesForType().iterator();
       boolean flag = true;
       while (it.hasNext()) {
@@ -213,7 +215,7 @@ public class ASTNodeWrapper {
    * @return
    */
   private int getJavadocOffset(FieldDeclaration fd){
-    List<ASTNode> list = (List<ASTNode>) fd.modifiers();
+    List<ASTNode> list = fd.modifiers();
     SimpleName sn = (SimpleName) getNode();
     
     Type tp = fd.getType();
@@ -247,7 +249,8 @@ public class ASTNodeWrapper {
    * @return
    */
   private int getJavadocOffset(MethodDeclaration md) {
-    List<ASTNode> list = (List<ASTNode>) md.modifiers();
+    @SuppressWarnings("unchecked")
+    List<ASTNode> list = md.modifiers();
     SimpleName sn = (SimpleName) getNode();
     int lineNum = getLineNumber(sn);
     log("SN " + sn + ", " + lineNum);
@@ -282,7 +285,8 @@ public class ASTNodeWrapper {
    */
   private int getJavadocOffset(TypeDeclaration td){
     // TODO: This isn't perfect yet. Class \n \n \n className still breaks it.. :'(
-    List<ASTNode> list= (List<ASTNode>)td.modifiers();
+    @SuppressWarnings("unchecked")
+    List<ASTNode> list = td.modifiers();
     SimpleName sn = (SimpleName) getNode();
     
     int lineNum = getLineNumber(sn);

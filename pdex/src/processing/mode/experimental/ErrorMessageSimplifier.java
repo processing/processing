@@ -7,7 +7,6 @@ import java.util.TreeMap;
 
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
-import static processing.mode.experimental.ExperimentalMode.log;
 
 public class ErrorMessageSimplifier {
   /**
