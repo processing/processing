@@ -120,12 +120,8 @@ public class CompositionTextPainter {
     FontMetrics fm = textArea.getPainter().getFontMetrics();
     int offsetY = fm.getHeight() - CompositionTextManager.COMPOSING_UNDERBAR_HEIGHT;
     int lineIndex = textArea.getCaretLine();
-//    loc.y = lineIndex * fm.getHeight() + offsetY;
     int offsetX = composedBeginCaretPosition - textArea.getLineStartOffset(lineIndex);
-//    loc.x = textArea.offsetToX(lineIndex, offsetX);
     return new Point(textArea.offsetToX(lineIndex, offsetX), 
-                     lineIndex * fm.getHeight() + offsetY);
-//    Point loc = new Point();
-//    return loc;
+                     (lineIndex - textArea.getFirstLine()) * fm.getHeight() + offsetY);
   }
 }

@@ -1,5 +1,12 @@
 0233 (3.0a6)
 
+
+earlier
+X any problems with new code signing crap? 
+X   issues raised around the symlink (just replace with a copy of the binary?)
+X   fixed the short-term problem, filed an issue for the rest
+X   https://developer.apple.com/library/prerelease/mac/technotes/tn2206/_index.html#//apple_ref/doc/uid/DTS40007919-CH1-TNTAG205
+
 joel
 X Add reference for installed tools and libraries to the Help menu
 X   https://github.com/processing/processing/issues/943
@@ -14,26 +21,16 @@ X add mnemonics for menus (alt-f to open 'file')
 X   http://code.google.com/p/processing/issues/detail?id=12
 X   https://github.com/processing/processing/issues/51
 X   https://github.com/processing/processing/pull/2382
+X getCaretLocation() bug in syntax.im package
+X   https://github.com/processing/processing/issues/2934
 
-
-# then for updates https://help.github.com/articles/syncing-a-fork/
-git fetch upstream
-git checkout master
-git merge upstream/master
-
-
-_ any problems with new code signing crap? 
-_   issues raised around the symlink (just replace with a copy of the binary?)
-_   https://developer.apple.com/library/prerelease/mac/technotes/tn2206/_index.html#//apple_ref/doc/uid/DTS40007919-CH1-TNTAG205
-
-_ add script to download JRE and JDK from Oracle
-_   https://github.com/processing/processing/issues/2960
 
 _ post a note about the "help" stuff
 _   https://github.com/processing/processing/labels/help
 
 _ finish Ant task to download JRE and JDK from Oracle
-_   add method to prompt user to download the JDK update
+_   add method to prompt OS X developers to download the JDK update
+_   https://github.com/processing/processing/issues/2960
 
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
@@ -825,13 +822,15 @@ _   http://code.google.com/p/processing/issues/detail?id=632
 
 DIST / Mac OS X
 
+_ Find a long-term solution for OS X bundler to address signing/symlink issues
+_   https://github.com/processing/processing/issues/2967
+_ appbundler improvements
+_   don't re-copy JRE into work folder if already exists
+_   implement a splash screen
 _ more OS X-specific hackery for improved appearance
 _   https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html
 _ possible better option for doing retina?
 _   g.getFontRenderContext().getTransform().equals(AffineTransform.getScaleInstance(2.0, 2.0))
-_ appbundler improvements
-_   don't re-copy JRE into work folder if already exists
-_   implement a splash screen
 _ LWJGL forum discussion 
 _   http://lwjgl.org/forum/index.php/topic,4711.225.html
 _ change cmd line for OS X to use symlink? 
