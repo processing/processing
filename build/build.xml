@@ -801,6 +801,7 @@
            </replacetokens>
        </filterchain >
    </copy >
+   <copy file="linux/copyright" tofile="linux/debian/DEBIAN/copyright" />
 
    <!-- Create .deb file -->
    <exec executable="fakeroot" dir="linux" failonerror="true">
