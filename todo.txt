@@ -30,6 +30,11 @@ X   https://github.com/processing/processing/issues/51
 X   https://github.com/processing/processing/pull/2382
 X getCaretLocation() bug in syntax.im package
 X   https://github.com/processing/processing/issues/2934
+X finish up debian package support (see the processing.mess folder)
+X   http://code.google.com/p/processing/issues/detail?id=75
+X   these bits need to be checked to ensure that they work on other distros
+X   https://github.com/processing/processing/issues/114
+X   https://github.com/processing/processing/pull/2972
 
 
 _ make examples pull/build automatic during dist
@@ -913,9 +918,6 @@ _   sudo apt-get install xvfb
 _   Xvfb :2 -screen 0 1024x768x24 &
 _   export DISPLAY=localhost:2.0
 _   ./<myExportedProcessingApplication>
-_ finish up debian package support (see the processing.mess folder)
-_   http://code.google.com/p/processing/issues/detail?id=75
-_   these bits need to be checked to ensure that they work on other distros
 _ not being able to make a link to the processing app
 _   argh.. more path and shell issues..
 _ splash screen

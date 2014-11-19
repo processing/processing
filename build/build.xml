@@ -725,7 +725,7 @@
     <exec executable="./processing" dir="linux/work" spawn="true"/>
   </target>
   
-  <target name="linux-dist-tar" depends="linux-build" 
+  <target name="linux-dist" depends="linux-build" 
 	  description="Build .tar.gz of linux version">
 
 <!--
@@ -759,7 +759,7 @@
     </echo>
   </target>
   
-  <target name="linux-dist" depends="linux-dist-tar" 
+  <target name="deb" depends="linux-dist" 
 	  description="Build .deb of linux version">
 
    <!-- start with a clean debian folder -->
@@ -835,11 +835,11 @@
    <delete dir="linux/debian" />
 
     <echo>
-      =======================================================
-      Processing for Linux was built. Grab the deb from   
+      ========================================================
+      Processing for Debian Linux was built. Grab the deb from   
       
       ${linux.deb}
-      =======================================================
+      ========================================================
     </echo>
   </target>
  
