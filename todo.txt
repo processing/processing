@@ -1,4 +1,6 @@
 0233 (3.0a6)
+X post a note about the "help" stuff
+X   https://github.com/processing/processing/labels/help
 
 
 earlier
@@ -6,6 +8,11 @@ X any problems with new code signing crap?
 X   issues raised around the symlink (just replace with a copy of the binary?)
 X   fixed the short-term problem, filed an issue for the rest
 X   https://developer.apple.com/library/prerelease/mac/technotes/tn2206/_index.html#//apple_ref/doc/uid/DTS40007919-CH1-TNTAG205
+X Move import suggestion to errors console
+X   https://github.com/processing/processing/issues/2947
+X server.stop produces an error: java.net.SocketException: socket closed
+X   https://github.com/processing/processing/issues/74
+X   https://github.com/processing/processing/pull/2474
 
 joel
 X Add reference for installed tools and libraries to the Help menu
@@ -25,8 +32,13 @@ X getCaretLocation() bug in syntax.im package
 X   https://github.com/processing/processing/issues/2934
 
 
-_ post a note about the "help" stuff
-_   https://github.com/processing/processing/labels/help
+_ make examples pull/build automatic during dist
+_ merge experimental into the main Java mode 
+_   thereby removing Java 2.0 mode from the next release
+_   otherwise redoing the design for 2 modes
+_ add span screens pref (near the display pref)
+_   add checkbox for spans to export dialog
+_ remove "save before running" message
 
 _ finish Ant task to download JRE and JDK from Oracle
 _   add method to prompt OS X developers to download the JDK update

@@ -12,6 +12,9 @@ X added getFontRenderContext() to PGraphics
 _ add attrib() method
 _   https://github.com/processing/processing/issues/2963
 _   assign this to DXF as well?
+_ createGraphics() currently broken in Java2D
+_ size() command not working to do a resize
+_ deal with applySettings() change (maybe not a problem?)
 
 _ remove sketch path hack from PApplet
 
@@ -41,6 +44,7 @@ _   make sure it works with retina/canvas/strategy as well
 
 
 processing.data
+_ add appendUnique()
 _ add fromOrder() and others? otherwise need temp object:
 _   categoryIndexLookup = new StringList(flavors).getOrder();
 _ handling of 'missing' values in Table needs serious work
