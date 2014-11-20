@@ -80,7 +80,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     Box rangeBox = new Box(BoxLayout.Y_AXIS);
     rangeBox.setAlignmentY(0);
     rangeBox.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    rangeBox.add(range.getCanvas());
+    rangeBox.add(range);
     box.add(rangeBox);
     box.add(Box.createHorizontalStrut(10));
 
@@ -88,7 +88,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     Box sliderBox = new Box(BoxLayout.Y_AXIS);
     sliderBox.setAlignmentY(0);
     sliderBox.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    sliderBox.add(slider.getCanvas());
+    sliderBox.add(slider);
     box.add(sliderBox);
     box.add(Box.createHorizontalStrut(10));
 
@@ -106,10 +106,6 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 
     window.pack();
     window.setResizable(false);
-    
-    // initialize once the components exist
-    range.init();
-    slider.init();
 
 //    Dimension size = getSize();
 //    Dimension screen = Toolkit.getScreenSize();
@@ -236,8 +232,8 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
       updateRGB(Integer.parseInt(str, 16));
       updateHSB();
     }
-    range.redraw();
-    slider.redraw();
+    range.repaint();
+    slider.repaint();
     //colorPanel.setBackground(new Color(red, green, blue));
     colorPanel.repaint();
     updating = false;
@@ -486,58 +482,46 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
   }
 
 
-  public class ColorRange extends PApplet {
+  public class ColorRange extends JComponent {
 
-    static final int WIDE = 256;
-    static final int HIGH = 256;
+    static final int WIDTH = 256;
+    static final int HEIGHT = 256;
 
-    int lastX, lastY;
+    private int lastX, lastY;
 
+    public ColorRange() {
+      addMouseListener(new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+          updateMouse(e);
+        }
+      });
 
-    public int sketchWidth() { 
-      return WIDE; 
-    }
-    
-    public int sketchHeight() { 
-      return HIGH; 
-    }
-    
-    public void setup() {
-      noLoop();
+      addMouseMotionListener(new MouseMotionAdapter() {
+        @Override
+        public void mouseDragged(MouseEvent e) {
+          updateMouse(e);
+        }
+      });
 
-      colorMode(HSB, 360, 256, 256);
-      noFill();
-      rectMode(CENTER);
+      addKeyListener(new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+          super.keyPressed(e);
 
-      loadPixels();
-    }
-
-    public void draw() {
-      if (width == WIDE && height == HIGH) {
-        int index = 0;
-        for (int j = 0; j < 256; j++) {
-          for (int i = 0; i < 256; i++) {
-            pixels[index++] = color(hue, i, 255 - j);
+          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+              ColorChooser.this.hide();
           }
         }
-
-        updatePixels();
-        stroke((brightness > 50) ? 0 : 255);
-        rect(lastX, lastY, 9, 9);
-      }
+      });
     }
 
-    public void mousePressed() {
-      updateMouse();
-    }
+    private void updateMouse(MouseEvent e) {
+      int mouseX = e.getX();
+      int mouseY = e.getY();
 
-    public void mouseDragged() {
-      updateMouse();
-    }
-
-    public void updateMouse() {
-      if ((mouseX >= 0) && (mouseX < 256) &&
-          (mouseY >= 0) && (mouseY < 256)) {
+      if ((mouseX >= 0) && (mouseX < WIDTH) &&
+            (mouseY >= 0) && (mouseY < HEIGHT)) {
         int nsaturation = (int) (100 * (mouseX / 255.0f));
         int nbrightness = 100 - ((int) (100 * (mouseY / 255.0f)));
         saturationField.setText(String.valueOf(nsaturation));
@@ -548,102 +532,105 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
       }
     }
 
-    public Dimension getPreferredSize() {
-      return new Dimension(WIDE, HIGH);
-    }
+    @Override
+    public void paintComponent(Graphics g) {
+      super.paintComponent(g);
 
-    public Dimension getMinimumSize() {
-      return new Dimension(WIDE, HIGH);
-    }
-
-    public Dimension getMaximumSize() {
-      return new Dimension(WIDE, HIGH);
-    }
-
-    public void keyPressed() {
-      if (key == ESC) {
-        ColorChooser.this.hide();
-        // don't quit out of processing
-        // http://dev.processing.org/bugs/show_bug.cgi?id=1006
-        key = 0;
+      for (int j = 0; j < WIDTH; j++) {
+        for (int i = 0; i < HEIGHT; i++) {
+          g.setColor(Color.getHSBColor(hue / 360f, i / 256f, (255 - j) / 256f));
+          g.fillRect(i, j, 1, 1);
+        }
       }
+
+      g.setColor((brightness > 50) ? Color.BLACK : Color.WHITE);
+      g.drawRect(lastX - 5, lastY - 5, 10, 10);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+      return new Dimension(WIDTH, HEIGHT);
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+      return getPreferredSize();
+    }
+
+    @Override
+    public Dimension getMaximumSize() {
+      return getPreferredSize();
     }
   }
 
 
-  public class ColorSlider extends PApplet {
+  public class ColorSlider extends JComponent {
 
-    static final int WIDE = 20;
-    static final int HIGH = 256;
+    static final int WIDTH = 20;
+    static final int HEIGHT = 256;
 
-    public int sketchWidth() {
-      return WIDE;
-    }
-    
-    public int sketchHeight() {
-      return HIGH;
-    }
-    
-    public void setup() {
-      colorMode(HSB, 255, 100, 100);
-      noLoop();
-      loadPixels();
-    }
-
-    public void draw() {
-//      if ((g == null) || (g.pixels == null)) return;
-      if ((width != WIDE) || (height < HIGH)) {
-        //System.out.println("bad size " + width + " " + height);
-        return;
-      }
-
-      int index = 0;
-      int sel = 255 - (int) (255 * (hue / 359f));
-      for (int j = 0; j < 256; j++) {
-        int c = color(255 - j, 100, 100);
-        if (j == sel) c = 0xFF000000;
-        for (int i = 0; i < WIDE; i++) {
-          g.pixels[index++] = c;
+    public ColorSlider() {
+      addMouseListener(new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+          updateMouse(e);
         }
-      }
-      updatePixels();
+      });
+
+      addMouseMotionListener(new MouseMotionAdapter() {
+        @Override
+        public void mouseDragged(MouseEvent e) {
+          updateMouse(e);
+        }
+      });
+
+      addKeyListener(new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+          super.keyPressed(e);
+
+          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+              ColorChooser.this.hide();
+          }
+        }
+      });
     }
 
-    public void mousePressed() {
-      updateMouse();
-    }
+    private void updateMouse(MouseEvent e) {
+      int mouseX = e.getX();
+      int mouseY = e.getY();
 
-    public void mouseDragged() {
-      updateMouse();
-    }
-
-    public void updateMouse() {
-      if ((mouseX >= 0) && (mouseX < 256) &&
-          (mouseY >= 0) && (mouseY < 256)) {
+      if ((mouseX >= 0) && (mouseX < WIDTH) &&
+              (mouseY >= 0) && (mouseY < HEIGHT)) {
         int nhue = 359 - (int) (359 * (mouseY / 255.0f));
         hueField.setText(String.valueOf(nhue));
       }
     }
 
+    public void paintComponent(Graphics g) {
+      super.paintComponent(g);
+
+      int sel = 255 - (int) (255 * (hue / 359.0));
+      for (int j = 0; j < HEIGHT; j++) {
+        Color color = Color.getHSBColor((255 - j) / 256f, 1, 1);
+        if (j == sel) {
+            color = Color.BLACK;
+        }
+        g.setColor(color);
+        g.drawRect(0, j, WIDTH, 1);
+      }
+    }
+
     public Dimension getPreferredSize() {
-      return new Dimension(WIDE, HIGH);
+      return new Dimension(WIDTH, HEIGHT);
     }
 
     public Dimension getMinimumSize() {
-      return new Dimension(WIDE, HIGH);
+      return getPreferredSize();
     }
 
     public Dimension getMaximumSize() {
-      return new Dimension(WIDE, HIGH);
-    }
-
-    public void keyPressed() {
-      if (key == ESC) {
-        ColorChooser.this.hide();
-        // don't quit out of processing
-        // http://dev.processing.org/bugs/show_bug.cgi?id=1006
-        key = 0;
-      }
+      return getPreferredSize();
     }
   }
 
