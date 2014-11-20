@@ -37,6 +37,8 @@ X   https://github.com/processing/processing/issues/114
 X   https://github.com/processing/processing/pull/2972
 X   https://github.com/processing/processing/issues/2973
 X   https://github.com/processing/processing/pull/2974
+X Replace ColorChooser PApplets with custom Swing components
+X   https://github.com/processing/processing/pull/2975
 
 
 _ make examples pull/build automatic during dist
