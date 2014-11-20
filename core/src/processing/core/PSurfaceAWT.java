@@ -679,8 +679,8 @@ public class PSurfaceAWT implements PSurface {
 
   /** Resize frame for these sketch (canvas) dimensions. */
   private Dimension setFrameSize() {  //int sketchWidth, int sketchHeight) {
-    System.out.format("setting frame size %d %d %n", sketchWidth, sketchHeight);
-    new Exception().printStackTrace(System.out);
+//    System.out.format("setting frame size %d %d %n", sketchWidth, sketchHeight);
+//    new Exception().printStackTrace(System.out);
     Insets insets = frame.getInsets();
     int windowW = Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
       insets.left + insets.right;
@@ -823,8 +823,8 @@ public class PSurfaceAWT implements PSurface {
 
   // needs to resize the frame, which will resize the canvas, and so on...
   public void setSize(int wide, int high) {
-    System.out.format("frame visible %b, setSize(%d, %d) %n", frame.isVisible(), wide, high);
-    new Exception().printStackTrace(System.out);
+//    System.out.format("frame visible %b, setSize(%d, %d) %n", frame.isVisible(), wide, high);
+//    new Exception().printStackTrace(System.out);
 
     sketchWidth = wide;
     sketchHeight = high;
