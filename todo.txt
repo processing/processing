@@ -35,6 +35,8 @@ X   http://code.google.com/p/processing/issues/detail?id=75
 X   these bits need to be checked to ensure that they work on other distros
 X   https://github.com/processing/processing/issues/114
 X   https://github.com/processing/processing/pull/2972
+X   https://github.com/processing/processing/issues/2973
+X   https://github.com/processing/processing/pull/2974
 
 
 _ make examples pull/build automatic during dist
