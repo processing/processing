@@ -54,6 +54,13 @@ _   https://github.com/processing/processing/issues/2960
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
 
+from the todo list
+_ reas: comments go nasty when auto-formatted
+_ reas: code coloring sometimes disappears
+_ me: undo not in the correct location
+_ implement the new gui
+_ drop XP support (but improve Windows 8 support? ouch)
+
 
 high
 _ dist needs to do a git pull on processing-docs
@@ -397,6 +404,8 @@ _   http://code.google.com/p/processing/issues/detail?id=494
 
 PDE / Editor
 
+_ Undo does not move to the correct location in the editor window
+_   https://github.com/processing/processing/issues/707
 _ clean up /tmp folders used during build
 _   https://github.com/processing/processing/issues/1896
 _ 'recent' menu doesn't respect examples folder of other p5 versions

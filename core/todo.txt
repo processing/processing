@@ -1,14 +1,54 @@
 0233 (3.0a6)
+X remove Applet as base class
 
 
-graphics
-X roll back full screen changes
-X   https://github.com/processing/processing/issues/2641
+earlier
+X size(640,360 , P3D) doesn't work properly
+X   https://github.com/processing/processing/issues/2924
+X   https://github.com/processing/processing/issues/2925
+
+
+applet/sketch
 X remove isGL(), is2D(), is3D(), displayable() from PApplet
 X   these were auto-imported from PGraphics
 X remove pause variable from PApplet (was not documented)
 X added copy() to PImage (to work like get(), ala PVector)
 X added getFontRenderContext() to PGraphics
+X why doesn't p5 punt when loadFont() is used on an otf?
+X   is this a GL problem? (example in bug report wasn't GL)
+X   https://github.com/processing/processing/issues/2876
+X   since we don't have any magic number in there, just randomly breaks
+X   add check to require .vlw extension with loadFont()
+_ performance issues on OS X (might be threading due to Applet)
+_   https://github.com/processing/processing/issues/2423
+_ clean up requestFocus() stuff
+_   make sure it works with retina/canvas/strategy as well
+_   requestFocus() method probably needs to be added to PApplet
+_ remove sketch path hack from PApplet
+_ args[] should be null if none passed (otherwise args == null checks are weird)
+
+
+full screen
+X roll back full screen changes
+X   https://github.com/processing/processing/issues/2641
+o new full screen sometimes causes sketch to temporarily be in the wrong spot
+X   removed the new stuff since it stank, rolled back to menu bar hiding
+X add option to have full screen span across screens
+o   display=all in cmd line
+o   sketchDisplay() -> 0 for all, or 1, 2, 3...
+X   added --span option
+X play with improvements to full screen here
+_ show warning when display spanning is turned off
+_   defaults read com.apple.spaces spans-displays
+_ crash on startup when "Mirror Displays" selected (cantfix?)
+_   suspect that this is a specific chipset since Oracle didn't reproduce
+_   AMD Radeon HD 6770M was in the Oracle bug report
+_   https://github.com/processing/processing/issues/2186
+_   https://bugs.openjdk.java.net/browse/JDK-8027391
+_   test with JG's 13" retina laptop
+
+
+graphics
 _ add attrib() method
 _   https://github.com/processing/processing/issues/2963
 _   assign this to DXF as well?
@@ -16,31 +56,34 @@ _ createGraphics() currently broken in Java2D
 _ size() command not working to do a resize
 _ deal with applySettings() change (maybe not a problem?)
 
-_ remove sketch path hack from PApplet
 
 python has to use launch() instead of open()
 map() is bad for Python (and JavaScript?)
 
-_ args[] should be null if none passed (otherwise args == null checks are weird)
-_ size(640,360 , P3D) doesn't work properly
-_   https://github.com/processing/processing/issues/2924
-_ why doesn't p5 punt when loadFont() is used on an otf?
-_   is this a GL problem? 
 
-_ show warning when display spanning is turned off
-_   defaults read com.apple.spaces spans-displays
-
-applet/component
-_ remove Applet as base class
-_ performance issues on OS X (might be threading due to Applet)
-_   https://github.com/processing/processing/issues/2423
-_ play with improvements to full screen here
-_ new full screen sometimes causes sketch to temporarily be in the wrong spot
-_ add option to have full screen span across screens
-_   display=all in cmd line
-_   sketchDisplay() -> 0 for all, or 1, 2, 3...
-_ clean up requestFocus() stuff
-_   make sure it works with retina/canvas/strategy as well
+under consideration
+_ break PUtil out from PApplet
+_ break more api with Processing 3?
+_   use enums for everything (fixes auto-completion)
+_   add chaining operations
+_ move to enums instead of PConstants?
+_   helps textMode() only accept valid entries
+_   really nice for auto-complete
+_   prevents hundreds of entries from coming up w/ auto-complete
+_   downside: breaks compatibility big time
+_ check retina with PGraphicsRetina2D
+_ fix the registered methods doc, stop/dispose working
+_   Casey needs to nudge people about libraries, so we need to fix this
+_ pause(), resume(), start(), stop() clarifications
+_ dispose/stop not great w/ libraries yet
+_ PShape complete refactoring
+_ proper touch events
+_   touch event doesn't make sense for mouseMove on desktop, hover on Android
+_   probably go with pointer: more universal for touch/mouse
+_ high-level touch events (swipe, et al)
+_   if Andres is done, they go in, if not then 3.0
+_ move away from loadPixels
+_ implement requestXxxx() API
 
 
 processing.data
@@ -117,13 +160,6 @@ _ retina sketches slow to start
 _   https://github.com/processing/processing/issues/2357
 _ Text looks blurry in GL Retina
 _   https://github.com/processing/processing/issues/2739
-
-
-cantfix
-_ crash on startup when "Mirror Displays" selected
-_   suspect that this is a specific chipset since Oracle didn't reproduce
-_   https://github.com/processing/processing/issues/2186
-_   test with JG's 13" retina laptop
 
 
 decisions/misc
