@@ -803,13 +803,13 @@ public class PSurfaceAWT implements PSurface {
       synchronized (pauseObject) {
         try {
           pauseObject.wait();
-          PApplet.debug("out of wait");
+//          PApplet.debug("out of wait");
         } catch (InterruptedException e) {
           // waiting for this interrupt on a start() (resume) call
         }
       }
     }
-    PApplet.debug("done with pause");
+//    PApplet.debug("done with pause");
   }
 
 

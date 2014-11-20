@@ -9482,7 +9482,7 @@ public class PApplet implements PConstants {
         //System.out.println("interrupt");
       }
     }
-    System.out.println("out of default size loop, " + width + " " + height);
+//    System.out.println("out of default size loop, " + width + " " + height);
     // convenience to avoid another 'get' from the static main() method
     return surface;
   }
