@@ -13,6 +13,9 @@ X   https://github.com/processing/processing/issues/2947
 X server.stop produces an error: java.net.SocketException: socket closed
 X   https://github.com/processing/processing/issues/74
 X   https://github.com/processing/processing/pull/2474
+X NPE when calling Client.ip() after the connection has been closed
+X   https://github.com/processing/processing/issues/2576
+X   https://github.com/processing/processing/pull/2922
 
 joel
 X Add reference for installed tools and libraries to the Help menu

@@ -269,7 +269,16 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   public void beginDraw() {
+    // TODO this will happen when it's offscreen.. need a better option here
+    if (image == null ||
+        ((BufferedImage) image).getWidth() != width ||
+        ((BufferedImage) image).getHeight() != height) {
+      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    }
     g2 = (Graphics2D) image.getGraphics();
+
+    // Calling getGraphics() seems to nuke the smoothing settings
+    smooth(quality);
 
     /*
     // NOTE: Calling image.getGraphics() will create a new Graphics context,

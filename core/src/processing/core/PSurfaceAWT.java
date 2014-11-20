@@ -87,7 +87,7 @@ public class PSurfaceAWT implements PSurface {
 
   void createCanvas() {
     canvas = new SmoothCanvas();
-    //canvas.setIgnoreRepaint(true);  // ??
+    canvas.setIgnoreRepaint(true);  // ??
 
     // send tab keys through to the PApplet
     canvas.setFocusTraversalKeysEnabled(false);

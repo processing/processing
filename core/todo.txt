@@ -1,6 +1,10 @@
 0233 (3.0a6)
 X remove Applet as base class
-
+X how to name the retina pixel stuff
+X   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
+X   hint(ENABLE_2X_PIXELS)?
+X   hidpi is Apple's name as well
+X   mostly getting away from this
 
 earlier
 X size(640,360 , P3D) doesn't work properly
@@ -49,6 +53,7 @@ _   test with JG's 13" retina laptop
 
 
 graphics
+_ how to allocation image object w/ createGraphics() (since no surface)
 _ add attrib() method
 _   https://github.com/processing/processing/issues/2963
 _   assign this to DXF as well?
@@ -71,7 +76,6 @@ _   helps textMode() only accept valid entries
 _   really nice for auto-complete
 _   prevents hundreds of entries from coming up w/ auto-complete
 _   downside: breaks compatibility big time
-_ check retina with PGraphicsRetina2D
 _ fix the registered methods doc, stop/dispose working
 _   Casey needs to nudge people about libraries, so we need to fix this
 _ pause(), resume(), start(), stop() clarifications
@@ -139,18 +143,20 @@ _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
 
 
-hidpi
+retina/hidpi
+_ the 2X thing on the renderer name is unnecessary
+_   just do pixelFactor() (and pull it during compilation)?
+_   add sketchPixelFactor() to handle the scenario?
+_   or is it just a boolean, because pixelFactor(2) is the only option?
+_ remove retina hint
+_ Text looks blurry in GL Retina (andres)
+_   https://github.com/processing/processing/issues/2739
+_ check retina with PGraphicsRetina2D
 _ Text is half size in PGraphicsRetina2D
 _   https://github.com/processing/processing/issues/2738
 _ text not getting the correct font in Retina2D
 _   https://github.com/processing/processing/issues/2617
 _ saveFrame() with retina render is making black images
-_ zero alpha values still a problem with retina renderer
-_   https://github.com/processing/processing/issues/2030
-_ how to name the retina pixel stuff
-_   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
-_   hint(ENABLE_2X_PIXELS)?
-_   hidpi is Apple's name as well
 _ no high-res display support for OpenGL
 _   https://github.com/processing/processing/issues/2573
 _   https://jogamp.org/bugzilla/show_bug.cgi?id=741
@@ -158,9 +164,10 @@ _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start
 _   https://github.com/processing/processing/issues/2357
-_ Text looks blurry in GL Retina
-_   https://github.com/processing/processing/issues/2739
-
+_ zero alpha values still a problem with retina renderer
+_   https://github.com/processing/processing/issues/2030
+_ NPE when using image() created with createGraphics(PGraphicsRetina2D)
+_   https://github.com/processing/processing/issues/2510
 
 decisions/misc
 _ use enums for constants
