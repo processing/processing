@@ -5442,6 +5442,9 @@ public class PApplet implements PConstants {
   * @see PApplet#createFont(String, float, boolean, char[])
   */
   public PFont loadFont(String filename) {
+    if (!filename.toLowerCase().endsWith(".vlw")) {
+      throw new IllegalArgumentException("loadFont() only works with .vlw font files");
+    }
     try {
       InputStream input = createInput(filename);
       return new PFont(input);
