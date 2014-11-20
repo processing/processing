@@ -278,12 +278,18 @@ public class PSurfaceAWT implements PSurface {
       // not sure why this was here, can't be good
       //canvas.setBounds(0, 0, sketch.width, sketch.height);
 
+      if (!canvas.isDisplayable()) {
+//        System.out.println("no peer.. holding");
+        return;
+      }
+
 //      System.out.println("render(), canvas bounds are " + canvas.getBounds());
       if (canvas.getBufferStrategy() == null) {  // whole block [121222]
 //        System.out.println("creating a strategy");
         canvas.createBufferStrategy(2);
       }
       BufferStrategy strategy = canvas.getBufferStrategy();
+//      System.out.println(strategy);
       if (strategy == null) {
         return;
       }
@@ -367,7 +373,9 @@ public class PSurfaceAWT implements PSurface {
 
 
   public void blit() {
-    canvas.repaint();
+//    System.out.println("blit");
+    ((SmoothCanvas) canvas).render();  // ??
+//    canvas.repaint();
     /*
     if (canvas.getGraphicsConfiguration() != null) {
       GraphicsDevice device = canvas.getGraphicsConfiguration().getDevice();
