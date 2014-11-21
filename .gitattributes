@@ -1,0 +1,12 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Files which should always be normalized and converted
+# to native line endings on checkout.
+*.java text
+*.pde text
+
+# Files that will always have CRLF line endings on checkout.
+*.bat eol=crlf
+build/macosx/jAppleMenuBar.url eol=crlf
+

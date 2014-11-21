@@ -759,7 +759,7 @@
     </echo>
   </target>
   
-  <target name="deb" depends="linux-dist" 
+  <target name="deb" depends="dist" 
 	  description="Build .deb of linux version">
 
    <!-- start with a clean debian folder -->

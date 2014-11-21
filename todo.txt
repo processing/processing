@@ -13,6 +13,9 @@ X   https://github.com/processing/processing/issues/2947
 X server.stop produces an error: java.net.SocketException: socket closed
 X   https://github.com/processing/processing/issues/74
 X   https://github.com/processing/processing/pull/2474
+X NPE when calling Client.ip() after the connection has been closed
+X   https://github.com/processing/processing/issues/2576
+X   https://github.com/processing/processing/pull/2922
 
 joel
 X Add reference for installed tools and libraries to the Help menu
@@ -35,6 +38,10 @@ X   http://code.google.com/p/processing/issues/detail?id=75
 X   these bits need to be checked to ensure that they work on other distros
 X   https://github.com/processing/processing/issues/114
 X   https://github.com/processing/processing/pull/2972
+X   https://github.com/processing/processing/issues/2973
+X   https://github.com/processing/processing/pull/2974
+X Replace ColorChooser PApplets with custom Swing components
+X   https://github.com/processing/processing/pull/2975
 
 
 _ make examples pull/build automatic during dist
@@ -51,6 +58,13 @@ _   https://github.com/processing/processing/issues/2960
 
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
+
+from the todo list
+_ reas: comments go nasty when auto-formatted
+_ reas: code coloring sometimes disappears
+_ me: undo not in the correct location
+_ implement the new gui
+_ drop XP support (but improve Windows 8 support? ouch)
 
 
 high
@@ -395,6 +409,8 @@ _   http://code.google.com/p/processing/issues/detail?id=494
 
 PDE / Editor
 
+_ Undo does not move to the correct location in the editor window
+_   https://github.com/processing/processing/issues/707
 _ clean up /tmp folders used during build
 _   https://github.com/processing/processing/issues/1896
 _ 'recent' menu doesn't respect examples folder of other p5 versions

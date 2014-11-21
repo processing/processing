@@ -5442,6 +5442,9 @@ public class PApplet implements PConstants {
   * @see PApplet#createFont(String, float, boolean, char[])
   */
   public PFont loadFont(String filename) {
+    if (!filename.toLowerCase().endsWith(".vlw")) {
+      throw new IllegalArgumentException("loadFont() only works with .vlw font files");
+    }
     try {
       InputStream input = createInput(filename);
       return new PFont(input);
@@ -9479,7 +9482,7 @@ public class PApplet implements PConstants {
         //System.out.println("interrupt");
       }
     }
-    System.out.println("out of default size loop, " + width + " " + height);
+//    System.out.println("out of default size loop, " + width + " " + height);
     // convenience to avoid another 'get' from the static main() method
     return surface;
   }

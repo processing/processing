@@ -87,7 +87,7 @@ public class PSurfaceAWT implements PSurface {
 
   void createCanvas() {
     canvas = new SmoothCanvas();
-    //canvas.setIgnoreRepaint(true);  // ??
+    canvas.setIgnoreRepaint(true);  // ??
 
     // send tab keys through to the PApplet
     canvas.setFocusTraversalKeysEnabled(false);
@@ -278,12 +278,18 @@ public class PSurfaceAWT implements PSurface {
       // not sure why this was here, can't be good
       //canvas.setBounds(0, 0, sketch.width, sketch.height);
 
+      if (!canvas.isDisplayable()) {
+//        System.out.println("no peer.. holding");
+        return;
+      }
+
 //      System.out.println("render(), canvas bounds are " + canvas.getBounds());
       if (canvas.getBufferStrategy() == null) {  // whole block [121222]
 //        System.out.println("creating a strategy");
         canvas.createBufferStrategy(2);
       }
       BufferStrategy strategy = canvas.getBufferStrategy();
+//      System.out.println(strategy);
       if (strategy == null) {
         return;
       }
@@ -367,7 +373,9 @@ public class PSurfaceAWT implements PSurface {
 
 
   public void blit() {
-    canvas.repaint();
+//    System.out.println("blit");
+    ((SmoothCanvas) canvas).render();  // ??
+//    canvas.repaint();
     /*
     if (canvas.getGraphicsConfiguration() != null) {
       GraphicsDevice device = canvas.getGraphicsConfiguration().getDevice();
@@ -671,8 +679,8 @@ public class PSurfaceAWT implements PSurface {
 
   /** Resize frame for these sketch (canvas) dimensions. */
   private Dimension setFrameSize() {  //int sketchWidth, int sketchHeight) {
-    System.out.format("setting frame size %d %d %n", sketchWidth, sketchHeight);
-    new Exception().printStackTrace(System.out);
+//    System.out.format("setting frame size %d %d %n", sketchWidth, sketchHeight);
+//    new Exception().printStackTrace(System.out);
     Insets insets = frame.getInsets();
     int windowW = Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
       insets.left + insets.right;
@@ -795,13 +803,13 @@ public class PSurfaceAWT implements PSurface {
       synchronized (pauseObject) {
         try {
           pauseObject.wait();
-          PApplet.debug("out of wait");
+//          PApplet.debug("out of wait");
         } catch (InterruptedException e) {
           // waiting for this interrupt on a start() (resume) call
         }
       }
     }
-    PApplet.debug("done with pause");
+//    PApplet.debug("done with pause");
   }
 
 
@@ -815,17 +823,21 @@ public class PSurfaceAWT implements PSurface {
 
   // needs to resize the frame, which will resize the canvas, and so on...
   public void setSize(int wide, int high) {
-    System.out.format("frame visible %b, setSize(%d, %d) %n", frame.isVisible(), wide, high);
-    new Exception().printStackTrace(System.out);
+//    System.out.format("frame visible %b, setSize(%d, %d) %n", frame.isVisible(), wide, high);
+//    new Exception().printStackTrace(System.out);
 
     sketchWidth = wide;
     sketchHeight = high;
 
 //    canvas.setSize(wide, high);
 //    frame.setSize(wide, high);
-    setFrameSize(); //wide, high);
+    if (frame != null) {  // canvas only
+      setFrameSize(); //wide, high);
+    }
     setCanvasSize();
-    frame.setLocationRelativeTo(null);
+    if (frame != null) {
+      frame.setLocationRelativeTo(null);
+    }
 
     GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
     // If not realized (off-screen, i.e the Color Selector Tool), gc will be null.
