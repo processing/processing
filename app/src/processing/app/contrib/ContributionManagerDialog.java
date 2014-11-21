@@ -477,7 +477,6 @@ public class ContributionManagerDialog {
           } else {
             status.setErrorMessage(Language.text("contrib.errors.list_download"));
           }
-          exception.printStackTrace();
           retryConnectingButton.setVisible(true);
         }
         else {
