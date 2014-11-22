@@ -42,7 +42,10 @@ X   https://github.com/processing/processing/issues/2973
 X   https://github.com/processing/processing/pull/2974
 X Replace ColorChooser PApplets with custom Swing components
 X   https://github.com/processing/processing/pull/2975
-
+X fix encodings, line endings, and mime types in the repo
+X   https://github.com/processing/processing/issues/2955
+X   https://github.com/processing/processing/pull/2978
+X   https://github.com/processing/processing/pull/2977
 
 _ make examples pull/build automatic during dist
 _ merge experimental into the main Java mode 
