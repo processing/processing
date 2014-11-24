@@ -76,12 +76,16 @@ public class Toolkit {
   /** Command on Mac OS X, Ctrl on Windows and Linux */
   static final int SHORTCUT_KEY_MASK =
     awtToolkit.getMenuShortcutKeyMask();
+  
   /** Command-W on Mac OS X, Ctrl-W on Windows and Linux */
   public static final KeyStroke WINDOW_CLOSE_KEYSTROKE =
-    KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);
+    KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);  
   /** Command-Option on Mac OS X, Ctrl-Alt on Windows and Linux */
-  static final int SHORTCUT_ALT_KEY_MASK = ActionEvent.ALT_MASK |
-    awtToolkit.getMenuShortcutKeyMask();
+  static final int SHORTCUT_ALT_KEY_MASK = 
+    ActionEvent.ALT_MASK | SHORTCUT_KEY_MASK;
+  /** Command-Shift on Mac OS X, Ctrl-Shift on Windows and Linux */
+  static final int SHORTCUT_SHIFT_KEY_MASK = 
+    ActionEvent.SHIFT_MASK | SHORTCUT_KEY_MASK;
 
 
   /**
@@ -112,7 +116,9 @@ public class Toolkit {
 
   /**
    * Same as newJMenuItem(), but adds the ALT (on Linux and Windows)
-   * or OPTION (on Mac OS X) key as a modifier.
+   * or OPTION (on Mac OS X) key as a modifier. This function should almost 
+   * never be used, because it's bad for non-US keyboards that use ALT in 
+   * strange and wondrous ways.
    */
   static public JMenuItem newJMenuItemAlt(String title, int what) {
     JMenuItem menuItem = new JMenuItem(title);
