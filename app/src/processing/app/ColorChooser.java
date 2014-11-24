@@ -484,8 +484,8 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 
   public class ColorRange extends JComponent {
 
-    static final int WIDTH = 256;
-    static final int HEIGHT = 256;
+    static final int WIDE = 256;
+    static final int HIGH = 256;
 
     private int lastX, lastY;
 
@@ -520,8 +520,8 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
       int mouseX = e.getX();
       int mouseY = e.getY();
 
-      if ((mouseX >= 0) && (mouseX < WIDTH) &&
-            (mouseY >= 0) && (mouseY < HEIGHT)) {
+      if ((mouseX >= 0) && (mouseX < WIDE) &&
+            (mouseY >= 0) && (mouseY < HIGH)) {
         int nsaturation = (int) (100 * (mouseX / 255.0f));
         int nbrightness = 100 - ((int) (100 * (mouseY / 255.0f)));
         saturationField.setText(String.valueOf(nsaturation));
@@ -536,8 +536,8 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     public void paintComponent(Graphics g) {
       super.paintComponent(g);
 
-      for (int j = 0; j < WIDTH; j++) {
-        for (int i = 0; i < HEIGHT; i++) {
+      for (int j = 0; j < WIDE; j++) {
+        for (int i = 0; i < HIGH; i++) {
           g.setColor(Color.getHSBColor(hue / 360f, i / 256f, (255 - j) / 256f));
           g.fillRect(i, j, 1, 1);
         }
@@ -549,7 +549,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 
     @Override
     public Dimension getPreferredSize() {
-      return new Dimension(WIDTH, HEIGHT);
+      return new Dimension(WIDE, HIGH);
     }
 
     @Override
@@ -566,8 +566,8 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 
   public class ColorSlider extends JComponent {
 
-    static final int WIDTH = 20;
-    static final int HEIGHT = 256;
+    static final int WIDE = 20;
+    static final int HIGH = 256;
 
     public ColorSlider() {
       addMouseListener(new MouseAdapter() {
@@ -600,8 +600,8 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
       int mouseX = e.getX();
       int mouseY = e.getY();
 
-      if ((mouseX >= 0) && (mouseX < WIDTH) &&
-              (mouseY >= 0) && (mouseY < HEIGHT)) {
+      if ((mouseX >= 0) && (mouseX < WIDE) &&
+              (mouseY >= 0) && (mouseY < HIGH)) {
         int nhue = 359 - (int) (359 * (mouseY / 255.0f));
         hueField.setText(String.valueOf(nhue));
       }
@@ -611,18 +611,18 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
       super.paintComponent(g);
 
       int sel = 255 - (int) (255 * (hue / 359.0));
-      for (int j = 0; j < HEIGHT; j++) {
+      for (int j = 0; j < HIGH; j++) {
         Color color = Color.getHSBColor((255 - j) / 256f, 1, 1);
         if (j == sel) {
             color = Color.BLACK;
         }
         g.setColor(color);
-        g.drawRect(0, j, WIDTH, 1);
+        g.drawRect(0, j, WIDE, 1);
       }
     }
 
     public Dimension getPreferredSize() {
-      return new Dimension(WIDTH, HEIGHT);
+      return new Dimension(WIDE, HIGH);
     }
 
     public Dimension getMinimumSize() {
