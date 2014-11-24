@@ -258,12 +258,12 @@ public class StringDict {
    * @webref stringdict:method
    * @brief Create a new key/value pair or change the value of one
    */
-  public void set(String key, String amount) {
+  public void set(String key, String value) {
     int index = index(key);
     if (index == -1) {
-      create(key, amount);
+      create(key, value);
     } else {
-      values[index] = amount;
+      values[index] = value;
     }
   }
 
