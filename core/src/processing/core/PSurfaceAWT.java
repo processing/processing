@@ -835,9 +835,9 @@ public class PSurfaceAWT implements PSurface {
       setFrameSize(); //wide, high);
     }
     setCanvasSize();
-    if (frame != null) {
-      frame.setLocationRelativeTo(null);
-    }
+//    if (frame != null) {
+//      frame.setLocationRelativeTo(null);
+//    }
 
     GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
     // If not realized (off-screen, i.e the Color Selector Tool), gc will be null.
@@ -1003,15 +1003,24 @@ public class PSurfaceAWT implements PSurface {
             if (farm.isVisible()) {
               Insets insets = farm.getInsets();
               Dimension windowSize = farm.getSize();
+
               // JFrame (unlike java.awt.Frame) doesn't include the left/top
               // insets for placement (though it does seem to need them for
               // overall size of the window. Perhaps JFrame sets its coord
               // system so that (0, 0) is always the upper-left of the content
               // area. Which seems nice, but breaks any f*ing AWT-based code.
+              setSize(windowSize.width - insets.left - insets.right,
+                      windowSize.height - insets.top - insets.bottom);
+
+              /*
               Rectangle newBounds =
                 new Rectangle(0, 0, //insets.left, insets.top,
                               windowSize.width - insets.left - insets.right,
                               windowSize.height - insets.top - insets.bottom);
+
+              System.out.println(e);
+              System.out.println(newBounds);
+
               Rectangle oldBounds = canvas.getBounds();
               if (!newBounds.equals(oldBounds)) {
                 // the ComponentListener in PApplet will handle calling size()
@@ -1023,17 +1032,8 @@ public class PSurfaceAWT implements PSurface {
                 // are still a little wonky on 1.7, especially on OS X.
                 // This gives us a way to at least test against older VMs.
                 canvas.revalidate();   // let the layout manager do its work
-                /*
-                if (revalidateMethod != null) {
-                  try {
-                    revalidateMethod.invoke(PApplet.this);
-                  } catch (Exception ex) {
-                    ex.printStackTrace();
-                    revalidateMethod = null;
-                  }
-                }
-                */
               }
+              */
             }
           }
         }

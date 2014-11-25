@@ -1,4 +1,4 @@
-0233 (3.0a6)
+s0233 (3.0a6)
 X remove Applet as base class
 X how to name the retina pixel stuff
 X   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
@@ -59,6 +59,9 @@ _   https://github.com/processing/processing/issues/2963
 _   assign this to DXF as well?
 _ createGraphics() currently broken in Java2D
 _ size() command not working to do a resize
+_ fix flicker when resizing window 
+_   running through PSurfaceAWT.setSize() is probably overkill
+_   setLocationRelativeTo(null) was removed, will it be missed?
 _ deal with applySettings() change (maybe not a problem?)
 
 
