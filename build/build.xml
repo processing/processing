@@ -292,6 +292,10 @@
       <fileset dir="${examples.dir}" />
     </copy>
 
+    <get src="http://download.processing.org/reference.zip" 
+         dest="../java/reference.zip" 
+         usetimestamp="true" />
+
     <unzip dest="${target.path}/modes/java" 
            src="../java/reference.zip" 
            overwrite="false">
