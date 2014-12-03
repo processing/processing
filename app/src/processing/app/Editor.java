@@ -567,9 +567,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menubar.add(buildSketchMenu());
 
     // For 3.0a4 move mode menu to the left of the Tool menu
-    JMenu modeMenu = buildModeMenu();
-    if (modeMenu != null) {
-      menubar.add(modeMenu);
+    JMenu[] multipleModeMenu = buildMultipleModeMenu();
+    if (multipleModeMenu != null) {
+      for (JMenu menu : multipleModeMenu) {
+        menubar.add(menu);
+      }
+    } else {
+      JMenu modeMenu = buildModeMenu();
+      if (modeMenu != null) {
+        menubar.add(modeMenu);
+      }
     }
 
     rebuildToolMenu();
@@ -1163,6 +1170,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Override this if you want a special menu for your particular 'mode'.
    */
   public JMenu buildModeMenu() {
+    return null;
+  }
+  
+  /**
+   * Override this if you want to add multiple menus for your particuular 'mode'.
+   * @return The array of the menus specific to your mode.
+   */
+  public JMenu[] buildMultipleModeMenu() {
     return null;
   }
 
