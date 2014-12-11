@@ -53,7 +53,10 @@ _   test with JG's 13" retina laptop
 
 
 graphics
-_ how to allocation image object w/ createGraphics() (since no surface)
+_ should the re-alloc of the drawing surface happen in beginDraw()
+_   that way it won't blit to the screen until we have a fresh redraw?
+_   otherwise it'll also be resizing on another thread.. badness
+_   how to allocation image object w/ createGraphics() (since no surface)
 _ add attrib() method
 _   https://github.com/processing/processing/issues/2963
 _   assign this to DXF as well?
