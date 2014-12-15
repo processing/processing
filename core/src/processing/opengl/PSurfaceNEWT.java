@@ -439,7 +439,7 @@ public class PSurfaceNEWT implements PSurface {
   class DrawListener implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
       pgl.getGL(drawable);
-
+//      System.out.println(" - " + sketch.frameCount);
       sketch.handleDraw();
 
       if (sketch.frameCount == 1) {
@@ -456,7 +456,15 @@ public class PSurfaceNEWT implements PSurface {
     public void init(GLAutoDrawable drawable) {
       pgl.getGL(drawable);
       sketch.start();
+
+      int c = graphics.backgroundColor;
+      pgl.clearColor(((c >> 16) & 0xff) / 255f,
+                     ((c >>  8) & 0xff) / 255f,
+                     ((c >>  0) & 0xff) / 255f,
+                     ((c >> 24) & 0xff) / 255f);
+      pgl.clear(PGL.COLOR_BUFFER_BIT);
     }
+
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
       pgl.getGL(drawable);
       setSize(w, h);
