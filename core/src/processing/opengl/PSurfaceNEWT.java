@@ -297,6 +297,8 @@ public class PSurfaceNEWT implements PSurface {
       @Override
       public void windowDestroyNotify(final WindowEvent e) {
         animator.stop();
+        PSurfaceNEWT.this.sketch.exit();
+        window.destroy();
       }
     });
 
