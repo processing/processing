@@ -1651,7 +1651,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //        if (sized) pgl.reinitSurface();
 //        if (parent.canDraw()) pgl.requestDraw();
 //      } else {
-        initPrimary();
+//        initPrimary();
 //      }
 
       if (!initialized) {

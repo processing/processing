@@ -866,6 +866,7 @@ public class PJOGL extends PGL {
 */
 
   protected void init(GLAutoDrawable glDrawable) {
+    firstFrame = true;
     capabilities = glDrawable.getChosenGLCapabilities();
     if (!hasFBOs()) {
       throw new RuntimeException(MISSING_FBO_ERROR);

@@ -454,6 +454,7 @@ public class PSurfaceNEWT implements PSurface {
 //      }
     }
     public void init(GLAutoDrawable drawable) {
+      pgl.init(drawable);
       pgl.getGL(drawable);
       sketch.start();
 
