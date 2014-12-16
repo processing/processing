@@ -103,6 +103,8 @@ public interface PSurface {
 
   public void setSize(int width, int height);
 
+  public void setSmooth(int level);
+
   public void setFrameRate(float fps);
 
   // called on the first frame so that the now-visible drawing surface can

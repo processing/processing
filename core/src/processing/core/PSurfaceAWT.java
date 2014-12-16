@@ -861,6 +861,10 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
+  public void setSmooth(int level) {
+  }
+
+
   private boolean checkRetina() {
     if (PApplet.platform == PConstants.MACOSX) {
     // This should probably be reset each time there's a display change.

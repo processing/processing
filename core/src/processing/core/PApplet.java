@@ -1791,6 +1791,7 @@ public class PApplet implements PConstants {
         return;
       }
 
+      int pquality = g.quality;
       insideDraw = true;
       g.beginDraw();
       if (recorder != null) {
@@ -1849,6 +1850,11 @@ public class PApplet implements PConstants {
         // (only do this once draw() has run, not just setup())
       }
       g.endDraw();
+
+      if (pquality != g.quality) {
+        surface.setSmooth(g.quality);
+      }
+
       if (recorder != null) {
         recorder.endDraw();
       }

@@ -351,7 +351,6 @@ public abstract class PGL {
   }
 
 
-
 //  public abstract Object getCanvas();
 //
 //
