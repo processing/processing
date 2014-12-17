@@ -631,13 +631,16 @@ public class PSurfaceNEWT implements PSurface {
                        InputEvent.META_MASK |
                        InputEvent.ALT_MASK);
 
+    short code = nativeEvent.getKeyCode();
     char keyChar;
-    if (nativeEvent.getKeyChar() == 0) {
+    int keyCode;
+    if (isPCodedKey(code)) {
+      keyCode = mapToPConst(code);
       keyChar = PConstants.CODED;
     } else {
+      keyCode = code;
       keyChar = nativeEvent.getKeyChar();
     }
-//    System.out.println("KY: " + nativeEvent.getKeyCode() + " " + nativeEvent.getKeySymbol());
 
     // From http://jogamp.org/deployment/v2.1.0/javadoc/jogl/javadoc/com/jogamp/newt/event/KeyEvent.html
     // public final short getKeySymbol()
@@ -649,10 +652,43 @@ public class PSurfaceNEWT implements PSurface {
     KeyEvent ke = new KeyEvent(nativeEvent, nativeEvent.getWhen(),
                                peAction, peModifiers,
                                keyChar,
-//                               nativeEvent.getKeyCode());
-                               nativeEvent.getKeySymbol());
+                               keyCode);
+//                               nativeEvent.getKeySymbol());
 
     sketch.postEvent(ke);
+  }
+
+  // Why do we need this mapping?
+  // Relevant discussion and links here:
+  // http://forum.jogamp.org/Newt-wrong-keycode-for-key-td4033690.html#a4033697
+  // (I don't think this is a complete solution).
+  private static int mapToPConst(short code) {
+    if (code == com.jogamp.newt.event.KeyEvent.VK_UP) {
+      return PConstants.UP;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_DOWN) {
+      return PConstants.DOWN;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_LEFT) {
+      return PConstants.LEFT;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_RIGHT) {
+      return PConstants.RIGHT;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_ALT) {
+      return PConstants.ALT;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_CONTROL) {
+      return PConstants.CONTROL;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_SHIFT) {
+      return PConstants.SHIFT;
+    }
+    return code;
+  }
+
+  private static boolean isPCodedKey(short code) {
+    return code == com.jogamp.newt.event.KeyEvent.VK_UP ||
+           code == com.jogamp.newt.event.KeyEvent.VK_DOWN ||
+           code == com.jogamp.newt.event.KeyEvent.VK_LEFT ||
+           code == com.jogamp.newt.event.KeyEvent.VK_RIGHT ||
+           code == com.jogamp.newt.event.KeyEvent.VK_ALT ||
+           code == com.jogamp.newt.event.KeyEvent.VK_CONTROL ||
+           code == com.jogamp.newt.event.KeyEvent.VK_SHIFT;
   }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
