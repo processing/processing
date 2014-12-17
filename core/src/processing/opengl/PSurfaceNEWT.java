@@ -417,6 +417,7 @@ public class PSurfaceNEWT implements PSurface {
       System.err.println("3. set size");
       sketchWidth = sketch.width = width;
       sketchHeight = sketch.height = height;
+      graphics.setSize(width, height);
     }
   }
 
