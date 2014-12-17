@@ -159,6 +159,7 @@ public class PdeEmitter implements PdeTokenTypes {
       // statements and all unary expression types qualify.  Return these
       // nodes directly
       case CLASS_DEF:
+      case ENUM_DEF:
       case LITERAL_if:
       case LITERAL_new:
       case LITERAL_for:
@@ -339,10 +340,13 @@ public class PdeEmitter implements PdeTokenTypes {
       break;
 
     case CLASS_DEF:
+    case ENUM_DEF:
     case INTERFACE_DEF:
       print(getChild(ast, MODIFIERS));
       if (ast.getType() == CLASS_DEF) {
         out.print("class");
+      } else if (ast.getType() == ENUM_DEF) {
+        out.print("enum");
       } else {
         out.print("interface");
       }
@@ -386,6 +390,7 @@ public class PdeEmitter implements PdeTokenTypes {
     case PARAMETER_DEF:
     case VARIABLE_PARAMETER_DEF:
     case VARIABLE_DEF:
+    case ENUM_CONSTANT_DEF:
     case TYPE:
     case SLIST:
     case ELIST:
@@ -744,6 +749,7 @@ public class PdeEmitter implements PdeTokenTypes {
       printChildren(ast);
       break;
 
+    case ANNOTATIONS:
     case ANNOTATION_ARRAY_INIT:
       printChildren(ast);
       break;

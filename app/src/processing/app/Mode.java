@@ -29,11 +29,15 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.*;
 
+import processing.app.contrib.ContributionType;
+import processing.app.contrib.ExamplesContribution;
 import processing.app.syntax.*;
 import processing.core.PApplet;
 
@@ -43,7 +47,7 @@ public abstract class Mode {
 
   protected File folder;
 
-  protected PdeKeywords tokenMarker = new PdeKeywords();
+  protected TokenMarker tokenMarker;
   protected HashMap<String, String> keywordToReference = 
     new HashMap<String, String>();
   
@@ -69,6 +73,8 @@ public abstract class Mode {
   protected File examplesFolder;
   protected File librariesFolder;
   protected File referenceFolder;
+  
+  protected File examplesContribFolder;
 
   public ArrayList<Library> coreLibraries;
   public ArrayList<Library> contribLibraries;
@@ -94,11 +100,15 @@ public abstract class Mode {
   public Mode(Base base, File folder) {
     this.base = base;
     this.folder = folder;
+    tokenMarker = createTokenMarker();
 
     // Get paths for the libraries and examples in the mode folder
     examplesFolder = new File(folder, "examples");
     librariesFolder = new File(folder, "libraries");
     referenceFolder = new File(folder, "reference");
+    
+    // Get path to the contributed examples compatible with this mode
+    examplesContribFolder = Base.getSketchbookExamplesFolder();
 
 //    rebuildToolbarMenu();
     rebuildLibraryList();
@@ -125,31 +135,43 @@ public abstract class Mode {
 
   
   protected void loadKeywords(File keywordFile) throws IOException {
+    // overridden for Python, where # is an actual keyword 
+    loadKeywords(keywordFile, "#");
+  }
+  
+  
+  protected void loadKeywords(File keywordFile, 
+                              String commentPrefix) throws IOException {
     BufferedReader reader = PApplet.createReader(keywordFile);
     String line = null;
     while ((line = reader.readLine()) != null) {
-//      String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
-      String[] pieces = PApplet.splitTokens(line);
-      if (pieces.length >= 2) {
-        String keyword = pieces[0];
-        String coloring = pieces[1];
+      if (!line.trim().startsWith(commentPrefix)) {
+        // Was difficult to make sure that mode authors were properly doing 
+        // tab-separated values. By definition, there can't be additional 
+        // spaces inside a keyword (or filename), so just splitting on tokens. 
+        String[] pieces = PApplet.splitTokens(line);
+        if (pieces.length >= 2) {
+          String keyword = pieces[0];
+          String coloring = pieces[1];
 
-        if (coloring.length() > 0) {
-          tokenMarker.addColoring(keyword, coloring);
-        }
-        if (pieces.length == 3) {
-          String htmlFilename = pieces[2];
-          if (htmlFilename.length() > 0) {
-            // if the file is for the version with parens, 
-            // add a paren to the keyword
-            if (htmlFilename.endsWith("_")) {
-              keyword += "_";
+          if (coloring.length() > 0) {
+            tokenMarker.addColoring(keyword, coloring);
+          }
+          if (pieces.length == 3) {
+            String htmlFilename = pieces[2];
+            if (htmlFilename.length() > 0) {
+              // if the file is for the version with parens, 
+              // add a paren to the keyword
+              if (htmlFilename.endsWith("_")) {
+                keyword += "_";
+              }
+              keywordToReference.put(keyword, htmlFilename);
             }
-            keywordToReference.put(keyword, htmlFilename);
           }
         }
       }
     }
+    reader.close();
   }
   
   
@@ -262,6 +284,15 @@ public abstract class Mode {
   //abstract public Editor createEditor(Base base, String path, int[] location);
 
 
+  /**
+   * Get the folder where this mode is stored. 
+   * @since 3.0a3
+   */
+  public File getFolder() {
+    return folder;
+  }
+  
+  
   public File getExamplesFolder() {
     return examplesFolder;
   }
@@ -382,6 +413,14 @@ public abstract class Mode {
       }
     });
     toolbarMenu.add(item);
+    
+    item = new JMenuItem(Language.text("examples.add_examples"));
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        base.handleOpenExampleManager();
+      }
+    });
+    toolbarMenu.add(item);
 
     // Add a list of all sketches and subfolders
     toolbarMenu.addSeparator();
@@ -411,13 +450,13 @@ public abstract class Mode {
 
   public void rebuildImportMenu() {  //JMenu importMenu) {
     if (importMenu == null) {
-      importMenu = new JMenu("Import Library...");
+      importMenu = new JMenu(Language.text("menu.library"));
     } else {
       //System.out.println("rebuilding import menu");
       importMenu.removeAll();
     }
 
-    JMenuItem addLib = new JMenuItem("Add Library...");
+    JMenuItem addLib = new JMenuItem(Language.text("menu.library.add_library"));
     addLib.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         base.handleOpenLibraryManager();
@@ -441,7 +480,7 @@ public abstract class Mode {
 //    }
 
     if (coreLibraries.size() == 0) {
-      JMenuItem item = new JMenuItem(getTitle() + " mode has no core libraries");
+      JMenuItem item = new JMenuItem(getTitle() + " " + Language.text("menu.library.no_core_libraries"));
       item.setEnabled(false);
       importMenu.add(item);
     } else {
@@ -458,7 +497,7 @@ public abstract class Mode {
 
     if (contribLibraries.size() != 0) {
       importMenu.addSeparator();
-      JMenuItem contrib = new JMenuItem("Contributed");
+      JMenuItem contrib = new JMenuItem(Language.text("menu.library.contributed"));
       contrib.setEnabled(false);
       importMenu.add(contrib);
 
@@ -571,10 +610,10 @@ public abstract class Mode {
   }
 
 
-  public JTree buildExamplesTree() {
+  public DefaultMutableTreeNode buildExamplesTree() {
     DefaultMutableTreeNode node = new DefaultMutableTreeNode("Examples");
 
-    JTree examplesTree = new JTree(node);
+//    JTree examplesTree = new JTree(node);
 //    rebuildExamplesTree(node);
 //  }
 
@@ -593,30 +632,28 @@ public abstract class Mode {
 //      });
       File[] subfolders = getExampleCategoryFolders();
 
-//      DefaultMutableTreeNode examplesParent = new DefaultMutableTreeNode("Examples");
+      DefaultMutableTreeNode modeExParent = new DefaultMutableTreeNode("Mode Examples");
+      
       for (File sub : subfolders) {
         DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
         if (base.addSketches(subNode, sub)) {
 //          examplesParent.add(subNode);
-          node.add(subNode);
+          modeExParent.add(subNode);
         }
       }
-//      node.add(examplesParent);
-//      examplesTree.expandPath(new TreePath(examplesParent));
-
+ 
       // get library examples
       boolean any = false;
-      DefaultMutableTreeNode libParent = new DefaultMutableTreeNode("Libraries");
       for (Library lib : coreLibraries) {
         if (lib.hasExamples()) {
           DefaultMutableTreeNode libNode = new DefaultMutableTreeNode(lib.getName());
-          any |= base.addSketches(libNode, lib.getExamplesFolder());
-          libParent.add(libNode);
+          if (base.addSketches(libNode, lib.getExamplesFolder()))
+            modeExParent.add(libNode);
         }
       }
-      if (any) {
-        node.add(libParent);
-      }
+      
+      if (modeExParent.getChildCount() > 0)
+        node.add(modeExParent);
 
       // get contrib library examples
       any = false;
@@ -627,7 +664,7 @@ public abstract class Mode {
       }
       if (any) {
 //        menu.addSeparator();
-        DefaultMutableTreeNode contribParent = new DefaultMutableTreeNode("Contributed Libraries");
+        DefaultMutableTreeNode contribParent = new DefaultMutableTreeNode("Library Examples");
 //        Base.addDisabledItem(menu, "Contributed");
         for (Library lib : contribLibraries) {
           if (lib.hasExamples()) {
@@ -644,7 +681,46 @@ public abstract class Mode {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return examplesTree;
+    
+    DefaultMutableTreeNode contribExampleNode = buildContributedExamplesTrees();
+    if (contribExampleNode.getChildCount() > 0)
+      node.add(contribExampleNode);
+    return node;
+  }
+
+
+  public DefaultMutableTreeNode buildContributedExamplesTrees() {
+    DefaultMutableTreeNode node = new DefaultMutableTreeNode("Contributed Examples");
+
+    try {
+      File[] subfolders = ContributionType.EXAMPLES.listCandidates(examplesContribFolder);
+      if (subfolders == null) {
+        subfolders = new File[0]; //empty array
+      }
+      for (File sub : subfolders) {
+        if (!ExamplesContribution.isExamplesCompatible(base, sub))
+          continue;
+        DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
+        if (base.addSketches(subNode, sub)) {
+          node.add(subNode);
+          int exampleNodeNumber = -1;
+          for (int y = 0; y < subNode.getChildCount(); y++)
+            if (subNode.getChildAt(y).toString().equals("examples"))
+              exampleNodeNumber = y;
+          if (exampleNodeNumber == -1)
+            continue;
+          TreeNode exampleNode = subNode.getChildAt(exampleNodeNumber);
+          subNode.remove(exampleNodeNumber);
+          int count = exampleNode.getChildCount();
+          for (int x = 0; x < count; x++) {
+            subNode.add((DefaultMutableTreeNode) exampleNode.getChildAt(0));
+          }
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return node;//examplesTree;
   }
 
 
@@ -665,9 +741,101 @@ public abstract class Mode {
   }
 
 
+  /**
+   * Function to give a JTree a pretty alternating gray-white colouring for
+   * its rows.
+   * 
+   * @param tree
+   */
+  private void colourizeTreeRows(JTree tree) {
+    // Code in this function adapted from:
+    // http://mateuszstankiewicz.eu/?p=263
+    tree.setCellRenderer(new DefaultTreeCellRenderer() {
+
+      @Override
+      public Component getTreeCellRendererComponent(JTree tree, Object value,
+                                                    boolean sel,
+                                                    boolean expanded,
+                                                    boolean leaf, int row,
+                                                    boolean hasFocus) {
+        JComponent c = (JComponent) super
+          .getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row,
+                                        hasFocus);
+
+        if (!tree.isRowSelected(row)) {
+          if (row % 2 == 0) {
+
+            // Need to set this, else the gray from the odd 
+            // rows colours this gray as well.
+            c.setBackground(new Color(255, 255, 255));
+
+            setBackgroundSelectionColor(new Color(0, 0, 255));
+            setTextSelectionColor(Color.WHITE);
+            setBorderSelectionColor(new Color(0, 0, 255));
+          } else {
+
+            // Set background for entire component (including the image).
+            // Using transparency messes things up, probably since the 
+            // transparent colour is not good friends with the images background colour.
+            c.setBackground(new Color(240, 240, 240));
+
+            // Can't use setBackgroundSelectionColor() directly, since then, the 
+            // image's background isn't affected.
+            // The setUI() doesn't fix the image's background because the 
+            // transparency likely interferes with its normal background, 
+            // making its background lighter than the rest. 
+//            setBackgroundNonSelectionColor(new Color(190, 190, 190));
+
+            setBackgroundSelectionColor(new Color(0, 0, 255));
+            setTextSelectionColor(Color.WHITE);
+            setBorderSelectionColor(new Color(0, 0, 255));
+          }
+        } else {// Transparent blue if selected
+          c.setBackground(new Color(127, 127, 255));
+        }
+
+        c.setOpaque(true);
+        return c;
+      }
+
+    });
+
+    tree.setUI(new BasicTreeUI() {
+
+      @Override
+      protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets,
+                              Rectangle bounds, TreePath path, int row,
+                              boolean isExpanded, boolean hasBeenExpanded,
+                              boolean isLeaf) {
+        Graphics g2 = g.create();
+
+        if (!tree.isRowSelected(row)) {
+          if (row % 2 == 0) {
+            // Need to set this, else the gray from the odd rows 
+            // affects the even rows too.
+            g2.setColor(new Color(255, 255, 255, 128));
+          } else {
+            // Transparent light-gray
+            g2.setColor(new Color(226, 226, 226, 128));
+          }
+        } else
+          // Transparent blue if selected
+          g2.setColor(new Color(0, 0, 255, 128));
+
+        g2.fillRect(0, bounds.y, tree.getWidth(), bounds.height);
+
+        g2.dispose();
+
+        super.paintRow(g, clipBounds, insets, bounds, path, row, isExpanded,
+                       hasBeenExpanded, isLeaf);
+      }
+    });
+  }
+
+
   public void showExamplesFrame() {
     if (examplesFrame == null) {
-      examplesFrame = new JFrame(getTitle() + " Examples");
+      examplesFrame = new JFrame(getTitle() + " " + Language.text("examples"));
       Toolkit.setIcon(examplesFrame);
       Toolkit.registerWindowCloseKeys(examplesFrame.getRootPane(), new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -675,7 +843,37 @@ public abstract class Mode {
         }
       });
       
-      final JTree tree = buildExamplesTree();
+      JPanel examplesPanel = new JPanel();
+      examplesPanel.setLayout(new BorderLayout());
+      examplesPanel.setBackground(Color.WHITE);
+      
+      final JPanel openExamplesManagerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      JLabel openExamplesManagerLabel = new JLabel(Language.text("examples.add_examples"));
+//      openExamplesManagerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+      openExamplesManagerPanel.add(openExamplesManagerLabel);
+      openExamplesManagerPanel.setOpaque(false);
+      Border lineBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK);
+      Border paddingBorder = BorderFactory.createEmptyBorder(3, 5, 1, 4);
+      openExamplesManagerPanel.setBorder(BorderFactory.createCompoundBorder(lineBorder, paddingBorder));
+//      openExamplesManagerLabel.set
+      openExamplesManagerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+      openExamplesManagerPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//      openExamplesManagerLabel.setForeground(new Color(0, 0, 238));
+      openExamplesManagerPanel.addMouseListener(new MouseAdapter() {
+        
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          base.handleOpenExampleManager();
+//          openExamplesManagerLabel.setForeground(new Color(85, 26, 139));
+        }
+      });
+      
+      final JTree tree = new JTree(buildExamplesTree());
+      
+      colourizeTreeRows(tree);
+      
+      tree.setOpaque(true);
+      tree.setAlignmentX(Component.LEFT_ALIGNMENT);
 
       tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
       tree.setShowsRootHandles(true);
@@ -737,16 +935,23 @@ public abstract class Mode {
         }
       });
 
-      tree.setBorder(new EmptyBorder(5, 5, 5, 5));
+      tree.setBorder(new EmptyBorder(0, 5, 5, 5));
       if (Base.isMacOS()) {
         tree.setToggleClickCount(2);
       } else {
         tree.setToggleClickCount(1);
       }
+  
       JScrollPane treePane = new JScrollPane(tree);
-      treePane.setPreferredSize(new Dimension(250, 450));
-      treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
-      examplesFrame.getContentPane().add(treePane);
+      treePane.setPreferredSize(new Dimension(250, 300));
+      treePane.setBorder(new EmptyBorder(2, 0, 0, 0));
+      treePane.setOpaque(true);
+      treePane.setBackground(Color.WHITE);
+      treePane.setAlignmentX(Component.LEFT_ALIGNMENT);
+      
+      examplesPanel.add(openExamplesManagerPanel,BorderLayout.PAGE_START);
+      examplesPanel.add(treePane, BorderLayout.CENTER);
+      examplesFrame.getContentPane().add(examplesPanel);
       examplesFrame.pack();
 
       restoreExpanded(tree);
@@ -872,6 +1077,104 @@ public abstract class Mode {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  public DefaultMutableTreeNode buildSketchbookTree(){
+    DefaultMutableTreeNode sbNode = new DefaultMutableTreeNode(Language.text("sketchbook.tree"));
+    try {
+      base.addSketches(sbNode, Base.getSketchbookFolder());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return sbNode;
+  }
+  
+  protected JFrame sketchbookFrame;
+  
+  public void showSketchbookFrame() {
+    if (sketchbookFrame == null) {
+      sketchbookFrame = new JFrame(Language.text("sketchbook"));
+      Toolkit.setIcon(sketchbookFrame);
+      Toolkit.registerWindowCloseKeys(sketchbookFrame.getRootPane(),
+                                      new ActionListener() {
+                                        public void actionPerformed(ActionEvent e) {
+                                          sketchbookFrame.setVisible(false);
+                                        }
+                                      });
+
+      final JTree tree = new JTree(buildSketchbookTree());
+      tree.getSelectionModel()
+        .setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+      tree.setShowsRootHandles(true);
+      tree.expandRow(0);
+      tree.setRootVisible(false);
+
+      tree.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+          if (e.getClickCount() == 2) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+              .getLastSelectedPathComponent();
+
+            int selRow = tree.getRowForLocation(e.getX(), e.getY());
+            //TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+            //if (node != null && node.isLeaf() && node.getPath().equals(selPath)) {
+            if (node != null && node.isLeaf() && selRow != -1) {
+              SketchReference sketch = (SketchReference) node.getUserObject();
+              base.handleOpen(sketch.getPath());
+            }
+          }
+        }
+      });
+
+      tree.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) { // doesn't fire keyTyped()
+            sketchbookFrame.setVisible(false);
+          }
+        }
+
+        public void keyTyped(KeyEvent e) {
+          if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+              .getLastSelectedPathComponent();
+            if (node != null && node.isLeaf()) {
+              SketchReference sketch = (SketchReference) node.getUserObject();
+              base.handleOpen(sketch.getPath());
+            }
+          }
+        }
+      });
+
+      tree.setBorder(new EmptyBorder(5, 5, 5, 5));
+      if (Base.isMacOS()) {
+        tree.setToggleClickCount(2);
+      } else {
+        tree.setToggleClickCount(1);
+      }
+      JScrollPane treePane = new JScrollPane(tree);
+      treePane.setPreferredSize(new Dimension(250, 450));
+      treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
+      sketchbookFrame.getContentPane().add(treePane);
+      sketchbookFrame.pack();
+    }
+
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        // Space for the editor plus a li'l gap
+        int roughWidth = sketchbookFrame.getWidth() + 20;
+        Point p = null;
+        // If no window open, or the editor is at the edge of the screen
+        if (base.activeEditor == null
+          || (p = base.activeEditor.getLocation()).x < roughWidth) {
+          // Center the window on the screen
+          sketchbookFrame.setLocationRelativeTo(null);
+        } else {
+          // Open the window relative to the editor
+          sketchbookFrame.setLocation(p.x - roughWidth, p.y);
+        }
+        sketchbookFrame.setVisible(true);
+      }
+    });
+  }
 
 /**
    * Get an image object from the theme folder.
@@ -905,6 +1208,10 @@ public abstract class Mode {
   //}
   public TokenMarker getTokenMarker() {
     return tokenMarker;
+  }
+  
+  protected TokenMarker createTokenMarker() {
+    return new PdeKeywords();
   }
 
 
@@ -1005,6 +1312,18 @@ public abstract class Mode {
 
 
   /**
+   * @param f File to be checked against this mode's accepted extensions.
+   * @return Whether or not the given file name features an extension supported by this mode.
+   */
+  public boolean canEdit(final File f) {
+    final int dot = f.getName().lastIndexOf('.');
+    if (dot < 0) {
+      return false;
+    }
+    return validExtension(f.getName().substring(dot + 1));
+  }
+  
+  /**
    * Check this extension (no dots, please) against the list of valid
    * extensions.
    */
@@ -1022,6 +1341,18 @@ public abstract class Mode {
    */
   abstract public String getDefaultExtension();
 
+
+  /**
+   * Returns the appropriate file extension to use for auxilliary source files in a sketch.
+   * For example, in a Java-mode sketch, auxilliary files should be name "Foo.java"; in
+   * Python mode, they should be named "foo.py".
+   * 
+   * <p>Modes that do not override this function will get the default behavior of returning the
+   * default extension.
+   */
+  public String getModuleExtension() {
+    return getDefaultExtension();
+  }
 
 
   /**
@@ -1083,4 +1414,9 @@ public abstract class Mode {
 //  public void handleNewReplace() {
 //    base.handleNewReplace();
 //  }
+  
+  @Override
+  public String toString() {
+    return getTitle();
+  }
 }

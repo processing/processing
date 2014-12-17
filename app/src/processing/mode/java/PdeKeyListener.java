@@ -80,6 +80,7 @@ public class PdeKeyListener {
 
     Sketch sketch = editor.getSketch();
 
+    /*
     if ((event.getModifiers() & CTRL_ALT) == CTRL_ALT) {
       if (code == KeyEvent.VK_LEFT) {
         sketch.handlePrevCode();
@@ -89,6 +90,7 @@ public class PdeKeyListener {
         return true;
       }
     }
+    */
 
     if ((event.getModifiers() & InputEvent.META_MASK) != 0) {
       //event.consume();  // does nothing
@@ -194,6 +196,9 @@ public class PdeKeyListener {
         textarea.setSelectedText(spaces(tabSize));
         event.consume();
         return true;
+      } else if (!Preferences.getBoolean("editor.tabs.expand")) {
+        textarea.setSelectedText("\t");
+        event.consume();
       }
       break;
 
@@ -301,9 +306,11 @@ public class PdeKeyListener {
           //textarea.setSelectionStart(origIndex + 1);
           textarea.setSelectionEnd(textarea.getSelectionStop() - spaceCount);
           textarea.setSelectedText("\n");
+          textarea.setCaretPosition(textarea.getCaretPosition() + extraCount + spaceCount);
         } else {
           String insertion = "\n" + spaces(spaceCount);
           textarea.setSelectedText(insertion);
+          textarea.setCaretPosition(textarea.getCaretPosition() + extraCount);
         }
 
         // not gonna bother handling more than one brace

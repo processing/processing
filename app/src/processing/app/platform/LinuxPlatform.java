@@ -23,6 +23,7 @@
 package processing.app.platform;
 
 import java.io.File;
+import java.awt.Toolkit;
 
 import processing.app.Base;
 import processing.app.Platform;
@@ -40,12 +41,27 @@ public class LinuxPlatform extends Platform {
         (!javaVendor.contains("Sun") && !javaVendor.contains("Oracle")) ||
         javaVM == null || !javaVM.contains("Java")) {
       Base.showWarning("Not fond of this Java VM",
-        "Processing requires Java 6 from Sun (i.e. the sun-java-jdk\n" +
+        "Processing requires Java 7 from Sun (i.e. the sun-java-jdk\n" +
         "package on Ubuntu). Other versions such as OpenJDK, IcedTea,\n" +
         "and GCJ are strongly discouraged. Among other things, you're\n" +
         "likely to run into problems with sketch window size and\n" +
         "placement. For more background, please read the wiki:\n" +
-        "http://wiki.processing.org/w/Supported_Platforms#Linux", null);
+        "https://github.com/processing/processing/wiki/Supported-Platforms#Linux", null);
+    }
+
+    // Set x11 WM_CLASS property which is used as the application
+    // name by Gnome3 and other window managers.
+    // https://github.com/processing/processing/issues/2534
+    try {
+      Toolkit xToolkit = Toolkit.getDefaultToolkit();
+      java.lang.reflect.Field awtAppClassNameField =
+        xToolkit.getClass().getDeclaredField("awtAppClassName");
+      awtAppClassNameField.setAccessible(true);
+      awtAppClassNameField.set(xToolkit, "Processing");
+
+    } catch(Exception e) {
+      // In case the implementation details change
+      e.printStackTrace();
     }
   }
 

@@ -5740,7 +5740,7 @@ public class PApplet extends Applet
    *      // list is now "apple, bear, cat"</PRE>
    */
   static public String join(String str[], String separator) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     for (int i = 0; i < str.length; i++) {
       if (i != 0) buffer.append(separator);
       buffer.append(str[i]);
@@ -5959,7 +5959,7 @@ public class PApplet extends Applet
    * @return true if 'what' is "true" or "TRUE", false otherwise
    */
   static final public boolean parseBoolean(String what) {
-    return new Boolean(what).booleanValue();
+    return Boolean.parseBoolean(what);
   }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -6017,7 +6017,7 @@ public class PApplet extends Applet
   static final public boolean[] parseBoolean(String what[]) {
     boolean outgoing[] = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
-      outgoing[i] = new Boolean(what[i]).booleanValue();
+      outgoing[i] = Boolean.parseBoolean(what[i]);
     }
     return outgoing;
   }

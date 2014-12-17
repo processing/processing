@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
 <li>
 <ul class="inheritance">
 <li>PShader</li>
@@ -91,10 +91,15 @@
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd><a href="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</a></dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="strong">PShader</span>
-extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+extends Object
+implements <a href="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</a></pre>
 <div class="block">This class encapsulates a GLSL shader program, including a vertex
  and a fragment shader. Based on the GLSLShader class from GLGraphics, which
  in turn was originally based in the code by JohnG:
@@ -130,6 +135,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#glVertex">glVertex</a></strong></code>&nbsp;</td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="fields_inherited_from_class_PConstants">
+<!--   -->
+</a>
+<h3>Fields inherited from interface&nbsp;<a href="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</a></h3>
+<code><a href="../../processing/core/PConstants.html#ADD">ADD</a>, <a href="../../processing/core/PConstants.html#ALPHA">ALPHA</a>, <a href="../../processing/core/PConstants.html#ALT">ALT</a>, <a href="../../processing/core/PConstants.html#AMBIENT">AMBIENT</a>, <a href="../../processing/core/PConstants.html#ARC">ARC</a>, <a href="../../processing/core/PConstants.html#ARGB">ARGB</a>, <a href="../../processing/core/PConstants.html#ARROW">ARROW</a>, <a href="../../processing/core/PConstants.html#BACKSPACE">BACKSPACE</a>, <a href="../../processing/core/PConstants.html#BASELINE">BASELINE</a>, <a href="../../processing/core/PConstants.html#BEVEL">BEVEL</a>, <a href="../../processing/core/PConstants.html#BEZIER_VERTEX">BEZIER_VERTEX</a>, <a href="../../processing/core/PConstants.html#BLEND">BLEND</a>, <a href="../../processing/core/PConstants.html#BLUR">BLUR</a>, <a href="../../processing/core/PConstants.html#BOTTOM">BOTTOM</a>, <a href="../../processing/core/PConstants.html#BOX">BOX</a>, <a href="../../processing/core/PConstants.html#BREAK">BREAK</a>, <a href="../../processing/core/PConstants.html#BURN">BURN</a>, <a href="../../processing/core/PConstants.html#CENTER">CENTER</a>, <a href="../../processing/core/PConstants.html#CHATTER">CHATTER</a>, <a href="../../processing/core/PConstants.html#CHORD">CHORD</a>, <a href="../../processing/core/PConstants.html#CLAMP">CLAMP</a>, <a href="../../processing/core/PConstants.html#CLOSE">CLOSE</a>, <a href="../../processing/core/PConstants.html#CODED">CODED</a>, <a href="../../processing/core/PConstants.html#COMPLAINT">COMPLAINT</a>, <a href="../../processing/core/PConstants.html#CONTROL">CONTROL</a>, <a href="../../processing/core/PConstants.html#CORNER">CORNER</a>, <a href="../../processing/core/PConstants.html#CORNERS">CORNERS</a>, <a href="../../processing/core/PConstants.html#CROSS">CROSS</a>, <a href="../../processing/core/PConstants.html#CURVE_VERTEX">CURVE_VERTEX</a>, <a href="../../processing/core/PConstants.html#CUSTOM">CUSTOM</a>, <a href="../../processing/core/PConstants.html#DARKEST">DARKEST</a>, <a href="../../processing/core/PConstants.html#DEG_TO_RAD">DEG_TO_RAD</a>, <a href="../../processing/core/PConstants.html#DELETE">DELETE</a>, <a href="../../processing/core/PConstants.html#DIAMETER">DIAMETER</a>, <a href="../../processing/core/PConstants.html#DIFFERENCE">DIFFERENCE</a>, <a href="../../processing/core/PConstants.html#DILATE">DILATE</a>, <a href="../../processing/core/PConstants.html#DIRECTIONAL">DIRECTIONAL</a>, <a href="../../processing/core/PConstants.html#DISABLE_DEPTH_MASK">DISABLE_DEPTH_MASK</a>, <a href="../../processing/core/PConstants.html#DISABLE_DEPTH_SORT">DISABLE_DEPTH_SORT</a>, <a href="../../processing/core/PConstants.html#DISABLE_DEPTH_TEST">DISABLE_DEPTH_TEST</a>, <a href="../../processing/core/PConstants.html#DISABLE_NATIVE_FONTS">DISABLE_NATIVE_FONTS</a>, <a href="../../processing/core/PConstants.html#DISABLE_OPENGL_ERRORS">DISABLE_OPENGL_ERRORS</a>, <a href="../../processing/core/PConstants.html#DISABLE_OPTIMIZED_STROKE">DISABLE_OPTIMIZED_STROKE</a>, <a href="../../processing/core/PConstants.html#DISABLE_RETINA_PIXELS">DISABLE_RETINA_PIXELS</a>, <a href="../../processing/core/PConstants.html#DISABLE_STROKE_PERSPECTIVE">DISABLE_STROKE_PERSPECTIVE</a>, <a href="../../processing/core/PConstants.html#DISABLE_STROKE_PURE">DISABLE_STROKE_PURE</a>, <a href="../../processing/core/PConstants.html#DISABLE_TEXTURE_MIPMAPS">DISABLE_TEXTURE_MIPMAPS</a>, <a href="../../processing/core/PConstants.html#DODGE">DODGE</a>, <a href="../../processing/core/PConstants.html#DOWN">DOWN</a>, <a href="../../processing/core/PConstants.html#DXF">DXF</a>, <a href="../../processing/core/PConstants.html#ELLIPSE">ELLIPSE</a>, <a href="../../processing/core/PConstants.html#ENABLE_DEPTH_MASK">ENABLE_DEPTH_MASK</a>, <a href="../../processing/core/PConstants.html#ENABLE_DEPTH_SORT">ENABLE_DEPTH_SORT</a>, <a href="../../processing/core/PConstants.html#ENABLE_DEPTH_TEST">ENABLE_DEPTH_TEST</a>, <a href="../../processing/core/PConstants.html#ENABLE_NATIVE_FONTS">ENABLE_NATIVE_FONTS</a>, <a href="../../processing/core/PConstants.html#ENABLE_OPENGL_ERRORS">ENABLE_OPENGL_ERRORS</a>, <a href="../../processing/core/PConstants.html#ENABLE_OPTIMIZED_STROKE">ENABLE_OPTIMIZED_STROKE</a>, <a href="../../processing/core/PConstants.html#ENABLE_RETINA_PIXELS">ENABLE_RETINA_PIXELS</a>, <a href="../../processing/core/PConstants.html#ENABLE_STROKE_PERSPECTIVE">ENABLE_STROKE_PERSPECTIVE</a>, <a href="../../processing/core/PConstants.html#ENABLE_STROKE_PURE">ENABLE_STROKE_PURE</a>, <a href="../../processing/core/PConstants.html#ENABLE_TEXTURE_MIPMAPS">ENABLE_TEXTURE_MIPMAPS</a>, <a href="../../processing/core/PConstants.html#ENTER">ENTER</a>, <a href="../../processing/core/PConstants.html#EPSILON">EPSILON</a>, <a href="../../processing/core/PConstants.html#ERODE">ERODE</a>, <a href="../../processing/core/PConstants.html#ERROR_BACKGROUND_IMAGE_FORMAT">ERROR_BACKGROUND_IMAGE_FORMAT</a>, <a href="../../processing/core/PConstants.html#ERROR_BACKGROUND_IMAGE_SIZE">ERROR_BACKGROUND_IMAGE_SIZE</a>, <a href="../../processing/core/PConstants.html#ERROR_PUSHMATRIX_OVERFLOW">ERROR_PUSHMATRIX_OVERFLOW</a>, <a href="../../processing/core/PConstants.html#ERROR_PUSHMATRIX_UNDERFLOW">ERROR_PUSHMATRIX_UNDERFLOW</a>, <a href="../../processing/core/PConstants.html#ERROR_TEXTFONT_NULL_PFONT">ERROR_TEXTFONT_NULL_PFONT</a>, <a href="../../processing/core/PConstants.html#ESC">ESC</a>, <a href="../../processing/core/PConstants.html#EXCLUSION">EXCLUSION</a>, <a href="../../processing/core/PConstants.html#GIF">GIF</a>, <a href="../../processing/core/PConstants.html#GRAY">GRAY</a>, <a href="../../processing/core/PConstants.html#GROUP">GROUP</a>, <a href="../../processing/core/PConstants.html#HALF_PI">HALF_PI</a>, <a href="../../processing/core/PConstants.html#HAND">HAND</a>, <a href="../../processing/core/PConstants.html#HARD_LIGHT">HARD_LIGHT</a>, <a href="../../processing/core/PConstants.html#HINT_COUNT">HINT_COUNT</a>, <a href="../../processing/core/PConstants.html#HSB">HSB</a>, <a href="../../processing/core/PConstants.html#IMAGE">IMAGE</a>, <a href="../../processing/core/PConstants.html#INVERT">INVERT</a>, <a href="../../processing/core/PConstants.html#JAVA2D">JAVA2D</a>, <a href="../../processing/core/PConstants.html#JPEG">JPEG</a>, <a href="../../processing/core/PConstants.html#LANDSCAPE">LANDSCAPE</a>, <a href="../../processing/core/PConstants.html#LEFT">LEFT</a>, <a href="../../processing/core/PConstants.html#LIGHTEST">LIGHTEST</a>, <a href="../../processing/core/PConstants.html#LINE_LOOP">LINE_LOOP</a>, <a href="../../processing/core/PConstants.html#LINE_STRIP">LINE_STRIP</a>, <a href="../../processing/core/PConstants.html#LINES">LINES</a>, <a href="../../processing/core/PConstants.html#LINUX">LINUX</a>, <a href="../../processing/core/PConstants.html#MACOSX">MACOSX</a>, <a href="../../processing/core/PConstants.html#MAX_FLOAT">MAX_FLOAT</a>, <a href="../../processing/core/PConstants.html#MAX_INT">MAX_INT</a>, <a href="../../processing/core/PConstants.html#MIN_FLOAT">MIN_FLOAT</a>, <a href="../../processing/core/PConstants.html#MIN_INT">MIN_INT</a>, <a href="../../processing/core/PConstants.html#MITER">MITER</a>, <a href="../../processing/core/PConstants.html#MODEL">MODEL</a>, <a href="../../processing/core/PConstants.html#MODELVIEW">MODELVIEW</a>, <a href="../../processing/core/PConstants.html#MOVE">MOVE</a>, <a href="../../processing/core/PConstants.html#MULTIPLY">MULTIPLY</a>, <a href="../../processing/core/PConstants.html#NORMAL">NORMAL</a>, <a href="../../processing/core/PConstants.html#OPAQUE">OPAQUE</a>, <a href="../../processing/core/PConstants.html#OPEN">OPEN</a>, <a href="../../processing/core/PConstants.html#OPENGL">OPENGL</a>, <a href="../../processing/core/PConstants.html#ORTHOGRAPHIC">ORTHOGRAPHIC</a>, <a href="../../processing/core/PConstants.html#OTHER">OTHER</a>, <a href="../../processing/core/PConstants.html#OVERLAY">OVERLAY</a>, <a href="../../processing/core/PConstants.html#P2D">P2D</a>, <a href="../../processing/core/PConstants.html#P3D">P3D</a>, <a href="../../processing/core/PConstants.html#PATH">PATH</a>, <a href="../../processing/core/PConstants.html#PDF">PDF</a>, <a href="../../processing/core/PConstants.html#PERSPECTIVE">PERSPECTIVE</a>, <a href="../../processing/core/PConstants.html#PI">PI</a>, <a href="../../processing/core/PConstants.html#PIE">PIE</a>, <a href="../../processing/core/PConstants.html#platformNames">platformNames</a>, <a href="../../processing/core/PConstants.html#POINTS">POINTS</a>, <a href="../../processing/core/PConstants.html#POLYGON">POLYGON</a>, <a href="../../processing/core/PConstants.html#PORTRAIT">PORTRAIT</a>, <a href="../../processing/core/PConstants.html#POSTERIZE">POSTERIZE</a>, <a href="../../processing/core/PConstants.html#PROBLEM">PROBLEM</a>, <a href="../../processing/core/PConstants.html#PROJECT">PROJECT</a>, <a href="../../processing/core/PConstants.html#PROJECTION">PROJECTION</a>, <a href="../../processing/core/PConstants.html#QUAD">QUAD</a>, <a href="../../processing/core/PConstants.html#QUAD_BEZIER_VERTEX">QUAD_BEZIER_VERTEX</a>, <a href="../../processing/core/PConstants.html#QUAD_STRIP">QUAD_STRIP</a>, <a href="../../processing/core/PConstants.html#QUADRATIC_VERTEX">QUADRATIC_VERTEX</a>, <a href="../../processing/core/PConstants.html#QUADS">QUADS</a>, <a href="../../processing/core/PConstants.html#QUARTER_PI">QUARTER_PI</a>, <a href="../../processing/core/PConstants.html#RAD_TO_DEG">RAD_TO_DEG</a>, <a href="../../processing/core/PConstants.html#RADIUS">RADIUS</a>, <a href="../../processing/core/PConstants.html#RECT">RECT</a>, <a href="../../processing/core/PConstants.html#REPEAT">REPEAT</a>, <a href="../../processing/core/PConstants.html#REPLACE">REPLACE</a>, <a href="../../processing/core/PConstants.html#RETURN">RETURN</a>, <a href="../../processing/core/PConstants.html#RGB">RGB</a>, <a href="../../processing/core/PConstants.html#RIGHT">RIGHT</a>, <a href="../../processing/core/PConstants.html#ROUND">ROUND</a>, <a href="../../processing/core/PConstants.html#SCREEN">SCREEN</a>, <a href="../../processing/core/PConstants.html#SHAPE">SHAPE</a>, <a href="../../processing/core/PConstants.html#SHIFT">SHIFT</a>, <a href="../../processing/core/PConstants.html#SOFT_LIGHT">SOFT_LIGHT</a>, <a href="../../processing/core/PConstants.html#SPHERE">SPHERE</a>, <a href="../../processing/core/PConstants.html#SPOT">SPOT</a>, <a href="../../processing/core/PConstants.html#SQUARE">SQUARE</a>, <a href="../../processing/core/PConstants.html#SUBTRACT">SUBTRACT</a>, <a href="../../processing/core/PConstants.html#TAB">TAB</a>, <a href="../../processing/core/PConstants.html#TARGA">TARGA</a>, <a href="../../processing/core/PConstants.html#TAU">TAU</a>, <a href="../../processing/core/PConstants.html#TEXT">TEXT</a>, <a href="../../processing/core/PConstants.html#THIRD_PI">THIRD_PI</a>, <a href="../../processing/core/PConstants.html#THRESHOLD">THRESHOLD</a>, <a href="../../processing/core/PConstants.html#TIFF">TIFF</a>, <a href="../../processing/core/PConstants.html#TOP">TOP</a>, <a href="../../processing/core/PConstants.html#TRIANGLE">TRIANGLE</a>, <a href="../../processing/core/PConstants.html#TRIANGLE_FAN">TRIANGLE_FAN</a>, <a href="../../processing/core/PConstants.html#TRIANGLE_STRIP">TRIANGLE_STRIP</a>, <a href="../../processing/core/PConstants.html#TRIANGLES">TRIANGLES</a>, <a href="../../processing/core/PConstants.html#TWO_PI">TWO_PI</a>, <a href="../../processing/core/PConstants.html#UP">UP</a>, <a href="../../processing/core/PConstants.html#VERTEX">VERTEX</a>, <a href="../../processing/core/PConstants.html#WAIT">WAIT</a>, <a href="../../processing/core/PConstants.html#WHITESPACE">WHITESPACE</a>, <a href="../../processing/core/PConstants.html#WINDOWS">WINDOWS</a>, <a href="../../processing/core/PConstants.html#X">X</a>, <a href="../../processing/core/PConstants.html#Y">Y</a>, <a href="../../processing/core/PConstants.html#Z">Z</a></code></li>
+</ul>
 </li>
 </ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -150,17 +162,22 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <td class="colOne"><code><strong><a href="../../processing/opengl/PShader.html#PShader(processing.core.PApplet)">PShader</a></strong>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../processing/opengl/PShader.html#PShader(processing.core.PApplet, java.lang.String, java.lang.String)">PShader</a></strong>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
-       <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;vertFilename,
-       <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;fragFilename)</code>
+<td class="colOne"><code><strong><a href="../../processing/opengl/PShader.html#PShader(processing.core.PApplet,%20java.lang.String[],%20java.lang.String[])">PShader</a></strong>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
+       String[]&nbsp;vertSource,
+       String[]&nbsp;fragSource)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../processing/opengl/PShader.html#PShader(processing.core.PApplet,%20java.lang.String,%20java.lang.String)">PShader</a></strong>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
+       String&nbsp;vertFilename,
+       String&nbsp;fragFilename)</code>
 <div class="block">Creates a shader program using the specified vertex and fragment
  shaders.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../processing/opengl/PShader.html#PShader(processing.core.PApplet, java.net.URL, java.net.URL)">PShader</a></strong>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
-       <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net">URL</a>&nbsp;vertURL,
-       <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net">URL</a>&nbsp;fragURL)</code>&nbsp;</td>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../processing/opengl/PShader.html#PShader(processing.core.PApplet,%20java.net.URL,%20java.net.URL)">PShader</a></strong>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
+       URL&nbsp;vertURL,
+       URL&nbsp;fragURL)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -191,36 +208,73 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, float)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20boolean)">set</a></strong>(String&nbsp;name,
+   boolean&nbsp;x)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20boolean[])">set</a></strong>(String&nbsp;name,
+   boolean[]&nbsp;vec)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20boolean[],%20int)">set</a></strong>(String&nbsp;name,
+   boolean[]&nbsp;boolvec,
+   int&nbsp;ncoords)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20boolean,%20boolean)">set</a></strong>(String&nbsp;name,
+   boolean&nbsp;x,
+   boolean&nbsp;y)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20boolean,%20boolean,%20boolean)">set</a></strong>(String&nbsp;name,
+   boolean&nbsp;x,
+   boolean&nbsp;y,
+   boolean&nbsp;z)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20boolean,%20boolean,%20boolean,%20boolean)">set</a></strong>(String&nbsp;name,
+   boolean&nbsp;x,
+   boolean&nbsp;y,
+   boolean&nbsp;z,
+   boolean&nbsp;w)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20float)">set</a></strong>(String&nbsp;name,
    float&nbsp;x)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, float[])">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20float[])">set</a></strong>(String&nbsp;name,
    float[]&nbsp;vec)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, float[], int)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20float[],%20int)">set</a></strong>(String&nbsp;name,
    float[]&nbsp;vec,
    int&nbsp;ncoords)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, float, float)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20float,%20float)">set</a></strong>(String&nbsp;name,
    float&nbsp;x,
    float&nbsp;y)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, float, float, float)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20float,%20float,%20float)">set</a></strong>(String&nbsp;name,
    float&nbsp;x,
    float&nbsp;y,
    float&nbsp;z)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, float, float, float, float)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20float,%20float,%20float,%20float)">set</a></strong>(String&nbsp;name,
    float&nbsp;x,
    float&nbsp;y,
    float&nbsp;z,
@@ -228,36 +282,36 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, int)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20int)">set</a></strong>(String&nbsp;name,
    int&nbsp;x)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, int[])">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20int[])">set</a></strong>(String&nbsp;name,
    int[]&nbsp;vec)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, int[], int)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20int[],%20int)">set</a></strong>(String&nbsp;name,
    int[]&nbsp;vec,
    int&nbsp;ncoords)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, int, int)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20int,%20int)">set</a></strong>(String&nbsp;name,
    int&nbsp;x,
    int&nbsp;y)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, int, int, int)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20int,%20int,%20int)">set</a></strong>(String&nbsp;name,
    int&nbsp;x,
    int&nbsp;y,
    int&nbsp;z)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, int, int, int, int)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20int,%20int,%20int,%20int)">set</a></strong>(String&nbsp;name,
    int&nbsp;x,
    int&nbsp;y,
    int&nbsp;z,
@@ -265,45 +319,53 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, processing.core.PImage)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20processing.core.PImage)">set</a></strong>(String&nbsp;name,
    <a href="../../processing/core/PImage.html" title="class in processing.core">PImage</a>&nbsp;tex)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, processing.core.PMatrix2D)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20processing.core.PMatrix2D)">set</a></strong>(String&nbsp;name,
    <a href="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</a>&nbsp;mat)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, processing.core.PMatrix3D)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20processing.core.PMatrix3D)">set</a></strong>(String&nbsp;name,
    <a href="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</a>&nbsp;mat)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, processing.core.PMatrix3D, boolean)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20processing.core.PMatrix3D,%20boolean)">set</a></strong>(String&nbsp;name,
    <a href="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</a>&nbsp;mat,
    boolean&nbsp;use3x3)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String, processing.core.PVector)">set</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#set(java.lang.String,%20processing.core.PVector)">set</a></strong>(String&nbsp;name,
    <a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;vec)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#setFragmentShader(java.lang.String)">setFragmentShader</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;fragFilename)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#setFragmentShader(java.lang.String)">setFragmentShader</a></strong>(String&nbsp;fragFilename)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#setFragmentShader(java.net.URL)">setFragmentShader</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net">URL</a>&nbsp;fragURL)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#setFragmentShader(java.lang.String[])">setFragmentShader</a></strong>(String[]&nbsp;fragSource)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#setVertexShader(java.lang.String)">setVertexShader</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;vertFilename)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#setFragmentShader(java.net.URL)">setFragmentShader</a></strong>(URL&nbsp;fragURL)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#setVertexShader(java.net.URL)">setVertexShader</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net">URL</a>&nbsp;vertURL)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#setVertexShader(java.lang.String)">setVertexShader</a></strong>(String&nbsp;vertFilename)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#setVertexShader(java.lang.String[])">setVertexShader</a></strong>(String[]&nbsp;vertSource)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/PShader.html#setVertexShader(java.net.URL)">setVertexShader</a></strong>(URL&nbsp;vertURL)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -316,8 +378,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -393,8 +455,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>PShader</h4>
 <pre>public&nbsp;PShader(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
-       <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;vertFilename,
-       <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;fragFilename)</pre>
+       String&nbsp;vertFilename,
+       String&nbsp;fragFilename)</pre>
 <div class="block">Creates a shader program using the specified vertex and fragment
  shaders.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - the parent program</dd><dd><code>vertFilename</code> - name of the vertex shader</dd><dd><code>fragFilename</code> - name of the fragment shader</dd></dl>
@@ -403,13 +465,24 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <a name="PShader(processing.core.PApplet, java.net.URL, java.net.URL)">
 <!--   -->
 </a>
+<ul class="blockList">
+<li class="blockList">
+<h4>PShader</h4>
+<pre>public&nbsp;PShader(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
+       URL&nbsp;vertURL,
+       URL&nbsp;fragURL)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>vertURL</code> - network location of the vertex shader</dd><dd><code>fragURL</code> - network location of the fragment shader</dd></dl>
+</li>
+</ul>
+<a name="PShader(processing.core.PApplet, java.lang.String[], java.lang.String[])">
+<!--   -->
+</a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>PShader</h4>
 <pre>public&nbsp;PShader(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;parent,
-       <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net">URL</a>&nbsp;vertURL,
-       <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net">URL</a>&nbsp;fragURL)</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>vertURL</code> - network location of the vertex shader</dd><dd><code>fragURL</code> - network location of the fragment shader</dd></dl>
+       String[]&nbsp;vertSource,
+       String[]&nbsp;fragSource)</pre>
 </li>
 </ul>
 </li>
@@ -426,7 +499,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>setVertexShader</h4>
-<pre>public&nbsp;void&nbsp;setVertexShader(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;vertFilename)</pre>
+<pre>public&nbsp;void&nbsp;setVertexShader(String&nbsp;vertFilename)</pre>
 </li>
 </ul>
 <a name="setVertexShader(java.net.URL)">
@@ -435,7 +508,16 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>setVertexShader</h4>
-<pre>public&nbsp;void&nbsp;setVertexShader(<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net">URL</a>&nbsp;vertURL)</pre>
+<pre>public&nbsp;void&nbsp;setVertexShader(URL&nbsp;vertURL)</pre>
+</li>
+</ul>
+<a name="setVertexShader(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setVertexShader</h4>
+<pre>public&nbsp;void&nbsp;setVertexShader(String[]&nbsp;vertSource)</pre>
 </li>
 </ul>
 <a name="setFragmentShader(java.lang.String)">
@@ -444,7 +526,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>setFragmentShader</h4>
-<pre>public&nbsp;void&nbsp;setFragmentShader(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;fragFilename)</pre>
+<pre>public&nbsp;void&nbsp;setFragmentShader(String&nbsp;fragFilename)</pre>
 </li>
 </ul>
 <a name="setFragmentShader(java.net.URL)">
@@ -453,7 +535,16 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>setFragmentShader</h4>
-<pre>public&nbsp;void&nbsp;setFragmentShader(<a href="http://docs.oracle.com/javase/7/docs/api/java/net/URL.html?is-external=true" title="class or interface in java.net">URL</a>&nbsp;fragURL)</pre>
+<pre>public&nbsp;void&nbsp;setFragmentShader(URL&nbsp;fragURL)</pre>
+</li>
+</ul>
+<a name="setFragmentShader(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFragmentShader</h4>
+<pre>public&nbsp;void&nbsp;setFragmentShader(String[]&nbsp;fragSource)</pre>
 </li>
 </ul>
 <a name="bind()">
@@ -492,7 +583,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        int&nbsp;x)</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - the name of the uniform variable to modify</dd><dd><code>x</code> - first component of the variable to modify</dd></dl>
 </li>
@@ -503,7 +594,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        int&nbsp;x,
        int&nbsp;y)</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>y</code> - second component of the variable to modify. The variable has to be declared with an array/vector type in the shader (i.e.: int[2], vec2)</dd></dl>
@@ -515,7 +606,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        int&nbsp;x,
        int&nbsp;y,
        int&nbsp;z)</pre>
@@ -528,7 +619,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        int&nbsp;x,
        int&nbsp;y,
        int&nbsp;z,
@@ -542,7 +633,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        float&nbsp;x)</pre>
 </li>
 </ul>
@@ -552,7 +643,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        float&nbsp;x,
        float&nbsp;y)</pre>
 </li>
@@ -563,7 +654,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        float&nbsp;x,
        float&nbsp;y,
        float&nbsp;z)</pre>
@@ -575,7 +666,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        float&nbsp;x,
        float&nbsp;y,
        float&nbsp;z,
@@ -588,9 +679,55 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        <a href="../../processing/core/PVector.html" title="class in processing.core">PVector</a>&nbsp;vec)</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>vec</code> - modifies all the components of an array/vector uniform variable. PVector can only be used if the type of the variable is vec3.</dd></dl>
+</li>
+</ul>
+<a name="set(java.lang.String, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>set</h4>
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
+       boolean&nbsp;x)</pre>
+</li>
+</ul>
+<a name="set(java.lang.String, boolean, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>set</h4>
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
+       boolean&nbsp;x,
+       boolean&nbsp;y)</pre>
+</li>
+</ul>
+<a name="set(java.lang.String, boolean, boolean, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>set</h4>
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
+       boolean&nbsp;x,
+       boolean&nbsp;y,
+       boolean&nbsp;z)</pre>
+</li>
+</ul>
+<a name="set(java.lang.String, boolean, boolean, boolean, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>set</h4>
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
+       boolean&nbsp;x,
+       boolean&nbsp;y,
+       boolean&nbsp;z,
+       boolean&nbsp;w)</pre>
 </li>
 </ul>
 <a name="set(java.lang.String, int[])">
@@ -599,7 +736,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        int[]&nbsp;vec)</pre>
 </li>
 </ul>
@@ -609,7 +746,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        int[]&nbsp;vec,
        int&nbsp;ncoords)</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>ncoords</code> - number of coordinates per element, max 4</dd></dl>
@@ -621,7 +758,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        float[]&nbsp;vec)</pre>
 </li>
 </ul>
@@ -631,8 +768,29 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        float[]&nbsp;vec,
+       int&nbsp;ncoords)</pre>
+</li>
+</ul>
+<a name="set(java.lang.String, boolean[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>set</h4>
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
+       boolean[]&nbsp;vec)</pre>
+</li>
+</ul>
+<a name="set(java.lang.String, boolean[], int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>set</h4>
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
+       boolean[]&nbsp;boolvec,
        int&nbsp;ncoords)</pre>
 </li>
 </ul>
@@ -642,7 +800,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        <a href="../../processing/core/PMatrix2D.html" title="class in processing.core">PMatrix2D</a>&nbsp;mat)</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>mat</code> - matrix of values</dd></dl>
 </li>
@@ -653,7 +811,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        <a href="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</a>&nbsp;mat)</pre>
 </li>
 </ul>
@@ -663,7 +821,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        <a href="../../processing/core/PMatrix3D.html" title="class in processing.core">PMatrix3D</a>&nbsp;mat,
        boolean&nbsp;use3x3)</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>use3x3</code> - enforces the matrix is 3 x 3</dd></dl>
@@ -675,7 +833,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockListLast">
 <li class="blockList">
 <h4>set</h4>
-<pre>public&nbsp;void&nbsp;set(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;name,
+<pre>public&nbsp;void&nbsp;set(String&nbsp;name,
        <a href="../../processing/core/PImage.html" title="class in processing.core">PImage</a>&nbsp;tex)</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>tex</code> - sets the sampler uniform variable to read from this image texture</dd></dl>
 </li>

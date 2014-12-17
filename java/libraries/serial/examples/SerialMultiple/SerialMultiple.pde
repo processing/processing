@@ -13,7 +13,7 @@ int[] dataIn = new int[2];         // a list to hold data from the serial ports
 void setup()  {
   size(400, 300);
   // print a list of the serial ports:
-  println(Serial.list());
+  printArray(Serial.list());
   // On my machine, the first and third ports in the list
   // were the serial ports that my microcontrollers were 
   // attached to.

@@ -237,13 +237,13 @@ public class FileTextFieldTransferHandler extends TransferHandler {
             int nch;
             boolean lastWasCR = false;
             int last;
-            StringBuffer sbuff = null;
+            StringBuilder sb = null;
 
             // Read in a block at a time, mapping \r\n to \n, as well as single
             // \r to \n.
             while ((nch = in.read(buff, 0, buff.length)) != -1) {
-                if (sbuff == null) {
-                    sbuff = new StringBuffer(nch);
+                if (sb == null) {
+                    sb = new StringBuilder(nch);
                 }
                 last = 0;
                 for (int counter = 0; counter < nch; counter++) {
@@ -251,7 +251,7 @@ public class FileTextFieldTransferHandler extends TransferHandler {
                         case '\r':
                             if (lastWasCR) {
                                 if (counter == 0) {
-                                    sbuff.append('\n');
+                                    sb.append('\n');
                                 } else {
                                     buff[counter - 1] = '\n';
                                 }
@@ -262,7 +262,7 @@ public class FileTextFieldTransferHandler extends TransferHandler {
                         case '\n':
                             if (lastWasCR) {
                                 if (counter > (last + 1)) {
-                                    sbuff.append(buff, last, counter - last - 1);
+                                    sb.append(buff, last, counter - last - 1);
                                 }
                                 // else nothing to do, can skip \r, next write will
                                 // write \n
@@ -273,7 +273,7 @@ public class FileTextFieldTransferHandler extends TransferHandler {
                         default:
                             if (lastWasCR) {
                                 if (counter == 0) {
-                                    sbuff.append('\n');
+                                    sb.append('\n');
                                 } else {
                                     buff[counter - 1] = '\n';
                                 }
@@ -285,18 +285,18 @@ public class FileTextFieldTransferHandler extends TransferHandler {
                 if (last < nch) {
                     if (lastWasCR) {
                         if (last < (nch - 1)) {
-                            sbuff.append(buff, last, nch - last - 1);
+                            sb.append(buff, last, nch - last - 1);
                         }
                     } else {
-                        sbuff.append(buff, last, nch - last);
+                        sb.append(buff, last, nch - last);
                     }
                 }
             }
             if (lastWasCR) {
-                sbuff.append('\n');
+                sb.append('\n');
             }
             System.out.println("FileTextTransferHandler " + c.getSelectionStart() + ".." + c.getSelectionEnd());
-            c.replaceSelection(sbuff != null ? sbuff.toString() : "");
+            c.replaceSelection(sb != null ? sb.toString() : "");
         }
     }
 

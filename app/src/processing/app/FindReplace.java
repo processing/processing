@@ -64,15 +64,15 @@ public class FindReplace extends JFrame {
 
 
   public FindReplace(Editor editor) {
-    super("Find");
+    super(Language.text("find"));
     setResizable(false);
     this.editor = editor;
 
     Container pain = getContentPane();
     pain.setLayout(null);
 
-    JLabel findLabel = new JLabel("Find:");
-    JLabel replaceLabel = new JLabel("Replace with:");
+    JLabel findLabel = new JLabel(Language.text("find.find"));
+    JLabel replaceLabel = new JLabel(Language.text("find.replace_with"));
     Dimension labelDimension = replaceLabel.getPreferredSize();
 
     pain.add(findLabel);
@@ -85,7 +85,7 @@ public class FindReplace extends JFrame {
     if (findString != null) findField.setText(findString);
     if (replaceString != null) replaceField.setText(replaceString);
 
-    ignoreCaseBox = new JCheckBox("Ignore Case");
+    ignoreCaseBox = new JCheckBox(Language.text("find.ignore_case"));
     ignoreCaseBox.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           ignoreCase = ignoreCaseBox.isSelected();
@@ -94,7 +94,7 @@ public class FindReplace extends JFrame {
     ignoreCaseBox.setSelected(ignoreCase);
     pain.add(ignoreCaseBox);
 
-    allTabsBox = new JCheckBox("All Tabs");
+    allTabsBox = new JCheckBox(Language.text("find.all_tabs"));
     allTabsBox.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           allTabs = allTabsBox.isSelected();
@@ -104,7 +104,7 @@ public class FindReplace extends JFrame {
     allTabsBox.setEnabled(true);
     pain.add(allTabsBox);
 
-    wrapAroundBox = new JCheckBox("Wrap Around");
+    wrapAroundBox = new JCheckBox(Language.text("find.wrap_around"));
     wrapAroundBox.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           wrapAround = wrapAroundBox.isSelected();
@@ -116,11 +116,11 @@ public class FindReplace extends JFrame {
     JPanel buttons = new JPanel();
     buttons.setLayout(new FlowLayout(FlowLayout.CENTER,BUTTON_GAP, 0));
 
-    replaceAllButton = new JButton("Replace All");
-    replaceButton = new JButton("Replace");
-    replaceAndFindButton = new JButton("Replace & Find");
-    previousButton = new JButton("Previous");
-    findButton = new JButton("Find");
+    replaceAllButton = new JButton(Language.text("find.btn.replace_all"));
+    replaceButton = new JButton(Language.text("find.btn.replace"));
+    replaceAndFindButton = new JButton(Language.text("find.btn.find_and_replace"));
+    previousButton = new JButton(Language.text("find.btn.previous"));
+    findButton = new JButton(Language.text("find.btn.find"));
 
     // ordering is different on mac versus pc
     if (Base.isMacOS()) {
@@ -454,9 +454,22 @@ public class FindReplace extends JFrame {
     editor.setSelection(0, 0);
 
     boolean foundAtLeastOne = false;
-    while (true) {
+    int startTab = -1, startIndex = -1, c = 50000; 
+    // you couldn't seriously be replacing 50K times o_O
+    while (--c > 0) {
       if (find(false, false)) {
-        foundAtLeastOne = true;
+        if(editor.getSketch().getCurrentCodeIndex() == startTab 
+          && editor.getSelectionStart() == startIndex){
+          // we've reached where we started, so stop the replace
+          Toolkit.beep();
+          editor.statusNotice("Reached beginning of search!");
+          break;
+        }
+        if(!foundAtLeastOne){
+          foundAtLeastOne = true;
+          startTab = editor.getSketch().getCurrentCodeIndex();
+          startIndex = editor.getSelectionStart();
+        }
         replace();
      } else {
         break;

@@ -22,7 +22,7 @@ void setup() {
   textFont(myFont);
 
   // List all the available serial ports:
-  println(Serial.list());
+  printArray(Serial.list());
 
   // I know that the first port in the serial list on my mac
   // is always my  FTDI adaptor, so I open Serial.list()[0].

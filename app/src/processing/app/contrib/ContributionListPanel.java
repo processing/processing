@@ -41,13 +41,6 @@ import processing.app.Base;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
 
-  static public final String INSTALL_FAILURE_TITLE = "Install Failed";
-
-  static public final String MALFORMED_URL_MESSAGE =
-    "The link fetched from Processing.org is not valid.\n" + 
-    "You can still install this library manually by visiting\n" + 
-    "the library's website.";
-
   ContributionManagerDialog contribManager;
   TreeMap<Contribution, ContributionPanel> panelByContribution;
 
@@ -186,7 +179,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   
   public void filterLibraries(List<Contribution> filteredContributions) {
     synchronized (panelByContribution) {
-      Set<Contribution> hiddenPanels = new TreeSet(contribListing.getComparator());
+      Set<Contribution> hiddenPanels = new TreeSet<Contribution>(contribListing.getComparator());
       hiddenPanels.addAll(panelByContribution.keySet());
 
       for (Contribution info : filteredContributions) {

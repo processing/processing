@@ -64,7 +64,6 @@
 <span class="strong">Package Hierarchies:</span>
 <ul class="horizontal">
 <li><a href="antlr/package-tree.html">antlr</a>, </li>
-<li><a href="japplemenubar/package-tree.html">japplemenubar</a>, </li>
 <li><a href="processing/app/package-tree.html">processing.app</a>, </li>
 <li><a href="processing/app/contrib/package-tree.html">processing.app.contrib</a>, </li>
 <li><a href="processing/app/exec/package-tree.html">processing.app.exec</a>, </li>
@@ -84,11 +83,11 @@
 <div class="contentContainer">
 <h2 title="Class Hierarchy">Class Hierarchy</h2>
 <ul>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang"><span class="strong">Object</span></a>
+<li type="circle">Object
 <ul>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/AbstractDocument.html?is-external=true" title="class or interface in javax.swing.text"><span class="strong">AbstractDocument</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Document.html?is-external=true" title="class or interface in javax.swing.text">Document</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</a>)
+<li type="circle">AbstractDocument (implements Document, Serializable)
 <ul>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/PlainDocument.html?is-external=true" title="class or interface in javax.swing.text"><span class="strong">PlainDocument</span></a>
+<li type="circle">PlainDocument
 <ul>
 <li type="circle"><a href="processing/app/syntax/SyntaxDocument.html" title="class in processing.app.syntax"><span class="strong">SyntaxDocument</span></a></li>
 </ul>
@@ -98,73 +97,79 @@
 <li type="circle"><a href="processing/app/tools/Archiver.html" title="class in processing.app.tools"><span class="strong">Archiver</span></a> (implements <a href="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a>)</li>
 <li type="circle"><a href="processing/mode/java/AutoFormat.html" title="class in processing.mode.java"><span class="strong">AutoFormat</span></a> (implements <a href="processing/app/Formatter.html" title="interface in processing.app">Formatter</a>)</li>
 <li type="circle"><a href="processing/app/Base.html" title="class in processing.app"><span class="strong">Base</span></a></li>
-<li type="circle"><a href="processing/app/syntax/Brackets.html" title="class in processing.app.syntax"><span class="strong">Brackets</span></a></li>
-<li type="circle">CharScanner
+<li type="circle">BaseAST (implements AST, Serializable)
 <ul>
-<li type="circle"><a href="processing/mode/java/preproc/PdeLexer.html" title="class in processing.mode.java.preproc"><span class="strong">PdeLexer</span></a> (implements <a href="processing/mode/java/preproc/PdeTokenTypes.html" title="interface in processing.mode.java.preproc">PdeTokenTypes</a>)</li>
-</ul>
-</li>
-<li type="circle">CharScanner
+<li type="circle">CommonAST
 <ul>
-<li type="circle"><a href="processing/mode/java/preproc/JavaLexer.html" title="class in processing.mode.java.preproc"><span class="strong">JavaLexer</span></a> (implements <a href="processing/mode/java/preproc/JavaTokenTypes.html" title="interface in processing.mode.java.preproc">JavaTokenTypes</a>)</li>
-</ul>
-</li>
-<li type="circle"><a href="processing/app/tools/ColorSelector.html" title="class in processing.app.tools"><span class="strong">ColorSelector</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/event/DocumentListener.html?is-external=true" title="class or interface in javax.swing.event">DocumentListener</a>, <a href="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a>)</li>
-<li type="circle"><a href="processing/mode/java/Commander.html" title="class in processing.mode.java"><span class="strong">Commander</span></a> (implements <a href="processing/app/RunnerListener.html" title="interface in processing.app">RunnerListener</a>)</li>
 <li type="circle">CommonASTWithHiddenTokens
 <ul>
 <li type="circle"><a href="antlr/ExtendedCommonASTWithHiddenTokens.html" title="class in antlr"><span class="strong">ExtendedCommonASTWithHiddenTokens</span></a></li>
 </ul>
 </li>
+</ul>
+</li>
+</ul>
+</li>
+<li type="circle"><a href="processing/app/syntax/Brackets.html" title="class in processing.app.syntax"><span class="strong">Brackets</span></a></li>
+<li type="circle">CharScanner (implements TokenStream)
+<ul>
+<li type="circle"><a href="processing/mode/java/preproc/JavaLexer.html" title="class in processing.mode.java.preproc"><span class="strong">JavaLexer</span></a> (implements <a href="processing/mode/java/preproc/JavaTokenTypes.html" title="interface in processing.mode.java.preproc">JavaTokenTypes</a>, TokenStream)</li>
+<li type="circle"><a href="processing/mode/java/preproc/PdeLexer.html" title="class in processing.mode.java.preproc"><span class="strong">PdeLexer</span></a> (implements <a href="processing/mode/java/preproc/PdeTokenTypes.html" title="interface in processing.mode.java.preproc">PdeTokenTypes</a>, TokenStream)</li>
+</ul>
+</li>
+<li type="circle"><a href="processing/app/ColorChooser.html" title="class in processing.app"><span class="strong">ColorChooser</span></a></li>
+<li type="circle"><a href="processing/app/ColorChooser.ColorListener.html" title="class in processing.app"><span class="strong">ColorChooser.ColorListener</span></a> (implements DocumentListener)</li>
+<li type="circle"><a href="processing/app/tools/ColorSelector.html" title="class in processing.app.tools"><span class="strong">ColorSelector</span></a> (implements <a href="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a>)</li>
+<li type="circle"><a href="processing/mode/java/Commander.html" title="class in processing.mode.java"><span class="strong">Commander</span></a> (implements <a href="processing/app/RunnerListener.html" title="interface in processing.app">RunnerListener</a>)</li>
 <li type="circle"><a href="processing/mode/java/Compiler.html" title="class in processing.mode.java"><span class="strong">Compiler</span></a></li>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt"><span class="strong">Component</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/image/ImageObserver.html?is-external=true" title="class or interface in java.awt.image">ImageObserver</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/MenuContainer.html?is-external=true" title="class or interface in java.awt">MenuContainer</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</a>)
+<li type="circle">Component (implements ImageObserver, MenuContainer, Serializable)
 <ul>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Container.html?is-external=true" title="class or interface in java.awt"><span class="strong">Container</span></a>
+<li type="circle">Container
 <ul>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing"><span class="strong">JComponent</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</a>)
+<li type="circle">JComponent (implements Serializable)
 <ul>
 <li type="circle"><a href="processing/app/EditorHeader.html" title="class in processing.app"><span class="strong">EditorHeader</span></a></li>
 <li type="circle"><a href="processing/app/EditorLineStatus.html" title="class in processing.app"><span class="strong">EditorLineStatus</span></a></li>
-<li type="circle"><a href="processing/app/EditorToolbar.html" title="class in processing.app"><span class="strong">EditorToolbar</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/KeyListener.html?is-external=true" title="class or interface in java.awt.event">KeyListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/event/MouseInputListener.html?is-external=true" title="class or interface in javax.swing.event">MouseInputListener</a>)
+<li type="circle"><a href="processing/app/EditorToolbar.html" title="class in processing.app"><span class="strong">EditorToolbar</span></a> (implements KeyListener, MouseInputListener)
 <ul>
 <li type="circle"><a href="processing/mode/java/JavaToolbar.html" title="class in processing.mode.java"><span class="strong">JavaToolbar</span></a></li>
 </ul>
 </li>
 <li type="circle"><a href="processing/app/syntax/JEditTextArea.html" title="class in processing.app.syntax"><span class="strong">JEditTextArea</span></a></li>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JPanel.html?is-external=true" title="class or interface in javax.swing"><span class="strong">JPanel</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/accessibility/Accessible.html?is-external=true" title="class or interface in javax.accessibility">Accessible</a>)
+<li type="circle">JPanel (implements Accessible)
 <ul>
-<li type="circle"><a href="processing/app/contrib/ContributionListPanel.html" title="class in processing.app.contrib"><span class="strong">ContributionListPanel</span></a> (implements <a href="processing/app/contrib/ContributionChangeListener.html" title="interface in processing.app.contrib">ContributionChangeListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/Scrollable.html?is-external=true" title="class or interface in javax.swing">Scrollable</a>)</li>
+<li type="circle"><a href="processing/app/contrib/ContributionListPanel.html" title="class in processing.app.contrib"><span class="strong">ContributionListPanel</span></a> (implements <a href="processing/app/contrib/ContributionChangeListener.html" title="interface in processing.app.contrib">ContributionChangeListener</a>, Scrollable)</li>
 <li type="circle"><a href="processing/app/EditorStatus.html" title="class in processing.app"><span class="strong">EditorStatus</span></a></li>
 </ul>
 </li>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JScrollPane.html?is-external=true" title="class or interface in javax.swing"><span class="strong">JScrollPane</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/accessibility/Accessible.html?is-external=true" title="class or interface in javax.accessibility">Accessible</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/ScrollPaneConstants.html?is-external=true" title="class or interface in javax.swing">ScrollPaneConstants</a>)
+<li type="circle">JScrollPane (implements Accessible, ScrollPaneConstants)
 <ul>
 <li type="circle"><a href="processing/app/EditorConsole.html" title="class in processing.app"><span class="strong">EditorConsole</span></a></li>
 </ul>
 </li>
-<li type="circle"><a href="processing/app/syntax/TextAreaPainter.html" title="class in processing.app.syntax"><span class="strong">TextAreaPainter</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/Printable.html?is-external=true" title="class or interface in java.awt.print">Printable</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/TabExpander.html?is-external=true" title="class or interface in javax.swing.text">TabExpander</a>)</li>
+<li type="circle"><a href="processing/app/syntax/TextAreaPainter.html" title="class in processing.app.syntax"><span class="strong">TextAreaPainter</span></a> (implements TabExpander)</li>
 </ul>
 </li>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Panel.html?is-external=true" title="class or interface in java.awt"><span class="strong">Panel</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/accessibility/Accessible.html?is-external=true" title="class or interface in javax.accessibility">Accessible</a>)
+<li type="circle">Panel (implements Accessible)
 <ul>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/applet/Applet.html?is-external=true" title="class or interface in java.applet"><span class="strong">Applet</span></a>
+<li type="circle">Applet
 <ul>
-<li type="circle"><a href="processing/core/PApplet.html" title="class in processing.core"><span class="strong">PApplet</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/FocusListener.html?is-external=true" title="class or interface in java.awt.event">FocusListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/KeyListener.html?is-external=true" title="class or interface in java.awt.event">KeyListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseListener.html?is-external=true" title="class or interface in java.awt.event">MouseListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseMotionListener.html?is-external=true" title="class or interface in java.awt.event">MouseMotionListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseWheelListener.html?is-external=true" title="class or interface in java.awt.event">MouseWheelListener</a>, <a href="processing/core/PConstants.html" title="interface in processing.core">PConstants</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html?is-external=true" title="class or interface in java.lang">Runnable</a>)
+<li type="circle"><a href="processing/core/PApplet.html" title="class in processing.core"><span class="strong">PApplet</span></a> (implements FocusListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, <a href="processing/core/PConstants.html" title="interface in processing.core">PConstants</a>, Runnable)
 <ul>
-<li type="circle"><a href="processing/app/tools/ColorSelector.ColorRange.html" title="class in processing.app.tools"><span class="strong">ColorSelector.ColorRange</span></a></li>
-<li type="circle"><a href="processing/app/tools/ColorSelector.ColorSlider.html" title="class in processing.app.tools"><span class="strong">ColorSelector.ColorSlider</span></a></li>
+<li type="circle"><a href="processing/app/ColorChooser.ColorRange.html" title="class in processing.app"><span class="strong">ColorChooser.ColorRange</span></a></li>
+<li type="circle"><a href="processing/app/ColorChooser.ColorSlider.html" title="class in processing.app"><span class="strong">ColorChooser.ColorSlider</span></a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 </li>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt"><span class="strong">Window</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/accessibility/Accessible.html?is-external=true" title="class or interface in javax.accessibility">Accessible</a>)
+<li type="circle">Window (implements Accessible)
 <ul>
 <li type="circle"><a href="processing/app/About.html" title="class in processing.app"><span class="strong">About</span></a></li>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Frame.html?is-external=true" title="class or interface in java.awt"><span class="strong">Frame</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/MenuContainer.html?is-external=true" title="class or interface in java.awt">MenuContainer</a>)
+<li type="circle">Frame (implements MenuContainer)
 <ul>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JFrame.html?is-external=true" title="class or interface in javax.swing"><span class="strong">JFrame</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/accessibility/Accessible.html?is-external=true" title="class or interface in javax.accessibility">Accessible</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/RootPaneContainer.html?is-external=true" title="class or interface in javax.swing">RootPaneContainer</a>, <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/WindowConstants.html?is-external=true" title="class or interface in javax.swing">WindowConstants</a>)
+<li type="circle">JFrame (implements Accessible, RootPaneContainer, WindowConstants)
 <ul>
 <li type="circle"><a href="processing/app/tools/CreateFont.html" title="class in processing.app.tools"><span class="strong">CreateFont</span></a> (implements <a href="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a>)</li>
 <li type="circle"><a href="processing/app/Editor.html" title="class in processing.app"><span class="strong">Editor</span></a> (implements <a href="processing/app/RunnerListener.html" title="interface in processing.app">RunnerListener</a>)
@@ -173,6 +178,7 @@
 </ul>
 </li>
 <li type="circle"><a href="processing/app/FindReplace.html" title="class in processing.app"><span class="strong">FindReplace</span></a></li>
+<li type="circle"><a href="processing/app/ProgressFrame.html" title="class in processing.app"><span class="strong">ProgressFrame</span></a> (implements PropertyChangeListener)</li>
 </ul>
 </li>
 </ul>
@@ -189,6 +195,7 @@
 <ul>
 <li type="circle"><a href="processing/app/contrib/LocalContribution.html" title="class in processing.app.contrib"><span class="strong">LocalContribution</span></a>
 <ul>
+<li type="circle"><a href="processing/app/contrib/ExamplesPackageContribution.html" title="class in processing.app.contrib"><span class="strong">ExamplesPackageContribution</span></a></li>
 <li type="circle"><a href="processing/app/Library.html" title="class in processing.app"><span class="strong">Library</span></a></li>
 <li type="circle"><a href="processing/app/contrib/ModeContribution.html" title="class in processing.app.contrib"><span class="strong">ModeContribution</span></a></li>
 <li type="circle"><a href="processing/app/contrib/ToolContribution.html" title="class in processing.app.contrib"><span class="strong">ToolContribution</span></a> (implements <a href="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a>)</li>
@@ -208,45 +215,43 @@
 <li type="circle"><a href="processing/event/TouchEvent.html" title="class in processing.event"><span class="strong">TouchEvent</span></a></li>
 </ul>
 </li>
-<li type="circle"><a href="processing/app/tools/FixEncoding.html" title="class in processing.app.tools"><span class="strong">FixEncoding</span></a> (implements <a href="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a>)</li>
 <li type="circle"><a href="processing/data/FloatDict.html" title="class in processing.data"><span class="strong">FloatDict</span></a></li>
-<li type="circle"><a href="processing/data/FloatList.html" title="class in processing.data"><span class="strong">FloatList</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;T&gt;)</li>
+<li type="circle"><a href="processing/data/FloatList.html" title="class in processing.data"><span class="strong">FloatList</span></a> (implements Iterable&lt;T&gt;)</li>
 <li type="circle"><a href="processing/opengl/FrameBuffer.html" title="class in processing.opengl"><span class="strong">FrameBuffer</span></a> (implements <a href="processing/core/PConstants.html" title="interface in processing.core">PConstants</a>)</li>
-<li type="circle"><a href="processing/app/syntax/HtmlSelection.html" title="class in processing.app.syntax"><span class="strong">HtmlSelection</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/datatransfer/Transferable.html?is-external=true" title="class or interface in java.awt.datatransfer">Transferable</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.backspace.html" title="class in processing.app.syntax"><span class="strong">InputHandler.backspace</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.backspace_word.html" title="class in processing.app.syntax"><span class="strong">InputHandler.backspace_word</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.clipboard_copy.html" title="class in processing.app.syntax"><span class="strong">InputHandler.clipboard_copy</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.clipboard_cut.html" title="class in processing.app.syntax"><span class="strong">InputHandler.clipboard_cut</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.clipboard_paste.html" title="class in processing.app.syntax"><span class="strong">InputHandler.clipboard_paste</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.delete.html" title="class in processing.app.syntax"><span class="strong">InputHandler.delete</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.delete_word.html" title="class in processing.app.syntax"><span class="strong">InputHandler.delete_word</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.document_end.html" title="class in processing.app.syntax"><span class="strong">InputHandler.document_end</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.document_home.html" title="class in processing.app.syntax"><span class="strong">InputHandler.document_home</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.end.html" title="class in processing.app.syntax"><span class="strong">InputHandler.end</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.home.html" title="class in processing.app.syntax"><span class="strong">InputHandler.home</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.insert_break.html" title="class in processing.app.syntax"><span class="strong">InputHandler.insert_break</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.insert_char.html" title="class in processing.app.syntax"><span class="strong">InputHandler.insert_char</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>, <a href="processing/app/syntax/InputHandler.NonRepeatable.html" title="interface in processing.app.syntax">InputHandler.NonRepeatable</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.insert_tab.html" title="class in processing.app.syntax"><span class="strong">InputHandler.insert_tab</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.next_char.html" title="class in processing.app.syntax"><span class="strong">InputHandler.next_char</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.next_line.html" title="class in processing.app.syntax"><span class="strong">InputHandler.next_line</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.next_page.html" title="class in processing.app.syntax"><span class="strong">InputHandler.next_page</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.next_word.html" title="class in processing.app.syntax"><span class="strong">InputHandler.next_word</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.overwrite.html" title="class in processing.app.syntax"><span class="strong">InputHandler.overwrite</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.prev_char.html" title="class in processing.app.syntax"><span class="strong">InputHandler.prev_char</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.prev_line.html" title="class in processing.app.syntax"><span class="strong">InputHandler.prev_line</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.prev_page.html" title="class in processing.app.syntax"><span class="strong">InputHandler.prev_page</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.prev_word.html" title="class in processing.app.syntax"><span class="strong">InputHandler.prev_word</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.repeat.html" title="class in processing.app.syntax"><span class="strong">InputHandler.repeat</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>, <a href="processing/app/syntax/InputHandler.NonRecordable.html" title="interface in processing.app.syntax">InputHandler.NonRecordable</a>)</li>
-<li type="circle"><a href="processing/app/syntax/InputHandler.toggle_rect.html" title="class in processing.app.syntax"><span class="strong">InputHandler.toggle_rect</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionListener.html?is-external=true" title="class or interface in java.awt.event">ActionListener</a>)</li>
-<li type="circle"><a href="processing/app/syntax/im/InputMethodSupport.html" title="class in processing.app.syntax.im"><span class="strong">InputMethodSupport</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/InputMethodListener.html?is-external=true" title="class or interface in java.awt.event">InputMethodListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true" title="class or interface in java.awt.im">InputMethodRequests</a>)</li>
+<li type="circle"><a href="processing/app/syntax/HtmlSelection.html" title="class in processing.app.syntax"><span class="strong">HtmlSelection</span></a> (implements Transferable)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.backspace.html" title="class in processing.app.syntax"><span class="strong">InputHandler.backspace</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.backspace_word.html" title="class in processing.app.syntax"><span class="strong">InputHandler.backspace_word</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.clipboard_copy.html" title="class in processing.app.syntax"><span class="strong">InputHandler.clipboard_copy</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.clipboard_cut.html" title="class in processing.app.syntax"><span class="strong">InputHandler.clipboard_cut</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.clipboard_paste.html" title="class in processing.app.syntax"><span class="strong">InputHandler.clipboard_paste</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.delete.html" title="class in processing.app.syntax"><span class="strong">InputHandler.delete</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.delete_word.html" title="class in processing.app.syntax"><span class="strong">InputHandler.delete_word</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.document_end.html" title="class in processing.app.syntax"><span class="strong">InputHandler.document_end</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.document_home.html" title="class in processing.app.syntax"><span class="strong">InputHandler.document_home</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.end.html" title="class in processing.app.syntax"><span class="strong">InputHandler.end</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.home.html" title="class in processing.app.syntax"><span class="strong">InputHandler.home</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.insert_break.html" title="class in processing.app.syntax"><span class="strong">InputHandler.insert_break</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.insert_char.html" title="class in processing.app.syntax"><span class="strong">InputHandler.insert_char</span></a> (implements ActionListener, <a href="processing/app/syntax/InputHandler.NonRepeatable.html" title="interface in processing.app.syntax">InputHandler.NonRepeatable</a>)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.insert_tab.html" title="class in processing.app.syntax"><span class="strong">InputHandler.insert_tab</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.next_char.html" title="class in processing.app.syntax"><span class="strong">InputHandler.next_char</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.next_line.html" title="class in processing.app.syntax"><span class="strong">InputHandler.next_line</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.next_page.html" title="class in processing.app.syntax"><span class="strong">InputHandler.next_page</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.next_word.html" title="class in processing.app.syntax"><span class="strong">InputHandler.next_word</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.overwrite.html" title="class in processing.app.syntax"><span class="strong">InputHandler.overwrite</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.prev_char.html" title="class in processing.app.syntax"><span class="strong">InputHandler.prev_char</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.prev_line.html" title="class in processing.app.syntax"><span class="strong">InputHandler.prev_line</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.prev_page.html" title="class in processing.app.syntax"><span class="strong">InputHandler.prev_page</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.prev_word.html" title="class in processing.app.syntax"><span class="strong">InputHandler.prev_word</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.repeat.html" title="class in processing.app.syntax"><span class="strong">InputHandler.repeat</span></a> (implements ActionListener, <a href="processing/app/syntax/InputHandler.NonRecordable.html" title="interface in processing.app.syntax">InputHandler.NonRecordable</a>)</li>
+<li type="circle"><a href="processing/app/syntax/InputHandler.toggle_rect.html" title="class in processing.app.syntax"><span class="strong">InputHandler.toggle_rect</span></a> (implements ActionListener)</li>
+<li type="circle"><a href="processing/app/syntax/im/InputMethodSupport.html" title="class in processing.app.syntax.im"><span class="strong">InputMethodSupport</span></a> (implements InputMethodListener, InputMethodRequests)</li>
 <li type="circle"><a href="processing/app/tools/InstallCommander.html" title="class in processing.app.tools"><span class="strong">InstallCommander</span></a> (implements <a href="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a>)</li>
 <li type="circle"><a href="processing/data/IntDict.html" title="class in processing.data"><span class="strong">IntDict</span></a></li>
-<li type="circle"><a href="processing/data/IntList.html" title="class in processing.data"><span class="strong">IntList</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;T&gt;)</li>
-<li type="circle"><a href="japplemenubar/JAppleMenuBar.html" title="class in japplemenubar"><span class="strong">JAppleMenuBar</span></a></li>
+<li type="circle"><a href="processing/data/IntList.html" title="class in processing.data"><span class="strong">IntList</span></a> (implements Iterable&lt;T&gt;)</li>
 <li type="circle"><a href="processing/mode/java/JavaBuild.html" title="class in processing.mode.java"><span class="strong">JavaBuild</span></a></li>
 <li type="circle"><a href="processing/data/JSONArray.html" title="class in processing.data"><span class="strong">JSONArray</span></a></li>
 <li type="circle"><a href="processing/data/JSONObject.html" title="class in processing.data"><span class="strong">JSONObject</span></a></li>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/KeyAdapter.html?is-external=true" title="class or interface in java.awt.event"><span class="strong">KeyAdapter</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/KeyListener.html?is-external=true" title="class or interface in java.awt.event">KeyListener</a>)
+<li type="circle">KeyAdapter (implements KeyListener)
 <ul>
 <li type="circle"><a href="processing/app/syntax/InputHandler.html" title="class in processing.app.syntax"><span class="strong">InputHandler</span></a>
 <ul>
@@ -256,23 +261,24 @@
 </ul>
 </li>
 <li type="circle"><a href="processing/app/syntax/KeywordMap.html" title="class in processing.app.syntax"><span class="strong">KeywordMap</span></a></li>
+<li type="circle"><a href="processing/app/Language.html" title="class in processing.app"><span class="strong">Language</span></a></li>
 <li type="circle"><a href="processing/opengl/LinePath.html" title="class in processing.opengl"><span class="strong">LinePath</span></a></li>
 <li type="circle"><a href="processing/opengl/LinePath.PathIterator.html" title="class in processing.opengl"><span class="strong">LinePath.PathIterator</span></a></li>
 <li type="circle"><a href="processing/opengl/LineStroker.html" title="class in processing.opengl"><span class="strong">LineStroker</span></a></li>
-<li type="circle">LLkParser
-<ul>
-<li type="circle"><a href="processing/mode/java/preproc/PdeRecognizer.html" title="class in processing.mode.java.preproc"><span class="strong">PdeRecognizer</span></a> (implements <a href="processing/mode/java/preproc/PdePartialTokenTypes.html" title="interface in processing.mode.java.preproc">PdePartialTokenTypes</a>)</li>
-</ul>
-</li>
-<li type="circle">LLkParser
-<ul>
-<li type="circle"><a href="processing/mode/java/preproc/JavaRecognizer.html" title="class in processing.mode.java.preproc"><span class="strong">JavaRecognizer</span></a> (implements <a href="processing/mode/java/preproc/JavaTokenTypes.html" title="interface in processing.mode.java.preproc">JavaTokenTypes</a>)</li>
-</ul>
-</li>
-<li type="circle"><a href="processing/mode/java/runner/MessageSiphon.html" title="class in processing.mode.java.runner"><span class="strong">MessageSiphon</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html?is-external=true" title="class or interface in java.lang">Runnable</a>)</li>
+<li type="circle"><a href="processing/mode/java/runner/MessageSiphon.html" title="class in processing.mode.java.runner"><span class="strong">MessageSiphon</span></a> (implements Runnable)</li>
 <li type="circle"><a href="processing/app/Mode.html" title="class in processing.app"><span class="strong">Mode</span></a>
 <ul>
 <li type="circle"><a href="processing/mode/java/JavaMode.html" title="class in processing.mode.java"><span class="strong">JavaMode</span></a></li>
+</ul>
+</li>
+<li type="circle">Parser
+<ul>
+<li type="circle">LLkParser
+<ul>
+<li type="circle"><a href="processing/mode/java/preproc/JavaRecognizer.html" title="class in processing.mode.java.preproc"><span class="strong">JavaRecognizer</span></a> (implements <a href="processing/mode/java/preproc/JavaTokenTypes.html" title="interface in processing.mode.java.preproc">JavaTokenTypes</a>)</li>
+<li type="circle"><a href="processing/mode/java/preproc/PdeRecognizer.html" title="class in processing.mode.java.preproc"><span class="strong">PdeRecognizer</span></a> (implements <a href="processing/mode/java/preproc/PdePartialTokenTypes.html" title="interface in processing.mode.java.preproc">PdePartialTokenTypes</a>)</li>
+</ul>
+</li>
 </ul>
 </li>
 <li type="circle"><a href="processing/mode/java/preproc/PdeEmitter.html" title="class in processing.mode.java.preproc"><span class="strong">PdeEmitter</span></a> (implements <a href="processing/mode/java/preproc/PdeTokenTypes.html" title="interface in processing.mode.java.preproc">PdeTokenTypes</a>)</li>
@@ -285,7 +291,7 @@
 <li type="circle"><a href="processing/opengl/PJOGL.html" title="class in processing.opengl"><span class="strong">PJOGL</span></a></li>
 </ul>
 </li>
-<li type="circle"><a href="processing/core/PImage.html" title="class in processing.core"><span class="strong">PImage</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Cloneable.html?is-external=true" title="class or interface in java.lang">Cloneable</a>, <a href="processing/core/PConstants.html" title="interface in processing.core">PConstants</a>)
+<li type="circle"><a href="processing/core/PImage.html" title="class in processing.core"><span class="strong">PImage</span></a> (implements Cloneable, <a href="processing/core/PConstants.html" title="interface in processing.core">PConstants</a>)
 <ul>
 <li type="circle"><a href="processing/core/PGraphics.html" title="class in processing.core"><span class="strong">PGraphics</span></a> (implements <a href="processing/core/PConstants.html" title="interface in processing.core">PConstants</a>)
 <ul>
@@ -314,12 +320,13 @@
 <li type="circle"><a href="processing/core/PMatrix2D.html" title="class in processing.core"><span class="strong">PMatrix2D</span></a> (implements <a href="processing/core/PMatrix.html" title="interface in processing.core">PMatrix</a>)</li>
 <li type="circle"><a href="processing/core/PMatrix3D.html" title="class in processing.core"><span class="strong">PMatrix3D</span></a> (implements <a href="processing/core/PMatrix.html" title="interface in processing.core">PMatrix</a>)</li>
 <li type="circle"><a href="processing/app/Preferences.html" title="class in processing.app"><span class="strong">Preferences</span></a></li>
+<li type="circle"><a href="processing/app/PreferencesFrame.html" title="class in processing.app"><span class="strong">PreferencesFrame</span></a></li>
 <li type="circle"><a href="processing/mode/java/preproc/PreprocessorResult.html" title="class in processing.mode.java.preproc"><span class="strong">PreprocessorResult</span></a></li>
 <li type="circle"><a href="processing/mode/java/PresentMode.html" title="class in processing.mode.java"><span class="strong">PresentMode</span></a></li>
 <li type="circle"><a href="processing/app/exec/ProcessHelper.html" title="class in processing.app.exec"><span class="strong">ProcessHelper</span></a></li>
 <li type="circle"><a href="processing/app/exec/ProcessRegistry.html" title="class in processing.app.exec"><span class="strong">ProcessRegistry</span></a></li>
-<li type="circle"><a href="processing/app/exec/ProcessResult.html" title="class in processing.app.exec"><span class="strong">ProcessResult</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;T&gt;)</li>
-<li type="circle"><a href="processing/opengl/PShader.html" title="class in processing.opengl"><span class="strong">PShader</span></a></li>
+<li type="circle"><a href="processing/app/exec/ProcessResult.html" title="class in processing.app.exec"><span class="strong">ProcessResult</span></a> (implements Iterable&lt;T&gt;)</li>
+<li type="circle"><a href="processing/opengl/PShader.html" title="class in processing.opengl"><span class="strong">PShader</span></a> (implements <a href="processing/core/PConstants.html" title="interface in processing.core">PConstants</a>)</li>
 <li type="circle"><a href="processing/core/PShape.html" title="class in processing.core"><span class="strong">PShape</span></a> (implements <a href="processing/core/PConstants.html" title="interface in processing.core">PConstants</a>)
 <ul>
 <li type="circle"><a href="processing/core/PShapeOBJ.html" title="class in processing.core"><span class="strong">PShapeOBJ</span></a></li>
@@ -333,22 +340,26 @@
 </ul>
 </li>
 <li type="circle"><a href="processing/core/PStyle.html" title="class in processing.core"><span class="strong">PStyle</span></a> (implements <a href="processing/core/PConstants.html" title="interface in processing.core">PConstants</a>)</li>
-<li type="circle"><a href="processing/core/PVector.html" title="class in processing.core"><span class="strong">PVector</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</a>)</li>
+<li type="circle"><a href="processing/core/PVector.html" title="class in processing.core"><span class="strong">PVector</span></a> (implements Serializable)</li>
 <li type="circle"><a href="processing/app/Recent.html" title="class in processing.app"><span class="strong">Recent</span></a></li>
 <li type="circle"><a href="processing/mode/java/runner/Runner.html" title="class in processing.mode.java.runner"><span class="strong">Runner</span></a> (implements <a href="processing/mode/java/runner/MessageConsumer.html" title="interface in processing.mode.java.runner">MessageConsumer</a>)</li>
-<li type="circle"><a href="processing/app/tools/SerialFixer.html" title="class in processing.app.tools"><span class="strong">SerialFixer</span></a> (implements <a href="processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a>)</li>
 <li type="circle"><a href="processing/app/Settings.html" title="class in processing.app"><span class="strong">Settings</span></a></li>
 <li type="circle"><a href="processing/app/SingleInstance.html" title="class in processing.app"><span class="strong">SingleInstance</span></a></li>
 <li type="circle"><a href="processing/app/Sketch.html" title="class in processing.app"><span class="strong">Sketch</span></a></li>
 <li type="circle"><a href="processing/app/SketchCode.html" title="class in processing.app"><span class="strong">SketchCode</span></a></li>
 <li type="circle"><a href="processing/app/SketchReference.html" title="class in processing.app"><span class="strong">SketchReference</span></a></li>
-<li type="circle"><a href="processing/data/Sort.html" title="class in processing.data"><span class="strong">Sort</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html?is-external=true" title="class or interface in java.lang">Runnable</a>)</li>
-<li type="circle"><a href="processing/app/exec/StreamPump.html" title="class in processing.app.exec"><span class="strong">StreamPump</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html?is-external=true" title="class or interface in java.lang">Runnable</a>)</li>
+<li type="circle"><a href="processing/data/Sort.html" title="class in processing.data"><span class="strong">Sort</span></a> (implements Runnable)</li>
+<li type="circle"><a href="processing/app/exec/StreamPump.html" title="class in processing.app.exec"><span class="strong">StreamPump</span></a> (implements Runnable)</li>
 <li type="circle"><a href="processing/data/StringDict.html" title="class in processing.data"><span class="strong">StringDict</span></a></li>
-<li type="circle"><a href="processing/data/StringList.html" title="class in processing.data"><span class="strong">StringList</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;T&gt;)</li>
+<li type="circle"><a href="processing/data/StringList.html" title="class in processing.data"><span class="strong">StringList</span></a> (implements Iterable&lt;T&gt;)</li>
+<li type="circle">SwingWorker&lt;T,V&gt; (implements RunnableFuture&lt;V&gt;)
+<ul>
+<li type="circle"><a href="processing/app/ProgressFrame.TaskAddFile.html" title="class in processing.app"><span class="strong">ProgressFrame.TaskAddFile</span></a></li>
+<li type="circle"><a href="processing/app/ProgressFrame.TaskSaveAs.html" title="class in processing.app"><span class="strong">ProgressFrame.TaskSaveAs</span></a></li>
+</ul>
+</li>
 <li type="circle"><a href="processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax"><span class="strong">SyntaxStyle</span></a></li>
-<li type="circle"><a href="processing/app/syntax/SyntaxUtilities.html" title="class in processing.app.syntax"><span class="strong">SyntaxUtilities</span></a></li>
-<li type="circle"><a href="processing/app/exec/SystemOutSiphon.html" title="class in processing.app.exec"><span class="strong">SystemOutSiphon</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html?is-external=true" title="class or interface in java.lang">Runnable</a>)</li>
+<li type="circle"><a href="processing/app/exec/SystemOutSiphon.html" title="class in processing.app.exec"><span class="strong">SystemOutSiphon</span></a> (implements Runnable)</li>
 <li type="circle"><a href="processing/data/Table.html" title="class in processing.data"><span class="strong">Table</span></a></li>
 <li type="circle"><a href="processing/app/syntax/TextAreaDefaults.html" title="class in processing.app.syntax"><span class="strong">TextAreaDefaults</span></a>
 <ul>
@@ -357,17 +368,17 @@
 </li>
 <li type="circle"><a href="processing/opengl/Texture.html" title="class in processing.opengl"><span class="strong">Texture</span></a> (implements <a href="processing/core/PConstants.html" title="interface in processing.core">PConstants</a>)</li>
 <li type="circle"><a href="processing/opengl/Texture.Parameters.html" title="class in processing.opengl"><span class="strong">Texture.Parameters</span></a></li>
-<li type="circle"><a href="processing/app/platform/ThinkDifferent.html" title="class in processing.app.platform"><span class="strong">ThinkDifferent</span></a> (implements ApplicationListener)</li>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html?is-external=true" title="class or interface in java.lang"><span class="strong">Thread</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html?is-external=true" title="class or interface in java.lang">Runnable</a>)
+<li type="circle"><a href="processing/app/platform/ThinkDifferent.html" title="class in processing.app.platform"><span class="strong">ThinkDifferent</span></a></li>
+<li type="circle">Thread (implements Runnable)
 <ul>
 <li type="circle"><a href="processing/app/exec/StreamRedirectThread.html" title="class in processing.app.exec"><span class="strong">StreamRedirectThread</span></a></li>
 </ul>
 </li>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html?is-external=true" title="class or interface in java.lang"><span class="strong">Throwable</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</a>)
+<li type="circle">Throwable (implements Serializable)
 <ul>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang"><span class="strong">Exception</span></a>
+<li type="circle">Exception
 <ul>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/RuntimeException.html?is-external=true" title="class or interface in java.lang"><span class="strong">RuntimeException</span></a>
+<li type="circle">RuntimeException
 <ul>
 <li type="circle"><a href="processing/core/PApplet.RendererChangeException.html" title="class in processing.core"><span class="strong">PApplet.RendererChangeException</span></a></li>
 </ul>
@@ -383,9 +394,13 @@
 <li type="circle"><a href="processing/app/syntax/PdeKeywords.html" title="class in processing.app.syntax"><span class="strong">PdeKeywords</span></a></li>
 </ul>
 </li>
-<li type="circle">TokenStreamHiddenTokenFilter
+<li type="circle">TokenStreamBasicFilter (implements IASDebugStream, TokenStream)
 <ul>
-<li type="circle"><a href="antlr/TokenStreamCopyingHiddenTokenFilter.html" title="class in antlr"><span class="strong">TokenStreamCopyingHiddenTokenFilter</span></a></li>
+<li type="circle">TokenStreamHiddenTokenFilter (implements TokenStream)
+<ul>
+<li type="circle"><a href="antlr/TokenStreamCopyingHiddenTokenFilter.html" title="class in antlr"><span class="strong">TokenStreamCopyingHiddenTokenFilter</span></a> (implements TokenStream)</li>
+</ul>
+</li>
 </ul>
 </li>
 <li type="circle"><a href="processing/mode/java/preproc/TokenUtil.html" title="class in processing.mode.java.preproc"><span class="strong">TokenUtil</span></a></li>
@@ -393,7 +408,7 @@
 <li type="circle"><a href="processing/app/UpdateCheck.html" title="class in processing.app"><span class="strong">UpdateCheck</span></a></li>
 <li type="circle"><a href="processing/app/WebServer.html" title="class in processing.app"><span class="strong">WebServer</span></a></li>
 <li type="circle"><a href="processing/app/platform/WindowsRegistry.html" title="class in processing.app.platform"><span class="strong">WindowsRegistry</span></a></li>
-<li type="circle"><a href="processing/data/XML.html" title="class in processing.data"><span class="strong">XML</span></a> (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</a>)</li>
+<li type="circle"><a href="processing/data/XML.html" title="class in processing.data"><span class="strong">XML</span></a> (implements Serializable)</li>
 </ul>
 </li>
 </ul>
@@ -418,7 +433,7 @@
 <li type="circle"><a href="processing/mode/java/preproc/PdePartialTokenTypes.html" title="interface in processing.mode.java.preproc"><span class="strong">PdePartialTokenTypes</span></a></li>
 <li type="circle"><a href="processing/mode/java/preproc/PdeTokenTypes.html" title="interface in processing.mode.java.preproc"><span class="strong">PdeTokenTypes</span></a></li>
 <li type="circle"><a href="processing/core/PMatrix.html" title="interface in processing.core"><span class="strong">PMatrix</span></a></li>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html?is-external=true" title="class or interface in java.lang"><span class="strong">Runnable</span></a>
+<li type="circle">Runnable
 <ul>
 <li type="circle"><a href="processing/app/tools/Tool.html" title="interface in processing.app.tools"><span class="strong">Tool</span></a></li>
 </ul>
@@ -429,9 +444,9 @@
 </ul>
 <h2 title="Enum Hierarchy">Enum Hierarchy</h2>
 <ul>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang"><span class="strong">Object</span></a>
+<li type="circle">Object
 <ul>
-<li type="circle"><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Enum.html?is-external=true" title="class or interface in java.lang"><span class="strong">Enum</span></a>&lt;E&gt; (implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Comparable.html?is-external=true" title="class or interface in java.lang">Comparable</a>&lt;T&gt;, <a href="http://docs.oracle.com/javase/7/docs/api/java/io/Serializable.html?is-external=true" title="class or interface in java.io">Serializable</a>)
+<li type="circle">Enum&lt;E&gt; (implements Comparable&lt;T&gt;, Serializable)
 <ul>
 <li type="circle"><a href="processing/app/contrib/ContributionType.html" title="enum in processing.app.contrib"><span class="strong">ContributionType</span></a></li>
 <li type="circle"><a href="processing/app/platform/WindowsRegistry.REGISTRY_ROOT_KEY.html" title="enum in processing.app.platform"><span class="strong">WindowsRegistry.REGISTRY_ROOT_KEY</span></a></li>

@@ -63,8 +63,9 @@ class FontTexture implements PConstants {
   protected TextureInfo[] glyphTexinfos;
   protected HashMap<PFont.Glyph, TextureInfo> texinfoMap;
 
+
   public FontTexture(PGraphicsOpenGL pg, PFont font, boolean is3D) {
-    pgl = PGraphicsOpenGL.pgl;
+    pgl = pg.pgl;
     this.is3D = is3D;
 
     initTexture(pg, font);
@@ -130,15 +131,15 @@ class FontTexture implements PConstants {
     if (is3D) {
       // Bilinear sampling ensures that the texture doesn't look pixelated
       // either when it is magnified or minified...
-      tex = new Texture(w, h, new Texture.Parameters(ARGB, Texture.BILINEAR,
-                                                     false));
+      tex = new Texture(pg, w, h,
+                        new Texture.Parameters(ARGB, Texture.BILINEAR, false));
     } else {
       // ...however, the effect of bilinear sampling is to add some blurriness
       // to the text in its original size. In 2D, we assume that text will be
       // shown at its original size, so linear sampling is chosen instead (which
       // only affects minimized text).
-      tex = new Texture(w, h, new Texture.Parameters(ARGB, Texture.LINEAR,
-                                                     false));
+      tex = new Texture(pg, w, h,
+                        new Texture.Parameters(ARGB, Texture.LINEAR, false));
     }
 
     if (textures == null) {
@@ -150,9 +151,15 @@ class FontTexture implements PConstants {
     } else if (resize) {
       // Replacing old smaller texture with larger one.
       // But first we must copy the contents of the older
-      // texture into the new one.
+      // texture into the new one. Setting blend mode to
+      // REPLACE to preserve color of transparent pixels.
       Texture tex0 = textures[currentTex];
+
+      tex.pg.pushStyle();
+      tex.pg.blendMode(REPLACE);
       tex.put(tex0);
+      tex.pg.popStyle();
+
       textures[currentTex] = tex;
 
       pg.setCache(images[currentTex], tex);

@@ -167,7 +167,7 @@ public class PdePreprocessor {
    * and pasting from the reference.
    */
   public static final String SIZE_REGEX =
-    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+)\\s*,?\\s*([^\\)]*)\\s*\\)\\s*\\;";
     //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
 
   
@@ -885,12 +885,15 @@ public class PdePreprocessor {
           out.println(indent + "public int sketchHeight() { return " + sketchHeight + "; }");
         }
       }
-      if (sketchRenderer != null && !hasMethod("sketchRenderer")) {
+      if (sketchRenderer != null && !hasMethod("sketchRenderer")) {        
         // Only include if it's a known renderer (otherwise it might be a variable)
         if (sketchRenderer.equals("P2D") ||
+            sketchRenderer.equals("P2D_2X") ||
             sketchRenderer.equals("P3D") ||
+            sketchRenderer.equals("P3D_3X") ||
             sketchRenderer.equals("OPENGL") ||
-            sketchRenderer.equals("JAVA2D")) {
+            sketchRenderer.equals("JAVA2D") ||
+            sketchRenderer.equals("JAVA2D_2X")) {
           out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
         }
       }

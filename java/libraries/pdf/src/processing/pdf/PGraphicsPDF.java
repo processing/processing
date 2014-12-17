@@ -33,7 +33,7 @@ import processing.core.*;
 
 
 /**
- * Thin wrapper for the iText PDF library, that handles writing PDF files.
+ * Thin wrapper for the iText PDF library that handles writing PDF files.
  * The majority of the work in this library is done by
  * <a href="http://www.lowagie.com/iText/">iText</a>.
  * <br /> <br />
@@ -408,8 +408,8 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     translate(x1, y1);
     int imageWidth = image.width;
     int imageHeight = image.height;
-    scale((x2 - x1) / (float)imageWidth,
-          (y2 - y1) / (float)imageHeight);
+    scale((x2 - x1) / imageWidth,
+          (y2 - y1) / imageHeight);
     if (u2-u1 == imageWidth && v2-v1 == imageHeight) {
       g2.drawImage((Image) image.getNative(), 0, 0, null);
     } else {
@@ -647,8 +647,10 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //      fontList = new String[entries.size()];
       fontList = new String[map.size()];
       int count = 0;
-      for (Object entry : map.entrySet()) {
-        fontList[count++] = (String) ((Map.Entry) entry).getKey();
+      for (Object key : map.keySet()) {
+//      for (Object entry : map.entrySet()) {
+//        fontList[count++] = (String) ((Map.Entry) entry).getKey();
+        fontList[count++] = (String) key;
       }
 //      Iterator it = entries.iterator();
 //      int count = 0;

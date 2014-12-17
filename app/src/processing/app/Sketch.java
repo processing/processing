@@ -26,6 +26,9 @@ package processing.app;
 import processing.core.*;
 
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.*;
 
 import javax.swing.*;
@@ -179,7 +182,7 @@ public class Sketch {
 
           // Don't allow people to use files with invalid names, since on load,
           // it would be otherwise possible to sneak in nasty filenames. [0116]
-          if (Sketch.isSanitaryName(base)) {
+          if (isSanitaryName(base)) {
             code[codeCount++] =
               new SketchCode(new File(folder, filename), extension);
           }
@@ -278,15 +281,14 @@ public class Sketch {
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage("Sketch is Read-Only",
-                       "Some files are marked \"read-only\", so you'll\n" +
-                       "need to re-save the sketch in another location,\n" +
-                       "and try again.");
+      Base.showMessage(Language.text("new.messages.is_read_only"),
+                       Language.text("new.messages.is_read_only.description"));
       return;
     }
 
     renamingCode = false;
-    editor.status.edit("Name for new file:", "");
+    // editor.status.edit("Name for new file:", "");
+    promptForTabName(Language.text("editor.tab.rename.description")+":", "");
   }
 
 
@@ -298,24 +300,22 @@ public class Sketch {
     ensureExistence();
 
     if (currentIndex == 0 && isUntitled()) {
-      Base.showMessage("Sketch is Untitled",
-                       "How about saving the sketch first \n" +
-                       "before trying to rename it?");
+      Base.showMessage(Language.text("rename.messages.is_untitled"),
+                       Language.text("rename.messages.is_untitled.description"));
       return;
     }
 
     if (isModified()) {
-      Base.showMessage("Save", "Please save the sketch before renaming.");
+      Base.showMessage(Language.text("menu.file.save"),
+                       Language.text("rename.messages.is_modified"));
       return;
     }
 
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage("Sketch is Read-Only",
-                       "Some files are marked \"read-only\", so you'll\n" +
-                       "need to re-save the sketch in another location,\n" +
-                       "and try again.");
+      Base.showMessage(Language.text("rename.messages.is_read_only"),
+                       Language.text("rename.messages.is_read_only.description"));
       return;
     }
 
@@ -323,27 +323,115 @@ public class Sketch {
     // TODO maybe just popup a text area?
     renamingCode = true;
     String prompt = (currentIndex == 0) ?
-      "New name for sketch:" : "New name for file:";
-    String oldName = (current.isExtension("pde")) ?
+      Language.text("editor.sketch.rename.description") : Language.text("editor.tab.rename.description");
+    String oldName = (current.isExtension(mode.getDefaultExtension())) ?
       current.getPrettyName() : current.getFileName();
-    editor.status.edit(prompt, oldName);
+    // editor.status.edit(prompt, oldName);
+    promptForTabName(prompt+":", oldName);
   }
+  
+  /**
+   * Displays a dialog for renaming or creating a new tab
+   * @param prompt - msg to display
+   * @param oldName
+   */
+  protected void promptForTabName(String prompt, String oldName) {
+    final JTextField field = new JTextField(oldName);
+    
+    field.addKeyListener(new KeyAdapter() {
+      // Forget ESC, the JDialog should handle it.
+      // Use keyTyped to catch when the feller is actually added to the text 
+      // field. With keyTyped, as opposed to keyPressed, the keyCode will be 
+      // zero, even if it's enter or backspace or whatever, so the keychar 
+      // should be used instead. Grr.
+      public void keyTyped(KeyEvent event) {
+        //System.out.println("got event " + event);
+        char ch = event.getKeyChar();
+        if ((ch == '_') || (ch == '.') || // allow.pde and .java 
+            (('A' <= ch) && (ch <= 'Z')) || (('a' <= ch) && (ch <= 'z'))) {
+          // These events are allowed straight through.
+        } else if (ch == ' ') {
+          String t = field.getText();
+          int start = field.getSelectionStart();
+          int end = field.getSelectionEnd();
+          field.setText(t.substring(0, start) + "_" + t.substring(end));
+          field.setCaretPosition(start + 1);
+          event.consume();
+        } else if ((ch >= '0') && (ch <= '9')) {
+          // getCaretPosition == 0 means that it's the first char
+          // and the field is empty.
+          // getSelectionStart means that it *will be* the first
+          // char, because the selection is about to be replaced
+          // with whatever is typed.
+          if (field.getCaretPosition() == 0 || 
+              field.getSelectionStart() == 0) {
+            // number not allowed as first digit
+            event.consume();
+          }
+        } else if (ch == KeyEvent.VK_ENTER) {
+          // Slightly ugly hack that ensures OK button of the dialog consumes 
+          // the Enter key event. Since the text field is the default component
+          // in the dialog, OK doesn't consume Enter key event, by default.
+          Container parent = field.getParent();
+          while (!(parent instanceof JOptionPane)) {
+            parent = parent.getParent();
+          }
+          JOptionPane pane = (JOptionPane) parent;
+          final JPanel pnlBottom = (JPanel) 
+            pane.getComponent(pane.getComponentCount() - 1);
+          for (int i = 0; i < pnlBottom.getComponents().length; i++) {
+            Component component = pnlBottom.getComponents()[i];
+            if (component instanceof JButton) {
+              final JButton okButton = (JButton) component;
+              if (okButton.getText().equalsIgnoreCase("OK")) {
+                ActionListener[] actionListeners = 
+                  okButton.getActionListeners();
+                if (actionListeners.length > 0) {
+                  actionListeners[0].actionPerformed(null);
+                  event.consume();
+                }
+              }
+            }
+          }
+        } else {
+          event.consume();
+        }
+      }
+    });
+
+    int userReply = JOptionPane.showOptionDialog(editor, new Object[] {
+                                                 prompt, field },
+                                                 Language.text("editor.tab.new"),
+                                                 JOptionPane.OK_CANCEL_OPTION,
+                                                 JOptionPane.PLAIN_MESSAGE,
+                                                 null, new Object[] {
+                                                 Preferences.PROMPT_OK,
+                                                 Preferences.PROMPT_CANCEL },
+                                                 field);
+
+    if (userReply == JOptionPane.OK_OPTION) {
+      nameCode(field.getText());
+    }
+  }
+
 
 
   /**
    * This is called upon return from entering a new file name.
    * (that is, from either newCode or renameCode after the prompt)
-   * This code is almost identical for both the newCode and renameCode
-   * cases, so they're kept merged except for right in the middle
-   * where they diverge.
    */
   protected void nameCode(String newName) {
+    newName = newName.trim();
+    if (newName.length() == 0) {
+      return;
+    }
+
     // make sure the user didn't hide the sketch folder
     ensureExistence();
 
     // Add the extension here, this simplifies some of the logic below.
     if (newName.indexOf('.') == -1) {
-      newName += "." + mode.getDefaultExtension();
+      newName += "." + (renamingCode ? mode.getDefaultExtension() : mode.getModuleExtension());
     }
 
     // if renaming to the same thing as before, just ignore.
@@ -359,21 +447,18 @@ public class Sketch {
       }
     }
 
-    newName = newName.trim();
-    if (newName.equals("")) return;
-
-    int dot = newName.indexOf('.');
-    if (dot == 0) {
+    if (newName.startsWith(".")) {
       Base.showWarning("Problem with rename",
-                       "The name cannot start with a period.", null);
+                       "The name cannot start with a period.");
       return;
     }
 
+    int dot = newName.lastIndexOf('.');
     String newExtension = newName.substring(dot+1).toLowerCase();
     if (!mode.validExtension(newExtension)) {
       Base.showWarning("Problem with rename",
                        "\"." + newExtension + "\"" +
-                       "is not a valid extension.", null);
+                       "is not a valid extension.");
       return;
     }
 
@@ -383,8 +468,8 @@ public class Sketch {
         if (current == code[0]) {  // If this is the main tab, disallow
           Base.showWarning("Problem with rename",
                            "The first tab cannot be a ." + newExtension + " file.\n" +
-                           "(It may be time for your to graduate to a\n" +
-                           "\"real\" programming environment, hotshot.)", null);
+                           "(It may be time for you to graduate to a\n" +
+                           "\"real\" programming environment, hotshot.)");
           return;
         }
       }
@@ -404,9 +489,10 @@ public class Sketch {
     // A regression introduced by Florian's bug report (below) years earlier.
     if (!(renamingCode && sanitaryName.equals(current.getPrettyName()))) {
       // Make sure no .pde *and* no .java files with the same name already exist
+      // (other than the one we are currently attempting to rename)
       // http://processing.org/bugs/bugzilla/543.html
       for (SketchCode c : code) {
-        if (sanitaryName.equalsIgnoreCase(c.getPrettyName())) {
+        if (c != current && sanitaryName.equalsIgnoreCase(c.getPrettyName())) {
           Base.showMessage("Nope",
                            "A file named \"" + c.getFileName() + "\" already exists at\n" +
                              "\"" + folder.getAbsolutePath() + "\"");
@@ -425,14 +511,14 @@ public class Sketch {
         if (newFolder.exists()) {
           Base.showWarning("Cannot Rename",
                            "Sorry, a sketch (or folder) named " +
-                           "\"" + newName + "\" already exists.", null);
+                           "\"" + newName + "\" already exists.");
           return;
         }
 
         // renaming the containing sketch folder
         boolean success = folder.renameTo(newFolder);
         if (!success) {
-          Base.showWarning("Error", "Could not rename the sketch folder.", null);
+          Base.showWarning("Error", "Could not rename the sketch folder.");
           return;
         }
         // let this guy know where he's living (at least for a split second)
@@ -454,7 +540,7 @@ public class Sketch {
         if (!current.renameTo(newFile, newExtension)) {
           Base.showWarning("Error",
                            "Could not rename \"" + current.getFileName() +
-                           "\" to \"" + newFile.getName() + "\"", null);
+                           "\" to \"" + newFile.getName() + "\"");
           return;
         }
 
@@ -486,7 +572,7 @@ public class Sketch {
         if (!current.renameTo(newFile, newExtension)) {
           Base.showWarning("Error",
                            "Could not rename \"" + current.getFileName() +
-                           "\" to \"" + newFile.getName() + "\"", null);
+                           "\" to \"" + newFile.getName() + "\"");
           return;
         }
       }
@@ -529,28 +615,26 @@ public class Sketch {
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage("Sketch is Read-Only",
-                       "Some files are marked \"read-only\", so you'll\n" +
-                       "need to re-save the sketch in another location,\n" +
-                       "and try again.");
+      Base.showMessage(Language.text("delete.messages.is_read_only"),
+                       Language.text("delete.messages.is_read_only.description"));
       return;
     }
 
     // don't allow if untitled
     if (currentIndex == 0 && isUntitled()) {  
-      Base.showMessage("Cannot Delete",
-                       "You can't delete a sketch that has not been saved.");
+      Base.showMessage(Language.text("delete.messages.cannot_delete"),
+                       Language.text("delete.messages.cannot_delete.description"));
       return;
     }
     
     // confirm deletion with user, yes/no
-    Object[] options = { "OK", "Cancel" };
+    Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
     String prompt = (currentIndex == 0) ?
-      "Are you sure you want to delete this sketch?" :
-      "Are you sure you want to delete \"" + current.getPrettyName() + "\"?";
+      Language.text("warn.delete.sketch") :
+      Language.interpolate("warn.delete.file", current.getPrettyName());
     int result = JOptionPane.showOptionDialog(editor,
                                               prompt,
-                                              "Delete",
+                                              Language.text("warn.delete"),
                                               JOptionPane.YES_NO_OPTION,
                                               JOptionPane.QUESTION_MESSAGE,
                                               null,
@@ -575,8 +659,8 @@ public class Sketch {
       } else {
         // delete the file
         if (!current.deleteFile()) {
-          Base.showMessage("Couldn't do it",
-                           "Could not delete \"" +
+          Base.showMessage(Language.text("delete.messages.cannot_delete.file"),
+                           Language.text("delete.messages.cannot_delete.file.description")+" \"" +
                            current.getFileName() + "\".");
           return;
         }
@@ -655,7 +739,8 @@ public class Sketch {
     if (Base.isMacOS()) {
       // http://developer.apple.com/qa/qa2001/qa1146.html
       Object modifiedParam = modified ? Boolean.TRUE : Boolean.FALSE;
-      editor.getRootPane().putClientProperty("windowModified", modifiedParam);
+      // https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html#WINDOW_DOCUMENTMODIFIED
+      editor.getRootPane().putClientProperty("Window.documentModified", modifiedParam);
     }
   }
 
@@ -713,14 +798,16 @@ public class Sketch {
   protected boolean saveAs() throws IOException {
     String newParentDir = null;
     String newName = null;
+	
+    final String oldName2 = folder.getName();
     // TODO rewrite this to use shared version from PApplet
-    final String PROMPT = "Save sketch folder as...";
+    final String PROMPT = Language.text("save");
     if (Preferences.getBoolean("chooser.files.native")) {
       // get new name for folder
       FileDialog fd = new FileDialog(editor, PROMPT, FileDialog.SAVE);
       if (isReadOnly() || isUntitled()) {
         // default to the sketchbook folder
-        fd.setDirectory(Preferences.get("sketchbook.path"));
+        fd.setDirectory(Preferences.getSketchbookPath());
       } else {
         // default to the parent folder of where this was
         fd.setDirectory(folder.getParent());
@@ -735,7 +822,7 @@ public class Sketch {
       fc.setDialogTitle(PROMPT);
       if (isReadOnly() || isUntitled()) {
         // default to the sketchbook folder
-        fc.setCurrentDirectory(new File(Preferences.get("sketchbook.path")));
+        fc.setCurrentDirectory(new File(Preferences.getSketchbookPath()));
       } else {
         // default to the parent folder of where this was
         fc.setCurrentDirectory(folder.getParentFile());
@@ -847,15 +934,21 @@ public class Sketch {
         return true;
       }
     });
-    // now copy over the items that make sense
-    for (File copyable : copyItems) {
-      if (copyable.isDirectory()) {
-        Base.copyDir(copyable, new File(newFolder, copyable.getName()));
-      } else {
-        Base.copyFile(copyable, new File(newFolder, copyable.getName()));
-      }
-    }
+	
 
+    final File newFolder2 = newFolder;
+    final File[] copyItems2 = copyItems;
+    final String newName2 = newName; 
+    
+    // Create a new event dispatch thread- to display ProgressBar
+    // while Saving As
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new ProgressFrame(copyItems2, newFolder2, oldName2, newName2, editor);
+      }
+    });
+    
+	
     // save the other tabs to their new location
     for (int i = 1; i < codeCount; i++) {
       File newFile = new File(newFolder, code[i].getFileName());
@@ -870,7 +963,7 @@ public class Sketch {
     }
 
     // save the main tab with its new name
-    File newFile = new File(newFolder, newName + ".pde");
+    File newFile = new File(newFolder, newName + "." + mode.getDefaultExtension());
     code[0].saveAs(newFile);
 
     updateInternal(newName, newFolder);
@@ -884,6 +977,7 @@ public class Sketch {
     // let Editor know that the save was successful
     return true;
   }
+
 
 
   /**
@@ -934,8 +1028,7 @@ public class Sketch {
     }
 
     // get a dialog, select a file to add to the sketch
-    String prompt =
-      "Select an image or other data file to copy to your sketch";
+    String prompt = Language.text("file");
     //FileDialog fd = new FileDialog(new Frame(), prompt, FileDialog.LOAD);
     FileDialog fd = new FileDialog(editor, prompt, FileDialog.LOAD);
     fd.setVisible(true);
@@ -952,7 +1045,8 @@ public class Sketch {
     boolean result = addFile(sourceFile);
 
     if (result) {
-      editor.statusNotice("One file added to the sketch.");
+//      editor.statusNotice("One file added to the sketch.");
+    	//Done from within TaskAddFile inner class when copying is completed
     }
   }
 
@@ -1004,7 +1098,7 @@ public class Sketch {
 
     // check whether this file already exists
     if (destFile.exists()) {
-      Object[] options = { "OK", "Cancel" };
+      Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
       String prompt = "Replace the existing version of " + filename + "?";
       int result = JOptionPane.showOptionDialog(editor,
                                                 prompt,
@@ -1045,16 +1139,17 @@ public class Sketch {
 
     // in case the user is "adding" the code in an attempt
     // to update the sketch's tabs
-    if (!sourceFile.equals(destFile)) {
-      try {
-        Base.copyFile(sourceFile, destFile);
-
-      } catch (IOException e) {
-        Base.showWarning("Error adding file",
-                         "Could not add '" + filename + "' to the sketch.", e);
-        return false;
+	if (!sourceFile.equals(destFile)) {
+		final File sourceFile2 = sourceFile;
+		final File destFile2 = destFile;
+	    // Create a new event dispatch thread- to display ProgressBar
+	    // while Saving As
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new ProgressFrame(sourceFile2, destFile2, editor);
       }
-    }
+    });
+	}
 
     if (codeExtension != null) {
       SketchCode newCode = new SketchCode(destFile, codeExtension);
@@ -1099,7 +1194,8 @@ public class Sketch {
 //      System.out.println(current.visited);
 //    }
     // if current is null, then this is the first setCurrent(0)
-    if ((currentIndex == which) && (current != null)) {
+    if (((currentIndex == which) && (current != null))
+      || which >= codeCount || which < 0) {
       return;
     }
 
@@ -1288,7 +1384,6 @@ public class Sketch {
    */
   public String getMainFilePath() {
     return primaryFile.getAbsolutePath();
-    //return code[0].file.getAbsolutePath();
   }
 
 
@@ -1435,11 +1530,13 @@ public class Sketch {
 
 
   /**
-   * Return true if the name is valid for a Processing sketch.
+   * Return true if the name is valid for a Processing sketch. Extensions of the form .foo are
+   * ignored.
    */
-  static public boolean isSanitaryName(String name) {
-    if (name.toLowerCase().endsWith(".pde")) {
-      name = name.substring(0, name.length() - 4);
+  public static boolean isSanitaryName(String name) {
+    final int dot = name.lastIndexOf('.');
+    if (dot >= 0) {
+      name = name.substring(0, dot);
     }
     return sanitizeName(name).equals(name);
   }
@@ -1469,24 +1566,24 @@ public class Sketch {
    */
   static public String sanitizeName(String origName) {
     char orig[] = origName.toCharArray();
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
 
     // Can't lead with a digit (or anything besides a letter), so prefix with
     // "sketch_". In 1.x this prefixed with an underscore, but those get shaved
     // off later, since you can't start a sketch name with underscore anymore.
     if (!asciiLetter(orig[0])) {
-      buffer.append("sketch_");
+      sb.append("sketch_");
     }
 //    for (int i = 0; i < orig.length; i++) {
     for (char c : orig) {
       if (asciiLetter(c) || (c >= '0' && c <= '9')) {
-        buffer.append(c);
+        sb.append(c);
 
       } else {
         // Tempting to only add if prev char is not underscore, but that
         // might be more confusing if lots of chars are converted and the
         // result is a very short string thats nothing like the original.
-        buffer.append('_');
+        sb.append('_');
       }
     }
     // Let's not be ridiculous about the length of filenames.
@@ -1495,22 +1592,22 @@ public class Sketch {
     // Limiting to that for sketches would mean setting the
     // upper-bound on the character limit here to 25 characters
     // (to handle the base name + ".class")
-    if (buffer.length() > 63) {
-      buffer.setLength(63);
+    if (sb.length() > 63) {
+      sb.setLength(63);
     }
     // Remove underscores from the beginning, these seem to be a reserved
     // thing on Android, plus it sometimes causes trouble elsewhere.
     int underscore = 0;
-    while (underscore < buffer.length() && buffer.charAt(underscore) == '_') {
+    while (underscore < sb.length() && sb.charAt(underscore) == '_') {
       underscore++;
     }
-    if (underscore == buffer.length()) {
+    if (underscore == sb.length()) {
       return "bad_sketch_name_please_fix";
 
     } else if (underscore != 0) {
-      return buffer.substring(underscore);
+      return sb.substring(underscore);
     }
-    return buffer.toString();
+    return sb.toString();
   }
 
 

@@ -54,7 +54,7 @@ public class CreateFont extends JFrame implements Tool {
 
 //  Dimension windowSize;
 
-  JList fontSelector;
+  JList<String> fontSelector;
   JTextField sizeSelector;
   JButton charsetButton;
   JCheckBox smoothBox;
@@ -74,12 +74,12 @@ public class CreateFont extends JFrame implements Tool {
 
 
   public CreateFont() {
-    super("Create Font");
+    super(Language.text("create_font"));
   }
 
 
   public String getMenuTitle() {
-    return "Create Font...";
+    return Language.text("menu.tools.create_font");
   }
 
 
@@ -175,7 +175,7 @@ public class CreateFont extends JFrame implements Tool {
     list = new String[index];
     System.arraycopy(flist, 0, list, 0, index);
 
-    fontSelector = new JList(list);
+    fontSelector = new JList<String>(list);
     fontSelector.addListSelectionListener(new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent e) {
           if (e.getValueIsAdjusting() == false) {
@@ -251,13 +251,13 @@ public class CreateFont extends JFrame implements Tool {
     pain.add(filestuff);
 
     JPanel buttons = new JPanel();
-    JButton cancelButton = new JButton("Cancel");
+    JButton cancelButton = new JButton(Language.text("prompt.cancel"));
     cancelButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           setVisible(false);
         }
       });
-    okButton = new JButton("OK");
+    okButton = new JButton(Language.text("prompt.ok"));
     okButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           build();
@@ -499,14 +499,14 @@ class CharacterSelector extends JFrame {
   JRadioButton allCharsButton;
   JRadioButton unicodeCharsButton;
   JScrollPane unicodeBlockScroller;
-  JList charsetList;
+  JList<JCheckBox> charsetList;
 
 
   public CharacterSelector() {
     super("Character Selector");
 
     charsetList = new CheckBoxList();
-    DefaultListModel model = new DefaultListModel();
+    DefaultListModel<JCheckBox> model = new DefaultListModel<JCheckBox>();
     charsetList.setModel(model);
     for (String item : blockNames) {
       model.addElement(new JCheckBox(item));
@@ -587,7 +587,7 @@ class CharacterSelector extends JFrame {
     pain.add(Box.createVerticalStrut(8));
 
     JPanel buttons = new JPanel();
-    JButton okButton = new JButton("OK");
+    JButton okButton = new JButton(Language.text("prompt.ok"));
     okButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           setVisible(false);
@@ -824,7 +824,7 @@ class CharacterSelector extends JFrame {
 // collection, but it seems to have been picked up so many places with others
 // placing their copyright on it, that I haven't been able to determine the
 // original author. [fry 20100216]
-class CheckBoxList extends JList {
+class CheckBoxList extends JList<JCheckBox> {
   protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 
   public CheckBoxList() {
@@ -836,8 +836,7 @@ class CheckBoxList extends JList {
           int index = locationToIndex(e.getPoint());
 
           if (index != -1) {
-            JCheckBox checkbox = (JCheckBox)
-            getModel().getElementAt(index);
+            JCheckBox checkbox = getModel().getElementAt(index);
             checkbox.setSelected(!checkbox.isSelected());
             repaint();
           }

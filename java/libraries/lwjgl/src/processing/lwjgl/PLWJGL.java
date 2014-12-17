@@ -125,6 +125,11 @@ public class PLWJGL extends PGL {
     if (glu == null) glu = new GLU();
   }
 
+  
+  public Canvas getCanvas() {
+    return canvas;
+  } 
+  
 
   protected void setFps(float fps) {
     if (!setFps || targetFps != fps) {
@@ -1523,7 +1528,7 @@ public class PLWJGL extends PGL {
   }
 
   public void copyTexSubImage2D(int target, int level, int xOffset, int yOffset, int x, int y, int width, int height) {
-    GL11.glCopyTexSubImage2D(target, level, x, y, xOffset, xOffset, width, height);
+    GL11.glCopyTexSubImage2D(target, level, x, y, xOffset, yOffset, width, height);
   }
 
   public void compressedTexImage2D(int target, int level, int internalFormat, int width, int height, int border, int imageSize, Buffer data) {
@@ -1920,7 +1925,7 @@ public class PLWJGL extends PGL {
 
   // Framebuffers Objects
 
-  public void bindFramebuffer(int target, int framebuffer) {
+  protected void bindFramebufferImpl(int target, int framebuffer) {
     GL30.glBindFramebuffer(target, framebuffer);
   }
 
@@ -1990,5 +1995,10 @@ public class PLWJGL extends PGL {
 
   public void drawBuffer(int buf) {
     GL11.glDrawBuffer(buf);
+  }
+
+
+  @Override
+  protected void getGL(PGL pgl) {
   }
 }

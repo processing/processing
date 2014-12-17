@@ -67,8 +67,8 @@ public class PAppletMethods extends Task {
     // Looking good, let's do this!
     //ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
     //PrintStream out = new PrintStream(outBytes, "UTF-8");
-    StringBuffer out = new StringBuffer();
-    StringBuffer content = new StringBuffer();
+    StringBuilder out = new StringBuilder();
+    StringBuilder content = new StringBuilder();
 
     try{
       BufferedReader applet = createReader(appletFile);
@@ -125,11 +125,11 @@ public class PAppletMethods extends Task {
   }
 
 
-  private void process(StringBuffer out, File input) throws IOException {
+  private void process(StringBuilder out, File input) throws IOException {
     BufferedReader in = createReader(input);
     int comments = 0;
     String line = null;
-    StringBuffer commentBuffer = new StringBuffer();
+    StringBuilder commentBuffer = new StringBuilder();
 
     while ((line = in.readLine()) != null) {
       String decl = "";

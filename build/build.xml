@@ -14,30 +14,44 @@
     <and>
       <os family="unix" />
       <not>
-	<os family="mac" />
+        <os family="mac" />
       </not>
     </and>
   </condition>
 
   <!-- Require Java 7 to bootstrap, otherwise there will be sadness. 
-       And I guess Java 8 should work too? Sorta? --> 
+       Java 1.8 caused build problems (with ECJ?) so not supported. --> 
   <fail message="Unsupported Java version: ${java.version}. Make sure that Java 7 (aka Java 1.7) is installed."> 
     <condition> 
       <not> 
         <or> 
           <contains string="${java.version}" substring="1.7" /> 
-          <contains string="${java.version}" substring="1.8" /> 
         </or> 
       </not> 
     </condition> 
   </fail> 
 
+  <property name="examples.dir" 
+	    value="../../processing-docs/content/examples" />
+
+  <property name="jdk.version" value="7" />
+  <property name="jdk.update" value="72" />
+  <property name="jdk.build" value="14" />
+  <property name="jdk.stuff" value="${jdk.version}u${jdk.update}" />
+  <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
+
   <!-- Figure out the JRE download location for Linux and Windows. -->
-  <condition property="jre.file" value="jre-7u40-${platform}-i586.tgz"> 
+  <condition property="jre.file" 
+             value="jre-${jdk.stuff}-${platform}-i586.tar.gz"> 
     <equals arg1="${sun.arch.data.model}" arg2="32" />
   </condition>
-  <condition property="jre.file" value="jre-7u40-${platform}-x64.tgz"> 
+  <condition property="jre.file" 
+             value="jre-${jdk.stuff}-${platform}-x64.tar.gz"> 
     <equals arg1="${sun.arch.data.model}" arg2="64" />
+  </condition>
+  <!-- JDK location for Mac OS X -->
+  <condition property="jdk.file" value="jdk-${jdk.stuff}-macosx-x64.dmg">
+    <equals arg1="${platform}" arg2="macosx" />
   </condition>
 
   <fileset dir="windows/work/java" id="jre-optional-windows">
@@ -48,7 +62,7 @@
     <include name="bin/klist.exe" />
     <include name="bin/ktab.exe" />
 
-    <include name="bin/keytool" />
+    <!--<include name="bin/keytool" />-->
     <include name="bin/orbd" />
     <include name="bin/policytool" />
     <include name="bin/rmid" />
@@ -64,7 +78,7 @@
   </fileset>
 
   <fileset dir="linux/work/java" id="jre-optional-linux">
-    <include name="bin/keytool" />
+    <!--<include name="bin/keytool" />-->
     <include name="bin/orbd" />
     <include name="bin/policytool" />
     <include name="bin/rmid" />
@@ -79,13 +93,13 @@
     <include name="lib/cmm/PYCC.pf" />
   </fileset>
 
-  <!-- There might be others, based on what was in the Java 6 docs, 
-       but that info isn't part of the Java 7 instructions.
-       http://www.oracle.com/technetwork/java/javase/jrereadme-182762.html -->
-
   <!-- Unused JavaFX files that can be removed from the JRE on Windows 
        and Linux. On Mac OS X, this is removed by the appbundler task.
        www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html -->
+
+  <!-- There might be others, based on what was in the Java 6 docs, 
+       but that info isn't part of the Java 7 instructions.
+       http://www.oracle.com/technetwork/java/javase/jrereadme-182762.html -->
 
   <fileset dir="${platform}/work/java" id="javafx-basics">
     <include name="THIRDPARTYLICENSEREADME-JAVAFX.txt" />
@@ -152,21 +166,21 @@
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.update.macosx" value="45" />
-  <property name="jdk.path.macosx" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_${jdk.update.macosx}.jdk" />
+  <property name="jdk.path.macosx" 
+            value="/Library/Java/JavaVirtualMachines/jdk${jdk.esoteric}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
   <fail if="macosx" unless="macosx_jdk_found"
-	message="JDK 7u${jdk.update.macosx} required.${line.separator}To build on OS X, you must install Oracle's JDK 7u${jdk.update.macosx} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only 7u${jdk.update.macosx} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
+        message="JDK ${jdk.stuff} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.stuff} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}or http://download.processing.org/java/${jdk.file}${line.separator}Note that only ${jdk.stuff} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
   <!--
   <fail if="linux" unless="java_tools_found" 
-	message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
+        message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
   -->
-	       
+               
   <!-- Figure out the platform-specific output directory for all this work. -->
   <condition property="target.path" 
-	     value="macosx/work/Processing.app/Contents/Java">
+             value="macosx/work/Processing.app/Contents/Java">
     <os family="mac" /> 
   </condition>
 
@@ -202,10 +216,14 @@
   </target>
 
   <target name="dist" depends="revision-check"
-	  description="Build Processing for distribution.">
+          description="Build Processing for distribution.">
     <input message="Enter version number:" 
-	   addproperty="version"
-	   defaultvalue="${revision}" />
+           addproperty="version"
+           defaultvalue="${revision}" />
+
+    <available file="${examples.dir}" property="examples.exist" />
+    <fail unless="examples.exist" message="To do a distribution, the processing-docs repo must be checked out at the same level as the processing repo." />
+
     <antcall target="${platform}-dist" />
   </target>
 
@@ -227,8 +245,11 @@
     <subant buildpath="../java/libraries/net" target="clean"/>
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
-    <subant buildpath="../java/libraries/video" target="clean"/>
     <subant buildpath="shared/tools/MovieMaker" target="clean"/>
+    <subant buildpath="../pdex" target="clean"/>
+
+    <!-- make sure this isn't around from an old build 140730 -->
+    <delete dir="../java/examples" />
   </target>
   
   <target name="subprojects-build">
@@ -238,8 +259,8 @@
     <subant buildpath="../java/libraries/net" target="build"/>
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
-    <subant buildpath="../java/libraries/video" target="build"/>
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
+    <subant buildpath="../pdex" target="package"/>
   </target>
   
 
@@ -249,7 +270,7 @@
  
   <target name="assemble" depends="version-clear, version-write">
     <fail unless="target.path" 
-	  message="Do not call assemble from the command line." />
+          message="Do not call assemble from the command line." />
     
     <!-- copy shared tools folder -->
     <copy todir="${target.path}/tools">
@@ -258,147 +279,37 @@
 
     <copy todir="${target.path}/modes/java">
       <fileset dir="../java">
-	<!-- don't include LWJGL, it's not operational -->
-	<exclude name="libraries/lwjgl/**" />
-<!--
-	<exclude name="**/bin/*" />
-	<exclude name="**/src/*" />
-	<exclude name="examples" />
-	<exclude name="**/cmd/**" />
--->
-	<exclude name="reference.zip" />
-	<exclude name="**/._*" />
+        <!-- don't include LWJGL, it's not operational -->
+        <exclude name="libraries/lwjgl/**" />
 
-	<exclude name="examples/**/applet/**" />
+        <exclude name="reference.zip" />
+        <exclude name="**/._*" />
       </fileset>
     </copy>
 
-<!-- decided against this. 
-     see: http://code.google.com/p/processing/issues/detail?id=650 -->
-<!--
-    <get src="http://www.java.com/js/deployJava.js" 
-	 dest="${target.path}/modes/java/applet/deployJava.js"
-	 usetimestamp="true" />
--->
+    <!-- get the examples folder, but don't require it to buid -->
+    <copy todir="${target.path}/modes/java/examples" failonerror="false">
+      <fileset dir="${examples.dir}" />
+    </copy>
 
-    <delete dir="${target.path}/modes/java/examples">
-      <include name="**/applet/**" />
-    </delete>
-<!--
-    <delete>
-      <fileset dir="${target.path}/modes/java/examples"
-	       includes="**/applet/**" />
-    </delete>
--->
+    <get src="http://download.processing.org/reference.zip" 
+         dest="../java/reference.zip" 
+         usetimestamp="true" />
 
-<!--
-    not happy on windows, since cygwin may not be installed
-    <exec executable="find" dir="${target.path}/modes/java/examples"
-	  errorproperty="ignored">
-      <arg line=". -name applet -exec rm -rf {} ';'" />
-    </exec>
--->
-
-<!--
-    <copy todir="${target.path}/modes/java/examples">
-      <fileset dir="../java/examples">
-	<exclude name="**/applet/**" />
-      </fileset>
-    </copy>
--->
-
-<!--     <copy todir="${target.path}/modes/javascript">
-      <fileset dir="../javascript">
-      	<exclude name="**/._*" />
-      </fileset>
-    </copy> -->
-
-<!--
-    <copy todir="${target.path}/modes/android">
-      <fileset dir="../android">
-	<include name="android-core.zip" />
-	<include name="examples/**" />
-	<include name="icons/**" />
-	<include name="theme/**" />
-	<include name="keywords.txt" />
-	<exclude name="**/._*" />
--->
-<!-- these had already been commented out 
-	<exclude name="**/bin/**" />
-	<exclude name="**/src/**" />
-	<exclude name="cmd" />
-	<exclude name="reference.zip" />
--->
-<!--
-      </fileset>
-    </copy>
--->
-    
-    <!-- copy libraries -->
-<!--
-    <copy todir="${target.path}/modes/java/libraries">
-      <fileset dir="../java/libraries">
-	<include name="**/library/**" />
-	<include name="**/src/**" />
-      </fileset>
-    </copy>
--->
-
-    <!-- copy shared library folder -->
-<!--
-    <copy todir="${target.path}/modes/java/libraries">
-      <fileset dir="shared/modes/java/libraries" />
-    </copy>
--->
-    
-    <!-- copy libraries for dxf, pdf, etc. -->
-<!--
-    <copy todir="${target.path}/modes/java/libraries/dxf">
-      <fileset dir="../dxf" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/net">
-      <fileset dir="../net" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/pdf">
-      <fileset dir="../pdf" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/serial">
-      <fileset dir="../serial" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/video">
-      <fileset dir="../video" includes="library/**,src/**" />
-    </copy>
--->
-    
-    <!-- Unzip documentation + examples -->
-<!--
     <unzip dest="${target.path}/modes/java" 
-	   src="shared/modes/java/examples.zip" 
-	   overwrite="false">
+           src="../java/reference.zip" 
+           overwrite="false">
       <patternset>
-	<exclude name="__MACOSX/**" />
-	<exclude name="**/._*" />
+        <exclude name="__MACOSX/**" />
+        <exclude name="**/._*" />
       </patternset>
     </unzip>
--->
-    <unzip dest="${target.path}/modes/java" 
-	   src="../java/reference.zip" 
-	   overwrite="false">
-      <patternset>
-	<exclude name="__MACOSX/**" />
-	<exclude name="**/._*" />
-      </patternset>
-    </unzip>
-    
-    <!-- Write the revision file -->
-    <!-- is there a good way to do this? -->
-    <!--
-    <echo file="${target.path}/lib/version.txt" 
-	  message="${version}" 
-	  if="${version}" />
-    <delete file="${target.path}/lib/version.txt"
-	    unless="${version}" />
-    -->
+
+    <!-- copy PDE X mode folder-->
+    <copy todir="${target.path}/modes/">
+      <fileset dir="../pdex/dist" />
+    </copy>
+
   </target>
 
   <target name="version-clear">
@@ -417,39 +328,39 @@
     <!-- figure out the revision number -->
     <loadfile srcfile="../todo.txt" property="revision">
       <filterchain>
-	<headfilter lines="1"/>
-	<tokenfilter>
-	  <stringtokenizer suppressdelims="true"/>
-	  <!-- grab the thing from the first line that's 4 digits -->
-	  <containsregex pattern="(\d\d\d\d)" />
-	</tokenfilter>
+        <headfilter lines="1"/>
+        <tokenfilter>
+          <stringtokenizer suppressdelims="true"/>
+          <!-- grab the thing from the first line that's 4 digits -->
+          <containsregex pattern="(\d\d\d\d)" />
+        </tokenfilter>
       </filterchain>
     </loadfile>
     <!-- <echo message="revision is ${revision}." /> -->
     
     <!-- figure out the revision number in base.java -->
     <loadfile srcfile="../app/src/processing/app/Base.java" 
-	      property="revision.base">
+              property="revision.base">
       <filterchain>
-	<tokenfilter>
-	  <linetokenizer />
-	  <containsregex pattern="String VERSION_NAME = "/>
-	  <replaceregex pattern="[^0-9]*" flags="g" replace=""/>
-	</tokenfilter>
+        <tokenfilter>
+          <linetokenizer />
+          <containsregex pattern="String VERSION_NAME = "/>
+          <replaceregex pattern="[^0-9]*" flags="g" replace=""/>
+        </tokenfilter>
       </filterchain>
     </loadfile>
     <!-- <echo message="base revision is ${revision.base}." /> -->
     
     <condition property="revision.correct">
       <!-- Using contains because I can't figure out how to get rid of the
-	   LF in revision.base. Please file a bug if you have a fix. -->
+           LF in revision.base. Please file a bug if you have a fix. -->
       <contains string="${revision.base}" substring="${revision}"/>
     </condition>
     
     <!-- the revision.base property won't be set
-	 if $revision wasn't found... -->
+         if $revision wasn't found... -->
     <fail unless="revision.correct" 
-	  message="Fix revision number in Base.java" />
+          message="Fix revision number in Base.java" />
   </target>
   
   
@@ -483,25 +394,25 @@
 
     <!--icon="macosx/processing.icns"-->
     <bundleapp outputDirectory="macosx/work"
-	       name="Processing"
-	       displayName="Processing"
-	       executableName="Processing"
-	       identifier="org.processing.app"
-	       signature="Pde2"
-	       icon="macosx/processing.icns"
-	       copyright="© The Processing Foundation"
-	       getInfo="${version}, Copyright © The Processing Foundation"
-	       shortVersion="${version}"
-	       version="${revision}"
-	       mainClassName="processing.app.Base">
+               name="Processing"
+               displayName="Processing"
+               executableName="Processing"
+               identifier="org.processing.app"
+               signature="Pde2"
+               icon="macosx/processing.icns"
+               copyright="© The Processing Foundation"
+               getInfo="${version}, Copyright © The Processing Foundation"
+               shortVersion="${version}"
+               version="${revision}"
+               mainClassName="processing.app.Base">
 
       <!-- The appbundler task needs a couple files (the Info.plist and
            anything else outside /jre) from the full JDK, even though 
-	   it's primarily copying over the JRE folder. -->
+           it's primarily copying over the JRE folder. -->
       <runtime dir="${jdk.path.macosx}/Contents/Home" />
       <!-- Eventually we'll want to load the JRE directly from 
-	   the .tgz on the Oracle site, though it's in a folder called 
-	   jre1.7.0_40.jre, so we'll need to strip that out. -->
+           the .tgz on the Oracle site, though it's in a folder called 
+           jre1.7.0_40.jre, so we'll need to strip that out. -->
 
       <!-- Same as runtime.jars, seen above; plus core.jar. -->
       <classpath file="../app/pde.jar" />
@@ -525,9 +436,9 @@
       <!--icon="macosx/template.app/Contents/Resources/pde.icns"-->
       <!--icon="${bundle.icon}"-->
       <bundledocument extensions="pde"
-		      icon="macosx/pde.icns"
-		      name="Processing Source Code"
-		      role="Editor">
+                      icon="macosx/pde.icns"
+                      name="Processing Source Code"
+                      role="Editor">
       </bundledocument>
 
       <!-- Sets dock icon when debugging (not launched via launch svcs) -->
@@ -539,81 +450,100 @@
 
       <!-- Probably no longer needed? [fry 130917]
       <option value="-Xms128M" />
-      <option value="-Xmx256M" />
       -->
+      <!-- returning 140606 per PDE X request -->
+      <option value="-Xmx256M" />
+
+      <option value="-Dapple.awt.application.name=Processing" />
+
+      <!-- avoid conflicts with JNA DLLs already in the path -->
+      <option value="-Djna.nosys=true" />
 
       <option value="-Dapple.laf.useScreenMenuBar=true" />
       <option value="-Dcom.apple.macos.use-file-dialog-packages=true" />
       <option value="-Dcom.apple.macos.useScreenMenuBar=true" />
-      <option value="-Dcom.apple.mrj.application.apple.menu.about.name=${bundle.name}" />
       <option value="-Dcom.apple.smallTabs=true" />
 
 <!--
     the old options; most of these are probably no longer useful
         <key>apple.laf.useScreenMenuBar</key>
         <string>true</string>
-	<key>apple.awt.showGrowBox</key>
-	<string>true</string>
-	<key>com.apple.smallTabs</key>
-	<string>true</string>
-	<key>apple.awt.Antialiasing</key>
-	<string>false</string>
-	<key>apple.awt.TextAntialiasing</key>
-	<string>true</string>
-	<key>com.apple.hwaccel</key>
-	<string>true</string>
-	<key>apple.awt.use-file-dialog-packages</key>
-	<string>false</string>
-	<key>apple.awt.graphics.UseQuartz</key>
-	<string>true</string>
+        <key>apple.awt.showGrowBox</key>
+        <string>true</string>
+        <key>com.apple.smallTabs</key>
+        <string>true</string>
+        <key>apple.awt.Antialiasing</key>
+        <string>false</string>
+        <key>apple.awt.TextAntialiasing</key>
+        <string>true</string>
+        <key>com.apple.hwaccel</key>
+        <string>true</string>
+        <key>apple.awt.use-file-dialog-packages</key>
+        <string>false</string>
+        <key>apple.awt.graphics.UseQuartz</key>
+        <string>true</string>
 -->
     </bundleapp>
 
+    <!-- The 'keytool' file is deleted by our appbundler. Add it back so that
+	  Android signing works properly. (Not modifying our appbundler since
+	  most of the time that appbundler is used, keytool isn't needed). 
+	  Also, because Ant's copy task does not retain file permissions on Unix systems, 
+	  we need to use <exec executable="cp" ... > instead -->
+    <exec executable="cp">
+      <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/bin"/>
+    </exec>
+
+    <!-- Replace libjli.dylib symlink with actual file. 
+         Deals with code signing issues on OS X 10.9.5+ -->
+    <property name="jli.path" value="macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/MacOS/libjli.dylib" />
+    <delete file="${jli.path}" />
+    <exec executable="cp">
+      <arg line="${jdk.path.macosx}/Contents/Home/jre/lib/jli/libjli.dylib ${jli.path}"/>
+    </exec>
+
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
-      <fileset dir="shared" includes="launch4j/**" />
-      <fileset dir="shared" includes="lib/**" />
+      <!--<fileset dir="shared" includes="launch4j/**" />-->
+      <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
 
     <!--
     Processing.app/Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/lib/fonts
     -->
-    <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk1.7.0_${jdk.update.macosx}.jdk/Contents/Home/jre/lib/fonts">
+    <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/lib/fonts">
       <fileset dir="shared/lib/fonts" includes="*" />
     </copy>
 
-    <property name="launch4j.dir" 
-	      value="macosx/work/Processing.app/Contents/Java/launch4j" />
+    <antcall target="assemble">
+      <param name="target.path" 
+             value="macosx/work/Processing.app/Contents/Java" />
+    </antcall>
+
+    <exec executable="macosx/language_gen.py" />
+
+    <property name="launch4j.dir" value="macosx/work/Processing.app/Contents/Java/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
     <move file="${launch4j.dir}/bin/windres-macosx"
-	  tofile="${launch4j.dir}/bin/windres" />
+          tofile="${launch4j.dir}/bin/windres" />
     <move file="${launch4j.dir}/bin/ld-macosx"
-	  tofile="${launch4j.dir}/bin/ld" />
+          tofile="${launch4j.dir}/bin/ld" />
 
     <!-- make executable (ant doesn't preserve) -->
     <chmod perm="ugo+x" file="${launch4j.dir}/bin/windres" />
     <chmod perm="ugo+x" file="${launch4j.dir}/bin/ld" />
 
     <!-- remove the others -->
-    <delete>
+    <delete failonerror="true">
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
-
-    <antcall target="assemble">
-      <param name="target.path" 
-	     value="macosx/work/Processing.app/Contents/Java" />
-    </antcall>
-
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
   </target>
   
   <target name="macosx-run" depends="macosx-build" 
-	  description="Run Mac OS X version">
+          description="Run Mac OS X version">
     <exec executable="open" dir="macosx/work" spawn="true">
       <arg value="-a" />
       <arg value="/Applications/Utilities/Terminal.app" />
@@ -629,7 +559,18 @@
       With a proper ID, if code signing fails, you may need to use:
       export CODESIGN_ALLOCATE="/Applications/Xcode.app/Contents/Developer/usr/bin/codesign_allocate"
     </echo>
-    <exec executable="codesign" dir="macosx/work">
+
+    <!-- 3rd party is for the app store, dev id is gatekeeper only -->
+    <!--<arg value="3rd Party Mac Developer Application" />-->
+
+    <exec executable="/usr/bin/codesign" dir="macosx/work">
+      <arg value="--force" />
+      <arg value="--sign" />
+      <arg value="Developer ID Application" />
+      <arg value="Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk" />
+    </exec>
+
+    <exec executable="/usr/bin/codesign" dir="macosx/work">
       <arg value="--force" />
       <arg value="--sign" />
       <arg value="Developer ID Application" />
@@ -638,8 +579,8 @@
   </target>
 
   <target name="macosx-dist" if="macosx" 
-	  depends="macosx-build" 
-	  description="Create a downloadable .zip for the Mac OS X version">
+          depends="macosx-build" 
+          description="Create a downloadable .zip for the Mac OS X version">
 
     <!-- The ant copy command does not preserve permissions. -->
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
@@ -647,9 +588,9 @@
     <!-- Now handled by the app bundler -->
     <!--
     <replace file="macosx/work/Processing.app/Contents/Info.plist"
-	     token="VERSION" value="${version}" />
+             token="VERSION" value="${version}" />
     <replace file="macosx/work/Processing.app/Contents/Info.plist"
-	     token="REVISION" value="${revision}" />
+             token="REVISION" value="${revision}" />
     -->
 
     <antcall target="macosx-dist-sign" />
@@ -694,25 +635,29 @@
     <copy todir="linux/work">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
-      <fileset dir="shared" includes="lib/**" />
+      <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
 
-    <property name="launch4j.dir" value="linux/work/launch4j" />
+    <antcall target="assemble">
+      <param name="target.path" value="linux/work" />
+    </antcall>
+
+    <property name="launch4j.dir" value="linux/work/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
-    <move file="${launch4j.dir}/bin/windres-linux${sun.arch.data.model}"
-	  tofile="${launch4j.dir}/bin/windres" />
-    <move file="${launch4j.dir}/bin/ld-linux${sun.arch.data.model}"
-	  tofile="${launch4j.dir}/bin/ld" />
+    <move file="${launch4j.dir}/bin/windres-linux"
+          tofile="${launch4j.dir}/bin/windres" />
+    <move file="${launch4j.dir}/bin/ld-linux"
+          tofile="${launch4j.dir}/bin/ld" />
 
     <!-- make executable (ant doesn't preserve) -->
     <chmod perm="ugo+x" file="${launch4j.dir}/bin/windres" />
     <chmod perm="ugo+x" file="${launch4j.dir}/bin/ld" />
 
     <!-- remove the others -->
-    <delete>
+    <delete failonerror="true">
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
@@ -720,15 +665,6 @@
     <copy todir="linux/work/lib" flatten="true">
       <fileset refid="runtime.jars" />
     </copy>
-    
-    <antcall target="assemble">
-      <param name="target.path" value="linux/work" />
-    </antcall>
-
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
 
     <copy file="linux/processing" todir="linux/work" />
     <chmod perm="ugo+x" file="linux/work/processing" />
@@ -737,21 +673,16 @@
     <copy file="linux/processing" tofile="linux/work/processing-java" />
     <chmod perm="ugo+x" file="linux/work/processing-java" />
 
-    <!--
-    <property name="jre.file" 
-	      value="jre-tools-6u37-linux${sun.arch.data.model}.tgz" />
-    -->
+    <get src="http://download.processing.org/java/${jre.file}" 
+         dest="linux/jre.tgz" 
+         usetimestamp="true" />
 
-    <get src="http://processing.googlecode.com/files/${jre.file}" 
-	 dest="linux/jre.tgz" 
-	 usetimestamp="true" />
-
-<!--	   
+<!--           
     Cannot use ant version of tar because it doesn't preserve properties.
     <untar compression="gzip" 
-	   dest="linux/work" 
-	   src="linux/jre.tgz" 
-	   overwrite="false"/>
+           dest="linux/work" 
+           src="linux/jre.tgz" 
+           overwrite="false"/>
 -->
 
 <!--
@@ -775,13 +706,13 @@
     <exec executable="rsync" dir="linux">
       <arg value="-a" />
       <arg value="--delete" />
-      <arg value="jre1.7.0_40/" />
+      <arg value="jre${jdk.esoteric}/" />
       <arg value="work/java" />
     </exec>
-    <delete dir="linux/jre1.7.0_40" />
+    <delete dir="linux/jre${jdk.esoteric}" />
 
     <!-- Remove unused JRE bloat. -->
-    <delete> 
+    <delete failonerror="true"> 
       <fileset refid="javafx-basics" />
       <fileset refid="javafx-linux-${sun.arch.data.model}" />
       <fileset refid="jre-optional-linux" />
@@ -794,7 +725,7 @@
   </target>
   
   <target name="linux-run" depends="linux-build" 
-	  description="Run Linux version">
+          description="Run Linux version">
     <exec executable="./processing" dir="linux/work" spawn="true"/>
   </target>
   
@@ -832,13 +763,97 @@
     </echo>
   </target>
   
-  
+  <target name="deb" depends="dist" 
+	  description="Build .deb of linux version">
+
+   <!-- start with a clean debian folder -->
+   <delete dir="linux/debian" quiet="true" />
+
+   <!-- setup the file structure -->
+   <mkdir dir="linux/debian/opt" />
+   <mkdir dir="linux/debian/usr/bin" />
+   <mkdir dir="linux/debian/usr/share/applications/" />
+   <mkdir dir="linux/debian/usr/share/mime/packages/" />
+   <!-- rename the work folder temporarily -->
+   <move file="linux/work" tofile="linux/debian/opt/processing" />
+   <symlink link="linux/debian/usr/bin/processing" resource="../../opt/processing/processing" />
+
+   <!-- place .desktop and .sharedmimeinfo file -->
+   <copy file="linux/processing.desktop" tofile="linux/debian/usr/share/applications/processing.desktop" >
+       <filterchain>
+           <replacetokens >
+               <token key="version" value="${version}" />
+           </replacetokens>
+       </filterchain >
+   </copy >
+   <copy file="linux/processing.sharedmimeinfo" tofile="linux/debian/usr/share/mime/packages/processing.xml" />
+
+   <!-- Set properties for DEBIAN/control file -->
+   <property name="linux.deb" value="linux/processing-${version}-linux${sun.arch.data.model}.deb" />
+
+   <condition property="deb.arch" value="i386"> 
+     <equals arg1="${sun.arch.data.model}" arg2="32" />
+   </condition>
+   <condition property="deb.arch" value="amd64"> 
+     <equals arg1="${sun.arch.data.model}" arg2="64" />
+   </condition>
+
+   <length property="deb.bsize" >
+     <fileset dir="linux/debian" />
+   </length>
+
+   <script language="javascript">
+     <![CDATA[
+        var length_bytes = project.getProperty("deb.bsize");
+        var length_kbytes = Math.ceil(length_bytes / 1024);
+        project.setNewProperty("deb.kbsize", length_kbytes);
+     ]]>
+   </script>
+
+  <!-- place DEBIAN/control file. -->
+   <mkdir dir="linux/debian/DEBIAN" />
+   <copy file="linux/control" tofile="linux/debian/DEBIAN/control" >
+       <filterchain>
+           <replacetokens >
+               <token key="version" value="${version}" />
+               <token key="size" value="${deb.kbsize}" />
+               <token key="arch" value="${deb.arch}" />
+           </replacetokens>
+       </filterchain >
+   </copy >
+   <copy file="linux/copyright" tofile="linux/debian/DEBIAN/copyright" />
+
+   <!-- Create .deb file -->
+   <exec executable="fakeroot" dir="linux" failonerror="true">
+     <arg value="dpkg-deb" />
+     <arg value="--build" />
+     <arg value="debian" />
+     <arg value="../${linux.deb}" />
+   </exec>
+
+   <!-- put... the candle... back -->
+   <!-- (rename the debian processing version to work) -->
+   <move file="linux/debian/opt/processing" tofile="linux/work" />
+
+   <!-- cleanup --> 
+   <delete dir="linux/debian" />
+
+    <echo>
+      ========================================================
+      Processing for Debian Linux was built. Grab the deb from   
+      
+      ${linux.deb}
+      ========================================================
+    </echo>
+  </target>
+ 
+
   <!-- - - - - - - - -->
   <!-- Windows       -->
   <!-- - - - - - - - -->
   
   <target name="windows-clean" depends="subprojects-clean"
-	  description="Clean windows version">
+          description="Clean windows version">
     <delete dir="windows/work" />
   </target>
   
@@ -855,8 +870,8 @@
   </target>
   
   <target name="windows-build" 
-	  depends="revision-check, windows-checkos, subprojects-build" 
-	  description="Build windows version">
+          depends="revision-check, windows-checkos, subprojects-build" 
+          description="Build windows version">
     <mkdir dir="windows/work" />
     
     <!-- assemble the pde -->
@@ -868,94 +883,39 @@
     <copy todir="windows/work">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
-      <fileset dir="shared" includes="lib/**" />
+      <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
 
     <fixcrlf file="windows/work/revisions.txt" eol="crlf" encoding="UTF-8" />
 
-    <property name="launch4j.dir" value="windows/work/launch4j" />
-
-    <!-- rename the version we need -->
-    <move file="${launch4j.dir}/bin/windres-windows32.exe"
-	  tofile="${launch4j.dir}/bin/windres.exe" />
-    <move file="${launch4j.dir}/bin/ld-windows32.exe"
-	  tofile="${launch4j.dir}/bin/ld.exe" />
-
-    <!-- remove the others -->
-    <delete>
-      <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
-      <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
-    </delete>
-
     <antcall target="assemble">
       <param name="target.path" value="windows/work" />
     </antcall>
 
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
-<!--
-    <echo message="the path is ${target.path}" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx32" failonerror="true" />
-    <delete dir="${target.path}/modes/java/libraries/video/library/macosx64" />
-    <exec executable="ls" dir="${target.path}/modes/java/libraries/video/library" />
+    <property name="launch4j.dir" value="windows/work/modes/java/application/launch4j" />
 
-    <condition property="delete32"> 
-      <equals arg1="${sun.arch.data.model}" arg2="64" />
-    </condition>
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows32" />
+    <!-- rename the version we need -->
+    <move file="${launch4j.dir}/bin/windres-windows.exe"
+          tofile="${launch4j.dir}/bin/windres.exe" />
+    <move file="${launch4j.dir}/bin/ld-windows.exe"
+          tofile="${launch4j.dir}/bin/ld.exe" />
 
-    <condition property="delete64"> 
-      <equals arg1="${sun.arch.data.model}" arg2="32" />
-    </condition>
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows64" />
--->
-
-    <condition property="video.delete" value="32"> 
-      <equals arg1="${sun.arch.data.model}" arg2="64" />
-    </condition>
-    <condition property="video.delete" value="64"> 
-      <equals arg1="${sun.arch.data.model}" arg2="32" />
-    </condition>
-    <delete dir="${target.path}/modes/java/libraries/video/library/windows${video.delete}" />
+    <!-- remove the others -->
+    <delete failonerror="true">
+      <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
+      <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
+    </delete>
     
     <taskdef name="launch4j" 
-	     classname="net.sf.launch4j.ant.Launch4jTask" 
-	     classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
+             classname="net.sf.launch4j.ant.Launch4jTask" 
+             classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
 
-    <copy todir="windows/work">
-      <fileset dir="windows/launcher" 
-	       includes="about.bmp, application.ico, config.xml, config-cmd.xml"/>
-    </copy>
-
-    <launch4j configFile="windows/work/config.xml" />
-    <launch4j configFile="windows/work/config-cmd.xml" />
-
-    <delete dir="windows/work" 
-	    includes="about.bmp, application.ico, config.xml, config-cmd.xml" />
-
-<!--
-    <launch4j>
-      <config headerType="gui"
-	      outfile="windows/work/processing-java.exe"
-	      dontWrapJar="false"
-	      jarPath="../app/pde.jar">
-	<classPath mainClass="processing.mode.java.Commander">
-	  <cp>lib/pde.jar</cp>
-	  <cp>lib/antlr.jar</cp>
-	  <cp>lib/jdt-core.jar</cp>
-	  <cp>lib/jna.jar</cp>
-	  <cp>lib/ant.jar</cp>
-	  <cp>lib/ant-launcher.jar</cp>
-	  <cp>core/library/core.jar</cp>
-	  <cp>%JAVA_HOME%/lib/tools.jar</cp>
-	</classPath>
-	<jre minVersion="1.6.0" jdkPreference="jdkOnly">
-	</jre>
-      </config>
-    </launch4j>
--->
+    <!-- not all launch4j options are available when embedded inside this 
+         file (i.e. the icon param doesn't work), so use a config file -->
+    <launch4j configFile="windows/config.xml" />
+    <launch4j configFile="windows/config-cmd.xml" />
 
     <!-- cygwin requires html, dll, and exe to have the +x flag -->
     <chmod perm="ugo+x">
@@ -963,27 +923,24 @@
     </chmod>
 
     <!-- starting with 2.0a7, require the local JRE + tools.jar -->
-    <!--
-    <property name="jre.file" 
-	      value="jre-tools-6u37-windows${sun.arch.data.model}.zip" />
-    -->
-    <get src="http://processing.googlecode.com/files/${jre.file}" 
-	 dest="windows/jre.tgz" 
-	 usetimestamp="true" />
+    <get src="http://download.processing.org/java/${jre.file}" 
+         dest="windows/jre.tgz" 
+         usetimestamp="true" />
 
     <!--
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
     -->
     <!-- Hopefully this is OK with the permissions (unlike Linux), 
-	 since those shouldn't matter on Windows. -->
+         since those shouldn't matter on Windows. -->
     <untar compression="gzip"
-	   dest="windows/work" 
-	   src="windows/jre.tgz" 
-	   overwrite="false" />
-    <move file="windows/work/jre1.7.0_40" tofile="windows/work/java" />
+           dest="windows/work" 
+           src="windows/jre.tgz" 
+           overwrite="false" />
+    <move file="windows/work/jre${jdk.esoteric}" 
+          tofile="windows/work/java" />
 
     <!-- Remove space-wasting JavaFX garbage. -->
-    <delete> 
+    <delete failonerror="true">
       <fileset refid="javafx-basics" />
       <fileset refid="javafx-windows" />
       <fileset refid="jre-optional-windows" />
@@ -995,36 +952,36 @@
   </target>
   
   <target name="windows-run" depends="windows-build" 
-	  description="Run windows version">
+          description="Run windows version">
     <exec executable="windows/work/processing.exe" 
-	  dir="windows/work" spawn="true"/>
+          dir="windows/work" spawn="true"/>
   </target>
 
   <target name="windows-dist" depends="windows-build" 
-	  description="Create .zip files of windows version">
+          description="Create .zip files of windows version">
     <!--
     <zip basedir="windows/work" 
-	 prefix="processing-${version}"
-	 destfile="windows/processing-${version}.zip" />
+         prefix="processing-${version}"
+         destfile="windows/processing-${version}.zip" />
     <zip basedir="windows/work" 
-	 prefix="processing-${version}"
-	 destfile="windows/processing-${version}-expert.zip" 
-	 excludes="java/**" />
+         prefix="processing-${version}"
+         destfile="windows/processing-${version}-expert.zip" 
+         excludes="java/**" />
     -->
 
     <property name="windows.dist" value="windows/processing-${version}-windows${sun.arch.data.model}.zip" />
 
     <zip destfile="${windows.dist}">
       <zipfileset dir="windows/work" 
-		  prefix="processing-${version}" />
+                  prefix="processing-${version}" />
     </zip>
 
 <!-- Expert is too much of a headache. Just nix it for 2.0. -->
 <!--
     <zip destfile="windows/processing-${version}-windows-expert.zip">
       <zipfileset dir="windows/work" 
-		  prefix="processing-${version}" 
-		  excludes="java/**" />
+                  prefix="processing-${version}" 
+                  excludes="java/**" />
     </zip>
 -->
     
@@ -1064,26 +1021,28 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg line="core -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../core/library/jogl-all.jar:../core/bin:../core/library/gluegen-rt.jar" destdir="javadoc/core" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="false" use="false" version="false">
+    <javadoc access="public" author="false" classpath="../core/library/jogl-all.jar:../core/bin:../core/library/gluegen-rt.jar" destdir="javadoc/core" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" splitindex="false" use="false" version="false">
 
       <!-- provide links for java.* classes. 
-	   also suppresses the java.lang prefix in the text.  --> 
+           also suppresses the java.lang prefix in the text.  --> 
       <link href="http://docs.oracle.com/javase/7/docs/api/" />
 
       <!-- prevent files from always appearing to have changed -->
       <arg value="-notimestamp" />
 
+      <arg value="-quiet" />
+
       <packageset dir="../core/src">
-	<include name="processing/**" />
+        <include name="processing/**" />
       </packageset>
 
     </javadoc>
 
 <!--
     <copy file="javadoc/stylesheet.css" 
-	  tofile="javadoc/core/stylesheet.css" />
+          tofile="javadoc/core/stylesheet.css" />
     <copy file="javadoc/index.html" 
-	  tofile="javadoc/core/index.html" />
+          tofile="javadoc/core/index.html" />
 -->
 
     <!-- build everything else -->
@@ -1091,32 +1050,36 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg line="everything -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../java/libraries/video/library/jna.jar:../java/libraries/serial/bin:lib/antlr.jar:../core/library/jogl-all.jar:../java/libraries/video/bin:lib/apple.jar:lib/jna.jar:lib/ant-launcher.jar:../java/libraries/pdf/bin:lib/ant.jar:../core/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/video/library/gstreamer-java.jar:lib/org-netbeans-swing-outline.jar:../java/libraries/dxf/bin:bin:../java/libraries/net/bin:../java/libraries/serial/library/jssc.jar:../core/library/gluegen-rt.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" splitindex="false" use="false" version="false" noqualifier="all">
+    <javadoc access="public" author="false" classpath="../app/lib/ant.jar:../app/lib/ant-launcher.jar:../app/lib/antlr.jar:../app/lib/apple.jar:../app/lib/jna.jar:../app/lib/org-netbeans-swing-outline.jar:../core/bin:../core/library/gluegen-rt.jar:../core/library/jogl-all.jar:../java/libraries/pdf/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/dxf/bin:../java/libraries/net/bin:../java/libraries/serial/bin:../java/mode/ecj.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" splitindex="false" use="false" version="false" noqualifier="all">
 
       <arg value="-notimestamp" />
+
+      <arg value="-quiet" />
 
       <link href="http://docs.oracle.com/javase/7/docs/api/" />
       
       <packageset dir="../app/src">
-	<include name="antlr/**" />
-	<include name="processing/**" />
+        <include name="antlr/**" />
+        <include name="processing/**" />
       </packageset>
 
       <packageset dir="../app/generated">
-	<include name="processing/**" />
+        <include name="processing/**" />
       </packageset>
 
       <packageset dir="../core/src">
-	<include name="processing/**" />
-	<include name="japplemenubar/**" />
+        <include name="processing/**" />
+	<!--
+        <include name="japplemenubar/**" />
+	-->
       </packageset>
     </javadoc>
 
 <!--
     <copy file="javadoc/stylesheet.css" 
-	  tofile="javadoc/everything/stylesheet.css" />
+          tofile="javadoc/everything/stylesheet.css" />
     <copy file="javadoc/index.html" 
-	  tofile="javadoc/everything/index.html" />
+          tofile="javadoc/everything/index.html" />
 -->
 
     <!-- set the MIME type so that Google Code shows the files properly -->
@@ -1156,7 +1119,7 @@ remove the spaces for depth since it should be double dash, but screws up commen
   <!-- - - - - - - - -->
   
   <target name="clean" description="Perform a spring cleaning" 
-	  depends="linux-clean, windows-clean, macosx-clean, subprojects-clean">
+          depends="linux-clean, windows-clean, macosx-clean, subprojects-clean">
   </target>
 
 </project>

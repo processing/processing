@@ -564,7 +564,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 
   
   /** Returns next tab stop after a specified point. */
-//  TabExpander tabExpander = new TabExpander() {    
+//  TabExpander tabExpander = new TabExpander() {
   @Override
   public float nextTabStop(float x, int tabOffset) {
     int offset = textArea.getHorizontalOffset();
@@ -572,7 +572,13 @@ public class TextAreaPainter extends JComponent implements TabExpander {
     return (ntabs + 1) * tabSize + offset;
   }
 //  };
-    
+
+
+  // do we go here? do will kill tabs?
+//  public float nextTabStop(float x, int tabOffset) {
+//    return x;
+//  }
+
 
   public Dimension getPreferredSize() {
     return new Dimension(fm.charWidth('w') * defaults.cols,
@@ -666,10 +672,11 @@ public class TextAreaPainter extends JComponent implements TabExpander {
     y += fm.getHeight();
     // doesn't respect fixed width like it should
 //    x = Utilities.drawTabbedText(currentLine, x, y, gfx, this, 0);
-    int w = fm.charWidth(' ');
+//    int w = fm.charWidth(' ');
     for (int i = 0; i < currentLine.count; i++) {
       gfx.drawChars(currentLine.array, currentLine.offset+i, 1, x, y);
-      x += w;
+      x = currentLine.array[currentLine.offset + i] == '\t' ? (int)nextTabStop(x, i) : 
+          x + fm.charWidth(currentLine.array[currentLine.offset+i]);
     }
 
     // Draw characters via input method. 
@@ -761,10 +768,11 @@ public class TextAreaPainter extends JComponent implements TabExpander {
       // doesn't respect mono metrics, insists on spacing w/ fractional or something
 //      x = Utilities.drawTabbedText(line, x, y, gfx, this, 0);
 //      gfx.drawChars(line.array, line.offset, line.count, x, y);
-      int w = fm.charWidth(' ');
+//      int w = fm.charWidth(' ');
       for (int i = 0; i < line.count; i++) {
         gfx.drawChars(line.array, line.offset+i, 1, x, y);
-        x += w;
+        x = line.array[line.offset + i] == '\t' ? (int)nextTabStop(x, i) : 
+          x + fm.charWidth(line.array[line.offset+i]);
       }
       //x += fm.charsWidth(line.array, line.offset, line.count);
       //x += fm.charWidth(' ') * line.count;

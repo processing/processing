@@ -1,36 +1,113 @@
-0224 core
+s0233 (3.0a6)
+X remove Applet as base class
+X how to name the retina pixel stuff
+X   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
+X   hint(ENABLE_2X_PIXELS)?
+X   hidpi is Apple's name as well
+X   mostly getting away from this
+
+earlier
+X size(640,360 , P3D) doesn't work properly
+X   https://github.com/processing/processing/issues/2924
+X   https://github.com/processing/processing/issues/2925
 
 
-high
-_ zero alpha values still a problem with retina renderer
-_   https://github.com/processing/processing/issues/2030
-_ Sort out blending differences with P2D/P3D
-_   https://github.com/processing/processing/issues/1844
-_ 'collector' class.. Dict that points to a list
-_   String as a key, int/float/string list as values
-_ blendMode(ADD) is broken with default renderer
-_   https://github.com/processing/processing/issues/2012
-_   may have been introduced between 2.0b7 and 2.0b8
-_ add option to have full screen span across screens
-_   display=all in cmd line
-_   sketchDisplay() -> 0 for all, or 1, 2, 3...
-_ test PGraphicsRetina2D w/ 7u40 
-_ make sure that 7u40 doesn't reintroduce starvation issue on retina Macs
-_ draw() called again before finishing on OS X (retina issue)
-_   https://github.com/processing/processing/issues/1709
-_ Linux sometimes not responding correctly w/ the size() command
-_   https://github.com/processing/processing/issues/1672
+applet/sketch
+X remove isGL(), is2D(), is3D(), displayable() from PApplet
+X   these were auto-imported from PGraphics
+X remove pause variable from PApplet (was not documented)
+X added copy() to PImage (to work like get(), ala PVector)
+X added getFontRenderContext() to PGraphics
+X why doesn't p5 punt when loadFont() is used on an otf?
+X   is this a GL problem? (example in bug report wasn't GL)
+X   https://github.com/processing/processing/issues/2876
+X   since we don't have any magic number in there, just randomly breaks
+X   add check to require .vlw extension with loadFont()
+_ performance issues on OS X (might be threading due to Applet)
+_   https://github.com/processing/processing/issues/2423
 _ clean up requestFocus() stuff
 _   make sure it works with retina/canvas/strategy as well
-_ finish PFont.getShape() implementation
-_   needs to have a way to set width/height properly
-_   draw(s) doesn't work on the returned PShape
-_ TGA files writing strangely
-_   https://github.com/processing/processing/issues/2096
+_   requestFocus() method probably needs to be added to PApplet
+_ remove sketch path hack from PApplet
+_ args[] should be null if none passed (otherwise args == null checks are weird)
 
-table
+
+full screen
+X roll back full screen changes
+X   https://github.com/processing/processing/issues/2641
+o new full screen sometimes causes sketch to temporarily be in the wrong spot
+X   removed the new stuff since it stank, rolled back to menu bar hiding
+X add option to have full screen span across screens
+o   display=all in cmd line
+o   sketchDisplay() -> 0 for all, or 1, 2, 3...
+X   added --span option
+X play with improvements to full screen here
+_ show warning when display spanning is turned off
+_   defaults read com.apple.spaces spans-displays
+_ crash on startup when "Mirror Displays" selected (cantfix?)
+_   suspect that this is a specific chipset since Oracle didn't reproduce
+_   AMD Radeon HD 6770M was in the Oracle bug report
+_   https://github.com/processing/processing/issues/2186
+_   https://bugs.openjdk.java.net/browse/JDK-8027391
+_   test with JG's 13" retina laptop
+
+
+graphics
+_ should the re-alloc of the drawing surface happen in beginDraw()
+_   that way it won't blit to the screen until we have a fresh redraw?
+_   otherwise it'll also be resizing on another thread.. badness
+_   how to allocation image object w/ createGraphics() (since no surface)
+_ add attrib() method
+_   https://github.com/processing/processing/issues/2963
+_   assign this to DXF as well?
+_ createGraphics() currently broken in Java2D
+_ size() command not working to do a resize
+_ fix flicker when resizing window 
+_   running through PSurfaceAWT.setSize() is probably overkill
+_   setLocationRelativeTo(null) was removed, will it be missed?
+_ deal with applySettings() change (maybe not a problem?)
+
+
+python has to use launch() instead of open()
+map() is bad for Python (and JavaScript?)
+
+
+under consideration
+_ break PUtil out from PApplet
+_ break more api with Processing 3?
+_   use enums for everything (fixes auto-completion)
+_   add chaining operations
+_ move to enums instead of PConstants?
+_   helps textMode() only accept valid entries
+_   really nice for auto-complete
+_   prevents hundreds of entries from coming up w/ auto-complete
+_   downside: breaks compatibility big time
+_ fix the registered methods doc, stop/dispose working
+_   Casey needs to nudge people about libraries, so we need to fix this
+_ pause(), resume(), start(), stop() clarifications
+_ dispose/stop not great w/ libraries yet
+_ PShape complete refactoring
+_ proper touch events
+_   touch event doesn't make sense for mouseMove on desktop, hover on Android
+_   probably go with pointer: more universal for touch/mouse
+_ high-level touch events (swipe, et al)
+_   if Andres is done, they go in, if not then 3.0
+_ move away from loadPixels
+_ implement requestXxxx() API
+
+
+processing.data
+_ add appendUnique()
+_ add fromOrder() and others? otherwise need temp object:
+_   categoryIndexLookup = new StringList(flavors).getOrder();
+_ handling of 'missing' values in Table needs serious work
+_   if missing int is zero, can't just remove those values from saving a table
+_   but for NaN values, it's a necessity
+_ get() methods in List/Dict shouldn't allow you to get bad values
+_   but set() methods can automatically resize the arrays
+_   though that means insert() should allow you to insert past the end
 _ addRow() is not efficient, probably need to do the doubling
-_   or have a setIncrement() function?
+o   or have a setIncrement() function?
 _   it would default to 1 on tables loaded from a file
 _   and default to doubling when created with "new Table"
 _   row count and array size are combined.. need to break apart
@@ -39,7 +116,70 @@ _   add match version that returns table that's only a pointer to original
 _   save the constructor for the version that actually copies data
 _   the table pointer version will be speedy and allow chaining 
 
+
+later
+_ bring back chaining in JSON (and add to XML)
+_   maybe once we make the PVector change
+_ bezierSegment() function to do equal-length segments
+_   https://github.com/processing/processing/issues/2919
+
+
+high
+_ Closing opengl sketch from the PDE doesn't stop java process on windows
+_   https://github.com/processing/processing/issues/2335
+_ dataPath() not working when app is not run from app dir on Linux
+_   https://github.com/processing/processing/issues/2195
+_ "Buffers have not been created" error for sketches w/o draw()
+_   https://github.com/processing/processing/issues/2469
+_   could not reproduce
+_ Sketch runs with default size if size() is followed by large memory allocation
+_   some sort of threading issue happening here
+_   https://github.com/processing/processing/issues/1672
+_   https://github.com/processing/processing/issues/2039 (dupe)
+_   https://github.com/processing/processing/issues/2294 (dupe)
+_   also check this out with the new full screen code on OS X
+_ point() rendering differently in 2.0.3 and 2.1
+_   https://github.com/processing/processing/issues/2278
+_   internally, we probably have to call set() if it's a 1 pixel point
+_     but that's going to be a mess.. need to first check the CTM
+_ tint() not working in PDF (regression between 2.0.3 and 2.1)
+_   https://github.com/processing/processing/issues/2428
+_ finish PFont.getShape() implementation
+_   needs to have a way to set width/height properly
+_   draw(s) doesn't work on the returned PShape
+
+
+retina/hidpi
+_ the 2X thing on the renderer name is unnecessary
+_   just do pixelFactor() (and pull it during compilation)?
+_   add sketchPixelFactor() to handle the scenario?
+_   or is it just a boolean, because pixelFactor(2) is the only option?
+_ remove retina hint
+_ Text looks blurry in GL Retina (andres)
+_   https://github.com/processing/processing/issues/2739
+_ check retina with PGraphicsRetina2D
+_ Text is half size in PGraphicsRetina2D
+_   https://github.com/processing/processing/issues/2738
+_ text not getting the correct font in Retina2D
+_   https://github.com/processing/processing/issues/2617
+_ saveFrame() with retina render is making black images
+_ no high-res display support for OpenGL
+_   https://github.com/processing/processing/issues/2573
+_   https://jogamp.org/bugzilla/show_bug.cgi?id=741
+_ no high-dpi support for core on Windows
+_   https://github.com/processing/processing/issues/2411
+_ retina sketches slow to start
+_   https://github.com/processing/processing/issues/2357
+_ zero alpha values still a problem with retina renderer
+_   https://github.com/processing/processing/issues/2030
+_ NPE when using image() created with createGraphics(PGraphicsRetina2D)
+_   https://github.com/processing/processing/issues/2510
+
 decisions/misc
+_ use enums for constants
+_   https://github.com/processing/processing/issues/2778
+_ make join() work with Iterable?
+_   will this collide with the current String[] version?
 _ add options for image.save() (or saveImage?)
 _   add quality=[0,1] for jpeg images
 _   add dpi=[0,n] for for png images
@@ -48,7 +188,7 @@ _ possible addition for 'implementation' variable
 X   http://code.google.com/p/processing/issues/detail?id=281
 _   https://github.com/processing/processing/issues/320
 _ should map() actually constrain to the low and high values?
-_   or have an alternate version that does that? (boolean param at end?)
+_   or have an alternate version that does that? (or boolean param at end?)
 _ decide whether to keep:
 _   public float textWidth(char[] chars, int start, int length)
 _ add version of math functions that use doubles?
@@ -77,14 +217,6 @@ _   nasty errors when loadImage/Font/createFont/etc used outside
 _   decision: add error messages where possible
 _   idea: set frameCount to -1 when setup not run yet?
 _     then set frameCount to 0 when setup() starts?
-_ how much of com.benfry.* should go in? 
-_   Table? StringIntPairs? JSON? MD5? Integrator? ColorIntegrator?
-_   decision: depends on if we can think of a good name
-_ check on DXFWriter, since it used to subclass P3D
-_   at least implement is3D? 
-_ sleep time needs to be set *much* higher for dormant applets
-_   10s should be fine--no need to keep spinning (bad for android too)
-_   just call interrupt() when it's time to get back to work
 _ need to clean up the hints in the reference/source
 _ sort out edge + 1 issue on stroke/fill for rectangles
 _   http://code.google.com/p/processing/issues/detail?id=509
@@ -123,14 +255,6 @@ _ online is there but deprecated
 _   doesn't test net connection to see if 'online'
 _   only tests whether running inside an applet viewer (not relevant)
 _   remove 'online' from the docs
-_ createGraphics() with no renderer param to point to JAVA2D
-_ docs: P2D and P3D are now OpenGL variations
-_ shader support - make decisions, Andres email, etc
-_ setAntiAlias() should instead just use parent.smooth
-_ antialias -> smoothMode(), smoothQuality(), quality()
-_   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
-_ final decision on pg.setQuality(sketchQuality())
-_   should probably be setQuality(parent.sketchQuality())
 _ add reference/docs for urlEncode() and urlDecode()
 _ verify (and document) public access members of PApplet
 _   http://code.google.com/p/processing/issues/detail?id=83
@@ -146,6 +270,11 @@ _ OpenGL offscreen requires primary surface to be OpenGL
 _ explain the new PGL interface
 _ can't really change the smoothing/options on offscreen
 _   is this still true?
+_ decide how disconnectEvent should actually be handled (and name?)
+_   was disconnect always there? 
+_   will need documentation
+_ negative indices so that we can work relative to the end in data classes?
+_ add Double and Long versions of the classes?
 
 
 
@@ -286,6 +415,9 @@ _   https://github.com/processing/processing/issues/1727
 
 CORE / PImage
 
+_ TGA files writing strangely
+_   https://github.com/processing/processing/issues/2096
+
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
@@ -372,8 +504,6 @@ _ for PShape, need to be able to set the origin (flash people)
 
 CORE / PShapeSVG
 
-_ implement A and a (elliptical arcs)
-_   http://code.google.com/p/processing/issues/detail?id=130
 _ implement support for SVG gradients from Inkscape
 _   http://code.google.com/p/processing/issues/detail?id=1142
 _ need to handle <!ENTITY tags in XML for SVG documents
@@ -403,13 +533,8 @@ _   https://github.com/processing/processing/issues/1596
 
 CORE / PVector
 
-_ PVector discussion with Dan
-_   Jer and Dan will look at their code, plus toxiclibs
-_ modify PVector to include better methods for chaining operations
-_   http://code.google.com/p/processing/issues/detail?id=218
 _ add screen(PVector), model(PVector) and world(PVector)?
 _   maybe screenVec()? or screenXYZ()?
-_ PVector chaining -> Dan looking into this
 
 
 CORE / OpenGL (Andres)
@@ -449,6 +574,8 @@ _   Updating graphics drivers may prevent the problem
 _ ellipse scaling method isn't great
 _   http://code.google.com/p/processing/issues/detail?id=87
 _ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
+_   https://github.com/processing/processing/issues/90
+_   for begin/endRaw: https://github.com/processing/processing/issues/2235
 _   http://code.google.com/p/processing/issues/detail?id=51
 _   polygon z-order depth sorting with alpha in opengl
 _   complete the implementation of hint() with proper implementation

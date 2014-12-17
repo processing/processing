@@ -48,7 +48,7 @@ public class Commander implements RunnerListener {
   static final String forceArg = "--force";
   static final String outputArg = "--output=";
   static final String exportApplicationArg = "--export";
-  static final String noJavaArg = "--export";
+  static final String noJavaArg = "--no-java";
   static final String platformArg = "--platform=";
   static final String bitsArg = "--bits=";
 //  static final String preferencesArg = "--preferences=";
@@ -62,19 +62,19 @@ public class Commander implements RunnerListener {
   static final int EXPORT = 4;
 
   Sketch sketch;
-  
+
   PrintStream systemOut;
   PrintStream systemErr;
 
 
-  static public void main(String[] args) {    
+  static public void main(String[] args) {
     // Do this early so that error messages go to the console
     Base.setCommandLine();
     // init the platform so that prefs and other native code is ready to go
     Base.initPlatform();
     // make sure a full JDK is installed
     Base.initRequirements();
-    
+
     // launch command line handler
     new Commander(args);
   }
@@ -86,28 +86,29 @@ public class Commander implements RunnerListener {
     String pdePath = null;  // path to the .pde file
     String outputPath = null;
     File outputFolder = null;
+    boolean outputSet = false;  // set an output folder
     boolean force = false;  // replace that no good output folder
 //    String preferencesPath = null;
     int platform = PApplet.platform; // default to this platform
 //    int platformBits = 0;
     int platformBits = Base.getNativeBits();
     int task = HELP;
-    boolean embedJava = true; 
+    boolean embedJava = true;
 
     // Turns out the output goes as MacRoman or something else useless.
     // http://code.google.com/p/processing/issues/detail?id=1418
     try {
       systemOut = new PrintStream(System.out, true, "UTF-8");
       systemErr = new PrintStream(System.err, true, "UTF-8");
-      
+
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
       System.exit(1);
     }
-    
+
 //    File preferencesFile = Base.getSettingsFile("preferences.txt");
 //    System.out.println("Preferences file at " + preferencesFile.getAbsolutePath());
-    
+
     for (String arg : args) {
       if (arg.length() == 0) {
         // ignore it, just the crappy shell script
@@ -132,7 +133,7 @@ public class Commander implements RunnerListener {
 
       } else if (arg.equals(exportApplicationArg)) {
         task = EXPORT;
-        
+
       } else if (arg.equals(noJavaArg)) {
         embedJava = false;
 
@@ -172,6 +173,7 @@ public class Commander implements RunnerListener {
 //        preferencesPath = arg.substring(preferencesArg.length());
 
       } else if (arg.startsWith(outputArg)) {
+        outputSet = true;
         outputPath = arg.substring(outputArg.length());
 
       } else if (arg.equals(forceArg)) {
@@ -194,22 +196,24 @@ public class Commander implements RunnerListener {
       System.exit(0);
     }
 
-    if (outputPath == null) {
-      complainAndQuit("An output path must be specified.", true);
-    }
-
-    outputFolder = new File(outputPath);
-    if (outputFolder.exists()) {
-      if (force) {
-        Base.removeDir(outputFolder);
-      } else {
-        complainAndQuit("The output folder already exists. " +
-        		            "Use --force to remove it.", false);
+    if (outputSet) {
+      if (outputPath == null) {
+        complainAndQuit("An output path must be specified.", true);
       }
-    }
 
-    if (!outputFolder.mkdirs()) {
-      complainAndQuit("Could not create the output folder.", false);
+      outputFolder = new File(outputPath);
+      if (outputFolder.exists()) {
+        if (force) {
+          Base.removeDir(outputFolder);
+        } else {
+          complainAndQuit("The output folder already exists. " +
+                          "Use --force to remove it.", false);
+        }
+      }
+
+      if (!outputFolder.mkdirs()) {
+        complainAndQuit("Could not create the output folder.", false);
+      }
     }
 
 //    // run static initialization that grabs all the prefs
@@ -224,13 +228,17 @@ public class Commander implements RunnerListener {
     if (sketchPath == null) {
       complainAndQuit("No sketch path specified.", true);
 
-    } else if (outputPath.equals(sketchPath)) {
-      complainAndQuit("The sketch path and output path cannot be identical.", false);
-
 //    } else if (!pdePath.toLowerCase().endsWith(".pde")) {
 //      complainAndQuit("Sketch path must point to the main .pde file.", false);
 
     } else {
+
+      if (outputSet) {
+        if (outputPath.equals(sketchPath)) {
+          complainAndQuit("The sketch path and output path cannot be identical.", false);
+        }
+      }
+
       boolean success = false;
 
 //      JavaMode javaMode =
@@ -240,6 +248,11 @@ public class Commander implements RunnerListener {
                               "processing.mode.java.JavaMode").getMode();
       try {
         sketch = new Sketch(pdePath, javaMode);
+
+        if (!outputSet) {
+          outputFolder = sketch.makeTempFolder();
+        }
+
         if (task == BUILD || task == RUN || task == PRESENT) {
           JavaBuild build = new JavaBuild(sketch);
           File srcFolder = new File(outputFolder, "source");
@@ -318,9 +331,9 @@ public class Commander implements RunnerListener {
         // TODO if column not specified, should just select the whole line.
         // But what's the correct syntax for that?
         systemErr.println(filename + ":" +
-          line + ":" + column + ":" + 
+          line + ":" + column + ":" +
           line + ":" + column + ":" + " " + re.getMessage());
-        
+
       } else {  // no line number, pass the trace along to the user
         exception.printStackTrace();
       }
@@ -346,7 +359,7 @@ public class Commander implements RunnerListener {
     out.println("--help               Show this help text. Congratulations.");
     out.println();
     out.println("--sketch=<name>      Specify the sketch folder (required)");
-    out.println("--output=<name>      Specify the output folder (required and");
+    out.println("--output=<name>      Specify the output folder (optional and");
     out.println("                     cannot be the same as the sketch folder.)");
     out.println();
     out.println("--force              The sketch will not build if the output");

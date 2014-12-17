@@ -63,23 +63,13 @@ public class Runner implements MessageConsumer {
   // Thread transferring remote output stream to our output stream
   protected Thread outThread = null;
 
-  // Mode for tracing the Trace program (default= 0 off)
-//  protected int debugTraceMode = 0;
-
-  //  Do we want to watch assignments to fields
-//  protected boolean watchFields = false;
-
-//  // Class patterns for which we don't want events
-//  protected String[] excludes = {
-//      "java.*", "javax.*", "sun.*", "com.sun.*",
-//      "apple.*",
-//      "processing.*"
-//  };
-
   protected SketchException exception;
   protected Editor editor;
   protected JavaBuild build;
   protected Process process;
+
+  protected PrintStream sketchErr;
+  protected PrintStream sketchOut;
   
 
   public Runner(JavaBuild build, RunnerListener listener) throws SketchException {
@@ -89,15 +79,18 @@ public class Runner implements MessageConsumer {
 
     if (listener instanceof Editor) {
       this.editor = (Editor) listener;
-//    } else {
-//      System.out.println("actually it's a " + listener.getClass().getName());
+      sketchErr = editor.getConsole().getErr();
+      sketchOut = editor.getConsole().getOut();
+    } else {
+      sketchErr = System.err;
+      sketchOut = System.out;
     }
 
     // Make sure all the imported libraries will actually run with this setup.
     int bits = Base.getNativeBits();
     for (Library library : build.getImportedLibraries()) {
       if (!library.supportsArch(PApplet.platform, bits)) {
-        System.err.println(library.getName() + " does not run in " + bits + "-bit mode.");
+        sketchErr.println(library.getName() + " does not run in " + bits + "-bit mode.");
         int opposite = (bits == 32) ? 64 : 32;
         if (Base.isMacOS()) {
           //if (library.supportsArch(PConstants.MACOSX, opposite)) {  // should always be true
@@ -138,60 +131,6 @@ public class Runner implements MessageConsumer {
     // Everyone works the same under Java 7 (also on OS X) 
     String[] commandArgs = new String[] { Base.getJavaPath(), jdwpArg };
     
-    /*
-    String[] commandArgs = null;
-    if (!Base.isMacOS()) {
-      commandArgs = new String[] {
-        Base.getJavaPath(),
-        jdwpArg
-      };
-    } else {
-      // Decided to just set this to 1.6 only, because otherwise it's gonna
-      // be a shitshow if folks are getting Apple's 1.6 with 32-bit and
-      // Oracle's 1.7 when run in 64-bit mode. ("Why does my sketch suck in
-      // 64-bit? Why is retina broken?)
-      // The --request flag will prompt to install Apple's 1.6 JVM if none is
-      // available. We're specifying 1.6 so that we can get support for both
-      // 32- and 64-bit, because Oracle won't be releasing Java 1.7 in 32-bit.
-      // Helpfully, the --request flag is not present on Mac OS X 10.6
-      // (luckily it is also not needed, because 1.6 is installed by default)
-      // but it requires an additional workaround to not use that flag,
-      // otherwise will see an error about an unsupported option. The flag is
-      // available with 10.7 and 10.8, the only other supported versions of
-      // OS X at this point, because we require 10.6.8 and higher. That also
-      // means we don't need to check for any other OS versions, the user is 
-      // a douchebag and modifies Info.plist to get around the restriction.
-      if (false) {
-        if (System.getProperty("os.version").startsWith("10.6")) {
-          commandArgs = new String[] {
-            "/usr/libexec/java_home",
-            "--version", "1.6",
-            "--exec", "java",
-            "-d" + Base.getNativeBits(),
-            jdwpArg
-          };
-        } else {  // for 10.7, 10.8, etc
-          commandArgs = new String[] {
-            "/usr/libexec/java_home",
-            "--request",  // install on-demand
-            "--version", "1.6",
-            "--exec", "java",
-            "-d" + Base.getNativeBits(),
-//          debugArg,
-            jdwpArg
-          };
-        }
-      } else {
-        // testing jdk-7u40
-        commandArgs = new String[] { 
-          //"/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/bin/java",
-          Base.getJavaPath(),
-          jdwpArg
-        };
-      }
-    }
-    */
-
     commandArgs = PApplet.concat(commandArgs, vmParams);
     commandArgs = PApplet.concat(commandArgs, sketchParams);
 //  PApplet.println(commandArgs);
@@ -240,7 +179,7 @@ public class Runner implements MessageConsumer {
           try {
             Thread.sleep(100);
           } catch (InterruptedException e1) {
-            e1.printStackTrace();
+            e1.printStackTrace(sketchErr);
           }
         }
       }
@@ -455,18 +394,18 @@ public class Runner implements MessageConsumer {
                                  "Preferences window. For more information, read Help \u2192 Troubleshooting.", null);
               } else {
                 for (String err : errorStrings) {
-                  System.err.println(err);
+                  sketchErr.println(err);
                 }
-                System.err.println("Using startup command: " + PApplet.join(args, " "));
+                sketchErr.println("Using startup command: " + PApplet.join(args, " "));
               }
             } else {
               //exc.printStackTrace();
-              System.err.println("Could not run the sketch (Target VM failed to initialize).");
+              sketchErr.println("Could not run the sketch (Target VM failed to initialize).");
               if (Preferences.getBoolean("run.options.memory")) {
                 // Only mention this if they've even altered the memory setup
-                System.err.println("Make sure that you haven't set the maximum available memory too high.");
+                sketchErr.println("Make sure that you haven't set the maximum available memory too high.");
               }
-              System.err.println("For more information, read revisions.txt and Help \u2192 Troubleshooting.");
+              sketchErr.println("For more information, read revisions.txt and Help \u2192 Troubleshooting.");
             }
             // changing this to separate editor and listener [091124]
             //if (editor != null) {
@@ -482,153 +421,6 @@ public class Runner implements MessageConsumer {
   }
 
 
-  /*
-  protected VirtualMachine launchVirtualMachine(String[] vmParams,
-                                                String[] classParams) {
-    //vm = launchTarget(sb.toString());
-    LaunchingConnector connector = (LaunchingConnector)
-      findConnector("com.sun.jdi.RawCommandLineLaunch");
-    //PApplet.println(connector);  // gets the defaults
-
-    //Map arguments = connectorArguments(connector, mainArgs);
-    Map arguments = connector.defaultArguments();
-
-    Connector.Argument commandArg =
-      (Connector.Argument)arguments.get("command");
-    // Using localhost instead of 127.0.0.1 sometimes causes a
-    // "Transport Error 202" error message when trying to run.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=895
-    // String addr = "127.0.0.1:" + (8000 + (int) (Math.random() * 1000));
-    //String addr = "localhost:" + (8000 + (int) (Math.random() * 1000));
-    // Better yet, host is not needed, so using just the port for the address
-    String addr = "" + (8000 + (int) (Math.random() * 1000));
-
-    String commandArgs =
-      "java -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
-    if (Base.isMacOS()) {
-      // Decided to just set this to 1.6 only, because otherwise it's gonna
-      // be a shitshow if folks are getting Apple's 1.6 with 32-bit and
-      // Oracle's 1.7 when run in 64-bit mode. ("Why does my sketch suck in
-      // 64-bit? Why is retina broken?)
-      // The --request flag will prompt to install Apple's 1.6 JVM if none is
-      // available. We're specifying 1.6 so that we can get support for both
-      // 32- and 64-bit, because Oracle won't be releasing Java 1.7 in 32-bit.
-      // Helpfully, the --request flag is not present on Mac OS X 10.6
-      // (luckily it is also not needed, because 1.6 is installed by default)
-      // but it requires an additional workaround to not use that flag,
-      // otherwise will see an error about an unsupported option. The flag is
-      // available with 10.7 and 10.8, the only other supported versions of
-      // OS X at this point, because we require 10.6.8 and higher. That also
-      // means we don't need to check for any other OS versions, unless
-      // is a douchebag and modifies Info.plist to get around the restriction.
-      addr = "" + (8000 + (int) (Math.random() * 1000));
-      commandArgs =
-        "/usr/libexec/java_home " +
-        (System.getProperty("os.version").startsWith("10.6") ? "" : "--request ") +
-        "--version 1.6 " +
-        "--exec java " +
-        "-d" + Base.getNativeBits() + " " +
-        "-Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
-    }
-
-    for (int i = 0; i < vmParams.length; i++) {
-      commandArgs = addArgument(commandArgs, vmParams[i], ' ');
-    }
-    if (classParams != null) {
-      for (int i = 0; i < classParams.length; i++) {
-        commandArgs = addArgument(commandArgs, classParams[i], ' ');
-      }
-    }
-    System.out.println("commandArgs is " + commandArgs);
-    commandArg.setValue(commandArgs);
-
-    Connector.Argument addressArg =
-      (Connector.Argument)arguments.get("address");
-    addressArg.setValue(addr);
-
-    //PApplet.println(connector);  // prints the current
-    //com.sun.tools.jdi.AbstractLauncher al;
-    //com.sun.tools.jdi.RawCommandLineLauncher rcll;
-
-    //System.out.println(PApplet.javaVersion);
-    // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#sunlaunch
-    try {
-      return connector.launch(arguments);
-    } catch (IOException exc) {
-      throw new Error("Unable to launch target VM: " + exc);
-    } catch (IllegalConnectorArgumentsException exc) {
-      throw new Error("Internal error: " + exc);
-    } catch (VMStartException exc) {
-      Process p = exc.process();
-      //System.out.println(p);
-      String[] errorStrings = PApplet.loadStrings(p.getErrorStream());
-      //String[] inputStrings = 
-        PApplet.loadStrings(p.getInputStream());
-
-      if (errorStrings != null && errorStrings.length > 1) {
-        if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
-          Base.showWarning("Way Too High",
-                           "Please lower the value for \u201Cmaximum available memory\u201D in the\n" +
-                           "Preferences window. For more information, read Help \u2192 Troubleshooting.",
-                           exc);
-        } else {
-          PApplet.println(errorStrings);
-          System.err.println("Using startup command:");
-          PApplet.println(arguments);
-        }
-      } else {
-        exc.printStackTrace();
-        System.err.println("Could not run the sketch (Target VM failed to initialize).");
-        if (Preferences.getBoolean("run.options.memory")) {
-          // Only mention this if they've even altered the memory setup
-          System.err.println("Make sure that you haven't set the maximum available memory too high.");
-        }
-        System.err.println("For more information, read revisions.txt and Help \u2192 Troubleshooting.");
-      }
-      // changing this to separate editor and listener [091124]
-      //if (editor != null) {
-      listener.statusError("Could not run the sketch.");
-      //}
-      return null;
-    }
-  }
-
-
-  private static boolean hasWhitespace(String string) {
-    int length = string.length();
-    for (int i = 0; i < length; i++) {
-      if (Character.isWhitespace(string.charAt(i))) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-
-  private static String addArgument(String string, String argument, char sep) {
-    if (hasWhitespace(argument) || argument.indexOf(',') != -1) {
-      // Quotes were stripped out for this argument, add 'em back.
-      StringBuffer buffer = new StringBuffer(string);
-      buffer.append('"');
-      for (int i = 0; i < argument.length(); i++) {
-        char c = argument.charAt(i);
-        if (c == '"') {
-          buffer.append('\\');
-//          buffer.append("\\\\");
-        }
-        buffer.append(c);
-      }
-      buffer.append('"');
-      buffer.append(sep);
-      return buffer.toString();
-      
-    } else {
-      return string + argument + String.valueOf(sep);
-    }
-  }
-  */
-
-
   /**
    * Generate the trace.
    * Enable events, start thread to display events,
@@ -639,9 +431,6 @@ public class Runner implements MessageConsumer {
     //vm.setDebugTraceMode(debugTraceMode);
 //    vm.setDebugTraceMode(VirtualMachine.TRACE_ALL);
 //    vm.setDebugTraceMode(VirtualMachine.TRACE_NONE);  // formerly, seems to have no effect
-
-    // For internal debugging
-    PrintWriter writer = null;
     
     // Calling this seems to set something internally to make the 
     // Eclipse JDI wake up. Without it, an ObjectCollectedException
@@ -678,7 +467,9 @@ public class Runner implements MessageConsumer {
 
             for (Event event : eventSet) {
 //              System.out.println("EventThread.handleEvent -> " + event);
-              if (event instanceof ExceptionEvent) {
+              if (event instanceof VMStartEvent) {
+                vm.resume();
+              } else if (event instanceof ExceptionEvent) {
 //                for (ThreadReference thread : vm.allThreads()) {
 //                  System.out.println("thread : " + thread);
 ////                  thread.suspend();
@@ -706,11 +497,9 @@ public class Runner implements MessageConsumer {
 
     outThread = new StreamRedirectThread("JVM stdout Reader",
                                          process.getInputStream(),
-                                         System.out);
+                                         sketchOut);
     errThread.start();
     outThread.start();
-
-    vm.resume();
 
     // Shutdown begins when event thread terminates
     try {
@@ -735,7 +524,6 @@ public class Runner implements MessageConsumer {
       // we don't interrupt
     }
     //System.out.println("and leaving");
-    if (writer != null) writer.close();
   }
 
 
@@ -796,7 +584,7 @@ public class Runner implements MessageConsumer {
     // First just report the exception and its placement
     reportException(message, or, event.thread());
     // Then try to pretty it up with a better message
-    handleCommonErrors(exceptionName, message, listener);
+    handleCommonErrors(exceptionName, message, listener, sketchErr);
     
     if (editor != null) {
       editor.deactivateRun();
@@ -816,41 +604,42 @@ public class Runner implements MessageConsumer {
    */
   public static boolean handleCommonErrors(final String exceptionClass,
                                            final String message,
-                                           final RunnerListener listener) {
+                                           final RunnerListener listener,
+                                           final PrintStream err) {
     if (exceptionClass.equals("java.lang.OutOfMemoryError")) {
       if (message.contains("exceeds VM budget")) {
         // TODO this is a kludge for Android, since there's no memory preference
         listener.statusError("OutOfMemoryError: This code attempts to use more memory than available.");
-        System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
-        System.err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
-        System.err.println("loading thousands of images), or simply that it's trying to use more memory");
-        System.err.println("than what is supported by the current device.");
+        err.println("An OutOfMemoryError means that your code is either using up too much memory");
+        err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
+        err.println("loading thousands of images), or simply that it's trying to use more memory");
+        err.println("than what is supported by the current device.");
       } else {
         listener.statusError("OutOfMemoryError: You may need to increase the memory setting in Preferences.");
-        System.err.println("An OutOfMemoryError means that your code is either using up too much memory");
-        System.err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
-        System.err.println("loading thousands of images), or that your sketch may need more memory to run.");
-        System.err.println("If your sketch uses a lot of memory (for instance if it loads a lot of data files)");
-        System.err.println("you can increase the memory available to your sketch using the Preferences window.");
+        err.println("An OutOfMemoryError means that your code is either using up too much memory");
+        err.println("because of a bug (e.g. creating an array that's too large, or unintentionally");
+        err.println("loading thousands of images), or that your sketch may need more memory to run.");
+        err.println("If your sketch uses a lot of memory (for instance if it loads a lot of data files)");
+        err.println("you can increase the memory available to your sketch using the Preferences window.");
       }
     } else if (exceptionClass.equals("java.lang.UnsatisfiedLinkError")) {
       listener.statusError("A library used by this sketch is not installed properly.");
-      System.err.println("A library relies on native code that's not available.");
-      System.err.println("Or only works properly when the sketch is run as a " + 
+      err.println("A library relies on native code that's not available.");
+      err.println("Or only works properly when the sketch is run as a " + 
         ((Base.getNativeBits() == 32) ? "64-bit " : "32-bit ") + " application.");
 
     } else if (exceptionClass.equals("java.lang.StackOverflowError")) {
       listener.statusError("StackOverflowError: This sketch is attempting too much recursion.");
-      System.err.println("A StackOverflowError means that you have a bug that's causing a function");
-      System.err.println("to be called recursively (it's calling itself and going in circles),");
-      System.err.println("or you're intentionally calling a recursive function too much,");
-      System.err.println("and your code should be rewritten in a more efficient manner.");
+      err.println("A StackOverflowError means that you have a bug that's causing a function");
+      err.println("to be called recursively (it's calling itself and going in circles),");
+      err.println("or you're intentionally calling a recursive function too much,");
+      err.println("and your code should be rewritten in a more efficient manner.");
 
     } else if (exceptionClass.equals("java.lang.UnsupportedClassVersionError")) {
       listener.statusError("UnsupportedClassVersionError: A library is using code compiled with an unsupported version of Java.");
-      System.err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.6 or earlier.");
-      System.err.println("A library used by this sketch was compiled for Java 1.7 or later, ");
-      System.err.println("and needs to be recompiled to be compatible with Java 1.6.");
+      err.println("This version of Processing only supports libraries and JAR files compiled for Java 1.6 or earlier.");
+      err.println("A library used by this sketch was compiled for Java 1.7 or later, ");
+      err.println("and needs to be recompiled to be compatible with Java 1.6.");
 
     } else if (exceptionClass.equals("java.lang.NoSuchMethodError") ||
                exceptionClass.equals("java.lang.NoSuchFieldError")) {
@@ -910,7 +699,7 @@ public class Runner implements MessageConsumer {
     } catch (IncompatibleThreadStateException e) {
       // This shouldn't happen, but if it does, print the exception in case
       // it's something that needs to be debugged separately.
-      e.printStackTrace();
+      e.printStackTrace(sketchErr);
     }
     // before giving up, try to extract from the throwable object itself
     // since sometimes exceptions are re-thrown from a different context
@@ -923,7 +712,7 @@ public class Runner implements MessageConsumer {
         ObjectReference ref = (ObjectReference)val;
         method = ((ClassType) ref.referenceType()).concreteMethodByName("getFileName", "()Ljava/lang/String;");
         StringReference strref = (StringReference) ref.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
-        String filename = strref.value();
+        String filename = strref == null ? "Unknown Source" : strref.value();
         method = ((ClassType) ref.referenceType()).concreteMethodByName("getLineNumber", "()I");
         IntegerValue intval = (IntegerValue) ref.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
         int lineNumber = intval.intValue() - 1;
@@ -942,7 +731,7 @@ public class Runner implements MessageConsumer {
       or.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
       
     } catch (Exception e) {
-      e.printStackTrace();
+      e.printStackTrace(sketchErr);
     }
     // Give up, nothing found inside the pile of stack frames
     SketchException rex = new SketchException(message);
@@ -1013,8 +802,8 @@ public class Runner implements MessageConsumer {
 
     // always shove out the message, since it might not fall under
     // the same setup as we're expecting
-    System.err.print(s);
+    sketchErr.print(s);
     //System.err.println("[" + s.length() + "] " + s);
-    System.err.flush();
+    sketchErr.flush();
   }
 }

@@ -65,12 +65,367 @@
 <div class="serializedFormContainer">
 <ul class="blockList">
 <li class="blockList">
+<h2 title="Package">Package&nbsp;antlr</h2>
+<ul class="blockList">
+<li class="blockList"><a name="antlr.ANTLRError">
+<!--   -->
+</a>
+<h3>Class ANTLRError extends Error implements Serializable</h3>
+</li>
+<li class="blockList"><a name="antlr.ANTLRException">
+<!--   -->
+</a>
+<h3>Class ANTLRException extends Exception implements Serializable</h3>
+</li>
+<li class="blockList"><a name="antlr.BaseAST">
+<!--   -->
+</a>
+<h3>Class BaseAST extends Object implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>down</h4>
+<pre>BaseAST down</pre>
+</li>
+<li class="blockListLast">
+<h4>right</h4>
+<pre>BaseAST right</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.CharStreamException">
+<!--   -->
+</a>
+<h3>Class CharStreamException extends ANTLRException implements Serializable</h3>
+</li>
+<li class="blockList"><a name="antlr.CharStreamIOException">
+<!--   -->
+</a>
+<h3>Class CharStreamIOException extends CharStreamException implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>io</h4>
+<pre>IOException io</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.CommonAST">
+<!--   -->
+</a>
+<h3>Class CommonAST extends BaseAST implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>ttype</h4>
+<pre>int ttype</pre>
+</li>
+<li class="blockListLast">
+<h4>text</h4>
+<pre>String text</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.CommonASTWithHiddenTokens">
+<!--   -->
+</a>
+<h3>Class CommonASTWithHiddenTokens extends CommonAST implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>hiddenBefore</h4>
+<pre>CommonHiddenStreamToken hiddenBefore</pre>
+</li>
+<li class="blockListLast">
+<h4>hiddenAfter</h4>
+<pre>CommonHiddenStreamToken hiddenAfter</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.ExtendedCommonASTWithHiddenTokens">
+<!--   -->
+</a>
+<h3>Class <a href="antlr/ExtendedCommonASTWithHiddenTokens.html" title="class in antlr">ExtendedCommonASTWithHiddenTokens</a> extends CommonASTWithHiddenTokens implements Serializable</h3>
+</li>
+<li class="blockList"><a name="antlr.MismatchedCharException">
+<!--   -->
+</a>
+<h3>Class MismatchedCharException extends RecognitionException implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>mismatchType</h4>
+<pre>int mismatchType</pre>
+</li>
+<li class="blockList">
+<h4>foundChar</h4>
+<pre>int foundChar</pre>
+</li>
+<li class="blockList">
+<h4>expecting</h4>
+<pre>int expecting</pre>
+</li>
+<li class="blockList">
+<h4>upper</h4>
+<pre>int upper</pre>
+</li>
+<li class="blockList">
+<h4>set</h4>
+<pre>BitSet set</pre>
+</li>
+<li class="blockListLast">
+<h4>scanner</h4>
+<pre>CharScanner scanner</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.MismatchedTokenException">
+<!--   -->
+</a>
+<h3>Class MismatchedTokenException extends RecognitionException implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>tokenNames</h4>
+<pre>String[] tokenNames</pre>
+</li>
+<li class="blockList">
+<h4>token</h4>
+<pre>Token token</pre>
+</li>
+<li class="blockList">
+<h4>node</h4>
+<pre>AST node</pre>
+</li>
+<li class="blockList">
+<h4>tokenText</h4>
+<pre>String tokenText</pre>
+</li>
+<li class="blockList">
+<h4>mismatchType</h4>
+<pre>int mismatchType</pre>
+</li>
+<li class="blockList">
+<h4>expecting</h4>
+<pre>int expecting</pre>
+</li>
+<li class="blockList">
+<h4>upper</h4>
+<pre>int upper</pre>
+</li>
+<li class="blockListLast">
+<h4>set</h4>
+<pre>BitSet set</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.NoViableAltException">
+<!--   -->
+</a>
+<h3>Class NoViableAltException extends RecognitionException implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>token</h4>
+<pre>Token token</pre>
+</li>
+<li class="blockListLast">
+<h4>node</h4>
+<pre>AST node</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.NoViableAltForCharException">
+<!--   -->
+</a>
+<h3>Class NoViableAltForCharException extends RecognitionException implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>foundChar</h4>
+<pre>char foundChar</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.ParseTree">
+<!--   -->
+</a>
+<h3>Class ParseTree extends BaseAST implements Serializable</h3>
+</li>
+<li class="blockList"><a name="antlr.ParseTreeRule">
+<!--   -->
+</a>
+<h3>Class ParseTreeRule extends ParseTree implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>ruleName</h4>
+<pre>String ruleName</pre>
+</li>
+<li class="blockListLast">
+<h4>altNumber</h4>
+<pre>int altNumber</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.ParseTreeToken">
+<!--   -->
+</a>
+<h3>Class ParseTreeToken extends ParseTree implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>token</h4>
+<pre>Token token</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.RecognitionException">
+<!--   -->
+</a>
+<h3>Class RecognitionException extends ANTLRException implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>fileName</h4>
+<pre>String fileName</pre>
+</li>
+<li class="blockList">
+<h4>line</h4>
+<pre>int line</pre>
+</li>
+<li class="blockListLast">
+<h4>column</h4>
+<pre>int column</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.SemanticException">
+<!--   -->
+</a>
+<h3>Class SemanticException extends RecognitionException implements Serializable</h3>
+</li>
+<li class="blockList"><a name="antlr.TokenStreamException">
+<!--   -->
+</a>
+<h3>Class TokenStreamException extends ANTLRException implements Serializable</h3>
+</li>
+<li class="blockList"><a name="antlr.TokenStreamIOException">
+<!--   -->
+</a>
+<h3>Class TokenStreamIOException extends TokenStreamException implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>io</h4>
+<pre>IOException io</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.TokenStreamRecognitionException">
+<!--   -->
+</a>
+<h3>Class TokenStreamRecognitionException extends TokenStreamException implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>recog</h4>
+<pre>RecognitionException recog</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="antlr.TokenStreamRetryException">
+<!--   -->
+</a>
+<h3>Class TokenStreamRetryException extends TokenStreamException implements Serializable</h3>
+</li>
+</ul>
+</li>
+<li class="blockList">
 <h2 title="Package">Package&nbsp;processing.app</h2>
 <ul class="blockList">
 <li class="blockList"><a name="processing.app.About">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/About.html" title="class in processing.app">About</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt">Window</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/About.html" title="class in processing.app">About</a> extends Window implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -79,7 +434,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>image</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a> image</pre>
+<pre>Image image</pre>
 </li>
 <li class="blockList">
 <h4>width</h4>
@@ -93,10 +448,37 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="processing.app.ColorChooser.ColorRange">
+<!--   -->
+</a>
+<h3>Class <a href="processing/app/ColorChooser.ColorRange.html" title="class in processing.app">ColorChooser.ColorRange</a> extends <a href="processing/core/PApplet.html" title="class in processing.core">PApplet</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>lastX</h4>
+<pre>int lastX</pre>
+</li>
+<li class="blockListLast">
+<h4>lastY</h4>
+<pre>int lastY</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="processing.app.ColorChooser.ColorSlider">
+<!--   -->
+</a>
+<h3>Class <a href="processing/app/ColorChooser.ColorSlider.html" title="class in processing.app">ColorChooser.ColorSlider</a> extends <a href="processing/core/PApplet.html" title="class in processing.core">PApplet</a> implements Serializable</h3>
+</li>
 <li class="blockList"><a name="processing.app.Editor">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/Editor.html" title="class in processing.app">Editor</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JFrame.html?is-external=true" title="class or interface in javax.swing">JFrame</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/Editor.html" title="class in processing.app">Editor</a> extends JFrame implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -117,20 +499,20 @@
 </li>
 <li class="blockList">
 <h4>pageFormat</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/PageFormat.html?is-external=true" title="class or interface in java.awt.print">PageFormat</a> pageFormat</pre>
+<pre>PageFormat pageFormat</pre>
 <div class="block">true if this file has not yet been given a name by the user</div>
 </li>
 <li class="blockList">
 <h4>printerJob</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/print/PrinterJob.html?is-external=true" title="class or interface in java.awt.print">PrinterJob</a> printerJob</pre>
+<pre>PrinterJob printerJob</pre>
 </li>
 <li class="blockList">
 <h4>fileMenu</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenu.html?is-external=true" title="class or interface in javax.swing">JMenu</a> fileMenu</pre>
+<pre>JMenu fileMenu</pre>
 </li>
 <li class="blockList">
 <h4>sketchMenu</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenu.html?is-external=true" title="class or interface in javax.swing">JMenu</a> sketchMenu</pre>
+<pre>JMenu sketchMenu</pre>
 </li>
 <li class="blockList">
 <h4>header</h4>
@@ -150,11 +532,11 @@
 </li>
 <li class="blockList">
 <h4>splitPane</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JSplitPane.html?is-external=true" title="class or interface in javax.swing">JSplitPane</a> splitPane</pre>
+<pre>JSplitPane splitPane</pre>
 </li>
 <li class="blockList">
 <h4>consolePanel</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JPanel.html?is-external=true" title="class or interface in javax.swing">JPanel</a> consolePanel</pre>
+<pre>JPanel consolePanel</pre>
 </li>
 <li class="blockList">
 <h4>console</h4>
@@ -170,15 +552,23 @@
 </li>
 <li class="blockList">
 <h4>sketchWindowLocation</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Point.html?is-external=true" title="class or interface in java.awt">Point</a> sketchWindowLocation</pre>
+<pre>Point sketchWindowLocation</pre>
 </li>
 <li class="blockList">
 <h4>undoItem</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenuItem.html?is-external=true" title="class or interface in javax.swing">JMenuItem</a> undoItem</pre>
+<pre>JMenuItem undoItem</pre>
 </li>
 <li class="blockList">
 <h4>redoItem</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenuItem.html?is-external=true" title="class or interface in javax.swing">JMenuItem</a> redoItem</pre>
+<pre>JMenuItem redoItem</pre>
+</li>
+<li class="blockList">
+<h4>copyItems</h4>
+<pre>JMenuItem copyItems</pre>
+</li>
+<li class="blockList">
+<h4>cutItems</h4>
+<pre>JMenuItem cutItems</pre>
 </li>
 <li class="blockList">
 <h4>undoAction</h4>
@@ -189,21 +579,29 @@
 <pre>Editor.RedoAction redoAction</pre>
 </li>
 <li class="blockList">
-<h4>undo</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/undo/UndoManager.html?is-external=true" title="class or interface in javax.swing.undo">UndoManager</a> undo</pre>
+<h4>copyAction</h4>
+<pre>Editor.CopyAction copyAction</pre>
 <div class="block">the currently selected tab's undo manager</div>
 </li>
 <li class="blockList">
+<h4>cutAction</h4>
+<pre>Editor.CutAction cutAction</pre>
+</li>
+<li class="blockList">
+<h4>undo</h4>
+<pre>UndoManager undo</pre>
+</li>
+<li class="blockList">
 <h4>compoundEdit</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/undo/CompoundEdit.html?is-external=true" title="class or interface in javax.swing.undo">CompoundEdit</a> compoundEdit</pre>
+<pre>CompoundEdit compoundEdit</pre>
 </li>
 <li class="blockList">
 <h4>timer</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Timer.html?is-external=true" title="class or interface in java.util">Timer</a> timer</pre>
+<pre>Timer timer</pre>
 </li>
 <li class="blockList">
 <h4>endUndoEvent</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/TimerTask.html?is-external=true" title="class or interface in java.util">TimerTask</a> endUndoEvent</pre>
+<pre>TimerTask endUndoEvent</pre>
 </li>
 <li class="blockList">
 <h4>isInserting</h4>
@@ -211,11 +609,11 @@
 </li>
 <li class="blockList">
 <h4>caretUndoStack</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Stack.html?is-external=true" title="class or interface in java.util">Stack</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Stack.html?is-external=true" title="class or interface in java.util">E</a>&gt; caretUndoStack</pre>
+<pre>Stack&lt;E&gt; caretUndoStack</pre>
 </li>
 <li class="blockList">
 <h4>caretRedoStack</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Stack.html?is-external=true" title="class or interface in java.util">Stack</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Stack.html?is-external=true" title="class or interface in java.util">E</a>&gt; caretRedoStack</pre>
+<pre>Stack&lt;E&gt; caretRedoStack</pre>
 </li>
 <li class="blockList">
 <h4>find</h4>
@@ -223,19 +621,27 @@
 </li>
 <li class="blockList">
 <h4>toolsMenu</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenu.html?is-external=true" title="class or interface in javax.swing">JMenu</a> toolsMenu</pre>
+<pre>JMenu toolsMenu</pre>
 </li>
 <li class="blockList">
 <h4>modeMenu</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenu.html?is-external=true" title="class or interface in javax.swing">JMenu</a> modeMenu</pre>
+<pre>JMenu modeMenu</pre>
 </li>
 <li class="blockList">
 <h4>coreTools</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">E</a>&gt; coreTools</pre>
+<pre>ArrayList&lt;E&gt; coreTools</pre>
+</li>
+<li class="blockList">
+<h4>contribTools</h4>
+<pre>ArrayList&lt;E&gt; contribTools</pre>
+</li>
+<li class="blockList">
+<h4>watcherSave</h4>
+<pre>boolean watcherSave</pre>
 </li>
 <li class="blockListLast">
-<h4>contribTools</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">E</a>&gt; contribTools</pre>
+<h4>watcherKey</h4>
+<pre>WatchKey watcherKey</pre>
 </li>
 </ul>
 </li>
@@ -244,7 +650,7 @@
 <li class="blockList"><a name="processing.app.EditorConsole">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/EditorConsole.html" title="class in processing.app">EditorConsole</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JScrollPane.html?is-external=true" title="class or interface in javax.swing">JScrollPane</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/EditorConsole.html" title="class in processing.app">EditorConsole</a> extends JScrollPane implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -257,7 +663,7 @@
 </li>
 <li class="blockList">
 <h4>consoleTextPane</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JTextPane.html?is-external=true" title="class or interface in javax.swing">JTextPane</a> consoleTextPane</pre>
+<pre>JTextPane consoleTextPane</pre>
 </li>
 <li class="blockList">
 <h4>consoleDoc</h4>
@@ -265,15 +671,23 @@
 </li>
 <li class="blockList">
 <h4>stdStyle</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/MutableAttributeSet.html?is-external=true" title="class or interface in javax.swing.text">MutableAttributeSet</a> stdStyle</pre>
+<pre>MutableAttributeSet stdStyle</pre>
 </li>
 <li class="blockList">
 <h4>errStyle</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/MutableAttributeSet.html?is-external=true" title="class or interface in javax.swing.text">MutableAttributeSet</a> errStyle</pre>
+<pre>MutableAttributeSet errStyle</pre>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>maxLineCount</h4>
 <pre>int maxLineCount</pre>
+</li>
+<li class="blockList">
+<h4>sketchOut</h4>
+<pre>PrintStream sketchOut</pre>
+</li>
+<li class="blockListLast">
+<h4>sketchErr</h4>
+<pre>PrintStream sketchErr</pre>
 </li>
 </ul>
 </li>
@@ -282,7 +696,7 @@
 <li class="blockList"><a name="processing.app.EditorHeader">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/EditorHeader.html" title="class in processing.app">EditorHeader</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/EditorHeader.html" title="class in processing.app">EditorHeader</a> extends JComponent implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -291,7 +705,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>bgColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> bgColor</pre>
+<pre>Color bgColor</pre>
 </li>
 <li class="blockList">
 <h4>hiding</h4>
@@ -299,19 +713,19 @@
 </li>
 <li class="blockList">
 <h4>hideColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> hideColor</pre>
+<pre>Color hideColor</pre>
 </li>
 <li class="blockList">
 <h4>textColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>[] textColor</pre>
+<pre>Color[] textColor</pre>
 </li>
 <li class="blockList">
 <h4>tabColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>[] tabColor</pre>
+<pre>Color[] tabColor</pre>
 </li>
 <li class="blockList">
 <h4>modifiedColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> modifiedColor</pre>
+<pre>Color modifiedColor</pre>
 </li>
 <li class="blockList">
 <h4>editor</h4>
@@ -327,7 +741,7 @@
 </li>
 <li class="blockList">
 <h4>font</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a> font</pre>
+<pre>Font font</pre>
 </li>
 <li class="blockList">
 <h4>fontAscent</h4>
@@ -335,11 +749,11 @@
 </li>
 <li class="blockList">
 <h4>menu</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenu.html?is-external=true" title="class or interface in javax.swing">JMenu</a> menu</pre>
+<pre>JMenu menu</pre>
 </li>
 <li class="blockList">
 <h4>popup</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JPopupMenu.html?is-external=true" title="class or interface in javax.swing">JPopupMenu</a> popup</pre>
+<pre>JPopupMenu popup</pre>
 </li>
 <li class="blockList">
 <h4>menuLeft</h4>
@@ -351,11 +765,11 @@
 </li>
 <li class="blockList">
 <h4>pieces</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a>[][] pieces</pre>
+<pre>Image[][] pieces</pre>
 </li>
 <li class="blockList">
 <h4>offscreen</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a> offscreen</pre>
+<pre>Image offscreen</pre>
 </li>
 <li class="blockList">
 <h4>sizeW</h4>
@@ -375,7 +789,7 @@
 </li>
 <li class="blockListLast">
 <h4>lastNoticeName</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> lastNoticeName</pre>
+<pre>String lastNoticeName</pre>
 </li>
 </ul>
 </li>
@@ -384,7 +798,7 @@
 <li class="blockList"><a name="processing.app.EditorLineStatus">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/EditorLineStatus.html" title="class in processing.app">EditorLineStatus</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/EditorLineStatus.html" title="class in processing.app">EditorLineStatus</a> extends JComponent implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -405,15 +819,15 @@
 </li>
 <li class="blockList">
 <h4>foreground</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> foreground</pre>
+<pre>Color foreground</pre>
 </li>
 <li class="blockList">
 <h4>background</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> background</pre>
+<pre>Color background</pre>
 </li>
 <li class="blockList">
 <h4>font</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a> font</pre>
+<pre>Font font</pre>
 </li>
 <li class="blockList">
 <h4>high</h4>
@@ -421,7 +835,7 @@
 </li>
 <li class="blockListLast">
 <h4>text</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> text</pre>
+<pre>String text</pre>
 </li>
 </ul>
 </li>
@@ -430,7 +844,7 @@
 <li class="blockList"><a name="processing.app.EditorStatus">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/EditorStatus.html" title="class in processing.app">EditorStatus</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JPanel.html?is-external=true" title="class or interface in javax.swing">JPanel</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/EditorStatus.html" title="class in processing.app">EditorStatus</a> extends JPanel implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -439,11 +853,11 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>bgcolor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>[] bgcolor</pre>
+<pre>Color[] bgcolor</pre>
 </li>
 <li class="blockList">
 <h4>fgcolor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>[] fgcolor</pre>
+<pre>Color[] fgcolor</pre>
 </li>
 <li class="blockList">
 <h4>editor</h4>
@@ -455,15 +869,15 @@
 </li>
 <li class="blockList">
 <h4>message</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> message</pre>
+<pre>String message</pre>
 </li>
 <li class="blockList">
 <h4>font</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a> font</pre>
+<pre>Font font</pre>
 </li>
 <li class="blockList">
 <h4>metrics</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/FontMetrics.html?is-external=true" title="class or interface in java.awt">FontMetrics</a> metrics</pre>
+<pre>FontMetrics metrics</pre>
 </li>
 <li class="blockList">
 <h4>ascent</h4>
@@ -471,7 +885,7 @@
 </li>
 <li class="blockList">
 <h4>offscreen</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a> offscreen</pre>
+<pre>Image offscreen</pre>
 </li>
 <li class="blockList">
 <h4>sizeW</h4>
@@ -480,18 +894,6 @@
 <li class="blockList">
 <h4>sizeH</h4>
 <pre>int sizeH</pre>
-</li>
-<li class="blockList">
-<h4>cancelButton</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JButton.html?is-external=true" title="class or interface in javax.swing">JButton</a> cancelButton</pre>
-</li>
-<li class="blockList">
-<h4>okButton</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JButton.html?is-external=true" title="class or interface in javax.swing">JButton</a> okButton</pre>
-</li>
-<li class="blockList">
-<h4>editField</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JTextField.html?is-external=true" title="class or interface in javax.swing">JTextField</a> editField</pre>
 </li>
 <li class="blockList">
 <h4>response</h4>
@@ -503,7 +905,7 @@
 </li>
 <li class="blockListLast">
 <h4>thread</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html?is-external=true" title="class or interface in java.lang">Thread</a> thread</pre>
+<pre>Thread thread</pre>
 </li>
 </ul>
 </li>
@@ -512,7 +914,7 @@
 <li class="blockList"><a name="processing.app.EditorToolbar">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/EditorToolbar.html" title="class in processing.app">EditorToolbar</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/EditorToolbar.html" title="class in processing.app">EditorToolbar</a> extends JComponent implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -533,7 +935,7 @@
 </li>
 <li class="blockList">
 <h4>offscreen</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a> offscreen</pre>
+<pre>Image offscreen</pre>
 </li>
 <li class="blockList">
 <h4>width</h4>
@@ -545,7 +947,7 @@
 </li>
 <li class="blockList">
 <h4>bgColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> bgColor</pre>
+<pre>Color bgColor</pre>
 </li>
 <li class="blockList">
 <h4>hiding</h4>
@@ -553,7 +955,7 @@
 </li>
 <li class="blockList">
 <h4>hideColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> hideColor</pre>
+<pre>Color hideColor</pre>
 </li>
 <li class="blockList">
 <h4>rollover</h4>
@@ -561,7 +963,7 @@
 </li>
 <li class="blockList">
 <h4>statusFont</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a> statusFont</pre>
+<pre>Font statusFont</pre>
 </li>
 <li class="blockList">
 <h4>statusAscent</h4>
@@ -569,7 +971,7 @@
 </li>
 <li class="blockList">
 <h4>statusColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> statusColor</pre>
+<pre>Color statusColor</pre>
 </li>
 <li class="blockList">
 <h4>shiftPressed</h4>
@@ -577,11 +979,11 @@
 </li>
 <li class="blockList">
 <h4>modeButtonColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> modeButtonColor</pre>
+<pre>Color modeButtonColor</pre>
 </li>
 <li class="blockList">
 <h4>modeTextFont</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a> modeTextFont</pre>
+<pre>Font modeTextFont</pre>
 </li>
 <li class="blockList">
 <h4>modeTextAscent</h4>
@@ -589,11 +991,11 @@
 </li>
 <li class="blockList">
 <h4>modeTextColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> modeTextColor</pre>
+<pre>Color modeTextColor</pre>
 </li>
 <li class="blockList">
 <h4>modeTitle</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> modeTitle</pre>
+<pre>String modeTitle</pre>
 </li>
 <li class="blockList">
 <h4>modeX1</h4>
@@ -613,11 +1015,11 @@
 </li>
 <li class="blockList">
 <h4>modeMenu</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenu.html?is-external=true" title="class or interface in javax.swing">JMenu</a> modeMenu</pre>
+<pre>JMenu modeMenu</pre>
 </li>
 <li class="blockListLast">
 <h4>buttons</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">E</a>&gt; buttons</pre>
+<pre>ArrayList&lt;E&gt; buttons</pre>
 </li>
 </ul>
 </li>
@@ -626,7 +1028,7 @@
 <li class="blockList"><a name="processing.app.FindReplace">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/FindReplace.html" title="class in processing.app">FindReplace</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JFrame.html?is-external=true" title="class or interface in javax.swing">JFrame</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/FindReplace.html" title="class in processing.app">FindReplace</a> extends JFrame implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -639,43 +1041,97 @@
 </li>
 <li class="blockList">
 <h4>findField</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JTextField.html?is-external=true" title="class or interface in javax.swing">JTextField</a> findField</pre>
+<pre>JTextField findField</pre>
 </li>
 <li class="blockList">
 <h4>replaceField</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JTextField.html?is-external=true" title="class or interface in javax.swing">JTextField</a> replaceField</pre>
+<pre>JTextField replaceField</pre>
 </li>
 <li class="blockList">
 <h4>replaceButton</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JButton.html?is-external=true" title="class or interface in javax.swing">JButton</a> replaceButton</pre>
+<pre>JButton replaceButton</pre>
 </li>
 <li class="blockList">
 <h4>replaceAllButton</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JButton.html?is-external=true" title="class or interface in javax.swing">JButton</a> replaceAllButton</pre>
+<pre>JButton replaceAllButton</pre>
 </li>
 <li class="blockList">
 <h4>replaceAndFindButton</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JButton.html?is-external=true" title="class or interface in javax.swing">JButton</a> replaceAndFindButton</pre>
+<pre>JButton replaceAndFindButton</pre>
 </li>
 <li class="blockList">
 <h4>previousButton</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JButton.html?is-external=true" title="class or interface in javax.swing">JButton</a> previousButton</pre>
+<pre>JButton previousButton</pre>
 </li>
 <li class="blockList">
 <h4>findButton</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JButton.html?is-external=true" title="class or interface in javax.swing">JButton</a> findButton</pre>
+<pre>JButton findButton</pre>
 </li>
 <li class="blockList">
 <h4>ignoreCaseBox</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JCheckBox.html?is-external=true" title="class or interface in javax.swing">JCheckBox</a> ignoreCaseBox</pre>
+<pre>JCheckBox ignoreCaseBox</pre>
 </li>
 <li class="blockList">
 <h4>allTabsBox</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JCheckBox.html?is-external=true" title="class or interface in javax.swing">JCheckBox</a> allTabsBox</pre>
+<pre>JCheckBox allTabsBox</pre>
 </li>
 <li class="blockListLast">
 <h4>wrapAroundBox</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JCheckBox.html?is-external=true" title="class or interface in javax.swing">JCheckBox</a> wrapAroundBox</pre>
+<pre>JCheckBox wrapAroundBox</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="processing.app.ProgressFrame">
+<!--   -->
+</a>
+<h3>Class <a href="processing/app/ProgressFrame.html" title="class in processing.app">ProgressFrame</a> extends JFrame implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>1L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>progressBar</h4>
+<pre>JProgressBar progressBar</pre>
+</li>
+<li class="blockList">
+<h4>saveAsLabel</h4>
+<pre>JLabel saveAsLabel</pre>
+</li>
+<li class="blockList">
+<h4>t</h4>
+<pre><a href="processing/app/ProgressFrame.TaskSaveAs.html" title="class in processing.app">ProgressFrame.TaskSaveAs</a> t</pre>
+</li>
+<li class="blockList">
+<h4>t2</h4>
+<pre><a href="processing/app/ProgressFrame.TaskAddFile.html" title="class in processing.app">ProgressFrame.TaskAddFile</a> t2</pre>
+</li>
+<li class="blockList">
+<h4>copyItems</h4>
+<pre>File[] copyItems</pre>
+</li>
+<li class="blockList">
+<h4>newFolder</h4>
+<pre>File newFolder</pre>
+</li>
+<li class="blockList">
+<h4>addFile</h4>
+<pre>File addFile</pre>
+</li>
+<li class="blockList">
+<h4>sourceFile</h4>
+<pre>File sourceFile</pre>
+</li>
+<li class="blockListLast">
+<h4>editor</h4>
+<pre><a href="processing/app/Editor.html" title="class in processing.app">Editor</a> editor</pre>
 </li>
 </ul>
 </li>
@@ -684,7 +1140,7 @@
 <li class="blockList"><a name="processing.app.SketchException">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/SketchException.html" title="class in processing.app">SketchException</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/SketchException.html" title="class in processing.app">SketchException</a> extends Exception implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -693,7 +1149,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>message</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> message</pre>
+<pre>String message</pre>
 </li>
 <li class="blockList">
 <h4>codeIndex</h4>
@@ -723,7 +1179,7 @@
 <li class="blockList"><a name="processing.app.contrib.ContributionListPanel">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/contrib/ContributionListPanel.html" title="class in processing.app.contrib">ContributionListPanel</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JPanel.html?is-external=true" title="class or interface in javax.swing">JPanel</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/contrib/ContributionListPanel.html" title="class in processing.app.contrib">ContributionListPanel</a> extends JPanel implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -736,7 +1192,7 @@
 </li>
 <li class="blockList">
 <h4>panelByContribution</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html?is-external=true" title="class or interface in java.util">TreeMap</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html?is-external=true" title="class or interface in java.util">K</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html?is-external=true" title="class or interface in java.util">V</a>&gt; panelByContribution</pre>
+<pre>TreeMap&lt;K,V&gt; panelByContribution</pre>
 </li>
 <li class="blockList">
 <h4>selectedPanel</h4>
@@ -761,7 +1217,7 @@
 <li class="blockList"><a name="processing.app.contrib.LocalContribution.IgnorableException">
 <!--   -->
 </a>
-<h3>Class LocalContribution.IgnorableException extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a> implements Serializable</h3>
+<h3>Class LocalContribution.IgnorableException extends Exception implements Serializable</h3>
 </li>
 </ul>
 </li>
@@ -771,7 +1227,7 @@
 <li class="blockList"><a name="processing.app.syntax.JEditTextArea">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/syntax/JEditTextArea.html" title="class in processing.app.syntax">JEditTextArea</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/syntax/JEditTextArea.html" title="class in processing.app.syntax">JEditTextArea</a> extends JComponent implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -800,7 +1256,7 @@
 </li>
 <li class="blockList">
 <h4>caretTimer</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/Timer.html?is-external=true" title="class or interface in javax.swing">Timer</a> caretTimer</pre>
+<pre>Timer caretTimer</pre>
 </li>
 <li class="blockList">
 <h4>DISABLE_CARET</h4>
@@ -812,11 +1268,11 @@
 </li>
 <li class="blockList">
 <h4>popup</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JPopupMenu.html?is-external=true" title="class or interface in javax.swing">JPopupMenu</a> popup</pre>
+<pre>JPopupMenu popup</pre>
 </li>
 <li class="blockList">
 <h4>eventListenerList</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/event/EventListenerList.html?is-external=true" title="class or interface in javax.swing.event">EventListenerList</a> eventListenerList</pre>
+<pre>EventListenerList eventListenerList</pre>
 </li>
 <li class="blockList">
 <h4>caretEvent</h4>
@@ -856,11 +1312,11 @@
 </li>
 <li class="blockList">
 <h4>vertical</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JScrollBar.html?is-external=true" title="class or interface in javax.swing">JScrollBar</a> vertical</pre>
+<pre>JScrollBar vertical</pre>
 </li>
 <li class="blockList">
 <h4>horizontal</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JScrollBar.html?is-external=true" title="class or interface in javax.swing">JScrollBar</a> horizontal</pre>
+<pre>JScrollBar horizontal</pre>
 </li>
 <li class="blockList">
 <h4>scrollBarsInitialized</h4>
@@ -880,7 +1336,7 @@
 </li>
 <li class="blockList">
 <h4>lineSegment</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Segment.html?is-external=true" title="class or interface in javax.swing.text">Segment</a> lineSegment</pre>
+<pre>Segment lineSegment</pre>
 </li>
 <li class="blockList">
 <h4>selectionStart</h4>
@@ -953,7 +1409,7 @@
 <li class="blockList"><a name="processing.app.syntax.SyntaxDocument">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/syntax/SyntaxDocument.html" title="class in processing.app.syntax">SyntaxDocument</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/PlainDocument.html?is-external=true" title="class or interface in javax.swing.text">PlainDocument</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/syntax/SyntaxDocument.html" title="class in processing.app.syntax">SyntaxDocument</a> extends PlainDocument implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -971,7 +1427,7 @@
 <li class="blockList"><a name="processing.app.syntax.TextAreaPainter">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/syntax/TextAreaPainter.html" title="class in processing.app.syntax">TextAreaPainter</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/syntax/TextAreaPainter.html" title="class in processing.app.syntax">TextAreaPainter</a> extends JComponent implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -984,14 +1440,41 @@
 <div class="block">True if inside printing, will handle disabling the highlight</div>
 </li>
 <li class="blockList">
-<h4>antialias</h4>
-<pre>boolean antialias</pre>
-<div class="block">Current setting for editor.antialias preference</div>
-</li>
-<li class="blockList">
 <h4>compositionTextPainter</h4>
 <pre><a href="processing/app/syntax/im/CompositionTextPainter.html" title="class in processing.app.syntax.im">CompositionTextPainter</a> compositionTextPainter</pre>
 <div class="block">A specific painter composed by the InputMethod.</div>
+</li>
+<li class="blockList">
+<h4>textArea</h4>
+<pre><a href="processing/app/syntax/JEditTextArea.html" title="class in processing.app.syntax">JEditTextArea</a> textArea</pre>
+</li>
+<li class="blockList">
+<h4>defaults</h4>
+<pre><a href="processing/app/syntax/TextAreaDefaults.html" title="class in processing.app.syntax">TextAreaDefaults</a> defaults</pre>
+</li>
+<li class="blockList">
+<h4>plainFont</h4>
+<pre>Font plainFont</pre>
+</li>
+<li class="blockList">
+<h4>boldFont</h4>
+<pre>Font boldFont</pre>
+</li>
+<li class="blockList">
+<h4>antialias</h4>
+<pre>boolean antialias</pre>
+</li>
+<li class="blockList">
+<h4>tabSize</h4>
+<pre>int tabSize</pre>
+</li>
+<li class="blockList">
+<h4>fm</h4>
+<pre>FontMetrics fm</pre>
+</li>
+<li class="blockList">
+<h4>highlights</h4>
+<pre><a href="processing/app/syntax/TextAreaPainter.Highlight.html" title="interface in processing.app.syntax">TextAreaPainter.Highlight</a> highlights</pre>
 </li>
 <li class="blockList">
 <h4>currentLineIndex</h4>
@@ -1001,73 +1484,9 @@
 <h4>currentLineTokens</h4>
 <pre><a href="processing/app/syntax/Token.html" title="class in processing.app.syntax">Token</a> currentLineTokens</pre>
 </li>
-<li class="blockList">
-<h4>currentLine</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Segment.html?is-external=true" title="class or interface in javax.swing.text">Segment</a> currentLine</pre>
-</li>
-<li class="blockList">
-<h4>textArea</h4>
-<pre><a href="processing/app/syntax/JEditTextArea.html" title="class in processing.app.syntax">JEditTextArea</a> textArea</pre>
-</li>
-<li class="blockList">
-<h4>styles</h4>
-<pre><a href="processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax">SyntaxStyle</a>[] styles</pre>
-</li>
-<li class="blockList">
-<h4>caretColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> caretColor</pre>
-</li>
-<li class="blockList">
-<h4>selectionColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> selectionColor</pre>
-</li>
-<li class="blockList">
-<h4>lineHighlightColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> lineHighlightColor</pre>
-</li>
-<li class="blockList">
-<h4>bracketHighlightColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> bracketHighlightColor</pre>
-</li>
-<li class="blockList">
-<h4>eolMarkerColor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> eolMarkerColor</pre>
-</li>
-<li class="blockList">
-<h4>blockCaret</h4>
-<pre>boolean blockCaret</pre>
-</li>
-<li class="blockList">
-<h4>lineHighlight</h4>
-<pre>boolean lineHighlight</pre>
-</li>
-<li class="blockList">
-<h4>bracketHighlight</h4>
-<pre>boolean bracketHighlight</pre>
-</li>
-<li class="blockList">
-<h4>eolMarkers</h4>
-<pre>boolean eolMarkers</pre>
-</li>
-<li class="blockList">
-<h4>cols</h4>
-<pre>int cols</pre>
-</li>
-<li class="blockList">
-<h4>rows</h4>
-<pre>int rows</pre>
-</li>
-<li class="blockList">
-<h4>tabSize</h4>
-<pre>int tabSize</pre>
-</li>
-<li class="blockList">
-<h4>fm</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/FontMetrics.html?is-external=true" title="class or interface in java.awt">FontMetrics</a> fm</pre>
-</li>
 <li class="blockListLast">
-<h4>highlights</h4>
-<pre><a href="processing/app/syntax/TextAreaPainter.Highlight.html" title="interface in processing.app.syntax">TextAreaPainter.Highlight</a> highlights</pre>
+<h4>currentLine</h4>
+<pre>Segment currentLine</pre>
 </li>
 </ul>
 </li>
@@ -1078,37 +1497,10 @@
 <li class="blockList">
 <h2 title="Package">Package&nbsp;processing.app.tools</h2>
 <ul class="blockList">
-<li class="blockList"><a name="processing.app.tools.ColorSelector.ColorRange">
-<!--   -->
-</a>
-<h3>Class <a href="processing/app/tools/ColorSelector.ColorRange.html" title="class in processing.app.tools">ColorSelector.ColorRange</a> extends <a href="processing/core/PApplet.html" title="class in processing.core">PApplet</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList"><a name="serializedForm">
-<!--   -->
-</a>
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>lastX</h4>
-<pre>int lastX</pre>
-</li>
-<li class="blockListLast">
-<h4>lastY</h4>
-<pre>int lastY</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="processing.app.tools.ColorSelector.ColorSlider">
-<!--   -->
-</a>
-<h3>Class <a href="processing/app/tools/ColorSelector.ColorSlider.html" title="class in processing.app.tools">ColorSelector.ColorSlider</a> extends <a href="processing/core/PApplet.html" title="class in processing.core">PApplet</a> implements Serializable</h3>
-</li>
 <li class="blockList"><a name="processing.app.tools.CreateFont">
 <!--   -->
 </a>
-<h3>Class <a href="processing/app/tools/CreateFont.html" title="class in processing.app.tools">CreateFont</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JFrame.html?is-external=true" title="class or interface in javax.swing">JFrame</a> implements Serializable</h3>
+<h3>Class <a href="processing/app/tools/CreateFont.html" title="class in processing.app.tools">CreateFont</a> extends JFrame implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -1121,35 +1513,35 @@
 </li>
 <li class="blockList">
 <h4>fontSelector</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JList.html?is-external=true" title="class or interface in javax.swing">JList</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JList.html?is-external=true" title="class or interface in javax.swing">E</a>&gt; fontSelector</pre>
+<pre>JList&lt;E&gt; fontSelector</pre>
 </li>
 <li class="blockList">
 <h4>sizeSelector</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JTextField.html?is-external=true" title="class or interface in javax.swing">JTextField</a> sizeSelector</pre>
+<pre>JTextField sizeSelector</pre>
 </li>
 <li class="blockList">
 <h4>charsetButton</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JButton.html?is-external=true" title="class or interface in javax.swing">JButton</a> charsetButton</pre>
+<pre>JButton charsetButton</pre>
 </li>
 <li class="blockList">
 <h4>smoothBox</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JCheckBox.html?is-external=true" title="class or interface in javax.swing">JCheckBox</a> smoothBox</pre>
+<pre>JCheckBox smoothBox</pre>
 </li>
 <li class="blockList">
 <h4>sample</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a> sample</pre>
+<pre>JComponent sample</pre>
 </li>
 <li class="blockList">
 <h4>okButton</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JButton.html?is-external=true" title="class or interface in javax.swing">JButton</a> okButton</pre>
+<pre>JButton okButton</pre>
 </li>
 <li class="blockList">
 <h4>filenameField</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JTextField.html?is-external=true" title="class or interface in javax.swing">JTextField</a> filenameField</pre>
+<pre>JTextField filenameField</pre>
 </li>
 <li class="blockList">
 <h4>table</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html?is-external=true" title="class or interface in java.util">HashMap</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html?is-external=true" title="class or interface in java.util">K</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html?is-external=true" title="class or interface in java.util">V</a>&gt; table</pre>
+<pre>HashMap&lt;K,V&gt; table</pre>
 </li>
 <li class="blockList">
 <h4>smooth</h4>
@@ -1157,11 +1549,11 @@
 </li>
 <li class="blockList">
 <h4>font</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a> font</pre>
+<pre>Font font</pre>
 </li>
 <li class="blockList">
 <h4>list</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[] list</pre>
+<pre>String[] list</pre>
 </li>
 <li class="blockList">
 <h4>selection</h4>
@@ -1175,11 +1567,6 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="processing.app.tools.ExportExamples">
-<!--   -->
-</a>
-<h3>Class ExportExamples extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a> implements Serializable</h3>
-</li>
 </ul>
 </li>
 <li class="blockList">
@@ -1188,7 +1575,7 @@
 <li class="blockList"><a name="processing.core.PApplet">
 <!--   -->
 </a>
-<h3>Class <a href="processing/core/PApplet.html" title="class in processing.core">PApplet</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/java/applet/Applet.html?is-external=true" title="class or interface in java.applet">Applet</a> implements Serializable</h3>
+<h3>Class <a href="processing/core/PApplet.html" title="class in processing.core">PApplet</a> extends Applet implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -1202,7 +1589,7 @@
 </li>
 <li class="blockList">
 <h4>frame</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Frame.html?is-external=true" title="class or interface in java.awt">Frame</a> frame</pre>
+<pre>Frame frame</pre>
 <div class="block">The frame containing this applet (if any)</div>
 </li>
 <li class="blockList">
@@ -1215,7 +1602,11 @@
 </li>
 <li class="blockList">
 <h4>canvas</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Canvas.html?is-external=true" title="class or interface in java.awt">Canvas</a> canvas</pre>
+<pre>Canvas canvas</pre>
+</li>
+<li class="blockList">
+<h4>revalidateMethod</h4>
+<pre>Method revalidateMethod</pre>
 </li>
 <li class="blockList">
 <h4>displayWidth</h4>
@@ -1258,14 +1649,14 @@
 </li>
 <li class="blockList">
 <h4>args</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[] args</pre>
+<pre>String[] args</pre>
 <div class="block">Command line options passed in from main().
  <p>
  This does not include the arguments passed in to PApplet itself.</div>
 </li>
 <li class="blockList">
 <h4>sketchPath</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a> sketchPath</pre>
+<pre>String sketchPath</pre>
 <div class="block">Path to sketch folder</div>
 </li>
 <li class="blockList">
@@ -1276,7 +1667,7 @@
 </li>
 <li class="blockList">
 <h4>currentSize</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Dimension.html?is-external=true" title="class or interface in java.awt">Dimension</a> currentSize</pre>
+<pre>Dimension currentSize</pre>
 <div class="block">Storage for the current renderer size to avoid re-allocation.</div>
 </li>
 <li class="blockList">
@@ -1302,8 +1693,8 @@
  ( end auto-generated )</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#loadPixels()"><code>PApplet.loadPixels()</code></a>, 
 <a href="processing/core/PApplet.html#updatePixels()"><code>PApplet.updatePixels()</code></a>, 
-<a href="processing/core/PApplet.html#get(int, int, int, int)"><code>PApplet.get(int, int, int, int)</code></a>, 
-<a href="processing/core/PApplet.html#set(int, int, int)"><code>PApplet.set(int, int, int)</code></a>, 
+<a href="processing/core/PApplet.html#get(int,%20int,%20int,%20int)"><code>PApplet.get(int, int, int, int)</code></a>, 
+<a href="processing/core/PApplet.html#set(int,%20int,%20int)"><code>PApplet.set(int, int, int)</code></a>, 
 <a href="processing/core/PImage.html" title="class in processing.core"><code>PImage</code></a></dd></dl>
 </li>
 <li class="blockList">
@@ -1318,6 +1709,8 @@
  <b>size()</b> is called.
 
  ( end auto-generated )</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#height"><code>PApplet.height</code></a>, 
+<a href="processing/core/PApplet.html#size(int,%20int)"><code>PApplet.size(int, int)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>height</h4>
@@ -1331,6 +1724,8 @@
  <b>size()</b> is called.
 
  ( end auto-generated )</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#width"><code>PApplet.width</code></a>, 
+<a href="processing/core/PApplet.html#size(int,%20int)"><code>PApplet.size(int, int)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>mouseX</h4>
@@ -1342,11 +1737,16 @@
 
  ( end auto-generated )</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a>, 
+<a href="processing/core/PApplet.html#pmouseX"><code>PApplet.pmouseX</code></a>, 
+<a href="processing/core/PApplet.html#pmouseY"><code>PApplet.pmouseY</code></a>, 
 <a href="processing/core/PApplet.html#mousePressed"><code>PApplet.mousePressed</code></a>, 
 <a href="processing/core/PApplet.html#mousePressed()"><code>PApplet.mousePressed()</code></a>, 
 <a href="processing/core/PApplet.html#mouseReleased()"><code>PApplet.mouseReleased()</code></a>, 
+<a href="processing/core/PApplet.html#mouseClicked()"><code>PApplet.mouseClicked()</code></a>, 
 <a href="processing/core/PApplet.html#mouseMoved()"><code>PApplet.mouseMoved()</code></a>, 
-<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a></dd></dl>
+<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a>, 
+<a href="processing/core/PApplet.html#mouseButton"><code>PApplet.mouseButton</code></a>, 
+<a href="processing/core/PApplet.html#mouseWheel(processing.event.MouseEvent)"><code>PApplet.mouseWheel(MouseEvent)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>mouseY</h4>
@@ -1358,11 +1758,16 @@
 
  ( end auto-generated )</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
+<a href="processing/core/PApplet.html#pmouseX"><code>PApplet.pmouseX</code></a>, 
+<a href="processing/core/PApplet.html#pmouseY"><code>PApplet.pmouseY</code></a>, 
 <a href="processing/core/PApplet.html#mousePressed"><code>PApplet.mousePressed</code></a>, 
 <a href="processing/core/PApplet.html#mousePressed()"><code>PApplet.mousePressed()</code></a>, 
 <a href="processing/core/PApplet.html#mouseReleased()"><code>PApplet.mouseReleased()</code></a>, 
+<a href="processing/core/PApplet.html#mouseClicked()"><code>PApplet.mouseClicked()</code></a>, 
 <a href="processing/core/PApplet.html#mouseMoved()"><code>PApplet.mouseMoved()</code></a>, 
-<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a></dd></dl>
+<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a>, 
+<a href="processing/core/PApplet.html#mouseButton"><code>PApplet.mouseButton</code></a>, 
+<a href="processing/core/PApplet.html#mouseWheel(processing.event.MouseEvent)"><code>PApplet.mouseWheel(MouseEvent)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>pmouseX</h4>
@@ -1389,9 +1794,17 @@
  functions if you want continuous response.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#pmouseY"><code>PApplet.pmouseY</code></a>, 
-<a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
-<a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a></dd></dl>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
+<a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a>, 
+<a href="processing/core/PApplet.html#pmouseY"><code>PApplet.pmouseY</code></a>, 
+<a href="processing/core/PApplet.html#mousePressed"><code>PApplet.mousePressed</code></a>, 
+<a href="processing/core/PApplet.html#mousePressed()"><code>PApplet.mousePressed()</code></a>, 
+<a href="processing/core/PApplet.html#mouseReleased()"><code>PApplet.mouseReleased()</code></a>, 
+<a href="processing/core/PApplet.html#mouseClicked()"><code>PApplet.mouseClicked()</code></a>, 
+<a href="processing/core/PApplet.html#mouseMoved()"><code>PApplet.mouseMoved()</code></a>, 
+<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a>, 
+<a href="processing/core/PApplet.html#mouseButton"><code>PApplet.mouseButton</code></a>, 
+<a href="processing/core/PApplet.html#mouseWheel(processing.event.MouseEvent)"><code>PApplet.mouseWheel(MouseEvent)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>pmouseY</h4>
@@ -1404,9 +1817,17 @@
  and mouse events is explained in the reference for <b>pmouseX</b>.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#pmouseX"><code>PApplet.pmouseX</code></a>, 
-<a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
-<a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a></dd></dl>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
+<a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a>, 
+<a href="processing/core/PApplet.html#pmouseX"><code>PApplet.pmouseX</code></a>, 
+<a href="processing/core/PApplet.html#mousePressed"><code>PApplet.mousePressed</code></a>, 
+<a href="processing/core/PApplet.html#mousePressed()"><code>PApplet.mousePressed()</code></a>, 
+<a href="processing/core/PApplet.html#mouseReleased()"><code>PApplet.mouseReleased()</code></a>, 
+<a href="processing/core/PApplet.html#mouseClicked()"><code>PApplet.mouseClicked()</code></a>, 
+<a href="processing/core/PApplet.html#mouseMoved()"><code>PApplet.mouseMoved()</code></a>, 
+<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a>, 
+<a href="processing/core/PApplet.html#mouseButton"><code>PApplet.mouseButton</code></a>, 
+<a href="processing/core/PApplet.html#mouseWheel(processing.event.MouseEvent)"><code>PApplet.mouseWheel(MouseEvent)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>dmouseX</h4>
@@ -1469,10 +1890,15 @@
  mouse button (unlike Java, which reports it as the left mouse).</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
 <a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a>, 
+<a href="processing/core/PApplet.html#pmouseX"><code>PApplet.pmouseX</code></a>, 
+<a href="processing/core/PApplet.html#pmouseY"><code>PApplet.pmouseY</code></a>, 
+<a href="processing/core/PApplet.html#mousePressed"><code>PApplet.mousePressed</code></a>, 
 <a href="processing/core/PApplet.html#mousePressed()"><code>PApplet.mousePressed()</code></a>, 
 <a href="processing/core/PApplet.html#mouseReleased()"><code>PApplet.mouseReleased()</code></a>, 
+<a href="processing/core/PApplet.html#mouseClicked()"><code>PApplet.mouseClicked()</code></a>, 
 <a href="processing/core/PApplet.html#mouseMoved()"><code>PApplet.mouseMoved()</code></a>, 
-<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a></dd></dl>
+<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a>, 
+<a href="processing/core/PApplet.html#mouseWheel(processing.event.MouseEvent)"><code>PApplet.mouseWheel(MouseEvent)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>mousePressed</h4>
@@ -1486,9 +1912,15 @@
  ( end auto-generated )</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#mouseX"><code>PApplet.mouseX</code></a>, 
 <a href="processing/core/PApplet.html#mouseY"><code>PApplet.mouseY</code></a>, 
+<a href="processing/core/PApplet.html#pmouseX"><code>PApplet.pmouseX</code></a>, 
+<a href="processing/core/PApplet.html#pmouseY"><code>PApplet.pmouseY</code></a>, 
+<a href="processing/core/PApplet.html#mousePressed()"><code>PApplet.mousePressed()</code></a>, 
 <a href="processing/core/PApplet.html#mouseReleased()"><code>PApplet.mouseReleased()</code></a>, 
+<a href="processing/core/PApplet.html#mouseClicked()"><code>PApplet.mouseClicked()</code></a>, 
 <a href="processing/core/PApplet.html#mouseMoved()"><code>PApplet.mouseMoved()</code></a>, 
-<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a></dd></dl>
+<a href="processing/core/PApplet.html#mouseDragged()"><code>PApplet.mouseDragged()</code></a>, 
+<a href="processing/core/PApplet.html#mouseButton"><code>PApplet.mouseButton</code></a>, 
+<a href="processing/core/PApplet.html#mouseWheel(processing.event.MouseEvent)"><code>PApplet.mouseWheel(MouseEvent)</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>mouseEvent</h4>
@@ -1620,7 +2052,8 @@
  frames. As such, this value won't be valid until after 5-10 frames.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#frameRate(float)"><code>PApplet.frameRate(float)</code></a></dd></dl>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#frameRate(float)"><code>PApplet.frameRate(float)</code></a>, 
+<a href="processing/core/PApplet.html#frameCount"><code>PApplet.frameCount</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>frameRateLastNanos</h4>
@@ -1655,7 +2088,8 @@
  0 and and after the first iteration of draw it is 1, etc.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#frameRate(float)"><code>PApplet.frameRate(float)</code></a></dd></dl>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="processing/core/PApplet.html#frameRate(float)"><code>PApplet.frameRate(float)</code></a>, 
+<a href="processing/core/PApplet.html#frameRate"><code>PApplet.frameRate</code></a></dd></dl>
 </li>
 <li class="blockList">
 <h4>finished</h4>
@@ -1675,11 +2109,11 @@
 </li>
 <li class="blockList">
 <h4>pauseObject</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a> pauseObject</pre>
+<pre>Object pauseObject</pre>
 </li>
 <li class="blockList">
 <h4>thread</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html?is-external=true" title="class or interface in java.lang">Thread</a> thread</pre>
+<pre>Thread thread</pre>
 </li>
 <li class="blockList">
 <h4>external</h4>
@@ -1693,7 +2127,7 @@
 </li>
 <li class="blockList">
 <h4>registerMap</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html?is-external=true" title="class or interface in java.util">HashMap</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html?is-external=true" title="class or interface in java.util">K</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html?is-external=true" title="class or interface in java.util">V</a>&gt; registerMap</pre>
+<pre>HashMap&lt;K,V&gt; registerMap</pre>
 <div class="block">Map of registered methods, stored by name.</div>
 </li>
 <li class="blockList">
@@ -1722,11 +2156,11 @@
 </li>
 <li class="blockList">
 <h4>invisibleCursor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Cursor.html?is-external=true" title="class or interface in java.awt">Cursor</a> invisibleCursor</pre>
+<pre>Cursor invisibleCursor</pre>
 </li>
 <li class="blockList">
 <h4>internalRandom</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Random.html?is-external=true" title="class or interface in java.util">Random</a> internalRandom</pre>
+<pre>Random internalRandom</pre>
 </li>
 <li class="blockList">
 <h4>perlin_octaves</h4>
@@ -1754,11 +2188,11 @@
 </li>
 <li class="blockList">
 <h4>perlinRandom</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Random.html?is-external=true" title="class or interface in java.util">Random</a> perlinRandom</pre>
+<pre>Random perlinRandom</pre>
 </li>
 <li class="blockList">
 <h4>loadImageFormats</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[] loadImageFormats</pre>
+<pre>String[] loadImageFormats</pre>
 </li>
 <li class="blockList">
 <h4>requestImageMax</h4>
@@ -1777,7 +2211,7 @@
 </li>
 <li class="blockListLast">
 <h4>selectFrame</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Frame.html?is-external=true" title="class or interface in java.awt">Frame</a> selectFrame</pre>
+<pre>Frame selectFrame</pre>
 </li>
 </ul>
 </li>
@@ -1786,12 +2220,12 @@
 <li class="blockList"><a name="processing.core.PApplet.RendererChangeException">
 <!--   -->
 </a>
-<h3>Class <a href="processing/core/PApplet.RendererChangeException.html" title="class in processing.core">PApplet.RendererChangeException</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/RuntimeException.html?is-external=true" title="class or interface in java.lang">RuntimeException</a> implements Serializable</h3>
+<h3>Class <a href="processing/core/PApplet.RendererChangeException.html" title="class in processing.core">PApplet.RendererChangeException</a> extends RuntimeException implements Serializable</h3>
 </li>
 <li class="blockList"><a name="processing.core.PVector">
 <!--   -->
 </a>
-<h3>Class <a href="processing/core/PVector.html" title="class in processing.core">PVector</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a> implements Serializable</h3>
+<h3>Class <a href="processing/core/PVector.html" title="class in processing.core">PVector</a> extends Object implements Serializable</h3>
 <dl class="nameValue">
 <dt>serialVersionUID:</dt>
 <dd>-6717872085945400694L</dd>
@@ -1844,7 +2278,7 @@
 <li class="blockList"><a name="processing.data.XML">
 <!--   -->
 </a>
-<h3>Class <a href="processing/data/XML.html" title="class in processing.data">XML</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a> implements Serializable</h3>
+<h3>Class <a href="processing/data/XML.html" title="class in processing.data">XML</a> extends Object implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList"><a name="serializedForm">
 <!--   -->
@@ -1853,7 +2287,7 @@
 <ul class="blockList">
 <li class="blockList">
 <h4>node</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/org/w3c/dom/Node.html?is-external=true" title="class or interface in org.w3c.dom">Node</a> node</pre>
+<pre>Node node</pre>
 <div class="block">The internal representation, a DOM node.</div>
 </li>
 <li class="blockList">

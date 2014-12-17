@@ -37,7 +37,7 @@ public class ExtendedCommonASTWithHiddenTokens
     public String getHiddenAfterString() {
 
 	CommonHiddenStreamToken t;
-	StringBuffer hiddenAfterString = new StringBuffer(100);
+	StringBuilder hiddenAfterString = new StringBuilder(100);
 
 	for ( t = hiddenAfter ; t != null ; t = t.getHiddenAfter() ) {
 	    hiddenAfterString.append(t.getText());
@@ -66,7 +66,7 @@ public class ExtendedCommonASTWithHiddenTokens
 
 	// dump that list
 
-	StringBuffer hiddenBeforeString = new StringBuffer(100);
+	StringBuilder hiddenBeforeString = new StringBuilder(100);
 
 	for ( CommonHiddenStreamToken t = child; t != null ; 
 	      t = t.getHiddenAfter() ) {
@@ -76,31 +76,29 @@ public class ExtendedCommonASTWithHiddenTokens
 	return hiddenBeforeString.toString();
     }
 
-    public void xmlSerializeNode(Writer out)
-        throws IOException {
-        StringBuffer buf = new StringBuffer(100);
-        buf.append("<");
-        buf.append(getClass().getName() + " ");
+    public void xmlSerializeNode(Writer out) throws IOException {
+        StringBuilder sb = new StringBuilder(100);
+        sb.append("<");
+        sb.append(getClass().getName() + " ");
 
-        buf.append("hiddenBeforeString=\"" + 
-		   encode(getHiddenBeforeString()) +
-		   "\" text=\"" + encode(getText()) + "\" type=\"" +
-                   getType() + "\" hiddenAfterString=\"" + 
-		   encode(getHiddenAfterString()) + "\"/>");
-        out.write(buf.toString());
+        sb.append("hiddenBeforeString=\"" +
+            encode(getHiddenBeforeString()) +
+            "\" text=\"" + encode(getText()) + "\" type=\"" +
+            getType() + "\" hiddenAfterString=\"" +
+            encode(getHiddenAfterString()) + "\"/>");
+        out.write(sb.toString());
     }
 
-    public void xmlSerializeRootOpen(Writer out)
-        throws IOException {
-        StringBuffer buf = new StringBuffer(100);
-        buf.append("<");
-        buf.append(getClass().getName() + " ");
-        buf.append("hiddenBeforeString=\"" + 
-		   encode(getHiddenBeforeString()) +
-		   "\" text=\"" + encode(getText()) + "\" type=\"" +
-                   getType() + "\" hiddenAfterString=\"" + 
-		   encode(getHiddenAfterString()) + "\">\n");
-        out.write(buf.toString());
+    public void xmlSerializeRootOpen(Writer out) throws IOException {
+        StringBuilder sb = new StringBuilder(100);
+        sb.append("<");
+        sb.append(getClass().getName() + " ");
+        sb.append("hiddenBeforeString=\"" +
+            encode(getHiddenBeforeString()) +
+            "\" text=\"" + encode(getText()) + "\" type=\"" +
+            getType() + "\" hiddenAfterString=\"" +
+            encode(getHiddenAfterString()) + "\">\n");
+        out.write(sb.toString());
     }
 
     public void xmlSerializeRootClose(Writer out)

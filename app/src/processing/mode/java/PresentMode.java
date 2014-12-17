@@ -49,11 +49,6 @@ public class PresentMode {
   //JMenu preferencesMenu;
   static JComboBox selector;
 
-  /**
-   * Index of the currently selected display to be used for present mode.
-   */
-  static GraphicsDevice device;
-
 
   static {
     GraphicsEnvironment environment =
@@ -75,7 +70,6 @@ public class PresentMode {
     selector.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           int index = selector.getSelectedIndex();
-          //device = devices[index];
           Preferences.setInteger("run.present.display", index + 1);
         }
       });

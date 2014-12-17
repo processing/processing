@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
 <li>processing.opengl.FrameBuffer</li>
@@ -98,7 +98,7 @@
 <hr>
 <br>
 <pre>public class <span class="strong">FrameBuffer</span>
-extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
+extends java.lang.Object
 implements <a href="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</a></pre>
 <div class="block">Encapsulates a Frame Buffer Object for offscreen rendering.
  When created with onscreen == true, it represents the normal
@@ -186,63 +186,75 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#copy(processing.opengl.FrameBuffer, processing.opengl.FrameBuffer)">copy</a></strong>(<a href="../../processing/opengl/FrameBuffer.html" title="class in processing.opengl">FrameBuffer</a>&nbsp;dest,
-    <a href="../../processing/opengl/FrameBuffer.html" title="class in processing.opengl">FrameBuffer</a>&nbsp;current)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#copy(processing.opengl.FrameBuffer,%20int)">copy</a></strong>(<a href="../../processing/opengl/FrameBuffer.html" title="class in processing.opengl">FrameBuffer</a>&nbsp;dest,
+    int&nbsp;mask)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#copyColor(processing.opengl.FrameBuffer)">copyColor</a></strong>(<a href="../../processing/opengl/FrameBuffer.html" title="class in processing.opengl">FrameBuffer</a>&nbsp;dest)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#copyDepth(processing.opengl.FrameBuffer)">copyDepth</a></strong>(<a href="../../processing/opengl/FrameBuffer.html" title="class in processing.opengl">FrameBuffer</a>&nbsp;dest)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#copyStencil(processing.opengl.FrameBuffer)">copyStencil</a></strong>(<a href="../../processing/opengl/FrameBuffer.html" title="class in processing.opengl">FrameBuffer</a>&nbsp;dest)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#disableDepthTest()">disableDepthTest</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#finish(processing.opengl.PGraphicsOpenGL)">finish</a></strong>(<a href="../../processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a>&nbsp;pg)</code>&nbsp;</td>
-</tr>
 <tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#finish()">finish</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#getDefaultDrawBuffer()">getDefaultDrawBuffer</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#getDefaultReadBuffer()">getDefaultReadBuffer</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/nio/IntBuffer.html?is-external=true" title="class or interface in java.nio">IntBuffer</a></code></td>
+<tr class="altColor">
+<td class="colFirst"><code>java.nio.IntBuffer</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#getPixelBuffer()">getPixelBuffer</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#getPixels(int[])">getPixels</a></strong>(int[]&nbsp;pixels)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#hasDepthBuffer()">hasDepthBuffer</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#hasStencilBuffer()">hasStencilBuffer</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#readPixels()">readPixels</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#setColorBuffer(processing.opengl.Texture)">setColorBuffer</a></strong>(<a href="../../processing/opengl/Texture.html" title="class in processing.opengl">Texture</a>&nbsp;tex)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#setColorBuffers(processing.opengl.Texture[])">setColorBuffers</a></strong>(<a href="../../processing/opengl/Texture.html" title="class in processing.opengl">Texture</a>[]&nbsp;textures)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#setColorBuffers(processing.opengl.Texture[], int)">setColorBuffers</a></strong>(<a href="../../processing/opengl/Texture.html" title="class in processing.opengl">Texture</a>[]&nbsp;textures,
+<td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#setColorBuffers(processing.opengl.Texture[],%20int)">setColorBuffers</a></strong>(<a href="../../processing/opengl/Texture.html" title="class in processing.opengl">Texture</a>[]&nbsp;textures,
                int&nbsp;n)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#setFBO(int)">setFBO</a></strong>(int&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../processing/opengl/FrameBuffer.html#swapColorBuffers()">swapColorBuffers</a></strong>()</code>&nbsp;</td>
 </tr>
@@ -251,8 +263,8 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -348,14 +360,41 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <pre>public&nbsp;void&nbsp;clear()</pre>
 </li>
 </ul>
-<a name="copy(processing.opengl.FrameBuffer, processing.opengl.FrameBuffer)">
+<a name="copyColor(processing.opengl.FrameBuffer)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>copyColor</h4>
+<pre>public&nbsp;void&nbsp;copyColor(<a href="../../processing/opengl/FrameBuffer.html" title="class in processing.opengl">FrameBuffer</a>&nbsp;dest)</pre>
+</li>
+</ul>
+<a name="copyDepth(processing.opengl.FrameBuffer)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>copyDepth</h4>
+<pre>public&nbsp;void&nbsp;copyDepth(<a href="../../processing/opengl/FrameBuffer.html" title="class in processing.opengl">FrameBuffer</a>&nbsp;dest)</pre>
+</li>
+</ul>
+<a name="copyStencil(processing.opengl.FrameBuffer)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>copyStencil</h4>
+<pre>public&nbsp;void&nbsp;copyStencil(<a href="../../processing/opengl/FrameBuffer.html" title="class in processing.opengl">FrameBuffer</a>&nbsp;dest)</pre>
+</li>
+</ul>
+<a name="copy(processing.opengl.FrameBuffer, int)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>copy</h4>
 <pre>public&nbsp;void&nbsp;copy(<a href="../../processing/opengl/FrameBuffer.html" title="class in processing.opengl">FrameBuffer</a>&nbsp;dest,
-        <a href="../../processing/opengl/FrameBuffer.html" title="class in processing.opengl">FrameBuffer</a>&nbsp;current)</pre>
+        int&nbsp;mask)</pre>
 </li>
 </ul>
 <a name="bind()">
@@ -376,13 +415,13 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <pre>public&nbsp;void&nbsp;disableDepthTest()</pre>
 </li>
 </ul>
-<a name="finish(processing.opengl.PGraphicsOpenGL)">
+<a name="finish()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>finish</h4>
-<pre>public&nbsp;void&nbsp;finish(<a href="../../processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</a>&nbsp;pg)</pre>
+<pre>public&nbsp;void&nbsp;finish()</pre>
 </li>
 </ul>
 <a name="readPixels()">
@@ -409,7 +448,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>getPixelBuffer</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/nio/IntBuffer.html?is-external=true" title="class or interface in java.nio">IntBuffer</a>&nbsp;getPixelBuffer()</pre>
+<pre>public&nbsp;java.nio.IntBuffer&nbsp;getPixelBuffer()</pre>
 </li>
 </ul>
 <a name="hasDepthBuffer()">

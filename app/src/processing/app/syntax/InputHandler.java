@@ -90,11 +90,11 @@ public abstract class InputHandler extends KeyAdapter
         // Default action
         public static final ActionListener INSERT_CHAR = new insert_char();
 
-        private static Hashtable actions;
+        private static Map<String, ActionListener> actions;
 
         static
         {
-                actions = new Hashtable();
+                actions = new HashMap<String, ActionListener>();
                 actions.put("backspace",BACKSPACE);
                 actions.put("backspace-word",BACKSPACE_WORD);
                 actions.put("delete",DELETE);
@@ -140,7 +140,7 @@ public abstract class InputHandler extends KeyAdapter
          */
         public static ActionListener getAction(String name)
         {
-                return (ActionListener)actions.get(name);
+                return actions.get(name);
         }
 
         /**
@@ -149,10 +149,9 @@ public abstract class InputHandler extends KeyAdapter
          */
         public static String getActionName(ActionListener listener)
         {
-                Enumeration en = getActions();
-                while(en.hasMoreElements())
+                Set<String> set = getActions();
+                for (String name : set)
                 {
-                        String name = (String)en.nextElement();
                         ActionListener _listener = getAction(name);
                         if(_listener == listener) {
                                 return name;
@@ -164,9 +163,9 @@ public abstract class InputHandler extends KeyAdapter
         /**
          * Returns an enumeration of all available actions.
          */
-        public static Enumeration getActions()
+        public static Set<String> getActions()
         {
-                return actions.keys();
+                return actions.keySet();
         }
 
         /**
@@ -1151,10 +1150,10 @@ public abstract class InputHandler extends KeyAdapter
 
                         if(textArea.isEditable())
                         {
-                                StringBuffer buf = new StringBuffer();
+                                StringBuilder sb = new StringBuilder();
                                 for(int i = 0; i < repeatCount; i++)
-                                        buf.append(str);
-                                textArea.overwriteSetSelectedText(buf.toString());
+                                        sb.append(str);
+                                textArea.overwriteSetSelectedText(sb.toString());
                         }
                         else
                         {

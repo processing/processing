@@ -3,7 +3,7 @@
   
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
-    <delete file="library/net.jar" />
+    <delete file="library/dxf.jar" />
   </target>
   
   <target name="compile" description="Compile sources">
@@ -13,8 +13,8 @@
     <fail unless="core-built" message="Please build the core library first and make sure it sits in ../../../core/library/core.jar" />
     
     <mkdir dir="bin" />
-    <javac source="1.6"
-	   target="1.6" 
+    <javac source="1.7"
+	   target="1.7"
 	   srcdir="src" destdir="bin" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"

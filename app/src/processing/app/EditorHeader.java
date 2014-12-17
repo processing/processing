@@ -119,7 +119,6 @@ public class EditorHeader extends JComponent {
 
           if ((x > menuLeft) && (x < menuRight)) {
             popup.show(EditorHeader.this, x, y);
-
           } else {
             Sketch sketch = editor.getSketch();
 //            for (int i = 0; i < sketch.getCodeCount(); i++) {
@@ -469,13 +468,17 @@ public class EditorHeader extends JComponent {
             // may be redundant.
             repaint();
           }
-
           public void popupMenuWillBecomeInvisible(PopupMenuEvent e) { }
           public void popupMenuWillBecomeVisible(PopupMenuEvent e) { }
         });
       */
     }
     JMenuItem item;
+    InputMap mInputMap = editor.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    ActionMap mActionMap = editor.getRootPane().getActionMap();
+    Action action;
+    String mapKey;
+    KeyStroke keyStroke;
 
     // maybe this shouldn't have a command key anyways..
     // since we're not trying to make this a full ide..
@@ -508,74 +511,93 @@ public class EditorHeader extends JComponent {
     */
 
     //item = new JMenuItem("New Tab");
-    item = Toolkit.newJMenuItemShift("New Tab", 'N');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.getSketch().handleNewCode();
-        }
-      });
+    item = Toolkit.newJMenuItemShift(Language.text("editor.header.new_tab"), KeyEvent.VK_N);
+    action = new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        editor.getSketch().handleNewCode();
+        editor.setWatcherSave();
+      }
+    };
+    mapKey = "editor.header.new_tab";
+    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.SHORTCUT_SHIFT_KEY_MASK);
+    mInputMap.put(keyStroke, mapKey);
+    mActionMap.put(mapKey, action);
+    item.addActionListener(action);
     menu.add(item);
 
-    item = new JMenuItem("Rename");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.getSketch().handleRenameCode();
-          /*
-          // this is already being called by nameCode(), the second stage of rename
-          if (editor.sketch.current == editor.sketch.code[0]) {
-            editor.sketchbook.rebuildMenus();
-          }
-          */
+    item = new JMenuItem(Language.text("editor.header.rename"));
+    action = new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        editor.getSketch().handleRenameCode();
+        /*
+        // this is already being called by nameCode(), the second stage of rename
+        if (editor.sketch.current == editor.sketch.code[0]) {
+          editor.sketchbook.rebuildMenus();
         }
-      });
+        */
+      }
+    };
+    item.addActionListener(action);
     menu.add(item);
 
-    item = new JMenuItem("Delete");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Sketch sketch = editor.getSketch();
-          if (!Base.isMacOS() &&  // ok on OS X
-              editor.base.editors.size() == 1 &&  // mmm! accessor
-              sketch.getCurrentCodeIndex() == 0) {
-              Base.showWarning("Yeah, no." ,
-                               "You can't delete the last tab " +
-                               "of the last open sketch.", null);
-          } else {
-            editor.getSketch().handleDeleteCode();
-          }
+    item = Toolkit.newJMenuItemShift(Language.text("editor.header.delete"), KeyEvent.VK_D);
+    action = new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        Sketch sketch = editor.getSketch();
+        if (!Base.isMacOS() &&  // ok on OS X
+            editor.base.editors.size() == 1 &&  // mmm! accessor
+            sketch.getCurrentCodeIndex() == 0) {
+            Base.showWarning(Language.text("editor.header.delete.warning.title"),
+                             Language.text("editor.header.delete.warning.text"), null);
+        } else {
+          editor.getSketch().handleDeleteCode();
+          editor.setWatcherSave();
         }
-      });
+      }
+    };
+    mapKey = "editor.header.delete";
+    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.SHORTCUT_ALT_KEY_MASK);
+    mInputMap.put(keyStroke, mapKey);
+    mActionMap.put(mapKey, action);
+    item.addActionListener(action);
     menu.add(item);
 
     menu.addSeparator();
 
     //  KeyEvent.VK_LEFT and VK_RIGHT will make Windows beep
-
-    item = new JMenuItem("Previous Tab");
-    KeyStroke ctrlAltLeft =
-      KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
-    item.setAccelerator(ctrlAltLeft);
-    // this didn't want to work consistently
-    /*
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.sketch.prevCode();
-        }
-      });
-    */
+    item = Toolkit.newJMenuItemAlt(Language.text("editor.header.previous_tab"), KeyEvent.VK_LEFT);
+    action = new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+//        Sketch sketch = editor.getSketch();
+//        sketch.setCurrentCode(sketch.getCurrentCodeIndex() - 1);
+        editor.getSketch().handlePrevCode();
+      }
+    };
+    mapKey = "editor.header.previous_tab";
+    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
+    mInputMap.put(keyStroke, mapKey);
+    mActionMap.put(mapKey, action);
+    item.addActionListener(action);
     menu.add(item);
 
-    item = new JMenuItem("Next Tab");
-    KeyStroke ctrlAltRight =
-      KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
-    item.setAccelerator(ctrlAltRight);
-    /*
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.sketch.nextCode();
-        }
-      });
-    */
+    item = Toolkit.newJMenuItemAlt(Language.text("editor.header.next_tab"), KeyEvent.VK_RIGHT);
+    action = new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+//        Sketch sketch = editor.getSketch();
+//        sketch.setCurrentCode(sketch.getCurrentCodeIndex() + 1);
+        editor.getSketch().handleNextCode();
+      }
+    };
+    mapKey = "editor.header.next_tab";
+    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
+    mInputMap.put(keyStroke, mapKey);
+    mActionMap.put(mapKey, action);
+    item.addActionListener(action);
     menu.add(item);
 
     Sketch sketch = editor.getSketch();
@@ -583,16 +605,18 @@ public class EditorHeader extends JComponent {
       menu.addSeparator();
 
       ActionListener jumpListener = new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            editor.getSketch().setCurrentCode(e.getActionCommand());
-          }
-        };
+        public void actionPerformed(ActionEvent e) {
+          editor.getSketch().setCurrentCode(e.getActionCommand());
+        }
+      };
       for (SketchCode code : sketch.getCode()) {
         item = new JMenuItem(code.getPrettyName());
         item.addActionListener(jumpListener);
         menu.add(item);
       }
     }
+    
+    Toolkit.setMenuMnemonics(menu);
   }
 
 
@@ -625,7 +649,7 @@ public class EditorHeader extends JComponent {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  class Tab implements Comparable {
+  static class Tab implements Comparable {
     int index;
     int left;
     int right;

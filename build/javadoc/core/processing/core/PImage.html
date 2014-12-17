@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
+<li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
 <li>processing.core.PImage</li>
@@ -93,7 +93,7 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Cloneable.html?is-external=true" title="class or interface in java.lang">Cloneable</a>, <a href="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</a></dd>
+<dd>java.lang.Cloneable, <a href="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</a></dd>
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
@@ -102,8 +102,8 @@
 <hr>
 <br>
 <pre>public class <span class="strong">PImage</span>
-extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
-implements <a href="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Cloneable.html?is-external=true" title="class or interface in java.lang">Cloneable</a></pre>
+extends java.lang.Object
+implements <a href="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</a>, java.lang.Cloneable</pre>
 <div class="block">( begin auto-generated from PImage.xml )
 
  Datatype for storing images. Processing can display <b>.gif</b>,
@@ -123,7 +123,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
  ( end auto-generated )</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#loadImage(java.lang.String)"><code>PApplet.loadImage(String)</code></a>, 
 <a href="../../processing/core/PApplet.html#imageMode(int)"><code>PApplet.imageMode(int)</code></a>, 
-<a href="../../processing/core/PApplet.html#createImage(int, int, int)"><code>PApplet.createImage(int, int, int)</code></a></dd></dl>
+<a href="../../processing/core/PApplet.html#createImage(int,%20int,%20int)"><code>PApplet.createImage(int, int, int)</code></a></dd></dl>
 </li>
 </ul>
 </div>
@@ -229,16 +229,16 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../processing/core/PImage.html#PImage(java.awt.Image)">PImage</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a>&nbsp;img)</code>
+<td class="colOne"><code><strong><a href="../../processing/core/PImage.html#PImage(java.awt.Image)">PImage</a></strong>(java.awt.Image&nbsp;img)</code>
 <div class="block">Construct a new PImage from a java.awt.Image.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../processing/core/PImage.html#PImage(int, int)">PImage</a></strong>(int&nbsp;width,
+<td class="colOne"><code><strong><a href="../../processing/core/PImage.html#PImage(int,%20int)">PImage</a></strong>(int&nbsp;width,
       int&nbsp;height)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../processing/core/PImage.html#PImage(int, int, int)">PImage</a></strong>(int&nbsp;width,
+<td class="colOne"><code><strong><a href="../../processing/core/PImage.html#PImage(int,%20int,%20int)">PImage</a></strong>(int&nbsp;width,
       int&nbsp;height,
       int&nbsp;format)</code>&nbsp;</td>
 </tr>
@@ -259,7 +259,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#blend(int, int, int, int, int, int, int, int, int)">blend</a></strong>(int&nbsp;sx,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#blend(int,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int)">blend</a></strong>(int&nbsp;sx,
      int&nbsp;sy,
      int&nbsp;sw,
      int&nbsp;sh,
@@ -271,7 +271,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#blend(processing.core.PImage, int, int, int, int, int, int, int, int, int)">blend</a></strong>(<a href="../../processing/core/PImage.html" title="class in processing.core">PImage</a>&nbsp;src,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#blend(processing.core.PImage,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int)">blend</a></strong>(<a href="../../processing/core/PImage.html" title="class in processing.core">PImage</a>&nbsp;src,
      int&nbsp;sx,
      int&nbsp;sy,
      int&nbsp;sw,
@@ -289,7 +289,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#blendColor(int, int, int)">blendColor</a></strong>(int&nbsp;c1,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#blendColor(int,%20int,%20int)">blendColor</a></strong>(int&nbsp;c1,
           int&nbsp;c2,
           int&nbsp;mode)</code>
 <div class="block">( begin auto-generated from blendColor.xml )
@@ -299,14 +299,14 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
+<td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PImage.html#clone()">clone</a></strong>()</code>
 <div class="block">Duplicate an image, returns new PImage object.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#copy(int, int, int, int, int, int, int, int)">copy</a></strong>(int&nbsp;sx,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#copy(int,%20int,%20int,%20int,%20int,%20int,%20int,%20int)">copy</a></strong>(int&nbsp;sx,
     int&nbsp;sy,
     int&nbsp;sw,
     int&nbsp;sh,
@@ -321,7 +321,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#copy(processing.core.PImage, int, int, int, int, int, int, int, int)">copy</a></strong>(<a href="../../processing/core/PImage.html" title="class in processing.core">PImage</a>&nbsp;src,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#copy(processing.core.PImage,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int)">copy</a></strong>(<a href="../../processing/core/PImage.html" title="class in processing.core">PImage</a>&nbsp;src,
     int&nbsp;sx,
     int&nbsp;sy,
     int&nbsp;sw,
@@ -337,7 +337,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#filter(int, float)">filter</a></strong>(int&nbsp;kind,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#filter(int,%20float)">filter</a></strong>(int&nbsp;kind,
       float&nbsp;param)</code>
 <div class="block">( begin auto-generated from PImage_filter.xml )
 
@@ -354,7 +354,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#get(int, int)">get</a></strong>(int&nbsp;x,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#get(int,%20int)">get</a></strong>(int&nbsp;x,
    int&nbsp;y)</code>
 <div class="block">( begin auto-generated from PImage_get.xml )
 
@@ -363,13 +363,13 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../processing/core/PImage.html" title="class in processing.core">PImage</a></code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#get(int, int, int, int)">get</a></strong>(int&nbsp;x,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#get(int,%20int,%20int,%20int)">get</a></strong>(int&nbsp;x,
    int&nbsp;y,
    int&nbsp;w,
    int&nbsp;h)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a></code></td>
+<td class="colFirst"><code>java.awt.Image</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PImage.html#getImage()">getImage</a></strong>()</code>
 <div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
@@ -391,14 +391,14 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <td class="colLast"><code><strong><a href="../../processing/core/PImage.html#getModifiedY2()">getModifiedY2</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
+<td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><strong><a href="../../processing/core/PImage.html#getNative()">getNative</a></strong>()</code>
 <div class="block">Returns a native BufferedImage from this PImage.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#init(int, int, int)">init</a></strong>(int&nbsp;width,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#init(int,%20int,%20int)">init</a></strong>(int&nbsp;width,
     int&nbsp;height,
     int&nbsp;format)</code>
 <div class="block">Function to be used by subclasses of PImage to init later than
@@ -438,7 +438,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#resize(int, int)">resize</a></strong>(int&nbsp;w,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#resize(int,%20int)">resize</a></strong>(int&nbsp;w,
       int&nbsp;h)</code>
 <div class="block">( begin auto-generated from PImage_resize.xml )
 
@@ -447,7 +447,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#save(java.lang.String)">save</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;filename)</code>
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#save(java.lang.String)">save</a></strong>(java.lang.String&nbsp;filename)</code>
 <div class="block">( begin auto-generated from PImage_save.xml )
 
  Saves the image into a file.</div>
@@ -455,7 +455,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#set(int, int, int)">set</a></strong>(int&nbsp;x,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#set(int,%20int,%20int)">set</a></strong>(int&nbsp;x,
    int&nbsp;y,
    int&nbsp;c)</code>
 <div class="block">( begin auto-generated from PImage_set.xml )
@@ -469,7 +469,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#set(int, int, processing.core.PImage)">set</a></strong>(int&nbsp;x,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#set(int,%20int,%20processing.core.PImage)">set</a></strong>(int&nbsp;x,
    int&nbsp;y,
    <a href="../../processing/core/PImage.html" title="class in processing.core">PImage</a>&nbsp;img)</code>
 <div class="block">Advanced</div>
@@ -497,7 +497,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#updatePixels(int, int, int, int)">updatePixels</a></strong>(int&nbsp;x,
+<td class="colLast"><code><strong><a href="../../processing/core/PImage.html#updatePixels(int,%20int,%20int,%20int)">updatePixels</a></strong>(int&nbsp;x,
             int&nbsp;y,
             int&nbsp;w,
             int&nbsp;h)</code>
@@ -511,8 +511,8 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;java.lang.<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -690,9 +690,9 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
  To create a new image, use the <b>createImage()</b> function (do not use
  <b>new PImage()</b>).
  ( end auto-generated )</div>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#loadImage(java.lang.String, java.lang.String)"><code>PApplet.loadImage(String, String)</code></a>, 
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#loadImage(java.lang.String,%20java.lang.String)"><code>PApplet.loadImage(String, String)</code></a>, 
 <a href="../../processing/core/PApplet.html#imageMode(int)"><code>PApplet.imageMode(int)</code></a>, 
-<a href="../../processing/core/PApplet.html#createImage(int, int, int)"><code>PApplet.createImage(int, int, int)</code></a></dd></dl>
+<a href="../../processing/core/PApplet.html#createImage(int,%20int,%20int)"><code>PApplet.createImage(int, int, int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="PImage(int, int)">
@@ -724,7 +724,7 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockListLast">
 <li class="blockList">
 <h4>PImage</h4>
-<pre>public&nbsp;PImage(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a>&nbsp;img)</pre>
+<pre>public&nbsp;PImage(java.awt.Image&nbsp;img)</pre>
 <div class="block">Construct a new PImage from a java.awt.Image. This constructor assumes
  that you've done the work of making sure a MediaTracker has been used
  to fully download the data and that the img is valid.</div>
@@ -762,8 +762,8 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <ul class="blockList">
 <li class="blockList">
 <h4>getImage</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
-public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a>&nbsp;getImage()</pre>
+<pre>@Deprecated
+public&nbsp;java.awt.Image&nbsp;getImage()</pre>
 <div class="block"><span class="strong">Deprecated.</span>&nbsp;</div>
 <div class="block">Use the getNative() method instead, which allows library interfaces to be
  written in a cross-platform fashion for desktop, Android, and others.</div>
@@ -775,7 +775,7 @@ public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.htm
 <ul class="blockList">
 <li class="blockList">
 <h4>getNative</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;getNative()</pre>
+<pre>public&nbsp;java.lang.Object&nbsp;getNative()</pre>
 <div class="block">Returns a native BufferedImage from this PImage.</div>
 </li>
 </ul>
@@ -920,8 +920,8 @@ public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.htm
 <ul class="blockList">
 <li class="blockList">
 <h4>clone</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;clone()
-             throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/CloneNotSupportedException.html?is-external=true" title="class or interface in java.lang">CloneNotSupportedException</a></pre>
+<pre>public&nbsp;java.lang.Object&nbsp;clone()
+                       throws java.lang.CloneNotSupportedException</pre>
 <div class="block">Duplicate an image, returns new PImage object.
  The pixels[] array for the new object will be unique
  and recopied from the source image. This is implemented as an
@@ -930,9 +930,9 @@ public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.htm
  CloneNotSupportedException, and from doing a cast from the result.</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</a></code>&nbsp;in class&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
+<dd><code>clone</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/CloneNotSupportedException.html?is-external=true" title="class or interface in java.lang">CloneNotSupportedException</a></code></dd></dl>
+<dd><code>java.lang.CloneNotSupportedException</code></dd></dl>
 </li>
 </ul>
 <a name="resize(int, int)">
@@ -958,7 +958,7 @@ public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.htm
  method, and call <b>resize()</b> on the PImage that is returned.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>w</code> - the resized image width</dd><dd><code>h</code> - the resized image height</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PImage.html#get(int, int, int, int)"><code>get(int, int, int, int)</code></a></dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>w</code> - the resized image width</dd><dd><code>h</code> - the resized image height</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PImage.html#get(int,%20int,%20int,%20int)"><code>get(int, int, int, int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="isLoaded()">
@@ -1036,9 +1036,9 @@ public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.htm
  is inside the bounds, and then has to check to see what image
  type it is. If you want things to be more efficient, access the
  pixels[] array directly.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - x-coordinate of the pixel</dd><dd><code>y</code> - y-coordinate of the pixel</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#set(int, int, int)"><code>PApplet.set(int, int, int)</code></a>, 
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - x-coordinate of the pixel</dd><dd><code>y</code> - y-coordinate of the pixel</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#set(int,%20int,%20int)"><code>PApplet.set(int, int, int)</code></a>, 
 <a href="../../processing/core/PApplet.html#pixels"><code>PApplet.pixels</code></a>, 
-<a href="../../processing/core/PApplet.html#copy(processing.core.PImage, int, int, int, int, int, int, int, int)"><code>PApplet.copy(PImage, int, int, int, int, int, int, int, int)</code></a></dd></dl>
+<a href="../../processing/core/PApplet.html#copy(processing.core.PImage,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int)"><code>PApplet.copy(PImage, int, int, int, int, int, int, int, int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="get(int, int, int, int)">
@@ -1092,9 +1092,9 @@ public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.htm
  <b>pixels[]</b> for more information.
 
  ( end auto-generated )</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - x-coordinate of the pixel</dd><dd><code>y</code> - y-coordinate of the pixel</dd><dd><code>c</code> - any value of the color datatype</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PImage.html#get(int, int, int, int)"><code>get(int, int, int, int)</code></a>, 
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - x-coordinate of the pixel</dd><dd><code>y</code> - y-coordinate of the pixel</dd><dd><code>c</code> - any value of the color datatype</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PImage.html#get(int,%20int,%20int,%20int)"><code>get(int, int, int, int)</code></a>, 
 <a href="../../processing/core/PImage.html#pixels"><code>pixels</code></a>, 
-<a href="../../processing/core/PImage.html#copy(processing.core.PImage, int, int, int, int, int, int, int, int)"><code>copy(PImage, int, int, int, int, int, int, int, int)</code></a></dd></dl>
+<a href="../../processing/core/PImage.html#copy(processing.core.PImage,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int)"><code>copy(PImage, int, int, int, int, int, int, int, int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="set(int, int, processing.core.PImage)">
@@ -1119,7 +1119,7 @@ public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.htm
 <ul class="blockList">
 <li class="blockList">
 <h4>mask</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Deprecated.html?is-external=true" title="class or interface in java.lang">@Deprecated</a>
+<pre>@Deprecated
 public&nbsp;void&nbsp;mask(int[]&nbsp;maskArray)</pre>
 <div class="block"><span class="strong">Deprecated.</span>&nbsp;</div>
 </li>
@@ -1253,7 +1253,7 @@ public&nbsp;void&nbsp;mask(int[]&nbsp;maskArray)</pre>
 
  ( end auto-generated )</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>sx</code> - X coordinate of the source's upper left corner</dd><dd><code>sy</code> - Y coordinate of the source's upper left corner</dd><dd><code>sw</code> - source image width</dd><dd><code>sh</code> - source image height</dd><dd><code>dx</code> - X coordinate of the destination's upper left corner</dd><dd><code>dy</code> - Y coordinate of the destination's upper left corner</dd><dd><code>dw</code> - destination image width</dd><dd><code>dh</code> - destination image height</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PGraphics.html#alpha(int)"><code>PGraphics.alpha(int)</code></a>, 
-<a href="../../processing/core/PImage.html#blend(processing.core.PImage, int, int, int, int, int, int, int, int, int)"><code>blend(PImage, int, int, int, int, int, int, int, int, int)</code></a></dd></dl>
+<a href="../../processing/core/PImage.html#blend(processing.core.PImage,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int)"><code>blend(PImage, int, int, int, int, int, int, int, int, int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="copy(processing.core.PImage, int, int, int, int, int, int, int, int)">
@@ -1352,8 +1352,8 @@ public&nbsp;void&nbsp;mask(int[]&nbsp;maskArray)</pre>
  the same as <TT>(255*255)/255</TT>. But for real-time use the shifts
  are preferrable, and the difference is insignificant for applications
  built with Processing.</P></div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>c1</code> - the first color to blend</dd><dd><code>c2</code> - the second color to blend</dd><dd><code>mode</code> - either BLEND, ADD, SUBTRACT, DARKEST, LIGHTEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, or BURN</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PImage.html#blend(processing.core.PImage, int, int, int, int, int, int, int, int, int)"><code>blend(PImage, int, int, int, int, int, int, int, int, int)</code></a>, 
-<a href="../../processing/core/PApplet.html#color(float, float, float, float)"><code>PApplet.color(float, float, float, float)</code></a></dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>c1</code> - the first color to blend</dd><dd><code>c2</code> - the second color to blend</dd><dd><code>mode</code> - either BLEND, ADD, SUBTRACT, DARKEST, LIGHTEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, or BURN</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PImage.html#blend(processing.core.PImage,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int)"><code>blend(PImage, int, int, int, int, int, int, int, int, int)</code></a>, 
+<a href="../../processing/core/PApplet.html#color(float,%20float,%20float,%20float)"><code>PApplet.color(float, float, float, float)</code></a></dd></dl>
 </li>
 </ul>
 <a name="blend(int, int, int, int, int, int, int, int, int)">
@@ -1439,8 +1439,8 @@ public&nbsp;void&nbsp;mask(int[]&nbsp;maskArray)</pre>
 
  ( end auto-generated )</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>src</code> - an image variable referring to the source image</dd><dd><code>sx</code> - X coordinate of the source's upper left corner</dd><dd><code>sy</code> - Y coordinate of the source's upper left corner</dd><dd><code>sw</code> - source image width</dd><dd><code>sh</code> - source image height</dd><dd><code>dx</code> - X coordinate of the destinations's upper left corner</dd><dd><code>dy</code> - Y coordinate of the destinations's upper left corner</dd><dd><code>dw</code> - destination image width</dd><dd><code>dh</code> - destination image height</dd><dd><code>mode</code> - Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/core/PApplet.html#alpha(int)"><code>PApplet.alpha(int)</code></a>, 
-<a href="../../processing/core/PImage.html#copy(processing.core.PImage, int, int, int, int, int, int, int, int)"><code>copy(PImage, int, int, int, int, int, int, int, int)</code></a>, 
-<a href="../../processing/core/PImage.html#blendColor(int, int, int)"><code>blendColor(int,int,int)</code></a></dd></dl>
+<a href="../../processing/core/PImage.html#copy(processing.core.PImage,%20int,%20int,%20int,%20int,%20int,%20int,%20int,%20int)"><code>copy(PImage, int, int, int, int, int, int, int, int)</code></a>, 
+<a href="../../processing/core/PImage.html#blendColor(int,%20int,%20int)"><code>blendColor(int,int,int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="save(java.lang.String)">
@@ -1449,7 +1449,7 @@ public&nbsp;void&nbsp;mask(int[]&nbsp;maskArray)</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>save</h4>
-<pre>public&nbsp;boolean&nbsp;save(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;filename)</pre>
+<pre>public&nbsp;boolean&nbsp;save(java.lang.String&nbsp;filename)</pre>
 <div class="block">( begin auto-generated from PImage_save.xml )
 
  Saves the image into a file. Images are saved in TIFF, TARGA, JPEG, and

@@ -1168,7 +1168,7 @@ public class JSONObject {
    * @see JSONObject#setBoolean(String, boolean)
    */
   public JSONObject setInt(String key, int value) {
-    this.put(key, new Integer(value));
+    this.put(key, Integer.valueOf(value));
     return this;
   }
 
@@ -1182,7 +1182,7 @@ public class JSONObject {
    * @throws JSONException If the key is null.
    */
   public JSONObject setLong(String key, long value) {
-    this.put(key, new Long(value));
+    this.put(key, Long.valueOf(value));
     return this;
   }
 
@@ -1492,9 +1492,9 @@ public class JSONObject {
             return d;
           }
         } else {
-          Long myLong = new Long(string);
+          Long myLong = Long.valueOf(string);
           if (myLong.longValue() == myLong.intValue()) {
-            return new Integer(myLong.intValue());
+            return Integer.valueOf(myLong.intValue());
           } else {
             return myLong;
           }
@@ -1644,10 +1644,10 @@ public class JSONObject {
       return value.toString();
     }
     if (value instanceof Map) {
-      return new JSONObject((Map)value).toString();
+      return new JSONObject(value).toString();
     }
     if (value instanceof Collection) {
-      return new JSONArray((Collection)value).toString();
+      return new JSONArray(value).toString();
     }
     if (value.getClass().isArray()) {
       return new JSONArray(value).toString();
@@ -1683,13 +1683,13 @@ public class JSONObject {
       }
 
       if (object instanceof Collection) {
-        return new JSONArray((Collection)object);
+        return new JSONArray(object);
       }
       if (object.getClass().isArray()) {
         return new JSONArray(object);
       }
       if (object instanceof Map) {
-        return new JSONObject((Map)object);
+        return new JSONObject(object);
       }
       Package objectPackage = object.getClass().getPackage();
       String objectPackageName = objectPackage != null
@@ -1732,9 +1732,9 @@ public class JSONObject {
     } else if (value instanceof JSONArray) {
       ((JSONArray) value).write(writer, indentFactor, indent);
     } else if (value instanceof Map) {
-      new JSONObject((Map) value).write(writer, indentFactor, indent);
+      new JSONObject(value).write(writer, indentFactor, indent);
     } else if (value instanceof Collection) {
-      new JSONArray((Collection) value).write(writer, indentFactor,
+      new JSONArray(value).write(writer, indentFactor,
                                               indent);
     } else if (value.getClass().isArray()) {
       new JSONArray(value).write(writer, indentFactor, indent);

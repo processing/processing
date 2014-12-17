@@ -24,6 +24,7 @@ package processing.app;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
+
 import javax.swing.*;
 
 import processing.core.PApplet;
@@ -53,8 +54,8 @@ public class Recent {
     this.base = base;
     remember = Preferences.getInteger("recent.count");
     file = Base.getSettingsFile(FILENAME);
-    mainMenu = new JMenu("Recent");
-    toolbarMenu = new JMenu("Recent");
+    mainMenu = new JMenu(Language.text("menu.file.recent"));
+    toolbarMenu = new JMenu(Language.text("menu.file.open"));
 
     try {
       load();
@@ -118,7 +119,14 @@ public class Recent {
     menu.removeAll();
     String sketchbookPath = Base.getSketchbookFolder().getAbsolutePath();
 //    String homePath = System.getProperty("user.home");
-    for (final Record rec : records) {
+    for (Record rec : records) {
+      updateMenuRecord(menu, rec, sketchbookPath);
+    }
+  }
+  
+  
+  private void updateMenuRecord(JMenu menu, final Record rec, String sketchbookPath) {
+    try {
       String recPath = new File(rec.getPath()).getParent();
       String purtyPath = null;
       
@@ -197,6 +205,11 @@ public class Recent {
       });
       //menu.add(item);
       menu.insert(item, 0);
+      
+    } catch (Exception e) {
+      // Strange things can happen... report them for the geeky and move on:
+      // https://github.com/processing/processing/issues/2463
+      e.printStackTrace();
     }
   }
 
@@ -297,7 +310,7 @@ public class Recent {
 //  }
 
 
-  class Record {
+  static class Record {
     String path;  // if not loaded, this is non-null
 //    EditorState state;  // if not loaded, this is non-null
 

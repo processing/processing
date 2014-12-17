@@ -33,6 +33,9 @@ import org.xml.sax.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import processing.core.PApplet;
 
@@ -258,6 +261,11 @@ public class XML implements Serializable {
 //  protected boolean save(OutputStream output) {
 //    return write(PApplet.createWriter(output));
 //  }
+
+
+  public boolean save(File file) {
+    return save(file, null);
+  }
 
 
   public boolean save(File file, String options) {
@@ -577,6 +585,25 @@ public class XML implements Serializable {
   }
 
 
+  public void trim() {
+    try {
+      XPathFactory xpathFactory = XPathFactory.newInstance();
+      XPathExpression xpathExp =
+        xpathFactory.newXPath().compile("//text()[normalize-space(.) = '']");
+      NodeList emptyTextNodes = (NodeList)
+        xpathExp.evaluate(node, XPathConstants.NODESET);
+
+      // Remove each empty text node from document.
+      for (int i = 0; i < emptyTextNodes.getLength(); i++) {
+        Node emptyTextNode = emptyTextNodes.item(i);
+        emptyTextNode.getParentNode().removeChild(emptyTextNode);
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+
 //  /** Remove whitespace nodes. */
 //  public void trim() {
 //////    public static boolean isWhitespace(XML xml) {
@@ -697,8 +724,14 @@ public class XML implements Serializable {
 
 
   public String getString(String name, String defaultValue) {
-    Node attr = node.getAttributes().getNamedItem(name);
-    return (attr == null) ? defaultValue : attr.getNodeValue();
+    NamedNodeMap attrs = node.getAttributes();
+    if (attrs != null) {
+      Node attr = attrs.getNamedItem(name);
+      if (attr != null) {
+        return attr.getNodeValue();
+      }
+    }
+    return defaultValue;
   }
 
 

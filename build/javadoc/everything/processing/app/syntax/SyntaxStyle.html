@@ -34,7 +34,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../processing/app/syntax/SyntaxDocument.html" title="class in processing.app.syntax"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../processing/app/syntax/SyntaxUtilities.html" title="class in processing.app.syntax"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../processing/app/syntax/TextAreaDefaults.html" title="class in processing.app.syntax"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?processing/app/syntax/SyntaxStyle.html" target="_top">Frames</a></li>
@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
 <li>
 <ul class="inheritance">
 <li>SyntaxStyle</li>
@@ -94,9 +94,9 @@
 <hr>
 <br>
 <pre>public class <span class="strong">SyntaxStyle</span>
-extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">A simple text style class. It can specify the color, italic flag,
- and bold flag of a run of text.</div>
+extends Object</pre>
+<div class="block">A simple text style class. 
+ It can specify the color and bold flag of a run of text.</div>
 </li>
 </ul>
 </div>
@@ -115,8 +115,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../processing/app/syntax/SyntaxStyle.html#SyntaxStyle(java.awt.Color, boolean, boolean)">SyntaxStyle</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;color,
-           boolean&nbsp;italic,
+<td class="colOne"><code><strong><a href="../../../processing/app/syntax/SyntaxStyle.html#SyntaxStyle(java.awt.Color,%20boolean)">SyntaxStyle</a></strong>(Color&nbsp;color,
            boolean&nbsp;bold)</code>
 <div class="block">Creates a new SyntaxStyle.</div>
 </td>
@@ -137,23 +136,9 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a></code></td>
+<td class="colFirst"><code>Color</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/SyntaxStyle.html#getColor()">getColor</a></strong>()</code>
 <div class="block">Returns the color specified in this style.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/FontMetrics.html?is-external=true" title="class or interface in java.awt">FontMetrics</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/SyntaxStyle.html#getFontMetrics(java.awt.Font, javax.swing.JComponent)">getFontMetrics</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font,
-              <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a>&nbsp;comp)</code>
-<div class="block">Returns the font metrics for the styled font.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/SyntaxStyle.html#getStyledFont(java.awt.Font)">getStyledFont</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font)</code>
-<div class="block">Returns the specified font, but with the style's bold and
- italic flags applied.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -163,27 +148,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/SyntaxStyle.html#isItalic()">isItalic</a></strong>()</code>
-<div class="block">Returns true if italics is enabled for this style.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/SyntaxStyle.html#isPlain()">isPlain</a></strong>()</code>
-<div class="block">Returns true if no font styles are enabled.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/syntax/SyntaxStyle.html#setGraphicsFlags(java.awt.Graphics, java.awt.Font)">setGraphicsFlags</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Graphics.html?is-external=true" title="class or interface in java.awt">Graphics</a>&nbsp;gfx,
-                <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font)</code>
-<div class="block">Sets the foreground color and font of the specified graphics
- context to that specified in this style.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colFirst"><code>String</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/syntax/SyntaxStyle.html#toString()">toString</a></strong>()</code>
 <div class="block">Returns a string representation of this object.</div>
 </td>
@@ -193,8 +158,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -210,14 +175,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="SyntaxStyle(java.awt.Color, boolean, boolean)">
+<a name="SyntaxStyle(java.awt.Color, boolean)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>SyntaxStyle</h4>
-<pre>public&nbsp;SyntaxStyle(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;color,
-           boolean&nbsp;italic,
+<pre>public&nbsp;SyntaxStyle(Color&nbsp;color,
            boolean&nbsp;bold)</pre>
 <div class="block">Creates a new SyntaxStyle.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>color</code> - The text color</dd><dd><code>italic</code> - True if the text should be italics</dd><dd><code>bold</code> - True if the text should be bold</dd></dl>
@@ -237,28 +201,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>getColor</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>&nbsp;getColor()</pre>
+<pre>public&nbsp;Color&nbsp;getColor()</pre>
 <div class="block">Returns the color specified in this style.</div>
-</li>
-</ul>
-<a name="isPlain()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isPlain</h4>
-<pre>public&nbsp;boolean&nbsp;isPlain()</pre>
-<div class="block">Returns true if no font styles are enabled.</div>
-</li>
-</ul>
-<a name="isItalic()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isItalic</h4>
-<pre>public&nbsp;boolean&nbsp;isItalic()</pre>
-<div class="block">Returns true if italics is enabled for this style.</div>
 </li>
 </ul>
 <a name="isBold()">
@@ -271,52 +215,17 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Returns true if boldface is enabled for this style.</div>
 </li>
 </ul>
-<a name="getStyledFont(java.awt.Font)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getStyledFont</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;getStyledFont(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font)</pre>
-<div class="block">Returns the specified font, but with the style's bold and
- italic flags applied.</div>
-</li>
-</ul>
-<a name="getFontMetrics(java.awt.Font, javax.swing.JComponent)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getFontMetrics</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/FontMetrics.html?is-external=true" title="class or interface in java.awt">FontMetrics</a>&nbsp;getFontMetrics(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font,
-                         <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComponent.html?is-external=true" title="class or interface in javax.swing">JComponent</a>&nbsp;comp)</pre>
-<div class="block">Returns the font metrics for the styled font.</div>
-</li>
-</ul>
-<a name="setGraphicsFlags(java.awt.Graphics, java.awt.Font)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setGraphicsFlags</h4>
-<pre>public&nbsp;void&nbsp;setGraphicsFlags(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Graphics.html?is-external=true" title="class or interface in java.awt">Graphics</a>&nbsp;gfx,
-                    <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a>&nbsp;font)</pre>
-<div class="block">Sets the foreground color and font of the specified graphics
- context to that specified in this style.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gfx</code> - The graphics context</dd><dd><code>font</code> - The font to add the styles to</dd></dl>
-</li>
-</ul>
 <a name="toString()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>toString</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString()</pre>
+<pre>public&nbsp;String&nbsp;toString()</pre>
 <div class="block">Returns a string representation of this object.</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a></code>&nbsp;in class&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
+<dd><code>toString</code>&nbsp;in class&nbsp;<code>Object</code></dd>
 </dl>
 </li>
 </ul>
@@ -346,7 +255,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../processing/app/syntax/SyntaxDocument.html" title="class in processing.app.syntax"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../processing/app/syntax/SyntaxUtilities.html" title="class in processing.app.syntax"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../processing/app/syntax/TextAreaDefaults.html" title="class in processing.app.syntax"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?processing/app/syntax/SyntaxStyle.html" target="_top">Frames</a></li>

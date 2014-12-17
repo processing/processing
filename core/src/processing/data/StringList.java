@@ -113,6 +113,9 @@ public class StringList implements Iterable<String> {
    * @brief Get an entry at a particular index
    */
   public String get(int index) {
+    if (index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return data[index];
   }
 
@@ -304,12 +307,17 @@ public class StringList implements Iterable<String> {
 //  }
 
 
+  public void insert(int index, String value) {
+    insert(index, new String[] { value });
+  }
+
+
   // same as splice
   public void insert(int index, String[] values) {
     if (index < 0) {
       throw new IllegalArgumentException("insert() index cannot be negative: it was " + index);
     }
-    if (index >= values.length) {
+    if (index >= data.length) {
       throw new IllegalArgumentException("insert() index " + index + " is past the end of this list");
     }
 
@@ -495,7 +503,7 @@ public class StringList implements Iterable<String> {
 
   /**
    * @webref stringlist:method
-   * @brief To come...
+   * @brief Reverse the order of the list elements
    */
   public void reverse() {
     int ii = count - 1;
@@ -630,7 +638,8 @@ public class StringList implements Iterable<String> {
 
 
   /**
-   * Copy as many values as possible into the specified array.
+   * Copy values into the specified array. If the specified array is null or
+   * not the same size, a new array will be allocated.
    * @param array
    */
   public String[] array(String[] array) {
@@ -680,14 +689,6 @@ public class StringList implements Iterable<String> {
   }
 
 
-//  public void println() {
-//    for (int i = 0; i < count; i++) {
-//      System.out.println("[" + i + "] " + data[i]);
-//    }
-//    System.out.flush();
-//  }
-
-
   public String join(String separator) {
     if (count == 0) {
       return "";
@@ -702,10 +703,11 @@ public class StringList implements Iterable<String> {
   }
 
 
-//  static public StringList split(String value, char delim) {
-//    String[] array = PApplet.split(value, delim);
-//    return new StringList(array);
-//  }
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.format("[%d] %s%n", i, data[i]);
+    }
+  }
 
 
   @Override

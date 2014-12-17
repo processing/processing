@@ -90,7 +90,7 @@ public class Brackets {
           readComment(text);
         } else if (d == '*') {
           readMLComment(text);
-        }
+        } else pos--; // Go back because there isn't a comment.
       } else if (c == '"' || c == '\'') {
         readString(text, c);
       } else if (c == '{' || c == '[' || c == '(' || c == '}' || c == ']'

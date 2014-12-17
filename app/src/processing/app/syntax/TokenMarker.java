@@ -25,6 +25,8 @@ import javax.swing.text.Segment;
  */
 public abstract class TokenMarker
 {
+    abstract public void addColoring(String keyword, String coloring);
+
         /**
          * A wrapper for the lower-level <code>markTokensImpl</code> method
          * that is called to split a line up into tokens.

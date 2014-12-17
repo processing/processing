@@ -26,29 +26,6 @@ public class IntDict {
   private HashMap<String, Integer> indices = new HashMap<String, Integer>();
 
 
-//  /**
-//   * Create a new object by counting the number of times each unique entry
-//   * shows up in the specified String array.
-//   */
-//  static public IntHash fromTally(String[] list) {
-//    IntHash outgoing = new IntHash();
-//    for (String s : list) {
-//      outgoing.inc(s);
-//    }
-//    outgoing.crop();
-//    return outgoing;
-//  }
-//
-//
-//  static public IntHash fromOrder(String[] list) {
-//    IntHash outgoing = new IntHash();
-//    for (int i = 0; i < list.length; i++) {
-//      outgoing.set(list[i], i);
-//    }
-//    return outgoing;
-//  }
-
-
   public IntDict() {
     count = 0;
     keys = new String[10];
@@ -76,14 +53,11 @@ public class IntDict {
    * @nowebref
    */
   public IntDict(BufferedReader reader) {
-//  public IntHash(PApplet parent, String filename) {
     String[] lines = PApplet.loadStrings(reader);
     keys = new String[lines.length];
     values = new int[lines.length];
 
-//    boolean csv = (lines[0].indexOf('\t') == -1);
     for (int i = 0; i < lines.length; i++) {
-//      String[] pieces = csv ? Table.splitLineCSV(lines[i]) : PApplet.split(lines[i], '\t');
       String[] pieces = PApplet.split(lines[i], '\t');
       if (pieces.length == 2) {
         keys[count] = pieces[0];
@@ -324,9 +298,19 @@ public class IntDict {
    */
   public int get(String key) {
     int index = index(key);
-    if (index == -1) return 0;
+    if (index == -1) {
+      throw new IllegalArgumentException("No key named '" + key + "'");
+    }
     return values[index];
   }
+
+
+  public int get(String key, int alternate) {
+    int index = index(key);
+    if (index == -1) return alternate;
+    return values[index];
+  }
+
 
   /**
    * Create a new key/value pair or change the value of one.
@@ -489,7 +473,7 @@ public class IntDict {
       keys = PApplet.expand(keys);
       values = PApplet.expand(values);
     }
-    indices.put(what, new Integer(count));
+    indices.put(what, Integer.valueOf(count));
     keys[count] = what;
     values[count] = much;
     count++;
@@ -535,8 +519,8 @@ public class IntDict {
     keys[b] = tkey;
     values[b] = tvalue;
 
-    indices.put(keys[a], new Integer(a));
-    indices.put(keys[b], new Integer(b));
+    indices.put(keys[a], Integer.valueOf(a));
+    indices.put(keys[b], Integer.valueOf(b));
   }
 
 
@@ -564,13 +548,8 @@ public class IntDict {
 
 
   /**
-<<<<<<< HEAD
-   * Sort by values in descending order (largest value will be at [0]).
-   *
-=======
    * Sort by values in ascending order. The smallest value will be at [0].
    *
->>>>>>> cd467dc12a42d588638aaab06746bebdfb333cc4
    * @webref intdict:method
    * @brief Sort by values in ascending order
    */
@@ -663,6 +642,13 @@ public class IntDict {
       writer.println(keys[i] + "\t" + values[i]);
     }
     writer.flush();
+  }
+
+
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.println(keys[i] + " = " + values[i]);
+    }
   }
 
 
