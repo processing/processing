@@ -165,10 +165,11 @@ public class PVector implements Serializable {
    * @param z the z component of the vector
    * @brief Set the components of the vector
    */
-  public void set(float x, float y, float z) {
+  public PVector set(float x, float y, float z) {
     this.x = x;
     this.y = y;
     this.z = z;
+    return this;
   }
 
 
@@ -176,19 +177,21 @@ public class PVector implements Serializable {
    * @param x the x component of the vector
    * @param y the y component of the vector
    */
-  public void set(float x, float y) {
+  public PVector set(float x, float y) {
     this.x = x;
     this.y = y;
+    return this;
   }
 
 
   /**
    * @param v any variable of type PVector
    */
-  public void set(PVector v) {
+  public PVector set(PVector v) {
     x = v.x;
     y = v.y;
     z = v.z;
+    return this;
   }
 
 
@@ -196,7 +199,7 @@ public class PVector implements Serializable {
    * Set the x, y (and maybe z) coordinates using a float[] array as the source.
    * @param source array to copy from
    */
-  public void set(float[] source) {
+  public PVector set(float[] source) {
     if (source.length >= 2) {
       x = source[0];
       y = source[1];
@@ -204,6 +207,7 @@ public class PVector implements Serializable {
     if (source.length >= 3) {
       z = source[2];
     }
+    return this;
   }
 
 
@@ -453,10 +457,11 @@ public class PVector implements Serializable {
    * @param v the vector to be added
    * @brief Adds x, y, and z components to a vector, one vector to another, or two independent vectors
    */
-  public void add(PVector v) {
+  public PVector add(PVector v) {
     x += v.x;
     y += v.y;
     z += v.z;
+    return this;
   }
 
 
@@ -465,10 +470,11 @@ public class PVector implements Serializable {
    * @param y y component of the vector
    * @param z z component of the vector
    */
-  public void add(float x, float y, float z) {
+  public PVector add(float x, float y, float z) {
     this.x += x;
     this.y += y;
     this.z += z;
+    return this;
   }
 
 
@@ -512,10 +518,11 @@ public class PVector implements Serializable {
    * @param v any variable of type PVector
    * @brief Subtract x, y, and z components from a vector, one vector from another, or two independent vectors
    */
-  public void sub(PVector v) {
+  public PVector sub(PVector v) {
     x -= v.x;
     y -= v.y;
     z -= v.z;
+    return this;
   }
 
 
@@ -524,10 +531,11 @@ public class PVector implements Serializable {
    * @param y the y component of the vector
    * @param z the z component of the vector
    */
-  public void sub(float x, float y, float z) {
+  public PVector sub(float x, float y, float z) {
     this.x -= x;
     this.y -= y;
     this.z -= z;
+    return this;
   }
 
 
@@ -567,11 +575,13 @@ public class PVector implements Serializable {
    * @usage web_application
    * @brief Multiply a vector by a scalar
    * @param n the number to multiply with the vector
+   * @return the modified PVector
    */
-  public void mult(float n) {
+  public PVector mult(float n) {
     x *= n;
     y *= n;
     z *= n;
+    return this;
   }
 
 
@@ -608,11 +618,13 @@ public class PVector implements Serializable {
    * @usage web_application
    * @brief Divide a vector by a scalar
    * @param n the number by which to divide the vector
+   * @return the modified PVector
    */
-  public void div(float n) {
+  public PVector div(float n) {
     x /= n;
     y /= n;
     z /= n;
+    return this;
   }
 
 
@@ -776,11 +788,12 @@ public class PVector implements Serializable {
    * @usage web_application
    * @brief Normalize the vector to a length of 1
    */
-  public void normalize() {
+  public PVector normalize() {
     float m = mag();
     if (m != 0 && m != 1) {
       div(m);
     }
+    return this;
   }
 
 
@@ -814,11 +827,12 @@ public class PVector implements Serializable {
    * @param max the maximum magnitude for the vector
    * @brief Limit the magnitude of the vector
    */
-  public void limit(float max) {
+  public PVector limit(float max) {
     if (magSq() > max*max) {
       normalize();
       mult(max);
     }
+    return this;
   }
 
 
@@ -834,9 +848,10 @@ public class PVector implements Serializable {
    * @param len the new length for this vector
    * @brief Set the magnitude of the vector
    */
-  public void setMag(float len) {
+  public PVector setMag(float len) {
     normalize();
     mult(len);
+    return this;
   }
 
 
@@ -889,11 +904,12 @@ public class PVector implements Serializable {
    * @brief Rotate the vector by an angle (2D only)
    * @param theta the angle of rotation
    */
-  public void rotate(float theta) {
+  public PVector rotate(float theta) {
     float temp = x;
     // Might need to check for rounding errors like with angleBetween function?
     x = x*PApplet.cos(theta) - y*PApplet.sin(theta);
     y = temp*PApplet.sin(theta) + y*PApplet.cos(theta);
+    return this;
   }
 
 
@@ -911,10 +927,11 @@ public class PVector implements Serializable {
    * @param amt  The amount of interpolation; some value between 0.0 (old vector) and 1.0 (new vector). 0.1 is very near the new vector. 0.5 is halfway in between.
    * @see PApplet#lerp(float, float, float)
    */
-  public void lerp(PVector v, float amt) {
+  public PVector lerp(PVector v, float amt) {
     x = PApplet.lerp(x, v.x, amt);
     y = PApplet.lerp(y, v.y, amt);
     z = PApplet.lerp(z, v.z, amt);
+    return this;
   }
 
 
@@ -936,10 +953,11 @@ public class PVector implements Serializable {
    * @param y the y component to lerp to
    * @param z the z component to lerp to
    */
-  public void lerp(float x, float y, float z, float amt) {
+  public PVector lerp(float x, float y, float z, float amt) {
     this.x = PApplet.lerp(this.x, x, amt);
     this.y = PApplet.lerp(this.y, y, amt);
     this.z = PApplet.lerp(this.z, z, amt);
+    return this;
   }
 
 
