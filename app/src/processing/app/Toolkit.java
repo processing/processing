@@ -637,6 +637,7 @@ public class Toolkit {
     HashSet<String> families = new HashSet<String>();
     for (Font font : getMonoFontList()) {
       families.add(font.getFamily());
+      System.out.println(font.getFamily());
     }
     String[] names = families.toArray(new String[0]);
     Arrays.sort(names);
@@ -664,6 +665,10 @@ public class Toolkit {
         monoFont = createFont("SourceCodePro-Regular.ttf", size);
         //monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
         monoBoldFont = createFont("SourceCodePro-Bold.ttf", size);
+        if (!monoFont.canDisplay('α') || !monoFont.canDisplay('ω')) {
+          monoFont = createFont("Anonymous Pro.ttf", size);
+          monoBoldFont = createFont("Anonymous Pro B.otf", size);
+        }
       } catch (Exception e) {
         Base.log("Could not load mono font", e);
         monoFont = new Font("Monospaced", Font.PLAIN, size);
@@ -691,6 +696,11 @@ public class Toolkit {
       try {
         sansFont = createFont("SourceSansPro-Regular.ttf", size);
         sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
+        if (!sansFont.canDisplay('α') || !sansFont.canDisplay('ω')) {
+          sansFont = createFont("Carlito-Regular.ttf", size);
+          sansBoldFont = createFont("Carlito-Bold.ttf", size);
+        }
+
       } catch (Exception e) {
         Base.log("Could not load sans font", e);
         sansFont = new Font("SansSerif", Font.PLAIN, size);
