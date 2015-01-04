@@ -637,7 +637,6 @@ public class Toolkit {
     HashSet<String> families = new HashSet<String>();
     for (Font font : getMonoFontList()) {
       families.add(font.getFamily());
-      System.out.println(font.getFamily());
     }
     String[] names = families.toArray(new String[0]);
     Arrays.sort(names);
