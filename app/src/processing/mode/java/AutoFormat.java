@@ -7,6 +7,7 @@
   Updates Copyright (c) 2001 Jason Pell.
   Further updates Copyright (c) 2003 Martin Gomez, Ateneo de Manila University
   Additional updates Copyright (c) 2005-10 Ben Fry and Casey Reas
+  Even more updates Copyright (c) 2014 George Bateman
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -302,6 +303,9 @@ public class AutoFormat implements Formatter {
   }
 
 
+  /**
+   * Called after else.
+   */
   private void gotElse() {
     tabs = s_tabs[curlyLvl][if_lev];
     p_flg[level] = sp_flg[curlyLvl][if_lev];
@@ -375,18 +379,6 @@ public class AutoFormat implements Formatter {
   }
 
 
-
-  /**
-   * Sees if result+"\n"+buf is of the form [optional anything][keyword][optional whitespace].
-   * It won't allow keyword to be directly preceded by an alphanumeric, _, or &amp;.
-   * Will be different if keyword contains regex codes.
-   */
-  private boolean textEnds(final String keyword) {
-    return Pattern.matches("^.*(?<![a-zA-Z0-9_&])" + keyword + "\\s*$",
-      new StringBuilder(result).append('\n').append(buf));
-  }
-
-
   /**
    * Sees if buf is of the form [optional anything][keyword][optional whitespace].
    * It won't allow keyword to be directly preceded by an alphanumeric, _, or &amp;.
@@ -448,7 +440,7 @@ public class AutoFormat implements Formatter {
     final String cleanText =
       normalizedText + (normalizedText.endsWith("\n") ? "" : "\n");
 
-    // All description at top of file.
+    // Globals' description at top of file.
     result.setLength(0);
     indentValue = Preferences.getInteger("editor.tabs.size");
 
@@ -458,14 +450,13 @@ public class AutoFormat implements Formatter {
     conditionalLevel = parenLevel = curlyLvl = if_lev = level = 0;
     tabs = 0;
     jdoc_flag = inStatementFlag = overflowFlag = false;
-    char cc;
     pos = arrayLevel = -1;
 
     int[] s_level = new int[10];
     sp_flg = new int[20][10];
     s_ind = new boolean[20][10];
-    int[] s_if_lev = new int[10];
-    boolean[] s_if_flg = new boolean[10];
+    int[] s_if_lev = new int[10];            // Stack
+    boolean[] s_if_flg = new boolean[10];    // Stack
     ind = new boolean[10];
     p_flg = new int[10];
     s_tabs = new int[20][10];
@@ -478,6 +469,7 @@ public class AutoFormat implements Formatter {
 
     while (!EOF) {
       char c = nextChar();
+
       switch (c) {
       default:
         inStatementFlag = true;
@@ -520,12 +512,15 @@ public class AutoFormat implements Formatter {
           }
         }
 
-        writeIndentedLine();
-
-        result.append("\n");
         if (elseFlag) {
+          writeIndentedLine();
+          result.append("\n");
+
           p_flg[level]++;
           tabs++;
+        } else {
+          writeIndentedLine();
+          result.append("\n");
         }
         startFlag = true;
         break;
@@ -646,7 +641,7 @@ public class AutoFormat implements Formatter {
       case '\'':
         inStatementFlag = true;
         buf.append(c);
-        cc = nextChar();
+        char cc = nextChar();
         while (!EOF && cc != c) {
           buf.append(cc);
           if (cc == '\\') {
