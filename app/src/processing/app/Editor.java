@@ -2280,11 +2280,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // With Java 7u40 on OS X, need to bring the window forward.
     toFront();
     
-    String prompt = "Save changes to " + sketch.getName() + "?  ";
+    String prompt = Language.text("close.unsaved_changes") + " " +
+      sketch.getName() + "?  ";
 
     if (!Base.isMacOS()) {
       int result =
-        JOptionPane.showConfirmDialog(this, prompt, "Close",
+        JOptionPane.showConfirmDialog(this, prompt,
+                                      Language.text("menu.file.close"),
                                       JOptionPane.YES_NO_CANCEL_OPTION,
                                       JOptionPane.QUESTION_MESSAGE);
 
