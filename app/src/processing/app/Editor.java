@@ -1814,7 +1814,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   public void handleCopyAsHTML() {
     textarea.copyAsHTML();
-    statusNotice("Code formatted as HTML has been copied to the clipboard.");
+    statusNotice(Language.text("editor.status.copy_as_html"));
   }
 
 
