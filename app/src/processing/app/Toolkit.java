@@ -666,7 +666,7 @@ public class Toolkit {
         monoBoldFont = createFont("SourceCodePro-Bold.ttf", size);
         if (!monoFont.canDisplay('α') || !monoFont.canDisplay('ω')) {
           monoFont = createFont("Anonymous Pro.ttf", size);
-          monoBoldFont = createFont("Anonymous Pro B.otf", size);
+          monoBoldFont = createFont("Anonymous Pro B.ttf", size);
         }
       } catch (Exception e) {
         Base.log("Could not load mono font", e);
