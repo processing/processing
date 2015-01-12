@@ -612,8 +612,13 @@ public abstract class PGL {
 //  protected abstract void swapBuffers();
 
 
-  protected boolean threadIsCurrent()  {
+  public boolean threadIsCurrent()  {
     return Thread.currentThread() == glThread;
+  }
+
+
+  public void setThread(Thread thread) {
+    glThread = thread;
   }
 
 

@@ -68,19 +68,6 @@ public class PSurfaceLWJGL implements PSurface {
     
     sketchWidth = sketch.sketchWidth();
     sketchHeight = sketch.sketchHeight();
-    try {
-      Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
-      Display.create();
-    } catch (LWJGLException e) {
-      e.printStackTrace();
-      System.exit(0);
-    }    
-    
-    keyPoller = new KeyPoller(sketch);
-    keyPoller.start();
-
-    mousePoller = new MousePoller(sketch);
-    mousePoller.start();    
     
     frame = new DummyFrame();
     return frame;
@@ -252,6 +239,20 @@ public class PSurfaceLWJGL implements PSurface {
      */
     @Override
     public void run() {  // not good to make this synchronized, locks things up
+      try {
+        Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
+        Display.create();
+      } catch (LWJGLException e) {
+        e.printStackTrace();
+        System.exit(0);
+      }    
+      
+      keyPoller = new KeyPoller(sketch);
+      keyPoller.start();
+
+      mousePoller = new MousePoller(sketch); 
+      mousePoller.start();
+      
       long beforeTime = System.nanoTime();
       long overSleepTime = 0L;
 
@@ -272,6 +273,7 @@ public class PSurfaceLWJGL implements PSurface {
       sketch.start();
 
       while ((Thread.currentThread() == thread) && !sketch.finished) {
+        pgl.setThread(thread);
         checkPause();
 
         // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
@@ -327,10 +329,9 @@ public class PSurfaceLWJGL implements PSurface {
 
       // If the user called the exit() function, the window should close,
       // rather than the sketch just halting.
-      // TODO: these methods need to be public...
-//      if (sketch.exitCalled) {
-//        sketch.exitActual();
-//      }
+      if (sketch.exitCalled()) {
+        sketch.exitActual();
+      }
     }
   }  
   
@@ -495,7 +496,7 @@ public class PSurfaceLWJGL implements PSurface {
           }
 
           int x = Mouse.getX();
-          int y = parent.height - Mouse.getY();
+          int y = sketchHeight - Mouse.getY();
           int button = 0;
           if (Mouse.isButtonDown(0)) {
             button = PConstants.LEFT;

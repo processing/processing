@@ -467,9 +467,9 @@ public class PSurfaceNEWT implements PSurface {
     public void dispose(GLAutoDrawable drawable) {
       pgl.getGL(drawable);
       sketch.dispose();
-//      if (sketch.exitCalled) {
-//        sketch.exitActual();
-//      }
+      if (sketch.exitCalled()) {
+        sketch.exitActual();
+      }
     }
     public void init(GLAutoDrawable drawable) {
       pgl.init(drawable);

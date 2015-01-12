@@ -23,12 +23,9 @@
 
 package processing.lwjgl;
 
-import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
@@ -40,12 +37,8 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.ARBES2Compatibility;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
@@ -59,13 +52,7 @@ import org.lwjgl.opengl.GL31;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.GLUtessellator;
 import org.lwjgl.util.glu.GLUtessellatorCallbackAdapter;
-import org.lwjgl.opengl.PixelFormat;
 
-import processing.core.PApplet;
-import processing.core.PConstants;
-import processing.event.Event;
-import processing.event.KeyEvent;
-import processing.event.MouseEvent;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 

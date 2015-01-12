@@ -2981,12 +2981,17 @@ public class PApplet implements PConstants {
   }
 
 
+  public boolean exitCalled() {
+    return exitCalled;
+  }
+
+
   /**
    * Some subclasses (I'm looking at you, processing.py) might wish to do something
    * other than actually terminate the JVM. This gives them a chance to do whatever
    * they have in mind when cleaning up.
    */
-  protected void exitActual() {
+  public void exitActual() {
     try {
       System.exit(0);
     } catch (SecurityException e) {
