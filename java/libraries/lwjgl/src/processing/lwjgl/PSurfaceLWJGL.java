@@ -65,9 +65,9 @@ public class PSurfaceLWJGL implements PSurface {
   public Frame initFrame(PApplet sketch, Color backgroundColor,
                          int deviceIndex, boolean fullScreen, boolean spanDisplays) {
     this.sketch = sketch;
-    
-    sketchWidth = sketch.sketchWidth();
-    sketchHeight = sketch.sketchHeight();
+            
+    sketchWidth = sketch.width = sketch.sketchWidth();
+    sketchHeight = sketch.height = sketch.sketchHeight();
     
     frame = new DummyFrame();
     return frame;
@@ -173,9 +173,13 @@ public class PSurfaceLWJGL implements PSurface {
   
   @Override
   public void setSize(int width, int height) {
-    // TODO Auto-generated method stub
-    
+    if (frame != null) {
+      sketchWidth = sketch.width = width;
+      sketchHeight = sketch.height = height;
+      graphics.setSize(width, height);
+    }  
   }
+  
 
   @Override
   public void setSmooth(int level) {
@@ -263,11 +267,11 @@ public class PSurfaceLWJGL implements PSurface {
 
       // If size un-initialized, might be a Canvas. Call setSize() here since
       // we now have a parent object that this Canvas can use as a peer.
-      if (graphics.image == null) {
+//      if (graphics.image == null) {
 //        System.out.format("it's null, sketchW/H already set to %d %d%n", sketchWidth, sketchHeight);
-        setSize(sketchWidth, sketchHeight);
+      setSize(sketchWidth, sketchHeight);
 //        System.out.format("  but now, sketchW/H changed to %d %d%n", sketchWidth, sketchHeight);
-      }
+//      }
 
       // un-pause the sketch and get rolling
       sketch.start();
