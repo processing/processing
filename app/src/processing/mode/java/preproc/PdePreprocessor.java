@@ -893,7 +893,9 @@ public class PdePreprocessor {
             sketchRenderer.equals("P3D_3X") ||
             sketchRenderer.equals("OPENGL") ||
             sketchRenderer.equals("JAVA2D") ||
-            sketchRenderer.equals("JAVA2D_2X")) {
+            sketchRenderer.equals("JAVA2D_2X") || 
+            sketchRenderer.equals("LWJGL.P2D") ||
+            sketchRenderer.equals("LWJGL.P3D")) {
           out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
         }
       }
