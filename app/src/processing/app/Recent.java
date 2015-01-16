@@ -281,6 +281,19 @@ public class Recent {
     }
   }
 
+//handles renaming done within  processing 
+synchronized void handleRename(Editor editor,String oldPath){
+      if (records.size() == remember) {
+        records.remove(0);  // remove the first entry
+      }
+      int index = findRecord(oldPath);
+      //check if record exists
+      if (index != -1) {
+        records.remove(index);
+      }
+      records.add(new Record(editor));
+      save();
+}
 
   int findRecord(String path) {
     for (int i = 0; i < records.size(); i++) {
