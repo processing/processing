@@ -985,7 +985,8 @@ public class Sketch {
    */
   protected void updateInternal(String sketchName, File sketchFolder) {
     // reset all the state information for the sketch object
-    String oldPath = getMainFilePath();    primaryFile = code[0].getFile();
+    String oldPath = getMainFilePath();    
+    primaryFile = code[0].getFile();
 //    String newPath = getMainFilePath();
 //    editor.base.renameRecent(oldPath, newPath);
 
