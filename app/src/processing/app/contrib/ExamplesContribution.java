@@ -17,8 +17,10 @@ public class ExamplesContribution extends LocalContribution {
 
   private ExamplesContribution(File folder) {
     super(folder);
-    compatibleModesList = parseCompatibleModesList(properties
-      .get("compatibleModesList"));
+    if (properties != null) {
+      compatibleModesList = parseCompatibleModesList(properties
+        .get("compatibleModesList"));
+    }
   }
 
   private static ArrayList<String> parseCompatibleModesList(String unparsedModes) {
