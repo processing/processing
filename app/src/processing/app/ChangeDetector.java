@@ -11,6 +11,8 @@ public class ChangeDetector implements WindowFocusListener {
 
   private Editor editor;
 
+  private boolean enabled = true;
+
   public ChangeDetector(Sketch sketch, Editor editor) {
     this.sketch = sketch;
     this.editor = editor;
@@ -18,16 +20,15 @@ public class ChangeDetector implements WindowFocusListener {
 
   @Override
   public void windowGainedFocus(WindowEvent e) {
-    long start = System.currentTimeMillis();
+    //remove the detector from main if it is disabled during runtime (due to an error?)
+    if (!enabled || !Preferences.getBoolean("editor.watcher")) {
+      editor.removeWindowFocusListener(this);
+      return;
+    }
     checkFileChange();
-    long end = System.currentTimeMillis();
-    long diff = end - start;
-    System.out.println("Full file change scan took " + (diff / 1000.)
-      + " seconds");
   }
 
   private void checkFileChange() {
-
     //check that the content of each of the files in sketch matches what is in memory
     if (sketch == null) {
       return;
@@ -49,8 +50,6 @@ public class ChangeDetector implements WindowFocusListener {
         }
       }).length;
       if (fileCount != sketch.getCodeCount()) {
-        System.out.println("filecount = " + fileCount + "\tsketchCount = "
-          + sketch.getCodeCount());
         if (reloadSketch()) {
           return;
         }
@@ -59,12 +58,10 @@ public class ChangeDetector implements WindowFocusListener {
 
     SketchCode[] codes = sketch.getCode();
     for (SketchCode sc : codes) {
-      //REMOVE 
-      System.out.println("Checking " + sc.getFileName());
       String inMemory = sc.getProgram();
       String onDisk = null;
-      File f = sc.getFile();
-      if (!f.exists()) {
+      File sketchFile = sc.getFile();
+      if (!sketchFile.exists()) {
         //if a file in the sketch was not found, then it must have been deleted externally
         //so reload the sketch
         if (reloadSketch()) {
@@ -72,18 +69,20 @@ public class ChangeDetector implements WindowFocusListener {
         }
       }
       try {
-        onDisk = Base.loadFile(f);
-      } catch (Exception e1) {
-        // TODO couldn't access file for some reason
-        // deal with it
-        System.out.println("Loading file failed");
-        e1.printStackTrace();
+        onDisk = Base.loadFile(sketchFile);
+      } catch (IOException e1) {
+        Base
+          .showWarningTiered("File Change Detection Failed",
+                             "Checking for changed files for this sketch has failed.",
+                             "The file change detector will be disabled.", e1);
+        enabled = false;
+        return;
       }
       if (onDisk == null) {
         //failed
       } else if (!inMemory.equals(onDisk)) {
         if (reloadSketch()) {
-          break;
+          return;
         }
       }
     }

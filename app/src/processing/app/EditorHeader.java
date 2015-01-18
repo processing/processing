@@ -516,8 +516,6 @@ public class EditorHeader extends JComponent {
       @Override
       public void actionPerformed(ActionEvent e) {
         editor.getSketch().handleNewCode();
-        //REMOVE
-        //editor.setWatcherSave();
       }
     };
     mapKey = "editor.header.new_tab";
@@ -555,8 +553,6 @@ public class EditorHeader extends JComponent {
                              Language.text("editor.header.delete.warning.text"), null);
         } else {
           editor.getSketch().handleDeleteCode();
-          //REMOVE
-          //editor.setWatcherSave();
         }
       }
     };
