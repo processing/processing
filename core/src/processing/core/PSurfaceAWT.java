@@ -831,10 +831,9 @@ public class PSurfaceAWT implements PSurface {
 
 //    canvas.setSize(wide, high);
 //    frame.setSize(wide, high);
-    if (frame != null) {  // canvas only
-      setFrameSize(); //wide, high);
-    }
+    setFrameSize(); //wide, high);
     setCanvasSize();
+    frame.setLocationRelativeTo(null);
 //    if (frame != null) {
 //      frame.setLocationRelativeTo(null);
 //    }
