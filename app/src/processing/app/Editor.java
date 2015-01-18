@@ -33,8 +33,6 @@ import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
-//REMOVE
-//import java.nio.file.*;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
