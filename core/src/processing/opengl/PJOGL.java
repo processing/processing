@@ -647,7 +647,7 @@ public class PJOGL extends PGL {
     this.drawable = pjogl.drawable;
     this.context = pjogl.context;
     this.glContext = pjogl.glContext;
-    this.glThread = pjogl.glThread;
+    setThread(pjogl.glThread);
 
     this.gl = pjogl.gl;
     this.gl2 = pjogl.gl2;
@@ -659,7 +659,7 @@ public class PJOGL extends PGL {
   protected void getGL(GLAutoDrawable glDrawable) {
     context = glDrawable.getContext();
     glContext = context.hashCode();
-    glThread = Thread.currentThread();
+    setThread(Thread.currentThread());
 
     gl = context.getGL();
     gl2 = gl.getGL2ES2();
@@ -866,6 +866,7 @@ public class PJOGL extends PGL {
 */
 
   protected void init(GLAutoDrawable glDrawable) {
+    firstFrame = true;
     capabilities = glDrawable.getChosenGLCapabilities();
     if (!hasFBOs()) {
       throw new RuntimeException(MISSING_FBO_ERROR);

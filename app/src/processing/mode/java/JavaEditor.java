@@ -55,7 +55,7 @@ public class JavaEditor extends Editor {
   public JMenu buildFileMenu() {
     //String appTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, false);
     String appTitle = Language.text("toolbar.export_application");
-    JMenuItem exportApplication = Toolkit.newJMenuItem(appTitle, 'E');
+    JMenuItem exportApplication = Toolkit.newJMenuItemShift(appTitle, 'E');
     exportApplication.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleExportApplication();

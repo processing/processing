@@ -1791,6 +1791,7 @@ public class PApplet implements PConstants {
         return;
       }
 
+      int pquality = g.quality;
       insideDraw = true;
       g.beginDraw();
       if (recorder != null) {
@@ -1849,6 +1850,11 @@ public class PApplet implements PConstants {
         // (only do this once draw() has run, not just setup())
       }
       g.endDraw();
+
+      if (pquality != g.quality) {
+        surface.setSmooth(g.quality);
+      }
+
       if (recorder != null) {
         recorder.endDraw();
       }
@@ -2975,12 +2981,17 @@ public class PApplet implements PConstants {
   }
 
 
+  public boolean exitCalled() {
+    return exitCalled;
+  }
+
+
   /**
    * Some subclasses (I'm looking at you, processing.py) might wish to do something
    * other than actually terminate the JVM. This gives them a chance to do whatever
    * they have in mind when cleaning up.
    */
-  protected void exitActual() {
+  public void exitActual() {
     try {
       System.exit(0);
     } catch (SecurityException e) {

@@ -79,7 +79,7 @@ public abstract class PGL {
    * See the code and comments involving this constant in
    * PGraphicsOpenGL.endDraw().
    */
-  protected static boolean SAVE_SURFACE_TO_PIXELS_HACK = true;
+  protected static boolean SAVE_SURFACE_TO_PIXELS_HACK = false;
 
   /** Enables/disables mipmap use. */
   protected static boolean MIPMAPS_ENABLED = true;
@@ -351,7 +351,6 @@ public abstract class PGL {
   }
 
 
-
 //  public abstract Object getCanvas();
 //
 //
@@ -613,8 +612,13 @@ public abstract class PGL {
 //  protected abstract void swapBuffers();
 
 
-  protected boolean threadIsCurrent()  {
+  public boolean threadIsCurrent()  {
     return Thread.currentThread() == glThread;
+  }
+
+
+  public void setThread(Thread thread) {
+    glThread = thread;
   }
 
 

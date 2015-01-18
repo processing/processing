@@ -872,7 +872,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menu.add(item);
 
     // For Arduino and Mac, this should be command-E, but that currently conflicts with Export Applet
-    item = Toolkit.newJMenuItemAlt(Language.text("menu.edit.use_selection_for_find"), 'F');
+    //item = Toolkit.newJMenuItemAlt(Language.text("menu.edit.use_selection_for_find"), 'F');
+    item = Toolkit.newJMenuItem(Language.text("menu.edit.use_selection_for_find"), 'E');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (find == null) {
@@ -882,19 +883,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
       });
     menu.add(item);
- // Listener to the Edit menu item
+    
+    // Update copy/cut state on selection/de-selection
     menu.addMenuListener(new MenuListener() {
     
       @Override
-      public void menuCanceled(MenuEvent e) {
-      }
+      public void menuCanceled(MenuEvent e) { }
     
       @Override
-      public void menuDeselected(MenuEvent e) {
-      }
-        /* Updating the copy and cut JMenuItems
-         * as soon as the Edit menu is selected
-        */
+      public void menuDeselected(MenuEvent e) { }
+
       @Override
       public void menuSelected(MenuEvent e) {
         copyAction.updateCopyState();

@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 //import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import javax.media.nativewindow.NativeSurface;
 import javax.media.nativewindow.ScalableSurface;
 import javax.media.opengl.GLAnimatorControl;
 import javax.media.opengl.GLAutoDrawable;
@@ -16,6 +17,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
 
+import com.jogamp.nativewindow.MutableGraphicsConfiguration;
 import com.jogamp.newt.Display;
 import com.jogamp.newt.MonitorDevice;
 import com.jogamp.newt.NewtFactory;
@@ -155,14 +157,14 @@ public class PSurfaceNEWT implements PSurface {
 //    caps.setPBuffer(false);
 //    caps.setFBO(false);
 
+    pgl.reqNumSamples = graphics.quality;
     caps.setSampleBuffers(true);
-    caps.setNumSamples(2);
+    caps.setNumSamples(pgl.reqNumSamples);
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
     pgl.capabilities = caps;
     System.err.println("0. create window");
     window = GLWindow.create(screen, caps);
-
 
     sketchWidth = sketch.sketchWidth();
     sketchHeight = sketch.sketchHeight();
@@ -297,6 +299,8 @@ public class PSurfaceNEWT implements PSurface {
       @Override
       public void windowDestroyNotify(final WindowEvent e) {
         animator.stop();
+        PSurfaceNEWT.this.sketch.exit();
+        window.destroy();
       }
     });
 
@@ -413,7 +417,23 @@ public class PSurfaceNEWT implements PSurface {
       System.err.println("3. set size");
       sketchWidth = sketch.width = width;
       sketchHeight = sketch.height = height;
+      graphics.setSize(width, height);
     }
+  }
+
+  public void setSmooth(int level) {
+    pgl.reqNumSamples = level;
+    GLCapabilities caps = new GLCapabilities(profile);
+    caps.setAlphaBits(PGL.REQUESTED_ALPHA_BITS);
+    caps.setDepthBits(PGL.REQUESTED_DEPTH_BITS);
+    caps.setStencilBits(PGL.REQUESTED_STENCIL_BITS);
+    caps.setSampleBuffers(true);
+    caps.setNumSamples(pgl.reqNumSamples);
+    caps.setBackgroundOpaque(true);
+    caps.setOnscreen(true);
+    NativeSurface target = window.getNativeSurface();
+    MutableGraphicsConfiguration config = (MutableGraphicsConfiguration) target.getGraphicsConfiguration();
+    config.setChosenCapabilities(caps);
   }
 
   public void setFrameRate(float fps) {
@@ -437,7 +457,7 @@ public class PSurfaceNEWT implements PSurface {
   class DrawListener implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
       pgl.getGL(drawable);
-
+//      System.out.println(" - " + sketch.frameCount);
       sketch.handleDraw();
 
       if (sketch.frameCount == 1) {
@@ -447,14 +467,23 @@ public class PSurfaceNEWT implements PSurface {
     public void dispose(GLAutoDrawable drawable) {
       pgl.getGL(drawable);
       sketch.dispose();
-//      if (sketch.exitCalled) {
-//        sketch.exitActual();
-//      }
+      if (sketch.exitCalled()) {
+        sketch.exitActual();
+      }
     }
     public void init(GLAutoDrawable drawable) {
+      pgl.init(drawable);
       pgl.getGL(drawable);
       sketch.start();
+
+      int c = graphics.backgroundColor;
+      pgl.clearColor(((c >> 16) & 0xff) / 255f,
+                     ((c >>  8) & 0xff) / 255f,
+                     ((c >>  0) & 0xff) / 255f,
+                     ((c >> 24) & 0xff) / 255f);
+      pgl.clear(PGL.COLOR_BUFFER_BIT);
     }
+
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
       pgl.getGL(drawable);
       setSize(w, h);
@@ -602,19 +631,64 @@ public class PSurfaceNEWT implements PSurface {
                        InputEvent.META_MASK |
                        InputEvent.ALT_MASK);
 
+    short code = nativeEvent.getKeyCode();
     char keyChar;
-    if (nativeEvent.getKeyChar() == 0) {
+    int keyCode;
+    if (isPCodedKey(code)) {
+      keyCode = mapToPConst(code);
       keyChar = PConstants.CODED;
     } else {
+      keyCode = code;
       keyChar = nativeEvent.getKeyChar();
     }
 
+    // From http://jogamp.org/deployment/v2.1.0/javadoc/jogl/javadoc/com/jogamp/newt/event/KeyEvent.html
+    // public final short getKeySymbol()
+    // Returns the virtual key symbol reflecting the current keyboard layout.
+    // public final short getKeyCode()
+    // Returns the virtual key code using a fixed mapping to the US keyboard layout.
+    // In contrast to key symbol, key code uses a fixed US keyboard layout and therefore is keyboard layout independent.
+    // E.g. virtual key code VK_Y denotes the same physical key regardless whether keyboard layout QWERTY or QWERTZ is active. The key symbol of the former is VK_Y, where the latter produces VK_Y.
     KeyEvent ke = new KeyEvent(nativeEvent, nativeEvent.getWhen(),
                                peAction, peModifiers,
                                keyChar,
-                               nativeEvent.getKeyCode());
+                               keyCode);
+//                               nativeEvent.getKeySymbol());
 
     sketch.postEvent(ke);
+  }
+
+  // Why do we need this mapping?
+  // Relevant discussion and links here:
+  // http://forum.jogamp.org/Newt-wrong-keycode-for-key-td4033690.html#a4033697
+  // (I don't think this is a complete solution).
+  private static int mapToPConst(short code) {
+    if (code == com.jogamp.newt.event.KeyEvent.VK_UP) {
+      return PConstants.UP;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_DOWN) {
+      return PConstants.DOWN;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_LEFT) {
+      return PConstants.LEFT;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_RIGHT) {
+      return PConstants.RIGHT;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_ALT) {
+      return PConstants.ALT;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_CONTROL) {
+      return PConstants.CONTROL;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_SHIFT) {
+      return PConstants.SHIFT;
+    }
+    return code;
+  }
+
+  private static boolean isPCodedKey(short code) {
+    return code == com.jogamp.newt.event.KeyEvent.VK_UP ||
+           code == com.jogamp.newt.event.KeyEvent.VK_DOWN ||
+           code == com.jogamp.newt.event.KeyEvent.VK_LEFT ||
+           code == com.jogamp.newt.event.KeyEvent.VK_RIGHT ||
+           code == com.jogamp.newt.event.KeyEvent.VK_ALT ||
+           code == com.jogamp.newt.event.KeyEvent.VK_CONTROL ||
+           code == com.jogamp.newt.event.KeyEvent.VK_SHIFT;
   }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

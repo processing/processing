@@ -1651,7 +1651,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //        if (sized) pgl.reinitSurface();
 //        if (parent.canDraw()) pgl.requestDraw();
 //      } else {
-        initPrimary();
+//        initPrimary();
 //      }
 
       if (!initialized) {
@@ -3392,6 +3392,7 @@ public class PGraphicsOpenGL extends PGraphics {
       lastSmoothCall = parent.frameCount;
 
       quality = level;
+      System.out.println(quality);
 
       if (quality == 1) {
         quality = 0;
@@ -3399,7 +3400,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       // This will trigger a surface restart next time
       // requestDraw() is called.
-      restartPGL();
+//      restartPGL();
     }
   }
 

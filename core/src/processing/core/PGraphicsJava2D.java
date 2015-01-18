@@ -1392,6 +1392,7 @@ public class PGraphicsJava2D extends PGraphics {
 
 //    g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
 //                        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+
   }
 
 
