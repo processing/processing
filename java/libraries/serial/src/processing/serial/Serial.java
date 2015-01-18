@@ -88,7 +88,7 @@ public class Serial implements SerialPortEventListener {
     // USB serial devices can also be specified like this
     // vendorid#productid#serial
     // where everything after the vendorid is optional
-    if (!portName.startsWith("/") && !portName.startsWith("COM")) {
+    if (!portName.startsWith("/") && !portName.toUpperCase().startsWith("COM")) {
       String[] wantUsb = portName.split("#");
 
       String[] availablePorts = this.list();
