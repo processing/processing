@@ -15,8 +15,8 @@ public class ChangeDetector implements WindowFocusListener {
 
   private boolean skip = false;
 
-  public ChangeDetector(Sketch sketch, Editor editor) {
-    this.sketch = sketch;
+  public ChangeDetector(Editor editor) {
+    this.sketch = editor.sketch;
     this.editor = editor;
   }
 
@@ -55,24 +55,30 @@ public class ChangeDetector implements WindowFocusListener {
         return false;
       }
     }).length;
-    
+
     if (fileCount != sketch.getCodeCount()) {
       reloadSketch(null);
       if (fileCount < 1) {
-        Base.showWarning("Canceling Reload",
-                         "You cannot delete the last code file in a sketch.");
-        //if they deleted the last file, re-save the SketchCode
         try {
           //make a blank file
           sketch.getMainFile().createNewFile();
         } catch (Exception e1) {
           //if that didn't work, tell them it's un-recoverable
-          Base.showError("Reload failed", "The sketch contains no code files",
+          Base.showError("Reload failed", "The sketch contains no code files.",
                          e1);
           //don't try to reload again after the double fail
           //this editor is probably trashed by this point, but a save-as might be possible
           skip = true;
+          return;
         }
+        //it's okay to do this without confirmation, because they already confirmed to deleting the unsaved changes above
+        sketch.reload();
+        editor.header.rebuild();
+        Base
+          .showWarning("Modified Reload",
+                       "You cannot delete the last code file in a sketch.\n"
+                         + "A new blank sketch file has been generated for you.");
+
       }
       return;
     }
