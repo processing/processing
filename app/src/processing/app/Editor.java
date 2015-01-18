@@ -33,7 +33,8 @@ import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
-import java.nio.file.*;
+//REMOVE
+//import java.nio.file.*;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
@@ -107,6 +108,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
   // maintain caret position during undo operations
   private final Stack<Integer> caretUndoStack = new Stack<Integer>();
   private final Stack<Integer> caretRedoStack = new Stack<Integer>();
+  
+  private ChangeDetector changeDetector;
 
   private FindReplace find;
   JMenu toolsMenu;
@@ -286,6 +289,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
     if (!loaded) {
       sketch = null;
     }
+    
+    //TODO new implementation of file change listener here
+    if (Preferences.getBoolean("editor.watcher")) {
+      changeDetector = new ChangeDetector(sketch, this);
+      addWindowFocusListener(changeDetector);
+    }
+    
   }
 
 
@@ -2459,10 +2469,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
       Base.showWarning("Error", "Could not create the sketch.", e);
       return false;
     }
-    // Disabling for 3.0a4
-    if (false && Preferences.getBoolean("editor.watcher")) {
-      initFileChangeListener();
-    }
+    //REMOVE delete
+//    // Disabling for 3.0a4
+//    if (false && Preferences.getBoolean("editor.watcher")) {
+//      initFileChangeListener();
+//    }
     
     header.rebuild();
     updateTitle();
@@ -2484,133 +2495,134 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    }
   }
   
+  //REMOVE delete
   //used to prevent the fileChangeListener from asking for reloads after internal changes
-  public void setWatcherSave() {
-    watcherSave = true;
-  }
-  
-  //set to true when the sketch is saved from inside processing
-  private boolean watcherSave;
-
-  //the key which is being used to poll the fs for changes
-  private WatchKey watcherKey = null;
-
-  private void initFileChangeListener() {
-    try {
-      WatchService watchService = FileSystems.getDefault().newWatchService();
-      Path sp = sketch.getFolder().toPath();
-      watcherKey = sp.register(watchService, 
-                               StandardWatchEventKinds.ENTRY_CREATE,
-                               StandardWatchEventKinds.ENTRY_DELETE,
-                               StandardWatchEventKinds.ENTRY_MODIFY);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    final WatchKey finKey = watcherKey;
-
-    //if the key is null for some reason, don't bother attaching a listener to it
-    if (finKey != null) {
-      // the key can now be polled for changes in the files
-      addWindowFocusListener(new WindowFocusListener() {
-        @Override
-        public void windowGainedFocus(WindowEvent arg0) {
-          //we switched locations (saveAs), ignore old things
-          if (watcherKey != finKey) {
-            return;
-          }
-          // check preference here for enabled or not?
-
-          //if the directory was deleted, then don't scan
-          if (finKey.isValid()) {
-            List<WatchEvent<?>> events = finKey.pollEvents();
-            if (!watcherSave) {
-              processFileEvents(events);
-            }
-          }
-
-          List<WatchEvent<?>> events = finKey.pollEvents();
-          if (!watcherSave)
-            processFileEvents(events);
-        }
-
-        @Override
-        public void windowLostFocus(WindowEvent arg0) {
-          //we switched locations (saveAs), ignore old things
-          if (watcherKey != finKey) {
-            return;
-          }
-          List<WatchEvent<?>> events = finKey.pollEvents();
-          //don't ask to reload a file we saved
-          if (!watcherSave) {
-            processFileEvents(events);
-          }
-          watcherSave = false;
-        }
-      });
-    }
-  }
+//  public void setWatcherSave() {
+//    watcherSave = true;
+//  }
+//  
+//  //set to true when the sketch is saved from inside processing
+//  private boolean watcherSave;
+//
+//  //the key which is being used to poll the fs for changes
+//  private WatchKey watcherKey = null;
+//
+//  private void initFileChangeListener() {
+//    try {
+//      WatchService watchService = FileSystems.getDefault().newWatchService();
+//      Path sp = sketch.getFolder().toPath();
+//      watcherKey = sp.register(watchService, 
+//                               StandardWatchEventKinds.ENTRY_CREATE,
+//                               StandardWatchEventKinds.ENTRY_DELETE,
+//                               StandardWatchEventKinds.ENTRY_MODIFY);
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    }
+//
+//    final WatchKey finKey = watcherKey;
+//
+//    //if the key is null for some reason, don't bother attaching a listener to it
+//    if (finKey != null) {
+//      // the key can now be polled for changes in the files
+//      addWindowFocusListener(new WindowFocusListener() {
+//        @Override
+//        public void windowGainedFocus(WindowEvent arg0) {
+//          //we switched locations (saveAs), ignore old things
+//          if (watcherKey != finKey) {
+//            return;
+//          }
+//          // check preference here for enabled or not?
+//
+//          //if the directory was deleted, then don't scan
+//          if (finKey.isValid()) {
+//            List<WatchEvent<?>> events = finKey.pollEvents();
+//            if (!watcherSave) {
+//              processFileEvents(events);
+//            }
+//          }
+//
+//          List<WatchEvent<?>> events = finKey.pollEvents();
+//          if (!watcherSave)
+//            processFileEvents(events);
+//        }
+//
+//        @Override
+//        public void windowLostFocus(WindowEvent arg0) {
+//          //we switched locations (saveAs), ignore old things
+//          if (watcherKey != finKey) {
+//            return;
+//          }
+//          List<WatchEvent<?>> events = finKey.pollEvents();
+//          //don't ask to reload a file we saved
+//          if (!watcherSave) {
+//            processFileEvents(events);
+//          }
+//          watcherSave = false;
+//        }
+//      });
+//    }
+//  }
 
   
   /**
    * Called when a file is changed.
    * @param events the list of events that have occured in the sketch folder
    */
-  private void processFileEvents(List<WatchEvent<?>> events) {
-    for (WatchEvent<?> e : events) {
-      boolean sketchFile = false;
-      Path file = ((Path) e.context()).getFileName();
-      System.out.println(file);
-      for (String s : getMode().getExtensions()) {
-        // if it is a change to a file with a known extension
-        if (file.toString().endsWith(s)) {
-          sketchFile = true;
-          break;
-        }
-      }
-      //if the file is not a known type, then go the the next event
-      if (!sketchFile) {
-        continue;
-      }
-
-      int response = 
-        Base.showYesNoQuestion(Editor.this,
-                               "File Modified",
-                               "Your sketch has been modified externally",
-                               "Would you like to reload the sketch?");
-      if (response == 0) {
-        //grab the 'main' code in case this reload tries to delete everything
-        File sc = sketch.getMainFile();
-        //reload the sketch
-        try {
-          sketch.reload();
-          header.rebuild();
-        } catch (Exception f) {
-          if (sketch.getCodeCount() < 1) {
-            Base.showWarning("Canceling Reload",
-                             "You cannot delete the last code file in a sketch.");
-            //if they deleted the last file, re-save the SketchCode
-            try {
-              //make a blank file
-              sc.createNewFile();
-            } catch (IOException e1) {
-              //if that didn't work, tell them it's un-recoverable
-              Base.showError("Reload failed", "The sketch contains no code files", e1);
-              //don't try to reload again after the double fail
-              //this editor is probably trashed by this point, but a save-as might be possible
-              break;
-            }
-            //don't ask for another reload after this save
-            watcherSave = true;
-            return;
-          }
-        }
-        //now that we've reloaded once, don't try to reload again
-        break;
-      }
-    }
-    watcherSave = false;
-  }
+//  private void processFileEvents(List<WatchEvent<?>> events) {
+//    for (WatchEvent<?> e : events) {
+//      boolean sketchFile = false;
+//      Path file = ((Path) e.context()).getFileName();
+//      System.out.println(file);
+//      for (String s : getMode().getExtensions()) {
+//        // if it is a change to a file with a known extension
+//        if (file.toString().endsWith(s)) {
+//          sketchFile = true;
+//          break;
+//        }
+//      }
+//      //if the file is not a known type, then go the the next event
+//      if (!sketchFile) {
+//        continue;
+//      }
+//
+//      int response = 
+//        Base.showYesNoQuestion(Editor.this,
+//                               "File Modified",
+//                               "Your sketch has been modified externally",
+//                               "Would you like to reload the sketch?");
+//      if (response == 0) {
+//        //grab the 'main' code in case this reload tries to delete everything
+//        File sc = sketch.getMainFile();
+//        //reload the sketch
+//        try {
+//          sketch.reload();
+//          header.rebuild();
+//        } catch (Exception f) {
+//          if (sketch.getCodeCount() < 1) {
+//            Base.showWarning("Canceling Reload",
+//                             "You cannot delete the last code file in a sketch.");
+//            //if they deleted the last file, re-save the SketchCode
+//            try {
+//              //make a blank file
+//              sc.createNewFile();
+//            } catch (IOException e1) {
+//              //if that didn't work, tell them it's un-recoverable
+//              Base.showError("Reload failed", "The sketch contains no code files", e1);
+//              //don't try to reload again after the double fail
+//              //this editor is probably trashed by this point, but a save-as might be possible
+//              break;
+//            }
+//            //don't ask for another reload after this save
+//            watcherSave = true;
+//            return;
+//          }
+//        }
+//        //now that we've reloaded once, don't try to reload again
+//        break;
+//      }
+//    }
+//    watcherSave = false;
+//  }
 
   /**
    * Set the title of the PDE window based on the current sketch, i.e.
@@ -2641,8 +2653,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
    */
   public boolean handleSave(boolean immediately) {
 //    handleStop();  // 0136
-
-    setWatcherSave();
+    
+    //REMOVE
+    //setWatcherSave();
     if (sketch.isUntitled()) {
       return handleSaveAs();
       // need to get the name, user might also cancel here
@@ -2686,13 +2699,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
     statusNotice(Language.text("editor.status.saving"));
     try {
       if (sketch.saveAs()) {
-        // Disabling for 3.0a4
-        if (false && Preferences.getBoolean("editor.watcher")) {  
-          // "Save As" moves where the files are, so a listener must be 
-          // attached to the new location.
-          // TODO shouldn't this remove the old listener?
-          initFileChangeListener();
-        }
+        //REMOVE
+//        // Disabling for 3.0a4
+//        if (false && Preferences.getBoolean("editor.watcher")) {  
+//          // "Save As" moves where the files are, so a listener must be 
+//          // attached to the new location.
+//          // TODO shouldn't this remove the old listener?
+//          initFileChangeListener();
+//        }
         // statusNotice("Done Saving.");
         // status is now printed from Sketch so that "Done Saving."
         // is only printed after Save As when progress bar is shown. 
@@ -3040,7 +3054,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       cutItem.setEnabled(active);
       copyItem.setEnabled(active);
       discourseItem.setEnabled(active);
-      
+
       referenceItem.setEnabled(referenceCheck(false) != null);
       super.show(component, x, y);
     }
