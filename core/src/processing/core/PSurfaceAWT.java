@@ -831,10 +831,13 @@ public class PSurfaceAWT implements PSurface {
 
 //    canvas.setSize(wide, high);
 //    frame.setSize(wide, high);
-    if (frame != null) {
-      frame.setLocationRelativeTo(null);
+    if (frame != null) {  // canvas only
+      setFrameSize(); //wide, high);
     }
     setCanvasSize();
+//    if (frame != null) {
+//      frame.setLocationRelativeTo(null);
+//    }
 
     GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
     // If not realized (off-screen, i.e the Color Selector Tool), gc will be null.
