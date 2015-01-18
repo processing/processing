@@ -13,6 +13,8 @@ public class ChangeDetector implements WindowFocusListener {
 
   private boolean enabled = true;
 
+  private boolean skip = false;
+
   public ChangeDetector(Sketch sketch, Editor editor) {
     this.sketch = sketch;
     this.editor = editor;
@@ -23,6 +25,11 @@ public class ChangeDetector implements WindowFocusListener {
     //remove the detector from main if it is disabled during runtime (due to an error?)
     if (!enabled || !Preferences.getBoolean("editor.watcher")) {
       editor.removeWindowFocusListener(this);
+      return;
+    }
+    //if they selected no, skip the next focus event
+    if (skip) {
+      skip = false;
       return;
     }
     checkFileChange();
@@ -36,24 +43,38 @@ public class ChangeDetector implements WindowFocusListener {
 
     //check file count first
     File sketchFolder = sketch.getFolder();
-    if (sketchFolder.isDirectory()) {
-      int fileCount = sketchFolder.list(new FilenameFilter() {
-        //return true if the file is a code file for this mode
-        @Override
-        public boolean accept(File dir, String name) {
-          for (String s : editor.getMode().getExtensions()) {
-            if (name.endsWith(s)) {
-              return true;
-            }
+    int fileCount = sketchFolder.list(new FilenameFilter() {
+      //return true if the file is a code file for this mode
+      @Override
+      public boolean accept(File dir, String name) {
+        for (String s : editor.getMode().getExtensions()) {
+          if (name.endsWith(s)) {
+            return true;
           }
-          return false;
         }
-      }).length;
-      if (fileCount != sketch.getCodeCount()) {
-        if (reloadSketch()) {
-          return;
+        return false;
+      }
+    }).length;
+    
+    if (fileCount != sketch.getCodeCount()) {
+      reloadSketch(null);
+      if (fileCount < 1) {
+        Base.showWarning("Canceling Reload",
+                         "You cannot delete the last code file in a sketch.");
+        //if they deleted the last file, re-save the SketchCode
+        try {
+          //make a blank file
+          sketch.getMainFile().createNewFile();
+        } catch (Exception e1) {
+          //if that didn't work, tell them it's un-recoverable
+          Base.showError("Reload failed", "The sketch contains no code files",
+                         e1);
+          //don't try to reload again after the double fail
+          //this editor is probably trashed by this point, but a save-as might be possible
+          skip = true;
         }
       }
+      return;
     }
 
     SketchCode[] codes = sketch.getCode();
@@ -64,9 +85,8 @@ public class ChangeDetector implements WindowFocusListener {
       if (!sketchFile.exists()) {
         //if a file in the sketch was not found, then it must have been deleted externally
         //so reload the sketch
-        if (reloadSketch()) {
-          break;
-        }
+        reloadSketch(sc);
+        return;
       }
       try {
         onDisk = Base.loadFile(sketchFile);
@@ -81,45 +101,50 @@ public class ChangeDetector implements WindowFocusListener {
       if (onDisk == null) {
         //failed
       } else if (!inMemory.equals(onDisk)) {
-        if (reloadSketch()) {
-          return;
-        }
+        reloadSketch(sc);
+        return;
       }
     }
   }
 
+  private void setSketchCodeModified(SketchCode sc) {
+    sc.setModified(true);
+    sketch.setModified(true);
+  }
+
   //returns true if the files in the sketch have been reloaded
-  private boolean reloadSketch() {
+  private void reloadSketch(SketchCode changed) {
     int response = Base
-      .showYesNoQuestion(editor, "File Modified",
-                         "Your sketch has been modified externally",
-                         "Would you like to reload the sketch?");
+      .showYesNoQuestion(editor,
+                         "File Modified",
+                         "Your sketch has been modified externally.<br>Would you like to reload the sketch?",
+                         "If you reload the sketch, any unsaved changes will be lost!");
     if (response == 0) {
-      File mainFile = sketch.getMainFile();
       //reload the sketch
-      try {
-        sketch.reload();
-        editor.header.rebuild();
-      } catch (Exception f) {
-        if (sketch.getCodeCount() < 1) {
-          Base.showWarning("Canceling Reload",
-                           "You cannot delete the last code file in a sketch.");
-          //if they deleted the last file, re-save the SketchCode
-          try {
-            //make a blank file
-            mainFile.createNewFile();
-          } catch (IOException e1) {
-            //if that didn't work, tell them it's un-recoverable
-            Base.showError("Reload failed",
-                           "The sketch contains no code files", e1);
-            //don't try to reload again after the double fail
-            //this editor is probably trashed by this point, but a save-as might be possible
-            return false;
+
+      sketch.reload();
+      editor.header.rebuild();
+
+    } else {
+      //they said no, make it possible for them to stop the errors by saving
+      if (changed != null) {
+        //set it to be modified so that it will actually save to disk when the user saves from inside processing
+        setSketchCodeModified(changed);
+      } else {
+        //the number of files changed, so they may be working with a file that doesn't exist any more
+        //find the files that are missing, and mark them as modified
+        for (SketchCode sc : sketch.getCode()) {
+          if (!sc.getFile().exists()) {
+            setSketchCodeModified(sc);
           }
         }
+        //if files were simply added, then nothing needs done
       }
+      editor.header.rebuild();
+      skip = true;
+      return;
     }
-    return true;
+    return;
   }
 
   @Override
