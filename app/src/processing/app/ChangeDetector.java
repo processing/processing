@@ -11,7 +11,8 @@ public class ChangeDetector implements WindowFocusListener {
 
   private Editor editor;
 
-  private boolean enabled = true;
+//  private boolean enabled = true;
+  private boolean enabled = false;  // broken on OS X
 
   private boolean skip = false;
 
