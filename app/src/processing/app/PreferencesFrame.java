@@ -381,7 +381,7 @@ public class PreferencesFrame {
     errorCheckerBox.setBounds(left, top, d.width + 10, d.height);
     //right = Math.max(right, left + d.width);
     //top += d.height + GUI_BETWEEN;
-    int warningLeft = left + d.width;
+    int warningLeft = left + d.width + 10;
 
 
     // [ ] Show Warnings - PDE X
@@ -390,7 +390,7 @@ public class PreferencesFrame {
       new JCheckBox(Language.text("preferences.show_warnings"));
     pain.add(warningsCheckerBox);
     d = warningsCheckerBox.getPreferredSize();
-    warningsCheckerBox.setBounds(warningLeft + 10, top, d.width + 10, d.height);
+    warningsCheckerBox.setBounds(warningLeft, top, d.width + 10, d.height);
     right = Math.max(right, warningLeft + d.width);
     top += d.height + GUI_BETWEEN;
 
