@@ -1154,7 +1154,9 @@ public class Base {
   public void handleRecent(Editor editor) {
     recent.handle(editor);
   }
-
+  public void handleRecentRename(Editor editor,String oldPath){
+    recent.handleRename(editor,oldPath);
+  }
 
   /**
    * Called before a sketch is renamed so that its old name is

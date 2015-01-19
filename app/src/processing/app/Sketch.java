@@ -549,7 +549,7 @@ public class Sketch {
         for (int i = 1; i < codeCount; i++) {
           code[i].setFolder(newFolder);
         }
-        // Update internal state to reflect the new location
+       // Update internal state to reflect the new location
         updateInternal(sanitaryName, newFolder);
 
 //        File newMainFile = new File(newFolder, newName + ".pde");
@@ -985,8 +985,7 @@ public class Sketch {
    */
   protected void updateInternal(String sketchName, File sketchFolder) {
     // reset all the state information for the sketch object
-
-//  String oldPath = getMainFilePath();
+    String oldPath = getMainFilePath();    
     primaryFile = code[0].getFile();
 //    String newPath = getMainFilePath();
 //    editor.base.renameRecent(oldPath, newPath);
@@ -1005,6 +1004,7 @@ public class Sketch {
 //    System.out.println("modified is now " + modified);
     editor.updateTitle();
     editor.base.rebuildSketchbookMenus();
+    editor.base.handleRecentRename(editor,oldPath);
 //    editor.header.rebuild();
   }
 
