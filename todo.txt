@@ -67,6 +67,8 @@ X   https://github.com/processing/processing/issues/1041
 X update name of sketch in the "Recent" menu
 X   https://github.com/processing/processing/issues/2984
 X   https://github.com/processing/processing/pull/3046
+X File change detection rewrite
+X   https://github.com/processing/processing/pull/3048
 
 
 _ make examples pull/build automatic during dist
