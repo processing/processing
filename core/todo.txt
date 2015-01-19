@@ -77,6 +77,7 @@ _ break PUtil out from PApplet
 _ break more api with Processing 3?
 _   use enums for everything (fixes auto-completion)
 _   add chaining operations
+_   min() and max() to use varargs
 _ move to enums instead of PConstants?
 _   helps textMode() only accept valid entries
 _   really nice for auto-complete

@@ -64,6 +64,9 @@ X lots of Auto Format fixes
 X   https://github.com/processing/processing/pull/3002
 X   https://github.com/processing/processing/issues/2540
 X   https://github.com/processing/processing/issues/1041
+X update name of sketch in the "Recent" menu
+X   https://github.com/processing/processing/issues/2984
+X   https://github.com/processing/processing/pull/3046
 
 
 _ make examples pull/build automatic during dist
