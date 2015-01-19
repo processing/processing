@@ -32,7 +32,17 @@ public class ChangeDetector implements WindowFocusListener {
       skip = false;
       return;
     }
-    checkFileChange();
+    checkFileChangeAsync();
+  }
+
+  private void checkFileChangeAsync() {
+    Thread th = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        checkFileChange();
+      }
+    });
+    th.start();
   }
 
   private void checkFileChange() {
