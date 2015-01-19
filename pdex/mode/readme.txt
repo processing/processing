@@ -7,6 +7,8 @@ http://download.eclipse.org/eclipse/updates/4.4/R-4.4.1-201409250400/plugins/?d
 The jdi.jar and jdimodel.jar files are unpacked 
 from the org.eclipse.jdt.debug JAR file.
 
+This Mode does not use ecj.jar from the original Java mode, because its files are contained in the JARs below.
+
 . . . 
 
 http://download.eclipse.org/eclipse/updates/4.4/R-4.4.1-201409250400/plugins/com.ibm.icu_52.1.0.v201404241930.jar
