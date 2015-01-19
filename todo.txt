@@ -28,6 +28,9 @@ joel
 X Add reference for installed tools and libraries to the Help menu
 X   https://github.com/processing/processing/issues/943
 X   https://github.com/processing/processing/pull/2804
+X examples.properties file missing prevents startup
+X   https://github.com/processing/processing/issues/3037
+X   https://github.com/processing/processing/pull/3047
 
 manindra
 X Fix for "Probably a ++ should go here" messages
@@ -53,6 +56,15 @@ X fix encodings, line endings, and mime types in the repo
 X   https://github.com/processing/processing/issues/2955
 X   https://github.com/processing/processing/pull/2978
 X   https://github.com/processing/processing/pull/2977
+X add control for dependencies (i.e. svg needs xml), needed for export
+X   http://code.google.com/p/processing/issues/detail?id=70
+X   https://github.com/processing/processing/issues/109
+X   https://github.com/processing/processing/pull/3010
+X lots of Auto Format fixes
+X   https://github.com/processing/processing/pull/3002
+X   https://github.com/processing/processing/issues/2540
+X   https://github.com/processing/processing/issues/1041
+
 
 _ make examples pull/build automatic during dist
 _ merge experimental into the main Java mode 
@@ -602,9 +614,6 @@ _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
 _   http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
-_ add control for dependencies (i.e. svg needs xml), needed for export
-X   http://code.google.com/p/processing/issues/detail?id=70
-_   https://github.com/processing/processing/issues/109
 _ need better platform designation setup for libs
 _ library installation should use the sketchbook folder, not the p5 folder
 _   actually enforce this, give users a warning about other libs
@@ -767,8 +776,6 @@ _   update will update classes from shared in the current folder
 
 TOOLS / Auto Format
 
-_ extra indent found
-_   https://github.com/processing/processing/issues/1041
 _ Switch block cases not indented
 _   https://github.com/processing/processing/issues/1042
 _ do a better job of maintaining cursor 
