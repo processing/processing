@@ -6,10 +6,18 @@ import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.MemoryImageSource;
+import java.nio.IntBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -40,6 +48,11 @@ public class PSurfaceLWJGL implements PSurface {
   PLWJGL pgl;
   
   boolean fullScreenRequested;
+  
+  int cursorType = PConstants.ARROW; // cursor type
+  boolean cursorVisible = true; // cursor visibility flag  
+  Cursor invisibleCursor;
+  
   // ........................................................
   
   // Event handling
@@ -307,24 +320,68 @@ public class PSurfaceLWJGL implements PSurface {
   @Override
   public void setCursor(int kind) {
     // TODO Auto-generated method stub
+    if (PApplet.platform == PConstants.MACOSX && kind == PConstants.MOVE) {
+      kind = PConstants.HAND;
+    }
+    java.awt.Cursor cursor0 = java.awt.Cursor.getPredefinedCursor(kind);
+    
+    
+//    Cursor cursor1 = Cursor(cursor0.,
+//        int height,
+//        int xHotspot,
+//        int yHotspot,
+//        int numImages,
+//        java.nio.IntBuffer images,
+//        java.nio.IntBuffer delays);
+    
+    
+//    Mouse.setNativeCursor(cursor1);
+    cursorVisible = true;
+    this.cursorType = kind; 
     
   }
 
   @Override
   public void setCursor(PImage image, int hotspotX, int hotspotY) {
-    // TODO Auto-generated method stub
-    
+    BufferedImage jimg = (BufferedImage)image.getNative();
+    IntBuffer buf = IntBuffer.wrap(jimg.getRGB(0, 0, jimg.getWidth(), jimg.getHeight(),
+                                               null, 0, jimg.getWidth()));
+    try {
+      Cursor cursor = new Cursor(jimg.getWidth(), jimg.getHeight(),
+                                 hotspotX, hotspotY, 1, buf, null);
+      Mouse.setNativeCursor(cursor);
+      cursorVisible = true;
+    } catch (LWJGLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   @Override
   public void showCursor() {
-    // TODO Auto-generated method stub
-    
+//    if (!cursorVisible) {
+//      cursorVisible = true;
+//      Mouse.setCursor(Cursor.getPredefinedCursor(cursorType));
+//    }
   }
 
   @Override
   public void hideCursor() {
-    // TODO Auto-generated method stub
+    if (invisibleCursor == null) {
+      try {
+        invisibleCursor = new Cursor(1, 1, 0, 0, 1, BufferUtils.createIntBuffer(1), null);
+      } catch (LWJGLException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+    }    
+    try {
+      Mouse.setNativeCursor(invisibleCursor);
+      cursorVisible = false;
+    } catch (LWJGLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   class AnimationThread extends Thread {
@@ -693,6 +750,8 @@ public class PSurfaceLWJGL implements PSurface {
   // To complete later...
   // http://docs.oracle.com/javase/6/docs/api/java/awt/event/KeyEvent.html
   // http://processing.org/reference/keyCode.html
+  // This might be very useful:
+  // http://gtge.googlecode.com/svn/trunk/GTGE%20Add-Ons/src/com/golden/gamedev/engine/lwjgl/LWJGLInput.java
   protected int LWJGLtoAWTCode(int code) {
     switch (code) {
     case Keyboard.KEY_0:
