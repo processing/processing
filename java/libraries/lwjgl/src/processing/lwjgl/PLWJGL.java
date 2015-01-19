@@ -1240,19 +1240,19 @@ public class PLWJGL extends PGL {
   }
 
   public void uniform2iv(int location, int count, IntBuffer v) {
-    v.limit(count);
+    v.limit(2 * count);
     GL20.glUniform2(location, v);
     v.clear();
   }
 
   public void uniform3iv(int location, int count, IntBuffer v) {
-    v.limit(count);
+    v.limit(3 * count);
     GL20.glUniform3(location, v);
     v.clear();
   }
 
   public void uniform4iv(int location, int count, IntBuffer v) {
-    v.limit(count);
+    v.limit(4 * count);
     GL20.glUniform4(location, v);
     v.clear();
   }
@@ -1264,19 +1264,19 @@ public class PLWJGL extends PGL {
   }
 
   public void uniform2fv(int location, int count, FloatBuffer v) {
-    v.limit(count);
+    v.limit(2 * count);
     GL20.glUniform2(location, v);
     v.clear();
   }
 
   public void uniform3fv(int location, int count, FloatBuffer v) {
-    v.limit(count);
+    v.limit(3 * count);
     GL20.glUniform3(location, v);
     v.clear();
   }
 
   public void uniform4fv(int location, int count, FloatBuffer v) {
-    v.limit(count);
+    v.limit(4 * count);
     GL20.glUniform4(location, v);
     v.clear();
   }  
