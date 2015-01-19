@@ -244,7 +244,18 @@ public class PSurfaceLWJGL implements PSurface {
     @Override
     public void run() {  // not good to make this synchronized, locks things up
       try {
+        DisplayMode[] modes = Display.getAvailableDisplayModes();
+        for (DisplayMode mode: modes) {
+          System.err.println(mode.toString());
+        }
+        
         Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
+        
+//        Display.setDisplayMode(Display.getDesktopDisplayMode());
+//        Display.setFullscreen(true);
+//        Display.create();                
+        
+        
         Display.create();
       } catch (LWJGLException e) {
         e.printStackTrace();
@@ -277,6 +288,9 @@ public class PSurfaceLWJGL implements PSurface {
       sketch.start();
 
       while ((Thread.currentThread() == thread) && !sketch.finished) {
+        if (Display.wasResized()) {
+          setSize(Display.getWidth(), Display.getHeight());
+        }
         pgl.setThread(thread);
         checkPause();
 
@@ -301,7 +315,6 @@ public class PSurfaceLWJGL implements PSurface {
         // this is necessary since the drawing is sometimes in a
         // separate thread, meaning that the next frame will start
         // before the update/paint is completed
-
         long afterTime = System.nanoTime();
         long timeDiff = afterTime - beforeTime;
         //System.out.println("time diff is " + timeDiff);
@@ -324,10 +337,14 @@ public class PSurfaceLWJGL implements PSurface {
             noDelays = 0;
           }
         }
-
-        beforeTime = System.nanoTime();
+        beforeTime = System.nanoTime();        
+//        Display.sync((int)frameRateTarget);
+        
+        if (Display.isCloseRequested()) break;
       }
 
+      keyPoller.requestStop();
+      mousePoller.requestStop();
       sketch.dispose();  // call to shutdown libs?
       Display.destroy();
 
@@ -348,17 +365,17 @@ public class PSurfaceLWJGL implements PSurface {
 
     @Override
     public void setResizable(boolean resizable) {
-//      super.setResizable(resizable);
+      Display.setResizable(resizable);      
     }
 
     @Override
     public void setVisible(boolean visible) {
-//      window.setVisible(visible);
+//      Display.setVisible(visible);
     }
 
     @Override
     public void setTitle(String title) {
-//      window.setTitle(title);
+      Display.setTitle(title);
     }
   }
   
