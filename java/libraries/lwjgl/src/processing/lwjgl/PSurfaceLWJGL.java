@@ -3,6 +3,11 @@ package processing.lwjgl;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -21,6 +26,7 @@ import processing.event.MouseEvent;
 import processing.opengl.PGraphicsOpenGL;
 
 public class PSurfaceLWJGL implements PSurface {
+  GraphicsDevice displayDevice;
   PApplet sketch;
   PGraphics graphics;
   
@@ -28,9 +34,12 @@ public class PSurfaceLWJGL implements PSurface {
   int sketchHeight; 
   
   Frame frame;
+  // Note that x and y may not be zero, depending on the display configuration
+  Rectangle screenRect;  
   
   PLWJGL pgl;
   
+  boolean fullScreenRequested;
   // ........................................................
   
   // Event handling
@@ -66,12 +75,99 @@ public class PSurfaceLWJGL implements PSurface {
                          int deviceIndex, boolean fullScreen, boolean spanDisplays) {
     this.sketch = sketch;
             
-    sketchWidth = sketch.width = sketch.sketchWidth();
-    sketchHeight = sketch.height = sketch.sketchHeight();
+    GraphicsEnvironment environment =
+        GraphicsEnvironment.getLocalGraphicsEnvironment();
+    
+      DisplayMode desktopMode = Display.getDesktopDisplayMode();
+      PApplet.println("DESKTOP MODES");
+      PApplet.println(desktopMode);
+      PApplet.println("ALL MODES");
+      try {
+        DisplayMode[] allModes = Display.getAvailableDisplayModes();
+        for (DisplayMode mode: allModes) {
+          PApplet.println(mode);
+        }        
+      } catch (LWJGLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
+
+      
+
+      if (deviceIndex >= 0) {  // if -1, use the default device
+        GraphicsDevice[] devices = environment.getScreenDevices();
+        if (deviceIndex < devices.length) {
+          displayDevice = devices[deviceIndex];
+        } else {
+          System.err.format("Display %d does not exist, " +
+            "using the default display instead.", deviceIndex);
+          for (int i = 0; i < devices.length; i++) {
+            System.err.format("Display %d is %s\n", i, devices[i]);
+          }
+        }
+      }
+      if (displayDevice == null) {
+        displayDevice = environment.getDefaultScreenDevice();
+      }
+
+      // Need to save the window bounds at full screen,
+      // because pack() will cause the bounds to go to zero.
+      // http://dev.processing.org/bugs/show_bug.cgi?id=923
+      screenRect = spanDisplays ? getDisplaySpan() :
+        displayDevice.getDefaultConfiguration().getBounds();    
+    
+    // Set the displayWidth/Height variables inside PApplet, so that they're
+    // usable and can even be returned by the sketchWidth()/Height() methods.
+    sketch.displayWidth = screenRect.width;
+    sketch.displayHeight = screenRect.height;
+
+    sketchWidth = sketch.sketchWidth();
+    sketchHeight = sketch.sketchHeight();
+        
+    // Sketch has already requested to be the same as the screen's
+    // width and height, so let's roll with full screen mode.
+    if (screenRect.width == sketchWidth &&
+        screenRect.height == sketchHeight) {
+      fullScreen = true;
+    }
+
+    if (fullScreen || spanDisplays) {
+      sketchWidth = screenRect.width;
+      sketchHeight = screenRect.height;
+    }
+    
+    if (fullScreen) {
+      // Called here because the graphics device is needed before we can
+      // determine whether the sketch wants size(displayWidth, displayHeight),
+      // and getting the graphics device will be PSurface-specific.
+//      PApplet.hideMenuBar();
+      
+      // Useful hidden switches:
+      // http://wiki.lwjgl.org/index.php?title=LWJGL_Hidden_Switches
+      System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
+      fullScreenRequested = true;
+    }
+    
+//    sketchWidth = sketch.width = sketch.sketchWidth();
+//    sketchHeight = sketch.height = sketch.sketchHeight();
     
     frame = new DummyFrame();
     return frame;
   }
+  
+  // get the bounds for all displays
+  static Rectangle getDisplaySpan() {
+    Rectangle bounds = new Rectangle();
+    GraphicsEnvironment environment =
+      GraphicsEnvironment.getLocalGraphicsEnvironment();
+    for (GraphicsDevice device : environment.getScreenDevices()) {
+      for (GraphicsConfiguration config : device.getConfigurations()) {
+        Rectangle2D.union(bounds, config.getBounds(), bounds);
+      }
+    }
+    return bounds;
+  }  
 
   @Override
   public void setTitle(String title) {
@@ -118,7 +214,7 @@ public class PSurfaceLWJGL implements PSurface {
       thread = new AnimationThread();
       thread.start();
     } else {
-      throw new IllegalStateException("Thread already started in PSurfaceAWT");
+      throw new IllegalStateException("Thread already started in PSurfaceLWJGL");
     }  
   }
 
@@ -244,15 +340,20 @@ public class PSurfaceLWJGL implements PSurface {
     @Override
     public void run() {  // not good to make this synchronized, locks things up
       try {
-        DisplayMode[] modes = Display.getAvailableDisplayModes();
-        for (DisplayMode mode: modes) {
-          System.err.println(mode.toString());
+//        DisplayMode[] modes = Display.getAvailableDisplayModes();
+//        for (DisplayMode mode: modes) {
+//          System.err.println(mode.toString());
+//        }
+
+          
+        Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
+        System.err.println(sketchWidth + " " + sketchHeight);
+        if (fullScreenRequested) {
+          Display.setFullscreen(true);
         }
         
-        Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
-        
 //        Display.setDisplayMode(Display.getDesktopDisplayMode());
-//        Display.setFullscreen(true);
+//        
 //        Display.create();                
         
         
