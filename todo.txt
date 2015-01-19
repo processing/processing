@@ -6,6 +6,12 @@ X   https://github.com/processing/processing/issues/2979
 X splash screen for Linux
 X   https://github.com/processing/processing/pull/3005
 
+X moving to Java 8 because Java 7 will be discontinued
+_   http://www.oracle.com/technetwork/java/javase/eol-135779.html
+_   requires Vista SP2 (ok, just say 7), and OS X 10.8.3, Ubuntu 12.04
+_ requires ECJ update (using 4.4.1)
+_   http://download.eclipse.org/eclipse/downloads/drops4/R-4.4.1-201409250400/
+
 _ Determine shortcut for Export vs Use Selection for Find
 _   https://github.com/processing/processing/issues/2985
 
