@@ -401,6 +401,7 @@ class ContributionPanel extends JPanel {
     installProgressBar.setAlignmentX(CENTER_ALIGNMENT);
 
     installRemoveButton = new JButton(" ");
+    installRemoveButton.putClientProperty("JButton.buttonType", "roundRect");
     installRemoveButton.setInheritsPopupMenu(true);
 
     Dimension installButtonDimensions = installRemoveButton.getPreferredSize();
@@ -936,8 +937,12 @@ class ContributionPanel extends JPanel {
       HTMLDocument html = (HTMLDocument) doc;
       StyleSheet stylesheet = html.getStyleSheet();
       
-      String c = (installed && !selected) ? "#555555" : "#000000";  // slightly grayed when installed
-//      String c = "#000000";  // just make them both black
+      String c;
+      if (selected) {
+        c = Base.isMacOS() ? "#ffffff" : "#000000";
+      } else {
+        c = installed ? "#555555" : "#000000";  // slightly grayed when installed
+      }
       stylesheet.addRule("body { color:" + c + "; }");
       stylesheet.addRule("a { color:" + c + "; }");
     }
