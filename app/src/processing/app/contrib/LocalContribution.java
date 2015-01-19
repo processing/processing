@@ -48,7 +48,7 @@ public abstract class LocalContribution extends Contribution {
   protected File folder;
   protected HashMap<String, String> properties;
   protected ClassLoader loader;
-  
+  protected List<String> specifiedImports; // mylib,mylib.util;
 
   public LocalContribution(File folder) {
     this.folder = folder;
@@ -61,6 +61,7 @@ public abstract class LocalContribution extends Contribution {
       name = properties.get("name");
       id = properties.get("id");
       categories = parseCategories(properties.get("category"));
+      specifiedImports = parseImports(properties.get("imports"));
       if (name == null) {
         name = folder.getName();
       }
@@ -542,7 +543,42 @@ public abstract class LocalContribution extends Contribution {
     return null;
   }
   */
-  
+  /**
+   * Returns the imports (package-names) for a library, as specified in its library.properties
+   * (e.g., imports=libname.*,libname.support.*) 
+   * 
+   * @return String[] packageNames (without wildcards) or null if none are specified
+   */
+  public String[] getSpecifiedImports() {
+    
+    return specifiedImports != null ? specifiedImports.toArray(new String[0]) : null;
+  }
+
+  /**
+   * @return the list of Java imports to be added to the sketch when the library is imported
+   * or null if none are specified
+   */
+  protected static List<String> parseImports(String importsStr) {
+    
+    List<String> outgoing = new ArrayList<String>();
+
+    if (importsStr != null) {
+      
+      String[] listing = PApplet.trim(PApplet.split(importsStr, ','));
+      for (String imp : listing) {
+        
+        // In case the wildcard is specified, strip it, as it gets added later)
+        if (imp.endsWith(".*")) { 
+
+          imp = imp.substring(0, imp.length() - 2);
+        }
+        
+        outgoing.add(imp);
+      }
+    }
+    
+    return (outgoing.size() > 0) ? outgoing : null; 
+  }
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
