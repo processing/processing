@@ -4,8 +4,9 @@ http://download.eclipse.org/eclipse/downloads/
 File listing at:
 http://download.eclipse.org/eclipse/updates/4.4/R-4.4.1-201409250400/plugins/?d
 
-The jdi.jar and jdimodel.jar files are unpacked 
-from the org.eclipse.jdt.debug JAR file.
+The jdtCompilerAdapter.jar is extracted from org.eclipse.jdt.core.jar to provide
+the JDTCompilerAdapter class, which is the Ant task for the JDT compiler.
+The jdi.jar and jdimodel.jar files are unpacked from org.eclipse.jdt.debug.jar.
 
 This Mode does not use ecj.jar from the original Java mode, because its files are contained in the JARs below.
 

@@ -12,15 +12,15 @@
 	     classpath="methods/methods.jar" />
     <methods dir="${basedir}/src/processing/core" recorder="true" />
 
-    <!-- Check for ecj.jar, since this is likely a PDE build. Using ECJ
-	 allows us to build the PDE with only a JRE on Windows and Linux.
+    <!-- Check for JDT compiler, since this is likely a PDE build. Using
+	 it allows us to build the PDE with only a JRE on Windows and Linux.
 	 So that the core can be built independently of the PDE, 
 	 use javac (the "modern" compiler) if ecj is not present. -->
-    <property name="ecj.jar" value="../java/mode/ecj.jar" />
+    <property name="jdt.jar" value="../java/mode/org.eclipse.jdt.core.jar" />
     <condition property="build.compiler" 
 	       value="org.eclipse.jdt.core.JDTCompilerAdapter"
 	       else="modern">
-      <available file="${ecj.jar}" />
+      <available file="${jdt.jar}" />
     </condition>
     <!--<echo message="compiler is ${build.compiler}" />-->
 
@@ -34,7 +34,7 @@
 	   classpath="library/jogl-all.jar; library/gluegen-rt.jar"
 	   nowarn="true">
       <!-- kinda gross, but if not using ecj, this just ignored anyway -->
-      <compilerclasspath path="${ecj.jar}" />
+      <compilerclasspath path="${jdt.jar}; ../java/mode/jdtCompilerAdapter.jar" />
     </javac>
     
     <!-- Copy the jnilib to the bin folder so it's included. -->
