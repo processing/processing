@@ -77,6 +77,13 @@ X File change detection rewrite
 X   https://github.com/processing/processing/pull/3048
 
 
+integration of pdex
+_ remove public 'ta' object in DebugEditor, also dmode
+_ rename TextArea and TextAreaPainter to JavaTextArea
+
+@SuppressWarnings({ "unused", "unchecked", "cast" })
+
+
 _ make examples pull/build automatic during dist
 _ merge experimental into the main Java mode 
 _   thereby removing Java 2.0 mode from the next release

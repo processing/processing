@@ -1,24 +1,27 @@
-/*
- * Copyright (C) 2012-14 Manindra Moharana <me@mkmoharana.com>
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
- */
-package processing.mode.experimental;
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
-import static processing.mode.experimental.ExperimentalMode.log;
-import static processing.mode.experimental.ExperimentalMode.logE;
+/*
+Part of the Processing project - http://processing.org
+Copyright (c) 2012-15 The Processing Foundation
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation, Inc.
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
+
+package processing.mode.java.pdex;
+
+import static processing.mode.java.pdex.ExperimentalMode.log;
+import static processing.mode.java.pdex.ExperimentalMode.logE;
 
 import java.io.File;
 import java.net.URL;
@@ -54,25 +57,22 @@ import processing.app.Library;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
 import processing.core.PApplet;
+import processing.mode.java.debug.DebugEditor;
 import processing.mode.java.preproc.PdePreprocessor;
+
 
 /**
  * The main error checking service
- * 
  * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
- *
  */
-public class ErrorCheckerService implements Runnable{
+public class ErrorCheckerService implements Runnable {
   
   protected DebugEditor editor;
-  /**
-   * Error check happens every sleepTime milliseconds
-   */
+
+  /** Error check happens every sleepTime milliseconds */
   public static final int sleepTime = 1000;
 
-  /**
-   * The amazing eclipse ast parser
-   */
+  /** The amazing eclipse ast parser */
   protected ASTParser parser;
  
   /**
@@ -555,7 +555,7 @@ public class ErrorCheckerService implements Runnable{
     return containsErrors.get();
   }
   
-  protected TreeMap<String, IProblem> tempErrorLog;
+  public TreeMap<String, IProblem> tempErrorLog;
 
   protected void syntaxCheck() {
     syntaxErrors.set(true);
@@ -959,7 +959,6 @@ public class ErrorCheckerService implements Runnable{
   /**
    * Various option for JDT Compiler
    */
-  @SuppressWarnings("rawtypes")
   protected Map compilerSettings;
 
   /**

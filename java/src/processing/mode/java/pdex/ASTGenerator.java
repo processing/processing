@@ -1,7 +1,27 @@
-package processing.mode.experimental;
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
-import static processing.mode.experimental.ExperimentalMode.log;
-import static processing.mode.experimental.ExperimentalMode.logE;
+/*
+Part of the Processing project - http://processing.org
+Copyright (c) 2012-15 The Processing Foundation
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation, Inc.
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
+
+package processing.mode.java.pdex;
+
+import static processing.mode.java.pdex.ExperimentalMode.log;
+import static processing.mode.java.pdex.ExperimentalMode.logE;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -94,6 +114,7 @@ import processing.app.Base;
 import processing.app.Library;
 import processing.app.SketchCode;
 import processing.app.Toolkit;
+import processing.mode.java.debug.DebugEditor;
 import processing.mode.java.preproc.PdePreprocessor;
 
 import com.google.classpath.ClassPath;
@@ -2361,16 +2382,20 @@ public class ASTGenerator {
     return null;
   }
   
+  
   protected SketchOutline sketchOutline;
-  protected void showSketchOutline(){
+  
+  public void showSketchOutline(){
     if(editor.hasJavaTabs) return; // sketch outline disabled if java tabs
     sketchOutline = new SketchOutline(codeTree, errorCheckerService);
     sketchOutline.show();
   }
   
-  protected void showTabOutline(){
+  
+  public void showTabOutline() {
     new TabOutline(errorCheckerService).show();
   }
+  
   
   public int javaCodeOffsetToLineStartOffset(int line, int jOffset){
     // Find the first node with this line number, return its offset - jOffset
@@ -2397,6 +2422,7 @@ public class ASTGenerator {
     }    
     return -1;
   }
+  
   
   /**
    * Converts pde line number to java line number
@@ -3341,7 +3367,7 @@ public class ASTGenerator {
     
     // log("Couldn't find import for class " + className);
 
-    for (Library lib : editor.dmode.contribLibraries) {
+    for (Library lib : editor.getMode().contribLibraries) {
       ClassPath cp = factory.createFromPath(lib.getClassPath());
       resources = cp.findResources("", regf);
       for (String res : resources) {
@@ -3407,7 +3433,7 @@ public class ASTGenerator {
     
     // log("Couldn't find import for class " + className);
 
-    for (Library lib : editor.dmode.contribLibraries) {
+    for (Library lib : editor.getMode().contribLibraries) {
       ClassPath cp = factory.createFromPath(lib.getClassPath());
       resources = cp.findResources("", regf);
       for (String res : resources) {

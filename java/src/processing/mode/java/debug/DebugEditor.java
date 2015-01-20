@@ -1,27 +1,27 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
 /*
- * Copyright (C) 2012-14 Martin Leopold <m@martinleopold.com> and Manindra Moharana <me@mkmoharana.com>
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
- */
-package processing.mode.experimental;
-import static processing.mode.experimental.ExperimentalMode.log;
-import static processing.mode.experimental.ExperimentalMode.logE;
-import galsasson.mode.tweak.ColorControlBox;
-import galsasson.mode.tweak.Handle;
-import galsasson.mode.tweak.SketchParser;
-import galsasson.mode.tweak.UDPTweakClient;
+Part of the Processing project - http://processing.org
+Copyright (c) 2012-15 The Processing Foundation
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation, Inc.
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
+
+package processing.mode.java.debug;
+
+import static processing.mode.java.pdex.ExperimentalMode.log;
+import static processing.mode.java.pdex.ExperimentalMode.logE;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -81,6 +81,20 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
+import processing.mode.java.pdex.AutoSaveUtil;
+import processing.mode.java.pdex.ErrorBar;
+import processing.mode.java.pdex.ErrorCheckerService;
+import processing.mode.java.pdex.ErrorMessageSimplifier;
+import processing.mode.java.pdex.ExperimentalMode;
+import processing.mode.java.pdex.Problem;
+import processing.mode.java.pdex.TextArea;
+import processing.mode.java.pdex.XQConsoleToggle;
+import processing.mode.java.pdex.XQErrorTable;
+import processing.mode.java.tweak.ColorControlBox;
+import processing.mode.java.tweak.Handle;
+import processing.mode.java.tweak.SketchParser;
+import processing.mode.java.tweak.UDPTweakClient;
+
 
 /**
  * Main View Class. Handles the editor window including tool bar and menu. Has
@@ -128,13 +142,13 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     // variable inspector
     protected JMenuItem toggleVariableInspectorMenuItem;
     // references
-    protected ExperimentalMode dmode; // the mode
+    public ExperimentalMode dmode; // the mode
     protected Debugger dbg; // the debugger
     protected VariableInspector vi; // the variable inspector frame
-    protected TextArea ta; // the text area
-
     
-    protected ErrorBar errorBar;
+    public TextArea ta; // the text area
+    public ErrorBar errorBar;
+    
     /**
      * Show Console button
      */
@@ -161,7 +175,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     /**
      * Enable/Disable compilation checking
      */
-    protected boolean compilationCheckEnabled = true;
+    public boolean compilationCheckEnabled = true;
     
     /**
      * Show warnings menu item
@@ -196,7 +210,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     /**
      * If sketch contains java tabs, some editor features are disabled
      */
-    protected boolean hasJavaTabs;
+    public boolean hasJavaTabs;
     
     /**
      * UNUSED. Disbaled for now.
@@ -454,7 +468,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     /**
      * Whether debug toolbar is enabled
      */
-    AtomicBoolean debugToolbarEnabled;
+    public AtomicBoolean debugToolbarEnabled;
     
     protected EditorToolbar javaToolbar, debugToolbar;
     
@@ -1622,7 +1636,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       super.statusEmpty();
     }
     
-    ErrorCheckerService errorCheckerService;
+    public ErrorCheckerService errorCheckerService;
     
     /**
      * Initializes and starts Error Checker Service
@@ -1740,7 +1754,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
   public static final String prefTweakPort = "tweak.port";
   public static final String prefTweakShowCode = "tweak.showcode";
 
-	String[] baseCode;
+	public String[] baseCode;
 
 	final static int SPACE_AMOUNT = 0;
 

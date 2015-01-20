@@ -1,4 +1,24 @@
-package galsasson.mode.tweak;
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+Part of the Processing project - http://processing.org
+Copyright (c) 2012-15 The Processing Foundation
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation, Inc.
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
+
+package processing.mode.java.tweak;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -6,7 +26,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
-import processing.mode.experimental.TextAreaPainter;
+import processing.mode.java.pdex.TextAreaPainter;
+
 
 public class ColorControlBox {
 
@@ -25,8 +46,8 @@ public class ColorControlBox {
 	int x, y, width, height;
 	TextAreaPainter painter;
 
-	public ColorControlBox(String context, ColorMode mode, ArrayList<Handle> handles)
-	{
+	
+	public ColorControlBox(String context, ColorMode mode, ArrayList<Handle> handles) {
 		this.drawContext = context;
 		this.colorMode = mode;
 		this.handles = handles;
@@ -43,6 +64,7 @@ public class ColorControlBox {
 		visible = Settings.alwaysShowColorBoxes;
 	}
 
+	
 	public void initInterface(TextAreaPainter textAreaPainter, int x, int y, int w, int h)
 	{
 		this.painter = textAreaPainter;

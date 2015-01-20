@@ -1,25 +1,31 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
 /*
- * Copyright (C) 2012-14 Martin Leopold <m@martinleopold.com> and Manindra Moharana <me@mkmoharana.com>
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
- */
-package processing.mode.experimental;
-import static processing.mode.experimental.ExperimentalMode.log;
-import static processing.mode.experimental.ExperimentalMode.log2;
-import galsasson.mode.tweak.ColorControlBox;
-import galsasson.mode.tweak.Handle;
+Part of the Processing project - http://processing.org
+Copyright (c) 2012-15 The Processing Foundation
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation, Inc.
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
+
+package processing.mode.java.pdex;
+
+import static processing.mode.java.pdex.ExperimentalMode.log;
+import static processing.mode.java.pdex.ExperimentalMode.log2;
+
+import processing.mode.java.debug.DebugEditor;
+import processing.mode.java.tweak.ColorControlBox;
+import processing.mode.java.tweak.Handle;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -41,9 +47,10 @@ import javax.swing.SwingWorker;
 import processing.app.Base;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaDefaults;
+
+
 /**
  * Customized text area. Adds support for line background colors.
- *
  * @author Martin Leopold <m@martinleopold.com>
  */
 public class TextArea extends JEditTextArea {
@@ -62,9 +69,9 @@ public class TextArea extends JEditTextArea {
 
   protected Color gutterLineColor = new Color(233, 233, 233); // color of vertical separation line
 
-  protected String breakpointMarker = "<>"; // the text marker for highlighting breakpoints in the gutter
+  public String breakpointMarker = "<>"; // the text marker for highlighting breakpoints in the gutter
 
-  protected String currentLineMarker = "->"; // the text marker for highlighting the current line in the gutter
+  public String currentLineMarker = "->"; // the text marker for highlighting the current line in the gutter
 
   protected Map<Integer, String> gutterText = new HashMap<Integer, String>(); // maps line index to gutter text
 
@@ -493,7 +500,7 @@ public class TextArea extends JEditTextArea {
    * @return gutter width in pixels
    */
   protected int getGutterWidth() {
-    if(editor.debugToolbarEnabled == null || !editor.debugToolbarEnabled.get()){
+    if (editor.debugToolbarEnabled == null || !editor.debugToolbarEnabled.get()){
       return 0;
     }
     FontMetrics fm = painter.getFontMetrics();
@@ -513,7 +520,7 @@ public class TextArea extends JEditTextArea {
    * @return margins in pixels
    */
   protected int getGutterMargins() {
-    if(editor.debugToolbarEnabled == null || !editor.debugToolbarEnabled.get()){
+    if (editor.debugToolbarEnabled == null || !editor.debugToolbarEnabled.get()){
       return 0;
     }
     return gutterPadding;
@@ -853,7 +860,7 @@ public class TextArea extends JEditTextArea {
   /**
    * Hides suggestion popup
    */
-  protected void hideSuggestion() {
+  public void hideSuggestion() {
     if (suggestion != null) {
       suggestion.hide();
       //log("Suggestion hidden.");

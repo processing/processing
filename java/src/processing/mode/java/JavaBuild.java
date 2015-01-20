@@ -1831,6 +1831,8 @@ public class JavaBuild {
               zos.closeEntry();
             }
           }
+          file.close();
+          
         } catch (IOException e) {
           System.err.println("Error in file " + pieces[i]);
           e.printStackTrace();

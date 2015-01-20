@@ -1,41 +1,40 @@
-/*
- * Copyright (C) 2012-14 Manindra Moharana <me@mkmoharana.com>
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
- */
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
-package processing.mode.experimental;
+/*
+Part of the Processing project - http://processing.org
+Copyright (c) 2012-15 The Processing Foundation
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation, Inc.
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
+
+package processing.mode.java.pdex;
 
 import java.util.ArrayList;
-import static processing.mode.experimental.ExperimentalMode.log;
+
+import static processing.mode.java.pdex.ExperimentalMode.log;
+
 
 /**
  * Performs offset matching between PDE and Java code (one line of code only)
- * 
  * @author Manindra Moharana <me@mkmoharana.com>
- * 
  */
-
 public class OffsetMatcher {
-
   public ArrayList<OffsetMatcher.OffsetPair> offsetMatch;
-
   String pdeCodeLine, javaCodeLine;
-  
   boolean matchingNeeded = false;
 
+  
   public OffsetMatcher(String pdeCode, String javaCode) {
     this.pdeCodeLine = pdeCode;
     this.javaCodeLine = javaCode;
@@ -43,23 +42,13 @@ public class OffsetMatcher {
       matchingNeeded = false;
       offsetMatch = new ArrayList<OffsetMatcher.OffsetPair>();
       //log("Offset Matching not needed");
-    }
-    else 
-    {
+    } else {
       matchingNeeded = true;
       minDistance();
-    }
-    
-//    log("PDE <-> Java");
-//    for (int i = 0; i < offsetMatch.size(); i++) {
-//      log(offsetMatch.get(i).pdeOffset + " <-> "
-//          + offsetMatch.get(i).javaOffset +
-//          ", " + pdeCodeLine.charAt(offsetMatch.get(i).pdeOffset)
-//          + " <-> " + javaCodeLine.charAt(offsetMatch.get(i).javaOffset));
-//    }
-//    log("Length " + offsetMatch.size());
+    }    
   }
 
+  
   public int getPdeOffForJavaOff(int start, int length) {
 //    log("PDE :" + pdeCodeLine + "\nJAVA:" + javaCodeLine);
 //    log("getPdeOffForJavaOff() start:" + start + ", len " + length);
@@ -68,8 +57,7 @@ public class OffsetMatcher {
     int end = getPdeOffForJavaOff(start + length - 1);
     if(ans == -1 || end == -1){
 //      log("ans: " + ans + " end: " + end);
-    }
-    else {
+    } else {
 //      log(start + " java start off, pde start off "
 //          + ans);
 //      log((start + length - 1) + " java end off, pde end off "
@@ -80,6 +68,7 @@ public class OffsetMatcher {
     return ans;
   }
 
+  
   public int getJavaOffForPdeOff(int start, int length) {
     if(!matchingNeeded) return start;
     int ans = getJavaOffForPdeOff(start); 
@@ -90,6 +79,7 @@ public class OffsetMatcher {
     return ans;
   }
 
+  
   public int getPdeOffForJavaOff(int javaOff) {
     if (!matchingNeeded)
       return javaOff;
@@ -119,6 +109,7 @@ public class OffsetMatcher {
     return -1;
   }
 
+  
   public int getJavaOffForPdeOff(int pdeOff) {
     if(!matchingNeeded) return pdeOff;
     for (int i = offsetMatch.size() - 1; i >= 0; i--) {
@@ -144,12 +135,12 @@ public class OffsetMatcher {
     return -1;
   }
 
+  
   /**
    * Finds 'distance' between two Strings.
    * See Edit Distance Problem
    * https://secweb.cs.odu.edu/~zeil/cs361/web/website/Lectures/styles/pages/editdistance.html
    * http://www.stanford.edu/class/cs124/lec/med.pdf 
-   * 
    */
   private int minDistance() {
 
@@ -203,6 +194,7 @@ public class OffsetMatcher {
     return dp[len1][len2];
   }
 
+  
   private void minDistInGrid(int g[][], int i, int j, int fi, int fj,
                              char s1[], char s2[], ArrayList<OffsetPair> set) {
 //    if(i < s1.length)System.out.print(s1[i] + " <->");
@@ -240,6 +232,7 @@ public class OffsetMatcher {
     }
   }
 
+  
   private class OffsetPair {
     public final int pdeOffset, javaOffset;
 
@@ -249,6 +242,7 @@ public class OffsetMatcher {
     }
   }
 
+  
   public static void main(String[] args) {
 //    minDistance("c = #qwerty;", "c = 0xffqwerty;");
     OffsetMatcher a;

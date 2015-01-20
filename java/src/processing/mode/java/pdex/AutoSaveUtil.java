@@ -1,24 +1,26 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
 /*
- * Copyright (C) 2012-14 Manindra Moharana <me@mkmoharana.com>
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place - Suite 330, Boston, MA 02111-1307, USA.
- */
+Part of the Processing project - http://processing.org
+Copyright (c) 2012-15 The Processing Foundation
 
-package processing.mode.experimental;
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation.
 
-import static processing.mode.experimental.ExperimentalMode.log;
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation, Inc.
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
+
+package processing.mode.java.pdex;
+
+import static processing.mode.java.pdex.ExperimentalMode.log;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -27,6 +29,7 @@ import java.util.Timer;
 
 import processing.app.Base;
 import processing.app.Sketch;
+import processing.mode.java.debug.DebugEditor;
 
 /**
  * Autosave utility for saving sketch backups in the background after
@@ -38,27 +41,19 @@ import processing.app.Sketch;
 public class AutoSaveUtil {
   
   private DebugEditor editor;
-  
   private Timer timer;
-  
-//  private int saveTime;
-  
   private File autosaveDir, pastSave;
-  
   private boolean isSaving;
-  
   private boolean isAutoSaveBackup;
+  private File sketchFolder; 
+  private File sketchBackupFolder;
   
-  private File sketchFolder, sketchBackupFolder;
-  
-  private static final String AUTOSAVEFOLDER = "__autosave__";
+  static private final String AUTOSAVEFOLDER = "__autosave__";
   
   /**
-   * 
-   * @param dedit
    * @param timeOut - in minutes, how frequently should saves occur
    */
-  public AutoSaveUtil(DebugEditor dedit, int timeOut){
+  public AutoSaveUtil(DebugEditor dedit, int timeOut) {
     /*
     editor = dedit;
     if (timeOut < 1) { // less than 1 minute not allowed!

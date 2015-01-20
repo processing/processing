@@ -1,26 +1,24 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
 /*
-  Part of the XQMode project - https://github.com/Manindra29/XQMode
+Part of the Processing project - http://processing.org
+Copyright (c) 2012-15 The Processing Foundation
 
-  Under Google Summer of Code 2012 - 
-  http://www.google-melange.com/gsoc/homepage/google/gsoc2012
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation.
 
-  Copyright (C) 2012 Manindra Moharana
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License version 2
-  as published by the Free Software Foundation.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation, Inc.
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software Foundation,
-  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
-
-package processing.mode.experimental;
+package processing.mode.java.pdex;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

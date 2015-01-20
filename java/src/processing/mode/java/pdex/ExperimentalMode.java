@@ -1,27 +1,26 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Part of the Processing project - http://processing.org
+Part of the Processing project - http://processing.org
+Copyright (c) 2012-15 The Processing Foundation
 
-  Copyright (c) 2012 The Processing Foundation
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation.
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License version 2
-  as published by the Free Software Foundation.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software Foundation,
-  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation, Inc.
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-package processing.mode.experimental;
+package processing.mode.java.pdex;
 
-import galsasson.mode.tweak.SketchParser;
+import processing.mode.java.tweak.SketchParser;
 
 import java.awt.Color;
 import java.io.File;
@@ -44,6 +43,7 @@ import processing.app.SketchCode;
 import processing.app.SketchException;
 import processing.mode.java.JavaBuild;
 import processing.mode.java.JavaMode;
+import processing.mode.java.debug.DebugEditor;
 import processing.mode.java.runner.Runner;
 
 

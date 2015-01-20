@@ -18,22 +18,23 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-package processing.mode.java.pdex;
+package processing.mode.java.debug;
 
-import com.sun.jdi.event.EventSet;
+import com.sun.jdi.ReferenceType;
 
 /**
- * Interface for VM callbacks.
+ * Listener to be notified when a class is loaded in the debugger. Used by
+ * {@link LineBreakpoint}s to activate themselves as soon as the respective
+ * class is loaded.
  *
  * @author Martin Leopold <m@martinleopold.com>
  */
-public interface VMEventListener {
+public interface ClassLoadListener {
 
     /**
-     * Receive an event from the VM. Events are sent in batches. See
-     * documentation of EventSet for more information.
+     * Event handler called when a class is loaded.
      *
-     * @param es Set of events
+     * @param theClass the class
      */
-    void vmEvent(EventSet es);
+    public void classLoaded(ReferenceType theClass);
 }

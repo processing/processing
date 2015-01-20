@@ -18,22 +18,21 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-package processing.mode.java.pdex;
-
-import com.sun.jdi.event.EventSet;
+package processing.mode.java.debug;
 
 /**
- * Interface for VM callbacks.
+ * A Listener for line number changes.
  *
  * @author Martin Leopold <m@martinleopold.com>
  */
-public interface VMEventListener {
+public interface LineListener {
 
     /**
-     * Receive an event from the VM. Events are sent in batches. See
-     * documentation of EventSet for more information.
+     * Event handler for line number changes (due to editing).
      *
-     * @param es Set of events
+     * @param line the line that has changed
+     * @param oldLineIdx the old line index (0-based)
+     * @param newLineIdx the new line index (0-based)
      */
-    void vmEvent(EventSet es);
+    void lineChanged(LineID line, int oldLineIdx, int newLineIdx);
 }
