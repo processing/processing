@@ -193,16 +193,18 @@ public class TextAreaPainter extends processing.app.syntax.TextAreaPainter
    *          horizontal position
    */
   @Override
-  protected void paintLine(Graphics gfx, TokenMarker tokenMarker, int line,
-                           int x) {
+  protected void paintLine(Graphics gfx, int line, int x, 
+                           TokenMarker tokenMarker) {
     try {
-      //TODO: This line is causing NPE's randomly ever since I added the toggle for 
-      //Java Mode/Debugger toolbar.
-      super.paintLine(gfx, tokenMarker, line, x + ta.getGutterWidth());
+      // TODO This line is causing NPE's randomly ever since I added the 
+      // toggle for Java Mode/Debugger toolbar. [Manindra]
+      super.paintLine(gfx, line, x + ta.getGutterWidth(), tokenMarker);
+      
     } catch (Exception e) {
       log(e.getMessage());
     }
-    if(ta.editor.debugToolbarEnabled != null && ta.editor.debugToolbarEnabled.get()){
+    if (ta.editor.debugToolbarEnabled != null && 
+        ta.editor.debugToolbarEnabled.get()) {
       // paint gutter
       paintGutterBg(gfx, line, x);
   

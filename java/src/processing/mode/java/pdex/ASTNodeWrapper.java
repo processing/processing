@@ -48,6 +48,7 @@ import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
+
 /**
  * Wrapper class for ASTNode objects
  * @author Manindra Moharana <me@mkmoharana.com>
@@ -55,12 +56,9 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
  */
 public class ASTNodeWrapper {
   private ASTNode Node;
-
   private String label;
-
   private int lineNumber;
-  
-  //private int apiLevel;
+
   
   /*
    * TODO: Every ASTNode object in ASTGenerator.codetree is stored as a
@@ -168,6 +166,7 @@ public class ASTNodeWrapper {
       while (it.hasNext()) {
         StructuralPropertyDescriptor prop = it.next();
         if (prop.isChildListProperty()) {
+          @SuppressWarnings("unchecked")
           List<ASTNode> nodelist = (List<ASTNode>) 
             thisNode.getStructuralProperty(prop);
           log("prop " + prop);
@@ -218,6 +217,7 @@ public class ASTNodeWrapper {
    * @return
    */
   private int getJavadocOffset(FieldDeclaration fd){
+    @SuppressWarnings("unchecked")
     List<ASTNode> list = fd.modifiers();
     SimpleName sn = (SimpleName) getNode();
     

@@ -631,13 +631,14 @@ public class TextAreaPainter extends JComponent implements TabExpander {
   }
 
 
-  /** Old paintLine() method with kooky args order, kept around for X Mode. */
-  @Deprecated
-  protected void paintLine(Graphics gfx, TokenMarker tokenMarker, 
-                           int line, int x) {
+//  /** Old paintLine() method with kooky args order, kept around for X Mode. */
+//  @Deprecated
+//  protected void paintLine(Graphics gfx, TokenMarker tokenMarker, 
+//                           int line, int x) {
 //    Font defaultFont = getFont();
 //    Color defaultColor = getForeground();
-
+  protected void paintLine(Graphics gfx, int line, int x, 
+                           TokenMarker tokenMarker) {
     currentLineIndex = line;
     int y = textArea.lineToY(line);
 
@@ -651,10 +652,10 @@ public class TextAreaPainter extends JComponent implements TabExpander {
   }
   
   
-  protected void paintLine(Graphics gfx, int line, int x, 
-                           TokenMarker tokenMarker) {
-    paintLine(gfx, tokenMarker, line, x);
-  }
+//  protected void paintLine(Graphics gfx, int line, int x, 
+//                           TokenMarker tokenMarker) {
+//    paintLine(gfx, tokenMarker, line, x);
+//  }
 
   
 //  protected void paintPlainLine(Graphics gfx, int line, Font defaultFont,

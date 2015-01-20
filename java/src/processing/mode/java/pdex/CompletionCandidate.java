@@ -103,8 +103,11 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     // log("ComCan " + method.getName());
     elementName = method.getName().toString();
     type = LOCAL_METHOD;
-    List<ASTNode> params = (List<ASTNode>) method
-        .getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
+    
+    @SuppressWarnings("unchecked")
+    List<ASTNode> params = (List<ASTNode>) 
+      method.getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
+    
     StringBuilder label = new StringBuilder(elementName + "(");
     StringBuilder cstr = new StringBuilder(method.getName() + "(");
     for (int i = 0; i < params.size(); i++) {
@@ -142,8 +145,9 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
 //    + matchedClass + " : " + "<font color=#777777>"
 //    + matchedClass2.substring(0, d) + "</font>", matchedClass
 //    + "</html>"
-    label = "<html>" + f.getName() + " : " + f.getType().getSimpleName()
-        + " - <font color=#777777>" + f.getDeclaringClass().getSimpleName() + "</font></html>";
+    label = "<html>" + f.getName() + " : " + f.getType().getSimpleName() + 
+        " - <font color=#777777>" + f.getDeclaringClass().getSimpleName() + 
+        "</font></html>";
     completionString = elementName;
     wrappedObject = f;
   }
@@ -215,10 +219,13 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
   }
   
   public void regenerateCompletionString(){
-    if(wrappedObject instanceof MethodDeclaration) {
+    if (wrappedObject instanceof MethodDeclaration) {
       MethodDeclaration method = (MethodDeclaration)wrappedObject;
-      List<ASTNode> params = (List<ASTNode>) method
-          .getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
+      
+      @SuppressWarnings("unchecked")
+      List<ASTNode> params = (List<ASTNode>) 
+          method.getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
+      
       StringBuilder label = new StringBuilder(elementName + "(");
       StringBuilder cstr = new StringBuilder(method.getName() + "(");
       for (int i = 0; i < params.size(); i++) {

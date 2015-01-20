@@ -81,7 +81,6 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
-import processing.mode.java.pdex.AutoSaveUtil;
 import processing.mode.java.pdex.ErrorBar;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
@@ -103,8 +102,6 @@ import processing.mode.java.tweak.UDPTweakClient;
  *
  * @author Martin Leopold <m@martinleopold.com>
  * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
- * 
- * 
  */
 public class DebugEditor extends JavaEditor implements ActionListener {
     // important fields from superclass
@@ -212,11 +209,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     public boolean hasJavaTabs;
     
-    /**
-     * UNUSED. Disbaled for now.
-     */
-    protected AutoSaveUtil autosaver;
-    
+
     public DebugEditor(Base base, String path, EditorState state, Mode mode) {
         super(base, path, state, mode);
 
@@ -1025,38 +1018,6 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
     private boolean viewingAutosaveBackup;
     
-    /**
-     * Loads and starts the auto save service
-     * Also handles the case where an auto save backup is found.
-     * The user is asked to save the sketch to a new location
-     */
-    private void loadAutoSaver(){
-      log("Load Auto Saver()");
-      autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval);      
-      if(!autosaver.checkForPastSave()) {
-        autosaver.init();
-        return;
-      }
-      File pastSave = autosaver.getPastSave();
-      int response = Base
-        .showYesNoQuestion(this,
-                           "Unsaved backup found!",
-                           "An automatic backup of \""
-                               + pastSave.getParentFile().getName()
-                               + "\" sketch has been found. This may mean Processing " +
-                               "was closed unexpectedly last time.",
-                           "Select YES to view it or NO to delete the backup.");
-      if(response == JOptionPane.YES_OPTION){
-        handleOpenInternal(pastSave.getAbsolutePath());        
-        // Base.showMessage("Save it..", "Remember to save the backup sketch to a specific location if you want to.");
-        //log(getSketch().getMainFilePath());
-        log("loadAutoSaver, viewing autosave? " + viewingAutosaveBackup);
-        return;
-      }
-      else{
-        autosaver.init();
-      }
-    }
 
     /**
      * Set text contents of a specific tab. Updates underlying document and text

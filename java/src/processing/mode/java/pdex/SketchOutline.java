@@ -67,6 +67,7 @@ public class SketchOutline {
   protected DebugEditor editor;
   protected boolean internalSelection = false;
 
+  
   public SketchOutline(DefaultMutableTreeNode codeTree, ErrorCheckerService ecs) {
     errorCheckerService = ecs;
     editor = ecs.getEditor();
@@ -78,20 +79,15 @@ public class SketchOutline {
     createGUI();
   }
   
+  
   private void createGUI(){
     frmOutlineView = new JFrame();
     frmOutlineView.setAlwaysOnTop(true);
     frmOutlineView.setUndecorated(true);
     Point tp = errorCheckerService.getEditor().ta.getLocationOnScreen();
-//    frmOutlineView.setBounds(tp.x
-//                                 + errorCheckerService.getEditor().ta
-//                                     .getWidth() - 300, tp.y, 300,
-//                             errorCheckerService.getEditor().ta.getHeight());
 
-    //TODO: ^Absolute dimensions are bad bro
-
-    int minWidth = (int) (editor.getMinimumSize().width * 0.7f), 
-        maxWidth = (int) (editor.getMinimumSize().width * 0.9f);
+    int minWidth = (int) (editor.getMinimumSize().width * 0.7f); 
+    int maxWidth = (int) (editor.getMinimumSize().width * 0.9f);
     frmOutlineView.setLayout(new BoxLayout(frmOutlineView.getContentPane(),
                                            BoxLayout.Y_AXIS));
     JPanel panelTop = new JPanel(), panelBottom = new JPanel();
@@ -267,7 +263,8 @@ public class SketchOutline {
     });
   }
   
-  private void scrollToNode(){
+  
+  private void scrollToNode() {
     SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
       protected Object doInBackground() throws Exception {
@@ -292,11 +289,11 @@ public class SketchOutline {
     worker.execute();
   }
 
+  
   protected boolean filterTree(String prefix, DefaultMutableTreeNode tree,
                                DefaultMutableTreeNode mainTree) {
     if (mainTree.isLeaf()) {
-      return (mainTree.getUserObject().toString().toLowerCase()
-          .startsWith(prefix));
+      return mainTree.getUserObject().toString().toLowerCase().startsWith(prefix);
     }
 
     boolean found = false;
@@ -313,7 +310,9 @@ public class SketchOutline {
     }
     return found;
   }
+  
 
+  @SuppressWarnings("unchecked")
   protected void generateSketchOutlineTree(DefaultMutableTreeNode node,
                                            DefaultMutableTreeNode codetree) {
     if (codetree == null)
@@ -337,12 +336,9 @@ public class SketchOutline {
     } else if (awnode.getNode() instanceof FieldDeclaration) {
       FieldDeclaration fd = (FieldDeclaration) awnode.getNode();
       for (VariableDeclarationFragment vdf : (List<VariableDeclarationFragment>) fd.fragments()) {
-        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(
-                                                                    new ASTNodeWrapper(
-                                                                                       vdf.getName(),
-                                                                                       new CompletionCandidate(
-                                                                                                               vdf)
-                                                                                           .toString()));
+        final String text = new CompletionCandidate(vdf).toString();
+        DefaultMutableTreeNode newNode = 
+          new DefaultMutableTreeNode(new ASTNodeWrapper(vdf.getName(), text));
         node.add(newNode);
       }
       return;
@@ -357,18 +353,22 @@ public class SketchOutline {
     }
   }
 
+  
   public void show() {
     frmOutlineView.setVisible(true);
   }
+  
   
   public void close(){
     frmOutlineView.setVisible(false);
     frmOutlineView.dispose();
   }
   
+  
   public boolean isVisible(){
     return frmOutlineView.isVisible();
   }
+  
   
   protected class CustomCellRenderer extends DefaultTreeCellRenderer {
 

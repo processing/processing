@@ -20,14 +20,10 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -61,19 +57,14 @@ import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
 import org.eclipse.jface.text.Document;
 
+
 /**
- * 
  * Provides compilation checking functionality
- * 
  * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
- *
  */
 public class CompilationChecker {
-  /**
-   * ICompilationUnit implementation
-   */
-  private class CompilationUnitImpl implements ICompilationUnit {
 
+  private class CompilationUnitImpl implements ICompilationUnit {
     private CompilationUnit unit;
 
     CompilationUnitImpl(CompilationUnit unit) {
@@ -84,10 +75,7 @@ public class CompilationChecker {
       char[] contents = null;
       try {
         Document doc = new Document();
-        if (readFromFile)
-          doc.set(readFile());
-        else
-          doc.set(sourceText);
+        doc.set(sourceText);
         // TextEdit edits = unit.rewrite(doc, null);
         // edits.apply(doc);
         String sourceCode = doc.get();
@@ -162,10 +150,10 @@ public class CompilationChecker {
       return this.problems;
     }
 
-    List<ClassFile> getResults() {
-      //System.out.println("Calling get results");
-      return this.classes;
-    }
+//    List<ClassFile> getResults() {
+//      //System.out.println("Calling get results");
+//      return this.classes;
+//    }
   }
 
   /**
@@ -304,8 +292,9 @@ public class CompilationChecker {
   };
   */
 
+  @SuppressWarnings("unchecked")
   private ICompilationUnit generateCompilationUnit() {
-    ASTParser parser = ASTParser.newParser(AST.JLS4);
+    ASTParser parser = ASTParser.newParser(AST.JLS8);
     try {
       parser.setSource("".toCharArray());
     } catch (Exception e) {
@@ -314,8 +303,7 @@ public class CompilationChecker {
     }
     Map<String, String> options = JavaCore.getOptions();
 
-    // Ben has decided to move on to 1.6. Yay!
-    JavaCore.setComplianceOptions(JavaCore.VERSION_1_6, options);
+    JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
     parser.setCompilerOptions(options);
     CompilationUnit unit = (CompilationUnit) parser.createAST(null);
     unit.recordModifications();
@@ -342,45 +330,9 @@ public class CompilationChecker {
     return new CompilationUnitImpl(unit);
   }
 
-  public static String fileName = "HelloPeasy";
+  static private String fileName = null;  //"HelloPeasy";
 
-  public static String readFile() {
-    BufferedReader reader = null;
-    System.out.println(fileName);
-    try {
-      reader = new BufferedReader(
-                                  new InputStreamReader(
-                                                        new FileInputStream(
-                                                                            new File(
-                                                                                     "/media/quarkninja/Work/TestStuff/"
-                                                                                         + fileName
-                                                                                         + ".java"))));
-    } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    try {
-      StringBuilder ret = new StringBuilder();
-      String line;
-      while ((line = reader.readLine()) != null) {
-        ret.append(line);
-        ret.append("\n");
-      }
-      return ("package " + fileName + ";\n" + ret.toString());
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } finally {
-      try {
-        reader.close();
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-    }
 
-    return null;
-  }
 
   private void compileMeQuitely(ICompilationUnit unit, Map<String, String> compilerSettings) {
 
@@ -510,7 +462,6 @@ public class CompilationChecker {
   public IProblem[] getErrors(String sourceName, String source, Map<String, String> settings,
                               URLClassLoader classLoader) {
     fileName = sourceName;
-    readFromFile = false;
     sourceText = "package " + fileName + ";\n" + source;
     if (classLoader != null)
       this.urlClassLoader = classLoader;
@@ -520,18 +471,17 @@ public class CompilationChecker {
     return prob;
   }
 
-  private boolean readFromFile = true;
+  String sourceText = null;  //"";
 
-  String sourceText = "";
-
+  
   public IProblem[] getErrors(String sourceName, String source) {
     return getErrors(sourceName, source, null);
   }
 
+  
   @SuppressWarnings("rawtypes")
   public IProblem[] getErrors(String sourceName, String source, Map<String, String> settings) {
     fileName = sourceName;
-    readFromFile = false;
     sourceText = "package " + fileName + ";\n" + source;
 
     compileMeQuitely(generateCompilationUnit(), settings);
@@ -539,10 +489,12 @@ public class CompilationChecker {
     return prob;
   }
 
+  
   public CompilationChecker() {
     // System.out.println("Compilation Checker initialized.");
   }
 
+  
   public CompilationChecker(ArrayList<File> fileList) {
     prepareClassLoader(fileList);
     // System.out.println("Compilation Checker initialized.");

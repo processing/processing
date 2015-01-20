@@ -66,7 +66,7 @@ public class PresentMode {
       names.add(name);
     }
 
-    selector = new JComboBox(names);
+    selector = new JComboBox<String>(names);
     selector.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           int index = selector.getSelectedIndex();

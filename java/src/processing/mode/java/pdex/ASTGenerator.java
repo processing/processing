@@ -121,6 +121,7 @@ import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
 import com.google.classpath.RegExpResourceFilter;
 
+@SuppressWarnings({ "deprecation", "unchecked" })
 public class ASTGenerator {
 
   protected ErrorCheckerService errorCheckerService;
@@ -1512,7 +1513,6 @@ public class ASTGenerator {
 */
   }
 
-  @SuppressWarnings("unchecked")
   protected static ASTNode findClosestParentNode(int lineNumber, ASTNode node) {
     Iterator<StructuralPropertyDescriptor> it = node
         .structuralPropertiesForType().iterator();
@@ -2248,7 +2248,7 @@ public class ASTGenerator {
     return defCU;
   }
 
-  @SuppressWarnings({ "unchecked" })
+  
   /**
    * Generates AST Swing component 
    * @param node
@@ -2280,22 +2280,22 @@ public class ASTGenerator {
                 .getStructuralProperty(prop)));
           }
         }
-      }
-
-      else if (prop.isChildListProperty()) {
-        List<ASTNode> nodelist = (List<ASTNode>) node
-            .getStructuralProperty(prop);
+      } else if (prop.isChildListProperty()) {
+        List<ASTNode> nodelist = (List<ASTNode>) 
+          node.getStructuralProperty(prop);
         for (ASTNode cnode : nodelist) {
           if (isAddableASTNode(cnode)) {
             ctnode = new DefaultMutableTreeNode(new ASTNodeWrapper(cnode));
             tnode.add(ctnode);
             visitRecur(cnode, ctnode);
-          } else
+          } else {
             visitRecur(cnode, tnode);
+          }
         }
       }
     }
   }
+  
   
   public void dfsNameOnly(DefaultMutableTreeNode tnode,ASTNode decl, String name) {
     Stack<DefaultMutableTreeNode> temp = new Stack<DefaultMutableTreeNode>();
@@ -2356,8 +2356,8 @@ public class ASTGenerator {
           }
         }
         else if (prop.isChildListProperty()) {
-          List<ASTNode> nodelist = (List<ASTNode>) node
-              .getStructuralProperty(prop);
+          List<ASTNode> nodelist = 
+            (List<ASTNode>) node.getStructuralProperty(prop);
           for (ASTNode temp : nodelist) {
             if (temp.getStartPosition() <= startOffset
                 && (temp.getStartPosition() + temp.getLength()) >= endOffset) {
@@ -2552,7 +2552,7 @@ public class ASTGenerator {
     }
   }
 
-  @SuppressWarnings("unchecked")
+  
   protected static ASTNode findLineOfNode(ASTNode node, int lineNumber,
                                         int offset, String name) {
 
@@ -2610,7 +2610,6 @@ public class ASTGenerator {
    * @param root
    * @return
    */
-  @SuppressWarnings("unchecked")
   public static ASTNode pinpointOnLine(ASTNode node, int offset,
                                        int lineStartOffset, String name) {
     //log("pinpointOnLine node class: " + node.getClass().getSimpleName());
@@ -2669,7 +2668,6 @@ public class ASTGenerator {
    * @param findMe
    * @return
    */
-  @SuppressWarnings("unchecked")
   protected static ASTNode findDeclaration(Name findMe) {
     
     // WARNING: You're entering the Rube Goldberg territory of Experimental Mode.
@@ -3224,7 +3222,8 @@ public class ASTGenerator {
     return (SimpleType) t;
   }
   
-  public static Type extracTypeInfo2(ASTNode node) {
+  
+  static public Type extracTypeInfo2(ASTNode node) {
     if (node == null)
       return null;
     switch (node.getNodeType()) {
@@ -3245,8 +3244,8 @@ public class ASTGenerator {
     return null;
   }
 
-  @SuppressWarnings("unchecked")
-  protected static ASTNode definedIn(ASTNode node, String name,
+  
+  static protected ASTNode definedIn(ASTNode node, String name,
                                    ArrayList<Integer> constrains,
                                    ASTNode declaringClass) {
     if (node == null)

@@ -22,6 +22,7 @@ package processing.mode.java.debug;
 
 import java.io.*;
 import java.lang.reflect.Method;
+
 import processing.app.Base;
 import processing.app.SketchException;
 import processing.core.PApplet;
@@ -121,6 +122,7 @@ public class Compiler extends processing.mode.java.Compiler {
           Class.forName("org.eclipse.jdt.core.compiler.CompilationProgress", false, loader);
         Class[] compileArgs =
           new Class[] { String[].class, PrintWriter.class, PrintWriter.class, progressClass };
+        @SuppressWarnings("unchecked")
         Method compileMethod = batchClass.getMethod("compile", compileArgs);
         success = (Boolean)
           compileMethod.invoke(null, new Object[] { command, outWriter, writer, null });

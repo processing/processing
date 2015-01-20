@@ -65,6 +65,7 @@ import processing.mode.java.preproc.PdePreprocessor;
  * The main error checking service
  * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
  */
+@SuppressWarnings("unchecked")
 public class ErrorCheckerService implements Runnable {
   
   protected DebugEditor editor;
@@ -249,7 +250,7 @@ public class ErrorCheckerService implements Runnable {
    */
   protected void initParser() {
     try {
-      parser = ASTParser.newParser(AST.JLS4);
+      parser = ASTParser.newParser(AST.JLS8);
     } catch (Exception e) {
       System.err.println("Experimental Mode initialization failed. "
           + "Are you running the right version of Processing? ");
@@ -964,7 +965,7 @@ public class ErrorCheckerService implements Runnable {
   /**
    * Sets compiler options for JDT Compiler
    */
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings("rawtypes")
   protected void prepareCompilerSetting() {
     compilerSettings = new HashMap();
 
@@ -973,7 +974,7 @@ public class ErrorCheckerService implements Runnable {
     compilerSettings.put(CompilerOptions.OPTION_SourceFileAttribute,
         CompilerOptions.GENERATE);
     compilerSettings.put(CompilerOptions.OPTION_Source,
-        CompilerOptions.VERSION_1_6);
+        CompilerOptions.VERSION_1_8);
     compilerSettings.put(CompilerOptions.OPTION_ReportUnusedImport,
         CompilerOptions.IGNORE);
     compilerSettings.put(CompilerOptions.OPTION_ReportMissingSerialVersion,

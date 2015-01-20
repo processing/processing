@@ -82,6 +82,7 @@ _ remove public 'ta' object in DebugEditor, also dmode
 _ rename TextArea and TextAreaPainter to JavaTextArea
 
 @SuppressWarnings({ "unused", "unchecked", "cast" })
+change JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
 
 
 _ make examples pull/build automatic during dist

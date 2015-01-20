@@ -116,6 +116,7 @@ public class Runner implements MessageConsumer {
   }
   
   
+  @SuppressWarnings("unchecked")
   public boolean launchVirtualMachine(boolean presenting) {
     String[] vmParams = getMachineParams();
     String[] sketchParams = getSketchParams(presenting);

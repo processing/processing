@@ -76,16 +76,15 @@ public class XQPreprocessor {
 		//source = prepareImports() + source;
 		Document doc = new Document(source);
 
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
+		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		parser.setSource(doc.get().toCharArray());
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
 		@SuppressWarnings("unchecked")
 		Map<String, String> options = JavaCore.getOptions();
 
-		// Ben has decided to move on to 1.6. Yay!
-		JavaCore.setComplianceOptions(JavaCore.VERSION_1_6, options);
-		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
+		JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
+		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
 		parser.setCompilerOptions(options);
 		CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 		cu.recordModifications();
