@@ -19,13 +19,12 @@
     </and>
   </condition>
 
-  <!-- Require Java 7 to bootstrap, otherwise there will be sadness. 
-       Java 1.8 caused build problems (with ECJ?) so not supported. --> 
-  <fail message="Unsupported Java version: ${java.version}. Make sure that Java 7 (aka Java 1.7) is installed."> 
+  <!-- Require Java 8 everywhere. -->
+  <fail message="Unsupported Java version: ${java.version}. Make sure that Java 7 (aka Java 1.8) is installed."> 
     <condition> 
       <not> 
         <or> 
-          <contains string="${java.version}" substring="1.7" /> 
+          <contains string="${java.version}" substring="1.8" /> 
         </or> 
       </not> 
     </condition> 
