@@ -43,7 +43,7 @@
 
   <target name="compile" description="Compile sources">
     <condition property="core-built">
-      <available file="${core.library.location}/core.jar" />
+      <available file="${core.library.path}/core.jar" />
     </condition>
     <fail unless="core-built" message="Please build the core library first and make sure it sits in ../core/library/core.jar" />
 
@@ -56,7 +56,32 @@
 	   debug="off"
 	   includeAntRuntime="false" 
 	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter"
-	   classpath="${core.library.location}/core.jar; ${env.JAVA_HOME}/lib/tools.jar; ${app.library.location}/lib/ant.jar; ${app.library.location}/lib/ant-launcher.jar; ${app.library.location}/lib/antlr.jar; ${app.library.location}/lib/apple.jar; ${app.library.location}/lib/jdt-core.jar; ${app.library.location}/lib/jna.jar; ${app.library.location}/lib/org-netbeans-swing-outline.jar; ${app.library.location}/pde.jar; mode/com.ibm.icu_4.4.2.v20110823.jar; mode/jdi.jar; mode/jdimodel.jar; mode/org.eclipse.core.contenttype_3.4.200.v20120523-2004.jar; mode/org.eclipse.core.jobs_3.5.300.v20120622-204750.jar; mode/org.eclipse.core.resources_3.8.1.v20120802-154922.jar; mode/org.eclipse.core.runtime_3.8.0.v20120521-2346.jar; mode/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar; mode/org.eclipse.equinox.preferences_3.5.0.v20120522-1841.jar; mode/org.eclipse.jdt.core_3.8.2.v20120814-155456.jar; mode/org.eclipse.jdt.debug_3.7.101.v20120725-115645.jar; mode/org.eclipse.osgi_3.8.1.v20120830-144521.jar; mode/org.eclipse.text_3.5.200.v20120523-1310.jar;mode/classpath-explorer-1.0.jar; mode/jsoup-1.7.1.jar;">
+	   classpath="${core.library.path}/core.jar; 
+                      ${app.library.path}/lib/ant.jar; 
+                      ${app.library.path}/lib/ant-launcher.jar; 
+                      ${app.library.path}/lib/antlr.jar; 
+                      ${app.library.path}/lib/apple.jar; 
+                      ${app.library.path}/lib/jna.jar; 
+                      ${app.library.path}/lib/org-netbeans-swing-outline.jar; 
+                      ${app.library.path}/pde.jar; 
+
+                      mode/jdi.jar; 
+                      mode/jdimodel.jar; 
+
+                      mode/com.ibm.icu_52.1.0.v201404241930.jar;
+
+                      mode/org.eclipse.core.contenttype_3.4.200.v20140207-1251.jar;
+                      mode/org.eclipse.core.jobs_3.6.0.v20140424-0053.jar;
+                      mode/org.eclipse.core.resources_3.9.1.v20140825-1431.jar;
+                      mode/org.eclipse.core.runtime_3.10.0.v20140318-2214.jar;
+                      mode/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar;
+                      mode/org.eclipse.equinox.preferences_3.5.200.v20140224-1527.jar;
+                      mode/org.eclipse.jdt.core_3.10.0.v20140902-0626.jar;
+                      mode/org.eclipse.osgi_3.10.1.v20140909-1633.jar;
+                      mode/org.eclipse.text_3.5.300.v20130515-1451.jar;
+
+                      mode/classpath-explorer-1.0.jar; 
+                      mode/jsoup-1.7.1.jar;">
       <src path="src" />
       <compilerclasspath path="../java/mode/ecj.jar" />
     </javac>

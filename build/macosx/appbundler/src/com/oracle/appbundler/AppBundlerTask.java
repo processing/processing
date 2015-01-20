@@ -76,8 +76,8 @@ public class AppBundlerTask extends Task {
 
   private String applicationCategory = null;
   private boolean highResolutionCapable = true;
-  // Oracle Java 7 requires 10.7.3 or later, so require it here.
-  private String minimumSystem = "10.7.3";
+  // Oracle Java 8 requires 10.8.3 or later, so require it here.
+  private String minimumSystem = "10.8.3";
   // By default, don't embed Java FX.
   private boolean javafx = false;
 
@@ -205,10 +205,10 @@ public class AppBundlerTask extends Task {
       "bin/",
 
       // original version, removed entire bin folder
-//      "jre/bin/",
+      //"jre/bin/",
 
       // remove everything except 'java'
-      "jre/bin/keytool",
+      // also keep 'keytool' (needed by Android)
       "jre/bin/orbd",
       "jre/bin/pack200",
       "jre/bin/policytool",

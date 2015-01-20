@@ -33,8 +33,6 @@ import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
-//REMOVE
-//import java.nio.file.*;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
@@ -999,7 +997,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  abstract public void handleImportLibrary(String jarPath);
+  abstract public void handleImportLibrary(String name);
 
 
   public JMenu getToolMenu() {

@@ -3,8 +3,17 @@ package processing.lwjgl;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.nio.IntBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -21,6 +30,7 @@ import processing.event.MouseEvent;
 import processing.opengl.PGraphicsOpenGL;
 
 public class PSurfaceLWJGL implements PSurface {
+  GraphicsDevice displayDevice;
   PApplet sketch;
   PGraphics graphics;
   
@@ -28,8 +38,17 @@ public class PSurfaceLWJGL implements PSurface {
   int sketchHeight; 
   
   Frame frame;
+  // Note that x and y may not be zero, depending on the display configuration
+  Rectangle screenRect;  
   
   PLWJGL pgl;
+  
+  boolean fullScreenRequested;
+  
+  int cursorType = PConstants.ARROW; // cursor type
+  boolean cursorVisible = true; // cursor visibility flag  
+  Cursor invisibleCursor;
+  Cursor currentCursor;
   
   // ........................................................
   
@@ -66,12 +85,99 @@ public class PSurfaceLWJGL implements PSurface {
                          int deviceIndex, boolean fullScreen, boolean spanDisplays) {
     this.sketch = sketch;
             
-    sketchWidth = sketch.width = sketch.sketchWidth();
-    sketchHeight = sketch.height = sketch.sketchHeight();
+    GraphicsEnvironment environment =
+        GraphicsEnvironment.getLocalGraphicsEnvironment();
+    
+      DisplayMode desktopMode = Display.getDesktopDisplayMode();
+      PApplet.println("DESKTOP MODES");
+      PApplet.println(desktopMode);
+      PApplet.println("ALL MODES");
+      try {
+        DisplayMode[] allModes = Display.getAvailableDisplayModes();
+        for (DisplayMode mode: allModes) {
+          PApplet.println(mode);
+        }        
+      } catch (LWJGLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
+
+      
+
+      if (deviceIndex >= 0) {  // if -1, use the default device
+        GraphicsDevice[] devices = environment.getScreenDevices();
+        if (deviceIndex < devices.length) {
+          displayDevice = devices[deviceIndex];
+        } else {
+          System.err.format("Display %d does not exist, " +
+            "using the default display instead.", deviceIndex);
+          for (int i = 0; i < devices.length; i++) {
+            System.err.format("Display %d is %s\n", i, devices[i]);
+          }
+        }
+      }
+      if (displayDevice == null) {
+        displayDevice = environment.getDefaultScreenDevice();
+      }
+
+      // Need to save the window bounds at full screen,
+      // because pack() will cause the bounds to go to zero.
+      // http://dev.processing.org/bugs/show_bug.cgi?id=923
+      screenRect = spanDisplays ? getDisplaySpan() :
+        displayDevice.getDefaultConfiguration().getBounds();    
+    
+    // Set the displayWidth/Height variables inside PApplet, so that they're
+    // usable and can even be returned by the sketchWidth()/Height() methods.
+    sketch.displayWidth = screenRect.width;
+    sketch.displayHeight = screenRect.height;
+
+    sketchWidth = sketch.sketchWidth();
+    sketchHeight = sketch.sketchHeight();
+        
+    // Sketch has already requested to be the same as the screen's
+    // width and height, so let's roll with full screen mode.
+    if (screenRect.width == sketchWidth &&
+        screenRect.height == sketchHeight) {
+      fullScreen = true;
+    }
+
+    if (fullScreen || spanDisplays) {
+      sketchWidth = screenRect.width;
+      sketchHeight = screenRect.height;
+    }
+    
+    if (fullScreen) {
+      // Called here because the graphics device is needed before we can
+      // determine whether the sketch wants size(displayWidth, displayHeight),
+      // and getting the graphics device will be PSurface-specific.
+//      PApplet.hideMenuBar();
+      
+      // Useful hidden switches:
+      // http://wiki.lwjgl.org/index.php?title=LWJGL_Hidden_Switches
+      System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
+      fullScreenRequested = true;
+    }
+    
+//    sketchWidth = sketch.width = sketch.sketchWidth();
+//    sketchHeight = sketch.height = sketch.sketchHeight();
     
     frame = new DummyFrame();
     return frame;
   }
+  
+  // get the bounds for all displays
+  static Rectangle getDisplaySpan() {
+    Rectangle bounds = new Rectangle();
+    GraphicsEnvironment environment =
+      GraphicsEnvironment.getLocalGraphicsEnvironment();
+    for (GraphicsDevice device : environment.getScreenDevices()) {
+      for (GraphicsConfiguration config : device.getConfigurations()) {
+        Rectangle2D.union(bounds, config.getBounds(), bounds);
+      }
+    }
+    return bounds;
+  }  
 
   @Override
   public void setTitle(String title) {
@@ -90,8 +196,15 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public void placeWindow(int[] location) {
-    Display.setLocation(location[0], location[1]);
-    
+    if (location != null) {
+      // a specific location was received from the Runner
+      // (applet has been run more than once, user placed window)
+      Display.setLocation(location[0], location[1]);
+    } else {  // just center on screen
+      // Can't use frame.setLocationRelativeTo(null) because it sends the
+      // frame to the main display, which undermines the --display setting.
+      setFrameCentered();
+    }    
   }
 
   @Override
@@ -99,6 +212,13 @@ public class PSurfaceLWJGL implements PSurface {
     // TODO Auto-generated method stub
     
   }
+  
+  private void setFrameCentered() {
+    // Can't use frame.setLocationRelativeTo(null) because it sends the
+    // frame to the main display, which undermines the --display setting.
+    Display.setLocation(screenRect.x + (screenRect.width - sketchWidth) / 2,
+                        screenRect.y + (screenRect.height - sketchHeight) / 2);
+  } 
 
   @Override
   public void placePresent(Color stopColor) {
@@ -118,7 +238,7 @@ public class PSurfaceLWJGL implements PSurface {
       thread = new AnimationThread();
       thread.start();
     } else {
-      throw new IllegalStateException("Thread already started in PSurfaceAWT");
+      throw new IllegalStateException("Thread already started in PSurfaceLWJGL");
     }  
   }
 
@@ -210,25 +330,78 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public void setCursor(int kind) {
+    System.err.println("Sorry, cursor types not supported in OpenGL, provide your cursor image");
     // TODO Auto-generated method stub
+//    if (PApplet.platform == PConstants.MACOSX && kind == PConstants.MOVE) {
+//      kind = PConstants.HAND;
+//    }
+//    
+//    java.awt.Cursor cursor0 = java.awt.Cursor.getPredefinedCursor(kind);
     
+    
+//    Cursor cursor1 = Cursor(cursor0.,
+//        int height,
+//        int xHotspot,
+//        int yHotspot,
+//        int numImages,
+//        java.nio.IntBuffer images,
+//        java.nio.IntBuffer delays);
+    
+    
+//    Mouse.setNativeCursor(cursor1);
+//    cursorVisible = true;
+//    this.cursorType = kind;     
   }
 
   @Override
   public void setCursor(PImage image, int hotspotX, int hotspotY) {
-    // TODO Auto-generated method stub
-    
+    BufferedImage jimg = (BufferedImage)image.getNative();
+    IntBuffer buf = IntBuffer.wrap(jimg.getRGB(0, 0, jimg.getWidth(), jimg.getHeight(),
+                                               null, 0, jimg.getWidth()));
+    try {
+      currentCursor = new Cursor(jimg.getWidth(), jimg.getHeight(),
+                                 hotspotX, hotspotY, 1, buf, null);
+      Mouse.setNativeCursor(currentCursor);
+      cursorVisible = true;
+    } catch (LWJGLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   @Override
   public void showCursor() {
-    // TODO Auto-generated method stub
-    
+    if (!cursorVisible) {
+//      setCursor(cursorType);
+//      cursorVisible = true;
+//      Mouse.setCursor(Cursor.getPredefinedCursor(cursorType));
+      try {
+        Mouse.setNativeCursor(currentCursor);
+        cursorVisible = true;
+      } catch (LWJGLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
   }
 
   @Override
   public void hideCursor() {
-    // TODO Auto-generated method stub
+    if (invisibleCursor == null) {
+      try {
+        invisibleCursor = new Cursor(1, 1, 0, 0, 1, BufferUtils.createIntBuffer(1), null);
+      } catch (LWJGLException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+    }    
+    try {
+      Mouse.setNativeCursor(invisibleCursor);
+      cursorVisible = false;
+    } catch (LWJGLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   class AnimationThread extends Thread {
@@ -244,7 +417,23 @@ public class PSurfaceLWJGL implements PSurface {
     @Override
     public void run() {  // not good to make this synchronized, locks things up
       try {
+//        DisplayMode[] modes = Display.getAvailableDisplayModes();
+//        for (DisplayMode mode: modes) {
+//          System.err.println(mode.toString());
+//        }
+
+          
         Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
+        System.err.println(sketchWidth + " " + sketchHeight);
+        if (fullScreenRequested) {
+          Display.setFullscreen(true);
+        }
+        
+//        Display.setDisplayMode(Display.getDesktopDisplayMode());
+//        
+//        Display.create();                
+        
+        
         Display.create();
       } catch (LWJGLException e) {
         e.printStackTrace();
@@ -256,6 +445,8 @@ public class PSurfaceLWJGL implements PSurface {
 
       mousePoller = new MousePoller(sketch); 
       mousePoller.start();
+      
+      System.err.println(Mouse.getNativeCursor());
       
       long beforeTime = System.nanoTime();
       long overSleepTime = 0L;
@@ -277,6 +468,9 @@ public class PSurfaceLWJGL implements PSurface {
       sketch.start();
 
       while ((Thread.currentThread() == thread) && !sketch.finished) {
+        if (Display.wasResized()) {
+          setSize(Display.getWidth(), Display.getHeight());
+        }
         pgl.setThread(thread);
         checkPause();
 
@@ -301,7 +495,6 @@ public class PSurfaceLWJGL implements PSurface {
         // this is necessary since the drawing is sometimes in a
         // separate thread, meaning that the next frame will start
         // before the update/paint is completed
-
         long afterTime = System.nanoTime();
         long timeDiff = afterTime - beforeTime;
         //System.out.println("time diff is " + timeDiff);
@@ -324,10 +517,14 @@ public class PSurfaceLWJGL implements PSurface {
             noDelays = 0;
           }
         }
-
-        beforeTime = System.nanoTime();
+        beforeTime = System.nanoTime();        
+//        Display.sync((int)frameRateTarget);
+        
+        if (Display.isCloseRequested()) break;
       }
 
+      keyPoller.requestStop();
+      mousePoller.requestStop();
       sketch.dispose();  // call to shutdown libs?
       Display.destroy();
 
@@ -348,17 +545,17 @@ public class PSurfaceLWJGL implements PSurface {
 
     @Override
     public void setResizable(boolean resizable) {
-//      super.setResizable(resizable);
+      Display.setResizable(resizable);      
     }
 
     @Override
     public void setVisible(boolean visible) {
-//      window.setVisible(visible);
+//      Display.setVisible(visible);
     }
 
     @Override
     public void setTitle(String title) {
-//      window.setTitle(title);
+      Display.setTitle(title);
     }
   }
   
@@ -376,6 +573,12 @@ public class PSurfaceLWJGL implements PSurface {
     KeyPoller(PApplet parent) {
       this.parent = parent;
       stopRequested = false;
+      try {
+        Keyboard.create();
+      } catch (LWJGLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
 
     @Override
@@ -467,6 +670,13 @@ public class PSurfaceLWJGL implements PSurface {
     MousePoller(PApplet parent) {
       this.parent = parent;
       stopRequested = false;
+      try {
+        Mouse.create();
+//        Mouse.setNativeCursor(null);
+      } catch (LWJGLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
 
     @Override
@@ -575,6 +785,8 @@ public class PSurfaceLWJGL implements PSurface {
   // To complete later...
   // http://docs.oracle.com/javase/6/docs/api/java/awt/event/KeyEvent.html
   // http://processing.org/reference/keyCode.html
+  // This might be very useful:
+  // http://gtge.googlecode.com/svn/trunk/GTGE%20Add-Ons/src/com/golden/gamedev/engine/lwjgl/LWJGLInput.java
   protected int LWJGLtoAWTCode(int code) {
     switch (code) {
     case Keyboard.KEY_0:

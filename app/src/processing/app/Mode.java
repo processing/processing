@@ -487,7 +487,10 @@ public abstract class Mode {
       for (Library library : coreLibraries) {
         JMenuItem item = new JMenuItem(library.getName());
         item.addActionListener(listener);
-        item.setActionCommand(library.getJarPath());
+        
+        // changed to library-name to facilitate specification of imports from properties file
+        item.setActionCommand(library.getName());
+        
         importMenu.add(item);
       }
     }
@@ -503,7 +506,9 @@ public abstract class Mode {
       for (Library library : contribLibraries) {
         JMenuItem item = new JMenuItem(library.getName());
         item.addActionListener(listener);
-        item.setActionCommand(library.getJarPath());
+        
+        // changed to library-name to facilitate specification if imports from properties file
+        item.setActionCommand(library.getName());
 
         String group = library.getGroup();
         if (group != null) {
@@ -1364,6 +1369,25 @@ public abstract class Mode {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  /**
+   * Checks coreLibraries and contribLibraries for a library with the specified name  
+   * @param libName the name of the library to find
+   * @return the Library or null if not found
+   */
+  public Library findLibraryByName(String libName) {
+   
+    for (Library lib : this.coreLibraries) {
+      if (libName.equals(lib.getName()))
+        return lib;
+    }
+    
+    for (Library lib : this.contribLibraries) {
+      if (libName.equals(lib.getName()))
+        return lib;
+    }
+    
+    return null;
+  }
 
   /**
    * Create a fresh applet/application folder if the 'delete target folder'

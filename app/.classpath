@@ -6,6 +6,7 @@
 			<attribute name="ignore_optional_problems" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-core"/>
 	<classpathentry kind="lib" path="lib/antlr.jar" sourcepath="lib/antlr-src.zip"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
@@ -18,6 +19,5 @@
 	<classpathentry kind="lib" path="lib/jdi.jar" sourcepath="/processing-experimental/mode/jdi-src.zip"/>
 	<classpathentry kind="lib" path="lib/jdimodel.jar" sourcepath="/processing-experimental/mode/jdimodel-src.zip"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

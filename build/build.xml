@@ -19,13 +19,12 @@
     </and>
   </condition>
 
-  <!-- Require Java 7 to bootstrap, otherwise there will be sadness. 
-       Java 1.8 caused build problems (with ECJ?) so not supported. --> 
-  <fail message="Unsupported Java version: ${java.version}. Make sure that Java 7 (aka Java 1.7) is installed."> 
+  <!-- Require Java 8 everywhere. -->
+  <fail message="Unsupported Java version: ${java.version}. Make sure that Java 7 (aka Java 1.8) is installed."> 
     <condition> 
       <not> 
         <or> 
-          <contains string="${java.version}" substring="1.7" /> 
+          <contains string="${java.version}" substring="1.8" /> 
         </or> 
       </not> 
     </condition> 
@@ -34,9 +33,15 @@
   <property name="examples.dir" 
 	    value="../../processing-docs/content/examples" />
 
+  <!--
   <property name="jdk.version" value="7" />
   <property name="jdk.update" value="72" />
   <property name="jdk.build" value="14" />
+  -->
+  <!-- Switching to 8 because updates end April 2015 -->
+  <property name="jdk.version" value="8" />
+  <property name="jdk.update" value="25" />
+  <property name="jdk.build" value="17" />
   <property name="jdk.stuff" value="${jdk.version}u${jdk.update}" />
   <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
 
@@ -55,6 +60,8 @@
   </condition>
 
   <fileset dir="windows/work/java" id="jre-optional-windows">
+    <include name="lib/ext/dnsns.jar" />
+
     <include name="bin/dtplugin" />
     <include name="bin/plugin2" />
 
@@ -62,7 +69,7 @@
     <include name="bin/klist.exe" />
     <include name="bin/ktab.exe" />
 
-    <!--<include name="bin/keytool" />-->
+    <!--<include name="bin/keytool" />--> <!-- needed for Android -->
     <include name="bin/orbd" />
     <include name="bin/policytool" />
     <include name="bin/rmid" />
@@ -73,12 +80,14 @@
     <include name="bin/javaws.exe" />
     <include name="lib/javaws.jar" />
 
-    <include name="lib/ext/dnsns.jar" />
     <include name="lib/cmm/PYCC.pf" />
   </fileset>
 
   <fileset dir="linux/work/java" id="jre-optional-linux">
-    <!--<include name="bin/keytool" />-->
+    <!--<include name="bin/keytool" />--> <!-- needed for Android -->
+
+    <include name="lib/ext/dnsns.jar" />
+
     <include name="bin/orbd" />
     <include name="bin/policytool" />
     <include name="bin/rmid" />
@@ -89,7 +98,6 @@
     <include name="bin/javaws" />
     <include name="lib/javaws.jar" />
 
-    <include name="lib/ext/dnsns.jar" />
     <include name="lib/cmm/PYCC.pf" />
   </fileset>
 
@@ -100,6 +108,9 @@
   <!-- There might be others, based on what was in the Java 6 docs, 
        but that info isn't part of the Java 7 instructions.
        http://www.oracle.com/technetwork/java/javase/jrereadme-182762.html -->
+
+  <!-- New list for Java 8, not updated yet here, nor in appbundler on OS X
+       http://www.oracle.com/technetwork/java/javase/jre-8-readme-2095710.html -->
 
   <fileset dir="${platform}/work/java" id="javafx-basics">
     <include name="THIRDPARTYLICENSEREADME-JAVAFX.txt" />
@@ -484,15 +495,6 @@
         <string>true</string>
 -->
     </bundleapp>
-
-    <!-- The 'keytool' file is deleted by our appbundler. Add it back so that
-	  Android signing works properly. (Not modifying our appbundler since
-	  most of the time that appbundler is used, keytool isn't needed). 
-	  Also, because Ant's copy task does not retain file permissions on Unix systems, 
-	  we need to use <exec executable="cp" ... > instead -->
-    <exec executable="cp">
-      <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/bin"/>
-    </exec>
 
     <!-- Replace libjli.dylib symlink with actual file. 
          Deals with code signing issues on OS X 10.9.5+ -->

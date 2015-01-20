@@ -61,8 +61,8 @@ public class PdeKeyListener {
     this.editor = editor;
     this.textarea = textarea;
 
-    // let him know that i'm leechin'
-    textarea.editorListener = this;
+//    // let him know that i'm leechin'
+//    textarea.editorListener = this;
   }
 
 

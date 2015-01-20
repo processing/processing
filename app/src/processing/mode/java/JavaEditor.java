@@ -15,6 +15,8 @@ import javax.swing.event.MenuListener;
 import processing.app.*;
 import processing.app.Toolkit;
 import processing.app.contrib.ToolContribution;
+import processing.app.syntax.JEditTextArea;
+import processing.app.syntax.PdeTextAreaDefaults;
 import processing.mode.java.runner.Runner;
 
 
@@ -22,7 +24,7 @@ public class JavaEditor extends Editor {
   JavaMode jmode;
 
   // TODO this needs prefs to be applied when necessary
-  PdeKeyListener listener;
+//  PdeKeyListener listener;
 
   // Runner associated with this editor window
   private Runner runtime;
@@ -31,11 +33,45 @@ public class JavaEditor extends Editor {
   protected JavaEditor(Base base, String path, EditorState state, Mode mode) {
     super(base, path, state, mode);
 
-    // hopefully these are no longer needed w/ swing
-    // (har har har.. that was wishful thinking)
-    listener = new PdeKeyListener(this, textarea);
+//    // hopefully these are no longer needed w/ swing
+//    // (har har har.. that was wishful thinking)
+//    listener = new PdeKeyListener(this, textarea);
 
     jmode = (JavaMode) mode;
+  }
+  
+  
+  protected JEditTextArea createTextArea() {
+    return new JEditTextArea(new PdeTextAreaDefaults(mode)) {
+       // Forwards key events directly to the input handler. This is slightly 
+       // faster than using a KeyListener because some Swing overhead is avoided.
+      PdeKeyListener editorListener = new PdeKeyListener(JavaEditor.this, this);
+
+      // Moved out of JEditTextArea for 3.0a6 to remove dependency on Java Mode
+      public void processKeyEvent(KeyEvent evt) {
+        // this had to be added in Processing 007X, because the menu key
+        // events weren't making it up to the frame.
+        super.processKeyEvent(evt);
+
+        if (inputHandler != null) {
+          switch (evt.getID()) {  
+          case KeyEvent.KEY_TYPED:  
+            if ((editorListener == null) || !editorListener.keyTyped(evt)) {
+              inputHandler.keyTyped(evt);
+            }
+            break;
+          case KeyEvent.KEY_PRESSED:
+            if ((editorListener == null) || !editorListener.keyPressed(evt)) {
+              inputHandler.keyPressed(evt);
+            }
+            break;
+          case KeyEvent.KEY_RELEASED:
+            inputHandler.keyReleased(evt);
+            break;
+          }
+        }
+      }
+    };
   }
 
 
@@ -950,7 +986,8 @@ public class JavaEditor extends Editor {
    * Add import statements to the current tab for all of packages inside
    * the specified jar file.
    */
-  public void handleImportLibrary(String jarPath) {
+  public void handleImportLibrary(String libraryName) {
+
     // make sure the user didn't hide the sketch folder
     sketch.ensureExistence();
 
@@ -960,11 +997,23 @@ public class JavaEditor extends Editor {
     if (mode.isDefaultExtension(sketch.getCurrentCode())) {
       sketch.setCurrentCode(0);
     }
+    
+    Library lib = mode.findLibraryByName(libraryName);
+    if (lib == null) {
+      statusError("Unable to locate library: "+libraryName);
+      return;
+    }
 
     // could also scan the text in the file to see if each import
     // statement is already in there, but if the user has the import
     // commented out, then this will be a problem.
-    String[] list = Base.packageListFromClassPath(jarPath);
+    String[] list = lib.getSpecifiedImports(); // ask the library for its imports 
+    if (list == null) {
+      
+      // Default to old behavior and load each package in the primary jar
+      list = Base.packageListFromClassPath(lib.getJarPath());
+    }
+
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < list.length; i++) {
       sb.append("import ");

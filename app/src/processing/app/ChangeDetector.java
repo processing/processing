@@ -1,17 +1,21 @@
 package processing.app;
 
+import java.awt.EventQueue;
+import java.awt.Frame;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 public class ChangeDetector implements WindowFocusListener {
   private Sketch sketch;
 
   private Editor editor;
 
-  private boolean enabled = true;
+//  private boolean enabled = true;
+  private boolean enabled = false;  // broken on OS X
 
   private boolean skip = false;
 
@@ -32,7 +36,78 @@ public class ChangeDetector implements WindowFocusListener {
       skip = false;
       return;
     }
-    checkFileChange();
+    checkFileChangeAsync();
+  }
+
+  private void checkFileChangeAsync() {
+    Thread th = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        checkFileChange();
+      }
+    });
+    th.start();
+  }
+
+  private void showErrorAsync(final String title, final String message,
+                              final Exception e) {
+    EventQueue.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        Base.showError(title, message, e);
+      }
+    });
+  }
+
+  private void showWarningAsync(final String title, final String message) {
+    EventQueue.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        Base.showWarning(title, message);
+      }
+    });
+  }
+
+  private void showWarningTieredAsync(final String title,
+                                      final String message1,
+                                      final String message2, final Exception e) {
+    EventQueue.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        Base.showWarningTiered(title, message1, message2, e);
+      }
+    });
+  }
+
+  private int showYesNoQuestionAsync(final Frame editor, final String title,
+                                     final String message1,
+                                     final String message2) {
+    final int[] res = { -1 };
+    try {
+      //have to wait for a response on this one
+      EventQueue.invokeAndWait(new Runnable() {
+        @Override
+        public void run() {
+          res[0] = Base.showYesNoQuestion(editor, title, message1, message2);
+        }
+      });
+    } catch (InvocationTargetException e) {
+      //occurs if Base.showYesNoQuestion throws an error, so, shouldn't happen
+      e.printStackTrace();
+    } catch (InterruptedException e) {
+      //occurs if the EDT is interrupted, so, shouldn't happen
+      e.printStackTrace();
+    }
+    return res[0];
+  }
+
+  private void rebuildHeaderAsync() {
+    EventQueue.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        editor.header.rebuild();
+      }
+    });
   }
 
   private void checkFileChange() {
@@ -41,6 +116,9 @@ public class ChangeDetector implements WindowFocusListener {
       return;
     }
 
+    //make sure the sketch folder exists at all. if it does not, it will be re-saved, and no changes will be detected
+    //
+    sketch.ensureExistence();
     //check file count first
     File sketchFolder = sketch.getFolder();
     int fileCount = sketchFolder.list(new FilenameFilter() {
@@ -48,7 +126,7 @@ public class ChangeDetector implements WindowFocusListener {
       @Override
       public boolean accept(File dir, String name) {
         for (String s : editor.getMode().getExtensions()) {
-          if (name.endsWith(s)) {
+          if (name.toLowerCase().endsWith(s.toLowerCase())) {
             return true;
           }
         }
@@ -57,14 +135,14 @@ public class ChangeDetector implements WindowFocusListener {
     }).length;
 
     if (fileCount != sketch.getCodeCount()) {
-      reloadSketch(null);
-      if (fileCount < 1) {
+      //if they chose to reload and there aren't any files left
+      if (reloadSketch(null) && fileCount < 1) {
         try {
           //make a blank file
           sketch.getMainFile().createNewFile();
         } catch (Exception e1) {
           //if that didn't work, tell them it's un-recoverable
-          Base.showError("Reload failed", "The sketch contains no code files.",
+          showErrorAsync("Reload failed", "The sketch contains no code files.",
                          e1);
           //don't try to reload again after the double fail
           //this editor is probably trashed by this point, but a save-as might be possible
@@ -73,11 +151,9 @@ public class ChangeDetector implements WindowFocusListener {
         }
         //it's okay to do this without confirmation, because they already confirmed to deleting the unsaved changes above
         sketch.reload();
-        editor.header.rebuild();
-        Base
-          .showWarning("Modified Reload",
-                       "You cannot delete the last code file in a sketch.\n"
-                         + "A new blank sketch file has been generated for you.");
+        showWarningAsync("Modified Reload",
+                         "You cannot delete the last code file in a sketch.\n"
+                           + "A new blank sketch file has been generated for you.");
 
       }
       return;
@@ -97,10 +173,9 @@ public class ChangeDetector implements WindowFocusListener {
       try {
         onDisk = Base.loadFile(sketchFile);
       } catch (IOException e1) {
-        Base
-          .showWarningTiered("File Change Detection Failed",
-                             "Checking for changed files for this sketch has failed.",
-                             "The file change detector will be disabled.", e1);
+        showWarningTieredAsync("File Change Detection Failed",
+                               "Checking for changed files for this sketch has failed.",
+                               "The file change detector will be disabled.", e1);
         enabled = false;
         return;
       }
@@ -119,18 +194,17 @@ public class ChangeDetector implements WindowFocusListener {
   }
 
   //returns true if the files in the sketch have been reloaded
-  private void reloadSketch(SketchCode changed) {
-    int response = Base
-      .showYesNoQuestion(editor,
-                         "File Modified",
-                         "Your sketch has been modified externally.<br>Would you like to reload the sketch?",
-                         "If you reload the sketch, any unsaved changes will be lost!");
+  private boolean reloadSketch(SketchCode changed) {
+    int response = showYesNoQuestionAsync(editor,
+                                          "File Modified",
+                                          "Your sketch has been modified externally.<br>Would you like to reload the sketch?",
+                                          "If you reload the sketch, any unsaved changes will be lost!");
     if (response == 0) {
       //reload the sketch
 
       sketch.reload();
-      editor.header.rebuild();
-
+      rebuildHeaderAsync();
+      return true;
     } else {
       //they said no, make it possible for them to stop the errors by saving
       if (changed != null) {
@@ -146,11 +220,10 @@ public class ChangeDetector implements WindowFocusListener {
         }
         //if files were simply added, then nothing needs done
       }
-      editor.header.rebuild();
+      rebuildHeaderAsync();
       skip = true;
-      return;
+      return false;
     }
-    return;
   }
 
   @Override

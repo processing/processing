@@ -1931,18 +1931,12 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-   * Forwards key events directly to the input handler.
-   * This is slightly faster than using a KeyListener
-   * because some Swing overhead is avoided.
-   */
-  public processing.mode.java.PdeKeyListener editorListener;
-
-  /**
    * The component that tracks the current line number.
    */
   public EditorLineStatus editorLineStatus;
 
 
+  /*
   public void processKeyEvent(KeyEvent evt) {
     // this had to be added in Processing 007X, because the menu key
     // events weren't making it up to the frame.
@@ -1968,6 +1962,7 @@ public class JEditTextArea extends JComponent
       break;
     }
   }
+  */
 
   // protected members
   protected static String CENTER = "center";

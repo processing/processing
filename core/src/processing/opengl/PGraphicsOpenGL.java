@@ -5240,10 +5240,17 @@ public class PGraphicsOpenGL extends PGraphics {
     float nz =
       dx*modelviewInv.m02 + dy*modelviewInv.m12 + dz*modelviewInv.m22;
 
-    float invn = 1.0f / PApplet.dist(0, 0, 0, nx, ny, nz);
-    lightNormal[3 * num + 0] = invn * nx;
-    lightNormal[3 * num + 1] = invn * ny;
-    lightNormal[3 * num + 2] = invn * nz;
+    float d = PApplet.dist(0, 0, 0, nx, ny, nz);
+    if (0 < d) {
+      float invn = 1.0f / d;
+      lightNormal[3 * num + 0] = invn * nx;
+      lightNormal[3 * num + 1] = invn * ny;
+      lightNormal[3 * num + 2] = invn * nz;
+    } else {
+      lightNormal[3 * num + 0] = 0;
+      lightNormal[3 * num + 1] = 0;
+      lightNormal[3 * num + 2] = 0;
+    }
   }
 
 

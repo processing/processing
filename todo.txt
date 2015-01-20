@@ -6,9 +6,15 @@ X   https://github.com/processing/processing/issues/2979
 X splash screen for Linux
 X   https://github.com/processing/processing/pull/3005
 
-_ Determine shortcut for Export vs Use Selection for Find
-_   https://github.com/processing/processing/issues/2985
-
+update components
+X moving to Java 8 because Java 7 will be discontinued
+X   http://www.oracle.com/technetwork/java/javase/eol-135779.html
+X   requires Vista SP2 (ok, just say 7), and OS X 10.8.3, Ubuntu 12.04
+X   requires 10.10 to build appbundler (for the Xcode SDK)
+X requires ECJ update (using 4.4.1)
+X   http://download.eclipse.org/eclipse/downloads/drops4/R-4.4.1-201409250400/
+X update to launch4j 3.6
+X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.6/
 
 earlier
 X any problems with new code signing crap? 
@@ -28,6 +34,9 @@ joel
 X Add reference for installed tools and libraries to the Help menu
 X   https://github.com/processing/processing/issues/943
 X   https://github.com/processing/processing/pull/2804
+X examples.properties file missing prevents startup
+X   https://github.com/processing/processing/issues/3037
+X   https://github.com/processing/processing/pull/3047
 
 manindra
 X Fix for "Probably a ++ should go here" messages
@@ -53,6 +62,20 @@ X fix encodings, line endings, and mime types in the repo
 X   https://github.com/processing/processing/issues/2955
 X   https://github.com/processing/processing/pull/2978
 X   https://github.com/processing/processing/pull/2977
+X add control for dependencies (i.e. svg needs xml), needed for export
+X   http://code.google.com/p/processing/issues/detail?id=70
+X   https://github.com/processing/processing/issues/109
+X   https://github.com/processing/processing/pull/3010
+X lots of Auto Format fixes
+X   https://github.com/processing/processing/pull/3002
+X   https://github.com/processing/processing/issues/2540
+X   https://github.com/processing/processing/issues/1041
+X update name of sketch in the "Recent" menu
+X   https://github.com/processing/processing/issues/2984
+X   https://github.com/processing/processing/pull/3046
+X File change detection rewrite
+X   https://github.com/processing/processing/pull/3048
+
 
 _ make examples pull/build automatic during dist
 _ merge experimental into the main Java mode 
@@ -66,8 +89,6 @@ _ finish Ant task to download JRE and JDK from Oracle
 _   add method to prompt OS X developers to download the JDK update
 _   https://github.com/processing/processing/issues/2960
 
-_ Add support for localizing contributions
-_   https://github.com/processing/processing/pull/2833
 
 from the todo list
 _ reas: comments go nasty when auto-formatted
@@ -92,8 +113,6 @@ _   https://github.com/processing/processing/issues/2944
 
 
 pending
-_ bug in getCaretLocation of CompositionTextPainter class
-_   https://github.com/processing/processing/issues/2934
 _ look at the sound library https://github.com/wirsing/ProcessingSound
 _   sound is not yet supported on Windows
 _ make reference build process part of dist
@@ -104,6 +123,8 @@ _   processing-docs/java_generate/ReferenceGenerator/processingrefBuild.sh
 _   remove reference.zip from main repo
 _ clean out the repo
 _   https://github.com/processing/processing/issues/1898
+_ Add support for localizing contributions
+_   https://github.com/processing/processing/pull/2833
 
 
 help me
@@ -135,6 +156,8 @@ _   https://github.com/processing/processing/issues/2955
 
 
 medium
+_ Determine shortcut for Export vs Use Selection for Find
+_   https://github.com/processing/processing/issues/2985
 _ remove toolbar menu references and code to rebuild
 _ fix single instance server on OS X to load double-clicked files
 _   when run from Eclipse, the single instance thing punts
@@ -602,9 +625,6 @@ _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
 _   http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
-_ add control for dependencies (i.e. svg needs xml), needed for export
-X   http://code.google.com/p/processing/issues/detail?id=70
-_   https://github.com/processing/processing/issues/109
 _ need better platform designation setup for libs
 _ library installation should use the sketchbook folder, not the p5 folder
 _   actually enforce this, give users a warning about other libs
@@ -767,8 +787,6 @@ _   update will update classes from shared in the current folder
 
 TOOLS / Auto Format
 
-_ extra indent found
-_   https://github.com/processing/processing/issues/1041
 _ Switch block cases not indented
 _   https://github.com/processing/processing/issues/1042
 _ do a better job of maintaining cursor 
