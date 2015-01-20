@@ -6,13 +6,9 @@ import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.MemoryImageSource;
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -52,6 +48,7 @@ public class PSurfaceLWJGL implements PSurface {
   int cursorType = PConstants.ARROW; // cursor type
   boolean cursorVisible = true; // cursor visibility flag  
   Cursor invisibleCursor;
+  Cursor currentCursor;
   
   // ........................................................
   
@@ -199,8 +196,15 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public void placeWindow(int[] location) {
-    Display.setLocation(location[0], location[1]);
-    
+    if (location != null) {
+      // a specific location was received from the Runner
+      // (applet has been run more than once, user placed window)
+      Display.setLocation(location[0], location[1]);
+    } else {  // just center on screen
+      // Can't use frame.setLocationRelativeTo(null) because it sends the
+      // frame to the main display, which undermines the --display setting.
+      setFrameCentered();
+    }    
   }
 
   @Override
@@ -208,6 +212,13 @@ public class PSurfaceLWJGL implements PSurface {
     // TODO Auto-generated method stub
     
   }
+  
+  private void setFrameCentered() {
+    // Can't use frame.setLocationRelativeTo(null) because it sends the
+    // frame to the main display, which undermines the --display setting.
+    Display.setLocation(screenRect.x + (screenRect.width - sketchWidth) / 2,
+                        screenRect.y + (screenRect.height - sketchHeight) / 2);
+  } 
 
   @Override
   public void placePresent(Color stopColor) {
@@ -319,11 +330,13 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public void setCursor(int kind) {
+    System.err.println("Sorry, cursor types not supported in OpenGL, provide your cursor image");
     // TODO Auto-generated method stub
-    if (PApplet.platform == PConstants.MACOSX && kind == PConstants.MOVE) {
-      kind = PConstants.HAND;
-    }
-    java.awt.Cursor cursor0 = java.awt.Cursor.getPredefinedCursor(kind);
+//    if (PApplet.platform == PConstants.MACOSX && kind == PConstants.MOVE) {
+//      kind = PConstants.HAND;
+//    }
+//    
+//    java.awt.Cursor cursor0 = java.awt.Cursor.getPredefinedCursor(kind);
     
     
 //    Cursor cursor1 = Cursor(cursor0.,
@@ -336,9 +349,8 @@ public class PSurfaceLWJGL implements PSurface {
     
     
 //    Mouse.setNativeCursor(cursor1);
-    cursorVisible = true;
-    this.cursorType = kind; 
-    
+//    cursorVisible = true;
+//    this.cursorType = kind;     
   }
 
   @Override
@@ -347,9 +359,9 @@ public class PSurfaceLWJGL implements PSurface {
     IntBuffer buf = IntBuffer.wrap(jimg.getRGB(0, 0, jimg.getWidth(), jimg.getHeight(),
                                                null, 0, jimg.getWidth()));
     try {
-      Cursor cursor = new Cursor(jimg.getWidth(), jimg.getHeight(),
+      currentCursor = new Cursor(jimg.getWidth(), jimg.getHeight(),
                                  hotspotX, hotspotY, 1, buf, null);
-      Mouse.setNativeCursor(cursor);
+      Mouse.setNativeCursor(currentCursor);
       cursorVisible = true;
     } catch (LWJGLException e) {
       // TODO Auto-generated catch block
@@ -359,10 +371,18 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public void showCursor() {
-//    if (!cursorVisible) {
+    if (!cursorVisible) {
+//      setCursor(cursorType);
 //      cursorVisible = true;
 //      Mouse.setCursor(Cursor.getPredefinedCursor(cursorType));
-//    }
+      try {
+        Mouse.setNativeCursor(currentCursor);
+        cursorVisible = true;
+      } catch (LWJGLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
   }
 
   @Override
@@ -425,6 +445,8 @@ public class PSurfaceLWJGL implements PSurface {
 
       mousePoller = new MousePoller(sketch); 
       mousePoller.start();
+      
+      System.err.println(Mouse.getNativeCursor());
       
       long beforeTime = System.nanoTime();
       long overSleepTime = 0L;
@@ -551,6 +573,12 @@ public class PSurfaceLWJGL implements PSurface {
     KeyPoller(PApplet parent) {
       this.parent = parent;
       stopRequested = false;
+      try {
+        Keyboard.create();
+      } catch (LWJGLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
 
     @Override
@@ -642,6 +670,13 @@ public class PSurfaceLWJGL implements PSurface {
     MousePoller(PApplet parent) {
       this.parent = parent;
       stopRequested = false;
+      try {
+        Mouse.create();
+//        Mouse.setNativeCursor(null);
+      } catch (LWJGLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
 
     @Override
