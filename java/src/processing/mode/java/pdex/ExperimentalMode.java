@@ -57,24 +57,26 @@ public class ExperimentalMode extends JavaMode {
   public static final int LOG_SIZE = 512 * 1024; // max log file size (in bytes)
   public static boolean DEBUG = !true;
 
+
   public ExperimentalMode(Base base, File folder) {
     super(base, folder);
 
-    // use libraries folder from javamode. will make sketches using core libraries work, as well as import libraries and examples menus
-    for (Mode m : base.getModeList()) {
-      if (m.getClass() == JavaMode.class) {
-        JavaMode jMode = (JavaMode) m;
-        librariesFolder = jMode.getLibrariesFolder();
-        rebuildLibraryList();
-        break;
-      }
-    }
-
-    // Fetch examples and reference from java mode
-    // thx to Manindra (https://github.com/martinleopold/DebugMode/issues/4)
-    examplesFolder = Base.getContentFile("modes/java/examples");
-    // https://github.com/martinleopold/DebugMode/issues/6
-    referenceFolder = Base.getContentFile("modes/java/reference");
+    // [removed by fry 150120]
+//    // use libraries folder from javamode. will make sketches using core libraries work, as well as import libraries and examples menus
+//    for (Mode m : base.getModeList()) {
+//      if (m.getClass() == JavaMode.class) {
+//        JavaMode jMode = (JavaMode) m;
+//        librariesFolder = jMode.getLibrariesFolder();
+//        rebuildLibraryList();
+//        break;
+//      }
+//    }
+//
+//    // Fetch examples and reference from java mode
+//    // thx to Manindra (https://github.com/martinleopold/DebugMode/issues/4)
+//    examplesFolder = Base.getContentFile("modes/java/examples");
+//    // https://github.com/martinleopold/DebugMode/issues/6
+//    referenceFolder = Base.getContentFile("modes/java/reference");
 
     // set logging level
     Logger globalLogger = Logger.getLogger("");
@@ -126,6 +128,7 @@ public class ExperimentalMode extends JavaMode {
     };
   }
 
+
   public File getContentFile(String path) {
     File file = new File(folder, path);
     if (!file.exists()) {
@@ -135,6 +138,7 @@ public class ExperimentalMode extends JavaMode {
     return file;
   }
 
+
   volatile public static boolean errorCheckEnabled = true,
       warningsEnabled = true, codeCompletionsEnabled = true,
       debugOutputEnabled = false, errorLogsEnabled = false,
@@ -142,6 +146,7 @@ public class ExperimentalMode extends JavaMode {
       defaultAutoSaveEnabled = true, // ,untitledAutoSaveEnabled;
       ccTriggerEnabled = false, importSuggestEnabled = true;
   public static int autoSaveInterval = 3; //in minutes
+
 
   /**
    * After how many typed characters, code completion is triggered
@@ -162,6 +167,7 @@ public class ExperimentalMode extends JavaMode {
 
   static volatile public boolean enableTweak = false;
 
+
   public void loadPreferences() {
     log("Load PDEX prefs");
     ensurePrefsExist();
@@ -179,6 +185,7 @@ public class ExperimentalMode extends JavaMode {
     importSuggestEnabled = Preferences.getBoolean(prefImportSuggestEnabled);
   }
 
+
   public void savePreferences() {
     log("Saving PDEX prefs");
     Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
@@ -194,6 +201,7 @@ public class ExperimentalMode extends JavaMode {
     Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
     Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
   }
+
 
   public void ensurePrefsExist() {
     //TODO: Need to do a better job of managing prefs. Think lists.
@@ -221,7 +229,6 @@ public class ExperimentalMode extends JavaMode {
       Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
     if (Preferences.get(prefImportSuggestEnabled) == null)
       Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
-
   }
 
 
@@ -270,7 +277,9 @@ public class ExperimentalMode extends JavaMode {
     return defaultValue;
   }
 
+
   protected ImageIcon classIcon, fieldIcon, methodIcon, localVarIcon;
+
   protected void loadIcons(){
     String iconPath = getContentFile("data")
         .getAbsolutePath()
@@ -297,6 +306,7 @@ public class ExperimentalMode extends JavaMode {
     return null;
   }
 
+
   /**
    * System.out.println()
    */
@@ -304,6 +314,7 @@ public class ExperimentalMode extends JavaMode {
     if(ExperimentalMode.DEBUG)
       System.out.println(message);
   }
+
 
   /**
    * System.err.println()
@@ -313,6 +324,7 @@ public class ExperimentalMode extends JavaMode {
       System.err.println(message);
   }
 
+
   /**
    * System.out.print
    */
@@ -320,6 +332,7 @@ public class ExperimentalMode extends JavaMode {
     if(ExperimentalMode.DEBUG)
       System.out.print(message);
   }
+
 
   public String[] getIgnorable() {
     return new String[] {
@@ -331,129 +344,128 @@ public class ExperimentalMode extends JavaMode {
     };
   }
 
+
   // TweakMode code
-        @Override
-        public Runner handleRun(Sketch sketch, RunnerListener listener) throws SketchException
-        {
-          final DebugEditor editor = (DebugEditor)listener;
-          editor.errorCheckerService.quickErrorCheck();
-                if (enableTweak) {
-                  enableTweak = false;
-                        return handleTweakPresentOrRun(sketch, listener, false);
-                }
-                else {
-                        /* Do the usual (JavaMode style) */
-                    JavaBuild build = new JavaBuild(sketch);
-                    String appletClassName = build.build(false);
-                    if (appletClassName != null) {
-                      final Runner runtime = new Runner(build, listener);
-                      new Thread(new Runnable() {
-                        public void run() {
-                          runtime.launch(false);  // this blocks until finished
-                        }
-                      }).start();
-                      return runtime;
-                    }
-                    return null;
-                }
-        }
+  @Override
+  public Runner handleRun(Sketch sketch,
+                          RunnerListener listener) throws SketchException {
+    final DebugEditor editor = (DebugEditor)listener;
+    editor.errorCheckerService.quickErrorCheck();
+    if (enableTweak) {
+      enableTweak = false;
+      return handleTweakPresentOrRun(sketch, listener, false);
+    } else {
+      // Do the usual (JavaMode style)
+      JavaBuild build = new JavaBuild(sketch);
+      String appletClassName = build.build(false);
+      if (appletClassName != null) {
+        final Runner runtime = new Runner(build, listener);
+        new Thread(new Runnable() {
+            public void run() {
+              runtime.launch(false);  // this blocks until finished
+            }
+          }).start();
+        return runtime;
+      }
+      return null;
+    }
+  }
 
-        @Override
-        public Runner handlePresent(Sketch sketch, RunnerListener listener) throws SketchException
-        {
-                final DebugEditor editor = (DebugEditor)listener;
-                editor.errorCheckerService.quickErrorCheck();
-                if (enableTweak) {
-                  enableTweak = false;
-                        return handleTweakPresentOrRun(sketch, listener, true);
-                }
-                else {
-                        /* Do the usual (JavaMode style) */
-                    JavaBuild build = new JavaBuild(sketch);
-                    String appletClassName = build.build(false);
-                    if (appletClassName != null) {
-                      final Runner runtime = new Runner(build, listener);
-                      new Thread(new Runnable() {
-                        public void run() {
-                          runtime.launch(true);
-                        }
-                      }).start();
-                      return runtime;
-                    }
-                    return null;
-                }
-        }
+  @Override
+  public Runner handlePresent(Sketch sketch,
+                              RunnerListener listener) throws SketchException {
+    final DebugEditor editor = (DebugEditor)listener;
+    editor.errorCheckerService.quickErrorCheck();
+    if (enableTweak) {
+      enableTweak = false;
+      return handleTweakPresentOrRun(sketch, listener, true);
+    } else {
+      /* Do the usual (JavaMode style) */
+      JavaBuild build = new JavaBuild(sketch);
+      String appletClassName = build.build(false);
+      if (appletClassName != null) {
+        final Runner runtime = new Runner(build, listener);
+        new Thread(new Runnable() {
+            public void run() {
+              runtime.launch(true);
+            }
+          }).start();
+        return runtime;
+      }
+      return null;
+    }
+  }
 
-        public Runner handleTweakPresentOrRun(Sketch sketch, RunnerListener listener, boolean present) throws SketchException
-        {
-                final DebugEditor editor = (DebugEditor)listener;
-                final boolean toPresent = present;
 
-                boolean launchInteractive = false;
+  public Runner handleTweakPresentOrRun(Sketch sketch,
+                                        RunnerListener listener,
+                                        boolean present) throws SketchException {
+    final DebugEditor editor = (DebugEditor)listener;
+    final boolean toPresent = present;
+    boolean launchInteractive = false;
 
-                if (isSketchModified(sketch)) {
-                        editor.deactivateRun();
-                        Base.showMessage("Save", "Please save the sketch before running in Tweak Mode.");
-                        return null;
-                }
+    if (isSketchModified(sketch)) {
+      editor.deactivateRun();
+      Base.showMessage("Save", "Please save the sketch before running in Tweak Mode.");
+      return null;
+    }
 
-                /* first try to build the unmodified code */
-                JavaBuild build = new JavaBuild(sketch);
-                String appletClassName = build.build(false);
-                if (appletClassName == null) {
-                        // unmodified build failed, so fail
-                        return null;
-                }
+    // first try to build the unmodified code
+    JavaBuild build = new JavaBuild(sketch);
+    String appletClassName = build.build(false);
+    if (appletClassName == null) {
+      // unmodified build failed, so fail
+      return null;
+    }
 
-                /* if compilation passed, modify the code and build again */
-                // save the original sketch code of the user
-                editor.initBaseCode();
-                // check for "// tweak" comment in the sketch
-                boolean requiresTweak = SketchParser.containsTweakComment(editor.baseCode);
-                // parse the saved sketch to get all (or only with "//tweak" comment) numbers
-                final SketchParser parser = new SketchParser(editor.baseCode, requiresTweak);
+    // if compilation passed, modify the code and build again
+    // save the original sketch code of the user
+    editor.initBaseCode();
+    // check for "// tweak" comment in the sketch
+    boolean requiresTweak = SketchParser.containsTweakComment(editor.baseCode);
+    // parse the saved sketch to get all (or only with "//tweak" comment) numbers
+    final SketchParser parser = new SketchParser(editor.baseCode, requiresTweak);
 
-                // add our code to the sketch
-                launchInteractive = editor.automateSketch(sketch, parser.allHandles);
+    // add our code to the sketch
+    launchInteractive = editor.automateSketch(sketch, parser.allHandles);
 
-                build = new JavaBuild(sketch);
-                appletClassName = build.build(false);
+    build = new JavaBuild(sketch);
+    appletClassName = build.build(false);
 
-                if (appletClassName != null) {
-                        final Runner runtime = new Runner(build, listener);
-                        new Thread(new Runnable() {
-                                public void run() {
-                                        runtime.launch(toPresent);  // this blocks until finished
-
+    if (appletClassName != null) {
+      final Runner runtime = new Runner(build, listener);
+      new Thread(new Runnable() {
+          public void run() {
+            runtime.launch(toPresent);  // this blocks until finished
                                         // executed when the sketch quits
-                                        editor.initEditorCode(parser.allHandles, false);
-                                        editor.stopInteractiveMode(parser.allHandles);
-                                }
+            editor.initEditorCode(parser.allHandles, false);
+            editor.stopInteractiveMode(parser.allHandles);
+          }
+        }).start();
 
-                        }).start();
+      if (launchInteractive) {
+        // replace editor code with baseCode
+        editor.initEditorCode(parser.allHandles, false);
+        editor.updateInterface(parser.allHandles, parser.colorBoxes);
+        editor.startInteractiveMode();
+      }
+      return runtime;
+    }
+    return null;
+  }
 
-                        if (launchInteractive) {
 
-                                // replace editor code with baseCode
-                                editor.initEditorCode(parser.allHandles, false);
-                                editor.updateInterface(parser.allHandles, parser.colorBoxes);
-                                editor.startInteractiveMode();
-                        }
+  private boolean isSketchModified(Sketch sketch) {
+    for (SketchCode sc : sketch.getCode()) {
+      if (sc.isModified()) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-                        return runtime;
-                }
 
-                return null;
-        }
-
-        private boolean isSketchModified(Sketch sketch)
-        {
-                for (SketchCode sc : sketch.getCode()) {
-                        if (sc.isModified()) {
-                                return true;
-                        }
-                }
-                return false;
-        }
-
+  static public void main(String[] args) {
+    processing.app.Base.main(args);
+  }
 }

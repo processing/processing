@@ -53,8 +53,8 @@ public class Base {
 //  static private boolean RELEASE = false;
 
   /** True if heavy debugging error/log messages are enabled */
-  static public boolean DEBUG = false;
-//  static public boolean DEBUG = true;
+//  static public boolean DEBUG = false;
+  static public boolean DEBUG = true;
 
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
@@ -168,7 +168,7 @@ public class Base {
     // because the platform has to be inited properly first.
 
     // Make sure a full JDK is installed
-    initRequirements();
+    //initRequirements();
 
     // Load the languages
     Language.init();
@@ -249,6 +249,7 @@ public class Base {
   }
 
 
+  /*
   public static void initRequirements() {
     try {
       Class.forName("com.sun.jdi.VirtualMachine"); //$NON-NLS-1$
@@ -271,6 +272,13 @@ public class Base {
                      "More information can be found on the Wiki.", cnfe);
     }
   }
+  */
+
+
+  private String getDefaultModeIdentifier() {
+    return "processing.mode.java.pdex.ExperimentalMode";
+    //return "processing.mode.java.JavaMode";
+  }
 
 
   private void buildCoreModes() {
@@ -281,6 +289,7 @@ public class Base {
     // PDE X calls getModeList() while it's loading, so coreModes must be set
     coreModes = new Mode[] { javaMode };
 
+    /*
     Mode pdexMode =
       ModeContribution.load(this, getContentFile("modes/ExperimentalMode"), //$NON-NLS-1$
                             "processing.mode.experimental.ExperimentalMode").getMode(); //$NON-NLS-1$
@@ -288,6 +297,7 @@ public class Base {
     // Safe to remove the old Java mode here?
     //coreModes = new Mode[] { pdexMode };
     coreModes = new Mode[] { pdexMode, javaMode };
+    */
   }
 
 
@@ -619,11 +629,6 @@ public class Base {
     }
   }
 
-
-  private String getDefaultModeIdentifier() {
-    return "processing.mode.java.JavaMode";
-  }
-  
 
   public Mode getDefaultMode() {
     return coreModes[0];

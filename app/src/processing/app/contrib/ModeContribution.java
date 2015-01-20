@@ -77,6 +77,7 @@ public class ModeContribution extends LocalContribution {
     className = initLoader(className);
     if (className != null) {
       Class<?> modeClass = loader.loadClass(className);
+      Base.log("Got mode class " + modeClass);
       Constructor con = modeClass.getConstructor(Base.class, File.class);
       mode = (Mode) con.newInstance(base, folder);
       mode.setClassLoader(loader);

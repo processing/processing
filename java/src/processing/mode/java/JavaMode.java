@@ -62,8 +62,8 @@ public class JavaMode extends Mode {
 
 //  public Editor createEditor(Base ibase, String path, int[] location) {
 //  }
-
-
+  
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
