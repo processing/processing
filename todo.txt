@@ -16,11 +16,6 @@ X   http://download.eclipse.org/eclipse/downloads/drops4/R-4.4.1-201409250400/
 X update to launch4j 3.6
 X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.6/
 
-
-_ Determine shortcut for Export vs Use Selection for Find
-_   https://github.com/processing/processing/issues/2985
-
-
 earlier
 X any problems with new code signing crap? 
 X   issues raised around the symlink (just replace with a copy of the binary?)
@@ -94,8 +89,6 @@ _ finish Ant task to download JRE and JDK from Oracle
 _   add method to prompt OS X developers to download the JDK update
 _   https://github.com/processing/processing/issues/2960
 
-_ Add support for localizing contributions
-_   https://github.com/processing/processing/pull/2833
 
 from the todo list
 _ reas: comments go nasty when auto-formatted
@@ -120,8 +113,6 @@ _   https://github.com/processing/processing/issues/2944
 
 
 pending
-_ bug in getCaretLocation of CompositionTextPainter class
-_   https://github.com/processing/processing/issues/2934
 _ look at the sound library https://github.com/wirsing/ProcessingSound
 _   sound is not yet supported on Windows
 _ make reference build process part of dist
@@ -132,6 +123,8 @@ _   processing-docs/java_generate/ReferenceGenerator/processingrefBuild.sh
 _   remove reference.zip from main repo
 _ clean out the repo
 _   https://github.com/processing/processing/issues/1898
+_ Add support for localizing contributions
+_   https://github.com/processing/processing/pull/2833
 
 
 help me
@@ -163,6 +156,8 @@ _   https://github.com/processing/processing/issues/2955
 
 
 medium
+_ Determine shortcut for Export vs Use Selection for Find
+_   https://github.com/processing/processing/issues/2985
 _ remove toolbar menu references and code to rebuild
 _ fix single instance server on OS X to load double-clicked files
 _   when run from Eclipse, the single instance thing punts

@@ -320,8 +320,7 @@ public class SketchOutline {
                                    .toString());
     } else if (awnode.getNode() instanceof FieldDeclaration) {
       FieldDeclaration fd = (FieldDeclaration) awnode.getNode();
-      for (VariableDeclarationFragment vdf : (List<VariableDeclarationFragment>) fd
-          .fragments()) {
+      for (VariableDeclarationFragment vdf : (List<VariableDeclarationFragment>) fd.fragments()) {
         DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(
                                                                     new ASTNodeWrapper(
                                                                                        vdf.getName(),

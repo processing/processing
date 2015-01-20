@@ -35,7 +35,7 @@ import javax.swing.tree.*;
 
 import processing.app.contrib.*;
 import processing.core.*;
-import processing.mode.java.JavaMode;
+
 
 /**
  * The base class for the main processing application.
@@ -276,7 +276,7 @@ public class Base {
   private void buildCoreModes() {
     Mode javaMode =
       ModeContribution.load(this, getContentFile("modes/java"), //$NON-NLS-1$
-                            "processing.mode.java.JavaMode").getMode(); //$NON-NLS-1$
+                            getDefaultModeIdentifier()).getMode(); //$NON-NLS-1$
 
     // PDE X calls getModeList() while it's loading, so coreModes must be set
     coreModes = new Mode[] { javaMode };
@@ -620,6 +620,11 @@ public class Base {
   }
 
 
+  private String getDefaultModeIdentifier() {
+    return "processing.mode.java.JavaMode";
+  }
+  
+
   public Mode getDefaultMode() {
     return coreModes[0];
   }
@@ -851,8 +856,7 @@ public class Base {
       }
     }
     if (possibleModes.size() == 1 &&
-        possibleModes.get(0).getIdentifier()
-        .equals(JavaMode.class.getCanonicalName())) {
+        possibleModes.get(0).getIdentifier().equals(getDefaultModeIdentifier())) {
       // If default mode can open it, then do so without prompting.
       return possibleModes.get(0);
     }
