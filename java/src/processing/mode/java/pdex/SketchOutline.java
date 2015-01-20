@@ -32,6 +32,7 @@ import java.awt.event.WindowFocusListener;
 import java.util.List;
 
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -119,21 +120,15 @@ public class SketchOutline {
     frmOutlineView.add(panelBottom);
     frmOutlineView.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frmOutlineView.pack();
-    frmOutlineView.setBounds(tp.x
-                                 + errorCheckerService.getEditor().ta
-                                     .getWidth() - minWidth, tp.y, minWidth,
+    frmOutlineView.setBounds(tp.x + errorCheckerService.getEditor().ta.getWidth() - minWidth, tp.y, minWidth,
                              Math.min(editor.ta.getHeight(), frmOutlineView.getHeight()));
-    frmOutlineView.setMinimumSize(new Dimension(minWidth, Math
-        .min(errorCheckerService.getEditor().ta.getHeight(), frmOutlineView.getHeight())));    
-    frmOutlineView.setLocation(tp.x
-                                   + errorCheckerService.getEditor().ta
-                                       .getWidth()/2 - frmOutlineView.getWidth()/2,
-                               frmOutlineView.getY()
-                                   + (editor.ta.getHeight() - frmOutlineView
-                                       .getHeight()) / 2);
+    frmOutlineView.setMinimumSize(new Dimension(minWidth, Math.min(errorCheckerService.getEditor().ta.getHeight(), frmOutlineView.getHeight())));    
+    frmOutlineView.setLocation(tp.x + errorCheckerService.getEditor().ta.getWidth()/2 - frmOutlineView.getWidth()/2,
+                               frmOutlineView.getY() + (editor.ta.getHeight() - frmOutlineView.getHeight()) / 2);
     addListeners();
   }
 
+  
   protected void addListeners() {
 
     searchField.addKeyListener(new KeyAdapter() {
@@ -145,8 +140,8 @@ public class SketchOutline {
         
         if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
          close();
-        }
-        else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+         
+        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
           if (soTree.getLastSelectedPathComponent() != null) {
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
                 .getLastSelectedPathComponent();
@@ -157,8 +152,8 @@ public class SketchOutline {
               close();
             }
           }
-        } 
-        else if (evt.getKeyCode() == KeyEvent.VK_UP) {
+          
+        } else if (evt.getKeyCode() == KeyEvent.VK_UP) {
           if (soTree.getLastSelectedPathComponent() == null) {
             soTree.setSelectionRow(0);
             return;
@@ -175,8 +170,8 @@ public class SketchOutline {
                                                     .getValue() - step));
           }
           soTree.setSelectionRow(x);
-        } 
-        else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
+          
+        } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
           if (soTree.getLastSelectedPathComponent() == null) {
             soTree.setSelectionRow(0);
             return;
@@ -373,29 +368,30 @@ public class SketchOutline {
   protected class CustomCellRenderer extends DefaultTreeCellRenderer {
 
     public Component getTreeCellRendererComponent(JTree tree, Object value,
-        boolean sel, boolean expanded, boolean leaf, int row,
-        boolean hasFocus) {
-
+                                                  boolean sel, boolean expanded, 
+                                                  boolean leaf, int row,
+                                                  boolean hasFocus) {
       super.getTreeCellRendererComponent(tree, value, sel, expanded,
-          leaf, row, hasFocus);
+                                         leaf, row, hasFocus);
       if (value instanceof DefaultMutableTreeNode)
         setIcon(getTreeIcon(value));
 
       return this;
     }
 
-    public javax.swing.Icon getTreeIcon(Object o) {
+    public Icon getTreeIcon(Object o) {
       if (((DefaultMutableTreeNode) o).getUserObject() instanceof ASTNodeWrapper) {
-
-        ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) o)
-            .getUserObject();
+        ASTNodeWrapper awrap = (ASTNodeWrapper) 
+          ((DefaultMutableTreeNode) o).getUserObject();
+        
         int type = awrap.getNode().getParent().getNodeType();
-        if (type == ASTNode.METHOD_DECLARATION)
+        if (type == ASTNode.METHOD_DECLARATION) {
           return editor.dmode.methodIcon;
-        if (type == ASTNode.TYPE_DECLARATION)
+        } else if (type == ASTNode.TYPE_DECLARATION) {
           return editor.dmode.classIcon;
-        if (type == ASTNode.VARIABLE_DECLARATION_FRAGMENT)
+        } else if (type == ASTNode.VARIABLE_DECLARATION_FRAGMENT) {
           return editor.dmode.fieldIcon;
+        }
       }
       return null;
     }
