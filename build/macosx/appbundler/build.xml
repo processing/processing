@@ -84,9 +84,13 @@ questions.
             <arg value="Cocoa"/>
             <arg value="-F"/>
             <arg value="${env.JAVA_HOME}/../.."/>
-            <arg value="-isysroot"/>                                           
+            <arg value="-isysroot"/>
+            <!--
             <arg value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk"/>
             <arg value="-mmacosx-version-min=10.7"/> 
+            -->
+            <arg value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk"/>
+            <arg value="-mmacosx-version-min=10.8"/> 
             <arg value="native/main.m"/>
         </exec>
     </target>
