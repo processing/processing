@@ -14,14 +14,19 @@ public class Downloader extends Task {
     "gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; " +
     "oraclelicense=accept-securebackup-cookie";
 
-  private int version;
-  private int update;
-  private int build;
+  private int version;  // Java 8
+  private int update;   // Update 31
+  private int build;    // Build 13
 
-  private boolean jdk;
+  private boolean jdk;  // false if JRE
 
-  private File baseDir;
-  private boolean includeRecorder;
+//  private String platform;  // macosx, windows, linux
+//  private String bits;  // i586 or x64
+  private String flavor;
+  
+  private String path;  // target path
+//  private File baseDir;
+//  private boolean includeRecorder;
 
 
   public Downloader() { }
@@ -45,13 +50,50 @@ public class Downloader extends Task {
   public void setJDK(boolean jdk) {
     this.jdk = jdk;
   }
+  
+  
+//  public void setPlatform(String platform) {
+//    this.platform = platform;
+//  }
+  
+  
+//  public void setBits(String bits) {
+//    this.bits = bits;
+//  }
+  
+  public void setFlavor(String flavor) {
+    this.flavor = flavor;
+  }
+  
+  
+  public void setPath(String path) {
+    this.path = path;
+  }
 
 
   public void execute() throws BuildException {
     //if (baseDir == null) {
     //  throw new BuildException("dir parameter must be set!");
     //}
+    
+    if (version == 0) {
+      throw new BuildException("version (i.e. 7 or 8) must be set");
+    }
+    
+    if (build == 0) {
+      throw new BuildException("build number must be set");
+    }
+    
+    if (flavor == null) {
+      throw new BuildException("you've gotta choose a flavor (macosx-x64.dmg, windows-x64.exe...");
+    }
+//    if (bits == null) {
+//      throw new BuildException("bits must be set (x64 or i586)");
+//    }
 
+    //download(path, jdk, platform, bits, version, update, build);
+    download();
+    
     /*
     downloadJRE("linux-i586.tar.gz");
     downloadJRE("linux-x64.tar.gz");
@@ -71,16 +113,20 @@ public class Downloader extends Task {
   }
 
 
-  static void download(File folder, String filename,
-                       boolean jre, String platform,
-                       int version, int update, int build) {
+//  static void download(String path, //File folder, String filename,
+//                       boolean jdk, String platform, String bits,
+//                       int version, int update, int build) {
+  void download() {
     //HttpURLConnection.setFollowRedirects(true);
-    if (filename == null) {
-      filename = (jre ? "jre" : "jdk") +
+    String filename = (jdk ? "jdk" : "jre") +
       (update == 0 ?
-       String.format("-%d-%s", version, platform) :
-       String.format("-%du%d-%s", version, update, platform));
+       String.format("-%d-%s", version, flavor) :
+       String.format("-%du%d-%s", version, update, flavor));
+    
+    if (path == null) {
+      path = filename;  //System.getProperty("user.dir");
     }
+
     //String url = "http://download.oracle.com/otn-pub/java/jdk/" +
     // https://edelivery.oracle.com/otn-pub/java/jdk/7u45-b18/jre-7u45-linux-i586.tar.gz
     String url = "https://edelivery.oracle.com/otn-pub/java/jdk/" +
@@ -119,7 +165,7 @@ public class Downloader extends Task {
       if (conn.getResponseCode() == 200) {
         InputStream input = conn.getInputStream();
         BufferedInputStream bis = new BufferedInputStream(input);
-        File outputFile = new File(folder, filename);
+        File outputFile = new File(path); //folder, filename);
         BufferedOutputStream output =
           new BufferedOutputStream(new FileOutputStream(outputFile));
         int c = bis.read();

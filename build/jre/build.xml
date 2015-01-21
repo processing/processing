@@ -1,31 +1,36 @@
-<project name="methods" default="task-lib">
+<project name="downloader" default="dist">
 
   <target name="compile">
     <mkdir dir="bin" />
 
-    <javac target="1.7" 
-	   srcdir="src" destdir="bin" 
+    <javac source="1.7"
+           target="1.7" 
+	   srcdir="src" 
+           destdir="bin" 
 	   debug="true" 
 	   includeantruntime="true"
 	   nowarn="true"
 	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
-      <compilerclasspath path="../../java/mode/ecj.jar" />
+      <compilerclasspath path="../../java/mode/org.eclipse.jdt.core.jar; 
+                               ../../java/mode/jdtCompilerAdapter.jar" />
     </javac>
   </target>
   
-  <target name="task-lib" depends="compile">
+  <target name="dist" depends="compile">
     <jar basedir="bin" destfile="downloader.jar" />
   </target>
   
-  <target name="demo">
+  <target name="demo" depends="dist">
     <taskdef name="downloader" 
 	     classname="Downloader"
 	     classpath="downloader.jar" />
-    <preproc dir="demo"/>
+    <downloader version="8" update="31" build="13" 
+                jdk="true" flavor="macosx-x64.dmg" />
   </target>
   
   <target name="clean">
     <delete dir="bin" />
     <delete file="downloader.jar" />
   </target>
+
 </project>
