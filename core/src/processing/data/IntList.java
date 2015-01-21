@@ -412,7 +412,11 @@ public class IntList implements Iterable<Integer> {
    * @brief Add to a value
    */
   public void add(int index, int amount) {
-    data[index] += amount;
+    if( index  < count) {
+	  data[index] += amount;
+    } else {
+	  throw new IndexOutOfBoundsException();
+	}
   }
 
   /**
@@ -420,7 +424,11 @@ public class IntList implements Iterable<Integer> {
    * @brief Subtract from a value
    */
   public void sub(int index, int amount) {
-    data[index] -= amount;
+    if( index  < count) {
+	  data[index] -= amount;
+    } else {
+	  throw new IndexOutOfBoundsException();
+	}
   }
 
   /**
@@ -428,7 +436,11 @@ public class IntList implements Iterable<Integer> {
    * @brief Multiply a value
    */
   public void mult(int index, int amount) {
-    data[index] *= amount;
+    if( index  < count) {
+	  data[index] *= amount;
+    } else {
+	  throw new IndexOutOfBoundsException();
+	}
   }
 
   /**
@@ -436,7 +448,11 @@ public class IntList implements Iterable<Integer> {
    * @brief Divide a value
    */
   public void div(int index, int amount) {
-    data[index] /= amount;
+    if( index  < count) {
+	  data[index] /= amount;
+    } else {
+	  throw new IndexOutOfBoundsException();
+	}
   }
 
 
