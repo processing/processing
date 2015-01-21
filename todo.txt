@@ -78,11 +78,15 @@ X   https://github.com/processing/processing/pull/3048
 
 
 integration of pdex
+X changed JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
+X change build scripts, get things running
 _ remove public 'ta' object in DebugEditor, also dmode
 _ rename TextArea and TextAreaPainter to JavaTextArea
-
-@SuppressWarnings({ "unused", "unchecked", "cast" })
-change JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
+_ DebugEditor.createTextArea() is copy & pasted from JavaEditor
+_   this whole setup is really gross at the moment
+_ auto-insert after antlr @SuppressWarnings({ "unused", "unchecked", "cast" })
+_ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
+_   because it's in the other package, can no longer rely on it
 
 
 _ make examples pull/build automatic during dist

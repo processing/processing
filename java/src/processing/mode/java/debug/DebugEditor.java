@@ -81,6 +81,7 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
+import processing.mode.java.PdeKeyListener;
 import processing.mode.java.pdex.ErrorBar;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
@@ -1297,10 +1298,43 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @return the customized text area object
      */
     @Override
+//    protected JEditTextArea createTextArea() {
+//        //System.out.println("overriding creation of text area");
+//        return new TextArea(new PdeTextAreaDefaults(mode), this);
+//    }
     protected JEditTextArea createTextArea() {
-        //System.out.println("overriding creation of text area");
-        return new TextArea(new PdeTextAreaDefaults(mode), this);
+      return new TextArea(new PdeTextAreaDefaults(mode), this) {
+         // Forwards key events directly to the input handler. This is slightly 
+         // faster than using a KeyListener because some Swing overhead is avoided.
+        PdeKeyListener editorListener = new PdeKeyListener(DebugEditor.this, this);
+
+        // Moved out of JEditTextArea for 3.0a6 to remove dependency on Java Mode
+        public void processKeyEvent(KeyEvent evt) {
+          // this had to be added in Processing 007X, because the menu key
+          // events weren't making it up to the frame.
+          super.processKeyEvent(evt);
+
+          if (inputHandler != null) {
+            switch (evt.getID()) {  
+            case KeyEvent.KEY_TYPED:  
+              if ((editorListener == null) || !editorListener.keyTyped(evt)) {
+                inputHandler.keyTyped(evt);
+              }
+              break;
+            case KeyEvent.KEY_PRESSED:
+              if ((editorListener == null) || !editorListener.keyPressed(evt)) {
+                inputHandler.keyPressed(evt);
+              }
+              break;
+            case KeyEvent.KEY_RELEASED:
+              inputHandler.keyReleased(evt);
+              break;
+            }
+          }
+        }
+      };
     }
+
 
     /**
      * Set the line to highlight as currently suspended at. Will override the

@@ -58,12 +58,14 @@ public class XQPreprocessor {
 	
 	private String[] coreImports, defaultImports;
 	
+	
 	public XQPreprocessor() {
 		PdePreprocessor p = new PdePreprocessor(null);
 		defaultImports = p.getDefaultImports();		
 		coreImports = p.getCoreImports();
 	}
 
+	
 	/**
 	 * The main method that performs preprocessing. Converts code into compilable java.
 	 * @param source - String
@@ -71,7 +73,7 @@ public class XQPreprocessor {
 	 * @return String - Compile ready java code
 	 */
 	public String doYourThing(String source,
-			ArrayList<ImportStatement> programImports) {
+	                          ArrayList<ImportStatement> programImports) {
 		this.extraImports = programImports;
 		//source = prepareImports() + source;
 		Document doc = new Document(source);
@@ -118,9 +120,9 @@ public class XQPreprocessor {
 		return doc.get();
 	}
 
+	
 	/**
 	 * Returns all import statements as lines of code
-	 * 
 	 * @return String - All import statements combined. Each import in a separate line.
 	 */
 	public String prepareImports() {
@@ -143,11 +145,13 @@ public class XQPreprocessor {
 		return totalImports;
 	}
 	
+	
 	public String prepareImports(ArrayList<ImportStatement> programImports) {
 	  this.extraImports = programImports;
 	  return prepareImports();
 	}
 
+	
 	/**
 	 * Visitor implementation that does all the substitution dirty work. <br>
 	 * <LI>Any function not specified as being protected or private will be made
@@ -190,6 +194,7 @@ public class XQPreprocessor {
 
 			return true;
 		}
+		
 
 		public boolean visit(NumberLiteral node) {
 			if (!node.getToken().endsWith("f")
@@ -206,6 +211,7 @@ public class XQPreprocessor {
 			return true;
 		}
 
+		
 		// public boolean visit(FieldDeclaration node) {
 		// if (node.getType().toString().equals("color")){
 		// System.err.println("color type detected!");
@@ -231,13 +237,9 @@ public class XQPreprocessor {
 		 */
 		public boolean visit(SimpleType node) {
 			if (node.toString().equals("color")) {
-				System.err
-						.println("color type detected! \nThis shouldn't be happening! Please report this as an issue.");
+				System.err.println("color type detected! \nThis shouldn't be happening! Please report this as an issue.");
 			}
 			return true;
-
 		}
-
 	}
-
 }

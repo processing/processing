@@ -53,8 +53,8 @@ public class Base {
 //  static private boolean RELEASE = false;
 
   /** True if heavy debugging error/log messages are enabled */
-//  static public boolean DEBUG = false;
-  static public boolean DEBUG = true;
+  static public boolean DEBUG = false;
+//  static public boolean DEBUG = true;
 
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
@@ -2235,7 +2235,7 @@ public class Base {
       // Path may have URL encoding, so remove it
       String decodedPath = PApplet.urlDecode(path);
 
-      if (decodedPath.contains("/app/bin")) {
+      if (decodedPath.contains("/app/bin")) {  // This means we're in Eclipse
         if (Base.isMacOS()) {
           processingRoot =
             new File(path, "../../build/macosx/work/Processing.app/Contents/Java");
@@ -2252,11 +2252,9 @@ public class Base {
           // This works for Windows, Linux, and Apple's Java 6 on OS X.
           processingRoot = jarFolder.getParentFile();
         } else if (Base.isMacOS()) {
-          // This works for Java 7 on OS X. The 'lib' folder is not part of the
-          // classpath on OS X, and adding it creates more problems than it's
-          // worth.
+          // This works for Java 8 on OS X. We don't have things inside a 'lib' 
+          // folder on OS X. Adding it caused more problems than it was worth.
           processingRoot = jarFolder;
-
         }
         if (processingRoot == null || !processingRoot.exists()) {
           // Try working directory instead (user.dir, different from user.home)
