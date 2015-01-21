@@ -423,12 +423,20 @@ public class FloatList implements Iterable<Float> {
   }
 
 
+  private String exceptionText(int count, int index, String method){
+    return "The list size is "+count+". Trying to "+method+" the element at "+index+" which does not exist.";
+  }
+
   /**
    * @webref floatlist:method
    * @brief Add to a value
    */
   public void add(int index, float amount) {
-    data[index] += amount;
+    if (index < count) {
+      data[index] += amount;
+    } else {
+      throw new ArrayIndexOutOfBoundsException(exceptionText(count, index, "add"));
+    }
   }
 
 
@@ -437,7 +445,11 @@ public class FloatList implements Iterable<Float> {
    * @brief Subtract from a value
    */
   public void sub(int index, float amount) {
-    data[index] -= amount;
+    if (index < count) {
+      data[index] -= amount;
+    } else {
+      throw new ArrayIndexOutOfBoundsException(exceptionText(count, index, "sub"));
+    }
   }
 
 
@@ -446,7 +458,11 @@ public class FloatList implements Iterable<Float> {
    * @brief Multiply a value
    */
   public void mult(int index, float amount) {
-    data[index] *= amount;
+    if (index < count) {
+      data[index] *= amount;
+    } else {
+      throw new ArrayIndexOutOfBoundsException(exceptionText(count, index, "mult"));
+    }
   }
 
 
@@ -455,7 +471,11 @@ public class FloatList implements Iterable<Float> {
    * @brief Divide a value
    */
   public void div(int index, float amount) {
-    data[index] /= amount;
+    if (index < count) {
+      data[index] /= amount;
+    } else {
+      throw new ArrayIndexOutOfBoundsException(exceptionText(count, index, "div"));
+    }
   }
 
 
