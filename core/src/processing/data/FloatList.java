@@ -428,7 +428,11 @@ public class FloatList implements Iterable<Float> {
    * @brief Add to a value
    */
   public void add(int index, float amount) {
-    data[index] += amount;
+    if (index < count) {
+      data[index] += amount;
+    } else {
+      throw new IndexOutOfBoundsException();
+    }
   }
 
 
@@ -437,7 +441,11 @@ public class FloatList implements Iterable<Float> {
    * @brief Subtract from a value
    */
   public void sub(int index, float amount) {
-    data[index] -= amount;
+    if (index < count) {
+      data[index] -= amount;
+    } else {
+      throw new IndexOutOfBoundsException();
+    }
   }
 
 
@@ -446,7 +454,11 @@ public class FloatList implements Iterable<Float> {
    * @brief Multiply a value
    */
   public void mult(int index, float amount) {
-    data[index] *= amount;
+    if (index < count) {
+      data[index] *= amount;
+    } else {
+      throw new IndexOutOfBoundsException();
+    }
   }
 
 
@@ -455,7 +467,11 @@ public class FloatList implements Iterable<Float> {
    * @brief Divide a value
    */
   public void div(int index, float amount) {
-    data[index] /= amount;
+    if (index < count) {
+      data[index] /= amount;
+    } else {
+      throw new IndexOutOfBoundsException();
+    }
   }
 
 
