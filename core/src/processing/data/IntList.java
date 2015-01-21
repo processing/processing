@@ -407,16 +407,20 @@ public class IntList implements Iterable<Integer> {
     data[index]++;
   }
 
+  private String exceptionText(int count, int index, String method){
+    return "The list size is "+count+". Trying to "+method+" the element at "+index+" which does not exist.";
+  }
+
   /**
    * @webref intlist:method
    * @brief Add to a value
    */
   public void add(int index, int amount) {
-    if( index  < count) {
-	  data[index] += amount;
+    if (index < count) {
+      data[index] += amount;
     } else {
-	  throw new IndexOutOfBoundsException();
-	}
+      throw new IndexOutOfBoundsException(exceptionText(count, index, "add"));
+    }
   }
 
   /**
@@ -424,11 +428,11 @@ public class IntList implements Iterable<Integer> {
    * @brief Subtract from a value
    */
   public void sub(int index, int amount) {
-    if( index  < count) {
-	  data[index] -= amount;
+    if (index < count) {
+      data[index] -= amount;
     } else {
-	  throw new IndexOutOfBoundsException();
-	}
+      throw new IndexOutOfBoundsException(exceptionText(count, index, "sub"));
+    }
   }
 
   /**
@@ -436,11 +440,11 @@ public class IntList implements Iterable<Integer> {
    * @brief Multiply a value
    */
   public void mult(int index, int amount) {
-    if( index  < count) {
-	  data[index] *= amount;
+    if (index < count) {
+      data[index] *= amount;
     } else {
-	  throw new IndexOutOfBoundsException();
-	}
+      throw new IndexOutOfBoundsException(exceptionText(count, index, "mult"));
+    }
   }
 
   /**
@@ -448,11 +452,11 @@ public class IntList implements Iterable<Integer> {
    * @brief Divide a value
    */
   public void div(int index, int amount) {
-    if( index  < count) {
-	  data[index] /= amount;
+    if (index < count) {
+      data[index] /= amount;
     } else {
-	  throw new IndexOutOfBoundsException();
-	}
+      throw new IndexOutOfBoundsException(exceptionText(count, index, "div"));
+    }
   }
 
 
