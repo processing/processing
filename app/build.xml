@@ -1,53 +1,16 @@
 <?xml version="1.0"?>
 <project name="Processing PDE" default="build">
 
-  <property name="generated" 
-	    value="${basedir}/generated/processing/mode/java/preproc" />
-  <mkdir dir="${generated}" />
-
-  <property name="grammars" 
-	    value="${basedir}/src/processing/mode/java/preproc" />
-
-  <property name="antlrjar" 
-	    value="${basedir}/lib/antlr.jar" />
-
-  <classloader taskname="antlr">
-    <classpath path="lib/antlr.jar" />
-  </classloader>
-
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
     <delete file="pde.jar" />
-    <delete>
-      <fileset dir="${generated}">
-	<include name="*.java" />
-	<include name="*.tokens" />
-	<include name="*.txt" />
-	<include name="*.g" />
-	<include name="*.smap" />
-	<include name="*.properties" />
-      </fileset>
-    </delete>
   </target>
 
-<!--<target name="preproc" depends="clean" description="Compile ANTLR grammar">-->
-  <target name="preproc" description="Compile ANTLR grammar">
-    <antlr target="${grammars}/java15.g" outputdirectory="${generated}">
-      <classpath path="${antlrjar}" />
-    </antlr>
-    <antlr target="${grammars}/pde.g" 
-	   outputdirectory="${generated}" 
-	   glib="${grammars}/java15.g">
-      <classpath path="${antlrjar}" />
-    </antlr>
-  </target>
-
-  <target name="compile" depends="preproc" description="Compile sources">
+  <target name="compile" description="Compile sources">
     <condition property="core-built">
       <available file="../core/library/core.jar" />
     </condition>
-    <fail unless="core-built" 
-	  message="Please build the core library first and make sure it sits in ../core/library/core.jar" />
+    <fail unless="core-built" message="Please build the core library first and make sure it is located at ../core/library/core.jar" />
 
     <mkdir dir="bin" />
     
@@ -71,13 +34,16 @@
 	   excludes="**/tools/format/**" 
 	   encoding="UTF-8" 
 	   includeAntRuntime="false" 
-	   classpath="../core/library/core.jar; lib/ant.jar; lib/ant-launcher.jar; lib/antlr.jar; lib/apple.jar; lib/jdt-core.jar; lib/jna.jar; lib/org-netbeans-swing-outline.jar;lib/com.ibm.icu_4.4.2.v20110823.jar;lib/jdi.jar;lib/jdimodel.jar;lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar"
+	   classpath="../core/library/core.jar; 
+                      lib/ant.jar; lib/ant-launcher.jar; 
+                      lib/apple.jar; 
+                      lib/jna.jar"
 	   debug="on"
 	   nowarn="true"
 	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
       <src path="src" />
-      <src path="generated" />
-      <compilerclasspath path="../java/mode/ecj.jar" />
+      <compilerclasspath path="../java/mode/org.eclipse.jdt.core.jar; 
+                               ../java/mode/jdtCompilerAdapter.jar" />
     </javac>
   </target>
 

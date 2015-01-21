@@ -1962,8 +1962,9 @@ public class JEditTextArea extends JComponent
       break;
     }
   }
-  */
+   */
 
+  
   // protected members
   protected static String CENTER = "center";
   protected static String RIGHT = "right";

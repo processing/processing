@@ -304,7 +304,28 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * solution where the listeners are handled properly.
    */
   protected JEditTextArea createTextArea() {
-    return new JEditTextArea(new PdeTextAreaDefaults(mode));
+    return new JEditTextArea(new PdeTextAreaDefaults(mode)) {
+      // this is a kludge that needs to be removed [fry 150120]
+      public void processKeyEvent(KeyEvent evt) {
+        // this had to be added in Processing 007X, because the menu key
+        // events weren't making it up to the frame.
+        super.processKeyEvent(evt);
+
+        if (inputHandler != null) {
+          switch (evt.getID()) {  
+          case KeyEvent.KEY_TYPED:
+            inputHandler.keyTyped(evt);
+            break;
+          case KeyEvent.KEY_PRESSED:
+            inputHandler.keyPressed(evt);
+            break;
+          case KeyEvent.KEY_RELEASED:
+            inputHandler.keyReleased(evt);
+            break;
+          }
+        }
+      }
+    };
   }
 
 

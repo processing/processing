@@ -724,7 +724,9 @@ public class Toolkit {
     File fontFile = new File(System.getProperty("java.home"), "lib/fonts/" + filename);
     if (!fontFile.exists()) {
       // if we're debugging from Eclipse, grab it from the work folder (user.dir is /app)
-      fontFile = new File(System.getProperty("user.dir"), "../build/shared/lib/fonts/" + filename); 
+      //fontFile = new File(System.getProperty("user.dir"), "../build/shared/lib/fonts/" + filename);
+      // if we're debugging the new Java Mode from Eclipse, paths are different 
+      fontFile = new File(System.getProperty("user.dir"), "../../shared/lib/fonts/" + filename);
     }
     BufferedInputStream input = new BufferedInputStream(new FileInputStream(fontFile));
     Font font = Font.createFont(Font.TRUETYPE_FONT, input);

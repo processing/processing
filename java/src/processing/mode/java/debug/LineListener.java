@@ -1,0 +1,38 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+Part of the Processing project - http://processing.org
+Copyright (c) 2012-15 The Processing Foundation
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation, Inc.
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
+
+package processing.mode.java.debug;
+
+/**
+ * A Listener for line number changes.
+ *
+ * @author Martin Leopold <m@martinleopold.com>
+ */
+public interface LineListener {
+
+    /**
+     * Event handler for line number changes (due to editing).
+     *
+     * @param line the line that has changed
+     * @param oldLineIdx the old line index (0-based)
+     * @param newLineIdx the new line index (0-based)
+     */
+    void lineChanged(LineID line, int oldLineIdx, int newLineIdx);
+}

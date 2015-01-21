@@ -151,7 +151,7 @@ public class PSurfaceLWJGL implements PSurface {
       // Called here because the graphics device is needed before we can
       // determine whether the sketch wants size(displayWidth, displayHeight),
       // and getting the graphics device will be PSurface-specific.
-//      PApplet.hideMenuBar();
+      PApplet.hideMenuBar();
       
       // Useful hidden switches:
       // http://wiki.lwjgl.org/index.php?title=LWJGL_Hidden_Switches
