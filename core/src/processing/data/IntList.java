@@ -407,9 +407,13 @@ public class IntList implements Iterable<Integer> {
     data[index]++;
   }
 
-  private String exceptionText(int count, int index, String method){
-    return "The list size is "+count+". Trying to "+method+" the element at "+index+" which does not exist.";
+
+  private void boundsProblem(int index, String method) {
+    final String msg = String.format("The list size is %d. " +
+      "You cannot %s() to element %d.", count, method, index);
+    throw new ArrayIndexOutOfBoundsException(msg);
   }
+
 
   /**
    * @webref intlist:method
@@ -419,7 +423,7 @@ public class IntList implements Iterable<Integer> {
     if (index < count) {
       data[index] += amount;
     } else {
-      throw new IndexOutOfBoundsException(exceptionText(count, index, "add"));
+      boundsProblem(index, "add");
     }
   }
 
@@ -431,7 +435,7 @@ public class IntList implements Iterable<Integer> {
     if (index < count) {
       data[index] -= amount;
     } else {
-      throw new IndexOutOfBoundsException(exceptionText(count, index, "sub"));
+      boundsProblem(index, "sub");
     }
   }
 
@@ -443,7 +447,7 @@ public class IntList implements Iterable<Integer> {
     if (index < count) {
       data[index] *= amount;
     } else {
-      throw new IndexOutOfBoundsException(exceptionText(count, index, "mult"));
+      boundsProblem(index, "mult");
     }
   }
 
@@ -455,7 +459,7 @@ public class IntList implements Iterable<Integer> {
     if (index < count) {
       data[index] /= amount;
     } else {
-      throw new IndexOutOfBoundsException(exceptionText(count, index, "div"));
+      boundsProblem(index, "div");
     }
   }
 

@@ -11,6 +11,9 @@ X size(640,360 , P3D) doesn't work properly
 X   https://github.com/processing/processing/issues/2924
 X   https://github.com/processing/processing/issues/2925
 
+data
+X Add exceptions for FloatList and IntList when using add() w/o enough elements
+X   https://github.com/processing/processing/pull/3053
 
 applet/sketch
 X remove isGL(), is2D(), is3D(), displayable() from PApplet
@@ -107,6 +110,7 @@ _   but for NaN values, it's a necessity
 _ get() methods in List/Dict shouldn't allow you to get bad values
 _   but set() methods can automatically resize the arrays
 _   though that means insert() should allow you to insert past the end
+_   and should add/div/mult let you work on non-existent elements?
 _ addRow() is not efficient, probably need to do the doubling
 o   or have a setIncrement() function?
 _   it would default to 1 on tables loaded from a file
