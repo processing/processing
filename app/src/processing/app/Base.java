@@ -2499,26 +2499,36 @@ public class Base {
    */
   static public void saveFile(String str, File file) throws IOException {
     File temp = File.createTempFile(file.getName(), null, file.getParentFile());
-    try{
+    try {
       // fix from cjwant to prevent symlinks from being destroyed.
       File canon = file.getCanonicalFile();
+      // assign the var as second step since previous line may throw exception   
       file = canon;
     } catch (IOException e) {
       throw new IOException("Could not resolve canonical representation of " +
                             file.getAbsolutePath());
     }
-    PApplet.saveStrings(temp, new String[] { str });
+    // Can't use saveStrings() here b/c Windows will add a ^M to the file
+    PrintWriter writer = PApplet.createWriter(temp);
+    writer.print(str);
+    boolean error = writer.checkError();  // calls flush()
+    writer.close();  // attempt to close regardless
+    if (error) {
+      throw new IOException("Error while trying to save " + file);
+    }
+    
+    // remove the old file before renaming the temp file
     if (file.exists()) {
       boolean result = file.delete();
       if (!result) {
         throw new IOException("Could not remove old version of " +
-                              file.getAbsolutePath());
+          file.getAbsolutePath());
       }
     }
     boolean result = temp.renameTo(file);
     if (!result) {
-      throw new IOException("Could not replace " +
-                            file.getAbsolutePath());
+      throw new IOException("Could not replace " + file.getAbsolutePath() + 
+                            " with " + temp.getAbsolutePath());
     }
   }
 
