@@ -14,6 +14,7 @@ X   https://github.com/processing/processing/issues/2925
 data
 X Add exceptions for FloatList and IntList when using add() w/o enough elements
 X   https://github.com/processing/processing/pull/3053
+X   https://github.com/processing/processing/issues/3052
 
 applet/sketch
 X remove isGL(), is2D(), is3D(), displayable() from PApplet

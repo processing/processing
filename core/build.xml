@@ -5,8 +5,16 @@
     <delete dir="bin" />
     <delete file="library/core.jar" />
   </target>
-  
-  <target name="compile" description="Compile">
+
+  <target name="methods-check">
+    <available file="methods/methods.jar" property="methods.present" />
+  </target>
+
+  <target name="methods-build" depends="methods-check" unless="methods.present">
+    <subant buildpath="methods" target="dist" />
+  </target>
+
+  <target name="compile" description="Compile" depends="methods-build">
     <taskdef name="methods" 
 	     classname="PAppletMethods" 
 	     classpath="methods/methods.jar" />

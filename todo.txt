@@ -5,6 +5,10 @@ X Deal with ctrl-alt-n regression
 X   https://github.com/processing/processing/issues/2979
 X splash screen for Linux
 X   https://github.com/processing/processing/pull/3005
+X don't add a ^M to files when writing
+X   https://github.com/processing/processing/issues/3014
+X add more bulletproofing to the save process
+X   https://github.com/processing/processing/issues/2923
 
 update components
 X moving to Java 8 because Java 7 will be discontinued
@@ -97,8 +101,9 @@ _ add span screens pref (near the display pref)
 _   add checkbox for spans to export dialog
 _ remove "save before running" message
 
-_ finish Ant task to download JRE and JDK from Oracle
-_   add method to prompt OS X developers to download the JDK update
+X finish Ant task to download JRE and JDK from Oracle
+_ add method to prompt OS X developers to download the JDK update
+_ make sure the file downloads correctly before renaming
 _   https://github.com/processing/processing/issues/2960
 
 
