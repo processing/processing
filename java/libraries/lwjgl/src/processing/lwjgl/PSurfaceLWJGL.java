@@ -77,7 +77,17 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public Canvas initCanvas(PApplet sketch) {
-    return null;
+    Canvas canvas = new Canvas();
+    canvas.setFocusable(true);
+    canvas.requestFocus();    
+    try {
+      Display.setParent(canvas);
+      return canvas;
+    } catch (LWJGLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;    
   }
 
   @Override
