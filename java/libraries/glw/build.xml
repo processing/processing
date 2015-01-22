@@ -21,7 +21,8 @@
 	   classpath="../../../core/library/core.jar; ../../../core/library/jogl-all.jar; ../../../core/library/gluegen-rt.jar" 
 	   nowarn="true"
 	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
-      <compilerclasspath path="../../mode/ecj.jar" />
+      <compilerclasspath path="mode/org.eclipse.jdt.core.jar; 
+                               mode/jdtCompilerAdapter.jar" />
     </javac>
   </target>
   

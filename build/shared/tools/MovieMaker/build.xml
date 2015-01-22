@@ -17,7 +17,8 @@
 	   classpath="../../../../app/bin" 
 	   nowarn="true"
 	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
-      <compilerclasspath path="../../../../java/mode/ecj.jar" />
+      <compilerclasspath path="../../../../java/mode/org.eclipse.jdt.core.jar; 
+                               ../../../../java/mode/jdtCompilerAdapter.jar" />
     </javac>
   </target>
 

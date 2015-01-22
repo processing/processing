@@ -1,10 +1,13 @@
-s0233 (3.0a6)
+0233 (3.0a6)
 X remove Applet as base class
 X how to name the retina pixel stuff
 X   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
 X   hint(ENABLE_2X_PIXELS)?
 X   hidpi is Apple's name as well
 X   mostly getting away from this
+
+_ textAlign(RIGHT) including spaces at the end of each line
+_   https://github.com/processing/processing/issues/3028
 
 earlier
 X size(640,360 , P3D) doesn't work properly
