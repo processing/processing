@@ -41,6 +41,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import processing.app.Sketch;
 import processing.app.SketchCode;
+import processing.mode.java.JavaBuild;
 import processing.mode.java.pdex.VMEventListener;
 import processing.mode.java.pdex.VMEventReader;
 
@@ -182,7 +183,7 @@ public class Debugger implements VMEventListener {
 
         try {
             Sketch sketch = editor.getSketch();
-            DebugBuild build = new DebugBuild(sketch);
+            JavaBuild build = new JavaBuild(sketch);
 
             Logger.getLogger(Debugger.class.getName()).log(Level.INFO, "building sketch: {0}", sketch.getName());
             //LineMapping.addLineNumbers(sketch); // annotate

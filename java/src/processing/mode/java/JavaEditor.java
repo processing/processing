@@ -861,7 +861,7 @@ public class JavaEditor extends Editor {
       //presentColorPanel.repaint();
       repaint();
       chooser.hide();
-    }    
+    }
   }
   
   

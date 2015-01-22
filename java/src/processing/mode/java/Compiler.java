@@ -70,10 +70,11 @@ public class Compiler {
     boolean success = false;
 
     String baseCommand[] = new String[] {
+      "-g",
       "-Xemacs",
       //"-noExit",  // not necessary for ecj
-      "-source", "1.6",
-      "-target", "1.6",
+      "-source", "1.7",
+      "-target", "1.7",
       "-classpath", build.getClassPath(),
       "-nowarn", // we're not currently interested in warnings (works in ecj)
       "-d", build.getBinFolder().getAbsolutePath() // output the classes in the buildPath
@@ -149,12 +150,8 @@ public class Compiler {
       writer.flush();
       writer.close();
 
-      String errorString = errorBuffer.toString();
-//      if (errorString.trim().length() != 0) {
-//        success = false;
-//      }
       BufferedReader reader =
-        new BufferedReader(new StringReader(errorString));
+        new BufferedReader(new StringReader(errorBuffer.toString()));
       //System.err.println(errorBuffer.toString());
 
       String line = null;
