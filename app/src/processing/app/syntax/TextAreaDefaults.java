@@ -18,9 +18,11 @@ import java.awt.*;
  * creating the text area is that this method is faster.
  */
 public class TextAreaDefaults {
+  // For 3.0a6, the InputHandler object was broken out because it has little
+  // to do with this code and created circuitous connections between classes. 
   //public InputHandler inputHandler;
+  
   public SyntaxDocument document;
-//  public boolean editable;
 
   public boolean caretVisible;
   public boolean caretBlinks;
@@ -42,11 +44,6 @@ public class TextAreaDefaults {
   public boolean eolMarkers;
   public boolean paintInvalid;
 
-  /*
-  public Font plainFont;
-  public Font boldFont;
-  public boolean antialias;
-  */
   public Color fgcolor;
   public Color bgcolor;
 }

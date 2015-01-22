@@ -31,6 +31,8 @@ import processing.app.Preferences;
 
 /**
  * Sets key bindings used by the PDE, except for those that are Mode-specific.
+ * Not part of the original jeditsyntax DefaultInputHandler because it makes
+ * use of Preferences and other PDE classes.
  */
 public class PdeInputHandler extends DefaultInputHandler {
   
