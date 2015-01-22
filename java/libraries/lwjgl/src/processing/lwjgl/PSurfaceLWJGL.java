@@ -77,7 +77,17 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public Canvas initCanvas(PApplet sketch) {
-    return null;
+    Canvas canvas = new Canvas();
+    canvas.setFocusable(true);
+    canvas.requestFocus();    
+    try {
+      Display.setParent(canvas);
+      return canvas;
+    } catch (LWJGLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;    
   }
 
   @Override
@@ -157,6 +167,12 @@ public class PSurfaceLWJGL implements PSurface {
       // http://wiki.lwjgl.org/index.php?title=LWJGL_Hidden_Switches
       System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
       fullScreenRequested = true;
+    }
+    
+    if (graphics.is2X()) {
+      // http://forum.lwjgl.org/index.php?topic=5084.0
+      System.setProperty("org.lwjgl.opengl.Display.enableHighDPI", "true");
+//      pgl.pixel_scale = 2;
     }
     
 //    sketchWidth = sketch.width = sketch.sketchWidth();
