@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-10 Ben Fry and Casey Reas
+  Copyright (c) 2012-15 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -34,21 +35,11 @@ import java.util.Arrays;
 
 
 /**
- * Filters key events for tab expansion/indent/etc.
- * <p/>
- * For version 0099, some changes have been made to make the indents
- * smarter. There are still issues though:
- * <UL>
- * <LI> indent happens when it picks up a curly brace on the previous line,
- *   but not if there's a  blank line between them.
- * <LI> It also doesn't handle single indent situations where a brace
- *   isn't used (i.e. an if statement or for loop that's a single line).
- *   It shouldn't actually be using braces.
- * </UL>
- * Solving these issues, however, would probably best be done by a
- * smarter parser/formatter, rather than continuing to hack this class.
+ * Filters key events for tab expansion/indent/etc. This is very old code
+ * that we'd love to replace with a smarter parser/formatter, rather than
+ * continuing to hack this class.
  */
-public class PdeKeyListener {
+public class PdeKeyListener extends PdeInputHandler {
   private Editor editor;
   private JEditTextArea textarea;
 
@@ -57,13 +48,26 @@ public class PdeKeyListener {
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
 
-  public PdeKeyListener(Editor editor, JEditTextArea textarea) {
-    this.editor = editor;
-    this.textarea = textarea;
-
-//    // let him know that i'm leechin'
-//    textarea.editorListener = this;
+  public PdeKeyListener(Editor editor) {
+    this.editor = editor;    
   }
+  
+  
+  public void keyPressed(KeyEvent event) {
+    if (!pressed(event)) {
+      super.keyPressed(event);
+    }
+  }
+
+  
+  public void keyTyped(KeyEvent event) {
+    if (!typed(event)) {
+      super.keyTyped(event);
+    }
+  }
+  
+  
+  // we don't need keyReleased(), so that's passed through automatically
 
 
   /**
@@ -74,36 +78,25 @@ public class PdeKeyListener {
    * keyTyped().
    * @return true if the event has been handled (to remove it from the queue)
    */
-  public boolean keyPressed(KeyEvent event) {
+  protected boolean pressed(KeyEvent event) {
+    if (textarea == null) {
+      textarea = editor.getTextArea();
+    }
+
     char c = event.getKeyChar();
     int code = event.getKeyCode();
 
     Sketch sketch = editor.getSketch();
-
-    /*
-    if ((event.getModifiers() & CTRL_ALT) == CTRL_ALT) {
-      if (code == KeyEvent.VK_LEFT) {
-        sketch.handlePrevCode();
-        return true;
-      } else if (code == KeyEvent.VK_RIGHT) {
-        sketch.handleNextCode();
-        return true;
-      }
-    }
-    */
 
     if ((event.getModifiers() & InputEvent.META_MASK) != 0) {
       //event.consume();  // does nothing
       return false;
     }
 
-    // TODO i don't like these accessors. clean em up later.
-//    if (!editor.getSketch().isModified()) {
     if ((code == KeyEvent.VK_BACK_SPACE) || (code == KeyEvent.VK_TAB) ||
         (code == KeyEvent.VK_ENTER) || ((c >= 32) && (c < 128))) {
       sketch.setModified(true);
     }
-//    }
 
     if ((code == KeyEvent.VK_UP) &&
         ((event.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
@@ -140,7 +133,7 @@ public class PdeKeyListener {
         textarea.setCaretPosition(index);
       }
       event.consume();
-      return true;
+//      return true;
 
     } else if ((code == KeyEvent.VK_DOWN) &&
                ((event.getModifiers() & InputEvent.CTRL_MASK) != 0)) {
@@ -164,11 +157,7 @@ public class PdeKeyListener {
         }
         index++;
       }
-      // if the first char, index will be -2
-      //if (index < 0) index = 0;
 
-      //textarea.setSelectionStart(index);
-      //textarea.setSelectionEnd(index);
       if ((event.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
         textarea.setSelectionStart(caretIndex);
         textarea.setSelectionEnd(index);
@@ -176,13 +165,9 @@ public class PdeKeyListener {
         textarea.setCaretPosition(index);
       }
       event.consume();
-      return true;
-    }
+//      return true;
 
-
-    switch (c) {
-
-    case 9:  // TAB
+    } else if (c == 9) {
       if ((event.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
         // if shift is down, the user always expects an outdent
         // http://code.google.com/p/processing/issues/detail?id=458
@@ -195,15 +180,13 @@ public class PdeKeyListener {
         int tabSize = Preferences.getInteger("editor.tabs.size");
         textarea.setSelectedText(spaces(tabSize));
         event.consume();
-        return true;
+
       } else if (!Preferences.getBoolean("editor.tabs.expand")) {
         textarea.setSelectedText("\t");
         event.consume();
       }
-      break;
 
-    case 10:  // auto-indent
-    case 13:
+    } else if (c == 10 || c == 13) {  // auto-indent
       if (Preferences.getBoolean("editor.indent")) {
         char contents[] = textarea.getText().toCharArray();
         int tabSize = Preferences.getInteger("editor.tabs.size");
@@ -212,26 +195,6 @@ public class PdeKeyListener {
         // (i.e. when you hit return, it'll be the last character
         // just before where the newline will be inserted)
         int origIndex = textarea.getCaretPosition() - 1;
-
-        // NOTE all this cursing about CRLF stuff is probably moot
-        // NOTE since the switch to JEditTextArea, which seems to use
-        // NOTE only LFs internally (thank god). disabling for 0099.
-        // walk through the array to the current caret position,
-        // and count how many weirdo windows line endings there are,
-        // which would be throwing off the caret position number
-        /*
-        int offset = 0;
-        int realIndex = origIndex;
-        for (int i = 0; i < realIndex-1; i++) {
-          if ((contents[i] == 13) && (contents[i+1] == 10)) {
-            offset++;
-            realIndex++;
-          }
-        }
-        // back up until \r \r\n or \n.. @#($* cross platform
-        //System.out.println(origIndex + " offset = " + offset);
-        origIndex += offset; // ARGH!#(* WINDOWS#@($*
-        */
 
         // if the previous thing is a brace (whether prev line or
         // up farther) then the correct indent is the number of spaces
@@ -244,10 +207,9 @@ public class PdeKeyListener {
         int spaceCount = calcSpaceCount(origIndex, contents);
 
         // If the last character was a left curly brace, then indent.
-        // For 0122, walk backwards a bit to make sure that the there
-        // isn't a curly brace several spaces (or lines) back. Also
-        // moved this before calculating extraCount, since it'll affect
-        // that as well.
+        // For 0122, walk backwards a bit to make sure that the there isn't a
+        // curly brace several spaces (or lines) back. Also moved this before
+        // calculating extraCount, since it'll affect that as well.
         int index2 = origIndex;
         while ((index2 >= 0) &&
                Character.isWhitespace(contents[index2])) {
@@ -262,7 +224,6 @@ public class PdeKeyListener {
             spaceCount += tabSize;
           }
         }
-        //System.out.println("spaceCount should be " + spaceCount);
 
         // now before inserting this many spaces, walk forward from
         // the caret position and count the number of spaces,
@@ -283,23 +244,10 @@ public class PdeKeyListener {
           index++;
         }
 
-        // hitting return on a line with spaces *after* the caret
-        // can cause trouble. for 0099, was ignoring the case, but this is
+        // Hitting return on a line with spaces *after* the caret
+        // can cause trouble. For 0099, was ignoring the case, but this is
         // annoying, so in 0122 we're trying to fix that.
-        /*
-        if (spaceCount - extraCount > 0) {
-          spaceCount -= extraCount;
-        }
-        */
         spaceCount -= extraCount;
-        //if (spaceCount < 0) spaceCount = 0;
-        //System.out.println("extraCount is " + extraCount);
-
-        // now, check to see if the current line contains a } and if so,
-        // outdent again by indent
-        //if (braceCount > 0) {
-        //spaceCount -= 2;
-        //}
 
         if (spaceCount < 0) {
           // for rev 0122, actually delete extra space
@@ -337,9 +285,9 @@ public class PdeKeyListener {
       }
       // mark this event as already handled (all but ignored)
       event.consume();
-      return true;
+//      return true;
 
-    case '}':
+    } else if (c == '}') {
       if (Preferences.getBoolean("editor.indent")) {
         // first remove anything that was there (in case this multiple
         // characters are selected, so that it's not in the way of the
@@ -383,13 +331,12 @@ public class PdeKeyListener {
         event.consume();
         return true;
       }
-      break;
     }
     return false;
   }
 
 
-  public boolean keyTyped(KeyEvent event) {
+  protected boolean typed(KeyEvent event) {
     char c = event.getKeyChar();
 
     if ((event.getModifiers() & InputEvent.CTRL_MASK) != 0) {
@@ -447,7 +394,7 @@ public class PdeKeyListener {
    * the beginning of the current block, and return the number of
    * spaces found on that line.
    */
-  protected int calcBraceIndent(int index, char contents[]) {
+  protected int calcBraceIndent(int index, char[] contents) {
     // now that we know things are ok to be indented, walk
     // backwards to the last { to see how far its line is indented.
     // this isn't perfect cuz it'll pick up commented areas,
@@ -479,44 +426,11 @@ public class PdeKeyListener {
 
     // check how many spaces on the line with the matching open brace
     //int pairedSpaceCount = calcSpaceCount(index, contents);
-    //System.out.println(pairedSpaceCount);
     return calcSpaceCount(index, contents);
   }
 
 
-//  /**
-//   * Get the character array and blank out the commented areas.
-//   * This hasn't yet been tested, the plan was to make auto-indent
-//   * less gullible (it gets fooled by braces that are commented out).
-//   */
-//  protected char[] getCleanedContents() {
-//    char c[] = textarea.getText().toCharArray();
-//
-//    int index = 0;
-//    while (index < c.length - 1) {
-//      if ((c[index] == '/') && (c[index+1] == '*')) {
-//        c[index++] = 0;
-//        c[index++] = 0;
-//        while ((index < c.length - 1) &&
-//               !((c[index] == '*') && (c[index+1] == '/'))) {
-//          c[index++] = 0;
-//        }
-//
-//      } else if ((c[index] == '/') && (c[index+1] == '/')) {
-//        // clear out until the end of the line
-//        while ((index < c.length) && (c[index] != 10)) {
-//          c[index++] = 0;
-//        }
-//        if (index != c.length) {
-//          index++;  // skip over the newline
-//        }
-//      }
-//    }
-//    return c;
-//  }
-
-
-  static String spaces(int count) {
+  static private String spaces(int count) {
     char[] c = new char[count];
     Arrays.fill(c, ' ');
     return new String(c);

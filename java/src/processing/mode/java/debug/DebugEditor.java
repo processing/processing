@@ -1303,7 +1303,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 //        return new TextArea(new PdeTextAreaDefaults(mode), this);
 //    }
     protected JEditTextArea createTextArea() {
-      return new TextArea(new PdeTextAreaDefaults(mode), this) {
+      return new TextArea(new PdeTextAreaDefaults(mode), new PdeKeyListener(this), this);
+      /*
+      return new TextArea(new PdeTextAreaDefaults(mode), new PdeInputHandler(), this) {
          // Forwards key events directly to the input handler. This is slightly 
          // faster than using a KeyListener because some Swing overhead is avoided.
         PdeKeyListener editorListener = new PdeKeyListener(DebugEditor.this, this);
@@ -1333,6 +1335,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           }
         }
       };
+      */
     }
 
 

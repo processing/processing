@@ -147,14 +147,10 @@ _   https://github.com/processing/processing/pull/2833
 
 
 help me
-_ IllegalArgumentException when clicking between editor windows
-_   https://github.com/processing/processing/issues/2530
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 _ closing the color selector makes things freeze (only Linux and Windows?)
 _   https://github.com/processing/processing/issues/2381
-_ incorporate new preproc
-_   https://github.com/fjenett/processing-preprocessor-antlr4
 _ SOCKS proxy not working: 
 _   https://github.com/processing/processing/issues/2643
 _   the current code that gets/sets the pref is in Preferences
@@ -422,8 +418,14 @@ _     http://www.javalobby.org/java/forums/t19012.html
 PDE / Compiler & Preprocessor
 
 medium (bugs/features)
+_ incorporate new preproc
+_   https://github.com/fjenett/processing-preprocessor-antlr4
+_   https://github.com/processing/processing/issues/3055
+_ update grammar for ANTLR
+_   https://github.com/processing/processing/issues/3054
 _ modify build to insert these after antlr run:
 _   @SuppressWarnings({"unused", "cast"})
+_   or get the updated ANTLR, which likely would support it
 _ omitting a semicolon shows the error on the line after it
 _ npe if library is removed before compile
 _   always check library folders to make sure they're still valid
@@ -461,7 +463,9 @@ _   http://code.google.com/p/processing/issues/detail?id=494
 
 PDE / Editor
 
-_ Undo does not move to the correct location in the editor window
+_ [help] IllegalArgumentException when clicking between editor windows
+_   https://github.com/processing/processing/issues/2530
+_ [help] Undo does not move to the correct location in the editor window
 _   https://github.com/processing/processing/issues/707
 _ clean up /tmp folders used during build
 _   https://github.com/processing/processing/issues/1896

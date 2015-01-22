@@ -22,7 +22,6 @@ package processing.mode.java.pdex;
 
 import static processing.mode.java.pdex.ExperimentalMode.log;
 import static processing.mode.java.pdex.ExperimentalMode.log2;
-
 import processing.mode.java.debug.DebugEditor;
 import processing.mode.java.tweak.ColorControlBox;
 import processing.mode.java.tweak.Handle;
@@ -45,6 +44,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;
 
 import processing.app.Base;
+import processing.app.syntax.InputHandler;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaDefaults;
 
@@ -81,16 +81,15 @@ public class TextArea extends JEditTextArea {
 
   protected ErrorCheckerService errorCheckerService;
 
-  public TextArea(TextAreaDefaults defaults, DebugEditor editor) {
-    super(defaults);
+  public TextArea(TextAreaDefaults defaults, InputHandler inputHandler, DebugEditor editor) {
+    super(defaults, inputHandler);
     this.editor = editor;
 
     // replace the painter:
     // first save listeners, these are package-private in JEditTextArea, so not accessible
     ComponentListener[] componentListeners = painter.getComponentListeners();
     mouseListeners = painter.getMouseListeners();
-    MouseMotionListener[] mouseMotionListeners = painter
-        .getMouseMotionListeners();
+    MouseMotionListener[] mouseMotionListeners = painter.getMouseMotionListeners();
 
     remove(painter);
 
@@ -119,10 +118,8 @@ public class TextArea extends JEditTextArea {
     gutterBgColor = theme.getThemeColor("gutter.bgcolor", gutterBgColor);
     gutterLineColor = theme.getThemeColor("gutter.linecolor", gutterLineColor);
     gutterPadding = theme.getInteger("gutter.padding");
-    breakpointMarker = theme.loadThemeString("breakpoint.marker",
-                                             breakpointMarker);
-    currentLineMarker = theme.loadThemeString("currentline.marker",
-                                              currentLineMarker);
+    breakpointMarker = theme.loadThemeString("breakpoint.marker", breakpointMarker);
+    currentLineMarker = theme.loadThemeString("currentline.marker", currentLineMarker);
 
     // TweakMode code
 

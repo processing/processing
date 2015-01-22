@@ -32,17 +32,8 @@ import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 
-import processing.app.Base;
-import processing.app.Editor;
-import processing.app.EditorState;
-import processing.app.Mode;
-import processing.app.Preferences;
-import processing.app.RunnerListener;
-import processing.app.Sketch;
-import processing.app.SketchCode;
-import processing.app.SketchException;
-import processing.mode.java.JavaBuild;
-import processing.mode.java.JavaMode;
+import processing.app.*;
+import processing.mode.java.*;
 import processing.mode.java.debug.DebugEditor;
 import processing.mode.java.runner.Runner;
 
@@ -281,9 +272,7 @@ public class ExperimentalMode extends JavaMode {
   protected ImageIcon classIcon, fieldIcon, methodIcon, localVarIcon;
 
   protected void loadIcons(){
-    String iconPath = getContentFile("data")
-        .getAbsolutePath()
-        + File.separator + "icons";
+    String iconPath = getContentFile("data").getAbsolutePath() + File.separator + "icons";
     classIcon = new ImageIcon(iconPath + File.separator + "class_obj.png");
     methodIcon = new ImageIcon(iconPath + File.separator
         + "methpub_obj.png");
@@ -295,6 +284,7 @@ public class ExperimentalMode extends JavaMode {
   }
 
 
+  /*
   public ClassLoader getJavaModeClassLoader() {
     for (Mode m : base.getModeList()) {
       if (m.getClass() == JavaMode.class) {
@@ -305,6 +295,7 @@ public class ExperimentalMode extends JavaMode {
     // badness
     return null;
   }
+  */
 
 
   /**

@@ -18,7 +18,7 @@ import java.awt.*;
  * creating the text area is that this method is faster.
  */
 public class TextAreaDefaults {
-  public InputHandler inputHandler;
+  //public InputHandler inputHandler;
   public SyntaxDocument document;
 //  public boolean editable;
 

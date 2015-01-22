@@ -37,6 +37,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.GrayFilter;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.UIDefaults;
@@ -68,7 +69,7 @@ import processing.mode.java.pdex.ExperimentalMode;
  *
  * @author Martin Leopold <m@martinleopold.com>
  */
-public class VariableInspector extends javax.swing.JFrame {
+public class VariableInspector extends JFrame {
 
     protected DefaultMutableTreeNode rootNode; // the root node (invisible)
     protected DefaultMutableTreeNode builtins; // node for Processing built-in variables

@@ -86,7 +86,7 @@ public class JEditTextArea extends JComponent
    * Creates a new JEditTextArea with the specified settings.
    * @param defaults The default settings
    */
-  public JEditTextArea(TextAreaDefaults defaults) {
+  public JEditTextArea(TextAreaDefaults defaults, InputHandler inputHandler) {
     // Enable the necessary events
     enableEvents(AWTEvent.KEY_EVENT_MASK);
 
@@ -129,7 +129,7 @@ public class JEditTextArea extends JComponent
     setFocusTraversalKeysEnabled(false);
 
     // Load the defaults
-    setInputHandler(defaults.inputHandler);
+    setInputHandler(inputHandler);
     setDocument(defaults.document);
 //    editable = defaults.editable;
     caretVisible = defaults.caretVisible;
@@ -1963,6 +1963,27 @@ public class JEditTextArea extends JComponent
     }
   }
    */
+  
+  
+  public void processKeyEvent(KeyEvent event) {
+    // this had to be added in Processing 007X, because the menu key
+    // events weren't making it up to the frame.
+    super.processKeyEvent(event);
+
+    if (inputHandler != null) {
+      switch (event.getID()) {
+      case KeyEvent.KEY_TYPED:
+        inputHandler.keyTyped(event);
+        break;
+      case KeyEvent.KEY_PRESSED:
+        inputHandler.keyPressed(event);
+        break;
+      case KeyEvent.KEY_RELEASED:
+        inputHandler.keyReleased(event);
+        break;
+      }
+    }
+  }
 
   
   // protected members

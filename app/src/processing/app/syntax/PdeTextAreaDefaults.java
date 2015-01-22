@@ -4,7 +4,8 @@
   PdeTextAreaDefaults - grabs font/color settings for the editor
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2012-14 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-03 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -15,11 +16,11 @@
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+  GNU General Public License for more details. 
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software Foundation,
-  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  along with this program; if not, write to the Free Software Foundation, Inc.
+  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
 package processing.app.syntax;
@@ -30,6 +31,7 @@ import processing.app.*;
 public class PdeTextAreaDefaults extends TextAreaDefaults {
 
   public PdeTextAreaDefaults(Mode mode) {
+    /*
     inputHandler = new DefaultInputHandler();
     //inputHandler.addDefaultKeyBindings();  // 0122
 
@@ -178,6 +180,7 @@ public class PdeTextAreaDefaults extends TextAreaDefaults {
     inputHandler.addKeyBinding("CS+DOWN", InputHandler.SELECT_DOC_END);
 
     inputHandler.addKeyBinding(mod + "+ENTER", InputHandler.REPEAT);
+    */
 
     document = new SyntaxDocument();
 //    editable = true;
