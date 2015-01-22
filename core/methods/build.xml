@@ -20,7 +20,7 @@
   </target>
   
   <target name="demo" depends="dist">
-    <mkdir dir="demo">
+    <mkdir dir="demo" />
 
     <copy todir="demo">
       <fileset file="../src/processing/core/PApplet.java" />
