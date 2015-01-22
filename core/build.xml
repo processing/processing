@@ -41,7 +41,7 @@
 	   srcdir="src" destdir="bin"
 	   classpath="library/jogl-all.jar; library/gluegen-rt.jar"
 	   nowarn="true">
-      <!-- kinda gross, but if not using ecj, this just ignored anyway -->
+      <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
       <compilerclasspath path="${jdt.jar}; ../java/mode/jdtCompilerAdapter.jar" />
     </javac>
     
