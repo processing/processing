@@ -169,6 +169,12 @@ public class PSurfaceLWJGL implements PSurface {
       fullScreenRequested = true;
     }
     
+    if (graphics.is2X()) {
+      // http://forum.lwjgl.org/index.php?topic=5084.0
+      System.setProperty("org.lwjgl.opengl.Display.enableHighDPI", "true");
+//      pgl.pixel_scale = 2;
+    }
+    
 //    sketchWidth = sketch.width = sketch.sketchWidth();
 //    sketchHeight = sketch.height = sketch.sketchHeight();
     
