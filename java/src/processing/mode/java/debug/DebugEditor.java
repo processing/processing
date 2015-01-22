@@ -81,7 +81,7 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
-import processing.mode.java.PdeKeyListener;
+import processing.mode.java.JavaInputHandler;
 import processing.mode.java.pdex.ErrorBar;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
@@ -1303,7 +1303,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 //        return new TextArea(new PdeTextAreaDefaults(mode), this);
 //    }
     protected JEditTextArea createTextArea() {
-      return new TextArea(new PdeTextAreaDefaults(mode), new PdeKeyListener(this), this);
+      return new TextArea(new PdeTextAreaDefaults(mode), new JavaInputHandler(this), this);
       /*
       return new TextArea(new PdeTextAreaDefaults(mode), new PdeInputHandler(), this) {
          // Forwards key events directly to the input handler. This is slightly 

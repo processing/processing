@@ -39,16 +39,15 @@ import java.util.Arrays;
  * that we'd love to replace with a smarter parser/formatter, rather than
  * continuing to hack this class.
  */
-public class PdeKeyListener extends PdeInputHandler {
+public class JavaInputHandler extends PdeInputHandler {
   private Editor editor;
-  private JEditTextArea textarea;
 
   /** ctrl-alt on windows and linux, cmd-alt on mac os x */
   static final int CTRL_ALT = ActionEvent.ALT_MASK |
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
 
-  public PdeKeyListener(Editor editor) {
+  public JavaInputHandler(Editor editor) {
     this.editor = editor;    
   }
   
@@ -79,14 +78,11 @@ public class PdeKeyListener extends PdeInputHandler {
    * @return true if the event has been handled (to remove it from the queue)
    */
   protected boolean pressed(KeyEvent event) {
-    if (textarea == null) {
-      textarea = editor.getTextArea();
-    }
-
     char c = event.getKeyChar();
     int code = event.getKeyCode();
 
     Sketch sketch = editor.getSketch();
+    JEditTextArea textarea = editor.getTextArea();
 
     if ((event.getModifiers() & InputEvent.META_MASK) != 0) {
       //event.consume();  // does nothing

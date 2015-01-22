@@ -42,7 +42,7 @@ public class JavaEditor extends Editor {
   
   
   protected JEditTextArea createTextArea() {
-    return new JEditTextArea(new PdeTextAreaDefaults(mode), new PdeKeyListener(this));
+    return new JEditTextArea(new PdeTextAreaDefaults(mode), new JavaInputHandler(this));
     /*
     return new JEditTextArea(new PdeTextAreaDefaults(mode), new PdeInputHandler()) {
        // Forwards key events directly to the input handler. This is slightly 
