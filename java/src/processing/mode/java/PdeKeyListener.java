@@ -403,7 +403,6 @@ public class PdeKeyListener {
   }
 
 
-
   /**
    * Return the index for the first character on this line.
    */
