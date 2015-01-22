@@ -21,119 +21,71 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 package processing.mode.java.pdex;
 
 import java.awt.Color;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
+import java.awt.FontMetrics;
+import java.awt.event.*;
 
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 
+import processing.app.Base;
 import processing.app.Language;
 import processing.mode.java.debug.DebugEditor;
-import static processing.mode.java.pdex.ExperimentalMode.log;
 
 
 /**
  * Custom JTable implementation for XQMode. Minor tweaks and addtions.
- * 
  * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
- * 
  */
 public class XQErrorTable extends JTable {
 
-	/**
-	 * Column Names of JTable
-	 */
-	public static final String[] columnNames = { Language.text("editor.footer.errors.problem"), Language.text("editor.footer.errors.tab"), Language.text("editor.footer.errors.line") };
+	/** Column Names of JTable */
+	public static final String[] columnNames = { 
+	  Language.text("editor.footer.errors.problem"), 
+	  Language.text("editor.footer.errors.tab"), 
+	  Language.text("editor.footer.errors.line") 
+	};
 
-	/**
-	 * Column Widths of JTable.
-	 */
+	/** Column Widths of JTable. */
 	public int[] columnWidths = { 600, 100, 50 }; // Default Values
 
-	/**
-	 * Is the column being resized?
-	 */
+	/** Is the column being resized? */
 	private boolean columnResizing = false;
 
-	/**
-	 * ErrorCheckerService instance
-	 */
+	/** ErrorCheckerService instance */
 	protected ErrorCheckerService errorCheckerService;
 
-	@Override
-	public boolean isCellEditable(int rowIndex, int colIndex) {
-		return false; // Disallow the editing of any cell
-	}
-
+	
 	public XQErrorTable(final ErrorCheckerService errorCheckerService) {
 		this.errorCheckerService = errorCheckerService;
 		for (int i = 0; i < this.getColumnModel().getColumnCount(); i++) {
-			this.getColumnModel().getColumn(i)
-					.setPreferredWidth(columnWidths[i]);
+			getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
 		}
 
-		this.getTableHeader().setReorderingAllowed(false);
+		getTableHeader().setReorderingAllowed(false);
 
-		this.addMouseListener(new MouseAdapter() {
+		addMouseListener(new MouseAdapter() {
 			@Override
 			synchronized public void mouseClicked(MouseEvent e) {
 				try {
-					errorCheckerService.scrollToErrorLine(((XQErrorTable) e
-							.getSource()).getSelectedRow());
-					// System.out.print("Row clicked: "
-					// + ((XQErrorTable) e.getSource()).getSelectedRow());
+				  int row = ((XQErrorTable) e.getSource()).getSelectedRow();
+					errorCheckerService.scrollToErrorLine(row);
 				} catch (Exception e1) {
-					System.out.println("Exception XQErrorTable mouseReleased "
-							+ e);
+					Base.log("Exception XQErrorTable mouseReleased " +  e);
 				}
-			}
-			
-//			public void mouseMoved(MouseEvent evt) {
-//		    log(evt);
-////		    String tip = null;
-////		    java.awt.Point p = evt.getPoint();
-//		    int rowIndex = rowAtPoint(evt.getPoint());
-//		    int colIndex = columnAtPoint(evt.getPoint());
-//		    synchronized (errorCheckerService.problemsList) {
-//		      if (rowIndex < errorCheckerService.problemsList.size()) {
-//		        Problem p = errorCheckerService.problemsList.get(rowIndex);
-//		        if (p.getImportSuggestions() != null
-//		            && p.getImportSuggestions().length > 0) {
-//		          log("Import Suggestions available");
-//		        }
-//		      }
-//		    }
-////		    return super.getToolTipText(evt);
-//		  }
+			}			
 		});
 		
 		final XQErrorTable thisTable = this; 
 		
-		this.addMouseMotionListener(new MouseMotionListener() {
+		this.addMouseMotionListener(new MouseMotionAdapter() {
       
       @Override
       public void mouseMoved(MouseEvent evt) {
-//        log(evt);
-//      String tip = null;
-//      java.awt.Point p = evt.getPoint();
         int rowIndex = rowAtPoint(evt.getPoint());
-//        int colIndex = columnAtPoint(evt.getPoint());
         synchronized (errorCheckerService.problemsList) {
           if (rowIndex < errorCheckerService.problemsList.size()) {
             
@@ -141,26 +93,21 @@ public class XQErrorTable extends JTable {
             if (p.getImportSuggestions() != null
                 && p.getImportSuggestions().length > 0) {
               String t = p.getMessage() + "(Import Suggestions available)";
-              int x1 = thisTable.getFontMetrics(thisTable.getFont())
-                  .stringWidth(p.getMessage()), x2 = thisTable
-                  .getFontMetrics(thisTable.getFont()).stringWidth(t);
-              if(evt.getX() < x1 || evt.getX() > x2) return;
-              String[] list = p.getImportSuggestions();
-              String className = list[0].substring(list[0].lastIndexOf('.') + 1);
-              String[] temp = new String[list.length];
-              for (int i = 0; i < list.length; i++) {
-                temp[i] = "<html>Import '" +  className + "' <font color=#777777>(" + list[i] + ")</font></html>";
+              FontMetrics fm = thisTable.getFontMetrics(thisTable.getFont());
+              int x1 = fm.stringWidth(p.getMessage());
+              int x2 = fm.stringWidth(t);
+              if (evt.getX() > x1 && evt.getX() < x2) {
+                String[] list = p.getImportSuggestions();
+                String className = list[0].substring(list[0].lastIndexOf('.') + 1);
+                String[] temp = new String[list.length];
+                for (int i = 0; i < list.length; i++) {
+                  temp[i] = "<html>Import '" +  className + "' <font color=#777777>(" + list[i] + ")</font></html>";
+                }
+                showImportSuggestion(temp, evt.getXOnScreen(), evt.getYOnScreen() - 3 * thisTable.getFont().getSize());
               }
-              showImportSuggestion(temp, evt.getXOnScreen(), evt.getYOnScreen() - 3 * thisTable.getFont().getSize());
             }
           }
-
         }
-      }
-      
-      @Override
-      public void mouseDragged(MouseEvent e) {
-        
       }
     });
 
@@ -178,10 +125,8 @@ public class XQErrorTable extends JTable {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				columnResizing = false;
-				for (int i = 0; i < ((JTableHeader) e.getSource())
-						.getColumnModel().getColumnCount(); i++) {
-					columnWidths[i] = ((JTableHeader) e.getSource())
-							.getColumnModel().getColumn(i).getWidth();
+				for (int i = 0; i < ((JTableHeader) e.getSource()).getColumnModel().getColumnCount(); i++) {
+					columnWidths[i] = ((JTableHeader) e.getSource()).getColumnModel().getColumn(i).getWidth();
 					// System.out.println("nw " + columnWidths[i]);
 				}
 			}
@@ -190,6 +135,13 @@ public class XQErrorTable extends JTable {
 		ToolTipManager.sharedInstance().registerComponent(this);
 	}
 	
+	
+	@Override
+  public boolean isCellEditable(int rowIndex, int colIndex) {
+    return false; // Disallow the editing of any cell
+  }
+
+
 	/**
 	 * Updates table contents with new data
 	 * @param tableModel - TableModel
@@ -209,7 +161,6 @@ public class XQErrorTable extends JTable {
 			}
 
 			protected void done() {
-
 				try {
 					setModel(tableModel);
 					
@@ -239,9 +190,12 @@ public class XQErrorTable extends JTable {
 		}
 		return true;
 	}
+	
+	
 	JFrame frmImportSuggest;
+	
 	private void showImportSuggestion(String list[], int x, int y){
-	  if(frmImportSuggest != null) {
+	  if (frmImportSuggest != null) {
 //	    frmImportSuggest.setVisible(false);
 //	    frmImportSuggest = null;
 	    return;
@@ -267,13 +221,11 @@ public class XQErrorTable extends JTable {
     
     final DebugEditor editor = errorCheckerService.getEditor();
     classList.addListSelectionListener(new ListSelectionListener() {
-      
-      @Override
       public void valueChanged(ListSelectionEvent e) {
         if (classList.getSelectedValue() != null) {
           try {
             String t = classList.getSelectedValue().trim();
-            log(t);
+            Base.log(t);
             int x = t.indexOf('(');
             String impString = "import " + t.substring(x + 1, t.indexOf(')')) + ";\n";
             int ct = editor.getSketch().getCurrentCodeIndex();
@@ -281,7 +233,7 @@ public class XQErrorTable extends JTable {
             editor.textArea().getDocument().insertString(0, impString, null);
             editor.getSketch().setCurrentCode(ct);
           } catch (BadLocationException ble) {
-            log("Failed to insert import");
+            Base.log("Failed to insert import");
             ble.printStackTrace();
           }
         }
@@ -311,7 +263,5 @@ public class XQErrorTable extends JTable {
     frmImportSuggest.setBounds(x, y, 250, 100);
     frmImportSuggest.pack();
     frmImportSuggest.setVisible(true);
-    
 	}
-	
 }

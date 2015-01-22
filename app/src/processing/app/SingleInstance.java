@@ -111,14 +111,14 @@ public class SingleInstance {
               }
 //              }
             } catch (IOException e) {
-              Base.log("SingleInstance error while listening", e);
+              Base.loge("SingleInstance error while listening", e);
             }
           }
         }
       }, "SingleInstance Server").start();
 
     } catch (IOException e) {
-      Base.log("Could not create single instance server.", e);
+      Base.loge("Could not create single instance server.", e);
     }
   }
 

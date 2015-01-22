@@ -189,7 +189,7 @@ public class Base {
       } catch (Exception e) {
 //        String mess = e.getMessage();
 //        if (!mess.contains("ch.randelshofer.quaqua.QuaquaLookAndFeel")) {
-        log("Could not set the Look & Feel", e); //$NON-NLS-1$
+        loge("Could not set the Look & Feel", e); //$NON-NLS-1$
 //        }
       }
 
@@ -2970,10 +2970,17 @@ public class Base {
   }
 
 
-  static public void log(String message, Throwable e) {
+  static public void loge(String message, Throwable e) {
+    if (DEBUG) {
+      System.err.println(message);
+      e.printStackTrace();
+    }
+  }
+  
+  
+  static public void loge(String message) {
     if (DEBUG) {
       System.out.println(message);
-      e.printStackTrace();
     }
   }
 }

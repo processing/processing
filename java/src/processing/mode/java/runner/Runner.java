@@ -116,6 +116,39 @@ public class Runner implements MessageConsumer {
   }
   
   
+  /**
+   * Simple non-blocking launch of the virtual machine. VM starts suspended.
+   * @return debuggee VM or null on failure
+   */
+  public VirtualMachine launchDebug() {
+    if (launchVirtualMachine(false)) {  // will return null on failure
+      redirectStreams(vm);
+    }
+    return vm;
+  }
+
+  
+  /**
+   * Redirect a VMs output and error streams to System.out and System.err
+   */
+  protected void redirectStreams(VirtualMachine vm) {
+    MessageSiphon ms = new MessageSiphon(process.getErrorStream(), this);
+    errThread = ms.getThread();
+    outThread = new StreamRedirectThread("VM output reader", process.getInputStream(), System.out);
+    errThread.start();
+    outThread.start();
+  }
+
+  
+  /**
+   * Additional access to the virtual machine. TODO: may not be needed
+   * @return debugge VM or null if not running
+   */
+  public VirtualMachine vm() {
+    return vm;
+  }
+  
+  
   @SuppressWarnings("unchecked")
   public boolean launchVirtualMachine(boolean presenting) {
     String[] vmParams = getMachineParams();

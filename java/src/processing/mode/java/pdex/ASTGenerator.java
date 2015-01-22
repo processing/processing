@@ -20,9 +20,6 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import static processing.mode.java.pdex.ExperimentalMode.log;
-import static processing.mode.java.pdex.ExperimentalMode.logE;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -288,7 +285,7 @@ public class ASTGenerator {
                                               .types().get(0)));
     //log("Total CU " + compilationUnit.types().size());
     if(compilationUnit.types() == null || compilationUnit.types().isEmpty()){
-      logE("No CU found!");
+      Base.loge("No CU found!");
     }
     visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
     SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
@@ -330,7 +327,7 @@ public class ASTGenerator {
       }
     };
     worker.execute();
-//    logE("++>" + System.getProperty("java.class.path"));
+//    Base.loge("++>" + System.getProperty("java.class.path"));
 //    log(System.getProperty("java.class.path"));
 //    log("-------------------------------");
     return codeTree;
@@ -907,9 +904,9 @@ public class ASTGenerator {
         parser.setKind(ASTParser.K_EXPRESSION);
         parser.setSource(word2.toCharArray());
         ASTNode testnode = parser.createAST(null);
-        //logE("PREDICTION PARSER PROBLEMS: " + parser);
+        //Base.loge("PREDICTION PARSER PROBLEMS: " + parser);
         // Find closest ASTNode of the document to this word
-        logE("Typed: " + word2 + "|" + " temp Node type: " + testnode.getClass().getSimpleName());
+        Base.loge("Typed: " + word2 + "|" + " temp Node type: " + testnode.getClass().getSimpleName());
         if(testnode instanceof MethodInvocation){
           MethodInvocation mi = (MethodInvocation)testnode;
           log(mi.getName() + "," + mi.getExpression() + "," + mi.typeArguments().size());
@@ -922,7 +919,7 @@ public class ASTGenerator {
           // Make sure nearestNode is not NULL if couldn't find a closeset node
           nearestNode = (ASTNode) errorCheckerService.getLastCorrectCU().types().get(0);
         }
-        logE(lineNumber + " Nearest ASTNode to PRED "
+        Base.loge(lineNumber + " Nearest ASTNode to PRED "
             + getNodeAsString(nearestNode));
 
         candidates = new ArrayList<CompletionCandidate>();
@@ -930,7 +927,7 @@ public class ASTGenerator {
         // Determine the expression typed
         
         if (testnode instanceof SimpleName && !noCompare) {
-          logE("One word expression " + getNodeAsString(testnode));
+          Base.loge("One word expression " + getNodeAsString(testnode));
           //==> Simple one word exprssion - so is just an identifier
           
           // Bottom up traversal of the AST to look for possible definitions at 
@@ -1022,7 +1019,7 @@ public class ASTGenerator {
 
           // ==> Complex expression of type blah.blah2().doIt,etc
           // Have to resolve it by carefully traversing AST of testNode
-          logE("Complex expression " + getNodeAsString(testnode));
+          Base.loge("Complex expression " + getNodeAsString(testnode));
           log("candidates empty");
           ASTNode childExpr = getChildExpression(testnode);
           log("Parent expression : " + getParentExpression(testnode));
@@ -1282,7 +1279,7 @@ public class ASTGenerator {
                                                - lineElement.getStartOffset());
       return javaLine;
     } catch (BadLocationException e) {
-      logE(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
+      Base.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
     }
     return null;
   }
@@ -1309,7 +1306,7 @@ public class ASTGenerator {
 //                                               - lineElement.getStartOffset());
       return lineElement;
     } catch (BadLocationException e) {
-      logE(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
+      Base.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
     }
     return null;
   }
@@ -1516,7 +1513,7 @@ public class ASTGenerator {
   protected static ASTNode findClosestParentNode(int lineNumber, ASTNode node) {
     Iterator<StructuralPropertyDescriptor> it = node
         .structuralPropertiesForType().iterator();
-    // logE("Props of " + node.getClass().getName());
+    // Base.loge("Props of " + node.getClass().getName());
     while (it.hasNext()) {
       StructuralPropertyDescriptor prop = it.next();
 
@@ -1745,12 +1742,12 @@ public class ASTGenerator {
         // log(getNodeAsString(simpName));
         decl = findDeclaration((SimpleName) simpName);
         if (decl != null) {
-//          logE("DECLA: " + decl.getClass().getName());
+//          Base.loge("DECLA: " + decl.getClass().getName());
           nodeLabel = getLabelIfType(new ASTNodeWrapper(decl),
                                      (SimpleName) simpName);
           //retLabelString = getNodeAsString(decl);
         } else {
-//          logE("null");
+//          Base.loge("null");
           if (scrollOnly) {
             editor.statusMessage(simpName + " is not defined in this sketch",
                                  DebugEditor.STATUS_ERR);
@@ -1784,13 +1781,13 @@ public class ASTGenerator {
        * since it contains all the properties.
        */
       ASTNode simpName2 = getNodeName(decl, nameOfNode);
-//      logE("FINAL String decl: " + getNodeAsString(decl));
-//      logE("FINAL String label: " + getNodeAsString(simpName2));
+//      Base.loge("FINAL String decl: " + getNodeAsString(decl));
+//      Base.loge("FINAL String label: " + getNodeAsString(simpName2));
       //errorCheckerService.highlightNode(simpName2);
       ASTNodeWrapper declWrap = new ASTNodeWrapper(simpName2, nodeLabel);
       //errorCheckerService.highlightNode(declWrap);
       if (!declWrap.highlightNode(this)) {
-        logE("Highlighting failed.");
+        Base.loge("Highlighting failed.");
       }
     }
 
@@ -1872,11 +1869,10 @@ public class ASTGenerator {
     CompilationUnit cu = (CompilationUnit) parser.createAST(null);
     log(CompilationUnit.propertyDescriptors(AST.JLS4).size());
 
-    DefaultMutableTreeNode astTree = new DefaultMutableTreeNode(
-                                                                "CompilationUnit");
-    logE("Errors: " + cu.getProblems().length);
+    DefaultMutableTreeNode astTree = new DefaultMutableTreeNode("CompilationUnit");
+    Base.loge("Errors: " + cu.getProblems().length);
     visitRecur(cu, astTree);
-    log(astTree.getChildCount());
+    Base.log("" + astTree.getChildCount());
 
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -1894,9 +1890,10 @@ public class ASTGenerator {
 
     ASTNode found = NodeFinder.perform(cu, 468, 5);
     if (found != null) {
-      log(found);
+      Base.log(found.toString());
     }
   }
+  
   
   final ASTGenerator thisASTGenerator = this;
   
@@ -1905,7 +1902,7 @@ public class ASTGenerator {
       
       @Override
       public void valueChanged(TreeSelectionEvent e) {
-        log(e);
+        Base.log(e.toString());
         SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           @Override
@@ -2093,7 +2090,7 @@ public class ASTGenerator {
         lineOffsetDisplacement.put(awrap.getLineNumber(),
                                    lineOffsetDisplacementConst);
       }
-//      logE(getNodeAsString(awrap.getNode()) + ", T:" + pdeOffsets[i][0]
+//      Base.loge(getNodeAsString(awrap.getNode()) + ", T:" + pdeOffsets[i][0]
 //          + ", L:" + pdeOffsets[i][1] + ", O:" + pdeOffsets[i][2]);
       highlightPDECode(pdeOffsets[i][0],
                        pdeOffsets[i][1], pdeOffsets[i][2]
@@ -2204,7 +2201,7 @@ public class ASTGenerator {
     if(wnode.getNode() == null){
       return null;
     }
-    logE("Gonna find all occurrences of "
+    Base.loge("Gonna find all occurrences of "
         + getNodeAsString(wnode.getNode()));
     
     //If wnode is a constructor, find the TD instead.
@@ -2221,7 +2218,7 @@ public class ASTGenerator {
       if(node != null && node instanceof TypeDeclaration){
         TypeDeclaration td = (TypeDeclaration) node;
         if(td.getName().toString().equals(md.getName().toString())){
-          logE("Renaming constructor of " + getNodeAsString(td));
+          Base.loge("Renaming constructor of " + getNodeAsString(td));
           wnode = new ASTNodeWrapper(td);
         }
       }
@@ -2257,7 +2254,7 @@ public class ASTGenerator {
   public static void visitRecur(ASTNode node, DefaultMutableTreeNode tnode) {
     Iterator<StructuralPropertyDescriptor> it = 
         node.structuralPropertiesForType().iterator();
-    //logE("Props of " + node.getClass().getName());
+    //Base.loge("Props of " + node.getClass().getName());
     DefaultMutableTreeNode ctnode = null;
     while (it.hasNext()) {
       StructuralPropertyDescriptor prop = it.next();
@@ -2461,7 +2458,7 @@ public class ASTGenerator {
         }
         log("Visiting: " + getNodeAsString(node));
         ASTNode decl2 = findDeclaration(sn);
-        logE("It's decl: " + getNodeAsString(decl2));
+        Base.loge("It's decl: " + getNodeAsString(decl2));
         log("But we need: "+getNodeAsString(decl));
         for (ASTNode astNode : nodesToBeMatched) {
           if(astNode.equals(decl2)){
@@ -2525,7 +2522,7 @@ public class ASTGenerator {
   public static void printRecur(ASTNode node) {
     Iterator<StructuralPropertyDescriptor> it = node
         .structuralPropertiesForType().iterator();
-    //logE("Props of " + node.getClass().getName());
+    //Base.loge("Props of " + node.getClass().getName());
     while (it.hasNext()) {
       StructuralPropertyDescriptor prop = it.next();
 
@@ -2559,12 +2556,12 @@ public class ASTGenerator {
     CompilationUnit root = (CompilationUnit) node.getRoot();
 //    log("Inside "+getNodeAsString(node) + " | " + root.getLineNumber(node.getStartPosition()));
     if (root.getLineNumber(node.getStartPosition()) == lineNumber) {
-      // logE(3 + getNodeAsString(node) + " len " + node.getLength());      
+      // Base.loge(3 + getNodeAsString(node) + " len " + node.getLength());      
       return node;
 //      if (offset < node.getLength())
 //        return node;
 //      else {
-//        logE(-11);
+//        Base.loge(-11);
 //        return null;
 //      }
     }
@@ -2577,7 +2574,7 @@ public class ASTGenerator {
                                                  .getStructuralProperty(prop),
                                              lineNumber, offset, name);
             if (retNode != null) {
-//              logE(11 + getNodeAsString(retNode));
+//              Base.loge(11 + getNodeAsString(retNode));
               return retNode;
             }
           }
@@ -2589,13 +2586,13 @@ public class ASTGenerator {
 
           ASTNode rr = findLineOfNode(retNode, lineNumber, offset, name);
           if (rr != null) {
-//              logE(12 + getNodeAsString(rr));
+//              Base.loge(12 + getNodeAsString(rr));
             return rr;
           }
         }
       }
     }
-//    logE("-1");
+//    Base.loge("-1");
     return null;
   }
 
@@ -2638,7 +2635,7 @@ public class ASTGenerator {
                                                  .getStructuralProperty(prop),
                                              offset, lineStartOffset, name);
             if (retNode != null) {
-//              logE(11 + getNodeAsString(retNode));
+//              Base.loge(11 + getNodeAsString(retNode));
               return retNode;
             }
           }
@@ -2650,13 +2647,13 @@ public class ASTGenerator {
 
           ASTNode rr = pinpointOnLine(retNode, offset, lineStartOffset, name);
           if (rr != null) {
-//              logE(12 + getNodeAsString(rr));
+//              Base.loge(12 + getNodeAsString(rr));
             return rr;
           }
         }
       }
     }
-//    logE("-1");
+//    Base.loge("-1");
     return null;
   }
 
@@ -3267,7 +3264,7 @@ public class ASTGenerator {
     switch (node.getNodeType()) {
 
     case ASTNode.TYPE_DECLARATION:
-      //logE(getNodeAsString(node));
+      //Base.loge(getNodeAsString(node));
       TypeDeclaration td = (TypeDeclaration) node;
       if (td.getName().toString().equals(name)) {
         if (constrains.contains(ASTNode.CLASS_INSTANCE_CREATION)) {
@@ -3306,25 +3303,25 @@ public class ASTGenerator {
       }
       break;
     case ASTNode.METHOD_DECLARATION:
-      //logE(getNodeAsString(node));
+      //Base.loge(getNodeAsString(node));
       if (((MethodDeclaration) node).getName().toString().equalsIgnoreCase(name))
         return node;
       break;
     case ASTNode.SINGLE_VARIABLE_DECLARATION:
-      //logE(getNodeAsString(node));
+      //Base.loge(getNodeAsString(node));
       if (((SingleVariableDeclaration) node).getName().toString().equalsIgnoreCase(name))
         return node;
       break;
     case ASTNode.FIELD_DECLARATION:
-      //logE("FD" + node);
+      //Base.loge("FD" + node);
       vdfList = ((FieldDeclaration) node).fragments();
       break;
     case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
-      //logE("VDE" + node);
+      //Base.loge("VDE" + node);
       vdfList = ((VariableDeclarationExpression) node).fragments();
       break;
     case ASTNode.VARIABLE_DECLARATION_STATEMENT:
-      //logE("VDS" + node);
+      //Base.loge("VDS" + node);
       vdfList = ((VariableDeclarationStatement) node).fragments();
       break;
 
@@ -3764,4 +3761,8 @@ public class ASTGenerator {
     return null;
   }
 
+  
+  static private void log(Object object) {
+    Base.log(object == null ? "null" : object.toString());
+  }
 }

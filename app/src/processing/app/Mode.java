@@ -1230,10 +1230,15 @@ public abstract class Mode {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  // Get attributes/values from the theme.txt file. To discourage burying this
+  // kind of information in code where it doesn't belong (and is difficult to 
+  // track down), these don't have a "default" option as a second parameter. 
 
-  //public String get(String attribute) {
-  //  return theme.get(attribute);
-  //}
+  
+  /** @since 3.0a6 */
+  public String getString(String attribute) {
+    return theme.get(attribute);
+  }
 
 
   public boolean getBoolean(String attribute) {
@@ -1252,7 +1257,6 @@ public abstract class Mode {
 
 
   public Font getFont(String attribute) {
-//    System.out.println("getFont(" + attribute + ") -> " + theme.getFont(attribute));
     return theme.getFont(attribute);
   }
 

@@ -20,11 +20,11 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.debug;
 
-import static processing.mode.java.pdex.ExperimentalMode.log;
-
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import processing.app.Base;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
@@ -219,13 +219,13 @@ public class LineBreakpoint implements ClassLoadListener {
     @Override
     public void classLoaded(ReferenceType theClass) {
         // check if our class is being loaded
-        log("Class Loaded: " + theClass.name());
+        Base.log("Class Loaded: " + theClass.name());
         if (theClass.name().equals(className())) {
             this.theClass = theClass;
             attach();
         }
         for (ReferenceType ct : theClass.nestedTypes()) {
-          log("Nested " + ct.name());
+          Base.log("Nested " + ct.name());
         }
     }
 }

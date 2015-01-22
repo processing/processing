@@ -20,9 +20,6 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import static processing.mode.java.pdex.ExperimentalMode.log;
-import static processing.mode.java.pdex.ExperimentalMode.logE;
-
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -346,10 +343,10 @@ public class ErrorCheckerService implements Runnable {
         }
         else {
           noSleep = false;
-          log("Didn't sleep!");
+          Base.log("Didn't sleep!");
         }
       } catch (Exception e) {
-        log("Oops! [ErrorCheckerThreaded]: " + e);
+        Base.log("Oops! [ErrorCheckerThreaded]: " + e);
         // e.printStackTrace();
       }
       
@@ -363,7 +360,7 @@ public class ErrorCheckerService implements Runnable {
       // Check if a certain interval has passed after the call. Only then
       // begin error check. Helps prevent unnecessary flickering. See #2677
       if (System.currentTimeMillis() - lastErrorCheckCall > errorCheckInterval) {
-        log("Interval passed, starting error check");
+        Base.log("Interval passed, starting error check");
         checkCode();
         checkForMissingImports();
       }
@@ -374,7 +371,7 @@ public class ErrorCheckerService implements Runnable {
     checkerClass = null;
     classLoader = null;
     System.gc();
-    logE("Thread stopped: " + editor.getSketch().getName());
+    Base.loge("Thread stopped: " + editor.getSketch().getName());
     System.gc();
   }
   
@@ -404,7 +401,7 @@ public class ErrorCheckerService implements Runnable {
         String args[] = p.getIProblem().getArguments();        
         if (args.length > 0) {
           String missingClass = args[0];
-          log("Will suggest for type:" + missingClass);
+          Base.log("Will suggest for type:" + missingClass);
           //astGenerator.suggestImports(missingClass);
         }
       }
@@ -417,6 +414,7 @@ public class ErrorCheckerService implements Runnable {
     return astGenerator;
   }
 
+  
   /**
    * This thing acts as an event queue counter of sort.
    * Since error checking happens on demand, anytime this counter
@@ -425,10 +423,12 @@ public class ErrorCheckerService implements Runnable {
    */
   protected AtomicInteger textModified = new AtomicInteger();
   
+  
   /**
    * Time stamp of last runManualErrorCheck() call.
    */
   private volatile long lastErrorCheckCall = 0;
+  
   
   /**
    * Triggers error check
@@ -439,11 +439,12 @@ public class ErrorCheckerService implements Runnable {
     lastErrorCheckCall = System.currentTimeMillis();
   }
   
+  
+  // TODO: Experimental, lookout for threading related issues
   public void quickErrorCheck() {
-    //TODO: Experimental, lookout for threading related issues
     noSleep = true;
-    log("quickErrorCheck()");
   }
+  
   
   protected SketchChangedListener sketchChangedListener;
   protected class SketchChangedListener implements DocumentListener{
@@ -516,7 +517,7 @@ public class ErrorCheckerService implements Runnable {
       astGenerator.buildAST(cu);
       if(!ExperimentalMode.errorCheckEnabled){
     	  problemsList.clear();
-    	  log("Error Check disabled, so not updating UI.");
+    	  Base.log("Error Check disabled, so not updating UI.");
       }
       calcPDEOffsetsForProbList();
       updateErrorTable();
@@ -540,7 +541,7 @@ public class ErrorCheckerService implements Runnable {
       return true;
 
     } catch (Exception e) {
-      log("Oops! [ErrorCheckerService.checkCode]: " + e);
+      Base.log("Oops! [ErrorCheckerService.checkCode]: " + e);
       e.printStackTrace();
     }
     return false;
@@ -770,7 +771,7 @@ public class ErrorCheckerService implements Runnable {
         Element lineElement = javaSource.getDefaultRootElement()
             .getElement(javaLineNumber);
         if (lineElement == null) {
-          log("calcPDEOffsetsForProbList(): Couldn't fetch javalinenum "
+          Base.log("calcPDEOffsetsForProbList(): Couldn't fetch javalinenum "
               + javaLineNumber + "\nProblem: " + p);
           p.setPDEOffsets(-1,-1);
           continue;
@@ -782,7 +783,7 @@ public class ErrorCheckerService implements Runnable {
         Element pdeLineElement = pdeTabs[p.getTabIndex()]
             .getDefaultRootElement().getElement(p.getLineNumber());
         if (pdeLineElement == null) {
-          log("calcPDEOffsetsForProbList(): Couldn't fetch pdelinenum "
+          Base.log("calcPDEOffsetsForProbList(): Couldn't fetch pdelinenum "
               + javaLineNumber + "\nProblem: " + p);
           p.setPDEOffsets(-1,-1);
           continue;
@@ -1056,7 +1057,7 @@ public class ErrorCheckerService implements Runnable {
       }*/
 
     } catch (Exception e) {
-      log("Exception at updateErrorTable() " + e);
+      Base.log("Exception at updateErrorTable() " + e);
       e.printStackTrace();
       pauseThread();
     }
@@ -1361,7 +1362,7 @@ public class ErrorCheckerService implements Runnable {
       }
 
     } catch (Exception e) {
-      log("Exception in preprocessCode()");
+      Base.log("Exception in preprocessCode()");
     }
     String sourceAlt = rawCode.toString();
     // Replace comments with whitespaces
@@ -1460,11 +1461,11 @@ public class ErrorCheckerService implements Runnable {
    * @return true - if highlighting happened correctly.
    */
   private boolean highlightNode(ASTNodeWrapper awrap){
-    log("Highlighting: " + awrap);
+    Base.log("Highlighting: " + awrap);
     try {
       int pdeoffsets[] = awrap.getPDECodeOffsets(this);
       int javaoffsets[] = awrap.getJavaCodeOffsets(this);
-      log("offsets: " +pdeoffsets[0] + "," +
+      Base.log("offsets: " +pdeoffsets[0] + "," +
           pdeoffsets[1]+ "," +javaoffsets[1]+ "," +
           javaoffsets[2]);
       scrollToErrorLine(editor, pdeoffsets[0],
@@ -1472,7 +1473,7 @@ public class ErrorCheckerService implements Runnable {
                                             javaoffsets[2]);
       return true;
     } catch (Exception e) {
-      logE("Scrolling failed for " + awrap);
+      Base.loge("Scrolling failed for " + awrap);
       // e.printStackTrace();
     }
     return false;
@@ -1532,7 +1533,7 @@ public class ErrorCheckerService implements Runnable {
       }
       editor.repaint();
     } catch (Exception e) {
-      logE(e
+      Base.loge(e
           + " : Error while selecting text in scrollToErrorLine(), for problem: " + p);
     }
     // log("---");
@@ -1564,7 +1565,8 @@ public class ErrorCheckerService implements Runnable {
       edt.setSelection(lsno, lsno + length);
       edt.getTextArea().scrollTo(lineNoInTab - 1, 0);
       edt.repaint();
-      log(lineStartOffset + " LSO,len " + length);
+      Base.log(lineStartOffset + " LSO,len " + length);
+      
     } catch (Exception e) {
       System.err.println(e
           + " : Error while selecting text in static scrollToErrorLine()");
@@ -1708,7 +1710,7 @@ public class ErrorCheckerService implements Runnable {
     if (!ExperimentalMode.errorCheckEnabled) {
       // unticked Menu Item
       // pauseThread();
-      log(editor.getSketch().getName()
+      Base.log(editor.getSketch().getName()
           + " - Error Checker paused.");
       editor.errorBar.errorPoints.clear();
       problemsList.clear();
@@ -1718,7 +1720,7 @@ public class ErrorCheckerService implements Runnable {
       editor.errorBar.repaint();
     } else {
       //resumeThread();
-      log(editor.getSketch().getName()
+      Base.log(editor.getSketch().getName()
           + " - Error Checker resumed.");
       runManualErrorCheck();
     }
@@ -1728,7 +1730,7 @@ public class ErrorCheckerService implements Runnable {
    * Stops the Error Checker Service thread
    */
   public void stopThread() {
-    logE("Stopping thread: " + editor.getSketch().getName());
+    Base.loge("Stopping thread: " + editor.getSketch().getName());
     stopThread.set(true);
   }
 

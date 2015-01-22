@@ -22,7 +22,6 @@ package processing.mode.java.pdex;
 
 import processing.mode.java.tweak.SketchParser;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
@@ -46,7 +45,7 @@ public class ExperimentalMode extends JavaMode {
   public static final boolean VERBOSE_LOGGING = true;
   //public static final boolean VERBOSE_LOGGING = false;
   public static final int LOG_SIZE = 512 * 1024; // max log file size (in bytes)
-  public static boolean DEBUG = !true;
+//  public static boolean DEBUG = !true;
 
 
   public ExperimentalMode(Base base, File folder) {
@@ -160,12 +159,12 @@ public class ExperimentalMode extends JavaMode {
 
 
   public void loadPreferences() {
-    log("Load PDEX prefs");
+    Base.log("Load PDEX prefs");
     ensurePrefsExist();
     errorCheckEnabled = Preferences.getBoolean(prefErrorCheck);
     warningsEnabled = Preferences.getBoolean(prefWarnings);
     codeCompletionsEnabled = Preferences.getBoolean(prefCodeCompletionEnabled);
-    DEBUG = Preferences.getBoolean(prefDebugOP);
+//    DEBUG = Preferences.getBoolean(prefDebugOP);
     errorLogsEnabled = Preferences.getBoolean(prefErrorLogs);
     autoSaveInterval = Preferences.getInteger(prefAutoSaveInterval);
 //    untitledAutoSaveEnabled = Preferences.getBoolean(prefUntitledAutoSave);
@@ -178,11 +177,11 @@ public class ExperimentalMode extends JavaMode {
 
 
   public void savePreferences() {
-    log("Saving PDEX prefs");
+    Base.log("Saving PDEX prefs");
     Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
     Preferences.setBoolean(prefWarnings, warningsEnabled);
     Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);
-    Preferences.setBoolean(prefDebugOP, DEBUG);
+//    Preferences.setBoolean(prefDebugOP, DEBUG);
     Preferences.setBoolean(prefErrorLogs, errorLogsEnabled);
     Preferences.setInteger(prefAutoSaveInterval, autoSaveInterval);
 //    Preferences.setBoolean(prefUntitledAutoSave,untitledAutoSaveEnabled);
@@ -203,7 +202,7 @@ public class ExperimentalMode extends JavaMode {
     if (Preferences.get(prefCodeCompletionEnabled) == null)
       Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);
     if (Preferences.get(prefDebugOP) == null)
-      Preferences.setBoolean(prefDebugOP, DEBUG);
+//      Preferences.setBoolean(prefDebugOP, DEBUG);
     if (Preferences.get(prefErrorLogs) == null)
       Preferences.setBoolean(prefErrorLogs, errorLogsEnabled);
     if (Preferences.get(prefAutoSaveInterval) == null)
@@ -232,41 +231,41 @@ public class ExperimentalMode extends JavaMode {
   }
 
 
-  /**
-   * Load a String value from theme.txt
-   *
-   * @param attribute the attribute key to load
-   * @param defaultValue the default value
-   * @return the attributes value, or the default value if the attribute
-   * couldn't be loaded
-   */
-  public String loadThemeString(String attribute, String defaultValue) {
-    String newString = theme.get(attribute);
-    if (newString != null) {
-      return newString;
-    }
-    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error loading String: {0}", attribute);
-    return defaultValue;
-  }
+//  /**
+//   * Load a String value from theme.txt
+//   *
+//   * @param attribute the attribute key to load
+//   * @param defaultValue the default value
+//   * @return the attributes value, or the default value if the attribute
+//   * couldn't be loaded
+//   */
+//  public String loadThemeString(String attribute, String defaultValue) {
+//    String newString = theme.get(attribute);
+//    if (newString != null) {
+//      return newString;
+//    }
+//    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error loading String: {0}", attribute);
+//    return defaultValue;
+//  }
 
 
-  /**
-   * Load a Color value from theme.txt
-   *
-   * @param attribute the attribute key to load
-   * @param defaultValue the default value
-   * @return the attributes value, or the default value if the attribute
-   * couldn't be loaded
-   */
-  public Color getThemeColor(String attribute, Color defaultValue) {
-    Color newColor = theme.getColor(attribute);
-    if (newColor != null) {
-      return newColor;
-    }
-    log("error loading color: " + attribute);
-    Logger.getLogger(ExperimentalMode.class.getName()).log(Level.WARNING, "Error loading Color: {0}", attribute);
-    return defaultValue;
-  }
+//  /**
+//   * Load a Color value from theme.txt
+//   *
+//   * @param attribute the attribute key to load
+//   * @param defaultValue the default value
+//   * @return the attributes value, or the default value if the attribute
+//   * couldn't be loaded
+//   */
+//  public Color getThemeColor(String attribute, Color defaultValue) {
+//    Color newColor = theme.getColor(attribute);
+//    if (newColor != null) {
+//      return newColor;
+//    }
+//    log("error loading color: " + attribute);
+//    Logger.getLogger(ExperimentalMode.class.getName()).log(Level.WARNING, "Error loading Color: {0}", attribute);
+//    return defaultValue;
+//  }
 
 
   protected ImageIcon classIcon, fieldIcon, methodIcon, localVarIcon;
@@ -298,31 +297,31 @@ public class ExperimentalMode extends JavaMode {
   */
 
 
-  /**
-   * System.out.println()
-   */
-  public static final void log(Object message){
-    if(ExperimentalMode.DEBUG)
-      System.out.println(message);
-  }
-
-
-  /**
-   * System.err.println()
-   */
-  public static final void logE(Object message){
-    if(ExperimentalMode.DEBUG)
-      System.err.println(message);
-  }
-
-
-  /**
-   * System.out.print
-   */
-  public static final void log2(Object message){
-    if(ExperimentalMode.DEBUG)
-      System.out.print(message);
-  }
+//  /**
+//   * System.out.println()
+//   */
+//  public static final void log(Object message){
+//    if(ExperimentalMode.DEBUG)
+//      System.out.println(message);
+//  }
+//
+//
+//  /**
+//   * System.err.println()
+//   */
+//  public static final void logE(Object message){
+//    if(ExperimentalMode.DEBUG)
+//      System.err.println(message);
+//  }
+//
+//
+//  /**
+//   * System.out.print
+//   */
+//  public static final void log2(Object message){
+//    if(ExperimentalMode.DEBUG)
+//      System.out.print(message);
+//  }
 
 
   public String[] getIgnorable() {

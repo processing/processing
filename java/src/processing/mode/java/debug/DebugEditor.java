@@ -1,27 +1,24 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-Part of the Processing project - http://processing.org
-Copyright (c) 2012-15 The Processing Foundation
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License version 2
-as published by the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software Foundation, Inc.
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+  Part of the Processing project - http://processing.org
+  Copyright (c) 2012-15 The Processing Foundation
+ 
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License version 2
+  as published by the Free Software Foundation.
+ 
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+ 
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation, Inc.
+  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
 package processing.mode.java.debug;
-
-import static processing.mode.java.pdex.ExperimentalMode.log;
-import static processing.mode.java.pdex.ExperimentalMode.logE;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -81,13 +78,12 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
-import processing.mode.java.JavaInputHandler;
 import processing.mode.java.pdex.ErrorBar;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
 import processing.mode.java.pdex.ExperimentalMode;
 import processing.mode.java.pdex.Problem;
-import processing.mode.java.pdex.TextArea;
+import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.XQConsoleToggle;
 import processing.mode.java.pdex.XQErrorTable;
 import processing.mode.java.tweak.ColorControlBox;
@@ -110,138 +106,87 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     //private JMenu fileMenu;
     //protected EditorToolbar toolbar;
 
-    // highlighting
-    protected Color breakpointColor = new Color(240, 240, 240); // the background color for highlighting lines
-    protected Color currentLineColor = new Color(255, 255, 150); // the background color for highlighting lines
-    protected Color breakpointMarkerColor = new Color(74, 84, 94); // the color of breakpoint gutter markers
-    protected Color currentLineMarkerColor = new Color(226, 117, 0); // the color of current line gutter markers
-    protected List<LineHighlight> breakpointedLines = new ArrayList<LineHighlight>(); // breakpointed lines
-    protected LineHighlight currentLine; // line the debugger is currently suspended at
-    protected final String breakpointMarkerComment = " //<>//"; // breakpoint marker comment
-    // menus
-    protected JMenu debugMenu; // the debug menu
-    // debugger control
-    protected JMenuItem debugMenuItem;
-    protected JMenuItem continueMenuItem;
-    protected JMenuItem stopMenuItem;
-    // breakpoints
-    protected JMenuItem toggleBreakpointMenuItem;
-    protected JMenuItem listBreakpointsMenuItem;
-    // stepping
-    protected JMenuItem stepOverMenuItem;
-    protected JMenuItem stepIntoMenuItem;
-    protected JMenuItem stepOutMenuItem;
-    // info
-    protected JMenuItem printStackTraceMenuItem;
-    protected JMenuItem printLocalsMenuItem;
-    protected JMenuItem printThisMenuItem;
-    protected JMenuItem printSourceMenuItem;
-    protected JMenuItem printThreads;
-    // variable inspector
-    protected JMenuItem toggleVariableInspectorMenuItem;
-    // references
-    public ExperimentalMode dmode; // the mode
-    protected Debugger dbg; // the debugger
-    protected VariableInspector vi; // the variable inspector frame
-    
-    public TextArea ta; // the text area
-    public ErrorBar errorBar;
-    
-    /**
-     * Show Console button
-     */
-    protected XQConsoleToggle btnShowConsole;
+  protected Color breakpointColor;  // = new Color(240, 240, 240); // the background color for highlighting lines
+  protected Color currentLineColor; // = new Color(255, 255, 150); // the background color for highlighting lines
+  protected Color breakpointMarkerColor; // = new Color(74, 84, 94); // the color of breakpoint gutter markers
+  protected Color currentLineMarkerColor; // = new Color(226, 117, 0); // the color of current line gutter markers
+  protected List<LineHighlight> breakpointedLines = new ArrayList<LineHighlight>(); // breakpointed lines
+  protected LineHighlight currentLine; // line the debugger is currently suspended at
+  protected final String breakpointMarkerComment = " //<>//"; // breakpoint marker comment
 
-    /**
-     * Show Problems button
-     */
-    protected XQConsoleToggle btnShowErrors;
+  protected JMenu debugMenu; // the debug menu
 
-    /**
-     * Scroll pane for Error Table
-     */
-    protected JScrollPane errorTableScrollPane;
+  protected JMenuItem debugMenuItem;
+  protected JMenuItem continueMenuItem;
+  protected JMenuItem stopMenuItem;
 
-    /**
-     * Panel with card layout which contains the p5 console and Error Table
-     * panes
-     */
-    protected JPanel consoleProblemsPane;
+  protected JMenuItem toggleBreakpointMenuItem;
+  protected JMenuItem listBreakpointsMenuItem;
+
+  protected JMenuItem stepOverMenuItem;
+  protected JMenuItem stepIntoMenuItem;
+  protected JMenuItem stepOutMenuItem;
+
+  protected JMenuItem printStackTraceMenuItem;
+  protected JMenuItem printLocalsMenuItem;
+  protected JMenuItem printThisMenuItem;
+  protected JMenuItem printSourceMenuItem;
+  protected JMenuItem printThreads;
+
+  protected JMenuItem toggleVariableInspectorMenuItem;
+
+  public ExperimentalMode dmode; // the mode
+  protected Debugger dbg; // the debugger
+  protected VariableInspector vi; // the variable inspector frame
+
+  public JavaTextArea ta; // the text area
+  public ErrorBar errorBar;
     
-    protected XQErrorTable errorTable;
+  protected XQConsoleToggle btnShowConsole;
+  protected XQConsoleToggle btnShowErrors;
+  protected JScrollPane errorTableScrollPane;
+  protected JPanel consoleProblemsPane;    
+  protected XQErrorTable errorTable;
     
-    /**
-     * Enable/Disable compilation checking
-     */
-    public boolean compilationCheckEnabled = true;
+  public boolean compilationCheckEnabled = true;
+
+  protected JCheckBoxMenuItem showWarnings;
+  public JCheckBoxMenuItem problemWindowMenuCB;
+  protected JCheckBoxMenuItem debugMessagesEnabled;
+  protected JMenuItem showOutline, showTabOutline;
+  protected JCheckBoxMenuItem writeErrorLog;
+  protected JCheckBoxMenuItem completionsEnabled;
     
-    /**
-     * Show warnings menu item
-     */
-    protected JCheckBoxMenuItem showWarnings;
-    
-    /**
-     * Check box menu item for show/hide Problem Window
-     */
-    public JCheckBoxMenuItem problemWindowMenuCB;
-    
-    /**
-     * Enable/Disable debug ouput
-     */
-    protected JCheckBoxMenuItem debugMessagesEnabled;
-    
-    /**
-     * Show outline view
-     */
-    protected JMenuItem showOutline, showTabOutline;
-    
-    /**
-     * Enable/Disable error logging
-     */
-    protected JCheckBoxMenuItem writeErrorLog;
-    
-    /**
-     * Enable/Disable code completion
-     */
-    protected JCheckBoxMenuItem completionsEnabled;
-    
-    /**
-     * If sketch contains java tabs, some editor features are disabled
-     */
-    public boolean hasJavaTabs;
+  // TODO no way should this be public; make an accessor or protected
+  public boolean hasJavaTabs;
     
 
     public DebugEditor(Base base, String path, EditorState state, Mode mode) {
-        super(base, path, state, mode);
+      super(base, path, state, mode);
 
-        // get mode
-        dmode = (ExperimentalMode) mode;
+      dmode = (ExperimentalMode) mode;
+      dbg = new Debugger(this);
+      vi = new VariableInspector(this);
 
-        // init controller class
-        dbg = new Debugger(this);
+      // access to customized (i.e. subclassed) text area
+      ta = (JavaTextArea) textarea;
 
-        // variable inspector window
-        vi = new VariableInspector(this);
+      // Add show usage option
+      JMenuItem showUsageItem = new JMenuItem("Show Usage...");
+      showUsageItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleShowUsage();
+        }
+      });
+      ta.getRightClickPopup().add(showUsageItem);
 
-        // access to customized (i.e. subclassed) text area
-        ta = (TextArea) textarea;
-        
-        // Add show usage option
-        JMenuItem showUsageItem = new JMenuItem("Show Usage..");
-        showUsageItem.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            handleShowUsage();
-          }
-        });
-        ta.getRightClickPopup().add(showUsageItem);
-        
-        // add refactor option
-        JMenuItem renameItem = new JMenuItem("Rename..");
-        renameItem.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            handleRefactor();
-          }
-        });        
+      // add refactor option
+      JMenuItem renameItem = new JMenuItem("Rename...");
+      renameItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleRefactor();
+        }
+      });        
         
         // TODO: Add support for word select on right click and rename.
 //        ta.customPainter.addMouseListener(new MouseAdapter() {
@@ -249,7 +194,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 //            System.out.println(evt);
 //          }
 //        });
-        ta.getRightClickPopup().add(renameItem);
+      ta.getRightClickPopup().add(renameItem);
         // set action on frame close
 //        addWindowListener(new WindowAdapter() {
 //            @Override
@@ -258,27 +203,28 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 //            }
 //        });
 
-        Toolkit.setMenuMnemonics(ta.getRightClickPopup());
+      Toolkit.setMenuMnemonics(ta.getRightClickPopup());
 
-        // load settings from theme.txt
-        ExperimentalMode theme = dmode;
-        breakpointColor = theme.getThemeColor("breakpoint.bgcolor", breakpointColor);
-        breakpointMarkerColor = theme.getThemeColor("breakpoint.marker.color", breakpointMarkerColor);
-        currentLineColor = theme.getThemeColor("currentline.bgcolor", currentLineColor);
-        currentLineMarkerColor = theme.getThemeColor("currentline.marker.color", currentLineMarkerColor);
+      // load settings from theme.txt
+      breakpointColor = mode.getColor("breakpoint.bgcolor"); //, breakpointColor);
+      breakpointMarkerColor = mode.getColor("breakpoint.marker.color"); //, breakpointMarkerColor);
+      currentLineColor = mode.getColor("currentline.bgcolor"); //, currentLineColor);
+      currentLineMarkerColor = mode.getColor("currentline.marker.color"); //, currentLineMarkerColor);
 
-        // set breakpoints from marker comments
-        for (LineID lineID : stripBreakpointComments()) {
-            //System.out.println("setting: " + lineID);
-            dbg.setBreakpoint(lineID);
-        }
-        getSketch().setModified(false); // setting breakpoints will flag sketch as modified, so override this here
+      // set breakpoints from marker comments
+      for (LineID lineID : stripBreakpointComments()) {
+        //System.out.println("setting: " + lineID);
+        dbg.setBreakpoint(lineID);
+      }
+      getSketch().setModified(false); // setting breakpoints will flag sketch as modified, so override this here
         
-        checkForJavaTabs();
-        initializeErrorChecker();
-        ta.setECSandThemeforTextArea(errorCheckerService, dmode);
-        addXQModeUI();    
-        debugToolbarEnabled = new AtomicBoolean(false);
+      checkForJavaTabs();
+      initializeErrorChecker();
+        
+      ta.setECSandThemeforTextArea(errorCheckerService, dmode);
+
+      addXQModeUI();    
+      debugToolbarEnabled = new AtomicBoolean(false);
         //log("Sketch Path: " + path);
     }
     
@@ -426,43 +372,13 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       }
     }
 
-    /**
-     * Overrides sketch menu creation to change keyboard shortcuts from "Run".
-     *
-     * @return the sketch menu
-     */
-    /*@Override
-    public JMenu buildSketchMenu() {
-        JMenuItem runItem = Toolkit.newJMenuItemShift(DebugToolbar.getTitle(DebugToolbar.RUN, false), KeyEvent.VK_R);
-        runItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleRun();
-            }
-        });
-
-        JMenuItem presentItem = new JMenuItem(DebugToolbar.getTitle(DebugToolbar.RUN, true));
-        presentItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handlePresent();
-            }
-        });
-
-        JMenuItem stopItem = new JMenuItem(DebugToolbar.getTitle(DebugToolbar.STOP, false));
-        stopItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleStop();
-            }
-        });
-        return buildSketchMenu(new JMenuItem[]{runItem, presentItem, stopItem});
-    }*/
     
-    /**
-     * Whether debug toolbar is enabled
-     */
-    public AtomicBoolean debugToolbarEnabled;
+    private AtomicBoolean debugToolbarEnabled;
+    
+    public boolean isDebugToolbarEnabled() {
+      return debugToolbarEnabled != null && debugToolbarEnabled.get();
+    }
+
     
     protected EditorToolbar javaToolbar, debugToolbar;
     
@@ -477,7 +393,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           javaToolbar = createToolbar();
         nextToolbar = javaToolbar;
         debugToolbarEnabled.set(false);
-        log("Switching to Java Mode Toolbar");
+        Base.log("Switching to Java Mode Toolbar");
       }
       else{
         // switch to debug
@@ -485,7 +401,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           debugToolbar = new DebugToolbar(this, getBase());
         nextToolbar = debugToolbar;
         debugToolbarEnabled.set(true);
-        log("Switching to Debugger Toolbar");
+        Base.log("Switching to Debugger Toolbar");
       }
       
       SwingUtilities.invokeLater(new Runnable() {
@@ -790,11 +706,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             Logger.getLogger(DebugEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Variable Inspector' menu item");
             toggleVariableInspector();
         } else if (source.equals(showOutline)){
-            log("Show Sketch Outline:");
+            Base.log("Show Sketch Outline:");
             errorCheckerService.getASTGenerator().showSketchOutline();
         }
         else if (source.equals(showTabOutline)){
-          log("Show Tab Outline:");
+          Base.log("Show Tab Outline:");
           errorCheckerService.getASTGenerator().showTabOutline();
       }
     }
@@ -896,7 +812,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           // this method gets called twice when saving sketch for the first time
           // once with new name and another with old(causing NPE). Keep an eye out 
           // for potential issues. See #2675. TODO:
-          logE("Illegal tab name to addBreakpointComments() " + tabFilename);          
+          Base.loge("Illegal tab name to addBreakpointComments() " + tabFilename);          
           return;
         }
         List<LineBreakpoint> bps = dbg.getBreakpoints(tab.getFileName());
@@ -1127,7 +1043,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      *
      * @return the text area object
      */
-    public TextArea textArea() {
+    public JavaTextArea textArea() {
         return ta;
     }
 
@@ -1303,7 +1219,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 //        return new TextArea(new PdeTextAreaDefaults(mode), this);
 //    }
     protected JEditTextArea createTextArea() {
-      return new TextArea(new PdeTextAreaDefaults(mode), new JavaInputHandler(this), this);
+      return new JavaTextArea(new PdeTextAreaDefaults(mode), this);
+      //return new JavaTextArea(new PdeTextAreaDefaults(mode), new JavaInputHandler(this), this);
       /*
       return new TextArea(new PdeTextAreaDefaults(mode), new PdeInputHandler(), this) {
          // Forwards key events directly to the input handler. This is slightly 
@@ -1347,36 +1264,36 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @param line the line to highlight as current suspended line
      */
     public void setCurrentLine(LineID line) {
-        clearCurrentLine();
-        if (line == null) {
-            return; // safety, e.g. when no line mapping is found and the null line is used.
-        }
-        switchToTab(line.fileName());
-        // scroll to line, by setting the cursor
-        cursorToLineStart(line.lineIdx());
-        // highlight line
-        currentLine = new LineHighlight(line.lineIdx(), currentLineColor, this);
-        currentLine.setMarker(ta.currentLineMarker, currentLineMarkerColor);
-        currentLine.setPriority(10); // fixes current line being hidden by the breakpoint when moved down
+      clearCurrentLine();
+      if (line == null) {
+        return; // safety, e.g. when no line mapping is found and the null line is used.
+      }
+      switchToTab(line.fileName());
+      // scroll to line, by setting the cursor
+      cursorToLineStart(line.lineIdx());
+      // highlight line
+      currentLine = new LineHighlight(line.lineIdx(), currentLineColor, this);
+      currentLine.setMarker(ta.currentLineMarker, currentLineMarkerColor);
+      currentLine.setPriority(10); // fixes current line being hidden by the breakpoint when moved down
     }
 
     /**
      * Clear the highlight for the debuggers current line.
      */
     public void clearCurrentLine() {
-        if (currentLine != null) {
-            currentLine.clear();
-            currentLine.dispose();
+      if (currentLine != null) {
+        currentLine.clear();
+        currentLine.dispose();
 
-            // revert to breakpoint color if any is set on this line
-            for (LineHighlight hl : breakpointedLines) {
-                if (hl.lineID().equals(currentLine.lineID())) {
-                    hl.paint();
-                    break;
-                }
-            }
-            currentLine = null;
+        // revert to breakpoint color if any is set on this line
+        for (LineHighlight hl : breakpointedLines) {
+          if (hl.lineID().equals(currentLine.lineID())) {
+            hl.paint();
+            break;
+          }
         }
+        currentLine = null;
+      }
     }
 
     /**
@@ -1385,13 +1302,13 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @param lineID the line id to highlight as breakpointed
      */
     public void addBreakpointedLine(LineID lineID) {
-        LineHighlight hl = new LineHighlight(lineID, breakpointColor, this);
-        hl.setMarker(ta.breakpointMarker, breakpointMarkerColor);
-        breakpointedLines.add(hl);
-        // repaint current line if it's on this line
-        if (currentLine != null && currentLine.lineID().equals(lineID)) {
-            currentLine.paint();
-        }
+      LineHighlight hl = new LineHighlight(lineID, breakpointColor, this);
+      hl.setMarker(ta.breakpointMarker, breakpointMarkerColor);
+      breakpointedLines.add(hl);
+      // repaint current line if it's on this line
+      if (currentLine != null && currentLine.lineID().equals(lineID)) {
+        currentLine.paint();
+      }
     }
 
     /**
@@ -1402,7 +1319,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     //TODO: remove and replace by {@link #addBreakpointedLine(LineID lineID)}
     public void addBreakpointedLine(int lineIdx) {
-        addBreakpointedLine(getLineIDInCurrentTab(lineIdx));
+      addBreakpointedLine(getLineIDInCurrentTab(lineIdx));
     }
 
     /**
@@ -1413,43 +1330,43 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * highlight from
      */
     public void removeBreakpointedLine(int lineIdx) {
-        LineID line = getLineIDInCurrentTab(lineIdx);
-        //System.out.println("line id: " + line.fileName() + " " + line.lineIdx());
-        LineHighlight foundLine = null;
-        for (LineHighlight hl : breakpointedLines) {
-            if (hl.lineID.equals(line)) {
-                foundLine = hl;
-                break;
-            }
+      LineID line = getLineIDInCurrentTab(lineIdx);
+      //System.out.println("line id: " + line.fileName() + " " + line.lineIdx());
+      LineHighlight foundLine = null;
+      for (LineHighlight hl : breakpointedLines) {
+        if (hl.lineID.equals(line)) {
+          foundLine = hl;
+          break;
         }
-        if (foundLine != null) {
-            foundLine.clear();
-            breakpointedLines.remove(foundLine);
-            foundLine.dispose();
-            // repaint current line if it's on this line
-            if (currentLine != null && currentLine.lineID().equals(line)) {
-                currentLine.paint();
-            }
+      }
+      if (foundLine != null) {
+        foundLine.clear();
+        breakpointedLines.remove(foundLine);
+        foundLine.dispose();
+        // repaint current line if it's on this line
+        if (currentLine != null && currentLine.lineID().equals(line)) {
+          currentLine.paint();
         }
+      }
     }
 
     /**
      * Remove all highlights for breakpointed lines.
      */
     public void clearBreakpointedLines() {
-        for (LineHighlight hl : breakpointedLines) {
-            hl.clear();
-            hl.dispose();
-        }
-        breakpointedLines.clear(); // remove all breakpoints
-        // fix highlights not being removed when tab names have changed due to opening a new sketch in same editor
-        ta.clearLineBgColors(); // force clear all highlights
-        ta.clearGutterText();
+      for (LineHighlight hl : breakpointedLines) {
+        hl.clear();
+        hl.dispose();
+      }
+      breakpointedLines.clear(); // remove all breakpoints
+      // fix highlights not being removed when tab names have changed due to opening a new sketch in same editor
+      ta.clearLineBgColors(); // force clear all highlights
+      ta.clearGutterText();
 
-        // repaint current line
-        if (currentLine != null) {
-            currentLine.paint();
-        }
+      // repaint current line
+      if (currentLine != null) {
+        currentLine.paint();
+      }
     }
 
     /**
@@ -1460,7 +1377,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * current tab
      */
     public LineID getLineIDInCurrentTab(int lineIdx) {
-        return new LineID(getSketch().getCurrentCode().getFileName(), lineIdx);
+      return new LineID(getSketch().getCurrentCode().getFileName(), lineIdx);
     }
 
     /**
@@ -1469,9 +1386,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @return the current {@link LineID}
      */
     protected LineID getCurrentLineID() {
-        String tab = getSketch().getCurrentCode().getFileName();
-        int lineNo = getTextArea().getCaretLine();
-        return new LineID(tab, lineNo);
+      String tab = getSketch().getCurrentCode().getFileName();
+      int lineNo = getTextArea().getCaretLine();
+      return new LineID(tab, lineNo);
     }
 
     /**
@@ -1481,7 +1398,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @return true, if the {@link LineID} is on the current tab.
      */
     public boolean isInCurrentTab(LineID line) {
-        return line.fileName().equals(getSketch().getCurrentCode().getFileName());
+      return line.fileName().equals(getSketch().getCurrentCode().getFileName());
     }
 
     /**
@@ -1492,32 +1409,32 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      */
     @Override
     protected void setCode(SketchCode code) {
-        //System.out.println("tab switch: " + code.getFileName());
-        super.setCode(code); // set the new document in the textarea, etc. need to do this first
+      //System.out.println("tab switch: " + code.getFileName());
+      super.setCode(code); // set the new document in the textarea, etc. need to do this first
 
-        // set line background colors for tab
-        if (ta != null) { // can be null when setCode is called the first time (in constructor)
-            // clear all line backgrounds
-            ta.clearLineBgColors();
-            // clear all gutter text
-            ta.clearGutterText();
-            // load appropriate line backgrounds for tab
-            // first paint breakpoints
-            for (LineHighlight hl : breakpointedLines) {
-                if (isInCurrentTab(hl.lineID())) {
-                    hl.paint();
-                }
-            }
-            // now paint current line (if any)
-            if (currentLine != null) {
-                if (isInCurrentTab(currentLine.lineID())) {
-                    currentLine.paint();
-                }
-            }
+      // set line background colors for tab
+      if (ta != null) { // can be null when setCode is called the first time (in constructor)
+        // clear all line backgrounds
+        ta.clearLineBgColors();
+        // clear all gutter text
+        ta.clearGutterText();
+        // load appropriate line backgrounds for tab
+        // first paint breakpoints
+        for (LineHighlight hl : breakpointedLines) {
+          if (isInCurrentTab(hl.lineID())) {
+            hl.paint();
+          }
         }
-        if (dbg() != null && dbg().isStarted()) {
-            dbg().startTrackingLineChanges();
+        // now paint current line (if any)
+        if (currentLine != null) {
+          if (isInCurrentTab(currentLine.lineID())) {
+            currentLine.paint();
+          }
         }
+      }
+      if (dbg() != null && dbg().isStarted()) {
+        dbg().startTrackingLineChanges();
+      }
     }
 
     /**
@@ -1528,13 +1445,13 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * not found
      */
     public SketchCode getTab(String fileName) {
-        Sketch s = getSketch();
-        for (SketchCode c : s.getCode()) {
-            if (c.getFileName().equals(fileName)) {
-                return c;
-            }
+      Sketch s = getSketch();
+      for (SketchCode c : s.getCode()) {
+        if (c.getFileName().equals(fileName)) {
+          return c;
         }
-        return null;
+      }
+      return null;
     }
 
     /**
@@ -1543,7 +1460,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @return the {@link SketchCode} representing the current tab
      */
     public SketchCode getCurrentTab() {
-        return getSketch().getCurrentCode();
+      return getSketch().getCurrentCode();
     }
 
     /**
@@ -1552,8 +1469,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @return the document object
      */
     public Document currentDocument() {
-        //return ta.getDocument();
-        return getCurrentTab().getDocument();
+      //return ta.getDocument();
+      return getCurrentTab().getDocument();
     }
 
     /**
@@ -1573,19 +1490,19 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * @param lineIdx the line (0-based) that was double clicked
      */
     public void gutterDblClicked(int lineIdx) {
-        if (dbg != null) {
-            dbg.toggleBreakpoint(lineIdx);
-        }
+      if (dbg != null) {
+        dbg.toggleBreakpoint(lineIdx);
+      }
     }
 
     public void statusBusy() {
-        statusNotice("Debugger busy...");
+      statusNotice("Debugger busy...");
     }
 
     public void statusHalted() {
-        statusNotice("Debugger halted.");
+      statusNotice("Debugger halted.");
     }
-    
+
     public static final int STATUS_EMPTY = 100, STATUS_COMPILER_ERR = 200,
         STATUS_WARNING = 300, STATUS_INFO = 400, STATUS_ERR = 500;
     public int statusMessageType = STATUS_EMPTY;
@@ -1611,7 +1528,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       }
       // Don't need to clear compiler error messages
       if(type == STATUS_COMPILER_ERR) return;
-      
+
       // Clear the message after a delay
       SwingWorker<Object, Object> s = new SwingWorker<Object, Object>() {
         @Override
@@ -1627,15 +1544,15 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       };
       s.execute();
     }
-    
+
     public void statusEmpty(){
       statusMessage = null;
       statusMessageType = STATUS_EMPTY;
       super.statusEmpty();
     }
-    
+
     public ErrorCheckerService errorCheckerService;
-    
+
     /**
      * Initializes and starts Error Checker Service
      */
@@ -1650,20 +1567,20 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         } catch (Exception e) {
           System.err
           .println("Error Checker Service not initialized [XQEditor]: "
-            + e);
+              + e);
           // e.printStackTrace();
         }
         // System.out.println("Error Checker Service initialized.");
       }
 
     }
-    
+
     /**
      * Updates the error bar
      * @param problems
      */
     public void updateErrorBar(ArrayList<Problem> problems) {
-          errorBar.updateErrorPoints(problems);
+      errorBar.updateErrorPoints(problems);
     }
 
     /**
@@ -1676,7 +1593,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       CardLayout cl = (CardLayout) consoleProblemsPane.getLayout();
       cl.show(consoleProblemsPane, buttonName);
     }
-    
+
     /**
      * Updates the error table
      * @param tableModel
@@ -1685,34 +1602,32 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     synchronized public boolean updateTable(final TableModel tableModel) {
       return errorTable.updateTable(tableModel);
     }
-    
+
     /**
      * Handle whether the tiny red error indicator is shown near the error button
      * at the bottom of the PDE
      */
     public void updateErrorToggle(){
-		btnShowErrors.updateMarker(ExperimentalMode.errorCheckEnabled
-				&& errorCheckerService.hasErrors(), errorBar.errorColor);
+      btnShowErrors.updateMarker(ExperimentalMode.errorCheckEnabled
+                                 && errorCheckerService.hasErrors(), errorBar.errorColor);
     }
-    
+
     /**
      * Handle refactor operation
      */
     private void handleRefactor() {
-      log("Caret at:");
-      log(ta.getLineText(ta.getCaretLine()));
+      Base.log("Caret at:" + ta.getLineText(ta.getCaretLine()));
       errorCheckerService.getASTGenerator().handleRefactor();
     }
-    
+
     /**
      * Handle show usage operation
      */
     private void handleShowUsage() {
-      log("Caret at:");
-      log(ta.getLineText(ta.getCaretLine()));
+      Base.log("Caret at:" + ta.getLineText(ta.getCaretLine()));
       errorCheckerService.getASTGenerator().handleShowUsage();
     }
-    
+
     /**
      * Checks if the sketch contains java tabs. If it does, the editor ain't built
      * for it, yet. Also, user should really start looking at more powerful IDEs 
@@ -1725,8 +1640,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
           compilationCheckEnabled = false;
           hasJavaTabs = true;
           JOptionPane.showMessageDialog(new Frame(), this
-              .getSketch().getName()
-              + " contains .java tabs. Some editor features are not supported " +
+                                        .getSketch().getName()
+                                        + " contains .java tabs. Some editor features are not supported " +
               "for .java tabs and will be disabled.");
           break;
         }
@@ -1737,7 +1652,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 		super.applyPreferences();
 		if (dmode != null) {
 			dmode.loadPreferences();
-			log("Applying prefs");
+			Base.log("Applying prefs");
 			// trigger it once to refresh UI
 			errorCheckerService.runManualErrorCheck();
 		}

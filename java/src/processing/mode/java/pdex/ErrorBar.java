@@ -28,7 +28,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -69,17 +69,17 @@ public class ErrorBar extends JPanel {
 	/**
 	 * Color of Error Marker
 	 */
-	public Color errorColor = new Color(0xED2630);
+	public Color errorColor; // = new Color(0xED2630);
 
 	/**
 	 * Color of Warning Marker
 	 */
-	public Color warningColor = new Color(0xFFC30E);
+	public Color warningColor; // = new Color(0xFFC30E);
 
 	/**
 	 * Background color of the component
 	 */
-	public Color backgroundColor = new Color(0x2C343D);
+	public Color backgroundColor; // = new Color(0x2C343D);
 
 	/**
 	 * DebugEditor instance
@@ -118,23 +118,26 @@ public class ErrorBar extends JPanel {
 		}
 	}
 
+	
 	public Dimension getPreferredSize() {
 		return new Dimension(preferredWidth, preferredHeight);
 	}
 
+	
 	public Dimension getMinimumSize() {
 		return getPreferredSize();
 	}
 
+	
 	public ErrorBar(DebugEditor editor, int height, ExperimentalMode mode) {
 		this.editor = editor;
 		this.preferredHeight = height;
 		this.errorCheckerService = editor.errorCheckerService;
-		errorColor = mode.getThemeColor("errorbar.errorcolor", errorColor);
-		warningColor = mode
-				.getThemeColor("errorbar.warningcolor", warningColor);
-		backgroundColor = mode.getThemeColor("errorbar.backgroundcolor",
-				backgroundColor);
+		
+		errorColor = mode.getColor("errorbar.errorcolor"); //, errorColor);
+		warningColor = mode.getColor("errorbar.warningcolor"); //, warningColor);
+		backgroundColor = mode.getColor("errorbar.backgroundcolor"); //, backgroundColor);
+		
 		addListeners();
 	}
 
@@ -238,7 +241,7 @@ public class ErrorBar extends JPanel {
 	 */
 	protected void addListeners() {
 
-		this.addMouseListener(new MouseAdapter() {
+		addMouseListener(new MouseAdapter() {
 
 			// Find out which error/warning the user has clicked
 			// and then scroll to that
@@ -272,20 +275,16 @@ public class ErrorBar extends JPanel {
 		});
 
 		// Tooltip on hover
-		this.addMouseMotionListener(new MouseMotionListener() {
-
-			@Override
+		addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseMoved(final MouseEvent evt) {
-        // System.out.println(e);
         SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           protected Object doInBackground() throws Exception {
             for (ErrorMarker eMarker : errorPoints) {
-              if (evt.getY() >= eMarker.getY() - 2
-                  && evt.getY() <= eMarker.getY() + 2 + errorMarkerHeight) {
+              if (evt.getY() >= eMarker.getY() - 2 && 
+                  evt.getY() <= eMarker.getY() + 2 + errorMarkerHeight) {
                 Problem p = eMarker.getProblem();
-                String msg = (p.isError() ? "Error: " : "Warning: ")
-                    + p.getMessage();
+                String msg = (p.isError() ? "Error: " : "Warning: ") + p.getMessage();
                 setToolTipText(msg);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 break;
@@ -294,7 +293,7 @@ public class ErrorBar extends JPanel {
             return null;
           }
         };
-				
+
 				try {
 					worker.execute();
 				} catch (Exception exp) {
@@ -304,13 +303,6 @@ public class ErrorBar extends JPanel {
 					// e.printStackTrace();
 				}
 			}
-
-			@Override
-			public void mouseDragged(MouseEvent arg0) {
-
-			}
 		});
-
 	}
-
 }

@@ -44,6 +44,7 @@ import processing.app.SketchCode;
 import processing.mode.java.JavaBuild;
 import processing.mode.java.pdex.VMEventListener;
 import processing.mode.java.pdex.VMEventReader;
+import processing.mode.java.runner.Runner;
 
 
 /**
@@ -55,7 +56,7 @@ import processing.mode.java.pdex.VMEventReader;
 public class Debugger implements VMEventListener {
 
     protected DebugEditor editor; // editor window, acting as main view
-    protected DebugRunner runtime; // the runtime, contains debuggee VM
+    protected Runner runtime; // the runtime, contains debuggee VM
     protected boolean started = false; // debuggee vm has started, VMStartEvent received, main class loaded
     protected boolean paused = false; // currently paused at breakpoint or step
     protected ThreadReference currentThread; // thread the last breakpoint or step occured in
@@ -202,8 +203,8 @@ public class Debugger implements VMEventListener {
                 //lineMap = LineMapping.generateMapping(srcPath + File.separator + mainClassName + ".java");
 
                 Logger.getLogger(Debugger.class.getName()).log(Level.INFO, "launching debuggee runtime");
-                runtime = new DebugRunner(build, editor);
-                VirtualMachine vm = runtime.launch(); // non-blocking
+                runtime = new Runner(build, editor);
+                VirtualMachine vm = runtime.launchDebug(); // non-blocking
                 if (vm == null) {
                     Logger.getLogger(Debugger.class.getName()).log(Level.SEVERE, "error 37: launch failed");
                 }

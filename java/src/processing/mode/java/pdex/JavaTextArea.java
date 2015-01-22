@@ -20,8 +20,7 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import static processing.mode.java.pdex.ExperimentalMode.log;
-import static processing.mode.java.pdex.ExperimentalMode.log2;
+import processing.mode.java.JavaInputHandler;
 import processing.mode.java.debug.DebugEditor;
 import processing.mode.java.tweak.ColorControlBox;
 import processing.mode.java.tweak.Handle;
@@ -44,67 +43,79 @@ import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;
 
 import processing.app.Base;
-import processing.app.syntax.InputHandler;
+import processing.app.Mode;
 import processing.app.syntax.JEditTextArea;
+import processing.app.syntax.PdeTextAreaDefaults;
 import processing.app.syntax.TextAreaDefaults;
+//import processing.app.syntax.TextAreaPainter;
 
 
 /**
  * Customized text area. Adds support for line background colors.
  * @author Martin Leopold <m@martinleopold.com>
  */
-public class TextArea extends JEditTextArea {
+public class JavaTextArea extends JEditTextArea {
+  protected PdeTextAreaDefaults defaults;
+  protected DebugEditor editor;
 
   protected MouseListener[] mouseListeners; // cached mouselisteners, these are wrapped by MouseHandler
 
-  protected DebugEditor editor; // the editor
+  // contains line background colors
+  protected Map<Integer, Color> lineColors = new HashMap<Integer, Color>(); 
 
-  // line properties
-  protected Map<Integer, Color> lineColors = new HashMap<Integer, Color>(); // contains line background colors
+  // [px] space added to the left and right of gutter chars
+  protected int gutterPadding; // = 3;
+  protected Color gutterBgColor; // = new Color(252, 252, 252); // gutter background color
+  protected Color gutterLineColor; // = new Color(233, 233, 233); // color of vertical separation line
 
-  // left-hand gutter properties
-  protected int gutterPadding = 3; // [px] space added to the left and right of gutter chars
+  /// the text marker for highlighting breakpoints in the gutter
+  public String breakpointMarker = "<>"; 
+  /// the text marker for highlighting the current line in the gutter
+  public String currentLineMarker = "->"; 
 
-  protected Color gutterBgColor = new Color(252, 252, 252); // gutter background color
+  /// maps line index to gutter text
+  protected Map<Integer, String> gutterText = new HashMap<Integer, String>(); 
 
-  protected Color gutterLineColor = new Color(233, 233, 233); // color of vertical separation line
-
-  public String breakpointMarker = "<>"; // the text marker for highlighting breakpoints in the gutter
-
-  public String currentLineMarker = "->"; // the text marker for highlighting the current line in the gutter
-
-  protected Map<Integer, String> gutterText = new HashMap<Integer, String>(); // maps line index to gutter text
-
-  protected Map<Integer, Color> gutterTextColors = new HashMap<Integer, Color>(); // maps line index to gutter text color
-
-  protected TextAreaPainter customPainter;
+  /// maps line index to gutter text color
+  protected Map<Integer, Color> gutterTextColors = new HashMap<Integer, Color>(); 
 
   protected ErrorCheckerService errorCheckerService;
+  
+  
 
-  public TextArea(TextAreaDefaults defaults, InputHandler inputHandler, DebugEditor editor) {
-    super(defaults, inputHandler);
+  protected JavaTextAreaPainter getCustomPainter() {
+    return (JavaTextAreaPainter) painter;
+  }
+  
+  
+  //public JavaTextArea(TextAreaDefaults defaults, InputHandler inputHandler, DebugEditor editor) {
+  //public JavaTextArea(DebugEditor editor) {
+  public JavaTextArea(TextAreaDefaults defaults, DebugEditor editor) {
+    super(defaults, new JavaInputHandler(editor));
+    //super(defaults, inputHandler);
     this.editor = editor;
 
-    // replace the painter:
-    // first save listeners, these are package-private in JEditTextArea, so not accessible
-    ComponentListener[] componentListeners = painter.getComponentListeners();
+    // removed all this since we have the createPainter() method and we 
+    // won't have to remove/re-add the custom painter object [fry 150122] 
+//    // replace the painter:
+//    // first save listeners, these are package-private in JEditTextArea, so not accessible
+//    ComponentListener[] componentListeners = painter.getComponentListeners();
     mouseListeners = painter.getMouseListeners();
-    MouseMotionListener[] mouseMotionListeners = painter.getMouseMotionListeners();
-
-    remove(painter);
-
-    // set new painter
-    customPainter = new TextAreaPainter(this, defaults);
-    painter = customPainter;
-
-    // set listeners
-    for (ComponentListener cl : componentListeners) {
-      painter.addComponentListener(cl);
-    }
-
-    for (MouseMotionListener mml : mouseMotionListeners) {
-      painter.addMouseMotionListener(mml);
-    }
+//    MouseMotionListener[] mouseMotionListeners = painter.getMouseMotionListeners();
+//
+//    remove(painter);
+//    // set new painter
+//    customPainter = new TextAreaPainter(this, defaults);
+//    painter = customPainter;
+//
+//    // set listeners
+//    for (ComponentListener cl : componentListeners) {
+//      painter.addComponentListener(cl);
+//    }
+//
+//    for (MouseMotionListener mml : mouseMotionListeners) {
+//      painter.addMouseMotionListener(mml);
+//    }
 
     // use a custom mouse handler instead of directly using mouseListeners
     MouseHandler mouseHandler = new MouseHandler();
@@ -114,27 +125,28 @@ public class TextArea extends JEditTextArea {
     add(CENTER, painter);
 
     // load settings from theme.txt
-    ExperimentalMode theme = (ExperimentalMode) editor.getMode();
-    gutterBgColor = theme.getThemeColor("gutter.bgcolor", gutterBgColor);
-    gutterLineColor = theme.getThemeColor("gutter.linecolor", gutterLineColor);
-    gutterPadding = theme.getInteger("gutter.padding");
-    breakpointMarker = theme.loadThemeString("breakpoint.marker", breakpointMarker);
-    currentLineMarker = theme.loadThemeString("currentline.marker", currentLineMarker);
+    Mode mode = editor.getMode();
+    gutterBgColor = mode.getColor("gutter.bgcolor");  //, gutterBgColor);
+    gutterLineColor = mode.getColor("gutter.linecolor"); //, gutterLineColor);
+    gutterPadding = mode.getInteger("gutter.padding");
+    breakpointMarker = mode.getString("breakpoint.marker");  //, breakpointMarker);
+    currentLineMarker = mode.getString("currentline.marker"); //, currentLineMarker);
 
     // TweakMode code
+    prevCompListeners = painter.getComponentListeners();
+    prevMouseListeners = painter.getMouseListeners();
+    prevMMotionListeners = painter.getMouseMotionListeners();
+    prevKeyListeners = editor.getKeyListeners();
 
-        prevCompListeners = painter
-                        .getComponentListeners();
-        prevMouseListeners = painter.getMouseListeners();
-        prevMMotionListeners = painter
-                        .getMouseMotionListeners();
-        prevKeyListeners = editor.getKeyListeners();
-
-
-        interactiveMode = false;
-        addPrevListeners();
-
+    interactiveMode = false;
+    addPrevListeners();
   }
+  
+  
+  protected JavaTextAreaPainter createPainter(final TextAreaDefaults defaults) {
+    return new JavaTextAreaPainter(this, defaults);
+  }
+  
 
   /**
    * Sets ErrorCheckerService and loads theme for TextArea(XQMode)
@@ -145,9 +157,10 @@ public class TextArea extends JEditTextArea {
   public void setECSandThemeforTextArea(ErrorCheckerService ecs,
                                         ExperimentalMode mode) {
     errorCheckerService = ecs;
-    customPainter.setECSandTheme(ecs, mode);
+    getCustomPainter().setECSandTheme(ecs, mode);
   }
 
+  
   /**
    * Handles KeyEvents for TextArea
    * Code completion begins from here.
@@ -157,7 +170,7 @@ public class TextArea extends JEditTextArea {
     if(evt.getKeyCode() == KeyEvent.VK_ESCAPE){
       if(suggestion != null){
         if(suggestion.isVisible()){
-          log("esc key");
+          Base.log("esc key");
           hideSuggestion();
           evt.consume();
           return;
@@ -199,12 +212,12 @@ public class TextArea extends JEditTextArea {
           }
         break;
       case KeyEvent.VK_BACK_SPACE:
-        log("BK Key");
+        Base.log("BK Key");
         break;
       case KeyEvent.VK_SPACE:
         if (suggestion != null)
           if (suggestion.isVisible()) {
-            log("Space bar, hide completion list");
+            Base.log("Space bar, hide completion list");
             suggestion.hide();
           }
         break;
@@ -233,8 +246,8 @@ public class TextArea extends JEditTextArea {
       
       if (keyChar == '.') {
         if (ExperimentalMode.codeCompletionsEnabled) {
-          log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
-          log("Typing: " + fetchPhrase(evt2));
+          Base.log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
+          Base.log("Typing: " + fetchPhrase(evt2));
         }
       } else if (keyChar == ' ') { // Trigger on Ctrl-Space
         if (!Base.isMacOS() && ExperimentalMode.codeCompletionsEnabled &&
@@ -244,8 +257,8 @@ public class TextArea extends JEditTextArea {
               // Provide completions only if it's enabled
               if (ExperimentalMode.codeCompletionsEnabled) {
                 getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
-                log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started");
-                log("Typing: " + fetchPhrase(evt2));
+                Base.log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started");
+                Base.log("Typing: " + fetchPhrase(evt2));
               }
               return null;
             }
@@ -268,8 +281,8 @@ public class TextArea extends JEditTextArea {
         protected Object doInBackground() throws Exception {
           // Provide completions only if it's enabled
           if (ExperimentalMode.codeCompletionsEnabled) {
-            log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
-            log("Typing: " + fetchPhrase(evt2));
+            Base.log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
+            Base.log("Typing: " + fetchPhrase(evt2));
           }
           return null;
         }
@@ -288,8 +301,8 @@ public class TextArea extends JEditTextArea {
         // Provide completions only if it's enabled
         if (ExperimentalMode.codeCompletionsEnabled
             && (ExperimentalMode.ccTriggerEnabled || suggestion.isVisible())) {
-          log("[KeyEvent]" + evt.getKeyChar() + "  |Prediction started");
-          log("Typing: " + fetchPhrase(evt));
+          Base.log("[KeyEvent]" + evt.getKeyChar() + "  |Prediction started");
+          Base.log("Typing: " + fetchPhrase(evt));
         }
         return null;
       }
@@ -303,7 +316,7 @@ public class TextArea extends JEditTextArea {
    * @return
    */
   private String fetchPhrase(MouseEvent evt) {
-    log("--handle Mouse Right Click--");
+    Base.log("--handle Mouse Right Click--");
     int off = xyToOffset(evt.getX(), evt.getY());
     if (off < 0)
       return null;
@@ -318,7 +331,7 @@ public class TextArea extends JEditTextArea {
     else {
       int x = xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
       int xLS = off - getLineStartNonWhiteSpaceOffset(line);
-      log("x=" + x);
+      Base.log("x=" + x);
       if (x < 0 || x >= s.length())
         return null;
       String word = s.charAt(x) + "";
@@ -357,7 +370,7 @@ public class TextArea extends JEditTextArea {
       }
       if (Character.isDigit(word.charAt(0)))
         return null;
-      log("Mouse click, word: " + word.trim());
+      Base.log("Mouse click, word: " + word.trim());
       errorCheckerService.getASTGenerator().setLastClickedWord(line, word, xLS);
       return word.trim();
     }
@@ -373,14 +386,14 @@ public class TextArea extends JEditTextArea {
   public String fetchPhrase(KeyEvent evt) {
 
     int off = getCaretPosition();
-    log2("off " + off);
+    Base.log("off " + off);
     if (off < 0)
       return null;
     int line = getCaretLine();
     if (line < 0)
       return null;
     String s = getLineText(line);
-    log2("lin " + line);
+    Base.log("  line " + line);
 
     //log2(s + " len " + s.length());
 
@@ -391,7 +404,7 @@ public class TextArea extends JEditTextArea {
       return null; //TODO: Does this check cause problems? Verify.
     }
 
-    log2(" x char: " + s.charAt(x));
+    Base.log("  x char: " + s.charAt(x));
 
     if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_'
         || s.charAt(x) == '(' || s.charAt(x) == '.')) {
@@ -497,9 +510,10 @@ public class TextArea extends JEditTextArea {
    * @return gutter width in pixels
    */
   protected int getGutterWidth() {
-    if (editor.debugToolbarEnabled == null || !editor.debugToolbarEnabled.get()){
+    if (!editor.isDebugToolbarEnabled()) {
       return 0;
     }
+
     FontMetrics fm = painter.getFontMetrics();
 //        log("fm: " + (fm == null));
 //        log("editor: " + (editor == null));
@@ -510,6 +524,7 @@ public class TextArea extends JEditTextArea {
     return textWidth + 2 * gutterPadding;
   }
 
+  
   /**
    * Retrieve the width of margins applied to the left and right of the gutter
    * text.
@@ -517,12 +532,13 @@ public class TextArea extends JEditTextArea {
    * @return margins in pixels
    */
   protected int getGutterMargins() {
-    if (editor.debugToolbarEnabled == null || !editor.debugToolbarEnabled.get()){
+    if (!editor.isDebugToolbarEnabled()) {
       return 0;
     }
     return gutterPadding;
   }
 
+  
   /**
    * Set the gutter text of a specific line.
    *
@@ -536,6 +552,7 @@ public class TextArea extends JEditTextArea {
     painter.invalidateLine(lineIdx);
   }
 
+  
   /**
    * Set the gutter text and color of a specific line.
    *
@@ -550,6 +567,7 @@ public class TextArea extends JEditTextArea {
     gutterTextColors.put(lineIdx, textColor);
     setGutterText(lineIdx, text);
   }
+  
 
   /**
    * Clear the gutter text of a specific line.
@@ -562,6 +580,7 @@ public class TextArea extends JEditTextArea {
     painter.invalidateLine(lineIdx);
   }
 
+  
   /**
    * Clear all gutter text.
    */
@@ -583,6 +602,7 @@ public class TextArea extends JEditTextArea {
     return gutterText.get(lineIdx);
   }
 
+  
   /**
    * Retrieve the gutter text color for a specific line.
    *
@@ -594,6 +614,7 @@ public class TextArea extends JEditTextArea {
     return gutterTextColors.get(lineIdx);
   }
 
+  
   /**
    * Set the background color of a line.
    *
@@ -618,6 +639,7 @@ public class TextArea extends JEditTextArea {
     painter.invalidateLine(lineIdx);
   }
 
+  
   /**
    * Clear all line background colors.
    */
@@ -628,6 +650,7 @@ public class TextArea extends JEditTextArea {
     lineColors.clear();
   }
 
+  
   /**
    * Get a lines background color.
    *
@@ -639,6 +662,7 @@ public class TextArea extends JEditTextArea {
     return lineColors.get(lineIdx);
   }
 
+  
   /**
    * Convert a character offset to a horizontal pixel position inside the text
    * area. Overridden to take gutter width into account.
@@ -654,6 +678,7 @@ public class TextArea extends JEditTextArea {
     return super._offsetToX(line, offset) + getGutterWidth();
   }
 
+  
   /**
    * Convert a horizontal pixel position to a character offset. Overridden to
    * take gutter width into account.
@@ -669,6 +694,7 @@ public class TextArea extends JEditTextArea {
     return super.xToOffset(line, x - getGutterWidth());
   }
 
+  
   /**
    * Custom mouse handler. Implements double clicking in the gutter area to
    * toggle breakpoints, sets default cursor (instead of text cursor) in the
@@ -761,41 +787,6 @@ public class TextArea extends JEditTextArea {
 
   private CompletionPanel suggestion;
 
-  //JEditTextArea textarea;
-
-  /* No longer used
-  private void addCompletionPopupListner() {
-    this.addKeyListener(new KeyListener() {
-
-      @Override
-      public void keyTyped(KeyEvent e) {
-
-      }
-
-      @Override
-      public void keyReleased(KeyEvent e) {
-        if (Character.isLetterOrDigit(e.getKeyChar())
-            || e.getKeyChar() == KeyEvent.VK_BACK_SPACE
-            || e.getKeyChar() == KeyEvent.VK_DELETE) {
-//          SwingUtilities.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//              showSuggestion();
-//            }
-//
-//          });
-        } else if (Character.isWhitespace(e.getKeyChar())
-            || e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-          hideSuggestion();
-        }
-      }
-
-      @Override
-      public void keyPressed(KeyEvent e) {
-      }
-    });
-  }*/
-
 
   // appears unused, removed when looking to change completion trigger [fry 140801]
   /*
@@ -810,53 +801,44 @@ public class TextArea extends JEditTextArea {
   }
   */
 
+  
   /**
    * Calculates location of caret and displays the suggestion popup at the location.
    *
-   * @param defListModel
+   * @param listModel
    * @param subWord
    */
-  protected void showSuggestion(DefaultListModel<CompletionCandidate> defListModel,String subWord) {
+  protected void showSuggestion(DefaultListModel<CompletionCandidate> listModel, String subWord) {
     hideSuggestion();
-    if (defListModel.size() == 0) {
-      log("TextArea: No suggestions to show.");
-      return;
-    }
-    int position = getCaretPosition();
-    Point location = new Point();
-    try {
-      location.x = offsetToX(getCaretLine(), position
-          - getLineStartOffset(getCaretLine()));
-      location.y = lineToY(getCaretLine())
-          + getPainter().getFontMetrics().getHeight() + getPainter().getFontMetrics().getDescent();
-      //log("TA position: " + location);
-    } catch (Exception e2) {
-      e2.printStackTrace();
-      return;
-    }
+    
+    if (listModel.size() == 0) {
+      Base.log("TextArea: No suggestions to show.");
 
-    if (subWord.length() < 2) {
-      return;
+    } else {
+      int position = getCaretPosition();
+      Point location = new Point();
+      try {
+        location.x = offsetToX(getCaretLine(), position
+                               - getLineStartOffset(getCaretLine()));
+        location.y = lineToY(getCaretLine())
+            + getPainter().getFontMetrics().getHeight() + getPainter().getFontMetrics().getDescent();
+        //log("TA position: " + location);
+      } catch (Exception e2) {
+        e2.printStackTrace();
+        return;
+      }
+
+      if (subWord.length() < 2) {
+        return;
+      }
+      suggestion = new CompletionPanel(this, position, subWord, 
+                                       listModel, location, editor);
+      requestFocusInWindow();
     }
-    //if (suggestion == null)
-    suggestion = new CompletionPanel(this, position, subWord, defListModel,
-                      location,editor);
-//    else
-//      suggestion.updateList(defListModel, subWord, location, position);
-//
-//    suggestion.setVisible(true);
-    requestFocusInWindow();
-//    SwingUtilities.invokeLater(new Runnable() {
-//      @Override
-//      public void run() {
-//        requestFocusInWindow();
-//      }
-//    });
   }
 
-  /**
-   * Hides suggestion popup
-   */
+  
+  /** Hides suggestion popup */
   public void hideSuggestion() {
     if (suggestion != null) {
       suggestion.hide();
@@ -908,10 +890,11 @@ public class TextArea extends JEditTextArea {
                 removeAllListeners();
 
                 // add our private interaction listeners
-                customPainter.addMouseListener(customPainter);
-                customPainter.addMouseMotionListener(customPainter);
-                customPainter.startInterativeMode();
-                customPainter.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                getCustomPainter().startInterativeMode();
+//                customPainter.addMouseListener(customPainter);
+//                customPainter.addMouseMotionListener(customPainter);
+//                customPainter.startInterativeMode();
+//                customPainter.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 this.editable = false;
                 this.caretBlinks = false;
                 this.setCaretVisible(false);
@@ -927,8 +910,8 @@ public class TextArea extends JEditTextArea {
                 removeAllListeners();
                 addPrevListeners();
 
-                customPainter.stopInteractiveMode();
-                customPainter.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+                getCustomPainter().stopInteractiveMode();
+//                customPainter.setCursor(new Cursor(Cursor.TEXT_CURSOR));
                 this.editable = true;
                 this.caretBlinks = true;
                 this.setCaretVisible(true);
@@ -945,13 +928,13 @@ public class TextArea extends JEditTextArea {
         {
                 // add the original text-edit listeners
                 for (ComponentListener cl : prevCompListeners) {
-                        customPainter.addComponentListener(cl);
+                        painter.addComponentListener(cl);
                 }
                 for (MouseListener ml : prevMouseListeners) {
-                        customPainter.addMouseListener(ml);
+                        painter.addMouseListener(ml);
                 }
                 for (MouseMotionListener mml : prevMMotionListeners) {
-                        customPainter.addMouseMotionListener(mml);
+                        painter.addMouseMotionListener(mml);
                 }
                 for (KeyListener kl : prevKeyListeners) {
                         editor.addKeyListener(kl);
@@ -960,7 +943,6 @@ public class TextArea extends JEditTextArea {
 
         //public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[]) {
         public void updateInterface(List<List<Handle>> handles, List<List<ColorControlBox>> colorBoxes) {
-                customPainter.updateInterface(handles, colorBoxes);
+                getCustomPainter().updateInterface(handles, colorBoxes);
         }
-
 }

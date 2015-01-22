@@ -22,8 +22,6 @@ package processing.mode.java.pdex;
 
 import java.util.ArrayList;
 
-import static processing.mode.java.pdex.ExperimentalMode.log;
-
 
 /**
  * Performs offset matching between PDE and Java code (one line of code only)
@@ -258,7 +256,6 @@ public class OffsetMatcher {
 //    a.getJavaOffForPdeOff(20,4);
     a = new OffsetMatcher("}", "\n");
     a.getPdeOffForJavaOff(0,1);
-    log("--");
     a = new OffsetMatcher("color abc = #qwerty;", "int abc = 0xffqwerty;");
     a.getPdeOffForJavaOff(4, 3);
 //    a.getJavaOffForPdeOff(6, 3);

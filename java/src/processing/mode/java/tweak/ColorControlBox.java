@@ -26,7 +26,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
-import processing.mode.java.pdex.TextAreaPainter;
+import processing.mode.java.pdex.JavaTextAreaPainter;
 
 
 public class ColorControlBox {
@@ -44,7 +44,7 @@ public class ColorControlBox {
 
 	// interface
 	int x, y, width, height;
-	TextAreaPainter painter;
+	JavaTextAreaPainter painter;
 
 	
 	public ColorControlBox(String context, ColorMode mode, ArrayList<Handle> handles) {
@@ -65,7 +65,7 @@ public class ColorControlBox {
 	}
 
 	
-	public void initInterface(TextAreaPainter textAreaPainter, int x, int y, int w, int h)
+	public void initInterface(JavaTextAreaPainter textAreaPainter, int x, int y, int w, int h)
 	{
 		this.painter = textAreaPainter;
 		this.x = x;

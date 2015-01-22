@@ -20,10 +20,6 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import static processing.mode.java.pdex.ExperimentalMode.log;
-import static processing.mode.java.pdex.ExperimentalMode.log2;
-import static processing.mode.java.pdex.ExperimentalMode.logE;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
@@ -47,6 +43,8 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+
+import processing.app.Base;
 
 
 /**
@@ -108,7 +106,7 @@ public class ASTNodeWrapper {
   public int[] getJavaCodeOffsets(ErrorCheckerService ecs) {
     int nodeOffset = Node.getStartPosition(), nodeLength = Node
         .getLength();
-    log("0.nodeOffset " + nodeOffset);
+    Base.log("0.nodeOffset " + nodeOffset);
     ASTNode thisNode = Node;
     while (thisNode.getParent() != null) {
       if (getLineNumber(thisNode.getParent()) == lineNumber) {
@@ -129,7 +127,7 @@ public class ASTNodeWrapper {
      */
     
     int altStartPos = thisNode.getStartPosition();
-    log("1.Altspos " + altStartPos);
+    Base.log("1.Altspos " + altStartPos);
     thisNode = thisNode.getParent();
     Javadoc jd = null;
     
@@ -144,21 +142,21 @@ public class ASTNodeWrapper {
     if (thisNode instanceof TypeDeclaration) {
       jd = ((TypeDeclaration) thisNode).getJavadoc();
       altStartPos = getJavadocOffset((TypeDeclaration) thisNode);
-      log("Has t jdoc " + ((TypeDeclaration) thisNode).getJavadoc());
+      Base.log("Has t jdoc " + ((TypeDeclaration) thisNode).getJavadoc());
     } else if (thisNode instanceof MethodDeclaration) {
       altStartPos = getJavadocOffset((MethodDeclaration) thisNode);
       jd = ((MethodDeclaration) thisNode).getJavadoc();
-      log("Has m jdoc " + jd);
+      Base.log("Has m jdoc " + jd);
     } else if (thisNode instanceof FieldDeclaration) {
       FieldDeclaration fd = ((FieldDeclaration) thisNode);
       jd = fd.getJavadoc();
-      log("Has f jdoc " + fd.getJavadoc());
+      Base.log("Has f jdoc " + fd.getJavadoc());
       altStartPos = getJavadocOffset(fd);
       //nodeOffset = ((VariableDeclarationFragment)(fd.fragments().get(0))).getName().getStartPosition();
     } 
     
     if (jd == null) {
-      log("Visiting children of node " + getNodeAsString(thisNode));
+      Base.log("Visiting children of node " + getNodeAsString(thisNode));
       @SuppressWarnings("unchecked")
       Iterator<StructuralPropertyDescriptor> it = 
           thisNode.structuralPropertiesForType().iterator();
@@ -169,9 +167,9 @@ public class ASTNodeWrapper {
           @SuppressWarnings("unchecked")
           List<ASTNode> nodelist = (List<ASTNode>) 
             thisNode.getStructuralProperty(prop);
-          log("prop " + prop);
+          Base.log("prop " + prop);
           for (ASTNode cnode : nodelist) {
-            log("Visiting node " + getNodeAsString(cnode));
+            Base.log("Visiting node " + getNodeAsString(cnode));
             if (getLineNumber(cnode) == lineNumber) {
               if (flag) {
                 altStartPos = cnode.getStartPosition();
@@ -193,7 +191,7 @@ public class ASTNodeWrapper {
           }
         }
       }
-      log("Altspos " + altStartPos);
+      Base.log("Altspos " + altStartPos);
     }
    
     int pdeoffsets[] = getPDECodeOffsets(ecs);
@@ -203,7 +201,7 @@ public class ASTNodeWrapper {
       return new int[] {
         lineNumber, nodeOffset + vals[0] - altStartPos, vals[1] };
     else {// no offset mapping needed
-      log("joff[1] = " + (nodeOffset - altStartPos));
+      Base.log("joff[1] = " + (nodeOffset - altStartPos));
       return new int[] { lineNumber, nodeOffset - altStartPos, nodeLength };
     }
   }
@@ -223,23 +221,19 @@ public class ASTNodeWrapper {
     
     Type tp = fd.getType();
     int lineNum = getLineNumber(sn);
-    log("SN "+sn + ", " + lineNum);
+    Base.log("SN "+sn + ", " + lineNum);
     for (ASTNode astNode : list) {
-      if(getLineNumber(astNode) == lineNum)
-      {
-        log("first node in that line " + astNode);
-        log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
+      if(getLineNumber(astNode) == lineNum) {
+        Base.log("first node in that line " + astNode);
+        Base.log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
         return (astNode.getStartPosition());
       }
     }
-    if(getLineNumber(fd.getType()) == lineNum)
-    {
-      log("first node in that line " + tp);
-      log("diff " + (sn.getStartPosition() - tp.getStartPosition()));
+    if(getLineNumber(fd.getType()) == lineNum) {
+      Base.log("first node in that line " + tp);
+      Base.log("diff " + (sn.getStartPosition() - tp.getStartPosition()));
       return (tp.getStartPosition());
     }
-    
-    
     return 0;   
   }
 
@@ -256,12 +250,12 @@ public class ASTNodeWrapper {
     List<ASTNode> list = md.modifiers();
     SimpleName sn = (SimpleName) getNode();
     int lineNum = getLineNumber(sn);
-    log("SN " + sn + ", " + lineNum);
+    Base.log("SN " + sn + ", " + lineNum);
     
     for (ASTNode astNode : list) {
       if (getLineNumber(astNode) == lineNum) {
-        log("first node in that line " + astNode);
-        log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
+        Base.log("first node in that line " + astNode);
+        Base.log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
         return (astNode.getStartPosition());
       }
     }
@@ -269,8 +263,8 @@ public class ASTNodeWrapper {
     if (!md.isConstructor()) {
       Type tp = md.getReturnType2();
       if (getLineNumber(tp) == lineNum) {
-        log("first node in that line " + tp);
-        log("diff " + (sn.getStartPosition() - tp.getStartPosition()));
+        Base.log("first node in that line " + tp);
+        Base.log("diff " + (sn.getStartPosition() - tp.getStartPosition()));
         return (tp.getStartPosition());
       }
     }
@@ -293,22 +287,21 @@ public class ASTNodeWrapper {
     SimpleName sn = (SimpleName) getNode();
     
     int lineNum = getLineNumber(sn);
-    log("SN "+sn + ", " + lineNum);
+    Base.log("SN "+sn + ", " + lineNum);
     for (ASTNode astNode : list) {
-      if(getLineNumber(astNode) == lineNum)
-      {
-        log("first node in that line " + astNode);
-        log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
+      if (getLineNumber(astNode) == lineNum) {
+        Base.log("first node in that line " + astNode);
+        Base.log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
         return (astNode.getStartPosition());
       }
     }
     
-    if(td.getJavadoc() != null){
-      log("diff "
+    if (td.getJavadoc() != null){
+      Base.log("diff "
           + (td.getJavadoc().getStartPosition() + td.getJavadoc().getLength() + 1));
       return (td.getJavadoc().getStartPosition() + td.getJavadoc().getLength() + 1);
     }
-    log("getJavadocOffset(TypeDeclaration td) "+sn + ", found nothing. Meh.");
+    Base.log("getJavadocOffset(TypeDeclaration td) "+sn + ", found nothing. Meh.");
     return 0;
   }
   
@@ -342,7 +335,7 @@ public class ASTNodeWrapper {
       pi++;
     int startoffDif = pi - pj;
     int stopindex = javaCodeMap[pj + nodeLen - 1];
-    log(startIndex + "SI,St" + stopindex + "sod " + startoffDif);
+    Base.log(startIndex + "SI,St" + stopindex + "sod " + startoffDif);
 
     // count till stopindex
     while (pdeCodeMap[pi] < stopindex && pi < pdeCodeMap.length) {
@@ -352,7 +345,7 @@ public class ASTNodeWrapper {
 
 //    log("PDE maps from " + pdeeCodeMap[pi]);
 
-    log("pde len " + count);
+    Base.log("pde len " + count);
     return new int[] { startoffDif, count };
   }
   
@@ -392,7 +385,7 @@ public class ASTNodeWrapper {
      * TODO: This is a work in progress. There may be more bugs here in hiding.
      */
         
-    log("Src:" + source);
+    Base.log("Src:" + source);
     // Instead of converting pde into java, how can I simply extract the same source 
     // from the java code? Think. TODO
     String sourceAlt = new String(source);
@@ -446,7 +439,7 @@ public class ASTNodeWrapper {
 
     } 
     if(offsetmap.isEmpty()){
-      log("No offset matching needed.");
+      Base.log("No offset matching needed.");
       return null;
     }
     // replace with 0xff[webcolor] and others
@@ -462,9 +455,9 @@ public class ASTNodeWrapper {
     colorMatcher = colorPattern.matcher(sourceAlt);
     sourceAlt = colorMatcher.replaceAll("int");
     
-    log("From direct source: ");
+    Base.log("From direct source: ");
 //    sourceAlt = sourceJava;
-    log(sourceAlt);
+    Base.log(sourceAlt);
     
 
     // Create code map. Beware! Dark magic ahead.
@@ -480,7 +473,7 @@ public class ASTNodeWrapper {
         pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
       }
 
-      log(key + ":" + offsetmap.get(key));
+      Base.log(key + ":" + offsetmap.get(key));
 
       int kval = offsetmap.get(key);
       if (kval > 0) {
@@ -522,22 +515,24 @@ public class ASTNodeWrapper {
       pj++;
     }
     
-    // debug o/p
-    for (int i = 0; i < pdeCodeMap.length; i++) {
-      if (pdeCodeMap[i] > 0 || javaCodeMap[i] > 0 || i == 0) {
-        if (i < source.length())
-          log2(source.charAt(i));
-        log2(pdeCodeMap[i] + " - " + javaCodeMap[i]);
-        if (i < sourceAlt.length())
-          log2(sourceAlt.charAt(i));
-        log2(" <-[" + i + "]");
-        log("");
+    if (Base.DEBUG) {
+      // debug o/p
+      for (int i = 0; i < pdeCodeMap.length; i++) {
+        if (pdeCodeMap[i] > 0 || javaCodeMap[i] > 0 || i == 0) {
+          if (i < source.length())
+            System.out.print(source.charAt(i));
+          System.out.print(pdeCodeMap[i] + " - " + javaCodeMap[i]);
+          if (i < sourceAlt.length())
+            System.out.print(sourceAlt.charAt(i));
+          System.out.print(" <-[" + i + "]");
+          System.out.println();
+        }
       }
+      System.out.println();
     }
-    log("");
-    
-    return new int[][]{javaCodeMap,pdeCodeMap};
+    return new int[][] { javaCodeMap, pdeCodeMap };
   }
+  
   
   /**
    * Highlight the ASTNode in the editor, if it's of type
@@ -546,7 +541,7 @@ public class ASTNodeWrapper {
    * @return - true if highlighting was successful
    */
   public boolean highlightNode(ASTGenerator astGenerator){
-    if(!(Node instanceof SimpleName)){
+    if (!(Node instanceof SimpleName)) {
       return false; 
     }
     SimpleName nodeName = (SimpleName) Node;
@@ -560,7 +555,7 @@ public class ASTNodeWrapper {
       Element lineElement = javaSource.getDefaultRootElement()
           .getElement(javaLineNumber-1);
       if(lineElement == null) {
-        log(lineNumber + " line element null while highlighting " + nodeName);
+        Base.log(lineNumber + " line element null while highlighting " + nodeName);
         return false;
       }
       
@@ -570,12 +565,12 @@ public class ASTNodeWrapper {
       astGenerator.editor.getSketch().setCurrentCode(pdeOffs[0]);
       String pdeLine = astGenerator.editor.getLineText(pdeOffs[1]);
       String lookingFor = nodeName.toString();
-      log(lookingFor + ", " + nodeName.getStartPosition());
-      log(javaLineNumber +" JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
+      Base.log(lookingFor + ", " + nodeName.getStartPosition());
+      Base.log(javaLineNumber +" JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
           + lineElement.getEndOffset());
-      log(pdeOffs[1] + " PL " + pdeLine);
+      Base.log(pdeOffs[1] + " PL " + pdeLine);
       if (!javaLine.contains(lookingFor) || !pdeLine.contains(lookingFor)) {
-        logE("Logical error in highLightNode(). Please file a bug report.");
+        Base.loge("Logical error in highLightNode(). Please file a bug report.");
         return false;
       }
       
@@ -584,7 +579,7 @@ public class ASTNodeWrapper {
                                   - lineElement.getStartOffset(),
                               nodeName.getLength());
       if (highlightStart == -1) {
-        logE("Logical error in highLightNode() during offset matching. " +
+        Base.loge("Logical error in highLightNode() during offset matching. " +
         		"Please file a bug report.");
         return false;
       }
@@ -623,8 +618,9 @@ public class ASTNodeWrapper {
           + index);
       */
       return true;
+      
     } catch (BadLocationException e) {
-      logE("BLE in highLightNode() for " + nodeName);
+      Base.loge("BLE in highLightNode() for " + nodeName);
       e.printStackTrace();
     }
     return false;
@@ -658,12 +654,9 @@ public class ASTNodeWrapper {
   public int getPDECodeOffsetForSN(ASTGenerator astGen){
     if (Node instanceof SimpleName) {
       Element lineElement = astGen.getJavaSourceCodeElement(lineNumber);
-      log("Line element off " + lineElement.getStartOffset());
-      OffsetMatcher ofm = new OffsetMatcher(
-                                            astGen
-                                                .getPDESourceCodeLine(lineNumber),
-                                            astGen
-                                                .getJavaSourceCodeLine(lineNumber));
+      Base.log("Line element off " + lineElement.getStartOffset());
+      OffsetMatcher ofm = new OffsetMatcher(astGen.getPDESourceCodeLine(lineNumber),
+                                            astGen.getJavaSourceCodeLine(lineNumber));
       //log("");
       int pdeOffset = ofm.getPdeOffForJavaOff(Node.getStartPosition()
           - lineElement.getStartOffset(), Node.toString().length());
@@ -699,7 +692,7 @@ public class ASTNodeWrapper {
    * @return
    */
   public static String getJavaCode(String source){
-    log("Src:" + source);
+    Base.log("Src:" + source);
     String sourceAlt = new String(source);
 
     // Find all #[web color] 
@@ -754,7 +747,7 @@ public class ASTNodeWrapper {
     colorMatcher = colorPattern.matcher(sourceAlt);
     sourceAlt = colorMatcher.replaceAll("int");
 
-    log("Converted:"+sourceAlt);
+    Base.log("Converted:"+sourceAlt);
     return sourceAlt;
   }
 

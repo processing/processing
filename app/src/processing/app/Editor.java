@@ -1118,7 +1118,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           statusError("\"" + tool.getMenuTitle() + "\" is not" +
                       "compatible with this version of Processing");
           //nsme.printStackTrace();
-          Base.log("Incompatible tool found during tool.run()", nsme);
+          Base.loge("Incompatible tool found during tool.run()", nsme);
           item.setEnabled(false);
 
         } catch (Exception ex) {
@@ -1156,13 +1156,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
         System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
                            "compatible with this version of Processing");
         System.err.println("The " + nsme.getMessage() + " method no longer exists.");
-        Base.log("Incompatible Tool found during tool.init()", nsme);
+        Base.loge("Incompatible Tool found during tool.init()", nsme);
 
       } catch (NoClassDefFoundError ncdfe) {
         System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
                            "compatible with this version of Processing");
         System.err.println("The " + ncdfe.getMessage() + " class is no longer available.");
-        Base.log("Incompatible Tool found during tool.init()", ncdfe);
+        Base.loge("Incompatible Tool found during tool.init()", ncdfe);
 
       } catch (Error err) {
         System.err.println("An error occurred inside \"" + tool.getMenuTitle() + "\"");

@@ -20,10 +20,6 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import static processing.mode.java.pdex.ExperimentalMode.log;
-import static processing.mode.java.pdex.ExperimentalMode.log2;
-import static processing.mode.java.pdex.ExperimentalMode.logE;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -53,6 +49,7 @@ import javax.swing.plaf.InsetsUIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.text.BadLocationException;
 
+import processing.app.Base;
 import processing.app.syntax.JEditTextArea;
 import processing.mode.java.debug.DebugEditor;
 
@@ -83,7 +80,7 @@ public class CompletionPanel {
    */
   private int insertionPosition;
 
-  private TextArea textarea;
+  private JavaTextArea textarea;
 
   /**
    * Scroll pane in which the completion list is displayed
@@ -105,7 +102,7 @@ public class CompletionPanel {
    */
   public CompletionPanel(final JEditTextArea textarea, int position, String subWord,
                          DefaultListModel<CompletionCandidate> items, final Point location, DebugEditor dedit) {
-    this.textarea = (TextArea) textarea;
+    this.textarea = (JavaTextArea) textarea;
     editor = dedit;
     this.insertionPosition = position;
     if (subWord.indexOf('.') != -1)
@@ -338,7 +335,7 @@ public class CompletionPanel {
           }
         }
         
-        logE(subWord + " <= subword, Inserting suggestion=> "
+        Base.loge(subWord + " <= subword, Inserting suggestion=> "
             + selectedSuggestion + " Current sub: " + currentSubword);
         if (currentSubword.length() > 0) {
           textarea.getDocument().remove(insertionPosition - currentSubwordLen,
@@ -359,7 +356,7 @@ public class CompletionPanel {
           }
         }
         
-        log("Suggestion inserted: " + System.currentTimeMillis());
+        Base.log("Suggestion inserted: " + System.currentTimeMillis());
         if (completionList.getSelectedValue().getLabel().contains("...")) {
           // log("No hide"); 
           // Why not hide it? Coz this is the case of
@@ -392,7 +389,7 @@ public class CompletionPanel {
   
   private String fetchCurrentSubword() {
     //log("Entering fetchCurrentSubword");
-    TextArea ta = editor.ta;
+    JavaTextArea ta = editor.ta;
     int off = ta.getCaretPosition();
     //log2("off " + off);
     if (off < 0)
@@ -405,9 +402,9 @@ public class CompletionPanel {
     //log2(s + " len " + s.length());
 
     int x = ta.getCaretPosition() - ta.getLineStartOffset(line) - 1, x1 = x - 1;
-    if(x >= s.length() || x < 0)
+    if (x >= s.length() || x < 0)
       return null; //TODO: Does this check cause problems? Verify.
-    log2(" x char: " + s.charAt(x));
+    if (Base.DEBUG) System.out.print(" x char: " + s.charAt(x));
     //int xLS = off - getLineStartNonWhiteSpaceOffset(line);    
 
     String word = (x < s.length() ? s.charAt(x) : "") + "";
@@ -564,16 +561,13 @@ public class CompletionPanel {
           break;
 
         default:
-          log("(CustomListRenderer)Unknown CompletionCandidate type " + cc.getType());
+          Base.log("(CustomListRenderer)Unknown CompletionCandidate type " + cc.getType());
           break;
         }
-
+      } else {
+        Base.log("(CustomListRenderer)Unknown CompletionCandidate object " + value);
       }
-      else
-        log("(CustomListRenderer)Unknown CompletionCandidate object " + value);
-      
       return label;
     }
   }
-  
 }
