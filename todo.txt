@@ -90,8 +90,10 @@ _ DebugEditor.createTextArea() is copy & pasted from JavaEditor
 _   this whole setup is really gross at the moment
 _ auto-insert after antlr @SuppressWarnings({ "unused", "unchecked", "cast" })
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
-_   because it's in the other package, can no longer rely on it
+_   because it's in the other ClassLoader, can no longer rely on it
 
+_ fix file change detection on OS X
+_   https://github.com/processing/processing/issues/2852
 
 _ make examples pull/build automatic during dist
 _ merge experimental into the main Java mode 

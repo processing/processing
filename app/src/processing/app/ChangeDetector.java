@@ -195,6 +195,7 @@ public class ChangeDetector implements WindowFocusListener {
 
   //returns true if the files in the sketch have been reloaded
   private boolean reloadSketch(SketchCode changed) {
+    //new Exception().printStackTrace(System.out);
     int response = showYesNoQuestionAsync(editor,
                                           "File Modified",
                                           "Your sketch has been modified externally.<br>Would you like to reload the sketch?",

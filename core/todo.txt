@@ -30,6 +30,9 @@ X   is this a GL problem? (example in bug report wasn't GL)
 X   https://github.com/processing/processing/issues/2876
 X   since we don't have any magic number in there, just randomly breaks
 X   add check to require .vlw extension with loadFont()
+X Memory usage insane increasing in 3.0a5
+X   https://github.com/processing/processing/issues/3007
+X   seems fixed due to the rewrite
 _ performance issues on OS X (might be threading due to Applet)
 _   https://github.com/processing/processing/issues/2423
 _ clean up requestFocus() stuff
