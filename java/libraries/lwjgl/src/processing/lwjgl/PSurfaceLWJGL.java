@@ -10,6 +10,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.IntBuffer;
+import java.lang.reflect.Field;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -798,13 +799,76 @@ public class PSurfaceLWJGL implements PSurface {
       stopRequested = true;
     }
   }
-
-  // To complete later...
-  // http://docs.oracle.com/javase/6/docs/api/java/awt/event/KeyEvent.html
-  // http://processing.org/reference/keyCode.html
-  // This might be very useful:
-  // http://gtge.googlecode.com/svn/trunk/GTGE%20Add-Ons/src/com/golden/gamedev/engine/lwjgl/LWJGLInput.java
+  /**
+   * AWT to LWJGL key constants conversion.
+   */
+  protected static final int[] LWJGL_KEY_CONVERSION;
+  /**
+   * Conversion LWJGL -> AWT keycode. Taken from GTGE library
+   * https://code.google.com/p/gtge/
+   * 
+   */
+  static {    
+    // LWJGL -> AWT conversion
+    // used for keypressed and keyreleased
+    // mapping Keyboard.KEY_ -> KeyEvent.VK_
+    LWJGL_KEY_CONVERSION = new int[Keyboard.KEYBOARD_SIZE];
+    
+    // loops through all of the registered keys in KeyEvent
+    Field[] keys = KeyEvent.class.getFields();
+    for (int i = 0; i < keys.length; i++) {
+      
+      try {
+        // Converts the KeyEvent constant name to the LWJGL constant
+        // name
+        String field = "KEY_" + keys[i].getName().substring(3);
+        Field lwjglKey = Keyboard.class.getField(field);
+        
+        // print key mapping
+        // System.out.println(field + " " + lwjglKey.getInt(null) + "="
+        // + keys[i].getInt(null));
+        
+        // Sets LWJGL index to be the KeyCode value
+        LWJGL_KEY_CONVERSION[lwjglKey.getInt(null)] = keys[i].getInt(null);
+        
+      } catch (Exception e) { }
+    }
+    
+    try {
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_BACK] = java.awt.event.KeyEvent.VK_BACK_SPACE;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_LBRACKET] = java.awt.event.KeyEvent.VK_BRACELEFT;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_RBRACKET] = java.awt.event.KeyEvent.VK_BRACERIGHT;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_APOSTROPHE] = java.awt.event.KeyEvent.VK_QUOTE;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_GRAVE] = java.awt.event.KeyEvent.VK_BACK_QUOTE;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_BACKSLASH] = java.awt.event.KeyEvent.VK_BACK_SLASH;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_CAPITAL] = java.awt.event.KeyEvent.VK_CAPS_LOCK;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_NUMLOCK] = java.awt.event.KeyEvent.VK_NUM_LOCK;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_SCROLL] = java.awt.event.KeyEvent.VK_SCROLL_LOCK;
+      
+      // two to one buttons mapping
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_RETURN] = java.awt.event.KeyEvent.VK_ENTER;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_NUMPADENTER] = java.awt.event.KeyEvent.VK_ENTER;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_LCONTROL] = java.awt.event.KeyEvent.VK_CONTROL;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_RCONTROL] = java.awt.event.KeyEvent.VK_CONTROL;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_LSHIFT] = java.awt.event.KeyEvent.VK_SHIFT;
+      LWJGL_KEY_CONVERSION[Keyboard.KEY_RSHIFT] = java.awt.event.KeyEvent.VK_SHIFT;
+    }
+    catch (Exception e) {
+    }    
+  }
+  
+  
   protected int LWJGLtoAWTCode(int code) {
+    try {
+      return LWJGL_KEY_CONVERSION[code];
+    }
+    catch (ArrayIndexOutOfBoundsException e) {
+      System.err.println("ERROR: Invalid LWJGL KeyCode " + code);
+      return -1;
+    }
+    
+    
+    /*
     switch (code) {
     case Keyboard.KEY_0:
       return java.awt.event.KeyEvent.VK_0;
@@ -1028,5 +1092,6 @@ public class PSurfaceLWJGL implements PSurface {
     default:
       return 0;
     }   
+    */
   } 
 }
