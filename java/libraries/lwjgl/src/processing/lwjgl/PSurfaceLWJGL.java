@@ -2,6 +2,7 @@ package processing.lwjgl;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -261,13 +262,76 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public void placeWindow(int[] location, int[] editorLocation) {
-    // TODO Auto-generated method stub
+    if (location != null) {
+      // a specific location was received from the Runner
+      // (applet has been run more than once, user placed window)
+      frame.setLocation(location[0], location[1]);
+    } else if (editorLocation != null) {
+      Dimension window = new Dimension(sketchWidth, sketchHeight);
+      
+      int locationX = editorLocation[0] - 20;
+      int locationY = editorLocation[1];
+
+      if (locationX - window.width > 10) {
+        // if it fits to the left of the window
+        Display.setLocation(locationX - window.width, locationY);
+
+      } else {  // doesn't fit
+        // if it fits inside the editor window,
+        // offset slightly from upper lefthand corner
+        // so that it's plunked inside the text area
+        locationX = editorLocation[0] + 66;
+        locationY = editorLocation[1] + 66;
+
+        if ((locationX + window.width > sketch.displayWidth - 33) ||
+            (locationY + window.height > sketch.displayHeight - 33)) {
+          // otherwise center on screen
+          locationX = (sketch.displayWidth - window.width) / 2;
+          locationY = (sketch.displayHeight - window.height) / 2;
+        }
+        Display.setLocation(locationX, locationY);
+      }
+    } else {  // just center on screen
+      setFrameCentered();
+    }  
     
+    if (Display.getY() < 0) {
+      // Windows actually allows you to place frames where they can't be
+      // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
+      Display.setLocation(Display.getX(), 30);
+    } 
   }
 
   @Override
   public void placePresent(Color stopColor) {
-    // TODO Auto-generated method stub
+    
+    /*
+    // After the pack(), the screen bounds are gonna be 0s
+    frame.setBounds(screenRect);
+    canvas.setBounds((screenRect.width - sketchWidth) / 2,
+                     (screenRect.height - sketchHeight) / 2,
+                     sketchWidth, sketchHeight);
+
+    if (stopColor != null) {
+      Label label = new Label("stop");
+      label.setForeground(stopColor);
+      label.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mousePressed(java.awt.event.MouseEvent e) {
+          sketch.exit();
+        }
+      });
+      frame.add(label);
+
+      Dimension labelSize = label.getPreferredSize();
+      // sometimes shows up truncated on mac
+      //System.out.println("label width is " + labelSize.width);
+      labelSize = new Dimension(100, labelSize.height);
+      label.setSize(labelSize);
+      label.setLocation(20, screenRect.height - labelSize.height - 20);
+    }
+    */
+    
     
   }
 
