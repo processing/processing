@@ -6,7 +6,6 @@ import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -88,7 +87,6 @@ public class PSurfaceLWJGL implements PSurface {
       Display.setParent(canvas);
       return canvas;
     } catch (LWJGLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return null;    
@@ -112,12 +110,8 @@ public class PSurfaceLWJGL implements PSurface {
           PApplet.println(mode);
         }        
       } catch (LWJGLException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      
-
-      
 
       if (deviceIndex >= 0) {  // if -1, use the default device
         GraphicsDevice[] devices = environment.getScreenDevices();
@@ -339,12 +333,10 @@ public class PSurfaceLWJGL implements PSurface {
   @Override
   public void setFrameRate(float fps) {
     frameRateTarget = fps;
-//    frameRatePeriod = (long) (1000000000.0 / frameRateTarget);
     if (60 < fps) {
       // Disables v-sync
       System.err.println("Disabling VSync");
       Display.setVSyncEnabled(false);
-//      Display.sync((int)fps);
     } else  {
       Display.setVSyncEnabled(true);
     }    
@@ -353,39 +345,20 @@ public class PSurfaceLWJGL implements PSurface {
   
   @Override
   public void requestFocus() {
-    // TODO Auto-generated method stub
+    // seems there is no way of request focus on the LWJGL Display, unless
+    // it is parented inside a Canvas:
+    // http://www.java-gaming.org/index.php?topic=31158.0
   }
   
 
   @Override
   public void blit() {
-    // TODO Auto-generated method stub
-    
+    Display.update(); // maybe this ??  
   }
 
   @Override
   public void setCursor(int kind) {
     System.err.println("Sorry, cursor types not supported in OpenGL, provide your cursor image");
-    // TODO Auto-generated method stub
-//    if (PApplet.platform == PConstants.MACOSX && kind == PConstants.MOVE) {
-//      kind = PConstants.HAND;
-//    }
-//    
-//    java.awt.Cursor cursor0 = java.awt.Cursor.getPredefinedCursor(kind);
-    
-    
-//    Cursor cursor1 = Cursor(cursor0.,
-//        int height,
-//        int xHotspot,
-//        int yHotspot,
-//        int numImages,
-//        java.nio.IntBuffer images,
-//        java.nio.IntBuffer delays);
-    
-    
-//    Mouse.setNativeCursor(cursor1);
-//    cursorVisible = true;
-//    this.cursorType = kind;     
   }
 
   @Override
@@ -399,7 +372,6 @@ public class PSurfaceLWJGL implements PSurface {
       Mouse.setNativeCursor(currentCursor);
       cursorVisible = true;
     } catch (LWJGLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
@@ -407,14 +379,10 @@ public class PSurfaceLWJGL implements PSurface {
   @Override
   public void showCursor() {
     if (!cursorVisible) {
-//      setCursor(cursorType);
-//      cursorVisible = true;
-//      Mouse.setCursor(Cursor.getPredefinedCursor(cursorType));
       try {
         Mouse.setNativeCursor(currentCursor);
         cursorVisible = true;
       } catch (LWJGLException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
@@ -426,7 +394,6 @@ public class PSurfaceLWJGL implements PSurface {
       try {
         invisibleCursor = new Cursor(1, 1, 0, 0, 1, BufferUtils.createIntBuffer(1), null);
       } catch (LWJGLException e1) {
-        // TODO Auto-generated catch block
         e1.printStackTrace();
       }
     }    
@@ -434,7 +401,6 @@ public class PSurfaceLWJGL implements PSurface {
       Mouse.setNativeCursor(invisibleCursor);
       cursorVisible = false;
     } catch (LWJGLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
@@ -632,7 +598,6 @@ public class PSurfaceLWJGL implements PSurface {
       try {
         Keyboard.create();
       } catch (LWJGLException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
@@ -728,9 +693,7 @@ public class PSurfaceLWJGL implements PSurface {
       stopRequested = false;
       try {
         Mouse.create();
-//        Mouse.setNativeCursor(null);
       } catch (LWJGLException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
