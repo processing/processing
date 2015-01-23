@@ -64,7 +64,7 @@ public class PSurfaceLWJGL implements PSurface {
   
   /** As of release 0116, frameRate(60) is called as a default */
   protected float frameRateTarget = 60;
-  protected long frameRatePeriod = 1000000000L / 60L;  
+//  protected long frameRatePeriod = 1000000000L / 60L;  
   
   PSurfaceLWJGL(PGraphics graphics) {
     this.graphics = graphics;
@@ -327,7 +327,7 @@ public class PSurfaceLWJGL implements PSurface {
   @Override
   public void setFrameRate(float fps) {
     frameRateTarget = fps;
-    frameRatePeriod = (long) (1000000000.0 / frameRateTarget);    
+//    frameRatePeriod = (long) (1000000000.0 / frameRateTarget);    
   }
 
   
@@ -462,15 +462,15 @@ public class PSurfaceLWJGL implements PSurface {
       mousePoller = new MousePoller(sketch); 
       mousePoller.start();
       
-      System.err.println(Mouse.getNativeCursor());
+//      System.err.println(Mouse.getNativeCursor());
       
-      long beforeTime = System.nanoTime();
-      long overSleepTime = 0L;
+//      long beforeTime = System.nanoTime();
+//      long overSleepTime = 0L;
 
-      int noDelays = 0;
+//      int noDelays = 0;
       // Number of frames with a delay of 0 ms before the
       // animation thread yields to other running threads.
-      final int NO_DELAYS_PER_YIELD = 15;
+//      final int NO_DELAYS_PER_YIELD = 15;
 
       // If size un-initialized, might be a Canvas. Call setSize() here since
       // we now have a parent object that this Canvas can use as a peer.
@@ -511,30 +511,30 @@ public class PSurfaceLWJGL implements PSurface {
         // this is necessary since the drawing is sometimes in a
         // separate thread, meaning that the next frame will start
         // before the update/paint is completed
-        long afterTime = System.nanoTime();
-        long timeDiff = afterTime - beforeTime;
-        //System.out.println("time diff is " + timeDiff);
-        long sleepTime = (frameRatePeriod - timeDiff) - overSleepTime;
-
-        if (sleepTime > 0) {  // some time left in this cycle
-          try {
-            Thread.sleep(sleepTime / 1000000L, (int) (sleepTime % 1000000L));
-            noDelays = 0;  // Got some sleep, not delaying anymore
-          } catch (InterruptedException ex) { }
-
-          overSleepTime = (System.nanoTime() - afterTime) - sleepTime;
-
-        } else {    // sleepTime <= 0; the frame took longer than the period
-          overSleepTime = 0L;
-          noDelays++;
-
-          if (noDelays > NO_DELAYS_PER_YIELD) {
-            Thread.yield();   // give another thread a chance to run
-            noDelays = 0;
-          }
-        }
-        beforeTime = System.nanoTime();        
-//        Display.sync((int)frameRateTarget);
+//        long afterTime = System.nanoTime();
+//        long timeDiff = afterTime - beforeTime;
+//        //System.out.println("time diff is " + timeDiff);
+//        long sleepTime = (frameRatePeriod - timeDiff) - overSleepTime;
+//
+//        if (sleepTime > 0) {  // some time left in this cycle
+//          try {
+//            Thread.sleep(sleepTime / 1000000L, (int) (sleepTime % 1000000L));
+//            noDelays = 0;  // Got some sleep, not delaying anymore
+//          } catch (InterruptedException ex) { }
+//
+//          overSleepTime = (System.nanoTime() - afterTime) - sleepTime;
+//
+//        } else {    // sleepTime <= 0; the frame took longer than the period
+//          overSleepTime = 0L;
+//          noDelays++;
+//
+//          if (noDelays > NO_DELAYS_PER_YIELD) {
+//            Thread.yield();   // give another thread a chance to run
+//            noDelays = 0;
+//          }
+//        }
+//        beforeTime = System.nanoTime();        
+        Display.sync((int)frameRateTarget);
         
         if (Display.isCloseRequested()) break;
       }
@@ -566,6 +566,7 @@ public class PSurfaceLWJGL implements PSurface {
 
     @Override
     public void setVisible(boolean visible) {
+//      Display.isVisible()
 //      Display.setVisible(visible);
     }
 
