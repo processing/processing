@@ -204,6 +204,9 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public void setVisible(boolean visible) {
+    // Apparently not possible:
+    // http://forum.lwjgl.org/index.php?topic=5388.0
+    System.err.println("Sorry, cannot set visibility of window in OpenGL");
   }
 
   @Override
@@ -328,14 +331,21 @@ public class PSurfaceLWJGL implements PSurface {
   @Override
   public void setFrameRate(float fps) {
     frameRateTarget = fps;
-//    frameRatePeriod = (long) (1000000000.0 / frameRateTarget);    
+//    frameRatePeriod = (long) (1000000000.0 / frameRateTarget);
+    if (60 < fps) {
+      // Disables v-sync
+      System.err.println("Disabling VSync");
+      Display.setVSyncEnabled(false);
+//      Display.sync((int)fps);
+    } else  {
+      Display.setVSyncEnabled(true);
+    }    
   }
 
   
   @Override
   public void requestFocus() {
     // TODO Auto-generated method stub
-    
   }
   
 
@@ -439,7 +449,8 @@ public class PSurfaceLWJGL implements PSurface {
 //          System.err.println(mode.toString());
 //        }
 
-          
+        System.err.println("DISPLAY PARENT: " + Display.getParent());  
+        
         Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
         System.err.println(sketchWidth + " " + sketchHeight);
         if (fullScreenRequested) {
@@ -569,6 +580,7 @@ public class PSurfaceLWJGL implements PSurface {
     public void setVisible(boolean visible) {
 //      Display.isVisible()
 //      Display.setVisible(visible);
+      System.err.println("Sorry, cannot set visibility of window in OpenGL");
     }
 
     @Override

@@ -109,19 +109,20 @@ public class PLWJGL extends PGL {
   } 
   
 
-  protected void setFps(float fps) {
-    if (!setFps || targetFps != fps) {
-      if (60 < fps) {
-        // Disables v-sync
-        Display.setVSyncEnabled(false);
-        Display.sync((int)fps);
-      } else  {
-        Display.setVSyncEnabled(true);
-      }
-      targetFps = currentFps = fps; 
-      setFps = true;      
-    }
-  }
+//  protected void setFps(float fps) {
+//    if (!setFps || targetFps != fps) {
+//      if (60 < fps) {
+//        // Disables v-sync
+//        System.err.println("Disabling VSync");
+//        Display.setVSyncEnabled(false);
+////        Display.sync((int)fps);
+//      } else  {
+//        Display.setVSyncEnabled(true);
+//      }
+//      targetFps = currentFps = fps; 
+//      setFps = true;      
+//    }
+//  }
 
 /*
   protected void initSurface(int antialias) {
