@@ -66,9 +66,9 @@ public abstract class PGL {
   // Parameters
 
   protected static boolean USE_FBOLAYER_BY_DEFAULT = false;
-  protected static int REQUESTED_DEPTH_BITS   = 24;
-  protected static int REQUESTED_STENCIL_BITS = 8;
-  protected static int REQUESTED_ALPHA_BITS   = 8;
+  public static int REQUESTED_DEPTH_BITS   = 24;
+  public static int REQUESTED_STENCIL_BITS = 8;
+  public static int REQUESTED_ALPHA_BITS   = 8;
 
   /** Switches between the use of regular and direct buffers. */
   protected static boolean USE_DIRECT_BUFFERS = true;
@@ -139,7 +139,7 @@ public abstract class PGL {
   protected boolean fboLayerCreated = false;
   protected boolean fboLayerInUse = false;
   protected boolean firstFrame = true;
-  protected int reqNumSamples;
+  public int reqNumSamples;
   protected int numSamples;
   protected IntBuffer glColorFbo;
   protected IntBuffer glMultiFbo;

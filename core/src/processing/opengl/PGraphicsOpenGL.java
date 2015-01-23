@@ -6521,7 +6521,8 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.getIntegerv(PGL.SAMPLES, intBuffer);
       int temp = intBuffer.get(0);
       if (quality != temp && 1 < temp && 1 < quality) {
-        quality = temp;
+        // TODO check why the samples is higher that initialized smooth level.
+//        quality = temp;
       }
     }
     if (quality < 2) {

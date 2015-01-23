@@ -19,6 +19,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.PixelFormat;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -28,6 +29,7 @@ import processing.core.PSurface;
 import processing.event.Event;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
+import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
 public class PSurfaceLWJGL implements PSurface {
@@ -60,6 +62,8 @@ public class PSurfaceLWJGL implements PSurface {
   /** Poller threads to get the keyboard/mouse events from LWJGL */
   protected static KeyPoller keyPoller;
   protected static MousePoller mousePoller; 
+  
+  protected static DisplayResarter restarter;
   
   Thread thread;
   boolean paused;
@@ -172,6 +176,31 @@ public class PSurfaceLWJGL implements PSurface {
       System.setProperty("org.lwjgl.opengl.Display.enableHighDPI", "true");
 //      pgl.pixel_scale = 2;
     }
+    
+    pgl.reqNumSamples = graphics.quality;
+
+    System.err.println("DISPLAY PARENT: " + Display.getParent());
+    System.err.println("DISPLAY SMOOTH: " + pgl.reqNumSamples);
+    
+    try {
+      int argb = graphics.backgroundColor;
+      float r = ((argb >> 16) & 0xff) / 255.0f;
+      float g = ((argb >> 8) & 0xff) / 255.0f;
+      float b = ((argb) & 0xff) / 255.0f; 
+      Display.setInitialBackground(r, g, b);    
+      Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
+      System.err.println(sketchWidth + " " + sketchHeight);
+      if (fullScreenRequested) {
+        Display.setFullscreen(true);
+      }      
+    } catch (LWJGLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    restarter = new DisplayResarter();
+    restarter.start();
+    
     
 //    sketchWidth = sketch.width = sketch.sketchWidth();
 //    sketchHeight = sketch.height = sketch.sketchHeight();
@@ -323,10 +352,12 @@ public class PSurfaceLWJGL implements PSurface {
   }
   
 
-  @Override
+  boolean forceExit = false;
+  @Override  
   public void setSmooth(int level) {
-    // TODO Auto-generated method stub
-    
+    System.err.println("set smooth " + level);
+    pgl.reqNumSamples = level;
+    restarter.changeRequested = true;
   }
   
 
@@ -353,7 +384,7 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public void blit() {
-    Display.update(); // maybe this ??  
+    // Nothing to do here  
   }
 
   @Override
@@ -421,26 +452,22 @@ public class PSurfaceLWJGL implements PSurface {
 //        DisplayMode[] modes = Display.getAvailableDisplayModes();
 //        for (DisplayMode mode: modes) {
 //          System.err.println(mode.toString());
-//        }
-
-        System.err.println("DISPLAY PARENT: " + Display.getParent());  
-        
-        Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
-        System.err.println(sketchWidth + " " + sketchHeight);
-        if (fullScreenRequested) {
-          Display.setFullscreen(true);
-        }
-        
+//        }        
 //        Display.setDisplayMode(Display.getDesktopDisplayMode());
 //        
-//        Display.create();                
-        
-        
-        Display.create();
+//        Display.create();
+//        Display.destroy();
+        System.err.println("CREATE THE DISPLAY");
+        PixelFormat format = new PixelFormat(PGL.REQUESTED_ALPHA_BITS,
+                                             PGL.REQUESTED_DEPTH_BITS,
+                                             PGL.REQUESTED_STENCIL_BITS, pgl.reqNumSamples);         
+        Display.create(format);
       } catch (LWJGLException e) {
         e.printStackTrace();
         System.exit(0);
       }    
+      
+      boolean deinit = true;
       
       keyPoller = new KeyPoller(sketch);
       keyPoller.start();
@@ -537,22 +564,31 @@ public class PSurfaceLWJGL implements PSurface {
         y0 = y;
         
         if (Display.isCloseRequested()) break;
-      }
-
-      if (externalMessages) {
-        sketch.exit();  // don't quit, need to just shut everything down (0133)
+        if (forceExit) {
+          System.err.println("QUIT");
+          deinit = false;
+          break;
+        }
       }
       
-      keyPoller.requestStop();
-      mousePoller.requestStop();
-      sketch.dispose();  // call to shutdown libs?
-      Display.destroy();
+      if (deinit) {      
+        if (externalMessages) {
+          sketch.exit();  // don't quit, need to just shut everything down (0133)
+        }
+        
+        keyPoller.requestStop();
+        mousePoller.requestStop();
+        sketch.dispose();  // call to shutdown libs?
+        Display.destroy();
 
-      // If the user called the exit() function, the window should close,
-      // rather than the sketch just halting.
-      if (sketch.exitCalled()) {
-        sketch.exitActual();
+        // If the user called the exit() function, the window should close,
+        // rather than the sketch just halting.
+        if (sketch.exitCalled()) {
+          sketch.exitActual();
+        }
       }
+      
+      
     }
   }  
   
@@ -669,7 +705,10 @@ public class PSurfaceLWJGL implements PSurface {
         try {
           Thread.sleep(10);
         } catch (InterruptedException e) {
-          e.printStackTrace();
+          // http://stackoverflow.com/questions/1024651/do-i-have-to-worry-about-interruptedexceptions-if-i-dont-interrupt-anything-mys/1024719#1024719
+//          e.printStackTrace();
+          Thread.currentThread().interrupt(); // restore interrupted status
+          break;
         }
       }
     }
@@ -679,6 +718,59 @@ public class PSurfaceLWJGL implements PSurface {
     }
   }
 
+  protected class DisplayResarter extends Thread {
+    boolean changeRequested = false;
+    
+    @Override
+    public void run() {
+      while (true) {
+        if (changeRequested) {
+          forceExit = true;
+          thread.interrupt();
+          while (thread.isAlive()) {
+//            System.err.println("alive");
+            Thread.yield();
+          }    
+          thread = null;
+          
+          keyPoller.requestStop();
+          keyPoller.interrupt();
+          while (keyPoller.isAlive()) {
+            Thread.yield();
+          }
+          mousePoller.requestStop();
+          mousePoller.interrupt();
+          while (mousePoller.isAlive()) {
+            Thread.yield();
+          }
+
+          /*
+          System.err.println("will destroy surface");
+          Display.destroy();
+          try {
+            Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
+          } catch (LWJGLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+*/          
+          startThread();
+          
+          
+          
+          changeRequested = false;
+        }
+        try {
+          Thread.sleep(10);
+        } catch (InterruptedException e) {
+//          e.printStackTrace();
+          Thread.currentThread().interrupt(); // restore interrupted status
+          break;
+        }        
+      }
+    }
+  }
+  
 
   protected class MousePoller extends Thread {
     protected PApplet parent;
@@ -791,7 +883,9 @@ public class PSurfaceLWJGL implements PSurface {
         try {
           Thread.sleep(10);
         } catch (InterruptedException e) {
-          e.printStackTrace();
+//          e.printStackTrace();
+          Thread.currentThread().interrupt(); // restore interrupted status
+          break;
         }
       }
     }
