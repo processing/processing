@@ -6,6 +6,7 @@ import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -54,6 +55,8 @@ public class PSurfaceLWJGL implements PSurface {
   // ........................................................
   
   // Event handling
+  
+  boolean externalMessages = false;
   
   /** Poller threads to get the keyboard/mouse events from LWJGL */
   protected static KeyPoller keyPoller;
@@ -225,6 +228,12 @@ public class PSurfaceLWJGL implements PSurface {
       // frame to the main display, which undermines the --display setting.
       setFrameCentered();
     }    
+    
+    if (Display.getY() < 0) {
+      // Windows actually allows you to place frames where they can't be
+      // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
+      Display.setLocation(Display.getX(), 30);
+    }    
   }
 
   @Override
@@ -232,13 +241,6 @@ public class PSurfaceLWJGL implements PSurface {
     // TODO Auto-generated method stub
     
   }
-  
-  private void setFrameCentered() {
-    // Can't use frame.setLocationRelativeTo(null) because it sends the
-    // frame to the main display, which undermines the --display setting.
-    Display.setLocation(screenRect.x + (screenRect.width - sketchWidth) / 2,
-                        screenRect.y + (screenRect.height - sketchHeight) / 2);
-  } 
 
   @Override
   public void placePresent(Color stopColor) {
@@ -248,10 +250,16 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public void setupExternalMessages() {
-    // TODO Auto-generated method stub
-    
+    externalMessages = true;
   }
 
+  private void setFrameCentered() {
+    // Can't use frame.setLocationRelativeTo(null) because it sends the
+    // frame to the main display, which undermines the --display setting.
+    Display.setLocation(screenRect.x + (screenRect.width - sketchWidth) / 2,
+                        screenRect.y + (screenRect.height - sketchHeight) / 2);
+  }   
+  
   @Override
   public void startThread() {
     if (thread == null) {
@@ -494,13 +502,17 @@ public class PSurfaceLWJGL implements PSurface {
 
       // un-pause the sketch and get rolling
       sketch.start();
-
+      
+      int x0 = Display.getX();
+      int y0 = Display.getY();
       while ((Thread.currentThread() == thread) && !sketch.finished) {
         if (Display.wasResized()) {
           setSize(Display.getWidth(), Display.getHeight());
         }
         pgl.setThread(thread);
         checkPause();
+        
+        
 
         // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
         // otherwise it may attempt a resize mid-render.
@@ -548,9 +560,23 @@ public class PSurfaceLWJGL implements PSurface {
 //        beforeTime = System.nanoTime();        
         Display.sync((int)frameRateTarget);
         
+        
+        int x = Display.getX();
+        int y = Display.getY();
+        if (externalMessages && (x != x0 || y0 != y)) {
+          System.err.println(PApplet.EXTERNAL_MOVE + " " + x + " " + y);
+          System.err.flush();  // doesn't seem to help or hurt          
+        }
+        x0 = x;
+        y0 = y;
+        
         if (Display.isCloseRequested()) break;
       }
 
+      if (externalMessages) {
+        sketch.exit();  // don't quit, need to just shut everything down (0133)
+      }
+      
       keyPoller.requestStop();
       mousePoller.requestStop();
       sketch.dispose();  // call to shutdown libs?
