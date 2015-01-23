@@ -929,7 +929,8 @@ public class PLWJGL extends PGL {
   }
 
   public void viewport(int x, int y, int w, int h) {
-    GL11.glViewport(x, y, w, h);
+    float f = Display.getPixelScaleFactor();
+    GL11.glViewport((int)(f * x), (int)(f * y), (int)f * w, (int)(f * h));
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -1369,7 +1370,8 @@ public class PLWJGL extends PGL {
   // Per-Fragment Operations
 
   public void scissor(int x, int y, int w, int h) {
-    GL11.glScissor(x, y, w, h);
+    float f = Display.getPixelScaleFactor();
+    GL11.glScissor((int)(f * x), (int)(f * y), (int)f * w, (int)(f * h));
   }
 
   public void sampleCoverage(float value, boolean invert) {
