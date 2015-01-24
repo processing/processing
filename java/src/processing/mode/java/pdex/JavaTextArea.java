@@ -21,6 +21,7 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 package processing.mode.java.pdex;
 
 import processing.mode.java.JavaInputHandler;
+import processing.mode.java.JavaMode;
 import processing.mode.java.debug.DebugEditor;
 import processing.mode.java.tweak.ColorControlBox;
 import processing.mode.java.tweak.Handle;
@@ -155,7 +156,7 @@ public class JavaTextArea extends JEditTextArea {
    * @param mode
    */
   public void setECSandThemeforTextArea(ErrorCheckerService ecs,
-                                        ExperimentalMode mode) {
+                                        JavaMode mode) {
     errorCheckerService = ecs;
     getCustomPainter().setECSandTheme(ecs, mode);
   }
@@ -245,17 +246,17 @@ public class JavaTextArea extends JEditTextArea {
       final KeyEvent evt2 = evt;
       
       if (keyChar == '.') {
-        if (ExperimentalMode.codeCompletionsEnabled) {
+        if (JavaMode.codeCompletionsEnabled) {
           Base.log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
           Base.log("Typing: " + fetchPhrase(evt2));
         }
       } else if (keyChar == ' ') { // Trigger on Ctrl-Space
-        if (!Base.isMacOS() && ExperimentalMode.codeCompletionsEnabled &&
+        if (!Base.isMacOS() && JavaMode.codeCompletionsEnabled &&
         (evt.isControlDown() || evt.isMetaDown())) {
           SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
             protected Object doInBackground() throws Exception {
               // Provide completions only if it's enabled
-              if (ExperimentalMode.codeCompletionsEnabled) {
+              if (JavaMode.codeCompletionsEnabled) {
                 getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
                 Base.log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started");
                 Base.log("Typing: " + fetchPhrase(evt2));
@@ -268,7 +269,7 @@ public class JavaTextArea extends JEditTextArea {
           hideSuggestion(); // hide on spacebar
         }
       } else {
-        if(ExperimentalMode.codeCompletionsEnabled) {
+        if (JavaMode.codeCompletionsEnabled) {
           prepareSuggestions(evt2);
         }
       }
@@ -280,7 +281,7 @@ public class JavaTextArea extends JEditTextArea {
       SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
         protected Object doInBackground() throws Exception {
           // Provide completions only if it's enabled
-          if (ExperimentalMode.codeCompletionsEnabled) {
+          if (JavaMode.codeCompletionsEnabled) {
             Base.log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
             Base.log("Typing: " + fetchPhrase(evt2));
           }
@@ -291,16 +292,16 @@ public class JavaTextArea extends JEditTextArea {
     }
   }
 
+  
   /**
    * Kickstart auto-complete suggestions
-   * @param evt - KeyEvent
    */
   private void prepareSuggestions(final KeyEvent evt){
     SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
       protected Object doInBackground() throws Exception {
         // Provide completions only if it's enabled
-        if (ExperimentalMode.codeCompletionsEnabled
-            && (ExperimentalMode.ccTriggerEnabled || suggestion.isVisible())) {
+        if (JavaMode.codeCompletionsEnabled &&
+            (JavaMode.ccTriggerEnabled || suggestion.isVisible())) {
           Base.log("[KeyEvent]" + evt.getKeyChar() + "  |Prediction started");
           Base.log("Typing: " + fetchPhrase(evt));
         }
@@ -310,6 +311,7 @@ public class JavaTextArea extends JEditTextArea {
     worker.execute();
   }
 
+  
   /**
    * Retrieves the word on which the mouse pointer is present
    * @param evt - the MouseEvent which triggered this method
@@ -495,7 +497,7 @@ public class JavaTextArea extends JEditTextArea {
     //    if (word.endsWith("."))
     //      word = word.substring(0, word.length() - 1);
     int lineStartNonWSOffset = 0;
-    if (word.length() >= ExperimentalMode.codeCompletionTriggerLength) {
+    if (word.length() >= JavaMode.codeCompletionTriggerLength) {
       errorCheckerService.getASTGenerator()
           .preparePredictions(word, line + errorCheckerService.mainClassOffset,
                               lineStartNonWSOffset);
@@ -504,6 +506,7 @@ public class JavaTextArea extends JEditTextArea {
 
   }
 
+  
   /**
    * Retrieve the total width of the gutter area.
    *
@@ -515,10 +518,6 @@ public class JavaTextArea extends JEditTextArea {
     }
 
     FontMetrics fm = painter.getFontMetrics();
-//        log("fm: " + (fm == null));
-//        log("editor: " + (editor == null));
-    //log("BPBPBPBPB: " + (editor.breakpointMarker == null));
-
     int textWidth = Math.max(fm.stringWidth(breakpointMarker),
                              fm.stringWidth(currentLineMarker));
     return textWidth + 2 * gutterPadding;

@@ -20,6 +20,7 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
+import processing.mode.java.JavaMode;
 import processing.mode.java.debug.DebugEditor;
 import processing.mode.java.tweak.*;
 
@@ -39,6 +40,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
 //import java.util.concurrent.atomic.AtomicBoolean;
+
 
 
 import javax.swing.text.BadLocationException;
@@ -440,7 +442,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param ecs
    * @param mode
    */
-  public void setECSandTheme(ErrorCheckerService ecs, ExperimentalMode mode) {
+  public void setECSandTheme(ErrorCheckerService ecs, JavaMode mode) {
     this.errorCheckerService = ecs;
     //loadTheme(mode);
 

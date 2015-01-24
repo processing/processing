@@ -54,6 +54,7 @@ import processing.app.Library;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
 import processing.core.PApplet;
+import processing.mode.java.JavaMode;
 import processing.mode.java.debug.DebugEditor;
 import processing.mode.java.preproc.PdePreprocessor;
 
@@ -375,6 +376,7 @@ public class ErrorCheckerService implements Runnable {
     System.gc();
   }
   
+  
   protected void updateSketchCodeListeners() {
     for (final SketchCode sc : editor.getSketch().getCode()) {
       boolean flag = false;
@@ -394,20 +396,23 @@ public class ErrorCheckerService implements Runnable {
     }
   }
 
+  
   protected void checkForMissingImports() {
-    if(!ExperimentalMode.importSuggestEnabled) return;
-    for (Problem p : problemsList) {
-      if(p.getIProblem().getID() == IProblem.UndefinedType) {
-        String args[] = p.getIProblem().getArguments();        
-        if (args.length > 0) {
-          String missingClass = args[0];
-          Base.log("Will suggest for type:" + missingClass);
-          //astGenerator.suggestImports(missingClass);
+    if (JavaMode.importSuggestEnabled) {
+      for (Problem p : problemsList) {
+        if(p.getIProblem().getID() == IProblem.UndefinedType) {
+          String args[] = p.getIProblem().getArguments();        
+          if (args.length > 0) {
+            String missingClass = args[0];
+            Base.log("Will suggest for type:" + missingClass);
+            //astGenerator.suggestImports(missingClass);
+          }
         }
       }
     }
   }
 
+  
   protected ASTGenerator astGenerator;
   
   public ASTGenerator getASTGenerator() {
@@ -454,7 +459,7 @@ public class ErrorCheckerService implements Runnable {
 
     @Override
     public void insertUpdate(DocumentEvent e) {
-      if (ExperimentalMode.errorCheckEnabled){
+      if (JavaMode.errorCheckEnabled) {
         runManualErrorCheck();
         //log("doc insert update, man error check..");
       }
@@ -462,7 +467,7 @@ public class ErrorCheckerService implements Runnable {
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-      if (ExperimentalMode.errorCheckEnabled){
+      if (JavaMode.errorCheckEnabled){
         runManualErrorCheck();
         //log("doc remove update, man error check..");
       }
@@ -470,7 +475,7 @@ public class ErrorCheckerService implements Runnable {
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-      if (ExperimentalMode.errorCheckEnabled){
+      if (JavaMode.errorCheckEnabled){
         runManualErrorCheck();
         //log("doc changed update, man error check..");
       }
@@ -515,7 +520,7 @@ public class ErrorCheckerService implements Runnable {
       }
       
       astGenerator.buildAST(cu);
-      if(!ExperimentalMode.errorCheckEnabled){
+      if (!JavaMode.errorCheckEnabled) {
     	  problemsList.clear();
     	  Base.log("Error Check disabled, so not updating UI.");
       }
@@ -703,7 +708,7 @@ public class ErrorCheckerService implements Runnable {
           }
   
           // If warnings are disabled, skip 'em
-          if (p.isWarning() && !ExperimentalMode.warningsEnabled) {
+          if (p.isWarning() && !JavaMode.warningsEnabled) {
             continue;
           }
           problemsList.add(p);
@@ -1008,30 +1013,29 @@ public class ErrorCheckerService implements Runnable {
           tempErrorLog.put(problemsList.get(i).getMessage(), problemsList
               .get(i).getIProblem());
         
-        if(!ExperimentalMode.importSuggestEnabled) continue;
-        Problem p = problemsList.get(i);
-        if(p.getIProblem().getID() == IProblem.UndefinedType) {
-          String args[] = p.getIProblem().getArguments();        
-          if (args.length > 0) {
-            String missingClass = args[0];
-//            log("Will suggest for type:" + missingClass);
-            //astGenerator.suggestImports(missingClass);
-            String[] si = astGenerator.getSuggestImports(missingClass);
-            if(si != null && si.length > 0){
-              p.setImportSuggestions(si);
-              errorData[i][0] = "<html>"
-                  + problemsList.get(i).getMessage()
-                  + " (<font color=#0000ff><u>Import Suggestions available</u></font>)</html>";
+        if (JavaMode.importSuggestEnabled) {
+          Problem p = problemsList.get(i);
+          if(p.getIProblem().getID() == IProblem.UndefinedType) {
+            String args[] = p.getIProblem().getArguments();        
+            if (args.length > 0) {
+              String missingClass = args[0];
+              //            log("Will suggest for type:" + missingClass);
+              //astGenerator.suggestImports(missingClass);
+              String[] si = astGenerator.getSuggestImports(missingClass);
+              if(si != null && si.length > 0){
+                p.setImportSuggestions(si);
+                errorData[i][0] = "<html>"
+                    + problemsList.get(i).getMessage()
+                    + " (<font color=#0000ff><u>Import Suggestions available</u></font>)</html>";
+              }
+
             }
-            
           }
         }
-        
       }
 
-      DefaultTableModel tm = new DefaultTableModel(errorData,
-                                                   XQErrorTable.columnNames);
-      // Update error table in the editor
+      DefaultTableModel tm = 
+        new DefaultTableModel(errorData, XQErrorTable.columnNames);
       editor.updateTable(tm);
       
       /*
@@ -1063,10 +1067,9 @@ public class ErrorCheckerService implements Runnable {
     }
 
   }
+
   
-  /**
-   * Repaints the textarea if required
-   */
+  /** Repaints the textarea if required */
   public void updatePaintedThingys() {    
     currentTab = editor.getSketch().getCodeIndex(
         editor.getSketch().getCurrentCode());
@@ -1088,27 +1091,23 @@ public class ErrorCheckerService implements Runnable {
    * line or not
    */
   public void updateEditorStatus() {
+    if (editor.getStatusMode() == EditorStatus.EDIT) return;
     
-    if(editor.getStatusMode() == EditorStatus.EDIT) return;
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
-    if(ExperimentalMode.errorCheckEnabled)
-    synchronized (editor.errorBar.errorPoints) {
-      for (ErrorMarker emarker : editor.errorBar.errorPoints) {
-        if (emarker.getProblem().getLineNumber() == editor.getTextArea()
-            .getCaretLine()) {
-          if (emarker.getType() == ErrorMarker.Warning) {
-              editor.statusMessage(emarker.getProblem().getMessage(),
+    if (JavaMode.errorCheckEnabled) {
+      synchronized (editor.errorBar.errorPoints) {
+        for (ErrorMarker emarker : editor.errorBar.errorPoints) {
+          if (emarker.getProblem().getLineNumber() == editor.getTextArea().getCaretLine()) {
+            if (emarker.getType() == ErrorMarker.Warning) {
+              editor.statusMessage(emarker.getProblem().getMessage(), 
                                    DebugEditor.STATUS_INFO);
-                                //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
-          //TODO: this is temporary
-          }
-          else {
+            } else {
               editor.statusMessage(emarker.getProblem().getMessage(),
                                    DebugEditor.STATUS_COMPILER_ERR);
-                               //+  " : " + errorMsgSimplifier.getIDName(emarker.problem.getIProblem().getID()));
+            }
+            return;
           }
-          return;
         }
       }
     }
@@ -1123,6 +1122,7 @@ public class ErrorCheckerService implements Runnable {
 //      lastCaretLine = editor.ta.getCaretLine();
 //    }
   }
+
   
   /**
    * Maps offset from java code to pde code. Returns a bunch of offsets as array
@@ -1707,7 +1707,7 @@ public class ErrorCheckerService implements Runnable {
   }
   
   public void handleErrorCheckingToggle(){
-    if (!ExperimentalMode.errorCheckEnabled) {
+    if (!JavaMode.errorCheckEnabled) {
       // unticked Menu Item
       // pauseThread();
       Base.log(editor.getSketch().getName()

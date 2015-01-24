@@ -61,7 +61,7 @@ import org.netbeans.swing.outline.RowModel;
 
 import com.sun.jdi.Value;
 
-import processing.mode.java.pdex.ExperimentalMode;
+import processing.mode.java.JavaMode;
 
 
 /**
@@ -270,7 +270,7 @@ public class VariableInspector extends JFrame {
          * null if the file wasn't found.
          */
         protected ImageIcon[][] loadIcons(String fileName) {
-            ExperimentalMode mode = editor.mode();
+            JavaMode mode = editor.mode();
             File file = mode.getContentFile(fileName);
             if (!file.exists()) {
                 Logger.getLogger(OutlineRenderer.class.getName()).log(Level.SEVERE, "icon file not found: {0}", file.getAbsolutePath());

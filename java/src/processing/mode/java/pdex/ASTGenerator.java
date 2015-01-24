@@ -111,6 +111,7 @@ import processing.app.Base;
 import processing.app.Library;
 import processing.app.SketchCode;
 import processing.app.Toolkit;
+import processing.mode.java.JavaMode;
 import processing.mode.java.debug.DebugEditor;
 import processing.mode.java.preproc.PdePreprocessor;
 
@@ -818,8 +819,8 @@ public class ASTGenerator {
   public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
     if(predictionOngoing.get()) return;
         
-    if(!ExperimentalMode.codeCompletionsEnabled) return;
-    if(word.length() < predictionMinLength) return;
+    if (!JavaMode.codeCompletionsEnabled) return;
+    if (word.length() < predictionMinLength) return;
     
     predictionOngoing.set(true);
     // This method is called from TextArea.fetchPhrase, which is called via a SwingWorker instance

@@ -78,21 +78,26 @@ _   setLocationRelativeTo(null) was removed, will it be missed?
 _ deal with applySettings() change (maybe not a problem?)
 
 
-python has to use launch() instead of open()
-map() is bad for Python (and JavaScript?)
+cross-language awkwardness
+_ python has to use launch() instead of open()
+_ map() is bad for Python and JavaScript
 
 
-under consideration
-_ break PUtil out from PApplet
-_ break more api with Processing 3?
-_   use enums for everything (fixes auto-completion)
-_   add chaining operations
-_   min() and max() to use varargs
+breaking api
+_ bring back chaining in JSON (and add to XML)
+_ add chaining operations to PVector
+_   https://github.com/processing/processing/issues/257
 _ move to enums instead of PConstants?
 _   helps textMode() only accept valid entries
 _   really nice for auto-complete
 _   prevents hundreds of entries from coming up w/ auto-complete
 _   downside: breaks compatibility big time
+_ min() and max() to use varargs
+_   https://github.com/processing/processing/issues/3027
+
+
+under consideration
+_ break PUtil out from PApplet
 _ fix the registered methods doc, stop/dispose working
 _   Casey needs to nudge people about libraries, so we need to fix this
 _ pause(), resume(), start(), stop() clarifications
@@ -129,9 +134,6 @@ _   save the constructor for the version that actually copies data
 _   the table pointer version will be speedy and allow chaining 
 
 
-later
-_ bring back chaining in JSON (and add to XML)
-_   maybe once we make the PVector change
 _ bezierSegment() function to do equal-length segments
 _   https://github.com/processing/processing/issues/2919
 

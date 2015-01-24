@@ -240,7 +240,8 @@ public class OffsetMatcher {
     }
   }
 
-  
+
+  /*
   public static void main(String[] args) {
 //    minDistance("c = #qwerty;", "c = 0xffqwerty;");
     OffsetMatcher a;
@@ -261,4 +262,6 @@ public class OffsetMatcher {
 //    a.getJavaOffForPdeOff(6, 3);
 //    distance("c = #bb00aa;", "c = 0xffbb00aa;");
   }
+  */
 }
+

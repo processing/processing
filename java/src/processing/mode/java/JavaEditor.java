@@ -33,48 +33,12 @@ public class JavaEditor extends Editor {
   protected JavaEditor(Base base, String path, EditorState state, Mode mode) {
     super(base, path, state, mode);
 
-//    // hopefully these are no longer needed w/ swing
-//    // (har har har.. that was wishful thinking)
-//    listener = new PdeKeyListener(this, textarea);
-
     jmode = (JavaMode) mode;
   }
   
   
   protected JEditTextArea createTextArea() {
     return new JEditTextArea(new PdeTextAreaDefaults(mode), new JavaInputHandler(this));
-    /*
-    return new JEditTextArea(new PdeTextAreaDefaults(mode), new PdeInputHandler()) {
-       // Forwards key events directly to the input handler. This is slightly 
-       // faster than using a KeyListener because some Swing overhead is avoided.
-      PdeKeyListener editorListener = new PdeKeyListener(JavaEditor.this, this);
-
-      // Moved out of JEditTextArea for 3.0a6 to remove dependency on Java Mode
-      public void processKeyEvent(KeyEvent evt) {
-        // this had to be added in Processing 007X, because the menu key
-        // events weren't making it up to the frame.
-        super.processKeyEvent(evt);
-
-        if (inputHandler != null) {
-          switch (evt.getID()) {  
-          case KeyEvent.KEY_TYPED:  
-            if ((editorListener == null) || !editorListener.keyTyped(evt)) {
-              inputHandler.keyTyped(evt);
-            }
-            break;
-          case KeyEvent.KEY_PRESSED:
-            if ((editorListener == null) || !editorListener.keyPressed(evt)) {
-              inputHandler.keyPressed(evt);
-            }
-            break;
-          case KeyEvent.KEY_RELEASED:
-            inputHandler.keyReleased(evt);
-            break;
-          }
-        }
-      }
-    };
-    */
   }
 
 

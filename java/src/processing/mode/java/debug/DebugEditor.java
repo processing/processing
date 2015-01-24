@@ -78,10 +78,10 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
+import processing.mode.java.JavaMode;
 import processing.mode.java.pdex.ErrorBar;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
-import processing.mode.java.pdex.ExperimentalMode;
 import processing.mode.java.pdex.Problem;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.XQConsoleToggle;
@@ -135,7 +135,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
 
   protected JMenuItem toggleVariableInspectorMenuItem;
 
-  public ExperimentalMode dmode; // the mode
+  public JavaMode dmode; // the mode
   protected Debugger dbg; // the debugger
   protected VariableInspector vi; // the variable inspector frame
 
@@ -164,7 +164,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
     public DebugEditor(Base base, String path, EditorState state, Mode mode) {
       super(base, path, state, mode);
 
-      dmode = (ExperimentalMode) mode;
+      dmode = (JavaMode) mode;
       dbg = new Debugger(this);
       vi = new VariableInspector(this);
 
@@ -319,15 +319,15 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         super.dispose();
     }
     
+    
     // Added temporarily to dump error log. TODO: Remove this later
-    public void internalCloseRunner(){      
-      if(ExperimentalMode.errorLogsEnabled) writeErrorsToFile();
-//      if(autosaver != null && !viewingAutosaveBackup) {
-//        log("stopping autosaver in internalCloseRunner");
-//        autosaver.stop();
-//      }
+    public void internalCloseRunner() {
+      if (JavaMode.errorLogsEnabled) {
+        writeErrorsToFile();
+      }
       super.internalCloseRunner();
     }
+    
     
     /**
      * Writes all error messages to a csv file.
@@ -637,11 +637,11 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       });
   
       JMenuItem enableTweak = Toolkit.newJMenuItemShift(Language.text("menu.sketch.tweak"), 'T');
-      enableTweak.setSelected(ExperimentalMode.enableTweak);
+      enableTweak.setSelected(JavaMode.enableTweak);
       enableTweak.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          ExperimentalMode.enableTweak = true;
+          JavaMode.enableTweak = true;
           handleRun();
         }
       });
@@ -1020,6 +1020,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         }
     }
 
+    
     /**
      * Access the debugger.
      *
@@ -1029,12 +1030,13 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         return dbg;
     }
 
+    
     /**
      * Access the mode.
      *
      * @return the mode object
      */
-    public ExperimentalMode mode() {
+    public JavaMode mode() {
         return dmode;
     }
 
@@ -1063,7 +1065,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
      * run/present/etc.
      */
     protected void autoSave() {
-        if (!ExperimentalMode.autoSaveEnabled)
+        if (!JavaMode.autoSaveEnabled)
             return;
 
         try {
@@ -1076,7 +1078,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
             // }
             // else
             if (sketch.isModified() && !sketch.isUntitled()) {
-                if (ExperimentalMode.autoSavePromptEnabled) {
+                if (JavaMode.autoSavePromptEnabled) {
                     final JDialog autoSaveDialog = new JDialog(
                             base.getActiveEditor(), this.getSketch().getName(),
                             true);
@@ -1111,9 +1113,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
                         public void actionPerformed(ActionEvent e) {
                             handleSave(true);
                             if (dontRedisplay.isSelected()) {
-                                ExperimentalMode.autoSavePromptEnabled = !dontRedisplay
-                                        .isSelected();
-                                ExperimentalMode.defaultAutoSaveEnabled = true;
+                                JavaMode.autoSavePromptEnabled = !dontRedisplay.isSelected();
+                                JavaMode.defaultAutoSaveEnabled = true;
                                 dmode.savePreferences();
                             }
                             autoSaveDialog.dispose();
@@ -1126,9 +1127,8 @@ public class DebugEditor extends JavaEditor implements ActionListener {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             if (dontRedisplay.isSelected()) {
-                                ExperimentalMode.autoSavePromptEnabled = !dontRedisplay
-                                        .isSelected();
-                                ExperimentalMode.defaultAutoSaveEnabled = false;
+                                JavaMode.autoSavePromptEnabled = !dontRedisplay.isSelected();
+                                JavaMode.defaultAutoSaveEnabled = false;
                                 dmode.savePreferences();
                             }
                             autoSaveDialog.dispose();
@@ -1151,8 +1151,9 @@ public class DebugEditor extends JavaEditor implements ActionListener {
                             .setLocationRelativeTo(base.getActiveEditor());
                     autoSaveDialog.setVisible(true);
 
-                } else if (ExperimentalMode.defaultAutoSaveEnabled)
+                } else if (JavaMode.defaultAutoSaveEnabled) {
                     handleSave(true);
+                }
             }
         } catch (Exception e) {
             statusError(e);
@@ -1603,15 +1604,18 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       return errorTable.updateTable(tableModel);
     }
 
+    
     /**
      * Handle whether the tiny red error indicator is shown near the error button
      * at the bottom of the PDE
      */
     public void updateErrorToggle(){
-      btnShowErrors.updateMarker(ExperimentalMode.errorCheckEnabled
-                                 && errorCheckerService.hasErrors(), errorBar.errorColor);
+      btnShowErrors.updateMarker(JavaMode.errorCheckEnabled &&
+                                 errorCheckerService.hasErrors(), 
+                                 errorBar.errorColor);
     }
 
+    
     /**
      * Handle refactor operation
      */
@@ -1620,6 +1624,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       errorCheckerService.getASTGenerator().handleRefactor();
     }
 
+    
     /**
      * Handle show usage operation
      */
@@ -1628,6 +1633,7 @@ public class DebugEditor extends JavaEditor implements ActionListener {
       errorCheckerService.getASTGenerator().handleShowUsage();
     }
 
+    
     /**
      * Checks if the sketch contains java tabs. If it does, the editor ain't built
      * for it, yet. Also, user should really start looking at more powerful IDEs 
@@ -1647,17 +1653,19 @@ public class DebugEditor extends JavaEditor implements ActionListener {
         }
       }
     }
-    
-	protected void applyPreferences() {
-		super.applyPreferences();
-		if (dmode != null) {
-			dmode.loadPreferences();
-			Base.log("Applying prefs");
-			// trigger it once to refresh UI
-			errorCheckerService.runManualErrorCheck();
-		}
-	}
 
+    
+    protected void applyPreferences() {
+      super.applyPreferences();
+      if (dmode != null) {
+        dmode.loadPreferences();
+        Base.log("Applying prefs");
+        // trigger it once to refresh UI
+        errorCheckerService.runManualErrorCheck();
+      }
+    }
+
+    
     // TweakMode code
     /**
      * Show warnings menu item
