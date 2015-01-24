@@ -56,7 +56,7 @@ public class LineBreakpoint implements ClassLoadListener {
      */
     public LineBreakpoint(LineID line, Debugger dbg) {
         this.line = line;
-        line.startTracking(dbg.editor().getTab(line.fileName()).getDocument());
+        line.startTracking(dbg.getEditor().getTab(line.fileName()).getDocument());
         this.dbg = dbg;
         theClass = dbg.getClass(className()); // try to get the class immediately, may return null if not yet loaded
         set(); // activate the breakpoint (show highlight, attach if debugger is running)
@@ -72,7 +72,7 @@ public class LineBreakpoint implements ClassLoadListener {
      */
     // TODO: remove and replace by {@link #LineBreakpoint(LineID line, Debugger dbg)}
     public LineBreakpoint(int lineIdx, Debugger dbg) {
-        this(dbg.editor().getLineIDInCurrentTab(lineIdx), dbg);
+        this(dbg.getEditor().getLineIDInCurrentTab(lineIdx), dbg);
     }
 
     /**
@@ -148,13 +148,13 @@ public class LineBreakpoint implements ClassLoadListener {
      */
     protected void set() {
         dbg.addClassLoadListener(this); // class may not yet be loaded
-        dbg.editor().addBreakpointedLine(line);
+        dbg.getEditor().addBreakpointedLine(line);
         if (theClass != null && dbg.isPaused()) { // class is loaded
             // immediately activate the breakpoint
             attach();
         }
-        if (dbg.editor().isInCurrentTab(line)) {
-            dbg.editor().getSketch().setModified(true);
+        if (dbg.getEditor().isInCurrentTab(line)) {
+            dbg.getEditor().getSketch().setModified(true);
         }
     }
 
@@ -165,14 +165,14 @@ public class LineBreakpoint implements ClassLoadListener {
     public void remove() {
         dbg.removeClassLoadListener(this);
         //System.out.println("removing " + line.lineIdx());
-        dbg.editor().removeBreakpointedLine(line.lineIdx());
+        dbg.getEditor().removeBreakpointedLine(line.lineIdx());
         if (dbg.isPaused()) {
             // immediately remove the breakpoint
             detach();
         }
         line.stopTracking();
-        if (dbg.editor().isInCurrentTab(line)) {
-            dbg.editor().getSketch().setModified(true);
+        if (dbg.getEditor().isInCurrentTab(line)) {
+            dbg.getEditor().getSketch().setModified(true);
         }
     }
 

@@ -2005,12 +2005,14 @@ public class JavaEditor extends Editor {
         return vi;
     }
 
+    
     public DebugToolbar toolbar() {
-      if(toolbar instanceof DebugToolbar)
+      if (toolbar instanceof DebugToolbar)
         return (DebugToolbar) toolbar;
       return null;
     }
 
+    
     /**
      * Show the variable inspector window.
      */
