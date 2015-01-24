@@ -276,8 +276,8 @@ public class Base {
 
 
   private String getDefaultModeIdentifier() {
-    return "processing.mode.java.pdex.ExperimentalMode";
-    //return "processing.mode.java.JavaMode";
+    //return "processing.mode.java.pdex.ExperimentalMode";
+    return "processing.mode.java.JavaMode";
   }
 
 
