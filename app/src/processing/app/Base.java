@@ -275,12 +275,14 @@ public class Base {
   */
 
 
+  // TODO should this be public to suggest override for Arduino and others?
   private String getDefaultModeIdentifier() {
     //return "processing.mode.java.pdex.ExperimentalMode";
     return "processing.mode.java.JavaMode";
   }
 
 
+  // TODO same as above... make public?
   private void buildCoreModes() {
     Mode javaMode =
       ModeContribution.load(this, getContentFile("modes/java"), //$NON-NLS-1$
