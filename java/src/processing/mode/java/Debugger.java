@@ -18,7 +18,7 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-package processing.mode.java.debug;
+package processing.mode.java;
 
 import com.sun.jdi.*;
 import com.sun.jdi.event.*;
@@ -41,21 +41,28 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import processing.app.Sketch;
 import processing.app.SketchCode;
-import processing.mode.java.JavaBuild;
+import processing.mode.java.debug.ArrayFieldNode;
+import processing.mode.java.debug.ClassLoadListener;
+import processing.mode.java.debug.FieldNode;
+import processing.mode.java.debug.LineBreakpoint;
+import processing.mode.java.debug.LineID;
+import processing.mode.java.debug.LocalVariableNode;
+import processing.mode.java.debug.VariableInspector;
+import processing.mode.java.debug.VariableNode;
 import processing.mode.java.pdex.VMEventListener;
 import processing.mode.java.pdex.VMEventReader;
 import processing.mode.java.runner.Runner;
 
 
 /**
- * Main controller class for debugging mode. Mainly works with DebugEditor as
+ * Main controller class for debugging mode. Mainly works with JavaEditor as
  * the corresponding "view". Uses DebugRunner to launch a VM.
  *
  * @author Martin Leopold <m@martinleopold.com>
  */
 public class Debugger implements VMEventListener {
 
-    protected DebugEditor editor; // editor window, acting as main view
+    protected JavaEditor editor; // editor window, acting as main view
     protected Runner runtime; // the runtime, contains debuggee VM
     protected boolean started = false; // debuggee vm has started, VMStartEvent received, main class loaded
     protected boolean paused = false; // currently paused at breakpoint or step
@@ -75,7 +82,7 @@ public class Debugger implements VMEventListener {
      *
      * @param editor The Editor that will act as primary view
      */
-    public Debugger(DebugEditor editor) {
+    public Debugger(JavaEditor editor) {
         this.editor = editor;
     }
 
@@ -97,7 +104,7 @@ public class Debugger implements VMEventListener {
      *
      * @return the editor object
      */
-    public DebugEditor editor() {
+    public JavaEditor editor() {
         return editor;
     }
 
@@ -1057,7 +1064,7 @@ public class Debugger implements VMEventListener {
      * @param maxDepth max recursion depth. 0 will give only direct children
      * @return list of child fields of the given value
      */
-    protected List<VariableNode> getFields(Value value, int maxDepth, boolean includeInherited) {
+    public List<VariableNode> getFields(Value value, int maxDepth, boolean includeInherited) {
         return getFields(value, 0, maxDepth, includeInherited);
     }
 

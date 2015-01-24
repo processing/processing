@@ -61,6 +61,8 @@ import org.netbeans.swing.outline.RowModel;
 
 import com.sun.jdi.Value;
 
+import processing.mode.java.Debugger;
+import processing.mode.java.JavaEditor;
 import processing.mode.java.JavaMode;
 
 
@@ -79,7 +81,7 @@ public class VariableInspector extends JFrame {
     protected List<VariableNode> locals; // current local variables
     protected List<VariableNode> thisFields; // all fields of the current this-object
     protected List<VariableNode> declaredThisFields; // declared i.e. non-inherited fields of this
-    protected DebugEditor editor; // the editor
+    protected JavaEditor editor; // the editor
     protected Debugger dbg; // the debugger
     protected List<TreePath> expandedNodes = new ArrayList<TreePath>(); // list of expanded tree paths. (using list to maintain the order of expansion)
     protected boolean p5mode = true; // processing / "advanced" mode flag (currently not used
@@ -87,7 +89,7 @@ public class VariableInspector extends JFrame {
     /**
      * Creates new form VariableInspector
      */
-    public VariableInspector(DebugEditor editor) {
+    public VariableInspector(JavaEditor editor) {
         this.editor = editor;
         this.dbg = editor.dbg();
 

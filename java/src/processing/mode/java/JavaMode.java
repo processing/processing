@@ -32,7 +32,6 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 import processing.app.*;
-import processing.mode.java.debug.DebugEditor;
 import processing.mode.java.runner.Runner;
 import processing.mode.java.tweak.SketchParser;
 
@@ -40,7 +39,7 @@ import processing.mode.java.tweak.SketchParser;
 public class JavaMode extends Mode {
 
   public Editor createEditor(Base base, String path, EditorState state) {
-    return new DebugEditor(base, path, state, this);
+    return new JavaEditor(base, path, state, this);
   }
 
 
@@ -111,7 +110,7 @@ public class JavaMode extends Mode {
 
   public Runner handleRun(Sketch sketch,
                           RunnerListener listener) throws SketchException {
-    final DebugEditor editor = (DebugEditor)listener;
+    final JavaEditor editor = (JavaEditor)listener;
     editor.errorCheckerService.quickErrorCheck();
     if (enableTweak) {
       enableTweak = false;
@@ -124,7 +123,7 @@ public class JavaMode extends Mode {
   
   public Runner handlePresent(Sketch sketch,
                               RunnerListener listener) throws SketchException {
-    final DebugEditor editor = (DebugEditor)listener;
+    final JavaEditor editor = (JavaEditor)listener;
     editor.errorCheckerService.quickErrorCheck();
     if (enableTweak) {
       enableTweak = false;
@@ -157,7 +156,7 @@ public class JavaMode extends Mode {
   public Runner handleTweak(Sketch sketch,
                             RunnerListener listener,
                             final boolean present) throws SketchException {
-    final DebugEditor editor = (DebugEditor)listener;
+    final JavaEditor editor = (JavaEditor)listener;
     boolean launchInteractive = false;
 
     if (isSketchModified(sketch)) {

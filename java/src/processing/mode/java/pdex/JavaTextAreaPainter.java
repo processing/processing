@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 package processing.mode.java.pdex;
 
 import processing.mode.java.JavaMode;
-import processing.mode.java.debug.DebugEditor;
+import processing.mode.java.JavaEditor;
 import processing.mode.java.tweak.*;
 
 import java.awt.Color;
@@ -845,7 +845,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 	
 	
-	private DebugEditor getEditor() {
+	private JavaEditor getEditor() {
 	  return ((JavaTextArea) textArea).editor;
 	}
 	

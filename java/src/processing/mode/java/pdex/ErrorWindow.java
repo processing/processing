@@ -37,7 +37,7 @@ import javax.swing.table.TableModel;
 
 import processing.app.Editor;
 import processing.app.Toolkit;
-import processing.mode.java.debug.DebugEditor;
+import processing.mode.java.JavaEditor;
 
 /**
  * Error Window that displays a tablular list of errors. Clicking on an error
@@ -58,7 +58,7 @@ public class ErrorWindow extends JFrame {
 	 */
 	protected JScrollPane scrollPane;
 
-	protected DebugEditor thisEditor;
+	protected JavaEditor thisEditor;
 	private JFrame thisErrorWindow;
 	
 	/**
@@ -75,7 +75,7 @@ public class ErrorWindow extends JFrame {
 	 *            - Editor
 	 * @param ecs - ErrorCheckerService
 	 */
-	public ErrorWindow(DebugEditor editor, ErrorCheckerService ecs) {
+	public ErrorWindow(JavaEditor editor, ErrorCheckerService ecs) {
 		thisErrorWindow = this;
 		errorCheckerService = ecs;
 		thisEditor = editor;

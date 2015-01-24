@@ -24,6 +24,9 @@ import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 
+import processing.mode.java.JavaEditor;
+
+
 /**
  * Model/Controller for a highlighted source code line. Implements a custom
  * background color and a text based marker placed in the left-hand gutter area.
@@ -32,57 +35,63 @@ import java.util.Set;
  */
 public class LineHighlight implements LineListener {
 
-    protected DebugEditor editor; // the view, used for highlighting lines by setting a background color
-    protected Color bgColor; // the background color for highlighting lines
-    protected LineID lineID; // the id of the line
-    protected String marker; //
-    protected Color markerColor;
-    protected int priority = 0;
-    protected static Set<LineHighlight> allHighlights = new HashSet<LineHighlight>();
+  protected JavaEditor editor; // the view, used for highlighting lines by setting a background color
+  protected Color bgColor; // the background color for highlighting lines
+  protected LineID lineID; // the id of the line
+  protected String marker; //
+  protected Color markerColor;
+  protected int priority = 0;
+  protected static Set<LineHighlight> allHighlights = new HashSet<LineHighlight>();
 
-    protected static boolean isHighestPriority(LineHighlight hl) {
-        for (LineHighlight check : allHighlights) {
-            if (check.lineID().equals(hl.lineID()) && check.priority() > hl.priority()) {
-                return false;
-            }
-        }
-        return true;
+  
+  /**
+   * Create a {@link LineHighlight}.
+   *
+   * @param lineID the line id to highlight
+   * @param bgColor the background color used for highlighting
+   * @param editor the {@link JavaEditor}
+   */
+  public LineHighlight(LineID lineID, Color bgColor, JavaEditor editor) {
+    this.lineID = lineID;
+    this.bgColor = bgColor;
+    this.editor = editor;
+    lineID.addListener(this);
+    lineID.startTracking(editor.getTab(lineID.fileName()).getDocument()); // TODO: overwrite a previous doc?
+    paint(); // already checks if on current tab
+    allHighlights.add(this);
+  }
+
+    
+  protected static boolean isHighestPriority(LineHighlight hl) {
+    for (LineHighlight check : allHighlights) {
+      if (check.getLineID().equals(hl.getLineID()) && 
+          check.priority() > hl.priority()) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    /**
-     * Create a {@link LineHighlight}.
-     *
-     * @param lineID the line id to highlight
-     * @param bgColor the background color used for highlighting
-     * @param editor the {@link DebugEditor}
-     */
-    public LineHighlight(LineID lineID, Color bgColor, DebugEditor editor) {
-        this.lineID = lineID;
-        this.bgColor = bgColor;
-        this.editor = editor;
-        lineID.addListener(this);
-        lineID.startTracking(editor.getTab(lineID.fileName()).getDocument()); // TODO: overwrite a previous doc?
-        paint(); // already checks if on current tab
-        allHighlights.add(this);
-    }
+  
+  public void setPriority(int p) {
+    this.priority = p;
+  }
 
-    public void setPriority(int p) {
-        this.priority = p;
-    }
+  
+  public int priority() {
+    return priority;
+  }
 
-    public int priority() {
-        return priority;
-    }
-
+  
     /**
      * Create a {@link LineHighlight} on the current tab.
      *
      * @param lineIdx the line index on the current tab to highlight
      * @param bgColor the background color used for highlighting
-     * @param editor the {@link DebugEditor}
+     * @param editor the {@link JavaEditor}
      */
-    // TODO: Remove and replace by {@link #LineHighlight(LineID lineID, Color bgColor, DebugEditor editor)}
-    public LineHighlight(int lineIdx, Color bgColor, DebugEditor editor) {
+    // TODO: Remove and replace by {@link #LineHighlight(LineID lineID, Color bgColor, JavaEditor editor)}
+    public LineHighlight(int lineIdx, Color bgColor, JavaEditor editor) {
         this(editor.getLineIDInCurrentTab(lineIdx), bgColor, editor);
     }
 
@@ -114,7 +123,7 @@ public class LineHighlight implements LineListener {
      *
      * @return the line id
      */
-    public LineID lineID() {
+    public LineID getLineID() {
         return lineID;
     }
 

@@ -22,7 +22,7 @@ package processing.mode.java.pdex;
 
 import processing.mode.java.JavaInputHandler;
 import processing.mode.java.JavaMode;
-import processing.mode.java.debug.DebugEditor;
+import processing.mode.java.JavaEditor;
 import processing.mode.java.tweak.ColorControlBox;
 import processing.mode.java.tweak.Handle;
 
@@ -57,7 +57,7 @@ import processing.app.syntax.TextAreaDefaults;
  */
 public class JavaTextArea extends JEditTextArea {
   protected PdeTextAreaDefaults defaults;
-  protected DebugEditor editor;
+  protected JavaEditor editor;
 
   protected MouseListener[] mouseListeners; // cached mouselisteners, these are wrapped by MouseHandler
 
@@ -89,9 +89,9 @@ public class JavaTextArea extends JEditTextArea {
   }
   
   
-  //public JavaTextArea(TextAreaDefaults defaults, InputHandler inputHandler, DebugEditor editor) {
-  //public JavaTextArea(DebugEditor editor) {
-  public JavaTextArea(TextAreaDefaults defaults, DebugEditor editor) {
+  //public JavaTextArea(TextAreaDefaults defaults, InputHandler inputHandler, JavaEditor editor) {
+  //public JavaTextArea(JavaEditor editor) {
+  public JavaTextArea(TextAreaDefaults defaults, JavaEditor editor) {
     super(defaults, new JavaInputHandler(editor));
     //super(defaults, inputHandler);
     this.editor = editor;

@@ -55,7 +55,7 @@ import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
 import processing.core.PApplet;
 import processing.mode.java.JavaMode;
-import processing.mode.java.debug.DebugEditor;
+import processing.mode.java.JavaEditor;
 import processing.mode.java.preproc.PdePreprocessor;
 
 
@@ -66,7 +66,7 @@ import processing.mode.java.preproc.PdePreprocessor;
 @SuppressWarnings("unchecked")
 public class ErrorCheckerService implements Runnable {
   
-  protected DebugEditor editor;
+  protected JavaEditor editor;
 
   /** Error check happens every sleepTime milliseconds */
   public static final int sleepTime = 1000;
@@ -217,7 +217,7 @@ public class ErrorCheckerService implements Runnable {
   
   protected ErrorMessageSimplifier errorMsgSimplifier;
   
-  public ErrorCheckerService(DebugEditor debugEditor) {
+  public ErrorCheckerService(JavaEditor debugEditor) {
     ensureMinP5Version();
     this.editor = debugEditor;
     stopThread = new AtomicBoolean(false);
@@ -274,7 +274,7 @@ public class ErrorCheckerService implements Runnable {
     }
 
     final ErrorCheckerService thisService = this;
-    final DebugEditor thisEditor = editor;
+    final JavaEditor thisEditor = editor;
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         try {
@@ -1101,10 +1101,10 @@ public class ErrorCheckerService implements Runnable {
           if (emarker.getProblem().getLineNumber() == editor.getTextArea().getCaretLine()) {
             if (emarker.getType() == ErrorMarker.Warning) {
               editor.statusMessage(emarker.getProblem().getMessage(), 
-                                   DebugEditor.STATUS_INFO);
+                                   JavaEditor.STATUS_INFO);
             } else {
               editor.statusMessage(emarker.getProblem().getMessage(),
-                                   DebugEditor.STATUS_COMPILER_ERR);
+                                   JavaEditor.STATUS_COMPILER_ERR);
             }
             return;
           }
@@ -1113,7 +1113,7 @@ public class ErrorCheckerService implements Runnable {
     }
     
     // This line isn't an error line anymore, so probably just clear it
-    if (editor.statusMessageType == DebugEditor.STATUS_COMPILER_ERR) {
+    if (editor.statusMessageType == JavaEditor.STATUS_COMPILER_ERR) {
       editor.statusEmpty();
       return;
     }
@@ -1748,7 +1748,7 @@ public class ErrorCheckerService implements Runnable {
     pauseThread.set(false);
   }
 
-  public DebugEditor getEditor() {
+  public JavaEditor getEditor() {
     return editor;
   }
   

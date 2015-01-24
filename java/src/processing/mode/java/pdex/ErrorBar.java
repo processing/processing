@@ -38,7 +38,7 @@ import javax.swing.text.BadLocationException;
 import processing.app.Base;
 import processing.app.SketchCode;
 import processing.mode.java.JavaMode;
-import processing.mode.java.debug.DebugEditor;
+import processing.mode.java.JavaEditor;
 
 /**
  * The bar on the left of the text area which displays all errors as rectangles. <br>
@@ -83,9 +83,9 @@ public class ErrorBar extends JPanel {
 	public Color backgroundColor; // = new Color(0x2C343D);
 
 	/**
-	 * DebugEditor instance
+	 * JavaEditor instance
 	 */
-	protected DebugEditor editor;
+	protected JavaEditor editor;
 
 	/**
 	 * ErrorCheckerService instance
@@ -130,7 +130,7 @@ public class ErrorBar extends JPanel {
 	}
 
 	
-	public ErrorBar(DebugEditor editor, int height, JavaMode mode) {
+	public ErrorBar(JavaEditor editor, int height, JavaMode mode) {
 		this.editor = editor;
 		this.preferredHeight = height;
 		this.errorCheckerService = editor.errorCheckerService;

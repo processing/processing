@@ -51,7 +51,7 @@ import javax.swing.text.BadLocationException;
 
 import processing.app.Base;
 import processing.app.syntax.JEditTextArea;
-import processing.mode.java.debug.DebugEditor;
+import processing.mode.java.JavaEditor;
 
 
 /**
@@ -87,7 +87,7 @@ public class CompletionPanel {
    */
   private JScrollPane scrollPane;
   
-  protected DebugEditor editor;
+  protected JavaEditor editor;
   
   public static final int MOUSE_COMPLETION = 10, KEYBOARD_COMPLETION = 20;
 
@@ -101,7 +101,7 @@ public class CompletionPanel {
    * @param dedit
    */
   public CompletionPanel(final JEditTextArea textarea, int position, String subWord,
-                         DefaultListModel<CompletionCandidate> items, final Point location, DebugEditor dedit) {
+                         DefaultListModel<CompletionCandidate> items, final Point location, JavaEditor dedit) {
     this.textarea = (JavaTextArea) textarea;
     editor = dedit;
     this.insertionPosition = position;

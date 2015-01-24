@@ -31,7 +31,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 
 import processing.app.Language;
-import processing.mode.java.debug.DebugEditor;
+import processing.mode.java.JavaEditor;
 
 /**
  * Toggle Button displayed in the editor line status panel for toggling bewtween
@@ -51,10 +51,10 @@ public class XQConsoleToggle extends JPanel implements MouseListener {
 	 * Height of the component
 	 */
 	protected int height;
-	protected DebugEditor editor;
+	protected JavaEditor editor;
 	protected String buttonName;
 
-	public XQConsoleToggle(DebugEditor editor, String buttonName, int height) {
+	public XQConsoleToggle(JavaEditor editor, String buttonName, int height) {
 		this.editor = editor;
 		this.height = height;
 		this.buttonName = buttonName;

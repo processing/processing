@@ -18,7 +18,7 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-package processing.mode.java.debug;
+package processing.mode.java;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -31,8 +31,9 @@ import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Language;
 import processing.app.Toolkit;
-import processing.mode.java.JavaToolbar;
+
 import processing.mode.java.pdex.XQConsoleToggle;
+
 
 /**
  * Custom toolbar for the editor window. Preserves original button numbers
@@ -190,7 +191,7 @@ public class DebugToolbar extends JavaToolbar {
   @Override
   public void handlePressed(MouseEvent e, int idx) {
     boolean shift = e.isShiftDown();
-    DebugEditor deditor = (DebugEditor) editor;
+    JavaEditor deditor = (JavaEditor) editor;
     int id = buttonId(idx); // convert index/position to button id
 
     switch (id) {

@@ -51,7 +51,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import processing.app.SketchCode;
-import processing.mode.java.debug.DebugEditor;
+import processing.mode.java.JavaEditor;
+
 
 public class TabOutline {
   protected JFrame frmOutlineView;
@@ -66,7 +67,7 @@ public class TabOutline {
   
   protected JLabel lblCaption;
 
-  protected DebugEditor editor;
+  protected JavaEditor editor;
 
   protected ErrorCheckerService errorCheckerService;
 
@@ -84,10 +85,8 @@ public class TabOutline {
     frmOutlineView.setUndecorated(true);
     Point tp = errorCheckerService.getEditor().ta.getLocationOnScreen();
     lblCaption = new JLabel("Tabs List (type to filter)");
-//    int minWidth = (int) (editor.getMinimumSize().width * 0.7f), maxWidth = (int) (editor
-//        .getMinimumSize().width * 0.9f);
-    int minWidth = estimateFrameWidth(), maxWidth = (int) (editor
-        .getMinimumSize().width * 0.9f);
+    int minWidth = estimateFrameWidth();
+    int maxWidth = (int) (editor.getMinimumSize().width * 0.9f);
     frmOutlineView.setLayout(new BoxLayout(frmOutlineView.getContentPane(),
                                            BoxLayout.Y_AXIS));
     JPanel panelTop = new JPanel(), panelMiddle = new JPanel(), panelBottom = new JPanel();

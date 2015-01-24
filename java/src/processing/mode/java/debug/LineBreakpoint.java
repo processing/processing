@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import processing.app.Base;
+import processing.mode.java.Debugger;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;

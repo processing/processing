@@ -55,7 +55,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-import processing.mode.java.debug.DebugEditor;
+import processing.mode.java.JavaEditor;
 
 
 public class SketchOutline {
@@ -65,7 +65,7 @@ public class SketchOutline {
   protected DefaultMutableTreeNode soNode, tempNode;
   protected final JTree soTree;
   protected JTextField searchField;
-  protected DebugEditor editor;
+  protected JavaEditor editor;
   protected boolean internalSelection = false;
 
   

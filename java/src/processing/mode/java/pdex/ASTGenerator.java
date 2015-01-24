@@ -111,8 +111,8 @@ import processing.app.Base;
 import processing.app.Library;
 import processing.app.SketchCode;
 import processing.app.Toolkit;
+import processing.mode.java.JavaEditor;
 import processing.mode.java.JavaMode;
-import processing.mode.java.debug.DebugEditor;
 import processing.mode.java.preproc.PdePreprocessor;
 
 import com.google.classpath.ClassPath;
@@ -124,7 +124,7 @@ public class ASTGenerator {
 
   protected ErrorCheckerService errorCheckerService;
 
-  protected DebugEditor editor;
+  protected JavaEditor editor;
 
   public DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode();
 
@@ -1751,7 +1751,7 @@ public class ASTGenerator {
 //          Base.loge("null");
           if (scrollOnly) {
             editor.statusMessage(simpName + " is not defined in this sketch",
-                                 DebugEditor.STATUS_ERR);
+                                 JavaEditor.STATUS_ERR);
           }
         }
 
@@ -2036,7 +2036,7 @@ public class ASTGenerator {
     DefaultMutableTreeNode defCU = findAllOccurrences(); //TODO: Repetition here
     if(defCU == null){
       editor.statusMessage("Can't locate definition of " + selText, 
-                           DebugEditor.STATUS_ERR);
+                           JavaEditor.STATUS_ERR);
       return;
     }
     
@@ -2132,13 +2132,13 @@ public class ASTGenerator {
     log("Last clicked word:" + lastClickedWord);
     if(lastClickedWord == null && editor.ta.getSelectedText() == null){
       editor.statusMessage("Highlight the class/function/variable name first"
-                           , DebugEditor.STATUS_INFO);
+                           , JavaEditor.STATUS_INFO);
       return;
     }
     
     if(errorCheckerService.hasSyntaxErrors()){
       editor.statusMessage("Can't perform action until syntax errors are " +
-      		"fixed :(", DebugEditor.STATUS_WARNING);
+      		"fixed :(", JavaEditor.STATUS_WARNING);
       return;
     }
     DefaultMutableTreeNode defCU = findAllOccurrences();   
@@ -2146,7 +2146,7 @@ public class ASTGenerator {
         : lastClickedWord;
     if(defCU == null){
       editor.statusMessage("Can't locate definition of " + selText, 
-                           DebugEditor.STATUS_ERR);
+                           JavaEditor.STATUS_ERR);
       return;
     }
     if(defCU.getChildCount() == 0)
@@ -2476,14 +2476,14 @@ public class ASTGenerator {
     log("Last clicked word:" + lastClickedWord);
     if(lastClickedWord == null && editor.ta.getSelectedText() == null){
       editor.statusMessage("Highlight the class/function/variable name first",
-                           DebugEditor.STATUS_INFO);
+                           JavaEditor.STATUS_INFO);
       return;
     }
     
     if(errorCheckerService.hasSyntaxErrors()){
       editor
           .statusMessage("Can't perform action until syntax errors are fixed :(",
-                         DebugEditor.STATUS_WARNING);
+                         JavaEditor.STATUS_WARNING);
       return;
     }
     
@@ -2492,7 +2492,7 @@ public class ASTGenerator {
         : lastClickedWord;
     if(defCU == null){
       editor.statusMessage(selText + " isn't defined in this sketch, so it can't" +
-      		" be renamed", DebugEditor.STATUS_ERR);
+      		" be renamed", JavaEditor.STATUS_ERR);
       return;
     }
     if (!frmRename.isVisible()){

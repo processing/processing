@@ -33,7 +33,7 @@ import javax.swing.text.BadLocationException;
 
 import processing.app.Base;
 import processing.app.Language;
-import processing.mode.java.debug.DebugEditor;
+import processing.mode.java.JavaEditor;
 
 
 /**
@@ -219,7 +219,7 @@ public class XQErrorTable extends JTable {
     frmImportSuggest.getContentPane().add(panel);
     frmImportSuggest.pack();
     
-    final DebugEditor editor = errorCheckerService.getEditor();
+    final JavaEditor editor = errorCheckerService.getEditor();
     classList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
         if (classList.getSelectedValue() != null) {
