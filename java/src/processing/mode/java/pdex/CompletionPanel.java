@@ -33,6 +33,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -50,6 +51,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.text.BadLocationException;
 
 import processing.app.Base;
+import processing.app.Mode;
 import processing.app.syntax.JEditTextArea;
 import processing.mode.java.JavaEditor;
 
@@ -91,6 +93,9 @@ public class CompletionPanel {
   
   public static final int MOUSE_COMPLETION = 10, KEYBOARD_COMPLETION = 20;
 
+  ImageIcon classIcon, fieldIcon, methodIcon, localVarIcon;
+
+
   /**
    * Triggers the completion popup
    * @param textarea
@@ -123,6 +128,12 @@ public class CompletionPanel {
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0)
         + location.y);
     //log("Suggestion shown: " + System.currentTimeMillis());
+    
+    Mode mode = editor.getMode();
+    classIcon = mode.loadIcon("theme/icon_class_obj.png");
+    methodIcon = mode.loadIcon("theme/icon_methpub_obj.png");
+    fieldIcon = mode.loadIcon("theme/icon_field_protected_obj.png");
+    localVarIcon = mode.loadIcon("theme/icon_field_default_obj.png");
   }
 
   private void styleScrollPane() {
@@ -199,7 +210,7 @@ public class CompletionPanel {
     int maxHeight = 250;
     FontMetrics fm = textarea.getGraphics().getFontMetrics();
     float itemHeight = Math.max((fm.getHeight() + (fm.getDescent()) * 0.5f),
-                                editor.dmode.classIcon.getIconHeight() * 1.2f);
+                                classIcon.getIconHeight() * 1.2f);
     
     if (horizontalScrollBarVisible)
       itemCount++;
@@ -233,7 +244,7 @@ public class CompletionPanel {
     int w = Math.min((int) min, maxWidth);
     if(w == maxWidth) 
       horizontalScrollBarVisible = true;
-    w += editor.dmode.classIcon.getIconWidth(); // add icon width too!
+    w += classIcon.getIconWidth(); // add icon width too!
     w += fm.stringWidth("           "); // a bit of offset
     //log("popup width " + w);
     return w; // popup menu width
@@ -545,19 +556,19 @@ public class CompletionPanel {
         CompletionCandidate cc = (CompletionCandidate) value;
         switch (cc.getType()) {
         case CompletionCandidate.LOCAL_VAR:
-          label.setIcon(editor.dmode.localVarIcon);
+          label.setIcon(localVarIcon);
           break;
         case CompletionCandidate.LOCAL_FIELD:
         case CompletionCandidate.PREDEF_FIELD:
-          label.setIcon(editor.dmode.fieldIcon);
+          label.setIcon(fieldIcon);
           break;
         case CompletionCandidate.LOCAL_METHOD:
         case CompletionCandidate.PREDEF_METHOD:
-          label.setIcon(editor.dmode.methodIcon);
+          label.setIcon(methodIcon);
           break;
         case CompletionCandidate.LOCAL_CLASS:
         case CompletionCandidate.PREDEF_CLASS:
-          label.setIcon(editor.dmode.classIcon);
+          label.setIcon(classIcon);
           break;
 
         default:

@@ -1176,15 +1176,25 @@ public abstract class Mode {
     });
   }
 
-/**
-   * Get an image object from the theme folder.
+  
+  /**
+   * Get an ImageIcon object from the mode folder.
+   * @since 3.0a6
    */
-  public Image loadImage(String filename) {
+  public ImageIcon loadIcon(String filename) {
     File file = new File(folder, filename);
     if (!file.exists()) {
       return null;
     }
-    return new ImageIcon(file.getAbsolutePath()).getImage();
+    return new ImageIcon(file.getAbsolutePath());
+  }
+  
+  
+  /**
+   * Get an image object from the mode folder.
+   */
+  public Image loadImage(String filename) {
+    return loadIcon(filename).getImage();
   }
 
 

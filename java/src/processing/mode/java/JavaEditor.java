@@ -48,9 +48,6 @@ import processing.mode.java.tweak.UDPTweakClient;
 public class JavaEditor extends Editor {
   JavaMode jmode;
 
-  // TODO this needs prefs to be applied when necessary
-//  PdeKeyListener listener;
-
   // Runner associated with this editor window
   private Runner runtime;
 
@@ -59,7 +56,6 @@ public class JavaEditor extends Editor {
     super(base, path, state, mode);
 
     jmode = (JavaMode) mode;
-    dmode = (JavaMode) mode;
     dbg = new Debugger(this);
     vi = new VariableInspector(this);
 
@@ -116,7 +112,7 @@ public class JavaEditor extends Editor {
     checkForJavaTabs();
     initializeErrorChecker();
 
-    ta.setECSandThemeforTextArea(errorCheckerService, dmode);
+    ta.setECSandThemeforTextArea(errorCheckerService, jmode);
 
     addXQModeUI();    
     debugToolbarEnabled = new AtomicBoolean(false);
@@ -1195,7 +1191,6 @@ public class JavaEditor extends Editor {
 
   protected JMenuItem toggleVariableInspectorMenuItem;
 
-  public JavaMode dmode; // the mode
   protected Debugger dbg; // the debugger
   protected VariableInspector vi; // the variable inspector frame
 
@@ -1228,7 +1223,7 @@ public class JavaEditor extends Editor {
       Box box = (Box) textarea.getParent();
       box.remove(2); // Remove textArea from it's container, i.e Box
       textAndError.setLayout(new BorderLayout());
-      errorBar =  new ErrorBar(this, textarea.getMinimumSize().height, dmode);
+      errorBar =  new ErrorBar(this, textarea.getMinimumSize().height, jmode);
       textAndError.add(errorBar, BorderLayout.EAST);
       textarea.setBounds(0, 0, errorBar.getX() - 1, textarea.getHeight());
       textAndError.add(textarea);
@@ -1419,246 +1414,179 @@ public class JavaEditor extends Editor {
      * @return The debug menu
      */
     protected JMenu buildDebugMenu() {
-        debugMenu = new JMenu(Language.text("menu.debug"));
-        //debugMenu = new JMenu("PDE X");
+      debugMenu = new JMenu(Language.text("menu.debug"));
 
-        JCheckBoxMenuItem toggleDebugger = new JCheckBoxMenuItem(Language.text("menu.debug.show_debug_toolbar"));
-        toggleDebugger.setSelected(false);
-        toggleDebugger.addActionListener(new ActionListener() {          
-          public void actionPerformed(ActionEvent e) {
-            switchToolbars();
-          }
-        });
-        debugMenu.add(toggleDebugger);
-        debugMenuItem = Toolkit.newJMenuItemAlt(Language.text("menu.debug.debug"), KeyEvent.VK_R);
-        debugMenuItem.addActionListener(this);
-        continueMenuItem = Toolkit.newJMenuItem(Language.text("menu.debug.continue"), KeyEvent.VK_U);
-        continueMenuItem.addActionListener(this);
-        stopMenuItem = new JMenuItem(Language.text("menu.debug.stop"));
-        stopMenuItem.addActionListener(this);
+      JCheckBoxMenuItem toggleDebugger =
+        new JCheckBoxMenuItem(Language.text("menu.debug.show_debug_toolbar"));
+      toggleDebugger.setSelected(false);
+      toggleDebugger.addActionListener(new ActionListener() {          
+        public void actionPerformed(ActionEvent e) {
+          switchToolbars();
+        }
+      });
+      debugMenu.add(toggleDebugger);
+      
+      debugMenuItem = Toolkit.newJMenuItemAlt(Language.text("menu.debug.debug"), KeyEvent.VK_R);
+      debugMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Debug' menu item");
+          dbg.startDebug();            
+        }
+      });
+      debugMenu.add(debugMenuItem);
 
-        toggleBreakpointMenuItem = Toolkit.newJMenuItem(Language.text("menu.debug.toggle_breakpoint"), KeyEvent.VK_B);
-        toggleBreakpointMenuItem.addActionListener(this);
-        listBreakpointsMenuItem = new JMenuItem(Language.text("menu.debug.list_breakpoints"));
-        listBreakpointsMenuItem.addActionListener(this);
+      continueMenuItem = Toolkit.newJMenuItem(Language.text("menu.debug.continue"), KeyEvent.VK_U);
+      continueMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Continue' menu item");
+          dbg.continueDebug();
+        }
+      });
+      debugMenu.add(continueMenuItem);
+      
+      stopMenuItem = new JMenuItem(Language.text("menu.debug.stop"));
+      stopMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Stop' menu item");
+          dbg.stopDebug();
+        }
+      });
+      debugMenu.add(stopMenuItem);
+      
+      debugMenu.addSeparator();
 
-        stepOverMenuItem = Toolkit.newJMenuItem(Language.text("menu.debug.step"), KeyEvent.VK_J);
-        stepOverMenuItem.addActionListener(this);
-        stepIntoMenuItem = Toolkit.newJMenuItemShift(Language.text("menu.debug.step_into"), KeyEvent.VK_J);
-        stepIntoMenuItem.addActionListener(this);
-        stepOutMenuItem = Toolkit.newJMenuItemAlt(Language.text("menu.debug.step_out"), KeyEvent.VK_J);
-        stepOutMenuItem.addActionListener(this);
+      toggleBreakpointMenuItem = 
+        Toolkit.newJMenuItem(Language.text("menu.debug.toggle_breakpoint"), KeyEvent.VK_B);
+      toggleBreakpointMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' menu item");
+          dbg.toggleBreakpoint();
+        }
+      });
+      debugMenu.add(toggleBreakpointMenuItem);
+      listBreakpointsMenuItem = new JMenuItem(Language.text("menu.debug.list_breakpoints"));
+      listBreakpointsMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'List Breakpoints' menu item");
+          dbg.listBreakpoints();    
+        }
+      });
+      debugMenu.add(listBreakpointsMenuItem);
 
-        printStackTraceMenuItem = new JMenuItem(Language.text("menu.debug.print_stack_trace"));
-        printStackTraceMenuItem.addActionListener(this);
-        printLocalsMenuItem = new JMenuItem(Language.text("menu.debug.print_locals"));
-        printLocalsMenuItem.addActionListener(this);
-        printThisMenuItem = new JMenuItem(Language.text("menu.debug.print_fields"));
-        printThisMenuItem.addActionListener(this);
-        printSourceMenuItem = new JMenuItem(Language.text("menu.debug.print_source_location"));
-        printSourceMenuItem.addActionListener(this);
-        printThreads = new JMenuItem(Language.text("menu.debug.print_threads"));
-        printThreads.addActionListener(this);
+      debugMenu.addSeparator();
+      
+      stepOverMenuItem = Toolkit.newJMenuItem(Language.text("menu.debug.step"), KeyEvent.VK_J);
+      stepOverMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Over' menu item");
+          dbg.stepOver();
+        }
+      });
+      debugMenu.add(stepOverMenuItem);
+      
+      stepIntoMenuItem = Toolkit.newJMenuItemShift(Language.text("menu.debug.step_into"), KeyEvent.VK_J);
+      stepIntoMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Into' menu item");
+          dbg.stepInto();
+         }
+      });
+      debugMenu.add(stepIntoMenuItem);
+      
+      stepOutMenuItem = Toolkit.newJMenuItemAlt(Language.text("menu.debug.step_out"), KeyEvent.VK_J);
+      stepOutMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Out' menu item");
+          dbg.stepOut();
+        }
+      });
+      debugMenu.add(stepOutMenuItem);
+      
+      debugMenu.addSeparator();
 
-        toggleVariableInspectorMenuItem = Toolkit.newJMenuItem(Language.text("menu.debug.toggle_variable_inspector"), KeyEvent.VK_I);
-        toggleVariableInspectorMenuItem.addActionListener(this);
+      printStackTraceMenuItem = new JMenuItem(Language.text("menu.debug.print_stack_trace"));
+      printStackTraceMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print Stack Trace' menu item");
+          dbg.printStackTrace();
+        }
+      });
+      debugMenu.add(printStackTraceMenuItem);
+      
+      printLocalsMenuItem = new JMenuItem(Language.text("menu.debug.print_locals"));
+      printLocalsMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print Locals' menu item");
+          dbg.printLocals();
+        }
+      });
+      debugMenu.add(printLocalsMenuItem);
 
-        debugMenu.add(debugMenuItem);
-        debugMenu.add(continueMenuItem);
-        debugMenu.add(stopMenuItem);
-        debugMenu.addSeparator();
-        debugMenu.add(toggleBreakpointMenuItem);
-        debugMenu.add(listBreakpointsMenuItem);
-        debugMenu.addSeparator();
-        debugMenu.add(stepOverMenuItem);
-        debugMenu.add(stepIntoMenuItem);
-        debugMenu.add(stepOutMenuItem);
-        debugMenu.addSeparator();
-        debugMenu.add(printStackTraceMenuItem);
-        debugMenu.add(printLocalsMenuItem);
-        debugMenu.add(printThisMenuItem);
-        debugMenu.add(printSourceMenuItem);
-        debugMenu.add(printThreads);
-        debugMenu.addSeparator();
-        debugMenu.add(toggleVariableInspectorMenuItem);
-        // debugMenu.addSeparator();
+      printThisMenuItem = new JMenuItem(Language.text("menu.debug.print_fields"));
+      printThisMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print This' menu item");
+          dbg.printThis();
+        }
+      });
+      debugMenu.add(printThisMenuItem);
 
-        // XQMode menu items
-        /*        
-        JCheckBoxMenuItem item;
-        item = new JCheckBoxMenuItem("Error Checker Enabled");
-        item.setSelected(ExperimentalMode.errorCheckEnabled);
-        item.addActionListener(new ActionListener() {
+      printSourceMenuItem = new JMenuItem(Language.text("menu.debug.print_source_location"));
+      printSourceMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print Source' menu item");
+          dbg.printSource();
+        }
+      });
+      debugMenu.add(printSourceMenuItem);
 
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            ExperimentalMode.errorCheckEnabled = ((JCheckBoxMenuItem) e.getSource()).isSelected();
-            errorCheckerService.handleErrorCheckingToggle();
-            dmode.savePreferences();
-          }
-        });
-        debugMenu.add(item);
+      printThreads = new JMenuItem(Language.text("menu.debug.print_threads"));
+      printThreads.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print Threads' menu item");
+          dbg.printThreads();
+        }
+      });
+      debugMenu.add(printThreads);
 
-        problemWindowMenuCB = new JCheckBoxMenuItem("Show Problem Window");
-        // problemWindowMenuCB.setSelected(true);
-        problemWindowMenuCB.addActionListener(new ActionListener() {
+      debugMenu.addSeparator();
 
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            if (errorCheckerService.errorWindow == null) {
-              return;
-            }
-            errorCheckerService.errorWindow
-                .setVisible(((JCheckBoxMenuItem) e.getSource())
-                    .isSelected());
-            // switch to console, now that Error Window is open
-            showProblemListView(XQConsoleToggle.CONSOLE);
-          }
-        });
-        debugMenu.add(problemWindowMenuCB);
+      toggleVariableInspectorMenuItem = Toolkit.newJMenuItem(Language.text("menu.debug.toggle_variable_inspector"), KeyEvent.VK_I);
+      toggleVariableInspectorMenuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Variable Inspector' menu item");
+          toggleVariableInspector();
+        }
+      });
 
-        showWarnings = new JCheckBoxMenuItem("Warnings Enabled");
-        showWarnings.setSelected(ExperimentalMode.warningsEnabled);
-        showWarnings.addActionListener(new ActionListener() {
+      debugMenu.add(toggleVariableInspectorMenuItem);
 
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            ExperimentalMode.warningsEnabled = ((JCheckBoxMenuItem) e
-                .getSource()).isSelected();
-            errorCheckerService.runManualErrorCheck();
-            dmode.savePreferences();
-          }
-        });
-        debugMenu.add(showWarnings);
-        
-        completionsEnabled = new JCheckBoxMenuItem("Code Completion Enabled");
-        completionsEnabled.setSelected(ExperimentalMode.codeCompletionsEnabled);
-        completionsEnabled.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-              ExperimentalMode.codeCompletionsEnabled = (((JCheckBoxMenuItem) e
-                  .getSource()).isSelected());
-              dmode.savePreferences();
-          }
-        });
-        debugMenu.add(completionsEnabled);
-        
-        debugMessagesEnabled = new JCheckBoxMenuItem("Show Debug Messages");
-        debugMessagesEnabled.setSelected(ExperimentalMode.DEBUG);
-        debugMessagesEnabled.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            ExperimentalMode.DEBUG = ((JCheckBoxMenuItem) e
-                .getSource()).isSelected();
-            dmode.savePreferences();
-          }
-        });
-        debugMenu.add(debugMessagesEnabled);     
-        
-        
-        writeErrorLog = new JCheckBoxMenuItem("Write Errors to Log");
-        writeErrorLog.setSelected(ExperimentalMode.errorLogsEnabled);
-        writeErrorLog.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            ExperimentalMode.errorLogsEnabled = ((JCheckBoxMenuItem) e
-                .getSource()).isSelected();
-            dmode.savePreferences();
-          }
-        });
-        debugMenu.add(writeErrorLog);
-        
-        debugMenu.addSeparator();
-        JMenuItem jitem = new JMenuItem("PDE X on GitHub");
-        jitem.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            Base.openURL("https://github.com/processing/processing-experimental");
-          }
-        });
-        debugMenu.add(jitem);
-        */
-        showOutline = Toolkit.newJMenuItem(Language.text("menu.debug.show_sketch_outline"), KeyEvent.VK_L);
-        showOutline.addActionListener(this);
-        debugMenu.add(showOutline);
-        
-        showTabOutline = Toolkit.newJMenuItem(Language.text("menu.debug.show_tabs_list"), KeyEvent.VK_Y);
-        showTabOutline.addActionListener(this);
-        debugMenu.add(showTabOutline);
-        
-        return debugMenu;
+      showOutline = Toolkit.newJMenuItem(Language.text("menu.debug.show_sketch_outline"), KeyEvent.VK_L);
+      showOutline.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Base.log("Show Sketch Outline:");
+          errorCheckerService.getASTGenerator().showSketchOutline();
+        }
+      });
+      debugMenu.add(showOutline);
+
+      showTabOutline = Toolkit.newJMenuItem(Language.text("menu.debug.show_tabs_list"), KeyEvent.VK_Y);
+      showTabOutline.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Base.log("Show Tab Outline:");
+          errorCheckerService.getASTGenerator().showTabOutline();
+        }
+      });
+      debugMenu.add(showTabOutline);
+
+      return debugMenu;
     }
+    
     
     @Override
     public JMenu buildModeMenu() {
-        return buildDebugMenu();
+      return buildDebugMenu();
     }
-    
-    /**
-     * Callback for menu items. Implementation of Swing ActionListener.
-     *
-     * @param ae Action event
-     */
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-        //System.out.println("ActionEvent: " + ae.toString());
-
-        JMenuItem source = (JMenuItem) ae.getSource();
-        if (source == debugMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Debug' menu item");
-            //dmode.handleDebug(sketch, this);
-            dbg.startDebug();
-        } else if (source == stopMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Stop' menu item");
-            //dmode.handleDebug(sketch, this);
-            dbg.stopDebug();
-        } else if (source == continueMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Continue' menu item");
-            //dmode.handleDebug(sketch, this);
-            dbg.continueDebug();
-        } else if (source == stepOverMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Over' menu item");
-            dbg.stepOver();
-        } else if (source == stepIntoMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Into' menu item");
-            dbg.stepInto();
-        } else if (source == stepOutMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Out' menu item");
-            dbg.stepOut();
-        } else if (source == printStackTraceMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print Stack Trace' menu item");
-            dbg.printStackTrace();
-        } else if (source == printLocalsMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print Locals' menu item");
-            dbg.printLocals();
-        } else if (source == printThisMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print This' menu item");
-            dbg.printThis();
-        } else if (source == printSourceMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print Source' menu item");
-            dbg.printSource();
-        } else if (source == printThreads) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print Threads' menu item");
-            dbg.printThreads();
-        } else if (source == toggleBreakpointMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' menu item");
-            dbg.toggleBreakpoint();
-        } else if (source == listBreakpointsMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'List Breakpoints' menu item");
-            dbg.listBreakpoints();
-        } else if (source == toggleVariableInspectorMenuItem) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Variable Inspector' menu item");
-            toggleVariableInspector();
-        } else if (source.equals(showOutline)){
-            Base.log("Show Sketch Outline:");
-            errorCheckerService.getASTGenerator().showSketchOutline();
-        }
-        else if (source.equals(showTabOutline)){
-          Base.log("Show Tab Outline:");
-          errorCheckerService.getASTGenerator().showTabOutline();
-      }
-    }
-
 
 
     /**
@@ -1670,22 +1598,23 @@ public class JavaEditor extends Editor {
      */
     @Override
     protected boolean handleOpenInternal(String path) {
-        // log("handleOpenInternal, path: " + path);
-        boolean didOpen = super.handleOpenInternal(path);
-        if (didOpen && dbg != null) {
-            // should already been stopped (open calls handleStop)
-            dbg.clearBreakpoints();
-            clearBreakpointedLines(); // force clear breakpoint highlights
-            variableInspector().reset(); // clear contents of variable inspector
-        }
-        //if(didOpen){
-          // autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval); // this is used instead of loadAutosaver(), temp measure
-          // loadAutoSaver();
-          // viewingAutosaveBackup = autosaver.isAutoSaveBackup();
-          // log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
-        //}
-        return didOpen;
+      // log("handleOpenInternal, path: " + path);
+      boolean didOpen = super.handleOpenInternal(path);
+      if (didOpen && dbg != null) {
+        // should already been stopped (open calls handleStop)
+        dbg.clearBreakpoints();
+        clearBreakpointedLines(); // force clear breakpoint highlights
+        variableInspector().reset(); // clear contents of variable inspector
+      }
+      //if(didOpen){
+      // autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval); // this is used instead of loadAutosaver(), temp measure
+      // loadAutoSaver();
+      // viewingAutosaveBackup = autosaver.isAutoSaveBackup();
+      // log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
+      //}
+      return didOpen;
     }
+    
 
     /**
      * Extract breakpointed lines from source code marker comments. This removes
@@ -1697,36 +1626,37 @@ public class JavaEditor extends Editor {
      * removed from.
      */
     protected List<LineID> stripBreakpointComments() {
-        List<LineID> bps = new ArrayList<LineID>();
-        // iterate over all tabs
-        Sketch sketch = getSketch();
-        for (int i = 0; i < sketch.getCodeCount(); i++) {
-            SketchCode tab = sketch.getCode(i);
-            String code = tab.getProgram();
-            String lines[] = code.split("\\r?\\n"); // newlines not included
-            //System.out.println(code);
+      List<LineID> bps = new ArrayList<LineID>();
+      // iterate over all tabs
+      Sketch sketch = getSketch();
+      for (int i = 0; i < sketch.getCodeCount(); i++) {
+        SketchCode tab = sketch.getCode(i);
+        String code = tab.getProgram();
+        String lines[] = code.split("\\r?\\n"); // newlines not included
+        //System.out.println(code);
 
-            // scan code for breakpoint comments
-            int lineIdx = 0;
-            for (String line : lines) {
-                //System.out.println(line);
-                if (line.endsWith(breakpointMarkerComment)) {
-                    LineID lineID = new LineID(tab.getFileName(), lineIdx);
-                    bps.add(lineID);
-                    //System.out.println("found breakpoint: " + lineID);
-                    // got a breakpoint
-                    //dbg.setBreakpoint(lineID);
-                    int index = line.lastIndexOf(breakpointMarkerComment);
-                    lines[lineIdx] = line.substring(0, index);
-                }
-                lineIdx++;
-            }
-            //tab.setProgram(code);
-            code = PApplet.join(lines, "\n");
-            setTabContents(tab.getFileName(), code);
+        // scan code for breakpoint comments
+        int lineIdx = 0;
+        for (String line : lines) {
+          //System.out.println(line);
+          if (line.endsWith(breakpointMarkerComment)) {
+            LineID lineID = new LineID(tab.getFileName(), lineIdx);
+            bps.add(lineID);
+            //System.out.println("found breakpoint: " + lineID);
+            // got a breakpoint
+            //dbg.setBreakpoint(lineID);
+            int index = line.lastIndexOf(breakpointMarkerComment);
+            lines[lineIdx] = line.substring(0, index);
+          }
+          lineIdx++;
         }
-        return bps;
+        //tab.setProgram(code);
+        code = PApplet.join(lines, "\n");
+        setTabContents(tab.getFileName(), code);
+      }
+      return bps;
     }
+    
 
     /**
      * Add breakpoint marker comments to the source file of a specific tab. This
@@ -1736,34 +1666,35 @@ public class JavaEditor extends Editor {
      * @param tabFilename the tab file name
      */
     protected void addBreakpointComments(String tabFilename) {
-        SketchCode tab = getTab(tabFilename);
-        if(tab == null) {
-          // this method gets called twice when saving sketch for the first time
-          // once with new name and another with old(causing NPE). Keep an eye out 
-          // for potential issues. See #2675. TODO:
-          Base.loge("Illegal tab name to addBreakpointComments() " + tabFilename);          
-          return;
-        }
-        List<LineBreakpoint> bps = dbg.getBreakpoints(tab.getFileName());
+      SketchCode tab = getTab(tabFilename);
+      if (tab == null) {
+        // this method gets called twice when saving sketch for the first time
+        // once with new name and another with old(causing NPE). Keep an eye out 
+        // for potential issues. See #2675. TODO:
+        Base.loge("Illegal tab name to addBreakpointComments() " + tabFilename);          
+        return;
+      }
+      List<LineBreakpoint> bps = dbg.getBreakpoints(tab.getFileName());
 
-        // load the source file
-        File sourceFile = new File(sketch.getFolder(), tab.getFileName());
-        //System.out.println("file: " + sourceFile);
-        try {
-            String code = Base.loadFile(sourceFile);
-            //System.out.println("code: " + code);
-            String lines[] = code.split("\\r?\\n"); // newlines not included
-            for (LineBreakpoint bp : bps) {
-                //System.out.println("adding bp: " + bp.lineID());
-                lines[bp.lineID().lineIdx()] += breakpointMarkerComment;
-            }
-            code = PApplet.join(lines, "\n");
-            //System.out.println("new code: " + code);
-            Base.saveFile(code, sourceFile);
-        } catch (IOException ex) {
-            Logger.getLogger(JavaEditor.class.getName()).log(Level.SEVERE, null, ex);
+      // load the source file
+      File sourceFile = new File(sketch.getFolder(), tab.getFileName());
+      //System.out.println("file: " + sourceFile);
+      try {
+        String code = Base.loadFile(sourceFile);
+        //System.out.println("code: " + code);
+        String lines[] = code.split("\\r?\\n"); // newlines not included
+        for (LineBreakpoint bp : bps) {
+          //System.out.println("adding bp: " + bp.lineID());
+          lines[bp.lineID().lineIdx()] += breakpointMarkerComment;
         }
+        code = PApplet.join(lines, "\n");
+        //System.out.println("new code: " + code);
+        Base.saveFile(code, sourceFile);
+      } catch (IOException ex) {
+        Logger.getLogger(JavaEditor.class.getName()).log(Level.SEVERE, null, ex);
+      }
     }
+    
 
     @Override
     public boolean handleSave(boolean immediately) {
@@ -1862,6 +1793,7 @@ public class JavaEditor extends Editor {
         }
     }
 
+    
     /**
      * Clear the console.
      */
@@ -1869,6 +1801,7 @@ public class JavaEditor extends Editor {
         console.clear();
     }
 
+    
     /**
      * Clear current text selection.
      */
@@ -1876,6 +1809,7 @@ public class JavaEditor extends Editor {
         setSelection(getCaretOffset(), getCaretOffset());
     }
 
+    
     /**
      * Select a line in the current tab.
      *
@@ -1885,6 +1819,7 @@ public class JavaEditor extends Editor {
         setSelection(getLineStartOffset(lineIdx), getLineStopOffset(lineIdx));
     }
 
+    
     /**
      * Set the cursor to the start of a line.
      *
@@ -1894,6 +1829,7 @@ public class JavaEditor extends Editor {
         setSelection(getLineStartOffset(lineIdx), getLineStartOffset(lineIdx));
     }
 
+    
     /**
      * Set the cursor to the end of a line.
      *
@@ -1936,7 +1872,7 @@ public class JavaEditor extends Editor {
      * @return the mode object
      */
     public JavaMode mode() {
-        return dmode;
+        return jmode;
     }
 
     /**
@@ -2014,7 +1950,7 @@ public class JavaEditor extends Editor {
                             if (dontRedisplay.isSelected()) {
                                 JavaMode.autoSavePromptEnabled = !dontRedisplay.isSelected();
                                 JavaMode.defaultAutoSaveEnabled = true;
-                                dmode.savePreferences();
+                                jmode.savePreferences();
                             }
                             autoSaveDialog.dispose();
                         }
@@ -2028,7 +1964,7 @@ public class JavaEditor extends Editor {
                             if (dontRedisplay.isSelected()) {
                                 JavaMode.autoSavePromptEnabled = !dontRedisplay.isSelected();
                                 JavaMode.defaultAutoSaveEnabled = false;
-                                dmode.savePreferences();
+                                jmode.savePreferences();
                             }
                             autoSaveDialog.dispose();
                         }
@@ -2509,8 +2445,8 @@ public class JavaEditor extends Editor {
     
     protected void applyPreferences() {
       super.applyPreferences();
-      if (dmode != null) {
-        dmode.loadPreferences();
+      if (jmode != null) {
+        jmode.loadPreferences();
         Base.log("Applying prefs");
         // trigger it once to refresh UI
         errorCheckerService.runManualErrorCheck();

@@ -29,8 +29,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.ImageIcon;
-
 import processing.app.*;
 import processing.mode.java.runner.Runner;
 import processing.mode.java.tweak.SketchParser;
@@ -48,7 +46,6 @@ public class JavaMode extends Mode {
     
     initLogger();
     loadPreferences();
-    loadIcons();
   }
 
 
@@ -277,19 +274,15 @@ public class JavaMode extends Mode {
   }
   
   
-  public ImageIcon classIcon, fieldIcon, methodIcon, localVarIcon;
+  //ImageIcon classIcon, fieldIcon, methodIcon, localVarIcon;
 
-  protected void loadIcons(){
-    String iconPath = getContentFile("data").getAbsolutePath() + File.separator + "icons";
-    classIcon = new ImageIcon(iconPath + File.separator + "class_obj.png");
-    methodIcon = new ImageIcon(iconPath + File.separator
-        + "methpub_obj.png");
-    fieldIcon = new ImageIcon(iconPath + File.separator
-        + "field_protected_obj.png");
-    localVarIcon = new ImageIcon(iconPath + File.separator
-                              + "field_default_obj.png");
-    // log("Icons loaded");
-  }
+//  protected void loadIcons() {
+//    String iconPath = getContentFile("data").getAbsolutePath() + File.separator + "icons";
+//    classIcon = new ImageIcon(iconPath + File.separator + "class_obj.png");
+//    methodIcon = new ImageIcon(iconPath + File.separator + "methpub_obj.png");
+//    fieldIcon = new ImageIcon(iconPath + File.separator + "field_protected_obj.png");
+//    localVarIcon = new ImageIcon(iconPath + File.separator + "field_default_obj.png");
+//  }
 
   
   static public volatile boolean errorCheckEnabled = true;

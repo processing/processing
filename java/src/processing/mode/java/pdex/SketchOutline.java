@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -55,6 +56,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
+import processing.app.Mode;
 import processing.mode.java.JavaEditor;
 
 
@@ -68,6 +70,8 @@ public class SketchOutline {
   protected JavaEditor editor;
   protected boolean internalSelection = false;
 
+  ImageIcon classIcon, fieldIcon, methodIcon;
+
   
   public SketchOutline(DefaultMutableTreeNode codeTree, ErrorCheckerService ecs) {
     errorCheckerService = ecs;
@@ -77,6 +81,12 @@ public class SketchOutline {
     soNode = (DefaultMutableTreeNode) soNode.getChildAt(0);
     tempNode = soNode;
     soTree = new JTree(soNode);
+    
+    Mode mode = editor.getMode();
+    classIcon = mode.loadIcon("theme/icon_class_obj.png");
+    methodIcon = mode.loadIcon("theme/icon_methpub_obj.png");
+    fieldIcon = mode.loadIcon("theme/icon_field_protected_obj.png");
+
     createGUI();
   }
   
@@ -386,11 +396,11 @@ public class SketchOutline {
         
         int type = awrap.getNode().getParent().getNodeType();
         if (type == ASTNode.METHOD_DECLARATION) {
-          return editor.dmode.methodIcon;
+          return methodIcon;
         } else if (type == ASTNode.TYPE_DECLARATION) {
-          return editor.dmode.classIcon;
+          return classIcon;
         } else if (type == ASTNode.VARIABLE_DECLARATION_FRAGMENT) {
-          return editor.dmode.fieldIcon;
+          return fieldIcon;
         }
       }
       return null;
