@@ -18,7 +18,7 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-package processing.mode.java.pdex;
+package processing.mode.java;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -30,6 +30,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
@@ -37,8 +38,9 @@ import javax.swing.text.BadLocationException;
 
 import processing.app.Base;
 import processing.app.SketchCode;
-import processing.mode.java.JavaMode;
-import processing.mode.java.JavaEditor;
+import processing.mode.java.pdex.ErrorCheckerService;
+import processing.mode.java.pdex.ErrorMarker;
+import processing.mode.java.pdex.Problem;
 
 /**
  * The bar on the left of the text area which displays all errors as rectangles. <br>
@@ -95,7 +97,7 @@ public class ErrorBar extends JPanel {
 	/**
 	 * Stores error markers displayed PER TAB along the error bar.
 	 */
-	protected ArrayList<ErrorMarker> errorPoints = new ArrayList<ErrorMarker>();
+	protected List<ErrorMarker> errorPoints = new ArrayList<ErrorMarker>();
 
 	/**
 	 * Stores previous list of error markers.
@@ -148,8 +150,7 @@ public class ErrorBar extends JPanel {
 	 * @param problems
 	 *            - List of problems.
 	 */
-	synchronized public void updateErrorPoints(final ArrayList<Problem> problems) {
-
+	synchronized public void updateErrorPoints(final List<Problem> problems) {
 		// NOTE TO SELF: ErrorMarkers are calculated for the present tab only
 		// Error Marker index in the arraylist is LOCALIZED for current tab.
 		// Also, need to do the update in the UI thread via SwingWorker to prevent

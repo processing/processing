@@ -56,8 +56,8 @@ import processing.app.syntax.TokenMarker;
 
 
 /**
- * Customized line painter. Adds support for background colors, left hand gutter
- * area with background color and text.
+ * Customized line painter. Adds support for background colors, 
+ * left hand gutter area with background color and text.
  */
 public class JavaTextAreaPainter extends TextAreaPainter
 	implements MouseListener, MouseMotionListener {
@@ -70,7 +70,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
   public Color errorMarkerColor; // = new Color(0xED2630);
   public Color warningMarkerColor; // = new Color(0xFFC30E);
 
-  static int ctrlMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+//  static int ctrlMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
   
   public JavaTextAreaPainter(JavaTextArea textArea, TextAreaDefaults defaults) {
@@ -180,7 +180,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
   protected void paintLine(Graphics gfx, int line, int x, 
                            TokenMarker tokenMarker) {
     try {
-      // TODO This line is causing NPE's randomly ever since I added the 
+      // TODO This line is causing NPEs randomly ever since I added the 
       // toggle for Java Mode/Debugger toolbar. [Manindra]
       super.paintLine(gfx, line, x + getGutterWidth(), tokenMarker);
       
@@ -326,7 +326,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     
     // Check if current line contains an error. If it does, find if it's an
     // error or warning
-    for (ErrorMarker emarker : errorCheckerService.getEditor().errorBar.errorPoints) {
+    for (ErrorMarker emarker : errorCheckerService.getEditor().getErrorPoints()) {
       if (emarker.getProblem().getLineNumber() == line) {
         notFound = false;
         if (emarker.getType() == ErrorMarker.Warning) {

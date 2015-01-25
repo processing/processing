@@ -1085,6 +1085,7 @@ public class ErrorCheckerService implements Runnable {
 
   }
   
+  
   protected int lastCaretLine = -1;
   
   /**
@@ -1097,8 +1098,8 @@ public class ErrorCheckerService implements Runnable {
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
     if (JavaMode.errorCheckEnabled) {
-      synchronized (editor.errorBar.errorPoints) {
-        for (ErrorMarker emarker : editor.errorBar.errorPoints) {
+      synchronized (editor.getErrorPoints()) {
+        for (ErrorMarker emarker : editor.getErrorPoints()) {
           if (emarker.getProblem().getLineNumber() == editor.getTextArea().getCaretLine()) {
             if (emarker.getType() == ErrorMarker.Warning) {
               editor.statusMessage(emarker.getProblem().getMessage(), 
@@ -1713,12 +1714,12 @@ public class ErrorCheckerService implements Runnable {
       // pauseThread();
       Base.log(editor.getSketch().getName()
           + " - Error Checker paused.");
-      editor.errorBar.errorPoints.clear();
+      editor.getErrorPoints().clear();
       problemsList.clear();
       updateErrorTable();
       updateEditorStatus();
       editor.getTextArea().repaint();
-      editor.errorBar.repaint();
+      editor.repaintErrorBar();
     } else {
       //resumeThread();
       Base.log(editor.getSketch().getName()

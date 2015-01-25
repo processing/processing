@@ -30,8 +30,8 @@ import processing.core.PApplet;
 import processing.mode.java.debug.LineBreakpoint;
 import processing.mode.java.debug.LineHighlight;
 import processing.mode.java.debug.LineID;
-import processing.mode.java.pdex.ErrorBar;
 import processing.mode.java.pdex.ErrorCheckerService;
+import processing.mode.java.pdex.ErrorMarker;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.Problem;
@@ -62,10 +62,10 @@ public class JavaEditor extends Editor {
 
   protected JMenu debugMenu;
 
-  protected Debugger debugger; // the debugger
-  protected DebugTray tray; // the variable inspector frame
+  protected Debugger debugger;
+  protected DebugTray tray;
 
-  public ErrorBar errorBar;
+  private ErrorBar errorBar;
     
   protected XQConsoleToggle btnShowConsole;
   protected XQConsoleToggle btnShowErrors;
@@ -2328,13 +2328,21 @@ public class JavaEditor extends Editor {
 
     }
 
-    /**
-     * Updates the error bar
-     * @param problems
-     */
-    public void updateErrorBar(ArrayList<Problem> problems) {
+
+    public void updateErrorBar(List<Problem> problems) {
       errorBar.updateErrorPoints(problems);
     }
+    
+    
+    public List<ErrorMarker> getErrorPoints() {
+      return errorBar.errorPoints;
+    }
+    
+    
+    public void repaintErrorBar() {
+      errorBar.repaint();
+    }
+
 
     /**
      * Toggle between Console and Errors List
