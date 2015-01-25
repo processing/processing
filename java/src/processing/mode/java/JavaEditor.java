@@ -60,31 +60,11 @@ public class JavaEditor extends Editor {
   protected LineHighlight currentLine; // line the debugger is currently suspended at
   protected final String breakpointMarkerComment = " //<>//"; // breakpoint marker comment
 
-  protected JMenu debugMenu; // the debug menu
-
-//  protected JMenuItem debugMenuItem;
-//  protected JMenuItem continueMenuItem;
-//  protected JMenuItem stopMenuItem;
-
-//  protected JMenuItem toggleBreakpointMenuItem;
-//  protected JMenuItem listBreakpointsMenuItem;
-
-//  protected JMenuItem stepOverMenuItem;
-//  protected JMenuItem stepIntoMenuItem;
-//  protected JMenuItem stepOutMenuItem;
-
-//  protected JMenuItem printStackTraceMenuItem;
-//  protected JMenuItem printLocalsMenuItem;
-//  protected JMenuItem printThisMenuItem;
-//  protected JMenuItem printSourceMenuItem;
-//  protected JMenuItem printThreads;
-
-//  protected JMenuItem toggleVariableInspectorMenuItem;
+  protected JMenu debugMenu;
 
   protected Debugger debugger; // the debugger
   protected DebugTray tray; // the variable inspector frame
 
-//  public JavaTextArea ta; // the text area
   public ErrorBar errorBar;
     
   protected XQConsoleToggle btnShowConsole;
@@ -94,16 +74,7 @@ public class JavaEditor extends Editor {
   protected XQErrorTable errorTable;
 
   // TODO how is this different from hasJavaTabs?
-  public boolean compilationCheckEnabled = true;
-
-//  protected JCheckBoxMenuItem showWarnings;
-//  public JCheckBoxMenuItem problemWindowMenuCB;
-//  protected JCheckBoxMenuItem debugMessagesEnabled;
-//  protected JMenuItem showOutline; 
-//  protected JMenuItem showTabOutline;
-//  protected JCheckBoxMenuItem writeErrorLog;
-//  protected JCheckBoxMenuItem completionsEnabled;
-    
+//  public boolean compilationCheckEnabled = true;
   private boolean hasJavaTabs;
   
 
@@ -2428,7 +2399,6 @@ public class JavaEditor extends Editor {
     private boolean checkForJavaTabs() {
       for (SketchCode code : getSketch().getCode()) {
         if (code.getExtension().equals("java")) {
-          compilationCheckEnabled = false;
           final String msg = 
             getSketch().getName() + " contains .java tabs. Some editor " +
             "features are not supported for .java tabs and will be disabled.";

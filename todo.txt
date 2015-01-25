@@ -94,6 +94,9 @@ X remove public 'ta' object in DebugEditor, also dmode
 _ fix hasJavaTabs() function
 _   almost always used as a negative, or tied to a 'return' from fxn
 _   name isn't tied to its function, but the symptom
+_   only checked once (when the editor is created)
+X   how does it relate to compilationCheckEnabled?
+X     removed, seems to be duplicate/used the same way
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
 _   because it's in the other ClassLoader, can no longer rely on it
 

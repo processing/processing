@@ -504,7 +504,7 @@ public class ErrorCheckerService implements Runnable {
       if (!hasSyntaxErrors()) {
              
       }
-      if (problems.length == 0 && editor.compilationCheckEnabled) {
+      if (problems.length == 0 && !editor.hasJavaTabs()) {
         //mainClassOffset++; // just a hack.
         
         sourceCode = xqpreproc.doYourThing(sourceCode, programImports);
