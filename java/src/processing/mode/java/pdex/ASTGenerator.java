@@ -429,7 +429,7 @@ public class ASTGenerator {
 
       @Override
       public void run() {
-        JavadocHelper.loadJavaDoc(jdocMap, editor.mode().getReferenceFolder());
+        JavadocHelper.loadJavaDoc(jdocMap, editor.getMode().getReferenceFolder());
       }
     });
     t.start();

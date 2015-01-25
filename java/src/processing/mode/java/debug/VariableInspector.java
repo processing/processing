@@ -20,12 +20,7 @@
 
 package processing.mode.java.debug;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
@@ -36,44 +31,21 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.GrayFilter;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.ExpandVetoException;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.*;
 
-import org.netbeans.swing.outline.DefaultOutlineCellRenderer;
-import org.netbeans.swing.outline.DefaultOutlineModel;
-import org.netbeans.swing.outline.ExtTreeWillExpandListener;
-import org.netbeans.swing.outline.Outline;
-import org.netbeans.swing.outline.OutlineModel;
-import org.netbeans.swing.outline.RenderDataProvider;
-import org.netbeans.swing.outline.RowModel;
+import org.netbeans.swing.outline.*;
 
 import com.sun.jdi.Value;
 
+import processing.app.Mode;
 import processing.mode.java.Debugger;
 import processing.mode.java.JavaEditor;
-import processing.mode.java.JavaMode;
 
 
-/**
- * Variable Inspector window.
- */
 public class VariableInspector extends JFrame {
   /// the root node (invisible)
   protected DefaultMutableTreeNode rootNode;
@@ -84,7 +56,9 @@ public class VariableInspector extends JFrame {
   /// data model for the tree column
   protected DefaultTreeModel treeModel;
   
-  /// data model for the whole Outline (tree and other columns)
+  private JScrollPane scrollPane;
+  
+  protected Outline tree;
   protected OutlineModel model; 
   
   protected List<DefaultMutableTreeNode> callStack;
@@ -112,36 +86,11 @@ public class VariableInspector extends JFrame {
   
   public VariableInspector(JavaEditor je) {
     editor = je;
-    dbg = editor.dbg();
+    dbg = editor.getDebugger();
     
     setUndecorated(true);
 
-    editor.addComponentListener(new ComponentListener() {
-      
-      @Override
-      public void componentShown(ComponentEvent e) { }
-      
-      @Override
-      public void componentResized(ComponentEvent e) {
-        updateBounds(e);
-      }
-      
-      @Override
-      public void componentMoved(ComponentEvent e) {
-        updateBounds(e);
-      }
-      
-      @Override
-      public void componentHidden(ComponentEvent e) { }
-      
-      private void updateBounds(ComponentEvent e) { 
-//        System.out.println(e);
-        setBounds(editor.getX() + editor.getWidth(), 
-                  editor.getY() + VERTICAL_OFFSET, 
-                  getPreferredSize().width, 
-                  editor.getHeight() - VERTICAL_OFFSET*2);
-      }
-    });
+    editor.addComponentListener(new EditorFollower());
     
     initComponents();
 
@@ -174,6 +123,35 @@ public class VariableInspector extends JFrame {
     declaredThisFields = new ArrayList<VariableNode>();
 
 //    this.setTitle(editor.getSketch().getName());
+  }
+  
+  
+  /** Keeps the debug window adjacent the editor at all times. */
+  class EditorFollower implements ComponentListener {
+
+    @Override
+    public void componentShown(ComponentEvent e) { }
+
+    @Override
+    public void componentHidden(ComponentEvent e) { }
+
+    @Override
+    public void componentResized(ComponentEvent e) {
+      updateBounds(e);
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {
+      updateBounds(e);
+    }
+
+    private void updateBounds(ComponentEvent e) { 
+      //        System.out.println(e);
+      setBounds(editor.getX() + editor.getWidth(), 
+                editor.getY() + VERTICAL_OFFSET, 
+                getPreferredSize().width, 
+                editor.getHeight() - VERTICAL_OFFSET*2);
+    }
   }
 
     
@@ -320,7 +298,7 @@ public class VariableInspector extends JFrame {
      * null if the file wasn't found.
      */
     protected ImageIcon[][] loadIcons(String fileName) {
-      JavaMode mode = editor.mode();
+      Mode mode = editor.getMode();
       File file = mode.getContentFile(fileName);
       if (!file.exists()) {
         Logger.getLogger(OutlineRenderer.class.getName()).log(Level.SEVERE, "icon file not found: {0}", file.getAbsolutePath());
@@ -451,7 +429,7 @@ public class VariableInspector extends JFrame {
   }
     
 
-    // TODO: could probably extend the simpler javax.swing.table.DefaultTableCellRenderer here
+    // TODO: could probably extend the simpler DefaultTableCellRenderer here
     /**
      * Renderer for the value column. Uses an italic font for null values and
      * Object values ("instance of ..."). Uses a gray color when tree is not
@@ -582,35 +560,24 @@ public class VariableInspector extends JFrame {
   }
 
     
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-        scrollPane = new JScrollPane();
-        tree = new Outline();
+  private void initComponents() {
+    scrollPane = new JScrollPane();
+    tree = new Outline();
 
-        scrollPane.setViewportView(tree);
+    scrollPane.setViewportView(tree);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+    GroupLayout layout = new GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                              .addGap(0, 400, Short.MAX_VALUE)
+                              .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)));
+    layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addGap(0, 300, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                      .addComponent(scrollPane, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)));
+    pack();
+  }
 
 
   protected static void run(final VariableInspector vi) {
@@ -621,10 +588,6 @@ public class VariableInspector extends JFrame {
       }
     });
   }
-  // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JScrollPane scrollPane;
-  protected org.netbeans.swing.outline.Outline tree;
-  // End of variables declaration//GEN-END:variables
 
 
   public DefaultMutableTreeNode getRootNode() {

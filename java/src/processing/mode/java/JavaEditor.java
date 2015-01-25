@@ -1861,23 +1861,13 @@ public class JavaEditor extends Editor {
      *
      * @return the debugger controller object
      */
-    public Debugger dbg() {
+    public Debugger getDebugger() {
         return dbg;
     }
 
     
     /**
-     * Access the mode.
-     *
-     * @return the mode object
-     */
-    public JavaMode mode() {
-        return jmode;
-    }
-
-    /**
      * Access the custom text area object.
-     *
      * @return the text area object
      */
     public JavaTextArea textArea() {
@@ -2223,8 +2213,8 @@ public class JavaEditor extends Editor {
           }
         }
       }
-      if (dbg() != null && dbg().isStarted()) {
-        dbg().startTrackingLineChanges();
+      if (getDebugger() != null && getDebugger().isStarted()) {
+        getDebugger().startTrackingLineChanges();
       }
     }
 
