@@ -380,7 +380,7 @@ public class CompletionPanel {
           // See #2755
           SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
             protected Object doInBackground() throws Exception {
-              editor.ta.fetchPhrase(null); 
+              ((JavaTextArea) editor.getTextArea()).fetchPhrase(null); 
               return null;
             }
           };
@@ -400,7 +400,7 @@ public class CompletionPanel {
   
   private String fetchCurrentSubword() {
     //log("Entering fetchCurrentSubword");
-    JavaTextArea ta = editor.ta;
+    JEditTextArea ta = editor.getTextArea();
     int off = ta.getCaretPosition();
     //log2("off " + off);
     if (off < 0)

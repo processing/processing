@@ -83,7 +83,7 @@ public class TabOutline {
     frmOutlineView = new JFrame();
     frmOutlineView.setAlwaysOnTop(true);
     frmOutlineView.setUndecorated(true);
-    Point tp = errorCheckerService.getEditor().ta.getLocationOnScreen();
+    Point tp = errorCheckerService.getEditor().getTextArea().getLocationOnScreen();
     lblCaption = new JLabel("Tabs List (type to filter)");
     int minWidth = estimateFrameWidth();
     int maxWidth = (int) (editor.getMinimumSize().width * 0.9f);
@@ -104,8 +104,8 @@ public class TabOutline {
     jsp.setViewportView(tabTree);
     jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
     jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    jsp.setMinimumSize(new Dimension(minWidth, editor.ta.getHeight() - 10));
-    jsp.setMaximumSize(new Dimension(maxWidth, editor.ta.getHeight() - 10));
+    jsp.setMinimumSize(new Dimension(minWidth, editor.getTextArea().getHeight() - 10));
+    jsp.setMaximumSize(new Dimension(maxWidth, editor.getTextArea().getHeight() - 10));
 
     panelBottom.add(jsp);
     frmOutlineView.add(panelTop);
@@ -113,20 +113,18 @@ public class TabOutline {
     frmOutlineView.add(panelBottom);
     frmOutlineView.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frmOutlineView.pack();
-    frmOutlineView.setBounds(tp.x
-                                 + errorCheckerService.getEditor().ta
-                                     .getWidth() - minWidth,
+    frmOutlineView.setBounds(tp.x + errorCheckerService.getEditor().getTextArea().getWidth() - minWidth,
                              tp.y,
                              minWidth,
                              estimateFrameHeight());
     frmOutlineView.setMinimumSize(new Dimension(minWidth, Math
-        .min(errorCheckerService.getEditor().ta.getHeight(),
+        .min(errorCheckerService.getEditor().getTextArea().getHeight(),
              frmOutlineView.getHeight())));
     frmOutlineView.setLocation(tp.x
-                                   + errorCheckerService.getEditor().ta
+                                   + errorCheckerService.getEditor().getTextArea()
                                        .getWidth()/2 - frmOutlineView.getWidth()/2,
                                frmOutlineView.getY()
-                                   + (editor.ta.getHeight() - frmOutlineView
+                                   + (editor.getTextArea().getHeight() - frmOutlineView
                                        .getHeight()) / 2);
     DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tabTree.getCellRenderer();
     renderer.setLeafIcon(null);
@@ -330,11 +328,10 @@ public class TabOutline {
   }
   
   private int estimateFrameWidth() {
-    FontMetrics fm = editor.ta.getGraphics().getFontMetrics();
+    FontMetrics fm = editor.getTextArea().getGraphics().getFontMetrics();
     int w = fm.stringWidth(lblCaption.getText()) + 10;
     for (int i = 0; i < editor.getSketch().getCodeCount(); i++) {
-      w = Math.max(w, fm.stringWidth(editor.getSketch().getCode(i)
-          .getPrettyName()) + 10);
+      w = Math.max(w, fm.stringWidth(editor.getSketch().getCode(i).getPrettyName()) + 10);
     }
     return w;
   }

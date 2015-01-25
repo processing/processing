@@ -583,7 +583,7 @@ public class ASTNodeWrapper {
         		"Please file a bug report.");
         return false;
       }
-      int lso = astGenerator.editor.ta.getLineStartOffset(pdeOffs[1]);
+      int lso = astGenerator.editor.getTextArea().getLineStartOffset(pdeOffs[1]);
       highlightStart += lso;
       astGenerator.editor.setSelection(highlightStart, highlightStart
           + nodeName.getLength());

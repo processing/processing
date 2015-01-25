@@ -94,6 +94,12 @@ _ remove public 'ta' object in DebugEditor, also dmode
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
 _   because it's in the other ClassLoader, can no longer rely on it
 
+gui
+_ need 'actively pressed' version of 'play' and 'stop'
+_   could do rollover as well, but do other apps use them?
+_   iTunes has no rollover state but has a 'down' state
+_     swaps to stop after release
+
 jre download/install
 _ update build scripts for Windows and Linux to use JRE downloader Ant Task
 _   https://github.com/processing/processing/issues/3059

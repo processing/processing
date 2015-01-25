@@ -226,24 +226,24 @@ public class DebugToolbar extends JavaToolbar {
         deditor.handleRun();
       } else {
         Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Debug' toolbar button");
-        deditor.dbg.startDebug();
+        deditor.debugger.startDebug();
       }
       break;
     case CONTINUE:
       Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Continue' toolbar button");
-      deditor.dbg.continueDebug();
+      deditor.debugger.continueDebug();
       break;
     case TOGGLE_BREAKPOINT:
       Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' toolbar button");
-      deditor.dbg.toggleBreakpoint();
+      deditor.debugger.toggleBreakpoint();
       break;
     case STEP:
       if (shift) {
         Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Step Into' toolbar button");
-        deditor.dbg.stepInto();
+        deditor.debugger.stepInto();
       } else {
         Logger.getLogger(DebugToolbar.class.getName()).log(Level.INFO, "Invoked 'Step' toolbar button");
-        deditor.dbg.stepOver();
+        deditor.debugger.stepOver();
       }
       break;
 //            case STEP_INTO:

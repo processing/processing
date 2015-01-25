@@ -95,7 +95,7 @@ public class SketchOutline {
     frmOutlineView = new JFrame();
     frmOutlineView.setAlwaysOnTop(true);
     frmOutlineView.setUndecorated(true);
-    Point tp = errorCheckerService.getEditor().ta.getLocationOnScreen();
+    Point tp = errorCheckerService.getEditor().getTextArea().getLocationOnScreen();
 
     int minWidth = (int) (editor.getMinimumSize().width * 0.7f); 
     int maxWidth = (int) (editor.getMinimumSize().width * 0.9f);
@@ -122,19 +122,19 @@ public class SketchOutline {
     jsp.setViewportView(soTree);
     jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
     jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    jsp.setMinimumSize(new Dimension(minWidth, editor.ta.getHeight() - 10));
-    jsp.setMaximumSize(new Dimension(maxWidth, editor.ta.getHeight() - 10));    
+    jsp.setMinimumSize(new Dimension(minWidth, editor.getTextArea().getHeight() - 10));
+    jsp.setMaximumSize(new Dimension(maxWidth, editor.getTextArea().getHeight() - 10));    
     
     panelBottom.add(jsp);
     frmOutlineView.add(panelTop);
     frmOutlineView.add(panelBottom);
     frmOutlineView.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frmOutlineView.pack();
-    frmOutlineView.setBounds(tp.x + errorCheckerService.getEditor().ta.getWidth() - minWidth, tp.y, minWidth,
-                             Math.min(editor.ta.getHeight(), frmOutlineView.getHeight()));
-    frmOutlineView.setMinimumSize(new Dimension(minWidth, Math.min(errorCheckerService.getEditor().ta.getHeight(), frmOutlineView.getHeight())));    
-    frmOutlineView.setLocation(tp.x + errorCheckerService.getEditor().ta.getWidth()/2 - frmOutlineView.getWidth()/2,
-                               frmOutlineView.getY() + (editor.ta.getHeight() - frmOutlineView.getHeight()) / 2);
+    frmOutlineView.setBounds(tp.x + errorCheckerService.getEditor().getTextArea().getWidth() - minWidth, tp.y, minWidth,
+                             Math.min(editor.getTextArea().getHeight(), frmOutlineView.getHeight()));
+    frmOutlineView.setMinimumSize(new Dimension(minWidth, Math.min(errorCheckerService.getEditor().getTextArea().getHeight(), frmOutlineView.getHeight())));    
+    frmOutlineView.setLocation(tp.x + errorCheckerService.getEditor().getTextArea().getWidth()/2 - frmOutlineView.getWidth()/2,
+                               frmOutlineView.getY() + (editor.getTextArea().getHeight() - frmOutlineView.getHeight()) / 2);
     addListeners();
   }
 

@@ -36,6 +36,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.PlainDocument;
 
@@ -1210,7 +1211,7 @@ public class ErrorCheckerService implements Runnable {
   public String getPDECodeAtLine(int tab, int linenumber){
     if(linenumber < 0) return null;
     editor.getSketch().setCurrentCode(tab);
-    return editor.ta.getLineText(linenumber);
+    return editor.getTextArea().getLineText(linenumber);
   }
   
   /**
@@ -1526,15 +1527,15 @@ public class ErrorCheckerService implements Runnable {
       // It's also a bit silly that if parameters to scrollTo() are out of range,
       // a BadLocation Exception is thrown internally and caught in JTextArea AND
       // even the stack trace gets printed! W/o letting me catch it later! SMH
-      if (p.getLineNumber() < Base.countLines(editor.textArea().getDocument()
-          .getText(0, editor.textArea().getDocument().getLength()))
-          && p.getLineNumber() >= 0) {
+      final Document doc = editor.getTextArea().getDocument();
+      final int lineCount = Base.countLines(doc.getText(0, doc.getLength()));
+      if (p.getLineNumber() < lineCount && p.getLineNumber() >= 0) {
         editor.getTextArea().scrollTo(p.getLineNumber(), 0);
       }
       editor.repaint();
+      
     } catch (Exception e) {
-      Base.loge(e
-          + " : Error while selecting text in scrollToErrorLine(), for problem: " + p);
+      Base.loge("Error while selecting text in scrollToErrorLine(), for problem: " + p, e);
     }
     // log("---");
   }

@@ -50,16 +50,68 @@ public class JavaEditor extends Editor {
   // Runner associated with this editor window
   private Runner runtime;
 
+  // Need to sort through the rest of these additions... 
+  
+  protected Color breakpointColor;  // = new Color(240, 240, 240); // the background color for highlighting lines
+  protected Color currentLineColor; // = new Color(255, 255, 150); // the background color for highlighting lines
+  protected Color breakpointMarkerColor; // = new Color(74, 84, 94); // the color of breakpoint gutter markers
+  protected Color currentLineMarkerColor; // = new Color(226, 117, 0); // the color of current line gutter markers
+  protected List<LineHighlight> breakpointedLines = new ArrayList<LineHighlight>(); // breakpointed lines
+  protected LineHighlight currentLine; // line the debugger is currently suspended at
+  protected final String breakpointMarkerComment = " //<>//"; // breakpoint marker comment
+
+  protected JMenu debugMenu; // the debug menu
+
+//  protected JMenuItem debugMenuItem;
+  protected JMenuItem continueMenuItem;
+  protected JMenuItem stopMenuItem;
+
+//  protected JMenuItem toggleBreakpointMenuItem;
+  protected JMenuItem listBreakpointsMenuItem;
+
+  protected JMenuItem stepOverMenuItem;
+  protected JMenuItem stepIntoMenuItem;
+  protected JMenuItem stepOutMenuItem;
+
+  protected JMenuItem printStackTraceMenuItem;
+  protected JMenuItem printLocalsMenuItem;
+  protected JMenuItem printThisMenuItem;
+  protected JMenuItem printSourceMenuItem;
+  protected JMenuItem printThreads;
+
+  protected JMenuItem toggleVariableInspectorMenuItem;
+
+  protected Debugger debugger; // the debugger
+  protected DebugTray tray; // the variable inspector frame
+
+//  public JavaTextArea ta; // the text area
+  public ErrorBar errorBar;
+    
+  protected XQConsoleToggle btnShowConsole;
+  protected XQConsoleToggle btnShowErrors;
+  protected JScrollPane errorTableScrollPane;
+  protected JPanel consoleProblemsPane;    
+  protected XQErrorTable errorTable;
+    
+  public boolean compilationCheckEnabled = true;
+
+  protected JCheckBoxMenuItem showWarnings;
+  public JCheckBoxMenuItem problemWindowMenuCB;
+  protected JCheckBoxMenuItem debugMessagesEnabled;
+  protected JMenuItem showOutline, showTabOutline;
+  protected JCheckBoxMenuItem writeErrorLog;
+  protected JCheckBoxMenuItem completionsEnabled;
+    
+  // TODO no way should this be public; make an accessor or protected
+  public boolean hasJavaTabs;
+  
 
   protected JavaEditor(Base base, String path, EditorState state, Mode mode) {
     super(base, path, state, mode);
 
     jmode = (JavaMode) mode;
-    dbg = new Debugger(this);
-    vi = new DebugTray(this);
-
-    // access to customized (i.e. subclassed) text area
-    ta = (JavaTextArea) textarea;
+    debugger = new Debugger(this);
+    tray = new DebugTray(this);
 
     // Add show usage option
     JMenuItem showUsageItem = new JMenuItem("Show Usage...");
@@ -68,7 +120,7 @@ public class JavaEditor extends Editor {
         handleShowUsage();
       }
     });
-    ta.getRightClickPopup().add(showUsageItem);
+    getTextArea().getRightClickPopup().add(showUsageItem);
 
     // add refactor option
     JMenuItem renameItem = new JMenuItem("Rename...");
@@ -84,7 +136,7 @@ public class JavaEditor extends Editor {
     //            System.out.println(evt);
     //          }
     //        });
-    ta.getRightClickPopup().add(renameItem);
+    textarea.getRightClickPopup().add(renameItem);
     // set action on frame close
     //        addWindowListener(new WindowAdapter() {
     //            @Override
@@ -93,7 +145,7 @@ public class JavaEditor extends Editor {
     //            }
     //        });
 
-    Toolkit.setMenuMnemonics(ta.getRightClickPopup());
+    Toolkit.setMenuMnemonics(textarea.getRightClickPopup());
 
     // load settings from theme.txt
     breakpointColor = mode.getColor("breakpoint.bgcolor"); //, breakpointColor);
@@ -104,14 +156,14 @@ public class JavaEditor extends Editor {
     // set breakpoints from marker comments
     for (LineID lineID : stripBreakpointComments()) {
       //System.out.println("setting: " + lineID);
-      dbg.setBreakpoint(lineID);
+      debugger.setBreakpoint(lineID);
     }
     getSketch().setModified(false); // setting breakpoints will flag sketch as modified, so override this here
 
     checkForJavaTabs();
     initializeErrorChecker();
 
-    ta.setECSandThemeforTextArea(errorCheckerService, jmode);
+    getJavaTextArea().setECSandThemeforTextArea(errorCheckerService, jmode);
 
     addXQModeUI();    
     debugToolbarEnabled = new AtomicBoolean(false);
@@ -1011,8 +1063,8 @@ public class JavaEditor extends Editor {
    * session or performs standard stop action if not currently debugging.
    */
   public void handleStop() {
-    if (dbg.isStarted()) {
-      dbg.stopDebug();
+    if (debugger.isStarted()) {
+      debugger.stopDebug();
       
     } else {
       toolbar.activate(JavaToolbar.STOP);
@@ -1052,14 +1104,14 @@ public class JavaEditor extends Editor {
     boolean saved = super.handleSaveAs();
     if (saved) {
       // re-set breakpoints in first tab (name has changed)
-      List<LineBreakpoint> bps = dbg.getBreakpoints(oldName);
-      dbg.clearBreakpoints(oldName);
+      List<LineBreakpoint> bps = debugger.getBreakpoints(oldName);
+      debugger.clearBreakpoints(oldName);
       String newName = getSketch().getCode(0).getFileName();
       //System.out.println("new name: " + newName);
       for (LineBreakpoint bp : bps) {
         LineID line = new LineID(newName, bp.lineID().lineIdx());
         //System.out.println("setting: " + line);
-        dbg.setBreakpoint(line);
+        debugger.setBreakpoint(line);
       }
       // add breakpoint marker comments to source file
       for (int i = 0; i < getSketch().getCodeCount(); i++) {
@@ -1067,7 +1119,7 @@ public class JavaEditor extends Editor {
       }
 
       // set new name of variable inspector
-      vi.setTitle(getSketch().getName());
+      tray.setTitle(getSketch().getName());
     }
     //  if file location has changed, update autosaver
     //        autosaver.reloadAutosaveDir();
@@ -1160,61 +1212,8 @@ public class JavaEditor extends Editor {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
   
   // Additions from PDE X, Debug Mode, Twerk Mode... 
+
   
-    protected Color breakpointColor;  // = new Color(240, 240, 240); // the background color for highlighting lines
-  protected Color currentLineColor; // = new Color(255, 255, 150); // the background color for highlighting lines
-  protected Color breakpointMarkerColor; // = new Color(74, 84, 94); // the color of breakpoint gutter markers
-  protected Color currentLineMarkerColor; // = new Color(226, 117, 0); // the color of current line gutter markers
-  protected List<LineHighlight> breakpointedLines = new ArrayList<LineHighlight>(); // breakpointed lines
-  protected LineHighlight currentLine; // line the debugger is currently suspended at
-  protected final String breakpointMarkerComment = " //<>//"; // breakpoint marker comment
-
-  protected JMenu debugMenu; // the debug menu
-
-  protected JMenuItem debugMenuItem;
-  protected JMenuItem continueMenuItem;
-  protected JMenuItem stopMenuItem;
-
-  protected JMenuItem toggleBreakpointMenuItem;
-  protected JMenuItem listBreakpointsMenuItem;
-
-  protected JMenuItem stepOverMenuItem;
-  protected JMenuItem stepIntoMenuItem;
-  protected JMenuItem stepOutMenuItem;
-
-  protected JMenuItem printStackTraceMenuItem;
-  protected JMenuItem printLocalsMenuItem;
-  protected JMenuItem printThisMenuItem;
-  protected JMenuItem printSourceMenuItem;
-  protected JMenuItem printThreads;
-
-  protected JMenuItem toggleVariableInspectorMenuItem;
-
-  protected Debugger dbg; // the debugger
-  protected DebugTray vi; // the variable inspector frame
-
-  public JavaTextArea ta; // the text area
-  public ErrorBar errorBar;
-    
-  protected XQConsoleToggle btnShowConsole;
-  protected XQConsoleToggle btnShowErrors;
-  protected JScrollPane errorTableScrollPane;
-  protected JPanel consoleProblemsPane;    
-  protected XQErrorTable errorTable;
-    
-  public boolean compilationCheckEnabled = true;
-
-  protected JCheckBoxMenuItem showWarnings;
-  public JCheckBoxMenuItem problemWindowMenuCB;
-  protected JCheckBoxMenuItem debugMessagesEnabled;
-  protected JMenuItem showOutline, showTabOutline;
-  protected JCheckBoxMenuItem writeErrorLog;
-  protected JCheckBoxMenuItem completionsEnabled;
-    
-  // TODO no way should this be public; make an accessor or protected
-  public boolean hasJavaTabs;
-    
-
     private void addXQModeUI(){
       
       // Adding ErrorBar
@@ -1269,7 +1268,7 @@ public class JavaEditor extends Editor {
       // ensure completion gets hidden on editor losing focus
       addWindowFocusListener(new WindowFocusListener() {        
         public void windowLostFocus(WindowEvent e) {
-         ta.hideSuggestion();
+         getJavaTextArea().hideSuggestion();
         }        
         public void windowGainedFocus(WindowEvent e) {
           
@@ -1298,9 +1297,9 @@ public class JavaEditor extends Editor {
     public void dispose() {
         //System.out.println("window dispose");
         // quit running debug session
-        dbg.stopDebug();        
+        debugger.stopDebug();        
         // remove var.inspector
-        vi.dispose();
+        tray.dispose();
         errorCheckerService.stopThread();
         // original dispose
         super.dispose();
@@ -1401,7 +1400,7 @@ public class JavaEditor extends Editor {
               break;
             }
           }
-          ta.repaint();
+          textarea.repaint();
         }
       });
     }
@@ -1414,6 +1413,7 @@ public class JavaEditor extends Editor {
      */
     protected JMenu buildDebugMenu() {
       debugMenu = new JMenu(Language.text("menu.debug"));
+      JMenuItem item;
 
       JCheckBoxMenuItem toggleDebugger =
         new JCheckBoxMenuItem(Language.text("menu.debug.show_debug_toolbar"));
@@ -1425,20 +1425,20 @@ public class JavaEditor extends Editor {
       });
       debugMenu.add(toggleDebugger);
       
-      debugMenuItem = Toolkit.newJMenuItemAlt(Language.text("menu.debug.debug"), KeyEvent.VK_R);
-      debugMenuItem.addActionListener(new ActionListener() {
+      item = Toolkit.newJMenuItemAlt(Language.text("menu.debug.debug"), KeyEvent.VK_R);
+      item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Debug' menu item");
-          dbg.startDebug();            
+          debugger.startDebug();            
         }
       });
-      debugMenu.add(debugMenuItem);
+      debugMenu.add(item);
 
       continueMenuItem = Toolkit.newJMenuItem(Language.text("menu.debug.continue"), KeyEvent.VK_U);
       continueMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Continue' menu item");
-          dbg.continueDebug();
+          debugger.continueDebug();
         }
       });
       debugMenu.add(continueMenuItem);
@@ -1447,27 +1447,28 @@ public class JavaEditor extends Editor {
       stopMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Stop' menu item");
-          dbg.stopDebug();
+          debugger.stopDebug();
         }
       });
       debugMenu.add(stopMenuItem);
       
       debugMenu.addSeparator();
 
-      toggleBreakpointMenuItem = 
+      item =  
         Toolkit.newJMenuItem(Language.text("menu.debug.toggle_breakpoint"), KeyEvent.VK_B);
-      toggleBreakpointMenuItem.addActionListener(new ActionListener() {
+      item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' menu item");
-          dbg.toggleBreakpoint();
+          debugger.toggleBreakpoint();
         }
       });
-      debugMenu.add(toggleBreakpointMenuItem);
+      debugMenu.add(item);
+      
       listBreakpointsMenuItem = new JMenuItem(Language.text("menu.debug.list_breakpoints"));
       listBreakpointsMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'List Breakpoints' menu item");
-          dbg.listBreakpoints();    
+          debugger.listBreakpoints();    
         }
       });
       debugMenu.add(listBreakpointsMenuItem);
@@ -1478,7 +1479,7 @@ public class JavaEditor extends Editor {
       stepOverMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Over' menu item");
-          dbg.stepOver();
+          debugger.stepOver();
         }
       });
       debugMenu.add(stepOverMenuItem);
@@ -1487,7 +1488,7 @@ public class JavaEditor extends Editor {
       stepIntoMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Into' menu item");
-          dbg.stepInto();
+          debugger.stepInto();
          }
       });
       debugMenu.add(stepIntoMenuItem);
@@ -1496,7 +1497,7 @@ public class JavaEditor extends Editor {
       stepOutMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Out' menu item");
-          dbg.stepOut();
+          debugger.stepOut();
         }
       });
       debugMenu.add(stepOutMenuItem);
@@ -1507,7 +1508,7 @@ public class JavaEditor extends Editor {
       printStackTraceMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print Stack Trace' menu item");
-          dbg.printStackTrace();
+          debugger.printStackTrace();
         }
       });
       debugMenu.add(printStackTraceMenuItem);
@@ -1516,7 +1517,7 @@ public class JavaEditor extends Editor {
       printLocalsMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print Locals' menu item");
-          dbg.printLocals();
+          debugger.printLocals();
         }
       });
       debugMenu.add(printLocalsMenuItem);
@@ -1525,7 +1526,7 @@ public class JavaEditor extends Editor {
       printThisMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print This' menu item");
-          dbg.printThis();
+          debugger.printThis();
         }
       });
       debugMenu.add(printThisMenuItem);
@@ -1534,7 +1535,7 @@ public class JavaEditor extends Editor {
       printSourceMenuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print Source' menu item");
-          dbg.printSource();
+          debugger.printSource();
         }
       });
       debugMenu.add(printSourceMenuItem);
@@ -1543,7 +1544,7 @@ public class JavaEditor extends Editor {
       printThreads.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Print Threads' menu item");
-          dbg.printThreads();
+          debugger.printThreads();
         }
       });
       debugMenu.add(printThreads);
@@ -1599,9 +1600,9 @@ public class JavaEditor extends Editor {
     protected boolean handleOpenInternal(String path) {
       // log("handleOpenInternal, path: " + path);
       boolean didOpen = super.handleOpenInternal(path);
-      if (didOpen && dbg != null) {
+      if (didOpen && debugger != null) {
         // should already been stopped (open calls handleStop)
-        dbg.clearBreakpoints();
+        debugger.clearBreakpoints();
         clearBreakpointedLines(); // force clear breakpoint highlights
         variableInspector().reset(); // clear contents of variable inspector
       }
@@ -1673,7 +1674,7 @@ public class JavaEditor extends Editor {
         Base.loge("Illegal tab name to addBreakpointComments() " + tabFilename);          
         return;
       }
-      List<LineBreakpoint> bps = dbg.getBreakpoints(tab.getFileName());
+      List<LineBreakpoint> bps = debugger.getBreakpoints(tab.getFileName());
 
       // load the source file
       File sourceFile = new File(sketch.getFolder(), tab.getFileName());
@@ -1774,7 +1775,7 @@ public class JavaEditor extends Editor {
      */
     protected void setTabContents(String tabFilename, String code) {
         // remove all breakpoints of this tab
-        dbg.clearBreakpoints(tabFilename);
+        debugger.clearBreakpoints(tabFilename);
 
         SketchCode currentTab = getCurrentTab();
 
@@ -1861,7 +1862,7 @@ public class JavaEditor extends Editor {
      * @return the debugger controller object
      */
     public Debugger getDebugger() {
-        return dbg;
+        return debugger;
     }
 
     
@@ -1869,8 +1870,8 @@ public class JavaEditor extends Editor {
      * Access the custom text area object.
      * @return the text area object
      */
-    public JavaTextArea textArea() {
-        return ta;
+    public JavaTextArea getJavaTextArea() {
+      return (JavaTextArea) textarea;
     }
 
     
@@ -1991,7 +1992,7 @@ public class JavaEditor extends Editor {
      * @return the variable inspector object
      */
     public DebugTray variableInspector() {
-        return vi;
+        return tray;
     }
 
     
@@ -2006,7 +2007,7 @@ public class JavaEditor extends Editor {
      * Show the variable inspector window.
      */
     public void showVariableInspector() {
-        vi.setVisible(true);
+        tray.setVisible(true);
     }
 
     /**
@@ -2016,23 +2017,23 @@ public class JavaEditor extends Editor {
      * invisible.
      */
     public void showVariableInspector(boolean visible) {
-        vi.setVisible(visible);
+        tray.setVisible(visible);
     }
 
     /**
      * Hide the variable inspector window.
      */
     public void hideVariableInspector() {
-        vi.setVisible(true);
+        tray.setVisible(true);
     }
 
     /**
      * Toggle visibility of the variable inspector window.
      */
     public void toggleVariableInspector() {
-        vi.setFocusableWindowState(false); // to not get focus when set visible
-        vi.setVisible(!vi.isVisible());
-        vi.setFocusableWindowState(true); // allow to get focus again
+        tray.setFocusableWindowState(false); // to not get focus when set visible
+        tray.setVisible(!tray.isVisible());
+        tray.setFocusableWindowState(true); // allow to get focus again
     }
 
 
@@ -2053,7 +2054,7 @@ public class JavaEditor extends Editor {
       cursorToLineStart(line.lineIdx());
       // highlight line
       currentLine = new LineHighlight(line.lineIdx(), currentLineColor, this);
-      currentLine.setMarker(ta.currentLineMarker, currentLineMarkerColor);
+      currentLine.setMarker(getJavaTextArea().currentLineMarker, currentLineMarkerColor);
       currentLine.setPriority(10); // fixes current line being hidden by the breakpoint when moved down
     }
 
@@ -2083,7 +2084,7 @@ public class JavaEditor extends Editor {
      */
     public void addBreakpointedLine(LineID lineID) {
       LineHighlight hl = new LineHighlight(lineID, breakpointColor, this);
-      hl.setMarker(ta.breakpointMarker, breakpointMarkerColor);
+      hl.setMarker(getJavaTextArea().breakpointMarker, breakpointMarkerColor);
       breakpointedLines.add(hl);
       // repaint current line if it's on this line
       if (currentLine != null && currentLine.getLineID().equals(lineID)) {
@@ -2140,8 +2141,8 @@ public class JavaEditor extends Editor {
       }
       breakpointedLines.clear(); // remove all breakpoints
       // fix highlights not being removed when tab names have changed due to opening a new sketch in same editor
-      ta.clearLineBgColors(); // force clear all highlights
-      ta.clearGutterText();
+      getJavaTextArea().clearLineBgColors(); // force clear all highlights
+      getJavaTextArea().clearGutterText();
 
       // repaint current line
       if (currentLine != null) {
@@ -2193,6 +2194,7 @@ public class JavaEditor extends Editor {
       super.setCode(code); // set the new document in the textarea, etc. need to do this first
 
       // set line background colors for tab
+      final JavaTextArea ta = getJavaTextArea();
       if (ta != null) { // can be null when setCode is called the first time (in constructor)
         // clear all line backgrounds
         ta.clearLineBgColors();
@@ -2270,8 +2272,8 @@ public class JavaEditor extends Editor {
      * @param lineIdx the line (0-based) that was double clicked
      */
     public void gutterDblClicked(int lineIdx) {
-      if (dbg != null) {
-        dbg.toggleBreakpoint(lineIdx);
+      if (debugger != null) {
+        debugger.toggleBreakpoint(lineIdx);
       }
     }
 
@@ -2399,7 +2401,7 @@ public class JavaEditor extends Editor {
      * Handle refactor operation
      */
     private void handleRefactor() {
-      Base.log("Caret at:" + ta.getLineText(ta.getCaretLine()));
+      Base.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
       errorCheckerService.getASTGenerator().handleRefactor();
     }
 
@@ -2408,7 +2410,7 @@ public class JavaEditor extends Editor {
      * Handle show usage operation
      */
     private void handleShowUsage() {
-      Base.log("Caret at:" + ta.getLineText(ta.getCaretLine()));
+      Base.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
       errorCheckerService.getASTGenerator().handleShowUsage();
     }
 
@@ -2460,15 +2462,16 @@ public class JavaEditor extends Editor {
 
   UDPTweakClient tweakClient;
 
-  public void startInteractiveMode()
-  {
-    ta.startInteractiveMode();
+  
+  public void startInteractiveMode() {
+    getJavaTextArea().startInteractiveMode();
   }
 
+  
   //public void stopInteractiveMode(ArrayList<Handle> handles[]) {
   public void stopInteractiveMode(List<List<Handle>> handles) {
     tweakClient.shutdown();
-    ta.stopInteractiveMode();
+    getJavaTextArea().stopInteractiveMode();
 
     // remove space from the code (before and after)
     removeSpacesFromCode();
@@ -2492,9 +2495,9 @@ public class JavaEditor extends Editor {
         // NO! don't keep changes
         loadSavedCode();
         // update the painter to draw the saved (old) code
-        ta.invalidate();
-      }
-      else {
+        textarea.invalidate();
+      
+      } else {
         // YES! keep changes
         // the new values are already present, just make sure the user can save the modified tabs
         for (int i=0; i<sketch.getCodeCount(); i++) {
@@ -2526,30 +2529,23 @@ public class JavaEditor extends Editor {
 
         // repaint the editor header (show the modified tabs)
         header.repaint();
-        ta.invalidate();
+        textarea.invalidate();
       }
-    }
-    else {
+    } else {
       // number values were not modified but we need to load the saved code
       // because of some formatting changes
       loadSavedCode();
-      ta.invalidate();
+      textarea.invalidate();
     }
   }
 
-  public void updateInterface(List<List<Handle>> handles, List<List<ColorControlBox>> colorBoxes) {
-    // set OSC port of handles
-//    for (int i=0; i<handles.length; i++) {
-//      for (Handle h : handles[i]) {
-//        h.setOscPort(oscPort);
-//      }
-//    }
-
-    ta.updateInterface(handles, colorBoxes);
+  
+  public void updateInterface(List<List<Handle>> handles, 
+                              List<List<ColorControlBox>> colorBoxes) {
+    getJavaTextArea().updateInterface(handles, colorBoxes);
   }
 
   
-  //private boolean[] getModifiedTabs(ArrayList<Handle> handles[]) {
   private boolean[] getModifiedTabs(List<List<Handle>> handles) {
     boolean[] modifiedTabs = new boolean[handles.size()];
 

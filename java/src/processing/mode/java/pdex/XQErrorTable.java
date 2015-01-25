@@ -230,7 +230,7 @@ public class XQErrorTable extends JTable {
             String impString = "import " + t.substring(x + 1, t.indexOf(')')) + ";\n";
             int ct = editor.getSketch().getCurrentCodeIndex();
             editor.getSketch().setCurrentCode(0);
-            editor.textArea().getDocument().insertString(0, impString, null);
+            editor.getTextArea().getDocument().insertString(0, impString, null);
             editor.getSketch().setCurrentCode(ct);
           } catch (BadLocationException ble) {
             Base.log("Failed to insert import");

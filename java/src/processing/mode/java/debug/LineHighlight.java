@@ -158,8 +158,8 @@ public class LineHighlight implements LineListener {
     public void lineChanged(LineID line, int oldLineIdx, int newLineIdx) {
         // clear old line
         if (editor.isInCurrentTab(new LineID(line.fileName(), oldLineIdx))) {
-            editor.textArea().clearLineBgColor(oldLineIdx);
-            editor.textArea().clearGutterText(oldLineIdx);
+            editor.getJavaTextArea().clearLineBgColor(oldLineIdx);
+            editor.getJavaTextArea().clearGutterText(oldLineIdx);
         }
 
         // paint new line
@@ -185,12 +185,12 @@ public class LineHighlight implements LineListener {
      */
     public void paint() {
         if (editor.isInCurrentTab(lineID)) {
-            editor.textArea().setLineBgColor(lineID.lineIdx(), bgColor);
+            editor.getJavaTextArea().setLineBgColor(lineID.lineIdx(), bgColor);
             if (marker != null) {
                 if (markerColor != null) {
-                    editor.textArea().setGutterText(lineID.lineIdx(), marker, markerColor);
+                    editor.getJavaTextArea().setGutterText(lineID.lineIdx(), marker, markerColor);
                 } else {
-                    editor.textArea().setGutterText(lineID.lineIdx(), marker);
+                    editor.getJavaTextArea().setGutterText(lineID.lineIdx(), marker);
                 }
             }
         }
@@ -201,8 +201,8 @@ public class LineHighlight implements LineListener {
      */
     public void clear() {
         if (editor.isInCurrentTab(lineID)) {
-            editor.textArea().clearLineBgColor(lineID.lineIdx());
-            editor.textArea().clearGutterText(lineID.lineIdx());
+            editor.getJavaTextArea().clearLineBgColor(lineID.lineIdx());
+            editor.getJavaTextArea().clearGutterText(lineID.lineIdx());
         }
     }
 }

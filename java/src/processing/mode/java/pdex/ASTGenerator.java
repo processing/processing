@@ -111,6 +111,7 @@ import processing.app.Base;
 import processing.app.Library;
 import processing.app.SketchCode;
 import processing.app.Toolkit;
+import processing.app.syntax.JEditTextArea;
 import processing.mode.java.JavaEditor;
 import processing.mode.java.JavaMode;
 import processing.mode.java.preproc.PdePreprocessor;
@@ -1077,8 +1078,7 @@ public class ASTGenerator {
 //      tableAuto.validate();
 //      tableAuto.repaint();
 //    }
-    errorCheckerService.getEditor().textArea()
-        .showSuggestion(defListModel, word);
+    errorCheckerService.getEditor().getJavaTextArea().showSuggestion(defListModel, word);
   }
 
   private DefaultListModel<CompletionCandidate> filterPredictions(){
@@ -2030,7 +2030,7 @@ public class ASTGenerator {
   
   protected void refactorIt(){
     String newName = txtRenameField.getText().trim();
-    String selText = lastClickedWord == null ? editor.ta.getSelectedText()
+    String selText = lastClickedWord == null ? getSelectedText()
         : lastClickedWord;
     // Find all occurrences of last clicked word
     DefaultMutableTreeNode defCU = findAllOccurrences(); //TODO: Repetition here
@@ -2098,7 +2098,7 @@ public class ASTGenerator {
                            + off, awrap.getNode()
                            .toString().length());
       //int k = JOptionPane.showConfirmDialog(new JFrame(), "Rename?","", JOptionPane.INFORMATION_MESSAGE);
-      editor.ta.setSelectedText(newName);
+      editor.getTextArea().setSelectedText(newName);
     }
     editor.stopCompoundEdit();
     errorCheckerService.resumeThread();
@@ -2123,14 +2123,15 @@ public class ASTGenerator {
 //        + lineStartWSOffset + ",Len: " + length);
     editor.toFront();
     editor.getSketch().setCurrentCode(tab);
-    lineStartWSOffset += editor.ta.getLineStartOffset(lineNumber);
-    editor.ta.select(lineStartWSOffset, lineStartWSOffset + length);
+    lineStartWSOffset += editor.getTextArea().getLineStartOffset(lineNumber);
+    editor.getTextArea().select(lineStartWSOffset, lineStartWSOffset + length);
   }
   
   public void handleShowUsage(){
     if(editor.hasJavaTabs) return; // show usage disabled if java tabs
     log("Last clicked word:" + lastClickedWord);
-    if(lastClickedWord == null && editor.ta.getSelectedText() == null){
+    if (lastClickedWord == null && 
+        getSelectedText() == null) {
       editor.statusMessage("Highlight the class/function/variable name first"
                            , JavaEditor.STATUS_INFO);
       return;
@@ -2142,9 +2143,9 @@ public class ASTGenerator {
       return;
     }
     DefaultMutableTreeNode defCU = findAllOccurrences();   
-    String selText = lastClickedWord == null ? editor.ta.getSelectedText()
-        : lastClickedWord;
-    if(defCU == null){
+    String selText = lastClickedWord == null ? 
+      getSelectedText() : lastClickedWord;
+    if (defCU == null) {
       editor.statusMessage("Can't locate definition of " + selText, 
                            JavaEditor.STATUS_ERR);
       return;
@@ -2176,25 +2177,24 @@ public class ASTGenerator {
   }
 
   protected DefaultMutableTreeNode findAllOccurrences(){
+    final JEditTextArea ta = editor.getTextArea();
+    
     log("Last clicked word:" + lastClickedWord);
-    String selText = lastClickedWord == null ? editor.ta.getSelectedText()
-        : lastClickedWord;
-    int line = editor.ta.getSelectionStartLine();
+    String selText = lastClickedWord == null ? ta.getSelectedText() :
+        lastClickedWord;
+    int line = ta.getSelectionStartLine();
     log(selText
         + "<- offsets "
         + (line)
         + ", "
-        + (editor.ta.getSelectionStart() - editor.ta
-            .getLineStartOffset(line))
+        + (ta.getSelectionStart() - ta.getLineStartOffset(line))
         + ", "
-        + (editor.ta.getSelectionStop() - editor.ta
-            .getLineStartOffset(line)));
-    int offwhitespace = editor.ta
-        .getLineStartNonWhiteSpaceOffset(line);
+        + (ta.getSelectionStop() - ta.getLineStartOffset(line)));
+    int offwhitespace = ta.getLineStartNonWhiteSpaceOffset(line);
     ASTNodeWrapper wnode;
     if (lastClickedWord == null || lastClickedWordNode.getNode() == null) {
       wnode = getASTNodeAt(line + errorCheckerService.mainClassOffset, selText,
-                           editor.ta.getSelectionStart() - offwhitespace, false);
+                           ta.getSelectionStart() - offwhitespace, false);
     }
     else{
       wnode = lastClickedWordNode;
@@ -2471,26 +2471,26 @@ public class ASTGenerator {
     return false;
   }
   
-  public void handleRefactor(){
+  public void handleRefactor() {
     if(editor.hasJavaTabs) return; // refactoring disabled if java tabs
     log("Last clicked word:" + lastClickedWord);
-    if(lastClickedWord == null && editor.ta.getSelectedText() == null){
+    if (lastClickedWord == null && 
+        getSelectedText() == null) {
       editor.statusMessage("Highlight the class/function/variable name first",
                            JavaEditor.STATUS_INFO);
       return;
     }
     
-    if(errorCheckerService.hasSyntaxErrors()){
-      editor
-          .statusMessage("Can't perform action until syntax errors are fixed :(",
-                         JavaEditor.STATUS_WARNING);
+    if (errorCheckerService.hasSyntaxErrors()) {
+      editor.statusMessage("Can't perform action until syntax errors are fixed :(",
+                           JavaEditor.STATUS_WARNING);
       return;
     }
     
     DefaultMutableTreeNode defCU = findAllOccurrences();   
-    String selText = lastClickedWord == null ? editor.ta.getSelectedText()
-        : lastClickedWord;
-    if(defCU == null){
+    String selText = lastClickedWord == null ? 
+        getSelectedText() : lastClickedWord;
+    if (defCU == null) {
       editor.statusMessage(selText + " isn't defined in this sketch, so it can't" +
       		" be renamed", JavaEditor.STATUS_ERR);
       return;
@@ -2505,7 +2505,7 @@ public class ASTGenerator {
       SwingUtilities.invokeLater(new Runnable() {          
         @Override
         public void run() {
-          String selText = lastClickedWord == null ? editor.ta.getSelectedText()
+          String selText = lastClickedWord == null ? getSelectedText()
               : lastClickedWord;
           frmOccurenceList.setTitle("All occurrences of "
               + selText);
@@ -3057,22 +3057,19 @@ public class ASTGenerator {
     return commentList;
   }
   
-  protected boolean caretWithinLineComment(){
-    String pdeLine = editor.getLineText(editor.textArea().getCaretLine()).trim();
-    int caretPos = editor.textArea().getCaretPosition()
-        - editor.textArea()
-            .getLineStartNonWhiteSpaceOffset(editor.textArea().getCaretLine());
+  
+  protected boolean caretWithinLineComment() {
+    final JEditTextArea ta = editor.getTextArea();
+    String pdeLine = editor.getLineText(ta.getCaretLine()).trim();
+    int caretPos = ta.getCaretPosition() - ta.getLineStartNonWhiteSpaceOffset(ta.getCaretLine());
     int x = pdeLine.indexOf("//");
-//    log(x + " , " + caretPos + ", Checking line for comment " + pdeLine);
-    //lineStartOffset = editor.textArea().
     
     if (x >= 0 && caretPos > x) {
-//      log("INSIDE a comment");
       return true;
     }
-//    log("not within comment");
     return false;
   }
+
   
   /**
    * A wrapper for java.lang.reflect types.
@@ -3480,7 +3477,7 @@ public class ASTGenerator {
                   + ";\n";
               int ct = editor.getSketch().getCurrentCodeIndex();
               editor.getSketch().setCurrentCode(0);
-              editor.textArea().getDocument().insertString(0, impString, null);
+              editor.getTextArea().getDocument().insertString(0, impString, null);
               editor.getSketch().setCurrentCode(ct);
               errorCheckerService.runManualErrorCheck();
               frmImportSuggest.setVisible(false);
@@ -3539,7 +3536,7 @@ public class ASTGenerator {
                         editor.getY()
                             + (editor.getHeight() - frmImportSuggest.getHeight())
                             / 2);
-      editor.ta.hideSuggestion();
+      hideSuggestion();
       classList.setSelectedIndex(0);
       frmImportSuggest.setVisible(true);
     }
@@ -3765,5 +3762,15 @@ public class ASTGenerator {
   
   static private void log(Object object) {
     Base.log(object == null ? "null" : object.toString());
+  }
+  
+  
+  private String getSelectedText() {
+    return editor.getTextArea().getSelectedText();
+  }
+  
+  
+  private void hideSuggestion() {
+    ((JavaTextArea) editor.getTextArea()).hideSuggestion();
   }
 }
