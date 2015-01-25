@@ -45,7 +45,7 @@ import processing.app.Mode;
 import processing.mode.java.debug.VariableNode;
 
 
-public class VariableInspector extends JFrame {
+public class DebugTray extends JFrame {
   /// the root node (invisible)
   protected DefaultMutableTreeNode rootNode;
   
@@ -83,7 +83,7 @@ public class VariableInspector extends JFrame {
   final int VERTICAL_OFFSET = 64;
     
   
-  public VariableInspector(JavaEditor editor) {
+  public DebugTray(JavaEditor editor) {
     this.editor = editor;
     
     setUndecorated(true);
@@ -573,7 +573,7 @@ public class VariableInspector extends JFrame {
   }
 
     
-  protected static void run(final VariableInspector vi) {
+  protected static void run(final DebugTray vi) {
     EventQueue.invokeLater(new Runnable() {
       @Override
       public void run() {

@@ -56,7 +56,7 @@ public class JavaEditor extends Editor {
 
     jmode = (JavaMode) mode;
     dbg = new Debugger(this);
-    vi = new VariableInspector(this);
+    vi = new DebugTray(this);
 
     // access to customized (i.e. subclassed) text area
     ta = (JavaTextArea) textarea;
@@ -1191,7 +1191,7 @@ public class JavaEditor extends Editor {
   protected JMenuItem toggleVariableInspectorMenuItem;
 
   protected Debugger dbg; // the debugger
-  protected VariableInspector vi; // the variable inspector frame
+  protected DebugTray vi; // the variable inspector frame
 
   public JavaTextArea ta; // the text area
   public ErrorBar errorBar;
@@ -1990,7 +1990,7 @@ public class JavaEditor extends Editor {
      *
      * @return the variable inspector object
      */
-    public VariableInspector variableInspector() {
+    public DebugTray variableInspector() {
         return vi;
     }
 
