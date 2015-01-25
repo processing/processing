@@ -33,7 +33,7 @@ import processing.mode.java.JavaEditor;
  *
  * @author Martin Leopold <m@martinleopold.com>
  */
-public class LineHighlight implements LineListener {
+public class LineHighlight {
 
   protected JavaEditor editor; // the view, used for highlighting lines by setting a background color
   protected Color bgColor; // the background color for highlighting lines
@@ -154,7 +154,6 @@ public class LineHighlight implements LineListener {
      * @param oldLineIdx the old line index (0-based)
      * @param newLineIdx the new line index (0-based)
      */
-    @Override
     public void lineChanged(LineID line, int oldLineIdx, int newLineIdx) {
         // clear old line
         if (editor.isInCurrentTab(new LineID(line.fileName(), oldLineIdx))) {

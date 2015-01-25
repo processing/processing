@@ -80,6 +80,8 @@ public class DebugTray extends JFrame {
   /// processing / "advanced" mode flag (currently not used)
   protected boolean p5mode = true; 
 
+  // The tray will be placed at this amount from the top of the editor window,
+  // and extend to this amount from the bottom of the editor window.
   final int VERTICAL_OFFSET = 64;
     
   

@@ -45,7 +45,7 @@ public class LineID implements DocumentListener {
     protected int lineIdx; // the line number, 0-based
     protected Document doc; // the Document to use for line number tracking
     protected Position pos; // the Position acquired during line number tracking
-    protected Set<LineListener> listeners = new HashSet<LineListener>(); // listeners for line number changes
+    protected Set<LineHighlight> listeners = new HashSet<LineHighlight>(); // listeners for line number changes
 
     public LineID(String fileName, int lineIdx) {
         this.fileName = fileName;
@@ -181,7 +181,7 @@ public class LineID implements DocumentListener {
             int oldLineIdx = lineIdx;
             lineIdx = doc.getDefaultRootElement().getElementIndex(offset); // offset to lineNo
             if (lineIdx != oldLineIdx) {
-                for (LineListener l : listeners) {
+                for (LineHighlight l : listeners) {
                     if (l != null) {
                         l.lineChanged(this, oldLineIdx, lineIdx);
                     } else {
@@ -197,7 +197,7 @@ public class LineID implements DocumentListener {
      *
      * @param l the listener to add
      */
-    public void addListener(LineListener l) {
+    public void addListener(LineHighlight l) {
         listeners.add(l);
     }
 
@@ -206,7 +206,7 @@ public class LineID implements DocumentListener {
      *
      * @param l the listener to remove
      */
-    public void removeListener(LineListener l) {
+    public void removeListener(LineHighlight l) {
         listeners.remove(l);
     }
 

@@ -100,6 +100,8 @@ X     removed, seems to be duplicate/used the same way
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
 _   because it's in the other ClassLoader, can no longer rely on it
 
+_ do the right thing on passing around List vs ArrayList and others
+
 gui
 _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
