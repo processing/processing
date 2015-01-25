@@ -205,22 +205,8 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
 //        offsetX = x2[i];
 //      }
     }
-    Graphics g = offscreen.getGraphics();    
-    Graphics2D g2 = (Graphics2D) g;
-    
-    if (Toolkit.highResDisplay()) {
-      // scale everything 2x, will be scaled down when drawn to the screen
-      g2.scale(2, 2);
-      if (Base.isUsableOracleJava()) {
-        // Oracle Java looks better with anti-aliasing turned on
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      }
-    } else {
-      // don't anti-alias text in retina mode w/ Apple Java
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                          RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    }
+    Graphics g = offscreen.getGraphics();
+    /*Graphics2D g2 =*/ Toolkit.prepareGraphics(g);
 
     g.setColor(hiding ? hideColor : bgColor);
     g.fillRect(0, 0, width, height);

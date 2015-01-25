@@ -32,6 +32,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
@@ -488,8 +489,32 @@ public class Toolkit {
 
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  
+  /** 
+   * Handles scaling for high-res displays, also sets text anti-aliasing 
+   * options. Moved to a utility function because it's used in several classes.
+   * @param g
+   * @return a Graphics2D object, as a bit o sugar
+   */
+  static public Graphics2D prepareGraphics(Graphics g) {
+    Graphics2D g2 = (Graphics2D) g;
+
+    if (Toolkit.highResDisplay()) {
+      // scale everything 2x, will be scaled down when drawn to the screen
+      g2.scale(2, 2);
+    } 
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+    return g2;
+  }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+    
   static Boolean highResProp;
 
 
@@ -501,43 +526,25 @@ public class Toolkit {
   }
   
   
+  // This should probably be reset each time there's a display change.
+  // A 5-minute search didn't turn up any such event in the Java API.
+  // Also, should we use the Toolkit associated with the editor window?
   static private boolean checkRetina() {
     if (Base.isMacOS()) {
-    // This should probably be reset each time there's a display change.
-    // A 5-minute search didn't turn up any such event in the Java API.
-    // Also, should we use the Toolkit associated with the editor window?
-//      String javaVendor = System.getProperty("java.vendor");
-//      if (javaVendor.contains("Apple")) {
-      if (System.getProperty("java.vendor").contains("Apple")) {
-        Float prop = (Float)
-          awtToolkit.getDesktopProperty("apple.awt.contentScaleFactor");
-        if (prop != null) {
-          return prop == 2;
-        }
-//      } else if (javaVendor.contains("Oracle")) {
-//        String version = System.getProperty("java.version");  // 1.7.0_40
-//        String[] m = PApplet.match(version, "1.(\\d).*_(\\d+)");
-//        
-//        // Make sure this is Oracle Java 7u40 or later
-//        if (m != null && 
-//            PApplet.parseInt(m[1]) >= 7 && 
-//            PApplet.parseInt(m[1]) >= 40) {
-      } else if (Base.isUsableOracleJava()) {
-        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice device = env.getDefaultScreenDevice();
+      GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      GraphicsDevice device = env.getDefaultScreenDevice();
 
-        try {
-          Field field = device.getClass().getDeclaredField("scale");
-          if (field != null) {
-            field.setAccessible(true);
-            Object scale = field.get(device);
+      try {
+        Field field = device.getClass().getDeclaredField("scale");
+        if (field != null) {
+          field.setAccessible(true);
+          Object scale = field.get(device);
 
-            if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
-              return true;
-            }
+          if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
+            return true;
           }
-        } catch (Exception ignore) { } 
-      }
+        }
+      } catch (Exception ignore) { } 
     }
     return false;
   }

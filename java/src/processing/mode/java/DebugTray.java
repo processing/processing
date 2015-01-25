@@ -91,7 +91,6 @@ public class DebugTray extends JFrame {
 
     scrollPane = new JScrollPane();
     tree = new Outline();
-
     scrollPane.setViewportView(tree);
 
     GroupLayout layout = new GroupLayout(getContentPane());
@@ -99,11 +98,16 @@ public class DebugTray extends JFrame {
     layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                               .addGap(0, 400, Short.MAX_VALUE)
                               .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)));
+                                        .addComponent(scrollPane, 
+                                                      GroupLayout.DEFAULT_SIZE, 
+                                                      400, Short.MAX_VALUE)));
     layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addGap(0, 300, Short.MAX_VALUE)
                             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                      .addComponent(scrollPane, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)));
+                                      .addComponent(scrollPane, 
+                                                    GroupLayout.Alignment.TRAILING, 
+                                                    GroupLayout.DEFAULT_SIZE, 
+                                                    300, Short.MAX_VALUE)));
     pack();
     
     // setup Outline
@@ -135,6 +139,11 @@ public class DebugTray extends JFrame {
     declaredThisFields = new ArrayList<VariableNode>();
 
 //    this.setTitle(editor.getSketch().getName());
+  }
+  
+  
+  class TrayToolbar extends JComponent {
+    
   }
   
   

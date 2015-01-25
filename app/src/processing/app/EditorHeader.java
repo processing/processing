@@ -253,21 +253,17 @@ public class EditorHeader extends JComponent {
       fontAscent = (int) Toolkit.getAscent(g);
     }
 
-    Graphics2D g2 = (Graphics2D) g;
-
+    Graphics2D g2 = Toolkit.prepareGraphics(g);
+    /*
     if (Toolkit.highResDisplay()) {
       // scale everything 2x, will be scaled down when drawn to the screen
       g2.scale(2, 2);
-      if (Base.isUsableOracleJava()) {
-        // Oracle Java looks better with anti-aliasing turned on
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      }
-    } else {
-      // don't anti-alias text in retina mode w/ Apple Java
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                          RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    }
+    } 
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+     */
 
     // set the background for the offscreen
     g.setColor(hiding ? hideColor : bgColor);

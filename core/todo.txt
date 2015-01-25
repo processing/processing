@@ -5,6 +5,9 @@ X   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
 X   hint(ENABLE_2X_PIXELS)?
 X   hidpi is Apple's name as well
 X   mostly getting away from this
+X bezierSegment() function to do equal-length segments
+X   https://github.com/processing/processing/issues/2919
+X   handled instead as an example
 
 _ textAlign(RIGHT) including spaces at the end of each line
 _   https://github.com/processing/processing/issues/3028
@@ -132,10 +135,6 @@ _ match and iterators
 _   add match version that returns table that's only a pointer to original
 _   save the constructor for the version that actually copies data
 _   the table pointer version will be speedy and allow chaining 
-
-
-_ bezierSegment() function to do equal-length segments
-_   https://github.com/processing/processing/issues/2919
 
 
 high

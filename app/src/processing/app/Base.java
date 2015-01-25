@@ -1522,6 +1522,7 @@ public class Base {
   }
 
 
+  /*
   static private Boolean usableOracleJava;
 
   // Make sure this is Oracle Java 7u40 or later. This is temporary.
@@ -1543,6 +1544,7 @@ public class Base {
     }
     return usableOracleJava;
   }
+  */
 
 
   /**

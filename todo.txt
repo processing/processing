@@ -9,6 +9,7 @@ X don't add a ^M to files when writing
 X   https://github.com/processing/processing/issues/3014
 X add more bulletproofing to the save process
 X   https://github.com/processing/processing/issues/2923
+X serious text improvements (at least on retina)
 
 update components
 X moving to Java 8 because Java 7 will be discontinued
@@ -84,13 +85,21 @@ X   https://github.com/processing/processing/pull/3048
 integration of pdex
 X changed JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
 X change build scripts, get things running
+X rename TextArea and TextAreaPainter to JavaTextArea
+X DebugEditor.createTextArea() is copy & pasted from JavaEditor
+X   this whole setup is really gross at the moment
+X finish Ant task to download JRE and JDK from Oracle
+
 _ remove public 'ta' object in DebugEditor, also dmode
-_ rename TextArea and TextAreaPainter to JavaTextArea
-_ DebugEditor.createTextArea() is copy & pasted from JavaEditor
-_   this whole setup is really gross at the moment
-_ auto-insert after antlr @SuppressWarnings({ "unused", "unchecked", "cast" })
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
 _   because it's in the other ClassLoader, can no longer rely on it
+
+jre download/install
+_ update build scripts for Windows and Linux to use JRE downloader Ant Task
+_   https://github.com/processing/processing/issues/3059
+_ add method to prompt OS X developers to download the JDK update
+_ make sure the file downloads correctly before renaming
+_   https://github.com/processing/processing/issues/2960
 
 _ fix file change detection on OS X
 _   https://github.com/processing/processing/issues/2852
@@ -102,11 +111,7 @@ _   otherwise redoing the design for 2 modes
 _ add span screens pref (near the display pref)
 _   add checkbox for spans to export dialog
 _ remove "save before running" message
-
-X finish Ant task to download JRE and JDK from Oracle
-_ add method to prompt OS X developers to download the JDK update
-_ make sure the file downloads correctly before renaming
-_   https://github.com/processing/processing/issues/2960
+_ auto-insert after antlr @SuppressWarnings({ "unused", "unchecked", "cast" })
 
 
 from the todo list

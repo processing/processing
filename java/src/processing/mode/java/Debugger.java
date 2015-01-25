@@ -922,6 +922,7 @@ public class Debugger implements VMEventListener {
         return "";
       }
       return t.frame(0).thisObject().referenceType().name();
+      
     } catch (IncompatibleThreadStateException ex) {
       log(Level.SEVERE, null, ex);
       return "";
