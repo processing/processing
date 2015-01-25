@@ -1,5 +1,6 @@
 package processing.lwjgl;
 
+//import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -7,11 +8,16 @@ import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+//import java.awt.Insets;
+import java.awt.Label;
 import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.IntBuffer;
 import java.lang.reflect.Field;
+
+import javax.swing.JFrame;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -92,7 +98,8 @@ public class PSurfaceLWJGL implements PSurface {
     
     Canvas canvas = new Canvas();
     canvas.setFocusable(true);
-    canvas.requestFocus();    
+    canvas.requestFocus();
+    canvas.setBounds(0, 0, sketchWidth, sketchHeight);
     try {
       Display.setParent(canvas);
       return canvas;
@@ -160,7 +167,8 @@ public class PSurfaceLWJGL implements PSurface {
       fullScreen = true;
     }
 
-    if (fullScreen || spanDisplays) {
+//    if (fullScreen || spanDisplays) {
+    if (spanDisplays) {
       sketchWidth = screenRect.width;
       sketchHeight = screenRect.height;
     }
@@ -245,7 +253,7 @@ public class PSurfaceLWJGL implements PSurface {
   public void setResizable(boolean resizable) {
     Display.setResizable(resizable);
   }
-
+  
   @Override
   public void placeWindow(int[] location) {
     if (location != null) {
@@ -307,8 +315,65 @@ public class PSurfaceLWJGL implements PSurface {
     } 
   }
 
+  JFrame presentFrame;
+  Canvas presentCanvas;
+  
   @Override
   public void placePresent(Color stopColor) {
+    
+    if (sketchWidth < screenRect.width || sketchHeight < screenRect.height) {
+
+      presentFrame = new JFrame(displayDevice.getDefaultConfiguration());      
+      presentFrame.getContentPane().setBackground(WINDOW_BGCOLOR);
+      
+//      presentCanvas = new Canvas();
+//      presentCanvas.setFocusable(true);
+//      presentCanvas.requestFocus();    
+//      presentCanvas.setBounds(0, 0, sketchWidth, sketchHeight);
+//       
+//      Insets insets = presentFrame.getInsets();
+//      int windowW = Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
+//        insets.left + insets.right;
+//      int windowH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT) +
+//        insets.top + insets.bottom;
+//      presentFrame.setSize(windowW, windowH);
+//      presentFrame.setLayout(new BorderLayout());
+//      presentFrame.add(presentCanvas, BorderLayout.CENTER);
+//      
+      presentFrame.setUndecorated(true);
+      presentFrame.setBounds(screenRect);
+      presentFrame.setVisible(true);      
+      presentFrame.setLayout(null);
+      presentFrame.invalidate();
+      presentFrame.setResizable(false);
+      presentFrame.setAlwaysOnTop(false);
+//      presentFrame.toBack();
+      
+
+
+      if (stopColor != null) {
+        Label label = new Label("stop");
+        label.setForeground(stopColor);
+        label.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mousePressed(java.awt.event.MouseEvent e) {
+            sketch.exit();
+          }
+        });
+        presentFrame.add(label);
+
+        Dimension labelSize = label.getPreferredSize();
+        // sometimes shows up truncated on mac
+        //System.out.println("label width is " + labelSize.width);
+        labelSize = new Dimension(100, labelSize.height);
+        label.setSize(labelSize);
+        label.setLocation(20, screenRect.height - labelSize.height - 20);
+      }
+    }
+
+    
+    
+    
     
     /*
     // After the pack(), the screen bounds are gonna be 0s
