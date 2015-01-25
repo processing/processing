@@ -30,7 +30,6 @@ import processing.core.PApplet;
 import processing.mode.java.debug.LineBreakpoint;
 import processing.mode.java.debug.LineHighlight;
 import processing.mode.java.debug.LineID;
-import processing.mode.java.debug.VariableInspector;
 import processing.mode.java.pdex.ErrorBar;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.ErrorMessageSimplifier;

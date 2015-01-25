@@ -18,7 +18,7 @@
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-package processing.mode.java.debug;
+package processing.mode.java;
 
 import java.awt.*;
 import java.awt.event.ComponentEvent;
@@ -42,8 +42,7 @@ import org.netbeans.swing.outline.*;
 import com.sun.jdi.Value;
 
 import processing.app.Mode;
-import processing.mode.java.Debugger;
-import processing.mode.java.JavaEditor;
+import processing.mode.java.debug.VariableNode;
 
 
 public class VariableInspector extends JFrame {
@@ -73,7 +72,7 @@ public class VariableInspector extends JFrame {
   protected List<VariableNode> declaredThisFields;
   
   protected JavaEditor editor; 
-  protected Debugger dbg; 
+//  protected Debugger dbg; 
   
   /// list of expanded tree paths. (using list to maintain the order of expansion)
   protected List<TreePath> expandedNodes = new ArrayList<TreePath>(); 
@@ -84,16 +83,29 @@ public class VariableInspector extends JFrame {
   final int VERTICAL_OFFSET = 64;
     
   
-  public VariableInspector(JavaEditor je) {
-    editor = je;
-    dbg = editor.getDebugger();
+  public VariableInspector(JavaEditor editor) {
+    this.editor = editor;
     
     setUndecorated(true);
-
     editor.addComponentListener(new EditorFollower());
-    
-    initComponents();
 
+    scrollPane = new JScrollPane();
+    tree = new Outline();
+
+    scrollPane.setViewportView(tree);
+
+    GroupLayout layout = new GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                              .addGap(0, 400, Short.MAX_VALUE)
+                              .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)));
+    layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addGap(0, 300, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                      .addComponent(scrollPane, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)));
+    pack();
+    
     // setup Outline
     rootNode = new DefaultMutableTreeNode("root");
     builtins = new DefaultMutableTreeNode("Processing");
@@ -224,6 +236,7 @@ public class VariableInspector extends JFrame {
     public void setValueFor(Object o, int i, Object o1) {
       VariableNode var = (VariableNode) o;
       String stringValue = (String) o1;
+      Debugger dbg = editor.getDebugger();
 
       Value value = null;
       try {
@@ -516,7 +529,7 @@ public class VariableInspector extends JFrame {
       }
       VariableNode var = (VariableNode) last;
       var.removeAllChildren(); // TODO: should we only load it once?
-      var.addChildren(filterNodes(dbg.getFields(var.getValue(), 0, true), new ThisFilter()));
+      var.addChildren(filterNodes(editor.getDebugger().getFields(var.getValue(), 0, true), new ThisFilter()));
     }
 
     @Override
@@ -560,26 +573,6 @@ public class VariableInspector extends JFrame {
   }
 
     
-  private void initComponents() {
-    scrollPane = new JScrollPane();
-    tree = new Outline();
-
-    scrollPane.setViewportView(tree);
-
-    GroupLayout layout = new GroupLayout(getContentPane());
-    getContentPane().setLayout(layout);
-    layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                              .addGap(0, 400, Short.MAX_VALUE)
-                              .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)));
-    layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                            .addGap(0, 300, Short.MAX_VALUE)
-                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                      .addComponent(scrollPane, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)));
-    pack();
-  }
-
-
   protected static void run(final VariableInspector vi) {
     EventQueue.invokeLater(new Runnable() {
       @Override
