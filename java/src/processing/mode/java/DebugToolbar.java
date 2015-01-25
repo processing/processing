@@ -74,6 +74,8 @@ public class DebugToolbar extends JavaToolbar {
   public DebugToolbar(Editor editor, Base base) {
     super(editor, base);
   }
+  
+  
   public Image[][] loadDebugImages() {
     int res = Toolkit.highResDisplay() ? 2 : 1;
     

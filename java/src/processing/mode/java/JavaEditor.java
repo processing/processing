@@ -92,19 +92,19 @@ public class JavaEditor extends Editor {
   protected JScrollPane errorTableScrollPane;
   protected JPanel consoleProblemsPane;    
   protected XQErrorTable errorTable;
-    
+
+  // TODO how is this different from hasJavaTabs?
   public boolean compilationCheckEnabled = true;
 
 //  protected JCheckBoxMenuItem showWarnings;
-  public JCheckBoxMenuItem problemWindowMenuCB;
+//  public JCheckBoxMenuItem problemWindowMenuCB;
 //  protected JCheckBoxMenuItem debugMessagesEnabled;
 //  protected JMenuItem showOutline; 
 //  protected JMenuItem showTabOutline;
 //  protected JCheckBoxMenuItem writeErrorLog;
 //  protected JCheckBoxMenuItem completionsEnabled;
     
-  // TODO no way should this be public; make an accessor or protected
-  public boolean hasJavaTabs;
+  private boolean hasJavaTabs;
   
 
   protected JavaEditor(Base base, String path, EditorState state, Mode mode) {
@@ -161,7 +161,7 @@ public class JavaEditor extends Editor {
     }
     getSketch().setModified(false); // setting breakpoints will flag sketch as modified, so override this here
 
-    checkForJavaTabs();
+    hasJavaTabs = checkForJavaTabs();
     initializeErrorChecker();
 
     getJavaTextArea().setECSandThemeforTextArea(errorCheckerService, jmode);
@@ -2415,24 +2415,28 @@ public class JavaEditor extends Editor {
     }
 
     
+    public boolean hasJavaTabs() {
+      return hasJavaTabs;
+    }
+    
+    
     /**
-     * Checks if the sketch contains java tabs. If it does, the editor ain't built
-     * for it, yet. Also, user should really start looking at more powerful IDEs 
-     * likeEclipse. Disable compilation check and some more features.
+     * Checks if the sketch contains java tabs. If it does, the editor ain't 
+     * built for it, yet. Also, user should really start looking at a full IDE 
+     * like Eclipse. Disable compilation check and some more features.
      */
-    private void checkForJavaTabs() {
-      hasJavaTabs = false;
-      for (int i = 0; i < this.getSketch().getCodeCount(); i++) {
-        if (this.getSketch().getCode(i).getExtension().equals("java")) {
+    private boolean checkForJavaTabs() {
+      for (SketchCode code : getSketch().getCode()) {
+        if (code.getExtension().equals("java")) {
           compilationCheckEnabled = false;
-          hasJavaTabs = true;
-          JOptionPane.showMessageDialog(new Frame(), this
-                                        .getSketch().getName()
-                                        + " contains .java tabs. Some editor features are not supported " +
-              "for .java tabs and will be disabled.");
-          break;
+          final String msg = 
+            getSketch().getName() + " contains .java tabs. Some editor " +
+            "features are not supported for .java tabs and will be disabled.";
+          Base.showWarning("Cannot debug advanced sketches", msg);
+          return true;
         }
       }
+      return false;
     }
 
     

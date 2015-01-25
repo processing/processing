@@ -75,11 +75,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
   
   public JavaTextAreaPainter(JavaTextArea textArea, TextAreaDefaults defaults) {
     super(textArea, defaults);
-//    ta = textArea;
     
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent evt) {
-        if (!hasJavaTabs()) { // Ctrl + Click disabled for java tabs
+        if (!getEditor().hasJavaTabs()) { // Ctrl + Click disabled for java tabs
           if (evt.getButton() == MouseEvent.BUTTON1) {
             if (evt.isControlDown() || evt.isMetaDown()) {
               handleCtrlClick(evt);
@@ -453,87 +452,89 @@ public class JavaTextAreaPainter extends TextAreaPainter
   }
 
   
-  public String getToolTipText(java.awt.event.MouseEvent evt) {
-    if (hasJavaTabs()) { // disabled for java tabs
-      setToolTipText(null);
-      return super.getToolTipText(evt);
-    }
-    int off = textArea.xyToOffset(evt.getX(), evt.getY());
-    if (off < 0) {
-      setToolTipText(null);
-      return super.getToolTipText(evt);
-    }
-    int line = textArea.getLineOfOffset(off);
-    if (line < 0) {
-      setToolTipText(null);
-      return super.getToolTipText(evt);
-    }
-    String s = textArea.getLineText(line);
-    if (s == "")
-      return evt.toString();
-    else if (s.length() == 0) {
-      setToolTipText(null);
-      return super.getToolTipText(evt);
-    } else {
-      int x = textArea.xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
-      int xLS = off - textArea.getLineStartNonWhiteSpaceOffset(line);
-      if (x < 0 || x >= s.length()) {
+  public String getToolTipText(MouseEvent event) {
+    if (!getEditor().hasJavaTabs()) { 
+      int off = textArea.xyToOffset(event.getX(), event.getY());
+      if (off < 0) {
         setToolTipText(null);
-        return super.getToolTipText(evt);
+        return super.getToolTipText(event);
       }
-      String word = s.charAt(x) + "";
-      if (s.charAt(x) == ' ') {
+      int line = textArea.getLineOfOffset(off);
+      if (line < 0) {
         setToolTipText(null);
-        return super.getToolTipText(evt);
+        return super.getToolTipText(event);
       }
-      if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_' || s
-          .charAt(x) == '$')) {
+      String s = textArea.getLineText(line);
+      if (s == "") {
+        return event.toString();
+
+      } else if (s.length() == 0) {
         setToolTipText(null);
-        return super.getToolTipText(evt);
-      }
-      int i = 0;
-      while (true) {
-        i++;
-        if (x1 >= 0 && x1 < s.length()) {
-          if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
-            word = s.charAt(x1--) + word;
-            xLS--;
+        return super.getToolTipText(event);
+
+      } else {
+        int x = textArea.xToOffset(line, event.getX()), x2 = x + 1, x1 = x - 1;
+        int xLS = off - textArea.getLineStartNonWhiteSpaceOffset(line);
+        if (x < 0 || x >= s.length()) {
+          setToolTipText(null);
+          return super.getToolTipText(event);
+        }
+        String word = s.charAt(x) + "";
+        if (s.charAt(x) == ' ') {
+          setToolTipText(null);
+          return super.getToolTipText(event);
+        }
+        if (!(Character.isLetterOrDigit(s.charAt(x)) || 
+            s.charAt(x) == '_' || s.charAt(x) == '$')) {
+          setToolTipText(null);
+          return super.getToolTipText(event);
+        }
+        int i = 0;
+        while (true) {
+          i++;
+          if (x1 >= 0 && x1 < s.length()) {
+            if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
+              word = s.charAt(x1--) + word;
+              xLS--;
+            } else
+              x1 = -1;
           } else
             x1 = -1;
-        } else
-          x1 = -1;
 
-        if (x2 >= 0 && x2 < s.length()) {
-          if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
-              || s.charAt(x2) == '$')
-            word = word + s.charAt(x2++);
-          else
+          if (x2 >= 0 && x2 < s.length()) {
+            if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
+                || s.charAt(x2) == '$')
+              word = word + s.charAt(x2++);
+            else
+              x2 = -1;
+          } else
             x2 = -1;
-        } else
-          x2 = -1;
 
-        if (x1 < 0 && x2 < 0)
-          break;
-        if (i > 200) {
-          // time out!
-          // System.err.println("Whoopsy! :P");
-          break;
+          if (x1 < 0 && x2 < 0)
+            break;
+          if (i > 200) {
+            // time out!
+            // System.err.println("Whoopsy! :P");
+            break;
+          }
+        }
+        if (Character.isDigit(word.charAt(0))) {
+          setToolTipText(null);
+          return super.getToolTipText(event);
+        }
+        String tooltipText = errorCheckerService.getASTGenerator()
+            .getLabelForASTNode(line, word, xLS);
+
+        //      log(errorCheckerService.mainClassOffset + " MCO "
+        //      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
+        if (tooltipText != null) {
+          return tooltipText;
         }
       }
-      if (Character.isDigit(word.charAt(0))) {
-        setToolTipText(null);
-        return super.getToolTipText(evt);
-      }
-      String tooltipText = errorCheckerService.getASTGenerator()
-          .getLabelForASTNode(line, word, xLS);
-
-//      log(errorCheckerService.mainClassOffset + " MCO "
-//      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
-      if (tooltipText != null)
-        return tooltipText;
     }
+    // Used when there are Java tabs, but also the fall-through case from above
     setToolTipText(null);
-    return super.getToolTipText(evt);
+    return super.getToolTipText(event);
   }
 
   
@@ -881,7 +882,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 //	}
 	
 	
-	private boolean hasJavaTabs() {
-	  return getEditor().hasJavaTabs;
-	}
+//	private boolean hasJavaTabs() {
+//	  return getEditor().hasJavaTabs();
+//	}
 }

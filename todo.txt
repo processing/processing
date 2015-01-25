@@ -89,8 +89,11 @@ X rename TextArea and TextAreaPainter to JavaTextArea
 X DebugEditor.createTextArea() is copy & pasted from JavaEditor
 X   this whole setup is really gross at the moment
 X finish Ant task to download JRE and JDK from Oracle
+X remove public 'ta' object in DebugEditor, also dmode
 
-_ remove public 'ta' object in DebugEditor, also dmode
+_ fix hasJavaTabs() function
+_   almost always used as a negative, or tied to a 'return' from fxn
+_   name isn't tied to its function, but the symptom
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
 _   because it's in the other ClassLoader, can no longer rely on it
 

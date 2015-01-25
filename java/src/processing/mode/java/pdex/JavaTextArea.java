@@ -163,22 +163,21 @@ public class JavaTextArea extends JEditTextArea {
 
   
   /**
-   * Handles KeyEvents for TextArea
-   * Code completion begins from here.
+   * Handles KeyEvents for TextArea (code completion begins from here).
    */
   public void processKeyEvent(KeyEvent evt) {
-    //if(Base.isMacOS() && evt.isControlDown()) System.out.println("Ctrl down: " + evt);
-    if(evt.getKeyCode() == KeyEvent.VK_ESCAPE){
-      if(suggestion != null){
-        if(suggestion.isVisible()){
+    if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+      if (suggestion != null){
+        if (suggestion.isVisible()){
           Base.log("esc key");
           hideSuggestion();
           evt.consume();
           return;
         }
       }
-    }
-    else if(evt.getKeyCode() == KeyEvent.VK_ENTER && evt.getID() == KeyEvent.KEY_PRESSED){
+    
+    } else if (evt.getKeyCode() == KeyEvent.VK_ENTER && 
+               evt.getID() == KeyEvent.KEY_PRESSED) {
       if (suggestion != null) {
         if (suggestion.isVisible()) {
           if (suggestion.insertSelection(CompletionPanel.KEYBOARD_COMPLETION)) {
@@ -228,62 +227,27 @@ public class JavaTextArea extends JEditTextArea {
     }
     super.processKeyEvent(evt);
 
-    if (editor.hasJavaTabs) return; // code completion disabled if java tabs
-
-    if (evt.getID() == KeyEvent.KEY_TYPED) {
-      char keyChar = evt.getKeyChar();
-      if (keyChar == KeyEvent.VK_ENTER ||
-          keyChar == KeyEvent.VK_ESCAPE ||
-          keyChar == KeyEvent.VK_TAB ||
-          keyChar == KeyEvent.CHAR_UNDEFINED) {
-        return;
-      }
-      else if (keyChar == ')') {
-        hideSuggestion(); // See #2741
-        return;
-      }
-
-      final KeyEvent evt2 = evt;
+    // code completion disabled if java tabs
+    if (!editor.hasJavaTabs()) {
+      if (evt.getID() == KeyEvent.KEY_TYPED) {
+        processCompletionKeys(evt);
       
-      if (keyChar == '.') {
-        if (JavaMode.codeCompletionsEnabled) {
-          Base.log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
-          Base.log("Typing: " + fetchPhrase(evt2));
-        }
-      } else if (keyChar == ' ') { // Trigger on Ctrl-Space
-        if (!Base.isMacOS() && JavaMode.codeCompletionsEnabled &&
-        (evt.isControlDown() || evt.isMetaDown())) {
-          SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
-            protected Object doInBackground() throws Exception {
-              // Provide completions only if it's enabled
-              if (JavaMode.codeCompletionsEnabled) {
-                getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
-                Base.log("[KeyEvent]" + evt2.getKeyChar() + "  |Prediction started");
-                Base.log("Typing: " + fetchPhrase(evt2));
-              }
-              return null;
-            }
-          };
-          worker.execute();
-        } else {
-          hideSuggestion(); // hide on spacebar
-        }
-      } else {
-        if (JavaMode.codeCompletionsEnabled) {
-          prepareSuggestions(evt2);
-        }
+      } else if (Base.isMacOS() && evt.getID() == KeyEvent.KEY_RELEASED) {
+        processControlSpace(evt);
       }
     }
-    // #2699 - Special case for OS X, where Ctrl-Space is not detected as Key_Typed -_-
-    else if (Base.isMacOS() && evt.getID() == KeyEvent.KEY_RELEASED
-        && evt.getKeyCode() == KeyEvent.VK_SPACE && evt.isControlDown()) {
-      final KeyEvent evt2 = evt;
+  }
+  
+  
+  // #2699 - Special case for OS X, where Ctrl-Space is not detected as Key_Typed -_-
+  private void processControlSpace(final KeyEvent event) {
+    if (event.getKeyCode() == KeyEvent.VK_SPACE && event.isControlDown()) {
       SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
         protected Object doInBackground() throws Exception {
           // Provide completions only if it's enabled
           if (JavaMode.codeCompletionsEnabled) {
-            Base.log("[KeyEvent]" + KeyEvent.getKeyText(evt2.getKeyCode()) + "  |Prediction started");
-            Base.log("Typing: " + fetchPhrase(evt2));
+            Base.log("[KeyEvent]" + KeyEvent.getKeyText(event.getKeyCode()) + "  |Prediction started");
+            Base.log("Typing: " + fetchPhrase(event));
           }
           return null;
         }
@@ -292,10 +256,52 @@ public class JavaTextArea extends JEditTextArea {
     }
   }
 
+    
+  private void processCompletionKeys(final KeyEvent event) {
+    char keyChar = event.getKeyChar();
+    if (keyChar == KeyEvent.VK_ENTER ||
+        keyChar == KeyEvent.VK_ESCAPE ||
+        keyChar == KeyEvent.VK_TAB ||
+        keyChar == KeyEvent.CHAR_UNDEFINED) {
+      return;
+
+    } else if (keyChar == ')') {
+      hideSuggestion(); // See #2741
+      return;
+    }
+
+    if (keyChar == '.') {
+      if (JavaMode.codeCompletionsEnabled) {
+        Base.log("[KeyEvent]" + KeyEvent.getKeyText(event.getKeyCode()) + "  |Prediction started");
+        Base.log("Typing: " + fetchPhrase(event));
+      }
+    } else if (keyChar == ' ') { // Trigger on Ctrl-Space
+      if (!Base.isMacOS() && JavaMode.codeCompletionsEnabled &&
+          (event.isControlDown() || event.isMetaDown())) {
+        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+          protected Object doInBackground() throws Exception {
+            // Provide completions only if it's enabled
+            if (JavaMode.codeCompletionsEnabled) {
+              getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
+              Base.log("[KeyEvent]" + event.getKeyChar() + "  |Prediction started");
+              Base.log("Typing: " + fetchPhrase(event));
+            }
+            return null;
+          }
+        };
+        worker.execute();
+      } else {
+        hideSuggestion(); // hide on spacebar
+      }
+    } else {
+      if (JavaMode.codeCompletionsEnabled) {
+        prepareSuggestions(event);
+      }
+    }
+  }
+
   
-  /**
-   * Kickstart auto-complete suggestions
-   */
+  /** Kickstart auto-complete suggestions */
   private void prepareSuggestions(final KeyEvent evt){
     SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
       protected Object doInBackground() throws Exception {
@@ -315,7 +321,6 @@ public class JavaTextArea extends JEditTextArea {
   /**
    * Retrieves the word on which the mouse pointer is present
    * @param evt - the MouseEvent which triggered this method
-   * @return
    */
   private String fetchPhrase(MouseEvent evt) {
     Base.log("--handle Mouse Right Click--");
@@ -726,7 +731,7 @@ public class JavaTextArea extends JEditTextArea {
       }
 
       if (me.getButton() == MouseEvent.BUTTON3) {
-        if(!editor.hasJavaTabs){ // tooltips, etc disabled for java tabs
+        if (!editor.hasJavaTabs()) { // tooltips, etc disabled for java tabs
           fetchPhrase(me);
         }
       }

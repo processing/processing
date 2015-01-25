@@ -2127,8 +2127,9 @@ public class ASTGenerator {
     editor.getTextArea().select(lineStartWSOffset, lineStartWSOffset + length);
   }
   
-  public void handleShowUsage(){
-    if(editor.hasJavaTabs) return; // show usage disabled if java tabs
+  public void handleShowUsage() {
+    if (editor.hasJavaTabs()) return; // show usage disabled if java tabs
+    
     log("Last clicked word:" + lastClickedWord);
     if (lastClickedWord == null && 
         getSelectedText() == null) {
@@ -2383,8 +2384,9 @@ public class ASTGenerator {
   
   protected SketchOutline sketchOutline;
   
-  public void showSketchOutline(){
-    if(editor.hasJavaTabs) return; // sketch outline disabled if java tabs
+  public void showSketchOutline() {
+    if (editor.hasJavaTabs()) return;
+    
     sketchOutline = new SketchOutline(codeTree, errorCheckerService);
     sketchOutline.show();
   }
@@ -2472,7 +2474,8 @@ public class ASTGenerator {
   }
   
   public void handleRefactor() {
-    if(editor.hasJavaTabs) return; // refactoring disabled if java tabs
+    if (editor.hasJavaTabs()) return;  // refactoring disabled w/ java tabs
+
     log("Last clicked word:" + lastClickedWord);
     if (lastClickedWord == null && 
         getSelectedText() == null) {

@@ -167,7 +167,8 @@ public class ErrorWindow extends JFrame {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				thisEditor.problemWindowMenuCB.setSelected(false);
+			  // removing b/c this was the only use of problemWindowMenuCB [fry 150125]
+//				thisEditor.problemWindowMenuCB.setSelected(false);
 			}
 
 			@Override
