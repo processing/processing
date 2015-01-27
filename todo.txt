@@ -42,6 +42,8 @@ X   https://github.com/processing/processing/pull/2804
 X examples.properties file missing prevents startup
 X   https://github.com/processing/processing/issues/3037
 X   https://github.com/processing/processing/pull/3047
+X several new French translations
+X   https://github.com/processing/processing/pull/3061
 
 manindra
 X Fix for "Probably a ++ should go here" messages
@@ -107,6 +109,8 @@ _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
 _   iTunes has no rollover state but has a 'down' state
 _     swaps to stop after release
+_ need unavailable/deactivate state for debug toolbar items
+_   or hide the tray when not debugging? Debug just a menu checkbox?
 
 jre download/install
 _ update build scripts for Windows and Linux to use JRE downloader Ant Task

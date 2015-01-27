@@ -1,21 +1,21 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-Part of the Processing project - http://processing.org
-Copyright (c) 2012-15 The Processing Foundation
+  Part of the Processing project - http://processing.org
+  Copyright (c) 2012-15 The Processing Foundation
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License version 2
-as published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License version 2
+  as published by the Free Software Foundation.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software Foundation, Inc.
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation, Inc.
+  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
 package processing.mode.java;
@@ -189,10 +189,9 @@ public class Debugger implements VMEventListener {
 
     // load edits into sketch obj, etc...
     editor.prepareRun();
-    if (editor.toolbar() != null) {
-      // after prepareRun, since this removes highlights
-      editor.toolbar().activate(DebugToolbar.DEBUG); 
-    }
+
+    // after prepareRun, since this removes highlights
+    editor.activateDebug(); 
 
     try {
       Sketch sketch = editor.getSketch();
@@ -251,19 +250,18 @@ public class Debugger implements VMEventListener {
     }
     stopTrackingLineChanges();
     started = false;
-    if (editor.toolbar() != null){
-      editor.toolbar().deactivate(DebugToolbar.DEBUG);
-      editor.toolbar().deactivate(DebugToolbar.CONTINUE);
-      editor.toolbar().deactivate(DebugToolbar.STEP);
-    }
+    
+    editor.deactivateDebug();
+    editor.deactivateContinue();
+    editor.deactivateStep();
+    
     editor.statusEmpty();
   }
 
 
   /** Resume paused debugging session. Resumes VM. */
   public synchronized void continueDebug() {
-    if(editor.toolbar() != null)
-      editor.toolbar().activate(DebugToolbar.CONTINUE);
+    editor.activateContinue();
     editor.variableInspector().lock();
     //editor.clearSelection();
     //clearHighlight();
@@ -288,8 +286,7 @@ public class Debugger implements VMEventListener {
       startDebug();
     } else if (isPaused()) {
       editor.variableInspector().lock();
-      if(editor.toolbar() != null)
-        editor.toolbar().activate(DebugToolbar.STEP);
+      editor.activateStep();
 
       // use global to mark that there is a step request pending
       requestedStep = runtime.vm().eventRequestManager().createStepRequest(currentThread, StepRequest.STEP_LINE, stepDepth);
@@ -619,10 +616,8 @@ public class Debugger implements VMEventListener {
       @Override
       public void run() {
         editor.setCurrentLine(newCurrentLine);
-        if(editor.toolbar() != null){
-          editor.toolbar().deactivate(DebugToolbar.STEP);
-          editor.toolbar().deactivate(DebugToolbar.CONTINUE);
-        }
+        editor.deactivateStep();
+        editor.deactivateContinue();
       }
     });
 
@@ -651,10 +646,8 @@ public class Debugger implements VMEventListener {
       @Override
       public void run() {
         editor.setCurrentLine(newCurrentLine);
-        if(editor.toolbar() != null){
-          editor.toolbar().deactivate(DebugToolbar.STEP);
-          editor.toolbar().deactivate(DebugToolbar.CONTINUE);
-        }
+        editor.deactivateStep();
+        editor.deactivateContinue();
       }
     });
 
@@ -953,18 +946,13 @@ public class Debugger implements VMEventListener {
   /**
    * Get a string describing a location.
    * Format: class.method:translated_line_number
-   * @param l a location
+   * @param loc a location
    * @return descriptive string for the given location
    */
-  protected String locationToString(Location l) {
-    LineID line = locationToLineID(l);
-    int lineNumber;
-    if (line != null) {
-      lineNumber = line.lineIdx() + 1;
-    } else {
-      lineNumber = l.lineNumber();
-    }
-    return l.declaringType().name() + "." + l.method().name() + ":" + lineNumber;
+  protected String locationToString(Location loc) {
+    LineID line = locationToLineID(loc);
+    int lineNumber = (line != null) ? (line.lineIdx() + 1) : loc.lineNumber();
+    return loc.declaringType().name() + "." + loc.method().name() + ":" + lineNumber;
   }
 
 

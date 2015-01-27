@@ -32,7 +32,7 @@ import javax.swing.event.*;
 
 
 /**
- * run/stop/etc buttons for the ide
+ * Run/Stop button plus Mode selection
  */
 public abstract class EditorToolbar extends JComponent implements MouseInputListener, KeyListener {
 

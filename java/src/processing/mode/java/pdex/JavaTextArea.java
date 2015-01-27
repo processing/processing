@@ -26,16 +26,8 @@ import processing.mode.java.JavaEditor;
 import processing.mode.java.tweak.ColorControlBox;
 import processing.mode.java.tweak.Handle;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.FontMetrics;
-import java.awt.Point;
-import java.awt.event.ComponentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,16 +40,15 @@ import processing.app.Mode;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.app.syntax.TextAreaDefaults;
-//import processing.app.syntax.TextAreaPainter;
 
 
-/**
- * Customized text area. Adds support for line background colors.
- * @author Martin Leopold <m@martinleopold.com>
- */
 public class JavaTextArea extends JEditTextArea {
   protected PdeTextAreaDefaults defaults;
   protected JavaEditor editor;
+
+  static final int LEFT_GUTTER = 59;
+  static final int RIGHT_GUTTER = 27;
+  static final int GUTTER_MARGIN = 3;
 
   protected MouseListener[] mouseListeners; // cached mouselisteners, these are wrapped by MouseHandler
 
@@ -512,35 +503,34 @@ public class JavaTextArea extends JEditTextArea {
   }
 
   
-  /**
-   * Retrieve the total width of the gutter area.
-   *
-   * @return gutter width in pixels
-   */
-  protected int getGutterWidth() {
-    if (!editor.isDebugToolbarEnabled()) {
-      return 0;
-    }
-
-    FontMetrics fm = painter.getFontMetrics();
-    int textWidth = Math.max(fm.stringWidth(breakpointMarker),
-                             fm.stringWidth(currentLineMarker));
-    return textWidth + 2 * gutterPadding;
-  }
-
-  
-  /**
-   * Retrieve the width of margins applied to the left and right of the gutter
-   * text.
-   *
-   * @return margins in pixels
-   */
-  protected int getGutterMargins() {
-    if (!editor.isDebugToolbarEnabled()) {
-      return 0;
-    }
-    return gutterPadding;
-  }
+//  /**
+//   * Retrieve the total width of the gutter area.
+//   * @return gutter width in pixels
+//   */
+//  protected int getGutterWidth() {
+//    if (!editor.isDebugToolbarEnabled()) {
+//      return 0;
+//    }
+//
+//    FontMetrics fm = painter.getFontMetrics();
+//    int textWidth = Math.max(fm.stringWidth(breakpointMarker),
+//                             fm.stringWidth(currentLineMarker));
+//    return textWidth + 2 * gutterPadding;
+//  }
+//
+//  
+//  /**
+//   * Retrieve the width of margins applied to the left and right of the gutter
+//   * text.
+//   *
+//   * @return margins in pixels
+//   */
+//  protected int getGutterMargins() {
+//    if (!editor.isDebugToolbarEnabled()) {
+//      return 0;
+//    }
+//    return gutterPadding;
+//  }
 
   
   /**
@@ -679,7 +669,7 @@ public class JavaTextArea extends JEditTextArea {
    */
   @Override
   public int _offsetToX(int line, int offset) {
-    return super._offsetToX(line, offset) + getGutterWidth();
+    return super._offsetToX(line, offset) + LEFT_GUTTER;
   }
 
   
@@ -695,7 +685,7 @@ public class JavaTextArea extends JEditTextArea {
    */
   @Override
   public int xToOffset(int line, int x) {
-    return super.xToOffset(line, x - getGutterWidth());
+    return super.xToOffset(line, x - LEFT_GUTTER);
   }
 
   
@@ -719,7 +709,7 @@ public class JavaTextArea extends JEditTextArea {
     @Override
     public void mousePressed(MouseEvent me) {
       // check if this happened in the gutter area
-      if (me.getX() < getGutterWidth()) {
+      if (me.getX() < LEFT_GUTTER) {
         if (me.getButton() == MouseEvent.BUTTON1 && me.getClickCount() == 2) {
           int line = me.getY() / painter.getFontMetrics().getHeight()
               + firstLine;
@@ -776,12 +766,12 @@ public class JavaTextArea extends JEditTextArea {
     @Override
     public void mouseMoved(MouseEvent me) {
       // No need to forward since the standard MouseMotionListeners are called anyway
-      if (me.getX() < getGutterWidth()) {
-        if (lastX >= getGutterWidth()) {
+      if (me.getX() < LEFT_GUTTER) {
+        if (lastX >= LEFT_GUTTER) {
           painter.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
       } else {
-        if (lastX < getGutterWidth()) {
+        if (lastX < LEFT_GUTTER) {
           painter.setCursor(new Cursor(Cursor.TEXT_CURSOR));
         }
       }

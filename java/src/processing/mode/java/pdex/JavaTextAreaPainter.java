@@ -182,20 +182,17 @@ public class JavaTextAreaPainter extends TextAreaPainter
     try {
       // TODO This line is causing NPEs randomly ever since I added the 
       // toggle for Java Mode/Debugger toolbar. [Manindra]
-      super.paintLine(gfx, line, x + getGutterWidth(), tokenMarker);
+      super.paintLine(gfx, line, x + JavaTextArea.LEFT_GUTTER, tokenMarker);
       
     } catch (Exception e) {
       Base.log(e.getMessage());
     }
-    if (getEditor().isDebugToolbarEnabled()) {
-      paintGutterBg(gfx, line, x);
-  
-      // disabled line background after P5 2.1, since it adds highlight by default
-      //paintLineBgColor(gfx, line, x + ta.getGutterWidth()); 
-  
-      paintGutterLine(gfx, line, x);
-      paintGutterText(gfx, line, x);
-    }   
+    
+    // formerly only when in debug mode
+    paintGutterBg(gfx, line, x);
+    paintGutterLine(gfx, line, x);
+    paintGutterText(gfx, line, x);
+
     paintErrorLine(gfx, line, x);
   }
   
@@ -213,7 +210,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
   protected void paintGutterBg(Graphics gfx, int line, int x) {
     gfx.setColor(getTextArea().gutterBgColor);
     int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
-    gfx.fillRect(0, y, getGutterWidth(), fm.getHeight());
+    gfx.fillRect(0, y, JavaTextArea.LEFT_GUTTER, fm.getHeight());
   }
 
   
@@ -230,8 +227,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
   protected void paintGutterLine(Graphics gfx, int line, int x) {
     int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
     gfx.setColor(getTextArea().gutterLineColor);
-    gfx.drawLine(getGutterWidth(), y, 
-                 getGutterWidth(), y + fm.getHeight());
+    gfx.drawLine(JavaTextArea.LEFT_GUTTER, y, 
+                 JavaTextArea.LEFT_GUTTER, y + fm.getHeight());
   }
 
   
@@ -263,13 +260,13 @@ public class JavaTextAreaPainter extends TextAreaPainter
     // draw 4 times to make it appear bold, displaced 1px to the right, to the bottom and bottom right.
     //int len = text.length() > ta.gutterChars ? ta.gutterChars : text.length();
     Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-                             getGutterMargins(), y, gfx, this, 0);
+                             JavaTextArea.GUTTER_MARGIN, y, gfx, this, 0);
     Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-                             getGutterMargins() + 1, y, gfx, this, 0);
+                             JavaTextArea.GUTTER_MARGIN + 1, y, gfx, this, 0);
     Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-                             getGutterMargins(), y + 1, gfx, this, 0);
+                             JavaTextArea.GUTTER_MARGIN, y + 1, gfx, this, 0);
     Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-                             getGutterMargins() + 1, y + 1, gfx, this, 0);
+                             JavaTextArea.GUTTER_MARGIN + 1, y + 1, gfx, this, 0);
   }
   
 
@@ -376,8 +373,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
       int x1 = fm.stringWidth(goodCode) + (aw - rw), y1 = y + fm.getHeight()
           - 2, x2 = x1 + rw;
       // Adding offsets for the gutter
-      x1 += getGutterWidth();
-      x2 += getGutterWidth();
+      x1 += JavaTextArea.LEFT_GUTTER;
+      x2 += JavaTextArea.LEFT_GUTTER;
 
       // gfx.fillRect(x1, y, rw, height);
 
@@ -856,14 +853,14 @@ public class JavaTextAreaPainter extends TextAreaPainter
   }
 
 	
-	private int getGutterMargins() {
-	  return ((JavaTextArea) textArea).getGutterMargins();
-	}
+//	private int getGutterMargins() {
+//	  return ((JavaTextArea) textArea).getGutterMargins();
+//	}
 	
 	
-	private int getGutterWidth() {
-	  return ((JavaTextArea) textArea).getGutterWidth();
-	}
+//	private int getGutterWidth() {
+//	  return ((JavaTextArea) textArea).getGutterWidth();
+//	}
 
 	
 	private JavaTextArea getTextArea() {

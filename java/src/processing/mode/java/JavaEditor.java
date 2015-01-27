@@ -8,7 +8,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,10 +60,14 @@ public class JavaEditor extends Editor {
   protected final String breakpointMarkerComment = " //<>//"; // breakpoint marker comment
 
   protected JMenu debugMenu;
+  JCheckBoxMenuItem toggleDebugger;
 
   protected Debugger debugger;
   protected DebugTray tray;
 
+//  private EditorToolbar javaToolbar;
+  private DebugToolbar debugToolbar;
+    
   private ErrorBar errorBar;
     
   protected XQConsoleToggle btnShowConsole;
@@ -138,7 +141,7 @@ public class JavaEditor extends Editor {
     getJavaTextArea().setECSandThemeforTextArea(errorCheckerService, jmode);
 
     addXQModeUI();    
-    debugToolbarEnabled = new AtomicBoolean(false);
+//    debugToolbarEnabled = new AtomicBoolean(false);
     //log("Sketch Path: " + path);
   }
   
@@ -1159,11 +1162,11 @@ public class JavaEditor extends Editor {
    * To initiate a "stop" action, call handleStop() instead.
    */
   public void deactivateRun() {
-    if (toolbar instanceof DebugToolbar){
-      toolbar.deactivate(DebugToolbar.RUN);
-    } else {
-      toolbar.deactivate(JavaToolbar.RUN);
-    }
+//    if (toolbar instanceof DebugToolbar){
+//      toolbar.deactivate(DebugToolbar.RUN);
+//    } else {
+    toolbar.deactivate(JavaToolbar.RUN);
+//    }
   }
 
 
@@ -1322,6 +1325,7 @@ public class JavaEditor extends Editor {
     }
 
     
+    /*
     private AtomicBoolean debugToolbarEnabled;
     
     public boolean isDebugToolbarEnabled() {
@@ -1329,11 +1333,7 @@ public class JavaEditor extends Editor {
     }
 
     
-    protected EditorToolbar javaToolbar, debugToolbar;
-    
-    /**
-     * Toggles between java mode and debug mode toolbar
-     */
+    /// Toggles between java mode and debug mode toolbar
     protected void switchToolbars(){
       final EditorToolbar nextToolbar;
       if(debugToolbarEnabled.get()){
@@ -1376,6 +1376,7 @@ public class JavaEditor extends Editor {
         }
       });
     }
+    */
 
     /**
      * Creates the debug menu. Includes ActionListeners for the menu items.
@@ -1387,12 +1388,12 @@ public class JavaEditor extends Editor {
       debugMenu = new JMenu(Language.text("menu.debug"));
       JMenuItem item;
 
-      JCheckBoxMenuItem toggleDebugger =
-        new JCheckBoxMenuItem(Language.text("menu.debug.show_debug_toolbar"));
+      toggleDebugger = new JCheckBoxMenuItem("Use the Debugger");
+        //new JCheckBoxMenuItem(Language.text("menu.debug.show_debug_toolbar"));
       toggleDebugger.setSelected(false);
       toggleDebugger.addActionListener(new ActionListener() {          
         public void actionPerformed(ActionEvent e) {
-          switchToolbars();
+          //switchToolbars();
         }
       });
       debugMenu.add(toggleDebugger);
@@ -1967,10 +1968,48 @@ public class JavaEditor extends Editor {
     }
 
     
+    /*
     public DebugToolbar toolbar() {
       if (toolbar instanceof DebugToolbar)
         return (DebugToolbar) toolbar;
       return null;
+    }
+    */
+    
+    
+    protected void activateRun() {
+      toolbar.activate(JavaToolbar.RUN);
+    }
+    
+    
+    protected void activateDebug() {
+      //debugToolbar.activate(DebugToolbar.DEBUG);
+      activateRun();
+    }
+
+    
+    protected void deactivateDebug() {
+      deactivateRun();
+    }
+    
+    
+    protected void activateContinue() {
+      debugToolbar.activateContinue();
+    }
+    
+
+    protected void deactivateContinue() {
+      debugToolbar.deactivateContinue();
+    }
+    
+
+    protected void activateStep() {
+      debugToolbar.activateStep();
+    }
+
+    
+    protected void deactivateStep() {
+      debugToolbar.deactivateStep();
     }
 
     

@@ -1194,8 +1194,17 @@ public abstract class Mode {
    * Get an image object from the mode folder.
    */
   public Image loadImage(String filename) {
-    return loadIcon(filename).getImage();
+    ImageIcon icon = loadIcon(filename); 
+    if (icon != null) {
+      return icon.getImage();
+    }
+    return null;
   }
+  
+  
+//  public EditorButton loadButton(String name) {
+//    return new EditorButton(this, name);
+//  }
 
 
   //public Settings getTheme() {
