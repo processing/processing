@@ -148,13 +148,6 @@ editor.tabs.size = 2
 # automatically indent each line
 editor.indent = true
 
-# size of divider between editing area and the console
-editor.divider.size = 0
-# the larger divider on windows is ugly with the little arrows
-# this makes it large enough to see (mouse changes) and use, 
-# but keeps it from being annoyingly obtrusive
-editor.divider.size.windows = 2
-
 # Whether to automatically reload modified tabs
 editor.watcher = true
 

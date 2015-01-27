@@ -56,7 +56,7 @@ public class EditorHeader extends JComponent {
   static final int NO_TEXT_WIDTH = 10;
 
   Color bgColor;
-  boolean hiding;
+//  boolean hiding;
   Color hideColor;
   
   Color textColor[] = new Color[2];
@@ -198,8 +198,8 @@ public class EditorHeader extends JComponent {
 
     bgColor = mode.getColor("header.bgcolor");
     
-    hiding = Preferences.getBoolean("buttons.hide.image");
-    hideColor = mode.getColor("buttons.hide.color");
+//    hiding = Preferences.getBoolean("buttons.hide.image");
+//    hideColor = mode.getColor("buttons.hide.color");
 
     textColor[SELECTED] = mode.getColor("header.text.selected.color");
     textColor[UNSELECTED] = mode.getColor("header.text.unselected.color");
@@ -213,6 +213,18 @@ public class EditorHeader extends JComponent {
 
 
   public void paintComponent(Graphics screen) {
+    setOpaque(false);
+    
+//    Component parent = getParent();
+//    while (parent != null) {
+//      //EditorConsole.systemOut.println("parent is " + parent + " " + parent.isOpaque());
+//      EditorConsole.systemOut.println(//"parent is " + 
+//        parent.getClass().getName() + " " + (parent.isOpaque() ? "OPAQUE" : ""));
+//      parent = parent.getParent();
+//    }
+//    System.out.println();
+//    if (true) return;
+    
     if (screen == null) return;
 
     Sketch sketch = editor.getSketch();
@@ -266,12 +278,13 @@ public class EditorHeader extends JComponent {
      */
 
     // set the background for the offscreen
-    g.setColor(hiding ? hideColor : bgColor);
+    //g.setColor(hiding ? hideColor : bgColor);
+    g.setColor(new Color(0, 0, 0, 0));
     g.fillRect(0, 0, imageW, imageH);
 
-    if (!hiding) {
-      editor.getMode().drawBackground(g, Preferences.GRID_SIZE);
-    }
+//    if (!hiding) {
+//      editor.getMode().drawBackground(g, Preferences.GRID_SIZE);
+//    }
 
     if (tabs.length != sketch.getCodeCount()) {
       tabs = new Tab[sketch.getCodeCount()];

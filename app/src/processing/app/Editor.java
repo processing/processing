@@ -39,6 +39,8 @@ import java.util.Timer;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
@@ -113,6 +115,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   ArrayList<ToolContribution> coreTools;
   public ArrayList<ToolContribution> contribTools;
+  
+  Image backgroundGradient;
 
 
 //  protected Editor(final Base base, String path, int[] location, final Mode mode) {
@@ -123,7 +127,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     this.mode = mode;
 
     Toolkit.setIcon(this);  // TODO should this be per-mode?
-
+    
     // Install default actions for Run, Present, etc.
 //    resetHandlers();
 
@@ -171,14 +175,44 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     buildMenuBar();
 
-    Container contentPain = getContentPane();
+    backgroundGradient = Toolkit.getLibImage("vertical-gradient.png");
+    JPanel contentPain = new JPanel() {
+      @Override
+      public void paintComponent(Graphics g) {
+//        super.paintComponent(g);
+        Dimension dim = getSize();
+        g.drawImage(backgroundGradient, 0, 0, dim.width, dim.height, this);
+//        g.setColor(Color.RED);
+//        g.fillRect(0, 0, dim.width, dim.height);
+      }
+    };
+    
+//    JFrame f = new JFrame();
+//    f.setContentPane(new JPanel() {
+//      @Override
+//      public void paintComponent(Graphics g) {
+////        super.paintComponent(g);
+//        Dimension dim = getSize();
+//        g.drawImage(backgroundGradient, 0, 0, dim.width, dim.height, this);
+////        g.setColor(Color.RED);
+////        g.fillRect(0, 0, dim.width, dim.height);
+//      }
+//    });
+//    f.setResizable(true);
+//    f.setVisible(true);
+
+    //Container contentPain = getContentPane();
+    setContentPane(contentPain);
     contentPain.setLayout(new BorderLayout());
     JPanel pain = new JPanel();
+    pain.setOpaque(false);
     pain.setLayout(new BorderLayout());
     contentPain.add(pain, BorderLayout.CENTER);
 
     Box box = Box.createVerticalBox();
     Box upper = Box.createVerticalBox();
+//    upper.setOpaque(false);
+//    box.setOpaque(false);
 
     initModeMenu();
     toolbar = createToolbar();
@@ -225,12 +259,51 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
     splitPane.setBorder(null);
+    
+    // necessary to let the gradient show through
+    splitPane.setOpaque(false);
+    
+    splitPane.setUI(new BasicSplitPaneUI() {
+      public BasicSplitPaneDivider createDefaultDivider() {
+        return new BasicSplitPaneDivider(this) {
+          final Color dividerColor = mode.getColor("divider.color"); //new Color(204, 204, 204);
+          final Color dotColor = mode.getColor("divider.dot.color"); //new Color(80, 80, 80);
+          int dotSize = mode.getInteger("divider.dot.diameter"); //3;
+          
+          //public void setBorder(Border b) { }
 
-    // the default size on windows is too small and kinda ugly
-    int dividerSize = Preferences.getInteger("editor.divider.size");
-    if (dividerSize != 0) {
-      splitPane.setDividerSize(dividerSize);
-    }
+          @Override
+          public void paint(Graphics g) {
+            //Graphics2D g2 = Toolkit.prepareGraphics(g);
+            //Toolkit.prepareGraphics(g);
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON);
+            
+            final int w = getSize().width;
+            final int h = getSize().height;
+            g.setColor(dividerColor);
+            g.fillRect(0, 0, w, h);
+            
+            g.setColor(dotColor);
+            int x = w/2 - dotSize/2;
+            int y = h/2 - dotSize/2;
+            //g2.fillOval(x, y, width, height);
+            g.fillOval(x, y, dotSize, dotSize);
+            
+            super.paint(g);
+          }
+        };
+      }
+    });
+    
+//    EditorConsole.systemOut.println("divider default size is " + splitPane.getDividerSize());
+//    // the default size on windows is too small and kinda ugly
+//    int dividerSize = Preferences.getInteger("editor.divider.size");
+//    if (dividerSize != 0) {
+//      splitPane.setDividerSize(dividerSize);
+//    }
+    splitPane.setDividerSize(mode.getInteger("divider.height"));
 
     box.add(splitPane);
 

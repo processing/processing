@@ -208,7 +208,7 @@ public abstract class Mode {
       // other things that have to be set explicitly for the defaults
       theme.setColor("run.window.bgcolor", SystemColor.control);
 
-      loadBackground();
+//      loadBackground();
 
     } catch (IOException e) {
       Base.showError("Problem loading theme.txt",
@@ -217,6 +217,7 @@ public abstract class Mode {
   }
   
   
+  /*
   protected void loadBackground() {
     String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
     backgroundImage = loadImage("theme/mode" + suffix);
@@ -245,6 +246,7 @@ public abstract class Mode {
                   BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
     }
   }
+  */
 
 
   public File getContentFile(String path) {

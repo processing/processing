@@ -397,19 +397,29 @@ public class Toolkit {
 
 
   /**
-   * Return an Image object from inside the Processing lib folder.
+   * Return an Image object from inside the Processing 'lib' folder.
    * Moved here so that Base can stay headless.
    */
   static public Image getLibImage(String filename) {
+    ImageIcon icon = getLibIcon(filename);
+    return (icon == null) ? null : icon.getImage(); 
+  }
+  
+  
+  /** 
+   * Get an ImageIcon from the Processing 'lib' folder. 
+   * @since 3.0a6 
+   */
+  static public ImageIcon getLibIcon(String filename) {
     File file = Base.getContentFile("lib/" + filename);
     if (!file.exists()) {
       return null;
     }
-    return new ImageIcon(file.getAbsolutePath()).getImage();
+    return new ImageIcon(file.getAbsolutePath());
   }
 
 
-  static ArrayList<Image> iconImages;
+  static List<Image> iconImages;
 
   
   // Deprecated version of the function, but can't get rid of it without 
