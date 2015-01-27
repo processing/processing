@@ -52,6 +52,14 @@ import processing.mode.java.debug.VariableNode;
 public class DebugTray extends JFrame {
   static public final int GAP = 13;
   
+  EditorButton continueButton;
+  EditorButton stepButton;
+  EditorButton breakpointButton;
+    
+  // The tray will be placed at this amount from the top of the editor window,
+  // and extend to this amount from the bottom of the editor window.
+  final int VERTICAL_OFFSET = 64;
+  
   /// the root node (invisible)
   protected DefaultMutableTreeNode rootNode;
   
@@ -61,7 +69,7 @@ public class DebugTray extends JFrame {
   /// data model for the tree column
   protected DefaultTreeModel treeModel;
   
-  private JScrollPane scrollPane;
+//  private JScrollPane scrollPane;
   
   protected Outline tree;
   protected OutlineModel model; 
@@ -86,14 +94,6 @@ public class DebugTray extends JFrame {
   /// processing / "advanced" mode flag (currently not used)
   protected boolean p5mode = true; 
 
-  // The tray will be placed at this amount from the top of the editor window,
-  // and extend to this amount from the bottom of the editor window.
-  final int VERTICAL_OFFSET = 64;
-  
-  EditorButton continueButton;
-  EditorButton stepButton;
-  EditorButton breakpointButton;
-    
   
   public DebugTray(final JavaEditor editor) {
     setUndecorated(true);
@@ -181,7 +181,7 @@ public class DebugTray extends JFrame {
   
   
   Container createScrollPane() {
-    scrollPane = new JScrollPane();
+    JScrollPane scrollPane = new JScrollPane();
     tree = new Outline();
     scrollPane.setViewportView(tree);
 
@@ -299,8 +299,18 @@ public class DebugTray extends JFrame {
    * http://kickjava.com/src/org/netbeans/swing/outline/DefaultOutlineCellRenderer.java.htm
    */
   protected class VariableRowModel implements RowModel {
-    protected String[] columnNames = {"Value", "Type"};
-    protected int[] editableTypes = {VariableNode.TYPE_BOOLEAN, VariableNode.TYPE_FLOAT, VariableNode.TYPE_INTEGER, VariableNode.TYPE_STRING, VariableNode.TYPE_FLOAT, VariableNode.TYPE_DOUBLE, VariableNode.TYPE_LONG, VariableNode.TYPE_SHORT, VariableNode.TYPE_CHAR};
+    final String[] columnNames = { "Value", "Type" };
+    final int[] editableTypes = {
+      VariableNode.TYPE_BOOLEAN, 
+      VariableNode.TYPE_FLOAT, 
+      VariableNode.TYPE_INTEGER, 
+      VariableNode.TYPE_STRING, 
+      VariableNode.TYPE_FLOAT, 
+      VariableNode.TYPE_DOUBLE, 
+      VariableNode.TYPE_LONG, 
+      VariableNode.TYPE_SHORT, 
+      VariableNode.TYPE_CHAR
+    };
 
     @Override
     public int getColumnCount() {
@@ -312,25 +322,22 @@ public class DebugTray extends JFrame {
     }
 
     @Override
-    public Object getValueFor(Object o, int i) {
-      if (o instanceof VariableNode) {
-        VariableNode var = (VariableNode) o;
-        switch (i) {
-        case 0:
-          return var; // will be converted to an appropriate String by ValueCellRenderer
-        case 1:
+    public Object getValueFor(Object obj, int column) {
+      if (obj instanceof VariableNode) {
+        VariableNode var = (VariableNode) obj;
+        if (column == 0) {
+          // will be converted to an appropriate String by ValueCellRenderer
+          return var;
+        } else if (column == 1) {
           return var.getTypeName();
-        default:
-          return "";
         }
-      } else {
-        return "";
       }
+      return "";
     }
 
     @Override
-    public Class getColumnClass(int i) {
-      if (i == 0) {
+    public Class getColumnClass(int column) {
+      if (column == 0) {
         return VariableNode.class;
       }
       return String.class;
