@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.TableColumn;
@@ -124,7 +125,7 @@ public class DebugTray extends JFrame {
     Box box = Box.createHorizontalBox();
 
     continueButton = 
-      new EditorButton(mode, "debug-continue", 
+      new EditorButton(mode, "theme/debug/continue", 
                        Language.text("toolbar.debug.continue")) {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -136,7 +137,7 @@ public class DebugTray extends JFrame {
     box.add(Box.createHorizontalStrut(GAP));
     
     stepButton = 
-      new EditorButton(mode, "debug-step",
+      new EditorButton(mode, "theme/debug/step",
                        Language.text("toolbar.debug.step"),
                        Language.text("toolbar.debug.step_into")) {
       @Override
@@ -154,7 +155,7 @@ public class DebugTray extends JFrame {
     box.add(Box.createHorizontalStrut(GAP));
 
     breakpointButton = 
-      new EditorButton(mode, "debug-breakpoint",
+      new EditorButton(mode, "theme/debug/breakpoint",
                        Language.text("toolbar.debug.toggle_breakpoints")) {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -162,15 +163,19 @@ public class DebugTray extends JFrame {
         editor.debugger.toggleBreakpoint();
       }
     };
-    add(breakpointButton);
+    box.add(breakpointButton);
     box.add(Box.createHorizontalStrut(GAP));
 
-    JLabel label = new JLabel();
+    JLabel label = new JLabel("testing");
     box.add(label);
     continueButton.setRolloverLabel(label);
     stepButton.setRolloverLabel(label);
     breakpointButton.setRolloverLabel(label);
     
+    // the rest is all gaps
+    box.add(Box.createHorizontalGlue());
+    box.setBorder(new EmptyBorder(GAP, GAP, GAP, GAP));
+
     return box;
   }
   

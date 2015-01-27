@@ -1184,8 +1184,10 @@ public abstract class Mode {
   public ImageIcon loadIcon(String filename) {
     File file = new File(folder, filename);
     if (!file.exists()) {
+//      EditorConsole.systemErr.println("file does not exist: " + file.getAbsolutePath());
       return null;
     }
+//    EditorConsole.systemErr.println("found: " + file.getAbsolutePath());
     return new ImageIcon(file.getAbsolutePath());
   }
   

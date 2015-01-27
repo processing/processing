@@ -62,12 +62,11 @@ implements MouseListener, MouseMotionListener, ActionListener {
     this.titleShift = titleShift;
    
     final int res = Toolkit.highResDisplay() ? 2 : 1;
-    
-    disabledImage = mode.loadImage(name + "-enabled-" + res + "x.png");
+    disabledImage = mode.loadImage(name + "-disabled-" + res + "x.png");
     enabledImage = mode.loadImage(name + "-enabled-" + res + "x.png");
-    selectedImage = mode.loadImage(name + "-enabled-" + res + "x.png");
-    pressedImage = mode.loadImage(name + "-enabled-" + res + "x.png");
-    rolloverImage = mode.loadImage(name + "-enabled-" + res + "x.png");
+    selectedImage = mode.loadImage(name + "-selected-" + res + "x.png");
+    pressedImage = mode.loadImage(name + "-pressed-" + res + "x.png");
+    rolloverImage = mode.loadImage(name + "-rollover-" + res + "x.png");
     
     if (disabledImage == null) { 
       disabledImage = enabledImage;
@@ -81,6 +80,8 @@ implements MouseListener, MouseMotionListener, ActionListener {
     if (rolloverImage == null) {
       rolloverImage = enabledImage;  // could be pressed image
     }
+    addMouseListener(this);
+    addMouseMotionListener(this);
   }
   
   
