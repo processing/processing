@@ -2174,9 +2174,11 @@ public class JavaEditor extends Editor {
       ta.clearGutterText();
       // load appropriate line backgrounds for tab
       // first paint breakpoints
-      for (LineHighlight hl : breakpointedLines) {
-        if (isInCurrentTab(hl.getLineID())) {
-          hl.paint();
+      if (breakpointedLines != null) {
+        for (LineHighlight hl : breakpointedLines) {
+          if (isInCurrentTab(hl.getLineID())) {
+            hl.paint();
+          }
         }
       }
       // now paint current line (if any)

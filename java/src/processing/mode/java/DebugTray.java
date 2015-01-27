@@ -100,9 +100,11 @@ public class DebugTray extends JFrame {
     this.editor = editor;    
     editor.addComponentListener(new EditorFollower());
 
-    setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-    add(createToolbar());
-    add(createScrollPane());
+    //setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+    Box box = Box.createVerticalBox();
+    box.add(createToolbar());
+    box.add(createScrollPane());
+    getContentPane().add(box);
     pack();
     
     /*
