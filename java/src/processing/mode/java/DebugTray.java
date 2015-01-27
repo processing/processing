@@ -21,6 +21,7 @@
 package processing.mode.java;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
@@ -41,11 +42,15 @@ import org.netbeans.swing.outline.*;
 
 import com.sun.jdi.Value;
 
+import processing.app.EditorButton;
+import processing.app.Language;
 import processing.app.Mode;
 import processing.mode.java.debug.VariableNode;
 
 
 public class DebugTray extends JFrame {
+  static public final int GAP = 13;
+  
   /// the root node (invisible)
   protected DefaultMutableTreeNode rootNode;
   
@@ -83,18 +88,97 @@ public class DebugTray extends JFrame {
   // The tray will be placed at this amount from the top of the editor window,
   // and extend to this amount from the bottom of the editor window.
   final int VERTICAL_OFFSET = 64;
+  
+  EditorButton continueButton;
+  EditorButton stepButton;
+  EditorButton breakpointButton;
     
   
-  public DebugTray(JavaEditor editor) {
-    this.editor = editor;
-    
+  public DebugTray(final JavaEditor editor) {
     setUndecorated(true);
+    
+    this.editor = editor;    
     editor.addComponentListener(new EditorFollower());
 
+    setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+    add(createToolbar());
+    add(createScrollPane());
+    pack();
+    
+    /*
+    bgColor = mode.getColor("buttons.bgcolor");
+    statusFont = mode.getFont("buttons.status.font");
+    statusColor = mode.getColor("buttons.status.color");
+//    modeTitle = mode.getTitle().toUpperCase();
+    modeTitle = mode.getTitle();
+    modeTextFont = mode.getFont("mode.button.font");
+    modeButtonColor = mode.getColor("mode.button.color");    
+    */
+  }
+  
+  
+  Container createToolbar() {
+    final Mode mode = editor.getMode();
+    Box box = Box.createHorizontalBox();
+
+    continueButton = 
+      new EditorButton(mode, "debug-continue", 
+                       Language.text("toolbar.debug.continue")) {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        Logger.getLogger(DebugTray.class.getName()).log(Level.INFO, "Invoked 'Continue' toolbar button");
+        editor.debugger.continueDebug();
+      }
+    };
+    box.add(continueButton);
+    box.add(Box.createHorizontalStrut(GAP));
+    
+    stepButton = 
+      new EditorButton(mode, "debug-step",
+                       Language.text("toolbar.debug.step"),
+                       Language.text("toolbar.debug.step_into")) {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (isShiftDown()) {
+          Logger.getLogger(DebugTray.class.getName()).log(Level.INFO, "Invoked 'Step Into' toolbar button");
+          editor.debugger.stepInto();
+        } else {
+          Logger.getLogger(DebugTray.class.getName()).log(Level.INFO, "Invoked 'Step' toolbar button");
+          editor.debugger.stepOver();
+        }
+      }
+    };
+    box.add(stepButton);
+    box.add(Box.createHorizontalStrut(GAP));
+
+    breakpointButton = 
+      new EditorButton(mode, "debug-breakpoint",
+                       Language.text("toolbar.debug.toggle_breakpoints")) {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        Logger.getLogger(DebugTray.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' toolbar button");
+        editor.debugger.toggleBreakpoint();
+      }
+    };
+    add(breakpointButton);
+    box.add(Box.createHorizontalStrut(GAP));
+
+    JLabel label = new JLabel();
+    box.add(label);
+    continueButton.setRolloverLabel(label);
+    stepButton.setRolloverLabel(label);
+    breakpointButton.setRolloverLabel(label);
+    
+    return box;
+  }
+  
+  
+  Container createScrollPane() {
     scrollPane = new JScrollPane();
     tree = new Outline();
     scrollPane.setViewportView(tree);
 
+    /*
     GroupLayout layout = new GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -111,6 +195,7 @@ public class DebugTray extends JFrame {
                                                     GroupLayout.DEFAULT_SIZE, 
                                                     300, Short.MAX_VALUE)));
     pack();
+    */
     
     // setup Outline
     rootNode = new DefaultMutableTreeNode("root");
@@ -140,23 +225,38 @@ public class DebugTray extends JFrame {
     thisFields = new ArrayList<VariableNode>();
     declaredThisFields = new ArrayList<VariableNode>();
 
-//    this.setTitle(editor.getSketch().getName());
+    return scrollPane;
   }
+
   
-  
-  class TrayToolbar extends JComponent {
+  protected void activateContinue() {
+  }
+
+
+  protected void deactivateContinue() {
+  }
+
+
+  protected void activateStep() {
+  }
+
+
+  protected void deactivateStep() {
+  }  
     
-  }
-  
   
   /** Keeps the debug window adjacent the editor at all times. */
   class EditorFollower implements ComponentListener {
 
     @Override
-    public void componentShown(ComponentEvent e) { }
+    public void componentShown(ComponentEvent e) { 
+      setVisible(true);
+    }
 
     @Override
-    public void componentHidden(ComponentEvent e) { }
+    public void componentHidden(ComponentEvent e) { 
+      setVisible(false);
+    }
 
     @Override
     public void componentResized(ComponentEvent e) {
