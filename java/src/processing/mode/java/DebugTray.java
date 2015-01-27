@@ -166,7 +166,7 @@ public class DebugTray extends JFrame {
     box.add(breakpointButton);
     box.add(Box.createHorizontalStrut(GAP));
 
-    JLabel label = new JLabel("testing");
+    JLabel label = new JLabel();
     box.add(label);
     continueButton.setRolloverLabel(label);
     stepButton.setRolloverLabel(label);
