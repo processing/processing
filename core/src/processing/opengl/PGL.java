@@ -580,6 +580,7 @@ public abstract class PGL {
   }
 
 
+  int labelTex = -1;
   protected void endDraw(boolean clear0) {
     if (fboLayerInUse) {
       syncBackTexture();
@@ -596,6 +597,21 @@ public abstract class PGL {
         clearDepth(1);
         clearColor(r, g, b, a);
         clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+
+        if (labelTex == -1) {
+//          labelTex = new Texture(pg);
+//          labelTex.init(100, 50,
+//                        glColorTex.get(backTex), TEXTURE_2D, RGBA,
+//                        fboWidth, fboHeight, NEAREST, NEAREST,
+//                        CLAMP_TO_EDGE, CLAMP_TO_EDGE);
+        }
+
+        // Don't use presentMode offset!
+//        drawTexture2D(labelTex, int texW, int texH, int scrW, int scrH,
+//                      int texX0, int texY0, int texX1, int texY1,
+//                      int scrX0, int scrY0, int scrX1, int scrY1);
+
+
       } else {
         clearDepth(1);
         clearColor(0, 0, 0, 0);

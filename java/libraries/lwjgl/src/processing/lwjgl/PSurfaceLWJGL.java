@@ -426,8 +426,6 @@ public class PSurfaceLWJGL implements PSurface {
       label.setLocation(20, screenRect.height - labelSize.height - 20);
     }
     */
-    
-    
   }
 
   @Override
@@ -1007,6 +1005,15 @@ public class PSurfaceLWJGL implements PSurface {
             }
           } else if (pressed) {
             action = MouseEvent.RELEASE;
+
+            if (presentMode) {
+              if (20 < Mouse.getX() && Mouse.getX() < 20 + 100 &&
+                  20 < Mouse.getY() && Mouse.getY() < 20 + 50) {
+                System.err.println("clicked on exit button");
+                sketch.exit();  
+              }
+            }
+            
             pressed = false;
           } else {
             action = MouseEvent.MOVE;
