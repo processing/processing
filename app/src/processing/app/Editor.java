@@ -183,6 +183,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //        g.fillRect(0, 0, dim.width, dim.height);
       }
     };
+    //contentPain.setBorder(new EmptyBorder(0, 0, 0, 0));
+    //System.out.println(contentPain.getBorder());
     
 //    JFrame f = new JFrame();
 //    f.setContentPane(new JPanel() {
@@ -201,10 +203,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
     //Container contentPain = getContentPane();
     setContentPane(contentPain);
     contentPain.setLayout(new BorderLayout());
-    JPanel pain = new JPanel();
-    pain.setOpaque(false);
-    pain.setLayout(new BorderLayout());
-    contentPain.add(pain, BorderLayout.CENTER);
+//    JPanel pain = new JPanel();
+//    pain.setOpaque(false);
+//    pain.setLayout(new BorderLayout());
+//    contentPain.add(pain, BorderLayout.CENTER);
 
     Box box = Box.createVerticalBox();
     Box upper = Box.createVerticalBox();
@@ -252,11 +254,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // if window increases in size, give all of increase to
     // the textarea in the upper pane
     splitPane.setResizeWeight(1D);
-
-    // to fix ugliness.. normally macosx java 1.3 puts an
-    // ugly white border around this object, so turn it off.
+    // remove any ugly borders added by PLAFs
     splitPane.setBorder(null);
-    
     // necessary to let the gradient show through
     splitPane.setOpaque(false);
     
@@ -304,7 +303,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     box.add(splitPane);
 
-    pain.add(box);
+    contentPain.add(box);
 
     // get shift down/up events so we can show the alt version of toolbar buttons
     textarea.addKeyListener(toolbar);
@@ -321,7 +320,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     });
 
-    pain.setTransferHandler(new FileDropHandler());
+    contentPain.setTransferHandler(new FileDropHandler());
 
     // Finish preparing Editor (formerly found in Base)
     pack();
