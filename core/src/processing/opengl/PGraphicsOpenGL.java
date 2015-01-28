@@ -5631,6 +5631,27 @@ public class PGraphicsOpenGL extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
+  // SAVE
+
+
+  @Override
+  public boolean save(String filename) {
+
+    // Act as an opaque surface for the purposes of saving.
+    if (primarySurface) {
+      int prevFormat = format;
+      format = RGB;
+      boolean result = super.save(filename);
+      format = prevFormat;
+      return result;
+    }
+
+    return super.save(filename);
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
   // LOAD/UPDATE TEXTURE
 
 
