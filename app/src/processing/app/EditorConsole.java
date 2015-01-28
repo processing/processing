@@ -344,10 +344,19 @@ public class EditorConsole extends JScrollPane {
     }
 
     public void write(byte b[], int offset, int length) {
-      if (console != null)
+      if (console != null) {
         console.message(new String(b, offset, length), err);
-      else if (currentConsole != null)
+      } else if (currentConsole != null) {
         currentConsole.message(new String(b, offset, length), err);
+      } else {
+        // If no console is present, still need to write this to the actual
+        // System.out or System.err. Otherwise we can't !#$!% debug anything. 
+        if (err) {
+          systemErr.write(b, offset, length);
+        } else {
+          systemOut.write(b, offset, length);
+        }
+      }
 
       final OutputStream echo = err ? stderrFile : stdoutFile;
       if (echo != null) {
