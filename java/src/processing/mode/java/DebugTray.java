@@ -176,6 +176,8 @@ public class DebugTray extends JFrame {
     box.add(Box.createHorizontalGlue());
     box.setBorder(new EmptyBorder(GAP, GAP, GAP, GAP));
 
+    // prevent the toolbar from getting taller than its default 
+    box.setMaximumSize(new Dimension(getMaximumSize().width, getPreferredSize().height));
     return box;
   }
   
@@ -256,32 +258,49 @@ public class DebugTray extends JFrame {
   class EditorFollower implements ComponentListener {
 
     @Override
-    public void componentShown(ComponentEvent e) { 
-      setVisible(true);
+    public void componentShown(ComponentEvent e) {
+      if (editor.isDebuggerEnabled()) {
+//        updateBounds();
+        setVisible(true);
+      }
     }
 
     @Override
-    public void componentHidden(ComponentEvent e) { 
-      setVisible(false);
+    public void componentHidden(ComponentEvent e) {
+      if (isVisible()) {
+        setVisible(false);
+      }
     }
 
     @Override
     public void componentResized(ComponentEvent e) {
-      updateBounds(e);
+      if (isVisible()) {
+        updateBounds();
+      }
     }
 
     @Override
     public void componentMoved(ComponentEvent e) {
-      updateBounds(e);
+      if (isVisible()) {
+        updateBounds();
+      }
     }
-
-    private void updateBounds(ComponentEvent e) { 
-      //        System.out.println(e);
-      setBounds(editor.getX() + editor.getWidth(), 
-                editor.getY() + VERTICAL_OFFSET, 
-                getPreferredSize().width, 
-                editor.getHeight() - VERTICAL_OFFSET*2);
+  }
+  
+  
+  private void updateBounds() {
+    setBounds(editor.getX() + editor.getWidth(), 
+              editor.getY() + VERTICAL_OFFSET, 
+              getPreferredSize().width, 
+              editor.getHeight() - VERTICAL_OFFSET*2);
+  }
+  
+  
+  public void setVisible(boolean visible) {
+    if (visible) {
+      updateBounds();
     }
+    super.setVisible(visible);
   }
 
     

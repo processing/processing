@@ -17,6 +17,11 @@ X size(640,360 , P3D) doesn't work properly
 X   https://github.com/processing/processing/issues/2924
 X   https://github.com/processing/processing/issues/2925
 
+contribs
+X saveFrame() doesn't save opaque PNG files
+X   https://github.com/processing/processing/issues/3031
+X   https://github.com/processing/processing/pull/3067
+
 data
 X Add exceptions for FloatList and IntList when using add() w/o enough elements
 X   https://github.com/processing/processing/pull/3053

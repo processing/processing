@@ -442,6 +442,40 @@ public abstract class Mode {
   }
 
 
+  protected int importMenuIndex = -1;
+  
+  /**
+   * Rather than re-building the library menu for every open sketch (very slow
+   * and prone to bugs when updating libs, particularly with the contribs mgr), 
+   * share a single instance across all windows. 
+   * @since 3.0a6
+   * @param sketchMenu the Sketch menu that's currently active
+   */
+  public void removeImportMenu(JMenu sketchMenu) {
+    JMenu importMenu = getImportMenu();
+    //importMenuIndex = sketchMenu.getComponentZOrder(importMenu);
+    importMenuIndex = Toolkit.getMenuItemIndex(sketchMenu, importMenu);
+    sketchMenu.remove(importMenu);
+  }
+  
+  
+  /**
+   * Re-insert the Import Library menu. Added function so that other modes
+   * need not have an 'import' menu.
+   * @since 3.0a6
+   * @param sketchMenu the Sketch menu that's currently active
+   */
+  public void insertImportMenu(JMenu sketchMenu) {
+    // hard-coded as 4 in 3.0a5, change to 5 for 3.0a6, but... yuck
+    //sketchMenu.insert(mode.getImportMenu(), 4);
+    // This is -1 on when the editor window is first shown, but that's fine
+    // because the import menu has just been added in the Editor constructor.
+    if (importMenuIndex != -1) {
+      sketchMenu.insert(getImportMenu(), importMenuIndex);
+    }
+  }
+  
+  
   public JMenu getImportMenu() {
     if (importMenu == null) {
       rebuildImportMenu();

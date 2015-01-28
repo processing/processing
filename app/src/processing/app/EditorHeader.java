@@ -215,16 +215,6 @@ public class EditorHeader extends JComponent {
   public void paintComponent(Graphics screen) {
     setOpaque(false);
     
-//    Component parent = getParent();
-//    while (parent != null) {
-//      //EditorConsole.systemOut.println("parent is " + parent + " " + parent.isOpaque());
-//      EditorConsole.systemOut.println(//"parent is " + 
-//        parent.getClass().getName() + " " + (parent.isOpaque() ? "OPAQUE" : ""));
-//      parent = parent.getParent();
-//    }
-//    System.out.println();
-//    if (true) return;
-    
     if (screen == null) return;
 
     Sketch sketch = editor.getSketch();

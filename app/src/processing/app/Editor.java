@@ -144,29 +144,26 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // When bringing a window to front, let the Base know
     addWindowListener(new WindowAdapter() {
+//      int importIndex;
+      
         public void windowActivated(WindowEvent e) {
-//          EditorConsole.systemOut.println("editor window activated");
           base.handleActivated(Editor.this);
-//          mode.handleActivated(Editor.this);
-//          fileMenu.insert(base.getSketchbookMenu(), 2);
           fileMenu.insert(base.getRecentMenu(), 2);
-//          fileMenu.insert(mode.getExamplesMenu(), 3);
           Toolkit.setMenuMnemsInside(fileMenu);
 
-          sketchMenu.insert(mode.getImportMenu(), 4);
+          //sketchMenu.insert(mode.getImportMenu(), 5);
+          mode.insertImportMenu(sketchMenu);
+          //sketchMenu.insert(mode.getImportMenu(), importIndex);
           Toolkit.setMenuMnemsInside(sketchMenu);
           mode.insertToolbarRecentMenu();
         }
 
-        // added for 1.0.5
-        // http://dev.processing.org/bugs/show_bug.cgi?id=1260
         public void windowDeactivated(WindowEvent e) {
-//          EditorConsole.systemErr.println("editor window deactivated");
-//          mode.handleDeactivated(Editor.this);
-//          fileMenu.remove(base.getSketchbookMenu());
           fileMenu.remove(base.getRecentMenu());
-//          fileMenu.remove(mode.getExamplesMenu());
-          sketchMenu.remove(mode.getImportMenu());
+//          JMenu importMenu = mode.getImportMenu();
+//          importIndex = sketchMenu.getComponentZOrder(mode.getImportMenu());
+//          sketchMenu.remove(mode.getImportMenu());
+          mode.removeImportMenu(sketchMenu);
           mode.removeToolbarRecentMenu();
         }
       });

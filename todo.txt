@@ -82,7 +82,9 @@ X   https://github.com/processing/processing/issues/2984
 X   https://github.com/processing/processing/pull/3046
 X File change detection rewrite
 X   https://github.com/processing/processing/pull/3048
-
+X broken Windows build due to launch4j .jar not updated
+X   https://github.com/processing/processing/issues/3062
+X   https://github.com/processing/processing/pull/3066
 
 integration of pdex
 X changed JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
@@ -93,6 +95,9 @@ X   this whole setup is really gross at the moment
 X finish Ant task to download JRE and JDK from Oracle
 X remove public 'ta' object in DebugEditor, also dmode
 
+update ld and windres: https://github.com/processing/processing/tree/master/java/application/launch4j/bin
+also xstream.jar https://github.com/processing/processing/tree/master/java/application/launch4j/lib
+
 _ fix hasJavaTabs() function
 _   almost always used as a negative, or tied to a 'return' from fxn
 _   name isn't tied to its function, but the symptom
@@ -101,6 +106,12 @@ X   how does it relate to compilationCheckEnabled?
 X     removed, seems to be duplicate/used the same way
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
 _   because it's in the other ClassLoader, can no longer rely on it
+_ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
+
+_ disable the debug toggle menu while running
+_   otherwise could run in one mode, then try to stop in another
+_ show debug window when running, hide when stopped
+_ can we animate its appearance?
 
 _ do the right thing on passing around List vs ArrayList and others
 
@@ -111,6 +122,8 @@ _   iTunes has no rollover state but has a 'down' state
 _     swaps to stop after release
 _ need unavailable/deactivate state for debug toolbar items
 _   or hide the tray when not debugging? Debug just a menu checkbox?
+_ using svg images for res-indep icons/gui
+_   http://stackoverflow.com/questions/2495501/swing-batik-create-an-imageicon-from-an-svg-file
 
 jre download/install
 _ update build scripts for Windows and Linux to use JRE downloader Ant Task

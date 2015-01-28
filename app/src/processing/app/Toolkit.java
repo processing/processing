@@ -758,4 +758,28 @@ public class Toolkit {
     //return new TextLayout("H", font, frc).getBounds().getHeight();
     return new TextLayout("H", g.getFont(), frc).getBounds().getHeight();
   }
+  
+
+  /** Do not use or rely upon presence of this method: not approved as final API. */ 
+  static public void debugOpacity(Component comp) {
+    Component parent = comp.getParent();
+    while (parent != null) {
+      //EditorConsole.systemOut.println("parent is " + parent + " " + parent.isOpaque());
+      EditorConsole.systemOut.println(parent.getClass().getName() + " " + (parent.isOpaque() ? "OPAQUE" : ""));
+      parent = parent.getParent();
+    }
+    EditorConsole.systemOut.println();
+  }
+  
+  
+  static public int getMenuItemIndex(JMenu menu, JMenuItem item) {
+    int index = 0;
+    for (Component comp : menu.getMenuComponents()) {
+      if (comp == item) {
+        return index;
+      }
+      index++;
+    }
+    return -1;
+  }
 }

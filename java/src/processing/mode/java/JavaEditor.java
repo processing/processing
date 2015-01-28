@@ -60,7 +60,7 @@ public class JavaEditor extends Editor {
   protected final String breakpointMarkerComment = " //<>//"; // breakpoint marker comment
 
   protected JMenu debugMenu;
-  JCheckBoxMenuItem toggleDebugger;
+  JCheckBoxMenuItem enableDebug;
 
   protected Debugger debugger;
   protected DebugTray tray;
@@ -191,10 +191,15 @@ public class JavaEditor extends Editor {
     JMenuItem runItem = Toolkit.newJMenuItem(JavaToolbar.getTitle(JavaToolbar.RUN, false), 'R');
     runItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleRun();
+        if (isDebuggerEnabled()) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Debug' menu item");
+          debugger.startDebug();
+        } else {
+          handleRun();
+        }
       }
     });
-
+    
     JMenuItem presentItem = Toolkit.newJMenuItemShift(JavaToolbar.getTitle(JavaToolbar.RUN, true), 'R');
     presentItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -205,7 +210,12 @@ public class JavaEditor extends Editor {
     JMenuItem stopItem = new JMenuItem(JavaToolbar.getTitle(JavaToolbar.STOP, false));
     stopItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleStop();
+        if (isDebuggerEnabled()) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Stop' menu item");
+          debugger.stopDebug();
+        } else {
+          handleStop();
+        }
       }
     });
 
@@ -1155,26 +1165,6 @@ public class JavaEditor extends Editor {
   }
 
 
-  /**
-   * Deactivate the Run button. This is called by Runner to notify that the
-   * sketch has stopped running, usually in response to an error (or maybe
-   * the sketch completing and exiting?) Tools should not call this function.
-   * To initiate a "stop" action, call handleStop() instead.
-   */
-  public void deactivateRun() {
-//    if (toolbar instanceof DebugToolbar){
-//      toolbar.deactivate(DebugToolbar.RUN);
-//    } else {
-    toolbar.deactivate(JavaToolbar.RUN);
-//    }
-  }
-
-
-//  public void deactivateExport() {
-//    toolbar.deactivate(JavaToolbar.EXPORT);
-//  }
-
-
   public void internalCloseRunner() {
     // Added temporarily to dump error log. TODO: Remove this later [mk29]
     if (JavaMode.errorLogsEnabled) {
@@ -1387,24 +1377,30 @@ public class JavaEditor extends Editor {
     debugMenu = new JMenu(Language.text("menu.debug"));
     JMenuItem item;
 
-    toggleDebugger = new JCheckBoxMenuItem("Use the Debugger");
+    // "use the debugger" sounds too colloquial, and "enable" sounds too technical
+    enableDebug = Toolkit.newJCheckBoxMenuItem("Enable Debugger", KeyEvent.VK_D);
     //new JCheckBoxMenuItem(Language.text("menu.debug.show_debug_toolbar"));
-    toggleDebugger.setSelected(false);
-    toggleDebugger.addActionListener(new ActionListener() {
+    enableDebug.setSelected(false);
+    enableDebug.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          //switchToolbars();
+          updateDebugToggle();
         }
       });
-    debugMenu.add(toggleDebugger);
+//    toggleDebugger.addChangeListener(new ChangeListener() {
+//      public void stateChanged(ChangeEvent e) {
+//      }
+//    });
+    debugMenu.add(enableDebug);
+    debugMenu.addSeparator();
 
-    item = Toolkit.newJMenuItemAlt(Language.text("menu.debug.debug"), KeyEvent.VK_R);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Debug' menu item");
-          debugger.startDebug();
-        }
-      });
-    debugMenu.add(item);
+//    item = Toolkit.newJMenuItemAlt(Language.text("menu.debug.debug"), KeyEvent.VK_R);
+//    item.addActionListener(new ActionListener() {
+//        public void actionPerformed(ActionEvent e) {
+//          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Debug' menu item");
+//          debugger.startDebug();
+//        }
+//      });
+//    debugMenu.add(item);
 
     item = Toolkit.newJMenuItem(Language.text("menu.debug.continue"), KeyEvent.VK_U);
     item.addActionListener(new ActionListener() {
@@ -1415,37 +1411,14 @@ public class JavaEditor extends Editor {
       });
     debugMenu.add(item);
 
-    item = new JMenuItem(Language.text("menu.debug.stop"));
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Stop' menu item");
-          debugger.stopDebug();
-        }
-      });
-    debugMenu.add(item);
-
-    debugMenu.addSeparator();
-
-    item =
-      Toolkit.newJMenuItem(Language.text("menu.debug.toggle_breakpoint"), KeyEvent.VK_B);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' menu item");
-          debugger.toggleBreakpoint();
-        }
-      });
-    debugMenu.add(item);
-
-    item = new JMenuItem(Language.text("menu.debug.list_breakpoints"));
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'List Breakpoints' menu item");
-          debugger.listBreakpoints();
-        }
-      });
-    debugMenu.add(item);
-
-    debugMenu.addSeparator();
+//    item = new JMenuItem(Language.text("menu.debug.stop"));
+//    item.addActionListener(new ActionListener() {
+//        public void actionPerformed(ActionEvent e) {
+//          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Stop' menu item");
+//          debugger.stopDebug();
+//        }
+//      });
+//    debugMenu.add(item);
 
     item = Toolkit.newJMenuItem(Language.text("menu.debug.step"), KeyEvent.VK_J);
     item.addActionListener(new ActionListener() {
@@ -1470,6 +1443,27 @@ public class JavaEditor extends Editor {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Out' menu item");
           debugger.stepOut();
+        }
+      });
+    debugMenu.add(item);
+
+    debugMenu.addSeparator();
+
+    item =
+      Toolkit.newJMenuItem(Language.text("menu.debug.toggle_breakpoint"), KeyEvent.VK_B);
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' menu item");
+          debugger.toggleBreakpoint();
+        }
+      });
+    debugMenu.add(item);
+
+    item = new JMenuItem(Language.text("menu.debug.list_breakpoints"));
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'List Breakpoints' menu item");
+          debugger.listBreakpoints();
         }
       });
     debugMenu.add(item);
@@ -1523,14 +1517,14 @@ public class JavaEditor extends Editor {
 
     debugMenu.addSeparator();
 
-    item = Toolkit.newJMenuItem(Language.text("menu.debug.toggle_variable_inspector"), KeyEvent.VK_I);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Variable Inspector' menu item");
-          toggleVariableInspector();
-        }
-      });
-    debugMenu.add(item);
+//    item = Toolkit.newJMenuItem(Language.text("menu.debug.toggle_variable_inspector"), KeyEvent.VK_I);
+//    item.addActionListener(new ActionListener() {
+//        public void actionPerformed(ActionEvent e) {
+//          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Variable Inspector' menu item");
+//          toggleVariableInspector();
+//        }
+//      });
+//    debugMenu.add(item);
 
     item = Toolkit.newJMenuItem(Language.text("menu.debug.show_sketch_outline"), KeyEvent.VK_L);
     item.addActionListener(new ActionListener() {
@@ -1551,6 +1545,11 @@ public class JavaEditor extends Editor {
     debugMenu.add(item);
 
     return debugMenu;
+  }
+  
+  
+  protected boolean isDebuggerEnabled() {
+    return enableDebug.isSelected();
   }
 
 
@@ -1946,7 +1945,24 @@ public class JavaEditor extends Editor {
 
 
   protected void activateRun() {
+    enableDebug.setEnabled(false);
     toolbar.activate(JavaToolbar.RUN);
+  }
+  
+  
+  /**
+   * Deactivate the Run button. This is called by Runner to notify that the
+   * sketch has stopped running, usually in response to an error (or maybe
+   * the sketch completing and exiting?) Tools should not call this function.
+   * To initiate a "stop" action, call handleStop() instead.
+   */
+  public void deactivateRun() {
+//    if (toolbar instanceof DebugToolbar){
+//      toolbar.deactivate(DebugToolbar.RUN);
+//    } else {
+    toolbar.deactivate(JavaToolbar.RUN);
+    enableDebug.setEnabled(true);
+//    }
   }
 
 
@@ -1981,32 +1997,49 @@ public class JavaEditor extends Editor {
   }
 
 
-  public void showVariableInspector() {
-    tray.setVisible(true);
+  public void updateDebugToggle() {
+    final boolean enabled = enableDebug.isSelected(); 
+    if (enabled) {
+      tray.setFocusableWindowState(false); // to not get focus when set visible
+      tray.setVisible(true);
+      tray.setFocusableWindowState(true); // allow to get focus again      
+    } else {
+      tray.setVisible(false);
+    }
+    for (Component item : debugMenu.getMenuComponents()) {
+      if (item instanceof JMenuItem && item != enableDebug) {
+        ((JMenuItem) item).setEnabled(enabled);
+      }
+    }
   }
-
-
-  /**
-   * Set visibility of the variable inspector window.
-   * @param visible true to set the variable inspector visible,
-   * false for invisible.
-   */
-  public void showVariableInspector(boolean visible) {
-    tray.setVisible(visible);
-  }
-
-
-  public void hideVariableInspector() {
-    tray.setVisible(true);
-  }
-
-
-  /** Toggle visibility of the variable inspector window. */
-  public void toggleVariableInspector() {
-    tray.setFocusableWindowState(false); // to not get focus when set visible
-    tray.setVisible(!tray.isVisible());
-    tray.setFocusableWindowState(true); // allow to get focus again
-  }
+  
+  
+//  public void showVariableInspector() {
+//    tray.setVisible(true);
+//  }
+//
+//
+//  /**
+//   * Set visibility of the variable inspector window.
+//   * @param visible true to set the variable inspector visible,
+//   * false for invisible.
+//   */
+//  public void showVariableInspector(boolean visible) {
+//    tray.setVisible(visible);
+//  }
+//
+//
+//  public void hideVariableInspector() {
+//    tray.setVisible(true);
+//  }
+//
+//
+//  /** Toggle visibility of the variable inspector window. */
+//  public void toggleVariableInspector() {
+//    tray.setFocusableWindowState(false); // to not get focus when set visible
+//    tray.setVisible(!tray.isVisible());
+//    tray.setFocusableWindowState(true); // allow to get focus again
+//  }
 
 
   /**
