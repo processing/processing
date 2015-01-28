@@ -316,6 +316,11 @@ public abstract class PGL {
     ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
 
+
+  public boolean presentMode = false;
+  public float offsetX;
+  public float offsetY;
+
   ///////////////////////////////////////////////////////////////
 
   // Initialization, finalization
@@ -410,7 +415,7 @@ public abstract class PGL {
   }
 
 
-  protected void requestFBOLayer() {
+  public void requestFBOLayer() {
     fboLayerRequested = true;
   }
 
@@ -526,6 +531,8 @@ public abstract class PGL {
     if (needFBOLayer(clear0)) {
       if (!fboLayerCreated) createFBOLayer();
 
+//      System.err.println("Using FBO layer");
+
       bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(backTex), 0);
@@ -561,14 +568,14 @@ public abstract class PGL {
       firstFrame = false;
     }
 
-    if (!USE_FBOLAYER_BY_DEFAULT) {
+//    if (!USE_FBOLAYER_BY_DEFAULT) {
       // The result of this assignment is the following: if the user requested
       // at some point the use of the FBO layer, but subsequently didn't
       // request it again, then the rendering won't render to the FBO layer if
       // not needed by the config, since it is slower than simple onscreen
       // rendering.
-      fboLayerRequested = false;
-    }
+//      fboLayerRequested = false;
+//    }
   }
 
 
@@ -967,7 +974,7 @@ public abstract class PGL {
       // Making sure that the viewport matches the provided screen dimensions
       viewBuffer.rewind();
       getIntegerv(VIEWPORT, viewBuffer);
-      viewport(0, 0, scrW, scrH);
+      viewport((int)offsetX, (int)offsetY, scrW, scrH);
 
       useProgram(ppgl.tex2DShaderProgram);
 
