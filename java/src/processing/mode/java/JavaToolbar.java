@@ -34,12 +34,7 @@ public class JavaToolbar extends EditorToolbar {
   static protected final int RUN    = 0;
   static protected final int STOP   = 1;
 
-//  static protected final int NEW    = 2;
-//  static protected final int OPEN   = 3;
-//  static protected final int SAVE   = 4;
-//  static protected final int EXPORT = 5;
-
-
+  
   public JavaToolbar(Editor editor, Base base) {
     super(editor, base);
   }
@@ -47,9 +42,7 @@ public class JavaToolbar extends EditorToolbar {
 
   public void init() {
     Image[][] images = loadImages();
-//    for (int i = 0; i < 6; i++) {
     for (int i = 0; i < 2; i++) {
-//      addButton(getTitle(i, false), getTitle(i, true), images[i], i == NEW);
       addButton(getTitle(i, false), getTitle(i, true), images[i], false);
     }
   }
@@ -57,12 +50,8 @@ public class JavaToolbar extends EditorToolbar {
 
   static public String getTitle(int index, boolean shift) {
     switch (index) {
-    case RUN:    return !shift ? Language.text("toolbar.run") : Language.text("toolbar.present");
-    case STOP:   return Language.text("toolbar.stop");
-//    case NEW:    return Language.text("toolbar.new");
-//    case OPEN:   return Language.text("toolbar.open");
-//    case SAVE:   return Language.text("toolbar.save");
-//    case EXPORT: return Language.text("toolbar.export_application");
+    case RUN: return !shift ? Language.text("toolbar.run") : Language.text("toolbar.present");
+    case STOP: return Language.text("toolbar.stop");
     }
     return null;
   }
@@ -84,35 +73,6 @@ public class JavaToolbar extends EditorToolbar {
     case STOP:
       jeditor.handleStop();
       break;
-
-      /*
-    case OPEN:
-//      popup = menu.getPopupMenu();
-      // TODO I think we need a longer chain of accessors here.
-      JPopupMenu popup = editor.getMode().getToolbarMenu().getPopupMenu();
-      popup.show(this, e.getX(), e.getY());
-      break;
-
-    case NEW:
-//      if (shift) {
-      base.handleNew();
-//      } else {
-//        base.handleNewReplace();
-//      }
-      break;
-
-    case SAVE:
-      jeditor.handleSave(false);
-      break;
-
-    case EXPORT:
-//      if (shift) {
-//        jeditor.handleExportApplet();
-//      } else {
-      jeditor.handleExportApplication();
-//      }
-      break;
-       */
     }
   }
 }
