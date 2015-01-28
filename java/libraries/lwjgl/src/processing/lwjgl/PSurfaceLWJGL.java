@@ -334,6 +334,9 @@ public class PSurfaceLWJGL implements PSurface {
      offsetX = pgl.offsetX = 0.5f * (screenRect.width - sketchWidth);
      offsetY = pgl.offsetY = 0.5f * (screenRect.height - sketchHeight);
      pgl.requestFBOLayer();
+     
+     
+     
 //     try {
 ////      Display.setFullscreen(true);
 //       Display.setDisplayMode(new DisplayMode(screenRect.width, screenRect.height));
@@ -342,9 +345,10 @@ public class PSurfaceLWJGL implements PSurface {
 //      e1.printStackTrace();
 //    }
       
-      /*
+     /*
       presentFrame = new JFrame(displayDevice.getDefaultConfiguration());      
       presentFrame.getContentPane().setBackground(WINDOW_BGCOLOR);
+      
       
 //      presentCanvas = new Canvas();
 //      presentCanvas.setFocusable(true);
@@ -981,7 +985,7 @@ public class PSurfaceLWJGL implements PSurface {
             modifiers |= Event.ALT;
           }
 
-          PApplet.println(Mouse.getX(), Mouse.getY(), offsetX, offsetY);   
+//          PApplet.println(Mouse.getX(), Mouse.getY(), offsetX, offsetY);   
           int x = Mouse.getX() - (int)offsetX;
           int y = sketchHeight - (Mouse.getY() - (int)offsetY);
           int button = 0;

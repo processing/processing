@@ -35,6 +35,7 @@ import java.util.Arrays;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
+import processing.core.PSurface;
 
 
 /**
@@ -586,9 +587,20 @@ public abstract class PGL {
       // Draw the contents of the back texture to the screen framebuffer.
       bindFramebufferImpl(FRAMEBUFFER, 0);
 
-      clearDepth(1);
-      clearColor(0, 0, 0, 0);
-      clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+
+      if (presentMode) {
+        float a = PSurface.WINDOW_BGCOLOR.getAlpha() / 255.0f;
+        float r = PSurface.WINDOW_BGCOLOR.getRed() / 255.0f;
+        float g = PSurface.WINDOW_BGCOLOR.getGreen() / 255.0f;
+        float b = PSurface.WINDOW_BGCOLOR.getBlue() / 255.0f;
+        clearDepth(1);
+        clearColor(r, g, b, a);
+        clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+      } else {
+        clearDepth(1);
+        clearColor(0, 0, 0, 0);
+        clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+      }
 
       // Render current back texture to screen, without blending.
       disable(BLEND);
