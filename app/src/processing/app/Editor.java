@@ -306,7 +306,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     contentPain.add(box);
 
     // get shift down/up events so we can show the alt version of toolbar buttons
-    textarea.addKeyListener(toolbar);
+    //textarea.addKeyListener(toolbar);
 
     // end an undo-chunk any time the caret moves unless it's when text is edited
     textarea.addCaretListener(new CaretListener() {

@@ -10,6 +10,10 @@ X   https://github.com/processing/processing/issues/3014
 X add more bulletproofing to the save process
 X   https://github.com/processing/processing/issues/2923
 X serious text improvements (at least on retina)
+_ finish adding 'examples' contribs
+_   https://github.com/processing/processing/issues/2953
+_   don't return here, allow contrib types to fail:
+_   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
 
 update components
 X moving to Java 8 because Java 7 will be discontinued
@@ -20,6 +24,8 @@ X requires ECJ update (using 4.4.1)
 X   http://download.eclipse.org/eclipse/downloads/drops4/R-4.4.1-201409250400/
 X update to launch4j 3.6
 X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.6/
+o   update ld and windres: https://github.com/processing/processing/tree/master/java/application/launch4j/bin
+o   also xstream.jar https://github.com/processing/processing/tree/master/java/application/launch4j/lib
 
 earlier
 X any problems with new code signing crap? 
@@ -95,9 +101,6 @@ X   this whole setup is really gross at the moment
 X finish Ant task to download JRE and JDK from Oracle
 X remove public 'ta' object in DebugEditor, also dmode
 
-update ld and windres: https://github.com/processing/processing/tree/master/java/application/launch4j/bin
-also xstream.jar https://github.com/processing/processing/tree/master/java/application/launch4j/lib
-
 _ fix hasJavaTabs() function
 _   almost always used as a negative, or tied to a 'return' from fxn
 _   name isn't tied to its function, but the symptom
@@ -114,6 +117,10 @@ _ show debug window when running, hide when stopped
 _ can we animate its appearance?
 
 _ do the right thing on passing around List vs ArrayList and others
+
+breakage
+_ break out a gui package (get class count down in .app)
+_ remove deprecated methods
 
 gui
 _ need 'actively pressed' version of 'play' and 'stop'

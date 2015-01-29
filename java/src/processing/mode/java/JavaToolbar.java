@@ -24,12 +24,24 @@ import java.awt.event.MouseEvent;
 
 //import javax.swing.JPopupMenu;
 
+
+import javax.swing.JPanel;
+
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorToolbar;
 import processing.app.Language;
 
 
+public class JavaToolbar extends EditorToolbar {
+  
+  public JavaToolbar(Editor editor) {
+    super(editor);
+  }
+}
+
+
+/*
 public class JavaToolbar extends EditorToolbar {
   static protected final int RUN    = 0;
   static protected final int STOP   = 1;
@@ -76,3 +88,4 @@ public class JavaToolbar extends EditorToolbar {
     }
   }
 }
+*/

@@ -153,7 +153,7 @@ public class JavaEditor extends Editor {
 
 
   public EditorToolbar createToolbar() {
-    return new JavaToolbar(this, base);
+    return new JavaToolbar(this);
   }
 
 
@@ -188,7 +188,7 @@ public class JavaEditor extends Editor {
 
 
   public JMenu buildSketchMenu() {
-    JMenuItem runItem = Toolkit.newJMenuItem(JavaToolbar.getTitle(JavaToolbar.RUN, false), 'R');
+    JMenuItem runItem = Toolkit.newJMenuItem(Language.text("toolbar.run"), 'R');
     runItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (isDebuggerEnabled()) {
@@ -200,14 +200,14 @@ public class JavaEditor extends Editor {
       }
     });
     
-    JMenuItem presentItem = Toolkit.newJMenuItemShift(JavaToolbar.getTitle(JavaToolbar.RUN, true), 'R');
+    JMenuItem presentItem = Toolkit.newJMenuItemShift(Language.text("toolbar.present"), 'R');
     presentItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handlePresent();
       }
     });
 
-    JMenuItem stopItem = new JMenuItem(JavaToolbar.getTitle(JavaToolbar.STOP, false));
+    JMenuItem stopItem = new JMenuItem(Language.text("toolbar.stop"));
     stopItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (isDebuggerEnabled()) {
@@ -1017,7 +1017,8 @@ public class JavaEditor extends Editor {
       public void run() {
         prepareRun();
         try {
-          toolbar.activate(JavaToolbar.RUN);
+//          toolbar.activate(JavaToolbar.RUN);
+          toolbar.activateRun();
           runtime = jmode.handleRun(sketch, JavaEditor.this);
 //          System.out.println("runtime now " + runtime);
         } catch (Exception e) {
@@ -1033,7 +1034,8 @@ public class JavaEditor extends Editor {
       public void run() {
         prepareRun();
         try {
-          toolbar.activate(JavaToolbar.RUN);
+//          toolbar.activate(JavaToolbar.RUN);
+          toolbar.activateRun();
           runtime = jmode.handlePresent(sketch, JavaEditor.this);
         } catch (Exception e) {
           statusError(e);
@@ -1052,7 +1054,8 @@ public class JavaEditor extends Editor {
       debugger.stopDebug();
 
     } else {
-      toolbar.activate(JavaToolbar.STOP);
+//      toolbar.activate(JavaToolbar.STOP);
+      toolbar.activateStop();
 
       try {
         //jmode.handleStop();
@@ -1066,8 +1069,10 @@ public class JavaEditor extends Editor {
         statusError(e);
       }
 
-      toolbar.deactivate(JavaToolbar.RUN);
-      toolbar.deactivate(JavaToolbar.STOP);
+//      toolbar.deactivate(JavaToolbar.RUN);
+//      toolbar.deactivate(JavaToolbar.STOP);
+      toolbar.deactivateStop();
+      toolbar.deactivateRun();
 
       // focus the PDE again after quitting presentation mode [toxi 030903]
       toFront();
@@ -1161,7 +1166,8 @@ public class JavaEditor extends Editor {
   public void statusError(String what) {
     super.statusError(what);
 //    new Exception("deactivating RUN").printStackTrace();
-    toolbar.deactivate(JavaToolbar.RUN);
+//    toolbar.deactivate(JavaToolbar.RUN);
+    toolbar.deactivateRun();
   }
 
 
@@ -1946,7 +1952,8 @@ public class JavaEditor extends Editor {
 
   protected void activateRun() {
     enableDebug.setEnabled(false);
-    toolbar.activate(JavaToolbar.RUN);
+//    toolbar.activate(JavaToolbar.RUN);
+    toolbar.activateRun();
   }
   
   
@@ -1960,7 +1967,8 @@ public class JavaEditor extends Editor {
 //    if (toolbar instanceof DebugToolbar){
 //      toolbar.deactivate(DebugToolbar.RUN);
 //    } else {
-    toolbar.deactivate(JavaToolbar.RUN);
+//    toolbar.deactivate(JavaToolbar.RUN);
+    toolbar.deactivateRun();
     enableDebug.setEnabled(true);
 //    }
   }
