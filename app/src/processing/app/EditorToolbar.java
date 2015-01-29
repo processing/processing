@@ -25,15 +25,10 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import java.util.Arrays;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import processing.core.PApplet;
 
 
 /**
@@ -108,7 +103,9 @@ abstract public class EditorToolbar extends JPanel {
     }
     ModeSelector ms = new ModeSelector(); 
     box.add(ms);
-    add(box);    
+    
+    setLayout(new BorderLayout());
+    add(box, BorderLayout.CENTER);
   }
   
   
@@ -168,6 +165,21 @@ abstract public class EditorToolbar extends JPanel {
   abstract public void handleStop();
   
 
+  public Dimension getPreferredSize() {
+    return new Dimension(super.getPreferredSize().width, HIGH);
+  }
+  
+  
+  public Dimension getMinimumSize() {
+    return new Dimension(super.getMinimumSize().width, HIGH);
+  }
+  
+  
+  public Dimension getMaximumSize() {
+    return new Dimension(super.getMaximumSize().width, HIGH);
+  }
+  
+  
   class ModeSelector extends JPanel {
     Image offscreen;
     int width, height;
