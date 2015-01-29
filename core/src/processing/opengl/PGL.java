@@ -554,10 +554,16 @@ public abstract class PGL {
       } else if (!clear0) {
         // Render previous back texture (now is the front) as background,
         // because no background() is being used ("incremental drawing")
-        drawTexture(TEXTURE_2D, glColorTex.get(frontTex),
-                    fboWidth, fboHeight, pg.width, pg.height,
-                                         0, 0, pg.width, pg.height,
-                                         0, 0, pg.width, pg.height);
+        int x = 0;
+        int y = 0;
+        if (presentMode) {
+          x = (int)offsetX;
+          y = (int)offsetY;
+        }
+        drawTexture(TEXTURE_2D, glColorTex.get(frontTex), fboWidth, fboHeight,
+                    x, y, pg.width, pg.height,
+                    0, 0, pg.width, pg.height,
+                    0, 0, pg.width, pg.height);
       }
 
       fboLayerInUse = true;
@@ -580,7 +586,7 @@ public abstract class PGL {
   }
 
 
-  int labelTex = -1;
+  IntBuffer labelTex;
   protected void endDraw(boolean clear0) {
     if (fboLayerInUse) {
       syncBackTexture();
@@ -598,19 +604,34 @@ public abstract class PGL {
         clearColor(r, g, b, a);
         clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
 
-        if (labelTex == -1) {
-//          labelTex = new Texture(pg);
-//          labelTex.init(100, 50,
-//                        glColorTex.get(backTex), TEXTURE_2D, RGBA,
-//                        fboWidth, fboHeight, NEAREST, NEAREST,
-//                        CLAMP_TO_EDGE, CLAMP_TO_EDGE);
+        if (labelTex == null) {
+          labelTex = allocateIntBuffer(1);
+          genTextures(1, labelTex);
+          bindTexture(TEXTURE_2D, labelTex.get(0));
+          texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
+          texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
+          texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
+          texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
+          texImage2D(TEXTURE_2D, 0, RGBA, 100, 50, 0, RGBA, UNSIGNED_BYTE, null);
+          initTexture(TEXTURE_2D, RGBA, 100, 50, pg.backgroundColor);
+          bindTexture(TEXTURE_2D, 0);
         }
+        drawTexture(TEXTURE_2D, labelTex.get(0), 100, 50,
+                    0, 0, 20 + 100, 20 + 50,
+                    0, 0, 100, 50,
+                    20, 20, 20 + 100, 20 + 50);
 
+/*
         // Don't use presentMode offset!
-//        drawTexture2D(labelTex, int texW, int texH, int scrW, int scrH,
-//                      int texX0, int texY0, int texX1, int texY1,
-//                      int scrX0, int scrY0, int scrX1, int scrY1);
+        drawTexture(TEXTURE_2D, labelTex.get(0),
+                    100, 50, pg.width, pg.height,
+                                         0, 0, pg.width, pg.height,
+                                         0, 0, pg.width, pg.height);
 
+        drawTexture2D(labelTex.get(0), 100, 50, int scrW, int scrH,
+                      0, 0, 100, 50,
+                      int scrX0, int scrY0, int scrX1, int scrY1);
+*/
 
       } else {
         clearDepth(1);
@@ -620,9 +641,17 @@ public abstract class PGL {
 
       // Render current back texture to screen, without blending.
       disable(BLEND);
+      int x = 0;
+      int y = 0;
+      if (presentMode) {
+        x = (int)offsetX;
+        y = (int)offsetY;
+      }
       drawTexture(TEXTURE_2D, glColorTex.get(backTex),
-                  fboWidth, fboHeight, pg.width, pg.height,
-                  0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+                  fboWidth, fboHeight,
+                  x, y, pg.width, pg.height,
+                  0, 0, pg.width, pg.height,
+                  0, 0, pg.width, pg.height);
 
       // Swapping front and back textures.
       int temp = frontTex;
@@ -887,7 +916,7 @@ public abstract class PGL {
 
 
   protected void initTexture(int target, int format, int width, int height,
-                          int initColor) {
+                            int initColor) {
     int[] glcolor = new int[16 * 16];
     Arrays.fill(glcolor, javaToNativeARGB(initColor));
     IntBuffer texels = allocateDirectIntBuffer(16 * 16);
@@ -925,24 +954,28 @@ public abstract class PGL {
    */
   public void drawTexture(int target, int id, int width, int height,
                           int X0, int Y0, int X1, int Y1) {
-    drawTexture(target, id, width, height, width, height,
-                            X0, Y0, X1, Y1, X0, Y0, X1, Y1);
+    drawTexture(target, id, width, height,
+                0, 0, width, height,
+                X0, Y0, X1, Y1,
+                X0, Y0, X1, Y1);
   }
 
 
   /**
    * Not an approved function, this will change or be removed in the future.
    */
-  public void drawTexture(int target, int id,
-                          int texW, int texH, int scrW, int scrH,
+  public void drawTexture(int target, int id,int texW, int texH,
+                          int viewX, int viewY, int scrW, int scrH,
                           int texX0, int texY0, int texX1, int texY1,
                           int scrX0, int scrY0, int scrX1, int scrY1) {
     if (target == TEXTURE_2D) {
-      drawTexture2D(id, texW, texH, scrW, scrH,
+      drawTexture2D(id, texW, texH,
+                    viewX, viewY, scrW, scrH,
                     texX0, texY0, texX1, texY1,
                     scrX0, scrY0, scrX1, scrY1);
     } else if (target == TEXTURE_RECTANGLE) {
-      drawTextureRect(id, texW, texH, scrW, scrH,
+      drawTextureRect(id, texW, texH,
+                      viewX, viewY, scrW, scrH,
                       texX0, texY0, texX1, texY1,
                       scrX0, scrY0, scrX1, scrY1);
     }
@@ -982,7 +1015,8 @@ public abstract class PGL {
   }
 
 
-  protected void drawTexture2D(int id, int texW, int texH, int scrW, int scrH,
+  protected void drawTexture2D(int id, int texW, int texH,
+                               int viewX, int viewY, int scrW, int scrH,
                                int texX0, int texY0, int texX1, int texY1,
                                int scrX0, int scrY0, int scrX1, int scrY1) {
     PGL ppgl = initTex2DShader();
@@ -1002,7 +1036,7 @@ public abstract class PGL {
       // Making sure that the viewport matches the provided screen dimensions
       viewBuffer.rewind();
       getIntegerv(VIEWPORT, viewBuffer);
-      viewport((int)offsetX, (int)offsetY, scrW, scrH);
+      viewport(viewX, viewY, scrW, scrH);
 
       useProgram(ppgl.tex2DShaderProgram);
 
@@ -1108,7 +1142,8 @@ public abstract class PGL {
   }
 
 
-  protected void drawTextureRect(int id, int texW, int texH, int scrW, int scrH,
+  protected void drawTextureRect(int id, int texW, int texH,
+                                 int viewX, int viewY, int scrW, int scrH,
                                  int texX0, int texY0, int texX1, int texY1,
                                  int scrX0, int scrY0, int scrX1, int scrY1) {
     PGL ppgl = initTexRectShader();
@@ -1132,7 +1167,7 @@ public abstract class PGL {
       // Making sure that the viewport matches the provided screen dimensions
       viewBuffer.rewind();
       getIntegerv(VIEWPORT, viewBuffer);
-      viewport(0, 0, scrW, scrH);
+      viewport(viewX, viewY, scrW, scrH);
 
       useProgram(ppgl.texRectShaderProgram);
 
