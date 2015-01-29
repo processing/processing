@@ -2060,6 +2060,9 @@ public class Base {
                                     fatal ?
                                     JOptionPane.ERROR_MESSAGE :
                                     JOptionPane.WARNING_MESSAGE);
+
+      if (fatal)
+        System.exit(1);
     }
   }
 
