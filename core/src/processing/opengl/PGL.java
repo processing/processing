@@ -627,7 +627,7 @@ public abstract class PGL {
         }
         drawTexture(TEXTURE_2D, labelTex.get(0), 100, 50,
                     0, 0, 20 + 100, 20 + 50,
-                    0, 0, 100, 50,
+                    0, 50, 100, 0,
                     20, 20, 20 + 100, 20 + 50);
 
 /*
