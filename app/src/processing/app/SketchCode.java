@@ -296,6 +296,7 @@ public class SketchCode {
       System.err.println();
     }
 
+    lastModified = file.lastModified();
     setModified(false);
   }
 

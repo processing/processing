@@ -1210,12 +1210,13 @@ public class Sketch {
     current = code[which];
     currentIndex = which;
     current.visited = System.currentTimeMillis();
+    //REMOVE 
     try {
       editor.setCode(current);
 //    editor.header.rebuild();
       editor.header.repaint();
     } catch (NullPointerException e) {
-      e.printStackTrace();
+      //e.printStackTrace();
     }
   }
 

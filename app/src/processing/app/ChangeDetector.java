@@ -14,7 +14,8 @@ public class ChangeDetector implements WindowFocusListener {
   private Editor editor;
 
 //  private boolean enabled = true;
-  private boolean enabled = false; // broken on OS X
+  //REMOVE on for testing
+  private boolean enabled = true; // broken on OS X
 
   private boolean skip = false;
 
@@ -39,9 +40,6 @@ public class ChangeDetector implements WindowFocusListener {
   }
 
   private void checkFileChangeAsync() {
-    if(1==1){
-      return;
-    }
     Thread th = new Thread(new Runnable() {
       @Override
       public void run() {
@@ -159,7 +157,7 @@ public class ChangeDetector implements WindowFocusListener {
         reloadSketch(sc);
         return;
       }
-      //if a file's tab was visited after the file was 
+      //if a file's tab was saved before the file was 
       if (sketchFile.lastModified() > sc.lastModified()) {
         reloadSketch(sc);
         return;
