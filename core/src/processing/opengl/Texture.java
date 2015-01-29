@@ -1271,16 +1271,16 @@ public class Texture implements PConstants {
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
-      pgl.drawTexture(tex.glTarget, tex.glName,
-                      tex.glWidth, tex.glHeight, tempFbo.width, tempFbo.height,
+      pgl.drawTexture(tex.glTarget, tex.glName, tex.glWidth, tex.glHeight,
+                      0, 0, tempFbo.width, tempFbo.height,
                       x, y, x + w, y + h, 0, 0, width, height);
 
     } else {
       // Rendering tex into "this" but without scaling so the contents
       // of the source texture fall in the corresponding texels of the
       // destination.
-      pgl.drawTexture(tex.glTarget, tex.glName,
-                      tex.glWidth, tex.glHeight, tempFbo.width, tempFbo.height,
+      pgl.drawTexture(tex.glTarget, tex.glName, tex.glWidth, tex.glHeight,
+                      0, 0, tempFbo.width, tempFbo.height,
                       x, y, x + w, y + h, x, y, x + w, y + h);
     }
     pg.popFramebuffer();
@@ -1307,16 +1307,16 @@ public class Texture implements PConstants {
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
-      pgl.drawTexture(texTarget, texName,
-                      texWidth, texHeight, tempFbo.width, tempFbo.height,
+      pgl.drawTexture(texTarget, texName, texWidth, texHeight,
+                      0, 0, tempFbo.width, tempFbo.height,
                       x, y, w, h, 0, 0, width, height);
 
     } else {
       // Rendering tex into "this" but without scaling so the contents
       // of the source texture fall in the corresponding texels of the
       // destination.
-      pgl.drawTexture(texTarget, texName,
-                      texWidth, texHeight, tempFbo.width, tempFbo.height,
+      pgl.drawTexture(texTarget, texName, texWidth, texHeight,
+                      0, 0, tempFbo.width, tempFbo.height,
                       x, y, w, h, x, y, w, h);
     }
     pg.popFramebuffer();

@@ -9,9 +9,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 //import java.awt.Insets;
-import java.awt.Label;
 import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.IntBuffer;
@@ -201,8 +199,13 @@ public class PSurfaceLWJGL implements PSurface {
       float r = ((argb >> 16) & 0xff) / 255.0f;
       float g = ((argb >> 8) & 0xff) / 255.0f;
       float b = ((argb) & 0xff) / 255.0f; 
-      Display.setInitialBackground(r, g, b);    
-      Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
+      Display.setInitialBackground(r, g, b);
+      if (fullScreen) {
+        Display.setDisplayMode(new DisplayMode(screenRect.width, screenRect.height));        
+      } else {
+        Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
+      }
+      
       System.err.println(sketchWidth + " " + sketchHeight);
       if (fullScreenRequested) {
         Display.setFullscreen(true);
@@ -318,13 +321,34 @@ public class PSurfaceLWJGL implements PSurface {
   JFrame presentFrame;
   Canvas presentCanvas;
   
+  boolean presentMode = false;
+  float offsetX;
+  float offsetY;  
   @Override
   public void placePresent(Color stopColor) {
     
     if (sketchWidth < screenRect.width || sketchHeight < screenRect.height) {
-
+      System.err.println("WILL USE FBO");
+     
+     presentMode = pgl.presentMode = true;
+     offsetX = pgl.offsetX = 0.5f * (screenRect.width - sketchWidth);
+     offsetY = pgl.offsetY = 0.5f * (screenRect.height - sketchHeight);
+     pgl.requestFBOLayer();
+     
+     
+     
+//     try {
+////      Display.setFullscreen(true);
+//       Display.setDisplayMode(new DisplayMode(screenRect.width, screenRect.height));
+//    } catch (LWJGLException e1) {
+//      // TODO Auto-generated catch block
+//      e1.printStackTrace();
+//    }
+      
+     /*
       presentFrame = new JFrame(displayDevice.getDefaultConfiguration());      
       presentFrame.getContentPane().setBackground(WINDOW_BGCOLOR);
+      
       
 //      presentCanvas = new Canvas();
 //      presentCanvas.setFocusable(true);
@@ -369,6 +393,7 @@ public class PSurfaceLWJGL implements PSurface {
         label.setSize(labelSize);
         label.setLocation(20, screenRect.height - labelSize.height - 20);
       }
+      */
     }
 
     
@@ -401,8 +426,6 @@ public class PSurfaceLWJGL implements PSurface {
       label.setLocation(20, screenRect.height - labelSize.height - 20);
     }
     */
-    
-    
   }
 
   @Override
@@ -703,6 +726,7 @@ public class PSurfaceLWJGL implements PSurface {
           deinit = false;
           break;
         }
+//        System.err.println(Display.isActive());
       }
       
       if (deinit) {      
@@ -738,6 +762,11 @@ public class PSurfaceLWJGL implements PSurface {
       Display.setResizable(resizable);      
     }
 
+//    @Override
+//    public void setLocation(int x, int y) {
+//      Display.setLocation(x, y);
+//    }
+    
     @Override
     public void setVisible(boolean visible) {
 //      Display.isVisible()
@@ -954,8 +983,9 @@ public class PSurfaceLWJGL implements PSurface {
             modifiers |= Event.ALT;
           }
 
-          int x = Mouse.getX();
-          int y = sketchHeight - Mouse.getY();
+//          PApplet.println(Mouse.getX(), Mouse.getY(), offsetX, offsetY);   
+          int x = Mouse.getX() - (int)offsetX;
+          int y = sketchHeight - (Mouse.getY() - (int)offsetY);
           int button = 0;
           if (Mouse.isButtonDown(0)) {
             button = PConstants.LEFT;
@@ -975,6 +1005,15 @@ public class PSurfaceLWJGL implements PSurface {
             }
           } else if (pressed) {
             action = MouseEvent.RELEASE;
+
+            if (presentMode) {
+              if (20 < Mouse.getX() && Mouse.getX() < 20 + 100 &&
+                  20 < Mouse.getY() && Mouse.getY() < 20 + 50) {
+                System.err.println("clicked on exit button");
+                sketch.exit();  
+              }
+            }
+            
             pressed = false;
           } else {
             action = MouseEvent.MOVE;
@@ -1095,232 +1134,5 @@ public class PSurfaceLWJGL implements PSurface {
       System.err.println("ERROR: Invalid LWJGL KeyCode " + code);
       return -1;
     }
-    
-    
-    /*
-    switch (code) {
-    case Keyboard.KEY_0:
-      return java.awt.event.KeyEvent.VK_0;
-    case Keyboard.KEY_1:
-      return java.awt.event.KeyEvent.VK_1;
-    case Keyboard.KEY_2:
-      return java.awt.event.KeyEvent.VK_2;
-    case Keyboard.KEY_3:
-      return java.awt.event.KeyEvent.VK_3;
-    case Keyboard.KEY_4:
-      return java.awt.event.KeyEvent.VK_4;
-    case Keyboard.KEY_5:
-      return java.awt.event.KeyEvent.VK_5;
-    case Keyboard.KEY_6:
-      return java.awt.event.KeyEvent.VK_6;
-    case Keyboard.KEY_7:
-      return java.awt.event.KeyEvent.VK_7;
-    case Keyboard.KEY_8:
-      return java.awt.event.KeyEvent.VK_8;
-    case Keyboard.KEY_9:
-      return java.awt.event.KeyEvent.VK_9;
-    case Keyboard.KEY_A:
-      return java.awt.event.KeyEvent.VK_A;
-    case Keyboard.KEY_B:
-      return java.awt.event.KeyEvent.VK_B;
-    case Keyboard.KEY_C:
-      return java.awt.event.KeyEvent.VK_C;
-    case Keyboard.KEY_D:
-      return java.awt.event.KeyEvent.VK_D;
-    case Keyboard.KEY_E:
-      return java.awt.event.KeyEvent.VK_E;
-    case Keyboard.KEY_F:
-      return java.awt.event.KeyEvent.VK_F;
-    case Keyboard.KEY_G:
-      return java.awt.event.KeyEvent.VK_G;
-    case Keyboard.KEY_H:
-      return java.awt.event.KeyEvent.VK_H;
-    case Keyboard.KEY_I:
-      return java.awt.event.KeyEvent.VK_I;
-    case Keyboard.KEY_J:
-      return java.awt.event.KeyEvent.VK_J;
-    case Keyboard.KEY_K:
-      return java.awt.event.KeyEvent.VK_K;
-    case Keyboard.KEY_L:
-      return java.awt.event.KeyEvent.VK_L;
-    case Keyboard.KEY_M:
-      return java.awt.event.KeyEvent.VK_M;
-    case Keyboard.KEY_N:
-      return java.awt.event.KeyEvent.VK_N;
-    case Keyboard.KEY_O:
-      return java.awt.event.KeyEvent.VK_O;
-    case Keyboard.KEY_P:
-      return java.awt.event.KeyEvent.VK_P;
-    case Keyboard.KEY_Q:
-      return java.awt.event.KeyEvent.VK_Q;
-    case Keyboard.KEY_R:
-      return java.awt.event.KeyEvent.VK_R;
-    case Keyboard.KEY_S:
-      return java.awt.event.KeyEvent.VK_S;
-    case Keyboard.KEY_T:
-      return java.awt.event.KeyEvent.VK_T;
-    case Keyboard.KEY_U:
-      return java.awt.event.KeyEvent.VK_U;
-    case Keyboard.KEY_V:
-      return java.awt.event.KeyEvent.VK_V;
-    case Keyboard.KEY_W:
-      return java.awt.event.KeyEvent.VK_W;
-    case Keyboard.KEY_X:
-      return java.awt.event.KeyEvent.VK_X;
-    case Keyboard.KEY_Y:
-      return java.awt.event.KeyEvent.VK_Y;
-    case Keyboard.KEY_Z:
-      return java.awt.event.KeyEvent.VK_Z;
-    case Keyboard.KEY_ADD:
-      return java.awt.event.KeyEvent.VK_ADD;
-    case Keyboard.KEY_APOSTROPHE:
-      return java.awt.event.KeyEvent.VK_ASTERISK;
-    case Keyboard.KEY_AT:
-      return java.awt.event.KeyEvent.VK_AT;
-    case Keyboard.KEY_BACK:
-      return java.awt.event.KeyEvent.VK_BACK_SPACE;
-    case Keyboard.KEY_BACKSLASH:
-      return java.awt.event.KeyEvent.VK_BACK_SLASH;
-    case Keyboard.KEY_CAPITAL:
-      return java.awt.event.KeyEvent.VK_CAPS_LOCK;
-    case Keyboard.KEY_CIRCUMFLEX:
-      return java.awt.event.KeyEvent.VK_CIRCUMFLEX;
-    case Keyboard.KEY_COLON:
-      return java.awt.event.KeyEvent.VK_COLON;
-    case Keyboard.KEY_COMMA:
-      return java.awt.event.KeyEvent.VK_COMMA;
-    case Keyboard.KEY_CONVERT:
-      return java.awt.event.KeyEvent.VK_CONVERT;
-    case Keyboard.KEY_DECIMAL:
-      return java.awt.event.KeyEvent.VK_DECIMAL;
-    case Keyboard.KEY_DELETE:
-      return java.awt.event.KeyEvent.VK_DELETE;
-    case Keyboard.KEY_DIVIDE:
-      return java.awt.event.KeyEvent.VK_DIVIDE;
-    case Keyboard.KEY_DOWN:
-      return java.awt.event.KeyEvent.VK_DOWN;
-    case Keyboard.KEY_END:
-      return java.awt.event.KeyEvent.VK_END;
-    case Keyboard.KEY_EQUALS:
-      return java.awt.event.KeyEvent.VK_EQUALS;
-    case Keyboard.KEY_ESCAPE:
-      return java.awt.event.KeyEvent.VK_ESCAPE;
-    case Keyboard.KEY_F1:
-      return java.awt.event.KeyEvent.VK_F1;
-    case Keyboard.KEY_F10:
-      return java.awt.event.KeyEvent.VK_F10;
-    case Keyboard.KEY_F11:
-      return java.awt.event.KeyEvent.VK_F11;
-    case Keyboard.KEY_F12:
-      return java.awt.event.KeyEvent.VK_F12;
-    case Keyboard.KEY_F13:
-      return java.awt.event.KeyEvent.VK_F13;
-    case Keyboard.KEY_F14:
-      return java.awt.event.KeyEvent.VK_F14;
-    case Keyboard.KEY_F15:
-      return java.awt.event.KeyEvent.VK_F15;
-    case Keyboard.KEY_F2:
-      return java.awt.event.KeyEvent.VK_F2;
-    case Keyboard.KEY_F3:
-      return java.awt.event.KeyEvent.VK_F3;
-    case Keyboard.KEY_F4:
-      return java.awt.event.KeyEvent.VK_F4;
-    case Keyboard.KEY_F5:
-      return java.awt.event.KeyEvent.VK_F5;
-    case Keyboard.KEY_F6:
-      return java.awt.event.KeyEvent.VK_F6;
-    case Keyboard.KEY_F7:
-      return java.awt.event.KeyEvent.VK_F7;
-    case Keyboard.KEY_F8:
-      return java.awt.event.KeyEvent.VK_F8;
-    case Keyboard.KEY_F9:
-      return java.awt.event.KeyEvent.VK_F9;
-//    case Keyboard.KEY_GRAVE:
-    case Keyboard.KEY_HOME:
-      return java.awt.event.KeyEvent.VK_HOME;
-    case Keyboard.KEY_INSERT:
-      return java.awt.event.KeyEvent.VK_INSERT;
-    case Keyboard.KEY_LBRACKET:
-      return java.awt.event.KeyEvent.VK_BRACELEFT;
-    case Keyboard.KEY_LCONTROL:
-      return java.awt.event.KeyEvent.VK_CONTROL;
-    case Keyboard.KEY_LEFT:
-      return java.awt.event.KeyEvent.VK_LEFT;
-    case Keyboard.KEY_LMENU:
-      return java.awt.event.KeyEvent.VK_ALT;
-    case Keyboard.KEY_LMETA:
-      return java.awt.event.KeyEvent.VK_META;
-    case Keyboard.KEY_LSHIFT:
-      return java.awt.event.KeyEvent.VK_SHIFT;
-    case Keyboard.KEY_MINUS:
-      return java.awt.event.KeyEvent.VK_MINUS;
-    case Keyboard.KEY_MULTIPLY:
-      return java.awt.event.KeyEvent.VK_MULTIPLY;
-//    case Keyboard.KEY_NEXT:
-    case Keyboard.KEY_NUMLOCK:
-      return java.awt.event.KeyEvent.VK_NUM_LOCK;
-    case Keyboard.KEY_NUMPAD0:
-      return java.awt.event.KeyEvent.VK_NUMPAD0;
-    case Keyboard.KEY_NUMPAD1:
-      return java.awt.event.KeyEvent.VK_NUMPAD1;
-    case Keyboard.KEY_NUMPAD2:
-      return java.awt.event.KeyEvent.VK_NUMPAD2;
-    case Keyboard.KEY_NUMPAD3:
-      return java.awt.event.KeyEvent.VK_NUMPAD3;
-    case Keyboard.KEY_NUMPAD4:
-      return java.awt.event.KeyEvent.VK_NUMPAD4;
-    case Keyboard.KEY_NUMPAD5:
-      return java.awt.event.KeyEvent.VK_NUMPAD5;
-    case Keyboard.KEY_NUMPAD6:
-      return java.awt.event.KeyEvent.VK_NUMPAD6;
-    case Keyboard.KEY_NUMPAD7:
-      return java.awt.event.KeyEvent.VK_NUMPAD7;
-    case Keyboard.KEY_NUMPAD8:
-      return java.awt.event.KeyEvent.VK_NUMPAD8;
-    case Keyboard.KEY_NUMPAD9:
-      return java.awt.event.KeyEvent.VK_NUMPAD9;
-//    case Keyboard.KEY_NUMPADCOMMA:
-//    case Keyboard.KEY_NUMPADENTER:
-//    case Keyboard.KEY_NUMPADEQUALS:
-    case Keyboard.KEY_PAUSE:
-      return java.awt.event.KeyEvent.VK_PAUSE;
-    case Keyboard.KEY_PERIOD:
-      return java.awt.event.KeyEvent.VK_PERIOD;
-//    case Keyboard.KEY_POWER:
-//    case Keyboard.KEY_PRIOR:
-    case Keyboard.KEY_RBRACKET:
-      return java.awt.event.KeyEvent.VK_BRACERIGHT;
-    case Keyboard.KEY_RCONTROL:
-      return java.awt.event.KeyEvent.VK_CONTROL;
-    case Keyboard.KEY_RETURN:
-      return java.awt.event.KeyEvent.VK_ENTER;
-    case Keyboard.KEY_RIGHT:
-      return java.awt.event.KeyEvent.VK_RIGHT;
-//    case Keyboard.KEY_RMENU:
-    case Keyboard.KEY_RMETA:
-      return java.awt.event.KeyEvent.VK_META;
-    case Keyboard.KEY_RSHIFT:
-      return java.awt.event.KeyEvent.VK_SHIFT;
-//    case Keyboard.KEY_SCROLL:
-    case Keyboard.KEY_SEMICOLON:
-      return java.awt.event.KeyEvent.VK_SEMICOLON;
-    case Keyboard.KEY_SLASH:
-      return java.awt.event.KeyEvent.VK_SLASH;
-//    case Keyboard.KEY_SLEEP:
-    case Keyboard.KEY_SPACE:
-      return java.awt.event.KeyEvent.VK_SPACE;
-    case Keyboard.KEY_STOP:
-      return java.awt.event.KeyEvent.VK_STOP;
-    case Keyboard.KEY_SUBTRACT:
-      return java.awt.event.KeyEvent.VK_SUBTRACT;
-    case Keyboard.KEY_TAB:
-      return java.awt.event.KeyEvent.VK_TAB;
-//    case Keyboard.KEY_UNDERLINE:
-    case Keyboard.KEY_UP:
-      return java.awt.event.KeyEvent.VK_UP;
-    default:
-      return 0;
-    }   
-    */
   } 
 }
