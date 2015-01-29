@@ -38,6 +38,19 @@ public class JavaToolbar extends EditorToolbar {
   public JavaToolbar(Editor editor) {
     super(editor);
   }
+
+  
+  @Override
+  public void handleRun() {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void handleStop() {
+    // TODO Auto-generated method stub
+    
+  }
 }
 
 

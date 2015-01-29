@@ -23,21 +23,27 @@
 
 package processing.app;
 
-//import java.awt.event.ActionEvent;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
 
+import javax.swing.Box;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
 /**
  * Run/Stop button plus Mode selection
  */
-public class EditorToolbar extends JPanel {
+abstract public class EditorToolbar extends JPanel {
   protected Editor editor;
   protected Base base;
   protected Mode mode;
 
-  EditorButton runButton;
-  EditorButton stopButton;
+  protected EditorButton runButton;
+  protected EditorButton stopButton;
+  
+  protected Box box;
+  protected JLabel label;
   
   
   public EditorToolbar(Editor editor) {
@@ -45,19 +51,65 @@ public class EditorToolbar extends JPanel {
     base = editor.getBase();
     mode = editor.getMode();
     
-//    runButton = new EditorButton() {
-//      
-//      @Override
-//      public void actionPerformed(ActionEvent e) {
-//        // TODO Auto-generated method stub
-//        
-//      }
-//    };
+    runButton = new EditorButton(mode, 
+                                 "/lib/toolbar/run",
+                                 Language.text("toolbar.run"), 
+                                 Language.text("toolbar.present")) {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        handleRun();
+      }
+    };
+    
+    stopButton = new EditorButton(mode,
+                                  "/lib/toolbar/stop",
+                                  Language.text("toolbar.stop")) {                            
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        handleStop();
+      }
+    };
+    
+    box = Box.createHorizontalBox();
+    box.add(runButton);
+    box.add(label = new JLabel());
+    box.add(Box.createHorizontalGlue());
+    
+    Component items = createModeButtons();
+    if (items != null) {
+      box.add(items);
+    }
+    box.add(createModeSelector());
+    
+    add(box);
+  }
+  
+  
+  public Component createModeButtons() {
+    return null;
+  }
+  
+  
+  public Component createModeSelector() {
+    return null;
+  }
+
+  
+  protected void swapButton(EditorButton replacement) {
+    box.remove(0);
+    box.add(replacement, 0);
+    box.revalidate();
+    box.repaint();  // may be needed
   }
   
   
   public void activateRun() { 
-    
+    //runButton.setPressed(true);
+//    Rectangle bounds = runButton.getBounds();
+//    remove(runButton);
+    swapButton(stopButton);
   }
   
   
@@ -67,13 +119,17 @@ public class EditorToolbar extends JPanel {
   
   
   public void activateStop() { 
-    
   }
   
   
-  public void deactivateStop() { 
-    
+  public void deactivateStop() {
+    swapButton(runButton);
   }
+  
+  
+  abstract public void handleRun();
+  
+  abstract public void handleStop();
 }
 //public abstract class EditorToolbar extends JComponent implements MouseInputListener, KeyListener {
 //

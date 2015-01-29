@@ -144,17 +144,19 @@ implements MouseListener, MouseMotionListener, ActionListener {
 
   @Override
   public void mousePressed(MouseEvent e) {
-    if (isEnabled()) {
-      pressed = true;
-      repaint();
-    }
+    setPressed(true);
   }
 
 
   @Override
   public void mouseReleased(MouseEvent e) {
+    setPressed(false);
+  }
+  
+  
+  public void setPressed(boolean pressed) {
     if (isEnabled()) {
-      pressed = false;
+      this.pressed = pressed;
       repaint();
     }
   }
