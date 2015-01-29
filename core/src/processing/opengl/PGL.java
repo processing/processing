@@ -615,12 +615,14 @@ public abstract class PGL {
           texImage2D(TEXTURE_2D, 0, RGBA, 100, 50, 0, RGBA, UNSIGNED_BYTE, null);
 //          initTexture(TEXTURE_2D, RGBA, 100, 50, pg.backgroundColor);
 
-          ByteBuffer bb = ByteBuffer.allocateDirect(labelPix.length*4);
-          bb.order(ByteOrder.nativeOrder());
-          IntBuffer ib = bb.asIntBuffer();
-          ib.put(labelPix);
-          ib.position(0);
-          copyToTexture(TEXTURE_2D, RGBA, labelTex.get(0), 0, 0, 100, 50, ib);
+//          ByteBuffer bb = ByteBuffer.allocateDirect(labelPix.length*4);
+//          bb.order(ByteOrder.nativeOrder());
+//          IntBuffer ib = bb.asIntBuffer();
+//          ib.put(labelPix);
+//          ib.position(0);
+
+          IntBuffer buf = allocateIntBuffer(labelPix);
+          copyToTexture(TEXTURE_2D, RGBA, labelTex.get(0), 0, 0, 100, 50, buf);
           bindTexture(TEXTURE_2D, 0);
         }
         drawTexture(TEXTURE_2D, labelTex.get(0), 100, 50,
@@ -1854,7 +1856,10 @@ public abstract class PGL {
 
   protected static ByteBuffer allocateByteBuffer(byte[] arr) {
     if (USE_DIRECT_BUFFERS) {
-      return allocateDirectByteBuffer(arr.length);
+      ByteBuffer buf = allocateDirectByteBuffer(arr.length);
+      buf.put(arr);
+      buf.position(0);
+      return buf;
     } else {
       return ByteBuffer.wrap(arr);
     }
@@ -1943,7 +1948,10 @@ public abstract class PGL {
 
   protected static ShortBuffer allocateShortBuffer(short[] arr) {
     if (USE_DIRECT_BUFFERS) {
-      return allocateDirectShortBuffer(arr.length);
+      ShortBuffer buf = allocateDirectShortBuffer(arr.length);
+      buf.put(arr);
+      buf.position(0);
+      return buf;
     } else {
       return ShortBuffer.wrap(arr);
     }
@@ -2032,7 +2040,10 @@ public abstract class PGL {
 
   protected static IntBuffer allocateIntBuffer(int[] arr) {
     if (USE_DIRECT_BUFFERS) {
-      return allocateDirectIntBuffer(arr.length);
+      IntBuffer buf = allocateDirectIntBuffer(arr.length);
+      buf.put(arr);
+      buf.position(0);
+      return buf;
     } else {
       return IntBuffer.wrap(arr);
     }
@@ -2120,7 +2131,10 @@ public abstract class PGL {
 
   protected static FloatBuffer allocateFloatBuffer(float[] arr) {
     if (USE_DIRECT_BUFFERS) {
-      return allocateDirectFloatBuffer(arr.length);
+      FloatBuffer buf = allocateDirectFloatBuffer(arr.length);
+      buf.put(arr);
+      buf.position(0);
+      return buf;
     } else {
       return FloatBuffer.wrap(arr);
     }
