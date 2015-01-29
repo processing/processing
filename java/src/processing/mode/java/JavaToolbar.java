@@ -19,37 +19,36 @@
 
 package processing.mode.java;
 
-import java.awt.Image;
-import java.awt.event.MouseEvent;
+import java.awt.event.InputEvent;
 
-//import javax.swing.JPopupMenu;
-
-
-import javax.swing.JPanel;
-
-import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorToolbar;
-import processing.app.Language;
 
 
 public class JavaToolbar extends EditorToolbar {
+  JavaEditor jeditor;
+  
   
   public JavaToolbar(Editor editor) {
     super(editor);
+    jeditor = (JavaEditor) editor;
   }
 
   
   @Override
-  public void handleRun() {
-    // TODO Auto-generated method stub
-    
+  public void handleRun(int modifiers) {
+    boolean shift = (modifiers & InputEvent.SHIFT_MASK) != 0;
+    if (shift) {
+      jeditor.handlePresent();
+    } else {
+      jeditor.handleRun();
+    }
   }
 
+  
   @Override
   public void handleStop() {
-    // TODO Auto-generated method stub
-    
+    jeditor.handleStop();
   }
 }
 

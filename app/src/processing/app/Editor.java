@@ -38,11 +38,8 @@ import java.util.List;
 import java.util.Timer;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
-import javax.swing.plaf.basic.BasicSplitPaneDivider;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
+import javax.swing.plaf.basic.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
@@ -54,6 +51,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected EditorState state;
   protected Mode mode;
 
+  static final int GUTTER = 60;
+  
   // Otherwise, if the window is resized with the message label
   // set to blank, its preferredSize() will be fuckered
   static protected final String EMPTY =

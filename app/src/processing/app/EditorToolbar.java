@@ -24,7 +24,7 @@
 package processing.app;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
@@ -73,7 +73,7 @@ abstract public class EditorToolbar extends JPanel {
       
       @Override
       public void actionPerformed(ActionEvent e) {
-        handleRun();
+        handleRun(e.getModifiers());
       }
     };
     
@@ -88,6 +88,7 @@ abstract public class EditorToolbar extends JPanel {
     };
     
     box = Box.createHorizontalBox();
+    box.add(Box.createHorizontalStrut(Editor.GUTTER));
     box.add(runButton);
     
     label = new JLabel();
@@ -159,7 +160,7 @@ abstract public class EditorToolbar extends JPanel {
   }
   
   
-  abstract public void handleRun();
+  abstract public void handleRun(int modifiers);
   
   
   abstract public void handleStop();

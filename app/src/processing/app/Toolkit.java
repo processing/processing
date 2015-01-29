@@ -414,7 +414,7 @@ public class Toolkit {
   static public ImageIcon getLibIcon(String filename) {
     File file = Base.getContentFile("lib/" + filename);
     if (!file.exists()) {
-      System.err.println("does not exist: " + file);
+//      System.err.println("does not exist: " + file);
       return null;
     }
     return new ImageIcon(file.getAbsolutePath());
