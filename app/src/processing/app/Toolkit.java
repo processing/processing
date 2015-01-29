@@ -21,6 +21,7 @@
 
 package processing.app;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -503,8 +504,8 @@ public class Toolkit {
   
   /** 
    * Handles scaling for high-res displays, also sets text anti-aliasing 
-   * options. Moved to a utility function because it's used in several classes.
-   * @param g
+   * options to be far less ugly than the defaults. 
+   * Moved to a utility function because it's used in several classes.
    * @return a Graphics2D object, as a bit o sugar
    */
   static public Graphics2D prepareGraphics(Graphics g) {
@@ -514,11 +515,45 @@ public class Toolkit {
       // scale everything 2x, will be scaled down when drawn to the screen
       g2.scale(2, 2);
     } 
+    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                         RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+    
     return g2;
+  }
+  
+  
+//  /**
+//   * Prepare and offscreen image that's sized for this Component, 1x or 2x 
+//   * depending on whether this is a retina display or not.
+//   * @param comp
+//   * @param image
+//   * @return
+//   */
+//  static public Image prepareOffscreen(Component comp, Image image) {
+//    Dimension size = comp.getSize();
+//    Image offscreen = image;
+//    if (image == null || 
+//        image.getWidth(null) != size.width || 
+//        image.getHeight(null) != size.height) {
+//      if (Toolkit.highResDisplay()) {
+//        offscreen = comp.createImage(size.width*2, size.height*2);
+//      } else {
+//        offscreen = comp.createImage(size.width, size.height);
+//      }
+//    }
+//    return offscreen;
+//  }
+  
+  
+  static final Color CLEAR_COLOR = new Color(0, true);
+  
+  static public void clearGraphics(Graphics g, int width, int height) {
+    g.setColor(CLEAR_COLOR);
+    g.fillRect(0, 0, width, height);
   }
 
 
@@ -741,10 +776,16 @@ public class Toolkit {
     File fontFile = new File(System.getProperty("java.home"), "lib/fonts/" + filename);
     if (!fontFile.exists()) {
       // if we're debugging from Eclipse, grab it from the work folder (user.dir is /app)
-      //fontFile = new File(System.getProperty("user.dir"), "../build/shared/lib/fonts/" + filename);
+      fontFile = new File(System.getProperty("user.dir"), "../build/shared/lib/fonts/" + filename);
+    }
+    if (!fontFile.exists()) {
       // if we're debugging the new Java Mode from Eclipse, paths are different 
       fontFile = new File(System.getProperty("user.dir"), "../../shared/lib/fonts/" + filename);
     }
+    if (!fontFile.exists()) {
+      Base.showError("Font Sadness", "Could not find required fonts", null);
+    }
+    
     BufferedInputStream input = new BufferedInputStream(new FileInputStream(fontFile));
     Font font = Font.createFont(Font.TRUETYPE_FONT, input);
     input.close();
@@ -752,6 +793,10 @@ public class Toolkit {
   }
   
   
+  /** 
+   * Synthesized replacement for FontMetrics.getAscent(), which is dreadfully 
+   * inaccurate and inconsistent across platforms. 
+   */
   static double getAscent(Graphics g) { //, Font font) {
     Graphics2D g2 = (Graphics2D) g;
     FontRenderContext frc = g2.getFontRenderContext();
@@ -762,13 +807,15 @@ public class Toolkit {
 
   /** Do not use or rely upon presence of this method: not approved as final API. */ 
   static public void debugOpacity(Component comp) {
-    Component parent = comp.getParent();
-    while (parent != null) {
+    //Component parent = comp.getParent();
+    while (comp != null) {
       //EditorConsole.systemOut.println("parent is " + parent + " " + parent.isOpaque());
-      EditorConsole.systemOut.println(parent.getClass().getName() + " " + (parent.isOpaque() ? "OPAQUE" : ""));
-      parent = parent.getParent();
+      //EditorConsole.systemOut.println(parent.getClass().getName() + " " + (parent.isOpaque() ? "OPAQUE" : ""));
+      System.out.println(comp.getClass().getName() + " " + (comp.isOpaque() ? "OPAQUE" : ""));
+      comp = comp.getParent();
     }
-    EditorConsole.systemOut.println();
+    //EditorConsole.systemOut.println();
+    System.out.println();
   }
   
   

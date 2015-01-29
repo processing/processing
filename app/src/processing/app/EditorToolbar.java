@@ -23,33 +23,53 @@
 
 package processing.app;
 
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.util.Arrays;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import processing.core.PApplet;
 
 
 /**
  * Run/Stop button plus Mode selection
  */
 abstract public class EditorToolbar extends JPanel {
+  static final int HIGH = 80;
+  
   protected Editor editor;
   protected Base base;
   protected Mode mode;
 
   protected EditorButton runButton;
   protected EditorButton stopButton;
+  protected EditorButton currentButton;
   
   protected Box box;
   protected JLabel label;
+  
+//  int GRADIENT_TOP = 192;
+//  int GRADIENT_BOTTOM = 246;
+  protected Image backgroundGradient;
+  protected Image reverseGradient;
   
   
   public EditorToolbar(Editor editor) {
     this.editor = editor;
     base = editor.getBase();
     mode = editor.getMode();
+    
+    //setOpaque(false);
+    //gradient = createGradient();
+    //System.out.println(gradient);
+    
+    backgroundGradient = mode.getGradient("header", 400, HIGH);
+    reverseGradient = mode.getGradient("reversed", 100, EditorButton.DIM);
     
     runButton = new EditorButton(mode, 
                                  "/lib/toolbar/run",
@@ -74,16 +94,28 @@ abstract public class EditorToolbar extends JPanel {
     
     box = Box.createHorizontalBox();
     box.add(runButton);
-    box.add(label = new JLabel());
-    box.add(Box.createHorizontalGlue());
     
+    label = new JLabel();
+    label.setFont(mode.getFont("toolbar.sketch.font"));
+    label.setForeground(mode.getColor("toolbar.sketch.color"));
+    box.add(label);
+    currentButton = runButton;
+    
+    box.add(Box.createHorizontalGlue());
     Component items = createModeButtons();
     if (items != null) {
       box.add(items);
     }
-    box.add(createModeSelector());
-    
-    add(box);
+    ModeSelector ms = new ModeSelector(); 
+    box.add(ms);
+    add(box);    
+  }
+  
+  
+  public void paintComponent(Graphics g) {
+//    super.paintComponent(g);
+    Dimension size = getSize();
+    g.drawImage(backgroundGradient, 0, 0, size.width, size.height, this);
   }
   
   
@@ -92,16 +124,19 @@ abstract public class EditorToolbar extends JPanel {
   }
   
   
-  public Component createModeSelector() {
-    return null;
-  }
-
+//  public Component createModeSelector() {
+//    return new ModeSelector();
+//  }
+  
   
   protected void swapButton(EditorButton replacement) {
-    box.remove(0);
-    box.add(replacement, 0);
-    box.revalidate();
-    box.repaint();  // may be needed
+    if (currentButton != replacement) {
+      box.remove(0);
+      box.add(replacement, 0);
+      box.revalidate();
+      box.repaint();  // may be needed
+      currentButton = replacement;
+    }
   }
   
   
@@ -129,8 +164,109 @@ abstract public class EditorToolbar extends JPanel {
   
   abstract public void handleRun();
   
+  
   abstract public void handleStop();
+  
+
+  class ModeSelector extends JPanel {
+    Image offscreen;
+    int width, height;
+    
+    String title; 
+    Font titleFont;
+    Color titleColor;
+    int titleAscent;
+    int titleWidth;
+    
+    final int MODE_GAP_WIDTH = 13;
+    final int ARROW_GAP_WIDTH = 6;
+    final int ARROW_WIDTH = 8;
+    final int ARROW_TOP = 21;
+    final int ARROW_BOTTOM = 29;
+
+    int[] triangleX = new int[3];
+    int[] triangleY = new int[] { ARROW_TOP, ARROW_TOP, ARROW_BOTTOM };
+    
+
+    @SuppressWarnings("deprecation")
+    public ModeSelector() {
+      title = mode.getTitle(); //.toUpperCase();
+      titleFont = mode.getFont("mode.title.font");
+      titleColor = mode.getColor("mode.title.color");
+      
+      // getGraphics() is null and no offscreen yet
+      titleWidth = getToolkit().getFontMetrics(titleFont).stringWidth(title);
+      
+//      setOpaque(false);
+    }
+    
+    @Override
+    public void paintComponent(Graphics screen) {
+//      Toolkit.debugOpacity(this);
+
+      Dimension size = getSize();
+      width = 0;
+      if (width != size.width || height != size.height) {
+        if (Toolkit.highResDisplay()) {
+          offscreen = createImage(size.width*2, size.height*2);
+        } else {
+          offscreen = createImage(size.width, size.height);
+        }
+        width = size.width;
+        height = size.height;
+      }
+      
+      Graphics g = offscreen.getGraphics();
+      /*Graphics2D g2 =*/ Toolkit.prepareGraphics(g);
+      //Toolkit.clearGraphics(g, width, height);
+//      g.clearRect(0, 0, width, height);
+//      g.setColor(Color.GREEN);
+//      g.fillRect(0, 0, width, height);
+      
+      g.setFont(titleFont);
+      if (titleAscent == 0) {
+        titleAscent = (int) Toolkit.getAscent(g); //metrics.getAscent();
+      }
+      FontMetrics metrics = g.getFontMetrics();
+      titleWidth = metrics.stringWidth(title);
+      
+      g.drawImage(reverseGradient, 0, 0, width, height, this);
+      
+      g.setColor(titleColor);
+      g.drawString(title, MODE_GAP_WIDTH, (height + titleAscent) / 2);
+      
+      int x = MODE_GAP_WIDTH + titleWidth + ARROW_GAP_WIDTH;
+      triangleX[0] = x;
+      triangleX[1] = x + ARROW_WIDTH;
+      triangleX[2] = x + ARROW_WIDTH/2;
+      g.fillPolygon(triangleX, triangleY, 3);
+      
+//      screen.clearRect(0, 0, width, height);
+      screen.drawImage(offscreen, 0, 0, width, height, this);
+//      screen.setColor(Color.RED);
+//      screen.drawRect(0, 0, width-1, height-1);
+    }
+  
+    @Override
+    public Dimension getPreferredSize() {
+      return new Dimension(MODE_GAP_WIDTH + titleWidth + 
+                           ARROW_GAP_WIDTH + ARROW_WIDTH + MODE_GAP_WIDTH, 
+                           EditorButton.DIM);
+    }
+    
+    @Override
+    public Dimension getMinimumSize() {
+      return getPreferredSize();
+    }
+    
+    @Override
+    public Dimension getMaximumSize() {
+      return getPreferredSize();
+    }
+  }
 }
+
+
 //public abstract class EditorToolbar extends JComponent implements MouseInputListener, KeyListener {
 //
 //  /** Width of each toolbar button. */

@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Timer;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
@@ -172,7 +174,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     buildMenuBar();
 
-    backgroundGradient = Toolkit.getLibImage("vertical-gradient.png");
+    /*
+    //backgroundGradient = Toolkit.getLibImage("vertical-gradient.png");
+    backgroundGradient = mode.getGradient("editor", 400, 400);
     JPanel contentPain = new JPanel() {
       @Override
       public void paintComponent(Graphics g) {
@@ -183,8 +187,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //        g.fillRect(0, 0, dim.width, dim.height);
       }
     };
+    */
     //contentPain.setBorder(new EmptyBorder(0, 0, 0, 0));
     //System.out.println(contentPain.getBorder());
+    JPanel contentPain = new JPanel();
     
 //    JFrame f = new JFrame();
 //    f.setContentPane(new JPanel() {
@@ -207,6 +213,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    pain.setOpaque(false);
 //    pain.setLayout(new BorderLayout());
 //    contentPain.add(pain, BorderLayout.CENTER);
+//    contentPain.setBorder(new EmptyBorder(10, 10, 10, 10));
 
     Box box = Box.createVerticalBox();
     Box upper = Box.createVerticalBox();
@@ -257,8 +264,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // remove any ugly borders added by PLAFs
     splitPane.setBorder(null);
     // necessary to let the gradient show through
-    splitPane.setOpaque(false);
-    
+//    splitPane.setOpaque(false);
+
+    // remove an ugly border around anything in a SplitPane !$*&!%
+    UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
+    // override the look of the SplitPane so that it's identical across OSes 
     splitPane.setUI(new BasicSplitPaneUI() {
       public BasicSplitPaneDivider createDefaultDivider() {
         return new BasicSplitPaneDivider(this) {
@@ -266,12 +276,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
           final Color dotColor = mode.getColor("divider.dot.color"); //new Color(80, 80, 80);
           int dotSize = mode.getInteger("divider.dot.diameter"); //3;
           
-          //public void setBorder(Border b) { }
-
           @Override
           public void paint(Graphics g) {
-            //Graphics2D g2 = Toolkit.prepareGraphics(g);
-            //Toolkit.prepareGraphics(g);
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                 RenderingHints.VALUE_ANTIALIAS_ON);
@@ -284,10 +290,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
             g.setColor(dotColor);
             int x = w/2 - dotSize/2;
             int y = h/2 - dotSize/2;
-            //g2.fillOval(x, y, width, height);
             g.fillOval(x, y, dotSize, dotSize);
-            
-            super.paint(g);
           }
         };
       }

@@ -32,3 +32,5 @@ editor.warningmarkercolor = #ffc30e
 errorbar.errorcolor = #ed2630
 errorbar.warningcolor = #ffc30e
 errorbar.backgroundcolor = #2c343d
+
+# color of error tickmark on right-hand side in comp: #c20102
