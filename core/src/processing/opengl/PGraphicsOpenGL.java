@@ -5631,6 +5631,27 @@ public class PGraphicsOpenGL extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
+  // SAVE
+
+
+  @Override
+  public boolean save(String filename) {
+
+    // Act as an opaque surface for the purposes of saving.
+    if (primarySurface) {
+      int prevFormat = format;
+      format = RGB;
+      boolean result = super.save(filename);
+      format = prevFormat;
+      return result;
+    }
+
+    return super.save(filename);
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
   // LOAD/UPDATE TEXTURE
 
 
@@ -5751,8 +5772,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // Processing Y axis is inverted with respect to OpenGL, so we need to
     // invert the y coordinates of the screen rectangle.
     pgl.disable(PGL.BLEND);
-    pgl.drawTexture(texture.glTarget, texture.glName,
-                    texture.glWidth, texture.glHeight, width, height,
+    pgl.drawTexture(texture.glTarget, texture.glName, texture.glWidth, texture.glHeight,
+                    0, 0, width, height,
                     x, y, x + w, y + h,
                     x, height - (y + h), x + w, height - y);
     pgl.enable(PGL.BLEND);
@@ -5972,8 +5993,8 @@ public class PGraphicsOpenGL extends PGraphics {
       texY1 = sy + sh;
     }
 
-    pgl.drawTexture(tex.glTarget, tex.glName,
-                    tex.glWidth, tex.glHeight, width, height,
+    pgl.drawTexture(tex.glTarget, tex.glName, tex.glWidth, tex.glHeight,
+                    0, 0, width, height,
                     texX0, texY0, texX1, texY1,
                     scrX0, scrY0, scrX1, scrY1);
 
