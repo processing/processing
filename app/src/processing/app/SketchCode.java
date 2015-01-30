@@ -54,6 +54,9 @@ public class SketchCode {
 
   /** Last time this tab was visited */
   long visited;
+  
+  /** The last time this tab was saved to disk */
+  private long lastModified;
 
   /**
    * Undo Manager for this tab, each tab keeps track of their own
@@ -293,6 +296,7 @@ public class SketchCode {
       System.err.println();
     }
 
+    lastModified = file.lastModified();
     setModified(false);
   }
 
@@ -307,6 +311,7 @@ public class SketchCode {
 
     Base.saveFile(program, file);
     savedProgram = program;
+    lastModified = file.lastModified();
     setModified(false);
   }
 
@@ -319,6 +324,7 @@ public class SketchCode {
     savedProgram = program;
     file = newFile;
     makePrettyName();
+    lastModified = file.lastModified();
     setModified(false);
   }
 
@@ -329,5 +335,13 @@ public class SketchCode {
    */
   public void setFolder(File sketchFolder) {
     file = new File(sketchFolder, file.getName());
+  }
+  
+  /**
+   * Used to determine whether this file was modified externally
+   * @return The time the file was last modified
+   */
+  public long lastModified(){
+    return lastModified;
   }
 }

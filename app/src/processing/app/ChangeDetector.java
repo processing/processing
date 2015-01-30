@@ -6,7 +6,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 public class ChangeDetector implements WindowFocusListener {
@@ -15,7 +14,7 @@ public class ChangeDetector implements WindowFocusListener {
   private Editor editor;
 
 //  private boolean enabled = true;
-  private boolean enabled = false;  // broken on OS X
+  private boolean enabled = true; // broken on OS X (possibly fixed? tested and it seems to work)
 
   private boolean skip = false;
 
@@ -64,17 +63,6 @@ public class ChangeDetector implements WindowFocusListener {
       @Override
       public void run() {
         Base.showWarning(title, message);
-      }
-    });
-  }
-
-  private void showWarningTieredAsync(final String title,
-                                      final String message1,
-                                      final String message2, final Exception e) {
-    EventQueue.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        Base.showWarningTiered(title, message1, message2, e);
       }
     });
   }
@@ -161,8 +149,6 @@ public class ChangeDetector implements WindowFocusListener {
 
     SketchCode[] codes = sketch.getCode();
     for (SketchCode sc : codes) {
-      String inMemory = sc.getProgram();
-      String onDisk = null;
       File sketchFile = sc.getFile();
       if (!sketchFile.exists()) {
         //if a file in the sketch was not found, then it must have been deleted externally
@@ -170,18 +156,8 @@ public class ChangeDetector implements WindowFocusListener {
         reloadSketch(sc);
         return;
       }
-      try {
-        onDisk = Base.loadFile(sketchFile);
-      } catch (IOException e1) {
-        showWarningTieredAsync("File Change Detection Failed",
-                               "Checking for changed files for this sketch has failed.",
-                               "The file change detector will be disabled.", e1);
-        enabled = false;
-        return;
-      }
-      if (onDisk == null) {
-        //failed
-      } else if (!inMemory.equals(onDisk)) {
+      //if a file's tab was saved before the file was 
+      if (sketchFile.lastModified() > sc.lastModified()) {
         reloadSketch(sc);
         return;
       }
