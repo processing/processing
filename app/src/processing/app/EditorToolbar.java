@@ -29,6 +29,7 @@ import java.awt.event.*;
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 
 /**
@@ -204,7 +205,7 @@ abstract public class EditorToolbar extends JPanel {
 
     int[] triangleX = new int[3];
     int[] triangleY = new int[] { ARROW_TOP, ARROW_TOP, ARROW_BOTTOM };
-    
+
 
     @SuppressWarnings("deprecation")
     public ModeSelector() {
@@ -214,6 +215,13 @@ abstract public class EditorToolbar extends JPanel {
       
       // getGraphics() is null and no offscreen yet
       titleWidth = getToolkit().getFontMetrics(titleFont).stringWidth(title);
+      
+      addMouseListener(new MouseAdapter() {
+        public void mousePressed(MouseEvent event) {
+          JPopupMenu popup = editor.getModeMenu().getPopupMenu();
+          popup.show(ModeSelector.this, event.getX(), event.getY());
+        }
+      });
     }
     
     @Override
