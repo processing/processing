@@ -129,8 +129,8 @@ abstract public class EditorToolbar extends JPanel {
   
   protected void swapButton(EditorButton replacement) {
     if (currentButton != replacement) {
-      box.remove(0);
-      box.add(replacement, 0);
+      box.remove(currentButton);
+      box.add(replacement, 1);  // has to go after the strut
       box.revalidate();
       box.repaint();  // may be needed
       currentButton = replacement;
@@ -209,8 +209,6 @@ abstract public class EditorToolbar extends JPanel {
       
       // getGraphics() is null and no offscreen yet
       titleWidth = getToolkit().getFontMetrics(titleFont).stringWidth(title);
-      
-//      setOpaque(false);
     }
     
     @Override
