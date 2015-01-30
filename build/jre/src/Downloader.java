@@ -92,7 +92,11 @@ public class Downloader extends Task {
 //    }
 
     //download(path, jdk, platform, bits, version, update, build);
-    download();
+    try {
+      download();
+    } catch (IOException e) {
+      throw new BuildException(e);
+    }
     
     /*
     downloadJRE("linux-i586.tar.gz");
@@ -116,7 +120,7 @@ public class Downloader extends Task {
 //  static void download(String path, //File folder, String filename,
 //                       boolean jdk, String platform, String bits,
 //                       int version, int update, int build) {
-  void download() {
+  void download() throws IOException {
     //HttpURLConnection.setFollowRedirects(true);
     String filename = (jdk ? "jdk" : "jre") +
       (update == 0 ?
@@ -134,55 +138,62 @@ public class Downloader extends Task {
       (update == 0 ?
        String.format("%d-b%02d/", version, build) :
        String.format("%du%d-b%02d/", version, update, build)) + filename;
-    System.out.println(url);
+//    System.out.println(url);
 
-    try {
-      HttpURLConnection conn =
+    HttpURLConnection conn =
         (HttpURLConnection) new URL(url).openConnection();
-      //conn.setRequestProperty("Cookie", "name1=value1; name2=value2");
-      conn.setRequestProperty("Cookie", COOKIE);
-      //conn.setRequestProperty("Cookie", "gpw_e24=http://www.oracle.com/");
+    //conn.setRequestProperty("Cookie", "name1=value1; name2=value2");
+    conn.setRequestProperty("Cookie", COOKIE);
+    //conn.setRequestProperty("Cookie", "gpw_e24=http://www.oracle.com/");
 
-      //printHeaders(conn);
-      //conn.connect();
-      if (conn.getResponseCode() == 302) {
-        Map<String, List<String>> headers = conn.getHeaderFields();
-        List<String> location = headers.get("Location");
-        if (location.size() == 1) {
-          url = location.get(0);
-        } else {
-          throw new RuntimeException("Got " + location.size() + " locations.");
-        }
-        List<String> cookies = headers.get("Set-Cookie");
-        conn = (HttpURLConnection) new URL(url).openConnection();
-        for (String cookie : cookies) {
-          conn.setRequestProperty("Cookie", cookie);
-        }
-        conn.setRequestProperty("Cookie", COOKIE);
-        conn.connect();
-      }
-
-      if (conn.getResponseCode() == 200) {
-        InputStream input = conn.getInputStream();
-        BufferedInputStream bis = new BufferedInputStream(input);
-        File outputFile = new File(path); //folder, filename);
-        BufferedOutputStream output =
-          new BufferedOutputStream(new FileOutputStream(outputFile));
-        int c = bis.read();
-        while (c != -1) {
-          output.write(c);
-          c = bis.read();
-        }
-        bis.close();
-        output.flush();
-        output.close();
+    //printHeaders(conn);
+    //conn.connect();
+    if (conn.getResponseCode() == 302) {
+      Map<String, List<String>> headers = conn.getHeaderFields();
+      List<String> location = headers.get("Location");
+      if (location.size() == 1) {
+        url = location.get(0);
       } else {
-        printHeaders(conn);
-        System.exit(1);
+        throw new RuntimeException("Got " + location.size() + " locations.");
       }
+      List<String> cookies = headers.get("Set-Cookie");
+      conn = (HttpURLConnection) new URL(url).openConnection();
+      for (String cookie : cookies) {
+        conn.setRequestProperty("Cookie", cookie);
+      }
+      conn.setRequestProperty("Cookie", COOKIE);
+      conn.connect();
+    }
 
-    } catch (Exception e) {
-      e.printStackTrace();
+    if (conn.getResponseCode() == 200) {
+      InputStream input = conn.getInputStream();
+      BufferedInputStream bis = new BufferedInputStream(input);
+      File outputFile = new File(path); //folder, filename);
+      File tempFile = File.createTempFile("download", "", outputFile.getParentFile());
+      BufferedOutputStream output =
+          new BufferedOutputStream(new FileOutputStream(tempFile));
+      int c = bis.read();
+      while (c != -1) {
+        output.write(c);
+        c = bis.read();
+      }
+      bis.close();
+      output.flush();
+      output.close();
+
+      if (outputFile.exists()) {
+        if (!outputFile.delete()) {
+          throw new BuildException("Could not delete old download: " + outputFile.getAbsolutePath());
+        }
+      }
+      if (!tempFile.renameTo(outputFile)) {
+        throw new BuildException(String.format("Could not rename %s to %s", 
+                                               tempFile.getAbsolutePath(), 
+                                               outputFile.getAbsolutePath()));
+      }
+    } else {
+      printHeaders(conn);
+      System.exit(1);
     }
   }
 

@@ -115,7 +115,7 @@ _ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
 _ disable the debug toggle menu while running
 _   otherwise could run in one mode, then try to stop in another
 _ show debug window when running, hide when stopped
-_ can we animate its appearance?
+_ can we animate the show/hide for the debug box?
 
 _ do the right thing on passing around List vs ArrayList and others
 
