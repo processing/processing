@@ -1211,7 +1211,7 @@ public class Sketch {
     currentIndex = which;
     current.visited = System.currentTimeMillis();
       editor.setCode(current);
-//editor.header.rebuild();
+//      editor.header.rebuild();
       editor.header.repaint();
   }
 
