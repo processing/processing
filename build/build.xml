@@ -20,7 +20,7 @@
   </condition>
 
   <!-- Require Java 8 everywhere. -->
-  <fail message="Unsupported Java version: ${java.version}. Make sure that Java 8 (aka Java 1.8) is installed."> 
+  <fail message="Unsupported Java version: ${java.version}. To build, make sure that Java 8 (aka Java 1.8) is installed."> 
     <condition> 
       <not> 
         <or> 
