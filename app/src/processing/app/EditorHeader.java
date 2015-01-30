@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2004-13 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -35,25 +36,33 @@ import javax.swing.*;
  * Sketch tabs at the top of the editor window.
  */
 public class EditorHeader extends JComponent {
+  // height of this tab bar
+  static final int HIGH = 36;
   // standard UI sizing (OS-specific, but generally consistent)
-  static final int SCROLLBAR_WIDTH = 16;
+//  static final int SCROLLBAR_WIDTH = 16;
   // amount of space on the left edge before the tabs start
-  static final int MARGIN_WIDTH = 6;
+  static final int MARGIN_WIDTH = Editor.GUTTER;
+  
+  static final int ARROW_TAB_WIDTH = 23;
   // distance from the righthand side of a tab to the drop-down arrow
-  static final int ARROW_GAP_WIDTH = 8;
+//  static final int ARROW_GAP_WIDTH = 8;
   // indent x/y for notch on the tab
-  static final int NOTCH = 0;
+  static final int ARROW_TOP = 14;
+  static final int ARROW_BOTTOM = 23;
+  static final int ARROW_WIDTH = 9;
+  
+//  static final int NOTCH = 0;
   // how far to raise the tab from the bottom of this Component
-  static final int TAB_HEIGHT = 25;
-  // line that continues across all of the tabs for the current one
-  static final int TAB_STRETCH = 3;
+  static final int TAB_HEIGHT = HIGH;
+//  // line that continues across all of the tabs for the current one
+//  static final int TAB_STRETCH = 3;
   // amount of extra space between individual tabs
-  static final int TAB_BETWEEN = 2;
+  static final int TAB_BETWEEN = 4;
   // amount of margin on the left/right for the text on the tab
-  static final int TEXT_MARGIN = 10;
+  static final int TEXT_MARGIN = 16;
   // width of the tab when no text visible
   // (total tab width will be this plus TEXT_MARGIN*2)
-  static final int NO_TEXT_WIDTH = 10;
+  static final int NO_TEXT_WIDTH = 16;
 
   Color bgColor;
 //  boolean hiding;
@@ -62,6 +71,7 @@ public class EditorHeader extends JComponent {
   Color textColor[] = new Color[2];
   Color tabColor[] = new Color[2];
   Color modifiedColor;
+  Color arrowColor;
 
   Editor editor;
 
@@ -80,7 +90,7 @@ public class EditorHeader extends JComponent {
 
   //
 
-  static final String STATUS[] = { "unsel", "sel" };
+//  static final String STATUS[] = { "unsel", "sel" };
   static final int UNSELECTED = 0;
   static final int SELECTED = 1;
 
@@ -90,13 +100,13 @@ public class EditorHeader extends JComponent {
 //  static final int RIGHT = 2;
 //  static final int MENU = 3;
 
-  static final int PIECE_WIDTH = 4;
-  static final int PIECE_HEIGHT = 33;
-  Image[][] pieces;
+//  static final int PIECE_WIDTH = 4;
+//  static final int PIECE_HEIGHT = 33;
+//  Image[][] pieces;
 
-  static final int ARROW_WIDTH = 14;
-  static final int ARROW_HEIGHT = 14;
-  static Image tabArrow;
+//  static final int ARROW_WIDTH = 14;
+//  static final int ARROW_HEIGHT = 14;
+//  static Image tabArrow;
 
   //
 
@@ -105,10 +115,14 @@ public class EditorHeader extends JComponent {
   int imageW, imageH;
 
   String lastNoticeName;
+  
+  Image gradient;
 
 
   public EditorHeader(Editor eddie) {
     this.editor = eddie;
+
+    gradient = editor.getMode().getGradient("header", 400, HIGH);
 
     updateMode();
 
@@ -167,40 +181,13 @@ public class EditorHeader extends JComponent {
 
   public void updateMode() {
     Mode mode = editor.getMode();
-//    int res = Toolkit.isRetina() ? 2 : 1;
-//    String suffix = "-2x.png";  // wishful thinking
-//    // Some modes may not have a 2x version. If a mode doesn't have a 1x
-//    // version, this will cause an error... they should always have 1x.
-//    if (res == 2) {
-//      if (!mode.getContentFile(tabFile(0, 0) + suffix).exists()) {
-//        res = 1;
-//      }
+//    if (tabArrow == null) {
+//      String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
+//      tabArrow = Toolkit.getLibImage("tab-arrow" + suffix);
 //    }
-//    if (res == 1) {
-//      suffix = ".png";
-//      if (!mode.getContentFile(tabFile(0, 0) + suffix).exists()) {
-//        suffix = ".gif";
-//      }
-//    }
-//
-//    pieces = new Image[STATUS.length][WHERE.length];
-//    for (int status = 0; status < STATUS.length; status++) {
-//      for (int where = 0; where < WHERE.length; where++) {
-//        //String filename = "theme/tab-" + STATUS[i] + "-" + WHERE[j] + ".gif";
-//        pieces[status][where] = mode.loadImage(tabFile(status, where) + suffix);
-//      }
-//    }
-
-    if (tabArrow == null) {
-      String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
-      tabArrow = Toolkit.getLibImage("tab-arrow" + suffix);
-    }
 
     bgColor = mode.getColor("header.bgcolor");
     
-//    hiding = Preferences.getBoolean("buttons.hide.image");
-//    hideColor = mode.getColor("buttons.hide.color");
-
     textColor[SELECTED] = mode.getColor("header.text.selected.color");
     textColor[UNSELECTED] = mode.getColor("header.text.unselected.color");
     font = mode.getFont("header.text.font");
@@ -208,6 +195,7 @@ public class EditorHeader extends JComponent {
     tabColor[SELECTED] = mode.getColor("header.tab.selected.color");
     tabColor[UNSELECTED] = mode.getColor("header.tab.unselected.color");
     
+    arrowColor = mode.getColor("header.tab.arrow.color");
     modifiedColor = mode.getColor("editor.selection.color");
   }
 
@@ -249,32 +237,13 @@ public class EditorHeader extends JComponent {
 
     Graphics g = offscreen.getGraphics();
     g.setFont(font);  // need to set this each time through
-//    metrics = g.getFontMetrics();
-//    fontAscent = metrics.getAscent();
     if (fontAscent == 0) {
       fontAscent = (int) Toolkit.getAscent(g);
     }
 
     Graphics2D g2 = Toolkit.prepareGraphics(g);
-    /*
-    if (Toolkit.highResDisplay()) {
-      // scale everything 2x, will be scaled down when drawn to the screen
-      g2.scale(2, 2);
-    } 
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-     */
 
-    // set the background for the offscreen
-    //g.setColor(hiding ? hideColor : bgColor);
-    g.setColor(new Color(0, 0, 0, 0));
-    g.fillRect(0, 0, imageW, imageH);
-
-//    if (!hiding) {
-//      editor.getMode().drawBackground(g, Preferences.GRID_SIZE);
-//    }
+    g.drawImage(gradient, 0, 0, imageW, imageH, this);
 
     if (tabs.length != sketch.getCodeCount()) {
       tabs = new Tab[sketch.getCodeCount()];
@@ -284,8 +253,7 @@ public class EditorHeader extends JComponent {
       visitOrder = new Tab[sketch.getCodeCount() - 1];
     }
 
-    int leftover =
-      ARROW_GAP_WIDTH + ARROW_WIDTH + MARGIN_WIDTH; // + SCROLLBAR_WIDTH;
+    int leftover = TAB_BETWEEN + ARROW_TAB_WIDTH; // + MARGIN_WIDTH; // + SCROLLBAR_WIDTH;
     int tabMax = getWidth() - leftover;
 
     // reset all tab positions
@@ -335,13 +303,24 @@ public class EditorHeader extends JComponent {
     placeTabs(MARGIN_WIDTH, tabMax, g2);
 
     // draw the dropdown menu target
-    menuLeft = tabs[tabs.length - 1].right + ARROW_GAP_WIDTH;
-    menuRight = menuLeft + ARROW_WIDTH;
-    int arrowY = (getHeight() - TAB_HEIGHT - TAB_STRETCH) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
-    g.drawImage(tabArrow, menuLeft, arrowY,
-                ARROW_WIDTH, ARROW_HEIGHT, null);
-//    g.drawImage(pieces[popup.isVisible() ? SELECTED : UNSELECTED][MENU],
-//                menuLeft, 0, null);
+    menuLeft = tabs[tabs.length - 1].right + TAB_BETWEEN;
+    menuRight = menuLeft + ARROW_TAB_WIDTH;
+    g.setColor(tabColor[UNSELECTED]);
+    drawTab(g, menuLeft, menuRight);
+//    int arrowY = (getHeight() - TAB_HEIGHT - TAB_STRETCH) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
+//    g.drawImage(tabArrow, menuLeft, arrowY,
+//                ARROW_WIDTH, ARROW_HEIGHT, null);
+    // TODO draw arrow here
+
+    g.setColor(arrowColor);
+    GeneralPath trianglePath = new GeneralPath();
+    float x1 = menuLeft + (ARROW_TAB_WIDTH - ARROW_WIDTH) / 2f;
+    float x2 = menuLeft + (ARROW_TAB_WIDTH + ARROW_WIDTH) / 2f;
+    trianglePath.moveTo(x1, ARROW_TOP);
+    trianglePath.lineTo(x2, ARROW_TOP);
+    trianglePath.lineTo((x1 + x2) / 2, ARROW_BOTTOM);
+    trianglePath.closePath();
+    g2.fill(trianglePath);
 
     screen.drawImage(offscreen, 0, 0, imageW, imageH, null);
   }
@@ -351,9 +330,9 @@ public class EditorHeader extends JComponent {
     Sketch sketch = editor.getSketch();
     int x = left;
 
-    final int bottom = getHeight() - TAB_STRETCH;
+    final int bottom = getHeight(); // - TAB_STRETCH;
     final int top = bottom - TAB_HEIGHT;
-    GeneralPath path = null;
+//    GeneralPath path = null;
     
     for (int i = 0; i < sketch.getCodeCount(); i++) {
       SketchCode code = sketch.getCode(i);
@@ -366,13 +345,13 @@ public class EditorHeader extends JComponent {
 //      int pieceWidth = pieceCount * PIECE_WIDTH;
 
       int state = (code == sketch.getCurrentCode()) ? SELECTED : UNSELECTED;
-      if (g != null) {
-        //g.drawImage(pieces[state][LEFT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
-        path = new GeneralPath();
-        path.moveTo(x, bottom);
-        path.lineTo(x, top + NOTCH);
-        path.lineTo(x + NOTCH, top);
-      }
+//      if (g != null) {
+//        //g.drawImage(pieces[state][LEFT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
+//        path = new GeneralPath();
+//        path.moveTo(x, bottom);
+//        path.lineTo(x, top + NOTCH);
+//        path.lineTo(x + NOTCH, top);
+//      }
       tab.left = x;
       x += TEXT_MARGIN;
 //      x += PIECE_WIDTH;
@@ -392,15 +371,17 @@ public class EditorHeader extends JComponent {
       tab.right = x;
 
       if (g != null) {
-        path.lineTo(x - NOTCH, top);
-        path.lineTo(x, top + NOTCH);
-        path.lineTo(x, bottom);
-        path.closePath();
         g.setColor(tabColor[state]);
-        g.fill(path);
-        // have to draw an extra outline to make things line up on retina
-        g.draw(path);
-        //g.drawImage(pieces[state][RIGHT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
+        drawTab(g, tab.left, tab.right);
+//        path.lineTo(x - NOTCH, top);
+//        path.lineTo(x, top + NOTCH);
+//        path.lineTo(x, bottom);
+//        path.closePath();
+//        g.setColor(tabColor[state]);
+//        g.fill(path);
+//        // have to draw an extra outline to make things line up on retina
+//        g.draw(path);
+//        //g.drawImage(pieces[state][RIGHT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
 
         if (tab.textVisible) {
           int textLeft = tab.left + ((tab.right - tab.left) - tab.textWidth) / 2;
@@ -417,7 +398,8 @@ public class EditorHeader extends JComponent {
       
         if (code.isModified()) {
           g.setColor(modifiedColor);
-          g.drawLine(tab.left + NOTCH, top, tab.right - NOTCH, top);
+          //g.drawLine(tab.left + NOTCH, top, tab.right - NOTCH, top);
+          g.drawLine(tab.left, top, tab.right, top);
         }
       }
 
@@ -428,13 +410,21 @@ public class EditorHeader extends JComponent {
       x += TAB_BETWEEN;
     }
     
-    // Draw this last because of half-pixel overlaps on retina displays
-    if (g != null) {
-      g.setColor(tabColor[SELECTED]);
-      g.fillRect(0, bottom, getWidth(), TAB_STRETCH);
-    }
+    // removed 150130
+//    // Draw this last because of half-pixel overlaps on retina displays
+//    if (g != null) {
+//      g.setColor(tabColor[SELECTED]);
+//      g.fillRect(0, bottom, getWidth(), TAB_STRETCH);
+//    }
     
     return x <= right;
+  }
+  
+  
+  private void drawTab(Graphics g, int left, int right) {
+    final int bottom = getHeight(); // - TAB_STRETCH;
+    final int top = bottom - TAB_HEIGHT;
+    g.fillRect(left, top, right - left, bottom - top);
   }
 
 
@@ -623,23 +613,17 @@ public class EditorHeader extends JComponent {
 
 
   public Dimension getPreferredSize() {
-    return getMinimumSize();
+    return new Dimension(300, HIGH);
   }
 
 
   public Dimension getMinimumSize() {
-//    if (Base.isMacOS()) {
-    return new Dimension(300, Preferences.GRID_SIZE);
-//    }
-//    return new Dimension(300, Preferences.GRID_SIZE - 1);
+    return getPreferredSize();
   }
 
 
   public Dimension getMaximumSize() {
-//    if (Base.isMacOS()) {
-    return new Dimension(3000, Preferences.GRID_SIZE);
-//    }
-//    return new Dimension(3000, Preferences.GRID_SIZE - 1);
+    return new Dimension(super.getMaximumSize().width, HIGH);
   }
 
 

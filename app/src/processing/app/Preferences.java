@@ -66,8 +66,8 @@ public class Preferences {
   static public int BUTTON_WIDTH = 
     Integer.parseInt(Language.text("preferences.button.width"));
 
-  /** height of the EditorHeader, EditorToolbar, and EditorStatus */
-  static final int GRID_SIZE = 32;
+//  /** height of the EditorHeader, EditorToolbar, and EditorStatus */
+//  static final int GRID_SIZE = 32;
 
   // Indents and spacing standards. These probably need to be modified
   // per platform as well, because Mac OS X is so huge, Windows is smaller,

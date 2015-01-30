@@ -52,6 +52,7 @@ public class JavaToolbar extends EditorToolbar {
     };
     debugButton.setReverse();
     box.add(debugButton);
+    addGap(box);
   }
 
   

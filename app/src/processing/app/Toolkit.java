@@ -552,14 +552,14 @@ public class Toolkit {
 //  }
   
   
-  static final Color CLEAR_COLOR = new Color(0, true);
+//  static final Color CLEAR_COLOR = new Color(0, true);
+//  
+//  static public void clearGraphics(Graphics g, int width, int height) {
+//    g.setColor(CLEAR_COLOR);
+//    g.fillRect(0, 0, width, height);
+//  }
   
-  static public void clearGraphics(Graphics g, int width, int height) {
-    g.setColor(CLEAR_COLOR);
-    g.fillRect(0, 0, width, height);
-  }
-
-
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     

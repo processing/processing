@@ -32,11 +32,10 @@ import javax.swing.*;
  * Panel just below the editing area that contains status messages.
  */
 public class EditorStatus extends JPanel {
+  static final int HIGH = 28;
+  
   Color[] bgcolor;
   Color[] fgcolor;
-
-  @Deprecated
-  static final int BUTTON_HEIGHT = 24;
 
   static public final int NOTICE = 0;
   static public final int ERR    = 1;
@@ -392,12 +391,12 @@ public class EditorStatus extends JPanel {
 
 
   public Dimension getMinimumSize() {
-    return new Dimension(300, Preferences.GRID_SIZE);
+    return new Dimension(300, HIGH);
   }
 
 
   public Dimension getMaximumSize() {
-    return new Dimension(3000, Preferences.GRID_SIZE);
+    return new Dimension(super.getMaximumSize().width, HIGH);
   }
 
 

@@ -10,11 +10,12 @@ status.font = processing.sans,plain,14
 
 # TABS
 # Settings for the tab area at the top.
-header.text.font = processing.sans,plain,15
+header.text.font = processing.sans,bold,15
 header.text.selected.color = #000000
 header.text.unselected.color = #ffffff
 header.tab.selected.color = #ffffff
 header.tab.unselected.color = #657d87
+header.tab.arrow.color = #000000
 header.gradient.top = #132638
 header.gradient.bottom = #122535
 
