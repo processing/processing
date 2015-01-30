@@ -30,6 +30,9 @@
     </condition> 
   </fail> 
 
+  <!-- could prompt here to download the necessary JRE
+       (Windows/Linux) or JDK (on Mac OS X) -->
+
   <property name="examples.dir" 
 	    value="../../processing-docs/content/examples" />
 

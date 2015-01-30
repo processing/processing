@@ -89,6 +89,8 @@ X   https://github.com/processing/processing/issues/2984
 X   https://github.com/processing/processing/pull/3046
 X File change detection rewrite
 X   https://github.com/processing/processing/pull/3048
+X another file change detection rewrite
+X   https://github.com/processing/processing/pull/3070
 X broken Windows build due to launch4j .jar not updated
 X   https://github.com/processing/processing/issues/3062
 X   https://github.com/processing/processing/pull/3066
