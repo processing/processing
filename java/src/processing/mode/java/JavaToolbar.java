@@ -1,7 +1,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2010-11 Ben Fry and Casey Reas
+  Copyright (c) 2013-15 The Processing Foundation
+  Copyright (c) 2010-13 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -19,10 +20,15 @@
 
 package processing.mode.java;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 
+import javax.swing.Box;
+
 import processing.app.Editor;
+import processing.app.EditorButton;
 import processing.app.EditorToolbar;
+import processing.app.Language;
 
 
 public class JavaToolbar extends EditorToolbar {
@@ -32,6 +38,20 @@ public class JavaToolbar extends EditorToolbar {
   public JavaToolbar(Editor editor) {
     super(editor);
     jeditor = (JavaEditor) editor;
+  }
+  
+  
+  public void addModeButtons(Box box) {
+    EditorButton debugButton = new EditorButton(mode, "/lib/toolbar/debug", 
+                                                Language.text("toolbar.debug")) {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        jeditor.toggleDebug();
+      }
+    };
+    debugButton.setReverse();
+    box.add(debugButton);
   }
 
   

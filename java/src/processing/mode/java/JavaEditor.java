@@ -2005,6 +2005,12 @@ public class JavaEditor extends Editor {
   }
 
 
+  public void toggleDebug() {
+    enableDebug.setSelected(!enableDebug.isSelected());
+    updateDebugToggle();
+  }
+  
+  
   public void updateDebugToggle() {
     final boolean enabled = enableDebug.isSelected(); 
     if (enabled) {

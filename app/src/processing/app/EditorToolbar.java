@@ -98,16 +98,22 @@ abstract public class EditorToolbar extends JPanel {
     currentButton = runButton;
     
     box.add(Box.createHorizontalGlue());
-    Component items = createModeButtons();
-    if (items != null) {
-      box.add(items);
-    }
+    addModeButtons(box);
+//    Component items = createModeButtons();
+//    if (items != null) {
+//      box.add(items);
+//    }
     ModeSelector ms = new ModeSelector(); 
     box.add(ms);
     
     setLayout(new BorderLayout());
     add(box, BorderLayout.CENTER);
   }
+  
+  
+//  public void setReverse(EditorButton button) {
+//    button.setGradient(reverseGradient);
+//  }
   
   
   public void paintComponent(Graphics g) {
@@ -117,8 +123,7 @@ abstract public class EditorToolbar extends JPanel {
   }
   
   
-  public Component createModeButtons() {
-    return null;
+  public void addModeButtons(Box box) {
   }
   
   

@@ -31,25 +31,25 @@ implements MouseListener, MouseMotionListener, ActionListener {
   static public final int DIM = 46;
 
   /** Button's description. */ 
-  String title;
+  protected String title;
   /** Description of alternate behavior when shift is down. */ 
-  String titleShift;
+  protected String titleShift;
 
-  boolean pressed;
-  boolean selected;
-  boolean rollover;
-  JLabel rolloverLabel;
-  boolean shift;
+  protected boolean pressed;
+  protected boolean selected;
+  protected boolean rollover;
+  protected JLabel rolloverLabel;
+  protected boolean shift;
   
-//  boolean enabled;
-//  State state;
-//  Map<State, Image> imageMap = new HashMap<>();
+  protected Image enabledImage;
+  protected Image disabledImage;
+  protected Image selectedImage;
+  protected Image rolloverImage;
+  protected Image pressedImage;
   
-  Image enabledImage;
-  Image disabledImage;
-  Image selectedImage;
-  Image rolloverImage;
-  Image pressedImage;
+  protected Image gradient;
+  
+  protected Mode mode;
   
   
   public EditorButton(Mode mode, String name, String title) {
@@ -58,6 +58,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
   
 
   public EditorButton(Mode mode, String name, String title, String titleShift) {
+    this.mode = mode;
     this.title = title;
     this.titleShift = titleShift;
    
@@ -97,6 +98,9 @@ implements MouseListener, MouseMotionListener, ActionListener {
     } else if (rollover) {
       image = rolloverImage;
     }
+    if (gradient != null) {
+      g.drawImage(gradient, 0, 0, DIM, DIM, this);
+    }
     g.drawImage(image, 0, 0, DIM, DIM, this);
   }
   
@@ -120,6 +124,16 @@ implements MouseListener, MouseMotionListener, ActionListener {
 ////    //updateState();
 ////    setState(State.ENABLED);
 //  }      
+  
+  
+  public void setReverse() {
+    gradient = mode.getGradient("reversed", DIM, DIM);
+  }
+  
+  
+//  public void setGradient(Image gradient) {
+//    this.gradient = gradient;
+//  }
   
   
   public void setRolloverLabel(JLabel label) {
