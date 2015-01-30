@@ -51,7 +51,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected EditorState state;
   protected Mode mode;
 
-  static final int GUTTER = 60;
+  static final int LEFT_GUTTER = 60;
+  static final int RIGHT_GUTTER = 26;
   
   // Otherwise, if the window is resized with the message label
   // set to blank, its preferredSize() will be fuckered
@@ -2592,6 +2593,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       // per other applications, don't set this until the file has been saved
       getRootPane().putClientProperty("Window.documentFile", null);
     }
+    
+    toolbar.setText(sketch.getName());
   }
 
 

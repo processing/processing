@@ -14,6 +14,7 @@ _ finish adding 'examples' contribs
 _   https://github.com/processing/processing/issues/2953
 _   don't return here, allow contrib types to fail:
 _   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
+_ trying to add a second tab with the same name causes an error
 
 update components
 X moving to Java 8 because Java 7 will be discontinued
@@ -123,6 +124,8 @@ _ break out a gui package (get class count down in .app)
 _ remove deprecated methods
 
 gui
+_ finish the gui
+_   https://github.com/processing/processing/issues/3072
 _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
 _   iTunes has no rollover state but has a 'down' state

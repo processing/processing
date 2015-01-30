@@ -41,6 +41,8 @@ abstract public class EditorToolbar extends JPanel {
   static final int HIGH = 80;
   // gap between buttons
   static final int GAP = 8;
+  // gap from the run button to the sketch label
+  static final int LABEL_GAP = 18;
   
   protected Editor editor;
   protected Base base;
@@ -93,9 +95,10 @@ abstract public class EditorToolbar extends JPanel {
     };
     
     box = Box.createHorizontalBox();
-    box.add(Box.createHorizontalStrut(Editor.GUTTER));
+    box.add(Box.createHorizontalStrut(Editor.LEFT_GUTTER));
     box.add(runButton);
     
+    box.add(Box.createHorizontalStrut(LABEL_GAP));
     label = new JLabel();
     label.setFont(mode.getFont("toolbar.sketch.font"));
     label.setForeground(mode.getColor("toolbar.sketch.color"));
@@ -110,6 +113,7 @@ abstract public class EditorToolbar extends JPanel {
 //    }
     ModeSelector ms = new ModeSelector(); 
     box.add(ms);
+    box.add(Box.createHorizontalStrut(Editor.RIGHT_GUTTER));
     
     setLayout(new BorderLayout());
     add(box, BorderLayout.CENTER);
@@ -121,7 +125,13 @@ abstract public class EditorToolbar extends JPanel {
 //  }
   
   
+  public void setText(String text) {
+    label.setText(text);
+  }
+  
+  
   public void paintComponent(Graphics g) {
+//    label.setText(editor.getSketch().getName());
 //    super.paintComponent(g);
     Dimension size = getSize();
     g.drawImage(gradient, 0, 0, size.width, size.height, this);

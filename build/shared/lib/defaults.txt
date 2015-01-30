@@ -89,7 +89,7 @@ platform.auto_file_type_associations = true
 
 
 # default size for the main window
-editor.window.width.default = 500
+editor.window.width.default = 700
 editor.window.height.default = 600
 
 editor.window.width.min = 400

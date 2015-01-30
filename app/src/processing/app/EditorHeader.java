@@ -41,7 +41,7 @@ public class EditorHeader extends JComponent {
   // standard UI sizing (OS-specific, but generally consistent)
 //  static final int SCROLLBAR_WIDTH = 16;
   // amount of space on the left edge before the tabs start
-  static final int MARGIN_WIDTH = Editor.GUTTER;
+  static final int MARGIN_WIDTH = Editor.LEFT_GUTTER;
   
   static final int ARROW_TAB_WIDTH = 23;
   // distance from the righthand side of a tab to the drop-down arrow
