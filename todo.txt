@@ -140,11 +140,11 @@ System.setProperty("awt.useSystemAAFontSettings","on");
 System.setProperty("swing.aatext", "true");
 
 jre download/install
+X make sure the file downloads correctly before renaming
+X   https://github.com/processing/processing/issues/2960
 _ update build scripts for Windows and Linux to use JRE downloader Ant Task
 _   https://github.com/processing/processing/issues/3059
 _ add method to prompt OS X developers to download the JDK update
-_ make sure the file downloads correctly before renaming
-_   https://github.com/processing/processing/issues/2960
 
 _ fix file change detection on OS X
 _   https://github.com/processing/processing/issues/2852
