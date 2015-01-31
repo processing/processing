@@ -23,6 +23,7 @@ package processing.app.contrib;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -385,8 +386,16 @@ public class ContributionListing {
         }
 
         if (!progress.isFinished()) {
-          ContributionManager.download(url, listingFile, progress);
+          File tempContribFile = Base.getSettingsFile("contributions_temp.txt");
+          tempContribFile.setWritable(true);
+          ContributionManager.download(url, tempContribFile, progress);
           if (!progress.isCanceled() && !progress.isError()) {
+            try {
+              Files.deleteIfExists(listingFile.toPath());
+              listingFile = new File(Files.move(tempContribFile.toPath(), tempContribFile.toPath().resolveSibling(listingFile.toPath())).toString());
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
             hasDownloadedLatestList = true;
             hasListDownloadFailed = false;
             setAdvertisedList(listingFile);
