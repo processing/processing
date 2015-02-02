@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-11 Ben Fry and Casey Reas
+  Copyright (c) 2013-14 The Processing Foundation
+  Copyright (c) 2005-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,10 +25,13 @@
 package processing.core;
 
 import java.awt.*;
+import java.awt.font.TextAttribute;
 import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import processing.data.XML;
@@ -35,40 +39,38 @@ import processing.data.XML;
 
 /**
  * Subclass for PGraphics that implements the graphics API using Java2D.
- *
- * <p>Pixel operations too slow? As of release 0085 (the first beta),
- * the default renderer uses Java2D. It's more accurate than the renderer
- * used in alpha releases of Processing (it handles stroke caps and joins,
- * and has better polygon tessellation), but it's super slow for handling
- * pixels. At least until we get a chance to get the old 2D renderer
- * (now called P2D) working in a similar fashion, you can use
- * <TT>size(w, h, P3D)</TT> instead of <TT>size(w, h)</TT> which will
- * be faster for general pixel flipping madness. </p>
- *
- * <p>To get access to the Java 2D "Graphics2D" object for the default
+ * <p>
+ * To get access to the Java 2D "Graphics2D" object for the default
  * renderer, use:
  * <PRE>Graphics2D g2 = ((PGraphicsJava2D)g).g2;</PRE>
  * This will let you do Java 2D stuff directly, but is not supported in
  * any way shape or form. Which just means "have fun, but don't complain
- * if it breaks."</p>
+ * if it breaks."
+ * <p>
+ * Advanced <a href="http://docs.oracle.com/javase/7/docs/webnotes/tsg/TSG-Desktop/html/java2d.html">debugging notes</a> for Java2D.
  */
 public class PGraphicsJava2D extends PGraphics {
-  BufferStrategy strategy;
-  BufferedImage bimage;
-  VolatileImage vimage;
-  Canvas canvas;
-//  boolean useCanvas = true;
-  boolean useCanvas = false;
-//  boolean useRetina = true;
-//  boolean useOffscreen = true;  // ~40fps
-  boolean useOffscreen = false;
+////  BufferStrategy strategy;
+////  BufferedImage bimage;
+////  VolatileImage vimage;
+//  Canvas canvas;
+////  boolean useCanvas = true;
+//  boolean useCanvas = false;
+////  boolean useRetina = true;
+////  boolean useOffscreen = true;  // ~40fps
+//  boolean useOffscreen = false;
 
   public Graphics2D g2;
-  protected BufferedImage offscreen;
+//  protected BufferedImage offscreen;
 
   Composite defaultComposite;
 
   GeneralPath gpath;
+
+  // path for contours so gpath can be closed
+  GeneralPath auxPath;
+
+  boolean openContour;
 
   /// break the shape at the next vertex (next vertex() call is a moveto())
   boolean breakShape;
@@ -118,26 +120,24 @@ public class PGraphicsJava2D extends PGraphics {
   //public void setPath(String path)
 
 
-  /**
-   * Called in response to a resize event, handles setting the
-   * new width and height internally, as well as re-allocating
-   * the pixel buffer for the new size.
-   *
-   * Note that this will nuke any cameraMode() settings.
-   */
-  @Override
-  public void setSize(int iwidth, int iheight) {  // ignore
-    width = iwidth;
-    height = iheight;
-//    width1 = width - 1;
-//    height1 = height - 1;
-
-    allocate();
-    reapplySettings();
-  }
+//  /**
+//   * Called in response to a resize event, handles setting the
+//   * new width and height internally, as well as re-allocating
+//   * the pixel buffer for the new size.
+//   *
+//   * Note that this will nuke any cameraMode() settings.
+//   */
+//  @Override
+//  public void setSize(int iwidth, int iheight) {  // ignore
+//    width = iwidth;
+//    height = iheight;
+//
+//    allocate();
+//    reapplySettings();
+//  }
 
 
-  // broken out because of subclassing for opengl
+  /*
   @Override
   protected void allocate() {
     // Tried this with RGB instead of ARGB for the primarySurface version,
@@ -190,7 +190,7 @@ public class PGraphicsJava2D extends PGraphics {
 //          System.out.println("hopefully faster " + width + " " + height);
 //          new Exception().printStackTrace(System.out);
 
-          GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+          GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
           // If not realized (off-screen, i.e the Color Selector Tool),
           // gc will be null.
           if (gc == null) {
@@ -202,27 +202,46 @@ public class PGraphicsJava2D extends PGraphics {
           g2 = (Graphics2D) image.getGraphics();
         }
       }
-    } else {
+    } else {  // not the primary surface
       // Since this buffer's offscreen anyway, no need for the extra offscreen
       // buffer. However, unlike the primary surface, this feller needs to be
       // ARGB so that blending ("alpha" compositing) will work properly.
       image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       g2 = (Graphics2D) image.getGraphics();
     }
-//    if (!useCanvas) {
-//      defaultComposite = g2.getComposite();
-//    }
+    */
 
-    // can't un-set this because this may be only a resize
-    // http://dev.processing.org/bugs/show_bug.cgi?id=463
-    //defaultsInited = false;
-    //checkSettings();
-    //reapplySettings = true;
+    /*
+    if (primarySurface) {
+      Canvas canvas = ((PSurfaceAWT) surface).canvas;
+
+      GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
+      // If not realized (off-screen, i.e the Color Selector Tool),
+      // gc will be null.
+      if (gc == null) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+      }
+
+      image = gc.createCompatibleImage(width, height);
+      g2 = (Graphics2D) image.getGraphics();
+
+    } else {
+
+    }
+    g2 = (Graphics2D) image.getGraphics();
   }
+     */
 
 
   //public void dispose()
 
+
+  @Override
+  public PSurface createSurface() {
+    //return (surface = new PSurfaceAWT());
+    return new PSurfaceAWT(this);
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -236,20 +255,32 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
-  @Override
-  public void requestDraw() {
-//    EventQueue.invokeLater(new Runnable() {
-//      public void run() {
-    parent.handleDraw();
-//      }
-//    });
-  }
+//  @Override
+//  public void requestDraw() {
+////    EventQueue.invokeLater(new Runnable() {
+////      public void run() {
+//    parent.handleDraw();
+////      }
+////    });
+//  }
 
 
 //  Graphics2D g2old;
 
   @Override
   public void beginDraw() {
+    // TODO this will happen when it's offscreen.. need a better option here
+    if (image == null ||
+        ((BufferedImage) image).getWidth() != width ||
+        ((BufferedImage) image).getHeight() != height) {
+      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    }
+    g2 = (Graphics2D) image.getGraphics();
+
+    // Calling getGraphics() seems to nuke the smoothing settings
+    smooth(quality);
+
+    /*
     // NOTE: Calling image.getGraphics() will create a new Graphics context,
     // even if it's for the same image that's already had a context created.
     // Seems like a speed/memory issue, and also requires that all smoothing,
@@ -258,8 +289,8 @@ public class PGraphicsJava2D extends PGraphics {
     // and 2) minimal overhead, however. Instinct suggests #1 may be true,
     // but #2 seems a problem.
     if (primarySurface && !useOffscreen) {
+      GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
       if (false) {
-        GraphicsConfiguration gc = parent.getGraphicsConfiguration();
         if (image == null || ((VolatileImage) image).validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
           image = gc.createCompatibleVolatileImage(width, height);
           g2 = (Graphics2D) image.getGraphics();
@@ -267,18 +298,12 @@ public class PGraphicsJava2D extends PGraphics {
         }
       } else {
         if (image == null) {
-          GraphicsConfiguration gc = parent.getGraphicsConfiguration();
           image = gc.createCompatibleImage(width, height);
           PApplet.debug("created new image, type is " + image);
           g2 = (Graphics2D) image.getGraphics();
           reapplySettings = true;
         }
       }
-      //g2 = (Graphics2D) image.getGraphics();
-//      if (g2 != g2old) {
-//        System.out.println("new g2: " + g2);
-//        g2old = g2;
-//      }
     }
 
     if (useCanvas && primarySurface) {
@@ -294,10 +319,6 @@ public class PGraphicsJava2D extends PGraphics {
                       "/" + caps.getBackBufferCapabilities().isAccelerated());
       }
       GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
-//      if (vimage == null || vimage.validate(gc) == VolatileImage.IMAGE_INCOMPATIBLE) {
-//        vimage = gc.createCompatibleVolatileImage(width, height);
-//      }
-//      g2 = (Graphics2D) vimage.getGraphics();
 
       if (bimage == null ||
           bimage.getWidth() != width ||
@@ -310,6 +331,7 @@ public class PGraphicsJava2D extends PGraphics {
         reapplySettings = true;
       }
     }
+    */
 
     checkSettings();
     resetMatrix(); // reset model matrix
@@ -324,6 +346,7 @@ public class PGraphicsJava2D extends PGraphics {
     //updatePixels();
 
     if (primarySurface) {
+      /*
       //if (canvas != null) {
       if (useCanvas) {
         //System.out.println(canvas);
@@ -351,6 +374,7 @@ public class PGraphicsJava2D extends PGraphics {
 //        g2.dispose();
 //        System.out.println("not doing anything special in endDraw()");
       }
+      */
     } else {
       // TODO this is probably overkill for most tasks...
       loadPixels();
@@ -366,9 +390,12 @@ public class PGraphicsJava2D extends PGraphics {
     // Marks pixels as modified so that the pixels will be updated.
     // Also sets mx1/y1/x2/y2 so that OpenGL will pick it up.
     setModified();
+
+    g2.dispose();
   }
 
 
+  /*
   private void redraw() {
     // only need this check if the validate() call will use redraw()
 //    if (strategy == null) return;
@@ -378,10 +405,10 @@ public class PGraphicsJava2D extends PGraphics {
         PApplet.debug("PGraphicsJava2D.redraw() top of inner do { } block");
         PApplet.debug("strategy is " + strategy);
         Graphics bsg = strategy.getDrawGraphics();
-        if (vimage != null) {
-          bsg.drawImage(vimage, 0, 0, null);
-        } else {
-          bsg.drawImage(bimage, 0, 0, null);
+//        if (vimage != null) {
+//          bsg.drawImage(vimage, 0, 0, null);
+//        } else {
+        bsg.drawImage(bimage, 0, 0, null);
 //      if (parent.frameCount == 0) {
 //        try {
 //          ImageIO.write(image, "jpg", new java.io.File("/Users/fry/Desktop/buff.jpg"));
@@ -389,7 +416,7 @@ public class PGraphicsJava2D extends PGraphics {
 //          e.printStackTrace();
 //        }
 //      }
-        }
+//        }
         bsg.dispose();
 
         // the strategy version
@@ -411,6 +438,7 @@ public class PGraphicsJava2D extends PGraphics {
     } while (strategy.contentsLost());
     PApplet.debug("PGraphicsJava2D.redraw() out of do { } block");
   }
+  */
 
 
 
@@ -424,9 +452,17 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   protected void defaultSettings() {
-    if (!useCanvas) {
-      defaultComposite = g2.getComposite();
-    }
+//    if (!useCanvas) {
+//      // Papered over another threading issue...
+//      // See if this comes back now that the other issue is fixed.
+////      while (g2 == null) {
+////        try {
+////          System.out.println("sleeping until g2 is available");
+////          Thread.sleep(5);
+////        } catch (InterruptedException e) { }
+////      }
+    defaultComposite = g2.getComposite();
+//    }
     super.defaultSettings();
   }
 
@@ -465,7 +501,118 @@ public class PGraphicsJava2D extends PGraphics {
   // SHAPES
 
 
-  //public void beginShape(int kind)
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE CREATION
+
+
+//  @Override
+//  public PShape createShape(PShape source) {
+//    return PShapeOpenGL.createShape2D(this, source);
+//  }
+
+
+  @Override
+  public PShape createShape() {
+    return createShape(PShape.GEOMETRY);
+  }
+
+
+  @Override
+  public PShape createShape(int type) {
+    return createShapeImpl(this, type);
+  }
+
+
+  @Override
+  public PShape createShape(int kind, float... p) {
+    return createShapeImpl(this, kind, p);
+  }
+
+
+  static protected PShape createShapeImpl(PGraphicsJava2D pg, int type) {
+    PShape shape = null;
+    if (type == PConstants.GROUP) {
+      shape = new PShape(pg, PConstants.GROUP);
+    } else if (type == PShape.PATH) {
+      shape = new PShape(pg, PShape.PATH);
+    } else if (type == PShape.GEOMETRY) {
+      shape = new PShape(pg, PShape.GEOMETRY);
+    }
+    shape.set3D(false);
+    return shape;
+  }
+
+
+  static protected PShape createShapeImpl(PGraphicsJava2D pg,
+                                                int kind, float... p) {
+    PShape shape = null;
+    int len = p.length;
+
+    if (kind == POINT) {
+      if (len != 2) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(POINT);
+    } else if (kind == LINE) {
+      if (len != 4) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(LINE);
+    } else if (kind == TRIANGLE) {
+      if (len != 6) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(TRIANGLE);
+    } else if (kind == QUAD) {
+      if (len != 8) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(QUAD);
+    } else if (kind == RECT) {
+      if (len != 4 && len != 5 && len != 8 && len != 9) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(RECT);
+    } else if (kind == ELLIPSE) {
+      if (len != 4 && len != 5) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(ELLIPSE);
+    } else if (kind == ARC) {
+      if (len != 6 && len != 7) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape(pg, PShape.PRIMITIVE);
+      shape.setKind(ARC);
+    } else if (kind == BOX) {
+      showWarning("Primitive not supported in 2D");
+    } else if (kind == SPHERE) {
+      showWarning("Primitive not supported in 2D");
+    } else {
+      showWarning("Unrecognized primitive type");
+    }
+
+    if (shape != null) {
+      shape.setParams(p);
+    }
+
+    shape.set3D(false);
+    return shape;
+  }
 
 
   @Override
@@ -481,6 +628,7 @@ public class PGraphicsJava2D extends PGraphics {
     // this way, just check to see if gpath is null, and if it isn't
     // then just use it to continue the shape.
     gpath = null;
+    auxPath = null;
   }
 
 
@@ -636,30 +784,62 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   public void beginContour() {
-    breakShape = true;
+    if (openContour) {
+      PGraphics.showWarning("Already called beginContour()");
+      return;
+    }
+
+    // draw contours to auxiliary path so main path can be closed later
+    GeneralPath contourPath = auxPath;
+    auxPath = gpath;
+    gpath = contourPath;
+
+    if (contourPath != null) {  // first contour does not break
+      breakShape = true;
+    }
+
+    openContour = true;
   }
 
 
   @Override
   public void endContour() {
-    // does nothing, just need the break in beginContour()
+    if (!openContour) {
+      PGraphics.showWarning("Need to call beginContour() first");
+      return;
+    }
+
+    // close this contour
+    if (gpath != null) gpath.closePath();
+
+    // switch back to main path
+    GeneralPath contourPath = gpath;
+    gpath = auxPath;
+    auxPath = contourPath;
+
+    openContour = false;
   }
 
 
   @Override
   public void endShape(int mode) {
+    if (openContour) { // correct automagically, notify user
+      endContour();
+      PGraphics.showWarning("Missing endContour() before endShape()");
+    }
     if (gpath != null) {  // make sure something has been drawn
       if (shape == POLYGON) {
         if (mode == CLOSE) {
           gpath.closePath();
+        }
+        if (auxPath != null) {
+          gpath.append(auxPath, false);
         }
         drawShape(gpath);
       }
     }
     shape = 0;
   }
-
-
 
   //////////////////////////////////////////////////////////////
 
@@ -738,11 +918,14 @@ public class PGraphicsJava2D extends PGraphics {
       int[] srcPixels = new int[width];
       int[] dstPixels = new int[width];
 
+      // Java won't set the high bits when RGB, returns 0 for alpha
+      int alphaFiller = (dstIn.getNumBands() == 3) ? (0xFF << 24) : 0x00;
+
       for (int y = 0; y < height; y++) {
         src.getDataElements(0, y, width, 1, srcPixels);
         dstIn.getDataElements(0, y, width, 1, dstPixels);
         for (int x = 0; x < width; x++) {
-          dstPixels[x] = blendColor(srcPixels[x], dstPixels[x], mode);
+          dstPixels[x] = blendColor(alphaFiller | dstPixels[x], srcPixels[x], mode);
         }
         dstOut.setDataElements(0, y, width, 1, dstPixels);
       }
@@ -1187,12 +1370,29 @@ public class PGraphicsJava2D extends PGraphics {
 
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
+
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                         quality == 4 ?
                         RenderingHints.VALUE_INTERPOLATION_BICUBIC :
                         RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+    // http://docs.oracle.com/javase/tutorial/2d/text/renderinghints.html
+    // Oracle Java text anti-aliasing on OS X looks like s*t compared to the
+    // text rendering with Apple's old Java 6. Below, several attempts to fix:
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    // Turns out this is the one that actually makes things work.
+    // Kerning is still screwed up, however.
+    g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//                         RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+
 //    g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
 //                        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+
   }
 
 
@@ -1214,6 +1414,8 @@ public class PGraphicsJava2D extends PGraphics {
                         RenderingHints.VALUE_ANTIALIAS_OFF);
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                         RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
   }
 
 
@@ -1275,6 +1477,12 @@ public class PGraphicsJava2D extends PGraphics {
     }
 
     if (who.modified) {
+      if (who.pixels == null) {
+        // This might be a PGraphics that hasn't been drawn to yet.
+        // Can't just bail because the cache has been created above.
+        // https://github.com/processing/processing/issues/2208
+        who.pixels = new int[who.width * who.height];
+      }
       cash.update(who, tint, tintColor);
       who.modified = false;
     }
@@ -1307,11 +1515,12 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
-  class ImageCache {
+  static class ImageCache {
     boolean tinted;
     int tintedColor;
     int[] tintedTemp;  // one row of tinted pixels
     BufferedImage image;
+//    BufferedImage compat;
 
 //    public ImageCache(PImage source) {
 ////      this.source = source;
@@ -1461,6 +1670,15 @@ public class PGraphicsJava2D extends PGraphics {
       }
       this.tinted = tint;
       this.tintedColor = tintColor;
+
+//      GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+//      compat = gc.createCompatibleImage(image.getWidth(),
+//                                        image.getHeight(),
+//                                        Transparency.TRANSLUCENT);
+//
+//      Graphics2D g = compat.createGraphics();
+//      g.drawImage(image, 0, 0, null);
+//      g.dispose();
     }
   }
 
@@ -1537,10 +1755,8 @@ public class PGraphicsJava2D extends PGraphics {
     }
 
     Font font = (Font) textFont.getNative();
-    //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
-      FontMetrics metrics = parent.getFontMetrics(font);
-      return metrics.getAscent();
+      return getFontMetrics(font).getAscent();
     }
     return super.textAscent();
   }
@@ -1549,13 +1765,11 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public float textDescent() {
     if (textFont == null) {
-      defaultFontOrDeath("textAscent");
+      defaultFontOrDeath("textDescent");
     }
     Font font = (Font) textFont.getNative();
-    //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
-      FontMetrics metrics = parent.getFontMetrics(font);
-      return metrics.getDescent();
+      return getFontMetrics(font).getDescent();
     }
     return super.textDescent();
   }
@@ -1588,7 +1802,7 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public void textSize(float size) {
     if (textFont == null) {
-      defaultFontOrDeath("textAscent", size);
+      defaultFontOrDeath("textSize", size);
     }
 
     // if a native version available, derive this font
@@ -1600,9 +1814,24 @@ public class PGraphicsJava2D extends PGraphics {
     Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
-      Font dfont = font.deriveFont(size);
-      g2.setFont(dfont);
-      textFont.setNative(dfont);
+      Map<TextAttribute, Object> map =
+        new HashMap<TextAttribute, Object>();
+      map.put(TextAttribute.SIZE, size);
+      map.put(TextAttribute.KERNING,
+              TextAttribute.KERNING_ON);
+//      map.put(TextAttribute.TRACKING,
+//              TextAttribute.TRACKING_TIGHT);
+      font = font.deriveFont(map);
+      g2.setFont(font);
+      textFont.setNative(font);
+
+//      Font dfont = font.deriveFont(size);
+////      Map<TextAttribute, ?> attrs = dfont.getAttributes();
+////      for (TextAttribute ta : attrs.keySet()) {
+////        System.out.println(ta + " -> " + attrs.get(ta));
+////      }
+//      g2.setFont(dfont);
+//      textFont.setNative(dfont);
     }
 
     // take care of setting the textSize and textLeading vars
@@ -1620,12 +1849,16 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   protected float textWidthImpl(char buffer[], int start, int stop) {
+    if (textFont == null) {
+      defaultFontOrDeath("textWidth");
+    }
+
     Font font = (Font) textFont.getNative();
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
       // maybe should use one of the newer/fancier functions for this?
       int length = stop - start;
-      FontMetrics metrics = g2.getFontMetrics(font);
+      FontMetrics metrics = getFontMetrics(font);
       // Using fractional metrics makes the measurement worse, not better,
       // at least on OS X 10.6 (November, 2010).
       // TextLayout returns the same value as charsWidth().
@@ -1709,36 +1942,38 @@ public class PGraphicsJava2D extends PGraphics {
                           RenderingHints.VALUE_ANTIALIAS_ON :
                           RenderingHints.VALUE_ANTIALIAS_OFF);
 
-      //System.out.println("setting frac metrics");
-      //g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-      //                    RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-
       g2.setColor(fillColorObject);
+
       int length = stop - start;
+      if (length != 0) {
       g2.drawChars(buffer, start, length, (int) (x + 0.5f), (int) (y + 0.5f));
+      // better to use round here? also, drawChars now just calls drawString
+//      g2.drawString(new String(buffer, start, stop - start), Math.round(x), Math.round(y));
+
       // better to use drawString() with floats? (nope, draws the same)
       //g2.drawString(new String(buffer, start, length), x, y);
 
-      // this didn't seem to help the scaling issue
-      // and creates garbage because of the new temporary object
-      //java.awt.font.GlyphVector gv = textFontNative.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop));
-      //g2.drawGlyphVector(gv, x, y);
-
-      //    System.out.println("text() " + new String(buffer, start, stop));
+      // this didn't seem to help the scaling issue, and creates garbage
+      // because of a fairly heavyweight new temporary object
+//      java.awt.font.GlyphVector gv =
+//        font.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop - start));
+//      g2.drawGlyphVector(gv, x, y);
+      }
 
       // return to previous smoothing state if it was changed
       //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialias);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias);
-
-//      textX = x + textWidthImpl(buffer, start, stop);
-//      textY = y;
-//      textZ = 0;  // this will get set by the caller if non-zero
 
     } else {  // otherwise just do the default
       super.textLineImpl(buffer, start, stop, x, y);
     }
   }
 
+
+  @Override
+  public FontMetrics getFontMetrics(Font font) {
+    return (g2 != null) ? g2.getFontMetrics(font) : super.getFontMetrics(font);
+  }
 
 
   //////////////////////////////////////////////////////////////
@@ -2329,10 +2564,11 @@ public class PGraphicsJava2D extends PGraphics {
   protected WritableRaster getRaster() {
     WritableRaster raster = null;
     if (primarySurface) {
+      /*
       // 'offscreen' will probably be removed in the next release
       if (useOffscreen) {
-        raster = ((BufferedImage) offscreen).getRaster();
-      } else if (image instanceof VolatileImage) {
+        raster = offscreen.getRaster();
+      } else*/ if (image instanceof VolatileImage) {
         // when possible, we'll try VolatileImage
         raster = ((VolatileImage) image).getSnapshot().getRaster();
       }
@@ -2401,9 +2637,11 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public void updatePixels(int x, int y, int c, int d) {
     //if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
-    if ((x != 0) || (y != 0) || (c != width) || (d != height)) {
+//    System.err.format("%d %d %d %d .. w/h = %d %d .. pw/ph = %d %d %n", x, y, c, d, width, height, pixelWidth, pixelHeight);
+    if ((x != 0) || (y != 0) || (c != pixelWidth) || (d != pixelHeight)) {
       // Show a warning message, but continue anyway.
       showVariationWarning("updatePixels(x, y, w, h)");
+//      new Exception().printStackTrace(System.out);
     }
 //    updatePixels();
     if (pixels != null) {
@@ -2542,15 +2780,30 @@ public class PGraphicsJava2D extends PGraphics {
   // MASK
 
 
+  static final String MASK_WARNING =
+    "mask() cannot be used on the main drawing surface";
+
+
   @Override
-  public void mask(int alpha[]) {
-    showMethodWarning("mask");
+  @SuppressWarnings("deprecation")
+  public void mask(int[] alpha) {
+    if (primarySurface) {
+      showWarning(MASK_WARNING);
+
+    } else {
+      super.mask(alpha);
+    }
   }
 
 
   @Override
   public void mask(PImage alpha) {
-    showMethodWarning("mask");
+    if (primarySurface) {
+      showWarning(MASK_WARNING);
+
+    } else {
+      super.mask(alpha);
+    }
   }
 
 

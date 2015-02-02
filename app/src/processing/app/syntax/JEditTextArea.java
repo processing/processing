@@ -86,7 +86,7 @@ public class JEditTextArea extends JComponent
    * Creates a new JEditTextArea with the specified settings.
    * @param defaults The default settings
    */
-  public JEditTextArea(TextAreaDefaults defaults) {
+  public JEditTextArea(TextAreaDefaults defaults, InputHandler inputHandler) {
     // Enable the necessary events
     enableEvents(AWTEvent.KEY_EVENT_MASK);
 
@@ -103,7 +103,7 @@ public class JEditTextArea extends JComponent
     }
 
     // Initialize some misc. stuff
-    painter = new TextAreaPainter(this, defaults);
+    painter = createPainter(defaults);
     documentHandler = new DocumentHandler();
     eventListenerList = new EventListenerList();
     caretEvent = new MutableCaretEvent();
@@ -129,7 +129,7 @@ public class JEditTextArea extends JComponent
     setFocusTraversalKeysEnabled(false);
 
     // Load the defaults
-    setInputHandler(defaults.inputHandler);
+    setInputHandler(inputHandler);
     setDocument(defaults.document);
 //    editable = defaults.editable;
     caretVisible = defaults.caretVisible;
@@ -177,6 +177,16 @@ public class JEditTextArea extends JComponent
 
 
   /**
+   * Override this to provide your own painter for this {@link JEditTextArea}.
+   * @param defaults
+   * @return a newly constructed {@link TextAreaPainter}.
+   */
+  protected TextAreaPainter createPainter(final TextAreaDefaults defaults) {
+    return new TextAreaPainter(this, defaults);
+  }
+
+
+  /**
    * Inline Input Method Support for Japanese.
    */
   public InputMethodRequests getInputMethodRequests() {
@@ -192,19 +202,53 @@ public class JEditTextArea extends JComponent
 
   /**
    * Get current position of the vertical scroll bar. [fry]
+   * @deprecated Use {@link #getVerticalScrollPosition()}.
    */
   public int getScrollPosition() {
-    return vertical.getValue();
+    return getVerticalScrollPosition();
   }
 
 
   /**
    * Set position of the vertical scroll bar. [fry]
+   * @deprecated Use {@link #setVerticalScrollPosition(int)}.
    */
   public void setScrollPosition(int what) {
-    vertical.setValue(what);
+    setVerticalScrollPosition(what);
+  }
+  
+  
+  /**
+   * Get current position of the vertical scroll bar.
+   */
+  public int getVerticalScrollPosition() {
+    return vertical.getValue();
   }
 
+
+  /**
+   * Set position of the vertical scroll bar.
+   */
+  public void setVerticalScrollPosition(int what) {
+    vertical.setValue(what);
+  }
+  
+  
+  /**
+   * Get current position of the horizontal scroll bar.
+   */
+  public int getHorizontalScrollPosition() {
+    return horizontal.getValue();
+  }
+  
+
+  /**
+   * Set position of the horizontal scroll bar.
+   */
+  public void setHorizontalScrollPosition(int what) {
+    horizontal.setValue(what);
+  }
+  
 
   /**
    * Returns the object responsible for painting this text area.
@@ -370,6 +414,11 @@ public class JEditTextArea extends JComponent
    * updating the scroll bars.
    */
   public void setFirstLine(int firstLine) {
+    if(firstLine < 0 || firstLine > getLineCount()) {
+      throw new IllegalArgumentException("First line out of range: "
+        + firstLine + " [0, " + getLineCount() + "]");
+    }
+
     if (firstLine == this.firstLine) return;
 
     this.firstLine = firstLine;
@@ -776,8 +825,8 @@ public class JEditTextArea extends JComponent
    * Set document with a twist, includes the old caret
    * and scroll positions, added for p5. [fry]
    */
-  public void setDocument(SyntaxDocument document,
-      int start, int stop, int scroll) {
+  public void setDocument(SyntaxDocument document, 
+                          int start, int stop, int scroll) {
     if (this.document == document)
       return;
     if (this.document != null)
@@ -788,7 +837,7 @@ public class JEditTextArea extends JComponent
 
     select(start, stop);
     updateScrollBars();
-    setScrollPosition(scroll);
+    setVerticalScrollPosition(scroll);
     painter.repaint();
   }
 
@@ -797,65 +846,60 @@ public class JEditTextArea extends JComponent
    * Returns the document's token marker. Equivalent to calling
    * <code>getDocument().getTokenMarker()</code>.
    */
-  public final TokenMarker getTokenMarker()
-  {
+  public final TokenMarker getTokenMarker() {
     return document.getTokenMarker();
   }
+  
 
   /**
    * Sets the document's token marker. Equivalent to caling
    * <code>getDocument().setTokenMarker()</code>.
    * @param tokenMarker The token marker
    */
-  public final void setTokenMarker(TokenMarker tokenMarker)
-  {
+  public final void setTokenMarker(TokenMarker tokenMarker) {
     document.setTokenMarker(tokenMarker);
   }
 
+  
   /**
    * Returns the length of the document. Equivalent to calling
    * <code>getDocument().getLength()</code>.
    */
-  public final int getDocumentLength()
-  {
+  public final int getDocumentLength() {
     return document.getLength();
   }
 
+  
   /**
    * Returns the number of lines in the document.
    */
-  public final int getLineCount()
-  {
+  public final int getLineCount() {
     return document.getDefaultRootElement().getElementCount();
   }
 
+  
   /**
    * Returns the line containing the specified offset.
    * @param offset The offset
    */
-  public final int getLineOfOffset(int offset)
-  {
+  public final int getLineOfOffset(int offset) {
     return document.getDefaultRootElement().getElementIndex(offset);
   }
 
+  
   /**
    * Returns the start offset of the specified line.
    * @param line The line
    * @return The start offset of the specified line, or -1 if the line is
    * invalid
    */
-  public int getLineStartOffset(int line)
-  {
-    Element lineElement = document.getDefaultRootElement()
-    .getElement(line);
-    if(lineElement == null)
-      return -1;
-    else
-      return lineElement.getStartOffset();
+  public int getLineStartOffset(int line) {
+    Element lineElement = document.getDefaultRootElement().getElement(line);
+    return (lineElement == null) ? -1 : lineElement.getStartOffset();
   }
 
-  public int getLineStartNonWhiteSpaceOffset(int line)
-  {
+  
+  public int getLineStartNonWhiteSpaceOffset(int line) {
     int offset = getLineStartOffset(line);
     int length = getLineLength(line);
     String str = getText(offset, length);
@@ -868,37 +912,33 @@ public class JEditTextArea extends JComponent
     return offset + length;
   }
 
+  
   /**
    * Returns the end offset of the specified line.
    * @param line The line
    * @return The end offset of the specified line, or -1 if the line is
    * invalid.
    */
-  public int getLineStopOffset(int line)
-  {
-    Element lineElement = document.getDefaultRootElement()
-    .getElement(line);
-    if(lineElement == null)
-      return -1;
-    else
-      return lineElement.getEndOffset();
+  public int getLineStopOffset(int line) {
+    Element lineElement = document.getDefaultRootElement().getElement(line);
+    return (lineElement == null) ? -1 : lineElement.getEndOffset();
   }
 
-  public int getLineStopNonWhiteSpaceOffset(int line)
-  {
+  
+  public int getLineStopNonWhiteSpaceOffset(int line) {
     int offset = getLineStopOffset(line);
     int length = getLineLength(line);
     String str = getText(offset - length - 1, length);
 
-    for(int i = 0; i < length; i++) {
+    for (int i = 0; i < length; i++) {
       if(!Character.isWhitespace(str.charAt(length - i - 1))) {
         return offset - i;
       }
     }
-
     return offset - length;
   }
 
+  
   /**
    * Returns the start offset of the line after this line, or the end of
    * this line if there is no next line.
@@ -906,42 +946,32 @@ public class JEditTextArea extends JComponent
    * @return The end offset of the specified line, or -1 if the line is
    * invalid.
    */
-  public int getLineSelectionStopOffset(int line)
-  {
-    Element lineElement = document.getDefaultRootElement()
-    .getElement(line);
-    if(lineElement == null)
-      return -1;
-    else
-      return Math.min(lineElement.getEndOffset(),getDocumentLength());
+  public int getLineSelectionStopOffset(int line) {
+    Element lineElement = document.getDefaultRootElement().getElement(line);
+    return (lineElement == null) ? -1 : 
+      Math.min(lineElement.getEndOffset(), getDocumentLength());
   }
 
+  
   /**
    * Returns the length of the specified line.
    * @param line The line
    */
-  public int getLineLength(int line)
-  {
-    Element lineElement = document.getDefaultRootElement()
-    .getElement(line);
-    if(lineElement == null)
-      return -1;
-    else
-      return lineElement.getEndOffset()
-      - lineElement.getStartOffset() - 1;
+  public int getLineLength(int line) {
+    Element lineElement = document.getDefaultRootElement().getElement(line);
+    return (lineElement == null) ? -1 : 
+      lineElement.getEndOffset() - lineElement.getStartOffset() - 1;
   }
 
+  
   /**
    * Returns the entire text of this text area.
    */
-  public String getText()
-  {
-    try
-    {
+  public String getText() {
+    try {
       return document.getText(0,document.getLength());
-    }
-    catch(BadLocationException bl)
-    {
+      
+    } catch(BadLocationException bl) {
       bl.printStackTrace();
       return null;
     }
@@ -951,8 +981,7 @@ public class JEditTextArea extends JComponent
   /**
    * Sets the entire text of this text area.
    */
-  public void setText(String text)
-  {
+  public void setText(String text) {
     try {
       document.beginCompoundEdit();
       document.remove(0,document.getLength());
@@ -973,18 +1002,16 @@ public class JEditTextArea extends JComponent
    * @param len The length of the substring
    * @return The substring, or null if the offsets are invalid
    */
-  public final String getText(int start, int len)
-  {
-    try
-    {
+  public final String getText(int start, int len) {
+    try {
       return document.getText(start,len);
-    }
-    catch(BadLocationException bl)
-    {
+    
+    } catch(BadLocationException bl) {
       bl.printStackTrace();
       return null;
     }
   }
+  
 
   /**
    * Copies the specified substring of the document into a segment.
@@ -993,49 +1020,47 @@ public class JEditTextArea extends JComponent
    * @param len The length of the substring
    * @param segment The segment
    */
-  public final void getText(int start, int len, Segment segment)
-  {
-    try
-    {
+  public final void getText(int start, int len, Segment segment) {
+    try {
       document.getText(start,len,segment);
-    }
-    catch(BadLocationException bl)
-    {
+      
+    } catch(BadLocationException bl) {
       bl.printStackTrace();
       segment.offset = segment.count = 0;
     }
   }
 
+  
   /**
    * Returns the text on the specified line.
    * @param lineIndex The line
    * @return The text, or null if the line is invalid
    */
-  public final String getLineText(int lineIndex)
-  {
+  public final String getLineText(int lineIndex) {
     int start = getLineStartOffset(lineIndex);
     return getText(start,getLineStopOffset(lineIndex) - start - 1);
   }
 
+  
   /**
    * Copies the text on the specified line into a segment. If the line
    * is invalid, the segment will contain a null string.
    * @param lineIndex The line
    */
-  public final void getLineText(int lineIndex, Segment segment)
-  {
+  public final void getLineText(int lineIndex, Segment segment) {
     int start = getLineStartOffset(lineIndex);
     getText(start,getLineStopOffset(lineIndex) - start - 1,segment);
   }
+  
 
   /**
    * Returns the selection start offset.
    */
-  public final int getSelectionStart()
-  {
+  public final int getSelectionStart() {
     return selectionStart;
   }
 
+  
   /**
    * Returns the offset where the selection starts on the specified
    * line.
@@ -1372,7 +1397,7 @@ public class JEditTextArea extends JComponent
         start = tmp;
       }
 
-      StringBuffer buf = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       Segment seg = new Segment();
 
       for(int i = selectionStartLine; i <= selectionEndLine; i++)
@@ -1386,13 +1411,13 @@ public class JEditTextArea extends JComponent
         lineLen = Math.min(end - start,lineEnd - lineStart);
 
         getText(lineStart,lineLen,seg);
-        buf.append(seg.array,seg.offset,seg.count);
+        sb.append(seg.array,seg.offset,seg.count);
 
         if(i != selectionEndLine)
-          buf.append('\n');
+          sb.append('\n');
       }
 
-      return buf.toString();
+      return sb.toString();
     }
     else
     {
@@ -1666,11 +1691,11 @@ public class JEditTextArea extends JComponent
       String selection = getSelectedText();
 
       int repeatCount = inputHandler.getRepeatCount();
-      StringBuffer buf = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       for(int i = 0; i < repeatCount; i++)
-        buf.append(selection);
+        sb.append(selection);
 
-      clipboard.setContents(new StringSelection(buf.toString()),null);
+      clipboard.setContents(new StringSelection(sb.toString()), null);
     }
   }
 
@@ -1696,7 +1721,7 @@ public class JEditTextArea extends JComponent
    * specific to any language or version of the PDE.
    */
   public void copyAsHTML() {
-    StringBuffer cf = new StringBuffer("<html><body><pre>\n");
+    StringBuilder cf = new StringBuilder("<html><body><pre>\n");
 
     int selStart = getSelectionStart();
     int selStop = getSelectionStop();
@@ -1733,7 +1758,7 @@ public class JEditTextArea extends JComponent
   }
 
 
-  private void emitAsHTML(StringBuffer cf, int line) {
+  private void emitAsHTML(StringBuilder cf, int line) {
     Segment segment = new Segment();
     getLineText(line, segment);
 
@@ -1814,7 +1839,7 @@ public class JEditTextArea extends JComponent
   /**
    * Handle encoding HTML entities for lt, gt, and anything non-ASCII.
    */
-  private void appendAsHTML(StringBuffer buffer, char c) {
+  private void appendAsHTML(StringBuilder buffer, char c) {
     if (c == '<') {
       buffer.append("&lt;");
     } else if (c == '>') {
@@ -1878,11 +1903,11 @@ public class JEditTextArea extends JComponent
         }
 
         int repeatCount = inputHandler.getRepeatCount();
-        StringBuffer buf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < repeatCount; i++) {
-          buf.append(selection);
+          sb.append(selection);
         }
-        selection = buf.toString();
+        selection = sb.toString();
         setSelectedText(selection);
 
       } catch (Exception e) {
@@ -1906,18 +1931,12 @@ public class JEditTextArea extends JComponent
   }
 
   /**
-   * Forwards key events directly to the input handler.
-   * This is slightly faster than using a KeyListener
-   * because some Swing overhead is avoided.
-   */
-  public processing.mode.java.PdeKeyListener editorListener;
-
-  /**
    * The component that tracks the current line number.
    */
   public EditorLineStatus editorLineStatus;
 
 
+  /*
   public void processKeyEvent(KeyEvent evt) {
     // this had to be added in Processing 007X, because the menu key
     // events weren't making it up to the frame.
@@ -1943,7 +1962,30 @@ public class JEditTextArea extends JComponent
       break;
     }
   }
+   */
+  
+  
+  public void processKeyEvent(KeyEvent event) {
+    // this had to be added in Processing 007X, because the menu key
+    // events weren't making it up to the frame.
+    super.processKeyEvent(event);
 
+    if (inputHandler != null) {
+      switch (event.getID()) {
+      case KeyEvent.KEY_TYPED:
+        inputHandler.keyTyped(event);
+        break;
+      case KeyEvent.KEY_PRESSED:
+        inputHandler.keyPressed(event);
+        break;
+      case KeyEvent.KEY_RELEASED:
+        inputHandler.keyReleased(event);
+        break;
+      }
+    }
+  }
+
+  
   // protected members
   protected static String CENTER = "center";
   protected static String RIGHT = "right";
@@ -2066,7 +2108,7 @@ public class JEditTextArea extends JComponent
     // do magic stuff
     else if(line < firstLine)
     {
-      setFirstLine(firstLine + count);
+      setFirstLine(line);
     }
     // end of magic stuff
     else
@@ -2327,7 +2369,7 @@ public class JEditTextArea extends JComponent
         try {
           select(getMarkPosition(), xyToOffset(evt.getX(), evt.getY()));
         } catch (ArrayIndexOutOfBoundsException e) {
-          Base.log("xToOffset problem", e);
+          Base.loge("xToOffset problem", e);
         }
       } else {
         int line = yToLine(evt.getY());
@@ -2384,9 +2426,22 @@ public class JEditTextArea extends JComponent
         return;
       }
 
-      if (event.isPopupTrigger() && (popup != null)) {
+      // isPopupTrigger() is handled differently across platforms, 
+      // so it may fire during release, or during the press. 
+      // http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseEvent.html#isPopupTrigger()
+      // However, we have to exit out of this method if it's a right-click
+      // anyway, because otherwise it'll de-select the current word. 
+      // As a result, better to just check for BUTTON3 now, indicating that
+      // isPopupTrigger() is going to fire on the release anyway.
+      boolean windowsRightClick =
+        Base.isWindows() && (event.getButton() == MouseEvent.BUTTON3);
+      if ((event.isPopupTrigger() || windowsRightClick) && (popup != null)) {
+//      // Windows fires the popup trigger on release (see mouseReleased() below)(
+//      if (!Base.isWindows()) {
+//        if (event.isPopupTrigger() && (popup != null)) {
         popup.show(painter, event.getX(), event.getY());
         return;
+//        }
       }
 
       int line = yToLine(event.getY());
@@ -2423,6 +2478,7 @@ public class JEditTextArea extends JComponent
     }
 
 
+    /*
     // Because isPopupTrigger() is handled differently across platforms, 
     // it may fire during release, or during the press.
     // http://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseEvent.html#isPopupTrigger()
@@ -2431,6 +2487,7 @@ public class JEditTextArea extends JComponent
         popup.show(painter, event.getX(), event.getY());
       }
     }
+    */
     
     
     private void doSingleClick(MouseEvent evt, int line, int offset, int dot) {

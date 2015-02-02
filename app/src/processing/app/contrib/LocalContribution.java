@@ -31,6 +31,7 @@ import java.util.zip.*;
 import javax.swing.JOptionPane;
 
 import processing.app.*;
+import processing.core.PApplet;
 
 
 /** 
@@ -39,6 +40,7 @@ import processing.app.*;
  */
 public abstract class LocalContribution extends Contribution {
   static public final String DELETION_FLAG = "marked_for_deletion";
+  static public final String UPDATE_FLAGGED = "marked_for_update";
   static public final String RESTART_FLAG = "requires_restart";
   
   protected String id;          // 1 (unique id for this library)
@@ -46,7 +48,7 @@ public abstract class LocalContribution extends Contribution {
   protected File folder;
   protected HashMap<String, String> properties;
   protected ClassLoader loader;
-  
+  protected List<String> specifiedImports; // mylib,mylib.util;
 
   public LocalContribution(File folder) {
     this.folder = folder;
@@ -59,6 +61,7 @@ public abstract class LocalContribution extends Contribution {
       name = properties.get("name");
       id = properties.get("id");
       categories = parseCategories(properties.get("category"));
+      specifiedImports = parseImports(properties.get("imports"));
       if (name == null) {
         name = folder.getName();
       }
@@ -73,7 +76,28 @@ public abstract class LocalContribution extends Contribution {
         System.err.println("The version number for the “" + name + "” library is not set properly.");
         System.err.println("Please contact the library author to fix it according to the guidelines.");
       }
+      
       prettyVersion = properties.get("prettyVersion");
+      
+      try {
+        lastUpdated = Long.parseLong(properties.get("lastUpdated"));
+      } catch (NumberFormatException e) {
+        lastUpdated = 0;
+
+      // Better comment these out till all contribs have a lastUpdated 
+//        System.err.println("The last updated timestamp for the “" + name + "” library is not set properly.");
+//        System.err.println("Please contact the library author to fix it according to the guidelines.");
+      }
+
+      String minRev = properties.get("minRevision");
+      if (minRev != null) {
+        minRevision = PApplet.parseInt(minRev, 0);
+      }
+      
+      String maxRev = properties.get("maxRevision");
+      if (maxRev != null) {
+        maxRevision = PApplet.parseInt(maxRev, 0);
+      }
       
     } else {
       Base.log("No properties file at " + propertiesFile.getAbsolutePath());
@@ -81,6 +105,19 @@ public abstract class LocalContribution extends Contribution {
       name = folder.getName();
       categories = defaultCategory();
     }
+    
+    if (categories.contains(SPECIAL_CATEGORY_NAME))
+      validateSpecial();
+  }
+
+
+  private void validateSpecial() {
+    for (AvailableContribution available : ContributionListing.getInstance().advertisedContributions)
+      if (available.getName().equals(name)) {
+        if (!available.isSpecial())
+          categories.remove(SPECIAL_CATEGORY_NAME);
+      }
+      return;
   }
 
 
@@ -185,67 +222,90 @@ public abstract class LocalContribution extends Contribution {
 //  }
   
   
-  LocalContribution copyAndLoad(Editor editor, 
+  LocalContribution copyAndLoad(Base base, 
                                 boolean confirmReplace, 
                                 StatusPanel status) {
-    ArrayList<LocalContribution> oldContribs = 
-      getType().listContributions(editor);
+// NOTE: null status => function is called on startup when Editor objects, et al. aren't ready
     
     String contribFolderName = getFolder().getName();
 
     File contribTypeFolder = getType().getSketchbookFolder();
     File contribFolder = new File(contribTypeFolder, contribFolderName);
+    
+    if (status != null) { // when status != null, install is not occurring on startup
+    
+      Editor editor = base.getActiveEditor();
+      
+      ArrayList<LocalContribution> oldContribs = 
+        getType().listContributions(editor);
+    
+      // In case an update marker exists, and the user wants to install, delete the update marker
+      if (contribFolder.exists() && !contribFolder.isDirectory()) {
+        contribFolder.delete();
+        contribFolder = new File(contribTypeFolder, contribFolderName);
+      }
 
-    for (LocalContribution oldContrib : oldContribs) {
-      if ((oldContrib.getFolder().exists() && oldContrib.getFolder().equals(contribFolder)) ||
-          (oldContrib.getId() != null && oldContrib.getId().equals(getId()))) {
+      for (LocalContribution oldContrib : oldContribs) {
+        if ((oldContrib.getFolder().exists() && oldContrib.getFolder().equals(contribFolder)) ||
+            (oldContrib.getId() != null && oldContrib.getId().equals(getId()))) {
 
-        if (oldContrib.getType().requiresRestart()) {
-          // XXX: We can't replace stuff, soooooo.... do something different
-          if (!oldContrib.backup(editor, false, status)) {
-            return null;
-          }
-        } else {
-          int result = 0;
-          boolean doBackup = Preferences.getBoolean("contribution.backup.on_install");
-          if (confirmReplace) {
-            if (doBackup) {
-              result = Base.showYesNoQuestion(editor, "Replace",
-                     "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
-                     "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
-                     "has been found in your sketchbook. Clicking “Yes”<br>"+
-                     "will move the existing library to a backup folder<br>" +
-                     "in <i>libraries/old</i> before replacing it.");
-              if (result != JOptionPane.YES_OPTION || !oldContrib.backup(editor, true, status)) {
-                return null;
-              }
-            } else {
-              result = Base.showYesNoQuestion(editor, "Replace",
-                     "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
-                     "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
-                     "has been found in your sketchbook. Clicking “Yes”<br>"+
-                     "will permanently delete this library and all of its contents<br>"+
-                     "before replacing it.");
-              if (result != JOptionPane.YES_OPTION || !oldContrib.getFolder().delete()) {
-                return null;
-              }
+          if (oldContrib.getType().requiresRestart()) {
+            // XXX: We can't replace stuff, soooooo.... do something different
+            if (!oldContrib.backup(editor, false, status)) {
+              return null;
             }
           } else {
-            if ((doBackup && !oldContrib.backup(editor, true, status)) ||
-                (!doBackup && !oldContrib.getFolder().delete())) {
-              return null;
+            int result = 0;
+            boolean doBackup = Preferences.getBoolean("contribution.backup.on_install");
+            if (confirmReplace) {
+              if (doBackup) {
+                result = Base.showYesNoQuestion(editor, "Replace",
+                       "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
+                       "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
+                       "has been found in your sketchbook. Clicking “Yes”<br>"+
+                       "will move the existing library to a backup folder<br>" +
+                       "in <i>libraries/old</i> before replacing it.");
+                if (result != JOptionPane.YES_OPTION || !oldContrib.backup(editor, true, status)) {
+                  return null;
+                }
+              } else {
+                result = Base.showYesNoQuestion(editor, "Replace",
+                       "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
+                       "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
+                       "has been found in your sketchbook. Clicking “Yes”<br>"+
+                       "will permanently delete this library and all of its contents<br>"+
+                       "before replacing it.");
+                if (result != JOptionPane.YES_OPTION || !oldContrib.getFolder().delete()) {
+                  return null;
+                }
+              }
+            } else {
+              if ((doBackup && !oldContrib.backup(editor, true, status)) ||
+                  (!doBackup && !oldContrib.getFolder().delete())) {
+                return null;
+              }
             }
           }
         }
       }
-    }
 
-    // At this point it should be safe to replace this fella
-    if (contribFolder.exists()) {
-      Base.removeDir(contribFolder);
+      // At this point it should be safe to replace this fella
+      if (contribFolder.exists()) {
+        Base.removeDir(contribFolder);
+      }
+    
+    }
+    else {
+      // This if should ideally never happen, since this function is to be called only when restarting on update
+      if (contribFolder.exists() && contribFolder.isDirectory()) {
+        Base.removeDir(contribFolder);
+      }
+      else if (contribFolder.exists()) {
+        contribFolder.delete();
+        contribFolder = new File(contribTypeFolder, contribFolderName);
+      }
     }
     
-
     File oldFolder = getFolder();
 
     try {
@@ -266,7 +326,7 @@ public abstract class LocalContribution extends Contribution {
     }
     */
     
-    return getType().load(editor.getBase(), contribFolder);
+    return getType().load(base, contribFolder);
   }
 
 
@@ -316,7 +376,7 @@ public abstract class LocalContribution extends Contribution {
                status, 
                ContributionListing.getInstance()); 
       }
-    }).start();
+    }, "Contribution Uninstaller").start();
   }
   
   
@@ -327,39 +387,83 @@ public abstract class LocalContribution extends Contribution {
     pm.startTask("Removing", ProgressMonitor.UNKNOWN);
 
     boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
-    if (getType().requiresRestart()) {
-      if (!doBackup || (doBackup && backup(editor, false, status))) {
-        if (setDeletionFlag(true)) {
-          contribListing.replaceContribution(this, this);
+//    if (getType().requiresRestart()) {
+//      if (!doBackup || (doBackup && backup(editor, false, status))) {
+//        if (setDeletionFlag(true)) {
+//          contribListing.replaceContribution(this, this);
+//        }
+//      }
+//    } else {
+    boolean success = false;
+    if (getType() == ContributionType.MODE) {
+      boolean isModeActive = false;
+      ModeContribution m = (ModeContribution) this;
+      Iterator<Editor> iter = editor.getBase().getEditors().iterator();
+      while (iter.hasNext()) {
+        Editor e = iter.next();
+        if (e.getMode().equals(m.getMode())) {
+          isModeActive = true;
+          break;
         }
       }
-    } else {
-      boolean success = false;
-      if (doBackup) {
-        success = backup(editor, true, status);
-      } else {
-        Base.removeDir(getFolder());
-        success = !getFolder().exists();
-      }
-
-      if (success) {
-        Contribution advertisedVersion =
-          contribListing.getAvailableContribution(this);
-
-        if (advertisedVersion == null) {
-          contribListing.removeContribution(this);
-        } else {
-          contribListing.replaceContribution(this, advertisedVersion);
-        }
-      } else {
-        // There was a failure backing up the folder
-        if (!doBackup) {
-          status.setErrorMessage("Could not delete the contribution's files");
-        }
+      if (!isModeActive)
+        m.clearClassLoader(editor.getBase());
+      else {
+        pm.cancel();
+        Base.showMessage("Mode Manager",
+                         "Please save your Sketch and change the Mode of all Editor\nwindows that have "
+                           + this.name + " as the active Mode.");
+        return;
       }
     }
+    
+    if (getType() == ContributionType.TOOL) {
+      ToolContribution t = (ToolContribution) this;
+      Iterator<Editor> iter = editor.getBase().getEditors().iterator();
+      while (iter.hasNext()) {
+        Editor ed = iter.next();
+        ed.clearToolMenu();
+      }
+      t.clearClassLoader(editor.getBase());
+    }
+    
+    if (doBackup) {
+      success = backup(editor, true, status);
+    } else {
+      Base.removeDir(getFolder());
+      success = !getFolder().exists();
+    }
+
+    if (success) {
+      if (getType() == ContributionType.TOOL) {
+        editor.removeTool();
+      }
+
+      Contribution advertisedVersion = contribListing
+        .getAvailableContribution(this);
+
+      if (advertisedVersion == null) {
+        contribListing.removeContribution(this);
+      } else {
+        contribListing.replaceContribution(this, advertisedVersion);
+      }
+    } 
+    else {
+      // There was a failure backing up the folder
+          if (!doBackup || (doBackup && backup(editor, false, status))) {
+            if (setDeletionFlag(true)) {
+              contribListing.replaceContribution(this, this);
+            }
+          }
+         else
+          status.setErrorMessage("Could not delete the contribution's files");
+    }
+//    }
     ContributionManager.refreshInstalled(editor);
-    pm.finished();
+    if (success)
+      pm.finished();
+    else
+      pm.cancel();
   }
 
   
@@ -439,7 +543,42 @@ public abstract class LocalContribution extends Contribution {
     return null;
   }
   */
-  
+  /**
+   * Returns the imports (package-names) for a library, as specified in its library.properties
+   * (e.g., imports=libname.*,libname.support.*) 
+   * 
+   * @return String[] packageNames (without wildcards) or null if none are specified
+   */
+  public String[] getSpecifiedImports() {
+    
+    return specifiedImports != null ? specifiedImports.toArray(new String[0]) : null;
+  }
+
+  /**
+   * @return the list of Java imports to be added to the sketch when the library is imported
+   * or null if none are specified
+   */
+  protected static List<String> parseImports(String importsStr) {
+    
+    List<String> outgoing = new ArrayList<String>();
+
+    if (importsStr != null) {
+      
+      String[] listing = PApplet.trim(PApplet.split(importsStr, ','));
+      for (String imp : listing) {
+        
+        // In case the wildcard is specified, strip it, as it gets added later)
+        if (imp.endsWith(".*")) { 
+
+          imp = imp.substring(0, imp.length() - 2);
+        }
+        
+        outgoing.add(imp);
+      }
+    }
+    
+    return (outgoing.size() > 0) ? outgoing : null; 
+  }
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -456,6 +595,24 @@ public abstract class LocalContribution extends Contribution {
 
   static boolean isDeletionFlagged(File folder) {
     return isFlagged(folder, DELETION_FLAG);
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  boolean setUpdateFlag(boolean flag) {
+    return setFlag(UPDATE_FLAGGED, flag);
+  }
+  
+  
+  boolean isUpdateFlagged() {
+    return isUpdateFlagged(getFolder());
+  }
+
+
+  static boolean isUpdateFlagged(File folder) {
+    return isFlagged(folder, UPDATE_FLAGGED);
   }
   
   

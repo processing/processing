@@ -74,12 +74,17 @@ public class Platform {
     }
   }
 
+  public void saveLanguage(String languageCode) {}
 
   public void init(Base base) {
     this.base = base;
   }
 
 
+  /** 
+   * This function should throw an exception or return a value. 
+   * Do not return null. 
+   */  
   public File getSettingsFolder() throws Exception {
     // otherwise make a .processing directory int the user's home dir
     File home = new File(System.getProperty("user.home"));

@@ -77,7 +77,8 @@ public class PShader implements PConstants {
   // be called by different renderers within a single application
   // (the one corresponding to the main surface, or other offscreen
   // renderers).
-  protected PGraphicsOpenGL pg;
+  protected PGraphicsOpenGL primaryPG;
+  protected PGraphicsOpenGL currentPG;
   protected PGL pgl;
   protected int context;      // The context that created this shader.
 
@@ -115,8 +116,8 @@ public class PShader implements PConstants {
   protected int transformMatLoc;
   protected int modelviewMatLoc;
   protected int projectionMatLoc;
-  protected int bufferLoc;
-  protected int bufferUnit;
+  protected int ppixelsLoc;
+  protected int ppixelsUnit;
   protected int viewportLoc;
 
   // Uniforms only for lines and points
@@ -180,7 +181,8 @@ public class PShader implements PConstants {
   public PShader(PApplet parent) {
     this();
     this.parent = parent;
-    pgl = PGraphicsOpenGL.pgl;
+    primaryPG = (PGraphicsOpenGL)parent.g;
+    pgl = primaryPG.pgl;
     context = pgl.createEmptyContext();
   }
 
@@ -195,7 +197,8 @@ public class PShader implements PConstants {
    */
   public PShader(PApplet parent, String vertFilename, String fragFilename) {
     this.parent = parent;
-    pgl = PGraphicsOpenGL.pgl;
+    primaryPG = (PGraphicsOpenGL)parent.g;
+    pgl = primaryPG.pgl;
 
     this.vertexURL = null;
     this.fragmentURL = null;
@@ -233,7 +236,8 @@ public class PShader implements PConstants {
    */
   public PShader(PApplet parent, URL vertURL, URL fragURL) {
     this.parent = parent;
-    pgl = PGraphicsOpenGL.pgl;
+    primaryPG = (PGraphicsOpenGL)parent.g;
+    pgl = primaryPG.pgl;
 
     this.vertexURL = vertURL;
     this.fragmentURL = fragURL;
@@ -266,7 +270,8 @@ public class PShader implements PConstants {
 
   public PShader(PApplet parent, String[] vertSource, String[] fragSource) {
     this.parent = parent;
-    pgl = PGraphicsOpenGL.pgl;
+    primaryPG = (PGraphicsOpenGL)parent.g;
+    pgl = primaryPG.pgl;
 
     this.vertexURL = null;
     this.fragmentURL = null;
@@ -748,7 +753,8 @@ public class PShader implements PConstants {
       uniformValues.put(loc, new UniformValue(type, value));
     } else {
       PGraphics.showWarning("The shader doesn't have a uniform called \"" +
-                            name + "\"");
+                            name + "\" OR the uniform was removed during" +
+                            "compilation because it was unused.");
     }
   }
 
@@ -828,7 +834,7 @@ public class PShader implements PConstants {
           pgl.uniformMatrix4fv(loc, 1, false, floatBuffer);
         } else if (val.type == UniformValue.SAMPLER2D) {
           PImage img = (PImage)val.value;
-          Texture tex = PGraphicsOpenGL.pgPrimary.getTexture(img);
+          Texture tex = currentPG.getTexture(img);
 
           if (textures == null) textures = new HashMap<Integer, Texture>();
           textures.put(loc, tex);
@@ -894,7 +900,7 @@ public class PShader implements PConstants {
   protected void init() {
     if (glProgram == 0 || contextIsOutdated()) {
       context = pgl.getCurrentContext();
-      glProgram = PGraphicsOpenGL.createGLSLProgramObject(context);
+      glProgram = PGraphicsOpenGL.createGLSLProgramObject(context, pgl);
 
       boolean vertRes = true;
       if (hasVertexShader()) {
@@ -964,7 +970,7 @@ public class PShader implements PConstants {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileVertexShader() {
-    glVertex = PGraphicsOpenGL.createGLSLVertShaderObject(context);
+    glVertex = PGraphicsOpenGL.createGLSLVertShaderObject(context, pgl);
 
     pgl.shaderSource(glVertex, PApplet.join(vertexShaderSource, "\n"));
     pgl.compileShader(glVertex);
@@ -985,7 +991,7 @@ public class PShader implements PConstants {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileFragmentShader() {
-    glFragment = PGraphicsOpenGL.createGLSLFragShaderObject(context);
+    glFragment = PGraphicsOpenGL.createGLSLFragShaderObject(context, pgl);
 
     pgl.shaderSource(glFragment, PApplet.join(fragmentShaderSource, "\n"));
     pgl.compileShader(glFragment);
@@ -1004,15 +1010,15 @@ public class PShader implements PConstants {
 
   protected void dispose() {
     if (glVertex != 0) {
-      PGraphicsOpenGL.deleteGLSLVertShaderObject(glVertex, context);
+      PGraphicsOpenGL.deleteGLSLVertShaderObject(glVertex, context, pgl);
       glVertex = 0;
     }
     if (glFragment != 0) {
-      PGraphicsOpenGL.deleteGLSLFragShaderObject(glFragment, context);
+      PGraphicsOpenGL.deleteGLSLFragShaderObject(glFragment, context, pgl);
       glFragment = 0;
     }
     if (glProgram != 0) {
-      PGraphicsOpenGL.deleteGLSLProgramObject(glProgram, context);
+      PGraphicsOpenGL.deleteGLSLProgramObject(glProgram, context, pgl);
       glProgram = 0;
     }
   }
@@ -1108,7 +1114,7 @@ public class PShader implements PConstants {
 
 
   protected void setRenderer(PGraphicsOpenGL pg) {
-    this.pg = pg;
+    this.currentPG = pg;
   }
 
 
@@ -1153,7 +1159,7 @@ public class PShader implements PConstants {
       projectionMatLoc = getUniformLoc("projectionMatrix");
 
     viewportLoc = getUniformLoc("viewport");
-    bufferLoc = getUniformLoc("buffer");
+    ppixelsLoc = getUniformLoc("ppixels");
 
     normalMatLoc = getUniformLoc("normalMatrix");
 
@@ -1182,41 +1188,41 @@ public class PShader implements PConstants {
 
   protected void setCommonUniforms() {
     if (-1 < transformMatLoc) {
-      pg.updateGLProjmodelview();
-      setUniformMatrix(transformMatLoc, pg.glProjmodelview);
+      currentPG.updateGLProjmodelview();
+      setUniformMatrix(transformMatLoc, currentPG.glProjmodelview);
     }
 
     if (-1 < modelviewMatLoc) {
-      pg.updateGLModelview();
-      setUniformMatrix(modelviewMatLoc, pg.glModelview);
+      currentPG.updateGLModelview();
+      setUniformMatrix(modelviewMatLoc, currentPG.glModelview);
     }
 
     if (-1 < projectionMatLoc) {
-      pg.updateGLProjection();
-      setUniformMatrix(projectionMatLoc, pg.glProjection);
+      currentPG.updateGLProjection();
+      setUniformMatrix(projectionMatLoc, currentPG.glProjection);
     }
 
     if (-1 < viewportLoc) {
-      float x = pg.viewport.get(0);
-      float y = pg.viewport.get(1);
-      float w = pg.viewport.get(2);
-      float h = pg.viewport.get(3);
+      float x = currentPG.viewport.get(0);
+      float y = currentPG.viewport.get(1);
+      float w = currentPG.viewport.get(2);
+      float h = currentPG.viewport.get(3);
       setUniformValue(viewportLoc, x, y, w, h);
     }
 
-    if (-1 < bufferLoc) {
-      bufferUnit = getLastTexUnit() + 1;
-      setUniformValue(bufferLoc, bufferUnit);
-      pgl.activeTexture(PGL.TEXTURE0 + bufferUnit);
-      pg.bindFrontTexture();
+    if (-1 < ppixelsLoc) {
+      ppixelsUnit = getLastTexUnit() + 1;
+      setUniformValue(ppixelsLoc, ppixelsUnit);
+      pgl.activeTexture(PGL.TEXTURE0 + ppixelsUnit);
+      currentPG.bindFrontTexture();
     } else {
-      bufferUnit = -1;
+      ppixelsUnit = -1;
     }
   }
 
   protected void bindTyped() {
-    if (pg == null) {
-      setRenderer(PGraphicsOpenGL.pgCurrent);
+    if (currentPG == null) {
+      setRenderer(primaryPG.getCurrentPG());
       loadAttributes();
       loadUniforms();
     }
@@ -1228,8 +1234,8 @@ public class PShader implements PConstants {
     if (-1 < normalLoc) pgl.enableVertexAttribArray(normalLoc);
 
     if (-1 < normalMatLoc) {
-      pg.updateGLNormal();
-      setUniformMatrix(normalMatLoc, pg.glNormal);
+      currentPG.updateGLNormal();
+      setUniformMatrix(normalMatLoc, currentPG.glNormal);
     }
 
     if (-1 < ambientLoc) pgl.enableVertexAttribArray(ambientLoc);
@@ -1237,17 +1243,17 @@ public class PShader implements PConstants {
     if (-1 < emissiveLoc) pgl.enableVertexAttribArray(emissiveLoc);
     if (-1 < shininessLoc) pgl.enableVertexAttribArray(shininessLoc);
 
-    int count = pg.lightCount;
+    int count = currentPG.lightCount;
     setUniformValue(lightCountLoc, count);
     if (0 < count) {
-      setUniformVector(lightPositionLoc, pg.lightPosition, 4, count);
-      setUniformVector(lightNormalLoc, pg.lightNormal, 3, count);
-      setUniformVector(lightAmbientLoc, pg.lightAmbient, 3, count);
-      setUniformVector(lightDiffuseLoc, pg.lightDiffuse, 3, count);
-      setUniformVector(lightSpecularLoc, pg.lightSpecular, 3, count);
-      setUniformVector(lightFalloffLoc, pg.lightFalloffCoefficients,
+      setUniformVector(lightPositionLoc, currentPG.lightPosition, 4, count);
+      setUniformVector(lightNormalLoc, currentPG.lightNormal, 3, count);
+      setUniformVector(lightAmbientLoc, currentPG.lightAmbient, 3, count);
+      setUniformVector(lightDiffuseLoc, currentPG.lightDiffuse, 3, count);
+      setUniformVector(lightSpecularLoc, currentPG.lightSpecular, 3, count);
+      setUniformVector(lightFalloffLoc, currentPG.lightFalloffCoefficients,
                        3, count);
-      setUniformVector(lightSpotLoc, pg.lightSpotParameters, 2, count);
+      setUniformVector(lightSpotLoc, currentPG.lightSpotParameters, 2, count);
     }
 
     if (-1 < directionLoc) pgl.enableVertexAttribArray(directionLoc);
@@ -1255,8 +1261,8 @@ public class PShader implements PConstants {
     if (-1 < offsetLoc) pgl.enableVertexAttribArray(offsetLoc);
 
     if (-1 < perspectiveLoc) {
-      if (pg.getHint(ENABLE_STROKE_PERSPECTIVE) &&
-          pg.nonOrthoProjection()) {
+      if (currentPG.getHint(ENABLE_STROKE_PERSPECTIVE) &&
+          currentPG.nonOrthoProjection()) {
         setUniformValue(perspectiveLoc, 1);
       } else {
         setUniformValue(perspectiveLoc, 0);
@@ -1264,11 +1270,11 @@ public class PShader implements PConstants {
     }
 
     if (-1 < scaleLoc) {
-      if (pg.getHint(DISABLE_OPTIMIZED_STROKE)) {
+      if (currentPG.getHint(DISABLE_OPTIMIZED_STROKE)) {
         setUniformValue(scaleLoc, 1.0f, 1.0f, 1.0f);
       } else {
         float f = PGL.STROKE_DISPLACEMENT;
-        if (pg.orthoProjection()) {
+        if (currentPG.orthoProjection()) {
           setUniformValue(scaleLoc, 1, 1, f);
         } else {
           setUniformValue(scaleLoc, f, f, f);
@@ -1299,10 +1305,10 @@ public class PShader implements PConstants {
     if (-1 < texCoordLoc) pgl.disableVertexAttribArray(texCoordLoc);
     if (-1 < normalLoc) pgl.disableVertexAttribArray(normalLoc);
 
-    if (-1 < bufferLoc) {
+    if (-1 < ppixelsLoc) {
       pgl.requestFBOLayer();
-      pgl.activeTexture(PGL.TEXTURE0 + bufferUnit);
-      pg.unbindFrontTexture();
+      pgl.activeTexture(PGL.TEXTURE0 + ppixelsUnit);
+      currentPG.unbindFrontTexture();
       pgl.activeTexture(PGL.TEXTURE0);
     }
 
@@ -1336,7 +1342,7 @@ public class PShader implements PConstants {
       setUniformValue(texOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
 
       if (-1 < textureLoc) {
-        texUnit =  -1 < bufferUnit ? bufferUnit + 1 : getLastTexUnit() + 1;
+        texUnit =  -1 < ppixelsUnit ? ppixelsUnit + 1 : getLastTexUnit() + 1;
         setUniformValue(textureLoc, texUnit);
         pgl.activeTexture(PGL.TEXTURE0 + texUnit);
         tex.bind();
@@ -1432,7 +1438,7 @@ public class PShader implements PConstants {
   //
   // Class to store a user-specified value for a uniform parameter
   // in the shader
-  protected class UniformValue {
+  protected static class UniformValue {
     static final int INT1      = 0;
     static final int INT2      = 1;
     static final int INT3      = 2;

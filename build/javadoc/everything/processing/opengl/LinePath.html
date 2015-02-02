@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
 <li>
 <ul class="inheritance">
 <li>LinePath</li>
@@ -94,7 +94,7 @@
 <hr>
 <br>
 <pre>public class <span class="strong">LinePath</span>
-extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+extends Object</pre>
 <div class="block">The <code>LinePath</code> class allows to represent polygonal paths,
  potentially composed by several disjoint polygonal segments.
  It can be iterated by the <a href="../../processing/opengl/LinePath.PathIterator.html" title="class in processing.opengl"><code>LinePath.PathIterator</code></a> class including all
@@ -237,7 +237,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../processing/opengl/LinePath.html#LinePath(int, int)">LinePath</a></strong>(int&nbsp;rule,
+<td class="colOne"><code><strong><a href="../../processing/opengl/LinePath.html#LinePath(int,%20int)">LinePath</a></strong>(int&nbsp;rule,
         int&nbsp;initialCapacity)</code>
 <div class="block">Constructs a new <code>LinePath</code> object from the given specified initial
  values.</div>
@@ -267,29 +267,29 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#copyOf(byte[], int)">copyOf</a></strong>(byte[]&nbsp;source,
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#copyOf(byte[],%20int)">copyOf</a></strong>(byte[]&nbsp;source,
       int&nbsp;length)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static float[]</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#copyOf(float[], int)">copyOf</a></strong>(float[]&nbsp;source,
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#copyOf(float[],%20int)">copyOf</a></strong>(float[]&nbsp;source,
       int&nbsp;length)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#copyOf(int[], int)">copyOf</a></strong>(int[]&nbsp;source,
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#copyOf(int[],%20int)">copyOf</a></strong>(int[]&nbsp;source,
       int&nbsp;length)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a></code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#createStrokedPath(processing.opengl.LinePath, float, int, int)">createStrokedPath</a></strong>(<a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a>&nbsp;src,
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#createStrokedPath(processing.opengl.LinePath,%20float,%20int,%20int)">createStrokedPath</a></strong>(<a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a>&nbsp;src,
                  float&nbsp;weight,
                  int&nbsp;caps,
                  int&nbsp;join)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a></code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#createStrokedPath(processing.opengl.LinePath, float, int, int, float)">createStrokedPath</a></strong>(<a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a>&nbsp;src,
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#createStrokedPath(processing.opengl.LinePath,%20float,%20int,%20int,%20float)">createStrokedPath</a></strong>(<a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a>&nbsp;src,
                  float&nbsp;weight,
                  int&nbsp;caps,
                  int&nbsp;join,
@@ -297,7 +297,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a></code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#createStrokedPath(processing.opengl.LinePath, float, int, int, float, processing.core.PMatrix2D)">createStrokedPath</a></strong>(<a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a>&nbsp;src,
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#createStrokedPath(processing.opengl.LinePath,%20float,%20int,%20int,%20float,%20processing.core.PMatrix2D)">createStrokedPath</a></strong>(<a href="../../processing/opengl/LinePath.html" title="class in processing.opengl">LinePath</a>&nbsp;src,
                  float&nbsp;weight,
                  int&nbsp;caps,
                  int&nbsp;join,
@@ -323,17 +323,17 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#hypot(double, double)">hypot</a></strong>(double&nbsp;x,
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#hypot(double,%20double)">hypot</a></strong>(double&nbsp;x,
      double&nbsp;y)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#hypot(int, int)">hypot</a></strong>(int&nbsp;x,
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#hypot(int,%20int)">hypot</a></strong>(int&nbsp;x,
      int&nbsp;y)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static long</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#hypot(long, long)">hypot</a></strong>(long&nbsp;x,
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#hypot(long,%20long)">hypot</a></strong>(long&nbsp;x,
      long&nbsp;y)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
@@ -342,7 +342,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#lineTo(float, float, int)">lineTo</a></strong>(float&nbsp;x,
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#lineTo(float,%20float,%20int)">lineTo</a></strong>(float&nbsp;x,
       float&nbsp;y,
       int&nbsp;c)</code>
 <div class="block">Adds a point to the path by drawing a straight line from the current
@@ -355,7 +355,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#moveTo(float, float, int)">moveTo</a></strong>(float&nbsp;x,
+<td class="colLast"><code><strong><a href="../../processing/opengl/LinePath.html#moveTo(float,%20float,%20int)">moveTo</a></strong>(float&nbsp;x,
       float&nbsp;y,
       int&nbsp;c)</code>
 <div class="block">Adds a point to the path by moving to the specified coordinates specified
@@ -379,8 +379,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -601,7 +601,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  <p>
  This method provides a single precision variant of the double precision
  <code>moveTo()</code> method on the base <code>LinePath</code> class.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the specified X coordinate</dd><dd><code>y</code> - the specified Y coordinate</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/opengl/LinePath.html#moveTo(float, float, int)"><code>moveTo(float, float, int)</code></a></dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the specified X coordinate</dd><dd><code>y</code> - the specified Y coordinate</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/opengl/LinePath.html#moveTo(float,%20float,%20int)"><code>moveTo(float, float, int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="lineTo(float, float, int)">
@@ -618,7 +618,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  <p>
  This method provides a single precision variant of the double precision
  <code>lineTo()</code> method on the base <code>LinePath</code> class.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the specified X coordinate</dd><dd><code>y</code> - the specified Y coordinate</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/opengl/LinePath.html#lineTo(float, float, int)"><code>lineTo(float, float, int)</code></a></dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>x</code> - the specified X coordinate</dd><dd><code>y</code> - the specified Y coordinate</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/opengl/LinePath.html#lineTo(float,%20float,%20int)"><code>lineTo(float, float, int)</code></a></dd></dl>
 </li>
 </ul>
 <a name="getPathIterator()">
@@ -669,7 +669,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="block">Sets the winding rule for this path to the specified value.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>rule</code> - an integer representing the specified winding rule</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/IllegalArgumentException.html?is-external=true" title="class or interface in java.lang">IllegalArgumentException</a></code> - if <code>rule</code> is not either <a href="../../processing/opengl/LinePath.html#WIND_EVEN_ODD"><code>WIND_EVEN_ODD</code></a> or
+<dd><code>IllegalArgumentException</code> - if <code>rule</code> is not either <a href="../../processing/opengl/LinePath.html#WIND_EVEN_ODD"><code>WIND_EVEN_ODD</code></a> or
               <a href="../../processing/opengl/LinePath.html#WIND_NON_ZERO"><code>WIND_NON_ZERO</code></a></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../processing/opengl/LinePath.html#getWindingRule()"><code>getWindingRule()</code></a></dd></dl>
 </li>
 </ul>

@@ -39,7 +39,7 @@ public class Settings {
   /** 
    * Copy of the defaults in case the user mangles a preference. 
    * It's necessary to keep a copy of the defaults around, because the user may
-   * have mangled a setting on their own. In the past, we used to load the 
+   * have replaced a setting on their own. In the past, we used to load the 
    * defaults, then replace those with what was in the user's preferences file.
    * Problem is, if something like a font entry in the user's file no longer 
    * parses properly, we need to be able to get back to a clean version of that

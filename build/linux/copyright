@@ -1,0 +1,53 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Processing
+Upstream-Contact: Processing Foundation  <foundation@processing.org>
+                  Ben Fry <fry@processing.org>
+                  Casey Reas <reas@processing.org>
+Source: https://github.com/processing/processing
+
+Files: core/*
+Copyright: 2001 Massachusetts Institute of Technology
+           2004-2014 Ben Fry and Casey Reas
+License: LGPL-2.1
+ This program is free software; you can redistribute it 
+ and/or modify it under the terms of the Lesser GNU General Public
+ License as published by the Free Software Foundation.
+ .
+ This program is distributed in the hope that it will be 
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the Lesser GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the Lesser GNU General Public
+ License version 2.1 can be found in the file
+ `/usr/share/common-licenses/LGPL-2.1'.
+ 
+
+Files: app/*
+Copyright: 2001 Massachusetts Institute of Technology
+           2004-2014 Ben Fry and Casey Reas
+License: GPL-2
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.

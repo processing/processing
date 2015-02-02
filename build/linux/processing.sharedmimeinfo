@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+    <mime-type type="text/x-processing">
+        <comment>Processing source code</comment>
+        <sub-class-of type="text/x-csrc"/>
+        <glob pattern="*.pde"/>
+    </mime-type>
+</mime-info>

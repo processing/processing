@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-11 Ben Fry and Casey Reas
+  Copyright (c) 2013-14 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -24,7 +25,12 @@
 
 package processing.core;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.font.FontRenderContext;
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
@@ -134,8 +140,8 @@ import processing.opengl.PShader;
    */
 public class PGraphics extends PImage implements PConstants {
 
-  /// Canvas object that covers rendering this graphics on screen.
-  public Canvas canvas;
+//  /// Canvas object that covers rendering this graphics on screen.
+//  public Canvas canvas;
 
   // ........................................................
 
@@ -180,6 +186,10 @@ public class PGraphics extends PImage implements PConstants {
    * are also added to the sketch.
    */
   protected boolean primarySurface;
+
+//  // TODO nervous about leaving this here since it seems likely to create
+//  // back-references where we don't want them
+//  protected PSurface surface;
 
   // ........................................................
 
@@ -501,7 +511,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Java AWT Image object associated with this renderer. For the 1.0 version
-   * of P2D and P3D, this was be associated with their MemoryImageSource.
+   * of P2D and P3D, this was associated with their MemoryImageSource.
    * For PGraphicsJava2D, it will be the offscreen drawing buffer.
    */
   public Image image;
@@ -680,6 +690,7 @@ public class PGraphics extends PImage implements PConstants {
    * as the first line of a subclass' constructor to properly set
    * the internal fields and defaults.
    *
+   * @nowebref
    */
   public PGraphics() {
   }
@@ -718,10 +729,6 @@ public class PGraphics extends PImage implements PConstants {
 //  }
 
 
-  public void setFrameRate(float frameRate) {  // ignore
-  }
-
-
   /**
    * The final step in setting up a renderer, set its size of this renderer.
    * This was formerly handled by the constructor, but instead it's been broken
@@ -736,19 +743,20 @@ public class PGraphics extends PImage implements PConstants {
   public void setSize(int w, int h) {  // ignore
     width = w;
     height = h;
-//    width1 = width - 1;
-//    height1 = height - 1;
 
-    allocate();
+    pixelWidth = width * pixelFactor;
+    pixelHeight = height * pixelFactor;
+
+//    allocate();
     reapplySettings();
   }
 
 
-  /**
-   * Allocate memory for this renderer. Generally will need to be implemented
-   * for all renderers.
-   */
-  protected void allocate() { }
+//  /**
+//   * Allocate memory for this renderer. Generally will need to be implemented
+//   * for all renderers.
+//   */
+//  protected void allocate() { }
 
 
   /**
@@ -759,6 +767,11 @@ public class PGraphics extends PImage implements PConstants {
    * endRaw(), in order to shut things off.
    */
   public void dispose() {  // ignore
+  }
+
+
+  public PSurface createSurface() {  // ignore
+    return new PSurfaceAWT(this);
   }
 
 
@@ -810,17 +823,6 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Handle grabbing the focus from the parent applet. Other renderers can
-   * override this if handling needs to be different.
-   */
-  public void requestFocus() {  // ignore
-    if (parent != null) {
-      parent.requestFocusInWindow();
-    }
-  }
-
-
-  /**
    * Some renderers have requirements re: when they are ready to draw.
    */
   public boolean canDraw() {  // ignore
@@ -828,12 +830,14 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /**
-   * Try to draw, or put a draw request on the queue.
-   */
-  public void requestDraw() {  // ignore
-    parent.handleDraw();
-  }
+  // removing because renderers will have their own animation threads and
+  // can handle this however they wish
+//  /**
+//   * Try to draw, or put a draw request on the queue.
+//   */
+//  public void requestDraw() {  // ignore
+//    parent.handleDraw();
+//  }
 
 
   /**
@@ -1096,7 +1100,7 @@ public class PGraphics extends PImage implements PConstants {
     if (which == ENABLE_NATIVE_FONTS ||
         which == DISABLE_NATIVE_FONTS) {
       showWarning("hint(ENABLE_NATIVE_FONTS) no longer supported. " +
-      		        "Use createFont() instead.");
+                  "Use createFont() instead.");
     }
     if (which > 0) {
       hints[which] = true;
@@ -1635,7 +1639,9 @@ public class PGraphics extends PImage implements PConstants {
     return loadShape(filename, null);
   }
 
-
+  /**
+   * @nowebref
+   */
   public PShape loadShape(String filename, String options) {
     showMissingWarning("loadShape");
     return null;
@@ -1867,7 +1873,7 @@ public class PGraphics extends PImage implements PConstants {
                                  "must be used before bezierVertex() or quadraticVertex()");
     }
     if (vertexCount == 0) {
-      throw new RuntimeException("vertex() must be used at least once" +
+      throw new RuntimeException("vertex() must be used at least once " +
                                  "before bezierVertex() or quadraticVertex()");
     }
   }
@@ -2664,8 +2670,8 @@ public class PGraphics extends PImage implements PConstants {
         }
 
         if (stop - start > TWO_PI) {
-          start = 0;
-          stop = TWO_PI;
+          // don't change start, it is visible in PIE mode
+          stop = start + TWO_PI;
         }
         arcImpl(x, y, w, h, start, stop, mode);
       }
@@ -3898,6 +3904,9 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
+   * @see PGraphics#textAscent()
+   * @see PGraphics#textDescent()
    */
   public void textAlign(int alignX, int alignY) {
     textAlign = alignX;
@@ -3974,6 +3983,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#loadFont(String)
    * @see PFont
    * @see PGraphics#text(String, float, float)
+   * @see PGraphics#textSize(float)
    */
   public void textFont(PFont which) {
     if (which != null) {
@@ -4037,6 +4047,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public void textLeading(float leading) {
     textLeading = leading;
@@ -4153,6 +4164,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textSize(float)
    */
   public float textWidth(String str) {
     if (textFont == null) {
@@ -4234,9 +4246,13 @@ public class PGraphics extends PImage implements PConstants {
    * @param x x-coordinate of text
    * @param y y-coordinate of text
    * @see PGraphics#textAlign(int, int)
-   * @see PGraphics#textMode(int)
-   * @see PApplet#loadFont(String)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#textMode(int)
+   * @see PGraphics#textSize(float)
+   * @see PGraphics#textLeading(float)
+   * @see PGraphics#textWidth(String)
+   * @see PGraphics#textAscent()
+   * @see PGraphics#textDescent()
    * @see PGraphics#rectMode(int)
    * @see PGraphics#fill(int, float)
    * @see_external String
@@ -4785,6 +4801,25 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /**
+   * Convenience method to get a legit FontMetrics object. Where possible,
+   * override this any renderer subclass so that you're not using what's
+   * returned by getDefaultToolkit() to get your metrics.
+   */
+  @SuppressWarnings("deprecation")
+  public FontMetrics getFontMetrics(Font font) {  // ignore
+    return Toolkit.getDefaultToolkit().getFontMetrics(font);
+  }
+
+
+  /**
+   * Convenience method to jump through some Java2D hoops and get an FRC.
+   */
+  public FontRenderContext getFontRenderContext(Font font) {  // ignore
+    return getFontMetrics(font).getFontRenderContext();
+  }
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -4808,6 +4843,7 @@ public class PGraphics extends PImage implements PConstants {
    * @webref transform
    * @see PGraphics#popMatrix()
    * @see PGraphics#translate(float, float, float)
+   * @see PGraphics#scale(float)
    * @see PGraphics#rotate(float)
    * @see PGraphics#rotateX(float)
    * @see PGraphics#rotateY(float)
@@ -6069,6 +6105,8 @@ public class PGraphics extends PImage implements PConstants {
    * @param rgb color value in hexadecimal notation
    * @see PGraphics#noStroke()
    * @see PGraphics#strokeWeight(float)
+   * @see PGraphics#strokeJoin(int)
+   * @see PGraphics#strokeCap(int)
    * @see PGraphics#fill(int, float)
    * @see PGraphics#noFill()
    * @see PGraphics#tint(int, float)
@@ -7285,14 +7323,15 @@ public class PGraphics extends PImage implements PConstants {
    * Strangely the old version of this code ignored the alpha
    * value. not sure if that was a bug or what.
    * <P>
-   * Note, no need for a bounds check since it's a 32 bit number.
+   * Note, no need for a bounds check for 'argb' since it's a 32 bit number.
+   * Bounds now checked on alpha, however (rev 0225).
    */
   protected void colorCalcARGB(int argb, float alpha) {
     if (alpha == colorModeA) {
       calcAi = (argb >> 24) & 0xff;
       calcColor = argb;
     } else {
-      calcAi = (int) (((argb >> 24) & 0xff) * (alpha / colorModeA));
+      calcAi = (int) (((argb >> 24) & 0xff) * PApplet.constrain((alpha / colorModeA), 0, 1));
       calcColor = (calcAi << 24) | (argb & 0xFFFFFF);
     }
     calcRi = (argb >> 16) & 0xff;
@@ -7635,6 +7674,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param amt between 0.0 and 1.0
    * @see PImage#blendColor(int, int, int)
    * @see PGraphics#color(float, float, float, float)
+   * @see PApplet#lerp(float, float, float)
    */
   public int lerpColor(int c1, int c2, float amt) {
     return lerpColor(c1, c2, amt, colorMode);
@@ -7662,10 +7702,10 @@ public class PGraphics extends PImage implements PConstants {
       float g2 = (c2 >> 8) & 0xff;
       float b2 = c2 & 0xff;
 
-      return (((int) (a1 + (a2-a1)*amt) << 24) |
-              ((int) (r1 + (r2-r1)*amt) << 16) |
-              ((int) (g1 + (g2-g1)*amt) << 8) |
-              ((int) (b1 + (b2-b1)*amt)));
+      return ((PApplet.round(a1 + (a2-a1)*amt) << 24) |
+              (PApplet.round(r1 + (r2-r1)*amt) << 16) |
+              (PApplet.round(g1 + (g2-g1)*amt) << 8) |
+              (PApplet.round(b1 + (b2-b1)*amt)));
 
     } else if (mode == HSB) {
       if (lerpColorHSB1 == null) {
@@ -7675,7 +7715,7 @@ public class PGraphics extends PImage implements PConstants {
 
       float a1 = (c1 >> 24) & 0xff;
       float a2 = (c2 >> 24) & 0xff;
-      int alfa = ((int) (a1 + (a2-a1)*amt)) << 24;
+      int alfa = (PApplet.round(a1 + (a2-a1)*amt)) << 24;
 
       Color.RGBtoHSB((c1 >> 16) & 0xff, (c1 >> 8) & 0xff, c1 & 0xff,
                      lerpColorHSB1);
@@ -7885,7 +7925,7 @@ public class PGraphics extends PImage implements PConstants {
    * A better name? showFrame, displayable, isVisible, visible, shouldDisplay,
    * what to call this?
    */
-  public boolean displayable() {
+  public boolean displayable() {  // ignore
     return true;
   }
 
@@ -7893,7 +7933,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Return true if this renderer supports 2D drawing. Defaults to true.
    */
-  public boolean is2D() {
+  public boolean is2D() {  // ignore
     return true;
   }
 
@@ -7901,7 +7941,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Return true if this renderer supports 3D drawing. Defaults to false.
    */
-  public boolean is3D() {
+  public boolean is3D() {  // ignore
     return false;
   }
 
@@ -7909,7 +7949,12 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Return true if this renderer does rendering through OpenGL. Defaults to false.
    */
-  public boolean isGL() {
+  public boolean isGL() {  // ignore
     return false;
+  }
+
+
+  public boolean is2X() {
+    return pixelFactor == 2;
   }
 }

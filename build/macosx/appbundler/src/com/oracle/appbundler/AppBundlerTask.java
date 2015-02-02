@@ -76,9 +76,9 @@ public class AppBundlerTask extends Task {
 
   private String applicationCategory = null;
   private boolean highResolutionCapable = true;
-  // Oracle Java 7 requires 10.7.3 or later, so require it here.
-  private String minimumSystem = "10.7.3";
-  // By default, don't embed Java FX. 
+  // Oracle Java 8 requires 10.8.3 or later, so require it here.
+  private String minimumSystem = "10.8.3";
+  // By default, don't embed Java FX.
   private boolean javafx = false;
 
   // JVM info properties
@@ -174,12 +174,12 @@ public class AppBundlerTask extends Task {
     this.minimumSystem = minimumSystem;
   }
 
-  
+
   public void setHighResolutionCapable(boolean highResolutionCapable) {
     this.highResolutionCapable = highResolutionCapable;
   }
-  
-  
+
+
   public void setJavaFX(boolean javafx) {
     this.javafx = javafx;
   }
@@ -203,12 +203,12 @@ public class AppBundlerTask extends Task {
 
     runtime.appendExcludes(new String[] {
       "bin/",
-      
+
       // original version, removed entire bin folder
-//      "jre/bin/",
-      
+      //"jre/bin/",
+
       // remove everything except 'java'
-      "jre/bin/keytool",
+      // also keep 'keytool' (needed by Android)
       "jre/bin/orbd",
       "jre/bin/pack200",
       "jre/bin/policytool",
@@ -226,12 +226,12 @@ public class AppBundlerTask extends Task {
       "jre/lib/plugin.jar",
       "jre/lib/security/javaws.policy"
     });
-    
+
     if (!javafx) {
       // http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
       runtime.appendExcludes(new String[] {
         "jre/THIRDPARTYLICENSEREADME-JAVAFX.txt",
-        
+
         "jre/lib/javafx.properties",
         "jre/lib/jfxrt.jar",
         "jre/lib/security/javafx.policy",
@@ -423,7 +423,7 @@ public class AppBundlerTask extends Task {
 
       // Copy icon to Resources folder
       copyIcon(resourcesDirectory);
-      
+
       // Copy the bundle/document icons as well
       copyBundleIcons(resourcesDirectory);
 
@@ -446,7 +446,7 @@ public class AppBundlerTask extends Task {
         if (zipEntry.isDirectory()) {
           file.mkdir();
         } else {
-          OutputStream outputStream = 
+          OutputStream outputStream =
             new BufferedOutputStream(new FileOutputStream(file), BUFFER_SIZE);
           try {
             int b = zipInputStream.read();
@@ -554,14 +554,14 @@ public class AppBundlerTask extends Task {
 
   private void copyIcon(File resourcesDirectory) throws IOException {
     if (iconFile == null) {
-      copy(getClass().getResource(DEFAULT_ICON_NAME), 
+      copy(getClass().getResource(DEFAULT_ICON_NAME),
            new File(resourcesDirectory, DEFAULT_ICON_NAME));
     } else {
       copy(iconFile, new File(resourcesDirectory, iconFile.getName()));
     }
   }
-  
-  
+
+
   private void copyBundleIcons(File resourcesDirectory) throws IOException {
     for (BundleDocument bundleDocument : bundleDocuments) {
       if (bundleDocument.hasIcon()) {
@@ -570,12 +570,12 @@ public class AppBundlerTask extends Task {
       }
     }
   }
-  
+
 
   private void writeInfoPlist(File file) throws IOException {
     FileOutputStream output = new FileOutputStream(file);
     PropertyLister plist = new PropertyLister(output);
-    
+
     // Get started, write all necessary header info and open plist element
     plist.writeStartDocument();
 
@@ -595,7 +595,7 @@ public class AppBundlerTask extends Task {
     plist.writeProperty("CFBundleVersion", version);
     plist.writeProperty("CFBundleSignature", signature);
     plist.writeProperty("NSHumanReadableCopyright", copyright);
-    
+
     if (getInfo != null) {
       plist.writeProperty("CFBundleGetInfoString", getInfo);
     }
@@ -603,7 +603,7 @@ public class AppBundlerTask extends Task {
     if (applicationCategory != null) {
       plist.writeProperty("LSApplicationCategoryType", applicationCategory);
     }
-    
+
     if (minimumSystem != null) {
       plist.writeProperty("LSMinimumSystemVersion", minimumSystem);
     }

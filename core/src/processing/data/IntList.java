@@ -130,6 +130,9 @@ public class IntList implements Iterable<Integer> {
    * @brief Get an entry at a particular index
    */
   public int get(int index) {
+    if (index >= this.count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return data[index];
   }
 
@@ -263,6 +266,11 @@ public class IntList implements Iterable<Integer> {
 //      count++;
 //    }
 //  }
+
+
+  public void insert(int index, int value) {
+    insert(index, new int[] { value });
+  }
 
 
   // same as splice
@@ -399,12 +407,24 @@ public class IntList implements Iterable<Integer> {
     data[index]++;
   }
 
+
+  private void boundsProblem(int index, String method) {
+    final String msg = String.format("The list size is %d. " +
+      "You cannot %s() to element %d.", count, method, index);
+    throw new ArrayIndexOutOfBoundsException(msg);
+  }
+
+
   /**
    * @webref intlist:method
    * @brief Add to a value
    */
   public void add(int index, int amount) {
-    data[index] += amount;
+    if (index < count) {
+      data[index] += amount;
+    } else {
+      boundsProblem(index, "add");
+    }
   }
 
   /**
@@ -412,7 +432,11 @@ public class IntList implements Iterable<Integer> {
    * @brief Subtract from a value
    */
   public void sub(int index, int amount) {
-    data[index] -= amount;
+    if (index < count) {
+      data[index] -= amount;
+    } else {
+      boundsProblem(index, "sub");
+    }
   }
 
   /**
@@ -420,7 +444,11 @@ public class IntList implements Iterable<Integer> {
    * @brief Multiply a value
    */
   public void mult(int index, int amount) {
-    data[index] *= amount;
+    if (index < count) {
+      data[index] *= amount;
+    } else {
+      boundsProblem(index, "mult");
+    }
   }
 
   /**
@@ -428,7 +456,11 @@ public class IntList implements Iterable<Integer> {
    * @brief Divide a value
    */
   public void div(int index, int amount) {
-    data[index] /= amount;
+    if (index < count) {
+      data[index] /= amount;
+    } else {
+      boundsProblem(index, "div");
+    }
   }
 
 
@@ -569,7 +601,7 @@ public class IntList implements Iterable<Integer> {
 
   /**
    * @webref intlist:method
-   * @brief Reverse sort, orders values by first digit
+   * @brief Reverse the order of the list elements
    */
   public void reverse() {
     int ii = count - 1;
@@ -670,7 +702,8 @@ public class IntList implements Iterable<Integer> {
 
 
   /**
-   * Copy as many values as possible into the specified array.
+   * Copy values into the specified array. If the specified array is null or
+   * not the same size, a new array will be allocated.
    * @param array
    */
   public int[] array(int[] array) {
@@ -768,6 +801,13 @@ public class IntList implements Iterable<Integer> {
       sb.append(data[i]);
     }
     return sb.toString();
+  }
+
+
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.format("[%d] %d%n", i, data[i]);
+    }
   }
 
 

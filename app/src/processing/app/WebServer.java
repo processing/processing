@@ -109,13 +109,13 @@ public class WebServer implements HttpConstants {
     //public static void main(String[] a) throws Exception {
     static public int launch(String zipPath) throws IOException {
       final ZipFile zip = new ZipFile(zipPath);
-      final HashMap<String, ZipEntry> entries = new HashMap();
+      final Map<String, ZipEntry> entries = new HashMap<String, ZipEntry>();
       Enumeration en = zip.entries();
       while (en.hasMoreElements()) {
         ZipEntry entry = (ZipEntry) en.nextElement();
         entries.put(entry.getName(), entry);
       }
-      
+
 //        if (a.length > 0) {
 //            port = Integer.parseInt(a[0]);
 //        }
@@ -164,9 +164,9 @@ public class WebServer implements HttpConstants {
 
 
 class WebServerWorker /*extends WebServer*/ implements HttpConstants, Runnable {
-  ZipFile zip;
-  HashMap<String, ZipEntry> entries;
-  
+    private final ZipFile zip;
+    private final Map<String, ZipEntry> entries;
+
     final static int BUF_SIZE = 2048;
 
     static final byte[] EOL = { (byte)'\r', (byte)'\n' };
@@ -176,10 +176,10 @@ class WebServerWorker /*extends WebServer*/ implements HttpConstants, Runnable {
     /* Socket to client we're handling */
     private Socket s;
 
-    WebServerWorker(ZipFile zip, HashMap entries) {
+    WebServerWorker(ZipFile zip, Map<String, ZipEntry> entries) {
       this.entries = entries;
       this.zip = zip;
-      
+
       buf = new byte[BUF_SIZE];
       s = null;
   }
@@ -370,7 +370,7 @@ outerloop:
               int ind = name.lastIndexOf('.');
               String ct = null;
               if (ind > 0) {
-                  ct = (String) map.get(name.substring(ind));
+                  ct = map.get(name.substring(ind));
               }
               if (ct == null) {
                 //System.err.println("unknown content type " + name.substring(ind));
@@ -417,7 +417,7 @@ outerloop:
                 int ind = name.lastIndexOf('.');
                 String ct = null;
                 if (ind > 0) {
-                    ct = (String) map.get(name.substring(ind));
+                    ct = map.get(name.substring(ind));
                 }
                 if (ct == null) {
                     ct = "unknown/unknown";
@@ -468,7 +468,7 @@ outerloop:
     }
 
     /* mapping of file extensions to content-types */
-    static java.util.Hashtable map = new java.util.Hashtable();
+    static Map<String, String> map = new HashMap<String, String>();
 
     static {
         fillMap();

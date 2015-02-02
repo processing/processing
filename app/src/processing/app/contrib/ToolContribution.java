@@ -22,6 +22,7 @@
 package processing.app.contrib;
 
 import java.io.*;
+import java.net.URLClassLoader;
 //import java.net.*;
 import java.util.*;
 
@@ -34,29 +35,62 @@ import processing.app.tools.Tool;
 public class ToolContribution extends LocalContribution implements Tool {
   private Tool tool;
 
+  private File referenceFile; // shortname/reference/index.html
 
   static public ToolContribution load(File folder) {
     try {
       return new ToolContribution(folder);
     } catch (IgnorableException ig) {
       Base.log(ig.getMessage());
-    } catch (Error err) {
-      // Handles UnsupportedClassVersionError and others
-      err.printStackTrace();
-    } catch (Exception ex) {
-      ex.printStackTrace();
+
+    } catch (VerifyError ve) {  // incompatible
+      // avoid the excessive error spew that happens here
+
+    } catch (Throwable e) {  // unknown error
+      e.printStackTrace();
     }
     return null;
   }
 
 
-  private ToolContribution(File folder) throws Exception {
+  private ToolContribution(File folder) throws Throwable {
     super(folder);
 
     String className = initLoader(null);
     if (className != null) {
       Class<?> toolClass = loader.loadClass(className);
       tool = (Tool) toolClass.newInstance();
+    }
+
+    referenceFile = new File(folder, "reference/index.html");
+  }
+
+
+  /**
+   * Method to close the ClassLoader so that the archives are no longer "locked" and
+   * a tool can be removed without restart.
+   */
+  public void clearClassLoader(Base base) {
+    try {
+      ((URLClassLoader) this.loader).close();
+    } catch (IOException e1) {
+      e1.printStackTrace();
+    }
+    Iterator<Editor> editorIter = base.getEditors().iterator();
+    while (editorIter.hasNext()) {
+      Editor editor = editorIter.next();
+      ArrayList<ToolContribution> contribTools = editor.contribTools;
+      for (ToolContribution toolContrib : contribTools)
+        if (toolContrib.getName().equals(this.name)) {
+          try {
+            ((URLClassLoader) toolContrib.loader).close();
+            editor.contribTools.remove(toolContrib);
+            break;
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+//        base.getActiveEditor().rebuildToolMenu();
+        }
     }
   }
 
@@ -122,5 +156,27 @@ public class ToolContribution extends LocalContribution implements Tool {
 
   public ContributionType getType() {
     return ContributionType.TOOL;
+  }
+
+
+  /**
+   * Returns the object stored in the referenceFile field, which contains an
+   * instance of the file object representing the index file of the reference
+   * 
+   * @return referenceFile
+   */
+  public File getReferenceIndexFile() {
+    return referenceFile;
+  }
+
+
+  /**
+   * Tests whether the reference's index file indicated by referenceFile exists.
+   * 
+   * @return true if and only if the file denoted by referenceFile exists; false
+   *         otherwise.
+   */
+  public boolean hasReference() {
+    return referenceFile.exists();
   }
 }

@@ -23,9 +23,6 @@
 
 package processing.opengl;
 
-import processing.core.PApplet;
-import processing.core.PGraphics;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.Buffer;
@@ -35,6 +32,11 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
+
+import processing.core.PApplet;
+import processing.core.PGraphics;
+import processing.core.PSurface;
+
 
 /**
  * Processing-OpenGL abstraction layer. Needs to be implemented by subclasses
@@ -52,19 +54,22 @@ public abstract class PGL {
   protected PGraphicsOpenGL pg;
 
   /** OpenGL thread */
-  protected static Thread glThread;
+  protected Thread glThread;
 
   /** ID of the GL context associated to the surface **/
-  protected static int glContext;
+  protected int glContext;
+
+  /** true if this is the GL interface for a primary surface PGraphics */
+  public boolean primaryPGL;
 
   // ........................................................
 
   // Parameters
 
   protected static boolean USE_FBOLAYER_BY_DEFAULT = false;
-  protected static int REQUESTED_DEPTH_BITS   = 24;
-  protected static int REQUESTED_STENCIL_BITS = 8;
-  protected static int REQUESTED_ALPHA_BITS   = 8;
+  public static int REQUESTED_DEPTH_BITS   = 24;
+  public static int REQUESTED_STENCIL_BITS = 8;
+  public static int REQUESTED_ALPHA_BITS   = 8;
 
   /** Switches between the use of regular and direct buffers. */
   protected static boolean USE_DIRECT_BUFFERS = true;
@@ -75,7 +80,7 @@ public abstract class PGL {
    * See the code and comments involving this constant in
    * PGraphicsOpenGL.endDraw().
    */
-  protected static boolean SAVE_SURFACE_TO_PIXELS_HACK = true;
+  protected static boolean SAVE_SURFACE_TO_PIXELS_HACK = false;
 
   /** Enables/disables mipmap use. */
   protected static boolean MIPMAPS_ENABLED = true;
@@ -131,21 +136,21 @@ public abstract class PGL {
 
   // FBO layer
 
-  protected static boolean fboLayerRequested = false;
-  protected static boolean fboLayerCreated = false;
-  protected static boolean fboLayerInUse = false;
-  protected static boolean firstFrame = true;
-  protected static int reqNumSamples;
-  protected static int numSamples;
-  protected static IntBuffer glColorFbo;
-  protected static IntBuffer glMultiFbo;
-  protected static IntBuffer glColorBuf;
-  protected static IntBuffer glColorTex;
-  protected static IntBuffer glDepthStencil;
-  protected static IntBuffer glDepth;
-  protected static IntBuffer glStencil;
-  protected static int fboWidth, fboHeight;
-  protected static int backTex, frontTex;
+  protected boolean fboLayerRequested = false;
+  protected boolean fboLayerCreated = false;
+  protected boolean fboLayerInUse = false;
+  protected boolean firstFrame = true;
+  public int reqNumSamples;
+  protected int numSamples;
+  protected IntBuffer glColorFbo;
+  protected IntBuffer glMultiFbo;
+  protected IntBuffer glColorBuf;
+  protected IntBuffer glColorTex;
+  protected IntBuffer glDepthStencil;
+  protected IntBuffer glDepth;
+  protected IntBuffer glStencil;
+  protected int fboWidth, fboHeight;
+  protected int backTex, frontTex;
 
   /** Flags used to handle the creation of a separate front texture */
   protected boolean usingFrontTex = false;
@@ -155,33 +160,34 @@ public abstract class PGL {
 
   // Texture rendering
 
-  protected static boolean loadedTex2DShader = false;
-  protected static int tex2DShaderProgram;
-  protected static int tex2DVertShader;
-  protected static int tex2DFragShader;
-  protected static int tex2DShaderContext;
-  protected static int texGeoVBO;
-  protected static int tex2DVertLoc;
-  protected static int tex2DTCoordLoc;
-  protected static int tex2DSamplerLoc;
+  protected boolean loadedTex2DShader = false;
+  protected int tex2DShaderProgram;
+  protected int tex2DVertShader;
+  protected int tex2DFragShader;
+  protected int tex2DShaderContext;
+  protected int tex2DVertLoc;
+  protected int tex2DTCoordLoc;
+  protected int tex2DSamplerLoc;
+  protected int tex2DGeoVBO;
 
-  protected static boolean loadedTexRectShader = false;
-  protected static int texRectShaderProgram;
-  protected static int texRectVertShader;
-  protected static int texRectFragShader;
-  protected static int texRectShaderContext;
-  protected static int texRectVertLoc;
-  protected static int texRectTCoordLoc;
-  protected static int texRectSamplerLoc;
+  protected boolean loadedTexRectShader = false;
+  protected int texRectShaderProgram;
+  protected int texRectVertShader;
+  protected int texRectFragShader;
+  protected int texRectShaderContext;
+  protected int texRectVertLoc;
+  protected int texRectTCoordLoc;
+  protected int texRectSamplerLoc;
+  protected int texRectGeoVBO;
 
-  protected static float[] texCoords = {
+  protected float[] texCoords = {
     //  X,     Y,    U,    V
     -1.0f, -1.0f, 0.0f, 0.0f,
     +1.0f, -1.0f, 1.0f, 0.0f,
     -1.0f, +1.0f, 0.0f, 1.0f,
     +1.0f, +1.0f, 1.0f, 1.0f
   };
-  protected static FloatBuffer texData;
+  protected FloatBuffer texData;
 
   protected static final String SHADER_PREPROCESSOR_DIRECTIVE =
     "#ifdef GL_ES\n" +
@@ -218,12 +224,12 @@ public abstract class PGL {
   };
 
   /** Which texturing targets are enabled */
-  protected static boolean[] texturingTargets = { false, false };
+  protected boolean[] texturingTargets = { false, false };
 
   /** Used to keep track of which textures are bound to each target */
-  protected static int maxTexUnits;
-  protected static int activeTexUnit = 0;
-  protected static int[][] boundTextures;
+  protected int maxTexUnits;
+  protected int activeTexUnit = 0;
+  protected int[][] boundTextures;
 
   // ........................................................
 
@@ -270,6 +276,13 @@ public abstract class PGL {
   protected static final String TEXUNIT_ERROR =
     "Number of texture units not supported by this hardware (or driver)" + WIKI;
 
+  protected static final String NONPRIMARY_ERROR =
+    "The renderer is trying to call a PGL function that can only be called on a primary PGL. " +
+    "This is most likely due to a bug in the renderer's code, please report it with an " +
+    "issue on Processing's github page https://github.com/processing/processing/issues?state=open " +
+    "if using any of the built-in OpenGL renderers. If you are using a contributed " +
+    "library, contact the library's developers.";
+
   // ........................................................
 
   // Constants
@@ -304,6 +317,11 @@ public abstract class PGL {
     ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
 
+
+  public boolean presentMode = false;
+  public float offsetX;
+  public float offsetY;
+
   ///////////////////////////////////////////////////////////////
 
   // Initialization, finalization
@@ -334,23 +352,24 @@ public abstract class PGL {
   }
 
 
-  /**
-   * Return the native canvas the OpenGL context associated to this PGL object
-   * is rendering to (if any).
-   */
-  public abstract Object getCanvas();
+  public void setPrimary(boolean primary) {
+    primaryPGL = primary;
+  }
 
 
-  protected abstract void setFps(float fps);
-
-
-  protected abstract void initSurface(int antialias);
-
-
-  protected abstract void reinitSurface();
-
-
-  protected abstract void registerListeners();
+//  public abstract Object getCanvas();
+//
+//
+//  protected abstract void setFps(float fps);
+//
+//
+//  protected abstract void initSurface(int antialias);
+//
+//
+//  protected abstract void reinitSurface();
+//
+//
+//  protected abstract void registerListeners();
 
 
   protected void deleteSurface() {
@@ -392,12 +411,12 @@ public abstract class PGL {
   }
 
 
-  protected boolean isFBOBacked() {
+  protected boolean isFBOBacked() {;
     return fboLayerInUse;
   }
 
 
-  protected void requestFBOLayer() {
+  public void requestFBOLayer() {
     fboLayerRequested = true;
   }
 
@@ -437,7 +456,7 @@ public abstract class PGL {
 
   protected Texture wrapBackTexture(Texture texture) {
     if (texture == null) {
-      texture = new Texture();
+      texture = new Texture(pg);
       texture.init(pg.width, pg.height,
                    glColorTex.get(backTex), TEXTURE_2D, RGBA,
                    fboWidth, fboHeight, NEAREST, NEAREST,
@@ -454,7 +473,7 @@ public abstract class PGL {
 
   protected Texture wrapFrontTexture(Texture texture)  {
     if (texture == null) {
-      texture = new Texture();
+      texture = new Texture(pg);
       texture.init(pg.width, pg.height,
                    glColorTex.get(frontTex), TEXTURE_2D, RGBA,
                    fboWidth, fboHeight, NEAREST, NEAREST,
@@ -495,8 +514,8 @@ public abstract class PGL {
   protected void syncBackTexture() {
     if (usingFrontTex) needSepFrontTex = true;
     if (1 < numSamples) {
-      bindFramebuffer(READ_FRAMEBUFFER, glMultiFbo.get(0));
-      bindFramebuffer(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+      bindFramebufferImpl(READ_FRAMEBUFFER, glMultiFbo.get(0));
+      bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
       blitFramebuffer(0, 0, fboWidth, fboHeight,
                       0, 0, fboWidth, fboHeight,
                       COLOR_BUFFER_BIT, NEAREST);
@@ -504,18 +523,195 @@ public abstract class PGL {
   }
 
 
-  protected int qualityToSamples(int quality) {
-    if (quality <= 1) {
-      return 1;
+  ///////////////////////////////////////////////////////////
+
+  // Frame rendering
+
+
+  protected void beginDraw(boolean clear0) {
+    if (needFBOLayer(clear0)) {
+      if (!fboLayerCreated) createFBOLayer();
+
+//      System.err.println("Using FBO layer");
+
+      bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
+      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                           TEXTURE_2D, glColorTex.get(backTex), 0);
+
+      if (1 < numSamples) {
+        bindFramebufferImpl(FRAMEBUFFER, glMultiFbo.get(0));
+      }
+
+      if (firstFrame) {
+        // No need to draw back color buffer because we are in the first frame.
+        int argb = pg.backgroundColor;
+        float a = ((argb >> 24) & 0xff) / 255.0f;
+        float r = ((argb >> 16) & 0xff) / 255.0f;
+        float g = ((argb >> 8) & 0xff) / 255.0f;
+        float b = ((argb) & 0xff) / 255.0f;
+        clearColor(r, g, b, a);
+        clear(COLOR_BUFFER_BIT);
+      } else if (!clear0) {
+        // Render previous back texture (now is the front) as background,
+        // because no background() is being used ("incremental drawing")
+        int x = 0;
+        int y = 0;
+        if (presentMode) {
+          x = (int)offsetX;
+          y = (int)offsetY;
+        }
+        drawTexture(TEXTURE_2D, glColorTex.get(frontTex), fboWidth, fboHeight,
+                    x, y, pg.width, pg.height,
+                    0, 0, pg.width, pg.height,
+                    0, 0, pg.width, pg.height);
+      }
+
+      fboLayerInUse = true;
     } else {
-      // Number of samples is always an even number:
-      int n = 2 * (quality / 2);
-      return n;
+      fboLayerInUse = false;
+    }
+
+    if (firstFrame) {
+      firstFrame = false;
+    }
+
+//    if (!USE_FBOLAYER_BY_DEFAULT) {
+      // The result of this assignment is the following: if the user requested
+      // at some point the use of the FBO layer, but subsequently didn't
+      // request it again, then the rendering won't render to the FBO layer if
+      // not needed by the config, since it is slower than simple onscreen
+      // rendering.
+//      fboLayerRequested = false;
+//    }
+  }
+
+
+  IntBuffer labelTex;
+  protected void endDraw(boolean clear0) {
+    if (fboLayerInUse) {
+      syncBackTexture();
+
+      // Draw the contents of the back texture to the screen framebuffer.
+      bindFramebufferImpl(FRAMEBUFFER, 0);
+
+
+      if (presentMode) {
+        float a = PSurface.WINDOW_BGCOLOR.getAlpha() / 255.0f;
+        float r = PSurface.WINDOW_BGCOLOR.getRed() / 255.0f;
+        float g = PSurface.WINDOW_BGCOLOR.getGreen() / 255.0f;
+        float b = PSurface.WINDOW_BGCOLOR.getBlue() / 255.0f;
+        clearDepth(1);
+        clearColor(r, g, b, a);
+        clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+
+        if (labelTex == null) {
+          labelTex = allocateIntBuffer(1);
+          genTextures(1, labelTex);
+          bindTexture(TEXTURE_2D, labelTex.get(0));
+          texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
+          texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
+          texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
+          texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
+          texImage2D(TEXTURE_2D, 0, RGBA, 100, 50, 0, RGBA, UNSIGNED_BYTE, null);
+//          initTexture(TEXTURE_2D, RGBA, 100, 50, pg.backgroundColor);
+
+//          ByteBuffer bb = ByteBuffer.allocateDirect(labelPix.length*4);
+//          bb.order(ByteOrder.nativeOrder());
+//          IntBuffer ib = bb.asIntBuffer();
+//          ib.put(labelPix);
+//          ib.position(0);
+
+          IntBuffer buf = allocateIntBuffer(labelPix);
+          copyToTexture(TEXTURE_2D, RGBA, labelTex.get(0), 0, 0, 100, 50, buf);
+          bindTexture(TEXTURE_2D, 0);
+        }
+        drawTexture(TEXTURE_2D, labelTex.get(0), 100, 50,
+                    0, 0, 20 + 100, 20 + 50,
+                    0, 50, 100, 0,
+                    20, 20, 20 + 100, 20 + 50);
+
+/*
+        // Don't use presentMode offset!
+        drawTexture(TEXTURE_2D, labelTex.get(0),
+                    100, 50, pg.width, pg.height,
+                                         0, 0, pg.width, pg.height,
+                                         0, 0, pg.width, pg.height);
+
+        drawTexture2D(labelTex.get(0), 100, 50, int scrW, int scrH,
+                      0, 0, 100, 50,
+                      int scrX0, int scrY0, int scrX1, int scrY1);
+*/
+
+      } else {
+        clearDepth(1);
+        clearColor(0, 0, 0, 0);
+        clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+      }
+
+      // Render current back texture to screen, without blending.
+      disable(BLEND);
+      int x = 0;
+      int y = 0;
+      if (presentMode) {
+        x = (int)offsetX;
+        y = (int)offsetY;
+      }
+      drawTexture(TEXTURE_2D, glColorTex.get(backTex),
+                  fboWidth, fboHeight,
+                  x, y, pg.width, pg.height,
+                  0, 0, pg.width, pg.height,
+                  0, 0, pg.width, pg.height);
+
+      // Swapping front and back textures.
+      int temp = frontTex;
+      frontTex = backTex;
+      backTex = temp;
     }
   }
 
 
-  protected void createFBOLayer() {
+  protected abstract void getGL(PGL pgl);
+//
+//
+//  protected abstract boolean canDraw();
+//
+//
+//  protected abstract void requestFocus();
+//
+//
+//  protected abstract void requestDraw();
+//
+//
+//  protected abstract void swapBuffers();
+
+
+  public boolean threadIsCurrent()  {
+    return Thread.currentThread() == glThread;
+  }
+
+
+  public void setThread(Thread thread) {
+    glThread = thread;
+  }
+
+
+  protected void beginGL() { }
+
+
+  protected void endGL() { }
+
+
+  private boolean needFBOLayer(boolean clear0) {
+    // TODO: need to revise this, on windows we might not want to use FBO layer
+    // even with anti-aliasing enabled...
+//    boolean res = !clear0 || fboLayerRequested || 1 < numSamples;
+//    System.err.println(res + " " + clear0 + " " + fboLayerRequested + " " + numSamples);
+//    return res;
+    return fboLayerRequested;
+  }
+
+
+  private void createFBOLayer() {
     String ext = getString(EXTENSIONS);
     if (-1 < ext.indexOf("texture_non_power_of_two")) {
       fboWidth = pg.width;
@@ -554,14 +750,14 @@ public abstract class PGL {
     frontTex = 1;
 
     genFramebuffers(1, glColorFbo);
-    bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
+    bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
     framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D,
                          glColorTex.get(backTex), 0);
 
     if (multisample) {
       // Creating multisampled FBO
       genFramebuffers(1, glMultiFbo);
-      bindFramebuffer(FRAMEBUFFER, glMultiFbo.get(0));
+      bindFramebufferImpl(FRAMEBUFFER, glMultiFbo.get(0));
 
       // color render buffer...
       genRenderbuffers(1, glColorBuf);
@@ -650,119 +846,10 @@ public abstract class PGL {
     clearColor(r, g, b, a);
     clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
 
-    bindFramebuffer(FRAMEBUFFER, 0);
+    bindFramebufferImpl(FRAMEBUFFER, 0);
 
     fboLayerCreated = true;
   }
-
-
-  ///////////////////////////////////////////////////////////
-
-  // Frame rendering
-
-
-  protected void beginDraw(boolean clear0) {
-    if (needFBOLayer(clear0)) {
-      if (!fboLayerCreated) createFBOLayer();
-
-      bindFramebuffer(FRAMEBUFFER, glColorFbo.get(0));
-      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
-                           TEXTURE_2D, glColorTex.get(backTex), 0);
-
-      if (1 < numSamples) {
-        bindFramebuffer(FRAMEBUFFER, glMultiFbo.get(0));
-      }
-
-      if (firstFrame) {
-        // No need to draw back color buffer because we are in the first frame.
-        int argb = pg.backgroundColor;
-        float a = ((argb >> 24) & 0xff) / 255.0f;
-        float r = ((argb >> 16) & 0xff) / 255.0f;
-        float g = ((argb >> 8) & 0xff) / 255.0f;
-        float b = ((argb) & 0xff) / 255.0f;
-        clearColor(r, g, b, a);
-        clear(COLOR_BUFFER_BIT);
-      } else if (!clear0) {
-        // Render previous back texture (now is the front) as background,
-        // because no background() is being used ("incremental drawing")
-        drawTexture(TEXTURE_2D, glColorTex.get(frontTex),
-                    fboWidth, fboHeight, pg.width, pg.height,
-                                         0, 0, pg.width, pg.height,
-                                         0, 0, pg.width, pg.height);
-      }
-
-      fboLayerInUse = true;
-    } else {
-      fboLayerInUse = false;
-    }
-
-    if (firstFrame) {
-      firstFrame = false;
-    }
-
-    if (!USE_FBOLAYER_BY_DEFAULT) {
-      // The result of this assignment is the following: if the user requested
-      // at some point the use of the FBO layer, but subsequently didn't
-      // request it again, then the rendering won't render to the FBO layer if
-      // not needed by the condif, since it is slower than simple onscreen
-      // rendering.
-      fboLayerRequested = false;
-    }
-  }
-
-
-  protected void endDraw(boolean clear0) {
-    if (fboLayerInUse) {
-      syncBackTexture();
-
-      // Draw the contents of the back texture to the screen framebuffer.
-      bindFramebuffer(FRAMEBUFFER, 0);
-
-      clearDepth(1);
-      clearColor(0, 0, 0, 0);
-      clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
-
-      // Render current back texture to screen, without blending.
-      disable(BLEND);
-      drawTexture(TEXTURE_2D, glColorTex.get(backTex),
-                  fboWidth, fboHeight, pg.width, pg.height,
-                                       0, 0, pg.width, pg.height,
-                                       0, 0, pg.width, pg.height);
-
-      // Swapping front and back textures.
-      int temp = frontTex;
-      frontTex = backTex;
-      backTex = temp;
-    }
-  }
-
-
-  protected abstract boolean canDraw();
-
-
-  protected abstract void requestFocus();
-
-
-  protected abstract void requestDraw();
-
-
-  protected abstract void swapBuffers();
-
-
-  protected boolean threadIsCurrent()  {
-    return Thread.currentThread() == glThread;
-  }
-
-
-  protected boolean needFBOLayer(boolean clear0) {
-    return !clear0 || fboLayerRequested || 1 < numSamples;
-  }
-
-
-  protected void beginGL() { }
-
-
-  protected void endGL() { }
 
 
   ///////////////////////////////////////////////////////////
@@ -791,7 +878,6 @@ public abstract class PGL {
 
 
   protected void enableTexturing(int target) {
-    enable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = true;
     } else if (target == TEXTURE_RECTANGLE) {
@@ -801,7 +887,6 @@ public abstract class PGL {
 
 
   protected void disableTexturing(int target) {
-    disable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = false;
     } else if (target == TEXTURE_RECTANGLE) {
@@ -840,7 +925,7 @@ public abstract class PGL {
 
 
   protected void initTexture(int target, int format, int width, int height,
-                          int initColor) {
+                            int initColor) {
     int[] glcolor = new int[16 * 16];
     Arrays.fill(glcolor, javaToNativeARGB(initColor));
     IntBuffer texels = allocateDirectIntBuffer(16 * 16);
@@ -855,6 +940,12 @@ public abstract class PGL {
     }
   }
 
+
+  protected void copyToTexture(int target, int format, int id, int x, int y,
+                               int w, int h, int[] buffer) {
+    copyToTexture(target, format, id, x, y, w, h, IntBuffer.wrap(buffer));
+
+  }
 
   protected void copyToTexture(int target, int format, int id, int x, int y,
                                int w, int h, IntBuffer buffer) {
@@ -878,65 +969,74 @@ public abstract class PGL {
    */
   public void drawTexture(int target, int id, int width, int height,
                           int X0, int Y0, int X1, int Y1) {
-    drawTexture(target, id, width, height, width, height,
-                            X0, Y0, X1, Y1, X0, Y0, X1, Y1);
+    drawTexture(target, id, width, height,
+                0, 0, width, height,
+                X0, Y0, X1, Y1,
+                X0, Y0, X1, Y1);
   }
 
 
   /**
    * Not an approved function, this will change or be removed in the future.
    */
-  public void drawTexture(int target, int id,
-                          int texW, int texH, int scrW, int scrH,
+  public void drawTexture(int target, int id,int texW, int texH,
+                          int viewX, int viewY, int scrW, int scrH,
                           int texX0, int texY0, int texX1, int texY1,
                           int scrX0, int scrY0, int scrX1, int scrY1) {
     if (target == TEXTURE_2D) {
-      drawTexture2D(id, texW, texH, scrW, scrH,
+      drawTexture2D(id, texW, texH,
+                    viewX, viewY, scrW, scrH,
                     texX0, texY0, texX1, texY1,
                     scrX0, scrY0, scrX1, scrY1);
     } else if (target == TEXTURE_RECTANGLE) {
-      drawTextureRect(id, texW, texH, scrW, scrH,
+      drawTextureRect(id, texW, texH,
+                      viewX, viewY, scrW, scrH,
                       texX0, texY0, texX1, texY1,
                       scrX0, scrY0, scrX1, scrY1);
     }
   }
 
 
-  protected void initTex2DShader() {
-    if (!loadedTex2DShader || tex2DShaderContext != glContext) {
+  protected PGL initTex2DShader() {
+    PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
+
+    if (!ppgl.loadedTex2DShader || ppgl.tex2DShaderContext != ppgl.glContext) {
       String vertSource = PApplet.join(texVertShaderSource, "\n");
       String fragSource = PApplet.join(tex2DFragShaderSource, "\n");
-      tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
-      tex2DFragShader = createShader(FRAGMENT_SHADER, fragSource);
-      if (0 < tex2DVertShader && 0 < tex2DFragShader) {
-        tex2DShaderProgram = createProgram(tex2DVertShader, tex2DFragShader);
+      ppgl.tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
+      ppgl.tex2DFragShader = createShader(FRAGMENT_SHADER, fragSource);
+      if (0 < ppgl.tex2DVertShader && 0 < ppgl.tex2DFragShader) {
+        ppgl.tex2DShaderProgram = createProgram(ppgl.tex2DVertShader, ppgl.tex2DFragShader);
       }
-      if (0 < tex2DShaderProgram) {
-        tex2DVertLoc = getAttribLocation(tex2DShaderProgram, "position");
-        tex2DTCoordLoc = getAttribLocation(tex2DShaderProgram, "texCoord");
-        tex2DSamplerLoc = getUniformLocation(tex2DShaderProgram, "texMap");
+      if (0 < ppgl.tex2DShaderProgram) {
+        ppgl.tex2DVertLoc = getAttribLocation(ppgl.tex2DShaderProgram, "position");
+        ppgl.tex2DTCoordLoc = getAttribLocation(ppgl.tex2DShaderProgram, "texCoord");
+        ppgl.tex2DSamplerLoc = getUniformLocation(ppgl.tex2DShaderProgram, "texMap");
       }
-      loadedTex2DShader = true;
-      tex2DShaderContext = glContext;
+      ppgl.loadedTex2DShader = true;
+      ppgl.tex2DShaderContext = ppgl.glContext;
 
       genBuffers(1, intBuffer);
-      texGeoVBO = intBuffer.get(0);
-      bindBuffer(ARRAY_BUFFER, texGeoVBO);
+      ppgl.tex2DGeoVBO = intBuffer.get(0);
+      bindBuffer(ARRAY_BUFFER, ppgl.tex2DGeoVBO);
       bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
     }
 
     if (texData == null) {
       texData = allocateDirectFloatBuffer(texCoords.length);
     }
+
+    return ppgl;
   }
 
 
-  protected void drawTexture2D(int id, int texW, int texH, int scrW, int scrH,
+  protected void drawTexture2D(int id, int texW, int texH,
+                               int viewX, int viewY, int scrW, int scrH,
                                int texX0, int texY0, int texX1, int texY1,
                                int scrX0, int scrY0, int scrX1, int scrY1) {
-    initTex2DShader();
+    PGL ppgl = initTex2DShader();
 
-    if (0 < tex2DShaderProgram) {
+    if (0 < ppgl.tex2DShaderProgram) {
       // The texture overwrites anything drawn earlier.
       boolean depthTest = getDepthTest();
       disable(DEPTH_TEST);
@@ -951,12 +1051,12 @@ public abstract class PGL {
       // Making sure that the viewport matches the provided screen dimensions
       viewBuffer.rewind();
       getIntegerv(VIEWPORT, viewBuffer);
-      viewport(0, 0, scrW, scrH);
+      viewport(viewX, viewY, scrW, scrH);
 
-      useProgram(tex2DShaderProgram);
+      useProgram(ppgl.tex2DShaderProgram);
 
-      enableVertexAttribArray(tex2DVertLoc);
-      enableVertexAttribArray(tex2DTCoordLoc);
+      enableVertexAttribArray(ppgl.tex2DVertLoc);
+      enableVertexAttribArray(ppgl.tex2DTCoordLoc);
 
       // Vertex coordinates of the textured quad are specified
       // in normalized screen space (-1, 1):
@@ -991,14 +1091,14 @@ public abstract class PGL {
         enabledTex = true;
       }
       bindTexture(TEXTURE_2D, id);
-      uniform1i(tex2DSamplerLoc, 0);
+      uniform1i(ppgl.tex2DSamplerLoc, 0);
 
       texData.position(0);
-      bindBuffer(ARRAY_BUFFER, texGeoVBO);
+      bindBuffer(ARRAY_BUFFER, ppgl.tex2DGeoVBO);
       bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, texData, STATIC_DRAW);
 
-      vertexAttribPointer(tex2DVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
-      vertexAttribPointer(tex2DTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
+      vertexAttribPointer(ppgl.tex2DVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
+      vertexAttribPointer(ppgl.tex2DTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
 
       drawArrays(TRIANGLE_STRIP, 0, 4);
 
@@ -1009,8 +1109,8 @@ public abstract class PGL {
         disableTexturing(TEXTURE_2D);
       }
 
-      disableVertexAttribArray(tex2DVertLoc);
-      disableVertexAttribArray(tex2DTCoordLoc);
+      disableVertexAttribArray(ppgl.tex2DVertLoc);
+      disableVertexAttribArray(ppgl.tex2DTCoordLoc);
 
       useProgram(0);
 
@@ -1022,47 +1122,52 @@ public abstract class PGL {
       depthMask(depthMask);
 
       viewport(viewBuffer.get(0), viewBuffer.get(1),
-               viewBuffer.get(2),viewBuffer.get(3));
+               viewBuffer.get(2), viewBuffer.get(3));
     }
   }
 
 
-  protected void initTexRectShader() {
-    if (!loadedTexRectShader || texRectShaderContext != glContext) {
+  protected PGL initTexRectShader() {
+    PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
+
+    if (!ppgl.loadedTexRectShader || ppgl.texRectShaderContext != ppgl.glContext) {
       String vertSource = PApplet.join(texVertShaderSource, "\n");
       String fragSource = PApplet.join(texRectFragShaderSource, "\n");
-      texRectVertShader = createShader(VERTEX_SHADER, vertSource);
-      texRectFragShader = createShader(FRAGMENT_SHADER, fragSource);
-      if (0 < texRectVertShader && 0 < texRectFragShader) {
-        texRectShaderProgram = createProgram(texRectVertShader,
-                                             texRectFragShader);
+      ppgl.texRectVertShader = createShader(VERTEX_SHADER, vertSource);
+      ppgl.texRectFragShader = createShader(FRAGMENT_SHADER, fragSource);
+      if (0 < ppgl.texRectVertShader && 0 < ppgl.texRectFragShader) {
+        ppgl.texRectShaderProgram = createProgram(ppgl.texRectVertShader,
+                                                  ppgl.texRectFragShader);
       }
-      if (0 < texRectShaderProgram) {
-        texRectVertLoc = getAttribLocation(texRectShaderProgram, "position");
-        texRectTCoordLoc = getAttribLocation(texRectShaderProgram, "texCoord");
-        texRectSamplerLoc = getUniformLocation(texRectShaderProgram, "texMap");
+      if (0 < ppgl.texRectShaderProgram) {
+        ppgl.texRectVertLoc = getAttribLocation(ppgl.texRectShaderProgram, "position");
+        ppgl.texRectTCoordLoc = getAttribLocation(ppgl.texRectShaderProgram, "texCoord");
+        ppgl.texRectSamplerLoc = getUniformLocation(ppgl.texRectShaderProgram, "texMap");
       }
-      loadedTexRectShader = true;
-      texRectShaderContext = glContext;
+      ppgl.loadedTexRectShader = true;
+      ppgl.texRectShaderContext = ppgl.glContext;
 
       genBuffers(1, intBuffer);
-      texGeoVBO = intBuffer.get(0);
-      bindBuffer(ARRAY_BUFFER, texGeoVBO);
+      ppgl.texRectGeoVBO = intBuffer.get(0);
+      bindBuffer(ARRAY_BUFFER, ppgl.texRectGeoVBO);
       bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
     }
+
+    return ppgl;
   }
 
 
-  protected void drawTextureRect(int id, int texW, int texH, int scrW, int scrH,
+  protected void drawTextureRect(int id, int texW, int texH,
+                                 int viewX, int viewY, int scrW, int scrH,
                                  int texX0, int texY0, int texX1, int texY1,
                                  int scrX0, int scrY0, int scrX1, int scrY1) {
-    initTexRectShader();
+    PGL ppgl = initTexRectShader();
 
     if (texData == null) {
       texData = allocateDirectFloatBuffer(texCoords.length);
     }
 
-    if (0 < texRectShaderProgram) {
+    if (0 < ppgl.texRectShaderProgram) {
       // The texture overwrites anything drawn earlier.
       boolean depthTest = getDepthTest();
       disable(DEPTH_TEST);
@@ -1077,12 +1182,12 @@ public abstract class PGL {
       // Making sure that the viewport matches the provided screen dimensions
       viewBuffer.rewind();
       getIntegerv(VIEWPORT, viewBuffer);
-      viewport(0, 0, scrW, scrH);
+      viewport(viewX, viewY, scrW, scrH);
 
-      useProgram(texRectShaderProgram);
+      useProgram(ppgl.texRectShaderProgram);
 
-      enableVertexAttribArray(texRectVertLoc);
-      enableVertexAttribArray(texRectTCoordLoc);
+      enableVertexAttribArray(ppgl.texRectVertLoc);
+      enableVertexAttribArray(ppgl.texRectTCoordLoc);
 
       // Vertex coordinates of the textured quad are specified
       // in normalized screen space (-1, 1):
@@ -1117,14 +1222,14 @@ public abstract class PGL {
         enabledTex = true;
       }
       bindTexture(TEXTURE_RECTANGLE, id);
-      uniform1i(texRectSamplerLoc, 0);
+      uniform1i(ppgl.texRectSamplerLoc, 0);
 
       texData.position(0);
-      bindBuffer(ARRAY_BUFFER, texGeoVBO);
+      bindBuffer(ARRAY_BUFFER, ppgl.texRectGeoVBO);
       bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, texData, STATIC_DRAW);
 
-      vertexAttribPointer(texRectVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
-      vertexAttribPointer(texRectTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
+      vertexAttribPointer(ppgl.texRectVertLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 0);
+      vertexAttribPointer(ppgl.texRectTCoordLoc, 2, FLOAT, false, 4 * SIZEOF_FLOAT, 2 * SIZEOF_FLOAT);
 
       drawArrays(TRIANGLE_STRIP, 0, 4);
 
@@ -1135,8 +1240,8 @@ public abstract class PGL {
         disableTexturing(TEXTURE_RECTANGLE);
       }
 
-      disableVertexAttribArray(texRectVertLoc);
-      disableVertexAttribArray(texRectTCoordLoc);
+      disableVertexAttribArray(ppgl.texRectVertLoc);
+      disableVertexAttribArray(ppgl.texRectTCoordLoc);
 
       useProgram(0);
 
@@ -1148,7 +1253,7 @@ public abstract class PGL {
       depthMask(depthMask);
 
       viewport(viewBuffer.get(0), viewBuffer.get(1),
-               viewBuffer.get(2),viewBuffer.get(3));
+               viewBuffer.get(2), viewBuffer.get(3));
     }
   }
 
@@ -1432,6 +1537,17 @@ public abstract class PGL {
   }
 
 
+  protected static int qualityToSamples(int quality) {
+    if (quality <= 1) {
+      return 1;
+    } else {
+      // Number of samples is always an even number:
+      int n = 2 * (quality / 2);
+      return n;
+    }
+  }
+
+
   protected String[] loadVertexShader(String filename) {
     return pg.parent.loadStrings(filename);
   }
@@ -1482,17 +1598,44 @@ public abstract class PGL {
   }
 
 
-  protected String[] convertFragmentSource(String[] fragSrc0,
-                                           int version0, int version1) {
+  protected static String[] convertFragmentSource(String[] fragSrc0,
+                                                  int version0, int version1) {
+    if (version0 == 120 && version1 == 150) {
+      String[] fragSrc = new String[fragSrc0.length + 2];
+      fragSrc[0] = "#version 150";
+      fragSrc[1] = "out vec4 fragColor;";
+      for (int i = 0; i < fragSrc0.length; i++) {
+        String line = fragSrc0[i];
+        line = line.replace("varying", "in");
+        line = line.replace("attribute", "in");
+        line = line.replace("gl_FragColor", "fragColor");
+        line = line.replace("texture", "texMap");
+        line = line.replace("texMap2D(", "texture(");
+        line = line.replace("texMap2DRect(", "texture(");
+        fragSrc[i + 2] = line;
+      }
+      return fragSrc;
+    }
     return fragSrc0;
   }
 
 
-  protected String[] convertVertexSource(String[] vertSrc0,
-                                         int version0, int version1) {
+
+  protected static String[] convertVertexSource(String[] vertSrc0,
+                                                int version0, int version1) {
+    if (version0 == 120 && version1 == 150) {
+      String[] vertSrc = new String[vertSrc0.length + 1];
+      vertSrc[0] = "#version 150";
+      for (int i = 0; i < vertSrc0.length; i++) {
+        String line = vertSrc0[i];
+        line = line.replace("attribute", "in");
+        line = line.replace("varying", "out");
+        vertSrc[i + 1] = line;
+      }
+      return vertSrc;
+    }
     return vertSrc0;
   }
-
 
   protected int createShader(int shaderType, String source) {
     int shader = createShader(shaderType);
@@ -1713,7 +1856,10 @@ public abstract class PGL {
 
   protected static ByteBuffer allocateByteBuffer(byte[] arr) {
     if (USE_DIRECT_BUFFERS) {
-      return allocateDirectByteBuffer(arr.length);
+      ByteBuffer buf = allocateDirectByteBuffer(arr.length);
+      buf.put(arr);
+      buf.position(0);
+      return buf;
     } else {
       return ByteBuffer.wrap(arr);
     }
@@ -1802,7 +1948,10 @@ public abstract class PGL {
 
   protected static ShortBuffer allocateShortBuffer(short[] arr) {
     if (USE_DIRECT_BUFFERS) {
-      return allocateDirectShortBuffer(arr.length);
+      ShortBuffer buf = allocateDirectShortBuffer(arr.length);
+      buf.put(arr);
+      buf.position(0);
+      return buf;
     } else {
       return ShortBuffer.wrap(arr);
     }
@@ -1891,7 +2040,10 @@ public abstract class PGL {
 
   protected static IntBuffer allocateIntBuffer(int[] arr) {
     if (USE_DIRECT_BUFFERS) {
-      return allocateDirectIntBuffer(arr.length);
+      IntBuffer buf = allocateDirectIntBuffer(arr.length);
+      buf.put(arr);
+      buf.position(0);
+      return buf;
     } else {
       return IntBuffer.wrap(arr);
     }
@@ -1979,7 +2131,10 @@ public abstract class PGL {
 
   protected static FloatBuffer allocateFloatBuffer(float[] arr) {
     if (USE_DIRECT_BUFFERS) {
-      return allocateDirectFloatBuffer(arr.length);
+      FloatBuffer buf = allocateDirectFloatBuffer(arr.length);
+      buf.put(arr);
+      buf.position(0);
+      return buf;
     } else {
       return FloatBuffer.wrap(arr);
     }
@@ -2051,25 +2206,18 @@ public abstract class PGL {
 
 
   // TODO: the next three functions shouldn't be here...
+  // Uses 'Object' so that the API can be used w/ Android Typeface objects
 
-  protected int getFontAscent(Object font) {
-    return 0;
-  }
-
-
-  protected int getFontDescent(Object font) {
-    return 0;
-  }
+  abstract protected int getFontAscent(Object font);
 
 
-  protected int getTextWidth(Object font, char buffer[], int start, int stop) {
-    return 0;
-  }
+  abstract protected int getFontDescent(Object font);
 
 
-  protected Object getDerivedFont(Object font, float size) {
-    return null;
-  }
+  abstract protected int getTextWidth(Object font, char[] buffer, int start, int stop);
+
+
+  abstract protected Object getDerivedFont(Object font, float size);
 
 
   ///////////////////////////////////////////////////////////
@@ -2506,11 +2654,11 @@ public abstract class PGL {
   // to glReadPixels() should be done in readPixelsImpl().
 
   public void readPixels(int x, int y, int width, int height, int format, int type, Buffer buffer){
-    boolean needEndBegin = format != STENCIL_INDEX &&
-                           format != DEPTH_COMPONENT && format != DEPTH_STENCIL;
-    if (needEndBegin) pg.beginReadPixels();
+    boolean pgCall = format != STENCIL_INDEX &&
+                     format != DEPTH_COMPONENT && format != DEPTH_STENCIL;
+    if (pgCall) pg.beginReadPixels();
     readPixelsImpl(x, y, width, height, format, type, buffer);
-    if (needEndBegin) pg.endReadPixels();
+    if (pgCall) pg.endReadPixels();
   }
 
   protected abstract void readPixelsImpl(int x, int y, int width, int height, int format, int type, Buffer buffer);
@@ -2692,7 +2840,13 @@ public abstract class PGL {
 
   // Framebuffers Objects
 
-  public abstract void bindFramebuffer(int target, int framebuffer);
+  public void bindFramebuffer(int target, int framebuffer) {
+    pg.beginBindFramebuffer(target, framebuffer);
+    bindFramebufferImpl(target, framebuffer);
+    pg.endBindFramebuffer(target, framebuffer);
+  }
+  protected abstract void bindFramebufferImpl(int target, int framebuffer);
+
   public abstract void deleteFramebuffers(int n, IntBuffer framebuffers);
   public abstract void genFramebuffers(int n, IntBuffer framebuffers);
   public abstract void bindRenderbuffer(int target, int renderbuffer);
@@ -2710,4 +2864,73 @@ public abstract class PGL {
   public abstract void renderbufferStorageMultisample(int target, int samples, int format, int width, int height);
   public abstract void readBuffer(int buf);
   public abstract void drawBuffer(int buf);
+
+  // Label pixels
+
+  int[] labelPix = {-2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -1315861, -2171170, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -1118482, -1, -2105377, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -1052689, -1, -2105377, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2039584, -855310, -263173, -131587, -460552, -1315861, -2236963, -2236963, -1052689, -263173, -1, -460552, -1118482, -2236963, -2236963, -1776412, -657931, -197380, -197380, -723724,
+-1907998, -2236963, -2236963, -2236963, -789517, -1118482, -1447447, -460552, -197380, -789517, -1710619, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-526345, -131587, -921103, -1250068, -592138, -1, -1184275, -2236963, -1447447, -526345, -1, -1052689, -1513240, -2236963, -1710619, -1, -328966, -1184275, -1118482, -263173, -65794, -1776412, -2236963, -2236963, -394759, -263173, -65794, -1118482, -1381654, -394759, -131587, -1907998, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2039584, -1, -1184275, -2236963, -2236963, -2236963, -460552, -723724, -2236963, -2236963, -1052689, -1, -2105377, -2236963, -2171170, -328966, -263173, -2105377, -2236963, -2236963, -2039584, -197380, -460552, -2236963, -2236963, -394759, -1, -1513240, -2236963, -2236963, -2105377, -197380, -526345, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2171170, -65794, -394759, -1710619, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -1052689, -1, -2105377, -2236963, -1907998, -1, -1184275, -2236963, -2236963, -2236963, -2236963, -1052689, -1, -1973791, -2236963, -394759, -328966, -2236963, -2236963, -2236963, -2236963, -1052689, -65794, -2171170, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -1250068, -1, -1, -197380, -855310, -1579033, -2236963, -2236963, -2236963, -1052689, -1, -2105377, -2236963, -1579033, -1, -1579033, -2236963, -2236963, -2236963, -2236963,
+-1447447, -1, -1644826, -2236963, -394759, -657931, -2236963, -2236963, -2236963, -2236963, -1381654, -1, -1842205, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -1776412, -986896, -328966, -1, -1, -855310, -2236963, -2236963, -1052689, -1, -2105377, -2236963, -1447447, -1, -1644826, -2236963, -2236963, -2236963, -2236963, -1513240, -1, -1579033, -2236963, -394759, -789517, -2236963, -2236963, -2236963, -2236963, -1381654, -1, -1776412, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2105377, -2171170, -2236963, -2236963, -1907998, -460552, -1, -1973791, -2236963, -1052689, -1, -2105377, -2236963, -1776412, -1, -1381654, -2236963, -2236963, -2236963, -2236963, -1184275, -1, -1776412, -2236963, -394759, -526345, -2236963, -2236963, -2236963, -2236963, -1118482, -65794, -2171170, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -1776412, -1, -1250068, -2236963, -2236963, -2236963, -1250068, -1, -1776412, -2236963, -1118482, -1, -2039584, -2236963, -2105377, -131587, -460552, -2236963, -2236963, -2236963, -2236963, -328966, -131587, -2171170, -2236963, -394759, -1, -1907998, -2236963, -2236963, -2236963, -328966, -394759, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -592138, -197380, -1250068, -1842205, -1381654, -263173, -263173, -2236963, -2236963, -1250068, -1, -921103, -1579033, -2236963, -1250068, -1, -789517, -1776412, -1776412, -657931,
+-1, -1513240, -2236963, -2236963, -394759, -1, -394759, -1644826, -1776412, -723724, -65794, -1776412, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-1842205, -460552, -1, -1, -1, -526345, -1973791, -2236963, -2236963, -2039584, -394759, -1, -460552, -2236963, -2236963, -1315861, -131587, -1, -1, -394759, -1447447, -2236963, -2236963, -2236963, -394759, -460552, -855310, -1, -1, -394759, -1513240, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2039584, -1842205, -2171170, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2105377, -2171170, -2236963, -2236963, -2236963, -2236963, -1973791, -2039584, -2236963, -2236963, -2236963, -2236963, -2236963, -394759, -526345, -2236963, -2105377, -1973791, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -394759, -526345, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -394759, -526345, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -1184275, -1250068, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963,
+-2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963, -2236963
+ };
+
 }

@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
 <li>
 <ul class="inheritance">
 <li>ProcessHelper</li>
@@ -94,7 +94,7 @@
 <hr>
 <br>
 <pre>public class <span class="strong">ProcessHelper</span>
-extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+extends Object</pre>
 <div class="block">Class to handle calling Runtime.exec() and stuffing output and error streams
  into Strings that can be dealt with more easily.</div>
 </li>
@@ -115,11 +115,11 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../processing/app/exec/ProcessHelper.html#ProcessHelper(java.io.File, java.lang.String...)">ProcessHelper</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;dir,
-             <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>...&nbsp;cmd)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../processing/app/exec/ProcessHelper.html#ProcessHelper(java.io.File,%20java.lang.String...)">ProcessHelper</a></strong>(File&nbsp;dir,
+             String...&nbsp;cmd)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../processing/app/exec/ProcessHelper.html#ProcessHelper(java.lang.String...)">ProcessHelper</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>...&nbsp;cmd)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../processing/app/exec/ProcessHelper.html#ProcessHelper(java.lang.String...)">ProcessHelper</a></strong>(String...&nbsp;cmd)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -144,12 +144,16 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../processing/app/exec/ProcessResult.html" title="class in processing.app.exec">ProcessResult</a></code></td>
-<td class="colLast"><code><strong><a href="../../../processing/app/exec/ProcessHelper.html#execute(java.lang.String)">execute</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;outgoing)</code>
+<td class="colLast"><code><strong><a href="../../../processing/app/exec/ProcessHelper.html#execute(java.lang.String)">execute</a></strong>(String&nbsp;outgoing)</code>
 <div class="block">Blocks execution, also passes a single line to the command's input stream.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../processing/app/exec/ProcessHelper.html#ffs(java.lang.String...)">ffs</a></strong>(String...&nbsp;cmd)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>String</code></td>
 <td class="colLast"><code><strong><a href="../../../processing/app/exec/ProcessHelper.html#toString()">toString</a></strong>()</code>&nbsp;</td>
 </tr>
 </table>
@@ -157,8 +161,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -180,7 +184,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>ProcessHelper</h4>
-<pre>public&nbsp;ProcessHelper(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>...&nbsp;cmd)</pre>
+<pre>public&nbsp;ProcessHelper(String...&nbsp;cmd)</pre>
 </li>
 </ul>
 <a name="ProcessHelper(java.io.File, java.lang.String...)">
@@ -189,8 +193,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ProcessHelper</h4>
-<pre>public&nbsp;ProcessHelper(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;dir,
-             <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>...&nbsp;cmd)</pre>
+<pre>public&nbsp;ProcessHelper(File&nbsp;dir,
+             String...&nbsp;cmd)</pre>
 </li>
 </ul>
 </li>
@@ -207,10 +211,10 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>toString</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;toString()</pre>
+<pre>public&nbsp;String&nbsp;toString()</pre>
 <dl>
 <dt><strong>Overrides:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a></code>&nbsp;in class&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></dd>
+<dd><code>toString</code>&nbsp;in class&nbsp;<code>Object</code></dd>
 </dl>
 </li>
 </ul>
@@ -221,29 +225,38 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>execute</h4>
 <pre>public&nbsp;<a href="../../../processing/app/exec/ProcessResult.html" title="class in processing.app.exec">ProcessResult</a>&nbsp;execute()
-                      throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/InterruptedException.html?is-external=true" title="class or interface in java.lang">InterruptedException</a>,
-                             <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
+                      throws InterruptedException,
+                             IOException</pre>
 <div class="block">Blocking execution.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>exit value of process</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/InterruptedException.html?is-external=true" title="class or interface in java.lang">InterruptedException</a></code></dd>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
+<dd><code>InterruptedException</code></dd>
+<dd><code>IOException</code></dd></dl>
 </li>
 </ul>
 <a name="execute(java.lang.String)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>execute</h4>
-<pre>public&nbsp;<a href="../../../processing/app/exec/ProcessResult.html" title="class in processing.app.exec">ProcessResult</a>&nbsp;execute(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;outgoing)
-                      throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/InterruptedException.html?is-external=true" title="class or interface in java.lang">InterruptedException</a>,
-                             <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
+<pre>public&nbsp;<a href="../../../processing/app/exec/ProcessResult.html" title="class in processing.app.exec">ProcessResult</a>&nbsp;execute(String&nbsp;outgoing)
+                      throws InterruptedException,
+                             IOException</pre>
 <div class="block">Blocks execution, also passes a single line to the command's input stream.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>exit value of process</dd>
 <dt><span class="strong">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/InterruptedException.html?is-external=true" title="class or interface in java.lang">InterruptedException</a></code></dd>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd></dl>
+<dd><code>InterruptedException</code></dd>
+<dd><code>IOException</code></dd></dl>
+</li>
+</ul>
+<a name="ffs(java.lang.String...)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>ffs</h4>
+<pre>public static&nbsp;boolean&nbsp;ffs(String...&nbsp;cmd)</pre>
 </li>
 </ul>
 </li>

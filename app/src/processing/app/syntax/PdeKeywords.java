@@ -29,10 +29,6 @@ import javax.swing.text.Segment;
 import processing.app.Editor;
 
 
-/**
- * This class reads a keywords.txt file to get coloring put links to reference
- * locations for the set of keywords.
- */
 public class PdeKeywords extends TokenMarker {
   private KeywordMap keywordColoring;
 
@@ -54,13 +50,24 @@ public class PdeKeywords extends TokenMarker {
     int num = coloring.charAt(coloring.length() - 1) - '1';
 //    byte id = (byte) ((isKey ? Token.KEYWORD1 : Token.LITERAL1) + num);
     int id = 0;
-    boolean paren = false;
     switch (coloring.charAt(0)) {
-      case 'K': id = Token.KEYWORD1 + num; break;
-      case 'L': id = Token.LITERAL1 + num; break;
-      case 'F': id = Token.FUNCTION1 + num; paren = true; break;
+      case 'K':
+        id = Token.KEYWORD1 + num;
+        keywordColoring.add(keyword, (byte) id, false);
+        if (id == Token.KEYWORD6) {
+          // these can be followed by parens
+          keywordColoring.add(keyword, (byte) id, true);
+        }
+        break;
+      case 'L':
+        id = Token.LITERAL1 + num;
+        keywordColoring.add(keyword, (byte) id, false);
+        break;
+      case 'F':
+        id = Token.FUNCTION1 + num;
+        keywordColoring.add(keyword, (byte) id, true);
+        break;
     }
-    keywordColoring.add(keyword, (byte) id, paren);
   }
 
 

@@ -180,9 +180,7 @@ WHITESPACE	LITERAL2
 # Java keywords (void, import, , etc.)
 		
 abstract	KEYWORD1
-assert	KEYWORD1
 break	KEYWORD1	break
-case	KEYWORD1	case
 class	KEYWORD1	class
 continue	KEYWORD1	continue
 default	KEYWORD1	default	
@@ -202,17 +200,23 @@ package	KEYWORD1
 private	KEYWORD1	private
 protected	KEYWORD1	
 public	KEYWORD1	public
-return	KEYWORD1	return	
 static	KEYWORD1	static
-strictfp	KEYWORD1
-super	KEYWORD1	super
-this	KEYWORD1	this
-throw	KEYWORD1	
+strictfp	KEYWORD1	
 throws	KEYWORD1	
 transient	KEYWORD1
 true	KEYWORD1	true
 void	KEYWORD1	void
 volatile	KEYWORD1
+
+
+# Java keywords which can be followed by a parenthesis
+
+assert	KEYWORD6
+case	KEYWORD6	case
+return	KEYWORD6	return	
+super	KEYWORD6	super
+this	KEYWORD6	this
+throw	KEYWORD6
 
 
 # Datatypes
@@ -231,6 +235,7 @@ HashMap	KEYWORD5	HashMap
 PrintWriter	KEYWORD5	PrintWriter
 String	KEYWORD5	String
 StringBuffer	KEYWORD5	
+StringBuilder	KEYWORD5
 Thread	KEYWORD5
 boolean	KEYWORD5	boolean
 byte	KEYWORD5	byte

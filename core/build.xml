@@ -5,24 +5,44 @@
     <delete dir="bin" />
     <delete file="library/core.jar" />
   </target>
-  
-  <target name="compile" description="Compile">
+
+  <target name="methods-check">
+    <available file="methods/methods.jar" property="methods.present" />
+  </target>
+
+  <target name="methods-build" depends="methods-check" unless="methods.present">
+    <subant buildpath="methods" target="dist" />
+  </target>
+
+  <target name="compile" description="Compile" depends="methods-build">
     <taskdef name="methods" 
 	     classname="PAppletMethods" 
 	     classpath="methods/methods.jar" />
     <methods dir="${basedir}/src/processing/core" recorder="true" />
 
+    <!-- Check for JDT compiler, since this is likely a PDE build. Using
+	 it allows us to build the PDE with only a JRE on Windows and Linux.
+	 So that the core can be built independently of the PDE, 
+	 use javac (the "modern" compiler) if ecj is not present. -->
+    <property name="jdt.jar" value="../java/mode/org.eclipse.jdt.core.jar" />
+    <condition property="build.compiler" 
+	       value="org.eclipse.jdt.core.JDTCompilerAdapter"
+	       else="modern">
+      <available file="${jdt.jar}" />
+    </condition>
+    <!--<echo message="compiler is ${build.compiler}" />-->
+
     <mkdir dir="bin" />
     <javac source="1.7"
-	   target="1.7" 
+	   target="1.7"
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   debug="true"
 	   srcdir="src" destdir="bin"
 	   classpath="library/jogl-all.jar; library/gluegen-rt.jar"
-	   nowarn="true"
-	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
-      <compilerclasspath path="../java/mode/ecj.jar" />
+	   nowarn="true">
+      <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
+      <compilerclasspath path="${jdt.jar}; ../java/mode/jdtCompilerAdapter.jar" />
     </javac>
     
     <!-- Copy the jnilib to the bin folder so it's included. -->

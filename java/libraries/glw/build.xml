@@ -13,15 +13,16 @@
     <fail unless="core-built" message="Please build the core library first and make sure it sits in ../../../core/library/core.jar" />
 
     <mkdir dir="bin" />
-    <javac source="1.6"
-	   target="1.6" 
+    <javac source="1.7"
+	   target="1.7"
 	   srcdir="src" destdir="bin" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   classpath="../../../core/library/core.jar; ../../../core/library/jogl-all.jar; ../../../core/library/gluegen-rt.jar" 
 	   nowarn="true"
 	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
-      <compilerclasspath path="../../mode/ecj.jar" />
+      <compilerclasspath path="mode/org.eclipse.jdt.core.jar; 
+                               mode/jdtCompilerAdapter.jar" />
     </javac>
   </target>
   

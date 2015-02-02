@@ -8,8 +8,8 @@
 
   <target name="compile" description="Compile sources">   
     <mkdir dir="bin" />
-    <javac target="1.6" 
-	   source="1.6"
+    <javac target="1.7"
+	   source="1.7"
 	   srcdir="src" 
 	   destdir="bin" 
 	   encoding="UTF-8"
@@ -17,7 +17,8 @@
 	   classpath="../../../../app/bin" 
 	   nowarn="true"
 	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
-      <compilerclasspath path="../../../../java/mode/ecj.jar" />
+      <compilerclasspath path="../../../../java/mode/org.eclipse.jdt.core.jar; 
+                               ../../../../java/mode/jdtCompilerAdapter.jar" />
     </javac>
   </target>
 

@@ -112,15 +112,21 @@ public class Serial implements SerialPortEventListener {
       throw new RuntimeException("Error opening serial port " + e.getPortName() + ": " + e.getExceptionType());
     }
 
-    try {
-      serialEventMethod = parent.getClass().getMethod("serialEvent", new Class[] { this.getClass() });
-    } catch (Exception e) {
-    }
+    serialEventMethod = findCallback("serialEvent");
+    serialAvailableMethod = findCallback("serialAvailable");
+  }
 
+  private Method findCallback(final String name) {
     try {
-      serialAvailableMethod = parent.getClass().getMethod("serialAvailable", new Class[] { this.getClass() });
+      return parent.getClass().getMethod(name, this.getClass());
     } catch (Exception e) {
     }
+    // Permit callback(Object) as alternative to callback(Serial).
+    try {
+      return parent.getClass().getMethod(name, Object.class);
+    } catch (Exception e) {
+    }
+    return null;
   }
 
   
@@ -129,11 +135,20 @@ public class Serial implements SerialPortEventListener {
   }
 
   
+  /**
+   * Return true if this port is still active and hasn't run
+   * into any trouble.
+   */
+  public boolean active() {
+    return port.isOpened();
+  }
+
+
   public void pre() {
     if (serialAvailableMethod != null && invokeSerialAvailable) {
       invokeSerialAvailable = false;
       try {
-        serialAvailableMethod.invoke(parent, new Object[] { this });
+        serialAvailableMethod.invoke(parent, this);
       } catch (Exception e) {
         System.err.println("Error, disabling serialAvailable() for "+port.getPortName());
         System.err.println(e.getLocalizedMessage());
@@ -392,7 +407,7 @@ public class Serial implements SerialPortEventListener {
                 // available() and read() inside draw - but this function has no
                 // thread-safety issues since it's being invoked during pre in the context
                 // of the Processing applet
-                serialEventMethod.invoke(parent, new Object[] { this });
+                serialEventMethod.invoke(parent, this);
               } catch (Exception e) {
                 System.err.println("Error, disabling serialEvent() for "+port.getPortName());
                 System.err.println(e.getLocalizedMessage());

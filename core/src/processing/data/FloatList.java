@@ -110,6 +110,9 @@ public class FloatList implements Iterable<Float> {
    * @brief Get an entry at a particular index
    */
   public float get(int index) {
+    if (index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
     return data[index];
   }
 
@@ -296,8 +299,13 @@ public class FloatList implements Iterable<Float> {
 //  }
 
 
+  public void insert(int index, float value) {
+    insert(index, new float[] { value });
+  }
+
+
   // same as splice
-  public void insert(int index, int[] values) {
+  public void insert(int index, float[] values) {
     if (index < 0) {
       throw new IllegalArgumentException("insert() index cannot be negative: it was " + index);
     }
@@ -325,7 +333,7 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  public void insert(int index, IntList list) {
+  public void insert(int index, FloatList list) {
     insert(index, list.values());
   }
 
@@ -415,12 +423,23 @@ public class FloatList implements Iterable<Float> {
   }
 
 
+  private void boundsProblem(int index, String method) {
+    final String msg = String.format("The list size is %d. " +
+      "You cannot %s() to element %d.", count, method, index);
+    throw new ArrayIndexOutOfBoundsException(msg);
+  }
+
+
   /**
    * @webref floatlist:method
    * @brief Add to a value
    */
   public void add(int index, float amount) {
-    data[index] += amount;
+    if (index < count) {
+      data[index] += amount;
+    } else {
+      boundsProblem(index, "add");
+    }
   }
 
 
@@ -429,7 +448,11 @@ public class FloatList implements Iterable<Float> {
    * @brief Subtract from a value
    */
   public void sub(int index, float amount) {
-    data[index] -= amount;
+    if (index < count) {
+      data[index] -= amount;
+    } else {
+      boundsProblem(index, "sub");
+    }
   }
 
 
@@ -438,7 +461,11 @@ public class FloatList implements Iterable<Float> {
    * @brief Multiply a value
    */
   public void mult(int index, float amount) {
-    data[index] *= amount;
+    if (index < count) {
+      data[index] *= amount;
+    } else {
+      boundsProblem(index, "mult");
+    }
   }
 
 
@@ -447,7 +474,11 @@ public class FloatList implements Iterable<Float> {
    * @brief Divide a value
    */
   public void div(int index, float amount) {
-    data[index] /= amount;
+    if (index < count) {
+      data[index] /= amount;
+    } else {
+      boundsProblem(index, "div");
+    }
   }
 
 
@@ -563,7 +594,27 @@ public class FloatList implements Iterable<Float> {
     new Sort() {
       @Override
       public int size() {
-        return count;
+        // if empty, don't even mess with the NaN check, it'll AIOOBE
+        if (count == 0) {
+          return 0;
+        }
+        // move NaN values to the end of the list and don't sort them
+        int right = count - 1;
+        while (data[right] != data[right]) {
+          right--;
+          if (right == -1) {  // all values are NaN
+            return 0;
+          }
+        }
+        for (int i = right; i >= 0; --i) {
+          float v = data[i];
+          if (v != v) {
+            data[i] = data[right];
+            data[right] = v;
+            --right;
+          }
+        }
+        return right + 1;
       }
 
       @Override
@@ -601,7 +652,7 @@ public class FloatList implements Iterable<Float> {
 
   /**
    * @webref floatlist:method
-   * @brief Reverse sort, orders values by first digit
+   * @brief Reverse the order of the list elements
    */
   public void reverse() {
     int ii = count - 1;
@@ -705,7 +756,8 @@ public class FloatList implements Iterable<Float> {
 
 
   /**
-   * Copy as many values as possible into the specified array.
+   * Copy values into the specified array. If the specified array is null or
+   * not the same size, a new array will be allocated.
    * @param array
    */
   public float[] array(float[] array) {
@@ -760,6 +812,13 @@ public class FloatList implements Iterable<Float> {
       sb.append(data[i]);
     }
     return sb.toString();
+  }
+
+
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.format("[%d] %f%n", i, data[i]);
+    }
   }
 
 

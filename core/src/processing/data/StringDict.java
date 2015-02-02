@@ -63,6 +63,7 @@ public class StringDict {
       if (pieces.length == 2) {
         keys[count] = pieces[0];
         values[count] = pieces[1];
+        indices.put(keys[count], count);
         count++;
       }
     }
@@ -245,16 +246,24 @@ public class StringDict {
     return values[index];
   }
 
+
+  public String get(String key, String alternate) {
+    int index = index(key);
+    if (index == -1) return alternate;
+    return values[index];
+  }
+
+
   /**
    * @webref stringdict:method
    * @brief Create a new key/value pair or change the value of one
    */
-  public void set(String key, String amount) {
+  public void set(String key, String value) {
     int index = index(key);
     if (index == -1) {
-      create(key, amount);
+      create(key, value);
     } else {
-      values[index] = amount;
+      values[index] = value;
     }
   }
 
@@ -278,7 +287,7 @@ public class StringDict {
       keys = PApplet.expand(keys);
       values = PApplet.expand(values);
     }
-    indices.put(key, new Integer(count));
+    indices.put(key, Integer.valueOf(count));
     keys[count] = key;
     values[count] = value;
     count++;
@@ -324,8 +333,8 @@ public class StringDict {
     keys[b] = tkey;
     values[b] = tvalue;
 
-    indices.put(keys[a], new Integer(a));
-    indices.put(keys[b], new Integer(b));
+    indices.put(keys[a], Integer.valueOf(a));
+    indices.put(keys[b], Integer.valueOf(b));
   }
 
 
@@ -424,6 +433,13 @@ public class StringDict {
       writer.println(keys[i] + "\t" + values[i]);
     }
     writer.flush();
+  }
+
+
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.println(keys[i] + " = " + values[i]);
+    }
   }
 
 

@@ -1,32 +1,55 @@
-<project name="methods" default="task-lib">
+<project name="methods" default="dist">
 
   <target name="compile">
+
+    <!-- Check for JDT compiler, since this is likely a PDE build. Using
+	 it allows us to build the PDE with only a JRE on Windows and Linux.
+	 So that the core can be built independently of the PDE, 
+	 use javac (the "modern" compiler) if ecj is not present. -->
+    <property name="jdt.jar" value="../../java/mode/org.eclipse.jdt.core.jar" />
+    <condition property="build.compiler" 
+	       value="org.eclipse.jdt.core.JDTCompilerAdapter"
+	       else="modern">
+      <available file="${jdt.jar}" />
+    </condition>
+    <!--<echo message="compiler is ${build.compiler}" />-->
+
     <mkdir dir="bin" />
-    <!--		<javac target="1.5" srcdir="src" destdir="bin" classpath="../ant/ant.jar" debug="true"/>-->
-<!--    <javac target="1.5" srcdir="src" destdir="bin" classpath="/usr/share/ant/ant.jar" debug="true"/>-->
-    <javac target="1.5" 
-	   srcdir="src" destdir="bin" 
+    <javac source="1.7" 
+           target="1.7" 
+	   srcdir="src" 
+           destdir="bin" 
 	   debug="true" 
 	   includeantruntime="true"
-	   nowarn="true"
-	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
-      <compilerclasspath path="../../java/mode/ecj.jar" />
+	   nowarn="true">
+      <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
+      <compilerclasspath path="${jdt.jar}; 
+                               ../../java/mode/jdtCompilerAdapter.jar" />
     </javac>
   </target>
   
-  <target name="task-lib" depends="compile">
+  <target name="dist" depends="compile">
     <jar basedir="bin" destfile="methods.jar" />
   </target>
   
-  <target name="demo">
+  <target name="demo" depends="dist">
+    <mkdir dir="demo" />
+
+    <copy todir="demo">
+      <fileset file="../src/processing/core/PApplet.java" />
+      <fileset file="../src/processing/core/PGraphics.java" />
+      <fileset file="../src/processing/core/PImage.java" />
+    </copy>
+
     <taskdef name="methods" 
 	     classname="PAppletMethods" 
 	     classpath="methods.jar" />
-    <preproc dir="demo"/>
+    <methods dir="demo"/>
   </target>
   
   <target name="clean">
     <delete dir="bin" />
     <delete file="methods.jar" />
   </target>
+
 </project>

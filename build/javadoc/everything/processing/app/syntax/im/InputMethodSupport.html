@@ -81,7 +81,7 @@
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
-<li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
+<li>Object</li>
 <li>
 <ul class="inheritance">
 <li>InputMethodSupport</li>
@@ -93,13 +93,13 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/InputMethodListener.html?is-external=true" title="class or interface in java.awt.event">InputMethodListener</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true" title="class or interface in java.awt.im">InputMethodRequests</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/util/EventListener.html?is-external=true" title="class or interface in java.util">EventListener</a></dd>
+<dd>InputMethodListener, InputMethodRequests, EventListener</dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="strong">InputMethodSupport</span>
-extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
-implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true" title="class or interface in java.awt.im">InputMethodRequests</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/InputMethodListener.html?is-external=true" title="class or interface in java.awt.event">InputMethodListener</a></pre>
+extends Object
+implements InputMethodRequests, InputMethodListener</pre>
 <div class="block">Support in-line Japanese input for PDE. (Maybe Chinese, Korean and more)
  This class is implemented by Java Input Method Framework and handles
  If you would like to know more about Java Input Method Framework,
@@ -143,18 +143,18 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMe
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/text/AttributedCharacterIterator.html?is-external=true" title="class or interface in java.text">AttributedCharacterIterator</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#cancelLatestCommittedText(java.text.AttributedCharacterIterator.Attribute[])">cancelLatestCommittedText</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/text/AttributedCharacterIterator.Attribute.html?is-external=true" title="class or interface in java.text">AttributedCharacterIterator.Attribute</a>[]&nbsp;attributes)</code>&nbsp;</td>
+<td class="colFirst"><code>AttributedCharacterIterator</code></td>
+<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#cancelLatestCommittedText(java.text.AttributedCharacterIterator.Attribute[])">cancelLatestCommittedText</a></strong>(AttributedCharacterIterator.Attribute[]&nbsp;attributes)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#caretPositionChanged(java.awt.event.InputMethodEvent)">caretPositionChanged</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/InputMethodEvent.html?is-external=true" title="class or interface in java.awt.event">InputMethodEvent</a>&nbsp;event)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#caretPositionChanged(java.awt.event.InputMethodEvent)">caretPositionChanged</a></strong>(InputMethodEvent&nbsp;event)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/text/AttributedCharacterIterator.html?is-external=true" title="class or interface in java.text">AttributedCharacterIterator</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#getCommittedText(int, int, java.text.AttributedCharacterIterator.Attribute[])">getCommittedText</a></strong>(int&nbsp;beginIndex,
+<td class="colFirst"><code>AttributedCharacterIterator</code></td>
+<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#getCommittedText(int,%20int,%20java.text.AttributedCharacterIterator.Attribute[])">getCommittedText</a></strong>(int&nbsp;beginIndex,
                 int&nbsp;endIndex,
-                <a href="http://docs.oracle.com/javase/7/docs/api/java/text/AttributedCharacterIterator.Attribute.html?is-external=true" title="class or interface in java.text">AttributedCharacterIterator.Attribute</a>[]&nbsp;attributes)</code>&nbsp;</td>
+                AttributedCharacterIterator.Attribute[]&nbsp;attributes)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
@@ -165,21 +165,21 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMe
 <td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#getInsertPositionOffset()">getInsertPositionOffset</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/font/TextHitInfo.html?is-external=true" title="class or interface in java.awt.font">TextHitInfo</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#getLocationOffset(int, int)">getLocationOffset</a></strong>(int&nbsp;x,
+<td class="colFirst"><code>TextHitInfo</code></td>
+<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#getLocationOffset(int,%20int)">getLocationOffset</a></strong>(int&nbsp;x,
                  int&nbsp;y)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/text/AttributedCharacterIterator.html?is-external=true" title="class or interface in java.text">AttributedCharacterIterator</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#getSelectedText(java.text.AttributedCharacterIterator.Attribute[])">getSelectedText</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/text/AttributedCharacterIterator.Attribute.html?is-external=true" title="class or interface in java.text">AttributedCharacterIterator.Attribute</a>[]&nbsp;attributes)</code>&nbsp;</td>
+<td class="colFirst"><code>AttributedCharacterIterator</code></td>
+<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#getSelectedText(java.text.AttributedCharacterIterator.Attribute[])">getSelectedText</a></strong>(AttributedCharacterIterator.Attribute[]&nbsp;attributes)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Rectangle.html?is-external=true" title="class or interface in java.awt">Rectangle</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#getTextLocation(java.awt.font.TextHitInfo)">getTextLocation</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/font/TextHitInfo.html?is-external=true" title="class or interface in java.awt.font">TextHitInfo</a>&nbsp;offset)</code>&nbsp;</td>
+<td class="colFirst"><code>Rectangle</code></td>
+<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#getTextLocation(java.awt.font.TextHitInfo)">getTextLocation</a></strong>(TextHitInfo&nbsp;offset)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#inputMethodTextChanged(java.awt.event.InputMethodEvent)">inputMethodTextChanged</a></strong>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/InputMethodEvent.html?is-external=true" title="class or interface in java.awt.event">InputMethodEvent</a>&nbsp;event)</code>
+<td class="colLast"><code><strong><a href="../../../../processing/app/syntax/im/InputMethodSupport.html#inputMethodTextChanged(java.awt.event.InputMethodEvent)">inputMethodTextChanged</a></strong>(InputMethodEvent&nbsp;event)</code>
 <div class="block">Handles events from InputMethod.</div>
 </td>
 </tr>
@@ -188,8 +188,8 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMe
 <li class="blockList"><a name="methods_inherited_from_class_Object">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></h3>
-<code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</a>, <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</a></code></li>
+<h3>Methods inherited from class&nbsp;Object</h3>
+<code>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -228,10 +228,10 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMe
 <ul class="blockList">
 <li class="blockList">
 <h4>getTextLocation</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Rectangle.html?is-external=true" title="class or interface in java.awt">Rectangle</a>&nbsp;getTextLocation(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/font/TextHitInfo.html?is-external=true" title="class or interface in java.awt.font">TextHitInfo</a>&nbsp;offset)</pre>
+<pre>public&nbsp;Rectangle&nbsp;getTextLocation(TextHitInfo&nbsp;offset)</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true#getTextLocation(java.awt.font.TextHitInfo)" title="class or interface in java.awt.im">getTextLocation</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true" title="class or interface in java.awt.im">InputMethodRequests</a></code></dd>
+<dd><code>getTextLocation</code>&nbsp;in interface&nbsp;<code>InputMethodRequests</code></dd>
 </dl>
 </li>
 </ul>
@@ -241,11 +241,11 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMe
 <ul class="blockList">
 <li class="blockList">
 <h4>getLocationOffset</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/font/TextHitInfo.html?is-external=true" title="class or interface in java.awt.font">TextHitInfo</a>&nbsp;getLocationOffset(int&nbsp;x,
+<pre>public&nbsp;TextHitInfo&nbsp;getLocationOffset(int&nbsp;x,
                             int&nbsp;y)</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true#getLocationOffset(int, int)" title="class or interface in java.awt.im">getLocationOffset</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true" title="class or interface in java.awt.im">InputMethodRequests</a></code></dd>
+<dd><code>getLocationOffset</code>&nbsp;in interface&nbsp;<code>InputMethodRequests</code></dd>
 </dl>
 </li>
 </ul>
@@ -258,7 +258,7 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMe
 <pre>public&nbsp;int&nbsp;getInsertPositionOffset()</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true#getInsertPositionOffset()" title="class or interface in java.awt.im">getInsertPositionOffset</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true" title="class or interface in java.awt.im">InputMethodRequests</a></code></dd>
+<dd><code>getInsertPositionOffset</code>&nbsp;in interface&nbsp;<code>InputMethodRequests</code></dd>
 </dl>
 </li>
 </ul>
@@ -268,12 +268,12 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMe
 <ul class="blockList">
 <li class="blockList">
 <h4>getCommittedText</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/text/AttributedCharacterIterator.html?is-external=true" title="class or interface in java.text">AttributedCharacterIterator</a>&nbsp;getCommittedText(int&nbsp;beginIndex,
+<pre>public&nbsp;AttributedCharacterIterator&nbsp;getCommittedText(int&nbsp;beginIndex,
                                            int&nbsp;endIndex,
-                                           <a href="http://docs.oracle.com/javase/7/docs/api/java/text/AttributedCharacterIterator.Attribute.html?is-external=true" title="class or interface in java.text">AttributedCharacterIterator.Attribute</a>[]&nbsp;attributes)</pre>
+                                           AttributedCharacterIterator.Attribute[]&nbsp;attributes)</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true#getCommittedText(int, int, java.text.AttributedCharacterIterator.Attribute[])" title="class or interface in java.awt.im">getCommittedText</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true" title="class or interface in java.awt.im">InputMethodRequests</a></code></dd>
+<dd><code>getCommittedText</code>&nbsp;in interface&nbsp;<code>InputMethodRequests</code></dd>
 </dl>
 </li>
 </ul>
@@ -286,7 +286,7 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMe
 <pre>public&nbsp;int&nbsp;getCommittedTextLength()</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true#getCommittedTextLength()" title="class or interface in java.awt.im">getCommittedTextLength</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true" title="class or interface in java.awt.im">InputMethodRequests</a></code></dd>
+<dd><code>getCommittedTextLength</code>&nbsp;in interface&nbsp;<code>InputMethodRequests</code></dd>
 </dl>
 </li>
 </ul>
@@ -296,10 +296,10 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMe
 <ul class="blockList">
 <li class="blockList">
 <h4>cancelLatestCommittedText</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/text/AttributedCharacterIterator.html?is-external=true" title="class or interface in java.text">AttributedCharacterIterator</a>&nbsp;cancelLatestCommittedText(<a href="http://docs.oracle.com/javase/7/docs/api/java/text/AttributedCharacterIterator.Attribute.html?is-external=true" title="class or interface in java.text">AttributedCharacterIterator.Attribute</a>[]&nbsp;attributes)</pre>
+<pre>public&nbsp;AttributedCharacterIterator&nbsp;cancelLatestCommittedText(AttributedCharacterIterator.Attribute[]&nbsp;attributes)</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true#cancelLatestCommittedText(java.text.AttributedCharacterIterator.Attribute[])" title="class or interface in java.awt.im">cancelLatestCommittedText</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true" title="class or interface in java.awt.im">InputMethodRequests</a></code></dd>
+<dd><code>cancelLatestCommittedText</code>&nbsp;in interface&nbsp;<code>InputMethodRequests</code></dd>
 </dl>
 </li>
 </ul>
@@ -309,10 +309,10 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMe
 <ul class="blockList">
 <li class="blockList">
 <h4>getSelectedText</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/text/AttributedCharacterIterator.html?is-external=true" title="class or interface in java.text">AttributedCharacterIterator</a>&nbsp;getSelectedText(<a href="http://docs.oracle.com/javase/7/docs/api/java/text/AttributedCharacterIterator.Attribute.html?is-external=true" title="class or interface in java.text">AttributedCharacterIterator.Attribute</a>[]&nbsp;attributes)</pre>
+<pre>public&nbsp;AttributedCharacterIterator&nbsp;getSelectedText(AttributedCharacterIterator.Attribute[]&nbsp;attributes)</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true#getSelectedText(java.text.AttributedCharacterIterator.Attribute[])" title="class or interface in java.awt.im">getSelectedText</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMethodRequests.html?is-external=true" title="class or interface in java.awt.im">InputMethodRequests</a></code></dd>
+<dd><code>getSelectedText</code>&nbsp;in interface&nbsp;<code>InputMethodRequests</code></dd>
 </dl>
 </li>
 </ul>
@@ -322,13 +322,13 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMe
 <ul class="blockList">
 <li class="blockList">
 <h4>inputMethodTextChanged</h4>
-<pre>public&nbsp;void&nbsp;inputMethodTextChanged(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/InputMethodEvent.html?is-external=true" title="class or interface in java.awt.event">InputMethodEvent</a>&nbsp;event)</pre>
+<pre>public&nbsp;void&nbsp;inputMethodTextChanged(InputMethodEvent&nbsp;event)</pre>
 <div class="block">Handles events from InputMethod.
  This method judges whether beginning of input or 
  progress of input or end and call related method.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/InputMethodListener.html?is-external=true#inputMethodTextChanged(java.awt.event.InputMethodEvent)" title="class or interface in java.awt.event">inputMethodTextChanged</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/InputMethodListener.html?is-external=true" title="class or interface in java.awt.event">InputMethodListener</a></code></dd>
+<dd><code>inputMethodTextChanged</code>&nbsp;in interface&nbsp;<code>InputMethodListener</code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>event</code> - event from Input Method.</dd></dl>
 </li>
 </ul>
@@ -338,10 +338,10 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/im/InputMe
 <ul class="blockListLast">
 <li class="blockList">
 <h4>caretPositionChanged</h4>
-<pre>public&nbsp;void&nbsp;caretPositionChanged(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/InputMethodEvent.html?is-external=true" title="class or interface in java.awt.event">InputMethodEvent</a>&nbsp;event)</pre>
+<pre>public&nbsp;void&nbsp;caretPositionChanged(InputMethodEvent&nbsp;event)</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/InputMethodListener.html?is-external=true#caretPositionChanged(java.awt.event.InputMethodEvent)" title="class or interface in java.awt.event">caretPositionChanged</a></code>&nbsp;in interface&nbsp;<code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/event/InputMethodListener.html?is-external=true" title="class or interface in java.awt.event">InputMethodListener</a></code></dd>
+<dd><code>caretPositionChanged</code>&nbsp;in interface&nbsp;<code>InputMethodListener</code></dd>
 </dl>
 </li>
 </ul>

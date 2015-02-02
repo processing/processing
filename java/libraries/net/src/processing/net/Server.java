@@ -24,11 +24,13 @@
 */
 
 package processing.net;
+
 import processing.core.*;
 
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
+
 
 /**
  * ( begin auto-generated from Server.xml )
@@ -65,11 +67,25 @@ public class Server implements Runnable {
    * @param port port used to transfer data
    */
   public Server(PApplet parent, int port) {
+    this(parent, port, null);
+  }
+    
+    
+  /**
+   * @param parent typically use "this"
+   * @param port port used to transfer data
+   * @param host when multiple NICs are in use, the ip (or name) to bind from 
+   */
+  public Server(PApplet parent, int port, String host) {
     this.parent = parent;
     this.port = port;
 
     try {
-      server = new ServerSocket(this.port);
+      if (host == null) {
+        server = new ServerSocket(this.port);
+      } else {
+        server = new ServerSocket(this.port, 10, InetAddress.getByName(host));
+      }
       //clients = new Vector();
       clients = new Client[10];
 
@@ -91,8 +107,9 @@ public class Server implements Runnable {
       }
 
     } catch (IOException e) {
-      e.printStackTrace();
+      //e.printStackTrace();
       thread = null;
+      throw new RuntimeException(e);
       //errorMessage("<init>", e);
     }
   }
@@ -109,8 +126,7 @@ public class Server implements Runnable {
    * @param client the client to disconnect
    */
   public void disconnect(Client client) {
-    //client.stop();
-    client.dispose();
+    client.stop();
     int index = clientIndex(client);
     if (index != -1) {
       removeIndex(index);
@@ -126,6 +142,21 @@ public class Server implements Runnable {
     }
     // mark last empty var for garbage collection
     clients[clientCount] = null;
+  }
+  
+  
+  protected void disconnectAll() {
+    synchronized (clients) {
+      for (int i = 0; i < clientCount; i++) {
+        try {
+          clients[i].stop();
+        } catch (Exception e) {
+          // ignore
+        }
+        clients[i] = null;
+      }
+      clientCount = 0;
+    }
   }
   
   
@@ -147,13 +178,22 @@ public class Server implements Runnable {
   }
 
   
+  /**
+   * Return true if this server is still active and hasn't run
+   * into any trouble.
+   */
+  public boolean active() {
+    return thread != null;
+  }
+  
+  
   static public String ip() {
     try {
       return InetAddress.getLocalHost().getHostAddress();
     } catch (UnknownHostException e) {
       e.printStackTrace();
+      return null;
     }
-    return null;
   }
 
 
@@ -216,9 +256,7 @@ public class Server implements Runnable {
     thread = null;
 
     if (clients != null) {
-      for (int i = 0; i < clientCount; i++) {
-        disconnect(clients[i]);
-      }
+      disconnectAll();
       clientCount = 0;
       clients = null;
     }
@@ -251,6 +289,10 @@ public class Server implements Runnable {
             }
           }
         }
+      } catch (SocketException e) {
+        //thrown when server.close() is called and server is waiting on accept
+        System.err.println("Server SocketException: " + e.getMessage());
+        thread = null;
       } catch (IOException e) {
         //errorMessage("run", e);
         e.printStackTrace();
@@ -277,8 +319,8 @@ public class Server implements Runnable {
   public void write(int data) {  // will also cover char
     int index = 0;
     while (index < clientCount) {
-      clients[index].write(data);
       if (clients[index].active()) {
+        clients[index].write(data);
         index++;
       } else {
         removeIndex(index);
@@ -290,8 +332,8 @@ public class Server implements Runnable {
   public void write(byte data[]) {
     int index = 0;
     while (index < clientCount) {
-      clients[index].write(data);
       if (clients[index].active()) {
+        clients[index].write(data);
         index++;
       } else {
         removeIndex(index);
@@ -303,23 +345,12 @@ public class Server implements Runnable {
   public void write(String data) {
     int index = 0;
     while (index < clientCount) {
-      clients[index].write(data);
       if (clients[index].active()) {
+        clients[index].write(data);
         index++;
       } else {
         removeIndex(index);
       }
     }
   }
-
-
-  /**
-   * General error reporting, all corralled here just in case
-   * I think of something slightly more intelligent to do.
-   */
-//  public void errorMessage(String where, Exception e) {
-//    parent.die("Error inside Server." + where + "()", e);
-//    //System.err.println("Error inside Server." + where + "()");
-//    //e.printStackTrace(System.err);
-//  }
 }

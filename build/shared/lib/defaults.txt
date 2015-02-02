@@ -48,10 +48,6 @@
 # has gone missing, and that it should instead use the default.
 #sketchbook.path=
 
-# if you don't want settings to go into "application data" on windows
-# and "library" on macosx, set this to the alternate location.
-#settings.path=data
-
 # By default, no sketches currently open
 last.sketch.count=0
 
@@ -93,7 +89,7 @@ platform.auto_file_type_associations = true
 
 
 # default size for the main window
-editor.window.width.default = 500
+editor.window.width.default = 700
 editor.window.height.default = 600
 
 editor.window.width.min = 400
@@ -152,12 +148,8 @@ editor.tabs.size = 2
 # automatically indent each line
 editor.indent = true
 
-# size of divider between editing area and the console
-editor.divider.size = 0
-# the larger divider on windows is ugly with the little arrows
-# this makes it large enough to see (mouse changes) and use, 
-# but keeps it from being annoyingly obtrusive
-editor.divider.size.windows = 2
+# Whether to automatically reload modified tabs
+editor.watcher = true
 
 # Hide the background image. Gross because this is a pref that
 # really lives over in theme.txt but it's split here.
@@ -249,6 +241,7 @@ editor.token.keyword2.style = #33997e,plain
 editor.token.keyword3.style = #669900,plain
 editor.token.keyword4.style = #d94a7a,plain
 editor.token.keyword5.style = #e2661a,plain
+editor.token.keyword6.style = #33997e,plain
 
 editor.token.literal1.style = #7D4793,plain
 editor.token.literal2.style = #718a62,plain
@@ -332,12 +325,6 @@ run.present.stop.color = #cccccc
 # use this by default to hide the menu bar and dock on osx
 #run.present.exclusive.macosx = true
 
-<<<<<<< HEAD:build/shared/lib/preferences.txt
-# true to disable warning messages when you are running Processing with
-# unsupported JDK such as OpenJDK or GCJ. You should NOT true this until
-# you understand what you are doing.
-run.jdk.unsupported = false
-=======
 # HTTP PROXY
 # Set a proxy server for folks that require it. This will allow the update
 # checker and the contrib manager to run properly in those environments.
@@ -345,4 +332,18 @@ run.jdk.unsupported = false
 #proxy.port=8080
 proxy.host=
 proxy.port=
->>>>>>> upstream/master:build/shared/lib/defaults.txt
+
+# PDE X
+pdex.autoSave.autoSaveByDefault=true
+pdex.autoSave.autoSaveEnabled=false
+pdex.autoSave.promptDisplay=true
+pdex.autoSaveInterval=5
+pdex.dbgOutput=false
+pdex.errorCheckEnabled=true
+pdex.warningsEnabled=true
+pdex.writeErrorLogs=false
+
+# Enable auto-completion when hitting ctrl-space
+pdex.completion = false
+# Trigger happy version of completion that fires more often
+pdex.completion.trigger = false
