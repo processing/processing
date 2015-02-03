@@ -674,6 +674,7 @@ public class Sketch {
         // update the tabs
         editor.header.repaint();
       }
+      editor.mode.rebuildSketchbookFrame();//update the sketchbook
     }
   }
 
@@ -1004,6 +1005,7 @@ public class Sketch {
 //    System.out.println("modified is now " + modified);
     editor.updateTitle();
     editor.base.rebuildSketchbookMenus();
+    editor.mode.rebuildSketchbookFrame();
     editor.base.handleRecentRename(editor,oldPath);
 //    editor.header.rebuild();
   }
