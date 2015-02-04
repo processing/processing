@@ -201,7 +201,7 @@ public class Serial implements SerialPortEventListener {
         serialAvailableMethod.invoke(parent, this);
       } catch (Exception e) {
         System.err.println("Error, disabling serialAvailable() for "+port.getPortName());
-        System.err.println(e.getLocalizedMessage());
+        e.printStackTrace();
         serialAvailableMethod = null;
       }
     }
@@ -460,7 +460,7 @@ public class Serial implements SerialPortEventListener {
                 serialEventMethod.invoke(parent, this);
               } catch (Exception e) {
                 System.err.println("Error, disabling serialEvent() for "+port.getPortName());
-                System.err.println(e.getLocalizedMessage());
+                e.printStackTrace();
                 serialEventMethod = null;
               }
             }
