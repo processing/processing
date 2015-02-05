@@ -162,6 +162,7 @@ public class Client implements Runnable {
     }
     if(isDisposeRegistered){
       parent.unregisterMethod("dispose", this);
+      isDisposeRegistered = false;
     }
     dispose();
   }
