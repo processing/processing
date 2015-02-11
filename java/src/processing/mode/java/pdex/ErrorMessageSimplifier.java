@@ -28,6 +28,8 @@ import java.util.TreeMap;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
+import processing.app.Base;
+
 public class ErrorMessageSimplifier {
   /**
    * Mapping between ProblemID constant and the constant name. Holds about 650
@@ -85,12 +87,12 @@ public class ErrorMessageSimplifier {
       return null;
     IProblem iprob = problem.getIProblem();
     String args[] = iprob.getArguments();
-//    log("Simplifying message: " + problem.getMessage() + " ID: "
-//        + getIDName(iprob.getID()));
-//    log("Arg count: " + args.length);
-//    for (int i = 0; i < args.length; i++) {
-//      log("Arg " + args[i]);
-//    }
+    Base.log("Simplifying message: " + problem.getMessage() + " ID: "
+        + getIDName(iprob.getID()));
+    Base.log("Arg count: " + args.length);
+    for (int i = 0; i < args.length; i++) {
+      Base.log("Arg " + args[i]);
+    }
 
     String result = null;
     
@@ -113,6 +115,9 @@ public class ErrorMessageSimplifier {
         else {
           if(args[0].equals("AssignmentOperator Expression")){
             result = "Consider adding a \"=\"";
+          }
+          else if (args[0].equalsIgnoreCase(") Statement")){
+            result = getErrorMessageForBracket(args[0].charAt(0));
           }
           else {
             result = "Error on \"" + args[0] + "\"";
@@ -141,7 +146,12 @@ public class ErrorMessageSimplifier {
           result = getErrorMessageForBracket(args[1].charAt(0));
         }
         else {
-          result = "Error on \"" + args[0] + "\"Consider adding a \"" + args[1] + "\"";
+          if(args[1].equalsIgnoreCase("Statement")){ // See #3104
+            result = "Error on \"" + args[0] + "\", statement expected after this.";
+          }
+          else {
+            result = "Error on \"" + args[0] + "\"Consider adding a \"" + args[1] + "\"";
+          }
         }
       }
       break;
