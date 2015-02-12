@@ -147,7 +147,7 @@ public class ErrorMessageSimplifier {
         }
         else {
           if(args[1].equalsIgnoreCase("Statement")){ // See #3104
-            result = "Error on \"" + args[0];
+            result = "Error on \"" + args[0] + "\"";
           }
           else {
             result = "Error on \"" + args[0] + "\"Consider adding a \"" + args[1] + "\"";
