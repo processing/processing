@@ -252,7 +252,12 @@ public class JavaBuild {
 //    // if this fella is OpenGL, and if so, to add the import. It's messy and
 //    // gross and someday we'll just always include OpenGL.
 //    String[] sizeInfo =
-      preprocessor.initSketchSize(sketch.getMainProgram(), sizeWarning);
+    
+/* next line commented out for ANTLR 4 - PdePreprocessor now does this when
+ * walking the tree
+ */
+//    preprocessor.initSketchSize(sketch.getMainProgram(), sizeWarning);
+
 //      //PdePreprocessor.parseSketchSize(sketch.getMainProgram(), false);
 //    if (sizeInfo != null) {
 //      String sketchRenderer = sizeInfo[3];
@@ -282,116 +287,6 @@ public class JavaBuild {
       fnfe.printStackTrace();
       String msg = "Build folder disappeared or could not be written";
       throw new SketchException(msg);
-
-    } catch (antlr.RecognitionException re) {
-      // re also returns a column that we're not bothering with for now
-      // first assume that it's the main file
-//      int errorFile = 0;
-      int errorLine = re.getLine() - 1;
-
-      // then search through for anyone else whose preprocName is null,
-      // since they've also been combined into the main pde.
-      int errorFile = findErrorFile(errorLine);
-//      System.out.println("error line is " + errorLine + ", file is " + errorFile);
-      errorLine -= sketch.getCode(errorFile).getPreprocOffset();
-//      System.out.println("  preproc offset for that file: " + sketch.getCode(errorFile).getPreprocOffset());
-
-//      System.out.println("i found this guy snooping around..");
-//      System.out.println("whatcha want me to do with 'im boss?");
-//      System.out.println(errorLine + " " + errorFile + " " + code[errorFile].getPreprocOffset());
-
-      String msg = re.getMessage();
-
-      //System.out.println(java.getAbsolutePath());
-//      System.out.println(bigCode);
-
-      if (msg.contains("expecting RCURLY")) {
-      //if (msg.equals("expecting RCURLY, found 'null'")) {
-        // This can be a problem since the error is sometimes listed as a line
-        // that's actually past the number of lines. For instance, it might
-        // report "line 15" of a 14 line program. Added code to highlightLine()
-        // inside Editor to deal with this situation (since that code is also
-        // useful for other similar situations).
-        throw new SketchException("Found one too many { characters " +
-                                  "without a } to match it.",
-                                  errorFile, errorLine, re.getColumn(), false);
-      }
-
-      if (msg.contains("expecting LCURLY")) {
-        System.err.println(msg);
-        String suffix = ".";
-        String[] m = PApplet.match(msg, "found ('.*')");
-        if (m != null) {
-          suffix = ", not " + m[1] + ".";
-        }
-        throw new SketchException("Was expecting a { character" + suffix,
-                                   errorFile, errorLine, re.getColumn(), false);
-      }
-
-      if (msg.indexOf("expecting RBRACK") != -1) {
-        System.err.println(msg);
-        throw new SketchException("Syntax error, " +
-                                  "maybe a missing ] character?",
-                                  errorFile, errorLine, re.getColumn(), false);
-      }
-
-      if (msg.indexOf("expecting SEMI") != -1) {
-        System.err.println(msg);
-        throw new SketchException("Syntax error, " +
-                                  "maybe a missing semicolon?",
-                                  errorFile, errorLine, re.getColumn(), false);
-      }
-
-      if (msg.indexOf("expecting RPAREN") != -1) {
-        System.err.println(msg);
-        throw new SketchException("Syntax error, " +
-                                  "maybe a missing right parenthesis?",
-                                  errorFile, errorLine, re.getColumn(), false);
-      }
-
-      if (msg.indexOf("preproc.web_colors") != -1) {
-        throw new SketchException("A web color (such as #ffcc00) " +
-                                  "must be six digits.",
-                                  errorFile, errorLine, re.getColumn(), false);
-      }
-
-      //System.out.println("msg is " + msg);
-      throw new SketchException(msg, errorFile,
-                                errorLine, re.getColumn(), false);
-
-    } catch (antlr.TokenStreamRecognitionException tsre) {
-      // while this seems to store line and column internally,
-      // there doesn't seem to be a method to grab it..
-      // so instead it's done using a regexp
-
-//      System.err.println("and then she tells me " + tsre.toString());
-      // TODO not tested since removing ORO matcher.. ^ could be a problem
-      String mess = "^line (\\d+):(\\d+):\\s";
-
-      String[] matches = PApplet.match(tsre.toString(), mess);
-      if (matches != null) {
-        int errorLine = Integer.parseInt(matches[1]) - 1;
-        int errorColumn = Integer.parseInt(matches[2]);
-
-        int errorFile = 0;
-        for (int i = 1; i < sketch.getCodeCount(); i++) {
-          SketchCode sc = sketch.getCode(i);
-          if (sc.isExtension("pde") &&
-              (sc.getPreprocOffset() < errorLine)) {
-            errorFile = i;
-          }
-        }
-        errorLine -= sketch.getCode(errorFile).getPreprocOffset();
-
-        throw new SketchException(tsre.getMessage(),
-                                  errorFile, errorLine, errorColumn);
-
-      } else {
-        // this is bad, defaults to the main class.. hrm.
-        String msg = tsre.toString();
-        throw new SketchException(msg, 0, -1, -1);
-      }
-
     } catch (SketchException pe) {
       // RunnerExceptions are caught here and re-thrown, so that they don't
       // get lost in the more general "Exception" handler below.
@@ -529,7 +424,7 @@ public class JavaBuild {
         sc.addPreprocOffset(result.headerOffset);
       }
     }
-    foundMain = preprocessor.hasMethod("main");
+    foundMain = preprocessor.hasMain();
     return result.className;
   }
 

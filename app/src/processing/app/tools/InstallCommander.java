@@ -82,7 +82,7 @@ public class InstallCommander implements Tool {
 
       String[] jarList = new String[] {
         "pde.jar",
-        "antlr.jar",
+        "antlr-4.5-complete.jar",
         "jna.jar",
         "ant.jar",
         "ant-launcher.jar",

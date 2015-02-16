@@ -9,7 +9,7 @@
 	    value="${basedir}/src/processing/mode/java/preproc" />
 
   <property name="antlr_jar" 
-	    value="${basedir}/mode/antlr.jar" />
+	    value="${basedir}/mode/antlr-4.5-complete.jar" />
 
   <property name="mode_jar"
             value="${basedir}/mode/JavaMode.jar" />
@@ -33,15 +33,16 @@
     </delete>
   </target>
 
-  <target name="preproc" description="Compile ANTLR grammar">
-    <antlr target="${grammars}/java15.g" outputdirectory="${generated}">
+  <target name="preproc" description="Compile ANTLR 4 grammar">
+    <java classname="org.antlr.v4.Tool"
+        failonerror="true">
       <classpath path="${antlr_jar}" />
-    </antlr>
-    <antlr target="${grammars}/pde.g" 
-	   outputdirectory="${generated}" 
-	   glib="${grammars}/java15.g">
-      <classpath path="${antlr_jar}" />
-    </antlr>
+      <arg value="-o" />
+      <arg value="${generated}" />
+      <arg value="-package" />
+      <arg value="processing.mode.java.preproc" />
+      <arg value="${grammars}/Processing.g4" />
+    </java>
   </target>
 
   <target name="compile" depends="preproc" description="Compile sources">
@@ -79,7 +80,7 @@
                       ../app/lib/apple.jar; 
                       ../app/lib/jna.jar; 
 
-                      mode/antlr.jar; 
+                      mode/antlr-4.5-complete.jar; 
                       mode/classpath-explorer-1.0.jar; 
                       mode/jsoup-1.7.1.jar;
                       mode/org.netbeans.swing.outline.jar; 

@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="generated"/>
 	<classpathentry excluding="processing/mode/java/PresentMode.java" kind="src" path="src"/>
-	<classpathentry kind="lib" path="mode/antlr.jar"/>
+	<classpathentry kind="lib" path="mode/antlr-4.5-complete.jar"/>
 	<classpathentry kind="lib" path="mode/classpath-explorer-1.0.jar"/>
 	<classpathentry kind="lib" path="mode/com.ibm.icu.jar"/>
 	<classpathentry kind="lib" path="mode/jdi.jar"/>

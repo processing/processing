@@ -59,7 +59,7 @@
 	   classpath="${core.library.path}/core.jar; 
                       ${app.library.path}/lib/ant.jar; 
                       ${app.library.path}/lib/ant-launcher.jar; 
-                      ${app.library.path}/lib/antlr.jar; 
+                      ${app.library.path}/lib/antlr-4.5-complete.jar; 
                       ${app.library.path}/lib/apple.jar; 
                       ${app.library.path}/lib/jna.jar; 
                       ${app.library.path}/lib/org-netbeans-swing-outline.jar; 
