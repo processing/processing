@@ -1,0 +1,10 @@
+# If you want to support more platforms, visit jogamp.org to get the 
+# natives libraries for the platform in question (i.e. Solaris). 
+
+name = OpenGL
+
+application.macosx=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-macosx-universal.jar,gluegen-rt-natives-macosx-universal.jar
+application.windows32=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-windows-i586.jar,gluegen-rt-natives-windows-i586.jar
+application.windows64=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-windows-amd64.jar,gluegen-rt-natives-windows-amd64.jar
+application.linux32=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-i586.jar,gluegen-rt-natives-linux-i586.jar
+application.linux64=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-amd64.jar,gluegen-rt-natives-linux-amd64.jar
