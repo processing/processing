@@ -1,4 +1,4 @@
-package processing.opengl;
+package processing.jogl;
 
 import java.awt.Canvas;
 import java.awt.Font;
@@ -14,6 +14,8 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 //import java.util.concurrent.CountDownLatch;
+
+
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
@@ -36,6 +38,8 @@ import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
+import processing.opengl.PGL;
+import processing.opengl.PGraphicsOpenGL;
 
 //import com.jogamp.newt.awt.NewtCanvasAWT;
 //import com.jogamp.newt.opengl.GLWindow;

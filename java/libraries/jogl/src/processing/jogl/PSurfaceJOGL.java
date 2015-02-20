@@ -1,4 +1,4 @@
-package processing.opengl;
+package processing.jogl;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -36,8 +36,9 @@ import processing.core.PImage;
 import processing.core.PSurface;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
+import processing.opengl.PGL;
 
-public class PSurfaceNEWT implements PSurface {
+public class PSurfaceJOGL implements PSurface {
   /** Selected GL profile */
   public static GLProfile profile;
 
@@ -58,9 +59,9 @@ public class PSurfaceNEWT implements PSurface {
   Throwable drawException;
   Object waitObject = new Object();
 
-  public PSurfaceNEWT(PGraphics graphics) {
+  public PSurfaceJOGL(PGraphics graphics) {
     this.graphics = graphics;
-    this.pgl = (PJOGL) ((PGraphicsOpenGL)graphics).pgl;
+    this.pgl = (PJOGL) ((PGraphicsJOGL)graphics).pgl;
   }
 
   public void initOffscreen() {
@@ -299,7 +300,7 @@ public class PSurfaceNEWT implements PSurface {
       @Override
       public void windowDestroyNotify(final WindowEvent e) {
         animator.stop();
-        PSurfaceNEWT.this.sketch.exit();
+        PSurfaceJOGL.this.sketch.exit();
         window.destroy();
       }
     });
@@ -320,6 +321,7 @@ public class PSurfaceNEWT implements PSurface {
     return frame;
   }
 
+  @SuppressWarnings("serial")
   class DummyFrame extends Frame {
 
     public DummyFrame() {

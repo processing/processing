@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012 Ben Fry and Casey Reas
+  Copyright (c) 2004-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,14 +22,19 @@
 
 package processing.jogl;
 
-import processing.core.PSurface;
+import processing.core.*;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
-public class PGraphics3D2X extends processing.opengl.PGraphics3D2X {
+/**
+ * LWJGL renderer.
+ *
+ */
+public class PGraphicsJOGL extends PGraphicsOpenGL {
   protected PGL createPGL(PGraphicsOpenGL pg) {
     return new PJOGL(pg);
-  }
+  }  
+  
   @Override
   public PSurface createSurface() {  // ignore
     return new PSurfaceJOGL(this);

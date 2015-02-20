@@ -255,28 +255,28 @@ public abstract class PGL {
 
   // Error messages
 
-  protected static final String WIKI =
+  public static final String WIKI =
     " Read http://wiki.processing.org/w/OpenGL_Issues for help.";
 
-  protected static final String FRAMEBUFFER_ERROR =
+  public static final String FRAMEBUFFER_ERROR =
     "Framebuffer error (%1$s), rendering will probably not work as expected" + WIKI;
 
-  protected static final String MISSING_FBO_ERROR =
+  public static final String MISSING_FBO_ERROR =
     "Framebuffer objects are not supported by this hardware (or driver)" + WIKI;
 
-  protected static final String MISSING_GLSL_ERROR =
+  public static final String MISSING_GLSL_ERROR =
     "GLSL shaders are not supported by this hardware (or driver)" + WIKI;
 
-  protected static final String MISSING_GLFUNC_ERROR =
+  public static final String MISSING_GLFUNC_ERROR =
     "GL function %1$s is not available on this hardware (or driver)" + WIKI;
 
-  protected static final String UNSUPPORTED_GLPROF_ERROR =
+  public static final String UNSUPPORTED_GLPROF_ERROR =
     "Unsupported OpenGL profile.";
 
-  protected static final String TEXUNIT_ERROR =
+  public static final String TEXUNIT_ERROR =
     "Number of texture units not supported by this hardware (or driver)" + WIKI;
 
-  protected static final String NONPRIMARY_ERROR =
+  public static final String NONPRIMARY_ERROR =
     "The renderer is trying to call a PGL function that can only be called on a primary PGL. " +
     "This is most likely due to a bug in the renderer's code, please report it with an " +
     "issue on Processing's github page https://github.com/processing/processing/issues?state=open " +
