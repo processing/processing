@@ -4868,6 +4868,10 @@ public class PApplet implements PConstants {
         vessel.height = actual.height;
         vessel.format = actual.format;
         vessel.pixels = actual.pixels;
+
+        vessel.pixelWidth = actual.width;
+        vessel.pixelHeight = actual.height;
+        vessel.pixelFactor = 1;
       }
       requestImageCount--;
     }

@@ -71,6 +71,8 @@ _   test with JG's 13" retina laptop
 
 
 graphics
+_ saveFrame() from setup() gives a black screen when size() is called
+_   as seen in the 'numbers' sketch
 _ should the re-alloc of the drawing surface happen in beginDraw()
 _   that way it won't blit to the screen until we have a fresh redraw?
 _   otherwise it'll also be resizing on another thread.. badness

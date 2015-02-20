@@ -51,6 +51,9 @@ X   https://github.com/processing/processing/issues/3037
 X   https://github.com/processing/processing/pull/3047
 X several new French translations
 X   https://github.com/processing/processing/pull/3061
+X contributions.txt now gets deleted and recreated instead of overwritten
+X   https://github.com/processing/processing/pull/3073
+X   https://github.com/processing/processing/issues/2994
 
 manindra
 X Fix for "Probably a ++ should go here" messages
@@ -94,6 +97,10 @@ X   https://github.com/processing/processing/pull/3070
 X broken Windows build due to launch4j .jar not updated
 X   https://github.com/processing/processing/issues/3062
 X   https://github.com/processing/processing/pull/3066
+X exported Linux sketches must be run from the sketch folder
+X   https://github.com/processing/processing/issues/1046
+X   https://github.com/processing/processing/pull/3083
+
 
 integration of pdex
 X changed JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
