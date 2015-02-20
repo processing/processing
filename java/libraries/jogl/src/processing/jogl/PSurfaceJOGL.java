@@ -36,6 +36,7 @@ import processing.core.PImage;
 import processing.core.PSurface;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
+import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PGL;
 
 public class PSurfaceJOGL implements PSurface {
@@ -61,7 +62,7 @@ public class PSurfaceJOGL implements PSurface {
 
   public PSurfaceJOGL(PGraphics graphics) {
     this.graphics = graphics;
-    this.pgl = (PJOGL) ((PGraphicsJOGL)graphics).pgl;
+    this.pgl = (PJOGL) ((PGraphicsOpenGL)graphics).pgl;
   }
 
   public void initOffscreen() {
