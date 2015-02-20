@@ -1,0 +1,221 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.processing</groupId>
+    <artifactId>processing-complete</artifactId>
+    <version>2.2.1</version>
+    <packaging>pom</packaging>
+
+
+ <name>Processing</name>
+    <description>Processing is a programming language, development environment, and online community. 
+        Meta-build file to package Processing components. 
+    </description>
+    <url>http://processing.org</url>
+    <inceptionYear>2001</inceptionYear>
+    
+    <organization>
+        <name>Processing Foundation</name>
+        <url>https://processing.org/</url>
+    </organization>
+    
+    <developers>
+        <developer>
+            <name>Ben Fry</name>
+            <url>http://fathom.info/</url>
+            <roles>
+                <role>Lead Developer</role>
+            </roles>
+        </developer>
+        
+        <developer>
+            <name>Casey Reas</name>
+            <url>http://reas.com</url>
+            <roles>
+                <role>Lead Developer</role>
+            </roles>
+        </developer>
+        
+        <developer>
+            <name>Andres Colubri</name>
+            <url>http://codeanticode.wordpress.com/</url>
+            <roles>
+                <role> OpenGL / Video</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Florian Jenett</name>
+            <url>http://www.florianjenett.de/</url>
+            <roles>
+                <role> Forum / Visual Design</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Scott Murray</name>
+            <url>http://alignedleft.com/</url>
+            <roles>
+                <role> Website / Reference</role>
+            </roles>
+        </developer>
+        
+        <developer>
+            <name>Jon Gacnik</name>
+            <url>http://jongacnik.com/</url>
+            <roles>
+                <role> Website</role>
+            </roles>
+        </developer>
+
+        <developer>
+            <name>Scott Garner</name>
+            <url>http://scott.j38.net/</url>
+            <roles>
+                <role> Hello Processing Website</role>
+            </roles>
+        </developer>
+
+        <developer>
+            <name>Gottfried Haider</name>
+            <url>http://gottfriedhaider.com/</url>
+            <roles>
+                <role> Serial Library Updates (64-bit)</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Jamie Kosoy</name>
+            <url>http://arbitrary.io/</url>
+            <roles>
+                <role> Website</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Manindra Moharana</name> 
+            <url>http://www.mkmoharana.com/</url>
+            <roles>
+                <role> Experimental Modes / Core</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>David Wicks </name>
+            <url>http://sansumbrella.com/</url>
+            <roles>
+                <role> Reference Engine</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Elie Zananiri </name>
+            <url>http://www.silentlycrashing.net/</url>
+            <roles>
+                <role> Contributed Libraries / Tools</role>
+            </roles>
+        </developer>
+
+    </developers>
+
+
+    <licenses>
+        <license>
+            <name>GPLv2 with Classpath exception</name>
+            <url>http://www.gnu.org/software/classpath/license.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+ 
+    <scm>
+        <url>https://github.com/processing/processing</url>
+        <connection>scm:git:git://github.com/processing/processing.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:processing/processing.git</developerConnection>
+    </scm> 
+    
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+    
+    <modules>
+        <module>../core</module>
+        <module>../app</module>
+        <module>../java/libraries/net/</module>
+        <module>../java/libraries/pdf/</module>
+        <module>../java/libraries/serial/</module>
+        <module>../java/libraries/video/</module>
+    </modules>
+    
+    
+    <build>
+        
+        <plugins>    
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+            </plugin> 
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+        
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+                
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            
+        </plugins>
+        
+    </build>
+
+</project>
