@@ -39,7 +39,7 @@
 	   includeAntRuntime="false"
 	   debug="true"
 	   srcdir="src" destdir="bin"
-	   classpath="library/jogl-all.jar; library/gluegen-rt.jar"
+	   classpath="library/lwjgl.jar; library/lwjgl_util.jar"
 	   nowarn="true">
       <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
       <compilerclasspath path="${jdt.jar}; ../java/mode/jdtCompilerAdapter.jar" />

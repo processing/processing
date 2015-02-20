@@ -664,7 +664,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public PSurface createSurface() {  // ignore
-    return new PSurfaceNEWT(this);
+    return new PSurfaceLWJGL(this);
+//    return new PSurfaceNEWT(this);
   }
 
 
@@ -1740,7 +1741,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Factory method
   protected PGL createPGL(PGraphicsOpenGL pg) {
-    return new PJOGL(pg);
+    return new PLWJGL(pg);
   }
 
 
