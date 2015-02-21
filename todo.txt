@@ -58,6 +58,10 @@ X   https://github.com/processing/processing/issues/2994
 manindra
 X Fix for "Probably a ++ should go here" messages
 X   https://github.com/processing/processing/issues/2956
+X Missing opening curly bracket error
+X   https://github.com/processing/processing/issues/3104
+X missing parenthesis error message
+X   https://github.com/processing/processing/issues/3103
 
 pulls
 X add mnemonics for menus (alt-f to open 'file')
@@ -100,7 +104,15 @@ X   https://github.com/processing/processing/pull/3066
 X exported Linux sketches must be run from the sketch folder
 X   https://github.com/processing/processing/issues/1046
 X   https://github.com/processing/processing/pull/3083
-
+X rectMode() broken for createShape with JAVA2D
+X   https://github.com/processing/processing/issues/3024
+X   https://github.com/processing/processing/pull/3102
+X IllegalArgumentException when clicking between editor windows
+X   https://github.com/processing/processing/issues/2530
+X   https://github.com/processing/processing/pull/3101
+X processing.net.Server only cleans up internal Clients when trying to write
+X   https://github.com/processing/processing/issues/3089
+X   https://github.com/processing/processing/pull/3097
 
 integration of pdex
 X changed JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
@@ -524,8 +536,6 @@ _   http://code.google.com/p/processing/issues/detail?id=494
 
 PDE / Editor
 
-_ [help] IllegalArgumentException when clicking between editor windows
-_   https://github.com/processing/processing/issues/2530
 _ [help] Undo does not move to the correct location in the editor window
 _   https://github.com/processing/processing/issues/707
 _ clean up /tmp folders used during build

@@ -9,6 +9,9 @@ X bezierSegment() function to do equal-length segments
 X   https://github.com/processing/processing/issues/2919
 X   handled instead as an example
 
+_ dragging sketch window hides it
+_   https://github.com/processing/processing/issues/3092
+
 _ textAlign(RIGHT) including spaces at the end of each line
 _   https://github.com/processing/processing/issues/3028
 
