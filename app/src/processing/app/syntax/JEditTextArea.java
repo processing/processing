@@ -1247,7 +1247,7 @@ public class JEditTextArea extends JComponent
       newBias = true;
     }
 
-    if(newStart < 0 || newEnd > getDocumentLength())
+    if((newStart < 0 || newEnd > getDocumentLength()) && start != end)
     {
       throw new IllegalArgumentException("Bounds out of"
           + " range: " + newStart + "," +
