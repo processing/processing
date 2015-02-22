@@ -36,10 +36,12 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.text.BadLocationException;
@@ -73,6 +75,23 @@ public class JavaTextAreaPainter extends TextAreaPainter
   protected Font gutterTextFont;
   protected Color gutterTextColor;
 //  protected Color gutterTempColor;
+  
+  public static class ErrorLineCoord {
+	public int xStart;
+	public int xEnd;
+	public int yStart;
+	public int yEnd;
+	public Problem problem;
+	
+	public ErrorLineCoord(int xStart, int xEnd, int yStart, int yEnd, Problem problem) {
+	  this.xStart = xStart;
+	  this.xEnd = xEnd;
+	  this.yStart = yStart;
+	  this.yEnd = yEnd;
+	  this.problem = problem;
+    }
+  }
+  public List<ErrorLineCoord> errorLineCoords = new ArrayList<>();
 
 //  static int ctrlMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
@@ -91,6 +110,19 @@ public class JavaTextAreaPainter extends TextAreaPainter
         }
       }
     });
+    
+    addMouseMotionListener(new MouseMotionAdapter() {
+      @Override
+      public void mouseMoved(final MouseEvent evt) {
+    	for (ErrorLineCoord coord : errorLineCoords) {
+    	  if (evt.getX() >= coord.xStart && evt.getX() <= coord.xEnd
+    			  && evt.getY() >= coord.yStart && evt.getY() <= coord.yEnd + 2) {
+    	    setToolTipText(coord.problem.getMessage());
+    		break;
+    	  }
+    	}
+      }
+	});
 
     // TweakMode code
     interactiveMode = false;
@@ -365,7 +397,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
     boolean notFound = true;
     boolean isWarning = false;
     Problem problem = null;
-
+    
+    errorLineCoords.clear();
     // Check if current line contains an error. If it does, find if it's an
     // error or warning
     for (ErrorMarker emarker : errorCheckerService.getEditor().getErrorPoints()) {
@@ -420,6 +453,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
       // Adding offsets for the gutter
       x1 += Editor.LEFT_GUTTER;
       x2 += Editor.LEFT_GUTTER;
+      
+      errorLineCoords.add(new ErrorLineCoord(x1,  x2, y, y1, problem));
 
       // gfx.fillRect(x1, y, rw, height);
 
@@ -494,8 +529,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
     gutterTextFont = mode.getFont("editor.gutter.text.font");
     gutterTextColor = mode.getColor("editor.gutter.text.color");
   }
-
-
+  
+  @Override
   public String getToolTipText(MouseEvent event) {
     if (!getEditor().hasJavaTabs()) {
       int off = textArea.xyToOffset(event.getX(), event.getY());
@@ -577,7 +612,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
       }
     }
     // Used when there are Java tabs, but also the fall-through case from above
-    setToolTipText(null);
+//    setToolTipText(null);
     return super.getToolTipText(event);
   }
 
