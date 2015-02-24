@@ -411,6 +411,7 @@ public class JavaBuild {
     if (core != null) {
       importedLibraries.add(core);
       classPath += core.getClassPath();
+      javaLibraryPath += File.pathSeparator + core.getNativePath();
     }
 
 //    System.out.println("extra imports: " + result.extraImports);
