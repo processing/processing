@@ -208,7 +208,7 @@ public class JavaMode extends Mode {
 
 
   // TODO Why is this necessary? Why isn't Sketch.isModified() used?
-  private boolean isSketchModified(Sketch sketch) {
+  static private boolean isSketchModified(Sketch sketch) {
     for (SketchCode sc : sketch.getCode()) {
       if (sc.isModified()) {
         return true;

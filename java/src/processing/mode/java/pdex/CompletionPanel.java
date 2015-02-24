@@ -183,7 +183,7 @@ public class CompletionPanel {
       return createZeroButton();
     }
 
-    private JButton createZeroButton() {
+    static private JButton createZeroButton() {
       JButton jbutton = new JButton();
       jbutton.setPreferredSize(new Dimension(0, 0));
       jbutton.setMinimumSize(new Dimension(0, 0));

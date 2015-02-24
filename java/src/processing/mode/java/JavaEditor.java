@@ -2553,7 +2553,7 @@ public class JavaEditor extends Editor {
   }
 
 
-  private boolean[] getModifiedTabs(List<List<Handle>> handles) {
+  static private boolean[] getModifiedTabs(List<List<Handle>> handles) {
     boolean[] modifiedTabs = new boolean[handles.size()];
 
     for (int i = 0; i < handles.size(); i++) {
@@ -2785,13 +2785,13 @@ public class JavaEditor extends Editor {
   }
 
 
-  private String replaceString(String str, int start, int end, String put) {
+  static private String replaceString(String str, int start, int end, String put) {
     return str.substring(0, start) + put + str.substring(end, str.length());
   }
 
 
   //private int howManyInts(ArrayList<Handle> handles[])
-  private int howManyInts(List<List<Handle>> handles) {
+  static private int howManyInts(List<List<Handle>> handles) {
     int count = 0;
     //for (int i=0; i<handles.length; i++) {
     for (List<Handle> list : handles) {
@@ -2807,7 +2807,7 @@ public class JavaEditor extends Editor {
 
 
   //private int howManyFloats(ArrayList<Handle> handles[])
-  private int howManyFloats(List<List<Handle>> handles) {
+  static private int howManyFloats(List<List<Handle>> handles) {
     int count = 0;
     //for (int i=0; i<handles.length; i++) {
     for (List<Handle> list : handles) {

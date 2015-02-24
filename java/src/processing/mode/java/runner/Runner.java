@@ -35,6 +35,7 @@ import java.util.*;
 
 import com.sun.jdi.*;
 import com.sun.jdi.connect.*;
+import com.sun.jdi.connect.Connector.Argument;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
 
@@ -149,7 +150,6 @@ public class Runner implements MessageConsumer {
   }
   
   
-  @SuppressWarnings("unchecked")
   public boolean launchVirtualMachine(boolean presenting) {
     String[] vmParams = getMachineParams();
     String[] sketchParams = getSketchParams(presenting);
@@ -175,7 +175,7 @@ public class Runner implements MessageConsumer {
       findConnector("com.sun.jdi.SocketAttach");
     //PApplet.println(connector);  // gets the defaults
 
-    Map arguments = connector.defaultArguments();
+    Map<String, Argument> arguments = connector.defaultArguments();
 
 //  Connector.Argument addressArg =
 //    (Connector.Argument)arguments.get("address");
@@ -564,7 +564,7 @@ public class Runner implements MessageConsumer {
   protected Connector findConnector(String connectorName) {
 //    List connectors = 
 //      com.sun.jdi.Bootstrap.virtualMachineManager().allConnectors();
-    List connectors =
+    List<Connector> connectors =
       org.eclipse.jdi.Bootstrap.virtualMachineManager().allConnectors();
 
 //    // debug: code to list available connectors

@@ -1449,7 +1449,7 @@ public class ASTGenerator {
       }
     }
     
-    Class probableClass = null;
+    Class<?> probableClass = null;
     if (tehClass.getClass_() != null) {
       probableClass = tehClass.getClass_();
     } else {

@@ -967,14 +967,13 @@ public class ErrorCheckerService implements Runnable {
   /**
    * Various option for JDT Compiler
    */
-  protected Map compilerSettings;
+  protected Map<String, String> compilerSettings;
 
   /**
    * Sets compiler options for JDT Compiler
    */
-  @SuppressWarnings("rawtypes")
   protected void prepareCompilerSetting() {
-    compilerSettings = new HashMap();
+    compilerSettings = new HashMap<String, String>();
 
     compilerSettings.put(CompilerOptions.OPTION_LineNumberAttribute,
         CompilerOptions.GENERATE);

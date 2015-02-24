@@ -1381,12 +1381,12 @@ public class Debugger implements VMEventListener {
   }
   
 
-  private void log(Level level, String msg) {
+  static private void log(Level level, String msg) {
     Logger.getLogger(Debugger.class.getName()).log(level, msg);
   }
 
   
-  private void log(Level level, String msg, Object obj) {
+  static private void log(Level level, String msg, Object obj) {
     Logger.getLogger(Debugger.class.getName()).log(level, msg, obj);
   }
 }

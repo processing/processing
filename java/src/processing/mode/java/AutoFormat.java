@@ -426,15 +426,14 @@ public class AutoFormat implements Formatter {
   /**
    * Takes all whitespace off the end of its argument.
    */
-  private void trimRight(final StringBuilder sb) {
-    while (sb.length() >= 1 && Character.isWhitespace(sb.charAt(sb.length() - 1)))
+  static private void trimRight(final StringBuilder sb) {
+    while (sb.length() >= 1 && Character.isWhitespace(sb.charAt(sb.length() - 1))) {
       sb.setLength(sb.length() - 1);
+    }
   }
 
 
-  /**
-   * Entry point
-   */
+  /** Entry point */
   public String format(final String source) {
     final String normalizedText = source.replaceAll("\r", "");
     final String cleanText =

@@ -420,7 +420,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param string
    * @return - String
    */
-  private String trimRight(String string) {
+  static private String trimRight(String string) {
     String newString = "";
     for (int i = 0; i < string.length(); i++) {
       if (string.charAt(i) != ' ') {

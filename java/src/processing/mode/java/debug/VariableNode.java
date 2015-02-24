@@ -234,7 +234,7 @@ public class VariableNode implements MutableTreeNode {
     }
 
     @Override
-    public Enumeration children() {
+    public Enumeration<MutableTreeNode> children() {
         return Collections.enumeration(children);
     }
 
