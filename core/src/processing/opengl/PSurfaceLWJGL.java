@@ -720,7 +720,14 @@ public class PSurfaceLWJGL implements PSurface {
         x0 = x;
         y0 = y;
 
-        if (Display.isCloseRequested()) break;
+        if (Display.isCloseRequested()) {
+//          if (externalMessages) {
+//            System.err.println(PApplet.EXTERNAL_QUIT);
+//            System.err.flush();  // important
+//          }
+          sketch.exit();
+          break;
+        }
         if (forceExit) {
           System.err.println("QUIT");
           deinit = false;
@@ -730,14 +737,16 @@ public class PSurfaceLWJGL implements PSurface {
       }
 
       if (deinit) {
-        if (externalMessages) {
-          sketch.exit();  // don't quit, need to just shut everything down (0133)
-        }
+//        if (externalMessages) {
+//          sketch.exit();  // don't quit, need to just shut everything down (0133)
+//        }
 
+        System.err.println("DESTROY");
         keyPoller.requestStop();
         mousePoller.requestStop();
         sketch.dispose();  // call to shutdown libs?
         Display.destroy();
+        frame.dispose();
 
         // If the user called the exit() function, the window should close,
         // rather than the sketch just halting.
@@ -1010,6 +1019,10 @@ public class PSurfaceLWJGL implements PSurface {
               if (20 < Mouse.getX() && Mouse.getX() < 20 + 100 &&
                   20 < Mouse.getY() && Mouse.getY() < 20 + 50) {
                 System.err.println("clicked on exit button");
+//              if (externalMessages) {
+//                System.err.println(PApplet.EXTERNAL_QUIT);
+//                System.err.flush();  // important
+//              }
                 sketch.exit();
               }
             }
