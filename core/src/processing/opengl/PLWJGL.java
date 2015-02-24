@@ -1694,5 +1694,6 @@ public class PLWJGL extends PGL {
 
   @Override
   protected void getGL(PGL pgl) {
+    glThread = pgl.glThread;
   }
 }
