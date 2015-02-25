@@ -8,6 +8,8 @@ X   mostly getting away from this
 X bezierSegment() function to do equal-length segments
 X   https://github.com/processing/processing/issues/2919
 X   handled instead as an example
+X add warning message when a negative textSize() is used
+X   https://github.com/processing/processing/issues/3110
 
 _ dragging sketch window hides it
 _   https://github.com/processing/processing/issues/3092

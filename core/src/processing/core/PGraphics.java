@@ -4131,6 +4131,12 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#textFont(PFont)
    */
   public void textSize(float size) {
+    // https://github.com/processing/processing/issues/3110
+    if (size <= 0) {
+      System.err.println("textSize(" + size + ") ignored: " +
+                         "the text size must be larger than zero");
+      return;
+    }
     if (textFont == null) {
       defaultFontOrDeath("textSize", size);
     }
