@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.compiler.IProblem;
 
 import processing.app.*;
 import processing.app.Toolkit;
+import processing.app.contrib.AvailableContribution;
 import processing.app.contrib.ToolContribution;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
@@ -32,6 +33,7 @@ import processing.mode.java.debug.LineID;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.ErrorMarker;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
+import processing.mode.java.pdex.ImportStatement;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.Problem;
 import processing.mode.java.pdex.XQConsoleToggle;
@@ -1845,6 +1847,63 @@ public class JavaEditor extends Editor {
   public void prepareRun() {
     autoSave();
     super.prepareRun();
+    downloadImports();
+  }
+  
+  /**
+   * Downloads libraries that have been imported, that aren't available as a 
+   * LocalContribution, but that have an AvailableContribution associated with 
+   * them. 
+   */
+  protected void downloadImports() {
+    String importRegex = errorCheckerService.importRegexp;
+    String tabCode;
+    for (SketchCode sc : sketch.getCode()) {
+      if (sc.isExtension("pde")) {
+        tabCode = sc.getProgram();
+
+        String[][] pieces = PApplet.matchAll(tabCode, importRegex);
+        
+        if (pieces != null) {
+          ArrayList<String> importHeaders = new ArrayList<String>();
+          for (String[] importStatement : pieces) {
+            importHeaders.add(importStatement[2]);
+          }
+          ArrayList<String> installLibsHeaders = getUninstalledAvailableLib(importHeaders);
+          for (String s : installLibsHeaders)
+            System.out.println(s);
+        }
+      }
+    }
+  }
+  
+  /**
+   * Returns the name of the 
+   * @param importHeaders
+   */
+  private ArrayList<String> getUninstalledAvailableLib(ArrayList<String> importHeadersList) {
+    ArrayList<String> libList = new ArrayList<String>();
+    for (String importHeaders : importHeadersList) {
+      int dot = importHeaders.lastIndexOf('.');
+      String entry = (dot == -1) ? importHeaders : importHeaders.substring(0,
+          dot);
+
+      if (entry.startsWith("java.") || entry.startsWith("javax.")
+          || entry.startsWith("processing.")) {
+        continue;// null;
+      }
+
+      Library library = null;
+      try {
+        library = this.getMode().getLibrary(entry);
+        if (library == null)
+          libList.add(importHeaders);//System.out.println(importHeaders + "not found");
+      } catch (Exception e) {
+        // Not gonna happen (hopefully)
+        libList.add(importHeaders);//System.out.println(importHeaders + "not found");
+      }
+    }
+    return libList;
   }
 
   /**
