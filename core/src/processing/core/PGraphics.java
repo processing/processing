@@ -4133,6 +4133,9 @@ public class PGraphics extends PImage implements PConstants {
   public void textSize(float size) {
     // https://github.com/processing/processing/issues/3110
     if (size <= 0) {
+      // Using System.err instead of showWarning to avoid running out of
+      // memory with a bunch of textSize() variants (cause of this bug is
+      // usually something done with map() or in a loop).
       System.err.println("textSize(" + size + ") ignored: " +
                          "the text size must be larger than zero");
       return;
