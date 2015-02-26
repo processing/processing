@@ -169,19 +169,21 @@ public class FindReplace extends JFrame {
 
     ypos += fieldHeight + SMALL;
 
-    final int third = (fieldWidth - SMALL*2) / 3;
+    final int half = (fieldWidth - SMALL) / 2;
     ignoreCaseBox.setBounds(EDGE + labelDimension.width + SMALL,
                             ypos,
-                            third, fieldHeight);
+                            half, fieldHeight);
 
-    allTabsBox.setBounds(EDGE + labelDimension.width + SMALL + third + SMALL,
+    allTabsBox.setBounds(EDGE + labelDimension.width + SMALL + half + SMALL,
                          ypos,
-                         third, fieldHeight);
+                         half, fieldHeight);
+
+    ypos += fieldHeight + SMALL;
 
     //wrapAroundBox.setBounds(EDGE + labelDimension.width + SMALL + (fieldWidth-SMALL)/2 + SMALL,
-    wrapAroundBox.setBounds(EDGE + labelDimension.width + SMALL + third*2 + SMALL*2,
+    wrapAroundBox.setBounds(EDGE + labelDimension.width + SMALL,
                             ypos,
-                            third, fieldHeight);
+                            half, fieldHeight);
 
     ypos += fieldHeight + SMALL;
 
