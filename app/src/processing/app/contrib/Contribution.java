@@ -47,6 +47,7 @@ abstract public class Contribution {
   protected long lastUpdated;   //  1402805757
   protected int minRevision;    //  0
   protected int maxRevision;    //  227
+  protected List<String> specifiedImports; // pdf.export.*,pdf.convert.common.*
   
   
   // "Sound"
@@ -76,6 +77,37 @@ abstract public class Contribution {
     if (category != null) {
       for (String c : categories) {
         if (category.equalsIgnoreCase(c)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }  
+  
+  
+  // pdf.export.*,pdf.convert.common.*
+  protected List<String> getImports() {
+    return specifiedImports;
+  }
+  
+  
+  protected String getImportStr() {
+    if (specifiedImports == null || specifiedImports.isEmpty())
+      return "";
+    StringBuilder sb = new StringBuilder();
+    for (String importName : specifiedImports) {
+      sb.append(importName);
+      sb.append(',');
+    }
+    sb.deleteCharAt(sb.length()-1);  // delete last comma
+    return sb.toString();
+  }
+  
+  
+  protected boolean hasImport(String importName) {
+    if (specifiedImports != null && importName != null) {
+      for (String c : specifiedImports) {
+        if (importName.equalsIgnoreCase(c)) {
           return true;
         }
       }
@@ -227,5 +259,21 @@ abstract public class Contribution {
       return defaultCategory();
     }
     return outgoing;
+  }
+  
+  
+  /**
+   * @return the list of imports that this contribution (library) contains.
+   */
+  static List<String> parseImports(String importStr) {
+    List<String> outgoing = new ArrayList<String>();
+    
+    if (importStr != null) {
+      String[] importList = PApplet.trim(PApplet.split(importStr, ','));
+      for (String importName : importList) {
+          outgoing.add(importName);
+      }
+    }
+    return (outgoing.size() > 0) ? outgoing : null; 
   }
 }

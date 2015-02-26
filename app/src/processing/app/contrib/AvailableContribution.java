@@ -33,7 +33,7 @@ import processing.core.PApplet;
 /**
  * A class to hold information about a Contribution that can be downloaded. 
  */
-class AvailableContribution extends Contribution {
+public class AvailableContribution extends Contribution {
   protected final ContributionType type;   // Library, tool, etc.
   protected final String link;             // Direct link to download the file
 
@@ -44,6 +44,7 @@ class AvailableContribution extends Contribution {
     
     //category = ContributionListing.getCategory(params.get("category"));
     categories = parseCategories(params.get("category"));
+    specifiedImports = parseImports(params.get("imports"));
     name = params.get("name");
     authorList = params.get("authorList");
     url = params.get("url");
@@ -250,6 +251,20 @@ class AvailableContribution extends Contribution {
         sb.deleteCharAt(sb.length() - 1);
         category = sb.toString();
       }
+      
+      String specifiedImport = "";
+      List<String> importsList = parseImports(properties.get("imports")); 
+      if (importsList == null || importsList.isEmpty()) {
+        specifiedImport = getImportStr();
+      } else {
+        StringBuilder sbImport = new StringBuilder();
+        for (String it : specifiedImports) {
+          sbImport.append(it);
+          sbImport.append(',');
+        }
+        sbImport.deleteCharAt(sbImport.length() - 1);
+        specifiedImport = sbImport.toString();
+      }
 
       String authorList = properties.get("authorList");
       if (authorList == null || authorList.isEmpty()) {
@@ -336,6 +351,9 @@ class AvailableContribution extends Contribution {
         writer.println("lastUpdated=" + lastUpdated);
         writer.println("minRevision=" + minRev);
         writer.println("maxRevision=" + maxRev);
+        if (getType() == ContributionType.LIBRARY) {
+          writer.println("imports=" + specifiedImport);
+        }
         if (getType() == ContributionType.EXAMPLES) {
           writer.println("compatibleModesList=" + compatibleContribsList);
         }
