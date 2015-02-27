@@ -515,7 +515,13 @@ public class ContributionListing {
         ContributionType contribType = ContributionType.fromName(type);
         if (contribType == null) {
           System.err.println("Error in contribution listing file on line " + (start+1));
-          return outgoing;
+          // Scan forward for the next blank line
+          int end = ++start;
+          while (end < lines.length && !lines[end].equals("")) {
+            end++;
+          }
+          start = end + 1;
+          continue;
         }
 
         // Scan forward for the next blank line
