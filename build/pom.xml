@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.processing</groupId>
     <artifactId>processing-complete</artifactId>
-    <version>2.2.1</version>
+    <version>3.0a5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
 
@@ -144,7 +144,7 @@
         <module>../java/libraries/net/</module>
         <module>../java/libraries/pdf/</module>
         <module>../java/libraries/serial/</module>
-        <module>../java/libraries/video/</module>
+        <module>../../processing-video/</module>
     </modules>
     
     

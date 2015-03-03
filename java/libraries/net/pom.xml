@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.processing</groupId>
         <artifactId>processing-complete</artifactId>
-        <version>2.2.1</version>
-        <relativePath>../build/pom.xml</relativePath>
+        <version>3.0a5-SNAPSHOT</version>
+        <relativePath>../../../build/pom.xml</relativePath>
     </parent>
     
     <groupId>org.processing</groupId>
     <artifactId>net</artifactId>
-    <version>2.2.1</version>
+    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <name>Processing net library</name>
@@ -24,7 +24,7 @@
         <dependency>
             <groupId>org.processing</groupId>
             <artifactId>core</artifactId>
-            <version>2.2.1</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
                                 
