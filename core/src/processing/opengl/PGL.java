@@ -402,7 +402,7 @@ public abstract class PGL {
 
 
   protected int getDefaultDrawBuffer()  {
-    return fboLayerInUse ? COLOR_ATTACHMENT0 : FRONT;
+    return fboLayerInUse ? COLOR_ATTACHMENT0 : BACK;
   }
 
 
