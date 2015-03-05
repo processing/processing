@@ -1413,7 +1413,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     
     public void actionPerformed(ActionEvent e) {
-      System.out.println(e.getActionCommand());
       handleCut();
     }
     
