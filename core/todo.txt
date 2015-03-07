@@ -17,6 +17,11 @@ _   https://github.com/processing/processing/issues/3092
 _ textAlign(RIGHT) including spaces at the end of each line
 _   https://github.com/processing/processing/issues/3028
 
+_ static mode (no setup() / draw()) broken
+_   https://github.com/processing/processing/issues/3130
+_ Sketch window dimensions off in Java2D
+_   https://github.com/processing/processing/issues/3129
+
 earlier
 X size(640,360 , P3D) doesn't work properly
 X   https://github.com/processing/processing/issues/2924
@@ -31,6 +36,10 @@ data
 X Add exceptions for FloatList and IntList when using add() w/o enough elements
 X   https://github.com/processing/processing/pull/3053
 X   https://github.com/processing/processing/issues/3052
+X fixes for table
+X   ensure # of columns and titles lines up with Table(iterator) constructor
+X   add table header to html output
+X   remove extra spaces from html output
 
 applet/sketch
 X remove isGL(), is2D(), is3D(), displayable() from PApplet
