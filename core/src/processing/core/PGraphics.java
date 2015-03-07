@@ -7134,15 +7134,15 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#stroke(float)
    */
   public void colorMode(int mode) {
-    if(colorMode == RGB && mode == HSB){
+    if(colorMode == RGB && mode == HSB) {
       float hsbvals[] = new float[3];
       Color.RGBtoHSB((int)colorModeX, (int)colorModeY, (int)colorModeZ, hsbvals);
       colorMode(mode, hsbvals[0] * 360, hsbvals[1] * 100, hsbvals[2] * 100, colorModeA);
-    } else if(colorMode == HSB && mode == RGB){
+    } else if(colorMode == HSB && mode == RGB) {
       float rgbvals[] = new float[3];
       Color.getHSBColor(colorModeX / 360, colorModeY / 100, colorModeZ / 100).getRGBColorComponents(rgbvals);
       colorMode(mode, rgbvals[0] * 255, rgbvals[1] * 255, rgbvals[2] * 255, colorModeA);
-    } else{
+    } else {
       colorMode(mode, colorModeX, colorModeY, colorModeZ, colorModeA);
     }
   }
