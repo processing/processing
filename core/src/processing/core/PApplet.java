@@ -5370,7 +5370,12 @@ public class PApplet implements PConstants {
           return dictionary.typedParse(createInput(filename), optionStr);
         }
       }
-      return new Table(createInput(filename), optionStr);
+      InputStream input = createInput(filename);
+      if (input == null) {
+        System.err.println(filename + " does not exist or could not be read");
+        return null;
+      }
+      return new Table(input, optionStr);
 
     } catch (IOException e) {
       e.printStackTrace();
