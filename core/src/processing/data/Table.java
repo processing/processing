@@ -1117,8 +1117,11 @@ public class Table {
 
 
   protected void writeHTML(PrintWriter writer) {
-    writer.println("<html>");
+    writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 3.2//EN\">");
+//    writer.println("<!DOCTYPE html>");
+//    writer.println("<meta charset=\"utf-8\">");
 
+    writer.println("<html>");
     writer.println("<head>");
     writer.println("  <meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\" />");
     writer.println("</head>");
@@ -1163,16 +1166,15 @@ public class Table {
         writer.print("&gt;");
       } else if (c == '&') {
         writer.print("&amp;");
-      } else if (c == '\'') {
-        writer.print("&apos;");
+//      } else if (c == '\'') {  // only in XML
+//        writer.print("&apos;");
       } else if (c == '"') {
         writer.print("&quot;");
 
-      // not necessary with UTF-8?
-//      } else if (c < 32 || c > 127) {
-//        writer.print("&#");
-//        writer.print((int) c);
-//        writer.print(';');
+      } else if (c < 32 || c > 127) {  // keep in ASCII or Tidy complains
+        writer.print("&#");
+        writer.print((int) c);
+        writer.print(';');
 
       } else {
         writer.print(c);
