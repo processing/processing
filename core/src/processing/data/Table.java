@@ -1133,7 +1133,9 @@ public class Table {
       writer.println("  <tr>");
       for (String entry : getColumnTitles()) {
         writer.print("      <th>");
-        writeEntryHTML(writer, entry);
+        if (entry != null) {
+          writeEntryHTML(writer, entry);
+        }
         writer.println("</th>");
       }
       writer.println("  </tr>");
@@ -1144,7 +1146,14 @@ public class Table {
       for (int col = 0; col < getColumnCount(); col++) {
         String entry = getString(row, col);
         writer.print("      <td>");
-        writeEntryHTML(writer, entry);
+        if (entry != null) {
+          // probably not a great idea to mess w/ the export
+//          if (entry.startsWith("<") && entry.endsWith(">")) {
+//            writer.print(entry);
+//          } else {
+          writeEntryHTML(writer, entry);
+//          }
+        }
         writer.println("</td>");
       }
       writer.println("    </tr>");
