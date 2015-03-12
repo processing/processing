@@ -25,6 +25,7 @@ We're removing `Applet` as the base class for `PApplet` and redoing the entire r
 
 #### Retina/HiDPI/2x drawing and displays
 * Documentation changes [here](https://github.com/processing/processing-docs/issues/170)
+
 ## The Mess
 
 The rest of this document are my notes while I'm making changes.
