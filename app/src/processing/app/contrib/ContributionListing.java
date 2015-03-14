@@ -43,7 +43,7 @@ public class ContributionListing {
   ArrayList<ContributionChangeListener> listeners;
   ArrayList<AvailableContribution> advertisedContributions;
   Map<String, List<Contribution>> librariesByCategory;
-  Map<String, Contribution> librariesByImportHeader;
+  public Map<String, Contribution> librariesByImportHeader;
   ArrayList<Contribution> allContributions;
   boolean hasDownloadedLatestList;
   boolean hasListDownloadFailed;
@@ -66,7 +66,7 @@ public class ContributionListing {
   }
 
 
-  static ContributionListing getInstance() {
+  public static ContributionListing getInstance() {
     if (singleInstance == null) {
       synchronized (ContributionListing.class) {
         if (singleInstance == null) {

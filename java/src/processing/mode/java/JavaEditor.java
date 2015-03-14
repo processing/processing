@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +24,8 @@ import org.eclipse.jdt.core.compiler.IProblem;
 import processing.app.*;
 import processing.app.Toolkit;
 import processing.app.contrib.AvailableContribution;
+import processing.app.contrib.Contribution;
+import processing.app.contrib.ContributionListing;
 import processing.app.contrib.ToolContribution;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
@@ -1869,20 +1872,22 @@ public class JavaEditor extends Editor {
           for (String[] importStatement : pieces) {
             importHeaders.add(importStatement[2]);
           }
-          ArrayList<String> installLibsHeaders = getUninstalledAvailableLib(importHeaders);
-          for (String s : installLibsHeaders)
-            System.out.println(s);
+          ArrayList<Contribution> installLibsHeaders = getNotInstalledAvailableLibs(importHeaders);
+          for (Contribution c : installLibsHeaders)
+            System.out.println(c.getName());
         }
       }
     }
   }
   
   /**
-   * Returns the name of the 
+   * Returns a list of AvailableContributions of those libraries that the user wants imported, 
+   * but that are not installed. 
    * @param importHeaders
    */
-  private ArrayList<String> getUninstalledAvailableLib(ArrayList<String> importHeadersList) {
-    ArrayList<String> libList = new ArrayList<String>();
+  private ArrayList<Contribution> getNotInstalledAvailableLibs(ArrayList<String> importHeadersList) {
+    Map<String, Contribution> importMap = ContributionListing.getInstance().librariesByImportHeader;
+    ArrayList<Contribution> libList = new ArrayList<Contribution>();
     for (String importHeaders : importHeadersList) {
       int dot = importHeaders.lastIndexOf('.');
       String entry = (dot == -1) ? importHeaders : importHeaders.substring(0,
@@ -1896,11 +1901,16 @@ public class JavaEditor extends Editor {
       Library library = null;
       try {
         library = this.getMode().getLibrary(entry);
-        if (library == null)
-          libList.add(importHeaders);//System.out.println(importHeaders + "not found");
+        if (library == null) {
+          Contribution c = importMap.get(importHeaders);
+          if (c!=null)
+            libList.add(c);//System.out.println(importHeaders + "not found");
+        }
       } catch (Exception e) {
         // Not gonna happen (hopefully)
-        libList.add(importHeaders);//System.out.println(importHeaders + "not found");
+        Contribution c = importMap.get(importHeaders);
+        if (c!=null)
+          libList.add(c);//System.out.println(importHeaders + "not found");
       }
     }
     return libList;
