@@ -365,7 +365,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     
   }
 
-
   protected ArrayList<ToolContribution> getCoreTools() {
     return coreTools;
   }
@@ -610,7 +609,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
    */
   protected void applyPreferences() {
     // Update fonts and other items controllable from the prefs
-    textarea.getPainter().updateAppearance();
+    TextAreaPainter tap=textarea.getPainter();
+    tap.setBackground( Preferences.getColor("run.present.bgcolor"));
+   
     textarea.repaint();
     
     console.updateAppearance();

@@ -21,8 +21,6 @@
 
 package processing.app;
 
-import processing.core.*;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -30,12 +28,37 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.PlainDocument;
+
+import processing.core.PApplet;
 
 
 /**
@@ -50,7 +73,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 
   ColorRange range;
   ColorSlider slider;
-
+  
   JTextField hueField, saturationField, brightnessField;
   JTextField redField, greenField, blueField;
 
@@ -93,6 +116,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     box.add(Box.createHorizontalStrut(10));
 
     box.add(createColorFields(buttonName, buttonListener));
+    
 //    System.out.println("1: " + hexField.getInsets());
 
     box.add(Box.createHorizontalStrut(10));
@@ -142,8 +166,9 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 
   
   //hexField.setText("#FFFFFF");
-
   
+  
+
   public void show() {
     window.setVisible(true);
     window.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
@@ -439,7 +464,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     row.add(button);
     row.add(Box.createHorizontalGlue());
     box.add(row);
-    
+       
     row = Box.createHorizontalBox();
     if (Base.isMacOS()) {
       row.add(Box.createHorizontalStrut(11));
