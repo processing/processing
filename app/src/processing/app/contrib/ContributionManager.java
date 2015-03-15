@@ -197,7 +197,10 @@ public class ContributionManager {
 
   /**
    * Non-blocking call to download and install a contribution in a new thread.
-   *
+   * Used when information about the progress of the download and install
+   * procedure is not of importance, such as if a contribution has to be 
+   * installed at startup time.
+   * 
    * @param url
    *          Direct link to the contribution.
    * @param ad
@@ -291,6 +294,92 @@ public class ContributionManager {
 
   }
 
+
+  /**
+   * Blocking call to download and install a set of libraries. Used when a list
+   * of libraries have to be installed while forcing the user to not modify
+   * anything and providing feedback via the console status area, such as when
+   * the user tries to run a sketch that imports uninstaled libraries.
+   *
+   * @param aList
+   *          The list of AvailableContributions to be downloaded and installed.
+   */
+  public static void downloadAndInstallOnImport(final Base base,
+                                                final ArrayList<AvailableContribution> aList) {
+
+    // To avoid the user from modifying stuff, since this function is only called
+    // during pre-processing
+    base.getActiveEditor().getTextArea().setEditable(false);
+    base.getActiveEditor().getConsole().clear();
+    
+    ArrayList<String> installedLibList = new ArrayList<String>();
+
+    for (AvailableContribution ad : aList) {
+      if (ad.getType() != ContributionType.LIBRARY)
+        continue;
+      try {
+        URL url = new URL(ad.link);
+        String filename = url.getFile();
+        filename = filename.substring(filename.lastIndexOf('/') + 1);
+        try {
+
+          File contribZip = File.createTempFile("download", filename);
+          contribZip.setWritable(true);
+
+          try {
+            // Use the console to let the user know what's happening
+            // The slightly complex if-else is required to let the user know when
+            // one install is completed and the next download has begun without 
+            // interfereing with occur status messages that may arise in the meanwhile
+            String statusMsg = base.getActiveEditor().getStatusMessage();
+            if (statusMsg.contains("has been installed"))
+              base.getActiveEditor().statusNotice(statusMsg + " "
+                                                    + "Now downloading "
+                                                    + ad.name);
+            else
+              base.getActiveEditor().statusNotice("Downloading " + ad.name
+                                                    + "...");
+
+            download(url, contribZip, null);
+
+            base.getActiveEditor()
+              .statusNotice("Installing " + ad.name + "...");
+            LocalContribution contribution = ad.install(base, contribZip,
+                                                        false, null);
+
+            if (contribution != null) {
+              contribListing.replaceContribution(ad, contribution);
+              if (base.getActiveEditor() != null)
+                refreshInstalled(base.getActiveEditor());
+            }
+
+            contribZip.delete();
+
+            installedLibList.add(ad.name);
+            base.getActiveEditor().statusNotice(ad.name
+                                                  + " has been installed.");
+
+          } catch (Exception e) {
+            System.out.println("Error during download and install of "
+              + ad.getName());
+          }
+        } catch (IOException e) {
+          System.err
+            .println("Could not write to temporary directory during download and install of "
+              + ad.getName());
+        }
+      } catch (MalformedURLException e1) {
+        System.err.println("Error: The library " + ad.getName()
+          + " has a weird looking download link.");
+      }
+    }
+    base.getActiveEditor().getTextArea().setEditable(true);
+    base.getActiveEditor().statusEmpty();
+    System.out.println("The following libraries have been installed:");
+    for (String l : installedLibList) {
+      System.out.println(l);
+    }
+  }
 
   static public void refreshInstalled(Editor e) {
 

@@ -26,6 +26,7 @@ import processing.app.Toolkit;
 import processing.app.contrib.AvailableContribution;
 import processing.app.contrib.Contribution;
 import processing.app.contrib.ContributionListing;
+import processing.app.contrib.ContributionManager;
 import processing.app.contrib.ToolContribution;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
@@ -1872,9 +1873,11 @@ public class JavaEditor extends Editor {
           for (String[] importStatement : pieces) {
             importHeaders.add(importStatement[2]);
           }
-          ArrayList<Contribution> installLibsHeaders = getNotInstalledAvailableLibs(importHeaders);
-          for (Contribution c : installLibsHeaders)
-            System.out.println(c.getName());
+          ArrayList<AvailableContribution> installLibsHeaders = getNotInstalledAvailableLibs(importHeaders);
+          if (!installLibsHeaders.isEmpty()) {
+            ContributionManager.downloadAndInstallOnImport(base,
+                installLibsHeaders);
+          }
         }
       }
     }
@@ -1885,9 +1888,9 @@ public class JavaEditor extends Editor {
    * but that are not installed. 
    * @param importHeaders
    */
-  private ArrayList<Contribution> getNotInstalledAvailableLibs(ArrayList<String> importHeadersList) {
+  private ArrayList<AvailableContribution> getNotInstalledAvailableLibs(ArrayList<String> importHeadersList) {
     Map<String, Contribution> importMap = ContributionListing.getInstance().librariesByImportHeader;
-    ArrayList<Contribution> libList = new ArrayList<Contribution>();
+    ArrayList<AvailableContribution> libList = new ArrayList<AvailableContribution>();
     for (String importHeaders : importHeadersList) {
       int dot = importHeaders.lastIndexOf('.');
       String entry = (dot == -1) ? importHeaders : importHeaders.substring(0,
@@ -1903,14 +1906,14 @@ public class JavaEditor extends Editor {
         library = this.getMode().getLibrary(entry);
         if (library == null) {
           Contribution c = importMap.get(importHeaders);
-          if (c!=null)
-            libList.add(c);//System.out.println(importHeaders + "not found");
+          if (c!=null && c instanceof AvailableContribution)
+            libList.add((AvailableContribution)c);//System.out.println(importHeaders + "not found");
         }
       } catch (Exception e) {
         // Not gonna happen (hopefully)
         Contribution c = importMap.get(importHeaders);
-        if (c!=null)
-          libList.add(c);//System.out.println(importHeaders + "not found");
+        if (c!=null && c instanceof AvailableContribution)
+          libList.add((AvailableContribution)c);//System.out.println(importHeaders + "not found");
       }
     }
     return libList;
