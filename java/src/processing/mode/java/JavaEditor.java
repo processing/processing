@@ -1875,8 +1875,19 @@ public class JavaEditor extends Editor {
           }
           ArrayList<AvailableContribution> installLibsHeaders = getNotInstalledAvailableLibs(importHeaders);
           if (!installLibsHeaders.isEmpty()) {
-            ContributionManager.downloadAndInstallOnImport(base,
-                installLibsHeaders);
+            StringBuilder libList = new StringBuilder("Would you like to install them now?");
+            for (AvailableContribution ac : installLibsHeaders) {
+              libList.append("\n  • " + ac.getName());
+            }
+            int option = Base
+                .showYesNoQuestion(this, "Missing Libraries Available",
+                                   "The following imported libraries  are available for download, but have not been installed.",
+                                   libList.toString());
+
+              if (option == JOptionPane.YES_OPTION) {
+                ContributionManager.downloadAndInstallOnImport(base,
+                    installLibsHeaders);
+              }
           }
         }
       }

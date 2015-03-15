@@ -334,8 +334,8 @@ public class ContributionManager {
             String statusMsg = base.getActiveEditor().getStatusMessage();
             if (statusMsg.contains("has been installed"))
               base.getActiveEditor().statusNotice(statusMsg + " "
-                                                    + "Now downloading "
-                                                    + ad.name);
+                                                    + "Downloading "
+                                                    + ad.name + "...");
             else
               base.getActiveEditor().statusNotice("Downloading " + ad.name
                                                     + "...");
@@ -377,7 +377,7 @@ public class ContributionManager {
     base.getActiveEditor().statusEmpty();
     System.out.println("The following libraries have been installed:");
     for (String l : installedLibList) {
-      System.out.println(l);
+      System.out.println("  • " + l);
     }
   }
 
