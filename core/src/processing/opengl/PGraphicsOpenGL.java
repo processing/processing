@@ -2234,6 +2234,21 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  @Override
+  public void attrib(String name, float... values) {
+  }
+
+
+  @Override
+  public void attrib(String name, int... values) {
+  }
+
+
+  @Override
+  public void attrib(String name, boolean... values) {
+  }
+
+
   protected void vertexImpl(float x, float y, float z, float u, float v) {
     boolean textured = textureImage != null;
     int fcolor = 0x00;

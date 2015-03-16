@@ -1210,6 +1210,22 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
+
+  public void attrib(String name, float... values) {
+    showMissingWarning("attrib");
+  }
+
+
+  public void attrib(String name, int... values) {
+    showMissingWarning("attrib");
+  }
+
+
+  public void attrib(String name, boolean... values) {
+    showMissingWarning("attrib");
+  }
+
+
   /**
    * ( begin auto-generated from textureMode.xml )
    *
@@ -1622,7 +1638,6 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void endShape(int mode) {
   }
-
 
 
   //////////////////////////////////////////////////////////////
