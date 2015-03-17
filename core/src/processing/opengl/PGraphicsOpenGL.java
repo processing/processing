@@ -95,6 +95,10 @@ public class PGraphicsOpenGL extends PGraphics {
   protected boolean pointBuffersCreated = false;
   protected int pointBuffersContext;
 
+  // Generic vertex attributes
+  protected HashMap<String, VertexAttribute> attribs;
+
+
   static protected final int INIT_VERTEX_BUFFER_SIZE  = 256;
   static protected final int INIT_INDEX_BUFFER_SIZE   = 512;
 
@@ -529,6 +533,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     viewport = PGL.allocateIntBuffer(4);
+
+    attribs = new HashMap<String, VertexAttribute >();
 
     inGeo = newInGeometry(this, IMMEDIATE);
     tessGeo = newTessGeometry(this, IMMEDIATE);
@@ -1292,6 +1298,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
       polyBuffersCreated = true;
     }
+
+    boolean created = false;
+    for (String name: attribs.keySet()) {
+      VertexAttribute attrib = attribs.get(name);
+      if (!attrib.bufferCreated() || polyBuffersContextIsOutdated()) {
+        attrib.createBuffer(pgl);
+        created = true;
+      }
+    }
+    if (created) pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
   }
 
 
@@ -1334,6 +1350,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.bufferData(PGL.ARRAY_BUFFER, sizef,
                      tessGeo.polyShininessBuffer, PGL.STATIC_DRAW);
     }
+
     if (lit || needNormals) {
       tessGeo.updatePolyNormalsBuffer();
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyNormal);
@@ -1346,6 +1363,14 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyTexcoord);
       pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef,
                      tessGeo.polyTexCoordsBuffer, PGL.STATIC_DRAW);
+    }
+
+    for (String name: attribs.keySet()) {
+      VertexAttribute attrib = attribs.get(name);
+      tessGeo.updateAttribBuffer(name);
+      pgl.bindBuffer(PGL.ARRAY_BUFFER, attrib.glName);
+      pgl.bufferData(PGL.ARRAY_BUFFER, attrib.sizeInBytes(size),
+                     tessGeo.attribBuffers.get(name), PGL.STATIC_DRAW);
     }
 
     tessGeo.updatePolyIndicesBuffer();
@@ -1406,6 +1431,14 @@ public class PGraphicsOpenGL extends PGraphics {
     if (glPolyShininess != 0) {
       PGraphicsOpenGL.finalizeVertexBufferObject(glPolyShininess, polyBuffersContext);
       glPolyShininess = 0;
+    }
+
+    for (String name: attribs.keySet()) {
+      VertexAttribute attrib = attribs.get(name);
+      if (attrib.glName != 0) {
+        PGraphicsOpenGL.finalizeVertexBufferObject(attrib.glName, polyBuffersContext);
+        attrib.glName = 0;
+      }
     }
 
     if (glPolyIndex != 0) {
@@ -2236,16 +2269,40 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void attrib(String name, float... values) {
+    VertexAttribute attrib = attribImpl(name, PGL.FLOAT, values.length);
+    if (attrib != null) attrib.set(values);
   }
 
 
   @Override
   public void attrib(String name, int... values) {
+    VertexAttribute attrib = attribImpl(name, PGL.INT, values.length);
+    if (attrib != null) attrib.set(values);
   }
 
 
   @Override
   public void attrib(String name, boolean... values) {
+    VertexAttribute attrib = attribImpl(name, PGL.BOOL, values.length);
+    if (attrib != null) attrib.set(values);
+  }
+
+
+  protected VertexAttribute attribImpl(String name, int type, int size) {
+    if (4 < size) {
+      PGraphics.showWarning("Vertex attributes cannot have more than 4 values");
+      return null;
+    }
+    VertexAttribute attrib = attribs.get(name);
+    if (attrib == null) {
+      attrib = new VertexAttribute(name, PGL.FLOAT, size);
+      attribs.put(name, attrib);
+    }
+    if (attrib.size != size) {
+      PGraphics.showWarning("New value for vertex attribute has wrong number of values");
+      return null;
+    }
+    return attrib;
   }
 
 
@@ -2526,6 +2583,14 @@ public class PGraphicsOpenGL extends PGraphics {
           shader.setTexcoordAttribute(glPolyTexcoord, 2, PGL.FLOAT, 0,
                                       2 * voffset * PGL.SIZEOF_FLOAT);
           shader.setTexture(tex);
+        }
+
+        for (String name: attribs.keySet()) {
+          VertexAttribute attrib = attribs.get(name);
+          attrib.updateLoc(shader);
+          shader.setAttributeVBO(attrib.glLoc, attrib.glName,
+                                 attrib.size, attrib.type,
+                                 false, 0, attrib.sizeInBytes(voffset));
         }
 
         shader.draw(glPolyIndex, icount, ioffset);
@@ -6930,6 +6995,90 @@ public class PGraphicsOpenGL extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
+  // Generic vertex attributes.
+
+
+  static protected class VertexAttribute {
+    static final int POSITIONAL = 0;
+    static final int NORMAL     = 1;
+    static final int OTHER      = 2;
+
+    String name;
+    int kind; // POSITIONAL, NORMAL, OTHER
+    int type; // GL_INT, GL_FLOAT, GL_BOOL
+    int size; // number of elements (1, 2, 3, or 4)
+    int elementSize;
+    int glName;
+    int glLoc;
+
+    float[] fvalues;
+    int[] ivalues;
+    boolean[] bvalues;
+
+    VertexAttribute(String name, int type, int size) {
+      this.name = name;
+      this.type = type;
+      this.size = size;
+
+      if (name.indexOf("pos") == 0) {
+        kind = POSITIONAL;
+      } else if (name.indexOf("norm") == 0) {
+        kind = NORMAL;
+      } else {
+        kind = OTHER;
+      }
+
+      if (type == PGL.FLOAT) {
+        elementSize = PGL.SIZEOF_FLOAT;
+        fvalues = new float[size];
+      } else if (type == PGL.INT) {
+        elementSize = PGL.SIZEOF_INT;
+        ivalues = new int[size];
+      } else if (type == PGL.BOOL) {
+        elementSize = PGL.SIZEOF_INT;
+        bvalues = new boolean[size];
+      }
+
+      glName = 0;
+      glLoc = -1;
+    }
+
+    boolean bufferCreated() {
+      return 0 < glName;
+    }
+
+    void createBuffer(PGL pgl) {
+      int ctx = pgl.getCurrentContext();
+      glName = createVertexBufferObject(ctx, pgl);
+      pgl.bindBuffer(PGL.ARRAY_BUFFER, glName);
+      pgl.bufferData(PGL.ARRAY_BUFFER, size * INIT_VERTEX_BUFFER_SIZE * elementSize,
+                     null, PGL.STATIC_DRAW);
+    }
+
+    void updateLoc(PShader shader) {
+      if (glLoc == -1) glLoc = shader.getAttributeLoc(name);
+    }
+
+    int sizeInBytes(int length) {
+      return length * size * elementSize;
+    }
+
+    void set(float[] values) {
+      PApplet.arrayCopy(values, 0, fvalues, 0, size);
+    }
+
+    void set(int[] values) {
+      PApplet.arrayCopy(values, 0, ivalues, 0, size);
+    }
+
+    void set(boolean[] values) {
+      PApplet.arrayCopy(values, 0, bvalues, 0, size);
+    }
+  }
+
+
+  //////////////////////////////////////////////////////////////
+
   // Input (raw) and Tessellated geometry, tessellator.
 
 
@@ -7202,6 +7351,12 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] emissive;
     float[] shininess;
 
+    // Generic attributes
+    HashMap<String, int[]> iattribs;
+    HashMap<String, float[]> fattribs;
+    HashMap<String, boolean[]> battribs;
+
+
     // Internally used by the addVertex() methods.
     int fillColor;
     int strokeColor;
@@ -7244,6 +7399,9 @@ public class PGraphicsOpenGL extends PGraphics {
       emissive = new int[PGL.DEFAULT_IN_VERTICES];
       shininess = new float[PGL.DEFAULT_IN_VERTICES];
       edges = new int[PGL.DEFAULT_IN_EDGES][3];
+      iattribs = new HashMap<String, int[]>();
+      fattribs = new HashMap<String, float[]>();
+      battribs = new HashMap<String, boolean[]>();
 
       clear();
     }
@@ -7262,6 +7420,7 @@ public class PGraphicsOpenGL extends PGraphics {
         expandSpecular(newSize);
         expandEmissive(newSize);
         expandShininess(newSize);
+        expandAttribs(newSize);
       }
     }
 
@@ -7442,6 +7601,21 @@ public class PGraphicsOpenGL extends PGraphics {
       shininess = temp;
     }
 
+    void expandAttribs(int n) {
+      for (String name: iattribs.keySet()) {
+        expandIntAttrib(name, n);
+      }
+    }
+
+    void expandIntAttrib(String name, int n) {
+      int[] attrib = iattribs.get(name);
+      int temp[] = new int[n];
+      PApplet.arrayCopy(attrib, 0, temp, 0, vertexCount);
+      iattribs.put(name, temp);
+    }
+
+
+
     void expandCodes(int n) {
       int temp[] = new int[n];
       PApplet.arrayCopy(codes, 0, temp, 0, codeCount);
@@ -7470,6 +7644,7 @@ public class PGraphicsOpenGL extends PGraphics {
         trimSpecular();
         trimEmissive();
         trimShininess();
+        trimAttribs();
       }
 
       if (0 < codeCount && codeCount < codes.length) {
@@ -7551,6 +7726,10 @@ public class PGraphicsOpenGL extends PGraphics {
       int temp[][] = new int[edgeCount][3];
       PApplet.arrayCopy(edges, 0, temp, 0, edgeCount);
       edges = temp;
+    }
+
+    void trimAttribs() {
+
     }
 
     // -----------------------------------------------------------------
@@ -8519,6 +8698,9 @@ public class PGraphicsOpenGL extends PGraphics {
     IntBuffer polyEmissiveBuffer;
     FloatBuffer polyShininessBuffer;
 
+    // Generic attributes
+    HashMap<String, Buffer> attribBuffers;
+
     int polyIndexCount;
     int firstPolyIndex;
     int lastPolyIndex;
@@ -8924,6 +9106,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected void updatePolyShininessBuffer(int offset, int size) {
       PGL.updateFloatBuffer(polyShininessBuffer, polyShininess, offset, size);
+    }
+
+    protected void updateAttribBuffer(String name) {
+      updateAttribBuffer(name, 0, polyVertexCount);
+    }
+
+    protected void updateAttribBuffer(String name, int offset, int size) {
+      // TODO
     }
 
     protected void updatePolyIndicesBuffer() {
