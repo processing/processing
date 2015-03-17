@@ -41,7 +41,7 @@ public interface PSurface {
   // Background default needs to be different from the default value in
   // PGraphics.backgroundColor, otherwise size(100, 100) bg spills over.
   // https://github.com/processing/processing/issues/2297
-  static final Color WINDOW_BGCOLOR = new Color(0x00, 0xAA, 0xFF);
+  static final Color WINDOW_BGCOLOR = new Color(0xAA, 0xAA, 0xAA);
 
   // renderer that doesn't draw to the screen
   public void initOffscreen();
