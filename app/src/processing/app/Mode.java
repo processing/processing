@@ -23,30 +23,87 @@
 
 package processing.app;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.plaf.basic.BasicTreeUI;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import processing.app.contrib.ContributionType;
 import processing.app.contrib.ExamplesContribution;
-import processing.app.syntax.*;
+import processing.app.syntax.PdeKeywords;
+import processing.app.syntax.SyntaxStyle;
+import processing.app.syntax.TokenMarker;
 import processing.core.PApplet;
 import processing.core.PConstants;
 
 
 public abstract class Mode {
   protected Base base;
+  
+  JTree tr;
+  JScrollPane treePane;
+  DefaultTreeModel model;
+  DefaultMutableTreeNode n;
 
   protected File folder;
 
@@ -1116,8 +1173,11 @@ public abstract class Mode {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  
+  
   public DefaultMutableTreeNode buildSketchbookTree(){
     DefaultMutableTreeNode sbNode = new DefaultMutableTreeNode(Language.text("sketchbook.tree"));
+   // System.out.println(Language.text("sketchbook.tree"));
     try {
       base.addSketches(sbNode, Base.getSketchbookFolder());
     } catch (IOException e) {
@@ -1126,11 +1186,46 @@ public abstract class Mode {
     return sbNode;
   }
   
+  
+  
   protected JFrame sketchbookFrame;
+ 
+  /**Function for rebuilding the tree in case user presses SPACE or
+  *  Sketchbook Folder is changed in Preferences. Also this helps if
+  *  a sketch is deleted from this folder not by means of Processing application window
+  *  but externally. The user can press SPACE to see changes
+  **/
+  public void rebuildTree()
+  {   
+    DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+    root.removeAllChildren();
+     try {
+       base.addSketches(root, Base.getSketchbookFolder());
+       model.reload(root);
+     } catch (IOException e) {
+       e.printStackTrace();
+     }
+  }
+  
+  /**Function to add a sketch in the tree in case the sketch is saved.
+    *Called from UpdateInternal in Base 
+    **/
+  public void updateTree(String sketchName, File sketchFolder)
+  {
+    
+    File f=new File(sketchFolder.getAbsolutePath()+"\\"+sketchName+".pde");
+      DefaultMutableTreeNode root=(DefaultMutableTreeNode)model.getRoot();
+      SketchReference sk=new SketchReference(sketchName,f);
+      
+      DefaultMutableTreeNode node=new DefaultMutableTreeNode(sk);
+      root.add(node);
+      model.reload(root);
+      
+  }
   
   public void showSketchbookFrame() {
     if (sketchbookFrame == null) {
-      sketchbookFrame = new JFrame(Language.text("sketchbook"));
+      sketchbookFrame = new JFrame(Language.text("sketchbook")); 
       Toolkit.setIcon(sketchbookFrame);
       Toolkit.registerWindowCloseKeys(sketchbookFrame.getRootPane(),
                                       new ActionListener() {
@@ -1138,13 +1233,19 @@ public abstract class Mode {
                                           sketchbookFrame.setVisible(false);
                                         }
                                       });
-
-      final JTree tree = new JTree(buildSketchbookTree());
+     
+     sketchbookFrame.getContentPane().setLayout(new BorderLayout());
+     DefaultMutableTreeNode root=buildSketchbookTree();
+     model=new DefaultTreeModel(root);
+      
+     final JTree tree = new JTree(model);
       tree.getSelectionModel()
         .setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+      
       tree.setShowsRootHandles(true);
       tree.expandRow(0);
       tree.setRootVisible(false);
+      tr=tree;
 
       tree.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
@@ -1162,14 +1263,14 @@ public abstract class Mode {
           }
         }
       });
-
+     
       tree.addKeyListener(new KeyAdapter() {
         public void keyPressed(KeyEvent e) {
           if (e.getKeyCode() == KeyEvent.VK_ESCAPE) { // doesn't fire keyTyped()
             sketchbookFrame.setVisible(false);
           }
         }
-
+        
         public void keyTyped(KeyEvent e) {
           if (e.getKeyChar() == KeyEvent.VK_ENTER) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
@@ -1179,22 +1280,27 @@ public abstract class Mode {
               base.handleOpen(sketch.getPath());
             }
           }
-        }
+          if (e.getKeyChar() == KeyEvent.VK_SPACE) {        
+           rebuildTree();           
+          }         
+        }     
       });
-
+          
       tree.setBorder(new EmptyBorder(5, 5, 5, 5));
       if (Base.isMacOS()) {
         tree.setToggleClickCount(2);
       } else {
         tree.setToggleClickCount(1);
       }
-      JScrollPane treePane = new JScrollPane(tree);
+      treePane = new JScrollPane(tree);
       treePane.setPreferredSize(new Dimension(250, 450));
       treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
-      sketchbookFrame.getContentPane().add(treePane);
+      JLabel refreshLabel=new JLabel("Press Space to REFRESH");
+      sketchbookFrame.getContentPane().add(refreshLabel, BorderLayout.SOUTH);
+      sketchbookFrame.getContentPane().add(treePane, BorderLayout.CENTER);
       sketchbookFrame.pack();
     }
-
+    
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {

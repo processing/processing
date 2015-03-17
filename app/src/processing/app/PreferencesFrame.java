@@ -677,7 +677,7 @@ public class PreferencesFrame {
     String oldPath = Preferences.getSketchbookPath();
     String newPath = sketchbookLocationField.getText();
     if (!newPath.equals(oldPath)) {
-      base.setSketchbookFolder(new File(newPath));
+      { base.setSketchbookFolder(new File(newPath)); base.getNextMode().rebuildTree(); }    
     }
 
 //    setBoolean("editor.external", externalEditorBox.isSelected());
