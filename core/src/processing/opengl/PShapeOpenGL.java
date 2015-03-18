@@ -31,6 +31,7 @@ import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PVector;
+import processing.opengl.PGraphicsOpenGL.AttributeMap;
 import processing.opengl.PGraphicsOpenGL.IndexCache;
 import processing.opengl.PGraphicsOpenGL.InGeometry;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
@@ -83,6 +84,8 @@ public class PShapeOpenGL extends PShape {
   protected InGeometry inGeo;
   protected TessGeometry tessGeo;
   protected Tessellator tessellator;
+
+  protected AttributeMap attributes;
 
   // ........................................................
 
@@ -333,6 +336,7 @@ public class PShapeOpenGL extends PShape {
 
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
       inGeo = PGraphicsOpenGL.newInGeometry(pg, PGraphicsOpenGL.RETAINED);
+      attributes = PGraphicsOpenGL.newAttributeMap();
     }
 
     // Style parameters are retrieved from the current values in the renderer.
@@ -1076,10 +1080,11 @@ public class PShapeOpenGL extends PShape {
     inGeo.addVertex(x, y, z,
                    fcolor,
                    normalX, normalY, normalZ,
-                    u, v,
-                    scolor, sweight,
-                    ambientColor, specularColor, emissiveColor, shininess,
-                    VERTEX, vertexBreak());
+                   u, v,
+                   scolor, sweight,
+                   ambientColor, specularColor, emissiveColor, shininess,
+                   attributes,
+                   VERTEX, vertexBreak());
 
     markForTessellation();
   }
@@ -1128,7 +1133,7 @@ public class PShapeOpenGL extends PShape {
 
     // Input arrays are trimmed since they are expanded by doubling their old
     // size, which might lead to arrays larger than the vertex counts.
-    inGeo.trim();
+    inGeo.trim(attributes);
 
     close = mode == CLOSE;
     markForTessellation();
