@@ -2589,7 +2589,7 @@ public class PGraphicsOpenGL extends PGraphics {
           attrib.updateLoc(shader);
           shader.setAttributeVBO(attrib.glLoc, attrib.glName,
                                  attrib.size, attrib.type,
-                                 false, 0, attrib.sizeInBytes(voffset));
+                                 attrib.isColor(), 0, attrib.sizeInBytes(voffset));
         }
 
         shader.draw(glPolyIndex, icount, ioffset);
@@ -7015,12 +7015,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   static protected class VertexAttribute {
-    static final int POSITIONAL = 0;
-    static final int NORMAL     = 1;
-    static final int OTHER      = 2;
+    static final int POSITION = 0;
+    static final int NORMAL   = 1;
+    static final int COLOR    = 2;
+    static final int OTHER    = 3;
 
     String name;
-    int kind; // POSITIONAL, NORMAL, OTHER
+    int kind; // POSITION, NORMAL, COLOR, OTHER
     int type; // GL_INT, GL_FLOAT, GL_BOOL
     int size; // number of elements (1, 2, 3, or 4)
     int elementSize;
@@ -7037,9 +7038,11 @@ public class PGraphicsOpenGL extends PGraphics {
       this.size = size;
 
       if (name.indexOf("pos") == 0) {
-        kind = POSITIONAL;
+        kind = POSITION;
       } else if (name.indexOf("norm") == 0) {
         kind = NORMAL;
+      } else if (name.indexOf("color") == 0 && type == PGL.INT && size == 1) {
+        kind = COLOR;
       } else {
         kind = OTHER;
       }
@@ -7057,6 +7060,22 @@ public class PGraphicsOpenGL extends PGraphics {
 
       glName = 0;
       glLoc = -1;
+    }
+
+    boolean isPosition() {
+      return kind == POSITION;
+    }
+
+    boolean isNormal() {
+      return kind == NORMAL;
+    }
+
+    boolean isColor() {
+      return kind == COLOR;
+    }
+
+    boolean isOther() {
+      return kind == OTHER;
     }
 
     boolean bufferCreated() {
@@ -8799,7 +8818,7 @@ public class PGraphicsOpenGL extends PGraphics {
     FloatBuffer polyShininessBuffer;
 
     // Generic attributes
-    HashMap<String, Buffer> attribBuffers;
+    HashMap<String, Buffer> attribBuffers = new HashMap<String, Buffer>();
 
     int polyIndexCount;
     int firstPolyIndex;
