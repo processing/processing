@@ -9497,6 +9497,7 @@ public class PGraphicsOpenGL extends PGraphics {
         trimPolySpecular();
         trimPolyEmissive();
         trimPolyShininess();
+        trimAttributes();
       }
 
       if (0 < polyIndexCount && polyIndexCount < polyIndices.length) {
@@ -9579,6 +9580,49 @@ public class PGraphicsOpenGL extends PGraphics {
       polyShininess = temp;
       polyShininessBuffer = PGL.allocateFloatBuffer(polyShininess);
     }
+
+    void trimAttributes() {
+
+    }
+
+    /*
+    void expandAttributes(int n) {
+      for (String name: attribs.keySet()) {
+        VertexAttribute attrib = attribs.get(name);
+        if (attrib.type == PGL.FLOAT) {
+          expandFloatAttribute(attrib, n);
+        } else if (attrib.type == PGL.INT) {
+          expandIntAttribute(attrib, n);
+        } else if (attrib.type == PGL.BOOL) {
+          expandBoolAttribute(attrib, n);
+        }
+      }
+    }
+
+    void expandFloatAttribute(VertexAttribute attrib, int n) {
+      float[] array = fattribs.get(attrib.name);
+      float temp[] = new float[attrib.size * n];
+      PApplet.arrayCopy(array, 0, temp, 0, attrib.size * polyVertexCount);
+      fattribs.put(attrib.name, temp);
+      polyAttribBuffers.put(attrib.name, PGL.allocateFloatBuffer(temp));
+    }
+
+    void expandIntAttribute(VertexAttribute attrib, int n) {
+      int[] array = iattribs.get(attrib.name);
+      int temp[] = new int[attrib.size * n];
+      PApplet.arrayCopy(array, 0, temp, 0, attrib.size * polyVertexCount);
+      iattribs.put(attrib.name, temp);
+      polyAttribBuffers.put(attrib.name, PGL.allocateIntBuffer(temp));
+    }
+
+    void expandBoolAttribute(VertexAttribute attrib, int n) {
+      byte[] array = battribs.get(attrib.name);
+      byte temp[] = new byte[attrib.size * n];
+      PApplet.arrayCopy(array, 0, temp, 0, attrib.size * polyVertexCount);
+      battribs.put(attrib.name, temp);
+      polyAttribBuffers.put(attrib.name, PGL.allocateByteBuffer(temp));
+    }
+    */
 
     void trimPolyIndices() {
       short temp[] = new short[polyIndexCount];
@@ -9973,6 +10017,13 @@ public class PGraphicsOpenGL extends PGraphics {
           polyNormals[index++] = nx*nm.m01 + ny*nm.m11 + nz*nm.m21;
           polyNormals[index  ] = nx*nm.m02 + ny*nm.m12 + nz*nm.m22;
         }
+
+        for (String name: attribs.keySet()) {
+          VertexAttribute attrib = attribs.get(name);
+          if (attrib.isColor() || attrib.isOther()) continue;
+          // TODO...
+        }
+
       } else {
         if (nvert <= PGL.MIN_ARRAYCOPY_SIZE) {
           // Copying elements one by one instead of using arrayCopy is more
@@ -10002,6 +10053,12 @@ public class PGraphicsOpenGL extends PGraphics {
             polyNormals[index++] = ny;
             polyNormals[index  ] = nz;
           }
+
+          for (String name: attribs.keySet()) {
+            VertexAttribute attrib = attribs.get(name);
+            if (attrib.isColor() || attrib.isOther()) continue;
+            // TODO...
+          }
         } else {
           for (int i = 0; i < nvert; i++) {
             int inIdx = i0 + i;
@@ -10012,6 +10069,12 @@ public class PGraphicsOpenGL extends PGraphics {
           }
           PApplet.arrayCopy(in.normals, 3 * i0,
                             polyNormals, 3 * firstPolyVertex, 3 * nvert);
+
+          for (String name: attribs.keySet()) {
+            VertexAttribute attrib = attribs.get(name);
+            if (attrib.isColor() || attrib.isOther()) continue;
+            // TODO...
+          }
         }
       }
 
@@ -10035,6 +10098,12 @@ public class PGraphicsOpenGL extends PGraphics {
           polyEmissive[tessIdx] = in.emissive[inIdx];
           polyShininess[tessIdx] = in.shininess[inIdx];
         }
+
+        for (String name: attribs.keySet()) {
+          VertexAttribute attrib = attribs.get(name);
+          if (attrib.isPosition() || attrib.isNormal()) continue;
+          // TODO...
+        }
       } else {
         PApplet.arrayCopy(in.colors, i0,
                           polyColors, firstPolyVertex, nvert);
@@ -10048,6 +10117,12 @@ public class PGraphicsOpenGL extends PGraphics {
                           polyEmissive, firstPolyVertex, nvert);
         PApplet.arrayCopy(in.shininess, i0,
                           polyShininess, firstPolyVertex, nvert);
+
+        for (String name: attribs.keySet()) {
+          VertexAttribute attrib = attribs.get(name);
+          if (attrib.isPosition() || attrib.isNormal()) continue;
+          // TODO...
+        }
       }
     }
 
@@ -10100,6 +10175,12 @@ public class PGraphicsOpenGL extends PGraphics {
           polyNormals[index++] = nx*tr.m00 + ny*tr.m01;
           polyNormals[index  ] = nx*tr.m10 + ny*tr.m11;
         }
+      }
+
+      for (String name: attribs.keySet()) {
+        VertexAttribute attrib = attribs.get(name);
+        if (attrib.isColor() || attrib.isOther()) continue;
+        // TODO...
       }
     }
 
@@ -10173,6 +10254,12 @@ public class PGraphicsOpenGL extends PGraphics {
           polyNormals[index++] = nx*tr.m10 + ny*tr.m11 + nz*tr.m12;
           polyNormals[index  ] = nx*tr.m20 + ny*tr.m21 + nz*tr.m22;
         }
+      }
+
+      for (String name: attribs.keySet()) {
+        VertexAttribute attrib = attribs.get(name);
+        if (attrib.isColor() || attrib.isOther()) continue;
+        // TODO...
       }
     }
 
@@ -10297,6 +10384,7 @@ public class PGraphicsOpenGL extends PGraphics {
         callback = new TessellatorCallback();
         gluTess = pg.pgl.createTessellator(callback);
       }
+      callback.setAttribs(tess.attribs);
     }
 
     void setInGeometry(InGeometry in) {
@@ -12461,6 +12549,23 @@ public class PGraphicsOpenGL extends PGraphics {
         if (addCache) {
           cache.addNew();
         }
+      }
+
+      AttributeMap attribs;
+      HashMap<Integer, String> nameMap;
+
+      void setAttribs(AttributeMap attribs) {
+        this.attribs = attribs;
+        nameMap = new HashMap<Integer, String>();
+        int i = 0;
+        for (String name: attribs.keySet()) {
+          nameMap.put(i, name);
+          i++;
+        }
+      }
+
+      VertexAttribute posToAttrib(int i) {
+        return attribs.get(nameMap.get(i));
       }
 
       public void begin(int type) {
