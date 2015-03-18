@@ -85,7 +85,7 @@ public class PShapeOpenGL extends PShape {
   protected TessGeometry tessGeo;
   protected Tessellator tessellator;
 
-  protected AttributeMap attributes;
+  protected AttributeMap attribs;
 
   // ........................................................
 
@@ -335,8 +335,8 @@ public class PShapeOpenGL extends PShape {
     this.tessellated = false;
 
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
-      inGeo = PGraphicsOpenGL.newInGeometry(pg, PGraphicsOpenGL.RETAINED);
-      attributes = PGraphicsOpenGL.newAttributeMap();
+      attribs = PGraphicsOpenGL.newAttributeMap();
+      inGeo = PGraphicsOpenGL.newInGeometry(pg, attribs, PGraphicsOpenGL.RETAINED);
     }
 
     // Style parameters are retrieved from the current values in the renderer.
@@ -1083,7 +1083,6 @@ public class PShapeOpenGL extends PShape {
                    u, v,
                    scolor, sweight,
                    ambientColor, specularColor, emissiveColor, shininess,
-                   attributes,
                    VERTEX, vertexBreak());
 
     markForTessellation();
@@ -1133,7 +1132,7 @@ public class PShapeOpenGL extends PShape {
 
     // Input arrays are trimmed since they are expanded by doubling their old
     // size, which might lead to arrays larger than the vertex counts.
-    inGeo.trim(attributes);
+    inGeo.trim();
 
     close = mode == CLOSE;
     markForTessellation();
@@ -2683,7 +2682,7 @@ public class PShapeOpenGL extends PShape {
   protected void tessellate() {
     if (root == this && parent == null) {
       if (tessGeo == null) {
-        tessGeo = PGraphicsOpenGL.newTessGeometry(pg, PGraphicsOpenGL.RETAINED);
+        tessGeo = PGraphicsOpenGL.newTessGeometry(pg, attribs, PGraphicsOpenGL.RETAINED);
       }
       tessGeo.clear();
 

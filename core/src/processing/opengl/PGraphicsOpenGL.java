@@ -535,8 +535,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     attribs = newAttributeMap();
 
-    inGeo = newInGeometry(this, IMMEDIATE);
-    tessGeo = newTessGeometry(this, IMMEDIATE);
+    inGeo = newInGeometry(this, attribs, IMMEDIATE);
+    tessGeo = newTessGeometry(this, attribs, IMMEDIATE);
     texCache = newTexCache(this);
 
     projection = new PMatrix3D();
@@ -1369,7 +1369,7 @@ public class PGraphicsOpenGL extends PGraphics {
       tessGeo.updateAttribBuffer(name);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, attrib.glName);
       pgl.bufferData(PGL.ARRAY_BUFFER, attrib.sizeInBytes(size),
-                     tessGeo.attribBuffers.get(name), PGL.STATIC_DRAW);
+                     tessGeo.polyAttribBuffers.get(name), PGL.STATIC_DRAW);
     }
 
     tessGeo.updatePolyIndicesBuffer();
@@ -2338,7 +2338,7 @@ public class PGraphicsOpenGL extends PGraphics {
                     u, v,
                     scolor, sweight,
                     ambientColor, specularColor, emissiveColor, shininess,
-                    attribs, VERTEX, vertexBreak());
+                    VERTEX, vertexBreak());
   }
 
 
@@ -3134,7 +3134,6 @@ public class PGraphicsOpenGL extends PGraphics {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.setAttribs(attribs);
     inGeo.addBezierVertex(x2, y2, z2,
                           x3, y3, z3,
                           x4, y4, z4, vertexBreak());
@@ -3163,7 +3162,6 @@ public class PGraphicsOpenGL extends PGraphics {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.setAttribs(attribs);
     inGeo.addQuadraticVertex(cx, cy, cz,
                              x3, y3, z3, vertexBreak());
   }
@@ -3191,7 +3189,6 @@ public class PGraphicsOpenGL extends PGraphics {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.setAttribs(attribs);
     inGeo.addCurveVertex(x, y, z, vertexBreak());
   }
 
@@ -3220,7 +3217,6 @@ public class PGraphicsOpenGL extends PGraphics {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.setAttribs(attribs);
     inGeo.addPoint(x, y, z, fill, stroke);
     endShape();
   }
@@ -3247,7 +3243,6 @@ public class PGraphicsOpenGL extends PGraphics {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.setAttribs(attribs);
     inGeo.addLine(x1, y1, z1,
                   x2, y2, z2,
                   fill, stroke);
@@ -3264,7 +3259,6 @@ public class PGraphicsOpenGL extends PGraphics {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.setAttribs(attribs);
     inGeo.addTriangle(x1, y1, 0,
                       x2, y2, 0,
                       x3, y3, 0,
@@ -3282,7 +3276,6 @@ public class PGraphicsOpenGL extends PGraphics {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.setAttribs(attribs);
     inGeo.addQuad(x1, y1, 0,
                   x2, y2, 0,
                   x3, y3, 0,
@@ -3301,7 +3294,6 @@ public class PGraphicsOpenGL extends PGraphics {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.setAttribs(attribs);
     inGeo.addRect(x1, y1, x2, y2, tl, tr, br, bl, stroke);
     endShape(CLOSE);
   }
@@ -3320,7 +3312,6 @@ public class PGraphicsOpenGL extends PGraphics {
      inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                        ambientColor, specularColor, emissiveColor, shininess);
      inGeo.setNormal(normalX, normalY, normalZ);
-     inGeo.setAttribs(attribs);
      inGeo.addEllipse(a, b, c, d, fill, stroke);
      endShape();
   }
@@ -3335,7 +3326,6 @@ public class PGraphicsOpenGL extends PGraphics {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
-    inGeo.setAttribs(attribs);
     inGeo.addArc(x, y, w, h, start, stop, fill, stroke, mode);
     endShape();
   }
@@ -7134,13 +7124,15 @@ public class PGraphicsOpenGL extends PGraphics {
   // Input (raw) and Tessellated geometry, tessellator.
 
 
-  static protected InGeometry newInGeometry(PGraphicsOpenGL pg, int mode) {
-    return new InGeometry(pg, mode);
+  static protected InGeometry newInGeometry(PGraphicsOpenGL pg, AttributeMap attr,
+                                            int mode) {
+    return new InGeometry(pg, attr, mode);
   }
 
 
-  static protected TessGeometry newTessGeometry(PGraphicsOpenGL pg, int mode) {
-    return new TessGeometry(pg, mode);
+  static protected TessGeometry newTessGeometry(PGraphicsOpenGL pg,
+                                                AttributeMap attr, int mode) {
+    return new TessGeometry(pg, attr, mode);
   }
 
 
@@ -7379,6 +7371,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected class InGeometry {
     PGraphicsOpenGL pg;
     int renderMode;
+    AttributeMap attribs;
 
     int vertexCount;
     int codeCount;
@@ -7404,7 +7397,6 @@ public class PGraphicsOpenGL extends PGraphics {
     float[] shininess;
 
     // Generic attributes
-    AttributeMap attribs;
     HashMap<String, float[]> fattrValues;
     HashMap<String, int[]> iattrValues;
     HashMap<String, byte[]> battrValues;
@@ -7419,8 +7411,9 @@ public class PGraphicsOpenGL extends PGraphics {
     float shininessFactor;
     float normalX, normalY, normalZ;
 
-    InGeometry(PGraphicsOpenGL pg, int mode) {
+    InGeometry(PGraphicsOpenGL pg, AttributeMap attr, int mode) {
       this.pg = pg;
+      this.attribs = attr;
       renderMode = mode;
       allocate();
     }
@@ -7460,7 +7453,7 @@ public class PGraphicsOpenGL extends PGraphics {
       clear();
     }
 
-    void vertexCheck(AttributeMap attribs) {
+    void vertexCheck() {
       if (vertexCount == vertices.length / 3) {
         int newSize = vertexCount << 1;
 
@@ -7474,7 +7467,7 @@ public class PGraphicsOpenGL extends PGraphics {
         expandSpecular(newSize);
         expandEmissive(newSize);
         expandShininess(newSize);
-        expandAttribs(attribs, newSize);
+        expandAttribs(newSize);
       }
     }
 
@@ -7655,8 +7648,8 @@ public class PGraphicsOpenGL extends PGraphics {
       shininess = temp;
     }
 
-    void expandAttribs(AttributeMap attr, int n) {
-      for (String name: attr.keySet()) {
+    void expandAttribs(int n) {
+      for (String name: attribs.keySet()) {
         VertexAttribute attrib = attribs.get(name);
         if (attrib.type == PGL.FLOAT) {
           expandFloatAttrib(attrib, n);
@@ -7705,7 +7698,7 @@ public class PGraphicsOpenGL extends PGraphics {
     //
     // Trim arrays
 
-    void trim(AttributeMap attribs) {
+    void trim() {
       if (0 < vertexCount && vertexCount < vertices.length / 3) {
         trimVertices();
         trimColors();
@@ -7717,7 +7710,7 @@ public class PGraphicsOpenGL extends PGraphics {
         trimSpecular();
         trimEmissive();
         trimShininess();
-        trimAttribs(attribs);
+        trimAttribs();
       }
 
       if (0 < codeCount && codeCount < codes.length) {
@@ -7801,8 +7794,8 @@ public class PGraphicsOpenGL extends PGraphics {
       edges = temp;
     }
 
-    void trimAttribs(AttributeMap attr) {
-      for (String name: attr.keySet()) {
+    void trimAttribs() {
+      for (String name: attribs.keySet()) {
         VertexAttribute attrib = attribs.get(name);
         if (attrib.type == PGL.FLOAT) {
           trimFloatAttrib(attrib);
@@ -7851,7 +7844,7 @@ public class PGraphicsOpenGL extends PGraphics {
                        0, 0,
                        strokeColor, strokeWeight,
                        ambientColor, specularColor, emissiveColor, shininessFactor,
-                       attribs, code, brk);
+                       code, brk);
     }
 
     int addVertex(float x, float y,
@@ -7869,7 +7862,7 @@ public class PGraphicsOpenGL extends PGraphics {
                        u, v,
                        strokeColor, strokeWeight,
                        ambientColor, specularColor, emissiveColor, shininessFactor,
-                       attribs, code, brk);
+                       code, brk);
     }
 
     int addVertex(float x, float y, float z, boolean brk) {
@@ -7883,7 +7876,7 @@ public class PGraphicsOpenGL extends PGraphics {
                        0, 0,
                        strokeColor, strokeWeight,
                        ambientColor, specularColor, emissiveColor, shininessFactor,
-                       attribs, code, brk);
+                       code, brk);
     }
 
     int addVertex(float x, float y, float z,
@@ -7901,7 +7894,7 @@ public class PGraphicsOpenGL extends PGraphics {
                        u, v,
                        strokeColor, strokeWeight,
                        ambientColor, specularColor, emissiveColor, shininessFactor,
-                       attribs, code, brk);
+                       code, brk);
     }
 
     int addVertex(float x, float y, float z,
@@ -7910,9 +7903,8 @@ public class PGraphicsOpenGL extends PGraphics {
                   float u, float v,
                   int scolor, float sweight,
                   int am, int sp, int em, float shine,
-                  AttributeMap attr,
                   int code, boolean brk) {
-      vertexCheck(attr);
+      vertexCheck();
       int index;
 
       index = 3 * vertexCount;
@@ -7939,8 +7931,8 @@ public class PGraphicsOpenGL extends PGraphics {
       emissive[vertexCount] = PGL.javaToNativeARGB(em);
       shininess[vertexCount] = shine;
 
-      for (String name: attr.keySet()) {
-        VertexAttribute attrib = attr.get(name);
+      for (String name: attribs.keySet()) {
+        VertexAttribute attrib = attribs.get(name);
         if (attrib.type == PGL.FLOAT) {
           float[] values = fattrValues.get(name);
           attrib.add(values, index);
@@ -8316,10 +8308,6 @@ public class PGraphicsOpenGL extends PGraphics {
       this.normalX = normalX;
       this.normalY = normalY;
       this.normalZ = normalZ;
-    }
-
-    void setAttribs(AttributeMap attribs) {
-      this.attribs = attribs;
     }
 
     void addPoint(float x, float y, float z, boolean fill, boolean stroke) {
@@ -8800,6 +8788,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected class TessGeometry {
     int renderMode;
     PGraphicsOpenGL pg;
+    AttributeMap attribs;
 
     // Tessellated polygon data
     int polyVertexCount;
@@ -8818,7 +8807,7 @@ public class PGraphicsOpenGL extends PGraphics {
     FloatBuffer polyShininessBuffer;
 
     // Generic attributes
-    HashMap<String, Buffer> attribBuffers = new HashMap<String, Buffer>();
+    HashMap<String, Buffer> polyAttribBuffers = new HashMap<String, Buffer>();
 
     int polyIndexCount;
     int firstPolyIndex;
@@ -8873,8 +8862,13 @@ public class PGraphicsOpenGL extends PGraphics {
     float[] pointOffsets;
     short[] pointIndices;
 
-    TessGeometry(PGraphicsOpenGL pg, int mode) {
+    HashMap<String, float[]> fattribs = new HashMap<String, float[]>();
+    HashMap<String, int[]> iattribs = new HashMap<String, int[]>();
+    HashMap<String, byte[]> battribs = new HashMap<String, byte[]>();
+
+    TessGeometry(PGraphicsOpenGL pg, AttributeMap attr, int mode) {
       this.pg = pg;
+      this.attribs = attr;
       renderMode = mode;
       allocate();
     }
@@ -8954,6 +8948,7 @@ public class PGraphicsOpenGL extends PGraphics {
         expandPolySpecular(newSize);
         expandPolyEmissive(newSize);
         expandPolyShininess(newSize);
+        expandAttributes(newSize);
       }
 
       firstPolyVertex = polyVertexCount;
@@ -8974,6 +8969,7 @@ public class PGraphicsOpenGL extends PGraphics {
         expandPolySpecular(newSize);
         expandPolyEmissive(newSize);
         expandPolyShininess(newSize);
+        expandAttributes(newSize);
       }
 
       firstPolyVertex = polyVertexCount;
@@ -9232,7 +9228,23 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     protected void updateAttribBuffer(String name, int offset, int size) {
-      // TODO
+      VertexAttribute attrib = attribs.get(name);
+      if (attrib.type == PGL.FLOAT) {
+        FloatBuffer buffer = (FloatBuffer)polyAttribBuffers.get(name);
+        float[] array = fattribs.get(name);
+        PGL.updateFloatBuffer(buffer, array,
+                              attrib.size * offset, attrib.size * size);
+      } else if (attrib.type == PGL.INT) {
+        IntBuffer buffer = (IntBuffer)polyAttribBuffers.get(name);
+        int[] array = iattribs.get(name);
+        PGL.updateIntBuffer(buffer, array,
+                            attrib.size * offset, attrib.size * size);
+      } else if (attrib.type == PGL.BOOL) {
+        ByteBuffer buffer = (ByteBuffer)polyAttribBuffers.get(name);
+        byte[] array = battribs.get(name);
+        PGL.updateByteBuffer(buffer, array,
+                             attrib.size * offset, attrib.size * size);
+      }
     }
 
     protected void updatePolyIndicesBuffer() {
@@ -9369,6 +9381,43 @@ public class PGraphicsOpenGL extends PGraphics {
       PApplet.arrayCopy(polyShininess, 0, temp, 0, polyVertexCount);
       polyShininess = temp;
       polyShininessBuffer = PGL.allocateFloatBuffer(polyShininess);
+    }
+
+    void expandAttributes(int n) {
+      for (String name: attribs.keySet()) {
+        VertexAttribute attrib = attribs.get(name);
+        if (attrib.type == PGL.FLOAT) {
+          expandFloatAttribute(attrib, n);
+        } else if (attrib.type == PGL.INT) {
+          expandIntAttribute(attrib, n);
+        } else if (attrib.type == PGL.BOOL) {
+          expandBoolAttribute(attrib, n);
+        }
+      }
+    }
+
+    void expandFloatAttribute(VertexAttribute attrib, int n) {
+      float[] array = fattribs.get(attrib.name);
+      float temp[] = new float[attrib.size * n];
+      PApplet.arrayCopy(array, 0, temp, 0, attrib.size * polyVertexCount);
+      fattribs.put(attrib.name, temp);
+      polyAttribBuffers.put(attrib.name, PGL.allocateFloatBuffer(temp));
+    }
+
+    void expandIntAttribute(VertexAttribute attrib, int n) {
+      int[] array = iattribs.get(attrib.name);
+      int temp[] = new int[attrib.size * n];
+      PApplet.arrayCopy(array, 0, temp, 0, attrib.size * polyVertexCount);
+      iattribs.put(attrib.name, temp);
+      polyAttribBuffers.put(attrib.name, PGL.allocateIntBuffer(temp));
+    }
+
+    void expandBoolAttribute(VertexAttribute attrib, int n) {
+      byte[] array = battribs.get(attrib.name);
+      byte temp[] = new byte[attrib.size * n];
+      PApplet.arrayCopy(array, 0, temp, 0, attrib.size * polyVertexCount);
+      battribs.put(attrib.name, temp);
+      polyAttribBuffers.put(attrib.name, PGL.allocateByteBuffer(temp));
     }
 
     void expandPolyIndices(int n) {
