@@ -7001,7 +7001,25 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  static protected class AttributeMap extends HashMap<String, VertexAttribute> { }
+  static protected class AttributeMap extends HashMap<String, VertexAttribute> {
+    public ArrayList<String> names = new ArrayList<String>();
+    public int numComp = 0;
+
+    @Override
+    public VertexAttribute put(String key, VertexAttribute value) {
+      VertexAttribute prev = super.put(key, value);
+
+      if (value.kind == VertexAttribute.POSITION) numComp += 3;
+      if (value.kind == VertexAttribute.COLOR) numComp += 3;
+      else numComp += value.size;
+
+      return prev;
+    }
+
+    public VertexAttribute get(int i) {
+      return super.get(names.get(i));
+    }
+  }
 
 
   static protected class VertexAttribute {
@@ -7582,6 +7600,18 @@ public class PGraphicsOpenGL extends PGraphics {
         v.z += vertices[index  ];
       }
       return vertexCount;
+    }
+
+    // TODO: needs type of curve, draw matrix as args.
+    double[] getAttribVector(int idx) {
+      int len = attribs.numComp;
+      for (int i = 0; i < attribs.size(); i++) {
+        VertexAttribute attrib = attribs.get(i);
+
+
+
+      }
+      return new double[len];
     }
 
     // -----------------------------------------------------------------
@@ -9892,6 +9922,7 @@ public class PGraphicsOpenGL extends PGraphics {
                        float nx, float ny, float nz,
                        float u, float v,
                        int am, int sp, int em, float shine,
+
                        boolean clampXY) {
       polyVertexCheck();
       int tessIdx = polyVertexCount - 1;
@@ -12081,6 +12112,12 @@ public class PGraphicsOpenGL extends PGraphics {
             nx, ny, nz,
             u, v,
             aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
+          double[] avect = in.getAttribVector(i);
+          if (0 < avect.length) {
+            double temp[] = new double[vertex.length + avect.length];
+            PApplet.arrayCopy(vertex, 0, temp, 0, vertex.length);
+            PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length);
+          }
           gluTess.addVertex(vertex);
         }
         if (stroke) addStrokeVertex(x1, y1, z1, strokeColor, strokeWeight);
@@ -12552,21 +12589,21 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       AttributeMap attribs;
-      HashMap<Integer, String> nameMap;
+//      HashMap<Integer, String> nameMap;
 
       void setAttribs(AttributeMap attribs) {
         this.attribs = attribs;
-        nameMap = new HashMap<Integer, String>();
-        int i = 0;
-        for (String name: attribs.keySet()) {
-          nameMap.put(i, name);
-          i++;
-        }
+//        nameMap = new HashMap<Integer, String>();
+//        int i = 0;
+//        for (String name: attribs.keySet()) {
+//          nameMap.put(i, name);
+//          i++;
+//        }
       }
-
-      VertexAttribute posToAttrib(int i) {
-        return attribs.get(nameMap.get(i));
-      }
+//
+//      VertexAttribute posToAttrib(int i) {
+//        return attribs.get(nameMap.get(i));
+//      }
 
       public void begin(int type) {
         cacheIndex = cache.getLast();
