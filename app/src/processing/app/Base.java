@@ -123,7 +123,7 @@ public class Base {
 
   protected ArrayList<ExamplesContribution> exampleContribs;
 
-  private JMenu sketchbookMenu;
+//  private JMenu sketchbookMenu;
 
   private Recent recent;
 
@@ -1097,24 +1097,24 @@ public class Base {
     }
   }
 
-
-  protected void rebuildSketchbookMenu() {
-//      System.err.println("sketchbook: " + sketchbookFolder);
-    sketchbookMenu.removeAll();
-    populateSketchbookMenu(sketchbookMenu);
-//    boolean found = false;
-//    try {
-//      found = addSketches(sketchbookMenu, sketchbookFolder, false);
-//    } catch (IOException e) {
-//      Base.showWarning("Sketchbook Menu Error",
-//                       "An error occurred while trying to list the sketchbook.", e);
-//    }
-//    if (!found) {
-//      JMenuItem empty = new JMenuItem("(empty)");
-//      empty.setEnabled(false);
-//      sketchbookMenu.add(empty);
-//    }
-  }
+//No longer needed as mode.rebuildSketchbookFrame is called.
+//  protected void rebuildSketchbookMenu() {
+////      System.err.println("sketchbook: " + sketchbookFolder);
+//    sketchbookMenu.removeAll();
+//    populateSketchbookMenu(sketchbookMenu);
+////    boolean found = false;
+////    try {
+////      found = addSketches(sketchbookMenu, sketchbookFolder, false);
+////    } catch (IOException e) {
+////      Base.showWarning("Sketchbook Menu Error",
+////                       "An error occurred while trying to list the sketchbook.", e);
+////    }
+////    if (!found) {
+////      JMenuItem empty = new JMenuItem("(empty)");
+////      empty.setEnabled(false);
+////      sketchbookMenu.add(empty);
+////    }
+//  }
 
 
   public void populateSketchbookMenu(JMenu menu) {

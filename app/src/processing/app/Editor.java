@@ -2664,6 +2664,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       // show the error as a message in the window
       statusError(e);
     }
+    mode.rebuildSketchbookFrame();//update sketchbook
     return true;
   }
 
