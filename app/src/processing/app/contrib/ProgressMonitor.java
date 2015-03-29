@@ -15,7 +15,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License along 
+  You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
@@ -36,7 +36,7 @@ import javax.swing.JProgressBar;
 //
 //  /**
 //   * Starts a new task with the given name.
-//   * 
+//   *
 //   * @param maxValue
 //   *          the amount of progress that must be made before a task is
 //   *          finished. This may be set to UNKNOWN.
@@ -64,28 +64,28 @@ import javax.swing.JProgressBar;
 //   * Requests for the task to be cancelled by setting isCanceled() to true.
 //   */
 //  public void cancel();
-//  
+//
 //  /**
 //   * @return <code>true</code> if an error occured while completing the task
 //   */
 //  public boolean isError();
-//  
+//
 //  /**
 //   * @return an exception that caused the error, may be null.
 //   */
 //  public Exception getException();
-//  
+//
 //  /**
 //   * Indicates that an error occurred while performing the task. Exception may
 //   * be null.
 //   */
 //  public void error(Exception e);
-//  
+//
 //  /**
 //   * Returns true if this task is complete
 //   */
 //  public boolean isFinished();
-//  
+//
 //  /**
 //   * This is called when the current task is finished. This should always be
 //   * called when a task is finished, whether or not an error occurred or the
@@ -102,15 +102,16 @@ abstract class ProgressMonitor {
   boolean error = false;
   boolean finished = false;
   Exception exception;
+  int max;
   int progress = 0;
-  
+
   public void startTask(String name, int maxValue) {
   }
-  
+
   public void setProgress(int value) {
     progress = value;
   }
-  
+
   public int getProgress() {
     return progress;
   }
@@ -122,7 +123,7 @@ abstract class ProgressMonitor {
   public void cancel() {
     canceled = true;
   }
-  
+
   public boolean isError() {
     return error;
   }
@@ -135,11 +136,11 @@ abstract class ProgressMonitor {
     error = true;
     exception = e;
   }
-  
+
   public boolean isFinished() {
     return finished;
   }
-  
+
   public void finished() {
     finished = true;
   }

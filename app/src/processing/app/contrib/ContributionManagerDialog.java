@@ -459,11 +459,18 @@ public class ContributionManagerDialog {
 
 
   protected void downloadAndUpdateContributionListing() {
-    status.setMessage(Language.text("contrib.status.downloading_list"));
     retryConnectingButton.setEnabled(false);
     contribListing.downloadAvailableList(new ProgressMonitor() {
-      
-      public void finished() {
+
+        @Override
+        public void setProgress(int value) {
+            super.setProgress(value);
+            int percent = (int)(value * 100.0f / this.max);
+            status.setMessage(Language.text("contrib.status.downloading_list") + " (" + percent + "%)");
+        }
+
+        @Override
+        public void finished() {
         super.finished();
         
         updateContributionListing();
