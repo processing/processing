@@ -518,6 +518,7 @@ public class PSurfaceAWT implements PSurface {
       // Did not help, and the screenRect setup seems to work fine.
       //frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 
+      frame.dispose(); //Release native resources, letting us use setUndecorated().
       frame.setUndecorated(true);
       // another duplicate?
 //      if (backgroundColor != null) {
@@ -525,7 +526,7 @@ public class PSurfaceAWT implements PSurface {
 //      }
       // this may be the bounds of all screens
       frame.setBounds(screenRect);
-      frame.setVisible(true);
+      frame.setVisible(true); //Readd native resources
     }
     frame.setLayout(null);
     //frame.add(applet);
