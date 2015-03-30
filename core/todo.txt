@@ -11,23 +11,16 @@ X   handled instead as an example
 X add warning message when a negative textSize() is used
 X   https://github.com/processing/processing/issues/3110
 
+head
+X Sketch window dimensions off in Java2D
+X   https://github.com/processing/processing/issues/3129
+X   https://github.com/processing/processing/pull/3162
+
 showstoppers
 _ static mode - no setup() / draw() - broken
 _   https://github.com/processing/processing/issues/3130
 _ dragging sketch window hides it
 _   https://github.com/processing/processing/issues/3092
-
-_ textAlign(RIGHT) including spaces at the end of each line
-_   https://github.com/processing/processing/issues/3028
-
-_ static mode (no setup() / draw()) broken
-_   https://github.com/processing/processing/issues/3130
-X Sketch window dimensions off in Java2D
-X   https://github.com/processing/processing/issues/3129
-X   https://github.com/processing/processing/pull/3162
-
-_ loadImage() doesn't follow redirects
-_   https://github.com/processing/processing-docs/issues/218
 
 earlier
 X size(640,360 , P3D) doesn't work properly
@@ -111,6 +104,10 @@ _ fix flicker when resizing window
 _   running through PSurfaceAWT.setSize() is probably overkill
 _   setLocationRelativeTo(null) was removed, will it be missed?
 _ deal with applySettings() change (maybe not a problem?)
+_ textAlign(RIGHT) including spaces at the end of each line
+_   https://github.com/processing/processing/issues/3028
+_ loadImage() doesn't follow redirects
+_   https://github.com/processing/processing-docs/issues/218
 
 
 cross-language awkwardness
