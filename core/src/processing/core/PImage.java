@@ -248,6 +248,14 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
+   * Do not remove, see notes in the other variant.
+   */
+  public void init(int width, int height, int format) {  // ignore
+    init(width, height, format, 1);
+  }
+
+
+  /**
    * Function to be used by subclasses of PImage to init later than
    * at the constructor, or re-init later when things changes.
    * Used by Capture and Movie classes (and perhaps others),

@@ -56,6 +56,9 @@ X   https://github.com/processing/processing/pull/3073
 X   https://github.com/processing/processing/issues/2994
 X Contrib Manager does not stop parsing contribs.txt if an error exists
 X   https://github.com/processing/processing/pull/3132
+X offer to install libraries imported libraries that are not available
+X   https://github.com/processing/processing/pull/3155
+X   https://github.com/processing/processing/issues/2566
 
 manindra
 X Fix for "Probably a ++ should go here" messages
