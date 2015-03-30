@@ -10,6 +10,8 @@ X   https://github.com/processing/processing/issues/2919
 X   handled instead as an example
 X add warning message when a negative textSize() is used
 X   https://github.com/processing/processing/issues/3110
+X loadXxxx() methods will truly follow redirects (including http -> https)
+X   https://github.com/processing/processing-docs/issues/218
 
 head
 X Sketch window dimensions off in Java2D

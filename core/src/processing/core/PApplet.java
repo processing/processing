@@ -6093,8 +6093,6 @@ public class PApplet implements PConstants {
    * Call openStream() without automatic gzip decompression.
    */
   public InputStream createInputRaw(String filename) {
-    InputStream stream = null;
-
     if (filename == null) return null;
 
     if (filename.length() == 0) {
@@ -6103,19 +6101,29 @@ public class PApplet implements PConstants {
       return null;
     }
 
-    // safe to check for this as a url first. this will prevent online
+    // First check whether this looks like a URL. This will prevent online
     // access logs from being spammed with GET /sketchfolder/http://blahblah
     if (filename.contains(":")) {  // at least smells like URL
       try {
         URL url = new URL(filename);
-        stream = url.openStream();
-        return stream;
+        URLConnection conn = url.openConnection();
+        HttpURLConnection httpConn = (HttpURLConnection) conn;
+        // Will not handle a protocol change (see below)
+        httpConn.setInstanceFollowRedirects(true);
+        int response = httpConn.getResponseCode();
+        // Normally will not follow HTTPS redirects from HTTP due to security concerns
+        // http://stackoverflow.com/questions/1884230/java-doesnt-follow-redirect-in-urlconnection/1884427
+        if (response >= 300 && response < 400) {
+          String newLocation = httpConn.getHeaderField("Location");
+          return createInputRaw(newLocation);
+        }
+        return conn.getInputStream();
 
       } catch (MalformedURLException mfue) {
         // not a url, that's fine
 
       } catch (FileNotFoundException fnfe) {
-        // Java 1.5 likes to throw this when URL not available. (fix for 0119)
+        // Added in 0119 b/c Java 1.5 throws FNFE when URL not available.
         // http://dev.processing.org/bugs/show_bug.cgi?id=403
 
       } catch (IOException e) {
@@ -6126,6 +6134,8 @@ public class PApplet implements PConstants {
         //throw new RuntimeException("Error downloading from URL " + filename);
       }
     }
+
+    InputStream stream = null;
 
     // Moved this earlier than the getResourceAsStream() checks, because
     // calling getResourceAsStream() on a directory lists its contents.
@@ -6157,7 +6167,7 @@ public class PApplet implements PConstants {
             throw new RuntimeException("This file is named " +
                                        filenameActual + " not " +
                                        filename + ". Rename the file " +
-            "or change your code.");
+                                       "or change your code.");
           }
         } catch (IOException e) { }
       }
