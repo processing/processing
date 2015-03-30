@@ -110,8 +110,9 @@ public class ContributionManager {
       // Hiding stack trace. An error has been shown where needed.
 //      ioe.printStackTrace();
     }
-    if (progress != null)
+    if (progress != null) {
       progress.finished();
+    }
     return success;
   }
 
@@ -154,8 +155,9 @@ public class ContributionManager {
                 contribListing.replaceContribution(ad, contribution);
                 if (contribution.getType() == ContributionType.MODE) {
                   ArrayList<ModeContribution> contribModes = editor.getBase().getModeContribs();
-                  if (!contribModes.contains(contribution))
+                  if (!contribModes.contains(contribution)) {
                     contribModes.add((ModeContribution) contribution);
+                  }
                 }
                 refreshInstalled(editor);
               }
@@ -197,7 +199,10 @@ public class ContributionManager {
 
   /**
    * Non-blocking call to download and install a contribution in a new thread.
-   *
+   * Used when information about the progress of the download and install
+   * procedure is not of importance, such as if a contribution has to be 
+   * installed at startup time.
+   * 
    * @param url
    *          Direct link to the contribution.
    * @param ad
@@ -229,8 +234,9 @@ public class ContributionManager {
                   contribModes.add((ModeContribution) contribution);
                 }
               }
-              if (base.getActiveEditor() != null)
+              if (base.getActiveEditor() != null) {
                 refreshInstalled(base.getActiveEditor());
+              }
             }
 
             contribZip.delete();
@@ -240,13 +246,12 @@ public class ContributionManager {
           } catch (Exception e) {
 //            Chuck the stack trace. The user might have no idea why it is appearing, or what (s)he did wrong...
 //            e.printStackTrace();
-            System.out.println("Error during download and install of "
-              + ad.getName());
+            String arg = "contrib.startup.errors.download_install";
+            System.err.println(Language.interpolate(arg, ad.getName()));
           }
         } catch (IOException e) {
-          System.err
-            .println("Could not write to temporary directory during download and install of "
-              + ad.getName());
+          String arg = "contrib.startup.errors.temp_dir";
+          System.err.println(Language.interpolate(arg, ad.getName()));
         }
       }
     }, "Contribution Installer").start();
@@ -285,10 +290,109 @@ public class ContributionManager {
     } catch (IOException e) {
 //      Again, forget about the stack trace. The user ain't done wrong
 //      e.printStackTrace();
-      System.err.println("The unupdated contribution marker seems to not like "
-        + ac.getName() + ". You may have to install it manually to update...");
+      String arg = "contrib.startup.errors.new_marker";
+      System.err.println(Language.interpolate(arg, ac.getName()));
     }
 
+  }
+
+
+  /**
+   * Blocking call to download and install a set of libraries. Used when a list
+   * of libraries have to be installed while forcing the user to not modify
+   * anything and providing feedback via the console status area, such as when
+   * the user tries to run a sketch that imports uninstaled libraries.
+   *
+   * @param aList
+   *          The list of AvailableContributions to be downloaded and installed.
+   */
+  public static void downloadAndInstallOnImport(final Base base,
+                                                final ArrayList<AvailableContribution> aList) {
+
+    // To avoid the user from modifying stuff, since this function is only called
+    // during pre-processing
+    base.getActiveEditor().getTextArea().setEditable(false);
+    base.getActiveEditor().getConsole().clear();
+
+    ArrayList<String> installedLibList = new ArrayList<String>();
+
+    // boolean variable to check if previous lib was installed successfully, 
+    // to give the user an idea about progress being made.
+    boolean isPrevDone = false;
+
+    for (AvailableContribution ad : aList) {
+      if (ad.getType() != ContributionType.LIBRARY) {
+        continue;
+      }
+      try {
+        URL url = new URL(ad.link);
+        String filename = url.getFile();
+        filename = filename.substring(filename.lastIndexOf('/') + 1);
+        try {
+
+          File contribZip = File.createTempFile("download", filename);
+          contribZip.setWritable(true);
+
+          try {
+            // Use the console to let the user know what's happening
+            // The slightly complex if-else is required to let the user know when
+            // one install is completed and the next download has begun without 
+            // interfereing with occur status messages that may arise in the meanwhile
+            String statusMsg = base.getActiveEditor().getStatusMessage();
+            if (isPrevDone) {
+              String status = statusMsg + " "
+                + Language.interpolate("contrib.import.progress.download", ad.name);
+              base.getActiveEditor().statusNotice(status);
+            }
+            else {
+              String arg = "contrib.import.progress.download";
+              String status = Language.interpolate(arg, ad.name);
+              base.getActiveEditor().statusNotice(status);
+            }
+
+            isPrevDone = false;
+
+            download(url, contribZip, null);
+
+            String arg = "contrib.import.progress.install";
+            base.getActiveEditor().statusNotice(Language.interpolate(arg,ad.name));
+            LocalContribution contribution = ad.install(base, contribZip,
+                                                        false, null);
+
+            if (contribution != null) {
+              contribListing.replaceContribution(ad, contribution);
+              if (base.getActiveEditor() != null) {
+                refreshInstalled(base.getActiveEditor());
+              }
+            }
+
+            contribZip.delete();
+
+            installedLibList.add(ad.name);
+            isPrevDone = true;
+            
+            arg = "contrib.import.progress.done";
+            base.getActiveEditor().statusNotice(Language.interpolate(arg,ad.name));
+
+          } catch (Exception e) {
+            String arg = "contrib.startup.errors.download_install";
+            System.err.println(Language.interpolate(arg, ad.getName()));
+          }
+        } catch (IOException e) {
+          String arg = "contrib.startup.errors.temp_dir";
+          System.err.println(Language.interpolate(arg,ad.getName()));
+        }
+      } catch (MalformedURLException e1) {
+        System.err.println(Language.interpolate("contrib.import.errors.link",
+                                                ad.getName()));
+      }
+    }
+    base.getActiveEditor().getTextArea().setEditable(true);
+    base.getActiveEditor().statusEmpty();
+    System.out.println(Language.text("contrib.import.progress.final_list"));
+    for (String l : installedLibList) {
+      System.out.println("  * " + l);
+    }
   }
 
 

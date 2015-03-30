@@ -43,6 +43,7 @@ public class ContributionListing {
   ArrayList<ContributionChangeListener> listeners;
   ArrayList<AvailableContribution> advertisedContributions;
   Map<String, List<Contribution>> librariesByCategory;
+  public Map<String, Contribution> librariesByImportHeader;
   ArrayList<Contribution> allContributions;
   boolean hasDownloadedLatestList;
   boolean hasListDownloadFailed;
@@ -53,6 +54,7 @@ public class ContributionListing {
     listeners = new ArrayList<ContributionChangeListener>();
     advertisedContributions = new ArrayList<AvailableContribution>();
     librariesByCategory = new HashMap<String, List<Contribution>>();
+    librariesByImportHeader = new HashMap<String, Contribution>();
     allContributions = new ArrayList<Contribution>();
     downloadingListingLock = new ReentrantLock();
 
@@ -64,7 +66,7 @@ public class ContributionListing {
   }
 
 
-  static ContributionListing getInstance() {
+  public static ContributionListing getInstance() {
     if (singleInstance == null) {
       synchronized (ContributionListing.class) {
         if (singleInstance == null) {
@@ -119,6 +121,12 @@ public class ContributionListing {
         }
       }
 
+      if (oldLib.getImports() != null) {
+        for (String importName : oldLib.getImports()) {
+          librariesByImportHeader.replace(importName, newLib);
+        }
+      }
+
       for (int i = 0; i < allContributions.size(); i++) {
         if (allContributions.get(i) == oldLib) {
           allContributions.set(i, newLib);
@@ -131,6 +139,11 @@ public class ContributionListing {
 
 
   private void addContribution(Contribution contribution) {
+    if (contribution.getImports() != null) {
+      for (String importName : contribution.getImports()) {
+        librariesByImportHeader.put(importName, contribution);
+      }
+    }
     for (String category : contribution.getCategories()) {
       if (librariesByCategory.containsKey(category)) {
         List<Contribution> list = librariesByCategory.get(category);
@@ -153,6 +166,11 @@ public class ContributionListing {
     for (String category : contribution.getCategories()) {
       if (librariesByCategory.containsKey(category)) {
         librariesByCategory.get(category).remove(contribution);
+      }
+    }
+    if (contribution.getImports() != null) {
+      for (String importName : contribution.getImports()) {
+        librariesByImportHeader.remove(importName);
       }
     }
     allContributions.remove(contribution);
