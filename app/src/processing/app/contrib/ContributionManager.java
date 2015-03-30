@@ -15,7 +15,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License along 
+  You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
@@ -43,7 +43,7 @@ public class ContributionManager {
   /**
    * Blocks until the file is downloaded or an error occurs. Returns true if the
    * file was successfully downloaded, false otherwise.
-   * 
+   *
    * @param source
    *          the URL of the file to download
    * @param dest
@@ -67,17 +67,18 @@ public class ContributionManager {
       conn.setReadTimeout(60 * 1000);
       conn.setRequestMethod("GET");
       conn.connect();
-  
+
       if (progress != null) {
         // TODO this is often -1, may need to set progress to indeterminate
         int fileSize = conn.getContentLength();
+        progress.max = fileSize;
 //      System.out.println("file size is " + fileSize);
-        progress.startTask(Language.text("contrib.progress.downloading"), fileSize); 
+        progress.startTask(Language.text("contrib.progress.downloading"), fileSize);
       }
-  
+
       InputStream in = conn.getInputStream();
       FileOutputStream out = new FileOutputStream(dest);
-  
+
       byte[] b = new byte[8192];
       int amount;
       if (progress != null) {
@@ -95,7 +96,7 @@ public class ContributionManager {
       out.flush();
       out.close();
       success = true;
-      
+
     } catch (SocketTimeoutException ste) {
       if (progress != null) {
         progress.error(ste);
@@ -106,7 +107,7 @@ public class ContributionManager {
         progress.error(ioe);
         progress.cancel();
       }
-      // Hiding stack trace. An error has been shown where needed. 
+      // Hiding stack trace. An error has been shown where needed.
 //      ioe.printStackTrace();
     }
     if (progress != null)
@@ -114,7 +115,7 @@ public class ContributionManager {
     return success;
   }
 
-  
+
   /**
    * Non-blocking call to download and install a contribution in a new thread.
    *
@@ -143,10 +144,10 @@ public class ContributionManager {
 
           try {
             download(url, contribZip, downloadProgress);
-            
+
             if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
               installProgress.startTask(Language.text("contrib.progress.installing"), ProgressMonitor.UNKNOWN);
-              LocalContribution contribution = 
+              LocalContribution contribution =
                 ad.install(editor.getBase(), contribZip, false, status);
 
               if (contribution != null) {
@@ -196,11 +197,11 @@ public class ContributionManager {
 
   /**
    * Non-blocking call to download and install a contribution in a new thread.
-   * 
+   *
    * @param url
    *          Direct link to the contribution.
    * @param ad
-   *          The AvailableContribution to be downloaded and installed. 
+   *          The AvailableContribution to be downloaded and installed.
    */
   static void downloadAndInstallOnStartup(final Base base, final URL url,
                                           final AvailableContribution ad) {
@@ -215,7 +216,7 @@ public class ContributionManager {
 
           try {
             download(url, contribZip, null);
-            
+
             LocalContribution contribution = ad.install(base, contribZip,
                                                         false, null);
 
@@ -233,7 +234,7 @@ public class ContributionManager {
             }
 
             contribZip.delete();
-            
+
             handleUpdateFailedMarkers(ad, filename.substring(0, filename.lastIndexOf('.')));
 
           } catch (Exception e) {
@@ -353,27 +354,27 @@ public class ContributionManager {
 
     return fileName;
   }
-  
-  
-  /** 
+
+
+  /**
    * Called by Base to clean up entries previously marked for deletion
    * and remove any "requires restart" flags.
    * Also updates all entries previously marked for update.
    */
   static public void cleanup(final Base base) throws Exception {
-    
+
     deleteTemp(Base.getSketchbookModesFolder());
     deleteTemp(Base.getSketchbookToolsFolder());
-    
+
     deleteFlagged(Base.getSketchbookLibrariesFolder());
     deleteFlagged(Base.getSketchbookModesFolder());
     deleteFlagged(Base.getSketchbookToolsFolder());
-    
+
     installPreviouslyFailed(base, Base.getSketchbookModesFolder());
     updateFlagged(base, Base.getSketchbookModesFolder());
-    
+
     updateFlagged(base, Base.getSketchbookToolsFolder());
-    
+
     SwingWorker s = new SwingWorker<Void, Void>() {
 
       @Override
@@ -389,8 +390,8 @@ public class ContributionManager {
     };
     s.execute();
 
-    
-    
+
+
     clearRestartFlags(Base.getSketchbookModesFolder());
     clearRestartFlags(Base.getSketchbookToolsFolder());
   }
@@ -400,7 +401,7 @@ public class ContributionManager {
    * Deletes the icky tmp folders that were left over from installs and updates
    * in the previous run of Processing. Needed to be called only on the tools
    * and modes sketchbook folders.
-   * 
+   *
    * @param root
    */
   static private void deleteTemp(File root) {
@@ -421,7 +422,7 @@ public class ContributionManager {
 
   /**
    * Deletes all the modes/tools/libs that are flagged for removal.
-   * 
+   *
    * @param root
    * @throws Exception
    */
@@ -436,12 +437,12 @@ public class ContributionManager {
       Base.removeDir(folder);
     }
   }
-  
-  
+
+
   /**
    * Installs all the modes/tools whose installation failed during an
    * auto-update the previous time Processing was started up.
-   * 
+   *
    * @param base
    * @param root
    * @throws Exception
@@ -470,7 +471,7 @@ public class ContributionManager {
 
   /**
    * Updates all the flagged modes/tools.
-   * 
+   *
    * @param base
    * @param root
    * @throws Exception
@@ -502,7 +503,7 @@ public class ContributionManager {
       updateContribsNames.add(properties.get("name"));
       Base.removeDir(folder);
     }
-    
+
     Iterator<AvailableContribution> iter = contribListing.advertisedContributions.iterator();
     while (iter.hasNext()) {
       AvailableContribution availableContribs = iter.next();
@@ -510,7 +511,7 @@ public class ContributionManager {
         updateContribsList.add(availableContribs);
       }
     }
-    
+
     Iterator<AvailableContribution> iter2 = updateContribsList.iterator();
     while (iter2.hasNext()) {
       AvailableContribution contribToUpdate = iter2.next();
@@ -518,8 +519,8 @@ public class ContributionManager {
       contribListing.replaceContribution(contribToUpdate, contribToUpdate);
     }
   }
-  
-  
+
+
   static private void installOnStartUp(final Base base, final AvailableContribution availableContrib) {
     if (availableContrib.link == null) {
       Base.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
@@ -528,16 +529,16 @@ public class ContributionManager {
     }
     try {
       URL downloadUrl = new URL(availableContrib.link);
-      
+
       ContributionManager.downloadAndInstallOnStartup(base, downloadUrl, availableContrib);
-      
+
     } catch (MalformedURLException e) {
       Base.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
                        Language.text("contrib.errors.malformed_url"), e);
     }
   }
-  
-  
+
+
   static private void clearRestartFlags(File root) throws Exception {
     File[] folderList = root.listFiles(new FileFilter() {
       public boolean accept(File folder) {
