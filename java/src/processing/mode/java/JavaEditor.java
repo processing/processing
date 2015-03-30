@@ -1853,11 +1853,12 @@ public class JavaEditor extends Editor {
     super.prepareRun();
     downloadImports();
   }
-  
+
+
   /**
-   * Downloads libraries that have been imported, that aren't available as a 
-   * LocalContribution, but that have an AvailableContribution associated with 
-   * them. 
+   * Downloads libraries that have been imported, that aren't available as a
+   * LocalContribution, but that have an AvailableContribution associated with
+   * them.
    */
   protected void downloadImports() {
     String importRegex = errorCheckerService.importRegexp;
@@ -1867,7 +1868,7 @@ public class JavaEditor extends Editor {
         tabCode = sc.getProgram();
 
         String[][] pieces = PApplet.matchAll(tabCode, importRegex);
-        
+
         if (pieces != null) {
           ArrayList<String> importHeaders = new ArrayList<String>();
           for (String[] importStatement : pieces) {
@@ -1879,24 +1880,26 @@ public class JavaEditor extends Editor {
             for (AvailableContribution ac : installLibsHeaders) {
               libList.append("\n  • " + ac.getName());
             }
-            int option = Base
-                .showYesNoQuestion(this, "Missing Libraries Available",
-                                   "The following imported libraries  are available for download, but have not been installed.",
-                                   libList.toString());
+            int option = Base.showYesNoQuestion(this,
+                Language.text("contrib.import.dialog.title"),
+                Language.text("contrib.import.dialog.primary_text"),
+                libList.toString());
 
-              if (option == JOptionPane.YES_OPTION) {
-                ContributionManager.downloadAndInstallOnImport(base,
-                    installLibsHeaders);
-              }
+            if (option == JOptionPane.YES_OPTION) {
+              ContributionManager.downloadAndInstallOnImport(base,
+                  installLibsHeaders);
+            }
           }
         }
       }
     }
   }
-  
+
+
   /**
-   * Returns a list of AvailableContributions of those libraries that the user wants imported, 
-   * but that are not installed. 
+   * Returns a list of AvailableContributions of those libraries that the user
+   * wants imported, but that are not installed.
+   * 
    * @param importHeaders
    */
   private ArrayList<AvailableContribution> getNotInstalledAvailableLibs(ArrayList<String> importHeadersList) {
@@ -1917,18 +1920,23 @@ public class JavaEditor extends Editor {
         library = this.getMode().getLibrary(entry);
         if (library == null) {
           Contribution c = importMap.get(importHeaders);
-          if (c!=null && c instanceof AvailableContribution)
-            libList.add((AvailableContribution)c);//System.out.println(importHeaders + "not found");
+          if (c != null && c instanceof AvailableContribution) {
+            libList.add((AvailableContribution) c);// System.out.println(importHeaders
+                                                   // + "not found");
+          }
         }
       } catch (Exception e) {
         // Not gonna happen (hopefully)
         Contribution c = importMap.get(importHeaders);
-        if (c!=null && c instanceof AvailableContribution)
-          libList.add((AvailableContribution)c);//System.out.println(importHeaders + "not found");
+        if (c != null && c instanceof AvailableContribution) {
+          libList.add((AvailableContribution) c);// System.out.println(importHeaders
+                                                 // + "not found");
+        }
       }
     }
     return libList;
   }
+
 
   /**
    * Displays a JDialog prompting the user to save when the user hits

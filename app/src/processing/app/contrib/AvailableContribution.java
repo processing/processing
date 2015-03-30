@@ -251,9 +251,9 @@ public class AvailableContribution extends Contribution {
         sb.deleteCharAt(sb.length() - 1);
         category = sb.toString();
       }
-      
+
       String specifiedImport = "";
-      List<String> importsList = parseImports(properties.get("imports")); 
+      List<String> importsList = parseImports(properties.get("imports"));
       if (importsList == null || importsList.isEmpty()) {
         specifiedImport = getImportStr();
       } else {

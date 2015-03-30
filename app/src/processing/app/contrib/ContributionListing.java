@@ -120,7 +120,7 @@ public class ContributionListing {
           }
         }
       }
-      
+
       if (oldLib.getImports() != null) {
         for (String importName : oldLib.getImports()) {
           librariesByImportHeader.replace(importName, newLib);

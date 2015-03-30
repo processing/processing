@@ -92,18 +92,18 @@ abstract public class Contribution {
   
   
   protected String getImportStr() {
-    if (specifiedImports == null || specifiedImports.isEmpty())
+    if (specifiedImports == null || specifiedImports.isEmpty()) {
       return "";
+    }
     StringBuilder sb = new StringBuilder();
     for (String importName : specifiedImports) {
       sb.append(importName);
       sb.append(',');
     }
-    sb.deleteCharAt(sb.length()-1);  // delete last comma
+    sb.deleteCharAt(sb.length() - 1); // delete last comma
     return sb.toString();
   }
-  
-  
+
   protected boolean hasImport(String importName) {
     if (specifiedImports != null && importName != null) {
       for (String c : specifiedImports) {
@@ -267,13 +267,13 @@ abstract public class Contribution {
    */
   static List<String> parseImports(String importStr) {
     List<String> outgoing = new ArrayList<String>();
-    
+
     if (importStr != null) {
       String[] importList = PApplet.trim(PApplet.split(importStr, ','));
       for (String importName : importList) {
-          outgoing.add(importName);
+        outgoing.add(importName);
       }
     }
-    return (outgoing.size() > 0) ? outgoing : null; 
+    return (outgoing.size() > 0) ? outgoing : null;
   }
 }
