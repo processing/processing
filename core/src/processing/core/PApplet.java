@@ -13958,7 +13958,12 @@ public class PApplet implements PConstants {
    * @see PApplet#lerp(float, float, float)
    */
   public int lerpColor(int c1, int c2, float amt) {
-    return g.lerpColor(c1, c2, amt);
+    if(g != null) {
+      return g.lerpColor(c1, c2, amt);
+    }
+    // use the default mode (RGB) if lerpColor is called in an active-mode sketch
+    // before setup() has run
+    return PGraphics.lerpColor(c1, c2, amt, RGB);
   }
 
 
