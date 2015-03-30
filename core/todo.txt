@@ -21,6 +21,7 @@ _ static mode (no setup() / draw()) broken
 _   https://github.com/processing/processing/issues/3130
 _ Sketch window dimensions off in Java2D
 _   https://github.com/processing/processing/issues/3129
+_   fix? https://github.com/processing/processing/pull/3162
 
 earlier
 X size(640,360 , P3D) doesn't work properly
@@ -209,7 +210,17 @@ _   https://github.com/processing/processing/issues/2030
 _ NPE when using image() created with createGraphics(PGraphicsRetina2D)
 _   https://github.com/processing/processing/issues/2510
 
+
 decisions/misc
+_ async requests
+_   Request r = createRequest("http://p5.org/feed/13134.jpg");
+_   Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
+_   Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
+_   implement callbacks for images and other loadXxxx() functions
+_     remove requestImage() and friends
+_   callback for requestImage()
+_     https://github.com/processing/processing/issues/680
+_   remove/update requestImage example
 _ use enums for constants
 _   https://github.com/processing/processing/issues/2778
 _ make join() work with Iterable?
@@ -309,6 +320,7 @@ _   was disconnect always there?
 _   will need documentation
 _ negative indices so that we can work relative to the end in data classes?
 _ add Double and Long versions of the classes?
+
 
 
 
@@ -864,12 +876,3 @@ _ put a Hash<Something> class in there
 _   will this work to sort by the values?
 _   there was another concern as well..
 _ save() should probably come out of image, ja?
-_ async requests
-_   Request r = createRequest("http://p5.org/feed/13134.jpg");
-_   Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
-_   Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
-_   implement callbacks for images and other loadXxxx() functions
-_     remove requestImage() and friends
-_   callback for requestImage()
-_     http://code.google.com/p/processing/issues/detail?id=641
-_   remove/update requestImage example

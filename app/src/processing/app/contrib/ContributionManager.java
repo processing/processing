@@ -497,8 +497,8 @@ public class ContributionManager {
       propFileName = "libraries.properties";
 
     for (File folder : markedForUpdate) {
-      HashMap<String, String> properties = Base
-        .readSettings(new File(folder, propFileName));
+      Map<String, String> properties = 
+        Base.readSettings(new File(folder, propFileName));
       updateContribsNames.add(properties.get("name"));
       Base.removeDir(folder);
     }

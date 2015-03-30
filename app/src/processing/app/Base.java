@@ -2309,14 +2309,20 @@ public class Base {
   /**
    * Read from a file with a bunch of attribute/value pairs
    * that are separated by = and ignore comments with #.
+   * Changed in 3.0a6 to return null (rather than empty hash) if no file,
+   * and changed return type to Map instead of HashMap.
    */
-  static public HashMap<String,String> readSettings(File inputFile) {
-    HashMap<String,String> outgoing = new HashMap<String,String>();
-    if (inputFile.exists()) {
-      String lines[] = PApplet.loadStrings(inputFile);
-      readSettings(inputFile.toString(), lines, outgoing);
+  static public Map<String, String> readSettings(File inputFile) {
+    if (!inputFile.exists()) {
+      System.err.println(inputFile + " does not exist.");
+      return null;
     }
-    return outgoing;
+    String lines[] = PApplet.loadStrings(inputFile);
+    if (lines == null) {
+      System.err.println("Could not read " + inputFile);
+      return null;
+    }
+    return readSettings(inputFile.toString(), lines);
   }
 
 
@@ -2324,9 +2330,13 @@ public class Base {
    * Parse a String array that contains attribute/value pairs separated
    * by = (the equals sign). The # (hash) symbol is used to denote comments.
    * Comments can be anywhere on a line. Blank lines are ignored.
+   * In 3.0a6, no longer taking a blank HahMap as param; no cases in the main
+   * PDE code of adding to a (Hash)Map. Also returning the Map instead of void.
+   * Both changes modify the method signature, but this was only used by the
+   * contrib classes. 
    */
-  static public void readSettings(String filename, String[] lines,
-                                  HashMap<String, String> settings) {
+  static public Map<String, String> readSettings(String filename, String[] lines) {
+    Map<String, String> settings = new HashMap<>();
     for (String line : lines) {
       // Remove comments
       int commentMarker = line.indexOf('#');
@@ -2350,6 +2360,7 @@ public class Base {
         }
       }
     }
+    return settings;
   }
 
 

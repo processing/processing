@@ -113,7 +113,7 @@ public class Library extends LocalContribution {
     referenceFile = new File(folder, "reference/index.html");
 
     File exportSettings = new File(libraryFolder, "export.txt");
-    HashMap<String,String> exportTable = Base.readSettings(exportSettings);
+    Map<String,String> exportTable = Base.readSettings(exportSettings);
 
     exportList = new HashMap<String, String[]>();
 

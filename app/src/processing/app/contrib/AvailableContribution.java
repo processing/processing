@@ -22,8 +22,8 @@
 package processing.app.contrib;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import processing.app.Base;
 import processing.app.Language;
@@ -38,7 +38,7 @@ class AvailableContribution extends Contribution {
   protected final String link;             // Direct link to download the file
 
   
-  public AvailableContribution(ContributionType type, HashMap<String, String> params) {
+  public AvailableContribution(ContributionType type, Map<String, String> params) {
     this.type = type;
     this.link = params.get("download");
     
@@ -231,7 +231,7 @@ class AvailableContribution extends Contribution {
    */
   public boolean writePropertiesFile(File propFile) {
     try {
-      HashMap<String, String> properties = Base.readSettings(propFile);
+      Map<String, String> properties = Base.readSettings(propFile);
 
       String name = properties.get("name");
       if (name == null || name.isEmpty())

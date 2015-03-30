@@ -54,6 +54,8 @@ X   https://github.com/processing/processing/pull/3061
 X contributions.txt now gets deleted and recreated instead of overwritten
 X   https://github.com/processing/processing/pull/3073
 X   https://github.com/processing/processing/issues/2994
+X Contrib Manager does not stop parsing contribs.txt if an error exists
+X   https://github.com/processing/processing/pull/3132
 
 manindra
 X Fix for "Probably a ++ should go here" messages

@@ -218,7 +218,7 @@ public class ContributionListing {
 
 
   protected List<Contribution> getFilteredLibraryList(String category, List<String> filters) {
-    ArrayList<Contribution> filteredList = 
+    ArrayList<Contribution> filteredList =
       new ArrayList<Contribution>(allContributions);
 
     Iterator<Contribution> it = filteredList.iterator();
@@ -310,9 +310,9 @@ public class ContributionListing {
 
 
   protected List<Contribution> getCompatibleContributionList(List<Contribution> filteredLibraries, boolean filter) {
-    ArrayList<Contribution> filteredList = 
+    ArrayList<Contribution> filteredList =
       new ArrayList<Contribution>(filteredLibraries);
-    
+
     if (!filter)
       return filteredList;
 
@@ -417,7 +417,7 @@ public class ContributionListing {
     }
     return false;
   }
-  
+
   boolean hasUpdates(Base base) {
     for (ModeContribution m : base.getModeContribs())
       if (hasUpdates(m))
@@ -459,7 +459,7 @@ public class ContributionListing {
     else
       return null;
   }
-  
+
 
 
   boolean hasDownloadedLatestList() {
@@ -479,7 +479,7 @@ public class ContributionListing {
 //    return s.toLowerCase().replaceAll("^\\p{Lower}", "");
 //  }
 
-  
+
 //  /**
 //   * @return the proper, valid name of this category to be displayed in the UI
 //   *         (e.g. "Typography / Geometry"). "Unknown" if the category null.
@@ -508,40 +508,31 @@ public class ContributionListing {
 
       int start = 0;
       while (start < lines.length) {
-//        // Only consider 'invalid' lines. These lines contain the type of
-//        // software: library, tool, mode
-//        if (!lines[start].contains("=")) {
         String type = lines[start];
         ContributionType contribType = ContributionType.fromName(type);
         if (contribType == null) {
           System.err.println("Error in contribution listing file on line " + (start+1));
           // Scan forward for the next blank line
           int end = ++start;
-          while (end < lines.length && !lines[end].equals("")) {
+          while (end < lines.length && lines[end].trim().length() != 0) {
             end++;
           }
           start = end + 1;
-          continue;
+
+        } else {
+          // Scan forward for the next blank line
+          int end = ++start;
+          while (end < lines.length && lines[end].trim().length() != 0) {
+            end++;
+          }
+
+          String[] contribLines = PApplet.subset(lines, start, end-start);
+
+          Map<String, String> contribParams = Base.readSettings(file.getName(), contribLines);
+
+          outgoing.add(new AvailableContribution(contribType, contribParams));
+          start = end + 1;
         }
-
-        // Scan forward for the next blank line
-        int end = ++start;
-        while (end < lines.length && !lines[end].equals("")) {
-          end++;
-        }
-
-        int length = end - start;
-        String[] contribLines = new String[length];
-        System.arraycopy(lines, start, contribLines, 0, length);
-
-        HashMap<String,String> contribParams = new HashMap<String,String>();
-        Base.readSettings(file.getName(), contribLines, contribParams);
-
-        outgoing.add(new AvailableContribution(contribType, contribParams));
-        start = end + 1;
-//        } else {
-//          start++;
-//        }
       }
     }
     return outgoing;
