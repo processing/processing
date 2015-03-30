@@ -9947,6 +9947,24 @@ public class PApplet implements PConstants {
   }
 
 
+  public void attrib(String name, float... values) {
+    if (recorder != null) recorder.attrib(name, values);
+    g.attrib(name, values);
+  }
+
+
+  public void attrib(String name, int... values) {
+    if (recorder != null) recorder.attrib(name, values);
+    g.attrib(name, values);
+  }
+
+
+  public void attrib(String name, boolean... values) {
+    if (recorder != null) recorder.attrib(name, values);
+    g.attrib(name, values);
+  }
+
+
   /**
    * ( begin auto-generated from textureMode.xml )
    *
