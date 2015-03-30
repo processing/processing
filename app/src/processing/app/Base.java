@@ -268,7 +268,7 @@ public class Base {
       Base.showError("Missing required files",
                      "Processing requires a JRE with tools.jar (or a\n" +
                      "full JDK) installed in (or linked to) a folder\n" +
-                     "named “java” next to the Processing application.\n" +
+                     "named â€œjavaâ€� next to the Processing application.\n" +
                      "More information can be found on the Wiki.", cnfe);
     }
   }
@@ -1264,7 +1264,7 @@ public class Base {
     return found;
   }
 
-
+  
   protected boolean addSketches(DefaultMutableTreeNode node, File folder) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) {

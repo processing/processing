@@ -365,7 +365,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     
   }
 
-
   protected ArrayList<ToolContribution> getCoreTools() {
     return coreTools;
   }
@@ -529,7 +528,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     JMenuItem addLib = new JMenuItem(Language.text("toolbar.add_mode"));
     addLib.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.handleOpenModeManager();
+       base.handleOpenModeManager();
       }
     });
     modeMenu.add(addLib);
@@ -610,7 +609,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
    */
   protected void applyPreferences() {
     // Update fonts and other items controllable from the prefs
-    textarea.getPainter().updateAppearance();
+    TextAreaPainter tap=textarea.getPainter();
+    tap.setBackground( Preferences.getColor("run.present.bgcolor"));
+   
     textarea.repaint();
     
     console.updateAppearance();
@@ -742,6 +743,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleSave(false);
+        
       }
     });
 //    saveMenuItem = item;
@@ -1493,9 +1495,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
         undoItem.setEnabled(false);
         undoItem.setText(Language.text("menu.edit.undo"));
         putValue(Action.NAME, Language.text("menu.edit.undo"));
-//        if (sketch != null) {
-//          sketch.setModified(false);  // 0107
-//        }
+        if (sketch != null) {
+          sketch.setModified(false);  // 0107
+        }
       }
     }
   }
@@ -1759,6 +1761,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public void startCompoundEdit() {
     stopCompoundEdit();
     compoundEdit = new CompoundEdit();
+    
   }
 
 
@@ -3006,7 +3009,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       copyItem.setEnabled(active);
       discourseItem.setEnabled(active);
 
-      referenceItem.setEnabled(referenceCheck(false) != null);
+     // referenceItem.setEnabled(referenceCheck(false) != null);
       super.show(component, x, y);
     }
   }

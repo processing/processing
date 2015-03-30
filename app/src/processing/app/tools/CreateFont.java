@@ -103,9 +103,11 @@ public class CreateFont extends JFrame implements Tool {
     JTextArea textarea = new JTextArea(labelText);
     textarea.setBorder(new EmptyBorder(10, 10, 20, 10));
     textarea.setBackground(null);
+    
     textarea.setEditable(false);
     textarea.setHighlighter(null);
     textarea.setFont(new Font("Dialog", Font.PLAIN, 12));
+    //textarea.setForeground(Color.green);
     pain.add(textarea);
 
     // don't care about families starting with . or #

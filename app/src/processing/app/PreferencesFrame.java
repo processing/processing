@@ -87,10 +87,10 @@ public class PreferencesFrame {
 
   public PreferencesFrame(Base base) {
     this.base = base;
-    //dialog = new JDialog(editor, "Preferences", true);
+   // dialog = new JDialog(editor, "Preferences", true);
     dialog = new JFrame(Language.text("preferences"));
     dialog.setResizable(false);
-
+    
     Container pain = dialog.getContentPane();
     pain.setLayout(null);
 
@@ -246,8 +246,7 @@ public class PreferencesFrame {
     presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
 
     presentColorHex = new JTextField(6);
-    presentColorHex
-        .setText(Preferences.get("run.present.bgcolor").substring(1));
+    presentColorHex.setText(Preferences.get("run.present.bgcolor").substring(1));
     presentColorHex.getDocument().addDocumentListener(new DocumentListener() {
 
       @Override
@@ -658,6 +657,9 @@ public class PreferencesFrame {
    * then send a message to the editor saying that it's time to do the same.
    */
   protected void applyFrame() {
+    //Preferred Screen Color
+   // base.getActiveEditor().textarea.getPainter().setBackground(Preferences.getColor("run.present.bg"));
+    
     Preferences.setBoolean("editor.smooth", //$NON-NLS-1$
                            editorAntialiasBox.isSelected());
 
@@ -675,7 +677,7 @@ public class PreferencesFrame {
     String oldPath = Preferences.getSketchbookPath();
     String newPath = sketchbookLocationField.getText();
     if (!newPath.equals(oldPath)) {
-      base.setSketchbookFolder(new File(newPath));
+      { base.setSketchbookFolder(new File(newPath)); base.getNextMode().rebuildTree(); }    
     }
 
 //    setBoolean("editor.external", externalEditorBox.isSelected());
@@ -746,13 +748,17 @@ public class PreferencesFrame {
         selection = Integer.parseInt((String) selection);
       }
       Preferences.set("console.font.size", String.valueOf(selection));
+      
 
     } catch (NumberFormatException e) {
       Base.log("Ignoring invalid font size " + consoleSizeField); //$NON-NLS-1$
       consoleSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
     }
 
+    
     Preferences.setColor("run.present.bgcolor", presentColor.getBackground());
+    
+   // Preferences.setColor("run.present.bgcolor", base.getActiveEditor().textarea.getPainter().getBackground());
 
     Preferences.setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
 

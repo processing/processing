@@ -553,7 +553,7 @@ public class Sketch {
         updateInternal(sanitaryName, newFolder);
 
 //        File newMainFile = new File(newFolder, newName + ".pde");
-//        String newMainFilePath = newMainFile.getAbsolutePath();
+//       String newMainFilePath = newMainFile.getAbsolutePath();
 //
 //        // having saved everything and renamed the folder and the main .pde,
 //        // use the editor to re-open the sketch to re-init state
@@ -798,6 +798,7 @@ public class Sketch {
   protected boolean saveAs() throws IOException {
     String newParentDir = null;
     String newName = null;
+    String sketchPath="";
 	
     final String oldName2 = folder.getName();
     // TODO rewrite this to use shared version from PApplet
@@ -808,9 +809,11 @@ public class Sketch {
       if (isReadOnly() || isUntitled()) {
         // default to the sketchbook folder
         fd.setDirectory(Preferences.getSketchbookPath());
+        sketchPath=Preferences.getSketchbookPath();
       } else {
         // default to the parent folder of where this was
         fd.setDirectory(folder.getParent());
+        sketchPath=folder.getParent();
       }
       String oldName = folder.getName();
       fd.setFile(oldName);
@@ -846,7 +849,7 @@ public class Sketch {
     if (!sanitaryName.equals(newName) && newFolder.exists()) {
       Base.showMessage("Cannot Save",
                        "A sketch with the cleaned name\n" +
-                       "“" + sanitaryName + "” already exists.");
+                       "â€œ" + sanitaryName + "â€� already exists.");
       return false;
     }
     newName = sanitaryName;
@@ -1006,6 +1009,8 @@ public class Sketch {
     editor.base.rebuildSketchbookMenus();
     editor.base.handleRecentRename(editor,oldPath);
 //    editor.header.rebuild();
+    
+    mode.updateTree(sketchName,sketchFolder);
   }
 
 
