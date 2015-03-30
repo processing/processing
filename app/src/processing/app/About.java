@@ -12,11 +12,13 @@ import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JOptionPane;
+
 
 public class About extends Window {
   Image image;
   int width, height;
-  
+  int reply;
   
   public About(Frame frame) {
     super(frame);
@@ -33,7 +35,10 @@ public class About extends Window {
     
     addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        dispose();
+        reply = JOptionPane.showConfirmDialog(null, "Are you sure you want to close?", "Close?",  JOptionPane.YES_NO_OPTION);
+        if (reply == JOptionPane.YES_OPTION) {
+           dispose();
+        }
       }
     });
     
