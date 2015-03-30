@@ -988,6 +988,8 @@ public class PSurfaceAWT implements PSurface {
       // maximization bug in OSX:
       // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=8036935
       public void windowStateChanged(WindowEvent e) {
+        // This seems to be firing when dragging the window on OS X
+        // https://github.com/processing/processing/issues/3092
         if (Frame.MAXIMIZED_BOTH == e.getNewState()) {
           // Supposedly, sending the frame to back and then front is a
           // workaround for this bug:
@@ -995,8 +997,11 @@ public class PSurfaceAWT implements PSurface {
           // but is not working for me...
           //frame.toBack();
           //frame.toFront();
-          // but either packing the frame does!
-          frame.pack();
+          // Packing the frame works, but that causes the window to collapse
+          // on OS X when the window is dragged. Changing to addNotify() for
+          // https://github.com/processing/processing/issues/3092
+          //frame.pack();
+          frame.addNotify();
         }
       }
     });
@@ -1004,6 +1009,13 @@ public class PSurfaceAWT implements PSurface {
     frame.addComponentListener(new ComponentAdapter() {
         @Override
         public void componentResized(ComponentEvent e) {
+//          for (ComponentListener cl : frame.getComponentListeners()) {
+//            System.out.println(cl);
+//          }
+//          System.out.println(e);
+//          System.out.println(frame.isResizable());
+//          new Exception().printStackTrace();
+
           // Ignore bad resize events fired during setup to fix
           // http://dev.processing.org/bugs/show_bug.cgi?id=341
           // This should also fix the blank screen on Linux bug
