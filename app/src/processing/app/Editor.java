@@ -986,10 +986,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menu.addMenuListener(new MenuListener() {
     
       @Override
-      public void menuCanceled(MenuEvent e) { }
+      public void menuCanceled(MenuEvent e) {
+        copyItems.setEnabled(true);
+        cutItems.setEnabled(true);
+      }
     
       @Override
-      public void menuDeselected(MenuEvent e) { }
+      public void menuDeselected(MenuEvent e) {
+        copyItems.setEnabled(true);
+        cutItems.setEnabled(true);
+      }
 
       @Override
       public void menuSelected(MenuEvent e) {
@@ -1407,7 +1413,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     
     public void actionPerformed(ActionEvent e) {
-      System.out.println(e.getActionCommand());
       handleCut();
     }
     
