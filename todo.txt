@@ -115,6 +115,11 @@ X   https://github.com/processing/processing/pull/3101
 X processing.net.Server only cleans up internal Clients when trying to write
 X   https://github.com/processing/processing/issues/3089
 X   https://github.com/processing/processing/pull/3097
+X issues with cut/copy shortcuts not working
+X   https://github.com/processing/processing/pull/3138
+X   https://github.com/processing/processing/issues/3136
+X Display download percentage when fetching contrib info
+X   https://github.com/processing/processing/pull/3161
 
 integration of pdex
 X changed JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
@@ -217,8 +222,6 @@ _   processing-docs/java_generate/ReferenceGenerator/processingrefBuild.sh
 _   remove reference.zip from main repo
 _ clean out the repo
 _   https://github.com/processing/processing/issues/1898
-_ Add support for localizing contributions
-_   https://github.com/processing/processing/pull/2833
 
 
 help me
@@ -243,6 +246,9 @@ _ clean up 'ant doc' target to remove warnings
 _   https://github.com/processing/processing/issues/1492
 _ fix encodings, line endings, and mime types in the repo
 _   https://github.com/processing/processing/issues/2955
+_ Add support for localizing contributions
+_   https://github.com/processing/processing/pull/2833
+_   https://github.com/processing/processing/issues/3154
 
 
 medium
@@ -266,6 +272,7 @@ _ should default to the local Java on Windows and Linux
 _   have export apps default to the local JRE
 _   Linux is probably using the system JRE if available
 _   launch4j may be all set, but double-check
+_   um, no--we should use the embedded version, b/c who knows what happens
 _ use platformDelete() to remove untitled sketches?
 _   would allow us to use the /tmp folder
 _ change to using platformDelete() instead of Base.removeDir() where possible

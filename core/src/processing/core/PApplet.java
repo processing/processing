@@ -9194,6 +9194,34 @@ public class PApplet implements PConstants {
   }
 
 
+  /**
+   * ( begin auto-generated from lerpColor.xml )
+   *
+   * Calculates a color or colors between two color at a specific increment.
+   * The <b>amt</b> parameter is the amount to interpolate between the two
+   * values where 0.0 equal to the first point, 0.1 is very near the first
+   * point, 0.5 is half-way in between, etc.
+   *
+   * ( end auto-generated )
+   *
+   * @webref color:creating_reading
+   * @usage web_application
+   * @param c1 interpolate from this color
+   * @param c2 interpolate to this color
+   * @param amt between 0.0 and 1.0
+   * @see PImage#blendColor(int, int, int)
+   * @see PGraphics#color(float, float, float, float)
+   * @see PApplet#lerp(float, float, float)
+   */
+  public int lerpColor(int c1, int c2, float amt) {
+    if (g != null) {
+      return g.lerpColor(c1, c2, amt);
+    }
+    // use the default mode (RGB) if lerpColor is called before setup()
+    return PGraphics.lerpColor(c1, c2, amt, RGB);
+  }
+
+
   static public int blendColor(int c1, int c2, int mode) {
     return PImage.blendColor(c1, c2, mode);
   }
@@ -13953,35 +13981,6 @@ public class PApplet implements PConstants {
    */
   public final float brightness(int rgb) {
     return g.brightness(rgb);
-  }
-
-
-  /**
-   * ( begin auto-generated from lerpColor.xml )
-   *
-   * Calculates a color or colors between two color at a specific increment.
-   * The <b>amt</b> parameter is the amount to interpolate between the two
-   * values where 0.0 equal to the first point, 0.1 is very near the first
-   * point, 0.5 is half-way in between, etc.
-   *
-   * ( end auto-generated )
-   *
-   * @webref color:creating_reading
-   * @usage web_application
-   * @param c1 interpolate from this color
-   * @param c2 interpolate to this color
-   * @param amt between 0.0 and 1.0
-   * @see PImage#blendColor(int, int, int)
-   * @see PGraphics#color(float, float, float, float)
-   * @see PApplet#lerp(float, float, float)
-   */
-  public int lerpColor(int c1, int c2, float amt) {
-    if(g != null) {
-      return g.lerpColor(c1, c2, amt);
-    }
-    // use the default mode (RGB) if lerpColor is called in an active-mode sketch
-    // before setup() has run
-    return PGraphics.lerpColor(c1, c2, amt, RGB);
   }
 
 

@@ -7700,7 +7700,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#color(float, float, float, float)
    * @see PApplet#lerp(float, float, float)
    */
-  public int lerpColor(int c1, int c2, float amt) {
+  public int lerpColor(int c1, int c2, float amt) {  // ignore
     return lerpColor(c1, c2, amt, colorMode);
   }
 

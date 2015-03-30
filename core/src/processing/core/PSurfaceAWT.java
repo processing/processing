@@ -518,6 +518,8 @@ public class PSurfaceAWT implements PSurface {
       // Did not help, and the screenRect setup seems to work fine.
       //frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 
+      // https://github.com/processing/processing/pull/3162
+      frame.dispose();  // release native resources, allows setUndecorated()
       frame.setUndecorated(true);
       // another duplicate?
 //      if (backgroundColor != null) {
@@ -525,7 +527,7 @@ public class PSurfaceAWT implements PSurface {
 //      }
       // this may be the bounds of all screens
       frame.setBounds(screenRect);
-      frame.setVisible(true);
+      frame.setVisible(true);  // re-add native resources
     }
     frame.setLayout(null);
     //frame.add(applet);
@@ -574,6 +576,9 @@ public class PSurfaceAWT implements PSurface {
   public void setVisible(boolean visible) {
     frame.setVisible(visible);
 
+    // removing per https://github.com/processing/processing/pull/3162
+    // can remove the code below once 3.0a6 is tested and behaving
+/*
     if (visible && PApplet.platform == PConstants.LINUX) {
       // Linux doesn't deal with insets the same way. We get fake insets
       // earlier, and then the window manager will slap its own insets
@@ -586,6 +591,7 @@ public class PSurfaceAWT implements PSurface {
                       insets.top + insets.bottom);
       }
     }
+*/
   }
 
 
@@ -679,6 +685,9 @@ public class PSurfaceAWT implements PSurface {
 
   /** Resize frame for these sketch (canvas) dimensions. */
   private Dimension setFrameSize() {  //int sketchWidth, int sketchHeight) {
+    // https://github.com/processing/processing/pull/3162
+    frame.addNotify();  // using instead of show() to add the peer [fry]
+
 //    System.out.format("setting frame size %d %d %n", sketchWidth, sketchHeight);
 //    new Exception().printStackTrace(System.out);
     Insets insets = frame.getInsets();
