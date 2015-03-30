@@ -518,6 +518,7 @@ public class PSurfaceAWT implements PSurface {
       // Did not help, and the screenRect setup seems to work fine.
       //frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 
+      frame.dispose(); //Release native resources, letting us use setUndecorated().
       frame.setUndecorated(true);
       // another duplicate?
 //      if (backgroundColor != null) {
@@ -525,7 +526,7 @@ public class PSurfaceAWT implements PSurface {
 //      }
       // this may be the bounds of all screens
       frame.setBounds(screenRect);
-      frame.setVisible(true);
+      frame.setVisible(true); //Readd native resources
     }
     frame.setLayout(null);
     //frame.add(applet);
@@ -573,19 +574,6 @@ public class PSurfaceAWT implements PSurface {
 
   public void setVisible(boolean visible) {
     frame.setVisible(visible);
-
-    if (visible && PApplet.platform == PConstants.LINUX) {
-      // Linux doesn't deal with insets the same way. We get fake insets
-      // earlier, and then the window manager will slap its own insets
-      // onto things once the frame is realized on the screen. Awzm.
-      if (PApplet.platform == PConstants.LINUX) {
-        Insets insets = frame.getInsets();
-        frame.setSize(Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
-                      insets.left + insets.right,
-                      Math.max(sketchHeight, MIN_WINDOW_HEIGHT) +
-                      insets.top + insets.bottom);
-      }
-    }
   }
 
 
@@ -681,6 +669,7 @@ public class PSurfaceAWT implements PSurface {
   private Dimension setFrameSize() {  //int sketchWidth, int sketchHeight) {
 //    System.out.format("setting frame size %d %d %n", sketchWidth, sketchHeight);
 //    new Exception().printStackTrace(System.out);
+    frame.show();
     Insets insets = frame.getInsets();
     int windowW = Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
       insets.left + insets.right;
