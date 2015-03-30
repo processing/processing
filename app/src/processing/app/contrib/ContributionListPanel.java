@@ -279,13 +279,14 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
     if (orientation == SwingConstants.VERTICAL) {
       int blockAmount = visibleRect.height;
-      if (direction > 0) {
-        visibleRect.y += blockAmount;
-      } else {
-        visibleRect.y -= blockAmount;
-      }
-
-      blockAmount += getScrollableUnitIncrement(visibleRect, orientation, direction);
+//      if (direction > 0) {
+//        visibleRect.y += blockAmount;
+//      } else {
+//        visibleRect.y -= blockAmount;
+//      }
+//
+//      blockAmount += getScrollableUnitIncrement(visibleRect, orientation, direction);
+      blockAmount /= 10;
       return blockAmount;
     }
     return 0;
