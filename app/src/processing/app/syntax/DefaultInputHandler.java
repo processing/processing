@@ -249,6 +249,9 @@ public class DefaultInputHandler extends InputHandler
                 // http://code.google.com/p/processing/issues/detail?id=596
                 if ((modifiers & InputEvent.CTRL_MASK) != 0 && c == '/') return;
 
+                //Prevents the Menubar shortcuts from getting typed into the editor
+                if((modifiers & InputEvent.ALT_MASK) != 0) return;
+
                 if (c != KeyEvent.CHAR_UNDEFINED) // &&
                   //                (modifiers & KeyEvent.ALT_MASK) == 0)
                 {
