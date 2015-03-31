@@ -1712,16 +1712,49 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void setAttrib(String name, int index, float... values) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setNormal()");
+      return;
+    }
+
+    VertexAttribute attrib = polyAttribs.get(name);
+    float[] array = inGeo.fattribs.get(name);
+    for (int i = 0; i < values.length; i++) {
+      array[attrib.size * index + 0] = values[i];
+    }
+    markForTessellation();
   }
 
 
   @Override
   public void setAttrib(String name, int index, int... values) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setNormal()");
+      return;
+    }
+
+    VertexAttribute attrib = polyAttribs.get(name);
+    int[] array = inGeo.iattribs.get(name);
+    for (int i = 0; i < values.length; i++) {
+      array[attrib.size * index + 0] = values[i];
+    }
+    markForTessellation();
   }
 
 
   @Override
   public void setAttrib(String name, int index, boolean... values) {
+    if (openShape) {
+      PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setNormal()");
+      return;
+    }
+
+    VertexAttribute attrib = polyAttribs.get(name);
+    byte[] array = inGeo.battribs.get(name);
+    for (int i = 0; i < values.length; i++) {
+      array[attrib.size * index + 0] = (byte)(values[i]?1:0);
+    }
+    markForTessellation();
   }
 
 
