@@ -169,9 +169,11 @@ public class Downloader extends Task {
       InputStream input = conn.getInputStream();
       BufferedInputStream bis = new BufferedInputStream(input);
       File outputFile = new File(path); //folder, filename);
+      // Write to a temp file so that we don't have an incomplete download
+      // masquerading as a good archive.
       File tempFile = File.createTempFile("download", "", outputFile.getParentFile());
       BufferedOutputStream output =
-          new BufferedOutputStream(new FileOutputStream(tempFile));
+        new BufferedOutputStream(new FileOutputStream(tempFile));
       int c = bis.read();
       while (c != -1) {
         output.write(c);
