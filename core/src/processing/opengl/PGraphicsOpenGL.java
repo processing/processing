@@ -95,7 +95,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected boolean pointBuffersCreated = false;
   protected int pointBuffersContext;
 
-  // Generic vertex attributes
+  // Generic vertex attributes (only for polys)
   protected AttributeMap attribs;
 
   static protected final int INIT_VERTEX_BUFFER_SIZE  = 256;
@@ -2294,7 +2294,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     VertexAttribute attrib = attribs.get(name);
     if (attrib == null) {
-      attrib = new VertexAttribute(name, PGL.FLOAT, size);
+      attrib = new VertexAttribute(name, type, size);
       attribs.put(name, attrib);
     }
     if (attrib.size != size) {
@@ -7003,16 +7003,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
   static protected class AttributeMap extends HashMap<String, VertexAttribute> {
     public ArrayList<String> names = new ArrayList<String>();
-    public int numComp = 0;
+    public int numComp = 0; // number of components for a single vertex
 
     @Override
     public VertexAttribute put(String key, VertexAttribute value) {
       VertexAttribute prev = super.put(key, value);
-
-      if (value.kind == VertexAttribute.POSITION) numComp += 3;
-      if (value.kind == VertexAttribute.COLOR) numComp += 3;
+      if (value.kind == VertexAttribute.COLOR) numComp += 4;
       else numComp += value.size;
-
       return prev;
     }
 
@@ -7045,9 +7042,9 @@ public class PGraphicsOpenGL extends PGraphics {
       this.type = type;
       this.size = size;
 
-      if (name.indexOf("pos") == 0) {
+      if (name.indexOf("pos") == 0 && type == PGL.FLOAT && size == 3) {
         kind = POSITION;
-      } else if (name.indexOf("norm") == 0) {
+      } else if (name.indexOf("norm") == 0 && type == PGL.FLOAT && size == 3) {
         kind = NORMAL;
       } else if (name.indexOf("color") == 0 && type == PGL.INT && size == 1) {
         kind = COLOR;
@@ -7084,6 +7081,18 @@ public class PGraphicsOpenGL extends PGraphics {
 
     boolean isOther() {
       return kind == OTHER;
+    }
+
+    boolean isFloat() {
+      return type == PGL.FLOAT;
+    }
+
+    boolean isInt() {
+      return type == PGL.INT;
+    }
+
+    boolean isBool() {
+      return type == PGL.BOOL;
     }
 
     boolean bufferCreated() {
@@ -7602,16 +7611,40 @@ public class PGraphicsOpenGL extends PGraphics {
       return vertexCount;
     }
 
-    // TODO: needs type of curve, draw matrix as args.
     double[] getAttribVector(int idx) {
-      int len = attribs.numComp;
+      double[] vector = new double[attribs.numComp];
+      int vidx = 0;
       for (int i = 0; i < attribs.size(); i++) {
         VertexAttribute attrib = attribs.get(i);
-
-
-
+        String name = attrib.name;
+        int pos0 = attrib.size * idx;
+        if (attrib.isColor()) {
+          int[] iarray = iattrValues.get(name);
+          int col = iarray[pos0];
+          vector[vidx++] = (col >> 24) & 0xFF;
+          vector[vidx++] = (col >> 16) & 0xFF;
+          vector[vidx++] = (col >>  8) & 0xFF;
+          vector[vidx++] = (col >>  0) & 0xFF;
+        } else {
+          if (attrib.isFloat()) {
+            float[] farray = fattrValues.get(name);
+            for (int n = 0; n < attrib.size; n++) {
+              vector[vidx++] = farray[pos0 + n];
+            }
+          } else if (attrib.isInt()) {
+            int[] iarray = iattrValues.get(name);
+            for (int n = 0; n < attrib.size; n++) {
+              vector[vidx++] = iarray[pos0 + n];
+            }
+          } else if (attrib.isBool()) {
+            byte[] barray = battrValues.get(name);
+            for (int n = 0; n < attrib.size; n++) {
+              vector[vidx++] = barray[pos0 + n];
+            }
+          }
+        }
       }
-      return new double[len];
+      return vector;
     }
 
     // -----------------------------------------------------------------
@@ -9917,12 +9950,108 @@ public class PGraphicsOpenGL extends PGraphics {
     //
     // Add poly geometry
 
+    void addPolyVertex(double[] d, boolean clampXY) {
+      int fcolor =
+        ((int)d[ 3]<<24) | ((int)d[ 4]<<16) | ((int)d[ 5]<<8) | (int)d[ 6];
+       int acolor =
+        ((int)d[12]<<24) | ((int)d[13]<<16) | ((int)d[14]<<8) | (int)d[15];
+       int scolor =
+        ((int)d[16]<<24) | ((int)d[17]<<16) | ((int)d[18]<<8) | (int)d[19];
+       int ecolor =
+        ((int)d[20]<<24) | ((int)d[21]<<16) | ((int)d[22]<<8) | (int)d[23];
+
+       addPolyVertex((float) d[ 0],  (float) d[ 1], (float) d[ 2],
+                     fcolor,
+                     (float) d[ 7],  (float) d[ 8], (float) d[ 9],
+                     (float) d[10], (float) d[11],
+                     acolor, scolor, ecolor,
+                     (float) d[24],
+                     clampXY);
+
+       if (25 <= d.length) {
+         PMatrix3D mm = pg.modelview;
+         PMatrix3D nm = pg.modelviewInv;
+         int tessIdx = polyVertexCount - 1;
+         int index;
+         int pos = 25;
+         for (int i = 0; i < attribs.size(); i++) {
+           VertexAttribute attrib = attribs.get(i);
+           String name = attrib.name;
+           index = attrib.size * tessIdx;
+           if (attrib.isColor()) {
+             // Reconstruct color from ARGB components
+             int color = (int)d[pos + 0]<<24 | (int)d[pos + 1]<<24 | ((int)d[pos + 2]<<8) | ((int)d[pos + 3]);
+             int[] tessValues = iattribs.get(name);
+             tessValues[index] = color;
+             pos += 4;
+           }  else if (attrib.isPosition()) {
+             float[] farray = fattribs.get(name);
+             float x = (float)d[pos + 0];
+             float y = (float)d[pos + 1];
+             float z = (float)d[pos + 1];
+             if (renderMode == IMMEDIATE && pg.flushMode == FLUSH_WHEN_FULL) {
+               if (clampXY) {
+                 // ceil emulates the behavior of JAVA2D
+                 farray[index++] =
+                   PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
+                 farray[index++] =
+                   PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
+               } else {
+                 farray[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
+                 farray[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
+               }
+               farray[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
+               farray[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
+             } else {
+               farray[index++] = x;
+               farray[index++] = y;
+               farray[index++] = z;
+               farray[index  ] = 1;
+             }
+             pos += 4;
+           } else if (attrib.isNormal()) {
+             float[] farray = fattribs.get(name);
+             float x = (float)d[pos + 0];
+             float y = (float)d[pos + 1];
+             float z = (float)d[pos + 1];
+             if (renderMode == IMMEDIATE && pg.flushMode == FLUSH_WHEN_FULL) {
+               farray[index++] = x*nm.m00 + y*nm.m10 + z*nm.m20;
+               farray[index++] = x*nm.m01 + y*nm.m11 + z*nm.m21;
+               farray[index  ] = x*nm.m02 + y*nm.m12 + z*nm.m22;
+             } else {
+               farray[index++] = x;
+               farray[index++] = y;
+               farray[index  ] = z;
+             }
+             pos += 3;
+           } else {
+             if (attrib.isFloat()) {
+               float[] farray = fattribs.get(name);
+               for (int n = 0; n < attrib.size; n++) {
+                 farray[index++] = (float)d[pos++];
+               }
+             } else if (attrib.isInt()) {
+               int[] iarray = iattribs.get(name);
+               for (int n = 0; n < attrib.size; n++) {
+                 iarray[index++] = (int)d[pos++];
+               }
+             } else if (attrib.isBool()) {
+               byte[] barray = battribs.get(name);
+               for (int n = 0; n < attrib.size; n++) {
+                 barray[index++] = (byte)d[pos++];
+               }
+             }
+             pos += attrib.size;
+           }
+         }
+       }
+    }
+
     void addPolyVertex(float x, float y, float z,
                        int rgba,
                        float nx, float ny, float nz,
                        float u, float v,
                        int am, int sp, int em, float shine,
-
                        boolean clampXY) {
       polyVertexCheck();
       int tessIdx = polyVertexCount - 1;
@@ -10047,14 +10176,40 @@ public class PGraphicsOpenGL extends PGraphics {
           polyNormals[index++] = nx*nm.m00 + ny*nm.m10 + nz*nm.m20;
           polyNormals[index++] = nx*nm.m01 + ny*nm.m11 + nz*nm.m21;
           polyNormals[index  ] = nx*nm.m02 + ny*nm.m12 + nz*nm.m22;
-        }
 
-        for (String name: attribs.keySet()) {
-          VertexAttribute attrib = attribs.get(name);
-          if (attrib.isColor() || attrib.isOther()) continue;
-          // TODO...
-        }
+          for (String name: attribs.keySet()) {
+            VertexAttribute attrib = attribs.get(name);
+            if (attrib.isColor() || attrib.isOther()) continue;
 
+            float[] inValues = in.fattrValues.get(name);
+            index = 3 * inIdx;
+            x = inValues[index++];
+            y = inValues[index++];
+            z = inValues[index  ];
+
+            float[] tessValues = fattribs.get(name);
+            if (attrib.isPosition()) {
+              index = 4 * tessIdx;
+              if (clampXY) {
+                // ceil emulates the behavior of JAVA2D
+                tessValues[index++] =
+                  PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
+                tessValues[index++] =
+                  PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
+              } else {
+                tessValues[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
+                tessValues[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
+              }
+              tessValues[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
+              tessValues[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
+            } else {
+              index = 3 * tessIdx;
+              tessValues[index++] = x*nm.m00 + y*nm.m10 + z*nm.m20;
+              tessValues[index++] = x*nm.m01 + y*nm.m11 + z*nm.m21;
+              tessValues[index  ] = x*nm.m02 + y*nm.m12 + z*nm.m22;
+            }
+          }
+        }
       } else {
         if (nvert <= PGL.MIN_ARRAYCOPY_SIZE) {
           // Copying elements one by one instead of using arrayCopy is more
@@ -10083,12 +10238,31 @@ public class PGraphicsOpenGL extends PGraphics {
             polyNormals[index++] = nx;
             polyNormals[index++] = ny;
             polyNormals[index  ] = nz;
-          }
 
-          for (String name: attribs.keySet()) {
-            VertexAttribute attrib = attribs.get(name);
-            if (attrib.isColor() || attrib.isOther()) continue;
-            // TODO...
+            for (String name: attribs.keySet()) {
+              VertexAttribute attrib = attribs.get(name);
+              if (attrib.isColor() || attrib.isOther()) continue;
+
+              float[] inValues = in.fattrValues.get(name);
+              index = 3 * inIdx;
+              x = inValues[index++];
+              y = inValues[index++];
+              z = inValues[index  ];
+
+              float[] tessValues = fattribs.get(name);
+              if (attrib.isPosition()) {
+                index = 4 * tessIdx;
+                tessValues[index++] = x;
+                tessValues[index++] = y;
+                tessValues[index++] = z;
+                tessValues[index  ] = 1;
+              } else {
+                index = 3 * tessIdx;
+                tessValues[index++] = x;
+                tessValues[index++] = y;
+                tessValues[index  ] = z;
+              }
+            }
           }
         } else {
           for (int i = 0; i < nvert; i++) {
@@ -10097,14 +10271,26 @@ public class PGraphicsOpenGL extends PGraphics {
             PApplet.arrayCopy(in.vertices, 3 * inIdx,
                               polyVertices, 4 * tessIdx, 3);
             polyVertices[4 * tessIdx + 3] = 1;
+
+            for (String name: attribs.keySet()) {
+              VertexAttribute attrib = attribs.get(name);
+              if (!attrib.isPosition()) continue;
+              float[] inValues = in.fattrValues.get(name);
+              float[] tessValues = fattribs.get(name);
+              PApplet.arrayCopy(inValues, 3 * inIdx,
+                                tessValues, 4 * tessIdx, 3);
+              tessValues[4 * tessIdx + 3] = 1;
+            }
           }
           PApplet.arrayCopy(in.normals, 3 * i0,
                             polyNormals, 3 * firstPolyVertex, 3 * nvert);
-
           for (String name: attribs.keySet()) {
             VertexAttribute attrib = attribs.get(name);
-            if (attrib.isColor() || attrib.isOther()) continue;
-            // TODO...
+            if (!attrib.isPosition()) continue;
+            float[] inValues = in.fattrValues.get(name);
+            float[] tessValues = fattribs.get(name);
+            PApplet.arrayCopy(inValues, 3 * i0,
+                              tessValues, 3 * firstPolyVertex, 3 * nvert);
           }
         }
       }
@@ -10128,12 +10314,32 @@ public class PGraphicsOpenGL extends PGraphics {
           polySpecular[tessIdx] = in.specular[inIdx];
           polyEmissive[tessIdx] = in.emissive[inIdx];
           polyShininess[tessIdx] = in.shininess[inIdx];
-        }
 
-        for (String name: attribs.keySet()) {
-          VertexAttribute attrib = attribs.get(name);
-          if (attrib.isPosition() || attrib.isNormal()) continue;
-          // TODO...
+          for (String name: attribs.keySet()) {
+            VertexAttribute attrib = attribs.get(name);
+            if (attrib.isPosition() || attrib.isNormal()) continue;
+            int index0 = attrib.size * inIdx;
+            int index1 = attrib.size * tessIdx;
+            if (attrib.isFloat()) {
+              float[] inValues = in.fattrValues.get(name);
+              float[] tessValues = fattribs.get(name);
+              for (int n = 0; n < attrib.size; n++) {
+                tessValues[index1++] = inValues[index0++];
+              }
+            } else if (attrib.isInt()) {
+              int[] inValues = in.iattrValues.get(name);
+              int[] tessValues = iattribs.get(name);
+              for (int n = 0; n < attrib.size; n++) {
+                tessValues[index1++] = inValues[index0++];
+              }
+            } else if (attrib.isBool()) {
+              byte[] inValues = in.battrValues.get(name);
+              byte[] tessValues = battribs.get(name);
+              for (int n = 0; n < attrib.size; n++) {
+                tessValues[index1++] = inValues[index0++];
+              }
+            }
+          }
         }
       } else {
         PApplet.arrayCopy(in.colors, i0,
@@ -10152,7 +10358,24 @@ public class PGraphicsOpenGL extends PGraphics {
         for (String name: attribs.keySet()) {
           VertexAttribute attrib = attribs.get(name);
           if (attrib.isPosition() || attrib.isNormal()) continue;
-          // TODO...
+          Object inValues = null;
+          Object tessValues = null;
+          if (attrib.isFloat()) {
+            inValues = in.fattrValues.get(name);
+            tessValues = fattribs.get(name);
+          } else if (attrib.isInt()) {
+            inValues = in.iattrValues.get(name);
+            tessValues = iattribs.get(name);
+          } else if (attrib.isBool()) {
+            inValues = in.battrValues.get(name);
+            tessValues = battribs.get(name);
+            PApplet.arrayCopy(inValues, attrib.size * i0,
+                              tessValues, attrib.size * firstPolyVertex,
+                              attrib.size * nvert);
+          }
+          PApplet.arrayCopy(inValues, attrib.size * i0,
+                            tessValues, attrib.size * firstPolyVertex,
+                            attrib.size * nvert);
         }
       }
     }
@@ -10412,10 +10635,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void initGluTess() {
       if (gluTess == null) {
-        callback = new TessellatorCallback();
+        callback = new TessellatorCallback(tess.attribs);
         gluTess = pg.pgl.createTessellator(callback);
       }
-      callback.setAttribs(tess.attribs);
     }
 
     void setInGeometry(InGeometry in) {
@@ -12116,10 +12338,11 @@ public class PGraphicsOpenGL extends PGraphics {
           if (0 < avect.length) {
             double temp[] = new double[vertex.length + avect.length];
             PApplet.arrayCopy(vertex, 0, temp, 0, vertex.length);
-            PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length);
+            PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length); // TODO careful with indices...
           }
           gluTess.addVertex(vertex);
         }
+
         if (stroke) addStrokeVertex(x1, y1, z1, strokeColor, strokeWeight);
       }
     }
@@ -12221,6 +12444,12 @@ public class PGraphicsOpenGL extends PGraphics {
             nx, ny, nz,
             u, v,
             aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
+          double[] avect = in.getAttribVector(i);
+          if (0 < avect.length) {
+            double temp[] = new double[vertex.length + avect.length];
+            PApplet.arrayCopy(vertex, 0, temp, 0, vertex.length);
+            PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length); // TODO careful with indices...
+          }
           gluTess.addVertex(vertex);
         }
         if (stroke) addStrokeVertex(x1, y1, z1, strokeColor, strokeWeight);
@@ -12323,6 +12552,12 @@ public class PGraphicsOpenGL extends PGraphics {
           nx, ny, nz,
           u, v,
           aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
+        double[] avect = in.getAttribVector(i);
+        if (0 < avect.length) {
+          double temp[] = new double[vertex0.length + avect.length];
+          PApplet.arrayCopy(vertex0, 0, temp, 0, vertex0.length);
+          PApplet.arrayCopy(avect, 0, temp, vertex0.length, avect.length); // TODO careful with indices...
+        }
         gluTess.addVertex(vertex0);
       }
       if (stroke) addStrokeVertex(x, y, z, strokeColor, strokeWeight);
@@ -12338,6 +12573,12 @@ public class PGraphicsOpenGL extends PGraphics {
             nx, ny, nz,
             u, v,
             aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
+          double[] avect = in.getAttribVector(i);
+          if (0 < avect.length) {
+            double temp[] = new double[vertex1.length + avect.length];
+            PApplet.arrayCopy(vertex1, 0, temp, 0, vertex1.length);
+            PApplet.arrayCopy(avect, 0, temp, vertex1.length, avect.length); // TODO careful with indices...
+          }
           gluTess.addVertex(vertex1);
         }
         if (stroke) addStrokeVertex(x, y, z, strokeColor, strokeWeight);
@@ -12397,6 +12638,12 @@ public class PGraphicsOpenGL extends PGraphics {
           nx, ny, nz,
           u, v,
           aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
+        double[] avect = in.getAttribVector(i);
+        if (0 < avect.length) {
+          double temp[] = new double[vertex.length + avect.length];
+          PApplet.arrayCopy(vertex, 0, temp, 0, vertex.length);
+          PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length); // TODO careful with indices...
+        }
         gluTess.addVertex(vertex);
       }
       if (stroke) addStrokeVertex(x, y, z, strokeColor, strokeWeight);
@@ -12566,6 +12813,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // http://code.google.com/p/glues/
     // to eventually come up with an optimized GLU tessellator in native code.
     protected class TessellatorCallback implements PGL.TessellatorCallback {
+      AttributeMap attribs;
       boolean calcNormals;
       boolean strokeTess;
       boolean clampXY;
@@ -12575,6 +12823,10 @@ public class PGraphicsOpenGL extends PGraphics {
       int vertCount;
       int vertOffset;
       int primitive;
+
+      public TessellatorCallback(AttributeMap attribs) {
+        this.attribs = attribs;
+      }
 
       public void init(boolean addCache, boolean strokeTess, boolean calcNorm,
                        boolean clampXY) {
@@ -12587,23 +12839,6 @@ public class PGraphicsOpenGL extends PGraphics {
           cache.addNew();
         }
       }
-
-      AttributeMap attribs;
-//      HashMap<Integer, String> nameMap;
-
-      void setAttribs(AttributeMap attribs) {
-        this.attribs = attribs;
-//        nameMap = new HashMap<Integer, String>();
-//        int i = 0;
-//        for (String name: attribs.keySet()) {
-//          nameMap.put(i, name);
-//          i++;
-//        }
-      }
-//
-//      VertexAttribute posToAttrib(int i) {
-//        return attribs.get(nameMap.get(i));
-//      }
 
       public void begin(int type) {
         cacheIndex = cache.getLast();
@@ -12708,23 +12943,7 @@ public class PGraphicsOpenGL extends PGraphics {
           }
 
           if (vertCount < PGL.MAX_VERTEX_INDEX1) {
-            // Combining individual rgba components back into int color values
-            int fcolor =
-             ((int)d[ 3]<<24) | ((int)d[ 4]<<16) | ((int)d[ 5]<<8) | (int)d[ 6];
-            int acolor =
-             ((int)d[12]<<24) | ((int)d[13]<<16) | ((int)d[14]<<8) | (int)d[15];
-            int scolor =
-             ((int)d[16]<<24) | ((int)d[17]<<16) | ((int)d[18]<<8) | (int)d[19];
-            int ecolor =
-             ((int)d[20]<<24) | ((int)d[21]<<16) | ((int)d[22]<<8) | (int)d[23];
-
-            tess.addPolyVertex((float) d[ 0],  (float) d[ 1], (float) d[ 2],
-                               fcolor,
-                               (float) d[ 7],  (float) d[ 8], (float) d[ 9],
-                               (float) d[10], (float) d[11],
-                               acolor, scolor, ecolor,
-                               (float) d[24], clampXY);
-
+            tess.addPolyVertex(d, clampXY);
             vertCount++;
           } else {
             throw new RuntimeException("The tessellator is generating too " +
@@ -12758,7 +12977,7 @@ public class PGraphicsOpenGL extends PGraphics {
        */
       public void combine(double[] coords, Object[] data,
                           float[] weight, Object[] outData) {
-        double[] vertex = new double[25 + 8];
+        double[] vertex = new double[25 + attribs.numComp + 8]; // why +8??
         vertex[0] = coords[0];
         vertex[1] = coords[1];
         vertex[2] = coords[2];
@@ -12766,7 +12985,7 @@ public class PGraphicsOpenGL extends PGraphics {
         // Calculating the rest of the vertex parameters (color,
         // normal, texcoords) as the linear combination of the
         // combined vertices.
-        for (int i = 3; i < 25; i++) {
+        for (int i = 3; i < 25 + attribs.numComp; i++) {
           vertex[i] = 0;
           for (int j = 0; j < 4; j++) {
             double[] vertData = (double[])data[j];
