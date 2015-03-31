@@ -205,7 +205,7 @@
 
   <target name="jre-download" depends="jre-check" if="jre.tgz.downloaded">
     <!-- make sure we're built -->
-    <subant buildpath="../jre" target="dist" />
+    <subant buildpath="jre" target="dist" />
 
     <!-- our special JRE downloader task -->
     <taskdef name="downloader" 
