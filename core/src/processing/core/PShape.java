@@ -700,6 +700,19 @@ public class PShape implements PConstants {
   public void normal(float nx, float ny, float nz) {
   }
 
+
+  public void attrib(String name, float... values) {
+  }
+
+
+  public void attrib(String name, int... values) {
+  }
+
+
+  public void attrib(String name, boolean... values) {
+  }
+
+
   /**
    * @webref pshape:method
    * @brief Starts the creation of a new PShape
