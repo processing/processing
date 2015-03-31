@@ -110,18 +110,19 @@ public class PSurfaceLWJGL implements PSurface {
     GraphicsEnvironment environment =
         GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-      DisplayMode desktopMode = Display.getDesktopDisplayMode();
-      PApplet.println("DESKTOP MODES");
-      PApplet.println(desktopMode);
-      PApplet.println("ALL MODES");
-      try {
-        DisplayMode[] allModes = Display.getAvailableDisplayModes();
-        for (DisplayMode mode: allModes) {
-          PApplet.println(mode);
-        }
-      } catch (LWJGLException e) {
-        e.printStackTrace();
-      }
+//      DisplayMode desktopMode = Display.getDesktopDisplayMode();
+//      PApplet.println("DESKTOP MODES");
+//      PApplet.println(desktopMode);
+//      PApplet.println("ALL MODES");
+
+//      try {
+//        DisplayMode[] allModes = Display.getAvailableDisplayModes();
+//        for (DisplayMode mode: allModes) {
+//          PApplet.println(mode);
+//        }
+//      } catch (LWJGLException e) {
+//        e.printStackTrace();
+//      }
 
       if (deviceIndex >= 0) {  // if -1, use the default device
         GraphicsDevice[] devices = environment.getScreenDevices();
@@ -185,8 +186,8 @@ public class PSurfaceLWJGL implements PSurface {
 
     pgl.reqNumSamples = graphics.quality;
 
-    System.err.println("DISPLAY PARENT: " + Display.getParent());
-    System.err.println("DISPLAY SMOOTH: " + pgl.reqNumSamples);
+//    System.err.println("DISPLAY PARENT: " + Display.getParent());
+//    System.err.println("DISPLAY SMOOTH: " + pgl.reqNumSamples);
 
     try {
       int argb = graphics.backgroundColor;
@@ -200,7 +201,7 @@ public class PSurfaceLWJGL implements PSurface {
         Display.setDisplayMode(new DisplayMode(sketchWidth, sketchHeight));
       }
 
-      System.err.println(sketchWidth + " " + sketchHeight);
+//      System.err.println(sketchWidth + " " + sketchHeight);
       if (fullScreen) {
         Display.setFullscreen(true);
       }
@@ -321,7 +322,7 @@ public class PSurfaceLWJGL implements PSurface {
   public void placePresent(Color stopColor) {
 
     if (sketchWidth < screenRect.width || sketchHeight < screenRect.height) {
-      System.err.println("WILL USE FBO");
+//      System.err.println("WILL USE FBO");
 
      presentMode = pgl.presentMode = true;
      offsetX = pgl.offsetX = 0.5f * (screenRect.width - sketchWidth);
@@ -513,7 +514,7 @@ public class PSurfaceLWJGL implements PSurface {
     @Override
     public void run() {  // not good to make this synchronized, locks things up
       try {
-        System.err.println("CREATE THE DISPLAY");
+//        System.err.println("CREATE THE DISPLAY");
         PixelFormat format = new PixelFormat(PGL.REQUESTED_ALPHA_BITS,
                                              PGL.REQUESTED_DEPTH_BITS,
                                              PGL.REQUESTED_STENCIL_BITS, pgl.reqNumSamples);
@@ -568,7 +569,7 @@ public class PSurfaceLWJGL implements PSurface {
         }
       }
 
-      System.err.println("DESTROY");
+//      System.err.println("DESTROY");
       keyPoller.requestStop();
       mousePoller.requestStop();
       sketch.dispose();  // call to shutdown libs?
