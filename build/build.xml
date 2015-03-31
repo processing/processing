@@ -203,7 +203,7 @@
     <available file="${jre.tgz.path}" property="jre.tgz.downloaded" />
   </target>
 
-  <target name="jre-download" depends="jre-check" if="jre.tgz.downloaded">
+  <target name="jre-download" depends="jre-check" unless="jre.tgz.downloaded">
     <!-- make sure we're built -->
     <subant buildpath="jre" target="dist" />
 
