@@ -925,9 +925,7 @@
     <fail message="wrong platform (${os.name})" />
   </target>
   
-  <target name="windows-build" 
-          depends="revision-check, windows-check-os, subprojects-build" 
-          description="Build windows version">
+  <target name="windows-build" depends="revision-check, windows-check-os, jre-download subprojects-build" description="Build Windows version">
     <mkdir dir="windows/work" />
     
     <!-- assemble the pde -->
@@ -979,9 +977,11 @@
     </chmod>
 
     <!-- starting with 2.0a7, require the local JRE + tools.jar -->
+<!--
     <get src="http://download.processing.org/java/${jre.file}" 
          dest="windows/jre.tgz" 
          usetimestamp="true" />
+-->
 
     <!--
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
