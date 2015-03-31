@@ -7145,11 +7145,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
     boolean active(PShader shader) {
       if (active) {
-        if (glLoc == -1) glLoc = shader.getAttributeLoc(name);
-        if (glLoc == -1) active = false;
-        return true;
-      } else return false;
-
+        if (glLoc == -1) {
+          glLoc = shader.getAttributeLoc(name);
+          if (glLoc == -1) active = false;
+        }
+      }
+      return active;
     }
 
     int sizeInBytes(int length) {
