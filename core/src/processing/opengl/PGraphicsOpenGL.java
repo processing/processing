@@ -2586,8 +2586,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
 
         for (VertexAttribute attrib: polyAttribs.values()) {
-          if (!attrib.active()) continue;
-          attrib.updateLoc(shader);
+          if (!attrib.active(shader)) continue;
           attrib.bind(pgl);
           shader.setAttributeVBO(attrib.glLoc, attrib.glName,
                                  attrib.tessSize, attrib.type,
@@ -2598,8 +2597,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       for (VertexAttribute attrib: polyAttribs.values()) {
-        if (!attrib.active()) continue;
-        attrib.unbind(pgl);
+        if (attrib.active(shader)) attrib.unbind(pgl);
       }
       shader.unbind();
     }
@@ -7049,6 +7047,7 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean modified;
     int firstModified;
     int lastModified;
+    boolean active;
 
     VertexAttribute(String name, int type, int size) {
       this.name = name;
@@ -7085,6 +7084,8 @@ public class PGraphicsOpenGL extends PGraphics {
       modified = false;
       firstModified = PConstants.MAX_INT;
       lastModified = PConstants.MIN_INT;
+
+      active = true;
     }
 
     boolean isPosition() {
@@ -7142,12 +7143,13 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.disableVertexAttribArray(glLoc);
     }
 
-    boolean active() {
-      return -1 < glLoc;
-    }
+    boolean active(PShader shader) {
+      if (active) {
+        if (glLoc == -1) glLoc = shader.getAttributeLoc(name);
+        if (glLoc == -1) active = false;
+        return true;
+      } else return false;
 
-    void updateLoc(PShader shader) {
-      if (glLoc == -1) glLoc = shader.getAttributeLoc(name);
     }
 
     int sizeInBytes(int length) {

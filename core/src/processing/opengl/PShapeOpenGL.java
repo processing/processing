@@ -4903,8 +4903,7 @@ public class PShapeOpenGL extends PShape {
       }
 
       for (VertexAttribute attrib: polyAttribs.values()) {
-        if (!attrib.active()) continue;
-        attrib.updateLoc(shader);
+        if (!attrib.active(shader)) continue;
         attrib.bind(pgl);
         shader.setAttributeVBO(attrib.glLoc, attrib.glName,
                                attrib.tessSize, attrib.type,
@@ -4915,8 +4914,7 @@ public class PShapeOpenGL extends PShape {
     }
 
     for (VertexAttribute attrib: polyAttribs.values()) {
-      if (!attrib.active()) continue;
-      attrib.unbind(pgl);
+      if (attrib.active(shader)) attrib.unbind(pgl);
     }
     if (shader != null && shader.bound()) {
       shader.unbind();
