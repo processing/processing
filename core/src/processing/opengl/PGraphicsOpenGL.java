@@ -7159,19 +7159,16 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-    void add(float[] dstValues, int count) {
-      int dstPos = size * count;
-      PApplet.arrayCopy(fvalues, 0, dstValues, dstPos, size);
+    void add(float[] dstValues, int dstIdx) {
+      PApplet.arrayCopy(fvalues, 0, dstValues, dstIdx, size);
     }
 
-    void add(int[] dstValues, int count) {
-      int dstPos = size * count;
-      PApplet.arrayCopy(ivalues, 0, dstValues, dstPos, size);
+    void add(int[] dstValues, int dstIdx) {
+      PApplet.arrayCopy(ivalues, 0, dstValues, dstIdx, size);
     }
 
-    void add(byte[] dstValues, int count) {
-      int dstPos = size * count;
-      PApplet.arrayCopy(bvalues, 0, dstValues, dstPos, size);
+    void add(byte[] dstValues, int dstIdx) {
+      PApplet.arrayCopy(bvalues, 0, dstValues, dstIdx, size);
     }
   }
 
@@ -10415,6 +10412,8 @@ public class PGraphicsOpenGL extends PGraphics {
           if (attrib.isFloat()) {
             inValues = in.fattribs.get(name);
             tessValues = fpolyAttribs.get(name);
+//            PApplet.println(inValues);
+//            PApplet.println("****************");
           } else if (attrib.isInt()) {
             inValues = in.iattribs.get(name);
             tessValues = ipolyAttribs.get(name);
