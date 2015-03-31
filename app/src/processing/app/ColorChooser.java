@@ -1,25 +1,27 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Part of the Processing project - http://processing.org
+ Part of the Processing project - http://processing.org
 
-  Copyright (c) 2006-14 Ben Fry and Casey Reas
+ Copyright (c) 2006-14 Ben Fry and Casey Reas
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License version 2
-  as published by the Free Software Foundation.
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License version 2
+ as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software Foundation,
-  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 package processing.app;
+
+import processing.core.*;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -28,52 +30,27 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.PlainDocument;
-
-import processing.core.PApplet;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
+import javax.swing.text.*;
 
 
 /**
  * Generic color selector frame, pulled from the Tool object. API not really
- * worked out here (what should the constructor be? how flexible?) So use with 
+ * worked out here (what should the constructor be? how flexible?) So use with
  * caution and be ready for it to break in future releases.
  */
-public class ColorChooser {  //extends JFrame implements DocumentListener {
+public class ColorChooser { //extends JFrame implements DocumentListener {
 
   int hue, saturation, brightness;  // range 360, 100, 100
   int red, green, blue;   // range 256, 256, 256
 
   ColorRange range;
   ColorSlider slider;
-  
+
   JTextField hueField, saturationField, brightnessField;
   JTextField redField, greenField, blueField;
 
@@ -81,7 +58,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
 
   JPanel colorPanel;
   DocumentListener colorListener;
-  
+
   JDialog window;
 
 
@@ -116,13 +93,12 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     box.add(Box.createHorizontalStrut(10));
 
     box.add(createColorFields(buttonName, buttonListener));
-    
 //    System.out.println("1: " + hexField.getInsets());
 
     box.add(Box.createHorizontalStrut(10));
-    
+
 //    System.out.println("2: " + hexField.getInsets());
-    
+
     window.getContentPane().add(box, BorderLayout.CENTER);
 //    System.out.println(hexField);
 //    System.out.println("3: " + hexField.getInsets());
@@ -140,14 +116,14 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     window.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     window.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
-          hide();
-        }
-      });
+        hide();
+      }
+    });
     Toolkit.registerWindowCloseKeys(window.getRootPane(), new ActionListener() {
-        public void actionPerformed(ActionEvent actionEvent) {
-          hide();
-        }
-      });
+      public void actionPerformed(ActionEvent actionEvent) {
+        hide();
+      }
+    });
 
     Toolkit.setIcon(window);
 
@@ -159,16 +135,15 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     greenField.getDocument().addDocumentListener(colorListener);
     blueField.getDocument().addDocumentListener(colorListener);
     hexField.getDocument().addDocumentListener(colorListener);
-    
+
     setColor(initialColor);
 //    System.out.println("4: " + hexField.getInsets());
   }
 
   
   //hexField.setText("#FFFFFF");
-  
-  
 
+  
   public void show() {
     window.setVisible(true);
     window.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
@@ -464,7 +439,7 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     row.add(button);
     row.add(Box.createHorizontalGlue());
     box.add(row);
-       
+    
     row = Box.createHorizontalBox();
     if (Base.isMacOS()) {
       row.add(Box.createHorizontalStrut(11));

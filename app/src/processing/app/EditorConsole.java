@@ -105,6 +105,7 @@ public class EditorConsole extends JScrollPane {
       consoleOut = new PrintStream(new EditorConsoleStream(false, null));
       consoleErr = new PrintStream(new EditorConsoleStream(true, null));
 
+     
       System.setOut(consoleOut);
       System.setErr(consoleErr);
 

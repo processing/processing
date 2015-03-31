@@ -168,10 +168,14 @@ public class Sketch {
       // Ignoring the dot prefix files is especially important to avoid files
       // with the ._ prefix on Mac OS X. (You'll see this with Mac files on
       // non-HFS drives, i.e. a thumb drive formatted FAT32.)
-      if (filename.startsWith(".")) continue;
+      if (filename.startsWith(".")) {
+        continue;
+      }
 
       // Don't let some wacko name a directory blah.pde or bling.java.
-      if (new File(folder, filename).isDirectory()) continue;
+      if (new File(folder, filename).isDirectory()) {
+        continue;
+      }
 
       // figure out the name without any extension
       String base = filename;
@@ -329,7 +333,7 @@ public class Sketch {
     // editor.status.edit(prompt, oldName);
     promptForTabName(prompt+":", oldName);
   }
-  
+
   /**
    * Displays a dialog for renaming or creating a new tab
    * @param prompt - msg to display
@@ -337,17 +341,17 @@ public class Sketch {
    */
   protected void promptForTabName(String prompt, String oldName) {
     final JTextField field = new JTextField(oldName);
-    
+
     field.addKeyListener(new KeyAdapter() {
       // Forget ESC, the JDialog should handle it.
-      // Use keyTyped to catch when the feller is actually added to the text 
-      // field. With keyTyped, as opposed to keyPressed, the keyCode will be 
-      // zero, even if it's enter or backspace or whatever, so the keychar 
+      // Use keyTyped to catch when the feller is actually added to the text
+      // field. With keyTyped, as opposed to keyPressed, the keyCode will be
+      // zero, even if it's enter or backspace or whatever, so the keychar
       // should be used instead. Grr.
       public void keyTyped(KeyEvent event) {
         //System.out.println("got event " + event);
         char ch = event.getKeyChar();
-        if ((ch == '_') || (ch == '.') || // allow.pde and .java 
+        if ((ch == '_') || (ch == '.') || // allow.pde and .java
             (('A' <= ch) && (ch <= 'Z')) || (('a' <= ch) && (ch <= 'z'))) {
           // These events are allowed straight through.
         } else if (ch == ' ') {
@@ -363,13 +367,13 @@ public class Sketch {
           // getSelectionStart means that it *will be* the first
           // char, because the selection is about to be replaced
           // with whatever is typed.
-          if (field.getCaretPosition() == 0 || 
+          if (field.getCaretPosition() == 0 ||
               field.getSelectionStart() == 0) {
             // number not allowed as first digit
             event.consume();
           }
         } else if (ch == KeyEvent.VK_ENTER) {
-          // Slightly ugly hack that ensures OK button of the dialog consumes 
+          // Slightly ugly hack that ensures OK button of the dialog consumes
           // the Enter key event. Since the text field is the default component
           // in the dialog, OK doesn't consume Enter key event, by default.
           Container parent = field.getParent();
@@ -377,14 +381,14 @@ public class Sketch {
             parent = parent.getParent();
           }
           JOptionPane pane = (JOptionPane) parent;
-          final JPanel pnlBottom = (JPanel) 
+          final JPanel pnlBottom = (JPanel)
             pane.getComponent(pane.getComponentCount() - 1);
           for (int i = 0; i < pnlBottom.getComponents().length; i++) {
             Component component = pnlBottom.getComponents()[i];
             if (component instanceof JButton) {
               final JButton okButton = (JButton) component;
               if (okButton.getText().equalsIgnoreCase("OK")) {
-                ActionListener[] actionListeners = 
+                ActionListener[] actionListeners =
                   okButton.getActionListeners();
                 if (actionListeners.length > 0) {
                   actionListeners[0].actionPerformed(null);
@@ -621,12 +625,12 @@ public class Sketch {
     }
 
     // don't allow if untitled
-    if (currentIndex == 0 && isUntitled()) {  
+    if (currentIndex == 0 && isUntitled()) {
       Base.showMessage(Language.text("delete.messages.cannot_delete"),
                        Language.text("delete.messages.cannot_delete.description"));
       return;
     }
-    
+
     // confirm deletion with user, yes/no
     Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
     String prompt = (currentIndex == 0) ?
@@ -648,6 +652,7 @@ public class Sketch {
         // delete the entire sketch
         Base.removeDir(folder);
 
+
         // get the changes into the sketchbook menu
         //sketchbook.rebuildMenus();
 
@@ -655,6 +660,7 @@ public class Sketch {
         //editor.handleNewUnchecked();
         //editor.handleClose2();
         editor.base.handleClose(editor, false);
+
 
       } else {
         // delete the file
@@ -700,7 +706,9 @@ public class Sketch {
    */
   public void handlePrevCode() {
     int prev = currentIndex - 1;
-    if (prev < 0) prev = codeCount-1;
+    if (prev < 0) {
+      prev = codeCount-1;
+    }
     setCurrentCode(prev);
   }
 
@@ -773,11 +781,15 @@ public class Sketch {
                        "Some files are marked \"read-only\", so you'll\n" +
                        "need to re-save this sketch to another location.");
       // if the user cancels, give up on the save()
-      if (!saveAs()) return false;
+      if (!saveAs()) {
+        return false;
+      }
     }
 
     for (int i = 0; i < codeCount; i++) {
-      if (code[i].isModified()) code[i].save();
+      if (code[i].isModified()) {
+        code[i].save();
+      }
     }
     calcModified();
     return true;
@@ -799,7 +811,7 @@ public class Sketch {
     String newParentDir = null;
     String newName = null;
     String sketchPath="";
-	
+
     final String oldName2 = folder.getName();
     // TODO rewrite this to use shared version from PApplet
     final String PROMPT = Language.text("save");
@@ -841,7 +853,9 @@ public class Sketch {
     }
 
     // user canceled selection
-    if (newName == null) return false;
+    if (newName == null) {
+      return false;
+    }
 
     // check on the sanity of the name
     String sanitaryName = Sketch.checkName(newName);
@@ -849,7 +863,7 @@ public class Sketch {
     if (!sanitaryName.equals(newName) && newFolder.exists()) {
       Base.showMessage("Cannot Save",
                        "A sketch with the cleaned name\n" +
-                       "â€œ" + sanitaryName + "â€� already exists.");
+                       "“" + sanitaryName + "” already exists.");
       return false;
     }
     newName = sanitaryName;
@@ -937,12 +951,12 @@ public class Sketch {
         return true;
       }
     });
-	
+
 
     final File newFolder2 = newFolder;
     final File[] copyItems2 = copyItems;
-    final String newName2 = newName; 
-    
+    final String newName2 = newName;
+
     // Create a new event dispatch thread- to display ProgressBar
     // while Saving As
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -950,8 +964,8 @@ public class Sketch {
         new ProgressFrame(copyItems2, newFolder2, oldName2, newName2, editor);
       }
     });
-    
-	
+
+
     // save the other tabs to their new location
     for (int i = 1; i < codeCount; i++) {
       File newFile = new File(newFolder, code[i].getFileName());
@@ -988,7 +1002,7 @@ public class Sketch {
    */
   protected void updateInternal(String sketchName, File sketchFolder) {
     // reset all the state information for the sketch object
-    String oldPath = getMainFilePath();    
+    String oldPath = getMainFilePath();
     primaryFile = code[0].getFile();
 //    String newPath = getMainFilePath();
 //    editor.base.renameRecent(oldPath, newPath);
@@ -1009,7 +1023,7 @@ public class Sketch {
     editor.base.rebuildSketchbookMenus();
     editor.base.handleRecentRename(editor,oldPath);
 //    editor.header.rebuild();
-    
+
     mode.updateTree(sketchName,sketchFolder);
   }
 
@@ -1040,7 +1054,9 @@ public class Sketch {
 
     String directory = fd.getDirectory();
     String filename = fd.getFile();
-    if (filename == null) return;
+    if (filename == null) {
+      return;
+    }
 
     // copy the file into the folder. if people would rather
     // it move instead of copy, they can do it by hand

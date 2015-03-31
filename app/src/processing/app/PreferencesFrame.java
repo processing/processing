@@ -90,7 +90,7 @@ public class PreferencesFrame {
    // dialog = new JDialog(editor, "Preferences", true);
     dialog = new JFrame(Language.text("preferences"));
     dialog.setResizable(false);
-    
+
     Container pain = dialog.getContentPane();
     pain.setLayout(null);
 
@@ -246,54 +246,59 @@ public class PreferencesFrame {
     presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
 
     presentColorHex = new JTextField(6);
-    presentColorHex.setText(Preferences.get("run.present.bgcolor").substring(1));
+    presentColorHex
+    .setText(Preferences.get("run.present.bgcolor").substring(1));
     presentColorHex.getDocument().addDocumentListener(new DocumentListener() {
 
       @Override
       public void removeUpdate(DocumentEvent e) {
         final String colorValue = presentColorHex.getText().toUpperCase();
-        if (colorValue.length() == 7 && (colorValue.startsWith("#")))
+        if (colorValue.length() == 7 && (colorValue.startsWith("#"))) {
           EventQueue.invokeLater(new Runnable() {
             public void run() {
               presentColorHex.setText(colorValue.substring(1));
             }
           });
+        }
         if (colorValue.length() == 6
             && colorValue.matches("[0123456789ABCDEF]*")) {
           presentColor.setBackground(new Color(Integer.parseInt(
               colorValue.substring(0, 2), 16), Integer.parseInt(
               colorValue.substring(2, 4), 16), Integer.parseInt(
               colorValue.substring(4, 6), 16)));
-          if (!colorValue.equals(presentColorHex.getText()))
+          if (!colorValue.equals(presentColorHex.getText())) {
             EventQueue.invokeLater(new Runnable() {
               public void run() {
                 presentColorHex.setText(colorValue);
               }
             });
+          }
         }
       }
 
       @Override
       public void insertUpdate(DocumentEvent e) {
         final String colorValue = presentColorHex.getText().toUpperCase();
-        if (colorValue.length() == 7 && (colorValue.startsWith("#")))
+        if (colorValue.length() == 7 && (colorValue.startsWith("#"))) {
           EventQueue.invokeLater(new Runnable() {
             public void run() {
               presentColorHex.setText(colorValue.substring(1));
             }
           });
+        }
         if (colorValue.length() == 6
             && colorValue.matches("[0123456789ABCDEF]*")) {
           presentColor.setBackground(new Color(Integer.parseInt(
               colorValue.substring(0, 2), 16), Integer.parseInt(
               colorValue.substring(2, 4), 16), Integer.parseInt(
               colorValue.substring(4, 6), 16)));
-          if (!colorValue.equals(presentColorHex.getText()))
+          if (!colorValue.equals(presentColorHex.getText())) {
             EventQueue.invokeLater(new Runnable() {
               public void run() {
                 presentColorHex.setText(colorValue);
               }
             });
+          }
         }
       }
 
@@ -659,7 +664,7 @@ public class PreferencesFrame {
   protected void applyFrame() {
     //Preferred Screen Color
    // base.getActiveEditor().textarea.getPainter().setBackground(Preferences.getColor("run.present.bg"));
-    
+
     Preferences.setBoolean("editor.smooth", //$NON-NLS-1$
                            editorAntialiasBox.isSelected());
 
@@ -677,7 +682,8 @@ public class PreferencesFrame {
     String oldPath = Preferences.getSketchbookPath();
     String newPath = sketchbookLocationField.getText();
     if (!newPath.equals(oldPath)) {
-      { base.setSketchbookFolder(new File(newPath)); base.getNextMode().rebuildTree(); }    
+      base.setSketchbookFolder(new File(newPath));
+      base.getNextMode().rebuildTree();
     }
 
 //    setBoolean("editor.external", externalEditorBox.isSelected());
@@ -716,7 +722,9 @@ public class PreferencesFrame {
     try {
       memoryMax = Integer.parseInt(memoryField.getText().trim());
       // make sure memory setting isn't too small
-      if (memoryMax < memoryMin) memoryMax = memoryMin;
+      if (memoryMax < memoryMin) {
+        memoryMax = memoryMin;
+      }
       Preferences.setInteger("run.options.memory.maximum", memoryMax); //$NON-NLS-1$
     } catch (NumberFormatException e) {
       System.err.println("Ignoring bad memory setting");
@@ -748,17 +756,14 @@ public class PreferencesFrame {
         selection = Integer.parseInt((String) selection);
       }
       Preferences.set("console.font.size", String.valueOf(selection));
-      
 
     } catch (NumberFormatException e) {
       Base.log("Ignoring invalid font size " + consoleSizeField); //$NON-NLS-1$
       consoleSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
     }
 
-    
+
     Preferences.setColor("run.present.bgcolor", presentColor.getBackground());
-    
-   // Preferences.setColor("run.present.bgcolor", base.getActiveEditor().textarea.getPainter().getBackground());
 
     Preferences.setBoolean("editor.input_method_support", inputMethodBox.isSelected()); //$NON-NLS-1$
 

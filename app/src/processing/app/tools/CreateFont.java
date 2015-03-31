@@ -103,23 +103,21 @@ public class CreateFont extends JFrame implements Tool {
     JTextArea textarea = new JTextArea(labelText);
     textarea.setBorder(new EmptyBorder(10, 10, 20, 10));
     textarea.setBackground(null);
-    
     textarea.setEditable(false);
     textarea.setHighlighter(null);
     textarea.setFont(new Font("Dialog", Font.PLAIN, 12));
-    //textarea.setForeground(Color.green);
     pain.add(textarea);
 
     // don't care about families starting with . or #
     // also ignore dialog, dialoginput, monospaced, serif, sansserif
 
     // getFontList is deprecated in 1.4, so this has to be used
-    //long t = System.currentTimeMillis(); 
+    //long t = System.currentTimeMillis();
     GraphicsEnvironment ge =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
     Font[] fonts = ge.getAllFonts();
     //System.out.println("font startup took " + (System.currentTimeMillis() - t) + " ms");
-    
+
     if (false) {
       ArrayList<Font> fontList = new ArrayList<Font>();
       File folderList = new File("/Users/fry/coconut/sys/fonts/web");
@@ -127,7 +125,9 @@ public class CreateFont extends JFrame implements Tool {
         if (folder.isDirectory()) {
           File[] items = folder.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-              if (name.charAt(0) == '.') return false;
+              if (name.charAt(0) == '.') {
+                return false;
+              }
               return (name.toLowerCase().endsWith(".ttf") ||
                       name.toLowerCase().endsWith(".otf"));
             }
@@ -139,7 +139,7 @@ public class CreateFont extends JFrame implements Tool {
               Font font = Font.createFont(Font.TRUETYPE_FONT, input);
               input.close();
               fontList.add(font);
-              
+
             } catch (Exception e) {
               System.out.println("Ignoring " + fontFile.getName());
             }

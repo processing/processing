@@ -268,7 +268,7 @@ public class Base {
       Base.showError("Missing required files",
                      "Processing requires a JRE with tools.jar (or a\n" +
                      "full JDK) installed in (or linked to) a folder\n" +
-                     "named â€œjavaâ€� next to the Processing application.\n" +
+                     "named “java” next to the Processing application.\n" +
                      "More information can be found on the Wiki.", cnfe);
     }
   }
@@ -1264,7 +1264,7 @@ public class Base {
     return found;
   }
 
-  
+
   protected boolean addSketches(DefaultMutableTreeNode node, File folder) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) {
@@ -1920,7 +1920,9 @@ public class Base {
    * much of a bummer, but something to notify the user about.
    */
   static public void showMessage(String title, String message) {
-    if (title == null) title = "Message";
+    if (title == null) {
+      title = "Message";
+    }
 
     if (commandLine) {
       System.out.println(title + ": " + message);
@@ -1943,7 +1945,9 @@ public class Base {
    * Non-fatal error message with optional stack trace side dish.
    */
   static public void showWarning(String title, String message, Throwable e) {
-    if (title == null) title = "Warning";
+    if (title == null) {
+      title = "Warning";
+    }
 
     if (commandLine) {
       System.out.println(title + ": " + message);
@@ -1952,7 +1956,9 @@ public class Base {
       JOptionPane.showMessageDialog(new Frame(), message, title,
                                     JOptionPane.WARNING_MESSAGE);
     }
-    if (e != null) e.printStackTrace();
+    if (e != null) {
+      e.printStackTrace();
+    }
   }
 
 
@@ -1962,7 +1968,9 @@ public class Base {
   static public void showWarningTiered(String title,
                                        String primary, String secondary,
                                        Throwable e) {
-    if (title == null) title = "Warning";
+    if (title == null) {
+      title = "Warning";
+    }
 
     final String message = primary + "\n" + secondary;
     if (commandLine) {
@@ -2011,7 +2019,9 @@ public class Base {
 //        }
       }
     }
-    if (e != null) e.printStackTrace();
+    if (e != null) {
+      e.printStackTrace();
+    }
   }
 
 
@@ -2021,7 +2031,9 @@ public class Base {
    * for errors that allow P5 to continue running.
    */
   static public void showError(String title, String message, Throwable e) {
-    if (title == null) title = "Error";
+    if (title == null) {
+      title = "Error";
+    }
 
     if (commandLine) {
       System.err.println(title + ": " + message);
@@ -2030,7 +2042,9 @@ public class Base {
       JOptionPane.showMessageDialog(new Frame(), message, title,
                                     JOptionPane.ERROR_MESSAGE);
     }
-    if (e != null) e.printStackTrace();
+    if (e != null) {
+      e.printStackTrace();
+    }
     System.exit(1);
   }
 
@@ -2040,7 +2054,9 @@ public class Base {
    */
   static private void showBadnessTrace(String title, String message,
                                        Throwable t, boolean fatal) {
-    if (title == null) title = fatal ? "Error" : "Warning";
+    if (title == null) {
+      title = fatal ? "Error" : "Warning";
+    }
 
     if (commandLine) {
       System.err.println(title + ": " + message);
@@ -2207,7 +2223,7 @@ public class Base {
           // This works for Windows, Linux, and Apple's Java 6 on OS X.
           processingRoot = jarFolder.getParentFile();
         } else if (Base.isMacOS()) {
-          // This works for Java 8 on OS X. We don't have things inside a 'lib' 
+          // This works for Java 8 on OS X. We don't have things inside a 'lib'
           // folder on OS X. Adding it caused more problems than it was worth.
           processingRoot = jarFolder;
         }
@@ -2266,9 +2282,9 @@ public class Base {
   static public InputStream getLibStream(String filename) throws IOException {
     return new FileInputStream(getLibFile(filename));
   }
-  
-  
-  // Note: getLibImage() has moved to Toolkit 
+
+
+  // Note: getLibImage() has moved to Toolkit
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -2281,7 +2297,9 @@ public class Base {
   static public int countLines(String what) {
     int count = 1;
     for (char c : what.toCharArray()) {
-      if (c == '\n') count++;
+      if (c == '\n') {
+        count++;
+      }
     }
     return count;
   }
@@ -2298,7 +2316,9 @@ public class Base {
     int bytesRead;
     while ((bytesRead = input.read(buffer, offset, size-offset)) != -1) {
       offset += bytesRead;
-      if (bytesRead == 0) break;
+      if (bytesRead == 0) {
+        break;
+      }
     }
     input.close();  // weren't properly being closed
     input = null;
@@ -2381,7 +2401,9 @@ public class Base {
    */
   static public String loadFile(File file) throws IOException {
     String[] contents = PApplet.loadStrings(file);
-    if (contents == null) return null;
+    if (contents == null) {
+      return null;
+    }
     return PApplet.join(contents, "\n");
   }
 
@@ -2394,7 +2416,7 @@ public class Base {
     try {
       // fix from cjwant to prevent symlinks from being destroyed.
       File canon = file.getCanonicalFile();
-      // assign the var as second step since previous line may throw exception   
+      // assign the var as second step since previous line may throw exception
       file = canon;
     } catch (IOException e) {
       throw new IOException("Could not resolve canonical representation of " +
@@ -2408,7 +2430,7 @@ public class Base {
     if (error) {
       throw new IOException("Error while trying to save " + file);
     }
-    
+
     // remove the old file before renaming the temp file
     if (file.exists()) {
       boolean result = file.delete();
@@ -2419,7 +2441,7 @@ public class Base {
     }
     boolean result = temp.renameTo(file);
     if (!result) {
-      throw new IOException("Could not replace " + file.getAbsolutePath() + 
+      throw new IOException("Could not replace " + file.getAbsolutePath() +
                             " with " + temp.getAbsolutePath());
     }
   }
@@ -2440,7 +2462,9 @@ public class Base {
     String files[] = sourceDir.list();
     for (int i = 0; i < files.length; i++) {
       // Ignore dot files (.DS_Store), dot folders (.svn) while copying
-      if (files[i].charAt(0) == '.') continue;
+      if (files[i].charAt(0) == '.') {
+        continue;
+      }
       //if (files[i].equals(".") || files[i].equals("..")) continue;
       File source = new File(sourceDir, files[i]);
       File target = new File(targetDir, files[i]);
@@ -2517,11 +2541,15 @@ public class Base {
    * (i.e. when cleaning temp files from lib/build)
    */
   static public void removeDescendants(File dir) {
-    if (!dir.exists()) return;
+    if (!dir.exists()) {
+      return;
+    }
 
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
-      if (files[i].equals(".") || files[i].equals("..")) continue;
+      if (files[i].equals(".") || files[i].equals("..")) {
+        continue;
+      }
       File dead = new File(dir, files[i]);
       if (!dead.isDirectory()) {
         if (!Preferences.getBoolean("compiler.save_build_files")) {
@@ -2548,12 +2576,16 @@ public class Base {
 
     String files[] = folder.list();
     // null if folder doesn't exist, happens when deleting sketch
-    if (files == null) return -1;
+    if (files == null) {
+      return -1;
+    }
 
     for (int i = 0; i < files.length; i++) {
       if (files[i].equals(".") ||
           files[i].equals("..") ||
-          files[i].equals(".DS_Store")) continue;
+          files[i].equals(".DS_Store")) {
+        continue;
+      }
       File fella = new File(folder, files[i]);
       if (fella.isDirectory()) {
         size += calcFolderSize(fella);
@@ -2607,7 +2639,9 @@ public class Base {
     String[] list = folder.list();
     if (list != null) {
       for (String item : list) {
-        if (item.charAt(0) == '.') continue;
+        if (item.charAt(0) == '.') {
+          continue;
+        }
         if (extension == null || item.toLowerCase().endsWith(extension)) {
           File file = new File(path, item);
           String newPath = file.getAbsolutePath();
@@ -2658,7 +2692,9 @@ public class Base {
    * files in the folder or within a subfolder.
    */
   static public String contentsToClassPath(File folder) {
-    if (folder == null) return "";
+    if (folder == null) {
+      return "";
+    }
 
     StringBuilder sb = new StringBuilder();
     String sep = System.getProperty("path.separator");
@@ -2676,7 +2712,9 @@ public class Base {
       for (int i = 0; i < list.length; i++) {
         // Skip . and ._ files. Prior to 0125p3, .jar files that had
         // OS X AppleDouble files associated would cause trouble.
-        if (list[i].startsWith(".")) continue;
+        if (list[i].startsWith(".")) {
+          continue;
+        }
 
         if (list[i].toLowerCase().endsWith(".jar") ||
             list[i].toLowerCase().endsWith(".zip")) {
@@ -2707,7 +2745,9 @@ public class Base {
 
     for (int i = 0; i < pieces.length; i++) {
       //System.out.println("checking piece '" + pieces[i] + "'");
-      if (pieces[i].length() == 0) continue;
+      if (pieces[i].length() == 0) {
+        continue;
+      }
 
       if (pieces[i].toLowerCase().endsWith(".jar") ||
           pieces[i].toLowerCase().endsWith(".zip")) {
@@ -2749,7 +2789,9 @@ public class Base {
 
           if (name.endsWith(".class")) {
             int slash = name.lastIndexOf('/');
-            if (slash == -1) continue;
+            if (slash == -1) {
+              continue;
+            }
 
             String pname = name.substring(0, slash);
             if (map.get(pname) == null) {
@@ -2781,7 +2823,9 @@ public class Base {
     String files[] = dir.list();
 
     for (int i = 0; i < files.length; i++) {
-      if (files[i].equals(".") || files[i].equals("..")) continue;
+      if (files[i].equals(".") || files[i].equals("..")) {
+        continue;
+      }
 
       File sub = new File(dir, files[i]);
       if (sub.isDirectory()) {
@@ -2868,8 +2912,8 @@ public class Base {
       e.printStackTrace();
     }
   }
-  
-  
+
+
   static public void loge(String message) {
     if (DEBUG) {
       System.out.println(message);
