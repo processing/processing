@@ -2585,17 +2585,18 @@ public class PGraphicsOpenGL extends PGraphics {
           shader.setTexture(tex);
         }
 
-        for (String name: polyAttribs.keySet()) {
-          VertexAttribute attrib = polyAttribs.get(name);
+        for (VertexAttribute attrib: polyAttribs.values()) {
           attrib.updateLoc(shader);
+          attrib.bind(pgl);
           shader.setAttributeVBO(attrib.glLoc, attrib.glName,
-                                 attrib.size, attrib.type,
+                                 attrib.tessSize, attrib.type,
                                  attrib.isColor(), 0, attrib.sizeInBytes(voffset));
         }
 
         shader.draw(glPolyIndex, icount, ioffset);
       }
 
+      for (VertexAttribute attrib: polyAttribs.values()) attrib.unbind(pgl);
       shader.unbind();
     }
     unbindPolyBuffers();
@@ -7128,12 +7129,20 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
+    void bind(PGL pgl) {
+      pgl.enableVertexAttribArray(glLoc);
+    }
+
+    void unbind(PGL pgl) {
+      pgl.disableVertexAttribArray(glLoc);
+    }
+
     void updateLoc(PShader shader) {
       if (glLoc == -1) glLoc = shader.getAttributeLoc(name);
     }
 
     int sizeInBytes(int length) {
-      return length * size * elementSize;
+      return length * tessSize * elementSize;
     }
 
     void set(float[] values) {
@@ -8029,6 +8038,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       for (String name: attribs.keySet()) {
         VertexAttribute attrib = attribs.get(name);
+        index = attrib.size * vertexCount;
         if (attrib.type == PGL.FLOAT) {
           float[] values = fattribs.get(name);
           attrib.add(values, index);
@@ -10411,12 +10421,9 @@ public class PGraphicsOpenGL extends PGraphics {
           } else if (attrib.isBool()) {
             inValues = in.battribs.get(name);
             tessValues = bpolyAttribs.get(name);
-            PApplet.arrayCopy(inValues, attrib.size * i0,
-                              tessValues, attrib.size * firstPolyVertex,
-                              attrib.size * nvert);
           }
           PApplet.arrayCopy(inValues, attrib.size * i0,
-                            tessValues, attrib.size * firstPolyVertex,
+                            tessValues, attrib.tessSize * firstPolyVertex,
                             attrib.size * nvert);
         }
       }

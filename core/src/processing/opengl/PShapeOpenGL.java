@@ -4902,20 +4902,19 @@ public class PShapeOpenGL extends PShape {
         shader.setTexture(tex);
       }
 
-      for (String name: polyAttribs.keySet()) {
-        VertexAttribute attrib = polyAttribs.get(name);
+      for (VertexAttribute attrib: polyAttribs.values()) {
         attrib.updateLoc(shader);
+        attrib.bind(pgl);
         shader.setAttributeVBO(attrib.glLoc, attrib.glName,
-                               attrib.size, attrib.type,
+                               attrib.tessSize, attrib.type,
                                attrib.isColor(), 0, attrib.sizeInBytes(voffset));
       }
 
       shader.draw(root.glPolyIndex, icount, ioffset);
     }
 
-    if (shader != null && shader.bound()) {
-      shader.unbind();
-    }
+    for (VertexAttribute attrib: polyAttribs.values()) attrib.unbind(pgl);
+    if (shader != null && shader.bound()) shader.unbind();
   }
 
 
