@@ -7014,6 +7014,7 @@ public class PGraphicsOpenGL extends PGraphics {
     @Override
     public VertexAttribute put(String key, VertexAttribute value) {
       VertexAttribute prev = super.put(key, value);
+      names.add(key);
       if (value.kind == VertexAttribute.COLOR) numComp += 4;
       else numComp += value.size;
       return prev;
@@ -10026,7 +10027,7 @@ public class PGraphicsOpenGL extends PGraphics {
                      (float) d[24],
                      clampXY);
 
-       if (25 <= d.length) {
+       if (25 < d.length) {
          PMatrix3D mm = pg.modelview;
          PMatrix3D nm = pg.modelviewInv;
          int tessIdx = polyVertexCount - 1;
