@@ -36,7 +36,9 @@ import processing.opengl.PGraphicsOpenGL.IndexCache;
 import processing.opengl.PGraphicsOpenGL.InGeometry;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
 import processing.opengl.PGraphicsOpenGL.Tessellator;
+import processing.opengl.PGraphicsOpenGL.VertexAttribute;
 
+import java.nio.Buffer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Stack;
@@ -532,6 +534,13 @@ public class PShapeOpenGL extends PShape {
     if (glPolyShininess != 0) {
       PGraphicsOpenGL.finalizeVertexBufferObject(glPolyShininess, context);
     }
+
+    for (VertexAttribute attrib: attribs.values()) {
+      if (attrib.glName != 0) {
+        PGraphicsOpenGL.finalizeVertexBufferObject(attrib.glName, context);
+      }
+    }
+
 
     if (glPolyIndex != 0) {
       PGraphicsOpenGL.finalizeVertexBufferObject(glPolyIndex, context);
@@ -1125,6 +1134,46 @@ public class PShapeOpenGL extends PShape {
     }
   }
 
+  @Override
+  public void attrib(String name, float... values) {
+    VertexAttribute attrib = attribImpl(name, PGL.FLOAT, values.length);
+    if (attrib != null) attrib.set(values);
+  }
+
+
+  @Override
+  public void attrib(String name, int... values) {
+    VertexAttribute attrib = attribImpl(name, PGL.INT, values.length);
+    if (attrib != null) attrib.set(values);
+  }
+
+
+  @Override
+  public void attrib(String name, boolean... values) {
+    VertexAttribute attrib = attribImpl(name, PGL.BOOL, values.length);
+    if (attrib != null) attrib.set(values);
+  }
+
+
+  protected VertexAttribute attribImpl(String name, int type, int size) {
+    if (4 < size) {
+      PGraphics.showWarning("Vertex attributes cannot have more than 4 values");
+      return null;
+    }
+    VertexAttribute attrib = attribs.get(name);
+    if (attrib == null) {
+      attrib = new VertexAttribute(name, type, size);
+      attribs.put(name, attrib);
+      inGeo.initAttrib(attrib);
+      tessGeo.initAttrib(attrib);
+    }
+    if (attrib.size != size) {
+      PGraphics.showWarning("New value for vertex attribute has wrong number of values");
+      return null;
+    }
+    return attrib;
+  }
+
 
   @Override
   public void endShape(int mode) {
@@ -1381,6 +1430,11 @@ public class PShapeOpenGL extends PShape {
                                         firstPolyVertex, lastPolyVertex);
       root.setModifiedPolyVertices(firstPolyVertex, lastPolyVertex);
       root.setModifiedPolyNormals(firstPolyVertex, lastPolyVertex);
+      for (VertexAttribute attrib: attribs.values()) {
+        if (attrib.isPosition() || attrib.isNormal()) {
+          root.setModifiedPolyAttrib(attrib, firstPolyVertex, lastPolyVertex);
+        }
+      }
     }
 
     if (is3D()) {
@@ -1604,7 +1658,7 @@ public class PShapeOpenGL extends PShape {
 
     // TODO: in certain cases (kind = TRIANGLE, etc) the correspondence between
     // input and tessellated vertices is 1-1, so in those cases re-tessellation
-    // wouldnt' be neccessary.
+    // wouldn't be necessary.
     inGeo.vertices[3 * index + 0] = x;
     inGeo.vertices[3 * index + 1] = y;
     inGeo.vertices[3 * index + 2] = z;
@@ -3784,6 +3838,15 @@ public class PShapeOpenGL extends PShape {
     pgl.bufferData(PGL.ARRAY_BUFFER, sizef,
                    tessGeo.polyShininessBuffer, glUsage);
 
+    for (String name: attribs.keySet()) {
+      VertexAttribute attrib = attribs.get(name);
+      tessGeo.updateAttribBuffer(attrib.name);
+      if (!attrib.bufferCreated()) attrib.createBuffer(pgl);
+      pgl.bindBuffer(PGL.ARRAY_BUFFER, attrib.glName);
+      pgl.bufferData(PGL.ARRAY_BUFFER, attrib.sizeInBytes(size),
+                     tessGeo.attribBuffers.get(name), PGL.STATIC_DRAW);
+    }
+
     pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
 
     tessGeo.updatePolyIndicesBuffer();
@@ -3893,6 +3956,9 @@ public class PShapeOpenGL extends PShape {
       PGraphicsOpenGL.removeVertexBufferObject(glPolySpecular, context);
       PGraphicsOpenGL.removeVertexBufferObject(glPolyEmissive, context);
       PGraphicsOpenGL.removeVertexBufferObject(glPolyShininess, context);
+      for (VertexAttribute attrib: attribs.values()) {
+        PGraphicsOpenGL.removeVertexBufferObject(attrib.glName, context);
+      }
       PGraphicsOpenGL.removeVertexBufferObject(glPolyIndex, context);
 
       PGraphicsOpenGL.removeVertexBufferObject(glLineVertex, context);
@@ -3917,6 +3983,7 @@ public class PShapeOpenGL extends PShape {
       glPolySpecular = 0;
       glPolyEmissive = 0;
       glPolyShininess = 0;
+      for (VertexAttribute attrib: attribs.values()) attrib.glName = 0;
       glPolyIndex = 0;
 
       glLineVertex = 0;
@@ -3986,6 +4053,10 @@ public class PShapeOpenGL extends PShape {
     if (glPolyShininess != 0) {
       PGraphicsOpenGL.deleteVertexBufferObject(glPolyShininess, context, pgl);
       glPolyShininess = 0;
+    }
+
+    for (VertexAttribute attrib: attribs.values()) {
+      attrib.deleteBuffer(pgl);
     }
 
     if (glPolyIndex != 0) {
@@ -4120,6 +4191,17 @@ public class PShapeOpenGL extends PShape {
       modifiedPolyShininess = false;
       firstModifiedPolyShininess = PConstants.MAX_INT;
       lastModifiedPolyShininess = PConstants.MIN_INT;
+    }
+    for (String name: attribs.keySet()) {
+      VertexAttribute attrib = attribs.get(name);
+      if (attrib.modified) {
+        int offset = firstModifiedPolyVertex;
+        int size = lastModifiedPolyVertex - offset + 1;
+        copyPolyAttrib(attrib, offset, size);
+        attrib.modified = false;
+        attrib.firstModified = PConstants.MAX_INT;
+        attrib.lastModified = PConstants.MIN_INT;
+      }
     }
 
     if (modifiedLineVertices) {
@@ -4264,6 +4346,18 @@ public class PShapeOpenGL extends PShape {
   }
 
 
+  protected void copyPolyAttrib(VertexAttribute attrib, int offset, int size) {
+    tessGeo.updateAttribBuffer(attrib.name, offset, size);
+    pgl.bindBuffer(PGL.ARRAY_BUFFER, attrib.glName);
+    Buffer buf = tessGeo.attribBuffers.get(attrib.name);
+    buf.position(attrib.size * offset);
+    pgl.bufferSubData(PGL.ARRAY_BUFFER, attrib.sizeInBytes(offset),
+                      attrib.sizeInBytes(size), buf);
+    buf.rewind();
+    pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
+  }
+
+
   protected void copyLineVertices(int offset, int size) {
     tessGeo.updateLineVerticesBuffer(offset, size);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, glLineVertex);
@@ -4390,6 +4484,20 @@ public class PShapeOpenGL extends PShape {
     if (first < firstModifiedPolyShininess) firstModifiedPolyShininess = first;
     if (last > lastModifiedPolyShininess) lastModifiedPolyShininess = last;
     modifiedPolyShininess = true;
+    modified = true;
+  }
+
+  protected void setModifiedPolyAttrib(VertexAttribute attrib, int first, int last) {
+    if (first < attrib.firstModified) attrib.firstModified = first;
+    if (last > attrib.lastModified) attrib.lastModified = last;
+    attrib.modified = true;
+    modified = true;
+  }
+
+  protected void setModifiedPolyAttribs(VertexAttribute attrib, int first, int last) {
+    if (first < attrib.firstModified) attrib.firstModified = first;
+    if (last > attrib.lastModified) attrib.lastModified = last;
+    attrib.modified = true;
     modified = true;
   }
 

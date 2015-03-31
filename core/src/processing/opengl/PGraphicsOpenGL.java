@@ -7039,6 +7039,11 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] ivalues;
     byte[] bvalues;
 
+    // For use in PShape
+    boolean modified;
+    int firstModified;
+    int lastModified;
+
     VertexAttribute(String name, int type, int size) {
       this.name = name;
       this.type = type;
@@ -7070,6 +7075,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
       glName = 0;
       glLoc = -1;
+
+      modified = false;
+      firstModified = PConstants.MAX_INT;
+      lastModified = PConstants.MIN_INT;
     }
 
     boolean isPosition() {
@@ -7110,6 +7119,13 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.bindBuffer(PGL.ARRAY_BUFFER, glName);
       pgl.bufferData(PGL.ARRAY_BUFFER, size * INIT_VERTEX_BUFFER_SIZE * elementSize,
                      null, PGL.STATIC_DRAW);
+    }
+
+    void deleteBuffer(PGL pgl) {
+      if (glName != 0) {
+        int ctx = pgl.getCurrentContext();
+        PGraphicsOpenGL.deleteVertexBufferObject(glName, ctx, pgl);
+      }
     }
 
     void updateLoc(PShader shader) {

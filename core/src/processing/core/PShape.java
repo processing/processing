@@ -2223,6 +2223,19 @@ public class PShape implements PConstants {
   }
 
 
+
+  public void setAttrib(String name, int index, float... values) {
+  }
+
+
+  public void setAttrib(String name, int index, int... values) {
+  }
+
+
+  public void setAttrib(String name, int index, boolean... values) {
+  }
+
+
   public float getTextureU(int index) {
     return vertices[index][PGraphics.U];
   }
