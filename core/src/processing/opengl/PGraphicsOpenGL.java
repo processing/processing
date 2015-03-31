@@ -2295,6 +2295,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (attrib == null) {
       attrib = new VertexAttribute(name, type, size);
       attribs.put(name, attrib);
+      inGeo.initAttrib(attrib);
+      tessGeo.initAttrib(attrib);
     }
     if (attrib.size != size) {
       PGraphics.showWarning("New value for vertex attribute has wrong number of values");
@@ -7482,6 +7484,19 @@ public class PGraphicsOpenGL extends PGraphics {
       clear();
     }
 
+    void initAttrib(VertexAttribute attrib) {
+      if (attrib.type == PGL.FLOAT) {
+        float[] temp = new float[attrib.size * PGL.DEFAULT_IN_VERTICES];
+        fattribs.put(attrib.name, temp);
+      } else if (attrib.type == PGL.INT) {
+        int[] temp = new int[attrib.size * PGL.DEFAULT_IN_VERTICES];
+        iattribs.put(attrib.name, temp);
+      } else if (attrib.type == PGL.BOOL) {
+        byte[] temp = new byte[attrib.size * PGL.DEFAULT_IN_VERTICES];
+        battribs.put(attrib.name, temp);
+      }
+    }
+
     void vertexCheck() {
       if (vertexCount == vertices.length / 3) {
         int newSize = vertexCount << 1;
@@ -8984,6 +8999,22 @@ public class PGraphicsOpenGL extends PGraphics {
       pointIndicesBuffer = PGL.allocateShortBuffer(pointIndices);
 
       clear();
+    }
+
+    void initAttrib(VertexAttribute attrib) {
+      if (attrib.type == PGL.FLOAT) {
+        float[] temp = new float[attrib.tessSize * PGL.DEFAULT_TESS_VERTICES];
+        fattribs.put(attrib.name, temp);
+        attribBuffers.put(attrib.name, PGL.allocateFloatBuffer(temp));
+      } else if (attrib.type == PGL.INT) {
+        int[] temp = new int[attrib.tessSize * PGL.DEFAULT_TESS_VERTICES];
+        iattribs.put(attrib.name, temp);
+        attribBuffers.put(attrib.name, PGL.allocateIntBuffer(temp));
+      } else if (attrib.type == PGL.BOOL) {
+        byte[] temp = new byte[attrib.tessSize * PGL.DEFAULT_TESS_VERTICES];
+        battribs.put(attrib.name, temp);
+        attribBuffers.put(attrib.name, PGL.allocateByteBuffer(temp));
+      }
     }
 
     void clear() {
