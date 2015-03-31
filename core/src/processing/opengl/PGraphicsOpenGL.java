@@ -2586,6 +2586,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
 
         for (VertexAttribute attrib: polyAttribs.values()) {
+          if (!attrib.active()) continue;
           attrib.updateLoc(shader);
           attrib.bind(pgl);
           shader.setAttributeVBO(attrib.glLoc, attrib.glName,
@@ -2596,7 +2597,10 @@ public class PGraphicsOpenGL extends PGraphics {
         shader.draw(glPolyIndex, icount, ioffset);
       }
 
-      for (VertexAttribute attrib: polyAttribs.values()) attrib.unbind(pgl);
+      for (VertexAttribute attrib: polyAttribs.values()) {
+        if (!attrib.active()) continue;
+        attrib.unbind(pgl);
+      }
       shader.unbind();
     }
     unbindPolyBuffers();
@@ -7135,6 +7139,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void unbind(PGL pgl) {
       pgl.disableVertexAttribArray(glLoc);
+    }
+
+    boolean active() {
+      return -1 < glLoc;
     }
 
     void updateLoc(PShader shader) {
