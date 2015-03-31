@@ -187,10 +187,6 @@
     <include name="lib/amd64/libprism-es2.so" />
   </fileset>
 
-  <!-- our special JRE downloader task -->
-  <taskdef name="downloader" 
-	   classname="Downloader"
-	   classpath="jre/downloader.jar" />
   <!--
   <echo message="${java.class.path}" />
   -->
@@ -200,6 +196,29 @@
   <property name="${platform}" value="${platform}" />
 
   <property environment="env" />
+
+  <property name="jre.tgz.path" value="${platform}/jre.tgz" />
+
+  <target name="jre-check"> 
+    <available file="${jre.tgz.path}" property="jre.tgz.downloaded" />
+  </target>
+
+  <target name="jre-download" depends="jre-check" if="jre.tgz.downloaded">
+    <!-- make sure we're built -->
+    <subant buildpath="../jre" target="dist" />
+
+    <!-- our special JRE downloader task -->
+    <taskdef name="downloader" 
+	     classname="Downloader"
+	     classpath="jre/downloader.jar" />
+
+    <downloader version="${jdk.version}" 
+                update="${jdk.update}" 
+                build="${jdk.build}" 
+                jdk="false" 
+                flavor="${jre.downloader}"
+                path="${platform}/jre.tgz" />    
+  </target>
 
   <!-- code signing hack, turns on code signing during dist -->
   <condition property="codesign"> 
@@ -662,23 +681,8 @@
     
     <fail message="wrong platform (${os.name})" />
   </target>
-
-  <property name="linux.jre.archive" value="linux/jre.tgz" />
-
-  <target name="linux-jre-check"> 
-    <available file="${linux.jre.archive}" property="linux.jre.downloaded" />
-  </target>
-
-  <target name="linux-jre" depends="linux-jre-check" if="linux.jre.downloaded">
-    <downloader version="${jdk.version}" 
-                update="${jdk.update}" 
-                build="${jdk.build}" 
-                jdk="false" 
-                flavor="${jre.downloader}"
-                path="${linux.jre.archive}" />    
-  </target>
   
-  <target name="linux-build" depends="revision-check, linux-check-os, linux-jre, subprojects-build" description="Build linux version">
+  <target name="linux-build" depends="revision-check, linux-check-os, jre-download, subprojects-build" description="Build Linux version">
     <mkdir dir="linux/work" />
     
     <copy todir="linux/work">
@@ -693,7 +697,8 @@
       <param name="target.path" value="linux/work" />
     </antcall>
 
-    <property name="launch4j.dir" value="linux/work/modes/java/application/launch4j" />
+    <property name="launch4j.dir" 
+              value="linux/work/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
     <move file="${launch4j.dir}/bin/windres-linux"
