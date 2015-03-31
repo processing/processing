@@ -58,13 +58,23 @@
     <equals arg1="${sun.arch.data.model}" arg2="64" />
   </condition>
 
-  <!-- for the new one that uses the special getter -->
+  <!-- for the full name from processing.org/downloads -->
   <condition property="jre.download" 
              value="${jdk.stuff}-${platform}-i586.tar.gz"> 
     <equals arg1="${sun.arch.data.model}" arg2="32" />
   </condition>
   <condition property="jre.download" 
              value="${jdk.stuff}-${platform}-x64.tar.gz"> 
+    <equals arg1="${sun.arch.data.model}" arg2="64" />
+  </condition>
+
+  <!-- for use with the Ant Task -->
+  <condition property="jre.downloader" 
+             value="${platform}-i586.tar.gz"> 
+    <equals arg1="${sun.arch.data.model}" arg2="32" />
+  </condition>
+  <condition property="jre.downloader" 
+             value="${platform}-x64.tar.gz"> 
     <equals arg1="${sun.arch.data.model}" arg2="64" />
   </condition>
 
@@ -177,6 +187,10 @@
     <include name="lib/amd64/libprism-es2.so" />
   </fileset>
 
+  <!-- our special JRE downloader task -->
+  <taskdef name="downloader" 
+	   classname="Downloader"
+	   classpath="jre/downloader.jar" />
   <!--
   <echo message="${java.class.path}" />
   -->
@@ -402,7 +416,7 @@
     <delete file="macosx/processing-*.dmg" />
   </target>
   
-  <target name="macosx-checkos" unless="macosx">
+  <target name="macosx-check-os" unless="macosx">
     <echo>
       =======================================================
       Processing for Mac OS X can only be built on Mac OS X.
@@ -413,7 +427,7 @@
     <fail message="wrong platform (${os.name})" />
   </target>
   
-  <target name="macosx-build" if="macosx" depends="revision-check, macosx-checkos, subprojects-build" description="Build Mac OS X version">
+  <target name="macosx-build" if="macosx" depends="revision-check, macosx-check-os, subprojects-build" description="Build Mac OS X version">
     <mkdir dir="macosx/work" />
     
     <!-- app bundler for OS X and Java 1.7 -->
@@ -637,10 +651,10 @@
     <delete dir="linux/work" />
   </target>
   
-  <target name="linux-checkos" unless="linux">
+  <target name="linux-check-os" unless="linux">
     <echo>
       =======================================================
-      Processing for Linux can only be built on on unix systems.
+      Processing for Linux can only be built on *nix systems.
       
       Bye. 
       =======================================================
@@ -648,8 +662,23 @@
     
     <fail message="wrong platform (${os.name})" />
   </target>
+
+  <property name="linux.jre.archive" value="linux/jre.tgz" />
+
+  <target name="linux-jre-check"> 
+    <available file="${linux.jre.archive}" property="linux.jre.downloaded" />
+  </target>
+
+  <target name="linux-jre" depends="linux-jre-check" if="linux.jre.downloaded">
+    <downloader version="${jdk.version}" 
+                update="${jdk.update}" 
+                build="${jdk.build}" 
+                jdk="false" 
+                flavor="${jre.downloader}"
+                path="${linux.jre.archive}" />    
+  </target>
   
-  <target name="linux-build" depends="revision-check, linux-checkos, subprojects-build" description="Build linux version">
+  <target name="linux-build" depends="revision-check, linux-check-os, linux-jre, subprojects-build" description="Build linux version">
     <mkdir dir="linux/work" />
     
     <copy todir="linux/work">
@@ -693,9 +722,11 @@
     <copy file="linux/processing" tofile="linux/work/processing-java" />
     <chmod perm="ugo+x" file="linux/work/processing-java" />
 
+<!--
     <get src="http://download.processing.org/java/${jre.file}" 
          dest="linux/jre.tgz" 
          usetimestamp="true" />
+-->
 
 <!--           
     Cannot use ant version of tar because it doesn't preserve properties.
@@ -877,7 +908,7 @@
     <delete dir="windows/work" />
   </target>
   
-  <target name="windows-checkos" unless="windows">
+  <target name="windows-check-os" unless="windows">
     <echo>
       =======================================================
       Processing for Windows can only be built on windows.
@@ -890,7 +921,7 @@
   </target>
   
   <target name="windows-build" 
-          depends="revision-check, windows-checkos, subprojects-build" 
+          depends="revision-check, windows-check-os, subprojects-build" 
           description="Build windows version">
     <mkdir dir="windows/work" />
     
