@@ -154,7 +154,7 @@ public class Downloader extends Task {
       if (location.size() == 1) {
         url = location.get(0);
       } else {
-        throw new RuntimeException("Got " + location.size() + " locations.");
+        throw new BuildException("Got " + location.size() + " locations.");
       }
       List<String> cookies = headers.get("Set-Cookie");
       conn = (HttpURLConnection) new URL(url).openConnection();
@@ -169,6 +169,7 @@ public class Downloader extends Task {
       InputStream input = conn.getInputStream();
       BufferedInputStream bis = new BufferedInputStream(input);
       File outputFile = new File(path); //folder, filename);
+      System.out.format("Downloading %s from %s%n", outputFile.getAbsolutePath(), url);
       // Write to a temp file so that we don't have an incomplete download
       // masquerading as a good archive.
       File tempFile = File.createTempFile("download", "", outputFile.getParentFile());
