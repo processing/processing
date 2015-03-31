@@ -13,12 +13,17 @@ X   https://github.com/processing/processing/issues/3110
 X loadXxxx() methods will truly follow redirects (including http -> https)
 X   https://github.com/processing/processing-docs/issues/218
 
+_ noSmooth() and other settings reset after setup()
+_   https://github.com/processing/processing/issues/3113
+
 head
 X Sketch window dimensions off in Java2D
 X   https://github.com/processing/processing/issues/3129
 X   https://github.com/processing/processing/pull/3162
 X dragging sketch window hides it
 X   https://github.com/processing/processing/issues/3092
+X Video library is incompatible with 0233
+X   https://github.com/processing/processing/issues/3114
 
 showstoppers
 _ static mode - no setup() / draw() - broken
@@ -128,10 +133,24 @@ _   prevents hundreds of entries from coming up w/ auto-complete
 _   downside: breaks compatibility big time
 _ min() and max() to use varargs
 _   https://github.com/processing/processing/issues/3027
+_ use enums for constants
+_   https://github.com/processing/processing/issues/2778
+_ make join() work with Iterable?
+_   will this collide with the current String[] version?
 
 
 under consideration
 _ break PUtil out from PApplet
+_ async requests
+_   https://github.com/processing/processing/issues/3165
+_   Request r = createRequest("http://p5.org/feed/13134.jpg");
+_   Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
+_   Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
+_   implement callbacks for images and other loadXxxx() functions
+_     remove requestImage() and friends
+_   callback for requestImage()
+_     https://github.com/processing/processing/issues/680
+_   remove/update requestImage example
 _ fix the registered methods doc, stop/dispose working
 _   Casey needs to nudge people about libraries, so we need to fix this
 _ pause(), resume(), start(), stop() clarifications
@@ -143,7 +162,6 @@ _   probably go with pointer: more universal for touch/mouse
 _ high-level touch events (swipe, et al)
 _   if Andres is done, they go in, if not then 3.0
 _ move away from loadPixels
-_ implement requestXxxx() API
 
 
 processing.data
@@ -221,19 +239,6 @@ _   https://github.com/processing/processing/issues/2510
 
 
 decisions/misc
-_ async requests
-_   Request r = createRequest("http://p5.org/feed/13134.jpg");
-_   Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
-_   Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
-_   implement callbacks for images and other loadXxxx() functions
-_     remove requestImage() and friends
-_   callback for requestImage()
-_     https://github.com/processing/processing/issues/680
-_   remove/update requestImage example
-_ use enums for constants
-_   https://github.com/processing/processing/issues/2778
-_ make join() work with Iterable?
-_   will this collide with the current String[] version?
 _ add options for image.save() (or saveImage?)
 _   add quality=[0,1] for jpeg images
 _   add dpi=[0,n] for for png images

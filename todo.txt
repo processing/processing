@@ -16,6 +16,18 @@ _   don't return here, allow contrib types to fail:
 _   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
 _ trying to add a second tab with the same name causes an error
 
+_ run button w/ debugger shouldn't require "continue" before actually starting
+_   https://github.com/processing/processing/issues/3096
+_ large window places the debugger window offscreen
+_   https://github.com/processing/processing/issues/3091
+
+jre download/install
+X make sure the file downloads correctly before renaming
+X   https://github.com/processing/processing/issues/2960
+X update build scripts for Windows and Linux to use JRE downloader Ant Task
+X   https://github.com/processing/processing/issues/3059
+_ add method to prompt OS X developers to download the JDK update
+
 update components
 X moving to Java 8 because Java 7 will be discontinued
 X   http://www.oracle.com/technetwork/java/javase/eol-135779.html
@@ -169,13 +181,6 @@ _   http://stackoverflow.com/questions/2495501/swing-batik-create-an-imageicon-f
 what do these do, and are we doing it already?
 System.setProperty("awt.useSystemAAFontSettings","on");
 System.setProperty("swing.aatext", "true");
-
-jre download/install
-X make sure the file downloads correctly before renaming
-X   https://github.com/processing/processing/issues/2960
-_ update build scripts for Windows and Linux to use JRE downloader Ant Task
-_   https://github.com/processing/processing/issues/3059
-_ add method to prompt OS X developers to download the JDK update
 
 _ fix file change detection on OS X
 _   https://github.com/processing/processing/issues/2852
@@ -815,12 +820,8 @@ _   don't bother having a "cancel" for the prefs window
 _ rewrite preferences window to use proper layout
 _   https://github.com/processing/processing/issues/67
 _   https://github.com/processing/processing/issues/2708
+_   https://github.com/processing/processing/issues/2986
 _ make prefs dialog modal?
-_ preferences window has been hit with the ugly stick
-_   redo panel to use proper Box layout etc
-_   also needs to look good across all platforms
-_   http://code.google.com/p/processing/issues/detail?id=28
-_   https://github.com/processing/processing/issues/67
 
 
 PDE / Runner 
