@@ -43,11 +43,13 @@ import java.util.List;
 
 
 
+
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Segment;
 import javax.swing.text.Utilities;
 
 import processing.app.Base;
+import processing.app.Editor;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
 import processing.app.syntax.TextAreaDefaults;
@@ -182,7 +184,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     try {
       // TODO This line is causing NPEs randomly ever since I added the 
       // toggle for Java Mode/Debugger toolbar. [Manindra]
-      super.paintLine(gfx, line, x + JavaTextArea.LEFT_GUTTER, tokenMarker);
+      super.paintLine(gfx, line, x + Editor.LEFT_GUTTER, tokenMarker);
       
     } catch (Exception e) {
       Base.log(e.getMessage());
@@ -210,7 +212,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
   protected void paintGutterBg(Graphics gfx, int line, int x) {
     gfx.setColor(getTextArea().gutterBgColor);
     int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
-    gfx.fillRect(0, y, JavaTextArea.LEFT_GUTTER, fm.getHeight());
+    gfx.fillRect(0, y, Editor.LEFT_GUTTER, fm.getHeight());
   }
 
   
@@ -227,8 +229,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
   protected void paintGutterLine(Graphics gfx, int line, int x) {
     int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
     gfx.setColor(getTextArea().gutterLineColor);
-    gfx.drawLine(JavaTextArea.LEFT_GUTTER, y, 
-                 JavaTextArea.LEFT_GUTTER, y + fm.getHeight());
+    gfx.drawLine(Editor.LEFT_GUTTER, y, 
+                 Editor.LEFT_GUTTER, y + fm.getHeight());
   }
 
   
@@ -260,13 +262,13 @@ public class JavaTextAreaPainter extends TextAreaPainter
     // draw 4 times to make it appear bold, displaced 1px to the right, to the bottom and bottom right.
     //int len = text.length() > ta.gutterChars ? ta.gutterChars : text.length();
     Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-                             JavaTextArea.GUTTER_MARGIN, y, gfx, this, 0);
+                             Editor.GUTTER_MARGIN, y, gfx, this, 0);
     Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-                             JavaTextArea.GUTTER_MARGIN + 1, y, gfx, this, 0);
+                             Editor.GUTTER_MARGIN + 1, y, gfx, this, 0);
     Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-                             JavaTextArea.GUTTER_MARGIN, y + 1, gfx, this, 0);
+                             Editor.GUTTER_MARGIN, y + 1, gfx, this, 0);
     Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-                             JavaTextArea.GUTTER_MARGIN + 1, y + 1, gfx, this, 0);
+                             Editor.GUTTER_MARGIN + 1, y + 1, gfx, this, 0);
   }
   
 
@@ -373,8 +375,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
       int x1 = fm.stringWidth(goodCode) + (aw - rw), y1 = y + fm.getHeight()
           - 2, x2 = x1 + rw;
       // Adding offsets for the gutter
-      x1 += JavaTextArea.LEFT_GUTTER;
-      x2 += JavaTextArea.LEFT_GUTTER;
+      x1 += Editor.LEFT_GUTTER;
+      x2 += Editor.LEFT_GUTTER;
 
       // gfx.fillRect(x1, y, rw, height);
 

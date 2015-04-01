@@ -51,8 +51,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected EditorState state;
   protected Mode mode;
 
-  static final int LEFT_GUTTER = 60;
-  static final int RIGHT_GUTTER = 26;
+  static public final int LEFT_GUTTER = 44;
+  static public final int RIGHT_GUTTER = 20;
+  static public final int GUTTER_MARGIN = 3;
+
   
   // Otherwise, if the window is resized with the message label
   // set to blank, its preferredSize() will be fuckered

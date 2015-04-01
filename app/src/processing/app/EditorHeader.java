@@ -37,7 +37,7 @@ import javax.swing.*;
  */
 public class EditorHeader extends JComponent {
   // height of this tab bar
-  static final int HIGH = 36;
+  static final int HIGH = 30;
   // standard UI sizing (OS-specific, but generally consistent)
 //  static final int SCROLLBAR_WIDTH = 16;
   // amount of space on the left edge before the tabs start

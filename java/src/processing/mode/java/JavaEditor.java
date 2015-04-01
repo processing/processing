@@ -37,7 +37,6 @@ import processing.mode.java.debug.LineID;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.ErrorMarker;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
-import processing.mode.java.pdex.ImportStatement;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.Problem;
 import processing.mode.java.pdex.XQConsoleToggle;

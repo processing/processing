@@ -36,6 +36,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;
 
 import processing.app.Base;
+import processing.app.Editor;
 import processing.app.Mode;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
@@ -46,9 +47,9 @@ public class JavaTextArea extends JEditTextArea {
   protected PdeTextAreaDefaults defaults;
   protected JavaEditor editor;
 
-  static final int LEFT_GUTTER = 59;
-  static final int RIGHT_GUTTER = 27;
-  static final int GUTTER_MARGIN = 3;
+//  static final int LEFT_GUTTER = Editor.LEFT_GUTTER;
+//  static final int RIGHT_GUTTER = Editor.RIGHT_GUTTER;
+//  static final int GUTTER_MARGIN = 3;
 
   protected MouseListener[] mouseListeners; // cached mouselisteners, these are wrapped by MouseHandler
 
@@ -669,7 +670,7 @@ public class JavaTextArea extends JEditTextArea {
    */
   @Override
   public int _offsetToX(int line, int offset) {
-    return super._offsetToX(line, offset) + LEFT_GUTTER;
+    return super._offsetToX(line, offset) + Editor.LEFT_GUTTER;
   }
 
   
@@ -685,7 +686,7 @@ public class JavaTextArea extends JEditTextArea {
    */
   @Override
   public int xToOffset(int line, int x) {
-    return super.xToOffset(line, x - LEFT_GUTTER);
+    return super.xToOffset(line, x - Editor.LEFT_GUTTER);
   }
 
   
@@ -709,7 +710,7 @@ public class JavaTextArea extends JEditTextArea {
     @Override
     public void mousePressed(MouseEvent me) {
       // check if this happened in the gutter area
-      if (me.getX() < LEFT_GUTTER) {
+      if (me.getX() < Editor.LEFT_GUTTER) {
         if (me.getButton() == MouseEvent.BUTTON1 && me.getClickCount() == 2) {
           int line = me.getY() / painter.getFontMetrics().getHeight()
               + firstLine;
@@ -766,12 +767,12 @@ public class JavaTextArea extends JEditTextArea {
     @Override
     public void mouseMoved(MouseEvent me) {
       // No need to forward since the standard MouseMotionListeners are called anyway
-      if (me.getX() < LEFT_GUTTER) {
-        if (lastX >= LEFT_GUTTER) {
+      if (me.getX() < Editor.LEFT_GUTTER) {
+        if (lastX >= Editor.LEFT_GUTTER) {
           painter.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
       } else {
-        if (lastX < LEFT_GUTTER) {
+        if (lastX < Editor.LEFT_GUTTER) {
           painter.setCursor(new Cursor(Cursor.TEXT_CURSOR));
         }
       }

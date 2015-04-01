@@ -38,11 +38,11 @@ import javax.swing.JPopupMenu;
 abstract public class EditorToolbar extends JPanel {
   // haven't decided how to handle this/how to make public/consistency 
   // for components/does it live in theme.txt
-  static final int HIGH = 80;
-  // gap between buttons
-  static final int GAP = 8;
+  static final int HIGH = 53;
+  // horizontal gap between buttons
+  static final int GAP = 9;
   // gap from the run button to the sketch label
-  static final int LABEL_GAP = 18;
+  static final int LABEL_GAP = GAP;
   
   protected Editor editor;
   protected Base base;
