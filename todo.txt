@@ -14,10 +14,13 @@ X Menu mnemonics (alt-f, etc) getting typed into the editor
 X   https://github.com/processing/processing/issues/3057
 X Opening and closing preferences window prompts user to save unmodified sketch
 X   https://github.com/processing/processing/issues/3074
+X Pressing PgDn in a code without scrollbar gives Exception
+X   https://github.com/processing/processing/issues/2990
 
 _ implement line numbers in the editor
 _   5px between line number (right-aligned) and the right edge of the gutter
 _   ie textAlign(RIGHT) / text(lineNum, LEFT_GUTTER - 5, y)
+_   https://github.com/processing/processing/issues/3128
 
 _ run button w/ debugger shouldn't require "continue" before actually starting
 _   https://github.com/processing/processing/issues/3096
@@ -87,6 +90,8 @@ X   https://github.com/processing/processing/pull/3069
 X Java 8 method replace() used, removed
 X   https://github.com/processing/processing/issues/3168
 X   https://github.com/processing/processing/pull/3169
+X Closing a few unclosed BufferedReaders and InputStreams
+X   https://github.com/processing/processing/pull/2961
 
 manindra
 X Fix for "Probably a ++ should go here" messages

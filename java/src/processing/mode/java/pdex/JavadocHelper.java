@@ -66,7 +66,7 @@ public class JavadocHelper {
         String methodName = docFile.getName().substring(0, docFile.getName().indexOf('_'));
         //System.out.println(methodName);
         for (Iterator<Element> it = elm.iterator(); it.hasNext();) {
-          Element ele = (Element) it.next();
+          Element ele = it.next();
           msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"ref-item\">"
               + ele.html() + "</table></div></html></body></html>";          
           //mat.replaceAll("");

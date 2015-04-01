@@ -374,7 +374,7 @@ public class CompilationChecker {
     prob = new IProblem[problems.size()];
     int count = 0;
     for (Iterator<IProblem> it = problems.iterator(); it.hasNext();) {
-      IProblem problem = (IProblem) it.next();
+      IProblem problem = it.next();
       prob[count++] = problem;
     }
   }
