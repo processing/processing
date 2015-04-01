@@ -386,6 +386,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
         super.processKeyEvent(evt);
 
         if (inputHandler != null) {
+          // Prevent sketch being marked modified cia ctrl-, on Windows/Linux 
+          if ((evt.getModifiers() & InputEvent.CTRL_MASK) != 0 && 
+              evt.getKeyChar() == ',') {
+            return;
+          }
           switch (evt.getID()) {  
           case KeyEvent.KEY_TYPED:
             inputHandler.keyTyped(evt);
