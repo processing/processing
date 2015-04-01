@@ -2893,6 +2893,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public boolean isHalted() {
     return false;
   }
+  
+  @Override
+  public void runFinished() {
+    toolbar.deactivateStop();
+  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

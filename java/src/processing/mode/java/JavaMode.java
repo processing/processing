@@ -132,7 +132,7 @@ public class JavaMode extends Mode {
 
 
   /** Handles the standard Java "Run" or "Present" */
-  public Runner handleLaunch(Sketch sketch, RunnerListener listener, 
+  public Runner handleLaunch(Sketch sketch, final RunnerListener listener,
                              final boolean present) throws SketchException {
     JavaBuild build = new JavaBuild(sketch);
     String appletClassName = build.build(false);
@@ -141,6 +141,7 @@ public class JavaMode extends Mode {
       new Thread(new Runnable() {
         public void run() {
           runtime.launch(present);  // this blocks until finished
+          listener.runFinished();
         }
       }).start();
       return runtime;

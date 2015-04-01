@@ -42,4 +42,6 @@ public interface RunnerListener {
   public void statusHalt();
   
   public boolean isHalted();
+  
+  public void runFinished();
 }

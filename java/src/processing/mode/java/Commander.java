@@ -401,4 +401,8 @@ public class Commander implements RunnerListener {
   public boolean isHalted() {
     return false;
   }
+  
+  @Override
+  public void runFinished() {
+  }
 }
