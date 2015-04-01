@@ -152,7 +152,6 @@ public class JavaEditor extends Editor {
 
 
   protected JEditTextArea createTextArea() {
-    //return new JEditTextArea(new PdeTextAreaDefaults(mode), new JavaInputHandler(this));
     return new JavaTextArea(new PdeTextAreaDefaults(mode), this);
   }
 
@@ -204,7 +203,7 @@ public class JavaEditor extends Editor {
         }
       }
     });
-    
+
     JMenuItem presentItem = Toolkit.newJMenuItemShift(Language.text("toolbar.present"), 'R');
     presentItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -1557,8 +1556,8 @@ public class JavaEditor extends Editor {
 
     return debugMenu;
   }
-  
-  
+
+
   protected boolean isDebuggerEnabled() {
     return enableDebug.isSelected();
   }
@@ -1898,7 +1897,7 @@ public class JavaEditor extends Editor {
   /**
    * Returns a list of AvailableContributions of those libraries that the user
    * wants imported, but that are not installed.
-   * 
+   *
    * @param importHeaders
    */
   private ArrayList<AvailableContribution> getNotInstalledAvailableLibs(ArrayList<String> importHeadersList) {
@@ -2045,8 +2044,8 @@ public class JavaEditor extends Editor {
 //    toolbar.activate(JavaToolbar.RUN);
     toolbar.activateRun();
   }
-  
-  
+
+
   /**
    * Deactivate the Run button. This is called by Runner to notify that the
    * sketch has stopped running, usually in response to an error (or maybe
@@ -2099,14 +2098,14 @@ public class JavaEditor extends Editor {
     enableDebug.setSelected(!enableDebug.isSelected());
     updateDebugToggle();
   }
-  
-  
+
+
   public void updateDebugToggle() {
-    final boolean enabled = enableDebug.isSelected(); 
+    final boolean enabled = enableDebug.isSelected();
     if (enabled) {
       tray.setFocusableWindowState(false); // to not get focus when set visible
       tray.setVisible(true);
-      tray.setFocusableWindowState(true); // allow to get focus again      
+      tray.setFocusableWindowState(true); // allow to get focus again
     } else {
       tray.setVisible(false);
     }
@@ -2116,8 +2115,8 @@ public class JavaEditor extends Editor {
       }
     }
   }
-  
-  
+
+
 //  public void showVariableInspector() {
 //    tray.setVisible(true);
 //  }

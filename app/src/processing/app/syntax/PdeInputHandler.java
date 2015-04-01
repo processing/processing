@@ -16,7 +16,7 @@
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details. 
+  GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software Foundation, Inc.
@@ -24,6 +24,9 @@
 */
 
 package processing.app.syntax;
+
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 import processing.app.Base;
 import processing.app.Preferences;
@@ -35,7 +38,7 @@ import processing.app.Preferences;
  * use of Preferences and other PDE classes.
  */
 public class PdeInputHandler extends DefaultInputHandler {
-  
+
   public PdeInputHandler() {
     // Use option on mac for text edit controls that are ctrl on Windows/Linux.
     // (i.e. ctrl-left/right is option-left/right on OS X)
@@ -182,5 +185,46 @@ public class PdeInputHandler extends DefaultInputHandler {
     addKeyBinding("CS+DOWN", InputHandler.SELECT_DOC_END);
 
     addKeyBinding(mod + "+ENTER", InputHandler.REPEAT);
+  }
+
+
+  public void keyPressed(KeyEvent event) {
+    // don't pass the ctrl-, through to the editor
+    // https://github.com/processing/processing/issues/3074
+    if ((event.getModifiers() & InputEvent.CTRL_MASK) != 0 &&
+        event.getKeyChar() == ',') {
+      return;
+    }
+    if (!handlePressed(event)) {
+      super.keyPressed(event);
+    }
+  }
+
+
+  public void keyTyped(KeyEvent event) {
+    if (!handleTyped(event)) {
+      super.keyTyped(event);
+    }
+  }
+
+
+  // we don't need keyReleased(), so that's passed through automatically
+
+
+  /**
+   * Override this function in your InputHandler to do any gymnastics.
+   * @return true if key has been handled (no further handling should be done)
+   */
+  public boolean handlePressed(KeyEvent event) {
+    return false;
+  }
+
+
+  /**
+   * Override this instead of keyPressed/keyTyped
+   * @return true if key has been handled (no further handling should be done)
+   */
+  public boolean handleTyped(KeyEvent event) {
+    return false;
   }
 }

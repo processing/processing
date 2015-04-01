@@ -77,15 +77,15 @@ public class Toolkit {
   /** Command on Mac OS X, Ctrl on Windows and Linux */
   static final int SHORTCUT_KEY_MASK =
     awtToolkit.getMenuShortcutKeyMask();
-  
+
   /** Command-W on Mac OS X, Ctrl-W on Windows and Linux */
   public static final KeyStroke WINDOW_CLOSE_KEYSTROKE =
-    KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);  
+    KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);
   /** Command-Option on Mac OS X, Ctrl-Alt on Windows and Linux */
-  static final int SHORTCUT_ALT_KEY_MASK = 
+  static final int SHORTCUT_ALT_KEY_MASK =
     ActionEvent.ALT_MASK | SHORTCUT_KEY_MASK;
   /** Command-Shift on Mac OS X, Ctrl-Shift on Windows and Linux */
-  static final int SHORTCUT_SHIFT_KEY_MASK = 
+  static final int SHORTCUT_SHIFT_KEY_MASK =
     ActionEvent.SHIFT_MASK | SHORTCUT_KEY_MASK;
 
 
@@ -117,8 +117,8 @@ public class Toolkit {
 
   /**
    * Same as newJMenuItem(), but adds the ALT (on Linux and Windows)
-   * or OPTION (on Mac OS X) key as a modifier. This function should almost 
-   * never be used, because it's bad for non-US keyboards that use ALT in 
+   * or OPTION (on Mac OS X) key as a modifier. This function should almost
+   * never be used, because it's bad for non-US keyboards that use ALT in
    * strange and wondrous ways.
    */
   static public JMenuItem newJMenuItemAlt(String title, int what) {
@@ -144,14 +144,14 @@ public class Toolkit {
 
 
   /**
-   * Removes all mnemonics, then sets a mnemonic for each menu and menu item 
+   * Removes all mnemonics, then sets a mnemonic for each menu and menu item
    * recursively by these rules:
    * <ol>
    * <li> It tries to assign one of <a href="http://techbase.kde.org/Projects/Usability/HIG/Keyboard_Accelerators">
    * KDE's defaults</a>.</li>
    * <li> Failing that, it loops through the first letter of each word, where a word
-   *  is a block of Unicode "alphabetical" chars, looking for an upper-case ASCII mnemonic 
-   *  that is not taken. This is to try to be relevant, by using a letter well-associated 
+   *  is a block of Unicode "alphabetical" chars, looking for an upper-case ASCII mnemonic
+   *  that is not taken. This is to try to be relevant, by using a letter well-associated
    *  with the command. (MS guidelines) </li>
    * <li> Ditto, but with lowercase. </li>
    * <li> Next, it tries the second ASCII character, if its width &gt;= half the width of
@@ -162,7 +162,7 @@ public class Toolkit {
    *  have 2/3 their actual width. (MS guidelines: avoid decenders). It also discriminates
    *  against vowels, imagining they have 2/3 their actual width. (MS and Gnome guidelines:
    *  avoid vowels. </li>
-   * <li>Failing that, it will loop left-to-right for an available digit. This is a last 
+   * <li>Failing that, it will loop left-to-right for an available digit. This is a last
    *  resort because the normal setMnemonic dislikes them.</li>
    * <li> If that doesn't work, it doesn't assign a mnemonic. </li>
    * </ol>
@@ -188,23 +188,23 @@ public class Toolkit {
     // for ampersands before mnemonics and ".+" for changable text. (They are regexs.)
     // Note that every ampersand MUST be followed by a lowercase ASCII letter.
     final String[] kdePreDefStrs = { "&file", "&new", "&open", "open&recent", "&save",
-      "save&as", "saveacop&y", "saveas&template", "savea&ll", "reloa&d", "&print", 
-      "printpre&view", "&import", "e&xport", "&closefile", "clos&eallfiles", "&quit", 
-      "&edit", "&undo", "re&do", "cu&t&", "&copy", "&paste", "&delete", "select&all", 
-      "dese&lect", "&find", "find&next", "findpre&vious", "&replace", "&gotoline", 
-      "&view", "&newview", "close&allviews", "&splitview", "&removeview", 
-      "splitter&orientation", "&horizontal", "&vertical", "view&mode", "&fullscreenmode", 
-      "&zoom", "zoom&in", "zoom&out", "zoomtopage&width", "zoomwhole&page", "zoom&factor", 
-      "&insert", "&format", "&go", "&up", "&back", "&forward", "&home", "&go", "&previouspage", 
-      "&nextpage", "&firstpage", "&lastpage", "read&updocument", "read&downdocument", "&back", 
-      "&forward", "&gotopage", "&bookmarks", "&addbookmark", "bookmark&tabsasfolder", 
+      "save&as", "saveacop&y", "saveas&template", "savea&ll", "reloa&d", "&print",
+      "printpre&view", "&import", "e&xport", "&closefile", "clos&eallfiles", "&quit",
+      "&edit", "&undo", "re&do", "cu&t&", "&copy", "&paste", "&delete", "select&all",
+      "dese&lect", "&find", "find&next", "findpre&vious", "&replace", "&gotoline",
+      "&view", "&newview", "close&allviews", "&splitview", "&removeview",
+      "splitter&orientation", "&horizontal", "&vertical", "view&mode", "&fullscreenmode",
+      "&zoom", "zoom&in", "zoom&out", "zoomtopage&width", "zoomwhole&page", "zoom&factor",
+      "&insert", "&format", "&go", "&up", "&back", "&forward", "&home", "&go", "&previouspage",
+      "&nextpage", "&firstpage", "&lastpage", "read&updocument", "read&downdocument", "&back",
+      "&forward", "&gotopage", "&bookmarks", "&addbookmark", "bookmark&tabsasfolder",
       "&editbookmarks", "&newbookmarksfolder", "&tools", "&settings", "&toolbars",
-      "configure&shortcuts", "configuretool&bars", "&configure*", "&help", ".+&handbook", 
+      "configure&shortcuts", "configuretool&bars", "&configure*", "&help", ".+&handbook",
       "&whatsthis", "report&bug", "&aboutprocessing", "about&kde", "&beenden" };
     Pattern[] kdePreDefPats = new Pattern[kdePreDefStrs.length];
     for (int i = 0; i < kdePreDefStrs.length; i++)
       kdePreDefPats[i] = Pattern.compile(kdePreDefStrs[i].replace("&",""));
-    
+
     final Pattern nonAAlpha = Pattern.compile("[^A-Za-z]");
     FontMetrics fmTmp = null;
     for (JMenuItem m : menu) {
@@ -214,15 +214,15 @@ public class Toolkit {
     final FontMetrics fm = fmTmp; // Hack for accessing variable in comparator.
 
     final Comparator<Character> charComparator = new Comparator<Character>() {
-      char[] baddies = "qypgjaeiouQYPGJAEIOU".toCharArray(); 
+      char[] baddies = "qypgjaeiouQYPGJAEIOU".toCharArray();
       public int compare(Character ch1, Character ch2) {
         // Descriminates against decenders for readability, per MS
-	// Human Interface Guide, and vowels per MS and Gnome.
+        // Human Interface Guide, and vowels per MS and Gnome.
         float w1 = fm.charWidth(ch1), w2 = fm.charWidth(ch2);
         for (char bad : baddies) {
           if (bad == ch1) w1 *= 0.66f;
           if (bad == ch2) w2 *= 0.66f;
-	}
+        }
         return (int)Math.signum(w2 - w1);
       }
     };
@@ -242,15 +242,15 @@ public class Toolkit {
       for (int i = 0; i < kdePreDefStrs.length; i++) {
         // To ASCII lowercase letters.
         String lASCIIName = nonAAlpha.matcher(jmi.getText()).replaceAll("").toLowerCase();
-	if (kdePreDefPats[i].matcher(lASCIIName).matches()) {
+        if (kdePreDefPats[i].matcher(lASCIIName).matches()) {
           char mnem = kdePreDefStrs[i].charAt(1+kdePreDefStrs[i].indexOf("&"));
           jmi.setMnemonic(mnem);
-	  taken.add(mnem);
-	  break;
-	}
+          taken.add(mnem);
+          break;
+        }
       }
     }
-    
+
     // Where KDE defaults fail, use an algorithm.
     algorithmicAssignment:
     for (JMenuItem jmi : menu) {
@@ -263,7 +263,7 @@ public class Toolkit {
       String cleanString = jmi.getText();
       if (cleanString.startsWith("sketchbook \u2192 "))
         cleanString = cleanString.substring(13);
-	
+
       if (cleanString.length() == 0) continue;
 
       // First, ban letters by underscores.
@@ -271,10 +271,10 @@ public class Toolkit {
       for (int i = 0; i < cleanString.length(); i++) {
         if (cleanString.charAt(i) == '_') {
           if (i > 0)
-	    banned.add(Character.toLowerCase(cleanString.charAt(i-1)));
-	  if (i+1 < cleanString.length())
-	    banned.add(Character.toLowerCase(cleanString.charAt(i+1)));
-	}
+            banned.add(Character.toLowerCase(cleanString.charAt(i-1)));
+          if (i+1 < cleanString.length())
+            banned.add(Character.toLowerCase(cleanString.charAt(i+1)));
+        }
       }
 
       // METHOD 2: Uppercase starts of words.
@@ -284,7 +284,7 @@ public class Toolkit {
         if (wd.length() == 0) continue;
         firstChar = wd.charAt(0);
         if (taken.contains(Character.toLowerCase(firstChar))) continue;
-	if (banned.contains(Character.toLowerCase(firstChar))) continue;
+        if (banned.contains(Character.toLowerCase(firstChar))) continue;
         if ('A' <= firstChar && firstChar <= 'Z') {
           jmi.setMnemonic(firstChar);
           taken.add((char)(firstChar | 32)); // tolowercase
@@ -297,7 +297,7 @@ public class Toolkit {
         if (wd.length() == 0) continue;
         firstChar = wd.charAt(0);
         if (taken.contains(Character.toLowerCase(firstChar))) continue;
-	if (banned.contains(Character.toLowerCase(firstChar))) continue;
+        if (banned.contains(Character.toLowerCase(firstChar))) continue;
         if ('a' <= firstChar && firstChar <= 'z') {
           jmi.setMnemonic(firstChar);
           taken.add(firstChar); // is lowercase
@@ -306,16 +306,16 @@ public class Toolkit {
       }
 
       // METHOD 4: Second wide-enough ASCII letter.
-      cleanString = nonAAlpha.matcher(jmi.getText()).replaceAll(""); 
+      cleanString = nonAAlpha.matcher(jmi.getText()).replaceAll("");
       if (cleanString.length() >= 2) {
         char ascii2nd = cleanString.charAt(1);
         if (!taken.contains((char)(ascii2nd|32)) &&
-	    !banned.contains((char)(ascii2nd|32)) &&
-	    fm.charWidth('A') <= 2*fm.charWidth(ascii2nd)) {
+            !banned.contains((char)(ascii2nd|32)) &&
+            fm.charWidth('A') <= 2*fm.charWidth(ascii2nd)) {
           jmi.setMnemonic(ascii2nd);
           taken.add((char)(ascii2nd|32));
           continue algorithmicAssignment;
-	}
+        }
       }
 
       // METHOD 5: charComparator over all ASCII letters.
@@ -327,7 +327,7 @@ public class Toolkit {
       Arrays.sort(cleanCharas, charComparator); // sorts in increasing order
       for (char mnem : cleanCharas) {
         if (taken.contains(Character.toLowerCase(mnem))) continue;
-	if (banned.contains(Character.toLowerCase(mnem))) continue;
+        if (banned.contains(Character.toLowerCase(mnem))) continue;
         // NB: setMnemonic(char) doesn't want [^A-Za-z]
         jmi.setMnemonic(mnem);
         taken.add(Character.toLowerCase(mnem));
@@ -339,8 +339,8 @@ public class Toolkit {
         if (taken.contains(digit)) continue;
         if (banned.contains(digit)) continue;
         jmi.setMnemonic(KeyEvent.VK_0 + digit - '0');
-	taken.add(digit);
-	continue algorithmicAssignment;
+        taken.add(digit);
+        continue algorithmicAssignment;
       }
     }
 
@@ -361,14 +361,14 @@ public class Toolkit {
     }
     setMenuMnemonics(items);
   }
-  
-  
+
+
   /**
    * As setMenuMnemonics(JMenuItem...).
    */
   public static void setMenuMnemonics(JPopupMenu menu) {
     ArrayList<JMenuItem> items = new ArrayList<JMenuItem>();
-    
+
     for (Component c : menu.getComponents()) {
       if (c instanceof JMenuItem) items.add((JMenuItem)c);
     }
@@ -402,13 +402,13 @@ public class Toolkit {
    */
   static public Image getLibImage(String filename) {
     ImageIcon icon = getLibIcon(filename);
-    return (icon == null) ? null : icon.getImage(); 
+    return (icon == null) ? null : icon.getImage();
   }
-  
-  
-  /** 
-   * Get an ImageIcon from the Processing 'lib' folder. 
-   * @since 3.0a6 
+
+
+  /**
+   * Get an ImageIcon from the Processing 'lib' folder.
+   * @since 3.0a6
    */
   static public ImageIcon getLibIcon(String filename) {
     File file = Base.getContentFile("lib/" + filename);
@@ -422,15 +422,15 @@ public class Toolkit {
 
   static List<Image> iconImages;
 
-  
-  // Deprecated version of the function, but can't get rid of it without 
-  // breaking tools and modes (they'd only require a recompile, but they would 
-  // no longer be backwards compatible. 
+
+  // Deprecated version of the function, but can't get rid of it without
+  // breaking tools and modes (they'd only require a recompile, but they would
+  // no longer be backwards compatible.
   static public void setIcon(Frame frame) {
     setIcon((Window) frame);
   }
 
-  
+
   /**
    * Give this Frame the Processing icon set. Ignored on OS X, because they
    * thought different and made this function set the minified image of the
@@ -498,13 +498,13 @@ public class Toolkit {
     return awtToolkit.getSystemClipboard();
   }
 
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
-  
-  /** 
-   * Handles scaling for high-res displays, also sets text anti-aliasing 
-   * options to be far less ugly than the defaults. 
+
+
+  /**
+   * Handles scaling for high-res displays, also sets text anti-aliasing
+   * options to be far less ugly than the defaults.
    * Moved to a utility function because it's used in several classes.
    * @return a Graphics2D object, as a bit o sugar
    */
@@ -514,7 +514,7 @@ public class Toolkit {
     if (Toolkit.highResDisplay()) {
       // scale everything 2x, will be scaled down when drawn to the screen
       g2.scale(2, 2);
-    } 
+    }
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -526,10 +526,10 @@ public class Toolkit {
     }
     return g2;
   }
-  
-  
+
+
 //  /**
-//   * Prepare and offscreen image that's sized for this Component, 1x or 2x 
+//   * Prepare and offscreen image that's sized for this Component, 1x or 2x
 //   * depending on whether this is a retina display or not.
 //   * @param comp
 //   * @param image
@@ -538,8 +538,8 @@ public class Toolkit {
 //  static public Image prepareOffscreen(Component comp, Image image) {
 //    Dimension size = comp.getSize();
 //    Image offscreen = image;
-//    if (image == null || 
-//        image.getWidth(null) != size.width || 
+//    if (image == null ||
+//        image.getWidth(null) != size.width ||
 //        image.getHeight(null) != size.height) {
 //      if (Toolkit.highResDisplay()) {
 //        offscreen = comp.createImage(size.width*2, size.height*2);
@@ -549,19 +549,19 @@ public class Toolkit {
 //    }
 //    return offscreen;
 //  }
-  
-  
+
+
 //  static final Color CLEAR_COLOR = new Color(0, true);
-//  
+//
 //  static public void clearGraphics(Graphics g, int width, int height) {
 //    g.setColor(CLEAR_COLOR);
 //    g.fillRect(0, 0, width, height);
 //  }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-    
+
   static Boolean highResProp;
 
 
@@ -571,8 +571,8 @@ public class Toolkit {
     }
     return highResProp;
   }
-  
-  
+
+
   // This should probably be reset each time there's a display change.
   // A 5-minute search didn't turn up any such event in the Java API.
   // Also, should we use the Toolkit associated with the editor window?
@@ -591,7 +591,7 @@ public class Toolkit {
             return true;
           }
         }
-      } catch (Exception ignore) { } 
+      } catch (Exception ignore) { }
     }
     return false;
   }
@@ -641,6 +641,10 @@ public class Toolkit {
 //  }
 
 
+  static final char GREEK_SMALL_LETTER_ALPHA = '\u03B1';  // α
+  static final char GREEK_CAPITAL_LETTER_OMEGA = '\u03A9';  // ω
+
+
   // Gets the plain (not bold, not italic) version of each
   static private List<Font> getMonoFontList() {
     GraphicsEnvironment ge =
@@ -648,36 +652,36 @@ public class Toolkit {
     Font[] fonts = ge.getAllFonts();
     ArrayList<Font> outgoing = new ArrayList<Font>();
     // Using AffineTransform.getScaleInstance(100, 100) doesn't change sizes
-    FontRenderContext frc = 
+    FontRenderContext frc =
       new FontRenderContext(new AffineTransform(),
-                            Preferences.getBoolean("editor.antialias"), 
-                            true);  // use fractional metrics 
+                            Preferences.getBoolean("editor.antialias"),
+                            true);  // use fractional metrics
     for (Font font : fonts) {
       if (font.getStyle() == Font.PLAIN &&
           font.canDisplay('i') && font.canDisplay('M') &&
           font.canDisplay(' ') && font.canDisplay('.')) {
-        
-        // The old method just returns 1 or 0, and using deriveFont(size)  
+
+        // The old method just returns 1 or 0, and using deriveFont(size)
         // is overkill. It also causes deprecation warnings
 //        @SuppressWarnings("deprecation")
 //        FontMetrics fm = awtToolkit.getFontMetrics(font);
         //FontMetrics fm = awtToolkit.getFontMetrics(font.deriveFont(24));
 //        System.out.println(fm.charWidth('i') + " " + fm.charWidth('M'));
 //        if (fm.charWidth('i') == fm.charWidth('M') &&
-//            fm.charWidth('M') == fm.charWidth(' ') && 
+//            fm.charWidth('M') == fm.charWidth(' ') &&
 //            fm.charWidth(' ') == fm.charWidth('.')) {
         double w = font.getStringBounds(" ", frc).getWidth();
-        if (w == font.getStringBounds("i", frc).getWidth() && 
+        if (w == font.getStringBounds("i", frc).getWidth() &&
             w == font.getStringBounds("M", frc).getWidth() &&
             w == font.getStringBounds(".", frc).getWidth()) {
-          
+
 //          //PApplet.printArray(font.getAvailableAttributes());
 //          Map<TextAttribute,?> attr = font.getAttributes();
 //          System.out.println(font.getFamily() + " > " + font.getName());
 //          System.out.println(font.getAttributes());
 //          System.out.println("  " + attr.get(TextAttribute.WEIGHT));
 //          System.out.println("  " + attr.get(TextAttribute.POSTURE));
-          
+
           outgoing.add(font);
 //          System.out.println("  good " + w);
         }
@@ -685,8 +689,8 @@ public class Toolkit {
     }
     return outgoing;
   }
-  
-  
+
+
   static public String[] getMonoFontFamilies() {
     HashSet<String> families = new HashSet<String>();
     for (Font font : getMonoFontList()) {
@@ -710,15 +714,16 @@ public class Toolkit {
     }
     return monoFont.getName();
   }
-  
-  
+
+
   static public Font getMonoFont(int size, int style) {
     if (monoFont == null) {
       try {
         monoFont = createFont("SourceCodePro-Regular.ttf", size);
         //monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
         monoBoldFont = createFont("SourceCodePro-Bold.ttf", size);
-        if (!monoFont.canDisplay('α') || !monoFont.canDisplay('ω')) {
+        if (!monoFont.canDisplay(GREEK_SMALL_LETTER_ALPHA) ||
+            !monoFont.canDisplay(GREEK_CAPITAL_LETTER_OMEGA)) {
           monoFont = createFont("Anonymous Pro.ttf", size);
           monoBoldFont = createFont("Anonymous Pro B.ttf", size);
         }
@@ -749,7 +754,8 @@ public class Toolkit {
       try {
         sansFont = createFont("SourceSansPro-Regular.ttf", size);
         sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
-        if (!sansFont.canDisplay('α') || !sansFont.canDisplay('ω')) {
+        if (!sansFont.canDisplay(GREEK_SMALL_LETTER_ALPHA) ||
+            !sansFont.canDisplay(GREEK_CAPITAL_LETTER_OMEGA)) {
           sansFont = createFont("Carlito-Regular.ttf", size);
           sansBoldFont = createFont("Carlito-Bold.ttf", size);
         }
@@ -776,11 +782,11 @@ public class Toolkit {
   }
 
 
-  /** 
-   * Get a font from the JRE lib/fonts folder. Our default fonts are also 
+  /**
+   * Get a font from the JRE lib/fonts folder. Our default fonts are also
    * installed there so that the monospace (and others) can be used by other
-   * font listing calls (i.e. it appears in the list of monospace fonts in 
-   * the Preferences window). 
+   * font listing calls (i.e. it appears in the list of monospace fonts in
+   * the Preferences window).
    */
   static private Font createFont(String filename, int size) throws IOException, FontFormatException {
     //InputStream is = Base.getLibStream("fonts/" + filename);
@@ -790,23 +796,23 @@ public class Toolkit {
       fontFile = new File(System.getProperty("user.dir"), "../build/shared/lib/fonts/" + filename);
     }
     if (!fontFile.exists()) {
-      // if we're debugging the new Java Mode from Eclipse, paths are different 
+      // if we're debugging the new Java Mode from Eclipse, paths are different
       fontFile = new File(System.getProperty("user.dir"), "../../shared/lib/fonts/" + filename);
     }
     if (!fontFile.exists()) {
       Base.showError("Font Sadness", "Could not find required fonts", null);
     }
-    
+
     BufferedInputStream input = new BufferedInputStream(new FileInputStream(fontFile));
     Font font = Font.createFont(Font.TRUETYPE_FONT, input);
     input.close();
     return font.deriveFont((float) size);
   }
-  
-  
-  /** 
-   * Synthesized replacement for FontMetrics.getAscent(), which is dreadfully 
-   * inaccurate and inconsistent across platforms. 
+
+
+  /**
+   * Synthesized replacement for FontMetrics.getAscent(), which is dreadfully
+   * inaccurate and inconsistent across platforms.
    */
   static double getAscent(Graphics g) { //, Font font) {
     Graphics2D g2 = (Graphics2D) g;
@@ -814,9 +820,9 @@ public class Toolkit {
     //return new TextLayout("H", font, frc).getBounds().getHeight();
     return new TextLayout("H", g.getFont(), frc).getBounds().getHeight();
   }
-  
 
-  /** Do not use or rely upon presence of this method: not approved as final API. */ 
+
+  /** Do not use or rely upon presence of this method: not approved as final API. */
   static public void debugOpacity(Component comp) {
     //Component parent = comp.getParent();
     while (comp != null) {
@@ -828,8 +834,8 @@ public class Toolkit {
     //EditorConsole.systemOut.println();
     System.out.println();
   }
-  
-  
+
+
   static public int getMenuItemIndex(JMenu menu, JMenuItem item) {
     int index = 0;
     for (Component comp : menu.getMenuComponents()) {
