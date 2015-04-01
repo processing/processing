@@ -53,7 +53,13 @@ public class Serial implements SerialPortEventListener {
   // * state of the RING, RLSD line
   // * sending breaks
 
-  
+
+  // USB Definitions
+  public static final String ARDUINO_FTDI = "0403#6001";
+  public static final String ARDUINO_LEONARDO = "2341#0036|8036";
+  public static final String ARDUINO_UNO = "2341#0001|0043";
+  public static final String ARDUINO_YUN = "2341#0010|0042";
+
   public Serial(PApplet parent) {
     this(parent, "COM1", 9600, 'N', 8, 1);
   }
@@ -78,6 +84,50 @@ public class Serial implements SerialPortEventListener {
     this.parent = parent;
     parent.registerMethod("dispose", this);
     parent.registerMethod("pre", this);
+
+    // USB serial devices can also be specified like this
+    // vendorid#productid#serial
+    // where everything after the vendorid is optional
+    if (!portName.startsWith("/") && !portName.toUpperCase().startsWith("COM")) {
+      String[] wantUsb = portName.split("#");
+
+      String[] availablePorts = this.list();
+      for (int i=0; i < availablePorts.length; i++) {
+        Map<String, String>props = this.getProperties(availablePorts[i]);
+
+        String vendor = props.get("idVendor");
+        if (vendor == null || !vendor.equalsIgnoreCase(wantUsb[0])) {
+          continue;
+        }
+        if (1 < wantUsb.length) {
+          // since companies might use different productids for the
+          // same thing, multiple matching ids can be specified with a
+          // pipe character
+          String product = props.get("idProduct");
+          String[] wantProducts = wantUsb[1].split("\\|");
+          boolean found = false;
+          for (int j=0; j < wantProducts.length; j++) {
+            if (product != null && product.equalsIgnoreCase(wantProducts[j])) {
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            continue;
+          }
+        }
+        if (2 < wantUsb.length) {
+          String serial = props.get("serial");
+          if (serial == null || !serial.equalsIgnoreCase(wantUsb[2])) {
+            continue;
+          }
+        }
+        // match
+        portName = availablePorts[i];
+        System.out.println("Using "+portName);
+        break;
+      }
+    }
 
     // setup parity
     if (parity == 'O') {
@@ -151,7 +201,7 @@ public class Serial implements SerialPortEventListener {
         serialAvailableMethod.invoke(parent, this);
       } catch (Exception e) {
         System.err.println("Error, disabling serialAvailable() for "+port.getPortName());
-        System.err.println(e.getLocalizedMessage());
+        e.printStackTrace();
         serialAvailableMethod = null;
       }
     }
@@ -410,7 +460,7 @@ public class Serial implements SerialPortEventListener {
                 serialEventMethod.invoke(parent, this);
               } catch (Exception e) {
                 System.err.println("Error, disabling serialEvent() for "+port.getPortName());
-                System.err.println(e.getLocalizedMessage());
+                e.printStackTrace();
                 serialEventMethod = null;
               }
             }
