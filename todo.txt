@@ -10,14 +10,10 @@ X   https://github.com/processing/processing/issues/3014
 X add more bulletproofing to the save process
 X   https://github.com/processing/processing/issues/2923
 X serious text improvements (at least on retina)
-_ finish adding 'examples' contribs
-_   https://github.com/processing/processing/issues/2953
-_   don't return here, allow contrib types to fail:
-_   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
-_ trying to add a second tab with the same name causes an error
-
-_ Opening and closing preferences window prompts user to save unmodified sketch
-_   https://github.com/processing/processing/issues/3074
+X Menu mnemonics (alt-f, etc) getting typed into the editor
+X   https://github.com/processing/processing/issues/3057
+X Opening and closing preferences window prompts user to save unmodified sketch
+X   https://github.com/processing/processing/issues/3074
 
 _ implement line numbers in the editor
 _   5px between line number (right-aligned) and the right edge of the gutter
@@ -32,6 +28,8 @@ _ how are we going to handle fonts for other languages?
 _   two new fonts have been added, other languages will need more
 _   need a decent sans with with Unicode coverage
 _   i.e. https://github.com/processing/processing/pull/3025
+
+_ trying to add a second tab with the same name causes an error
 
 jre download/install
 X make sure the file downloads correctly before renaming
@@ -86,6 +84,9 @@ X   https://github.com/processing/processing/issues/2566
 X make fatal errors terminate the pde
 X   https://github.com/processing/processing/issues/3068
 X   https://github.com/processing/processing/pull/3069
+X Java 8 method replace() used, removed
+X   https://github.com/processing/processing/issues/3168
+X   https://github.com/processing/processing/pull/3169
 
 manindra
 X Fix for "Probably a ++ should go here" messages
@@ -175,6 +176,12 @@ X     removed, seems to be duplicate/used the same way
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
 _   because it's in the other ClassLoader, can no longer rely on it
 _ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
+
+3.0a7
+_ finish adding 'examples' contribs
+_   https://github.com/processing/processing/issues/2953
+_   don't return here, allow contrib types to fail:
+_   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
 
 _ disable the debug toggle menu while running
 _   otherwise could run in one mode, then try to stop in another

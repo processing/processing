@@ -864,21 +864,24 @@ public abstract class InputHandler extends KeyAdapter
                         int visibleLines = textArea.getVisibleLines();
                         int line = textArea.getCaretLine();
 
-                        firstLine += visibleLines;
-                        if (firstLine >= lineCount )
-                          firstLine -= visibleLines;
-                        else if(firstLine + visibleLines >= lineCount - 1)
-                          firstLine = lineCount - visibleLines;
+                        // Can't page down if there's nothing to visit
+                        // https://github.com/processing/processing/issues/2990
+                        if (lineCount > visibleLines) {                        
+                          firstLine += visibleLines;  // page down
+                          if (firstLine + visibleLines >= lineCount - 1) {
+                            // back up to the latest line we can go to 
+                            firstLine = lineCount - visibleLines;
+                          }
+                        
 
-                        textArea.setFirstLine(firstLine);
+                          textArea.setFirstLine(firstLine);
 
-                        int caret = textArea.getLineStartOffset(
-                                Math.min(textArea.getLineCount() - 1,
-                                line + visibleLines));
-                        if(select)
-                                textArea.select(textArea.getMarkPosition(),caret);
-                        else
-                                textArea.setCaretPosition(caret);
+                          int caret = textArea.getLineStartOffset(Math.min(textArea.getLineCount() - 1, line + visibleLines));
+                          if (select)
+                            textArea.select(textArea.getMarkPosition(),caret);
+                          else
+                            textArea.setCaretPosition(caret);
+                        }                        
                 }
         }
 
