@@ -145,6 +145,7 @@ X   https://github.com/processing/processing/pull/3097
 X issues with cut/copy shortcuts not working
 X   https://github.com/processing/processing/pull/3138
 X   https://github.com/processing/processing/issues/3136
+X   https://github.com/processing/processing/issues/3107
 X Display download percentage when fetching contrib info
 X   https://github.com/processing/processing/pull/3161
 X Recreating Client instance will cause an out-of-memory error
