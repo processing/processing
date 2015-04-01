@@ -20,15 +20,10 @@
 
 package processing.mode.java;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 
-import javax.swing.Box;
-
 import processing.app.Editor;
-import processing.app.EditorButton;
 import processing.app.EditorToolbar;
-import processing.app.Language;
 
 
 public class JavaToolbar extends EditorToolbar {
