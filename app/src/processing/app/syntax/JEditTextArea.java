@@ -140,10 +140,12 @@ public class JEditTextArea extends JComponent
 //    focusedComponent = this;
 
     addMouseWheelListener(new MouseWheelListener() {
+
+      @Override
       public void mouseWheelMoved(MouseWheelEvent e) {
         if (scrollBarsInitialized) {
           if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-            int amt = e.getUnitsToScroll();
+            int scrollAmount = e.getUnitsToScroll();
 //            System.out.println("rot/amt = " + e.getWheelRotation() + " " + amt);
 //            int max = vertical.getMaximum();
 //            System.out.println("UNIT SCROLL of " + amt + " at value " + vertical.getValue() + " and max " + max);
@@ -161,14 +163,12 @@ public class JEditTextArea extends JComponent
 
             // inertia scrolling on OS X will fire several shift-wheel events
             // that are negative values.. this makes the scrolling area jump.
-            boolean skip = Base.isMacOS() && e.isShiftDown();
-            //if (ex == 0) {
-            if (!skip) {
-              vertical.setValue(vertical.getValue() + amt);
-//            } else {
-//              System.out.println("  ** skipping");
+            boolean isHorizontal = Base.isMacOS() && e.isShiftDown();
+            if (isHorizontal) {
+              horizontal.setValue(horizontal.getValue() + scrollAmount);
+            }else{
+              vertical.setValue(vertical.getValue() + scrollAmount);
             }
-//            System.out.println();
           }
         }
       }
@@ -358,7 +358,7 @@ public class JEditTextArea extends JComponent
   /**
    * Updates the state of the scroll bars. This should be called
    * if the number of lines in the document changes, or when the
-   * size of the text are changes.
+   * size of the text area changes.
    */
   public void updateScrollBars() {
     if (vertical != null && visibleLines != 0) {
