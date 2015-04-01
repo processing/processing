@@ -381,7 +381,7 @@ public class PreferencesFrame {
     errorCheckerBox.setBounds(left, top, d.width + 10, d.height);
     //right = Math.max(right, left + d.width);
     //top += d.height + GUI_BETWEEN;
-    int warningLeft = left + d.width;
+    int warningLeft = left + d.width + 10;
 
 
     // [ ] Show Warnings - PDE X
