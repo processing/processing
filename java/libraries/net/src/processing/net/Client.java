@@ -61,7 +61,8 @@ public class Client implements Runnable {
   int bufferIndex;
   int bufferLast;
 
-  boolean isDisposeRegistered = false;
+  boolean disposeRegistered = false;
+  
   
   /**
    * @param parent typically use "this"
@@ -82,7 +83,7 @@ public class Client implements Runnable {
       thread.start();
 
       parent.registerMethod("dispose", this);
-      isDisposeRegistered = true;
+      disposeRegistered = true;
 
       // reflection to check whether host sketch has a call for
       // public void clientEvent(processing.net.Client)
@@ -160,9 +161,9 @@ public class Client implements Runnable {
         disconnectEventMethod = null;
       }
     }
-    if(isDisposeRegistered){
+    if (disposeRegistered) {
       parent.unregisterMethod("dispose", this);
-      isDisposeRegistered = false;
+      disposeRegistered = false;
     }
     dispose();
   }
