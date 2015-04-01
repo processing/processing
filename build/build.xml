@@ -752,7 +752,7 @@
       <arg value="-xzpf" />
       -->
       <arg value="xfz" />
-      <arg value="jre.tgz"/>
+      <arg value="${jre.tgz.path}"/>
     </exec>
 
     <!--
@@ -990,7 +990,7 @@
          since those shouldn't matter on Windows. -->
     <untar compression="gzip"
            dest="windows/work" 
-           src="windows/jre.tgz" 
+           src="${jre.tgz.path}" 
            overwrite="false" />
     <move file="windows/work/jre${jdk.esoteric}" 
           tofile="windows/work/java" />
