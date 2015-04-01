@@ -90,7 +90,7 @@ public class ProgressFrame extends JFrame implements PropertyChangeListener {
       // to close the progress bar automatically when done, and to 
       // print that Saving is done in Message Area
 
-      editor.statusNotice("Done Saving.");
+      editor.statusNotice(Language.text("editor.status.saving.done"));
       ProgressFrame.this.closeProgressBar();
     }
 
