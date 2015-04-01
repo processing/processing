@@ -3754,7 +3754,10 @@ public class PApplet implements PConstants {
 
 
   /**
+   * Find the maximum value in an array.
+   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
    * @param list array of numbers to compare
+   * @return The maximum value
    */
   static public final int max(int[] list) {
     if (list.length == 0) {
@@ -3767,6 +3770,26 @@ public class PApplet implements PConstants {
     return max;
   }
 
+
+  static public final int max(int a, int b, int... c) {
+    int max = a > b ? a : b; // manual max
+
+    if (c != null) {
+      for (int i : c) { //advanced for
+        if (i > max) max = i;
+      }
+    }
+
+    return max;
+  }
+
+
+  /**
+   * Find the maximum value in an array.
+   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
+   * @param list array of numbers to compare
+   * @return The maximum value
+   */
   static public final float max(float[] list) {
     if (list.length == 0) {
       throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
@@ -3779,12 +3802,19 @@ public class PApplet implements PConstants {
   }
 
 
-  /**
-   * Find the maximum value in an array.
-   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
-   * @param list the source array
-   * @return The maximum value
-   */
+  static public final float max(float a, float b, float... c) {
+    float max = a > b ? a : b; // manual max
+
+    if (c != null) {
+      for (float i : c) { //advanced for
+        if (i > max) max = i;
+      }
+    }
+
+    return max;
+  }
+
+
   /*
   static public final double max(double[] list) {
     if (list.length == 0) {
@@ -3855,6 +3885,20 @@ public class PApplet implements PConstants {
     return min;
   }
 
+  static public final int min(int a, int b, int... c) {
+    int min = a < b ? a : b; // manual min
+
+    if (c != null) {
+      for (int i : c) { //advanced for
+        if (i < min) min = i;
+      }
+    }
+
+    return min;
+  }
+
+
+
   static public final float min(float[] list) {
     if (list.length == 0) {
       throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
@@ -3865,6 +3909,20 @@ public class PApplet implements PConstants {
     }
     return min;
   }
+
+
+  static public final float min(float a, float b, float... c) {
+    float min = a < b ? a : b; // manual min
+
+    if (c != null) {
+      for (float i : c) { //advanced for
+        if (i < min) min = i;
+      }
+    }
+
+    return min;
+  }
+
 
 
   /**
