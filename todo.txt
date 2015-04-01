@@ -25,6 +25,11 @@ _   https://github.com/processing/processing/issues/3096
 _ large window places the debugger window offscreen
 _   https://github.com/processing/processing/issues/3091
 
+_ how are we going to handle fonts for other languages? 
+_   two new fonts have been added, other languages will need more
+_   need a decent sans with with Unicode coverage
+_   i.e. https://github.com/processing/processing/pull/3025
+
 jre download/install
 X make sure the file downloads correctly before renaming
 X   https://github.com/processing/processing/issues/2960
@@ -145,6 +150,8 @@ X   https://github.com/processing/processing/pull/3161
 X Recreating Client instance will cause an out-of-memory error
 X   https://github.com/processing/processing/issues/1400
 X   https://github.com/processing/processing/pull/3088
+X Greek translation and new fonts
+X   https://github.com/processing/processing/pull/3025
 
 integration of pdex
 X changed JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
