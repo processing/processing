@@ -50,18 +50,22 @@ divider.dot.color = #505050
 # TOOLBAR BUTTON TEXT
 #buttons.status.font = processing.sans,bold,13
 #buttons.status.color = #ffffff
-toolbar.sketch.font = processing.sans,plain,24
-toolbar.sketch.color = #ffffff
+#toolbar.sketch.font = processing.sans,plain,24
+#toolbar.sketch.color = #ffffff
+toolbar.rollover.font = processing.sans,plain,12
+toolbar.rollover.color = #ffffff
 toolbar.gradient.top = #142c40
 toolbar.gradient.bottom = #132638
 
 # MODE SELECTOR
-mode.title.font = processing.sans,bold,15
+#mode.title.font = processing.sans,bold,15
+mode.title.font = processing.sans,plain,12
 mode.title.color = #ffffff
 # outline color of the mode button
 #mode.button.color = #ffffff
 #mode.button.gap = 13
 #mode.arrow.width
+mode.background.color = #3D5362
 
 # LINE STATUS
 # The editor line number status bar at the bottom of the screen

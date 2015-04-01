@@ -50,7 +50,7 @@ abstract public class EditorToolbar extends JPanel {
 
   protected EditorButton runButton;
   protected EditorButton stopButton;
-  protected EditorButton currentButton;
+//  protected EditorButton currentButton;
   
   protected Box box;
   protected JLabel label;
@@ -96,14 +96,20 @@ abstract public class EditorToolbar extends JPanel {
     
     box = Box.createHorizontalBox();
     box.add(Box.createHorizontalStrut(Editor.LEFT_GUTTER));
+    
     box.add(runButton);
+    box.add(Box.createHorizontalStrut(GAP));
+    box.add(stopButton);
     
     box.add(Box.createHorizontalStrut(LABEL_GAP));
     label = new JLabel();
-    label.setFont(mode.getFont("toolbar.sketch.font"));
-    label.setForeground(mode.getColor("toolbar.sketch.color"));
+    label.setFont(mode.getFont("toolbar.rollover.font"));
+    label.setForeground(mode.getColor("toolbar.rollover.color"));
     box.add(label);
-    currentButton = runButton;
+//    currentButton = runButton;
+    
+    runButton.setRolloverLabel(label);
+    stopButton.setRolloverLabel(label);
     
     box.add(Box.createHorizontalGlue());
     addModeButtons(box);
@@ -125,9 +131,9 @@ abstract public class EditorToolbar extends JPanel {
 //  }
   
   
-  public void setText(String text) {
-    label.setText(text);
-  }
+//  public void setText(String text) {
+//    label.setText(text);
+//  }
   
   
   public void paintComponent(Graphics g) {
@@ -152,22 +158,22 @@ abstract public class EditorToolbar extends JPanel {
 //  }
   
   
-  protected void swapButton(EditorButton replacement) {
-    if (currentButton != replacement) {
-      box.remove(currentButton);
-      box.add(replacement, 1);  // has to go after the strut
-      box.revalidate();
-      box.repaint();  // may be needed
-      currentButton = replacement;
-    }
-  }
+//  protected void swapButton(EditorButton replacement) {
+//    if (currentButton != replacement) {
+//      box.remove(currentButton);
+//      box.add(replacement, 1);  // has to go after the strut
+//      box.revalidate();
+//      box.repaint();  // may be needed
+//      currentButton = replacement;
+//    }
+//  }
   
   
   public void activateRun() { 
-    //runButton.setPressed(true);
-//    Rectangle bounds = runButton.getBounds();
-//    remove(runButton);
-    swapButton(stopButton);
+//    //runButton.setPressed(true);
+////    Rectangle bounds = runButton.getBounds();
+////    remove(runButton);
+//    swapButton(stopButton);
   }
   
   
@@ -181,7 +187,7 @@ abstract public class EditorToolbar extends JPanel {
   
   
   public void deactivateStop() {
-    swapButton(runButton);
+//    swapButton(runButton);
   }
   
   
@@ -218,14 +224,16 @@ abstract public class EditorToolbar extends JPanel {
     
     final int MODE_GAP_WIDTH = 13;
     final int ARROW_GAP_WIDTH = 6;
-    final int ARROW_WIDTH = 8;
-    final int ARROW_TOP = 21;
-    final int ARROW_BOTTOM = 29;
+    final int ARROW_WIDTH = 6;
+    final int ARROW_TOP = 15;
+    final int ARROW_BOTTOM = 21;
 
     int[] triangleX = new int[3];
     int[] triangleY = new int[] { ARROW_TOP, ARROW_TOP, ARROW_BOTTOM };
     
-    Image background;
+//    Image background;
+    Color backgroundColor;
+    
 
     @SuppressWarnings("deprecation")
     public ModeSelector() {
@@ -243,7 +251,8 @@ abstract public class EditorToolbar extends JPanel {
         }
       });
       
-      background = mode.getGradient("reversed", 100, EditorButton.DIM);
+      //background = mode.getGradient("reversed", 100, EditorButton.DIM);
+      backgroundColor = mode.getColor("mode.background.color");
     }
     
     @Override
@@ -276,10 +285,12 @@ abstract public class EditorToolbar extends JPanel {
       FontMetrics metrics = g.getFontMetrics();
       titleWidth = metrics.stringWidth(title);
       
-      g.drawImage(background, 0, 0, width, height, this);
+      //g.drawImage(background, 0, 0, width, height, this);
+      g.setColor(backgroundColor);
+      g.fillRect(0, 0, width, height);
       
       g.setColor(titleColor);
-      g.drawString(title, MODE_GAP_WIDTH, (height + titleAscent) / 2);
+      g.drawString(title.toUpperCase(), MODE_GAP_WIDTH, (height + titleAscent) / 2);
       
       int x = MODE_GAP_WIDTH + titleWidth + ARROW_GAP_WIDTH;
       triangleX[0] = x;

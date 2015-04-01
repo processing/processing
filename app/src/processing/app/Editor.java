@@ -2601,7 +2601,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       getRootPane().putClientProperty("Window.documentFile", null);
     }
     
-    toolbar.setText(sketch.getName());
+//    toolbar.setText(sketch.getName());
   }
 
 

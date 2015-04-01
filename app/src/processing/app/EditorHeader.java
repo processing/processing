@@ -47,8 +47,8 @@ public class EditorHeader extends JComponent {
   // distance from the righthand side of a tab to the drop-down arrow
 //  static final int ARROW_GAP_WIDTH = 8;
   // indent x/y for notch on the tab
-  static final int ARROW_TOP = 14;
-  static final int ARROW_BOTTOM = 23;
+  static final int ARROW_TOP = 12;
+  static final int ARROW_BOTTOM = 20;
   static final int ARROW_WIDTH = 9;
   
 //  static final int NOTCH = 0;

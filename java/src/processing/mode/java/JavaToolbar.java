@@ -41,6 +41,7 @@ public class JavaToolbar extends EditorToolbar {
   }
   
   
+  /*
   public void addModeButtons(Box box) {
     EditorButton debugButton = new EditorButton(mode, "/lib/toolbar/debug", 
                                                 Language.text("toolbar.debug")) {
@@ -54,6 +55,7 @@ public class JavaToolbar extends EditorToolbar {
     box.add(debugButton);
     addGap(box);
   }
+  */
 
   
   @Override
