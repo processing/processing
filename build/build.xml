@@ -45,26 +45,26 @@
   <property name="jdk.version" value="8" />
   <property name="jdk.update" value="40" />
   <property name="jdk.build" value="26" />
-  <property name="jdk.stuff" value="${jdk.version}u${jdk.update}" />
+  <property name="jdk.short" value="${jdk.version}u${jdk.update}" />
   <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
 
   <!-- Figure out the JRE download location for Linux and Windows. -->
   <condition property="jre.file" 
-             value="jre-${jdk.stuff}-${platform}-i586.tar.gz"> 
+             value="jre-${jdk.short}-${platform}-i586.tar.gz"> 
     <equals arg1="${sun.arch.data.model}" arg2="32" />
   </condition>
   <condition property="jre.file" 
-             value="jre-${jdk.stuff}-${platform}-x64.tar.gz"> 
+             value="jre-${jdk.short}-${platform}-x64.tar.gz"> 
     <equals arg1="${sun.arch.data.model}" arg2="64" />
   </condition>
 
   <!-- for the full name from processing.org/downloads -->
   <condition property="jre.download" 
-             value="${jdk.stuff}-${platform}-i586.tar.gz"> 
+             value="${jdk.short}-${platform}-i586.tar.gz"> 
     <equals arg1="${sun.arch.data.model}" arg2="32" />
   </condition>
   <condition property="jre.download" 
-             value="${jdk.stuff}-${platform}-x64.tar.gz"> 
+             value="${jdk.short}-${platform}-x64.tar.gz"> 
     <equals arg1="${sun.arch.data.model}" arg2="64" />
   </condition>
 
@@ -80,7 +80,7 @@
 
   <!-- JDK location for Mac OS X -->
   <!--
-  <condition property="jdk.file" value="jdk-${jdk.stuff}-macosx-x64.dmg">
+  <condition property="jdk.file" value="jdk-${jdk.short}-macosx-x64.dmg">
     <equals arg1="${platform}" arg2="macosx" />
   </condition>
   -->
@@ -197,7 +197,7 @@
 
   <property environment="env" />
 
-  <property name="jre.tgz.path" value="${platform}/jre.tgz" />
+  <property name="jre.tgz.path" value="${platform}/jre-${jdk.short}.tgz" />
 
   <target name="jre-check"> 
     <available file="${jre.tgz.path}" property="jre.tgz.downloaded" />
@@ -232,7 +232,7 @@
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
   <fail if="macosx" unless="macosx_jdk_found"
-        message="JDK ${jdk.stuff} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.stuff} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.stuff} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
+        message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
   <!--
   <fail if="linux" unless="java_tools_found" 
         message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
