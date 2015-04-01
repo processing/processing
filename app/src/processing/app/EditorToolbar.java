@@ -178,7 +178,7 @@ abstract public class EditorToolbar extends JPanel {
   
   
   public void deactivateRun() { 
-    
+    swapButton(runButton);
   }
   
   
