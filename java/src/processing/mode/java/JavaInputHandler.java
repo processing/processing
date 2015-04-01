@@ -89,8 +89,9 @@ public class JavaInputHandler extends PdeInputHandler {
       return false;
     }
 
-    if ((code == KeyEvent.VK_BACK_SPACE) || (code == KeyEvent.VK_TAB) ||
-        (code == KeyEvent.VK_ENTER) || ((c >= 32) && (c < 128))) {
+    if (((code == KeyEvent.VK_BACK_SPACE) || (code == KeyEvent.VK_TAB) ||
+        (code == KeyEvent.VK_ENTER) || ((c >= 32) && (c < 128))) &&
+        !((event.getModifiers() & InputEvent.CTRL_MASK) != 0 && c == ',' )) {
       sketch.setModified(true);
     }
 
