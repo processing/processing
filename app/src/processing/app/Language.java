@@ -131,7 +131,7 @@ public class Language {
       if (prefFile.exists()) {
         String language = PApplet.loadStrings(prefFile)[0];
         language = language.trim().toLowerCase();
-        if (!language.equals("")) {
+        if (language.trim().length() != 0) {
           return language;
         }
       }
@@ -207,7 +207,10 @@ public class Language {
   }
 
 
-  /** Get current language */
+  /** 
+   * Get the current language.
+   * @return two digit ISO code (lowercase)  
+   */
   static public String getLanguage() {
     return init().language;
   }

@@ -722,10 +722,14 @@ public class Toolkit {
         monoFont = createFont("SourceCodePro-Regular.ttf", size);
         //monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
         monoBoldFont = createFont("SourceCodePro-Bold.ttf", size);
-        if (!monoFont.canDisplay(GREEK_SMALL_LETTER_ALPHA) ||
-            !monoFont.canDisplay(GREEK_CAPITAL_LETTER_OMEGA)) {
-          monoFont = createFont("Anonymous Pro.ttf", size);
-          monoBoldFont = createFont("Anonymous Pro B.ttf", size);
+        
+        // additional language constraints
+        if ("el".equals(Language.getLanguage())) {
+          if (!monoFont.canDisplay(GREEK_SMALL_LETTER_ALPHA) ||
+              !monoFont.canDisplay(GREEK_CAPITAL_LETTER_OMEGA)) {
+            monoFont = createFont("AnonymousPro-Regular.ttf", size);
+            monoBoldFont = createFont("AnonymousPro-Bold.ttf", size);
+          }
         }
       } catch (Exception e) {
         Base.loge("Could not load mono font", e);
@@ -754,12 +758,15 @@ public class Toolkit {
       try {
         sansFont = createFont("SourceSansPro-Regular.ttf", size);
         sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
-        if (!sansFont.canDisplay(GREEK_SMALL_LETTER_ALPHA) ||
-            !sansFont.canDisplay(GREEK_CAPITAL_LETTER_OMEGA)) {
-          sansFont = createFont("Carlito-Regular.ttf", size);
-          sansBoldFont = createFont("Carlito-Bold.ttf", size);
+        
+        // additional language constraints
+        if ("el".equals(Language.getLanguage())) {
+          if (!sansFont.canDisplay(GREEK_SMALL_LETTER_ALPHA) ||
+              !sansFont.canDisplay(GREEK_CAPITAL_LETTER_OMEGA)) {
+            sansFont = createFont("Carlito-Regular.ttf", size);
+            sansBoldFont = createFont("Carlito-Bold.ttf", size);
+          }
         }
-
       } catch (Exception e) {
         Base.loge("Could not load sans font", e);
         sansFont = new Font("SansSerif", Font.PLAIN, size);
