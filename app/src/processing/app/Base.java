@@ -2061,8 +2061,9 @@ public class Base {
                                     JOptionPane.ERROR_MESSAGE :
                                     JOptionPane.WARNING_MESSAGE);
 
-      if (fatal)
+      if (fatal) {
         System.exit(1);
+      }
     }
   }
 
