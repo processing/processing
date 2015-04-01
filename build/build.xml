@@ -217,7 +217,7 @@
                 build="${jdk.build}" 
                 jdk="false" 
                 flavor="${jre.downloader}"
-                path="${platform}/jre.tgz" />    
+                path="${jre.tgz.path}" />    
   </target>
 
   <!-- code signing hack, turns on code signing during dist -->
