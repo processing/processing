@@ -865,9 +865,10 @@ public abstract class InputHandler extends KeyAdapter
                         int line = textArea.getCaretLine();
 
                         firstLine += visibleLines;
-
-                        if(firstLine + visibleLines >= lineCount - 1)
-                                firstLine = lineCount - visibleLines;
+                        if (firstLine >= lineCount )
+                          firstLine -= visibleLines;
+                        else if(firstLine + visibleLines >= lineCount - 1)
+                          firstLine = lineCount - visibleLines;
 
                         textArea.setFirstLine(firstLine);
 
