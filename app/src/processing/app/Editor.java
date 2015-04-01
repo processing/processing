@@ -2385,22 +2385,51 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // With Java 7u40 on OS X, need to bring the window forward.
     toFront();
     
-    String prompt = "Save changes to " + sketch.getName() + "?  ";
+    
 
     if (!Base.isMacOS()) {
-      int result =
-        JOptionPane.showConfirmDialog(this, prompt, "Close",
-                                      JOptionPane.YES_NO_CANCEL_OPTION,
-                                      JOptionPane.QUESTION_MESSAGE);
+      Object[] options = new String[] {
+        Language.text("save.btn.save"), Language.text("save.btn.dont_save"), Language.text("prompt.cancel")
+      };
+      JOptionPane optionPane = new JOptionPane("<html> " +
+        "<head> <style type=\"text/css\">"+
+        "b { font: 13pt \"Lucida Grande\" }"+
+        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+        "</style> </head>" +
+        "<b>" + Language.text("save.title") + "</b>" +
+        "<p>" + Language.text("save.hint") + "</p>", 
+              JOptionPane.QUESTION_MESSAGE, 
+              JOptionPane.YES_NO_CANCEL_OPTION,
+              null,
+              options);
+              
 
-      if (result == JOptionPane.YES_OPTION) {
+      JDialog dialog = optionPane.createDialog("Confirm Dialog");
+
+      Set<AWTKeyStroke> forwardTraversalKeys = 
+              new HashSet<AWTKeyStroke>(dialog.getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS));
+      forwardTraversalKeys.add(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.VK_UNDEFINED));
+
+      Set<AWTKeyStroke> backwardTraversalKeys = 
+              new HashSet<AWTKeyStroke>(dialog.getFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS));                  
+      backwardTraversalKeys.add(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_LEFT, KeyEvent.VK_UNDEFINED));
+
+
+      dialog.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardTraversalKeys);
+      dialog.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardTraversalKeys);
+      dialog.setVisible(true);   
+
+
+      Object result = optionPane.getValue();                    
+        
+      if (result == options[0]) {
         return handleSave(true);
 
-      } else if (result == JOptionPane.NO_OPTION) {
+      } else if (result == options[1]) {
         return true;  // ok to continue
 
-      } else if (result == JOptionPane.CANCEL_OPTION ||
-                 result == JOptionPane.CLOSED_OPTION) {
+      } else if (result == options[2] ||
+                 result == null) {
         return false;
 
       } else {
