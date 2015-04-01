@@ -74,7 +74,6 @@ public class JavaInputHandler extends PdeInputHandler {
 
     if ((code == KeyEvent.VK_BACK_SPACE) || (code == KeyEvent.VK_TAB) ||
         (code == KeyEvent.VK_ENTER) || ((c >= 32) && (c < 128))) {
-      System.out.println(event);
       sketch.setModified(true);
     }
 

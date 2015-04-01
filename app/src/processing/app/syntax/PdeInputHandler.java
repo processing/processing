@@ -188,6 +188,22 @@ public class PdeInputHandler extends DefaultInputHandler {
   }
 
 
+  protected boolean isMnemonic(KeyEvent event) {
+    // Don't do this on OS X, because alt (the option key) is used for
+    // non-ASCII chars, and there are no menu mnemonics to speak of
+    if (!Base.isMacOS()) {
+      if ((event.getModifiers() & InputEvent.ALT_MASK) != 0 &&
+          event.getKeyChar() != KeyEvent.VK_UNDEFINED) {
+        // This is probably a menu mnemonic, don't pass it through.
+        // If it's an alt-NNNN sequence, those only work on the keypad
+        // and pass through UNDEFINED as the keyChar.
+        return true;
+      }
+    }
+    return false;
+  }
+
+
   public void keyPressed(KeyEvent event) {
     // don't pass the ctrl-, through to the editor
     // https://github.com/processing/processing/issues/3074
@@ -195,6 +211,11 @@ public class PdeInputHandler extends DefaultInputHandler {
         event.getKeyChar() == ',') {
       return;
     }
+    // don't pass menu mnemonics (alt-f for file, etc) to the editor
+    if (isMnemonic(event)) {
+      return;
+    }
+
     if (!handlePressed(event)) {
       super.keyPressed(event);
     }
@@ -202,6 +223,10 @@ public class PdeInputHandler extends DefaultInputHandler {
 
 
   public void keyTyped(KeyEvent event) {
+    if (isMnemonic(event)) {
+      return;
+    }
+
     if (!handleTyped(event)) {
       super.keyTyped(event);
     }
