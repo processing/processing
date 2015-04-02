@@ -572,9 +572,20 @@ public class PSurfaceLWJGL implements PSurface {
 //      System.err.println("DESTROY");
       keyPoller.requestStop();
       mousePoller.requestStop();
-      sketch.dispose();  // call to shutdown libs?
-      Display.destroy();
-      frame.dispose();
+
+      while (true) {
+//        graphics.beginDraw();
+////        System.out.println("update");
+//        graphics.endDraw();
+        if (Display.isCloseRequested() || sketch.exitCalled()) {
+          sketch.dispose();  // call to shutdown libs?
+          Display.destroy();
+          frame.dispose();
+          break;
+        }
+        Display.update();
+        Display.sync((int)frameRateTarget);
+      }
 
       // If the user called the exit() function, the window should close,
       // rather than the sketch just halting.
