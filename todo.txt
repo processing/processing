@@ -22,23 +22,31 @@ X implement line numbers in the editor
 X   5px between line number (right-aligned) and the right edge of the gutter
 X   ie textAlign(RIGHT) / text(lineNum, LEFT_GUTTER - 5, y)
 X   https://github.com/processing/processing/issues/3128
+X run button w/ debugger shouldn't require "continue" before actually starting
+X   https://github.com/processing/processing/issues/3096
 
-_ run button w/ debugger shouldn't require "continue" before actually starting
-_   https://github.com/processing/processing/issues/3096
-
-_ how are we going to handle fonts for other languages? 
-_   two new fonts have been added, other languages will need more
-_   need a decent sans with with Unicode coverage
-_   i.e. https://github.com/processing/processing/pull/3025
-
-_ trying to add a second tab with the same name causes an error
+integration of pdex/debug
+o make the tabs have a default minimum size
+o   multiple sizes as they get smaller (web browser style)
+X merge experimental into the main Java mode 
+X   thereby removing Java 2.0 mode from the next release
+X   otherwise redoing the design for 2 modes
+X changed JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
+X change build scripts, get things running
+X rename TextArea and TextAreaPainter to JavaTextArea
+X DebugEditor.createTextArea() is copy & pasted from JavaEditor
+X   this whole setup is really gross at the moment
+X finish Ant task to download JRE and JDK from Oracle
+X remove public 'ta' object in DebugEditor, also dmode
+X hasJavaTabs() cleanup
+X   how does it relate to compilationCheckEnabled?
+X     removed, seems to be duplicate/used the same way
 
 jre download/install
 X make sure the file downloads correctly before renaming
 X   https://github.com/processing/processing/issues/2960
 X update build scripts for Windows and Linux to use JRE downloader Ant Task
 X   https://github.com/processing/processing/issues/3059
-_ add method to prompt OS X developers to download the JDK update
 
 update components
 X moving to Java 8 because Java 7 will be discontinued
@@ -161,25 +169,9 @@ X   https://github.com/processing/processing/issues/1400
 X   https://github.com/processing/processing/pull/3088
 X Greek translation and new fonts
 X   https://github.com/processing/processing/pull/3025
+X Show tooltip when hovering over errors
+X   https://github.com/processing/processing/pull/3119
 
-integration of pdex
-X changed JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
-X change build scripts, get things running
-X rename TextArea and TextAreaPainter to JavaTextArea
-X DebugEditor.createTextArea() is copy & pasted from JavaEditor
-X   this whole setup is really gross at the moment
-X finish Ant task to download JRE and JDK from Oracle
-X remove public 'ta' object in DebugEditor, also dmode
-
-_ fix hasJavaTabs() function
-_   almost always used as a negative, or tied to a 'return' from fxn
-_   name isn't tied to its function, but the symptom
-_   only checked once (when the editor is created)
-X   how does it relate to compilationCheckEnabled?
-X     removed, seems to be duplicate/used the same way
-_ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
-_   because it's in the other ClassLoader, can no longer rely on it
-_ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
 
 3.0a7
 _ finish adding 'examples' contribs
@@ -187,20 +179,35 @@ _   https://github.com/processing/processing/issues/2953
 _   don't return here, allow contrib types to fail:
 _   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
 
+
+pdex
+_ fix hasJavaTabs() function
+_   almost always used as a negative, or tied to a 'return' from fxn
+_   name isn't tied to its function, but the symptom
+_   only checked once (when the editor is created)
+_ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
+_   because it's in the other ClassLoader, can no longer rely on it
+_ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
 _ disable the debug toggle menu while running
 _   otherwise could run in one mode, then try to stop in another
 _ show debug window when running, hide when stopped
 _ can we animate the show/hide for the debug box?
 
-_ do the right thing on passing around List vs ArrayList and others
 
 breakage
 _ break out a gui package (get class count down in .app)
 _ remove deprecated methods
+_ do the right thing on passing around List vs ArrayList and others
+
 
 gui
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
+_ fonts are still really ugly
+_   may need to drop use of Source Sans
+_   what do these do, and are we doing it already?
+_   System.setProperty("awt.useSystemAAFontSettings","on");
+_   System.setProperty("swing.aatext", "true");
 _ large window places the debugger window offscreen
 _   https://github.com/processing/processing/issues/3091
 _ need 'actively pressed' version of 'play' and 'stop'
@@ -212,19 +219,16 @@ _   or hide the tray when not debugging? Debug just a menu checkbox?
 _ using svg images for res-indep icons/gui
 _   http://stackoverflow.com/questions/2495501/swing-batik-create-an-imageicon-from-an-svg-file
 
-what do these do, and are we doing it already?
-System.setProperty("awt.useSystemAAFontSettings","on");
-System.setProperty("swing.aatext", "true");
 
+pde
+_ add build.xml prompt for OS X developers to download the JDK update
+_ how are we going to handle fonts for other languages? 
+_   two new fonts have been added, other languages will need more
+_   need a decent sans with with Unicode coverage
+_   i.e. https://github.com/processing/processing/pull/3025
 _ fix file change detection on OS X
 _   https://github.com/processing/processing/issues/2852
-
-_ make the tabs have a default minimum size
-_   multiple sizes as they get smaller (web browser style)
 _ make examples pull/build automatic during dist
-_ merge experimental into the main Java mode 
-_   thereby removing Java 2.0 mode from the next release
-_   otherwise redoing the design for 2 modes
 _ add span screens pref (near the display pref)
 _   add checkbox for spans to export dialog
 _ remove "save before running" message
@@ -237,6 +241,9 @@ _ reas: code coloring sometimes disappears
 _ me: undo not in the correct location
 _ implement the new gui
 _ drop XP support (but improve Windows 8 support? ouch)
+_ improve error message when creating a tab with the same name
+_   right now it's generic, based on "a file exists"
+_ don't allow users to create 'blah.java' when 'blah.pde' already in sketch
 
 
 high
