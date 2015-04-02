@@ -25,8 +25,6 @@ X   https://github.com/processing/processing/issues/3128
 
 _ run button w/ debugger shouldn't require "continue" before actually starting
 _   https://github.com/processing/processing/issues/3096
-_ large window places the debugger window offscreen
-_   https://github.com/processing/processing/issues/3091
 
 _ how are we going to handle fonts for other languages? 
 _   two new fonts have been added, other languages will need more
@@ -203,6 +201,8 @@ _ remove deprecated methods
 gui
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
+_ large window places the debugger window offscreen
+_   https://github.com/processing/processing/issues/3091
 _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
 _   iTunes has no rollover state but has a 'down' state

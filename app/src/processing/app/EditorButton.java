@@ -26,13 +26,13 @@ import java.awt.event.*;
 import javax.swing.*;
 
 
-abstract public class EditorButton extends JComponent 
+abstract public class EditorButton extends JComponent
 implements MouseListener, MouseMotionListener, ActionListener {
   static public final int DIM = 35;
 
-  /** Button's description. */ 
+  /** Button's description. */
   protected String title;
-  /** Description of alternate behavior when shift is down. */ 
+  /** Description of alternate behavior when shift is down. */
   protected String titleShift;
 
   protected boolean pressed;
@@ -40,36 +40,36 @@ implements MouseListener, MouseMotionListener, ActionListener {
   protected boolean rollover;
   protected JLabel rolloverLabel;
   protected boolean shift;
-  
+
   protected Image enabledImage;
   protected Image disabledImage;
   protected Image selectedImage;
   protected Image rolloverImage;
   protected Image pressedImage;
-  
+
   protected Image gradient;
-  
+
   protected Mode mode;
-  
-  
+
+
   public EditorButton(Mode mode, String name, String title) {
     this(mode, name, title, title);
   }
-  
+
 
   public EditorButton(Mode mode, String name, String title, String titleShift) {
     this.mode = mode;
     this.title = title;
     this.titleShift = titleShift;
-   
+
     final int res = Toolkit.highResDisplay() ? 2 : 1;
     disabledImage = mode.loadImage(name + "-disabled-" + res + "x.png");
     enabledImage = mode.loadImage(name + "-enabled-" + res + "x.png");
     selectedImage = mode.loadImage(name + "-selected-" + res + "x.png");
     pressedImage = mode.loadImage(name + "-pressed-" + res + "x.png");
     rolloverImage = mode.loadImage(name + "-rollover-" + res + "x.png");
-    
-    if (disabledImage == null) { 
+
+    if (disabledImage == null) {
       disabledImage = enabledImage;
     }
     if (selectedImage == null) {
@@ -84,8 +84,8 @@ implements MouseListener, MouseMotionListener, ActionListener {
     addMouseListener(this);
     addMouseMotionListener(this);
   }
-  
-  
+
+
   @Override
   public void paintComponent(Graphics g) {
     Image image = enabledImage;
@@ -103,8 +103,8 @@ implements MouseListener, MouseMotionListener, ActionListener {
     }
     g.drawImage(image, 0, 0, DIM, DIM, this);
   }
-  
-  
+
+
 //    public String toString() {
 //      switch (this) {
 //      case DISABLED: return "disabled";
@@ -112,30 +112,30 @@ implements MouseListener, MouseMotionListener, ActionListener {
 //      case SELECTED: return "selected";
 //      case ROLLOVER: return "rollover";
 //      case PRESSED: return "pressed";
-//    
+//
 ////    for (State bs : State.values()) {
 ////      Image image = mode.loadImage(bs.getFilename(name));
 ////      if (image != null) {
 ////        imageMap.put(bs, image);
 ////      }
 ////    }
-////    
+////
 ////    enabled = true;
 ////    //updateState();
 ////    setState(State.ENABLED);
-//  }      
-  
-  
+//  }
+
+
   public void setReverse() {
     gradient = mode.getGradient("reversed", DIM, DIM);
   }
-  
-  
+
+
 //  public void setGradient(Image gradient) {
 //    this.gradient = gradient;
 //  }
-  
-  
+
+
   public void setRolloverLabel(JLabel label) {
     rolloverLabel = label;
   }
@@ -145,12 +145,12 @@ implements MouseListener, MouseMotionListener, ActionListener {
   public void mouseClicked(MouseEvent e) {
     if (isEnabled()) {
       shift = e.isShiftDown();
-      actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, 
+      actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
                                       null, e.getModifiers()));
     }
   }
-  
-  
+
+
   public boolean isShiftDown() {
     return shift;
   }
@@ -166,13 +166,18 @@ implements MouseListener, MouseMotionListener, ActionListener {
   public void mouseReleased(MouseEvent e) {
     setPressed(false);
   }
-  
-  
+
+
   public void setPressed(boolean pressed) {
     if (isEnabled()) {
       this.pressed = pressed;
       repaint();
     }
+  }
+
+
+  public void setSelected(boolean selected) {
+    this.selected = selected;
   }
 
 
@@ -205,41 +210,41 @@ implements MouseListener, MouseMotionListener, ActionListener {
 
 
   abstract public void actionPerformed(ActionEvent e);
-  
+
 //  @Override
-//  public void actionPerformed(ActionEvent e) { 
+//  public void actionPerformed(ActionEvent e) {
 //    // To be overridden by all subclasses
 //  }
-  
-  
+
+
   @Override
   public Dimension getPreferredSize() {
     return new Dimension(DIM, DIM);
   }
-  
-  
+
+
   @Override
   public Dimension getMinimumSize() {
     return getPreferredSize();
   }
-  
-  
+
+
   @Override
   public Dimension getMaximumSize() {
     return getPreferredSize();
   }
-  
-  
+
+
 //  public Image getImage() {
 //    return imageMap.get(state);
 //  }
 //
-//  
+//
 ////  protected void updateState() {
 ////    state = ButtonState.ENABLED;
 ////  }
-//  
-//  
+//
+//
 //  public void setEnabled(boolean enabled) {
 //    this.enabled = enabled;
 //    if (enabled) {
@@ -252,8 +257,8 @@ implements MouseListener, MouseMotionListener, ActionListener {
 //      }
 //    }
 //  }
-//  
-//  
+//
+//
 //  public void setState(State state) {
 //    this.state = state;
 //  }
@@ -261,16 +266,16 @@ implements MouseListener, MouseMotionListener, ActionListener {
 
 //  public enum State {
 //    DISABLED, ENABLED, SELECTED, ROLLOVER, PRESSED;
-//    
-//    /** 
-//     * @param name the root name 
+//
+//    /**
+//     * @param name the root name
 //     * @return
 //     */
 //    public String getFilename(String name) {
 //      final int res = Toolkit.highResDisplay() ? 2 : 1;
-//      return name + "-" + toString() + "-" + res + "x.png"; 
+//      return name + "-" + toString() + "-" + res + "x.png";
 //    }
-//    
+//
 //    public String toString() {
 //      switch (this) {
 //      case DISABLED: return "disabled";

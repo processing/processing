@@ -195,12 +195,7 @@ public class JavaEditor extends Editor {
     JMenuItem runItem = Toolkit.newJMenuItem(Language.text("toolbar.run"), 'R');
     runItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        if (isDebuggerEnabled()) {
-          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Debug' menu item");
-          debugger.startDebug();
-        } else {
-          handleRun();
-        }
+        handleRun();
       }
     });
 
@@ -1017,19 +1012,24 @@ public class JavaEditor extends Editor {
 
 
   public void handleRun() {
-    new Thread(new Runnable() {
-      public void run() {
-        prepareRun();
-        try {
-//          toolbar.activate(JavaToolbar.RUN);
-          toolbar.activateRun();
-          runtime = jmode.handleRun(sketch, JavaEditor.this);
-//          System.out.println("runtime now " + runtime);
-        } catch (Exception e) {
-          statusError(e);
+    if (isDebuggerEnabled()) {
+      // Don't start the sketch paused, continue until a breakpoint or error
+      // https://github.com/processing/processing/issues/3096
+      debugger.continueDebug();
+
+    } else {
+      new Thread(new Runnable() {
+        public void run() {
+          prepareRun();
+          try {
+            toolbar.activateRun();
+            runtime = jmode.handleRun(sketch, JavaEditor.this);
+          } catch (Exception e) {
+            statusError(e);
+          }
         }
-      }
-    }).start();
+      }).start();
+    }
   }
 
 

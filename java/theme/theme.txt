@@ -29,8 +29,9 @@ editor.errormarkercolor = #ed2630
 editor.warningmarkercolor = #ffc30e
 
 # ERROR BAR - error bar on the right that shows the markers
-errorbar.errorcolor = #ed2630
+# formerly #ed2630, tickmark on right-hand side in comp is #c20102
+errorbar.errorcolor = #c20102  
 errorbar.warningcolor = #ffc30e
-errorbar.backgroundcolor = #2c343d
+# using gutter.bcolor in 3.0a6
+#errorbar.backgroundcolor = #2c343d
 
-# color of error tickmark on right-hand side in comp: #c20102

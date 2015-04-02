@@ -49,9 +49,9 @@ import processing.mode.java.pdex.Problem;
  * scrolls to the tab and location. Error messages displayed on hover. Markers
  * are not in sync with the error line. Similar to eclipse's right error bar
  * which displays the overall errors in a document
- * 
+ *
  * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
- * 
+ *
  */
 public class ErrorBar extends JPanel {
 	/**
@@ -121,32 +121,33 @@ public class ErrorBar extends JPanel {
 		}
 	}
 
-	
+
 	public Dimension getPreferredSize() {
 		return new Dimension(preferredWidth, preferredHeight);
 	}
 
-	
+
 	public Dimension getMinimumSize() {
 		return getPreferredSize();
 	}
 
-	
+
 	public ErrorBar(JavaEditor editor, int height, JavaMode mode) {
 		this.editor = editor;
 		this.preferredHeight = height;
 		this.errorCheckerService = editor.errorCheckerService;
-		
+
 		errorColor = mode.getColor("errorbar.errorcolor"); //, errorColor);
 		warningColor = mode.getColor("errorbar.warningcolor"); //, warningColor);
-		backgroundColor = mode.getColor("errorbar.backgroundcolor"); //, backgroundColor);
-		
+		//backgroundColor = mode.getColor("errorbar.backgroundcolor"); //, backgroundColor);
+		backgroundColor = mode.getColor("gutter.bgcolor");
+
 		addListeners();
 	}
 
 	/**
 	 * Update error markers in the error bar.
-	 * 
+	 *
 	 * @param problems
 	 *            - List of problems.
 	 */
@@ -154,7 +155,7 @@ public class ErrorBar extends JPanel {
 		// NOTE TO SELF: ErrorMarkers are calculated for the present tab only
 		// Error Marker index in the arraylist is LOCALIZED for current tab.
 		// Also, need to do the update in the UI thread via SwingWorker to prevent
-	  // concurrency issues. 
+	  // concurrency issues.
 		final int fheight = this.getHeight();
 		SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
@@ -175,7 +176,7 @@ public class ErrorBar extends JPanel {
             errorPointsOld.add(marker);
           }
           errorPoints.clear();
-  
+
           // Each problem.getSourceLine() will have an extra line added
           // because of
           // class declaration in the beginning as well as default imports
@@ -215,7 +216,7 @@ public class ErrorBar extends JPanel {
 
 	/**
 	 * Check if new errors have popped up in the sketch since the last check
-	 * 
+	 *
 	 * @return true - if errors have changed
 	 */
 	public boolean errorPointsChanged() {
@@ -283,7 +284,7 @@ public class ErrorBar extends JPanel {
 
           protected Object doInBackground() throws Exception {
             for (ErrorMarker eMarker : errorPoints) {
-              if (evt.getY() >= eMarker.getY() - 2 && 
+              if (evt.getY() >= eMarker.getY() - 2 &&
                   evt.getY() <= eMarker.getY() + 2 + errorMarkerHeight) {
                 Problem p = eMarker.getProblem();
                 String msg = (p.isError() ? "Error: " : "Warning: ") + p.getMessage();

@@ -103,7 +103,7 @@ public class Debugger implements VMEventListener {
   public VirtualMachine vm() {
     if (runtime != null) {
       return runtime.vm();
-    } 
+    }
     return null;
   }
 
@@ -121,7 +121,7 @@ public class Debugger implements VMEventListener {
   public ReferenceType getMainClass() {
     if (isStarted()) {
       return mainClass;
-    } 
+    }
     return null;
   }
 
@@ -191,7 +191,7 @@ public class Debugger implements VMEventListener {
     editor.prepareRun();
 
     // after prepareRun, since this removes highlights
-    editor.activateDebug(); 
+    editor.activateDebug();
 
     try {
       Sketch sketch = editor.getSketch();
@@ -250,11 +250,11 @@ public class Debugger implements VMEventListener {
     }
     stopTrackingLineChanges();
     started = false;
-    
+
     editor.deactivateDebug();
     editor.deactivateContinue();
     editor.deactivateStep();
-    
+
     editor.statusEmpty();
   }
 
@@ -336,7 +336,7 @@ public class Debugger implements VMEventListener {
 
 
   /**
-   * Print fields of current {@code this}-object. 
+   * Print fields of current {@code this}-object.
    * Outputs type, name and value of each field.
    */
   public synchronized void printThis() {
@@ -387,7 +387,7 @@ public class Debugger implements VMEventListener {
     log(Level.INFO, "set breakpoint on line {0}", line);
   }
 
-  
+
   /**
    * Remove a breakpoint from the current line (if set).
    */
@@ -915,7 +915,7 @@ public class Debugger implements VMEventListener {
         return "";
       }
       return t.frame(0).thisObject().referenceType().name();
-      
+
     } catch (IncompatibleThreadStateException ex) {
       log(Level.SEVERE, null, ex);
       return "";
@@ -1379,13 +1379,13 @@ public class Debugger implements VMEventListener {
     runtimeLineChanges.clear();
     runtimeTabsTracked.clear();
   }
-  
+
 
   static private void log(Level level, String msg) {
     Logger.getLogger(Debugger.class.getName()).log(level, msg);
   }
 
-  
+
   static private void log(Level level, String msg, Object obj) {
     Logger.getLogger(Debugger.class.getName()).log(level, msg, obj);
   }

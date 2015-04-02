@@ -69,10 +69,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
   public Color warningColor; // = new Color(0xFFC30E);
   public Color errorMarkerColor; // = new Color(0xED2630);
   public Color warningMarkerColor; // = new Color(0xFFC30E);
-  
+
   protected Font gutterTextFont;
   protected Color gutterTextColor;
-  protected Color gutterTempColor;
+//  protected Color gutterTempColor;
 
 //  static int ctrlMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
@@ -225,7 +225,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     gfx.setFont(gutterTextFont);
     FontMetrics gm = getFontMetrics();
     //int tx = Editor.GUTTER_MARGIN + ;
-    int tx = Editor.LEFT_GUTTER - Editor.GUTTER_MARGIN - 
+    int tx = Editor.LEFT_GUTTER - Editor.GUTTER_MARGIN -
       gm.charsWidth(txt, 0, txt.length);
 //    Color textColor = getTextArea().getGutterTextColor(line);
 //    if (textColor == null) {
@@ -236,10 +236,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
     gfx.setColor(gutterTextColor);
     int ty = textArea.lineToY(line) + fm.getHeight();
     Utilities.drawTabbedText(new Segment(txt, 0, text.length()),
-                             tx, ty, gfx, this, 0);    
+                             tx, ty, gfx, this, 0);
   }
-  
-  
+
+
 //  /**
 //   * Paint the gutter background (solid color).
 //   *
@@ -490,8 +490,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
     warningColor = mode.getColor("editor.warningcolor"); //, warningColor);
     errorMarkerColor = mode.getColor("editor.errormarkercolor"); //, errorMarkerColor);
     warningMarkerColor = mode.getColor("editor.warningmarkercolor"); //, warningMarkerColor);
-    
-    gutterTextFont = mode.getFont("editor.gutter.text.font"); 
+
+    gutterTextFont = mode.getFont("editor.gutter.text.font");
     gutterTextColor = mode.getColor("editor.gutter.text.color");
   }
 
