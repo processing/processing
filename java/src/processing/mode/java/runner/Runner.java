@@ -180,8 +180,7 @@ public class Runner implements MessageConsumer {
 //  Connector.Argument addressArg =
 //    (Connector.Argument)arguments.get("address");
 //  addressArg.setValue(addr);
-    Connector.Argument portArg =
-      (Connector.Argument)arguments.get("port");
+    Connector.Argument portArg = arguments.get("port");
     portArg.setValue(portStr);
     
 //    Connector.Argument timeoutArg =

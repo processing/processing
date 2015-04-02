@@ -16,6 +16,8 @@ X Opening and closing preferences window prompts user to save unmodified sketch
 X   https://github.com/processing/processing/issues/3074
 X Pressing PgDn in a code without scrollbar gives Exception
 X   https://github.com/processing/processing/issues/2990
+X internal fixes and cleanups to TweakMode
+X   https://github.com/processing/processing/issues/2799
 
 _ implement line numbers in the editor
 _   5px between line number (right-aligned) and the right edge of the gutter

@@ -26,6 +26,8 @@ import processing.mode.java.tweak.*;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -39,10 +41,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
-//import java.util.concurrent.atomic.AtomicBoolean;
-
-
-
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Segment;
@@ -58,7 +56,7 @@ import processing.app.syntax.TokenMarker;
 
 
 /**
- * Customized line painter. Adds support for background colors, 
+ * Customized line painter. Adds support for background colors,
  * left hand gutter area with background color and text.
  */
 public class JavaTextAreaPainter extends TextAreaPainter
@@ -71,13 +69,17 @@ public class JavaTextAreaPainter extends TextAreaPainter
   public Color warningColor; // = new Color(0xFFC30E);
   public Color errorMarkerColor; // = new Color(0xED2630);
   public Color warningMarkerColor; // = new Color(0xFFC30E);
+  
+  protected Font gutterTextFont;
+  protected Color gutterTextColor;
+  protected Color gutterTempColor;
 
 //  static int ctrlMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
-  
+
   public JavaTextAreaPainter(JavaTextArea textArea, TextAreaDefaults defaults) {
     super(textArea, defaults);
-    
+
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent evt) {
         if (!getEditor().hasJavaTabs()) { // Ctrl + Click disabled for java tabs
@@ -95,7 +97,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     cursorType = Cursor.DEFAULT_CURSOR;
   }
 
-  
+
   void handleCtrlClick(MouseEvent evt) {
     Base.log("--handleCtrlClick--");
     int off = textArea.xyToOffset(evt.getX(), evt.getY());
@@ -151,12 +153,12 @@ public class JavaTextAreaPainter extends TextAreaPainter
       }
       if (Character.isDigit(word.charAt(0)))
         return;
-      
+
       Base.log(errorCheckerService.mainClassOffset + line + "|" + line + "| offset " + xLS + word + " <= \n");
       errorCheckerService.getASTGenerator().scrollToDeclaration(line, word, xLS);
     }
   }
-  
+
 
 //  private void loadTheme(ExperimentalMode mode) {
 //    errorColor = mode.getThemeColor("editor.errorcolor", errorColor);
@@ -165,11 +167,11 @@ public class JavaTextAreaPainter extends TextAreaPainter
 //    warningMarkerColor = mode.getThemeColor("editor.warningmarkercolor", warningMarkerColor);
 //  }
 
-  
+
   /**
    * Paint a line. Paints the gutter (with background color and text) then the
    * line (background color and text).
-   * 
+   *
    * @param gfx
    *          the graphics context
    * @param tokenMarker
@@ -179,102 +181,143 @@ public class JavaTextAreaPainter extends TextAreaPainter
    *          horizontal position
    */
   @Override
-  protected void paintLine(Graphics gfx, int line, int x, 
+  protected void paintLine(Graphics gfx, int line, int x,
                            TokenMarker tokenMarker) {
     try {
-      // TODO This line is causing NPEs randomly ever since I added the 
+      // TODO This line is causing NPEs randomly ever since I added the
       // toggle for Java Mode/Debugger toolbar. [Manindra]
       super.paintLine(gfx, line, x + Editor.LEFT_GUTTER, tokenMarker);
-      
+
     } catch (Exception e) {
       Base.log(e.getMessage());
     }
-    
+
     // formerly only when in debug mode
-    paintGutterBg(gfx, line, x);
-    paintGutterLine(gfx, line, x);
-    paintGutterText(gfx, line, x);
+    paintLeftGutter(gfx, line, x);
+//    paintGutterBg(gfx, line, x);
+//    paintGutterLine(gfx, line, x);
+//    paintGutterText(gfx, line, x);
 
     paintErrorLine(gfx, line, x);
   }
-  
+
 
   /**
-   * Paint the gutter background (solid color).
-   * 
-   * @param gfx
-   *          the graphics context
-   * @param line
-   *          0-based line number
-   * @param x
-   *          horizontal position
+   * Paint the gutter: draw the background, draw line numbers, break points.
+   * @param gfx the graphics context
+   * @param line 0-based line number
+   * @param x horizontal position
    */
-  protected void paintGutterBg(Graphics gfx, int line, int x) {
+  protected void paintLeftGutter(Graphics gfx, int line, int x) {
     gfx.setColor(getTextArea().gutterBgColor);
+//    gfx.setColor(Color.ORANGE);
     int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
     gfx.fillRect(0, y, Editor.LEFT_GUTTER, fm.getHeight());
-  }
 
-  
-  /**
-   * Paint the vertical gutter separator line.
-   * 
-   * @param gfx
-   *          the graphics context
-   * @param line
-   *          0-based line number
-   * @param x
-   *          horizontal position
-   */
-  protected void paintGutterLine(Graphics gfx, int line, int x) {
-    int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
-    gfx.setColor(getTextArea().gutterLineColor);
-    gfx.drawLine(Editor.LEFT_GUTTER, y, 
-                 Editor.LEFT_GUTTER, y + fm.getHeight());
-  }
-
-  
-  /**
-   * Paint the gutter text.
-   * 
-   * @param gfx
-   *          the graphics context
-   * @param line
-   *          0-based line number
-   * @param x
-   *          horizontal position
-   */
-  protected void paintGutterText(Graphics gfx, int line, int x) {
     String text = getTextArea().getGutterText(line);
+    // if no special text for a breakpoint, just show the line number
     if (text == null) {
-      return;
+      text = String.valueOf(line + 1);
     }
+    char[] txt = text.toCharArray();
 
-    gfx.setFont(getFont());
-    Color textColor = getTextArea().getGutterTextColor(line);
-    if (textColor == null) {
-      gfx.setColor(getForeground());
-    } else {
-      gfx.setColor(textColor);
-    }
-    int y = textArea.lineToY(line) + fm.getHeight();
-
-    // draw 4 times to make it appear bold, displaced 1px to the right, to the bottom and bottom right.
-    //int len = text.length() > ta.gutterChars ? ta.gutterChars : text.length();
-    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-                             Editor.GUTTER_MARGIN, y, gfx, this, 0);
-    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-                             Editor.GUTTER_MARGIN + 1, y, gfx, this, 0);
-    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-                             Editor.GUTTER_MARGIN, y + 1, gfx, this, 0);
-    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-                             Editor.GUTTER_MARGIN + 1, y + 1, gfx, this, 0);
+    //gfx.setFont(getFont());
+    gfx.setFont(gutterTextFont);
+    FontMetrics gm = getFontMetrics();
+    //int tx = Editor.GUTTER_MARGIN + ;
+    int tx = Editor.LEFT_GUTTER - Editor.GUTTER_MARGIN - 
+      gm.charsWidth(txt, 0, txt.length);
+//    Color textColor = getTextArea().getGutterTextColor(line);
+//    if (textColor == null) {
+//      gfx.setColor(getForeground());
+//    } else {
+//      gfx.setColor(textColor);
+//    }
+    gfx.setColor(gutterTextColor);
+    int ty = textArea.lineToY(line) + fm.getHeight();
+    Utilities.drawTabbedText(new Segment(txt, 0, text.length()),
+                             tx, ty, gfx, this, 0);    
   }
   
+  
+//  /**
+//   * Paint the gutter background (solid color).
+//   *
+//   * @param gfx
+//   *          the graphics context
+//   * @param line
+//   *          0-based line number
+//   * @param x
+//   *          horizontal position
+//   */
+//  protected void paintGutterBg(Graphics gfx, int line, int x) {
+//    gfx.setColor(getTextArea().gutterBgColor);
+//    gfx.setColor(Color.ORANGE);
+//    int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
+//    gfx.fillRect(0, y, Editor.LEFT_GUTTER, fm.getHeight());
+//  }
+
+
+//  /**
+//   * Paint the vertical gutter separator line.
+//   *
+//   * @param gfx
+//   *          the graphics context
+//   * @param line
+//   *          0-based line number
+//   * @param x
+//   *          horizontal position
+//   */
+//  protected void paintGutterLine(Graphics gfx, int line, int x) {
+//    int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
+//    gfx.setColor(getTextArea().gutterLineColor);
+//    gfx.setColor(Color.GREEN);
+//    gfx.drawLine(Editor.LEFT_GUTTER, y,
+//                 Editor.LEFT_GUTTER, y + fm.getHeight());
+//  }
+
+
+//  /**
+//   * Paint the gutter text.
+//   *
+//   * @param gfx
+//   *          the graphics context
+//   * @param line
+//   *          0-based line number
+//   * @param x
+//   *          horizontal position
+//   */
+//  protected void paintGutterText(Graphics gfx, int line, int x) {
+//    String text = getTextArea().getGutterText(line);
+//    if (text == null) {
+//      return;
+//    }
+//
+//    gfx.setFont(getFont());
+//    Color textColor = getTextArea().getGutterTextColor(line);
+//    if (textColor == null) {
+//      gfx.setColor(getForeground());
+//    } else {
+//      gfx.setColor(textColor);
+//    }
+//    int y = textArea.lineToY(line) + fm.getHeight();
+//
+//    // draw 4 times to make it appear bold, displaced 1px to the right, to the bottom and bottom right.
+//    //int len = text.length() > ta.gutterChars ? ta.gutterChars : text.length();
+//    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
+//                             Editor.GUTTER_MARGIN, y, gfx, this, 0);
+//    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
+//                             Editor.GUTTER_MARGIN + 1, y, gfx, this, 0);
+//    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
+//                             Editor.GUTTER_MARGIN, y + 1, gfx, this, 0);
+//    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
+//                             Editor.GUTTER_MARGIN + 1, y + 1, gfx, this, 0);
+//  }
+
 
   /**
    * Paint the background color of a line.
-   * 
+   *
    * @param gfx
    *          the graphics context
    * @param line
@@ -298,11 +341,11 @@ public class JavaTextAreaPainter extends TextAreaPainter
     gfx.setColor(col);
     gfx.fillRect(0, y, getWidth(), height);
   }
-  
+
 
   /**
    * Paints the underline for an error/warning line
-   * 
+   *
    * @param gfx
    *          the graphics context
    * @param tokenMarker
@@ -322,7 +365,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     boolean notFound = true;
     boolean isWarning = false;
     Problem problem = null;
-    
+
     // Check if current line contains an error. If it does, find if it's an
     // error or warning
     for (ErrorMarker emarker : errorCheckerService.getEditor().getErrorPoints()) {
@@ -349,7 +392,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 //    int height = fm.getHeight();
     int start = textArea.getLineStartOffset(line) + problem.getPDELineStartOffset();
     int pLength = problem.getPDELineStopOffset() + 1 - problem.getPDELineStartOffset();
-    
+
     try {
       String badCode = null;
       String goodCode = null;
@@ -381,7 +424,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
       // gfx.fillRect(x1, y, rw, height);
 
       // Let the painting begin!
-      
+
       // Little rect at starting of a line containing errors - disabling it for now
 //      gfx.setColor(errorMarkerColor);
 //      if (isWarning) {
@@ -389,7 +432,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
 //      }
 //      gfx.fillRect(1, y + 2, 3, height - 2);
 
-      
       gfx.setColor(errorColor);
       if (isWarning) {
         gfx.setColor(warningColor);
@@ -415,10 +457,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
     // gfx.fillRect(2, y, 3, height);
   }
 
-  
+
   /**
    * Trims out trailing whitespaces (to the right)
-   * 
+   *
    * @param string
    * @return - String
    */
@@ -433,10 +475,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
     return newString;
   }
 
-  
+
   /**
    * Sets ErrorCheckerService and loads theme for TextAreaPainter(XQMode)
-   * 
+   *
    * @param ecs
    * @param mode
    */
@@ -448,11 +490,14 @@ public class JavaTextAreaPainter extends TextAreaPainter
     warningColor = mode.getColor("editor.warningcolor"); //, warningColor);
     errorMarkerColor = mode.getColor("editor.errormarkercolor"); //, errorMarkerColor);
     warningMarkerColor = mode.getColor("editor.warningmarkercolor"); //, warningMarkerColor);
+    
+    gutterTextFont = mode.getFont("editor.gutter.text.font"); 
+    gutterTextColor = mode.getColor("editor.gutter.text.color");
   }
 
-  
+
   public String getToolTipText(MouseEvent event) {
-    if (!getEditor().hasJavaTabs()) { 
+    if (!getEditor().hasJavaTabs()) {
       int off = textArea.xyToOffset(event.getX(), event.getY());
       if (off < 0) {
         setToolTipText(null);
@@ -483,7 +528,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
           setToolTipText(null);
           return super.getToolTipText(event);
         }
-        if (!(Character.isLetterOrDigit(s.charAt(x)) || 
+        if (!(Character.isLetterOrDigit(s.charAt(x)) ||
             s.charAt(x) == '_' || s.charAt(x) == '$')) {
           setToolTipText(null);
           return super.getToolTipText(event);
@@ -536,7 +581,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     return super.getToolTipText(event);
   }
 
-  
+
   // TweakMode code
 	protected int horizontalAdjustment = 0;
 
@@ -590,7 +635,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		}
 	}
 
-	
+
 	public void startInterativeMode() {
 	  addMouseListener(this);
 	  addMouseMotionListener(this);
@@ -599,7 +644,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		repaint();
 	}
 
-	
+
 	public void stopInteractiveMode() {
 		interactiveMode = false;
 
@@ -613,7 +658,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		repaint();
 	}
 
-	
+
 	// Update the interface
 	//public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[]) {
 	public void updateInterface(List<List<Handle>> handles, List<List<ColorControlBox>> colorBoxes) {
@@ -623,6 +668,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		initInterfacePositions();
 		repaint();
 	}
+
 
 	/**
 	* Initialize all the number changing interfaces.
@@ -657,7 +703,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		textArea.scrollTo(prevScroll, 0);
 	}
 
-	
+
 	/**
 	 * Take the saved code of the current tab and replace
 	 * all numbers with their current values.
@@ -683,7 +729,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		sc.setProgram(code);
 	}
 
-	
+
 	// don't paint while we do the stuff below
 	private synchronized void replaceTextAreaCode(String code) {
 	  // by default setText will scroll all the way to the end
@@ -694,12 +740,12 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	  textArea.setOrigin(scrollLine, -scrollHor);
 	}
 
-	
+
 	public String replaceString(String str, int start, int end, String put) {
 		return str.substring(0, start) + put + str.substring(end, str.length());
 	}
 
-	
+
 	public void updateCursor(int mouseX, int mouseY) {
 		int currentTab = getCurrentCodeIndex();
 		for (Handle n : handles.get(currentTab)) {
@@ -725,8 +771,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
 			setCursor(new Cursor(cursorType));
 		}
 	}
-	
-	
+
+
 	private void showHideColorBoxes(int y) {
 	  // display the box if the mouse if in the same line.
 	  // always keep the color box of the color selector.
@@ -748,6 +794,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		}
 	}
 
+
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (mouseHandle != null) {
@@ -765,12 +812,12 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		}
 	}
 
-	
+
 	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
-	
+
 	@Override
 	public void mousePressed(MouseEvent e) {
 		int currentTab = getCurrentCodeIndex();
@@ -807,7 +854,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		}
 	}
 
-	
+
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (mouseHandle != null) {
@@ -819,7 +866,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		}
 	}
 
-	
+
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		updateCursor(e.getX(), e.getY());
@@ -829,58 +876,58 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		}
 	}
 
-	
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 	}
 
-	
+
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
 	}
 
-	
+
 	// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-	
-	
+
+
 	private JavaEditor getEditor() {
 	  return ((JavaTextArea) textArea).editor;
 	}
-	
-	
+
+
 	private int getCurrentCodeIndex() {
     return getEditor().getSketch().getCurrentCodeIndex();
   }
 
-	
+
 //	private int getGutterMargins() {
 //	  return ((JavaTextArea) textArea).getGutterMargins();
 //	}
-	
-	
+
+
 //	private int getGutterWidth() {
 //	  return ((JavaTextArea) textArea).getGutterWidth();
 //	}
 
-	
+
 	private JavaTextArea getTextArea() {
 	  return (JavaTextArea) textArea;
 	}
-	
-	
+
+
 //	private Color getGutterBgColor() {
 //    return ((JavaTextArea) textArea).gutterBgColor;
 //  }
-	
-	
+
+
 //	private boolean isDebugToolbarEnabled() {
 //	  AtomicBoolean enabled = getEditor().debugToolbarEnabled;
 //	  return (enabled != null && enabled.get());
 //	}
-	
-	
+
+
 //	private boolean hasJavaTabs() {
 //	  return getEditor().hasJavaTabs();
 //	}

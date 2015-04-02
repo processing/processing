@@ -102,3 +102,6 @@ editor.eolmarkers.color = #999999
 # bracket/brace highlighting
 editor.brackethighlight = true
 editor.brackethighlight.color = #006699
+
+editor.gutter.text.font = processing.sans,plain,11
+editor.gutter.text.color = #657d87
