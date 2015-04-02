@@ -13,14 +13,6 @@ X   https://github.com/processing/processing/issues/3110
 X loadXxxx() methods will truly follow redirects (including http -> https)
 X   https://github.com/processing/processing-docs/issues/218
 
-showstoppers
-_ static mode - no setup() / draw() - broken in Java2D
-_   https://github.com/processing/processing/issues/3130
-_ noSmooth() and other settings reset after setup()
-_   https://github.com/processing/processing/issues/3113
-_ static mode - no setup() / draw() - broken in OpenGL
-_   https://github.com/processing/processing/issues/3163
-
 head
 X Sketch window dimensions off in Java2D
 X   https://github.com/processing/processing/issues/3129
@@ -67,14 +59,6 @@ X   add check to require .vlw extension with loadFont()
 X Memory usage insane increasing in 3.0a5
 X   https://github.com/processing/processing/issues/3007
 X   seems fixed due to the rewrite
-_ performance issues on OS X (might be threading due to Applet)
-_   https://github.com/processing/processing/issues/2423
-_ clean up requestFocus() stuff
-_   make sure it works with retina/canvas/strategy as well
-_   requestFocus() method probably needs to be added to PApplet
-_ remove sketch path hack from PApplet
-_ args[] should be null if none passed (otherwise args == null checks are weird)
-
 
 full screen
 X roll back full screen changes
@@ -86,6 +70,28 @@ o   display=all in cmd line
 o   sketchDisplay() -> 0 for all, or 1, 2, 3...
 X   added --span option
 X play with improvements to full screen here
+
+
+showstoppers
+_ static mode - no setup() / draw() - broken in Java2D
+_   https://github.com/processing/processing/issues/3130
+_ noSmooth() and other settings reset after setup()
+_   https://github.com/processing/processing/issues/3113
+_ static mode - no setup() / draw() - broken in OpenGL
+_   https://github.com/processing/processing/issues/3163
+
+
+applet/sketch
+_ performance issues on OS X (might be threading due to Applet)
+_   https://github.com/processing/processing/issues/2423
+_ clean up requestFocus() stuff
+_   make sure it works with retina/canvas/strategy as well
+_   requestFocus() method probably needs to be added to PApplet
+_ remove sketch path hack from PApplet
+_ args[] should be null if none passed (otherwise args == null checks are weird)
+
+
+full screen
 _ show warning when display spanning is turned off
 _   defaults read com.apple.spaces spans-displays
 _ crash on startup when "Mirror Displays" selected (cantfix?)
@@ -94,6 +100,8 @@ _   AMD Radeon HD 6770M was in the Oracle bug report
 _   https://github.com/processing/processing/issues/2186
 _   https://bugs.openjdk.java.net/browse/JDK-8027391
 _   test with JG's 13" retina laptop
+_ Ubuntu Unity prevents full screen from working properly
+_   https://github.com/processing/processing/issues/3158
 
 
 graphics
