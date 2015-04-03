@@ -398,7 +398,8 @@ public class PreferencesFrame {
     // [ ] Enable Code Completion - PDE X
 
     codeCompletionBox =
-      new JCheckBox(Language.text("preferences.code_completion") + " Ctrl-" + Language.text("preferences.cmd_space"));
+      new JCheckBox(Language.text("preferences.code_completion") +
+                    " Ctrl-" + Language.text("preferences.cmd_space"));
     pain.add(codeCompletionBox);
     d = codeCompletionBox.getPreferredSize();
     codeCompletionBox.setBounds(left, top, d.width + 10, d.height);
@@ -516,7 +517,7 @@ public class PreferencesFrame {
 
     // More preferences are in the ...
 
-    label = new JLabel(Language.text("preferences.file")+":");
+    label = new JLabel(Language.text("preferences.file") + ":");
     pain.add(label);
     d = label.getPreferredSize();
     label.setForeground(Color.gray);
@@ -545,7 +546,7 @@ public class PreferencesFrame {
     right = Math.max(right, left + d.width);
     top += d.height;
 
-    label = new JLabel("("+Language.text("preferences.file.hint")+")");
+    label = new JLabel("(" + Language.text("preferences.file.hint") + ")");
     pain.add(label);
     d = label.getPreferredSize();
     label.setForeground(Color.gray);
@@ -782,8 +783,7 @@ public class PreferencesFrame {
     //codeCompletionTriggerBox.setSelected(Preferences.getBoolean("pdex.completion.trigger"));
     //codeCompletionTriggerBox.setEnabled(codeCompletionBox.isSelected());
     importSuggestionsBox.setSelected(Preferences.getBoolean("pdex.importSuggestEnabled"));
-    deletePreviousBox.
-      setSelected(Preferences.getBoolean("export.delete_target_folder")); //$NON-NLS-1$
+    deletePreviousBox.setSelected(Preferences.getBoolean("export.delete_target_folder")); //$NON-NLS-1$
 
     sketchbookLocationField.setText(Preferences.getSketchbookPath());
     checkUpdatesBox.setSelected(Preferences.getBoolean("update.check")); //$NON-NLS-1$
@@ -817,8 +817,7 @@ public class PreferencesFrame {
     memoryField.setEnabled(memoryOverrideBox.isSelected());
 
     if (autoAssociateBox != null) {
-      autoAssociateBox.
-        setSelected(Preferences.getBoolean("platform.auto_file_type_associations")); //$NON-NLS-1$
+      autoAssociateBox.setSelected(Preferences.getBoolean("platform.auto_file_type_associations")); //$NON-NLS-1$
     }
 
     dialog.setVisible(true);
@@ -828,14 +827,13 @@ public class PreferencesFrame {
   /**
    * I have some ideas on how we could make Swing even more obtuse for the
    * most basic usage scenarios. Is there someone on the team I can contact?
-   * Oracle, are you listening?
+   * Oracle staffer, are you reading this? This could be your meal ticket.
    */
   static class FontNamer extends JLabel implements ListCellRenderer<Font> {
     public Component getListCellRendererComponent(JList<? extends Font> list,
                                                   Font value, int index,
                                                   boolean isSelected,
                                                   boolean cellHasFocus) {
-      //if (Base.isMacOS()) {
       setText(value.getFamily() + " / " + value.getName() + " (" + value.getPSName() + ")");
       return this;
     }
