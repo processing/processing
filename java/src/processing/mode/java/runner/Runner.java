@@ -71,7 +71,7 @@ public class Runner implements MessageConsumer {
 
   protected PrintStream sketchErr;
   protected PrintStream sketchOut;
-  
+
 
   public Runner(JavaBuild build, RunnerListener listener) throws SketchException {
     this.listener = listener;
@@ -95,11 +95,11 @@ public class Runner implements MessageConsumer {
         int opposite = (bits == 32) ? 64 : 32;
         if (Base.isMacOS()) {
           //if (library.supportsArch(PConstants.MACOSX, opposite)) {  // should always be true
-          throw new SketchException("To use " + library.getName() + ", " +  
+          throw new SketchException("To use " + library.getName() + ", " +
                                     "switch to " + opposite + "-bit mode in Preferences.");
           //}
         } else {
-          throw new SketchException(library.getName() + " is only compatible " +  
+          throw new SketchException(library.getName() + " is only compatible " +
                                     "with the  " + opposite + "-bit download of Processing.");
           //throw new SketchException(library.getName() + " does not run in " + bits + "-bit mode.");
           // "To use this library, switch to 32-bit mode in Preferences." (OS X)
@@ -115,8 +115,8 @@ public class Runner implements MessageConsumer {
       generateTrace();
     }
   }
-  
-  
+
+
   /**
    * Simple non-blocking launch of the virtual machine. VM starts suspended.
    * @return debuggee VM or null on failure
@@ -128,7 +128,7 @@ public class Runner implements MessageConsumer {
     return vm;
   }
 
-  
+
   /**
    * Redirect a VMs output and error streams to System.out and System.err
    */
@@ -140,7 +140,7 @@ public class Runner implements MessageConsumer {
     outThread.start();
   }
 
-  
+
   /**
    * Additional access to the virtual machine. TODO: may not be needed
    * @return debugge VM or null if not running
@@ -148,8 +148,8 @@ public class Runner implements MessageConsumer {
   public VirtualMachine vm() {
     return vm;
   }
-  
-  
+
+
   public boolean launchVirtualMachine(boolean presenting) {
     String[] vmParams = getMachineParams();
     String[] sketchParams = getSketchParams(presenting);
@@ -158,20 +158,20 @@ public class Runner implements MessageConsumer {
 
     // Older (Java 1.5 and earlier) version, go figure
 //    String jdwpArg = "-Xrunjdwp:transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
-//    String debugArg = "-Xdebug"; 
+//    String debugArg = "-Xdebug";
     // Newer (Java 1.5+) version that uses JVMTI
     String jdwpArg = "-agentlib:jdwp=transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
 
-    // Everyone works the same under Java 7 (also on OS X) 
+    // Everyone works the same under Java 7 (also on OS X)
     String[] commandArgs = new String[] { Base.getJavaPath(), jdwpArg };
-    
+
     commandArgs = PApplet.concat(commandArgs, vmParams);
     commandArgs = PApplet.concat(commandArgs, sketchParams);
 //  PApplet.println(commandArgs);
 //  commandArg.setValue(commandArgs);
     launchJava(commandArgs);
-    
-    AttachingConnector connector = (AttachingConnector) 
+
+    AttachingConnector connector = (AttachingConnector)
       findConnector("com.sun.jdi.SocketAttach");
     //PApplet.println(connector);  // gets the defaults
 
@@ -182,7 +182,7 @@ public class Runner implements MessageConsumer {
 //  addressArg.setValue(addr);
     Connector.Argument portArg = arguments.get("port");
     portArg.setValue(portStr);
-    
+
 //    Connector.Argument timeoutArg =
 //      (Connector.Argument)arguments.get("timeout");
 //    timeoutArg.setValue("10000");
@@ -193,7 +193,7 @@ public class Runner implements MessageConsumer {
 
     //System.out.println(PApplet.javaVersion);
     // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#sunlaunch
-    
+
     try {
 //      boolean available = false;
 //      while (!available) {
@@ -376,7 +376,7 @@ public class Runner implements MessageConsumer {
       }
 
       params.add(PApplet.ARGS_DISPLAY + "=" + runDisplay);
-      
+
 
       if (presenting) {
         params.add(PApplet.ARGS_FULL_SCREEN);
@@ -389,10 +389,11 @@ public class Runner implements MessageConsumer {
                    Preferences.get("run.present.bgcolor"));
       }
 
-      params.add(build.getSketchClassName());
+      // There was a PDE X hack that put this after the class name, but it was
+      // removed for 3.0a6 because it would break the args passed to sketches.
       params.add(PApplet.ARGS_SKETCH_FOLDER + "=" + build.getSketchPath());
-      // Adding sketch path in the end coz it's likely to
-      // contain spaces and things go wrong on UNIX systems.
+
+      params.add(build.getSketchClassName());
     }
 
 //    String outgoing[] = new String[params.size()];
@@ -414,12 +415,12 @@ public class Runner implements MessageConsumer {
           if (result != 0) {
             String[] errorStrings = PApplet.loadStrings(process.getErrorStream());
             String[] inputStrings = PApplet.loadStrings(process.getInputStream());
-            
+
 //            PApplet.println("launchJava stderr:");
 //            PApplet.println(errorStrings);
 //            PApplet.println("launchJava stdout:");
             PApplet.printArray(inputStrings);
-            
+
             if (errorStrings != null && errorStrings.length > 1) {
               if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
                 Base.showWarning("Way Too High",
@@ -464,18 +465,18 @@ public class Runner implements MessageConsumer {
     //vm.setDebugTraceMode(debugTraceMode);
 //    vm.setDebugTraceMode(VirtualMachine.TRACE_ALL);
 //    vm.setDebugTraceMode(VirtualMachine.TRACE_NONE);  // formerly, seems to have no effect
-    
-    // Calling this seems to set something internally to make the 
+
+    // Calling this seems to set something internally to make the
     // Eclipse JDI wake up. Without it, an ObjectCollectedException
-    // is thrown on excReq.enable(). No idea why this works, 
-    // but at least exception handling has returned. (Suspect that it may 
-    // block until all or at least some threads are available, meaning 
-    // that the app has launched and we have legit objects to talk to). 
+    // is thrown on excReq.enable(). No idea why this works,
+    // but at least exception handling has returned. (Suspect that it may
+    // block until all or at least some threads are available, meaning
+    // that the app has launched and we have legit objects to talk to).
     vm.allThreads();
-    // The bug may not have been noticed because the test suite waits for 
-    // a thread to be available, and queries it by calling allThreads(). 
+    // The bug may not have been noticed because the test suite waits for
+    // a thread to be available, and queries it by calling allThreads().
     // See org.eclipse.debug.jdi.tests.AbstractJDITest for the example.
-    
+
     EventRequestManager mgr = vm.eventRequestManager();
     // get only the uncaught exceptions
     ExceptionRequest excReq = mgr.createExceptionRequest(null, false, true);
@@ -487,7 +488,7 @@ public class Runner implements MessageConsumer {
 //    excReq.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 //    excReq.setSuspendPolicy(EventRequest.SUSPEND_NONE);  // another option?
     excReq.enable();
-    
+
     Thread eventThread = new Thread() {
       public void run() {
         try {
@@ -495,7 +496,7 @@ public class Runner implements MessageConsumer {
           while (connected) {
             EventQueue eventQueue = vm.eventQueue();
             // remove() blocks until event(s) available
-            EventSet eventSet = eventQueue.remove();  
+            EventSet eventSet = eventQueue.remove();
 //            listener.vmEvent(eventSet);
 
             for (Event event : eventSet) {
@@ -510,7 +511,7 @@ public class Runner implements MessageConsumer {
                 exceptionEvent((ExceptionEvent) event);
               } else if (event instanceof VMDisconnectEvent) {
                 connected = false;
-              } 
+              }
             }
           }
 //        } catch (VMDisconnectedException e) {
@@ -524,8 +525,8 @@ public class Runner implements MessageConsumer {
     };
     eventThread.start();
 
-    
-    errThread = 
+
+    errThread =
       new MessageSiphon(process.getErrorStream(), this).getThread();
 
     outThread = new StreamRedirectThread("JVM stdout Reader",
@@ -537,7 +538,7 @@ public class Runner implements MessageConsumer {
     // Shutdown begins when event thread terminates
     try {
       if (eventThread != null) eventThread.join();  // is this the problem?
-      
+
 //      System.out.println("in here");
       // Bug #852 tracked to this next line in the code.
       // http://dev.processing.org/bugs/show_bug.cgi?id=852
@@ -561,7 +562,7 @@ public class Runner implements MessageConsumer {
 
 
   protected Connector findConnector(String connectorName) {
-//    List connectors = 
+//    List connectors =
 //      com.sun.jdi.Bootstrap.virtualMachineManager().allConnectors();
     List<Connector> connectors =
       org.eclipse.jdi.Bootstrap.virtualMachineManager().allConnectors();
@@ -584,8 +585,8 @@ public class Runner implements MessageConsumer {
         return connector;
       }
     }
-    Base.showError("Compiler Error", 
-                   "findConnector() failed to find " + 
+    Base.showError("Compiler Error",
+                   "findConnector() failed to find " +
                     connectorName + " inside Runner", null);
     return null; // Not reachable
   }
@@ -618,7 +619,7 @@ public class Runner implements MessageConsumer {
     reportException(message, or, event.thread());
     // Then try to pretty it up with a better message
     handleCommonErrors(exceptionName, message, listener, sketchErr);
-    
+
     if (editor != null) {
       editor.deactivateRun();
     }
@@ -626,10 +627,10 @@ public class Runner implements MessageConsumer {
 
 
   /**
-   * Provide more useful explanations of common error messages, perhaps with 
-   * a short message in the status area, and (if necessary) a longer message 
+   * Provide more useful explanations of common error messages, perhaps with
+   * a short message in the status area, and (if necessary) a longer message
    * in the console.
-   * 
+   *
    * @param exceptionClass Class name causing the error (with full package name)
    * @param message The message from the exception
    * @param listener The Editor or command line interface that's listening for errors
@@ -658,7 +659,7 @@ public class Runner implements MessageConsumer {
     } else if (exceptionClass.equals("java.lang.UnsatisfiedLinkError")) {
       listener.statusError("A library used by this sketch is not installed properly.");
       err.println("A library relies on native code that's not available.");
-      err.println("Or only works properly when the sketch is run as a " + 
+      err.println("Or only works properly when the sketch is run as a " +
         ((Base.getNativeBits() == 32) ? "64-bit " : "32-bit ") + " application.");
 
     } else if (exceptionClass.equals("java.lang.StackOverflowError")) {
@@ -762,7 +763,7 @@ public class Runner implements MessageConsumer {
       method = ((ClassType) or.referenceType()).concreteMethodByName("printStackTrace", "()V");
 //      System.err.println("got method " + method);
       or.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
-      
+
     } catch (Exception e) {
       e.printStackTrace(sketchErr);
     }

@@ -9418,16 +9418,16 @@ public class PApplet implements PConstants {
       argIndex++;
     }
 
-    // Now that sketch path is passed in args after the sketch name
-    // it's not set in the above loop(the above loop breaks after
-    // finding sketch name). So setting sketch path here.
-    // https://github.com/processing/processing/commit/0a14835e6f5f4766b022e73a8fe562318636727c
-    // TODO this is a hack added for PDE X and needs to be removed [fry 141104]
-    for (int i = 0; i < args.length; i++) {
-      if (args[i].startsWith(ARGS_SKETCH_FOLDER)){
-        folder = args[i].substring(args[i].indexOf('=') + 1);
-      }
-    }
+//    // Now that sketch path is passed in args after the sketch name
+//    // it's not set in the above loop(the above loop breaks after
+//    // finding sketch name). So setting sketch path here.
+//    // https://github.com/processing/processing/commit/0a14835e6f5f4766b022e73a8fe562318636727c
+//    // TODO this is a hack added for PDE X and needs to be removed [fry 141104]
+//    for (int i = 0; i < args.length; i++) {
+//      if (args[i].startsWith(ARGS_SKETCH_FOLDER)){
+//        folder = args[i].substring(args[i].indexOf('=') + 1);
+//      }
+//    }
 
     // Set this property before getting into any GUI init code
     //System.setProperty("com.apple.mrj.application.apple.menu.about.name", name);
