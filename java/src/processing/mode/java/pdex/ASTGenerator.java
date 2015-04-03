@@ -135,14 +135,14 @@ public class ASTGenerator {
    * AST Window
    */
   protected JFrame frmASTView;
-  
+
   protected JFrame frameAutoComp;
 
   /**
    * Swing component wrapper for AST, used for internal testing
    */
   protected JTree jtree;
-  
+
   /**
    * JTree used for testing refactoring operations
    */
@@ -155,29 +155,29 @@ public class ASTGenerator {
   protected JEditorPane javadocPane;
 
   protected JScrollPane scrollPane;
-  
+
   protected JFrame frmRename;
 
   protected JButton btnRename;
-  
+
   protected JButton btnListOccurrence;
-  
+
   protected JTextField txtRenameField;
-  
+
   protected JFrame frmOccurenceList;
-  
+
   protected JLabel lblRefactorOldName;
-  
+
   public ASTGenerator(ErrorCheckerService ecs) {
     this.errorCheckerService = ecs;
     this.editor = ecs.getEditor();
     setupGUI();
     //addCompletionPopupListner();
-    addListeners(); 
+    addListeners();
     //loadJavaDoc();
     predictionOngoing = new AtomicBoolean(false);
   }
-  
+
   protected void setupGUI(){
     frmASTView = new JFrame();
 
@@ -191,7 +191,7 @@ public class ASTGenerator {
 
     btnRename = new JButton("Rename");
     btnListOccurrence = new JButton("Show Usage");
-    frmRename = new JFrame();    
+    frmRename = new JFrame();
     frmRename.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     frmRename.setSize(250, 130);
     frmRename.setLayout(new BoxLayout(frmRename.getContentPane(), BoxLayout.Y_AXIS));
@@ -204,7 +204,7 @@ public class ASTGenerator {
     panelBottom.add(Box.createHorizontalGlue());
     panelBottom.add(btnListOccurrence);
     panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
-    panelBottom.add(btnRename);    
+    panelBottom.add(btnRename);
     frmRename.setTitle("Enter new name:");
     txtRenameField = new JTextField();
     txtRenameField.setPreferredSize(new Dimension(150, 60));
@@ -215,29 +215,29 @@ public class ASTGenerator {
     panelTop.add(Box.createRigidArea(new Dimension(0, 10)));
     panelTop.add(lblRefactorOldName);
     frmRename.add(panelTop);
-    frmRename.add(panelBottom);    
+    frmRename.add(panelBottom);
     frmRename.setMinimumSize(frmRename.getSize());
     frmRename.setLocation(editor.getX()
                               + (editor.getWidth() - frmRename.getWidth()) / 2,
                           editor.getY()
                               + (editor.getHeight() - frmRename.getHeight())
                               / 2);
-    
-    
+
+
     frmOccurenceList = new JFrame();
     frmOccurenceList.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     frmOccurenceList.setSize(300, 400);
     Toolkit.setIcon(frmOccurenceList);
     JScrollPane sp2 = new JScrollPane();
     treeRename = new JTree();
-    sp2.setViewportView(treeRename);    
-    frmOccurenceList.add(sp2);    
+    sp2.setViewportView(treeRename);
+    frmOccurenceList.add(sp2);
     //occurenceListFrame.setVisible(true);
-    
+
 //    frameAutoComp = new JFrame();
 //    frameAutoComp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //    frameAutoComp.setBounds(new Rectangle(1280, 100, 460, 620));
-//    Toolkit.setIcon(frameAutoComp); 
+//    Toolkit.setIcon(frameAutoComp);
 //    tableAuto = new JTable();
 //    JScrollPane sp3 = new JScrollPane();
 //    sp3.setViewportView(tableAuto);
@@ -255,10 +255,10 @@ public class ASTGenerator {
 //    scrollPane.setViewportView(javadocPane);
 //    frmJavaDoc.add(scrollPane);
     //frmJavaDoc.setUndecorated(true);
-    
-    
+
+
   }
-  
+
   /**
    * Toggle AST View window
    */
@@ -312,7 +312,7 @@ public class ASTGenerator {
 //          if (!frameAutoComp.isVisible()) {
 //
 //            frameAutoComp.setVisible(true);
-//            
+//
 //          }
 //          if (!frmJavaDoc.isVisible()) {
 //            long t = System.currentTimeMillis();
@@ -338,7 +338,7 @@ public class ASTGenerator {
   protected ClassPathFactory factory;
 
   /**
-   * Used for searching for package declaration of a class 
+   * Used for searching for package declaration of a class
    */
   protected ClassPath classPath;
 
@@ -349,14 +349,14 @@ public class ASTGenerator {
    */
   protected void loadJars() {
 //    SwingWorker worker = new SwingWorker() {
-//      protected void done(){        
+//      protected void done(){
 //      }
 //      protected Object doInBackground() throws Exception {
-//        return null;        
+//        return null;
 //      }
-//    };    
+//    };
 //    worker.execute();
-    
+
     Thread t = new Thread(new Runnable() {
 
       public void run() {
@@ -412,7 +412,7 @@ public class ASTGenerator {
             log(f.getAbsolutePath() + " | rt.jar found?"
                 + f.exists());
           }
-          
+
         } catch (Exception e) {
           e.printStackTrace();
         }
@@ -440,7 +440,7 @@ public class ASTGenerator {
   public DefaultMutableTreeNode buildAST(CompilationUnit cu) {
     return buildAST(errorCheckerService.sourceCode, cu);
   }
-  
+
   public static CompletionCandidate[] checkForTypes(ASTNode node) {
 
     List<VariableDeclarationFragment> vdfs = null;
@@ -495,7 +495,7 @@ public class ASTGenerator {
   /**
    * Find the parent of the expression in a().b, this would give me the return
    * type of a(), so that we can find all children of a() begininng with b
-   * 
+   *
    * @param nearestNode
    * @param expression
    * @return
@@ -544,7 +544,7 @@ public class ASTGenerator {
       if (noCompare) { // no compare, as in "abc.hello." need to resolve hello here
         return findDeclaration2(((QualifiedName) expression).getName(),
                                 nearestNode);
-      } else { 
+      } else {
         //User typed "abc.hello.by" (bye being complete), so need to resolve "abc.hello." only
         return findDeclaration2(((QualifiedName) expression).getQualifier(),
                           nearestNode);
@@ -553,7 +553,7 @@ public class ASTGenerator {
 
     return null;
   }
-  
+
   /**
    * Finds the type of the expression in foo.bar().a().b, this would give me the
    * type of b if it exists in return type of a(). If noCompare is true,
@@ -590,13 +590,13 @@ public class ASTGenerator {
     case ASTNode.FIELD_ACCESS:
       FieldAccess fa = (FieldAccess) astNode;
       if (fa.getExpression() == null) {
-        
+
         // TODO: Check for existence of 'new' keyword. Could be a ClassInstanceCreation
-        
+
         // Local code or belongs to super class
         log("FA,Not implemented.");
         return null;
-      } else { 
+      } else {
         if (fa.getExpression() instanceof SimpleName) {
           stp = extracTypeInfo(findDeclaration2((SimpleName) fa.getExpression(),
                                                 nearestNode));
@@ -612,12 +612,12 @@ public class ASTGenerator {
                   .getName().toString());
             }
             log("FA resolve 3rd par, Can't resolve " + fa.getExpression());
-            
+
             return null;
           }
           log("FA, SN Type " + getNodeAsString(stp));
           scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
-          
+
         } else {
           scopeParent = resolveExpression3rdParty(nearestNode,
                                                   fa.getExpression(), noCompare);
@@ -638,7 +638,7 @@ public class ASTGenerator {
         //Local code or belongs to super class
         log("MI,Not implemented.");
         return null;
-      } else { 
+      } else {
         if (mi.getExpression() instanceof SimpleName) {
           stp = extracTypeInfo(findDeclaration2((SimpleName) mi.getExpression(),
                                                 nearestNode));
@@ -680,7 +680,7 @@ public class ASTGenerator {
           log("MI, ScopeParent " + scopeParent);
           return definedIn3rdPartyClass(scopeParent, mi.getName().toString());
         }
-        
+
       }
     case ASTNode.QUALIFIED_NAME:
       QualifiedName qn = (QualifiedName) astNode;
@@ -694,7 +694,7 @@ public class ASTGenerator {
         log("QN,Not implemented.");
         return null;
       } else  {
-        
+
         if (qn.getQualifier() instanceof SimpleName) {
           stp = extracTypeInfo(findDeclaration2(qn.getQualifier(), nearestNode));
           if(stp == null){
@@ -715,7 +715,7 @@ public class ASTGenerator {
           ASTNode typeDec = findDeclaration2(stp.getName(),nearestNode);
           if(typeDec == null){
             log(stp.getName() + " couldn't be found locally..");
-            
+
             Class<?> tehClass = findClassIfExists(stp.getName().toString());
             if (tehClass != null) {
               // note how similar thing is called on line 690. Check check.
@@ -733,7 +733,7 @@ public class ASTGenerator {
           log("QN, ScopeParent " + scopeParent);
           return definedIn3rdPartyClass(scopeParent, qn.getName().toString());
         }
-        
+
       }
     case ASTNode.ARRAY_ACCESS:
       ArrayAccess arac = (ArrayAccess)astNode;
@@ -742,13 +742,13 @@ public class ASTGenerator {
       log("Unaccounted type " + getNodeAsString(astNode));
       break;
     }
-    
+
     return null;
   }
-  
+
   /**
    * For a().abc.a123 this would return a123
-   * 
+   *
    * @param expression
    * @return
    */
@@ -769,7 +769,7 @@ public class ASTGenerator {
         + getNodeAsString(expression));
     return null;
   }
-  
+
   public static ASTNode getParentExpression(ASTNode expression) {
 //  ASTNode anode = null;
     if (expression instanceof SimpleName) {
@@ -798,7 +798,7 @@ public class ASTGenerator {
     }
     candidates = newCandidate;
   }
-  
+
   /**
    * List of CompletionCandidates
    */
@@ -806,23 +806,23 @@ public class ASTGenerator {
   protected String lastPredictedWord = " ";
   //protected AtomicBoolean predictionsEnabled;
   protected int predictionMinLength = 2;
-  
-  
+
+
   private AtomicBoolean predictionOngoing;
-  
+
   /**
    * The main function that calculates possible code completion candidates
-   *  
+   *
    * @param word
    * @param line
    * @param lineStartNonWSOffset
    */
   public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
     if(predictionOngoing.get()) return;
-        
+
     if (!JavaMode.codeCompletionsEnabled) return;
     if (word.length() < predictionMinLength) return;
-    
+
     predictionOngoing.set(true);
     // This method is called from TextArea.fetchPhrase, which is called via a SwingWorker instance
     // in TextArea.processKeyEvent
@@ -831,7 +831,7 @@ public class ASTGenerator {
       predictionOngoing.set(false);
       return;
     }
-    
+
 //    SwingWorker worker = new SwingWorker() {
 //
 //      @Override
@@ -840,18 +840,18 @@ public class ASTGenerator {
 //      }
 //
 //      protected void done() {
-    
+
         // If the parsed code contains pde enhancements, take 'em out.
         String word2 = ASTNodeWrapper.getJavaCode(word);
 
-        //After typing 'arg.' all members of arg type are to be listed. This one is a flag for it        
+        //After typing 'arg.' all members of arg type are to be listed. This one is a flag for it
         boolean noCompare = false;
         if (word2.endsWith(".")) {
           // return all matches
           word2 = word2.substring(0, word2.length() - 1);
           noCompare = true;
         }
-        
+
         if (word2.length() >= predictionMinLength && !noCompare
             && word2.length() > lastPredictedWord.length()) {
           if (word2.startsWith(lastPredictedWord)) {
@@ -869,7 +869,7 @@ public class ASTGenerator {
             return;
           }
         }
-        
+
         int lineNumber = line;
         // Adjust line number for tabbed sketches
         if (errorCheckerService != null) {
@@ -884,9 +884,9 @@ public class ASTGenerator {
             }
 
         }
-        
+
         // Ensure that we're not inside a comment. TODO: Binary search
-        
+
         /*for (Comment comm : getCodeComments()) {
           int commLineNo = PdeToJavaLineNumber(compilationUnit
               .getLineNumber(comm.getStartPosition()));
@@ -898,7 +898,7 @@ public class ASTGenerator {
                                                   comm.getStartPosition()));
             break;
           }
-        }*/        
+        }*/
 
         // Now parse the expression into an ASTNode object
         ASTNode nearestNode = null;
@@ -913,7 +913,7 @@ public class ASTGenerator {
           MethodInvocation mi = (MethodInvocation)testnode;
           log(mi.getName() + "," + mi.getExpression() + "," + mi.typeArguments().size());
         }
-        
+
         // find nearest ASTNode
         nearestNode = findClosestNode(lineNumber, (ASTNode) errorCheckerService.getLastCorrectCU().types()
             .get(0));
@@ -927,12 +927,12 @@ public class ASTGenerator {
         candidates = new ArrayList<CompletionCandidate>();
         lastPredictedWord = word2;
         // Determine the expression typed
-        
+
         if (testnode instanceof SimpleName && !noCompare) {
           Base.loge("One word expression " + getNodeAsString(testnode));
           //==> Simple one word exprssion - so is just an identifier
-          
-          // Bottom up traversal of the AST to look for possible definitions at 
+
+          // Bottom up traversal of the AST to look for possible definitions at
           // higher levels.
           //nearestNode = nearestNode.getParent();
           while (nearestNode != null) {
@@ -1006,7 +1006,7 @@ public class ASTGenerator {
               int d = matchedClass.lastIndexOf('.');
               if (ignorableImport(matchedClass2,matchedClass.substring(d + 1)))
                 continue;
-              
+
               matchedClass = matchedClass.substring(d + 1); //class name
               candidates
                   .add(new CompletionCandidate(matchedClass, "<html>"
@@ -1047,9 +1047,9 @@ public class ASTGenerator {
           else
           {
             log("ChildExpr is null");
-          }          
+          }
         }
-        
+
         showPredictions(word);
         predictionOngoing.set(false);
 //      }
@@ -1057,10 +1057,13 @@ public class ASTGenerator {
 //
 //    worker.execute();
   }
-  
+
   protected void showPredictions(final String word) {
-    if (sketchOutline != null)
-      if (sketchOutline.isVisible()) return;
+    if (sketchOutline != null && sketchOutline.isVisible()) {
+      // don't show completions when the outline is visible
+      return;
+    }
+
     Collections.sort(candidates);
 //    CompletionCandidate[][] candi = new CompletionCandidate[candidates.size()][1];
 //    DefaultListModel<CompletionCandidate> defListModel = new DefaultListModel<CompletionCandidate>();
@@ -1127,7 +1130,7 @@ public class ASTGenerator {
 
   /**
    * Loads classes from .jar files in sketch classpath
-   * 
+   *
    * @param typeName
    * @param child
    * @param noCompare
@@ -1137,7 +1140,7 @@ public class ASTGenerator {
                                                           String child,
                                                           boolean noCompare,
                                                           boolean staticOnly) {
-    
+
     ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
     log("In GMFT(), Looking for match " + child.toString()
         + " in class " + typeName + " noCompare " + noCompare + " staticOnly "
@@ -1148,9 +1151,9 @@ public class ASTGenerator {
       return candidates;
     }
    return getMembersForType(new ClassMember(probableClass), child, noCompare, staticOnly);
-   
+
   }
-  
+
   public ArrayList<CompletionCandidate> getMembersForType(ClassMember tehClass,
                                                           String childToLookFor,
                                                           boolean noCompare,
@@ -1165,7 +1168,7 @@ public class ASTGenerator {
     }
     // tehClass will either be a TypeDecl defined locally
     if(tehClass.getDeclaringNode() instanceof TypeDeclaration){
-      
+
       TypeDeclaration td = (TypeDeclaration) tehClass.getDeclaringNode();
       for (int i = 0; i < td.getFields().length; i++) {
         List<VariableDeclarationFragment> vdfs = td.getFields()[i]
@@ -1188,13 +1191,13 @@ public class ASTGenerator {
             .startsWith(child))
           candidates.add(new CompletionCandidate(td.getMethods()[i]));
       }
-      
+
       ArrayList<CompletionCandidate> superClassCandidates = new ArrayList<CompletionCandidate>();
       if(td.getSuperclassType() != null){
         log(getNodeAsString(td.getSuperclassType()) + " <-Looking into superclass of " + tehClass);
         superClassCandidates = getMembersForType(new ClassMember(td
                                                      .getSuperclassType()),
-                                                 childToLookFor, noCompare, staticOnly);        
+                                                 childToLookFor, noCompare, staticOnly);
       }
       else
       {
@@ -1206,9 +1209,9 @@ public class ASTGenerator {
       }
       return candidates;
     }
-    
+
     // Or tehClass will be a predefined class
-   
+
     Class<?> probableClass;
     if (tehClass.getClass_() != null) {
       probableClass = tehClass.getClass_();
@@ -1250,7 +1253,7 @@ public class ASTGenerator {
     }
     return candidates;
   }
-  
+
   public String getPDESourceCodeLine(int javaLineNumber) {
     int res[] = errorCheckerService
         .calculateTabIndexAndLineNumber(javaLineNumber);
@@ -1259,7 +1262,7 @@ public class ASTGenerator {
     }
     return null;
   }
-  
+
   /**
    * Returns the java source code line at the given line number
    * @param javaLineNumber
@@ -1311,7 +1314,7 @@ public class ASTGenerator {
     }
     return null;
   }
-  
+
   /**
    * Searches for the particular class in the default list of imports as well as
    * the Sketch classpath
@@ -1325,12 +1328,12 @@ public class ASTGenerator {
     Class<?> tehClass = null;
     // First, see if the classname is a fully qualified name and loads straightaway
     tehClass = loadClass(className);
-    
-    if (tehClass != null) {    
+
+    if (tehClass != null) {
       //log(tehClass.getName() + " located straightaway");
       return tehClass;
     }
-    
+
     log("Looking in the classloader for " + className);
     ArrayList<ImportStatement> imports = errorCheckerService
         .getProgramImports();
@@ -1356,7 +1359,7 @@ public class ASTGenerator {
       //log("Doesn't exist in package: " + impS.getImportName());
 
     }
-    
+
     PdePreprocessor p = new PdePreprocessor(null);
     for (String impS : p.getCoreImports()) {
       tehClass = loadClass(impS.substring(0,impS.length()-1) + className);
@@ -1366,10 +1369,10 @@ public class ASTGenerator {
       }
       //log("Doesn't exist in package: " + impS);
     }
-    
+
     for (String impS : p.getDefaultImports()) {
       if(className.equals(impS) || impS.endsWith(className)){
-        tehClass = loadClass(impS);                    
+        tehClass = loadClass(impS);
         if (tehClass != null) {
           log(tehClass.getName() + " located.");
           return tehClass;
@@ -1377,19 +1380,19 @@ public class ASTGenerator {
        // log("Doesn't exist in package: " + impS);
       }
     }
-    
+
     // And finally, the daddy
     String daddy = "java.lang." + className;
-    tehClass = loadClass(daddy);                    
+    tehClass = loadClass(daddy);
     if (tehClass != null) {
       log(tehClass.getName() + " located.");
       return tehClass;
     }
     //log("Doesn't exist in java.lang");
-    
+
     return tehClass;
   }
-  
+
   protected Class<?> loadClass(String className){
     Class<?> tehClass = null;
     if (className != null) {
@@ -1402,7 +1405,7 @@ public class ASTGenerator {
     }
     return tehClass;
   }
-  
+
   public ClassMember definedIn3rdPartyClass(String className,String memberName){
     Class<?> probableClass = findClassIfExists(className);
     if (probableClass == null) {
@@ -1415,7 +1418,7 @@ public class ASTGenerator {
       return definedIn3rdPartyClass(new ClassMember(probableClass), memberName);
     }
   }
-  
+
   public ClassMember definedIn3rdPartyClass(ClassMember tehClass,String memberName){
     if(tehClass == null)
       return null;
@@ -1423,10 +1426,10 @@ public class ASTGenerator {
         + " in " + tehClass);
     String memberNameL = memberName.toLowerCase();
     if (tehClass.getDeclaringNode() instanceof TypeDeclaration) {
-      
+
       TypeDeclaration td = (TypeDeclaration) tehClass.getDeclaringNode();
       for (int i = 0; i < td.getFields().length; i++) {
-        List<VariableDeclarationFragment> vdfs = 
+        List<VariableDeclarationFragment> vdfs =
           td.getFields()[i].fragments();
         for (VariableDeclarationFragment vdf : vdfs) {
           if (vdf.getName().toString().toLowerCase()
@@ -1443,12 +1446,12 @@ public class ASTGenerator {
       if (td.getSuperclassType() != null) {
         log(getNodeAsString(td.getSuperclassType()) + " <-Looking into superclass of " + tehClass);
         return definedIn3rdPartyClass(new ClassMember(td
-                                                     .getSuperclassType()),memberName);        
+                                                     .getSuperclassType()),memberName);
       } else {
         return definedIn3rdPartyClass(new ClassMember(Object.class),memberName);
       }
     }
-    
+
     Class<?> probableClass = null;
     if (tehClass.getClass_() != null) {
       probableClass = tehClass.getClass_();
@@ -1456,7 +1459,7 @@ public class ASTGenerator {
       probableClass = findClassIfExists(tehClass.getTypeAsString());
       log("Loaded " + probableClass.toString());
     }
-    for (Method method : probableClass.getMethods()) {        
+    for (Method method : probableClass.getMethods()) {
       if (method.getName().equalsIgnoreCase(memberName)) {
         return new ClassMember(method);
       }
@@ -1468,7 +1471,7 @@ public class ASTGenerator {
     }
     return null;
   }
-  
+
   public void updateJavaDoc(final CompletionCandidate candidate) {
     //TODO: Work on this later.
       return;
@@ -1494,10 +1497,10 @@ public class ASTGenerator {
             temp = (jdocMap.get(key));
             break;
           }
-        } 
+        }
       }
     }
-    
+
     final String jdocString = temp;
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -1574,9 +1577,9 @@ public class ASTGenerator {
     if (nodes.size() > 0) {
       ASTNode retNode = parent;
       for (int i = 0; i < nodes.size(); i++) {
-        ASTNode cNode = nodes.get(i);        
+        ASTNode cNode = nodes.get(i);
         log(cNode + "|cNode " + getLineNumber(cNode) + ", lfor " + lineNumber );
-        if (getLineNumber(cNode) <= lineNumber)          
+        if (getLineNumber(cNode) <= lineNumber)
           retNode = cNode;
       }
 
@@ -1593,7 +1596,7 @@ public class ASTGenerator {
     return getASTNodeAt(lineNumber, name, offset, false).getLabel();
     //return "";
   }
-  
+
   protected String getLabelIfType(ASTNodeWrapper node, SimpleName sn){
     ASTNode current = node.getNode().getParent();
     String type = "";
@@ -1638,11 +1641,11 @@ public class ASTGenerator {
       int x = fullName.indexOf(".");
       fullName.delete(0, x + 1);
       return type + " " + fullName;
-    
+
     case ASTNode.SINGLE_VARIABLE_DECLARATION:
       SingleVariableDeclaration svd = (SingleVariableDeclaration)node.getNode();
       return svd.getType() + " " + svd.getName();
-      
+
     case ASTNode.VARIABLE_DECLARATION_STATEMENT:
       return ((VariableDeclarationStatement) node.getNode()).getType() + " "
           + simpleName;
@@ -1652,8 +1655,8 @@ public class ASTGenerator {
     default:
       break;
     }
-    
-    
+
+
     return "";
   }
 
@@ -1672,7 +1675,7 @@ public class ASTGenerator {
    */
   public ASTNodeWrapper getASTNodeAt(int lineNumber, String name, int offset,
                                      boolean scrollOnly) {
-    
+
     // Convert tab based pde line number to actual line number
     int pdeLineNumber = lineNumber + errorCheckerService.mainClassOffset;
 //    log("----getASTNodeAt---- CU State: "
@@ -1714,7 +1717,7 @@ public class ASTGenerator {
       int javaOffset = ofm.getJavaOffForPdeOff(offset, name.length())
           + lineNode.getStartPosition();
 //      log("JAVA ast offset: " + (javaOffset));
-      
+
       // Find the corresponding node in the AST
       ASTNode simpName = dfsLookForASTNode(errorCheckerService.getLatestCU(),
                                            name, javaOffset,
@@ -1845,7 +1848,7 @@ public class ASTGenerator {
     return ((CompilationUnit) node.getRoot()).getLineNumber(node
         .getStartPosition());
   }
-  
+
   public static int getLineNumber(ASTNode node, int pos) {
     return ((CompilationUnit) node.getRoot()).getLineNumber(pos);
   }
@@ -1894,13 +1897,13 @@ public class ASTGenerator {
       Base.log(found.toString());
     }
   }
-  
-  
+
+
   final ASTGenerator thisASTGenerator = this;
-  
+
   protected void addListeners(){
     jtree.addTreeSelectionListener(new TreeSelectionListener() {
-      
+
       @Override
       public void valueChanged(TreeSelectionEvent e) {
         Base.log(e.toString());
@@ -1917,12 +1920,12 @@ public class ASTGenerator {
               return;
             }
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) jtree
-                .getLastSelectedPathComponent();    
+                .getLastSelectedPathComponent();
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
               awrap.highlightNode(thisASTGenerator);
               // errorCheckerService.highlightNode(awrap);
-              
+
               //--
               try {
                 int javaLineNumber = getLineNumber(awrap.getNode());
@@ -1935,7 +1938,7 @@ public class ASTGenerator {
                 if(lineElement == null) {
                   return;
                 }
-                
+
                 String javaLine = javaSource.getText(lineElement.getStartOffset(),
                                                      lineElement.getEndOffset()
                                                          - lineElement.getStartOffset());
@@ -1955,11 +1958,11 @@ public class ASTGenerator {
         worker.execute();
       }
     });
-    
+
     btnRename.addActionListener(new ActionListener() {
-      
+
       @Override
-      public void actionPerformed(ActionEvent e) {       
+      public void actionPerformed(ActionEvent e) {
         if(txtRenameField.getText().length() == 0)
           return;
         SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
@@ -1995,9 +1998,9 @@ public class ASTGenerator {
         worker.execute();
       }
     });
-        
+
     treeRename.addTreeSelectionListener(new TreeSelectionListener() {
-      
+
       @Override
       public void valueChanged(TreeSelectionEvent e) {
         log(e);
@@ -2014,8 +2017,8 @@ public class ASTGenerator {
               return;
             }
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) treeRename
-                .getLastSelectedPathComponent();    
-            
+                .getLastSelectedPathComponent();
+
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
               //errorCheckerService.highlightNode(awrap);
@@ -2027,7 +2030,7 @@ public class ASTGenerator {
       }
     });
   }
-  
+
   protected void refactorIt(){
     String newName = txtRenameField.getText().trim();
     String selText = lastClickedWord == null ? getSelectedText()
@@ -2035,11 +2038,11 @@ public class ASTGenerator {
     // Find all occurrences of last clicked word
     DefaultMutableTreeNode defCU = findAllOccurrences(); //TODO: Repetition here
     if(defCU == null){
-      editor.statusMessage("Can't locate definition of " + selText, 
+      editor.statusMessage("Can't locate definition of " + selText,
                            JavaEditor.STATUS_ERR);
       return;
     }
-    
+
     // Verify if the new name is a valid java identifier
     if(!newName.matches("([a-zA-Z][a-zA-Z0-9_]*)|([_][a-zA-Z0-9_]+)"))
     {
@@ -2048,7 +2051,7 @@ public class ASTGenerator {
       return;
     }
     //else log("New name looks K.");
-    
+
     errorCheckerService.pauseThread();
     if(treeRename.isVisible()){
       treeRename.setModel(new DefaultTreeModel(defCU));
@@ -2075,7 +2078,7 @@ public class ASTGenerator {
       pdeOffsets[i][1] = ans[1];
       pdeOffsets[i][2] = awrap.getPDECodeOffsetForSN(this);
     }
-    
+
     editor.startCompoundEdit();
     for (int i = 0; i < defCU.getChildCount(); i++) {
       ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
@@ -2109,7 +2112,7 @@ public class ASTGenerator {
     lastClickedWord = null;
     lastClickedWordNode = null;
   }
-  
+
   /**
    * Highlights text in the editor
    * @param tab
@@ -2126,28 +2129,28 @@ public class ASTGenerator {
     lineStartWSOffset += editor.getTextArea().getLineStartOffset(lineNumber);
     editor.getTextArea().select(lineStartWSOffset, lineStartWSOffset + length);
   }
-  
+
   public void handleShowUsage() {
     if (editor.hasJavaTabs()) return; // show usage disabled if java tabs
-    
+
     log("Last clicked word:" + lastClickedWord);
-    if (lastClickedWord == null && 
+    if (lastClickedWord == null &&
         getSelectedText() == null) {
       editor.statusMessage("Highlight the class/function/variable name first"
                            , JavaEditor.STATUS_INFO);
       return;
     }
-    
+
     if(errorCheckerService.hasSyntaxErrors()){
       editor.statusMessage("Can't perform action until syntax errors are " +
       		"fixed :(", JavaEditor.STATUS_WARNING);
       return;
     }
-    DefaultMutableTreeNode defCU = findAllOccurrences();   
-    String selText = lastClickedWord == null ? 
+    DefaultMutableTreeNode defCU = findAllOccurrences();
+    String selText = lastClickedWord == null ?
       getSelectedText() : lastClickedWord;
     if (defCU == null) {
-      editor.statusMessage("Can't locate definition of " + selText, 
+      editor.statusMessage("Can't locate definition of " + selText,
                            JavaEditor.STATUS_ERR);
       return;
     }
@@ -2163,10 +2166,10 @@ public class ASTGenerator {
     lastClickedWord = null;
     lastClickedWordNode = null;
   }
-  
+
   protected String lastClickedWord = null;
   protected ASTNodeWrapper lastClickedWordNode = null;
-  
+
   public String getLastClickedWord() {
     return lastClickedWord;
   }
@@ -2179,7 +2182,7 @@ public class ASTGenerator {
 
   protected DefaultMutableTreeNode findAllOccurrences(){
     final JEditTextArea ta = editor.getTextArea();
-    
+
     log("Last clicked word:" + lastClickedWord);
     String selText = lastClickedWord == null ? ta.getSelectedText() :
         lastClickedWord;
@@ -2205,7 +2208,7 @@ public class ASTGenerator {
     }
     Base.loge("Gonna find all occurrences of "
         + getNodeAsString(wnode.getNode()));
-    
+
     //If wnode is a constructor, find the TD instead.
     if (wnode.getNodeType() == ASTNode.METHOD_DECLARATION) {
       MethodDeclaration md = (MethodDeclaration) wnode.getNode();
@@ -2225,14 +2228,14 @@ public class ASTGenerator {
         }
       }
     }
-    
+
     DefaultMutableTreeNode defCU = new DefaultMutableTreeNode(
                                                               new ASTNodeWrapper(
                                                                                  wnode
                                                                                      .getNode(),
                                                                                  selText));
     dfsNameOnly(defCU, wnode.getNode(), selText);
-    
+
     // Reverse the list obtained via dfs
     Stack<Object> tempS = new Stack<Object>();
     for (int i = 0; i < defCU.getChildCount(); i++) {
@@ -2243,18 +2246,18 @@ public class ASTGenerator {
       defCU.add((MutableTreeNode) tempS.pop());
     }
     log(wnode);
-    
+
     return defCU;
   }
 
-  
+
   /**
-   * Generates AST Swing component 
+   * Generates AST Swing component
    * @param node
    * @param tnode
    */
   public static void visitRecur(ASTNode node, DefaultMutableTreeNode tnode) {
-    Iterator<StructuralPropertyDescriptor> it = 
+    Iterator<StructuralPropertyDescriptor> it =
         node.structuralPropertiesForType().iterator();
     //Base.loge("Props of " + node.getClass().getName());
     DefaultMutableTreeNode ctnode = null;
@@ -2280,7 +2283,7 @@ public class ASTGenerator {
           }
         }
       } else if (prop.isChildListProperty()) {
-        List<ASTNode> nodelist = (List<ASTNode>) 
+        List<ASTNode> nodelist = (List<ASTNode>)
           node.getStructuralProperty(prop);
         for (ASTNode cnode : nodelist) {
           if (isAddableASTNode(cnode)) {
@@ -2294,18 +2297,18 @@ public class ASTGenerator {
       }
     }
   }
-  
-  
+
+
   public void dfsNameOnly(DefaultMutableTreeNode tnode,ASTNode decl, String name) {
     Stack<DefaultMutableTreeNode> temp = new Stack<DefaultMutableTreeNode>();
     temp.push(codeTree);
-    
+
     while(!temp.isEmpty()){
       DefaultMutableTreeNode cnode = temp.pop();
       for (int i = 0; i < cnode.getChildCount(); i++) {
         temp.push((DefaultMutableTreeNode) cnode.getChildAt(i));
       }
-      
+
       if(!(cnode.getUserObject() instanceof ASTNodeWrapper))
         continue;
       ASTNodeWrapper awnode = (ASTNodeWrapper) cnode.getUserObject();
@@ -2317,10 +2320,10 @@ public class ASTGenerator {
             .getNode(), "Line " + (val[1] + 1) + " | Tab: "
             + editor.getSketch().getCode(val[0]).getPrettyName())));
       }
-      
+
     }
   }
-  
+
   public ASTNode dfsLookForASTNode(ASTNode root, String name, int startOffset,
                                    int endOffset) {
 //    log("dfsLookForASTNode() lookin for " + name + " Offsets: " + startOffset
@@ -2331,7 +2334,7 @@ public class ASTGenerator {
     while (!stack.isEmpty()) {
       ASTNode node = stack.pop();
       //log("Popped from stack: " + getNodeAsString(node));
-      Iterator<StructuralPropertyDescriptor> it = 
+      Iterator<StructuralPropertyDescriptor> it =
           node.structuralPropertiesForType().iterator();
       while (it.hasNext()) {
         StructuralPropertyDescriptor prop = it.next();
@@ -2355,7 +2358,7 @@ public class ASTGenerator {
           }
         }
         else if (prop.isChildListProperty()) {
-          List<ASTNode> nodelist = 
+          List<ASTNode> nodelist =
             (List<ASTNode>) node.getStructuralProperty(prop);
           for (ASTNode temp : nodelist) {
             if (temp.getStartPosition() <= startOffset
@@ -2380,23 +2383,23 @@ public class ASTGenerator {
 //    log("dfsLookForASTNode() not found " + name);
     return null;
   }
-  
-  
+
+
   protected SketchOutline sketchOutline;
-  
+
   public void showSketchOutline() {
     if (editor.hasJavaTabs()) return;
-    
+
     sketchOutline = new SketchOutline(codeTree, errorCheckerService);
     sketchOutline.show();
   }
-  
-  
+
+
   public void showTabOutline() {
     new TabOutline(errorCheckerService).show();
   }
-  
-  
+
+
   public int javaCodeOffsetToLineStartOffset(int line, int jOffset){
     // Find the first node with this line number, return its offset - jOffset
     line = pdeLineNumToJavaLineNum(line);
@@ -2419,11 +2422,11 @@ public class ASTGenerator {
             + "LSO: " + (jOffset - awnode.getNode().getStartPosition()));
         return (jOffset - awnode.getNode().getStartPosition());
       }
-    }    
+    }
     return -1;
   }
-  
-  
+
+
   /**
    * Converts pde line number to java line number
    * @param pdeLineNum - pde line number
@@ -2441,11 +2444,11 @@ public class ASTGenerator {
       }
     return javaLineNumber;
   }
-  
+
   protected boolean isInstanceOfType(ASTNode node,ASTNode decl, String name){
     if(node instanceof SimpleName){
       SimpleName sn = (SimpleName) node;
-      
+
       if (sn.toString().equals(name)) {
         ArrayList<ASTNode> nodesToBeMatched = new ArrayList<ASTNode>();
         nodesToBeMatched.add(decl);
@@ -2472,26 +2475,26 @@ public class ASTGenerator {
     }
     return false;
   }
-  
+
   public void handleRefactor() {
     if (editor.hasJavaTabs()) return;  // refactoring disabled w/ java tabs
 
     log("Last clicked word:" + lastClickedWord);
-    if (lastClickedWord == null && 
+    if (lastClickedWord == null &&
         getSelectedText() == null) {
       editor.statusMessage("Highlight the class/function/variable name first",
                            JavaEditor.STATUS_INFO);
       return;
     }
-    
+
     if (errorCheckerService.hasSyntaxErrors()) {
       editor.statusMessage("Can't perform action until syntax errors are fixed :(",
                            JavaEditor.STATUS_WARNING);
       return;
     }
-    
-    DefaultMutableTreeNode defCU = findAllOccurrences();   
-    String selText = lastClickedWord == null ? 
+
+    DefaultMutableTreeNode defCU = findAllOccurrences();
+    String selText = lastClickedWord == null ?
         getSelectedText() : lastClickedWord;
     if (defCU == null) {
       editor.statusMessage(selText + " isn't defined in this sketch, so it can't" +
@@ -2505,7 +2508,7 @@ public class ASTGenerator {
                             + (editor.getHeight() - frmRename.getHeight())
                             / 2);
       frmRename.setVisible(true);
-      SwingUtilities.invokeLater(new Runnable() {          
+      SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
           String selText = lastClickedWord == null ? getSelectedText()
@@ -2521,7 +2524,7 @@ public class ASTGenerator {
     }
     frmRename.toFront();
   }
-  
+
 
   public static void printRecur(ASTNode node) {
     Iterator<StructuralPropertyDescriptor> it = node
@@ -2553,14 +2556,14 @@ public class ASTGenerator {
     }
   }
 
-  
+
   protected static ASTNode findLineOfNode(ASTNode node, int lineNumber,
                                         int offset, String name) {
 
     CompilationUnit root = (CompilationUnit) node.getRoot();
 //    log("Inside "+getNodeAsString(node) + " | " + root.getLineNumber(node.getStartPosition()));
     if (root.getLineNumber(node.getStartPosition()) == lineNumber) {
-      // Base.loge(3 + getNodeAsString(node) + " len " + node.getLength());      
+      // Base.loge(3 + getNodeAsString(node) + " len " + node.getLength());
       return node;
 //      if (offset < node.getLength())
 //        return node;
@@ -2601,7 +2604,7 @@ public class ASTGenerator {
   }
 
   /**
-   * 
+   *
    * @param node
    * @param offset
    *          - from textarea painter
@@ -2625,7 +2628,7 @@ public class ASTGenerator {
         }
         else {
           return null;
-        } 
+        }
       } else {
         return null;
       }
@@ -2665,15 +2668,15 @@ public class ASTGenerator {
    * Give this thing a {@link Name} instance - a {@link SimpleName} from the
    * ASTNode for ex, and it tries its level best to locate its declaration in
    * the AST. It really does.
-   * 
+   *
    * @param findMe
    * @return
    */
   protected static ASTNode findDeclaration(Name findMe) {
-    
+
     // WARNING: You're entering the Rube Goldberg territory of Experimental Mode.
     // To debug this code, thou must take the Recursive Leap of Faith.
-    
+
     // log("entering --findDeclaration1 -- " + findMe.toString());
     ASTNode declaringClass = null;
     ASTNode parent = findMe.getParent();
@@ -2775,7 +2778,7 @@ public class ASTGenerator {
         SimpleType stp = extracTypeInfo(findDeclaration((qn.getQualifier())));
 //        log(qn.getQualifier() + "->" + qn.getName());
         declaringClass = findDeclaration(stp.getName());
-        
+
 //        log("QN decl class: " + getNodeAsString(declaringClass));
         constrains.clear();
         constrains.add(ASTNode.TYPE_DECLARATION);
@@ -2812,13 +2815,13 @@ public class ASTGenerator {
       TypeDeclaration td = (TypeDeclaration) parent;
       if(findMe.equals(td.getName()))
       {
-        return parent; 
+        return parent;
       }
     }
     else if (parent instanceof Expression) {
 //      constrains.add(ASTNode.TYPE_DECLARATION);
 //      constrains.add(ASTNode.METHOD_DECLARATION);
-//      constrains.add(ASTNode.FIELD_DECLARATION);      
+//      constrains.add(ASTNode.FIELD_DECLARATION);
     }
 //    else if(findMe instanceof QualifiedName){
 //      QualifiedName qn = (QualifiedName) findMe;
@@ -3010,7 +3013,7 @@ public class ASTGenerator {
     } else if (parent instanceof Expression) {
 //      constrains.add(ASTNode.TYPE_DECLARATION);
 //      constrains.add(ASTNode.METHOD_DECLARATION);
-//      constrains.add(ASTNode.FIELD_DECLARATION);      
+//      constrains.add(ASTNode.FIELD_DECLARATION);
     } // TODO: in findDec, we also have a case where parent of type TD is handled.
       // Figure out if needed here as well.
 //    log("Alternate parent: " + getNodeAsString(alternateParent));
@@ -3046,8 +3049,8 @@ public class ASTGenerator {
     }
     return null;
   }
-  
-  
+
+
   protected List<Comment> getCodeComments(){
     List<Comment> commentList = compilationUnit.getCommentList();
 //    log("Total comments: " + commentList.size());
@@ -3059,21 +3062,21 @@ public class ASTGenerator {
 //    }
     return commentList;
   }
-  
-  
+
+
   protected boolean caretWithinLineComment() {
     final JEditTextArea ta = editor.getTextArea();
     String pdeLine = editor.getLineText(ta.getCaretLine()).trim();
     int caretPos = ta.getCaretPosition() - ta.getLineStartNonWhiteSpaceOffset(ta.getCaretLine());
     int x = pdeLine.indexOf("//");
-    
+
     if (x >= 0 && caretPos > x) {
       return true;
     }
     return false;
   }
 
-  
+
   /**
    * A wrapper for java.lang.reflect types.
    * Will have to see if the usage turns out to be internal only here or not
@@ -3091,11 +3094,11 @@ public class ASTGenerator {
     private Class<?> thisclass;
 
     private String stringVal;
-    
+
     private String classType;
-    
+
     private ASTNode astNode;
-    
+
     private ASTNode declaringNode;
 
     public ClassMember(Class<?> m) {
@@ -3123,7 +3126,7 @@ public class ASTGenerator {
       stringVal = "Cons " + " " + m.getName() + " defined in "
           + m.getDeclaringClass().getName();
     }
-    
+
     public ClassMember(ASTNode node){
       astNode = node;
       stringVal = getNodeAsString(node);
@@ -3142,7 +3145,7 @@ public class ASTGenerator {
           // a predefined type
           classType = stp.getName().toString();
           Class<?> probableClass = findClassIfExists(classType);
-          thisclass = probableClass; 
+          thisclass = probableClass;
         }
         else{
           // a local type
@@ -3154,7 +3157,7 @@ public class ASTGenerator {
     public Class<?> getClass_() {
       return thisclass;
     }
-    
+
     public ASTNode getDeclaringNode(){
       return declaringNode;
     }
@@ -3170,7 +3173,7 @@ public class ASTGenerator {
     public Constructor<?> getCons() {
       return cons;
     }
-    
+
     public ASTNode getASTNode(){
       return astNode;
     }
@@ -3178,16 +3181,16 @@ public class ASTGenerator {
     public String toString() {
       return stringVal;
     }
-    
+
     public String getTypeAsString(){
       return classType;
     }
   }
-  
-  
+
+
   /**
    * Find the SimpleType from FD, SVD, VDS, etc
-   * 
+   *
    * @param node
    * @return
    */
@@ -3219,8 +3222,8 @@ public class ASTGenerator {
     }
     return (SimpleType) t;
   }
-  
-  
+
+
   static public Type extracTypeInfo2(ASTNode node) {
     if (node == null)
       return null;
@@ -3242,7 +3245,7 @@ public class ASTGenerator {
     return null;
   }
 
-  
+
   static protected ASTNode definedIn(ASTNode node, String name,
                                    ArrayList<Integer> constrains,
                                    ASTNode declaringClass) {
@@ -3337,7 +3340,7 @@ public class ASTGenerator {
     }
     return null;
   }
-  
+
   public String[] getSuggestImports(final String className){
     if(ignoredImportSuggestions == null) {
       ignoredImportSuggestions = new TreeSet<String>();
@@ -3361,7 +3364,7 @@ public class ASTGenerator {
     for (String res : resources) {
       candidates.add(res);
     }
-    
+
     // log("Couldn't find import for class " + className);
 
     for (Library lib : editor.getMode().contribLibraries) {
@@ -3372,7 +3375,7 @@ public class ASTGenerator {
         log("Res: " + res);
       }
     }
-    
+
     if (editor.getSketch().hasCodeFolder()) {
       File codeFolder = editor.getSketch().getCodeFolder();
       // get a list of .jar files in the "code" folder
@@ -3391,17 +3394,17 @@ public class ASTGenerator {
       resources[i] = candidates.get(i).replace('/', '.')
           .substring(0, candidates.get(i).length() - 6);
     }
-    
+
 //    ArrayList<String> ans = new ArrayList<String>();
 //    for (int i = 0; i < resources.length; i++) {
 //      ans.add(resources[i]);
 //    }
-    
+
     return resources;
   }
   protected JFrame frmImportSuggest;
   private TreeSet<String> ignoredImportSuggestions;
-  
+
   public void suggestImports(final String className){
     if(ignoredImportSuggestions == null) {
       ignoredImportSuggestions = new TreeSet<String>();
@@ -3427,7 +3430,7 @@ public class ASTGenerator {
     for (String res : resources) {
       candidates.add(res);
     }
-    
+
     // log("Couldn't find import for class " + className);
 
     for (Library lib : editor.getMode().contribLibraries) {
@@ -3438,7 +3441,7 @@ public class ASTGenerator {
         log("Res: " + res);
       }
     }
-    
+
     if (editor.getSketch().hasCodeFolder()) {
       File codeFolder = editor.getSketch().getCodeFolder();
       // get a list of .jar files in the "code" folder
@@ -3492,14 +3495,14 @@ public class ASTGenerator {
           }
         }
       });
-      
+
       JButton btnCancel = new JButton("Cancel");
       btnCancel.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           frmImportSuggest.setVisible(false);
         }
       });
-      
+
       JPanel panelTop = new JPanel(), panelBottom = new JPanel(), panelLabel = new JPanel();
       panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
       panelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -3545,12 +3548,12 @@ public class ASTGenerator {
     }
 
   }
-  
+
   public void disposeAllWindows() {
     disposeWindow(frmASTView, frameAutoComp, frmImportSuggest,
                   frmOccurenceList, frmRename);
   }
-  
+
   public static void disposeWindow(JFrame... f) {
     for (JFrame jFrame : f) {
       if(jFrame != null)
@@ -3562,7 +3565,7 @@ public class ASTGenerator {
     "com.oracle.", "sun.", "sunw.", "com.sun.", "javax.", "sunw.", "org.ietf.",
     "org.jcp.", "org.omg.", "org.w3c.", "org.xml.", "org.eclipse.", "com.ibm.",
     "org.netbeans.", "org.jsoup.", "org.junit.", "org.apache.", "antlr." };
-  public static final String allowedImports[] = {"java.lang.", "java.util.", "java.io.", 
+  public static final String allowedImports[] = {"java.lang.", "java.util.", "java.io.",
     "java.math.", "processing.core.", "processing.data.", "processing.event.", "processing.opengl."};
   protected boolean ignorableImport(String impName, String className) {
     //TODO: Trie man.
@@ -3576,7 +3579,7 @@ public class ASTGenerator {
     }
     return true;
   }
-  
+
   public static boolean isAddableASTNode(ASTNode node) {
     switch (node.getNodeType()) {
 //    case ASTNode.STRING_LITERAL:
@@ -3588,7 +3591,7 @@ public class ASTGenerator {
       return true;
     }
   }
-  
+
   /**
    * For any line or expression, finds the line start offset(java code).
    * @param node
@@ -3602,13 +3605,13 @@ public class ASTGenerator {
       } else {
         break;
       }
-    }    
+    }
     return node.getStartPosition();
   }
-  
+
   /**
    * For any node, finds various offsets (java code).
-   * 
+   *
    * @param node
    * @return int[]{line number, line number start offset, node start offset,
    *         node length}
@@ -3622,11 +3625,11 @@ public class ASTGenerator {
       } else {
         break;
       }
-    }    
+    }
     return new int[]{nodeLineNo, node.getStartPosition(), nodeOffset,nodeLength};
   }
-  
-  
+
+
 
   static protected String getNodeAsString(ASTNode node) {
     if (node == null)
@@ -3676,7 +3679,7 @@ public class ASTGenerator {
 
   /**
    * CompletionPanel name
-   * 
+   *
    * @param node
    * @return
    */
@@ -3762,17 +3765,17 @@ public class ASTGenerator {
     return null;
   }
 
-  
+
   static private void log(Object object) {
     Base.log(object == null ? "null" : object.toString());
   }
-  
-  
+
+
   private String getSelectedText() {
     return editor.getTextArea().getSelectedText();
   }
-  
-  
+
+
   private void hideSuggestion() {
     ((JavaTextArea) editor.getTextArea()).hideSuggestion();
   }
