@@ -752,7 +752,7 @@
       <arg value="-xzpf" />
       -->
       <arg value="xfz" />
-      <arg value="${jre.tgz.path}"/>
+      <arg value="../${jre.tgz.path}"/>
     </exec>
 
     <!--
