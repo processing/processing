@@ -27,7 +27,6 @@ import processing.mode.java.tweak.*;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -60,6 +59,8 @@ import processing.app.syntax.TokenMarker;
 /**
  * Customized line painter. Adds support for background colors,
  * left hand gutter area with background color and text.
+ * TODO Most of this needs to be merged into the main TextAreaPainter,
+ * since it has nothing to do with Java. [fry]
  */
 public class JavaTextAreaPainter extends TextAreaPainter
 	implements MouseListener, MouseMotionListener {
@@ -75,14 +76,14 @@ public class JavaTextAreaPainter extends TextAreaPainter
   protected Font gutterTextFont;
   protected Color gutterTextColor;
 //  protected Color gutterTempColor;
-  
+
   public static class ErrorLineCoord {
 	public int xStart;
 	public int xEnd;
 	public int yStart;
 	public int yEnd;
 	public Problem problem;
-	
+
 	public ErrorLineCoord(int xStart, int xEnd, int yStart, int yEnd, Problem problem) {
 	  this.xStart = xStart;
 	  this.xEnd = xEnd;
@@ -110,7 +111,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
         }
       }
     });
-    
+
     addMouseMotionListener(new MouseMotionAdapter() {
       @Override
       public void mouseMoved(final MouseEvent evt) {
@@ -255,17 +256,12 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
     //gfx.setFont(getFont());
     gfx.setFont(gutterTextFont);
-    FontMetrics gm = getFontMetrics();
-    //int tx = Editor.GUTTER_MARGIN + ;
+    // Right-align the text
     int tx = Editor.LEFT_GUTTER - Editor.GUTTER_MARGIN -
-      gm.charsWidth(txt, 0, txt.length);
-//    Color textColor = getTextArea().getGutterTextColor(line);
-//    if (textColor == null) {
-//      gfx.setColor(getForeground());
-//    } else {
-//      gfx.setColor(textColor);
-//    }
+      gfx.getFontMetrics().charsWidth(txt, 0, txt.length);
     gfx.setColor(gutterTextColor);
+    // Using 'fm' here because it's relative to the editor text size,
+    // not the numbers in the gutter
     int ty = textArea.lineToY(line) + fm.getHeight();
     Utilities.drawTabbedText(new Segment(txt, 0, text.length()),
                              tx, ty, gfx, this, 0);
@@ -397,7 +393,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     boolean notFound = true;
     boolean isWarning = false;
     Problem problem = null;
-    
+
     errorLineCoords.clear();
     // Check if current line contains an error. If it does, find if it's an
     // error or warning
@@ -453,7 +449,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
       // Adding offsets for the gutter
       x1 += Editor.LEFT_GUTTER;
       x2 += Editor.LEFT_GUTTER;
-      
+
       errorLineCoords.add(new ErrorLineCoord(x1,  x2, y, y1, problem));
 
       // gfx.fillRect(x1, y, rw, height);
@@ -529,7 +525,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     gutterTextFont = mode.getFont("editor.gutter.text.font");
     gutterTextColor = mode.getColor("editor.gutter.text.color");
   }
-  
+
   @Override
   public String getToolTipText(MouseEvent event) {
     if (!getEditor().hasJavaTabs()) {
