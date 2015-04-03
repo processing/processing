@@ -20,27 +20,31 @@
 
 package processing.mode.java;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 
+import javax.swing.Box;
+
 import processing.app.Editor;
+import processing.app.EditorButton;
 import processing.app.EditorToolbar;
+import processing.app.Language;
 
 
 public class JavaToolbar extends EditorToolbar {
   JavaEditor jeditor;
-  
-  
+
+
   public JavaToolbar(Editor editor) {
     super(editor);
     jeditor = (JavaEditor) editor;
   }
-  
-  
-  /*
+
+
   public void addModeButtons(Box box) {
-    EditorButton debugButton = new EditorButton(mode, "/lib/toolbar/debug", 
+    EditorButton debugButton = new EditorButton(mode, "/lib/toolbar/debug",
                                                 Language.text("toolbar.debug")) {
-      
+
       @Override
       public void actionPerformed(ActionEvent e) {
         jeditor.toggleDebug();
@@ -50,9 +54,8 @@ public class JavaToolbar extends EditorToolbar {
     box.add(debugButton);
     addGap(box);
   }
-  */
 
-  
+
   @Override
   public void handleRun(int modifiers) {
     boolean shift = (modifiers & InputEvent.SHIFT_MASK) != 0;
@@ -63,7 +66,7 @@ public class JavaToolbar extends EditorToolbar {
     }
   }
 
-  
+
   @Override
   public void handleStop() {
     jeditor.handleStop();
@@ -76,7 +79,7 @@ public class JavaToolbar extends EditorToolbar {
   static protected final int RUN    = 0;
   static protected final int STOP   = 1;
 
-  
+
   public JavaToolbar(Editor editor, Base base) {
     super(editor, base);
   }
