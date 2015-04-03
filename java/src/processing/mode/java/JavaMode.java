@@ -43,7 +43,7 @@ public class JavaMode extends Mode {
 
   public JavaMode(Base base, File folder) {
     super(base, folder);
-    
+
     initLogger();
     loadPreferences();
   }
@@ -52,8 +52,8 @@ public class JavaMode extends Mode {
   public String getTitle() {
     return "Java";
   }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -94,7 +94,7 @@ public class JavaMode extends Mode {
 //      try {
 //        coreLibrary = getLibrary("processing.core");
 //        System.out.println("core found at " + coreLibrary.getLibraryPath());
-//      } catch (SketchException e) { 
+//      } catch (SketchException e) {
 //        Base.log("Serious problem while locating processing.core", e);
 //      }
     }
@@ -117,7 +117,7 @@ public class JavaMode extends Mode {
     }
   }
 
-  
+
   public Runner handlePresent(Sketch sketch,
                               RunnerListener listener) throws SketchException {
     final JavaEditor editor = (JavaEditor)listener;
@@ -132,7 +132,7 @@ public class JavaMode extends Mode {
 
 
   /** Handles the standard Java "Run" or "Present" */
-  public Runner handleLaunch(Sketch sketch, RunnerListener listener, 
+  public Runner handleLaunch(Sketch sketch, RunnerListener listener,
                              final boolean present) throws SketchException {
     JavaBuild build = new JavaBuild(sketch);
     String appletClassName = build.build(false);
@@ -236,12 +236,12 @@ public class JavaMode extends Mode {
     JavaBuild build = new JavaBuild(sketch);
     return build.exportApplication();
   }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
+
   // Merged from ExperimentalMode
- 
+
 
   void initLogger() {
     final boolean VERBOSE_LOGGING = true;
@@ -272,8 +272,8 @@ public class JavaMode extends Mode {
       Logger.getLogger(JavaMode.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
-  
-  
+
+
   //ImageIcon classIcon, fieldIcon, methodIcon, localVarIcon;
 
 //  protected void loadIcons() {
@@ -284,7 +284,7 @@ public class JavaMode extends Mode {
 //    localVarIcon = new ImageIcon(iconPath + File.separator + "field_default_obj.png");
 //  }
 
-  
+
   static public volatile boolean errorCheckEnabled = true;
   static public volatile boolean warningsEnabled = true;
   static public volatile boolean codeCompletionsEnabled = true;
@@ -380,8 +380,8 @@ public class JavaMode extends Mode {
     if (Preferences.get(prefImportSuggestEnabled) == null)
       Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
   }
-  
-  
+
+
   static public void main(String[] args) {
     processing.app.Base.main(args);
   }

@@ -25,16 +25,14 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileFilter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,7 +65,6 @@ import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.BadLocationException;
@@ -93,7 +90,6 @@ import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Name;
-import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
@@ -106,6 +102,9 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import processing.app.Base;
 import processing.app.Library;
@@ -120,53 +119,34 @@ import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
 import com.google.classpath.RegExpResourceFilter;
 
+
 @SuppressWarnings({ "deprecation", "unchecked" })
 public class ASTGenerator {
-
   protected ErrorCheckerService errorCheckerService;
-
   protected JavaEditor editor;
-
   public DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode();
-
   protected DefaultMutableTreeNode currentParent = null;
 
-  /**
-   * AST Window
-   */
   protected JFrame frmASTView;
-
   protected JFrame frameAutoComp;
 
-  /**
-   * Swing component wrapper for AST, used for internal testing
-   */
+  /** Swing component wrapper for AST, used for internal testing */
   protected JTree jtree;
 
-  /**
-   * JTree used for testing refactoring operations
-   */
-  protected JTree treeRename;
+  /** JTree used for testing refactoring operations */
+  protected JTree refactorTree;
 
   protected CompilationUnit compilationUnit;
-
   protected JTable tableAuto;
-
   protected JEditorPane javadocPane;
-
   protected JScrollPane scrollPane;
-
   protected JFrame frmRename;
-
   protected JButton btnRename;
-
   protected JButton btnListOccurrence;
-
   protected JTextField txtRenameField;
-
   protected JFrame frmOccurenceList;
-
   protected JLabel lblRefactorOldName;
+
 
   public ASTGenerator(ErrorCheckerService ecs) {
     this.errorCheckerService = ecs;
@@ -178,7 +158,8 @@ public class ASTGenerator {
     predictionOngoing = new AtomicBoolean(false);
   }
 
-  protected void setupGUI(){
+
+  protected void setupGUI() {
     frmASTView = new JFrame();
 
     jtree = new JTree();
@@ -229,40 +210,13 @@ public class ASTGenerator {
     frmOccurenceList.setSize(300, 400);
     Toolkit.setIcon(frmOccurenceList);
     JScrollPane sp2 = new JScrollPane();
-    treeRename = new JTree();
-    sp2.setViewportView(treeRename);
+    refactorTree = new JTree();
+    sp2.setViewportView(refactorTree);
     frmOccurenceList.add(sp2);
-    //occurenceListFrame.setVisible(true);
-
-//    frameAutoComp = new JFrame();
-//    frameAutoComp.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//    frameAutoComp.setBounds(new Rectangle(1280, 100, 460, 620));
-//    Toolkit.setIcon(frameAutoComp);
-//    tableAuto = new JTable();
-//    JScrollPane sp3 = new JScrollPane();
-//    sp3.setViewportView(tableAuto);
-//    frameAutoComp.add(sp3);
-
-//    frmJavaDoc = new JFrame();
-//    frmJavaDoc.setTitle("P5 InstaHelp");
-//    //jdocWindow.setUndecorated(true);
-//    frmJavaDoc.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-//    javadocPane = new JEditorPane();
-//    javadocPane.setContentType("text/html");
-//    javadocPane.setText("<html> </html>");
-//    javadocPane.setEditable(false);
-//    scrollPane = new JScrollPane();
-//    scrollPane.setViewportView(javadocPane);
-//    frmJavaDoc.add(scrollPane);
-    //frmJavaDoc.setUndecorated(true);
-
-
   }
 
-  /**
-   * Toggle AST View window
-   */
-  public static final boolean SHOWAST = !true;
+
+  public static final boolean SHOW_AST = !true;
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
@@ -299,7 +253,7 @@ public class ASTGenerator {
 
       protected void done() {
         if (codeTree != null) {
-          if(SHOWAST){
+          if(SHOW_AST){
   					if (jtree.hasFocus() || frmASTView.hasFocus())
   						return;
             jtree.setModel(new DefaultTreeModel(codeTree));
@@ -348,94 +302,99 @@ public class ASTGenerator {
    * Loads up .jar files and classes defined in it for completion lookup
    */
   protected void loadJars() {
-//    SwingWorker worker = new SwingWorker() {
-//      protected void done(){
-//      }
-//      protected Object doInBackground() throws Exception {
-//        return null;
-//      }
-//    };
-//    worker.execute();
+    factory = new ClassPathFactory();
 
-    Thread t = new Thread(new Runnable() {
+    StringBuilder tehPath = new StringBuilder(System
+                                              .getProperty("java.class.path"));
+    // Starting with JDK 1.7, no longer using Apple's Java, so
+    // rt.jar has the same path on all OSes
+    tehPath.append(File.pathSeparatorChar
+                   + System.getProperty("java.home") + File.separator + "lib"
+                   + File.separator + "rt.jar" + File.pathSeparatorChar);
 
-      public void run() {
-        try {
-          factory = new ClassPathFactory();
-
-          StringBuilder tehPath = new StringBuilder(System
-              .getProperty("java.class.path"));
-          // Starting with JDK 1.7, no longer using Apple's Java, so
-          // rt.jar has the same path on all OSes
-          tehPath.append(File.pathSeparatorChar
-              + System.getProperty("java.home") + File.separator + "lib"
-              + File.separator + "rt.jar" + File.pathSeparatorChar);
-
-          if (errorCheckerService.classpathJars != null) {
-            synchronized (errorCheckerService.classpathJars) {
-              for (URL jarPath : errorCheckerService.classpathJars) {
-                //log(jarPath.getPath());
-                tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
-              }
-            }
-          }
-
-//          String paths[] = tehPath.toString().split(File.separatorChar +"");
-//          StringTokenizer st = new StringTokenizer(tehPath.toString(),
-//                                                   File.pathSeparatorChar + "");
-//          while (st.hasMoreElements()) {
-//            String sstr = (String) st.nextElement();
-//            log(sstr);
-//          }
-
-          classPath = factory.createFromPath(tehPath.toString());
-          log("Classpath created " + (classPath != null));
-//          for (String packageName : classPath.listPackages("")) {
-//            log(packageName);
-//          }
-//          RegExpResourceFilter regExpResourceFilter = new RegExpResourceFilter(
-//                                                                               ".*",
-//                                                                               "ArrayList.class");
-//          String[] resources = classPath.findResources("", regExpResourceFilter);
-//          for (String className : resources) {
-//            log("-> " + className);
-//          }
-          log("Sketch classpath jars loaded.");
-          if (Base.isMacOS()) {
-            File f = new File(System.getProperty("java.home") + File.separator + "bundle"
-                + File.separator + "Classes" + File.separator + "classes.jar");
-            log(f.getAbsolutePath() + " | classes.jar found?"
-                + f.exists());
-          } else {
-            File f = new File(System.getProperty("java.home") + File.separator
-                + "lib" + File.separator + "rt.jar" + File.separator);
-            log(f.getAbsolutePath() + " | rt.jar found?"
-                + f.exists());
-          }
-
-        } catch (Exception e) {
-          e.printStackTrace();
+    if (errorCheckerService.classpathJars != null) {
+      synchronized (errorCheckerService.classpathJars) {
+        for (URL jarPath : errorCheckerService.classpathJars) {
+          //log(jarPath.getPath());
+          tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
         }
       }
-    });
-    t.start();
+    }
+
+    classPath = factory.createFromPath(tehPath.toString());
+    log("Classpath created " + (classPath != null));
+    log("Sketch classpath jars loaded.");
+    if (Base.isMacOS()) {
+      File f = new File(System.getProperty("java.home") + File.separator + "bundle"
+          + File.separator + "Classes" + File.separator + "classes.jar");
+      log(f.getAbsolutePath() + " | classes.jar found?"
+          + f.exists());
+    } else {
+      File f = new File(System.getProperty("java.home") + File.separator
+                        + "lib" + File.separator + "rt.jar" + File.separator);
+      log(f.getAbsolutePath() + " | rt.jar found?"
+          + f.exists());
+    }
   }
+
 
   protected TreeMap<String, String> jdocMap;
 
   protected void loadJavaDoc() {
     jdocMap = new TreeMap<String, String>();
+
     // presently loading only p5 reference for PApplet
-    Thread t = new Thread(new Runnable() {
-
-      @Override
+    new Thread(new Runnable() {
       public void run() {
-        JavadocHelper.loadJavaDoc(jdocMap, editor.getMode().getReferenceFolder());
+        try {
+          loadJavaDoc(jdocMap, editor.getMode().getReferenceFolder());
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
-    });
-    t.start();
-
+    }).start();
   }
+
+
+  static void loadJavaDoc(TreeMap<String, String> jdocMap,
+                          File referenceFolder) throws IOException, MalformedURLException {
+    Document doc;
+
+    FileFilter fileFilter = new FileFilter() {
+      public boolean accept(File file) {
+        if(!file.getName().endsWith("_.html"))
+          return false;
+        int k = 0;
+        for (int i = 0; i < file.getName().length(); i++) {
+          if(file.getName().charAt(i)== '_')
+            k++;
+          if(k > 1)
+            return false;
+        }
+        return true;
+      }
+    };
+
+    for (File docFile : referenceFolder.listFiles(fileFilter)) {
+      doc = Jsoup.parse(docFile, null);
+      Elements elm = doc.getElementsByClass("ref-item");
+      String msg = "";
+      String methodName = docFile.getName().substring(0, docFile.getName().indexOf('_'));
+      //System.out.println(methodName);
+      for (Iterator<org.jsoup.nodes.Element> it = elm.iterator(); it.hasNext();) {
+        org.jsoup.nodes.Element ele = it.next();
+        msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"ref-item\">"
+            + ele.html() + "</table></div></html></body></html>";
+        //mat.replaceAll("");
+        msg = msg.replaceAll("img src=\"", "img src=\""
+            + referenceFolder.toURI().toURL().toString() + "/");
+        //System.out.println(ele.text());
+      }
+      jdocMap.put(methodName, msg);
+    }
+    System.out.println("JDoc loaded "+jdocMap.size());
+  }
+
 
   public DefaultMutableTreeNode buildAST(CompilationUnit cu) {
     return buildAST(errorCheckerService.sourceCode, cu);
@@ -817,16 +776,16 @@ public class ASTGenerator {
    * @param line
    * @param lineStartNonWSOffset
    */
-  public void preparePredictions(final String word, final int line, final int lineStartNonWSOffset) {
-    if(predictionOngoing.get()) return;
-
+  public void preparePredictions(final String word, final int line,
+                                 final int lineStartNonWSOffset) {
+    if (predictionOngoing.get()) return;
     if (!JavaMode.codeCompletionsEnabled) return;
     if (word.length() < predictionMinLength) return;
 
     predictionOngoing.set(true);
     // This method is called from TextArea.fetchPhrase, which is called via a SwingWorker instance
     // in TextArea.processKeyEvent
-    if(caretWithinLineComment()){
+    if (caretWithinLineComment()) {
       log("No predictions.");
       predictionOngoing.set(false);
       return;
@@ -874,8 +833,7 @@ public class ASTGenerator {
         // Adjust line number for tabbed sketches
         if (errorCheckerService != null) {
           editor = errorCheckerService.getEditor();
-          int codeIndex = editor.getSketch().getCodeIndex(editor
-                                                              .getCurrentTab());
+          int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
           if (codeIndex > 0)
             for (int i = 0; i < codeIndex; i++) {
               SketchCode sc = editor.getSketch().getCode(i);
@@ -940,21 +898,19 @@ public class ASTGenerator {
             // definitions.
             if (nearestNode instanceof TypeDeclaration) {
               TypeDeclaration td = (TypeDeclaration) nearestNode;
-              if (td
-                  .getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY) != null) {
-                SimpleType st = (SimpleType) td
-                    .getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
+              if (td.getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY) != null) {
+                SimpleType st = (SimpleType) td.getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
                 log("Superclass " + st.getName());
-                for (CompletionCandidate can : getMembersForType(st.getName()
-                    .toString(), word2, noCompare, false)) {
+                ArrayList<CompletionCandidate> candidates =
+                  getMembersForType(st.getName().toString(), word2, noCompare, false);
+                for (CompletionCandidate can : candidates) {
                   candidates.add(can);
                 }
                 //findDeclaration(st.getName())
-
               }
             }
-            List<StructuralPropertyDescriptor> sprops = nearestNode
-                .structuralPropertiesForType();
+            List<StructuralPropertyDescriptor> sprops =
+              nearestNode.structuralPropertiesForType();
             for (StructuralPropertyDescriptor sprop : sprops) {
               ASTNode cnode = null;
               if (!sprop.isChildListProperty()) {
@@ -970,8 +926,8 @@ public class ASTGenerator {
                 }
               } else {
                 // Childlist prop
-                List<ASTNode> nodelist = (List<ASTNode>) nearestNode
-                    .getStructuralProperty(sprop);
+                List<ASTNode> nodelist = (List<ASTNode>)
+                  nearestNode.getStructuralProperty(sprop);
                 for (ASTNode clnode : nodelist) {
                   CompletionCandidate[] types = checkForTypes(clnode);
                   if (types != null) {
@@ -990,19 +946,13 @@ public class ASTGenerator {
           log("Empty can. " + word2);
           if (classPath != null) {
             RegExpResourceFilter regExpResourceFilter;
-            regExpResourceFilter = new RegExpResourceFilter(
-                                                            Pattern
-                                                                .compile(".*"),
-                                                            Pattern
-                                                                .compile(word2
-                                                                             + "[a-zA-Z_0-9]*.class",
-                                                                         Pattern.CASE_INSENSITIVE));
-            String[] resources = classPath.findResources("",
-                                                         regExpResourceFilter);
+            regExpResourceFilter = new RegExpResourceFilter(Pattern.compile(".*"),
+                                                            Pattern.compile(word2 + "[a-zA-Z_0-9]*.class",
+                                                                            Pattern.CASE_INSENSITIVE));
+            String[] resources = classPath.findResources("", regExpResourceFilter);
             for (String matchedClass2 : resources) {
               matchedClass2 = matchedClass2.replace('/', '.'); //package name
-              String matchedClass = matchedClass2.substring(0, matchedClass2
-                  .length() - 6);
+              String matchedClass = matchedClass2.substring(0, matchedClass2.length() - 6);
               int d = matchedClass.lastIndexOf('.');
               if (ignorableImport(matchedClass2,matchedClass.substring(d + 1)))
                 continue;
@@ -1853,50 +1803,50 @@ public class ASTGenerator {
     return ((CompilationUnit) node.getRoot()).getLineNumber(pos);
   }
 
-  public static void main(String[] args) {
-    //traversal2();
-  }
-
-  public static void traversal2() {
-    ASTParser parser = ASTParser.newParser(AST.JLS4);
-    String source = readFile("/media/quarkninja/Work/TestStuff/low.java");
-//    String source = "package decl; \npublic class ABC{\n int ret(){\n}\n}";
-    parser.setSource(source.toCharArray());
-    parser.setKind(ASTParser.K_COMPILATION_UNIT);
-
-    Map<String, String> options = JavaCore.getOptions();
-
-    JavaCore.setComplianceOptions(JavaCore.VERSION_1_6, options);
-    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
-    parser.setCompilerOptions(options);
-
-    CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-    log(CompilationUnit.propertyDescriptors(AST.JLS4).size());
-
-    DefaultMutableTreeNode astTree = new DefaultMutableTreeNode("CompilationUnit");
-    Base.loge("Errors: " + cu.getProblems().length);
-    visitRecur(cu, astTree);
-    Base.log("" + astTree.getChildCount());
-
-    try {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      JFrame frame2 = new JFrame();
-      JTree jtree = new JTree(astTree);
-      frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      frame2.setBounds(new Rectangle(100, 100, 460, 620));
-      JScrollPane sp = new JScrollPane();
-      sp.setViewportView(jtree);
-      frame2.add(sp);
-      frame2.setVisible(true);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    ASTNode found = NodeFinder.perform(cu, 468, 5);
-    if (found != null) {
-      Base.log(found.toString());
-    }
-  }
+//  public static void main(String[] args) {
+//    traversal2();
+//  }
+//
+//  public static void traversal2() {
+//    ASTParser parser = ASTParser.newParser(AST.JLS4);
+//    String source = readFile("/media/quarkninja/Work/TestStuff/low.java");
+////    String source = "package decl; \npublic class ABC{\n int ret(){\n}\n}";
+//    parser.setSource(source.toCharArray());
+//    parser.setKind(ASTParser.K_COMPILATION_UNIT);
+//
+//    Map<String, String> options = JavaCore.getOptions();
+//
+//    JavaCore.setComplianceOptions(JavaCore.VERSION_1_6, options);
+//    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
+//    parser.setCompilerOptions(options);
+//
+//    CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+//    log(CompilationUnit.propertyDescriptors(AST.JLS4).size());
+//
+//    DefaultMutableTreeNode astTree = new DefaultMutableTreeNode("CompilationUnit");
+//    Base.loge("Errors: " + cu.getProblems().length);
+//    visitRecur(cu, astTree);
+//    Base.log("" + astTree.getChildCount());
+//
+//    try {
+//      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//      JFrame frame2 = new JFrame();
+//      JTree jtree = new JTree(astTree);
+//      frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//      frame2.setBounds(new Rectangle(100, 100, 460, 620));
+//      JScrollPane sp = new JScrollPane();
+//      sp.setViewportView(jtree);
+//      frame2.add(sp);
+//      frame2.setVisible(true);
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+//
+//    ASTNode found = NodeFinder.perform(cu, 468, 5);
+//    if (found != null) {
+//      Base.log(found.toString());
+//    }
+//  }
 
 
   final ASTGenerator thisASTGenerator = this;
@@ -1999,7 +1949,7 @@ public class ASTGenerator {
       }
     });
 
-    treeRename.addTreeSelectionListener(new TreeSelectionListener() {
+    refactorTree.addTreeSelectionListener(new TreeSelectionListener() {
 
       @Override
       public void valueChanged(TreeSelectionEvent e) {
@@ -2012,11 +1962,11 @@ public class ASTGenerator {
           }
 
           protected void done() {
-            if(treeRename
+            if(refactorTree
                 .getLastSelectedPathComponent() == null){
               return;
             }
-            DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) treeRename
+            DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) refactorTree
                 .getLastSelectedPathComponent();
 
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
@@ -2053,9 +2003,9 @@ public class ASTGenerator {
     //else log("New name looks K.");
 
     errorCheckerService.pauseThread();
-    if(treeRename.isVisible()){
-      treeRename.setModel(new DefaultTreeModel(defCU));
-      ((DefaultTreeModel) treeRename.getModel()).reload();
+    if(refactorTree.isVisible()){
+      refactorTree.setModel(new DefaultTreeModel(defCU));
+      ((DefaultTreeModel) refactorTree.getModel()).reload();
     }
 //    frmOccurenceList.setTitle("Usage of \"" + selText + "\" : "
 //        + defCU.getChildCount() + " time(s)");
@@ -2156,9 +2106,9 @@ public class ASTGenerator {
     }
     if(defCU.getChildCount() == 0)
       return;
-    treeRename.setModel(new DefaultTreeModel(defCU));
-    ((DefaultTreeModel) treeRename.getModel()).reload();
-    treeRename.setRootVisible(false);
+    refactorTree.setModel(new DefaultTreeModel(defCU));
+    ((DefaultTreeModel) refactorTree.getModel()).reload();
+    refactorTree.setRootVisible(false);
     frmOccurenceList.setTitle("Usage of \"" + selText + "\" : "
         + defCU.getChildCount() + " time(s)");
     frmOccurenceList.setLocation(editor.getX() + editor.getWidth(),editor.getY());
@@ -3729,41 +3679,41 @@ public class ASTGenerator {
     return value;
   }
 
-  public void jdocWindowVisible(boolean visible) {
-   // frmJavaDoc.setVisible(visible);
-  }
+//  public void jdocWindowVisible(boolean visible) {
+//   // frmJavaDoc.setVisible(visible);
+//  }
 
-  public static String readFile(String path) {
-    BufferedReader reader = null;
-    try {
-      reader = new BufferedReader(
-                                  new InputStreamReader(
-                                                        new FileInputStream(
-                                                                            new File(
-                                                                                     path))));
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
-    try {
-      StringBuilder ret = new StringBuilder();
-      // ret.append("package " + className + ";\n");
-      String line;
-      while ((line = reader.readLine()) != null) {
-        ret.append(line);
-        ret.append("\n");
-      }
-      return ret.toString();
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      try {
-        reader.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    return null;
-  }
+//  public static String readFile2(String path) {
+//    BufferedReader reader = null;
+//    try {
+//      reader = new BufferedReader(
+//                                  new InputStreamReader(
+//                                                        new FileInputStream(
+//                                                                            new File(
+//                                                                                     path))));
+//    } catch (FileNotFoundException e) {
+//      e.printStackTrace();
+//    }
+//    try {
+//      StringBuilder ret = new StringBuilder();
+//      // ret.append("package " + className + ";\n");
+//      String line;
+//      while ((line = reader.readLine()) != null) {
+//        ret.append(line);
+//        ret.append("\n");
+//      }
+//      return ret.toString();
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    } finally {
+//      try {
+//        reader.close();
+//      } catch (IOException e) {
+//        e.printStackTrace();
+//      }
+//    }
+//    return null;
+//  }
 
 
   static private void log(Object object) {
