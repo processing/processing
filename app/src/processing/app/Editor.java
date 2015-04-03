@@ -2119,8 +2119,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     boolean commented = true;
     for (int i = startLine; commented && (i <= stopLine); i++) {
       String lineText = textarea.getLineText(i).trim();
-      if (lineText.length() == 0)
+      if (lineText.length() == 0) {
         continue; //ignore blank lines
+      }
       commented = lineText.startsWith(prefix);
     }
 
@@ -2150,7 +2151,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         // add a comment
         location = textarea.getLineStartOffset(line) + lso;
         textarea.select(location, location);
-        textarea.setSelectedText(prefix + " "); //Add a '// '
+        textarea.setSelectedText(prefix);
       }
     }
     // Subtract one from the end, otherwise selects past the current line.
