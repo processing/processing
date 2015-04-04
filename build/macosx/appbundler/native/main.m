@@ -59,6 +59,7 @@ typedef int (JNICALL *JLI_Launch_t)(int argc, char ** argv,
 int launch(char *);
 
 int main(int argc, char *argv[]) {
+
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     int result;
@@ -80,12 +81,20 @@ int main(int argc, char *argv[]) {
 }
 
 int launch(char *commandName) {
+
+    //Attempt to disable Inertia scroll
+    //From https://developer.apple.com/library/mac/releasenotes/DriversKernelHardware/RN-MagicMouse/
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *appDefaults = [NSDictionary dictionaryWithObject:@"NO"
+       forKey:@"AppleMomentumScrollSupported"];
+    [defaults registerDefaults:appDefaults];
+
     // Get the main bundle
     NSBundle *mainBundle = [NSBundle mainBundle];
 
     // Get the main bundle's info dictionary
     NSDictionary *infoDictionary = [mainBundle infoDictionary];
-    
+
     // Set the working directory based on config, defaulting to the user's home directory
     NSString *workingDir = [infoDictionary objectForKey:@WORKING_DIR];
     if (workingDir != nil) {
@@ -93,9 +102,9 @@ int launch(char *commandName) {
     } else {
         workingDir = NSHomeDirectory();
     }
-    
+
     chdir([workingDir UTF8String]);
-           
+
     // execute privileged
     NSString *privileged = [infoDictionary objectForKey:@JVM_RUN_PRIVILEGED];
     if (privileged != nil && getuid() != 0) {
@@ -107,10 +116,10 @@ int launch(char *commandName) {
 	    return 0;  // Should this return 'error' instead? [fry]
         }
     }
-    
+
     // Locate the JLI_Launch() function
     NSString *runtime = [infoDictionary objectForKey:@JVM_RUNTIME_KEY];
-    
+
     const char *libjliPath = NULL;
     if (runtime != nil) {
         NSString *runtimePath = [[[NSBundle mainBundle] builtInPlugInsPath] stringByAppendingPathComponent:runtime];
@@ -142,20 +151,20 @@ int launch(char *commandName) {
 
     // Set the class path
     NSString *mainBundlePath = [mainBundle bundlePath];
-    NSString *javaPath = 
+    NSString *javaPath =
         [mainBundlePath stringByAppendingString:@"/Contents/Java"];
         // Changed Contents/Java to the old Contents/Resources/Java [fry]
         //[mainBundlePath stringByAppendingString:@"/Contents/Resources/Java"];
-    // Removed the /Classes, because the P5 compiler (ECJ?) will throw an 
-    // error if it doesn't exist. But it's harmless to leave the root dir, 
-    // since it will always exist, and I guess if you wanted to put .class 
+    // Removed the /Classes, because the P5 compiler (ECJ?) will throw an
+    // error if it doesn't exist. But it's harmless to leave the root dir,
+    // since it will always exist, and I guess if you wanted to put .class
     // files in there, they'd work. If I knew more Cocoa, I'd just make this
     // an empty string to start, to be appended a few lines later. [fry]
     //NSMutableString *classPath = [NSMutableString stringWithFormat:@"-Djava.class.path=%@/Classes", javaPath];
     NSMutableString *classPath = [NSMutableString stringWithFormat:@"-Djava.class.path=%@", javaPath];
 
     NSFileManager *defaultFileManager = [NSFileManager defaultManager];
-    NSArray *javaDirectoryContents = 
+    NSArray *javaDirectoryContents =
         [defaultFileManager contentsOfDirectoryAtPath:javaPath error:nil];
     if (javaDirectoryContents == nil) {
         [[NSException exceptionWithName:@JAVA_LAUNCH_ERROR
@@ -171,9 +180,9 @@ int launch(char *commandName) {
 
     /*
     // search the 'lib' subfolder as well [fry]
-    NSString *libPath = 
+    NSString *libPath =
       [mainBundlePath stringByAppendingString:@"/Contents/Resources/Java/lib"];
-    NSArray *libDirectoryContents = 
+    NSArray *libDirectoryContents =
       [defaultFileManager contentsOfDirectoryAtPath:libPath error:nil];
     if (libDirectoryContents != nil) {
       for (NSString *file in libDirectoryContents) {
@@ -200,24 +209,24 @@ int launch(char *commandName) {
     }
 
     // Set OSX special folders
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,   
-            NSUserDomainMask, YES);                                            
-    NSString *basePath = [paths objectAtIndex:0];                                                                           
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,
+            NSUserDomainMask, YES);
+    NSString *basePath = [paths objectAtIndex:0];
     NSString *libraryDirectory = [NSString stringWithFormat:@"-DLibraryDirectory=%@", basePath];
 
-    paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,           
-            NSUserDomainMask, YES);                                            
-    basePath = [paths objectAtIndex:0];                                                                           
+    paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+            NSUserDomainMask, YES);
+    basePath = [paths objectAtIndex:0];
     NSString *documentsDirectory = [NSString stringWithFormat:@"-DDocumentsDirectory=%@", basePath];
-                                                                               
-    paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, 
-            NSUserDomainMask, YES);                                            
-    basePath = [paths objectAtIndex:0];                                                                           
+
+    paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory,
+            NSUserDomainMask, YES);
+    basePath = [paths objectAtIndex:0];
     NSString *applicationSupportDirectory = [NSString stringWithFormat:@"-DApplicationSupportDirectory=%@", basePath];
-                                                                               
-    paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, 
-            NSUserDomainMask, YES);                                            
-    basePath = [paths objectAtIndex:0];                                                                           
+
+    paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
+            NSUserDomainMask, YES);
+    basePath = [paths objectAtIndex:0];
     NSString *cachesDirectory = [NSString stringWithFormat:@"-DCachesDirectory=%@", basePath];
 
     NSString *sandboxEnabled = @"true";
