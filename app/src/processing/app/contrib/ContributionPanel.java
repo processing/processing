@@ -166,7 +166,7 @@ class ContributionPanel extends JPanel {
           installProgressBar.setVisible(true);
           installProgressBar.setIndeterminate(true);
 
-          JProgressMonitor monitor = new JProgressMonitor(installProgressBar) {
+          ContribProgressBar monitor = new ContribProgressBar(installProgressBar) {
             public void finishedAction() {
               // Finished uninstalling the library
               resetInstallProgressBarState();
@@ -304,7 +304,7 @@ class ContributionPanel extends JPanel {
           installProgressBar.setVisible(true);
           installProgressBar.setIndeterminate(true);
 
-          JProgressMonitor progress = new JProgressMonitor(installProgressBar) {
+          ContribProgressBar progress = new ContribProgressBar(installProgressBar) {
             public void finishedAction() {
               // Finished uninstalling the library
               resetInstallProgressBarState();
@@ -731,7 +731,7 @@ class ContributionPanel extends JPanel {
       URL downloadUrl = new URL(url);
       installProgressBar.setVisible(true);
 
-      JProgressMonitor downloadProgress = new JProgressMonitor(installProgressBar) {
+      ContribProgressBar downloadProgress = new ContribProgressBar(installProgressBar) {
         public void finishedAction() {
           // Finished downloading library
         }
@@ -750,7 +750,7 @@ class ContributionPanel extends JPanel {
         }
       };
 
-      JProgressMonitor installProgress = new JProgressMonitor(installProgressBar) {
+      ContribProgressBar installProgress = new ContribProgressBar(installProgressBar) {
         public void finishedAction() {
           // Finished installing library
           resetInstallProgressBarState();

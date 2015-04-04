@@ -366,7 +366,7 @@ public abstract class LocalContribution extends Contribution {
    * Non-blocking call to remove a contribution in a new thread.
    */
   void removeContribution(final Editor editor,
-                          final ProgressMonitor pm,
+                          final ContribProgressMonitor pm,
                           final StatusPanel status) {
     new Thread(new Runnable() {
       public void run() {
@@ -380,10 +380,10 @@ public abstract class LocalContribution extends Contribution {
   
   
   void remove(final Editor editor,
-              final ProgressMonitor pm,
+              final ContribProgressMonitor pm,
               final StatusPanel status, 
               final ContributionListing contribListing) {
-    pm.startTask("Removing", ProgressMonitor.UNKNOWN);
+    pm.startTask("Removing", ContribProgressMonitor.UNKNOWN);
 
     boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
 //    if (getType().requiresRestart()) {

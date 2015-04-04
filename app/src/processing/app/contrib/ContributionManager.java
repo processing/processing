@@ -56,7 +56,7 @@ public class ContributionManager {
    * @throws FileNotFoundException
    *           if an error occurred downloading the file
    */
-  static boolean download(URL source, File dest, ProgressMonitor progress) {
+  static boolean download(URL source, File dest, ContribProgressMonitor progress) {
     boolean success = false;
     try {
 //      System.out.println("downloading file " + source);
@@ -131,8 +131,8 @@ public class ContributionManager {
   static void downloadAndInstall(final Editor editor,
                                  final URL url,
                                  final AvailableContribution ad,
-                                 final JProgressMonitor downloadProgress,
-                                 final JProgressMonitor installProgress,
+                                 final ContribProgressBar downloadProgress,
+                                 final ContribProgressBar installProgress,
                                  final StatusPanel status) {
 
     new Thread(new Runnable() {
@@ -147,7 +147,7 @@ public class ContributionManager {
             download(url, contribZip, downloadProgress);
 
             if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
-              installProgress.startTask(Language.text("contrib.progress.installing"), ProgressMonitor.UNKNOWN);
+              installProgress.startTask(Language.text("contrib.progress.installing"), ContribProgressMonitor.UNKNOWN);
               LocalContribution contribution =
                 ad.install(editor.getBase(), contribZip, false, status);
 
