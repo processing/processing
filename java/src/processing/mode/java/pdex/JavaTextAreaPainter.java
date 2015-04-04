@@ -667,7 +667,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	}
 
 
-	public void startInterativeMode() {
+	protected void startInterativeMode() {
 	  addMouseListener(this);
 	  addMouseMotionListener(this);
 	  interactiveMode = true;
@@ -676,7 +676,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	}
 
 
-	public void stopInteractiveMode() {
+	protected void stopInteractiveMode() {
 		interactiveMode = false;
 
 		if (colorSelector != null) {
@@ -692,7 +692,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 	// Update the interface
 	//public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[]) {
-	public void updateInterface(List<List<Handle>> handles, List<List<ColorControlBox>> colorBoxes) {
+	protected void updateInterface(List<List<Handle>> handles, List<List<ColorControlBox>> colorBoxes) {
 		this.handles = handles;
 		this.colorBoxes = colorBoxes;
 
@@ -706,7 +706,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	* synchronize this method to prevent the execution of 'paint' in the middle.
 	* (don't paint while we make changes to the text of the editor)
 	*/
-	public synchronized void initInterfacePositions() {
+	private synchronized void initInterfacePositions() {
 		SketchCode[] code = getEditor().getSketch().getCode();
 		int prevScroll = textArea.getVerticalScrollPosition();
 		String prevText = textArea.getText();
@@ -772,12 +772,12 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	}
 
 
-	public String replaceString(String str, int start, int end, String put) {
+	private String replaceString(String str, int start, int end, String put) {
 		return str.substring(0, start) + put + str.substring(end, str.length());
 	}
 
 
-	public void updateCursor(int mouseX, int mouseY) {
+	private void updateCursor(int mouseX, int mouseY) {
 		int currentTab = getCurrentCodeIndex();
 		for (Handle n : handles.get(currentTab)) {
 			if (n.pick(mouseX, mouseY)) {
