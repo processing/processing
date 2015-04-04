@@ -667,6 +667,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	}
 
 
+<<<<<<< HEAD
 	public void startInterativeMode() {
 	  addMouseListener(this);
 	  addMouseMotionListener(this);
@@ -778,6 +779,119 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 
 	public void updateCursor(int mouseX, int mouseY) {
+=======
+	protected void startInterativeMode() {
+	  addMouseListener(this);
+	  addMouseMotionListener(this);
+	  interactiveMode = true;
+	  setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		repaint();
+	}
+
+
+	protected void stopInteractiveMode() {
+		interactiveMode = false;
+
+		if (colorSelector != null) {
+			// close color selector
+			colorSelector.hide();
+			colorSelector.frame.dispatchEvent(new WindowEvent(colorSelector.frame, WindowEvent.WINDOW_CLOSING));
+		}
+
+		setCursor(new Cursor(Cursor.TEXT_CURSOR));
+		repaint();
+	}
+
+
+	// Update the interface
+	//public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[]) {
+	protected void updateInterface(List<List<Handle>> handles, List<List<ColorControlBox>> colorBoxes) {
+		this.handles = handles;
+		this.colorBoxes = colorBoxes;
+
+		initInterfacePositions();
+		repaint();
+	}
+
+
+	/**
+	* Initialize all the number changing interfaces.
+	* synchronize this method to prevent the execution of 'paint' in the middle.
+	* (don't paint while we make changes to the text of the editor)
+	*/
+	private synchronized void initInterfacePositions() {
+		SketchCode[] code = getEditor().getSketch().getCode();
+		int prevScroll = textArea.getVerticalScrollPosition();
+		String prevText = textArea.getText();
+
+		for (int tab=0; tab<code.length; tab++) {
+			String tabCode = getEditor().baseCode[tab];
+			textArea.setText(tabCode);
+			for (Handle n : handles.get(tab)) {
+				int lineStartChar = textArea.getLineStartOffset(n.line);
+				int x = textArea.offsetToX(n.line, n.newStartChar - lineStartChar);
+				int end = textArea.offsetToX(n.line, n.newEndChar - lineStartChar);
+				int y = textArea.lineToY(n.line) + fm.getHeight() + 1;
+				n.initInterface(x, y, end-x, fm.getHeight());
+			}
+
+			for (ColorControlBox cBox : colorBoxes.get(tab)) {
+				int lineStartChar = textArea.getLineStartOffset(cBox.getLine());
+				int x = textArea.offsetToX(cBox.getLine(), cBox.getCharIndex() - lineStartChar);
+				int y = textArea.lineToY(cBox.getLine()) + fm.getDescent();
+				cBox.initInterface(this, x, y+1, fm.getHeight()-2, fm.getHeight()-2);
+			}
+		}
+
+		textArea.setText(prevText);
+		textArea.scrollTo(prevScroll, 0);
+	}
+
+
+	/**
+	 * Take the saved code of the current tab and replace
+	 * all numbers with their current values.
+	 * Update TextArea with the new code.
+	 */
+	public void updateCodeText() {
+		int charInc = 0;
+		int currentTab = getCurrentCodeIndex();
+		SketchCode sc = getEditor().getSketch().getCode(currentTab);
+		String code = getEditor().baseCode[currentTab];
+
+		for (Handle n : handles.get(currentTab)) {
+			int s = n.startChar + charInc;
+			int e = n.endChar + charInc;
+			code = replaceString(code, s, e, n.strNewValue);
+			n.newStartChar = n.startChar + charInc;
+			charInc += n.strNewValue.length() - n.strValue.length();
+			n.newEndChar = n.endChar + charInc;
+		}
+
+		replaceTextAreaCode(code);
+		// update also the sketch code for later
+		sc.setProgram(code);
+	}
+
+
+	// don't paint while we do the stuff below
+	private synchronized void replaceTextAreaCode(String code) {
+	  // by default setText will scroll all the way to the end
+	  // remember current scroll position
+	  int scrollLine = textArea.getVerticalScrollPosition();
+	  int scrollHor = textArea.getHorizontalScrollPosition();
+	  textArea.setText(code);
+	  textArea.setOrigin(scrollLine, -scrollHor);
+	}
+
+
+	private String replaceString(String str, int start, int end, String put) {
+		return str.substring(0, start) + put + str.substring(end, str.length());
+	}
+
+
+	private void updateCursor(int mouseX, int mouseY) {
+>>>>>>> refs/remotes/upstream/master
 		int currentTab = getCurrentCodeIndex();
 		for (Handle n : handles.get(currentTab)) {
 			if (n.pick(mouseX, mouseY)) {

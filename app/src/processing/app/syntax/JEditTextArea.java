@@ -140,6 +140,7 @@ public class JEditTextArea extends JComponent
 //    focusedComponent = this;
 
     addMouseWheelListener(new MouseWheelListener() {
+<<<<<<< HEAD
       public void mouseWheelMoved(MouseWheelEvent e) {
         if (scrollBarsInitialized) {
           if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
@@ -359,6 +360,227 @@ public class JEditTextArea extends JComponent
    * Updates the state of the scroll bars. This should be called
    * if the number of lines in the document changes, or when the
    * size of the text are changes.
+=======
+
+      @Override
+      public void mouseWheelMoved(MouseWheelEvent e) {
+        if (scrollBarsInitialized) {
+          if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+            int scrollAmount = e.getUnitsToScroll();
+//            System.out.println("rot/amt = " + e.getWheelRotation() + " " + amt);
+//            int max = vertical.getMaximum();
+//            System.out.println("UNIT SCROLL of " + amt + " at value " + vertical.getValue() + " and max " + max);
+//            System.out.println("  get wheel rotation is " + e.getWheelRotation());
+//            int ex = e.getModifiersEx();
+//            String mods = InputEvent.getModifiersExText(ex);
+//            if (ex != 0) {
+//              System.out.println("  3 2         1         0");
+//              System.out.println("  10987654321098765432109876543210");
+//              System.out.println("  " + PApplet.binary(e.getModifiersEx()));
+////            if (mods.length() > 0) {
+//              System.out.println("  mods extext = " + mods + " " + mods.length() + " " + PApplet.hex(mods.charAt(0)));
+//            }
+//            System.out.println("  " + e);
+
+            // inertia scrolling on OS X will fire several shift-wheel events
+            // that are negative values.. this makes the scrolling area jump.
+            boolean isHorizontal = Base.isMacOS() && e.isShiftDown();
+            if (isHorizontal) {
+              horizontal.setValue(horizontal.getValue() + scrollAmount);
+            }else{
+              vertical.setValue(vertical.getValue() + scrollAmount);
+            }
+          }
+        }
+      }
+    });
+  }
+
+
+  /**
+   * Override this to provide your own painter for this {@link JEditTextArea}.
+   * @param defaults
+   * @return a newly constructed {@link TextAreaPainter}.
+   */
+  protected TextAreaPainter createPainter(final TextAreaDefaults defaults) {
+    return new TextAreaPainter(this, defaults);
+  }
+
+
+  /**
+   * Inline Input Method Support for Japanese.
+   */
+  public InputMethodRequests getInputMethodRequests() {
+    if (Preferences.getBoolean("editor.input_method_support")) {
+      if (inputMethodSupport == null) {
+        inputMethodSupport = new InputMethodSupport(this);
+      }
+      return inputMethodSupport;
+    }
+    return null;
+  }
+
+
+  /**
+   * Get current position of the vertical scroll bar. [fry]
+   * @deprecated Use {@link #getVerticalScrollPosition()}.
+   */
+  public int getScrollPosition() {
+    return getVerticalScrollPosition();
+  }
+
+
+  /**
+   * Set position of the vertical scroll bar. [fry]
+   * @deprecated Use {@link #setVerticalScrollPosition(int)}.
+   */
+  public void setScrollPosition(int what) {
+    setVerticalScrollPosition(what);
+  }
+  
+  
+  /**
+   * Get current position of the vertical scroll bar.
+   */
+  public int getVerticalScrollPosition() {
+    return vertical.getValue();
+  }
+
+
+  /**
+   * Set position of the vertical scroll bar.
+   */
+  public void setVerticalScrollPosition(int what) {
+    vertical.setValue(what);
+  }
+  
+  
+  /**
+   * Get current position of the horizontal scroll bar.
+   */
+  public int getHorizontalScrollPosition() {
+    return horizontal.getValue();
+  }
+  
+
+  /**
+   * Set position of the horizontal scroll bar.
+   */
+  public void setHorizontalScrollPosition(int what) {
+    horizontal.setValue(what);
+  }
+  
+
+  /**
+   * Returns the object responsible for painting this text area.
+   */
+  public final TextAreaPainter getPainter() {
+    return painter;
+  }
+  
+  
+  public final Printable getPrintable() {
+    return painter.getPrintable();
+  }
+
+
+  /**
+   * Returns the input handler.
+   */
+  public final InputHandler getInputHandler() {
+    return inputHandler;
+  }
+
+
+  /**
+   * Sets the input handler.
+   * @param inputHandler The new input handler
+   */
+  public void setInputHandler(InputHandler inputHandler) {
+    this.inputHandler = inputHandler;
+  }
+
+
+  /**
+   * Returns true if the caret is blinking, false otherwise.
+   */
+  public final boolean isCaretBlinkEnabled() {
+    return caretBlinks;
+  }
+
+
+  /**
+   * Toggles caret blinking.
+   * @param caretBlinks True if the caret should blink, false otherwise
+   */
+  public void setCaretBlinkEnabled(boolean caretBlinks) {
+    this.caretBlinks = caretBlinks;
+    if (!caretBlinks) {
+      blink = false;
+    }
+    painter.invalidateSelectedLines();
+  }
+
+
+  /**
+   * Returns true if the caret is visible, false otherwise.
+   */
+  public final boolean isCaretVisible() {
+    return (!caretBlinks || blink) && caretVisible;
+  }
+
+
+  /**
+   * Sets if the caret should be visible.
+   * @param caretVisible True if the caret should be visible, false
+   * otherwise
+   */
+  public void setCaretVisible(boolean caretVisible) {
+    this.caretVisible = caretVisible;
+    blink = true;
+
+    painter.invalidateSelectedLines();
+  }
+
+
+  /**
+   * Blinks the caret.
+   */
+  public final void blinkCaret() {
+    if (caretBlinks)  {
+      blink = !blink;
+      painter.invalidateSelectedLines();
+    } else {
+      blink = true;
+    }
+  }
+
+
+  /**
+   * Returns the number of lines from the top and button of the
+   * text area that are always visible.
+   */
+  public final int getElectricScroll() {
+    return electricScroll;
+  }
+
+
+  /**
+   * Sets the number of lines from the top and bottom of the text
+   * area that are always visible
+   * @param electricScroll The number of lines always visible from
+   * the top or bottom
+   */
+  public final void setElectricScroll(int electricScroll) {
+    this.electricScroll = electricScroll;
+  }
+
+
+  /**
+   * Updates the state of the scroll bars. This should be called
+   * if the number of lines in the document changes, or when the
+   * size of the text area changes.
+>>>>>>> refs/remotes/upstream/master
    */
   public void updateScrollBars() {
     if (vertical != null && visibleLines != 0) {

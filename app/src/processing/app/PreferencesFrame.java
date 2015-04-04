@@ -125,6 +125,7 @@ public class PreferencesFrame {
 
     button = new JButton(Preferences.PROMPT_BROWSE);
     button.addActionListener(new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
           File dflt = new File(sketchbookLocationField.getText());
           PApplet.selectFolder(Language.text("preferences.sketchbook_location.popup"),
@@ -255,6 +256,7 @@ public class PreferencesFrame {
         final String colorValue = presentColorHex.getText().toUpperCase();
         if (colorValue.length() == 7 && (colorValue.startsWith("#")))
           EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
               presentColorHex.setText(colorValue.substring(1));
             }
@@ -267,6 +269,7 @@ public class PreferencesFrame {
               colorValue.substring(4, 6), 16)));
           if (!colorValue.equals(presentColorHex.getText()))
             EventQueue.invokeLater(new Runnable() {
+              @Override
               public void run() {
                 presentColorHex.setText(colorValue);
               }
@@ -279,6 +282,7 @@ public class PreferencesFrame {
         final String colorValue = presentColorHex.getText().toUpperCase();
         if (colorValue.length() == 7 && (colorValue.startsWith("#")))
           EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
               presentColorHex.setText(colorValue.substring(1));
             }
@@ -291,6 +295,7 @@ public class PreferencesFrame {
               colorValue.substring(4, 6), 16)));
           if (!colorValue.equals(presentColorHex.getText()))
             EventQueue.invokeLater(new Runnable() {
+              @Override
               public void run() {
                 presentColorHex.setText(colorValue);
               }
@@ -528,14 +533,17 @@ public class PreferencesFrame {
     label = new JLabel(Preferences.getPreferencesPath());
     final JLabel clickable = label;
     label.addMouseListener(new MouseAdapter() {
+        @Override
         public void mousePressed(MouseEvent e) {
           Base.openFolder(Base.getSettingsFolder());
         }
 
+        @Override
         public void mouseEntered(MouseEvent e) {
           clickable.setForeground(new Color(0, 0, 140));
         }
 
+        @Override
         public void mouseExited(MouseEvent e) {
           clickable.setForeground(Color.BLACK);
         }
@@ -559,6 +567,7 @@ public class PreferencesFrame {
 
     button = new JButton(Preferences.PROMPT_OK);
     button.addActionListener(new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
           applyFrame();
           disposeFrame();
@@ -574,6 +583,7 @@ public class PreferencesFrame {
 
     button = new JButton(Preferences.PROMPT_CANCEL);
     button.addActionListener(new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
           disposeFrame();
         }
@@ -593,12 +603,14 @@ public class PreferencesFrame {
     // closing the window is same as hitting cancel button
 
     dialog.addWindowListener(new WindowAdapter() {
+        @Override
         public void windowClosing(WindowEvent e) {
           disposeFrame();
         }
       });
 
     ActionListener disposer = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent actionEvent) {
           disposeFrame();
         }
@@ -619,6 +631,7 @@ public class PreferencesFrame {
     // handle window closing commands for ctrl/cmd-W or hitting ESC.
 
     pain.addKeyListener(new KeyAdapter() {
+        @Override
         public void keyPressed(KeyEvent e) {
           //System.out.println(e);
           KeyStroke wc = Toolkit.WINDOW_CLOSE_KEYSTROKE;
@@ -677,6 +690,7 @@ public class PreferencesFrame {
     String newPath = sketchbookLocationField.getText();
     if (!newPath.equals(oldPath)) {
       base.setSketchbookFolder(new File(newPath));
+      base.getNextMode().rebuildTree();
     }
 
 //    setBoolean("editor.external", externalEditorBox.isSelected());
@@ -799,6 +813,7 @@ public class PreferencesFrame {
 
     // This takes a while to load, so run it from a separate thread
     EventQueue.invokeLater(new Runnable() {
+      @Override
       public void run() {
         initFontList();
       }
@@ -830,6 +845,7 @@ public class PreferencesFrame {
    * Oracle staffer, are you reading this? This could be your meal ticket.
    */
   static class FontNamer extends JLabel implements ListCellRenderer<Font> {
+    @Override
     public Component getListCellRendererComponent(JList<? extends Font> list,
                                                   Font value, int index,
                                                   boolean isSelected,

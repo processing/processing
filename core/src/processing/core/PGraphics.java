@@ -4573,6 +4573,7 @@ public class PGraphics extends PImage implements PConstants {
       if ((buffer[index] == ' ') || (index == stop)) {
         float wordWidth = textWidthImpl(buffer, wordStart, index);
 
+<<<<<<< HEAD
         if (runningX + wordWidth > boxWidth) {
           if (runningX != 0) {
             // Next word is too big, output the current line and advance
@@ -4614,6 +4615,48 @@ public class PGraphics extends PImage implements PConstants {
         } else {  // this word will fit, just add it to the line
           runningX += wordWidth + spaceWidth;
           wordStart = index + 1;  // move on to the next word
+=======
+        if (runningX + wordWidth >= boxWidth) {
+          if (runningX != 0) {
+            // Next word is too big, output the current line and advance
+            index = wordStart;
+            textSentenceBreak(lineStart, index);
+            // Eat whitespace before the first word on the next line.
+            while ((index < stop) && (buffer[index] == ' ')) {
+              index++;
+            }
+          } else {  // (runningX == 0)
+            // If this is the first word on the line, and its width is greater
+            // than the width of the text box, then break the word where at the
+            // max width, and send the rest of the word to the next line.
+            do {
+              index--;
+              if (index == wordStart) {
+                // Not a single char will fit on this line. screw 'em.
+                //System.out.println("screw you");
+                return false; //Float.NaN;
+              }
+              wordWidth = textWidthImpl(buffer, wordStart, index);
+            } while (wordWidth > boxWidth);
+
+            //textLineImpl(buffer, lineStart, index, x, y);
+            textSentenceBreak(lineStart, index);
+          }
+          lineStart = index;
+          wordStart = index;
+          runningX = 0;
+
+        } else if (index == stop) {
+          // last line in the block, time to unload
+          //textLineImpl(buffer, lineStart, index, x, y);
+          textSentenceBreak(lineStart, index);
+//          y += textLeading;
+          index++;
+
+        } else {  // this word will fit, just add it to the line
+          runningX += wordWidth;
+          wordStart = index ;  // move on to the next word including the space before the word
+>>>>>>> refs/remotes/upstream/master
           index++;
         }
       } else {  // not a space or the last character

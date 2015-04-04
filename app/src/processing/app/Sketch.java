@@ -328,8 +328,9 @@ public class Sketch {
       current.getPrettyName() : current.getFileName();
     // editor.status.edit(prompt, oldName);
     promptForTabName(prompt+":", oldName);
+    mode.rebuildTree();
   }
-  
+
   /**
    * Displays a dialog for renaming or creating a new tab
    * @param prompt - msg to display
@@ -337,17 +338,18 @@ public class Sketch {
    */
   protected void promptForTabName(String prompt, String oldName) {
     final JTextField field = new JTextField(oldName);
-    
+
     field.addKeyListener(new KeyAdapter() {
       // Forget ESC, the JDialog should handle it.
-      // Use keyTyped to catch when the feller is actually added to the text 
-      // field. With keyTyped, as opposed to keyPressed, the keyCode will be 
-      // zero, even if it's enter or backspace or whatever, so the keychar 
+      // Use keyTyped to catch when the feller is actually added to the text
+      // field. With keyTyped, as opposed to keyPressed, the keyCode will be
+      // zero, even if it's enter or backspace or whatever, so the keychar
       // should be used instead. Grr.
+      @Override
       public void keyTyped(KeyEvent event) {
         //System.out.println("got event " + event);
         char ch = event.getKeyChar();
-        if ((ch == '_') || (ch == '.') || // allow.pde and .java 
+        if ((ch == '_') || (ch == '.') || // allow.pde and .java
             (('A' <= ch) && (ch <= 'Z')) || (('a' <= ch) && (ch <= 'z'))) {
           // These events are allowed straight through.
         } else if (ch == ' ') {
@@ -363,13 +365,13 @@ public class Sketch {
           // getSelectionStart means that it *will be* the first
           // char, because the selection is about to be replaced
           // with whatever is typed.
-          if (field.getCaretPosition() == 0 || 
+          if (field.getCaretPosition() == 0 ||
               field.getSelectionStart() == 0) {
             // number not allowed as first digit
             event.consume();
           }
         } else if (ch == KeyEvent.VK_ENTER) {
-          // Slightly ugly hack that ensures OK button of the dialog consumes 
+          // Slightly ugly hack that ensures OK button of the dialog consumes
           // the Enter key event. Since the text field is the default component
           // in the dialog, OK doesn't consume Enter key event, by default.
           Container parent = field.getParent();
@@ -377,14 +379,14 @@ public class Sketch {
             parent = parent.getParent();
           }
           JOptionPane pane = (JOptionPane) parent;
-          final JPanel pnlBottom = (JPanel) 
+          final JPanel pnlBottom = (JPanel)
             pane.getComponent(pane.getComponentCount() - 1);
           for (int i = 0; i < pnlBottom.getComponents().length; i++) {
             Component component = pnlBottom.getComponents()[i];
             if (component instanceof JButton) {
               final JButton okButton = (JButton) component;
               if (okButton.getText().equalsIgnoreCase("OK")) {
-                ActionListener[] actionListeners = 
+                ActionListener[] actionListeners =
                   okButton.getActionListeners();
                 if (actionListeners.length > 0) {
                   actionListeners[0].actionPerformed(null);
@@ -621,12 +623,12 @@ public class Sketch {
     }
 
     // don't allow if untitled
-    if (currentIndex == 0 && isUntitled()) {  
+    if (currentIndex == 0 && isUntitled()) {
       Base.showMessage(Language.text("delete.messages.cannot_delete"),
                        Language.text("delete.messages.cannot_delete.description"));
       return;
     }
-    
+
     // confirm deletion with user, yes/no
     Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
     String prompt = (currentIndex == 0) ?
@@ -798,7 +800,7 @@ public class Sketch {
   protected boolean saveAs() throws IOException {
     String newParentDir = null;
     String newName = null;
-	
+
     final String oldName2 = folder.getName();
     // TODO rewrite this to use shared version from PApplet
     final String PROMPT = Language.text("save");
@@ -908,6 +910,7 @@ public class Sketch {
     }
 
     File[] copyItems = folder.listFiles(new FileFilter() {
+      @Override
       public boolean accept(File file) {
         String name = file.getName();
         // just in case the OS likes to return these as if they're legit
@@ -934,21 +937,22 @@ public class Sketch {
         return true;
       }
     });
-	
+
 
     final File newFolder2 = newFolder;
     final File[] copyItems2 = copyItems;
-    final String newName2 = newName; 
-    
+    final String newName2 = newName;
+
     // Create a new event dispatch thread- to display ProgressBar
     // while Saving As
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
       public void run() {
         new ProgressFrame(copyItems2, newFolder2, oldName2, newName2, editor);
       }
     });
-    
-	
+
+
     // save the other tabs to their new location
     for (int i = 1; i < codeCount; i++) {
       File newFile = new File(newFolder, code[i].getFileName());
@@ -967,6 +971,7 @@ public class Sketch {
     code[0].saveAs(newFile);
 
     updateInternal(newName, newFolder);
+    mode.updateTree(newName, newFolder);
 
     // Make sure that it's not an untitled sketch
     setUntitled(false);
@@ -985,7 +990,7 @@ public class Sketch {
    */
   protected void updateInternal(String sketchName, File sketchFolder) {
     // reset all the state information for the sketch object
-    String oldPath = getMainFilePath();    
+    String oldPath = getMainFilePath();
     primaryFile = code[0].getFile();
 //    String newPath = getMainFilePath();
 //    editor.base.renameRecent(oldPath, newPath);
@@ -1145,6 +1150,7 @@ public class Sketch {
 	    // Create a new event dispatch thread- to display ProgressBar
 	    // while Saving As
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      @Override
       public void run() {
         new ProgressFrame(sourceFile2, destFile2, editor);
       }
