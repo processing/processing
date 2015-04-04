@@ -21,58 +21,37 @@
 */
 package processing.app.contrib;
 
+import javax.swing.JProgressBar;
+
 
 // I suspect this code can mostly be replaced with built-in Swing functions.
 // This code seems like it's adapted from old example code found on the web.
 // https://github.com/processing/processing/issues/3176
 
-abstract class ContribProgressMonitor {
-  static final int UNKNOWN = -1;
-  boolean canceled = false;
-  boolean error = false;
-  boolean finished = false;
-  Exception exception;
-  int max;
-  int progress = 0;
+abstract class ContribProgressBar extends ContribProgressMonitor {
+  JProgressBar progressBar;
+
+  public ContribProgressBar(JProgressBar progressBar) {
+    this.progressBar = progressBar;
+  }
 
   public void startTask(String name, int maxValue) {
+    finished = false;
+    progressBar.setString(name);
+    progressBar.setIndeterminate(maxValue == UNKNOWN);
+    progressBar.setMaximum(maxValue);
   }
 
   public void setProgress(int value) {
-    progress = value;
+    super.setProgress(value);
+    progressBar.setValue(value);
   }
 
-  public int getProgress() {
-    return progress;
-  }
-
-  public boolean isCanceled() {
-    return canceled;
-  }
-
-  public void cancel() {
-    canceled = true;
-  }
-
-  public boolean isError() {
-    return error;
-  }
-
-  public Exception getException() {
-    return exception;
-  }
-
-  public void error(Exception e) {
-    error = true;
-    exception = e;
-  }
-
-  public boolean isFinished() {
-    return finished;
-  }
-
+  @Override
   public void finished() {
-    finished = true;
+    super.finished();
+    finishedAction();
   }
-}
 
+  public abstract void finishedAction();
+}
