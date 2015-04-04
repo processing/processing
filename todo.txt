@@ -24,6 +24,8 @@ X   ie textAlign(RIGHT) / text(lineNum, LEFT_GUTTER - 5, y)
 X   https://github.com/processing/processing/issues/3128
 X run button w/ debugger shouldn't require "continue" before actually starting
 X   https://github.com/processing/processing/issues/3096
+X remove code that's moving the sketch path arg later
+X   https://github.com/processing/processing/commit/0a14835e6f5f4766b022e73a8fe562318636727c
 
 integration of pdex/debug
 o make the tabs have a default minimum size
@@ -171,6 +173,15 @@ X Greek translation and new fonts
 X   https://github.com/processing/processing/pull/3025
 X Show tooltip when hovering over errors
 X   https://github.com/processing/processing/pull/3119
+X Fix multi-touch horizontal scrolling on OS X
+X   https://github.com/processing/processing/pull/3170
+X   https://github.com/processing/processing/issues/180
+X textAlign(RIGHT) adds extra space to the right
+X   https://github.com/processing/processing/pull/3078
+X   https://github.com/processing/processing/issues/3028
+
+_ Mode and Mode Managers not working
+_   https://github.com/processing/processing/issues/3172
 
 
 3.0a7
@@ -179,6 +190,14 @@ _   https://github.com/processing/processing/issues/2953
 _   don't return here, allow contrib types to fail:
 _   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
 
+_ Linux throwing IllegalStateException: Buffers have not been created
+_   in render() (called from blit) PSurfaceAWT:301
+
+X Ubuntu Unity prevents full screen from working properly
+X   http://stackoverflow.com/questions/8837719/java-in-full-screen-on-linux-how-to-cover-task-bar
+X   https://github.com/processing/processing/issues/3158
+_   add notes to the Wiki about this (also to Linux)
+_   https://github.com/processing/processing/wiki/Window-Size-and-Full-Screen
 
 pdex
 _ fix hasJavaTabs() function
