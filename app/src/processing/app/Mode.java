@@ -1127,7 +1127,7 @@ public abstract class Mode {
     }
     return sbNode;
   }
-
+  
   protected JFrame sketchbookFrame;
 
   /*
@@ -1168,11 +1168,10 @@ public abstract class Mode {
       Toolkit.setIcon(sketchbookFrame);
       Toolkit.registerWindowCloseKeys(sketchbookFrame.getRootPane(),
                                       new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          sketchbookFrame.setVisible(false);
-        }
-      });
+                                        public void actionPerformed(ActionEvent e) {
+                                          sketchbookFrame.setVisible(false);
+                                        }
+                                      });
 
       sketchbookFrame.getContentPane().setLayout(new BorderLayout());
       DefaultMutableTreeNode root = buildSketchbookTree();

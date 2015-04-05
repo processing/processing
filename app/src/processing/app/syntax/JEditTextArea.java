@@ -140,11 +140,12 @@ public class JEditTextArea extends JComponent
 //    focusedComponent = this;
 
     addMouseWheelListener(new MouseWheelListener() {
+
       @Override
       public void mouseWheelMoved(MouseWheelEvent e) {
         if (scrollBarsInitialized) {
           if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-            int amt = e.getUnitsToScroll();
+            int scrollAmount = e.getUnitsToScroll();
 //            System.out.println("rot/amt = " + e.getWheelRotation() + " " + amt);
 //            int max = vertical.getMaximum();
 //            System.out.println("UNIT SCROLL of " + amt + " at value " + vertical.getValue() + " and max " + max);
@@ -162,14 +163,12 @@ public class JEditTextArea extends JComponent
 
             // inertia scrolling on OS X will fire several shift-wheel events
             // that are negative values.. this makes the scrolling area jump.
-            boolean skip = Base.isMacOS() && e.isShiftDown();
-            //if (ex == 0) {
-            if (!skip) {
-              vertical.setValue(vertical.getValue() + amt);
-//            } else {
-//              System.out.println("  ** skipping");
+            boolean isHorizontal = Base.isMacOS() && e.isShiftDown();
+            if (isHorizontal) {
+              horizontal.setValue(horizontal.getValue() + scrollAmount);
+            }else{
+              vertical.setValue(vertical.getValue() + scrollAmount);
             }
-//            System.out.println();
           }
         }
       }
@@ -190,7 +189,6 @@ public class JEditTextArea extends JComponent
   /**
    * Inline Input Method Support for Japanese.
    */
-  @Override
   public InputMethodRequests getInputMethodRequests() {
     if (Preferences.getBoolean("editor.input_method_support")) {
       if (inputMethodSupport == null) {
@@ -206,7 +204,6 @@ public class JEditTextArea extends JComponent
    * Get current position of the vertical scroll bar. [fry]
    * @deprecated Use {@link #getVerticalScrollPosition()}.
    */
-  @Deprecated
   public int getScrollPosition() {
     return getVerticalScrollPosition();
   }
@@ -216,7 +213,6 @@ public class JEditTextArea extends JComponent
    * Set position of the vertical scroll bar. [fry]
    * @deprecated Use {@link #setVerticalScrollPosition(int)}.
    */
-  @Deprecated
   public void setScrollPosition(int what) {
     setVerticalScrollPosition(what);
   }
@@ -362,7 +358,7 @@ public class JEditTextArea extends JComponent
   /**
    * Updates the state of the scroll bars. This should be called
    * if the number of lines in the document changes, or when the
-   * size of the text are changes.
+   * size of the text area changes.
    */
   public void updateScrollBars() {
     if (vertical != null && visibleLines != 0) {
@@ -1755,7 +1751,6 @@ public class JEditTextArea extends JComponent
 
     Clipboard clipboard = processing.app.Toolkit.getSystemClipboard();
     clipboard.setContents(formatted, new ClipboardOwner() {
-      @Override
       public void lostOwnership(Clipboard clipboard, Transferable contents) {
         // i don't care about ownership
       }
@@ -1926,7 +1921,6 @@ public class JEditTextArea extends JComponent
    * Called by the AWT when this component is removed from it's parent.
    * This stops clears the currently focused component.
    */
-  @Override
   public void removeNotify() {
     super.removeNotify();
 //    if(focusedComponent == this)
@@ -1971,7 +1965,6 @@ public class JEditTextArea extends JComponent
    */
   
   
-  @Override
   public void processKeyEvent(KeyEvent event) {
     // this had to be added in Processing 007X, because the menu key
     // events weren't making it up to the frame.
@@ -2129,7 +2122,6 @@ public class JEditTextArea extends JComponent
   {
     //final int LEFT_EXTRA = 5;
 
-    @Override
     public void addLayoutComponent(String name, Component comp)
     {
       if(name.equals(CENTER))
@@ -2142,7 +2134,6 @@ public class JEditTextArea extends JComponent
         leftOfScrollBar.addElement(comp);
     }
 
-    @Override
     public void removeLayoutComponent(Component comp)
     {
       if(center == comp)
@@ -2155,7 +2146,6 @@ public class JEditTextArea extends JComponent
         leftOfScrollBar.removeElement(comp);
     }
 
-    @Override
     public Dimension preferredLayoutSize(Container parent)
     {
       Dimension dim = new Dimension();
@@ -2174,7 +2164,6 @@ public class JEditTextArea extends JComponent
       return dim;
     }
 
-    @Override
     public Dimension minimumLayoutSize(Container parent)
     {
       Dimension dim = new Dimension();
@@ -2195,7 +2184,6 @@ public class JEditTextArea extends JComponent
       return dim;
     }
 
-    @Override
     public void layoutContainer(Container parent)
     {
       Dimension size = parent.getSize();
@@ -2262,13 +2250,11 @@ public class JEditTextArea extends JComponent
       super(JEditTextArea.this);
     }
 
-    @Override
     public int getDot()
     {
       return getCaretPosition();
     }
 
-    @Override
     public int getMark()
     {
       return getMarkPosition();
@@ -2277,7 +2263,6 @@ public class JEditTextArea extends JComponent
 
   class AdjustHandler implements AdjustmentListener
   {
-    @Override
     public void adjustmentValueChanged(final AdjustmentEvent evt)
     {
       if(!scrollBarsInitialized)
@@ -2287,7 +2272,6 @@ public class JEditTextArea extends JComponent
       // and the result is that scrolling doesn't stop after
       // the mouse is released
       SwingUtilities.invokeLater(new Runnable() {
-        @Override
         public void run()
         {
           if (evt.getAdjustable() == vertical) {
@@ -2302,7 +2286,6 @@ public class JEditTextArea extends JComponent
 
   class ComponentHandler extends ComponentAdapter
   {
-    @Override
     public void componentResized(ComponentEvent evt)
     {
       recalculateVisibleLines();
@@ -2312,7 +2295,6 @@ public class JEditTextArea extends JComponent
 
   class DocumentHandler implements DocumentListener
   {
-    @Override
     public void insertUpdate(DocumentEvent evt)
     {
       documentChanged(evt);
@@ -2337,7 +2319,6 @@ public class JEditTextArea extends JComponent
       select(newStart,newEnd);
     }
 
-    @Override
     public void removeUpdate(DocumentEvent evt)
     {
       documentChanged(evt);
@@ -2371,7 +2352,6 @@ public class JEditTextArea extends JComponent
       select(newStart,newEnd);
     }
 
-    @Override
     public void changedUpdate(DocumentEvent evt)
     {
     }
@@ -2380,7 +2360,6 @@ public class JEditTextArea extends JComponent
 
   class DragHandler implements MouseMotionListener
   {
-    @Override
     public void mouseDragged(MouseEvent evt) {
       if (popup != null && popup.isVisible()) return;
 
@@ -2410,19 +2389,16 @@ public class JEditTextArea extends JComponent
       }
     }
 
-    @Override
     public void mouseMoved(MouseEvent evt) {}
   }
 
 
   class FocusHandler implements FocusListener {
     
-    @Override
     public void focusGained(FocusEvent evt) {
       setCaretVisible(true);
     }
 
-    @Override
     public void focusLost(FocusEvent evt) {
       setCaretVisible(false);
     }
@@ -2431,7 +2407,6 @@ public class JEditTextArea extends JComponent
 
   class MouseHandler extends MouseAdapter {
     
-    @Override
     public void mousePressed(MouseEvent event) {
 //      try {
 //      requestFocus();
@@ -2583,29 +2558,24 @@ public class JEditTextArea extends JComponent
       this.end = end;
     }
 
-    @Override
     public boolean isSignificant() {
       return false;
     }
 
-    @Override
     public String getPresentationName() {
       return "caret move";
     }
 
-    @Override
     public void undo() throws CannotUndoException {
       super.undo();
       select(start,end);
     }
 
-    @Override
     public void redo() throws CannotRedoException {
       super.redo();
       select(start,end);
     }
 
-    @Override
     public boolean addEdit(UndoableEdit edit) {
       if (edit instanceof CaretUndo) {
         CaretUndo cedit = (CaretUndo)edit;
