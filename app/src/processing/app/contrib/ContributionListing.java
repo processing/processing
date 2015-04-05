@@ -392,7 +392,7 @@ public class ContributionListing {
    * Starts a new thread to download the advertised list of contributions.
    * Only one instance will run at a time.
    */
-  protected void downloadAvailableList(final ProgressMonitor progress) {
+  protected void downloadAvailableList(final ContribProgressMonitor progress) {
     new Thread(new Runnable() {
       public void run() {
         downloadingListingLock.lock();

@@ -4573,13 +4573,12 @@ public class PGraphics extends PImage implements PConstants {
       if ((buffer[index] == ' ') || (index == stop)) {
         float wordWidth = textWidthImpl(buffer, wordStart, index);
 
-        if (runningX + wordWidth > boxWidth) {
+        if (runningX + wordWidth >= boxWidth) {
           if (runningX != 0) {
             // Next word is too big, output the current line and advance
             index = wordStart;
             textSentenceBreak(lineStart, index);
-            // Eat whitespace because multiple spaces don't count for s*
-            // when they're at the end of a line.
+            // Eat whitespace before the first word on the next line.
             while ((index < stop) && (buffer[index] == ' ')) {
               index++;
             }
@@ -4612,8 +4611,8 @@ public class PGraphics extends PImage implements PConstants {
           index++;
 
         } else {  // this word will fit, just add it to the line
-          runningX += wordWidth + spaceWidth;
-          wordStart = index + 1;  // move on to the next word
+          runningX += wordWidth;
+          wordStart = index ;  // move on to the next word including the space before the word
           index++;
         }
       } else {  // not a space or the last character

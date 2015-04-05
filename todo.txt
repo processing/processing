@@ -25,6 +25,7 @@ X   https://github.com/processing/processing/issues/3128
 X run button w/ debugger shouldn't require "continue" before actually starting
 X   https://github.com/processing/processing/issues/3096
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 integration of pdex/debug
 o make the tabs have a default minimum size
@@ -181,6 +182,8 @@ _   don't return here, allow contrib types to fail:
 _   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
 
 =======
+=======
+>>>>>>> upstream/master
 X remove code that's moving the sketch path arg later
 X   https://github.com/processing/processing/commit/0a14835e6f5f4766b022e73a8fe562318636727c
 
@@ -355,7 +358,10 @@ X   http://stackoverflow.com/questions/8837719/java-in-full-screen-on-linux-how-
 X   https://github.com/processing/processing/issues/3158
 _   add notes to the Wiki about this (also to Linux)
 _   https://github.com/processing/processing/wiki/Window-Size-and-Full-Screen
+<<<<<<< HEAD
 >>>>>>> refs/remotes/upstream/master
+=======
+>>>>>>> upstream/master
 
 pdex
 _ fix hasJavaTabs() function

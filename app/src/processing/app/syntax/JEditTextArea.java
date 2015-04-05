@@ -92,7 +92,6 @@ public class JEditTextArea extends JComponent
 
     if (!DISABLE_CARET) {
       caretTimer = new Timer(500, new ActionListener() {
-        @Override
         public void actionPerformed(ActionEvent e) {
           if (hasFocus()) {
             blinkCaret();

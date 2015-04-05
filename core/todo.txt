@@ -74,10 +74,15 @@ X play with improvements to full screen here
 
 showstoppers
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 _ static sketch with size() produces black window
 _ are we running on the EDT or not?
 >>>>>>> refs/remotes/upstream/master
+=======
+_ static sketch with size() produces black window
+_ are we running on the EDT or not?
+>>>>>>> upstream/master
 _ static mode - no setup() / draw() - broken in Java2D
 _   https://github.com/processing/processing/issues/3130
 _ noSmooth() and other settings reset after setup()

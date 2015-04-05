@@ -108,7 +108,6 @@ class ContributionPanel extends JPanel {
     enableHyperlinks = false;
     alreadySelected = false;
     conditionalHyperlinkOpener = new HyperlinkListener() {
-      @Override
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           if (enableHyperlinks) {
@@ -121,7 +120,6 @@ class ContributionPanel extends JPanel {
     };
 
     installActionListener = new ActionListener() {
-      @Override
       public void actionPerformed(ActionEvent e) {
         listPanel.contribManager.status.clear();
         isInstallInProgress = true;
@@ -134,7 +132,6 @@ class ContributionPanel extends JPanel {
     };
 
     undoActionListener = new ActionListener() {
-      @Override
       public void actionPerformed(ActionEvent e) {
         listPanel.contribManager.status.clear();
         if (contrib instanceof LocalContribution) {
@@ -159,7 +156,6 @@ class ContributionPanel extends JPanel {
     };
 
     removeActionListener = new ActionListener() {
-      @Override
       public void actionPerformed(ActionEvent arg) {
         listPanel.contribManager.status.clear();
         if (contrib.isInstalled() && contrib instanceof LocalContribution) {
@@ -170,8 +166,7 @@ class ContributionPanel extends JPanel {
           installProgressBar.setVisible(true);
           installProgressBar.setIndeterminate(true);
 
-          JProgressMonitor monitor = new JProgressMonitor(installProgressBar) {
-            @Override
+          ContribProgressBar monitor = new ContribProgressBar(installProgressBar) {
             public void finishedAction() {
               // Finished uninstalling the library
               resetInstallProgressBarState();
@@ -182,7 +177,6 @@ class ContributionPanel extends JPanel {
               setSelected(true); // Needed for smooth working. Dunno why, though...
             }
 
-            @Override
             public void cancel() {
               super.cancel();
               resetInstallProgressBarState();
@@ -224,7 +218,6 @@ class ContributionPanel extends JPanel {
     contextMenu = new JPopupMenu();
     openFolder = new JMenuItem("Open Folder");
     openFolder.addActionListener(new ActionListener() {
-      @Override
       public void actionPerformed(ActionEvent e) {
         if (contrib instanceof LocalContribution) {
           File folder = ((LocalContribution) contrib).getFolder();
@@ -243,7 +236,6 @@ class ContributionPanel extends JPanel {
     setSelected(false);
 
     setExpandListener(this, new MouseAdapter() {
-      @Override
       public void mousePressed(MouseEvent e) {
         if (contrib.isCompatible(Base.getRevision()))
           listPanel.setSelectedPanel(ContributionPanel.this);
@@ -304,7 +296,6 @@ class ContributionPanel extends JPanel {
 
     updateButton.addActionListener(new ActionListener() {
 
-      @Override
       public void actionPerformed(ActionEvent e) {
         listPanel.contribManager.status.clear();
         isUpdateInProgress = true;
@@ -313,8 +304,7 @@ class ContributionPanel extends JPanel {
           installProgressBar.setVisible(true);
           installProgressBar.setIndeterminate(true);
 
-          JProgressMonitor progress = new JProgressMonitor(installProgressBar) {
-            @Override
+          ContribProgressBar progress = new ContribProgressBar(installProgressBar) {
             public void finishedAction() {
               // Finished uninstalling the library
               resetInstallProgressBarState();
@@ -741,13 +731,11 @@ class ContributionPanel extends JPanel {
       URL downloadUrl = new URL(url);
       installProgressBar.setVisible(true);
 
-      JProgressMonitor downloadProgress = new JProgressMonitor(installProgressBar) {
-        @Override
+      ContribProgressBar downloadProgress = new ContribProgressBar(installProgressBar) {
         public void finishedAction() {
           // Finished downloading library
         }
 
-        @Override
         public void cancel() {
           // Finished installing library
           resetInstallProgressBarState();
@@ -762,8 +750,7 @@ class ContributionPanel extends JPanel {
         }
       };
 
-      JProgressMonitor installProgress = new JProgressMonitor(installProgressBar) {
-        @Override
+      ContribProgressBar installProgress = new ContribProgressBar(installProgressBar) {
         public void finishedAction() {
           // Finished installing library
           resetInstallProgressBarState();
@@ -780,7 +767,6 @@ class ContributionPanel extends JPanel {
           setSelected(true);
         }
 
-        @Override
         public void cancel() {
           finishedAction();
         }
@@ -877,7 +863,6 @@ class ContributionPanel extends JPanel {
 
 //  static int inc;
 
-  @Override
   public void setForeground(Color fg) {
     super.setForeground(fg);
 
@@ -967,14 +952,15 @@ class ContributionPanel extends JPanel {
     }
   }
 
+
   static void setTextStyle(JTextPane textPane) {
     Document doc = textPane.getDocument();
     if (doc instanceof HTMLDocument) {
       HTMLDocument html = (HTMLDocument) doc;
       StyleSheet stylesheet = html.getStyleSheet();
-      stylesheet.addRule("body { " + "  margin: 0; padding: 0;"
-        + "  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;"
-        +
+      stylesheet.addRule("body { " +
+                         "  margin: 0; padding: 0;" +
+                         "  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;" +
                          "  font-size: 100%;" + "font-size: 0.95em; " +
                          "}");
     }
