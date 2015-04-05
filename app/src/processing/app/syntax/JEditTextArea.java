@@ -92,6 +92,7 @@ public class JEditTextArea extends JComponent
 
     if (!DISABLE_CARET) {
       caretTimer = new Timer(500, new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
           if (hasFocus()) {
             blinkCaret();
@@ -140,7 +141,7 @@ public class JEditTextArea extends JComponent
 //    focusedComponent = this;
 
     addMouseWheelListener(new MouseWheelListener() {
-<<<<<<< HEAD
+      @Override
       public void mouseWheelMoved(MouseWheelEvent e) {
         if (scrollBarsInitialized) {
           if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
@@ -190,6 +191,7 @@ public class JEditTextArea extends JComponent
   /**
    * Inline Input Method Support for Japanese.
    */
+  @Override
   public InputMethodRequests getInputMethodRequests() {
     if (Preferences.getBoolean("editor.input_method_support")) {
       if (inputMethodSupport == null) {
@@ -205,6 +207,7 @@ public class JEditTextArea extends JComponent
    * Get current position of the vertical scroll bar. [fry]
    * @deprecated Use {@link #getVerticalScrollPosition()}.
    */
+  @Deprecated
   public int getScrollPosition() {
     return getVerticalScrollPosition();
   }
@@ -214,6 +217,7 @@ public class JEditTextArea extends JComponent
    * Set position of the vertical scroll bar. [fry]
    * @deprecated Use {@link #setVerticalScrollPosition(int)}.
    */
+  @Deprecated
   public void setScrollPosition(int what) {
     setVerticalScrollPosition(what);
   }
@@ -360,227 +364,6 @@ public class JEditTextArea extends JComponent
    * Updates the state of the scroll bars. This should be called
    * if the number of lines in the document changes, or when the
    * size of the text are changes.
-=======
-
-      @Override
-      public void mouseWheelMoved(MouseWheelEvent e) {
-        if (scrollBarsInitialized) {
-          if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-            int scrollAmount = e.getUnitsToScroll();
-//            System.out.println("rot/amt = " + e.getWheelRotation() + " " + amt);
-//            int max = vertical.getMaximum();
-//            System.out.println("UNIT SCROLL of " + amt + " at value " + vertical.getValue() + " and max " + max);
-//            System.out.println("  get wheel rotation is " + e.getWheelRotation());
-//            int ex = e.getModifiersEx();
-//            String mods = InputEvent.getModifiersExText(ex);
-//            if (ex != 0) {
-//              System.out.println("  3 2         1         0");
-//              System.out.println("  10987654321098765432109876543210");
-//              System.out.println("  " + PApplet.binary(e.getModifiersEx()));
-////            if (mods.length() > 0) {
-//              System.out.println("  mods extext = " + mods + " " + mods.length() + " " + PApplet.hex(mods.charAt(0)));
-//            }
-//            System.out.println("  " + e);
-
-            // inertia scrolling on OS X will fire several shift-wheel events
-            // that are negative values.. this makes the scrolling area jump.
-            boolean isHorizontal = Base.isMacOS() && e.isShiftDown();
-            if (isHorizontal) {
-              horizontal.setValue(horizontal.getValue() + scrollAmount);
-            }else{
-              vertical.setValue(vertical.getValue() + scrollAmount);
-            }
-          }
-        }
-      }
-    });
-  }
-
-
-  /**
-   * Override this to provide your own painter for this {@link JEditTextArea}.
-   * @param defaults
-   * @return a newly constructed {@link TextAreaPainter}.
-   */
-  protected TextAreaPainter createPainter(final TextAreaDefaults defaults) {
-    return new TextAreaPainter(this, defaults);
-  }
-
-
-  /**
-   * Inline Input Method Support for Japanese.
-   */
-  public InputMethodRequests getInputMethodRequests() {
-    if (Preferences.getBoolean("editor.input_method_support")) {
-      if (inputMethodSupport == null) {
-        inputMethodSupport = new InputMethodSupport(this);
-      }
-      return inputMethodSupport;
-    }
-    return null;
-  }
-
-
-  /**
-   * Get current position of the vertical scroll bar. [fry]
-   * @deprecated Use {@link #getVerticalScrollPosition()}.
-   */
-  public int getScrollPosition() {
-    return getVerticalScrollPosition();
-  }
-
-
-  /**
-   * Set position of the vertical scroll bar. [fry]
-   * @deprecated Use {@link #setVerticalScrollPosition(int)}.
-   */
-  public void setScrollPosition(int what) {
-    setVerticalScrollPosition(what);
-  }
-  
-  
-  /**
-   * Get current position of the vertical scroll bar.
-   */
-  public int getVerticalScrollPosition() {
-    return vertical.getValue();
-  }
-
-
-  /**
-   * Set position of the vertical scroll bar.
-   */
-  public void setVerticalScrollPosition(int what) {
-    vertical.setValue(what);
-  }
-  
-  
-  /**
-   * Get current position of the horizontal scroll bar.
-   */
-  public int getHorizontalScrollPosition() {
-    return horizontal.getValue();
-  }
-  
-
-  /**
-   * Set position of the horizontal scroll bar.
-   */
-  public void setHorizontalScrollPosition(int what) {
-    horizontal.setValue(what);
-  }
-  
-
-  /**
-   * Returns the object responsible for painting this text area.
-   */
-  public final TextAreaPainter getPainter() {
-    return painter;
-  }
-  
-  
-  public final Printable getPrintable() {
-    return painter.getPrintable();
-  }
-
-
-  /**
-   * Returns the input handler.
-   */
-  public final InputHandler getInputHandler() {
-    return inputHandler;
-  }
-
-
-  /**
-   * Sets the input handler.
-   * @param inputHandler The new input handler
-   */
-  public void setInputHandler(InputHandler inputHandler) {
-    this.inputHandler = inputHandler;
-  }
-
-
-  /**
-   * Returns true if the caret is blinking, false otherwise.
-   */
-  public final boolean isCaretBlinkEnabled() {
-    return caretBlinks;
-  }
-
-
-  /**
-   * Toggles caret blinking.
-   * @param caretBlinks True if the caret should blink, false otherwise
-   */
-  public void setCaretBlinkEnabled(boolean caretBlinks) {
-    this.caretBlinks = caretBlinks;
-    if (!caretBlinks) {
-      blink = false;
-    }
-    painter.invalidateSelectedLines();
-  }
-
-
-  /**
-   * Returns true if the caret is visible, false otherwise.
-   */
-  public final boolean isCaretVisible() {
-    return (!caretBlinks || blink) && caretVisible;
-  }
-
-
-  /**
-   * Sets if the caret should be visible.
-   * @param caretVisible True if the caret should be visible, false
-   * otherwise
-   */
-  public void setCaretVisible(boolean caretVisible) {
-    this.caretVisible = caretVisible;
-    blink = true;
-
-    painter.invalidateSelectedLines();
-  }
-
-
-  /**
-   * Blinks the caret.
-   */
-  public final void blinkCaret() {
-    if (caretBlinks)  {
-      blink = !blink;
-      painter.invalidateSelectedLines();
-    } else {
-      blink = true;
-    }
-  }
-
-
-  /**
-   * Returns the number of lines from the top and button of the
-   * text area that are always visible.
-   */
-  public final int getElectricScroll() {
-    return electricScroll;
-  }
-
-
-  /**
-   * Sets the number of lines from the top and bottom of the text
-   * area that are always visible
-   * @param electricScroll The number of lines always visible from
-   * the top or bottom
-   */
-  public final void setElectricScroll(int electricScroll) {
-    this.electricScroll = electricScroll;
-  }
-
-
-  /**
-   * Updates the state of the scroll bars. This should be called
-   * if the number of lines in the document changes, or when the
-   * size of the text area changes.
->>>>>>> refs/remotes/upstream/master
    */
   public void updateScrollBars() {
     if (vertical != null && visibleLines != 0) {
@@ -1973,6 +1756,7 @@ public class JEditTextArea extends JComponent
 
     Clipboard clipboard = processing.app.Toolkit.getSystemClipboard();
     clipboard.setContents(formatted, new ClipboardOwner() {
+      @Override
       public void lostOwnership(Clipboard clipboard, Transferable contents) {
         // i don't care about ownership
       }
@@ -2143,6 +1927,7 @@ public class JEditTextArea extends JComponent
    * Called by the AWT when this component is removed from it's parent.
    * This stops clears the currently focused component.
    */
+  @Override
   public void removeNotify() {
     super.removeNotify();
 //    if(focusedComponent == this)
@@ -2187,6 +1972,7 @@ public class JEditTextArea extends JComponent
    */
   
   
+  @Override
   public void processKeyEvent(KeyEvent event) {
     // this had to be added in Processing 007X, because the menu key
     // events weren't making it up to the frame.
@@ -2344,6 +2130,7 @@ public class JEditTextArea extends JComponent
   {
     //final int LEFT_EXTRA = 5;
 
+    @Override
     public void addLayoutComponent(String name, Component comp)
     {
       if(name.equals(CENTER))
@@ -2356,6 +2143,7 @@ public class JEditTextArea extends JComponent
         leftOfScrollBar.addElement(comp);
     }
 
+    @Override
     public void removeLayoutComponent(Component comp)
     {
       if(center == comp)
@@ -2368,6 +2156,7 @@ public class JEditTextArea extends JComponent
         leftOfScrollBar.removeElement(comp);
     }
 
+    @Override
     public Dimension preferredLayoutSize(Container parent)
     {
       Dimension dim = new Dimension();
@@ -2386,6 +2175,7 @@ public class JEditTextArea extends JComponent
       return dim;
     }
 
+    @Override
     public Dimension minimumLayoutSize(Container parent)
     {
       Dimension dim = new Dimension();
@@ -2406,6 +2196,7 @@ public class JEditTextArea extends JComponent
       return dim;
     }
 
+    @Override
     public void layoutContainer(Container parent)
     {
       Dimension size = parent.getSize();
@@ -2472,11 +2263,13 @@ public class JEditTextArea extends JComponent
       super(JEditTextArea.this);
     }
 
+    @Override
     public int getDot()
     {
       return getCaretPosition();
     }
 
+    @Override
     public int getMark()
     {
       return getMarkPosition();
@@ -2485,6 +2278,7 @@ public class JEditTextArea extends JComponent
 
   class AdjustHandler implements AdjustmentListener
   {
+    @Override
     public void adjustmentValueChanged(final AdjustmentEvent evt)
     {
       if(!scrollBarsInitialized)
@@ -2494,6 +2288,7 @@ public class JEditTextArea extends JComponent
       // and the result is that scrolling doesn't stop after
       // the mouse is released
       SwingUtilities.invokeLater(new Runnable() {
+        @Override
         public void run()
         {
           if (evt.getAdjustable() == vertical) {
@@ -2508,6 +2303,7 @@ public class JEditTextArea extends JComponent
 
   class ComponentHandler extends ComponentAdapter
   {
+    @Override
     public void componentResized(ComponentEvent evt)
     {
       recalculateVisibleLines();
@@ -2517,6 +2313,7 @@ public class JEditTextArea extends JComponent
 
   class DocumentHandler implements DocumentListener
   {
+    @Override
     public void insertUpdate(DocumentEvent evt)
     {
       documentChanged(evt);
@@ -2541,6 +2338,7 @@ public class JEditTextArea extends JComponent
       select(newStart,newEnd);
     }
 
+    @Override
     public void removeUpdate(DocumentEvent evt)
     {
       documentChanged(evt);
@@ -2574,6 +2372,7 @@ public class JEditTextArea extends JComponent
       select(newStart,newEnd);
     }
 
+    @Override
     public void changedUpdate(DocumentEvent evt)
     {
     }
@@ -2582,6 +2381,7 @@ public class JEditTextArea extends JComponent
 
   class DragHandler implements MouseMotionListener
   {
+    @Override
     public void mouseDragged(MouseEvent evt) {
       if (popup != null && popup.isVisible()) return;
 
@@ -2611,16 +2411,19 @@ public class JEditTextArea extends JComponent
       }
     }
 
+    @Override
     public void mouseMoved(MouseEvent evt) {}
   }
 
 
   class FocusHandler implements FocusListener {
     
+    @Override
     public void focusGained(FocusEvent evt) {
       setCaretVisible(true);
     }
 
+    @Override
     public void focusLost(FocusEvent evt) {
       setCaretVisible(false);
     }
@@ -2629,6 +2432,7 @@ public class JEditTextArea extends JComponent
 
   class MouseHandler extends MouseAdapter {
     
+    @Override
     public void mousePressed(MouseEvent event) {
 //      try {
 //      requestFocus();
@@ -2780,24 +2584,29 @@ public class JEditTextArea extends JComponent
       this.end = end;
     }
 
+    @Override
     public boolean isSignificant() {
       return false;
     }
 
+    @Override
     public String getPresentationName() {
       return "caret move";
     }
 
+    @Override
     public void undo() throws CannotUndoException {
       super.undo();
       select(start,end);
     }
 
+    @Override
     public void redo() throws CannotRedoException {
       super.redo();
       select(start,end);
     }
 
+    @Override
     public boolean addEdit(UndoableEdit edit) {
       if (edit instanceof CaretUndo) {
         CaretUndo cedit = (CaretUndo)edit;
