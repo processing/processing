@@ -27,6 +27,10 @@ X   https://github.com/processing/processing/issues/3096
 X remove code that's moving the sketch path arg later
 X   https://github.com/processing/processing/commit/0a14835e6f5f4766b022e73a8fe562318636727c
 
+_ install/remove buttons not working
+_   https://github.com/processing/processing/issues/3172
+_ search the source for 'applet' references (i.e. SVG docs)
+
 integration of pdex/debug
 o make the tabs have a default minimum size
 o   multiple sizes as they get smaller (web browser style)

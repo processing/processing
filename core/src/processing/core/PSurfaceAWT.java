@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2014 The Processing Foundation
+  Copyright (c) 2014-15 The Processing Foundation
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -104,8 +104,10 @@ public class PSurfaceAWT implements PSurface {
 
 
   /**
-   * Handle grabbing the focus from the parent applet. Other renderers can
-   * override this if handling needs to be different.
+   * Handle grabbing the focus on startup. Other renderers can override this
+   * if handling needs to be different. For the AWT, the request is invoked
+   * later on the EDT. Other implementations may not require that, so the
+   * invokeLater() happens in here rather than requiring the caller to wrap it.
    */
   public void requestFocus() {
     // for 2.0a6, moving this request to the EDT
@@ -198,72 +200,11 @@ public class PSurfaceAWT implements PSurface {
     }
 
 
-    /*
-    protected synchronized void render_example() {
-      System.out.println("render(), bounds are " + getBounds());
-      if (getBufferStrategy() == null) {  // whole block [121222]
-        System.out.println("creating a strategy");
-        createBufferStrategy(2);
-      }
-      BufferStrategy strategy = getBufferStrategy();
-      if (strategy == null) {
-        return;
-      }
-      // Render single frame
-      do {
-        // The following loop ensures that the contents of the drawing buffer
-        // are consistent in case the underlying surface was recreated
-        do {
-          Graphics draw = strategy.getDrawGraphics();
-          //Insets i = getInsets();
-          //int w = (int)(((double)(getWidth() - i.left - i.right))/2+0.5);
-          //int h = (int)(((double)(getHeight() - i.top - i.bottom))/2+0.5);
-          Insets i = new Insets(0, 0, 0, 0);
-          int w = getWidth() / 2;
-          int h = getHeight() / 2;
-
-          if (false) {
-            draw.setColor(Color.YELLOW);
-            draw.fillRect(i.left, i.top + h, w, getHeight() - h);
-            draw.fillRect(i.left + w, i.top, getWidth() - w, h);
-            draw.setColor(Color.BLACK);
-            draw.fillRect(i.left, i.top, w, h);
-            draw.fillRect(i.left + w, i.top + h, getWidth() - w, getHeight() - h);
-          } else {
-            draw.setColor(Color.WHITE);
-            draw.fillRect(i.left, i.top, getWidth(), getHeight());
-
-            draw.setColor(Color.BLACK);
-            draw.setFont(new Font("SansSerif", Font.PLAIN, 50));
-            draw.drawString("this is some text", 50, 100);
-
-//          draw.setColor(Color.BLACK);
-//          int mx = Math.max(getWidth(), getHeight());
-//          for (int x = -getWidth(); x < getWidth(); x += 5) {
-//            draw.drawLine(x, 0, x + mx, mx);
-//          }
-          }
-
-          draw.dispose();
-
-          // Repeat the rendering if the drawing buffer contents
-          // were restored
-          System.out.println("restored " + strategy.contentsRestored());
-        } while (strategy.contentsRestored());
-
-        // Display the buffer
-        System.out.println("showing");
-        strategy.show();
-
-        // Repeat the rendering if the drawing buffer was lost
-        System.out.println("lost " + strategy.contentsLost());
-        System.out.println();
-      } while (strategy.contentsLost());
-    }
-    */
-
-
     protected synchronized void render() {
+      if (!EventQueue.isDispatchThread()) {
+        //throw new IllegalStateException("render() called outside the EDT");
+        System.err.println("render() called outside the EDT");
+      }
 //      if (canvas == null) {
 //        removeListeners(this);
 //        canvas = new Canvas();
@@ -280,6 +221,13 @@ public class PSurfaceAWT implements PSurface {
 
       if (!canvas.isDisplayable()) {
 //        System.out.println("no peer.. holding");
+        return;
+      }
+
+      if (graphics.image == null) {
+        if (PApplet.DEBUG) {
+          new Exception("image is null, returning").printStackTrace(System.out);
+        }
         return;
       }
 
@@ -321,83 +269,15 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
-  /*
-  @Override
-  public void update(Graphics screen) {
-    paint(screen);
-  }
-
-
-  @Override
-  public void paint(Graphics screen) {
-//    int r = (int) random(10000);
-//    System.out.println("into paint " + r);
-    //super.paint(screen);
-
-    // ignore the very first call to paint, since it's coming
-    // from the o.s., and the applet will soon update itself anyway.
-    if (frameCount == 0) {
-//      println("Skipping frame");
-      // paint() may be called more than once before things
-      // are finally painted to the screen and the thread gets going
-      return;
-    }
-    // without ignoring the first call, the first several frames
-    // are confused because paint() gets called in the midst of
-    // the initial nextFrame() call, so there are multiple
-    // updates fighting with one another.
-
-    // make sure the screen is visible and usable
-    // (also prevents over-drawing when using PGraphicsOpenGL)
-
-//    if (useActive) {
-//      return;
-//    }
-
-//    if (insideDraw) {
-//      new Exception().printStackTrace(System.out);
-//    }
-    if (!insideDraw && (g != null) && (g.image != null)) {
-      if (useStrategy) {
-        render();
-      } else {
-//        System.out.println("drawing to screen");
-        //screen.drawImage(g.image, 0, 0, null);  // not retina friendly
-        screen.drawImage(g.image, 0, 0, width, height, null);
-      }
-    } else {
-      debug(insideDraw + " " + g + " " + ((g != null) ? g.image : "-"));
-    }
-  }
-*/
-
-
   public void blit() {
-//    System.out.println("blit");
-    ((SmoothCanvas) canvas).render();  // ??
-//    canvas.repaint();
-    /*
-    if (canvas.getGraphicsConfiguration() != null) {
-      GraphicsDevice device = canvas.getGraphicsConfiguration().getDevice();
-      if (device != displayDevice) {
-        System.out.println("display device changed from " + displayDevice + " to " + device);
+    // Other folks taht call render() (i.e. paint()) are already on the EDT.
+    // We need to be using the EDT since we're messing with the Canvas
+    // object and BufferStrategy and friends.
+    EventQueue.invokeLater(new Runnable() {
+      public void run() {
+        ((SmoothCanvas) canvas).render();
       }
-    }
-
-    if (useActive) {
-      if (useStrategy) {
-        render();
-      } else {
-        Graphics screen = canvas.getGraphics();
-        if (screen != null) {
-          screen.drawImage(g.image, 0, 0, sketch.width, sketch.height, null);
-        }
-      }
-    } else {
-      canvas.repaint();
-    }
-//  getToolkit().sync();  // force repaint now (proper method)
-    */
+    });
   }
 
 
@@ -674,6 +554,8 @@ public class PSurfaceAWT implements PSurface {
 
 
   private void setCanvasSize() {
+//    System.out.format("setting canvas size %d %d%n", sketchWidth, sketchHeight);
+//    new Exception().printStackTrace(System.out);
     int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
     int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
 
@@ -833,7 +715,16 @@ public class PSurfaceAWT implements PSurface {
   // needs to resize the frame, which will resize the canvas, and so on...
   public void setSize(int wide, int high) {
 //    System.out.format("frame visible %b, setSize(%d, %d) %n", frame.isVisible(), wide, high);
-//    new Exception().printStackTrace(System.out);
+    if (PApplet.DEBUG) {
+      new Exception(String.format("setSize(%d, %d)", wide, high)).printStackTrace(System.out);
+    }
+
+    if (wide == sketchWidth && high == sketchHeight) {
+      if (PApplet.DEBUG) {
+        new Exception("w/h unchanged " + wide + " " + high).printStackTrace(System.out);
+      }
+      return;  // unchanged, don't rebuild everything
+    }
 
     sketchWidth = wide;
     sketchHeight = high;
@@ -1421,13 +1312,25 @@ public class PSurfaceAWT implements PSurface {
       // animation thread yields to other running threads.
       final int NO_DELAYS_PER_YIELD = 15;
 
+      /*
       // If size un-initialized, might be a Canvas. Call setSize() here since
       // we now have a parent object that this Canvas can use as a peer.
       if (graphics.image == null) {
 //        System.out.format("it's null, sketchW/H already set to %d %d%n", sketchWidth, sketchHeight);
-        setSize(sketchWidth, sketchHeight);
+        try {
+          EventQueue.invokeAndWait(new Runnable() {
+            public void run() {
+              setSize(sketchWidth, sketchHeight);
+            }
+          });
+        } catch (InterruptedException ie) {
+          ie.printStackTrace();
+        } catch (InvocationTargetException ite) {
+          ite.printStackTrace();
+        }
 //        System.out.format("  but now, sketchW/H changed to %d %d%n", sketchWidth, sketchHeight);
       }
+      */
 
       // un-pause the sketch and get rolling
       sketch.start();
@@ -1443,13 +1346,26 @@ public class PSurfaceAWT implements PSurface {
 //        }
 
         // render a single frame
-//        if (g != null) {
+//        try {
+//          EventQueue.invokeAndWait(new Runnable() {
+//            public void run() {
         sketch.handleDraw();
-//        }
 
+//        EventQueue.invokeLater(new Runnable() {
+//          public void run() {
         if (sketch.frameCount == 1) {
           requestFocus();
         }
+//          }
+//        });
+
+//            }
+//          });
+//        } catch (InterruptedException ie) {
+//          ie.printStackTrace();
+//        } catch (InvocationTargetException ite) {
+//          ite.getTargetException().printStackTrace();
+//        }
 
         // wait for update & paint to happen before drawing next frame
         // this is necessary since the drawing is sometimes in a

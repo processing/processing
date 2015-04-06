@@ -204,7 +204,7 @@ public class PApplet implements PConstants {
   static final boolean DEBUG = false;
 //  static final boolean DEBUG = true;
 
-  /** Default width and height for applet when not specified */
+  /** Default width and height for sketch when not specified */
   static public final int DEFAULT_WIDTH = 100;
   static public final int DEFAULT_HEIGHT = 100;
 
@@ -9341,8 +9341,8 @@ public class PApplet implements PConstants {
    * the 'args' array when not null.
    * @param mainClass name of the class to load (with package if any)
    * @param args command line arguments to pass to the sketch's 'args' array.
-   *             Note that this is *not* the same as the args passed to PApplet
-   *             such as --display and others.
+   *             Note that this is *not* the same as the args passed to (and
+   *             understood by) PApplet such as --display.
    */
   static public void main(final String mainClass, final String[] sketchArgs) {
     String[] args = new String[] { mainClass };
@@ -9353,7 +9353,6 @@ public class PApplet implements PConstants {
   }
 
 
-  /*
   static public void runSketch(final String[] args,
                                final PApplet constructedApplet) {
     EventQueue.invokeLater(new Runnable() {
@@ -9362,11 +9361,15 @@ public class PApplet implements PConstants {
       }
     });
   }
-  */
 
 
-  static public void runSketch(final String[] args,
-                               final PApplet constructedApplet) {
+  /**
+   * Moving this to the EDT for 3.0a6 because the main() messes with AWT
+   * components (or even Swing components, presumably). Hoping to get more
+   * consistent behavior across platforms and implementations.
+   */
+  static protected void runSketchEDT(final String[] args,
+                                  final PApplet constructedApplet) {
     // Supposed to help with flicker, but no effect on OS X.
     // TODO IIRC this helped on Windows, but need to double check.
     System.setProperty("sun.awt.noerasebackground", "true");

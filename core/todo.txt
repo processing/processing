@@ -72,6 +72,12 @@ X   added --span option
 X play with improvements to full screen here
 
 
+_ split 'present' and 'full screen'?
+_   --full-screen causes considerable flicker at this point
+_   or split them when sketchWidth/Height are implemented?
+_ check on performance of the new EDT setup
+
+
 showstoppers
 _ static sketch with size() produces black window
 _ are we running on the EDT or not?
@@ -81,6 +87,9 @@ _ noSmooth() and other settings reset after setup()
 _   https://github.com/processing/processing/issues/3113
 _ static mode - no setup() / draw() - broken in OpenGL
 _   https://github.com/processing/processing/issues/3163
+
+_ sketch window is not placed at correct location on restart
+_   https://github.com/processing/processing/issues/3125
 
 
 applet/sketch
