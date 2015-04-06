@@ -237,6 +237,24 @@ class ContributionPanel extends JPanel {
 
     setExpandListener(this, new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
+        // TODO: Fix Contribution Manager buttons
+        // The following is a temporary solution that calls all the ActionListeners 
+        // associated with a button when a user clicks on it
+        if (ContributionPanel.this.installRemoveButton.contains(e.getPoint())
+          && installRemoveButton.isVisible()) {
+          JButton irButton = ContributionPanel.this.installRemoveButton;
+          for (ActionListener a : irButton.getActionListeners()) {
+            a.actionPerformed(new ActionEvent(e.getSource(), e.getID(), e.paramString()));
+          }
+        }
+        else if (ContributionPanel.this.updateButton.contains(e.getPoint())
+          && updateButton.isVisible()) {
+          JButton upButton = ContributionPanel.this.updateButton;
+          for (ActionListener a : upButton.getActionListeners()) {
+            a.actionPerformed(new ActionEvent(e.getSource(), e.getID(), e.paramString()));
+          }
+        }
+        
         if (contrib.isCompatible(Base.getRevision()))
           listPanel.setSelectedPanel(ContributionPanel.this);
         else
