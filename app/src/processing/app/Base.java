@@ -1275,14 +1275,14 @@ public class Base {
       return false;  // let's not go there
     }
 
-    String[] list = folder.list();
+    String[] fileList = folder.list();
     // If a bad folder or unreadable or whatever, this will come back null
-    if (list == null) {
+    if (fileList == null) {
       return false;
     }
 
     // Alphabetize the list, since it's not always alpha order
-    Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
+    Arrays.sort(fileList, String.CASE_INSENSITIVE_ORDER);
 
 //    ActionListener listener = new ActionListener() {
 //        public void actionPerformed(ActionEvent e) {
@@ -1301,8 +1301,8 @@ public class Base {
     //menu.addActionListener(listener);
 
     boolean found = false;
-
-    for (String name : list) {
+    for (String name : fileList) {
+      //Skip hidden files
       if (name.charAt(0) == '.') {
         continue;
       }
@@ -1317,18 +1317,14 @@ public class Base {
       if (subfolder.isDirectory()) {
         File entry = checkSketchFolder(subfolder, name);
         if (entry != null) {
-//          DefaultMutableTreeNode item = new DefaultMutableTreeNode(name);
           DefaultMutableTreeNode item =
             new DefaultMutableTreeNode(new SketchReference(name, entry));
-//          item.addActionListener(listener);
-//          item.setActionCommand(entry.getAbsolutePath());
-//          menu.add(item);
+
           node.add(item);
           found = true;
 
         } else {
           // not a sketch folder, but maybe a subfolder containing sketches
-//          JMenu submenu = new JMenu(name);
           DefaultMutableTreeNode subnode = new DefaultMutableTreeNode(name);
           // needs to be separate var otherwise would set ifound to false
           boolean anything = addSketches(subnode, subfolder);
