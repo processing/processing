@@ -27,7 +27,7 @@ X   https://github.com/processing/processing/issues/3096
 X remove code that's moving the sketch path arg later
 X   https://github.com/processing/processing/commit/0a14835e6f5f4766b022e73a8fe562318636727c
 
-_ install/remove buttons not working
+_ install/remove buttons not working in the managers
 _   https://github.com/processing/processing/issues/3172
 _ search the source for 'applet' references (i.e. SVG docs)
 
@@ -183,9 +183,13 @@ X   https://github.com/processing/processing/issues/180
 X textAlign(RIGHT) adds extra space to the right
 X   https://github.com/processing/processing/pull/3078
 X   https://github.com/processing/processing/issues/3028
-
-_ Mode and Mode Managers not working
-_   https://github.com/processing/processing/issues/3172
+X Refactor examples manager window
+X   https://github.com/processing/processing/issues/3133
+X   https://github.com/processing/processing/pull/3177
+X Fix ColorChooser cursor
+X   https://github.com/processing/processing/pull/3186
+X Improve Spanish localization 
+X   https://github.com/processing/processing/pull/3185
 
 
 3.0a7
