@@ -146,7 +146,6 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
   
   public void show() {
     window.setVisible(true);
-    window.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
   }
   
   
@@ -490,6 +489,8 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     private int lastX, lastY;
 
     public ColorRange() {
+      setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+
       addMouseListener(new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
@@ -570,6 +571,8 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     static final int HIGH = 256;
 
     public ColorSlider() {
+      setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+
       addMouseListener(new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
