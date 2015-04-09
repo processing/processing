@@ -53,16 +53,20 @@ public class Platform {
   Base base;
 
 
+  public void init(Base base) {
+    this.base = base;
+  }
+
+
   /**
    * Set the default L & F. While I enjoy the bounty of the sixteen possible
    * exception types that this UIManager method might throw, I feel that in
    * just this one particular case, I'm being spoiled by those engineers
-   * at Sun, those Masters of the Abstractionverse. It leaves me feeling sad
-   * and overweight. So instead, I'll pretend that I'm not offered eleven dozen
-   * ways to report to the user exactly what went wrong, and I'll bundle them
-   * all into a single catch-all "Exception". Because in the end, all I really
-   * care about is whether things worked or not. And even then, I don't care.
-   *
+   * at Sun, those Masters of the Abstractionverse. So instead, I'll pretend
+   * that I'm not offered eleven dozen ways to report to the user exactly what
+   * went wrong, and I'll bundle them all into a single catch-all "Exception".
+   * Because in the end, all I really care about is whether things worked or
+   * not. And even then, I don't care.
    * @throws Exception Just like I said.
    */
   public void setLookAndFeel() throws Exception {
@@ -74,17 +78,20 @@ public class Platform {
     }
   }
 
-  public void saveLanguage(String languageCode) {}
 
-  public void init(Base base) {
-    this.base = base;
-  }
+  /**
+   * Handle any platform-specific languages saving. This is necessary on OS X
+   * because of how bundles are handled, but perhaps your platform would like
+   * to Think Different too?
+   * @param languageCode 2-digit lowercase ISO language code
+   */
+  public void saveLanguage(String languageCode) { }
 
 
-  /** 
-   * This function should throw an exception or return a value. 
-   * Do not return null. 
-   */  
+  /**
+   * This function should throw an exception or return a value.
+   * Do not return null.
+   */
   public File getSettingsFolder() throws Exception {
     // otherwise make a .processing directory int the user's home dir
     File home = new File(System.getProperty("user.home"));
@@ -149,26 +156,26 @@ public class Platform {
     }
     */
   }
-  
+
 
   /**
-   * Attempts to move to the Trash on OS X, or the Recycle Bin on Windows. 
-   * Also tries to find a suitable Trash location on Linux. 
-   * If not possible, just deletes the file or folder instead.  
+   * Attempts to move to the Trash on OS X, or the Recycle Bin on Windows.
+   * Also tries to find a suitable Trash location on Linux.
+   * If not possible, just deletes the file or folder instead.
    * @param file the folder or file to be removed/deleted
    * @return true if the folder was successfully removed
-   * @throws IOException 
+   * @throws IOException
    */
   final public boolean deleteFile(File file) throws IOException {
     FileUtils fu = FileUtils.getInstance();
     if (fu.hasTrash()) {
       fu.moveToTrash(new File[] { file });
       return true;
-      
+
     } else if (file.isDirectory()) {
       Base.removeDir(file);
       return true;
-      
+
     } else {
       return file.delete();
     }

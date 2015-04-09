@@ -145,8 +145,8 @@ public class Preferences {
     // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
     String proxyHost = get("proxy.host");
     String proxyPort = get("proxy.port");
-    if (proxyHost != null && proxyHost.trim().length() != 0 &&
-        proxyPort != null && proxyPort.trim().length() != 0) {
+    if (proxyHost != null && proxyHost.length() != 0 &&
+        proxyPort != null && proxyPort.length() != 0) {
       System.setProperty("http.proxyHost", proxyHost);
       System.setProperty("http.proxyPort", proxyPort);
     }
