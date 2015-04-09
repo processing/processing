@@ -38,8 +38,6 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.*;
 
-import processing.app.contrib.ContributionType;
-import processing.app.contrib.ExamplesContribution;
 import processing.app.syntax.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -51,9 +49,9 @@ public abstract class Mode {
   protected File folder;
 
   protected TokenMarker tokenMarker;
-  protected HashMap<String, String> keywordToReference = 
+  protected HashMap<String, String> keywordToReference =
     new HashMap<String, String>();
-  
+
   protected Settings theme;
 //  protected Formatter formatter;
 //  protected Tool formatter;
@@ -76,7 +74,7 @@ public abstract class Mode {
   protected File examplesFolder;
   protected File librariesFolder;
   protected File referenceFolder;
-  
+
   protected File examplesContribFolder;
 
   public ArrayList<Library> coreLibraries;
@@ -84,16 +82,16 @@ public abstract class Mode {
 
   /** Library folder for core. (Used for OpenGL in particular.) */
   protected Library coreLibrary;
-  
-  /** 
+
+  /**
    * ClassLoader used to retrieve classes for this mode. Useful if you want
-   * to grab any additional classes that subclass what's in the mode folder. 
+   * to grab any additional classes that subclass what's in the mode folder.
    */
   protected ClassLoader classLoader;
 
   static final int BACKGROUND_WIDTH = 1025;
   static final int BACKGROUND_HEIGHT = 65;
-  protected Image backgroundImage;  
+  protected Image backgroundImage;
 
 //  public Mode(Base base, File folder) {
 //    this(base, folder, base.getSketchbookLibrariesFolder());
@@ -109,14 +107,14 @@ public abstract class Mode {
     examplesFolder = new File(folder, "examples");
     librariesFolder = new File(folder, "libraries");
     referenceFolder = new File(folder, "reference");
-    
+
     // Get path to the contributed examples compatible with this mode
     examplesContribFolder = Base.getSketchbookExamplesFolder();
 
 //    rebuildToolbarMenu();
     rebuildLibraryList();
 //    rebuildExamplesMenu();
-    
+
     try {
       for (File file : getKeywordFiles()) {
         loadKeywords(file);
@@ -126,8 +124,8 @@ public abstract class Mode {
                        "Could not load keywords file for " + getTitle() + " mode.", e);
     }
   }
-  
-  
+
+
   /**
    * To add additional keywords, or to grab them from another mode, override
    * this function. If your mode has no keywords, return a zero length array.
@@ -136,22 +134,22 @@ public abstract class Mode {
     return new File[] { new File(folder, "keywords.txt") };
   }
 
-  
+
   protected void loadKeywords(File keywordFile) throws IOException {
-    // overridden for Python, where # is an actual keyword 
+    // overridden for Python, where # is an actual keyword
     loadKeywords(keywordFile, "#");
   }
-  
-  
-  protected void loadKeywords(File keywordFile, 
+
+
+  protected void loadKeywords(File keywordFile,
                               String commentPrefix) throws IOException {
     BufferedReader reader = PApplet.createReader(keywordFile);
     String line = null;
     while ((line = reader.readLine()) != null) {
       if (!line.trim().startsWith(commentPrefix)) {
-        // Was difficult to make sure that mode authors were properly doing 
-        // tab-separated values. By definition, there can't be additional 
-        // spaces inside a keyword (or filename), so just splitting on tokens. 
+        // Was difficult to make sure that mode authors were properly doing
+        // tab-separated values. By definition, there can't be additional
+        // spaces inside a keyword (or filename), so just splitting on tokens.
         String[] pieces = PApplet.splitTokens(line);
         if (pieces.length >= 2) {
           String keyword = pieces[0];
@@ -163,7 +161,7 @@ public abstract class Mode {
           if (pieces.length == 3) {
             String htmlFilename = pieces[2];
             if (htmlFilename.length() > 0) {
-              // if the file is for the version with parens, 
+              // if the file is for the version with parens,
               // add a paren to the keyword
               if (htmlFilename.endsWith("_")) {
                 keyword += "_";
@@ -176,13 +174,13 @@ public abstract class Mode {
     }
     reader.close();
   }
-  
-  
+
+
   public void setClassLoader(ClassLoader loader) {
     this.classLoader = loader;
   }
-  
-  
+
+
   public ClassLoader getClassLoader() {
     return classLoader;
   }
@@ -191,16 +189,16 @@ public abstract class Mode {
   /**
    * Setup additional elements that are only required when running with a GUI,
    * rather than from the command-line. Note that this will not be called when
-   * the Mode is used from the command line (because Base will be null).  
+   * the Mode is used from the command line (because Base will be null).
    */
   public void setupGUI() {
     try {
-      // First load the default theme data for the whole PDE. 
+      // First load the default theme data for the whole PDE.
       theme = new Settings(Base.getContentFile("lib/theme.txt"));
-      
-      // The mode-specific theme.txt file should only contain additions, 
-      // and in extremely rare cases, it might override entries from the 
-      // main theme. Do not override for style changes unless they are 
+
+      // The mode-specific theme.txt file should only contain additions,
+      // and in extremely rare cases, it might override entries from the
+      // main theme. Do not override for style changes unless they are
       // objectively necessary for your Mode.
       File modeTheme = new File(folder, "theme/theme.txt");
       if (modeTheme.exists()) {
@@ -218,8 +216,8 @@ public abstract class Mode {
                      "Could not load theme.txt, please re-install Processing", e);
     }
   }
-  
-  
+
+
   /*
   protected void loadBackground() {
     String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
@@ -232,8 +230,8 @@ public abstract class Mode {
       backgroundImage = loadImage("theme/mode" + suffix);
     }
   }
-  
-  
+
+
   public void drawBackground(Graphics g, int offset) {
     if (backgroundImage != null) {
       if (!Toolkit.highResDisplay()) {
@@ -245,7 +243,7 @@ public abstract class Mode {
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                             RenderingHints.VALUE_INTERPOLATION_BICUBIC);
       }
-      g.drawImage(backgroundImage, 0, -offset, 
+      g.drawImage(backgroundImage, 0, -offset,
                   BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
     }
   }
@@ -290,14 +288,14 @@ public abstract class Mode {
 
 
   /**
-   * Get the folder where this mode is stored. 
+   * Get the folder where this mode is stored.
    * @since 3.0a3
    */
   public File getFolder() {
     return folder;
   }
-  
-  
+
+
   public File getExamplesFolder() {
     return examplesFolder;
   }
@@ -418,7 +416,7 @@ public abstract class Mode {
       }
     });
     toolbarMenu.add(item);
-    
+
     item = new JMenuItem(Language.text("examples.add_examples"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -446,11 +444,11 @@ public abstract class Mode {
 
 
   protected int importMenuIndex = -1;
-  
+
   /**
    * Rather than re-building the library menu for every open sketch (very slow
-   * and prone to bugs when updating libs, particularly with the contribs mgr), 
-   * share a single instance across all windows. 
+   * and prone to bugs when updating libs, particularly with the contribs mgr),
+   * share a single instance across all windows.
    * @since 3.0a6
    * @param sketchMenu the Sketch menu that's currently active
    */
@@ -460,8 +458,8 @@ public abstract class Mode {
     importMenuIndex = Toolkit.getMenuItemIndex(sketchMenu, importMenu);
     sketchMenu.remove(importMenu);
   }
-  
-  
+
+
   /**
    * Re-insert the Import Library menu. Added function so that other modes
    * need not have an 'import' menu.
@@ -477,8 +475,8 @@ public abstract class Mode {
       sketchMenu.insert(getImportMenu(), importMenuIndex);
     }
   }
-  
-  
+
+
   public JMenu getImportMenu() {
     if (importMenu == null) {
       rebuildImportMenu();
@@ -526,10 +524,10 @@ public abstract class Mode {
       for (Library library : coreLibraries) {
         JMenuItem item = new JMenuItem(library.getName());
         item.addActionListener(listener);
-        
+
         // changed to library-name to facilitate specification of imports from properties file
         item.setActionCommand(library.getName());
-        
+
         importMenu.add(item);
       }
     }
@@ -545,7 +543,7 @@ public abstract class Mode {
       for (Library library : contribLibraries) {
         JMenuItem item = new JMenuItem(library.getName());
         item.addActionListener(listener);
-        
+
         // changed to library-name to facilitate specification if imports from properties file
         item.setActionCommand(library.getName());
 
@@ -676,7 +674,7 @@ public abstract class Mode {
       if(foundationLibraries.getChildCount() > 0) {
         root.add(foundationLibraries);
       }
-      
+
       // Get examples for third party libraries
       DefaultMutableTreeNode contributed = new DefaultMutableTreeNode("Libraries");
       for (Library lib : contribLibraries) {
@@ -716,7 +714,7 @@ public abstract class Mode {
   /**
    * Function to give a JTree a pretty alternating gray-white colouring for
    * its rows.
-   * 
+   *
    * @param tree
    */
   private void colourizeTreeRows(JTree tree) {
@@ -737,7 +735,7 @@ public abstract class Mode {
         if (!tree.isRowSelected(row)) {
           if (row % 2 == 0) {
 
-            // Need to set this, else the gray from the odd 
+            // Need to set this, else the gray from the odd
             // rows colours this gray as well.
             c.setBackground(new Color(255, 255, 255));
 
@@ -747,15 +745,15 @@ public abstract class Mode {
           } else {
 
             // Set background for entire component (including the image).
-            // Using transparency messes things up, probably since the 
+            // Using transparency messes things up, probably since the
             // transparent colour is not good friends with the images background colour.
             c.setBackground(new Color(240, 240, 240));
 
-            // Can't use setBackgroundSelectionColor() directly, since then, the 
+            // Can't use setBackgroundSelectionColor() directly, since then, the
             // image's background isn't affected.
-            // The setUI() doesn't fix the image's background because the 
-            // transparency likely interferes with its normal background, 
-            // making its background lighter than the rest. 
+            // The setUI() doesn't fix the image's background because the
+            // transparency likely interferes with its normal background,
+            // making its background lighter than the rest.
 //            setBackgroundNonSelectionColor(new Color(190, 190, 190));
 
             setBackgroundSelectionColor(new Color(0, 0, 255));
@@ -783,7 +781,7 @@ public abstract class Mode {
 
         if (!tree.isRowSelected(row)) {
           if (row % 2 == 0) {
-            // Need to set this, else the gray from the odd rows 
+            // Need to set this, else the gray from the odd rows
             // affects the even rows too.
             g2.setColor(new Color(255, 255, 255, 128));
           } else {
@@ -814,11 +812,11 @@ public abstract class Mode {
           examplesFrame.setVisible(false);
         }
       });
-      
+
       JPanel examplesPanel = new JPanel();
       examplesPanel.setLayout(new BorderLayout());
       examplesPanel.setBackground(Color.WHITE);
-      
+
       final JPanel openExamplesManagerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
       JButton addExamplesButton = new JButton(Language.text("examples.add_examples"));
       openExamplesManagerPanel.add(addExamplesButton);
@@ -834,11 +832,11 @@ public abstract class Mode {
           base.handleOpenExampleManager();
         }
       });
-      
+
       final JTree tree = new JTree(buildExamplesTree());
-      
+
       colourizeTreeRows(tree);
-      
+
       tree.setOpaque(true);
       tree.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -907,14 +905,14 @@ public abstract class Mode {
       } else {
         tree.setToggleClickCount(1);
       }
-  
+
       JScrollPane treePane = new JScrollPane(tree);
       treePane.setPreferredSize(new Dimension(250, 300));
       treePane.setBorder(new EmptyBorder(2, 0, 0, 0));
       treePane.setOpaque(true);
       treePane.setBackground(Color.WHITE);
       treePane.setAlignmentX(Component.LEFT_ALIGNMENT);
-      
+
       examplesPanel.add(openExamplesManagerPanel,BorderLayout.PAGE_START);
       examplesPanel.add(treePane, BorderLayout.CENTER);
       examplesFrame.getContentPane().add(examplesPanel);
@@ -1052,9 +1050,9 @@ public abstract class Mode {
     }
     return sbNode;
   }
-  
+
   protected JFrame sketchbookFrame;
-  
+
   public void showSketchbookFrame() {
     if (sketchbookFrame == null) {
       sketchbookFrame = new JFrame(Language.text("sketchbook"));
@@ -1142,7 +1140,7 @@ public abstract class Mode {
     });
   }
 
-  
+
   /**
    * Get an ImageIcon object from the Mode folder.
    * Or when prefixed with /lib, load it from the main /lib folder.
@@ -1160,21 +1158,21 @@ public abstract class Mode {
 //    EditorConsole.systemErr.println("found: " + file.getAbsolutePath());
     return new ImageIcon(file.getAbsolutePath());
   }
-  
-  
+
+
   /**
    * Get an image object from the mode folder.
    * Or when prefixed with /lib, load it from the main /lib folder.
    */
   public Image loadImage(String filename) {
-    ImageIcon icon = loadIcon(filename); 
+    ImageIcon icon = loadIcon(filename);
     if (icon != null) {
       return icon.getImage();
     }
     return null;
   }
-  
-  
+
+
 //  public EditorButton loadButton(String name) {
 //    return new EditorButton(this, name);
 //  }
@@ -1201,7 +1199,7 @@ public abstract class Mode {
   public TokenMarker getTokenMarker() {
     return tokenMarker;
   }
-  
+
   protected TokenMarker createTokenMarker() {
     return new PdeKeywords();
   }
@@ -1223,10 +1221,10 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   // Get attributes/values from the theme.txt file. To discourage burying this
-  // kind of information in code where it doesn't belong (and is difficult to 
-  // track down), these don't have a "default" option as a second parameter. 
+  // kind of information in code where it doesn't belong (and is difficult to
+  // track down), these don't have a "default" option as a second parameter.
 
-  
+
   /** @since 3.0a6 */
   public String getString(String attribute) {
     return theme.get(attribute);
@@ -1272,8 +1270,8 @@ public abstract class Mode {
 //    return new SyntaxStyle(color, italic, bold);
     return new SyntaxStyle(color, bold);
   }
-  
-  
+
+
   public Image getGradient(String attribute, int wide, int high) {
     int top = getColor(attribute + ".gradient.top").getRGB();
     int bot = getColor(attribute + ".gradient.bottom").getRGB();
@@ -1284,8 +1282,8 @@ public abstract class Mode {
 //    float r2 = (bot >> 16) & 0xff;
 //    float g2 = (bot >> 8) & 0xff;
 //    float b2 = bot & 0xff;
-    
-    BufferedImage outgoing = 
+
+    BufferedImage outgoing =
       new BufferedImage(wide, high, BufferedImage.TYPE_INT_RGB);
     int[] row = new int[wide];
     WritableRaster wr = outgoing.getRaster();
@@ -1351,7 +1349,7 @@ public abstract class Mode {
     }
     return validExtension(f.getName().substring(dot + 1));
   }
-  
+
   /**
    * Check this extension (no dots, please) against the list of valid
    * extensions.
@@ -1375,7 +1373,7 @@ public abstract class Mode {
    * Returns the appropriate file extension to use for auxilliary source files in a sketch.
    * For example, in a Java-mode sketch, auxilliary files should be name "Foo.java"; in
    * Python mode, they should be named "foo.py".
-   * 
+   *
    * <p>Modes that do not override this function will get the default behavior of returning the
    * default extension.
    */
@@ -1399,22 +1397,22 @@ public abstract class Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   /**
-   * Checks coreLibraries and contribLibraries for a library with the specified name  
+   * Checks coreLibraries and contribLibraries for a library with the specified name
    * @param libName the name of the library to find
    * @return the Library or null if not found
    */
   public Library findLibraryByName(String libName) {
-   
+
     for (Library lib : this.coreLibraries) {
       if (libName.equals(lib.getName()))
         return lib;
     }
-    
+
     for (Library lib : this.contribLibraries) {
       if (libName.equals(lib.getName()))
         return lib;
     }
-    
+
     return null;
   }
 
@@ -1443,7 +1441,7 @@ public abstract class Mode {
 //  public void handleNewReplace() {
 //    base.handleNewReplace();
 //  }
-  
+
   @Override
   public String toString() {
     return getTitle();
