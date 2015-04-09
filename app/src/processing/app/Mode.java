@@ -1152,7 +1152,7 @@ public abstract class Mode {
     }
     File file = new File(folder, filename);
     if (!file.exists()) {
-      EditorConsole.systemErr.println("file does not exist: " + file.getAbsolutePath());
+//      EditorConsole.systemErr.println("file does not exist: " + file.getAbsolutePath());
       return null;
     }
 //    EditorConsole.systemErr.println("found: " + file.getAbsolutePath());
