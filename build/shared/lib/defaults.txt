@@ -215,13 +215,12 @@ editor.untitled.suffix=yyMMdd
 # GTK isn't for everyone (and KDE users will get Metal or some
 # such anyway, so this is now broken out as an option
 # Linux is by default even uglier than metal (Motif?).
-# Actually, i'm using native menus, so they're even uglier
-# and Motif-looking (Lesstif?). Ick. Need to fix this.
-# For 0120, trying out the gtk+ look and feel as the default.
-# This is available in Java 1.4.2 and later, and it can't possibly
-# be any worse than Metal. (Ocean might also work, but that's for
-# Java 1.5, and we aren't going there yet)
-editor.laf.linux = com.sun.java.swing.plaf.gtk.GTKLookAndFeel
+#editor.laf.linux = com.sun.java.swing.plaf.gtk.GTKLookAndFeel
+# Trying Nimbus in 3.0a6 because the GTK menus are really dreadful.
+# Unfortunately, the Nimbus scrollbars are really gross, but...
+# As always, people can override on their own, or the next step 
+# is to do a Synth LAF that gives us something not awful.
+editor.laf.linux = com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
