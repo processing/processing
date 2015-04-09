@@ -220,7 +220,7 @@ editor.untitled.suffix=yyMMdd
 # Unfortunately, the Nimbus scrollbars are really gross, but...
 # As always, people can override on their own, or the next step 
 # is to do a Synth LAF that gives us something not awful.
-editor.laf.linux = com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel
+editor.laf.linux = javax.swing.plaf.nimbus.NimbusLookAndFeel
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
