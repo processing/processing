@@ -50,7 +50,7 @@ public class Preferences {
   static final String PREFS_FILE = "preferences.txt"; //$NON-NLS-1$
 
   static HashMap<String, String> defaults;
-  static HashMap<String, String> table = new HashMap<String,String>();
+  static HashMap<String, String> table = new HashMap<String, String>();
   static File preferencesFile;
 
   static final String PROMPT_YES     = Language.text("prompt.yes");
@@ -65,9 +65,6 @@ public class Preferences {
    */
   static public int BUTTON_WIDTH =
     Integer.parseInt(Language.text("preferences.button.width"));
-
-//  /** height of the EditorHeader, EditorToolbar, and EditorStatus */
-//  static final int GRID_SIZE = 32;
 
   // Indents and spacing standards. These probably need to be modified
   // per platform as well, because Mac OS X is so huge, Windows is smaller,
@@ -90,6 +87,8 @@ public class Preferences {
                            "You'll need to reinstall Processing.", e);
     }
 
+    /* provisionally removed in 3.0a6, see changes in load()
+
     // check for platform-specific properties in the defaults
     String platformExt = "." + PConstants.platformNames[PApplet.platform]; //$NON-NLS-1$
     int platformExtLength = platformExt.length();
@@ -109,9 +108,10 @@ public class Preferences {
       String value = get(key);
       set(actualKey, value);
     }
+    */
 
-    // clone the hash table
-    //defaults = (HashMap<String, String>) table.clone();
+    // Clone the defaults, then override any them with the user's preferences.
+    // This ensures that any new/added preference will be present.
     defaults = new HashMap<String, String>(table);
 
     // other things that have to be set explicitly for the defaults
@@ -145,8 +145,8 @@ public class Preferences {
     // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
     String proxyHost = get("proxy.host");
     String proxyPort = get("proxy.port");
-    if (proxyHost != null && proxyHost.trim().length() != 0 &&
-        proxyPort != null && proxyPort.trim().length() != 0) {
+    if (proxyHost != null && proxyHost.length() != 0 &&
+        proxyPort != null && proxyPort.length() != 0) {
       System.setProperty("http.proxyHost", proxyHost);
       System.setProperty("http.proxyPort", proxyPort);
     }
@@ -158,10 +158,19 @@ public class Preferences {
   }
 
 
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /**
+   * Load a set of key/value pairs from a UTF-8 encoded file into 'table'.
+   * For 3.0a6, this removes any platform-specific extensions from keys, so
+   * that we don't have platform-specific entries in a user's preferences.txt
+   * file, which would require all prefs to be changed twice, or risk being
+   * overwritten by the unchanged platform-specific version on reload.
+   */
   static public void load(InputStream input) throws IOException {
+    HashMap<String, String> platformSpecific = new HashMap<>();
+
     String[] lines = PApplet.loadStrings(input);  // Reads as UTF-8
     for (String line : lines) {
       if ((line.length() == 0) ||
@@ -172,13 +181,46 @@ public class Preferences {
       if (equals != -1) {
         String key = line.substring(0, equals).trim();
         String value = line.substring(equals + 1).trim();
-        table.put(key, value);
+        if (!isPlatformSpecific(key, value, platformSpecific)) {
+          table.put(key, value);
+        }
       }
+    }
+    // Now override the keys with any platform-specific defaults we've found.
+    for (String key : platformSpecific.keySet()) {
+      table.put(key, platformSpecific.get(key));
     }
   }
 
 
-  // .................................................................
+  /**
+   * @param key original key (may include platform extension)
+   * @param value
+   * @param specific where to put the key/value pairs for *this* platform
+   * @return true if a platform-specific key
+   */
+  static protected boolean isPlatformSpecific(String key, String value,
+                                              Map<String, String> specific) {
+    for (String platform : PConstants.platformNames) {
+      String ext = "." + platform;
+      if (key.endsWith(ext)) {
+        String thisPlatform = PConstants.platformNames[PApplet.platform];
+        if (platform.equals(thisPlatform)) {
+          key = key.substring(0, key.lastIndexOf(ext));
+          // store this for later overrides
+          specific.put(key, value);
+        } else {
+          // ignore platform-specific defaults for other platforms,
+          // but return 'true' because it needn't be added to the big list
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   static protected void save() {
@@ -191,6 +233,7 @@ public class Preferences {
     PrintWriter writer = PApplet.createWriter(preferencesFile);
 
     String[] keyList = table.keySet().toArray(new String[table.size()]);
+    // Sorting is really helpful for debugging, diffing, and finding keys
     keyList = PApplet.sort(keyList);
     for (String key : keyList) {
       writer.println(key + "=" + table.get(key)); //$NON-NLS-1$
@@ -201,7 +244,7 @@ public class Preferences {
   }
 
 
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   // all the information from preferences.txt
