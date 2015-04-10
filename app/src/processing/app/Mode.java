@@ -38,8 +38,6 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.*;
 
-import processing.app.contrib.ContributionType;
-import processing.app.contrib.ExamplesContribution;
 import processing.app.syntax.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -652,118 +650,51 @@ public abstract class Mode {
 
 
   public DefaultMutableTreeNode buildExamplesTree() {
-    DefaultMutableTreeNode node = new DefaultMutableTreeNode("Examples");
+    DefaultMutableTreeNode root = new DefaultMutableTreeNode("Examples");
 
-//    JTree examplesTree = new JTree(node);
-//    rebuildExamplesTree(node);
-//  }
-
-    //DefaultTreeCellRenderer renderer = tree.
-//    TreeCellRenderer tcr = examplesTree.getCellRenderer();
-
-    //
-//
-//  public void rebuildExamplesTree(DefaultMutableTreeNode node) {
     try {
-      // break down the examples folder for examples
-//      File[] subfolders = examplesFolder.listFiles(new FilenameFilter() {
-//        public boolean accept(File dir, String name) {
-//          return dir.isDirectory() && name.charAt(0) != '.';
-//        }
-//      });
-      File[] subfolders = getExampleCategoryFolders();
 
-      DefaultMutableTreeNode modeExParent = new DefaultMutableTreeNode("Mode Examples");
+      File[] examples = getExampleCategoryFolders();
 
-      for (File sub : subfolders) {
-        DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
-        if (base.addSketches(subNode, sub)) {
-//          examplesParent.add(subNode);
-          modeExParent.add(subNode);
+      for (File subFolder : examples) {
+        DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(subFolder.getName());
+        if (base.addSketches(subNode, subFolder)) {
+          root.add(subNode);
         }
       }
 
-      // get library examples
-      boolean any = false;
+      DefaultMutableTreeNode foundationLibraries = new DefaultMutableTreeNode("Core Libraries");
+
+      // Get examples for core libraries
       for (Library lib : coreLibraries) {
         if (lib.hasExamples()) {
           DefaultMutableTreeNode libNode = new DefaultMutableTreeNode(lib.getName());
           if (base.addSketches(libNode, lib.getExamplesFolder()))
-            modeExParent.add(libNode);
+            foundationLibraries.add(libNode);
         }
       }
+      if(foundationLibraries.getChildCount() > 0) {
+        root.add(foundationLibraries);
+      }
 
-      if (modeExParent.getChildCount() > 0)
-        node.add(modeExParent);
-
-      // get contrib library examples
-      any = false;
+      // Get examples for third party libraries
+      DefaultMutableTreeNode contributed = new DefaultMutableTreeNode("Libraries");
       for (Library lib : contribLibraries) {
         if (lib.hasExamples()) {
-          any = true;
-        }
-      }
-      if (any) {
-//        menu.addSeparator();
-        DefaultMutableTreeNode contribParent = new DefaultMutableTreeNode("Library Examples");
-//        Base.addDisabledItem(menu, "Contributed");
-        for (Library lib : contribLibraries) {
-          if (lib.hasExamples()) {
-//            JMenu libMenu = new JMenu(lib.getName());
             DefaultMutableTreeNode libNode = new DefaultMutableTreeNode(lib.getName());
-//            base.addSketches(libMenu, lib.getExamplesFolder(), replace);
             base.addSketches(libNode, lib.getExamplesFolder());
-//            menu.add(libMenu);
-            contribParent.add(libNode);
-          }
+          contributed.add(libNode);
         }
-        node.add(contribParent);
+      }
+      if(contributed.getChildCount() > 0){
+        root.add(contributed);
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    DefaultMutableTreeNode contribExampleNode = buildContributedExamplesTrees();
-    if (contribExampleNode.getChildCount() > 0)
-      node.add(contribExampleNode);
-    return node;
+    return root;
   }
-
-
-  public DefaultMutableTreeNode buildContributedExamplesTrees() {
-    DefaultMutableTreeNode node = new DefaultMutableTreeNode("Contributed Examples");
-
-    try {
-      File[] subfolders = ContributionType.EXAMPLES.listCandidates(examplesContribFolder);
-      if (subfolders == null) {
-        subfolders = new File[0]; //empty array
-      }
-      for (File sub : subfolders) {
-        if (!ExamplesContribution.isExamplesCompatible(base, sub))
-          continue;
-        DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
-        if (base.addSketches(subNode, sub)) {
-          node.add(subNode);
-          int exampleNodeNumber = -1;
-          for (int y = 0; y < subNode.getChildCount(); y++)
-            if (subNode.getChildAt(y).toString().equals("examples"))
-              exampleNodeNumber = y;
-          if (exampleNodeNumber == -1)
-            continue;
-          TreeNode exampleNode = subNode.getChildAt(exampleNodeNumber);
-          subNode.remove(exampleNodeNumber);
-          int count = exampleNode.getChildCount();
-          for (int x = 0; x < count; x++) {
-            subNode.add((DefaultMutableTreeNode) exampleNode.getChildAt(0));
-          }
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return node;//examplesTree;
-  }
-
 
   public void resetExamples() {
     if (examplesFrame != null) {
@@ -888,24 +819,19 @@ public abstract class Mode {
       examplesPanel.setLayout(new BorderLayout());
       examplesPanel.setBackground(Color.WHITE);
 
-      final JPanel openExamplesManagerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-      JLabel openExamplesManagerLabel = new JLabel(Language.text("examples.add_examples"));
-//      openExamplesManagerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-      openExamplesManagerPanel.add(openExamplesManagerLabel);
+      final JPanel openExamplesManagerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JButton addExamplesButton = new JButton(Language.text("examples.add_examples"));
+      openExamplesManagerPanel.add(addExamplesButton);
       openExamplesManagerPanel.setOpaque(false);
       Border lineBorder = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK);
       Border paddingBorder = BorderFactory.createEmptyBorder(3, 5, 1, 4);
       openExamplesManagerPanel.setBorder(BorderFactory.createCompoundBorder(lineBorder, paddingBorder));
-//      openExamplesManagerLabel.set
       openExamplesManagerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
       openExamplesManagerPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//      openExamplesManagerLabel.setForeground(new Color(0, 0, 238));
-      openExamplesManagerPanel.addMouseListener(new MouseAdapter() {
-
+      addExamplesButton.addActionListener(new ActionListener() {
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void actionPerformed(ActionEvent e) {
           base.handleOpenExampleManager();
-//          openExamplesManagerLabel.setForeground(new Color(85, 26, 139));
         }
       });
 
@@ -918,7 +844,6 @@ public abstract class Mode {
 
       tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
       tree.setShowsRootHandles(true);
-//      tree.setToggleClickCount(2);
       // expand the root
       tree.expandRow(0);
       // now hide the root
@@ -1153,14 +1078,14 @@ public abstract class Mode {
    * Called from updateInernal in Base.java
    */
   public void updateTree(String sketchName, File sketchFolder) {
-      File f = new File(sketchFolder.getAbsolutePath() + "\\" + sketchName
-        + ".pde");
-      if (model != null) {
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
-        SketchReference reference = new SketchReference(sketchName, f);
-        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(reference);
-        root.add(newNode);
-        model.reload(root);
+    File f = new File(sketchFolder.getAbsolutePath() + "\\" + sketchName
+      + ".pde");
+    if (model != null) {
+      DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+      SketchReference reference = new SketchReference(sketchName, f);
+      DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(reference);
+      root.add(newNode);
+      model.reload(root);
     }
   }
 
@@ -1175,10 +1100,7 @@ public abstract class Mode {
                                         }
                                       });
 
-      sketchbookFrame.getContentPane().setLayout(new BorderLayout());
-      DefaultMutableTreeNode root = buildSketchbookTree();
-      model = new DefaultTreeModel(root);
-      final JTree tree = new JTree(model);
+      final JTree tree = new JTree(buildSketchbookTree());
       tree.getSelectionModel()
         .setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
       tree.setShowsRootHandles(true);
@@ -1218,10 +1140,6 @@ public abstract class Mode {
               base.handleOpen(sketch.getPath());
             }
           }
-
-          if (e.getKeyChar() == KeyEvent.VK_SPACE) {
-            rebuildTree();
-          }
         }
       });
 
@@ -1234,9 +1152,7 @@ public abstract class Mode {
       JScrollPane treePane = new JScrollPane(tree);
       treePane.setPreferredSize(new Dimension(250, 450));
       treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
-      JLabel refreshLabel = new JLabel("Press SPACE to refresh");
-      sketchbookFrame.getContentPane().add(refreshLabel, BorderLayout.SOUTH);
-      sketchbookFrame.getContentPane().add(treePane, BorderLayout.CENTER);
+      sketchbookFrame.getContentPane().add(treePane);
       sketchbookFrame.pack();
     }
 
