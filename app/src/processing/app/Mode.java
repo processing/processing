@@ -1100,7 +1100,10 @@ public abstract class Mode {
                                         }
                                       });
 
-      final JTree tree = new JTree(buildSketchbookTree());
+      sketchbookFrame.getContentPane().setLayout(new BorderLayout());
+      DefaultMutableTreeNode root = buildSketchbookTree();
+      model = new DefaultTreeModel(root);
+      final JTree tree = new JTree(model);
       tree.getSelectionModel()
         .setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
       tree.setShowsRootHandles(true);
@@ -1140,6 +1143,10 @@ public abstract class Mode {
               base.handleOpen(sketch.getPath());
             }
           }
+
+          if (e.getKeyChar() == KeyEvent.VK_SPACE) {
+            rebuildTree();
+          }
         }
       });
 
@@ -1152,7 +1159,9 @@ public abstract class Mode {
       JScrollPane treePane = new JScrollPane(tree);
       treePane.setPreferredSize(new Dimension(250, 450));
       treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
-      sketchbookFrame.getContentPane().add(treePane);
+      JLabel refreshLabel = new JLabel("Press SPACE to refresh");
+      sketchbookFrame.getContentPane().add(refreshLabel, BorderLayout.SOUTH);
+      sketchbookFrame.getContentPane().add(treePane, BorderLayout.CENTER);
       sketchbookFrame.pack();
     }
 
