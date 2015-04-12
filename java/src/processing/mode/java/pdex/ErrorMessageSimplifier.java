@@ -87,12 +87,12 @@ public class ErrorMessageSimplifier {
       return null;
     IProblem iprob = problem.getIProblem();
     String args[] = iprob.getArguments();
-    Base.log("Simplifying message: " + problem.getMessage() + " ID: "
-        + getIDName(iprob.getID()));
-    Base.log("Arg count: " + args.length);
-    for (int i = 0; i < args.length; i++) {
-      Base.log("Arg " + args[i]);
-    }
+//    Base.log("Simplifying message: " + problem.getMessage() + " ID: "
+//        + getIDName(iprob.getID()));
+//    Base.log("Arg count: " + args.length);
+//    for (int i = 0; i < args.length; i++) {
+//      Base.log("Arg " + args[i]);
+//    }
 
     String result = null;
     

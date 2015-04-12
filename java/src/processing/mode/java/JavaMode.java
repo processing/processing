@@ -29,6 +29,8 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.ImageIcon;
+
 import processing.app.*;
 import processing.mode.java.runner.Runner;
 import processing.mode.java.tweak.SketchParser;
@@ -46,6 +48,17 @@ public class JavaMode extends Mode {
 
     initLogger();
     loadPreferences();
+    loadIcons();
+  }
+  
+  /**
+   * Needed by code completion panel. See {@link processing.mode.java.pdex.CompletionPanel}
+   */
+  private void loadIcons(){
+    classIcon = loadIcon("theme/icon_class_obj.png");
+    methodIcon = loadIcon("theme/icon_methpub_obj.png");
+    fieldIcon = loadIcon("theme/icon_field_protected_obj.png");
+    localVarIcon = loadIcon("theme/icon_field_default_obj.png");
   }
 
 
@@ -316,6 +329,11 @@ public class JavaMode extends Mode {
   static public final String prefImportSuggestEnabled = "pdex.importSuggestEnabled";
 
   static volatile public boolean enableTweak = false;
+  
+  static public ImageIcon classIcon;
+  static public ImageIcon fieldIcon;
+  static public ImageIcon methodIcon;
+  static public ImageIcon localVarIcon;
 
 
   public void loadPreferences() {
