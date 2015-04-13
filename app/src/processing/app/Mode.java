@@ -46,6 +46,8 @@ import processing.core.PConstants;
 public abstract class Mode {
   protected Base base;
 
+  protected DefaultTreeModel model;
+
   protected File folder;
 
   protected TokenMarker tokenMarker;
@@ -1053,6 +1055,40 @@ public abstract class Mode {
 
   protected JFrame sketchbookFrame;
 
+  /*
+   * Function for rebuilding the tree in case user presses SPACE or the
+   * sketchbook folder is changed in preferences. Also This helps if a sketch is
+   * deleted not by means of processing application window but externally.
+   */
+  public void rebuildTree() {
+    if (model != null) {
+      DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+      root.removeAllChildren();
+      try {
+        base.addSketches(root, Base.getSketchbookFolder());
+        model.reload(root);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  /*
+   * Function Called to add a sketch in the tree in case the sketch is saved
+   * Called from updateInernal in Base.java
+   */
+  public void updateTree(String sketchName, File sketchFolder) {
+    File f = new File(sketchFolder.getAbsolutePath() + "\\" + sketchName
+      + ".pde");
+    if (model != null) {
+      DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+      SketchReference reference = new SketchReference(sketchName, f);
+      DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(reference);
+      root.add(newNode);
+      model.reload(root);
+    }
+  }
+
   public void showSketchbookFrame() {
     if (sketchbookFrame == null) {
       sketchbookFrame = new JFrame(Language.text("sketchbook"));
@@ -1064,7 +1100,10 @@ public abstract class Mode {
                                         }
                                       });
 
-      final JTree tree = new JTree(buildSketchbookTree());
+      sketchbookFrame.getContentPane().setLayout(new BorderLayout());
+      DefaultMutableTreeNode root = buildSketchbookTree();
+      model = new DefaultTreeModel(root);
+      final JTree tree = new JTree(model);
       tree.getSelectionModel()
         .setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
       tree.setShowsRootHandles(true);
@@ -1104,6 +1143,10 @@ public abstract class Mode {
               base.handleOpen(sketch.getPath());
             }
           }
+
+          if (e.getKeyChar() == KeyEvent.VK_SPACE) {
+            rebuildTree();
+          }
         }
       });
 
@@ -1116,7 +1159,9 @@ public abstract class Mode {
       JScrollPane treePane = new JScrollPane(tree);
       treePane.setPreferredSize(new Dimension(250, 450));
       treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
-      sketchbookFrame.getContentPane().add(treePane);
+      JLabel refreshLabel = new JLabel("Press SPACE to refresh");
+      sketchbookFrame.getContentPane().add(refreshLabel, BorderLayout.SOUTH);
+      sketchbookFrame.getContentPane().add(treePane, BorderLayout.CENTER);
       sketchbookFrame.pack();
     }
 
