@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
 import processing.app.Base;
+import processing.app.Language;
 
 public class ErrorMessageSimplifier {
   /**
@@ -99,12 +100,14 @@ public class ErrorMessageSimplifier {
     switch (iprob.getID()) {
     case IProblem.ParsingError:
       if (args.length > 0) {
-        result = "Error on \"" + args[0] + "\"";
+        result = Language.text("editor.status.error_on") + " \"" + args[0]
+          + "\"";
       }
       break;
     case IProblem.ParsingErrorDeleteToken:
       if (args.length > 0) {
-        result = "Error on \"" + args[0] + "\"";
+        result = Language.text("editor.status.error_on") + " \"" + args[0]
+          + "\"";
       }
       break;
     case IProblem.ParsingErrorInsertToComplete:
@@ -114,13 +117,14 @@ public class ErrorMessageSimplifier {
         }
         else {
           if(args[0].equals("AssignmentOperator Expression")){
-            result = "Consider adding a \"=\"";
+            result = Language.text("editor.status.missing.add") + " \"=\"";
           }
           else if (args[0].equalsIgnoreCase(") Statement")){
             result = getErrorMessageForBracket(args[0].charAt(0));
           }
           else {
-            result = "Error on \"" + args[0] + "\"";
+            result = Language.text("editor.status.error_on") + " \"" + args[0]
+              + "\"";
           }
         }
       }
@@ -129,14 +133,16 @@ public class ErrorMessageSimplifier {
       if (args.length > 0) {
         if (args[1].equals("VariableDeclaratorId")) {
           if(args[0].equals("int")) {
-            result = "\"color\" and \"int\" are reserved words & can't be used as variable names";
+            result = Language.text ("editor.status.reserved_words");
           }
           else {
-            result = "Error on \"" + args[0] + "\"";
+            result = Language.text("editor.status.error_on") + " \""
+              + args[0] + "\"";
           }
         }
         else {
-          result = "Error on \"" + args[0] + "\""; 
+          result = Language.text("editor.status.error_on") + " \"" + args[0]
+            + "\""; 
         }
       }
       break;
@@ -147,18 +153,23 @@ public class ErrorMessageSimplifier {
         }
         else {
           if(args[1].equalsIgnoreCase("Statement")){ // See #3104
-            result = "Error on \"" + args[0] + "\"";
+            result = Language.text("editor.status.error_on") + " \""
+              + args[0] + "\"";
           }
           else {
-            result = "Error on \"" + args[0] + "\"Consider adding a \"" + args[1] + "\"";
+            result = Language.text("editor.status.error_on") + " \""
+              + args[0] + Language.text("editor.status.missing.add") + args[1]
+              + "\"";
           }
         }
       }
       break;
     case IProblem.UndefinedMethod:
       if (args.length > 2) {
-        result = "The method \"" + args[args.length - 2] + "("
-            + getSimpleName(args[args.length - 1]) + ")\" doesn't exist";
+        result = Language.text("editor.status.undefined_method");
+        String methodDef = "\"" + args[args.length - 2] + "("
+          + getSimpleName (args[args.length - 1]) + ")\"";
+        result = result.replace("methoddef", methodDef);
       }
       break;
     case IProblem.ParameterMismatch:
@@ -166,39 +177,55 @@ public class ErrorMessageSimplifier {
         // 2nd arg is method name, 3rd arg is correct param list
         if (args[2].trim().length() == 0) {
           // the case where no params are needed.
-          result = "The method \"" + args[1]
-              + "\" doesn't expect any parameters";
+          result = Language.text("editor.status.empty_param");
+          String methodDef = "\"" + args[1] + "()\"";
+          result = result.replace("methoddef", methodDef);
         } else {
-          result = "The method \"" + args[1]
-              + "\" expects parameters like this: " + args[1] + "("
-              + getSimpleName(args[2]) + ")";
+          result = Language.text("editor.status.wrong_param");
+          
+          String method = "\"" + args[1] + "\"";
+          String methodDef = " \"" + args[1] + "(" + getSimpleName(args[2])
+            + ")\"";
+          result = result.replace("method", method);
+          result += methodDef;
         }
       }
       break;
     case IProblem.UndefinedField:
       if (args.length > 0) {
-        result = "The global variable \"" + args[0] + "\" doesn't exist";
+        result = Language.text("editor.status.undef_global_var");
+        String variableName = "\"" + args[0] + "\"";
+        result = result.replace("varname", variableName);
       }
       break;
     case IProblem.UndefinedType:
       if (args.length > 0) {
-        result = "The class \"" + args[0] + "\" doesn't exist";
+        String className = "\"" + args[0] + "\"";
+        result = Language.text("editor.status.undef_class");
+        result = result.replace("classname", className);
       }
       break;
     case IProblem.UnresolvedVariable:
       if (args.length > 0) {
-        result = "The variable \"" + args[0] + "\" doesn't exist";
+        String variableName = "\"" + args[0] + "\"";
+        result = Language.text("editor.status.undef_var");
+        result = result.replace("varname", variableName);
       }
       break;
     case IProblem.UndefinedName:
       if (args.length > 0) {
-        result = "The name \"" + args[0] + "\" can't be recognized";
+        String name = "\"" + args[0] + "\"";
+        result = Language.text("editor.status.undef_name");
+        result = result.replace("namefield", name);
       }
       break;
     case IProblem.TypeMismatch:
       if (args.length > 1) {
-        result = "Type mismatch, \"" + getSimpleName(args[0])
-            + "\" doesn't match with \"" + getSimpleName(args[1]) + "\"";
+        String typeA = "\"" + args[0] + "\"";
+        String typeB = "\"" + args[1] + "\"";
+        result = Language.text("editor.status.type_mismatch");
+        result = result.replace("typeA", typeA);
+        result = result.replace("typeB", typeB);
       }
       break;
     }
@@ -241,28 +268,33 @@ public class ErrorMessageSimplifier {
     String result = null;
     switch (c) {
     case ';':
-      result = "Missing a semi-colon \";\"";
+      result = Language.text("editor.status.missing.semi_colon") + " \";\"";
       break;
     case '[':
-      result = "Missing opening square bracket \"[\"";
+      result = Language.text("editor.status.missing.open_sq_bracket") +
+        " \"[\"";
       break;
     case ']':
-      result = "Missing closing square bracket \"]\"";
+      result = Language.text("editor.status.missing.closing_sq_bracket") +
+        " \"]\"";
       break;
     case '(':
-      result = "Missing opening parentheses \"(\"";
+      result = Language.text("editor.status.missing.open_paren") + " \"(\"";
       break;
     case ')':
-      result = "Missing closing parentheses \")\"";
+      result = Language.text("editor.status.missing.close_paren") + "  \")\"";
       break;
     case '{':
-      result = "Missing opening curly bracket \"{\"";
+      result = Language.text("editor.status.missing.open_curly_bracket") +
+        " \"{\"";
       break;
     case '}':
-      result = "Missing closing curly bracket \"}\"";
+      result = Language.text("editor.status.missing.closing_curly_bracket") +
+        " \"}\"";
       break;
     default:
-      result = "Consider adding a \"" + c + "\"";
+      result = Language.text("editor.status.missing.default") + " \"" + c +
+        "\"";
     }
 
     return result;
