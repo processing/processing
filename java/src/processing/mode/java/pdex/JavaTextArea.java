@@ -210,7 +210,7 @@ public class JavaTextArea extends JEditTextArea {
         if (suggestion != null)
           if (suggestion.isVisible()) {
             Base.log("Space bar, hide completion list");
-            suggestion.hide();
+            suggestion.setInvisible();
           }
         break;
       default:
@@ -836,7 +836,7 @@ public class JavaTextArea extends JEditTextArea {
   /** Hides suggestion popup */
   public void hideSuggestion() {
     if (suggestion != null) {
-      suggestion.hide();
+      suggestion.setInvisible();
       //log("Suggestion hidden.");
       suggestion = null;
     }
