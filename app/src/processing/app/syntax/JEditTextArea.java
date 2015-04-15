@@ -567,7 +567,7 @@ public class JEditTextArea extends JComponent
     } else if(x + width >= painter.getWidth()) {
       newHorizontalOffset = horizontalOffset +
       (painter.getWidth() - x) - width - 5;
-    } 
+    }
 
     return setOrigin(newFirstLine,newHorizontalOffset);
   }
