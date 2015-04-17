@@ -31,10 +31,18 @@ contribs
 X saveFrame() doesn't save opaque PNG files
 X   https://github.com/processing/processing/issues/3031
 X   https://github.com/processing/processing/pull/3067
+
+akarshit
 X lerpColor() outside of setup()/draw() kills sketch
 X   https://github.com/processing/processing/issues/3145
-X   use default colorMode() with lerpColor() outside setup()
+X use default colorMode() with lerpColor() outside setup()
 X   https://github.com/processing/processing/pull/3146
+X textAlign(RIGHT) adds extra space to the right
+X   https://github.com/processing/processing/pull/3078
+X   https://github.com/processing/processing/issues/3028
+X rectMode() broken for createShape with JAVA2D
+X   https://github.com/processing/processing/issues/3024
+X   https://github.com/processing/processing/pull/3102
 
 data
 X Add exceptions for FloatList and IntList when using add() w/o enough elements

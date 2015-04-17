@@ -26,6 +26,8 @@ X run button w/ debugger shouldn't require "continue" before actually starting
 X   https://github.com/processing/processing/issues/3096
 X remove code that's moving the sketch path arg later
 X   https://github.com/processing/processing/commit/0a14835e6f5f4766b022e73a8fe562318636727c
+X the .macosx, .linux, etc prefs should be stripped
+X   only use them on first load, and merge into preferences.txt
 
 _ install/remove buttons not working in the managers
 _   https://github.com/processing/processing/issues/3172
@@ -114,6 +116,25 @@ X   https://github.com/processing/processing/issues/3104
 X missing parenthesis error message
 X   https://github.com/processing/processing/issues/3103
 
+akarshit
+X rewrite preferences window to use proper layout
+X   https://github.com/processing/processing/issues/67
+X   https://github.com/processing/processing/issues/2708
+X   https://github.com/processing/processing/issues/2986
+X Find/Replace dialog uses GroupLayout
+X   https://github.com/processing/processing/pull/3190
+X   https://github.com/processing/processing/pull/3131
+X issues with cut/copy shortcuts not working
+X   https://github.com/processing/processing/pull/3138
+X   https://github.com/processing/processing/issues/3136
+X   https://github.com/processing/processing/issues/3107
+X IllegalArgumentException when clicking between editor windows
+X   https://github.com/processing/processing/issues/2530
+X   https://github.com/processing/processing/pull/3101
+X Newline after a very long line moves the visible area right
+X   https://github.com/processing/processing/issues/3148
+X   https://github.com/processing/processing/pull/3196
+
 pulls
 X add mnemonics for menus (alt-f to open 'file')
 X   http://code.google.com/p/processing/issues/detail?id=12
@@ -155,19 +176,9 @@ X   https://github.com/processing/processing/pull/3066
 X exported Linux sketches must be run from the sketch folder
 X   https://github.com/processing/processing/issues/1046
 X   https://github.com/processing/processing/pull/3083
-X rectMode() broken for createShape with JAVA2D
-X   https://github.com/processing/processing/issues/3024
-X   https://github.com/processing/processing/pull/3102
-X IllegalArgumentException when clicking between editor windows
-X   https://github.com/processing/processing/issues/2530
-X   https://github.com/processing/processing/pull/3101
 X processing.net.Server only cleans up internal Clients when trying to write
 X   https://github.com/processing/processing/issues/3089
 X   https://github.com/processing/processing/pull/3097
-X issues with cut/copy shortcuts not working
-X   https://github.com/processing/processing/pull/3138
-X   https://github.com/processing/processing/issues/3136
-X   https://github.com/processing/processing/issues/3107
 X Display download percentage when fetching contrib info
 X   https://github.com/processing/processing/pull/3161
 X Recreating Client instance will cause an out-of-memory error
@@ -180,9 +191,6 @@ X   https://github.com/processing/processing/pull/3119
 X Fix multi-touch horizontal scrolling on OS X
 X   https://github.com/processing/processing/pull/3170
 X   https://github.com/processing/processing/issues/180
-X textAlign(RIGHT) adds extra space to the right
-X   https://github.com/processing/processing/pull/3078
-X   https://github.com/processing/processing/issues/3028
 X Refactor examples manager window
 X   https://github.com/processing/processing/issues/3133
 X   https://github.com/processing/processing/pull/3177
@@ -875,8 +883,6 @@ _   move styling to separate constants that are more accessible
 
 PDE / Preferences
 
-_ the .macosx, .linux, etc prefs should be stripped
-_   only use them on first load, and merge into preferences.txt
 _ Editor.applyFrame() may not have a valid 'editor' object to work with
 _   if windows closed, and prefs altered, NPE thrown
 _   make sure editor isn't trying to apply prefs when no editor is open
@@ -888,10 +894,6 @@ _   also, this may be part of why other sketches aren't reloading properly
 _ simple prefs implementation to set key/value pairs using a JTable
 _ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
 _   don't bother having a "cancel" for the prefs window
-_ rewrite preferences window to use proper layout
-_   https://github.com/processing/processing/issues/67
-_   https://github.com/processing/processing/issues/2708
-_   https://github.com/processing/processing/issues/2986
 _ make prefs dialog modal?
 
 
