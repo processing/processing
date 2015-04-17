@@ -131,7 +131,7 @@ public class ProgressFrame extends JFrame implements PropertyChangeListener {
       // to close the progress bar automatically when done, and to 
       // print that adding file is done in Message Area
 
-      editor.statusNotice("One file added to the sketch.");
+      editor.statusNotice(Language.text("editor.status.drag_and_drop.files_added.1"));
       ProgressFrame.this.closeProgressBar();
     }
 

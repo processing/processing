@@ -1388,7 +1388,9 @@ public class JavaEditor extends Editor {
     JMenuItem item;
 
     // "use the debugger" sounds too colloquial, and "enable" sounds too technical
-    enableDebug = Toolkit.newJCheckBoxMenuItem("Enable Debugger", KeyEvent.VK_D);
+    enableDebug =
+      Toolkit.newJCheckBoxMenuItem(Language.text("menu.debug.enable"),
+				   KeyEvent.VK_D);
     //new JCheckBoxMenuItem(Language.text("menu.debug.show_debug_toolbar"));
     enableDebug.setSelected(false);
     enableDebug.addActionListener(new ActionListener() {
@@ -2378,12 +2380,12 @@ public class JavaEditor extends Editor {
 
 
   public void statusBusy() {
-    statusNotice("Debugger busy...");
+    statusNotice(Language.text("editor.status.debug.busy"));
   }
 
 
   public void statusHalted() {
-    statusNotice("Debugger halted.");
+    statusNotice(Language.text("editor.status.debug.halt"));
   }
 
 
@@ -2584,9 +2586,10 @@ public class JavaEditor extends Editor {
 
     if (modified) {
       // ask to keep the values
-      int ret = Base.showYesNoQuestion(this, "Tweak Mode",
-                  "Keep the changes?",
-                  "You changed some values in your sketch. Would you like to keep the changes?");
+      int ret =
+	Base.showYesNoQuestion(this, Language.text("tweak_mode"),
+			       Language.text("tweak_mode.keep_changes.line1"),
+			       Language.text("tweak_mode.keep_changes.line2"));
       if (ret == 1) {
         // NO! don't keep changes
         loadSavedCode();

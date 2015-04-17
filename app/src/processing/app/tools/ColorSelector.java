@@ -63,7 +63,8 @@ public class ColorSelector implements Tool {
       synchronized(ColorSelector.class) {
         if (selector == null) {
           selector = new ColorChooser(editor, false, Color.WHITE,
-              "Copy", new ActionListener() {
+                                      Language.text("menu.edit.copy"),
+                                      new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {

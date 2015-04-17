@@ -226,6 +226,27 @@ public class ErrorMessageSimplifier {
         result = result.replace("typeB", q(args[1]));
       }
       break;
+
+    case IProblem.LocalVariableIsNeverUsed:
+      if (args.length > 0) {
+        result = Language.text("editor.status.unused_variable");
+        result = result.replace("varname", q(args[0]));
+      }
+      break;
+
+    case IProblem.UninitializedLocalVariable:
+      if (args.length > 0) {
+        result = Language.text("editor.status.uninitialized_variable");
+        result = result.replace("varname", q(args[0]));
+      }
+      break;
+
+    case IProblem.AssignmentHasNoEffect:
+      if (args.length > 0) {
+        result = Language.text("editor.status.no_effect_assignment");
+        result = result.replace("varname", q(args[0]));
+      }
+      break;
     }
 
     //log("Simplified Error Msg: " + result);

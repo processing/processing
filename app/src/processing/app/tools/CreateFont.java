@@ -95,10 +95,7 @@ public class CreateFont extends JFrame implements Tool {
 
     pain.setLayout(new BoxLayout(pain, BoxLayout.Y_AXIS));
 
-    String labelText =
-      "Use this tool to create bitmap fonts for your program.\n" +
-      "Select a font and size, and click 'OK' to generate the font.\n" +
-      "It will be added to the data folder of the current sketch.";
+    String labelText = Language.text("create_font.label");
 
     JTextArea textarea = new JTextArea(labelText);
     textarea.setBorder(new EmptyBorder(10, 10, 20, 10));
@@ -206,7 +203,7 @@ public class CreateFont extends JFrame implements Tool {
     pain.add(new Box.Filler(d2, d2, d2));
 
     JPanel panel = new JPanel();
-    panel.add(new JLabel("Size:"));
+    panel.add(new JLabel(Language.text("create_font.size") + ":" ));
     sizeSelector = new JTextField(" 48 ");
     sizeSelector.getDocument().addDocumentListener(new DocumentListener() {
         public void insertUpdate(DocumentEvent e) { update(); }
@@ -215,7 +212,7 @@ public class CreateFont extends JFrame implements Tool {
       });
     panel.add(sizeSelector);
 
-    smoothBox = new JCheckBox("Smooth");
+    smoothBox = new JCheckBox(Language.text("create_font.smooth"));
     smoothBox.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           smooth = smoothBox.isSelected();
@@ -233,7 +230,7 @@ public class CreateFont extends JFrame implements Tool {
 //      });
 //    allBox.setSelected(all);
 //    panel.add(allBox);
-    charsetButton = new JButton("Characters...");
+    charsetButton = new JButton(Language.text("create_font.characters"));
     charsetButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         //showCharacterList();
@@ -245,7 +242,7 @@ public class CreateFont extends JFrame implements Tool {
     pain.add(panel);
 
     JPanel filestuff = new JPanel();
-    filestuff.add(new JLabel("Filename:"));
+    filestuff.add(new JLabel(Language.text("create_font.filename") + ":"));
     filestuff.add(filenameField = new JTextField(20));
     filestuff.add(new JLabel(".vlw"));
     pain.add(filestuff);
@@ -503,7 +500,7 @@ class CharacterSelector extends JFrame {
 
 
   public CharacterSelector() {
-    super("Character Selector");
+    super(Language.text("create_font.character_selector"));
 
     charsetList = new CheckBoxList();
     DefaultListModel<JCheckBox> model = new DefaultListModel<JCheckBox>();
@@ -526,11 +523,7 @@ class CharacterSelector extends JFrame {
 
     pain.setLayout(new BoxLayout(pain, BoxLayout.Y_AXIS));
 
-    String labelText =
-      "Default characters will include most bitmaps for Mac OS\n" +
-      "and Windows Latin scripts. Including all characters may\n" +
-      "require large amounts of memory for all of the bitmaps.\n" +
-      "For greater control, you can select specific Unicode blocks.";
+    String labelText = Language.text("create_font.character_selector.label");
     JTextArea textarea = new JTextArea(labelText);
     textarea.setBorder(new EmptyBorder(13, 8, 13, 8));
     textarea.setBackground(null);
@@ -546,9 +539,12 @@ class CharacterSelector extends JFrame {
         charsetList.setEnabled(unicodeCharsButton.isSelected());
       }
     };
-    defaultCharsButton = new JRadioButton("Default Characters");
-    allCharsButton = new JRadioButton("All Characters");
-    unicodeCharsButton = new JRadioButton("Specific Unicode Blocks");
+    defaultCharsButton =
+      new JRadioButton(Language.text("create_font.default_characters"));
+    allCharsButton =
+      new JRadioButton(Language.text("create_font.all_characters"));
+    unicodeCharsButton =
+      new JRadioButton(Language.text("create_font.specific_unicode"));
 
     defaultCharsButton.addActionListener(listener);
     allCharsButton.addActionListener(listener);
