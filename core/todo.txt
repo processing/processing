@@ -171,6 +171,9 @@ _     remove requestImage() and friends
 _   callback for requestImage()
 _     https://github.com/processing/processing/issues/680
 _   remove/update requestImage example
+_   check into promise api
+_     http://www.html5rocks.com/en/tutorials/es6/promises/
+_     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 _ fix the registered methods doc, stop/dispose working
 _   Casey needs to nudge people about libraries, so we need to fix this
 _ pause(), resume(), start(), stop() clarifications

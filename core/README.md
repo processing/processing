@@ -40,6 +40,15 @@ The rest of this document are my notes while I'm making changes.
 4. full screen (sketch same as screen size)
 5. all screens (sketch spans all screens)
 
+#### alternate version
+1. pde sketch
+2. standalone sketch (exported)
+3. running from Eclipse
+4. size command?
+5. renderer change?
+6. renderer that draws to screen (Java2D) or not (PDF)
+7. OpenGL or not
+
 resize events: 
 Frame > Canvas > PGraphics > PApplet
 user-driven Frame resize events follow that order

@@ -190,7 +190,10 @@ X Fix ColorChooser cursor
 X   https://github.com/processing/processing/pull/3186
 X Improve Spanish localization 
 X   https://github.com/processing/processing/pull/3185
-
+X internationalization of editor error messages and greek translations
+X   https://github.com/processing/processing/pull/3189
+X improve internationalization and localization in greek
+X   https://github.com/processing/processing/pull/3197
 
 3.0a7
 _ finish adding 'examples' contribs
