@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import processing.core.PApplet;
-
+import processing.app.Language;
 
 abstract public class Contribution {
   static final String SPECIAL_CATEGORY_NAME = "Starred";
@@ -251,6 +251,7 @@ abstract public class Contribution {
       String[] listing = PApplet.trim(PApplet.split(categoryStr, ','));
       for (String category : listing) {
         if (validCategories.contains(category)) {
+          category = translateCategory(category);
           outgoing.add(category);
         }
       }
@@ -276,4 +277,55 @@ abstract public class Contribution {
     }
     return (outgoing.size() > 0) ? outgoing : null;
   }
+
+  static private String translateCategory(String cat) {
+    String translated = "";
+  
+    switch (cat) {
+    case "3D":
+      translated = Language.text("contrib.category.3d");
+      break;
+    case "Animation":
+      translated = Language.text("contrib.category.animation");
+      break;
+    case "Data":
+      translated = Language.text("contrib.category.data");
+      break;
+    case "Geometry":
+      translated = Language.text("contrib.category.geometry");
+      break;
+    case "GUI":
+      translated = Language.text("contrib.category.gui");
+      break;
+    case "Hardware":
+      translated = Language.text("contrib.category.hardware");
+      break;
+    case "I/O":
+      translated = Language.text("contrib.category.io");
+      break;
+    case "Math":
+      translated = Language.text("contrib.category.math");
+      break;
+    case "Simulation":
+      translated = Language.text("contrib.category.simulation");
+      break;
+    case "Sound":
+      translated = Language.text("contrib.category.sound");
+      break;
+    case "Typography":
+      translated = Language.text("contrib.category.typography");
+      break;
+    case "Utilities":
+      translated = Language.text("contrib.category.utilities");
+      break;
+    case "Video & Vision":
+      translated = Language.text("contrib.category.video_vision");
+      break;
+    case "Other":
+      translated = Language.text("contrib.category.other");
+      break;
+    }
+    return translated;
+  }
+  
 }

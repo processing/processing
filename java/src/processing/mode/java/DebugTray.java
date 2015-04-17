@@ -210,7 +210,11 @@ public class DebugTray extends JFrame {
     rootNode = new DefaultMutableTreeNode("root");
     builtins = new DefaultMutableTreeNode("Processing");
     treeModel = new DefaultTreeModel(rootNode); // model for the tree column
-    model = DefaultOutlineModel.createOutlineModel(treeModel, new VariableRowModel(), true, "Name"); // model for all columns
+    // model for all columns
+    model =
+      DefaultOutlineModel.createOutlineModel(treeModel, new VariableRowModel(),
+                                             true,
+                                             Language.text("debugger.name"));
 
     ExpansionHandler expansionHandler = new ExpansionHandler();
     model.getTreePathSupport().addTreeWillExpandListener(expansionHandler);
@@ -318,7 +322,9 @@ public class DebugTray extends JFrame {
    * http://kickjava.com/src/org/netbeans/swing/outline/DefaultOutlineCellRenderer.java.htm
    */
   protected class VariableRowModel implements RowModel {
-    final String[] columnNames = { "Value", "Type" };
+    final String column0 = Language.text("debugger.value");
+    final String column1 = Language.text("debugger.type");
+    final String[] columnNames = { column0, column1 };
     final int[] editableTypes = {
       VariableNode.TYPE_BOOLEAN, 
       VariableNode.TYPE_FLOAT, 

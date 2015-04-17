@@ -125,7 +125,7 @@ public class Archiver implements Tool {
         e.printStackTrace();
       }
     } else {
-      editor.statusNotice("Archive sketch canceled.");
+      editor.statusNotice(Language.text("editor.status.archiver.cancel"));
     }
   }
 

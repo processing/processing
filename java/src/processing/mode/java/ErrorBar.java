@@ -41,6 +41,7 @@ import processing.app.SketchCode;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.ErrorMarker;
 import processing.mode.java.pdex.Problem;
+import processing.app.Language;
 
 /**
  * The bar on the left of the text area which displays all errors as rectangles. <br>
@@ -287,7 +288,11 @@ public class ErrorBar extends JPanel {
               if (evt.getY() >= eMarker.getY() - 2 &&
                   evt.getY() <= eMarker.getY() + 2 + errorMarkerHeight) {
                 Problem p = eMarker.getProblem();
-                String msg = (p.isError() ? "Error: " : "Warning: ") + p.getMessage();
+                String msg = ((p.isError()
+                               ? Language.text("editor.status.error")
+                               : Language.text("editor.status.warning")) + ": "
+                              + p.getMessage());
+
                 setToolTipText(msg);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 break;

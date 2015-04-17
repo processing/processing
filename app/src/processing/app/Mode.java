@@ -661,7 +661,8 @@ public abstract class Mode {
         }
       }
 
-      DefaultMutableTreeNode foundationLibraries = new DefaultMutableTreeNode("Core Libraries");
+      DefaultMutableTreeNode foundationLibraries =
+        new DefaultMutableTreeNode(Language.text("examples.core_libraries"));
 
       // Get examples for core libraries
       for (Library lib : coreLibraries) {
@@ -676,7 +677,8 @@ public abstract class Mode {
       }
 
       // Get examples for third party libraries
-      DefaultMutableTreeNode contributed = new DefaultMutableTreeNode("Libraries");
+      DefaultMutableTreeNode contributed = new
+        DefaultMutableTreeNode(Language.text("examples.libraries"));
       for (Library lib : contribLibraries) {
         if (lib.hasExamples()) {
             DefaultMutableTreeNode libNode = new DefaultMutableTreeNode(lib.getName());

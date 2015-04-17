@@ -171,7 +171,8 @@ public class JavaMode extends Mode {
 
     if (isSketchModified(sketch)) {
       editor.deactivateRun();
-      Base.showMessage("Save", "Please save the sketch before running in Tweak Mode.");
+      Base.showMessage(Language.text("menu.file.save"),
+                       Language.text("tweak_mode.save_before_tweak"));
       return null;
     }
 
