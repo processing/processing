@@ -563,7 +563,7 @@ public class JEditTextArea extends JComponent
     int width = painter.getFontMetrics().charWidth('w');
 
     if(x < 0) {
-      newHorizontalOffset = Math.min(0,horizontalOffset - x + width + 5);
+      newHorizontalOffset = Math.max(0,horizontalOffset - x + width + 5);
     } else if(x + width >= painter.getWidth()) {
       newHorizontalOffset = horizontalOffset +
       (painter.getWidth() - x) - width - 5;
