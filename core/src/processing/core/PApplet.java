@@ -197,6 +197,7 @@ public class PApplet implements PConstants {
   /**
    * Path to sketch folder. Previously undocumented, made private in 3.0a5
    * so that people use the sketchPath() method and it's inited properly.
+   * Call sketchPath() once to set the default.
    */
   private String sketchPath;
 //  public String sketchPath;

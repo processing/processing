@@ -79,6 +79,10 @@ o   sketchDisplay() -> 0 for all, or 1, 2, 3...
 X   added --span option
 X play with improvements to full screen here
 
+_ exitCalled() and exitActual made public by Andres, breaks Python
+_   also not API we want to expose, so sort this out
+_ destroy() removed, but bring back? is that better than dispose()?
+_   Python Mode has a hook for when it's called
 
 _ split 'present' and 'full screen'?
 _   --full-screen causes considerable flicker at this point

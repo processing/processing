@@ -28,6 +28,7 @@ X remove code that's moving the sketch path arg later
 X   https://github.com/processing/processing/commit/0a14835e6f5f4766b022e73a8fe562318636727c
 X the .macosx, .linux, etc prefs should be stripped
 X   only use them on first load, and merge into preferences.txt
+X auto-insert after antlr @SuppressWarnings({ "unused", "unchecked", "cast" })
 
 _ install/remove buttons not working in the managers
 _   https://github.com/processing/processing/issues/3172
@@ -209,6 +210,8 @@ _   https://github.com/processing/processing/issues/2953
 _   don't return here, allow contrib types to fail:
 _   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
 
+_ need to handle the 2.x to 3.x sketchbook transition
+
 _ Linux throwing IllegalStateException: Buffers have not been created
 _   in render() (called from blit) PSurfaceAWT:301
 
@@ -270,7 +273,6 @@ _ make examples pull/build automatic during dist
 _ add span screens pref (near the display pref)
 _   add checkbox for spans to export dialog
 _ remove "save before running" message
-_ auto-insert after antlr @SuppressWarnings({ "unused", "unchecked", "cast" })
 
 
 from the todo list
