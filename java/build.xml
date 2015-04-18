@@ -42,6 +42,35 @@
 	   glib="${grammars}/java15.g">
       <classpath path="${antlr_jar}" />
     </antlr>
+
+    <!-- clean up the warning mess caused by this old antlr version -->
+    <property name="uuc" value="@SuppressWarnings({ &quot;unused&quot;, &quot;unchecked&quot;, &quot;cast&quot; })${line.separator}" />
+    <property name="uc" value="@SuppressWarnings({ &quot;unused&quot;, &quot;cast&quot; })${line.separator}" />
+
+    <replaceregexp 
+        file="generated/processing/mode/java/preproc/JavaLexer.java"
+        match="(public class JavaLexer .*)" 
+        replace="${uuc}\1">
+    </replaceregexp>
+
+    <replaceregexp 
+        file="generated/processing/mode/java/preproc/JavaRecognizer.java"
+        match="(public class JavaRecognizer .*)" 
+        replace="${uc}\1">
+    </replaceregexp>
+
+    <replaceregexp 
+        file="generated/processing/mode/java/preproc/PdeLexer.java"
+        match="(public class PdeLexer .*)" 
+        replace="${uuc}\1">
+    </replaceregexp>
+
+    <replaceregexp 
+        file="generated/processing/mode/java/preproc/PdeRecognizer.java"
+        match="(public class PdeRecognizer .*)" 
+        replace="${uc}\1">
+    </replaceregexp>
+    <!-- end of workaround for old antlr -->
   </target>
 
   <target name="compile" depends="preproc" description="Compile sources">
