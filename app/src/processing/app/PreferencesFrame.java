@@ -390,7 +390,7 @@ public class PreferencesFrame {
       new JCheckBox(Language.text("preferences.show_warnings"));
     pain.add(warningsCheckerBox);
     d = warningsCheckerBox.getPreferredSize();
-    warningsCheckerBox.setBounds(warningLeft, top, d.width + 10, d.height);
+    warningsCheckerBox.setBounds(warningLeft + 20, top, d.width + 10, d.height);
     right = Math.max(right, warningLeft + d.width);
     top += d.height + GUI_BETWEEN;
 
