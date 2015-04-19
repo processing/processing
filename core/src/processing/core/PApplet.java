@@ -1679,6 +1679,9 @@ public class PApplet implements PConstants {
       pg.setPrimary(primary);
       if (path != null) pg.setPath(path);
 //      pg.setQuality(sketchQuality());
+      if (!primary) {
+        surface.initImage(pg, w, h);
+      }
       pg.setSize(w, h);
 
       // everything worked, return it

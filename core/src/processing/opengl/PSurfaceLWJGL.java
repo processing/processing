@@ -415,6 +415,11 @@ public class PSurfaceLWJGL implements PSurface {
   }
 
 
+  public void initImage(PGraphics gr, int wide, int high) {
+    // TODO not sure yet how to implement [fry]
+  }
+
+
   @Override
   public void setSmooth(int level) {
     System.err.println("set smooth " + level);

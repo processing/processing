@@ -203,7 +203,8 @@ public class PSurfaceAWT implements PSurface {
     protected synchronized void render() {
       if (!EventQueue.isDispatchThread()) {
         //throw new IllegalStateException("render() called outside the EDT");
-        System.err.println("render() called outside the EDT");
+        //System.err.println("render() called outside the EDT");
+        new Exception("render() called outside the EDT").printStackTrace();
       }
 //      if (canvas == null) {
 //        removeListeners(this);
@@ -739,6 +740,18 @@ public class PSurfaceAWT implements PSurface {
 //      frame.setLocationRelativeTo(null);
 //    }
 
+    initImage(graphics, wide, high);
+
+    //throw new RuntimeException("implement me, see readme.md");
+    sketch.width = wide;
+    sketch.height = high;
+
+    // set PGraphics variables for width/height/pixelWidth/pixelHeight
+    graphics.setSize(wide, high);
+  }
+
+
+  public void initImage(PGraphics gr, int wide, int high) {
     GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
     // If not realized (off-screen, i.e the Color Selector Tool), gc will be null.
     if (gc == null) {
@@ -749,15 +762,8 @@ public class PSurfaceAWT implements PSurface {
 
     // Formerly this was broken into separate versions based on offscreen or
     // not, but we may as well create a compatible image; it won't hurt, right?
-    int factor = graphics.pixelFactor;
-    graphics.image = gc.createCompatibleImage(wide * factor, high * factor);
-
-    //throw new RuntimeException("implement me, see readme.md");
-    sketch.width = wide;
-    sketch.height = high;
-
-    // sets internal variables for width/height/pixelWidth/pixelHeight
-    graphics.setSize(wide, high);
+    int factor = gr.pixelFactor;
+    gr.image = gc.createCompatibleImage(wide * factor, high * factor);
   }
 
 

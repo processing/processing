@@ -103,6 +103,9 @@ public interface PSurface {
 
   public void setSize(int width, int height);
 
+  // create pixel buffer (pulled out for offscreen graphics)
+  public void initImage(PGraphics gr, int wide, int high);
+
   public void setSmooth(int level);
 
   public void setFrameRate(float fps);
