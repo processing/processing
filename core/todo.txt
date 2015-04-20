@@ -67,6 +67,7 @@ X   add check to require .vlw extension with loadFont()
 X Memory usage insane increasing in 3.0a5
 X   https://github.com/processing/processing/issues/3007
 X   seems fixed due to the rewrite
+X remove set/get/removeCache() methods from PApplet (add //ignore line)
 
 full screen
 X roll back full screen changes
@@ -79,10 +80,18 @@ o   sketchDisplay() -> 0 for all, or 1, 2, 3...
 X   added --span option
 X play with improvements to full screen here
 
-_ exitCalled() and exitActual made public by Andres, breaks Python
-_   also not API we want to expose, so sort this out
+_ remove setTitle() etc methods from PSurface, just use the ones from Frame?
+_   and with that, encourage the use of the dummy frame object in renderers
 _ destroy() removed, but bring back? is that better than dispose()?
 _   Python Mode has a hook for when it's called
+
+opengl misc
+_ sketchQuality() vs sketchSmooth()?
+_ move glsl entries to their own subdirectory?
+_ exitCalled() and exitActual made public by Andres, breaks Python
+_   also not API we want to expose, so sort this out
+_ get code into makeGraphics() to handle bad path settings for LWJGL
+_   right now it has a bunch of JOGL-specific code
 
 _ split 'present' and 'full screen'?
 _   --full-screen causes considerable flicker at this point

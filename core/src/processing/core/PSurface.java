@@ -103,9 +103,21 @@ public interface PSurface {
 
   public void setSize(int width, int height);
 
+  /**
+   * Called by {@link PApplet#createGraphics(int, int)} to nitialize the
+   * {@link PGraphics#image} object with an image that's compatible with this
+   * drawing surface/display/hardware.
+   * @param gr PGraphics object whose image will be set
+   * @param wide
+   * @param high
+   */
   // create pixel buffer (pulled out for offscreen graphics)
   public void initImage(PGraphics gr, int wide, int high);
 
+  /**
+   * Sometimes smoothing must be set at the drawing surface level
+   * not just inside the renderer itself.
+   */
   public void setSmooth(int level);
 
   public void setFrameRate(float fps);

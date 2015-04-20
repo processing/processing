@@ -375,7 +375,7 @@ public class PSurfaceAWT implements PSurface {
     }
     frame.getContentPane().setBackground(backgroundColor);
 
-    // Set the trimmings around the image
+    // Put the p5 logo in the Frame's corner to override the Java coffee cup.
     setIconImage(frame);
 
     // For 0149, moving this code (up to the pack() method) before init().
@@ -812,7 +812,7 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
-  // get the bounds for all displays
+  /** Get the bounds rectangle for all displays. */
   static Rectangle getDisplaySpan() {
     Rectangle bounds = new Rectangle();
     GraphicsEnvironment environment =
@@ -1418,8 +1418,8 @@ public class PSurfaceAWT implements PSurface {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  int cursorType = PConstants.ARROW; // cursor type
-  boolean cursorVisible = true; // cursor visibility flag
+  int cursorType = PConstants.ARROW;
+  boolean cursorVisible = true;
   Cursor invisibleCursor;
 
 
@@ -1436,26 +1436,22 @@ public class PSurfaceAWT implements PSurface {
 
 
   public void setCursor(PImage img, int x, int y) {
-    // don't set this as cursor type, instead use cursor_type
-    // to save the last cursor used in case cursor() is called
+    // Don't set cursorType, instead use cursorType to save the last
+    // regular cursor type used for when cursor() is called.
     //cursor_type = Cursor.CUSTOM_CURSOR;
-    Image jimage =
-      canvas.getToolkit().createImage(new MemoryImageSource(img.width, img.height,
-                                        img.pixels, 0, img.width));
-    Point hotspot = new Point(x, y);
-    Toolkit tk = Toolkit.getDefaultToolkit();
-    Cursor cursor = tk.createCustomCursor(jimage, hotspot, "Custom Cursor");
+    Cursor cursor =
+      canvas.getToolkit().createCustomCursor((Image) img.getNative(),
+                                             new Point(x, y),
+                                             "custom");
     canvas.setCursor(cursor);
     cursorVisible = true;
-
   }
 
 
   public void showCursor() {
-    // maybe should always set here? seems dangerous, since
-    // it's likely that java will set the cursor to something
-    // else on its own, and the applet will be stuck b/c bagel
-    // thinks that the cursor is set to one particular thing
+    // Maybe should always set here? Seems dangerous, since it's likely that
+    // Java will set the cursor to something else on its own, and the sketch
+    // will be stuck b/c p5 thinks the cursor is set to one particular thing.
     if (!cursorVisible) {
       cursorVisible = true;
       canvas.setCursor(Cursor.getPredefinedCursor(cursorType));
@@ -1464,8 +1460,8 @@ public class PSurfaceAWT implements PSurface {
 
 
   public void hideCursor() {
-    // in 0216, just re-hide it?
-//  if (!cursorVisible) return;  // don't hide if already hidden.
+    // Because the OS may have shown the cursor on its own,
+    // don't return if 'cursorVisible' is set to true. [rev 0216]
 
     if (invisibleCursor == null) {
       BufferedImage cursorImg =
@@ -1473,9 +1469,6 @@ public class PSurfaceAWT implements PSurface {
       invisibleCursor =
         canvas.getToolkit().createCustomCursor(cursorImg, new Point(8, 8), "blank");
     }
-    // was formerly 16x16, but the 0x0 was added by jdf as a fix
-    // for macosx, which wasn't honoring the invisible cursor
-//  cursor(invisibleCursor, 8, 8);
     canvas.setCursor(invisibleCursor);
     cursorVisible = false;
   }
