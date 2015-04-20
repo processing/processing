@@ -790,7 +790,6 @@ public class PApplet implements PConstants {
 //    width = g.width;
 //    height = g.height;
 
-    // prior to 3a5, thread was started here
     surface.startThread();
   }
 
@@ -1677,7 +1676,10 @@ public class PApplet implements PConstants {
 
       pg.setParent(this);
       pg.setPrimary(primary);
-      if (path != null) pg.setPath(path);
+      if (path != null) {
+        // Wrap in sketchPath() because it has to be absolute
+        pg.setPath(sketchPath(path));
+      }
 //      pg.setQuality(sketchQuality());
       if (!primary) {
         surface.initImage(pg, w, h);
@@ -9884,44 +9886,6 @@ public class PApplet implements PConstants {
   // the PImage and PGraphics source code files.
 
   // public functions for processing.core
-
-
-  /**
-   * Store data of some kind for the renderer that requires extra metadata of
-   * some kind. Usually this is a renderer-specific representation of the
-   * image data, for instance a BufferedImage with tint() settings applied for
-   * PGraphicsJava2D, or resized image data and OpenGL texture indices for
-   * PGraphicsOpenGL.
-   * @param renderer The PGraphics renderer associated to the image
-   * @param storage The metadata required by the renderer
-   */
-  public void setCache(PImage image, Object storage) {
-    if (recorder != null) recorder.setCache(image, storage);
-    g.setCache(image, storage);
-  }
-
-
-  /**
-   * Get cache storage data for the specified renderer. Because each renderer
-   * will cache data in different formats, it's necessary to store cache data
-   * keyed by the renderer object. Otherwise, attempting to draw the same
-   * image to both a PGraphicsJava2D and a PGraphicsOpenGL will cause errors.
-   * @param renderer The PGraphics renderer associated to the image
-   * @return metadata stored for the specified renderer
-   */
-  public Object getCache(PImage image) {
-    return g.getCache(image);
-  }
-
-
-  /**
-   * Remove information associated with this renderer from the cache, if any.
-   * @param renderer The PGraphics renderer whose cache data should be removed
-   */
-  public void removeCache(PImage image) {
-    if (recorder != null) recorder.removeCache(image);
-    g.removeCache(image);
-  }
 
 
   public PGL beginPGL() {
