@@ -684,15 +684,8 @@ public class PGraphics extends PImage implements PConstants {
   // INTERNAL
 
 
-  /**
-   * Constructor for the PGraphics object. Use this to ensure that
-   * the defaults get set properly. In a subclass, use this(w, h)
-   * as the first line of a subclass' constructor to properly set
-   * the internal fields and defaults.
-   *
-   * @nowebref
-   */
   public PGraphics() {
+    // Allows subclasses to override
   }
 
 
@@ -734,7 +727,7 @@ public class PGraphics extends PImage implements PConstants {
    * This was formerly handled by the constructor, but instead it's been broken
    * out so that setParent/setPrimary/setPath can be handled differently.
    *
-   * Important that this is ignored by preproc.pl because otherwise it will
+   * Important: this is ignored by the Methods task because otherwise it will
    * override setSize() in PApplet/Applet/Component, which will 1) not call
    * super.setSize(), and 2) will cause the renderer to be resized from the
    * event thread (EDT), causing a nasty crash as it collides with the
@@ -789,7 +782,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param renderer The PGraphics renderer associated to the image
    * @param storage The metadata required by the renderer
    */
-  public void setCache(PImage image, Object storage) {
+  public void setCache(PImage image, Object storage) {  // ignore
     cacheMap.put(image, storage);
   }
 
@@ -802,7 +795,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param renderer The PGraphics renderer associated to the image
    * @return metadata stored for the specified renderer
    */
-  public Object getCache(PImage image) {
+  public Object getCache(PImage image) {  // ignore
     return cacheMap.get(image);
   }
 
@@ -811,7 +804,7 @@ public class PGraphics extends PImage implements PConstants {
    * Remove information associated with this renderer from the cache, if any.
    * @param renderer The PGraphics renderer whose cache data should be removed
    */
-  public void removeCache(PImage image) {
+  public void removeCache(PImage image) {  // ignore
     cacheMap.remove(image);
   }
 
