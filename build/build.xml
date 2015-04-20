@@ -43,8 +43,8 @@
   -->
   <!-- Switching to 8 because updates for 7 end April 2015 -->
   <property name="jdk.version" value="8" />
-  <property name="jdk.update" value="40" />
-  <property name="jdk.build" value="26" />
+  <property name="jdk.update" value="45" />
+  <property name="jdk.build" value="14" />
   <property name="jdk.short" value="${jdk.version}u${jdk.update}" />
   <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
 
