@@ -12,6 +12,12 @@ X add warning message when a negative textSize() is used
 X   https://github.com/processing/processing/issues/3110
 X loadXxxx() methods will truly follow redirects (including http -> https)
 X   https://github.com/processing/processing-docs/issues/218
+o move to enums instead of PConstants?
+o   helps textMode() only accept valid entries
+o   really nice for auto-complete
+o   prevents hundreds of entries from coming up w/ auto-complete
+o   downside: breaks compatibility big time
+X   would have to use ALIGN_CENTER eta al, so no
 
 head
 X Sketch window dimensions off in Java2D
@@ -167,11 +173,6 @@ breaking api
 _ bring back chaining in JSON (and add to XML)
 _ add chaining operations to PVector
 _   https://github.com/processing/processing/issues/257
-_ move to enums instead of PConstants?
-_   helps textMode() only accept valid entries
-_   really nice for auto-complete
-_   prevents hundreds of entries from coming up w/ auto-complete
-_   downside: breaks compatibility big time
 _ min() and max() to use varargs
 _   https://github.com/processing/processing/issues/3027
 _ use enums for constants
