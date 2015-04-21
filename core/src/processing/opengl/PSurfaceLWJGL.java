@@ -2,6 +2,7 @@ package processing.opengl;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
@@ -77,7 +78,7 @@ public class PSurfaceLWJGL implements PSurface {
 
 
   @Override
-  public void initOffscreen() {
+  public void initOffscreen(PApplet sketch) {
   }
 
 
@@ -232,24 +233,24 @@ public class PSurfaceLWJGL implements PSurface {
   }
 
 
-  @Override
-  public void setTitle(String title) {
-    Display.setTitle(title);
-  }
-
-
-  @Override
-  public void setVisible(boolean visible) {
-    // Apparently not possible:
-    // http://forum.lwjgl.org/index.php?topic=5388.0
-    System.err.println("Cannot set visibility of window in OpenGL");
-  }
-
-
-  @Override
-  public void setResizable(boolean resizable) {
-    Display.setResizable(resizable);
-  }
+//  @Override
+//  public void setTitle(String title) {
+//    Display.setTitle(title);
+//  }
+//
+//
+//  @Override
+//  public void setVisible(boolean visible) {
+//    // Apparently not possible:
+//    // http://forum.lwjgl.org/index.php?topic=5388.0
+//    System.err.println("Cannot set visibility of window in OpenGL");
+//  }
+//
+//
+//  @Override
+//  public void setResizable(boolean resizable) {
+//    Display.setResizable(resizable);
+//  }
 
 
   @Override
@@ -415,8 +416,12 @@ public class PSurfaceLWJGL implements PSurface {
   }
 
 
-  public void initImage(PGraphics gr, int wide, int high) {
-    // TODO not sure yet how to implement [fry]
+//  @Override
+//  public void initImage(PGraphics graphics) {
+//    // TODO not sure yet how to implement [fry]
+//  }
+  public Component getComponent() {
+    return frame;
   }
 
 
@@ -623,6 +628,8 @@ public class PSurfaceLWJGL implements PSurface {
       Display.setTitle(title);
     }
   }
+
+
 
   ///////////////////////////////////////////////////////////
 

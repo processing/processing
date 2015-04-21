@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-14 The Processing Foundation
+  Copyright (c) 2012-15 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -24,15 +24,14 @@
 
 package processing.core;
 
-// used for setting bg colors and whatnot
 import java.awt.Canvas;
+// used for setting bg colors and whatnot
 import java.awt.Color;
 // use for the link() command (and maybe open()?)
 import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.FileDialog;
 import java.awt.Font;
-// for the Frame object (deprecate?)
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -66,26 +65,33 @@ import processing.opengl.*;
  * Window Size and Full Screen</A> page on the Wiki has useful information
  * about sizing, multiple displays, full screen, etc.
  * <p/>
- * Processing uses active mode rendering in all cases. All animation tasks
- * happen on the "Processing Animation Thread". The setup() and draw() methods
- * are handled by that thread, and events (like mouse movement and key presses,
- * which are fired by the event dispatch thread or EDT) are queued to be safely
- * handled at the end of draw(). For code that needs to run on the EDT,
- * use EventQueue.invokeLater(). When doing so, be careful to synchronize
- * between that code (since invokeLater() will make your code run from the EDT)
- * and the Processing animation thread. Use of a callback function or the
- * registerXxx() methods in PApplet can help ensure that your code doesn't do
- * something naughty.
+ * Processing uses active mode rendering. All animation tasks happen on the
+ * "Processing Animation Thread". The setup() and draw() methods are handled
+ * by that thread, and events (like mouse movement and key presses, which are
+ * fired by the event dispatch thread or EDT) are queued to be safely handled
+ * at the end of draw().
  * <p/>
- * As of Processing 2.0, we have discontinued support for versions of Java
- * prior to 1.6. We don't have enough people to support it, and for a
- * project of our (tiny) size, we should be focusing on the future, rather
- * than working around legacy Java code.
+ * Starting with 3.0a6, blit operations are on the EDT, so as not to cause
+ * GUI problems with Swing and AWT. In the case of the default renderer, the
+ * sketch renders to an offscreen image, then the EDT is asked to bring that
+ * image to the screen.
+ * <p/>
+ * For code that needs to run on the EDT, use EventQueue.invokeLater(). When
+ * doing so, be careful to synchronize between that code and the Processing
+ * animation thread. That is, you can't call Processing methods from the EDT
+ * or at any random time from another thread. Use of a callback function or
+ * the registerXxx() methods in PApplet can help ensure that your code doesn't
+ * do something naughty.
  * <p/>
  * As of Processing 3.0, we have removed Applet as the base class for PApplet.
  * This means that we can remove lots of legacy code, however one downside is
  * that it's no longer possible (without extra code) to embed a PApplet into
  * another Java application.
+ * <p/>
+ * As of Processing 3.0, we have discontinued support for versions of Java
+ * prior to 1.8. We don't have enough people to support it, and for a
+ * project of our (tiny) size, we should be focusing on the future, rather
+ * than working around legacy Java code.
  */
 public class PApplet implements PConstants {
 //public class PApplet extends Applet
@@ -1614,9 +1620,7 @@ public class PApplet implements PConstants {
    *
    */
   public PGraphics createGraphics(int w, int h, String renderer) {
-    PGraphics pg = makeGraphics(w, h, renderer, null, false);
-    //pg.parent = this;  // make save() work
-    return pg;
+    return createGraphics(w, h, renderer, null);
   }
 
 
@@ -1627,12 +1631,17 @@ public class PApplet implements PConstants {
    */
   public PGraphics createGraphics(int w, int h,
                                   String renderer, String path) {
+    return makeGraphics(w, h, renderer, savePath(path), false);
+    /*
     if (path != null) {
       path = savePath(path);
     }
     PGraphics pg = makeGraphics(w, h, renderer, path, false);
-    pg.parent = this;  // make save() work
+    //pg.parent = this;  // why wasn't setParent() used before 3.0a6?
+    //pg.setParent(this);  // make save() work
+    // Nevermind, parent is set in makeGraphics()
     return pg;
+    */
   }
 
 
@@ -1641,13 +1650,12 @@ public class PApplet implements PConstants {
 //  }
 
 
-  /** Create default renderer, likely to be resized, but needed for surface init. */
-  protected PGraphics makePrimaryGraphics() {
-    return makeGraphics(sketchWidth(), sketchHeight(), sketchRenderer(), null, true);
-  }
-
-
-  /** Version of createGraphics() used internally. */
+  /**
+   * Version of createGraphics() used internally.
+   * @param path A full (not relative) path.
+   *             {@link PApplet#createGraphics} will call
+   *             {@link PApplet#savePath} first.
+   */
   protected PGraphics makeGraphics(int w, int h,
                                    String renderer, String path,
                                    boolean primary) {
@@ -1677,13 +1685,12 @@ public class PApplet implements PConstants {
       pg.setParent(this);
       pg.setPrimary(primary);
       if (path != null) {
-        // Wrap in sketchPath() because it has to be absolute
-        pg.setPath(sketchPath(path));
+        pg.setPath(path);
       }
 //      pg.setQuality(sketchQuality());
-      if (!primary) {
-        surface.initImage(pg, w, h);
-      }
+//      if (!primary) {
+//        surface.initImage(pg, w, h);
+//      }
       pg.setSize(w, h);
 
       // everything worked, return it
@@ -1738,9 +1745,16 @@ public class PApplet implements PConstants {
         if (platform == MACOSX) {
           e.printStackTrace(System.out);  // OS X bug (still true?)
         }
+        e.printStackTrace();
         throw new RuntimeException(e.getMessage());
       }
     }
+  }
+
+
+  /** Create default renderer, likely to be resized, but needed for surface init. */
+  protected PGraphics createPrimaryGraphics() {
+    return makeGraphics(sketchWidth(), sketchHeight(), sketchRenderer(), null, true);
   }
 
 
@@ -9370,9 +9384,8 @@ public class PApplet implements PConstants {
 
 
   /**
-   * Moving this to the EDT for 3.0a6 because the main() messes with AWT
-   * components (or even Swing components, presumably). Hoping to get more
-   * consistent behavior across platforms and implementations.
+   * Moving this to the EDT for 3.0a6 because that's the proper thing to do
+   * when messing with AWT/Swing components. And boy, do we mess with 'em.
    */
   static protected void runSketchEDT(final String[] args,
                                   final PApplet constructedApplet) {
@@ -9512,6 +9525,7 @@ public class PApplet implements PConstants {
 //    Frame frame =
 //      surface.initFrame(applet, backgroundColor,
 //                        displayIndex, present, spanDisplays);
+
     PSurface surface =
       applet.initSurface(backgroundColor, displayIndex, fullScreen, spanDisplays);
 
@@ -9528,15 +9542,15 @@ public class PApplet implements PConstants {
 //    // In a static mode app, this will be after setup() has completed,
 //    // and the empty draw() has set "finished" to true.
 //    // TODO make sure this won't hang if the applet has an exception.
-//    while (applet.defaultSize && !applet.finished) {
-//      //System.out.println("default size");
-//      try {
-//        Thread.sleep(5);
-//
-//      } catch (InterruptedException e) {
-//        //System.out.println("interrupt");
-//      }
-//    }
+    while (applet.defaultSize && !applet.finished) {
+      //System.out.println("default size");
+      try {
+        Thread.sleep(5);
+
+      } catch (InterruptedException e) {
+        //System.out.println("interrupt");
+      }
+    }
 
     if (fullScreen) {
       //surface.placeFullScreen(hideStop);
@@ -9565,10 +9579,16 @@ public class PApplet implements PConstants {
 //    } catch (Exception e) {
 //      throw new RuntimeException(e);
 //    }
-    g = makePrimaryGraphics();
+    g = createPrimaryGraphics();
     surface = g.createSurface();
-    frame = surface.initFrame(this, backgroundColor, displayIndex, present, spanDisplays);
-    surface.setTitle(getClass().getName());
+    if (g.displayable()) {
+      frame = surface.initFrame(this, backgroundColor, displayIndex, present, spanDisplays);
+      //surface.setTitle(getClass().getName());
+      frame.setTitle(getClass().getName());
+//    } else {
+//      // TODO necessary?
+//      surface.initOffscreen(this);
+    }
 
     init();
 
@@ -9578,6 +9598,11 @@ public class PApplet implements PConstants {
     // moving it to init() 141114
     //applet.start();
 
+    // Removing this for 3.0a6. sketchWidth/Height() methods should give us
+    // good values for most cases, and removes the hackery seen here.
+    // TODO May need to keep since setup() may take a while, so why not have
+    //      it first render offscreen before showing.
+    /*
     // Wait until the applet has figured out its width.
     // In a static mode app, this will be after setup() has completed,
     // and the empty draw() has set "finished" to true.
@@ -9591,6 +9616,8 @@ public class PApplet implements PConstants {
         //System.out.println("interrupt");
       }
     }
+    */
+
 //    System.out.println("out of default size loop, " + width + " " + height);
     // convenience to avoid another 'get' from the static main() method
     return surface;
@@ -9618,7 +9645,7 @@ public class PApplet implements PConstants {
    * sketch.init()  // start the animation thread
    */
   public Canvas getCanvas() {
-    g = makePrimaryGraphics();
+    g = createPrimaryGraphics();
     surface = g.createSurface();
     return surface.initCanvas(this);
   }

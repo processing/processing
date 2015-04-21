@@ -137,6 +137,13 @@ public class PGraphicsJava2D extends PGraphics {
 //  }
 
 
+//  @Override
+//  protected void allocate() {
+//    //surface.initImage(this, width, height);
+//    surface.initImage(this);
+//  }
+
+
   /*
   @Override
   protected void allocate() {
@@ -239,8 +246,8 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   public PSurface createSurface() {
-    //return (surface = new PSurfaceAWT());
-    return new PSurfaceAWT(this);
+    return surface = new PSurfaceAWT(this);
+//    return new PSurfaceAWT(this);
   }
 
 
@@ -267,15 +274,43 @@ public class PGraphicsJava2D extends PGraphics {
 
 //  Graphics2D g2old;
 
+  public Graphics2D checkImage() {
+    if (image == null ||
+      ((BufferedImage) image).getWidth() != width ||
+      ((BufferedImage) image).getHeight() != height) {
+//        image = new BufferedImage(width * pixelFactor, height * pixelFactor
+//                                  format == RGB ?  BufferedImage.TYPE_INT_ARGB);
+      GraphicsConfiguration gc = null;
+      if (surface != null) {
+        Component comp = surface.getComponent();
+        if (comp == null) {
+          comp = parent.frame;
+        }
+        if (comp != null) {
+          gc = comp.getGraphicsConfiguration();
+        }
+      }
+      // If not realized (off-screen, i.e the Color Selector Tool), gc will be null.
+      if (gc == null) {
+        //System.err.println("GraphicsConfiguration null in initImage()");
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+      }
+
+      // Formerly this was broken into separate versions based on offscreen or
+      // not, but we may as well create a compatible image; it won't hurt, right?
+      int wide = width * pixelFactor;
+      int high = height * pixelFactor;
+      image = gc.createCompatibleImage(wide, high);
+    }
+    return (Graphics2D) image.getGraphics();
+  }
+
+
   @Override
   public void beginDraw() {
-    // TODO this will happen when it's offscreen.. need a better option here
-    if (image == null ||
-        ((BufferedImage) image).getWidth() != width ||
-        ((BufferedImage) image).getHeight() != height) {
-      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    }
-    g2 = (Graphics2D) image.getGraphics();
+    g2 = checkImage();
+    //g2 = (Graphics2D) image.getGraphics();
 
     // Calling getGraphics() seems to nuke the smoothing settings
     smooth(quality);

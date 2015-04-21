@@ -168,7 +168,7 @@ public class PGraphics extends PImage implements PConstants {
   /// true if defaults() has been called a first time
   protected boolean settingsInited;
 
-  /// true if defaults() has been called a first time
+  /// true if settings should be re-applied on next beginDraw()
   protected boolean reapplySettings;
 
   /// set to a PGraphics object being used inside a beginRaw/endRaw() block
@@ -516,6 +516,9 @@ public class PGraphics extends PImage implements PConstants {
    */
   public Image image;
 
+  /** Surface object that we're talking to */
+  protected PSurface surface;
+
   // ........................................................
 
   // internal color for setting/calculating
@@ -653,7 +656,7 @@ public class PGraphics extends PImage implements PConstants {
    * vertex() calls will be based on coordinates that are
    * based on the IMAGE or NORMALIZED.
    */
-  public int textureMode    = IMAGE;
+  public int textureMode = IMAGE;
 
   /**
    * Current horizontal coordinate for texture, will always
@@ -683,6 +686,11 @@ public class PGraphics extends PImage implements PConstants {
 
   // INTERNAL
 
+  // Most renderers will only override the default implementation of one or
+  // two of the setXxxx() methods, so they're broken out here since the
+  // default implementations for each are simple, obvious, and common.
+  // They're also separate to avoid a monolithic and fragile constructor.
+
 
   public PGraphics() {
     // Allows subclasses to override
@@ -691,6 +699,8 @@ public class PGraphics extends PImage implements PConstants {
 
   public void setParent(PApplet parent) {  // ignore
     this.parent = parent;
+    // Some renderers (OpenGL) need to know what smoothing level will be used
+    // before the rendering surface is even created.
     quality = parent.sketchQuality();
   }
 
@@ -737,17 +747,20 @@ public class PGraphics extends PImage implements PConstants {
     width = w;
     height = h;
 
+    /** {@link PImage.pixelFactor} set in {@link PImage#PImage()} */
     pixelWidth = width * pixelFactor;
     pixelHeight = height * pixelFactor;
 
-//    allocate();
-    reapplySettings();
+//    if (surface != null) {
+//      allocate();
+//    }
+//    reapplySettings();
+    reapplySettings = true;
   }
 
 
 //  /**
-//   * Allocate memory for this renderer. Generally will need to be implemented
-//   * for all renderers.
+//   * Allocate memory or an image buffer for this renderer.
 //   */
 //  protected void allocate() { }
 
@@ -764,7 +777,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public PSurface createSurface() {  // ignore
-    return new PSurfaceAWT(this);
+    return surface = new PSurfaceAWT(this);
   }
 
 
@@ -950,7 +963,7 @@ public class PGraphics extends PImage implements PConstants {
 
     settingsInited = true;
     // defaultSettings() overlaps reapplySettings(), don't do both
-    //reapplySettings = false;
+    reapplySettings = false;
   }
 
 

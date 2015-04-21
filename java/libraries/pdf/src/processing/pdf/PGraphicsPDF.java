@@ -100,6 +100,13 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   }
 
 
+  @Override
+  public PSurface createSurface() {
+    return surface = new PSurfaceBasic();
+  }
+
+
+  @Override
   protected void defaultSettings() {  // ignore
     super.defaultSettings();
     textMode = SHAPE;
@@ -141,7 +148,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 //      g2 = template.createGraphics(width, height, mapper);
     }
 //    System.out.println("beginDraw " + (System.currentTimeMillis() - t0));
-    
+
     // super in Java2D now creates an image buffer, don't do that
 //    super.beginDraw();
     checkSettings();

@@ -36,11 +36,11 @@ import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 
-public class PSurfaceAWT implements PSurface {
+public class PSurfaceAWT extends PSurfaceBasic {
   GraphicsDevice displayDevice;
 
   // used for canvas to determine whether resizable or not
-  boolean resizable;  // default is false
+//  boolean resizable;  // default is false
 
   // Internally, we know it's always a JFrame (not just a Frame)
   JFrame frame;
@@ -55,19 +55,10 @@ public class PSurfaceAWT implements PSurface {
   boolean useStrategy = false;
   Canvas canvas;
 
-  PApplet sketch;
   PGraphics graphics;
 
   int sketchWidth;
   int sketchHeight;
-
-  Thread thread;
-  boolean paused;
-  Object pauseObject = new Object();
-
-  /** As of release 0116, frameRate(60) is called as a default */
-  protected float frameRateTarget = 60;
-  protected long frameRatePeriod = 1000000000L / 60L;
 
 
   public PSurfaceAWT(PGraphics graphics) {
@@ -109,6 +100,7 @@ public class PSurfaceAWT implements PSurface {
    * later on the EDT. Other implementations may not require that, so the
    * invokeLater() happens in here rather than requiring the caller to wrap it.
    */
+  @Override
   public void requestFocus() {
     // for 2.0a6, moving this request to the EDT
     EventQueue.invokeLater(new Runnable() {
@@ -156,7 +148,8 @@ public class PSurfaceAWT implements PSurface {
 
     @Override
     public Dimension getMaximumSize() {
-      return resizable ? super.getMaximumSize() : getPreferredSize();
+      //return resizable ? super.getMaximumSize() : getPreferredSize();
+      return frame.isResizable() ? super.getMaximumSize() : getPreferredSize();
     }
 
 
@@ -270,6 +263,7 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
+  @Override
   public void blit() {
     // Other folks taht call render() (i.e. paint()) are already on the EDT.
     // We need to be using the EDT since we're messing with the Canvas
@@ -283,8 +277,9 @@ public class PSurfaceAWT implements PSurface {
 
 
   // what needs to happen here?
-  public void initOffscreen() {
-
+  @Override
+  public void initOffscreen(PApplet sketch) {
+    this.sketch = sketch;
   }
 
   /*
@@ -296,6 +291,7 @@ public class PSurfaceAWT implements PSurface {
   }
   */
 
+  @Override
   public Canvas initCanvas(PApplet sketch) {
     this.sketch = sketch;
 
@@ -307,6 +303,7 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
+  @Override
   public Frame initFrame(PApplet sketch, Color backgroundColor,
                          int deviceIndex, boolean fullScreen, boolean spanDisplays) {
     this.sketch = sketch;
@@ -438,45 +435,46 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
-  /** Set the window (and dock, or whatever necessary) title. */
-  public void setTitle(String title) {
-    frame.setTitle(title);
-  }
-
-
-  /** Set true if we want to resize things (default is not resizable) */
-  public void setResizable(boolean resizable) {
-    this.resizable = resizable;  // really only used for canvas
-
-    if (frame != null) {
-      frame.setResizable(resizable);
-    }
-  }
-
-
-  public void setVisible(boolean visible) {
-    frame.setVisible(visible);
-
-    // removing per https://github.com/processing/processing/pull/3162
-    // can remove the code below once 3.0a6 is tested and behaving
-/*
-    if (visible && PApplet.platform == PConstants.LINUX) {
-      // Linux doesn't deal with insets the same way. We get fake insets
-      // earlier, and then the window manager will slap its own insets
-      // onto things once the frame is realized on the screen. Awzm.
-      if (PApplet.platform == PConstants.LINUX) {
-        Insets insets = frame.getInsets();
-        frame.setSize(Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
-                      insets.left + insets.right,
-                      Math.max(sketchHeight, MIN_WINDOW_HEIGHT) +
-                      insets.top + insets.bottom);
-      }
-    }
-*/
-  }
+//  /** Set the window (and dock, or whatever necessary) title. */
+//  public void setTitle(String title) {
+//    frame.setTitle(title);
+//  }
+//
+//
+//  /** Set true if we want to resize things (default is not resizable) */
+//  public void setResizable(boolean resizable) {
+//    this.resizable = resizable;  // really only used for canvas
+//
+//    if (frame != null) {
+//      frame.setResizable(resizable);
+//    }
+//  }
+//
+//
+//  public void setVisible(boolean visible) {
+//    frame.setVisible(visible);
+//
+//    // removing per https://github.com/processing/processing/pull/3162
+//    // can remove the code below once 3.0a6 is tested and behaving
+///*
+//    if (visible && PApplet.platform == PConstants.LINUX) {
+//      // Linux doesn't deal with insets the same way. We get fake insets
+//      // earlier, and then the window manager will slap its own insets
+//      // onto things once the frame is realized on the screen. Awzm.
+//      if (PApplet.platform == PConstants.LINUX) {
+//        Insets insets = frame.getInsets();
+//        frame.setSize(Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
+//                      insets.left + insets.right,
+//                      Math.max(sketchHeight, MIN_WINDOW_HEIGHT) +
+//                      insets.top + insets.bottom);
+//      }
+//    }
+//*/
+//  }
 
 
   //public void placeFullScreen(boolean hideStop) {
+  @Override
   public void placePresent(Color stopColor) {
     // After the pack(), the screen bounds are gonna be 0s
     frame.setBounds(screenRect);
@@ -510,6 +508,7 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
+  @Override
   public void placeWindow(int[] location) {
     setFrameSize(); //sketchWidth, sketchHeight);
 
@@ -549,7 +548,7 @@ public class PSurfaceAWT implements PSurface {
 
     // all set for rockin
     if (sketch.getGraphics().displayable()) {
-      setVisible(true);
+      frame.setVisible(true);
     }
   }
 
@@ -591,6 +590,7 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
+  @Override
   public void placeWindow(int[] location, int[] editorLocation) {
     //Dimension window = setFrameSize(sketchWidth, sketchHeight);
     Dimension window = setFrameSize(); //sketchWidth, sketchHeight);
@@ -653,74 +653,21 @@ public class PSurfaceAWT implements PSurface {
 
     // TODO this is much too late... why even create the enormous frame for PDF?
     if (sketch.getGraphics().displayable()) {
-      setVisible(true);
-    }
-  }
-
-
-  public void startThread() {
-    if (thread == null) {
-      thread = new AnimationThread();
-      thread.start();
-    } else {
-      throw new IllegalStateException("Thread already started in PSurfaceAWT");
-    }
-  }
-
-
-  public boolean stopThread() {
-    if (thread == null) {
-      return false;
-    }
-    thread = null;
-    return true;
-  }
-
-
-  public boolean isStopped() {
-    return thread == null;
-  }
-
-
-  // sets a flag to pause the thread when ready
-  public void pauseThread() {
-    PApplet.debug("PApplet.run() paused, calling object wait...");
-    paused = true;
-  }
-
-
-  // halts the animation thread if the pause flag is set
-  protected void checkPause() {
-    if (paused) {
-      synchronized (pauseObject) {
-        try {
-          pauseObject.wait();
-//          PApplet.debug("out of wait");
-        } catch (InterruptedException e) {
-          // waiting for this interrupt on a start() (resume) call
-        }
-      }
-    }
-//    PApplet.debug("done with pause");
-  }
-
-
-  public void resumeThread() {
-    paused = false;
-    synchronized (pauseObject) {
-      pauseObject.notifyAll();  // wake up the animation thread
+      frame.setVisible(true);
     }
   }
 
 
   // needs to resize the frame, which will resize the canvas, and so on...
+  @Override
   public void setSize(int wide, int high) {
-//    System.out.format("frame visible %b, setSize(%d, %d) %n", frame.isVisible(), wide, high);
     if (PApplet.DEBUG) {
+      //System.out.format("frame visible %b, setSize(%d, %d) %n", frame.isVisible(), wide, high);
       new Exception(String.format("setSize(%d, %d)", wide, high)).printStackTrace(System.out);
     }
 
-    if (wide == sketchWidth && high == sketchHeight) {
+    //if (wide == sketchWidth && high == sketchHeight) {  // doesn't work on launch
+    if (wide == sketch.width && high == sketch.height) {
       if (PApplet.DEBUG) {
         new Exception("w/h unchanged " + wide + " " + high).printStackTrace(System.out);
       }
@@ -732,7 +679,7 @@ public class PSurfaceAWT implements PSurface {
 
 //    canvas.setSize(wide, high);
 //    frame.setSize(wide, high);
-    if (frame != null) {  // canvas only
+    if (frame != null) {  // skip if just a canvas
       setFrameSize(); //wide, high);
     }
     setCanvasSize();
@@ -740,7 +687,7 @@ public class PSurfaceAWT implements PSurface {
 //      frame.setLocationRelativeTo(null);
 //    }
 
-    initImage(graphics, wide, high);
+    //initImage(graphics, wide, high);
 
     //throw new RuntimeException("implement me, see readme.md");
     sketch.width = wide;
@@ -748,25 +695,32 @@ public class PSurfaceAWT implements PSurface {
 
     // set PGraphics variables for width/height/pixelWidth/pixelHeight
     graphics.setSize(wide, high);
+//    System.out.println("out of setSize()");
   }
 
 
-  public void initImage(PGraphics gr, int wide, int high) {
+  //public void initImage(PGraphics gr, int wide, int high) {
+  /*
+  @Override
+  public void initImage(PGraphics graphics) {
     GraphicsConfiguration gc = canvas.getGraphicsConfiguration();
     // If not realized (off-screen, i.e the Color Selector Tool), gc will be null.
     if (gc == null) {
-      System.err.println("GraphicsConfiguration null in setSize()");
+      System.err.println("GraphicsConfiguration null in initImage()");
       GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
       gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
     }
 
     // Formerly this was broken into separate versions based on offscreen or
     // not, but we may as well create a compatible image; it won't hurt, right?
-    int factor = gr.pixelFactor;
-    gr.image = gc.createCompatibleImage(wide * factor, high * factor);
+    int wide = graphics.width * graphics.pixelFactor;
+    int high = graphics.height * graphics.pixelFactor;
+    graphics.image = gc.createCompatibleImage(wide, high);
   }
+  */
 
 
+  @Override
   public void setSmooth(int level) {
   }
 
@@ -850,6 +804,7 @@ public class PSurfaceAWT implements PSurface {
    * (so that it will be saved by the PDE for the next run) and
    * notify on quit. See more notes in the Worker class.
    */
+  @Override
   public void setupExternalMessages() {
 
     frame.addComponentListener(new ComponentAdapter() {
@@ -1291,128 +1246,6 @@ public class PSurfaceAWT implements PSurface {
 //    addListeners(comp);
 //  }
 
-  public void setFrameRate(float fps) {
-    frameRateTarget = fps;
-    frameRatePeriod = (long) (1000000000.0 / frameRateTarget);
-    //g.setFrameRate(fps);
-  }
-
-
-  class AnimationThread extends Thread {
-
-    public AnimationThread() {
-      super("Animation Thread");
-    }
-
-    /**
-     * Main method for the primary animation thread.
-     * <A HREF="http://java.sun.com/products/jfc/tsc/articles/painting/">Painting in AWT and Swing</A>
-     */
-    @Override
-    public void run() {  // not good to make this synchronized, locks things up
-      long beforeTime = System.nanoTime();
-      long overSleepTime = 0L;
-
-      int noDelays = 0;
-      // Number of frames with a delay of 0 ms before the
-      // animation thread yields to other running threads.
-      final int NO_DELAYS_PER_YIELD = 15;
-
-      /*
-      // If size un-initialized, might be a Canvas. Call setSize() here since
-      // we now have a parent object that this Canvas can use as a peer.
-      if (graphics.image == null) {
-//        System.out.format("it's null, sketchW/H already set to %d %d%n", sketchWidth, sketchHeight);
-        try {
-          EventQueue.invokeAndWait(new Runnable() {
-            public void run() {
-              setSize(sketchWidth, sketchHeight);
-            }
-          });
-        } catch (InterruptedException ie) {
-          ie.printStackTrace();
-        } catch (InvocationTargetException ite) {
-          ite.printStackTrace();
-        }
-//        System.out.format("  but now, sketchW/H changed to %d %d%n", sketchWidth, sketchHeight);
-      }
-      */
-
-      // un-pause the sketch and get rolling
-      sketch.start();
-
-      while ((Thread.currentThread() == thread) && !sketch.finished) {
-        checkPause();
-
-        // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
-        // otherwise it may attempt a resize mid-render.
-//        Dimension currentSize = canvas.getSize();
-//        if (currentSize.width != sketchWidth || currentSize.height != sketchHeight) {
-//          System.err.format("need to resize from %s to %d, %d%n", currentSize, sketchWidth, sketchHeight);
-//        }
-
-        // render a single frame
-//        try {
-//          EventQueue.invokeAndWait(new Runnable() {
-//            public void run() {
-        sketch.handleDraw();
-
-//        EventQueue.invokeLater(new Runnable() {
-//          public void run() {
-        if (sketch.frameCount == 1) {
-          requestFocus();
-        }
-//          }
-//        });
-
-//            }
-//          });
-//        } catch (InterruptedException ie) {
-//          ie.printStackTrace();
-//        } catch (InvocationTargetException ite) {
-//          ite.getTargetException().printStackTrace();
-//        }
-
-        // wait for update & paint to happen before drawing next frame
-        // this is necessary since the drawing is sometimes in a
-        // separate thread, meaning that the next frame will start
-        // before the update/paint is completed
-
-        long afterTime = System.nanoTime();
-        long timeDiff = afterTime - beforeTime;
-        //System.out.println("time diff is " + timeDiff);
-        long sleepTime = (frameRatePeriod - timeDiff) - overSleepTime;
-
-        if (sleepTime > 0) {  // some time left in this cycle
-          try {
-            Thread.sleep(sleepTime / 1000000L, (int) (sleepTime % 1000000L));
-            noDelays = 0;  // Got some sleep, not delaying anymore
-          } catch (InterruptedException ex) { }
-
-          overSleepTime = (System.nanoTime() - afterTime) - sleepTime;
-
-        } else {    // sleepTime <= 0; the frame took longer than the period
-          overSleepTime = 0L;
-          noDelays++;
-
-          if (noDelays > NO_DELAYS_PER_YIELD) {
-            Thread.yield();   // give another thread a chance to run
-            noDelays = 0;
-          }
-        }
-
-        beforeTime = System.nanoTime();
-      }
-
-      sketch.dispose();  // call to shutdown libs?
-
-      // If the user called the exit() function, the window should close,
-      // rather than the sketch just halting.
-      if (sketch.exitCalled) {
-        sketch.exitActual();
-      }
-    }
-  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -1423,6 +1256,7 @@ public class PSurfaceAWT implements PSurface {
   Cursor invisibleCursor;
 
 
+  @Override
   public void setCursor(int kind) {
     // Swap the HAND cursor because MOVE doesn't seem to be available on OS X
     // https://github.com/processing/processing/issues/2358
@@ -1435,6 +1269,7 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
+  @Override
   public void setCursor(PImage img, int x, int y) {
     // Don't set cursorType, instead use cursorType to save the last
     // regular cursor type used for when cursor() is called.
@@ -1448,6 +1283,7 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
+  @Override
   public void showCursor() {
     // Maybe should always set here? Seems dangerous, since it's likely that
     // Java will set the cursor to something else on its own, and the sketch
@@ -1459,6 +1295,7 @@ public class PSurfaceAWT implements PSurface {
   }
 
 
+  @Override
   public void hideCursor() {
     // Because the OS may have shown the cursor on its own,
     // don't return if 'cursorVisible' is set to true. [rev 0216]

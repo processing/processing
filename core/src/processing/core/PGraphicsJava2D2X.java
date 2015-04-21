@@ -1,7 +1,5 @@
 package processing.core;
 
-import java.awt.*;
-
 
 public class PGraphicsJava2D2X extends PGraphicsJava2D {
 //  PImage retina;
@@ -97,22 +95,22 @@ public class PGraphicsJava2D2X extends PGraphicsJava2D {
 
   @Override
   public void beginDraw() {
-//    GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+    super.beginDraw();
+////    GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+////
+////    if (image == null) {
+////      retina.width = width * 2;
+////      retina.height = height * 2;
+////      image = gc.createCompatibleImage(retina.width, retina.height);
+////    }
+//    g2 = (Graphics2D) image.getGraphics();
 //
-//    if (image == null) {
-//      retina.width = width * 2;
-//      retina.height = height * 2;
-//      image = gc.createCompatibleImage(retina.width, retina.height);
-//    }
-    g2 = (Graphics2D) image.getGraphics();
-
-    checkSettings();
-    resetMatrix(); // reset model matrix
+//    vertexCount = 0;
+//    checkSettings();
+//    resetMatrix(); // reset model matrix
 
     // inserted here for retina
     g2.scale(2, 2);
-
-    vertexCount = 0;
   }
 
 

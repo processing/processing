@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2014 The Processing Foundation
+  Copyright (c) 2014-15 The Processing Foundation
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@ package processing.core;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Frame;
 
 
@@ -44,7 +45,7 @@ public interface PSurface {
   static final Color WINDOW_BGCOLOR = new Color(0xDD, 0xDD, 0xDD);
 
   // renderer that doesn't draw to the screen
-  public void initOffscreen();
+  public void initOffscreen(PApplet sketch);
 
   public Canvas initCanvas(PApplet sketch);
 
@@ -53,14 +54,18 @@ public interface PSurface {
 
   //
 
-  /** Set the window (and dock, or whatever necessary) title. */
-  public void setTitle(String title);
+  // Just call these on an AWT Frame object stored in PApplet.
+  // Silly, but prevents a lot of rewrite and extra methods for little benefit.
+  // However, maybe prevents us from having to document the 'frame' variable?
 
-  /** Show or hide the window. */
-  public void setVisible(boolean visible);
-
-  /** Set true if we want to resize things (default is not resizable) */
-  public void setResizable(boolean resizable);
+//  /** Set the window (and dock, or whatever necessary) title. */
+//  public void setTitle(String title);
+//
+//  /** Show or hide the window. */
+//  public void setVisible(boolean visible);
+//
+//  /** Set true if we want to resize things (default is not resizable) */
+//  public void setResizable(boolean resizable);
 
   //
 
@@ -76,35 +81,13 @@ public interface PSurface {
 
   //
 
-  /** Start the animation thread */
-  public void startThread();
-
-  /**
-   * On the next trip through the animation thread, things should go sleepy-bye.
-   * Does not pause the thread immediately because that needs to happen on the
-   * animation thread itself, so fires on the next trip through draw().
-   */
-  public void pauseThread();
-
-  public void resumeThread();
-
-  /**
-   * Stop the animation thread (set it null)
-   * @return false if already stopped
-   */
-  public boolean stopThread();
-
-  public boolean isStopped();
-
-  //
-
   // sets displayWidth/Height inside PApplet
   //public void checkDisplaySize();
 
   public void setSize(int width, int height);
 
   /**
-   * Called by {@link PApplet#createGraphics(int, int)} to nitialize the
+   * Called by {@link PApplet#createGraphics} to initialize the
    * {@link PGraphics#image} object with an image that's compatible with this
    * drawing surface/display/hardware.
    * @param gr PGraphics object whose image will be set
@@ -112,7 +95,10 @@ public interface PSurface {
    * @param high
    */
   // create pixel buffer (pulled out for offscreen graphics)
-  public void initImage(PGraphics gr, int wide, int high);
+  //public void initImage(PGraphics gr, int wide, int high);
+  // create pixel buffer, called from allocate() to produce a compatible image for rendering efficiently
+//  public void initImage(PGraphics gr);
+  public Component getComponent();
 
   /**
    * Sometimes smoothing must be set at the drawing surface level
@@ -141,4 +127,23 @@ public interface PSurface {
 
   //
 
+  /** Start the animation thread */
+  public void startThread();
+
+  /**
+   * On the next trip through the animation thread, things should go sleepy-bye.
+   * Does not pause the thread immediately because that needs to happen on the
+   * animation thread itself, so fires on the next trip through draw().
+   */
+  public void pauseThread();
+
+  public void resumeThread();
+
+  /**
+   * Stop the animation thread (set it null)
+   * @return false if already stopped
+   */
+  public boolean stopThread();
+
+  public boolean isStopped();
 }
