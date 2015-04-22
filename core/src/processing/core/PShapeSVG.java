@@ -127,7 +127,7 @@ import java.util.HashMap;
  * <LI> Now properly supports Processing 0118
  * <LI> Fixed a bunch of things for Casey's students and general buggity.
  * <LI> Will now properly draw #FFFFFFFF colors (were being represented as -1)
- * <LI> SVGs without <g> tags are now properly caught and loaded
+ * <LI> SVGs without &lt;g&gt; tags are now properly caught and loaded
  * <LI> Added a method customStyle() for overriding SVG colors/styles
  * <LI> Added a method SVGStyle() to go back to using SVG colors/styles
  * </UL>
@@ -154,6 +154,19 @@ public class PShapeSVG extends PShape {
   float strokeOpacity;
   float fillOpacity;
 
+  /**
+   * Used for percentages. Width of containing SVG.
+   */
+  protected float svgWidth;
+  /**
+   * Used for percentages. Height of containing SVG.
+   */
+  protected float svgHeight;
+  /**
+   * Used for percentages. √((w² + h²)/2) of containing SVG.
+   */
+  protected float svgXYSize;
+
 
   Gradient strokeGradient;
   Paint strokeGradientPaint;
@@ -175,44 +188,17 @@ public class PShapeSVG extends PShape {
 
 
   /**
-   * Initializes a new SVG Object from the given PNode.
+   * Initializes a new SVG Object from the given XML.
    */
   public PShapeSVG(XML svg) {
     this(null, svg, true);
 
     if (!svg.getName().equals("svg")) {
-      throw new RuntimeException("root is not <svg>, it's <" + svg.getName() + ">");
+      throw new RuntimeException("The root node is not <svg>, it's <" + svg.getName() + ">." +
+         (svg.getName().toLowerCase().equals("html") ?
+         " That means it's just a webpage. Did you download it right?" : ""));
     }
 
-    // not proper parsing of the viewBox, but will cover us for cases where
-    // the width and height of the object is not specified
-    String viewBoxStr = svg.getString("viewBox");
-    if (viewBoxStr != null) {
-      int[] viewBox = PApplet.parseInt(PApplet.splitTokens(viewBoxStr));
-      width = viewBox[2];
-      height = viewBox[3];
-    }
-
-    // TODO if viewbox is not same as width/height, then use it to scale
-    // the original objects. for now, viewbox only used when width/height
-    // are empty values (which by the spec means w/h of "100%"
-    String unitWidth = svg.getString("width");
-    String unitHeight = svg.getString("height");
-    if (unitWidth != null) {
-      width = parseUnitSize(unitWidth);
-      height = parseUnitSize(unitHeight);
-    } else {
-      if ((width == 0) || (height == 0)) {
-        //throw new RuntimeException("width/height not specified");
-        PGraphics.showWarning("The width and/or height is not " +
-                              "readable in the <svg> tag of this file.");
-        // For the spec, the default is 100% and 100%. For purposes
-        // here, insert a dummy value because this is prolly just a
-        // font or something for which the w/h doesn't matter.
-        width = 1;
-        height = 1;
-      }
-    }
 
     //root = new Group(null, svg);
 //    parseChildren(svg);  // ?
@@ -244,6 +230,8 @@ public class PShapeSVG extends PShape {
       //hasTransform = false;
       //transformation = null; //new float[] { 1, 0, 0, 1, 0, 0 };
 
+      // svgWidth, svgHeight, and svgXYSize done below.
+
       strokeOpacity = 1;
       fillOpacity = 1;
       opacity = 1;
@@ -267,7 +255,62 @@ public class PShapeSVG extends PShape {
       //hasTransform = parent.hasTransform;
       //transformation = parent.transformation;
 
+      svgWidth  = parent.svgWidth;
+      svgHeight = parent.svgHeight;
+      svgXYSize = parent.svgXYSize;
+
       opacity = parent.opacity;
+    }
+
+    // Need to get width/height in early.
+    if (properties.getName().equals("svg")) {
+      String unitWidth = properties.getString("width");
+      String unitHeight = properties.getString("height");
+
+      // Can't handle width/height as percentages easily. I'm just going
+      // to put in 100 as a dummy value, beacuse this means that it will
+      // come out as a reasonable value.
+      if (unitWidth  != null) width  = parseUnitSize(unitWidth,  100);
+      if (unitHeight != null) height = parseUnitSize(unitHeight, 100);
+
+      String viewBoxStr = properties.getString("viewBox");
+      if (viewBoxStr != null) {
+        float[] viewBox = PApplet.parseFloat(PApplet.splitTokens(viewBoxStr));
+        if (unitWidth == null || unitHeight == null) {
+          // Not proper parsing of the viewBox, but will cover us for cases where
+          // the width and height of the object is not specified.
+          width = viewBox[2];
+          height = viewBox[3];
+        } else {
+          // http://www.w3.org/TR/SVG/coords.html#ViewBoxAttribute
+          // TODO: preserveAspectRatio.
+          if (matrix == null) matrix = new PMatrix2D();
+          matrix.scale(width/viewBox[2], height/viewBox[3]);
+          matrix.translate(-viewBox[0], -viewBox[1]);
+        }
+      }
+
+      // Negative size is illegal.
+      if (width < 0 || height < 0)
+        throw new RuntimeException("<svg>: width (" + width +
+        ") and height (" + height + ") must not be negative.");
+
+      // It's technically valid to have width or height == 0. Not specified at
+      // all is what to test for.
+      if ((unitWidth == null || unitHeight == null) && viewBoxStr == null) {
+        //throw new RuntimeException("width/height not specified");
+        PGraphics.showWarning("The width and/or height is not " +
+                              "readable in the <svg> tag of this file.");
+        // For the spec, the default is 100% and 100%. For purposes
+        // here, insert a dummy value because this is prolly just a
+        // font or something for which the w/h doesn't matter.
+        width = 1;
+        height = 1;
+      }
+
+      svgWidth = width;
+      svgHeight = height;
+      svgXYSize = PApplet.sqrt((svgWidth*svgWidth + svgHeight*svgHeight)/2.0f);
     }
 
     element = properties;
@@ -287,7 +330,11 @@ public class PShapeSVG extends PShape {
 
     String transformStr = properties.getString("transform");
     if (transformStr != null) {
-      matrix = parseTransform(transformStr);
+      if (matrix == null) {
+        matrix = parseTransform(transformStr);
+      } else {
+        matrix.preApply(parseTransform(transformStr));
+      }
     }
 
     if (parseKids) {
@@ -304,12 +351,7 @@ public class PShapeSVG extends PShape {
 
     for (XML elem : elements) {
       PShape kid = parseChild(elem);
-      if (kid != null) {
-//        if (kid.name != null) {
-//          System.out.println("adding child " + kid.name);
-//        }
-        addChild(kid);
-      }
+      if (kid != null) addChild(kid);
     }
     children = (PShape[]) PApplet.subset(children, 0, childCount);
   }
@@ -323,6 +365,7 @@ public class PShapeSVG extends PShape {
 //    System.err.println("parsing child in pshape " + elem.getName());
     String name = elem.getName();
     PShapeSVG shape = null;
+
 
     if (name == null) {
       // just some whitespace that can be ignored (hopefully)
@@ -388,14 +431,9 @@ public class PShapeSVG extends PShape {
 //    } else if (name.equals("glyph") || name.equals("missing-glyph")) {
 //      return new FontGlyph(this, elem);
 
-    } else if (name.equals("metadata")) {
-      // fontforge just stuffs this in as a comment
-      return null;
-
     } else if (name.equals("text")) {  // || name.equals("font")) {
-      PGraphics.showWarning("Text and fonts in SVG files " +
-                                  "are not currently supported, " +
-                            "convert text to outlines instead.");
+      PGraphics.showWarning("Text and fonts in SVG files are " +
+        "not currently supported, convert text to outlines instead.");
 
     } else if (name.equals("filter")) {
       PGraphics.showWarning("Filters are not supported.");
@@ -412,8 +450,11 @@ public class PShapeSVG extends PShape {
     } else if (name.equals("sodipodi:namedview")) {
       // these are always in Inkscape files, the warnings get tedious
 
-    } else if (name.equals("title")) {
-      // harmless
+    } else if (name.equals("metadata")
+        || name.equals("title") || name.equals("desc")) {
+      // fontforge just stuffs <metadata> in as a comment.
+      // All harmless stuff, irrelevant to rendering.
+      return null;
 
     } else if (!name.startsWith("#")) {
       PGraphics.showWarning("Ignoring <" + name + "> tag.");
@@ -427,10 +468,10 @@ public class PShapeSVG extends PShape {
     kind = LINE;
     family = PRIMITIVE;
     params = new float[] {
-      getFloatWithUnit(element, "x1"),
-      getFloatWithUnit(element, "y1"),
-      getFloatWithUnit(element, "x2"),
-      getFloatWithUnit(element, "y2")
+      getFloatWithUnit(element, "x1", svgWidth),
+      getFloatWithUnit(element, "y1", svgHeight),
+      getFloatWithUnit(element, "x2", svgWidth),
+      getFloatWithUnit(element, "y2", svgHeight)
     };
   }
 
@@ -444,21 +485,22 @@ public class PShapeSVG extends PShape {
     family = PRIMITIVE;
     params = new float[4];
 
-    params[0] = getFloatWithUnit(element, "cx");
-    params[1] = getFloatWithUnit(element, "cy");
+    params[0] = getFloatWithUnit(element, "cx", svgWidth);
+    params[1] = getFloatWithUnit(element, "cy", svgHeight);
 
     float rx, ry;
     if (circle) {
-      rx = ry = getFloatWithUnit(element, "r");
+      rx = ry = getFloatWithUnit(element, "r", svgXYSize);
     } else {
-      rx = getFloatWithUnit(element, "rx");
-      ry = getFloatWithUnit(element, "ry");
+      rx = getFloatWithUnit(element, "rx", svgWidth);
+      ry = getFloatWithUnit(element, "ry", svgHeight);
     }
     params[0] -= rx;
     params[1] -= ry;
 
     params[2] = rx*2;
     params[3] = ry*2;
+
   }
 
 
@@ -466,16 +508,17 @@ public class PShapeSVG extends PShape {
     kind = RECT;
     family = PRIMITIVE;
     params = new float[] {
-      getFloatWithUnit(element, "x"),
-      getFloatWithUnit(element, "y"),
-      getFloatWithUnit(element, "width"),
-      getFloatWithUnit(element, "height")
+      getFloatWithUnit(element, "x", svgWidth),
+      getFloatWithUnit(element, "y", svgHeight),
+      getFloatWithUnit(element, "width", svgWidth),
+      getFloatWithUnit(element, "height", svgHeight)
     };
   }
 
 
   /**
    * Parse a polyline or polygon from an SVG file.
+   * Syntax defined at http://www.w3.org/TR/SVG/shapes.html#PointsBNF
    * @param close true if shape is closed (polygon), false if not (polyline)
    */
   protected void parsePoly(boolean close) {
@@ -488,9 +531,9 @@ public class PShapeSVG extends PShape {
       vertexCount = pointsBuffer.length;
       vertices = new float[vertexCount][2];
       for (int i = 0; i < vertexCount; i++) {
-        String pb[] = PApplet.split(pointsBuffer[i], ',');
-        vertices[i][X] = Float.valueOf(pb[0]).floatValue();
-        vertices[i][Y] = Float.valueOf(pb[1]).floatValue();
+        String pb[] = PApplet.splitTokens(pointsBuffer[i], ", \t\r\n");
+        vertices[i][X] = Float.parseFloat(pb[0]);
+        vertices[i][Y] = Float.parseFloat(pb[1]);
       }
     }
   }
@@ -871,11 +914,6 @@ public class PShapeSVG extends PShape {
           PApplet.join(PApplet.subset(pathTokens, i), ",");
         System.err.println("parsed: " + parsed);
         System.err.println("unparsed: " + unparsed);
-        if (pathTokens[i].equals("a") || pathTokens[i].equals("A")) {
-          String msg = "Sorry, elliptical arc support for SVG files " +
-            "is not yet implemented (See issue 130 for updates)";
-          throw new RuntimeException(msg);
-        }
         throw new RuntimeException("shape command not handled: " + pathTokens[i]);
       }
 //      prevCommand = c;
@@ -1089,13 +1127,11 @@ public class PShapeSVG extends PShape {
     } else if (pieces[1].equals("translate")) {
       float tx = m[0];
       float ty = (m.length == 2) ? m[1] : m[0];
-      //return new float[] { 1, 0, tx,  0, 1, ty };
       return new PMatrix2D(1, 0, tx, 0, 1, ty);
 
     } else if (pieces[1].equals("scale")) {
       float sx = m[0];
       float sy = (m.length == 2) ? m[1] : m[0];
-      //return new float[] { sx, 0, 0, 0, sy, 0 };
       return new PMatrix2D(sx, 0, 0,  0, sy, 0);
 
     } else if (pieces[1].equals("rotate")) {
@@ -1111,7 +1147,7 @@ public class PShapeSVG extends PShape {
         PMatrix2D mat = new PMatrix2D(0, 1, m[1],  1, 0, m[2]);
         mat.rotate(m[0]);
         mat.translate(-m[1], -m[2]);
-        return mat; //.get(null);
+        return mat;
       }
 
     } else if (pieces[1].equals("skewX")) {
@@ -1219,7 +1255,7 @@ public class PShapeSVG extends PShape {
 
 
   void setStrokeWeight(String lineweight) {
-    strokeWeight = parseUnitSize(lineweight);
+    strokeWeight = parseUnitSize(lineweight, svgXYSize);
   }
 
 
@@ -1268,41 +1304,29 @@ public class PShapeSVG extends PShape {
 
 
   void setColor(String colorText, boolean isFill) {
+    colorText = colorText.trim();
     int opacityMask = fillColor & 0xFF000000;
     boolean visible = true;
     int color = 0;
     String name = "";
+    String lColorText = colorText.toLowerCase();
     Gradient gradient = null;
     Paint paint = null;
     if (colorText.equals("none")) {
       visible = false;
-    } else if (colorText.equals("black")) {
-      color = opacityMask;
-    } else if (colorText.equals("white")) {
-      color = opacityMask | 0xFFFFFF;
-    } else if (colorText.startsWith("#")) {
-      if (colorText.length() == 4) {
-        // Short form: #ABC, transform to long form #AABBCC
-        colorText = colorText.replaceAll("^#(.)(.)(.)$", "#$1$1$2$2$3$3");
-      }
-      color = opacityMask |
-          (Integer.parseInt(colorText.substring(1), 16)) & 0xFFFFFF;
-      //System.out.println("hex for fill is " + PApplet.hex(fillColor));
-    } else if (colorText.startsWith("rgb")) {
-      color = opacityMask | parseRGB(colorText);
     } else if (colorText.startsWith("url(#")) {
       name = colorText.substring(5, colorText.length() - 1);
-//      PApplet.println("looking for " + name);
       Object object = findChild(name);
-      //PApplet.println("found " + fillObject);
       if (object instanceof Gradient) {
         gradient = (Gradient) object;
         paint = calcGradientPaint(gradient); //, opacity);
-        //PApplet.println("got filla " + fillObject);
       } else {
 //        visible = false;
         System.err.println("url " + name + " refers to unexpected data: " + object);
       }
+    } else {
+      // Prints errors itself.
+      color = opacityMask | parseSimpleColor(colorText);
     }
     if (isFill) {
       fill = visible;
@@ -1320,17 +1344,85 @@ public class PShapeSVG extends PShape {
   }
 
 
+  /**
+   * Parses the "color" datatype only, and prints an error if it is not of this form.
+   * http://www.w3.org/TR/SVG/types.html#DataTypeColor
+   * @return 0xRRGGBB (no alpha). Zero on error.
+   */
+  static protected int parseSimpleColor(String colorText) {
+    colorText = colorText.toLowerCase().trim();
+    if (colorNames.containsKey(colorText)) {
+      return colorNames.get(colorText);
+    } else if (colorText.startsWith("#")) {
+      if (colorText.length() == 4) {
+        // Short form: #ABC, transform to long form #AABBCC
+        colorText = colorText.replaceAll("^#(.)(.)(.)$", "#$1$1$2$2$3$3");
+      }
+      return (Integer.parseInt(colorText.substring(1), 16)) & 0xFFFFFF;
+      //System.out.println("hex for fill is " + PApplet.hex(fillColor));
+    } else if (colorText.startsWith("rgb")) {
+      return parseRGB(colorText);
+    } else {
+      System.err.println("Cannot parse \"" + colorText + "\".");
+      return 0;
+    }
+  }
+
+
+  /**
+   * Deliberately conforms to HTML 4.01 color spec + en-gb grey,
+   * not SVG's 147-color system.
+   */
+  static protected HashMap<String, Integer> colorNames;
+
+  static {
+    colorNames = new HashMap<String, Integer>();
+    colorNames.put("aqua",         0x00ffff);
+    colorNames.put("black",        0x000000);
+    colorNames.put("blue",         0x0000ff);
+    colorNames.put("fuchsia",      0xff00ff);
+    colorNames.put("gray",         0x808080);
+    colorNames.put("grey",         0x808080);
+    colorNames.put("green",        0x008000);
+    colorNames.put("lime",         0x00ff00);
+    colorNames.put("maroon",       0x800000);
+    colorNames.put("navy",         0x000080);
+    colorNames.put("olive",        0x808000);
+    colorNames.put("purple",       0x800080);
+    colorNames.put("red",          0xff0000);
+    colorNames.put("silver",       0xc0c0c0);
+    colorNames.put("teal",         0x008080);
+    colorNames.put("white",        0xffffff);
+    colorNames.put("yellow",       0xffff00);
+  }
+
+
   static protected int parseRGB(String what) {
     int leftParen = what.indexOf('(') + 1;
     int rightParen = what.indexOf(')');
     String sub = what.substring(leftParen, rightParen);
-    int[] values = PApplet.parseInt(PApplet.splitTokens(sub, ", "));
-    return (values[0] << 16) | (values[1] << 8) | (values[2]);
+    String[] values = PApplet.splitTokens(sub, ", ");
+    int rgbValue = 0;
+    if (values.length == 3) {
+      // Color spec allows for rgb values to be percentages.
+      for (int i = 0; i < 3; i++) {
+        rgbValue <<= 8;
+        if (values[i].endsWith("%")) {
+          rgbValue |= (int)(PApplet.constrain(255*parseFloatOrPercent(values[i]), 0, 255));
+        } else {
+          rgbValue |= PApplet.constrain(PApplet.parseInt(values[i]), 0, 255);
+        }
+      }
+    } else System.err.println("Could not read color \"" + what + "\".");
+
+    return rgbValue;
   }
 
 
   static protected HashMap<String, String> parseStyleAttributes(String style) {
     HashMap<String, String> table = new HashMap<String, String>();
+    if (style == null) return table;
+
     String[] pieces = style.split(";");
     for (int i = 0; i < pieces.length; i++) {
       String[] parts = pieces[i].split(":");
@@ -1345,18 +1437,21 @@ public class PShapeSVG extends PShape {
    * have a unit suffix (length or coordinate).
    * @param element what to parse
    * @param attribute name of the attribute to get
+   * @param relativeTo (float) Used for %. When relative to viewbox, should
+   *    be svgWidth for horizontal dimentions, svgHeight for vertical, and
+   *    svgXYSize for anything else.
    * @return unit-parsed version of the data
    */
-  static protected float getFloatWithUnit(XML element, String attribute) {
+  static protected float getFloatWithUnit(XML element, String attribute, float relativeTo) {
     String val = element.getString(attribute);
-    return (val == null) ? 0 : parseUnitSize(val);
+    return (val == null) ? 0 : parseUnitSize(val, relativeTo);
   }
 
 
   /**
    * Parse a size that may have a suffix for its units.
-   * Ignoring cases where this could also be a percentage.
-   * The <A HREF="http://www.w3.org/TR/SVG/coords.html#Units">units</A> spec:
+   * This assumes 90dpi, which implies, as given in the
+   * <A HREF="http://www.w3.org/TR/SVG/coords.html#Units">units</A> spec:
    * <UL>
    * <LI>"1pt" equals "1.25px" (and therefore 1.25 user units)
    * <LI>"1pc" equals "15px" (and therefore 15 user units)
@@ -1364,8 +1459,11 @@ public class PShapeSVG extends PShape {
    * <LI>"1cm" equals "35.43307px" (and therefore 35.43307 user units)
    * <LI>"1in" equals "90px" (and therefore 90 user units)
    * </UL>
+   * @param relativeTo (float) Used for %. When relative to viewbox, should
+   *    be svgWidth for horizontal dimentions, svgHeight for vertical, and
+   *    svgXYSize for anything else.
    */
-  static protected float parseUnitSize(String text) {
+  static protected float parseUnitSize(String text, float relativeTo) {
     int len = text.length() - 2;
 
     if (text.endsWith("pt")) {
@@ -1380,8 +1478,20 @@ public class PShapeSVG extends PShape {
       return PApplet.parseFloat(text.substring(0, len)) * 90;
     } else if (text.endsWith("px")) {
       return PApplet.parseFloat(text.substring(0, len));
+    } else if (text.endsWith("%")) {
+      return relativeTo * parseFloatOrPercent(text);
     } else {
       return PApplet.parseFloat(text);
+    }
+  }
+
+
+  static protected float parseFloatOrPercent(String text) {
+    text = text.trim();
+    if (text.endsWith("%")) {
+      return Float.parseFloat(text.substring(0, text.length() - 1)) / 100.0f;
+    } else {
+      return Float.parseFloat(text);
     }
   }
 
@@ -1409,22 +1519,24 @@ public class PShapeSVG extends PShape {
         String name = elem.getName();
         if (name.equals("stop")) {
           String offsetAttr = elem.getString("offset");
-          float div = 1.0f;
-          if (offsetAttr.endsWith("%")) {
-            div = 100.0f;
-            offsetAttr = offsetAttr.substring(0, offsetAttr.length() - 1);
-          }
-          offset[count] = PApplet.parseFloat(offsetAttr) / div;
+          offset[count] = parseFloatOrPercent(offsetAttr);
+
           String style = elem.getString("style");
           HashMap<String, String> styles = parseStyleAttributes(style);
 
           String colorStr = styles.get("stop-color");
-          if (colorStr == null) colorStr = "#000000";
+          if (colorStr == null) {
+            colorStr = elem.getString("stop-color");
+            if (colorStr == null) colorStr = "#000000";
+          }
           String opacityStr = styles.get("stop-opacity");
-          if (opacityStr == null) opacityStr = "1";
-          int tupacity = (int) (PApplet.parseFloat(opacityStr) * 255);
-          color[count] = (tupacity << 24) |
-            Integer.parseInt(colorStr.substring(1), 16);
+          if (opacityStr == null) {
+            opacityStr = elem.getString("stop-opacity");
+            if (opacityStr == null) opacityStr = "1";
+          }
+          int tupacity = PApplet.constrain(
+                          (int)(PApplet.parseFloat(opacityStr) * 255), 0, 255);
+          color[count] = (tupacity << 24) | parseSimpleColor(colorStr);
           count++;
         }
       }
@@ -1440,10 +1552,10 @@ public class PShapeSVG extends PShape {
     public LinearGradient(PShapeSVG parent, XML properties) {
       super(parent, properties);
 
-      this.x1 = getFloatWithUnit(properties, "x1");
-      this.y1 = getFloatWithUnit(properties, "y1");
-      this.x2 = getFloatWithUnit(properties, "x2");
-      this.y2 = getFloatWithUnit(properties, "y2");
+      this.x1 = getFloatWithUnit(properties, "x1", svgWidth);
+      this.y1 = getFloatWithUnit(properties, "y1", svgHeight);
+      this.x2 = getFloatWithUnit(properties, "x2", svgWidth);
+      this.y2 = getFloatWithUnit(properties, "y2", svgHeight);
 
       String transformStr =
         properties.getString("gradientTransform");
@@ -1470,9 +1582,9 @@ public class PShapeSVG extends PShape {
     public RadialGradient(PShapeSVG parent, XML properties) {
       super(parent, properties);
 
-      this.cx = getFloatWithUnit(properties, "cx");
-      this.cy = getFloatWithUnit(properties, "cy");
-      this.r  = getFloatWithUnit(properties, "r");
+      this.cx = getFloatWithUnit(properties, "cx", svgWidth);
+      this.cy = getFloatWithUnit(properties, "cy", svgHeight);
+      this.r  = getFloatWithUnit(properties, "r", svgXYSize);
 
       String transformStr =
         properties.getString("gradientTransform");
