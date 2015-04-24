@@ -30,9 +30,9 @@ X the .macosx, .linux, etc prefs should be stripped
 X   only use them on first load, and merge into preferences.txt
 X auto-insert after antlr @SuppressWarnings({ "unused", "unchecked", "cast" })
 
+_ editor window draws in stages (at least on OS X) on first view
+_ "sketch modified" message still happening
 _ is debug turned on? lots of "export.txt" complaints
-_ sketchbook window is completely empty w/ no sketches
-_   requires restart of p5 before it updates
 _ install/remove buttons not working in the managers
 _   https://github.com/processing/processing/issues/3172
 _ search the source for 'applet' references (i.e. SVG docs)
@@ -215,8 +215,6 @@ _   https://github.com/processing/processing/issues/2953
 _   don't return here, allow contrib types to fail:
 _   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
 
-_ need to handle the 2.x to 3.x sketchbook transition
-
 _ Linux throwing IllegalStateException: Buffers have not been created
 _   in render() (called from blit) PSurfaceAWT:301
 
@@ -301,8 +299,6 @@ _   might be something with libraries (native or otherwise)
 _ move the language stuff to the settings folder
 _   that way people can modify and test w/o recompiling
 _   https://github.com/processing/processing/issues/2938
-_ sketchbook window doesn't update when sketches are added, renamed, etc
-_   https://github.com/processing/processing/issues/2944
 
 
 pending
@@ -316,6 +312,17 @@ _   processing-docs/java_generate/ReferenceGenerator/processingrefBuild.sh
 _   remove reference.zip from main repo
 _ clean out the repo
 _   https://github.com/processing/processing/issues/1898
+
+
+sketchbook
+_ need to handle the 2.x to 3.x sketchbook transition
+_ "Save As" is reloading the whole sketchbook, argh
+_ sketchbook window is completely empty w/ no sketches
+_   requires restart of p5 before it updates
+_ sketchbook window doesn't update when sketches are added, renamed, etc
+_   https://github.com/processing/processing/issues/2944
+_ improve start time by populating sketchbook/libraries on threads
+_   https://github.com/processing/processing/issues/2945
 
 
 help me
@@ -334,8 +341,6 @@ _   http://stackoverflow.com/questions/4933677/detecting-windows-ie-proxy-settin
 _   http://www.java2s.com/Code/Java/Network-Protocol/DetectProxySettingsforInternetConnection.htm
 _ problems with non-US keyboards and some shortcuts
 _   https://github.com/processing/processing/issues/2199
-_ improve start time by populating sketchbook/libraries on threads
-_   https://github.com/processing/processing/issues/2945
 _ clean up 'ant doc' target to remove warnings
 _   https://github.com/processing/processing/issues/1492
 _ fix encodings, line endings, and mime types in the repo

@@ -360,11 +360,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       sketch = null;
     }
 
-    //add a window listener to watch for changes to the files in the sketch
-    if (Preferences.getBoolean("editor.watcher")) {
-      addWindowFocusListener(new ChangeDetector(this));
-    }
-
+    // Add a window listener to watch for changes to the files in the sketch
+    addWindowFocusListener(new ChangeDetector(this));
   }
 
 
