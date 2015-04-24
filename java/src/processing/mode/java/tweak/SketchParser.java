@@ -284,6 +284,7 @@ public class SketchParser {
 		}
 	}
 
+
 	private ArrayList<ColorMode> findAllColorModes() {
 		ArrayList<ColorMode> modes = new ArrayList<ColorMode>();
 
@@ -399,6 +400,7 @@ public class SketchParser {
 			}
 		}
 	}
+
 
 	private void createColorBoxesForLights() {
 		// search code for light color and material color functions.
@@ -539,7 +541,7 @@ public class SketchParser {
 	}
 
 
-	public List<List<Range>> getAllScientificNotations() {
+	private List<List<Range>> getAllScientificNotations() {
 		//ArrayList<Range> notations[] = new ArrayList[codeTabs.length];
 	  List<List<Range>> notations = new ArrayList<>();
 
@@ -560,7 +562,7 @@ public class SketchParser {
 	}
 
 
-	public static boolean containsTweakComment(String[] codeTabs) {
+	static public boolean containsTweakComment(String[] codeTabs) {
 		for (String tab : codeTabs) {
 			if (hasTweakComment(tab)) {
 				return true;
@@ -570,7 +572,7 @@ public class SketchParser {
 	}
 
 
-	static public boolean lineHasTweakComment(int pos, String code) {
+	static private boolean lineHasTweakComment(int pos, String code) {
 		int lineEnd = getEndOfLine(pos, code);
 		if (lineEnd < 0) {
 			return false;
@@ -777,7 +779,7 @@ public class SketchParser {
 //	}
 
 
-	class Range {
+	static class Range {
 		int start;
 		int end;
 
