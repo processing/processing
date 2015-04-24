@@ -18,13 +18,19 @@ o   really nice for auto-complete
 o   prevents hundreds of entries from coming up w/ auto-complete
 o   downside: breaks compatibility big time
 X   would have to use ALIGN_CENTER eta al, so no
+X flicker on startup
+X   https://github.com/processing/processing/issues/3134
+X static mode - no setup() / draw() - broken in Java2D
+X   https://github.com/processing/processing/issues/3130
+X are we running on the EDT or not?
+X   switched to using the EDT, but no EDT for blit() b/c it flickers
 
-_ flicker badness with offscreen buffer
-_   https://github.com/processing/processing/issues/3134
-_ move checkRetina()/highResDisplay() to PApplet
-_   and out of Toolkit and PSurfaceAWT
-_ probably should also check to make sure PApplet running JVM 8
-_   or compile against 1.8 and force it?
+
+showstoppers
+_ noSmooth() and other settings reset after setup()
+_   https://github.com/processing/processing/issues/3113
+_ static mode - no setup() / draw() - broken in OpenGL
+_   https://github.com/processing/processing/issues/3163
 
 head
 X Sketch window dimensions off in Java2D
@@ -47,6 +53,9 @@ X   https://github.com/processing/processing/pull/3067
 X fixes to SVG, implement percentages and some named colors
 X   https://github.com/processing/processing/pull/3205
 X   https://github.com/processing/processing/issues/2992
+X add option to save JSON in compact form
+X   https://github.com/processing/processing/pull/3202
+_   needs documentation
 
 akarshit
 X lerpColor() outside of setup()/draw() kills sketch
@@ -100,6 +109,10 @@ _ remove setTitle() etc methods from PSurface, just use the ones from Frame?
 _   and with that, encourage the use of the dummy frame object in renderers
 _ destroy() removed, but bring back? is that better than dispose()?
 _   Python Mode has a hook for when it's called
+_ move checkRetina()/highResDisplay() to PApplet
+_   and out of Toolkit and PSurfaceAWT
+_ probably should also check to make sure PApplet running JVM 8
+_   or compile against 1.8 and force it?
 
 opengl misc
 _ sketchQuality() vs sketchSmooth()?
@@ -114,16 +127,6 @@ _   --full-screen causes considerable flicker at this point
 _   or split them when sketchWidth/Height are implemented?
 _ check on performance of the new EDT setup
 
-
-showstoppers
-_ static sketch with size() produces black window
-_ are we running on the EDT or not?
-_ static mode - no setup() / draw() - broken in Java2D
-_   https://github.com/processing/processing/issues/3130
-_ noSmooth() and other settings reset after setup()
-_   https://github.com/processing/processing/issues/3113
-_ static mode - no setup() / draw() - broken in OpenGL
-_   https://github.com/processing/processing/issues/3163
 
 _ sketch window is not placed at correct location on restart
 _   https://github.com/processing/processing/issues/3125

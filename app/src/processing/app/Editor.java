@@ -2837,9 +2837,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
       if (mess.indexOf(javaLang) == 0) {
         mess = mess.substring(javaLang.length());
       }
+      // The phrase "RuntimeException" isn't useful for most users
       String rxString = "RuntimeException: ";
       if (mess.startsWith(rxString)) {
         mess = mess.substring(rxString.length());
+      }
+      // This is just confusing for most PDE users (save it for Eclipse users)
+      String illString = "IllegalArgumentException: ";
+      if (mess.startsWith(illString)) {
+        mess = mess.substring(illString.length());
       }
       statusError(mess);
     }
