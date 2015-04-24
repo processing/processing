@@ -354,6 +354,7 @@
 
     <get src="http://download.processing.org/reference.zip" 
          dest="../java/reference.zip" 
+         ignoreerrors="true"
          usetimestamp="true" />
 
     <unzip dest="${target.path}/modes/java" 
