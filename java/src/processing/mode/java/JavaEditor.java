@@ -733,6 +733,8 @@ public class JavaEditor extends Editor {
       platformName = "Linux (" + Base.getNativeBits() + "-bit)";
     }
 
+    final String javaPlatform =
+      PApplet.split(System.getProperty("java.version"), '.')[1];
     boolean embed = Preferences.getBoolean("export.application.embed_java");
     final String embedWarning =
       "<html><div width=\"" + divWidth + "\"><font size=\"2\">" +
@@ -744,7 +746,7 @@ public class JavaEditor extends Editor {
       "<html><div width=\"" + divWidth + "\"><font size=\"2\">" +
 //      "<html><body><font size=2>" +
       "Users on all platforms will have to install the latest " +
-      "version of Java " + ((int) PApplet.version) +
+      "version of Java " + javaPlatform +
       " from <a href=\"\">http://java.com/download</a>. " +
       "<br/>&nbsp;";
       //"from <a href=\"http://java.com/download\">java.com/download</a>.";
