@@ -3611,6 +3611,7 @@ public class PApplet implements PConstants {
         System.out.println(what);
       }
     }
+    System.out.flush();
   }
 
 
