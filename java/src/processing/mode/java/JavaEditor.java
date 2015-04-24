@@ -744,7 +744,8 @@ public class JavaEditor extends Editor {
       "<html><div width=\"" + divWidth + "\"><font size=\"2\">" +
 //      "<html><body><font size=2>" +
       "Users on all platforms will have to install the latest " +
-      "version of Java 7 from <a href=\"\">http://java.com/download</a>. " +
+      "version of Java " + ((int) PApplet.version) +
+      " from <a href=\"\">http://java.com/download</a>. " +
       "<br/>&nbsp;";
       //"from <a href=\"http://java.com/download\">java.com/download</a>.";
     final JLabel warningLabel = new JLabel(embed ? embedWarning : nopeWarning);
@@ -1390,7 +1391,7 @@ public class JavaEditor extends Editor {
     // "use the debugger" sounds too colloquial, and "enable" sounds too technical
     enableDebug =
       Toolkit.newJCheckBoxMenuItem(Language.text("menu.debug.enable"),
-				   KeyEvent.VK_D);
+                                   KeyEvent.VK_D);
     //new JCheckBoxMenuItem(Language.text("menu.debug.show_debug_toolbar"));
     enableDebug.setSelected(false);
     enableDebug.addActionListener(new ActionListener() {
@@ -2587,9 +2588,9 @@ public class JavaEditor extends Editor {
     if (modified) {
       // ask to keep the values
       int ret =
-	Base.showYesNoQuestion(this, Language.text("tweak_mode"),
-			       Language.text("tweak_mode.keep_changes.line1"),
-			       Language.text("tweak_mode.keep_changes.line2"));
+        Base.showYesNoQuestion(this, Language.text("tweak_mode"),
+                               Language.text("tweak_mode.keep_changes.line1"),
+                               Language.text("tweak_mode.keep_changes.line2"));
       if (ret == 1) {
         // NO! don't keep changes
         loadSavedCode();
