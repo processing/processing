@@ -60,18 +60,18 @@ public class ColorSelector {
 
 		if (!colorBox.isBW) {
 			selectorBox = new ColorSelectorBox();
-			box.add(selectorBox.getCanvas());
+			box.add(selectorBox.getComponent());
 		}
 
 		box.add(Box.createHorizontalGlue());
-		box.add(selectorSlider.getCanvas(), BorderLayout.CENTER);
+		box.add(selectorSlider.getComponent(), BorderLayout.CENTER);
 		box.add(Box.createHorizontalGlue());
 
 		frame.getContentPane().add(box, BorderLayout.CENTER);
 		frame.pack();
 		frame.setResizable(false);
 		frame.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-		
+
     selectorBox.init();
     selectorSlider.init();
 	}
@@ -138,9 +138,9 @@ public class ColorSelector {
 		PImage backImg;
 
 		public int sketchWidth() { return 255; }
-		
+
 		public int sketchHeight() { return 255; }
-		
+
 		public void setup() {
 			noLoop();
 			colorMode(HSB, 255, 255, 255);
@@ -239,7 +239,7 @@ public class ColorSelector {
 		*/
 	}
 
-	
+
 	public class ColorSelectorSlider extends PApplet {
 		PImage backImg;
 		int lastY;
