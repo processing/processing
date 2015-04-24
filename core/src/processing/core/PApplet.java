@@ -3891,7 +3891,7 @@ public class PApplet implements PConstants {
   }
 
 
-  /**
+  /*
    * Find the minimum value in an array.
    * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
    * @param list the source array
