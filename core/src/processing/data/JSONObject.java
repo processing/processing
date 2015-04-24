@@ -1554,12 +1554,19 @@ public class JSONObject {
 
 
   public boolean save(File file, String options) {
-    return write(PApplet.createWriter(file));
+    return write(PApplet.createWriter(file), options);
   }
 
-
   public boolean write(PrintWriter output) {
-    output.print(format(2));
+    return write(output, null);
+  }
+
+  public boolean write(PrintWriter output, String options) {
+    int indentFactor = 2;
+    if (options != null && options.equals("compact")) {
+      indentFactor = -1;
+    }
+    output.print(format(indentFactor));
     output.flush();
     return true;
   }
