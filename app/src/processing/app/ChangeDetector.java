@@ -15,13 +15,42 @@ public class ChangeDetector implements WindowFocusListener {
   private Sketch sketch;
   private Editor editor;
 
-  private boolean enabled = true;
+  // Set true if the user selected 'no'. TODO this can't just skip once,
+  // because subsequent returns to the window w/o saving will keep firing.
   private boolean skip = false;
 
 
   public ChangeDetector(Editor editor) {
     this.sketch = editor.sketch;
     this.editor = editor;
+  }
+
+
+  @Override
+  public void windowGainedFocus(WindowEvent e) {
+    // Keep the listener instantiated and check this to avoid a maze of
+    // adding and removing and re-adding with Preferences changes.
+    if (Preferences.getBoolean("editor.watcher")) {
+      // if they selected no, skip the next focus event
+      if (skip) {
+        skip = false;
+
+      } else {
+        new Thread(new Runnable() {
+          @Override
+          public void run() {
+            checkFileChange();
+          }
+        }).start();
+      }
+    }
+  }
+
+
+  @Override
+  public void windowLostFocus(WindowEvent e) {
+    // Shouldn't need to do anything here, and not storing anything here b/c we
+    // don't want to assume a loss of focus is required before change detection
   }
 
 
@@ -140,36 +169,6 @@ public class ChangeDetector implements WindowFocusListener {
     rebuildHeaderEDT();
     skip = true;
     return false;
-  }
-
-
-  @Override
-  public void windowLostFocus(WindowEvent e) {
-    //shouldn't need to do anything here
-  }
-
-
-  @Override
-  public void windowGainedFocus(WindowEvent e) {
-    if (enabled) {
-      //remove the detector from main if it is disabled during runtime (due to an error?)
-      //if (!enabled || !Preferences.getBoolean("editor.watcher")) {
-      //editor.removeWindowFocusListener(this);
-      //} else if (skip) {
-
-      // if they selected no, skip the next focus event
-      if (skip) {
-        skip = false;
-
-      } else {
-        new Thread(new Runnable() {
-          @Override
-          public void run() {
-            checkFileChange();
-          }
-        }).start();
-      }
-    }
   }
 
 

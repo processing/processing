@@ -148,7 +148,7 @@ editor.tabs.size = 2
 # automatically indent each line
 editor.indent = true
 
-# Whether to automatically reload modified tabs
+# Whether to check files to see if they've been modified externally
 editor.watcher = true
 
 # Hide the background image. Gross because this is a pref that

@@ -29,6 +29,8 @@ X   https://github.com/processing/processing/commit/0a14835e6f5f4766b022e73a8fe5
 X the .macosx, .linux, etc prefs should be stripped
 X   only use them on first load, and merge into preferences.txt
 X auto-insert after antlr @SuppressWarnings({ "unused", "unchecked", "cast" })
+X fix file change detection on OS X
+X   https://github.com/processing/processing/issues/2852
 
 _ editor window draws in stages (at least on OS X) on first view
 _ "sketch modified" message still happening
@@ -270,8 +272,6 @@ _ how are we going to handle fonts for other languages?
 _   two new fonts have been added, other languages will need more
 _   need a decent sans with with Unicode coverage
 _   i.e. https://github.com/processing/processing/pull/3025
-_ fix file change detection on OS X
-_   https://github.com/processing/processing/issues/2852
 _ make examples pull/build automatic during dist
 _ add span screens pref (near the display pref)
 _   add checkbox for spans to export dialog
