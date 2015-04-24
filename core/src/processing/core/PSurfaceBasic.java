@@ -22,7 +22,6 @@
 
 package processing.core;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Frame;
@@ -47,7 +46,7 @@ public class PSurfaceBasic implements PSurface {
   }
 
 
-  public Canvas initCanvas(PApplet sketch) {
+  public Component initComponent(PApplet sketch) {
     return null;
   }
 
@@ -116,7 +115,8 @@ public class PSurfaceBasic implements PSurface {
       thread = new AnimationThread();
       thread.start();
     } else {
-      throw new IllegalStateException("Thread already started in PSurfaceAWT");
+      throw new IllegalStateException("Thread already started in " +
+                                      getClass().getSimpleName());
     }
   }
 

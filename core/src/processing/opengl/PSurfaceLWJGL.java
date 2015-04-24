@@ -83,7 +83,7 @@ public class PSurfaceLWJGL implements PSurface {
 
 
   @Override
-  public Canvas initCanvas(PApplet sketch) {
+  public Canvas initComponent(PApplet sketch) {
     this.sketch = sketch;
 
     sketchWidth = sketch.sketchWidth();

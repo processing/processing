@@ -24,9 +24,10 @@
 
 package processing.core;
 
-import java.awt.Canvas;
 // used for setting bg colors and whatnot
 import java.awt.Color;
+// Component is further up the chain than Canvas
+import java.awt.Component;
 // use for the link() command (and maybe open()?)
 import java.awt.Desktop;
 import java.awt.EventQueue;
@@ -1811,7 +1812,10 @@ public class PApplet implements PConstants {
         return;
       }
 
+      // Store the quality setting in case it's changed during draw and the
+      // drawing context needs to be re-built before the next frame.
       int pquality = g.quality;
+
       insideDraw = true;
       g.beginDraw();
       if (recorder != null) {
@@ -9644,10 +9648,10 @@ public class PApplet implements PConstants {
    * // add the canvas object to your project and validate() it
    * sketch.init()  // start the animation thread
    */
-  public Canvas getCanvas() {
+  public Component getComponent() {
     g = createPrimaryGraphics();
     surface = g.createSurface();
-    return surface.initCanvas(this);
+    return surface.initComponent(this);
   }
 
 

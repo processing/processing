@@ -33,6 +33,8 @@ X auto-insert after antlr @SuppressWarnings({ "unused", "unchecked", "cast" })
 _ install/remove buttons not working in the managers
 _   https://github.com/processing/processing/issues/3172
 _ search the source for 'applet' references (i.e. SVG docs)
+_ Window size not passing into Tweak Mode
+_   https://github.com/processing/processing/issues/3208
 
 integration of pdex/debug
 o make the tabs have a default minimum size

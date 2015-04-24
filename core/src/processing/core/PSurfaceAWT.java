@@ -48,12 +48,11 @@ public class PSurfaceAWT extends PSurfaceBasic {
   // Note that x and y may not be zero, depending on the display configuration
   Rectangle screenRect;
 
-  // disabled on retina inside init()
-  boolean useActive = true;
-//  boolean useActive = false;
-//  boolean useStrategy = true;
-  boolean useStrategy = false;
-  Canvas canvas;
+  // 3.0a5 didn't use strategy, and active was shut off during init() w/ retina
+  boolean useStrategy = true;
+
+//  Canvas canvas;
+  Component canvas;
 
   PGraphics graphics;
 
@@ -65,22 +64,31 @@ public class PSurfaceAWT extends PSurfaceBasic {
     this.graphics = graphics;
 
     if (checkRetina()) {
+//      System.out.println("retina in use");
+
       // The active-mode rendering seems to be 2x slower, so disable it
       // with retina. On a non-retina machine, however, useActive seems
       // the only (or best) way to handle the rendering.
-      useActive = false;
+//      useActive = false;
+//      canvas = new JPanel(true) {
+//        @Override
+//        public void paint(Graphics screen) {
+////          if (!sketch.insideDraw) {
+//          screen.drawImage(PSurfaceAWT.this.graphics.image, 0, 0, sketchWidth, sketchHeight, null);
+////          }
+//        }
+//      };
+      // Under 1.8 and the current 3.0a6 threading regime, active mode w/o
+      // strategy is far faster, but perhaps only because it's blitting with
+      // flicker--pushing pixels out before the screen has finished rendering.
+//      useStrategy = false;
+    }
+    canvas = new SmoothCanvas();
+    if (useStrategy) {
+      canvas.setIgnoreRepaint(true);
     }
 
-    createCanvas();
-    addListeners();
-  }
-
-
-  void createCanvas() {
-    canvas = new SmoothCanvas();
-    canvas.setIgnoreRepaint(true);  // ??
-
-    // send tab keys through to the PApplet
+    // Pass tab key to the sketch, rather than moving between components
     canvas.setFocusTraversalKeysEnabled(false);
 
     canvas.addComponentListener(new ComponentAdapter() {
@@ -91,6 +99,7 @@ public class PSurfaceAWT extends PSurfaceBasic {
         }
       }
     });
+    addListeners();
   }
 
 
@@ -177,13 +186,28 @@ public class PSurfaceAWT extends PSurfaceBasic {
 
 
     @Override
-    public void paint(Graphics g) {
+    public void paint(Graphics screen) {
 //      System.out.println("painting");
 //    validate();
-      render();
+      if (useStrategy) {
+        render();
+
+      } else {
+//        new Exception("painting").printStackTrace(System.out);
+//        if (graphics.image != null) { // && !sketch.insideDraw) {
+        if (onscreen != null) {
+//          synchronized (graphics.image) {
+          // Needs the width/height to be set so that retina images are properly scaled down
+//          screen.drawImage(graphics.image, 0, 0, sketchWidth, sketchHeight, null);
+          synchronized (offscreenLock) {
+            screen.drawImage(onscreen, 0, 0, sketchWidth, sketchHeight, null);
+          }
+        }
+      }
     }
 
 
+    /*
     @Override
     public void addNotify() {
 //      System.out.println("adding notify");
@@ -191,14 +215,19 @@ public class PSurfaceAWT extends PSurfaceBasic {
       // prior to Java 7 on OS X, this no longer works [121222]
 //    createBufferStrategy(2);
     }
+    */
 
 
     protected synchronized void render() {
+      //System.out.println("render() top");
+
+      /*
       if (!EventQueue.isDispatchThread()) {
         //throw new IllegalStateException("render() called outside the EDT");
         //System.err.println("render() called outside the EDT");
         new Exception("render() called outside the EDT").printStackTrace();
       }
+      */
 //      if (canvas == null) {
 //        removeListeners(this);
 //        canvas = new Canvas();
@@ -225,12 +254,13 @@ public class PSurfaceAWT extends PSurfaceBasic {
         return;
       }
 
+      Canvas c = (Canvas) canvas;
 //      System.out.println("render(), canvas bounds are " + canvas.getBounds());
-      if (canvas.getBufferStrategy() == null) {  // whole block [121222]
+      if (c.getBufferStrategy() == null) {  // whole block [121222]
 //        System.out.println("creating a strategy");
-        canvas.createBufferStrategy(2);
+        c.createBufferStrategy(2);
       }
-      BufferStrategy strategy = canvas.getBufferStrategy();
+      BufferStrategy strategy = c.getBufferStrategy();
 //      System.out.println(strategy);
       if (strategy == null) {
         return;
@@ -240,10 +270,27 @@ public class PSurfaceAWT extends PSurfaceBasic {
         // The following loop ensures that the contents of the drawing buffer
         // are consistent in case the underlying surface was recreated
         do {
-          Graphics draw = strategy.getDrawGraphics();
+          Graphics2D draw = (Graphics2D) strategy.getDrawGraphics();
           //draw.drawImage(pg.image, 0, 0, sketch.width, sketch.height, null);
+          //System.out.println("render() drawing image");
+          /*
+          while (sketch.insideDraw) {
+            System.out.println("render() yielding because inside draw");
+            //Thread.yield();
+            try {
+              Thread.sleep(1);
+            } catch (InterruptedException e) { }
+          }
+          */
+
+          // this wasn't any faster than setting the image size while drawing
+//          if (graphics.pixelFactor == 2) {
+//            draw.scale(0.5, 0.5);
+//          }
+
           // draw to width/height, since this may be a 2x image
           draw.drawImage(graphics.image, 0, 0, sketchWidth, sketchHeight, null);
+//          draw.drawImage(graphics.image, 0, 0, null);
           draw.dispose();
 
           // Repeat the rendering if the drawing buffer contents
@@ -259,20 +306,56 @@ public class PSurfaceAWT extends PSurfaceBasic {
 //        System.out.println("lost " + strategy.contentsLost());
 //        System.out.println();
       } while (strategy.contentsLost());
+      //System.out.println("render() bottom");
     }
   }
 
 
+  Object offscreenLock = new Object();
+  BufferedImage offscreen;
+  BufferedImage onscreen;
+//  Graphics off;
+
   @Override
   public void blit() {
-    // Other folks taht call render() (i.e. paint()) are already on the EDT.
+    // Other folks that call render() (i.e. paint()) are already on the EDT.
     // We need to be using the EDT since we're messing with the Canvas
     // object and BufferStrategy and friends.
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        ((SmoothCanvas) canvas).render();
+    //EventQueue.invokeLater(new Runnable() {
+    //public void run() {
+    //((SmoothCanvas) canvas).render();
+    //}
+    //});
+
+    if (useStrategy) {
+      // Not necessary to be on the EDT to update BufferStrategy
+      ((SmoothCanvas) canvas).render();
+    } else {
+      if (graphics.image != null) {
+        BufferedImage graphicsImage = (BufferedImage) graphics.image;
+        if (offscreen == null ||
+          offscreen.getWidth() != graphicsImage.getWidth() ||
+          offscreen.getHeight() != graphicsImage.getHeight()) {
+          System.out.println("creating new image");
+          offscreen = (BufferedImage)
+            canvas.createImage(graphicsImage.getWidth(),
+                               graphicsImage.getHeight());
+//          off = offscreen.getGraphics();
+        }
+//        synchronized (offscreen) {
+        Graphics2D off = (Graphics2D) offscreen.getGraphics();
+//        off.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+        off.drawImage(graphicsImage, 0, 0, null);
+//        }
+        off.dispose();
+        synchronized (offscreenLock) {
+          BufferedImage temp = onscreen;
+          onscreen = offscreen;
+          offscreen = temp;
+        }
+        canvas.repaint();
       }
-    });
+    }
   }
 
 
@@ -292,7 +375,7 @@ public class PSurfaceAWT extends PSurfaceBasic {
   */
 
   @Override
-  public Canvas initCanvas(PApplet sketch) {
+  public Component initComponent(PApplet sketch) {
     this.sketch = sketch;
 
     // needed for getPreferredSize() et al
@@ -727,39 +810,25 @@ public class PSurfaceAWT extends PSurfaceBasic {
 
   private boolean checkRetina() {
     if (PApplet.platform == PConstants.MACOSX) {
-    // This should probably be reset each time there's a display change.
-    // A 5-minute search didn't turn up any such event in the Java API.
-    // Also, should we use the Toolkit associated with the editor window?
+      // This should probably be reset each time there's a display change.
+      // A 5-minute search didn't turn up any such event in the Java 7 API.
+      // Also, should we use the Toolkit associated with the editor window?
       final String javaVendor = System.getProperty("java.vendor");
-      if (javaVendor.contains("Apple")) {
-        Float prop = (Float)
-          canvas.getToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
-        if (prop != null) {
-          return prop == 2;
-        }
-      } else if (javaVendor.contains("Oracle")) {
-        String version = System.getProperty("java.version");  // 1.7.0_40
-        String[] m = PApplet.match(version, "1.(\\d).*_(\\d+)");
+      if (javaVendor.contains("Oracle")) {
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
 
-        // Make sure this is Oracle Java 7u40 or later
-        if (m != null &&
-          PApplet.parseInt(m[1]) >= 7 &&
-          PApplet.parseInt(m[1]) >= 40) {
-          GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-          GraphicsDevice device = env.getDefaultScreenDevice();
+        try {
+          Field field = device.getClass().getDeclaredField("scale");
+          if (field != null) {
+            field.setAccessible(true);
+            Object scale = field.get(device);
 
-          try {
-            Field field = device.getClass().getDeclaredField("scale");
-            if (field != null) {
-              field.setAccessible(true);
-              Object scale = field.get(device);
-
-              if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
-                return true;
-              }
+            if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
+              return true;
             }
-          } catch (Exception ignore) { }
-        }
+          }
+        } catch (Exception ignore) { }
       }
     }
     return false;

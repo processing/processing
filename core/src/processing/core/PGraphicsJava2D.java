@@ -276,14 +276,18 @@ public class PGraphicsJava2D extends PGraphics {
 
   public Graphics2D checkImage() {
     if (image == null ||
-      ((BufferedImage) image).getWidth() != width ||
-      ((BufferedImage) image).getHeight() != height) {
+      ((BufferedImage) image).getWidth() != width*pixelFactor ||
+      ((BufferedImage) image).getHeight() != height*pixelFactor) {
+//      ((VolatileImage) image).getWidth() != width ||
+//      ((VolatileImage) image).getHeight() != height) {
 //        image = new BufferedImage(width * pixelFactor, height * pixelFactor
 //                                  format == RGB ?  BufferedImage.TYPE_INT_ARGB);
+
       GraphicsConfiguration gc = null;
       if (surface != null) {
         Component comp = surface.getComponent();
         if (comp == null) {
+//          System.out.println("component null, but parent.frame is " + parent.frame);
           comp = parent.frame;
         }
         if (comp != null) {
@@ -292,7 +296,7 @@ public class PGraphicsJava2D extends PGraphics {
       }
       // If not realized (off-screen, i.e the Color Selector Tool), gc will be null.
       if (gc == null) {
-        //System.err.println("GraphicsConfiguration null in initImage()");
+        System.err.println("GraphicsConfiguration null in initImage()");
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
       }
@@ -301,7 +305,10 @@ public class PGraphicsJava2D extends PGraphics {
       // not, but we may as well create a compatible image; it won't hurt, right?
       int wide = width * pixelFactor;
       int high = height * pixelFactor;
+//      System.out.println("re-creating image");
       image = gc.createCompatibleImage(wide, high);
+//      image = gc.createCompatibleVolatileImage(wide, high);
+      //image = surface.getComponent().createImage(width, height);
     }
     return (Graphics2D) image.getGraphics();
   }

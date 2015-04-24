@@ -19,6 +19,13 @@ o   prevents hundreds of entries from coming up w/ auto-complete
 o   downside: breaks compatibility big time
 X   would have to use ALIGN_CENTER eta al, so no
 
+_ flicker badness with offscreen buffer
+_   https://github.com/processing/processing/issues/3134
+_ move checkRetina()/highResDisplay() to PApplet
+_   and out of Toolkit and PSurfaceAWT
+_ probably should also check to make sure PApplet running JVM 8
+_   or compile against 1.8 and force it?
+
 head
 X Sketch window dimensions off in Java2D
 X   https://github.com/processing/processing/issues/3129
@@ -37,6 +44,9 @@ contribs
 X saveFrame() doesn't save opaque PNG files
 X   https://github.com/processing/processing/issues/3031
 X   https://github.com/processing/processing/pull/3067
+X fixes to SVG, implement percentages and some named colors
+X   https://github.com/processing/processing/pull/3205
+X   https://github.com/processing/processing/issues/2992
 
 akarshit
 X lerpColor() outside of setup()/draw() kills sketch
