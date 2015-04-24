@@ -1309,7 +1309,7 @@ public class PShapeSVG extends PShape {
     boolean visible = true;
     int color = 0;
     String name = "";
-    String lColorText = colorText.toLowerCase();
+//    String lColorText = colorText.toLowerCase();
     Gradient gradient = null;
     Paint paint = null;
     if (colorText.equals("none")) {
