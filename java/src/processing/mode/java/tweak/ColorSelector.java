@@ -32,6 +32,9 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
 
+
+// TODO replace this with {@link processing.app.ColorChooser}
+// https://github.com/processing/processing/issues/3209
 public class ColorSelector {
 	int hue, saturation, brightness;
 

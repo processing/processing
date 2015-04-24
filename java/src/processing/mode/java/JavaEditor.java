@@ -2559,8 +2559,6 @@ public class JavaEditor extends Editor {
 
   public String[] baseCode;
 
-  final static int SPACE_AMOUNT = 0;
-
   UDPTweakClient tweakClient;
 
 
@@ -2575,7 +2573,7 @@ public class JavaEditor extends Editor {
     getJavaTextArea().stopInteractiveMode();
 
     // remove space from the code (before and after)
-    removeSpacesFromCode();
+    //removeSpacesFromCode();
 
     // check which tabs were modified
     boolean modified = false;
@@ -2624,9 +2622,8 @@ public class JavaEditor extends Editor {
         // save the sketch
         try {
           sketch.save();
-        }
-        catch (IOException e) {
-          Base.showWarning("Tweak Mode", "Could not save the modified sketch!", e);
+        } catch (IOException e) {
+          Base.showWarning("Error", "Could not save the modified sketch.", e);
         }
 
         // repaint the editor header (show the modified tabs)
@@ -2665,16 +2662,9 @@ public class JavaEditor extends Editor {
   public void initBaseCode() {
     SketchCode[] code = sketch.getCode();
 
-    String space = new String();
-
-    for (int i=0; i<SPACE_AMOUNT; i++) {
-      space += "\n";
-    }
-
     baseCode = new String[code.length];
     for (int i = 0; i < code.length; i++) {
       baseCode[i] = new String(code[i].getSavedProgram());
-      baseCode[i] = space + baseCode[i] + space;
     }
   }
 
@@ -2728,19 +2718,21 @@ public class JavaEditor extends Editor {
   }
 
 
+  /*
   private void removeSpacesFromCode() {
     SketchCode[] code = sketch.getCode();
     for (int i=0; i<code.length; i++) {
       String c = code[i].getProgram();
-      c = c.substring(SPACE_AMOUNT, c.length() - SPACE_AMOUNT);
+      //c = c.substring(SPACE_AMOUNT, c.length() - SPACE_AMOUNT);
       code[i].setProgram(c);
-      /* Wild Hack: set document to null so the text editor will refresh
-         the program contents when the document tab is being clicked */
+      // TODO Wild Hack: set document to null so the text editor will refresh
+      // the program contents when the document tab is being clicked
       code[i].setDocument(null);
     }
     // this will update the current code
     setCode(sketch.getCurrentCode());
   }
+  */
 
 
   /**
