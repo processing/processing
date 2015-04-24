@@ -39,7 +39,7 @@ public class SketchParser {
 
 	List<List<Range>> scientificNotations;
 
-	
+
 	public SketchParser(String[] codeTabs, boolean requiresComment) {
 		this.codeTabs = codeTabs;
 		this.requiresComment = requiresComment;
@@ -57,15 +57,13 @@ public class SketchParser {
 		createColorBoxes();
 		createColorBoxesForLights();
 
-		/* If there is more than one color mode per context,
-		 * allow only hex and webcolors in this context.
-		 * Currently there is no notion of order of execution so we
-		 * cannot know which color mode relate to a color.
-		 */
+		// If there is more than one color mode per context, allow only hex and
+		// webcolors in this context. Currently there is no notion of order of
+		// execution so we cannot know which color mode relate to a color.
 		handleMultipleColorModes();
 	}
 
-	
+
 	public void addAllNumbers() {
 		//allHandles = new ArrayList[codeTabs.length];  // moved inside addAllDecimalNumbers
 		addAllDecimalNumbers();
@@ -78,7 +76,7 @@ public class SketchParser {
 		}
 	}
 
-	
+
 	/**
 	 * Get a list of all the numbers in this sketch
 	 * @return
@@ -89,13 +87,13 @@ public class SketchParser {
 
 		// for every number found:
 		// save its type (int/float), name, value and position in code.
-	  
+
 		Pattern p = Pattern.compile("[\\[\\{<>(),\\t\\s\\+\\-\\/\\*^%!|&=?:~]\\d+\\.?\\d*");
 		for (int i = 0; i < codeTabs.length; i++) {
 			//allHandles[i] = new ArrayList<Handle>();
 		  List<Handle> handles = new ArrayList<Handle>();
 		  allHandles.add(handles);
-		  
+
 			String c = codeTabs[i];
 			Matcher m = p.matcher(c);
 
@@ -157,41 +155,37 @@ public class SketchParser {
 
 				int line = countLines(c.substring(0, start)) - 1;			// zero based
 				String value = c.substring(start, end);
-				//value
-    			if (value.contains(".") || forceFloat) {
-    				// consider this as a float
-        			String name = varPrefix + "_float[" + floatVarCount +"]";
-        			int decimalDigits = getNumDigitsAfterPoint(value);
-        			handles.add(new Handle("float", name, floatVarCount, value, i, line, start, end, decimalDigits));
-    				floatVarCount++;
-    			} else {
-    				// consider this as an int
-        			String name = varPrefix + "_int[" + intVarCount +"]";
-        			handles.add(new Handle("int", name, intVarCount, value, i, line, start, end, 0));
-    				intVarCount++;
-    			}
-    		}
-    	}
-    }
+				if (value.contains(".") || forceFloat) {
+				  // consider this as a float
+				  String name = varPrefix + "_float[" + floatVarCount +"]";
+				  int decimalDigits = getNumDigitsAfterPoint(value);
+				  handles.add(new Handle("float", name, floatVarCount, value, i, line, start, end, decimalDigits));
+				  floatVarCount++;
+				} else {
+				  // consider this as an int
+				  String name = varPrefix + "_int[" + intVarCount +"]";
+				  handles.add(new Handle("int", name, intVarCount, value, i, line, start, end, 0));
+				  intVarCount++;
+				}
+			}
+		}
+	}
+
 
 	/**
 	 * Get a list of all the hexadecimal numbers in the code
 	 * @return
 	 * list of all hexadecimal numbers in the sketch
 	 */
-	private void addAllHexNumbers()
-	{
-		/* for every number found:
-		 * save its type (int/float), name, value and position in code.
-		 */
+	private void addAllHexNumbers() {
+		// for every number found:
+		// save its type (int/float), name, value and position in code.
 		Pattern p = Pattern.compile("[\\[\\{<>(),\\t\\s\\+\\-\\/\\*^%!|&=?:~]0x[A-Fa-f0-9]+");
-		for (int i=0; i<codeTabs.length; i++)
-		{
+		for (int i = 0; i < codeTabs.length; i++) {
 			String c = codeTabs[i];
 			Matcher m = p.matcher(c);
 
-			while (m.find())
-			{
+			while (m.find()) {
 				int start = m.start()+1;
 				int end = m.end();
 
@@ -230,17 +224,16 @@ public class SketchParser {
 				}
 				allHandles.get(i).add(handle);
 				intVarCount++;
-    		}
-    	}
-    }
+			}
+		}
+	}
+
 
 	/**
 	 * Get a list of all the webcolors (#) numbers in the code
-	 * @return
 	 * list of all hexadecimal numbers in the sketch
 	 */
-	private void addAllWebColorNumbers()
-	{
+	private void addAllWebColorNumbers() {
 		Pattern p = Pattern.compile("#[A-Fa-f0-9]{6}");
 		for (int i=0; i<codeTabs.length; i++)
 		{
@@ -325,17 +318,17 @@ public class SketchParser {
 		return modes;
 	}
 
-	
+
 	private void createColorBoxes() {
 	  colorBoxes = new ArrayList<>();
 		// search tab for the functions: 'color', 'fill', 'stroke', 'background', 'tint'
 		Pattern p = Pattern.compile("color\\(|color\\s\\(|fill[\\(\\s]|stroke[\\(\\s]|background[\\(\\s]|tint[\\(\\s]");
-		
+
 		for (int i = 0; i < codeTabs.length; i++) {
 			//colorBoxes[i] = new ArrayList<ColorControlBox>();
 			List<ColorControlBox> colorBox = new ArrayList<ColorControlBox>();
 			colorBoxes.add(colorBox);
-			
+
 			String tab = codeTabs[i];
 			Matcher m = p.matcher(tab);
 
@@ -412,7 +405,7 @@ public class SketchParser {
 		Pattern p = Pattern.compile("ambientLight[\\(\\s]|directionalLight[\\(\\s]"+
 					"|pointLight[\\(\\s]|spotLight[\\(\\s]|lightSpecular[\\(\\s]"+
 					"|specular[\\(\\s]|ambient[\\(\\s]|emissive[\\(\\s]");
-		
+
 		for (int i=0; i<codeTabs.length; i++) {
 			String tab = codeTabs[i];
 			Matcher m = p.matcher(tab);
@@ -548,7 +541,7 @@ public class SketchParser {
 		}
 	}
 
-	
+
 	public List<List<Range>> getAllScientificNotations() {
 		//ArrayList<Range> notations[] = new ArrayList[codeTabs.length];
 	  List<List<Range>> notations = new ArrayList<>();
@@ -578,7 +571,7 @@ public class SketchParser {
 		}
 		return false;
 	}
-	
+
 
 	static public boolean lineHasTweakComment(int pos, String code) {
 		int lineEnd = getEndOfLine(pos, code);
@@ -589,7 +582,7 @@ public class SketchParser {
 		String line = code.substring(pos, lineEnd);
 		return hasTweakComment(line);
 	}
-	
+
 
 	static private boolean hasTweakComment(String code) {
 		Pattern p = Pattern.compile("\\/\\/.*tweak", Pattern.CASE_INSENSITIVE);
@@ -613,7 +606,7 @@ public class SketchParser {
 		return false;
 	}
 
-	
+
 	static private int getNumDigitsAfterPoint(String number) {
 		Pattern p = Pattern.compile("\\.[0-9]+");
 		Matcher m = p.matcher(number);
@@ -624,13 +617,13 @@ public class SketchParser {
 		return 0;
 	}
 
-	
+
 	static private int countLines(String str) {
 		String[] lines = str.split("\r\n|\n\r|\n|\r");
 		return lines.length;
 	}
 
-	
+
 	/**
 	* Are we inside a string? (TODO: ignore comments in the code)
 	* @param pos
@@ -721,12 +714,12 @@ public class SketchParser {
 		return false;
 	}
 
-	
+
 	static private int getEndOfLine(int pos, String code) {
 		return code.indexOf("\n", pos);
 	}
 
-	
+
 	static private int getStartOfLine(int pos, String code) {
 		while (pos >= 0) {
 			if (code.charAt(pos) == '\n') {
@@ -738,7 +731,7 @@ public class SketchParser {
 		return 0;
 	}
 
-	
+
 	/** returns the object of the function starting at 'pos'
 	 *
 	 * @param pos
@@ -769,7 +762,7 @@ public class SketchParser {
 		return obj;
 	}
 
-	
+
 	static public int getSetupStart(String code) {
 		Pattern p = Pattern.compile("void[\\s\\t\\r\\n]*setup[\\s\\t]*\\(\\)[\\s\\t\\r\\n]*\\{");
 		Matcher m = p.matcher(code);
@@ -786,7 +779,7 @@ public class SketchParser {
 //		return str.substring(0, start) + put + str.substring(end, str.length());
 //	}
 
-	
+
 	class Range {
 		int start;
 		int end;

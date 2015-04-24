@@ -2562,13 +2562,13 @@ public class JavaEditor extends Editor {
   UDPTweakClient tweakClient;
 
 
-  public void startInteractiveMode() {
+  protected void startInteractiveMode() {
     getJavaTextArea().startInteractiveMode();
   }
 
 
   //public void stopInteractiveMode(ArrayList<Handle> handles[]) {
-  public void stopInteractiveMode(List<List<Handle>> handles) {
+  protected void stopInteractiveMode(List<List<Handle>> handles) {
     tweakClient.shutdown();
     getJavaTextArea().stopInteractiveMode();
 
@@ -2639,7 +2639,7 @@ public class JavaEditor extends Editor {
   }
 
 
-  public void updateInterface(List<List<Handle>> handles,
+  protected void updateInterface(List<List<Handle>> handles,
                               List<List<ColorControlBox>> colorBoxes) {
     getJavaTextArea().updateInterface(handles, colorBoxes);
   }
@@ -2659,7 +2659,7 @@ public class JavaEditor extends Editor {
   }
 
 
-  public void initBaseCode() {
+  protected void initBaseCode() {
     SketchCode[] code = sketch.getCode();
 
     baseCode = new String[code.length];
@@ -2669,7 +2669,7 @@ public class JavaEditor extends Editor {
   }
 
 
-  public void initEditorCode(List<List<Handle>> handles, boolean withSpaces) {
+  protected void initEditorCode(List<List<Handle>> handles, boolean withSpaces) {
     SketchCode[] sketchCode = sketch.getCode();
     for (int tab=0; tab<baseCode.length; tab++) {
         // beautify the numbers
@@ -2740,7 +2740,7 @@ public class JavaEditor extends Editor {
    * these variables and handle update messages.
    */
   //public boolean automateSketch(Sketch sketch, ArrayList<Handle> handles[])
-  public boolean automateSketch(Sketch sketch, List<List<Handle>> handles) {
+  protected boolean automateSketch(Sketch sketch, List<List<Handle>> handles) {
     SketchCode[] code = sketch.getCode();
 
     if (code.length < 1) {
