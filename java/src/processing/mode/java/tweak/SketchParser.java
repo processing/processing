@@ -496,22 +496,20 @@ public class SketchParser {
 			}
 		}
 
-		// if non found, create the default color mode for this context and return it
-		ColorMode newCM = new ColorMode(context);
-		colorModes.add(newCM);
-
-		return newCM;
+		// if none found, create the default color mode for this context and return it
+		ColorMode newMode = new ColorMode(context);
+		colorModes.add(newMode);
+		return newMode;
 	}
 
-	private void handleMultipleColorModes()
-	{
+
+	private void handleMultipleColorModes() {
 		// count how many color modes per context
 		Map<String, Integer> modeCount = new HashMap<String, Integer>();
-		for (ColorMode cm : colorModes)
-		{
+		for (ColorMode cm : colorModes) {
 			Integer prev = modeCount.get(cm.drawContext);
 			if (prev == null) {
-				prev=0;
+				prev = 0;
 			}
 			modeCount.put(cm.drawContext, prev+1);
 		}
@@ -525,11 +523,10 @@ public class SketchParser {
 			}
 		}
 
-		/* keep only hex and web color boxes in color calls
-		 * that belong to 'multipleContexts' contexts
-		 */
-		for (int i=0; i<codeTabs.length; i++) {
-			ArrayList<ColorControlBox> toDelete = new ArrayList<ColorControlBox>();
+		// keep only hex and web color boxes in color calls
+		// that belong to 'multipleContexts' contexts
+		for (int i = 0; i < codeTabs.length; i++) {
+			List<ColorControlBox> toDelete = new ArrayList<ColorControlBox>();
 			for (String context : multipleContexts) {
 				for (ColorControlBox ccb : colorBoxes.get(i)) {
 					if (ccb.drawContext.equals(context) && !ccb.isHex) {
