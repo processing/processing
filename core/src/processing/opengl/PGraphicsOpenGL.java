@@ -8863,9 +8863,6 @@ public class PGraphicsOpenGL extends PGraphics {
         indices[indCount + 1] = vert1 - detailU;
         indices[indCount + 2] = vert1 - 1;
         indCount += 3;
-
-        addEdge(vert1 - detailU, vert1 - 1, true, true);
-        addEdge(vert1 - 1, vert1, true, true);
       }
 
       // Northern cap -------------------------------------------------------
