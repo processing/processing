@@ -18,19 +18,14 @@ o   really nice for auto-complete
 o   prevents hundreds of entries from coming up w/ auto-complete
 o   downside: breaks compatibility big time
 X   would have to use ALIGN_CENTER eta al, so no
-X flicker on startup
-X   https://github.com/processing/processing/issues/3134
-X static mode - no setup() / draw() - broken in Java2D
-X   https://github.com/processing/processing/issues/3130
-X are we running on the EDT or not?
-X   switched to using the EDT, but no EDT for blit() b/c it flickers
-
 
 showstoppers
 _ noSmooth() and other settings reset after setup()
 _   https://github.com/processing/processing/issues/3113
 _ static mode - no setup() / draw() - broken in OpenGL
 _   https://github.com/processing/processing/issues/3163
+_ sketch window is not placed at correct location on restart
+_   https://github.com/processing/processing/issues/3125
 
 head
 X Sketch window dimensions off in Java2D
@@ -55,7 +50,12 @@ X   https://github.com/processing/processing/pull/3205
 X   https://github.com/processing/processing/issues/2992
 X add option to save JSON in compact form
 X   https://github.com/processing/processing/pull/3202
-_   needs documentation
+X Remove extra edges in sphere tessellation
+X   https://github.com/processing/processing/issues/3193
+X   https://github.com/processing/processing/pull/3211
+X Add exceptions for FloatList and IntList when using add() w/o enough elements
+X   https://github.com/processing/processing/pull/3053
+X   https://github.com/processing/processing/issues/3052
 
 akarshit
 X lerpColor() outside of setup()/draw() kills sketch
@@ -70,13 +70,15 @@ X   https://github.com/processing/processing/issues/3024
 X   https://github.com/processing/processing/pull/3102
 
 data
-X Add exceptions for FloatList and IntList when using add() w/o enough elements
-X   https://github.com/processing/processing/pull/3053
-X   https://github.com/processing/processing/issues/3052
 X fixes for table
 X   ensure # of columns and titles lines up with Table(iterator) constructor
 X   add table header to html output
 X   remove extra spaces from html output
+X json updates
+X   make save() and write() consistent between JSONObject and JSONArray
+X   add indent=N to saveJSONObject/Array() methods
+X   add 'compact' to JSONArray (see PR for the add to JSONObject)
+X add push() and pop() to String/Int/FloatList
 
 applet/sketch
 X remove isGL(), is2D(), is3D(), displayable() from PApplet
@@ -93,6 +95,12 @@ X Memory usage insane increasing in 3.0a5
 X   https://github.com/processing/processing/issues/3007
 X   seems fixed due to the rewrite
 X remove set/get/removeCache() methods from PApplet (add //ignore line)
+X flicker on startup
+X   https://github.com/processing/processing/issues/3134
+X static mode - no setup() / draw() - broken in Java2D
+X   https://github.com/processing/processing/issues/3130
+X are we running on the EDT or not?
+X   switched to using the EDT, but no EDT for blit() b/c it flickers
 
 full screen
 X roll back full screen changes
@@ -104,6 +112,13 @@ o   display=all in cmd line
 o   sketchDisplay() -> 0 for all, or 1, 2, 3...
 X   added --span option
 X play with improvements to full screen here
+X Ubuntu Unity prevents full screen from working properly
+X   http://stackoverflow.com/questions/8837719/java-in-full-screen-on-linux-how-to-cover-task-bar
+X   https://github.com/processing/processing/issues/3158
+o   add notes to the Wiki about this (already added)
+X     https://github.com/processing/processing/wiki/Window-Size-and-Full-Screen
+X Linux throwing IllegalStateException: Buffers have not been created
+X   in render() (called from blit) PSurfaceAWT:301
 
 _ remove setTitle() etc methods from PSurface, just use the ones from Frame?
 _   and with that, encourage the use of the dummy frame object in renderers
@@ -113,6 +128,12 @@ _ move checkRetina()/highResDisplay() to PApplet
 _   and out of Toolkit and PSurfaceAWT
 _ probably should also check to make sure PApplet running JVM 8
 _   or compile against 1.8 and force it?
+_ present window draws in stages (OS X)
+_ split 'present' and 'full screen'?
+_   --full-screen causes considerable flicker at this point
+_   or split them when sketchWidth/Height are implemented?
+_ check on performance of the new EDT setup
+
 
 opengl misc
 _ sketchQuality() vs sketchSmooth()?
@@ -121,15 +142,6 @@ _ exitCalled() and exitActual made public by Andres, breaks Python
 _   also not API we want to expose, so sort this out
 _ get code into makeGraphics() to handle bad path settings for LWJGL
 _   right now it has a bunch of JOGL-specific code
-
-_ split 'present' and 'full screen'?
-_   --full-screen causes considerable flicker at this point
-_   or split them when sketchWidth/Height are implemented?
-_ check on performance of the new EDT setup
-
-
-_ sketch window is not placed at correct location on restart
-_   https://github.com/processing/processing/issues/3125
 
 
 applet/sketch
