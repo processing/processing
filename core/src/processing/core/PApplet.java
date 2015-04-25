@@ -1884,8 +1884,6 @@ public class PApplet implements PConstants {
       }
       insideDraw = false;
 
-      surface.blit();
-
       if (frameCount != 0) {
         handleMethods("post");
       }

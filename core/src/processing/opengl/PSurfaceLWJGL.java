@@ -453,10 +453,10 @@ public class PSurfaceLWJGL implements PSurface {
   }
 
 
-  @Override
-  public void blit() {
-    // Nothing to do here
-  }
+//  @Override
+//  public void blit() {
+//    // Nothing to do here
+//  }
 
 
   @Override

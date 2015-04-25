@@ -20,12 +20,19 @@ o   downside: breaks compatibility big time
 X   would have to use ALIGN_CENTER eta al, so no
 X noSmooth() not sticking, has to be called again inside draw()
 X   https://github.com/processing/processing/issues/3113
+X performance issues on OS X (might be threading due to Applet)
+X   https://github.com/processing/processing/issues/2423
+X   can't fix, it's all Oracle stuff
 
 showstoppers
 _ static mode - no setup() / draw() - broken in OpenGL
 _   https://github.com/processing/processing/issues/3163
+
+high priority
 _ sketch window is not placed at correct location when running a second time
 _   https://github.com/processing/processing/issues/3125
+_ present mode is 30-40% slower than windowed
+_   w/ this example: https://github.com/processing/processing/issues/2423
 
 head
 X Sketch window dimensions off in Java2D
@@ -120,9 +127,11 @@ X     https://github.com/processing/processing/wiki/Window-Size-and-Full-Screen
 X Linux throwing IllegalStateException: Buffers have not been created
 X   in render() (called from blit) PSurfaceAWT:301
 
+
 _ remove setTitle() etc methods from PSurface, just use the ones from Frame?
 _   and with that, encourage the use of the dummy frame object in renderers
-_ destroy() removed, but bring back? is that better than dispose()?
+o destroy() removed, but bring back? is that better than dispose()?
+_   destroy() only called dispose(), so no difference
 _   Python Mode has a hook for when it's called
 _ move checkRetina()/highResDisplay() to PApplet
 _   and out of Toolkit and PSurfaceAWT
@@ -135,6 +144,15 @@ _   or split them when sketchWidth/Height are implemented?
 _ check on performance of the new EDT setup
 
 
+rendering performance
+_ can't do version that draws to BufferStrategy directly
+_   pixel operations (get/set/loadPixels/saveFrame) might be fixable
+_   but can't re-run draw() to re-blit the screen
+_     because we don't split calc() and draw()
+_   even with the split, handleDraw() might need to live in PSurface
+_ add calc() option? this could ease transition
+
+
 opengl misc
 _ sketchQuality() vs sketchSmooth()?
 _ move glsl entries to their own subdirectory?
@@ -145,8 +163,6 @@ _   right now it has a bunch of JOGL-specific code
 
 
 applet/sketch
-_ performance issues on OS X (might be threading due to Applet)
-_   https://github.com/processing/processing/issues/2423
 _ clean up requestFocus() stuff
 _   make sure it works with retina/canvas/strategy as well
 _   requestFocus() method probably needs to be added to PApplet

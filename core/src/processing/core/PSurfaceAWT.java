@@ -36,7 +36,7 @@ import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 
-public class PSurfaceAWT extends PSurfaceBasic {
+public class PSurfaceAWT extends PSurfaceNone {
   GraphicsDevice displayDevice;
 
   // used for canvas to determine whether resizable or not
@@ -316,7 +316,7 @@ public class PSurfaceAWT extends PSurfaceBasic {
   BufferedImage onscreen;
 //  Graphics off;
 
-  @Override
+
   public void blit() {
     // Other folks that call render() (i.e. paint()) are already on the EDT.
     // We need to be using the EDT since we're messing with the Canvas
@@ -1377,6 +1377,18 @@ public class PSurfaceAWT extends PSurfaceBasic {
     }
     canvas.setCursor(invisibleCursor);
     cursorVisible = false;
+  }
+
+
+  @Override
+  public Thread createThread() {
+    return new AnimationThread() {
+      @Override
+      public void render() {
+        super.render();
+        blit();
+      }
+    };
   }
 
 

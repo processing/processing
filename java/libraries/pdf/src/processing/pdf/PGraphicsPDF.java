@@ -102,7 +102,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
   @Override
   public PSurface createSurface() {
-    return surface = new PSurfaceBasic();
+    return surface = new PSurfaceNone();
   }
 
 

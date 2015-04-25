@@ -111,8 +111,8 @@ public interface PSurface {
   // receive key and mouse events
   public void requestFocus();
 
-  // finish rendering to the screen (called by PApplet)
-  public void blit();
+//  // finish rendering to the screen (called by PApplet)
+//  public void blit();
 
   //
 

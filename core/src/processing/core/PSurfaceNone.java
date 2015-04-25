@@ -27,7 +27,11 @@ import java.awt.Component;
 import java.awt.Frame;
 
 
-public class PSurfaceBasic implements PSurface {
+/**
+ * Surface that's not really visible. Used for PDF and friends, or as a base
+ * class for other drawing surfaces. It includes the standard rendering loop.
+ */
+public class PSurfaceNone implements PSurface {
   PApplet sketch;
 
   Thread thread;
@@ -38,7 +42,7 @@ public class PSurfaceBasic implements PSurface {
   protected long frameRatePeriod = 1000000000L / 60L;
 
 
-  public PSurfaceBasic() { }
+  public PSurfaceNone() { }
 
 
   public void initOffscreen(PApplet sketch) {
@@ -94,9 +98,9 @@ public class PSurfaceBasic implements PSurface {
 
   }
 
-  public void blit() {
-    // TODO Auto-generated method stub
-  }
+//  public void blit() {
+//    // TODO Auto-generated method stub
+//  }
 
   public void setCursor(int kind) { }
 
@@ -110,9 +114,14 @@ public class PSurfaceBasic implements PSurface {
   //
 
 
+  public Thread createThread() {
+    return new AnimationThread();
+  }
+
+
   public void startThread() {
     if (thread == null) {
-      thread = new AnimationThread();
+      thread = createThread();
       thread.start();
     } else {
       throw new IllegalStateException("Thread already started in " +
@@ -172,10 +181,15 @@ public class PSurfaceBasic implements PSurface {
     //g.setFrameRate(fps);
   }
 
+
   class AnimationThread extends Thread {
 
     public AnimationThread() {
       super("Animation Thread");
+    }
+
+    public void render() {
+      sketch.handleDraw();
     }
 
     /**
@@ -229,7 +243,7 @@ public class PSurfaceBasic implements PSurface {
 //        try {
 //          EventQueue.invokeAndWait(new Runnable() {
 //            public void run() {
-        sketch.handleDraw();
+        render();
 
 //        EventQueue.invokeLater(new Runnable() {
 //          public void run() {
