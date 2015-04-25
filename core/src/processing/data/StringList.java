@@ -150,8 +150,9 @@ public class StringList implements Iterable<String> {
     if (count == 0) {
       throw new RuntimeException("Can't call pop() on an empty list");
     }
-    String value = get(count-1);
-    count--;
+    count--;  // back up to the last entry
+    String value = get(count);
+    data[count] = null;  // avoid leak
     return value;
   }
 
