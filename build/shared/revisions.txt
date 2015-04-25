@@ -1,4 +1,4 @@
-PROCESSING 3.0a6 (REV 0233) - XX April 2015
+PROCESSING 3.0a6 (REV 0233) - 25 April 2015
 
 This is the big one! We've jettisoned PApplet as the base class so that
 we can improve performance, reduce flicker, and have a better base from
@@ -364,6 +364,13 @@ X Add push() and pop() to String/Int/FloatList
 
 
 [ sketch ]
+
++ Added E2D, an experimental/enhanced renderer that draws directly 
+  to the Graphics context without an intermediate image. This greatly 
+  speeds up performance (especially on retina/hidpi displays), but 
+  prevents pixel access (no save(), saveFrame(), loadPixels(), etc). 
+  It also causes some rendering hiccups (frame rate is not as smooth), 
+  but that's why it's experimental.
 
 + Remove isGL(), is2D(), is3D(), displayable() from PApplet
   (these were unintentionally auto-imported from PGraphics)
