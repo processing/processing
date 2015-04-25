@@ -66,7 +66,6 @@ public class FindReplace extends JFrame {
 
   public FindReplace(Editor editor) {
     super(Language.text("find"));
-    setResizable(true);
     this.editor = editor;
 
     Container pain = getContentPane();
@@ -120,7 +119,7 @@ public class FindReplace extends JFrame {
     pain.setLayout(layout);
     layout.setAutoCreateGaps(true);
     layout.setAutoCreateContainerGaps(true);
-    
+
     Group buttonsHorizontalGroup = layout.createSequentialGroup(); // To hold the buttons in the specified order depending on the OS
 
     replaceAllButton = new JButton(Language.text("find.btn.replace_all"));
@@ -160,7 +159,7 @@ public class FindReplace extends JFrame {
     }
 //    pain.add(buttons);
     setFound(false);
-    
+
     Group buttonsVerticalGroup = layout.createParallelGroup(); // Creates group for arranging buttons vertically
     buttonsVerticalGroup.addComponent(findButton)
     .addComponent(previousButton)
@@ -257,7 +256,7 @@ public class FindReplace extends JFrame {
     Dimension screen = Toolkit.getScreenSize();
     setLocation((screen.width - size.width) / 2,
                       (screen.height - size.height) / 2);
-    
+
     replaceButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         replace();
@@ -299,27 +298,29 @@ public class FindReplace extends JFrame {
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          handleClose();
-        }
-      });
+      public void windowClosing(WindowEvent e) {
+        handleClose();
+      }
+    });
     Toolkit.registerWindowCloseKeys(getRootPane(), new ActionListener() {
-        public void actionPerformed(ActionEvent actionEvent) {
-          //hide();
-          handleClose();
-        }
-      });
+      public void actionPerformed(ActionEvent actionEvent) {
+        handleClose();
+      }
+    });
     Toolkit.setIcon(this);
 
     // hack to to get first field to focus properly on osx
     addWindowListener(new WindowAdapter() {
-        public void windowActivated(WindowEvent e) {
-          //System.out.println("activating");
-          /*boolean ok =*/ findField.requestFocusInWindow();
-          //System.out.println("got " + ok);
-          findField.selectAll();
-        }
-      });
+      public void windowActivated(WindowEvent e) {
+        //System.out.println("activating");
+        /*boolean ok =*/ findField.requestFocusInWindow();
+        //System.out.println("got " + ok);
+        findField.selectAll();
+      }
+    });
+    pack();
+    setResizable(true);
+    setLocationRelativeTo(null);
   }
 
 
@@ -379,11 +380,11 @@ public class FindReplace extends JFrame {
             }
 
             try {
-              Document doc = sketch.getCode(tabIndex + 1).getDocument(); 
+              Document doc = sketch.getCode(tabIndex + 1).getDocument();
               if(doc != null) {
                 text = doc.getText(0, doc.getLength()); // this thing has the latest changes
               }
-              else { 
+              else {
                 text = sketch.getCode(tabIndex + 1).getProgram(); // not this thing.
               }
             } catch (BadLocationException e) {
@@ -430,11 +431,11 @@ public class FindReplace extends JFrame {
               break;
             }
             try {
-              Document doc = sketch.getCode(tabIndex - 1).getDocument(); 
+              Document doc = sketch.getCode(tabIndex - 1).getDocument();
               if(doc != null) {
                 text = doc.getText(0, doc.getLength()); // this thing has the latest changes
               }
-              else { 
+              else {
                 text = sketch.getCode(tabIndex - 1).getProgram(); // not this thing.
               }
             } catch (BadLocationException e) {
@@ -513,11 +514,11 @@ public class FindReplace extends JFrame {
     editor.setSelection(0, 0);
 
     boolean foundAtLeastOne = false;
-    int startTab = -1, startIndex = -1, c = 50000; 
+    int startTab = -1, startIndex = -1, c = 50000;
     // you couldn't seriously be replacing 50K times o_O
     while (--c > 0) {
       if (find(false, false)) {
-        if(editor.getSketch().getCurrentCodeIndex() == startTab 
+        if(editor.getSketch().getCurrentCodeIndex() == startTab
           && editor.getSelectionStart() == startIndex){
           // we've reached where we started, so stop the replace
           Toolkit.beep();

@@ -96,7 +96,7 @@ public class PreferencesFrame {
     layout = new GroupLayout(pain);// pain ??
 //    layout.setAutoCreateGaps(true);
     layout.setAutoCreateContainerGaps(true);
-    
+
 //    pain.setLayout(null);
     pain.setLayout(layout);
 
@@ -154,9 +154,9 @@ public class PreferencesFrame {
 
 
     // Language: [ English ] (requires restart of Processing)
-    
-    
-    
+
+
+
 //    Container languageBox = Box.createHorizontalBox();
     JLabel languageLabel = new JLabel(Language.text("preferences.language")+": ");
 //    languageBox.add(languageLabel);
@@ -365,7 +365,7 @@ public class PreferencesFrame {
 //    right = Math.max(right, left + d.width);
 //    top += d.height + GUI_BETWEEN;
 
-  
+
 
     // [ ] Enable complex text input (for Japanese et al, requires restart)
 
@@ -651,10 +651,10 @@ public class PreferencesFrame {
       )
       .addComponent(preferenceHintLabel)
     );
-    
-    layout.linkSize(okButton, cancelButton); //Making sure that Ok and Cancel buttons
-                                             //are of the same size
-    
+
+    // Making sure that Ok and Cancel buttons are of the same size
+    layout.linkSize(okButton, cancelButton);
+
     layout.setVerticalGroup(layout
       .createSequentialGroup()
       .addComponent(sketchbookLocationLabel)
@@ -721,35 +721,28 @@ public class PreferencesFrame {
       .addContainerGap()
       );
     dialog.getRootPane().setDefaultButton(okButton);
-    
-    if(Base.isWindows()){
+
+    if (Base.isWindows()){
       autoAssociateBox.setVisible(true);
     }
     // closing the window is same as hitting cancel button
 
     dialog.addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          disposeFrame();
-        }
-      });
+      public void windowClosing(WindowEvent e) {
+        disposeFrame();
+      }
+    });
 
     ActionListener disposer = new ActionListener() {
-        public void actionPerformed(ActionEvent actionEvent) {
-          disposeFrame();
-        }
-      };
+      public void actionPerformed(ActionEvent actionEvent) {
+        disposeFrame();
+      }
+    };
+
     Toolkit.registerWindowCloseKeys(dialog.getRootPane(), disposer);
     Toolkit.setIcon(dialog);
-//    dialog.setResizable(true);
-    Dimension screen = Toolkit.getScreenSize();
-    high = (int) layout.preferredLayoutSize(dialog.getContentPane()).getHeight();
-    wide = (int) layout.preferredLayoutSize(dialog.getContentPane()).getWidth();
-    dialog.setLocation((screen.width - wide) / 2,
-                      (screen.height - high) / 2);
-
-    dialog.pack(); // get insets
-//    Insets insets = dialog.getInsets();
-    dialog.setSize(wide, high);
+    dialog.pack();
+    dialog.setLocationRelativeTo(null);
 
 
     // handle window closing commands for ctrl/cmd-W or hitting ESC.

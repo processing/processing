@@ -39,6 +39,7 @@ _   https://github.com/processing/processing/issues/3212
 _ Find/Replace regressions
 _   https://github.com/processing/processing/issues/3213
 _ editor window draws in stages (at least on OS X) on first view
+_   the console/bottom area stays white until an additional repaint?
 X is debug turned on? lots of "export.txt" complaints
 _   remove export.txt complaints when loading libraries
 _ install/remove buttons not working in the managers
