@@ -360,7 +360,7 @@ but a few that you might be likely to run across:
 
 + Add 'compact' to JSONArray (see PR for the add to JSONObject)
 
-X Add push() and pop() to String/Int/FloatList
++ Add push() and pop() to String/Int/FloatList
 
 
 [ sketch ]

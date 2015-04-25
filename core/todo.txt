@@ -1,4 +1,5 @@
 0234 (3.0a7)
+X add fix to avoid StringList leak
 
 
 high priority
