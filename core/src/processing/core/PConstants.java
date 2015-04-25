@@ -53,7 +53,12 @@ public interface PConstants {
   static final String P2D_2X = "processing.opengl.PGraphics2D2X";
   static final String P3D    = "processing.opengl.PGraphics3D";
   static final String P3D_2X = "processing.opengl.PGraphics3D2X";
+
+  // remove this? breakage?
   static final String OPENGL = P3D;
+
+  // Experimental, higher-performance Java 2D renderer
+  static final String E2D = PGraphicsDanger2D.class.getName();
 
   static final String PDF = "processing.pdf.PGraphicsPDF";
   static final String DXF = "processing.dxf.RawDXF";
