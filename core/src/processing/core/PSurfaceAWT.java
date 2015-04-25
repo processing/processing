@@ -205,7 +205,7 @@ public class PSurfaceAWT extends PSurfaceNone {
         }
       }
     }
-
+  }
 
     /*
     @Override
@@ -218,7 +218,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     */
 
 
-    protected synchronized void render() {
+  protected synchronized void render() {
       //System.out.println("render() top");
 
       /*
@@ -242,37 +242,37 @@ public class PSurfaceAWT extends PSurfaceNone {
       // not sure why this was here, can't be good
       //canvas.setBounds(0, 0, sketch.width, sketch.height);
 
-      if (!canvas.isDisplayable()) {
+    if (!canvas.isDisplayable()) {
 //        System.out.println("no peer.. holding");
-        return;
-      }
+      return;
+    }
 
-      if (graphics.image == null) {
-        if (PApplet.DEBUG) {
-          new Exception("image is null, returning").printStackTrace(System.out);
-        }
-        return;
+    if (graphics.image == null) {
+      if (PApplet.DEBUG) {
+        new Exception("image is null, returning").printStackTrace(System.out);
       }
+      return;
+    }
 
-      Canvas c = (Canvas) canvas;
+    Canvas c = (Canvas) canvas;
 //      System.out.println("render(), canvas bounds are " + canvas.getBounds());
-      if (c.getBufferStrategy() == null) {  // whole block [121222]
+    if (c.getBufferStrategy() == null) {  // whole block [121222]
 //        System.out.println("creating a strategy");
-        c.createBufferStrategy(2);
-      }
-      BufferStrategy strategy = c.getBufferStrategy();
+      c.createBufferStrategy(2);
+    }
+    BufferStrategy strategy = c.getBufferStrategy();
 //      System.out.println(strategy);
-      if (strategy == null) {
-        return;
-      }
-      // Render single frame
+    if (strategy == null) {
+      return;
+    }
+    // Render single frame
+    do {
+      // The following loop ensures that the contents of the drawing buffer
+      // are consistent in case the underlying surface was recreated
       do {
-        // The following loop ensures that the contents of the drawing buffer
-        // are consistent in case the underlying surface was recreated
-        do {
-          Graphics2D draw = (Graphics2D) strategy.getDrawGraphics();
-          //draw.drawImage(pg.image, 0, 0, sketch.width, sketch.height, null);
-          //System.out.println("render() drawing image");
+        Graphics2D draw = (Graphics2D) strategy.getDrawGraphics();
+        //draw.drawImage(pg.image, 0, 0, sketch.width, sketch.height, null);
+        //System.out.println("render() drawing image");
           /*
           while (sketch.insideDraw) {
             System.out.println("render() yielding because inside draw");
@@ -288,26 +288,25 @@ public class PSurfaceAWT extends PSurfaceNone {
 //            draw.scale(0.5, 0.5);
 //          }
 
-          // draw to width/height, since this may be a 2x image
-          draw.drawImage(graphics.image, 0, 0, sketchWidth, sketchHeight, null);
+        // draw to width/height, since this may be a 2x image
+        draw.drawImage(graphics.image, 0, 0, sketchWidth, sketchHeight, null);
 //          draw.drawImage(graphics.image, 0, 0, null);
-          draw.dispose();
+        draw.dispose();
 
-          // Repeat the rendering if the drawing buffer contents
-          // were restored
+        // Repeat the rendering if the drawing buffer contents
+        // were restored
 //          System.out.println("restored " + strategy.contentsRestored());
-        } while (strategy.contentsRestored());
+      } while (strategy.contentsRestored());
 
-        // Display the buffer
+      // Display the buffer
 //        System.out.println("showing");
-        strategy.show();
+      strategy.show();
 
-        // Repeat the rendering if the drawing buffer was lost
+      // Repeat the rendering if the drawing buffer was lost
 //        System.out.println("lost " + strategy.contentsLost());
 //        System.out.println();
-      } while (strategy.contentsLost());
-      //System.out.println("render() bottom");
-    }
+    } while (strategy.contentsLost());
+//      System.out.println("render() bottom");
   }
 
 
@@ -329,7 +328,8 @@ public class PSurfaceAWT extends PSurfaceNone {
 
     if (useStrategy) {
       // Not necessary to be on the EDT to update BufferStrategy
-      ((SmoothCanvas) canvas).render();
+      //((SmoothCanvas) canvas).render();
+      render();
     } else {
       if (graphics.image != null) {
         BufferedImage graphicsImage = (BufferedImage) graphics.image;
@@ -1385,7 +1385,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     return new AnimationThread() {
       @Override
       public void render() {
-        super.render();
+        sketch.handleDraw();
         blit();
       }
     };
