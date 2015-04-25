@@ -39,11 +39,6 @@ import processing.core.*;
 
 /**
  * Window for modifying preferences.
- * <P>
- * This is ugly GUI code that uses exact layout. This was done in frustration
- * one evening (and pre-Swing), but that's long since past, and the code
- * should instead be ported to a proper Swing layout like Group or BoxLayout.
- * <A HREF="https://github.com/processing/processing/issues/67">See here</A>.
  */
 public class PreferencesFrame {
   JFrame dialog;
@@ -470,17 +465,6 @@ public class PreferencesFrame {
 //    pain.add(deletePreviousBox);
 //    d = deletePreviousBox.getPreferredSize();
 //    deletePreviousBox.setBounds(left, top, d.width + 10, d.height);
-//    right = Math.max(right, left + d.width);
-//    top += d.height + GUI_BETWEEN;
-
-
-    // [ ] Hide tab/toolbar background image
-
-    whinyBox = new JCheckBox(Language.text("preferences.hide_toolbar_background_image")+
-                             " ("+Language.text("preferences.requires_restart")+")");
-//    pain.add(whinyBox);
-//    d = whinyBox.getPreferredSize();
-//    whinyBox.setBounds(left, top, d.width + 10, d.height);
 //    right = Math.max(right, left + d.width);
 //    top += d.height + GUI_BETWEEN;
 

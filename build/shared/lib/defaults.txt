@@ -151,11 +151,6 @@ editor.indent = true
 # Whether to check files to see if they've been modified externally
 editor.watcher = true
 
-# Hide the background image. Gross because this is a pref that
-# really lives over in theme.txt but it's split here.
-buttons.hide.image = false
-toolbar.hide.image = false
-
 # font choice and size for the console
 #console.font = Monospaced,plain,11
 #console.font.macosx = Monaco,plain,10
