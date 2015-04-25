@@ -294,6 +294,10 @@ but a few that you might be likely to run across:
 + Remove Applet as the base class. 
   https://github.com/processing/processing/tree/master/core
 
++ Replaced JOGL with LWJGL. Ongoing JOGL support is unclear and LWJGL
+  seems to be more consistently maintained. Unfortunately, it trades 
+  one set of quirks for another.
+
 + Renamed 2x (hidpi/retina) versions of renderers to JAVA2D_2X, P3D_2X, etc.
 
 + add warning message when a negative textSize() is used
