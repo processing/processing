@@ -32,6 +32,12 @@ X auto-insert after antlr @SuppressWarnings({ "unused", "unchecked", "cast" })
 X fix file change detection on OS X
 X   https://github.com/processing/processing/issues/2852
 
+_ Preferences window sizing problems
+_   window contents are cropped off
+_   Editor font size dropdown is enormous
+_   https://github.com/processing/processing/issues/3212
+_ Find/Replace regressions
+_   https://github.com/processing/processing/issues/3213
 _ editor window draws in stages (at least on OS X) on first view
 X is debug turned on? lots of "export.txt" complaints
 _   remove export.txt complaints when loading libraries

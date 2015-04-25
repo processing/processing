@@ -18,13 +18,13 @@ o   really nice for auto-complete
 o   prevents hundreds of entries from coming up w/ auto-complete
 o   downside: breaks compatibility big time
 X   would have to use ALIGN_CENTER eta al, so no
+X noSmooth() not sticking, has to be called again inside draw()
+X   https://github.com/processing/processing/issues/3113
 
 showstoppers
-_ noSmooth() and other settings reset after setup()
-_   https://github.com/processing/processing/issues/3113
 _ static mode - no setup() / draw() - broken in OpenGL
 _   https://github.com/processing/processing/issues/3163
-_ sketch window is not placed at correct location on restart
+_ sketch window is not placed at correct location when running a second time
 _   https://github.com/processing/processing/issues/3125
 
 head

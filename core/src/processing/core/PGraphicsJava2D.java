@@ -1439,9 +1439,9 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   @Override
-  public void smooth(int antialias) {
-    this.quality = antialias;
-    if (antialias == 0) {
+  public void smooth(int quality) {
+    this.quality = quality;
+    if (quality == 0) {
       noSmooth();
     } else {
       smooth();
@@ -1452,6 +1452,7 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public void noSmooth() {
     smooth = false;
+    quality = 0;  // Github 3113
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_OFF);
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
