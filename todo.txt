@@ -3,8 +3,6 @@ X post a note about the "help" stuff
 X   https://github.com/processing/processing/labels/help
 X Deal with ctrl-alt-n regression 
 X   https://github.com/processing/processing/issues/2979
-X splash screen for Linux
-X   https://github.com/processing/processing/pull/3005
 X don't add a ^M to files when writing
 X   https://github.com/processing/processing/issues/3014
 X add more bulletproofing to the save process
@@ -34,13 +32,9 @@ X   window contents are cropped off
 X "Your sketch has been modified externally" appear without reason
 X   fix file change detection on OS X
 X   https://github.com/processing/processing/issues/2852
-
-_ editor window draws in stages (at least on OS X) on first view
-_   the console/bottom area stays white until an additional repaint?
 X is debug turned on? lots of "export.txt" complaints
-_   remove export.txt complaints when loading libraries
-_ install/remove buttons not working in the managers
-_   https://github.com/processing/processing/issues/3172
+X   remove export.txt complaints when loading libraries
+X   was because of the readSettings() change
 
 integration of pdex/debug
 o make the tabs have a default minimum size
@@ -145,6 +139,8 @@ X   https://github.com/processing/processing/issues/3148
 X   https://github.com/processing/processing/pull/3196
 
 pulls
+X splash screen for Linux
+X   https://github.com/processing/processing/pull/3005
 X add mnemonics for menus (alt-f to open 'file')
 X   http://code.google.com/p/processing/issues/detail?id=12
 X   https://github.com/processing/processing/issues/51
@@ -212,11 +208,18 @@ X   https://github.com/processing/processing/pull/3189
 X improve internationalization and localization in greek
 X   https://github.com/processing/processing/pull/3197
 
+
+3.0a6
+_ install/remove buttons not working in the managers
+_   https://github.com/processing/processing/issues/3172
+
+
 3.0a7
 _ finish adding 'examples' contribs
 _   https://github.com/processing/processing/issues/2953
 _   don't return here, allow contrib types to fail:
 _   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
+
 
 pdex
 _ fix hasJavaTabs() function
@@ -241,11 +244,17 @@ _ do the right thing on passing around List vs ArrayList and others
 gui
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
-_ fonts are still really ugly
+_ editor window draws in stages (at least on OS X) on first view
+_   the console/bottom area stays white until an additional repaint?
+_ fonts are still really ugly (on non-retina)
 _   may need to drop use of Source Sans
 _   what do these do, and are we doing it already?
 _   System.setProperty("awt.useSystemAAFontSettings","on");
 _   System.setProperty("swing.aatext", "true");
+_ how are we going to handle fonts for other languages? 
+_   two new fonts have been added, other languages will need more
+_   need a decent sans with with Unicode coverage
+_   i.e. https://github.com/processing/processing/pull/3025
 _ large window places the debugger window offscreen
 _   https://github.com/processing/processing/issues/3091
 _ need 'actively pressed' version of 'play' and 'stop'
@@ -258,12 +267,8 @@ _ using svg images for res-indep icons/gui
 _   http://stackoverflow.com/questions/2495501/swing-batik-create-an-imageicon-from-an-svg-file
 
 
-pde
+pde/build
 _ add build.xml prompt for OS X developers to download the JDK update
-_ how are we going to handle fonts for other languages? 
-_   two new fonts have been added, other languages will need more
-_   need a decent sans with with Unicode coverage
-_   i.e. https://github.com/processing/processing/pull/3025
 _ make examples pull/build automatic during dist
 _ dist needs to do a git pull on processing-docs
 _ make reference build process part of dist
@@ -300,6 +305,9 @@ _ search the source for 'applet' references (i.e. SVG docs)
 
 
 sketchbook
+_ Mode.rebuildLibraryList() called too many times on startup? 
+_   and when sketches saved as well?
+_   makes saving *really* slow with a lot of libraries
 _ need to handle the 2.x to 3.x sketchbook transition
 _ New/Rename/Save As is reloading the whole sketchbook, argh
 _ sketchbook window is completely empty w/ no sketches

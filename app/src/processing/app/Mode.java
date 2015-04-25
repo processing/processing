@@ -312,6 +312,7 @@ public abstract class Mode {
 
 
   public void rebuildLibraryList() {
+    //new Exception("Rebuilding library list").printStackTrace(System.out);
     // reset the table mapping imports to libraries
     importToLibraryTable = new HashMap<String, ArrayList<Library>>();
 

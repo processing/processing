@@ -2207,7 +2207,7 @@ public class Base {
           // This works for Windows, Linux, and Apple's Java 6 on OS X.
           processingRoot = jarFolder.getParentFile();
         } else if (Base.isMacOS()) {
-          // This works for Java 8 on OS X. We don't have things inside a 'lib' 
+          // This works for Java 8 on OS X. We don't have things inside a 'lib'
           // folder on OS X. Adding it caused more problems than it was worth.
           processingRoot = jarFolder;
         }
@@ -2266,9 +2266,9 @@ public class Base {
   static public InputStream getLibStream(String filename) throws IOException {
     return new FileInputStream(getLibFile(filename));
   }
-  
-  
-  // Note: getLibImage() has moved to Toolkit 
+
+
+  // Note: getLibImage() has moved to Toolkit
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -2314,7 +2314,7 @@ public class Base {
    */
   static public Map<String, String> readSettings(File inputFile) {
     if (!inputFile.exists()) {
-      System.err.println(inputFile + " does not exist.");
+      if (DEBUG) System.err.println(inputFile + " does not exist.");
       return null;
     }
     String lines[] = PApplet.loadStrings(inputFile);
@@ -2333,7 +2333,7 @@ public class Base {
    * In 3.0a6, no longer taking a blank HahMap as param; no cases in the main
    * PDE code of adding to a (Hash)Map. Also returning the Map instead of void.
    * Both changes modify the method signature, but this was only used by the
-   * contrib classes. 
+   * contrib classes.
    */
   static public Map<String, String> readSettings(String filename, String[] lines) {
     Map<String, String> settings = new HashMap<>();
@@ -2405,7 +2405,7 @@ public class Base {
     try {
       // fix from cjwant to prevent symlinks from being destroyed.
       File canon = file.getCanonicalFile();
-      // assign the var as second step since previous line may throw exception   
+      // assign the var as second step since previous line may throw exception
       file = canon;
     } catch (IOException e) {
       throw new IOException("Could not resolve canonical representation of " +
@@ -2419,7 +2419,7 @@ public class Base {
     if (error) {
       throw new IOException("Error while trying to save " + file);
     }
-    
+
     // remove the old file before renaming the temp file
     if (file.exists()) {
       boolean result = file.delete();
@@ -2430,7 +2430,7 @@ public class Base {
     }
     boolean result = temp.renameTo(file);
     if (!result) {
-      throw new IOException("Could not replace " + file.getAbsolutePath() + 
+      throw new IOException("Could not replace " + file.getAbsolutePath() +
                             " with " + temp.getAbsolutePath());
     }
   }
@@ -2879,8 +2879,8 @@ public class Base {
       e.printStackTrace();
     }
   }
-  
-  
+
+
   static public void loge(String message) {
     if (DEBUG) {
       System.out.println(message);
