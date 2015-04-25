@@ -157,6 +157,22 @@ public class IntList implements Iterable<Integer> {
   }
 
 
+  /** Just an alias for append(), but matches pop() */
+  public void push(int value) {
+    append(value);
+  }
+
+
+  public int pop() {
+    if (count == 0) {
+      throw new RuntimeException("Can't call pop() on an empty list");
+    }
+    int value = get(count-1);
+    count--;
+    return value;
+  }
+
+
   /**
    * Remove an element from the specified index
    *

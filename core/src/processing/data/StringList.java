@@ -140,6 +140,22 @@ public class StringList implements Iterable<String> {
   }
 
 
+  /** Just an alias for append(), but matches pop() */
+  public void push(String value) {
+    append(value);
+  }
+
+
+  public String pop() {
+    if (count == 0) {
+      throw new RuntimeException("Can't call pop() on an empty list");
+    }
+    String value = get(count-1);
+    count--;
+    return value;
+  }
+
+
   /**
    * Remove an element from the specified index.
    *

@@ -137,6 +137,22 @@ public class FloatList implements Iterable<Float> {
   }
 
 
+  /** Just an alias for append(), but matches pop() */
+  public void push(float value) {
+    append(value);
+  }
+
+
+  public float pop() {
+    if (count == 0) {
+      throw new RuntimeException("Can't call pop() on an empty list");
+    }
+    float value = get(count-1);
+    count--;
+    return value;
+  }
+
+
   /**
    * Remove an element from the specified index.
    *
