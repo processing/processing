@@ -1,3 +1,125 @@
+0233 (3.0a6)
+X remove Applet as base class
+X how to name the retina pixel stuff
+X   hint(ENABLE_RETINA_PIXELS) or hint(ENABLE_HIDPI_PIXELS)
+X   hint(ENABLE_2X_PIXELS)?
+X   hidpi is Apple's name as well
+X   mostly getting away from this
+X bezierSegment() function to do equal-length segments
+X   https://github.com/processing/processing/issues/2919
+X   handled instead as an example
+X add warning message when a negative textSize() is used
+X   https://github.com/processing/processing/issues/3110
+X loadXxxx() methods will truly follow redirects (including http -> https)
+X   https://github.com/processing/processing-docs/issues/218
+o move to enums instead of PConstants?
+o   helps textMode() only accept valid entries
+o   really nice for auto-complete
+o   prevents hundreds of entries from coming up w/ auto-complete
+o   downside: breaks compatibility big time
+X   would have to use ALIGN_CENTER eta al, so no
+X noSmooth() not sticking, has to be called again inside draw()
+X   https://github.com/processing/processing/issues/3113
+X performance issues on OS X (might be threading due to Applet)
+X   https://github.com/processing/processing/issues/2423
+X   can't fix, it's all Oracle stuff
+X remove sketch path hack from PApplet
+X   this may cause Linux issues, but we need to solve that properly
+
+head
+X Sketch window dimensions off in Java2D
+X   https://github.com/processing/processing/issues/3129
+X   https://github.com/processing/processing/pull/3162
+X dragging sketch window hides it
+X   https://github.com/processing/processing/issues/3092
+X Video library is incompatible with 0233
+X   https://github.com/processing/processing/issues/3114
+
+earlier
+X size(640,360 , P3D) doesn't work properly
+X   https://github.com/processing/processing/issues/2924
+X   https://github.com/processing/processing/issues/2925
+
+contribs
+X saveFrame() doesn't save opaque PNG files
+X   https://github.com/processing/processing/issues/3031
+X   https://github.com/processing/processing/pull/3067
+X fixes to SVG, implement percentages and some named colors
+X   https://github.com/processing/processing/pull/3205
+X   https://github.com/processing/processing/issues/2992
+X add option to save JSON in compact form
+X   https://github.com/processing/processing/pull/3202
+X Remove extra edges in sphere tessellation
+X   https://github.com/processing/processing/issues/3193
+X   https://github.com/processing/processing/pull/3211
+X Add exceptions for FloatList and IntList when using add() w/o enough elements
+X   https://github.com/processing/processing/pull/3053
+X   https://github.com/processing/processing/issues/3052
+
+akarshit
+X lerpColor() outside of setup()/draw() kills sketch
+X   https://github.com/processing/processing/issues/3145
+X use default colorMode() with lerpColor() outside setup()
+X   https://github.com/processing/processing/pull/3146
+X textAlign(RIGHT) adds extra space to the right
+X   https://github.com/processing/processing/pull/3078
+X   https://github.com/processing/processing/issues/3028
+X rectMode() broken for createShape with JAVA2D
+X   https://github.com/processing/processing/issues/3024
+X   https://github.com/processing/processing/pull/3102
+
+data
+X fixes for table
+X   ensure # of columns and titles lines up with Table(iterator) constructor
+X   add table header to html output
+X   remove extra spaces from html output
+X json updates
+X   make save() and write() consistent between JSONObject and JSONArray
+X   add indent=N to saveJSONObject/Array() methods
+X   add 'compact' to JSONArray (see PR for the add to JSONObject)
+X add push() and pop() to String/Int/FloatList
+
+applet/sketch
+X remove isGL(), is2D(), is3D(), displayable() from PApplet
+X   these were auto-imported from PGraphics
+X remove pause variable from PApplet (was not documented)
+X added copy() to PImage (to work like get(), ala PVector)
+X added getFontRenderContext() to PGraphics
+X why doesn't p5 punt when loadFont() is used on an otf?
+X   is this a GL problem? (example in bug report wasn't GL)
+X   https://github.com/processing/processing/issues/2876
+X   since we don't have any magic number in there, just randomly breaks
+X   add check to require .vlw extension with loadFont()
+X Memory usage insane increasing in 3.0a5
+X   https://github.com/processing/processing/issues/3007
+X   seems fixed due to the rewrite
+X remove set/get/removeCache() methods from PApplet (add //ignore line)
+X flicker on startup
+X   https://github.com/processing/processing/issues/3134
+X static mode - no setup() / draw() - broken in Java2D
+X   https://github.com/processing/processing/issues/3130
+X are we running on the EDT or not?
+X   switched to using the EDT, but no EDT for blit() b/c it flickers
+
+full screen
+X roll back full screen changes
+X   https://github.com/processing/processing/issues/2641
+o new full screen sometimes causes sketch to temporarily be in the wrong spot
+X   removed the new stuff since it stank, rolled back to menu bar hiding
+X add option to have full screen span across screens
+o   display=all in cmd line
+o   sketchDisplay() -> 0 for all, or 1, 2, 3...
+X   added --span option
+X play with improvements to full screen here
+X Ubuntu Unity prevents full screen from working properly
+X   http://stackoverflow.com/questions/8837719/java-in-full-screen-on-linux-how-to-cover-task-bar
+X   https://github.com/processing/processing/issues/3158
+o   add notes to the Wiki about this (already added)
+X     https://github.com/processing/processing/wiki/Window-Size-and-Full-Screen
+X Linux throwing IllegalStateException: Buffers have not been created
+X   in render() (called from blit) PSurfaceAWT:301
+
+
 0232 core (3.0a5) 
 X detect CMYK JPEG images and return null
 X   https://community.oracle.com/thread/1272045?start=0&tstart=0

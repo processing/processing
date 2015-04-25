@@ -1,3 +1,214 @@
+0233 (3.0a6)
+X post a note about the "help" stuff
+X   https://github.com/processing/processing/labels/help
+X Deal with ctrl-alt-n regression 
+X   https://github.com/processing/processing/issues/2979
+X don't add a ^M to files when writing
+X   https://github.com/processing/processing/issues/3014
+X add more bulletproofing to the save process
+X   https://github.com/processing/processing/issues/2923
+X serious text improvements (at least on retina)
+X Menu mnemonics (alt-f, etc) getting typed into the editor
+X   https://github.com/processing/processing/issues/3057
+X Opening and closing preferences window prompts user to save unmodified sketch
+X   https://github.com/processing/processing/issues/3074
+X Pressing PgDn in a code without scrollbar gives Exception
+X   https://github.com/processing/processing/issues/2990
+X internal fixes and cleanups to TweakMode
+X   https://github.com/processing/processing/issues/2799
+X implement line numbers in the editor
+X   5px between line number (right-aligned) and the right edge of the gutter
+X   ie textAlign(RIGHT) / text(lineNum, LEFT_GUTTER - 5, y)
+X   https://github.com/processing/processing/issues/3128
+X run button w/ debugger shouldn't require "continue" before actually starting
+X   https://github.com/processing/processing/issues/3096
+X remove code that's moving the sketch path arg later
+X   https://github.com/processing/processing/commit/0a14835e6f5f4766b022e73a8fe562318636727c
+X the .macosx, .linux, etc prefs should be stripped
+X   only use them on first load, and merge into preferences.txt
+X auto-insert after antlr @SuppressWarnings({ "unused", "unchecked", "cast" })
+X Preferences window sizing problems
+X   window contents are cropped off
+X "Your sketch has been modified externally" appear without reason
+X   fix file change detection on OS X
+X   https://github.com/processing/processing/issues/2852
+X is debug turned on? lots of "export.txt" complaints
+X   remove export.txt complaints when loading libraries
+X   was because of the readSettings() change
+
+integration of pdex/debug
+o make the tabs have a default minimum size
+o   multiple sizes as they get smaller (web browser style)
+X merge experimental into the main Java mode 
+X   thereby removing Java 2.0 mode from the next release
+X   otherwise redoing the design for 2 modes
+X changed JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
+X change build scripts, get things running
+X rename TextArea and TextAreaPainter to JavaTextArea
+X DebugEditor.createTextArea() is copy & pasted from JavaEditor
+X   this whole setup is really gross at the moment
+X finish Ant task to download JRE and JDK from Oracle
+X remove public 'ta' object in DebugEditor, also dmode
+X hasJavaTabs() cleanup
+X   how does it relate to compilationCheckEnabled?
+X     removed, seems to be duplicate/used the same way
+
+jre download/install
+X make sure the file downloads correctly before renaming
+X   https://github.com/processing/processing/issues/2960
+X update build scripts for Windows and Linux to use JRE downloader Ant Task
+X   https://github.com/processing/processing/issues/3059
+
+update components
+X moving to Java 8 because Java 7 will be discontinued
+X   http://www.oracle.com/technetwork/java/javase/eol-135779.html
+X   requires Vista SP2 (ok, just say 7), and OS X 10.8.3, Ubuntu 12.04
+X   requires 10.10 to build appbundler (for the Xcode SDK)
+X requires ECJ update (using 4.4.1)
+X   http://download.eclipse.org/eclipse/downloads/drops4/R-4.4.1-201409250400/
+X update to launch4j 3.6
+X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.6/
+o   update ld and windres: https://github.com/processing/processing/tree/master/java/application/launch4j/bin
+o   also xstream.jar https://github.com/processing/processing/tree/master/java/application/launch4j/lib
+
+earlier
+X any problems with new code signing crap? 
+X   issues raised around the symlink (just replace with a copy of the binary?)
+X   fixed the short-term problem, filed an issue for the rest
+X   https://developer.apple.com/library/prerelease/mac/technotes/tn2206/_index.html#//apple_ref/doc/uid/DTS40007919-CH1-TNTAG205
+X Move import suggestion to errors console
+X   https://github.com/processing/processing/issues/2947
+X server.stop produces an error: java.net.SocketException: socket closed
+X   https://github.com/processing/processing/issues/74
+X   https://github.com/processing/processing/pull/2474
+X NPE when calling Client.ip() after the connection has been closed
+X   https://github.com/processing/processing/issues/2576
+X   https://github.com/processing/processing/pull/2922
+
+joel
+X Add reference for installed tools and libraries to the Help menu
+X   https://github.com/processing/processing/issues/943
+X   https://github.com/processing/processing/pull/2804
+X examples.properties file missing prevents startup
+X   https://github.com/processing/processing/issues/3037
+X   https://github.com/processing/processing/pull/3047
+X several new French translations
+X   https://github.com/processing/processing/pull/3061
+X contributions.txt now gets deleted and recreated instead of overwritten
+X   https://github.com/processing/processing/pull/3073
+X   https://github.com/processing/processing/issues/2994
+X Contrib Manager does not stop parsing contribs.txt if an error exists
+X   https://github.com/processing/processing/pull/3132
+X offer to install libraries imported libraries that are not available
+X   https://github.com/processing/processing/pull/3155
+X   https://github.com/processing/processing/issues/2566
+X make fatal errors terminate the pde
+X   https://github.com/processing/processing/issues/3068
+X   https://github.com/processing/processing/pull/3069
+X Java 8 method replace() used, removed
+X   https://github.com/processing/processing/issues/3168
+X   https://github.com/processing/processing/pull/3169
+X Closing a few unclosed BufferedReaders and InputStreams
+X   https://github.com/processing/processing/pull/2961
+
+manindra
+X Fix for "Probably a ++ should go here" messages
+X   https://github.com/processing/processing/issues/2956
+X Missing opening curly bracket error
+X   https://github.com/processing/processing/issues/3104
+X missing parenthesis error message
+X   https://github.com/processing/processing/issues/3103
+
+akarshit
+X rewrite preferences window to use proper layout
+X   https://github.com/processing/processing/issues/67
+X   https://github.com/processing/processing/issues/2708
+X   https://github.com/processing/processing/issues/2986
+X Find/Replace dialog uses GroupLayout
+X   https://github.com/processing/processing/pull/3190
+X   https://github.com/processing/processing/pull/3131
+X issues with cut/copy shortcuts not working
+X   https://github.com/processing/processing/pull/3138
+X   https://github.com/processing/processing/issues/3136
+X   https://github.com/processing/processing/issues/3107
+X IllegalArgumentException when clicking between editor windows
+X   https://github.com/processing/processing/issues/2530
+X   https://github.com/processing/processing/pull/3101
+X Newline after a very long line moves the visible area right
+X   https://github.com/processing/processing/issues/3148
+X   https://github.com/processing/processing/pull/3196
+
+pulls
+X splash screen for Linux
+X   https://github.com/processing/processing/pull/3005
+X add mnemonics for menus (alt-f to open 'file')
+X   http://code.google.com/p/processing/issues/detail?id=12
+X   https://github.com/processing/processing/issues/51
+X   https://github.com/processing/processing/pull/2382
+X getCaretLocation() bug in syntax.im package
+X   https://github.com/processing/processing/issues/2934
+X finish up debian package support (see the processing.mess folder)
+X   http://code.google.com/p/processing/issues/detail?id=75
+X   these bits need to be checked to ensure that they work on other distros
+X   https://github.com/processing/processing/issues/114
+X   https://github.com/processing/processing/pull/2972
+X   https://github.com/processing/processing/issues/2973
+X   https://github.com/processing/processing/pull/2974
+X Replace ColorChooser PApplets with custom Swing components
+X   https://github.com/processing/processing/pull/2975
+X fix encodings, line endings, and mime types in the repo
+X   https://github.com/processing/processing/issues/2955
+X   https://github.com/processing/processing/pull/2978
+X   https://github.com/processing/processing/pull/2977
+X add control for dependencies (i.e. svg needs xml), needed for export
+X   http://code.google.com/p/processing/issues/detail?id=70
+X   https://github.com/processing/processing/issues/109
+X   https://github.com/processing/processing/pull/3010
+X lots of Auto Format fixes
+X   https://github.com/processing/processing/pull/3002
+X   https://github.com/processing/processing/issues/2540
+X   https://github.com/processing/processing/issues/1041
+X update name of sketch in the "Recent" menu
+X   https://github.com/processing/processing/issues/2984
+X   https://github.com/processing/processing/pull/3046
+X File change detection rewrite
+X   https://github.com/processing/processing/pull/3048
+X another file change detection rewrite
+X   https://github.com/processing/processing/pull/3070
+X broken Windows build due to launch4j .jar not updated
+X   https://github.com/processing/processing/issues/3062
+X   https://github.com/processing/processing/pull/3066
+X exported Linux sketches must be run from the sketch folder
+X   https://github.com/processing/processing/issues/1046
+X   https://github.com/processing/processing/pull/3083
+X processing.net.Server only cleans up internal Clients when trying to write
+X   https://github.com/processing/processing/issues/3089
+X   https://github.com/processing/processing/pull/3097
+X Display download percentage when fetching contrib info
+X   https://github.com/processing/processing/pull/3161
+X Recreating Client instance will cause an out-of-memory error
+X   https://github.com/processing/processing/issues/1400
+X   https://github.com/processing/processing/pull/3088
+X Greek translation and new fonts
+X   https://github.com/processing/processing/pull/3025
+X Show tooltip when hovering over errors
+X   https://github.com/processing/processing/pull/3119
+X Fix multi-touch horizontal scrolling on OS X
+X   https://github.com/processing/processing/pull/3170
+X   https://github.com/processing/processing/issues/180
+X Refactor examples manager window
+X   https://github.com/processing/processing/issues/3133
+X   https://github.com/processing/processing/pull/3177
+X Fix ColorChooser cursor
+X   https://github.com/processing/processing/pull/3186
+X Improve Spanish localization 
+X   https://github.com/processing/processing/pull/3185
+X internationalization of editor error messages and greek translations
+X   https://github.com/processing/processing/pull/3189
+X improve internationalization and localization in greek
+X   https://github.com/processing/processing/pull/3197
+
+
 0232 pde (3.0a5)
 X remove debug message printed to the console when the ctrl key is down in PDE X
 X size(640,360 , P3D) doesn't work properly
