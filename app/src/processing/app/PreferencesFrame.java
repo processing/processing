@@ -461,7 +461,7 @@ public class PreferencesFrame {
     // [ ] Delete previous application folder on export
 
     deletePreviousBox =
-    new JCheckBox(Language.text("preferences.delete_previous_folder_on_export"));
+      new JCheckBox(Language.text("preferences.delete_previous_folder_on_export"));
 //    pain.add(deletePreviousBox);
 //    d = deletePreviousBox.getPreferredSize();
 //    deletePreviousBox.setBounds(left, top, d.width + 10, d.height);
@@ -471,7 +471,8 @@ public class PreferencesFrame {
 
     // [ ] Check for updates on startup
 
-    checkUpdatesBox = new JCheckBox(Language.text("preferences.check_for_updates_on_startup"));
+    checkUpdatesBox =
+      new JCheckBox(Language.text("preferences.check_for_updates_on_startup"));
 //    pain.add(checkUpdatesBox);
 //    d = checkUpdatesBox.getPreferredSize();
 //    checkUpdatesBox.setBounds(left, top, d.width + 10, d.height);
