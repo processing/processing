@@ -676,6 +676,6 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
 
   protected void nope(String function) {
-    throw new RuntimeException("No " + function + "() for PGraphicsPDF");
+    throw new RuntimeException("No " + function + "() for " + getClass().getSimpleName());
   }
 }
