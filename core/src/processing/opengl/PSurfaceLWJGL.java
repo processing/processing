@@ -277,8 +277,9 @@ public class PSurfaceLWJGL implements PSurface {
   public void placeWindow(int[] location, int[] editorLocation) {
     if (location != null) {
       // a specific location was received from the Runner
-      // (applet has been run more than once, user placed window)
+      // (the sketch has been run more than once/the user moved the window)
       frame.setLocation(location[0], location[1]);
+
     } else if (editorLocation != null) {
       Dimension window = new Dimension(sketchWidth, sketchHeight);
 
