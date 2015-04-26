@@ -597,7 +597,8 @@ public class PreferencesFrame {
           .addGroup(layout.createSequentialGroup()
                       .addComponent(fontLabel)
                       .addComponent(fontSelectionBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-          .addGroup(layout.createSequentialGroup()
+          .addGroup(GroupLayout.Alignment.LEADING,
+                       layout.createSequentialGroup()
                       .addComponent(fontSizelabel)
                       .addComponent(fontSizeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                       .addComponent(consoleFontSizeLabel)
