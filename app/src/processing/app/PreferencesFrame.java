@@ -605,6 +605,7 @@ public class PreferencesFrame {
           .addGroup(layout.createSequentialGroup()
                       .addComponent(backgroundColorLabel)
                       .addComponent(hashLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                      .addGap(0)
                       .addComponent(presentColorHex, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                       .addComponent(presentColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
           .addComponent(editorAntialiasBox)
