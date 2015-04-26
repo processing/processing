@@ -636,8 +636,6 @@ public class PreferencesFrame {
       .addGap(BORDER)
     );
 
-    layout.linkSize(fontSizeField, consoleFontSizeField);// Not sure if this will fix the size bug on mac
-
     layout.setVerticalGroup(layout.createSequentialGroup()
       .addGap(BORDER)
       .addComponent(sketchbookLocationLabel)
