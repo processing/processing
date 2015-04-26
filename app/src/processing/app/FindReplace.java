@@ -168,9 +168,11 @@ public class FindReplace extends JFrame {
     .addComponent(replaceAllButton);
 
     layout.setHorizontalGroup(layout.createParallelGroup()
-      .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup() // TRAILING makes everything right alinged
-        .addComponent(findLabel)
-        .addComponent(findField))
+      .addGroup(GroupLayout.Alignment.TRAILING, // TRAILING makes everything right alinged 
+                layout.createSequentialGroup()
+                .addGap(replaceLabel.getPreferredSize().width - findLabel.getPreferredSize().width)
+                .addComponent(findLabel)
+                .addComponent(findField))
       .addGroup(GroupLayout.Alignment.TRAILING,
                 layout.createSequentialGroup()
                   .addComponent(replaceLabel)
@@ -182,7 +184,7 @@ public class FindReplace extends JFrame {
                   .addComponent(wrapAroundBox))
       .addGroup(buttonsHorizontalGroup));
 
-    layout.linkSize(SwingConstants.HORIZONTAL, findLabel, replaceLabel); //Making size of findLabel and replaceLabel equal
+//    layout.linkSize(SwingConstants.HORIZONTAL, findLabel, replaceLabel); //Making size of findLabel and replaceLabel equal
 
     layout.setVerticalGroup(layout.createSequentialGroup()
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
