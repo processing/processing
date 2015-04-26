@@ -3,6 +3,8 @@ X add fix to avoid StringList leak
 
 
 high priority
+_ OpenGL sketches work only after running a sketch with default renderer
+_   https://github.com/processing/processing/issues/3218
 _ static mode - no setup() / draw() - broken in OpenGL
 _   https://github.com/processing/processing/issues/3163
 _ sketch window is not placed at correct location when running a second time

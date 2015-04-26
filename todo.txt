@@ -1,4 +1,15 @@
 0234 (3.0a7)
+X fix bug causing Preferences window exception
+X   https://github.com/processing/processing/issues/3215
+
+akarshit
+_ Preferences window elements not sized correctly in 3.0a6
+X   https://github.com/processing/processing/pull/3217
+_   https://github.com/processing/processing/issues/3212
+_   still having trouble w/ font menus
+X Fixed Find/Replace layout regressions in 3.0a6
+X   https://github.com/processing/processing/issues/3213
+X   https://github.com/processing/processing/pull/3216
 
 
 _ install/remove buttons not working in the managers
@@ -21,6 +32,8 @@ _ disable the debug toggle menu while running
 _   otherwise could run in one mode, then try to stop in another
 _ show debug window when running, hide when stopped
 _ can we animate the show/hide for the debug box?
+_ break out Mode options to their own panels in prefs
+_   Mode should just provide a panel for their prefs
 
 
 breakage
@@ -97,12 +110,15 @@ _ Mode.rebuildLibraryList() called too many times on startup?
 _   and when sketches saved as well?
 _   makes saving *really* slow with a lot of libraries
 _ need to handle the 2.x to 3.x sketchbook transition
+_   prefs are the same file, but sketchbook location pref is different
 _ New/Rename/Save As is reloading the whole sketchbook, argh
 _ sketchbook window is completely empty w/ no sketches
 _   requires restart of p5 before it updates
 _   https://github.com/processing/processing/issues/3214
 _ sketchbook window doesn't update when sketches are added, renamed, etc
 _   https://github.com/processing/processing/issues/2944
+_ possible PR for updating sketchbook stuff
+_   https://github.com/processing/processing/pull/3081
 _ improve start time by populating sketchbook/libraries on threads
 _   https://github.com/processing/processing/issues/2945
 _ longer PR about sketchbook stuff, but closed
@@ -110,12 +126,6 @@ _   https://github.com/processing/processing/pull/3178
 
 
 help me
-_ Preferences window is ugly
-_   Editor font size dropdown is enormous
-_   probably need to break out Java options, since it's getting too long
-_   https://github.com/processing/processing/issues/3212
-_ Find/Replace regressions
-_   https://github.com/processing/processing/issues/3213
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 _ closing the color selector makes things freeze (only Linux and Windows?)

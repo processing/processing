@@ -1,3 +1,29 @@
+PROCESSING 3.0a7 (REV 0234) - 26 April 2015
+
+Read the notes in 3.0a6 for major changes! This is only a minor bug fix
+release to take care of a few things that were broken in 3.0a6.
+
+
+[ fixes ] 
+
++ Fix bug that prevented the Preferences window from opening
+  https://github.com/processing/processing/issues/3215
+
+
+[ contributed fixes ] 
+
++ Preferences window elements not sized correctly in 3.0a6
+  https://github.com/processing/processing/pull/3217
+  https://github.com/processing/processing/issues/3212
+
++ Fixed Find/Replace layout regressions in 3.0a6
+  https://github.com/processing/processing/issues/3213
+  https://github.com/processing/processing/pull/3216
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 3.0a6 (REV 0233) - 25 April 2015
 
 This is the big one! We've jettisoned PApplet as the base class so that
