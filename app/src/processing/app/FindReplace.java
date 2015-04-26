@@ -174,14 +174,19 @@ public class FindReplace extends JFrame {
                 .addComponent(findLabel)
                 .addComponent(findField))
       .addGroup(GroupLayout.Alignment.TRAILING,
-                layout.createSequentialGroup()
+                layout
+                  .createSequentialGroup()
                   .addComponent(replaceLabel)
-                  .addComponent(replaceField))
-      .addGroup(GroupLayout.Alignment.TRAILING,
-                layout.createSequentialGroup()
-                  .addComponent(ignoreCaseBox)
-                  .addComponent(allTabsBox)
-                  .addComponent(wrapAroundBox))
+                  .addGroup(layout
+                              .createParallelGroup()
+                              .addComponent(replaceField)
+                              .addGroup(GroupLayout.Alignment.LEADING,
+                                        layout
+                                          .createSequentialGroup()
+                                          .addComponent(ignoreCaseBox)
+                                          .addComponent(allTabsBox)
+                                          .addComponent(wrapAroundBox))))
+      
       .addGroup(buttonsHorizontalGroup));
 
 //    layout.linkSize(SwingConstants.HORIZONTAL, findLabel, replaceLabel); //Making size of findLabel and replaceLabel equal
