@@ -36,7 +36,7 @@ import javax.swing.text.Document;
  */
 public class FindReplace extends JFrame {
 
-//  static final int EDGE = Base.isMacOS() ? 20 : 13;
+  static final int BORDER = Base.isMacOS() ? 20 : 13;
 //  static final int SMALL = 6;
 // //  12 is correct for Mac, other numbers may be required for other platforms
 //  static final int BUTTON_GAP = 12;
@@ -167,24 +167,40 @@ public class FindReplace extends JFrame {
     .addComponent(replaceButton)
     .addComponent(replaceAllButton);
 
-    layout.setHorizontalGroup(layout.createParallelGroup()
-      .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup() // TRAILING makes everything right alinged
-        .addComponent(findLabel)
-        .addComponent(findField))
-      .addGroup(GroupLayout.Alignment.TRAILING,
-                layout.createSequentialGroup()
-                  .addComponent(replaceLabel)
-                  .addComponent(replaceField))
-      .addGroup(GroupLayout.Alignment.TRAILING,
-                layout.createSequentialGroup()
-                  .addComponent(ignoreCaseBox)
-                  .addComponent(allTabsBox)
-                  .addComponent(wrapAroundBox))
-      .addGroup(buttonsHorizontalGroup));
+    layout
+      .setHorizontalGroup(layout
+        .createSequentialGroup()
+        .addGap(BORDER)
+        .addGroup(layout
+                    .createParallelGroup()
+                    .addGroup(GroupLayout.Alignment.TRAILING, // TRAILING makes everything right alinged 
+                              layout
+                                .createSequentialGroup()
+                                .addGap(replaceLabel.getPreferredSize().width
+                                          - findLabel.getPreferredSize().width)
+                                .addComponent(findLabel)
+                                .addComponent(findField))
+                    .addGroup(GroupLayout.Alignment.TRAILING,
+                              layout
+                                .createSequentialGroup()
+                                .addComponent(replaceLabel)
+                                .addGroup(layout
+                                            .createParallelGroup()
+                                            .addComponent(replaceField)
+                                            .addGroup(GroupLayout.Alignment.LEADING,
+                                                      layout
+                                                        .createSequentialGroup()
+                                                        .addComponent(ignoreCaseBox)
+                                                        .addComponent(allTabsBox)
+                                                        .addComponent(wrapAroundBox))))
+                    .addGroup(GroupLayout.Alignment.CENTER,buttonsHorizontalGroup))
+        .addGap(BORDER)
+        );
 
-    layout.linkSize(SwingConstants.HORIZONTAL, findLabel, replaceLabel); //Making size of findLabel and replaceLabel equal
-
+//    layout.linkSize(SwingConstants.HORIZONTAL, findButton, replaceButton, replaceAllButton, replaceAndFindButton, previousButton);
+    
     layout.setVerticalGroup(layout.createSequentialGroup()
+      .addGap(BORDER)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(findLabel)
                   .addComponent(findField))
@@ -195,7 +211,9 @@ public class FindReplace extends JFrame {
                   .addComponent(ignoreCaseBox)
                   .addComponent(allTabsBox)
                   .addComponent(wrapAroundBox))
-                  .addGroup(buttonsVerticalGroup));
+                  .addGroup(buttonsVerticalGroup)
+      .addGap(BORDER) 
+      );
 
 //    Dimension buttonsDimension = buttons.getPreferredSize();
 //    int visibleButtonWidth = buttonsDimension.width - 2 * BUTTON_GAP;
