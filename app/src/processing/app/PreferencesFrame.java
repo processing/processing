@@ -53,7 +53,6 @@ public class PreferencesFrame {
   JTextField presentColorHex;
   JCheckBox editorAntialiasBox;
   JCheckBox deletePreviousBox;
-  JCheckBox whinyBox;
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
   JCheckBox checkUpdatesBox;
@@ -619,7 +618,6 @@ public class PreferencesFrame {
                     .addComponent(memoryOverrideBox)
                     .addComponent(memoryField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
       .addComponent(deletePreviousBox)
-      .addComponent(whinyBox)
       .addComponent(checkUpdatesBox)
       .addGroup(layout.createSequentialGroup()
                   .addComponent(displayLabel)
@@ -686,8 +684,6 @@ public class PreferencesFrame {
                 .addComponent(memoryField))
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addComponent(deletePreviousBox)
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-      .addComponent(whinyBox)
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addComponent(checkUpdatesBox)
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -778,13 +774,6 @@ public class PreferencesFrame {
 
     Preferences.setBoolean("export.delete_target_folder", //$NON-NLS-1$
                            deletePreviousBox.isSelected());
-
-    boolean wine = whinyBox.isSelected();
-    Preferences.setBoolean("header.hide.image", wine); //$NON-NLS-1$
-    Preferences.setBoolean("buttons.hide.image", wine); //$NON-NLS-1$
-    // Could iterate through editors here and repaint them all, but probably
-    // requires a doLayout() call, and that may have different effects on
-    // each platform, and nobody wants to debug/support that.
 
     // if the sketchbook path has changed, rebuild the menus
     String oldPath = Preferences.getSketchbookPath();
@@ -901,9 +890,6 @@ public class PreferencesFrame {
 
     sketchbookLocationField.setText(Preferences.getSketchbookPath());
     checkUpdatesBox.setSelected(Preferences.getBoolean("update.check")); //$NON-NLS-1$
-
-    whinyBox.setSelected(Preferences.getBoolean("header.hide.image") || //$NON-NLS-1$
-                         Preferences.getBoolean("buttons.hide.image")); //$NON-NLS-1$
 
     updateDisplayList();
     int displayNum = Preferences.getInteger("run.display"); //$NON-NLS-1$
