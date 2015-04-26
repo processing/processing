@@ -85,10 +85,9 @@ public class PreferencesFrame {
     this.base = base;
     //dialog = new JDialog(editor, "Preferences", true);
     dialog = new JFrame(Language.text("preferences"));
-    dialog.setResizable(false);
     Container pain = dialog.getContentPane();
     layout = new GroupLayout(pain);// pain ??
-//    layout.setAutoCreateGaps(true);
+    layout.setAutoCreateGaps(true);
     layout.setAutoCreateContainerGaps(true);
 
 //    pain.setLayout(null);
@@ -97,7 +96,8 @@ public class PreferencesFrame {
 //    final int GUI_BETWEEN = Preferences.GUI_BETWEEN;
 //    final int GUI_BIG = Preferences.GUI_BIG;
 //    final int GUI_SMALL = Preferences.GUI_SMALL;
-//    final int BUTTON_WIDTH = Preferences.BUTTON_WIDTH;
+    final int BUTTON_WIDTH = Preferences.BUTTON_WIDTH;
+    final int BORDER = Base.isMacOS() ? 20 : 13;
 
 //    int top = GUI_BIG;
 //    int left = GUI_BIG;
@@ -449,6 +449,7 @@ public class PreferencesFrame {
         memoryField.setEnabled(memoryOverrideBox.isSelected());
       }
     });
+    JLabel mbLabel = new JLabel("MB");
 //    memoryBox.add(memoryField);
 //    memoryBox.add(new JLabel(" MB"));
 //    pain.add(memoryBox);
@@ -582,124 +583,110 @@ public class PreferencesFrame {
 
 //    wide = right + GUI_BIG;
 //    high = top + GUI_SMALL;
-    layout.setHorizontalGroup(layout.createParallelGroup()
-      .addComponent(sketchbookLocationLabel)
-      .addGroup(layout.createSequentialGroup()
-                  .addComponent(sketchbookLocationField)
-                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                  .addComponent(browseButton))
-      .addGroup(layout.createSequentialGroup()
-                  .addComponent(languageLabel)
-                  .addComponent(languageSelectionBox,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                  .addComponent(restartProcessingLabel))
-      .addGroup(layout.createSequentialGroup()
-                  .addComponent(fontLabel)
-                  .addComponent(fontSelectionBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-      .addGroup(layout.createSequentialGroup()
-                  .addComponent(fontSizelabel)
-                  .addComponent(fontSizeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                  .addComponent(consoleFontSizeLabel)
-                  .addComponent(consoleFontSizeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-      )
-      .addGroup(layout.createSequentialGroup()
-                  .addComponent(backgroundColorLabel)
-                  .addComponent(hashLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                  .addComponent(presentColorHex, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                  .addComponent(presentColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-      .addComponent(editorAntialiasBox)
-      .addComponent(inputMethodBox)
-      .addComponent(errorCheckerBox)
-      .addComponent(warningsCheckerBox)
-      .addComponent(codeCompletionBox)
-      .addComponent(importSuggestionsBox)
-      .addGroup(layout.createSequentialGroup()
-                    .addComponent(memoryOverrideBox)
-                    .addComponent(memoryField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-      .addComponent(deletePreviousBox)
-      .addComponent(checkUpdatesBox)
-      .addGroup(layout.createSequentialGroup()
-                  .addComponent(displayLabel)
-                  .addComponent(displaySelectionBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-      )
-      .addComponent(autoAssociateBox)
-      .addComponent(morePreferenceLabel)
-      .addGroup(layout.createSequentialGroup()
-                  .addComponent(preferencePathLabel)
-                  .addGap(0, 100, 200)
-                  .addComponent(okButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                  .addComponent(cancelButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-      )
-      .addComponent(preferenceHintLabel)
+    layout.setHorizontalGroup(layout.createSequentialGroup()
+      .addGap(BORDER)
+      .addGroup(layout.createParallelGroup()
+          .addComponent(sketchbookLocationLabel)
+          .addGroup(layout.createSequentialGroup()
+                      .addComponent(sketchbookLocationField)
+                      .addComponent(browseButton))
+          .addGroup(layout.createSequentialGroup()
+                      .addComponent(languageLabel)
+                      .addComponent(languageSelectionBox,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                      .addComponent(restartProcessingLabel))
+          .addGroup(layout.createSequentialGroup()
+                      .addComponent(fontLabel)
+                      .addComponent(fontSelectionBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+          .addGroup(layout.createSequentialGroup()
+                      .addComponent(fontSizelabel)
+                      .addComponent(fontSizeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                      .addComponent(consoleFontSizeLabel)
+                      .addComponent(consoleFontSizeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+          .addGroup(layout.createSequentialGroup()
+                      .addComponent(backgroundColorLabel)
+                      .addComponent(hashLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                      .addGap(0)
+                      .addComponent(presentColorHex, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                      .addComponent(presentColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+          .addComponent(editorAntialiasBox)
+          .addComponent(inputMethodBox)
+          .addGroup(layout.createSequentialGroup()
+                      .addComponent(errorCheckerBox)
+                      .addComponent(warningsCheckerBox))
+          .addComponent(codeCompletionBox)
+          .addComponent(importSuggestionsBox)
+          .addGroup(layout.createSequentialGroup()
+                        .addComponent(memoryOverrideBox)
+                        .addComponent(memoryField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(mbLabel))
+          .addComponent(deletePreviousBox)
+          .addComponent(checkUpdatesBox)
+          .addGroup(layout.createSequentialGroup()
+                      .addComponent(displayLabel)
+                      .addComponent(displaySelectionBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+          )
+          .addComponent(autoAssociateBox)
+          .addComponent(morePreferenceLabel)
+          .addComponent(preferencePathLabel)
+          .addComponent(preferenceHintLabel)
+          .addGroup(GroupLayout.Alignment.TRAILING ,layout.createSequentialGroup()
+                      .addComponent(okButton, BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, BUTTON_WIDTH) // Ok and CAncel buttton are now of size BUTTON_WIDTH
+                      .addComponent(cancelButton, BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, BUTTON_WIDTH)
+          ))
+      .addGap(BORDER)
     );
 
-    // Making sure that Ok and Cancel buttons are of the same size
-    layout.linkSize(okButton, cancelButton);
+    layout.linkSize(fontSizeField, consoleFontSizeField);// Not sure if this will fix the size bug on mac
 
-    layout.setVerticalGroup(layout
-      .createSequentialGroup()
+    layout.setVerticalGroup(layout.createSequentialGroup()
+      .addGap(BORDER)
       .addComponent(sketchbookLocationLabel)
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addGroup(layout.createParallelGroup()
                   .addComponent(sketchbookLocationField)
                   .addComponent(browseButton))
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(languageLabel)
                   .addComponent(languageSelectionBox)
                   .addComponent(restartProcessingLabel))
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).
                   addComponent(fontLabel)
                   .addComponent(fontSelectionBox))
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(fontSizelabel)
                   .addComponent(fontSizeField)
                   .addComponent(consoleFontSizeLabel)
                   .addComponent(consoleFontSizeField))
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(backgroundColorLabel)
                   .addComponent(hashLabel)
                   .addComponent(presentColorHex)
                   .addComponent(presentColor))
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addComponent(editorAntialiasBox)
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addComponent(inputMethodBox)
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-      .addComponent(errorCheckerBox)
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-      .addComponent(warningsCheckerBox)
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-      .addComponent(codeCompletionBox)
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-      .addComponent(importSuggestionsBox)
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addGroup(layout.createParallelGroup()
+                  .addComponent(errorCheckerBox)
+                  .addComponent(warningsCheckerBox))
+      .addComponent(codeCompletionBox)
+      .addComponent(importSuggestionsBox)
+      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addComponent(memoryOverrideBox)
-                .addComponent(memoryField))
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(memoryField)
+                .addComponent(mbLabel))
       .addComponent(deletePreviousBox)
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addComponent(checkUpdatesBox)
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(displayLabel)
                   .addComponent(displaySelectionBox))
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addComponent(autoAssociateBox)
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
       .addComponent(morePreferenceLabel)
+      .addGap(0)
       .addComponent(preferencePathLabel)
-      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                  .addComponent(preferenceHintLabel)
+      .addGap(0)
+      .addComponent(preferenceHintLabel)
+      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(okButton)
                   .addComponent(cancelButton))
-      .addContainerGap()
+      .addGap(BORDER) 
       );
     dialog.getRootPane().setDefaultButton(okButton);
 
