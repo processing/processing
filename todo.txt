@@ -1,6 +1,16 @@
 0235 (3.0a8)
 
+_ Unable to install "processing-java"
+_   https://github.com/processing/processing/issues/3224
+_   also update the Windows and Linux versions
 
+_ "Your sketch has been modified externally..." appears erroneously
+_   https://github.com/processing/processing/issues/3222
+_ Error message changes from "function" to "method"
+_   https://github.com/processing/processing/issues/3225
+
+
+_ fix this error message: Experimental Mode: Yikes! Can't find "processing.opengl" library! Line: 2 in tab: particle_signature_30_01
 _ 'ant clean' not removing old versions created by dist
 _ finish adding 'examples' contribs
 _   https://github.com/processing/processing/issues/2953

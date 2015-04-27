@@ -13,6 +13,7 @@ _   right now, on Windows it moves it on-screen (b/c of previous bug reports)
 _   may be cause of some of the display placement issues w/ multiple displays
 _   seem to recall one of the bugs mentioning stacked displays
 _   need to change to iterate through display rectangles
+_ tweak mode ColorSelector is broken (uses getComponent())
 
 
 rendering/performance/surface

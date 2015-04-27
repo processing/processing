@@ -22,6 +22,7 @@
 package processing.app.tools;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -31,6 +32,7 @@ import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Language;
 import processing.core.PApplet;
+import processing.data.StringList;
 
 
 public class InstallCommander implements Tool {
@@ -80,28 +82,16 @@ public class InstallCommander implements Tool {
       PrintWriter writer = PApplet.createWriter(file);
       writer.println("#!/bin/sh");
 
-      String[] jarList = new String[] {
-        "pde.jar",
-        "antlr.jar",
-        "jna.jar",
-        "ant.jar",
-        "ant-launcher.jar",
-
-        // extra libraries for new JDI setup
-        "org-netbeans-swing-outline.jar",
-        "com.ibm.icu_4.4.2.v20110823.jar",
-        "jdi.jar",
-        "jdimodel.jar",
-        "org.eclipse.osgi_3.8.1.v20120830-144521.jar",
-
-        "core/library/core.jar"        
-      };
-      String classPath = PApplet.join(jarList, ":");
-
-      //String javaRoot = System.getProperty("javaroot");
       String javaRoot = Base.getContentFile(".").getCanonicalPath();
+
+      StringList jarList = new StringList();
+      addJarList(jarList, new File(javaRoot));
+      addJarList(jarList, new File(javaRoot, "core/library"));
+      addJarList(jarList, new File(javaRoot, "modes/java/mode"));
+      String classPath = jarList.join(":").replaceAll(javaRoot + "\\/?", "");
+
       writer.println("cd \"" + javaRoot + "\" && " +
-                     Base.getJavaPath() + 
+                     Base.getJavaPath() +
                      " -Djna.nosys=true" +
       		           " -cp \"" + classPath + "\"" +
       		           " processing.mode.java.Commander \"$@\"");
@@ -134,6 +124,18 @@ public class InstallCommander implements Tool {
     } catch (IOException e) {
       Base.showWarning("Error while installing",
                        "An error occurred and the tools were not installed.", e);
+    }
+  }
+
+
+  static private void addJarList(StringList list, File dir) {
+    File[] jars = dir.listFiles(new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        return name.toLowerCase().endsWith(".jar") && !name.startsWith(".");
+      }
+    });
+    for (File jar : jars) {
+      list.append(jar.getAbsolutePath());
     }
   }
 }
