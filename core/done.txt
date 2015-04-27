@@ -1,3 +1,7 @@
+0234 (3.0a7)
+X add fix to avoid StringList leak
+
+
 0233 (3.0a6)
 X remove Applet as base class
 X how to name the retina pixel stuff
