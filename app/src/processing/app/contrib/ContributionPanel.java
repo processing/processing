@@ -46,6 +46,16 @@ import processing.app.Toolkit;
 import processing.app.Language;
 
 
+// TODO clean up accessors (too many cases of several de-references for basic tasks
+// TODO hyperlink listener seems far too complicated for what it does,
+//      and why have a 'null' version rather than detecting whether selected or not
+// TODO don't add/remove listeners for install/remove/undo based on function,
+//      just keep track of current behavior and call that. too many things can go wrong.
+// TODO get rid of huge actionPerformed() blocks with anonymous classes,
+//      just make handleInstall(), etc methods and a single actionPerformed
+//      for the button that calls the necessary behavior (see prev note)
+// TODO switch to the built-in fonts (available from Toolkit) rather than verdana et al
+
 /**
  * Panel that expands and gives a brief overview of a library when clicked.
  */
@@ -80,8 +90,8 @@ class ContributionPanel extends JPanel {
   private boolean alreadySelected;
   private boolean enableHyperlinks;
   private HyperlinkListener conditionalHyperlinkOpener;
-  private JTextPane descriptionBlock;
-  private JLabel notificationBlock;
+  private JTextPane descriptionPane;
+  private JLabel notificationLabel;
   private JButton updateButton;
   private JProgressBar installProgressBar;
   private JButton installRemoveButton;
@@ -226,7 +236,6 @@ class ContributionPanel extends JPanel {
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
     addPaneComponents();
-//    addProgressBarAndButton();
 
     setBackground(listPanel.getBackground());
     setOpaque(true);
@@ -234,11 +243,13 @@ class ContributionPanel extends JPanel {
 
     setExpandListener(this, new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        if (contrib.isCompatible(Base.getRevision()))
+        if (contrib.isCompatible(Base.getRevision())) {
           listPanel.setSelectedPanel(ContributionPanel.this);
-        else
-          listPanel.contribManager.status.setErrorMessage(contrib.getName()
-            + " is not compatible with this revision of Processing");
+        } else {
+          final String msg = contrib.getName() +
+            " is not compatible with this version of Processing";
+          listPanel.contribManager.status.setErrorMessage(msg);
+        }
       }
     });
   }
@@ -251,35 +262,36 @@ class ContributionPanel extends JPanel {
   private void addPaneComponents() {
     setLayout(new BorderLayout());
 
-    descriptionBlock = new JTextPane();
-    descriptionBlock.setInheritsPopupMenu(true);
-    Insets margin = descriptionBlock.getMargin();
+    descriptionPane = new JTextPane();
+    descriptionPane.setInheritsPopupMenu(true);
+    descriptionPane.setEditable(false);  // why would this ever be true?
+    Insets margin = descriptionPane.getMargin();
     margin.bottom = 0;
-    descriptionBlock.setMargin(margin);
-    descriptionBlock.setContentType("text/html");
-    setTextStyle(descriptionBlock);
-    descriptionBlock.setOpaque(false);
+    descriptionPane.setMargin(margin);
+    descriptionPane.setContentType("text/html");
+    setTextStyle(descriptionPane);
+    descriptionPane.setOpaque(false);
     if (UIManager.getLookAndFeel().getID().equals("Nimbus")) {
-      descriptionBlock.setBackground(new Color(0, 0, 0, 0));
+      descriptionPane.setBackground(new Color(0, 0, 0, 0));
     }
 //    stripTextSelectionListeners(descriptionBlock);
 
-    descriptionBlock.setBorder(new EmptyBorder(4, 7, 7, 7));
-    descriptionBlock.setHighlighter(null);
-    add(descriptionBlock, BorderLayout.CENTER);
+    descriptionPane.setBorder(new EmptyBorder(4, 7, 7, 7));
+    descriptionPane.setHighlighter(null);
+    add(descriptionPane, BorderLayout.CENTER);
 
     JPanel updateBox = new JPanel();  //new BoxLayout(filterPanel, BoxLayout.X_AXIS)
     updateBox.setLayout(new BorderLayout());
 
-    notificationBlock = new JLabel();
-    notificationBlock.setInheritsPopupMenu(true);
-    notificationBlock.setVisible(false);
-    notificationBlock.setOpaque(false);
+    notificationLabel = new JLabel();
+    notificationLabel.setInheritsPopupMenu(true);
+    notificationLabel.setVisible(false);
+    notificationLabel.setOpaque(false);
     // not needed after changing to JLabel
 //    notificationBlock.setContentType("text/html");
 //    notificationBlock.setHighlighter(null);
 //    setTextStyle(notificationBlock);
-    notificationBlock.setFont(new Font("Verdana", Font.ITALIC, 10));
+    notificationLabel.setFont(new Font("Verdana", Font.ITALIC, 10));
 //    stripTextSelectionListeners(notificationBlock);
 
     updateButton = new JButton("Update");
@@ -362,7 +374,7 @@ class ContributionPanel extends JPanel {
 //      add(updateButton, c);
 //    }
     updateBox.add(updateButton, BorderLayout.EAST);
-    updateBox.add(notificationBlock, BorderLayout.WEST);
+    updateBox.add(notificationLabel, BorderLayout.WEST);
     updateBox.setBorder(new EmptyBorder(4, 7, 7, 7));
     updateBox.setOpaque(false);
     add(updateBox, BorderLayout.SOUTH);
@@ -451,7 +463,7 @@ class ContributionPanel extends JPanel {
     JPanel updateBox = new JPanel();
     updateBox.setLayout(new BorderLayout());
     updateBox.setInheritsPopupMenu(true);
-    updateBox.add(notificationBlock, BorderLayout.WEST);
+    updateBox.add(notificationLabel, BorderLayout.WEST);
     updateBox.setBorder(new EmptyBorder(4, 7, 7, 7));
     updateBox.setOpaque(false);
     add(updateBox, BorderLayout.SOUTH);
@@ -517,11 +529,16 @@ class ContributionPanel extends JPanel {
 
 
   private void setExpandListener(Component component,
-                                 MouseAdapter expandPanelMouseListener) {
-    component.addMouseListener(expandPanelMouseListener);
+                                 MouseListener expandListener) {
+    if (component instanceof JButton) {
+      // This will confuse the button, causing it to stick on OS X
+      // https://github.com/processing/processing/issues/3172
+      return;
+    }
+    component.addMouseListener(expandListener);
     if (component instanceof Container) {
       for (Component child : ((Container) component).getComponents()) {
-        setExpandListener(child, expandPanelMouseListener);
+        setExpandListener(child, expandListener);
       }
     }
   }
@@ -566,7 +583,6 @@ class ContributionPanel extends JPanel {
     }
     description.append("<br/>");
 
-    //System.out.println("checking restart flag for " + contrib + " " + contrib.getName() + " and it's " + contrib.isRestartFlagged());
     if (contrib.isDeletionFlagged()) {
       description.append(REMOVE_RESTART_MESSAGE);
     } else if (contrib.isRestartFlagged()) {
@@ -586,6 +602,8 @@ class ContributionPanel extends JPanel {
 
     String version = contrib.getPrettyVersion();
 
+    // TODO this has no place here, we shouldn't be cleaning up contrib
+    // information in the f*king GUI.
     if (version != null && !version.isEmpty()) {
       description.append("<br/>");
       if (version.toLowerCase().startsWith("build")) // For Python mode
@@ -607,9 +625,7 @@ class ContributionPanel extends JPanel {
     }
 
     description.append("</body></html>");
-    //descriptionText.setText(description.toString());
-    descriptionBlock.setText(description.toString());
-//    System.out.println(description);
+    descriptionPane.setText(description.toString());
 
     if (contribListing.hasUpdates(contrib)) {
       StringBuilder versionText = new StringBuilder();
@@ -620,22 +636,18 @@ class ContributionPanel extends JPanel {
         ;
       } else {
         String latestVersion = contribListing.getLatestVersion(contrib);
-        if (latestVersion != null)
-          versionText.append("New version (" + latestVersion + ") available!");
-        else
-          versionText.append("New version available!");
-//        if (contrib.getType().requiresRestart()) {
-//          // If a contribution can't be reinstalled in-place, the user may need
-//          // to remove the current version, restart Processing, then install.
-//          versionText.append(" To update, first remove the current version.");
-//        }
+        if (latestVersion != null) {
+          versionText.append("New version (" + latestVersion + ") available.");
+        } else {
+          versionText.append("New version available.");
+        }
       }
       versionText.append("</i></body></html>");
-      notificationBlock.setText(versionText.toString());
-      notificationBlock.setVisible(true);
+      notificationLabel.setText(versionText.toString());
+      notificationLabel.setVisible(true);
     } else {
-      notificationBlock.setText("");
-      notificationBlock.setVisible(false);
+      notificationLabel.setText("");
+      notificationLabel.setVisible(false);
     }
 
     updateButton.setEnabled(true);
@@ -787,18 +799,18 @@ class ContributionPanel extends JPanel {
     installRemoveButton.setEnabled(installRemoveButton.getText().equals(Language.text("contrib.remove")) ||!contribListing.hasListDownloadFailed());
     reorganizePaneComponents();
 
-    descriptionBlock.removeHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
-    descriptionBlock.removeHyperlinkListener(conditionalHyperlinkOpener);
+    descriptionPane.removeHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
+    descriptionPane.removeHyperlinkListener(conditionalHyperlinkOpener);
     if (isSelected()) {
-      descriptionBlock.addHyperlinkListener(conditionalHyperlinkOpener);
-      descriptionBlock.setEditable(false);
+      descriptionPane.addHyperlinkListener(conditionalHyperlinkOpener);
+//      descriptionPane.setEditable(false);
     } else {
-      descriptionBlock.addHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
-      descriptionBlock.setEditable(true);
+      descriptionPane.addHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
+//      descriptionPane.setEditable(true);
     }
 
     // Update style of hyperlinks
-    setSelectionStyle(descriptionBlock, isSelected());
+    setSelectionStyle(descriptionPane, isSelected());
 
     alreadySelected = isSelected();
   }
@@ -809,34 +821,12 @@ class ContributionPanel extends JPanel {
   }
 
 
-//  public void setForeground(Color fg) {
-//    super.setForeground(fg);
-//    System.out.println(contrib.getName());
-//  }
-
-//  static int inc;
-
   public void setForeground(Color fg) {
     super.setForeground(fg);
 
-//      PrintWriter writer = PApplet.createWriter(new File("/Users/fry/Desktop/traces/" + PApplet.nf(++inc, 4) + ".txt"));
-//      new Exception().printStackTrace(writer);
-//      writer.flush();
-//      writer.close();
-
-//    if (headerPaneSet != null) {
-//      System.out.println(headerPaneSet.size());
-////      int rgb = fg.getRGB();
-//      for (JTextPane pane : headerPaneSet) {
-////        setForegroundStyle(pane, rgb);
-//        setForegroundStyle(pane, contrib.isInstalled());
-//      }
-//    }
     if (contrib != null) {
       boolean installed = contrib.isInstalled();
-//      setForegroundStyle(headerText, installed);
-//      setForegroundStyle(descriptionText, installed);
-      setForegroundStyle(descriptionBlock, installed, isSelected());
+      setForegroundStyle(descriptionPane, installed, isSelected());
     }
   }
 
