@@ -97,6 +97,7 @@ public interface PSurface {
   //public void initImage(PGraphics gr, int wide, int high);
   // create pixel buffer, called from allocate() to produce a compatible image for rendering efficiently
 //  public void initImage(PGraphics gr);
+
   public Component getComponent();
 
   /**

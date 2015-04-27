@@ -804,6 +804,12 @@ public class PSurfaceAWT extends PSurfaceNone {
 
 
   @Override
+  public Component getComponent() {
+    return canvas;
+  }
+
+
+  @Override
   public void setSmooth(int level) {
   }
 

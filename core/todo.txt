@@ -14,6 +14,8 @@ _   may be cause of some of the display placement issues w/ multiple displays
 _   seem to recall one of the bugs mentioning stacked displays
 _   need to change to iterate through display rectangles
 _ tweak mode ColorSelector is broken (uses getComponent())
+_ closing a sketch window manually (not hitting Stop) not killing sketch
+_   at least with the Java2D renderer
 
 
 rendering/performance/surface
