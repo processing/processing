@@ -33,21 +33,21 @@ import processing.core.PApplet;
 public class Language {
 //  static private final String FILE = "processing.app.languages.PDE";
   //static private final String LISTING = "processing/app/languages/languages.txt";
-  
+
   // Store the language information in a file separate from the preferences,
   // because preferences need the language on load time.
   static protected final String PREF_FILE = "language.txt";
   static protected final File prefFile = Base.getSettingsFile(PREF_FILE);
-  
+
   /** Single instance of this Language class */
   static private volatile Language instance;
-  
+
   /** The system language */
   private String language;
-  
+
   /** Available languages */
   private HashMap<String, String> languages;
-  
+
   //private ResourceBundle bundle;
   //private Settings bundle;
   private LanguageBundle bundle;
@@ -57,18 +57,18 @@ public class Language {
     String systemLanguage = Locale.getDefault().getLanguage();
     language = loadLanguage();
     boolean writePrefs = false;
-    
+
     if (language == null) {
       language = systemLanguage;
       writePrefs = true;
     }
-    
+
     // Set available languages
     languages = new HashMap<String, String>();
     for (String code : listSupported()) {
       languages.put(code, Locale.forLanguageTag(code).getDisplayLanguage(Locale.forLanguageTag(code)));
     }
-    
+
     // Set default language
     if (!languages.containsKey(language)) {
       language = "en";
@@ -87,8 +87,8 @@ public class Language {
       e.printStackTrace();
     }
   }
-  
-  
+
+
   static private String[] listSupported() {
     // List of languages in alphabetical order. (Add yours here.)
     // Also remember to add it to the corresponding build/build.xml rule.
@@ -99,7 +99,7 @@ public class Language {
       "es", // Spanish
       "fr", // French, Français
       "ja", // Japanese
-      "ko", // Korean      
+      "ko", // Korean
       "nl", // Dutch, Nederlands
       "pt", // Portuguese
       "tr", // Turkish
@@ -126,7 +126,7 @@ public class Language {
 
 
   /** Read the saved language */
-  static private String loadLanguage() { 
+  static private String loadLanguage() {
     try {
       if (prefFile.exists()) {
         String language = PApplet.loadStrings(prefFile)[0];
@@ -140,11 +140,11 @@ public class Language {
     }
     return null;
   }
-  
-  
+
+
   /**
-   * Save the language directly to a settings file. This is 'save' and not 
-   * 'set' because a language change requires a restart of Processing. 
+   * Save the language directly to a settings file. This is 'save' and not
+   * 'set' because a language change requires a restart of Processing.
    */
   static public void saveLanguage(String language) {
     try {
@@ -154,8 +154,8 @@ public class Language {
     }
     Base.getPlatform().saveLanguage(language);
   }
-  
-  
+
+
   /** Singleton constructor */
   static public Language init() {
     if (instance == null) {
@@ -181,13 +181,13 @@ public class Language {
     }
   }
 
-  
+
   static public String interpolate(String text, Object... arguments) {
 //    return String.format(init().bundle.getString(text), arguments);
     return String.format(init().bundle.getString(text), arguments);
   }
 
-  
+
   static public String pluralize(String text, int count) {
 //    ResourceBundle bundle = init().bundle;
     LanguageBundle bundle = init().bundle;
@@ -199,7 +199,7 @@ public class Language {
     }
     return interpolate(String.format(fmt, "n"), count);
   }
-  
+
 
   /** Get all available languages */
   static public Map<String, String> getLanguages() {
@@ -207,9 +207,9 @@ public class Language {
   }
 
 
-  /** 
+  /**
    * Get the current language.
-   * @return two digit ISO code (lowercase)  
+   * @return two digit ISO code (lowercase)
    */
   static public String getLanguage() {
     return init().language;
@@ -219,7 +219,7 @@ public class Language {
 //  /** Set new language (called by Preferences) */
 //  static public void setLanguage(String language) {
 //    this.language = language;
-//    
+//
 //    try {
 //      File file = Base.getContentFile("lib/language.txt");
 //      Base.saveFile(language, file);
@@ -265,14 +265,14 @@ public class Language {
     }
   }
   */
-  
-  
+
+
   static class LanguageBundle {
     Map<String, String> table;
-    
+
     LanguageBundle(String language) throws IOException {
       table = new HashMap<String, String>();
-      
+
       String baseFilename = "languages/PDE.properties";
       String langFilename = "languages/PDE_" + language + ".properties";
 
@@ -287,23 +287,38 @@ public class Language {
       if (userLangFile.exists()) {
         langFile = userLangFile;
       }
-      
+
       read(baseFile);
       read(langFile);
     }
-    
+
     void read(File additions) {
       String[] lines = PApplet.loadStrings(additions);
-      for (String line : lines) {
+      //for (String line : lines) {
+      for (int i = 0; i < lines.length; i++) {
+        String line = lines[i];
         if ((line.length() == 0) ||
             (line.charAt(0) == '#')) continue;
 
-        // this won't properly handle = signs being in the text
+        // this won't properly handle = signs inside in the text
         int equals = line.indexOf('=');
         if (equals != -1) {
           String key = line.substring(0, equals).trim();
           String value = line.substring(equals + 1).trim();
-          
+
+          /*
+          // Support for backslashes to continue lines... Nah.
+          while (line.endsWith("\\")) {
+            // remove the backslash from the previous
+            value = value.substring(0, value.length() - 1);
+            // get the next line
+            line = lines[++i].trim();
+            // append the new line to the value (with a space)
+            // This is imperfect since the prev may end <br>
+            value += " " + line;
+          }
+          */
+
           // fix \n and \'
           value = value.replaceAll("\\\\n", "\n");
           value = value.replaceAll("\\\\'", "'");
@@ -312,11 +327,11 @@ public class Language {
         }
       }
     }
-    
+
     String getString(String key) {
       return table.get(key);
     }
-    
+
     boolean containsKey(String key) {
       return table.containsKey(key);
     }
