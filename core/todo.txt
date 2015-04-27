@@ -10,6 +10,7 @@ _   https://github.com/processing/processing/issues/3163
 _ sketch window is not placed at correct location when running a second time
 _   https://github.com/processing/processing/issues/3125
 _ y location of frame might be negative, but that might be ok 
+_   right now, on Windows it moves it on-screen (b/c of previous bug reports)
 _   may be cause of some of the display placement issues w/ multiple displays
 _   seem to recall one of the bugs mentioning stacked displays
 _   need to change to iterate through display rectangles

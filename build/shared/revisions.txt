@@ -9,16 +9,32 @@ release to take care of a few things that were broken in 3.0a6.
 + Fix bug that prevented the Preferences window from opening
   https://github.com/processing/processing/issues/3215
 
-
-[ contributed fixes ] 
++ Install/remove buttons not working in the Library/Mode/Tool Managers
+  https://github.com/processing/processing/issues/3172
 
 + Preferences window elements not sized correctly in 3.0a6
-  https://github.com/processing/processing/pull/3217
   https://github.com/processing/processing/issues/3212
+  https://github.com/processing/processing/pull/3217
+  https://github.com/processing/processing/pull/3220
 
 + Fixed Find/Replace layout regressions in 3.0a6
   https://github.com/processing/processing/issues/3213
   https://github.com/processing/processing/pull/3216
+
++ Avoid minor memory leak in StringList.pop()
+
+
+[ known issues ] 
+
++ OpenGL sketches work on Windows (32- and 64-bit) only after running 
+  a sketch that uses the default renderer
+  https://github.com/processing/processing/issues/3218
+
++ Other issues that are our highest priority for the next release:
+  https://github.com/processing/processing/labels/critical
+
++ Other high priority items to be fixed before 3.0:
+  https://github.com/processing/processing/issues?q=is%3Aopen+label%3Ahigh+-label%3Aenhancement
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

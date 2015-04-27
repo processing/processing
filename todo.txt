@@ -3,13 +3,11 @@ X fix bug causing Preferences window exception
 X   https://github.com/processing/processing/issues/3215
 X install/remove buttons not working in the managers
 X   https://github.com/processing/processing/issues/3172
-
-akarshit
-_ Preferences window elements not sized correctly in 3.0a6
-_   https://github.com/processing/processing/issues/3212
+X Preferences window elements not sized correctly in 3.0a6
+X   https://github.com/processing/processing/issues/3212
 X   https://github.com/processing/processing/pull/3217
 X   https://github.com/processing/processing/pull/3220
-_   still having trouble w/ font menus
+X   call setEditable() later after the layout
 X Fixed Find/Replace layout regressions in 3.0a6
 X   https://github.com/processing/processing/issues/3213
 X   https://github.com/processing/processing/pull/3216
@@ -35,12 +33,15 @@ _ show debug window when running, hide when stopped
 _ can we animate the show/hide for the debug box?
 _ break out Mode options to their own panels in prefs
 _   Mode should just provide a panel for their prefs
+_ in PDE.properties, unnecessary special syntax is used for replacements
+_   methoddef, varname, classname, namefield, typeA, typeB will be replaced with the correct value during runtime (don't translate)
 
 
 breakage
 _ break out a gui package (get class count down in .app)
 _ remove deprecated methods
 _ do the right thing on passing around List vs ArrayList and others
+_ PreferencesFrame is a misnomer (not a frame itself)
 
 
 gui
