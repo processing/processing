@@ -1,4 +1,5 @@
-0235 (3.0a7)
+0235 (3.0a8)
+X pop() was not implemented correctly
 
 
 high priority
