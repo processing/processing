@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-14 The Processing Foundation
+  Copyright (c) 2012-15 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -43,8 +43,8 @@ import processing.core.*;
 public class PreferencesFrame {
   JFrame dialog;
   GroupLayout layout;
-  int wide;
-  int high;
+//  int wide;
+//  int high;
 
   static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 };
 
@@ -86,7 +86,7 @@ public class PreferencesFrame {
     //dialog = new JDialog(editor, "Preferences", true);
     dialog = new JFrame(Language.text("preferences"));
     Container pain = dialog.getContentPane();
-    layout = new GroupLayout(pain);// pain ??
+    layout = new GroupLayout(pain);
     layout.setAutoCreateGaps(true);
     layout.setAutoCreateContainerGaps(true);
 
@@ -212,7 +212,7 @@ public class PreferencesFrame {
 //    box.add(fontSizelabel);
     fontSizeField = new JComboBox<Integer>(FONT_SIZES);
 ////    fontSizeField = new JComboBox<Integer>(FONT_SIZES);
-    fontSizeField.setEditable(true);
+//    fontSizeField.setEditable(true);
 //    box.add(fontSizeField);
 //    box.add(Box.createHorizontalStrut(GUI_BETWEEN));
 
@@ -221,7 +221,7 @@ public class PreferencesFrame {
 //    box.add(consoleSizeLabel);
 ////    consoleSizeField = new JComboBox<Integer>(FONT_SIZES);
     consoleFontSizeField = new JComboBox<Integer>(FONT_SIZES);
-    consoleFontSizeField.setEditable(true);
+//    consoleFontSizeField.setEditable(true);
 //    box.add(consoleSizeField);
 
 //    pain.add(box);
@@ -527,10 +527,12 @@ public class PreferencesFrame {
           Base.openFolder(Base.getSettingsFolder());
         }
 
+        // Light this up in blue like a hyperlink
         public void mouseEntered(MouseEvent e) {
           clickable.setForeground(new Color(0, 0, 140));
         }
 
+        // Set the text back to black when the mouse is outside
         public void mouseExited(MouseEvent e) {
           clickable.setForeground(Color.BLACK);
         }
@@ -685,7 +687,7 @@ public class PreferencesFrame {
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(okButton)
                   .addComponent(cancelButton))
-      .addGap(BORDER) 
+      .addGap(BORDER)
       );
     dialog.getRootPane().setDefaultButton(okButton);
 
@@ -711,6 +713,10 @@ public class PreferencesFrame {
     dialog.pack();
     dialog.setLocationRelativeTo(null);
 
+    // Workaround for OS X, which breaks the layout when these are set earlier
+    // https://github.com/processing/processing/issues/3212
+    fontSizeField.setEditable(true);
+    consoleFontSizeField.setEditable(true);
 
     // handle window closing commands for ctrl/cmd-W or hitting ESC.
 
@@ -734,9 +740,9 @@ public class PreferencesFrame {
   }
 
 
-  public Dimension getPreferredSize() {
-    return new Dimension(wide, high);
-  }
+//  public Dimension getPreferredSize() {
+//    return new Dimension(wide, high);
+//  }
 
 
   // .................................................................
@@ -884,11 +890,12 @@ public class PreferencesFrame {
     }
 
     // This takes a while to load, so run it from a separate thread
-    EventQueue.invokeLater(new Runnable() {
+    //EventQueue.invokeLater(new Runnable() {
+    new Thread(new Runnable() {
       public void run() {
         initFontList();
       }
-    });
+    }).start();
 
     fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
     consoleFontSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
@@ -928,13 +935,20 @@ public class PreferencesFrame {
   void initFontList() {
     if (monoFontFamilies == null) {
       monoFontFamilies = Toolkit.getMonoFontFamilies();
-      fontSelectionBox.setModel(new DefaultComboBoxModel<String>(monoFontFamilies));
-      String family = Preferences.get("editor.font.family");
 
-      // Set a reasonable default, in case selecting the family fails
-      fontSelectionBox.setSelectedItem("Monospaced");
-      fontSelectionBox.setSelectedItem(family);
-      fontSelectionBox.setEnabled(true);
+      EventQueue.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          fontSelectionBox.setModel(new DefaultComboBoxModel<String>(monoFontFamilies));
+          String family = Preferences.get("editor.font.family");
+
+          // Set a reasonable default, in case selecting the family fails
+          fontSelectionBox.setSelectedItem("Monospaced");
+          // Now try to select the family (will fail silently, see prev line)
+          fontSelectionBox.setSelectedItem(family);
+          fontSelectionBox.setEnabled(true);
+        }
+      });
     }
   }
 
