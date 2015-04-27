@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -81,7 +81,6 @@ class ContributionPanel extends JPanel {
   private boolean enableHyperlinks;
   private HyperlinkListener conditionalHyperlinkOpener;
   private JTextPane descriptionBlock;
-//  private JTextPane notificationBlock;
   private JLabel notificationBlock;
   private JButton updateButton;
   private JProgressBar installProgressBar;
@@ -90,7 +89,6 @@ class ContributionPanel extends JPanel {
   private JMenuItem openFolder;
   private JPanel barButtonCardPane;
 
-//  private HashSet<JTextPane> headerPaneSet;
   private ActionListener removeActionListener;
   private ActionListener installActionListener;
   private ActionListener undoActionListener;
@@ -103,7 +101,6 @@ class ContributionPanel extends JPanel {
   ContributionPanel(ContributionListPanel contributionListPanel) {
     listPanel = contributionListPanel;
     barButtonCardPane = new JPanel();
-//    headerPaneSet = new HashSet<JTextPane>();
 
     enableHyperlinks = false;
     alreadySelected = false;
@@ -546,49 +543,13 @@ class ContributionPanel extends JPanel {
   public void setContribution(Contribution contrib) {
     this.contrib = contrib;
 
-
     if (contrib.isSpecial()) {
-      ImageIcon processingIcon = new ImageIcon(Toolkit.getLibImage("icons/pde-"
-        + "48" + ".png"));
+      ImageIcon processingIcon = Toolkit.getLibIcon("icons/pde-48.png");
       JLabel iconLabel = new JLabel(processingIcon);
       iconLabel.setBorder(new EmptyBorder(4, 7, 7, 7));
       iconLabel.setVerticalAlignment(SwingConstants.TOP);
       add(iconLabel, BorderLayout.WEST);
     }
-
-//    StringBuilder nameText = new StringBuilder();
-//    nameText.append("<html><body><b>");
-//    if (contrib.getUrl() == null) {
-//      nameText.append(contrib.getName());
-//    } else {
-//      nameText.append("<a href=\"" + contrib.getUrl() + "\">" + contrib.getName() + "</a>");
-//    }
-//    nameText.append("</b>");
-//    String authorList = contrib.getAuthorList();
-//    if (authorList != null && !authorList.isEmpty()) {
-//      nameText.append(" by ");
-//      nameText.append(toHtmlLinks(contrib.getAuthorList()));
-//    }
-//    nameText.append("</body></html>");
-//    headerText.setText(nameText.toString());
-//
-//    StringBuilder description = new StringBuilder();
-//    description.append("<html><body>");
-//    boolean isFlagged = contrib.isDeletionFlagged();
-//    if (isFlagged) {
-//      description.append(ContributionListPanel.DELETION_MESSAGE);
-//    } else {
-//      String sentence = contrib.getSentence();
-//      if (sentence == null || sentence.isEmpty()) {
-//        sentence = "<i>Description unavailable.</i>";
-//      } else {
-//        sentence = sanitizeHtmlTags(sentence);
-//        sentence = toHtmlLinks(sentence);
-//      }
-//      description.append(sentence);
-//    }
-//    description.append("</body></html>");
-//    descriptionText.setText(description.toString());
 
     StringBuilder description = new StringBuilder();
     description.append("<html><body><b>");
@@ -613,7 +574,6 @@ class ContributionPanel extends JPanel {
     } else if (contrib.isUpdateFlagged()) {
       description.append(UPDATE_RESTART_MESSAGE);
     } else {
-
       String sentence = contrib.getSentence();
       if (sentence == null || sentence.isEmpty()) {
         sentence = String.format("<i>%s</i>", Language.text("contrib.errors.description_unavailable"));
@@ -827,26 +787,19 @@ class ContributionPanel extends JPanel {
     installRemoveButton.setEnabled(installRemoveButton.getText().equals(Language.text("contrib.remove")) ||!contribListing.hasListDownloadFailed());
     reorganizePaneComponents();
 
-//    for (JTextPane textPane : headerPaneSet) {
-    {
-//      JTextPane textPane = headerText;
-//      JTextPane textPane = textBlock;
-      JEditorPane editorPane = descriptionBlock;  //textPane;
-
-      editorPane.removeHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
-      editorPane.removeHyperlinkListener(conditionalHyperlinkOpener);
-      if (isSelected()) {
-        editorPane.addHyperlinkListener(conditionalHyperlinkOpener);
-        editorPane.setEditable(false);
-      } else {
-        editorPane.addHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
-        editorPane.setEditable(true);
-      }
-
-      // Update style of hyperlinks
-//      setSelectionStyle(textPane, isSelected());
-      setSelectionStyle(descriptionBlock, isSelected());
+    descriptionBlock.removeHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
+    descriptionBlock.removeHyperlinkListener(conditionalHyperlinkOpener);
+    if (isSelected()) {
+      descriptionBlock.addHyperlinkListener(conditionalHyperlinkOpener);
+      descriptionBlock.setEditable(false);
+    } else {
+      descriptionBlock.addHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
+      descriptionBlock.setEditable(true);
     }
+
+    // Update style of hyperlinks
+    setSelectionStyle(descriptionBlock, isSelected());
+
     alreadySelected = isSelected();
   }
 

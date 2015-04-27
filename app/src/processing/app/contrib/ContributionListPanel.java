@@ -15,7 +15,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License along 
+  You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
@@ -36,7 +36,7 @@ import processing.app.Base;
 
 // The "Scrollable" implementation and its methods here take care of preventing
 // the scrolling area from running exceptionally slowly. Not sure why they're
-// necessary in the first place, however; seems like odd behavior.  
+// necessary in the first place, however; seems like odd behavior.
 // It also allows the description text in the panels to wrap properly.
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
@@ -55,7 +55,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 //  private ContributionListing contribListing;
   private ContributionListing contribListing = ContributionListing.getInstance();
 
-  
+
   public ContributionListPanel(ContributionManagerDialog libraryManager,
                                ContributionFilter filter) {
     super();
@@ -84,7 +84,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     status = new StatusPanel();
   }
 
-  
+
   private void updatePanelOrdering() {
     int row = 0;
     for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
@@ -108,11 +108,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     add(status, c);
   }
 
-  
-//  static int inc; 
-  
+
   public void contributionAdded(final Contribution contribution) {
-//    new Exception().printStackTrace();
     if (filter.matches(contribution)) {
       EventQueue.invokeLater(new Runnable() {
         public void run() {
@@ -122,14 +119,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
               panelByContribution.put(contribution, newPanel);
             }
             if (newPanel != null) {
-//              System.out.println("ContributionListPanel.contributionAdded(" + contribution.getName() + ")");
               newPanel.setContribution(contribution);
               add(newPanel);
               updatePanelOrdering();
-//                PrintWriter writer = PApplet.createWriter(new File("/Users/fry/Desktop/traces/" + PApplet.nf(++inc, 4) + ".txt"));
-//                new Exception().printStackTrace(writer);
-//                writer.flush();
-//                writer.close();
               updateColors();  // XXX this is the place
             }
           }
@@ -138,7 +130,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
   }
 
-  
+
   public void contributionRemoved(final Contribution contribution) {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
@@ -156,7 +148,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     });
   }
 
-  
+
   public void contributionChanged(final Contribution oldContrib,
                                   final Contribution newContrib) {
     EventQueue.invokeLater(new Runnable() {
@@ -176,10 +168,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     });
   }
 
-  
+
   public void filterLibraries(List<Contribution> filteredContributions) {
     synchronized (panelByContribution) {
-      Set<Contribution> hiddenPanels = new TreeSet<Contribution>(contribListing.getComparator());
+      Set<Contribution> hiddenPanels =
+        new TreeSet<Contribution>(contribListing.getComparator());
       hiddenPanels.addAll(panelByContribution.keySet());
 
       for (Contribution info : filteredContributions) {
@@ -198,11 +191,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       }
     }
   }
-  
+
 
   protected void setSelectedPanel(ContributionPanel panel) {
     if (selectedPanel == panel) {
       selectedPanel.setSelected(true);
+
     } else {
       ContributionPanel lastSelected = selectedPanel;
       selectedPanel = panel;
@@ -216,13 +210,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       requestFocusInWindow();
     }
   }
-  
-  
+
+
   protected ContributionPanel getSelectedPanel() {
     return selectedPanel;
   }
 
-  
+
   /**
    * Updates the colors of all library panels that are visible.
    */
@@ -267,12 +261,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
   }
 
-  
+
   public Dimension getPreferredScrollableViewportSize() {
     return getPreferredSize();
   }
 
-  
+
   /**
    * Amount to scroll to reveal a new page of items
    */
@@ -291,7 +285,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     return 0;
   }
 
-  
+
   /**
    * Amount to scroll to reveal the rest of something we are on or a new item
    */
@@ -332,13 +326,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     return 0;
   }
 
-  
+
   public boolean getScrollableTracksViewportHeight() {
     return false;
   }
 
-  
+
   public boolean getScrollableTracksViewportWidth() {
     return true;
-  }  
+  }
 }
