@@ -2739,7 +2739,6 @@ public class JavaEditor extends Editor {
    * Replace all numbers with variables and add code to initialize
    * these variables and handle update messages.
    */
-  //public boolean automateSketch(Sketch sketch, ArrayList<Handle> handles[])
   protected boolean automateSketch(Sketch sketch, List<List<Handle>> handles) {
     SketchCode[] code = sketch.getCode();
 
@@ -2751,8 +2750,8 @@ public class JavaEditor extends Editor {
       return false;
     }
 
-    int setupStartPos = SketchParser.getSetupStart(baseCode[0]);
-    if (setupStartPos < 0) {
+    int setupEndPos = SketchParser.getSetupEnd(baseCode[0]);
+    if (setupEndPos < 0) {
       return false;
     }
 
@@ -2849,8 +2848,8 @@ public class JavaEditor extends Editor {
       " tweakmode_initAllVars();\n"+
       " tweakmode_initCommunication();\n\n";
 
-    setupStartPos = SketchParser.getSetupStart(c);
-    c = replaceString(c, setupStartPos, setupStartPos, addToSetup);
+    setupEndPos = SketchParser.getSetupEnd(c);
+    c = replaceString(c, setupEndPos, setupEndPos, addToSetup);
 
     code[0].setProgram(header + c);
 

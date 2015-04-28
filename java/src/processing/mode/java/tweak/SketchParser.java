@@ -38,17 +38,22 @@ public class SketchParser {
 	ArrayList<ColorMode> colorModes;
 
 	List<List<Range>> scientificNotations;
-
-
+	
+	Range setupFunction;
+	
 	public SketchParser(String[] codeTabs, boolean requiresComment) {
 		this.codeTabs = codeTabs;
 		this.requiresComment = requiresComment;
 		intVarCount=0;
 		floatVarCount=0;
-
+		
+		// get setup function range (to ignore all numbers there)
+		setupFunction = new Range(getSetupStart(codeTabs[0]), getSetupEnd(codeTabs[0]));
+		
+		// get all scientific notation (to ignore them)
 		scientificNotations = getAllScientificNotations();
 
-		// find, add, and sort all tweakable numbers in the sketch
+		// find, add, and sort all tweak-able numbers in the sketch
 		addAllNumbers();
 
 		// handle colors
@@ -65,11 +70,11 @@ public class SketchParser {
 
 
 	public void addAllNumbers() {
-		//allHandles = new ArrayList[codeTabs.length];  // moved inside addAllDecimalNumbers
+		allHandles = new ArrayList<>();
+
 		addAllDecimalNumbers();
 		addAllHexNumbers();
 		addAllWebColorNumbers();
-		//for (int i=0; i<codeTabs.length; i++) {
 		for (List<Handle> handle : allHandles) {
 			//Collections.sort(allHandles[i], new HandleComparator());
 		  Collections.sort(handle, new HandleComparator());
@@ -83,14 +88,11 @@ public class SketchParser {
 	 * list of all numbers in the sketch (excluding hexadecimals)
 	 */
 	private void addAllDecimalNumbers() {
-	   allHandles = new ArrayList<>();
-
 		// for every number found:
 		// save its type (int/float), name, value and position in code.
 
 		Pattern p = Pattern.compile("[\\[\\{<>(),\\t\\s\\+\\-\\/\\*^%!|&=?:~]\\d+\\.?\\d*");
 		for (int i = 0; i < codeTabs.length; i++) {
-			//allHandles[i] = new ArrayList<Handle>();
 		  List<Handle> handles = new ArrayList<Handle>();
 		  allHandles.add(handles);
 
@@ -104,6 +106,11 @@ public class SketchParser {
 
 				if (isInComment(start, codeTabs[i])) {
 					// ignore comments
+					continue;
+				}
+				
+				if (setupFunction.contains(start)) {
+					// ignore numbers in setup
 					continue;
 				}
 
@@ -193,6 +200,11 @@ public class SketchParser {
 					// ignore comments
 					continue;
 				}
+				
+				if (setupFunction.contains(start)) {
+					// ignore number in setup
+					continue;
+				}
 
 				if (requiresComment) {
 					// only add numbers that have the "// tweak" comment in their line
@@ -247,6 +259,11 @@ public class SketchParser {
 
 				if (isInComment(start, codeTabs[i])) {
 					// ignore comments
+					continue;
+				}
+				
+				if (setupFunction.contains(start)) {
+					// ignore number in setup
 					continue;
 				}
 
@@ -326,7 +343,6 @@ public class SketchParser {
 		Pattern p = Pattern.compile("color\\(|color\\s\\(|fill[\\(\\s]|stroke[\\(\\s]|background[\\(\\s]|tint[\\(\\s]");
 
 		for (int i = 0; i < codeTabs.length; i++) {
-			//colorBoxes[i] = new ArrayList<ColorControlBox>();
 			List<ColorControlBox> colorBox = new ArrayList<ColorControlBox>();
 			colorBoxes.add(colorBox);
 
@@ -348,6 +364,11 @@ public class SketchParser {
 					// ignore colors in a comment
 					continue;
 				}
+				
+				if (setupFunction.contains(m.start())) {
+					// ignore number in setup
+					continue;
+				}
 
 				// look for handles inside the parenthesis
 				for (Handle handle : allHandles.get(i)) {
@@ -360,7 +381,7 @@ public class SketchParser {
 
 				if (colorHandles.size() > 0) {
 					/* make sure there is no other stuff between '()' like variables.
-					 * substract all handle values from string inside parenthesis and
+					 * subtract all handle values from string inside parenthesis and
 					 * check there is no garbage left
 					 */
 					String insidePar = tab.substring(openPar+1, closePar);
@@ -427,6 +448,11 @@ public class SketchParser {
 					// ignore colors in a comment
 					continue;
 				}
+				
+				if (setupFunction.contains(m.start())) {
+					// ignore number in setup
+					continue;
+				}
 
 				// put 'colorParamsEnd' after three parameters inside the parenthesis or at the close
 				int colorParamsEnd = openPar;
@@ -450,7 +476,7 @@ public class SketchParser {
 
 				if (colorHandles.size() > 0) {
 					/* make sure there is no other stuff between '()' like variables.
-					 * substract all handle values from string inside parenthesis and
+					 * subtract all handle values from string inside parenthesis and
 					 * check there is no garbage left
 					 */
 					String insidePar = tab.substring(openPar+1, colorParamsEnd);
@@ -546,14 +572,10 @@ public class SketchParser {
 	  List<List<Range>> notations = new ArrayList<>();
 
 		Pattern p = Pattern.compile("[+\\-]?(?:0|[1-9]\\d*)(?:\\.\\d*)?[eE][+\\-]?\\d+");
-		//for (int i = 0; i < codeTabs.length; i++) {
 		for (String code : codeTabs) {
 		  List<Range> notation = new ArrayList<Range>();
-			//notations[i] = new ArrayList<Range>();
-			//Matcher m = p.matcher(codeTabs[i]);
 		  Matcher m = p.matcher(code);
 			while (m.find()) {
-				//notations[i].add(new Range(m.start(), m.end()));
 			  notation.add(new Range(m.start(), m.end()));
 			}
 			notations.add(notation);
@@ -772,11 +794,37 @@ public class SketchParser {
 
 		return -1;
 	}
-
-
-//	private String replaceString(String str, int start, int end, String put) {
-//		return str.substring(0, start) + put + str.substring(end, str.length());
-//	}
+	
+	static public int getSetupEnd(String code) {
+		int setupStart = getSetupStart(code);
+		if (setupStart == -1) {
+			return -1;
+		}
+		
+		// count brackets to look for setup end
+		int bracketCount=1;
+		int pos = setupStart;
+		while (bracketCount>0 && pos<code.length()) {
+			if (code.charAt(pos) == '{') {
+				if (!isInComment(pos, code)) {
+					bracketCount++;
+				}
+			}
+			else if (code.charAt(pos) == '}') {
+				if (!isInComment(pos, code)) {
+					bracketCount--;
+				}
+			}
+			
+			pos++;
+		}
+		
+		if (bracketCount == 0) {
+			return pos-1;
+		}
+		
+		return -1;
+	}
 
 
 	static class Range {
