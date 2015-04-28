@@ -1710,8 +1710,9 @@ public class PGraphics extends PImage implements PConstants {
 
   /** Override this method to return an appropriate shape for your renderer */
   protected PShape createShapeFamily(int type) {
-    showMethodWarning("createShape()");
-    return null;
+    return new PShape(this, type);
+//    showMethodWarning("createShape()");
+//    return null;
   }
 
 
@@ -1788,9 +1789,11 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /** Override this to have a custom shape object used by your renderer. */
   protected PShape createShapePrimitive(int kind, float... p) {
-    showMethodWarning("createShape()");
-    return null;
+//    showMethodWarning("createShape()");
+//    return null;
+    return new PShape(this, kind, p);
   }
 
 
