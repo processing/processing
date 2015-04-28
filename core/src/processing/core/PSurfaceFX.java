@@ -31,7 +31,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -168,10 +167,14 @@ public class PSurfaceFX implements PSurface {
                          int deviceIndex, boolean fullScreen,
                          boolean spanDisplays) {
     this.sketch = sketch;
-    //Application.launch(PApplicationFX.class, new String[] { });
     PApplicationFX.surface = this;
-    Application.launch(PApplicationFX.class);
-    return new DummyFrame();
+    Frame frame = new DummyFrame();
+    new Thread(new Runnable() {
+      public void run() {
+        Application.launch(PApplicationFX.class);
+      }
+    }).start();
+    return frame;
   }
 
 
@@ -193,7 +196,11 @@ public class PSurfaceFX implements PSurface {
 
     @Override
     public void setTitle(String title) {
-      stage.setTitle(title);
+      if (stage != null) {
+        stage.setTitle(title);
+      } else {
+        System.err.println("stage was null for setTitle()");
+      }
     }
   }
 
