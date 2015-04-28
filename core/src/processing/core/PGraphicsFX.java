@@ -24,18 +24,24 @@ package processing.core;
 
 import java.nio.IntBuffer;
 
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelFormat;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.transform.Transform;
 
 
 public class PGraphicsFX extends PGraphics {
   GraphicsContext context;
+
+  static final WritablePixelFormat<IntBuffer> argbFormat =
+    PixelFormat.getIntArgbInstance();
 
 //  public Graphics2D g2;
 //  Composite defaultComposite;
@@ -1077,8 +1083,8 @@ public class PGraphicsFX extends PGraphics {
     }
 
     context.drawImage(((ImageCache) getCache(who)).image,
-                      x1, y1, x2, y2,
-                      u1, v1, u2, v2);
+                      u1, v1, u2-u1, v2-v1,
+                      x1, y1, x2-x1, y2-y1);
 
     // Every few years I think "nah, Java2D couldn't possibly be that f*king
     // slow, why are we doing this by hand?" then comes the affirmation:
@@ -1141,9 +1147,6 @@ public class PGraphicsFX extends PGraphics {
         image = new WritableImage(source.width, source.height);
       }
 
-      final WritablePixelFormat<IntBuffer> format =
-        PixelFormat.getIntArgbInstance();
-
       //WritableRaster wr = image.getRaster();
       PixelWriter pw = image.getPixelWriter();
       if (tint) {
@@ -1178,7 +1181,7 @@ public class PGraphicsFX extends PGraphics {
                   (((b2 * b1) & 0xff00) >> 8);
             }
             //wr.setDataElements(0, y, source.width, 1, tintedTemp);
-            pw.setPixels(0, y, source.width, 1, format, tintedTemp, 0, source.width);
+            pw.setPixels(0, y, source.width, 1, argbFormat, tintedTemp, 0, source.width);
           }
           // could this be any slower?
 //          float[] scales = { tintR, tintG, tintB };
@@ -1197,7 +1200,7 @@ public class PGraphicsFX extends PGraphics {
                 tintedTemp[x] = hi | (source.pixels[index++] & 0xFFFFFF);
               }
               //wr.setDataElements(0, y, source.width, 1, tintedTemp);
-              pw.setPixels(0, y, source.width, 1, format, tintedTemp, 0, source.width);
+              pw.setPixels(0, y, source.width, 1, argbFormat, tintedTemp, 0, source.width);
             }
           } else {
             int index = 0;
@@ -1236,7 +1239,7 @@ public class PGraphicsFX extends PGraphics {
                 }
               }
               //wr.setDataElements(0, y, source.width, 1, tintedTemp);
-              pw.setPixels(0, y, source.width, 1, format, tintedTemp, 0, source.width);
+              pw.setPixels(0, y, source.width, 1, argbFormat, tintedTemp, 0, source.width);
             }
           }
           // Not sure why ARGB images take the scales in this order...
@@ -1257,8 +1260,9 @@ public class PGraphicsFX extends PGraphics {
         }
         // If no tint, just shove the pixels on in there verbatim
         //wr.setDataElements(0, 0, source.width, source.height, source.pixels);
+        System.out.println("moving the big one");
         pw.setPixels(0, 0, source.width, source.height,
-                     format, source.pixels, 0, source.width);
+                     argbFormat, source.pixels, 0, source.width);
       }
       this.tinted = tint;
       this.tintedColor = tintColor;
@@ -2186,14 +2190,18 @@ public class PGraphicsFX extends PGraphics {
 //    }
 //    return raster;
 //  }
-//
-//
-//  @Override
-//  public void loadPixels() {
-//    if ((pixels == null) || (pixels.length != width * height)) {
-//      pixels = new int[width * height];
-//    }
-//
+
+
+  @Override
+  public void loadPixels() {
+    pixelFactor = 2;
+    int wide = width * pixelFactor;
+    int high = height * pixelFactor;
+
+    if ((pixels == null) || (pixels.length != wide*high)) {
+      pixels = new int[wide * high];
+    }
+
 //    WritableRaster raster = getRaster();
 //    raster.getDataElements(0, 0, width, height, pixels);
 //    if (raster.getNumBands() == 3) {
@@ -2203,12 +2211,18 @@ public class PGraphicsFX extends PGraphics {
 //        pixels[i] = 0xff000000 | pixels[i];
 //      }
 //    }
-//      //((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
-////    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
-////    WritableRaster raster = image.getRaster();
-//  }
-//
-//
+    SnapshotParameters sp = new SnapshotParameters();
+    if (pixelFactor == 2) {
+      sp.setTransform(Transform.scale(2, 2));
+    }
+    WritableImage wi = ((PSurfaceFX) surface).canvas.snapshot(sp, null);
+    PixelReader pr = wi.getPixelReader();
+    //pr.getPixels(0, 0, width, height, argbFormat, pixels, 0, width);
+    //pr.getPixels(0, 0, width*2, height*2, argbFormat, pixels, 0, width*2);
+    pr.getPixels(0, 0, wide, high, argbFormat, pixels, 0, wide);
+  }
+
+
 ////  /**
 ////   * Update the pixels[] buffer to the PGraphics image.
 ////   * <P>
