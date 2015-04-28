@@ -60,6 +60,9 @@ public interface PConstants {
   // Experimental, higher-performance Java 2D renderer
   static final String E2D = PGraphicsDanger2D.class.getName();
 
+  // Experimental JavaFX renderer; even better 2D performance?
+  static final String FX2D = PGraphicsFX.class.getName();
+
   static final String PDF = "processing.pdf.PGraphicsPDF";
   static final String DXF = "processing.dxf.RawDXF";
 
