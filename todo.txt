@@ -5,6 +5,11 @@ X Unable to install "processing-java"
 X   https://github.com/processing/processing/issues/3224
 X   also update the Windows and Linux versions
 
+contribs
+X Window size not passing into Tweak Mode
+X   https://github.com/processing/processing/issues/3208
+X   https://github.com/processing/processing/pull/3227
+
 
 _ we've lost arrow keys to expand items in the examples window
 _   sketchbook window too?
@@ -166,8 +171,6 @@ _   https://github.com/processing/processing/issues/3154
 _ export application ubuntu -> windows not working (2.2.1)
 _   https://github.com/processing/processing/issues/2698
 _   might be something with libraries (native or otherwise)
-_ Window size not passing into Tweak Mode
-_   https://github.com/processing/processing/issues/3208
 
 
 medium
