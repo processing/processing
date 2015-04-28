@@ -2739,9 +2739,11 @@ public class JavaEditor extends Editor {
    * Replace all numbers with variables and add code to initialize
    * these variables and handle update messages.
    */
-  protected boolean automateSketch(Sketch sketch, List<List<Handle>> handles) {
+  protected boolean automateSketch(Sketch sketch, SketchParser parser) {
     SketchCode[] code = sketch.getCode();
 
+    List<List<Handle>> handles = parser.allHandles;
+    
     if (code.length < 1) {
       return false;
     }
@@ -2793,7 +2795,7 @@ public class JavaEditor extends Editor {
       }
       code[tab].setProgram(c);
     }
-
+    
     // add the main header to the code in the first tab
     String c = code[0].getProgram();
 
