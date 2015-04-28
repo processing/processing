@@ -22,7 +22,16 @@
 
 package processing.core;
 
+import java.nio.IntBuffer;
+
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.PixelFormat;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+import javafx.scene.image.WritablePixelFormat;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 
 
 public class PGraphicsFX extends PGraphics {
@@ -647,15 +656,14 @@ public class PGraphicsFX extends PGraphics {
 ////      }
 //    }
 //  }
-//
-//
-//  @Override
-//  public void line(float x1, float y1, float x2, float y2) {
-//    line.setLine(x1, y1, x2, y2);
-//    strokeShape(line);
-//  }
-//
-//
+
+
+  @Override
+  public void line(float x1, float y1, float x2, float y2) {
+    context.strokeLine(x1, y1, x2, y2);
+  }
+
+
 //  @Override
 //  public void triangle(float x1, float y1, float x2, float y2,
 //                       float x3, float y3) {
@@ -998,273 +1006,276 @@ public class PGraphicsFX extends PGraphics {
 //    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 //                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 //  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // IMAGE
-//
-//
-//  //public void imageMode(int mode)
-//
-//
-//  //public void image(PImage image, float x, float y)
-//
-//
-//  //public void image(PImage image, float x, float y, float c, float d)
-//
-//
-//  //public void image(PImage image,
-//  //                  float a, float b, float c, float d,
-//  //                  int u1, int v1, int u2, int v2)
-//
-//
-//  /**
-//   * Handle renderer-specific image drawing.
-//   */
-//  @Override
-//  protected void imageImpl(PImage who,
-//                           float x1, float y1, float x2, float y2,
-//                           int u1, int v1, int u2, int v2) {
-//    // Image not ready yet, or an error
-//    if (who.width <= 0 || who.height <= 0) return;
-//
-//    ImageCache cash = (ImageCache) getCache(who);
-//
-//    // Nuke the cache if the image was resized
-//    if (cash != null) {
-//      if (who.width != cash.image.getWidth() ||
-//          who.height != cash.image.getHeight()) {
-//        cash = null;
-//      }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // IMAGE
+
+
+  //public void imageMode(int mode)
+
+
+  //public void image(PImage image, float x, float y)
+
+
+  //public void image(PImage image, float x, float y, float c, float d)
+
+
+  //public void image(PImage image,
+  //                  float a, float b, float c, float d,
+  //                  int u1, int v1, int u2, int v2)
+
+
+  /**
+   * Handle renderer-specific image drawing.
+   */
+  @Override
+  protected void imageImpl(PImage who,
+                           float x1, float y1, float x2, float y2,
+                           int u1, int v1, int u2, int v2) {
+    // Image not ready yet, or an error
+    if (who.width <= 0 || who.height <= 0) return;
+
+    ImageCache cash = (ImageCache) getCache(who);
+
+    // Nuke the cache if the image was resized
+    if (cash != null) {
+      if (who.width != cash.image.getWidth() ||
+          who.height != cash.image.getHeight()) {
+        cash = null;
+      }
+    }
+
+    if (cash == null) {
+      //System.out.println("making new image cache");
+      cash = new ImageCache(); //who);
+      setCache(who, cash);
+      who.updatePixels();  // mark the whole thing for update
+      who.modified = true;
+    }
+
+    // If image previously was tinted, or the color changed
+    // or the image was tinted, and tint is now disabled
+    if ((tint && !cash.tinted) ||
+        (tint && (cash.tintedColor != tintColor)) ||
+        (!tint && cash.tinted)) {
+      // For tint change, mark all pixels as needing update.
+      who.updatePixels();
+    }
+
+    if (who.modified) {
+      if (who.pixels == null) {
+        // This might be a PGraphics that hasn't been drawn to yet.
+        // Can't just bail because the cache has been created above.
+        // https://github.com/processing/processing/issues/2208
+        who.pixels = new int[who.width * who.height];
+      }
+      cash.update(who, tint, tintColor);
+      who.modified = false;
+    }
+
+    context.drawImage(((ImageCache) getCache(who)).image,
+                      x1, y1, x2, y2,
+                      u1, v1, u2, v2);
+
+    // Every few years I think "nah, Java2D couldn't possibly be that f*king
+    // slow, why are we doing this by hand?" then comes the affirmation:
+//    Composite oldComp = null;
+//    if (false && tint) {
+//      oldComp = g2.getComposite();
+//      int alpha = (tintColor >> 24) & 0xff;
+//      System.out.println("using alpha composite");
+//      Composite alphaComp =
+//        AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha / 255f);
+//      g2.setComposite(alphaComp);
 //    }
 //
-//    if (cash == null) {
-//      //System.out.println("making new image cache");
-//      cash = new ImageCache(); //who);
-//      setCache(who, cash);
-//      who.updatePixels();  // mark the whole thing for update
-//      who.modified = true;
-//    }
-//
-//    // If image previously was tinted, or the color changed
-//    // or the image was tinted, and tint is now disabled
-//    if ((tint && !cash.tinted) ||
-//        (tint && (cash.tintedColor != tintColor)) ||
-//        (!tint && cash.tinted)) {
-//      // For tint change, mark all pixels as needing update.
-//      who.updatePixels();
-//    }
-//
-//    if (who.modified) {
-//      if (who.pixels == null) {
-//        // This might be a PGraphics that hasn't been drawn to yet.
-//        // Can't just bail because the cache has been created above.
-//        // https://github.com/processing/processing/issues/2208
-//        who.pixels = new int[who.width * who.height];
-//      }
-//      cash.update(who, tint, tintColor);
-//      who.modified = false;
-//    }
-//
-//    g2.drawImage(((ImageCache) getCache(who)).image,
+//    long t = System.currentTimeMillis();
+//    g2.drawImage(who.getImage(),
 //                 (int) x1, (int) y1, (int) x2, (int) y2,
 //                 u1, v1, u2, v2, null);
+//    System.out.println(System.currentTimeMillis() - t);
 //
-//    // Every few years I think "nah, Java2D couldn't possibly be that f*king
-//    // slow, why are we doing this by hand?" then comes the affirmation:
-////    Composite oldComp = null;
-////    if (false && tint) {
-////      oldComp = g2.getComposite();
-////      int alpha = (tintColor >> 24) & 0xff;
-////      System.out.println("using alpha composite");
-////      Composite alphaComp =
-////        AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha / 255f);
-////      g2.setComposite(alphaComp);
-////    }
-////
-////    long t = System.currentTimeMillis();
-////    g2.drawImage(who.getImage(),
-////                 (int) x1, (int) y1, (int) x2, (int) y2,
-////                 u1, v1, u2, v2, null);
-////    System.out.println(System.currentTimeMillis() - t);
-////
-////    if (oldComp != null) {
-////      g2.setComposite(oldComp);
-////    }
-//  }
-//
-//
-//  static class ImageCache {
-//    boolean tinted;
-//    int tintedColor;
-//    int[] tintedTemp;  // one row of tinted pixels
-//    BufferedImage image;
-////    BufferedImage compat;
-//
-////    public ImageCache(PImage source) {
-//////      this.source = source;
-////      // even if RGB, set the image type to ARGB, because the
-////      // image may have an alpha value for its tint().
-//////      int type = BufferedImage.TYPE_INT_ARGB;
-////      //System.out.println("making new buffered image");
-//////      image = new BufferedImage(source.width, source.height, type);
-////    }
-//
-//    /**
-//     * Update the pixels of the cache image. Already determined that the tint
-//     * has changed, or the pixels have changed, so should just go through
-//     * with the update without further checks.
-//     */
-//    public void update(PImage source, boolean tint, int tintColor) {
-//      //int bufferType = BufferedImage.TYPE_INT_ARGB;
-//      int targetType = ARGB;
-//      boolean opaque = (tintColor & 0xFF000000) == 0xFF000000;
-//      if (source.format == RGB) {
-//        if (!tint || (tint && opaque)) {
-//          //bufferType = BufferedImage.TYPE_INT_RGB;
-//          targetType = RGB;
-//        }
+//    if (oldComp != null) {
+//      g2.setComposite(oldComp);
+//    }
+  }
+
+
+  static class ImageCache {
+    boolean tinted;
+    int tintedColor;
+    int[] tintedTemp;  // one row of tinted pixels
+    //BufferedImage image;
+    WritableImage image;
+
+    /**
+     * Update the pixels of the cache image. Already determined that the tint
+     * has changed, or the pixels have changed, so should just go through
+     * with the update without further checks.
+     */
+    public void update(PImage source, boolean tint, int tintColor) {
+      //int bufferType = BufferedImage.TYPE_INT_ARGB;
+      int targetType = ARGB;
+      boolean opaque = (tintColor & 0xFF000000) == 0xFF000000;
+      if (source.format == RGB) {
+        if (!tint || (tint && opaque)) {
+          //bufferType = BufferedImage.TYPE_INT_RGB;
+          targetType = RGB;
+        }
+      }
+//      boolean wrongType = (image != null) && (image.getType() != bufferType);
+//      if ((image == null) || wrongType) {
+//        image = new BufferedImage(source.width, source.height, bufferType);
 //      }
-////      boolean wrongType = (image != null) && (image.getType() != bufferType);
-////      if ((image == null) || wrongType) {
-////        image = new BufferedImage(source.width, source.height, bufferType);
-////      }
-//      // Must always use an ARGB image, otherwise will write zeros
-//      // in the alpha channel when drawn to the screen.
-//      // https://github.com/processing/processing/issues/2030
+      // Must always use an ARGB image, otherwise will write zeros
+      // in the alpha channel when drawn to the screen.
+      // https://github.com/processing/processing/issues/2030
 //      if (image == null) {
 //        image = new BufferedImage(source.width, source.height,
 //                                  BufferedImage.TYPE_INT_ARGB);
 //      }
+      if (image == null) {
+        image = new WritableImage(source.width, source.height);
+      }
+
+      final WritablePixelFormat<IntBuffer> format =
+        PixelFormat.getIntArgbInstance();
+
+      //WritableRaster wr = image.getRaster();
+      PixelWriter pw = image.getPixelWriter();
+      if (tint) {
+        if (tintedTemp == null || tintedTemp.length != source.width) {
+          tintedTemp = new int[source.width];
+        }
+        int a2 = (tintColor >> 24) & 0xff;
+//        System.out.println("tint color is " + a2);
+//        System.out.println("source.pixels[0] alpha is " + (source.pixels[0] >>> 24));
+        int r2 = (tintColor >> 16) & 0xff;
+        int g2 = (tintColor >> 8) & 0xff;
+        int b2 = (tintColor) & 0xff;
+
+        //if (bufferType == BufferedImage.TYPE_INT_RGB) {
+        if (targetType == RGB) {
+          // The target image is opaque, meaning that the source image has no
+          // alpha (is not ARGB), and the tint has no alpha.
+          int index = 0;
+          for (int y = 0; y < source.height; y++) {
+            for (int x = 0; x < source.width; x++) {
+              int argb1 = source.pixels[index++];
+              int r1 = (argb1 >> 16) & 0xff;
+              int g1 = (argb1 >> 8) & 0xff;
+              int b1 = (argb1) & 0xff;
+
+              // Prior to 2.1, the alpha channel was commented out here,
+              // but can't remember why (just thought unnecessary b/c of RGB?)
+              // https://github.com/processing/processing/issues/2030
+              tintedTemp[x] = 0xFF000000 |
+                  (((r2 * r1) & 0xff00) << 8) |
+                  ((g2 * g1) & 0xff00) |
+                  (((b2 * b1) & 0xff00) >> 8);
+            }
+            //wr.setDataElements(0, y, source.width, 1, tintedTemp);
+            pw.setPixels(0, y, source.width, 1, format, tintedTemp, 0, source.width);
+          }
+          // could this be any slower?
+//          float[] scales = { tintR, tintG, tintB };
+//          float[] offsets = new float[3];
+//          RescaleOp op = new RescaleOp(scales, offsets, null);
+//          op.filter(image, image);
+
+        //} else if (bufferType == BufferedImage.TYPE_INT_ARGB) {
+        } else if (targetType == ARGB) {
+          if (source.format == RGB &&
+              (tintColor & 0xffffff) == 0xffffff) {
+            int hi = tintColor & 0xff000000;
+            int index = 0;
+            for (int y = 0; y < source.height; y++) {
+              for (int x = 0; x < source.width; x++) {
+                tintedTemp[x] = hi | (source.pixels[index++] & 0xFFFFFF);
+              }
+              //wr.setDataElements(0, y, source.width, 1, tintedTemp);
+              pw.setPixels(0, y, source.width, 1, format, tintedTemp, 0, source.width);
+            }
+          } else {
+            int index = 0;
+            for (int y = 0; y < source.height; y++) {
+              if (source.format == RGB) {
+                int alpha = tintColor & 0xFF000000;
+                for (int x = 0; x < source.width; x++) {
+                  int argb1 = source.pixels[index++];
+                  int r1 = (argb1 >> 16) & 0xff;
+                  int g1 = (argb1 >> 8) & 0xff;
+                  int b1 = (argb1) & 0xff;
+                  tintedTemp[x] = alpha |
+                      (((r2 * r1) & 0xff00) << 8) |
+                      ((g2 * g1) & 0xff00) |
+                      (((b2 * b1) & 0xff00) >> 8);
+                }
+              } else if (source.format == ARGB) {
+                for (int x = 0; x < source.width; x++) {
+                  int argb1 = source.pixels[index++];
+                  int a1 = (argb1 >> 24) & 0xff;
+                  int r1 = (argb1 >> 16) & 0xff;
+                  int g1 = (argb1 >> 8) & 0xff;
+                  int b1 = (argb1) & 0xff;
+                  tintedTemp[x] =
+                      (((a2 * a1) & 0xff00) << 16) |
+                      (((r2 * r1) & 0xff00) << 8) |
+                      ((g2 * g1) & 0xff00) |
+                      (((b2 * b1) & 0xff00) >> 8);
+                }
+              } else if (source.format == ALPHA) {
+                int lower = tintColor & 0xFFFFFF;
+                for (int x = 0; x < source.width; x++) {
+                  int a1 = source.pixels[index++];
+                  tintedTemp[x] =
+                      (((a2 * a1) & 0xff00) << 16) | lower;
+                }
+              }
+              //wr.setDataElements(0, y, source.width, 1, tintedTemp);
+              pw.setPixels(0, y, source.width, 1, format, tintedTemp, 0, source.width);
+            }
+          }
+          // Not sure why ARGB images take the scales in this order...
+//          float[] scales = { tintR, tintG, tintB, tintA };
+//          float[] offsets = new float[4];
+//          RescaleOp op = new RescaleOp(scales, offsets, null);
+//          op.filter(image, image);
+        }
+      } else {  // !tint
+        if (targetType == RGB && (source.pixels[0] >> 24 == 0)) {
+          // If it's an RGB image and the high bits aren't set, need to set
+          // the high bits to opaque because we're drawing ARGB images.
+          source.filter(OPAQUE);
+          // Opting to just manipulate the image here, since it shouldn't
+          // affect anything else (and alpha(get(x, y)) should return 0xff).
+          // Wel also make no guarantees about the values of the pixels array
+          // in a PImage and how the high bits will be set.
+        }
+        // If no tint, just shove the pixels on in there verbatim
+        //wr.setDataElements(0, 0, source.width, source.height, source.pixels);
+        pw.setPixels(0, 0, source.width, source.height,
+                     format, source.pixels, 0, source.width);
+      }
+      this.tinted = tint;
+      this.tintedColor = tintColor;
+
+//      GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+//      compat = gc.createCompatibleImage(image.getWidth(),
+//                                        image.getHeight(),
+//                                        Transparency.TRANSLUCENT);
 //
-//      WritableRaster wr = image.getRaster();
-//      if (tint) {
-//        if (tintedTemp == null || tintedTemp.length != source.width) {
-//          tintedTemp = new int[source.width];
-//        }
-//        int a2 = (tintColor >> 24) & 0xff;
-////        System.out.println("tint color is " + a2);
-////        System.out.println("source.pixels[0] alpha is " + (source.pixels[0] >>> 24));
-//        int r2 = (tintColor >> 16) & 0xff;
-//        int g2 = (tintColor >> 8) & 0xff;
-//        int b2 = (tintColor) & 0xff;
-//
-//        //if (bufferType == BufferedImage.TYPE_INT_RGB) {
-//        if (targetType == RGB) {
-//          // The target image is opaque, meaning that the source image has no
-//          // alpha (is not ARGB), and the tint has no alpha.
-//          int index = 0;
-//          for (int y = 0; y < source.height; y++) {
-//            for (int x = 0; x < source.width; x++) {
-//              int argb1 = source.pixels[index++];
-//              int r1 = (argb1 >> 16) & 0xff;
-//              int g1 = (argb1 >> 8) & 0xff;
-//              int b1 = (argb1) & 0xff;
-//
-//              // Prior to 2.1, the alpha channel was commented out here,
-//              // but can't remember why (just thought unnecessary b/c of RGB?)
-//              // https://github.com/processing/processing/issues/2030
-//              tintedTemp[x] = 0xFF000000 |
-//                  (((r2 * r1) & 0xff00) << 8) |
-//                  ((g2 * g1) & 0xff00) |
-//                  (((b2 * b1) & 0xff00) >> 8);
-//            }
-//            wr.setDataElements(0, y, source.width, 1, tintedTemp);
-//          }
-//          // could this be any slower?
-////          float[] scales = { tintR, tintG, tintB };
-////          float[] offsets = new float[3];
-////          RescaleOp op = new RescaleOp(scales, offsets, null);
-////          op.filter(image, image);
-//
-//        //} else if (bufferType == BufferedImage.TYPE_INT_ARGB) {
-//        } else if (targetType == ARGB) {
-//          if (source.format == RGB &&
-//              (tintColor & 0xffffff) == 0xffffff) {
-//            int hi = tintColor & 0xff000000;
-//            int index = 0;
-//            for (int y = 0; y < source.height; y++) {
-//              for (int x = 0; x < source.width; x++) {
-//                tintedTemp[x] = hi | (source.pixels[index++] & 0xFFFFFF);
-//              }
-//              wr.setDataElements(0, y, source.width, 1, tintedTemp);
-//            }
-//          } else {
-//            int index = 0;
-//            for (int y = 0; y < source.height; y++) {
-//              if (source.format == RGB) {
-//                int alpha = tintColor & 0xFF000000;
-//                for (int x = 0; x < source.width; x++) {
-//                  int argb1 = source.pixels[index++];
-//                  int r1 = (argb1 >> 16) & 0xff;
-//                  int g1 = (argb1 >> 8) & 0xff;
-//                  int b1 = (argb1) & 0xff;
-//                  tintedTemp[x] = alpha |
-//                      (((r2 * r1) & 0xff00) << 8) |
-//                      ((g2 * g1) & 0xff00) |
-//                      (((b2 * b1) & 0xff00) >> 8);
-//                }
-//              } else if (source.format == ARGB) {
-//                for (int x = 0; x < source.width; x++) {
-//                  int argb1 = source.pixels[index++];
-//                  int a1 = (argb1 >> 24) & 0xff;
-//                  int r1 = (argb1 >> 16) & 0xff;
-//                  int g1 = (argb1 >> 8) & 0xff;
-//                  int b1 = (argb1) & 0xff;
-//                  tintedTemp[x] =
-//                      (((a2 * a1) & 0xff00) << 16) |
-//                      (((r2 * r1) & 0xff00) << 8) |
-//                      ((g2 * g1) & 0xff00) |
-//                      (((b2 * b1) & 0xff00) >> 8);
-//                }
-//              } else if (source.format == ALPHA) {
-//                int lower = tintColor & 0xFFFFFF;
-//                for (int x = 0; x < source.width; x++) {
-//                  int a1 = source.pixels[index++];
-//                  tintedTemp[x] =
-//                      (((a2 * a1) & 0xff00) << 16) | lower;
-//                }
-//              }
-//              wr.setDataElements(0, y, source.width, 1, tintedTemp);
-//            }
-//          }
-//          // Not sure why ARGB images take the scales in this order...
-////          float[] scales = { tintR, tintG, tintB, tintA };
-////          float[] offsets = new float[4];
-////          RescaleOp op = new RescaleOp(scales, offsets, null);
-////          op.filter(image, image);
-//        }
-//      } else {  // !tint
-//        if (targetType == RGB && (source.pixels[0] >> 24 == 0)) {
-//          // If it's an RGB image and the high bits aren't set, need to set
-//          // the high bits to opaque because we're drawing ARGB images.
-//          source.filter(OPAQUE);
-//          // Opting to just manipulate the image here, since it shouldn't
-//          // affect anything else (and alpha(get(x, y)) should return 0xff).
-//          // Wel also make no guarantees about the values of the pixels array
-//          // in a PImage and how the high bits will be set.
-//        }
-//        // If no tint, just shove the pixels on in there verbatim
-//        wr.setDataElements(0, 0, source.width, source.height, source.pixels);
-//      }
-//      this.tinted = tint;
-//      this.tintedColor = tintColor;
-//
-////      GraphicsConfiguration gc = parent.getGraphicsConfiguration();
-////      compat = gc.createCompatibleImage(image.getWidth(),
-////                                        image.getHeight(),
-////                                        Transparency.TRANSLUCENT);
-////
-////      Graphics2D g = compat.createGraphics();
-////      g.drawImage(image, 0, 0, null);
-////      g.dispose();
-//    }
-//  }
-//
-//
-//
+//      Graphics2D g = compat.createGraphics();
+//      g.drawImage(image, 0, 0, null);
+//      g.dispose();
+    }
+  }
+
+
+
 //  //////////////////////////////////////////////////////////////
 //
 //  // SHAPE
@@ -1834,55 +1845,51 @@ public class PGraphicsFX extends PGraphics {
 //  // STYLE
 //
 //  // pushStyle(), popStyle(), style() and getStyle() inherited.
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // STROKE CAP/JOIN/WEIGHT
-//
-//
-//  @Override
-//  public void strokeCap(int cap) {
-//    super.strokeCap(cap);
-//    strokeImpl();
-//  }
-//
-//
-//  @Override
-//  public void strokeJoin(int join) {
-//    super.strokeJoin(join);
-//    strokeImpl();
-//  }
-//
-//
-//  @Override
-//  public void strokeWeight(float weight) {
-//    super.strokeWeight(weight);
-//    strokeImpl();
-//  }
-//
-//
-//  protected void strokeImpl() {
-//    int cap = BasicStroke.CAP_BUTT;
-//    if (strokeCap == ROUND) {
-//      cap = BasicStroke.CAP_ROUND;
-//    } else if (strokeCap == PROJECT) {
-//      cap = BasicStroke.CAP_SQUARE;
-//    }
-//
-//    int join = BasicStroke.JOIN_BEVEL;
-//    if (strokeJoin == MITER) {
-//      join = BasicStroke.JOIN_MITER;
-//    } else if (strokeJoin == ROUND) {
-//      join = BasicStroke.JOIN_ROUND;
-//    }
-//
-//    g2.setStroke(new BasicStroke(strokeWeight, cap, join));
-//  }
-//
-//
-//
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // STROKE CAP/JOIN/WEIGHT
+
+
+  @Override
+  public void strokeCap(int cap) {
+    super.strokeCap(cap);
+    if (strokeCap == ROUND) {
+      context.setLineCap(StrokeLineCap.ROUND);
+    } else if (strokeCap == PROJECT) {
+      context.setLineCap(StrokeLineCap.SQUARE);
+    } else {
+      context.setLineCap(StrokeLineCap.BUTT);
+    }
+    //strokeImpl();
+  }
+
+
+  @Override
+  public void strokeJoin(int join) {
+    super.strokeJoin(join);
+    if (strokeJoin == MITER) {
+      context.setLineJoin(StrokeLineJoin.MITER);
+    } else if (strokeJoin == ROUND) {
+      context.setLineJoin(StrokeLineJoin.ROUND);
+    } else {
+      context.setLineJoin(StrokeLineJoin.BEVEL);
+    }
+    //strokeImpl();
+  }
+
+
+  @Override
+  public void strokeWeight(float weight) {
+    super.strokeWeight(weight);
+    context.setLineWidth(weight);
+    //strokeImpl();
+  }
+
+
+
 //  //////////////////////////////////////////////////////////////
 //
 //  // STROKE
@@ -2049,9 +2056,17 @@ public class PGraphicsFX extends PGraphics {
 //      g2.setComposite(oldComposite);
 //    }
 //  }
-//
-//
-//
+
+
+  @Override
+  public void backgroundImpl() {
+    //context.setPaint(backgroundPaint);
+    context.setFill(new Color(backgroundR, backgroundG, backgroundB, backgroundA / 255));
+    context.fillRect(0, 0, width, height);
+  }
+
+
+
 //  //////////////////////////////////////////////////////////////
 //
 //  // COLOR MODE

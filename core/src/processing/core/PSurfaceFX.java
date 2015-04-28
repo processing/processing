@@ -89,14 +89,18 @@ public class PSurfaceFX implements PSurface {
         @Override
         public void changed(ObservableValue<? extends Number> value,
                             Number oldWidth, Number newWidth) {
+          sketch.width = newWidth.intValue();
 //          draw();
+          fx.setSize(sketch.width, sketch.height);
         }
       });
       heightProperty().addListener(new ChangeListener<Number>() {
         @Override
         public void changed(ObservableValue<? extends Number> value,
                             Number oldHeight, Number newHeight) {
+          sketch.height = newHeight.intValue();
 //          draw();
+          fx.setSize(sketch.width, sketch.height);
         }
       });
     }
@@ -307,7 +311,7 @@ public class PSurfaceFX implements PSurface {
 
         @Override
         public void handle(long now) {
-          System.out.println("handle(" + now + ") calling handleDraw()");
+          //System.out.println("handle(" + now + ") calling handleDraw()");
           sketch.handleDraw();
         }
       };
