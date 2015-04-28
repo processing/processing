@@ -736,16 +736,7 @@ public class SketchParser {
 	}
 	
 	static private boolean isWhiteSpace(char c) {
-		if (c == ' ' ||
-				c == '\t' ||
-				c == '\n' ||
-				c == '\r') {
-			return true;
-		}
-		
-		int[][] a = {{1,2},{3,4}};
-		
-		return false;
+		return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 	}
 
 	/**
