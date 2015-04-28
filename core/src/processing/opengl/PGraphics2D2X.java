@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
 import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
@@ -276,6 +275,7 @@ public class PGraphics2D2X extends PGraphicsOpenGL {
   // SHAPE CREATION
 
 
+  /*
   @Override
   public PShape createShape(PShape source) {
     return PShapeOpenGL.createShape2D(this, source);
@@ -383,6 +383,7 @@ public class PGraphics2D2X extends PGraphicsOpenGL {
     shape.set3D(false);
     return shape;
   }
+  */
 
 
   //////////////////////////////////////////////////////////////

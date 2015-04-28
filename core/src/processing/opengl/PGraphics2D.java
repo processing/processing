@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
 import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
@@ -275,6 +274,19 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // SHAPE CREATION
 
 
+//  @Override
+//  protected PShape createShapeFamily(int type) {
+//    return new PShapeOpenGL(this, type);
+//  }
+//
+//
+//  @Override
+//  protected PShape createShapePrimitive(int kind, float... p) {
+//    return new PShapeOpenGL(this, kind, p);
+//  }
+
+
+  /*
   @Override
   public PShape createShape(PShape source) {
     return PShapeOpenGL.createShape2D(this, source);
@@ -382,6 +394,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
     shape.set3D(false);
     return shape;
   }
+  */
 
 
   //////////////////////////////////////////////////////////////

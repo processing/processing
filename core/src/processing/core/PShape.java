@@ -23,9 +23,9 @@
 package processing.core;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import processing.core.PApplet;
-import processing.core.PGraphicsJava2D;
 
 
 /**
@@ -79,11 +79,11 @@ import processing.core.PGraphicsJava2D;
  */
 public class PShape implements PConstants {
   protected String name;
-  protected HashMap<String,PShape> nameTable;
+  protected Map<String,PShape> nameTable;
 
 //  /** Generic, only draws its child objects. */
 //  static public final int GROUP = 0;
-  // GROUP now inherited from PConstants
+  // GROUP now inherited from PConstants, and is still zero
   /** A line, ellipse, arc, image, etc. */
   static public final int PRIMITIVE = 1;
   /** A series of vertex, curveVertex, and bezierVertex calls. */
@@ -147,7 +147,7 @@ public class PShape implements PConstants {
 
   public float depth;
 
-  PGraphicsJava2D g;
+  PGraphics g;
 
   // set to false if the object is hidden in the layers palette
   protected boolean visible = true;
@@ -271,12 +271,14 @@ public class PShape implements PConstants {
 //  public float px;
 //  public float py;
 
+
   /**
    * @nowebref
    */
   public PShape() {
     this.family = GROUP;
   }
+
 
   /**
    * @nowebref
@@ -285,45 +287,45 @@ public class PShape implements PConstants {
     this.family = family;
   }
 
+
   /**
    * @nowebref
    */
-  public PShape(PGraphicsJava2D pg, int family) {
-    this.g = pg;
+  public PShape(PGraphics g, int family) {
+    this.g = g;
     this.family = family;
-    this.parent = null;
 
     // Style parameters are retrieved from the current values in the renderer.
-    textureMode = pg.textureMode;
+    textureMode = g.textureMode;
 
-    colorMode(pg.colorMode,
-              pg.colorModeX, pg.colorModeY, pg.colorModeZ, pg.colorModeA);
+    colorMode(g.colorMode,
+              g.colorModeX, g.colorModeY, g.colorModeZ, g.colorModeA);
 
     // Initial values for fill, stroke and tint colors are also imported from
     // the renderer. This is particular relevant for primitive shapes, since is
     // not possible to set their color separately when creating them, and their
     // input vertices are actually generated at rendering time, by which the
     // color configuration of the renderer might have changed.
-    fill = pg.fill;
-    fillColor = pg.fillColor;
+    fill = g.fill;
+    fillColor = g.fillColor;
 
-    stroke = pg.stroke;
-    strokeColor = pg.strokeColor;
-    strokeWeight = pg.strokeWeight;
-    strokeCap = pg.strokeCap;
-    strokeJoin = pg.strokeJoin;
+    stroke = g.stroke;
+    strokeColor = g.strokeColor;
+    strokeWeight = g.strokeWeight;
+    strokeCap = g.strokeCap;
+    strokeJoin = g.strokeJoin;
 
-    tint = pg.tint;
-    tintColor = pg.tintColor;
+    tint = g.tint;
+    tintColor = g.tintColor;
 
-    setAmbient = pg.setAmbient;
-    ambientColor = pg.ambientColor;
-    specularColor = pg.specularColor;
-    emissiveColor = pg.emissiveColor;
-    shininess = pg.shininess;
+    setAmbient = g.setAmbient;
+    ambientColor = g.ambientColor;
+    specularColor = g.specularColor;
+    emissiveColor = g.emissiveColor;
+    shininess = g.shininess;
 
-    sphereDetailU = pg.sphereDetailU;
-    sphereDetailV = pg.sphereDetailV;
+    sphereDetailU = g.sphereDetailU;
+    sphereDetailV = g.sphereDetailV;
 
 //    bezierDetail = pg.bezierDetail;
 //    curveDetail = pg.curveDetail;
@@ -346,7 +348,20 @@ public class PShape implements PConstants {
     if (family == GROUP) {
       // GROUP shapes are always marked as ended.
 //      shapeCreated = true;
+      // TODO why was this commented out?
     }
+  }
+
+
+  public PShape(PGraphics g, int kind, float... params) {
+    this(g, PRIMITIVE);
+    setKind(kind);
+    setParams(params);
+  }
+
+
+  public void setFamily(int family) {
+    this.family = family;
   }
 
 
@@ -1565,7 +1580,7 @@ public class PShape implements PConstants {
   /**
    * Draws the SVG document.
    */
-  public void drawImpl(PGraphics g) {
+  protected void drawImpl(PGraphics g) {
     if (family == GROUP) {
       drawGroup(g);
     } else if (family == PRIMITIVE) {

@@ -2156,6 +2156,32 @@ public class PGraphicsOpenGL extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
+  // CREATE SHAPE
+
+
+  @Override
+  protected PShape createShapeFamily(int type) {
+    PShape shape = new PShapeOpenGL(this, type);
+    if (is3D()) {
+      shape.set3D(true);
+    }
+    return shape;
+  }
+
+
+  @Override
+  protected PShape createShapePrimitive(int kind, float... p) {
+    PShape shape = new PShapeOpenGL(this, kind, p);
+    if (is3D()) {
+      shape.set3D(true);
+    }
+    return shape;
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
   // VERTEX SHAPES
 
 

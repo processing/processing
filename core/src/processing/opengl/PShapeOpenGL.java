@@ -307,6 +307,8 @@ public class PShapeOpenGL extends PShape {
 
   public PShapeOpenGL(PGraphicsOpenGL pg, int family) {
     this.pg = pg;
+    this.family = family;
+
     pgl = pg.pgl;
     context = pgl.createEmptyContext();
 
@@ -331,7 +333,6 @@ public class PShapeOpenGL extends PShape {
     glPointIndex = 0;
 
     this.tessellator = PGraphicsOpenGL.tessellator;
-    this.family = family;
     this.root = this;
     this.parent = null;
     this.tessellated = false;
@@ -395,6 +396,14 @@ public class PShapeOpenGL extends PShape {
       // GROUP shapes are always marked as ended.
       shapeCreated = true;
     }
+  }
+
+
+  /** Create a shape from the PRIMITIVE family, using this kind and these params */
+  public PShapeOpenGL(PGraphicsOpenGL pg, int kind, float... p) {
+    this(pg, PRIMITIVE);
+    setKind(kind);
+    setParams(p);
   }
 
 
@@ -594,16 +603,20 @@ public class PShapeOpenGL extends PShape {
   public static PShapeOpenGL createShape3D(PGraphicsOpenGL pg, PShape src) {
     PShapeOpenGL dest = null;
     if (src.getFamily() == GROUP) {
-      dest = PGraphics3D.createShapeImpl(pg, GROUP);
+      //dest = PGraphics3D.createShapeImpl(pg, GROUP);
+      dest = (PShapeOpenGL) ((PGraphics3D) pg).createShapeFamily(GROUP);
       copyGroup3D(pg, src, dest);
     } else if (src.getFamily() == PRIMITIVE) {
-      dest = PGraphics3D.createShapeImpl(pg, src.getKind(), src.getParams());
+      //dest = PGraphics3D.createShapeImpl(pg, src.getKind(), src.getParams());
+      dest = (PShapeOpenGL) ((PGraphics3D) pg).createShapePrimitive(src.getKind(), src.getParams());
       PShape.copyPrimitive(src, dest);
     } else if (src.getFamily() == GEOMETRY) {
-      dest = PGraphics3D.createShapeImpl(pg, PShape.GEOMETRY);
+      //dest = PGraphics3D.createShapeImpl(pg, PShape.GEOMETRY);
+      dest = (PShapeOpenGL) ((PGraphics3D) pg).createShapeFamily(PShape.GEOMETRY);
       PShape.copyGeometry(src, dest);
     } else if (src.getFamily() == PATH) {
-      dest = PGraphics3D.createShapeImpl(pg, PATH);
+      dest = (PShapeOpenGL) ((PGraphics3D) pg).createShapeFamily(PShape.PATH);
+      //dest = PGraphics3D.createShapeImpl(pg, PATH);
       PShape.copyPath(src, dest);
     }
     dest.setName(src.getName());
@@ -617,16 +630,20 @@ public class PShapeOpenGL extends PShape {
   static public PShapeOpenGL createShape2D(PGraphicsOpenGL pg, PShape src) {
     PShapeOpenGL dest = null;
     if (src.getFamily() == GROUP) {
-      dest = PGraphics2D.createShapeImpl(pg, GROUP);
+      //dest = PGraphics2D.createShapeImpl(pg, GROUP);
+      dest = (PShapeOpenGL) ((PGraphics2D) pg).createShapeFamily(GROUP);
       copyGroup2D(pg, src, dest);
     } else if (src.getFamily() == PRIMITIVE) {
-      dest = PGraphics2D.createShapeImpl(pg, src.getKind(), src.getParams());
+      //dest = PGraphics2D.createShapeImpl(pg, src.getKind(), src.getParams());
+      dest = (PShapeOpenGL) ((PGraphics2D) pg).createShapePrimitive(src.getKind(), src.getParams());
       PShape.copyPrimitive(src, dest);
     } else if (src.getFamily() == GEOMETRY) {
-      dest = PGraphics2D.createShapeImpl(pg, PShape.GEOMETRY);
+      //dest = PGraphics2D.createShapeImpl(pg, PShape.GEOMETRY);
+      dest = (PShapeOpenGL) ((PGraphics2D) pg).createShapeFamily(PShape.GEOMETRY);
       PShape.copyGeometry(src, dest);
     } else if (src.getFamily() == PATH) {
-      dest = PGraphics2D.createShapeImpl(pg, PATH);
+      //dest = PGraphics2D.createShapeImpl(pg, PATH);
+      dest = (PShapeOpenGL) ((PGraphics2D) pg).createShapeFamily(PShape.PATH);
       PShape.copyPath(src, dest);
     }
     dest.setName(src.getName());
@@ -2512,14 +2529,18 @@ public class PShapeOpenGL extends PShape {
     short[] indices = tessGeo.polyIndices;
 
     PShape tess;
-    if (is3D()) {
-      tess = PGraphics3D.createShapeImpl(pg, PShape.GEOMETRY);
-    } else if (is2D()) {
-      tess = PGraphics2D.createShapeImpl(pg, PShape.GEOMETRY);
-    } else {
-      PGraphics.showWarning("This shape is not either 2D or 3D!");
-      return null;
-    }
+//    if (is3D()) {
+//      //tess = PGraphics3D.createShapeImpl(pg, PShape.GEOMETRY);
+//      tess = pg.createShapeFamily(PShape.GEOMETRY);
+//    } else if (is2D()) {
+//      //tess = PGraphics2D.createShapeImpl(pg, PShape.GEOMETRY);
+//      tess = pg.createShapeFamily(PShape.GEOMETRY);
+//    } else {
+//      PGraphics.showWarning("This shape is not either 2D or 3D!");
+//      return null;
+//    }
+    tess = pg.createShapeFamily(PShape.GEOMETRY);
+    tess.set3D(is3D);  // if this is a 3D shape, make the new shape 3D as well
     tess.beginShape(TRIANGLES);
     tess.noStroke();
 

@@ -1500,6 +1500,7 @@ public class PGraphics extends PImage implements PConstants {
     vertexCount++;
   }
 
+
   /**
    * Used by renderer subclasses or PShape to efficiently pass in already
    * formatted vertex information.
@@ -1614,6 +1615,7 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("beginContour");
   }
 
+
   /**
    * @webref shape:vertex
    */
@@ -1625,6 +1627,7 @@ public class PGraphics extends PImage implements PConstants {
   public void endShape() {
     endShape(OPEN);
   }
+
 
   /**
    * ( begin auto-generated from endShape.xml )
@@ -1646,9 +1649,11 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
   // SHAPE I/O
+
 
   /**
    * @webref shape
@@ -1659,6 +1664,7 @@ public class PGraphics extends PImage implements PConstants {
   public PShape loadShape(String filename) {
     return loadShape(filename, null);
   }
+
 
   /**
    * @nowebref
@@ -1674,6 +1680,7 @@ public class PGraphics extends PImage implements PConstants {
 
   // SHAPE CREATION
 
+
   /**
    * @webref shape
    * @see PShape
@@ -1681,34 +1688,111 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#loadShape(String)
    */
   public PShape createShape() {
-    showMissingWarning("createShape");
-    return null;
+    // Defaults to GEOMETRY (rather than GROUP like the default constructor)
+    // because that's how people will use it within a sketch.
+    return createShape(PShape.GEOMETRY);
   }
 
 
-  public PShape createShape(PShape source) {
-    showMissingWarning("createShape");
-    return null;
-  }
-
-
-  /**
-   * @param type either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP
-   */
+  // POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP
   public PShape createShape(int type) {
-    showMissingWarning("createShape");
+    // If it's a PRIMITIVE, it needs the 'params' field anyway
+    if (type == PConstants.GROUP ||
+        type == PShape.PATH ||
+        type == PShape.GEOMETRY) {
+      return createShapeFamily(type);
+    }
+    final String msg =
+      "Only GROUP, PShape.PATH, and PShape.GEOMETRY work with createShape()";
+    throw new IllegalArgumentException(msg);
+  }
+
+
+  /** Override this method to return an appropriate shape for your renderer */
+  protected PShape createShapeFamily(int type) {
+    showMethodWarning("createShape()");
     return null;
   }
 
 
   /**
-   * @param kind either LINE, TRIANGLE, RECT, ELLIPSE, ARC, SPHERE, BOX
+   * @param kind either POINT, LINE, TRIANGLE, QUAD, RECT, ELLIPSE, ARC, BOX, SPHERE
    * @param p parameters that match the kind of shape
    */
   public PShape createShape(int kind, float... p) {
-    showMissingWarning("createShape");
+    int len = p.length;
+
+    if (kind == POINT) {
+      if (is3D() && len != 2 && len != 3) {
+        throw new IllegalArgumentException("Use createShape(POINT, x, y) or createShape(POINT, x, y, z)");
+      } else if (len != 2) {
+        throw new IllegalArgumentException("Use createShape(POINT, x, y)");
+      }
+      return createShapePrimitive(kind, p);
+
+    } else if (kind == LINE) {
+      if (is3D() && len != 4 && len != 6) {
+        throw new IllegalArgumentException("Use createShape(LINE, x1, y1, x2, y2) or createShape(LINE, x1, y1, z1, x2, y2, z1)");
+      } else if (len != 4) {
+        throw new IllegalArgumentException("Use createShape(LINE, x1, y1, x2, y2)");
+      }
+      return createShapePrimitive(kind, p);
+
+    } else if (kind == TRIANGLE) {
+      if (len != 6) {
+        throw new IllegalArgumentException("Use createShape(TRIANGLE, x1, y1, x2, y2, x3, y3)");
+      }
+      return createShapePrimitive(kind, p);
+
+    } else if (kind == QUAD) {
+      if (len != 8) {
+        throw new IllegalArgumentException("Use createShape(QUAD, x1, y1, x2, y2, x3, y3, x4, y4)");
+      }
+      return createShapePrimitive(kind, p);
+
+    } else if (kind == RECT) {
+      if (len != 4 && len != 5 && len != 8 && len != 9) {
+        throw new IllegalArgumentException("Wrong number of parameters for createShape(RECT), see the reference");
+      }
+      return createShapePrimitive(kind, p);
+
+    } else if (kind == ELLIPSE) {
+      if (len != 4 && len != 5) {
+        throw new IllegalArgumentException("Use createShape(ELLIPSE, x, y, w, h) or createShape(ELLIPSE, x, y, w, h, mode)");
+      }
+      return createShapePrimitive(kind, p);
+
+    } else if (kind == ARC) {
+      if (len != 6 && len != 7) {
+        throw new IllegalArgumentException("Use createShape(ARC, x, y, w, h, start, stop)");
+      }
+      return createShapePrimitive(kind, p);
+
+    } else if (kind == BOX) {
+      if (!is3D()) {
+        throw new IllegalArgumentException("createShape(BOX) is not supported in 2D");
+      } else if (len != 1 && len != 3) {
+        throw new IllegalArgumentException("Use createShape(BOX, size) or createShape(BOX, width, height, depth)");
+      }
+      return createShapePrimitive(kind, p);
+
+    } else if (kind == SPHERE) {
+      if (!is3D()) {
+        throw new IllegalArgumentException("createShape(SPHERE) is not supported in 2D");
+      } else if (len != 1) {
+        throw new IllegalArgumentException("Use createShape(SPHERE, radius)");
+      }
+      return createShapePrimitive(kind, p);
+    }
+    throw new IllegalArgumentException("Unknown shape type passed to createShape()");
+  }
+
+
+  protected PShape createShapePrimitive(int kind, float... p) {
+    showMethodWarning("createShape()");
     return null;
   }
+
 
 
   //////////////////////////////////////////////////////////////
@@ -1753,6 +1837,7 @@ public class PGraphics extends PImage implements PConstants {
   public void shader(PShader shader) {
     showMissingWarning("shader");
   }
+
 
   /**
    * @param kind type of shader, either POINTS, LINES, or TRIANGLES

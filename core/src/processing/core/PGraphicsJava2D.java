@@ -540,12 +540,19 @@ public class PGraphicsJava2D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
-  // SHAPES
-
-
-  //////////////////////////////////////////////////////////////
-
   // SHAPE CREATION
+
+
+  @Override
+  protected PShape createShapeFamily(int type) {
+    return new PShape(this, type);
+  }
+
+
+  @Override
+  protected PShape createShapePrimitive(int kind, float... p) {
+    return new PShape(this, kind, p);
+  }
 
 
 //  @Override
@@ -554,25 +561,8 @@ public class PGraphicsJava2D extends PGraphics {
 //  }
 
 
-  @Override
-  public PShape createShape() {
-    return createShape(PShape.GEOMETRY);
-  }
-
-
-  @Override
-  public PShape createShape(int type) {
-    return createShapeImpl(this, type);
-  }
-
-
-  @Override
-  public PShape createShape(int kind, float... p) {
-    return createShapeImpl(this, kind, p);
-  }
-
-
-  static protected PShape createShapeImpl(PGraphicsJava2D pg, int type) {
+  /*
+  protected PShape createShapeImpl(PGraphicsJava2D pg, int type) {
     PShape shape = null;
     if (type == PConstants.GROUP) {
       shape = new PShape(pg, PConstants.GROUP);
@@ -581,11 +571,14 @@ public class PGraphicsJava2D extends PGraphics {
     } else if (type == PShape.GEOMETRY) {
       shape = new PShape(pg, PShape.GEOMETRY);
     }
-    shape.set3D(false);
+    // defaults to false, don't assign it and make complexity for overrides
+    //shape.set3D(false);
     return shape;
   }
+   */
 
 
+  /*
   static protected PShape createShapeImpl(PGraphicsJava2D pg,
                                                 int kind, float... p) {
     PShape shape = null;
@@ -652,9 +645,18 @@ public class PGraphicsJava2D extends PGraphics {
       shape.setParams(p);
     }
 
-    shape.set3D(false);
+    // defaults to false, don't assign it and make complexity for overrides
+    //shape.set3D(false);
+
     return shape;
   }
+  */
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // SHAPES
 
 
   @Override

@@ -10266,21 +10266,13 @@ public class PApplet implements PConstants {
   }
 
 
-  public PShape createShape(PShape source) {
-    return g.createShape(source);
-  }
-
-
-  /**
-   * @param type either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP
-   */
   public PShape createShape(int type) {
     return g.createShape(type);
   }
 
 
   /**
-   * @param kind either LINE, TRIANGLE, RECT, ELLIPSE, ARC, SPHERE, BOX
+   * @param kind either POINT, LINE, TRIANGLE, QUAD, RECT, ELLIPSE, ARC, BOX, SPHERE
    * @param p parameters that match the kind of shape
    */
   public PShape createShape(int kind, float... p) {

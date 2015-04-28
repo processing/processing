@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
 import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PShape;
 import processing.core.PShapeOBJ;
@@ -158,6 +157,23 @@ public class PGraphics3D extends PGraphicsOpenGL {
   // SHAPE CREATION
 
 
+//  @Override
+//  protected PShape createShapeFamily(int type) {
+//    PShape shape = new PShapeOpenGL(this, type);
+//    shape.set3D(true);
+//    return shape;
+//  }
+//
+//
+//  @Override
+//  protected PShape createShapePrimitive(int kind, float... p) {
+//    PShape shape = new PShapeOpenGL(this, kind, p);
+//    shape.set3D(true);
+//    return shape;
+//  }
+
+
+  /*
   @Override
   public PShape createShape(PShape source) {
     return PShapeOpenGL.createShape3D(this, source);
@@ -250,6 +266,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
       }
       shape = new PShapeOpenGL(pg, PShape.PRIMITIVE);
       shape.setKind(ARC);
+
     } else if (kind == BOX) {
       if (len != 1 && len != 3) {
         showWarning("Wrong number of parameters");
@@ -275,4 +292,5 @@ public class PGraphics3D extends PGraphicsOpenGL {
     shape.set3D(true);
     return shape;
   }
+  */
 }

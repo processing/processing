@@ -1,5 +1,22 @@
 0235 (3.0a8)
 X pop() was not implemented correctly
+X fairly major rewrite of createShape() 
+X   prevents same code from appearing 5x (!) in the source
+X   improves bad api design with the static createShapeImpl() methods
+
+
+_ need reference update for createShape()
+_   createShape(RECT) uses x/y/w/h, and optionally adds a mode param
+_     and optionally the corner radii
+_   createShape(ELLIPSE) is x/y/w/h, and optionally adds a mode param
+
+
+opengl
+_ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
+_   shouldn't be static, run it from the renderer, that's point of createXxx()
+_ when did setPath() sneak into PShape? API is nothing like anything else
+_ public createShape() method that takes another shape as param?
+_   should just be the constructor doing this, or copy()
 
 
 high priority
