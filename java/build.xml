@@ -44,14 +44,15 @@
     </antlr>
 
     <!-- clean up the warning mess caused by this old antlr version -->
-    <property name="uuc" value="@SuppressWarnings({ &quot;unused&quot;, &quot;unchecked&quot;, &quot;cast&quot; })${line.separator}" />
+    <!--<property name="uuc" value="@SuppressWarnings({ &quot;unused&quot;, &quot;unchecked&quot;, &quot;cast&quot; })${line.separator}" />-->
+    <property name="uucr" value="@SuppressWarnings({ &quot;unused&quot;, &quot;unchecked&quot;, &quot;cast&quot;, &quot;rawtypes&quot;  })${line.separator}" />
     <property name="uc" value="@SuppressWarnings({ &quot;unused&quot;, &quot;cast&quot; })${line.separator}" />
 
     <!-- need to match against the previous line so that we don't re-add -->
     <replaceregexp 
         file="generated/processing/mode/java/preproc/JavaLexer.java"
         match="(\n\n)(public class JavaLexer .*)" 
-        replace="\1${uuc}\2">
+        replace="\1${uucr}\2">
     </replaceregexp>
 
     <replaceregexp 
@@ -63,7 +64,7 @@
     <replaceregexp 
         file="generated/processing/mode/java/preproc/PdeLexer.java"
         match="(\n\n)(public class PdeLexer .*)" 
-        replace="\1${uuc}\2">
+        replace="\1${uucr}\2">
     </replaceregexp>
 
     <replaceregexp 
