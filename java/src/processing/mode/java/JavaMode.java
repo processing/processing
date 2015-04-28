@@ -167,7 +167,6 @@ public class JavaMode extends Mode {
                             RunnerListener listener,
                             final boolean present) throws SketchException {
     final JavaEditor editor = (JavaEditor)listener;
-    boolean launchInteractive = false;
 
     if (isSketchModified(sketch)) {
       editor.deactivateRun();
@@ -193,7 +192,7 @@ public class JavaMode extends Mode {
     final SketchParser parser = new SketchParser(editor.baseCode, requiresTweak);
 
     // add our code to the sketch
-    launchInteractive = editor.automateSketch(sketch, parser.allHandles);
+    final boolean launchInteractive = editor.automateSketch(sketch, parser);
 
     build = new JavaBuild(sketch);
     appletClassName = build.build(false);
@@ -204,8 +203,10 @@ public class JavaMode extends Mode {
           public void run() {
             runtime.launch(present);  // this blocks until finished
             // next lines are executed when the sketch quits
-            editor.initEditorCode(parser.allHandles, false);
-            editor.stopInteractiveMode(parser.allHandles);
+            if (launchInteractive) {
+                editor.initEditorCode(parser.allHandles, false);
+                editor.stopInteractiveMode(parser.allHandles);
+            }
           }
         }).start();
 
