@@ -32,6 +32,7 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.StrokeLineCap;
@@ -618,106 +619,94 @@ public class PGraphicsFX extends PGraphics {
 
 
 
-//  //////////////////////////////////////////////////////////////
-//
-//  // RECT
-//
-//
-//  //public void rectMode(int mode)
-//
-//
-//  //public void rect(float a, float b, float c, float d)
-//
-//
-//  @Override
-//  protected void rectImpl(float x1, float y1, float x2, float y2) {
+  //////////////////////////////////////////////////////////////
+
+  // RECT
+
+
+  //public void rectMode(int mode)
+
+
+  //public void rect(float a, float b, float c, float d)
+
+
+  @Override
+  protected void rectImpl(float x1, float y1, float x2, float y2) {
 //    rect.setFrame(x1, y1, x2-x1, y2-y1);
 //    drawShape(rect);
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // ELLIPSE
-//
-//
-//  //public void ellipseMode(int mode)
-//
-//
-//  //public void ellipse(float a, float b, float c, float d)
-//
-//
-//  @Override
-//  protected void ellipseImpl(float x, float y, float w, float h) {
+    if (fill) context.fillRect(x1, y1, x2, y2);
+    if (stroke) context.strokeRect(x1, y1, x2, y2);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // ELLIPSE
+
+
+  //public void ellipseMode(int mode)
+
+
+  //public void ellipse(float a, float b, float c, float d)
+
+
+  @Override
+  protected void ellipseImpl(float x, float y, float w, float h) {
 //    ellipse.setFrame(x, y, w, h);
 //    drawShape(ellipse);
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // ARC
-//
-//
-//  //public void arc(float a, float b, float c, float d,
-//  //                float start, float stop)
-//
-//
-//  @Override
-//  protected void arcImpl(float x, float y, float w, float h,
-//                         float start, float stop, int mode) {
-//    // 0 to 90 in java would be 0 to -90 for p5 renderer
-//    // but that won't work, so -90 to 0?
-//
-//    start = -start * RAD_TO_DEG;
-//    stop = -stop * RAD_TO_DEG;
-//
-//    // ok to do this because already checked for NaN
-////    while (start < 0) {
-////      start += 360;
-////      stop += 360;
-////    }
-////    if (start > stop) {
-////      float temp = start;
-////      start = stop;
-////      stop = temp;
-////    }
-//    float sweep = stop - start;
-//
-//    // The defaults, before 2.0b7, were to stroke as Arc2D.OPEN, and then fill
-//    // using Arc2D.PIE. That's a little wonky, but it's here for compatability.
-//    int fillMode = Arc2D.PIE;
-//    int strokeMode = Arc2D.OPEN;
-//
-//    if (mode == OPEN) {
-//      fillMode = Arc2D.OPEN;
-//      //strokeMode = Arc2D.OPEN;
-//
-//    } else if (mode == PIE) {
-//      //fillMode = Arc2D.PIE;
-//      strokeMode = Arc2D.PIE;
-//
-//    } else if (mode == CHORD) {
-//      fillMode = Arc2D.CHORD;
-//      strokeMode = Arc2D.CHORD;
-//    }
-//
-//    if (fill) {
-//      //System.out.println("filla");
-//      arc.setArc(x, y, w, h, start, sweep, fillMode);
-//      fillShape(arc);
-//    }
-//    if (stroke) {
-//      //System.out.println("strokey");
-//      arc.setArc(x, y, w, h, start, sweep, strokeMode);
-//      strokeShape(arc);
-//    }
-//  }
-//
-//
-//
+    if (fill) context.fillOval(x, y, w, h);
+    if (stroke) context.strokeOval(x, y, w, h);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // ARC
+
+
+  //public void arc(float a, float b, float c, float d,
+  //                float start, float stop)
+
+
+  @Override
+  protected void arcImpl(float x, float y, float w, float h,
+                         float start, float stop, int mode) {
+    // 0 to 90 in java would be 0 to -90 for p5 renderer
+    // but that won't work, so -90 to 0?
+
+    start = -start * RAD_TO_DEG;
+    stop = -stop * RAD_TO_DEG;
+
+    float sweep = stop - start;
+
+    // The defaults, before 2.0b7, were to stroke as Arc2D.OPEN, and then fill
+    // using Arc2D.PIE. That's a little wonky, but it's here for compatability.
+    ArcType fillMode = ArcType.ROUND;  // Arc2D.PIE
+    ArcType strokeMode = ArcType.OPEN;
+
+    if (mode == OPEN) {
+      fillMode = ArcType.OPEN;
+
+    } else if (mode == PIE) {
+      strokeMode = ArcType.ROUND;  // PIE
+
+    } else if (mode == CHORD) {
+      fillMode = ArcType.CHORD;
+      strokeMode = ArcType.CHORD;
+    }
+
+    if (fill) {
+      context.fillArc(x, y, w, h, start, sweep, fillMode);
+    }
+    if (stroke) {
+      context.strokeArc(x, y, w, h, start, sweep, strokeMode);
+    }
+  }
+
+
+
 //  //////////////////////////////////////////////////////////////
 //
 //  // JAVA2D SHAPE/PATH HANDLING
@@ -761,179 +750,148 @@ public class PGraphicsFX extends PGraphics {
 //      g2.draw(s);
 //    }
 //  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // BOX
-//
-//
-//  //public void box(float size)
-//
-//
-//  @Override
-//  public void box(float w, float h, float d) {
-//    showMethodWarning("box");
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // SPHERE
-//
-//
-//  //public void sphereDetail(int res)
-//
-//
-//  //public void sphereDetail(int ures, int vres)
-//
-//
-//  @Override
-//  public void sphere(float r) {
-//    showMethodWarning("sphere");
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // BEZIER
-//
-//
-//  //public float bezierPoint(float a, float b, float c, float d, float t)
-//
-//
-//  //public float bezierTangent(float a, float b, float c, float d, float t)
-//
-//
-//  //protected void bezierInitCheck()
-//
-//
-//  //protected void bezierInit()
-//
-//
-//  /** Ignored (not needed) in Java 2D. */
-//  @Override
-//  public void bezierDetail(int detail) {
-//  }
-//
-//
-//  //public void bezier(float x1, float y1,
-//  //                   float x2, float y2,
-//  //                   float x3, float y3,
-//  //                   float x4, float y4)
-//
-//
-//  //public void bezier(float x1, float y1, float z1,
-//  //                   float x2, float y2, float z2,
-//  //                   float x3, float y3, float z3,
-//  //                   float x4, float y4, float z4)
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // CURVE
-//
-//
-//  //public float curvePoint(float a, float b, float c, float d, float t)
-//
-//
-//  //public float curveTangent(float a, float b, float c, float d, float t)
-//
-//
-//  /** Ignored (not needed) in Java 2D. */
-//  @Override
-//  public void curveDetail(int detail) {
-//  }
-//
-//  //public void curveTightness(float tightness)
-//
-//
-//  //protected void curveInitCheck()
-//
-//
-//  //protected void curveInit()
-//
-//
-//  //public void curve(float x1, float y1,
-//  //                  float x2, float y2,
-//  //                  float x3, float y3,
-//  //                  float x4, float y4)
-//
-//
-//  //public void curve(float x1, float y1, float z1,
-//  //                  float x2, float y2, float z2,
-//  //                  float x3, float y3, float z3,
-//  //                  float x4, float y4, float z4)
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // SMOOTH
-//
-//
-//  @Override
-//  public void smooth() {
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // BOX
+
+
+  //public void box(float size)
+
+
+  @Override
+  public void box(float w, float h, float d) {
+    showMethodWarning("box");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // SPHERE
+
+
+  //public void sphereDetail(int res)
+
+
+  //public void sphereDetail(int ures, int vres)
+
+
+  @Override
+  public void sphere(float r) {
+    showMethodWarning("sphere");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // BEZIER
+
+
+  //public float bezierPoint(float a, float b, float c, float d, float t)
+
+
+  //public float bezierTangent(float a, float b, float c, float d, float t)
+
+
+  //protected void bezierInitCheck()
+
+
+  //protected void bezierInit()
+
+
+  /** Ignored (not needed) by this renderer. */
+  @Override
+  public void bezierDetail(int detail) { }
+
+
+  //public void bezier(float x1, float y1,
+  //                   float x2, float y2,
+  //                   float x3, float y3,
+  //                   float x4, float y4)
+
+
+  //public void bezier(float x1, float y1, float z1,
+  //                   float x2, float y2, float z2,
+  //                   float x3, float y3, float z3,
+  //                   float x4, float y4, float z4)
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // CURVE
+
+
+  //public float curvePoint(float a, float b, float c, float d, float t)
+
+
+  //public float curveTangent(float a, float b, float c, float d, float t)
+
+
+  /** Ignored (not needed) in Java 2D. */
+  @Override
+  public void curveDetail(int detail) { }
+
+
+  //public void curveTightness(float tightness)
+
+
+  //protected void curveInitCheck()
+
+
+  //protected void curveInit()
+
+
+  //public void curve(float x1, float y1,
+  //                  float x2, float y2,
+  //                  float x3, float y3,
+  //                  float x4, float y4)
+
+
+  //public void curve(float x1, float y1, float z1,
+  //                  float x2, float y2, float z2,
+  //                  float x3, float y3, float z3,
+  //                  float x4, float y4, float z4)
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // SMOOTH
+
+
+  @Override
+  public void smooth() {
 //    smooth = true;
 //
 //    if (quality == 0) {
 //      quality = 4;  // change back to bicubic
 //    }
-//
-//    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//                        RenderingHints.VALUE_ANTIALIAS_ON);
-//
-//    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-//                        quality == 4 ?
-//                        RenderingHints.VALUE_INTERPOLATION_BICUBIC :
-//                        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//
-//    // http://docs.oracle.com/javase/tutorial/2d/text/renderinghints.html
-//    // Oracle Java text anti-aliasing on OS X looks like s*t compared to the
-//    // text rendering with Apple's old Java 6. Below, several attempts to fix:
-//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-//    // Turns out this is the one that actually makes things work.
-//    // Kerning is still screwed up, however.
-//    g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-//                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-////    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-////                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-////    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-////                         RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-//
-////    g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
-////                        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-//
-//  }
-//
-//
-//  @Override
-//  public void smooth(int quality) {
+    showMissingWarning("smooth");
+  }
+
+  @Override
+  public void smooth(int quality) {
 //    this.quality = quality;
 //    if (quality == 0) {
 //      noSmooth();
 //    } else {
 //      smooth();
 //    }
-//  }
-//
-//
-//  @Override
-//  public void noSmooth() {
-//    smooth = false;
-//    quality = 0;  // Github 3113
-//    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//                        RenderingHints.VALUE_ANTIALIAS_OFF);
-//    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-//                        RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-//  }
+    showMissingWarning("smooth");
+  }
+
+
+  @Override
+  public void noSmooth() {
+    smooth = false;
+    quality = 0;  // https://github.com/processing/processing/issues/3113
+    showMissingWarning("noSmooth");
+  }
 
 
 
@@ -1202,23 +1160,23 @@ public class PGraphicsFX extends PGraphics {
 
 
 
-//  //////////////////////////////////////////////////////////////
-//
-//  // SHAPE
-//
-//
-//  //public void shapeMode(int mode)
-//
-//
-//  //public void shape(PShape shape)
-//
-//
-//  //public void shape(PShape shape, float x, float y)
-//
-//
-//  //public void shape(PShape shape, float x, float y, float c, float d)
-//
-//
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE
+
+
+  //public void shapeMode(int mode)
+
+
+  //public void shape(PShape shape)
+
+
+  //public void shape(PShape shape, float x, float y)
+
+
+  //public void shape(PShape shape, float x, float y, float c, float d)
+
+
 //  //////////////////////////////////////////////////////////////
 //
 //  // SHAPE I/O
@@ -1253,8 +1211,8 @@ public class PGraphicsFX extends PGraphics {
 //
 //    return svg;
 //  }
-//
-//
+
+
 //  //////////////////////////////////////////////////////////////
 //
 //  // TEXT ATTRIBTUES
@@ -2390,16 +2348,16 @@ public class PGraphicsFX extends PGraphics {
   // BLEND
 
 
-//  static public int blendColor(int c1, int c2, int mode)
+  //static public int blendColor(int c1, int c2, int mode)
 
 
-//  public void blend(int sx, int sy, int sw, int sh,
-//                    int dx, int dy, int dw, int dh, int mode)
+  //public void blend(int sx, int sy, int sw, int sh,
+  //                  int dx, int dy, int dw, int dh, int mode)
 
 
-//  public void blend(PImage src,
-//                    int sx, int sy, int sw, int sh,
-//                    int dx, int dy, int dw, int dh, int mode)
+  //public void blend(PImage src,
+  //                  int sx, int sy, int sw, int sh,
+  //                  int dx, int dy, int dw, int dh, int mode)
 
 
 
@@ -2408,8 +2366,5 @@ public class PGraphicsFX extends PGraphics {
   // SAVE
 
 
-//  public void save(String filename) {
-//    loadPixels();
-//    super.save(filename);
-//  }
+  //public void save(String filename)
 }
