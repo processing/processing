@@ -32,6 +32,8 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.ClosePath;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Transform;
@@ -155,11 +157,7 @@ public class PGraphicsFX extends PGraphics {
   //protected void checkSettings()
 
 
-//  @Override
-//  protected void defaultSettings() {
-//    defaultComposite = g2.getComposite();
-//    super.defaultSettings();
-//  }
+  //protected void defaultSettings()
 
 
   //protected void reapplySettings()
@@ -171,23 +169,7 @@ public class PGraphicsFX extends PGraphics {
   // HINT
 
 
-//  @Override
-//  public void hint(int which) {
-//    // take care of setting the hint
-//    super.hint(which);
-//
-//    // Avoid badness when drawing shorter strokes.
-//    // http://code.google.com/p/processing/issues/detail?id=1068
-//    // Unfortunately cannot always be enabled, because it makes the
-//    // stroke in many standard Processing examples really gross.
-//    if (which == ENABLE_STROKE_PURE) {
-//      g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-//                          RenderingHints.VALUE_STROKE_PURE);
-//    } else if (which == DISABLE_STROKE_PURE) {
-//      g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-//                          RenderingHints.VALUE_STROKE_DEFAULT);
-//    }
-//  }
+  //public void hint(int which)
 
 
 
@@ -196,33 +178,39 @@ public class PGraphicsFX extends PGraphics {
   // SHAPE CREATION
 
 
-//  @Override
-//  protected PShape createShapeFamily(int type) {
-//    return new PShape(this, type);
-//  }
+  //protected PShape createShapeFamily(int type)
 
 
-//  @Override
-//  protected PShape createShapePrimitive(int kind, float... p) {
-//    return new PShape(this, kind, p);
-//  }
+  //protected PShape createShapePrimitive(int kind, float... p)
 
 
-//  @Override
-//  public void beginShape(int kind) {
-//    //super.beginShape(kind);
-//    shape = kind;
-//    vertexCount = 0;
-//    curveVertexCount = 0;
-//
-//    // set gpath to null, because when mixing curves and straight
-//    // lines, vertexCount will be set back to zero, so vertexCount == 1
-//    // is no longer a good indicator of whether the shape is new.
-//    // this way, just check to see if gpath is null, and if it isn't
-//    // then just use it to continue the shape.
-//    gpath = null;
-//    auxPath = null;
-//  }
+
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE
+
+
+  Path gpath;
+  Path auxPath;
+//  boolean gpath;
+  boolean breakShape;
+  boolean openContour;
+
+
+  @Override
+  public void beginShape(int kind) {
+    shape = kind;
+    vertexCount = 0;
+    curveVertexCount = 0;
+
+    // set gpath to null, because when mixing curves and straight
+    // lines, vertexCount will be set back to zero, so vertexCount == 1
+    // is no longer a good indicator of whether the shape is new.
+    // this way, just check to see if gpath is null, and if it isn't
+    // then just use it to continue the shape.
+    gpath = null;
+    auxPath = null;
+  }
 
 
   //public boolean edge(boolean e)
@@ -240,122 +228,124 @@ public class PGraphicsFX extends PGraphics {
   }
 
 
-//  @Override
-//  public void vertex(float x, float y) {
-//    curveVertexCount = 0;
-//    //float vertex[];
-//
-//    if (vertexCount == vertices.length) {
-//      float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
-//      System.arraycopy(vertices, 0, temp, 0, vertexCount);
-//      vertices = temp;
-//      //message(CHATTER, "allocating more vertices " + vertices.length);
-//    }
-//    // not everyone needs this, but just easier to store rather
-//    // than adding another moving part to the code...
-//    vertices[vertexCount][X] = x;
-//    vertices[vertexCount][Y] = y;
-//    vertexCount++;
-//
-//    switch (shape) {
-//
-//    case POINTS:
-//      point(x, y);
-//      break;
-//
-//    case LINES:
-//      if ((vertexCount % 2) == 0) {
-//        line(vertices[vertexCount-2][X],
-//             vertices[vertexCount-2][Y], x, y);
-//      }
-//      break;
-//
-//    case TRIANGLES:
-//      if ((vertexCount % 3) == 0) {
-//        triangle(vertices[vertexCount - 3][X],
-//                 vertices[vertexCount - 3][Y],
-//                 vertices[vertexCount - 2][X],
-//                 vertices[vertexCount - 2][Y],
-//                 x, y);
-//      }
-//      break;
-//
-//    case TRIANGLE_STRIP:
-//      if (vertexCount >= 3) {
-//        triangle(vertices[vertexCount - 2][X],
-//                 vertices[vertexCount - 2][Y],
-//                 vertices[vertexCount - 1][X],
-//                 vertices[vertexCount - 1][Y],
-//                 vertices[vertexCount - 3][X],
-//                 vertices[vertexCount - 3][Y]);
-//      }
-//      break;
-//
-//    case TRIANGLE_FAN:
-//      if (vertexCount >= 3) {
-//        // This is an unfortunate implementation because the stroke for an
-//        // adjacent triangle will be repeated. However, if the stroke is not
-//        // redrawn, it will replace the adjacent line (when it lines up
-//        // perfectly) or show a faint line (when off by a small amount).
-//        // The alternative would be to wait, then draw the shape as a
-//        // polygon fill, followed by a series of vertices. But that's a
-//        // poor method when used with PDF, DXF, or other recording objects,
-//        // since discrete triangles would likely be preferred.
-//        triangle(vertices[0][X],
-//                 vertices[0][Y],
-//                 vertices[vertexCount - 2][X],
-//                 vertices[vertexCount - 2][Y],
-//                 x, y);
-//      }
-//      break;
-//
-//    case QUAD:
-//    case QUADS:
-//      if ((vertexCount % 4) == 0) {
-//        quad(vertices[vertexCount - 4][X],
-//             vertices[vertexCount - 4][Y],
-//             vertices[vertexCount - 3][X],
-//             vertices[vertexCount - 3][Y],
-//             vertices[vertexCount - 2][X],
-//             vertices[vertexCount - 2][Y],
-//             x, y);
-//      }
-//      break;
-//
-//    case QUAD_STRIP:
-//      // 0---2---4
-//      // |   |   |
-//      // 1---3---5
-//      if ((vertexCount >= 4) && ((vertexCount % 2) == 0)) {
-//        quad(vertices[vertexCount - 4][X],
-//             vertices[vertexCount - 4][Y],
-//             vertices[vertexCount - 2][X],
-//             vertices[vertexCount - 2][Y],
-//             x, y,
-//             vertices[vertexCount - 3][X],
-//             vertices[vertexCount - 3][Y]);
-//      }
-//      break;
-//
-//    case POLYGON:
-//      if (gpath == null) {
-//        gpath = new GeneralPath();
-//        gpath.moveTo(x, y);
-//      } else if (breakShape) {
-//        gpath.moveTo(x, y);
-//        breakShape = false;
-//      } else {
-//        gpath.lineTo(x, y);
-//      }
-//      break;
-//    }
-//  }
+  @Override
+  public void vertex(float x, float y) {
+    curveVertexCount = 0;
+    //float vertex[];
+
+    if (vertexCount == vertices.length) {
+      float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
+      System.arraycopy(vertices, 0, temp, 0, vertexCount);
+      vertices = temp;
+      //message(CHATTER, "allocating more vertices " + vertices.length);
+    }
+    // not everyone needs this, but just easier to store rather
+    // than adding another moving part to the code...
+    vertices[vertexCount][X] = x;
+    vertices[vertexCount][Y] = y;
+    vertexCount++;
+
+    switch (shape) {
+
+    case POINTS:
+      point(x, y);
+      break;
+
+    case LINES:
+      if ((vertexCount % 2) == 0) {
+        line(vertices[vertexCount-2][X],
+             vertices[vertexCount-2][Y], x, y);
+      }
+      break;
+
+    case TRIANGLES:
+      if ((vertexCount % 3) == 0) {
+        triangle(vertices[vertexCount - 3][X],
+                 vertices[vertexCount - 3][Y],
+                 vertices[vertexCount - 2][X],
+                 vertices[vertexCount - 2][Y],
+                 x, y);
+      }
+      break;
+
+    case TRIANGLE_STRIP:
+      if (vertexCount >= 3) {
+        triangle(vertices[vertexCount - 2][X],
+                 vertices[vertexCount - 2][Y],
+                 vertices[vertexCount - 1][X],
+                 vertices[vertexCount - 1][Y],
+                 vertices[vertexCount - 3][X],
+                 vertices[vertexCount - 3][Y]);
+      }
+      break;
+
+    case TRIANGLE_FAN:
+      if (vertexCount >= 3) {
+        // This is an unfortunate implementation because the stroke for an
+        // adjacent triangle will be repeated. However, if the stroke is not
+        // redrawn, it will replace the adjacent line (when it lines up
+        // perfectly) or show a faint line (when off by a small amount).
+        // The alternative would be to wait, then draw the shape as a
+        // polygon fill, followed by a series of vertices. But that's a
+        // poor method when used with PDF, DXF, or other recording objects,
+        // since discrete triangles would likely be preferred.
+        triangle(vertices[0][X],
+                 vertices[0][Y],
+                 vertices[vertexCount - 2][X],
+                 vertices[vertexCount - 2][Y],
+                 x, y);
+      }
+      break;
+
+    case QUAD:
+    case QUADS:
+      if ((vertexCount % 4) == 0) {
+        quad(vertices[vertexCount - 4][X],
+             vertices[vertexCount - 4][Y],
+             vertices[vertexCount - 3][X],
+             vertices[vertexCount - 3][Y],
+             vertices[vertexCount - 2][X],
+             vertices[vertexCount - 2][Y],
+             x, y);
+      }
+      break;
+
+    case QUAD_STRIP:
+      // 0---2---4
+      // |   |   |
+      // 1---3---5
+      if ((vertexCount >= 4) && ((vertexCount % 2) == 0)) {
+        quad(vertices[vertexCount - 4][X],
+             vertices[vertexCount - 4][Y],
+             vertices[vertexCount - 2][X],
+             vertices[vertexCount - 2][Y],
+             x, y,
+             vertices[vertexCount - 3][X],
+             vertices[vertexCount - 3][Y]);
+      }
+      break;
+
+    case POLYGON:
+      if (gpath == null) {
+        context.moveTo(x, y);
+      } else if (breakShape) {
+        context.moveTo(x, y);
+        breakShape = false;
+      } else {
+        context.lineTo(x, y);
+      }
+      pathX = x;
+      pathY = y;
+      break;
+    }
+  }
 
 
   @Override
   public void vertex(float x, float y, float z) {
     showDepthWarningXYZ("vertex");
   }
+
 
   @Override
   public void vertex(float[] v) {
@@ -375,211 +365,166 @@ public class PGraphicsFX extends PGraphics {
   }
 
 
-//  @Override
-//  public void beginContour() {
-//    if (openContour) {
-//      PGraphics.showWarning("Already called beginContour()");
-//      return;
+  @Override
+  public void beginContour() {
+    if (openContour) {
+      PGraphics.showWarning("Already called beginContour()");
+      return;
+    }
+
+    // draw contours to auxiliary path so main path can be closed later
+    Path temp = auxPath;
+    auxPath = gpath;
+    gpath = temp;
+
+//    if (auxPath != null) {  // first contour does not break
+    breakShape = true;
+    auxPath = new Path();
 //    }
-//
-//    // draw contours to auxiliary path so main path can be closed later
-//    GeneralPath contourPath = auxPath;
-//    auxPath = gpath;
-//    gpath = contourPath;
-//
-//    if (contourPath != null) {  // first contour does not break
-//      breakShape = true;
-//    }
-//
-//    openContour = true;
-//  }
+
+    breakShape = true;
+    openContour = true;
+  }
 
 
-//  @Override
-//  public void endContour() {
-//    if (!openContour) {
-//      PGraphics.showWarning("Need to call beginContour() first");
-//      return;
-//    }
-//
-//    // close this contour
-//    if (gpath != null) gpath.closePath();
-//
-//    // switch back to main path
-//    GeneralPath contourPath = gpath;
-//    gpath = auxPath;
-//    auxPath = contourPath;
-//
-//    openContour = false;
-//  }
+  @Override
+  public void endContour() {
+    if (!openContour) {
+      PGraphics.showWarning("Need to call beginContour() first");
+      return;
+    }
+
+    // close this contour
+    if (gpath != null) {
+      //gpath.closePath();
+      auxPath.getElements().addAll(gpath.getElements());
+      auxPath.getElements().add(new ClosePath());
+    }
+
+    // switch back to main path
+    Path temp = gpath;
+    gpath = auxPath;
+    auxPath = temp;
+
+    openContour = false;
+  }
 
 
-//  @Override
-//  public void endShape(int mode) {
-//    if (openContour) { // correct automagically, notify user
-//      endContour();
-//      PGraphics.showWarning("Missing endContour() before endShape()");
-//    }
-//    if (gpath != null) {  // make sure something has been drawn
-//      if (shape == POLYGON) {
-//        if (mode == CLOSE) {
-//          gpath.closePath();
-//        }
-//        if (auxPath != null) {
-//          gpath.append(auxPath, false);
-//        }
-//        drawShape(gpath);
-//      }
-//    }
-//    shape = 0;
-//  }
+  @Override
+  public void endShape(int mode) {
+    if (openContour) { // correct automagically, notify user
+      endContour();
+      PGraphics.showWarning("Missing endContour() before endShape()");
+    }
+    if (gpath != null) {  // make sure something has been drawn
+      if (shape == POLYGON) {
+        if (mode == CLOSE) {
+          //gpath.closePath();
+          gpath.getElements().add(new ClosePath());
+        }
+        if (auxPath != null) {
+          //gpath.append(auxPath, false);
+          gpath.getElements().addAll(auxPath.getElements());
+        }
+        //drawShape(gpath);
+        // TODO argh, can't go this route
+      }
+    }
+    shape = 0;
+  }
 
 
 
-//  //////////////////////////////////////////////////////////////
-//
-//  // CLIPPING
-//
-//
-//  @Override
-//  protected void clipImpl(float x1, float y1, float x2, float y2) {
-//    g2.setClip(new Rectangle2D.Float(x1, y1, x2 - x1, y2 - y1));
-//  }
-//
-//
-//  @Override
-//  public void noClip() {
-//    g2.setClip(null);
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // BLEND
-//
-//  /**
-//   * ( begin auto-generated from blendMode.xml )
-//   *
-//   * This is a new reference entry for Processing 2.0. It will be updated shortly.
-//   *
-//   * ( end auto-generated )
-//   *
-//   * @webref Rendering
-//   * @param mode the blending mode to use
-//   */
-//  @Override
-//  protected void blendModeImpl() {
-//    if (blendMode == BLEND) {
-//      g2.setComposite(defaultComposite);
-//
-//    } else {
-//      g2.setComposite(new Composite() {
-//
-//        @Override
-//        public CompositeContext createContext(ColorModel srcColorModel,
-//                                              ColorModel dstColorModel,
-//                                              RenderingHints hints) {
-//          return new BlendingContext(blendMode);
-//        }
-//      });
-//    }
-//  }
-//
-//
-//  // Blending implementation cribbed from portions of Romain Guy's
-//  // demo and terrific writeup on blending modes in Java 2D.
-//  // http://www.curious-creature.org/2006/09/20/new-blendings-modes-for-java2d/
-//  private static final class BlendingContext implements CompositeContext {
-//    private int mode;
-//
-//    private BlendingContext(int mode) {
-//      this.mode = mode;
-//    }
-//
-//    public void dispose() { }
-//
-//    public void compose(Raster src, Raster dstIn, WritableRaster dstOut) {
-//      // not sure if this is really necessary, since we control our buffers
-//      if (src.getSampleModel().getDataType() != DataBuffer.TYPE_INT ||
-//          dstIn.getSampleModel().getDataType() != DataBuffer.TYPE_INT ||
-//          dstOut.getSampleModel().getDataType() != DataBuffer.TYPE_INT) {
-//        throw new IllegalStateException("Source and destination must store pixels as INT.");
-//      }
-//
-//      int width = Math.min(src.getWidth(), dstIn.getWidth());
-//      int height = Math.min(src.getHeight(), dstIn.getHeight());
-//
-//      int[] srcPixels = new int[width];
-//      int[] dstPixels = new int[width];
-//
-//      // Java won't set the high bits when RGB, returns 0 for alpha
-//      int alphaFiller = (dstIn.getNumBands() == 3) ? (0xFF << 24) : 0x00;
-//
-//      for (int y = 0; y < height; y++) {
-//        src.getDataElements(0, y, width, 1, srcPixels);
-//        dstIn.getDataElements(0, y, width, 1, dstPixels);
-//        for (int x = 0; x < width; x++) {
-//          dstPixels[x] = blendColor(alphaFiller | dstPixels[x], srcPixels[x], mode);
-//        }
-//        dstOut.setDataElements(0, y, width, 1, dstPixels);
-//      }
-//    }
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // BEZIER VERTICES
-//
-//
-//  @Override
-//  public void bezierVertex(float x1, float y1,
-//                           float x2, float y2,
-//                           float x3, float y3) {
-//    bezierVertexCheck();
-//    gpath.curveTo(x1, y1, x2, y2, x3, y3);
-//  }
-//
-//
-//  @Override
-//  public void bezierVertex(float x2, float y2, float z2,
-//                           float x3, float y3, float z3,
-//                           float x4, float y4, float z4) {
-//    showDepthWarningXYZ("bezierVertex");
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // QUADRATIC BEZIER VERTICES
-//
-//
-//  @Override
-//  public void quadraticVertex(float ctrlX, float ctrlY,
-//                         float endX, float endY) {
-//    bezierVertexCheck();
+  //////////////////////////////////////////////////////////////
+
+  // CLIPPING
+
+
+  @Override
+  protected void clipImpl(float x1, float y1, float x2, float y2) {
+    //g2.setClip(new Rectangle2D.Float(x1, y1, x2 - x1, y2 - y1));
+    showMethodWarning("clip()");
+  }
+
+
+  @Override
+  public void noClip() {
+    //g2.setClip(null);
+    showMethodWarning("noClip()");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // BLEND
+
+
+  @Override
+  protected void blendModeImpl() {
+    showMethodWarning("blendMode()");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // BEZIER VERTICES
+
+
+  @Override
+  public void bezierVertex(float x1, float y1,
+                           float x2, float y2,
+                           float x3, float y3) {
+    bezierVertexCheck();
+    //gpath.curveTo(x1, y1, x2, y2, x3, y3);
+    context.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+    pathX = x3;
+    pathY = y3;
+
+  }
+
+
+  @Override
+  public void bezierVertex(float x2, float y2, float z2,
+                           float x3, float y3, float z3,
+                           float x4, float y4, float z4) {
+    showDepthWarningXYZ("bezierVertex");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // QUADRATIC BEZIER VERTICES
+
+
+  float pathX, pathY;  // last point, used by quadratic vertices
+
+
+  @Override
+  public void quadraticVertex(float ctrlX, float ctrlY,
+                              float endX, float endY) {
+    bezierVertexCheck();
 //    Point2D cur = gpath.getCurrentPoint();
-//
-//    float x1 = (float) cur.getX();
-//    float y1 = (float) cur.getY();
-//
-//    bezierVertex(x1 + ((ctrlX-x1)*2/3.0f), y1 + ((ctrlY-y1)*2/3.0f),
-//                 endX + ((ctrlX-endX)*2/3.0f), endY + ((ctrlY-endY)*2/3.0f),
-//                 endX, endY);
-//  }
-//
-//
-//  @Override
-//  public void quadraticVertex(float x2, float y2, float z2,
-//                         float x4, float y4, float z4) {
-//    showDepthWarningXYZ("quadVertex");
-//  }
-//
-//
-//
+
+//    float pathX = (float) cur.getX();
+//    float pathY = (float) cur.getY();
+
+    bezierVertex(pathX + ((ctrlX-pathX)*2/3.0f), pathY + ((ctrlY-pathY)*2/3.0f),
+                 endX + ((ctrlX-endX)*2/3.0f), endY + ((ctrlY-endY)*2/3.0f),
+                 endX, endY);
+  }
+
+
+  @Override
+  public void quadraticVertex(float x2, float y2, float z2,
+                         float x4, float y4, float z4) {
+    showDepthWarningXYZ("quadVertex");
+  }
+
+
+
 //  //////////////////////////////////////////////////////////////
 //
 //  // CURVE VERTICES
