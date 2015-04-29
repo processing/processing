@@ -1454,7 +1454,7 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public void noSmooth() {
     smooth = false;
-    quality = 0;  // Github 3113
+    quality = 0;  // https://github.com/processing/processing/issues/3113
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_OFF);
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
