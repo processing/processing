@@ -47,22 +47,20 @@ public class PGraphicsFX extends PGraphics {
 
 //  public Graphics2D g2;
 //  Composite defaultComposite;
-//  GeneralPath gpath;
-//
-//  // path for contours so gpath can be closed
-//  GeneralPath auxPath;
-//
-//  boolean openContour;
-//
-//  /// break the shape at the next vertex (next vertex() call is a moveto())
-//  boolean breakShape;
-//
-//  /// coordinates for internal curve calculation
-//  float[] curveCoordX;
-//  float[] curveCoordY;
-//  float[] curveDrawX;
-//  float[] curveDrawY;
-//
+
+  Path gpath;
+  // path for contours so gpath can be closed
+  Path auxPath;
+  boolean openContour;
+  /// break the shape at the next vertex (next vertex() call is a moveto())
+  boolean breakShape;
+
+  /// coordinates for internal curve calculation
+  float[] curveCoordX;
+  float[] curveCoordY;
+  float[] curveDrawX;
+  float[] curveDrawY;
+
 //  int transformCount;
 //  AffineTransform transformStack[] =
 //    new AffineTransform[MATRIX_STACK_DEPTH];
@@ -188,13 +186,6 @@ public class PGraphicsFX extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // SHAPE
-
-
-  Path gpath;
-  Path auxPath;
-//  boolean gpath;
-  boolean breakShape;
-  boolean openContour;
 
 
   @Override
@@ -334,8 +325,6 @@ public class PGraphicsFX extends PGraphics {
       } else {
         context.lineTo(x, y);
       }
-      pathX = x;
-      pathY = y;
       break;
     }
   }
@@ -477,10 +466,7 @@ public class PGraphicsFX extends PGraphics {
                            float x2, float y2,
                            float x3, float y3) {
     bezierVertexCheck();
-    //gpath.curveTo(x1, y1, x2, y2, x3, y3);
     context.bezierCurveTo(x1, y1, x2, y2, x3, y3);
-    pathX = x3;
-    pathY = y3;
 
   }
 
@@ -499,21 +485,10 @@ public class PGraphicsFX extends PGraphics {
   // QUADRATIC BEZIER VERTICES
 
 
-  float pathX, pathY;  // last point, used by quadratic vertices
-
-
   @Override
   public void quadraticVertex(float ctrlX, float ctrlY,
                               float endX, float endY) {
-    bezierVertexCheck();
-//    Point2D cur = gpath.getCurrentPoint();
-
-//    float pathX = (float) cur.getX();
-//    float pathY = (float) cur.getY();
-
-    bezierVertex(pathX + ((ctrlX-pathX)*2/3.0f), pathY + ((ctrlY-pathY)*2/3.0f),
-                 endX + ((ctrlX-endX)*2/3.0f), endY + ((ctrlY-endY)*2/3.0f),
-                 endX, endY);
+    context.quadraticCurveTo(ctrlX, ctrlY, endX, endY);
   }
 
 
@@ -525,88 +500,88 @@ public class PGraphicsFX extends PGraphics {
 
 
 
-//  //////////////////////////////////////////////////////////////
-//
-//  // CURVE VERTICES
-//
-//
-//  @Override
-//  protected void curveVertexCheck() {
-//    super.curveVertexCheck();
-//
-//    if (curveCoordX == null) {
-//      curveCoordX = new float[4];
-//      curveCoordY = new float[4];
-//      curveDrawX = new float[4];
-//      curveDrawY = new float[4];
-//    }
-//  }
-//
-//
-//  @Override
-//  protected void curveVertexSegment(float x1, float y1,
-//                                    float x2, float y2,
-//                                    float x3, float y3,
-//                                    float x4, float y4) {
-//    curveCoordX[0] = x1;
-//    curveCoordY[0] = y1;
-//
-//    curveCoordX[1] = x2;
-//    curveCoordY[1] = y2;
-//
-//    curveCoordX[2] = x3;
-//    curveCoordY[2] = y3;
-//
-//    curveCoordX[3] = x4;
-//    curveCoordY[3] = y4;
-//
-//    curveToBezierMatrix.mult(curveCoordX, curveDrawX);
-//    curveToBezierMatrix.mult(curveCoordY, curveDrawY);
-//
-//    // since the paths are continuous,
-//    // only the first point needs the actual moveto
-//    if (gpath == null) {
+  //////////////////////////////////////////////////////////////
+
+  // CURVE VERTICES
+
+
+  @Override
+  protected void curveVertexCheck() {
+    super.curveVertexCheck();
+
+    if (curveCoordX == null) {
+      curveCoordX = new float[4];
+      curveCoordY = new float[4];
+      curveDrawX = new float[4];
+      curveDrawY = new float[4];
+    }
+  }
+
+
+  @Override
+  protected void curveVertexSegment(float x1, float y1,
+                                    float x2, float y2,
+                                    float x3, float y3,
+                                    float x4, float y4) {
+    curveCoordX[0] = x1;
+    curveCoordY[0] = y1;
+
+    curveCoordX[1] = x2;
+    curveCoordY[1] = y2;
+
+    curveCoordX[2] = x3;
+    curveCoordY[2] = y3;
+
+    curveCoordX[3] = x4;
+    curveCoordY[3] = y4;
+
+    curveToBezierMatrix.mult(curveCoordX, curveDrawX);
+    curveToBezierMatrix.mult(curveCoordY, curveDrawY);
+
+    // since the paths are continuous,
+    // only the first point needs the actual moveto
+    if (gpath == null) {
 //      gpath = new GeneralPath();
-//      gpath.moveTo(curveDrawX[0], curveDrawY[0]);
-//    }
-//
-//    gpath.curveTo(curveDrawX[1], curveDrawY[1],
-//                  curveDrawX[2], curveDrawY[2],
-//                  curveDrawX[3], curveDrawY[3]);
-//  }
-//
-//
-//  @Override
-//  public void curveVertex(float x, float y, float z) {
-//    showDepthWarningXYZ("curveVertex");
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // RENDERER
-//
-//
-//  //public void flush()
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // POINT, LINE, TRIANGLE, QUAD
-//
-//
-//  @Override
-//  public void point(float x, float y) {
-//    if (stroke) {
-////      if (strokeWeight > 1) {
-//      line(x, y, x + EPSILON, y + EPSILON);
-////      } else {
-////        set((int) screenX(x, y), (int) screenY(x, y), strokeColor);
-////      }
-//    }
-//  }
+      context.moveTo(curveDrawX[0], curveDrawY[0]);
+    }
+
+    context.bezierCurveTo(curveDrawX[1], curveDrawY[1],
+                          curveDrawX[2], curveDrawY[2],
+                          curveDrawX[3], curveDrawY[3]);
+  }
+
+
+  @Override
+  public void curveVertex(float x, float y, float z) {
+    showDepthWarningXYZ("curveVertex");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // RENDERER
+
+
+  //public void flush()
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // POINT, LINE, TRIANGLE, QUAD
+
+
+  @Override
+  public void point(float x, float y) {
+    if (stroke) {
+//      if (strokeWeight > 1) {
+      line(x, y, x + EPSILON, y + EPSILON);
+//      } else {
+//        set((int) screenX(x, y), (int) screenY(x, y), strokeColor);
+//      }
+    }
+  }
 
 
   @Override
@@ -615,32 +590,34 @@ public class PGraphicsFX extends PGraphics {
   }
 
 
-//  @Override
-//  public void triangle(float x1, float y1, float x2, float y2,
-//                       float x3, float y3) {
-//    gpath = new GeneralPath();
-//    gpath.moveTo(x1, y1);
-//    gpath.lineTo(x2, y2);
-//    gpath.lineTo(x3, y3);
-//    gpath.closePath();
-//    drawShape(gpath);
-//  }
-//
-//
-//  @Override
-//  public void quad(float x1, float y1, float x2, float y2,
-//                   float x3, float y3, float x4, float y4) {
-//    GeneralPath gp = new GeneralPath();
-//    gp.moveTo(x1, y1);
-//    gp.lineTo(x2, y2);
-//    gp.lineTo(x3, y3);
-//    gp.lineTo(x4, y4);
-//    gp.closePath();
-//    drawShape(gp);
-//  }
-//
-//
-//
+  @Override
+  public void triangle(float x1, float y1, float x2, float y2,
+                       float x3, float y3) {
+    context.beginPath();
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.lineTo(x3, y3);
+    context.closePath();
+    if (fill) context.fill();
+    if (stroke) context.stroke();
+  }
+
+
+  @Override
+  public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4) {
+    context.beginPath();
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.lineTo(x3, y3);
+    context.lineTo(x4, y4);
+    context.closePath();
+    if (fill) context.fill();
+    if (stroke) context.stroke();
+  }
+
+
+
 //  //////////////////////////////////////////////////////////////
 //
 //  // RECT
