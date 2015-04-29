@@ -387,7 +387,7 @@ public class PSurfaceAWT extends PSurfaceNone {
 
 
   @Override
-  public Frame initFrame(PApplet sketch, Color backgroundColor,
+  public void initFrame(PApplet sketch, Color backgroundColor,
                          int deviceIndex, boolean fullScreen, boolean spanDisplays) {
     this.sketch = sketch;
 
@@ -514,46 +514,49 @@ public class PSurfaceAWT extends PSurfaceNone {
     // http://code.google.com/p/processing/issues/detail?id=467
     frame.setResizable(false);
 
-    return frame;
+//    return frame;
   }
 
 
-//  /** Set the window (and dock, or whatever necessary) title. */
-//  public void setTitle(String title) {
-//    frame.setTitle(title);
-//  }
-//
-//
-//  /** Set true if we want to resize things (default is not resizable) */
-//  public void setResizable(boolean resizable) {
-//    this.resizable = resizable;  // really only used for canvas
-//
-//    if (frame != null) {
-//      frame.setResizable(resizable);
-//    }
-//  }
-//
-//
-//  public void setVisible(boolean visible) {
-//    frame.setVisible(visible);
-//
-//    // removing per https://github.com/processing/processing/pull/3162
-//    // can remove the code below once 3.0a6 is tested and behaving
-///*
-//    if (visible && PApplet.platform == PConstants.LINUX) {
-//      // Linux doesn't deal with insets the same way. We get fake insets
-//      // earlier, and then the window manager will slap its own insets
-//      // onto things once the frame is realized on the screen. Awzm.
-//      if (PApplet.platform == PConstants.LINUX) {
-//        Insets insets = frame.getInsets();
-//        frame.setSize(Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
-//                      insets.left + insets.right,
-//                      Math.max(sketchHeight, MIN_WINDOW_HEIGHT) +
-//                      insets.top + insets.bottom);
-//      }
-//    }
-//*/
-//  }
+  /** Set the window (and dock, or whatever necessary) title. */
+  @Override
+  public void setTitle(String title) {
+    frame.setTitle(title);
+  }
+
+
+  /** Set true if we want to resize things (default is not resizable) */
+  @Override
+  public void setResizable(boolean resizable) {
+    //this.resizable = resizable;  // really only used for canvas
+
+    if (frame != null) {
+      frame.setResizable(resizable);
+    }
+  }
+
+
+  @Override
+  public void setVisible(boolean visible) {
+    frame.setVisible(visible);
+
+    // removing per https://github.com/processing/processing/pull/3162
+    // can remove the code below once 3.0a6 is tested and behaving
+/*
+    if (visible && PApplet.platform == PConstants.LINUX) {
+      // Linux doesn't deal with insets the same way. We get fake insets
+      // earlier, and then the window manager will slap its own insets
+      // onto things once the frame is realized on the screen. Awzm.
+      if (PApplet.platform == PConstants.LINUX) {
+        Insets insets = frame.getInsets();
+        frame.setSize(Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
+                      insets.left + insets.right,
+                      Math.max(sketchHeight, MIN_WINDOW_HEIGHT) +
+                      insets.top + insets.bottom);
+      }
+    }
+*/
+  }
 
 
   //public void placeFullScreen(boolean hideStop) {

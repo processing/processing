@@ -91,7 +91,7 @@ public class PSurfaceJOGL implements PSurface {
     return null;
   }
 
-  public Frame initFrame(PApplet sketch, Color backgroundColor,
+  public void initFrame(PApplet sketch, Color backgroundColor,
                          int deviceIndex, boolean fullScreen,
                          boolean spanDisplays) {
     this.sketch = sketch;
@@ -321,42 +321,45 @@ public class PSurfaceJOGL implements PSurface {
       // error setting the window visible, should quit...
     }
 
-    frame = new DummyFrame();
-    return frame;
+//    frame = new DummyFrame();
+//    return frame;
   }
 
-  @SuppressWarnings("serial")
-  class DummyFrame extends Frame {
+//  @SuppressWarnings("serial")
+//  class DummyFrame extends Frame {
+//
+//    public DummyFrame() {
+//      super();
+//    }
+//
+//    @Override
+//    public void setResizable(boolean resizable) {
+////      super.setResizable(resizable);
+//    }
+//
+//    @Override
+//    public void setVisible(boolean visible) {
+//      window.setVisible(visible);
+//    }
+//
+//    @Override
+//    public void setTitle(String title) {
+//      window.setTitle(title);
+//    }
+//  }
 
-    public DummyFrame() {
-      super();
-    }
 
-    @Override
-    public void setResizable(boolean resizable) {
-//      super.setResizable(resizable);
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-      window.setVisible(visible);
-    }
-
-    @Override
-    public void setTitle(String title) {
-      window.setTitle(title);
-    }
-  }
-
-
+  @Override
   public void setTitle(String title) {
     window.setTitle(title);
   }
 
+  @Override
   public void setVisible(boolean visible) {
     window.setVisible(visible);
   }
 
+  @Override
   public void setResizable(boolean resizable) {
     // TODO Auto-generated method stub
 

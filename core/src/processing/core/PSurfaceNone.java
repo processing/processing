@@ -24,7 +24,6 @@ package processing.core;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Frame;
 
 
 /**
@@ -55,10 +54,27 @@ public class PSurfaceNone implements PSurface {
   }
 
 
-  public Frame initFrame(PApplet sketch, Color backgroundColor,
+  public void initFrame(PApplet sketch, Color backgroundColor,
                          int deviceIndex, boolean fullScreen,
                          boolean spanDisplays) {
-    return null;
+  }
+
+
+  /** Set the window (and dock, or whatever necessary) title. */
+  public void setTitle(String title) {
+    // TODO ignored?
+  }
+
+
+  /** Show or hide the window. */
+  public void setVisible(boolean visible) {
+    // TODO ignored?
+  }
+
+
+  /** Set true if we want to resize things (default is not resizable) */
+  public void setResizable(boolean resizable) {
+    // TODO ignored?
   }
 
 

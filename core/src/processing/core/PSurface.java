@@ -24,7 +24,6 @@ package processing.core;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Frame;
 
 
 public interface PSurface {
@@ -48,8 +47,9 @@ public interface PSurface {
 
   public Component initComponent(PApplet sketch);
 
-  public Frame initFrame(PApplet sketch, Color backgroundColor,
-                         int deviceIndex, boolean fullScreen, boolean spanDisplays);
+  //public Frame initFrame(PApplet sketch, Color backgroundColor,
+  public void initFrame(PApplet sketch, Color backgroundColor,
+                        int deviceIndex, boolean fullScreen, boolean spanDisplays);
 
   //
 
@@ -57,14 +57,14 @@ public interface PSurface {
   // Silly, but prevents a lot of rewrite and extra methods for little benefit.
   // However, maybe prevents us from having to document the 'frame' variable?
 
-//  /** Set the window (and dock, or whatever necessary) title. */
-//  public void setTitle(String title);
-//
-//  /** Show or hide the window. */
-//  public void setVisible(boolean visible);
-//
-//  /** Set true if we want to resize things (default is not resizable) */
-//  public void setResizable(boolean resizable);
+  /** Set the window (and dock, or whatever necessary) title. */
+  public void setTitle(String title);
+
+  /** Show or hide the window. */
+  public void setVisible(boolean visible);
+
+  /** Set true if we want to resize things (default is not resizable) */
+  public void setResizable(boolean resizable);
 
   //
 

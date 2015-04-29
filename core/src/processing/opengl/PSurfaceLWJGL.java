@@ -104,7 +104,7 @@ public class PSurfaceLWJGL implements PSurface {
 
 
   @Override
-  public Frame initFrame(PApplet sketch, Color backgroundColor,
+  public void initFrame(PApplet sketch, Color backgroundColor,
                          int deviceIndex, boolean fullScreen, boolean spanDisplays) {
     this.sketch = sketch;
 
@@ -214,8 +214,8 @@ public class PSurfaceLWJGL implements PSurface {
 //    sketchWidth = sketch.width = sketch.sketchWidth();
 //    sketchHeight = sketch.height = sketch.sketchHeight();
 
-    frame = new DummyFrame();
-    return frame;
+//    frame = new DummyFrame();
+//    return frame;
   }
 
 
@@ -233,24 +233,24 @@ public class PSurfaceLWJGL implements PSurface {
   }
 
 
-//  @Override
-//  public void setTitle(String title) {
-//    Display.setTitle(title);
-//  }
-//
-//
-//  @Override
-//  public void setVisible(boolean visible) {
-//    // Apparently not possible:
-//    // http://forum.lwjgl.org/index.php?topic=5388.0
-//    System.err.println("Cannot set visibility of window in OpenGL");
-//  }
-//
-//
-//  @Override
-//  public void setResizable(boolean resizable) {
-//    Display.setResizable(resizable);
-//  }
+  @Override
+  public void setTitle(String title) {
+    Display.setTitle(title);
+  }
+
+
+  @Override
+  public void setVisible(boolean visible) {
+    // Apparently not possible:
+    // http://forum.lwjgl.org/index.php?topic=5388.0
+    System.err.println("Cannot set visibility of window in OpenGL");
+  }
+
+
+  @Override
+  public void setResizable(boolean resizable) {
+    Display.setResizable(resizable);
+  }
 
 
   @Override
@@ -607,28 +607,28 @@ public class PSurfaceLWJGL implements PSurface {
   }
 
 
-  @SuppressWarnings("serial")
-  class DummyFrame extends Frame {
-
-    public DummyFrame() {
-      super();
-    }
-
-    @Override
-    public void setResizable(boolean resizable) {
-      Display.setResizable(resizable);
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-      System.err.println("Cannot set visibility of window in OpenGL");
-    }
-
-    @Override
-    public void setTitle(String title) {
-      Display.setTitle(title);
-    }
-  }
+//  @SuppressWarnings("serial")
+//  class DummyFrame extends Frame {
+//
+//    public DummyFrame() {
+//      super();
+//    }
+//
+//    @Override
+//    public void setResizable(boolean resizable) {
+//      Display.setResizable(resizable);
+//    }
+//
+//    @Override
+//    public void setVisible(boolean visible) {
+//      System.err.println("Cannot set visibility of window in OpenGL");
+//    }
+//
+//    @Override
+//    public void setTitle(String title) {
+//      Display.setTitle(title);
+//    }
+//  }
 
 
 

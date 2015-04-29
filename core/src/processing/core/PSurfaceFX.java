@@ -167,46 +167,65 @@ public class PSurfaceFX implements PSurface {
   }
 
 
-  public Frame initFrame(PApplet sketch, java.awt.Color backgroundColor,
+  //public Frame initFrame(PApplet sketch, java.awt.Color backgroundColor,
+  public void initFrame(PApplet sketch, java.awt.Color backgroundColor,
                          int deviceIndex, boolean fullScreen,
                          boolean spanDisplays) {
     this.sketch = sketch;
     PApplicationFX.surface = this;
-    Frame frame = new DummyFrame();
+    //Frame frame = new DummyFrame();
     new Thread(new Runnable() {
       public void run() {
         Application.launch(PApplicationFX.class);
       }
     }).start();
-    return frame;
+    //return frame;
   }
 
 
-  class DummyFrame extends Frame {
-
-    public DummyFrame() {
-      super();
-    }
-
-    @Override
-    public void setResizable(boolean resizable) {
-      // TODO
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-      stage.show();
-    }
-
-    @Override
-    public void setTitle(String title) {
-      if (stage != null) {
-        stage.setTitle(title);
-      } else {
-        System.err.println("stage was null for setTitle()");
-      }
-    }
+  /** Set the window (and dock, or whatever necessary) title. */
+  public void setTitle(String title) {
+    // TODO ignored?
   }
+
+
+  /** Show or hide the window. */
+  public void setVisible(boolean visible) {
+    // TODO ignored?
+  }
+
+
+  /** Set true if we want to resize things (default is not resizable) */
+  public void setResizable(boolean resizable) {
+    // TODO ignored?
+  }
+
+
+//  class DummyFrame extends Frame {
+//
+//    public DummyFrame() {
+//      super();
+//    }
+//
+//    @Override
+//    public void setResizable(boolean resizable) {
+//      // TODO
+//    }
+//
+//    @Override
+//    public void setVisible(boolean visible) {
+//      stage.show();
+//    }
+//
+//    @Override
+//    public void setTitle(String title) {
+//      if (stage != null) {
+//        stage.setTitle(title);
+//      } else {
+//        System.err.println("stage was null for setTitle()");
+//      }
+//    }
+//  }
 
 
   /*

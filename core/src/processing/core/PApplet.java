@@ -9585,9 +9585,34 @@ public class PApplet implements PConstants {
     g = createPrimaryGraphics();
     surface = g.createSurface();
     if (g.displayable()) {
-      frame = surface.initFrame(this, backgroundColor, displayIndex, present, spanDisplays);
-      //surface.setTitle(getClass().getName());
-      frame.setTitle(getClass().getName());
+      frame = new Frame() {
+        @Override
+        public void setResizable(boolean resizable) {
+          deprecationWarning("setResizable");
+          surface.setResizable(resizable);
+        }
+
+        @Override
+        public void setVisible(boolean visible) {
+          deprecationWarning("setVisible");
+          surface.setVisible(visible);
+        }
+
+        @Override
+        public void setTitle(String title) {
+          deprecationWarning("setTitle");
+          surface.setTitle(title);
+        }
+
+        private void deprecationWarning(String method) {
+          PGraphics.showWarning("Use surface." + method + "() instead of " +
+                                "frame." + method + " in Processing 3");
+        }
+      };
+
+      surface.initFrame(this, backgroundColor, displayIndex, present, spanDisplays);
+      surface.setTitle(getClass().getName());
+      //frame.setTitle(getClass().getName());
 //    } else {
 //      // TODO necessary?
 //      surface.initOffscreen(this);
