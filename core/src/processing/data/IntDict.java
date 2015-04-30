@@ -83,6 +83,28 @@ public class IntDict {
     }
   }
 
+
+  /**
+   * Constructor to allow (more intuitive) inline initialization, e.g.:
+   * <pre>
+   * new FloatDict(new Object[][] {
+   *   { "key1", 1 },
+   *   { "key2", 2 }
+   * });
+   * </pre>
+   */
+  public IntDict(Object[][] pairs) {
+    count = pairs.length;
+    this.keys = new String[count];
+    this.values = new int[count];
+    for (int i = 0; i < count; i++) {
+      keys[i] = (String) pairs[i][0];
+      values[i] = (Integer) pairs[i][1];
+      indices.put(keys[i], i);
+    }
+  }
+
+
   /**
    * Returns the number of key/value pairs
    *

@@ -69,6 +69,7 @@ public class StringDict {
     }
   }
 
+
   /**
    * @nowebref
    */
@@ -83,6 +84,29 @@ public class StringDict {
       indices.put(keys[i], i);
     }
   }
+
+
+  /**
+   * Constructor to allow (more intuitive) inline initialization, e.g.:
+   * <pre>
+   * new StringDict(new String[][] {
+   *   { "key1", "value1" },
+   *   { "key2", "value2" }
+   * });
+   * </pre>
+   * It's no Python, but beats a static { } block with HashMap.put() statements.
+   */
+  public StringDict(String[][] pairs) {
+    count = pairs.length;
+    this.keys = new String[count];
+    this.values = new String[count];
+    for (int i = 0; i < count; i++) {
+      keys[i] = pairs[i][0];
+      values[i] = pairs[i][1];
+      indices.put(keys[i], i);
+    }
+  }
+
 
   /**
    * @webref stringdict:method

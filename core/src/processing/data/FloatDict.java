@@ -68,6 +68,28 @@ public class FloatDict {
     }
   }
 
+
+  /**
+   * Constructor to allow (more intuitive) inline initialization, e.g.:
+   * <pre>
+   * new FloatDict(new Object[][] {
+   *   { "key1", 1 },
+   *   { "key2", 2 }
+   * });
+   * </pre>
+   */
+  public FloatDict(Object[][] pairs) {
+    count = pairs.length;
+    this.keys = new String[count];
+    this.values = new float[count];
+    for (int i = 0; i < count; i++) {
+      keys[i] = (String) pairs[i][0];
+      values[i] = (Float) pairs[i][1];
+      indices.put(keys[i], i);
+    }
+  }
+
+
   /**
    * @nowebref
    */

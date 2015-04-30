@@ -9,6 +9,9 @@ contribs
 X Window size not passing into Tweak Mode
 X   https://github.com/processing/processing/issues/3208
 X   https://github.com/processing/processing/pull/3227
+X preferences window fixes for Linux
+X   https://github.com/processing/processing/pull/3232
+X   https://github.com/processing/processing/issues/3231
 
 
 _ we've lost arrow keys to expand items in the examples window

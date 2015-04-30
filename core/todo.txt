@@ -3,6 +3,7 @@ X pop() was not implemented correctly
 X fairly major rewrite of createShape() 
 X   prevents same code from appearing 5x (!) in the source
 X   improves bad api design with the static createShapeImpl() methods
+X add new String/Int/FloatDict constructors for easier initialization
 
 
 _ need reference update for createShape()
@@ -128,6 +129,7 @@ _   https://github.com/processing/processing/issues/2778
 _ make join() work with Iterable?
 _   will this collide with the current String[] version?
 _ remove OPENGL constant (tell people to use P3D or P2D)
+_ exec() and open() to use varargs
 
 
 under consideration
