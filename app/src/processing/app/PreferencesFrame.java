@@ -77,6 +77,8 @@ public class PreferencesFrame {
   String[] monoFontFamilies;
   JComboBox<String> fontSelectionBox;
 
+  JButton okButton;
+
   /** Base object so that updates can be applied to the list of editors. */
   Base base;
 
@@ -554,7 +556,7 @@ public class PreferencesFrame {
 
     // [  OK  ] [ Cancel ]  maybe these should be next to the message?
 
-    JButton okButton = new JButton(Preferences.PROMPT_OK);
+    okButton = new JButton(Preferences.PROMPT_OK);
     okButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           applyFrame();
@@ -710,6 +712,7 @@ public class PreferencesFrame {
 
     Toolkit.registerWindowCloseKeys(dialog.getRootPane(), disposer);
     Toolkit.setIcon(dialog);
+    dialog.setResizable(false);
     dialog.pack();
     dialog.setLocationRelativeTo(null);
 
@@ -912,6 +915,15 @@ public class PreferencesFrame {
     if (autoAssociateBox != null) {
       autoAssociateBox.setSelected(Preferences.getBoolean("platform.auto_file_type_associations")); //$NON-NLS-1$
     }
+    // The OK Button has to be set as the default button every time the 
+    // PrefWindow is to be displayed
+    dialog.getRootPane().setDefaultButton(okButton);
+
+    // The pack is called again here second time to fix layout bugs
+    // the bugs are not due to groupLayout but due to HTML rendering of components
+    // more info can be found here -> https://netbeans.org/bugzilla/show_bug.cgi?id=79967
+    dialog.pack();
+
     dialog.setVisible(true);
   }
 
