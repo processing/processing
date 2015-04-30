@@ -504,7 +504,6 @@ public class PreferencesFrame {
                   .addComponent(cancelButton))
       .addGap(BORDER)
       );
-    dialog.getRootPane().setDefaultButton(okButton);
 
     if (Base.isWindows()){
       autoAssociateBox.setVisible(true);
