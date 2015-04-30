@@ -736,6 +736,13 @@ public class PreferencesFrame {
   public void sketchbookCallback(File file) {
     if (file != null) {
       sketchbookLocationField.setText(file.getAbsolutePath());
+
+      // This sets the sketchbookFrame to null so that when showSketchbookFrame()
+      // is called the sketchbook has to be rebuild again with the modified path.
+      // This would have to changed when the implementation
+      // of methods for building and displaying the sketchbook will be changed
+      // as specified in #3178 
+      base.activeEditor.mode.sketchbookFrame = null;
     }
   }
 
