@@ -383,7 +383,7 @@ public class PreferencesFrame {
     JLabel preferenceHintLabel = new JLabel("(" + Language.text("preferences.file.hint") + ")");
     preferenceHintLabel.setForeground(Color.gray);
 
-    // [  OK  ] [ Cancel ]  
+    // [  OK  ] [ Cancel ]
 
     okButton = new JButton(Preferences.PROMPT_OK);
     okButton.addActionListener(new ActionListener() {
