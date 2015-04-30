@@ -917,7 +917,7 @@ public class PreferencesFrame {
     // the bugs are not due to groupLayout but due to HTML rendering of components
     // more info can be found here -> https://netbeans.org/bugzilla/show_bug.cgi?id=79967
     dialog.pack();
-    
+
     dialog.setVisible(true);
   }
 
