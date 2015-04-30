@@ -710,6 +710,7 @@ public class PreferencesFrame {
 
     Toolkit.registerWindowCloseKeys(dialog.getRootPane(), disposer);
     Toolkit.setIcon(dialog);
+    dialog.setResizable(false);
     dialog.pack();
     dialog.setLocationRelativeTo(null);
 
@@ -912,6 +913,11 @@ public class PreferencesFrame {
     if (autoAssociateBox != null) {
       autoAssociateBox.setSelected(Preferences.getBoolean("platform.auto_file_type_associations")); //$NON-NLS-1$
     }
+    // The pack is called again here second time to fix layout bugs
+    // the bugs are not due to groupLayout but due to HTML rendering of components
+    // more info can be found here -> https://netbeans.org/bugzilla/show_bug.cgi?id=79967
+    dialog.pack();
+    
     dialog.setVisible(true);
   }
 
