@@ -400,18 +400,16 @@ public class PreferencesFrame {
         }
       });
 
-    // finish up
-
-    layout.setHorizontalGroup(layout.createSequentialGroup()
+    layout.setHorizontalGroup(layout.createSequentialGroup() // sequential group for border + mainContent + border
       .addGap(BORDER)
-      .addGroup(layout.createParallelGroup()
+      .addGroup(layout.createParallelGroup() // parallel group for rest of the components
           .addComponent(sketchbookLocationLabel)
           .addGroup(layout.createSequentialGroup()
                       .addComponent(sketchbookLocationField)
                       .addComponent(browseButton))
           .addGroup(layout.createSequentialGroup()
                       .addComponent(languageLabel)
-                      .addComponent(languageSelectionBox,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                      .addComponent(languageSelectionBox,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE) // This makes the component non-resizable in the X direction
                       .addComponent(restartProcessingLabel))
           .addGroup(layout.createSequentialGroup()
                       .addComponent(fontLabel)
@@ -449,14 +447,14 @@ public class PreferencesFrame {
           .addComponent(morePreferenceLabel)
           .addComponent(preferencePathLabel)
           .addComponent(preferenceHintLabel)
-          .addGroup(GroupLayout.Alignment.TRAILING ,layout.createSequentialGroup()
-                      .addComponent(okButton, BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, BUTTON_WIDTH) // Ok and CAncel buttton are now of size BUTTON_WIDTH
+          .addGroup(GroupLayout.Alignment.TRAILING ,layout.createSequentialGroup() // Trailing so that the buttons are to the right
+                      .addComponent(okButton, BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, BUTTON_WIDTH) // Ok and Cancel buttton are now of size BUTTON_WIDTH
                       .addComponent(cancelButton, BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, BUTTON_WIDTH)
           ))
       .addGap(BORDER)
     );
 
-    layout.setVerticalGroup(layout.createSequentialGroup()
+    layout.setVerticalGroup(layout.createSequentialGroup() // sequential group for border + mainContent + border
       .addGap(BORDER)
       .addComponent(sketchbookLocationLabel)
       .addGroup(layout.createParallelGroup()
@@ -524,7 +522,8 @@ public class PreferencesFrame {
         disposeFrame();
       }
     };
-
+    // finish up
+    
     Toolkit.registerWindowCloseKeys(dialog.getRootPane(), disposer);
     Toolkit.setIcon(dialog);
     dialog.setResizable(false);
