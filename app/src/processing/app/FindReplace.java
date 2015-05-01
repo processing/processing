@@ -38,7 +38,7 @@ public class FindReplace extends JFrame {
 
   static final int BORDER = Base.isMacOS() ? 20 : 13;
 //  static final int SMALL = 6;
-// //  12 is correct for Mac, other numbers may be required for other platforms
+//  12 is correct for Mac, other numbers may be required for other platforms
 //  static final int BUTTON_GAP = 12;
 
   Editor editor;
@@ -72,15 +72,8 @@ public class FindReplace extends JFrame {
 
     JLabel findLabel = new JLabel(Language.text("find.find"));
     JLabel replaceLabel = new JLabel(Language.text("find.replace_with"));
-//    Dimension labelDimension = replaceLabel.getPreferredSize();
     findField = new JTextField();
     replaceField = new JTextField();
-//    pain.add(findLabel);
-//    pain.add(replaceLabel);
-
-//    pain.add(findField = new JTextField());
-//    pain.add(replaceField = new JTextField());
-//    int fieldHeight = findField.getPreferredSize().height;
 
     if (findString != null) findField.setText(findString);
     if (replaceString != null) replaceField.setText(replaceString);
@@ -92,7 +85,6 @@ public class FindReplace extends JFrame {
         }
       });
     ignoreCaseBox.setSelected(ignoreCase);
-//    pain.add(ignoreCaseBox);
 
     allTabsBox = new JCheckBox(Language.text("find.all_tabs"));
     allTabsBox.addActionListener(new ActionListener() {
@@ -102,7 +94,6 @@ public class FindReplace extends JFrame {
       });
     allTabsBox.setSelected(allTabs);
     allTabsBox.setEnabled(true);
-//    pain.add(allTabsBox);
 
     wrapAroundBox = new JCheckBox(Language.text("find.wrap_around"));
     wrapAroundBox.addActionListener(new ActionListener() {
@@ -111,10 +102,7 @@ public class FindReplace extends JFrame {
         }
       });
     wrapAroundBox.setSelected(wrapAround);
-//    pain.add(wrapAroundBox);
 
-//    JPanel buttons = new JPanel();
-//    buttons.setLayout(new FlowLayout(FlowLayout.CENTER,BUTTON_GAP, 0));
     GroupLayout layout = new GroupLayout(pain);
     pain.setLayout(layout);
     layout.setAutoCreateGaps(true);
@@ -135,15 +123,6 @@ public class FindReplace extends JFrame {
         .addComponent(replaceAndFindButton)
         .addComponent(previousButton)
         .addComponent(findButton);
-//      buttons.add(replaceAllButton);
-//      buttons.add(replaceButton);
-//      buttons.add(replaceAndFindButton);
-//      buttons.add(previousButton);
-//      buttons.add(findButton);
-
-      // to fix ugliness.. normally macosx java 1.3 puts an
-      // ugly white border around this object, so turn it off.
-//      buttons.setBorder(null);
 
     } else {
       buttonsHorizontalGroup.addComponent(findButton)
@@ -151,13 +130,7 @@ public class FindReplace extends JFrame {
         .addComponent(replaceAndFindButton)
         .addComponent(replaceButton)
         .addComponent(replaceAllButton);
-//      buttons.add(findButton);
-//      buttons.add(previousButton);
-//      buttons.add(replaceAndFindButton);
-//      buttons.add(replaceButton);
-//      buttons.add(replaceAllButton);
     }
-//    pain.add(buttons);
     setFound(false);
 
     Group buttonsVerticalGroup = layout.createParallelGroup(); // Creates group for arranging buttons vertically
@@ -167,106 +140,48 @@ public class FindReplace extends JFrame {
     .addComponent(replaceButton)
     .addComponent(replaceAllButton);
 
-    layout
-      .setHorizontalGroup(layout
+    layout.setHorizontalGroup(layout
         .createSequentialGroup()
         .addGap(BORDER)
-        .addGroup(layout
-                    .createParallelGroup()
-                    .addGroup(GroupLayout.Alignment.TRAILING, // TRAILING makes everything right alinged 
-                              layout
-                                .createSequentialGroup()
-                                .addGap(replaceLabel.getPreferredSize().width
-                                          - findLabel.getPreferredSize().width)
-                                .addComponent(findLabel)
-                                .addComponent(findField))
-                    .addGroup(GroupLayout.Alignment.TRAILING,
-                              layout
-                                .createSequentialGroup()
-                                .addComponent(replaceLabel)
-                                .addGroup(layout
-                                            .createParallelGroup()
-                                            .addComponent(replaceField)
-                                            .addGroup(GroupLayout.Alignment.LEADING,
-                                                      layout
-                                                        .createSequentialGroup()
-                                                        .addComponent(ignoreCaseBox)
-                                                        .addComponent(allTabsBox)
-                                                        .addComponent(wrapAroundBox))))
-                    .addGroup(GroupLayout.Alignment.CENTER,buttonsHorizontalGroup))
+        .addGroup(layout.createParallelGroup()
+            .addGroup(GroupLayout.Alignment.TRAILING, // TRAILING makes everything right alinged 
+                layout.createSequentialGroup()
+                    .addGap(replaceLabel.getPreferredSize().width
+                        - findLabel.getPreferredSize().width)
+                    .addComponent(findLabel)
+                    .addComponent(findField))
+            .addGroup(GroupLayout.Alignment.TRAILING,
+                layout.createSequentialGroup()
+                    .addComponent(replaceLabel)
+                    .addGroup(layout.createParallelGroup()
+                        .addComponent(replaceField)
+                        .addGroup(GroupLayout.Alignment.LEADING,
+                                  layout.createSequentialGroup()
+                                      .addComponent(ignoreCaseBox)
+                                      .addComponent(allTabsBox)
+                                      .addComponent(wrapAroundBox)
+                                      .addGap(0))))
+            .addGroup(GroupLayout.Alignment.CENTER,buttonsHorizontalGroup))
         .addGap(BORDER)
-        );
+    );
 
 //    layout.linkSize(SwingConstants.HORIZONTAL, findButton, replaceButton, replaceAllButton, replaceAndFindButton, previousButton);
     
     layout.setVerticalGroup(layout.createSequentialGroup()
       .addGap(BORDER)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                  .addComponent(findLabel)
-                  .addComponent(findField))
+          .addComponent(findLabel)
+          .addComponent(findField))
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                  .addComponent(replaceLabel)
-                  .addComponent(replaceField))
+          .addComponent(replaceLabel)
+          .addComponent(replaceField))
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                  .addComponent(ignoreCaseBox)
-                  .addComponent(allTabsBox)
-                  .addComponent(wrapAroundBox))
-                  .addGroup(buttonsVerticalGroup)
+          .addComponent(ignoreCaseBox)
+          .addComponent(allTabsBox)
+          .addComponent(wrapAroundBox))
+          .addGroup(buttonsVerticalGroup)
       .addGap(BORDER) 
       );
-
-//    Dimension buttonsDimension = buttons.getPreferredSize();
-//    int visibleButtonWidth = buttonsDimension.width - 2 * BUTTON_GAP;
-//    int fieldWidth = visibleButtonWidth - (labelDimension.width + SMALL);
-
-//   // +1 since it's better to tend downwards
-//    int yoff = (1 + fieldHeight - labelDimension.height) / 2;
-//
-//    int ypos = EDGE;
-//
-//    int labelWidth = findLabel.getPreferredSize().width;
-//    findLabel.setBounds(EDGE + (labelDimension.width-labelWidth), ypos + yoff, //  + yoff was added to the wrong field
-//                        labelWidth, labelDimension.height);
-//    findField.setBounds(EDGE + labelDimension.width + SMALL, ypos,
-//                        fieldWidth, fieldHeight);
-//
-//    ypos += fieldHeight + SMALL;
-//
-//    labelWidth = replaceLabel.getPreferredSize().width;
-//    replaceLabel.setBounds(EDGE + (labelDimension.width-labelWidth), ypos + yoff,
-//                           labelWidth, labelDimension.height);
-//    replaceField.setBounds(EDGE + labelDimension.width + SMALL, ypos,
-//                           fieldWidth, fieldHeight);
-//
-//    ypos += fieldHeight + SMALL;
-//
-//    final int third = (fieldWidth - SMALL*2) / 3;
-//    ignoreCaseBox.setBounds(EDGE + labelDimension.width + SMALL,
-//                            ypos,
-//                            third, fieldHeight);
-//
-//    allTabsBox.setBounds(EDGE + labelDimension.width + SMALL + third + SMALL,
-//                         ypos,
-//                         third, fieldHeight);
-//
-//    //wrapAroundBox.setBounds(EDGE + labelDimension.width + SMALL + (fieldWidth-SMALL)/2 + SMALL,
-//    wrapAroundBox.setBounds(EDGE + labelDimension.width + SMALL + third*2 + SMALL*2,
-//                            ypos,
-//                            third, fieldHeight);
-//
-//    ypos += fieldHeight + SMALL;
-//
-//    buttons.setBounds(EDGE-BUTTON_GAP, ypos,
-//                      buttonsDimension.width, buttonsDimension.height);
-//
-//    ypos += buttonsDimension.height + EDGE;
-//
-//    int wide = visibleButtonWidth + EDGE*2;
-//    int high = ypos;
-//
-//    pack();
-//    Insets insets = getInsets();
-//    setSize(wide + insets.left + insets.right,high + insets.top + insets.bottom);
 
     setLocationRelativeTo(null); // center
     Dimension size = layout.preferredLayoutSize(pain);
