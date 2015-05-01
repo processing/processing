@@ -1,7 +1,5 @@
 package processing.jogl;
 
-import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Frame;
@@ -73,6 +71,8 @@ public class PSurfaceJOGL implements PSurface {
     // TODO Auto-generated method stub
   }
 
+
+  /*
   public Canvas initComponent(PApplet sketch) {
     this.sketch = sketch;
 
@@ -90,10 +90,12 @@ public class PSurfaceJOGL implements PSurface {
 
     return null;
   }
+  */
 
-  public void initFrame(PApplet sketch, Color backgroundColor,
-                         int deviceIndex, boolean fullScreen,
-                         boolean spanDisplays) {
+
+  public void initFrame(PApplet sketch, int backgroundColor,
+                        int deviceIndex, boolean fullScreen,
+                        boolean spanDisplays) {
     this.sketch = sketch;
 
     Display display = NewtFactory.createDisplay(null);
@@ -375,7 +377,7 @@ public class PSurfaceJOGL implements PSurface {
 
   }
 
-  public void placePresent(Color stopColor) {
+  public void placePresent(int stopColor) {
     // TODO Auto-generated method stub
 
   }
