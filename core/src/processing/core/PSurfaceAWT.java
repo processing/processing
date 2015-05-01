@@ -316,7 +316,7 @@ public class PSurfaceAWT extends PSurfaceNone {
 //  Graphics off;
 
 
-  public void blit() {
+  protected void blit() {
     // Other folks that call render() (i.e. paint()) are already on the EDT.
     // We need to be using the EDT since we're messing with the Canvas
     // object and BufferStrategy and friends.
