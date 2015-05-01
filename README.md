@@ -11,9 +11,8 @@ the “core” and the libraries that are included with the [download](http://pr
 > "Major changes" means possible breakage to libraries/tools/modes (as we make API changes) and the removal of `Applet` as the base class for PApplet. Some of these will be sorted out before the release, others are changes that will break some code between 2.x and 3.x. Obviously, we will work hard to break as few things as possible.
 
 If you have found a bug in the Processing software, you can file it here under the [“issues” tab](https://github.com/processing/processing/issues). 
-If it relates to the [JavaScript](http://processingjs.org) version, please use [their issue tracker](https://github.com/processing-js/processing-js/issues).
 All Android-related development has moved to its own repository [here](https://github.com/processing/processing-android), 
-so issues with Android Mode, or with the Android version of the core library should be posted there instead.
+so issues with Android Mode, or with the Android version of the core library should be posted there instead. The [processing.js](http://processingjs.org) project is not affiliated with us, but you can find their issue tracker [here](https://github.com/processing-js/processing-js/issues).
 
 The issues list has been imported from Google Code, so there are many spurious references 
 amongst them since the numbering changed. Basically, any time you see references to 
@@ -35,4 +34,4 @@ But in the meantime, I ask for your patience,
 and [patches](https://github.com/processing/processing/pulls).
 
 Ben Fry, 3 February 2013  
-Last updated 13 January 2015
+Last updated 1 May 2015
