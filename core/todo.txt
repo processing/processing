@@ -4,6 +4,8 @@ X fairly major rewrite of createShape()
 X   prevents same code from appearing 5x (!) in the source
 X   improves bad api design with the static createShapeImpl() methods
 X add new String/Int/FloatDict constructors for easier initialization
+X errors in case changes not correctly reported
+X   https://github.com/processing/processing/issues/3235
 
 
 _ need reference update for createShape()

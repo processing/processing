@@ -49,6 +49,9 @@ import javax.swing.JFileChooser;
 
 // used by desktopFile() method
 import javax.swing.filechooser.FileSystemView;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -5216,10 +5219,17 @@ public class PApplet implements PConstants {
   public XML loadXML(String filename, String options) {
     try {
       return new XML(createReader(filename), options);
-//      return new XML(createInput(filename), options);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
+
+      // can't use catch-all exception, since it might catch the
+      // RuntimException about the incorrect case sensitivity
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+
+    } catch (ParserConfigurationException e) {
+      throw new RuntimeException(e);
+
+    } catch (SAXException e) {
+      throw new RuntimeException(e);
     }
   }
 
@@ -5241,9 +5251,9 @@ public class PApplet implements PConstants {
   public XML parseXML(String xmlString, String options) {
     try {
       return XML.parse(xmlString, options);
+
     } catch (Exception e) {
-      e.printStackTrace();
-      return null;
+      throw new RuntimeException(e);
     }
   }
 
@@ -5897,22 +5907,12 @@ public class PApplet implements PConstants {
    * @see PrintWriter
    */
   public BufferedReader createReader(String filename) {
-    try {
-      InputStream is = createInput(filename);
-      if (is == null) {
-        System.err.println(filename + " does not exist or could not be read");
-        return null;
-      }
-      return createReader(is);
-
-    } catch (Exception e) {
-      if (filename == null) {
-        System.err.println("Filename passed to reader() was null");
-      } else {
-        System.err.println("Couldn't create a reader for " + filename);
-      }
+    InputStream is = createInput(filename);
+    if (is == null) {
+      System.err.println(filename + " does not exist or could not be read");
+      return null;
     }
-    return null;
+    return createReader(is);
   }
 
 
@@ -5927,16 +5927,10 @@ public class PApplet implements PConstants {
       }
       return createReader(is);
 
-    } catch (Exception e) {
-      if (file == null) {
-        throw new RuntimeException("File passed to createReader() was null");
-      } else {
-        e.printStackTrace();
-        throw new RuntimeException("Couldn't create a reader for " +
-                                   file.getAbsolutePath());
-      }
+    } catch (IOException e) {
+      // Re-wrap rather than forcing novices to learn about exceptions
+      throw new RuntimeException(e);
     }
-    //return null;
   }
 
 
@@ -5979,12 +5973,16 @@ public class PApplet implements PConstants {
     return createWriter(saveFile(filename));
   }
 
+
   /**
    * @nowebref
    * I want to print lines to a file. I have RSI from typing these
    * eight lines of code so many times.
    */
   static public PrintWriter createWriter(File file) {
+    if (file == null) {
+      throw new RuntimeException("File passed to createWriter() was null");
+    }
     try {
       createPath(file);  // make sure in-between folders exist
       OutputStream output = new FileOutputStream(file);
@@ -5994,15 +5992,9 @@ public class PApplet implements PConstants {
       return createWriter(output);
 
     } catch (Exception e) {
-      if (file == null) {
-        throw new RuntimeException("File passed to createWriter() was null");
-      } else {
-        e.printStackTrace();
-        throw new RuntimeException("Couldn't create a writer for " +
-                                   file.getAbsolutePath());
-      }
+      throw new RuntimeException("Couldn't create a writer for " +
+                                 file.getAbsolutePath(), e);
     }
-    //return null;
   }
 
   /**
@@ -6025,12 +6017,13 @@ public class PApplet implements PConstants {
   // FILE INPUT
 
 
-  /**
-   * @deprecated As of release 0136, use createInput() instead.
-   */
-  public InputStream openStream(String filename) {
-    return createInput(filename);
-  }
+  // Removed for 3.0a8
+//  /**
+//   * @deprecated As of release 0136, use createInput() instead.
+//   */
+//  public InputStream openStream(String filename) {
+//    return createInput(filename);
+//  }
 
 
   /**
