@@ -185,7 +185,7 @@ public class PSurfaceFX implements PSurface {
 
   /** Set the window (and dock, or whatever necessary) title. */
   public void setTitle(String title) {
-    // TODO ignored?
+    stage.setTitle(title);
   }
 
 
@@ -197,7 +197,7 @@ public class PSurfaceFX implements PSurface {
 
   /** Set true if we want to resize things (default is not resizable) */
   public void setResizable(boolean resizable) {
-    // TODO ignored?
+    stage.setResizable(resizable);
   }
 
 
