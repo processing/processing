@@ -22,8 +22,8 @@
 
 package processing.core;
 
-import java.awt.Component;
-import java.awt.Frame;
+//import java.awt.Component;
+//import java.awt.Frame;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -65,7 +65,7 @@ public class PSurfaceFX implements PSurface {
   PGraphicsFX fx;
   Stage stage;
   Canvas canvas;
-  Frame dummy;
+//  Frame dummy;
 
   AnimationTimer timer;
 
@@ -140,9 +140,9 @@ public class PSurfaceFX implements PSurface {
   }
 
 
-  public Component initComponent(PApplet sketch) {
-    return null;
-  }
+//  public Component initComponent(PApplet sketch) {
+//    return null;
+//  }
 
 
   static public class PApplicationFX extends Application {
@@ -162,13 +162,13 @@ public class PSurfaceFX implements PSurface {
 
       //stage.setScene(new Scene(new Group(canvas)));
       stage.setScene(new Scene(stackPane));
-      stage.show();  // move to setVisible(true)?
+      //stage.show();  // move to setVisible(true)?
     }
   }
 
 
   //public Frame initFrame(PApplet sketch, java.awt.Color backgroundColor,
-  public void initFrame(PApplet sketch, java.awt.Color backgroundColor,
+  public void initFrame(PApplet sketch, int backgroundColor,
                          int deviceIndex, boolean fullScreen,
                          boolean spanDisplays) {
     this.sketch = sketch;
@@ -191,7 +191,7 @@ public class PSurfaceFX implements PSurface {
 
   /** Show or hide the window. */
   public void setVisible(boolean visible) {
-    // TODO ignored?
+    stage.show();
   }
 
 
@@ -254,7 +254,6 @@ public class PSurfaceFX implements PSurface {
 
   public void placeWindow(int[] location) {
     // TODO Auto-generated method stub
-
   }
 
 
@@ -264,28 +263,28 @@ public class PSurfaceFX implements PSurface {
   }
 
 
-  public void placePresent(java.awt.Color stopColor) {
+  // http://download.java.net/jdk8/jfxdocs/javafx/stage/Stage.html#setFullScreenExitHint-java.lang.String-
+  // http://download.java.net/jdk8/jfxdocs/javafx/stage/Stage.html#setFullScreenExitKeyCombination-javafx.scene.input.KeyCombination-
+  public void placePresent(int stopColor) {
     // TODO Auto-generated method stub
-
   }
 
 
   public void setupExternalMessages() {
     // TODO Auto-generated method stub
-
   }
 
 
   public void setSize(int width, int height) {
-    // TODO Auto-generated method stub
-
+    System.out.println(getClass().getSimpleName() + " setSize()");
+    stage.setWidth(width);
+    stage.setHeight(height);
   }
 
 
-  public Component getComponent() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+//  public Component getComponent() {
+//    return null;
+//  }
 
   public void setSmooth(int level) {
     // TODO Auto-generated method stub

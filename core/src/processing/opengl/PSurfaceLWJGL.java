@@ -1,7 +1,5 @@
 package processing.opengl;
 
-import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -82,6 +80,7 @@ public class PSurfaceLWJGL implements PSurface {
   }
 
 
+  /*
   @Override
   public Canvas initComponent(PApplet sketch) {
     this.sketch = sketch;
@@ -101,10 +100,11 @@ public class PSurfaceLWJGL implements PSurface {
     }
     return null;
   }
+  */
 
 
   @Override
-  public void initFrame(PApplet sketch, Color backgroundColor,
+  public void initFrame(PApplet sketch, int backgroundColor,
                          int deviceIndex, boolean fullScreen, boolean spanDisplays) {
     this.sketch = sketch;
 
@@ -321,7 +321,7 @@ public class PSurfaceLWJGL implements PSurface {
   float offsetX;
   float offsetY;
   @Override
-  public void placePresent(Color stopColor) {
+  public void placePresent(int stopColor) {
 
     if (sketchWidth < screenRect.width || sketchHeight < screenRect.height) {
 //      System.err.println("WILL USE FBO");

@@ -4,6 +4,7 @@ X   https://github.com/processing/processing/issues/3225
 X Unable to install "processing-java"
 X   https://github.com/processing/processing/issues/3224
 X   also update the Windows and Linux versions
+_ "one file added to sketch" when actually 2 
 
 contribs
 X Window size not passing into Tweak Mode

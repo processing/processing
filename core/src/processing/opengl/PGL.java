@@ -596,10 +596,11 @@ public abstract class PGL {
 
 
       if (presentMode) {
-        float a = PSurface.WINDOW_BGCOLOR.getAlpha() / 255.0f;
-        float r = PSurface.WINDOW_BGCOLOR.getRed() / 255.0f;
-        float g = PSurface.WINDOW_BGCOLOR.getGreen() / 255.0f;
-        float b = PSurface.WINDOW_BGCOLOR.getBlue() / 255.0f;
+        int argb = PSurface.WINDOW_BGCOLOR;
+        float a = ((argb >> 24) & 0xff)  / 255.0f;
+        float r = ((argb >> 16) & 0xff) / 255.0f;
+        float g = ((argb >> 8) & 0xff) / 255.0f;
+        float b = (argb & 0xff) / 255.0f;
         clearDepth(1);
         clearColor(r, g, b, a);
         clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);

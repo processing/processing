@@ -374,6 +374,7 @@ public class PSurfaceAWT extends PSurfaceNone {
   }
   */
 
+  /*
   @Override
   public Component initComponent(PApplet sketch) {
     this.sketch = sketch;
@@ -384,11 +385,12 @@ public class PSurfaceAWT extends PSurfaceNone {
 
     return canvas;
   }
+  */
 
 
   @Override
-  public void initFrame(PApplet sketch, Color backgroundColor,
-                         int deviceIndex, boolean fullScreen, boolean spanDisplays) {
+  public void initFrame(PApplet sketch, int backgroundColor,
+                        int deviceIndex, boolean fullScreen, boolean spanDisplays) {
     this.sketch = sketch;
 
     GraphicsEnvironment environment =
@@ -450,10 +452,10 @@ public class PSurfaceAWT extends PSurfaceNone {
 
     // Removed code above, also removed from what's now in the placeXxxx()
     // methods. Not sure why it was being double-set; hopefully anachronistic.
-    if (backgroundColor == null) {
+    if (backgroundColor == 0) {
       backgroundColor = WINDOW_BGCOLOR;
     }
-    frame.getContentPane().setBackground(backgroundColor);
+    frame.getContentPane().setBackground(new Color(backgroundColor, false));
 
     // Put the p5 logo in the Frame's corner to override the Java coffee cup.
     setIconImage(frame);
@@ -561,7 +563,7 @@ public class PSurfaceAWT extends PSurfaceNone {
 
   //public void placeFullScreen(boolean hideStop) {
   @Override
-  public void placePresent(Color stopColor) {
+  public void placePresent(int stopColor) {
     // After the pack(), the screen bounds are gonna be 0s
     frame.setBounds(screenRect);
     canvas.setBounds((screenRect.width - sketchWidth) / 2,
@@ -573,9 +575,9 @@ public class PSurfaceAWT extends PSurfaceNone {
 //      macosxFullScreenToggle(frame);
 //    }
 
-    if (stopColor != null) {
+    if (stopColor != 0) {
       Label label = new Label("stop");
-      label.setForeground(stopColor);
+      label.setForeground(new Color(stopColor, false));
       label.addMouseListener(new MouseAdapter() {
         @Override
         public void mousePressed(java.awt.event.MouseEvent e) {
@@ -806,10 +808,10 @@ public class PSurfaceAWT extends PSurfaceNone {
   */
 
 
-  @Override
-  public Component getComponent() {
-    return canvas;
-  }
+//  @Override
+//  public Component getComponent() {
+//    return canvas;
+//  }
 
 
   @Override

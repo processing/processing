@@ -25,10 +25,13 @@
 package processing.core;
 
 // used for setting bg colors and whatnot
-import java.awt.Color;
+//import java.awt.Color;
 // Component is further up the chain than Canvas
-import java.awt.Component;
+//import java.awt.Component;
 // use for the link() command (and maybe open()?)
+
+// these are used for various methods (url opening, file selection, etc)
+// how many more can we remove?
 import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.FileDialog;
@@ -38,13 +41,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.lang.reflect.*;
-import java.net.*;
-import java.text.*;
-import java.util.*;
-import java.util.regex.*;
-import java.util.zip.*;
 
 // used by loadImage() functions
 import javax.imageio.ImageIO;
@@ -53,6 +49,14 @@ import javax.swing.JFileChooser;
 
 // used by desktopFile() method
 import javax.swing.filechooser.FileSystemView;
+
+import java.io.*;
+import java.lang.reflect.*;
+import java.net.*;
+import java.text.*;
+import java.util.*;
+import java.util.regex.*;
+import java.util.zip.*;
 
 import processing.data.*;
 import processing.event.*;
@@ -9409,8 +9413,9 @@ public class PApplet implements PConstants {
     int[] editorLocation = null;
 
     String name = null;
-    Color backgroundColor = null;
-    Color stopColor = Color.GRAY;
+    int backgroundColor = 0;
+    //int stopColor = java.awt.Color.GRAY.getRGB();
+    int stopColor = 0xff808080;
     boolean hideStop = false;
 
     int displayIndex = -1;  // -1 means use default, b/c numbered from 0
@@ -9436,11 +9441,11 @@ public class PApplet implements PConstants {
 
         } else if (param.equals(ARGS_BGCOLOR)) {
           if (value.charAt(0) == '#') value = value.substring(1);
-          backgroundColor = new Color(Integer.parseInt(value, 16));
+          backgroundColor = 0xff000000 | Integer.parseInt(value, 16);
 
         } else if (param.equals(ARGS_STOP_COLOR)) {
           if (value.charAt(0) == '#') value = value.substring(1);
-          stopColor = new Color(Integer.parseInt(value, 16));
+          stopColor = 0xff000000 | Integer.parseInt(value, 16);
 
         } else if (param.equals(ARGS_SKETCH_FOLDER)) {
           folder = value;
@@ -9558,7 +9563,7 @@ public class PApplet implements PConstants {
     if (fullScreen) {
       //surface.placeFullScreen(hideStop);
       if (hideStop) {
-        stopColor = null;  // they'll get the hint
+        stopColor = 0;  // they'll get the hint
       }
       surface.placePresent(stopColor);
     } else {
@@ -9571,7 +9576,7 @@ public class PApplet implements PConstants {
   }
 
 
-  protected PSurface initSurface(Color backgroundColor, int displayIndex,
+  protected PSurface initSurface(int backgroundColor, int displayIndex,
                                  boolean present, boolean spanDisplays) {
 //    try {
 //      String renderer = applet.sketchRenderer();
@@ -9662,21 +9667,21 @@ public class PApplet implements PConstants {
 //  }
 
 
-  /**
-   * Return a Canvas object that can be embedded into other Java GUIs.
-   * This is necessary because PApplet no longer subclasses Component.
-   *
-   * <pre>
-   * PApplet sketch = new EmbedSketch();
-   * Canvas canvas = sketch.getCanvas();
-   * // add the canvas object to your project and validate() it
-   * sketch.init()  // start the animation thread
-   */
-  public Component getComponent() {
-    g = createPrimaryGraphics();
-    surface = g.createSurface();
-    return surface.initComponent(this);
-  }
+//  /**
+//   * Return a Canvas object that can be embedded into other Java GUIs.
+//   * This is necessary because PApplet no longer subclasses Component.
+//   *
+//   * <pre>
+//   * PApplet sketch = new EmbedSketch();
+//   * Canvas canvas = sketch.getCanvas();
+//   * // add the canvas object to your project and validate() it
+//   * sketch.init()  // start the animation thread
+//   */
+//  public Component getComponent() {
+//    g = createPrimaryGraphics();
+//    surface = g.createSurface();
+//    return surface.initComponent(this);
+//  }
 
 
   /** Convenience method, should only be called by PSurface subclasses. */

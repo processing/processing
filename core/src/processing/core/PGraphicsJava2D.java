@@ -285,7 +285,7 @@ public class PGraphicsJava2D extends PGraphics {
 
       GraphicsConfiguration gc = null;
       if (surface != null) {
-        Component comp = surface.getComponent();
+        Component comp = null;  //surface.getComponent();
         if (comp == null) {
 //          System.out.println("component null, but parent.frame is " + parent.frame);
           comp = parent.frame;

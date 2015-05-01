@@ -22,8 +22,8 @@
 
 package processing.core;
 
-import java.awt.Color;
-import java.awt.Component;
+//import java.awt.Color;
+//import java.awt.Component;
 
 
 /**
@@ -44,17 +44,19 @@ public class PSurfaceNone implements PSurface {
   public PSurfaceNone() { }
 
 
+  @Override
   public void initOffscreen(PApplet sketch) {
     // TODO Auto-generated method stub
   }
 
 
-  public Component initComponent(PApplet sketch) {
-    return null;
-  }
+//  public Component initComponent(PApplet sketch) {
+//    return null;
+//  }
 
 
-  public void initFrame(PApplet sketch, Color backgroundColor,
+  @Override
+  public void initFrame(PApplet sketch, int backgroundColor,
                          int deviceIndex, boolean fullScreen,
                          boolean spanDisplays) {
   }
@@ -82,7 +84,7 @@ public class PSurfaceNone implements PSurface {
 
   public void placeWindow(int[] location, int[] editorLocation) { }
 
-  public void placePresent(Color stopColor) { }
+  public void placePresent(int stopColor) { }
 
   public void setupExternalMessages() { }
 
@@ -95,14 +97,16 @@ public class PSurfaceNone implements PSurface {
 
   }
 
+
 //  public void initImage(PGraphics graphics) {
 //    // TODO Auto-generated method stub
 //
 //  }
 
-  public Component getComponent() {
-    return null;
-  }
+//  public Component getComponent() {
+//    return null;
+//  }
+
 
   public void setSmooth(int level) {
     // TODO Auto-generated method stub

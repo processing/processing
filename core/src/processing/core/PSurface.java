@@ -22,9 +22,6 @@
 
 package processing.core;
 
-import java.awt.Color;
-import java.awt.Component;
-
 
 public interface PSurface {
   /**
@@ -40,15 +37,18 @@ public interface PSurface {
   // Background default needs to be different from the default value in
   // PGraphics.backgroundColor, otherwise size(100, 100) bg spills over.
   // https://github.com/processing/processing/issues/2297
-  static final Color WINDOW_BGCOLOR = new Color(0xDD, 0xDD, 0xDD);
+  //static final Color WINDOW_BGCOLOR = new Color(0xDD, 0xDD, 0xDD);
+  static final int WINDOW_BGCOLOR = 0xffDDDDDD;
 
   // renderer that doesn't draw to the screen
   public void initOffscreen(PApplet sketch);
 
-  public Component initComponent(PApplet sketch);
+  // considering removal in favor of separate Component classes for appropriate renderers
+  // (i.e. for Java2D or a generic Image surface, but not PDF, debatable for GL or FX)
+  //public Component initComponent(PApplet sketch);
 
   //public Frame initFrame(PApplet sketch, Color backgroundColor,
-  public void initFrame(PApplet sketch, Color backgroundColor,
+  public void initFrame(PApplet sketch, int backgroundColor,
                         int deviceIndex, boolean fullScreen, boolean spanDisplays);
 
   //
@@ -73,7 +73,7 @@ public interface PSurface {
   public void placeWindow(int[] location, int[] editorLocation);
 
   //public void placeFullScreen(boolean hideStop);
-  public void placePresent(Color stopColor);
+  public void placePresent(int stopColor);
 
   // Sketch is running from the PDE, set up messaging back to the PDE
   public void setupExternalMessages();
@@ -98,7 +98,7 @@ public interface PSurface {
   // create pixel buffer, called from allocate() to produce a compatible image for rendering efficiently
 //  public void initImage(PGraphics gr);
 
-  public Component getComponent();
+  //public Component getComponent();
 
   /**
    * Sometimes smoothing must be set at the drawing surface level
