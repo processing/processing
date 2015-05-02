@@ -808,6 +808,13 @@ public class PApplet implements PConstants {
   }
 
 
+  // Named quality instead of smooth to avoid people trying to set (or get)
+  // the current smooth level this way. Also that smooth(number) isn't really
+  // public or well-known API. It's specific to the capabilities of the
+  // rendering surface, and somewhat independent of whether the sketch is
+  // smoothing at any given time. It's also a bit like getFill() would return
+  // true/false for whether fill was enabled, getFillColor() would return the
+  // color itself. Or at least that's what I can recall at the moment. [fry]
   public int sketchQuality() {
     return 2;
   }
