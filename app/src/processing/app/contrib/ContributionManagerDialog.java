@@ -161,6 +161,9 @@ public class ContributionManagerDialog {
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
+          // The message is set to null so that every time the retry button is hit
+          // no previous error is displayed in the status
+          status.setMessage(null);
           downloadAndUpdateContributionListing();
         }
       });
