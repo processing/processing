@@ -154,6 +154,13 @@ public class Preferences {
       System.setProperty("http.proxyHost", proxyHost);
       System.setProperty("http.proxyPort", proxyPort);
     }
+    String socksProxyHost = get("socksProxy.host");
+    String socksProxyPort = get("socksProxy.port");
+    if (socksProxyHost != null && socksProxyHost.length() != 0 && socksProxyPort != null
+      && socksProxyPort.length() != 0) {
+      System.setProperty("socksProxyHost", socksProxyHost);
+      System.setProperty("socksProxyPort", socksProxyPort);
+    }
   }
 
 
