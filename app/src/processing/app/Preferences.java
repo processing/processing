@@ -140,11 +140,11 @@ public class Preferences {
 
     PApplet.useNativeSelect =
       Preferences.getBoolean("chooser.files.native"); //$NON-NLS-1$
-    
+
     // So that the system proxy setting are used by default
     // https://github.com/processing/processing/issues/2643
-    System.setProperty("java.net.useSystemProxies","true");
-    
+    System.setProperty("java.net.useSystemProxies", "true");
+
     // Set http proxy for folks that require it.
     // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
     String proxyHost = get("proxy.host");
