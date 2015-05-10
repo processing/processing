@@ -327,6 +327,14 @@ run.present.stop.color = #cccccc
 proxy.host=
 proxy.port=
 
+# SOCKS PROXY
+# Set a proxy server for folks that require it. This will allow the update
+# checker and the contrib manager to run properly in those environments.
+#socksProxy.host=proxy.example.com
+#socksProxy.port=9150
+socksProxy.host=
+socksProxy.port=
+
 # PDE X
 pdex.autoSave.autoSaveByDefault=true
 pdex.autoSave.autoSaveEnabled=false
