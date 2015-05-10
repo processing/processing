@@ -319,21 +319,20 @@ run.present.stop.color = #cccccc
 # use this by default to hide the menu bar and dock on osx
 #run.present.exclusive.macosx = true
 
-# HTTP PROXY
+# PROXIES
 # Set a proxy server for folks that require it. This will allow the update
 # checker and the contrib manager to run properly in those environments.
-#proxy.host=proxy.example.com
-#proxy.port=8080
-proxy.host=
-proxy.port=
-
-# SOCKS PROXY
-# Set a proxy server for folks that require it. This will allow the update
-# checker and the contrib manager to run properly in those environments.
-#socksProxy.host=proxy.example.com
-#socksProxy.port=9150
-socksProxy.host=
-socksProxy.port=
+# This changed from proxy.host and proxy.port to proxy.http.host and
+# proxy.http.port in 3.0a8. In addition, https and socks were added.
+proxy.http.host=
+proxy.http.port=
+proxy.https.host=
+proxy.https.port=
+proxy.socks.host=
+proxy.socks.port=
+# Example of usage (replace 'http' with 'https' or 'socks' as needed)
+#proxy.http.host=proxy.example.com
+#proxy.http.port=8080
 
 # PDE X
 pdex.autoSave.autoSaveByDefault=true

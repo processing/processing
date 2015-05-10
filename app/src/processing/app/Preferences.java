@@ -141,29 +141,54 @@ public class Preferences {
     PApplet.useNativeSelect =
       Preferences.getBoolean("chooser.files.native"); //$NON-NLS-1$
 
-    // So that the system proxy setting are used by default
+    // Use the system proxy settings by default
     // https://github.com/processing/processing/issues/2643
     System.setProperty("java.net.useSystemProxies", "true");
 
-    // Set http proxy for folks that require it.
+    // Set HTTP, HTTPS, and SOCKS proxies for individuals
+    // who want/need to override the system setting
     // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
-    String proxyHost = get("proxy.host");
-    String proxyPort = get("proxy.port");
-    if (proxyHost != null && proxyHost.length() != 0 &&
-        proxyPort != null && proxyPort.length() != 0) {
-      System.setProperty("http.proxyHost", proxyHost);
-      System.setProperty("http.proxyPort", proxyPort);
-    }
+    // Less readable version with the Oracle style sheet:
+    // http://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.html
+    handleProxy("http", "http.proxyHost", "http.proxyPort");
+    handleProxy("https", "https.proxyHost", "https.proxyPort");
+    handleProxy("socks", "socksProxyHost", "socksProxyPort");
 
-    // Set socks proxy for folks that require it.
-    // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
-    String socksProxyHost = get("socksProxy.host");
-    String socksProxyPort = get("socksProxy.port");
+    /*
+    String httpProxyHost = get("proxy.http.host");
+    String httpProxyPort = get("proxy.http.port");
+    if (httpProxyHost != null && httpProxyHost.length() != 0 &&
+        httpProxyPort != null && httpProxyPort.length() != 0) {
+      System.setProperty("http.proxyHost", httpProxyHost);
+      System.setProperty("http.proxyPort", httpProxyPort);
+    }
+    String httpsProxyHost = get("proxy.https.host");
+    String httpsProxyPort = get("proxy.https.port");
+    if (httpsProxyHost != null && httpsProxyHost.length() != 0 &&
+        httpsProxyPort != null && httpsProxyPort.length() != 0) {
+      System.setProperty("https.proxyHost", httpsProxyHost);
+      System.setProperty("https.proxyPort", httpsProxyPort);
+    }
+    String socksProxyHost = get("proxy.socks.host");
+    String socksProxyPort = get("proxy.socks.port");
     if (socksProxyHost != null && socksProxyHost.length() != 0 &&
-      socksProxyPort != null && socksProxyPort.length() != 0) {
+        socksProxyPort != null && socksProxyPort.length() != 0) {
       System.setProperty("socksProxyHost", socksProxyHost);
       System.setProperty("socksProxyPort", socksProxyPort);
     }
+    */
+  }
+
+
+  static void handleProxy(String protocol, String hostProp, String portProp) {
+    String proxyHost = get("proxy." + protocol + ".host");
+    String proxyPort = get("proxy." + protocol + ".port");
+    if (proxyHost != null && proxyHost.length() != 0 &&
+        proxyPort != null && proxyPort.length() != 0) {
+      System.setProperty(hostProp, proxyHost);
+      System.setProperty(portProp, proxyPort);
+    }
+
   }
 
 
