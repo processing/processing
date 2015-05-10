@@ -27,7 +27,6 @@ package processing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.GeneralPath;
-import java.util.Arrays;
 
 import javax.swing.*;
 
@@ -42,7 +41,7 @@ public class EditorHeader extends JComponent {
 //  static final int SCROLLBAR_WIDTH = 16;
   // amount of space on the left edge before the tabs start
   static final int MARGIN_WIDTH = Editor.LEFT_GUTTER;
-  
+
   static final int ARROW_TAB_WIDTH = 23;
   // distance from the righthand side of a tab to the drop-down arrow
 //  static final int ARROW_GAP_WIDTH = 8;
@@ -50,7 +49,7 @@ public class EditorHeader extends JComponent {
   static final int ARROW_TOP = 12;
   static final int ARROW_BOTTOM = 20;
   static final int ARROW_WIDTH = 9;
-  
+
 //  static final int NOTCH = 0;
   // how far to raise the tab from the bottom of this Component
   static final int TAB_HEIGHT = HIGH;
@@ -67,7 +66,7 @@ public class EditorHeader extends JComponent {
   Color bgColor;
 //  boolean hiding;
   Color hideColor;
-  
+
   Color textColor[] = new Color[2];
   Color tabColor[] = new Color[2];
   Color modifiedColor;
@@ -115,7 +114,7 @@ public class EditorHeader extends JComponent {
   int imageW, imageH;
 
   String lastNoticeName;
-  
+
   Image gradient;
 
 
@@ -187,14 +186,14 @@ public class EditorHeader extends JComponent {
 //    }
 
     bgColor = mode.getColor("header.bgcolor");
-    
+
     textColor[SELECTED] = mode.getColor("header.text.selected.color");
     textColor[UNSELECTED] = mode.getColor("header.text.unselected.color");
     font = mode.getFont("header.text.font");
 
     tabColor[SELECTED] = mode.getColor("header.tab.selected.color");
     tabColor[UNSELECTED] = mode.getColor("header.tab.unselected.color");
-    
+
     arrowColor = mode.getColor("header.tab.arrow.color");
     modifiedColor = mode.getColor("editor.selection.color");
   }
@@ -202,7 +201,7 @@ public class EditorHeader extends JComponent {
 
   public void paintComponent(Graphics screen) {
     setOpaque(false);
-    
+
     if (screen == null) return;
 
     Sketch sketch = editor.getSketch();
@@ -269,13 +268,13 @@ public class EditorHeader extends JComponent {
 //      tab.text = "  " + codeName + (code.isModified() ? " \u00A7" : "  ");
 //      tab.text = "  " + codeName + "  ";
       tab.text = hide ? code.getPrettyName() : code.getFileName();
-      
+
       tab.textWidth = (int)
         font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
     }
 /* TODO eliminated 279-302 because it doesn't really work to reduce the tab size (by much anyways)
  *      and makes it confusing to find the tab you want because the name is hidden
- *      
+ *
     // make sure everything can fit
     if (!placeTabs(MARGIN_WIDTH, tabMax, null)) {
       //System.arraycopy(tabs, 0, visitOrder, 0, tabs.length);
@@ -311,7 +310,7 @@ public class EditorHeader extends JComponent {
       menuLeft = tabs[tabs.length - 1].right + TAB_BETWEEN;
       menuRight = menuLeft + ARROW_TAB_WIDTH;
     }
-    
+
     g.setColor(tabColor[UNSELECTED]);
     drawTab(g, menuLeft, menuRight);
 //    int arrowY = (getHeight() - TAB_HEIGHT - TAB_STRETCH) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
@@ -340,7 +339,7 @@ public class EditorHeader extends JComponent {
     final int bottom = getHeight(); // - TAB_STRETCH;
     final int top = bottom - TAB_HEIGHT;
 //    GeneralPath path = null;
-    
+
     for (int i = 0; i < sketch.getCodeCount(); i++) {
       SketchCode code = sketch.getCode(i);
       Tab tab = tabs[i];
@@ -402,7 +401,7 @@ public class EditorHeader extends JComponent {
 //          g.drawLine(tab.left, baseline-fontAscent, tab.right, baseline-fontAscent);
 //          g.drawLine(tab.left, baseline, tab.right, baseline);
         }
-      
+
         if (code.isModified()) {
           g.setColor(modifiedColor);
           //g.drawLine(tab.left + NOTCH, top, tab.right - NOTCH, top);
@@ -416,18 +415,18 @@ public class EditorHeader extends JComponent {
 //      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
       x += TAB_BETWEEN;
     }
-    
+
     // removed 150130
 //    // Draw this last because of half-pixel overlaps on retina displays
 //    if (g != null) {
 //      g.setColor(tabColor[SELECTED]);
 //      g.fillRect(0, bottom, getWidth(), TAB_STRETCH);
 //    }
-    
+
     return x <= right;
   }
-  
-  
+
+
   private void drawTab(Graphics g, int left, int right) {
     final int bottom = getHeight(); // - TAB_STRETCH;
     final int top = bottom - TAB_HEIGHT;
@@ -609,7 +608,7 @@ public class EditorHeader extends JComponent {
         menu.add(item);
       }
     }
-    
+
     Toolkit.setMenuMnemonics(menu);
   }
 
