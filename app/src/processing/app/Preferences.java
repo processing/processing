@@ -154,6 +154,16 @@ public class Preferences {
       System.setProperty("http.proxyHost", proxyHost);
       System.setProperty("http.proxyPort", proxyPort);
     }
+
+    // Set socks proxy for folks that require it.
+    // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
+    String socksProxyHost = get("socksProxy.host");
+    String socksProxyPort = get("socksProxy.port");
+    if (socksProxyHost != null && socksProxyHost.length() != 0 &&
+      socksProxyPort != null && socksProxyPort.length() != 0) {
+      System.setProperty("socksProxyHost", socksProxyHost);
+      System.setProperty("socksProxyPort", socksProxyPort);
+    }
   }
 
 
