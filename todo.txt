@@ -4,7 +4,12 @@ X   https://github.com/processing/processing/issues/3225
 X Unable to install "processing-java"
 X   https://github.com/processing/processing/issues/3224
 X   also update the Windows and Linux versions
+
+
 _ "one file added to sketch" when actually 2 
+_ Cmd-click behavior on function/variable is firing when cmd-click not pressed
+_   https://github.com/processing/processing/issues/3242
+
 
 contribs
 X Window size not passing into Tweak Mode
@@ -13,6 +18,17 @@ X   https://github.com/processing/processing/pull/3227
 X preferences window fixes for Linux
 X   https://github.com/processing/processing/pull/3232
 X   https://github.com/processing/processing/issues/3231
+X Clear error message in Contribution Manager after retrying
+X   https://github.com/processing/processing/pull/3240
+X   https://github.com/processing/processing/issues/3239
+X keep tab menu at the right-hand side
+X   https://github.com/processing/processing/pull/3236
+X add SOCKS proxy support to the PDE
+X   https://github.com/processing/processing/issues/2643
+X   https://github.com/processing/processing/pull/3260
+X Use system proxy by default
+X   https://github.com/processing/processing/issues/1476
+X   https://github.com/processing/processing/pull/3251
 
 
 _ we've lost arrow keys to expand items in the examples window
@@ -710,6 +726,7 @@ _   but changing the size breaks the vertical centering
 _ highlight color seems to be incorrect?
 _ after installing, the item in the manager list doesn't change color
 _ scrolls to bottom of window after updating the list
+_   https://github.com/processing/processing/issues/3248
 _ wheel mouse is super jumpy 
 _   something about unit increment in ContributionListPanel
 _ arrow keys up/down move scroll bar, not selection

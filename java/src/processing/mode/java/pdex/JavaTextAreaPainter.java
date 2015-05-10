@@ -251,6 +251,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     // if no special text for a breakpoint, just show the line number
     if (text == null) {
       text = String.valueOf(line + 1);
+      //text = makeOSF(String.valueOf(line + 1));
     }
     char[] txt = text.toCharArray();
 
@@ -265,6 +266,16 @@ public class JavaTextAreaPainter extends TextAreaPainter
     int ty = textArea.lineToY(line) + fm.getHeight();
     Utilities.drawTabbedText(new Segment(txt, 0, text.length()),
                              tx, ty, gfx, this, 0);
+  }
+
+
+  // Failed attempt to switch line numbers to old-style figures
+  String makeOSF(String what) {
+    char[] c = what.toCharArray();
+    for (int i = 0; i < c.length; i++) {
+      c[i] += (char) (c[i] - '0' + 0x362);
+    }
+    return new String(c);
   }
 
 

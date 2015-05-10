@@ -212,6 +212,8 @@ _   draw(s) doesn't work on the returned PShape
 
 
 retina/hidpi
+_ save() and saveFrame() with 2X renderers fails
+_   https://github.com/processing/processing/issues/3255
 _ the 2X thing on the renderer name is unnecessary
 _   just do pixelFactor() (and pull it during compilation)?
 _   add sketchPixelFactor() to handle the scenario?
