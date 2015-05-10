@@ -273,7 +273,9 @@ public class EditorHeader extends JComponent {
       tab.textWidth = (int)
         font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
     }
-
+/* TODO eliminated 279-302 because it doesn't really work to reduce the tab size (by much anyways)
+ *      and makes it confusing to find the tab you want because the name is hidden
+ *      
     // make sure everything can fit
     if (!placeTabs(MARGIN_WIDTH, tabMax, null)) {
       //System.arraycopy(tabs, 0, visitOrder, 0, tabs.length);
@@ -297,14 +299,19 @@ public class EditorHeader extends JComponent {
           break;
         }
       }
-    }
+    }*/
 
     // now actually draw the tabs
-    placeTabs(MARGIN_WIDTH, tabMax, g2);
-
-    // draw the dropdown menu target
-    menuLeft = tabs[tabs.length - 1].right + TAB_BETWEEN;
-    menuRight = menuLeft + ARROW_TAB_WIDTH;
+    if(!placeTabs(MARGIN_WIDTH, tabMax - ARROW_TAB_WIDTH, g2)){
+      // draw the dropdown menu target at the right of the window
+      menuRight = tabMax;
+      menuLeft = menuRight - ARROW_TAB_WIDTH;
+    } else {
+      // draw the dropdown menu target next to the tabs
+      menuLeft = tabs[tabs.length - 1].right + TAB_BETWEEN;
+      menuRight = menuLeft + ARROW_TAB_WIDTH;
+    }
+    
     g.setColor(tabColor[UNSELECTED]);
     drawTab(g, menuLeft, menuRight);
 //    int arrowY = (getHeight() - TAB_HEIGHT - TAB_STRETCH) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
@@ -370,7 +377,7 @@ public class EditorHeader extends JComponent {
 //      }
       tab.right = x;
 
-      if (g != null) {
+      if (g != null && tab.right < right) {
         g.setColor(tabColor[state]);
         drawTab(g, tab.left, tab.right);
 //        path.lineTo(x - NOTCH, top);
