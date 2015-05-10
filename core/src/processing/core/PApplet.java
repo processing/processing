@@ -9402,6 +9402,9 @@ public class PApplet implements PConstants {
     // Call validate() while resize events are in progress
     Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
+    // So that the system proxy setting are used by default
+    System.setProperty("java.net.useSystemProxies", "true");
+
     if (args.length < 1) {
       System.err.println("Usage: PApplet [options] <class name> [sketch args]");
       System.err.println("See the Javadoc for PApplet for an explanation.");
