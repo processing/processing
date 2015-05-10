@@ -52,6 +52,10 @@ _   https://github.com/processing/processing/blob/master/app/src/processing/app/
 
 
 pdex
+_ need active state for the butterfly
+_ get rid of the debugger 'pane', just have that be the old window
+_ almost all of the debugger menu needs to disappear
+_   everything below toggle breakpoint, plus show/hide inspector
 _ debugger button should show/hide toolbar buttons for step/continue
 _ fix hasJavaTabs() function
 _   almost always used as a negative, or tied to a 'return' from fxn
