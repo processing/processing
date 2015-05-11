@@ -1,14 +1,17 @@
 0235 (3.0a8)
-X Change "method" to "function" in a few error messages
-X   https://github.com/processing/processing/issues/3225
 X Unable to install "processing-java"
 X   https://github.com/processing/processing/issues/3224
 X   also update the Windows and Linux versions
-X Change error message from "function" to "method"
-X   https://github.com/processing/processing/issues/3225
 X replace ColorSelector with JComponent version
 X   https://github.com/processing/processing/issues/3209
 
+debugger/pdex
+X Change "method" to "function" in a few error messages
+X   https://github.com/processing/processing/issues/3225
+X ErrorMessageSimplifier should use the language subst stuff
+o   also, shouldn't that be one text() method with different args?
+X Error message for incorrect function arguments is wonky
+X   https://github.com/processing/processing/issues/3268
 
 contribs
 X Window size not passing into Tweak Mode
@@ -38,9 +41,6 @@ X   https://github.com/processing/processing/pull/3260
 X Use system proxy by default
 X   https://github.com/processing/processing/issues/1476
 X   https://github.com/processing/processing/pull/3251
-
-_ ErrorMessageSimplifier should use the language subst stuff
-_   also, shouldn't that be one text() method with different args?
 
 _ "step" not working properly
 _   https://github.com/processing/processing/issues/3266
