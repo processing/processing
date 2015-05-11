@@ -26,6 +26,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -144,7 +145,8 @@ public class ColorSelector {
 			  public void mousePressed(MouseEvent e) {
 			    updateMouse(e);
 			  }
-
+			});
+			addMouseMotionListener(new MouseAdapter() {
 			  public void mouseDragged(MouseEvent e) {
 			    updateMouse(e);
         }
@@ -156,10 +158,16 @@ public class ColorSelector {
 		  g.drawImage(backImg, 0, 0, this);
 
 		  Graphics2D g2 = (Graphics2D) g;
+		  // otherwise the oval is hideous
+		  // TODO make a proper hidpi version of all this
+		  g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+		                      RenderingHints.VALUE_ANTIALIAS_ON);
+
 		  g.setColor(lastY < 128 ? Color.BLACK : Color.WHITE);
 			AffineTransform tx = g2.getTransform();
 			g2.translate(lastX, lastY);
-			g2.drawOval(0, 0, 5, 5);
+			//g2.drawOval(0, 0, 5, 5);
+			g2.drawOval(-3, -3, 6, 6);
 			g2.drawLine(-8, 0, -6, 0);
 			g2.drawLine(6, 0, 8, 0);
 			g2.drawLine(0, -8, 0, -6);
@@ -174,7 +182,7 @@ public class ColorSelector {
 			for (int j = 0; j < 256; j++) {
 			  for (int i = 0; i < 256; i++) {
 			    pixels[index++] =  // color(hue, i, 255-j);
-			      Color.HSBtoRGB(hue / 255f, (i / 255f), (255-j));
+			      Color.HSBtoRGB(hue / 255f, (i / 255f), (255-j)/255f);
 				}
 			}
 			backImg = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
@@ -256,7 +264,8 @@ public class ColorSelector {
         public void mousePressed(MouseEvent e) {
           updateMouse(e);
         }
-
+      });
+      addMouseMotionListener(new MouseAdapter() {
         public void mouseDragged(MouseEvent e) {
           updateMouse(e);
         }
@@ -304,6 +313,7 @@ public class ColorSelector {
 			g.drawRect(24, -2, 4, 4);
 			g2.setTransform(tx);
 
+			/*
 			if (colorBox.isBW) {
 //				stroke(255);
 //				rect(0, 0, 29, 254);
@@ -317,6 +327,7 @@ public class ColorSelector {
         g.drawLine(0, 0, 0, 255);
         g.drawLine(29, 0, 29, 255);
 			}
+			*/
 		}
 
 
