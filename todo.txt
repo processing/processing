@@ -6,6 +6,9 @@ X   https://github.com/processing/processing/issues/3224
 X   also update the Windows and Linux versions
 X Change error message from "function" to "method"
 X   https://github.com/processing/processing/issues/3225
+X replace ColorSelector with JComponent version
+X   https://github.com/processing/processing/issues/3209
+
 
 contribs
 X Window size not passing into Tweak Mode
@@ -27,7 +30,6 @@ X   https://github.com/processing/processing/pull/3260
 X Use system proxy by default
 X   https://github.com/processing/processing/issues/1476
 X   https://github.com/processing/processing/pull/3251
-
 
 _ "one file added to sketch" message when two files added
 _ Cmd-click behavior on function/variable is firing when cmd-click not pressed
@@ -55,6 +57,7 @@ pdex
 _ need active state for the butterfly
 _ get rid of the debugger 'pane', just have that be the old window
 _ almost all of the debugger menu needs to disappear
+_   https://github.com/processing/processing/issues/3267
 _   everything below toggle breakpoint, plus show/hide inspector
 _ debugger button should show/hide toolbar buttons for step/continue
 _ fix hasJavaTabs() function
@@ -922,6 +925,8 @@ _   http://code.google.com/p/processing/issues/detail?id=632
 
 DIST / Mac OS X
 
+_ Update QuickLook plugin for Processing 3
+_   https://github.com/processing/processing/issues/3261
 _ Find a long-term solution for OS X bundler to address signing/symlink issues
 _   https://github.com/processing/processing/issues/2967
 _ appbundler improvements
