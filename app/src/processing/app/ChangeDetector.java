@@ -14,6 +14,8 @@ import javax.swing.JOptionPane;
 public class ChangeDetector implements WindowFocusListener {
   private Sketch sketch;
   private Editor editor;
+  
+  private final int MODIFIED_TIME_BUFFER = 1000;
 
   // Set true if the user selected 'no'. TODO this can't just skip once,
   // because subsequent returns to the window w/o saving will keep firing.
@@ -103,18 +105,24 @@ public class ChangeDetector implements WindowFocusListener {
       return;
     }
 
+
     SketchCode[] codes = sketch.getCode();
     for (SketchCode sc : codes) {
       File sketchFile = sc.getFile();
       if (sketchFile.exists()) {
         long diff = sketchFile.lastModified() - sc.lastModified();
         if (diff != 0) {
-          if (Base.isMacOS() && diff == 1000L) {
+          if (Base.isMacOS() && diff < 1000L + MODIFIED_TIME_BUFFER) {
+//            System.err.println("within buffer mac");
             // Mac OS X has a one second difference. Not sure if it's a Java bug
             // or something else about how OS X is writing files.
             continue;
+          } else if (diff < MODIFIED_TIME_BUFFER) {
+            //if the file was modified within some reasonable time, then ignore it
+//            System.err.println("within buffer not mac");
+            continue;
           }
-          System.out.println(sketchFile.getName() + " " + diff);
+//          System.out.println(sketchFile.getName() + " " + diff);
           reloadSketch(sc);
           return;
         }
