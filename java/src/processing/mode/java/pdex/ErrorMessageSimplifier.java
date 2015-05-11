@@ -22,13 +22,14 @@ package processing.mode.java.pdex;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.TreeMap;
 
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
 import processing.app.Language;
+import processing.core.PApplet;
+import processing.data.StringList;
 
 
 public class ErrorMessageSimplifier {
@@ -102,13 +103,13 @@ public class ErrorMessageSimplifier {
 
     case IProblem.ParsingError:
       if (args.length > 0) {
-        result = Language.text("editor.status.error_on") + qs(args[0]);
+        result = Language.interpolate("editor.status.error_on", args[0]);
       }
       break;
 
     case IProblem.ParsingErrorDeleteToken:
       if (args.length > 0) {
-        result = Language.text("editor.status.error_on") + qs(args[0]);
+        result = Language.interpolate("editor.status.error_on", args[0]);
       }
       break;
 
@@ -119,13 +120,13 @@ public class ErrorMessageSimplifier {
 
         } else {
           if (args[0].equals("AssignmentOperator Expression")) {
-            result = Language.text("editor.status.missing.add") + qs("=");
+            result = Language.interpolate("editor.status.missing.add", "=");
 
           } else if (args[0].equalsIgnoreCase(") Statement")) {
             result = getErrorMessageForBracket(args[0].charAt(0));
 
           } else {
-            result = Language.text("editor.status.error_on") + qs(args[0]);
+            result = Language.interpolate("editor.status.error_on", args[0]);
           }
         }
       }
@@ -137,10 +138,10 @@ public class ErrorMessageSimplifier {
           if (args[0].equals("int")) {
             result = Language.text ("editor.status.reserved_words");
           } else {
-            result = Language.text("editor.status.error_on") + qs(args[0]);
+            result = Language.interpolate("editor.status.error_on", args[0]);
           }
         } else {
-          result = Language.text("editor.status.error_on") + qs(args[0]);
+          result = Language.interpolate("editor.status.error_on", args[0]);
         }
       }
       break;
@@ -151,12 +152,13 @@ public class ErrorMessageSimplifier {
           result = getErrorMessageForBracket(args[1].charAt(0));
         }
         else {
-          if(args[1].equalsIgnoreCase("Statement")){ // See #3104
-            result = Language.text("editor.status.error_on") + qs(args[0]);
-          }
-          else {
-            result = Language.text("editor.status.error_on") +
-              " \"" + args[0] + Language.text("editor.status.missing.add") + args[1] + "\"";
+          // https://github.com/processing/processing/issues/3104
+          if (args[1].equalsIgnoreCase("Statement")) {
+            result = Language.interpolate("editor.status.error_on", args[0]);
+          } else {
+            result =
+              Language.interpolate("editor.status.error_on", args[0]) + " " +
+              Language.interpolate("editor.status.missing.add", args[1]);
           }
         }
       }
@@ -166,7 +168,7 @@ public class ErrorMessageSimplifier {
       if (args.length > 2) {
         result = Language.text("editor.status.undefined_method");
         String methodDef = "\"" + args[args.length - 2] + "("
-          + getSimpleName (args[args.length - 1]) + ")\"";
+          + removePackagePrefixes (args[args.length - 1]) + ")\"";
         result = result.replace("methoddef", methodDef);
       }
       break;
@@ -176,75 +178,66 @@ public class ErrorMessageSimplifier {
         // 2nd arg is method name, 3rd arg is correct param list
         if (args[2].trim().length() == 0) {
           // the case where no params are needed.
-          result = Language.text("editor.status.empty_param");
-          String methodDef = "\"" + args[1] + "()\"";
-          result = result.replace("methoddef", methodDef);
+          result = Language.interpolate("editor.status.empty_param", args[1]);
 
         } else {
-          result = Language.text("editor.status.wrong_param");
-
-          String method = q(args[1]);
-          String methodDef = " \"" + args[1] + "(" + getSimpleName(args[2]) + ")\"";
-          result = result.replace("method", method);
-          result += methodDef;
+          result = Language.interpolate("editor.status.wrong_param",
+                                 args[1], args[1], removePackagePrefixes(args[2]));
+//          String method = q(args[1]);
+//          String methodDef = " \"" + args[1] + "(" + getSimpleName(args[2]) + ")\"";
+//          result = result.replace("method", method);
+//          result += methodDef;
         }
       }
       break;
 
     case IProblem.UndefinedField:
       if (args.length > 0) {
-        result = Language.text("editor.status.undef_global_var");
-        result = result.replace("varname", q(args[0]));
+        result = Language.interpolate("editor.status.undef_global_var", args[0]);
       }
       break;
 
     case IProblem.UndefinedType:
       if (args.length > 0) {
-        result = Language.text("editor.status.undef_class");
-        result = result.replace("classname", q(args[0]));
+        result = Language.interpolate("editor.status.undef_class", args[0]);
       }
       break;
 
     case IProblem.UnresolvedVariable:
       if (args.length > 0) {
-        result = Language.text("editor.status.undef_var");
-        result = result.replace("varname", q(args[0]));
+        result = Language.interpolate("editor.status.undef_var", args[0]);
       }
       break;
 
     case IProblem.UndefinedName:
       if (args.length > 0) {
-        result = Language.text("editor.status.undef_name");
-        result = result.replace("namefield", q(args[0]));
+        result = Language.interpolate("editor.status.undef_name", args[0]);
       }
       break;
 
     case IProblem.TypeMismatch:
       if (args.length > 1) {
-        result = Language.text("editor.status.type_mismatch");
-        result = result.replace("typeA", q(args[0]));
-        result = result.replace("typeB", q(args[1]));
+        result = Language.interpolate("editor.status.type_mismatch", args[0], args[1]);
+//        result = result.replace("typeA", q(args[0]));
+//        result = result.replace("typeB", q(args[1]));
       }
       break;
 
     case IProblem.LocalVariableIsNeverUsed:
       if (args.length > 0) {
-        result = Language.text("editor.status.unused_variable");
-        result = result.replace("varname", q(args[0]));
+        result = Language.interpolate("editor.status.unused_variable", args[0]);
       }
       break;
 
     case IProblem.UninitializedLocalVariable:
       if (args.length > 0) {
-        result = Language.text("editor.status.uninitialized_variable");
-        result = result.replace("varname", q(args[0]));
+        result = Language.interpolate("editor.status.uninitialized_variable", args[0]);
       }
       break;
 
     case IProblem.AssignmentHasNoEffect:
       if (args.length > 0) {
-        result = Language.text("editor.status.no_effect_assignment");
-        result = result.replace("varname", q(args[0]));
+        result = Language.interpolate("editor.status.no_effect_assignment", args[0]);
       }
       break;
     }
@@ -257,51 +250,51 @@ public class ErrorMessageSimplifier {
   /**
    * Converts java.lang.String into String, etc
    */
-  static private String getSimpleName(String inp) {
-    if (inp.indexOf('.') < 0) {
-      return inp;
+  static private String removePackagePrefixes(String input) {
+    if (!input.contains(".")) {
+      return input;
     }
-    String res = "";
-    ArrayList<String> names = new ArrayList<String>();
-    if (inp.indexOf(',') >= 0) {
-      String arr[] = inp.split(",");
-      for (int i = 0; i < arr.length; i++) {
-        names.add(arr[i]);
+    String[] names = PApplet.split(input, ',');
+//    List<String> names = new ArrayList<String>();
+//    if (inp.indexOf(',') >= 0) {
+//      names.addAll(Arrays.asList(inp.split(",")));
+//    } else {
+//      names.add(inp);
+//    }
+    StringList result = new StringList();
+    for (String name : names) {
+      int dot = name.lastIndexOf('.');
+      if (dot >= 0) {
+        name = name.substring(dot + 1, name.length());
       }
-    } else {
-      names.add(inp);
+      result.append(name);
     }
-    for (String n : names) {
-      int x = n.lastIndexOf('.');
-      if (x >= 0) {
-        n = n.substring(x + 1, n.length());
-      }
-      res = res + ", " + n;
-    }
-    return res.substring(2, res.length());
+    return result.join(", ");
   }
 
 
   static private String getErrorMessageForBracket(char c) {
     switch (c) {
-      case ';': return Language.text("editor.status.missing.semi_colon") + qs(";");
-      case '[': return Language.text("editor.status.missing.open_sq_bracket") + qs("[");
-      case ']': return Language.text("editor.status.missing.closing_sq_bracket") + qs("]");
-      case '(': return Language.text("editor.status.missing.open_paren") + qs("(");
-      case ')': return Language.text("editor.status.missing.close_paren") + qs(")");
-      case '{': return Language.text("editor.status.missing.open_curly_bracket") + qs("{");
-      case '}': return Language.text("editor.status.missing.closing_curly_bracket") + qs("}");
+      case ';': return Language.text("editor.status.missing.semi_colon");
+      case '[': return Language.text("editor.status.missing.open_sq_bracket");
+      case ']': return Language.text("editor.status.missing.closing_sq_bracket");
+      case '(': return Language.text("editor.status.missing.open_paren");
+      case ')': return Language.text("editor.status.missing.close_paren");
+      case '{': return Language.text("editor.status.missing.open_curly_bracket");
+      case '}': return Language.text("editor.status.missing.closing_curly_bracket");
     }
-    return Language.text("editor.status.missing.default") + qs(c);
+    // This seems to be unreachable and wasn't in PDE.properties.
+    // I've added it for 3.0a8, but that seems gross. [fry]
+    return Language.interpolate("editor.status.missing.default", c);
   }
 
 
-  static private final String q(Object quotable) {
-    return "\"" + quotable + "\"";
-  }
+//  static private final String q(Object quotable) {
+//    return "\"" + quotable + "\"";
+//  }
 
 
-  static private final String qs(Object quotable) {
-    return " " + q(quotable);
-  }
+//  static private final String qs(Object quotable) {
+//    return " " + q(quotable);
+//  }
 }
