@@ -17,6 +17,14 @@ X   https://github.com/processing/processing/pull/3227
 X keep tab menu at the right-hand side
 X   https://github.com/processing/processing/pull/3236
 
+sketch reloading
+X "Your sketch has been modified externally..." appears erroneously
+X   https://github.com/processing/processing/issues/3222
+X Prevent breakpoints from causing a reload prompt
+X   https://github.com/processing/processing/pull/3263
+X Added buffer to file detection time
+X   https://github.com/processing/processing/pull/3262
+
 akarshit
 X preferences window fixes for Linux
 X   https://github.com/processing/processing/pull/3232
@@ -31,6 +39,8 @@ X Use system proxy by default
 X   https://github.com/processing/processing/issues/1476
 X   https://github.com/processing/processing/pull/3251
 
+_ "run sketches on display" not working in 3.0a7
+_   https://github.com/processing/processing/issues/3264
 _ "one file added to sketch" message when two files added
 _ Cmd-click behavior on function/variable is firing when cmd-click not pressed
 _   https://github.com/processing/processing/issues/3242

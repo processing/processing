@@ -14,7 +14,11 @@ import javax.swing.JOptionPane;
 public class ChangeDetector implements WindowFocusListener {
   private Sketch sketch;
   private Editor editor;
-  
+
+  // Windows and others seem to have a few hundred ms difference in reported
+  // times, so we're arbitrarily setting a gap in time here.
+  // Mac OS X has an (exactly) one second difference. Not sure if it's a Java
+  // bug or something else about how OS X is writing files.
   private final int MODIFIED_TIME_BUFFER = 1000;
 
   // Set true if the user selected 'no'. TODO this can't just skip once,
@@ -111,26 +115,16 @@ public class ChangeDetector implements WindowFocusListener {
       File sketchFile = sc.getFile();
       if (sketchFile.exists()) {
         long diff = sketchFile.lastModified() - sc.lastModified();
-        if (diff != 0) {
-          if (Base.isMacOS() && diff < 1000L + MODIFIED_TIME_BUFFER) {
-//            System.err.println("within buffer mac");
-            // Mac OS X has a one second difference. Not sure if it's a Java bug
-            // or something else about how OS X is writing files.
-            continue;
-          } else if (diff < MODIFIED_TIME_BUFFER) {
-            //if the file was modified within some reasonable time, then ignore it
-//            System.err.println("within buffer not mac");
-            continue;
-          }
-//          System.out.println(sketchFile.getName() + " " + diff);
+        if (diff > MODIFIED_TIME_BUFFER) {
+          //System.out.println(sketchFile.getName() + " " + diff);
           reloadSketch(sc);
-          return;
+          //return;
         }
       } else {
         // If a file in the sketch was not found, then it must have been
         // deleted externally, so reload the sketch.
         reloadSketch(sc);
-        return;
+        //return;
       }
     }
   }
