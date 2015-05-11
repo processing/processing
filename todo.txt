@@ -61,7 +61,9 @@ _ finish adding 'examples' contribs
 _   https://github.com/processing/processing/issues/2953
 _   don't return here, allow contrib types to fail:
 _   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
-
+_ Debugger "String is null" error when hitting breakpoint
+_   https://github.com/processing/processing/issues/3265
+_   hopefully fixed, but what's happening here?
 
 pdex
 _ need active state for the butterfly
