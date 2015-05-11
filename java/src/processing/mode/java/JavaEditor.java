@@ -1662,10 +1662,12 @@ public class JavaEditor extends Editor {
     List<LineBreakpoint> bps = debugger.getBreakpoints(tab.getFileName());
 
     // load the source file
-    File sourceFile = new File(sketch.getFolder(), tab.getFileName());
+    ////switched to using resoures provided by the SketchCode class
+    // File sourceFile = new File(sketch.getFolder(), tab.getFileName());
     //System.out.println("file: " + sourceFile);
     try {
-      String code = Base.loadFile(sourceFile);
+      tab.load();
+      String code = tab.getProgram();
       //System.out.println("code: " + code);
       String lines[] = code.split("\\r?\\n"); // newlines not included
       for (LineBreakpoint bp : bps) {
@@ -1674,7 +1676,7 @@ public class JavaEditor extends Editor {
       }
       code = PApplet.join(lines, "\n");
       //System.out.println("new code: " + code);
-      Base.saveFile(code, sourceFile);
+      tab.save();
     } catch (IOException ex) {
       Logger.getLogger(JavaEditor.class.getName()).log(Level.SEVERE, null, ex);
     }
