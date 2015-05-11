@@ -33,7 +33,7 @@ import javax.swing.*;
  */
 public class EditorStatus extends JPanel {
   static final int HIGH = 28;
-  
+
   Color[] bgcolor;
   Color[] fgcolor;
 
@@ -205,8 +205,11 @@ public class EditorStatus extends JPanel {
     g.fillRect(0, 0, sizeW, sizeH);
 
     g.setColor(fgcolor[mode]);
-    g.setFont(font); // needs to be set each time on osx
-    g.drawString(message, Preferences.GUI_SMALL, (sizeH + ascent) / 2);
+    // https://github.com/processing/processing/issues/3265
+    if (message != null) {
+      g.setFont(font); // needs to be set each time on osx
+      g.drawString(message, Preferences.GUI_SMALL, (sizeH + ascent) / 2);
+    }
 
     if (indeterminate) {
       //int x = cancelButton.getX();

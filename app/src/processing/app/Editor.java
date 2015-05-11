@@ -2854,6 +2854,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Show a notice message in the editor status bar.
    */
   public void statusNotice(String msg) {
+    if (msg == null) {
+      new Exception("This code called statusNotice(null)").printStackTrace();
+      msg = "";
+    }
     status.notice(msg);
   }
 
@@ -2868,7 +2872,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   /**
    * Returns the current notice message in the editor status bar.
    */
-  public String getStatusMessage(){
+  public String getStatusMessage() {
     return status.message;
   }
 
@@ -2876,7 +2880,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   /**
    * Returns the current mode of the editor status bar: NOTICE, ERR or EDIT.
    */
-  public int getStatusMode(){
+  public int getStatusMode() {
     return status.mode;
   }
 
