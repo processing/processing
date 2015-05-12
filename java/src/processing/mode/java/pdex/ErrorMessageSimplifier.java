@@ -166,10 +166,9 @@ public class ErrorMessageSimplifier {
 
     case IProblem.UndefinedMethod:
       if (args.length > 2) {
-        result = Language.text("editor.status.undefined_method");
-        String methodDef = "\"" + args[args.length - 2] + "("
-          + removePackagePrefixes (args[args.length - 1]) + ")\"";
-        result = result.replace("methoddef", methodDef);
+        String methodName = args[args.length - 2];
+        String methodArgs = removePackagePrefixes(args[args.length - 1]);
+        result = Language.interpolate("editor.status.undefined_method", methodName, methodArgs);
       }
       break;
 
