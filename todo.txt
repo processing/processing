@@ -19,6 +19,8 @@ X Debugger "String is null" error when hitting breakpoint
 _   https://github.com/processing/processing/issues/3265
 X Error message for incorrect function arguments is wonky
 _   https://github.com/processing/processing/issues/3268
+X String concatenation mistakes produce odd error messages
+X   https://github.com/processing/processing/issues/3253
 
 contribs
 X Window size not passing into Tweak Mode
