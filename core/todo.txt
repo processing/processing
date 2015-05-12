@@ -85,6 +85,10 @@ _ args[] should be null if none passed (otherwise args == null checks are weird)
 
 
 full screen
+_ "run sketches on display" not working in 3.0a7
+_   https://github.com/processing/processing/issues/3264
+_ full screen doesn't work on second window w/o present mode
+_   https://github.com/processing/processing/issues/3271
 _ show warning when display spanning is turned off
 _   defaults read com.apple.spaces spans-displays
 _ crash on startup when "Mirror Displays" selected (cantfix?)

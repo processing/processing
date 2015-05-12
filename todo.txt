@@ -9,6 +9,8 @@ X   requires restart of p5 before it updates
 X   https://github.com/processing/processing/issues/3214
 X Replace & Find was reading "Find & Replace" 
 X   https://github.com/processing/processing/issues/3247
+X "one file added to sketch" message when two files added
+X   turned out to be really awful ProgressFrame code
 
 debugger/pdex
 X Change "method" to "function" in a few error messages
@@ -53,9 +55,7 @@ X   https://github.com/processing/processing/pull/3251
 
 _ "step" not working properly
 _   https://github.com/processing/processing/issues/3266
-_ "run sketches on display" not working in 3.0a7
-_   https://github.com/processing/processing/issues/3264
-_ "one file added to sketch" message when two files added
+
 _ Cmd-click behavior on function/variable is firing when cmd-click not pressed
 _   https://github.com/processing/processing/issues/3242
 _ we've lost arrow keys to expand items in the examples window
@@ -76,6 +76,8 @@ _   https://github.com/processing/processing/blob/master/app/src/processing/app/
 _ Debugger "String is null" error when hitting breakpoint
 _   https://github.com/processing/processing/issues/3265
 _   hopefully fixed, but what's happening here?
+_ continue clearing out ProgressFrame
+_   also hook up the statusNotice() when done
 
 pdex
 _ need active state for the butterfly

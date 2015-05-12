@@ -508,9 +508,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
                          "An error occurred while trying to add files to the sketch.", e);
         return false;
       }
-
       statusNotice(Language.pluralize("editor.status.drag_and_drop.files_added", successful));
-
       return true;
     }
   }
@@ -2885,6 +2883,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       new IllegalArgumentException("This code called statusNotice(null)").printStackTrace();
       msg = "";
     }
+    new Exception("setting notice to " + msg).printStackTrace();
     status.notice(msg);
   }
 
