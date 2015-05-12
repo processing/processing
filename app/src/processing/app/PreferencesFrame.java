@@ -174,14 +174,13 @@ public class PreferencesFrame {
     presentColor = new JTextField("      ");
     presentColor.setOpaque(true);
     presentColor.setEnabled(false);
-    presentColor.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(
-        1, 1, 0, 0, new Color(195, 195, 195)), BorderFactory.createMatteBorder(
-        0, 0, 1, 1, new Color(54, 54, 54))));
+    Border cb = new CompoundBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, new Color(195, 195, 195)),
+                                   BorderFactory.createMatteBorder(0, 0, 1, 1, new Color(54, 54, 54)));
+    presentColor.setBorder(cb);
     presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
 
     presentColorHex = new JTextField(6);
-    presentColorHex
-        .setText(Preferences.get("run.present.bgcolor").substring(1));
+    presentColorHex.setText(Preferences.get("run.present.bgcolor").substring(1));
     presentColorHex.getDocument().addDocumentListener(new DocumentListener() {
 
       @Override
@@ -193,12 +192,9 @@ public class PreferencesFrame {
               presentColorHex.setText(colorValue.substring(1));
             }
           });
-        if (colorValue.length() == 6
-            && colorValue.matches("[0123456789ABCDEF]*")) {
-          presentColor.setBackground(new Color(Integer.parseInt(
-              colorValue.substring(0, 2), 16), Integer.parseInt(
-              colorValue.substring(2, 4), 16), Integer.parseInt(
-              colorValue.substring(4, 6), 16)));
+        if (colorValue.length() == 6 &&
+            colorValue.matches("[0123456789ABCDEF]*")) {
+          presentColor.setBackground(new Color(PApplet.unhex(colorValue)));
           if (!colorValue.equals(presentColorHex.getText()))
             EventQueue.invokeLater(new Runnable() {
               public void run() {
@@ -219,10 +215,7 @@ public class PreferencesFrame {
           });
         if (colorValue.length() == 6
             && colorValue.matches("[0123456789ABCDEF]*")) {
-          presentColor.setBackground(new Color(Integer.parseInt(
-              colorValue.substring(0, 2), 16), Integer.parseInt(
-              colorValue.substring(2, 4), 16), Integer.parseInt(
-              colorValue.substring(4, 6), 16)));
+          presentColor.setBackground(new Color(PApplet.unhex(colorValue)));
           if (!colorValue.equals(presentColorHex.getText()))
             EventQueue.invokeLater(new Runnable() {
               public void run() {
@@ -242,10 +235,7 @@ public class PreferencesFrame {
           public void actionPerformed(ActionEvent e) {
             String colorValue = selector.getHexColor();
             presentColorHex.setText(colorValue.substring(1));
-            presentColor.setBackground(new Color(Integer.parseInt(
-                colorValue.substring(1, 3), 16), Integer.parseInt(
-                colorValue.substring(3, 5), 16), Integer.parseInt(
-                colorValue.substring(5, 7), 16)));
+            presentColor.setBackground(new Color(PApplet.unhex(colorValue)));
             selector.hide();
           }
         });
@@ -435,19 +425,25 @@ public class PreferencesFrame {
           .addComponent(importSuggestionsBox)
           .addGroup(layout.createSequentialGroup()
                         .addComponent(memoryOverrideBox)
-                        .addComponent(memoryField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(memoryField,
+                                      GroupLayout.PREFERRED_SIZE,
+                                      GroupLayout.DEFAULT_SIZE,
+                                      GroupLayout.PREFERRED_SIZE)
                         .addComponent(mbLabel))
           .addComponent(deletePreviousBox)
           .addComponent(checkUpdatesBox)
           .addGroup(layout.createSequentialGroup()
                       .addComponent(displayLabel)
-                      .addComponent(displaySelectionBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                      .addComponent(displaySelectionBox,
+                                    GroupLayout.PREFERRED_SIZE,
+                                    GroupLayout.DEFAULT_SIZE,
+                                    GroupLayout.PREFERRED_SIZE)
           )
           .addComponent(autoAssociateBox)
           .addComponent(morePreferenceLabel)
           .addComponent(preferencePathLabel)
           .addComponent(preferenceHintLabel)
-          .addGroup(GroupLayout.Alignment.TRAILING ,layout.createSequentialGroup() // Trailing so that the buttons are to the right
+          .addGroup(GroupLayout.Alignment.TRAILING,layout.createSequentialGroup() // Trailing so that the buttons are to the right
                       .addComponent(okButton, BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, BUTTON_WIDTH) // Ok and Cancel buttton are now of size BUTTON_WIDTH
                       .addComponent(cancelButton, BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, BUTTON_WIDTH)
           ))
@@ -522,7 +518,7 @@ public class PreferencesFrame {
       }
     };
     // finish up
-    
+
     Toolkit.registerWindowCloseKeys(dialog.getRootPane(), disposer);
     Toolkit.setIcon(dialog);
     dialog.setResizable(false);
@@ -728,7 +724,7 @@ public class PreferencesFrame {
     if (autoAssociateBox != null) {
       autoAssociateBox.setSelected(Preferences.getBoolean("platform.auto_file_type_associations")); //$NON-NLS-1$
     }
-    // The OK Button has to be set as the default button every time the 
+    // The OK Button has to be set as the default button every time the
     // PrefWindow is to be displayed
     dialog.getRootPane().setDefaultButton(okButton);
 

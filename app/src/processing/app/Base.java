@@ -1094,7 +1094,8 @@ public class Base {
       //mode.rebuildLibraryList();
       mode.rebuildImportMenu();  // calls rebuildLibraryList
       mode.rebuildToolbarMenu();
-      mode.resetExamples();
+      mode.rebuildExamplesFrame();
+      mode.rebuildSketchbookFrame();
     }
   }
 

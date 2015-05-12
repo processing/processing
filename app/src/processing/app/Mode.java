@@ -35,7 +35,6 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
-import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.*;
 
 import processing.app.syntax.*;
@@ -697,7 +696,8 @@ public abstract class Mode {
     return root;
   }
 
-  public void resetExamples() {
+
+  public void rebuildExamplesFrame() {
     if (examplesFrame != null) {
       boolean visible = examplesFrame.isVisible();
       Rectangle bounds = null;
@@ -711,98 +711,6 @@ public abstract class Mode {
         examplesFrame.setBounds(bounds);
       }
     }
-  }
-
-
-  /**
-   * Function to give a JTree a pretty alternating gray-white colouring for
-   * its rows.
-   *
-   * @param tree
-   */
-  private void colourizeTreeRows(JTree tree) {
-    // Code in this function adapted from:
-    // http://mateuszstankiewicz.eu/?p=263
-    tree.setCellRenderer(new DefaultTreeCellRenderer() {
-
-      @Override
-      public Component getTreeCellRendererComponent(JTree tree, Object value,
-                                                    boolean sel,
-                                                    boolean expanded,
-                                                    boolean leaf, int row,
-                                                    boolean hasFocus) {
-        JComponent c = (JComponent) super
-          .getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row,
-                                        hasFocus);
-
-        if (!tree.isRowSelected(row)) {
-          if (row % 2 == 0) {
-
-            // Need to set this, else the gray from the odd
-            // rows colours this gray as well.
-            c.setBackground(new Color(255, 255, 255));
-
-            setBackgroundSelectionColor(new Color(0, 0, 255));
-            setTextSelectionColor(Color.WHITE);
-            setBorderSelectionColor(new Color(0, 0, 255));
-          } else {
-
-            // Set background for entire component (including the image).
-            // Using transparency messes things up, probably since the
-            // transparent colour is not good friends with the images background colour.
-            c.setBackground(new Color(240, 240, 240));
-
-            // Can't use setBackgroundSelectionColor() directly, since then, the
-            // image's background isn't affected.
-            // The setUI() doesn't fix the image's background because the
-            // transparency likely interferes with its normal background,
-            // making its background lighter than the rest.
-//            setBackgroundNonSelectionColor(new Color(190, 190, 190));
-
-            setBackgroundSelectionColor(new Color(0, 0, 255));
-            setTextSelectionColor(Color.WHITE);
-            setBorderSelectionColor(new Color(0, 0, 255));
-          }
-        } else {// Transparent blue if selected
-          c.setBackground(new Color(127, 127, 255));
-        }
-
-        c.setOpaque(true);
-        return c;
-      }
-
-    });
-
-    tree.setUI(new BasicTreeUI() {
-
-      @Override
-      protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets,
-                              Rectangle bounds, TreePath path, int row,
-                              boolean isExpanded, boolean hasBeenExpanded,
-                              boolean isLeaf) {
-        Graphics g2 = g.create();
-
-        if (!tree.isRowSelected(row)) {
-          if (row % 2 == 0) {
-            // Need to set this, else the gray from the odd rows
-            // affects the even rows too.
-            g2.setColor(new Color(255, 255, 255, 128));
-          } else {
-            // Transparent light-gray
-            g2.setColor(new Color(226, 226, 226, 128));
-          }
-        } else
-          // Transparent blue if selected
-          g2.setColor(new Color(0, 0, 255, 128));
-
-        g2.fillRect(0, bounds.y, tree.getWidth(), bounds.height);
-
-        g2.dispose();
-
-        super.paintRow(g, clipBounds, insets, bounds, path, row, isExpanded,
-                       hasBeenExpanded, isLeaf);
-      }
-    });
   }
 
 
@@ -837,8 +745,6 @@ public abstract class Mode {
       });
 
       final JTree tree = new JTree(buildExamplesTree());
-
-      colourizeTreeRows(tree);
 
       tree.setOpaque(true);
       tree.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -1015,8 +921,6 @@ public abstract class Mode {
   }
 
 
-//  void
-
 //  protected TreePath findPath(FileItem item) {
 //    ArrayList<FileItem> items = new ArrayList<FileItem>();
 ////    FileItem which = item.isDirectory() ? item : (FileItem) item.getParent();
@@ -1044,8 +948,12 @@ public abstract class Mode {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  public DefaultMutableTreeNode buildSketchbookTree(){
-    DefaultMutableTreeNode sbNode = new DefaultMutableTreeNode(Language.text("sketchbook.tree"));
+
+  protected JFrame sketchbookFrame;
+
+  public DefaultMutableTreeNode buildSketchbookTree() {
+    DefaultMutableTreeNode sbNode =
+      new DefaultMutableTreeNode(Language.text("sketchbook.tree"));
     try {
       base.addSketches(sbNode, Base.getSketchbookFolder());
     } catch (IOException e) {
@@ -1054,22 +962,31 @@ public abstract class Mode {
     return sbNode;
   }
 
-  protected JFrame sketchbookFrame;
+
+  /** Sketchbook has changed, update it on next viewing. */
+  public void rebuildSketchbookFrame() {
+    boolean visible =
+      (sketchbookFrame == null) ? false : sketchbookFrame.isVisible();
+    sketchbookFrame = null;
+    if (visible) {
+      showSketchbookFrame();
+    }
+  }
+
 
   public void showSketchbookFrame() {
     if (sketchbookFrame == null) {
       sketchbookFrame = new JFrame(Language.text("sketchbook"));
       Toolkit.setIcon(sketchbookFrame);
-      Toolkit.registerWindowCloseKeys(sketchbookFrame.getRootPane(),
-                                      new ActionListener() {
-                                        public void actionPerformed(ActionEvent e) {
-                                          sketchbookFrame.setVisible(false);
-                                        }
-                                      });
+      final ActionListener listener = new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          sketchbookFrame.setVisible(false);
+        }
+      };
+      Toolkit.registerWindowCloseKeys(sketchbookFrame.getRootPane(), listener);
 
       final JTree tree = new JTree(buildSketchbookTree());
-      tree.getSelectionModel()
-        .setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+      tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
       tree.setShowsRootHandles(true);
       tree.expandRow(0);
       tree.setRootVisible(false);
@@ -1077,8 +994,8 @@ public abstract class Mode {
       tree.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
           if (e.getClickCount() == 2) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
-              .getLastSelectedPathComponent();
+            DefaultMutableTreeNode node =
+              (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 
             int selRow = tree.getRowForLocation(e.getX(), e.getY());
             //TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
@@ -1123,15 +1040,15 @@ public abstract class Mode {
       sketchbookFrame.pack();
     }
 
-    SwingUtilities.invokeLater(new Runnable() {
+    EventQueue.invokeLater(new Runnable() {
       @Override
       public void run() {
         // Space for the editor plus a li'l gap
         int roughWidth = sketchbookFrame.getWidth() + 20;
         Point p = null;
         // If no window open, or the editor is at the edge of the screen
-        if (base.activeEditor == null
-          || (p = base.activeEditor.getLocation()).x < roughWidth) {
+        if (base.activeEditor == null ||
+            (p = base.activeEditor.getLocation()).x < roughWidth) {
           // Center the window on the screen
           sketchbookFrame.setLocationRelativeTo(null);
         } else {
@@ -1142,6 +1059,9 @@ public abstract class Mode {
       }
     });
   }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**

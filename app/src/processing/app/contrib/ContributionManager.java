@@ -401,7 +401,7 @@ public class ContributionManager {
     while (iter.hasNext()) {
       Editor ed = iter.next();
       ed.getMode().rebuildImportMenu();
-      ed.getMode().resetExamples();
+      ed.getMode().rebuildExamplesFrame();
       ed.rebuildToolMenu();
       ed.rebuildModeMenu();
     }
