@@ -38,7 +38,6 @@ import java.nio.ShortBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBES2Compatibility;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
@@ -267,7 +266,7 @@ public class PLWJGL extends PGL {
     projMatrix.put(pg.projection.m23);
     projMatrix.put(pg.projection.m33);
     projMatrix.rewind();
-    GL11.glLoadMatrix(projMatrix);
+    GL11.glLoadMatrixf(projMatrix);
 
     if (mvMatrix == null) {
       mvMatrix = allocateFloatBuffer(16);
@@ -291,7 +290,7 @@ public class PLWJGL extends PGL {
     mvMatrix.put(pg.modelview.m23);
     mvMatrix.put(pg.modelview.m33);
     mvMatrix.rewind();
-    GL11.glLoadMatrix(mvMatrix);
+    GL11.glLoadMatrixf(mvMatrix);
   }
 
 
@@ -815,7 +814,7 @@ public class PLWJGL extends PGL {
       if (byteBuffer.capacity() < data.capacity()) {
         byteBuffer = allocateDirectByteBuffer(data.capacity());
       }
-      GL11.glGetBoolean(value, byteBuffer);
+      GL11.glGetBooleanv(value, byteBuffer);
       for (int i = 0; i < data.capacity(); i++) {
         data.put(i, byteBuffer.get(i));
       }
@@ -827,7 +826,7 @@ public class PLWJGL extends PGL {
   @Override
   public void getIntegerv(int value, IntBuffer data) {
     if (-1 < value) {
-      GL11.glGetInteger(value, data);
+      GL11.glGetIntegerv(value, data);
     } else {
       fillIntBuffer(data, 0, data.capacity() - 1, 0);
     }
@@ -836,7 +835,7 @@ public class PLWJGL extends PGL {
   @Override
   public void getFloatv(int value, FloatBuffer data) {
     if (-1 < value) {
-      GL11.glGetFloat(value, data);
+      GL11.glGetFloatv(value, data);
     } else {
       fillFloatBuffer(data, 0, data.capacity() - 1, 0);
     }
@@ -957,7 +956,8 @@ public class PLWJGL extends PGL {
 
   @Override
   public void viewport(int x, int y, int w, int h) {
-    float f = Display.getPixelScaleFactor();
+//    float f = Display.getPixelScaleFactor();
+    float f = 1;
     GL11.glViewport((int)(f * x), (int)(f * y), (int)f * w, (int)(f * h));
   }
 
@@ -1022,7 +1022,7 @@ public class PLWJGL extends PGL {
   @Override
   public void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer data) {
     if (type == UNSIGNED_INT) {
-      GL20.glVertexAttribPointer(index, size, true, normalized, stride, (IntBuffer)data);
+      GL20.glVertexAttribPointer(index, size, normalized, stride, (IntBuffer)data);
     } else if (type == UNSIGNED_BYTE) {
       GL20.glVertexAttribPointer(index, size, true, normalized, stride, (ByteBuffer)data);
     } else if (type == UNSIGNED_SHORT) {
@@ -1167,12 +1167,12 @@ public class PLWJGL extends PGL {
 
   @Override
   public void getTexParameteriv(int target, int pname, IntBuffer params) {
-    GL11.glGetTexParameter(target, pname, params);
+    GL11.glGetTexParameteriv(target, pname, params);
   }
 
   @Override
   public void getTexParameterfv(int target, int pname, FloatBuffer params) {
-    GL11.glGetTexParameter(target, pname, params);
+    GL11.glGetTexParameterfv(target, pname, params);
   }
 
   @Override
@@ -1255,12 +1255,13 @@ public class PLWJGL extends PGL {
   }
 
   @Override
-  public String getActiveAttrib (int program, int index, IntBuffer size, IntBuffer type) {
-    IntBuffer typeTmp = BufferUtils.createIntBuffer(2);
-    String name = GL20.glGetActiveAttrib(program, index, 256, typeTmp);
-    size.put(typeTmp.get(0));
-    type.put(typeTmp.get(1));
-    return name;
+  public String getActiveAttrib(int program, int index, IntBuffer size, IntBuffer type) {
+//    IntBuffer typeTmp = BufferUtils.createIntBuffer(2);
+//    String name = GL20.glGetActiveAttrib(program, index, 256, typeTmp);
+//    size.put(typeTmp.get(0));
+//    type.put(typeTmp.get(1));
+//    return name;
+    return GL20.glGetActiveAttrib(program, index, size, type);
   }
 
   @Override
@@ -1280,10 +1281,11 @@ public class PLWJGL extends PGL {
 
   @Override
   public String getActiveUniform(int program, int index, IntBuffer size, IntBuffer type) {
-    IntBuffer typeTmp = BufferUtils.createIntBuffer(2);
-    String name = GL20.glGetActiveUniform(program, index, 256, typeTmp);
-    type.put(typeTmp.get(0));
-    return name;
+//    IntBuffer typeTmp = BufferUtils.createIntBuffer(2);
+//    String name = GL20.glGetActiveUniform(program, index, 256, typeTmp);
+//    type.put(typeTmp.get(0));
+//    return name;
+    return GL20.glGetActiveUniform(program, index, size, type);
   }
 
   @Override
@@ -1329,77 +1331,77 @@ public class PLWJGL extends PGL {
   @Override
   public void uniform1iv(int location, int count, IntBuffer v) {
     v.limit(count);
-    GL20.glUniform1(location, v);
+    GL20.glUniform1iv(location, v);
     v.clear();
   }
 
   @Override
   public void uniform2iv(int location, int count, IntBuffer v) {
     v.limit(2 * count);
-    GL20.glUniform2(location, v);
+    GL20.glUniform2iv(location, v);
     v.clear();
   }
 
   @Override
   public void uniform3iv(int location, int count, IntBuffer v) {
     v.limit(3 * count);
-    GL20.glUniform3(location, v);
+    GL20.glUniform3iv(location, v);
     v.clear();
   }
 
   @Override
   public void uniform4iv(int location, int count, IntBuffer v) {
     v.limit(4 * count);
-    GL20.glUniform4(location, v);
+    GL20.glUniform4iv(location, v);
     v.clear();
   }
 
   @Override
   public void uniform1fv(int location, int count, FloatBuffer v) {
     v.limit(count);
-    GL20.glUniform1(location, v);
+    GL20.glUniform1fv(location, v);
     v.clear();
   }
 
   @Override
   public void uniform2fv(int location, int count, FloatBuffer v) {
     v.limit(2 * count);
-    GL20.glUniform2(location, v);
+    GL20.glUniform2fv(location, v);
     v.clear();
   }
 
   @Override
   public void uniform3fv(int location, int count, FloatBuffer v) {
     v.limit(3 * count);
-    GL20.glUniform3(location, v);
+    GL20.glUniform3fv(location, v);
     v.clear();
   }
 
   @Override
   public void uniform4fv(int location, int count, FloatBuffer v) {
     v.limit(4 * count);
-    GL20.glUniform4(location, v);
+    GL20.glUniform4fv(location, v);
     v.clear();
   }
 
   @Override
   public void uniformMatrix2fv(int location, int count, boolean transpose, FloatBuffer mat) {
     mat.limit(4);
-    GL20.glUniformMatrix2(location, transpose, mat);
+    GL20.glUniformMatrix2fv(location, transpose, mat);
     mat.clear();
   }
 
   @Override
   public void uniformMatrix3fv(int location, int count, boolean transpose, FloatBuffer mat) {
     mat.limit(9);
-    GL20.glUniformMatrix3(location, transpose, mat);
+    GL20.glUniformMatrix3fv(location, transpose, mat);
     mat.clear();
   }
 
   @Override
   public void uniformMatrix4fv(int location, int count, boolean transpose, FloatBuffer mat) {
     mat.limit(16);
-    GL20.glUniformMatrix4(location, transpose, mat);
+    GL20.glUniformMatrix4fv(location, transpose, mat);
     mat.clear();
   }
 
@@ -1415,7 +1417,7 @@ public class PLWJGL extends PGL {
 
   @Override
   public void getShaderiv(int shader, int pname, IntBuffer params) {
-    GL20.glGetShader(shader, pname, params);
+    GL20.glGetShaderiv(shader, pname, params);
   }
 
   @Override
@@ -1442,29 +1444,30 @@ public class PLWJGL extends PGL {
 
   @Override
   public void getVertexAttribfv(int index, int pname, FloatBuffer params) {
-    GL20.glGetVertexAttrib(index, pname, params);
+    GL20.glGetVertexAttribfv(index, pname, params);
   }
 
   @Override
   public void getVertexAttribiv(int index, int pname, IntBuffer params) {
-    GL20.glGetVertexAttrib(index, pname, params);
+    GL20.glGetVertexAttribiv(index, pname, params);
   }
 
   @Override
   public void getVertexAttribPointerv(int index, int pname, ByteBuffer data) {
-    int len = data.capacity();
-    ByteBuffer res = GL20.glGetVertexAttribPointer(index, pname, len);
-    data.put(res);
+//    int len = data.capacity();
+//    ByteBuffer res = GL20.glGetVertexAttribPointer(index, pname, len);
+//    data.put(res);
+    GL20.glGetVertexAttribPointerv(index, pname, data);
   }
 
   @Override
   public void getUniformfv(int program, int location, FloatBuffer params) {
-    GL20.glGetUniform(program, location, params);
+    GL20.glGetUniformfv(program, location, params);
   }
 
   @Override
   public void getUniformiv(int program, int location, IntBuffer params) {
-    GL20.glGetUniform(program, location, params);
+    GL20.glGetUniformiv(program, location, params);
   }
 
   @Override
@@ -1474,7 +1477,7 @@ public class PLWJGL extends PGL {
 
   @Override
   public void getProgramiv(int program, int pname, IntBuffer params) {
-    GL20.glGetProgram(program, pname, params);
+    GL20.glGetProgramiv(program, pname, params);
   }
 
   @Override
@@ -1489,7 +1492,8 @@ public class PLWJGL extends PGL {
 
   @Override
   public void scissor(int x, int y, int w, int h) {
-    float f = Display.getPixelScaleFactor();
+//    float f = Display.getPixelScaleFactor();
+    float f = 1;
     GL11.glScissor((int)(f * x), (int)(f * y), (int)f * w, (int)(f * h));
   }
 
@@ -1658,7 +1662,7 @@ public class PLWJGL extends PGL {
 
   @Override
   public void getFramebufferAttachmentParameteriv(int target, int attachment, int pname, IntBuffer params) {
-    GL30.glGetFramebufferAttachmentParameter(target, attachment, pname, params);
+    GL30.glGetFramebufferAttachmentParameteriv(target, attachment, pname, params);
   }
 
   @Override
@@ -1668,7 +1672,7 @@ public class PLWJGL extends PGL {
 
   @Override
   public void getRenderbufferParameteriv(int target, int pname, IntBuffer params) {
-    GL30.glGetRenderbufferParameter(target, pname, params);
+    GL30.glGetRenderbufferParameteriv(target, pname, params);
   }
 
   @Override
