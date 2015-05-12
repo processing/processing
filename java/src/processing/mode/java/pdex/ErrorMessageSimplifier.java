@@ -274,13 +274,13 @@ public class ErrorMessageSimplifier {
 
   static private String getErrorMessageForBracket(char c) {
     switch (c) {
-      case ';': return Language.text("editor.status.missing.semi_colon");
-      case '[': return Language.text("editor.status.missing.open_sq_bracket");
-      case ']': return Language.text("editor.status.missing.closing_sq_bracket");
-      case '(': return Language.text("editor.status.missing.open_paren");
-      case ')': return Language.text("editor.status.missing.close_paren");
-      case '{': return Language.text("editor.status.missing.open_curly_bracket");
-      case '}': return Language.text("editor.status.missing.closing_curly_bracket");
+      case ';': return Language.text("editor.status.missing.semicolon");
+      case '[': return Language.text("editor.status.missing.left_sq_bracket");
+      case ']': return Language.text("editor.status.missing.right_sq_bracket");
+      case '(': return Language.text("editor.status.missing.left_paren");
+      case ')': return Language.text("editor.status.missing.right_paren");
+      case '{': return Language.text("editor.status.missing.left_curly_bracket");
+      case '}': return Language.text("editor.status.missing.right_curly_bracket");
     }
     // This seems to be unreachable and wasn't in PDE.properties.
     // I've added it for 3.0a8, but that seems gross. [fry]
