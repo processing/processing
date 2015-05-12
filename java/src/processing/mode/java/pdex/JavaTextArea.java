@@ -43,6 +43,15 @@ import processing.app.syntax.PdeTextAreaDefaults;
 import processing.app.syntax.TextAreaDefaults;
 
 
+// TODO The way listeners are added/removed here is fragile and
+//      likely to cause bugs that are very difficult to find.
+//      We shouldn't be re-inventing the wheel with how listeners are handled.
+// TODO We're overriding more things in JEditTextArea than we should, which
+//      makes it trickier for other Modes (Python, etc) to subclass because
+//      they'll need to re-implement what's in here, but first wade through it.
+//      To fix, we need to clean this up and put the appropriate cross-Mode
+//      changes into JEditTextArea (or a subclass in processing.app)
+
 public class JavaTextArea extends JEditTextArea {
   protected PdeTextAreaDefaults defaults;
   protected JavaEditor editor;
@@ -51,7 +60,8 @@ public class JavaTextArea extends JEditTextArea {
 //  static final int RIGHT_GUTTER = Editor.RIGHT_GUTTER;
 //  static final int GUTTER_MARGIN = 3;
 
-  protected MouseListener[] mouseListeners; // cached mouselisteners, these are wrapped by MouseHandler
+  // cached mouselisteners, these are wrapped by MouseHandler
+  protected MouseListener[] mouseListeners;
 
   // contains line background colors
   protected Map<Integer, Color> lineColors = new HashMap<Integer, Color>();
@@ -73,7 +83,7 @@ public class JavaTextArea extends JEditTextArea {
   protected Map<Integer, Color> gutterTextColors = new HashMap<Integer, Color>();
 
   protected ErrorCheckerService errorCheckerService;
-
+  private CompletionPanel suggestion;
 
 
   protected JavaTextAreaPainter getCustomPainter() {
@@ -81,15 +91,17 @@ public class JavaTextArea extends JEditTextArea {
   }
 
 
-  //public JavaTextArea(TextAreaDefaults defaults, InputHandler inputHandler, JavaEditor editor) {
-  //public JavaTextArea(JavaEditor editor) {
   public JavaTextArea(TextAreaDefaults defaults, JavaEditor editor) {
     super(defaults, new JavaInputHandler(editor));
-    //super(defaults, inputHandler);
     this.editor = editor;
 
     // removed all this since we have the createPainter() method and we
     // won't have to remove/re-add the custom painter object [fry 150122]
+    // although there's also something bad happening here, that we're
+    // re-forwarding all those events to all the other listeners?
+    // that's making a hacky mess, plus the tweak code is also doing
+    // something similar? [fry 150512]
+
 //    // replace the painter:
 //    // first save listeners, these are package-private in JEditTextArea, so not accessible
 //    ComponentListener[] componentListeners = painter.getComponentListeners();
@@ -207,19 +219,18 @@ public class JavaTextArea extends JEditTextArea {
         Base.log("BK Key");
         break;
       case KeyEvent.VK_SPACE:
-        if (suggestion != null)
+        if (suggestion != null) {
           if (suggestion.isVisible()) {
             Base.log("Space bar, hide completion list");
             suggestion.setInvisible();
           }
-        break;
-      default:
+        }
         break;
       }
     }
     super.processKeyEvent(evt);
 
-    // code completion disabled if java tabs
+    // code completion disabled if Java tabs present
     if (!editor.hasJavaTabs()) {
       if (evt.getID() == KeyEvent.KEY_TYPED) {
         processCompletionKeys(evt);
@@ -231,7 +242,8 @@ public class JavaTextArea extends JEditTextArea {
   }
 
 
-  // #2699 - Special case for OS X, where Ctrl-Space is not detected as Key_Typed -_-
+  // Special case for OS X, where Ctrl-Space is not detected as KEY_TYPED
+  // https://github.com/processing/processing/issues/2699
   private void processControlSpace(final KeyEvent event) {
     if (event.getKeyCode() == KeyEvent.VK_SPACE && event.isControlDown()) {
       SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
@@ -367,23 +379,22 @@ public class JavaTextArea extends JEditTextArea {
           break;
         }
       }
-      if (Character.isDigit(word.charAt(0)))
+      if (Character.isDigit(word.charAt(0))) {
         return null;
+      }
       Base.log("Mouse click, word: " + word.trim());
       errorCheckerService.getASTGenerator().setLastClickedWord(line, word, xLS);
       return word.trim();
     }
   }
 
+
   /**
    * Retrieves the current word typed just before the caret.
    * Then triggers code completion for that word.
-   *
    * @param evt - the KeyEvent which triggered this method
-   * @return
    */
   public String fetchPhrase(KeyEvent evt) {
-
     int off = getCaretPosition();
     Base.log("off " + off);
     if (off < 0)
@@ -586,6 +597,7 @@ public class JavaTextArea extends JEditTextArea {
     gutterText.clear();
   }
 
+
   /**
    * Retrieve the gutter text of a specific line.
    *
@@ -622,6 +634,7 @@ public class JavaTextArea extends JEditTextArea {
     lineColors.put(lineIdx, col);
     painter.invalidateLine(lineIdx);
   }
+
 
   /**
    * Clear the background color of a line.
@@ -696,7 +709,6 @@ public class JavaTextArea extends JEditTextArea {
    * gutter area.
    */
   protected class MouseHandler implements MouseListener, MouseMotionListener {
-
     protected int lastX; // previous horizontal positon of the mouse cursor
 
     @Override
@@ -780,8 +792,6 @@ public class JavaTextArea extends JEditTextArea {
     }
   }
 
-  private CompletionPanel suggestion;
-
 
   // appears unused, removed when looking to change completion trigger [fry 140801]
   /*
@@ -842,102 +852,92 @@ public class JavaTextArea extends JEditTextArea {
     }
   }
 
+
   // TweakMode code
 
   // save input listeners to stop/start text edit
-        ComponentListener[] prevCompListeners;
-        MouseListener[] prevMouseListeners;
-        MouseMotionListener[] prevMMotionListeners;
-        KeyListener[] prevKeyListeners;
+  ComponentListener[] prevCompListeners;
+  MouseListener[] prevMouseListeners;
+  MouseMotionListener[] prevMMotionListeners;
+  KeyListener[] prevKeyListeners;
+  boolean interactiveMode;
 
-        boolean interactiveMode;
+  /* remove all standard interaction listeners */
+  public void removeAllListeners() {
+    ComponentListener[] componentListeners = painter.getComponentListeners();
+    MouseListener[] mouseListeners = painter.getMouseListeners();
+    MouseMotionListener[] mouseMotionListeners = painter.getMouseMotionListeners();
+    KeyListener[] keyListeners = editor.getKeyListeners();
 
-        /* remove all standard interaction listeners */
-        public void removeAllListeners()
-        {
-                ComponentListener[] componentListeners = painter
-                                .getComponentListeners();
-                MouseListener[] mouseListeners = painter.getMouseListeners();
-                MouseMotionListener[] mouseMotionListeners = painter
-                                .getMouseMotionListeners();
-                KeyListener[] keyListeners = editor.getKeyListeners();
+    for (ComponentListener cl : componentListeners) {
+      painter.removeComponentListener(cl);
+    }
+    for (MouseListener ml : mouseListeners) {
+      painter.removeMouseListener(ml);
+    }
+    for (MouseMotionListener mml : mouseMotionListeners) {
+      painter.removeMouseMotionListener(mml);
+    }
+    for (KeyListener kl : keyListeners) {
+      editor.removeKeyListener(kl);
+    }
+  }
 
-                for (ComponentListener cl : componentListeners)
-                        painter.removeComponentListener(cl);
 
-                for (MouseListener ml : mouseListeners)
-                        painter.removeMouseListener(ml);
+  public void startInteractiveMode() {
+    // ignore if we are already in interactiveMode
+    if (interactiveMode) return;
 
-                for (MouseMotionListener mml : mouseMotionListeners)
-                        painter.removeMouseMotionListener(mml);
+    removeAllListeners();
 
-                for (KeyListener kl : keyListeners) {
-                        editor.removeKeyListener(kl);
-                }
-        }
+    // add our private interaction listeners
+    getCustomPainter().startInterativeMode();
+    this.editable = false;
+    this.caretBlinks = false;
+    this.setCaretVisible(false);
+    interactiveMode = true;
+  }
 
-        public void startInteractiveMode()
-        {
-                // ignore if we are already in interactiveMode
-                if (interactiveMode)
-                        return;
 
-                removeAllListeners();
+  public void stopInteractiveMode() {
+    // ignore if we are not in interactive mode
+    if (!interactiveMode) return;
 
-                // add our private interaction listeners
-                getCustomPainter().startInterativeMode();
-//                customPainter.addMouseListener(customPainter);
-//                customPainter.addMouseMotionListener(customPainter);
-//                customPainter.startInterativeMode();
-//                customPainter.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                this.editable = false;
-                this.caretBlinks = false;
-                this.setCaretVisible(false);
-                interactiveMode = true;
-        }
+    removeAllListeners();
+    addPrevListeners();
 
-        public void stopInteractiveMode()
-        {
-                // ignore if we are not in interactive mode
-                if (!interactiveMode)
-                        return;
+    getCustomPainter().stopInteractiveMode();
+    this.editable = true;
+    this.caretBlinks = true;
+    this.setCaretVisible(true);
+    interactiveMode = false;
+  }
 
-                removeAllListeners();
-                addPrevListeners();
 
-                getCustomPainter().stopInteractiveMode();
-//                customPainter.setCursor(new Cursor(Cursor.TEXT_CURSOR));
-                this.editable = true;
-                this.caretBlinks = true;
-                this.setCaretVisible(true);
+  public int getHorizontalScroll() {
+    return horizontal.getValue();
+  }
 
-                interactiveMode = false;
-        }
 
-        public int getHorizontalScroll()
-        {
-                return horizontal.getValue();
-        }
+  private void addPrevListeners() {
+    // add the original text-edit listeners
+    for (ComponentListener cl : prevCompListeners) {
+      painter.addComponentListener(cl);
+    }
+    for (MouseListener ml : prevMouseListeners) {
+      painter.addMouseListener(ml);
+    }
+    for (MouseMotionListener mml : prevMMotionListeners) {
+      painter.addMouseMotionListener(mml);
+    }
+    for (KeyListener kl : prevKeyListeners) {
+      editor.addKeyListener(kl);
+    }
+  }
 
-        private void addPrevListeners()
-        {
-                // add the original text-edit listeners
-                for (ComponentListener cl : prevCompListeners) {
-                        painter.addComponentListener(cl);
-                }
-                for (MouseListener ml : prevMouseListeners) {
-                        painter.addMouseListener(ml);
-                }
-                for (MouseMotionListener mml : prevMMotionListeners) {
-                        painter.addMouseMotionListener(mml);
-                }
-                for (KeyListener kl : prevKeyListeners) {
-                        editor.addKeyListener(kl);
-                }
-        }
 
-        //public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[]) {
-        public void updateInterface(List<List<Handle>> handles, List<List<ColorControlBox>> colorBoxes) {
-                getCustomPainter().updateInterface(handles, colorBoxes);
-        }
+  public void updateInterface(List<List<Handle>> handles,
+                              List<List<ColorControlBox>> colorBoxes) {
+    getCustomPainter().updateInterface(handles, colorBoxes);
+  }
 }
