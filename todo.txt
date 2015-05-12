@@ -10,8 +10,10 @@ X Change "method" to "function" in a few error messages
 X   https://github.com/processing/processing/issues/3225
 X ErrorMessageSimplifier should use the language subst stuff
 o   also, shouldn't that be one text() method with different args?
+X Debugger "String is null" error when hitting breakpoint
+_   https://github.com/processing/processing/issues/3265
 X Error message for incorrect function arguments is wonky
-X   https://github.com/processing/processing/issues/3268
+_   https://github.com/processing/processing/issues/3268
 
 contribs
 X Window size not passing into Tweak Mode
