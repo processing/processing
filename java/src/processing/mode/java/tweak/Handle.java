@@ -55,7 +55,7 @@ public class Handle {
   String textFormat;
 
   // the client that sends the changes
-  UDPTweakClient tweakClient;
+  TweakClient tweakClient;
 
 
   public Handle(String t, String n, int vi, String v, int ti, int l, int sc,
@@ -253,7 +253,7 @@ public class Handle {
   }
 
 
-  public void setTweakClient(UDPTweakClient client) {
+  public void setTweakClient(TweakClient client) {
     tweakClient = client;
   }
 

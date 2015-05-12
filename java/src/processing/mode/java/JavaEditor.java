@@ -45,7 +45,7 @@ import processing.mode.java.runner.Runner;
 import processing.mode.java.tweak.ColorControlBox;
 import processing.mode.java.tweak.Handle;
 import processing.mode.java.tweak.SketchParser;
-import processing.mode.java.tweak.UDPTweakClient;
+import processing.mode.java.tweak.TweakClient;
 
 
 public class JavaEditor extends Editor {
@@ -2557,12 +2557,11 @@ public class JavaEditor extends Editor {
 
   // TWEAK MODE
 
-  public static final String prefTweakPort = "tweak.port";
-  public static final String prefTweakShowCode = "tweak.showcode";
+  static final String prefTweakPort = "tweak.port";
+  static final String prefTweakShowCode = "tweak.showcode";
 
   public String[] baseCode;
-
-  UDPTweakClient tweakClient;
+  TweakClient tweakClient;
 
 
   protected void startInteractiveMode() {
@@ -2776,7 +2775,7 @@ public class JavaEditor extends Editor {
     }
 
     // create the client that will send the new values to the sketch
-    tweakClient = new UDPTweakClient(port);
+    tweakClient = new TweakClient(port);
     // update handles with a reference to the client object
     for (int tab=0; tab<code.length; tab++) {
       for (Handle h : handles.get(tab)) {
@@ -2827,7 +2826,7 @@ public class JavaEditor extends Editor {
     }
 
     // add the server code that will receive the value change messages
-    header += UDPTweakClient.getServerCode(port, numOfInts>0, numOfFloats>0);
+    header += TweakClient.getServerCode(port, numOfInts>0, numOfFloats>0);
     header += "TweakModeServer tweakmode_Server;\n";
 
     header += "void tweakmode_initAllVars() {\n";

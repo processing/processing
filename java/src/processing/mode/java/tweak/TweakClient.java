@@ -24,7 +24,7 @@ import java.net.*;
 import java.nio.ByteBuffer;
 
 
-public class UDPTweakClient {
+public class TweakClient {
 	private DatagramSocket socket;
 	private InetAddress address;
 	private boolean initialized;
@@ -35,7 +35,7 @@ public class UDPTweakClient {
 	static final int SHUTDOWN = 0xffffffff;
 
 
-	public UDPTweakClient(int sketchPort) {
+	public TweakClient(int sketchPort) {
 		this.sketchPort = sketchPort;
 
 		try {
