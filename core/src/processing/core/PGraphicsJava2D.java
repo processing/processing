@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-14 The Processing Foundation
+  Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2005-13 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
@@ -2639,12 +2639,12 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   public void loadPixels() {
-    if ((pixels == null) || (pixels.length != width * height)) {
-      pixels = new int[width * height];
+    if (pixels == null || (pixels.length != pixelWidth*pixelHeight)) {
+      pixels = new int[pixelWidth * pixelHeight];
     }
 
     WritableRaster raster = getRaster();
-    raster.getDataElements(0, 0, width, height, pixels);
+    raster.getDataElements(0, 0, pixelWidth, pixelHeight, pixels);
     if (raster.getNumBands() == 3) {
       // Java won't set the high bits when RGB, returns 0 for alpha
       // https://github.com/processing/processing/issues/2030
@@ -2690,7 +2690,7 @@ public class PGraphicsJava2D extends PGraphics {
     }
 //    updatePixels();
     if (pixels != null) {
-      getRaster().setDataElements(0, 0, width, height, pixels);
+      getRaster().setDataElements(0, 0, pixelWidth, pixelHeight, pixels);
     }
     modified = true;
   }

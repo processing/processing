@@ -62,7 +62,7 @@ public class PSurfaceFX implements PSurface {
 
   //Application app;
   //Stage stage;
-  PGraphicsFX fx;
+  PGraphicsFX2D fx;
   Stage stage;
   Canvas canvas;
 //  Frame dummy;
@@ -70,7 +70,7 @@ public class PSurfaceFX implements PSurface {
   AnimationTimer timer;
 
 
-  public PSurfaceFX(PGraphicsFX graphics) {
+  public PSurfaceFX(PGraphicsFX2D graphics) {
     fx = graphics;
     canvas = new ResizableCanvas();
     fx.context = canvas.getGraphicsContext2D();

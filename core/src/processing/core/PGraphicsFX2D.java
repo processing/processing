@@ -40,7 +40,7 @@ import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Transform;
 
 
-public class PGraphicsFX extends PGraphics {
+public class PGraphicsFX2D extends PGraphics {
   GraphicsContext context;
 
   static final WritablePixelFormat<IntBuffer> argbFormat =
@@ -89,7 +89,7 @@ public class PGraphicsFX extends PGraphics {
   // INTERNAL
 
 
-  public PGraphicsFX() { }
+  public PGraphicsFX2D() { }
 
 
   //public void setParent(PApplet parent)
@@ -433,14 +433,14 @@ public class PGraphicsFX extends PGraphics {
   @Override
   protected void clipImpl(float x1, float y1, float x2, float y2) {
     //g2.setClip(new Rectangle2D.Float(x1, y1, x2 - x1, y2 - y1));
-    showMethodWarning("clip()");
+    showTodoWarning("clip()", 3274);
   }
 
 
   @Override
   public void noClip() {
     //g2.setClip(null);
-    showMethodWarning("noClip()");
+    showTodoWarning("noClip()", 3274);
   }
 
 
@@ -452,7 +452,7 @@ public class PGraphicsFX extends PGraphics {
 
   @Override
   protected void blendModeImpl() {
-    showMethodWarning("blendMode()");
+    showTodoWarning("blendMode()", 3275);
   }
 
 
@@ -832,7 +832,7 @@ public class PGraphicsFX extends PGraphics {
   //public float curveTangent(float a, float b, float c, float d, float t)
 
 
-  /** Ignored (not needed) in Java 2D. */
+  /** Ignored (not needed) by this renderer. */
   @Override
   public void curveDetail(int detail) { }
 
@@ -965,28 +965,6 @@ public class PGraphicsFX extends PGraphics {
     context.drawImage(((ImageCache) getCache(who)).image,
                       u1, v1, u2-u1, v2-v1,
                       x1, y1, x2-x1, y2-y1);
-
-    // Every few years I think "nah, Java2D couldn't possibly be that f*king
-    // slow, why are we doing this by hand?" then comes the affirmation:
-//    Composite oldComp = null;
-//    if (false && tint) {
-//      oldComp = g2.getComposite();
-//      int alpha = (tintColor >> 24) & 0xff;
-//      System.out.println("using alpha composite");
-//      Composite alphaComp =
-//        AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha / 255f);
-//      g2.setComposite(alphaComp);
-//    }
-//
-//    long t = System.currentTimeMillis();
-//    g2.drawImage(who.getImage(),
-//                 (int) x1, (int) y1, (int) x2, (int) y2,
-//                 u1, v1, u2, v2, null);
-//    System.out.println(System.currentTimeMillis() - t);
-//
-//    if (oldComp != null) {
-//      g2.setComposite(oldComp);
-//    }
   }
 
 
@@ -2033,48 +2011,14 @@ public class PGraphicsFX extends PGraphics {
 //
 //
 //
-//  //////////////////////////////////////////////////////////////
-//
-//  // PIMAGE METHODS
-//
-//
-//  // getImage, setCache, getCache, removeCache, isModified, setModified
-//
-//
-//  protected WritableRaster getRaster() {
-//    WritableRaster raster = null;
-//    if (primarySurface) {
-//      /*
-//      // 'offscreen' will probably be removed in the next release
-//      if (useOffscreen) {
-//        raster = offscreen.getRaster();
-//      } else*/ if (image instanceof VolatileImage) {
-//        // when possible, we'll try VolatileImage
-//        raster = ((VolatileImage) image).getSnapshot().getRaster();
-//      }
-//    }
-//    if (raster == null) {
-//      raster = ((BufferedImage) image).getRaster();
-//    }
-//
-//    // On Raspberry Pi (and perhaps other platforms, the color buffer won't
-//    // necessarily be the int array that we'd like. Need to convert it here.
-//    // Not that this would probably mean getRaster() would need to work more
-//    // like loadRaster/updateRaster because the pixels will need to be
-//    // temporarily moved to (and later from) a buffer that's understood by
-//    // the rest of the Processing source.
-//    // https://github.com/processing/processing/issues/2010
-//    if (raster.getTransferType() != DataBuffer.TYPE_INT) {
-//      System.err.println("See https://github.com/processing/processing/issues/2010");
-//      throw new RuntimeException("Pixel operations are not supported on this device.");
-//    }
-//    return raster;
-//  }
+  //////////////////////////////////////////////////////////////
+
+  // PIMAGE METHODS
 
 
   @Override
   public void loadPixels() {
-    pixelFactor = 2;
+//    pixelFactor = 2;
     int wide = width * pixelFactor;
     int high = height * pixelFactor;
 
@@ -2103,21 +2047,6 @@ public class PGraphicsFX extends PGraphics {
   }
 
 
-////  /**
-////   * Update the pixels[] buffer to the PGraphics image.
-////   * <P>
-////   * Unlike in PImage, where updatePixels() only requests that the
-////   * update happens, in PGraphicsJava2D, this will happen immediately.
-////   */
-////  @Override
-////  public void updatePixels() {
-////    //updatePixels(0, 0, width, height);
-//////    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
-//////    WritableRaster raster = image.getRaster();
-////    updatePixels(0, 0, width, height);
-////  }
-//
-//
 //  /**
 //   * Update the pixels[] buffer to the PGraphics image.
 //   * <P>
@@ -2367,4 +2296,16 @@ public class PGraphicsFX extends PGraphics {
 
 
   //public void save(String filename)
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  /**
+   * Display a warning that the specified method is simply unavailable.
+   */
+  static public void showTodoWarning(String method, int issue) {
+    showWarning(method + "() is not yet available: " +
+                "https://github.com/processing/processing/issues/" + issue);
+  }
 }

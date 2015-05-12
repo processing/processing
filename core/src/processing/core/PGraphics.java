@@ -7950,7 +7950,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   static public void showDepthWarning(String method) {
     showWarning(method + "() can only be used with a renderer that " +
-                "supports 3D, such as P3D or OPENGL.");
+                "supports 3D, such as P3D.");
   }
 
 
@@ -7962,7 +7962,7 @@ public class PGraphics extends PImage implements PConstants {
   static public void showDepthWarningXYZ(String method) {
     showWarning(method + "() with x, y, and z coordinates " +
                 "can only be used with a renderer that " +
-                "supports 3D, such as P3D or OPENGL. " +
+                "supports 3D, such as P3D. " +
                 "Use a version without a z-coordinate instead.");
   }
 

@@ -18,6 +18,13 @@ _     and optionally the corner radii
 _   createShape(ELLIPSE) is x/y/w/h, and optionally adds a mode param
 
 
+javafx
+_ clip/noClip
+_   https://github.com/processing/processing/issues/3274
+_ blendMode
+_   https://github.com/processing/processing/issues/3275
+_ getNative() is problematic because it gives back a BufferedImage
+
 opengl
 _ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
 _   shouldn't be static, run it from the renderer, that's point of createXxx()
