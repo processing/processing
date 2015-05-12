@@ -1,5 +1,38 @@
 package processing.opengl;
 
+
+import static org.lwjgl.glfw.Callbacks.errorCallbackPrint;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
+import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_FALSE;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.system.MemoryUtil.NULL;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -9,17 +42,27 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.lang.reflect.Field;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Cursor;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.PixelFormat;
+//import org.lwjgl.LWJGLException;
+//import org.lwjgl.input.Cursor;
+//import org.lwjgl.input.Keyboard;
+//import org.lwjgl.input.Mouse;
+//import org.lwjgl.opengl.Display;
+//import org.lwjgl.opengl.DisplayMode;
+//import org.lwjgl.opengl.PixelFormat;
+
+import org.lwjgl.glfw.GLFWCursorPosCallback;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.GLFWScrollCallback;
+import org.lwjgl.glfw.GLFWvidmode;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLContext;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -46,10 +89,18 @@ public class PSurfaceLWJGL implements PSurface {
 
   PLWJGL pgl;
 
+  private GLFWMouseButtonCallback mouseCallback;
+  private GLFWCursorPosCallback posCallback;
+  private GLFWKeyCallback keyCallback;
+  private GLFWScrollCallback scrollCallback;
+  private GLFWErrorCallback errorCallback;
+  //The window handle
+  private long window;
+
   int cursorType = PConstants.ARROW; // cursor type
   boolean cursorVisible = true; // cursor visibility flag
-  Cursor invisibleCursor;
-  Cursor currentCursor;
+//  Cursor invisibleCursor;
+//  Cursor currentCursor;
 
   // ........................................................
 
@@ -58,8 +109,8 @@ public class PSurfaceLWJGL implements PSurface {
   boolean externalMessages = false;
 
   /** Poller threads to get the keyboard/mouse events from LWJGL */
-  protected static KeyPoller keyPoller;
-  protected static MousePoller mousePoller;
+//  protected static KeyPoller keyPoller;
+//  protected static MousePoller mousePoller;
 
   Thread thread;
   boolean paused;
@@ -107,7 +158,26 @@ public class PSurfaceLWJGL implements PSurface {
   public void initFrame(PApplet sketch, int backgroundColor,
                          int deviceIndex, boolean fullScreen, boolean spanDisplays) {
     this.sketch = sketch;
+    sketchWidth = sketch.sketchWidth();
+    sketchHeight = sketch.sketchHeight();
 
+
+    // Setup an error callback. The default implementation
+    // will print the error message in System.err.
+    glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
+
+    // Initialize GLFW. Most GLFW functions will not work before doing this.
+    if (glfwInit() != GL11.GL_TRUE)
+      throw new IllegalStateException("Unable to initialize GLFW");
+
+    // Configure our window
+    glfwDefaultWindowHints(); // optional, the current window hints are already
+                              // the default
+    glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // the window will stay hidden after
+                                            // creation
+    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
+
+    /*
     GraphicsEnvironment environment =
         GraphicsEnvironment.getLocalGraphicsEnvironment();
 
@@ -210,6 +280,7 @@ public class PSurfaceLWJGL implements PSurface {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+*/
 
 //    sketchWidth = sketch.width = sketch.sketchWidth();
 //    sketchHeight = sketch.height = sketch.sketchHeight();
@@ -235,7 +306,7 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public void setTitle(String title) {
-    Display.setTitle(title);
+//    Display.setTitle(title);
   }
 
 
@@ -243,18 +314,19 @@ public class PSurfaceLWJGL implements PSurface {
   public void setVisible(boolean visible) {
     // Apparently not possible:
     // http://forum.lwjgl.org/index.php?topic=5388.0
-    System.err.println("Cannot set visibility of window in OpenGL");
+//    System.err.println("Cannot set visibility of window in OpenGL");
   }
 
 
   @Override
   public void setResizable(boolean resizable) {
-    Display.setResizable(resizable);
+//    Display.setResizable(resizable);
   }
 
 
   @Override
   public void placeWindow(int[] location) {
+    /*
     if (location != null) {
       // a specific location was received from the Runner
       // (applet has been run more than once, user placed window)
@@ -270,11 +342,13 @@ public class PSurfaceLWJGL implements PSurface {
       // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
       Display.setLocation(Display.getX(), 30);
     }
+    */
   }
 
 
   @Override
   public void placeWindow(int[] location, int[] editorLocation) {
+    /*
     if (location != null) {
       // a specific location was received from the Runner
       // (the sketch has been run more than once/the user moved the window)
@@ -314,6 +388,7 @@ public class PSurfaceLWJGL implements PSurface {
       // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
       Display.setLocation(Display.getX(), 30);
     }
+    */
   }
 
 
@@ -339,13 +414,15 @@ public class PSurfaceLWJGL implements PSurface {
     externalMessages = true;
   }
 
-
+  /*
   private void setFrameCentered() {
+
     // Can't use frame.setLocationRelativeTo(null) because it sends the
     // frame to the main display, which undermines the --display setting.
     Display.setLocation(screenRect.x + (screenRect.width - sketchWidth) / 2,
                         screenRect.y + (screenRect.height - sketchHeight) / 2);
   }
+*/
 
 
   @Override
@@ -435,6 +512,7 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public void setFrameRate(float fps) {
+    /*
     frameRateTarget = fps;
     if (60 < fps) {
       // Disables v-sync
@@ -443,6 +521,7 @@ public class PSurfaceLWJGL implements PSurface {
     } else  {
       Display.setVSyncEnabled(true);
     }
+    */
   }
 
 
@@ -468,6 +547,7 @@ public class PSurfaceLWJGL implements PSurface {
 
   @Override
   public void setCursor(PImage image, int hotspotX, int hotspotY) {
+    /*
     BufferedImage jimg = (BufferedImage)image.getNative();
     IntBuffer buf = IntBuffer.wrap(jimg.getRGB(0, 0, jimg.getWidth(), jimg.getHeight(),
                                                null, 0, jimg.getWidth()));
@@ -479,24 +559,28 @@ public class PSurfaceLWJGL implements PSurface {
     } catch (LWJGLException e) {
       e.printStackTrace();
     }
+    */
   }
 
 
   @Override
   public void showCursor() {
     if (!cursorVisible) {
+      /*
       try {
         Mouse.setNativeCursor(currentCursor);
         cursorVisible = true;
       } catch (LWJGLException e) {
         e.printStackTrace();
       }
+      */
     }
   }
 
 
   @Override
   public void hideCursor() {
+    /*
     if (invisibleCursor == null) {
       try {
         invisibleCursor = new Cursor(1, 1, 0, 0, 1, BufferUtils.createIntBuffer(1), null);
@@ -510,6 +594,7 @@ public class PSurfaceLWJGL implements PSurface {
     } catch (LWJGLException e) {
       e.printStackTrace();
     }
+    */
   }
 
 
@@ -524,6 +609,177 @@ public class PSurfaceLWJGL implements PSurface {
      */
     @Override
     public void run() {  // not good to make this synchronized, locks things up
+      int WIDTH = sketchWidth;
+      int HEIGHT = sketchHeight;
+
+      // Create the window
+      window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World!", NULL, NULL);
+      if (window == NULL)
+        throw new RuntimeException("Failed to create the GLFW window");
+
+
+      // Event handling in LWJGL3:
+      // https://github.com/LWJGL/lwjgl3-wiki/wiki/2.6.3-Input-handling-with-GLFW
+
+      glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
+        @Override
+        public void invoke(long window, int key, int scancode, int action,
+            int mods) {
+          System.out.println("Key pressed: " + key + ", " + scancode + " " + action);
+          if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
+            glfwSetWindowShouldClose(window, GL_TRUE); // We will detect this in
+                                                       // our rendering loop
+        }
+      });
+
+      glfwSetMouseButtonCallback(window, mouseCallback = new GLFWMouseButtonCallback() {
+        @Override
+        public void invoke(long window, int button, int action, int mods) {
+          System.out.println("mouse pressed: " + button + ", " + action + " " + mods);
+        }
+      });
+
+      glfwSetCursorPosCallback(window, posCallback = new GLFWCursorPosCallback() {
+        @Override
+        public void invoke(long window, double xpos, double ypos) {
+          System.out.println("mouse moved: " + xpos + " " + ypos);
+
+
+          long millis = System.currentTimeMillis();
+
+          int modifiers = 0;
+//          if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) ||
+//              Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+//            modifiers |= Event.SHIFT;
+//          }
+//          if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ||
+//              Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+//            modifiers |= Event.CTRL;
+//          }
+//          if (Keyboard.isKeyDown(Keyboard.KEY_LMETA) ||
+//              Keyboard.isKeyDown(Keyboard.KEY_RMETA)) {
+//            modifiers |= Event.META;
+//          }
+//          if (Keyboard.isKeyDown(Keyboard.KEY_LMENU) ||
+//              Keyboard.isKeyDown(Keyboard.KEY_RMENU)) {
+//            // LWJGL maps the menu key and the alt key to the same value.
+//            modifiers |= Event.ALT;
+//          }
+
+          int x = (int)xpos;
+          int y = (int)ypos;
+          int button = 0;
+//          if (Mouse.isButtonDown(0)) {
+//            button = PConstants.LEFT;
+//          } else if (Mouse.isButtonDown(1)) {
+//            button = PConstants.RIGHT;
+//          } else if (Mouse.isButtonDown(2)) {
+//            button = PConstants.CENTER;
+//          }
+
+          int action = 0;
+//          if (button != 0) {
+//            if (pressed) {
+//              action = MouseEvent.DRAG;
+//            } else {
+//              action = MouseEvent.PRESS;
+//              pressed = true;
+//            }
+//          } else if (pressed) {
+//            action = MouseEvent.RELEASE;
+//          } else {
+//            action = MouseEvent.MOVE;
+//          }
+          action = MouseEvent.MOVE;
+
+//          if (inside) {
+//            if (!Mouse.isInsideWindow()) {
+//              inside = false;
+//              action = MouseEvent.EXIT;
+//            }
+//          } else {
+//            if (Mouse.isInsideWindow()) {
+//              inside = true;
+//              action = MouseEvent.ENTER;
+//            }
+//          }
+//
+          int count = 0;
+//          if (Mouse.getEventButtonState()) {
+//            startedClickTime = millis;
+//            startedClickButton = button;
+//          } else {
+//            if (action == MouseEvent.RELEASE) {
+//              boolean clickDetected = millis - startedClickTime < 500;
+//              if (clickDetected) {
+//                // post a RELEASE event, in addition to the CLICK event.
+//                MouseEvent me = new MouseEvent(null, millis, action, modifiers,
+//                                               x, y, button, count);
+//                parent.postEvent(me);
+//                action = MouseEvent.CLICK;
+//                count = 1;
+//              }
+//            }
+//          }
+
+
+
+          MouseEvent me = new MouseEvent(null, millis, action, modifiers,
+                                         x, y, button, count);
+          sketch.postEvent(me);
+
+
+        }
+      });
+
+      glfwSetScrollCallback(window, scrollCallback = new GLFWScrollCallback() {
+        @Override
+        public void invoke(long window, double xoffset, double yoffset) {
+          System.out.println("mouse scrolled: " + xoffset + " " + yoffset);
+        }
+      });
+
+
+
+      // Get the resolution of the primary monitor
+      ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+      // Center our window
+      glfwSetWindowPos(window, (GLFWvidmode.width(vidmode) - WIDTH) / 2,
+          (GLFWvidmode.height(vidmode) - HEIGHT) / 2);
+
+      // Make the OpenGL context current
+      glfwMakeContextCurrent(window);
+      // Enable v-sync
+      glfwSwapInterval(1);
+
+      // Make the window visible
+      glfwShowWindow(window);
+
+
+      GLContext.createFromCurrent();
+
+      // Set the clear color
+      glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+
+      // Run the rendering loop until the user has attempted to close
+      // the window or has pressed the ESCAPE key.
+      while (glfwWindowShouldClose(window) == GL_FALSE) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the
+                                                            // framebuffer
+
+        pgl.setThread(thread);
+        checkPause();
+        sketch.handleDraw();
+
+        glfwSwapBuffers(window); // swap the color buffers
+
+        // Poll for window events. The key callback above will only be
+        // invoked during this call.
+        glfwPollEvents();
+      }
+
+
+      /*
       try {
 //        System.err.println("CREATE THE DISPLAY");
         PixelFormat format = new PixelFormat(PGL.REQUESTED_ALPHA_BITS,
@@ -603,6 +859,7 @@ public class PSurfaceLWJGL implements PSurface {
       if (sketch.exitCalled()) {
         sketch.exitActual();
       }
+      */
     }
   }
 
@@ -636,7 +893,7 @@ public class PSurfaceLWJGL implements PSurface {
 
   // LWJGL event handling
 
-
+/*
   protected class KeyPoller extends Thread {
     protected PApplet parent;
     protected boolean stopRequested;
@@ -726,8 +983,9 @@ public class PSurfaceLWJGL implements PSurface {
       stopRequested = true;
     }
   }
+*/
 
-
+  /*
   protected class MousePoller extends Thread {
     protected PApplet parent;
     protected boolean stopRequested;
@@ -864,15 +1122,11 @@ public class PSurfaceLWJGL implements PSurface {
       stopRequested = true;
     }
   }
-  /**
-   * AWT to LWJGL key constants conversion.
-   */
+
+  // AWT to LWJGL key constants conversion.
   protected static final int[] LWJGL_KEY_CONVERSION;
-  /**
-   * Conversion LWJGL -> AWT keycode. Taken from GTGE library
-   * https://code.google.com/p/gtge/
-   *
-   */
+   // Conversion LWJGL -> AWT keycode. Taken from GTGE library
+   // https://code.google.com/p/gtge/
   static {
     // LWJGL -> AWT conversion
     // used for keypressed and keyreleased
@@ -932,4 +1186,5 @@ public class PSurfaceLWJGL implements PSurface {
       return -1;
     }
   }
+  */
 }
