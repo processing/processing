@@ -2883,7 +2883,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
       new IllegalArgumentException("This code called statusNotice(null)").printStackTrace();
       msg = "";
     }
-    new Exception("setting notice to " + msg).printStackTrace();
     status.notice(msg);
   }
 
