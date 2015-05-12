@@ -32,7 +32,7 @@ public class OffsetMatcher {
   String pdeCodeLine, javaCodeLine;
   boolean matchingNeeded = false;
 
-  
+
   public OffsetMatcher(String pdeCode, String javaCode) {
     this.pdeCodeLine = pdeCode;
     this.javaCodeLine = javaCode;
@@ -43,15 +43,15 @@ public class OffsetMatcher {
     } else {
       matchingNeeded = true;
       minDistance();
-    }    
+    }
   }
 
-  
+
   public int getPdeOffForJavaOff(int start, int length) {
 //    log("PDE :" + pdeCodeLine + "\nJAVA:" + javaCodeLine);
 //    log("getPdeOffForJavaOff() start:" + start + ", len " + length);
     if(!matchingNeeded) return start;
-    int ans = getPdeOffForJavaOff(start); 
+    int ans = getPdeOffForJavaOff(start);
     int end = getPdeOffForJavaOff(start + length - 1);
     if(ans == -1 || end == -1){
 //      log("ans: " + ans + " end: " + end);
@@ -66,10 +66,10 @@ public class OffsetMatcher {
     return ans;
   }
 
-  
+
   public int getJavaOffForPdeOff(int start, int length) {
     if(!matchingNeeded) return start;
-    int ans = getJavaOffForPdeOff(start); 
+    int ans = getJavaOffForPdeOff(start);
 //    log(start + " pde start off, java start off "
 //        + getJavaOffForPdeOff(start));
 //    log((start + length - 1) + " pde end off, java end off "
@@ -77,7 +77,7 @@ public class OffsetMatcher {
     return ans;
   }
 
-  
+
   public int getPdeOffForJavaOff(int javaOff) {
     if (!matchingNeeded)
       return javaOff;
@@ -86,7 +86,7 @@ public class OffsetMatcher {
         continue;
       } else if (offsetMatch.get(i).javaOffset == javaOff) {
 //        int j = i;
-        
+
         // sometimes there are multiple repeated j offsets for a single pde offset
         // so go to the last one, with bound check
         while (i > 0 && offsetMatch.get(--i).javaOffset == javaOff) {
@@ -107,7 +107,7 @@ public class OffsetMatcher {
     return -1;
   }
 
-  
+
   public int getJavaOffForPdeOff(int pdeOff) {
     if(!matchingNeeded) return pdeOff;
     for (int i = offsetMatch.size() - 1; i >= 0; i--) {
@@ -117,11 +117,11 @@ public class OffsetMatcher {
 //        int j = i;
         while (i > 0 && offsetMatch.get(--i).pdeOffset == pdeOff) {
 //          log("MP " + offsetMatch.get(i).javaOffset + " "
-//              + offsetMatch.get(i).pdeOffset); 
+//              + offsetMatch.get(i).pdeOffset);
         }
         if (i + 1 < offsetMatch.size()) { // bounds check, see #2664
           int javaOff = offsetMatch.get(++i).javaOffset;
-          while (i > 0 && offsetMatch.get(--i).javaOffset == javaOff) {            
+          while (i > 0 && offsetMatch.get(--i).javaOffset == javaOff) {
           }
         }
         int j = i + 1;
@@ -133,12 +133,12 @@ public class OffsetMatcher {
     return -1;
   }
 
-  
+
   /**
    * Finds 'distance' between two Strings.
    * See Edit Distance Problem
    * https://secweb.cs.odu.edu/~zeil/cs361/web/website/Lectures/styles/pages/editdistance.html
-   * http://www.stanford.edu/class/cs124/lec/med.pdf 
+   * http://www.stanford.edu/class/cs124/lec/med.pdf
    */
   private int minDistance() {
 
@@ -192,7 +192,7 @@ public class OffsetMatcher {
     return dp[len1][len2];
   }
 
-  
+
   private void minDistInGrid(int g[][], int i, int j, int fi, int fj,
                              char s1[], char s2[], ArrayList<OffsetPair> set) {
 //    if(i < s1.length)System.out.print(s1[i] + " <->");
@@ -230,7 +230,7 @@ public class OffsetMatcher {
     }
   }
 
-  
+
   private class OffsetPair {
     public final int pdeOffset, javaOffset;
 
@@ -252,7 +252,7 @@ public class OffsetMatcher {
 //    a.getJavaOffForPdeOff(12, 3);
 //    minDistance("static void main(){;", "public static void main(){;");
 //      minDistance("#bb00aa", "0xffbb00aa");
-//    a = new OffsetMatcher("void test(ArrayList<Boid> boids){", 
+//    a = new OffsetMatcher("void test(ArrayList<Boid> boids){",
 //    "public void test(ArrayList<Boid> boids){");
 //    a.getJavaOffForPdeOff(20,4);
     a = new OffsetMatcher("}", "\n");
