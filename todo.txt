@@ -4,6 +4,11 @@ X   https://github.com/processing/processing/issues/3224
 X   also update the Windows and Linux versions
 X replace ColorSelector with JComponent version
 X   https://github.com/processing/processing/issues/3209
+X sketchbook window is completely empty w/ no sketches
+X   requires restart of p5 before it updates
+X   https://github.com/processing/processing/issues/3214
+X Replace & Find was reading "Find & Replace" 
+X   https://github.com/processing/processing/issues/3247
 
 debugger/pdex
 X Change "method" to "function" in a few error messages
@@ -174,9 +179,6 @@ _   makes saving *really* slow with a lot of libraries
 _ need to handle the 2.x to 3.x sketchbook transition
 _   prefs are the same file, but sketchbook location pref is different
 _ New/Rename/Save As is reloading the whole sketchbook, argh
-_ sketchbook window is completely empty w/ no sketches
-_   requires restart of p5 before it updates
-_   https://github.com/processing/processing/issues/3214
 _ sketchbook window doesn't update when sketches are added, renamed, etc
 _   https://github.com/processing/processing/issues/2944
 _ possible PR for updating sketchbook stuff

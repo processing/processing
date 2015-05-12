@@ -108,11 +108,12 @@ public class FindReplace extends JFrame {
     layout.setAutoCreateGaps(true);
     layout.setAutoCreateContainerGaps(true);
 
-    Group buttonsHorizontalGroup = layout.createSequentialGroup(); // To hold the buttons in the specified order depending on the OS
+    // To hold the buttons in the specified order depending on the OS
+    Group buttonsHorizontalGroup = layout.createSequentialGroup();
 
     replaceAllButton = new JButton(Language.text("find.btn.replace_all"));
     replaceButton = new JButton(Language.text("find.btn.replace"));
-    replaceAndFindButton = new JButton(Language.text("find.btn.find_and_replace"));
+    replaceAndFindButton = new JButton(Language.text("find.btn.replace_and_find"));
     previousButton = new JButton(Language.text("find.btn.previous"));
     findButton = new JButton(Language.text("find.btn.find"));
 
@@ -144,7 +145,7 @@ public class FindReplace extends JFrame {
         .createSequentialGroup()
         .addGap(BORDER)
         .addGroup(layout.createParallelGroup()
-            .addGroup(GroupLayout.Alignment.TRAILING, // TRAILING makes everything right alinged 
+            .addGroup(GroupLayout.Alignment.TRAILING, // TRAILING makes everything right alinged
                 layout.createSequentialGroup()
                     .addGap(replaceLabel.getPreferredSize().width
                         - findLabel.getPreferredSize().width)
@@ -166,7 +167,7 @@ public class FindReplace extends JFrame {
     );
 
 //    layout.linkSize(SwingConstants.HORIZONTAL, findButton, replaceButton, replaceAllButton, replaceAndFindButton, previousButton);
-    
+
     layout.setVerticalGroup(layout.createSequentialGroup()
       .addGap(BORDER)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -180,7 +181,7 @@ public class FindReplace extends JFrame {
           .addComponent(allTabsBox)
           .addComponent(wrapAroundBox))
           .addGroup(buttonsVerticalGroup)
-      .addGap(BORDER) 
+      .addGap(BORDER)
       );
 
     setLocationRelativeTo(null); // center
