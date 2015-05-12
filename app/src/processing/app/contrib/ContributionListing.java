@@ -445,7 +445,7 @@ public class ContributionListing {
     for (Library l : base.getActiveEditor().getMode().contribLibraries)
       if (hasUpdates(l))
         return true;
-    for (ToolContribution t : base.getActiveEditor().contribTools)
+    for (ToolContribution t : base.getActiveEditor().getToolContribs())
       if (hasUpdates(t))
         return true;
     return false;

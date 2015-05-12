@@ -3,6 +3,8 @@ package processing.app.contrib;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import processing.app.Base;
 import processing.core.PApplet;
@@ -36,7 +38,7 @@ public class ExamplesContribution extends LocalContribution {
   /**
    * Function to determine whether or not the example present in the
    * exampleLocation directory is compatible with the present mode.
-   * 
+   *
    * @param base
    * @param exampleLocationFolder
    * @return true if the example is compatible with the mode of the currently
@@ -61,14 +63,14 @@ public class ExamplesContribution extends LocalContribution {
 
   static public void loadMissing(Base base) {
     File examplesFolder = Base.getSketchbookExamplesFolder();
-    ArrayList<ExamplesContribution> contribExamples = base.getExampleContribs();
+    List<ExamplesContribution> contribExamples = base.getExampleContribs();
 
-    HashMap<File, ExamplesContribution> existing = new HashMap<File, ExamplesContribution>();
+    Map<File, ExamplesContribution> existing = new HashMap<File, ExamplesContribution>();
     for (ExamplesContribution contrib : contribExamples) {
       existing.put(contrib.getFolder(), contrib);
     }
     File[] potential = ContributionType.EXAMPLES.listCandidates(examplesFolder);
-    // If modesFolder does not exist or is inaccessible (folks might like to 
+    // If modesFolder does not exist or is inaccessible (folks might like to
     // mess with folders then report it as a bug) 'potential' will be null.
     if (potential != null) {
       for (File folder : potential) {

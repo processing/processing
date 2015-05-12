@@ -44,11 +44,11 @@ public class ModeContribution extends LocalContribution {
                                       String searchName) {
     try {
       return new ModeContribution(base, folder, searchName);
-      
+
     } catch (IgnorableException ig) {
       Base.log(ig.getMessage());
-      
-    } catch (Throwable err) {  
+
+    } catch (Throwable err) {
       // Throwable to catch Exceptions or UnsupportedClassVersionError et al
       if (searchName == null) {
         err.printStackTrace();
@@ -87,13 +87,13 @@ public class ModeContribution extends LocalContribution {
     }
   }
 
+
   /**
    * Method to close the ClassLoader so that the archives are no longer "locked"
    * and a mode can be removed without restart.
    */
   public void clearClassLoader(Base base) {
-    
-    ArrayList<ModeContribution> contribModes = base.getModeContribs();
+    List<ModeContribution> contribModes = base.getModeContribs();
     int botherToRemove = contribModes.indexOf(this);
     if (botherToRemove != -1) { // The poor thing isn't even loaded, and we're trying to remove it...
       contribModes.remove(botherToRemove);
@@ -109,16 +109,17 @@ public class ModeContribution extends LocalContribution {
     }
   }
 
+
   static public void loadMissing(Base base) {
     File modesFolder = Base.getSketchbookModesFolder();
-    ArrayList<ModeContribution> contribModes = base.getModeContribs();
+    List<ModeContribution> contribModes = base.getModeContribs();
 
-    HashMap<File, ModeContribution> existing = new HashMap<File, ModeContribution>();
+    Map<File, ModeContribution> existing = new HashMap<File, ModeContribution>();
     for (ModeContribution contrib : contribModes) {
       existing.put(contrib.getFolder(), contrib);
     }
     File[] potential = ContributionType.MODE.listCandidates(modesFolder);
-    // If modesFolder does not exist or is inaccessible (folks might like to 
+    // If modesFolder does not exist or is inaccessible (folks might like to
     // mess with folders then report it as a bug) 'potential' will be null.
     if (potential != null) {
       for (File folder : potential) {
@@ -133,7 +134,7 @@ public class ModeContribution extends LocalContribution {
         }
       }
     }
-    
+
     // This allows you to build and test your Mode code from Eclipse.
     // -Dusemode=com.foo.FrobMode:/path/to/FrobMode
     final String useMode = System.getProperty("usemode");

@@ -15,7 +15,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License along 
+  You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
@@ -33,7 +33,7 @@ import processing.app.Library;
 public enum ContributionType {
   LIBRARY, TOOL, MODE, EXAMPLES;
 
-    
+
   public String toString() {
     switch (this) {
     case LIBRARY:
@@ -47,11 +47,11 @@ public enum ContributionType {
     }
     return null;  // should be unreachable
   };
-  
-  
-  /** 
-   * Get this type name as a purtied up, capitalized version. 
-   * @return Mode for mode, Tool for tool, etc. 
+
+
+  /**
+   * Get this type name as a purtied up, capitalized version.
+   * @return Mode for mode, Tool for tool, etc.
    */
   public String getTitle() {
     String s = toString();
@@ -63,8 +63,8 @@ public enum ContributionType {
     else
       return Character.toUpperCase(s.charAt(0)) + s.substring(1);
   }
-    
-    
+
+
   public String getFolderName() {
     switch (this) {
     case LIBRARY:
@@ -78,33 +78,33 @@ public enum ContributionType {
     }
     return null;  // should be unreachable
   }
-  
-  
+
+
   public File createTempFolder() throws IOException {
     return Base.createTempFolder(toString(), "tmp", getSketchbookFolder());
   }
-  
-  
+
+
   public boolean isTempFolderName(String name) {
     return name.startsWith(toString()) && name.endsWith("tmp");
   }
-  
-  
+
+
 //  public String getTempPrefix() {
 //    return toString();
 //  }
-//  
-//  
+//
+//
 //  public String getTempSuffix() {
 //    return "tmp";
 //  }
-    
-    
+
+
 //    public String getPropertiesName() {
 //      return toString() + ".properties";
 //    }
 
-    
+
   static public ContributionType fromName(String s) {
     if (s != null) {
       if ("library".equalsIgnoreCase(s)) {
@@ -140,8 +140,8 @@ public enum ContributionType {
 
 
   boolean isCandidate(File potential) {
-    return (potential.isDirectory() && 
-            new File(potential, toString()).exists() && 
+    return (potential.isDirectory() &&
+            new File(potential, toString()).exists() &&
             !isTempFolderName(potential.getName()));
   }
 
@@ -176,17 +176,17 @@ public enum ContributionType {
     }
     return folders[0];
   }
-  
-  
-  /** 
+
+
+  /**
    * Returns true if the type of contribution requires the PDE to restart
-   * when being added or removed. 
+   * when being added or removed.
    */
   boolean requiresRestart() {
     return this == ContributionType.TOOL || this == ContributionType.MODE;
   }
-  
-  
+
+
   LocalContribution load(Base base, File folder) {
     switch (this) {
     case LIBRARY:
@@ -210,7 +210,7 @@ public enum ContributionType {
       contribs.addAll(editor.getMode().contribLibraries);
       break;
     case TOOL:
-      contribs.addAll(editor.contribTools);
+      contribs.addAll(editor.getToolContribs());
       break;
     case MODE:
       contribs.addAll(editor.getBase().getModeContribs());
@@ -221,17 +221,17 @@ public enum ContributionType {
     }
     return contribs;
   }
-  
+
 
   File getBackupFolder() {
     return new File(getSketchbookFolder(), "old");
   }
-  
-  
+
+
   File createBackupFolder(StatusPanel status) {
-    File backupFolder = getBackupFolder(); 
+    File backupFolder = getBackupFolder();
 //    if (backupFolder.isDirectory()) {
-//      status.setErrorMessage("First remove the folder named \"old\" from the " + 
+//      status.setErrorMessage("First remove the folder named \"old\" from the " +
 //                             getFolderName() + " folder in the sketchbook.");
 //      return null;
 //    }
@@ -242,9 +242,9 @@ public enum ContributionType {
     }
     return backupFolder;
   }
-  
-  
-  /** 
+
+
+  /**
    * Create a filter for a specific contribution type.
    * @param type The type, or null for a generic update checker.
    */
@@ -255,8 +255,8 @@ public enum ContributionType {
       }
     };
   }
-  
-  
+
+
   static ContributionFilter createUpdateFilter() {
     return new ContributionFilter() {
       public boolean matches(Contribution contrib) {

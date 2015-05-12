@@ -24,6 +24,7 @@ package processing.app;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -124,18 +125,18 @@ public class Recent {
       updateMenuRecord(menu, rec, sketchbookPath);
     }
   }
-  
-  
+
+
   private void updateMenuRecord(JMenu menu, final Record rec, String sketchbookPath) {
     try {
       String recPath = new File(rec.getPath()).getParent();
       String purtyPath = null;
-      
+
       if (recPath.startsWith(sketchbookPath)) {
         purtyPath = "sketchbook \u2192 " +
           recPath.substring(sketchbookPath.length() + 1);
       } else {
-        ArrayList<Mode> modes = base.getModeList();
+        List<Mode> modes = base.getModeList();
         for (Mode mode : modes) {
           File examplesFolder = mode.getExamplesFolder();
           String examplesPath = examplesFolder.getAbsolutePath();
@@ -206,7 +207,7 @@ public class Recent {
       });
       //menu.add(item);
       menu.insert(item, 0);
-      
+
     } catch (Exception e) {
       // Strange things can happen... report them for the geeky and move on:
       // https://github.com/processing/processing/issues/2463
@@ -282,7 +283,7 @@ public class Recent {
     }
   }
 
-//handles renaming done within  processing 
+//handles renaming done within  processing
 synchronized void handleRename(Editor editor,String oldPath){
       if (records.size() == remember) {
         records.remove(0);  // remove the first entry

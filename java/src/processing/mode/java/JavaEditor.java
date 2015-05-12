@@ -331,6 +331,7 @@ public class JavaEditor extends Editor {
         boolean isCoreToolMenuItemAdded = false;
         boolean isContribToolMenuItemAdded = false;
 
+        List<ToolContribution> contribTools = getToolContribs();
         // Adding this in in case a reference folder is added for MovieMaker, or in case
         // other core tools are introduced later
         isCoreToolMenuItemAdded = addToolReferencesToSubMenu(getCoreTools(), toolRefSubmenu);
@@ -456,7 +457,6 @@ public class JavaEditor extends Editor {
 
 
   /**
-   *
    * Populates the JMenu with JMenuItems, one for each Tool that has a reference
    * accompanying it. The JMenuItems open the index.htm/index.html file of the
    * reference in the user's default browser, or the readme.txt in the user's
@@ -469,7 +469,7 @@ public class JavaEditor extends Editor {
    *          to be added
    * @return true if and only if any JMenuItems were added; false otherwise
    */
-  private boolean addToolReferencesToSubMenu(ArrayList<ToolContribution> toolsList, JMenu subMenu) {
+  private boolean addToolReferencesToSubMenu(List<ToolContribution> toolsList, JMenu subMenu) {
     boolean isItemAdded = false;
     Iterator<ToolContribution> iter = toolsList.iterator();
     while (iter.hasNext()) {
@@ -2746,7 +2746,7 @@ public class JavaEditor extends Editor {
     SketchCode[] code = sketch.getCode();
 
     List<List<Handle>> handles = parser.allHandles;
-    
+
     if (code.length < 1) {
       return false;
     }
@@ -2798,7 +2798,7 @@ public class JavaEditor extends Editor {
       }
       code[tab].setProgram(c);
     }
-    
+
     // add the main header to the code in the first tab
     String c = code[0].getProgram();
 

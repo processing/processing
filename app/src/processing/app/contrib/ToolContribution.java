@@ -79,12 +79,12 @@ public class ToolContribution extends LocalContribution implements Tool {
     Iterator<Editor> editorIter = base.getEditors().iterator();
     while (editorIter.hasNext()) {
       Editor editor = editorIter.next();
-      ArrayList<ToolContribution> contribTools = editor.contribTools;
+      List<ToolContribution> contribTools = editor.getToolContribs();
       for (ToolContribution toolContrib : contribTools)
         if (toolContrib.getName().equals(this.name)) {
           try {
             ((URLClassLoader) toolContrib.loader).close();
-            editor.contribTools.remove(toolContrib);
+            editor.removeToolContrib(toolContrib);
             break;
           } catch (IOException e) {
             e.printStackTrace();
@@ -127,7 +127,7 @@ public class ToolContribution extends LocalContribution implements Tool {
 
 
 //  Editor editor;  // used to send error messages
-  
+
   public void init(Editor editor) {
 //    try {
 //      this.editor = editor;
@@ -162,7 +162,7 @@ public class ToolContribution extends LocalContribution implements Tool {
   /**
    * Returns the object stored in the referenceFile field, which contains an
    * instance of the file object representing the index file of the reference
-   * 
+   *
    * @return referenceFile
    */
   public File getReferenceIndexFile() {
@@ -172,7 +172,7 @@ public class ToolContribution extends LocalContribution implements Tool {
 
   /**
    * Tests whether the reference's index file indicated by referenceFile exists.
-   * 
+   *
    * @return true if and only if the file denoted by referenceFile exists; false
    *         otherwise.
    */

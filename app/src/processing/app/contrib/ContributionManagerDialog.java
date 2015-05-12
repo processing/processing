@@ -434,13 +434,14 @@ public class ContributionManagerDialog {
         new ArrayList<Library>(editor.getMode().contribLibraries);
       contributions.addAll(libraries);
 
-      ArrayList<ToolContribution> tools = editor.contribTools;
+      //ArrayList<ToolContribution> tools = editor.contribTools;
+      List<ToolContribution> tools = editor.getToolContribs();
       contributions.addAll(tools);
 
-      ArrayList<ModeContribution> modes = editor.getBase().getModeContribs();
+      List<ModeContribution> modes = editor.getBase().getModeContribs();
       contributions.addAll(modes);
 
-      ArrayList<ExamplesContribution> examples = editor.getBase().getExampleContribs();
+      List<ExamplesContribution> examples = editor.getBase().getExampleContribs();
       contributions.addAll(examples);
 
 //    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);

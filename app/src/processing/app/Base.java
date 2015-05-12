@@ -120,8 +120,8 @@ public class Base {
 
   /** The built-in modes. coreModes[0] will be considered the 'default'. */
   private Mode[] coreModes;
-  protected ArrayList<ModeContribution> modeContribs;
 
+  protected ArrayList<ModeContribution> modeContribs;
   protected ArrayList<ExamplesContribution> exampleContribs;
 
   private JMenu sketchbookMenu;
@@ -492,12 +492,12 @@ public class Base {
   }
 
 
-  public ArrayList<ModeContribution> getModeContribs() {
+  public List<ModeContribution> getModeContribs() {
     return modeContribs;
   }
 
 
-  public ArrayList<Mode> getModeList() {
+  public List<Mode> getModeList() {
     ArrayList<Mode> allModes = new ArrayList<Mode>();
     allModes.addAll(Arrays.asList(coreModes));
     if (modeContribs != null) {
@@ -509,7 +509,7 @@ public class Base {
   }
 
 
-  public ArrayList<ExamplesContribution> getExampleContribs() {
+  public List<ExamplesContribution> getExampleContribs() {
     return exampleContribs;
   }
 

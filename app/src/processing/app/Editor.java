@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-14 The Processing Foundation
+  Copyright (c) 2012-15 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -28,20 +28,36 @@ import processing.app.syntax.*;
 import processing.app.tools.*;
 import processing.core.*;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.plaf.basic.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
+
 
 /**
  * Main editor panel for the Processing Development Environment.
@@ -117,8 +133,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
   JMenu toolsMenu;
   JMenu modeMenu;
 
-  ArrayList<ToolContribution> coreTools;
-  public ArrayList<ToolContribution> contribTools;
+  List<ToolContribution> coreTools;
+  List<ToolContribution> contribTools;
 
   Image backgroundGradient;
 
@@ -365,8 +381,18 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  protected ArrayList<ToolContribution> getCoreTools() {
+  protected List<ToolContribution> getCoreTools() {
     return coreTools;
+  }
+
+
+  public List<ToolContribution> getToolContribs() {
+    return contribTools;
+  }
+
+
+  public void removeToolContrib(ToolContribution tc) {
+    contribTools.remove(tc);
   }
 
 
@@ -437,6 +463,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     @SuppressWarnings("unchecked")
     public boolean importData(TransferHandler.TransferSupport support) {
+      System.out.println(support.getTransferable());
       int successful = 0;
 
       if (!canImport(support)) {
@@ -449,7 +476,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           new DataFlavor("text/uri-list;class=java.lang.String");
 
         if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-          java.util.List list = (java.util.List)
+          List list = (List)
             transferable.getTransferData(DataFlavor.javaFileListFlavor);
           for (int i = 0; i < list.size(); i++) {
             File file = (File) list.get(i);
@@ -1192,7 +1219,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //  }
 
 
-  void addToolItem(final Tool tool, HashMap<String, JMenuItem> toolItems) {
+  void addToolItem(final Tool tool, Map<String, JMenuItem> toolItems) {
     String title = tool.getMenuTitle();
     final JMenuItem item = new JMenuItem(title);
     item.addActionListener(new ActionListener() {
@@ -1220,8 +1247,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  protected void addTools(JMenu menu, ArrayList<ToolContribution> tools) {
-    HashMap<String, JMenuItem> toolItems = new HashMap<String, JMenuItem>();
+  protected void addTools(JMenu menu, List<ToolContribution> tools) {
+    Map<String, JMenuItem> toolItems = new HashMap<String, JMenuItem>();
 
     for (final ToolContribution tool : tools) {
       try {

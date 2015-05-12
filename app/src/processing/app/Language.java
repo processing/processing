@@ -31,9 +31,6 @@ import processing.core.PApplet;
  * Internationalization (i18n)
  */
 public class Language {
-//  static private final String FILE = "processing.app.languages.PDE";
-  //static private final String LISTING = "processing/app/languages/languages.txt";
-
   // Store the language information in a file separate from the preferences,
   // because preferences need the language on load time.
   static protected final String PREF_FILE = "language.txt";
@@ -48,8 +45,6 @@ public class Language {
   /** Available languages */
   private HashMap<String, String> languages;
 
-  //private ResourceBundle bundle;
-  //private Settings bundle;
   private LanguageBundle bundle;
 
 
@@ -159,7 +154,7 @@ public class Language {
   /** Singleton constructor */
   static public Language init() {
     if (instance == null) {
-      synchronized(Language.class) {
+      synchronized (Language.class) {
         if (instance == null) {
           instance = new Language();
         }
@@ -169,35 +164,49 @@ public class Language {
   }
 
 
-  /** Get translation from bundles. */
-  static public String text(String text) {
-//    ResourceBundle bundle = init().bundle;
+  static private String get(String key) {
     LanguageBundle bundle = init().bundle;
 
     try {
-      return bundle.getString(text);
-    } catch (MissingResourceException e) {
-      return text;
-    }
+      String value = bundle.getString(key);
+      if (value != null) {
+        return value;
+      }
+    } catch (MissingResourceException e) { }
+
+    return null;
   }
 
 
-  static public String interpolate(String text, Object... arguments) {
-//    return String.format(init().bundle.getString(text), arguments);
-    return String.format(init().bundle.getString(text), arguments);
+  /** Get translation from bundles. */
+  static public String text(String key) {
+    String value = get(key);
+    if (value == null) {
+      // MissingResourceException and null values
+      return key;
+    }
+    return value;
   }
 
 
-  static public String pluralize(String text, int count) {
-//    ResourceBundle bundle = init().bundle;
-    LanguageBundle bundle = init().bundle;
-
-    String fmt = text + ".%s";
-    String key = String.format(fmt, count);
-    if (bundle.containsKey(key)) {
-      return interpolate(key, count);
+  static public String interpolate(String key, Object... arguments) {
+    String value = get(key);
+    if (value == null) {
+      return key;
     }
-    return interpolate(String.format(fmt, "n"), count);
+    return String.format(value, arguments);
+  }
+
+
+  static public String pluralize(String key, int count) {
+    // First check if the bundle contains an entry for this specific count
+    String customKey = key + "." + count;
+    String value = get(customKey);
+    if (value != null) {
+      return String.format(value, count);
+    }
+    // Use the general 'n' version for n items
+    return interpolate(key + ".n", count);
   }
 
 

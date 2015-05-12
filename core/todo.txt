@@ -7,6 +7,8 @@ X add new String/Int/FloatDict constructors for easier initialization
 X errors in case changes not correctly reported
 X   https://github.com/processing/processing/issues/3235
 
+_ Fullscreen window on second monitor without using present mode
+_   https://github.com/processing/processing/issues/3271
 _ move svgz handling to PApplet
 _   remove objz handling
 
