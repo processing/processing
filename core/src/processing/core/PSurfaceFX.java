@@ -283,9 +283,10 @@ public class PSurfaceFX implements PSurface {
 
 
   public void setSize(int width, int height) {
-    System.out.println(getClass().getSimpleName() + " setSize()");
+    System.out.format("%s.setSize(%d, %d)%n", getClass().getSimpleName(), width, height);
     stage.setWidth(width);
     stage.setHeight(height);
+    fx.setSize(width, height);
   }
 
 
