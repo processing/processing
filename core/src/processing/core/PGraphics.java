@@ -7125,7 +7125,9 @@ public class PGraphics extends PImage implements PConstants {
     backgroundR = calcR;
     backgroundG = calcG;
     backgroundB = calcB;
-    backgroundA = (format == RGB) ? colorModeA : calcA;
+    //backgroundA = (format == RGB) ? colorModeA : calcA;
+    // If drawing surface is opaque, this maxes out at 1.0. [fry 150513]
+    backgroundA = (format == RGB) ? 1 : calcA;
     backgroundRi = calcRi;
     backgroundGi = calcGi;
     backgroundBi = calcBi;
