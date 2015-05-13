@@ -884,15 +884,15 @@ public class PGraphicsFX2D extends PGraphics {
   // SMOOTH
 
 
-  @Override
-  public void smooth() {
+//  @Override
+//  public void smooth() {
 //    smooth = true;
 //
 //    if (quality == 0) {
 //      quality = 4;  // change back to bicubic
 //    }
-    showMissingWarning("smooth");
-  }
+//  }
+
 
   @Override
   public void smooth(int quality) {
@@ -908,8 +908,8 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void noSmooth() {
-    smooth = false;
-    quality = 0;  // https://github.com/processing/processing/issues/3113
+//    smooth = false;
+//    quality = 0;  // https://github.com/processing/processing/issues/3113
     showMissingWarning("noSmooth");
   }
 
