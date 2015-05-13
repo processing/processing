@@ -22,7 +22,9 @@ We're removing `Applet` as the base class for `PApplet` and redoing the entire r
 
 #### Integration with Java applications
 Because `PApplet` was a Java `Component`, it was possible to embed Processing into other Java code. Making it a generic component, however, places limitations on how much performance can be improved, due to the cross-platform mess of Java's outdated (and somewhat unsuspported) AWT. 
+
 In earlier alpha releases, a `getCanvas()` or `getComponent()` method provided a way to get an object to be embedded, but at the current time, it looks like we'll have to move in another direction. At the present time, it looks like it'll be necessary to create a separate `PComponent` or `PCanvas` class that can be used, but it's not clear how that will work. 
+
 This is one of many unfortunate tradeoffs I'm trying to sort through as we try to remove significant barriers to performance caused by the design of Java's AWT, while also supporting features (like embedding) that we've spent so much time supporting. 
 
 #### Offscreen rendering
