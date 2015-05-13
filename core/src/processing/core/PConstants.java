@@ -27,6 +27,8 @@ package processing.core;
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 
+import processing.data.StringList;
+
 
 /**
  * Numbers shared throughout processing.core.
@@ -45,6 +47,15 @@ public interface PConstants {
 
 
   // renderers known to processing.core
+
+  // List of renderers used inside PdePreprocessor
+  static final StringList rendererList = new StringList(new String[] {
+    "JAVA2D", "JAVA2D_2X",
+    "P2D", "P2D_2X", "P3D", "P3D_2X", "OPENGL",
+    "E2D", "FX2D", "FX2D_2X",  // experimental
+    "LWJGL.P2D", "LWJGL.P3D",  // hmm
+    "PDF"  // no DXF because that's only for beginRaw()
+  });
 
   static final String JAVA2D    = "processing.core.PGraphicsJava2D";
   static final String JAVA2D_2X = "processing.core.PGraphicsJava2D2X";
