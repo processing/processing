@@ -1,13 +1,16 @@
 ## Major destruction of `core` has started for Processing 3.
 
+
 #### What?
 We're removing `Applet` as the base class for `PApplet` and redoing the entire rendering and threading model for Processing sketches.
+
 
 #### Why?
 1. The changes will improve performance--greatly, in some cases--and reduce flicker and quirkiness in others. Using AWT objects like `Applet` (which subclasses `Component`) cause (sometimes major) performance restrictions or other visual glitches like flicker. 
 2. The code to mitigate the issues from #1 is very difficult to debug and make work properly across the many platforms we support (Macs, Macs with retina displays, Windows 7, Windows 8, 32- and 64-bit machines, Linux who-knows-what, and so on)
 3. The design of `core` is 13 years old, and the graphics features available (OpenGL, VolatileImage, BufferStrategy, etc) have changed drastically since then. I've papered over these changes and done my best to keep performance on-pace so that we don't break a lot of old code (or libraries), but now is the time for a clean break.
 4. With the death of applets, keeping the Applet base class is anachronistic. However, we're keeping the name `PApplet` because with any luck, these changes will only require a recompile of any sketch (or library) code. 
+
 
 #### What else?
 1. A new `PSurface` object has been added that acts as the layer between `PApplet` and `PGraphics`. It will handle interaction with the OS (creation of a window, placement on screen, getting events) as well as the animation thread (because OpenGL's animation thread is very different from an AWT animation thread).
@@ -16,25 +19,33 @@ We're removing `Applet` as the base class for `PApplet` and redoing the entire r
 4. We're working to add the ability to span multiple screens in "full screen" mode.
 5. In 3.0a2 we introduced a change on OS X to use Apple's "official" full screen mode. With this comes a dorky animation and the inability to span multiple screens. We've rolled that back.
 
+
 #### But what about...? 
-1. One downside is that you'll no longer be able to just drop a Processing sketch into other Java code, because `PApplet` will no longer subclass `Applet` (and therefore, `Component`). This is a huge downside for a tiny number of users. For the majority of users, re-read the "why" section. We'll try to figure out ways to continue embedding in other Java code, however, since we use this in our own work, and even within Processing itself (the Color Selector). 
-2. We're still determining how much code we're willing to break due to API changes. Stay tuned.
+
+We're still determining how much code we're willing to break due to API changes. Stay tuned.
+
 
 #### Integration with Java applications
-Because `PApplet` was a Java `Component`, it was possible to embed Processing into other Java code. Making it a generic component, however, places limitations on how much performance can be improved, due to the cross-platform mess of Java's outdated (and somewhat unsuspported) AWT. 
+One downside of these changes is that you'll no longer be able to just drop a Processing sketch into other Java code, because `PApplet` will no longer subclass `Applet` (and therefore, `Component`). This is a huge downside for a tiny number of users. 
 
-In earlier alpha releases, a `getCanvas()` or `getComponent()` method provided a way to get an object to be embedded, but at the current time, it looks like we'll have to move in another direction. At the present time, it looks like it'll be necessary to create a separate `PComponent` or `PCanvas` class that can be used, but it's not clear how that will work. 
+Making it a generic `Component`, however, means that we cannot improve performance, due to the cross-platform mess of Java's outdated (and somewhat unsuspported) AWT. 
 
-This is one of many unfortunate tradeoffs I'm trying to sort through as we try to remove significant barriers to performance caused by the design of Java's AWT, while also supporting features (like embedding) that we've spent so much time supporting. 
+In 3.0 alpha 6 and 7, a `getCanvas()` or `getComponent()` method provided a way to get an object to be embedded, but as we prepare for alpha 8, it looks like we'll have to move in another direction. At the present time, it looks like it'll be necessary to create a separate `PComponent` or `PCanvas` class that can be used, but it's not clear how that will work. 
+
+This is one of many unfortunate tradeoffs I'm trying to sort through as we try to remove significant barriers to performance caused by the design of Java's AWT, while also supporting features (like embedding) that we've spent so much time supporting in the past.
+
 
 #### Offscreen rendering
 * createGraphics() will create a buffer that's not resizable. `PGraphics.setSize()` is called in `PApplet.makeGraphics()`, and that's the end of the story. No `Surface.setSize()` calls are involved as in a normal rendering situation.
 
+
 #### Retina/HiDPI/2x drawing and displays
 * Documentation changes [here](https://github.com/processing/processing-docs/issues/170)
 
+
 #### The Event Dispatch Thread
 The current source starts putting AWT (and Swing, if any) calls on the [EDT](https://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html), per Oracle's statements in Java's documentation. Actual rendering in the default renderer happens off the EDT, but the EDT is used to blit the image to the screen (or resize windows, etc). Looking for more consistent cross-platform results by doing this.
+
 
 ## The Mess
 
