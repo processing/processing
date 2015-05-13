@@ -467,6 +467,7 @@
                getInfo="${version}, Copyright © The Processing Foundation"
                shortVersion="${version}"
                version="${revision}"
+               javafx="true"
                mainClassName="processing.app.Base">
 
       <!-- The appbundler task needs a couple files (the Info.plist and

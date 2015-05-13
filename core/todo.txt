@@ -7,6 +7,8 @@ X add new String/Int/FloatDict constructors for easier initialization
 X errors in case changes not correctly reported
 X   https://github.com/processing/processing/issues/3235
 
+_ FX: noSmooth(), or this particular variation of it, is not available with this renderer. -> should never show up // also similar for smooth()
+
 _ Single Frame (No Screen Display) PDF broken
 _   https://github.com/processing/processing/issues/3280
 _ Fullscreen window on second monitor without using present mode

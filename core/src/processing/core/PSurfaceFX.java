@@ -147,12 +147,16 @@ public class PSurfaceFX implements PSurface {
 
   static public class PApplicationFX extends Application {
     static public PSurfaceFX surface;
+    static String title;  // title set at launch
 
     public PApplicationFX() { }
 
     @Override
     public void start(final Stage stage) {
       surface.stage = stage;
+      if (title != null) {
+        stage.setTitle(title);
+      }
 
       Canvas canvas = surface.canvas;
       StackPane stackPane = new StackPane();
@@ -185,7 +189,10 @@ public class PSurfaceFX implements PSurface {
 
   /** Set the window (and dock, or whatever necessary) title. */
   public void setTitle(String title) {
-    stage.setTitle(title);
+    PApplicationFX.title = title;  // store this in case the stage still null
+    if (stage != null) {
+      stage.setTitle(title);
+    }
   }
 
 
