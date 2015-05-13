@@ -1942,10 +1942,13 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void backgroundImpl() {
     //context.setPaint(backgroundPaint);
-    Paint saved = context.getFill();
+    Paint savedFill = context.getFill();
+    BlendMode savedBlend = context.getGlobalBlendMode();
     context.setFill(new Color(backgroundR, backgroundG, backgroundB, backgroundA));
+    context.setGlobalBlendMode(BlendMode.SRC_OVER);
     context.fillRect(0, 0, width, height);
-    context.setFill(saved);
+    context.setFill(savedFill);
+    context.setGlobalBlendMode(savedBlend);
   }
 
 
