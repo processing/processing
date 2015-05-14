@@ -26,10 +26,12 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 //class PApplicationFX extends Application {
@@ -57,12 +59,9 @@ import javafx.stage.Stage;
 public class PSurfaceFX implements PSurface {
   PApplet sketch;
 
-  //Application app;
-  //Stage stage;
   PGraphicsFX2D fx;
   Stage stage;
   Canvas canvas;
-//  Frame dummy;
 
   AnimationTimer timer;
 
@@ -75,13 +74,8 @@ public class PSurfaceFX implements PSurface {
 
 
   class ResizableCanvas extends Canvas {
-//    public ResizableCanvas(int width, int height) {
-//      super(width, height);
-    public ResizableCanvas() {
 
-      // Redraw canvas when size changes.
-      //widthProperty().addListener(evt -> draw());
-      //heightProperty().addListener(evt -> draw());
+    public ResizableCanvas() {
       widthProperty().addListener(new ChangeListener<Number>() {
         @Override
         public void changed(ObservableValue<? extends Number> value,
@@ -101,20 +95,6 @@ public class PSurfaceFX implements PSurface {
         }
       });
     }
-
-//    private void draw() {
-//      double width = getWidth();
-//      double height = getHeight();
-//
-//      GraphicsContext gc = getGraphicsContext2D();
-//      gc.clearRect(0, 0, width, height);
-//
-//      gc.setStroke(javafx.scene.paint.Color.RED);
-//      gc.strokeLine(0, 0, width, height);
-//      gc.strokeLine(0, height, width, 0);
-//
-//      sketch.handleDraw();
-//    }
 
     @Override
     public boolean isResizable() {
@@ -369,8 +349,29 @@ public class PSurfaceFX implements PSurface {
   }
 
 
+  @Override
   public void setupExternalMessages() {
-    // TODO Auto-generated method stub
+    stage.xProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> value,
+                          Number oldX, Number newX) {
+        sketch.frameMoved(newX.intValue(), stage.yProperty().intValue());
+      }
+    });
+
+    stage.yProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> value,
+                          Number oldY, Number newY) {
+        sketch.frameMoved(stage.xProperty().intValue(), newY.intValue());
+      }
+    });
+
+    stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+      public void handle(WindowEvent we) {
+        sketch.exit();
+      }
+    });
   }
 
 
