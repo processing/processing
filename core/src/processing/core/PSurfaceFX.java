@@ -163,57 +163,6 @@ public class PSurfaceFX implements PSurface {
   }
 
 
-//  class DummyFrame extends Frame {
-//
-//    public DummyFrame() {
-//      super();
-//    }
-//
-//    @Override
-//    public void setResizable(boolean resizable) {
-//      // TODO
-//    }
-//
-//    @Override
-//    public void setVisible(boolean visible) {
-//      stage.show();
-//    }
-//
-//    @Override
-//    public void setTitle(String title) {
-//      if (stage != null) {
-//        stage.setTitle(title);
-//      } else {
-//        System.err.println("stage was null for setTitle()");
-//      }
-//    }
-//  }
-
-
-  /*
-  public class PApplicationFX extends Application {
-
-    public PApplicationFX() {
-      super();
-    }
-
-    @Override
-    public void start(final Stage stage) {
-      PSurfaceFX.this.stage = stage;
-
-      StackPane stackPane = new StackPane();
-      stackPane.getChildren().add(canvas);
-      canvas.widthProperty().bind(stackPane.widthProperty());
-      canvas.heightProperty().bind(stackPane.heightProperty());
-
-      //stage.setScene(new Scene(new Group(canvas)));
-      stage.setScene(new Scene(stackPane));
-      //stage.show();  // move to setVisible(true)?
-    }
-  }
-  */
-
-
   /*
   @Override
   public void placeWindow(int[] location) {
