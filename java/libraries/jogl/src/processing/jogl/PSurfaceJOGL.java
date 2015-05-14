@@ -1,20 +1,18 @@
 package processing.jogl;
 
 import java.awt.Component;
-import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Rectangle;
-//import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import javax.media.nativewindow.NativeSurface;
-import javax.media.nativewindow.ScalableSurface;
-import javax.media.opengl.GLAnimatorControl;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLException;
-import javax.media.opengl.GLProfile;
+import com.jogamp.nativewindow.NativeSurface;
+import com.jogamp.nativewindow.ScalableSurface;
+import com.jogamp.opengl.GLAnimatorControl;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.GLException;
+import com.jogamp.opengl.GLProfile;
 
 import com.jogamp.nativewindow.MutableGraphicsConfiguration;
 import com.jogamp.newt.Display;
@@ -219,16 +217,16 @@ public class PSurfaceJOGL implements PSurface {
       }
     }
 
-    int[] reqSurfacePixelScale;
+    float[] reqSurfacePixelScale;
     if (graphics.is2X()) {
        // Retina
-       reqSurfacePixelScale = new int[] { ScalableSurface.AUTOMAX_PIXELSCALE,
-                                          ScalableSurface.AUTOMAX_PIXELSCALE };
+       reqSurfacePixelScale = new float[] { ScalableSurface.AUTOMAX_PIXELSCALE,
+                                            ScalableSurface.AUTOMAX_PIXELSCALE };
        pgl.pixel_scale = 2;
     } else {
       // Non-retina
-      reqSurfacePixelScale = new int[] { ScalableSurface.IDENTITY_PIXELSCALE,
-                                         ScalableSurface.IDENTITY_PIXELSCALE };
+      reqSurfacePixelScale = new float[] { ScalableSurface.IDENTITY_PIXELSCALE,
+                                           ScalableSurface.IDENTITY_PIXELSCALE };
       pgl.pixel_scale = 1;
     }
     window.setSurfaceScale(reqSurfacePixelScale);
@@ -312,7 +310,10 @@ public class PSurfaceJOGL implements PSurface {
     });
 
 
-//  window.setVisible(true);
+    window.setVisible(true);
+    System.err.println("1. set visible");
+    
+    /*
     try {
       EventQueue.invokeAndWait(new Runnable() {
         public void run() {
@@ -322,7 +323,8 @@ public class PSurfaceJOGL implements PSurface {
     } catch (Exception ex) {
       // error setting the window visible, should quit...
     }
-
+*/
+    
 //    frame = new DummyFrame();
 //    return frame;
   }
@@ -391,7 +393,7 @@ public class PSurfaceJOGL implements PSurface {
     if (animator != null) {
       System.err.println("2. start animator");
       animator.start();
-      animator.getThread().setName("Processing-GL-draw");
+//      animator.getThread().setName("Processing-GL-draw");
     }
   }
 
@@ -483,8 +485,8 @@ public class PSurfaceJOGL implements PSurface {
       }
     }
     public void init(GLAutoDrawable drawable) {
-      pgl.init(drawable);
       pgl.getGL(drawable);
+      pgl.init(drawable);      
       sketch.start();
 
       int c = graphics.backgroundColor;

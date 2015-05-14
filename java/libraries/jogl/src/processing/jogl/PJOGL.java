@@ -17,24 +17,24 @@ import java.nio.IntBuffer;
 
 
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GL2ES1;
-import javax.media.opengl.GL2ES2;
-import javax.media.opengl.GL2ES3;
-import javax.media.opengl.GL2GL3;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCapabilitiesImmutable;
-import javax.media.opengl.GLContext;
-import javax.media.opengl.GLDrawable;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES1;
+import com.jogamp.opengl.GL2ES2;
+import com.jogamp.opengl.GL2ES3;
+import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilitiesImmutable;
+import com.jogamp.opengl.GLContext;
+import com.jogamp.opengl.GLDrawable;
 //import javax.media.opengl.GLEventListener;
 //import javax.media.opengl.GLFBODrawable;
-import javax.media.opengl.GLProfile;
+import com.jogamp.opengl.GLProfile;
 //import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.fixedfunc.GLMatrixFunc;
-import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUtessellator;
-import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
+import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLUtessellator;
+import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -669,12 +669,12 @@ public class PJOGL extends PGL {
     gl2 = gl.getGL2ES2();
     try {
       gl2x = gl.getGL2();
-    } catch (javax.media.opengl.GLException e) {
+    } catch (com.jogamp.opengl.GLException e) {
       gl2x = null;
     }
     try {
       gl3 = gl.getGL2GL3();
-    } catch (javax.media.opengl.GLException e) {
+    } catch (com.jogamp.opengl.GLException e) {
       gl3 = null;
     }
   }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="library/jogl-all.jar"/>
+	<classpathentry kind="lib" path="library/jogl-all.jar" sourcepath="library/jogl-java-src.zip"/>
 	<classpathentry kind="lib" path="library/gluegen-rt.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-core"/>
