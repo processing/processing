@@ -7,6 +7,12 @@ X add new String/Int/FloatDict constructors for easier initialization
 X errors in case changes not correctly reported
 X   https://github.com/processing/processing/issues/3235
 
+javafx
+X implement blendMode
+X   https://github.com/processing/processing/issues/3275
+X hide the smooth() warnings
+
+
 _ Single Frame (No Screen Display) PDF broken
 _   https://github.com/processing/processing/issues/3280
 _ Fullscreen window on second monitor without using present mode
@@ -19,12 +25,9 @@ _   createShape(RECT) uses x/y/w/h, and optionally adds a mode param
 _     and optionally the corner radii
 _   createShape(ELLIPSE) is x/y/w/h, and optionally adds a mode param
 
-
 javafx
 _ clip/noClip
 _   https://github.com/processing/processing/issues/3274
-_ blendMode
-_   https://github.com/processing/processing/issues/3275
 _ getNative() is problematic because it gives back a BufferedImage
 
 opengl

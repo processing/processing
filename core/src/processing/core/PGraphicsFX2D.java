@@ -26,12 +26,14 @@ import java.nio.IntBuffer;
 
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.Path;
@@ -452,7 +454,25 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   protected void blendModeImpl() {
-    showTodoWarning("blendMode()", 3275);
+    BlendMode mode = BlendMode.SRC_OVER;
+    switch (blendMode) {
+      case REPLACE: showWarning("blendMode(REPLACE) is not supported"); break;
+      case BLEND: break;  // this is SRC_OVER, the default
+      case ADD: mode = BlendMode.ADD; break; // everyone's favorite
+      case SUBTRACT: showWarning("blendMode(SUBTRACT) is not supported"); break;
+      case LIGHTEST: mode = BlendMode.LIGHTEN; break;
+      case DARKEST: mode = BlendMode.DARKEN; break;
+      case DIFFERENCE: mode = BlendMode.DIFFERENCE; break;
+      case EXCLUSION: mode = BlendMode.EXCLUSION; break;
+      case MULTIPLY: mode = BlendMode.MULTIPLY; break;
+      case SCREEN: mode = BlendMode.SCREEN; break;
+      case OVERLAY: mode = BlendMode.OVERLAY; break;
+      case HARD_LIGHT: mode = BlendMode.HARD_LIGHT; break;
+      case SOFT_LIGHT: mode = BlendMode.SOFT_LIGHT; break;
+      case DODGE: mode = BlendMode.COLOR_DODGE; break;
+      case BURN: mode = BlendMode.COLOR_BURN; break;
+    }
+    context.setGlobalBlendMode(mode);
   }
 
 
@@ -864,15 +884,15 @@ public class PGraphicsFX2D extends PGraphics {
   // SMOOTH
 
 
-  @Override
-  public void smooth() {
+//  @Override
+//  public void smooth() {
 //    smooth = true;
 //
 //    if (quality == 0) {
 //      quality = 4;  // change back to bicubic
 //    }
-    showMissingWarning("smooth");
-  }
+//  }
+
 
   @Override
   public void smooth(int quality) {
@@ -888,8 +908,8 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void noSmooth() {
-    smooth = false;
-    quality = 0;  // https://github.com/processing/processing/issues/3113
+//    smooth = false;
+//    quality = 0;  // https://github.com/processing/processing/issues/3113
     showMissingWarning("noSmooth");
   }
 
@@ -1752,54 +1772,53 @@ public class PGraphicsFX2D extends PGraphics {
 
 
 
-//  //////////////////////////////////////////////////////////////
-//
-//  // STROKE
-//
-//  // noStroke() and stroke() inherited from PGraphics.
-//
-//
-//  @Override
-//  protected void strokeFromCalc() {
-//    super.strokeFromCalc();
-//    strokeColorObject = new Color(strokeColor, true);
-//    strokeGradient = false;
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // TINT
-//
-//  // noTint() and tint() inherited from PGraphics.
-//
-//
+  //////////////////////////////////////////////////////////////
+
+  // STROKE
+
+  // noStroke() and stroke() inherited from PGraphics.
+
+
+  @Override
+  protected void strokeFromCalc() {
+    super.strokeFromCalc();
+    context.setStroke(new Color(strokeR, strokeG, strokeB, strokeA));
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // TINT
+
+  // noTint() and tint() inherited from PGraphics.
+
+
+  // handled while rendering, less of a 'state' thing for the context
 //  @Override
 //  protected void tintFromCalc() {
 //    super.tintFromCalc();
 //    // TODO actually implement tinted images
 //    tintColorObject = new Color(tintColor, true);
 //  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // FILL
-//
-//  // noFill() and fill() inherited from PGraphics.
-//
-//
-//  @Override
-//  protected void fillFromCalc() {
-//    super.fillFromCalc();
-//    fillColorObject = new Color(fillColor, true);
-//    fillGradient = false;
-//  }
-//
-//
-//
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // FILL
+
+  // noFill() and fill() inherited from PGraphics.
+
+
+  @Override
+  protected void fillFromCalc() {
+    super.fillFromCalc();
+    context.setFill(new Color(fillR, fillG, fillB, fillA));
+  }
+
+
+
 //  //////////////////////////////////////////////////////////////
 //
 //  // MATERIAL PROPERTIES
@@ -1923,8 +1942,13 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void backgroundImpl() {
     //context.setPaint(backgroundPaint);
-    context.setFill(new Color(backgroundR, backgroundG, backgroundB, backgroundA / 255));
+    Paint savedFill = context.getFill();
+    BlendMode savedBlend = context.getGlobalBlendMode();
+    context.setFill(new Color(backgroundR, backgroundG, backgroundB, backgroundA));
+    context.setGlobalBlendMode(BlendMode.SRC_OVER);
     context.fillRect(0, 0, width, height);
+    context.setFill(savedFill);
+    context.setGlobalBlendMode(savedBlend);
   }
 
 

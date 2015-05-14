@@ -36,6 +36,7 @@ import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.SketchException;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.mode.java.preproc.PdeLexer;
 import processing.mode.java.preproc.PdeRecognizer;
 import processing.mode.java.preproc.PdeTokenTypes;
@@ -170,14 +171,14 @@ public class PdePreprocessor {
     "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+)\\s*,?\\s*([^\\)]*)\\s*\\)\\s*\\;";
     //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
 
-  
+
   private static final Pattern PUBLIC_CLASS =
     Pattern.compile("(^|;)\\s*public\\s+class\\s+\\S+\\s+extends\\s+PApplet", Pattern.MULTILINE);
     // Can't only match any 'public class', needs to be a PApplet
     // http://code.google.com/p/processing/issues/detail?id=551
     //Pattern.compile("(^|;)\\s*public\\s+class", Pattern.MULTILINE);
 
-  
+
   private static final Pattern FUNCTION_DECL =
     Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
         "(void|int|float|double|String|char|byte)" +
@@ -290,7 +291,7 @@ public class PdePreprocessor {
     int index = 0;
     while (index < p.length) {
       // for any double slash comments, ignore until the end of the line
-      if (!insideQuote && 
+      if (!insideQuote &&
           (p[index] == '/') &&
           (index < p.length - 1) &&
           (p[index+1] == '/')) {
@@ -329,7 +330,7 @@ public class PdePreprocessor {
       } else if (p[index] == '"' && index > 0 && p[index-1] != '\\') {
         insideQuote = !insideQuote;
         index++;
-        
+
       } else {  // any old character, move along
         index++;
       }
@@ -518,10 +519,10 @@ public class PdePreprocessor {
       program = substituteUnicode(program);
     }
 
-    // For 0215, adding } as a legitimate prefix to the import (along with 
+    // For 0215, adding } as a legitimate prefix to the import (along with
     // newline and semicolon) for cases where a tab ends with } and an import
     // statement starts the next tab.
-    final String importRegexp = 
+    final String importRegexp =
       "((?:^|;|\\})\\s*)(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
     final Pattern importPattern = Pattern.compile(importRegexp);
     String scrubbed = scrubComments(program);
@@ -551,9 +552,9 @@ public class PdePreprocessor {
         // Remove the import from the main program
         program = program.substring(0, start) + program.substring(stop);
         scrubbed = scrubbed.substring(0, start) + scrubbed.substring(stop);
-        // Set the offset to start, because everything between 
+        // Set the offset to start, because everything between
         // start and stop has been deleted.
-        offset = m.start();        
+        offset = m.start();
       }
     } while (found);
 //    System.out.println("program now:");
@@ -566,13 +567,13 @@ public class PdePreprocessor {
     }
 
     final PrintWriter stream = new PrintWriter(out);
-    final int headerOffset = 
+    final int headerOffset =
       writeImports(stream, programImports, codeFolderImports);
-    return new PreprocessorResult(mode, headerOffset + 2, 
+    return new PreprocessorResult(mode, headerOffset + 2,
                                   write(program, stream), programImports);
   }
 
-  
+
   static String substituteUnicode(String program) {
     // check for non-ascii chars (these will be/must be in unicode format)
     char p[] = program.toCharArray();
@@ -698,7 +699,7 @@ public class PdePreprocessor {
 
     return className;
   }
-  
+
 
   private PdeRecognizer createParser(final String program) {
     // create a lexer with the stream reader, and tell it to handle
@@ -885,17 +886,25 @@ public class PdePreprocessor {
           out.println(indent + "public int sketchHeight() { return " + sketchHeight + "; }");
         }
       }
-      if (sketchRenderer != null && !hasMethod("sketchRenderer")) {        
+      if (sketchRenderer != null && !hasMethod("sketchRenderer")) {
         // Only include if it's a known renderer (otherwise it might be a variable)
+        if (PConstants.rendererList.hasValue(sketchRenderer)) {
+          /*
+        }
         if (sketchRenderer.equals("P2D") ||
             sketchRenderer.equals("P2D_2X") ||
             sketchRenderer.equals("P3D") ||
             sketchRenderer.equals("P3D_3X") ||
             sketchRenderer.equals("OPENGL") ||
             sketchRenderer.equals("JAVA2D") ||
-            sketchRenderer.equals("JAVA2D_2X") || 
+            sketchRenderer.equals("JAVA2D_2X") ||
+            sketchRenderer.equals("E2D") ||
+            sketchRenderer.equals("FX2D") ||
+            sketchRenderer.equals("FX2D_2X") ||
+            sketchRenderer.equals("PDF") ||
             sketchRenderer.equals("LWJGL.P2D") ||
             sketchRenderer.equals("LWJGL.P3D")) {
+            */
           out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
         }
       }
@@ -952,7 +961,7 @@ public class PdePreprocessor {
     // These may change in-between (if the prefs panel adds this option)
     //String prefsLine = Preferences.get("preproc.imports");
     //return PApplet.splitTokens(prefsLine, ", ");
-    return new String[] { 
+    return new String[] {
       "java.util.HashMap",
       "java.util.ArrayList",
       "java.io.File",
