@@ -1,7 +1,9 @@
 package processing.jogl;
 
 import java.awt.Component;
-import java.awt.Frame;
+//import java.awt.Dimension;
+import java.awt.Point;
+//import java.awt.Frame;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
@@ -13,7 +15,6 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
-
 import com.jogamp.nativewindow.MutableGraphicsConfiguration;
 import com.jogamp.newt.Display;
 import com.jogamp.newt.MonitorDevice;
@@ -43,7 +44,7 @@ public class PSurfaceJOGL implements PSurface {
   PJOGL pgl;
 
   GLWindow window;
-  Frame frame;
+//  Frame frame;
   FPSAnimator animator;
   Rectangle screenRect;
 
@@ -67,21 +68,17 @@ public class PSurfaceJOGL implements PSurface {
 
   
   public void initOffscreen(PApplet sketch) {
-//    this.sketch = sketch;
-//
-//    sketchWidth = sketch.sketchWidth();
-//    sketchHeight = sketch.sketchHeight();
-//
-//    if (window != null) {
-//      canvas = new NewtCanvasAWT(window);
-//      canvas.setBounds(0, 0, window.getWidth(), window.getHeight());
+    this.sketch = sketch;
+
+    sketchWidth = sketch.sketchWidth();
+    sketchHeight = sketch.sketchHeight();
+
+    if (window != null) {
+      canvas = new NewtCanvasAWT(window);
+      canvas.setBounds(0, 0, window.getWidth(), window.getHeight());
 //      canvas.setBackground(new Color(pg.backgroundColor, true));
-//      canvas.setFocusable(true);
-//
-//      return canvas;
-//    }
-//
-//    return null;
+      canvas.setFocusable(true);
+    }
   }
 
 
@@ -181,6 +178,9 @@ public class PSurfaceJOGL implements PSurface {
                                 new Rectangle(0, 0, displayDevice.getViewportInWindowUnits().getWidth(),
                                                     displayDevice.getViewportInWindowUnits().getHeight());
 
+    sketch.displayWidth = screenRect.width;
+    sketch.displayHeight = screenRect.height;    
+    
     // Sketch has already requested to be the same as the screen's
     // width and height, so let's roll with full screen mode.
     if (screenRect.width == sketchWidth &&
@@ -237,7 +237,7 @@ public class PSurfaceJOGL implements PSurface {
     DrawListener drawlistener = new DrawListener();
     window.addGLEventListener(drawlistener);
 
-    System.err.println("0. create animator");
+    System.err.println("1. create animator");
     animator = new FPSAnimator(window, 60);
     drawException = null;
     animator.setUncaughtExceptionHandler(new GLAnimatorControl.UncaughtExceptionHandler() {
@@ -307,7 +307,7 @@ public class PSurfaceJOGL implements PSurface {
 
 
     window.setVisible(true);
-    System.err.println("1. set visible");
+    System.err.println("4. set visible");
     
     /*
     try {
@@ -362,17 +362,68 @@ public class PSurfaceJOGL implements PSurface {
   @Override
   public void setResizable(boolean resizable) {
     // TODO Auto-generated method stub
-
+    
   }
-
-  public void placeWindow(int[] location) {
-    // TODO Auto-generated method stub
-
+  
+  private void setFrameCentered() {
+    // Can't use frame.setLocationRelativeTo(null) because it sends the
+    // frame to the main display, which undermines the --display setting.
+    window.setPosition(screenRect.x + (screenRect.width - sketchWidth) / 2,
+                       screenRect.y + (screenRect.height - sketchHeight) / 2);
   }
+  
 
+  @Override
   public void placeWindow(int[] location, int[] editorLocation) {
-    // TODO Auto-generated method stub
+//    Dimension dim = new Dimension(sketchWidth, sketchHeight);
+//    int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
+//    int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
 
+    if (location != null) {
+      // a specific location was received from the Runner
+      // (applet has been run more than once, user placed window)
+//      frame.setLocation(location[0], location[1]);
+      window.setPosition(location[0], location[1]);
+
+    } else if (editorLocation != null) {
+      int locationX = editorLocation[0] - 20;
+      int locationY = editorLocation[1];
+
+      if (locationX - window.getWidth() > 10) {
+        // if it fits to the left of the window
+        window.setPosition(locationX - window.getWidth(), locationY);
+
+      } else {  // doesn't fit
+        // if it fits inside the editor window,
+        // offset slightly from upper lefthand corner
+        // so that it's plunked inside the text area
+        locationX = editorLocation[0] + 66;
+        locationY = editorLocation[1] + 66;
+
+        if ((locationX + window.getWidth() > sketch.displayWidth - 33) ||
+            (locationY + window.getHeight() > sketch.displayHeight - 33)) {
+          // otherwise center on screen
+          locationX = (sketch.displayWidth - window.getWidth()) / 2;
+          locationY = (sketch.displayHeight - window.getHeight()) / 2;
+        }
+        window.setPosition(locationX, locationY);
+      }
+    } else {  // just center on screen
+      setFrameCentered();
+    }
+    Point frameLoc = new Point(window.getX(), window.getY());
+    if (frameLoc.y < 0) {
+      // Windows actually allows you to place frames where they can't be
+      // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
+      window.setPosition(frameLoc.x, 30);
+    }
+
+//    canvas.setBounds((contentW - sketchWidth)/2,
+//                     (contentH - sketchHeight)/2,
+//                     sketchWidth, sketchHeight);
+
+    
+    
   }
 
   boolean presentMode = false;
@@ -396,7 +447,7 @@ public class PSurfaceJOGL implements PSurface {
 
   public void startThread() {
     if (animator != null) {
-      System.err.println("2. start animator");
+      System.err.println("5. start animator");
       animator.start();
 //      animator.getThread().setName("Processing-GL-draw");
     }
@@ -431,12 +482,12 @@ public class PSurfaceJOGL implements PSurface {
   }
 
   public void setSize(int width, int height) {
-    if (frame != null) {
-      System.err.println("3. set size");
-      sketchWidth = sketch.width = width;
-      sketchHeight = sketch.height = height;
-      graphics.setSize(width, height);
-    }
+//    if (frame != null) {
+    System.err.println("3. set size");
+    sketchWidth = sketch.width = width;
+    sketchHeight = sketch.height = height;
+    graphics.setSize(width, height);
+//    }
   }
 
   public Component getComponent() {
@@ -490,9 +541,11 @@ public class PSurfaceJOGL implements PSurface {
       }
     }
     public void init(GLAutoDrawable drawable) {
+      System.err.println("2. init drawable");
       pgl.getGL(drawable);
       pgl.init(drawable);      
       sketch.start();
+//      setSize(sketchWidth, sketchHeight);
 
       int c = graphics.backgroundColor;
       pgl.clearColor(((c >> 16) & 0xff) / 255f,
@@ -672,11 +725,11 @@ public class PSurfaceJOGL implements PSurface {
     int keyCode;
     if (isPCodedKey(code)) {
       keyCode = mapToPConst(code);
-      keyChar = PConstants.CODED;
+      keyChar = PConstants.CODED;      
     } else {
       keyCode = code;
       keyChar = nativeEvent.getKeyChar();
-    }
+    }    
 
     // From http://jogamp.org/deployment/v2.1.0/javadoc/jogl/javadoc/com/jogamp/newt/event/KeyEvent.html
     // public final short getKeySymbol()
@@ -729,13 +782,28 @@ public class PSurfaceJOGL implements PSurface {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  
   public void setCursor(int kind) {
-    // TODO Auto-generated method stub
-
+    System.err.println("Cursor types not supported in OpenGL, provide your cursor image");
   }
+  
 
   public void setCursor(PImage image, int hotspotX, int hotspotY) {
-    // TODO Auto-generated method stub
+    final Display disp = window.getScreen().getDisplay();
+    disp.createNative();
+    
+//    BufferedImage jimg = (BufferedImage)image.getNative();
+//    IntBuffer buf = IntBuffer.wrap(jimg.getRGB(0, 0, jimg.getWidth(), jimg.getHeight(),
+//                                               null, 0, jimg.getWidth()));    
+//  
+//    final PixelRectangle pixelrect = new PixelRectangle.GenericPixelRect(srcFmt, new Dimension(width, height),
+//        srcStrideBytes, srcIsGLOriented, srcPixels);    
+//    
+//    PointerIcon pi = disp.createPointerIcon(PixelRectangle pixelrect,
+//                                            hotspotX,
+//                                            hotspotY);
+//
+//    window.setPointerIcon(pi);
 
   }
 
