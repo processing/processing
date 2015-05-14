@@ -1608,59 +1608,57 @@ public class PGraphicsFX2D extends PGraphics {
 //  //                    float bottom, float top,
 //  //                    float near, float far)
 //  //public void printProjection()
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // SCREEN and MODEL transforms
-//
-//
-//  @Override
-//  public float screenX(float x, float y) {
-//    g2.getTransform().getMatrix(transform);
-//    return (float)transform[0]*x + (float)transform[2]*y + (float)transform[4];
-//  }
-//
-//
-//  @Override
-//  public float screenY(float x, float y) {
-//    g2.getTransform().getMatrix(transform);
-//    return (float)transform[1]*x + (float)transform[3]*y + (float)transform[5];
-//  }
-//
-//
-//  @Override
-//  public float screenX(float x, float y, float z) {
-//    showDepthWarningXYZ("screenX");
-//    return 0;
-//  }
-//
-//
-//  @Override
-//  public float screenY(float x, float y, float z) {
-//    showDepthWarningXYZ("screenY");
-//    return 0;
-//  }
-//
-//
-//  @Override
-//  public float screenZ(float x, float y, float z) {
-//    showDepthWarningXYZ("screenZ");
-//    return 0;
-//  }
-//
-//
-//  //public float modelX(float x, float y, float z)
-//
-//
-//  //public float modelY(float x, float y, float z)
-//
-//
-//  //public float modelZ(float x, float y, float z)
-//
-//
-//
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // SCREEN and MODEL transforms
+
+
+  @Override
+  public float screenX(float x, float y) {
+    return (float) context.getTransform().transform(x, y).getX();
+  }
+
+
+  @Override
+  public float screenY(float x, float y) {
+    return (float) context.getTransform().transform(x, y).getY();
+  }
+
+
+  @Override
+  public float screenX(float x, float y, float z) {
+    showDepthWarningXYZ("screenX");
+    return 0;
+  }
+
+
+  @Override
+  public float screenY(float x, float y, float z) {
+    showDepthWarningXYZ("screenY");
+    return 0;
+  }
+
+
+  @Override
+  public float screenZ(float x, float y, float z) {
+    showDepthWarningXYZ("screenZ");
+    return 0;
+  }
+
+
+  //public float modelX(float x, float y, float z)
+
+
+  //public float modelY(float x, float y, float z)
+
+
+  //public float modelZ(float x, float y, float z)
+
+
+
 //  //////////////////////////////////////////////////////////////
 //
 //  // STYLE
