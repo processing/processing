@@ -715,9 +715,8 @@ public class PApplet implements PConstants {
 
   /**
    * When run externally to a PdeEditor,
-   * this is sent by the applet when it quits.
+   * this is sent by the sketch when it quits.
    */
-  //static public final String EXTERNAL_QUIT = "__QUIT__";
   static public final String EXTERNAL_STOP = "__STOP__";
 
   /**

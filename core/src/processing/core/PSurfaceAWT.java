@@ -888,26 +888,19 @@ public class PSurfaceAWT extends PSurfaceNone {
    */
   @Override
   public void setupExternalMessages() {
-
     frame.addComponentListener(new ComponentAdapter() {
-        @Override
-        public void componentMoved(ComponentEvent e) {
-          Point where = ((Frame) e.getSource()).getLocation();
-          System.err.println(PApplet.EXTERNAL_MOVE + " " +
-                             where.x + " " + where.y);
-          System.err.flush();  // doesn't seem to help or hurt
-        }
-      });
-
+      @Override
+      public void componentMoved(ComponentEvent e) {
+        Point where = ((Frame) e.getSource()).getLocation();
+        sketch.frameMoved(where.x, where.y);
+      }
+    });
     frame.addWindowListener(new WindowAdapter() {
-        @Override
-        public void windowClosing(WindowEvent e) {
-//          System.err.println(PApplet.EXTERNAL_QUIT);
-//          System.err.flush();  // important
-//          System.exit(0);
-          sketch.exit();  // don't quit, need to just shut everything down (0133)
-        }
-      });
+      @Override
+      public void windowClosing(WindowEvent e) {
+        sketch.exit();  // don't quit, need to just shut everything down (0133)
+      }
+    });
   }
 
 
@@ -941,62 +934,32 @@ public class PSurfaceAWT extends PSurfaceNone {
     });
 
     frame.addComponentListener(new ComponentAdapter() {
-        @Override
-        public void componentResized(ComponentEvent e) {
-//          for (ComponentListener cl : frame.getComponentListeners()) {
-//            System.out.println(cl);
-//          }
-//          System.out.println(e);
-//          System.out.println(frame.isResizable());
-//          new Exception().printStackTrace();
+      @Override
+      public void componentResized(ComponentEvent e) {
+        // Ignore bad resize events fired during setup to fix
+        // http://dev.processing.org/bugs/show_bug.cgi?id=341
+        // This should also fix the blank screen on Linux bug
+        // http://dev.processing.org/bugs/show_bug.cgi?id=282
+        if (frame.isResizable()) {
+          // might be multiple resize calls before visible (i.e. first
+          // when pack() is called, then when it's resized for use).
+          // ignore them because it's not the user resizing things.
+          Frame farm = (Frame) e.getComponent();
+          if (farm.isVisible()) {
+            Insets insets = farm.getInsets();
+            Dimension windowSize = farm.getSize();
 
-          // Ignore bad resize events fired during setup to fix
-          // http://dev.processing.org/bugs/show_bug.cgi?id=341
-          // This should also fix the blank screen on Linux bug
-          // http://dev.processing.org/bugs/show_bug.cgi?id=282
-          if (frame.isResizable()) {
-            // might be multiple resize calls before visible (i.e. first
-            // when pack() is called, then when it's resized for use).
-            // ignore them because it's not the user resizing things.
-            Frame farm = (Frame) e.getComponent();
-            if (farm.isVisible()) {
-              Insets insets = farm.getInsets();
-              Dimension windowSize = farm.getSize();
-
-              // JFrame (unlike java.awt.Frame) doesn't include the left/top
-              // insets for placement (though it does seem to need them for
-              // overall size of the window. Perhaps JFrame sets its coord
-              // system so that (0, 0) is always the upper-left of the content
-              // area. Which seems nice, but breaks any f*ing AWT-based code.
-              setSize(windowSize.width - insets.left - insets.right,
-                      windowSize.height - insets.top - insets.bottom);
-
-              /*
-              Rectangle newBounds =
-                new Rectangle(0, 0, //insets.left, insets.top,
-                              windowSize.width - insets.left - insets.right,
-                              windowSize.height - insets.top - insets.bottom);
-
-              System.out.println(e);
-              System.out.println(newBounds);
-
-              Rectangle oldBounds = canvas.getBounds();
-              if (!newBounds.equals(oldBounds)) {
-                // the ComponentListener in PApplet will handle calling size()
-                canvas.setBounds(newBounds);
-
-                // In 0225, calling this via reflection so that we can still
-                // compile in Java 1.6. This is a trap since we really need
-                // to move to 1.7 and cannot support 1.6, but things like text
-                // are still a little wonky on 1.7, especially on OS X.
-                // This gives us a way to at least test against older VMs.
-                canvas.revalidate();   // let the layout manager do its work
-              }
-              */
-            }
+            // JFrame (unlike java.awt.Frame) doesn't include the left/top
+            // insets for placement (though it does seem to need them for
+            // overall size of the window. Perhaps JFrame sets its coord
+            // system so that (0, 0) is always the upper-left of the content
+            // area. Which seems nice, but breaks any f*ing AWT-based code.
+            setSize(windowSize.width - insets.left - insets.right,
+                    windowSize.height - insets.top - insets.bottom);
           }
         }
-      });
+      }
+    });
   }
 
 
