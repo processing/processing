@@ -34,28 +34,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 
-//class PApplicationFX extends Application {
-//  static public PSurfaceFX surface;
-//
-//  public PApplicationFX() { }
-//
-//  @Override
-//  public void start(final Stage stage) {
-//    surface.stage = stage;
-//
-//    Canvas canvas = surface.canvas;
-//    StackPane stackPane = new StackPane();
-//    stackPane.getChildren().add(canvas);
-//    canvas.widthProperty().bind(stackPane.widthProperty());
-//    canvas.heightProperty().bind(stackPane.heightProperty());
-//
-//    //stage.setScene(new Scene(new Group(canvas)));
-//    stage.setScene(new Scene(stackPane));
-//    //stage.show();  // move to setVisible(true)?
-//  }
-//}
-
-
 public class PSurfaceFX implements PSurface {
   PApplet sketch;
 
