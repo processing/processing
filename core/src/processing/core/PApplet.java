@@ -42,6 +42,7 @@ import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
+
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -1829,6 +1830,11 @@ public class PApplet implements PConstants {
       // Store the quality setting in case it's changed during draw and the
       // drawing context needs to be re-built before the next frame.
       int pquality = g.quality;
+
+      if (insideDraw) {
+        System.err.println("handleDraw() called before finishing");
+        System.exit(1);
+      }
 
       insideDraw = true;
       g.beginDraw();
