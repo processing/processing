@@ -256,6 +256,7 @@ public class PSurfaceFX implements PSurface {
   */
 
 
+  /*
   @Override
   public void placeWindow(int[] location) {
     //setFrameSize();
@@ -296,11 +297,68 @@ public class PSurfaceFX implements PSurface {
       setVisible(true);
     }
   }
+  */
 
 
+  @Override
   public void placeWindow(int[] location, int[] editorLocation) {
-    // TODO Auto-generated method stub
+    //Dimension window = setFrameSize();
 
+//    int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
+//    int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
+
+    if (location != null) {
+      // a specific location was received from the Runner
+      // (applet has been run more than once, user placed window)
+      stage.setX(location[0]);
+      stage.setY(location[1]);
+
+    } else if (editorLocation != null) {
+      int locationX = editorLocation[0] - 20;
+      int locationY = editorLocation[1];
+
+      if (locationX - stage.getWidth() > 10) {
+        // if it fits to the left of the window
+        stage.setX(locationX - stage.getWidth());
+        stage.setY(locationY);
+
+      } else {  // doesn't fit
+        // if it fits inside the editor window,
+        // offset slightly from upper lefthand corner
+        // so that it's plunked inside the text area
+        locationX = editorLocation[0] + 66;
+        locationY = editorLocation[1] + 66;
+
+        if ((locationX + stage.getWidth() > sketch.displayWidth - 33) ||
+            (locationY + stage.getHeight() > sketch.displayHeight - 33)) {
+          // otherwise center on screen
+          locationX = (int) ((sketch.displayWidth - stage.getWidth()) / 2);
+          locationY = (int) ((sketch.displayHeight - stage.getHeight()) / 2);
+        }
+        stage.setX(locationX);
+        stage.setY(locationY);
+      }
+    } else {  // just center on screen
+      //setFrameCentered();
+    }
+    if (stage.getY() < 0) {
+      // Windows actually allows you to place frames where they can't be
+      // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
+      //frame.setLocation(frameLoc.x, 30);
+      stage.setY(30);
+    }
+
+    //canvas.setBounds((contentW - sketchWidth)/2,
+    //                 (contentH - sketchHeight)/2,
+    //                 sketchWidth, sketchHeight);
+
+    // handle frame resizing events
+    //setupFrameResizeListener();
+
+    // TODO this is much too late... why even create the enormous frame for PDF?
+    if (sketch.getGraphics().displayable()) {
+      setVisible(true);
+    }
   }
 
 

@@ -307,9 +307,9 @@ public class PSurfaceLWJGL implements PSurface {
   }
 
 
+  /*
   @Override
   public void placeWindow(int[] location) {
-    /*
     if (location != null) {
       // a specific location was received from the Runner
       // (applet has been run more than once, user placed window)
@@ -325,8 +325,8 @@ public class PSurfaceLWJGL implements PSurface {
       // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
       Display.setLocation(Display.getX(), 30);
     }
-    */
   }
+  */
 
 
   @Override

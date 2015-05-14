@@ -80,12 +80,17 @@ public class PSurfaceNone implements PSurface {
   }
 
 
-  public void placeWindow(int[] location) { }
+//  public void placeWindow(int[] location) { }
 
+  @Override
   public void placeWindow(int[] location, int[] editorLocation) { }
 
+
+  @Override
   public void placePresent(int stopColor) { }
 
+
+  @Override
   public void setupExternalMessages() { }
 
 

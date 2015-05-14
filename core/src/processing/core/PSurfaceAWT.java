@@ -596,6 +596,7 @@ public class PSurfaceAWT extends PSurfaceNone {
   }
 
 
+  /*
   @Override
   public void placeWindow(int[] location) {
     setFrameSize(); //sketchWidth, sketchHeight);
@@ -639,6 +640,7 @@ public class PSurfaceAWT extends PSurfaceNone {
       frame.setVisible(true);
     }
   }
+  */
 
 
   private void setCanvasSize() {

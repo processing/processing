@@ -68,7 +68,7 @@ public interface PSurface {
 
   //
 
-  public void placeWindow(int[] location);
+//  public void placeWindow(int[] location);
 
   public void placeWindow(int[] location, int[] editorLocation);
 
