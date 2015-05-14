@@ -1875,8 +1875,8 @@ public class PJOGL extends PGL {
 
   @Override
   public void viewport(int x, int y, int w, int h) {
-    gl.glViewport(pixel_scale * x, pixel_scale * y, pixel_scale * w, pixel_scale * h);
-//    gl.glViewport(x, y, w, h);
+//    gl.glViewport(pixel_scale * x, pixel_scale * y, pixel_scale * w, pixel_scale * h);
+    gl.glViewport(x, y, w, h);
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -2398,7 +2398,8 @@ public class PJOGL extends PGL {
 
   @Override
   public void scissor(int x, int y, int w, int h) {
-    gl.glScissor(pixel_scale * x, pixel_scale * y, pixel_scale * w, pixel_scale * h);
+//    gl.glScissor(pixel_scale * x, pixel_scale * y, pixel_scale * w, pixel_scale * h);
+    gl.glScissor(x, y, w, h);
   }
 
   @Override
