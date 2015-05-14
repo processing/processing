@@ -1753,25 +1753,11 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public PShape loadShape(String filename, String options) {
     String extension = PApplet.getExtension(filename);
-
-    PShapeSVG svg = null;
-
     if (extension.equals("svg") || extension.equals("svgz")) {
-      svg = new PShapeSVG(parent.loadXML(filename));
-
-//    } else if (extension.equals("svgz")) {
-//      try {
-//        InputStream input = new GZIPInputStream(parent.createInput(filename));
-//        XML xml = new XML(PApplet.createReader(input), options);
-//        svg = new PShapeSVG(xml);
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//      }
-    } else {
-      PGraphics.showWarning("Unsupported format: " + filename);
+      return new PShapeSVG(parent.loadXML(filename));
     }
-
-    return svg;
+    PGraphics.showWarning("Unsupported format: " + filename);
+    return null;
   }
 
 

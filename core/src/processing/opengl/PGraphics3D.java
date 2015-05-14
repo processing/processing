@@ -110,6 +110,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
   // SHAPE I/O
@@ -126,30 +127,15 @@ public class PGraphics3D extends PGraphicsOpenGL {
 
     if (extension.equals("obj")) {
       obj = new PShapeOBJ(pg.parent, filename);
-
-    } else if (extension.equals("objz")) {
-      try {
-        // TODO: The obj file can be read from the gzip, but if it refers to
-        // a materials file and texture images, those must be contained in the
-        // data folder, cannot be inside the gzip.
-        InputStream input =
-          new GZIPInputStream(pg.parent.createInput(filename));
-        obj = new PShapeOBJ(pg.parent, PApplet.createReader(input));
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-
-    if (obj != null) {
       int prevTextureMode = pg.textureMode;
       pg.textureMode = NORMAL;
       PShapeOpenGL p3d = PShapeOpenGL.createShape3D((PGraphicsOpenGL)pg, obj);
       pg.textureMode = prevTextureMode;
       return p3d;
-    } else {
-      return null;
     }
+    return null;
   }
+
 
 
   //////////////////////////////////////////////////////////////
