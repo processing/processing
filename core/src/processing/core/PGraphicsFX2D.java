@@ -1682,7 +1682,6 @@ public class PGraphicsFX2D extends PGraphics {
     } else {
       context.setLineCap(StrokeLineCap.BUTT);
     }
-    //strokeImpl();
   }
 
 
@@ -1696,7 +1695,6 @@ public class PGraphicsFX2D extends PGraphics {
     } else {
       context.setLineJoin(StrokeLineJoin.BEVEL);
     }
-    //strokeImpl();
   }
 
 
@@ -1704,7 +1702,6 @@ public class PGraphicsFX2D extends PGraphics {
   public void strokeWeight(float weight) {
     super.strokeWeight(weight);
     context.setLineWidth(weight);
-    //strokeImpl();
   }
 
 
@@ -1729,15 +1726,6 @@ public class PGraphicsFX2D extends PGraphics {
   // TINT
 
   // noTint() and tint() inherited from PGraphics.
-
-
-  // handled while rendering, less of a 'state' thing for the context
-//  @Override
-//  protected void tintFromCalc() {
-//    super.tintFromCalc();
-//    // TODO actually implement tinted images
-//    tintColorObject = new Color(tintColor, true);
-//  }
 
 
 
@@ -1799,86 +1787,18 @@ public class PGraphicsFX2D extends PGraphics {
 //  //public void lightSpecular(float x, float y, float z)
 //  //protected void lightPosition(int num, float x, float y, float z)
 //  //protected void lightDirection(int num, float x, float y, float z)
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // BACKGROUND
-//
-//
-//  int[] clearPixels;
-//
-//  protected void clearPixels(int color) {
-//    // On a hi-res display, image may be larger than width/height
-//    int imageWidth = image.getWidth(null);
-//    int imageHeight = image.getHeight(null);
-//
-//    // Create a small array that can be used to set the pixels several times.
-//    // Using a single-pixel line of length 'width' is a tradeoff between
-//    // speed (setting each pixel individually is too slow) and memory
-//    // (an array for width*height would waste lots of memory if it stayed
-//    // resident, and would terrify the gc if it were re-created on each trip
-//    // to background().
-////    WritableRaster raster = ((BufferedImage) image).getRaster();
-////    WritableRaster raster = image.getRaster();
-//    WritableRaster raster = getRaster();
-//    if ((clearPixels == null) || (clearPixels.length < imageWidth)) {
-//      clearPixels = new int[imageWidth];
-//    }
-//    Arrays.fill(clearPixels, 0, imageWidth, backgroundColor);
-//    for (int i = 0; i < imageHeight; i++) {
-//      raster.setDataElements(0, i, imageWidth, 1, clearPixels);
-//    }
-//  }
-//
-//  // background() methods inherited from PGraphics, along with the
-//  // PImage version of backgroundImpl(), since it just calls set().
-//
-//
-//  //public void backgroundImpl(PImage image)
-//
-//
-//  @Override
-//  public void backgroundImpl() {
-//    if (backgroundAlpha) {
-//      clearPixels(backgroundColor);
-//
-//    } else {
-//      Color bgColor = new Color(backgroundColor);
-//      // seems to fire an additional event that causes flickering,
-//      // like an extra background erase on OS X
-////      if (canvas != null) {
-////        canvas.setBackground(bgColor);
-////      }
-//      //new Exception().printStackTrace(System.out);
-//      // in case people do transformations before background(),
-//      // need to handle this with a push/reset/pop
-//      Composite oldComposite = g2.getComposite();
-//      g2.setComposite(defaultComposite);
-//
-//      pushMatrix();
-//      resetMatrix();
-//      g2.setColor(bgColor); //, backgroundAlpha));
-////      g2.fillRect(0, 0, width, height);
-//      // On a hi-res display, image may be larger than width/height
-//      if (image != null) {
-//        // image will be null in subclasses (i.e. PDF)
-//        g2.fillRect(0, 0, image.getWidth(null), image.getHeight(null));
-//      } else {
-//        // hope for the best if image is null
-//        g2.fillRect(0, 0, width, height);
-//      }
-//      popMatrix();
-//
-//      g2.setComposite(oldComposite);
-//    }
-//  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // BACKGROUND
 
 
   @Override
   public void backgroundImpl() {
-    //context.setPaint(backgroundPaint);
+    // This only takes into account cases where this is the primary surface.
+    // Not sure what we do with offscreen anyway.
     Paint savedFill = context.getFill();
     BlendMode savedBlend = context.getGlobalBlendMode();
     context.setFill(new Color(backgroundR, backgroundG, backgroundB, backgroundA));
@@ -1969,9 +1889,9 @@ public class PGraphicsFX2D extends PGraphics {
 //
 //
 //  //public boolean is3D()  // false
-//
-//
-//
+
+
+
   //////////////////////////////////////////////////////////////
 
   // PIMAGE METHODS
@@ -2152,39 +2072,22 @@ public class PGraphicsFX2D extends PGraphics {
 //      raster.setDataElements(targetX, targetY, temp.width, temp.height, temp.pixels);
 //    }
 //  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // MASK
-//
-//
-//  static final String MASK_WARNING =
-//    "mask() cannot be used on the main drawing surface";
-//
-//
-//  @Override
-//  @SuppressWarnings("deprecation")
-//  public void mask(int[] alpha) {
-//    if (primarySurface) {
-//      showWarning(MASK_WARNING);
-//
-//    } else {
-//      super.mask(alpha);
-//    }
-//  }
-//
-//
-//  @Override
-//  public void mask(PImage alpha) {
-//    if (primarySurface) {
-//      showWarning(MASK_WARNING);
-//
-//    } else {
-//      super.mask(alpha);
-//    }
-//  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // MASK
+
+
+  static final String MASK_WARNING =
+    "mask() cannot be used on the main drawing surface";
+
+
+  @Override
+  public void mask(PImage alpha) {
+    showWarning(MASK_WARNING);
+  }
 
 
 

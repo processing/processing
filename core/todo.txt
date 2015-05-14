@@ -11,7 +11,10 @@ javafx
 X implement blendMode
 X   https://github.com/processing/processing/issues/3275
 X hide the smooth() warnings
-
+_ loadPixels() (also 2x)
+_ updatePixels()
+_ save() and saveFrame()
+_ get() and set()
 
 _ Single Frame (No Screen Display) PDF broken
 _   https://github.com/processing/processing/issues/3280
