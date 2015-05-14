@@ -32,6 +32,10 @@ javafx
 _ clip/noClip
 _   https://github.com/processing/processing/issues/3274
 _ getNative() is problematic because it gives back a BufferedImage
+_   move loadImage() into PGraphics, with AWT version the default?
+_ don't remove javafx stuff from Windows build
+_ implement frameRate()
+_ implement external messages (moving the window)
 
 opengl
 _ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
