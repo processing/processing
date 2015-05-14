@@ -43,6 +43,7 @@ import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
 
+
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -9286,6 +9287,20 @@ public class PApplet implements PConstants {
     return PImage.blendColor(c1, c2, mode);
   }
 
+
+
+  //////////////////////////////////////////////////////////////
+
+
+  void frameMoved(int x, int y) {
+    System.err.println(EXTERNAL_MOVE + " " + x + " " + y);
+    System.err.flush();  // doesn't seem to help or hurt
+  }
+
+
+  void frameResized(int w, int h) {
+
+  }
 
 
   //////////////////////////////////////////////////////////////
