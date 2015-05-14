@@ -39,6 +39,7 @@ import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 
 
@@ -64,11 +65,9 @@ public class PGraphicsFX2D extends PGraphics {
   float[] curveDrawX;
   float[] curveDrawY;
 
-//  int transformCount;
-//  AffineTransform transformStack[] =
-//    new AffineTransform[MATRIX_STACK_DEPTH];
-//  double[] transform = new double[6];
-//
+  int transformCount;
+  Affine transformStack[] = new Affine[MATRIX_STACK_DEPTH];
+
 //  Line2D.Float line = new Line2D.Float();
 //  Ellipse2D.Float ellipse = new Ellipse2D.Float();
 //  Rectangle2D.Float rect = new Rectangle2D.Float();
@@ -1448,202 +1447,207 @@ public class PGraphicsFX2D extends PGraphics {
 //  public FontMetrics getFontMetrics(Font font) {
 //    return (g2 != null) ? g2.getFontMetrics(font) : super.getFontMetrics(font);
 //  }
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // MATRIX STACK
-//
-//
-//  @Override
-//  public void pushMatrix() {
-//    if (transformCount == transformStack.length) {
-//      throw new RuntimeException("pushMatrix() cannot use push more than " +
-//                                 transformStack.length + " times");
-//    }
-//    transformStack[transformCount] = g2.getTransform();
-//    transformCount++;
-//  }
-//
-//
-//  @Override
-//  public void popMatrix() {
-//    if (transformCount == 0) {
-//      throw new RuntimeException("missing a pushMatrix() " +
-//                                 "to go with that popMatrix()");
-//    }
-//    transformCount--;
-//    g2.setTransform(transformStack[transformCount]);
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // MATRIX TRANSFORMS
-//
-//
-//  @Override
-//  public void translate(float tx, float ty) {
-//    g2.translate(tx, ty);
-//  }
-//
-//
-//  //public void translate(float tx, float ty, float tz)
-//
-//
-//  @Override
-//  public void rotate(float angle) {
-//    g2.rotate(angle);
-//  }
-//
-//
-//  @Override
-//  public void rotateX(float angle) {
-//    showDepthWarning("rotateX");
-//  }
-//
-//
-//  @Override
-//  public void rotateY(float angle) {
-//    showDepthWarning("rotateY");
-//  }
-//
-//
-//  @Override
-//  public void rotateZ(float angle) {
-//    showDepthWarning("rotateZ");
-//  }
-//
-//
-//  @Override
-//  public void rotate(float angle, float vx, float vy, float vz) {
-//    showVariationWarning("rotate");
-//  }
-//
-//
-//  @Override
-//  public void scale(float s) {
-//    g2.scale(s, s);
-//  }
-//
-//
-//  @Override
-//  public void scale(float sx, float sy) {
-//    g2.scale(sx, sy);
-//  }
-//
-//
-//  @Override
-//  public void scale(float sx, float sy, float sz) {
-//    showDepthWarningXYZ("scale");
-//  }
-//
-//
-//  @Override
-//  public void shearX(float angle) {
-//    g2.shear(Math.tan(angle), 0);
-//  }
-//
-//
-//  @Override
-//  public void shearY(float angle) {
-//    g2.shear(0, Math.tan(angle));
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // MATRIX MORE
-//
-//
-//  @Override
-//  public void resetMatrix() {
-//    g2.setTransform(new AffineTransform());
-//  }
-//
-//
-//  //public void applyMatrix(PMatrix2D source)
-//
-//
-//  @Override
-//  public void applyMatrix(float n00, float n01, float n02,
-//                          float n10, float n11, float n12) {
-//    //System.out.println("PGraphicsJava2D.applyMatrix()");
-//    //System.out.println(new AffineTransform(n00, n10, n01, n11, n02, n12));
-//    g2.transform(new AffineTransform(n00, n10, n01, n11, n02, n12));
-//    //g2.transform(new AffineTransform(n00, n01, n02, n10, n11, n12));
-//  }
-//
-//
-//  //public void applyMatrix(PMatrix3D source)
-//
-//
-//  @Override
-//  public void applyMatrix(float n00, float n01, float n02, float n03,
-//                          float n10, float n11, float n12, float n13,
-//                          float n20, float n21, float n22, float n23,
-//                          float n30, float n31, float n32, float n33) {
-//    showVariationWarning("applyMatrix");
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // MATRIX GET/SET
-//
-//
-//  @Override
-//  public PMatrix getMatrix() {
-//    return getMatrix((PMatrix2D) null);
-//  }
-//
-//
-//  @Override
-//  public PMatrix2D getMatrix(PMatrix2D target) {
-//    if (target == null) {
-//      target = new PMatrix2D();
-//    }
-//    g2.getTransform().getMatrix(transform);
+
+
+  //////////////////////////////////////////////////////////////
+
+  // MATRIX STACK
+
+
+  @Override
+  public void pushMatrix() {
+    if (transformCount == transformStack.length) {
+      throw new RuntimeException("pushMatrix() cannot use push more than " +
+                                 transformStack.length + " times");
+    }
+    context.getTransform(transformStack[transformCount]);
+    transformCount++;
+  }
+
+
+  @Override
+  public void popMatrix() {
+    if (transformCount == 0) {
+      throw new RuntimeException("missing a pushMatrix() " +
+                                 "to go with that popMatrix()");
+    }
+    transformCount--;
+    context.setTransform(transformStack[transformCount]);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // MATRIX TRANSFORMS
+
+
+  @Override
+  public void translate(float tx, float ty) {
+    context.translate(tx, ty);
+  }
+
+
+  //public void translate(float tx, float ty, float tz)
+
+
+  @Override
+  public void rotate(float angle) {
+    context.rotate(PApplet.radians(angle));
+  }
+
+
+  @Override
+  public void rotateX(float angle) {
+    showDepthWarning("rotateX");
+  }
+
+
+  @Override
+  public void rotateY(float angle) {
+    showDepthWarning("rotateY");
+  }
+
+
+  @Override
+  public void rotateZ(float angle) {
+    showDepthWarning("rotateZ");
+  }
+
+
+  @Override
+  public void rotate(float angle, float vx, float vy, float vz) {
+    showVariationWarning("rotate");
+  }
+
+
+  @Override
+  public void scale(float s) {
+    context.scale(s, s);
+  }
+
+
+  @Override
+  public void scale(float sx, float sy) {
+    context.scale(sx, sy);
+  }
+
+
+  @Override
+  public void scale(float sx, float sy, float sz) {
+    showDepthWarningXYZ("scale");
+  }
+
+
+  @Override
+  public void shearX(float angle) {
+    Affine temp = new Affine();
+    temp.appendShear(Math.tan(angle), 0);
+    context.transform(temp);
+  }
+
+
+  @Override
+  public void shearY(float angle) {
+    Affine temp = new Affine();
+    temp.appendShear(0, Math.tan(angle));
+    context.transform(temp);
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // MATRIX MORE
+
+
+  @Override
+  public void resetMatrix() {
+    context.setTransform(new Affine());
+  }
+
+
+  //public void applyMatrix(PMatrix2D source)
+
+
+  @Override
+  public void applyMatrix(float n00, float n01, float n02,
+                          float n10, float n11, float n12) {
+    context.transform(n00, n10, n01, n11, n02, n12);
+  }
+
+
+  //public void applyMatrix(PMatrix3D source)
+
+
+  @Override
+  public void applyMatrix(float n00, float n01, float n02, float n03,
+                          float n10, float n11, float n12, float n13,
+                          float n20, float n21, float n22, float n23,
+                          float n30, float n31, float n32, float n33) {
+    showVariationWarning("applyMatrix");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // MATRIX GET/SET
+
+
+  @Override
+  public PMatrix getMatrix() {
+    return getMatrix((PMatrix2D) null);
+  }
+
+
+  @Override
+  public PMatrix2D getMatrix(PMatrix2D target) {
+    if (target == null) {
+      target = new PMatrix2D();
+    }
+    //double[] transform = new double[6];
+    // TODO This is not tested; apparently Affine is a full 3x4
+    Affine t = context.getTransform(); //.getMatrix(transform);
 //    target.set((float) transform[0], (float) transform[2], (float) transform[4],
 //               (float) transform[1], (float) transform[3], (float) transform[5]);
-//    return target;
-//  }
-//
-//
-//  @Override
-//  public PMatrix3D getMatrix(PMatrix3D target) {
-//    showVariationWarning("getMatrix");
-//    return target;
-//  }
-//
-//
-//  //public void setMatrix(PMatrix source)
-//
-//
-//  @Override
-//  public void setMatrix(PMatrix2D source) {
-//    g2.setTransform(new AffineTransform(source.m00, source.m10,
-//                                        source.m01, source.m11,
-//                                        source.m02, source.m12));
-//  }
-//
-//
-//  @Override
-//  public void setMatrix(PMatrix3D source) {
-//    showVariationWarning("setMatrix");
-//  }
-//
-//
-//  @Override
-//  public void printMatrix() {
-//    getMatrix((PMatrix2D) null).print();
-//  }
-//
-//
-//
+    target.set((float) t.getMxx(), (float) t.getMxy(), (float) t.getTx(),
+               (float) t.getMyx(), (float) t.getMyy(), (float) t.getTy());
+    return target;
+  }
+
+
+  @Override
+  public PMatrix3D getMatrix(PMatrix3D target) {
+    showVariationWarning("getMatrix");
+    return target;
+  }
+
+
+  //public void setMatrix(PMatrix source)
+
+
+  @Override
+  public void setMatrix(PMatrix2D source) {
+    context.setTransform(source.m00, source.m10,
+                         source.m01, source.m11,
+                         source.m02, source.m12);
+  }
+
+
+  @Override
+  public void setMatrix(PMatrix3D source) {
+    showVariationWarning("setMatrix");
+  }
+
+
+  @Override
+  public void printMatrix() {
+    getMatrix((PMatrix2D) null).print();
+  }
+
+
+
 //  //////////////////////////////////////////////////////////////
 //
 //  // CAMERA and PROJECTION
