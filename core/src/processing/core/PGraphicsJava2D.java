@@ -28,13 +28,9 @@ import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.awt.geom.*;
 import java.awt.image.*;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
-
-import processing.data.XML;
 
 
 /**
@@ -1751,10 +1747,7 @@ public class PGraphicsJava2D extends PGraphics {
   // SHAPE I/O
 
 
-  @Override
-  public PShape loadShape(String filename) {
-    return loadShape(filename, null);
-  }
+  //public PShape loadShape(String filename)
 
 
   @Override
@@ -1763,23 +1756,24 @@ public class PGraphicsJava2D extends PGraphics {
 
     PShapeSVG svg = null;
 
-    if (extension.equals("svg")) {
+    if (extension.equals("svg") || extension.equals("svgz")) {
       svg = new PShapeSVG(parent.loadXML(filename));
 
-    } else if (extension.equals("svgz")) {
-      try {
-        InputStream input = new GZIPInputStream(parent.createInput(filename));
-        XML xml = new XML(PApplet.createReader(input), options);
-        svg = new PShapeSVG(xml);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+//    } else if (extension.equals("svgz")) {
+//      try {
+//        InputStream input = new GZIPInputStream(parent.createInput(filename));
+//        XML xml = new XML(PApplet.createReader(input), options);
+//        svg = new PShapeSVG(xml);
+//      } catch (Exception e) {
+//        e.printStackTrace();
+//      }
     } else {
       PGraphics.showWarning("Unsupported format: " + filename);
     }
 
     return svg;
   }
+
 
 
   //////////////////////////////////////////////////////////////

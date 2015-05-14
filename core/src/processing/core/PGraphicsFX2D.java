@@ -49,11 +49,7 @@ public class PGraphicsFX2D extends PGraphics {
   static final WritablePixelFormat<IntBuffer> argbFormat =
     PixelFormat.getIntArgbInstance();
 
-//  public Graphics2D g2;
-//  Composite defaultComposite;
-
-  Path gpath;
-  // path for contours so gpath can be closed
+  Path workPath;
   Path auxPath;
   boolean openContour;
   /// break the shape at the next vertex (next vertex() call is a moveto())
@@ -201,7 +197,7 @@ public class PGraphicsFX2D extends PGraphics {
     // is no longer a good indicator of whether the shape is new.
     // this way, just check to see if gpath is null, and if it isn't
     // then just use it to continue the shape.
-    gpath = null;
+    workPath = null;
     auxPath = null;
   }
 
@@ -319,7 +315,7 @@ public class PGraphicsFX2D extends PGraphics {
       break;
 
     case POLYGON:
-      if (gpath == null) {
+      if (workPath == null) {
         context.moveTo(x, y);
       } else if (breakShape) {
         context.moveTo(x, y);
@@ -365,8 +361,8 @@ public class PGraphicsFX2D extends PGraphics {
 
     // draw contours to auxiliary path so main path can be closed later
     Path temp = auxPath;
-    auxPath = gpath;
-    gpath = temp;
+    auxPath = workPath;
+    workPath = temp;
 
 //    if (auxPath != null) {  // first contour does not break
     breakShape = true;
@@ -386,15 +382,15 @@ public class PGraphicsFX2D extends PGraphics {
     }
 
     // close this contour
-    if (gpath != null) {
+    if (workPath != null) {
       //gpath.closePath();
-      auxPath.getElements().addAll(gpath.getElements());
+      auxPath.getElements().addAll(workPath.getElements());
       auxPath.getElements().add(new ClosePath());
     }
 
     // switch back to main path
-    Path temp = gpath;
-    gpath = auxPath;
+    Path temp = workPath;
+    workPath = auxPath;
     auxPath = temp;
 
     openContour = false;
@@ -407,15 +403,15 @@ public class PGraphicsFX2D extends PGraphics {
       endContour();
       PGraphics.showWarning("Missing endContour() before endShape()");
     }
-    if (gpath != null) {  // make sure something has been drawn
+    if (workPath != null) {  // make sure something has been drawn
       if (shape == POLYGON) {
         if (mode == CLOSE) {
           //gpath.closePath();
-          gpath.getElements().add(new ClosePath());
+          workPath.getElements().add(new ClosePath());
         }
         if (auxPath != null) {
           //gpath.append(auxPath, false);
-          gpath.getElements().addAll(auxPath.getElements());
+          workPath.getElements().addAll(auxPath.getElements());
         }
         //drawShape(gpath);
         // TODO argh, can't go this route
@@ -560,7 +556,7 @@ public class PGraphicsFX2D extends PGraphics {
 
     // since the paths are continuous,
     // only the first point needs the actual moveto
-    if (gpath == null) {
+    if (workPath == null) {
 //      gpath = new GeneralPath();
       context.moveTo(curveDrawX[0], curveDrawY[0]);
     }
@@ -717,58 +713,12 @@ public class PGraphicsFX2D extends PGraphics {
     }
 
     if (fill) {
-      context.fillArc(x, y, w, h, start, sweep, fillMode);
+      context.fillArc(x, y, w, h, PApplet.degrees(start), PApplet.degrees(sweep), fillMode);
     }
     if (stroke) {
-      context.strokeArc(x, y, w, h, start, sweep, strokeMode);
+      context.strokeArc(x, y, w, h, PApplet.degrees(start), PApplet.degrees(sweep), strokeMode);
     }
   }
-
-
-
-//  //////////////////////////////////////////////////////////////
-//
-//  // JAVA2D SHAPE/PATH HANDLING
-//
-//
-//  protected void fillShape(Shape s) {
-//    if (fillGradient) {
-//      g2.setPaint(fillGradientObject);
-//      g2.fill(s);
-//    } else if (fill) {
-//      g2.setColor(fillColorObject);
-//      g2.fill(s);
-//    }
-//  }
-//
-//
-//  protected void strokeShape(Shape s) {
-//    if (strokeGradient) {
-//      g2.setPaint(strokeGradientObject);
-//      g2.draw(s);
-//    } else if (stroke) {
-//      g2.setColor(strokeColorObject);
-//      g2.draw(s);
-//    }
-//  }
-//
-//
-//  protected void drawShape(Shape s) {
-//    if (fillGradient) {
-//      g2.setPaint(fillGradientObject);
-//      g2.fill(s);
-//    } else if (fill) {
-//      g2.setColor(fillColorObject);
-//      g2.fill(s);
-//    }
-//    if (strokeGradient) {
-//      g2.setPaint(strokeGradientObject);
-//      g2.draw(s);
-//    } else if (stroke) {
-//      g2.setColor(strokeColorObject);
-//      g2.draw(s);
-//    }
-//  }
 
 
 
@@ -907,8 +857,6 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void noSmooth() {
-//    smooth = false;
-//    quality = 0;  // https://github.com/processing/processing/issues/3113
     showMissingWarning("noSmooth");
   }
 
@@ -1174,40 +1122,27 @@ public class PGraphicsFX2D extends PGraphics {
   //public void shape(PShape shape, float x, float y, float c, float d)
 
 
-//  //////////////////////////////////////////////////////////////
-//
-//  // SHAPE I/O
-//
-//
-//  @Override
-//  public PShape loadShape(String filename) {
-//    return loadShape(filename, null);
-//  }
-//
-//
-//  @Override
-//  public PShape loadShape(String filename, String options) {
-//    String extension = PApplet.getExtension(filename);
-//
-//    PShapeSVG svg = null;
-//
-//    if (extension.equals("svg")) {
-//      svg = new PShapeSVG(parent.loadXML(filename));
-//
-//    } else if (extension.equals("svgz")) {
-//      try {
-//        InputStream input = new GZIPInputStream(parent.createInput(filename));
-//        XML xml = new XML(PApplet.createReader(input), options);
-//        svg = new PShapeSVG(xml);
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//      }
-//    } else {
-//      PGraphics.showWarning("Unsupported format: " + filename);
-//    }
-//
-//    return svg;
-//  }
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE I/O
+
+
+  @Override
+  public PShape loadShape(String filename) {
+    return loadShape(filename, null);
+  }
+
+
+  @Override
+  public PShape loadShape(String filename, String options) {
+    String extension = PApplet.getExtension(filename);
+    if (extension.equals("svg") || extension.equals("svgz")) {
+      return new PShapeSVG(parent.loadXML(filename));
+    }
+    PGraphics.showWarning("Unsupported format: " + filename);
+    return null;
+  }
+
 
 
 //  //////////////////////////////////////////////////////////////

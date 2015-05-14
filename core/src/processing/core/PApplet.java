@@ -6105,7 +6105,9 @@ public class PApplet implements PConstants {
    */
   public InputStream createInput(String filename) {
     InputStream input = createInputRaw(filename);
-    if ((input != null) && filename.toLowerCase().endsWith(".gz")) {
+    final String lower = filename.toLowerCase();
+    if ((input != null) &&
+        (lower.endsWith(".gz") || lower.endsWith(".svgz"))) {
       try {
         return new GZIPInputStream(input);
       } catch (IOException e) {
