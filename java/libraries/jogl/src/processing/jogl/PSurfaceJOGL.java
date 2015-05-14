@@ -65,30 +65,24 @@ public class PSurfaceJOGL implements PSurface {
     this.pgl = (PJOGL) ((PGraphicsOpenGL)graphics).pgl;
   }
 
+  
   public void initOffscreen(PApplet sketch) {
-    // TODO Auto-generated method stub
-  }
-
-
-  /*
-  public Canvas initComponent(PApplet sketch) {
-    this.sketch = sketch;
-
-    sketchWidth = sketch.sketchWidth();
-    sketchHeight = sketch.sketchHeight();
-
-    if (window != null) {
-      canvas = new NewtCanvasAWT(window);
-      canvas.setBounds(0, 0, window.getWidth(), window.getHeight());
+//    this.sketch = sketch;
+//
+//    sketchWidth = sketch.sketchWidth();
+//    sketchHeight = sketch.sketchHeight();
+//
+//    if (window != null) {
+//      canvas = new NewtCanvasAWT(window);
+//      canvas.setBounds(0, 0, window.getWidth(), window.getHeight());
 //      canvas.setBackground(new Color(pg.backgroundColor, true));
-      canvas.setFocusable(true);
-
-      return canvas;
-    }
-
-    return null;
+//      canvas.setFocusable(true);
+//
+//      return canvas;
+//    }
+//
+//    return null;
   }
-  */
 
 
   public void initFrame(PApplet sketch, int backgroundColor,
@@ -194,7 +188,8 @@ public class PSurfaceJOGL implements PSurface {
       fullScreen = true;
     }
 
-    if (fullScreen || spanDisplays) {
+//    if (fullScreen || spanDisplays) {
+    if (spanDisplays) {
       sketchWidth = screenRect.width;
       sketchHeight = screenRect.height;
     }
@@ -210,6 +205,7 @@ public class PSurfaceJOGL implements PSurface {
     // This example could be useful:
     // com.jogamp.opengl.test.junit.newt.mm.TestScreenMode01cNEWT
     if (fullScreen) {
+      PApplet.hideMenuBar();
       if (spanDisplays) {
         window.setFullscreen(monitors);
       } else {
@@ -379,9 +375,18 @@ public class PSurfaceJOGL implements PSurface {
 
   }
 
-  public void placePresent(int stopColor) {
-    // TODO Auto-generated method stub
-
+  boolean presentMode = false;
+  float offsetX;
+  float offsetY;
+  public void placePresent(int stopColor) {    
+    if (sketchWidth < screenRect.width || sketchHeight < screenRect.height) {
+      System.err.println("Present mode");
+//    System.err.println("WILL USE FBO");
+      presentMode = pgl.presentMode = true;
+      offsetX = pgl.offsetX = 0.5f * (screenRect.width - sketchWidth);
+      offsetY = pgl.offsetY = 0.5f * (screenRect.height - sketchHeight);
+      pgl.requestFBOLayer();
+    }
   }
 
   public void setupExternalMessages() {
@@ -627,9 +632,27 @@ public class PSurfaceJOGL implements PSurface {
       peCount = nativeEvent.getClickCount();
     }
 
+    
+    if (presentMode) {
+      if (20 < nativeEvent.getX() && nativeEvent.getX() < 20 + 100 &&
+          screenRect.height - 70 < nativeEvent.getY() && nativeEvent.getY() < screenRect.height - 20) {
+        System.err.println("clicked on exit button");
+//      if (externalMessages) {
+//        System.err.println(PApplet.EXTERNAL_QUIT);
+//        System.err.flush();  // important
+//      }
+        animator.stop();
+        PSurfaceJOGL.this.sketch.exit();
+        window.destroy();
+      }
+    }
+    
+    int x = nativeEvent.getX() - (int)offsetX;
+    int y = nativeEvent.getY() - (int)offsetY;
+    
     MouseEvent me = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
                                    peAction, peModifiers,
-                                   nativeEvent.getX(), nativeEvent.getY(),
+                                   x, y,
                                    peButton,
                                    peCount);
 
