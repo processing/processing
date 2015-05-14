@@ -29,9 +29,9 @@ import java.net.URL;
 import java.nio.*;
 import java.util.*;
 
+
 /**
  * OpenGL renderer.
- *
  */
 public class PGraphicsOpenGL extends PGraphics {
   /** Interface between Processing and OpenGL */

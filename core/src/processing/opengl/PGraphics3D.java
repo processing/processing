@@ -22,13 +22,10 @@
 
 package processing.opengl;
 
-import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
-
-import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PShape;
 import processing.core.PShapeOBJ;
+
 
 public class PGraphics3D extends PGraphicsOpenGL {
 
