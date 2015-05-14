@@ -51,6 +51,8 @@ public class PSurfaceJOGL implements PSurface {
   PApplet sketch;
   PGraphics graphics;
 
+  int sketchX;
+  int sketchY;
   int sketchWidth;
   int sketchHeight;
 
@@ -168,8 +170,8 @@ public class PSurfaceJOGL implements PSurface {
     if (displayDevice == null) {
       displayDevice = window.getMainMonitor();
     }
-    int sketchX = displayDevice.getViewportInWindowUnits().getX();
-    int sketchY = displayDevice.getViewportInWindowUnits().getY();
+    sketchX = displayDevice.getViewportInWindowUnits().getX();
+    sketchY = displayDevice.getViewportInWindowUnits().getY();
 
     int screenWidth = screen.getWidth();
     int screenHeight = screen.getHeight();
@@ -194,8 +196,7 @@ public class PSurfaceJOGL implements PSurface {
       sketchHeight = screenRect.height;
     }
 
-//    window..setBackground(new Color(backgroundColor, true));
-    window.setPosition(sketchX, sketchY);
+//    window..setBackground(new Color(backgroundColor, true));    
     window.setSize(sketchWidth, sketchHeight);
 
     System.out.println("deviceIndex: " + deviceIndex);
@@ -253,7 +254,7 @@ public class PSurfaceJOGL implements PSurface {
       }
     });
 
-    (new Thread(new Runnable() {
+   new Thread(new Runnable() {
       public void run() {
         synchronized (waitObject) {
           try {
@@ -269,31 +270,7 @@ public class PSurfaceJOGL implements PSurface {
           }
         }
       }
-    }
-    )).start();
-
-
-    /*
-    try {
-      EventQueue.invokeAndWait(new Runnable() {
-        public void run() {
-          while (true) {
-            try {
-              if (drawException != null) {
-                if (drawException instanceof RuntimeException) {
-                  throw (RuntimeException)drawException;
-                } else {
-                  throw new RuntimeException(drawException);
-                }
-              } else {
-                Thread.sleep(100);
-              }
-            } catch (InterruptedException e) { }
-          }
-      }});
-    } catch (Exception ex) {
-    }
-*/
+    }).start();
 
 
     window.addWindowListener(new WindowAdapter() {
@@ -324,30 +301,6 @@ public class PSurfaceJOGL implements PSurface {
 //    frame = new DummyFrame();
 //    return frame;
   }
-
-//  @SuppressWarnings("serial")
-//  class DummyFrame extends Frame {
-//
-//    public DummyFrame() {
-//      super();
-//    }
-//
-//    @Override
-//    public void setResizable(boolean resizable) {
-////      super.setResizable(resizable);
-//    }
-//
-//    @Override
-//    public void setVisible(boolean visible) {
-//      window.setVisible(visible);
-//    }
-//
-//    @Override
-//    public void setTitle(String title) {
-//      window.setTitle(title);
-//    }
-//  }
-
 
   @Override
   public void setTitle(String title) {
@@ -468,6 +421,12 @@ public class PSurfaceJOGL implements PSurface {
     if (animator != null) {
       System.err.println("5. start animator");
       animator.start();
+      
+      if (0 < sketchX && 0 < sketchY) {
+          System.err.println("5.1 set inital window position");
+          window.setPosition(sketchX, sketchY);
+          sketchX = sketchY = 0;
+      }
 //      animator.getThread().setName("Processing-GL-draw");
     }
   }
