@@ -22,9 +22,6 @@
 
 package processing.core;
 
-//import java.awt.Component;
-//import java.awt.Frame;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -259,8 +256,45 @@ public class PSurfaceFX implements PSurface {
   */
 
 
+  @Override
   public void placeWindow(int[] location) {
-    // TODO Auto-generated method stub
+    //setFrameSize();
+
+    if (location != null) {
+      // a specific location was received from the Runner
+      // (applet has been run more than once, user placed window)
+      stage.setX(location[0]);
+      stage.setY(location[1]);
+
+    } else {  // just center on screen
+      // Can't use frame.setLocationRelativeTo(null) because it sends the
+      // frame to the main display, which undermines the --display setting.
+//      frame.setLocation(screenRect.x + (screenRect.width - sketchWidth) / 2,
+//                        screenRect.y + (screenRect.height - sketchHeight) / 2);
+    }
+    if (stage.getY() < 0) {
+      // Windows actually allows you to place frames where they can't be
+      // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
+      //frame.setLocation(frameLoc.x, 30);
+      stage.setY(30);
+    }
+
+    //setCanvasSize();
+
+    // TODO add window closing behavior
+//    frame.addWindowListener(new WindowAdapter() {
+//      @Override
+//      public void windowClosing(WindowEvent e) {
+//        System.exit(0);
+//      }
+//    });
+
+    // TODO handle frame resizing events
+//    setupFrameResizeListener();
+
+    if (sketch.getGraphics().displayable()) {
+      setVisible(true);
+    }
   }
 
 
@@ -283,7 +317,7 @@ public class PSurfaceFX implements PSurface {
 
 
   public void setSize(int width, int height) {
-    System.out.format("%s.setSize(%d, %d)%n", getClass().getSimpleName(), width, height);
+    //System.out.format("%s.setSize(%d, %d)%n", getClass().getSimpleName(), width, height);
     stage.setWidth(width);
     stage.setHeight(height);
     fx.setSize(width, height);
@@ -294,15 +328,18 @@ public class PSurfaceFX implements PSurface {
 //    return null;
 //  }
 
+
   public void setSmooth(int level) {
     // TODO Auto-generated method stub
 
   }
 
+
   public void setFrameRate(float fps) {
     // TODO Auto-generated method stub
 
   }
+
 
   @Override
   public void requestFocus() {
@@ -310,20 +347,24 @@ public class PSurfaceFX implements PSurface {
 
   }
 
+
   public void setCursor(int kind) {
     // TODO Auto-generated method stub
 
   }
+
 
   public void setCursor(PImage image, int hotspotX, int hotspotY) {
     // TODO Auto-generated method stub
 
   }
 
+
   public void showCursor() {
     // TODO Auto-generated method stub
 
   }
+
 
   public void hideCursor() {
     // TODO Auto-generated method stub
