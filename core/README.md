@@ -66,6 +66,16 @@ It looks like LWJGL3 will be a nice game-centric platform (full screen, affordan
 LWJGL and JOGL are both great projects and we're thankful for all the work that they put in, and our own experience with Processing means that we couldn't be more sympathetic to the difficulty they face in maintaining their cross-platform, cross-chipset, cross-everything code. Like Processing, both projects are open source and created by volunteers who give their work away for free. We're enormously appreciative of their efforts.
 
 
+## `sketchRenderer()` is required
+Prior to Processing 3, dark magic was used to make the `size()` command work. This was done to hide an enormous amount of complexity from users. Over time, the hacks involved became untenable or just unsustainable. The process was like this:
+* The default renderer would be initialized offscreen and unused
+* `setup()` would run, and if the renderer changed, the sketch would throw an exception causing things to restart (re-calling the `setup()` method)
+* The previous step gave fits to any other variants of Processing (like Python or Ruby or Scala)
+* We had a tricky, stuttery situation where some things would happen automatically, other things would be delayed slightly
+In the Android version of Processing, these methods weren't possible, so we enhanced the preprocessor to parse the `size()` command used in the sketch and create methods called `sketchWidth()` and `sketchHeight()` and so on, that returned the values found in `setup()`. 
+In Processing 3, these have moved to the desktop version of Processing as well. That means that when using Processing without the PDE (i.e. from Eclipse), it's necessary to implement these methods as well. 
+
+
 ## The Mess
 
 The rest of this document are my notes while I'm making changes.
@@ -105,7 +115,6 @@ another PSurfaceAWT variant could allow direct rendering to the canvas (no loadP
 
 
 #### To Document
-- sketchRenderer() is required
 - the renderer class/package is used to call a static method on the PGraphics that returns the class type for the rendering surface
 
 inside main, will know the screen that's being used for the app
