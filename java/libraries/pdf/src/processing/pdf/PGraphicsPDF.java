@@ -72,7 +72,9 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     this.path = path;
     if (path != null) {
       file = new File(path);
-      if (!file.isAbsolute()) file = null;
+      if (!file.isAbsolute()) {
+        file = null;
+      }
     }
     if (file == null) {
       throw new RuntimeException("PGraphicsPDF requires an absolute path " +

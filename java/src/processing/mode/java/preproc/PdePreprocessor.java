@@ -203,7 +203,6 @@ public class PdePreprocessor {
 
   public String[] initSketchSize(String code, boolean sizeWarning) throws SketchException {
     String[] info = parseSketchSize(code, sizeWarning);
-    PApplet.printArray(info);
     if (info != null) {
       sizeStatement = info[0];
       sketchWidth = info[1];

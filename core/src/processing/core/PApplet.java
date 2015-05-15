@@ -1519,8 +1519,10 @@ public class PApplet implements PConstants {
         throw new RuntimeException("The sketchRenderer() method is not implemented.");
       }
     }
-    surface.setSize(w, h);
-    g.setPath(path);  // finally, a path
+    // size() shouldn't actually do anything here [3.0a8]
+//    surface.setSize(w, h);
+    // this won't be absolute, which will piss off PDF [3.0a8]
+//    g.setPath(path);  // finally, a path
 
 //    // Run this from the EDT, just cuz it's AWT stuff (or maybe later Swing)
 //   EventQueue.invokeLater(new Runnable() {
@@ -1659,7 +1661,7 @@ public class PApplet implements PConstants {
    */
   public PGraphics createGraphics(int w, int h,
                                   String renderer, String path) {
-    return makeGraphics(w, h, renderer, savePath(path), false);
+    return makeGraphics(w, h, renderer, path, false);
     /*
     if (path != null) {
       path = savePath(path);
@@ -1680,9 +1682,7 @@ public class PApplet implements PConstants {
 
   /**
    * Version of createGraphics() used internally.
-   * @param path A full (not relative) path.
-   *             {@link PApplet#createGraphics} will call
-   *             {@link PApplet#savePath} first.
+   * @param path A path (or null if none), can be absolute or relative ({@link PApplet#savePath} will be called)
    */
   protected PGraphics makeGraphics(int w, int h,
                                    String renderer, String path,
@@ -1712,9 +1712,8 @@ public class PApplet implements PConstants {
 
       pg.setParent(this);
       pg.setPrimary(primary);
-      System.out.println("path is " + path);
       if (path != null) {
-        pg.setPath(path);
+        pg.setPath(savePath(path));
       }
 //      pg.setQuality(sketchQuality());
 //      if (!primary) {
