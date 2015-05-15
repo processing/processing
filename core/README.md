@@ -44,7 +44,8 @@ This is one of many unfortunate tradeoffs I'm trying to sort through as we try t
 
 
 #### The Event Dispatch Thread
-The current source starts putting AWT (and Swing, if any) calls on the [EDT](https://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html), per Oracle's statements in Java's documentation. Actual rendering in the default renderer happens off the EDT, but the EDT is used to blit the image to the screen (or resize windows, etc). Looking for more consistent cross-platform results by doing this.
+The source has gone back and forth between putting all AWT (and Swing, if any) calls on the [EDT](https://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html). Per Oracle's statements in Java's documentation, this is best practice (at least for Swing; for AWT it's not clear). However, we've gone back and forth several times as to whether it's necessary or worthwhile. 
+Actual rendering in the default renderer happens off the EDT, but the EDT is used to blit the image to the screen (or resize windows, etc). By moving to the EDT, we're looking for more consistent cross-platform results. In practice, results are either mixed or not there.
 
 
 ## OpenGL 
