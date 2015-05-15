@@ -46,7 +46,7 @@ public class PSurfaceNone implements PSurface {
 
   @Override
   public void initOffscreen(PApplet sketch) {
-    // TODO Auto-generated method stub
+    this.sketch = sketch;
   }
 
 
@@ -57,8 +57,9 @@ public class PSurfaceNone implements PSurface {
 
   @Override
   public void initFrame(PApplet sketch, int backgroundColor,
-                         int deviceIndex, boolean fullScreen,
-                         boolean spanDisplays) {
+                        int deviceIndex, boolean fullScreen,
+                        boolean spanDisplays) {
+    this.sketch = sketch;
   }
 
 

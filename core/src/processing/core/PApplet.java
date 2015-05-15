@@ -44,6 +44,7 @@ import java.awt.image.BufferedImage;
 
 
 
+
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -1489,6 +1490,7 @@ public class PApplet implements PConstants {
     size(w, h, sketchRenderer(), null);
   }
 
+
   /**
    * @param renderer Either P2D, P3D, or PDF
    */
@@ -1496,16 +1498,26 @@ public class PApplet implements PConstants {
     size(w, h, renderer, null);
   }
 
-/**
- * @nowebref
- */
+
+  /**
+   * @nowebref
+   */
   public void size(final int w, final int h, String renderer, String path) {
     if (!renderer.equals(sketchRenderer())) {
-      System.err.println("Because you're not running from the PDE, add this to your code:");
-      System.err.println("public String sketchRenderer() {");
-      System.err.println("  return \"" + renderer + "\";");
-      System.err.println("}");
-      throw new RuntimeException("The sketchRenderer() method is not implemented.");
+      if (external) {
+        // The PDE should have parsed it, but something still went wrong
+        final String msg =
+          String.format("Something bad happened when calling " +
+                        "size(%d, %d, %s, %s)", w, h, renderer, path);
+        throw new RuntimeException(msg);
+
+      } else {
+        System.err.println("Because you're not running from the PDE, add this to your code:");
+        System.err.println("public String sketchRenderer() {");
+        System.err.println("  return \"" + renderer + "\";");
+        System.err.println("}");
+        throw new RuntimeException("The sketchRenderer() method is not implemented.");
+      }
     }
     surface.setSize(w, h);
     g.setPath(path);  // finally, a path
@@ -1700,6 +1712,7 @@ public class PApplet implements PConstants {
 
       pg.setParent(this);
       pg.setPrimary(primary);
+      System.out.println("path is " + path);
       if (path != null) {
         pg.setPath(path);
       }
@@ -1770,7 +1783,8 @@ public class PApplet implements PConstants {
 
   /** Create default renderer, likely to be resized, but needed for surface init. */
   protected PGraphics createPrimaryGraphics() {
-    return makeGraphics(sketchWidth(), sketchHeight(), sketchRenderer(), null, true);
+    return makeGraphics(sketchWidth(), sketchHeight(),
+                        sketchRenderer(), sketchOutputPath(), true);
   }
 
 
@@ -9643,9 +9657,8 @@ public class PApplet implements PConstants {
       surface.initFrame(this, backgroundColor, displayIndex, present, spanDisplays);
       surface.setTitle(getClass().getName());
       //frame.setTitle(getClass().getName());
-//    } else {
-//      // TODO necessary?
-//      surface.initOffscreen(this);
+    } else {
+      surface.initOffscreen(this);  // for PDF, PSurfaceNone, and friends
     }
 
     init();

@@ -118,12 +118,14 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
     if (document == null) {
       document = new Document(new Rectangle(width, height));
+      boolean missingPath = false;
       try {
         if (file != null) {
           //BufferedOutputStream output = new BufferedOutputStream(stream, 16384);
           output = new BufferedOutputStream(new FileOutputStream(file), 16384);
 
         } else if (output == null) {
+          missingPath = true;
           throw new RuntimeException("PGraphicsPDF requires a path " +
                                      "for the location of the output file.");
         }
@@ -132,25 +134,26 @@ public class PGraphicsPDF extends PGraphicsJava2D {
         content = writer.getDirectContent();
 //        template = content.createTemplate(width, height);
 
-      } catch (Exception e) {
-        e.printStackTrace();
-        throw new RuntimeException("Problem saving the PDF file.");
+      } catch (RuntimeException re) {
+        if (missingPath) {
+          throw re;  // don't re-package our own error
+        } else {
+          throw new RuntimeException("Problem saving the PDF file.", re);
+        }
+
+      } catch (FileNotFoundException fnfe) {
+        throw new RuntimeException("Can't save the PDF file to " + path, fnfe);
+
+      } catch (DocumentException de) {
+        throw new RuntimeException("Error inside the PDF library.", de);
       }
 
-//      System.out.println("beginDraw fonts " + (System.currentTimeMillis() - t));
-//      g2 = content.createGraphics(width, height, getMapper());
-//      if (textMode == SHAPE) {
       g2 = content.createGraphicsShapes(width, height);
-//      } else if (textMode == MODEL) {
-//        g2 = content.createGraphics(width, height, getMapper());
-//      }
-//      g2 = createGraphics();
-//      g2 = template.createGraphics(width, height, mapper);
     }
-//    System.out.println("beginDraw " + (System.currentTimeMillis() - t0));
 
     // super in Java2D now creates an image buffer, don't do that
-//    super.beginDraw();
+    //super.beginDraw();
+
     checkSettings();
     resetMatrix(); // reset model matrix
     vertexCount = 0;

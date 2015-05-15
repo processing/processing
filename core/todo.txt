@@ -38,13 +38,17 @@ _ implement frameRate()
 _ implement external messages (moving the window)
 
 opengl
+X deal with some performance issues
+X   https://github.com/processing/processing/issues/3210
+X Can't run sketches with offscreen PGraphics
+X   https://github.com/processing/processing/issues/3259
+_ Merge glw code into the OpenGL library
+_   https://github.com/processing/processing/issues/3284
 _ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
 _   shouldn't be static, run it from the renderer, that's point of createXxx()
 _ when did setPath() sneak into PShape? API is nothing like anything else
 _ public createShape() method that takes another shape as param?
 _   should just be the constructor doing this, or copy()
-_ drawing 100k lines is slow (example from Reas)
-_   figure out what the bottleneck is here
 
 
 high priority

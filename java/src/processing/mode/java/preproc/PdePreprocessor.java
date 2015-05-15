@@ -4,7 +4,7 @@
   PdePreprocessor - wrapper for default ANTLR-generated parser
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2004-15 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   ANTLR-generated parser and several supporting classes written
@@ -36,7 +36,7 @@ import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.SketchException;
 import processing.core.PApplet;
-import processing.core.PConstants;
+import processing.data.StringList;
 import processing.mode.java.preproc.PdeLexer;
 import processing.mode.java.preproc.PdeRecognizer;
 import processing.mode.java.preproc.PdeTokenTypes;
@@ -167,12 +167,13 @@ public class PdePreprocessor {
    * in the sketch, which is the case especially for anyone who is cutting
    * and pasting from the reference.
    */
-  public static final String SIZE_REGEX =
-    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+)\\s*,?\\s*([^\\)]*)\\s*\\)\\s*\\;";
-    //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+//  public static final String SIZE_REGEX =
+//    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+)\\s*,?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+  static private final String SIZE_CONTENTS_REGEX =
+    "(?:^|\\s|;)size\\s*\\(([^\\)]+)\\)\\s*\\;";
 
 
-  private static final Pattern PUBLIC_CLASS =
+  static private final Pattern PUBLIC_CLASS =
     Pattern.compile("(^|;)\\s*public\\s+class\\s+\\S+\\s+extends\\s+PApplet", Pattern.MULTILINE);
     // Can't only match any 'public class', needs to be a PApplet
     // http://code.google.com/p/processing/issues/detail?id=551
@@ -201,6 +202,7 @@ public class PdePreprocessor {
 
   public String[] initSketchSize(String code, boolean sizeWarning) throws SketchException {
     String[] info = parseSketchSize(code, sizeWarning);
+    PApplet.printArray(info);
     if (info != null) {
       sizeStatement = info[0];
       sketchWidth = info[1];
@@ -208,6 +210,44 @@ public class PdePreprocessor {
       sketchRenderer = info[3];
     }
     return info;
+  }
+
+
+  // break on commas, except those inside quotes, e.g.:
+  // size(300, 200, PDF, "output,weirdname.pdf");
+  // no handling for escaped (\") quotes
+  static private StringList breakCommas(String contents) {
+    StringList outgoing = new StringList();
+
+    boolean insideQuote = false;
+    // The current word being read
+    StringBuilder current = new StringBuilder();
+    char[] chars = contents.toCharArray();
+    for (int i = 0; i < chars.length; i++) {
+      char c = chars[i];
+      if (insideQuote) {
+        current.append(c);
+        if (c == '\"') {
+          insideQuote = false;
+        }
+      } else {
+        if (c == ',') {
+          if (current.length() != 0) {
+            outgoing.append(current.toString());
+            current.setLength(0);
+          }
+        } else {
+          current.append(c);
+          if (c == '\"') {
+            insideQuote = true;
+          }
+        }
+      }
+    }
+    if (current.length() != 0) {
+      outgoing.append(current.toString());
+    }
+    return outgoing;
   }
 
 
@@ -225,15 +265,29 @@ public class PdePreprocessor {
 
 //    String scrubbed = scrubComments(sketch.getCode(0).getProgram());
 //    String[] matches = PApplet.match(scrubbed, SIZE_REGEX);
-    String[] matches = PApplet.match(scrubComments(code), SIZE_REGEX);
+//    String[] matches = PApplet.match(scrubComments(code), SIZE_REGEX);
 
-    if (matches != null) {
+    // Get everything inside the parens for the size() method
+    String[] contents = PApplet.match(scrubComments(code), SIZE_CONTENTS_REGEX);
+    if (contents != null) {
+      //String[] matches = split on commas, but not commas inside quotes
+
+      StringList args = breakCommas(contents[1]);
+      String width = args.get(0);
+      String height = args.get(1);
+      String renderer = (args.size() >= 3) ? args.get(2) : null;
+      String path = (args.size() >= 4) ? args.get(3) : null;
+
       boolean badSize = false;
 
-      if (matches[1].equals("screenWidth") ||
-          matches[1].equals("screenHeight") ||
-          matches[2].equals("screenWidth") ||
-          matches[2].equals("screenHeight")) {
+      // Trying to remember why we wanted to allow people to use displayWidth
+      // as the height or displayHeight as the width, but maybe it's for
+      // making a square sketch window? Not going to
+
+      if (width.equals("screenWidth") ||
+          width.equals("screenHeight") ||
+          height.equals("screenHeight") ||
+          height.equals("screenWidth")) {
         final String message =
           "The screenWidth and screenHeight variables\n" +
           "are named displayWidth and displayHeight\n" +
@@ -242,14 +296,14 @@ public class PdePreprocessor {
         return null;
       }
 
-      if (!matches[1].equals("displayWidth") &&
-          !matches[1].equals("displayHeight") &&
-          PApplet.parseInt(matches[1], -1) == -1) {
+      if (!width.equals("displayWidth") &&
+          !width.equals("displayHeight") &&
+          PApplet.parseInt(width, -1) == -1) {
         badSize = true;
       }
-      if (!matches[2].equals("displayWidth") &&
-          !matches[2].equals("displayHeight") &&
-          PApplet.parseInt(matches[2], -1) == -1) {
+      if (!height.equals("displayWidth") &&
+          !height.equals("displayHeight") &&
+          PApplet.parseInt(height, -1) == -1) {
         badSize = true;
       }
 
@@ -266,15 +320,24 @@ public class PdePreprocessor {
       }
 
       // Remove additional space 'round the renderer
-      matches[3] = matches[3].trim();
-
-      // if the renderer entry is empty, set it to null
-      if (matches[3].length() == 0) {
-        matches[3] = null;
+      if (renderer != null) {
+        renderer = renderer.trim();
+        if (renderer.length() == 0) {  // if empty, set null
+          renderer = null;
+        }
       }
-      return matches;
+
+      // Same for the file name
+      if (path != null) {
+        path = path.trim();
+        if (path.length() == 0) {
+          path = null;
+        }
+      }
+      return new String[] { contents[0], width, height, renderer, path };
     }
-    return new String[] { null, null, null, null };  // not an error, just empty
+    // not an error, just no size() specified
+    return new String[] { null, null, null, null, null };
   }
 
 
@@ -888,25 +951,9 @@ public class PdePreprocessor {
       }
       if (sketchRenderer != null && !hasMethod("sketchRenderer")) {
         // Only include if it's a known renderer (otherwise it might be a variable)
-        if (PConstants.rendererList.hasValue(sketchRenderer)) {
-          /*
-        }
-        if (sketchRenderer.equals("P2D") ||
-            sketchRenderer.equals("P2D_2X") ||
-            sketchRenderer.equals("P3D") ||
-            sketchRenderer.equals("P3D_3X") ||
-            sketchRenderer.equals("OPENGL") ||
-            sketchRenderer.equals("JAVA2D") ||
-            sketchRenderer.equals("JAVA2D_2X") ||
-            sketchRenderer.equals("E2D") ||
-            sketchRenderer.equals("FX2D") ||
-            sketchRenderer.equals("FX2D_2X") ||
-            sketchRenderer.equals("PDF") ||
-            sketchRenderer.equals("LWJGL.P2D") ||
-            sketchRenderer.equals("LWJGL.P3D")) {
-            */
-          out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
-        }
+        //if (PConstants.rendererList.hasValue(sketchRenderer)) {
+        out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
+        //}
       }
 
       if (!hasMethod("main")) {
