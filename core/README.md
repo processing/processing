@@ -60,6 +60,8 @@ The short version of how it played out (written 15 May 2015)
 * Andrés went back to JOGL (last 48 hours) to find that many bugs had been fixed and development was continuing. 
 * For 3.0a8, we dropped LWJGL since JOGL is performing much better, and we're 99% sure that's the final decision for 3.0 (yesterday).
 
+It looks like LWJGL3 will be a nice game-centric platform (full screen, affordances for game input/behavior) in the coming months, but the direction they're having to go with 3 means they're moving further away from what we need in Processing with something *slightly* more general.
+
 LWJGL and JOGL are both great projects and we're thankful for all the work that they put in, and our own experience with Processing means that we couldn't be more sympathetic to the difficulty they face in maintaining their cross-platform, cross-chipset, cross-everything code. Like Processing, both projects are open source and created by volunteers who give their work away for free. We're enormously appreciative of their efforts.
 
 
