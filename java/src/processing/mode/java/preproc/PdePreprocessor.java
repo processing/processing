@@ -159,6 +159,7 @@ public class PdePreprocessor {
   protected String sketchWidth;
   protected String sketchHeight;
   protected String sketchRenderer;
+  protected String sketchOutputPath;
 
   /**
    * Regular expression for parsing the size() method. This should match
@@ -208,6 +209,7 @@ public class PdePreprocessor {
       sketchWidth = info[1];
       sketchHeight = info[2];
       sketchRenderer = info[3];
+      sketchOutputPath = info[4];
     }
     return info;
   }
@@ -954,6 +956,9 @@ public class PdePreprocessor {
         //if (PConstants.rendererList.hasValue(sketchRenderer)) {
         out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
         //}
+      }
+      if (sketchOutputPath != null && !hasMethod("sketchOutputPath")) {
+        out.println(indent + "public String sketchOutputPath() { return " + sketchOutputPath + "; }");
       }
 
       if (!hasMethod("main")) {
