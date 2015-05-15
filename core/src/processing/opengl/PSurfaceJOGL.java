@@ -190,7 +190,10 @@ public class PSurfaceJOGL implements PSurface {
       fullScreen = true;
     }
 
-//    if (fullScreen || spanDisplays) {
+    if (fullScreen) {
+      presentMode = sketchWidth < screenRect.width && sketchHeight < screenRect.height;
+    }
+
     if (spanDisplays) {
       sketchWidth = screenRect.width;
       sketchHeight = screenRect.height;
@@ -198,6 +201,10 @@ public class PSurfaceJOGL implements PSurface {
 
 //    window..setBackground(new Color(backgroundColor, true));
     window.setSize(sketchWidth, sketchHeight);
+    sketch.width = sketch.sketchWidth();
+    sketch.height = sketch.sketchHeight();
+    graphics.setSize(sketch.width, sketch.height);
+
 
     System.out.println("deviceIndex: " + deviceIndex);
     System.out.println(displayDevice);
@@ -206,6 +213,7 @@ public class PSurfaceJOGL implements PSurface {
     // This example could be useful:
     // com.jogamp.opengl.test.junit.newt.mm.TestScreenMode01cNEWT
     if (fullScreen) {
+      window.setPosition(sketchX, sketchY);
       PApplet.hideMenuBar();
       if (spanDisplays) {
         window.setFullscreen(monitors);
@@ -237,6 +245,8 @@ public class PSurfaceJOGL implements PSurface {
 
     DrawListener drawlistener = new DrawListener();
     window.addGLEventListener(drawlistener);
+
+
 
     System.err.println("1. create animator");
     animator = new FPSAnimator(window, 60);
@@ -402,7 +412,7 @@ public class PSurfaceJOGL implements PSurface {
   float offsetX;
   float offsetY;
   public void placePresent(int stopColor) {
-    if (sketchWidth < screenRect.width || sketchHeight < screenRect.height) {
+    if (presentMode) {
       System.err.println("Present mode");
 //    System.err.println("WILL USE FBO");
       presentMode = pgl.presentMode = true;
@@ -460,13 +470,18 @@ public class PSurfaceJOGL implements PSurface {
   }
 
   public void setSize(int width, int height) {
-//    if (frame != null) {
-    System.err.println("3. set size");
+    if (animator.isAnimating()) {
+      System.err.println("3. set size");
 
-    sketchWidth = sketch.width = width;
-    sketchHeight = sketch.height = height;
-    graphics.setSize(width, height);
-//    }
+      if (!presentMode) {
+        sketch.width = width;
+        sketch.height = height;
+        graphics.setSize(width, height);
+      }
+
+      sketchWidth = width;
+      sketchHeight = height;
+    }
   }
 
   public Component getComponent() {
@@ -683,7 +698,8 @@ public class PSurfaceJOGL implements PSurface {
 
 
     if (presentMode) {
-      if (20 < nativeEvent.getX() && nativeEvent.getX() < 20 + 100 &&
+      if (peAction == KeyEvent.RELEASE &&
+          20 < nativeEvent.getX() && nativeEvent.getX() < 20 + 100 &&
           screenRect.height - 70 < nativeEvent.getY() && nativeEvent.getY() < screenRect.height - 20) {
         System.err.println("clicked on exit button");
 //      if (externalMessages) {
