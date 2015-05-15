@@ -253,14 +253,13 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   }
 
 
+  // endDraw() needs to be overridden so that the endDraw() from
+  // PGraphicsJava2D is not inherited (it calls loadPixels).
+  // http://dev.processing.org/bugs/show_bug.cgi?id=1169
   public void endDraw() {
     // Also need to pop the matrix since the matrix doesn't reset on each run
     // http://dev.processing.org/bugs/show_bug.cgi?id=1227
     popMatrix();
-
-    // This needs to be overridden so that the endDraw() from PGraphicsJava2D
-    // is not inherited (it calls loadPixels).
-    // http://dev.processing.org/bugs/show_bug.cgi?id=1169
   }
 
 
