@@ -47,6 +47,22 @@ This is one of many unfortunate tradeoffs I'm trying to sort through as we try t
 The current source starts putting AWT (and Swing, if any) calls on the [EDT](https://docs.oracle.com/javase/tutorial/uiswing/concurrency/dispatch.html), per Oracle's statements in Java's documentation. Actual rendering in the default renderer happens off the EDT, but the EDT is used to blit the image to the screen (or resize windows, etc). Looking for more consistent cross-platform results by doing this.
 
 
+## OpenGL 
+
+During the alpha 6, 7, and 8 release process we did some juggling with what OpenGL library we should use. 
+
+The short version of how it played out (written 15 May 2015)
+* JOGL had some major bugs and development seemed to have stopped (summer/fall 2014)
+* @codeanticode had been trying out LWJGL2 to see how it fared (last fall 2014)
+* The LWJGL project has moved all their development effort to LWJGL3 (since then)
+* Andrés spent the week rewriting OpenGL to use LWJGL3
+* LWJGL3 is simply too unstable for us to use, would require major reworking of PApplet to remove *all* uses of AWT, and they seem to be still struggling with many fundamental issues (this week) 
+* Andrés went back to JOGL (last 48 hours) to find that many bugs had been fixed and development was continuing. 
+* For 3.0a8, we dropped LWJGL since JOGL is performing much better, and we're 99% sure that's the final decision for 3.0 (yesterday).
+
+LWJGL and JOGL are both great projects and we're thankful for all the work that they put in, and our own experience with Processing means that we couldn't be more sympathetic to the difficulty they face in maintaining their cross-platform, cross-chipset, cross-everything code. Like Processing, both projects are open source and created by volunteers who give their work away for free. We're enormously appreciative of their efforts.
+
+
 ## The Mess
 
 The rest of this document are my notes while I'm making changes.
