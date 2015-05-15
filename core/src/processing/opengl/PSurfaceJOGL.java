@@ -213,6 +213,7 @@ public class PSurfaceJOGL implements PSurface {
     // This example could be useful:
     // com.jogamp.opengl.test.junit.newt.mm.TestScreenMode01cNEWT
     if (fullScreen) {
+      window.setPosition(sketchX, sketchY);
       PApplet.hideMenuBar();
       if (spanDisplays) {
         window.setFullscreen(monitors);
