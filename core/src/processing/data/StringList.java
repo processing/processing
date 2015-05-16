@@ -44,6 +44,23 @@ public class StringList implements Iterable<String> {
   }
 
 
+  public StringList(Object... items) {
+    count = items.length;
+    data = new String[count];
+    int index = 0;
+    for (Object o : items) {
+//      // Not gonna go with null values staying that way because perhaps
+//      // the most common case here is to immediately call join() or similar.
+//      data[index++] = String.valueOf(o);
+      // Keep null values null (because join() will make non-null anyway)
+      if (o != null) {  // leave null values null
+        data[index] = o.toString();
+      }
+      index++;
+    }
+  }
+
+
   /**
    * Create from something iterable, for instance:
    * StringList list = new StringList(hashMap.keySet());
