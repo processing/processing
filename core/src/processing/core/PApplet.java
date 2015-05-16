@@ -24,12 +24,6 @@
 
 package processing.core;
 
-// used for setting bg colors and whatnot
-//import java.awt.Color;
-// Component is further up the chain than Canvas
-//import java.awt.Component;
-// use for the link() command (and maybe open()?)
-
 // these are used for various methods (url opening, file selection, etc)
 // how many more can we remove?
 import java.awt.Desktop;
@@ -41,9 +35,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-
-
-
 
 // used by loadImage() functions
 import javax.imageio.ImageIO;
