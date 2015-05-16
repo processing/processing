@@ -61,7 +61,8 @@ public class PSurfaceAWT extends PSurfaceNone {
 
 
   public PSurfaceAWT(PGraphics graphics) {
-    this.graphics = graphics;
+    //this.graphics = graphics;
+    super(graphics);
 
     if (checkRetina()) {
 //      System.out.println("retina in use");
