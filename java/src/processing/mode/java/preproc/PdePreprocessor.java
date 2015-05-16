@@ -203,6 +203,7 @@ public class PdePreprocessor {
 
   public String[] initSketchSize(String code, boolean sizeWarning) throws SketchException {
     String[] info = parseSketchSize(code, sizeWarning);
+    //PApplet.printArray(info);
     if (info != null) {
       sizeStatement = info[0];
       sketchWidth = info[1];
@@ -274,8 +275,8 @@ public class PdePreprocessor {
       //String[] matches = split on commas, but not commas inside quotes
 
       StringList args = breakCommas(contents[1]);
-      String width = args.get(0);
-      String height = args.get(1);
+      String width = args.get(0).trim();
+      String height = args.get(1).trim();
       String renderer = (args.size() >= 3) ? args.get(2) : null;
       String path = (args.size() >= 4) ? args.get(3) : null;
 

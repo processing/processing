@@ -47,6 +47,8 @@ public class PSurfaceNone implements PSurface {
   @Override
   public void initOffscreen(PApplet sketch) {
     this.sketch = sketch;
+
+    setSize(sketch.sketchWidth(), sketch.sketchHeight());
   }
 
 
@@ -59,7 +61,9 @@ public class PSurfaceNone implements PSurface {
   public void initFrame(PApplet sketch, int backgroundColor,
                         int deviceIndex, boolean fullScreen,
                         boolean spanDisplays) {
-    this.sketch = sketch;
+    //this.sketch = sketch;
+    throw new IllegalStateException("initFrame() not available with " +
+                                    getClass().getSimpleName());
   }
 
 
