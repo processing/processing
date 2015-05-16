@@ -10,45 +10,33 @@ X move svgz handling to PApplet
 X   remove objz handling
 X Single Frame (No Screen Display) PDF broken
 X   https://github.com/processing/processing/issues/3280
+o remove setTitle() etc methods from PSurface, just use the ones from Frame?
+o   and with that, encourage the use of the dummy frame object in renderers
+X   dummy moved into PApplet itself
 
 opengl
+X OpenGL sketches work only after running a sketch with default renderer
+X   https://github.com/processing/processing/issues/3218
+X static mode - no setup() / draw() - broken in OpenGL
+X   https://github.com/processing/processing/issues/3163
 X deal with some performance issues
 X   https://github.com/processing/processing/issues/3210
 X Can't run sketches with offscreen PGraphics
 X   https://github.com/processing/processing/issues/3259
-X static mode - no setup() / draw() - broken in OpenGL
-X   https://github.com/processing/processing/issues/3163
+o Merge glw code into the OpenGL library
+o   https://github.com/processing/processing/issues/3284
 
 javafx
 X implement blendMode
 X   https://github.com/processing/processing/issues/3275
 X hide the smooth() warnings
-_ loadPixels() (also 2x)
-_ updatePixels()
-_ save() and saveFrame()
-_ get() and set()
-
-javafx
-_ clip/noClip
-_   https://github.com/processing/processing/issues/3274
-_ getNative() is problematic because it gives back a BufferedImage
-_   move loadImage() into PGraphics, with AWT version the default?
-_ don't remove javafx stuff from Windows build
-_ implement frameRate()
-_ implement external messages (moving the window)
-
-_ Merge glw code into the OpenGL library
-_   https://github.com/processing/processing/issues/3284
-_ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
-_   shouldn't be static, run it from the renderer, that's point of createXxx()
-_ when did setPath() sneak into PShape? API is nothing like anything else
-_ public createShape() method that takes another shape as param?
-_   should just be the constructor doing this, or copy()
 
 
 high priority
-_ OpenGL sketches work only after running a sketch with default renderer
-_   https://github.com/processing/processing/issues/3218
+_ size() is fairly broken for PDF and SVG or whatever
+_   make size(300, 300, PDF) without implementing sketchXxx() methods work
+_   this shouldn't be a huge thing, we're not going to set the window visible
+_   until after setup() completes anyway (otherwise a delay w/ blank window)
 _ sketch window is not placed at correct location when running a second time
 _   https://github.com/processing/processing/issues/3125
 _ y location of frame might be negative, but that might be ok 
@@ -61,6 +49,23 @@ _ closing a sketch window manually (not hitting Stop) not killing sketch
 _   at least with the Java2D renderer
 
 
+javafx
+_ displayWidth, displayHeight, full screen, display number
+_ present mode (stage in the center, clear the rest of the screen)
+_ createGraphics() should probably create PGraphicsJava2D
+_ loadPixels() (also 2x)
+_ updatePixels()
+_ save() and saveFrame()
+_ get() and set()
+_ clip/noClip
+_   https://github.com/processing/processing/issues/3274
+_ getNative() is problematic because it gives back a BufferedImage
+_   move loadImage() into PGraphics, with AWT version the default?
+_ don't remove javafx stuff from Windows build
+_ implement frameRate()
+_ implement external messages (moving the window)
+
+
 _ Fullscreen window on second monitor without using present mode
 _   https://github.com/processing/processing/issues/3271
 _ need reference update for createShape()
@@ -70,8 +75,6 @@ _   createShape(ELLIPSE) is x/y/w/h, and optionally adds a mode param
 
 
 rendering/performance/surface
-_ remove setTitle() etc methods from PSurface, just use the ones from Frame?
-_   and with that, encourage the use of the dummy frame object in renderers
 o destroy() removed, but bring back? is that better than dispose()?
 _   destroy() only called dispose(), so no difference
 _   Python Mode has a hook for when it's called
@@ -101,6 +104,11 @@ _ exitCalled() and exitActual made public by Andres, breaks Python
 _   also not API we want to expose, so sort this out
 _ get code into makeGraphics() to handle bad path settings for LWJGL
 _   right now it has a bunch of JOGL-specific code
+_ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
+_   shouldn't be static, run it from the renderer, that's point of createXxx()
+_ when did setPath() sneak into PShape? API is nothing like anything else
+_ public createShape() method that takes another shape as param?
+_   should just be the constructor doing this, or copy()
 
 
 applet/sketch

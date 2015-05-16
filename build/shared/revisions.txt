@@ -1,3 +1,126 @@
+PROCESSING 3.0a8 (REV 0235) - XX May 2015
+
+Stabilizing the mess from 3.0a6 and 3.0a7. Read the release notes for
+those versions (below) if you haven't already.
+
+Lots of work on FX2D renderer, likely to be the default for 3.0.
+Not quite ready for prime time, however. 
+
+
+[ fixes ]
+
++ Command line "processing-java" was broken
+  https://github.com/processing/processing/issues/3224
+
++ Sketchbook window requires restart of Processing before updating
+  after sketchbook location change.
+  https://github.com/processing/processing/issues/3214
+  
++ Replace & Find was reading "Find & Replace" 
+  https://github.com/processing/processing/issues/3247
+  
++ "One file added to sketch" message when two files added
+
++ pop() was not implemented correctly in String/Int/FloatList
+
++ Errors in file name case differences not correctly reported
+  https://github.com/processing/processing/issues/3235
+
++ Single Frame (no screen display) PDF broken
+  https://github.com/processing/processing/issues/3280
+
+
+[ changes ]
+
++ Replace Tweak Mode ColorSelector with JComponent version
+  https://github.com/processing/processing/issues/3209
+
++ Fairly major rewrite of createShape(), shouldn't affect anything,
+  but keep an eye out for regressions.
+
++ Add new String/Int/FloatDict constructors that take an array for
+  useful static/<init> initialization
+
++ Move svgz handling to PApplet, remove objz handling
+
++ Implement blendMode in FX2D
+  https://github.com/processing/processing/issues/3275
+  
+
+[ debugger ]
+
++ Debugger "String is null" error when hitting breakpoint
+  https://github.com/processing/processing/issues/3265
+
++ Change "method" to "function" in a few error messages
+  https://github.com/processing/processing/issues/3225
+  
++ Error message for incorrect function arguments is wonky
+  https://github.com/processing/processing/issues/3268
+  
++ String concatenation mistakes produce odd error messages
+  https://github.com/processing/processing/issues/3253
+
+
+[ contributed fixes ]
+
++ Window size not passing into Tweak Mode
+  https://github.com/processing/processing/issues/3208
+  https://github.com/processing/processing/pull/3227
+  
++ Keep the tab menu at the right-hand side
+  https://github.com/processing/processing/pull/3236
+
++ "Your sketch has been modified externally..." appears erroneously
+  https://github.com/processing/processing/issues/3222
+
++ Prevent breakpoints from causing a reload prompt
+  https://github.com/processing/processing/pull/3263
+  
++ Added buffer to file detection time
+  https://github.com/processing/processing/pull/3262
+
+
+[ akarshit contributions ]
+
++ Preferences window fixes for Linux
+  https://github.com/processing/processing/pull/3232
+  https://github.com/processing/processing/issues/3231
+  
++ Clear error message in Contribution Manager after retrying
+  https://github.com/processing/processing/pull/3240
+  https://github.com/processing/processing/issues/3239
+  
++ Add SOCKS proxy support to the PDE
+  https://github.com/processing/processing/issues/2643
+  https://github.com/processing/processing/pull/3260
+  
++ Use system proxy by default
+  https://github.com/processing/processing/issues/1476
+  https://github.com/processing/processing/pull/3251
+
+
+[ opengl by andres ]
+
++ Moved back to JOGL instead of LWJGL for OpenGL
+  https://github.com/processing/processing/blob/master/core/README.md
+
++ OpenGL sketches work only after running a sketch with default renderer
+  https://github.com/processing/processing/issues/3218
+  
++ static mode - no setup() / draw() - broken in OpenGL
+  https://github.com/processing/processing/issues/3163
+  
++ Deal with some performance issues
+  https://github.com/processing/processing/issues/3210
+  
++ Can't run sketches with offscreen PGraphics
+  https://github.com/processing/processing/issues/3259
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 3.0a7 (REV 0234) - 26 April 2015
 
 Read the notes in 3.0a6 for major changes! This is only a minor bug fix
