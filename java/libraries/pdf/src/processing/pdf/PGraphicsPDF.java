@@ -91,15 +91,15 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   }
 
 
-  /**
-   * all the init stuff happens in here, in case someone calls size()
-   * along the way and wants to hork things up.
-   */
-  protected void allocate() {
-    // can't do anything here, because this will be called by the
-    // superclass PGraphics, and the file/path object won't be set yet
-    // (since super() called right at the beginning of the constructor)
-  }
+//  /**
+//   * all the init stuff happens in here, in case someone calls size()
+//   * along the way and wants to hork things up.
+//   */
+//  protected void allocate() {
+//    // can't do anything here, because this will be called by the
+//    // superclass PGraphics, and the file/path object won't be set yet
+//    // (since super() called right at the beginning of the constructor)
+//  }
 
 
   @Override
