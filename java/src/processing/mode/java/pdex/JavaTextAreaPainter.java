@@ -104,7 +104,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
       public void mouseClicked(MouseEvent evt) {
         if (!getEditor().hasJavaTabs()) { // Ctrl + Click disabled for java tabs
           if (evt.getButton() == MouseEvent.BUTTON1) {
-            if (evt.isControlDown() || evt.isMetaDown()) {
+            if ((evt.isControlDown() && !Base.isMacOS()) || evt.isMetaDown()) {
               handleCtrlClick(evt);
             }
           }
