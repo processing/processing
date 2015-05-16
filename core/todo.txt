@@ -8,8 +8,8 @@ X errors in case changes not correctly reported
 X   https://github.com/processing/processing/issues/3235
 X move svgz handling to PApplet
 X   remove objz handling
-_ Single Frame (No Screen Display) PDF broken
-_   https://github.com/processing/processing/issues/3280
+X Single Frame (No Screen Display) PDF broken
+X   https://github.com/processing/processing/issues/3280
 
 opengl
 X deal with some performance issues
