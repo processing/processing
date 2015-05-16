@@ -6,6 +6,18 @@ X   improves bad api design with the static createShapeImpl() methods
 X add new String/Int/FloatDict constructors for easier initialization
 X errors in case changes not correctly reported
 X   https://github.com/processing/processing/issues/3235
+X move svgz handling to PApplet
+X   remove objz handling
+_ Single Frame (No Screen Display) PDF broken
+_   https://github.com/processing/processing/issues/3280
+
+opengl
+X deal with some performance issues
+X   https://github.com/processing/processing/issues/3210
+X Can't run sketches with offscreen PGraphics
+X   https://github.com/processing/processing/issues/3259
+X static mode - no setup() / draw() - broken in OpenGL
+X   https://github.com/processing/processing/issues/3163
 
 javafx
 X implement blendMode
@@ -16,18 +28,6 @@ _ updatePixels()
 _ save() and saveFrame()
 _ get() and set()
 
-_ Single Frame (No Screen Display) PDF broken
-_   https://github.com/processing/processing/issues/3280
-_ Fullscreen window on second monitor without using present mode
-_   https://github.com/processing/processing/issues/3271
-_ move svgz handling to PApplet
-_   remove objz handling
-
-_ need reference update for createShape()
-_   createShape(RECT) uses x/y/w/h, and optionally adds a mode param
-_     and optionally the corner radii
-_   createShape(ELLIPSE) is x/y/w/h, and optionally adds a mode param
-
 javafx
 _ clip/noClip
 _   https://github.com/processing/processing/issues/3274
@@ -37,11 +37,6 @@ _ don't remove javafx stuff from Windows build
 _ implement frameRate()
 _ implement external messages (moving the window)
 
-opengl
-X deal with some performance issues
-X   https://github.com/processing/processing/issues/3210
-X Can't run sketches with offscreen PGraphics
-X   https://github.com/processing/processing/issues/3259
 _ Merge glw code into the OpenGL library
 _   https://github.com/processing/processing/issues/3284
 _ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
@@ -54,8 +49,6 @@ _   should just be the constructor doing this, or copy()
 high priority
 _ OpenGL sketches work only after running a sketch with default renderer
 _   https://github.com/processing/processing/issues/3218
-_ static mode - no setup() / draw() - broken in OpenGL
-_   https://github.com/processing/processing/issues/3163
 _ sketch window is not placed at correct location when running a second time
 _   https://github.com/processing/processing/issues/3125
 _ y location of frame might be negative, but that might be ok 
@@ -66,6 +59,14 @@ _   need to change to iterate through display rectangles
 _ tweak mode ColorSelector is broken (uses getComponent())
 _ closing a sketch window manually (not hitting Stop) not killing sketch
 _   at least with the Java2D renderer
+
+
+_ Fullscreen window on second monitor without using present mode
+_   https://github.com/processing/processing/issues/3271
+_ need reference update for createShape()
+_   createShape(RECT) uses x/y/w/h, and optionally adds a mode param
+_     and optionally the corner radii
+_   createShape(ELLIPSE) is x/y/w/h, and optionally adds a mode param
 
 
 rendering/performance/surface
