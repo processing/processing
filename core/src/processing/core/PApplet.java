@@ -278,7 +278,7 @@ public class PApplet implements PConstants {
    * @see PApplet#height
    * @see PApplet#size(int, int)
    */
-  public int width;
+  public int width = DEFAULT_WIDTH;
 
   /**
    * ( begin auto-generated from height.xml )
@@ -294,7 +294,7 @@ public class PApplet implements PConstants {
    * @see PApplet#width
    * @see PApplet#size(int, int)
    */
-  public int height;
+  public int height = DEFAULT_HEIGHT;
 
   /**
    * ( begin auto-generated from mouseX.xml )
@@ -801,6 +801,21 @@ public class PApplet implements PConstants {
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  String renderer = JAVA2D;
+  int quality = 2;
+  boolean fullScreen;
+  boolean spanScreens;
+  String outputPath;
+  OutputStream outputStream;
+
+
+  public void settings() {
+  }
+
+
   // Named quality instead of smooth to avoid people trying to set (or get)
   // the current smooth level this way. Also that smooth(number) isn't really
   // public or well-known API. It's specific to the capabilities of the
@@ -809,43 +824,54 @@ public class PApplet implements PConstants {
   // true/false for whether fill was enabled, getFillColor() would return the
   // color itself. Or at least that's what I can recall at the moment. [fry]
   public int sketchQuality() {
-    return 2;
+    //return 2;
+    return quality;
   }
 
 
   public int sketchWidth() {
-    return DEFAULT_WIDTH;
+    //return DEFAULT_WIDTH;
+    return width;
   }
 
 
   public int sketchHeight() {
-    return DEFAULT_HEIGHT;
+    //return DEFAULT_HEIGHT;
+    return height;
   }
 
 
   public String sketchRenderer() {
-    return JAVA2D;
+    //return JAVA2D;
+    return renderer;
   }
 
 
   public boolean sketchFullScreen() {
-    return false;
+    //return false;
+    return fullScreen;
   }
 
 
   public boolean sketchSpanScreens() {
-    return false;
+    //return false;
+    return spanScreens;
   }
 
 
   public String sketchOutputPath() {
-    return null;
+    //return null;
+    return outputPath;
   }
 
 
   public OutputStream sketchOutputStream() {
-    return null;
+    //return null;
+    return outputStream;
   }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   public PGraphics getGraphics() {
@@ -9648,7 +9674,7 @@ public class PApplet implements PConstants {
       surface.setTitle(getClass().getName());
       //frame.setTitle(getClass().getName());
     } else {
-      surface.initOffscreen(this);  // for PDF, PSurfaceNone, and friends
+      surface.initOffscreen(this);  // for PDF/PSurfaceNone and friends
     }
 
     init();
