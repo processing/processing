@@ -182,6 +182,8 @@ _   sound is not yet supported on Windows
 _ clean out the repo
 _   https://github.com/processing/processing/issues/1898
 _ search the source for 'applet' references (i.e. SVG docs)
+_ update list of option JRE files
+_   https://github.com/processing/processing/issues/3288
 
 
 sketchbook

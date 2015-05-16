@@ -85,6 +85,10 @@
   </condition>
   -->
 
+  <!-- These lists haven't been updated since Java 6. The new list:
+       http://www.oracle.com/technetwork/java/javase/jre-8-readme-2095710.html
+       Please help: https://github.com/processing/processing/issues/3288 -->
+
   <fileset dir="windows/work/java" id="jre-optional-windows">
     <include name="lib/ext/dnsns.jar" />
 
@@ -129,14 +133,9 @@
 
   <!-- Unused JavaFX files that can be removed from the JRE on Windows 
        and Linux. On Mac OS X, this is removed by the appbundler task.
-       www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html -->
-
-  <!-- There might be others, based on what was in the Java 6 docs, 
-       but that info isn't part of the Java 7 instructions.
-       http://www.oracle.com/technetwork/java/javase/jrereadme-182762.html -->
-
-  <!-- New list for Java 8, not updated yet here, nor in appbundler on OS X
-       http://www.oracle.com/technetwork/java/javase/jre-8-readme-2095710.html -->
+       www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
+       However, we're now looking into using JavaFX as the default 2D
+       renderer for 3.0. So in 3.0a8, we're no longer removing javafx. -->
 
   <fileset dir="${platform}/work/java" id="javafx-basics">
     <include name="THIRDPARTYLICENSEREADME-JAVAFX.txt" />
@@ -772,9 +771,11 @@
     <delete dir="linux/jre${jdk.esoteric}" />
 
     <!-- Remove unused JRE bloat. -->
-    <delete failonerror="true"> 
+    <delete failonerror="true">
+      <!--
       <fileset refid="javafx-basics" />
       <fileset refid="javafx-linux-${sun.arch.data.model}" />
+      -->
       <fileset refid="jre-optional-linux" />
     </delete>
 
@@ -999,10 +1000,12 @@
     <move file="windows/work/jre${jdk.esoteric}" 
           tofile="windows/work/java" />
 
-    <!-- Remove space-wasting JavaFX garbage. -->
+    <!-- Remove unused JRE bloat. -->
     <delete failonerror="true">
+      <!--
       <fileset refid="javafx-basics" />
       <fileset refid="javafx-windows" />
+      -->
       <fileset refid="jre-optional-windows" />
     </delete>
 
