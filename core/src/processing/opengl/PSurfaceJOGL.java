@@ -227,7 +227,7 @@ public class PSurfaceJOGL implements PSurface {
        // Retina
        reqSurfacePixelScale = new float[] { ScalableSurface.AUTOMAX_PIXELSCALE,
                                             ScalableSurface.AUTOMAX_PIXELSCALE };
-//       pgl.pixel_scale = 2;
+       pgl.pixel_scale = 2;
     } else {
       // Non-retina
       reqSurfacePixelScale = new float[] { ScalableSurface.IDENTITY_PIXELSCALE,
@@ -343,10 +343,10 @@ public class PSurfaceJOGL implements PSurface {
 
     int w = sketchWidth;
     int h = sketchHeight;
-    if (graphics.is2X()) {
-      w /= 2;
-      h /= 2;
-    }
+//    if (graphics.is2X()) {
+//      w /= 2;
+//      h /= 2;
+//    }
 
     window.setPosition(sketchX + screenRect.x + (screenRect.width - w) / 2,
                        sketchY + screenRect.y + (screenRect.height - h) / 2);
@@ -361,9 +361,6 @@ public class PSurfaceJOGL implements PSurface {
 
     if (location != null) {
       System.err.println("place window at " + location[0] + ", " + location[1]);
-      // a specific location was received from the Runner
-      // (applet has been run more than once, user placed window)
-//      frame.setLocation(location[0], location[1]);
       window.setPosition(location[0], location[1]);
 
     } else if (editorLocation != null) {
@@ -403,9 +400,6 @@ public class PSurfaceJOGL implements PSurface {
 //    canvas.setBounds((contentW - sketchWidth)/2,
 //                     (contentH - sketchHeight)/2,
 //                     sketchWidth, sketchHeight);
-
-
-
   }
 
   boolean presentMode = false;
@@ -564,11 +558,12 @@ public class PSurfaceJOGL implements PSurface {
 
       System.out.println("reshape: " + w + ", " + h);
       pgl.getGL(drawable);
-      if (!graphics.is2X() && 1 < hasSurfacePixelScale[0]) {
-        setSize(w/2, h/2);
-      } else {
-        setSize(w, h);
-      }
+//      if (!graphics.is2X() && 1 < hasSurfacePixelScale[0]) {
+//        setSize(w/2, h/2);
+//      } else {
+//        setSize(w, h);
+//      }
+      setSize((int)(w/hasSurfacePixelScale[0]), (int)(h/hasSurfacePixelScale[1]));
     }
   }
 
@@ -713,12 +708,12 @@ public class PSurfaceJOGL implements PSurface {
     }
 
     final float[] hasSurfacePixelScale = window.getCurrentSurfaceScale(new float[2]);
-    int x = nativeEvent.getX() - (int)offsetX;
-    int y = nativeEvent.getY() - (int)offsetY;
-    if (!graphics.is2X() && 1 < hasSurfacePixelScale[0]) {
-      x /= 2;
-      y /= 2;
-    }
+    int x = (int)((nativeEvent.getX() - (int)offsetX) / hasSurfacePixelScale[0]);
+    int y = (int)((nativeEvent.getY() - (int)offsetY) / hasSurfacePixelScale[1]);
+//    if (!graphics.is2X() && 1 < hasSurfacePixelScale[0]) {
+//      x /= 2;
+//      y /= 2;
+//    }
 
     MouseEvent me = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
                                    peAction, peModifiers,
