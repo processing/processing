@@ -32,6 +32,8 @@ Not quite ready for prime time, however.
 
 [ changes ]
 
++ Added SVG Export library (works like PDF Export)
+
 + Replace Tweak Mode ColorSelector with JComponent version
   https://github.com/processing/processing/issues/3209
 

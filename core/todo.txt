@@ -13,6 +13,7 @@ X   https://github.com/processing/processing/issues/3280
 o remove setTitle() etc methods from PSurface, just use the ones from Frame?
 o   and with that, encourage the use of the dummy frame object in renderers
 X   dummy moved into PApplet itself
+X add SVG export library
 
 opengl
 X OpenGL sketches work only after running a sketch with default renderer
@@ -53,6 +54,8 @@ javafx
 _ displayWidth, displayHeight, full screen, display number
 _ present mode (stage in the center, clear the rest of the screen)
 _ createGraphics() should probably create PGraphicsJava2D
+_   or is Canvas specific to the PGraphics, and we get another Context2D?
+_   http://docs.oracle.com/javafx/2/api/javafx/scene/canvas/Canvas.html
 _ loadPixels() (also 2x)
 _ updatePixels()
 _ save() and saveFrame()
