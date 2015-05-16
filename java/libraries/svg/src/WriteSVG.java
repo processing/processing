@@ -1,5 +1,8 @@
 import processing.core.PApplet;
 
+
+// TODO This is code for testing; remove before final release
+
 public class WriteSVG extends PApplet {
 
   public String sketchRenderer() {
