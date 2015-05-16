@@ -36,6 +36,9 @@ import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
+
+
+
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -804,6 +807,8 @@ public class PApplet implements PConstants {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  boolean insideSettings;
+
   String renderer = JAVA2D;
   int quality = 2;
   boolean fullScreen;
@@ -812,20 +817,32 @@ public class PApplet implements PConstants {
   OutputStream outputStream;
 
 
-  public void settings() {
+  boolean insideSettings(Object... args) {
+    if (insideSettings) {
+      return true;
+    }
+    final String url = "https://processing.org/reference/size_.html";
+    if (!external) {  // post a warning for users of Eclipse and other IDEs
+      StringList argList = new StringList(args);
+      System.err.println("When not using the PDE, size() can only be used inside settings().");
+      System.err.println("Remove the size() method from setup(), and add the following:");
+      System.err.println("public void settings() {");
+      System.err.println("  size(" + argList.join(", ") + ");");
+      System.err.println("}");
+    }
+    throw new IllegalStateException("size() cannot be used here, see " + url);
   }
 
 
-  // Named quality instead of smooth to avoid people trying to set (or get)
-  // the current smooth level this way. Also that smooth(number) isn't really
-  // public or well-known API. It's specific to the capabilities of the
-  // rendering surface, and somewhat independent of whether the sketch is
-  // smoothing at any given time. It's also a bit like getFill() would return
-  // true/false for whether fill was enabled, getFillColor() would return the
-  // color itself. Or at least that's what I can recall at the moment. [fry]
-  public int sketchQuality() {
-    //return 2;
-    return quality;
+  void handleSettings() {
+    insideSettings = true;
+    settings();
+    insideSettings = false;
+  }
+
+
+  /** Override this method to call size() when not using the PDE. */
+  public void settings() {
   }
 
 
@@ -844,6 +861,19 @@ public class PApplet implements PConstants {
   public String sketchRenderer() {
     //return JAVA2D;
     return renderer;
+  }
+
+
+  // Named quality instead of smooth to avoid people trying to set (or get)
+  // the current smooth level this way. Also that smooth(number) isn't really
+  // public or well-known API. It's specific to the capabilities of the
+  // rendering surface, and somewhat independent of whether the sketch is
+  // smoothing at any given time. It's also a bit like getFill() would return
+  // true/false for whether fill was enabled, getFillColor() would return the
+  // color itself. Or at least that's what I can recall at the moment. [fry]
+  public int sketchQuality() {
+    //return 2;
+    return quality;
   }
 
 
@@ -1497,29 +1527,47 @@ public class PApplet implements PConstants {
    * use the previous renderer and simply resize it.
    *
    * @webref environment
-   * @param w width of the display window in units of pixels
-   * @param h height of the display window in units of pixels
+   * @param width width of the display window in units of pixels
+   * @param height height of the display window in units of pixels
    * @see PApplet#width
    * @see PApplet#height
    */
-  public void size(int w, int h) {
+  public void size(int width, int height) {
     //size(w, h, JAVA2D, null);
-    size(w, h, sketchRenderer(), null);
+    //size(w, h, sketchRenderer(), null);
+    if (insideSettings(width, height)) {
+      this.width = width;
+      this.height = height;
+//    } else if (external) {
+//      throw new IllegalStateException("size() cannot be called here");
+//    } else {
+//      System.err.println("Because you're running outside the PDE, "
+    }
   }
 
 
-  /**
-   * @param renderer Either P2D, P3D, or PDF
-   */
-  public void size(int w, int h, String renderer) {
-    size(w, h, renderer, null);
+  public void size(int width, int height, String renderer) {
+    //size(w, h, renderer, null);
+    if (insideSettings(width, height, renderer)) {
+      this.width = width;
+      this.height = height;
+      this.renderer = renderer;
+    }
   }
 
 
   /**
    * @nowebref
    */
-  public void size(final int w, final int h, String renderer, String path) {
+  public void size(int width, int height, String renderer, String path) {
+    if (insideSettings(width, height, renderer, path)) {
+      this.width = width;
+      this.height = height;
+      this.renderer = renderer;
+      this.outputPath = path;
+    }
+
+    /*
     if (!renderer.equals(sketchRenderer())) {
       if (external) {
         // The PDE should have parsed it, but something still went wrong
@@ -1536,6 +1584,8 @@ public class PApplet implements PConstants {
         throw new RuntimeException("The sketchRenderer() method is not implemented.");
       }
     }
+    */
+
     // size() shouldn't actually do anything here [3.0a8]
 //    surface.setSize(w, h);
     // this won't be absolute, which will piss off PDF [3.0a8]
@@ -9447,7 +9497,7 @@ public class PApplet implements PConstants {
    * when messing with AWT/Swing components. And boy, do we mess with 'em.
    */
   static protected void runSketchEDT(final String[] args,
-                                  final PApplet constructedApplet) {
+                                  final PApplet constructedSketch) {
     // Supposed to help with flicker, but no effect on OS X.
     // TODO IIRC this helped on Windows, but need to double check.
     System.setProperty("sun.awt.noerasebackground", "true");
@@ -9546,66 +9596,41 @@ public class PApplet implements PConstants {
     // This )*)(*@#$ Apple bulls*t don't work no matter where you put it
     // (static method of the class, at the top of main, wherever)
 
-    final PApplet applet;
-    if (constructedApplet != null) {
-      applet = constructedApplet;
+    final PApplet sketch;
+    if (constructedSketch != null) {
+      sketch = constructedSketch;
     } else {
       try {
         Class<?> c =
           Thread.currentThread().getContextClassLoader().loadClass(name);
-        applet = (PApplet) c.newInstance();
+        sketch = (PApplet) c.newInstance();
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
     }
 
-//    try {
-//      String renderer = applet.sketchRenderer();
-//      Class<?> rendererClass =
-//        Thread.currentThread().getContextClassLoader().loadClass(renderer);
-//      Method surfaceMethod = rendererClass.getMethod("createSurface");
-//      PSurface surface = (PSurface) surfaceMethod.invoke(null, new Object[] { });
-//    } catch (Exception e) {
-//      throw new RuntimeException(e);
-//    }
+    sketch.handleSettings();
 
     // A handful of things that need to be set before init/start.
-    applet.sketchPath = folder;
+    sketch.sketchPath = folder;
     // If the applet doesn't call for full screen, but the command line does,
     // enable it. Conversely, if the command line does not, don't disable it.
     // Query the applet to see if it wants to be full screen all the time.
-    fullScreen |= applet.sketchFullScreen();
+    fullScreen |= sketch.sketchFullScreen();
     // If spanning screens, that means we're also full screen.
-    fullScreen |= applet.sketchSpanScreens();
+    fullScreen |= sketch.sketchSpanScreens();
     // pass everything after the class name in as args to the sketch itself
     // (fixed for 2.0a5, this was just subsetting by 1, which didn't skip opts)
-    applet.args = PApplet.subset(args, argIndex + 1);
-    applet.external = external;
-
-    // For backwards compatability, initFrame() returns an AWT Frame object,
-    // whether or not one is actually used. There's lots of code that uses
-    // frame.setTitle() and frame.setResizable() out there...
-//    Frame frame =
-//      surface.initFrame(applet, backgroundColor,
-//                        displayIndex, present, spanDisplays);
+    sketch.args = PApplet.subset(args, argIndex + 1);
+    sketch.external = external;
 
     PSurface surface =
-      applet.initSurface(backgroundColor, displayIndex, fullScreen, spanDisplays);
+      sketch.initSurface(backgroundColor, displayIndex, fullScreen, spanDisplays);
 
-//    applet.frame = frame;
-//    frame.setTitle(name);
-//
-//    applet.init();
-//    // TODO this used to be inside init()... does it need to stay there for
-//    // other external things like Python or embedding in Java apps?
-//    surface.startThread();
-////    applet.start();
-//
-//    // Wait until the applet has figured out its width.
-//    // In a static mode app, this will be after setup() has completed,
-//    // and the empty draw() has set "finished" to true.
-//    // TODO make sure this won't hang if the applet has an exception.
-    while (applet.defaultSize && !applet.finished) {
+    // Wait until the applet has figured out its width. In a static mode app,
+    // everything happens inside setup(), so this will be after setup() has
+    // completed, and the empty draw() has set "finished" to true.
+    while (sketch.defaultSize && !sketch.finished) {
       //System.out.println("default size");
       try {
         Thread.sleep(5);
@@ -9616,7 +9641,6 @@ public class PApplet implements PConstants {
     }
 
     if (fullScreen) {
-      //surface.placeFullScreen(hideStop);
       if (hideStop) {
         stopColor = 0;  // they'll get the hint
       }
@@ -9633,17 +9657,9 @@ public class PApplet implements PConstants {
 
   protected PSurface initSurface(int backgroundColor, int displayIndex,
                                  boolean present, boolean spanDisplays) {
-//    try {
-//      String renderer = applet.sketchRenderer();
-//      Class<?> rendererClass =
-//        Thread.currentThread().getContextClassLoader().loadClass(renderer);
-//      Method surfaceMethod = rendererClass.getMethod("createSurface");
-//      PSurface surface = (PSurface) surfaceMethod.invoke(null, new Object[] { });
-//    } catch (Exception e) {
-//      throw new RuntimeException(e);
-//    }
     g = createPrimaryGraphics();
     surface = g.createSurface();
+
     if (g.displayable()) {
       frame = new Frame() {
         @Override
@@ -9672,41 +9688,12 @@ public class PApplet implements PConstants {
 
       surface.initFrame(this, backgroundColor, displayIndex, present, spanDisplays);
       surface.setTitle(getClass().getName());
-      //frame.setTitle(getClass().getName());
+
     } else {
       surface.initOffscreen(this);  // for PDF/PSurfaceNone and friends
     }
 
     init();
-
-    // TODO this used to be inside init()... does it need to stay there for
-    // other external things like Python or embedding in Java apps?
-    //surface.startThread();
-    // moving it to init() 141114
-    //applet.start();
-
-    // Removing this for 3.0a6. sketchWidth/Height() methods should give us
-    // good values for most cases, and removes the hackery seen here.
-    // TODO May need to keep since setup() may take a while, so why not have
-    //      it first render offscreen before showing.
-    /*
-    // Wait until the applet has figured out its width.
-    // In a static mode app, this will be after setup() has completed,
-    // and the empty draw() has set "finished" to true.
-    // TODO make sure this won't hang if the applet has an exception.
-    while (defaultSize && !finished) {
-//      System.out.println("default size");
-      try {
-        Thread.sleep(5);
-
-      } catch (InterruptedException e) {
-        //System.out.println("interrupt");
-      }
-    }
-    */
-
-//    System.out.println("out of default size loop, " + width + " " + height);
-    // convenience to avoid another 'get' from the static main() method
     return surface;
   }
 
