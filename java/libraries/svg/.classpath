@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="library/batik-awt-util-1.8.jar"/>
+	<classpathentry kind="lib" path="library/batik-dom-1.8.jar"/>
+	<classpathentry kind="lib" path="library/batik-ext-1.8.jar"/>
+	<classpathentry kind="lib" path="library/batik-svggen-1.8.jar"/>
+	<classpathentry kind="lib" path="library/batik-util-1.8.jar"/>
+	<classpathentry kind="lib" path="library/batik-xml-1.8.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/processing-core"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
