@@ -50,6 +50,14 @@ Actual rendering in the default renderer happens off the EDT, but the EDT is use
 
 ## OpenGL 
 
+And now, for something completely different.
+
+### Changes from 2.x
+
+Any code that uses `javax.media.opengl` in imports should replace that `com.jogamp.opengl`. I guess the JOGL folks are fully on their own w/o Oracle/Sun support. 
+
+### JOGL vs LWJGL
+
 During the alpha 6, 7, and 8 release process we did some juggling with what OpenGL library we should use. 
 
 The short version of how it played out (written 15 May 2015)
