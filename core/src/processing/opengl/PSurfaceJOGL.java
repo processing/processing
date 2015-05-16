@@ -62,6 +62,7 @@ public class PSurfaceJOGL implements PSurface {
 
   NewtCanvasAWT canvas;
 
+  float[] hasSurfacePixelScale = {0, 0};
 
   public PSurfaceJOGL(PGraphics graphics) {
     this.graphics = graphics;
@@ -97,14 +98,13 @@ public class PSurfaceJOGL implements PSurface {
     ArrayList<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
     for (int i = 0; i < screen.getMonitorDevices().size(); i++) {
       MonitorDevice monitor = screen.getMonitorDevices().get(i);
-      System.out.println("Monitor " + monitor.getId() + " ************");
-      System.out.println(monitor.toString());
-      System.out.println(monitor.getViewportInWindowUnits());
-      System.out.println(monitor.getViewport());
-
+//      System.out.println("Monitor " + monitor.getId() + " ************");
+//      System.out.println(monitor.toString());
+//      System.out.println(monitor.getViewportInWindowUnits());
+//      System.out.println(monitor.getViewport());
       monitors.add(monitor);
     }
-    System.out.println("*******************************");
+//    System.out.println("*******************************");
 
     if (deviceIndex >= 0) {  // if -1, use the default device
       if (deviceIndex < monitors.size()) {
@@ -161,7 +161,7 @@ public class PSurfaceJOGL implements PSurface {
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
     pgl.capabilities = caps;
-    System.err.println("0. create window");
+//    System.err.println("0. create window");
     window = GLWindow.create(screen, caps);
 
     sketchWidth = sketch.sketchWidth();
@@ -173,8 +173,8 @@ public class PSurfaceJOGL implements PSurface {
     sketchX = displayDevice.getViewportInWindowUnits().getX();
     sketchY = displayDevice.getViewportInWindowUnits().getY();
 
-    int screenWidth = screen.getWidth();
-    int screenHeight = screen.getHeight();
+//    int screenWidth = screen.getWidth();
+//    int screenHeight = screen.getHeight();
 
     screenRect = spanDisplays ? new Rectangle(0, 0, screen.getWidth(), screen.getHeight()) :
                                 new Rectangle(0, 0, displayDevice.getViewportInWindowUnits().getWidth(),
@@ -205,10 +205,9 @@ public class PSurfaceJOGL implements PSurface {
     sketch.height = sketch.sketchHeight();
     graphics.setSize(sketch.width, sketch.height);
 
-
-    System.out.println("deviceIndex: " + deviceIndex);
-    System.out.println(displayDevice);
-    System.out.println("Screen res " + screenWidth + "x" + screenHeight);
+//    System.out.println("deviceIndex: " + deviceIndex);
+//    System.out.println(displayDevice);
+//    System.out.println("Screen res " + screenWidth + "x" + screenHeight);
 
     // This example could be useful:
     // com.jogamp.opengl.test.junit.newt.mm.TestScreenMode01cNEWT
@@ -246,9 +245,7 @@ public class PSurfaceJOGL implements PSurface {
     DrawListener drawlistener = new DrawListener();
     window.addGLEventListener(drawlistener);
 
-
-
-    System.err.println("1. create animator");
+//    System.err.println("1. create animator");
     animator = new FPSAnimator(window, 60);
     drawException = null;
     animator.setUncaughtExceptionHandler(new GLAnimatorControl.UncaughtExceptionHandler() {
@@ -294,7 +291,7 @@ public class PSurfaceJOGL implements PSurface {
 
 
     window.setVisible(true);
-    System.err.println("4. set visible");
+//    System.err.println("4. set visible");
 
     /*
     try {
@@ -333,13 +330,13 @@ public class PSurfaceJOGL implements PSurface {
     // frame to the main display, which undermines the --display setting.
     int sketchX = displayDevice.getViewportInWindowUnits().getX();
     int sketchY = displayDevice.getViewportInWindowUnits().getY();
-    System.err.println("just center on the screen at " + sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2 + ", " +
-                                                         sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
-
-    System.err.println("  Display starts at " +  sketchX + ", " + sketchY);
-    System.err.println("  Screen rect pos: " +  screenRect.x + ", " + screenRect.y);
-    System.err.println("  Screen rect w/h: " +  screenRect.width + ", " + screenRect.height);
-    System.err.println("  Sketch w/h: " +  sketchWidth + ", " + sketchHeight);
+//    System.err.println("just center on the screen at " + sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2 + ", " +
+//                                                         sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
+//
+//    System.err.println("  Display starts at " +  sketchX + ", " + sketchY);
+//    System.err.println("  Screen rect pos: " +  screenRect.x + ", " + screenRect.y);
+//    System.err.println("  Screen rect w/h: " +  screenRect.width + ", " + screenRect.height);
+//    System.err.println("  Sketch w/h: " +  sketchWidth + ", " + sketchHeight);
 
     int w = sketchWidth;
     int h = sketchHeight;
@@ -360,11 +357,11 @@ public class PSurfaceJOGL implements PSurface {
 //    int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
 
     if (location != null) {
-      System.err.println("place window at " + location[0] + ", " + location[1]);
+//      System.err.println("place window at " + location[0] + ", " + location[1]);
       window.setPosition(location[0], location[1]);
 
     } else if (editorLocation != null) {
-      System.err.println("place window at editor location " + editorLocation[0] + ", " + editorLocation[1]);
+//      System.err.println("place window at editor location " + editorLocation[0] + ", " + editorLocation[1]);
       int locationX = editorLocation[0] - 20;
       int locationY = editorLocation[1];
 
@@ -407,7 +404,7 @@ public class PSurfaceJOGL implements PSurface {
   float offsetY;
   public void placePresent(int stopColor) {
     if (presentMode) {
-      System.err.println("Present mode");
+//      System.err.println("Present mode");
 //    System.err.println("WILL USE FBO");
       presentMode = pgl.presentMode = true;
       offsetX = pgl.offsetX = 0.5f * (screenRect.width - sketchWidth);
@@ -423,11 +420,11 @@ public class PSurfaceJOGL implements PSurface {
 
   public void startThread() {
     if (animator != null) {
-      System.err.println("5. start animator");
+//      System.err.println("5. start animator");
       animator.start();
 
       if (0 < sketchX && 0 < sketchY) {
-          System.err.println("5.1 set inital window position");
+//          System.err.println("5.1 set inital window position");
           window.setPosition(sketchX, sketchY);
           sketchX = sketchY = 0;
       }
@@ -465,7 +462,7 @@ public class PSurfaceJOGL implements PSurface {
 
   public void setSize(int width, int height) {
     if (animator.isAnimating()) {
-      System.err.println("3. set size");
+//      System.err.println("3. set size");
 
       if (!presentMode) {
         sketch.width = width;
@@ -529,7 +526,7 @@ public class PSurfaceJOGL implements PSurface {
       }
     }
     public void init(GLAutoDrawable drawable) {
-      System.err.println("2. init drawable");
+//      System.err.println("2. init drawable");
       pgl.getGL(drawable);
       pgl.init(drawable);
       sketch.start();
@@ -545,18 +542,18 @@ public class PSurfaceJOGL implements PSurface {
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
 
-      final float[] valReqSurfacePixelScale = window.getRequestedSurfaceScale(new float[2]);
-      final float[] hasSurfacePixelScale = window.getCurrentSurfaceScale(new float[2]);
-      final float[] nativeSurfacePixelScale = window.getMaximumSurfaceScale(new float[2]);
-      System.err.println("[set PixelScale post]: "+
-                         valReqSurfacePixelScale[0]+"x"+valReqSurfacePixelScale[1]+" (val) -> "+
-                         hasSurfacePixelScale[0]+"x"+hasSurfacePixelScale[1]+" (has), "+
-                         nativeSurfacePixelScale[0]+"x"+nativeSurfacePixelScale[1]+" (native)");
+//      final float[] valReqSurfacePixelScale = window.getRequestedSurfaceScale(new float[2]);
+      window.getCurrentSurfaceScale(hasSurfacePixelScale);
+//      final float[] nativeSurfacePixelScale = window.getMaximumSurfaceScale(new float[2]);
+//      System.err.println("[set PixelScale post]: "+
+//                         valReqSurfacePixelScale[0]+"x"+valReqSurfacePixelScale[1]+" (val) -> "+
+//                         hasSurfacePixelScale[0]+"x"+hasSurfacePixelScale[1]+" (has), "+
+//                         nativeSurfacePixelScale[0]+"x"+nativeSurfacePixelScale[1]+" (native)");
 
 
 
 
-      System.out.println("reshape: " + w + ", " + h);
+//      System.out.println("reshape: " + w + ", " + h);
       pgl.getGL(drawable);
 //      if (!graphics.is2X() && 1 < hasSurfacePixelScale[0]) {
 //        setSize(w/2, h/2);
@@ -691,12 +688,14 @@ public class PSurfaceJOGL implements PSurface {
       peCount = nativeEvent.getClickCount();
     }
 
-
+    window.getCurrentSurfaceScale(hasSurfacePixelScale);
+    int sx = (int)(nativeEvent.getX()/hasSurfacePixelScale[0]);
+    int sy = (int)(nativeEvent.getY()/hasSurfacePixelScale[1]);
     if (presentMode) {
       if (peAction == KeyEvent.RELEASE &&
-          20 < nativeEvent.getX() && nativeEvent.getX() < 20 + 100 &&
-          screenRect.height - 70 < nativeEvent.getY() && nativeEvent.getY() < screenRect.height - 20) {
-        System.err.println("clicked on exit button");
+          20 < sx && sx < 20 + 100 &&
+          screenRect.height - 70 < sy && sy < screenRect.height - 20) {
+//        System.err.println("clicked on exit button");
 //      if (externalMessages) {
 //        System.err.println(PApplet.EXTERNAL_QUIT);
 //        System.err.flush();  // important
@@ -707,9 +706,8 @@ public class PSurfaceJOGL implements PSurface {
       }
     }
 
-    final float[] hasSurfacePixelScale = window.getCurrentSurfaceScale(new float[2]);
-    int x = (int)((nativeEvent.getX() - (int)offsetX) / hasSurfacePixelScale[0]);
-    int y = (int)((nativeEvent.getY() - (int)offsetY) / hasSurfacePixelScale[1]);
+    int mx = sx - (int)offsetX;
+    int my = sy - (int)offsetY;
 //    if (!graphics.is2X() && 1 < hasSurfacePixelScale[0]) {
 //      x /= 2;
 //      y /= 2;
@@ -717,7 +715,7 @@ public class PSurfaceJOGL implements PSurface {
 
     MouseEvent me = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
                                    peAction, peModifiers,
-                                   x, y,
+                                   mx, my,
                                    peButton,
                                    peCount);
 

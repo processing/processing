@@ -213,12 +213,6 @@ public class PJOGL extends PGL {
 
   // ........................................................
 
-  // Retina support
-
-  int pixel_scale = 1;
-
-  // ........................................................
-
   // Utility arrays to copy projection/modelview matrices to GL
 
   protected float[] projMatrix;

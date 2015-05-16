@@ -134,6 +134,12 @@ public abstract class PGL {
 
   // ........................................................
 
+  // Retina support
+
+  int pixel_scale = 1;
+
+  // ........................................................
+
   // FBO layer
 
   protected boolean fboLayerRequested = false;
@@ -562,7 +568,7 @@ public abstract class PGL {
         }
         drawTexture(TEXTURE_2D, glColorTex.get(frontTex), fboWidth, fboHeight,
                     x, y, pg.width, pg.height,
-                    0, 0, pg.width, pg.height,
+                    0, 0, pixel_scale * pg.width, pixel_scale * pg.height,
                     0, 0, pg.width, pg.height);
       }
 
@@ -660,7 +666,7 @@ public abstract class PGL {
       drawTexture(TEXTURE_2D, glColorTex.get(backTex),
                   fboWidth, fboHeight,
                   x, y, pg.width, pg.height,
-                  0, 0, pg.width, pg.height,
+                  0, 0, pixel_scale * pg.width, pixel_scale * pg.height,
                   0, 0, pg.width, pg.height);
 
       // Swapping front and back textures.
@@ -715,11 +721,11 @@ public abstract class PGL {
   private void createFBOLayer() {
     String ext = getString(EXTENSIONS);
     if (-1 < ext.indexOf("texture_non_power_of_two")) {
-      fboWidth = pg.width;
-      fboHeight = pg.height;
+      fboWidth = pixel_scale * pg.width;
+      fboHeight = pixel_scale * pg.height;
     } else {
-      fboWidth = nextPowerOfTwo(pg.width);
-      fboHeight = nextPowerOfTwo(pg.height);
+      fboWidth = nextPowerOfTwo(pixel_scale * pg.width);
+      fboHeight = nextPowerOfTwo(pixel_scale * pg.height);
     }
 
     int maxs = maxSamples();
