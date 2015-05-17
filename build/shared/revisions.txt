@@ -56,7 +56,10 @@ Not quite ready for prime time, however.
   https://github.com/processing/processing/issues/3275
 
 + Added StringList(Object...) constructor to handle a grab bag of objects
-  
+
++ Inside main(), don't set 'args' to a zero-length array if no args 
+  were passed in, instead leave 'args' null. 
+
 
 [ debugger ]
 

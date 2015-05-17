@@ -9483,10 +9483,10 @@ public class PApplet implements PConstants {
 
 
   static public void runSketch(final String[] args,
-                               final PApplet constructedApplet) {
+                               final PApplet constructedSketch) {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
-        runSketchEDT(args, constructedApplet);
+        runSketchEDT(args, constructedSketch);
       }
     });
   }
@@ -9497,7 +9497,7 @@ public class PApplet implements PConstants {
    * when messing with AWT/Swing components. And boy, do we mess with 'em.
    */
   static protected void runSketchEDT(final String[] args,
-                                  final PApplet constructedSketch) {
+                                     final PApplet constructedSketch) {
     // Supposed to help with flicker, but no effect on OS X.
     // TODO IIRC this helped on Windows, but need to double check.
     System.setProperty("sun.awt.noerasebackground", "true");
@@ -9619,9 +9619,14 @@ public class PApplet implements PConstants {
     fullScreen |= sketch.sketchFullScreen();
     // If spanning screens, that means we're also full screen.
     fullScreen |= sketch.sketchSpanScreens();
-    // pass everything after the class name in as args to the sketch itself
-    // (fixed for 2.0a5, this was just subsetting by 1, which didn't skip opts)
-    sketch.args = PApplet.subset(args, argIndex + 1);
+
+    // Don't set 'args' to a zero-length array if it should be null [3.0a8]
+    if (args.length != argIndex + 1) {
+      // pass everything after the class name in as args to the sketch itself
+      // (fixed for 2.0a5, this was just subsetting by 1, which didn't skip opts)
+      sketch.args = PApplet.subset(args, argIndex + 1);
+    }
+
     sketch.external = external;
 
     PSurface surface =

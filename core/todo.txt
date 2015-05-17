@@ -29,6 +29,10 @@ _ update documentation to say "don't override sketchXxxx() methods"
 o use enums for constants
 X   https://github.com/processing/processing/issues/2778
 X   nope, requires having ALIGN_LEFT instead of just LEFT
+X clean up requestFocus() stuff
+X   make sure it works with retina/canvas/strategy as well
+X args[] should be null if none passed
+X   otherwise args == null checks are weird
 
 opengl
 X OpenGL sketches work only after running a sketch with default renderer
@@ -122,12 +126,6 @@ _ when did setPath() sneak into PShape? API is nothing like anything else
 _ public createShape() method that takes another shape as param?
 _   should just be the constructor doing this, or copy()
 
-
-applet/sketch
-X clean up requestFocus() stuff
-X   make sure it works with retina/canvas/strategy as well
-_ args[] should be null if none passed
-_   otherwise args == null checks are weird
 
 
 full screen
