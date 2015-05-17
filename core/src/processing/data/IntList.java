@@ -254,6 +254,14 @@ public class IntList implements Iterable<Integer> {
   }
 
 
+  /** Add this value, but only if it's not already in the list. */
+  public void appendUnique(int value) {
+    if (!hasValue(value)) {
+      append(value);
+    }
+  }
+
+
 //  public void insert(int index, int value) {
 //    if (index+1 > count) {
 //      if (index+1 < data.length) {

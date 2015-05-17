@@ -38,6 +38,7 @@ X   this was fixed earlier?
 X fix flicker when resizing window 
 X   running through PSurfaceAWT.setSize() is probably overkill
 o   setLocationRelativeTo(null) was removed, will it be missed?
+X add appendUnique() to Int/Float/StringList
 
 opengl
 X OpenGL sketches work only after running a sketch with default renderer
@@ -193,7 +194,6 @@ _   map() is bad for Python and JavaScript
 
 
 data
-_ add appendUnique()
 _ add fromOrder() and others? otherwise need temp object:
 _   categoryIndexLookup = new StringList(flavors).getOrder();
 _ handling of 'missing' values in Table needs serious work

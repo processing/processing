@@ -57,6 +57,12 @@ Not quite ready for prime time, however.
 
 + Added StringList(Object...) constructor to handle a grab bag of objects
 
++ Added appendUnique() to Int/Float/StringList to only add unique items
+  to a list. Replaces the following code, making "set" operations easier:
+  if (!theList.hasValue(value)) {
+    thiList.append(value);
+  }
+
 + Inside main(), don't set 'args' to a zero-length array if no args 
   were passed in, instead leave 'args' null. 
 
