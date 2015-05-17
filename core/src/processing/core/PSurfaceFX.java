@@ -115,6 +115,7 @@ public class PSurfaceFX implements PSurface {
 
       EventHandler<KeyEvent> keyHandler = new EventHandler<KeyEvent>() {
         public void handle(KeyEvent e) {
+          System.out.println(e);
           fxKeyEvent(e);
         }
       };
@@ -231,6 +232,7 @@ public class PSurfaceFX implements PSurface {
     Platform.runLater(new Runnable() {
       public void run() {
         stage.show();
+        canvas.requestFocus();
       }
     });
   }
@@ -408,11 +410,10 @@ public class PSurfaceFX implements PSurface {
   }
 
 
-  @Override
-  public void requestFocus() {
-    // TODO Auto-generated method stub
-
-  }
+//  @Override
+//  public void requestFocus() {
+//    canvas.requestFocus();
+//  }
 
 
   public void setCursor(int kind) {

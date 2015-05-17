@@ -111,7 +111,7 @@ public class PSurfaceAWT extends PSurfaceNone {
    * invokeLater() happens in here rather than requiring the caller to wrap it.
    */
   @Override
-  public void requestFocus() {
+  void requestFocus() {
     // for 2.0a6, moving this request to the EDT
     EventQueue.invokeLater(new Runnable() {
       public void run() {

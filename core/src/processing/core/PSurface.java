@@ -108,9 +108,9 @@ public interface PSurface {
 
   public void setFrameRate(float fps);
 
-  // called on the first frame so that the now-visible drawing surface can
-  // receive key and mouse events
-  public void requestFocus();
+//  // called on the first frame so that the now-visible drawing surface can
+//  // receive key and mouse events
+//  public void requestFocus();
 
 //  // finish rendering to the screen (called by PApplet)
 //  public void blit();

@@ -141,7 +141,7 @@ public class PSurfaceNone implements PSurface {
 
   }
 
-  public void requestFocus() {
+  void requestFocus() {
     // TODO Auto-generated method stub
 
   }
