@@ -19,7 +19,16 @@ X size() is fairly broken for PDF and SVG or whatever
 X   make size(300, 300, PDF) without implementing sketchXxx() methods work
 X   this shouldn't be a huge thing, we're not going to set the window visible
 X   until after setup() completes anyway (otherwise a delay w/ blank window)
+X Sketch runs with default size if size() is followed by large memory allocation
+X   some sort of threading issue happening here
+X   https://github.com/processing/processing/issues/1672
+X   https://github.com/processing/processing/issues/2039 (dupe)
+X   https://github.com/processing/processing/issues/2294 (dupe)
+o   also check this out with the new full screen code on OS X
 _ update documentation to say "don't override sketchXxxx() methods"
+o use enums for constants
+X   https://github.com/processing/processing/issues/2778
+X   nope, requires having ALIGN_LEFT instead of just LEFT
 
 opengl
 X OpenGL sketches work only after running a sketch with default renderer
@@ -32,6 +41,8 @@ X Can't run sketches with offscreen PGraphics
 X   https://github.com/processing/processing/issues/3259
 o Merge glw code into the OpenGL library
 o   https://github.com/processing/processing/issues/3284
+X "Buffers have not been created" error for sketches w/o draw()
+X   https://github.com/processing/processing/issues/2469
 
 javafx
 X implement blendMode
@@ -85,31 +96,22 @@ _ implement external messages (moving the window)
 
 
 rendering/performance/surface
-o destroy() removed, but bring back? is that better than dispose()?
-_   destroy() only called dispose(), so no difference
-_   Python Mode has a hook for when it's called
-_ move checkRetina()/highResDisplay() to PApplet
-_   and out of Toolkit and PSurfaceAWT
-_ probably should also check to make sure PApplet running JVM 8
-_   or compile against 1.8 and force it?
 _ present window draws in stages (OS X)
 _ split 'present' and 'full screen'?
 _   --full-screen causes considerable flicker at this point
 _   or split them when sketchWidth/Height are implemented?
 _ check on performance of the new EDT setup
-_ can't do version that draws to BufferStrategy directly
-_   pixel operations (get/set/loadPixels/saveFrame) might be fixable
-_   but can't re-run draw() to re-blit the screen
-_     because we don't split calc() and draw()
-_   even with the split, handleDraw() might need to live in PSurface
-_ add calc() option? this could ease transition
 _ present mode is 30-40% slower than windowed
 _   w/ this example: https://github.com/processing/processing/issues/2423
 
 
-opengl misc
+opengl
+_ Closing opengl sketch from the PDE doesn't stop java process on windows
+_   https://github.com/processing/processing/issues/2335
+_ OpenGL sketches do not terminate, have to be killed
+_   https://github.com/processing/processing/issues/2982
 _ sketchQuality() vs sketchSmooth()?
-_ move glsl entries to their own subdirectory?
+_ move glsl entries to their own subdirectory
 _ exitCalled() and exitActual made public by Andres, breaks Python
 _   also not API we want to expose, so sort this out
 _ get code into makeGraphics() to handle bad path settings for LWJGL
@@ -122,10 +124,10 @@ _   should just be the constructor doing this, or copy()
 
 
 applet/sketch
-_ clean up requestFocus() stuff
-_   make sure it works with retina/canvas/strategy as well
-_   requestFocus() method probably needs to be added to PApplet
-_ args[] should be null if none passed (otherwise args == null checks are weird)
+X clean up requestFocus() stuff
+X   make sure it works with retina/canvas/strategy as well
+_ args[] should be null if none passed
+_   otherwise args == null checks are weird
 
 
 full screen
@@ -169,20 +171,13 @@ _ loadImage() doesn't follow redirects
 _   https://github.com/processing/processing-docs/issues/218
 
 
-cross-language awkwardness
-_ python has to use launch() instead of open()
-_ map() is bad for Python and JavaScript
-
-
 breaking api
 _ bring back chaining in JSON (and add to XML)
 _ add chaining operations to PVector
 _   https://github.com/processing/processing/issues/257
 _ min() and max() to use varargs
 _   https://github.com/processing/processing/issues/3027
-_ use enums for constants
-_   https://github.com/processing/processing/issues/2778
-_ make join() work with Iterable?
+_ make join() work with Iterable or Object... or both?
 _   will this collide with the current String[] version?
 _ remove OPENGL constant (tell people to use P3D or P2D)
 _ exec() and open() to use varargs
@@ -190,6 +185,9 @@ _ join() to use varargs
 _ break PUtil out from PApplet
 _   pro: weird to call PApplet for things like hex/join/etc
 _   con: still lots of things like selectFolder() that need GUI
+_ cross-language awkwardness
+_   python has to use launch() instead of open()
+_   map() is bad for Python and JavaScript
 
 
 data
@@ -215,19 +213,8 @@ _   the table pointer version will be speedy and allow chaining
 
 
 high
-_ Closing opengl sketch from the PDE doesn't stop java process on windows
-_   https://github.com/processing/processing/issues/2335
 _ dataPath() not working when app is not run from app dir on Linux
 _   https://github.com/processing/processing/issues/2195
-_ "Buffers have not been created" error for sketches w/o draw()
-_   https://github.com/processing/processing/issues/2469
-_   could not reproduce
-_ Sketch runs with default size if size() is followed by large memory allocation
-_   some sort of threading issue happening here
-_   https://github.com/processing/processing/issues/1672
-_   https://github.com/processing/processing/issues/2039 (dupe)
-_   https://github.com/processing/processing/issues/2294 (dupe)
-_   also check this out with the new full screen code on OS X
 _ point() rendering differently in 2.0.3 and 2.1
 _   https://github.com/processing/processing/issues/2278
 _   internally, we probably have to call set() if it's a 1 pixel point
@@ -269,6 +256,13 @@ _   https://github.com/processing/processing/issues/2510
 
 
 decisions/misc
+_ keep Danger2D? 
+_   can't do version that draws to BufferStrategy directly
+_   pixel operations (get/set/loadPixels/saveFrame) might be fixable
+_   but can't re-run draw() to re-blit the screen
+_     because we don't split calc() and draw()
+_   even with the split, handleDraw() might need to live in PSurface
+_   add calc() option? this could ease transition
 _ need reference update for createShape()
 _   though we need to verify the behavior here
 _   createShape(RECT) uses x/y/w/h, and optionally adds a mode param
@@ -392,8 +386,15 @@ _ decide how disconnectEvent should actually be handled (and name?)
 _   was disconnect always there? 
 _   will need documentation
 _ negative indices so that we can work relative to the end in data classes?
-_ add Double and Long versions of the classes?
-
+_ add Double and Long versions of the data classes?
+_ add requestFocus() method to PApplet (or surface?)
+o destroy() removed, but bring back? is that better than dispose()?
+_   destroy() only called dispose(), so no difference
+_   Python Mode has a hook for when it's called
+_ move checkRetina()/highResDisplay() to PApplet
+_   and out of Toolkit and PSurfaceAWT
+_ probably should also check to make sure PApplet running JVM 8
+_   or compile against 1.8 and force it?
 
 
 

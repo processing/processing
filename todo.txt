@@ -22,6 +22,7 @@ X   https://github.com/processing/processing/wiki/Running-without-a-Display
 X write up code guidelines for project
 X   make proper Eclipse style prefs to reinforce
 X   https://github.com/processing/processing/wiki/Style-Guidelines
+X change preproc to write settings() method instead of sketchXxxx() 
 
 cleaning
 X better text editor / live debugging (integrate Eclipse JDT)

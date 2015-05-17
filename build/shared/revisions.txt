@@ -9,6 +9,10 @@ Not quite ready for prime time, however.
 
 [ fixes ]
 
++ size() sometimes erratic (i.e default size used) This was often 
+  seen with large setup() functions, or on more esoteric platforms.
+  https://github.com/processing/processing/issues/1672
+
 + Command line "processing-java" was broken
   https://github.com/processing/processing/issues/3224
 
@@ -28,6 +32,9 @@ Not quite ready for prime time, however.
 
 + Single Frame (no screen display) PDF broken
   https://github.com/processing/processing/issues/3280
+
++ "Buffers have not been created" error for sketches w/o draw()
+  https://github.com/processing/processing/issues/2469
 
 
 [ changes ]
