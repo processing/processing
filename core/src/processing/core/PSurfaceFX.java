@@ -24,6 +24,7 @@ package processing.core;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -102,17 +103,17 @@ public class PSurfaceFX implements PSurface {
 
   static public class PApplicationFX extends Application {
     static public PSurfaceFX surface;
-    static String title;  // title set at launch
-    static boolean resizable;  // set at launch
+//    static String title;  // title set at launch
+//    static boolean resizable;  // set at launch
 
     public PApplicationFX() { }
 
     @Override
     public void start(final Stage stage) {
       surface.stage = stage;
-      if (title != null) {
-        stage.setTitle(title);
-      }
+//      if (title != null) {
+//        stage.setTitle(title);
+//      }
 
       Canvas canvas = surface.canvas;
       StackPane stackPane = new StackPane();
@@ -139,31 +140,43 @@ public class PSurfaceFX implements PSurface {
         Application.launch(PApplicationFX.class);
       }
     }).start();
+
+    while (stage == null) {
+      // wait for stage to be initialized before continuing
+      try {
+        System.out.println("waiting for launch");
+        Thread.sleep(5);
+      } catch (InterruptedException e) { }
+    }
     //return frame;
   }
 
 
   /** Set the window (and dock, or whatever necessary) title. */
   public void setTitle(String title) {
-    PApplicationFX.title = title;  // store this in case the stage still null
-    if (stage != null) {
-      stage.setTitle(title);
-    }
+//    PApplicationFX.title = title;  // store this in case the stage still null
+//    if (stage != null) {
+    stage.setTitle(title);
+//    }
   }
 
 
   /** Show or hide the window. */
   public void setVisible(boolean visible) {
-    stage.show();
+    Platform.runLater(new Runnable() {
+      public void run() {
+        stage.show();
+      }
+    });
   }
 
 
   /** Set true if we want to resize things (default is not resizable) */
   public void setResizable(boolean resizable) {
-    PApplicationFX.resizable = resizable;
-    if (stage != null) {
-      stage.setResizable(resizable);
-    }
+//    PApplicationFX.resizable = resizable;
+//    if (stage != null) {
+    stage.setResizable(resizable);
+//    }
   }
 
 
