@@ -3,8 +3,8 @@ PROCESSING 3.0a8 (REV 0235) - XX May 2015
 Stabilizing the mess from 3.0a6 and 3.0a7. Read the release notes for
 those versions (below) if you haven't already.
 
-Lots of work on FX2D renderer, likely to be the default for 3.0.
-Not quite ready for prime time, however. 
+If you're using Eclipse or another IDE, be sure to read the "changes"
+section below, for a change in how the size() command works.
 
 
 [ fixes ]
@@ -22,7 +22,7 @@ Not quite ready for prime time, however.
   
 + Replace & Find was reading "Find & Replace" 
   https://github.com/processing/processing/issues/3247
-  
+
 + "One file added to sketch" message when two files added
 
 + pop() was not implemented correctly in String/Int/FloatList
@@ -39,7 +39,32 @@ Not quite ready for prime time, however.
 
 [ changes ]
 
-+ Added SVG Export library (works like PDF Export)
++ Behind the scenes, the size() method is now moved out of setup()
+  and into a method named settings(). The settings() is called before
+  setup() and is the only place where size() can be used. If using
+  Processing without the PDE (i.e. with another IDE like Eclipse),
+  remove the size() method from setup() and instead place it like so:
+  
+  public void settings() {
+    size(400, 400, P3D);  // your size() command here
+  }
+  
+  The rest of your code remains unchanged. The PDE does this 
+  transparently, so 99% of people won't even notice this change.
+  However, it allows us to fix (and avoid) a lot of really nasty
+  complications that come from how Processing lets you switch
+  between 2D drawing and OpenGL and even something like PDF with
+  simple changes to the size() method.
+
+  We're trying "settings()" as the method name, but that may change
+  in a future alpha release. Once we hit beta, it will not change.
+
+  For those familiar with them, the sketchWidth(), sketchHeight(),
+  sketchRenderer(), etc methods should no longer be used. This new
+  implementation of the settings() method is a simpler solution.
+
++ Added SVG Export library (works like PDF Export). This has not
+  been tested heavily yet. 
 
 + Replace Tweak Mode ColorSelector with JComponent version
   https://github.com/processing/processing/issues/3209

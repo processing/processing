@@ -65,17 +65,18 @@ public interface PConstants {
   static final String P3D    = "processing.opengl.PGraphics3D";
   static final String P3D_2X = "processing.opengl.PGraphics3D2X";
 
-  // remove this? breakage?
+  // When will it be time to remove this to have people use P3D instead?
   static final String OPENGL = P3D;
 
-  // Experimental, higher-performance Java 2D renderer
+  // Experimental, higher-performance Java 2D renderer (but no pixel ops)
   static final String E2D = PGraphicsDanger2D.class.getName();
 
-  // Experimental JavaFX renderer; even better 2D performance?
+  // Experimental JavaFX renderer; even better 2D performance
   static final String FX2D = PGraphicsFX2D.class.getName();
   static final String FX2D_2X = PGraphicsFX2D2X.class.getName();
 
   static final String PDF = "processing.pdf.PGraphicsPDF";
+  static final String SVG = "processing.svg.PGraphicsSVG";
   static final String DXF = "processing.dxf.RawDXF";
 
   // platform IDs for PApplet.platform

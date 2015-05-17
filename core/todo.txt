@@ -84,6 +84,7 @@ high priority
 _ instead of all these sketchXxxx() methods, should we have sketchSetting()
 _   and an internal dictionary that stores them all?
 _   or sketchInt() or settingsInt()?
+_   too much soup inside main() to handle arg parsing and passing to the sketch
 _ update documentation to say "don't override sketchXxxx() methods"
 _ sketch window is not placed at correct location when running a second time
 _   https://github.com/processing/processing/issues/3125
