@@ -31,21 +31,22 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
+
 public class CompletionCandidate implements Comparable<CompletionCandidate>{
-
-  private String elementName; //
-
+  private String elementName;
   private String label; // the toString value
-
   private String completionString;
-  
   private Object wrappedObject;
-
   private int type;
 
-  public static final int PREDEF_CLASS = 0, PREDEF_FIELD = 1,
-      PREDEF_METHOD = 2, LOCAL_CLASS = 3, LOCAL_METHOD = 4, LOCAL_FIELD = 5,
-      LOCAL_VAR = 6;
+  static final int PREDEF_CLASS = 0;
+  static final int PREDEF_FIELD = 1;
+  static final int PREDEF_METHOD = 2;
+  static final int LOCAL_CLASS = 3;
+  static final int LOCAL_METHOD = 4;
+  static final int LOCAL_FIELD = 5;
+  static final int LOCAL_VAR = 6;
+
 
   public CompletionCandidate(Method method) {
     method.getDeclaringClass().getName();
@@ -72,7 +73,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     type = PREDEF_METHOD;
     wrappedObject = method;
   }
-  
+
   public Object getWrappedObject() {
     return wrappedObject;
   }
@@ -87,7 +88,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     label = svd.getName() + " : " + svd.getType();
     wrappedObject = svd;
   }
-  
+
   public CompletionCandidate(VariableDeclarationFragment  vdf) {
     completionString = vdf.getName().toString();
     elementName = vdf.getName().toString();
@@ -98,16 +99,16 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     label = vdf.getName() + " : " + ASTGenerator.extracTypeInfo2(vdf);
     wrappedObject = vdf;
   }
-  
+
   public CompletionCandidate(MethodDeclaration method) {
     // log("ComCan " + method.getName());
     elementName = method.getName().toString();
     type = LOCAL_METHOD;
-    
+
     @SuppressWarnings("unchecked")
-    List<ASTNode> params = (List<ASTNode>) 
+    List<ASTNode> params = (List<ASTNode>)
       method.getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
-    
+
     StringBuilder label = new StringBuilder(elementName + "(");
     StringBuilder cstr = new StringBuilder(method.getName() + "(");
     for (int i = 0; i < params.size(); i++) {
@@ -145,18 +146,18 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
 //    + matchedClass + " : " + "<font color=#777777>"
 //    + matchedClass2.substring(0, d) + "</font>", matchedClass
 //    + "</html>"
-    label = "<html>" + f.getName() + " : " + f.getType().getSimpleName() + 
-        " - <font color=#777777>" + f.getDeclaringClass().getSimpleName() + 
+    label = "<html>" + f.getName() + " : " + f.getType().getSimpleName() +
+        " - <font color=#777777>" + f.getDeclaringClass().getSimpleName() +
         "</font></html>";
     completionString = elementName;
     wrappedObject = f;
   }
 
-  public CompletionCandidate(String name, String labelStr, String completionStr, int type) {    
+  public CompletionCandidate(String name, String labelStr, String completionStr, int type) {
     elementName = name;
     label = labelStr;
     completionString = completionStr;
-    this.type = type;    
+    this.type = type;
   }
 
   public CompletionCandidate(String name, int type) {
@@ -181,11 +182,11 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
   public int getType() {
     return type;
   }
-  
+
   public String getLabel() {
     return label;
   }
-  
+
   public String getNoHtmlLabel(){
     if(!label.contains("<html>")) {
       return label;
@@ -217,15 +218,15 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     }
     return (elementName.compareTo(cc.getElementName()));
   }
-  
+
   public void regenerateCompletionString(){
     if (wrappedObject instanceof MethodDeclaration) {
       MethodDeclaration method = (MethodDeclaration)wrappedObject;
-      
+
       @SuppressWarnings("unchecked")
-      List<ASTNode> params = (List<ASTNode>) 
+      List<ASTNode> params = (List<ASTNode>)
           method.getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
-      
+
       StringBuilder label = new StringBuilder(elementName + "(");
       StringBuilder cstr = new StringBuilder(method.getName() + "(");
       for (int i = 0; i < params.size(); i++) {
