@@ -129,7 +129,7 @@ _ args[] should be null if none passed (otherwise args == null checks are weird)
 
 
 full screen
-_ Fullscreen window on second monitor without using present mode
+_ Full screen window on second monitor without using present mode
 _   https://github.com/processing/processing/issues/3271
 _ "run sketches on display" not working in 3.0a7
 _   https://github.com/processing/processing/issues/3264

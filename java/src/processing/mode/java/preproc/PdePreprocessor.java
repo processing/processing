@@ -939,6 +939,15 @@ public class PdePreprocessor {
     }
 
     if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
+      // doesn't remove the oriiginal size() method, but calling size()
+      // again in setup() is harmless.
+      if (!hasMethod("settings") && sizeStatement != null) {
+        out.println(indent + "public void settings() { " + sizeStatement + " }");
+//        out.println(indent + "public void settings() {");
+//        out.println(indent + indent + sizeStatement);
+//        out.println(indent + "}");
+      }
+      /*
       if (sketchWidth != null && !hasMethod("sketchWidth")) {
         // Only include if it's a number (a variable will be a problem)
         if (PApplet.parseInt(sketchWidth, -1) != -1 || sketchWidth.equals("displayWidth")) {
@@ -960,6 +969,7 @@ public class PdePreprocessor {
       if (sketchOutputPath != null && !hasMethod("sketchOutputPath")) {
         out.println(indent + "public String sketchOutputPath() { return " + sketchOutputPath + "; }");
       }
+      */
 
       if (!hasMethod("main")) {
         out.println(indent + "static public void main(String[] passedArgs) {");
@@ -1036,6 +1046,10 @@ public class PdePreprocessor {
 //    return pkg.startsWith("processing.xml.");
   }
 
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   /**
    * Find the first CLASS_DEF node in the tree, and return the name of the
    * class in question.
@@ -1049,10 +1063,12 @@ public class PdePreprocessor {
     return t;
   }
 
+
   public void debugAST(final AST ast, final boolean includeHidden) {
     System.err.println("------------------");
     debugAST(ast, includeHidden, 0);
   }
+
 
   private void debugAST(final AST ast, final boolean includeHidden,
                         final int indent) {
@@ -1073,23 +1089,24 @@ public class PdePreprocessor {
       debugAST(kid, includeHidden, indent + 1);
   }
 
+
   private String debugHiddenAfter(AST ast) {
-    if (!(ast instanceof antlr.CommonASTWithHiddenTokens))
-      return "";
-    return debugHiddenTokens(((antlr.CommonASTWithHiddenTokens) ast)
-        .getHiddenAfter());
+    return (ast instanceof antlr.CommonASTWithHiddenTokens) ?
+      debugHiddenTokens(((antlr.CommonASTWithHiddenTokens) ast).getHiddenAfter()) : "";
   }
 
   private String debugHiddenBefore(AST ast) {
-    if (!(ast instanceof antlr.CommonASTWithHiddenTokens))
+    if (!(ast instanceof antlr.CommonASTWithHiddenTokens)) {
       return "";
-    antlr.CommonHiddenStreamToken child = null, parent = ((antlr.CommonASTWithHiddenTokens) ast)
-        .getHiddenBefore();
+    }
+    antlr.CommonHiddenStreamToken parent =
+      ((antlr.CommonASTWithHiddenTokens) ast).getHiddenBefore();
 
     if (parent == null) {
       return "";
     }
 
+    antlr.CommonHiddenStreamToken child = null;
     do {
       child = parent;
       parent = child.getHiddenBefore();
@@ -1098,15 +1115,18 @@ public class PdePreprocessor {
     return debugHiddenTokens(child);
   }
 
+
   private String debugHiddenTokens(antlr.CommonHiddenStreamToken t) {
     final StringBuilder sb = new StringBuilder();
     for (; t != null; t = filter.getHiddenAfter(t)) {
-      if (sb.length() == 0)
+      if (sb.length() == 0) {
         sb.append("[");
+      }
       sb.append(t.getText().replace("\n", "\\n"));
     }
-    if (sb.length() > 0)
+    if (sb.length() > 0) {
       sb.append("]");
+    }
     return sb.toString();
   }
 }

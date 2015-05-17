@@ -245,25 +245,21 @@ public class JavaBuild {
       }
     }
 
-//    // initSketchSize() sets the internal sketchWidth/Height/Renderer vars
-//    // in the preprocessor. Those are used in preproc.write() so that they
-//    // can be turned into sketchXxxx() methods.
-//    // This also returns the size info as an array so that we can figure out
-//    // if this fella is OpenGL, and if so, to add the import. It's messy and
-//    // gross and someday we'll just always include OpenGL.
-//    String[] sizeInfo =
+    // initSketchSize() sets the internal sketchWidth/Height/Renderer vars
+    // in the preprocessor. Those are used in preproc.write() so that they
+    // can be used to add methods (settings() or sketchXxxx())
+    String[] sizeParts =
       preprocessor.initSketchSize(sketch.getMainProgram(), sizeWarning);
-//      //PdePreprocessor.parseSketchSize(sketch.getMainProgram(), false);
-//    if (sizeInfo != null) {
-//      String sketchRenderer = sizeInfo[3];
-//      if (sketchRenderer != null) {
-//        if (sketchRenderer.equals("P2D") ||
-//            sketchRenderer.equals("P3D") ||
-//            sketchRenderer.equals("OPENGL")) {
-//          bigCode.insert(0, "import processing.opengl.*; ");
-//        }
-//      }
-//    }
+    //System.out.format("size() is '%s'%n", info[0]);
+
+    // Remove the size() statement (will be added back by writeFooter())
+    if (sizeParts != null) {
+      String sizeStatement = sizeParts[0];
+      if (sizeStatement != null) {
+        int index = bigCode.indexOf(sizeStatement);
+        bigCode.delete(index, index + sizeStatement.length());
+      }
+    }
 
     PreprocessorResult result;
     try {
@@ -1833,7 +1829,7 @@ public class JavaBuild {
             }
           }
           file.close();
-          
+
         } catch (IOException e) {
           System.err.println("Error in file " + pieces[i]);
           e.printStackTrace();
