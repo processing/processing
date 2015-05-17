@@ -55,7 +55,10 @@ _   at least with the Java2D renderer
 
 javafx
 _ key events
+_   keyChar and keyCode are super wonky
+_   what's the way to do this after the deprecation?
 _ mouse events
+_   is it necessary to handle ctrl-click differently on OS X?
 _ displayWidth, displayHeight, full screen, display number
 _ present mode (stage in the center, clear the rest of the screen)
 _ createGraphics() should probably create PGraphicsJava2D

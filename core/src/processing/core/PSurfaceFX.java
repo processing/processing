@@ -30,23 +30,25 @@ package processing.core;
 //import java.awt.event.MouseWheelEvent;
 //import java.awt.event.MouseWheelListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
-//import processing.event.KeyEvent;
-//import processing.event.MouseEvent;
 
 
 public class PSurfaceFX implements PSurface {
@@ -553,135 +555,149 @@ public class PSurfaceFX implements PSurface {
   */
 
 
-  protected void fxMouseEvent(javafx.scene.input.MouseEvent nativeEvent) {
+  static Map<EventType<? extends MouseEvent>, Integer> mouseMap =
+    new HashMap<EventType<? extends MouseEvent>, Integer>();
+  static {
+    mouseMap.put(MouseEvent.MOUSE_PRESSED, processing.event.MouseEvent.PRESS);
+    mouseMap.put(MouseEvent.MOUSE_RELEASED, processing.event.MouseEvent.RELEASE);
+    mouseMap.put(MouseEvent.MOUSE_CLICKED, processing.event.MouseEvent.CLICK);
+    mouseMap.put(MouseEvent.MOUSE_DRAGGED, processing.event.MouseEvent.DRAG);
+    mouseMap.put(MouseEvent.MOUSE_MOVED, processing.event.MouseEvent.MOVE);
+    mouseMap.put(MouseEvent.MOUSE_ENTERED, processing.event.MouseEvent.ENTER);
+    mouseMap.put(MouseEvent.MOUSE_EXITED, processing.event.MouseEvent.EXIT);
+  }
+
+  protected void fxMouseEvent(MouseEvent nativeEvent) {
     // the 'amount' is the number of button clicks for a click event,
     // or the number of steps/clicks on the wheel for a mouse wheel event.
     int peCount = nativeEvent.getClickCount();
 
-    int peAction = 0;
-    switch (nativeEvent.getID()) {
-    case java.awt.event.MouseEvent.MOUSE_PRESSED:
-      peAction = MouseEvent.PRESS;
-      break;
-    case java.awt.event.MouseEvent.MOUSE_RELEASED:
-      peAction = MouseEvent.RELEASE;
-      break;
-    case java.awt.event.MouseEvent.MOUSE_CLICKED:
-      peAction = MouseEvent.CLICK;
-      break;
-    case java.awt.event.MouseEvent.MOUSE_DRAGGED:
-      peAction = MouseEvent.DRAG;
-      break;
-    case java.awt.event.MouseEvent.MOUSE_MOVED:
-      peAction = MouseEvent.MOVE;
-      break;
-    case java.awt.event.MouseEvent.MOUSE_ENTERED:
-      peAction = MouseEvent.ENTER;
-      break;
-    case java.awt.event.MouseEvent.MOUSE_EXITED:
-      peAction = MouseEvent.EXIT;
-      break;
-    //case java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL:
-    case java.awt.event.MouseEvent.MOUSE_WHEEL:
-      peAction = MouseEvent.WHEEL;
-      /*
-      if (preciseWheelMethod != null) {
-        try {
-          peAmount = ((Double) preciseWheelMethod.invoke(nativeEvent, (Object[]) null)).floatValue();
-        } catch (Exception e) {
-          preciseWheelMethod = null;
-        }
-      }
-      */
-      peCount = ((MouseWheelEvent) nativeEvent).getWheelRotation();
-      break;
+    //EventType<? extends MouseEvent> et = nativeEvent.getEventType();
+    int peAction = mouseMap.get(nativeEvent.getEventType());
+//    if (et == MouseEvent.MOUSE_PRESSED) {
+//      peAction = processing.event.MouseEvent.PRESS;
+//    } else if (et == MouseEvent.MOUSE_RELEASED) {
+//      peAction = processing.event.MouseEvent.RELEASE;
+//
+//    case java.awt.event.MouseEvent.MOUSE_CLICKED:
+//      peAction = MouseEvent.CLICK;
+//      break;
+//    case java.awt.event.MouseEvent.MOUSE_DRAGGED:
+//      peAction = MouseEvent.DRAG;
+//      break;
+//    case java.awt.event.MouseEvent.MOUSE_MOVED:
+//      peAction = MouseEvent.MOVE;
+//      break;
+//    case java.awt.event.MouseEvent.MOUSE_ENTERED:
+//      peAction = MouseEvent.ENTER;
+//      break;
+//    case java.awt.event.MouseEvent.MOUSE_EXITED:
+//      peAction = MouseEvent.EXIT;
+//      break;
+
+    int peModifiers = 0;
+    if (nativeEvent.isShiftDown()) {
+      peModifiers |= processing.event.Event.SHIFT;
+    }
+    if (nativeEvent.isControlDown()) {
+      peModifiers |= processing.event.Event.CTRL;
+    }
+    if (nativeEvent.isMetaDown()) {
+      peModifiers |= processing.event.Event.META;
+    }
+    if (nativeEvent.isAltDown()) {
+      peModifiers |= processing.event.Event.ALT;
     }
 
-    //System.out.println(nativeEvent);
-    //int modifiers = nativeEvent.getModifiersEx();
-    // If using getModifiersEx(), the regular modifiers don't set properly.
-    int modifiers = nativeEvent.getModifiers();
-
-    int peModifiers = modifiers &
-      (InputEvent.SHIFT_MASK |
-       InputEvent.CTRL_MASK |
-       InputEvent.META_MASK |
-       InputEvent.ALT_MASK);
-
-    // Windows and OS X seem to disagree on how to handle this. Windows only
-    // sets BUTTON1_DOWN_MASK, while OS X seems to set BUTTON1_MASK.
-    // This is an issue in particular with mouse release events:
-    // http://code.google.com/p/processing/issues/detail?id=1294
-    // The fix for which led to a regression (fixed here by checking both):
-    // http://code.google.com/p/processing/issues/detail?id=1332
     int peButton = 0;
-//    if ((modifiers & InputEvent.BUTTON1_MASK) != 0 ||
-//        (modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0) {
-//      peButton = LEFT;
-//    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0 ||
-//               (modifiers & InputEvent.BUTTON2_DOWN_MASK) != 0) {
-//      peButton = CENTER;
-//    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0 ||
-//               (modifiers & InputEvent.BUTTON3_DOWN_MASK) != 0) {
-//      peButton = RIGHT;
-//    }
-    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
+    if (nativeEvent.isPrimaryButtonDown()) {
       peButton = PConstants.LEFT;
-    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
-      peButton = PConstants.CENTER;
-    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
+    } else if (nativeEvent.isSecondaryButtonDown()) {
       peButton = PConstants.RIGHT;
+    } else if (nativeEvent.isMiddleButtonDown()) {
+      peButton = PConstants.CENTER;
     }
 
-    // If running on Mac OS, allow ctrl-click as right mouse. Prior to 0215,
-    // this used isPopupTrigger() on the native event, but that doesn't work
-    // for mouseClicked and mouseReleased (or others).
-    if (PApplet.platform == PConstants.MACOSX) {
-      //if (nativeEvent.isPopupTrigger()) {
-      if ((modifiers & InputEvent.CTRL_MASK) != 0) {
-        peButton = PConstants.RIGHT;
-      }
+    // If running on Mac OS, allow ctrl-click as right mouse.
+    // TODO see if this is necessary for JavaFX
+    if (PApplet.platform == PConstants.MACOSX &&
+        nativeEvent.isControlDown() &&
+        peButton == PConstants.LEFT) {
+      peButton = PConstants.RIGHT;
     }
 
     //if (canvas.getBoundsInLocal().contains(me.getX(), me.getY())) {
     //System.out.println(me.getSceneX() + " " + me.getSceneY());
     //}
 
-    sketch.postEvent(new MouseEvent(nativeEvent, nativeEvent.getWhen(),
-                                    peAction, peModifiers,
-                                    nativeEvent.getX(), nativeEvent.getY(),
-                                    peButton,
-                                    peCount));
+    //long when = nativeEvent.getWhen();  // from AWT
+    long when = System.currentTimeMillis();
+    int x = (int) nativeEvent.getX();  // getSceneX()?
+    int y = (int) nativeEvent.getY();
+
+    sketch.postEvent(new processing.event.MouseEvent(nativeEvent, when,
+                                                     peAction, peModifiers,
+                                                     x, y,
+                                                     peButton,
+                                                     peCount));
   }
 
 
-  protected void fxKeyEvent(javafx.scene.input.KeyEvent event) {
+  // https://docs.oracle.com/javafx/2/api/javafx/scene/input/ScrollEvent.html
+  protected void fxScrollEvent(ScrollEvent event) {
+//   //case java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL:
+//    case java.awt.event.MouseEvent.MOUSE_WHEEL:
+//      peAction = MouseEvent.WHEEL;
+//      /*
+//      if (preciseWheelMethod != null) {
+//        try {
+//          peAmount = ((Double) preciseWheelMethod.invoke(nativeEvent, (Object[]) null)).floatValue();
+//        } catch (Exception e) {
+//          preciseWheelMethod = null;
+//        }
+//      }
+//      */
+//      peCount = ((MouseWheelEvent) nativeEvent).getWheelRotation();
+//      break;
+  }
+
+
+  @SuppressWarnings("deprecation")
+  protected void fxKeyEvent(javafx.scene.input.KeyEvent nativeEvent) {
     int peAction = 0;
-    switch (event.getID()) {
-    case java.awt.event.KeyEvent.KEY_PRESSED:
-      peAction = KeyEvent.PRESS;
-      break;
-    case java.awt.event.KeyEvent.KEY_RELEASED:
-      peAction = KeyEvent.RELEASE;
-      break;
-    case java.awt.event.KeyEvent.KEY_TYPED:
-      peAction = KeyEvent.TYPE;
-      break;
+    EventType<? extends KeyEvent> et = nativeEvent.getEventType();
+    if (et == KeyEvent.KEY_PRESSED) {
+      peAction = processing.event.KeyEvent.PRESS;
+    } else if (et == KeyEvent.KEY_RELEASED) {
+      peAction = processing.event.KeyEvent.RELEASE;
+    } else if (et == KeyEvent.KEY_TYPED) {
+      peAction = processing.event.KeyEvent.TYPE;
     }
 
-//    int peModifiers = event.getModifiersEx() &
-//      (InputEvent.SHIFT_DOWN_MASK |
-//       InputEvent.CTRL_DOWN_MASK |
-//       InputEvent.META_DOWN_MASK |
-//       InputEvent.ALT_DOWN_MASK);
-    int peModifiers = event.getModifiers() &
-      (InputEvent.SHIFT_MASK |
-       InputEvent.CTRL_MASK |
-       InputEvent.META_MASK |
-       InputEvent.ALT_MASK);
+    int peModifiers = 0;
+    if (nativeEvent.isShiftDown()) {
+      peModifiers |= processing.event.Event.SHIFT;
+    }
+    if (nativeEvent.isControlDown()) {
+      peModifiers |= processing.event.Event.CTRL;
+    }
+    if (nativeEvent.isMetaDown()) {
+      peModifiers |= processing.event.Event.META;
+    }
+    if (nativeEvent.isAltDown()) {
+      peModifiers |= processing.event.Event.ALT;
+    }
 
-    sketch.postEvent(new KeyEvent(event, event.getWhen(),
-                                  peAction, peModifiers,
-                                  event.getKeyChar(), event.getKeyCode()));
+    long when = System.currentTimeMillis();
+    KeyCode kc = nativeEvent.getCode();
+    // Are the f*ing serious?
+    char key = kc.impl_getChar().charAt(0);
+    int keyCode = kc.impl_getCode();
+    sketch.postEvent(new processing.event.KeyEvent(nativeEvent, when,
+                                                   peAction, peModifiers,
+                                                   key, keyCode));
   }
+
+
+
 }
