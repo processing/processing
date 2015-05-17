@@ -62,7 +62,7 @@ public class PSurfaceJOGL implements PSurface {
 
   NewtCanvasAWT canvas;
 
-  float[] hasSurfacePixelScale = {0, 0};
+  float[] currentPixelScale = {0, 0};
 
   public PSurfaceJOGL(PGraphics graphics) {
     this.graphics = graphics;
@@ -226,12 +226,10 @@ public class PSurfaceJOGL implements PSurface {
        // Retina
        reqSurfacePixelScale = new float[] { ScalableSurface.AUTOMAX_PIXELSCALE,
                                             ScalableSurface.AUTOMAX_PIXELSCALE };
-       pgl.pixel_scale = 2;
     } else {
       // Non-retina
       reqSurfacePixelScale = new float[] { ScalableSurface.IDENTITY_PIXELSCALE,
                                            ScalableSurface.IDENTITY_PIXELSCALE };
-//      pgl.pixel_scale = 1;
     }
     window.setSurfaceScale(reqSurfacePixelScale);
 
@@ -475,6 +473,11 @@ public class PSurfaceJOGL implements PSurface {
     }
   }
 
+  public float getPixelScale() {
+    window.getCurrentSurfaceScale(currentPixelScale);
+    return currentPixelScale[0];
+  }
+
   public Component getComponent() {
     return canvas;
   }
@@ -543,7 +546,7 @@ public class PSurfaceJOGL implements PSurface {
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
 
 //      final float[] valReqSurfacePixelScale = window.getRequestedSurfaceScale(new float[2]);
-      window.getCurrentSurfaceScale(hasSurfacePixelScale);
+      window.getCurrentSurfaceScale(currentPixelScale);
 //      final float[] nativeSurfacePixelScale = window.getMaximumSurfaceScale(new float[2]);
 //      System.err.println("[set PixelScale post]: "+
 //                         valReqSurfacePixelScale[0]+"x"+valReqSurfacePixelScale[1]+" (val) -> "+
@@ -560,7 +563,7 @@ public class PSurfaceJOGL implements PSurface {
 //      } else {
 //        setSize(w, h);
 //      }
-      setSize((int)(w/hasSurfacePixelScale[0]), (int)(h/hasSurfacePixelScale[1]));
+      setSize((int)(w/currentPixelScale[0]), (int)(h/currentPixelScale[1]));
     }
   }
 
@@ -688,9 +691,9 @@ public class PSurfaceJOGL implements PSurface {
       peCount = nativeEvent.getClickCount();
     }
 
-    window.getCurrentSurfaceScale(hasSurfacePixelScale);
-    int sx = (int)(nativeEvent.getX()/hasSurfacePixelScale[0]);
-    int sy = (int)(nativeEvent.getY()/hasSurfacePixelScale[1]);
+    window.getCurrentSurfaceScale(currentPixelScale);
+    int sx = (int)(nativeEvent.getX()/currentPixelScale[0]);
+    int sy = (int)(nativeEvent.getY()/currentPixelScale[1]);
     if (presentMode) {
       if (peAction == KeyEvent.RELEASE &&
           20 < sx && sx < 20 + 100 &&
