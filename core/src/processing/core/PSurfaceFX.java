@@ -609,16 +609,12 @@ public class PSurfaceFX implements PSurface {
     }
 
     // If running on Mac OS, allow ctrl-click as right mouse.
-    // TODO see if this is necessary for JavaFX
+    // (Verified to be needed with Java 8u45 and JavaFX)
     if (PApplet.platform == PConstants.MACOSX &&
         fxEvent.isControlDown() &&
         button == PConstants.LEFT) {
       button = PConstants.RIGHT;
     }
-
-    //if (canvas.getBoundsInLocal().contains(me.getX(), me.getY())) {
-    //System.out.println(me.getSceneX() + " " + me.getSceneY());
-    //}
 
     //long when = nativeEvent.getWhen();  // from AWT
     long when = System.currentTimeMillis();
