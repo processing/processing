@@ -22,8 +22,6 @@ package processing.mode.java;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -49,57 +47,58 @@ import processing.app.Mode;
 import processing.mode.java.debug.VariableNode;
 
 
-public class DebugTray extends JFrame {
+public class VariableInspector extends JFrame {
   static public final int GAP = 13;
-  
+
   EditorButton continueButton;
   EditorButton stepButton;
   EditorButton breakpointButton;
-    
+
   // The tray will be placed at this amount from the top of the editor window,
   // and extend to this amount from the bottom of the editor window.
   final int VERTICAL_OFFSET = 64;
-  
+  final int HORIZONTAL_OFFSET = 16;
+
   /// the root node (invisible)
   protected DefaultMutableTreeNode rootNode;
-  
+
   /// node for Processing built-in variables
-  protected DefaultMutableTreeNode builtins; 
-  
+  protected DefaultMutableTreeNode builtins;
+
   /// data model for the tree column
   protected DefaultTreeModel treeModel;
-  
+
 //  private JScrollPane scrollPane;
-  
+
   protected Outline tree;
-  protected OutlineModel model; 
-  
+  protected OutlineModel model;
+
   protected List<DefaultMutableTreeNode> callStack;
-  
+
   /// current local variables
   protected List<VariableNode> locals;
-  
+
   /// all fields of the current this-object
-  protected List<VariableNode> thisFields; 
-  
+  protected List<VariableNode> thisFields;
+
   /// declared i.e. non-inherited fields of this
   protected List<VariableNode> declaredThisFields;
-  
-  protected JavaEditor editor; 
-//  protected Debugger dbg; 
-  
-  /// list of expanded tree paths. (using list to maintain the order of expansion)
-  protected List<TreePath> expandedNodes = new ArrayList<TreePath>(); 
-  
-  /// processing / "advanced" mode flag (currently not used)
-  protected boolean p5mode = true; 
 
-  
-  public DebugTray(final JavaEditor editor) {
-    setUndecorated(true);
-    
-    this.editor = editor;    
-    editor.addComponentListener(new EditorFollower());
+  protected JavaEditor editor;
+//  protected Debugger dbg;
+
+  /// list of expanded tree paths. (using list to maintain the order of expansion)
+  protected List<TreePath> expandedNodes = new ArrayList<TreePath>();
+
+  /// processing / "advanced" mode flag (currently not used)
+  protected boolean p5mode = true;
+
+
+  public VariableInspector(final JavaEditor editor) {
+    super("Inspector");
+    this.editor = editor;
+    //setUndecorated(true);
+    //editor.addComponentListener(new EditorFollower());
 
     //setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
     Box box = Box.createVerticalBox();
@@ -107,7 +106,12 @@ public class DebugTray extends JFrame {
     box.add(createScrollPane());
     getContentPane().add(box);
     pack();
-    
+
+//    setLocation(editor.getX() + editor.getWidth() + HORIZONTAL_OFFSET,
+//                editor.getY() + VERTICAL_OFFSET);
+    setLocationRelativeTo(editor);
+
+
     /*
     bgColor = mode.getColor("buttons.bgcolor");
     statusFont = mode.getFont("buttons.status.font");
@@ -115,38 +119,38 @@ public class DebugTray extends JFrame {
 //    modeTitle = mode.getTitle().toUpperCase();
     modeTitle = mode.getTitle();
     modeTextFont = mode.getFont("mode.button.font");
-    modeButtonColor = mode.getColor("mode.button.color");    
+    modeButtonColor = mode.getColor("mode.button.color");
     */
   }
-  
-  
+
+
   Container createToolbar() {
     final Mode mode = editor.getMode();
     Box box = Box.createHorizontalBox();
 
-    continueButton = 
-      new EditorButton(mode, "theme/debug/continue", 
+    continueButton =
+      new EditorButton(mode, "theme/debug/continue",
                        Language.text("toolbar.debug.continue")) {
       @Override
       public void actionPerformed(ActionEvent e) {
-        Logger.getLogger(DebugTray.class.getName()).log(Level.INFO, "Invoked 'Continue' toolbar button");
+        Logger.getLogger(VariableInspector.class.getName()).log(Level.INFO, "Invoked 'Continue' toolbar button");
         editor.debugger.continueDebug();
       }
     };
     box.add(continueButton);
     box.add(Box.createHorizontalStrut(GAP));
-    
-    stepButton = 
+
+    stepButton =
       new EditorButton(mode, "theme/debug/step",
                        Language.text("toolbar.debug.step"),
                        Language.text("toolbar.debug.step_into")) {
       @Override
       public void actionPerformed(ActionEvent e) {
         if (isShiftDown()) {
-          Logger.getLogger(DebugTray.class.getName()).log(Level.INFO, "Invoked 'Step Into' toolbar button");
+          Logger.getLogger(VariableInspector.class.getName()).log(Level.INFO, "Invoked 'Step Into' toolbar button");
           editor.debugger.stepInto();
         } else {
-          Logger.getLogger(DebugTray.class.getName()).log(Level.INFO, "Invoked 'Step' toolbar button");
+          Logger.getLogger(VariableInspector.class.getName()).log(Level.INFO, "Invoked 'Step' toolbar button");
           editor.debugger.stepOver();
         }
       }
@@ -154,12 +158,12 @@ public class DebugTray extends JFrame {
     box.add(stepButton);
     box.add(Box.createHorizontalStrut(GAP));
 
-    breakpointButton = 
+    breakpointButton =
       new EditorButton(mode, "theme/debug/breakpoint",
                        Language.text("toolbar.debug.toggle_breakpoints")) {
       @Override
       public void actionPerformed(ActionEvent e) {
-        Logger.getLogger(DebugTray.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' toolbar button");
+        Logger.getLogger(VariableInspector.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' toolbar button");
         editor.debugger.toggleBreakpoint();
       }
     };
@@ -171,17 +175,17 @@ public class DebugTray extends JFrame {
     continueButton.setRolloverLabel(label);
     stepButton.setRolloverLabel(label);
     breakpointButton.setRolloverLabel(label);
-    
+
     // the rest is all gaps
     box.add(Box.createHorizontalGlue());
     box.setBorder(new EmptyBorder(GAP, GAP, GAP, GAP));
 
-    // prevent the toolbar from getting taller than its default 
+    // prevent the toolbar from getting taller than its default
     box.setMaximumSize(new Dimension(getMaximumSize().width, getPreferredSize().height));
     return box;
   }
-  
-  
+
+
   Container createScrollPane() {
     JScrollPane scrollPane = new JScrollPane();
     tree = new Outline();
@@ -193,19 +197,19 @@ public class DebugTray extends JFrame {
     layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                               .addGap(0, 400, Short.MAX_VALUE)
                               .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(scrollPane, 
-                                                      GroupLayout.DEFAULT_SIZE, 
+                                        .addComponent(scrollPane,
+                                                      GroupLayout.DEFAULT_SIZE,
                                                       400, Short.MAX_VALUE)));
     layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addGap(0, 300, Short.MAX_VALUE)
                             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                      .addComponent(scrollPane, 
-                                                    GroupLayout.Alignment.TRAILING, 
-                                                    GroupLayout.DEFAULT_SIZE, 
+                                      .addComponent(scrollPane,
+                                                    GroupLayout.Alignment.TRAILING,
+                                                    GroupLayout.DEFAULT_SIZE,
                                                     300, Short.MAX_VALUE)));
     pack();
     */
-    
+
     // setup Outline
     rootNode = new DefaultMutableTreeNode("root");
     builtins = new DefaultMutableTreeNode("Processing");
@@ -241,7 +245,7 @@ public class DebugTray extends JFrame {
     return scrollPane;
   }
 
-  
+
   protected void activateContinue() {
   }
 
@@ -255,10 +259,11 @@ public class DebugTray extends JFrame {
 
 
   protected void deactivateStep() {
-  }  
-    
-  
-  /** Keeps the debug window adjacent the editor at all times. */
+  }
+
+
+  /*
+  // Keeps the debug window adjacent the editor at all times.
   class EditorFollower implements ComponentListener {
 
     @Override
@@ -290,30 +295,25 @@ public class DebugTray extends JFrame {
       }
     }
   }
-  
-  
+
+
   private void updateBounds() {
-    setBounds(editor.getX() + editor.getWidth(), 
-              editor.getY() + VERTICAL_OFFSET, 
-              getPreferredSize().width, 
+    setBounds(editor.getX() + editor.getWidth(),
+              editor.getY() + VERTICAL_OFFSET,
+              getPreferredSize().width,
               editor.getHeight() - VERTICAL_OFFSET*2);
   }
-  
-  
+
+
   public void setVisible(boolean visible) {
     if (visible) {
       updateBounds();
     }
     super.setVisible(visible);
   }
+  */
 
-    
-//  @Override
-//  public void setTitle(String title) {
-//    super.setTitle(title + " | Variable Inspector");
-//  }
 
-    
   /**
    * Model for a Outline Row (excluding the tree column). Column 0 is "Value".
    * Column 1 is "Type". Handles setting and getting values. TODO: Maybe use a
@@ -326,14 +326,14 @@ public class DebugTray extends JFrame {
     final String column1 = Language.text("debugger.type");
     final String[] columnNames = { column0, column1 };
     final int[] editableTypes = {
-      VariableNode.TYPE_BOOLEAN, 
-      VariableNode.TYPE_FLOAT, 
-      VariableNode.TYPE_INTEGER, 
-      VariableNode.TYPE_STRING, 
-      VariableNode.TYPE_FLOAT, 
-      VariableNode.TYPE_DOUBLE, 
-      VariableNode.TYPE_LONG, 
-      VariableNode.TYPE_SHORT, 
+      VariableNode.TYPE_BOOLEAN,
+      VariableNode.TYPE_FLOAT,
+      VariableNode.TYPE_INTEGER,
+      VariableNode.TYPE_STRING,
+      VariableNode.TYPE_FLOAT,
+      VariableNode.TYPE_DOUBLE,
+      VariableNode.TYPE_LONG,
+      VariableNode.TYPE_SHORT,
       VariableNode.TYPE_CHAR
     };
 
@@ -436,10 +436,10 @@ public class DebugTray extends JFrame {
       return columnNames[i];
     }
   }
-    
+
 
   /**
-   * Renderer for the tree portion of the outline component. 
+   * Renderer for the tree portion of the outline component.
    * Handles icons, text color and tool tips.
    */
   protected class OutlineRenderer implements RenderDataProvider {
@@ -453,14 +453,14 @@ public class DebugTray extends JFrame {
     }
 
     /**
-     * Load multiple icons (horizotal) with multiple states (vertical) from
+     * Load multiple icons (horizontal) with multiple states (vertical) from
      * a single file.
      *
      * @param fileName file path in the mode folder.
      * @return a nested array (first index: icon, second index: state) or
      * null if the file wasn't found.
      */
-    protected ImageIcon[][] loadIcons(String fileName) {
+    private ImageIcon[][] loadIcons(String fileName) {
       Mode mode = editor.getMode();
       File file = mode.getContentFile(fileName);
       if (!file.exists()) {
@@ -474,7 +474,6 @@ public class DebugTray extends JFrame {
 
       for (int i = 0; i < cols; i++) {
         for (int j = 0; j < rows; j++) {
-          //Image image = createImage(ICON_SIZE, ICON_SIZE);
           Image image = new BufferedImage(ICON_SIZE, ICON_SIZE, BufferedImage.TYPE_INT_ARGB);
           Graphics g = image.getGraphics();
           g.drawImage(allIcons, -i * ICON_SIZE, -j * ICON_SIZE, null);
@@ -494,11 +493,7 @@ public class DebugTray extends JFrame {
 
 
     protected VariableNode toVariableNode(Object o) {
-      if (o instanceof VariableNode) {
-        return (VariableNode) o;
-      } else {
-        return null;
-      }
+      return (o instanceof VariableNode) ? (VariableNode) o : null;
     }
 
 
@@ -514,16 +509,10 @@ public class DebugTray extends JFrame {
 
     @Override
     public String getDisplayName(Object o) {
-      return o.toString(); // VariableNode.toString() returns name; (for sorting)
-//            VariableNode var = toVariableNode(o);
-//            if (var != null) {
-//                return var.getName();
-//            } else {
-//                return o.toString();
-//            }
+      return o.toString();
     }
 
-        
+
     @Override
     public boolean isHtmlDisplayName(Object o) {
       return false;
@@ -561,43 +550,35 @@ public class DebugTray extends JFrame {
     public Icon getIcon(Object o) {
       VariableNode var = toVariableNode(o);
       if (var != null) {
-        if (tree.isEnabled()) {
-          return getIcon(var.getType(), 0);
+        return getIcon(var.getType(), tree.isEnabled() ? 0 : 1);
+      }
+      if (o instanceof TreeNode) {
+        UIDefaults defaults = UIManager.getDefaults();
+
+        boolean isLeaf = model.isLeaf(o);
+        Icon icon;
+        if (isLeaf) {
+          icon = defaults.getIcon("Tree.leafIcon");
         } else {
-          return getIcon(var.getType(), 1);
+          icon = defaults.getIcon("Tree.closedIcon");
         }
-      } else {
-        if (o instanceof TreeNode) {
-//                    TreeNode node = (TreeNode) o;
-//                    AbstractLayoutCache layout = tree.getLayoutCache();
-          UIDefaults defaults = UIManager.getDefaults();
 
-          boolean isLeaf = model.isLeaf(o);
-          Icon icon;
-          if (isLeaf) {
-            icon = defaults.getIcon("Tree.leafIcon");
-          } else {
-            icon = defaults.getIcon("Tree.closedIcon");
-          }
-
-          if (!tree.isEnabled()) {
-            return toGray(icon);
-          }
-          return icon;
+        if (!tree.isEnabled()) {
+          return toGray(icon);
         }
+        return icon;
       }
       return null; // use standard icon
-            //UIManager.getIcon(o);
     }
   }
-    
 
-    // TODO: could probably extend the simpler DefaultTableCellRenderer here
-    /**
-     * Renderer for the value column. Uses an italic font for null values and
-     * Object values ("instance of ..."). Uses a gray color when tree is not
-     * enabled.
-     */
+
+  // TODO: could probably extend the simpler DefaultTableCellRenderer here
+  /**
+   * Renderer for the value column. Uses an italic font for null values and
+   * Object values ("instance of ..."). Uses a gray color when tree is not
+   * enabled.
+   */
   protected class ValueCellRenderer extends DefaultOutlineCellRenderer {
 
     public ValueCellRenderer() {
@@ -605,40 +586,29 @@ public class DebugTray extends JFrame {
     }
 
     protected void setItalic(boolean on) {
-      if (on) {
-        setFont(new Font(getFont().getName(), Font.ITALIC, getFont().getSize()));
-      } else {
-        setFont(new Font(getFont().getName(), Font.PLAIN, getFont().getSize()));
-      }
+      setFont(new Font(getFont().getName(),
+                       on ? Font.ITALIC : Font.PLAIN,
+                       getFont().getSize()));
     }
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-      if (!tree.isEnabled()) {
-        setForeground(Color.GRAY);
-      } else {
-        setForeground(Color.BLACK);
-      }
+      setForeground(tree.isEnabled() ? Color.BLACK : Color.GRAY);
 
       if (value instanceof VariableNode) {
         VariableNode var = (VariableNode) value;
 
-        if (var.getValue() == null || var.getType() == VariableNode.TYPE_OBJECT) {
-          setItalic(true);
-        } else {
-          setItalic(false);
-        }
+        setItalic(var.getValue() == null ||
+                  var.getType() == VariableNode.TYPE_OBJECT);
         value = var.getStringValue();
       }
-
       setValue(value);
       return c;
     }
   }
 
-    
+
   /**
    * Editor for the value column. Will show an empty string when editing
    * String values that are null.
@@ -663,9 +633,9 @@ public class DebugTray extends JFrame {
     }
   }
 
-    
+
   /**
-   * Handler for expanding and collapsing tree nodes. 
+   * Handler for expanding and collapsing tree nodes.
    * Implements lazy loading of tree data (on expand).
    */
   protected class ExpansionHandler implements ExtTreeWillExpandListener, TreeExpansionListener {
@@ -722,8 +692,8 @@ public class DebugTray extends JFrame {
     }
   }
 
-    
-  protected static void run(final DebugTray vi) {
+
+  protected static void run(final VariableInspector vi) {
     EventQueue.invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -737,7 +707,7 @@ public class DebugTray extends JFrame {
     return rootNode;
   }
 
-    
+
   /**
    * Unlock the inspector window. Rebuild after this to avoid ... dots in the
    * trees labels
@@ -746,7 +716,7 @@ public class DebugTray extends JFrame {
     tree.setEnabled(true);
   }
 
-  
+
   /**
    * Lock the inspector window. Cancels open edits.
    */
@@ -758,7 +728,7 @@ public class DebugTray extends JFrame {
     tree.setEnabled(false);
   }
 
-  
+
   /**
    * Reset the inspector windows data. Rebuild after this to make changes
    * visible.
@@ -787,7 +757,7 @@ public class DebugTray extends JFrame {
     callStack = nodes;
   }
 
-  
+
   /**
    * Update locals data.
    *
@@ -799,7 +769,7 @@ public class DebugTray extends JFrame {
   public void updateLocals(List<VariableNode> nodes, String title) {
     locals = nodes;
   }
-  
+
 
   /**
    * Update this-fields data.
@@ -812,7 +782,7 @@ public class DebugTray extends JFrame {
   public void updateThisFields(List<VariableNode> nodes, String title) {
     thisFields = nodes;
   }
-  
+
 
   /**
    * Update declared (non-inherited) this-fields data.
@@ -826,7 +796,7 @@ public class DebugTray extends JFrame {
     declaredThisFields = nodes;
   }
 
-    
+
   /**
    * Rebuild the outline tree from current data. Uses the data provided by
    * {@link #updateCallStack}, {@link #updateLocals}, {@link #updateThisFields}
@@ -871,7 +841,7 @@ public class DebugTray extends JFrame {
     }
   }
 
-  
+
   /**
    * Re-build a {@link TreePath} from a previous path using equals-checks
    * starting at the root node. This is used to use paths from previous trees
@@ -905,7 +875,7 @@ public class DebugTray extends JFrame {
     }
     return new TreePath(newPath);
   }
-  
+
 
   /**
    * Filter a list of nodes using a {@link VariableNodeFilter}.
@@ -923,21 +893,21 @@ public class DebugTray extends JFrame {
     return filtered;
   }
 
-  
+
   protected void addAllNodes(DefaultMutableTreeNode root, List<? extends MutableTreeNode> nodes) {
     for (MutableTreeNode node : nodes) {
       root.add(node);
     }
   }
 
-  
+
   public interface VariableNodeFilter {
 
     /** Check whether the filter accepts a {@link VariableNode}. */
     public boolean accept(VariableNode var);
   }
 
-  
+
   /**
    * A {@link VariableNodeFilter} that accepts Processing built-in variable
    * names.
@@ -966,7 +936,7 @@ public class DebugTray extends JFrame {
       return Arrays.asList(p5Builtins).contains(var.getName());
     }
   }
-  
+
 
   /**
    * A {@link VariableNodeFilter} that rejects implicit this references.
@@ -979,7 +949,7 @@ public class DebugTray extends JFrame {
       return !var.getName().startsWith("this$");
     }
   }
-  
+
 
   /**
    * A {@link VariableNodeFilter} that either rejects this-fields if hidden by
@@ -991,12 +961,12 @@ public class DebugTray extends JFrame {
     public static final int MODE_HIDE = 0; // don't show hidden this fields
 
     // Prefix a this-fields name with "this." if hidden by a local.
-    public static final int MODE_PREFIX = 1; 
-    
+    public static final int MODE_PREFIX = 1;
+
     protected List<VariableNode> locals;
     protected int mode;
 
-    
+
     /**
      * Construct a {@link LocalHidesThisFilter}.
      * @param locals a list of locals to check against
@@ -1006,7 +976,7 @@ public class DebugTray extends JFrame {
       this.locals = locals;
       this.mode = mode;
     }
-    
+
 
     @Override
     public boolean accept(VariableNode var) {

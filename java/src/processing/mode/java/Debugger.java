@@ -876,7 +876,7 @@ public class Debugger implements VMEventListener {
         // TODO: needs to be handled in a better way:
         log(Level.WARNING, "call stack empty");
       } else {
-        final DebugTray vi = editor.variableInspector();
+        final VariableInspector vi = editor.variableInspector();
         // first get data
         final List<DefaultMutableTreeNode> stackTrace = getStackTrace(t);
         final List<VariableNode> locals = getLocals(t, 0);

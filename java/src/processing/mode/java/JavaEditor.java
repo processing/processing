@@ -68,7 +68,7 @@ public class JavaEditor extends Editor {
   JCheckBoxMenuItem enableDebug;
 
   protected Debugger debugger;
-  protected DebugTray tray;
+  protected VariableInspector tray;
 
 //  private EditorToolbar javaToolbar;
 //  private DebugToolbar debugToolbar;
@@ -91,7 +91,7 @@ public class JavaEditor extends Editor {
 
     jmode = (JavaMode) mode;
     debugger = new Debugger(this);
-    tray = new DebugTray(this);
+    tray = new VariableInspector(this);
 
     // Add show usage option
     JMenuItem showUsageItem = new JMenuItem("Show Usage...");
@@ -2042,7 +2042,7 @@ public class JavaEditor extends Editor {
    * Access variable inspector window.
    * @return the variable inspector object
    */
-  public DebugTray variableInspector() {
+  public VariableInspector variableInspector() {
     return tray;
   }
 
