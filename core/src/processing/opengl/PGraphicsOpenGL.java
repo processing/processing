@@ -43,6 +43,9 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Font cache for texture objects. */
   protected WeakHashMap<PFont, FontTexture> fontMap;
 
+  // just to get things running properly, need to
+  protected PSurfaceJOGL surfaceJOGL;
+
   // ........................................................
 
   // Basic rendering parameters:
@@ -668,8 +671,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public PSurface createSurface() {  // ignore
-    return new PSurfaceJOGL(this);
-//    return new PSurfaceNEWT(this);
+    surfaceJOGL = new PSurfaceJOGL(this);
+    return surfaceJOGL;
   }
 
 
@@ -693,6 +696,11 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void removeCache(PImage image) {
     getPrimaryPG().cacheMap.remove(image);
+  }
+
+
+  public float getPixelScale() {
+    return surfaceJOGL.getPixelScale();
   }
 
 
