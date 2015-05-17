@@ -1,4 +1,4 @@
-PROCESSING 3.0a8 (REV 0235) - XX May 2015
+PROCESSING 3.0a8 (REV 0235) - 17 May 2015
 
 Stabilizing the mess from 3.0a6 and 3.0a7. Read the release notes for
 those versions (below) if you haven't already.
