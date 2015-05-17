@@ -859,22 +859,14 @@ public class ErrorCheckerService implements Runnable {
         // Try to get the library classpath and add it to the list
         try {
           library = editor.getMode().getLibrary(entry);
-          // log("lib->" + library.getClassPath() + "<-");
-          String libraryPath[] = PApplet.split(library.getClassPath()
-              .substring(1).trim(), File.pathSeparatorChar);
-          for (int i = 0; i < libraryPath.length; i++) {
-            // log(entry + " ::"
-            // + new File(libraryPath[i]).toURI().toURL());
-            classpathJars.add(new File(libraryPath[i]).toURI().toURL());
+          String[] libraryPath =
+            PApplet.split(library.getClassPath().substring(1).trim(),
+                          File.pathSeparatorChar);
+          for (String pathItem : libraryPath) {
+            classpathJars.add(new File(pathItem).toURI().toURL());
           }
-          // log("-- ");
-          // classpath[count] = (new File(library.getClassPath()
-          // .substring(1))).toURI().toURL();
-          // log("  found ");
-          // log(library.getClassPath().substring(1));
         } catch (Exception e) {
           if (library == null && !codeFolderChecked) {
-            // log(1);
             // Look around in the code folder for jar files
             if (editor.getSketch().hasCodeFolder()) {
               File codeFolder = editor.getSketch().getCodeFolder();
@@ -883,18 +875,14 @@ public class ErrorCheckerService implements Runnable {
               // (class files in subfolders should also be picked up)
               String codeFolderClassPath = Base.contentsToClassPath(codeFolder);
               codeFolderChecked = true;
+              // huh? doesn't this mean .length() == 0? [fry]
               if (codeFolderClassPath.equalsIgnoreCase("")) {
-                System.err.println("Cannot find \""
-                    + entry
-                    + "\" library. Line: "
-                    + impstat.getLineNumber()
-                    + " in tab: "
-                    + editor.getSketch().getCode(impstat.getTab()).getPrettyName());
-                System.out.println("Please make sure that the library is present in <sketchbook "
-                        + "folder>/libraries folder or in the code folder of your sketch");
+                System.err.format("Cannot find \"%s\" library. Line %d in tab %s%n",
+                                  entry, impstat.getLineNumber(),
+                                  editor.getSketch().getCode(impstat.getTab()).getPrettyName());
+                System.err.println("Make sure that the library is installed properly.");
 
-              }
-              else {
+              } else {
                 String codeFolderPath[] =
                   PApplet.split(codeFolderClassPath.substring(1).trim(),
                                 File.pathSeparatorChar);
@@ -902,36 +890,23 @@ public class ErrorCheckerService implements Runnable {
                   for (String pathItem : codeFolderPath) {
                     classpathJars.add(new File(pathItem).toURI().toURL());
                   }
-
                 } catch (Exception e2) {
                   e2.printStackTrace();
                 }
               }
             } else {
-              System.err.println("Experimental Mode: Yikes! Can't find \""
-                  + entry
-                  + "\" library! Line: "
-                  + impstat.getLineNumber()
-                  + " in tab: "
-                  + editor.getSketch().getCode(impstat.getTab())
-                      .getPrettyName());
-              System.out
-                  .println("Please make sure that the library is present in <sketchbook "
-                      + "folder>/libraries folder or in the code folder of your sketch");
+              System.err.format("Cannot find \"%s\" library. Line %d in tab %s%n",
+                                entry, impstat.getLineNumber(),
+                                editor.getSketch().getCode(impstat.getTab()).getPrettyName());
             }
 
           } else {
-            System.err
-                .println("Yikes! There was some problem in prepareImports(): "
-                    + e);
-            System.err.println("I was processing: " + entry);
-
-            // e.printStackTrace();
+            new Exception("Error while handling '" + entry + "'", e).printStackTrace();
           }
         }
-
       }
     }
+
     new Thread(new Runnable() {
       public void run() {
         astGenerator.loadJars(); // update jar file for completion lookup
@@ -942,45 +917,35 @@ public class ErrorCheckerService implements Runnable {
 
   /**
    * Ignore processing packages, java.*.*. etc.
-   *
-   * @param packageName
-   * @return boolean
    */
   protected boolean ignorableImport(String packageName) {
-    // packageName.startsWith("processing.")
-    // ||
-    if (packageName.startsWith("java.") || packageName.startsWith("javax.")) {
-      return true;
-    }
-    return false;
+    return (packageName.startsWith("java.") ||
+            packageName.startsWith("javax."));
   }
 
-  /**
-   * Various option for JDT Compiler
-   */
+
+  /** Options for the JDT Compiler */
   protected Map<String, String> compilerSettings;
 
-  /**
-   * Sets compiler options for JDT Compiler
-   */
+
+  /** Set compiler options for JDT Compiler */
   protected void prepareCompilerSetting() {
     compilerSettings = new HashMap<String, String>();
 
     compilerSettings.put(CompilerOptions.OPTION_LineNumberAttribute,
-        CompilerOptions.GENERATE);
+                         CompilerOptions.GENERATE);
     compilerSettings.put(CompilerOptions.OPTION_SourceFileAttribute,
-        CompilerOptions.GENERATE);
+                         CompilerOptions.GENERATE);
     compilerSettings.put(CompilerOptions.OPTION_Source,
-        CompilerOptions.VERSION_1_8);
+                         CompilerOptions.VERSION_1_8);
     compilerSettings.put(CompilerOptions.OPTION_ReportUnusedImport,
-        CompilerOptions.IGNORE);
+                         CompilerOptions.IGNORE);
     compilerSettings.put(CompilerOptions.OPTION_ReportMissingSerialVersion,
-        CompilerOptions.IGNORE);
+                         CompilerOptions.IGNORE);
     compilerSettings.put(CompilerOptions.OPTION_ReportRawTypeReference,
-        CompilerOptions.IGNORE);
-    compilerSettings.put(
-        CompilerOptions.OPTION_ReportUncheckedTypeOperation,
-        CompilerOptions.IGNORE);
+                         CompilerOptions.IGNORE);
+    compilerSettings.put(CompilerOptions.OPTION_ReportUncheckedTypeOperation,
+                         CompilerOptions.IGNORE);
   }
 
 
@@ -1028,34 +993,11 @@ public class ErrorCheckerService implements Runnable {
         new DefaultTableModel(errorData, XQErrorTable.columnNames);
       editor.updateTable(tm);
 
-      /*
-      if (errorWindow != null) {
-        if (errorWindow.isVisible()) {
-          errorWindow.updateTable(tm);
-        }
-
-        // A rotating slash animation on the title bar to show
-        // that error checker thread is running
-
-        slashAnimationIndex++;
-        if (slashAnimationIndex == slashAnimation.length) {
-          slashAnimationIndex = 0;
-        }
-        if (editor != null) {
-          String info = slashAnimation[slashAnimationIndex] + " T:"
-              + (System.currentTimeMillis() - lastTimeStamp)
-              + "ms";
-          errorWindow.setTitle("Problems - "
-              + editor.getSketch().getName() + " " + info);
-        }
-      }*/
-
     } catch (Exception e) {
       Base.log("Exception at updateErrorTable() " + e);
       e.printStackTrace();
       pauseThread();
     }
-
   }
 
 
@@ -1517,6 +1459,10 @@ public class ErrorCheckerService implements Runnable {
       // It's also a bit silly that if parameters to scrollTo() are out of range,
       // a BadLocation Exception is thrown internally and caught in JTextArea AND
       // even the stack trace gets printed! W/o letting me catch it later! SMH
+      // That's because 1) you can prevent it by not causing the BLE,
+      // and 2) there are so many JEditSyntax bugs that actually throwing the
+      // exception all the time would cause the editor to shut down over
+      // trivial/recoverable quirks. It's the least bad option. [fry]
       final Document doc = editor.getTextArea().getDocument();
       final int lineCount = Base.countLines(doc.getText(0, doc.getLength()));
       if (p.getLineNumber() < lineCount && p.getLineNumber() >= 0) {

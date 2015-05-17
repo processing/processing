@@ -1,5 +1,9 @@
 0236 (3.0a9)
 
+pdex/debugger
+X remove "Experimental Mode: Yikes!" messages
+
+
 in a8, but unconfirmed
 _ "step" not working properly
 _   https://github.com/processing/processing/issues/3266
@@ -10,7 +14,6 @@ _   https://github.com/processing/processing/issues/3242
 pdex
 _ NullPointerException in initiateToolTip()
 _   https://github.com/processing/processing/issues/3286
-_ fix this error message: Experimental Mode: Yikes! Can't find "processing.opengl" library! Line: 2 in tab: particle_signature_30_01
 _ get rid of the debugger 'pane', just have that be the old window
 o   show debug window when running, hide when stopped
 o   can we animate the show/hide for the debug box?
