@@ -812,7 +812,8 @@ public class PApplet implements PConstants {
   String renderer = JAVA2D;
   int quality = 2;
   boolean fullScreen;
-  boolean spanScreens;
+  boolean spanDisplays;
+  int displayIndex;
   String outputPath;
   OutputStream outputStream;
 
@@ -883,9 +884,19 @@ public class PApplet implements PConstants {
   }
 
 
-  public boolean sketchSpanScreens() {
+  // Could be named 'screen' instead of display since it's the people using
+  // full screen who will be looking for it. On the other hand, screenX/Y/Z
+  // makes things confusing, and if 'displayIndex' exists...
+  public boolean sketchSpanDisplays() {
     //return false;
-    return spanScreens;
+    return spanDisplays;
+  }
+
+
+  // Or should this be sketchDisplayNum instead of sketchDisplayIndex?
+  // (Index seems weird, but we don't use 'num' anywhere.)
+  public int sketchDisplayIndex() {
+    return displayIndex;
   }
 
 
@@ -9543,14 +9554,25 @@ public class PApplet implements PConstants {
 
         } else if (param.equals(ARGS_DISPLAY)) {
           displayIndex = parseInt(value, -1);
+          if (displayIndex == -1) {
+            System.err.println("Could not parse " + value + " for " + ARGS_DISPLAY);
+          }
 
         } else if (param.equals(ARGS_BGCOLOR)) {
-          if (value.charAt(0) == '#') value = value.substring(1);
-          backgroundColor = 0xff000000 | Integer.parseInt(value, 16);
+          if (value.charAt(0) == '#' && value.length() == 7) {
+            value = value.substring(1);
+            backgroundColor = 0xff000000 | Integer.parseInt(value, 16);
+          } else {
+            System.err.println(ARGS_BGCOLOR + " should be a # followed by six digits");
+          }
 
         } else if (param.equals(ARGS_STOP_COLOR)) {
-          if (value.charAt(0) == '#') value = value.substring(1);
-          stopColor = 0xff000000 | Integer.parseInt(value, 16);
+          if (value.charAt(0) == '#' && value.length() == 7) {
+            value = value.substring(1);
+            stopColor = 0xff000000 | Integer.parseInt(value, 16);
+          } else {
+            System.err.println(ARGS_STOP_COLOR + " should be a # followed by six digits");
+          }
 
         } else if (param.equals(ARGS_SKETCH_FOLDER)) {
           folder = value;
@@ -9591,11 +9613,6 @@ public class PApplet implements PConstants {
 //      }
 //    }
 
-    // Set this property before getting into any GUI init code
-    //System.setProperty("com.apple.mrj.application.apple.menu.about.name", name);
-    // This )*)(*@#$ Apple bulls*t don't work no matter where you put it
-    // (static method of the class, at the top of main, wherever)
-
     final PApplet sketch;
     if (constructedSketch != null) {
       sketch = constructedSketch;
@@ -9609,16 +9626,21 @@ public class PApplet implements PConstants {
       }
     }
 
+    // Call the settings() method which will give us our size() call
     sketch.handleSettings();
 
     // A handful of things that need to be set before init/start.
     sketch.sketchPath = folder;
+
+    sketch.spanDisplays = spanDisplays;
+    // If spanning screens, that means we're also full screen.
+    fullScreen |= spanDisplays;
+
     // If the applet doesn't call for full screen, but the command line does,
     // enable it. Conversely, if the command line does not, don't disable it.
     // Query the applet to see if it wants to be full screen all the time.
-    fullScreen |= sketch.sketchFullScreen();
-    // If spanning screens, that means we're also full screen.
-    fullScreen |= sketch.sketchSpanScreens();
+    //fullScreen |= sketch.sketchFullScreen();
+    sketch.fullScreen |= fullScreen;
 
     // Don't set 'args' to a zero-length array if it should be null [3.0a8]
     if (args.length != argIndex + 1) {
@@ -9661,7 +9683,7 @@ public class PApplet implements PConstants {
 
 
   protected PSurface initSurface(int backgroundColor, int displayIndex,
-                                 boolean present, boolean spanDisplays) {
+                                 boolean fullScreen, boolean spanDisplays) {
     g = createPrimaryGraphics();
     surface = g.createSurface();
 
@@ -9691,7 +9713,7 @@ public class PApplet implements PConstants {
         }
       };
 
-      surface.initFrame(this, backgroundColor, displayIndex, present, spanDisplays);
+      surface.initFrame(this, backgroundColor, displayIndex, fullScreen, spanDisplays);
       surface.setTitle(getClass().getName());
 
     } else {

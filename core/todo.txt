@@ -1,9 +1,7 @@
 0235 (3.0a8)
-X pop() was not implemented correctly
 X fairly major rewrite of createShape() 
 X   prevents same code from appearing 5x (!) in the source
 X   improves bad api design with the static createShapeImpl() methods
-X add new String/Int/FloatDict constructors for easier initialization
 X errors in case changes not correctly reported
 X   https://github.com/processing/processing/issues/3235
 X move svgz handling to PApplet
@@ -38,7 +36,18 @@ X   this was fixed earlier?
 X fix flicker when resizing window 
 X   running through PSurfaceAWT.setSize() is probably overkill
 o   setLocationRelativeTo(null) was removed, will it be missed?
+
+data
+X pop() was not implemented correctly
+X add new String/Int/FloatDict constructors for easier initialization
 X add appendUnique() to Int/Float/StringList
+o add fromOrder() and others? otherwise need temp object:
+o   categoryIndexLookup = new StringList(flavors).getOrder();
+X   decided no:
+X     not a huge deal to call getOrder() and deal w/ temp objects
+X     likely to only be called only once during execution
+X     it's only for StringList
+X     in the end, not worth adding fromXxxx() syntax for single use
 
 opengl
 X OpenGL sketches work only after running a sketch with default renderer
@@ -72,14 +81,18 @@ X   yes, verified and working properly
 
 
 high priority
+_ instead of all these sketchXxxx() methods, should we have sketchSetting()
+_   and an internal dictionary that stores them all?
+_   or sketchInt() or settingsInt()?
 _ update documentation to say "don't override sketchXxxx() methods"
 _ sketch window is not placed at correct location when running a second time
 _   https://github.com/processing/processing/issues/3125
-_ y location of frame might be negative, but that might be ok 
+_ y-location of frame might be negative, but that might be ok 
 _   right now, on Windows it moves it on-screen (b/c of previous bug reports)
 _   may be cause of some of the display placement issues w/ multiple displays
 _   seem to recall one of the bugs mentioning stacked displays
 _   need to change to iterate through display rectangles
+_   may be related to full-screen bug filed recently
 _ closing a sketch window manually (not hitting Stop) not killing sketch
 _   at least with the Java2D renderer
 
@@ -194,8 +207,6 @@ _   map() is bad for Python and JavaScript
 
 
 data
-_ add fromOrder() and others? otherwise need temp object:
-_   categoryIndexLookup = new StringList(flavors).getOrder();
 _ handling of 'missing' values in Table needs serious work
 _   if missing int is zero, can't just remove those values from saving a table
 _   but for NaN values, it's a necessity
