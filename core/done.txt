@@ -1,3 +1,85 @@
+0235 (3.0a8)
+X fairly major rewrite of createShape() 
+X   prevents same code from appearing 5x (!) in the source
+X   improves bad api design with the static createShapeImpl() methods
+X errors in case changes not correctly reported
+X   https://github.com/processing/processing/issues/3235
+X move svgz handling to PApplet
+X   remove objz handling
+X Single Frame (No Screen Display) PDF broken
+X   https://github.com/processing/processing/issues/3280
+o remove setTitle() etc methods from PSurface, just use the ones from Frame?
+o   and with that, encourage the use of the dummy frame object in renderers
+X   dummy moved into PApplet itself
+X add SVG export library
+X add StringList(Object...) constructor
+X size() is fairly broken for PDF and SVG or whatever
+X   make size(300, 300, PDF) without implementing sketchXxx() methods work
+X   this shouldn't be a huge thing, we're not going to set the window visible
+X   until after setup() completes anyway (otherwise a delay w/ blank window)
+X Sketch runs with default size if size() is followed by large memory allocation
+X   some sort of threading issue happening here
+X   https://github.com/processing/processing/issues/1672
+X   https://github.com/processing/processing/issues/2039 (dupe)
+X   https://github.com/processing/processing/issues/2294 (dupe)
+o   also check this out with the new full screen code on OS X
+o use enums for constants
+X   https://github.com/processing/processing/issues/2778
+X   nope, requires having ALIGN_LEFT instead of just LEFT
+X clean up requestFocus() stuff
+X   make sure it works with retina/canvas/strategy as well
+X args[] should be null if none passed
+X   otherwise args == null checks are weird
+X saveFrame() from setup() gives a black screen when size() is called
+X   as seen in the 'numbers' sketch
+X   this was fixed earlier?
+X fix flicker when resizing window 
+X   running through PSurfaceAWT.setSize() is probably overkill
+o   setLocationRelativeTo(null) was removed, will it be missed?
+
+data
+X pop() was not implemented correctly
+X add new String/Int/FloatDict constructors for easier initialization
+X add appendUnique() to Int/Float/StringList
+o add fromOrder() and others? otherwise need temp object:
+o   categoryIndexLookup = new StringList(flavors).getOrder();
+X   decided no:
+X     not a huge deal to call getOrder() and deal w/ temp objects
+X     likely to only be called only once during execution
+X     it's only for StringList
+X     in the end, not worth adding fromXxxx() syntax for single use
+
+opengl
+X OpenGL sketches work only after running a sketch with default renderer
+X   https://github.com/processing/processing/issues/3218
+X static mode - no setup() / draw() - broken in OpenGL
+X   https://github.com/processing/processing/issues/3163
+X deal with some performance issues
+X   https://github.com/processing/processing/issues/3210
+X Can't run sketches with offscreen PGraphics
+X   https://github.com/processing/processing/issues/3259
+o Merge glw code into the OpenGL library
+o   https://github.com/processing/processing/issues/3284
+X "Buffers have not been created" error for sketches w/o draw()
+X   https://github.com/processing/processing/issues/2469
+o get code into makeGraphics() to handle bad path settings for LWJGL
+o   right now it has a bunch of JOGL-specific code
+X   switched back to JOGL
+
+javafx
+X implement blendMode
+X   https://github.com/processing/processing/issues/3275
+X hide the smooth() warnings
+X don't remove JavaFX stuff from Windows and Linux builds
+X sizing works
+X setting title and other threading fixes
+X mouse events
+X key events
+X exit() and ESC working
+X is it necessary to handle ctrl-click differently on OS X?
+X   yes, verified and working properly
+
+
 0234 (3.0a7)
 X add fix to avoid StringList leak
 
