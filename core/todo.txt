@@ -25,7 +25,6 @@ X   https://github.com/processing/processing/issues/1672
 X   https://github.com/processing/processing/issues/2039 (dupe)
 X   https://github.com/processing/processing/issues/2294 (dupe)
 o   also check this out with the new full screen code on OS X
-_ update documentation to say "don't override sketchXxxx() methods"
 o use enums for constants
 X   https://github.com/processing/processing/issues/2778
 X   nope, requires having ALIGN_LEFT instead of just LEFT
@@ -33,6 +32,12 @@ X clean up requestFocus() stuff
 X   make sure it works with retina/canvas/strategy as well
 X args[] should be null if none passed
 X   otherwise args == null checks are weird
+X saveFrame() from setup() gives a black screen when size() is called
+X   as seen in the 'numbers' sketch
+X   this was fixed earlier?
+X fix flicker when resizing window 
+X   running through PSurfaceAWT.setSize() is probably overkill
+o   setLocationRelativeTo(null) was removed, will it be missed?
 
 opengl
 X OpenGL sketches work only after running a sketch with default renderer
@@ -47,6 +52,9 @@ o Merge glw code into the OpenGL library
 o   https://github.com/processing/processing/issues/3284
 X "Buffers have not been created" error for sketches w/o draw()
 X   https://github.com/processing/processing/issues/2469
+o get code into makeGraphics() to handle bad path settings for LWJGL
+o   right now it has a bunch of JOGL-specific code
+X   switched back to JOGL
 
 javafx
 X implement blendMode
@@ -59,10 +67,11 @@ X mouse events
 X key events
 X exit() and ESC working
 X is it necessary to handle ctrl-click differently on OS X?
-X   yes, verified
+X   yes, verified and working properly
 
 
 high priority
+_ update documentation to say "don't override sketchXxxx() methods"
 _ sketch window is not placed at correct location when running a second time
 _   https://github.com/processing/processing/issues/3125
 _ y location of frame might be negative, but that might be ok 
@@ -99,36 +108,35 @@ _ implement frameRate()
 _ implement external messages (moving the window)
 
 
-rendering/performance/surface
-_ present window draws in stages (OS X)
-_ split 'present' and 'full screen'?
-_   --full-screen causes considerable flicker at this point
-_   or split them when sketchWidth/Height are implemented?
-_ check on performance of the new EDT setup
-_ present mode is 30-40% slower than windowed
-_   w/ this example: https://github.com/processing/processing/issues/2423
-
-
 opengl
-_ Closing opengl sketch from the PDE doesn't stop java process on windows
+_ Closing OpenGL sketch from the PDE doesn't stop java.exe process
 _   https://github.com/processing/processing/issues/2335
 _ OpenGL sketches do not terminate, have to be killed
 _   https://github.com/processing/processing/issues/2982
+_ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
+_   shouldn't be static, run it from the renderer, that's point of createXxx()
+_ public createShape() method that takes another shape as param?
+_   should just be the constructor doing this, or copy()
+_ add attrib() method
+_   https://github.com/processing/processing/issues/2963
+_   assign this to DXF as well?
+
+
+opengl questions
 _ sketchQuality() vs sketchSmooth()?
 _ move glsl entries to their own subdirectory
 _ exitCalled() and exitActual made public by Andres, breaks Python
 _   also not API we want to expose, so sort this out
-_ get code into makeGraphics() to handle bad path settings for LWJGL
-_   right now it has a bunch of JOGL-specific code
-_ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
-_   shouldn't be static, run it from the renderer, that's point of createXxx()
+_   or maybe we're fine b/c now FX2D needs it as well
 _ when did setPath() sneak into PShape? API is nothing like anything else
-_ public createShape() method that takes another shape as param?
-_   should just be the constructor doing this, or copy()
-
+_   probably from the material stuff, but we need to fix that
 
 
 full screen
+_ present window draws in stages (OS X)
+_ split 'present' and 'full screen'?
+_   --full-screen causes considerable flicker at this point
+_   or split them when sketchWidth/Height are implemented?
 _ Full screen window on second monitor without using present mode
 _   https://github.com/processing/processing/issues/3271
 _ "run sketches on display" not working in 3.0a7
@@ -148,25 +156,21 @@ _   https://github.com/processing/processing/issues/3158
 
 
 graphics
-_ saveFrame() from setup() gives a black screen when size() is called
-_   as seen in the 'numbers' sketch
 _ should the re-alloc of the drawing surface happen in beginDraw()
 _   that way it won't blit to the screen until we have a fresh redraw?
 _   otherwise it'll also be resizing on another thread.. badness
 _   how to allocation image object w/ createGraphics() (since no surface)
-_ add attrib() method
-_   https://github.com/processing/processing/issues/2963
-_   assign this to DXF as well?
 _ createGraphics() currently broken in Java2D
 _ size() command not working to do a resize
-_ fix flicker when resizing window 
-_   running through PSurfaceAWT.setSize() is probably overkill
-_   setLocationRelativeTo(null) was removed, will it be missed?
+_   need a programmatic way to set size
 _ deal with applySettings() change (maybe not a problem?)
 _ textAlign(RIGHT) including spaces at the end of each line
 _   https://github.com/processing/processing/issues/3028
 _ loadImage() doesn't follow redirects
 _   https://github.com/processing/processing-docs/issues/218
+_ check on performance of the new EDT setup
+_ present mode is 30-40% slower than windowed
+_   w/ this example: https://github.com/processing/processing/issues/2423
 
 
 breaking api
