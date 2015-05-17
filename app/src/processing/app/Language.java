@@ -61,7 +61,8 @@ public class Language {
     // Set available languages
     languages = new HashMap<String, String>();
     for (String code : listSupported()) {
-      languages.put(code, Locale.forLanguageTag(code).getDisplayLanguage(Locale.forLanguageTag(code)));
+      Locale locale = Locale.forLanguageTag(code);
+      languages.put(code, locale.getDisplayLanguage(locale));
     }
 
     // Set default language
