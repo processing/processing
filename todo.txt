@@ -12,12 +12,36 @@ X Replace & Find was reading "Find & Replace"
 X   https://github.com/processing/processing/issues/3247
 X "one file added to sketch" message when two files added
 X   turned out to be really messy ProgressFrame code
+X write Wiki page on how to run "headless"
+X   old version from user Batuff:
+X   sudo apt-get install xvfb
+X   Xvfb :2 -screen 0 1024x768x24 &
+X   export DISPLAY=localhost:2.0
+X   ./<myExportedProcessingApplication>
+X   https://github.com/processing/processing/wiki/Running-without-a-Display
+X write up code guidelines for project
+X   make proper Eclipse style prefs to reinforce
+X   https://github.com/processing/processing/wiki/Style-Guidelines
+
+cleaning
+X better text editor / live debugging (integrate Eclipse JDT)
+X   line numbers
+X   it's too difficult for students to debug their code
+X     can the jdt be hooked in somewhat easily?
+X Replace current editor with more advanced version
+X   http://code.google.com/p/processing/issues/detail?id=1032
+o   code coloring is imperfect because it's not based on a parser
+X rename location is awkward, do it on the tab?
+X date inconsistencies
+o   https://github.com/processing/processing/issues/1777
 
 debugger/pdex
 X Change "method" to "function" in a few error messages
 X   https://github.com/processing/processing/issues/3225
 X ErrorMessageSimplifier should use the language subst stuff
 o   also, shouldn't that be one text() method with different args?
+X   in PDE.properties, unnecessary special syntax is used for replacements
+X   methoddef, varname, classname, namefield, typeA, typeB
 X Debugger "String is null" error when hitting breakpoint
 X   https://github.com/processing/processing/issues/3265
 X Error message for incorrect function arguments is wonky
@@ -27,6 +51,10 @@ X   https://github.com/processing/processing/issues/3253
 X Debugger "String is null" error when hitting breakpoint
 X   https://github.com/processing/processing/issues/3265
 X   hopefully fixed, but what's happening here?
+_ "step" not working properly
+_   https://github.com/processing/processing/issues/3266
+_ Cmd-click behavior on function/variable is firing when cmd-click not pressed
+_   https://github.com/processing/processing/issues/3242
 
 contribs
 X Window size not passing into Tweak Mode
@@ -67,16 +95,14 @@ X   http://www.java2s.com/Code/Java/Network-Protocol/DetectProxySettingsforInter
 
 
 pdex
-_ "step" not working properly
-_   https://github.com/processing/processing/issues/3266
-_ Cmd-click behavior on function/variable is firing when cmd-click not pressed
-_   https://github.com/processing/processing/issues/3242
 _ NullPointerException in initiateToolTip()
 _   https://github.com/processing/processing/issues/3286
 _ fix this error message: Experimental Mode: Yikes! Can't find "processing.opengl" library! Line: 2 in tab: particle_signature_30_01
 _ get rid of the debugger 'pane', just have that be the old window
 o   show debug window when running, hide when stopped
 o   can we animate the show/hide for the debug box?
+_ large window places the debugger window offscreen
+_   https://github.com/processing/processing/issues/3091
 _ almost all of the debugger menu needs to disappear
 _   https://github.com/processing/processing/issues/3267
 _   everything below toggle breakpoint, plus show/hide inspector
@@ -90,8 +116,6 @@ _   because it's in the other ClassLoader, can no longer rely on it
 _ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
 _ disable the debug toggle menu while running
 _   otherwise could run in one mode, then try to stop in another
-_ in PDE.properties, unnecessary special syntax is used for replacements
-_   methoddef, varname, classname, namefield, typeA, typeB will be replaced with the correct value during runtime (don't translate)
 
 
 breakage
@@ -118,16 +142,13 @@ _ how are we going to handle fonts for other languages?
 _   two new fonts have been added, other languages will need more
 _   need a decent sans with with Unicode coverage
 _   i.e. https://github.com/processing/processing/pull/3025
-_ large window places the debugger window offscreen
-_   https://github.com/processing/processing/issues/3091
 _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
 _   iTunes has no rollover state but has a 'down' state
 _     swaps to stop after release
 _ need unavailable/deactivate state for debug toolbar items
 _   or hide the tray when not debugging? Debug just a menu checkbox?
-_ using svg images for res-indep icons/gui
-_   http://stackoverflow.com/questions/2495501/swing-batik-create-an-imageicon-from-an-svg-file
+_ need active state for the butterfly
 
 
 pde/build
@@ -135,7 +156,6 @@ _ make sure "PDF Export" is showing for the library name
 _ we've lost arrow keys to expand items in the examples window
 _   sketchbook window too?
 _ 'ant clean' not removing old versions created by dist
-_ need active state for the butterfly
 _ continue clearing out ProgressFrame
 _   also hook up the statusNotice() when done
 _ move to launch4j 3.7 http://launch4j.sourceforge.net/
@@ -164,6 +184,10 @@ _   how was this resolved? just implemented overrides?
 _ add span screens pref (near the display pref)
 _   add checkbox for spans to export dialog
 _ remove "save before running" message
+_ pass through the source to update licenses
+_   add Processing Foundation as 2012-15
+_   update license info to state gplv2 not v3
+_   run through that online license checker
 
 
 from the todo list
@@ -931,6 +955,14 @@ _   jedit syntax is under mit license
 _     http://www.opensource.org/licenses/mit-license.php
 _ different name for 'lib' folder because of libraries folder?
 _   avoid some confusion for when describing the libraries folder to users
+_ add proper copyright and license information for all included projects
+_   https://github.com/processing/processing/issues/224
+_   http://code.google.com/p/processing/issues/detail?id=185
+_   list of license issues
+_   http://code.google.com/p/processing/issues/detail?id=575
+_ write up guidelines for modes
+_   i.e. don't mess with Sketch menu, put it in the mode menu
+_ p5 assets need to be licensed differently from the source
 
 
 DIST / Windows
@@ -1026,11 +1058,6 @@ DIST / Linux
 
 _ Processing is named processing-app-Base in Gnome 3
 _   https://github.com/processing/processing/issues/2534
-_ how to run "headless" from user Batuff
-_   sudo apt-get install xvfb
-_   Xvfb :2 -screen 0 1024x768x24 &
-_   export DISPLAY=localhost:2.0
-_   ./<myExportedProcessingApplication>
 _ not being able to make a link to the processing app
 _   argh.. more path and shell issues..
 
@@ -1041,47 +1068,17 @@ _   argh.. more path and shell issues..
 ////////////////////////////////////////////////////////////////////
 
 
-DEVELOP
-
-Things to fix on the source code side of things.
-
-
-_ update license info to state gplv2 not v3
-_   add Processing Foundation as 2012
-_   https://github.com/processing/processing/issues/1777
-_ add proper copyright and license information for all included projects
-_   http://code.google.com/p/processing/issues/detail?id=185
-_   list of license issues
-_   http://code.google.com/p/processing/issues/detail?id=575
-_ write up code guidelines for project
-_   make proper Eclipse style prefs to reinforce
-_ write up guidelines for modes
-_   i.e. don't mess with Sketch menu, put it in the mode menu
-_ p5 assets need to be licensed differently from the source
-
-
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
 
 FUTURE 
 
-Notes for 3.0 (and later).
+Notes for some indefinite later release...
 
-
+_ using svg images for res-indep icons/gui
+_   http://stackoverflow.com/questions/2495501/swing-batik-create-an-imageicon-from-an-svg-file
 _ nurbs or other architecture stuff
 _ force indentation - implement an option for beginners especially
 _ indents and loops
 _   or make the area light up gray as it's being worked on
-_ Replace current editor with more advanced version
-_   http://code.google.com/p/processing/issues/detail?id=1032
-_   code coloring is imperfect because it's not based on a parser
-_ better text editor / live debugging (integrate Eclipse JDT)
-_   line numbers
-_   it's too difficult for students to debug their code
-_     can the jdt be hooked in somewhat easily?
 _ get rid of static mode? only setup/draw mode? or create project that way?
 _   pro: simplify internal code, fixes some of the worst errors
 _   con: people love it, most of the books use it heavily
@@ -1110,7 +1107,6 @@ _     make sure the application is within the bounds of the current display?
 _     (from 0, 0 to width, height)
 _     messy since some displays have negative coords
 _     http://code.google.com/p/processing/issues/detail?id=27
-_ rename location is awkward, do it on the tab?
 _ Resurrect the Eclipse plug-in project
 _   http://code.google.com/p/processing/issues/detail?id=1031
 _ improve the speed of file copying

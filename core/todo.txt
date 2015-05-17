@@ -19,6 +19,7 @@ X size() is fairly broken for PDF and SVG or whatever
 X   make size(300, 300, PDF) without implementing sketchXxx() methods work
 X   this shouldn't be a huge thing, we're not going to set the window visible
 X   until after setup() completes anyway (otherwise a delay w/ blank window)
+_ update documentation to say "don't override sketchXxxx() methods"
 
 opengl
 X OpenGL sketches work only after running a sketch with default renderer
@@ -83,14 +84,6 @@ _ implement frameRate()
 _ implement external messages (moving the window)
 
 
-_ Fullscreen window on second monitor without using present mode
-_   https://github.com/processing/processing/issues/3271
-_ need reference update for createShape()
-_   createShape(RECT) uses x/y/w/h, and optionally adds a mode param
-_     and optionally the corner radii
-_   createShape(ELLIPSE) is x/y/w/h, and optionally adds a mode param
-
-
 rendering/performance/surface
 o destroy() removed, but bring back? is that better than dispose()?
 _   destroy() only called dispose(), so no difference
@@ -136,6 +129,8 @@ _ args[] should be null if none passed (otherwise args == null checks are weird)
 
 
 full screen
+_ Fullscreen window on second monitor without using present mode
+_   https://github.com/processing/processing/issues/3271
 _ "run sketches on display" not working in 3.0a7
 _   https://github.com/processing/processing/issues/3264
 _ full screen doesn't work on second window w/o present mode
@@ -191,37 +186,13 @@ _ make join() work with Iterable?
 _   will this collide with the current String[] version?
 _ remove OPENGL constant (tell people to use P3D or P2D)
 _ exec() and open() to use varargs
-
-
-under consideration
+_ join() to use varargs
 _ break PUtil out from PApplet
-_ async requests
-_   https://github.com/processing/processing/issues/3165
-_   Request r = createRequest("http://p5.org/feed/13134.jpg");
-_   Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
-_   Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
-_   implement callbacks for images and other loadXxxx() functions
-_     remove requestImage() and friends
-_   callback for requestImage()
-_     https://github.com/processing/processing/issues/680
-_   remove/update requestImage example
-_   check into promise api
-_     http://www.html5rocks.com/en/tutorials/es6/promises/
-_     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
-_ fix the registered methods doc, stop/dispose working
-_   Casey needs to nudge people about libraries, so we need to fix this
-_ pause(), resume(), start(), stop() clarifications
-_ dispose/stop not great w/ libraries yet
-_ PShape complete refactoring
-_ proper touch events
-_   touch event doesn't make sense for mouseMove on desktop, hover on Android
-_   probably go with pointer: more universal for touch/mouse
-_ high-level touch events (swipe, et al)
-_   if Andres is done, they go in, if not then 3.0
-_ move away from loadPixels
+_   pro: weird to call PApplet for things like hex/join/etc
+_   con: still lots of things like selectFolder() that need GUI
 
 
-processing.data
+data
 _ add appendUnique()
 _ add fromOrder() and others? otherwise need temp object:
 _   categoryIndexLookup = new StringList(flavors).getOrder();
@@ -298,6 +269,35 @@ _   https://github.com/processing/processing/issues/2510
 
 
 decisions/misc
+_ need reference update for createShape()
+_   though we need to verify the behavior here
+_   createShape(RECT) uses x/y/w/h, and optionally adds a mode param
+_     and optionally the corner radii
+_   createShape(ELLIPSE) is x/y/w/h, and optionally adds a mode param
+_ async requests
+_   https://github.com/processing/processing/issues/3165
+_   Request r = createRequest("http://p5.org/feed/13134.jpg");
+_   Request r = createRequest("http://p5.org/feed/13134.jpg", "callbackName");
+_   Request r = createRequest("http://p5.org/feed/13134, "callbackName", "jpg");
+_   implement callbacks for images and other loadXxxx() functions
+_     remove requestImage() and friends
+_   callback for requestImage()
+_     https://github.com/processing/processing/issues/680
+_   remove/update requestImage example
+_   check into promise api
+_     http://www.html5rocks.com/en/tutorials/es6/promises/
+_     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+_ fix the registered methods doc, stop/dispose working
+_   Casey needs to nudge people about libraries, so we need to fix this
+_ pause(), resume(), start(), stop() clarifications
+_ dispose/stop not great w/ libraries yet
+_ PShape complete refactoring
+_ proper touch events
+_   touch event doesn't make sense for mouseMove on desktop, hover on Android
+_   probably go with pointer: more universal for touch/mouse
+_ high-level touch events (swipe, et al)
+_   if Andres is done, they go in, if not then 3.0
+_ move away from loadPixels
 _ add options for image.save() (or saveImage?)
 _   add quality=[0,1] for jpeg images
 _   add dpi=[0,n] for for png images
