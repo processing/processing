@@ -44,6 +44,10 @@ public class StringList implements Iterable<String> {
   }
 
 
+  /**
+   * Construct a StringList from a random pile of objects. Null values will
+   * stay null, but all the others will be converted to String values.
+   */
   public StringList(Object... items) {
     count = items.length;
     data = new String[count];

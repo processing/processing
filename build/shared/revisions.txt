@@ -47,6 +47,8 @@ Not quite ready for prime time, however.
 
 + Implement blendMode in FX2D
   https://github.com/processing/processing/issues/3275
+
++ Added StringList(Object...) constructor to handle a grab bag of objects
   
 
 [ debugger ]
