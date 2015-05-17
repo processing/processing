@@ -103,6 +103,7 @@ public class PSurfaceFX implements PSurface {
   static public class PApplicationFX extends Application {
     static public PSurfaceFX surface;
     static String title;  // title set at launch
+    static boolean resizable;  // set at launch
 
     public PApplicationFX() { }
 
@@ -159,7 +160,10 @@ public class PSurfaceFX implements PSurface {
 
   /** Set true if we want to resize things (default is not resizable) */
   public void setResizable(boolean resizable) {
-    stage.setResizable(resizable);
+    PApplicationFX.resizable = resizable;
+    if (stage != null) {
+      stage.setResizable(resizable);
+    }
   }
 
 
@@ -262,7 +266,6 @@ public class PSurfaceFX implements PSurface {
     // handle frame resizing events
     //setupFrameResizeListener();
 
-    // TODO this is much too late... why even create the enormous frame for PDF?
     if (sketch.getGraphics().displayable()) {
       setVisible(true);
     }
