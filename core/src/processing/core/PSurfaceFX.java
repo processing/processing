@@ -461,18 +461,19 @@ public class PSurfaceFX implements PSurface {
 
   public void pauseThread() {
     // TODO Auto-generated method stub
-
   }
+
 
   public void resumeThread() {
     // TODO Auto-generated method stub
-
   }
+
 
   public boolean stopThread() {
     // TODO Auto-generated method stub
     return false;
   }
+
 
   public boolean isStopped() {
     // TODO Auto-generated method stub
@@ -572,63 +573,47 @@ public class PSurfaceFX implements PSurface {
     mouseMap.put(MouseEvent.MOUSE_EXITED, processing.event.MouseEvent.EXIT);
   }
 
-  protected void fxMouseEvent(MouseEvent nativeEvent) {
+  protected void fxMouseEvent(MouseEvent fxEvent) {
     // the 'amount' is the number of button clicks for a click event,
     // or the number of steps/clicks on the wheel for a mouse wheel event.
-    int peCount = nativeEvent.getClickCount();
+    int count = fxEvent.getClickCount();
 
+    int action = mouseMap.get(fxEvent.getEventType());
     //EventType<? extends MouseEvent> et = nativeEvent.getEventType();
-    int peAction = mouseMap.get(nativeEvent.getEventType());
 //    if (et == MouseEvent.MOUSE_PRESSED) {
 //      peAction = processing.event.MouseEvent.PRESS;
 //    } else if (et == MouseEvent.MOUSE_RELEASED) {
 //      peAction = processing.event.MouseEvent.RELEASE;
-//
-//    case java.awt.event.MouseEvent.MOUSE_CLICKED:
-//      peAction = MouseEvent.CLICK;
-//      break;
-//    case java.awt.event.MouseEvent.MOUSE_DRAGGED:
-//      peAction = MouseEvent.DRAG;
-//      break;
-//    case java.awt.event.MouseEvent.MOUSE_MOVED:
-//      peAction = MouseEvent.MOVE;
-//      break;
-//    case java.awt.event.MouseEvent.MOUSE_ENTERED:
-//      peAction = MouseEvent.ENTER;
-//      break;
-//    case java.awt.event.MouseEvent.MOUSE_EXITED:
-//      peAction = MouseEvent.EXIT;
-//      break;
 
-    int peModifiers = 0;
-    if (nativeEvent.isShiftDown()) {
-      peModifiers |= processing.event.Event.SHIFT;
+    int modifiers = 0;
+    if (fxEvent.isShiftDown()) {
+      modifiers |= processing.event.Event.SHIFT;
     }
-    if (nativeEvent.isControlDown()) {
-      peModifiers |= processing.event.Event.CTRL;
+    if (fxEvent.isControlDown()) {
+      modifiers |= processing.event.Event.CTRL;
     }
-    if (nativeEvent.isMetaDown()) {
-      peModifiers |= processing.event.Event.META;
+    if (fxEvent.isMetaDown()) {
+      modifiers |= processing.event.Event.META;
     }
-    if (nativeEvent.isAltDown()) {
-      peModifiers |= processing.event.Event.ALT;
+    if (fxEvent.isAltDown()) {
+      modifiers |= processing.event.Event.ALT;
     }
 
-    int peButton = 0;
-    if (nativeEvent.isPrimaryButtonDown()) {
-      peButton = PConstants.LEFT;
-    } else if (nativeEvent.isSecondaryButtonDown()) {
-      peButton = PConstants.RIGHT;
-    } else if (nativeEvent.isMiddleButtonDown()) {
-      peButton = PConstants.CENTER;
+    int button = 0;
+    if (fxEvent.isPrimaryButtonDown()) {
+      button = PConstants.LEFT;
+    } else if (fxEvent.isSecondaryButtonDown()) {
+      button = PConstants.RIGHT;
+    } else if (fxEvent.isMiddleButtonDown()) {
+      button = PConstants.CENTER;
     }
 
     // If running on Mac OS, allow ctrl-click as right mouse.
     // TODO see if this is necessary for JavaFX
     if (PApplet.platform == PConstants.MACOSX &&
-        nativeEvent.isControlDown() &&
-        peButton == PConstants.LEFT) {
-      peButton = PConstants.RIGHT;
+        fxEvent.isControlDown() &&
+        button == PConstants.LEFT) {
+      button = PConstants.RIGHT;
     }
 
     //if (canvas.getBoundsInLocal().contains(me.getX(), me.getY())) {
@@ -637,14 +622,12 @@ public class PSurfaceFX implements PSurface {
 
     //long when = nativeEvent.getWhen();  // from AWT
     long when = System.currentTimeMillis();
-    int x = (int) nativeEvent.getX();  // getSceneX()?
-    int y = (int) nativeEvent.getY();
+    int x = (int) fxEvent.getX();  // getSceneX()?
+    int y = (int) fxEvent.getY();
 
-    sketch.postEvent(new processing.event.MouseEvent(nativeEvent, when,
-                                                     peAction, peModifiers,
-                                                     x, y,
-                                                     peButton,
-                                                     peCount));
+    sketch.postEvent(new processing.event.MouseEvent(fxEvent, when,
+                                                     action, modifiers,
+                                                     x, y, button, count));
   }
 
 
@@ -668,9 +651,9 @@ public class PSurfaceFX implements PSurface {
 
 
   @SuppressWarnings("deprecation")
-  protected void fxKeyEvent(javafx.scene.input.KeyEvent nativeEvent) {
+  protected void fxKeyEvent(javafx.scene.input.KeyEvent fxEvent) {
     int action = 0;
-    EventType<? extends KeyEvent> et = nativeEvent.getEventType();
+    EventType<? extends KeyEvent> et = fxEvent.getEventType();
     if (et == KeyEvent.KEY_PRESSED) {
       action = processing.event.KeyEvent.PRESS;
     } else if (et == KeyEvent.KEY_RELEASED) {
@@ -680,25 +663,25 @@ public class PSurfaceFX implements PSurface {
     }
 
     int modifiers = 0;
-    if (nativeEvent.isShiftDown()) {
+    if (fxEvent.isShiftDown()) {
       modifiers |= processing.event.Event.SHIFT;
     }
-    if (nativeEvent.isControlDown()) {
+    if (fxEvent.isControlDown()) {
       modifiers |= processing.event.Event.CTRL;
     }
-    if (nativeEvent.isMetaDown()) {
+    if (fxEvent.isMetaDown()) {
       modifiers |= processing.event.Event.META;
     }
-    if (nativeEvent.isAltDown()) {
+    if (fxEvent.isAltDown()) {
       modifiers |= processing.event.Event.ALT;
     }
 
     long when = System.currentTimeMillis();
-    KeyCode kc = nativeEvent.getCode();
+    KeyCode kc = fxEvent.getCode();
     // Are they f*ing serious?
     char key = kc.impl_getChar().charAt(0);
     int keyCode = kc.impl_getCode();
-    sketch.postEvent(new processing.event.KeyEvent(nativeEvent, when,
+    sketch.postEvent(new processing.event.KeyEvent(fxEvent, when,
                                                    action, modifiers,
                                                    key, keyCode));
   }

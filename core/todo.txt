@@ -39,6 +39,8 @@ X hide the smooth() warnings
 X don't remove JavaFX stuff from Windows and Linux builds
 X sizing works
 X setting title and other threading fixes
+X key events
+X exit() and ESC working
 
 
 high priority
@@ -54,9 +56,11 @@ _   at least with the Java2D renderer
 
 
 javafx
-_ key events
-_   keyChar and keyCode are super wonky
+_ static mode sketches (draw once and halt w/o closing window)
+_ noLoop()
+_ keyChar and keyCode are super wonky and unlike AWT
 _   what's the way to do this after the deprecation?
+_   if this is going to be the default renderer, has to be ironed out
 _ mouse events
 _   is it necessary to handle ctrl-click differently on OS X?
 _ displayWidth, displayHeight, full screen, display number
