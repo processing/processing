@@ -22,6 +22,14 @@
 
 package processing.core;
 
+//import java.awt.event.FocusEvent;
+//import java.awt.event.FocusListener;
+//import java.awt.event.KeyListener;
+//import java.awt.event.MouseListener;
+//import java.awt.event.MouseMotionListener;
+//import java.awt.event.MouseWheelEvent;
+//import java.awt.event.MouseWheelListener;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -30,9 +38,15 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
+//import processing.event.KeyEvent;
+//import processing.event.MouseEvent;
 
 
 public class PSurfaceFX implements PSurface {
@@ -71,6 +85,54 @@ public class PSurfaceFX implements PSurface {
           sketch.height = newHeight.intValue();
 //          draw();
           fx.setSize(sketch.width, sketch.height);
+        }
+      });
+
+      //addEventHandler(eventType, eventHandler);
+
+      EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
+        public void handle(MouseEvent e) {
+          fxMouseEvent(e);
+        }
+      };
+
+      setOnMousePressed(mouseHandler);
+      setOnMouseReleased(mouseHandler);
+      setOnMouseClicked(mouseHandler);
+      setOnMouseEntered(mouseHandler);
+      setOnMouseExited(mouseHandler);
+
+      setOnMouseDragged(mouseHandler);
+      setOnMouseMoved(mouseHandler);
+
+      setOnScroll(new EventHandler<ScrollEvent>() {
+        public void handle(ScrollEvent e) {
+          fxScrollEvent(e);
+        }
+      });
+
+      EventHandler<KeyEvent> keyHandler = new EventHandler<KeyEvent>() {
+        public void handle(KeyEvent e) {
+          fxKeyEvent(e);
+        }
+      };
+
+      setOnKeyPressed(keyHandler);
+      setOnKeyReleased(keyHandler);
+      setOnKeyTyped(keyHandler);
+
+      setFocusTraversable(false);  // prevent tab from de-focusing
+
+      focusedProperty().addListener(new ChangeListener<Boolean>() {
+        public void changed(ObservableValue<? extends Boolean> value,
+                            Boolean oldValue, Boolean newValue) {
+          if (newValue.booleanValue()) {
+            sketch.focused = true;
+            sketch.focusGained();
+          } else {
+            sketch.focused = false;
+            sketch.focusLost();
+          }
         }
       });
     }
@@ -162,6 +224,7 @@ public class PSurfaceFX implements PSurface {
 
 
   /** Show or hide the window. */
+  @Override
   public void setVisible(boolean visible) {
     Platform.runLater(new Runnable() {
       public void run() {
@@ -407,5 +470,218 @@ public class PSurfaceFX implements PSurface {
   public boolean isStopped() {
     // TODO Auto-generated method stub
     return false;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  /*
+  protected void addListeners() {
+
+    canvas.addMouseListener(new MouseListener() {
+
+      public void mousePressed(java.awt.event.MouseEvent e) {
+        nativeMouseEvent(e);
+      }
+
+      public void mouseReleased(java.awt.event.MouseEvent e) {
+        nativeMouseEvent(e);
+      }
+
+      public void mouseClicked(java.awt.event.MouseEvent e) {
+        nativeMouseEvent(e);
+      }
+
+      public void mouseEntered(java.awt.event.MouseEvent e) {
+        nativeMouseEvent(e);
+      }
+
+      public void mouseExited(java.awt.event.MouseEvent e) {
+        nativeMouseEvent(e);
+      }
+    });
+
+    canvas.addMouseMotionListener(new MouseMotionListener() {
+
+      public void mouseDragged(java.awt.event.MouseEvent e) {
+        nativeMouseEvent(e);
+      }
+
+      public void mouseMoved(java.awt.event.MouseEvent e) {
+        nativeMouseEvent(e);
+      }
+    });
+
+    canvas.addMouseWheelListener(new MouseWheelListener() {
+
+      public void mouseWheelMoved(MouseWheelEvent e) {
+        nativeMouseEvent(e);
+      }
+    });
+
+    canvas.addKeyListener(new KeyListener() {
+
+      public void keyPressed(java.awt.event.KeyEvent e) {
+        nativeKeyEvent(e);
+      }
+
+
+      public void keyReleased(java.awt.event.KeyEvent e) {
+        nativeKeyEvent(e);
+      }
+
+
+      public void keyTyped(java.awt.event.KeyEvent e) {
+        nativeKeyEvent(e);
+      }
+    });
+
+    canvas.addFocusListener(new FocusListener() {
+
+      public void focusGained(FocusEvent e) {
+        sketch.focused = true;
+        sketch.focusGained();
+      }
+
+      public void focusLost(FocusEvent e) {
+        sketch.focused = false;
+        sketch.focusLost();
+      }
+    });
+  }
+  */
+
+
+  protected void fxMouseEvent(javafx.scene.input.MouseEvent nativeEvent) {
+    // the 'amount' is the number of button clicks for a click event,
+    // or the number of steps/clicks on the wheel for a mouse wheel event.
+    int peCount = nativeEvent.getClickCount();
+
+    int peAction = 0;
+    switch (nativeEvent.getID()) {
+    case java.awt.event.MouseEvent.MOUSE_PRESSED:
+      peAction = MouseEvent.PRESS;
+      break;
+    case java.awt.event.MouseEvent.MOUSE_RELEASED:
+      peAction = MouseEvent.RELEASE;
+      break;
+    case java.awt.event.MouseEvent.MOUSE_CLICKED:
+      peAction = MouseEvent.CLICK;
+      break;
+    case java.awt.event.MouseEvent.MOUSE_DRAGGED:
+      peAction = MouseEvent.DRAG;
+      break;
+    case java.awt.event.MouseEvent.MOUSE_MOVED:
+      peAction = MouseEvent.MOVE;
+      break;
+    case java.awt.event.MouseEvent.MOUSE_ENTERED:
+      peAction = MouseEvent.ENTER;
+      break;
+    case java.awt.event.MouseEvent.MOUSE_EXITED:
+      peAction = MouseEvent.EXIT;
+      break;
+    //case java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL:
+    case java.awt.event.MouseEvent.MOUSE_WHEEL:
+      peAction = MouseEvent.WHEEL;
+      /*
+      if (preciseWheelMethod != null) {
+        try {
+          peAmount = ((Double) preciseWheelMethod.invoke(nativeEvent, (Object[]) null)).floatValue();
+        } catch (Exception e) {
+          preciseWheelMethod = null;
+        }
+      }
+      */
+      peCount = ((MouseWheelEvent) nativeEvent).getWheelRotation();
+      break;
+    }
+
+    //System.out.println(nativeEvent);
+    //int modifiers = nativeEvent.getModifiersEx();
+    // If using getModifiersEx(), the regular modifiers don't set properly.
+    int modifiers = nativeEvent.getModifiers();
+
+    int peModifiers = modifiers &
+      (InputEvent.SHIFT_MASK |
+       InputEvent.CTRL_MASK |
+       InputEvent.META_MASK |
+       InputEvent.ALT_MASK);
+
+    // Windows and OS X seem to disagree on how to handle this. Windows only
+    // sets BUTTON1_DOWN_MASK, while OS X seems to set BUTTON1_MASK.
+    // This is an issue in particular with mouse release events:
+    // http://code.google.com/p/processing/issues/detail?id=1294
+    // The fix for which led to a regression (fixed here by checking both):
+    // http://code.google.com/p/processing/issues/detail?id=1332
+    int peButton = 0;
+//    if ((modifiers & InputEvent.BUTTON1_MASK) != 0 ||
+//        (modifiers & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+//      peButton = LEFT;
+//    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0 ||
+//               (modifiers & InputEvent.BUTTON2_DOWN_MASK) != 0) {
+//      peButton = CENTER;
+//    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0 ||
+//               (modifiers & InputEvent.BUTTON3_DOWN_MASK) != 0) {
+//      peButton = RIGHT;
+//    }
+    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
+      peButton = PConstants.LEFT;
+    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
+      peButton = PConstants.CENTER;
+    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
+      peButton = PConstants.RIGHT;
+    }
+
+    // If running on Mac OS, allow ctrl-click as right mouse. Prior to 0215,
+    // this used isPopupTrigger() on the native event, but that doesn't work
+    // for mouseClicked and mouseReleased (or others).
+    if (PApplet.platform == PConstants.MACOSX) {
+      //if (nativeEvent.isPopupTrigger()) {
+      if ((modifiers & InputEvent.CTRL_MASK) != 0) {
+        peButton = PConstants.RIGHT;
+      }
+    }
+
+    //if (canvas.getBoundsInLocal().contains(me.getX(), me.getY())) {
+    //System.out.println(me.getSceneX() + " " + me.getSceneY());
+    //}
+
+    sketch.postEvent(new MouseEvent(nativeEvent, nativeEvent.getWhen(),
+                                    peAction, peModifiers,
+                                    nativeEvent.getX(), nativeEvent.getY(),
+                                    peButton,
+                                    peCount));
+  }
+
+
+  protected void fxKeyEvent(javafx.scene.input.KeyEvent event) {
+    int peAction = 0;
+    switch (event.getID()) {
+    case java.awt.event.KeyEvent.KEY_PRESSED:
+      peAction = KeyEvent.PRESS;
+      break;
+    case java.awt.event.KeyEvent.KEY_RELEASED:
+      peAction = KeyEvent.RELEASE;
+      break;
+    case java.awt.event.KeyEvent.KEY_TYPED:
+      peAction = KeyEvent.TYPE;
+      break;
+    }
+
+//    int peModifiers = event.getModifiersEx() &
+//      (InputEvent.SHIFT_DOWN_MASK |
+//       InputEvent.CTRL_DOWN_MASK |
+//       InputEvent.META_DOWN_MASK |
+//       InputEvent.ALT_DOWN_MASK);
+    int peModifiers = event.getModifiers() &
+      (InputEvent.SHIFT_MASK |
+       InputEvent.CTRL_MASK |
+       InputEvent.META_MASK |
+       InputEvent.ALT_MASK);
+
+    sketch.postEvent(new KeyEvent(event, event.getWhen(),
+                                  peAction, peModifiers,
+                                  event.getKeyChar(), event.getKeyCode()));
   }
 }
