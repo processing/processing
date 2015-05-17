@@ -54,7 +54,7 @@ public class PSurfaceAWT extends PSurfaceNone {
 //  Canvas canvas;
   Component canvas;
 
-  PGraphics graphics;
+//  PGraphics graphics;  // moved to PSurfaceNone
 
   int sketchWidth;
   int sketchHeight;
