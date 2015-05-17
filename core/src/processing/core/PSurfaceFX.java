@@ -141,14 +141,14 @@ public class PSurfaceFX implements PSurface {
       }
     }).start();
 
+    // wait for stage to be initialized on its own thread before continuing
     while (stage == null) {
-      // wait for stage to be initialized before continuing
       try {
-        System.out.println("waiting for launch");
+        //System.out.println("waiting for launch");
         Thread.sleep(5);
       } catch (InterruptedException e) { }
     }
-    //return frame;
+    setSize(sketch.sketchWidth(), sketch.sketchHeight());
   }
 
 
