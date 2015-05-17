@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -105,7 +106,7 @@ public class ErrorCheckerService implements Runnable {
   /**
    * URLs of extra imports jar files stored here.
    */
-  protected URL[] classpath;
+  protected URL[] classPath;
 
   /**
    * Stores all Problems in the sketch
@@ -166,7 +167,7 @@ public class ErrorCheckerService implements Runnable {
   /**
    * List of jar files to be present in compilation checker's classpath
    */
-  protected ArrayList<URL> classpathJars;
+  protected List<URL> classpathJars;
 
   /**
    * Timestamp - for measuring total overhead
@@ -663,18 +664,18 @@ public class ErrorCheckerService implements Runnable {
 
       // If imports have changed, reload classes with new classpath.
       if (loadCompClass) {
-
-        classpath = new URL[classpathJars.size()];
-        int ii = 0;
-        for (; ii < classpathJars.size(); ii++) {
-          classpath[ii] = classpathJars.get(ii);
-        }
+        classPath = new URL[classpathJars.size()];
+//        int ii = 0;
+//        for (; ii < classpathJars.size(); ii++) {
+//          classPath[ii] = classpathJars.get(ii);
+//        }
+        classpathJars.toArray(classPath);
 
         compilationChecker = null;
         classLoader = null;
         System.gc();
         // log("CP Len -- " + classpath.length);
-        classLoader = new URLClassLoader(classpath);
+        classLoader = new URLClassLoader(classPath);
         compilationChecker = new CompilationChecker();
         loadCompClass = false;
       }
@@ -684,19 +685,17 @@ public class ErrorCheckerService implements Runnable {
       }
 
       synchronized (problemsList) {
-        problems = compilationChecker.getErrors(className, sourceCode, compilerSettings, classLoader);
+        problems = compilationChecker.getErrors(className, sourceCode,
+                                                compilerSettings, classLoader);
         if (problems == null) {
           return;
         }
 
-        for (int i = 0; i < problems.length; i++) {
-
-          IProblem problem = problems[i];
-
+        for (IProblem problem : problems) {
           // added a -1 to line number because in compile check code
           // an extra package statement is added, so all line numbers
           // are increased by 1
-          int a[] = calculateTabIndexAndLineNumber(problem.getSourceLineNumber() - 1);
+          int[] a = calculateTabIndexAndLineNumber(problem.getSourceLineNumber() - 1);
 
           Problem p = new Problem(problem, a[0], a[1]);
           if (problem.isError()) {
@@ -715,25 +714,23 @@ public class ErrorCheckerService implements Runnable {
           problemsList.add(p);
         }
       }
-    }
 
-    catch (Exception e) {
+    } catch (Exception e) {
       System.err.println("compileCheck() problem." + e);
       e.printStackTrace();
       pauseThread();
+
     } catch (NoClassDefFoundError e) {
-      System.err
-          .println(e
-              + " compileCheck() problem. Somebody tried to mess with Experimental Mode files.");
+      e.printStackTrace();
       pauseThread();
+
     } catch(OutOfMemoryError e) {
-      System.err.println("Processing has used up its maximum alloted memory. Please close some Processing " +
-    " windows and then reopen this sketch.");
+      System.err.println("Out of memory while checking for errors.");
+      System.err.println("Close some sketches and then re-open this sketch.");
       pauseThread();
     }
-
-    // log("Compilecheck, Done.");
   }
+
 
   /**
    * Calculates PDE Offsets from Java Offsets for Problems
@@ -741,70 +738,61 @@ public class ErrorCheckerService implements Runnable {
   private void calcPDEOffsetsForProbList() {
     try {
       PlainDocument javaSource = new PlainDocument();
-      // Code in pde tabs stored as PlainDocument
-      PlainDocument pdeTabs[] = new PlainDocument[editor.getSketch()
-          .getCodeCount()];
-//      log("calcPDEOffsetsForProbList() mco: " + mainClassOffset + " CU state: "
-//          + compilationUnitState);
 
       javaSource.insertString(0, sourceCode, null);
-      for (int i = 0; i < pdeTabs.length; i++) {
-        SketchCode sc = editor.getSketch().getCode(i);
-        pdeTabs[i] = new PlainDocument();
+      // Code in pde tabs stored as PlainDocument
+      List<Document> pdeTabs = new ArrayList<>();
+      for (SketchCode sc : editor.getSketch().getCode()) {
+        PlainDocument tab = new PlainDocument();
         if (editor.getSketch().getCurrentCode().equals(sc)) {
-          pdeTabs[i].insertString(0,
-                                  sc.getDocument().getText(0,
-                                                           sc.getDocument()
-                                                               .getLength()),
-                                  null);
+          Document doc = sc.getDocument();
+          tab.insertString(0, doc.getText(0, doc.getLength()), null);
         } else {
-          pdeTabs[i].insertString(0,
-                                  sc.getProgram(),
-                                  null);
+          tab.insertString(0, sc.getProgram(), null);
         }
+        pdeTabs.add(tab);
       }
       int pkgNameOffset = ("package " + className + ";\n").length();
       // package name is added only during compile check
       if(compilationUnitState != 2) pkgNameOffset = 0;
 
       for (Problem p : problemsList) {
-        int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset, prbEnd = p
-            .getIProblem().getSourceEnd() - pkgNameOffset;
-        // log(p.toString());
-        // log("IProblem Start " + prbStart + ", End " + prbEnd);
-        int javaLineNumber = p.getSourceLineNumber()
-            - ((compilationUnitState != 2) ? 1 : 2);
-        Element lineElement = javaSource.getDefaultRootElement()
-            .getElement(javaLineNumber);
+        int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset;
+        int prbEnd = p.getIProblem().getSourceEnd() - pkgNameOffset;
+        int javaLineNumber = p.getSourceLineNumber() - 1;
+        if (compilationUnitState == 2) {
+          javaLineNumber--;
+        }
+        Element lineElement =
+          javaSource.getDefaultRootElement().getElement(javaLineNumber);
         if (lineElement == null) {
-          Base.log("calcPDEOffsetsForProbList(): Couldn't fetch javalinenum "
-              + javaLineNumber + "\nProblem: " + p);
-          p.setPDEOffsets(-1,-1);
+          Base.log("calcPDEOffsetsForProbList(): " +
+                   "Couldn't fetch Java line number " +
+                   javaLineNumber + "\nProblem: " + p);
+          p.setPDEOffsets(-1, -1);
           continue;
         }
-        String javaLine = javaSource
-            .getText(lineElement.getStartOffset(), lineElement.getEndOffset()
-                - lineElement.getStartOffset());
+        int lineStart = lineElement.getStartOffset();
+        int lineLength = lineElement.getEndOffset() - lineStart;
+        String javaLine = javaSource.getText(lineStart, lineLength);
 
-        Element pdeLineElement = pdeTabs[p.getTabIndex()]
-            .getDefaultRootElement().getElement(p.getLineNumber());
+        Document doc = pdeTabs.get(p.getTabIndex());
+        Element pdeLineElement =
+          doc.getDefaultRootElement().getElement(p.getLineNumber());
         if (pdeLineElement == null) {
-          Base.log("calcPDEOffsetsForProbList(): Couldn't fetch pdelinenum "
-              + javaLineNumber + "\nProblem: " + p);
+          Base.log("calcPDEOffsetsForProbList(): " +
+                   "Couldn't fetch pde line number " +
+                   javaLineNumber + "\nProblem: " + p);
           p.setPDEOffsets(-1,-1);
           continue;
         }
-        String pdeLine = pdeTabs[p.getTabIndex()]
-            .getText(pdeLineElement.getStartOffset(), pdeLineElement.getEndOffset()
-                - pdeLineElement.getStartOffset());
-        //log("calcPDEOffsetsForProbList(): P " + pdeLine);
-        //log("calcPDEOffsetsForProbList(): J " + javaLine);
+        int pdeLineStart = pdeLineElement.getStartOffset();
+        int pdeLineLength = pdeLineElement.getEndOffset() - pdeLineStart;
+        String pdeLine =
+          pdeTabs.get(p.getTabIndex()).getText(pdeLineStart, pdeLineLength);
         OffsetMatcher ofm = new OffsetMatcher(pdeLine, javaLine);
-        //log("");
-        int pdeOffset = ofm.getPdeOffForJavaOff(prbStart
-            - lineElement.getStartOffset(), (prbEnd - prbStart + 1));
-//        astGenerator.highlightPDECode(p.getTabIndex(), p.getLineNumber(),
-//                                      pdeOffset, (prbEnd - prbStart + 1));
+        int pdeOffset =
+          ofm.getPdeOffForJavaOff(prbStart - lineStart, prbEnd - prbStart + 1);
         p.setPDEOffsets(pdeOffset, pdeOffset + prbEnd - prbStart);
       }
     } catch (BadLocationException ble) {
@@ -814,32 +802,36 @@ public class ErrorCheckerService implements Runnable {
     }
   }
 
-  public CompilationUnit getLastCorrectCU(){
+
+  public CompilationUnit getLastCorrectCU() {
     return lastCorrectCU;
   }
 
-  public CompilationUnit getLatestCU(){
+
+  public CompilationUnit getLatestCU() {
     return compileCheckCU;
   }
 
+
   private int loadClassCounter = 0;
+
   public URLClassLoader getSketchClassLoader() {
     loadClassCounter++;
-    if(loadClassCounter > 100){
+    if (loadClassCounter > 100) {
       loadClassCounter = 0;
       classLoader = null;
       System.gc();
-      classLoader = new URLClassLoader(classpath);
+      classLoader = new URLClassLoader(classPath);
     }
     return classLoader;
   }
 
+
   /**
-   * Processes import statements to obtain classpaths of contributed
+   * Processes import statements to obtain class paths of contributed
    * libraries. This would be needed for compilation check. Also, adds
    * stuff(jar files, class files, candy) from the code folder. And it looks
    * messed up.
-   *
    */
   protected void prepareCompilerClasspath() {
     if (!loadCompClass) {
@@ -889,36 +881,30 @@ public class ErrorCheckerService implements Runnable {
 
               // get a list of .jar files in the "code" folder
               // (class files in subfolders should also be picked up)
-              String codeFolderClassPath = Base
-                  .contentsToClassPath(codeFolder);
+              String codeFolderClassPath = Base.contentsToClassPath(codeFolder);
               codeFolderChecked = true;
               if (codeFolderClassPath.equalsIgnoreCase("")) {
-                System.err.println("Experimental Mode: Yikes! Can't find \""
+                System.err.println("Cannot find \""
                     + entry
-                    + "\" library! Line: "
+                    + "\" library. Line: "
                     + impstat.getLineNumber()
                     + " in tab: "
-                    + editor.getSketch().getCode(impstat.getTab())
-                        .getPrettyName());
-                System.out
-                    .println("Please make sure that the library is present in <sketchbook "
+                    + editor.getSketch().getCode(impstat.getTab()).getPrettyName());
+                System.out.println("Please make sure that the library is present in <sketchbook "
                         + "folder>/libraries folder or in the code folder of your sketch");
 
               }
               else {
-                String codeFolderPath[] = PApplet.split(
-                    codeFolderClassPath.substring(1).trim(),
-                    File.pathSeparatorChar);
+                String codeFolderPath[] =
+                  PApplet.split(codeFolderClassPath.substring(1).trim(),
+                                File.pathSeparatorChar);
                 try {
-                  for (int i = 0; i < codeFolderPath.length; i++) {
-                    classpathJars.add(new File(codeFolderPath[i])
-                        .toURI().toURL());
+                  for (String pathItem : codeFolderPath) {
+                    classpathJars.add(new File(pathItem).toURI().toURL());
                   }
 
                 } catch (Exception e2) {
-                  System.out
-                      .println("Yikes! codefolder, prepareImports(): "
-                          + e2);
+                  e2.printStackTrace();
                 }
               }
             } else {
@@ -1002,7 +988,6 @@ public class ErrorCheckerService implements Runnable {
    * Updates the error table in the Error Window.
    */
   public void updateErrorTable() {
-
     try {
       String[][] errorData = new String[problemsList.size()][3];
       for (int i = 0; i < problemsList.size(); i++) {
