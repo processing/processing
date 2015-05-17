@@ -115,7 +115,6 @@ public class PSurfaceFX implements PSurface {
 
       EventHandler<KeyEvent> keyHandler = new EventHandler<KeyEvent>() {
         public void handle(KeyEvent e) {
-          System.out.println(e);
           fxKeyEvent(e);
         }
       };
@@ -448,6 +447,11 @@ public class PSurfaceFX implements PSurface {
         public void handle(long now) {
           //System.out.println("handle(" + now + ") calling handleDraw()");
           sketch.handleDraw();
+
+          if (sketch.exitCalled) {
+            //sketch.exitActual();  // just calls System.exit()
+            Platform.exit();  // version for safe JavaFX shutdown
+          }
         }
       };
       timer.start();
@@ -665,40 +669,37 @@ public class PSurfaceFX implements PSurface {
 
   @SuppressWarnings("deprecation")
   protected void fxKeyEvent(javafx.scene.input.KeyEvent nativeEvent) {
-    int peAction = 0;
+    int action = 0;
     EventType<? extends KeyEvent> et = nativeEvent.getEventType();
     if (et == KeyEvent.KEY_PRESSED) {
-      peAction = processing.event.KeyEvent.PRESS;
+      action = processing.event.KeyEvent.PRESS;
     } else if (et == KeyEvent.KEY_RELEASED) {
-      peAction = processing.event.KeyEvent.RELEASE;
+      action = processing.event.KeyEvent.RELEASE;
     } else if (et == KeyEvent.KEY_TYPED) {
-      peAction = processing.event.KeyEvent.TYPE;
+      action = processing.event.KeyEvent.TYPE;
     }
 
-    int peModifiers = 0;
+    int modifiers = 0;
     if (nativeEvent.isShiftDown()) {
-      peModifiers |= processing.event.Event.SHIFT;
+      modifiers |= processing.event.Event.SHIFT;
     }
     if (nativeEvent.isControlDown()) {
-      peModifiers |= processing.event.Event.CTRL;
+      modifiers |= processing.event.Event.CTRL;
     }
     if (nativeEvent.isMetaDown()) {
-      peModifiers |= processing.event.Event.META;
+      modifiers |= processing.event.Event.META;
     }
     if (nativeEvent.isAltDown()) {
-      peModifiers |= processing.event.Event.ALT;
+      modifiers |= processing.event.Event.ALT;
     }
 
     long when = System.currentTimeMillis();
     KeyCode kc = nativeEvent.getCode();
-    // Are the f*ing serious?
+    // Are they f*ing serious?
     char key = kc.impl_getChar().charAt(0);
     int keyCode = kc.impl_getCode();
     sketch.postEvent(new processing.event.KeyEvent(nativeEvent, when,
-                                                   peAction, peModifiers,
+                                                   action, modifiers,
                                                    key, keyCode));
   }
-
-
-
 }
