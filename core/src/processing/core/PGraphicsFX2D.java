@@ -1085,7 +1085,7 @@ public class PGraphicsFX2D extends PGraphics {
         }
         // If no tint, just shove the pixels on in there verbatim
         //wr.setDataElements(0, 0, source.width, source.height, source.pixels);
-        System.out.println("moving the big one");
+        //System.out.println("moving the big one");
         pw.setPixels(0, 0, source.width, source.height,
                      argbFormat, source.pixels, 0, source.width);
       }
