@@ -2,7 +2,8 @@
 X Unable to install "processing-java"
 X   https://github.com/processing/processing/issues/3224
 X   also update the Windows and Linux versions
-X replace ColorSelector with JComponent version
+X color selector in Tweak Mode is broken (uses getComponent())
+X   replace ColorSelector with JComponent version
 X   https://github.com/processing/processing/issues/3209
 X sketchbook window is completely empty w/ no sketches
 X   requires restart of p5 before it updates

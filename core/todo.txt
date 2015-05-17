@@ -15,6 +15,10 @@ o   and with that, encourage the use of the dummy frame object in renderers
 X   dummy moved into PApplet itself
 X add SVG export library
 X add StringList(Object...) constructor
+X size() is fairly broken for PDF and SVG or whatever
+X   make size(300, 300, PDF) without implementing sketchXxx() methods work
+X   this shouldn't be a huge thing, we're not going to set the window visible
+X   until after setup() completes anyway (otherwise a delay w/ blank window)
 
 opengl
 X OpenGL sketches work only after running a sketch with default renderer
@@ -33,13 +37,11 @@ X implement blendMode
 X   https://github.com/processing/processing/issues/3275
 X hide the smooth() warnings
 X don't remove JavaFX stuff from Windows and Linux builds
+X sizing works
+X setting title and other threading fixes
 
 
 high priority
-_ size() is fairly broken for PDF and SVG or whatever
-_   make size(300, 300, PDF) without implementing sketchXxx() methods work
-_   this shouldn't be a huge thing, we're not going to set the window visible
-_   until after setup() completes anyway (otherwise a delay w/ blank window)
 _ sketch window is not placed at correct location when running a second time
 _   https://github.com/processing/processing/issues/3125
 _ y location of frame might be negative, but that might be ok 
@@ -47,12 +49,13 @@ _   right now, on Windows it moves it on-screen (b/c of previous bug reports)
 _   may be cause of some of the display placement issues w/ multiple displays
 _   seem to recall one of the bugs mentioning stacked displays
 _   need to change to iterate through display rectangles
-_ tweak mode ColorSelector is broken (uses getComponent())
 _ closing a sketch window manually (not hitting Stop) not killing sketch
 _   at least with the Java2D renderer
 
 
 javafx
+_ key events
+_ mouse events
 _ displayWidth, displayHeight, full screen, display number
 _ present mode (stage in the center, clear the rest of the screen)
 _ createGraphics() should probably create PGraphicsJava2D
