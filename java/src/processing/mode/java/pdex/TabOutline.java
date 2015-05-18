@@ -56,28 +56,23 @@ import processing.mode.java.JavaEditor;
 
 public class TabOutline {
   protected JFrame frmOutlineView;
-
   protected JScrollPane jsp;
-
-  protected DefaultMutableTreeNode tabNode, tempNode;
-
+  protected DefaultMutableTreeNode tabNode;
+  protected DefaultMutableTreeNode tempNode;
   protected JTree tabTree;
-
   protected JTextField searchField;
-  
   protected JLabel lblCaption;
-
   protected JavaEditor editor;
-
   protected ErrorCheckerService errorCheckerService;
-
   protected boolean internalSelection = false;
+
 
   public TabOutline(ErrorCheckerService ecs) {
     errorCheckerService = ecs;
     editor = ecs.getEditor();
     createGUI();
   }
+
 
   private void createGUI() {
     frmOutlineView = new JFrame();
@@ -120,18 +115,15 @@ public class TabOutline {
     frmOutlineView.setMinimumSize(new Dimension(minWidth, Math
         .min(errorCheckerService.getEditor().getTextArea().getHeight(),
              frmOutlineView.getHeight())));
-    frmOutlineView.setLocation(tp.x
-                                   + errorCheckerService.getEditor().getTextArea()
-                                       .getWidth()/2 - frmOutlineView.getWidth()/2,
-                               frmOutlineView.getY()
-                                   + (editor.getTextArea().getHeight() - frmOutlineView
-                                       .getHeight()) / 2);
+    frmOutlineView.setLocation(tp.x + errorCheckerService.getEditor().getTextArea().getWidth()/2 - frmOutlineView.getWidth()/2,
+                               frmOutlineView.getY() + (editor.getTextArea().getHeight() - frmOutlineView.getHeight()) / 2);
     DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tabTree.getCellRenderer();
     renderer.setLeafIcon(null);
     renderer.setClosedIcon(null);
     renderer.setOpenIcon(null);
     addListeners();
   }
+
 
   private void addListeners() {
     searchField.addKeyListener(new KeyAdapter() {
@@ -258,14 +250,14 @@ public class TabOutline {
         worker.execute();
       }
     });
-    
+
     tabTree.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent me) {
         if (tabTree.getLastSelectedPathComponent() == null) {
           return;
         }
-        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) tabTree
-            .getLastSelectedPathComponent();
+        DefaultMutableTreeNode tnode =
+          (DefaultMutableTreeNode) tabTree.getLastSelectedPathComponent();
         //log("Clicked " + tnode);
         switchToTab(tnode.toString());
         close();
@@ -281,7 +273,7 @@ public class TabOutline {
       }
     });
   }
-  
+
   private void switchToTab(String tabName) {
     for (SketchCode sc : editor.getSketch().getCode()) {
       if (sc.getPrettyName().equals(tabName)) {
@@ -326,7 +318,7 @@ public class TabOutline {
     }
     return found;
   }
-  
+
   private int estimateFrameWidth() {
     FontMetrics fm = editor.getTextArea().getGraphics().getFontMetrics();
     int w = fm.stringWidth(lblCaption.getText()) + 10;
@@ -335,7 +327,7 @@ public class TabOutline {
     }
     return w;
   }
-  
+
   private int estimateFrameHeight() {
     int textHeight = jsp.getGraphics().getFontMetrics().getHeight() + 2;
     int t = Math.max(4, editor.getSketch().getCodeCount() + 3);
@@ -354,5 +346,4 @@ public class TabOutline {
   public boolean isVisible() {
     return frmOutlineView.isVisible();
   }
-
 }

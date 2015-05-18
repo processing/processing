@@ -2179,11 +2179,8 @@ public class ASTGenerator {
       }
     }
 
-    DefaultMutableTreeNode defCU = new DefaultMutableTreeNode(
-                                                              new ASTNodeWrapper(
-                                                                                 wnode
-                                                                                     .getNode(),
-                                                                                 selText));
+    DefaultMutableTreeNode defCU =
+      new DefaultMutableTreeNode(new ASTNodeWrapper(wnode.getNode(), selText));
     dfsNameOnly(defCU, wnode.getNode(), selText);
 
     // Reverse the list obtained via dfs
