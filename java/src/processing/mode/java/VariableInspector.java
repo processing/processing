@@ -251,6 +251,7 @@ public class VariableInspector extends JDialog {
     thisFields = new ArrayList<VariableNode>();
     declaredThisFields = new ArrayList<VariableNode>();
 
+    scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
     return scrollPane;
   }
 
