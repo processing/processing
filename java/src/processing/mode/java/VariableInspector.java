@@ -21,7 +21,6 @@
 package processing.mode.java;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -31,7 +30,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.TableColumn;
@@ -103,7 +101,8 @@ public class VariableInspector extends JDialog {
     // https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html#WINDOWS
     getRootPane().putClientProperty("Window.style", "small");
 
-    // When clicking this window, keep the focus on the Editor window
+    // When clicking this window, keep the focus on the Editor window.
+    // Slightly awkward on OS X, but less weird than the Editor losing focus?
     setFocusableWindowState(false);
 
     //setUndecorated(true);
@@ -111,7 +110,7 @@ public class VariableInspector extends JDialog {
 
     //setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
     Box box = Box.createVerticalBox();
-    box.add(createToolbar());
+//    box.add(createToolbar());
     box.add(createScrollPane());
     getContentPane().add(box);
     pack();
@@ -132,6 +131,7 @@ public class VariableInspector extends JDialog {
   }
 
 
+  /*
   Container createToolbar() {
     final Mode mode = editor.getMode();
     Box box = Box.createHorizontalBox();
@@ -192,6 +192,7 @@ public class VariableInspector extends JDialog {
     box.setMaximumSize(new Dimension(getMaximumSize().width, getPreferredSize().height));
     return box;
   }
+  */
 
 
   Container createScrollPane() {

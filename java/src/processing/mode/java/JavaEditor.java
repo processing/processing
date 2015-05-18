@@ -65,12 +65,16 @@ public class JavaEditor extends Editor {
   protected final String breakpointMarkerComment = " //<>//"; // breakpoint marker comment
 
   protected JMenu debugMenu;
-  JCheckBoxMenuItem enableDebug;
+//  JCheckBoxMenuItem enableDebug;
 //  boolean debugEnabled;
 //  JMenuItem enableDebug;
 
+  protected JMenuItem debugItem;
   protected Debugger debugger;
+  protected boolean debugEnabled;
+
   protected VariableInspector inspector;
+  protected JMenuItem inspectorItem;
 
 //  private EditorToolbar javaToolbar;
 //  private DebugToolbar debugToolbar;
@@ -1418,20 +1422,22 @@ public class JavaEditor extends Editor {
 //    enableDebug =
 //      Toolkit.newJCheckBoxMenuItem(Language.text("menu.debug.enable"),
 //                                   KeyEvent.VK_D);
-    enableDebug =
-      Toolkit.newJCheckBoxMenuItem(Language.text("menu.debug.enable"),
-                                   KeyEvent.VK_D);
+//    enableDebug =
+//      Toolkit.newJCheckBoxMenuItem(Language.text("menu.debug.enable"),
+//                                   KeyEvent.VK_D);
+    debugItem = Toolkit.newJMenuItem(Language.text("menu.debug.enable"), 'D');
 //    enableDebug.setSelected(false);
-    enableDebug.addActionListener(new ActionListener() {
+    debugItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        updateDebugToggle();
+//        updateDebugToggle();
+        toggleDebug();
       }
     });
 //    toggleDebugger.addChangeListener(new ChangeListener() {
 //      public void stateChanged(ChangeEvent e) {
 //      }
 //    });
-    debugMenu.add(enableDebug);
+    debugMenu.add(debugItem);
     debugMenu.addSeparator();
 
 //    item = Toolkit.newJMenuItemAlt(Language.text("menu.debug.debug"), KeyEvent.VK_R);
@@ -1501,14 +1507,14 @@ public class JavaEditor extends Editor {
     debugMenu.add(item);
     item.setEnabled(false);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.debug.variable_inspector"), 'Y');
-    item.addActionListener(new ActionListener() {
+    inspectorItem = Toolkit.newJMenuItem(Language.text("menu.debug.show_variables"), 'Y');
+    inspectorItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           toggleVariableInspector();
         }
       });
-    debugMenu.add(item);
-    item.setEnabled(false);
+    debugMenu.add(inspectorItem);
+    inspectorItem.setEnabled(false);
 
     /*
     item = new JMenuItem(Language.text("menu.debug.list_breakpoints"));
@@ -1606,7 +1612,8 @@ public class JavaEditor extends Editor {
 
 
   protected boolean isDebuggerEnabled() {
-    return enableDebug.isSelected();
+    //return enableDebug.isSelected();
+    return debugEnabled;
   }
 
 
@@ -2090,7 +2097,7 @@ public class JavaEditor extends Editor {
 
 
   protected void activateRun() {
-    enableDebug.setEnabled(false);
+    debugItem.setEnabled(false);
 //    toolbar.activate(JavaToolbar.RUN);
     toolbar.activateRun();
   }
@@ -2108,7 +2115,7 @@ public class JavaEditor extends Editor {
 //    } else {
 //    toolbar.deactivate(JavaToolbar.RUN);
     toolbar.deactivateRun();
-    enableDebug.setEnabled(true);
+    debugItem.setEnabled(true);
 //    }
   }
 
@@ -2145,17 +2152,24 @@ public class JavaEditor extends Editor {
 
 
   public void toggleDebug() {
-    enableDebug.setSelected(!enableDebug.isSelected());
-    updateDebugToggle();
-  }
-
-
-  public void updateDebugToggle() {
-    final boolean enabled = isDebuggerEnabled();
+//    enableDebug.setSelected(!enableDebug.isSelected());
+    debugEnabled = !debugEnabled;
+//    updateDebugToggle();
+//  }
+//
+//
+//  public void updateDebugToggle() {
+//    final boolean enabled = isDebuggerEnabled();
     rebuildToolbar();
 
+    if (debugEnabled) {
+      debugItem.setText(Language.text("menu.debug.disable"));
+    } else {
+      debugItem.setText(Language.text("menu.debug.enable"));
+    }
+
     // Hide the variable inspector if it's currently visible
-    if (!enabled && inspector.isVisible()) {
+    if (!debugEnabled && inspector.isVisible()) {
       toggleVariableInspector();
     }
     /*
@@ -2168,8 +2182,8 @@ public class JavaEditor extends Editor {
     }
     */
     for (Component item : debugMenu.getMenuComponents()) {
-      if (item instanceof JMenuItem && item != enableDebug) {
-        ((JMenuItem) item).setEnabled(enabled);
+      if (item instanceof JMenuItem && item != debugItem) {
+        ((JMenuItem) item).setEnabled(debugEnabled);
       }
     }
   }
@@ -2177,9 +2191,11 @@ public class JavaEditor extends Editor {
 
   public void toggleVariableInspector() {
     if (inspector.isVisible()) {
+      inspectorItem.setText(Language.text("menu.debug.show_variables"));
       inspector.setVisible(false);
     } else {
 //      inspector.setFocusableWindowState(false); // to not get focus when set visible
+      inspectorItem.setText(Language.text("menu.debug.show_variables"));
       inspector.setVisible(true);
 //      inspector.setFocusableWindowState(true); // allow to get focus again
     }

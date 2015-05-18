@@ -3,6 +3,8 @@
 andres
 X Offscreen rendering broken in OpenGL renderers
 X   https://github.com/processing/processing/issues/3292
+X Initial location of OpenGL window hides the title bar
+X   https://github.com/processing/processing/issues/2981
 
 
 high priority
@@ -49,6 +51,8 @@ _ implement external messages (moving the window)
 
 
 opengl
+_ Quitting P3D sketch throws an error
+_   https://github.com/processing/processing/issues/3293
 _ Closing OpenGL sketch from the PDE doesn't stop java.exe process
 _   https://github.com/processing/processing/issues/2335
 _ OpenGL sketches do not terminate, have to be killed
