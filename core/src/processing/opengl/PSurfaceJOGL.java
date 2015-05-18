@@ -270,9 +270,12 @@ public class PSurfaceJOGL implements PSurface {
 //          System.err.println("Caught exception: " + drawException.getMessage());
           if (drawException != null) {
             Throwable cause = drawException.getCause();
-            if (cause instanceof RuntimeException) {
+            if (cause instanceof ThreadDeath) {
+              System.out.println("caught ThreadDeath");
+//              throw (ThreadDeath)cause;
+            } else if (cause instanceof RuntimeException) {
               throw (RuntimeException)cause;
-            } else if (!(cause instanceof java.lang.ThreadDeath)) {
+            } else {
               throw new RuntimeException(cause);
             }
           }
@@ -511,7 +514,6 @@ public class PSurfaceJOGL implements PSurface {
 
   public void requestFocus() {
     window.requestFocus();
-
   }
 
   class DrawListener implements GLEventListener {
