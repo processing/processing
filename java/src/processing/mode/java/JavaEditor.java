@@ -66,9 +66,11 @@ public class JavaEditor extends Editor {
 
   protected JMenu debugMenu;
   JCheckBoxMenuItem enableDebug;
+//  boolean debugEnabled;
+//  JMenuItem enableDebug;
 
   protected Debugger debugger;
-  protected VariableInspector tray;
+  protected VariableInspector inspector;
 
 //  private EditorToolbar javaToolbar;
 //  private DebugToolbar debugToolbar;
@@ -91,7 +93,7 @@ public class JavaEditor extends Editor {
 
     jmode = (JavaMode) mode;
     debugger = new Debugger(this);
-    tray = new VariableInspector(this);
+    inspector = new VariableInspector(this);
 
     // Add show usage option
     JMenuItem showUsageItem = new JMenuItem("Show Usage...");
@@ -1087,6 +1089,28 @@ public class JavaEditor extends Editor {
   }
 
 
+  public void handleStep(int modifiers) {
+    if (modifiers == 0) {
+      Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Over' menu item");
+      debugger.stepOver();
+
+    } else if ((modifiers & KeyEvent.SHIFT_DOWN_MASK) != 0) {
+      Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Into' menu item");
+      debugger.stepInto();
+
+    } else if ((modifiers & KeyEvent.ALT_DOWN_MASK) != 0) {
+      Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Out' menu item");
+      debugger.stepOut();
+    }
+  }
+
+
+  public void handleContinue() {
+    Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Continue' menu item");
+    debugger.continueDebug();
+  }
+
+
   public void handleSave() {
 //    toolbar.activate(JavaToolbar.SAVE);
     super.handleSave(true);
@@ -1116,7 +1140,7 @@ public class JavaEditor extends Editor {
       }
 
       // set new name of variable inspector
-      tray.setTitle(getSketch().getName());
+      inspector.setTitle(getSketch().getName());
     }
     //  if file location has changed, update autosaver
     //        autosaver.reloadAutosaveDir();
@@ -1276,7 +1300,7 @@ public class JavaEditor extends Editor {
     // quit running debug session
     debugger.stopDebug();
     // remove var.inspector
-    tray.dispose();
+    inspector.dispose();
     errorCheckerService.stopThread();
     // original dispose
     super.dispose();
@@ -1391,16 +1415,18 @@ public class JavaEditor extends Editor {
     JMenuItem item;
 
     // "use the debugger" sounds too colloquial, and "enable" sounds too technical
+//    enableDebug =
+//      Toolkit.newJCheckBoxMenuItem(Language.text("menu.debug.enable"),
+//                                   KeyEvent.VK_D);
     enableDebug =
       Toolkit.newJCheckBoxMenuItem(Language.text("menu.debug.enable"),
                                    KeyEvent.VK_D);
-    //new JCheckBoxMenuItem(Language.text("menu.debug.show_debug_toolbar"));
-    enableDebug.setSelected(false);
+//    enableDebug.setSelected(false);
     enableDebug.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          updateDebugToggle();
-        }
-      });
+      public void actionPerformed(ActionEvent e) {
+        updateDebugToggle();
+      }
+    });
 //    toggleDebugger.addChangeListener(new ChangeListener() {
 //      public void stateChanged(ChangeEvent e) {
 //      }
@@ -1420,8 +1446,7 @@ public class JavaEditor extends Editor {
     item = Toolkit.newJMenuItem(Language.text("menu.debug.continue"), KeyEvent.VK_U);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Continue' menu item");
-          debugger.continueDebug();
+          handleContinue();
         }
       });
     debugMenu.add(item);
@@ -1437,18 +1462,16 @@ public class JavaEditor extends Editor {
 
     item = Toolkit.newJMenuItem(Language.text("menu.debug.step"), KeyEvent.VK_J);
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Over' menu item");
-          debugger.stepOver();
-        }
-      });
+      public void actionPerformed(ActionEvent e) {
+        handleStep(0);
+      }
+    });
     debugMenu.add(item);
 
     item = Toolkit.newJMenuItemShift(Language.text("menu.debug.step_into"), KeyEvent.VK_J);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Into' menu item");
-          debugger.stepInto();
+          handleStep(KeyEvent.SHIFT_DOWN_MASK);
         }
       });
     debugMenu.add(item);
@@ -1456,8 +1479,7 @@ public class JavaEditor extends Editor {
     item = Toolkit.newJMenuItemAlt(Language.text("menu.debug.step_out"), KeyEvent.VK_J);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Out' menu item");
-          debugger.stepOut();
+          handleStep(KeyEvent.ALT_DOWN_MASK);
         }
       });
     debugMenu.add(item);
@@ -2043,7 +2065,7 @@ public class JavaEditor extends Editor {
    * @return the variable inspector object
    */
   public VariableInspector variableInspector() {
-    return tray;
+    return inspector;
   }
 
 
@@ -2083,22 +2105,22 @@ public class JavaEditor extends Editor {
 
 
   protected void activateContinue() {
-    tray.activateContinue();
+    inspector.activateContinue();
   }
 
 
   protected void deactivateContinue() {
-    tray.deactivateContinue();
+    inspector.deactivateContinue();
   }
 
 
   protected void activateStep() {
-    tray.activateStep();
+    inspector.activateStep();
   }
 
 
   protected void deactivateStep() {
-    tray.deactivateStep();
+    inspector.deactivateStep();
   }
 
 
@@ -2109,14 +2131,16 @@ public class JavaEditor extends Editor {
 
 
   public void updateDebugToggle() {
-    final boolean enabled = enableDebug.isSelected();
+    final boolean enabled = isDebuggerEnabled();
+    /*
     if (enabled) {
-      tray.setFocusableWindowState(false); // to not get focus when set visible
-      tray.setVisible(true);
-      tray.setFocusableWindowState(true); // allow to get focus again
+      inspector.setFocusableWindowState(false); // to not get focus when set visible
+      inspector.setVisible(true);
+      inspector.setFocusableWindowState(true); // allow to get focus again
     } else {
-      tray.setVisible(false);
+      inspector.setVisible(false);
     }
+    */
     for (Component item : debugMenu.getMenuComponents()) {
       if (item instanceof JMenuItem && item != enableDebug) {
         ((JMenuItem) item).setEnabled(enabled);

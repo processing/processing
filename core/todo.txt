@@ -1,5 +1,9 @@
 0236 (3.0a9)
 
+andres
+X Offscreen rendering broken in OpenGL renderers
+X   https://github.com/processing/processing/issues/3292
+
 
 high priority
 _ instead of all these sketchXxxx() methods, should we have sketchSetting()

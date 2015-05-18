@@ -23,8 +23,17 @@
 
 package processing.app;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JLabel;
@@ -42,7 +51,7 @@ abstract public class EditorToolbar extends JPanel {
   // horizontal gap between buttons
   static final int GAP = 9;
   // gap from the run button to the sketch label
-  static final int LABEL_GAP = GAP;
+//  static final int LABEL_GAP = GAP;
 
   protected Editor editor;
   protected Base base;
@@ -66,42 +75,28 @@ abstract public class EditorToolbar extends JPanel {
     base = editor.getBase();
     mode = editor.getMode();
 
-    //setOpaque(false);
-    //gradient = createGradient();
-    //System.out.println(gradient);
-
     gradient = mode.getGradient("toolbar", 400, HIGH);
 //    reverseGradient = mode.getGradient("reversed", 100, EditorButton.DIM);
 
-    runButton = new EditorButton(mode,
-                                 "/lib/toolbar/run",
-                                 Language.text("toolbar.run"),
-                                 Language.text("toolbar.present")) {
+    rebuild();
+  }
 
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        handleRun(e.getModifiers());
-      }
-    };
 
-    stopButton = new EditorButton(mode,
-                                  "/lib/toolbar/stop",
-                                  Language.text("toolbar.stop")) {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        handleStop();
-      }
-    };
+  public void rebuild() {
+    removeAll();  // remove previous components, if any
+    List<EditorButton> buttons = createButtons();
 
     box = Box.createHorizontalBox();
     box.add(Box.createHorizontalStrut(Editor.LEFT_GUTTER));
 
-    box.add(runButton);
-    box.add(Box.createHorizontalStrut(GAP));
-    box.add(stopButton);
+    for (EditorButton button : buttons) {
+      box.add(button);
+      box.add(Box.createHorizontalStrut(GAP));
+    }
+//    // remove the last gap
+//    box.remove(box.getComponentCount() - 1);
 
-    box.add(Box.createHorizontalStrut(LABEL_GAP));
+//    box.add(Box.createHorizontalStrut(LABEL_GAP));
     label = new JLabel();
     label.setFont(mode.getFont("toolbar.rollover.font"));
     label.setForeground(mode.getColor("toolbar.rollover.color"));
@@ -141,6 +136,29 @@ abstract public class EditorToolbar extends JPanel {
 //    super.paintComponent(g);
     Dimension size = getSize();
     g.drawImage(gradient, 0, 0, size.width, size.height, this);
+  }
+
+
+  public List<EditorButton> createButtons() {
+    runButton = new EditorButton(mode,
+                                 "/lib/toolbar/run",
+                                 Language.text("toolbar.run"),
+                                 Language.text("toolbar.present")) {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        handleRun(e.getModifiers());
+      }
+    };
+
+    stopButton = new EditorButton(mode,
+                                  "/lib/toolbar/stop",
+                                  Language.text("toolbar.stop")) {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        handleStop();
+      }
+    };
+    return new ArrayList<>(Arrays.asList(runButton, stopButton));
   }
 
 
