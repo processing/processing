@@ -268,10 +268,13 @@ public class PSurfaceJOGL implements PSurface {
             e.printStackTrace();
           }
 //          System.err.println("Caught exception: " + drawException.getMessage());
-          if (drawException instanceof RuntimeException) {
-            throw (RuntimeException)drawException.getCause();
-          } else {
-            throw new RuntimeException(drawException.getCause());
+          if (drawException != null) {
+            Throwable cause = drawException.getCause();
+            if (cause instanceof RuntimeException) {
+              throw (RuntimeException)cause;
+            } else if (!(cause instanceof java.lang.ThreadDeath)) {
+              throw new RuntimeException(cause);
+            }
           }
         }
       }
