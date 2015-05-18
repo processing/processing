@@ -2,25 +2,28 @@
 
 pdex/debugger
 X remove "Experimental Mode: Yikes!" messages
+o NullPointerException in initiateToolTip()
+X   https://github.com/processing/processing/issues/3286
+X   can no longer reproduce
 
-
-in a8, but unconfirmed
-_ "step" not working properly
-_   https://github.com/processing/processing/issues/3266
+in alpha 8 (but not confirmed in time)
+X "step" not working properly
+X   https://github.com/processing/processing/issues/3266
 _ Cmd-click behavior on function/variable is firing when cmd-click not pressed
 _   https://github.com/processing/processing/issues/3242
 
 
 pdex
-_ NullPointerException in initiateToolTip()
-_   https://github.com/processing/processing/issues/3286
-_ get rid of the debugger 'pane', just have that be the old window
+_ name of toggle debug and variable inspector
+_   Enable Debugger (with or without a checkbox)
+_   "show inspector" "hide inspector" "variable inspector" (with a check)
+X get rid of the debugger 'pane', just have that be the old window
 o   show debug window when running, hide when stopped
 o   can we animate the show/hide for the debug box?
-_ large window places the debugger window offscreen
-_   https://github.com/processing/processing/issues/3091
-_ almost all of the debugger menu needs to disappear
-_   https://github.com/processing/processing/issues/3267
+X large window places the debugger window offscreen
+X   https://github.com/processing/processing/issues/3091
+X almost all of the debugger menu needs to disappear
+X   https://github.com/processing/processing/issues/3267
 _   everything below toggle breakpoint, plus show/hide inspector
 _ debugger button should show/hide toolbar buttons for step/continue
 _ fix hasJavaTabs() function

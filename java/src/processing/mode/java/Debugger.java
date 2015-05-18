@@ -317,49 +317,49 @@ public class Debugger implements VMEventListener {
   }
 
 
-  /** Print the current stack trace. */
-  public synchronized void printStackTrace() {
-    if (isStarted()) {
-      printStackTrace(currentThread);
-    }
-  }
-
-
-  /**
-   * Print local variables. Outputs type, name and value of each variable.
-   */
-  public synchronized void printLocals() {
-    if (isStarted()) {
-      printLocalVariables(currentThread);
-    }
-  }
-
-
-  /**
-   * Print fields of current {@code this}-object.
-   * Outputs type, name and value of each field.
-   */
-  public synchronized void printThis() {
-    if (isStarted()) {
-      printThis(currentThread);
-    }
-  }
-
-
-  /**
-   * Print a source code snippet of the current location.
-   */
-  public synchronized void printSource() {
-    if (isStarted()) {
-      printSourceLocation(currentThread);
-    }
-  }
+//  /** Print the current stack trace. */
+//  public synchronized void printStackTrace() {
+//    if (isStarted()) {
+//      printStackTrace(currentThread);
+//    }
+//  }
+//
+//
+//  /**
+//   * Print local variables. Outputs type, name and value of each variable.
+//   */
+//  public synchronized void printLocals() {
+//    if (isStarted()) {
+//      printLocalVariables(currentThread);
+//    }
+//  }
+//
+//
+//  /**
+//   * Print fields of current {@code this}-object.
+//   * Outputs type, name and value of each field.
+//   */
+//  public synchronized void printThis() {
+//    if (isStarted()) {
+//      printThis(currentThread);
+//    }
+//  }
+//
+//
+//  /**
+//   * Print a source code snippet of the current location.
+//   */
+//  public synchronized void printSource() {
+//    if (isStarted()) {
+//      printSourceLocation(currentThread);
+//    }
+//  }
 
 
   /**
    * Set a breakpoint on the current line.
    */
-  public synchronized void setBreakpoint() {
+  synchronized void setBreakpoint() {
     setBreakpoint(editor.getCurrentLineID());
   }
 
@@ -369,12 +369,12 @@ public class Debugger implements VMEventListener {
    * @param lineIdx the line index (0-based) of the current tab to set the
    * breakpoint on
    */
-  public synchronized void setBreakpoint(int lineIdx) {
+  synchronized void setBreakpoint(int lineIdx) {
     setBreakpoint(editor.getLineIDInCurrentTab(lineIdx));
   }
 
 
-  public synchronized void setBreakpoint(LineID line) {
+  synchronized void setBreakpoint(LineID line) {
     // do nothing if we are kinda busy
     if (isStarted() && !isPaused()) {
       return;
@@ -391,7 +391,7 @@ public class Debugger implements VMEventListener {
   /**
    * Remove a breakpoint from the current line (if set).
    */
-  public synchronized void removeBreakpoint() {
+  synchronized void removeBreakpoint() {
     removeBreakpoint(editor.getCurrentLineID().lineIdx());
   }
 
@@ -402,7 +402,7 @@ public class Debugger implements VMEventListener {
    * @param lineIdx the line index (0-based) in the current tab to remove the
    * breakpoint from
    */
-  protected void removeBreakpoint(int lineIdx) {
+  void removeBreakpoint(int lineIdx) {
     // do nothing if we are kinda busy
     if (isBusy()) {
       return;
@@ -418,7 +418,7 @@ public class Debugger implements VMEventListener {
 
 
   /** Remove all breakpoints. */
-  public synchronized void clearBreakpoints() {
+  synchronized void clearBreakpoints() {
     //TODO: handle busy-ness correctly
     if (isBusy()) {
       log(Level.WARNING, "busy");
@@ -436,7 +436,7 @@ public class Debugger implements VMEventListener {
    * Clear breakpoints in a specific tab.
    * @param tabFilename the tab's file name
    */
-  public synchronized void clearBreakpoints(String tabFilename) {
+  synchronized void clearBreakpoints(String tabFilename) {
     //TODO: handle busy-ness correctly
     if (isBusy()) {
       log(Level.WARNING, "busy");
@@ -460,7 +460,7 @@ public class Debugger implements VMEventListener {
    * @return the breakpoint, or null if no breakpoint is set on the specified
    * line.
    */
-  protected LineBreakpoint breakpointOnLine(LineID line) {
+  LineBreakpoint breakpointOnLine(LineID line) {
     for (LineBreakpoint bp : breakpoints) {
       if (bp.isOnLine(line)) {
         return bp;
@@ -471,7 +471,7 @@ public class Debugger implements VMEventListener {
 
 
   /** Toggle a breakpoint on the current line. */
-  public synchronized void toggleBreakpoint() {
+  synchronized void toggleBreakpoint() {
     toggleBreakpoint(editor.getCurrentLineID().lineIdx());
   }
 
@@ -480,7 +480,7 @@ public class Debugger implements VMEventListener {
    * Toggle a breakpoint on a line in the current tab.
    * @param lineIdx the line index (0-based) in the current tab
    */
-  public synchronized void toggleBreakpoint(int lineIdx) {
+  synchronized void toggleBreakpoint(int lineIdx) {
     LineID line = editor.getLineIDInCurrentTab(lineIdx);
     if (!hasBreakpoint(line)) {
       setBreakpoint(line.lineIdx());
@@ -501,17 +501,17 @@ public class Debugger implements VMEventListener {
   }
 
 
-  /** Print a list of currently set breakpoints. */
-  public synchronized void listBreakpoints() {
-    if (breakpoints.isEmpty()) {
-      System.out.println("no breakpoints");
-    } else {
-      System.out.println("line breakpoints:");
-      for (LineBreakpoint bp : breakpoints) {
-        System.out.println(bp);
-      }
-    }
-  }
+//  /** Print a list of currently set breakpoints. */
+//  public synchronized void listBreakpoints() {
+//    if (breakpoints.isEmpty()) {
+//      System.out.println("no breakpoints");
+//    } else {
+//      System.out.println("line breakpoints:");
+//      for (LineBreakpoint bp : breakpoints) {
+//        System.out.println(bp);
+//      }
+//    }
+//  }
 
 
   /**
@@ -519,7 +519,7 @@ public class Debugger implements VMEventListener {
    * @param tabFilename the tab's file name
    * @return the list of breakpoints in the given tab
    */
-  public synchronized List<LineBreakpoint> getBreakpoints(String tabFilename) {
+  synchronized List<LineBreakpoint> getBreakpoints(String tabFilename) {
     List<LineBreakpoint> list = new ArrayList<LineBreakpoint>();
     for (LineBreakpoint bp : breakpoints) {
       if (bp.lineID().fileName().equals(tabFilename)) {

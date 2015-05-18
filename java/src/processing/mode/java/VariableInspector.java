@@ -47,7 +47,7 @@ import processing.app.Mode;
 import processing.mode.java.debug.VariableNode;
 
 
-public class VariableInspector extends JFrame {
+public class VariableInspector extends JDialog {
   static public final int GAP = 13;
 
   EditorButton continueButton;
@@ -95,8 +95,17 @@ public class VariableInspector extends JFrame {
 
 
   public VariableInspector(final JavaEditor editor) {
-    super("Inspector");
+    // As a JDialog, the menu bar comes from the Editor
+    super(editor, "Inspector");
     this.editor = editor;
+
+    // Use the small toolbar style (at least on OS X)
+    // https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html#WINDOWS
+    getRootPane().putClientProperty("Window.style", "small");
+
+    // When clicking this window, keep the focus on the Editor window
+    setFocusableWindowState(false);
+
     //setUndecorated(true);
     //editor.addComponentListener(new EditorFollower());
 
@@ -110,7 +119,6 @@ public class VariableInspector extends JFrame {
 //    setLocation(editor.getX() + editor.getWidth() + HORIZONTAL_OFFSET,
 //                editor.getY() + VERTICAL_OFFSET);
     setLocationRelativeTo(editor);
-
 
     /*
     bgColor = mode.getColor("buttons.bgcolor");

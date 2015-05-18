@@ -1450,6 +1450,7 @@ public class JavaEditor extends Editor {
         }
       });
     debugMenu.add(item);
+    item.setEnabled(false);
 
 //    item = new JMenuItem(Language.text("menu.debug.stop"));
 //    item.addActionListener(new ActionListener() {
@@ -1467,6 +1468,7 @@ public class JavaEditor extends Editor {
       }
     });
     debugMenu.add(item);
+    item.setEnabled(false);
 
     item = Toolkit.newJMenuItemShift(Language.text("menu.debug.step_into"), KeyEvent.VK_J);
     item.addActionListener(new ActionListener() {
@@ -1475,6 +1477,7 @@ public class JavaEditor extends Editor {
         }
       });
     debugMenu.add(item);
+    item.setEnabled(false);
 
     item = Toolkit.newJMenuItemAlt(Language.text("menu.debug.step_out"), KeyEvent.VK_J);
     item.addActionListener(new ActionListener() {
@@ -1483,11 +1486,12 @@ public class JavaEditor extends Editor {
         }
       });
     debugMenu.add(item);
+    item.setEnabled(false);
 
     debugMenu.addSeparator();
 
     item =
-      Toolkit.newJMenuItem(Language.text("menu.debug.toggle_breakpoint"), KeyEvent.VK_B);
+      Toolkit.newJMenuItem(Language.text("menu.debug.toggle_breakpoint"), 'B');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' menu item");
@@ -1495,7 +1499,18 @@ public class JavaEditor extends Editor {
         }
       });
     debugMenu.add(item);
+    item.setEnabled(false);
 
+    item = Toolkit.newJMenuItem(Language.text("menu.debug.variable_inspector"), 'Y');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          toggleVariableInspector();
+        }
+      });
+    debugMenu.add(item);
+    item.setEnabled(false);
+
+    /*
     item = new JMenuItem(Language.text("menu.debug.list_breakpoints"));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -1506,7 +1521,9 @@ public class JavaEditor extends Editor {
     debugMenu.add(item);
 
     debugMenu.addSeparator();
+     */
 
+    /*
     item = new JMenuItem(Language.text("menu.debug.print_stack_trace"));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -1553,6 +1570,7 @@ public class JavaEditor extends Editor {
     debugMenu.add(item);
 
     debugMenu.addSeparator();
+    */
 
 //    item = Toolkit.newJMenuItem(Language.text("menu.debug.toggle_variable_inspector"), KeyEvent.VK_I);
 //    item.addActionListener(new ActionListener() {
@@ -1563,6 +1581,7 @@ public class JavaEditor extends Editor {
 //      });
 //    debugMenu.add(item);
 
+    /*
     item = Toolkit.newJMenuItem(Language.text("menu.debug.show_sketch_outline"), KeyEvent.VK_L);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -1580,6 +1599,7 @@ public class JavaEditor extends Editor {
         }
       });
     debugMenu.add(item);
+    */
 
     return debugMenu;
   }
@@ -2133,6 +2153,10 @@ public class JavaEditor extends Editor {
   public void updateDebugToggle() {
     final boolean enabled = isDebuggerEnabled();
     rebuildToolbar();
+
+    if (!enabled && inspector.isVisible()) {
+      toggleVariableInspector();
+    }
     /*
     if (enabled) {
       inspector.setFocusableWindowState(false); // to not get focus when set visible
@@ -2150,11 +2174,22 @@ public class JavaEditor extends Editor {
   }
 
 
+  public void toggleVariableInspector() {
+    if (inspector.isVisible()) {
+      inspector.setVisible(false);
+    } else {
+//      inspector.setFocusableWindowState(false); // to not get focus when set visible
+      inspector.setVisible(true);
+//      inspector.setFocusableWindowState(true); // allow to get focus again
+    }
+  }
+
+
 //  public void showVariableInspector() {
 //    tray.setVisible(true);
 //  }
-//
-//
+
+
 //  /**
 //   * Set visibility of the variable inspector window.
 //   * @param visible true to set the variable inspector visible,
