@@ -2154,6 +2154,7 @@ public class JavaEditor extends Editor {
     final boolean enabled = isDebuggerEnabled();
     rebuildToolbar();
 
+    // Hide the variable inspector if it's currently visible
     if (!enabled && inspector.isVisible()) {
       toggleVariableInspector();
     }

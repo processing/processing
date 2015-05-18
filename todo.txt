@@ -5,6 +5,15 @@ X remove "Experimental Mode: Yikes!" messages
 o NullPointerException in initiateToolTip()
 X   https://github.com/processing/processing/issues/3286
 X   can no longer reproduce
+X get rid of the debugger 'pane', just have that be the old window
+o   show debug window when running, hide when stopped
+o   can we animate the show/hide for the debug box?
+X large window places the debugger window offscreen
+X   https://github.com/processing/processing/issues/3091
+X almost all of the debugger menu needs to disappear
+X   https://github.com/processing/processing/issues/3267
+X   everything below toggle breakpoint, plus show/hide inspector
+X debugger button should show/hide toolbar buttons for step/continue
 
 in alpha 8 (but not confirmed in time)
 X "step" not working properly
@@ -17,15 +26,6 @@ pdex
 _ name of toggle debug and variable inspector
 _   Enable Debugger (with or without a checkbox)
 _   "show inspector" "hide inspector" "variable inspector" (with a check)
-X get rid of the debugger 'pane', just have that be the old window
-o   show debug window when running, hide when stopped
-o   can we animate the show/hide for the debug box?
-X large window places the debugger window offscreen
-X   https://github.com/processing/processing/issues/3091
-X almost all of the debugger menu needs to disappear
-X   https://github.com/processing/processing/issues/3267
-_   everything below toggle breakpoint, plus show/hide inspector
-_ debugger button should show/hide toolbar buttons for step/continue
 _ fix hasJavaTabs() function
 _   almost always used as a negative, or tied to a 'return' from fxn
 _   name isn't tied to its function, but the symptom
