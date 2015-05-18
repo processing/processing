@@ -23,7 +23,6 @@ package processing.mode.java;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.Box;
@@ -50,8 +49,12 @@ public class JavaToolbar extends EditorToolbar {
   }
 
 
+  @Override
   public List<EditorButton> createButtons() {
-    final boolean debug = jeditor.isDebuggerEnabled();
+    // jeditor not ready yet because this is called by super()
+    final boolean debug = ((JavaEditor) editor).isDebuggerEnabled();
+//    System.out.println("creating buttons in JavaToolbar, debug:" + debug);
+    List<EditorButton> outgoing = new ArrayList<>();
 
     final String runText = debug ?
       Language.text("toolbar.debug") : Language.text("toolbar.run");
@@ -64,6 +67,7 @@ public class JavaToolbar extends EditorToolbar {
         handleRun(e.getModifiers());
       }
     };
+    outgoing.add(runButton);
 
     if (debug) {
       stepButton = new EditorButton(mode,
@@ -76,6 +80,8 @@ public class JavaToolbar extends EditorToolbar {
           jeditor.handleStep(e.getModifiers());
         }
       };
+      outgoing.add(stepButton);
+
       continueButton = new EditorButton(mode,
                                         "/lib/toolbar/continue",
                                         Language.text("menu.debug.continue")) {
@@ -84,6 +90,7 @@ public class JavaToolbar extends EditorToolbar {
           jeditor.handleContinue();
         }
       };
+      outgoing.add(continueButton);
     }
 
     stopButton = new EditorButton(mode,
@@ -94,7 +101,9 @@ public class JavaToolbar extends EditorToolbar {
         handleStop();
       }
     };
-    return new ArrayList<>(Arrays.asList(runButton, stopButton));
+    outgoing.add(stopButton);
+
+    return outgoing;
   }
 
 

@@ -2132,6 +2132,7 @@ public class JavaEditor extends Editor {
 
   public void updateDebugToggle() {
     final boolean enabled = isDebuggerEnabled();
+    rebuildToolbar();
     /*
     if (enabled) {
       inspector.setFocusableWindowState(false); // to not get focus when set visible
