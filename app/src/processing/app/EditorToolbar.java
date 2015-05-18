@@ -89,22 +89,25 @@ abstract public class EditorToolbar extends JPanel {
     box = Box.createHorizontalBox();
     box.add(Box.createHorizontalStrut(Editor.LEFT_GUTTER));
 
+    label = new JLabel();
+    label.setFont(mode.getFont("toolbar.rollover.font"));
+    label.setForeground(mode.getColor("toolbar.rollover.color"));
+
     for (EditorButton button : buttons) {
       box.add(button);
       box.add(Box.createHorizontalStrut(GAP));
+      button.setRolloverLabel(label);
     }
 //    // remove the last gap
 //    box.remove(box.getComponentCount() - 1);
 
 //    box.add(Box.createHorizontalStrut(LABEL_GAP));
-    label = new JLabel();
-    label.setFont(mode.getFont("toolbar.rollover.font"));
-    label.setForeground(mode.getColor("toolbar.rollover.color"));
     box.add(label);
 //    currentButton = runButton;
 
-    runButton.setRolloverLabel(label);
-    stopButton.setRolloverLabel(label);
+
+//    runButton.setRolloverLabel(label);
+//    stopButton.setRolloverLabel(label);
 
     box.add(Box.createHorizontalGlue());
     addModeButtons(box);
