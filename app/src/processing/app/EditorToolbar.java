@@ -132,8 +132,6 @@ abstract public class EditorToolbar extends JPanel {
 
 
   public void paintComponent(Graphics g) {
-//    label.setText(editor.getSketch().getName());
-//    super.paintComponent(g);
     Dimension size = getSize();
     g.drawImage(gradient, 0, 0, size.width, size.height, this);
   }
