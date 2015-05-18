@@ -255,6 +255,7 @@ public class VariableInspector extends JDialog {
   }
 
 
+  /*
   protected void activateContinue() {
   }
 
@@ -269,6 +270,7 @@ public class VariableInspector extends JDialog {
 
   protected void deactivateStep() {
   }
+  */
 
 
   /*

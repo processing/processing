@@ -21,6 +21,8 @@ import javax.swing.text.Document;
 
 import org.eclipse.jdt.core.compiler.IProblem;
 
+import processing.core.PApplet;
+
 import processing.app.*;
 import processing.app.Toolkit;
 import processing.app.contrib.AvailableContribution;
@@ -30,7 +32,6 @@ import processing.app.contrib.ContributionManager;
 import processing.app.contrib.ToolContribution;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
-import processing.core.PApplet;
 import processing.mode.java.debug.LineBreakpoint;
 import processing.mode.java.debug.LineHighlight;
 import processing.mode.java.debug.LineID;
@@ -1914,7 +1915,7 @@ public class JavaEditor extends Editor {
           for (String[] importStatement : pieces) {
             importHeaders.add(importStatement[2]);
           }
-          ArrayList<AvailableContribution> installLibsHeaders = getNotInstalledAvailableLibs(importHeaders);
+          List<AvailableContribution> installLibsHeaders = getNotInstalledAvailableLibs(importHeaders);
           if (!installLibsHeaders.isEmpty()) {
             StringBuilder libList = new StringBuilder("Would you like to install them now?");
             for (AvailableContribution ac : installLibsHeaders) {
@@ -1942,7 +1943,7 @@ public class JavaEditor extends Editor {
    *
    * @param importHeaders
    */
-  private ArrayList<AvailableContribution> getNotInstalledAvailableLibs(ArrayList<String> importHeadersList) {
+  private List<AvailableContribution> getNotInstalledAvailableLibs(ArrayList<String> importHeadersList) {
     Map<String, Contribution> importMap = ContributionListing.getInstance().librariesByImportHeader;
     ArrayList<AvailableContribution> libList = new ArrayList<AvailableContribution>();
     for (String importHeaders : importHeadersList) {
@@ -2117,22 +2118,22 @@ public class JavaEditor extends Editor {
 
 
   protected void activateContinue() {
-    inspector.activateContinue();
+    ((JavaToolbar) toolbar).activateContinue();
   }
 
 
   protected void deactivateContinue() {
-    inspector.deactivateContinue();
+    ((JavaToolbar) toolbar).deactivateContinue();
   }
 
 
   protected void activateStep() {
-    inspector.activateStep();
+    ((JavaToolbar) toolbar).activateStep();
   }
 
 
   protected void deactivateStep() {
-    inspector.deactivateStep();
+    ((JavaToolbar) toolbar).deactivateStep();
   }
 
 

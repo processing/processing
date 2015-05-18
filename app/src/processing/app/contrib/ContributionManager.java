@@ -306,7 +306,7 @@ public class ContributionManager {
    *          The list of AvailableContributions to be downloaded and installed.
    */
   public static void downloadAndInstallOnImport(final Base base,
-                                                final ArrayList<AvailableContribution> aList) {
+                                                final List<AvailableContribution> aList) {
 
     // To avoid the user from modifying stuff, since this function is only called
     // during pre-processing

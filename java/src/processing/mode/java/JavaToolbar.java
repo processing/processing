@@ -137,6 +137,30 @@ public class JavaToolbar extends EditorToolbar {
   public void handleStop() {
     jeditor.handleStop();
   }
+
+
+  public void activateContinue() {
+    continueButton.setSelected(true);
+    repaint();
+  }
+
+
+  protected void deactivateContinue() {
+    continueButton.setSelected(false);
+    repaint();
+  }
+
+
+  protected void activateStep() {
+    stepButton.setSelected(true);
+    repaint();
+  }
+
+
+  protected void deactivateStep() {
+    stepButton.setSelected(false);
+    repaint();
+  }
 }
 
 
