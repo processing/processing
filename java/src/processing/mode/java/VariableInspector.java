@@ -96,7 +96,7 @@ public class VariableInspector extends JDialog {
 
   public VariableInspector(final JavaEditor editor) {
     // As a JDialog, the menu bar comes from the Editor
-    super(editor, "Inspector");
+    super(editor, "Variables");
     this.editor = editor;
 
     // Use the small toolbar style (at least on OS X)
