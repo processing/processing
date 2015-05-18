@@ -39,18 +39,17 @@ import org.netbeans.swing.outline.*;
 
 import com.sun.jdi.Value;
 
-import processing.app.EditorButton;
 import processing.app.Language;
 import processing.app.Mode;
 import processing.mode.java.debug.VariableNode;
 
 
 public class VariableInspector extends JDialog {
-  static public final int GAP = 13;
+//  static public final int GAP = 13;
 
-  EditorButton continueButton;
-  EditorButton stepButton;
-  EditorButton breakpointButton;
+//  EditorButton continueButton;
+//  EditorButton stepButton;
+//  EditorButton breakpointButton;
 
   // The tray will be placed at this amount from the top of the editor window,
   // and extend to this amount from the bottom of the editor window.
@@ -87,9 +86,6 @@ public class VariableInspector extends JDialog {
 
   /// list of expanded tree paths. (using list to maintain the order of expansion)
   protected List<TreePath> expandedNodes = new ArrayList<TreePath>();
-
-  /// processing / "advanced" mode flag (currently not used)
-  protected boolean p5mode = true;
 
 
   public VariableInspector(final JavaEditor editor) {
@@ -251,6 +247,7 @@ public class VariableInspector extends JDialog {
     thisFields = new ArrayList<VariableNode>();
     declaredThisFields = new ArrayList<VariableNode>();
 
+    // Remove ugly (and unused) focus border on OS X
     scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
     return scrollPane;
   }
@@ -326,6 +323,9 @@ public class VariableInspector extends JDialog {
   */
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   /**
    * Model for a Outline Row (excluding the tree column). Column 0 is "Value".
    * Column 1 is "Type". Handles setting and getting values. TODO: Maybe use a
@@ -351,11 +351,7 @@ public class VariableInspector extends JDialog {
 
     @Override
     public int getColumnCount() {
-      if (p5mode) {
-        return 1; // only show value in p5 mode
-      } else {
-        return 2;
-      }
+      return 1;
     }
 
     @Override
@@ -450,17 +446,18 @@ public class VariableInspector extends JDialog {
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   /**
    * Renderer for the tree portion of the outline component.
    * Handles icons, text color and tool tips.
    */
-  protected class OutlineRenderer implements RenderDataProvider {
+  class OutlineRenderer implements RenderDataProvider {
+    Icon[][] icons;
+    static final int ICON_SIZE = 16; // icon size (square, size=width=height)
 
-    protected Icon[][] icons;
-    protected static final int ICON_SIZE = 16; // icon size (square, size=width=height)
-
-    public OutlineRenderer() {
-      // load icons
+    OutlineRenderer() {
       icons = loadIcons("theme/var-icons.gif");
     }
 
@@ -585,6 +582,9 @@ public class VariableInspector extends JDialog {
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   // TODO: could probably extend the simpler DefaultTableCellRenderer here
   /**
    * Renderer for the value column. Uses an italic font for null values and
@@ -621,6 +621,9 @@ public class VariableInspector extends JDialog {
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   /**
    * Editor for the value column. Will show an empty string when editing
    * String values that are null.
@@ -632,18 +635,23 @@ public class VariableInspector extends JDialog {
     }
 
     @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+    public Component getTableCellEditorComponent(JTable table, Object value,
+                                                 boolean isSelected,
+                                                 int row, int column) {
       if (!(value instanceof VariableNode)) {
         return super.getTableCellEditorComponent(table, value, isSelected, row, column);
       }
       VariableNode var = (VariableNode) value;
-      if (var.getType() == VariableNode.TYPE_STRING && var.getValue() == null) {
-        return super.getTableCellEditorComponent(table, "", isSelected, row, column);
-      } else {
-        return super.getTableCellEditorComponent(table, var.getStringValue(), isSelected, row, column);
-      }
+
+      String strValue =
+        (var.getType() == VariableNode.TYPE_STRING &&
+         var.getValue() == null) ? "" : var.getStringValue();
+      return super.getTableCellEditorComponent(table, strValue, isSelected, row, column);
     }
   }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -705,19 +713,25 @@ public class VariableInspector extends JDialog {
   }
 
 
-  protected static void run(final VariableInspector vi) {
-    EventQueue.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        vi.setVisible(true);
-      }
-    });
-  }
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  // removed in 3.0a9, doesn't seem to be used?
+//  protected static void run(final VariableInspector vi) {
+//    EventQueue.invokeLater(new Runnable() {
+//      @Override
+//      public void run() {
+//        vi.setVisible(true);
+//      }
+//    });
+//  }
+
+
+  /*
   public DefaultMutableTreeNode getRootNode() {
     return rootNode;
   }
+  */
 
 
   /**
@@ -816,41 +830,38 @@ public class VariableInspector extends JDialog {
    */
   public void rebuild() {
     rootNode.removeAllChildren();
-    if (p5mode) {
-      // add all locals to root
-      addAllNodes(rootNode, locals);
 
-      // add non-inherited this fields
-      addAllNodes(rootNode, filterNodes(declaredThisFields, new LocalHidesThisFilter(locals, LocalHidesThisFilter.MODE_PREFIX)));
+    // add all locals to root
+    addAllNodes(rootNode, locals);
 
-      // add p5 builtins in a new folder
-      builtins.removeAllChildren();
-      addAllNodes(builtins, filterNodes(thisFields, new P5BuiltinsFilter()));
-      if (builtins.getChildCount() > 0) { // skip builtins in certain situations e.g. in pure java tabs.
-        rootNode.add(builtins);
-      }
+    // add non-inherited this fields
+    addAllNodes(rootNode, filterNodes(declaredThisFields, new LocalHidesThisFilter(locals, LocalHidesThisFilter.MODE_PREFIX)));
 
-      // notify tree (using model) changed a node and its children
-      // http://stackoverflow.com/questions/2730851/how-to-update-jtree-elements
-      // needs to be done before expanding paths!
-      treeModel.nodeStructureChanged(rootNode);
-
-      // handle node expansions
-      for (TreePath path : expandedNodes) {
-        //System.out.println("re-expanding: " + path);
-        path = synthesizePath(path);
-        if (path != null) {
-          tree.expandPath(path);
-        } else {
-          //System.out.println("couldn't synthesize path");
-        }
-      }
-
-      // this expansion causes problems when sorted and stepping
-      //tree.expandPath(new TreePath(new Object[]{rootNode, builtins}));
-    } else {
-      // TODO: implement advanced mode here
+    // add p5 builtins in a new folder
+    builtins.removeAllChildren();
+    addAllNodes(builtins, filterNodes(thisFields, new P5BuiltinsFilter()));
+    if (builtins.getChildCount() > 0) { // skip builtins in certain situations e.g. in pure java tabs.
+      rootNode.add(builtins);
     }
+
+    // notify tree (using model) changed a node and its children
+    // http://stackoverflow.com/questions/2730851/how-to-update-jtree-elements
+    // needs to be done before expanding paths!
+    treeModel.nodeStructureChanged(rootNode);
+
+    // handle node expansions
+    for (TreePath path : expandedNodes) {
+      //System.out.println("re-expanding: " + path);
+      path = synthesizePath(path);
+      if (path != null) {
+        tree.expandPath(path);
+      } else {
+        //System.out.println("couldn't synthesize path");
+      }
+    }
+
+    // this expansion causes problems when sorted and stepping
+    //tree.expandPath(new TreePath(new Object[]{rootNode, builtins}));
   }
 
 
@@ -913,6 +924,9 @@ public class VariableInspector extends JDialog {
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   public interface VariableNodeFilter {
 
     /** Check whether the filter accepts a {@link VariableNode}. */
@@ -963,12 +977,14 @@ public class VariableInspector extends JDialog {
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   /**
    * A {@link VariableNodeFilter} that either rejects this-fields if hidden by
    * a local, or prefixes its name with "this."
    */
   public class LocalHidesThisFilter implements VariableNodeFilter {
-
     // Reject a this-field if hidden by a local.
     public static final int MODE_HIDE = 0; // don't show hidden this fields
 
@@ -977,7 +993,6 @@ public class VariableInspector extends JDialog {
 
     protected List<VariableNode> locals;
     protected int mode;
-
 
     /**
      * Construct a {@link LocalHidesThisFilter}.
@@ -988,7 +1003,6 @@ public class VariableInspector extends JDialog {
       this.locals = locals;
       this.mode = mode;
     }
-
 
     @Override
     public boolean accept(VariableNode var) {
