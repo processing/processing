@@ -44,7 +44,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected WeakHashMap<PFont, FontTexture> fontMap;
 
   // just to get things running properly, need to
-  protected PSurfaceJOGL surfaceJOGL;
+  static protected PSurfaceJOGL surfaceJOGL;
 
   // ........................................................
 
