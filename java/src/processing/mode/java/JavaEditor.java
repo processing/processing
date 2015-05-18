@@ -87,9 +87,8 @@ public class JavaEditor extends Editor {
   protected JPanel consoleProblemsPane;
   protected XQErrorTable errorTable;
 
-  // TODO how is this different from hasJavaTabs?
-//  public boolean compilationCheckEnabled = true;
   private boolean hasJavaTabs;
+  private boolean javaTabWarned;
 
 
   protected JavaEditor(Base base, String path, EditorState state, Mode mode) {
@@ -151,9 +150,58 @@ public class JavaEditor extends Editor {
 
     getJavaTextArea().setECSandThemeforTextArea(errorCheckerService, jmode);
 
-    addXQModeUI();
-//    debugToolbarEnabled = new AtomicBoolean(false);
-    //log("Sketch Path: " + path);
+    // Adding ErrorBar
+    JPanel textAndError = new JPanel();
+    Box box = (Box) textarea.getParent();
+    box.remove(2); // Remove textArea from it's container, i.e Box
+    textAndError.setLayout(new BorderLayout());
+    errorBar =  new ErrorBar(this, textarea.getMinimumSize().height, jmode);
+    textAndError.add(errorBar, BorderLayout.EAST);
+    textarea.setBounds(0, 0, errorBar.getX() - 1, textarea.getHeight());
+    textAndError.add(textarea);
+    box.add(textAndError);
+
+    // Adding Error Table in a scroll pane
+    errorTableScrollPane = new JScrollPane();
+    errorTable = new XQErrorTable(errorCheckerService);
+    // errorTableScrollPane.setBorder(new EmptyBorder(2, 2, 2, 2));
+    errorTableScrollPane.setBorder(new EtchedBorder());
+    errorTableScrollPane.setViewportView(errorTable);
+
+    // Adding toggle console button
+    consolePanel.remove(2);
+    JPanel lineStatusPanel = new JPanel();
+    lineStatusPanel.setLayout(new BorderLayout());
+    btnShowConsole = new XQConsoleToggle(this, Language.text("editor.footer.console"), lineStatus.getHeight());
+    btnShowErrors = new XQConsoleToggle(this, Language.text("editor.footer.errors"), lineStatus.getHeight());
+    btnShowConsole.addMouseListener(btnShowConsole);
+    btnShowErrors.addMouseListener(btnShowErrors);
+
+    JPanel toggleButtonPanel = new JPanel(new BorderLayout());
+    toggleButtonPanel.add(btnShowConsole, BorderLayout.EAST);
+    toggleButtonPanel.add(btnShowErrors, BorderLayout.WEST);
+    lineStatusPanel.add(toggleButtonPanel, BorderLayout.EAST);
+    lineStatus.setBounds(0, 0, toggleButtonPanel.getX() - 1,
+                         toggleButtonPanel.getHeight());
+    lineStatusPanel.add(lineStatus);
+    consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
+    lineStatusPanel.repaint();
+
+    // Adding JPanel with CardLayout for Console/Problems Toggle
+    consolePanel.remove(1);
+    consoleProblemsPane = new JPanel(new CardLayout());
+    consoleProblemsPane.add(errorTableScrollPane, Language.text("editor.footer.errors"));
+    consoleProblemsPane.add(console, Language.text("editor.footer.console"));
+    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
+
+    // ensure completion gets hidden on editor losing focus
+    addWindowFocusListener(new WindowFocusListener() {
+      public void windowLostFocus(WindowEvent e) {
+        getJavaTextArea().hideSuggestion();
+      }
+
+      public void windowGainedFocus(WindowEvent e) { }
+    });
   }
 
 
@@ -164,6 +212,17 @@ public class JavaEditor extends Editor {
 
   public EditorToolbar createToolbar() {
     return new JavaToolbar(this);
+  }
+
+
+  public EditorHeader createHeader() {
+    return new EditorHeader(this) {
+      public void rebuild() {
+        super.rebuild();
+        System.out.println("checking for Java tabs");
+        hasJavaTabs = checkForJavaTabs();
+      }
+    };
   }
 
 
@@ -1115,11 +1174,13 @@ public class JavaEditor extends Editor {
   }
 
 
+  /*
   public void handleSave() {
 //    toolbar.activate(JavaToolbar.SAVE);
     super.handleSave(true);
 //    toolbar.deactivate(JavaToolbar.SAVE);
   }
+  */
 
 
   public boolean handleSaveAs() {
@@ -1139,15 +1200,13 @@ public class JavaEditor extends Editor {
         debugger.setBreakpoint(line);
       }
       // add breakpoint marker comments to source file
-      for (int i = 0; i < getSketch().getCodeCount(); i++) {
-        addBreakpointComments(getSketch().getCode(i).getFileName());
+      for (SketchCode code : getSketch().getCode()) {
+        addBreakpointComments(code.getFileName());
       }
 
       // set new name of variable inspector
-      inspector.setTitle(getSketch().getName());
+      //inspector.setTitle(getSketch().getName());
     }
-    //  if file location has changed, update autosaver
-    //        autosaver.reloadAutosaveDir();
     return saved;
   }
 
@@ -1179,7 +1238,6 @@ public class JavaEditor extends Editor {
     // commented out, then this will be a problem.
     String[] list = lib.getSpecifiedImports(); // ask the library for its imports
     if (list == null) {
-
       // Default to old behavior and load each package in the primary jar
       list = Base.packageListFromClassPath(lib.getJarPath());
     }
@@ -1219,79 +1277,6 @@ public class JavaEditor extends Editor {
 
   // Additions from PDE X, Debug Mode, Twerk Mode...
 
-
-  private void addXQModeUI(){
-    // Adding ErrorBar
-    JPanel textAndError = new JPanel();
-    Box box = (Box) textarea.getParent();
-    box.remove(2); // Remove textArea from it's container, i.e Box
-    textAndError.setLayout(new BorderLayout());
-    errorBar =  new ErrorBar(this, textarea.getMinimumSize().height, jmode);
-    textAndError.add(errorBar, BorderLayout.EAST);
-    textarea.setBounds(0, 0, errorBar.getX() - 1, textarea.getHeight());
-    textAndError.add(textarea);
-    box.add(textAndError);
-
-    // Adding Error Table in a scroll pane
-    errorTableScrollPane = new JScrollPane();
-    errorTable = new XQErrorTable(errorCheckerService);
-    // errorTableScrollPane.setBorder(new EmptyBorder(2, 2, 2, 2));
-    errorTableScrollPane.setBorder(new EtchedBorder());
-    errorTableScrollPane.setViewportView(errorTable);
-
-    // Adding toggle console button
-    consolePanel.remove(2);
-    JPanel lineStatusPanel = new JPanel();
-    lineStatusPanel.setLayout(new BorderLayout());
-    btnShowConsole = new XQConsoleToggle(this,
-                                         XQConsoleToggle.CONSOLE, lineStatus.getHeight());
-    btnShowErrors = new XQConsoleToggle(this,
-                                        XQConsoleToggle.ERRORSLIST, lineStatus.getHeight());
-    btnShowConsole.addMouseListener(btnShowConsole);
-
-    // lineStatusPanel.add(btnShowConsole, BorderLayout.EAST);
-    // lineStatusPanel.add(btnShowErrors);
-    btnShowErrors.addMouseListener(btnShowErrors);
-
-    JPanel toggleButtonPanel = new JPanel(new BorderLayout());
-    toggleButtonPanel.add(btnShowConsole, BorderLayout.EAST);
-    toggleButtonPanel.add(btnShowErrors, BorderLayout.WEST);
-    lineStatusPanel.add(toggleButtonPanel, BorderLayout.EAST);
-    lineStatus.setBounds(0, 0, toggleButtonPanel.getX() - 1,
-                         toggleButtonPanel.getHeight());
-    lineStatusPanel.add(lineStatus);
-    consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
-    lineStatusPanel.repaint();
-
-    // Adding JPanel with CardLayout for Console/Problems Toggle
-    consolePanel.remove(1);
-    consoleProblemsPane = new JPanel(new CardLayout());
-    consoleProblemsPane.add(errorTableScrollPane, XQConsoleToggle.ERRORSLIST);
-    consoleProblemsPane.add(console, XQConsoleToggle.CONSOLE);
-    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
-
-    // ensure completion gets hidden on editor losing focus
-    addWindowFocusListener(new WindowFocusListener() {
-      public void windowLostFocus(WindowEvent e) {
-        getJavaTextArea().hideSuggestion();
-      }
-
-      public void windowGainedFocus(WindowEvent e) { }
-    });
-  }
-
-//    /**
-//     * Event handler called when closing the editor window. Kills the variable
-//     * inspector window.
-//     *
-//     * @param e the event object
-//     */
-//    protected void onWindowClosing(WindowEvent e) {
-//        // remove var.inspector
-//        vi.dispose();
-//        // quit running debug session
-//        dbg.stopDebug();
-//    }
 
   /**
    * Used instead of the windowClosing event handler, since it's not called on
@@ -2608,10 +2593,13 @@ public class JavaEditor extends Editor {
   private boolean checkForJavaTabs() {
     for (SketchCode code : getSketch().getCode()) {
       if (code.getExtension().equals("java")) {
-        final String msg =
-          getSketch().getName() + " contains .java tabs. Some editor " +
-          "features are not supported for .java tabs and will be disabled.";
-        Base.showWarning("Cannot debug advanced sketches", msg);
+        if (!javaTabWarned) {
+          System.out.println(getSketch().getName() + " contains .java tabs. ");
+          System.out.println("Some editor features (like completion " +
+                             "and error checking) will be disabled.");
+          //Base.showWarning("Cannot debug advanced sketches", msg);
+          javaTabWarned = true;
+        }
         return true;
       }
     }

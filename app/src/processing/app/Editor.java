@@ -242,7 +242,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     toolbar = createToolbar();
     upper.add(toolbar);
 
-    header = new EditorHeader(this);
+    header = createHeader();
     upper.add(header);
 
     textarea = createTextArea();
@@ -591,6 +591,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //  public Settings getTheme() {
 //    return mode.getTheme();
 //  }
+
+
+  public EditorHeader createHeader() {
+    return new EditorHeader(this);
+  }
 
 
   abstract public EditorToolbar createToolbar();

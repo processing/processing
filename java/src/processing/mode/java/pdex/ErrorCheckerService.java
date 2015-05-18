@@ -52,6 +52,7 @@ import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorStatus;
+import processing.app.Language;
 import processing.app.Library;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
@@ -331,7 +332,7 @@ public class ErrorCheckerService implements Runnable {
     lastErrorCheckCall = System.currentTimeMillis();
 
     if(!hasSyntaxErrors())
-      editor.showProblemListView(XQConsoleToggle.CONSOLE);
+      editor.showProblemListView(Language.text("editor.footer.console"));
     // Make sure astGen has at least one CU to start with
     // This is when the loaded sketch already has syntax errors.
     // Completion wouldn't be complete, but it'd be still something

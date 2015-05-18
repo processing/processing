@@ -14,6 +14,15 @@ X almost all of the debugger menu needs to disappear
 X   https://github.com/processing/processing/issues/3267
 X   everything below toggle breakpoint, plus show/hide inspector
 X debugger button should show/hide toolbar buttons for step/continue
+X name of toggle debug and variable inspector
+X   Enable Debugger (with or without a checkbox)
+X   "show inspector" "hide inspector" "variable inspector" (with a check)
+o need unavailable/deactivate state for debug toolbar items
+o   or hide the tray when not debugging? Debug just a menu checkbox?
+o fix hasJavaTabs() function
+o   almost always used as a negative, or tied to a 'return' from fxn
+o   name isn't tied to its function, but the symptom
+X update hasJavaTabs on editor header rebuild
 
 in alpha 8 (but not confirmed in time)
 X "step" not working properly
@@ -23,13 +32,6 @@ _   https://github.com/processing/processing/issues/3242
 
 
 pdex
-_ name of toggle debug and variable inspector
-_   Enable Debugger (with or without a checkbox)
-_   "show inspector" "hide inspector" "variable inspector" (with a check)
-_ fix hasJavaTabs() function
-_   almost always used as a negative, or tied to a 'return' from fxn
-_   name isn't tied to its function, but the symptom
-_   only checked once (when the editor is created)
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
 _   because it's in the other ClassLoader, can no longer rely on it
 _ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
@@ -49,9 +51,19 @@ _ move Library to LibraryContribution and into contrib?
 gui
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
-_ remove EditorLineStatus (we have line numbers)
-_ editor window draws in stages (at least on OS X) on first view
+_ implement the bottom half of the editor window
+_   editor window draws in stages (at least on OS X) on first view
 _   the console/bottom area stays white until an additional repaint?
+_ remove EditorLineStatus (we have line numbers)
+_ need active state for the butterfly
+
+
+gui (lower, not blocking for beta)
+_ need 'actively pressed' version of 'play' and 'stop'
+_   could do rollover as well, but do other apps use them?
+_   iTunes has no rollover state but has a 'down' state
+_     swaps to stop after release
+_ remove focus border from the Variables window
 _ fonts are still really ugly (on non-retina)
 _   may need to drop use of Source Sans
 _   what do these do, and are we doing it already?
@@ -61,13 +73,7 @@ _ how are we going to handle fonts for other languages?
 _   two new fonts have been added, other languages will need more
 _   need a decent sans with with Unicode coverage
 _   i.e. https://github.com/processing/processing/pull/3025
-_ need 'actively pressed' version of 'play' and 'stop'
-_   could do rollover as well, but do other apps use them?
-_   iTunes has no rollover state but has a 'down' state
-_     swaps to stop after release
-_ need unavailable/deactivate state for debug toolbar items
-_   or hide the tray when not debugging? Debug just a menu checkbox?
-_ need active state for the butterfly
+_ deactivate step, continue, stop when not running?
 
 
 pde/build

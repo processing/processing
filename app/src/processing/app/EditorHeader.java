@@ -469,8 +469,8 @@ public class EditorHeader extends JComponent {
       */
     }
     JMenuItem item;
-    InputMap mInputMap = editor.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-    ActionMap mActionMap = editor.getRootPane().getActionMap();
+    InputMap inputMap = editor.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    ActionMap actionMap = editor.getRootPane().getActionMap();
     Action action;
     String mapKey;
     KeyStroke keyStroke;
@@ -515,8 +515,8 @@ public class EditorHeader extends JComponent {
     };
     mapKey = "editor.header.new_tab";
     keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.SHORTCUT_SHIFT_KEY_MASK);
-    mInputMap.put(keyStroke, mapKey);
-    mActionMap.put(mapKey, action);
+    inputMap.put(keyStroke, mapKey);
+    actionMap.put(mapKey, action);
     item.addActionListener(action);
     menu.add(item);
 
@@ -553,8 +553,8 @@ public class EditorHeader extends JComponent {
     };
     mapKey = "editor.header.delete";
     keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.SHORTCUT_ALT_KEY_MASK);
-    mInputMap.put(keyStroke, mapKey);
-    mActionMap.put(mapKey, action);
+    inputMap.put(keyStroke, mapKey);
+    actionMap.put(mapKey, action);
     item.addActionListener(action);
     menu.add(item);
 
@@ -572,8 +572,8 @@ public class EditorHeader extends JComponent {
     };
     mapKey = "editor.header.previous_tab";
     keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
-    mInputMap.put(keyStroke, mapKey);
-    mActionMap.put(mapKey, action);
+    inputMap.put(keyStroke, mapKey);
+    actionMap.put(mapKey, action);
     item.addActionListener(action);
     menu.add(item);
 
@@ -588,8 +588,8 @@ public class EditorHeader extends JComponent {
     };
     mapKey = "editor.header.next_tab";
     keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
-    mInputMap.put(keyStroke, mapKey);
-    mActionMap.put(mapKey, action);
+    inputMap.put(keyStroke, mapKey);
+    actionMap.put(mapKey, action);
     item.addActionListener(action);
     menu.add(item);
 

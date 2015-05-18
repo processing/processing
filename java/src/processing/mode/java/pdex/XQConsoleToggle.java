@@ -30,23 +30,20 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
 
-import processing.app.Language;
 import processing.mode.java.JavaEditor;
 
-/**
- * Toggle Button displayed in the editor line status panel for toggling bewtween
- * console and problems list. Glorified JPanel.
- * 
- * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
- * 
- */
 
+/**
+ * Toggle Button displayed in the editor line status panel for toggling between
+ * console and problems list. Glorified JPanel.
+ *
+ * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
+ *
+ */
 public class XQConsoleToggle extends JPanel implements MouseListener {
-	public static final String CONSOLE = Language.text("editor.footer.console"), ERRORSLIST = Language.text("editor.footer.errors") ;
-	
 	private boolean toggleText = true;
 	private boolean toggleBG = true;
-	
+
 	/**
 	 * Height of the component
 	 */
@@ -75,8 +72,8 @@ public class XQConsoleToggle extends JPanel implements MouseListener {
 	public void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		
+		                     RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
 		// On mouse hover, text and background color are changed.
 		if (toggleBG) {
 			g.setColor(new Color(0xff9DA7B0));
@@ -91,7 +88,7 @@ public class XQConsoleToggle extends JPanel implements MouseListener {
 			g.fillRect(0, 0, 4, this.getHeight());
 			g.setColor(Color.WHITE);
 		}
-		
+
 		g.drawString(buttonName, getWidth() / 2 + 2 // + 2 is a offset
 				- getFontMetrics(getFont()).stringWidth(buttonName) / 2,
 				this.getHeight() - 6);
@@ -100,8 +97,8 @@ public class XQConsoleToggle extends JPanel implements MouseListener {
 			g.fillRect(4, 0, 2, this.getHeight());
 		}
 	}
-	
-	boolean drawMarker = false; 
+
+	boolean drawMarker = false;
 	protected Color markerColor;
 	public void updateMarker(boolean value, Color color){
 	  drawMarker = value;
