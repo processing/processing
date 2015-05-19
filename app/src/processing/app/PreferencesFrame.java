@@ -219,19 +219,20 @@ public class PreferencesFrame {
     });
 
     selector = new ColorChooser(frame, false,
-        Preferences.getColor("run.present.bgcolor"), Language.text("prompt.ok"),
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            String colorValue = selector.getHexColor();
-            presentColorHex.setText(colorValue.substring(1));
-            presentColor.setBackground(new Color(PApplet.unhex(colorValue)));
-            selector.hide();
-          }
-        });
+                                Preferences.getColor("run.present.bgcolor"),
+                                Language.text("prompt.ok"),
+                                new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        String colorValue = selector.getHexColor();
+        colorValue = colorValue.substring(1);  // remove the #
+        presentColorHex.setText(colorValue);
+        presentColor.setBackground(new Color(PApplet.unhex(colorValue)));
+        selector.hide();
+      }
+    });
 
     presentColor.addMouseListener(new MouseAdapter() {
-
       @Override
       public void mouseExited(MouseEvent e) {
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
