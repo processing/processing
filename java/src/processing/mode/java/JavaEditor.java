@@ -1522,6 +1522,7 @@ public class JavaEditor extends Editor {
     debugMenu.add(item);
     item.setEnabled(false);
 
+    /*
     inspectorItem = Toolkit.newJMenuItem(Language.text("menu.debug.show_variables"), 'Y');
     inspectorItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -1530,6 +1531,7 @@ public class JavaEditor extends Editor {
       });
     debugMenu.add(inspectorItem);
     inspectorItem.setEnabled(false);
+    */
 
     /*
     item = new JMenuItem(Language.text("menu.debug.list_breakpoints"));
@@ -2188,10 +2190,12 @@ public class JavaEditor extends Editor {
       debugItem.setText(Language.text("menu.debug.enable"));
     }
 
-    // Hide the variable inspector if it's currently visible
-    if (!debugEnabled && inspector.isVisible()) {
-      toggleVariableInspector();
-    }
+//    // Hide the variable inspector if it's currently visible
+//    if (!debugEnabled && inspector.isVisible()) {
+//      toggleVariableInspector();
+//    }
+    inspector.setVisible(debugEnabled);
+
     /*
     if (enabled) {
       inspector.setFocusableWindowState(false); // to not get focus when set visible
@@ -2209,6 +2213,7 @@ public class JavaEditor extends Editor {
   }
 
 
+  /*
   public void toggleVariableInspector() {
     if (inspector.isVisible()) {
       inspectorItem.setText(Language.text("menu.debug.show_variables"));
@@ -2220,6 +2225,7 @@ public class JavaEditor extends Editor {
 //      inspector.setFocusableWindowState(true); // allow to get focus again
     }
   }
+  */
 
 
 //  public void showVariableInspector() {

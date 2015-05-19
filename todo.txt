@@ -1,15 +1,15 @@
 0236 (3.0a9)
 X show screen dimensions in the Preferences window
 
-gui
+gui/pdex/debugger
 X implement the bottom half of the editor window
 X   editor window draws in stages (at least on OS X) on first view
 X   the console/bottom area stays white until an additional repaint?
 X   fixed these issues and replaced with footer
 X remove EditorLineStatus (we have line numbers)
-
-
-pdex/debugger
+X automatically show the variables window when debugging, hide when not
+X ctrl-y shortcut duplicated
+X   https://github.com/processing/processing/issues/3298
 X remove "Experimental Mode: Yikes!" messages
 o NullPointerException in initiateToolTip()
 X   https://github.com/processing/processing/issues/3286
@@ -52,9 +52,6 @@ _ move Library to LibraryContribution and into contrib?
 
 gui
 _ click a line number to toggle breakpoint
-_ automatically show the variables window when debugging, hide when not
-_ ctrl-y shortcut duplicated
-_   https://github.com/processing/processing/issues/3298
 _ need active state for the butterfly
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072

@@ -111,9 +111,15 @@ public class VariableInspector extends JDialog {
     getContentPane().add(box);
     pack();
 
-//    setLocation(editor.getX() + editor.getWidth() + HORIZONTAL_OFFSET,
-//                editor.getY() + VERTICAL_OFFSET);
-    setLocationRelativeTo(editor);
+    int x = editor.getX() + editor.getWidth() + HORIZONTAL_OFFSET;
+    if (x + getWidth() > getToolkit().getScreenSize().width) {
+      // If it doesn't fit on screen, place it inside the editor window,
+      // per the OS rules for window placement
+      setLocationRelativeTo(editor);
+    } else {
+      // If it'll fit, place it to the right of the editor window
+      setLocation(x, editor.getY() + VERTICAL_OFFSET);
+    }
 
     /*
     bgColor = mode.getColor("buttons.bgcolor");
