@@ -22,7 +22,6 @@ import javax.swing.text.Document;
 import org.eclipse.jdt.core.compiler.IProblem;
 
 import processing.core.PApplet;
-
 import processing.app.*;
 import processing.app.Toolkit;
 import processing.app.contrib.AvailableContribution;
@@ -210,12 +209,15 @@ public class JavaEditor extends Editor {
   public Container createConsolePanel() {
     //JPanel consolePanel = new JPanel();
     JTabbedPane tabPane = new JTabbedPane(JTabbedPane.BOTTOM);
+//    tabPane.setUI(new BasicTabbedPaneUI());
+//    tabPane.setBorder(BorderFactory.createEmptyBorder());
 
     // Adding Error Table in a scroll pane
     errorTableScrollPane = new JScrollPane();
     errorTable = new XQErrorTable(errorCheckerService);
     // errorTableScrollPane.setBorder(new EmptyBorder(2, 2, 2, 2));
-    errorTableScrollPane.setBorder(new EtchedBorder());
+//    errorTableScrollPane.setBorder(new EtchedBorder());
+    errorTableScrollPane.setBorder(BorderFactory.createEmptyBorder());
     errorTableScrollPane.setViewportView(errorTable);
 
 //    // Adding toggle console button
