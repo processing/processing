@@ -34,6 +34,8 @@ o   name isn't tied to its function, but the symptom
 X update hasJavaTabs on editor header rebuild
 X remove focus border from the Variables window
 X need active state for the butterfly
+X click a line number to toggle breakpoint
+X   was in there before, but required double-click
 
 in alpha 8 (but not confirmed in time)
 X "step" not working properly
@@ -43,13 +45,13 @@ X   https://github.com/processing/processing/issues/3242
 
 
 gui
-_ click a line number to toggle breakpoint
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
 _ add a "what's new" window to explain features in 3
 
 
 gui (lower, not blocking for beta)
+_ tiny trail of dots when moving the selection bar up/down on retina
 _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
 _   iTunes has no rollover state but has a 'down' state

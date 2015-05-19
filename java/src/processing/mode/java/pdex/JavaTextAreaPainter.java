@@ -100,6 +100,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
   public JavaTextAreaPainter(JavaTextArea textArea, TextAreaDefaults defaults) {
     super(textArea, defaults);
+    new Exception().printStackTrace(System.out);
 
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent evt) {
@@ -113,18 +114,37 @@ public class JavaTextAreaPainter extends TextAreaPainter
       }
     });
 
+    // Handle mouse clicks to toggle breakpoints
+    addMouseListener(new MouseAdapter() {
+      long lastTime;  // OS X seems to be firing multiple mouse events
+
+      public void mousePressed(MouseEvent event) {
+        long thisTime = event.getWhen();
+        if (thisTime - lastTime > 100) {
+          if (event.getX() < Editor.LEFT_GUTTER) {
+            int offset = getTextArea().xyToOffset(event.getX(), event.getY());
+            if (offset >= 0) {
+              int lineIndex = getTextArea().getLineOfOffset(offset);
+              getEditor().toggleBreakpoint(lineIndex);
+            }
+          }
+          lastTime = thisTime;
+        }
+      }
+    });
+
     addMouseMotionListener(new MouseMotionAdapter() {
       @Override
       public void mouseMoved(final MouseEvent evt) {
-    	for (ErrorLineCoord coord : errorLineCoords) {
-    	  if (evt.getX() >= coord.xStart && evt.getX() <= coord.xEnd
-    			  && evt.getY() >= coord.yStart && evt.getY() <= coord.yEnd + 2) {
-    	    setToolTipText(coord.problem.getMessage());
-    		break;
-    	  }
-    	}
+        for (ErrorLineCoord coord : errorLineCoords) {
+          if (evt.getX() >= coord.xStart && evt.getX() <= coord.xEnd &&
+              evt.getY() >= coord.yStart && evt.getY() <= coord.yEnd + 2) {
+            setToolTipText(coord.problem.getMessage());
+            break;
+          }
+        }
       }
-	});
+    });
 
     // TweakMode code
     interactiveMode = false;

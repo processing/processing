@@ -1202,6 +1202,19 @@ public class JavaEditor extends Editor {
   }
 
 
+  /** Toggle a breakpoint on the current line. */
+  public void toggleBreakpoint() {
+    debugger.toggleBreakpoint(getCurrentLineID().lineIdx());
+  }
+
+
+  public void toggleBreakpoint(int lineIndex) {
+    new Exception().printStackTrace(System.out);
+    debugger.toggleBreakpoint(lineIndex);
+  }
+
+
+
   /*
   public void handleSave() {
 //    toolbar.activate(JavaToolbar.SAVE);
@@ -1516,7 +1529,7 @@ public class JavaEditor extends Editor {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' menu item");
-          debugger.toggleBreakpoint();
+          toggleBreakpoint();
         }
       });
     debugMenu.add(item);
@@ -2477,15 +2490,15 @@ public class JavaEditor extends Editor {
   }
 
 
-  /**
-   * Event Handler for double clicking in the left hand gutter area.
-   * @param lineIdx the line (0-based) that was double clicked
-   */
-  public void gutterDblClicked(int lineIdx) {
-    if (debugger != null) {
-      debugger.toggleBreakpoint(lineIdx);
-    }
-  }
+//  /**
+//   * Event Handler for double clicking in the left hand gutter area.
+//   * @param lineIdx the line (0-based) that was double clicked
+//   */
+//  public void gutterDblClicked(int lineIdx) {
+//    if (debugger != null) {
+//      debugger.toggleBreakpoint(lineIdx);
+//    }
+//  }
 
 
   public void statusBusy() {

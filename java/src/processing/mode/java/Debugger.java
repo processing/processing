@@ -470,22 +470,16 @@ public class Debugger implements VMEventListener {
   }
 
 
-  /** Toggle a breakpoint on the current line. */
-  synchronized void toggleBreakpoint() {
-    toggleBreakpoint(editor.getCurrentLineID().lineIdx());
-  }
-
-
   /**
    * Toggle a breakpoint on a line in the current tab.
    * @param lineIdx the line index (0-based) in the current tab
    */
   synchronized void toggleBreakpoint(int lineIdx) {
     LineID line = editor.getLineIDInCurrentTab(lineIdx);
-    if (!hasBreakpoint(line)) {
-      setBreakpoint(line.lineIdx());
-    } else {
+    if (hasBreakpoint(line)) {
       removeBreakpoint(line.lineIdx());
+    } else {
+      setBreakpoint(line.lineIdx());
     }
   }
 

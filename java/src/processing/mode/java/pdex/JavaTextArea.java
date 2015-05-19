@@ -719,17 +719,22 @@ public class JavaTextArea extends JEditTextArea {
 
     @Override
     public void mousePressed(MouseEvent me) {
-      // check if this happened in the gutter area
-      if (me.getX() < Editor.LEFT_GUTTER) {
-        if (me.getButton() == MouseEvent.BUTTON1 && me.getClickCount() == 2) {
-          int line = me.getY() / painter.getFontMetrics().getHeight()
-              + firstLine;
-          if (line >= 0 && line <= getLineCount() - 1) {
-            editor.gutterDblClicked(line);
-          }
-        }
-        return;
-      }
+//      // check if this happened in the gutter area
+//      if (me.getX() < Editor.LEFT_GUTTER) {
+//        if (me.getButton() == MouseEvent.BUTTON1) { // && me.getClickCount() == 2) {
+//          //int line = me.getY() / painter.getFontMetrics().getHeight() + firstLine;
+//          int offset = xyToOffset(me.getX(), me.getY());
+//          if (offset >= 0) {
+//            int lineIndex = getLineOfOffset(offset);
+//            editor.toggleBreakpoint(lineIndex);
+//          }
+////          if (line >= 0 && line < getLineCount()) {
+////            //editor.gutterDblClicked(line);
+////            editor.toggleBreakpoint(line);
+////          }
+//        }
+//        return;
+//      }
 
       if (me.getButton() == MouseEvent.BUTTON3) {
         if (!editor.hasJavaTabs()) { // tooltips, etc disabled for java tabs
