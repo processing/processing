@@ -271,7 +271,7 @@ public class PSurfaceJOGL implements PSurface {
           if (drawException != null) {
             Throwable cause = drawException.getCause();
             if (cause instanceof ThreadDeath) {
-              System.out.println("caught ThreadDeath");
+//              System.out.println("caught ThreadDeath");
 //              throw (ThreadDeath)cause;
             } else if (cause instanceof RuntimeException) {
               throw (RuntimeException)cause;
@@ -287,7 +287,7 @@ public class PSurfaceJOGL implements PSurface {
     window.addWindowListener(new WindowAdapter() {
       @Override
       public void windowDestroyNotify(final WindowEvent e) {
-        System.out.println("destroy notify");
+//        System.out.println("destroy notify");
         PSurfaceJOGL.this.sketch.dispose();
         PSurfaceJOGL.this.sketch.exitActual();
 //        animator.stop();
@@ -531,7 +531,7 @@ public class PSurfaceJOGL implements PSurface {
       }
 
       if (sketch.exitCalled()) {
-        System.out.println("exit");
+//        System.out.println("exit");
         animator.stop();
         sketch.dispose();
         sketch.exitActual();
@@ -539,7 +539,7 @@ public class PSurfaceJOGL implements PSurface {
     }
     public void dispose(GLAutoDrawable drawable) {
 //      pgl.getGL(drawable);
-      System.out.println("dispose");
+//      System.out.println("dispose");
       sketch.dispose();
 //      if (sketch.exitCalled()) {
 //        sketch.exitActual();
