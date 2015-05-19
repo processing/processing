@@ -292,7 +292,7 @@ public class PGraphicsJava2D extends PGraphics {
       }
       // If not realized (off-screen, i.e the Color Selector Tool), gc will be null.
       if (gc == null) {
-        System.err.println("GraphicsConfiguration null in initImage()");
+        //System.err.println("GraphicsConfiguration null in initImage()");
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
       }

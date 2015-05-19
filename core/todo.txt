@@ -3,7 +3,7 @@ X Implement Cmd-Q handler on Mac OS X
 X   https://github.com/processing/processing/issues/3301
 X Changing "background color when Presenting" causes Exception
 X   https://github.com/processing/processing/issues/3299
-_ remove "null in initImage()" message
+X remove "null in initImage()" message
 
 fixed in 3.0a8
 X Full screen window on second monitor without using present mode
