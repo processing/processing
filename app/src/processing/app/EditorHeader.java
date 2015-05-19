@@ -37,27 +37,31 @@ import javax.swing.*;
  */
 public class EditorHeader extends JComponent {
   // height of this tab bar
-  static final int HIGH = 30;
+  static final int HIGH = 29;
   // standard UI sizing (OS-specific, but generally consistent)
 //  static final int SCROLLBAR_WIDTH = 16;
   // amount of space on the left edge before the tabs start
-  static final int MARGIN_WIDTH = Editor.LEFT_GUTTER;
+//  static final int MARGIN_WIDTH = Editor.LEFT_GUTTER;
 
-  static final int ARROW_TAB_WIDTH = 23;
+  static final int ARROW_TAB_WIDTH = 18;
   // distance from the righthand side of a tab to the drop-down arrow
 //  static final int ARROW_GAP_WIDTH = 8;
   // indent x/y for notch on the tab
-  static final int ARROW_TOP = 12;
-  static final int ARROW_BOTTOM = 20;
-  static final int ARROW_WIDTH = 9;
+  static final int ARROW_TOP = 11;
+  static final int ARROW_BOTTOM = 18;
+  static final int ARROW_WIDTH = 6;
+
+  static final int CURVE_RADIUS = 6;
 
 //  static final int NOTCH = 0;
   // how far to raise the tab from the bottom of this Component
-  static final int TAB_HEIGHT = HIGH;
+//  static final int TAB_HEIGHT = HIGH;
+  static final int TAB_TOP = 0;
+  static final int TAB_BOTTOM = 27;
 //  // line that continues across all of the tabs for the current one
 //  static final int TAB_STRETCH = 3;
   // amount of extra space between individual tabs
-  static final int TAB_BETWEEN = 4;
+  static final int TAB_BETWEEN = 3;
   // amount of margin on the left/right for the text on the tab
   static final int TEXT_MARGIN = 16;
   // width of the tab when no text visible
@@ -201,12 +205,9 @@ public class EditorHeader extends JComponent {
 
 
   public void paintComponent(Graphics screen) {
-    setOpaque(false);
-
     if (screen == null) return;
-
     Sketch sketch = editor.getSketch();
-    if (sketch == null) return;  // ??
+    if (sketch == null) return;  // possible?
 
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
@@ -274,7 +275,7 @@ public class EditorHeader extends JComponent {
         font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
     }
     // make sure everything can fit
-    if (!placeTabs(MARGIN_WIDTH, tabMax, null)) {
+    if (!placeTabs(Editor.LEFT_GUTTER, tabMax, null)) {
       //System.arraycopy(tabs, 0, visitOrder, 0, tabs.length);
       // always show the tab with the sketch's name
 //      System.arraycopy(tabs, 1, visitOrder, 0, tabs.length - 1);
@@ -292,14 +293,14 @@ public class EditorHeader extends JComponent {
       // Keep shrinking the tabs one-by-one until things fit properly
       for (int i = 0; i < visitOrder.length; i++) {
         tabs[visitOrder[i].index].textVisible = false;
-        if (placeTabs(MARGIN_WIDTH, tabMax, null)) {
+        if (placeTabs(Editor.LEFT_GUTTER, tabMax, null)) {
           break;
         }
       }
     }
 
     // now actually draw the tabs
-    if(!placeTabs(MARGIN_WIDTH, tabMax - ARROW_TAB_WIDTH, g2)){
+    if (!placeTabs(Editor.LEFT_GUTTER, tabMax - ARROW_TAB_WIDTH, g2)){
       // draw the dropdown menu target at the right of the window
       menuRight = tabMax;
       menuLeft = menuRight - ARROW_TAB_WIDTH;
@@ -310,11 +311,17 @@ public class EditorHeader extends JComponent {
     }
 
     g.setColor(tabColor[UNSELECTED]);
-    drawTab(g, menuLeft, menuRight);
+    drawTab(g, menuLeft, menuRight, false, true);
 //    int arrowY = (getHeight() - TAB_HEIGHT - TAB_STRETCH) + (TAB_HEIGHT - ARROW_HEIGHT)/2;
 //    g.drawImage(tabArrow, menuLeft, arrowY,
 //                ARROW_WIDTH, ARROW_HEIGHT, null);
     // TODO draw arrow here
+
+    g.setColor(tabColor[SELECTED]);
+
+    // can't be done with lines, b/c retina leaves tiny hairlines
+    g.fillRect(Editor.LEFT_GUTTER, TAB_BOTTOM,
+               editor.getWidth(), 2);
 
     g.setColor(arrowColor);
     GeneralPath trianglePath = new GeneralPath();
@@ -334,8 +341,8 @@ public class EditorHeader extends JComponent {
     Sketch sketch = editor.getSketch();
     int x = left;
 
-    final int bottom = getHeight(); // - TAB_STRETCH;
-    final int top = bottom - TAB_HEIGHT;
+//    final int bottom = getHeight(); // - TAB_STRETCH;
+//    final int top = bottom - TAB_HEIGHT;
 //    GeneralPath path = null;
 
     for (int i = 0; i < sketch.getCodeCount(); i++) {
@@ -376,7 +383,7 @@ public class EditorHeader extends JComponent {
 
       if (g != null && tab.right < right) {
         g.setColor(tabColor[state]);
-        drawTab(g, tab.left, tab.right);
+        drawTab(g, tab.left, tab.right, i == 0, false);
 //        path.lineTo(x - NOTCH, top);
 //        path.lineTo(x, top + NOTCH);
 //        path.lineTo(x, bottom);
@@ -392,8 +399,8 @@ public class EditorHeader extends JComponent {
           g.setColor(textColor[state]);
 //          int baseline = (int) Math.ceil((sizeH + fontAscent) / 2.0);
           //int baseline = bottom - (TAB_HEIGHT - fontAscent)/2;
-          int tabHeight = TAB_HEIGHT; //bottom - top;
-          int baseline = top + (tabHeight + fontAscent) / 2;
+          int tabHeight = TAB_BOTTOM - TAB_TOP;
+          int baseline = TAB_TOP + (tabHeight + fontAscent) / 2;
           //g.drawString(sketch.code[i].name, textLeft, baseline);
           g.drawString(tab.text, textLeft, baseline);
 //          g.drawLine(tab.left, baseline-fontAscent, tab.right, baseline-fontAscent);
@@ -403,7 +410,7 @@ public class EditorHeader extends JComponent {
         if (code.isModified()) {
           g.setColor(modifiedColor);
           //g.drawLine(tab.left + NOTCH, top, tab.right - NOTCH, top);
-          g.drawLine(tab.left, top, tab.right, top);
+          g.drawLine(tab.left, TAB_TOP, tab.right, TAB_TOP);
         }
       }
 
@@ -425,10 +432,59 @@ public class EditorHeader extends JComponent {
   }
 
 
-  private void drawTab(Graphics g, int left, int right) {
-    final int bottom = getHeight(); // - TAB_STRETCH;
-    final int top = bottom - TAB_HEIGHT;
-    g.fillRect(left, top, right - left, bottom - top);
+  private void drawTab(Graphics g, int left, int right,
+                       boolean leftNotch, boolean rightNotch) {
+//    final int bottom = getHeight(); // - TAB_STRETCH;
+//    final int top = bottom - TAB_HEIGHT;
+//    g.fillRect(left, top, right - left, bottom - top);
+
+    Graphics2D g2 = (Graphics2D) g;
+//    GeneralPath path = new GeneralPath();
+    roundRect(g2, left, TAB_TOP, right, TAB_BOTTOM,
+              leftNotch ? CURVE_RADIUS : 0,
+              rightNotch ? CURVE_RADIUS : 0,
+              0, 0);
+
+//    path.moveTo(left, TAB_BOTTOM);
+//    if (left == MARGIN_WIDTH) {  // first tab on the left
+//      path.lineTo(left, TAB_TOP - CURVE_RADIUS);
+//    }
+
+  }
+
+
+  private void roundRect(Graphics2D g2,
+                         float x1, float y1, float x2, float y2,
+                         float tl, float tr, float br, float bl) {
+    GeneralPath path = new GeneralPath();
+//    vertex(x1+tl, y1);
+
+    if (tr != 0) {
+      path.moveTo(x2-tr, y1);
+      path.quadTo(x2, y1, x2, y1+tr);
+    } else {
+      path.moveTo(x2, y1);
+    }
+    if (br != 0) {
+      path.lineTo(x2, y2-br);
+      path.quadTo(x2, y2, x2-br, y2);
+    } else {
+      path.lineTo(x2, y2);
+    }
+    if (bl != 0) {
+      path.lineTo(x1+bl, y2);
+      path.quadTo(x1, y2, x1, y2-bl);
+    } else {
+      path.lineTo(x1, y2);
+    }
+    if (tl != 0) {
+      path.lineTo(x1, y1+tl);
+      path.quadTo(x1, y1, x1+tl, y1);
+    } else {
+      path.lineTo(x1, y1);
+    }
+    path.closePath();
+    g2.fill(path);
   }
 
 

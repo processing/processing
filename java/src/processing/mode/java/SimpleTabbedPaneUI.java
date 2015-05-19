@@ -197,6 +197,10 @@ public class SimpleTabbedPaneUI extends BasicTabbedPaneUI {
                                    0, 21, colorSet.bottomGradColor2));
     g2d.fillRect(xpos, 10, width, 11);
 
+//    System.out.println("drawing orange");
+//    g2d.setColor(Color.ORANGE);
+//    g2d.fillRect(xpos, 0, width, 21);
+
     if (contentTopBorderDrawn) {
       g2d.setColor(lineColor);
       g2d.drawLine(rect.x, 20, rect.x + rect.width - 1, 20);

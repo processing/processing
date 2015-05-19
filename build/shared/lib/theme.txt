@@ -10,14 +10,19 @@ status.font = processing.sans,plain,14
 
 # TABS
 # Settings for the tab area at the top.
-header.text.font = processing.sans,bold,15
+header.text.font = processing.sans,bold,13
 header.text.selected.color = #000000
 header.text.unselected.color = #ffffff
-header.tab.selected.color = #ffffff
-header.tab.unselected.color = #657d87
-header.tab.arrow.color = #000000
+#header.tab.arrow.color = #000000
+header.tab.arrow.color = #ffffff
 header.gradient.top = #132638
 header.gradient.bottom = #122535
+#header.tab.selected.color = #ffffff
+#header.tab.unselected.color = #657d87
+
+# r11-002
+header.tab.selected.color = #e0fffd
+header.tab.unselected.color = #2d4251
 
 # CONSOLE
 # The font is handled by preferences, so its size/etc are modifiable.
@@ -51,7 +56,7 @@ divider.dot.color = #505050
 #toolbar.sketch.color = #ffffff
 toolbar.rollover.font = processing.sans,plain,12
 toolbar.rollover.color = #ffffff
-toolbar.gradient.top = #142c40
+toolbar.gradient.top = #142a3e
 toolbar.gradient.bottom = #132638
 
 # MODE SELECTOR

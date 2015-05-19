@@ -211,6 +211,8 @@ public class JavaEditor extends Editor {
     JTabbedPane tabPane = new JTabbedPane(JTabbedPane.BOTTOM);
 //    tabPane.setUI(new BasicTabbedPaneUI());
     tabPane.setUI(new SimpleTabbedPaneUI());
+//    tabPane.setUI(new SillyTabbedPaneUI());
+//    tabPane.setUI(new PlasticTabbedPaneUI());
 //    tabPane.setBorder(BorderFactory.createEmptyBorder());
 //    tabPane.setBackground(Color.RED);
 

@@ -722,7 +722,7 @@ public class Toolkit {
         monoFont = createFont("SourceCodePro-Regular.ttf", size);
         //monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
         monoBoldFont = createFont("SourceCodePro-Bold.ttf", size);
-        
+
         // additional language constraints
         if ("el".equals(Language.getLanguage())) {
           if (!monoFont.canDisplay(GREEK_SMALL_LETTER_ALPHA) ||
@@ -758,7 +758,7 @@ public class Toolkit {
       try {
         sansFont = createFont("SourceSansPro-Regular.ttf", size);
         sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
-        
+
         // additional language constraints
         if ("el".equals(Language.getLanguage())) {
           if (!sansFont.canDisplay(GREEK_SMALL_LETTER_ALPHA) ||
