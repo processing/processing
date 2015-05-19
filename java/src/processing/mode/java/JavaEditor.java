@@ -210,7 +210,9 @@ public class JavaEditor extends Editor {
     //JPanel consolePanel = new JPanel();
     JTabbedPane tabPane = new JTabbedPane(JTabbedPane.BOTTOM);
 //    tabPane.setUI(new BasicTabbedPaneUI());
+    tabPane.setUI(new SimpleTabbedPaneUI());
 //    tabPane.setBorder(BorderFactory.createEmptyBorder());
+//    tabPane.setBackground(Color.RED);
 
     // Adding Error Table in a scroll pane
     errorTableScrollPane = new JScrollPane();

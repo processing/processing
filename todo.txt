@@ -77,6 +77,7 @@ _   two new fonts have been added, other languages will need more
 _   need a decent sans with with Unicode coverage
 _   i.e. https://github.com/processing/processing/pull/3025
 _ deactivate step, continue, stop when not running?
+_ update EditorButton rollover label when pressing shift or alt
 
 
 pde/build
