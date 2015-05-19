@@ -750,6 +750,9 @@ public class PSurfaceJOGL implements PSurface {
     window.getCurrentSurfaceScale(currentPixelScale);
     int sx = (int)(nativeEvent.getX()/currentPixelScale[0]);
     int sy = (int)(nativeEvent.getY()/currentPixelScale[1]);
+    int mx = sx - (int)offsetX;
+    int my = sy - (int)offsetY;
+
     if (presentMode) {
       if (peAction == KeyEvent.RELEASE &&
           20 < sx && sx < 20 + 100 &&
@@ -763,10 +766,12 @@ public class PSurfaceJOGL implements PSurface {
         sketch.exit();
 //        window.destroy();
       }
+
+      if (mx < 0 || sketchWidth < mx || my < 0 || sketchHeight < my) {
+        return;
+      }
     }
 
-    int mx = sx - (int)offsetX;
-    int my = sy - (int)offsetY;
 //    if (!graphics.is2X() && 1 < hasSurfacePixelScale[0]) {
 //      x /= 2;
 //      y /= 2;
