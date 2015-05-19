@@ -75,10 +75,6 @@ public class SimpleTabbedPaneUI extends BasicTabbedPaneUI {
   protected void installDefaults() {
     super.installDefaults();
 
-//              RollOverListener l = new RollOverListener();
-//              tabPane.addMouseListener(l);
-//              tabPane.addMouseMotionListener(l);
-
     MouseAdapter adapter = new MouseAdapter() {
         public void mouseMoved(MouseEvent e) {
           checkRollOver();
@@ -243,42 +239,4 @@ public class SimpleTabbedPaneUI extends BasicTabbedPaneUI {
     Color bottomGradColor1;
     Color bottomGradColor2;
   }
-
-
-        // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-        /*
-        private class RollOverListener implements MouseMotionListener, MouseListener {
-
-                public void mouseDragged(MouseEvent e) { }
-
-                public void mouseMoved(MouseEvent e) {
-                        checkRollOver();
-                }
-
-                public void mouseClicked(MouseEvent e) { }
-
-                public void mousePressed(MouseEvent e) { }
-
-                public void mouseReleased(MouseEvent e) { }
-
-                public void mouseEntered(MouseEvent e) {
-                        checkRollOver();
-                }
-
-                public void mouseExited(MouseEvent e) {
-                        tabPane.repaint();
-                }
-
-                private void checkRollOver() {
-                        int currentRollOver = getRolloverTab();
-                        if (currentRollOver != lastRollOverTab) {
-                                lastRollOverTab = currentRollOver;
-                                Rectangle tabsRect = new Rectangle(0, 0, tabPane.getWidth(), 20);
-                                tabPane.repaint(tabsRect);
-                        }
-                }
-        }
-        */
 }
