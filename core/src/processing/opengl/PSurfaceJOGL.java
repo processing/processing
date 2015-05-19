@@ -245,8 +245,8 @@ public class PSurfaceJOGL implements PSurface {
     // This example could be useful:
     // com.jogamp.opengl.test.junit.newt.mm.TestScreenMode01cNEWT
     if (fullScreen) {
-      window.setPosition(sketchX, sketchY);
       PApplet.hideMenuBar();
+      window.setTopLevelPosition(sketchX, sketchY);
       if (spanDisplays) {
         window.setFullscreen(monitors);
       } else {
@@ -386,8 +386,8 @@ public class PSurfaceJOGL implements PSurface {
 //      h /= 2;
 //    }
 
-    window.setPosition(sketchX + screenRect.x + (screenRect.width - w) / 2,
-                       sketchY + screenRect.y + (screenRect.height - h) / 2);
+    window.setTopLevelPosition(sketchX + screenRect.x + (screenRect.width - w) / 2,
+                               sketchY + screenRect.y + (screenRect.height - h) / 2);
   }
 
 
@@ -397,18 +397,23 @@ public class PSurfaceJOGL implements PSurface {
 //    int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
 //    int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
 
+    int x = window.getX() - window.getInsets().getLeftWidth();
+    int y = window.getY() - window.getInsets().getTopHeight();
+    int w = window.getWidth() + window.getInsets().getTotalWidth();
+    int h = window.getHeight() + window.getInsets().getTotalHeight();
+
     if (location != null) {
 //      System.err.println("place window at " + location[0] + ", " + location[1]);
-      window.setPosition(location[0], location[1]);
+      window.setTopLevelPosition(location[0], location[1]);
 
     } else if (editorLocation != null) {
 //      System.err.println("place window at editor location " + editorLocation[0] + ", " + editorLocation[1]);
       int locationX = editorLocation[0] - 20;
       int locationY = editorLocation[1];
 
-      if (locationX - window.getWidth() > 10) {
+      if (locationX - w > 10) {
         // if it fits to the left of the window
-        window.setPosition(locationX - window.getWidth(), locationY);
+        window.setTopLevelPosition(locationX - w, locationY);
 
       } else {  // doesn't fit
         // if it fits inside the editor window,
@@ -417,22 +422,23 @@ public class PSurfaceJOGL implements PSurface {
         locationX = editorLocation[0] + 66;
         locationY = editorLocation[1] + 66;
 
-        if ((locationX + window.getWidth() > sketch.displayWidth - 33) ||
-            (locationY + window.getHeight() > sketch.displayHeight - 33)) {
+        if ((locationX + w > sketch.displayWidth - 33) ||
+            (locationY + h > sketch.displayHeight - 33)) {
           // otherwise center on screen
-          locationX = (sketch.displayWidth - window.getWidth()) / 2;
-          locationY = (sketch.displayHeight - window.getHeight()) / 2;
+          locationX = (sketch.displayWidth - w) / 2;
+          locationY = (sketch.displayHeight - h) / 2;
         }
-        window.setPosition(locationX, locationY);
+        window.setTopLevelPosition(locationX, locationY);
       }
     } else {  // just center on screen
       setFrameCentered();
     }
-    Point frameLoc = new Point(window.getX(), window.getY());
+
+    Point frameLoc = new Point(x, y);
     if (frameLoc.y < 0) {
       // Windows actually allows you to place frames where they can't be
       // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
-      window.setPosition(frameLoc.x, 30);
+      window.setTopLevelPosition(frameLoc.x, 30);
     }
 
 //    canvas.setBounds((contentW - sketchWidth)/2,
@@ -466,7 +472,7 @@ public class PSurfaceJOGL implements PSurface {
 
       if (0 < sketchX && 0 < sketchY) {
 //          System.err.println("5.1 set inital window position");
-          window.setPosition(sketchX, sketchY);
+          window.setTopLevelPosition(sketchX, sketchY);
           sketchX = sketchY = 0;
       }
 //      animator.getThread().setName("Processing-GL-draw");
