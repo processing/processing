@@ -88,14 +88,8 @@ public class ThinkDifferent {
     application.setQuitHandler(new QuitHandler() {
       public void handleQuitRequestWith(QuitEvent event, QuitResponse response) {
         sketch.exit();
-        response.performQuit();
-        /*
-        if (base.handleQuit()) {
-          response.performQuit();
-        } else {
-          response.cancelQuit();
-        }
-        */
+        response.cancelQuit();  // we'll quit manually
+        //response.performQuit();  // can't just quit out willy nilly
       }
     });
 
