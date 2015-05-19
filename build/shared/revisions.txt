@@ -1,3 +1,74 @@
+PROCESSING 3.0a9 (REV 0236) - 19 May 2015
+
+More work as we head toward beta. Mostly improvements to the GUI 
+and fixes for many bugs. So close to beta I can practically smell it.
+
+
+[ changes ] 
+
++ Implement more of the bottom half of the editor window GUI
+
++ Show screen dimensions in the Preferences window for display selector
+
++ Change how the variables/debug window works. Automatically 
+  show the window when debugging, hide when not.
+  https://github.com/processing/processing/issues/3298
+  https://github.com/processing/processing/issues/3091
+
++ Enabling and disabling the debugger toggles the Step/Continue 
+  buttons in the toolbar
+
++ Remove techie options from the Debug menu
+  https://github.com/processing/processing/issues/3267
+
++ Add more visual states to the toolbar buttons
+
++ Lots of internal cleaning
+
+
+[ bug fixes ] 
+
++ Implement Cmd-Q handler on Mac OS X to shut down sketches properly
+  https://github.com/processing/processing/issues/3301
+
++ Changing "background color when Presenting" causes Exception
+  https://github.com/processing/processing/issues/3299
+
++ displayWidth and displayHeight not set properly on startup
+  https://github.com/processing/processing/issues/3295
+
+
+[ andres vs. opengl, episode 7 ]
+
++ Offscreen rendering broken in OpenGL renderers
+  https://github.com/processing/processing/issues/3292
+  https://github.com/processing/processing/issues/3259
+
++ Initial location of OpenGL window hides the title bar
+  https://github.com/processing/processing/issues/2981
+
++ OpenGL sketches do not terminate, have to be killed
+  https://github.com/processing/processing/issues/2982
+
++ Quitting P3D sketch throws an error
+  https://github.com/processing/processing/issues/3293
+
+
+[ fixed in 3.0a8, confirmed later ] 
+
++ "Step" not working properly
+  https://github.com/processing/processing/issues/3266
+
++ Cmd-click behavior on function/variable is firing when cmd-click not pressed
+  https://github.com/processing/processing/issues/3242
+
++ Full screen window on second monitor without using present mode
+  https://github.com/processing/processing/issues/3271
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 3.0a8 (REV 0235) - 17 May 2015
 
 Stabilizing the mess from 3.0a6 and 3.0a7. Read the release notes for
