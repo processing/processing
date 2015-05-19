@@ -823,7 +823,8 @@ public class Base {
     } catch (Throwable t) {
       showBadnessTrace("Terrible News",
                        "A serious error occurred while " +
-                       "trying to create a new editor window.", t, false);
+                       "trying to create a new editor window.", t,
+                       nextMode == getDefaultMode());  // quit if default
       nextMode = getDefaultMode();
       return null;
     }

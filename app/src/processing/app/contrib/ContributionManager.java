@@ -311,7 +311,7 @@ public class ContributionManager {
     // To avoid the user from modifying stuff, since this function is only called
     // during pre-processing
     base.getActiveEditor().getTextArea().setEditable(false);
-    base.getActiveEditor().getConsole().clear();
+//    base.getActiveEditor().getConsole().clear();
 
     ArrayList<String> installedLibList = new ArrayList<String>();
 

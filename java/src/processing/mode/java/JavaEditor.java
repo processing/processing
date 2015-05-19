@@ -206,7 +206,7 @@ public class JavaEditor extends Editor {
 
 
   @Override
-  public Container createFooter() {
+  public EditorFooter createFooter() {
 //    //JPanel consolePanel = new JPanel();
 //    JTabbedPane footer = new JTabbedPane(JTabbedPane.BOTTOM);
 ////    tabPane.setUI(new BasicTabbedPaneUI());
@@ -215,7 +215,9 @@ public class JavaEditor extends Editor {
 ////    tabPane.setUI(new PlasticTabbedPaneUI());
 ////    tabPane.setBorder(BorderFactory.createEmptyBorder());
 ////    tabPane.setBackground(Color.RED);
-    EditorFooter footer = new EditorFooter(this);
+
+//    EditorFooter footer = new EditorFooter(this);
+    EditorFooter footer = super.createFooter();
 
     // Adding Error Table in a scroll pane
     errorTableScrollPane = new JScrollPane();
@@ -251,7 +253,8 @@ public class JavaEditor extends Editor {
 //    consoleProblemsPane.add(super.createConsolePanel(), Language.text("editor.footer.console"));
 //    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
 
-    footer.addPanel(Language.text("editor.footer.console"), new EditorConsole(this));
+//    console = new EditorConsole(this);
+//    footer.addPanel(Language.text("editor.footer.console"), console);
     footer.addPanel(Language.text("editor.footer.errors"), errorTableScrollPane);
 
     //return consolePanel;
@@ -2571,7 +2574,8 @@ public class JavaEditor extends Editor {
   public void showProblemListView(String buttonName) {
 //    CardLayout cl = (CardLayout) consoleProblemsPane.getLayout();
 //    cl.show(consoleProblemsPane, buttonName);
-    ((JTabbedPane) consolePanel).setSelectedIndex(ERROR_TAB_INDEX);
+//    ((JTabbedPane) consolePanel).setSelectedIndex(ERROR_TAB_INDEX);
+    footer.setPanel(errorTableScrollPane);
   }
 
 
@@ -2586,14 +2590,17 @@ public class JavaEditor extends Editor {
    * the error button at the bottom of the PDE
    */
   public void updateErrorToggle() {
-    String title = Language.text("editor.footer.errors");
-    if (JavaMode.errorCheckEnabled && errorCheckerService.hasErrors()) {
-      title += "*";
-    }
-    ((JTabbedPane) consolePanel).setTitleAt(ERROR_TAB_INDEX, title);
-//    btnShowErrors.updateMarker(JavaMode.errorCheckEnabled &&
-//                               errorCheckerService.hasErrors(),
-//                               errorBar.errorColor);
+    footer.setNotification(errorTableScrollPane,
+                           JavaMode.errorCheckEnabled &&
+                           errorCheckerService.hasErrors());
+//    String title = Language.text("editor.footer.errors");
+//    if (JavaMode.errorCheckEnabled && errorCheckerService.hasErrors()) {
+//      title += "*";
+//    }
+//    ((JTabbedPane) footer).setTitleAt(ERROR_TAB_INDEX, title);
+////    btnShowErrors.updateMarker(JavaMode.errorCheckEnabled &&
+////                               errorCheckerService.hasErrors(),
+////                               errorBar.errorColor);
   }
 
 

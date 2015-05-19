@@ -30,7 +30,6 @@ import processing.core.*;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
@@ -96,7 +95,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected JEditTextArea textarea;
   protected EditorStatus status;
   protected JSplitPane splitPane;
-  protected Container consolePanel;
+  protected EditorFooter footer;
   protected EditorConsole console;
 //  protected EditorLineStatus lineStatus;
 
@@ -246,7 +245,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setHorizontalOffset(JEditTextArea.leftHandGutter);
 
-    consolePanel = createFooter();
+    footer = createFooter();
 
     upper.add(textarea);
 
@@ -254,7 +253,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    status = new EditorStatus(this);
 //    upper.add(status);
 
-    splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, consolePanel);
+    splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, footer);
 
     // disable this because it hides the message area, which is essential (issue #745)
     splitPane.setOneTouchExpandable(false);
@@ -417,8 +416,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  public Container createFooter() {
-    return new EditorConsole(this);
+  public EditorFooter createFooter() {
+    EditorFooter ef = new EditorFooter(this);
+    console = new EditorConsole(this);
+    ef.addPanel(Language.text("editor.footer.console"), console);
+    return ef;
 
     /*
     // assemble console panel, consisting of status area and the console itself

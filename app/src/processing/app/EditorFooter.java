@@ -101,6 +101,30 @@ public class EditorFooter extends Box {
   }
 
 
+//  public void setPanel(int index) {
+//    cardLayout.show(cardPanel, tabs.get(index).name);
+//  }
+
+
+  public void setPanel(Component comp) {
+    for (Tab tab : tabs) {
+      if (tab.comp == comp) {
+        cardLayout.show(cardPanel, tab.name);
+      }
+    }
+  }
+
+
+  public void setNotification(Component comp, boolean note) {
+    for (Tab tab : tabs) {
+      if (tab.comp == comp) {
+        tab.notification = note;
+        repaint();
+      }
+    }
+  }
+
+
   public void updateMode() {
     Mode mode = editor.getMode();
 
@@ -127,7 +151,7 @@ public class EditorFooter extends Box {
           for (Tab tab : tabs) {
             if (tab.contains(x)) {
               //editor.setFooterPanel(tab.index);
-              cardLayout.show(cardPanel, tab.text);
+              cardLayout.show(cardPanel, tab.name);
             }
           }
         }
@@ -178,7 +202,7 @@ public class EditorFooter extends Box {
       // reset all tab positions
       for (Tab tab : tabs) {
         tab.textWidth = (int)
-          font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
+          font.getStringBounds(tab.name, g2.getFontRenderContext()).getWidth();
       }
 
       // now actually draw the tabs
@@ -192,61 +216,64 @@ public class EditorFooter extends Box {
 
       screen.drawImage(offscreen, 0, 0, imageW, imageH, null);
     }
-  }
 
 
-  /**
-   * @param left starting position from the left
-   * @param g graphics context, or null if we're not drawing
-   */
-  private void placeTabs(int left, Graphics2D g) {
-    int x = left;
+    /**
+     * @param left starting position from the left
+     * @param g graphics context, or null if we're not drawing
+     */
+    private void placeTabs(int left, Graphics2D g) {
+      int x = left;
 
-    for (Tab tab : tabs) {
-      int state = tab.isCurrent() ? SELECTED : UNSELECTED;
-      tab.left = x;
-      x += TEXT_MARGIN;
-      x += tab.textWidth + TEXT_MARGIN;
-      tab.right = x;
+      for (Tab tab : tabs) {
+        int state = tab.isCurrent() ? SELECTED : UNSELECTED;
+        tab.left = x;
+        x += TEXT_MARGIN;
+        x += tab.textWidth + TEXT_MARGIN;
+        tab.right = x;
 
-      // if drawing and not just placing
-      if (g != null) {
-        g.setColor(tabColor[state]);
-        drawTab(g, tab.left, tab.right, tab.isFirst(), tab.isLast());
+        // if drawing and not just placing
+        if (g != null) {
+          g.setColor(tabColor[state]);
+          if (tab.notification) {
+            g.setColor(new Color(192, 0, 0));
+          }
+          drawTab(g, tab.left, tab.right, tab.isFirst(), tab.isLast());
 
-        int textLeft = tab.left + ((tab.right - tab.left) - tab.textWidth) / 2;
-        g.setColor(textColor[state]);
-        int tabHeight = TAB_BOTTOM - TAB_TOP;
-        int baseline = TAB_TOP + (tabHeight + fontAscent) / 2;
-        g.drawString(tab.text, textLeft, baseline);
+          int textLeft = tab.left + ((tab.right - tab.left) - tab.textWidth) / 2;
+          g.setColor(textColor[state]);
+          int tabHeight = TAB_BOTTOM - TAB_TOP;
+          int baseline = TAB_TOP + (tabHeight + fontAscent) / 2;
+          g.drawString(tab.name, textLeft, baseline);
+        }
+        x += TAB_BETWEEN;
       }
-      x += TAB_BETWEEN;
     }
-  }
 
 
-  private void drawTab(Graphics g, int left, int right,
-                       boolean leftNotch, boolean rightNotch) {
-    Graphics2D g2 = (Graphics2D) g;
-    EditorHeader.roundRect(g2, left, TAB_TOP, right, TAB_BOTTOM,
-                           0, 0,
-                           leftNotch ? CURVE_RADIUS : 0,
-                           rightNotch ? CURVE_RADIUS : 0);
-  }
+    private void drawTab(Graphics g, int left, int right,
+                         boolean leftNotch, boolean rightNotch) {
+      Graphics2D g2 = (Graphics2D) g;
+      EditorHeader.roundRect(g2, left, TAB_TOP, right, TAB_BOTTOM,
+                             0, 0,
+                             leftNotch ? CURVE_RADIUS : 0,
+                               rightNotch ? CURVE_RADIUS : 0);
+    }
 
 
-  public Dimension getPreferredSize() {
-    return new Dimension(300, HIGH);
-  }
+    public Dimension getPreferredSize() {
+      return new Dimension(300, HIGH);
+    }
 
 
-  public Dimension getMinimumSize() {
-    return getPreferredSize();
-  }
+    public Dimension getMinimumSize() {
+      return getPreferredSize();
+    }
 
 
-  public Dimension getMaximumSize() {
-    return new Dimension(super.getMaximumSize().width, HIGH);
+    public Dimension getMaximumSize() {
+      return new Dimension(super.getMaximumSize().width, HIGH);
+    }
   }
 
 
@@ -254,15 +281,16 @@ public class EditorFooter extends Box {
 
 
   class Tab {
-    String text;
+    String name;
     Component comp;
+    boolean notification;
 
     int left;
     int right;
     int textWidth;
 
     Tab(String name, Component comp) {
-      this.text = name;
+      this.name = name;
       this.comp = comp;
     }
 
