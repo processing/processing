@@ -10,7 +10,7 @@ status.font = processing.sans,plain,14
 
 # TABS
 # Settings for the tab area at the top.
-header.text.font = processing.sans,bold,13
+header.text.font = processing.sans,bold,14
 header.text.selected.color = #000000
 header.text.unselected.color = #ffffff
 #header.tab.arrow.color = #000000
@@ -71,10 +71,10 @@ mode.background.color = #3D5362
 
 # LINE STATUS
 # The editor line number status bar at the bottom of the screen
-linestatus.color = #ffffff
-linestatus.bgcolor = #29333d
-linestatus.font = processing.sans,plain,13
-linestatus.height  = 20
+#linestatus.color = #ffffff
+#linestatus.bgcolor = #29333d
+#linestatus.font = processing.sans,plain,13
+#linestatus.height  = 20
 
 
 # EDITOR - DETAILS
@@ -87,7 +87,8 @@ editor.gradient.top = #122535
 editor.gradient.bottom = #020408
 
 # highlight for the current line
-editor.linehighlight.color=#e2e2e2
+#editor.linehighlight.color=#e2e2e2
+editor.linehighlight.color=#ebfffd
 # highlight for the current line
 editor.linehighlight=true
 
@@ -106,4 +107,7 @@ editor.brackethighlight = true
 editor.brackethighlight.color = #006699
 
 editor.gutter.text.font = processing.mono,plain,11
-editor.gutter.text.color = #657d87
+#editor.gutter.text.color = #657d87
+#editor.gutter.text.color = #587478
+editor.gutter.text.color = #bbd6d5
+editor.gutter.linehighlight.color=#587478

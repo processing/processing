@@ -75,6 +75,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
   protected Font gutterTextFont;
   protected Color gutterTextColor;
+  protected Color gutterLineHighlightColor;
 //  protected Color gutterTempColor;
 
   public static class ErrorLineCoord {
@@ -242,9 +243,13 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param x horizontal position
    */
   protected void paintLeftGutter(Graphics gfx, int line, int x) {
-    gfx.setColor(getTextArea().gutterBgColor);
 //    gfx.setColor(Color.ORANGE);
     int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
+    if (line == textArea.getSelectionStopLine()) {
+      gfx.setColor(gutterLineHighlightColor);
+    } else {
+      gfx.setColor(getTextArea().gutterBgColor);
+    }
     gfx.fillRect(0, y, Editor.LEFT_GUTTER, fm.getHeight());
 
     String text = getTextArea().getGutterText(line);
@@ -535,6 +540,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
     gutterTextFont = mode.getFont("editor.gutter.text.font");
     gutterTextColor = mode.getColor("editor.gutter.text.color");
+    gutterLineHighlightColor = mode.getColor("editor.gutter.linehighlight.color");
   }
 
   @Override
