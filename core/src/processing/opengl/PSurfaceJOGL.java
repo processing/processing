@@ -1,6 +1,8 @@
 package processing.opengl;
 
 import java.awt.Component;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 //import java.awt.Dimension;
 import java.awt.Point;
 //import java.awt.Frame;
@@ -96,14 +98,45 @@ public class PSurfaceJOGL implements PSurface {
     screen.addReference();
 
     ArrayList<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
-    for (int i = 0; i < screen.getMonitorDevices().size(); i++) {
-      MonitorDevice monitor = screen.getMonitorDevices().get(i);
-//      System.out.println("Monitor " + monitor.getId() + " ************");
-//      System.out.println(monitor.toString());
-//      System.out.println(monitor.getViewportInWindowUnits());
-//      System.out.println(monitor.getViewport());
-      monitors.add(monitor);
+    GraphicsEnvironment environment =
+      GraphicsEnvironment.getLocalGraphicsEnvironment();
+    GraphicsDevice[] devices = environment.getScreenDevices();
+    for (GraphicsDevice device: devices) {
+      String did = device.getIDstring();
+      String[] parts = did.split("Display");
+      String id1 = "";
+      if (1 < parts.length) {
+        id1 = parts[1].trim();
+      }
+      MonitorDevice monitor = null;
+      for (int i = 0; i < screen.getMonitorDevices().size(); i++) {
+        MonitorDevice mon = screen.getMonitorDevices().get(i);
+        String mid = String.valueOf(mon.getId());
+        if (id1.equals(mid)) {
+//          System.out.println("Monitor " + monitor.getId() + " ************");
+//          System.out.println(monitor.toString());
+//          System.out.println(monitor.getViewportInWindowUnits());
+//          System.out.println(monitor.getViewport());
+          monitor = mon;
+          break;
+        }
+      }
+      if (monitor == null) {
+        // Didn't find a matching monitor, try using less stringent id check
+        for (int i = 0; i < screen.getMonitorDevices().size(); i++) {
+          MonitorDevice mon = screen.getMonitorDevices().get(i);
+          String mid = String.valueOf(mon.getId());
+          if (-1 < did.indexOf(mid)) {
+            monitor = mon;
+            break;
+          }
+        }
+      }
+      if (monitor != null) {
+        monitors.add(monitor);
+      }
     }
+
 //    System.out.println("*******************************");
 
     if (deviceIndex >= 0) {  // if -1, use the default device
