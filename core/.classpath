@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="library/jogl-all.jar"/>
 	<classpathentry kind="lib" path="library/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="apple.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
