@@ -1,6 +1,14 @@
 0236 (3.0a9)
 X show screen dimensions in the Preferences window
 
+gui
+X implement the bottom half of the editor window
+X   editor window draws in stages (at least on OS X) on first view
+X   the console/bottom area stays white until an additional repaint?
+X   fixed these issues and replaced with footer
+X remove EditorLineStatus (we have line numbers)
+
+
 pdex/debugger
 X remove "Experimental Mode: Yikes!" messages
 o NullPointerException in initiateToolTip()
@@ -29,16 +37,8 @@ X remove focus border from the Variables window
 in alpha 8 (but not confirmed in time)
 X "step" not working properly
 X   https://github.com/processing/processing/issues/3266
-_ Cmd-click behavior on function/variable is firing when cmd-click not pressed
-_   https://github.com/processing/processing/issues/3242
-
-
-pdex
-_ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
-_   because it's in the other ClassLoader, can no longer rely on it
-_ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
-_ disable the debug toggle menu while running
-_   otherwise could run in one mode, then try to stop in another
+X Cmd-click behavior on function/variable is firing when cmd-click not pressed
+X   https://github.com/processing/processing/issues/3242
 
 
 breakage
@@ -58,10 +58,6 @@ _   https://github.com/processing/processing/issues/3298
 _ need active state for the butterfly
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
-_ implement the bottom half of the editor window
-_   editor window draws in stages (at least on OS X) on first view
-_   the console/bottom area stays white until an additional repaint?
-_ remove EditorLineStatus (we have line numbers)
 _ add a "what's new" window to explain features in 3
 
 
@@ -81,9 +77,14 @@ _   need a decent sans with with Unicode coverage
 _   i.e. https://github.com/processing/processing/pull/3025
 _ deactivate step, continue, stop when not running?
 _ update EditorButton rollover label when pressing shift or alt
+_ disable the debug toggle menu while running
+_   otherwise could run in one mode, then try to stop in another
 
 
 pde/build
+_ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
+_   because it's in the other ClassLoader, can no longer rely on it
+_ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
 _ make sure "PDF Export" is showing for the library name
 _ we've lost arrow keys to expand items in the examples window
 _   sketchbook window too?

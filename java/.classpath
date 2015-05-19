@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="generated"/>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="processing/mode/java/pdex/ErrorWindow.java" kind="src" path="src"/>
 	<classpathentry kind="lib" path="mode/antlr.jar"/>
 	<classpathentry kind="lib" path="mode/classpath-explorer-1.0.jar"/>
 	<classpathentry kind="lib" path="mode/com.ibm.icu.jar"/>
