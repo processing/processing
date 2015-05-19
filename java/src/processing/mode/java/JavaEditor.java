@@ -40,7 +40,6 @@ import processing.mode.java.pdex.ErrorMarker;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.Problem;
-import processing.mode.java.pdex.XQConsoleToggle;
 import processing.mode.java.pdex.XQErrorTable;
 import processing.mode.java.runner.Runner;
 import processing.mode.java.tweak.ColorControlBox;
@@ -83,11 +82,12 @@ public class JavaEditor extends Editor {
 
   private ErrorBar errorBar;
 
-  protected XQConsoleToggle btnShowConsole;
-  protected XQConsoleToggle btnShowErrors;
+//  protected XQConsoleToggle btnShowConsole;
+//  protected XQConsoleToggle btnShowErrors;
   protected JScrollPane errorTableScrollPane;
-  protected JPanel consoleProblemsPane;
+//  protected JPanel consoleProblemsPane;
   protected XQErrorTable errorTable;
+  static final int ERROR_TAB_INDEX = 0;
 
   private boolean hasJavaTabs;
   private boolean javaTabWarned;
@@ -208,7 +208,8 @@ public class JavaEditor extends Editor {
 
   @Override
   public Container createConsolePanel() {
-    JPanel consolePanel = new JPanel();
+    //JPanel consolePanel = new JPanel();
+    JTabbedPane tabPane = new JTabbedPane(JTabbedPane.BOTTOM);
 
     // Adding Error Table in a scroll pane
     errorTableScrollPane = new JScrollPane();
@@ -217,33 +218,37 @@ public class JavaEditor extends Editor {
     errorTableScrollPane.setBorder(new EtchedBorder());
     errorTableScrollPane.setViewportView(errorTable);
 
-    // Adding toggle console button
-//    consolePanel.remove(2);  // removes the line status
-    JPanel lineStatusPanel = new JPanel();
-    lineStatusPanel.setLayout(new BorderLayout());
-    btnShowConsole = new XQConsoleToggle(this, Language.text("editor.footer.console"), mode.getInteger("linestatus.height"));
-    btnShowErrors = new XQConsoleToggle(this, Language.text("editor.footer.errors"), mode.getInteger("linestatus.height"));
-    btnShowConsole.addMouseListener(btnShowConsole);
-    btnShowErrors.addMouseListener(btnShowErrors);
+//    // Adding toggle console button
+////    consolePanel.remove(2);  // removes the line status
+//    JPanel lineStatusPanel = new JPanel();
+//    lineStatusPanel.setLayout(new BorderLayout());
+//    btnShowConsole = new XQConsoleToggle(this, Language.text("editor.footer.console"), mode.getInteger("linestatus.height"));
+//    btnShowErrors = new XQConsoleToggle(this, Language.text("editor.footer.errors"), mode.getInteger("linestatus.height"));
+//    btnShowConsole.addMouseListener(btnShowConsole);
+//    btnShowErrors.addMouseListener(btnShowErrors);
 
-    JPanel toggleButtonPanel = new JPanel(new BorderLayout());
-    toggleButtonPanel.add(btnShowConsole, BorderLayout.EAST);
-    toggleButtonPanel.add(btnShowErrors, BorderLayout.WEST);
-    lineStatusPanel.add(toggleButtonPanel, BorderLayout.EAST);
-//    lineStatus.setBounds(0, 0, toggleButtonPanel.getX() - 1,
-//                         toggleButtonPanel.getHeight());
-//    lineStatusPanel.add(lineStatus);
-    consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
-    lineStatusPanel.repaint();
+//    JPanel toggleButtonPanel = new JPanel(new BorderLayout());
+//    toggleButtonPanel.add(btnShowConsole, BorderLayout.EAST);
+//    toggleButtonPanel.add(btnShowErrors, BorderLayout.WEST);
+//    lineStatusPanel.add(toggleButtonPanel, BorderLayout.EAST);
+////    lineStatus.setBounds(0, 0, toggleButtonPanel.getX() - 1,
+////                         toggleButtonPanel.getHeight());
+////    lineStatusPanel.add(lineStatus);
+//    consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
+//    lineStatusPanel.repaint();
 
-    // Adding JPanel with CardLayout for Console/Problems Toggle
-//    consolePanel.remove(1);  // removes the console itself
-    consoleProblemsPane = new JPanel(new CardLayout());
-    consoleProblemsPane.add(errorTableScrollPane, Language.text("editor.footer.errors"));
-    consoleProblemsPane.add(super.createConsolePanel(), Language.text("editor.footer.console"));
-    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
+//    // Adding JPanel with CardLayout for Console/Problems Toggle
+////    consolePanel.remove(1);  // removes the console itself
+//    consoleProblemsPane = new JPanel(new CardLayout());
+//    consoleProblemsPane.add(errorTableScrollPane, Language.text("editor.footer.errors"));
+//    consoleProblemsPane.add(super.createConsolePanel(), Language.text("editor.footer.console"));
+//    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
 
-    return consolePanel;
+    tabPane.add(Language.text("editor.footer.errors"), errorTableScrollPane);
+    tabPane.add(Language.text("editor.footer.console"), super.createConsolePanel());
+
+    //return consolePanel;
+    return tabPane;
   }
 
 
@@ -2557,8 +2562,9 @@ public class JavaEditor extends Editor {
 
   /** Toggle between Console and Errors List */
   public void showProblemListView(String buttonName) {
-    CardLayout cl = (CardLayout) consoleProblemsPane.getLayout();
-    cl.show(consoleProblemsPane, buttonName);
+//    CardLayout cl = (CardLayout) consoleProblemsPane.getLayout();
+//    cl.show(consoleProblemsPane, buttonName);
+    ((JTabbedPane) consolePanel).setSelectedIndex(ERROR_TAB_INDEX);
   }
 
 
@@ -2573,9 +2579,14 @@ public class JavaEditor extends Editor {
    * the error button at the bottom of the PDE
    */
   public void updateErrorToggle() {
-    btnShowErrors.updateMarker(JavaMode.errorCheckEnabled &&
-                               errorCheckerService.hasErrors(),
-                               errorBar.errorColor);
+    String title = Language.text("editor.footer.errors");
+    if (JavaMode.errorCheckEnabled && errorCheckerService.hasErrors()) {
+      title += "*";
+    }
+    ((JTabbedPane) consolePanel).setTitleAt(ERROR_TAB_INDEX, title);
+//    btnShowErrors.updateMarker(JavaMode.errorCheckEnabled &&
+//                               errorCheckerService.hasErrors(),
+//                               errorBar.errorColor);
   }
 
 
