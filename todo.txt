@@ -41,15 +41,6 @@ X Cmd-click behavior on function/variable is firing when cmd-click not pressed
 X   https://github.com/processing/processing/issues/3242
 
 
-breakage
-_ break out a gui package (get class count down in .app)
-_ remove deprecated methods
-_ do the right thing on passing around List vs ArrayList and others
-_ PreferencesFrame is a misnomer (not a frame itself)
-_   change to PreferencesDialog, and make it a dialog?
-_ move Library to LibraryContribution and into contrib?
-
-
 gui
 _ click a line number to toggle breakpoint
 _ need active state for the butterfly
@@ -118,6 +109,15 @@ _ pass through the source to update licenses
 _   add Processing Foundation as 2012-15
 _   update license info to state gplv2 not v3
 _   run through that online license checker
+
+
+breakage
+_ break out a gui package (get class count down in .app)
+_ remove deprecated methods
+_ do the right thing on passing around List vs ArrayList and others
+_ PreferencesFrame is a misnomer (not a frame itself)
+_   change to PreferencesDialog, and make it a dialog?
+_ move Library to LibraryContribution and into contrib?
 
 
 from the todo list
