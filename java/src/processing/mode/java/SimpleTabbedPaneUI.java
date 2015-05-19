@@ -1,6 +1,7 @@
 package processing.mode.java;
 
 import javax.swing.*;
+import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import java.awt.*;
@@ -22,9 +23,9 @@ public class SimpleTabbedPaneUI extends BasicTabbedPaneUI {
   private int lastRollOverTab = -1;
 
 
-//      public static ComponentUI createUI(JComponent c) {
-//              return new SimpleTabbedPaneUI();
-//      }
+//  public static ComponentUI createUI(JComponent c) {
+//    return new SimpleTabbedPaneUI();
+//  }
 
 
   public SimpleTabbedPaneUI() {
@@ -76,27 +77,28 @@ public class SimpleTabbedPaneUI extends BasicTabbedPaneUI {
     super.installDefaults();
 
     MouseAdapter adapter = new MouseAdapter() {
-        public void mouseMoved(MouseEvent e) {
-          checkRollOver();
-        }
 
-        public void mouseEntered(MouseEvent e) {
-          checkRollOver();
-        }
+      public void mouseMoved(MouseEvent e) {
+        checkRollOver();
+      }
 
-        public void mouseExited(MouseEvent e) {
-          tabPane.repaint();
-        }
+      public void mouseEntered(MouseEvent e) {
+        checkRollOver();
+      }
 
-        private void checkRollOver() {
-          int currentRollOver = getRolloverTab();
-          if (currentRollOver != lastRollOverTab) {
-            lastRollOverTab = currentRollOver;
-            Rectangle tabsRect = new Rectangle(0, 0, tabPane.getWidth(), 20);
-            tabPane.repaint(tabsRect);
-          }
+      public void mouseExited(MouseEvent e) {
+        tabPane.repaint();
+      }
+
+      private void checkRollOver() {
+        int currentRollOver = getRolloverTab();
+        if (currentRollOver != lastRollOverTab) {
+          lastRollOverTab = currentRollOver;
+          Rectangle tabsRect = new Rectangle(0, 0, tabPane.getWidth(), 20);
+          tabPane.repaint(tabsRect);
         }
-      };
+      }
+    };
     tabPane.addMouseListener(adapter);
     tabPane.addMouseMotionListener(adapter);
 
@@ -148,6 +150,11 @@ public class SimpleTabbedPaneUI extends BasicTabbedPaneUI {
     g2d.fillRect(0, 10, tabPane.getWidth(), 11);
 
     super.paintTabArea(g, tabPlacement, selectedIndex);
+
+    //g2d.setClip(0, 0, tabPane.getWidth(), tabPane.getHeight());
+    System.out.println("painting green " + g2d.getClip());
+    g2d.setColor(Color.GREEN);
+    g2d.fillRect(0, 0, tabPane.getWidth(), 21);
 
     if (contentTopBorderDrawn) {
       g2d.setColor(lineColor);
