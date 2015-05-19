@@ -79,7 +79,7 @@ public class JavaEditor extends Editor {
 //  private EditorToolbar javaToolbar;
 //  private DebugToolbar debugToolbar;
 
-  private ErrorBar errorBar;
+  private ErrorColumn errorBar;
 
 //  protected XQConsoleToggle btnShowConsole;
 //  protected XQConsoleToggle btnShowErrors;
@@ -162,7 +162,7 @@ public class JavaEditor extends Editor {
     // remove the text area temporarily
     box.remove(2);
     textAndError.setLayout(new BorderLayout());
-    errorBar =  new ErrorBar(this, textarea.getMinimumSize().height, jmode);
+    errorBar =  new ErrorColumn(this, textarea.getMinimumSize().height, jmode);
     textAndError.add(errorBar, BorderLayout.EAST);
     textarea.setBounds(0, 0, errorBar.getX() - 1, textarea.getHeight());
     textAndError.add(textarea);

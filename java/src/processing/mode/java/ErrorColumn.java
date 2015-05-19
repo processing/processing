@@ -54,7 +54,7 @@ import processing.app.Language;
  * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
  *
  */
-public class ErrorBar extends JPanel {
+public class ErrorColumn extends JPanel {
 	/**
 	 * Preferred height of the component
 	 */
@@ -133,7 +133,7 @@ public class ErrorBar extends JPanel {
 	}
 
 
-	public ErrorBar(JavaEditor editor, int height, JavaMode mode) {
+	public ErrorColumn(JavaEditor editor, int height, JavaMode mode) {
 		this.editor = editor;
 		this.preferredHeight = height;
 		this.errorCheckerService = editor.errorCheckerService;
