@@ -53,8 +53,11 @@ public class VariableInspector extends JDialog {
 
   // The tray will be placed at this amount from the top of the editor window,
   // and extend to this amount from the bottom of the editor window.
-  final int VERTICAL_OFFSET = 64;
-  final int HORIZONTAL_OFFSET = 16;
+  static final int VERTICAL_OFFSET = 64;
+  static final int HORIZONTAL_OFFSET = 16;
+
+  static final int DEFAULT_WIDTH = 300;
+  static final int DEFAULT_HEIGHT = 400;
 
   /// the root node (invisible)
   protected DefaultMutableTreeNode rootNode;
@@ -255,6 +258,7 @@ public class VariableInspector extends JDialog {
 
     // Remove ugly (and unused) focus border on OS X
     scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+    scrollPane.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
     return scrollPane;
   }
 
