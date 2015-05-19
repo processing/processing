@@ -208,6 +208,8 @@ public class JavaEditor extends Editor {
 
   @Override
   public Container createConsolePanel() {
+    JPanel consolePanel = new JPanel();
+
     // Adding Error Table in a scroll pane
     errorTableScrollPane = new JScrollPane();
     errorTable = new XQErrorTable(errorCheckerService);
@@ -231,17 +233,17 @@ public class JavaEditor extends Editor {
 //    lineStatus.setBounds(0, 0, toggleButtonPanel.getX() - 1,
 //                         toggleButtonPanel.getHeight());
 //    lineStatusPanel.add(lineStatus);
-//    consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
+    consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
     lineStatusPanel.repaint();
 
     // Adding JPanel with CardLayout for Console/Problems Toggle
-//    consolePanel.remove(1);
+//    consolePanel.remove(1);  // removes the console itself
     consoleProblemsPane = new JPanel(new CardLayout());
     consoleProblemsPane.add(errorTableScrollPane, Language.text("editor.footer.errors"));
     consoleProblemsPane.add(super.createConsolePanel(), Language.text("editor.footer.console"));
-//    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
+    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
 
-    return consoleProblemsPane;
+    return consolePanel;
   }
 
 
