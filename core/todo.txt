@@ -20,6 +20,7 @@ X   https://github.com/processing/processing/issues/2982
 X Quitting P3D sketch throws an error
 X   https://github.com/processing/processing/issues/3293
 
+
 high priority
 _ displayWidth and displayHeight are zero
 _   https://github.com/processing/processing/issues/3295

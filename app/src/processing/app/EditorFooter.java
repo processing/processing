@@ -58,6 +58,7 @@ public class EditorFooter extends Box {
 
   Color[] textColor = new Color[2];
   Color[] tabColor = new Color[2];
+  Color errorColor;
 
   Editor editor;
 
@@ -138,6 +139,8 @@ public class EditorFooter extends Box {
 
     tabColor[SELECTED] = mode.getColor("footer.tab.selected.color");
     tabColor[UNSELECTED] = mode.getColor("footer.tab.unselected.color");
+
+    errorColor = mode.getColor("status.error.bgcolor");
 
     gradient = mode.makeGradient("footer", 400, HIGH);
   }
@@ -241,12 +244,16 @@ public class EditorFooter extends Box {
         if (g != null) {
           g.setColor(tabColor[state]);
           if (tab.notification) {
-            g.setColor(new Color(192, 0, 0));
+            g.setColor(errorColor);
           }
           drawTab(g, tab.left, tab.right, tab.isFirst(), tab.isLast());
 
           int textLeft = tab.left + ((tab.right - tab.left) - tab.textWidth) / 2;
-          g.setColor(textColor[state]);
+          if (tab.notification && state == UNSELECTED) {
+            g.setColor(Color.LIGHT_GRAY);
+          } else {
+            g.setColor(textColor[state]);
+          }
           int tabHeight = TAB_BOTTOM - TAB_TOP;
           int baseline = TAB_TOP + (tabHeight + fontAscent) / 2;
           g.drawString(tab.name, textLeft, baseline);

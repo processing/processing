@@ -351,7 +351,7 @@ public class EditorHeader extends JComponent {
         if (code.isModified()) {
           g.setColor(modifiedColor);
           //g.drawLine(tab.left + NOTCH, top, tab.right - NOTCH, top);
-          g.drawLine(tab.left + (i == 0 ? CURVE_RADIUS : 0), TAB_TOP, tab.right, TAB_TOP);
+          g.drawLine(tab.left + (i == 0 ? CURVE_RADIUS : 0), TAB_TOP, tab.right-1, TAB_TOP);
         }
       }
 
