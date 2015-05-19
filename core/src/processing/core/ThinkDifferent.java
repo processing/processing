@@ -39,21 +39,25 @@ public class ThinkDifferent {
 
   // pseudo-singleton model; no point in making multiple instances
   // of the EAWT application or our adapter
-  private static ThinkDifferent adapter;
+//  private static ThinkDifferent adapter;
   // http://developer.apple.com/documentation/Java/Reference/1.4.2/appledoc/api/com/apple/eawt/Application.html
   private static Application application;
 
   // reference to the app where the existing quit, about, prefs code is
   //private Base base;
 
+  // True if user has tried to quit once. Prevents us from canceling the quit
+  // call if the sketch is held up for some reason.
+  static boolean attemptedQuit;
+
 
   static public void init(final PApplet sketch) {
     if (application == null) {
       application = Application.getApplication();
     }
-    if (adapter == null) {
-      adapter = new ThinkDifferent();  //base);
-    }
+//    if (adapter == null) {
+//      adapter = new ThinkDifferent();  //base);
+//    }
 
     // Keeping these around in case we decide we want to add generic handlers
     // for these other features. Not sure how this affects JavaFX.
@@ -88,8 +92,12 @@ public class ThinkDifferent {
     application.setQuitHandler(new QuitHandler() {
       public void handleQuitRequestWith(QuitEvent event, QuitResponse response) {
         sketch.exit();
-        response.cancelQuit();  // we'll quit manually
-        //response.performQuit();  // can't just quit out willy nilly
+        if (!attemptedQuit) {
+          response.cancelQuit();  // we'll quit manually
+          attemptedQuit = true;
+        } else {
+          response.performQuit();  // just force it this time
+        }
       }
     });
 
