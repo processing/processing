@@ -50,7 +50,7 @@ public class EditorFooter extends Box {
   static final int CURVE_RADIUS = 6;
 
   static final int TAB_TOP = 0;
-  static final int TAB_BOTTOM = 27;
+  static final int TAB_BOTTOM = 23;
   // amount of extra space between individual tabs
   static final int TAB_BETWEEN = 3;
   // amount of margin on the left/right for the text on the tab

@@ -20,13 +20,13 @@ header.tab.selected.color = #e0fffd
 header.tab.unselected.color = #2d4251
 
 # LOWER TABS
-footer.text.font = processing.sans,bold,14
-footer.text.selected.color = #000000
-footer.text.unselected.color = #ffffff
+footer.text.font = processing.sans,bold,12
+footer.text.selected.color = #ffffff
+footer.text.unselected.color = #000000
 footer.tab.arrow.color = #ffffff
 footer.gradient.top = #132638
 footer.gradient.bottom = #122535
-footer.tab.selected.color = #e0fffd
+footer.tab.selected.color = #3D5362
 footer.tab.unselected.color = #2d4251
 
 # CONSOLE
