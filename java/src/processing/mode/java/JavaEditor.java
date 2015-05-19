@@ -156,53 +156,23 @@ public class JavaEditor extends Editor {
     errorCheckerService = new ErrorCheckerService(this);
     new Thread(errorCheckerService).start();
 
-    getJavaTextArea().setECSandThemeforTextArea(errorCheckerService, jmode);
-
-    // Adding ErrorBar
+    // hack to add a JPanel to the right-hand side of the text area
     JPanel textAndError = new JPanel();
-//    Box box = (Box) textarea.getParent();
-//    box.remove(2); // Remove textArea from it's container, i.e Box
+    // parent is a vertical box with the toolbar, the header, and the text area
+    Box box = (Box) textarea.getParent();
+    // remove the text area temporarily
+    box.remove(2);
     textAndError.setLayout(new BorderLayout());
     errorBar =  new ErrorBar(this, textarea.getMinimumSize().height, jmode);
     textAndError.add(errorBar, BorderLayout.EAST);
     textarea.setBounds(0, 0, errorBar.getX() - 1, textarea.getHeight());
     textAndError.add(textarea);
-//    box.add(textAndError);
+    // add our hacked version back to the editor
+    box.add(textAndError);
 
-    // Adding Error Table in a scroll pane
-    errorTableScrollPane = new JScrollPane();
-    errorTable = new XQErrorTable(errorCheckerService);
-    // errorTableScrollPane.setBorder(new EmptyBorder(2, 2, 2, 2));
-    errorTableScrollPane.setBorder(new EtchedBorder());
-    errorTableScrollPane.setViewportView(errorTable);
+    getJavaTextArea().setECSandThemeforTextArea(errorCheckerService, jmode);
 
-    // Adding toggle console button
-//    consolePanel.remove(2);
-    JPanel lineStatusPanel = new JPanel();
-    lineStatusPanel.setLayout(new BorderLayout());
-    btnShowConsole = new XQConsoleToggle(this, Language.text("editor.footer.console"), lineStatus.getHeight());
-    btnShowErrors = new XQConsoleToggle(this, Language.text("editor.footer.errors"), lineStatus.getHeight());
-    btnShowConsole.addMouseListener(btnShowConsole);
-    btnShowErrors.addMouseListener(btnShowErrors);
-
-    JPanel toggleButtonPanel = new JPanel(new BorderLayout());
-    toggleButtonPanel.add(btnShowConsole, BorderLayout.EAST);
-    toggleButtonPanel.add(btnShowErrors, BorderLayout.WEST);
-    lineStatusPanel.add(toggleButtonPanel, BorderLayout.EAST);
-    lineStatus.setBounds(0, 0, toggleButtonPanel.getX() - 1,
-                         toggleButtonPanel.getHeight());
-    lineStatusPanel.add(lineStatus);
-//    consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
-    lineStatusPanel.repaint();
-
-    // Adding JPanel with CardLayout for Console/Problems Toggle
-//    consolePanel.remove(1);
-    consoleProblemsPane = new JPanel(new CardLayout());
-    consoleProblemsPane.add(errorTableScrollPane, Language.text("editor.footer.errors"));
-    consoleProblemsPane.add(console, Language.text("editor.footer.console"));
-//    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
-
-    // ensure completion gets hidden on editor losing focus
+    // ensure completion is hidden when editor loses focus
     addWindowFocusListener(new WindowFocusListener() {
       public void windowLostFocus(WindowEvent e) {
         getJavaTextArea().hideSuggestion();
@@ -233,6 +203,45 @@ public class JavaEditor extends Editor {
         hasJavaTabs = checkForJavaTabs();
       }
     };
+  }
+
+
+  @Override
+  public Container createConsolePanel() {
+    // Adding Error Table in a scroll pane
+    errorTableScrollPane = new JScrollPane();
+    errorTable = new XQErrorTable(errorCheckerService);
+    // errorTableScrollPane.setBorder(new EmptyBorder(2, 2, 2, 2));
+    errorTableScrollPane.setBorder(new EtchedBorder());
+    errorTableScrollPane.setViewportView(errorTable);
+
+    // Adding toggle console button
+//    consolePanel.remove(2);  // removes the line status
+    JPanel lineStatusPanel = new JPanel();
+    lineStatusPanel.setLayout(new BorderLayout());
+    btnShowConsole = new XQConsoleToggle(this, Language.text("editor.footer.console"), mode.getInteger("linestatus.height"));
+    btnShowErrors = new XQConsoleToggle(this, Language.text("editor.footer.errors"), mode.getInteger("linestatus.height"));
+    btnShowConsole.addMouseListener(btnShowConsole);
+    btnShowErrors.addMouseListener(btnShowErrors);
+
+    JPanel toggleButtonPanel = new JPanel(new BorderLayout());
+    toggleButtonPanel.add(btnShowConsole, BorderLayout.EAST);
+    toggleButtonPanel.add(btnShowErrors, BorderLayout.WEST);
+    lineStatusPanel.add(toggleButtonPanel, BorderLayout.EAST);
+//    lineStatus.setBounds(0, 0, toggleButtonPanel.getX() - 1,
+//                         toggleButtonPanel.getHeight());
+//    lineStatusPanel.add(lineStatus);
+//    consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
+    lineStatusPanel.repaint();
+
+    // Adding JPanel with CardLayout for Console/Problems Toggle
+//    consolePanel.remove(1);
+    consoleProblemsPane = new JPanel(new CardLayout());
+    consoleProblemsPane.add(errorTableScrollPane, Language.text("editor.footer.errors"));
+    consoleProblemsPane.add(super.createConsolePanel(), Language.text("editor.footer.console"));
+//    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
+
+    return consoleProblemsPane;
   }
 
 

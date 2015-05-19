@@ -24,6 +24,7 @@ o fix hasJavaTabs() function
 o   almost always used as a negative, or tied to a 'return' from fxn
 o   name isn't tied to its function, but the symptom
 X update hasJavaTabs on editor header rebuild
+X remove focus border from the Variables window
 
 in alpha 8 (but not confirmed in time)
 X "step" not working properly
@@ -50,6 +51,7 @@ _ move Library to LibraryContribution and into contrib?
 
 
 gui
+_ automatically show the variables window when debugging, hide when not
 _ need active state for the butterfly
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
@@ -57,7 +59,7 @@ _ implement the bottom half of the editor window
 _   editor window draws in stages (at least on OS X) on first view
 _   the console/bottom area stays white until an additional repaint?
 _ remove EditorLineStatus (we have line numbers)
-_ add a "what's new" window to promote features in 3?
+_ add a "what's new" window to explain features in 3
 
 
 gui (lower, not blocking for beta)
@@ -65,7 +67,6 @@ _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
 _   iTunes has no rollover state but has a 'down' state
 _     swaps to stop after release
-_ remove focus border from the Variables window
 _ fonts are still really ugly (on non-retina)
 _   may need to drop use of Source Sans
 _   what do these do, and are we doing it already?

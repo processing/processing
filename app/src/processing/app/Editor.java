@@ -30,6 +30,7 @@ import processing.core.*;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
@@ -95,9 +96,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected JEditTextArea textarea;
   protected EditorStatus status;
   protected JSplitPane splitPane;
-  protected JPanel consolePanel;
+  protected Container consolePanel;
   protected EditorConsole console;
-  protected EditorLineStatus lineStatus;
+//  protected EditorLineStatus lineStatus;
 
   // currently opened program
   protected Sketch sketch;
@@ -245,20 +246,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setHorizontalOffset(JEditTextArea.leftHandGutter);
 
-    // assemble console panel, consisting of status area and the console itself
-    consolePanel = new JPanel();
-    consolePanel.setLayout(new BorderLayout());
-
-//    status = new EditorStatus(this);
-//    consolePanel.add(status, BorderLayout.NORTH);
-
-    console = new EditorConsole(this);
-    // windows puts an ugly border on this guy
-    console.setBorder(null);
-    consolePanel.add(console, BorderLayout.CENTER);
-
-    lineStatus = new EditorLineStatus(this);
-    consolePanel.add(lineStatus, BorderLayout.SOUTH);
+    consolePanel = createConsolePanel();
 
     upper.add(textarea);
 
@@ -426,6 +414,25 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     };
     */
+  }
+
+
+  public Container createConsolePanel() {
+    // assemble console panel, consisting of status area and the console itself
+    JPanel panel = new JPanel();
+    panel.setLayout(new BorderLayout());
+
+//    status = new EditorStatus(this);
+//    consolePanel.add(status, BorderLayout.NORTH);
+
+    console = new EditorConsole(this);
+    // windows puts an ugly border on this guy
+    console.setBorder(null);
+    panel.add(console, BorderLayout.CENTER);
+
+//    lineStatus = new EditorLineStatus(this);
+//    consolePanel.add(lineStatus, BorderLayout.SOUTH);
+    return panel;
   }
 
 
