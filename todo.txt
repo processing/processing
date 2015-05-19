@@ -48,9 +48,7 @@ gui
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
 _ add a "what's new" window to explain features in 3
-
-
-gui (lower, not blocking for beta)
+_ mouse events (i.e. toggle breakpoint) seem to be firing twice
 _ tiny trail of dots when moving the selection bar up/down on retina
 _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
