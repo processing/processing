@@ -24,57 +24,46 @@
 
 package processing.app;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.*;
 
 
 /**
- * Sketch tabs at the top of the editor window.
+ * Console/error/whatever tabs at the bottom of the editor window.
  */
-public class EditorHeader extends JComponent {
+public class EditorFooter extends JComponent {
   // height of this tab bar
   static final int HIGH = 29;
 
-  static final int ARROW_TAB_WIDTH = 18;
-  static final int ARROW_TOP = 11;
-  static final int ARROW_BOTTOM = 18;
-  static final int ARROW_WIDTH = 6;
-
   static final int CURVE_RADIUS = 6;
 
-  static final int TAB_TOP = 0;
-  static final int TAB_BOTTOM = 27;
+  static final int TAB_TOP = 2;
+  static final int TAB_BOTTOM = 29;
   // amount of extra space between individual tabs
   static final int TAB_BETWEEN = 3;
   // amount of margin on the left/right for the text on the tab
   static final int TEXT_MARGIN = 16;
-  // width of the tab when no text visible
-  // (total tab width will be this plus TEXT_MARGIN*2)
-  static final int NO_TEXT_WIDTH = 16;
 
-//  Color bgColor;
   Color textColor[] = new Color[2];
   Color tabColor[] = new Color[2];
-  Color modifiedColor;
-  Color arrowColor;
 
   Editor editor;
 
-  Tab[] tabs = new Tab[0];
-  Tab[] visitOrder;
+  List<Tab> tabs;
 
   Font font;
   int fontAscent;
 
   JMenu menu;
   JPopupMenu popup;
-
-  int menuLeft;
-  int menuRight;
 
   static final int UNSELECTED = 0;
   static final int SELECTED = 1;
@@ -83,12 +72,10 @@ public class EditorHeader extends JComponent {
   int sizeW, sizeH;
   int imageW, imageH;
 
-  String lastNoticeName;
-
   Image gradient;
 
 
-  public EditorHeader(Editor eddie) {
+  public EditorFooter(Editor eddie) {
     this.editor = eddie;
 
     gradient = editor.getMode().getGradient("header", 400, HIGH);
@@ -96,61 +83,29 @@ public class EditorHeader extends JComponent {
     updateMode();
 
     addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-          int x = e.getX();
-          int y = e.getY();
+      public void mousePressed(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
 
-          if ((x > menuLeft) && (x < menuRight)) {
-            popup.show(EditorHeader.this, x, y);
-          } else {
-            Sketch sketch = editor.getSketch();
-            for (Tab tab : tabs) {
-              if (tab.contains(x)) {
-                sketch.setCurrentCode(tab.index);
-                repaint();
-              }
-            }
+        for (Tab tab : tabs) {
+          if (tab.contains(x)) {
+            editor.setFooterPanel(tab.index);
           }
         }
-
-        public void mouseExited(MouseEvent e) {
-          // only clear if it's been set
-          if (lastNoticeName != null) {
-            // only clear if it's the same as what we set it to
-            editor.clearNotice(lastNoticeName);
-            lastNoticeName = null;
-          }
-        }
+      }
     });
-
-    addMouseMotionListener(new MouseMotionAdapter() {
-        public void mouseMoved(MouseEvent e) {
-          int x = e.getX();
-          for (Tab tab : tabs) {
-            if (tab.contains(x) && !tab.textVisible) {
-              lastNoticeName = editor.getSketch().getCode(tab.index).getPrettyName();
-              editor.statusNotice(lastNoticeName);
-            }
-          }
-        }
-      });
   }
 
 
   public void updateMode() {
     Mode mode = editor.getMode();
 
-//    bgColor = mode.getColor("header.bgcolor");
+    textColor[SELECTED] = mode.getColor("footer.text.selected.color");
+    textColor[UNSELECTED] = mode.getColor("footer.text.unselected.color");
+    font = mode.getFont("footer.text.font");
 
-    textColor[SELECTED] = mode.getColor("header.text.selected.color");
-    textColor[UNSELECTED] = mode.getColor("header.text.unselected.color");
-    font = mode.getFont("header.text.font");
-
-    tabColor[SELECTED] = mode.getColor("header.tab.selected.color");
-    tabColor[UNSELECTED] = mode.getColor("header.tab.unselected.color");
-
-    arrowColor = mode.getColor("header.tab.arrow.color");
-    modifiedColor = mode.getColor("editor.selection.color");
+    tabColor[SELECTED] = mode.getColor("footer.tab.selected.color");
+    tabColor[UNSELECTED] = mode.getColor("footer.tab.unselected.color");
   }
 
 
@@ -201,10 +156,9 @@ public class EditorHeader extends JComponent {
       for (int i = 0; i < tabs.length; i++) {
         tabs[i] = new Tab(i);
       }
-      visitOrder = new Tab[sketch.getCodeCount() - 1];
     }
 
-    int leftover = TAB_BETWEEN + ARROW_TAB_WIDTH;
+    int leftover = TAB_BETWEEN;
     int tabMax = getWidth() - leftover;
 
     // reset all tab positions
@@ -216,11 +170,6 @@ public class EditorHeader extends JComponent {
       // hide extensions for .pde files
       boolean hide = editor.getMode().hideExtension(code.getExtension());
       tab.text = hide ? code.getPrettyName() : code.getFileName();
-
-      // if modified, add the li'l glyph next to the name
-//      if (code.isModified()) {
-//        tab.text += " \u00A7";
-//      }
 
       tab.textWidth = (int)
         font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
@@ -281,12 +230,7 @@ public class EditorHeader extends JComponent {
 
 
   private boolean placeTabs(int left, int right, Graphics2D g) {
-    Sketch sketch = editor.getSketch();
     int x = left;
-
-//    final int bottom = getHeight(); // - TAB_STRETCH;
-//    final int top = bottom - TAB_HEIGHT;
-//    GeneralPath path = null;
 
     for (int i = 0; i < sketch.getCodeCount(); i++) {
       SketchCode code = sketch.getCode(i);
@@ -633,14 +577,12 @@ public class EditorHeader extends JComponent {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  static class Tab implements Comparable {
+  static class Tab {
     int index;
     int left;
     int right;
     String text;
     int textWidth;
-    boolean textVisible;
-    long lastVisited;
 
     Tab(int index) {
       this.index = index;
@@ -648,22 +590,6 @@ public class EditorHeader extends JComponent {
 
     boolean contains(int x) {
       return x >= left && x <= right;
-    }
-
-    // sort by the last time visited
-    public int compareTo(Object o) {
-      Tab other = (Tab) o;
-      // do this here to deal with situation where both are 0
-      if (lastVisited == other.lastVisited) {
-        return 0;
-      }
-      if (lastVisited == 0) {
-        return -1;
-      }
-      if (other.lastVisited == 0) {
-        return 1;
-      }
-      return (int) (lastVisited - other.lastVisited);
     }
   }
 }
