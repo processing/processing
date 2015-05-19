@@ -23,16 +23,25 @@
 
 package processing.app;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.EventQueue;
+import java.awt.FileDialog;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 import java.util.zip.*;
 
-import javax.swing.*;
-import javax.swing.tree.*;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import processing.app.contrib.*;
 import processing.core.*;
