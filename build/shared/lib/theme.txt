@@ -72,7 +72,10 @@ mode.title.color = #ffffff
 #mode.button.color = #ffffff
 #mode.button.gap = 13
 #mode.arrow.width
-mode.background.color = #3D5362
+#mode.background.color = #3D5362
+# stolen from gradient bottom
+mode.background.color = #132638
+mode.outline.color = #3a505e
 
 # LINE STATUS
 # The editor line number status bar at the bottom of the screen

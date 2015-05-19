@@ -266,10 +266,9 @@ public class EditorFooter extends Box {
     private void drawTab(Graphics g, int left, int right,
                          boolean leftNotch, boolean rightNotch) {
       Graphics2D g2 = (Graphics2D) g;
-      EditorHeader.roundRect(g2, left, TAB_TOP, right, TAB_BOTTOM,
-                             0, 0,
-                             rightNotch ? CURVE_RADIUS : 0,
-                             leftNotch ? CURVE_RADIUS : 0);
+      g2.fill(Toolkit.createRoundRect(left, TAB_TOP, right, TAB_BOTTOM, 0, 0,
+                                      rightNotch ? CURVE_RADIUS : 0,
+                                      leftNotch ? CURVE_RADIUS : 0));
     }
 
 

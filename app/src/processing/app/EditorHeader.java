@@ -380,52 +380,17 @@ public class EditorHeader extends JComponent {
 //    g.fillRect(left, top, right - left, bottom - top);
 
     Graphics2D g2 = (Graphics2D) g;
-//    GeneralPath path = new GeneralPath();
-    roundRect(g2, left, TAB_TOP, right, TAB_BOTTOM,
-              leftNotch ? CURVE_RADIUS : 0,
-              rightNotch ? CURVE_RADIUS : 0,
-              0, 0);
+    g2.fill(Toolkit.createRoundRect(left, TAB_TOP,
+                                    right, TAB_BOTTOM,
+                                    leftNotch ? CURVE_RADIUS : 0,
+                                    rightNotch ? CURVE_RADIUS : 0,
+                                    0, 0));
 
 //    path.moveTo(left, TAB_BOTTOM);
 //    if (left == MARGIN_WIDTH) {  // first tab on the left
 //      path.lineTo(left, TAB_TOP - CURVE_RADIUS);
 //    }
 
-  }
-
-
-  static void roundRect(Graphics2D g2,
-                        float x1, float y1, float x2, float y2,
-                        float tl, float tr, float br, float bl) {
-    GeneralPath path = new GeneralPath();
-//    vertex(x1+tl, y1);
-
-    if (tr != 0) {
-      path.moveTo(x2-tr, y1);
-      path.quadTo(x2, y1, x2, y1+tr);
-    } else {
-      path.moveTo(x2, y1);
-    }
-    if (br != 0) {
-      path.lineTo(x2, y2-br);
-      path.quadTo(x2, y2, x2-br, y2);
-    } else {
-      path.lineTo(x2, y2);
-    }
-    if (bl != 0) {
-      path.lineTo(x1+bl, y2);
-      path.quadTo(x1, y2, x1, y2-bl);
-    } else {
-      path.lineTo(x1, y2);
-    }
-    if (tl != 0) {
-      path.lineTo(x1, y1+tl);
-      path.quadTo(x1, y1, x1+tl, y1);
-    } else {
-      path.lineTo(x1, y1);
-    }
-    path.closePath();
-    g2.fill(path);
   }
 
 

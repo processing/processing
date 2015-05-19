@@ -29,6 +29,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -50,8 +51,8 @@ abstract public class EditorToolbar extends JPanel {
   static final int HIGH = 53;
   // horizontal gap between buttons
   static final int GAP = 9;
-  // gap from the run button to the sketch label
-//  static final int LABEL_GAP = GAP;
+  // corner radius on the mode selector
+  static final int RADIUS = 3;
 
   protected Editor editor;
   protected Base base;
@@ -64,10 +65,7 @@ abstract public class EditorToolbar extends JPanel {
   protected Box box;
   protected JLabel label;
 
-//  int GRADIENT_TOP = 192;
-//  int GRADIENT_BOTTOM = 246;
   protected Image gradient;
-//  protected Image reverseGradient;
 
 
   public EditorToolbar(Editor editor) {
@@ -246,14 +244,15 @@ abstract public class EditorToolbar extends JPanel {
     final int MODE_GAP_WIDTH = 13;
     final int ARROW_GAP_WIDTH = 6;
     final int ARROW_WIDTH = 6;
-    final int ARROW_TOP = 15;
-    final int ARROW_BOTTOM = 21;
+    final int ARROW_TOP = 12;
+    final int ARROW_BOTTOM = 18;
 
     int[] triangleX = new int[3];
     int[] triangleY = new int[] { ARROW_TOP, ARROW_TOP, ARROW_BOTTOM };
 
 //    Image background;
     Color backgroundColor;
+    Color outlineColor;
 
 
     @SuppressWarnings("deprecation")
@@ -274,6 +273,7 @@ abstract public class EditorToolbar extends JPanel {
 
       //background = mode.getGradient("reversed", 100, EditorButton.DIM);
       backgroundColor = mode.getColor("mode.background.color");
+      outlineColor = mode.getColor("mode.outline.color");
     }
 
     @Override
@@ -293,7 +293,7 @@ abstract public class EditorToolbar extends JPanel {
       }
 
       Graphics g = offscreen.getGraphics();
-      /*Graphics2D g2 =*/ Toolkit.prepareGraphics(g);
+      Graphics2D g2 = Toolkit.prepareGraphics(g);
       //Toolkit.clearGraphics(g, width, height);
 //      g.clearRect(0, 0, width, height);
 //      g.setColor(Color.GREEN);
@@ -306,12 +306,17 @@ abstract public class EditorToolbar extends JPanel {
       FontMetrics metrics = g.getFontMetrics();
       titleWidth = metrics.stringWidth(title);
 
-      //g.drawImage(background, 0, 0, width, height, this);
+      // clear the background
       g.setColor(backgroundColor);
       g.fillRect(0, 0, width, height);
 
+      // draw the outline for this feller
+      g.setColor(outlineColor);
+      g2.draw(Toolkit.createRoundRect(1, 1, width-1, height-1,
+                                      RADIUS, RADIUS, RADIUS, RADIUS));
+
       g.setColor(titleColor);
-      g.drawString(title.toUpperCase(), MODE_GAP_WIDTH, (height + titleAscent) / 2);
+      g.drawString(title, MODE_GAP_WIDTH, (height + titleAscent) / 2);
 
       int x = MODE_GAP_WIDTH + titleWidth + ARROW_GAP_WIDTH;
       triangleX[0] = x;
@@ -319,10 +324,7 @@ abstract public class EditorToolbar extends JPanel {
       triangleX[2] = x + ARROW_WIDTH/2;
       g.fillPolygon(triangleX, triangleY, 3);
 
-//      screen.clearRect(0, 0, width, height);
       screen.drawImage(offscreen, 0, 0, width, height, this);
-//      screen.setColor(Color.RED);
-//      screen.drawRect(0, 0, width-1, height-1);
     }
 
     @Override

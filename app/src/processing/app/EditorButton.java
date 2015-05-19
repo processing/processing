@@ -28,7 +28,7 @@ import javax.swing.*;
 
 abstract public class EditorButton extends JComponent
 implements MouseListener, MouseMotionListener, ActionListener {
-  static public final int DIM = 35;
+  static public final int DIM = 30;
 
   /** Button's description. */
   protected String title;
