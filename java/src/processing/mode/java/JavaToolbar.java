@@ -118,7 +118,10 @@ public class JavaToolbar extends EditorToolbar {
         jeditor.toggleDebug();
       }
     };
-    debugButton.setReverse();
+//    debugButton.setReverse();
+    if (((JavaEditor) editor).isDebuggerEnabled()) {
+      debugButton.setSelected(true);
+    }
     box.add(debugButton);
     addGap(box);
   }

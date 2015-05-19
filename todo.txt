@@ -1,5 +1,5 @@
 0236 (3.0a9)
-X show screen dimensions in the Preferences window
+X show screen dimensions in the Preferences window for display selector
 
 gui/pdex/debugger
 X implement the bottom half of the editor window
@@ -33,6 +33,7 @@ o   almost always used as a negative, or tied to a 'return' from fxn
 o   name isn't tied to its function, but the symptom
 X update hasJavaTabs on editor header rebuild
 X remove focus border from the Variables window
+X need active state for the butterfly
 
 in alpha 8 (but not confirmed in time)
 X "step" not working properly
@@ -43,7 +44,6 @@ X   https://github.com/processing/processing/issues/3242
 
 gui
 _ click a line number to toggle breakpoint
-_ need active state for the butterfly
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
 _ add a "what's new" window to explain features in 3
