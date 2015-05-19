@@ -321,7 +321,7 @@ public class EditorHeader extends JComponent {
 
     // can't be done with lines, b/c retina leaves tiny hairlines
     g.fillRect(Editor.LEFT_GUTTER, TAB_BOTTOM,
-               editor.getWidth(), 2);
+               editor.getTextArea().getWidth() - Editor.LEFT_GUTTER, 2);
 
     g.setColor(arrowColor);
     GeneralPath trianglePath = new GeneralPath();
