@@ -24,13 +24,17 @@
 
 package processing.app;
 
+import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.GeneralPath;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
@@ -39,7 +43,7 @@ import javax.swing.*;
 /**
  * Console/error/whatever tabs at the bottom of the editor window.
  */
-public class EditorFooter extends JComponent {
+public class EditorFooter extends Box {
   // height of this tab bar
   static final int HIGH = 29;
 
@@ -52,12 +56,12 @@ public class EditorFooter extends JComponent {
   // amount of margin on the left/right for the text on the tab
   static final int TEXT_MARGIN = 16;
 
-  Color textColor[] = new Color[2];
-  Color tabColor[] = new Color[2];
+  Color[] textColor = new Color[2];
+  Color[] tabColor = new Color[2];
 
   Editor editor;
 
-  List<Tab> tabs;
+  List<Tab> tabs = new ArrayList<>();
 
   Font font;
   int fontAscent;
@@ -74,26 +78,26 @@ public class EditorFooter extends JComponent {
 
   Image gradient;
 
+  JPanel cardPanel;
+  CardLayout cardLayout;
+
 
   public EditorFooter(Editor eddie) {
+    super(BoxLayout.Y_AXIS);
     this.editor = eddie;
-
-    gradient = editor.getMode().getGradient("header", 400, HIGH);
 
     updateMode();
 
-    addMouseListener(new MouseAdapter() {
-      public void mousePressed(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
+    cardLayout = new CardLayout();
+    cardPanel = new JPanel(cardLayout);
+    add(cardPanel);
+    add(new Controller());
+  }
 
-        for (Tab tab : tabs) {
-          if (tab.contains(x)) {
-            editor.setFooterPanel(tab.index);
-          }
-        }
-      }
-    });
+
+  public void addPanel(String name, Component comp) {
+    tabs.add(new Tab(name, comp));
+    cardPanel.add(name, comp);
   }
 
 
@@ -106,456 +110,128 @@ public class EditorFooter extends JComponent {
 
     tabColor[SELECTED] = mode.getColor("footer.tab.selected.color");
     tabColor[UNSELECTED] = mode.getColor("footer.tab.unselected.color");
+
+    gradient = mode.makeGradient("footer", 400, HIGH);
   }
 
 
-  public void paintComponent(Graphics screen) {
-    if (screen == null) return;
-    Sketch sketch = editor.getSketch();
-    if (sketch == null) return;  // possible?
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-    Dimension size = getSize();
-    if ((size.width != sizeW) || (size.height != sizeH)) {
-      // component has been resized
 
-      if ((size.width > imageW) || (size.height > imageH)) {
-        // nix the image and recreate, it's too small
-        offscreen = null;
+  class Controller extends JComponent {
 
-      } else {
-        // if the image is larger than necessary, no need to change
+    Controller() {
+      addMouseListener(new MouseAdapter() {
+        public void mousePressed(MouseEvent e) {
+          int x = e.getX();
+          for (Tab tab : tabs) {
+            if (tab.contains(x)) {
+              //editor.setFooterPanel(tab.index);
+              cardLayout.show(cardPanel, tab.text);
+            }
+          }
+        }
+      });
+    }
+
+    public void paintComponent(Graphics screen) {
+      if (screen == null) return;
+      Sketch sketch = editor.getSketch();
+      if (sketch == null) return;  // possible?
+
+      Dimension size = getSize();
+      if ((size.width != sizeW) || (size.height != sizeH)) {
+        // component has been resized
+
+        if ((size.width > imageW) || (size.height > imageH)) {
+          // nix the image and recreate, it's too small
+          offscreen = null;
+
+        } else {
+          // if the image is larger than necessary, no need to change
+          sizeW = size.width;
+          sizeH = size.height;
+        }
+      }
+
+      if (offscreen == null) {
         sizeW = size.width;
         sizeH = size.height;
-      }
-    }
-
-    if (offscreen == null) {
-      sizeW = size.width;
-      sizeH = size.height;
-      imageW = sizeW;
-      imageH = sizeH;
-      if (Toolkit.highResDisplay()) {
-        offscreen = createImage(imageW*2, imageH*2);
-      } else {
-        offscreen = createImage(imageW, imageH);
-      }
-    }
-
-    Graphics g = offscreen.getGraphics();
-    g.setFont(font);  // need to set this each time through
-    if (fontAscent == 0) {
-      fontAscent = (int) Toolkit.getAscent(g);
-    }
-
-    Graphics2D g2 = Toolkit.prepareGraphics(g);
-
-    g.drawImage(gradient, 0, 0, imageW, imageH, this);
-
-    if (tabs.length != sketch.getCodeCount()) {
-      tabs = new Tab[sketch.getCodeCount()];
-      for (int i = 0; i < tabs.length; i++) {
-        tabs[i] = new Tab(i);
-      }
-    }
-
-    int leftover = TAB_BETWEEN;
-    int tabMax = getWidth() - leftover;
-
-    // reset all tab positions
-    for (Tab tab : tabs) {
-      SketchCode code = sketch.getCode(tab.index);
-      tab.textVisible = true;
-      tab.lastVisited = code.lastVisited();
-
-      // hide extensions for .pde files
-      boolean hide = editor.getMode().hideExtension(code.getExtension());
-      tab.text = hide ? code.getPrettyName() : code.getFileName();
-
-      tab.textWidth = (int)
-        font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
-    }
-    // try to make everything fit
-    if (!placeTabs(Editor.LEFT_GUTTER, tabMax, null)) {
-      // always show the tab with the sketch's name
-      int index = 0;
-      // stock the array backwards so the rightmost tabs are closed by default
-      for (int i = tabs.length - 1; i > 0; --i) {
-        visitOrder[index++] = tabs[i];
-      }
-      Arrays.sort(visitOrder);  // sort on when visited
-
-      // Keep shrinking the tabs one-by-one until things fit properly
-      for (int i = 0; i < visitOrder.length; i++) {
-        tabs[visitOrder[i].index].textVisible = false;
-        if (placeTabs(Editor.LEFT_GUTTER, tabMax, null)) {
-          break;
+        imageW = sizeW;
+        imageH = sizeH;
+        if (Toolkit.highResDisplay()) {
+          offscreen = createImage(imageW*2, imageH*2);
+        } else {
+          offscreen = createImage(imageW, imageH);
         }
       }
+
+      Graphics g = offscreen.getGraphics();
+      g.setFont(font);  // need to set this each time through
+      if (fontAscent == 0) {
+        fontAscent = (int) Toolkit.getAscent(g);
+      }
+
+      Graphics2D g2 = Toolkit.prepareGraphics(g);
+      g.drawImage(gradient, 0, 0, imageW, imageH, this);
+
+      // reset all tab positions
+      for (Tab tab : tabs) {
+        tab.textWidth = (int)
+          font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
+      }
+
+      // now actually draw the tabs
+      placeTabs(Editor.LEFT_GUTTER, g2);
+
+      // draw the two pixel line that extends left/right below the tabs
+      g.setColor(tabColor[SELECTED]);
+      // can't be done with lines, b/c retina leaves tiny hairlines
+      g.fillRect(Editor.LEFT_GUTTER, TAB_BOTTOM,
+                 editor.getTextArea().getWidth() - Editor.LEFT_GUTTER, 2);
+
+      screen.drawImage(offscreen, 0, 0, imageW, imageH, null);
     }
-
-    // now actually draw the tabs
-    if (!placeTabs(Editor.LEFT_GUTTER, tabMax - ARROW_TAB_WIDTH, g2)){
-      // draw the dropdown menu target at the right of the window
-      menuRight = tabMax;
-      menuLeft = menuRight - ARROW_TAB_WIDTH;
-    } else {
-      // draw the dropdown menu target next to the tabs
-      menuLeft = tabs[tabs.length - 1].right + TAB_BETWEEN;
-      menuRight = menuLeft + ARROW_TAB_WIDTH;
-    }
-
-    // draw the two pixel line that extends left/right below the tabs
-    g.setColor(tabColor[SELECTED]);
-    // can't be done with lines, b/c retina leaves tiny hairlines
-    g.fillRect(Editor.LEFT_GUTTER, TAB_BOTTOM,
-               editor.getTextArea().getWidth() - Editor.LEFT_GUTTER, 2);
-
-    // draw the tab for the menu
-    g.setColor(tabColor[UNSELECTED]);
-    drawTab(g, menuLeft, menuRight, false, true);
-
-    // draw the arrow on the menu tab
-    g.setColor(arrowColor);
-    GeneralPath trianglePath = new GeneralPath();
-    float x1 = menuLeft + (ARROW_TAB_WIDTH - ARROW_WIDTH) / 2f;
-    float x2 = menuLeft + (ARROW_TAB_WIDTH + ARROW_WIDTH) / 2f;
-    trianglePath.moveTo(x1, ARROW_TOP);
-    trianglePath.lineTo(x2, ARROW_TOP);
-    trianglePath.lineTo((x1 + x2) / 2, ARROW_BOTTOM);
-    trianglePath.closePath();
-    g2.fill(trianglePath);
-
-    screen.drawImage(offscreen, 0, 0, imageW, imageH, null);
   }
 
 
-  private boolean placeTabs(int left, int right, Graphics2D g) {
+  /**
+   * @param left starting position from the left
+   * @param g graphics context, or null if we're not drawing
+   */
+  private void placeTabs(int left, Graphics2D g) {
     int x = left;
 
-    for (int i = 0; i < sketch.getCodeCount(); i++) {
-      SketchCode code = sketch.getCode(i);
-      Tab tab = tabs[i];
-
-//      int pieceCount = 2 + (tab.textWidth / PIECE_WIDTH);
-//      if (tab.textVisible == false) {
-//        pieceCount = 4;
-//      }
-//      int pieceWidth = pieceCount * PIECE_WIDTH;
-
-      int state = (code == sketch.getCurrentCode()) ? SELECTED : UNSELECTED;
-//      if (g != null) {
-//        //g.drawImage(pieces[state][LEFT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
-//        path = new GeneralPath();
-//        path.moveTo(x, bottom);
-//        path.lineTo(x, top + NOTCH);
-//        path.lineTo(x + NOTCH, top);
-//      }
+    for (Tab tab : tabs) {
+      int state = tab.isCurrent() ? SELECTED : UNSELECTED;
       tab.left = x;
       x += TEXT_MARGIN;
-//      x += PIECE_WIDTH;
-
-//      int contentLeft = x;
-//      for (int j = 0; j < pieceCount; j++) {
-//        if (g != null) {
-//          g.drawImage(pieces[state][MIDDLE], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
-//        }
-//        x += PIECE_WIDTH;
-//      }
-//      if (g != null) {
-      int drawWidth = tab.textVisible ? tab.textWidth : NO_TEXT_WIDTH;
-      x += drawWidth + TEXT_MARGIN;
-//        path.moveTo(x, top);
-//      }
+      x += tab.textWidth + TEXT_MARGIN;
       tab.right = x;
 
-      if (g != null && tab.right < right) {
+      // if drawing and not just placing
+      if (g != null) {
         g.setColor(tabColor[state]);
-        drawTab(g, tab.left, tab.right, i == 0, false);
-//        path.lineTo(x - NOTCH, top);
-//        path.lineTo(x, top + NOTCH);
-//        path.lineTo(x, bottom);
-//        path.closePath();
-//        g.setColor(tabColor[state]);
-//        g.fill(path);
-//        // have to draw an extra outline to make things line up on retina
-//        g.draw(path);
-//        //g.drawImage(pieces[state][RIGHT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
+        drawTab(g, tab.left, tab.right, tab.isFirst(), tab.isLast());
 
-        if (tab.textVisible) {
-          int textLeft = tab.left + ((tab.right - tab.left) - tab.textWidth) / 2;
-          g.setColor(textColor[state]);
-//          int baseline = (int) Math.ceil((sizeH + fontAscent) / 2.0);
-          //int baseline = bottom - (TAB_HEIGHT - fontAscent)/2;
-          int tabHeight = TAB_BOTTOM - TAB_TOP;
-          int baseline = TAB_TOP + (tabHeight + fontAscent) / 2;
-          //g.drawString(sketch.code[i].name, textLeft, baseline);
-          g.drawString(tab.text, textLeft, baseline);
-//          g.drawLine(tab.left, baseline-fontAscent, tab.right, baseline-fontAscent);
-//          g.drawLine(tab.left, baseline, tab.right, baseline);
-        }
-
-        if (code.isModified()) {
-          g.setColor(modifiedColor);
-          //g.drawLine(tab.left + NOTCH, top, tab.right - NOTCH, top);
-          g.drawLine(tab.left + (i == 0 ? CURVE_RADIUS : 0), TAB_TOP, tab.right, TAB_TOP);
-        }
+        int textLeft = tab.left + ((tab.right - tab.left) - tab.textWidth) / 2;
+        g.setColor(textColor[state]);
+        int tabHeight = TAB_BOTTOM - TAB_TOP;
+        int baseline = TAB_TOP + (tabHeight + fontAscent) / 2;
+        g.drawString(tab.text, textLeft, baseline);
       }
-
-//      if (g != null) {
-//        g.drawImage(pieces[state][RIGHT], x, 0, PIECE_WIDTH, PIECE_HEIGHT, null);
-//      }
-//      x += PIECE_WIDTH - 1;  // overlap by 1 pixel
       x += TAB_BETWEEN;
     }
-
-    // removed 150130
-//    // Draw this last because of half-pixel overlaps on retina displays
-//    if (g != null) {
-//      g.setColor(tabColor[SELECTED]);
-//      g.fillRect(0, bottom, getWidth(), TAB_STRETCH);
-//    }
-
-    return x <= right;
   }
 
 
   private void drawTab(Graphics g, int left, int right,
                        boolean leftNotch, boolean rightNotch) {
-//    final int bottom = getHeight(); // - TAB_STRETCH;
-//    final int top = bottom - TAB_HEIGHT;
-//    g.fillRect(left, top, right - left, bottom - top);
-
     Graphics2D g2 = (Graphics2D) g;
-//    GeneralPath path = new GeneralPath();
-    roundRect(g2, left, TAB_TOP, right, TAB_BOTTOM,
-              leftNotch ? CURVE_RADIUS : 0,
-              rightNotch ? CURVE_RADIUS : 0,
-              0, 0);
-
-//    path.moveTo(left, TAB_BOTTOM);
-//    if (left == MARGIN_WIDTH) {  // first tab on the left
-//      path.lineTo(left, TAB_TOP - CURVE_RADIUS);
-//    }
-
-  }
-
-
-  static void roundRect(Graphics2D g2,
-                        float x1, float y1, float x2, float y2,
-                        float tl, float tr, float br, float bl) {
-    GeneralPath path = new GeneralPath();
-//    vertex(x1+tl, y1);
-
-    if (tr != 0) {
-      path.moveTo(x2-tr, y1);
-      path.quadTo(x2, y1, x2, y1+tr);
-    } else {
-      path.moveTo(x2, y1);
-    }
-    if (br != 0) {
-      path.lineTo(x2, y2-br);
-      path.quadTo(x2, y2, x2-br, y2);
-    } else {
-      path.lineTo(x2, y2);
-    }
-    if (bl != 0) {
-      path.lineTo(x1+bl, y2);
-      path.quadTo(x1, y2, x1, y2-bl);
-    } else {
-      path.lineTo(x1, y2);
-    }
-    if (tl != 0) {
-      path.lineTo(x1, y1+tl);
-      path.quadTo(x1, y1, x1+tl, y1);
-    } else {
-      path.lineTo(x1, y1);
-    }
-    path.closePath();
-    g2.fill(path);
-  }
-
-
-  /**
-   * Called when a new sketch is opened.
-   */
-  public void rebuild() {
-    //System.out.println("rebuilding editor header");
-    rebuildMenu();
-    repaint();
-  }
-
-
-  public void rebuildMenu() {
-    //System.out.println("rebuilding");
-    if (menu != null) {
-      menu.removeAll();
-
-    } else {
-      menu = new JMenu();
-      popup = menu.getPopupMenu();
-      add(popup);
-      popup.setLightWeightPopupEnabled(true);
-
-      /*
-      popup.addPopupMenuListener(new PopupMenuListener() {
-          public void popupMenuCanceled(PopupMenuEvent e) {
-            // on redraw, the isVisible() will get checked.
-            // actually, a repaint may be fired anyway, so this
-            // may be redundant.
-            repaint();
-          }
-          public void popupMenuWillBecomeInvisible(PopupMenuEvent e) { }
-          public void popupMenuWillBecomeVisible(PopupMenuEvent e) { }
-        });
-      */
-    }
-    JMenuItem item;
-    InputMap inputMap = editor.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-    ActionMap actionMap = editor.getRootPane().getActionMap();
-    Action action;
-    String mapKey;
-    KeyStroke keyStroke;
-
-    // maybe this shouldn't have a command key anyways..
-    // since we're not trying to make this a full ide..
-    //item = Editor.newJMenuItem("New", 'T');
-
-    /*
-    item = Editor.newJMenuItem("Previous", KeyEvent.VK_PAGE_UP);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          System.out.println("prev");
-        }
-      });
-    if (editor.sketch != null) {
-      item.setEnabled(editor.sketch.codeCount > 1);
-    }
-    menu.add(item);
-
-    item = Editor.newJMenuItem("Next", KeyEvent.VK_PAGE_DOWN);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          System.out.println("ext");
-        }
-      });
-    if (editor.sketch != null) {
-      item.setEnabled(editor.sketch.codeCount > 1);
-    }
-    menu.add(item);
-
-    menu.addSeparator();
-    */
-
-    //item = new JMenuItem("New Tab");
-    item = Toolkit.newJMenuItemShift(Language.text("editor.header.new_tab"), KeyEvent.VK_N);
-    action = new AbstractAction() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        editor.getSketch().handleNewCode();
-      }
-    };
-    mapKey = "editor.header.new_tab";
-    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.SHORTCUT_SHIFT_KEY_MASK);
-    inputMap.put(keyStroke, mapKey);
-    actionMap.put(mapKey, action);
-    item.addActionListener(action);
-    menu.add(item);
-
-    item = new JMenuItem(Language.text("editor.header.rename"));
-    action = new AbstractAction() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        editor.getSketch().handleRenameCode();
-        /*
-        // this is already being called by nameCode(), the second stage of rename
-        if (editor.sketch.current == editor.sketch.code[0]) {
-          editor.sketchbook.rebuildMenus();
-        }
-        */
-      }
-    };
-    item.addActionListener(action);
-    menu.add(item);
-
-    item = Toolkit.newJMenuItemShift(Language.text("editor.header.delete"), KeyEvent.VK_D);
-    action = new AbstractAction() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        Sketch sketch = editor.getSketch();
-        if (!Base.isMacOS() &&  // ok on OS X
-            editor.base.editors.size() == 1 &&  // mmm! accessor
-            sketch.getCurrentCodeIndex() == 0) {
-            Base.showWarning(Language.text("editor.header.delete.warning.title"),
-                             Language.text("editor.header.delete.warning.text"), null);
-        } else {
-          editor.getSketch().handleDeleteCode();
-        }
-      }
-    };
-    mapKey = "editor.header.delete";
-    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.SHORTCUT_ALT_KEY_MASK);
-    inputMap.put(keyStroke, mapKey);
-    actionMap.put(mapKey, action);
-    item.addActionListener(action);
-    menu.add(item);
-
-    menu.addSeparator();
-
-    //  KeyEvent.VK_LEFT and VK_RIGHT will make Windows beep
-    item = Toolkit.newJMenuItemAlt(Language.text("editor.header.previous_tab"), KeyEvent.VK_LEFT);
-    action = new AbstractAction() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-//        Sketch sketch = editor.getSketch();
-//        sketch.setCurrentCode(sketch.getCurrentCodeIndex() - 1);
-        editor.getSketch().handlePrevCode();
-      }
-    };
-    mapKey = "editor.header.previous_tab";
-    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
-    inputMap.put(keyStroke, mapKey);
-    actionMap.put(mapKey, action);
-    item.addActionListener(action);
-    menu.add(item);
-
-    item = Toolkit.newJMenuItemAlt(Language.text("editor.header.next_tab"), KeyEvent.VK_RIGHT);
-    action = new AbstractAction() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-//        Sketch sketch = editor.getSketch();
-//        sketch.setCurrentCode(sketch.getCurrentCodeIndex() + 1);
-        editor.getSketch().handleNextCode();
-      }
-    };
-    mapKey = "editor.header.next_tab";
-    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
-    inputMap.put(keyStroke, mapKey);
-    actionMap.put(mapKey, action);
-    item.addActionListener(action);
-    menu.add(item);
-
-    Sketch sketch = editor.getSketch();
-    if (sketch != null) {
-      menu.addSeparator();
-
-      ActionListener jumpListener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          editor.getSketch().setCurrentCode(e.getActionCommand());
-        }
-      };
-      for (SketchCode code : sketch.getCode()) {
-        item = new JMenuItem(code.getPrettyName());
-        item.addActionListener(jumpListener);
-        menu.add(item);
-      }
-    }
-
-    Toolkit.setMenuMnemonics(menu);
-  }
-
-
-  public void deselectMenu() {
-    repaint();
+    EditorHeader.roundRect(g2, left, TAB_TOP, right, TAB_BOTTOM,
+                           0, 0,
+                           leftNotch ? CURVE_RADIUS : 0,
+                           rightNotch ? CURVE_RADIUS : 0);
   }
 
 
@@ -577,19 +253,33 @@ public class EditorFooter extends JComponent {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  static class Tab {
-    int index;
+  class Tab {
+    String text;
+    Component comp;
+
     int left;
     int right;
-    String text;
     int textWidth;
 
-    Tab(int index) {
-      this.index = index;
+    Tab(String name, Component comp) {
+      this.text = name;
+      this.comp = comp;
     }
 
     boolean contains(int x) {
       return x >= left && x <= right;
+    }
+
+    boolean isCurrent() {
+      return comp.isVisible();
+    }
+
+    boolean isFirst() {
+      return tabs.get(0) == this;
+    }
+
+    boolean isLast() {
+      return tabs.get(tabs.size() - 1) == this;
     }
   }
 }

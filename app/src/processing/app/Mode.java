@@ -1195,7 +1195,7 @@ public abstract class Mode {
   }
 
 
-  public Image getGradient(String attribute, int wide, int high) {
+  public Image makeGradient(String attribute, int wide, int high) {
     int top = getColor(attribute + ".gradient.top").getRGB();
     int bot = getColor(attribute + ".gradient.bottom").getRGB();
 

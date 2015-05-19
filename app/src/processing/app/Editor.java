@@ -246,7 +246,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setHorizontalOffset(JEditTextArea.leftHandGutter);
 
-    consolePanel = createConsolePanel();
+    consolePanel = createFooter();
 
     upper.add(textarea);
 
@@ -417,7 +417,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  public Container createConsolePanel() {
+  public Container createFooter() {
+    return new EditorConsole(this);
+
+    /*
     // assemble console panel, consisting of status area and the console itself
     JPanel panel = new JPanel();
     panel.setLayout(new BorderLayout());
@@ -433,6 +436,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    lineStatus = new EditorLineStatus(this);
 //    consolePanel.add(lineStatus, BorderLayout.SOUTH);
     return panel;
+    */
   }
 
 

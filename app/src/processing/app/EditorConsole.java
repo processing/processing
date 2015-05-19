@@ -167,19 +167,24 @@ public class EditorConsole extends JScrollPane {
         }
       }
     }).start();
+
+    // windows puts an ugly border on this guy
+    setBorder(null);
   }
+
 
   public PrintStream getOut() {
     return sketchOut;
   }
+
 
   public PrintStream getErr() {
     return sketchErr;
   }
 
 
-  /** 
-   * Update the font family and sizes based on the Preferences window. 
+  /**
+   * Update the font family and sizes based on the Preferences window.
    */
   protected void updateAppearance() {
     String fontFamily = Preferences.get("editor.font.family");
@@ -190,8 +195,8 @@ public class EditorConsole extends JScrollPane {
     StyleConstants.setFontSize(errStyle, fontSize);
     clear();  // otherwise we'll have mixed fonts
   }
-  
-  
+
+
   /**
    * Change coloring, fonts, etc in response to a mode change.
    */
@@ -291,12 +296,12 @@ public class EditorConsole extends JScrollPane {
       // Java on Mac OS X, but is widely reported as the source of any other
       // bug or problem that a user runs into. It may well be a Processing
       // bug, but until we know, we're suppressing the messages.
-    } else if (err && what.contains("Make pbuffer:")) { 
+    } else if (err && what.contains("Make pbuffer:")) {
       // Remove initalization warning from LWJGL.
     } else if (err && what.contains("XInitThreads() called for concurrent")) {
       // "Info: XInitThreads() called for concurrent Thread support" message on Linux
     } else if (!err && what.contains("Listening for transport dt_socket at address")) {
-      // Message from the JVM about the socket launch for debug 
+      // Message from the JVM about the socket launch for debug
       // Listening for transport dt_socket at address: 8727
     } else {
       // Append a piece of text to the console. Swing components are NOT
@@ -350,7 +355,7 @@ public class EditorConsole extends JScrollPane {
         currentConsole.message(new String(b, offset, length), err);
       } else {
         // If no console is present, still need to write this to the actual
-        // System.out or System.err. Otherwise we can't !#$!% debug anything. 
+        // System.out or System.err. Otherwise we can't !#$!% debug anything.
         if (err) {
           systemErr.write(b, offset, length);
         } else {

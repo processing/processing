@@ -137,7 +137,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
 
 
   public void setReverse() {
-    gradient = mode.getGradient("reversed", DIM, DIM);
+    gradient = mode.makeGradient("reversed", DIM, DIM);
   }
 
 

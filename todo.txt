@@ -51,6 +51,7 @@ _ move Library to LibraryContribution and into contrib?
 
 
 gui
+_ click a line number to toggle breakpoint
 _ automatically show the variables window when debugging, hide when not
 _ need active state for the butterfly
 _ finish the gui

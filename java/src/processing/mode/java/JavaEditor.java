@@ -206,15 +206,16 @@ public class JavaEditor extends Editor {
 
 
   @Override
-  public Container createConsolePanel() {
-    //JPanel consolePanel = new JPanel();
-    JTabbedPane tabPane = new JTabbedPane(JTabbedPane.BOTTOM);
-//    tabPane.setUI(new BasicTabbedPaneUI());
-    tabPane.setUI(new SimpleTabbedPaneUI());
-//    tabPane.setUI(new SillyTabbedPaneUI());
-//    tabPane.setUI(new PlasticTabbedPaneUI());
-//    tabPane.setBorder(BorderFactory.createEmptyBorder());
-//    tabPane.setBackground(Color.RED);
+  public Container createFooter() {
+//    //JPanel consolePanel = new JPanel();
+//    JTabbedPane footer = new JTabbedPane(JTabbedPane.BOTTOM);
+////    tabPane.setUI(new BasicTabbedPaneUI());
+//    footer.setUI(new SimpleTabbedPaneUI());
+////    tabPane.setUI(new SillyTabbedPaneUI());
+////    tabPane.setUI(new PlasticTabbedPaneUI());
+////    tabPane.setBorder(BorderFactory.createEmptyBorder());
+////    tabPane.setBackground(Color.RED);
+    EditorFooter footer = new EditorFooter(this);
 
     // Adding Error Table in a scroll pane
     errorTableScrollPane = new JScrollPane();
@@ -250,11 +251,11 @@ public class JavaEditor extends Editor {
 //    consoleProblemsPane.add(super.createConsolePanel(), Language.text("editor.footer.console"));
 //    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
 
-    tabPane.add(Language.text("editor.footer.errors"), errorTableScrollPane);
-    tabPane.add(Language.text("editor.footer.console"), super.createConsolePanel());
+    footer.addPanel(Language.text("editor.footer.console"), new EditorConsole(this));
+    footer.addPanel(Language.text("editor.footer.errors"), errorTableScrollPane);
 
     //return consolePanel;
-    return tabPane;
+    return footer;
   }
 
 

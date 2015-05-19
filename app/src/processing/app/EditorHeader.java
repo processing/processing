@@ -91,8 +91,6 @@ public class EditorHeader extends JComponent {
   public EditorHeader(Editor eddie) {
     this.editor = eddie;
 
-    gradient = editor.getMode().getGradient("header", 400, HIGH);
-
     updateMode();
 
     addMouseListener(new MouseAdapter() {
@@ -140,8 +138,6 @@ public class EditorHeader extends JComponent {
   public void updateMode() {
     Mode mode = editor.getMode();
 
-//    bgColor = mode.getColor("header.bgcolor");
-
     textColor[SELECTED] = mode.getColor("header.text.selected.color");
     textColor[UNSELECTED] = mode.getColor("header.text.unselected.color");
     font = mode.getFont("header.text.font");
@@ -151,6 +147,8 @@ public class EditorHeader extends JComponent {
 
     arrowColor = mode.getColor("header.tab.arrow.color");
     modifiedColor = mode.getColor("editor.selection.color");
+
+    gradient = mode.makeGradient("header", 400, HIGH);
   }
 
 

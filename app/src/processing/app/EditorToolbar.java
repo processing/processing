@@ -75,7 +75,7 @@ abstract public class EditorToolbar extends JPanel {
     base = editor.getBase();
     mode = editor.getMode();
 
-    gradient = mode.getGradient("toolbar", 400, HIGH);
+    gradient = mode.makeGradient("toolbar", 400, HIGH);
 //    reverseGradient = mode.getGradient("reversed", 100, EditorButton.DIM);
 
     rebuild();
