@@ -49,8 +49,8 @@ public class EditorFooter extends Box {
 
   static final int CURVE_RADIUS = 6;
 
-  static final int TAB_TOP = 2;
-  static final int TAB_BOTTOM = 29;
+  static final int TAB_TOP = 0;
+  static final int TAB_BOTTOM = 27;
   // amount of extra space between individual tabs
   static final int TAB_BETWEEN = 3;
   // amount of margin on the left/right for the text on the tab
@@ -80,6 +80,7 @@ public class EditorFooter extends Box {
 
   JPanel cardPanel;
   CardLayout cardLayout;
+  Controller controller;
 
 
   public EditorFooter(Editor eddie) {
@@ -91,7 +92,9 @@ public class EditorFooter extends Box {
     cardLayout = new CardLayout();
     cardPanel = new JPanel(cardLayout);
     add(cardPanel);
-    add(new Controller());
+
+    controller = new Controller();
+    add(controller);
   }
 
 
@@ -110,6 +113,7 @@ public class EditorFooter extends Box {
     for (Tab tab : tabs) {
       if (tab.comp == comp) {
         cardLayout.show(cardPanel, tab.name);
+        repaint();
       }
     }
   }
@@ -152,6 +156,7 @@ public class EditorFooter extends Box {
             if (tab.contains(x)) {
               //editor.setFooterPanel(tab.index);
               cardLayout.show(cardPanel, tab.name);
+              repaint();
             }
           }
         }
@@ -208,11 +213,11 @@ public class EditorFooter extends Box {
       // now actually draw the tabs
       placeTabs(Editor.LEFT_GUTTER, g2);
 
-      // draw the two pixel line that extends left/right below the tabs
-      g.setColor(tabColor[SELECTED]);
-      // can't be done with lines, b/c retina leaves tiny hairlines
-      g.fillRect(Editor.LEFT_GUTTER, TAB_BOTTOM,
-                 editor.getTextArea().getWidth() - Editor.LEFT_GUTTER, 2);
+//      // draw the two pixel line that extends left/right below the tabs
+//      g.setColor(tabColor[SELECTED]);
+//      // can't be done with lines, b/c retina leaves tiny hairlines
+//      g.fillRect(Editor.LEFT_GUTTER, TAB_BOTTOM,
+//                 editor.getTextArea().getWidth() - Editor.LEFT_GUTTER, 2);
 
       screen.drawImage(offscreen, 0, 0, imageW, imageH, null);
     }
@@ -256,8 +261,8 @@ public class EditorFooter extends Box {
       Graphics2D g2 = (Graphics2D) g;
       EditorHeader.roundRect(g2, left, TAB_TOP, right, TAB_BOTTOM,
                              0, 0,
-                             leftNotch ? CURVE_RADIUS : 0,
-                               rightNotch ? CURVE_RADIUS : 0);
+                             rightNotch ? CURVE_RADIUS : 0,
+                             leftNotch ? CURVE_RADIUS : 0);
     }
 
 

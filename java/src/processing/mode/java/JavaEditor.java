@@ -2570,13 +2570,18 @@ public class JavaEditor extends Editor {
   }
 
 
-  /** Toggle between Console and Errors List */
-  public void showProblemListView(String buttonName) {
-//    CardLayout cl = (CardLayout) consoleProblemsPane.getLayout();
-//    cl.show(consoleProblemsPane, buttonName);
-//    ((JTabbedPane) consolePanel).setSelectedIndex(ERROR_TAB_INDEX);
-    footer.setPanel(errorTableScrollPane);
+  public void showConsole() {
+    footer.setPanel(console);
   }
+
+
+//  /** Toggle between Console and Errors List */
+//  public void showProblemListView(String buttonName) {
+////    CardLayout cl = (CardLayout) consoleProblemsPane.getLayout();
+////    cl.show(consoleProblemsPane, buttonName);
+////    ((JTabbedPane) consolePanel).setSelectedIndex(ERROR_TAB_INDEX);
+//    footer.setPanel(errorTableScrollPane);
+//  }
 
 
   /** Updates the error table */
