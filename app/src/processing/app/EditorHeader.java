@@ -27,6 +27,7 @@ package processing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.GeneralPath;
+import java.util.Arrays;
 
 import javax.swing.*;
 
@@ -272,9 +273,6 @@ public class EditorHeader extends JComponent {
       tab.textWidth = (int)
         font.getStringBounds(tab.text, g2.getFontRenderContext()).getWidth();
     }
-/* TODO eliminated 279-302 because it doesn't really work to reduce the tab size (by much anyways)
- *      and makes it confusing to find the tab you want because the name is hidden
- *
     // make sure everything can fit
     if (!placeTabs(MARGIN_WIDTH, tabMax, null)) {
       //System.arraycopy(tabs, 0, visitOrder, 0, tabs.length);
@@ -298,7 +296,7 @@ public class EditorHeader extends JComponent {
           break;
         }
       }
-    }*/
+    }
 
     // now actually draw the tabs
     if(!placeTabs(MARGIN_WIDTH, tabMax - ARROW_TAB_WIDTH, g2)){
