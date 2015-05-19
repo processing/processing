@@ -1209,19 +1209,9 @@ public class JavaEditor extends Editor {
 
 
   public void toggleBreakpoint(int lineIndex) {
-    new Exception().printStackTrace(System.out);
     debugger.toggleBreakpoint(lineIndex);
   }
 
-
-
-  /*
-  public void handleSave() {
-//    toolbar.activate(JavaToolbar.SAVE);
-    super.handleSave(true);
-//    toolbar.deactivate(JavaToolbar.SAVE);
-  }
-  */
 
 
   public boolean handleSaveAs() {
