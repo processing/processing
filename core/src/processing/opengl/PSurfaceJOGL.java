@@ -287,9 +287,13 @@ public class PSurfaceJOGL implements PSurface {
     window.addWindowListener(new WindowAdapter() {
       @Override
       public void windowDestroyNotify(final WindowEvent e) {
-        animator.stop();
-        PSurfaceJOGL.this.sketch.exit();
-        window.destroy();
+        System.out.println("destroy notify");
+        PSurfaceJOGL.this.sketch.dispose();
+        PSurfaceJOGL.this.sketch.exitActual();
+//        animator.stop();
+//        PSurfaceJOGL.this.sketch.exit();
+//        window.destroy();
+//
       }
     });
 
@@ -525,13 +529,21 @@ public class PSurfaceJOGL implements PSurface {
       if (sketch.frameCount == 1) {
         requestFocus();
       }
-    }
-    public void dispose(GLAutoDrawable drawable) {
-      pgl.getGL(drawable);
-      sketch.dispose();
+
       if (sketch.exitCalled()) {
+        System.out.println("exit");
+        animator.stop();
+        sketch.dispose();
         sketch.exitActual();
       }
+    }
+    public void dispose(GLAutoDrawable drawable) {
+//      pgl.getGL(drawable);
+      System.out.println("dispose");
+      sketch.dispose();
+//      if (sketch.exitCalled()) {
+//        sketch.exitActual();
+//      }
     }
     public void init(GLAutoDrawable drawable) {
 //      System.err.println("2. init drawable");
@@ -708,9 +720,9 @@ public class PSurfaceJOGL implements PSurface {
 //        System.err.println(PApplet.EXTERNAL_QUIT);
 //        System.err.flush();  // important
 //      }
-        animator.stop();
-        PSurfaceJOGL.this.sketch.exit();
-        window.destroy();
+//        animator.stop();
+        sketch.exit();
+//        window.destroy();
       }
     }
 
