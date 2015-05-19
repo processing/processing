@@ -158,7 +158,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected URL defColorShaderVertURL =
     PGraphicsOpenGL.class.getResource("ColorVert.glsl");
   static protected URL defTextureShaderVertURL =
-    PGraphicsOpenGL.class.getResource("TextureVert.glsl");
+    PGraphicsOpenGL.class.getResource("TexVert.glsl");
   static protected URL defLightShaderVertURL =
     PGraphicsOpenGL.class.getResource("LightVert.glsl");
   static protected URL defTexlightShaderVertURL =
@@ -166,7 +166,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected URL defColorShaderFragURL =
     PGraphicsOpenGL.class.getResource("ColorFrag.glsl");
   static protected URL defTextureShaderFragURL =
-    PGraphicsOpenGL.class.getResource("TextureFrag.glsl");
+    PGraphicsOpenGL.class.getResource("TexFrag.glsl");
   static protected URL defLightShaderFragURL =
     PGraphicsOpenGL.class.getResource("LightFrag.glsl");
   static protected URL defTexlightShaderFragURL =
