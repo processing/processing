@@ -35,8 +35,9 @@
 	   encoding="UTF-8" 
 	   includeAntRuntime="false" 
 	   classpath="../core/library/core.jar; 
-                      lib/ant.jar; lib/ant-launcher.jar; 
-                      lib/apple.jar; 
+                      ../core/apple.jar; 
+                      lib/ant.jar; 
+                      lib/ant-launcher.jar; 
                       lib/jna.jar"
 	   debug="on"
 	   nowarn="true"
