@@ -1,4 +1,5 @@
 0236 (3.0a9)
+X show screen dimensions in the Preferences window
 
 pdex/debugger
 X remove "Experimental Mode: Yikes!" messages
@@ -49,13 +50,14 @@ _ move Library to LibraryContribution and into contrib?
 
 
 gui
+_ need active state for the butterfly
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
 _ implement the bottom half of the editor window
 _   editor window draws in stages (at least on OS X) on first view
 _   the console/bottom area stays white until an additional repaint?
 _ remove EditorLineStatus (we have line numbers)
-_ need active state for the butterfly
+_ add a "what's new" window to promote features in 3?
 
 
 gui (lower, not blocking for beta)

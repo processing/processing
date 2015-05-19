@@ -29,16 +29,12 @@ import processing.app.tools.*;
 import processing.core.*;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.print.*;
@@ -253,8 +249,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     consolePanel = new JPanel();
     consolePanel.setLayout(new BorderLayout());
 
-    status = new EditorStatus(this);
-    consolePanel.add(status, BorderLayout.NORTH);
+//    status = new EditorStatus(this);
+//    consolePanel.add(status, BorderLayout.NORTH);
 
     console = new EditorConsole(this);
     // windows puts an ugly border on this guy
@@ -279,16 +275,20 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // if window increases in size, give all of increase to
     // the textarea in the upper pane
     splitPane.setResizeWeight(1D);
-    // remove any ugly borders added by PLAFs
+    // remove any ugly borders added by PLAFs (doesn't fix everything)
     splitPane.setBorder(null);
-    // necessary to let the gradient show through
-//    splitPane.setOpaque(false);
-
     // remove an ugly border around anything in a SplitPane !$*&!%
     UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
+    // set the height per our gui design
+    //splitPane.setDividerSize(mode.getInteger("divider.height"));
+    splitPane.setDividerSize(EditorStatus.HIGH);
+
     // override the look of the SplitPane so that it's identical across OSes
     splitPane.setUI(new BasicSplitPaneUI() {
       public BasicSplitPaneDivider createDefaultDivider() {
+        status = new EditorStatus(this, Editor.this);
+        return status;
+        /*
         return new BasicSplitPaneDivider(this) {
           final Color dividerColor = mode.getColor("divider.color"); //new Color(204, 204, 204);
           final Color dotColor = mode.getColor("divider.dot.color"); //new Color(80, 80, 80);
@@ -311,16 +311,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
             g.fillOval(x, y, dotSize, dotSize);
           }
         };
+        */
       }
     });
-
-//    EditorConsole.systemOut.println("divider default size is " + splitPane.getDividerSize());
-//    // the default size on windows is too small and kinda ugly
-//    int dividerSize = Preferences.getInteger("editor.divider.size");
-//    if (dividerSize != 0) {
-//      splitPane.setDividerSize(dividerSize);
-//    }
-    splitPane.setDividerSize(mode.getInteger("divider.height"));
 
     box.add(splitPane);
 

@@ -1,5 +1,9 @@
 0236 (3.0a9)
 
+fixed in 3.0a8
+X Full screen window on second monitor without using present mode
+X   https://github.com/processing/processing/issues/3271
+
 andres
 X Offscreen rendering broken in OpenGL renderers
 X   https://github.com/processing/processing/issues/3292
@@ -8,6 +12,11 @@ X   https://github.com/processing/processing/issues/2981
 
 
 high priority
+_ displayWidth and displayHeight are zero
+_   https://github.com/processing/processing/issues/3295
+_   need a better option for using full screen
+_   maybe we use the AWT screen sizes first, then match the others w/ em?
+_   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
 _ instead of all these sketchXxxx() methods, should we have sketchSetting()
 _   and an internal dictionary that stores them all?
 _   or sketchInt() or settingsInt()?
@@ -77,12 +86,12 @@ _   probably from the material stuff, but we need to fix that
 
 
 full screen
+_ do we need to change up the api?
+_   https://github.com/processing/processing/issues/3296
 _ present window draws in stages (OS X)
 _ split 'present' and 'full screen'?
 _   --full-screen causes considerable flicker at this point
 _   or split them when sketchWidth/Height are implemented?
-_ Full screen window on second monitor without using present mode
-_   https://github.com/processing/processing/issues/3271
 _ "run sketches on display" not working in 3.0a7
 _   https://github.com/processing/processing/issues/3264
 _ full screen doesn't work on second window w/o present mode

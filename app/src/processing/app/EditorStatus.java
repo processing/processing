@@ -25,13 +25,14 @@ package processing.app;
 
 import java.awt.*;
 
-import javax.swing.*;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 
 /**
  * Panel just below the editing area that contains status messages.
  */
-public class EditorStatus extends JPanel {
+public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   static final int HIGH = 28;
 
   Color[] bgcolor;
@@ -70,8 +71,9 @@ public class EditorStatus extends JPanel {
   Thread thread;
 
 
-
-  public EditorStatus(Editor editor) {
+  //public EditorStatus(Editor editor) {
+  public EditorStatus(BasicSplitPaneUI ui, Editor editor) {
+    super(ui);
     this.editor = editor;
     empty();
     updateMode();
@@ -172,7 +174,8 @@ public class EditorStatus extends JPanel {
   }
 
 
-  public void paintComponent(Graphics screen) {
+  //public void paintComponent(Graphics screen) {
+  public void paint(Graphics screen) {
 //    if (okButton == null) setup();
 
     Dimension size = getSize();

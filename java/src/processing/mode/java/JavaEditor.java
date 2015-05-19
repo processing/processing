@@ -57,13 +57,14 @@ public class JavaEditor extends Editor {
 
   // Need to sort through the rest of these additions...
 
-  protected Color breakpointColor;  // = new Color(240, 240, 240); // the background color for highlighting lines
-  protected Color currentLineColor; // = new Color(255, 255, 150); // the background color for highlighting lines
-  protected Color breakpointMarkerColor; // = new Color(74, 84, 94); // the color of breakpoint gutter markers
-  protected Color currentLineMarkerColor; // = new Color(226, 117, 0); // the color of current line gutter markers
-  protected List<LineHighlight> breakpointedLines = new ArrayList<LineHighlight>(); // breakpointed lines
-  protected LineHighlight currentLine; // line the debugger is currently suspended at
-  protected final String breakpointMarkerComment = " //<>//"; // breakpoint marker comment
+  protected Color breakpointColor;
+  protected Color currentLineColor;
+  protected Color breakpointMarkerColor;
+  protected Color currentLineMarkerColor;
+  protected List<LineHighlight> breakpointedLines =
+    new ArrayList<LineHighlight>();
+  protected LineHighlight currentLine; // where the debugger is suspended
+  protected final String breakpointMarkerComment = " //<>//";
 
   protected JMenu debugMenu;
 //  JCheckBoxMenuItem enableDebug;
@@ -90,6 +91,8 @@ public class JavaEditor extends Editor {
 
   private boolean hasJavaTabs;
   private boolean javaTabWarned;
+
+  protected ErrorCheckerService errorCheckerService;
 
 
   protected JavaEditor(Base base, String path, EditorState state, Mode mode) {
@@ -134,33 +137,37 @@ public class JavaEditor extends Editor {
     Toolkit.setMenuMnemonics(textarea.getRightClickPopup());
 
     // load settings from theme.txt
-    breakpointColor = mode.getColor("breakpoint.bgcolor"); //, breakpointColor);
-    breakpointMarkerColor = mode.getColor("breakpoint.marker.color"); //, breakpointMarkerColor);
-    currentLineColor = mode.getColor("currentline.bgcolor"); //, currentLineColor);
-    currentLineMarkerColor = mode.getColor("currentline.marker.color"); //, currentLineMarkerColor);
+    breakpointColor = mode.getColor("breakpoint.bgcolor");
+    breakpointMarkerColor = mode.getColor("breakpoint.marker.color");
+    currentLineColor = mode.getColor("currentline.bgcolor");
+    currentLineMarkerColor = mode.getColor("currentline.marker.color");
 
     // set breakpoints from marker comments
     for (LineID lineID : stripBreakpointComments()) {
       //System.out.println("setting: " + lineID);
       debugger.setBreakpoint(lineID);
     }
-    getSketch().setModified(false); // setting breakpoints will flag sketch as modified, so override this here
+    // setting breakpoints will flag sketch as modified, so override this here
+    getSketch().setModified(false);
 
     hasJavaTabs = checkForJavaTabs();
-    initializeErrorChecker();
+    //initializeErrorChecker();
+
+    errorCheckerService = new ErrorCheckerService(this);
+    new Thread(errorCheckerService).start();
 
     getJavaTextArea().setECSandThemeforTextArea(errorCheckerService, jmode);
 
     // Adding ErrorBar
     JPanel textAndError = new JPanel();
-    Box box = (Box) textarea.getParent();
-    box.remove(2); // Remove textArea from it's container, i.e Box
+//    Box box = (Box) textarea.getParent();
+//    box.remove(2); // Remove textArea from it's container, i.e Box
     textAndError.setLayout(new BorderLayout());
     errorBar =  new ErrorBar(this, textarea.getMinimumSize().height, jmode);
     textAndError.add(errorBar, BorderLayout.EAST);
     textarea.setBounds(0, 0, errorBar.getX() - 1, textarea.getHeight());
     textAndError.add(textarea);
-    box.add(textAndError);
+//    box.add(textAndError);
 
     // Adding Error Table in a scroll pane
     errorTableScrollPane = new JScrollPane();
@@ -170,7 +177,7 @@ public class JavaEditor extends Editor {
     errorTableScrollPane.setViewportView(errorTable);
 
     // Adding toggle console button
-    consolePanel.remove(2);
+//    consolePanel.remove(2);
     JPanel lineStatusPanel = new JPanel();
     lineStatusPanel.setLayout(new BorderLayout());
     btnShowConsole = new XQConsoleToggle(this, Language.text("editor.footer.console"), lineStatus.getHeight());
@@ -185,15 +192,15 @@ public class JavaEditor extends Editor {
     lineStatus.setBounds(0, 0, toggleButtonPanel.getX() - 1,
                          toggleButtonPanel.getHeight());
     lineStatusPanel.add(lineStatus);
-    consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
+//    consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
     lineStatusPanel.repaint();
 
     // Adding JPanel with CardLayout for Console/Problems Toggle
-    consolePanel.remove(1);
+//    consolePanel.remove(1);
     consoleProblemsPane = new JPanel(new CardLayout());
     consoleProblemsPane.add(errorTableScrollPane, Language.text("editor.footer.errors"));
     consoleProblemsPane.add(console, Language.text("editor.footer.console"));
-    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
+//    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
 
     // ensure completion gets hidden on editor losing focus
     addWindowFocusListener(new WindowFocusListener() {
@@ -220,7 +227,8 @@ public class JavaEditor extends Editor {
     return new EditorHeader(this) {
       public void rebuild() {
         super.rebuild();
-        System.out.println("checking for Java tabs");
+
+        // after Rename and New Tab, we may have new .java tabs
         hasJavaTabs = checkForJavaTabs();
       }
     };
@@ -1288,11 +1296,13 @@ public class JavaEditor extends Editor {
   public void dispose() {
     //System.out.println("window dispose");
     // quit running debug session
-    debugger.stopDebug();
-    // remove var.inspector
-    inspector.dispose();
+    if (debugEnabled) {
+      debugger.stopDebug();
+    }
+    if (inspector != null) {
+      inspector.dispose();
+    }
     errorCheckerService.stopThread();
-    // original dispose
     super.dispose();
   }
 
@@ -2508,24 +2518,22 @@ public class JavaEditor extends Editor {
   }
 
 
-  public ErrorCheckerService errorCheckerService;
-
-  /**
-   * Initializes and starts Error Checker Service
-   */
-  private void initializeErrorChecker() {
-    Thread errorCheckerThread = null;
-
-    if (errorCheckerThread == null) {
-      errorCheckerService = new ErrorCheckerService(this);
-      errorCheckerThread = new Thread(errorCheckerService);
-      try {
-        errorCheckerThread.start();
-      } catch (Exception e) {
-        Base.loge("Error Checker Service not initialized", e);
-      }
-    }
-  }
+//  /**
+//   * Initializes and starts Error Checker Service
+//   */
+//  private void initializeErrorChecker() {
+//    Thread errorCheckerThread = null;
+//
+//    if (errorCheckerThread == null) {
+//      errorCheckerService = new ErrorCheckerService(this);
+//      errorCheckerThread = new Thread(errorCheckerService);
+//      try {
+//        errorCheckerThread.start();
+//      } catch (Exception e) {
+//        Base.loge("Error Checker Service not initialized", e);
+//      }
+//    }
+//  }
 
 
   public void updateErrorBar(List<Problem> problems) {
