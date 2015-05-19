@@ -22,6 +22,7 @@ package processing.mode.java;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +78,8 @@ public class JavaToolbar extends EditorToolbar {
                                     Language.text("menu.debug.step_out")) {
         @Override
         public void actionPerformed(ActionEvent e) {
-          jeditor.handleStep(e.getModifiers());
+          final int mask = KeyEvent.SHIFT_DOWN_MASK | KeyEvent.ALT_DOWN_MASK;
+          jeditor.handleStep(e.getModifiers() & mask);
         }
       };
       outgoing.add(stepButton);
