@@ -53,6 +53,8 @@ _ move Library to LibraryContribution and into contrib?
 gui
 _ click a line number to toggle breakpoint
 _ automatically show the variables window when debugging, hide when not
+_ ctrl-y shortcut duplicated
+_   https://github.com/processing/processing/issues/3298
 _ need active state for the butterfly
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072

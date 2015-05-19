@@ -9626,6 +9626,21 @@ public class PApplet implements PConstants {
       }
     }
 
+    if (platform == MACOSX) {
+      try {
+        final String td = "processing.core.ThinkDifferent";
+        Class<?> thinkDifferent =
+          Thread.currentThread().getContextClassLoader().loadClass(td);
+
+        Method method =
+          thinkDifferent.getMethod("init", new Class[] { PApplet.class });
+        method.invoke(null, new Object[] { sketch });
+
+      } catch (Exception e) {
+        e.printStackTrace();  // That's unfortunate
+      }
+    }
+
     // Call the settings() method which will give us our size() call
     sketch.handleSettings();
 

@@ -1,4 +1,9 @@
 0236 (3.0a9)
+X Implement Cmd-Q handler on Mac OS X
+X   https://github.com/processing/processing/issues/3301
+_ remove "null in initImage()" message
+_ Changing "background color when Presenting" causes Exception
+_   https://github.com/processing/processing/issues/3299
 
 fixed in 3.0a8
 X Full screen window on second monitor without using present mode
@@ -7,9 +12,11 @@ X   https://github.com/processing/processing/issues/3271
 andres
 X Offscreen rendering broken in OpenGL renderers
 X   https://github.com/processing/processing/issues/3292
+X   https://github.com/processing/processing/issues/3259
 X Initial location of OpenGL window hides the title bar
 X   https://github.com/processing/processing/issues/2981
-
+X OpenGL sketches do not terminate, have to be killed
+X   https://github.com/processing/processing/issues/2982
 
 high priority
 _ displayWidth and displayHeight are zero
@@ -64,8 +71,6 @@ _ Quitting P3D sketch throws an error
 _   https://github.com/processing/processing/issues/3293
 _ Closing OpenGL sketch from the PDE doesn't stop java.exe process
 _   https://github.com/processing/processing/issues/2335
-_ OpenGL sketches do not terminate, have to be killed
-_   https://github.com/processing/processing/issues/2982
 _ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
 _   shouldn't be static, run it from the renderer, that's point of createXxx()
 _ public createShape() method that takes another shape as param?
