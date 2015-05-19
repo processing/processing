@@ -223,6 +223,7 @@ public class JavaEditor extends Editor {
   }
 
 
+  // Override the parent call to add hook to the rebuild() method
   public EditorHeader createHeader() {
     return new EditorHeader(this) {
       public void rebuild() {
@@ -252,15 +253,7 @@ public class JavaEditor extends Editor {
         handleExportApplication();
       }
     });
-//    String appletTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, true);
-//    JMenuItem exportApplet = Base.newJMenuItemShift(appletTitle, 'E');
-//    exportApplet.addActionListener(new ActionListener() {
-//      public void actionPerformed(ActionEvent e) {
-//        handleExportApplet();
-//      }
-//    });
 
-//    return buildFileMenu(new JMenuItem[] { exportApplication, exportApplet });
     return buildFileMenu(new JMenuItem[] { exportApplication });
   }
 
@@ -1163,15 +1156,15 @@ public class JavaEditor extends Editor {
 
   public void handleStep(int modifiers) {
     if (modifiers == 0) {
-      Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Over' menu item");
+      Logger.getLogger(getClass().getName()).log(Level.INFO, "Invoked 'Step Over' menu item");
       debugger.stepOver();
 
     } else if ((modifiers & KeyEvent.SHIFT_DOWN_MASK) != 0) {
-      Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Into' menu item");
+      Logger.getLogger(getClass().getName()).log(Level.INFO, "Invoked 'Step Into' menu item");
       debugger.stepInto();
 
     } else if ((modifiers & KeyEvent.ALT_DOWN_MASK) != 0) {
-      Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Step Out' menu item");
+      Logger.getLogger(getClass().getName()).log(Level.INFO, "Invoked 'Step Out' menu item");
       debugger.stepOut();
     }
   }
