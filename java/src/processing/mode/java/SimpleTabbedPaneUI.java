@@ -7,10 +7,9 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 
+// TODO why the hell is this not doing anything?
 public class SimpleTabbedPaneUI extends BasicTabbedPaneUI {
   private ColorSet selectedColorSet;
   private ColorSet defaultColorSet;
@@ -23,9 +22,9 @@ public class SimpleTabbedPaneUI extends BasicTabbedPaneUI {
   private int lastRollOverTab = -1;
 
 
-//  public static ComponentUI createUI(JComponent c) {
-//    return new SimpleTabbedPaneUI();
-//  }
+  public static ComponentUI createUI(JComponent c) {
+    return new SimpleTabbedPaneUI();
+  }
 
 
   public SimpleTabbedPaneUI() {
@@ -152,9 +151,9 @@ public class SimpleTabbedPaneUI extends BasicTabbedPaneUI {
     super.paintTabArea(g, tabPlacement, selectedIndex);
 
     //g2d.setClip(0, 0, tabPane.getWidth(), tabPane.getHeight());
-    System.out.println("painting green " + g2d.getClip());
-    g2d.setColor(Color.GREEN);
-    g2d.fillRect(0, 0, tabPane.getWidth(), 21);
+//    System.out.println("painting green " + g2d.getClip());
+//    g2d.setColor(Color.GREEN);
+//    g2d.fillRect(0, 0, tabPane.getWidth(), 21);
 
     if (contentTopBorderDrawn) {
       g2d.setColor(lineColor);
