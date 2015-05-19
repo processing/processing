@@ -100,7 +100,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
   public JavaTextAreaPainter(JavaTextArea textArea, TextAreaDefaults defaults) {
     super(textArea, defaults);
-    new Exception().printStackTrace(System.out);
 
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent evt) {
