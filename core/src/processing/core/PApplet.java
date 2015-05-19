@@ -27,17 +27,17 @@ package processing.core;
 // these are used for various methods (url opening, file selection, etc)
 // how many more can we remove?
 import java.awt.Desktop;
+import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-
-
-
 
 // used by loadImage() functions
 import javax.imageio.ImageIO;
@@ -837,6 +837,20 @@ public class PApplet implements PConstants {
 
   void handleSettings() {
     insideSettings = true;
+
+    // Workaround for https://github.com/processing/processing/issues/3295
+    // until we resolved https://github.com/processing/processing/issues/3296
+    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    GraphicsDevice device = ge.getDefaultScreenDevice();
+    GraphicsDevice[] devices = ge.getScreenDevices();
+    // default or unparsed will be -1
+    if (displayIndex >= 0 && displayIndex < devices.length) {
+      device = devices[displayIndex];
+    }
+    DisplayMode displayMode = device.getDisplayMode();
+    displayWidth = displayMode.getWidth();
+    displayHeight = displayMode.getHeight();
+
     settings();
     insideSettings = false;
   }

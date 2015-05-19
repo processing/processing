@@ -24,7 +24,9 @@ X   https://github.com/processing/processing/issues/3293
 high priority
 _ displayWidth and displayHeight are zero
 _   https://github.com/processing/processing/issues/3295
-_   need a better option for using full screen
+_ need a better option for using full screen
+_   https://github.com/processing/processing/issues/3296
+_   right now using a (display ignoring) hack to displayWidth/Height
 _   maybe we use the AWT screen sizes first, then match the others w/ em?
 _   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
 _ instead of all these sketchXxxx() methods, should we have sketchSetting()
@@ -92,8 +94,6 @@ _   probably from the material stuff, but we need to fix that
 
 
 full screen
-_ do we need to change up the api?
-_   https://github.com/processing/processing/issues/3296
 _ present window draws in stages (OS X)
 _ split 'present' and 'full screen'?
 _   --full-screen causes considerable flicker at this point
