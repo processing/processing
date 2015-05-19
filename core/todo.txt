@@ -4,6 +4,8 @@ X   https://github.com/processing/processing/issues/3301
 X Changing "background color when Presenting" causes Exception
 X   https://github.com/processing/processing/issues/3299
 X remove "null in initImage()" message
+X displayWidth and displayHeight are zero
+X   https://github.com/processing/processing/issues/3295
 
 fixed in 3.0a8
 X Full screen window on second monitor without using present mode
@@ -22,8 +24,6 @@ X   https://github.com/processing/processing/issues/3293
 
 
 high priority
-_ displayWidth and displayHeight are zero
-_   https://github.com/processing/processing/issues/3295
 _ need a better option for using full screen
 _   https://github.com/processing/processing/issues/3296
 _   right now using a (display ignoring) hack to displayWidth/Height
