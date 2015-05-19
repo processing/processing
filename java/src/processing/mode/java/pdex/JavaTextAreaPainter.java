@@ -66,7 +66,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	implements MouseListener, MouseMotionListener {
 
 //  protected JavaTextArea ta; // we need the subclassed textarea
-  protected ErrorCheckerService errorCheckerService;
+//  protected ErrorCheckerService errorCheckerService;
 
   public Color errorColor; // = new Color(0xED2630);
   public Color warningColor; // = new Color(0xFFC30E);
@@ -188,8 +188,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
       if (Character.isDigit(word.charAt(0)))
         return;
 
-      Base.log(errorCheckerService.mainClassOffset + line + "|" + line + "| offset " + xLS + word + " <= \n");
-      errorCheckerService.getASTGenerator().scrollToDeclaration(line, word, xLS);
+      Base.log(getEditor().getErrorChecker().mainClassOffset + line + "|" + line + "| offset " + xLS + word + " <= \n");
+      getEditor().getErrorChecker().getASTGenerator().scrollToDeclaration(line, word, xLS);
     }
   }
 
@@ -398,11 +398,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param x
    */
   protected void paintErrorLine(Graphics gfx, int line, int x) {
-    if (errorCheckerService == null) {
-      return;
-    }
-
-    if (errorCheckerService.problemsList == null) {
+    ErrorCheckerService ecs = getEditor().getErrorChecker();
+    if (ecs == null || ecs.problemsList == null) {
       return;
     }
 
@@ -413,7 +410,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     errorLineCoords.clear();
     // Check if current line contains an error. If it does, find if it's an
     // error or warning
-    for (ErrorMarker emarker : errorCheckerService.getEditor().getErrorPoints()) {
+    for (ErrorMarker emarker : getEditor().getErrorPoints()) {
       if (emarker.getProblem().getLineNumber() == line) {
         notFound = false;
         if (emarker.getType() == ErrorMarker.Warning) {
@@ -529,8 +526,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param ecs
    * @param mode
    */
-  public void setECSandTheme(ErrorCheckerService ecs, JavaMode mode) {
-    this.errorCheckerService = ecs;
+  public void setMode(JavaMode mode) {
+    //this.errorCheckerService = ecs;
     //loadTheme(mode);
 
     errorColor = mode.getColor("editor.errorcolor"); //, errorColor);
@@ -542,6 +539,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     gutterTextColor = mode.getColor("editor.gutter.text.color");
     gutterLineHighlightColor = mode.getColor("editor.gutter.linehighlight.color");
   }
+
 
   @Override
   public String getToolTipText(MouseEvent event) {
@@ -614,7 +612,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
           setToolTipText(null);
           return super.getToolTipText(event);
         }
-        String tooltipText = errorCheckerService.getASTGenerator()
+        String tooltipText = getEditor().getErrorChecker().getASTGenerator()
             .getLabelForASTNode(line, word, xLS);
 
         //      log(errorCheckerService.mainClassOffset + " MCO "

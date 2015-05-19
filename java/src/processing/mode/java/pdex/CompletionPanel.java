@@ -104,9 +104,9 @@ public class CompletionPanel {
    * @param dedit
    */
   public CompletionPanel(final JEditTextArea textarea, int position, String subWord,
-                         DefaultListModel<CompletionCandidate> items, final Point location, JavaEditor dedit) {
+                         DefaultListModel<CompletionCandidate> items, final Point location, JavaEditor editor) {
     this.textarea = (JavaTextArea) textarea;
-    editor = dedit;
+    this.editor = editor;
     this.insertionPosition = position;
     if (subWord.indexOf('.') != -1)
       this.subWord = subWord.substring(subWord.lastIndexOf('.') + 1);
@@ -121,7 +121,7 @@ public class CompletionPanel {
     scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
     popupMenu.setPopupSize(calcWidth(), calcHeight(items.getSize())); //TODO: Eradicate this evil
-    this.textarea.errorCheckerService.getASTGenerator().updateJavaDoc(completionList.getSelectedValue());
+    editor.getErrorChecker().getASTGenerator().updateJavaDoc(completionList.getSelectedValue());
     textarea.requestFocusInWindow();
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0) + location.y);
     //log("Suggestion shown: " + System.currentTimeMillis());
@@ -487,7 +487,7 @@ public class CompletionPanel {
                                                  .getVerticalScrollBar()
                                                  .getValue()
                                                  - step);
-      textarea.errorCheckerService.getASTGenerator().updateJavaDoc(completionList.getSelectedValue());
+      editor.getErrorChecker().getASTGenerator().updateJavaDoc(completionList.getSelectedValue());
     }
   }
 
@@ -504,7 +504,7 @@ public class CompletionPanel {
       int index = Math.min(completionList.getSelectedIndex() + 1,
                            completionList.getModel().getSize() - 1);
       selectIndex(index);
-      textarea.errorCheckerService.getASTGenerator().updateJavaDoc(completionList.getSelectedValue());
+      editor.getErrorChecker().getASTGenerator().updateJavaDoc(completionList.getSelectedValue());
       int step = scrollPane.getVerticalScrollBar().getMaximum() / completionList.getModel().getSize();
       scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getValue() + step);
     }

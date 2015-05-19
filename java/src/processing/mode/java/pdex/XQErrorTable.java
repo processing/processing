@@ -23,6 +23,7 @@ package processing.mode.java.pdex;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.event.*;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -41,12 +42,13 @@ import processing.mode.java.JavaEditor;
  * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
  */
 public class XQErrorTable extends JTable {
+  JavaEditor editor;
 
 	/** Column Names of JTable */
-	public static final String[] columnNames = { 
-	  Language.text("editor.footer.errors.problem"), 
-	  Language.text("editor.footer.errors.tab"), 
-	  Language.text("editor.footer.errors.line") 
+	public static final String[] columnNames = {
+	  Language.text("editor.footer.errors.problem"),
+	  Language.text("editor.footer.errors.tab"),
+	  Language.text("editor.footer.errors.line")
 	};
 
 	/** Column Widths of JTable. */
@@ -56,11 +58,13 @@ public class XQErrorTable extends JTable {
 	private boolean columnResizing = false;
 
 	/** ErrorCheckerService instance */
-	protected ErrorCheckerService errorCheckerService;
+//	protected ErrorCheckerService errorCheckerService;
 
-	
-	public XQErrorTable(final ErrorCheckerService errorCheckerService) {
-		this.errorCheckerService = errorCheckerService;
+
+//	public XQErrorTable(final ErrorCheckerService errorCheckerService) {
+//		this.errorCheckerService = errorCheckerService;
+	public XQErrorTable(final JavaEditor editor) {
+	  this.editor = editor;
 		for (int i = 0; i < this.getColumnModel().getColumnCount(); i++) {
 			getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
 		}
@@ -72,28 +76,30 @@ public class XQErrorTable extends JTable {
 			synchronized public void mouseClicked(MouseEvent e) {
 				try {
 				  int row = ((XQErrorTable) e.getSource()).getSelectedRow();
-					errorCheckerService.scrollToErrorLine(row);
+					editor.getErrorChecker().scrollToErrorLine(row);
 				} catch (Exception e1) {
 					Base.log("Exception XQErrorTable mouseReleased " +  e);
 				}
-			}			
+			}
 		});
-		
-		final XQErrorTable thisTable = this; 
-		
+
+//		final XQErrorTable thisTable = this;
+
 		this.addMouseMotionListener(new MouseMotionAdapter() {
-      
+
       @Override
       public void mouseMoved(MouseEvent evt) {
         int rowIndex = rowAtPoint(evt.getPoint());
-        synchronized (errorCheckerService.problemsList) {
-          if (rowIndex < errorCheckerService.problemsList.size()) {
-            
-            Problem p = errorCheckerService.problemsList.get(rowIndex);
+
+        List<Problem> problemsList = editor.getErrorChecker().problemsList;
+        synchronized (problemsList) {
+          if (rowIndex < problemsList.size()) {
+
+            Problem p = problemsList.get(rowIndex);
             if (p.getImportSuggestions() != null
                 && p.getImportSuggestions().length > 0) {
               String t = p.getMessage() + "(Import Suggestions available)";
-              FontMetrics fm = thisTable.getFontMetrics(thisTable.getFont());
+              FontMetrics fm = getFontMetrics(getFont());
               int x1 = fm.stringWidth(p.getMessage());
               int x2 = fm.stringWidth(t);
               if (evt.getX() > x1 && evt.getX() < x2) {
@@ -103,7 +109,7 @@ public class XQErrorTable extends JTable {
                 for (int i = 0; i < list.length; i++) {
                   temp[i] = "<html>Import '" +  className + "' <font color=#777777>(" + list[i] + ")</font></html>";
                 }
-                showImportSuggestion(temp, evt.getXOnScreen(), evt.getYOnScreen() - 3 * thisTable.getFont().getSize());
+                showImportSuggestion(temp, evt.getXOnScreen(), evt.getYOnScreen() - 3 * getFont().getSize());
               }
             }
           }
@@ -116,7 +122,7 @@ public class XQErrorTable extends JTable {
 		// widths,and resume updating. Updating is disabled as long as
 		// columnResizing is true
 		this.getTableHeader().addMouseListener(new MouseAdapter() {
-			
+
 			@Override
 			public void mousePressed(MouseEvent e) {
 				columnResizing = true;
@@ -131,11 +137,11 @@ public class XQErrorTable extends JTable {
 				}
 			}
 		});
-		
+
 		ToolTipManager.sharedInstance().registerComponent(this);
 	}
-	
-	
+
+
 	@Override
   public boolean isCellEditable(int rowIndex, int colIndex) {
     return false; // Disallow the editing of any cell
@@ -163,7 +169,7 @@ public class XQErrorTable extends JTable {
 			protected void done() {
 				try {
 					setModel(tableModel);
-					
+
 					// Set column widths to user defined widths
 					for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
 						getColumnModel().getColumn(i).setPreferredWidth(
@@ -190,10 +196,10 @@ public class XQErrorTable extends JTable {
 		}
 		return true;
 	}
-	
-	
+
+
 	JFrame frmImportSuggest;
-	
+
 	private void showImportSuggestion(String list[], int x, int y){
 	  if (frmImportSuggest != null) {
 //	    frmImportSuggest.setVisible(false);
@@ -203,7 +209,7 @@ public class XQErrorTable extends JTable {
 	  final JList<String> classList = new JList<String>(list);
     classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     frmImportSuggest = new JFrame();
-    
+
     frmImportSuggest.setUndecorated(true);
     frmImportSuggest.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     JPanel panel = new JPanel();
@@ -218,8 +224,7 @@ public class XQErrorTable extends JTable {
     panel.validate();
     frmImportSuggest.getContentPane().add(panel);
     frmImportSuggest.pack();
-    
-    final JavaEditor editor = errorCheckerService.getEditor();
+
     classList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
         if (classList.getSelectedValue() != null) {
@@ -242,9 +247,9 @@ public class XQErrorTable extends JTable {
         frmImportSuggest = null;
       }
     });
-    
+
     frmImportSuggest.addWindowFocusListener(new WindowFocusListener() {
-      
+
       @Override
       public void windowLostFocus(WindowEvent e) {
         if (frmImportSuggest != null) {
@@ -252,10 +257,10 @@ public class XQErrorTable extends JTable {
           frmImportSuggest = null;
         }
       }
-      
+
       @Override
       public void windowGainedFocus(WindowEvent e) {
-        
+
       }
     });
 

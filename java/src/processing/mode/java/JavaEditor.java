@@ -169,7 +169,7 @@ public class JavaEditor extends Editor {
     // add our hacked version back to the editor
     box.add(textAndError);
 
-    getJavaTextArea().setECSandThemeforTextArea(errorCheckerService, jmode);
+    getJavaTextArea().setMode(jmode);
 
     // ensure completion is hidden when editor loses focus
     addWindowFocusListener(new WindowFocusListener() {
@@ -221,7 +221,7 @@ public class JavaEditor extends Editor {
 
     // Adding Error Table in a scroll pane
     errorTableScrollPane = new JScrollPane();
-    errorTable = new XQErrorTable(errorCheckerService);
+    errorTable = new XQErrorTable(this);
     // errorTableScrollPane.setBorder(new EmptyBorder(2, 2, 2, 2));
 //    errorTableScrollPane.setBorder(new EtchedBorder());
     errorTableScrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -1910,6 +1910,11 @@ public class JavaEditor extends Editor {
    */
   public JavaTextArea getJavaTextArea() {
     return (JavaTextArea) textarea;
+  }
+
+
+  public ErrorCheckerService getErrorChecker() {
+    return errorCheckerService;
   }
 
 

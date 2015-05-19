@@ -22,7 +22,6 @@ package processing.mode.java.pdex;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
-import java.awt.Point;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
@@ -35,16 +34,16 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 
-import processing.app.Editor;
 import processing.app.Toolkit;
 import processing.mode.java.JavaEditor;
+
 
 /**
  * Error Window that displays a tablular list of errors. Clicking on an error
  * scrolls to its location in the code.
- * 
+ *
  * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
- * 
+ *
  */
 public class ErrorWindow extends JFrame {
 
@@ -58,9 +57,10 @@ public class ErrorWindow extends JFrame {
 	 */
 	protected JScrollPane scrollPane;
 
-	protected JavaEditor thisEditor;
+	//protected JavaEditor thisEditor;
+	protected JavaEditor editor;
 	private JFrame thisErrorWindow;
-	
+
 	/**
 	 * Handles the sticky Problem window
 	 */
@@ -70,7 +70,7 @@ public class ErrorWindow extends JFrame {
 
 	/**
 	 * Preps up ErrorWindow
-	 * 
+	 *
 	 * @param editor
 	 *            - Editor
 	 * @param ecs - ErrorCheckerService
@@ -78,10 +78,11 @@ public class ErrorWindow extends JFrame {
 	public ErrorWindow(JavaEditor editor, ErrorCheckerService ecs) {
 		thisErrorWindow = this;
 		errorCheckerService = ecs;
-		thisEditor = editor;
+		this.editor = editor;
 		setTitle("Problems");
 		prepareFrame();
 	}
+
 
 	/**
 	 * Sets up ErrorWindow
@@ -100,7 +101,7 @@ public class ErrorWindow extends JFrame {
 		scrollPane = new JScrollPane();
 		contentPane.add(scrollPane);
 
-		errorTable = new XQErrorTable(errorCheckerService);
+		errorTable = new XQErrorTable(editor);
 		scrollPane.setViewportView(errorTable);
 
 		try {
@@ -111,17 +112,17 @@ public class ErrorWindow extends JFrame {
 			e.printStackTrace();
 		}
 
-		if (thisEditor != null) {
-			setLocation(new Point(thisEditor.getLocation().x
-					+ thisEditor.getWidth(), thisEditor.getLocation().y));
+		if (editor != null) {
+			setLocation(editor.getLocation().x + editor.getWidth(),
+			            editor.getLocation().y);
 		}
-
 	}
+
 
 	/**
 	 * Updates the error table with new data(Table Model). Called from Error
 	 * Checker Service.
-	 * 
+	 *
 	 * @param tableModel
 	 *            - Table Model
 	 * @return True - If error table was updated successfully.
@@ -173,12 +174,12 @@ public class ErrorWindow extends JFrame {
 
 			@Override
 			public void windowDeiconified(WindowEvent e) {
-				thisEditor.setExtendedState(Frame.NORMAL);
+				editor.setExtendedState(Frame.NORMAL);
 			}
 
 		});
 
-		if (thisEditor == null) {
+		if (editor == null) {
 			System.out.println("Editor null");
 			return;
 		}
@@ -209,7 +210,7 @@ public class ErrorWindow extends JFrame {
 
 		});*/
 
-		thisEditor.addComponentListener(new ComponentListener() {
+		editor.addComponentListener(new ComponentListener() {
 
 			@Override
 			public void componentShown(ComponentEvent e) {
@@ -249,10 +250,10 @@ public class ErrorWindow extends JFrame {
 	 * Implements the docking feature of the tool - The frame sticks to the
 	 * editor and once docked, moves along with it as the editor is resized,
 	 * moved, or closed.
-	 * 
+	 *
 	 * This class has been borrowed from Tab Manager tool by Thomas Diewald. It
 	 * has been slightly modified and used here.
-	 * 
+	 *
 	 * @author Thomas Diewald , http://thomasdiewald.com
 	 */
 	private class DockTool2Base {
@@ -285,9 +286,7 @@ public class ErrorWindow extends JFrame {
 
 		//
 		public void tryDocking() {
-			if (thisEditor == null)
-				return;
-			Editor editor = thisEditor;
+			if (editor == null) return;
 			Frame frame = thisErrorWindow;
 
 			int ex = editor.getX();
@@ -330,9 +329,7 @@ public class ErrorWindow extends JFrame {
 		}
 
 		public void dock() {
-			if (thisEditor == null)
-				return;
-			Editor editor = thisEditor;
+			if (editor == null) return;
 			Frame frame = thisErrorWindow;
 
 			int ex = editor.getX();
@@ -369,6 +366,5 @@ public class ErrorWindow extends JFrame {
 			}
 			frame.setLocation(x, y);
 		}
-
 	}
 }

@@ -82,7 +82,7 @@ public class JavaTextArea extends JEditTextArea {
   /// maps line index to gutter text color
   protected Map<Integer, Color> gutterTextColors = new HashMap<Integer, Color>();
 
-  protected ErrorCheckerService errorCheckerService;
+//  protected ErrorCheckerService errorCheckerService;
   private CompletionPanel suggestion;
 
 
@@ -159,10 +159,9 @@ public class JavaTextArea extends JEditTextArea {
    * @param ecs
    * @param mode
    */
-  public void setECSandThemeforTextArea(ErrorCheckerService ecs,
-                                        JavaMode mode) {
-    errorCheckerService = ecs;
-    getCustomPainter().setECSandTheme(ecs, mode);
+  public void setMode(JavaMode mode) {
+//    errorCheckerService = ecs;
+    getCustomPainter().setMode(mode);
   }
 
 
@@ -383,7 +382,7 @@ public class JavaTextArea extends JEditTextArea {
         return null;
       }
       Base.log("Mouse click, word: " + word.trim());
-      errorCheckerService.getASTGenerator().setLastClickedWord(line, word, xLS);
+      editor.getErrorChecker().getASTGenerator().setLastClickedWord(line, word, xLS);
       return word.trim();
     }
   }
@@ -443,8 +442,7 @@ public class JavaTextArea extends JEditTextArea {
       if (word.endsWith("."))
         word = word.substring(0, word.length() - 1);
 
-      errorCheckerService.getASTGenerator().preparePredictions(word, line
-          + errorCheckerService.mainClassOffset,0);
+      editor.getErrorChecker().getASTGenerator().preparePredictions(word, line + editor.getErrorChecker().mainClassOffset,0);
       return word;
     }
 
@@ -506,8 +504,8 @@ public class JavaTextArea extends JEditTextArea {
     //      word = word.substring(0, word.length() - 1);
     int lineStartNonWSOffset = 0;
     if (word.length() >= JavaMode.codeCompletionTriggerLength) {
-      errorCheckerService.getASTGenerator()
-          .preparePredictions(word, line + errorCheckerService.mainClassOffset,
+      editor.getErrorChecker().getASTGenerator()
+          .preparePredictions(word, line + editor.getErrorChecker().mainClassOffset,
                               lineStartNonWSOffset);
     }
     return word;

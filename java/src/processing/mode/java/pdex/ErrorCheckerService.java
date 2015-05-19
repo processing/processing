@@ -111,7 +111,7 @@ public class ErrorCheckerService implements Runnable {
   /**
    * Stores all Problems in the sketch
    */
-  public ArrayList<Problem> problemsList;
+  public List<Problem> problemsList;
 
   /**
    * How many lines are present till the initial class declaration? In static
