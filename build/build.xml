@@ -24,6 +24,21 @@
     <echo message="The tools.jar file is not required to build Processing." />
   </target>
 
+  <!-- detetect Raspberry Pi and friends -->
+  <condition property="linux-arm32" value="linux-arm32">
+    <and>
+      <equals arg1="${platform}" arg2="linux" />
+      <equals arg1="${os.arch}" arg2="arm" />
+      <equals arg1="${sun.arch.data.model}" arg2="32" />
+    </and>
+  </condition>
+
+  <target name="check-linux-arm32" if="linux-arm32">
+    <!-- there is currently no JRE available -->
+    <property name="jre.download.jdk" value="true" />
+    <property name="jre.downloader" value="linux-arm-vfp-hflt.tar.gz" />
+  </target>
+
   <!-- Require Java 8 everywhere. -->
   <fail message="Unsupported Java version: ${java.version}. To build, make sure that Java 8 (aka Java 1.8) is installed."> 
     <condition> 
@@ -46,7 +61,7 @@
   <property name="jdk.update" value="72" />
   <property name="jdk.build" value="14" />
   -->
-  <!-- Switching to 8 because updates for 7 end April 2015 -->
+  <!-- Switching to 8 because updates for 7 ended April 2015 -->
   <property name="jdk.version" value="8" />
   <property name="jdk.update" value="51" />
   <property name="jdk.build" value="16" />
@@ -64,16 +79,6 @@
     <equals arg1="${sun.arch.data.model}" arg2="64" />
   </condition>
   -->
-
-  <!-- for use with the Ant Task -->
-  <condition property="jre.downloader" 
-             value="${platform}-i586.tar.gz"> 
-    <equals arg1="${sun.arch.data.model}" arg2="32" />
-  </condition>
-  <condition property="jre.downloader" 
-             value="${platform}-x64.tar.gz"> 
-    <equals arg1="${sun.arch.data.model}" arg2="64" />
-  </condition>
 
   <!-- JDK location for Mac OS X -->
   <!--
@@ -211,10 +216,22 @@
 
   <target name="jre-download" depends="jre-check, downloader-setup"
           unless="jre.tgz.downloaded">
+    <!-- we normally download a JRE, except on arm -->
+    <property name="jre.download.jdk" value="false" />
+
+    <condition property="jre.downloader"
+               value="${platform}-i586.tar.gz">
+        <equals arg1="${sun.arch.data.model}" arg2="32" />
+    </condition>
+    <condition property="jre.downloader"
+               value="${platform}-x64.tar.gz">
+      <equals arg1="${sun.arch.data.model}" arg2="64" />
+    </condition>
+
     <downloader version="${jdk.version}" 
                 update="${jdk.update}" 
                 build="${jdk.build}" 
-                jdk="false" 
+                jdk="${jre.download.jdk}"
                 flavor="${jre.downloader}"
                 path="${jre.tgz.path}" />    
   </target>
@@ -706,7 +723,7 @@
     <fail message="wrong platform (${os.name})" />
   </target>
   
-  <target name="linux-build" depends="ignore-tools, revision-check, linux-check-os, jre-download, subprojects-build" description="Build Linux version">
+  <target name="linux-build" depends="ignore-tools, check-linux-arm32, revision-check, linux-check-os, jre-download, subprojects-build" description="Build Linux version">
     <mkdir dir="linux/work" />
     
     <copy todir="linux/work">
@@ -783,13 +800,27 @@
     We only want to move when the folder didn't exist before
     <move file="linux/jre1.7.0_40" tofile="linux/work/java" />
     -->
+
+    <!-- use the jre subfolder when having downloaded a JDK file -->
+    <condition property="jre.dir" value="jdk${jdk.esoteric}/jre/">
+      <!-- property might not be set, but it is for arm -->
+      <equals arg1="${jre.download.jdk}" arg2="true" />
+    </condition>
+    <condition property="jre.dir" value="jre${jdk.esoteric}/">
+      <not>
+        <equals arg1="${jre.download.jdk}" arg2="true" />
+      </not>
+    </condition>
+
     <exec executable="rsync" dir="linux">
       <arg value="-a" />
       <arg value="--delete" />
-      <arg value="jre${jdk.esoteric}/" />
+      <arg value="${jre.dir}" />
       <arg value="work/java" />
     </exec>
-    <delete dir="linux/jre${jdk.esoteric}" />
+
+    <delete dir="linux/jre${jdk.esoteric}" failonerror="false" />
+    <delete dir="linux/jdk${jdk.esoteric}" failonerror="false" />
 
     <!-- Remove unused JRE bloat. -->
     <delete failonerror="true">
