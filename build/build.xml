@@ -54,6 +54,7 @@
   <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
 
   <!-- Figure out the JRE download location for Linux and Windows. -->
+  <!--
   <condition property="jre.file" 
              value="jre-${jdk.short}-${platform}-i586.tar.gz"> 
     <equals arg1="${sun.arch.data.model}" arg2="32" />
@@ -62,16 +63,7 @@
              value="jre-${jdk.short}-${platform}-x64.tar.gz"> 
     <equals arg1="${sun.arch.data.model}" arg2="64" />
   </condition>
-
-  <!-- for the full name from processing.org/downloads -->
-  <condition property="jre.download" 
-             value="${jdk.short}-${platform}-i586.tar.gz"> 
-    <equals arg1="${sun.arch.data.model}" arg2="32" />
-  </condition>
-  <condition property="jre.download" 
-             value="${jdk.short}-${platform}-x64.tar.gz"> 
-    <equals arg1="${sun.arch.data.model}" arg2="64" />
-  </condition>
+  -->
 
   <!-- for use with the Ant Task -->
   <condition property="jre.downloader" 
