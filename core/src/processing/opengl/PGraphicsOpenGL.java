@@ -12465,7 +12465,8 @@ public class PGraphicsOpenGL extends PGraphics {
           if (0 < avect.length) {
             double temp[] = new double[vertex.length + avect.length];
             PApplet.arrayCopy(vertex, 0, temp, 0, vertex.length);
-            PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length); // TODO careful with indices...
+            PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length);
+            vertex = temp;
           }
           gluTess.addVertex(vertex);
         }
@@ -12575,7 +12576,8 @@ public class PGraphicsOpenGL extends PGraphics {
           if (0 < avect.length) {
             double temp[] = new double[vertex.length + avect.length];
             PApplet.arrayCopy(vertex, 0, temp, 0, vertex.length);
-            PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length); // TODO careful with indices...
+            PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length);
+            vertex = temp;
           }
           gluTess.addVertex(vertex);
         }
@@ -12683,7 +12685,8 @@ public class PGraphicsOpenGL extends PGraphics {
         if (0 < avect.length) {
           double temp[] = new double[vertex0.length + avect.length];
           PApplet.arrayCopy(vertex0, 0, temp, 0, vertex0.length);
-          PApplet.arrayCopy(avect, 0, temp, vertex0.length, avect.length); // TODO careful with indices...
+          PApplet.arrayCopy(avect, 0, temp, vertex0.length, avect.length);
+          vertex0 = temp;
         }
         gluTess.addVertex(vertex0);
       }
@@ -12704,7 +12707,8 @@ public class PGraphicsOpenGL extends PGraphics {
           if (0 < avect.length) {
             double temp[] = new double[vertex1.length + avect.length];
             PApplet.arrayCopy(vertex1, 0, temp, 0, vertex1.length);
-            PApplet.arrayCopy(avect, 0, temp, vertex1.length, avect.length); // TODO careful with indices...
+            PApplet.arrayCopy(avect, 0, temp, vertex1.length, avect.length);
+            vertex1 = temp;
           }
           gluTess.addVertex(vertex1);
         }
@@ -12769,7 +12773,8 @@ public class PGraphicsOpenGL extends PGraphics {
         if (0 < avect.length) {
           double temp[] = new double[vertex.length + avect.length];
           PApplet.arrayCopy(vertex, 0, temp, 0, vertex.length);
-          PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length); // TODO careful with indices...
+          PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length);
+          vertex = temp;
         }
         gluTess.addVertex(vertex);
       }
