@@ -9068,15 +9068,15 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void initAttrib(VertexAttribute attrib) {
-      if (attrib.type == PGL.FLOAT) {
+      if (attrib.type == PGL.FLOAT && !fpolyAttribs.containsKey(attrib.name)) {
         float[] temp = new float[attrib.tessSize * PGL.DEFAULT_TESS_VERTICES];
         fpolyAttribs.put(attrib.name, temp);
         polyAttribBuffers.put(attrib.name, PGL.allocateFloatBuffer(temp));
-      } else if (attrib.type == PGL.INT) {
+      } else if (attrib.type == PGL.INT && !ipolyAttribs.containsKey(attrib.name)) {
         int[] temp = new int[attrib.tessSize * PGL.DEFAULT_TESS_VERTICES];
         ipolyAttribs.put(attrib.name, temp);
         polyAttribBuffers.put(attrib.name, PGL.allocateIntBuffer(temp));
-      } else if (attrib.type == PGL.BOOL) {
+      } else if (attrib.type == PGL.BOOL && !bpolyAttribs.containsKey(attrib.name)) {
         byte[] temp = new byte[attrib.tessSize * PGL.DEFAULT_TESS_VERTICES];
         bpolyAttribs.put(attrib.name, temp);
         polyAttribBuffers.put(attrib.name, PGL.allocateByteBuffer(temp));
@@ -13116,7 +13116,6 @@ public class PGraphicsOpenGL extends PGraphics {
         vertex[0] = coords[0];
         vertex[1] = coords[1];
         vertex[2] = coords[2];
-        System.out.println("combine: " + n);
 
         // Calculating the rest of the vertex parameters (color,
         // normal, texcoords) as the linear combination of the
