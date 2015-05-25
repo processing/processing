@@ -157,6 +157,14 @@ public class Library extends LocalContribution {
       nativeLibraryFolder = hostLibrary;
     }
 //    System.out.println("3 native lib folder now " + nativeLibraryFolder);
+
+    if (hostPlatform.equals("linux") && System.getProperty("os.arch").equals("arm")) {
+      hostLibrary = new File(libraryFolder, "linux-armv6hf");
+      if (hostLibrary.exists()) {
+        nativeLibraryFolder = hostLibrary;
+      }
+    }
+
     // save that folder for later use
     nativeLibraryPath = nativeLibraryFolder.getAbsolutePath();
 
