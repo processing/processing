@@ -70,6 +70,7 @@ public class Library extends LocalContribution {
         if (name.equals("linux")) return false;
         if (name.equals("linux32")) return false;
         if (name.equals("linux64")) return false;
+        if (name.equals("linux-armv6hf")) return false;
         if (name.equals("android")) return false;
       }
       return true;
