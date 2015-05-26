@@ -1182,7 +1182,6 @@ public class PShapeOpenGL extends PShape {
       attrib = new VertexAttribute(name, type, size);
       polyAttribs.put(name, attrib);
       inGeo.initAttrib(attrib);
-      tessGeo.initAttrib(attrib);
     }
     if (attrib.size != size) {
       PGraphics.showWarning("New value for vertex attribute has wrong number of values");
@@ -2794,6 +2793,10 @@ public class PShapeOpenGL extends PShape {
         tessGeo = PGraphicsOpenGL.newTessGeometry(pg, polyAttribs, PGraphicsOpenGL.RETAINED);
       }
       tessGeo.clear();
+      for (int i = 0; i < polyAttribs.size(); i++) {
+        VertexAttribute attrib = polyAttribs.get(i);
+        tessGeo.initAttrib(attrib);
+      }
 
       tessellateImpl();
 
@@ -4542,14 +4545,8 @@ public class PShapeOpenGL extends PShape {
     modified = true;
   }
 
-  protected void setModifiedPolyAttrib(VertexAttribute attrib, int first, int last) {
-    if (first < attrib.firstModified) attrib.firstModified = first;
-    if (last > attrib.lastModified) attrib.lastModified = last;
-    attrib.modified = true;
-    modified = true;
-  }
 
-  protected void setModifiedPolyAttribs(VertexAttribute attrib, int first, int last) {
+  protected void setModifiedPolyAttrib(VertexAttribute attrib, int first, int last) {
     if (first < attrib.firstModified) attrib.firstModified = first;
     if (last > attrib.lastModified) attrib.lastModified = last;
     attrib.modified = true;

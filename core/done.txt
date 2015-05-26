@@ -1,3 +1,28 @@
+0236 (3.0a9)
+X Implement Cmd-Q handler on Mac OS X
+X   https://github.com/processing/processing/issues/3301
+X Changing "background color when Presenting" causes Exception
+X   https://github.com/processing/processing/issues/3299
+X remove "null in initImage()" message
+X displayWidth and displayHeight are zero
+X   https://github.com/processing/processing/issues/3295
+
+fixed in 3.0a8
+X Full screen window on second monitor without using present mode
+X   https://github.com/processing/processing/issues/3271
+
+andres
+X Offscreen rendering broken in OpenGL renderers
+X   https://github.com/processing/processing/issues/3292
+X   https://github.com/processing/processing/issues/3259
+X Initial location of OpenGL window hides the title bar
+X   https://github.com/processing/processing/issues/2981
+X OpenGL sketches do not terminate, have to be killed
+X   https://github.com/processing/processing/issues/2982
+X Quitting P3D sketch throws an error
+X   https://github.com/processing/processing/issues/3293
+
+
 0235 (3.0a8)
 X fairly major rewrite of createShape() 
 X   prevents same code from appearing 5x (!) in the source

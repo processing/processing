@@ -1,47 +1,4 @@
-0236 (3.0a9)
-X show screen dimensions in the Preferences window for display selector
-
-gui/pdex/debugger
-X implement the bottom half of the editor window
-X   editor window draws in stages (at least on OS X) on first view
-X   the console/bottom area stays white until an additional repaint?
-X   fixed these issues and replaced with footer
-X remove EditorLineStatus (we have line numbers)
-X automatically show the variables window when debugging, hide when not
-X ctrl-y shortcut duplicated
-X   https://github.com/processing/processing/issues/3298
-X remove "Experimental Mode: Yikes!" messages
-o NullPointerException in initiateToolTip()
-X   https://github.com/processing/processing/issues/3286
-X   can no longer reproduce
-X get rid of the debugger 'pane', just have that be the old window
-o   show debug window when running, hide when stopped
-o   can we animate the show/hide for the debug box?
-X large window places the debugger window offscreen
-X   https://github.com/processing/processing/issues/3091
-X almost all of the debugger menu needs to disappear
-X   https://github.com/processing/processing/issues/3267
-X   everything below toggle breakpoint, plus show/hide inspector
-X debugger button should show/hide toolbar buttons for step/continue
-X name of toggle debug and variable inspector
-X   Enable Debugger (with or without a checkbox)
-X   "show inspector" "hide inspector" "variable inspector" (with a check)
-o need unavailable/deactivate state for debug toolbar items
-o   or hide the tray when not debugging? Debug just a menu checkbox?
-o fix hasJavaTabs() function
-o   almost always used as a negative, or tied to a 'return' from fxn
-o   name isn't tied to its function, but the symptom
-X update hasJavaTabs on editor header rebuild
-X remove focus border from the Variables window
-X need active state for the butterfly
-X click a line number to toggle breakpoint
-X   was in there before, but required double-click
-
-in alpha 8 (but not confirmed in time)
-X "step" not working properly
-X   https://github.com/processing/processing/issues/3266
-X Cmd-click behavior on function/variable is firing when cmd-click not pressed
-X   https://github.com/processing/processing/issues/3242
+0237 (3.0a10)
 
 
 gui
