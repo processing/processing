@@ -125,6 +125,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
               updateColors();  // XXX this is the place
             }
           }
+          EventQueue.invokeLater(new Runnable() {
+            public void run() {
+              scrollRectToVisible(new Rectangle(0, 0, 1, 1));
+            }
+          });
         }
       });
     }
