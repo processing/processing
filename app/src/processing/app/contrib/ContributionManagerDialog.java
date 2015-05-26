@@ -469,7 +469,7 @@ public class ContributionManagerDialog {
 
   protected void downloadAndUpdateContributionListing() {
     retryConnectingButton.setEnabled(false);
-
+    status.setMessage(Language.text("contrib.status.downloading_list"));
     contribListing.downloadAvailableList(new ContribProgressBar(progressBar) {
       
       
