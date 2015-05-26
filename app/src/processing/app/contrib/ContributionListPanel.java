@@ -125,6 +125,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
               updateColors();  // XXX this is the place
             }
           }
+          // http://stackoverflow.com/questions/19400239/scrolling-to-the-top-jpanel-inside-a-jscrollpane
           EventQueue.invokeLater(new Runnable() {
             public void run() {
               scrollRectToVisible(new Rectangle(0, 0, 1, 1));
