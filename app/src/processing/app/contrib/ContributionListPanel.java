@@ -86,33 +86,48 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
 
   private void updatePanelOrdering() {
-    int row = 0;
-    for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
-      GridBagConstraints c = new GridBagConstraints();
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.weightx = 1;
-      c.gridx = 0;
-      c.gridy = row++;
-      c.anchor = GridBagConstraints.NORTH;
-
-      add(entry.getValue(), c);
-    }
-
+    int row = panelByContribution.size() + 1;
     GridBagConstraints c = new GridBagConstraints();
     c.fill = GridBagConstraints.BOTH;
     c.weightx = 1;
     c.weighty = 1;
     c.gridx = 0;
-    c.gridy = row++;
+    c.gridy = row--;
     c.anchor = GridBagConstraints.NORTH;
     add(status, c);
+    List<Entry<Contribution, ContributionPanel>> entries = new ArrayList<Map.Entry<Contribution,ContributionPanel>>(panelByContribution.entrySet());
+    Collections.sort(entries, new Comparator<Entry<Contribution, ContributionPanel>>(){
+
+      @Override
+      public int compare(Entry<Contribution, ContributionPanel> o1,
+                         Entry<Contribution, ContributionPanel> o2) {
+        return o2.getKey().getName().toLowerCase().compareTo(o1.getKey().getName().toLowerCase());
+      }
+      
+    });
+//    for (Entry<Contribution, ContributionPanel> entry : entries) {
+//      System.out.println(entry.getKey().getName());
+//    }
+//    System.out.println("---------------------");
+//    Collections.reverse(entries);
+    for (Entry<Contribution, ContributionPanel> entry : entries) {
+      c = new GridBagConstraints();
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.weightx = 1;
+      c.gridx = 0;
+      c.gridy = row--;
+      c.anchor = GridBagConstraints.NORTH;
+//      System.out.println("i got executed " + entry.getKey().getName());
+      add(entry.getValue(), c);
+    }
+
   }
 
 
   public void contributionAdded(final Contribution contribution) {
     if (filter.matches(contribution)) {
-      EventQueue.invokeLater(new Runnable() {
-        public void run() {
+//      EventQueue.invokeLater(new Runnable() {
+//        public void run() {
           if (!panelByContribution.containsKey(contribution)) {
             ContributionPanel newPanel = new ContributionPanel(ContributionListPanel.this);
             synchronized (panelByContribution) {
@@ -121,19 +136,20 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             if (newPanel != null) {
               newPanel.setContribution(contribution);
               add(newPanel);
-              updatePanelOrdering();
+//              updatePanelOrdering();
+//              scrollRectToVisible(new Rectangle(0, 0, 1, 1));
               updateColors();  // XXX this is the place
             }
           }
           // To make the scroll shift to the first element
           // http://stackoverflow.com/questions/19400239/scrolling-to-the-top-jpanel-inside-a-jscrollpane
-          EventQueue.invokeLater(new Runnable() {
-            public void run() {
-              scrollRectToVisible(new Rectangle(0, 0, 1, 1));
-            }
-          });
-        }
-      });
+//          EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+////              scrollRectToVisible(new Rectangle(0, 0, 1, 1));
+//            }
+//          });
+//        }
+//      });
     }
   }
 
@@ -168,7 +184,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             panelByContribution.remove(oldContrib);
             panel.setContribution(newContrib);
             panelByContribution.put(newContrib, panel);
-            updatePanelOrdering();
+//            updatePanelOrdering();
           }
         }
       }
@@ -341,5 +357,26 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   public boolean getScrollableTracksViewportWidth() {
     return true;
+  }
+
+
+  @Override
+  public void lock() {
+    setVisible(false);
+  }
+
+
+  @Override
+  public void unlock() {
+    EventQueue.invokeLater(new Runnable() {
+      
+      @Override
+      public void run() {
+        // TODO Auto-generated method stub
+        updatePanelOrdering();
+        setVisible(true);
+        
+      }
+    });
   }
 }

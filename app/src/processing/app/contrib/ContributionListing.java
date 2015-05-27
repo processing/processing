@@ -86,6 +86,9 @@ public class ContributionListing {
     for (Contribution contribution : advertisedContributions) {
       addContribution(contribution);
     }
+    for (ContributionChangeListener contributionChangeListener : listeners) {
+      contributionChangeListener.unlock();
+    }
     Collections.sort(allContributions, nameComparator);
   }
 
@@ -95,6 +98,9 @@ public class ContributionListing {
    * pre-existing libraries by the same name as one in the list.
    */
   protected void updateInstalledList(List<Contribution> installedContributions) {
+    for (ContributionChangeListener contributionChangeListener : listeners) {
+      contributionChangeListener.lock();
+    }
     for (Contribution contribution : installedContributions) {
       Contribution existingContribution = getContribution(contribution);
       if (existingContribution != null) {
@@ -104,6 +110,9 @@ public class ContributionListing {
         addContribution(contribution);
       }
     }
+//    for (ContributionChangeListener contributionChangeListener : listeners) {
+//      contributionChangeListener.unlock();
+//    }
   }
 
 
@@ -418,7 +427,13 @@ public class ContributionListing {
             }
             hasDownloadedLatestList = true;
             hasListDownloadFailed = false;
+            for (ContributionChangeListener contributionChangeListener : listeners) {
+              contributionChangeListener.lock();
+            }
             setAdvertisedList(listingFile);
+            for (ContributionChangeListener contributionChangeListener : listeners) {
+              contributionChangeListener.unlock();
+            }
           }
           else
             hasListDownloadFailed = true;
@@ -569,7 +584,7 @@ public class ContributionListing {
   }
 
 
-  static Comparator<Contribution> nameComparator = new Comparator<Contribution>() {
+  public static Comparator<Contribution> nameComparator = new Comparator<Contribution>() {
     public int compare(Contribution o1, Contribution o2) {
       return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
     }

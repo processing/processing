@@ -477,6 +477,8 @@ public class ContributionManagerDialog {
       public void startTask(String name, int maxValue) {
         super.startTask(name, maxValue);
         progressBar.setString(null);
+//        updateContributionListing();
+
       }
 
       @Override
