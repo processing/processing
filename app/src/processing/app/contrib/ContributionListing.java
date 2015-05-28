@@ -86,9 +86,6 @@ public class ContributionListing {
     for (Contribution contribution : advertisedContributions) {
       addContribution(contribution);
     }
-    for (ContributionChangeListener contributionChangeListener : listeners) {
-      contributionChangeListener.unlock();
-    }
     Collections.sort(allContributions, nameComparator);
   }
 
@@ -98,9 +95,6 @@ public class ContributionListing {
    * pre-existing libraries by the same name as one in the list.
    */
   protected void updateInstalledList(List<Contribution> installedContributions) {
-    for (ContributionChangeListener contributionChangeListener : listeners) {
-      contributionChangeListener.lock();
-    }
     for (Contribution contribution : installedContributions) {
       Contribution existingContribution = getContribution(contribution);
       if (existingContribution != null) {
@@ -110,9 +104,6 @@ public class ContributionListing {
         addContribution(contribution);
       }
     }
-//    for (ContributionChangeListener contributionChangeListener : listeners) {
-//      contributionChangeListener.unlock();
-//    }
   }
 
 
@@ -405,7 +396,6 @@ public class ContributionListing {
     new Thread(new Runnable() {
       public void run() {
         downloadingListingLock.lock();
-
         URL url = null;
         try {
           url = new URL(LISTING_URL);
@@ -427,12 +417,9 @@ public class ContributionListing {
             }
             hasDownloadedLatestList = true;
             hasListDownloadFailed = false;
-            for (ContributionChangeListener contributionChangeListener : listeners) {
-              contributionChangeListener.lock();
-            }
             setAdvertisedList(listingFile);
             for (ContributionChangeListener contributionChangeListener : listeners) {
-              contributionChangeListener.unlock();
+              contributionChangeListener.asyncUpdatePanelOrdering(true);
             }
           }
           else

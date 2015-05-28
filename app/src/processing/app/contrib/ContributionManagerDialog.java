@@ -470,6 +470,7 @@ public class ContributionManagerDialog {
   protected void downloadAndUpdateContributionListing() {
     retryConnectingButton.setEnabled(false);
     status.setMessage(Language.text("contrib.status.downloading_list"));
+    contributionListPanel.setVisible(false);
     contribListing.downloadAvailableList(new ContribProgressBar(progressBar) {
       
       
@@ -477,8 +478,6 @@ public class ContributionManagerDialog {
       public void startTask(String name, int maxValue) {
         super.startTask(name, maxValue);
         progressBar.setString(null);
-//        updateContributionListing();
-
       }
 
       @Override
@@ -496,10 +495,12 @@ public class ContributionManagerDialog {
 
         updateContributionListing();
         updateCategoryChooser();
+        
 
         retryConnectingButton.setEnabled(true);
 
         if (error) {
+        contributionListPanel.asyncUpdatePanelOrdering(true);
           if (exception instanceof SocketTimeoutException) {
             status.setErrorMessage(Language
               .text("contrib.errors.list_download.timeout"));
