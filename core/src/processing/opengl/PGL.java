@@ -1296,12 +1296,15 @@ public abstract class PGL {
   }
 
 
+  protected static boolean isPowerOfTwo(int val) {
+    return (val & (val - 1)) == 0;
+  }
+
+
   // bit shifting this might be more efficient
   protected static int nextPowerOfTwo(int val) {
     int ret = 1;
-    while (ret < val) {
-      ret <<= 1;
-    }
+    while (ret < val) ret <<= 1;
     return ret;
   }
 
