@@ -56,6 +56,11 @@ public abstract class LocalContribution extends Contribution {
     File propertiesFile = new File(folder, getTypeName() + ".properties");
     if (propertiesFile.exists()) {
       properties = Base.readSettings(propertiesFile);
+      
+      File propertiesLanguageFile = new File(folder, getTypeName() +"_" + Language.getLanguage() + ".properties");
+      if(propertiesLanguageFile.exists()){
+        properties.putAll(Base.readSettings(propertiesLanguageFile));
+      }
 
       name = properties.get("name");
       id = properties.get("id");
