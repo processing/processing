@@ -7122,6 +7122,15 @@ public class PGraphicsOpenGL extends PGraphics {
       active = true;
     }
 
+    public boolean diff(VertexAttribute attr) {
+       return !name.equals(attr.name) ||
+              kind != attr.kind ||
+              type != attr.type ||
+              size != attr.size ||
+              tessSize != attr.tessSize ||
+              elementSize != attr.elementSize;
+    }
+
     boolean isPosition() {
       return kind == POSITION;
     }

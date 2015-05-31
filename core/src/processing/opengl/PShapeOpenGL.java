@@ -2788,7 +2788,12 @@ public class PShapeOpenGL extends PShape {
 
 
   protected void tessellate() {
-    if (root == this && parent == null) {
+    if (root == this && parent == null) { // Root shape
+      if (polyAttribs == null) {
+        polyAttribs = PGraphicsOpenGL.newAttributeMap();
+        collectPolyAttribs();
+      }
+
       if (tessGeo == null) {
         tessGeo = PGraphicsOpenGL.newTessGeometry(pg, polyAttribs, PGraphicsOpenGL.RETAINED);
       }
@@ -2807,6 +2812,30 @@ public class PShapeOpenGL extends PShape {
     }
   }
 
+
+  protected void collectPolyAttribs() {
+    AttributeMap rootAttribs = root.polyAttribs;
+
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShapeOpenGL child = (PShapeOpenGL) children[i];
+        child.collectPolyAttribs();
+      }
+    } else {
+      for (int i = 0; i < polyAttribs.size(); i++) {
+        VertexAttribute attrib = polyAttribs.get(i);
+        tessGeo.initAttrib(attrib);
+        if (rootAttribs.containsKey(attrib.name)) {
+          VertexAttribute rattrib = rootAttribs.get(attrib.name);
+          if (rattrib.diff(attrib)) {
+            throw new RuntimeException("Children shapes cannot have different attributes with same name");
+          }
+        } else {
+          rootAttribs.put(attrib.name, attrib);
+        }
+      }
+    }
+  }
 
   protected void tessellateImpl() {
     tessGeo = root.tessGeo;
