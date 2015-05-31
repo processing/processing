@@ -523,8 +523,14 @@ public class PSurfaceJOGL implements PSurface {
   }
 
   public float getPixelScale() {
-    window.getCurrentSurfaceScale(currentPixelScale);
-    return currentPixelScale[0];
+    if (graphics.is2X()) {
+      // Even if the graphics are retina, the user might have moved the window
+      // into a non-retina monitor, so we need to check
+      window.getCurrentSurfaceScale(currentPixelScale);
+      return currentPixelScale[0];
+    } else {
+      return 1;
+    }
   }
 
   public Component getComponent() {
