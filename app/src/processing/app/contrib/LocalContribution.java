@@ -57,6 +57,7 @@ public abstract class LocalContribution extends Contribution {
     if (propertiesFile.exists()) {
       properties = Base.readSettings(propertiesFile);
       
+      // Read properties from specific file like libraries_en.properties
       File propertiesLanguageFile = new File(folder, getTypeName() +"_" + Language.getLanguage() + ".properties");
       if(propertiesLanguageFile.exists()){
         properties.putAll(Base.readSettings(propertiesLanguageFile));
