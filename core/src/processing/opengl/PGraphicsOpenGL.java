@@ -590,6 +590,9 @@ public class PGraphicsOpenGL extends PGraphics {
   public void setSize(int iwidth, int iheight) {
     width = iwidth;
     height = iheight;
+    float f = getPixelScale();
+    pixelWidth = (int)(width * f);
+    pixelHeight = (int)(height * f);
 
     // init perspective projection based on new dimensions
     cameraFOV = 60 * DEG_TO_RAD; // at least for now
@@ -700,7 +703,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public float getPixelScale() {
-    return surfaceJOGL.getPixelScale();
+    if (surfaceJOGL == null) return pixelFactor;
+    else return surfaceJOGL.getPixelScale();
   }
 
 
