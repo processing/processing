@@ -5733,20 +5733,21 @@ public class PGraphicsOpenGL extends PGraphics {
                          int sourceX, int sourceY,
                          int sourceWidth, int sourceHeight,
                          int targetX, int targetY) {
+    // Copies the pixels
     loadPixels();
-    super.setImpl(sourceImage, sourceX, sourceY, sourceWidth, sourceHeight,
-                  targetX, targetY);
- // do we need this?
- // see https://github.com/processing/processing/issues/2125
-//     if (sourceImage.format == RGB) {
-//       int targetOffset = targetY * width + targetX;
-//       for (int y = sourceY; y < sourceY + sourceHeight; y++) {
-//         for (int x = targetOffset; x < targetOffset + sourceWidth; x++) {
-//           pixels[x] |= 0xff000000;
-//         }
-//         targetOffset += width;
-//       }
-//     }
+    int sourceOffset = sourceY * sourceImage.pixelWidth + sourceX;
+    int targetOffset = targetY * pixelWidth + targetX;
+    for (int y = sourceY; y < sourceY + sourceHeight; y++) {
+      System.arraycopy(sourceImage.pixels, sourceOffset, pixels, targetOffset, sourceWidth);
+      sourceOffset += sourceImage.pixelWidth;
+      targetOffset += pixelWidth;
+    }
+
+    // Draws the texture, copy() is very efficient because it simply renders
+    // the texture cache of sourceImage using OpenGL.
+    copy(sourceImage,
+         sourceX, sourceY, sourceWidth, sourceHeight,
+         targetX, targetY, sourceWidth, sourceHeight);
   }
 
 
@@ -5893,7 +5894,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // Processing Y axis is inverted with respect to OpenGL, so we need to
     // invert the y coordinates of the screen rectangle.
     pgl.disable(PGL.BLEND);
-    pgl.drawTexture(texture.glTarget, texture.glName, texture.glWidth, texture.glHeight,
+    pgl.drawTexture(texture.glTarget, texture.glName,
+                    texture.glWidth, texture.glHeight,
                     0, 0, width, height,
                     x, y, x + w, y + h,
                     x, height - (y + h), x + w, height - y);
