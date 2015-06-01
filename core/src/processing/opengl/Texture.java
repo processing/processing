@@ -519,35 +519,40 @@ public class Texture implements PConstants {
 
   public void usingMipmaps(boolean mipmaps, int sampling)  {
     if (mipmaps) {
-      if (glMinFilter != PGL.LINEAR_MIPMAP_NEAREST &&
-          glMinFilter != PGL.LINEAR_MIPMAP_LINEAR) {
-        if (sampling == POINT) {
-          glMagFilter = PGL.NEAREST;
-          glMinFilter = PGL.NEAREST;
-        } else if (sampling == LINEAR)  {
-          glMagFilter = PGL.NEAREST;
-          glMinFilter =
-            PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;
-        } else if (sampling == BILINEAR)  {
-          glMagFilter = PGL.LINEAR;
-          glMinFilter =
-            PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;
-        } else if (sampling == TRILINEAR)  {
-          glMagFilter = PGL.LINEAR;
-          glMinFilter =
-            PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_LINEAR : PGL.LINEAR;
-        } else {
-          throw new RuntimeException("Unknown texture filtering mode");
-        }
-      }
-
       usingMipmaps = true;
-    } else {
-      if (glMinFilter == PGL.LINEAR_MIPMAP_NEAREST ||
-        glMinFilter == PGL.LINEAR_MIPMAP_LINEAR) {
-        glMinFilter = PGL.LINEAR;
+      if (sampling == POINT) {
+        glMagFilter = PGL.NEAREST;
+        glMinFilter = PGL.NEAREST;
+        usingMipmaps = false;
+      } else if (sampling == LINEAR)  {
+        glMagFilter = PGL.NEAREST;
+        glMinFilter =
+          PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;
+      } else if (sampling == BILINEAR)  {
+        glMagFilter = PGL.LINEAR;
+        glMinFilter =
+          PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;
+      } else if (sampling == TRILINEAR)  {
+        glMagFilter = PGL.LINEAR;
+        glMinFilter =
+          PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_LINEAR : PGL.LINEAR;
+      } else {
+        throw new RuntimeException("Unknown texture filtering mode");
       }
+    } else {
       usingMipmaps = false;
+      if (sampling == POINT) {
+        glMagFilter = PGL.NEAREST;
+        glMinFilter = PGL.NEAREST;
+      } else if (sampling == LINEAR)  {
+        glMagFilter = PGL.NEAREST;
+        glMinFilter = PGL.LINEAR;
+      } else if (sampling == BILINEAR || sampling == TRILINEAR)  {
+        glMagFilter = PGL.LINEAR;
+        glMinFilter = PGL.LINEAR;
+      } else {
+        throw new RuntimeException("Unknown texture filtering mode");
+      }
     }
 
     bind();
