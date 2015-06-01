@@ -94,25 +94,24 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       c.gridx = 0;
       c.gridy = row++;
       c.anchor = GridBagConstraints.NORTH;
-
       add(entry.getValue(), c);
     }
-
     GridBagConstraints c = new GridBagConstraints();
     c.fill = GridBagConstraints.BOTH;
     c.weightx = 1;
     c.weighty = 1;
     c.gridx = 0;
-    c.gridy = row++;
+    c.gridy = row;
     c.anchor = GridBagConstraints.NORTH;
     add(status, c);
+
   }
 
 
   public void contributionAdded(final Contribution contribution) {
     if (filter.matches(contribution)) {
-      EventQueue.invokeLater(new Runnable() {
-        public void run() {
+//      EventQueue.invokeLater(new Runnable() {
+//        public void run() {
           if (!panelByContribution.containsKey(contribution)) {
             ContributionPanel newPanel = new ContributionPanel(ContributionListPanel.this);
             synchronized (panelByContribution) {
@@ -121,12 +120,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             if (newPanel != null) {
               newPanel.setContribution(contribution);
               add(newPanel);
-              updatePanelOrdering();
+//              updatePanelOrdering();
               updateColors();  // XXX this is the place
             }
           }
-        }
-      });
+//      });
     }
   }
 
@@ -161,7 +159,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             panelByContribution.remove(oldContrib);
             panel.setContribution(newContrib);
             panelByContribution.put(newContrib, panel);
-            updatePanelOrdering();
+//            updatePanelOrdering();
           }
         }
       }
@@ -334,5 +332,17 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   public boolean getScrollableTracksViewportWidth() {
     return true;
+  }
+
+  @Override
+  public void asyncUpdatePanelOrdering(final boolean value) {
+    EventQueue.invokeLater(new Runnable() {
+      
+      @Override
+      public void run() {
+        updatePanelOrdering();
+        setVisible(value);
+      }
+    });
   }
 }

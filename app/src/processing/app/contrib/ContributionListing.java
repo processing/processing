@@ -396,7 +396,6 @@ public class ContributionListing {
     new Thread(new Runnable() {
       public void run() {
         downloadingListingLock.lock();
-
         URL url = null;
         try {
           url = new URL(LISTING_URL);
@@ -419,6 +418,9 @@ public class ContributionListing {
             hasDownloadedLatestList = true;
             hasListDownloadFailed = false;
             setAdvertisedList(listingFile);
+            for (ContributionChangeListener contributionChangeListener : listeners) {
+              contributionChangeListener.asyncUpdatePanelOrdering(true);
+            }
           }
           else
             hasListDownloadFailed = true;
@@ -569,7 +571,7 @@ public class ContributionListing {
   }
 
 
-  static Comparator<Contribution> nameComparator = new Comparator<Contribution>() {
+  public static Comparator<Contribution> nameComparator = new Comparator<Contribution>() {
     public int compare(Contribution o1, Contribution o2) {
       return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
     }
