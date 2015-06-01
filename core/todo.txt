@@ -1,5 +1,5 @@
 0237 (3.0a10)
-
+X retain original java.awt.Frame when it's in use
 
 fixed earlier/can no longer reproduce
 X strips when rendering spheres with lights and anti-aliasing

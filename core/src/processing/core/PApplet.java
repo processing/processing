@@ -9716,7 +9716,8 @@ public class PApplet implements PConstants {
     g = createPrimaryGraphics();
     surface = g.createSurface();
 
-    if (g.displayable()) {
+    // if the PSurface calls setFrame() no need to create a fake frame
+    if (g.displayable() && frame == null) {
       frame = new Frame() {
         @Override
         public void setResizable(boolean resizable) {

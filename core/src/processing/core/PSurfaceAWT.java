@@ -517,7 +517,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     // http://code.google.com/p/processing/issues/detail?id=467
     frame.setResizable(false);
 
-//    return frame;
+    sketch.setFrame(frame);
   }
 
 
