@@ -1,7 +1,32 @@
 0237 (3.0a10)
 
 
+fixed earlier/can no longer reproduce
+X strips when rendering spheres with lights and anti-aliasing
+X   https://github.com/processing/processing/issues/1185
+
+andres/opengl
+X set(0, 0, image) does not set alpha channel to opaque in P2D/P3D
+X   https://github.com/processing/processing/issues/2125
+X save() and saveFrame() with OPENGL renderer fails
+X   https://github.com/processing/processing/issues/3334
+X group shapes are broken in 3.0a9
+X   https://github.com/processing/processing/issues/3336
+X only a quarter of the sketch is appearing with P2D_2X and P3D_2X
+X   (i.e. the image shows up too large) 
+X   https://github.com/processing/processing/issues/3332
+X   https://github.com/processing/processing/issues/3327
+X single transparent pixel at end of textures in OpenGL
+X   https://github.com/processing/processing/issues/115
+X implement setImpl() instead of set() inside PGraphicsOpenGL
+X   https://github.com/processing/processing/issues/160
+
+
 high priority
+_ sketch window briefly appears on top left corner when using OpenGL
+_   https://github.com/processing/processing/issues/3308
+_ looks like we're off by 1 on monitor numbering 
+_   https://github.com/processing/processing/issues/3309
 _ need a better option for using full screen
 _   https://github.com/processing/processing/issues/3296
 _   right now using a (display ignoring) hack to displayWidth/Height
@@ -72,6 +97,8 @@ _   probably from the material stuff, but we need to fix that
 
 
 full screen
+_ claim about a bar at the top in 10.9
+_   https://github.com/processing/processing/issues/3305
 _ present window draws in stages (OS X)
 _ split 'present' and 'full screen'?
 _   --full-screen causes considerable flicker at this point

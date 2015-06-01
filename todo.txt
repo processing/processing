@@ -1,7 +1,21 @@
 0237 (3.0a10)
 
+fixed earlier
+X Can't set Breakpoint from the Breakpoint bar at the side
+X   https://github.com/processing/processing/issues/2835
+X Old version number shown in Mode Manager dialog
+X   https://github.com/processing/processing/issues/2843
+
 
 gui
+_ add new app and export icons (downloaded)
+_ inquire about updated document icon
+_ don't show breakpoints when debugger is off
+_   https://github.com/processing/processing/issues/3093
+_ no setting breakpoints when debugger is off
+_   https://github.com/processing/processing/issues/3306
+_ make breakpoints more prominent
+_   https://github.com/processing/processing/issues/3307
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
 _ add a "what's new" window to explain features in 3
@@ -27,6 +41,8 @@ _   otherwise could run in one mode, then try to stop in another
 
 
 pde/build
+_ when variables used in size(), getting exceptions instead of any warning
+_   https://github.com/processing/processing/issues/3311
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
 _   because it's in the other ClassLoader, can no longer rely on it
 _ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
@@ -66,6 +82,10 @@ _ pass through the source to update licenses
 _   add Processing Foundation as 2012-15
 _   update license info to state gplv2 not v3
 _   run through that online license checker
+_ default display set to a second, then gets confused when monitor doesn't exist
+_   is this not resetting the preference?
+_   https://github.com/processing/processing/issues/1457
+_ add last revision used / max revision used settings?
 
 
 breakage
