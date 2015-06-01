@@ -3513,10 +3513,12 @@ public class PGraphicsOpenGL extends PGraphics {
       lastSmoothCall = parent.frameCount;
 
       quality = level;
-      System.out.println(quality);
 
-      if (quality == 1) {
+      if (quality <= 1) {
         quality = 0;
+        textureSampling = Texture.POINT;
+      } else {
+        textureSampling = Texture.TRILINEAR;
       }
 
       // This will trigger a surface restart next time
@@ -3531,6 +3533,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (smoothDisabled) return;
 
     smooth = false;
+    textureSampling = Texture.POINT;
 
     if (1 < quality) {
       smoothCallCount++;
@@ -6392,7 +6395,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void checkTexture(Texture tex) {
     if (!tex.colorBuffer() &&
-        tex.usingMipmaps == hints[DISABLE_TEXTURE_MIPMAPS]) {
+        (tex.usingMipmaps == hints[DISABLE_TEXTURE_MIPMAPS] ||
+         tex.currentSampling() != textureSampling)) {
       if (hints[DISABLE_TEXTURE_MIPMAPS]) {
         tex.usingMipmaps(false, textureSampling);
       } else {

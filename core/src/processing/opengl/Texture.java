@@ -357,8 +357,7 @@ public class Texture implements PConstants {
       if (PGraphicsOpenGL.autoMipmapGenSupported) {
         pgl.generateMipmap(glTarget);
       } else {
-        // TODO: finish manual mipmap generation,
-        // https://github.com/processing/processing/issues/3335
+        manualMipmap();
       }
     }
 
@@ -424,8 +423,7 @@ public class Texture implements PConstants {
       if (PGraphicsOpenGL.autoMipmapGenSupported) {
         pgl.generateMipmap(glTarget);
       } else {
-        // TODO: finish manual mipmap generation,
-        // https://github.com/processing/processing/issues/3335
+        manualMipmap();
       }
     }
     pgl.bindTexture(glTarget, 0);
@@ -518,8 +516,9 @@ public class Texture implements PConstants {
 
 
   public void usingMipmaps(boolean mipmaps, int sampling)  {
+    int glMagFilter0 = glMagFilter;
+    int glMinFilter0 = glMinFilter;
     if (mipmaps) {
-      usingMipmaps = true;
       if (sampling == POINT) {
         glMagFilter = PGL.NEAREST;
         glMinFilter = PGL.NEAREST;
@@ -528,14 +527,17 @@ public class Texture implements PConstants {
         glMagFilter = PGL.NEAREST;
         glMinFilter =
           PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;
+        usingMipmaps = true;
       } else if (sampling == BILINEAR)  {
         glMagFilter = PGL.LINEAR;
         glMinFilter =
           PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR;
+        usingMipmaps = true;
       } else if (sampling == TRILINEAR)  {
         glMagFilter = PGL.LINEAR;
         glMinFilter =
           PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_LINEAR : PGL.LINEAR;
+        usingMipmaps = true;
       } else {
         throw new RuntimeException("Unknown texture filtering mode");
       }
@@ -555,17 +557,19 @@ public class Texture implements PConstants {
       }
     }
 
-    bind();
-    pgl.texParameteri(glTarget, PGL.TEXTURE_MIN_FILTER, glMinFilter);
-    pgl.texParameteri(glTarget, PGL.TEXTURE_MAG_FILTER, glMagFilter);
-    if (usingMipmaps) {
-      if (PGraphicsOpenGL.autoMipmapGenSupported) {
-        pgl.generateMipmap(glTarget);
-      } else {
-        // TODO: need manual generation here..
+    if (glMagFilter0 != glMagFilter || glMinFilter0 != glMinFilter) {
+      bind();
+      pgl.texParameteri(glTarget, PGL.TEXTURE_MIN_FILTER, glMinFilter);
+      pgl.texParameteri(glTarget, PGL.TEXTURE_MAG_FILTER, glMagFilter);
+      if (usingMipmaps) {
+        if (PGraphicsOpenGL.autoMipmapGenSupported) {
+          pgl.generateMipmap(glTarget);
+        } else {
+          manualMipmap();
+        }
       }
+      unbind();
     }
-    unbind();
   }
 
 
@@ -651,6 +655,23 @@ public class Texture implements PConstants {
     invertedY = v;
   }
 
+
+  public int currentSampling() {
+    if (glMagFilter == PGL.NEAREST && glMinFilter == PGL.NEAREST) {
+      return POINT;
+    } else if (glMagFilter == PGL.NEAREST &&
+               glMinFilter == (PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR)) {
+      return LINEAR;
+    } else if (glMagFilter == PGL.LINEAR &&
+               glMinFilter == (PGL.MIPMAPS_ENABLED ? PGL.LINEAR_MIPMAP_NEAREST : PGL.LINEAR)) {
+      return BILINEAR;
+    } else if (glMagFilter == PGL.LINEAR &&
+               glMinFilter == PGL.LINEAR_MIPMAP_LINEAR) {
+      return TRILINEAR;
+    } else {
+      return -1;
+    }
+  }
 
   ////////////////////////////////////////////////////////////
 
@@ -777,6 +798,12 @@ public class Texture implements PConstants {
   protected void updatePixelBuffer(int[] pixels) {
     pixelBuffer = PGL.updateIntBuffer(pixelBuffer, pixels, true);
     pixBufUpdateCount++;
+  }
+
+
+  protected void manualMipmap() {
+    // TODO: finish manual mipmap generation,
+    // https://github.com/processing/processing/issues/3335
   }
 
 
