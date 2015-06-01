@@ -21,6 +21,17 @@ X   https://github.com/processing/processing/issues/160
 _ save() and saveFrame() with OPENGL renderer fails
 _   https://github.com/processing/processing/issues/3334
 
+beta
+_ fullScreen() method
+_ sort out display stuff
+_ Text looks blurry in GL Retina (andres)
+_   https://github.com/processing/processing/issues/2739
+_ check retina with PGraphicsRetina2D
+_ Text is half size in PGraphicsRetina2D
+_   https://github.com/processing/processing/issues/2738
+_ text not getting the correct font in Retina2D
+_   https://github.com/processing/processing/issues/2617
+
 
 critical
 _ draw() executes twice when noLoop() called in setup()
@@ -110,6 +121,8 @@ _   also not API we want to expose, so sort this out
 _   or maybe we're fine b/c now FX2D needs it as well
 _ when did setPath() sneak into PShape? API is nothing like anything else
 _   probably from the material stuff, but we need to fix that
+_ ortho function is broken
+_   https://github.com/processing/processing/issues/1278
 
 
 full screen
@@ -213,13 +226,6 @@ _   just do pixelFactor() (and pull it during compilation)?
 _   add sketchPixelFactor() to handle the scenario?
 _   or is it just a boolean, because pixelFactor(2) is the only option?
 _ remove retina hint
-_ Text looks blurry in GL Retina (andres)
-_   https://github.com/processing/processing/issues/2739
-_ check retina with PGraphicsRetina2D
-_ Text is half size in PGraphicsRetina2D
-_   https://github.com/processing/processing/issues/2738
-_ text not getting the correct font in Retina2D
-_   https://github.com/processing/processing/issues/2617
 _ saveFrame() with retina render is making black images
 _ no high-res display support for OpenGL
 _   https://github.com/processing/processing/issues/2573
