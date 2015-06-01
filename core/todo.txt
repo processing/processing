@@ -8,8 +8,6 @@ X   https://github.com/processing/processing/issues/1185
 andres/opengl
 X set(0, 0, image) does not set alpha channel to opaque in P2D/P3D
 X   https://github.com/processing/processing/issues/2125
-X save() and saveFrame() with OPENGL renderer fails
-X   https://github.com/processing/processing/issues/3334
 X group shapes are broken in 3.0a9
 X   https://github.com/processing/processing/issues/3336
 X only a quarter of the sketch is appearing with P2D_2X and P3D_2X
@@ -20,9 +18,26 @@ X single transparent pixel at end of textures in OpenGL
 X   https://github.com/processing/processing/issues/115
 X implement setImpl() instead of set() inside PGraphicsOpenGL
 X   https://github.com/processing/processing/issues/160
+_ save() and saveFrame() with OPENGL renderer fails
+_   https://github.com/processing/processing/issues/3334
+
+
+critical
+_ draw() executes twice when noLoop() called in setup()
+_   https://github.com/processing/processing/issues/3310
+_   broken since 3.0a7, but not in 3.0a5
+_ static mode broken with Java2D on Windows and Linux
+_   https://github.com/processing/processing/issues/3315
+_ sketch sometimes doesn't show with noLoop() on Linux
+_   https://github.com/processing/processing/issues/3316
 
 
 high priority
+_ prevent running _2X renderers on non-2x hardware
+_ PGraphic ignores PNG transparency (regression from 3.0a5)
+_   https://github.com/processing/processing/issues/3317
+_ strokeWeight() in setup() not working for default renderer
+_   https://github.com/processing/processing/issues/3331
 _ sketch window briefly appears on top left corner when using OpenGL
 _   https://github.com/processing/processing/issues/3308
 _ looks like we're off by 1 on monitor numbering 
@@ -83,6 +98,7 @@ _ public createShape() method that takes another shape as param?
 _   should just be the constructor doing this, or copy()
 _ add attrib() method
 _   https://github.com/processing/processing/issues/2963
+_   andres needs input on how the api works
 _   assign this to DXF as well?
 
 
