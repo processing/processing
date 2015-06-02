@@ -1,7 +1,7 @@
 package processing.app.tools;
 /*
  * Nearly all of this code is
- * Copyright (c) 2010-2011 Werner Randelshofer, Immensee, Switzerland.
+ * Copyright (c) 2010-2011 Werner Randelshofer, Goldau, Switzerland.
  * All rights reserved.
  * (However, he should not be held responsible for the current mess of a hack
  * that it has become.)
@@ -9,7 +9,17 @@ package processing.app.tools;
  * You may not use, copy or modify this file, except in compliance with the
  * license agreement you entered into with Werner Randelshofer.
  * For details see accompanying license terms.
+ *
+ * This code is licensed under the Creative Commons Attribution 3.0 licence
+ * (CC-BY-3.0).
  */
+
+import org.monte.media.math.Rational;
+import org.monte.media.Buffer;
+import org.monte.media.Format;
+import org.monte.media.gui.datatransfer.FileTextFieldTransferHandler;
+import org.monte.media.mp3.MP3AudioInputStream;
+import org.monte.media.quicktime.QuickTimeWriter;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -26,20 +36,17 @@ import javax.swing.filechooser.FileSystemView;
 
 import processing.app.Editor;
 import processing.app.Language;
-import ch.randelshofer.gui.datatransfer.FileTextFieldTransferHandler;
-import ch.randelshofer.media.mp3.MP3AudioInputStream;
-import ch.randelshofer.media.quicktime.QuickTimeWriter;
+import static org.monte.media.FormatKeys.*;
+import static org.monte.media.AudioFormatKeys.*;
+import static org.monte.media.VideoFormatKeys.*;
 
 
 /**
  * Hacked from Werner Randelshofer's QuickTimeWriter demo. The original version
- * can be found <a href="http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/">here</a>.
+ * can be found <a href="http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/">here</a>,
+ * and an updated copy is at src/org/monte/moviemaker/MovieMakerMain.java.
  * <p>
- * A more up-to-date version of the project seems to be 
- * <a href="http://www.randelshofer.ch/monte/">here</a>.
- * If someone would like to help us update the encoder, that'd be great.
- * <p>
- * Broken out as a separate project because the license (CC) probably isn't 
+ * Broken out as a separate project because the license (CC) probably isn't
  * compatible with the rest of Processing and we don't want any confusion.
  * <p>
  * Added JAI ImageIO to support lots of other image file formats [131008].
@@ -515,7 +522,7 @@ public class MovieMaker extends JFrame implements Tool {
     //final String streaming = prefs.get("movie.streaming", "fastStartCompressed");
     final String streaming = "fastStartCompressed";
     if (soundFile == null && imageFolder == null) {
-      JOptionPane.showMessageDialog(this, Language.text("movie_maker.error.need_input"));
+      showMessageDialog(this, Language.text("movie_maker.error.need_input"));
       return;
     }
 
@@ -525,28 +532,28 @@ public class MovieMaker extends JFrame implements Tool {
       height = Integer.parseInt(heightField.getText());
       fps = Double.parseDouble(fpsField.getText());
     } catch (Throwable t) {
-      JOptionPane.showMessageDialog(this, Language.text("movie_maker.error.badnumbers"));
+      showMessageDialog(this, Language.text("movie_maker.error.badnumbers"));
       return;
     }
     if (width < 1 || height < 1 || fps < 1) {
-      JOptionPane.showMessageDialog(this, Language.text("movie_maker.error.badnumbers"));
+      showMessageDialog(this, Language.text("movie_maker.error.badnumbers"));
       return;
     }
 
-    final QuickTimeWriter.VideoFormat videoFormat;
+    final Format videoFormat;
     switch (compressionBox.getSelectedIndex()) {
 //    case 0:
-//      videoFormat = QuickTimeWriter.VideoFormat.RAW;
+//      videoFormat = QuickTimeWriter.VIDEO_RAW;
 //      break;
     case 0://1:
-      videoFormat = QuickTimeWriter.VideoFormat.RLE;
+      videoFormat = QuickTimeWriter.VIDEO_ANIMATION;
       break;
     case 1://2:
-      videoFormat = QuickTimeWriter.VideoFormat.JPG;
+      videoFormat = QuickTimeWriter.VIDEO_JPEG;
       break;
     case 2://3:
     default:
-      videoFormat = QuickTimeWriter.VideoFormat.PNG;
+      videoFormat = QuickTimeWriter.VIDEO_PNG;
       break;
     }
 
@@ -659,7 +666,7 @@ public class MovieMaker extends JFrame implements Tool {
         if (o instanceof Throwable) {
           Throwable t = (Throwable) o;
           t.printStackTrace();
-          JOptionPane.showMessageDialog(MovieMaker.this,
+          showMessageDialog(MovieMaker.this,
               Language.text("movie_maker.error.movie_failed") + "\n" + (t.getMessage() == null ? t.toString() : t.getMessage()),
               Language.text("movie_maker.error.sorry"),
               JOptionPane.ERROR_MESSAGE);
@@ -714,7 +721,7 @@ public class MovieMaker extends JFrame implements Tool {
   
 
   /** variable frame rate. */
-  private void writeVideoOnlyVFR(File movieFile, File[] imgFiles, int width, int height, double fps, QuickTimeWriter.VideoFormat videoFormat, /*boolean passThrough,*/ String streaming) throws IOException {
+  private void writeVideoOnlyVFR(File movieFile, File[] imgFiles, int width, int height, double fps, Format videoFormat, /*boolean passThrough,*/ String streaming) throws IOException {
     File tmpFile = streaming.equals("none") ? movieFile : new File(movieFile.getPath() + ".tmp");
     ProgressMonitor p = new ProgressMonitor(MovieMaker.this, 
                                             Language.interpolate("movie_maker.progress.creating_file_name", movieFile.getName()),
@@ -730,7 +737,7 @@ public class MovieMaker extends JFrame implements Tool {
       int timeScale = (int) (fps * 100.0);
       int duration = 100;
 
-      qtOut = new QuickTimeWriter(videoFormat == QuickTimeWriter.VideoFormat.RAW ? movieFile : tmpFile);
+      qtOut = new QuickTimeWriter(videoFormat == QuickTimeWriter.VIDEO_RAW ? movieFile : tmpFile);
       qtOut.addVideoTrack(videoFormat, timeScale, width, height);
       qtOut.setSyncInterval(0, 30);
 
@@ -751,7 +758,7 @@ public class MovieMaker extends JFrame implements Tool {
 
         //if (passThrough) {
         if (false) {
-          qtOut.writeSample(0, f, duration);
+          qtOut.writeSample(0, f, duration, true);
         } else {
           //BufferedImage fImg = ImageIO.read(f);
           BufferedImage fImg = readImage(f);
@@ -760,7 +767,7 @@ public class MovieMaker extends JFrame implements Tool {
             prevImgDuration += duration;
           } else {
             if (prevImgDuration != 0) {
-              qtOut.writeFrame(0, prevImg, prevImgDuration);
+              qtOut.write(0, prevImg, prevImgDuration);
             }
             prevImgDuration = duration;
             System.arraycopy(data, 0, prevData, 0, data.length);
@@ -768,7 +775,7 @@ public class MovieMaker extends JFrame implements Tool {
         }
       }
       if (prevImgDuration != 0) {
-        qtOut.writeFrame(0, prevImg, prevImgDuration);
+        qtOut.write(0, prevImg, prevImgDuration);
       }
       if (streaming.equals("fastStart")) {
         qtOut.toWebOptimizedMovie(movieFile, false);
@@ -869,7 +876,7 @@ public class MovieMaker extends JFrame implements Tool {
   }
 
   private void writeVideoAndAudio(File movieFile, File[] imgFiles, File audioFile,
-      int width, int height, double fps, QuickTimeWriter.VideoFormat videoFormat,
+      int width, int height, double fps, Format videoFormat,
       /*boolean passThrough,*/ String streaming) throws IOException {
     File tmpFile = streaming.equals("none") ? movieFile : new File(movieFile.getPath() + ".tmp");
     ProgressMonitor p = new ProgressMonitor(MovieMaker.this,
@@ -895,7 +902,7 @@ public class MovieMaker extends JFrame implements Tool {
       int asDuration = (int) (audioFormat.getSampleRate() / audioFormat.getFrameRate());
       int vsDuration = 100;
       // Create writer
-      qtOut = new QuickTimeWriter(videoFormat == QuickTimeWriter.VideoFormat.RAW ? movieFile : tmpFile);
+      qtOut = new QuickTimeWriter(videoFormat == QuickTimeWriter.VIDEO_RAW ? movieFile : tmpFile);
       qtOut.addAudioTrack(audioFormat); // audio in track 0
       qtOut.addVideoTrack(videoFormat, (int) (fps * vsDuration), width, height);  // video in track 1
 
@@ -955,7 +962,7 @@ public class MovieMaker extends JFrame implements Tool {
           p.setNote(Language.interpolate("movie_maker.progress.processing", imgFiles[imgIndex].getName()));
           //if (passThrough) {
           if (false) {
-            qtOut.writeSample(1, imgFiles[imgIndex], vsDuration);
+            qtOut.writeSample(1, imgFiles[imgIndex], vsDuration, true);
           } else {
             //BufferedImage fImg = ImageIO.read(imgFiles[imgIndex]);
             BufferedImage fImg = readImage(imgFiles[imgIndex]);
@@ -964,7 +971,7 @@ public class MovieMaker extends JFrame implements Tool {
             }
             g.drawImage(fImg, 0, 0, width, height, null);
             fImg.flush();
-            qtOut.writeFrame(1, imgBuffer, vsDuration);
+            qtOut.write(1, imgBuffer, vsDuration);
           }
           ++imgIndex;
         }
@@ -1198,8 +1205,40 @@ public class MovieMaker extends JFrame implements Tool {
       is.close();
     }
   }
+
+
+  /**
+   * Make verbose error messages from exceptions fit into a JOptionPane.
+   */
+  private static class NiceOptionPane extends JOptionPane {
+    public NiceOptionPane(Object message, int messageType) {
+      super(message, messageType);
+    }
+
+
+    @Override
+    public int getMaxCharactersPerLineCount() {
+      return 75;
+    }
+  }
+
+
+  private static void showMessageDialog(Component parentComponent, Object message)
+      throws HeadlessException {
+    showMessageDialog(parentComponent, message, Language.text("movie_maker"),
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+
+
+  private static void showMessageDialog(java.awt.Component parentComponent, Object message,
+      String title, int messageType) throws HeadlessException {
+    JDialog dialog = new NiceOptionPane(message, messageType)
+          .createDialog(parentComponent, title);
+    dialog.show();
+    dialog.dispose();
+  }
   
-  
+
   /**
    * @param args the command line arguments
    */
