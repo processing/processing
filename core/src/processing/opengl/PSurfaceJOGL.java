@@ -806,6 +806,9 @@ public class PSurfaceJOGL implements PSurface {
     if (isPCodedKey(code)) {
       keyCode = mapToPConst(code);
       keyChar = PConstants.CODED;
+    } else if (isHackyKey(code)) {
+      keyCode = code;
+      keyChar = hackToChar(code, nativeEvent.getKeyChar());
     } else {
       keyCode = code;
       keyChar = nativeEvent.getKeyChar();
@@ -822,7 +825,6 @@ public class PSurfaceJOGL implements PSurface {
                                peAction, peModifiers,
                                keyChar,
                                keyCode);
-//                               nativeEvent.getKeySymbol());
 
     sketch.postEvent(ke);
   }
@@ -858,6 +860,20 @@ public class PSurfaceJOGL implements PSurface {
            code == com.jogamp.newt.event.KeyEvent.VK_ALT ||
            code == com.jogamp.newt.event.KeyEvent.VK_CONTROL ||
            code == com.jogamp.newt.event.KeyEvent.VK_SHIFT;
+  }
+
+  private static boolean isHackyKey(short code) {
+    return code == com.jogamp.newt.event.KeyEvent.VK_BACK_SPACE ||
+           code == com.jogamp.newt.event.KeyEvent.VK_TAB;
+  }
+
+  private static char hackToChar(short code, char def) {
+    if (code == com.jogamp.newt.event.KeyEvent.VK_BACK_SPACE) {
+      return '\b';
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_TAB) {
+      return '\t';
+    }
+    return def;
   }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
