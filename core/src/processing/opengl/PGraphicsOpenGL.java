@@ -218,8 +218,8 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Aspect ratio of camera's view. */
   public float cameraAspect;
 
-  /** Actual position of the camera. */
-  protected float cameraEyeX, cameraEyeY, cameraEyeZ;
+  /** Distance between camera eye and center. */
+  protected float eyeDist;
 
   /** Flag to indicate that we are inside beginCamera/endCamera block. */
   protected boolean manipulatingCamera;
@@ -4559,15 +4559,12 @@ public class PGraphicsOpenGL extends PGraphics {
     float z0 = eyeX - centerX;
     float z1 = eyeY - centerY;
     float z2 = eyeZ - centerZ;
-    float mag = PApplet.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
-    if (nonZero(mag)) {
-      z0 /= mag;
-      z1 /= mag;
-      z2 /= mag;
+    eyeDist = PApplet.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+    if (nonZero(eyeDist)) {
+      z0 /= eyeDist;
+      z1 /= eyeDist;
+      z2 /= eyeDist;
     }
-    cameraEyeX = eyeX;
-    cameraEyeY = eyeY;
-    cameraEyeZ = eyeZ;
 
     // Calculating Y vector
     float y0 = upX;
@@ -4586,18 +4583,18 @@ public class PGraphicsOpenGL extends PGraphics {
 
     // Cross product gives area of parallelogram, which is < 1.0 for
     // non-perpendicular unit-length vectors; so normalize x, y here:
-    mag = PApplet.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
-    if (nonZero(mag)) {
-      x0 /= mag;
-      x1 /= mag;
-      x2 /= mag;
+    float xmag = PApplet.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
+    if (nonZero(xmag)) {
+      x0 /= xmag;
+      x1 /= xmag;
+      x2 /= xmag;
     }
 
-    mag = PApplet.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
-    if (nonZero(mag)) {
-      y0 /= mag;
-      y1 /= mag;
-      y2 /= mag;
+    float ymag = PApplet.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+    if (nonZero(ymag)) {
+      y0 /= ymag;
+      y1 /= ymag;
+      y2 /= ymag;
     }
 
     modelview.set(x0, x1, x2, 0,
@@ -4645,7 +4642,7 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   @Override
   public void ortho() {
-    ortho(0, width, 0, height, 0, cameraEyeZ * 10);
+    ortho(-width/2f, width/2f, -height/2f, height/2f, 0, eyeDist * 10);
   }
 
 
@@ -4656,7 +4653,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void ortho(float left, float right,
                     float bottom, float top) {
-    ortho(left, right, bottom, top, 0, cameraEyeZ * 10);
+    ortho(left, right, bottom, top, 0, eyeDist * 10);
   }
 
 
@@ -4671,13 +4668,6 @@ public class PGraphicsOpenGL extends PGraphics {
     float w = right - left;
     float h = top - bottom;
     float d = far - near;
-
-    // Applying the camera translation (only on x and y, as near and far
-    // are given as distances from the viewer)
-    left   -= cameraEyeX;
-    right  -= cameraEyeX;
-    bottom -= cameraEyeY;
-    top    -= cameraEyeY;
 
     // Flushing geometry with a different perspective configuration.
     flush();

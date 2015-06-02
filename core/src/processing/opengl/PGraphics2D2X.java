@@ -156,7 +156,7 @@ public class PGraphics2D2X extends PGraphicsOpenGL {
 
   @Override
   protected void defaultCamera() {
-    cameraEyeX = cameraEyeY = cameraEyeZ = 0;
+    eyeDist = 1;
     resetMatrix();
   }
 
