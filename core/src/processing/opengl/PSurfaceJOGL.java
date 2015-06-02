@@ -24,8 +24,8 @@ import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Screen;
 import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.event.InputEvent;
-import com.jogamp.newt.event.WindowAdapter;
-import com.jogamp.newt.event.WindowEvent;
+//import com.jogamp.newt.event.WindowAdapter;
+//import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.util.FPSAnimator;
 
@@ -317,19 +317,15 @@ public class PSurfaceJOGL implements PSurface {
     }).start();
 
 
+   /*
     window.addWindowListener(new WindowAdapter() {
       @Override
       public void windowDestroyNotify(final WindowEvent e) {
-//        System.out.println("destroy notify");
         PSurfaceJOGL.this.sketch.dispose();
         PSurfaceJOGL.this.sketch.exitActual();
-//        animator.stop();
-//        PSurfaceJOGL.this.sketch.exit();
-//        window.destroy();
-//
       }
     });
-
+*/
 
     window.setVisible(true);
 //    System.err.println("4. set visible");
@@ -636,15 +632,20 @@ public class PSurfaceJOGL implements PSurface {
     @Override
     public void windowGainedFocus(com.jogamp.newt.event.WindowEvent arg0) {
 //      pg.parent.focusGained(null);
+//      System.err.println("gain focus");
     }
 
     @Override
     public void windowLostFocus(com.jogamp.newt.event.WindowEvent arg0) {
 //      pg.parent.focusLost(null);
+//      System.err.println("lost focus");
     }
 
     @Override
     public void windowDestroyNotify(com.jogamp.newt.event.WindowEvent arg0) {
+//      System.err.println("bye");
+      PSurfaceJOGL.this.sketch.dispose();
+      PSurfaceJOGL.this.sketch.exitActual();
     }
 
     @Override
@@ -660,7 +661,14 @@ public class PSurfaceJOGL implements PSurface {
     }
 
     @Override
-    public void windowResized(com.jogamp.newt.event.WindowEvent arg0) { }
+    public void windowResized(com.jogamp.newt.event.WindowEvent arg0) {
+//      System.err.println("resized");
+//      System.err.println(window.hasFocus());
+//      window.removeMouseListener(mouseListener);
+//      mouseListener = new NEWTMouseListener();
+//      window.addMouseListener(mouseListener);
+    }
+
   }
 
   // NEWT mouse listener
@@ -694,10 +702,12 @@ public class PSurfaceJOGL implements PSurface {
     }
     @Override
     public void mouseEntered(com.jogamp.newt.event.MouseEvent e) {
+//      System.out.println("enter");
       nativeMouseEvent(e, MouseEvent.ENTER);
     }
     @Override
     public void mouseExited(com.jogamp.newt.event.MouseEvent e) {
+//      System.out.println("exit");
       nativeMouseEvent(e, MouseEvent.EXIT);
     }
   }
