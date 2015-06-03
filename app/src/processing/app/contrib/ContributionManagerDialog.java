@@ -279,7 +279,7 @@ public class ContributionManagerDialog {
       scrollPane.setViewportView(contributionListPanel);
 //      scrollPane.getViewport().setOpaque(true);
 //      scrollPane.getViewport().setBackground(contributionListPanel.getBackground());
-      scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
       scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 //      scrollPane.setBorder(new EmptyBorder(0, 7, 0, 7));
       pane.add(scrollPane, BorderLayout.CENTER);
