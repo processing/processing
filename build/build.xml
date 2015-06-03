@@ -456,7 +456,6 @@
              classname="com.oracle.appbundler.AppBundlerTask"   
              classpath="macosx/appbundler.jar" />
 
-    <!--icon="macosx/processing.icns"-->
     <bundleapp outputDirectory="macosx/work"
                name="Processing"
                displayName="Processing"
@@ -498,10 +497,8 @@
       <!-- no support for this with Java 7 from Oracle -->
       <!--<arch name="i386"/>-->
 
-      <!--icon="macosx/template.app/Contents/Resources/pde.icns"-->
-      <!--icon="${bundle.icon}"-->
       <bundledocument extensions="pde"
-                      icon="macosx/pde.icns"
+                      icon="macosx/document.icns"
                       name="Processing Source Code"
                       role="Editor">
       </bundledocument>
@@ -1078,12 +1075,7 @@
           tofile="${icon.set}/icon_32x32.png" />
     <copy file="${icon.src}/pde-64.png"
           tofile="${icon.set}/icon_32x32@2x.png" />
-
-    <copy file="${icon.src}/pde-64.png"
-          tofile="${icon.set}/icon_64x64.png" />
-    <copy file="${icon.src}/pde-128.png"
-          tofile="${icon.set}/icon_64x64@2x.png" />
-
+    
     <copy file="${icon.src}/pde-128.png"
           tofile="${icon.set}/icon_128x128.png" />
     <copy file="${icon.src}/pde-256.png"

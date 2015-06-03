@@ -8,6 +8,7 @@ X     https://msdn.microsoft.com/en-us/library/dn742485.aspx
 X     merged list of sizes: 16, 24, 32, 48, 64, 256
 X   Linux version of updated icon
 X     handled with the .desktop file, nothing has changed for the file location
+_   add larger icons to core folder
 
 fixed earlier
 X Can't set Breakpoint from the Breakpoint bar at the side
