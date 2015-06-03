@@ -1,5 +1,5 @@
 0237 (3.0a10)
-_ debug message showing up when dragging and dropping files
+X debug message showing up when dragging and dropping files
 
 fixed earlier
 X Can't set Breakpoint from the Breakpoint bar at the side

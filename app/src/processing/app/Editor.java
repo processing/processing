@@ -469,7 +469,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     @SuppressWarnings("unchecked")
     public boolean importData(TransferHandler.TransferSupport support) {
-      System.out.println(support.getTransferable());
       int successful = 0;
 
       if (!canImport(support)) {
