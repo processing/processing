@@ -181,6 +181,7 @@ public class ContributionManagerDialog {
       contributionListPanel.grabFocus();
     }
     dialog.setVisible(true);
+    contributionListPanel.grabFocus();
 
     if (contribListing.hasDownloadedLatestList()) {
       updateContributionListing();
