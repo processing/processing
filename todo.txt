@@ -6,8 +6,8 @@ X   add support for the 1024 file
 X   Windows versions of the icons
 X     https://msdn.microsoft.com/en-us/library/dn742485.aspx
 X     merged list of sizes: 16, 24, 32, 48, 64, 256
-X     "Application icons and Control Panel items: The full set includes 16x16, 32x32, 48x48, and 256x256 (code scales between 32 and 256). The .ico file format is required. For Classic Mode, the full set is 16x16, 24x24, 32x32, 48x48 and 64x64."
-_   Linux version of updated icon
+X   Linux version of updated icon
+X     handled with the .desktop file, nothing has changed for the file location
 
 fixed earlier
 X Can't set Breakpoint from the Breakpoint bar at the side
