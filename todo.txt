@@ -1,5 +1,10 @@
 0237 (3.0a10)
 X debug message showing up when dragging and dropping files
+_ add new app and export icons (downloaded)
+_   add versions for OS X (build process?)
+_   add support for the 1024 file
+_   Windows versions of the icons
+_   Linux versions
 
 fixed earlier
 X Can't set Breakpoint from the Breakpoint bar at the side
@@ -22,7 +27,6 @@ X   https://github.com/processing/processing/pull/3319
 
 
 gui
-_ add new app and export icons (downloaded)
 _ add new lower console/errors icons
 _ show hover text with 'debug'
 _ inquire about updated document icon
