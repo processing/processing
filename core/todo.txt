@@ -31,6 +31,10 @@ _   https://github.com/processing/processing/issues/3334
 
 
 beta
+_ size() inside setup() can only have numbers
+_   size() inside settings() is left alone and can do whatever it wants
+_   comments are being removed before size() is getting checked
+_     probably remove anything inside settings() as well?
 _ fullScreen() method
 _ sort out display stuff
 _ Text looks blurry in GL Retina (andres)
