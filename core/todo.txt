@@ -23,6 +23,8 @@ X PShape 3D: strange extra lines
 X   https://github.com/processing/processing/issues/3006
 X backspace key is identified as delete in OpenGL renderers
 X   https://github.com/processing/processing/issues/3338
+X set icon for OpenGL windows
+X   https://github.com/processing/processing/issues/3348
 _ save() and saveFrame() with OPENGL renderer fails
 _   https://github.com/processing/processing/issues/3334
 
@@ -118,8 +120,6 @@ _ add attrib() method
 _   https://github.com/processing/processing/issues/2963
 _   andres needs input on how the api works
 _   assign this to DXF as well?
-_ set icon for OpenGL windows
-_   https://github.com/processing/processing/issues/3348
 _ window loses focus after maximizing
 _   https://github.com/processing/processing/issues/3339
 
