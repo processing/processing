@@ -462,8 +462,8 @@ public class PSurfaceJOGL implements PSurface {
 
   protected void setIconImages() {
       int[] sizes = { 16, 32, 48, 64 };
-      String[] iconImages = new String[4];
-      for (int i = 0; i < 4; i++) {
+      String[] iconImages = new String[sizes.length];
+      for (int i = 0; i < sizes.length; i++) {
         iconImages[i] = "/icon/icon-" + sizes[i] + ".png";
       }
       NewtFactory.setWindowIcons(new ClassResources(PApplet.class, iconImages));
