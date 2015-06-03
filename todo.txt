@@ -11,6 +11,11 @@ contribs
 X fix several Greek error messages
 X   https://github.com/processing/processing/issues/3329
 X   https://github.com/processing/processing/pull/3330
+X   https://github.com/processing/processing/pull/3340
+
+gsoc
+X contrib manager scroll bar only shows up when needed
+X   https://github.com/processing/processing/pull/3343
 X Progress bar added to Contrib Manager
 X   https://github.com/processing/processing/issues/3160
 X   https://github.com/processing/processing/pull/3319
@@ -18,6 +23,8 @@ X   https://github.com/processing/processing/pull/3319
 
 gui
 _ add new app and export icons (downloaded)
+_ add new lower console/errors icons
+_ show hover text with 'debug'
 _ inquire about updated document icon
 _ don't show breakpoints when debugger is off
 _   https://github.com/processing/processing/issues/3093

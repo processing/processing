@@ -18,8 +18,14 @@ X single transparent pixel at end of textures in OpenGL
 X   https://github.com/processing/processing/issues/115
 X implement setImpl() instead of set() inside PGraphicsOpenGL
 X   https://github.com/processing/processing/issues/160
+X   https://github.com/processing/processing/issues/3012
+X PShape 3D: strange extra lines
+X   https://github.com/processing/processing/issues/3006
+X backspace key is identified as delete in OpenGL renderers
+X   https://github.com/processing/processing/issues/3338
 _ save() and saveFrame() with OPENGL renderer fails
 _   https://github.com/processing/processing/issues/3334
+
 
 beta
 _ fullScreen() method
@@ -101,6 +107,7 @@ _ implement external messages (moving the window)
 
 
 opengl
+_ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
 _ Closing OpenGL sketch from the PDE doesn't stop java.exe process
 _   https://github.com/processing/processing/issues/2335
 _ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
@@ -111,6 +118,10 @@ _ add attrib() method
 _   https://github.com/processing/processing/issues/2963
 _   andres needs input on how the api works
 _   assign this to DXF as well?
+_ set icon for OpenGL windows
+_   https://github.com/processing/processing/issues/3348
+_ window loses focus after maximizing
+_   https://github.com/processing/processing/issues/3339
 
 
 opengl questions
@@ -123,6 +134,8 @@ _ when did setPath() sneak into PShape? API is nothing like anything else
 _   probably from the material stuff, but we need to fix that
 _ ortho function is broken
 _   https://github.com/processing/processing/issues/1278
+_ add imageSmooth()?
+_   https://github.com/processing/processing/issues/1272
 
 
 full screen
