@@ -3,15 +3,13 @@ package processing.opengl;
 import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 //import java.awt.Dimension;
 import java.awt.Point;
 //import java.awt.Frame;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.net.URL;
 import java.util.ArrayList;
 
+import com.jogamp.common.util.IOUtil.ClassResources;
 import com.jogamp.nativewindow.NativeSurface;
 import com.jogamp.nativewindow.ScalableSurface;
 import com.jogamp.opengl.GLAnimatorControl;
@@ -94,6 +92,8 @@ public class PSurfaceJOGL implements PSurface {
                         int deviceIndex, boolean fullScreen,
                         boolean spanDisplays) {
     this.sketch = sketch;
+
+    setIconImages();
 
     Display display = NewtFactory.createDisplay(null);
     display.addReference();
@@ -236,7 +236,6 @@ public class PSurfaceJOGL implements PSurface {
     }
 
 //    window..setBackground(new Color(backgroundColor, true));
-    setIconImage(window);
     window.setSize(sketchWidth, sketchHeight);
     sketch.width = sketch.sketchWidth();
     sketch.height = sketch.sketchHeight();
@@ -461,34 +460,21 @@ public class PSurfaceJOGL implements PSurface {
   }
 
 
-  static ArrayList<Image> iconImages;
-
-  static protected void setIconImage(GLWindow window) {
-    if (PApplet.platform != PConstants.MACOSX) {
-      try {
-        if (iconImages == null) {
-          iconImages = new ArrayList<Image>();
-          final int[] sizes = { 16, 32, 48, 64 };
-
-          for (int sz : sizes) {
-            URL url = PApplet.class.getResource("/icon/icon-" + sz + ".png");
-            Image image = Toolkit.getDefaultToolkit().getImage(url);
-            iconImages.add(image);
-          }
-        }
-
-        // TODO: GLWindow does not appear to have any API to set icon...
-//        window.setIconImages(iconImages);
-
-
-      } catch (Exception e) { }  // harmless; keep this to ourselves
-    }
+  protected void setIconImages() {
+      int[] sizes = { 16, 32, 48, 64 };
+      String[] iconImages = new String[4];
+      for (int i = 0; i < 4; i++) {
+        iconImages[i] = "/icon/icon-" + sizes[i] + ".png";
+      }
+      NewtFactory.setWindowIcons(new ClassResources(PApplet.class, iconImages));
   }
+
 
   public void setupExternalMessages() {
     // TODO Auto-generated method stub
 
   }
+
 
   public void startThread() {
     if (animator != null) {
