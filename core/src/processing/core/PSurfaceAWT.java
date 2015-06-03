@@ -975,7 +975,7 @@ public class PSurfaceAWT extends PSurfaceNone {
       try {
         if (iconImages == null) {
           iconImages = new ArrayList<Image>();
-          final int[] sizes = { 16, 32, 48, 64 };
+          final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
 
           for (int sz : sizes) {
             //URL url = getClass().getResource("/icon/icon-" + sz + ".png");
