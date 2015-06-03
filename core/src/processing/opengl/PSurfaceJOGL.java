@@ -3,10 +3,13 @@ package processing.opengl;
 import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 //import java.awt.Dimension;
 import java.awt.Point;
 //import java.awt.Frame;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.net.URL;
 import java.util.ArrayList;
 
 import com.jogamp.nativewindow.NativeSurface;
@@ -233,6 +236,7 @@ public class PSurfaceJOGL implements PSurface {
     }
 
 //    window..setBackground(new Color(backgroundColor, true));
+    setIconImage(window);
     window.setSize(sketchWidth, sketchHeight);
     sketch.width = sketch.sketchWidth();
     sketch.height = sketch.sketchHeight();
@@ -453,6 +457,31 @@ public class PSurfaceJOGL implements PSurface {
       offsetX = pgl.offsetX = 0.5f * (screenRect.width - sketchWidth);
       offsetY = pgl.offsetY = 0.5f * (screenRect.height - sketchHeight);
       pgl.requestFBOLayer();
+    }
+  }
+
+
+  static ArrayList<Image> iconImages;
+
+  static protected void setIconImage(GLWindow window) {
+    if (PApplet.platform != PConstants.MACOSX) {
+      try {
+        if (iconImages == null) {
+          iconImages = new ArrayList<Image>();
+          final int[] sizes = { 16, 32, 48, 64 };
+
+          for (int sz : sizes) {
+            URL url = PApplet.class.getResource("/icon/icon-" + sz + ".png");
+            Image image = Toolkit.getDefaultToolkit().getImage(url);
+            iconImages.add(image);
+          }
+        }
+
+        // TODO: GLWindow does not appear to have any API to set icon...
+//        window.setIconImages(iconImages);
+
+
+      } catch (Exception e) { }  // harmless; keep this to ourselves
     }
   }
 
