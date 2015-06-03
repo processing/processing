@@ -1058,6 +1058,66 @@
   </target> 
 
 
+  <!-- Target to create the icons... putting this in here rather than docs.
+       For OS X (though Linux might work), not intended for general use,
+       because it requires things like iconutil (on OS X) or ImageMagick's
+       convert tool (primarily in *nix environments). -->
+  <target name="icons">
+    
+    <!-- create pde.iconset for Mac OS X -->
+    <property name="icon.src" value="shared/lib/icons" />
+    <property name="icon.set" value="/tmp/pde.iconset" />
+    <mkdir dir="${icon.set}" />
+    
+    <copy file="${icon.src}/pde-16.png"
+          tofile="${icon.set}/icon_16x16.png" />
+    <copy file="${icon.src}/pde-32.png"
+          tofile="${icon.set}/icon_16x16@2x.png" />
+
+    <copy file="${icon.src}/pde-32.png"
+          tofile="${icon.set}/icon_32x32.png" />
+    <copy file="${icon.src}/pde-64.png"
+          tofile="${icon.set}/icon_32x32@2x.png" />
+
+    <copy file="${icon.src}/pde-64.png"
+          tofile="${icon.set}/icon_64x64.png" />
+    <copy file="${icon.src}/pde-128.png"
+          tofile="${icon.set}/icon_64x64@2x.png" />
+
+    <copy file="${icon.src}/pde-128.png"
+          tofile="${icon.set}/icon_128x128.png" />
+    <copy file="${icon.src}/pde-256.png"
+          tofile="${icon.set}/icon_128x128@2x.png" />
+
+    <copy file="${icon.src}/pde-256.png"
+          tofile="${icon.set}/icon_256x256.png" />
+    <copy file="${icon.src}/pde-512.png"
+          tofile="${icon.set}/icon_256x256@2x.png" />
+
+    <copy file="${icon.src}/pde-512.png"
+          tofile="${icon.set}/icon_512x512.png" />
+    <copy file="${icon.src}/pde-1024.png"
+          tofile="${icon.set}/icon_512x512@2x.png" />
+
+    <exec executable="iconutil">
+      <arg line="-c icns -o macosx/processing.icns ${icon.set}" />
+    </exec>
+
+    <delete dir="${icon.set}" />
+    
+    <!-- Create .ico for the PDE itself 
+         https://msdn.microsoft.com/en-us/library/dn742485.aspx
+         "Application icons and Control Panel items: The full set includes
+         16x16, 32x32, 48x48, and 256x256 (code scales between 32 and 256).
+         The .ico file format is required. For Classic Mode, the full set
+         is 16x16, 24x24, 32x32, 48x48 and 64x64."
+         We're missing size 24x24, but, eh... -->
+    <exec executable="convert" dir="shared/lib/icons">
+      <arg line="pde-16.png pde-32.png pde-48.png pde-64.png pde-256.png ../../../windows/application.ico" />
+    </exec>
+  </target>
+
+  
   <!-- - - - - - - - - - - - - - - - - - -->
   <!-- Package source 'n tag the release -->
   <!-- - - - - - - - - - - - - - - - - - -->

@@ -1,16 +1,22 @@
 0237 (3.0a10)
 X debug message showing up when dragging and dropping files
-_ add new app and export icons (downloaded)
-_   add versions for OS X (build process?)
-_   add support for the 1024 file
-_   Windows versions of the icons
-_   Linux versions
+X add new app and export icons (downloaded)
+X   add versions for OS X (build process?)
+X   add support for the 1024 file
+X   Windows versions of the icons
+X     https://msdn.microsoft.com/en-us/library/dn742485.aspx
+X     merged list of sizes: 16, 24, 32, 48, 64, 256
+X     "Application icons and Control Panel items: The full set includes 16x16, 32x32, 48x48, and 256x256 (code scales between 32 and 256). The .ico file format is required. For Classic Mode, the full set is 16x16, 24x24, 32x32, 48x48 and 64x64."
+_   Linux version of updated icon
 
 fixed earlier
 X Can't set Breakpoint from the Breakpoint bar at the side
 X   https://github.com/processing/processing/issues/2835
 X Old version number shown in Mode Manager dialog
 X   https://github.com/processing/processing/issues/2843
+o Update Windows icons for multiple sizes, implement them in the PDE
+o   http://code.google.com/p/processing/issues/detail?id=632
+X   closed during the 2.x cycle
 
 contribs
 X fix several Greek error messages
@@ -905,8 +911,6 @@ _   how can we provide an error message here?
 _ how to handle double-clicked files on windows?
 _   big deal for psk and others
 _   this may already work with SingleInstance stuff
-_ Update Windows icons for multiple sizes, implement them in the PDE
-_   http://code.google.com/p/processing/issues/detail?id=632
 
 
 DIST / Mac OS X
