@@ -25,7 +25,7 @@ The [processing-docs](https://github.com/processing/processing-docs/) repository
 
 The instructions for building the source [are here](https://github.com/processing/processing/wiki/Build-Instructions).
 
-Someday we'll also ~~[write code style guidelines](https://github.com/processing/processing/wiki/Style-Guidelines),~~ fix all these bugs, 
+Someday we'll also ~~[write code style guidelines](https://github.com/processing/processing/wiki/Style-Guidelines)~~, fix all these bugs, 
 throw together hundreds of unit tests, 
 and get rich off all this stuff that we're giving away for free.
 
