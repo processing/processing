@@ -988,6 +988,12 @@ public class PSurfaceAWT extends PSurfaceNone {
         frame.setIconImages(iconImages);
 
       } catch (Exception e) { }  // harmless; keep this to ourselves
+
+    } else {
+      // On OS X, set this for AWT surfaces, which handles the dock image
+      // as well as the cmd-tab image that's shown. Just one size, I guess.
+      URL url = PApplet.class.getResource("/icon/icon-512.png");
+      ThinkDifferent.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
     }
   }
 

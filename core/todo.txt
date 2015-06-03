@@ -1,5 +1,6 @@
 0237 (3.0a10)
 X retain original java.awt.Frame when it's in use
+X set frame icon images for Java2D (dock and cmd-tab) 
 
 fixed earlier/can no longer reproduce
 X strips when rendering spheres with lights and anti-aliasing

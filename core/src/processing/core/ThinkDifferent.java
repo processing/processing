@@ -22,6 +22,8 @@
 
 package processing.core;
 
+import java.awt.Image;
+
 import com.apple.eawt.AppEvent.QuitEvent;
 import com.apple.eawt.Application;
 import com.apple.eawt.QuitHandler;
@@ -117,5 +119,10 @@ public class ThinkDifferent {
       e.printStackTrace();  // oh well, never mind
     }
     */
+  }
+
+
+  static void setIconImage(Image image) {
+    application.setDockIconImage(image);
   }
 }
