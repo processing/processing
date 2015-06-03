@@ -512,8 +512,6 @@ public class PGraphicsOpenGL extends PGraphics {
   static final String NO_COLOR_SHADER_ERROR =
     "Your shader needs to be of COLOR type " +
     "to render this geometry properly, using default shader instead.";
-  static final String TOO_LONG_STROKE_PATH_ERROR =
-    "Stroke path is too long, some bevel triangles won't be added";
   static final String TESSELLATION_ERROR =
     "Tessellation Error: %1$s";
 
@@ -11171,7 +11169,7 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int ln = 0; ln < lineCount; ln++) {
         int i0 = 2 * ln + 0;
         int i1 = 2 * ln + 1;
-        index = addLineSegment3D(i0, i1, index, null, false);
+        index = addLineSegment3D(i0, i1, i0 - 2, i1 - 1, index, null, false);
       }
       lastLineIndexCache = index;
     }
@@ -11254,9 +11252,9 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int ln = 0; ln < lineCount; ln++) {
         int i1 = ln + 1;
         if (0 < nBevelTr) {
-          index = addLineSegment3D(i0, i1, index, lastInd, false);
+          index = addLineSegment3D(i0, i1, i1 - 2, i1 - 1, index, lastInd, false);
         } else {
-          index = addLineSegment3D(i0, i1, index, null, false);
+          index = addLineSegment3D(i0, i1, i1 - 2, i1 - 1, index, null, false);
         }
         i0 = i1;
       }
@@ -11334,21 +11332,22 @@ public class PGraphicsOpenGL extends PGraphics {
                                               tess.lineIndexCache.getLast();
       firstLineIndexCache = index;
       int i0 = 0;
+      int i1 = -1;
       short[] lastInd = {-1, -1};
       short firstInd = -1;
       for (int ln = 0; ln < lineCount - 1; ln++) {
-        int i1 = ln + 1;
+        i1 = ln + 1;
         if (0 < nBevelTr) {
-          index = addLineSegment3D(i0, i1, index, lastInd, false);
+          index = addLineSegment3D(i0, i1, i1 - 2, i1 - 1, index, lastInd, false);
           if (ln == 0) firstInd = (short)(lastInd[0] - 2);
         } else {
-          index = addLineSegment3D(i0, i1, index, null, false);
+          index = addLineSegment3D(i0, i1, i1 - 2, i1 - 1, index, null, false);
         }
         i0 = i1;
       }
-      index = addLineSegment3D(0, in.vertexCount - 1, index, lastInd, false);
+      index = addLineSegment3D(0, in.vertexCount - 1, i1 - 2, i1 - 1, index, lastInd, false);
       if (0 < nBevelTr) {
-        index = addBevel3D(0, index, lastInd, firstInd, false);
+        index = addBevel3D(0, 0, in.vertexCount - 1, index, lastInd, firstInd, false);
       }
       lastLineIndexCache = index;
     }
@@ -11425,24 +11424,28 @@ public class PGraphicsOpenGL extends PGraphics {
       firstLineIndexCache = index;
       short[] lastInd = {-1, -1};
       short firstInd = -1;
+      int pi0 = -1;
+      int pi1 = -1;
       for (int i = 0; i <= in.edgeCount - 1; i++) {
         int[] edge = in.edges[i];
         int i0 = edge[0];
         int i1 = edge[1];
         if (bevel) {
           if (edge[2] == EDGE_CLOSE) {
-            index = addBevel3D(edge[1], index, lastInd, firstInd, false);
+            index = addBevel3D(edge[1], pi0, pi1, index, lastInd, firstInd, false);
             lastInd[0] = lastInd[1] = -1; // No join with next line segment.
           } else {
-            index = addLineSegment3D(i0, i1, index, lastInd, false);
+            index = addLineSegment3D(i0, i1, pi0, pi1, index, lastInd, false);
             if (edge[2] == EDGE_START) firstInd = (short)(lastInd[0] - 2);
             if (edge[2] == EDGE_STOP || edge[2] == EDGE_SINGLE) {
               lastInd[0] = lastInd[1] = -1; // No join with next line segment.
             }
           }
         } else if (edge[2] != EDGE_CLOSE) {
-          index = addLineSegment3D(i0, i1, index, null, false);
+          index = addLineSegment3D(i0, i1, pi0, pi1, index, null, false);
         }
+        pi0 = i0;
+        pi1 = i1;
       }
       lastLineIndexCache = index;
     }
@@ -11524,7 +11527,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1.
-    int addLineSegment3D(int i0, int i1, int index, short[] lastInd,
+    int addLineSegment3D(int i0, int i1, int pi0, int pi1, int index, short[] lastInd,
                          boolean constStroke) {
       IndexCache cache = tess.lineIndexCache;
       int count = cache.vertexCount[index];
@@ -11570,21 +11573,31 @@ public class PGraphicsOpenGL extends PGraphics {
       if (lastInd != null) {
         if (-1 < lastInd[0] && -1 < lastInd[1]) {
           // Adding bevel triangles
-          tess.setLineVertex(vidx, strokeVertices, i0, color0);
-
           if (newCache) {
-            PGraphics.showWarning(TOO_LONG_STROKE_PATH_ERROR);
+            if (-1 < pi0 && -1 <= pi1) {
+              // Vertices used in the previous cache need to be copied to the
+              // newly created one
+              tess.setLineVertex(vidx, strokeVertices, i0, color0);
 
-            // TODO: Fix this situation, the vertices from the previous cache
-            // block should be copied in the newly created one.
-            tess.lineIndices[iidx++] = (short) (count + 4);
-            tess.lineIndices[iidx++] = (short) (count + 0);
-            tess.lineIndices[iidx++] = (short) (count + 0);
+              color = constStroke ? strokeColor : strokeColors[pi0];
+              weight = constStroke ? strokeWeight : strokeWeights[pi0];
+              weight *= transformScale();
+              tess.setLineVertex(vidx++, strokeVertices, pi1, pi0, color, -weight/2); // count+2 vert from previous block
+              tess.setLineVertex(vidx++, strokeVertices, pi1, pi0, color, +weight/2); // count+3 vert from previous block
 
-            tess.lineIndices[iidx++] = (short) (count + 4);
-            tess.lineIndices[iidx++] = (short) (count + 1);
-            tess.lineIndices[iidx  ] = (short) (count + 1);
+              tess.lineIndices[iidx++] = (short) (count + 4);
+              tess.lineIndices[iidx++] = (short) (count + 5);
+              tess.lineIndices[iidx++] = (short) (count + 0);
+
+              tess.lineIndices[iidx++] = (short) (count + 4);
+              tess.lineIndices[iidx++] = (short) (count + 6);
+              tess.lineIndices[iidx  ] = (short) (count + 1);
+
+              cache.incCounts(index, 6, 3);
+            }
           } else {
+            tess.setLineVertex(vidx, strokeVertices, i0, color0);
+
             tess.lineIndices[iidx++] = (short) (count + 4);
             tess.lineIndices[iidx++] = lastInd[0];
             tess.lineIndices[iidx++] = (short) (count + 0);
@@ -11592,19 +11605,19 @@ public class PGraphicsOpenGL extends PGraphics {
             tess.lineIndices[iidx++] = (short) (count + 4);
             tess.lineIndices[iidx++] = lastInd[1];
             tess.lineIndices[iidx  ] = (short) (count + 1);
+
+            cache.incCounts(index, 6, 1);
           }
 
-          cache.incCounts(index, 6, 1);
+          // Vertices for next bevel
+          lastInd[0] = (short) (count + 2);
+          lastInd[1] = (short) (count + 3);
         }
-
-        // Vertices for next bevel
-        lastInd[0] = (short) (count + 2);
-        lastInd[1] = (short) (count + 3);
       }
       return index;
     }
 
-    int addBevel3D(int i0, int index, short[] lastInd, short firstInd,
+    int addBevel3D(int i0, int pi0, int pi1, int index, short[] lastInd, short firstInd,
                    boolean constStroke) {
       IndexCache cache = tess.lineIndexCache;
       int count = cache.vertexCount[index];
@@ -11625,17 +11638,24 @@ public class PGraphicsOpenGL extends PGraphics {
           tess.setLineVertex(vidx, strokeVertices, i0, color0);
 
           if (newCache) {
-            PGraphics.showWarning(TOO_LONG_STROKE_PATH_ERROR);
+            if (-1 < pi0 && -1 <= pi1) {
+              // Vertices used in the previous cache need to be copied to the
+              // newly created one
+              int color1 = constStroke ? strokeColor : strokeColors[pi1];
 
-            // TODO: Fix this situation, the vertices from the previous cache
-            // block should be copied in the newly created one.
-//            tess.lineIndices[iidx++] = (short) (count + 4);
-//            tess.lineIndices[iidx++] = (short) (count + 0);
-//            tess.lineIndices[iidx++] = (short) (count + 0);
-//
-//            tess.lineIndices[iidx++] = (short) (count + 4);
-//            tess.lineIndices[iidx++] = (short) (count + 1);
-//            tess.lineIndices[iidx  ] = (short) (count + 1);
+              tess.setLineVertex(vidx, strokeVertices, pi0, color0);
+              tess.setLineVertex(vidx, strokeVertices, pi1, color1);
+
+              tess.lineIndices[iidx++] = (short) (count + 4);
+              tess.lineIndices[iidx++] = (short) (count + 5);
+              tess.lineIndices[iidx++] = (short) (count + 0);
+
+              tess.lineIndices[iidx++] = (short) (count + 4);
+              tess.lineIndices[iidx++] = (short) (count + 6);
+              tess.lineIndices[iidx  ] = (short) (count + 1);
+
+              cache.incCounts(index, 6, 3);
+            }
           } else {
             tess.lineIndices[iidx++] = (short) (count + 0);
             tess.lineIndices[iidx++] = lastInd[0];
@@ -11644,9 +11664,9 @@ public class PGraphicsOpenGL extends PGraphics {
             tess.lineIndices[iidx++] = (short) (count + 0);
             tess.lineIndices[iidx++] = lastInd[1];
             tess.lineIndices[iidx  ] = (short) (firstInd + 1);
-          }
 
-          cache.incCounts(index, 6, 1);
+            cache.incCounts(index, 6, 1);
+          }
         }
       }
 
