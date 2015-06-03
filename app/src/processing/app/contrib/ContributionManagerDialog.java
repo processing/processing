@@ -168,7 +168,7 @@ public class ContributionManagerDialog {
           downloadAndUpdateContributionListing();
         }
       });
-      
+
       progressBar = new JProgressBar();
       progressBar.setVisible(true);
 
@@ -178,7 +178,6 @@ public class ContributionManagerDialog {
 
       dialog.pack();
       dialog.setLocationRelativeTo(null);
-      contributionListPanel.grabFocus();
     }
     dialog.setVisible(true);
     contributionListPanel.grabFocus();
@@ -472,8 +471,8 @@ public class ContributionManagerDialog {
     retryConnectingButton.setEnabled(false);
     status.setMessage(Language.text("contrib.status.downloading_list"));
     contribListing.downloadAvailableList(new ContribProgressBar(progressBar) {
-      
-      
+
+
       @Override
       public void startTask(String name, int maxValue) {
         super.startTask(name, maxValue);
