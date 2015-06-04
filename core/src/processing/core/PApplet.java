@@ -858,6 +858,7 @@ public class PApplet implements PConstants {
 
   /** Override this method to call size() when not using the PDE. */
   public void settings() {
+    size(DEFAULT_WIDTH, DEFAULT_HEIGHT, JAVA2D);
   }
 
 
@@ -1558,25 +1559,29 @@ public class PApplet implements PConstants {
    * @see PApplet#height
    */
   public void size(int width, int height) {
-    //size(w, h, JAVA2D, null);
-    //size(w, h, sketchRenderer(), null);
-    if (insideSettings(width, height)) {
-      this.width = width;
-      this.height = height;
-//    } else if (external) {
-//      throw new IllegalStateException("size() cannot be called here");
-//    } else {
-//      System.err.println("Because you're running outside the PDE, "
+    // Check to make sure the width/height have actually changed. It's ok to
+    // have size() duplicated (and may be better to not remove it from where
+    // it sits in the code anyway when adding it to settings()). Only take
+    // action if things have changed.
+    if (width != this.width ||
+        height != this.height) {
+      if (insideSettings(width, height)) {
+        this.width = width;
+        this.height = height;
+      }
     }
   }
 
 
   public void size(int width, int height, String renderer) {
-    //size(w, h, renderer, null);
-    if (insideSettings(width, height, renderer)) {
-      this.width = width;
-      this.height = height;
-      this.renderer = renderer;
+    if (width != this.width ||
+        height != this.height ||
+        !renderer.equals(this.renderer)) {
+      if (insideSettings(width, height, renderer)) {
+        this.width = width;
+        this.height = height;
+        this.renderer = renderer;
+      }
     }
   }
 
@@ -1585,11 +1590,18 @@ public class PApplet implements PConstants {
    * @nowebref
    */
   public void size(int width, int height, String renderer, String path) {
-    if (insideSettings(width, height, renderer, path)) {
-      this.width = width;
-      this.height = height;
-      this.renderer = renderer;
-      this.outputPath = path;
+    // Don't bother checking path, it's probably been modified to absolute,
+    // so it would always trigger. But the alternative is comparing the
+    // canonical file, which seems overboard.
+    if (width != this.width ||
+        height != this.height ||
+        !renderer.equals(this.renderer)) {
+      if (insideSettings(width, height, renderer, path)) {
+        this.width = width;
+        this.height = height;
+        this.renderer = renderer;
+        this.outputPath = path;
+      }
     }
 
     /*
