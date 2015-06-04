@@ -119,7 +119,9 @@ public class Archiver implements Tool {
         zos.flush();
         zos.close();
 
-        editor.statusNotice("Created archive " + newbie.getName() + ".");
+        editor.statusNotice(Language
+                            .interpolate("editor.status.archiver.create",
+                                         newbie.getName()));
 
       } catch (IOException e) {
         e.printStackTrace();
