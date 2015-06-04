@@ -855,6 +855,17 @@ public class PSurfaceJOGL implements PSurface {
     sketch.postEvent(ke);
   }
 
+  private static boolean isPCodedKey(short code) {
+    return code == com.jogamp.newt.event.KeyEvent.VK_UP ||
+           code == com.jogamp.newt.event.KeyEvent.VK_DOWN ||
+           code == com.jogamp.newt.event.KeyEvent.VK_LEFT ||
+           code == com.jogamp.newt.event.KeyEvent.VK_RIGHT ||
+           code == com.jogamp.newt.event.KeyEvent.VK_ALT ||
+           code == com.jogamp.newt.event.KeyEvent.VK_CONTROL ||
+           code == com.jogamp.newt.event.KeyEvent.VK_SHIFT ||
+           code == com.jogamp.newt.event.KeyEvent.VK_WINDOWS;
+  }
+
   // Why do we need this mapping?
   // Relevant discussion and links here:
   // http://forum.jogamp.org/Newt-wrong-keycode-for-key-td4033690.html#a4033697
@@ -874,18 +885,10 @@ public class PSurfaceJOGL implements PSurface {
       return PConstants.CONTROL;
     } else if (code == com.jogamp.newt.event.KeyEvent.VK_SHIFT) {
       return PConstants.SHIFT;
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_WINDOWS) {
+      return java.awt.event.KeyEvent.VK_META;
     }
     return code;
-  }
-
-  private static boolean isPCodedKey(short code) {
-    return code == com.jogamp.newt.event.KeyEvent.VK_UP ||
-           code == com.jogamp.newt.event.KeyEvent.VK_DOWN ||
-           code == com.jogamp.newt.event.KeyEvent.VK_LEFT ||
-           code == com.jogamp.newt.event.KeyEvent.VK_RIGHT ||
-           code == com.jogamp.newt.event.KeyEvent.VK_ALT ||
-           code == com.jogamp.newt.event.KeyEvent.VK_CONTROL ||
-           code == com.jogamp.newt.event.KeyEvent.VK_SHIFT;
   }
 
   private static boolean isHackyKey(short code) {
