@@ -131,9 +131,6 @@ import antlr.collections.AST;
  * itself.  The ANTLR manual goes into a fair amount of detail about the
  * what each type of file is for.
  * <P/>
- *
- * Hacked to death in 2010 by
- * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  */
 public class PdePreprocessor {
   protected static final String UNICODE_ESCAPES = "0123456789abcdefABCDEF";
@@ -150,86 +147,9 @@ public class PdePreprocessor {
 
   private TokenStreamCopyingHiddenTokenFilter filter;
 
-//  private boolean foundMain;
   private String advClassName = "";
   protected Mode mode;
   Set<String> foundMethods;
-
-//  protected String sizeStatement;
-//  protected String sketchWidth;
-//  protected String sketchHeight;
-//  protected String sketchRenderer;
-//  protected String sketchOutputPath;
-
-  /*
-  static class SizeInfo {
-    String statement;
-    String width;
-    String height;
-    String renderer;
-    String path;
-    String display;
-
-//    SizeInfo(String statement, String width, String height,
-//             String renderer, String outputPath, String display) {
-//      this.statement = statement;
-//    }
-
-    boolean hasOldSyntax() {
-      if (width.equals("screenWidth") ||
-          width.equals("screenHeight") ||
-          height.equals("screenHeight") ||
-          height.equals("screenWidth")) {
-        final String message =
-          "The screenWidth and screenHeight variables are named\n" +
-          "displayWidth and displayHeight in Processing 3.\n" +
-          "Or you can use the fullScreen() method instead of size().";
-        Base.showWarning("Time for a quick update", message, null);
-        return true;
-      }
-      if (width.equals("screen.width") ||
-          width.equals("screen.height") ||
-          height.equals("screen.height") ||
-          height.equals("screen.width")) {
-        final String message =
-          "The screen.width and screen.height variables are named\n" +
-          "displayWidth and displayHeight in Processing 3.\n" +
-          "Or you can use the fullScreen() method instead of size().";
-        Base.showWarning("Time for a quick update", message, null);
-        return true;
-      }
-      return false;
-    }
-
-    boolean hasBadSize() {
-      if (!width.equals("displayWidth") &&
-          !width.equals("displayHeight") &&
-          PApplet.parseInt(width, -1) == -1) {
-        return true;
-      }
-      if (!height.equals("displayWidth") &&
-          !height.equals("displayHeight") &&
-          PApplet.parseInt(height, -1) == -1) {
-        return true;
-      }
-      return false;
-    }
-
-
-    void checkEmpty() {
-      if (renderer != null) {
-        if (renderer.length() == 0) {  // if empty, set null
-          renderer = null;
-        }
-      }
-      if (path != null) {
-        if (path.length() == 0) {
-          path = null;
-        }
-      }
-    }
-  }
-  */
 
   SizeInfo sizeInfo;
 
@@ -254,18 +174,17 @@ public class PdePreprocessor {
     "(?:^|\\s|;)void\\ssetup\\s*\\(";
 
 
+  // Can't only match any 'public class', needs to be a PApplet
+  // http://code.google.com/p/processing/issues/detail?id=551
   static private final Pattern PUBLIC_CLASS =
     Pattern.compile("(^|;)\\s*public\\s+class\\s+\\S+\\s+extends\\s+PApplet", Pattern.MULTILINE);
-    // Can't only match any 'public class', needs to be a PApplet
-    // http://code.google.com/p/processing/issues/detail?id=551
-    //Pattern.compile("(^|;)\\s*public\\s+class", Pattern.MULTILINE);
 
 
   private static final Pattern FUNCTION_DECL =
     Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
-        "(void|int|float|double|String|char|byte)" +
-        "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
-        Pattern.MULTILINE);
+                    "(void|int|float|double|String|char|byte)" +
+                    "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
+                    Pattern.MULTILINE);
 
 
   public PdePreprocessor(final String sketchName) {
@@ -281,16 +200,8 @@ public class PdePreprocessor {
   }
 
 
-  public SizeInfo initSketchSize(String code, boolean sizeWarning) throws SketchException {
-//    String[] info = parseSketchSize(code, sizeWarning);
-//    if (info != null) {
-//      sizeStatement = info[0];
-//      sketchWidth = info[1];
-//      sketchHeight = info[2];
-//      sketchRenderer = info[3];
-//      sketchOutputPath = info[4];
-//    }
-//    return info;
+  public SizeInfo initSketchSize(String code,
+                                 boolean sizeWarning) throws SketchException {
     sizeInfo = parseSketchSize(code, sizeWarning);
     return sizeInfo;
   }
@@ -430,6 +341,20 @@ public class PdePreprocessor {
       return info;
       //return new String[] { contents[0], width, height, renderer, path };
     }
+    // if no size() found, check for fullScreen()
+    contents = PApplet.match(searchArea, FULL_SCREEN_CONTENTS_REGEX);
+    if (contents != null) {
+      SizeInfo info = new SizeInfo();
+      info.statement = contents[0];
+      StringList args = breakCommas(contents[1]);
+      info.renderer = args.get(0).trim();
+      info.display = args.size() > 1 ? args.get(1).trim() : null;
+      info.width = "displayWidth";
+      info.height = "displayHeight";
+      info.checkEmpty();
+      return info;
+    }
+
     // not an error, just no size() specified
     //return new String[] { null, null, null, null, null };
     return new SizeInfo();

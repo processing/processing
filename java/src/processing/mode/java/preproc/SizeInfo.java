@@ -89,6 +89,11 @@ public class SizeInfo {
         path = null;
       }
     }
+    if (display != null) {
+      if (display.length() == 0) {
+        display = null;
+      }
+    }
   }
 
 
