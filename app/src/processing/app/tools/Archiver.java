@@ -4,7 +4,8 @@
   Archiver - plugin tool for archiving sketches
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2012-2015 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -95,7 +96,8 @@ public class Archiver implements Tool {
     } while (newbie.exists());
 
     // open up a prompt for where to save this fella
-    PApplet.selectOutput(Language.text("archive_sketch"), "fileSelected", newbie, this, editor);
+    PApplet.selectOutput(Language.text("archive_sketch"),
+                         "fileSelected", newbie, this, editor);
   }
 
 
@@ -119,9 +121,10 @@ public class Archiver implements Tool {
         zos.flush();
         zos.close();
 
-        editor.statusNotice(Language
-                            .interpolate("editor.status.archiver.create",
-                                         newbie.getName()));
+        final String msg =
+          Language.interpolate("editor.status.archiver.create",
+                               newbie.getName());
+        editor.statusNotice(msg);
 
       } catch (IOException e) {
         e.printStackTrace();
@@ -161,15 +164,3 @@ public class Archiver implements Tool {
     }
   }
 }
-
-
-    /*
-    int index = 0;
-    SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
-    String purty = formatter.format(new Date());
-    do {
-      newbieName = "sketch_" + purty + ((char) ('a' + index));
-      newbieDir = new File(newbieParentDir, newbieName);
-      index++;
-    } while (newbieDir.exists());
-    */

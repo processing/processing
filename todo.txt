@@ -25,6 +25,8 @@ X fix several Greek error messages
 X   https://github.com/processing/processing/issues/3329
 X   https://github.com/processing/processing/pull/3330
 X   https://github.com/processing/processing/pull/3340
+X add i18n for Archiver and missing text
+X   https://github.com/processing/processing/pull/3349
 
 gsoc
 X contrib manager scroll bar only shows up when needed
