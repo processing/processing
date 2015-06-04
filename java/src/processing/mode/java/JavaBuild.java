@@ -248,18 +248,20 @@ public class JavaBuild {
     // initSketchSize() sets the internal sketchWidth/Height/Renderer vars
     // in the preprocessor. Those are used in preproc.write() so that they
     // can be used to add methods (settings() or sketchXxxx())
-    String[] sizeParts =
+    //String[] sizeParts =
+    SizeInfo sizeInfo =
       preprocessor.initSketchSize(sketch.getMainProgram(), sizeWarning);
     //System.out.format("size() is '%s'%n", info[0]);
 
     // Remove the size() statement (will be added back by writeFooter())
-    if (sizeParts != null) {
-      String sizeStatement = sizeParts[0];
+    if (sizeInfo != null) {
+      String sizeStatement = sizeInfo.getStatement();
       if (sizeStatement != null) {
         int index = bigCode.indexOf(sizeStatement);
         bigCode.delete(index, index + sizeStatement.length());
       }
     }
+
 
     PreprocessorResult result;
     try {

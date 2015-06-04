@@ -153,13 +153,86 @@ public class PdePreprocessor {
 //  private boolean foundMain;
   private String advClassName = "";
   protected Mode mode;
-  HashMap<String, Object> foundMethods;
+  Set<String> foundMethods;
 
-  protected String sizeStatement;
-  protected String sketchWidth;
-  protected String sketchHeight;
-  protected String sketchRenderer;
-  protected String sketchOutputPath;
+//  protected String sizeStatement;
+//  protected String sketchWidth;
+//  protected String sketchHeight;
+//  protected String sketchRenderer;
+//  protected String sketchOutputPath;
+
+  /*
+  static class SizeInfo {
+    String statement;
+    String width;
+    String height;
+    String renderer;
+    String path;
+    String display;
+
+//    SizeInfo(String statement, String width, String height,
+//             String renderer, String outputPath, String display) {
+//      this.statement = statement;
+//    }
+
+    boolean hasOldSyntax() {
+      if (width.equals("screenWidth") ||
+          width.equals("screenHeight") ||
+          height.equals("screenHeight") ||
+          height.equals("screenWidth")) {
+        final String message =
+          "The screenWidth and screenHeight variables are named\n" +
+          "displayWidth and displayHeight in Processing 3.\n" +
+          "Or you can use the fullScreen() method instead of size().";
+        Base.showWarning("Time for a quick update", message, null);
+        return true;
+      }
+      if (width.equals("screen.width") ||
+          width.equals("screen.height") ||
+          height.equals("screen.height") ||
+          height.equals("screen.width")) {
+        final String message =
+          "The screen.width and screen.height variables are named\n" +
+          "displayWidth and displayHeight in Processing 3.\n" +
+          "Or you can use the fullScreen() method instead of size().";
+        Base.showWarning("Time for a quick update", message, null);
+        return true;
+      }
+      return false;
+    }
+
+    boolean hasBadSize() {
+      if (!width.equals("displayWidth") &&
+          !width.equals("displayHeight") &&
+          PApplet.parseInt(width, -1) == -1) {
+        return true;
+      }
+      if (!height.equals("displayWidth") &&
+          !height.equals("displayHeight") &&
+          PApplet.parseInt(height, -1) == -1) {
+        return true;
+      }
+      return false;
+    }
+
+
+    void checkEmpty() {
+      if (renderer != null) {
+        if (renderer.length() == 0) {  // if empty, set null
+          renderer = null;
+        }
+      }
+      if (path != null) {
+        if (path.length() == 0) {
+          path = null;
+        }
+      }
+    }
+  }
+  */
+
+  SizeInfo sizeInfo;
+
 
   /**
    * Regular expression for parsing the size() method. This should match
@@ -172,6 +245,13 @@ public class PdePreprocessor {
 //    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+)\\s*,?\\s*([^\\)]*)\\s*\\)\\s*\\;";
   static private final String SIZE_CONTENTS_REGEX =
     "(?:^|\\s|;)size\\s*\\(([^\\)]+)\\)\\s*\\;";
+  static private final String FULL_SCREEN_CONTENTS_REGEX =
+    "(?:^|\\s|;)fullScreen\\s*\\(([^\\)]+)\\)\\s*\\;";
+  /** Test whether there's a void somewhere (the program has functions). */
+  static private final String VOID_REGEX =
+    "(?:^|\\s|;)void\\s";
+  static private final String VOID_SETUP_REGEX =
+    "(?:^|\\s|;)void\\ssetup\\s*\\(";
 
 
   static private final Pattern PUBLIC_CLASS =
@@ -201,17 +281,18 @@ public class PdePreprocessor {
   }
 
 
-  public String[] initSketchSize(String code, boolean sizeWarning) throws SketchException {
-    String[] info = parseSketchSize(code, sizeWarning);
-    //PApplet.printArray(info);
-    if (info != null) {
-      sizeStatement = info[0];
-      sketchWidth = info[1];
-      sketchHeight = info[2];
-      sketchRenderer = info[3];
-      sketchOutputPath = info[4];
-    }
-    return info;
+  public SizeInfo initSketchSize(String code, boolean sizeWarning) throws SketchException {
+//    String[] info = parseSketchSize(code, sizeWarning);
+//    if (info != null) {
+//      sizeStatement = info[0];
+//      sketchWidth = info[1];
+//      sketchHeight = info[2];
+//      sketchRenderer = info[3];
+//      sketchOutputPath = info[4];
+//    }
+//    return info;
+    sizeInfo = parseSketchSize(code, sizeWarning);
+    return sizeInfo;
   }
 
 
@@ -259,7 +340,7 @@ public class PdePreprocessor {
    * @param fussy true if it should show an error message if bad size()
    * @return null if there was an error, otherwise an array (might contain some/all nulls)
    */
-  static public String[] parseSketchSize(String code, boolean fussy) {
+  static public SizeInfo parseSketchSize(String code, boolean fussy) {
     // This matches against any uses of the size() function, whether numbers
     // or variables or whatever. This way, no warning is shown if size() isn't
     // actually used in the applet, which is the case especially for anyone
@@ -269,47 +350,71 @@ public class PdePreprocessor {
 //    String[] matches = PApplet.match(scrubbed, SIZE_REGEX);
 //    String[] matches = PApplet.match(scrubComments(code), SIZE_REGEX);
 
+      /*
+   1. no size() or fullScreen() method at all
+      will use the non-overridden settings() method in PApplet
+   2. size() or fullScreen() found inside setup() (static mode sketch or otherwise)
+      make sure that it uses numbers (or displayWidth/Height), copy into settings
+   3. size() or fullScreen() already in settings()
+      don't mess with the sketch, don't insert any defaults
+
+   really only need to deal with situation #2.. nothing to be done for 1 and 3
+   */
+    // if static mode sketch, all we need is regex
+    // easy proxy for static in this case is whether [^\s]void\s is present
+
+    String searchArea = scrubComments(code);
+    String[] setupMatch = PApplet.match(searchArea, VOID_SETUP_REGEX);
+    if (setupMatch != null) {
+      String found = setupMatch[0];
+      int start = searchArea.indexOf(found) + found.length();
+      int openBrace = searchArea.indexOf("{", start);
+      char[] c = searchArea.toCharArray();
+      int depth = 0;
+      int closeBrace = -1;
+      StringBuilder sb = new StringBuilder();
+      for (int i = openBrace; i < c.length; i++) {
+        if (c[i] == '{') {
+          depth++;
+        } else if (c[i] == '}') {
+          depth--;
+          if (depth == 0) {
+            closeBrace = ++i;
+            break;
+          }
+        } else {
+          sb.append(c[i]);
+        }
+      }
+      if (closeBrace == -1) {
+//        throw new SketchException("Found a { that's missing a matching }");
+        return null;
+      }
+      searchArea = sb.toString();
+    }
+
     // Get everything inside the parens for the size() method
-    String[] contents = PApplet.match(scrubComments(code), SIZE_CONTENTS_REGEX);
+    String[] contents = PApplet.match(searchArea, SIZE_CONTENTS_REGEX);
     if (contents != null) {
       //String[] matches = split on commas, but not commas inside quotes
 
       StringList args = breakCommas(contents[1]);
-      String width = args.get(0).trim();
-      String height = args.get(1).trim();
-      String renderer = (args.size() >= 3) ? args.get(2) : null;
-      String path = (args.size() >= 4) ? args.get(3) : null;
-
-      boolean badSize = false;
+      SizeInfo info = new SizeInfo();
+      info.statement = contents[0];
+      info.width = args.get(0).trim();
+      info.height = args.get(1).trim();
+      info.renderer = (args.size() >= 3) ? args.get(2).trim() : null;
+      info.path = (args.size() >= 4) ? args.get(3).trim() : null;
 
       // Trying to remember why we wanted to allow people to use displayWidth
       // as the height or displayHeight as the width, but maybe it's for
       // making a square sketch window? Not going to
 
-      if (width.equals("screenWidth") ||
-          width.equals("screenHeight") ||
-          height.equals("screenHeight") ||
-          height.equals("screenWidth")) {
-        final String message =
-          "The screenWidth and screenHeight variables\n" +
-          "are named displayWidth and displayHeight\n" +
-          "in this release of Processing.";
-        Base.showWarning("Time for a quick update", message, null);
+      if (info.hasOldSyntax()) {
         return null;
       }
 
-      if (!width.equals("displayWidth") &&
-          !width.equals("displayHeight") &&
-          PApplet.parseInt(width, -1) == -1) {
-        badSize = true;
-      }
-      if (!height.equals("displayWidth") &&
-          !height.equals("displayHeight") &&
-          PApplet.parseInt(height, -1) == -1) {
-        badSize = true;
-      }
-
-      if (badSize && fussy) {
+      if (info.hasBadSize() && fussy) {
         // found a reference to size, but it didn't seem to contain numbers
         final String message =
           "The size of this applet could not automatically\n" +
@@ -321,25 +426,13 @@ public class PdePreprocessor {
         return null;
       }
 
-      // Remove additional space 'round the renderer
-      if (renderer != null) {
-        renderer = renderer.trim();
-        if (renderer.length() == 0) {  // if empty, set null
-          renderer = null;
-        }
-      }
-
-      // Same for the file name
-      if (path != null) {
-        path = path.trim();
-        if (path.length() == 0) {
-          path = null;
-        }
-      }
-      return new String[] { contents[0], width, height, renderer, path };
+      info.checkEmpty();
+      return info;
+      //return new String[] { contents[0], width, height, renderer, path };
     }
     // not an error, just no size() specified
-    return new String[] { null, null, null, null, null };
+    //return new String[] { null, null, null, null, null };
+    return new SizeInfo();
   }
 
 
@@ -405,12 +498,12 @@ public class PdePreprocessor {
 
 
   public void addMethod(String methodName) {
-    foundMethods.put(methodName, new Object());
+    foundMethods.add(methodName);
   }
 
 
   public boolean hasMethod(String methodName) {
-    return foundMethods.containsKey(methodName);
+    return foundMethods.contains(methodName);
   }
 
 
@@ -571,7 +664,7 @@ public class PdePreprocessor {
 
     // need to reset whether or not this has a main()
 //    foundMain = false;
-    foundMethods = new HashMap<String, Object>();
+    foundMethods = new HashSet<String>();
 
     // http://processing.org/bugs/bugzilla/5.html
     if (!program.endsWith("\n")) {
@@ -941,8 +1034,8 @@ public class PdePreprocessor {
     if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
       // doesn't remove the oriiginal size() method, but calling size()
       // again in setup() is harmless.
-      if (!hasMethod("settings") && sizeStatement != null) {
-        out.println(indent + "public void settings() { " + sizeStatement + " }");
+      if (!hasMethod("settings") && sizeInfo.statement != null) {
+        out.println(indent + "public void settings() { " + sizeInfo.statement + " }");
 //        out.println(indent + "public void settings() {");
 //        out.println(indent + indent + sizeStatement);
 //        out.println(indent + "}");
