@@ -252,7 +252,8 @@ public class PdePreprocessor {
    * @param fussy true if it should show an error message if bad size()
    * @return null if there was an error, otherwise an array (might contain some/all nulls)
    */
-  static public SizeInfo parseSketchSize(String code, boolean fussy) {
+  static public SizeInfo parseSketchSize(String code,
+                                         boolean fussy) throws SketchException {
     // This matches against any uses of the size() function, whether numbers
     // or variables or whatever. This way, no warning is shown if size() isn't
     // actually used in the applet, which is the case especially for anyone
@@ -299,8 +300,8 @@ public class PdePreprocessor {
         }
       }
       if (closeBrace == -1) {
-//        throw new SketchException("Found a { that's missing a matching }");
-        return null;
+        throw new SketchException("Found a { that's missing a matching }", false);
+//        return null;
       }
       searchArea = sb.toString();
     }
@@ -323,19 +324,20 @@ public class PdePreprocessor {
       // making a square sketch window? Not going to
 
       if (info.hasOldSyntax()) {
-        return null;
+//        return null;
+        throw new SketchException("Please update your code to continue.", false);
       }
 
       if (info.hasBadSize() && fussy) {
         // found a reference to size, but it didn't seem to contain numbers
         final String message =
-          "The size of this applet could not automatically\n" +
-          "be determined from your code. Use only numeric\n" +
-          "values (not variables) for the size() command.\n" +
-          "See the size() reference for an explanation.";
+          "The size of this sketch could not be determined from your code.\n" +
+          "Use only numbers (not variables) for the size() command.\n" +
+          "Read the size() reference for more details.";
         Base.showWarning("Could not find sketch size", message, null);
 //        new Exception().printStackTrace(System.out);
-        return null;
+//        return null;
+        throw new SketchException("Please fix the size() line to continue.", false);
       }
 
       info.checkEmpty();
