@@ -21,10 +21,11 @@ o   http://code.google.com/p/processing/issues/detail?id=632
 X   closed during the 2.x cycle
 
 contribs
-X fix several Greek error messages
+X several Greek translation updates
 X   https://github.com/processing/processing/issues/3329
 X   https://github.com/processing/processing/pull/3330
 X   https://github.com/processing/processing/pull/3340
+X   https://github.com/processing/processing/pull/3354
 X add i18n for Archiver and missing text
 X   https://github.com/processing/processing/pull/3349
 
