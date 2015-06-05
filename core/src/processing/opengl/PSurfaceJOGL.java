@@ -200,8 +200,26 @@ public class PSurfaceJOGL implements PSurface {
 //    System.err.println("0. create window");
     window = GLWindow.create(screen, caps);
 
+    float[] reqSurfacePixelScale;
+    if (graphics.is2X()) {
+       // Retina
+       reqSurfacePixelScale = new float[] { ScalableSurface.AUTOMAX_PIXELSCALE,
+                                            ScalableSurface.AUTOMAX_PIXELSCALE };
+    } else {
+      // Non-retina
+      reqSurfacePixelScale = new float[] { ScalableSurface.IDENTITY_PIXELSCALE,
+                                           ScalableSurface.IDENTITY_PIXELSCALE };
+    }
+    window.setSurfaceScale(reqSurfacePixelScale);
+//  window..setBackground(new Color(backgroundColor, true));
     sketchWidth = sketch.sketchWidth();
     sketchHeight = sketch.sketchHeight();
+    sketch.width = sketch.sketchWidth();
+    sketch.height = sketch.sketchHeight();
+
+    window.setSize(sketchWidth, sketchHeight);
+    //graphics.setSize(sketch.width, sketch.height);
+
 
     if (displayDevice == null) {
       displayDevice = window.getMainMonitor();
@@ -236,10 +254,10 @@ public class PSurfaceJOGL implements PSurface {
     }
 
 //    window..setBackground(new Color(backgroundColor, true));
-    window.setSize(sketchWidth, sketchHeight);
-    sketch.width = sketch.sketchWidth();
-    sketch.height = sketch.sketchHeight();
-    graphics.setSize(sketch.width, sketch.height);
+//    window.setSize(sketchWidth, sketchHeight);
+//    sketch.width = sketch.sketchWidth();
+//    sketch.height = sketch.sketchHeight();
+//    graphics.setSize(sketch.width, sketch.height);
 
 //    System.out.println("deviceIndex: " + deviceIndex);
 //    System.out.println(displayDevice);
@@ -256,18 +274,6 @@ public class PSurfaceJOGL implements PSurface {
         window.setFullscreen(true);
       }
     }
-
-    float[] reqSurfacePixelScale;
-    if (graphics.is2X()) {
-       // Retina
-       reqSurfacePixelScale = new float[] { ScalableSurface.AUTOMAX_PIXELSCALE,
-                                            ScalableSurface.AUTOMAX_PIXELSCALE };
-    } else {
-      // Non-retina
-      reqSurfacePixelScale = new float[] { ScalableSurface.IDENTITY_PIXELSCALE,
-                                           ScalableSurface.IDENTITY_PIXELSCALE };
-    }
-    window.setSurfaceScale(reqSurfacePixelScale);
 
     NEWTMouseListener mouseListener = new NEWTMouseListener();
     window.addMouseListener(mouseListener);
