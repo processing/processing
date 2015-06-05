@@ -26,6 +26,8 @@ X backspace key is identified as delete in OpenGL renderers
 X   https://github.com/processing/processing/issues/3338
 X set icon for OpenGL windows
 X   https://github.com/processing/processing/issues/3348
+X key problem with DELETE, BACKSPACE and CMD in P3D / P2D
+X   https://github.com/processing/processing/issues/3352
 _ save() and saveFrame() with OPENGL renderer fails
 _   https://github.com/processing/processing/issues/3334
 
@@ -36,7 +38,12 @@ _   size() inside settings() is left alone and can do whatever it wants
 _   comments are being removed before size() is getting checked
 _     probably remove anything inside settings() as well?
 _ fullScreen() method
-_ sort out display stuff
+_   take display into account for fullScreen()
+_ noSmooth()
+_   can only be called inside setup(), show warning elsewhere
+_   is lifted out of setup() and into settings()
+_   goes before the first beginDraw() with createGraphics()
+_ sort out display stuff (bug in the numbering in 3.0a9)
 _ Text looks blurry in GL Retina (andres)
 _   https://github.com/processing/processing/issues/2739
 _ check retina with PGraphicsRetina2D

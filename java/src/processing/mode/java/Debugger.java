@@ -199,7 +199,8 @@ public class Debugger implements VMEventListener {
 
       log(Level.INFO, "building sketch: {0}", sketch.getName());
       //LineMapping.addLineNumbers(sketch); // annotate
-      mainClassName = build.build(false);
+//      mainClassName = build.build(false);
+      mainClassName = build.build(true);
       //LineMapping.removeLineNumbers(sketch); // annotate
       log(Level.INFO, "class: {0}", mainClassName);
 

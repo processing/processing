@@ -167,9 +167,10 @@ public class PdePreprocessor {
     "(?:^|\\s|;)size\\s*\\(([^\\)]+)\\)\\s*\\;";
   static private final String FULL_SCREEN_CONTENTS_REGEX =
     "(?:^|\\s|;)fullScreen\\s*\\(([^\\)]+)\\)\\s*\\;";
-  /** Test whether there's a void somewhere (the program has functions). */
-  static private final String VOID_REGEX =
-    "(?:^|\\s|;)void\\s";
+//  /** Test whether there's a void somewhere (the program has functions). */
+//  static private final String VOID_REGEX =
+//    "(?:^|\\s|;)void\\s";
+  /** Used to grab the start of setup() so we can mine it for size() */
   static private final String VOID_SETUP_REGEX =
     "(?:^|\\s|;)void\\ssetup\\s*\\(";
 
