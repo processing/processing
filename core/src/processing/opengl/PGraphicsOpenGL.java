@@ -588,9 +588,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public void setSize(int iwidth, int iheight) {
     width = iwidth;
     height = iheight;
-    float f = getPixelScale();
-    pixelWidth = (int)(width * f);
-    pixelHeight = (int)(height * f);
+    updatePixelSize();
 
     // init perspective projection based on new dimensions
     cameraFOV = 60 * DEG_TO_RAD; // at least for now
@@ -674,6 +672,13 @@ public class PGraphicsOpenGL extends PGraphics {
   public PSurface createSurface() {  // ignore
     surfaceJOGL = new PSurfaceJOGL(this);
     return surfaceJOGL;
+  }
+
+
+  protected void updatePixelSize() {
+    float f = getPixelScale();
+    pixelWidth = (int)(width * f);
+    pixelHeight = (int)(height * f);
   }
 
 
@@ -5586,8 +5591,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void allocatePixels() {
-    if ((pixels == null) || (pixels.length != width * height)) {
-      pixels = new int[width * height];
+    updatePixelSize();
+    if ((pixels == null) || (pixels.length != pixelWidth * pixelHeight)) {
+      pixels = new int[pixelWidth * pixelHeight];
       pixelBuffer = PGL.allocateIntBuffer(pixels);
     }
   }
@@ -5605,6 +5611,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void readPixels() {
+    updatePixelSize();
     beginPixelsOp(OP_READ);
     try {
       // The readPixelsImpl() call in inside a try/catch block because it appears
@@ -5612,7 +5619,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // thread instead of the Animation thread right after a resize. Because
       // of this the width and height might have a different size than the
       // one of the pixels arrays.
-      pgl.readPixelsImpl(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
+      pgl.readPixelsImpl(0, 0, pixelWidth, pixelHeight, PGL.RGBA, PGL.UNSIGNED_BYTE,
                          pixelBuffer);
     } catch (IndexOutOfBoundsException e) {
       // Silently catch the exception.
@@ -5621,14 +5628,15 @@ public class PGraphicsOpenGL extends PGraphics {
     try {
       // Idem...
       PGL.getIntArray(pixelBuffer, pixels);
-      PGL.nativeToJavaARGB(pixels, width, height);
+      PGL.nativeToJavaARGB(pixels, pixelWidth, pixelHeight);
     } catch (ArrayIndexOutOfBoundsException e) {
     }
   }
 
 
   protected void drawPixels(int x, int y, int w, int h) {
-    int len = w * h;
+    int f = (int)getPixelScale();
+    int len = f * w * h;
     if (nativePixels == null || nativePixels.length < len) {
       nativePixels = new int[len];
       nativePixelBuffer = PGL.allocateIntBuffer(nativePixels);
@@ -5639,18 +5647,18 @@ public class PGraphicsOpenGL extends PGraphics {
         // The pixels to be copied to the texture need to be consecutive, and
         // they are not in the pixels array, so putting each row one after
         // another in nativePixels.
-        int offset0 = y * width + x;
+        int offset0 = f * (y * width + x);
         int offset1 = 0;
 
-        for (int yc = y; yc < y + h; yc++) {
-          System.arraycopy(pixels, offset0, nativePixels, offset1, w);
-          offset0 += width;
-          offset1 += w;
+        for (int yc = f * y; yc < f * (y + h); yc++) {
+          System.arraycopy(pixels, offset0, nativePixels, offset1, f * w);
+          offset0 += f * width;
+          offset1 += f * w;
         }
       } else {
         PApplet.arrayCopy(pixels, 0, nativePixels, 0, len);
       }
-      PGL.javaToNativeARGB(nativePixels, w, h);
+      PGL.javaToNativeARGB(nativePixels, f * w, f * h);
     } catch (ArrayIndexOutOfBoundsException e) {
     }
     PGL.putIntArray(nativePixelBuffer, nativePixels);
@@ -5673,10 +5681,10 @@ public class PGraphicsOpenGL extends PGraphics {
       // (off)screen buffer.
       // First, copy the pixels to the texture. We don't need to invert the
       // pixel copy because the texture will be drawn inverted.
-      int tw = PApplet.min(texture.glWidth - x, w);
-      int th = PApplet.min(texture.glHeight - y, h);
+      int tw = PApplet.min(texture.glWidth - f * x, f * w);
+      int th = PApplet.min(texture.glHeight - f * y, f * h);
       pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
-                        x, y, tw, th, nativePixelBuffer);
+                        f * x, f * y, tw, th, nativePixelBuffer);
       beginPixelsOp(OP_WRITE);
       drawTexture(x, y, w, h);
       endPixelsOp();
@@ -5685,7 +5693,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // currently drawing to. Because the texture is invertex along Y, we
       // need to reflect that in the vertical arguments.
       pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
-                        x, height - (y + h), w, h, nativePixelBuffer);
+                        f * x, f * (height - (y + h)), f * w, f * h, nativePixelBuffer);
     }
   }
 
@@ -5724,6 +5732,8 @@ public class PGraphicsOpenGL extends PGraphics {
                          int sourceX, int sourceY,
                          int sourceWidth, int sourceHeight,
                          int targetX, int targetY) {
+    updatePixelSize();
+
     // Copies the pixels
     loadPixels();
     int sourceOffset = sourceY * sourceImage.pixelWidth + sourceX;
@@ -5780,6 +5790,8 @@ public class PGraphicsOpenGL extends PGraphics {
     flush(); // To make sure the color buffer is updated.
 
     if (primarySurface) {
+      updatePixelSize();
+
       if (pgl.isFBOBacked()) {
         // In the case of MSAA, this is needed so the back buffer is in sync
         // with the rendering.
@@ -5790,21 +5802,21 @@ public class PGraphicsOpenGL extends PGraphics {
         // Here we go the slow route: we first copy the contents of the color
         // buffer into a pixels array (but we keep it in native format) and
         // then copy this array into the texture.
-        if (nativePixels == null || nativePixels.length < width * height) {
-          nativePixels = new int[width * height];
+        if (nativePixels == null || nativePixels.length < pixelWidth * pixelHeight) {
+          nativePixels = new int[pixelWidth * pixelHeight];
           nativePixelBuffer = PGL.allocateIntBuffer(nativePixels);
         }
 
         beginPixelsOp(OP_READ);
         try {
           // See comments in readPixels() for the reason for this try/catch.
-          pgl.readPixelsImpl(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE,
+          pgl.readPixelsImpl(0, 0, pixelWidth, pixelHeight, PGL.RGBA, PGL.UNSIGNED_BYTE,
                              nativePixelBuffer);
         } catch (IndexOutOfBoundsException e) {
         }
         endPixelsOp();
 
-        texture.setNative(nativePixelBuffer, 0, 0, width, height);
+        texture.setNative(nativePixelBuffer, 0, 0, pixelWidth, pixelHeight);
       }
     } else if (offscreenMultisample) {
        // We need to copy the contents of the multisampled buffer to the color
@@ -5841,11 +5853,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void loadTextureImpl(int sampling, boolean mipmap) {
-    if (width == 0 || height == 0) return;
+    updatePixelSize();
+    if (pixelWidth == 0 || pixelHeight == 0) return;
     if (texture == null || texture.contextIsOutdated()) {
       Texture.Parameters params = new Texture.Parameters(ARGB,
                                                          sampling, mipmap);
-      texture = new Texture(this, width, height, params);
+      texture = new Texture(this, pixelWidth, pixelHeight, params);
       texture.invertedY(true);
       texture.colorBuffer(true);
       setCache(this, texture);
@@ -5854,7 +5867,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void createPTexture() {
-    ptexture = new Texture(this, width, height, texture.getParameters());
+    updatePixelSize();
+    ptexture = new Texture(this, pixelWidth, pixelHeight, texture.getParameters());
     ptexture.invertedY(true);
     ptexture.colorBuffer(true);
   }
@@ -5922,7 +5936,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void mask(PImage alpha) {
-    if (alpha.width != width || alpha.height != height) {
+    updatePixelSize();
+    if (alpha.width != pixelWidth || alpha.height != pixelHeight) {
       throw new RuntimeException("The PImage used with mask() must be " +
       "the same size as the applet.");
     }
@@ -6485,14 +6500,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void beginOnscreenDraw() {
+    updatePixelSize();
+
     pgl.beginDraw(clearColorBuffer);
 
     if (drawFramebuffer == null) {
-      drawFramebuffer = new FrameBuffer(this, width, height, true);
+      drawFramebuffer = new FrameBuffer(this, pixelWidth, pixelHeight, true);
     }
     drawFramebuffer.setFBO(pgl.getDrawFramebuffer());
     if (readFramebuffer == null) {
-      readFramebuffer = new FrameBuffer(this, width, height, true);
+      readFramebuffer = new FrameBuffer(this, pixelWidth, pixelHeight, true);
     }
     readFramebuffer.setFBO(pgl.getReadFramebuffer());
     if (currentFramebuffer == null) {
