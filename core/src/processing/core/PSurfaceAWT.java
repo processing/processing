@@ -437,6 +437,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     if (screenRect.width == sketchWidth &&
         screenRect.height == sketchHeight) {
       fullScreen = true;
+      sketch.fullScreen = true;  // hmm
     }
 
     if (fullScreen || spanDisplays) {
@@ -459,7 +460,8 @@ public class PSurfaceAWT extends PSurfaceNone {
 //    if (backgroundColor == 0) {
 //      backgroundColor = WINDOW_BGCOLOR;
 //    }
-    frame.getContentPane().setBackground(new Color(sketch.sketchWindowColor(), false));
+    final Color windowColor = new Color(sketch.sketchWindowColor(), false);
+    frame.getContentPane().setBackground(windowColor);
 
     // Put the p5 logo in the Frame's corner to override the Java coffee cup.
     setIconImage(frame);

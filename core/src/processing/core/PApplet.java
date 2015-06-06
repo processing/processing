@@ -812,6 +812,7 @@ public class PApplet implements PConstants {
   String renderer = JAVA2D;
 //  int quality = 2;
   int smooth = 1;
+
   boolean fullScreen;
 //  boolean spanDisplays;
   int display;  // set to SPAN when using all displays
@@ -826,20 +827,25 @@ public class PApplet implements PConstants {
   int windowColor = 0xffDDDDDD;
 
 
-  boolean insideSettings(Object... args) {
+  /**
+   * @param method "size" or "fullScreen"
+   * @param args parameters passed to the function so we can show the user
+   * @return true if safely inside the settings() method
+   */
+  boolean insideSettings(String method, Object... args) {
     if (insideSettings) {
       return true;
     }
-    final String url = "https://processing.org/reference/size_.html";
+    final String url = "https://processing.org/reference/" + method + "_.html";
     if (!external) {  // post a warning for users of Eclipse and other IDEs
       StringList argList = new StringList(args);
-      System.err.println("When not using the PDE, size() can only be used inside settings().");
-      System.err.println("Remove the size() method from setup(), and add the following:");
+      System.err.println("When not using the PDE, " + method + "() can only be used inside settings().");
+      System.err.println("Remove the " + method + "() method from setup(), and add the following:");
       System.err.println("public void settings() {");
-      System.err.println("  size(" + argList.join(", ") + ");");
+      System.err.println("  " + method + "(" + argList.join(", ") + ");");
       System.err.println("}");
     }
-    throw new IllegalStateException("size() cannot be used here, see " + url);
+    throw new IllegalStateException(method + "() cannot be used here, see " + url);
   }
 
 
@@ -857,11 +863,10 @@ public class PApplet implements PConstants {
     if (display > 0 && display <= displayDevices.length) {
       device = displayDevices[display-1];
     }
-    if (display != SPAN) {
-      DisplayMode displayMode = device.getDisplayMode();
-      displayWidth = displayMode.getWidth();
-      displayHeight = displayMode.getHeight();
-    }
+    // Set displayWidth and displayHeight for people still using those.
+    DisplayMode displayMode = device.getDisplayMode();
+    displayWidth = displayMode.getWidth();
+    displayHeight = displayMode.getHeight();
 
     // Here's where size(), fullScreen(), smooth(N) and noSmooth() might
     // be called, conjuring up the demons of various rendering configurations.
@@ -1512,12 +1517,19 @@ public class PApplet implements PConstants {
 
 
   public void fullScreen(String renderer) {
-
+    if (insideSettings("fullScreen", renderer)) {
+      fullScreen = true;
+      this.renderer = renderer;
+    }
   }
 
 
   public void fullScreen(String renderer, int display) {
-
+    if (insideSettings("fullScreen", renderer, display)) {
+      fullScreen = true;
+      this.renderer = renderer;
+      this.display = display;
+    }
   }
 
 
@@ -1601,7 +1613,7 @@ public class PApplet implements PConstants {
     // action if things have changed.
     if (width != this.width ||
         height != this.height) {
-      if (insideSettings(width, height)) {
+      if (insideSettings("size", width, height)) {
         this.width = width;
         this.height = height;
       }
@@ -1613,7 +1625,7 @@ public class PApplet implements PConstants {
     if (width != this.width ||
         height != this.height ||
         !renderer.equals(this.renderer)) {
-      if (insideSettings(width, height, renderer)) {
+      if (insideSettings("size", width, height, renderer)) {
         this.width = width;
         this.height = height;
         this.renderer = renderer;
@@ -1632,7 +1644,7 @@ public class PApplet implements PConstants {
     if (width != this.width ||
         height != this.height ||
         !renderer.equals(this.renderer)) {
-      if (insideSettings(width, height, renderer, path)) {
+      if (insideSettings("size", width, height, renderer, path)) {
         this.width = width;
         this.height = height;
         this.renderer = renderer;

@@ -48,6 +48,7 @@ X   maybe we use the AWT screen sizes first, then match the others w/ em?
 _   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
 X   --full-screen replaced with --present (to untangle things)
 _     if you want full screen, use the fullScreen() method
+_   docs: no mixing size() and fullScreen(). pick one.
 X instead of all these sketchXxxx() methods, should we have sketchSetting()
 _   and an internal dictionary that stores them all?
 _     intParam(), stringParam() and setParam()? 
