@@ -687,9 +687,10 @@ public class PApplet implements PConstants {
    */
   static public final String ARGS_LOCATION = "--location";
 
+  /** Used by the PDE to suggest a display (set in prefs, passed on Run) */
   static public final String ARGS_DISPLAY = "--display";
 
-  static public final String ARGS_SPAN_DISPLAYS = "--span";
+//  static public final String ARGS_SPAN_DISPLAYS = "--span";
 
   static public final String ARGS_WINDOW_COLOR = "--window-color";
 
@@ -814,6 +815,7 @@ public class PApplet implements PConstants {
   boolean fullScreen;
 //  boolean spanDisplays;
   int display;  // set to SPAN when using all displays
+  GraphicsDevice[] displayDevices;
 
   String outputPath;
   OutputStream outputStream;
@@ -848,16 +850,18 @@ public class PApplet implements PConstants {
     // until we resolve https://github.com/processing/processing/issues/3296
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice device = ge.getDefaultScreenDevice();
-    GraphicsDevice[] devices = ge.getScreenDevices();
+    displayDevices = ge.getScreenDevices();
 
     // Default or unparsed will be -1, spanning will be 0, actual displays will
     // be numbered from 1 because it's too weird to say "display 0" in prefs.
-    if (display > 0 && display <= devices.length) {
-      device = devices[display-1];
+    if (display > 0 && display <= displayDevices.length) {
+      device = displayDevices[display-1];
     }
-    DisplayMode displayMode = device.getDisplayMode();
-    displayWidth = displayMode.getWidth();
-    displayHeight = displayMode.getHeight();
+    if (display != SPAN) {
+      DisplayMode displayMode = device.getDisplayMode();
+      displayWidth = displayMode.getWidth();
+      displayHeight = displayMode.getHeight();
+    }
 
     // Here's where size(), fullScreen(), smooth(N) and noSmooth() might
     // be called, conjuring up the demons of various rendering configurations.
@@ -9602,7 +9606,7 @@ public class PApplet implements PConstants {
     int displayIndex = -1;  // use default
 //    boolean fullScreen = false;
     boolean present = false;
-    boolean spanDisplays = false;
+//    boolean spanDisplays = false;
 
     String param = null, value = null;
     String folder = calcSketchPath();
@@ -9651,8 +9655,8 @@ public class PApplet implements PConstants {
         if (args[argIndex].equals(ARGS_PRESENT)) {
           present = true;
 
-        } else if (args[argIndex].equals(ARGS_SPAN_DISPLAYS)) {
-          spanDisplays = true;
+//        } else if (args[argIndex].equals(ARGS_SPAN_DISPLAYS)) {
+//          spanDisplays = true;
 
         } else if (args[argIndex].equals(ARGS_HIDE_STOP)) {
           hideStop = true;
@@ -9713,13 +9717,13 @@ public class PApplet implements PConstants {
     // A handful of things that need to be set before init/start.
     sketch.sketchPath = folder;
 
-//    sketch.spanDisplays = spanDisplays;
-    // If spanning screens, that means we're also full screen.
-//    fullScreen |= spanDisplays;
-    if (spanDisplays) {
-      displayIndex = SPAN;
-//      fullScreen = true;
-    }
+////    sketch.spanDisplays = spanDisplays;
+//    // If spanning screens, that means we're also full screen.
+////    fullScreen |= spanDisplays;
+//    if (spanDisplays) {
+//      displayIndex = SPAN;
+////      fullScreen = true;
+//    }
 
 //    // If the applet doesn't call for full screen, but the command line does,
 //    // enable it. Conversely, if the command line does not, don't disable it.
