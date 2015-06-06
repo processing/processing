@@ -379,7 +379,7 @@ public class Runner implements MessageConsumer {
 
 
       if (presenting) {
-        params.add(PApplet.ARGS_FULL_SCREEN);
+        params.add(PApplet.ARGS_PRESENT);
 //        if (Preferences.getBoolean("run.present.exclusive")) {
 //          params.add(PApplet.ARGS_EXCLUSIVE);
 //        }

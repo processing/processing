@@ -1155,7 +1155,7 @@ public class JavaBuild {
           }
           while ((index = sb.indexOf("@@lsuipresentationmode@@")) != -1) {
             sb.replace(index, index + "@@lsuipresentationmode@@".length(),
-                       Preferences.getBoolean("export.application.fullscreen") ? "4" : "0");
+                       Preferences.getBoolean("export.application.present") ? "4" : "0");
           }
 
           lines[i] = sb.toString();

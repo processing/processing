@@ -740,25 +740,24 @@ public class JavaEditor extends Editor {
         Preferences.setBoolean("export.application.stop", showStopButton.isSelected());
       }
     });
-    showStopButton.setEnabled(Preferences.getBoolean("export.application.fullscreen"));
+    showStopButton.setEnabled(Preferences.getBoolean("export.application.present"));
     showStopButton.setBorder(new EmptyBorder(3, 13 + indent, 6, 13));
 
-    final JCheckBox fullScreenButton = new JCheckBox(Language.text("export.options.fullscreen"));
-    //fullscreenButton.setMnemonic(KeyEvent.VK_F);
-    fullScreenButton.setSelected(Preferences.getBoolean("export.application.fullscreen"));
-    fullScreenButton.addItemListener(new ItemListener() {
+    final JCheckBox presentButton = new JCheckBox(Language.text("export.options.fullscreen"));
+    presentButton.setSelected(Preferences.getBoolean("export.application.present"));
+    presentButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        boolean sal = fullScreenButton.isSelected();
-        Preferences.setBoolean("export.application.fullscreen", sal);
+        boolean sal = presentButton.isSelected();
+        Preferences.setBoolean("export.application.present", sal);
         showStopButton.setEnabled(sal);
       }
     });
-    fullScreenButton.setBorder(new EmptyBorder(3, 13, 3, 13));
+    presentButton.setBorder(new EmptyBorder(3, 13, 3, 13));
 
     JPanel presentPanel = new JPanel();
     presentPanel.setLayout(new BoxLayout(presentPanel, BoxLayout.Y_AXIS));
     Box fullScreenBox = Box.createHorizontalBox();
-    fullScreenBox.add(fullScreenButton);
+    fullScreenBox.add(presentButton);
 
     /*
     //run.present.stop.color
