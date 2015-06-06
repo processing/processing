@@ -753,7 +753,7 @@ public class PShader implements PConstants {
       uniformValues.put(loc, new UniformValue(type, value));
     } else {
       PGraphics.showWarning("The shader doesn't have a uniform called \"" +
-                            name + "\" OR the uniform was removed during" +
+                            name + "\" OR the uniform was removed during " +
                             "compilation because it was unused.");
     }
   }
@@ -897,47 +897,63 @@ public class PShader implements PConstants {
     }
   }
 
-  protected void init() {
+
+  public void init() {
     if (glProgram == 0 || contextIsOutdated()) {
-      context = pgl.getCurrentContext();
-      glProgram = PGraphicsOpenGL.createGLSLProgramObject(context, pgl);
-
-      boolean vertRes = true;
-      if (hasVertexShader()) {
-        vertRes = compileVertexShader();
-      } else {
-        PGraphics.showException("Doesn't have a vertex shader");
-      }
-
-      boolean fragRes = true;
-      if (hasFragmentShader()) {
-        fragRes = compileFragmentShader();
-      } else {
-        PGraphics.showException("Doesn't have a fragment shader");
-      }
-
-      if (vertRes && fragRes) {
+      create();
+      if (compile()) {
         pgl.attachShader(glProgram, glVertex);
         pgl.attachShader(glProgram, glFragment);
+
         setup();
 
         pgl.linkProgram(glProgram);
 
-        pgl.getProgramiv(glProgram, PGL.LINK_STATUS, intBuffer);
-        boolean linked = intBuffer.get(0) == 0 ? false : true;
-        if (!linked) {
-          PGraphics.showException("Cannot link shader program:\n" +
-                                  pgl.getProgramInfoLog(glProgram));
-        }
-
-        pgl.validateProgram(glProgram);
-        pgl.getProgramiv(glProgram, PGL.VALIDATE_STATUS, intBuffer);
-        boolean validated = intBuffer.get(0) == 0 ? false : true;
-        if (!validated) {
-          PGraphics.showException("Cannot validate shader program:\n" +
-                                  pgl.getProgramInfoLog(glProgram));
-        }
+        validate();
       }
+    }
+  }
+
+
+  protected void create() {
+    context = pgl.getCurrentContext();
+    glProgram = PGraphicsOpenGL.createGLSLProgramObject(context, pgl);
+  }
+
+
+  protected boolean compile() {
+    boolean vertRes = true;
+    if (hasVertexShader()) {
+      vertRes = compileVertexShader();
+    } else {
+      PGraphics.showException("Doesn't have a vertex shader");
+    }
+
+    boolean fragRes = true;
+    if (hasFragmentShader()) {
+      fragRes = compileFragmentShader();
+    } else {
+      PGraphics.showException("Doesn't have a fragment shader");
+    }
+
+    return vertRes && fragRes;
+  }
+
+
+  protected void validate() {
+    pgl.getProgramiv(glProgram, PGL.LINK_STATUS, intBuffer);
+    boolean linked = intBuffer.get(0) == 0 ? false : true;
+    if (!linked) {
+      PGraphics.showException("Cannot link shader program:\n" +
+                              pgl.getProgramInfoLog(glProgram));
+    }
+
+    pgl.validateProgram(glProgram);
+    pgl.getProgramiv(glProgram, PGL.VALIDATE_STATUS, intBuffer);
+    boolean validated = intBuffer.get(0) == 0 ? false : true;
+    if (!validated) {
+      PGraphics.showException("Cannot validate shader program:\n" +
+                              pgl.getProgramInfoLog(glProgram));
     }
   }
 
@@ -962,9 +978,11 @@ public class PShader implements PConstants {
     return vertexShaderSource != null && 0 < vertexShaderSource.length;
   }
 
+
   protected boolean hasFragmentShader() {
     return fragmentShaderSource != null && 0 < fragmentShaderSource.length;
   }
+
 
   /**
    * @param shaderSource a string containing the shader's code
@@ -1022,6 +1040,7 @@ public class PShader implements PConstants {
       glProgram = 0;
     }
   }
+
 
   static protected int getShaderType(String[] source, int defaultType) {
     for (int i = 0; i < source.length; i++) {
@@ -1219,6 +1238,7 @@ public class PShader implements PConstants {
       ppixelsUnit = -1;
     }
   }
+
 
   protected void bindTyped() {
     if (currentPG == null) {

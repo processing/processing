@@ -6850,15 +6850,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public PShader loadShader(String fragFilename, String vertFilename) {
+    PShader shader = null;
     if (fragFilename == null || fragFilename.equals("")) {
       PGraphics.showWarning(MISSING_FRAGMENT_SHADER);
-      return null;
     } else if (vertFilename == null || vertFilename.equals("")) {
       PGraphics.showWarning(MISSING_VERTEX_SHADER);
-      return null;
     } else {
-      return new PShader(parent, vertFilename, fragFilename);
+      shader = new PShader(parent, vertFilename, fragFilename);
     }
+    return shader;
   }
 
 
@@ -6866,6 +6866,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public void shader(PShader shader) {
     flush(); // Flushing geometry drawn with a different shader.
 
+    if (shader != null) shader.init();
     if (shader.isPolyShader()) polyShader = shader;
     else if (shader.isLineShader()) lineShader = shader;
     else if (shader.isPointShader()) pointShader = shader;
@@ -6877,6 +6878,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public void shader(PShader shader, int kind) {
     flush(); // Flushing geometry drawn with a different shader.
 
+    if (shader != null) shader.init();
     if (kind == TRIANGLES) polyShader = shader;
     else if (kind == LINES) lineShader = shader;
     else if (kind == POINTS) pointShader = shader;
