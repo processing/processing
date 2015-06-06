@@ -181,12 +181,10 @@ public class PGraphics extends PImage implements PConstants {
   protected String path;
 
   /**
-   * true if this is the main drawing surface for a particular sketch.
-   * This would be set to false for an offscreen buffer or if it were
-   * created any other way than size(). When this is set, the listeners
-   * are also added to the sketch.
+   * True if this is the main graphics context for a sketch.
+   * False for offscreen buffers retrieved via createGraphics().
    */
-  protected boolean primarySurface;
+  protected boolean primaryGraphics;
 
 //  // TODO nervous about leaving this here since it seems likely to create
 //  // back-references where we don't want them
@@ -712,12 +710,12 @@ public class PGraphics extends PImage implements PConstants {
    * else that goes along with that.
    */
   public void setPrimary(boolean primary) {  // ignore
-    this.primarySurface = primary;
+    this.primaryGraphics = primary;
 
     // base images must be opaque (for performance and general
     // headache reasons.. argh, a semi-transparent opengl surface?)
     // use createGraphics() if you want a transparent surface.
-    if (primarySurface) {
+    if (primaryGraphics) {
       format = RGB;
     }
   }
@@ -960,7 +958,7 @@ public class PGraphics extends PImage implements PConstants {
     // a gray background (when just a transparent surface or an empty pdf
     // is what's desired).
     // this background() call is for the Java 2D and OpenGL renderers.
-    if (primarySurface) {
+    if (primaryGraphics) {
       //System.out.println("main drawing surface bg " + getClass().getName());
       background(backgroundColor);
     }
@@ -3614,7 +3612,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   final public void smooth(int quality) {  // ignore
-    if (primarySurface) {
+    if (primaryGraphics) {
       parent.smooth(quality);
     } else {
       // make sure beginDraw() not called yet

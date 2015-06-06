@@ -131,7 +131,7 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void endDraw() {
-    if (!primarySurface) {
+    if (!primaryGraphics) {
       // TODO this is probably overkill for most tasks...
       loadPixels();
     }

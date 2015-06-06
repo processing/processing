@@ -607,7 +607,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public void dispose() { // PGraphics
     super.dispose();
 
-    if (primarySurface) {
+    if (primaryGraphics) {
       // Swap buffers the end to make sure that no
       // garbage is shown on the screen, this particularly
       // affects non-interactive sketches on windows that
@@ -622,7 +622,7 @@ public class PGraphicsOpenGL extends PGraphics {
     finalizePointBuffers();
 
     deleteSurfaceTextures();
-    if (primarySurface) {
+    if (primaryGraphics) {
       deleteDefaultShaders();
     } else {
       if (offscreenFramebuffer != null) {
@@ -635,7 +635,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     deleteFinalizedGLResources(pgl);
 
-    if (primarySurface) {
+    if (primaryGraphics) {
       pgl.deleteSurface();
     }
   }
@@ -648,7 +648,7 @@ public class PGraphicsOpenGL extends PGraphics {
       finalizePointBuffers();
 
       deleteSurfaceTextures();
-      if (!primarySurface) {
+      if (!primaryGraphics) {
         if (offscreenFramebuffer != null) {
           offscreenFramebuffer.dispose();
           offscreenFramebuffer = null;
@@ -1693,7 +1693,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void beginDraw() {
-    if (primarySurface) {
+    if (primaryGraphics) {
 //      if (initialized) {
 //        if (sized) pgl.reinitSurface();
 //        if (parent.canDraw()) pgl.requestDraw();
@@ -1721,7 +1721,7 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }
 
-    if (!primarySurface && getPrimaryPG().texCache.containsTexture(this)) {
+    if (!primaryGraphics && getPrimaryPG().texCache.containsTexture(this)) {
       // This offscreen surface is being used as a texture earlier in draw,
       // so we should update the rendering up to this point since it will be
       // modified.
@@ -1733,7 +1733,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     setViewport();
-    if (primarySurface) {
+    if (primaryGraphics) {
       beginOnscreenDraw();
     } else {
       beginOffscreenDraw();
@@ -1768,13 +1768,13 @@ public class PGraphicsOpenGL extends PGraphics {
       restoreSurface = true;
     }
 
-    if (primarySurface) {
+    if (primaryGraphics) {
       endOnscreenDraw();
     } else {
       endOffscreenDraw();
     }
 
-    if (primarySurface) {
+    if (primaryGraphics) {
       setCurrentPG(null);
     } else {
       getPrimaryPG().setCurrentPG(getPrimaryPG());
@@ -1792,7 +1792,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected PGraphicsOpenGL getPrimaryPG() {
-    if (primarySurface) {
+    if (primaryGraphics) {
       return this;
     } else {
       return (PGraphicsOpenGL)parent.g;
@@ -1808,7 +1808,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   protected PGL getPrimaryPGL() {
-    if (primarySurface) {
+    if (primaryGraphics) {
       return pgl;
     } else {
       return ((PGraphicsOpenGL)parent.g).pgl;
@@ -1909,7 +1909,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void beginPixelsOp(int op) {
     FrameBuffer pixfb = null;
-    if (primarySurface) {
+    if (primaryGraphics) {
       if (op == OP_READ) {
         if (pgl.isFBOBacked() && pgl.isMultisampled()) {
           // Making sure the back texture is up-to-date...
@@ -5558,7 +5558,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // color buffer into it.
   @Override
   public void loadPixels() {
-    if (primarySurface && sized) {
+    if (primaryGraphics && sized) {
       // Something wrong going on with threading, sized can never be true if
       // all the steps in a resize happen inside the Animation thread.
       return;
@@ -5664,13 +5664,13 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     PGL.putIntArray(nativePixelBuffer, nativePixels);
     // Copying pixel buffer to screen texture...
-    if (primarySurface && !pgl.isFBOBacked()) {
+    if (primaryGraphics && !pgl.isFBOBacked()) {
       // First making sure that the screen texture is valid. Only in the case
       // of non-FBO-backed primary surface we might need to create the texture.
       loadTextureImpl(POINT, false);
     }
 
-    boolean needToDrawTex = primarySurface && (!pgl.isFBOBacked() ||
+    boolean needToDrawTex = primaryGraphics && (!pgl.isFBOBacked() ||
                             (pgl.isFBOBacked() && pgl.isMultisampled())) ||
                             offscreenMultisample;
     if (needToDrawTex) {
@@ -5762,7 +5762,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public boolean save(String filename) {
 
     // Act as an opaque surface for the purposes of saving.
-    if (primarySurface) {
+    if (primaryGraphics) {
       int prevFormat = format;
       format = RGB;
       boolean result = super.save(filename);
@@ -5790,7 +5790,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     flush(); // To make sure the color buffer is updated.
 
-    if (primarySurface) {
+    if (primaryGraphics) {
       updatePixelSize();
 
       if (pgl.isFBOBacked()) {
@@ -5993,7 +5993,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     boolean needEndDraw = false;
-    if (primarySurface) pgl.requestFBOLayer();
+    if (primaryGraphics) pgl.requestFBOLayer();
     else if (!drawing) {
       beginDraw();
       needEndDraw = true;
@@ -6069,7 +6069,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void copy(int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
-    if (primarySurface) pgl.requestFBOLayer();
+    if (primaryGraphics) pgl.requestFBOLayer();
     loadTexture();
     if (filterTexture == null || filterTexture.contextIsOutdated()) {
       filterTexture = new Texture(this, texture.width, texture.height,
@@ -6352,7 +6352,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void bindFrontTexture() {
-    if (primarySurface) {
+    if (primaryGraphics) {
       pgl.bindFrontTexture();
     } else {
       if (ptexture == null) createPTexture();
@@ -6362,7 +6362,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void unbindFrontTexture() {
-    if (primarySurface) {
+    if (primaryGraphics) {
       pgl.unbindFrontTexture();
     } else {
       ptexture.unbind();
@@ -6671,7 +6671,7 @@ public class PGraphicsOpenGL extends PGraphics {
       flushMode = FLUSH_WHEN_FULL;
     }
 
-    if (primarySurface) {
+    if (primaryGraphics) {
       pgl.getIntegerv(PGL.SAMPLES, intBuffer);
       int temp = intBuffer.get(0);
       if (smooth != temp && 1 < temp && 1 < smooth) {
@@ -6691,7 +6691,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       // To avoid having garbage in the screen after a resize,
       // in the case background is not called in draw().
-      if (primarySurface) {
+      if (primaryGraphics) {
         background(backgroundColor);
       } else {
         // offscreen surfaces are transparent by default.

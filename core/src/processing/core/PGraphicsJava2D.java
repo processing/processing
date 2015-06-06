@@ -422,7 +422,7 @@ public class PGraphicsJava2D extends PGraphics {
     // copy of all the pixels to the surface.. so that's kind of a mess.
     //updatePixels();
 
-    if (primarySurface) {
+    if (primaryGraphics) {
       /*
       //if (canvas != null) {
       if (useCanvas) {
@@ -2627,7 +2627,7 @@ public class PGraphicsJava2D extends PGraphics {
 
   protected WritableRaster getRaster() {
     WritableRaster raster = null;
-    if (primarySurface) {
+    if (primaryGraphics) {
       /*
       // 'offscreen' will probably be removed in the next release
       if (useOffscreen) {
@@ -2851,7 +2851,7 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   @SuppressWarnings("deprecation")
   public void mask(int[] alpha) {
-    if (primarySurface) {
+    if (primaryGraphics) {
       showWarning(MASK_WARNING);
 
     } else {
@@ -2862,7 +2862,7 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   public void mask(PImage alpha) {
-    if (primarySurface) {
+    if (primaryGraphics) {
       showWarning(MASK_WARNING);
 
     } else {
