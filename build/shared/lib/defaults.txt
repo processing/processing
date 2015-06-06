@@ -185,7 +185,8 @@ run.options.bits.macosx = 32
 # Index of the display to use for running sketches (starts at 1). 
 # Kept this 1-indexed because older vesions of Processing were setting
 # the preference even before it was being used.
-run.display = 0
+# -1 means the default display, 0 means all displays
+run.display = -1
 
 # set internally
 #run.window.bgcolor=

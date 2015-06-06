@@ -151,7 +151,7 @@ public class PdePreprocessor {
   protected Mode mode;
   Set<String> foundMethods;
 
-  SizeInfo sizeInfo;
+  SurfaceInfo sizeInfo;
 
 
   /**
@@ -201,7 +201,7 @@ public class PdePreprocessor {
   }
 
 
-  public SizeInfo initSketchSize(String code,
+  public SurfaceInfo initSketchSize(String code,
                                  boolean sizeWarning) throws SketchException {
     sizeInfo = parseSketchSize(code, sizeWarning);
     return sizeInfo;
@@ -252,7 +252,7 @@ public class PdePreprocessor {
    * @param fussy true if it should show an error message if bad size()
    * @return null if there was an error, otherwise an array (might contain some/all nulls)
    */
-  static public SizeInfo parseSketchSize(String code,
+  static public SurfaceInfo parseSketchSize(String code,
                                          boolean fussy) throws SketchException {
     // This matches against any uses of the size() function, whether numbers
     // or variables or whatever. This way, no warning is shown if size() isn't
@@ -312,7 +312,7 @@ public class PdePreprocessor {
       //String[] matches = split on commas, but not commas inside quotes
 
       StringList args = breakCommas(contents[1]);
-      SizeInfo info = new SizeInfo();
+      SurfaceInfo info = new SurfaceInfo();
       info.statement = contents[0];
       info.width = args.get(0).trim();
       info.height = args.get(1).trim();
@@ -347,7 +347,7 @@ public class PdePreprocessor {
     // if no size() found, check for fullScreen()
     contents = PApplet.match(searchArea, FULL_SCREEN_CONTENTS_REGEX);
     if (contents != null) {
-      SizeInfo info = new SizeInfo();
+      SurfaceInfo info = new SurfaceInfo();
       info.statement = contents[0];
       StringList args = breakCommas(contents[1]);
       info.renderer = args.get(0).trim();
@@ -360,7 +360,7 @@ public class PdePreprocessor {
 
     // not an error, just no size() specified
     //return new String[] { null, null, null, null, null };
-    return new SizeInfo();
+    return new SurfaceInfo();
   }
 
 
@@ -1001,7 +1001,7 @@ public class PdePreprocessor {
           out.print("\"" + PApplet.ARGS_FULL_SCREEN + "\", ");
 
           String farbe = Preferences.get("run.present.bgcolor");
-          out.print("\"" + PApplet.ARGS_BGCOLOR + "=" + farbe + "\", ");
+          out.print("\"" + PApplet.ARGS_WINDOW_COLOR + "=" + farbe + "\", ");
 
           if (Preferences.getBoolean("export.application.stop")) {
             farbe = Preferences.get("run.present.stop.color");

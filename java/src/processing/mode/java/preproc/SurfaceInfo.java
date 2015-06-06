@@ -27,13 +27,16 @@ import processing.app.Base;
 import processing.core.PApplet;
 
 
-public class SizeInfo {
+public class SurfaceInfo {
   String statement;
   String width;
   String height;
   String renderer;
   String path;
+
   String display;
+  /** null for nothing in setup(), 0 for noSmooth(), N for smooth(N) */
+  Integer quality;
 
 
   boolean hasOldSyntax() {

@@ -385,7 +385,7 @@ public class Runner implements MessageConsumer {
 //        }
         params.add(PApplet.ARGS_STOP_COLOR + "=" +
                    Preferences.get("run.present.stop.color"));
-        params.add(PApplet.ARGS_BGCOLOR + "=" +
+        params.add(PApplet.ARGS_WINDOW_COLOR + "=" +
                    Preferences.get("run.present.bgcolor"));
       }
 

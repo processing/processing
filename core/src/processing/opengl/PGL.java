@@ -35,7 +35,6 @@ import java.util.Arrays;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
-import processing.core.PSurface;
 
 
 /**
@@ -589,16 +588,15 @@ public abstract class PGL {
 
 
   IntBuffer labelTex;
-  protected void endDraw(boolean clear0) {
+  protected void endDraw(boolean clear0, int windowColor) {
     if (fboLayerInUse) {
       syncBackTexture();
 
       // Draw the contents of the back texture to the screen framebuffer.
       bindFramebufferImpl(FRAMEBUFFER, 0);
 
-
       if (presentMode) {
-        int argb = PSurface.WINDOW_BGCOLOR;
+        int argb = windowColor;
         float a = ((argb >> 24) & 0xff)  / 255.0f;
         float r = ((argb >> 16) & 0xff) / 255.0f;
         float g = ((argb >> 8) & 0xff) / 255.0f;

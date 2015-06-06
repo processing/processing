@@ -163,6 +163,9 @@ public class PGraphics extends PImage implements PConstants {
   /// the anti-aliasing level for renderers that support it
   public int quality;
 
+//  public int smooth;
+
+
   // ........................................................
 
   /// true if defaults() has been called a first time
@@ -701,7 +704,7 @@ public class PGraphics extends PImage implements PConstants {
     this.parent = parent;
     // Some renderers (OpenGL) need to know what smoothing level will be used
     // before the rendering surface is even created.
-    quality = parent.sketchQuality();
+    quality = parent.sketchSmooth();
   }
 
 

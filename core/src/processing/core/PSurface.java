@@ -34,12 +34,6 @@ public interface PSurface {
   static public final int MIN_WINDOW_WIDTH = 128;
   static public final int MIN_WINDOW_HEIGHT = 128;
 
-  // Background default needs to be different from the default value in
-  // PGraphics.backgroundColor, otherwise size(100, 100) bg spills over.
-  // https://github.com/processing/processing/issues/2297
-  //static final Color WINDOW_BGCOLOR = new Color(0xDD, 0xDD, 0xDD);
-  static final int WINDOW_BGCOLOR = 0xffDDDDDD;
-
   // renderer that doesn't draw to the screen
   public void initOffscreen(PApplet sketch);
 
@@ -48,8 +42,9 @@ public interface PSurface {
   //public Component initComponent(PApplet sketch);
 
   //public Frame initFrame(PApplet sketch, Color backgroundColor,
-  public void initFrame(PApplet sketch, int backgroundColor,
-                        int deviceIndex, boolean fullScreen, boolean spanDisplays);
+//  public void initFrame(PApplet sketch, int backgroundColor,
+//                        int deviceIndex, boolean fullScreen, boolean spanDisplays);
+  public void initFrame(PApplet sketch);
 
   //
 

@@ -1,6 +1,13 @@
 0237 (3.0a10)
 X retain original java.awt.Frame when it's in use
 X set frame icon images for Java2D (dock and cmd-tab) 
+X size() inside setup() can only have numbers
+X   size() inside settings() is left alone and can do whatever it wants
+X   comments are being removed before size() is getting checked
+X     probably remove anything inside settings() as well?
+o add imageSmooth()?
+o   https://github.com/processing/processing/issues/1272
+X   decided no, again
 
 fixed earlier/can no longer reproduce
 X strips when rendering spheres with lights and anti-aliasing
@@ -28,21 +35,30 @@ X set icon for OpenGL windows
 X   https://github.com/processing/processing/issues/3348
 X key problem with DELETE, BACKSPACE and CMD in P3D / P2D
 X   https://github.com/processing/processing/issues/3352
-_ save() and saveFrame() with OPENGL renderer fails
-_   https://github.com/processing/processing/issues/3334
+X save() and saveFrame() with OPENGL renderer fails
+X   https://github.com/processing/processing/issues/3334
 
 
 beta
-_ size() inside setup() can only have numbers
-_   size() inside settings() is left alone and can do whatever it wants
-_   comments are being removed before size() is getting checked
-_     probably remove anything inside settings() as well?
-_ fullScreen() method
-_   take display into account for fullScreen()
+X sketchXxxx() methods are final, need to move folks away from these
+_ fix up handling of fullScreen()
+_   https://github.com/processing/processing/issues/3296
+_   right now using a (display ignoring) hack to displayWidth/Height
+X   maybe we use the AWT screen sizes first, then match the others w/ em?
+_   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
+X   --full-screen replaced with --present (to untangle things)
+_     if you want full screen, use the fullScreen() method
+X instead of all these sketchXxxx() methods, should we have sketchSetting()
+_   and an internal dictionary that stores them all?
+_     intParam(), stringParam() and setParam()? 
+o   or sketchInt() or settingsInt()?
+o   too much soup inside main() to handle arg parsing and passing to the sketch
+X   moved things to settings()
 _ noSmooth()
 _   can only be called inside setup(), show warning elsewhere
 _   is lifted out of setup() and into settings()
 _   goes before the first beginDraw() with createGraphics()
+_   sketchQuality() needs to be rooted out
 _ sort out display stuff (bug in the numbering in 3.0a9)
 _ Text looks blurry in GL Retina (andres)
 _   https://github.com/processing/processing/issues/2739
@@ -73,15 +89,6 @@ _ sketch window briefly appears on top left corner when using OpenGL
 _   https://github.com/processing/processing/issues/3308
 _ looks like we're off by 1 on monitor numbering 
 _   https://github.com/processing/processing/issues/3309
-_ need a better option for using full screen
-_   https://github.com/processing/processing/issues/3296
-_   right now using a (display ignoring) hack to displayWidth/Height
-_   maybe we use the AWT screen sizes first, then match the others w/ em?
-_   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
-_ instead of all these sketchXxxx() methods, should we have sketchSetting()
-_   and an internal dictionary that stores them all?
-_   or sketchInt() or settingsInt()?
-_   too much soup inside main() to handle arg parsing and passing to the sketch
 _ update documentation to say "don't override sketchXxxx() methods"
 _ sketch window is not placed at correct location when running a second time
 _   https://github.com/processing/processing/issues/3125
@@ -146,8 +153,6 @@ _ when did setPath() sneak into PShape? API is nothing like anything else
 _   probably from the material stuff, but we need to fix that
 _ ortho function is broken
 _   https://github.com/processing/processing/issues/1278
-_ add imageSmooth()?
-_   https://github.com/processing/processing/issues/1272
 
 
 full screen

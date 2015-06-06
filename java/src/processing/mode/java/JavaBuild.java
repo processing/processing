@@ -249,7 +249,7 @@ public class JavaBuild {
     // in the preprocessor. Those are used in preproc.write() so that they
     // can be used to add methods (settings() or sketchXxxx())
     //String[] sizeParts =
-    SizeInfo sizeInfo =
+    SurfaceInfo sizeInfo =
       preprocessor.initSketchSize(sketch.getMainProgram(), sizeWarning);
     if (sizeInfo == null) {
       // An error occurred while trying to pull out the size, so exit here

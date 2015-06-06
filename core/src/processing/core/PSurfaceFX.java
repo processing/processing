@@ -193,9 +193,9 @@ public class PSurfaceFX implements PSurface {
 
 
   //public Frame initFrame(PApplet sketch, java.awt.Color backgroundColor,
-  public void initFrame(PApplet sketch, int backgroundColor,
+  public void initFrame(PApplet sketch) {/*, int backgroundColor,
                          int deviceIndex, boolean fullScreen,
-                         boolean spanDisplays) {
+                         boolean spanDisplays) {*/
     this.sketch = sketch;
     PApplicationFX.surface = this;
     //Frame frame = new DummyFrame();

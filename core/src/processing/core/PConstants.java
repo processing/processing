@@ -472,6 +472,8 @@ public interface PConstants {
   /** Screen orientation constant for landscape (the hot dog way). */
   static final int LANDSCAPE = 2;
 
+  /** Use with fullScreen() to indicate all available displays. */
+  static final int SPAN = 0;
 
   // cursor types
 

@@ -390,20 +390,21 @@ public class PSurfaceAWT extends PSurfaceNone {
 
 
   @Override
-  public void initFrame(PApplet sketch, int backgroundColor,
-                        int deviceIndex, boolean fullScreen, boolean spanDisplays) {
+  public void initFrame(PApplet sketch) {/*, int backgroundColor,
+                        int deviceIndex, boolean fullScreen, boolean spanDisplays) {*/
     this.sketch = sketch;
 
     GraphicsEnvironment environment =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-    if (deviceIndex >= 0) {  // if -1, use the default device
+    int displayNum = sketch.sketchDisplay();
+    if (displayNum > 0) {  // if -1, use the default device
       GraphicsDevice[] devices = environment.getScreenDevices();
-      if (deviceIndex < devices.length) {
-        displayDevice = devices[deviceIndex];
+      if (displayNum <= devices.length) {
+        displayDevice = devices[displayNum - 1];
       } else {
         System.err.format("Display %d does not exist, " +
-          "using the default display instead.", deviceIndex);
+          "using the default display instead.", displayNum);
         for (int i = 0; i < devices.length; i++) {
           System.err.format("Display %d is %s\n", i, devices[i]);
         }
@@ -416,6 +417,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     // Need to save the window bounds at full screen,
     // because pack() will cause the bounds to go to zero.
     // http://dev.processing.org/bugs/show_bug.cgi?id=923
+    boolean spanDisplays = sketch.sketchDisplay() == PConstants.SPAN;
     screenRect = spanDisplays ? getDisplaySpan() :
       displayDevice.getDefaultConfiguration().getBounds();
     // DisplayMode doesn't work here, because we can't get the upper-left
@@ -429,6 +431,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     sketchWidth = sketch.sketchWidth();
     sketchHeight = sketch.sketchHeight();
 
+    boolean fullScreen = sketch.sketchFullScreen();
     // Sketch has already requested to be the same as the screen's
     // width and height, so let's roll with full screen mode.
     if (screenRect.width == sketchWidth &&
@@ -451,12 +454,12 @@ public class PSurfaceAWT extends PSurfaceNone {
 //    ((JFrame) frame).getContentPane().setBackground(WINDOW_BGCOLOR);
 //    // Cannot call setResizable(false) until later due to OS X (issue #467)
 
-    // Removed code above, also removed from what's now in the placeXxxx()
-    // methods. Not sure why it was being double-set; hopefully anachronistic.
-    if (backgroundColor == 0) {
-      backgroundColor = WINDOW_BGCOLOR;
-    }
-    frame.getContentPane().setBackground(new Color(backgroundColor, false));
+//    // Removed code above, also removed from what's now in the placeXxxx()
+//    // methods. Not sure why it was being double-set; hopefully anachronistic.
+//    if (backgroundColor == 0) {
+//      backgroundColor = WINDOW_BGCOLOR;
+//    }
+    frame.getContentPane().setBackground(new Color(sketch.sketchWindowColor(), false));
 
     // Put the p5 logo in the Frame's corner to override the Java coffee cup.
     setIconImage(frame);

@@ -6524,7 +6524,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void endOnscreenDraw() {
-    pgl.endDraw(clearColorBuffer0);
+    pgl.endDraw(clearColorBuffer0, parent.sketchWindowColor());
   }
 
 

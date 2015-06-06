@@ -8,6 +8,7 @@ import java.awt.Point;
 //import java.awt.Frame;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.jogamp.common.util.IOUtil.ClassResources;
 import com.jogamp.nativewindow.NativeSurface;
@@ -88,9 +89,9 @@ public class PSurfaceJOGL implements PSurface {
   }
 
 
-  public void initFrame(PApplet sketch, int backgroundColor,
+  public void initFrame(PApplet sketch) {/*, int backgroundColor,
                         int deviceIndex, boolean fullScreen,
-                        boolean spanDisplays) {
+                        boolean spanDisplays) {*/
     this.sketch = sketch;
 
     setIconImages();
@@ -100,7 +101,7 @@ public class PSurfaceJOGL implements PSurface {
     Screen screen = NewtFactory.createScreen(display, 0);
     screen.addReference();
 
-    ArrayList<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
+    List<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
     GraphicsEnvironment environment =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice[] devices = environment.getScreenDevices();
@@ -142,14 +143,15 @@ public class PSurfaceJOGL implements PSurface {
 
 //    System.out.println("*******************************");
 
-    if (deviceIndex >= 0) {  // if -1, use the default device
-      if (deviceIndex < monitors.size()) {
-        displayDevice = monitors.get(deviceIndex);
+    int displayNum = sketch.sketchDisplay();
+    if (displayNum > 0) {  // if -1, use the default device
+      if (displayNum <= monitors.size()) {
+        displayDevice = monitors.get(displayNum - 1);
       } else {
         System.err.format("Display %d does not exist, " +
-          "using the default display instead.", deviceIndex);
+          "using the default display instead.", displayNum);
         for (int i = 0; i < monitors.size(); i++) {
-          System.err.format("Display %d is %s\n", i, monitors.get(i));
+          System.err.format("Display %d is %s\n", i+1, monitors.get(i));
         }
       }
     }
@@ -230,13 +232,17 @@ public class PSurfaceJOGL implements PSurface {
 //    int screenWidth = screen.getWidth();
 //    int screenHeight = screen.getHeight();
 
-    screenRect = spanDisplays ? new Rectangle(0, 0, screen.getWidth(), screen.getHeight()) :
-                                new Rectangle(0, 0, displayDevice.getViewportInWindowUnits().getWidth(),
-                                                    displayDevice.getViewportInWindowUnits().getHeight());
+    boolean spanDisplays = sketch.sketchDisplay() == PConstants.SPAN;
+    screenRect = spanDisplays ?
+      new Rectangle(0, 0, screen.getWidth(), screen.getHeight()) :
+      new Rectangle(0, 0,
+                    displayDevice.getViewportInWindowUnits().getWidth(),
+                    displayDevice.getViewportInWindowUnits().getHeight());
 
     sketch.displayWidth = screenRect.width;
     sketch.displayHeight = screenRect.height;
 
+    boolean fullScreen = sketch.sketchFullScreen();
     // Sketch has already requested to be the same as the screen's
     // width and height, so let's roll with full screen mode.
     if (screenRect.width == sketchWidth &&

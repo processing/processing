@@ -105,7 +105,6 @@ public class PApplet implements PConstants {
 //{
   /**
    * Full name of the Java version (i.e. 1.5.0_11).
-   * Prior to 0125, this was only the first three digits.
    */
   public static final String javaVersionName =
     System.getProperty("java.version");
@@ -690,11 +689,11 @@ public class PApplet implements PConstants {
 
   static public final String ARGS_DISPLAY = "--display";
 
-  static public final String ARGS_BGCOLOR = "--bgcolor";
+  static public final String ARGS_SPAN_DISPLAYS = "--span";
 
-  static public final String ARGS_FULL_SCREEN = "--full-screen";
+  static public final String ARGS_WINDOW_COLOR = "--window-color";
 
-  static public final String ARGS_SPAN_SCREENS = "--span";
+  static public final String ARGS_PRESENT = "--present";
 
   static public final String ARGS_STOP_COLOR = "--stop-color";
 
@@ -810,12 +809,19 @@ public class PApplet implements PConstants {
   boolean insideSettings;
 
   String renderer = JAVA2D;
-  int quality = 2;
+//  int quality = 2;
+  int smooth = 1;
   boolean fullScreen;
-  boolean spanDisplays;
-  int displayIndex;
+//  boolean spanDisplays;
+  int display;  // set to SPAN when using all displays
+
   String outputPath;
   OutputStream outputStream;
+
+  // Background default needs to be different from the default value in
+  // PGraphics.backgroundColor, otherwise size(100, 100) bg spills over.
+  // https://github.com/processing/processing/issues/2297
+  int windowColor = 0xffDDDDDD;
 
 
   boolean insideSettings(Object... args) {
@@ -839,42 +845,48 @@ public class PApplet implements PConstants {
     insideSettings = true;
 
     // Workaround for https://github.com/processing/processing/issues/3295
-    // until we resolved https://github.com/processing/processing/issues/3296
+    // until we resolve https://github.com/processing/processing/issues/3296
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice device = ge.getDefaultScreenDevice();
     GraphicsDevice[] devices = ge.getScreenDevices();
-    // default or unparsed will be -1
-    if (displayIndex >= 0 && displayIndex < devices.length) {
-      device = devices[displayIndex];
+
+    // Default or unparsed will be -1, spanning will be 0, actual displays will
+    // be numbered from 1 because it's too weird to say "display 0" in prefs.
+    if (display > 0 && display <= devices.length) {
+      device = devices[display-1];
     }
     DisplayMode displayMode = device.getDisplayMode();
     displayWidth = displayMode.getWidth();
     displayHeight = displayMode.getHeight();
 
+    // Here's where size(), fullScreen(), smooth(N) and noSmooth() might
+    // be called, conjuring up the demons of various rendering configurations.
     settings();
+
     insideSettings = false;
   }
 
 
   /** Override this method to call size() when not using the PDE. */
   public void settings() {
-    size(DEFAULT_WIDTH, DEFAULT_HEIGHT, JAVA2D);
+    // is this necessary? (doesn't appear to be, so removing)
+    //size(DEFAULT_WIDTH, DEFAULT_HEIGHT, JAVA2D);
   }
 
 
-  public int sketchWidth() {
+  final public int sketchWidth() {
     //return DEFAULT_WIDTH;
     return width;
   }
 
 
-  public int sketchHeight() {
+  final public int sketchHeight() {
     //return DEFAULT_HEIGHT;
     return height;
   }
 
 
-  public String sketchRenderer() {
+  final public String sketchRenderer() {
     //return JAVA2D;
     return renderer;
   }
@@ -887,43 +899,52 @@ public class PApplet implements PConstants {
   // smoothing at any given time. It's also a bit like getFill() would return
   // true/false for whether fill was enabled, getFillColor() would return the
   // color itself. Or at least that's what I can recall at the moment. [fry]
-  public int sketchQuality() {
-    //return 2;
-    return quality;
+//  public int sketchQuality() {
+//    //return 2;
+//    return quality;
+//  }
+  // smoothing 1 is default.. 0 is none.. 2,4,8 depend on renderer
+  final public int sketchSmooth() {
+    return smooth;
   }
 
 
-  public boolean sketchFullScreen() {
+  final public boolean sketchFullScreen() {
     //return false;
     return fullScreen;
   }
 
 
-  // Could be named 'screen' instead of display since it's the people using
-  // full screen who will be looking for it. On the other hand, screenX/Y/Z
-  // makes things confusing, and if 'displayIndex' exists...
-  public boolean sketchSpanDisplays() {
-    //return false;
-    return spanDisplays;
+//  // Could be named 'screen' instead of display since it's the people using
+//  // full screen who will be looking for it. On the other hand, screenX/Y/Z
+//  // makes things confusing, and if 'displayIndex' exists...
+//  public boolean sketchSpanDisplays() {
+//    //return false;
+//    return spanDisplays;
+//  }
+
+
+  // Using num instead of index since the latter usually refers 0-indexed lists
+  // SPAN is used when using all displays
+  final public int sketchDisplay() {
+    return display;
   }
 
 
-  // Or should this be sketchDisplayNum instead of sketchDisplayIndex?
-  // (Index seems weird, but we don't use 'num' anywhere.)
-  public int sketchDisplayIndex() {
-    return displayIndex;
-  }
-
-
-  public String sketchOutputPath() {
+  final public String sketchOutputPath() {
     //return null;
     return outputPath;
   }
 
 
-  public OutputStream sketchOutputStream() {
+  final public OutputStream sketchOutputStream() {
     //return null;
     return outputStream;
+  }
+
+
+  final public int sketchWindowColor() {
+    return windowColor;
   }
 
 
@@ -935,6 +956,7 @@ public class PApplet implements PConstants {
   }
 
 
+  // TODO should this join the sketchXxxx() functions specific to settings()?
   public void orientation(int which) {
     // ignore calls to the orientation command
   }
@@ -1483,6 +1505,16 @@ public class PApplet implements PConstants {
     }
   }
   */
+
+
+  public void fullScreen(String renderer) {
+
+  }
+
+
+  public void fullScreen(String renderer, int display) {
+
+  }
 
 
   /**
@@ -9447,38 +9479,46 @@ public class PApplet implements PConstants {
    * <PRE>
    * Parameters useful for launching or also used by the PDE:
    *
-   * --location=x,y        upper-lefthand corner of where the applet
-   *                       should appear on screen. if not used,
-   *                       the default is to center on the main screen.
+   * --location=x,y         Upper-lefthand corner of where the applet
+   *                        should appear on screen. If not used,
+   *                        the default is to center on the main screen.
    *
-   * --full-screen         put the applet into full screen "present" mode.
+   * --present              Presentation mode: blanks the entire screen and
+   *                        shows the sketch by itself. If the sketch is
+   *                        smaller than the screen, the background around it
+   *                        will use the --window-color setting.
    *
-   * --hide-stop           use to hide the stop button in situations where
-   *                       you don't want to allow users to exit. also
-   *                       see the FAQ on information for capturing the ESC
-   *                       key when running in presentation mode.
+   * --hide-stop            Use to hide the stop button in situations where
+   *                        you don't want to allow users to exit. also
+   *                        see the FAQ on information for capturing the ESC
+   *                        key when running in presentation mode.
    *
-   * --stop-color=#xxxxxx  color of the 'stop' text used to quit an
-   *                       sketch when it's in present mode.
+   * --stop-color=#xxxxxx   Color of the 'stop' text used to quit an
+   *                        sketch when it's in present mode.
    *
-   * --bgcolor=#xxxxxx     background color of the window.
+   * --window-color=#xxxxxx Background color of the window. The color used
+   *                        around the sketch when it's smaller than the
+   *                        minimum window size for the OS, and the matte
+   *                        color when using 'present' mode.
    *
-   * --sketch-path         location of where to save files from functions
-   *                       like saveStrings() or saveFrame(). defaults to
-   *                       the folder that the java application was
-   *                       launched from, which means if this isn't set by
-   *                       the pde, everything goes into the same folder
-   *                       as processing.exe.
+   * --sketch-path          location of where to save files from functions
+   *                        like saveStrings() or saveFrame(). defaults to
+   *                        the folder that the java application was
+   *                        launched from, which means if this isn't set by
+   *                        the pde, everything goes into the same folder
+   *                        as processing.exe.
    *
-   * --display=n           set what display should be used by this sketch.
-   *                       displays are numbered starting from 0.
+   * --display=n            set what display should be used by this sketch.
+   *                        displays are numbered starting from 1.
+   *
+   * --span                 Makes the sketch full screen across all displays.
    *
    * Parameters used by Processing when running via the PDE
    *
-   * --external            set when the applet is being used by the PDE
+   * --external             set when the applet is being used by the PDE
    *
-   * --editor-location=x,y position of the upper-lefthand corner of the
-   *                       editor window, for placement of applet window
+   * --editor-location=x,y  position of the upper-lefthand corner of the
+   *                        editor window, for placement of applet window
    *
    * All parameters *after* the sketch class name are passed to the sketch
    * itself and available from its 'args' array while the sketch is running.
@@ -9555,13 +9595,13 @@ public class PApplet implements PConstants {
     int[] editorLocation = null;
 
     String name = null;
-    int backgroundColor = 0;
-    //int stopColor = java.awt.Color.GRAY.getRGB();
+    int windowColor = 0;
     int stopColor = 0xff808080;
     boolean hideStop = false;
 
-    int displayIndex = -1;  // -1 means use default, b/c numbered from 0
-    boolean fullScreen = false;
+    int displayIndex = -1;  // use default
+//    boolean fullScreen = false;
+    boolean present = false;
     boolean spanDisplays = false;
 
     String param = null, value = null;
@@ -9584,12 +9624,12 @@ public class PApplet implements PConstants {
             System.err.println("Could not parse " + value + " for " + ARGS_DISPLAY);
           }
 
-        } else if (param.equals(ARGS_BGCOLOR)) {
+        } else if (param.equals(ARGS_WINDOW_COLOR)) {
           if (value.charAt(0) == '#' && value.length() == 7) {
             value = value.substring(1);
-            backgroundColor = 0xff000000 | Integer.parseInt(value, 16);
+            windowColor = 0xff000000 | Integer.parseInt(value, 16);
           } else {
-            System.err.println(ARGS_BGCOLOR + " should be a # followed by six digits");
+            System.err.println(ARGS_WINDOW_COLOR + " should be a # followed by six digits");
           }
 
         } else if (param.equals(ARGS_STOP_COLOR)) {
@@ -9608,10 +9648,10 @@ public class PApplet implements PConstants {
         }
 
       } else {
-        if (args[argIndex].equals(ARGS_FULL_SCREEN)) {
-          fullScreen = true;
+        if (args[argIndex].equals(ARGS_PRESENT)) {
+          present = true;
 
-        } else if (args[argIndex].equals(ARGS_SPAN_SCREENS)) {
+        } else if (args[argIndex].equals(ARGS_SPAN_DISPLAYS)) {
           spanDisplays = true;
 
         } else if (args[argIndex].equals(ARGS_HIDE_STOP)) {
@@ -9673,15 +9713,19 @@ public class PApplet implements PConstants {
     // A handful of things that need to be set before init/start.
     sketch.sketchPath = folder;
 
-    sketch.spanDisplays = spanDisplays;
+//    sketch.spanDisplays = spanDisplays;
     // If spanning screens, that means we're also full screen.
-    fullScreen |= spanDisplays;
+//    fullScreen |= spanDisplays;
+    if (spanDisplays) {
+      displayIndex = SPAN;
+//      fullScreen = true;
+    }
 
-    // If the applet doesn't call for full screen, but the command line does,
-    // enable it. Conversely, if the command line does not, don't disable it.
-    // Query the applet to see if it wants to be full screen all the time.
-    //fullScreen |= sketch.sketchFullScreen();
-    sketch.fullScreen |= fullScreen;
+//    // If the applet doesn't call for full screen, but the command line does,
+//    // enable it. Conversely, if the command line does not, don't disable it.
+//    // Query the applet to see if it wants to be full screen all the time.
+//    //fullScreen |= sketch.sketchFullScreen();
+//    sketch.fullScreen |= fullScreen;
 
     // Don't set 'args' to a zero-length array if it should be null [3.0a8]
     if (args.length != argIndex + 1) {
@@ -9692,8 +9736,12 @@ public class PApplet implements PConstants {
 
     sketch.external = external;
 
-    PSurface surface =
-      sketch.initSurface(backgroundColor, displayIndex, fullScreen, spanDisplays);
+    if (windowColor != 0) {
+      sketch.windowColor = windowColor;
+    }
+
+    PSurface surface = sketch.initSurface();
+//      sketch.initSurface(windowColor, displayIndex, fullScreen, spanDisplays);
 
     // Wait until the applet has figured out its width. In a static mode app,
     // everything happens inside setup(), so this will be after setup() has
@@ -9708,7 +9756,7 @@ public class PApplet implements PConstants {
       }
     }
 
-    if (fullScreen) {
+    if (present) {
       if (hideStop) {
         stopColor = 0;  // they'll get the hint
       }
@@ -9723,8 +9771,8 @@ public class PApplet implements PConstants {
   }
 
 
-  protected PSurface initSurface(int backgroundColor, int displayIndex,
-                                 boolean fullScreen, boolean spanDisplays) {
+  protected PSurface initSurface() {/*int backgroundColor, int displayNum,
+                                 boolean fullScreen, boolean spanDisplays) {*/
     g = createPrimaryGraphics();
     surface = g.createSurface();
 
@@ -9755,7 +9803,7 @@ public class PApplet implements PConstants {
         }
       };
 
-      surface.initFrame(this, backgroundColor, displayIndex, fullScreen, spanDisplays);
+      surface.initFrame(this); //, backgroundColor, displayNum, fullScreen, spanDisplays);
       surface.setTitle(getClass().getName());
 
     } else {
