@@ -172,7 +172,6 @@ public class PApplet implements PConstants {
    * X, the menu bar will remain present unless "Present" mode is used.
    *
    * ( end auto-generated )
-   * @webref environment
    */
   public int displayWidth;
 
@@ -190,7 +189,6 @@ public class PApplet implements PConstants {
    * X, the menu bar will remain present unless "Present" mode is used.
    *
    * ( end auto-generated )
-   * @webref environment
    */
   public int displayHeight;
 

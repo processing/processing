@@ -1,4 +1,3 @@
-antlr
 processing.app
 processing.app.contrib
 processing.app.exec
@@ -9,7 +8,5 @@ processing.app.tools
 processing.core
 processing.data
 processing.event
-processing.mode.java
 processing.mode.java.preproc
-processing.mode.java.runner
 processing.opengl
