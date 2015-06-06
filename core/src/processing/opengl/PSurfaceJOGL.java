@@ -193,7 +193,7 @@ public class PSurfaceJOGL implements PSurface {
 //    caps.setPBuffer(false);
 //    caps.setFBO(false);
 
-    pgl.reqNumSamples = graphics.quality;
+    pgl.reqNumSamples = graphics.smooth;
     caps.setSampleBuffers(true);
     caps.setNumSamples(pgl.reqNumSamples);
     caps.setBackgroundOpaque(true);

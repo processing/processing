@@ -8,6 +8,8 @@ X     probably remove anything inside settings() as well?
 o add imageSmooth()?
 o   https://github.com/processing/processing/issues/1272
 X   decided no, again
+X sketchQuality() vs sketchSmooth()?
+X   'quality' is being removed since smoothing will be a one-time thing
 
 fixed earlier/can no longer reproduce
 X strips when rendering spheres with lights and anti-aliasing
@@ -37,10 +39,11 @@ X key problem with DELETE, BACKSPACE and CMD in P3D / P2D
 X   https://github.com/processing/processing/issues/3352
 X save() and saveFrame() with OPENGL renderer fails
 X   https://github.com/processing/processing/issues/3334
-
+X Errors in glsl code are only caught when set() is used
+X   https://github.com/processing/processing/issues/2268
+X move glsl entries to their own subdirectory
 
 beta
-X sketchXxxx() methods are final, need to move folks away from these
 X fix up handling of fullScreen()
 X   https://github.com/processing/processing/issues/3296
 X   right now using a (display ignoring) hack to displayWidth/Height
@@ -48,27 +51,27 @@ X   maybe we use the AWT screen sizes first, then match the others w/ em?
 X   --full-screen replaced with --present (to untangle things)
 X     if you want full screen, use the fullScreen() method
 X   --span removed as an option, better to just do this from code
-_   docs: no mixing size() and fullScreen(). pick one.
+X   docs: no mixing size() and fullScreen(). pick one.
 X instead of all these sketchXxxx() methods, should we have sketchSetting()
-_   and an internal dictionary that stores them all?
-_   intParam(), stringParam() and setParam()? 
-_   or sketchInt() or settingsInt()?
 o   too much soup inside main() to handle arg parsing and passing to the sketch
 X   moved things to settings()
-_ noSmooth()
+X split 'present' and 'full screen'?
+X   --full-screen causes considerable flicker at this point
+X   or split them when sketchWidth/Height are implemented?
+_ smooth() and noSmooth()
 _   can only be called inside setup(), show warning elsewhere
 _   is lifted out of setup() and into settings()
 _   goes before the first beginDraw() with createGraphics()
 _   sketchQuality() needs to be rooted out
-_ sort out display stuff (bug in the numbering in 3.0a9)
-_ Text looks blurry in GL Retina (andres)
-_   https://github.com/processing/processing/issues/2739
-_ check retina with PGraphicsRetina2D
-_ Text is half size in PGraphicsRetina2D
-_   https://github.com/processing/processing/issues/2738
-_ text not getting the correct font in Retina2D
-_   https://github.com/processing/processing/issues/2617
-
+_   https://github.com/processing/processing/issues/3357
+_   https://github.com/processing/processing-docs/issues/251
+_ replace sketchXxxx() methods with another mechanism?
+_   and an internal dictionary that stores them all?
+_   intParam(), stringParam() and setParam()? 
+_   or sketchInt() or settingsInt()?
+_   surface.size(), surface.noSmooth()... just like PGraphics methods?
+X sketchXxxx() methods are final, need to move folks away from these
+_   or is this a bad move until we've sorted out Android?
 
 critical
 _ draw() executes twice when noLoop() called in setup()
@@ -147,8 +150,6 @@ _   https://github.com/processing/processing/issues/3339
 
 
 opengl questions
-_ sketchQuality() vs sketchSmooth()?
-_ move glsl entries to their own subdirectory
 _ exitCalled() and exitActual made public by Andres, breaks Python
 _   also not API we want to expose, so sort this out
 _   or maybe we're fine b/c now FX2D needs it as well
@@ -159,12 +160,9 @@ _   https://github.com/processing/processing/issues/1278
 
 
 full screen
-_ claim about a bar at the top in 10.9
+_ full screen needs to ignore location setting for frame?
 _   https://github.com/processing/processing/issues/3305
 _ present window draws in stages (OS X)
-_ split 'present' and 'full screen'?
-_   --full-screen causes considerable flicker at this point
-_   or split them when sketchWidth/Height are implemented?
 _ "run sketches on display" not working in 3.0a7
 _   https://github.com/processing/processing/issues/3264
 _ full screen doesn't work on second window w/o present mode
@@ -271,6 +269,13 @@ _ zero alpha values still a problem with retina renderer
 _   https://github.com/processing/processing/issues/2030
 _ NPE when using image() created with createGraphics(PGraphicsRetina2D)
 _   https://github.com/processing/processing/issues/2510
+_ Text looks blurry in GL Retina (andres)
+_   https://github.com/processing/processing/issues/2739
+_ check retina with PGraphicsRetina2D
+_ Text is half size in PGraphicsRetina2D
+_   https://github.com/processing/processing/issues/2738
+_ text not getting the correct font in Retina2D
+_   https://github.com/processing/processing/issues/2617
 
 
 decisions/misc

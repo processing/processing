@@ -316,7 +316,8 @@ public class PGraphicsJava2D extends PGraphics {
     //g2 = (Graphics2D) image.getGraphics();
 
     // Calling getGraphics() seems to nuke the smoothing settings
-    smooth(quality);
+    //smooth(quality);
+    handleSmooth();
 
     /*
     // NOTE: Calling image.getGraphics() will create a new Graphics context,
@@ -374,6 +375,44 @@ public class PGraphicsJava2D extends PGraphics {
     checkSettings();
     resetMatrix(); // reset model matrix
     vertexCount = 0;
+  }
+
+
+  protected void handleSmooth() {
+    if (smooth == 0) {
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                          RenderingHints.VALUE_ANTIALIAS_OFF);
+      g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                          RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                          RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+
+    } else {
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                          RenderingHints.VALUE_ANTIALIAS_ON);
+
+      g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                          (smooth == 1 || smooth == 4) ?
+                          RenderingHints.VALUE_INTERPOLATION_BICUBIC :
+                          RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+    // http://docs.oracle.com/javase/tutorial/2d/text/renderinghints.html
+    // Oracle Java text anti-aliasing on OS X looks like s*t compared to the
+    // text rendering with Apple's old Java 6. Below, several attempts to fix:
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    // Turns out this is the one that actually makes things work.
+    // Kerning is still screwed up, however.
+    g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//                         RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+
+//    g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
+//                        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+    }
   }
 
 
@@ -1395,69 +1434,69 @@ public class PGraphicsJava2D extends PGraphics {
 
 
 
-  //////////////////////////////////////////////////////////////
-
-  // SMOOTH
-
-
-  @Override
-  public void smooth() {
-    smooth = true;
-
-    if (quality == 0) {
-      quality = 4;  // change back to bicubic
-    }
-
-    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
-
-    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                        quality == 4 ?
-                        RenderingHints.VALUE_INTERPOLATION_BICUBIC :
-                        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-    // http://docs.oracle.com/javase/tutorial/2d/text/renderinghints.html
-    // Oracle Java text anti-aliasing on OS X looks like s*t compared to the
-    // text rendering with Apple's old Java 6. Below, several attempts to fix:
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    // Turns out this is the one that actually makes things work.
-    // Kerning is still screwed up, however.
-    g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+//  //////////////////////////////////////////////////////////////
+//
+//  // SMOOTH
+//
+//
+//  @Override
+//  public void smooth() {
+//    smooth = true;
+//
+//    if (quality == 0) {
+//      quality = 4;  // change back to bicubic
+//    }
+//
+//    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//                        RenderingHints.VALUE_ANTIALIAS_ON);
+//
+//    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+//                        quality == 4 ?
+//                        RenderingHints.VALUE_INTERPOLATION_BICUBIC :
+//                        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//
+//    // http://docs.oracle.com/javase/tutorial/2d/text/renderinghints.html
+//    // Oracle Java text anti-aliasing on OS X looks like s*t compared to the
+//    // text rendering with Apple's old Java 6. Below, several attempts to fix:
 //    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+//                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+//    // Turns out this is the one that actually makes things work.
+//    // Kerning is still screwed up, however.
+//    g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+//                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+////    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+////                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+////    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+////                         RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+//
+////    g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
+////                        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+//
+//  }
+//
+//
+//  @Override
+//  public void smooth(int quality) {
+//    this.quality = quality;
+//    if (quality == 0) {
+//      noSmooth();
+//    } else {
+//      smooth();
+//    }
+//  }
+//
+//
+//  @Override
+//  public void noSmooth() {
+//    smooth = false;
+//    quality = 0;  // https://github.com/processing/processing/issues/3113
+//    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//                        RenderingHints.VALUE_ANTIALIAS_OFF);
+//    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+//                        RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 //    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//                         RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-
-//    g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
-//                        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-
-  }
-
-
-  @Override
-  public void smooth(int quality) {
-    this.quality = quality;
-    if (quality == 0) {
-      noSmooth();
-    } else {
-      smooth();
-    }
-  }
-
-
-  @Override
-  public void noSmooth() {
-    smooth = false;
-    quality = 0;  // https://github.com/processing/processing/issues/3113
-    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_OFF);
-    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                        RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-  }
+//                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+//  }
 
 
 

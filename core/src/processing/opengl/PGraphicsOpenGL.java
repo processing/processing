@@ -1852,7 +1852,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     pgl.depthFunc(PGL.LEQUAL);
 
-    if (quality < 2) {
+    if (smooth < 2) {
       pgl.disable(PGL.MULTISAMPLE);
     } else {
       pgl.enable(PGL.MULTISAMPLE);
@@ -3481,7 +3481,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // SMOOTH
 
-
+/*
   @Override
   public void smooth() {
     if (quality < 2) {
@@ -3553,6 +3553,7 @@ public class PGraphicsOpenGL extends PGraphics {
       restartPGL();
     }
   }
+  */
 
 
   //////////////////////////////////////////////////////////////
@@ -6544,9 +6545,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     boolean packed = depthBits == 24 && stencilBits == 8 &&
                      packedDepthStencilSupported;
-    if (PGraphicsOpenGL.fboMultisampleSupported && 1 < quality) {
+    if (PGraphicsOpenGL.fboMultisampleSupported && 1 < smooth) {
       multisampleFramebuffer =
-        new FrameBuffer(this, texture.glWidth, texture.glHeight, quality, 0,
+        new FrameBuffer(this, texture.glWidth, texture.glHeight, smooth, 0,
                         depthBits, stencilBits, packed, false);
 
       multisampleFramebuffer.clear();
@@ -6560,7 +6561,7 @@ public class PGraphicsOpenGL extends PGraphics {
                         false, false);
 
     } else {
-      quality = 0;
+      smooth = 0;
       offscreenFramebuffer =
         new FrameBuffer(this, texture.glWidth, texture.glHeight, 1, 1,
                         depthBits, stencilBits, packed, false);
@@ -6673,12 +6674,12 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       pgl.getIntegerv(PGL.SAMPLES, intBuffer);
       int temp = intBuffer.get(0);
-      if (quality != temp && 1 < temp && 1 < quality) {
+      if (smooth != temp && 1 < temp && 1 < smooth) {
         // TODO check why the samples is higher that initialized smooth level.
 //        quality = temp;
       }
     }
-    if (quality < 2) {
+    if (smooth < 2) {
       pgl.disable(PGL.MULTISAMPLE);
     } else {
       pgl.enable(PGL.MULTISAMPLE);

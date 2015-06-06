@@ -157,13 +157,11 @@ public class PGraphics extends PImage implements PConstants {
   /// width * height (useful for many calculations)
   public int pixelCount;
 
-  /// true if smoothing is enabled (read-only)
-  public boolean smooth;
+//  /// true if smoothing is enabled (read-only)
+//  public boolean smooth;
 
   /// the anti-aliasing level for renderers that support it
-  public int quality;
-
-//  public int smooth;
+  public int smooth;
 
 
   // ........................................................
@@ -704,7 +702,7 @@ public class PGraphics extends PImage implements PConstants {
     this.parent = parent;
     // Some renderers (OpenGL) need to know what smoothing level will be used
     // before the rendering surface is even created.
-    quality = parent.sketchSmooth();
+    smooth = parent.sketchSmooth();
   }
 
 
@@ -760,6 +758,11 @@ public class PGraphics extends PImage implements PConstants {
 //    reapplySettings();
     reapplySettings = true;
   }
+
+
+//  public void setSmooth(int level) {
+//    this.smooth = level;
+//  }
 
 
 //  /**
@@ -919,12 +922,12 @@ public class PGraphics extends PImage implements PConstants {
   protected void defaultSettings() {  // ignore
 //    System.out.println("PGraphics.defaultSettings() " + width + " " + height);
 
-    //smooth();  // 2.0a5
-    if (quality > 0) {  // 2.0a5
-      smooth();
-    } else {
-      noSmooth();
-    }
+//    //smooth();  // 2.0a5
+//    if (quality > 0) {  // 2.0a5
+//      smooth();
+//    } else {
+//      noSmooth();
+//    }
 
     colorMode(RGB, 255);
     fill(255);
@@ -1015,12 +1018,12 @@ public class PGraphics extends PImage implements PConstants {
     } else {
       noTint();
     }
-    if (smooth) {
-      smooth();
-    } else {
-      // Don't bother setting this, cuz it'll anger P3D.
-      noSmooth();
-    }
+//    if (smooth) {
+//      smooth();
+//    } else {
+//      // Don't bother setting this, cuz it'll anger P3D.
+//      noSmooth();
+//    }
     if (textFont != null) {
 //      System.out.println("  textFont in reapply is " + textFont);
       // textFont() resets the leading, so save it in case it's changed
@@ -3558,52 +3561,89 @@ public class PGraphics extends PImage implements PConstants {
   // SMOOTHING
 
 
-  /**
-   * If true in PImage, use bilinear interpolation for copy()
-   * operations. When inherited by PGraphics, also controls shapes.
-   */
+//  /**
+//   * If true in PImage, use bilinear interpolation for copy()
+//   * operations. When inherited by PGraphics, also controls shapes.
+//   */
+//
+//  /**
+//   * ( begin auto-generated from smooth.xml )
+//   *
+//   * Draws all geometry with smooth (anti-aliased) edges. This will sometimes
+//   * slow down the frame rate of the application, but will enhance the visual
+//   * refinement. Note that <b>smooth()</b> will also improve image quality of
+//   * resized images, and <b>noSmooth()</b> will disable image (and font)
+//   * smoothing altogether.
+//   *
+//   * ( end auto-generated )
+//   *
+//   * @webref shape:attributes
+//   * @see PGraphics#noSmooth()
+//   * @see PGraphics#hint(int)
+//   * @see PApplet#size(int, int, String)
+//   */
+//  public void smooth() {
+//    smooth = true;
+//  }
+//
+//  /**
+//   *
+//   * @param level either 2, 4, or 8
+//   */
+//  public void smooth(int level) {
+//    smooth = true;
+//  }
+//
+//  /**
+//   * ( begin auto-generated from noSmooth.xml )
+//   *
+//   * Draws all geometry with jagged (aliased) edges.
+//   *
+//   * ( end auto-generated )
+//   * @webref shape:attributes
+//   * @see PGraphics#smooth()
+//   */
+//  public void noSmooth() {
+//    smooth = false;
+//  }
 
-  /**
-   * ( begin auto-generated from smooth.xml )
-   *
-   * Draws all geometry with smooth (anti-aliased) edges. This will sometimes
-   * slow down the frame rate of the application, but will enhance the visual
-   * refinement. Note that <b>smooth()</b> will also improve image quality of
-   * resized images, and <b>noSmooth()</b> will disable image (and font)
-   * smoothing altogether.
-   *
-   * ( end auto-generated )
-   *
-   * @webref shape:attributes
-   * @see PGraphics#noSmooth()
-   * @see PGraphics#hint(int)
-   * @see PApplet#size(int, int, String)
-   */
-  public void smooth() {
-    smooth = true;
+
+  final public void smooth() {  // ignore
+    smooth(1);
   }
 
-  /**
-   *
-   * @param level either 2, 4, or 8
-   */
-  public void smooth(int level) {
-    smooth = true;
+
+  final public void smooth(int quality) {  // ignore
+    if (primarySurface) {
+      parent.smooth(quality);
+    } else {
+      // make sure beginDraw() not called yet
+      if (settingsInited) {
+        // ignore if it's just a repeat of the current state
+        if (this.smooth != quality) {
+          smoothWarning("smooth");
+        }
+      } else {
+        this.smooth = quality;
+      }
+    }
   }
 
-  /**
-   * ( begin auto-generated from noSmooth.xml )
-   *
-   * Draws all geometry with jagged (aliased) edges.
-   *
-   * ( end auto-generated )
-   * @webref shape:attributes
-   * @see PGraphics#smooth()
-   */
-  public void noSmooth() {
-    smooth = false;
+
+  final public void noSmooth() {  // ignore
+    smooth(0);
+    /*
+    if (primarySurface) {
+      parent.noSmooth();
+    } else {
+    }
+    */
   }
 
+
+  private void smoothWarning(String method) {
+    PGraphics.showWarning("%s() can only be used before beginDraw()", method);
+  }
 
 
   //////////////////////////////////////////////////////////////

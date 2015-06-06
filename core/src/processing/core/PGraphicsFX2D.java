@@ -843,22 +843,22 @@ public class PGraphicsFX2D extends PGraphics {
 //  }
 
 
-  @Override
-  public void smooth(int quality) {
-//    this.quality = quality;
-//    if (quality == 0) {
-//      noSmooth();
-//    } else {
-//      smooth();
-//    }
-    showMissingWarning("smooth");
-  }
-
-
-  @Override
-  public void noSmooth() {
-    showMissingWarning("noSmooth");
-  }
+//  @Override
+//  public void smooth(int quality) {
+////    this.quality = quality;
+////    if (quality == 0) {
+////      noSmooth();
+////    } else {
+////      smooth();
+////    }
+//    showMissingWarning("smooth");
+//  }
+//
+//
+//  @Override
+//  public void noSmooth() {
+//    showMissingWarning("noSmooth");
+//  }
 
 
 

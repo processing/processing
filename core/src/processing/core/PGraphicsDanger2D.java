@@ -63,7 +63,7 @@ public class PGraphicsDanger2D extends PGraphicsJava2D {
 //    }
 
     // Calling getGraphics() seems to nuke the smoothing settings
-    smooth(quality);
+    smooth(smooth);
 
     checkSettings();
     resetMatrix(); // reset model matrix

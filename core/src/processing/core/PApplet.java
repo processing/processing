@@ -879,9 +879,9 @@ public class PApplet implements PConstants {
   * Description to come...
   *
   * ( end auto-generated )
-  * 
+  *
   * Override this method to call size() when not using the PDE.
-  * 
+  *
   * @webref environment
   * @see PApplet#fullScreen()
   * @see PApplet#setup()
@@ -966,6 +966,41 @@ public class PApplet implements PConstants {
 
   final public int sketchWindowColor() {
     return windowColor;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public void smooth() {
+    smooth(1);
+  }
+
+
+  public void smooth(int level) {
+    if (insideSettings) {
+      this.smooth = level;
+
+    } else if (this.smooth != level) {
+      smoothWarning("smooth");
+    }
+  }
+
+
+  public void noSmooth() {
+    if (insideSettings) {
+      this.smooth = 0;
+
+    } else if (this.smooth != 0) {
+      smoothWarning("noSmooth");
+    }
+  }
+
+
+  private void smoothWarning(String method) {
+    // When running from the PDE, say setup(), otherwise say settings()
+    final String where = external ? "setup" : "settings";
+    PGraphics.showWarning("%s() can only be used inside %s()", method, where);
   }
 
 
@@ -2021,7 +2056,7 @@ public class PApplet implements PConstants {
 
       // Store the quality setting in case it's changed during draw and the
       // drawing context needs to be re-built before the next frame.
-      int pquality = g.quality;
+      int pquality = g.smooth;
 
       if (insideDraw) {
         System.err.println("handleDraw() called before finishing");
@@ -2087,8 +2122,8 @@ public class PApplet implements PConstants {
       }
       g.endDraw();
 
-      if (pquality != g.quality) {
-        surface.setSmooth(g.quality);
+      if (pquality != g.smooth) {
+        surface.setSmooth(g.smooth);
       }
 
       if (recorder != null) {
@@ -11472,53 +11507,6 @@ public class PApplet implements PConstants {
                     float x4, float y4, float z4) {
     if (recorder != null) recorder.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
     g.curve(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4);
-  }
-
-
-  /**
-   * ( begin auto-generated from smooth.xml )
-   *
-   * Draws all geometry with smooth (anti-aliased) edges. This will sometimes
-   * slow down the frame rate of the application, but will enhance the visual
-   * refinement. Note that <b>smooth()</b> will also improve image quality of
-   * resized images, and <b>noSmooth()</b> will disable image (and font)
-   * smoothing altogether.
-   *
-   * ( end auto-generated )
-   *
-   * @webref shape:attributes
-   * @see PGraphics#noSmooth()
-   * @see PGraphics#hint(int)
-   * @see PApplet#size(int, int, String)
-   */
-  public void smooth() {
-    if (recorder != null) recorder.smooth();
-    g.smooth();
-  }
-
-
-  /**
-   *
-   * @param level either 2, 4, or 8
-   */
-  public void smooth(int level) {
-    if (recorder != null) recorder.smooth(level);
-    g.smooth(level);
-  }
-
-
-  /**
-   * ( begin auto-generated from noSmooth.xml )
-   *
-   * Draws all geometry with jagged (aliased) edges.
-   *
-   * ( end auto-generated )
-   * @webref shape:attributes
-   * @see PGraphics#smooth()
-   */
-  public void noSmooth() {
-    if (recorder != null) recorder.noSmooth();
-    g.noSmooth();
   }
 
 
