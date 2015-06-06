@@ -1098,7 +1098,8 @@ public class PGraphics extends PImage implements PConstants {
    * enabled or disabled.
    *
    * ( end auto-generated )
-   * @webref rendering
+   *
+   * @webref Rendering
    * @param which name of the hint to be enabled or disabled
    * @see PGraphics
    * @see PApplet#createGraphics(int, int, String, String)
@@ -3574,7 +3575,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * ( end auto-generated )
    *
-   * @webref shape:attributes
+   * @webref Environment
    * @see PGraphics#noSmooth()
    * @see PGraphics#hint(int)
    * @see PApplet#size(int, int, String)
@@ -3585,7 +3586,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    *
-   * @param level either 2, 4, or 8
+   * @param level either 0, 1, 2, 4, or 8
    */
   public void smooth(int level) {
     smooth = true;
@@ -3597,7 +3598,7 @@ public class PGraphics extends PImage implements PConstants {
    * Draws all geometry with jagged (aliased) edges.
    *
    * ( end auto-generated )
-   * @webref shape:attributes
+   * @webref Environment
    * @see PGraphics#smooth()
    */
   public void noSmooth() {

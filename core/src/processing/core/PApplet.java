@@ -11486,7 +11486,7 @@ public class PApplet implements PConstants {
    *
    * ( end auto-generated )
    *
-   * @webref shape:attributes
+   * @webref Environment
    * @see PGraphics#noSmooth()
    * @see PGraphics#hint(int)
    * @see PApplet#size(int, int, String)
@@ -11499,7 +11499,7 @@ public class PApplet implements PConstants {
 
   /**
    *
-   * @param level either 2, 4, or 8
+   * @param level either 0, 1, 2, 4, or 8
    */
   public void smooth(int level) {
     if (recorder != null) recorder.smooth(level);
@@ -11513,7 +11513,7 @@ public class PApplet implements PConstants {
    * Draws all geometry with jagged (aliased) edges.
    *
    * ( end auto-generated )
-   * @webref shape:attributes
+   * @webref Environment
    * @see PGraphics#smooth()
    */
   public void noSmooth() {
