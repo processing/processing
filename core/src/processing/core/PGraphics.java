@@ -3569,7 +3569,7 @@ public class PGraphics extends PImage implements PConstants {
     if (primaryGraphics) {
       parent.smooth(quality);
     } else {
-      // make sure beginDraw() not called yet
+      // for createGraphics(), make sure beginDraw() not called yet
       if (settingsInited) {
         // ignore if it's just a repeat of the current state
         if (this.smooth != quality) {
