@@ -1,3 +1,6 @@
+# THE TEXT BELOW IS HAND WRITTEN AND FOUND IN THE FILE "keywords_base.txt"
+# IN THE PROCESSING-DOCS REPO. DON'T EDITS THE keywords.txt FILE DIRECTLY.
+
 # For an explanation of these tags, see Token.java 
 # trunk/processing/app/src/processing/app/syntax/Token.java
 
@@ -92,6 +95,8 @@ HINT_COUNT	LITERAL2
 HSB	LITERAL2	colorMode_
 IMAGE	LITERAL2	textureMode_
 INVERT	LITERAL2	filter_
+JAVA2D	LITERAL2	size_
+JAVA2D_2X	LITERAL2	size_
 JPEG	LITERAL2	
 LEFT	LITERAL2	keyCode
 LIGHTEST	LITERAL2	blend_
@@ -120,6 +125,8 @@ PAL	LITERAL2
 PDF	LITERAL2	size_
 P2D	LITERAL2	size_
 P3D	LITERAL2	size_
+P2D_2X	LITERAL2	size_
+P3D_2X	LITERAL2	size_
 PERSPECTIVE	LITERAL2
 PI	LITERAL2	PI
 PIE	LITERAL2	
@@ -490,6 +497,7 @@ frameCount	KEYWORD4	frameCount
 frameRate	KEYWORD4	frameRate
 frameRate	FUNCTION1	frameRate_
 frustum	FUNCTION1	frustum_
+fullScreen	FUNCTION1	fullScreen_
 get	FUNCTION1	get_
 green	FUNCTION1	green_
 HALF_PI	LITERAL2	HALF_PI
@@ -554,8 +562,8 @@ remove	FUNCTION2	JSONArray_remove_
 setBoolean	FUNCTION2	JSONArray_setBoolean_
 setFloat	FUNCTION2	JSONArray_setFloat_
 setInt	FUNCTION2	JSONArray_setInt_
-getJSONArray	FUNCTION2	JSONArray_setJSONArray_
-getJSONObject	FUNCTION2	JSONArray_setJSONObject_
+setJSONArray	FUNCTION2	JSONArray_setJSONArray_
+setJSONObject	FUNCTION2	JSONArray_setJSONObject_
 setString	FUNCTION2	JSONArray_setString_
 size	FUNCTION2	JSONArray_size_
 JSONObject	KEYWORD5	JSONObject
@@ -749,7 +757,7 @@ saveJSONArray	FUNCTION1	saveJSONArray_
 saveJSONObject	FUNCTION1	saveJSONObject_
 saveStream	FUNCTION1	saveStream_
 saveStrings	FUNCTION1	saveStrings_
-loadTable	FUNCTION1	saveTable_
+saveTable	FUNCTION1	saveTable_
 saveXML	FUNCTION1	saveXML_
 scale	FUNCTION1	scale_
 screenX	FUNCTION1	screenX_
@@ -760,6 +768,7 @@ selectFolder	FUNCTION1	selectFolder_
 selectInput	FUNCTION1	selectInput_
 selectOutput	FUNCTION1	selectOutput_
 set	FUNCTION1	set_
+settings	FUNCTION4	settings
 setup	FUNCTION4	setup
 shader	FUNCTION1	shader_
 shape	FUNCTION1	shape_
@@ -841,7 +850,7 @@ setString	FUNCTION2	Table_setString_
 trim	FUNCTION2	Table_trim_
 TableRow	KEYWORD5	TableRow
 getFloat	FUNCTION2	TableRow_getFloat_
-getFloat	FUNCTION2	TableRow_getInt_
+getInt	FUNCTION2	TableRow_getInt_
 getString	FUNCTION2	TableRow_getString_
 setFloat	FUNCTION2	TableRow_setFloat_
 setInt	FUNCTION2	TableRow_setInt_
@@ -860,6 +869,7 @@ texture	FUNCTION1	texture_
 textureMode	FUNCTION1	textureMode_
 textureWrap	FUNCTION1	textureWrap_
 textWidth	FUNCTION1	textWidth_
+thread	FUNCTION1	thread_
 tint	FUNCTION1	tint_
 translate	FUNCTION1	translate_
 triangle	FUNCTION1	triangle_
