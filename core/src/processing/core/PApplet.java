@@ -812,8 +812,7 @@ public class PApplet implements PConstants {
   int smooth = 1;
 
   boolean fullScreen;
-//  boolean spanDisplays;
-  int display;  // set to SPAN when using all displays
+  int display = -1;  // use default
   GraphicsDevice[] displayDevices;
 
   String outputPath;
@@ -945,8 +944,7 @@ public class PApplet implements PConstants {
 //  }
 
 
-  // Using num instead of index since the latter usually refers 0-indexed lists
-  // SPAN is used when using all displays
+  // Numbered from 1, SPAN (0) means all displays, -1 means the default display
   final public int sketchDisplay() {
     return display;
   }
