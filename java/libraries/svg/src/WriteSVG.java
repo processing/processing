@@ -5,18 +5,18 @@ import processing.core.PApplet;
 
 public class WriteSVG extends PApplet {
 
-  public String sketchRenderer() {
-    return "processing.svg.PGraphicsSVG";
-  }
+//  public String sketchRenderer() {
+//    return "processing.svg.PGraphicsSVG";
+//  }
 
 
-  public String sketchOutputPath() {
-    return "/Users/fry/Desktop/frame-####.svg";
-  }
+//  public String sketchOutputPath() {
+//    return "/Users/fry/Desktop/frame-####.svg";
+//  }
 
 
-  public void setup() {
-    size(600, 400, "processing.svg.PGraphicsSVG", "/Users/fry/Desktop/frame-####.svg");
+  public void settings() {
+    size(600, 400, SVG, desktopPath("frame-####.svg"));
 //    frameRate(1);
   }
 
