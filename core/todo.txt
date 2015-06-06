@@ -41,18 +41,18 @@ X   https://github.com/processing/processing/issues/3334
 
 beta
 X sketchXxxx() methods are final, need to move folks away from these
-_ fix up handling of fullScreen()
-_   https://github.com/processing/processing/issues/3296
-_   right now using a (display ignoring) hack to displayWidth/Height
+X fix up handling of fullScreen()
+X   https://github.com/processing/processing/issues/3296
+X   right now using a (display ignoring) hack to displayWidth/Height
 X   maybe we use the AWT screen sizes first, then match the others w/ em?
-_   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
 X   --full-screen replaced with --present (to untangle things)
-_     if you want full screen, use the fullScreen() method
+X     if you want full screen, use the fullScreen() method
+X   --span removed as an option, better to just do this from code
 _   docs: no mixing size() and fullScreen(). pick one.
 X instead of all these sketchXxxx() methods, should we have sketchSetting()
 _   and an internal dictionary that stores them all?
-_     intParam(), stringParam() and setParam()? 
-o   or sketchInt() or settingsInt()?
+_   intParam(), stringParam() and setParam()? 
+_   or sketchInt() or settingsInt()?
 o   too much soup inside main() to handle arg parsing and passing to the sketch
 X   moved things to settings()
 _ noSmooth()
@@ -105,6 +105,8 @@ _   at least with the Java2D renderer
 
 javafx
 _ static mode sketches (draw once and halt w/o closing window)
+_ fix display handling, line up the device order with AWT
+_   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
 _ noLoop()
 _ keyChar and keyCode are super wonky and unlike AWT
 _   https://github.com/processing/processing/issues/3290
