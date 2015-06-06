@@ -875,8 +875,22 @@ public class PApplet implements PConstants {
     insideSettings = false;
   }
 
+  /**
+  * ( begin auto-generated from settings.xml )
+  *
+  * Description to come...
+  *
+  * ( end auto-generated )
+  * 
+  * Override this method to call size() when not using the PDE.
+  * 
+  * @webref environment
+  * @see PApplet#fullScreen()
+  * @see PApplet#setup()
+  * @see PApplet#size()
+  * @see PApplet#smooth()
+  */
 
-  /** Override this method to call size() when not using the PDE. */
   public void settings() {
     // is this necessary? (doesn't appear to be, so removing)
     //size(DEFAULT_WIDTH, DEFAULT_HEIGHT, JAVA2D);
@@ -1515,6 +1529,19 @@ public class PApplet implements PConstants {
   }
   */
 
+/**
+  * ( begin auto-generated from fullScreen.xml )
+  *
+  * Description to come...
+  *
+  * ( end auto-generated )
+  * @webref environment
+  * @param renderer the renderer to use, e.g. P2D, P2D_2X, P3D...
+  * @see PApplet#settings()
+  * @see PApplet#setup()
+  * @see PApplet#size()
+  * @see PApplet#smooth()
+  */
 
   public void fullScreen(String renderer) {
     if (insideSettings("fullScreen", renderer)) {
@@ -1523,6 +1550,9 @@ public class PApplet implements PConstants {
     }
   }
 
+/**
+  * @param display the screen to run the sketch on (1, 2, 3, etc.)
+  */
 
   public void fullScreen(String renderer, int display) {
     if (insideSettings("fullScreen", renderer, display)) {
@@ -1797,7 +1827,6 @@ public class PApplet implements PConstants {
    * @param w width in pixels
    * @param h height in pixels
    * @param renderer Either P2D, P3D, or PDF
-   *
    * @see PGraphics#PGraphics
    *
    */
