@@ -1534,7 +1534,7 @@ public class PApplet implements PConstants {
   *
   * ( end auto-generated )
   * @webref environment
-  * @param renderer the renderer to use, e.g. P2D, P2D_2X, P3D...
+  * @param renderer the renderer to use, e.g. JAVA2D, JAVA2D_2X, P2D, P2D_2X, P3D, P3D_2X
   * @see PApplet#settings()
   * @see PApplet#setup()
   * @see PApplet#size()

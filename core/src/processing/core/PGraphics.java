@@ -1099,7 +1099,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * ( end auto-generated )
    *
-   * @webref Rendering
+   * @webref rendering
    * @param which name of the hint to be enabled or disabled
    * @see PGraphics
    * @see PApplet#createGraphics(int, int, String, String)
@@ -1953,7 +1953,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * ( end auto-generated )
    *
-   * @webref Rendering
+   * @webref rendering
    * @param mode the blending mode to use
    */
   public void blendMode(int mode) {
