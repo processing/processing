@@ -1099,6 +1099,7 @@ public class PGraphics extends PImage implements PConstants {
    * enabled or disabled.
    *
    * ( end auto-generated )
+   *
    * @webref rendering
    * @param which name of the hint to be enabled or disabled
    * @see PGraphics
@@ -1953,7 +1954,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * ( end auto-generated )
    *
-   * @webref Rendering
+   * @webref rendering
    * @param mode the blending mode to use
    */
   public void blendMode(int mode) {
@@ -3559,53 +3560,6 @@ public class PGraphics extends PImage implements PConstants {
   // SMOOTHING
 
 
-//  /**
-//   * If true in PImage, use bilinear interpolation for copy()
-//   * operations. When inherited by PGraphics, also controls shapes.
-//   */
-//
-//  /**
-//   * ( begin auto-generated from smooth.xml )
-//   *
-//   * Draws all geometry with smooth (anti-aliased) edges. This will sometimes
-//   * slow down the frame rate of the application, but will enhance the visual
-//   * refinement. Note that <b>smooth()</b> will also improve image quality of
-//   * resized images, and <b>noSmooth()</b> will disable image (and font)
-//   * smoothing altogether.
-//   *
-//   * ( end auto-generated )
-//   *
-//   * @webref shape:attributes
-//   * @see PGraphics#noSmooth()
-//   * @see PGraphics#hint(int)
-//   * @see PApplet#size(int, int, String)
-//   */
-//  public void smooth() {
-//    smooth = true;
-//  }
-//
-//  /**
-//   *
-//   * @param level either 2, 4, or 8
-//   */
-//  public void smooth(int level) {
-//    smooth = true;
-//  }
-//
-//  /**
-//   * ( begin auto-generated from noSmooth.xml )
-//   *
-//   * Draws all geometry with jagged (aliased) edges.
-//   *
-//   * ( end auto-generated )
-//   * @webref shape:attributes
-//   * @see PGraphics#smooth()
-//   */
-//  public void noSmooth() {
-//    smooth = false;
-//  }
-
-
   final public void smooth() {  // ignore
     smooth(1);
   }
@@ -3630,18 +3584,13 @@ public class PGraphics extends PImage implements PConstants {
 
   final public void noSmooth() {  // ignore
     smooth(0);
-    /*
-    if (primarySurface) {
-      parent.noSmooth();
-    } else {
-    }
-    */
   }
 
 
   private void smoothWarning(String method) {
     PGraphics.showWarning("%s() can only be used before beginDraw()", method);
   }
+
 
 
   //////////////////////////////////////////////////////////////
