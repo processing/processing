@@ -9505,17 +9505,18 @@ public class PApplet implements PConstants {
    *                        minimum window size for the OS, and the matte
    *                        color when using 'present' mode.
    *
-   * --sketch-path          location of where to save files from functions
+   * --sketch-path          Location of where to save files from functions
    *                        like saveStrings() or saveFrame(). defaults to
    *                        the folder that the java application was
    *                        launched from, which means if this isn't set by
    *                        the pde, everything goes into the same folder
    *                        as processing.exe.
    *
-   * --display=n            set what display should be used by this sketch.
-   *                        displays are numbered starting from 1.
-   *
-   * --span                 Makes the sketch full screen across all displays.
+   * --display=n            Set what display should be used by this sketch.
+   *                        Displays are numbered starting from 1. This will
+   *                        be overridden by fullScreen() calls that specify
+   *                        a display. Omitting this option will cause the
+   *                        default display to be used.
    *
    * Parameters used by Processing when running via the PDE
    *
