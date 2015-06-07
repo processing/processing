@@ -127,6 +127,13 @@ _   https://github.com/processing/processing/issues/1457
 _ add last revision used / max revision used settings?
 
 
+crashing
+_ hard crash on startup in HD 5000 graphics
+_   https://github.com/processing/processing/issues/3359
+_ Hard crash on startup inside strlen call when using 3.0a8+ on OS X
+_   https://github.com/processing/processing/issues/3360
+
+
 breakage
 _ break out a gui package (get class count down in .app)
 _ remove deprecated methods

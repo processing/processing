@@ -378,6 +378,10 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
+  /**
+   * Smoothing for Java2D is 2 for bilinear, and 3 for bicubic (the default).
+   * Internally, smooth(1) is the default, smooth(0) is noSmooth().
+   */
   protected void handleSmooth() {
     if (smooth == 0) {
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -391,20 +395,23 @@ public class PGraphicsJava2D extends PGraphics {
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                           RenderingHints.VALUE_ANTIALIAS_ON);
 
-      g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                          (smooth == 1 || smooth == 4) ?
-                          RenderingHints.VALUE_INTERPOLATION_BICUBIC :
-                          RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+      if (smooth == 1 || smooth == 3) {  // default is bicubic
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                            RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+      } else if (smooth == 2) {
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                            RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+      }
 
-    // http://docs.oracle.com/javase/tutorial/2d/text/renderinghints.html
-    // Oracle Java text anti-aliasing on OS X looks like s*t compared to the
-    // text rendering with Apple's old Java 6. Below, several attempts to fix:
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    // Turns out this is the one that actually makes things work.
-    // Kerning is still screwed up, however.
-    g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+      // http://docs.oracle.com/javase/tutorial/2d/text/renderinghints.html
+      // Oracle Java text anti-aliasing on OS X looks like s*t compared to the
+      // text rendering with Apple's old Java 6. Below, several attempts to fix:
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                          RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      // Turns out this is the one that actually makes things work.
+      // Kerning is still screwed up, however.
+      g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                          RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 //    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 //                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 //    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
