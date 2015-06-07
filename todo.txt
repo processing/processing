@@ -39,6 +39,13 @@ X   https://github.com/processing/processing/pull/3319
 
 
 gui
+_ implement 'welcome' screen
+_   https://github.com/processing/processing/issues/3358
+_   a summary of what's new, plus a link to GitHub wiki page with details
+_   a warning that some Processing 2 sketches may not be compatible
+_   if a v2 sketchbook already exists, show a prompt to choose either creating a new Processing 3 sketch folder or use the existing v2 one, plus a link to GitHub wiki page with details
+_   a checkbox for "show this welcome each time" (default to checked)
+-   a button to dismiss the welcome screen (e.g., "get started")
 _ add new lower console/errors icons
 _ show hover text with 'debug'
 _ inquire about updated document icon

@@ -43,8 +43,10 @@ X Errors in glsl code are only caught when set() is used
 X   https://github.com/processing/processing/issues/2268
 X move glsl entries to their own subdirectory
 
+
 beta
 X fix up handling of fullScreen()
+X   https://github.com/processing/processing-docs/issues/250
 X   https://github.com/processing/processing/issues/3296
 X   right now using a (display ignoring) hack to displayWidth/Height
 X   maybe we use the AWT screen sizes first, then match the others w/ em?
@@ -59,19 +61,21 @@ X split 'present' and 'full screen'?
 X   --full-screen causes considerable flicker at this point
 X   or split them when sketchWidth/Height are implemented?
 _ smooth() and noSmooth()
-_   can only be called inside setup(), show warning elsewhere
-_   is lifted out of setup() and into settings()
-_   goes before the first beginDraw() with createGraphics()
-_   sketchQuality() needs to be rooted out
 _   https://github.com/processing/processing/issues/3357
 _   https://github.com/processing/processing-docs/issues/251
+_   can only be called inside setup(), show warning elsewhere
+_   is lifted out of setup() and into settings()
+X   goes before the first beginDraw() with createGraphics()
+X   sketchQuality() needs to be rooted out
 _ replace sketchXxxx() methods with another mechanism?
 _   and an internal dictionary that stores them all?
 _   intParam(), stringParam() and setParam()? 
 _   or sketchInt() or settingsInt()?
 _   surface.size(), surface.noSmooth()... just like PGraphics methods?
-X sketchXxxx() methods are final, need to move folks away from these
+X sketchXxxx() methods
+_   make final to move folks away from these?
 _   or is this a bad move until we've sorted out Android?
+
 
 critical
 _ draw() executes twice when noLoop() called in setup()
