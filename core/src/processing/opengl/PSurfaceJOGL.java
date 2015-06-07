@@ -250,7 +250,7 @@ public class PSurfaceJOGL implements PSurface {
     if (screenRect.width == sketchWidth &&
         screenRect.height == sketchHeight) {
       fullScreen = true;
-//        sketch.fullScreen = true;  // hmm
+      sketch.fullScreen();
     }
 
     if (fullScreen || spanDisplays) {
