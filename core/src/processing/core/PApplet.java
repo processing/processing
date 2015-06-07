@@ -970,11 +970,16 @@ public class PApplet implements PConstants {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /**
+   * @webref environment
+   */
   public void smooth() {
     smooth(1);
   }
 
-
+  /**
+   * @param level either 0, 1, 2, 4, 8
+   */
   public void smooth(int level) {
     if (insideSettings) {
       this.smooth = level;
@@ -984,7 +989,9 @@ public class PApplet implements PConstants {
     }
   }
 
-
+  /**
+   * @webref environment
+   */
   public void noSmooth() {
     if (insideSettings) {
       this.smooth = 0;
