@@ -10,6 +10,7 @@ X   Linux version of updated icon
 X     handled with the .desktop file, nothing has changed for the file location
 X   add larger icons to core folder
 X   update export icons in java/application (export.icns and export.ico)
+X remove no longer used 'pdex' directory
 
 fixed earlier
 X Can't set Breakpoint from the Breakpoint bar at the side
