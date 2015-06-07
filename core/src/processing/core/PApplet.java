@@ -809,7 +809,7 @@ public class PApplet implements PConstants {
 
   String renderer = JAVA2D;
 //  int quality = 2;
-  int smooth = 1;
+  int smooth = 1;  // default smoothing (whatever that means for the renderer)
 
   boolean fullScreen;
   int display = -1;  // use default
@@ -872,6 +872,7 @@ public class PApplet implements PConstants {
     insideSettings = false;
   }
 
+
   /**
   * ( begin auto-generated from settings.xml )
   *
@@ -887,7 +888,6 @@ public class PApplet implements PConstants {
   * @see PApplet#size()
   * @see PApplet#smooth()
   */
-
   public void settings() {
     // is this necessary? (doesn't appear to be, so removing)
     //size(DEFAULT_WIDTH, DEFAULT_HEIGHT, JAVA2D);
@@ -1567,6 +1567,15 @@ public class PApplet implements PConstants {
   }
   */
 
+
+  /**
+   * Create a full-screen sketch using the default renderer.
+   */
+  public void fullScreen() {
+    fullScreen(sketchRenderer());
+  }
+
+
 /**
   * ( begin auto-generated from fullScreen.xml )
   *
@@ -1580,7 +1589,6 @@ public class PApplet implements PConstants {
   * @see PApplet#size()
   * @see PApplet#smooth()
   */
-
   public void fullScreen(String renderer) {
     if (insideSettings("fullScreen", renderer)) {
       fullScreen = true;
@@ -1588,10 +1596,10 @@ public class PApplet implements PConstants {
     }
   }
 
-/**
-  * @param display the screen to run the sketch on (1, 2, 3, etc.)
-  */
 
+  /**
+   * @param display the screen to run the sketch on (1, 2, 3, etc.)
+   */
   public void fullScreen(String renderer, int display) {
     if (insideSettings("fullScreen", renderer, display)) {
       fullScreen = true;

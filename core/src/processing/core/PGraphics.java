@@ -3559,11 +3559,13 @@ public class PGraphics extends PImage implements PConstants {
 
   // SMOOTHING
 
-  final public void smooth() {  // ignore
+
+  public void smooth() {  // ignore
     smooth(1);
   }
 
-  final public void smooth(int quality) {  // ignore
+
+  public void smooth(int quality) {  // ignore
     if (primaryGraphics) {
       parent.smooth(quality);
     } else {
@@ -3579,7 +3581,8 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-  final public void noSmooth() {  // ignore
+
+  public void noSmooth() {  // ignore
     smooth(0);
   }
 

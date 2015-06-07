@@ -437,7 +437,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     if (screenRect.width == sketchWidth &&
         screenRect.height == sketchHeight) {
       fullScreen = true;
-      sketch.fullScreen = true;  // hmm
+      sketch.fullScreen();  // won't change the renderer
     }
 
     if (fullScreen || spanDisplays) {

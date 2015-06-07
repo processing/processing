@@ -61,12 +61,14 @@ X split 'present' and 'full screen'?
 X   --full-screen causes considerable flicker at this point
 X   or split them when sketchWidth/Height are implemented?
 _ smooth() and noSmooth()
+X   goes before the first beginDraw() with createGraphics()
+X   sketchQuality() needs to be rooted out
+X   don't make this final, since it'll break a bunch of code
+X     it'd be a nice indicator for renderers, but not worth what it breaks
 _   https://github.com/processing/processing/issues/3357
 _   https://github.com/processing/processing-docs/issues/251
 _   can only be called inside setup(), show warning elsewhere
 _   is lifted out of setup() and into settings()
-X   goes before the first beginDraw() with createGraphics()
-X   sketchQuality() needs to be rooted out
 _ replace sketchXxxx() methods with another mechanism?
 _   and an internal dictionary that stores them all?
 _   intParam(), stringParam() and setParam()? 
