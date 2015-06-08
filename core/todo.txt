@@ -1,10 +1,18 @@
 0237 (3.0a10)
-X retain original java.awt.Frame when it's in use
+X retain original java.awt.Frame when it's available from PSurfaceAWT
 X set frame icon images for Java2D (dock and cmd-tab) 
+X   https://github.com/processing/processing/issues/257
+
+breaking api
 X re-opened the Gates of Hell by adding chaining operations to PVector
 X   https://github.com/processing/processing/issues/257
-X change open() to launch() to fix conflicts in Python (and elsewhere?)
-X change exec() to use varargs for convenience
+o add chaining operations to XML and JSON
+X exec() and open() to use varargs
+X   changed exec() to use varargs for convenience
+X cross-language awkwardness
+X   python has to use launch() instead of open()
+X   changed open() to launch() to fix conflicts in Python (and elsewhere?)
+o   map() is bad for Python and JavaScript
 
 fixed earlier/can no longer reproduce
 X strips when rendering spheres with lights and anti-aliasing
@@ -113,16 +121,6 @@ _   or sketchInt() or settingsInt()?
 _   surface.size(), surface.noSmooth()... just like PGraphics methods?
 _   make final to move folks away from these?
 _   or is this a bad move until we've sorted out Android?
-
-
-breaking api
-_ add chaining operations to PVector
-_   https://github.com/processing/processing/issues/257
-_ add chaining operations to XML and JSON
-_ exec() and open() to use varargs
-_ cross-language awkwardness
-_   python has to use launch() instead of open()
-_   map() is bad for Python and JavaScript
 
 
 high priority

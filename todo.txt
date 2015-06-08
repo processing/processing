@@ -11,7 +11,9 @@ X     handled with the .desktop file, nothing has changed for the file location
 X   add larger icons to core folder
 X   update export icons in java/application (export.icns and export.ico)
 X remove no longer used 'pdex' directory
-X rolled back to 3.0a5 version of appbundler
+X rolled back to 3.0a5 version of appbundler due to crash on startup
+X   https://github.com/processing/processing/issues/3359
+X   https://github.com/processing/processing/issues/3360
 X   this re-introduces two bugs (serial export and scrolling)
 X   and any other changes later than 16 November 2015:
 X   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
@@ -24,6 +26,7 @@ X   https://github.com/processing/processing/issues/2843
 o Update Windows icons for multiple sizes, implement them in the PDE
 o   http://code.google.com/p/processing/issues/detail?id=632
 X   closed during the 2.x cycle
+
 
 contribs
 X several Greek translation updates
@@ -44,14 +47,18 @@ X   https://github.com/processing/processing/issues/3160
 X   https://github.com/processing/processing/pull/3319
 
 
-gui
+beta
 _ add "welcome" or "what's new" window to explain features in 3
 _   https://github.com/processing/processing/issues/3358
 _   a summary of what's new, plus a link to GitHub wiki page with details
 _   a warning that some Processing 2 sketches may not be compatible
-_   if a v2 sketchbook already exists, show a prompt to choose either creating a new Processing 3 sketch folder or use the existing v2 one, plus a link to GitHub wiki page with details
 _   a checkbox for "show this welcome each time" (default to checked)
--   a button to dismiss the welcome screen (e.g., "get started")
+_   a button to dismiss the welcome screen (e.g., "get started")
+_ 2.x vs 3.x sketchbook battle (part of the welcome screen item)
+_   if a v2 sketchbook already exists, show a prompt to choose either creating a new Processing 3 sketch folder or use the existing v2 one, plus a link to GitHub wiki page with details
+
+
+gui
 _ add new lower console/errors icons
 _ show hover text with 'debug'
 _ inquire about updated document icon
@@ -135,6 +142,9 @@ _ add last revision used / max revision used settings?
 crashing
 _ fix appbundler problems due to rollback
 _   this re-introduces two bugs (serial export and scrolling)
+_   and any other changes later than 16 November 2015:
+_   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
+_   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
 _ another possible culprit
 _   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
 _ EXC_BAD_ACCESS inside AppleIntelHD5000GraphicsGLDriver when starting 3.0a8+
