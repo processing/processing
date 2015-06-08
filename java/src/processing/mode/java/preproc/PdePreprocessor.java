@@ -318,7 +318,7 @@ public class PdePreprocessor {
     }
     String[] noContents = matchMethod("noSmooth", searchArea);
     if (noContents != null) {
-      if (extraStatements != null) {
+      if (extraStatements.size() != 0) {
         throw new SketchException("smooth() and noSmooth() cannot be used in the same sketch");
       } else {
         extraStatements.append(noContents[0]);
@@ -369,8 +369,8 @@ public class PdePreprocessor {
         throw new SketchException("Please fix the size() line to continue.", false);
       }
 
-      if (extraStatements != null) {
-        info.statement += extraStatements;
+      if (extraStatements.size() != 0) {
+        info.statement += extraStatements.join(" ");
       }
       info.checkEmpty();
       return info;
@@ -401,7 +401,7 @@ public class PdePreprocessor {
       }
       info.width = "displayWidth";
       info.height = "displayHeight";
-      if (extraStatements != null) {
+      if (extraStatements.size() != 0) {
         info.statement += extraStatements.join(" ");
       }
       info.checkEmpty();
@@ -410,7 +410,7 @@ public class PdePreprocessor {
 
     // Made it this far, but no size() or fullScreen(), and still
     // need to pull out the noSmooth() and smooth(N) methods.
-    if (extraStatements != null) {
+    if (extraStatements.size() != 0) {
       SurfaceInfo info = new SurfaceInfo();
       info.statement = extraStatements.join(" ");
       return info;
