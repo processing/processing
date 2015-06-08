@@ -163,7 +163,7 @@ public class Toolkit {
    *  To improve readability, it discriminates against decenders (qypgj), imagining they
    *  have 2/3 their actual width. (MS guidelines: avoid decenders). It also discriminates
    *  against vowels, imagining they have 2/3 their actual width. (MS and Gnome guidelines:
-   *  avoid vowels. </li>
+   *  avoid vowels.) </li>
    * <li>Failing that, it will loop left-to-right for an available digit. This is a last
    *  resort because the normal setMnemonic dislikes them.</li>
    * <li> If that doesn't work, it doesn't assign a mnemonic. </li>
@@ -181,44 +181,52 @@ public class Toolkit {
    * @param menu
    *          A menu, a list of menus or an array of menu items to set mnemonics for.
    */
-  public static void setMenuMnemonics(JMenuItem... menu) {
+  static public void setMenuMnemonics(JMenuItem... menu) {
     if (Base.isMacOS()) return;
     if (menu.length == 0) return;
 
-    // This list is (mostly) the contents of http://techbase.kde.org/Projects/Usability/HIG/
-    // Keyboard_Accelerators, made lowercase, with nothing but letters left except
-    // for ampersands before mnemonics and ".+" for changable text. (They are regexs.)
-    // Note that every ampersand MUST be followed by a lowercase ASCII letter.
-    final String[] kdePreDefStrs = { "&file", "&new", "&open", "open&recent", "&save",
-      "save&as", "saveacop&y", "saveas&template", "savea&ll", "reloa&d", "&print",
-      "printpre&view", "&import", "e&xport", "&closefile", "clos&eallfiles", "&quit",
-      "&edit", "&undo", "re&do", "cu&t&", "&copy", "&paste", "&delete", "select&all",
-      "dese&lect", "&find", "find&next", "findpre&vious", "&replace", "&gotoline",
-      "&view", "&newview", "close&allviews", "&splitview", "&removeview",
-      "splitter&orientation", "&horizontal", "&vertical", "view&mode", "&fullscreenmode",
-      "&zoom", "zoom&in", "zoom&out", "zoomtopage&width", "zoomwhole&page", "zoom&factor",
-      "&insert", "&format", "&go", "&up", "&back", "&forward", "&home", "&go", "&previouspage",
-      "&nextpage", "&firstpage", "&lastpage", "read&updocument", "read&downdocument", "&back",
-      "&forward", "&gotopage", "&bookmarks", "&addbookmark", "bookmark&tabsasfolder",
-      "&editbookmarks", "&newbookmarksfolder", "&tools", "&settings", "&toolbars",
-      "configure&shortcuts", "configuretool&bars", "&configure*", "&help", ".+&handbook",
-      "&whatsthis", "report&bug", "&aboutprocessing", "about&kde", "&beenden" };
+    // The English is http://techbase.kde.org/Projects/Usability/HIG/Keyboard_Accelerators,
+    // made lowercase.
+    // Nothing but [a-z] except for '&' before mnemonics and regexes for changable text.
+    final String[] kdePreDefStrs = { "&file", "&new", "&open", "open&recent",
+      "&save", "save&as", "saveacop&y", "saveas&template", "savea&ll", "reloa&d",
+      "&print", "printpre&view", "&import", "e&xport", "&closefile",
+      "clos&eallfiles", "&quit", "&edit", "&undo", "re&do", "cu&t", "&copy",
+      "&paste", "&delete", "select&all", "dese&lect", "&find", "find&next",
+      "findpre&vious", "&replace", "&gotoline", "&view", "&newview",
+      "close&allviews", "&splitview", "&removeview", "splitter&orientation",
+      "&horizontal", "&vertical", "view&mode", "&fullscreenmode", "&zoom",
+      "zoom&in", "zoom&out", "zoomtopage&width", "zoomwhole&page", "zoom&factor",
+      "&insert", "&format", "&go", "&up", "&back", "&forward", "&home", "&go",
+      "&previouspage", "&nextpage", "&firstpage", "&lastpage", "read&updocument",
+      "read&downdocument", "&back", "&forward", "&gotopage", "&bookmarks",
+      "&addbookmark", "bookmark&tabsasfolder", "&editbookmarks",
+      "&newbookmarksfolder", "&tools", "&settings", "&toolbars",
+      "configure&shortcuts", "configuretool&bars", "&configure.*", "&help",
+      ".+&handbook", "&whatsthis", "report&bug", "&aboutprocessing", "about&kde",
+      "&beenden", "&suchen",   // de
+      "&preferncias", "&sair", // Preferências; pt
+      "&rechercher" };         // fr
     Pattern[] kdePreDefPats = new Pattern[kdePreDefStrs.length];
-    for (int i = 0; i < kdePreDefStrs.length; i++)
+    for (int i = 0; i < kdePreDefStrs.length; i++) {
       kdePreDefPats[i] = Pattern.compile(kdePreDefStrs[i].replace("&",""));
+    }
 
     final Pattern nonAAlpha = Pattern.compile("[^A-Za-z]");
     FontMetrics fmTmp = null;
     for (JMenuItem m : menu) {
-      if (m != null) fmTmp = m.getFontMetrics(m.getFont());
+      if (m != null) {
+        fmTmp = m.getFontMetrics(m.getFont());
+        break;
+      }
     }
-    if (fmTmp == null) return; // All null menuitems; comparator would fail.
+    if (fmTmp == null) return; // All null menuitems; would fail.
     final FontMetrics fm = fmTmp; // Hack for accessing variable in comparator.
 
     final Comparator<Character> charComparator = new Comparator<Character>() {
-      char[] baddies = "qypgjaeiouQYPGJAEIOU".toCharArray();
+      char[] baddies = "qypgjaeiouQAEIOU".toCharArray();
       public int compare(Character ch1, Character ch2) {
-        // Descriminates against decenders for readability, per MS
+        // Discriminates against descenders for readability, per MS
         // Human Interface Guide, and vowels per MS and Gnome.
         float w1 = fm.charWidth(ch1), w2 = fm.charWidth(ch2);
         for (char bad : baddies) {
@@ -240,14 +248,15 @@ public class Toolkit {
     for (JMenuItem jmi : menu) {
       if (jmi == null) continue;
       if (jmi.getText() == null) continue;
-      jmi.setMnemonic(0); // Reset.
+      jmi.setMnemonic(0); // Reset all mnemonics.
+      String asciiName = nonAAlpha.matcher(jmi.getText()).replaceAll("");
+      String lAsciiName = asciiName.toLowerCase();
       for (int i = 0; i < kdePreDefStrs.length; i++) {
-        // To ASCII lowercase letters.
-        String lASCIIName = nonAAlpha.matcher(jmi.getText()).replaceAll("").toLowerCase();
-        if (kdePreDefPats[i].matcher(lASCIIName).matches()) {
-          char mnem = kdePreDefStrs[i].charAt(1+kdePreDefStrs[i].indexOf("&"));
+        if (kdePreDefPats[i].matcher(lAsciiName).matches()) {
+          char mnem = asciiName.charAt(kdePreDefStrs[i].indexOf("&"));
           jmi.setMnemonic(mnem);
-          taken.add(mnem);
+          jmi.setDisplayedMnemonicIndex(jmi.getText().indexOf(mnem));
+          taken.add((char)(mnem | 32)); // to lowercase
           break;
         }
       }
@@ -273,9 +282,9 @@ public class Toolkit {
       for (int i = 0; i < cleanString.length(); i++) {
         if (cleanString.charAt(i) == '_') {
           if (i > 0)
-            banned.add(Character.toLowerCase(cleanString.charAt(i-1)));
-          if (i+1 < cleanString.length())
-            banned.add(Character.toLowerCase(cleanString.charAt(i+1)));
+            banned.add(Character.toLowerCase(cleanString.charAt(i - 1)));
+          if (i + 1 < cleanString.length())
+            banned.add(Character.toLowerCase(cleanString.charAt(i + 1)));
         }
       }
 
@@ -289,6 +298,7 @@ public class Toolkit {
         if (banned.contains(Character.toLowerCase(firstChar))) continue;
         if ('A' <= firstChar && firstChar <= 'Z') {
           jmi.setMnemonic(firstChar);
+          jmi.setDisplayedMnemonicIndex(jmi.getText().indexOf(firstChar));
           taken.add((char)(firstChar | 32)); // tolowercase
           continue algorithmicAssignment;
         }
@@ -302,6 +312,7 @@ public class Toolkit {
         if (banned.contains(Character.toLowerCase(firstChar))) continue;
         if ('a' <= firstChar && firstChar <= 'z') {
           jmi.setMnemonic(firstChar);
+          jmi.setDisplayedMnemonicIndex(jmi.getText().indexOf(firstChar));
           taken.add(firstChar); // is lowercase
           continue algorithmicAssignment;
         }
@@ -315,6 +326,7 @@ public class Toolkit {
             !banned.contains((char)(ascii2nd|32)) &&
             fm.charWidth('A') <= 2*fm.charWidth(ascii2nd)) {
           jmi.setMnemonic(ascii2nd);
+          jmi.setDisplayedMnemonicIndex(jmi.getText().indexOf(ascii2nd));
           taken.add((char)(ascii2nd|32));
           continue algorithmicAssignment;
         }
@@ -330,8 +342,10 @@ public class Toolkit {
       for (char mnem : cleanCharas) {
         if (taken.contains(Character.toLowerCase(mnem))) continue;
         if (banned.contains(Character.toLowerCase(mnem))) continue;
+
         // NB: setMnemonic(char) doesn't want [^A-Za-z]
         jmi.setMnemonic(mnem);
+        jmi.setDisplayedMnemonicIndex(jmi.getText().indexOf(mnem));
         taken.add(Character.toLowerCase(mnem));
         continue algorithmicAssignment;
       }
@@ -341,6 +355,7 @@ public class Toolkit {
         if (taken.contains(digit)) continue;
         if (banned.contains(digit)) continue;
         jmi.setMnemonic(KeyEvent.VK_0 + digit - '0');
+        // setDisplayedMnemonicIndex() unneeded: no case issues.
         taken.add(digit);
         continue algorithmicAssignment;
       }
@@ -356,7 +371,7 @@ public class Toolkit {
   /**
    * As setMenuMnemonics(JMenuItem...).
    */
-  public static void setMenuMnemonics(JMenuBar menubar) {
+  static public void setMenuMnemonics(JMenuBar menubar) {
     JMenuItem[] items = new JMenuItem[menubar.getMenuCount()];
     for (int i = 0; i < items.length; i++) {
       items[i] = menubar.getMenu(i);
@@ -368,7 +383,7 @@ public class Toolkit {
   /**
    * As setMenuMnemonics(JMenuItem...).
    */
-  public static void setMenuMnemonics(JPopupMenu menu) {
+  static public void setMenuMnemonics(JPopupMenu menu) {
     ArrayList<JMenuItem> items = new ArrayList<JMenuItem>();
 
     for (Component c : menu.getComponents()) {
@@ -381,7 +396,7 @@ public class Toolkit {
   /**
    * Calls setMenuMnemonics(JMenuItem...) on the sub-elements only.
    */
-  public static void setMenuMnemsInside(JMenu menu) {
+  static public void setMenuMnemsInside(JMenu menu) {
     JMenuItem[] items = new JMenuItem[menu.getItemCount()];
     for (int i = 0; i < items.length; i++) {
       items[i] = menu.getItem(i);
