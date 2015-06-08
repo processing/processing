@@ -514,7 +514,7 @@ public interface PConstants {
   static final int ENABLE_STROKE_PURE         =  9;
   static final int DISABLE_STROKE_PURE        = -9;
 
-  static final int HINT_COUNT                 = 11;
+  static final int HINT_COUNT                 = 10;
 
   // error messages
 
