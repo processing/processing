@@ -163,10 +163,10 @@ public class PdePreprocessor {
    */
 //  public static final String SIZE_REGEX =
 //    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+)\\s*,?\\s*([^\\)]*)\\s*\\)\\s*\\;";
-  static private final String SIZE_CONTENTS_REGEX =
-    "(?:^|\\s|;)size\\s*\\(([^\\)]+)\\)\\s*\\;";
-  static private final String FULL_SCREEN_CONTENTS_REGEX =
-    "(?:^|\\s|;)fullScreen\\s*\\(([^\\)]+)\\)\\s*\\;";
+//  static private final String SIZE_CONTENTS_REGEX =
+//    "(?:^|\\s|;)size\\s*\\(([^\\)]+)\\)\\s*\\;";
+//  static private final String FULL_SCREEN_CONTENTS_REGEX =
+//    "(?:^|\\s|;)fullScreen\\s*\\(([^\\)]+)\\)\\s*\\;";
 //  /** Test whether there's a void somewhere (the program has functions). */
 //  static private final String VOID_REGEX =
 //    "(?:^|\\s|;)void\\s";
@@ -208,9 +208,11 @@ public class PdePreprocessor {
   }
 
 
-  // break on commas, except those inside quotes, e.g.:
-  // size(300, 200, PDF, "output,weirdname.pdf");
-  // no handling for escaped (\") quotes
+  /**
+   * Break on commas, except those inside quotes,
+   * e.g.: size(300, 200, PDF, "output,weirdname.pdf");
+   * No special handling implemented for escaped (\") quotes.
+   */
   static private StringList breakCommas(String contents) {
     StringList outgoing = new StringList();
 
@@ -248,7 +250,8 @@ public class PdePreprocessor {
 
   /**
    * Parse a chunk of code and extract the size() command and its contents.
-   * @param code Usually the code from the main tab in the sketch
+   * Also goes after fullScreen(), smooth(), and noSmooth().
+   * @param code The code from the main tab in the sketch
    * @param fussy true if it should show an error message if bad size()
    * @return null if there was an error, otherwise an array (might contain some/all nulls)
    */
@@ -306,14 +309,28 @@ public class PdePreprocessor {
       searchArea = sb.toString();
     }
 
-    // Get everything inside the parens for the size() method
-    String[] contents = PApplet.match(searchArea, SIZE_CONTENTS_REGEX);
-    if (contents != null) {
-      //String[] matches = split on commas, but not commas inside quotes
+    // First look for noSmooth() or smooth(N) so we can hoist it into settings.
+    String smoothStatement = null;
+    String[] smoothContents = matchMethod("smooth", searchArea);
+    if (smoothContents != null) {
+      smoothStatement = smoothContents[0];
+    }
+    String[] noContents = matchMethod("noSmooth", searchArea);
+    if (noContents != null) {
+      if (smoothStatement != null) {
+        throw new SketchException("smooth() and noSmooth() cannot be used in the same sketch");
+      } else {
+        smoothStatement = noContents[0];
+      }
+    }
 
-      StringList args = breakCommas(contents[1]);
+    // Get everything inside the parens for the size() method
+    //String[] contents = PApplet.match(searchArea, SIZE_CONTENTS_REGEX);
+    String[] sizeContents = matchMethod("size", searchArea);
+    if (sizeContents != null) {
+      StringList args = breakCommas(sizeContents[1]);
       SurfaceInfo info = new SurfaceInfo();
-      info.statement = contents[0];
+      info.statement = sizeContents[0];
       info.width = args.get(0).trim();
       info.height = args.get(1).trim();
       info.renderer = (args.size() >= 3) ? args.get(2).trim() : null;
@@ -340,27 +357,66 @@ public class PdePreprocessor {
         throw new SketchException("Please fix the size() line to continue.", false);
       }
 
+      if (smoothStatement != null) {
+        info.statement += smoothStatement;
+      }
       info.checkEmpty();
       return info;
       //return new String[] { contents[0], width, height, renderer, path };
     }
     // if no size() found, check for fullScreen()
-    contents = PApplet.match(searchArea, FULL_SCREEN_CONTENTS_REGEX);
-    if (contents != null) {
+    //contents = PApplet.match(searchArea, FULL_SCREEN_CONTENTS_REGEX);
+    String[] fullContents = matchMethod("fullScreen", searchArea);
+    if (fullContents != null) {
       SurfaceInfo info = new SurfaceInfo();
-      info.statement = contents[0];
-      StringList args = breakCommas(contents[1]);
-      info.renderer = args.get(0).trim();
-      info.display = args.size() > 1 ? args.get(1).trim() : null;
+      info.statement = fullContents[0];
+      StringList args = breakCommas(fullContents[1]);
+      if (args.size() > 0) {  // might have no args
+        String args0 = args.get(0).trim();
+        if (args.size() == 1) {
+          // could be either fullScreen(1) or fullScreen(P2D), figure out which
+          if (args0.equals("SPAN") || PApplet.parseInt(args0, -1) != -1) {
+            // it's the display parameter, not the renderer
+            info.display = args0;
+          } else {
+            info.renderer = args0;
+          }
+        } else if (args.size() == 2) {
+          info.renderer = args0;
+          info.display = args.get(1).trim();
+        } else {
+          throw new SketchException("That's too many parameters for fullScreen()");
+        }
+      }
       info.width = "displayWidth";
       info.height = "displayHeight";
+      if (smoothStatement != null) {
+        info.statement += smoothStatement;
+      }
       info.checkEmpty();
+      return info;
+    }
+
+    // Made it this far, but no size() or fullScreen(), and still
+    // need to pull out the noSmooth() and smooth(N) methods.
+    if (smoothStatement != null) {
+      SurfaceInfo info = new SurfaceInfo();
+      info.statement = smoothStatement;
       return info;
     }
 
     // not an error, just no size() specified
     //return new String[] { null, null, null, null, null };
     return new SurfaceInfo();
+  }
+
+
+  static protected String[] matchMethod(String methodName, String searchArea) {
+    final String left = "(?:^|\\s|;)";
+    // doesn't match empty pairs of parens
+    //final String right = "\\s*\\(([^\\)]+)\\)\\s*\\;";
+    final String right = "\\s*\\(([^\\)]*)\\)\\s*\\;";
+    return PApplet.match(searchArea, left + methodName + right);
   }
 
 

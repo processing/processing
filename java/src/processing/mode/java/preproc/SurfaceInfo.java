@@ -4,7 +4,7 @@
   SizeInfo - parsed elements of a size() or fullScreen() call
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2015 Ben Fry and Casey Reas
+  Copyright (c) 2015 The Processing Foundation
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,7 +36,8 @@ public class SurfaceInfo {
 
   String display;
   /** null for nothing in setup(), 0 for noSmooth(), N for smooth(N) */
-  Integer quality;
+  //Integer quality;
+//  String smooth;
 
 
   boolean hasOldSyntax() {
