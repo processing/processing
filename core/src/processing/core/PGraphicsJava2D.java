@@ -313,10 +313,11 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public void beginDraw() {
     g2 = checkImage();
-    //g2 = (Graphics2D) image.getGraphics();
 
-    // Calling getGraphics() seems to nuke the smoothing settings
-    //smooth(quality);
+    // Calling getGraphics() seems to nuke several settings.
+    // It seems to be re-creating a new Graphics2D object each time.
+    // https://github.com/processing/processing/issues/3331
+    strokeImpl();
     handleSmooth();
 
     /*

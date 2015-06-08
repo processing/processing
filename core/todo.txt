@@ -2,6 +2,8 @@
 X retain original java.awt.Frame when it's available from PSurfaceAWT
 X set frame icon images for Java2D (dock and cmd-tab) 
 X   https://github.com/processing/processing/issues/257
+X strokeWeight() in setup() not working for default renderer
+X   https://github.com/processing/processing/issues/3331
 
 breaking api
 X re-opened the Gates of Hell by adding chaining operations to PVector
@@ -13,10 +15,6 @@ X cross-language awkwardness
 X   python has to use launch() instead of open()
 X   changed open() to launch() to fix conflicts in Python (and elsewhere?)
 o   map() is bad for Python and JavaScript
-
-fixed earlier/can no longer reproduce
-X strips when rendering spheres with lights and anti-aliasing
-X   https://github.com/processing/processing/issues/1185
 
 api decisions
 o min() and max() to use varargs
@@ -116,6 +114,19 @@ X Errors in glsl code are only caught when set() is used
 X   https://github.com/processing/processing/issues/2268
 X move glsl entries to their own subdirectory
 
+cleaning
+X strips when rendering spheres with lights and anti-aliasing
+X   https://github.com/processing/processing/issues/1185
+X fix regex documentation (assigned to Shiffman)
+X   http://code.google.com/p/processing/issues/detail?id=169
+X OpenGL offscreen requires primary surface to be OpenGL
+X can't really change the smoothing/options on offscreen
+X   is this still true?
+X online is there but deprecated
+X   doesn't test net connection to see if 'online'
+X   only tests whether running inside an applet viewer (not relevant)
+X   remove 'online' from the docs
+
 
 beta
 _ replace sketchXxxx() methods with another mechanism?
@@ -140,8 +151,6 @@ _ sketch not always showing with empty draw()
 _   https://github.com/processing/processing/issues/3363
 _ PGraphic ignores PNG transparency (regression from 3.0a5)
 _   https://github.com/processing/processing/issues/3317
-_ strokeWeight() in setup() not working for default renderer
-_   https://github.com/processing/processing/issues/3331
 _ sketch window briefly appears on top left corner when using OpenGL
 _   https://github.com/processing/processing/issues/3308
 _ looks like we're off by 1 on monitor numbering 
@@ -243,8 +252,6 @@ _   need a programmatic way to set size
 _ deal with applySettings() change (maybe not a problem?)
 _ textAlign(RIGHT) including spaces at the end of each line
 _   https://github.com/processing/processing/issues/3028
-_ loadImage() doesn't follow redirects
-_   https://github.com/processing/processing-docs/issues/218
 _ check on performance of the new EDT setup
 _ present mode is 30-40% slower than windowed
 _   w/ this example: https://github.com/processing/processing/issues/2423
@@ -417,10 +424,6 @@ _ deprecate the older splice() etc API inside PApplet?
 _ splice() throws ClassCastException when used with objects like PVector 
 _   http://code.google.com/p/processing/issues/detail?id=1407
 _ add notes about the new shader setup
-_ online is there but deprecated
-_   doesn't test net connection to see if 'online'
-_   only tests whether running inside an applet viewer (not relevant)
-_   remove 'online' from the docs
 _ add reference/docs for urlEncode() and urlDecode()
 _ verify (and document) public access members of PApplet
 _   http://code.google.com/p/processing/issues/detail?id=83
@@ -430,12 +433,7 @@ _   also set the font *after* the record has started
 _   maybe should instead make textMode(SHAPE) the norm? 
 _   and people can change it to textMode(MODEL) if they want?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1535 (no gcode)
-_ fix regex documentation (assigned to Shiffman)
-_   http://code.google.com/p/processing/issues/detail?id=169
-_ OpenGL offscreen requires primary surface to be OpenGL
 _ explain the new PGL interface
-_ can't really change the smoothing/options on offscreen
-_   is this still true?
 _ decide how disconnectEvent should actually be handled (and name?)
 _   was disconnect always there? 
 _   will need documentation
