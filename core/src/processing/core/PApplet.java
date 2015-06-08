@@ -1052,7 +1052,7 @@ public class PApplet implements PConstants {
         }
         if (density == 2 && displayDensity() == 1) {
           // Don't throw exception because the sketch should still work
-          System.err.println("pixelDensity(2) is not available for this display, using pixelDensity(1) instead");
+          throw new RuntimeException("pixelDensity(2) is not available for this display");
         } else {
           this.pixelDensity = density;
         }
@@ -9774,22 +9774,26 @@ public class PApplet implements PConstants {
   }
 
 
+  // Moving this back off the EDT for alpha 10. Not sure if we're helping or
+  // hurting, but unless we do, errors inside settings() are never passed
+  // through to the PDE. There are other ways around that, no doubt, but I'm
+  // also suspecting that these "not showing up" bugs might be EDT issues.
   static public void runSketch(final String[] args,
                                final PApplet constructedSketch) {
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        runSketchEDT(args, constructedSketch);
-      }
-    });
-  }
-
-
-  /**
-   * Moving this to the EDT for 3.0a6 because that's the proper thing to do
-   * when messing with AWT/Swing components. And boy, do we mess with 'em.
-   */
-  static protected void runSketchEDT(final String[] args,
-                                     final PApplet constructedSketch) {
+//    EventQueue.invokeLater(new Runnable() {
+//      public void run() {
+//        runSketchEDT(args, constructedSketch);
+//      }
+//    });
+//  }
+//
+//
+//  /**
+//   * Moving this to the EDT for 3.0a6 because that's the proper thing to do
+//   * when messing with AWT/Swing components. And boy, do we mess with 'em.
+//   */
+//  static protected void runSketchEDT(final String[] args,
+//                                     final PApplet constructedSketch) {
     // Supposed to help with flicker, but no effect on OS X.
     // TODO IIRC this helped on Windows, but need to double check.
     System.setProperty("sun.awt.noerasebackground", "true");
@@ -9923,7 +9927,11 @@ public class PApplet implements PConstants {
     }
 
     // Call the settings() method which will give us our size() call
+//    try {
     sketch.handleSettings();
+//    } catch (Throwable t) {
+//      System.err.println("I think I'm gonna hurl");
+//    }
 
     // A handful of things that need to be set before init/start.
     sketch.sketchPath = folder;

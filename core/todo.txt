@@ -70,6 +70,12 @@ X size() inside setup() can only have numbers
 X   size() inside settings() is left alone and can do whatever it wants
 X   comments are being removed before size() is getting checked
 X     probably remove anything inside settings() as well?
+X looks like we're off by 1 on monitor numbering 
+X   https://github.com/processing/processing/issues/3309
+X full screen doesn't work on second window w/o present mode
+X   https://github.com/processing/processing/issues/3271
+_ "run sketches on display" not working in 3.0a7
+_   https://github.com/processing/processing/issues/3264
 
 pixelDensity and 2X
 X add displayDensity() methods
@@ -136,6 +142,7 @@ _   or sketchInt() or settingsInt()?
 _   surface.size(), surface.noSmooth()... just like PGraphics methods?
 _   make final to move folks away from these?
 _   or is this a bad move until we've sorted out Android?
+_ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 high priority
@@ -153,9 +160,6 @@ _ PGraphic ignores PNG transparency (regression from 3.0a5)
 _   https://github.com/processing/processing/issues/3317
 _ sketch window briefly appears on top left corner when using OpenGL
 _   https://github.com/processing/processing/issues/3308
-_ looks like we're off by 1 on monitor numbering 
-_   https://github.com/processing/processing/issues/3309
-_ update documentation to say "don't override sketchXxxx() methods"
 _ sketch window is not placed at correct location when running a second time
 _   https://github.com/processing/processing/issues/3125
 _ y-location of frame might be negative, but that might be ok 
@@ -222,13 +226,9 @@ _   https://github.com/processing/processing/issues/1278
 
 
 full screen
-_ full screen needs to ignore location setting for frame?
+_ full screen needs to ignore prev location setting for frame?
 _   https://github.com/processing/processing/issues/3305
 _ present window draws in stages (OS X)
-_ "run sketches on display" not working in 3.0a7
-_   https://github.com/processing/processing/issues/3264
-_ full screen doesn't work on second window w/o present mode
-_   https://github.com/processing/processing/issues/3271
 _ show warning when display spanning is turned off
 _   defaults read com.apple.spaces spans-displays
 _ crash on startup when "Mirror Displays" selected (cantfix?)

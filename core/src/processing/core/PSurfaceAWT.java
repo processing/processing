@@ -694,6 +694,10 @@ public class PSurfaceAWT extends PSurfaceNone {
     int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
     int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
 
+    if (sketch.sketchFullScreen()) {
+      location = null;
+    }
+
     if (location != null) {
       // a specific location was received from the Runner
       // (applet has been run more than once, user placed window)
