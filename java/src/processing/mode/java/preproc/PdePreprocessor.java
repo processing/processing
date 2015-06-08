@@ -309,19 +309,24 @@ public class PdePreprocessor {
       searchArea = sb.toString();
     }
 
+    StringList extraStatements = new StringList();
+
     // First look for noSmooth() or smooth(N) so we can hoist it into settings.
-    String smoothStatement = null;
     String[] smoothContents = matchMethod("smooth", searchArea);
     if (smoothContents != null) {
-      smoothStatement = smoothContents[0];
+      extraStatements.append(smoothContents[0]);
     }
     String[] noContents = matchMethod("noSmooth", searchArea);
     if (noContents != null) {
-      if (smoothStatement != null) {
+      if (extraStatements != null) {
         throw new SketchException("smooth() and noSmooth() cannot be used in the same sketch");
       } else {
-        smoothStatement = noContents[0];
+        extraStatements.append(noContents[0]);
       }
+    }
+    String[] pixelDensityContents = matchMethod("pixelDensity", searchArea);
+    if (pixelDensityContents != null) {
+      extraStatements.append(pixelDensityContents[0]);
     }
 
     String[] sizeContents = matchMethod("size", searchArea);
@@ -364,8 +369,8 @@ public class PdePreprocessor {
         throw new SketchException("Please fix the size() line to continue.", false);
       }
 
-      if (smoothStatement != null) {
-        info.statement += smoothStatement;
+      if (extraStatements != null) {
+        info.statement += extraStatements;
       }
       info.checkEmpty();
       return info;
@@ -396,8 +401,8 @@ public class PdePreprocessor {
       }
       info.width = "displayWidth";
       info.height = "displayHeight";
-      if (smoothStatement != null) {
-        info.statement += smoothStatement;
+      if (extraStatements != null) {
+        info.statement += extraStatements.join(" ");
       }
       info.checkEmpty();
       return info;
@@ -405,9 +410,9 @@ public class PdePreprocessor {
 
     // Made it this far, but no size() or fullScreen(), and still
     // need to pull out the noSmooth() and smooth(N) methods.
-    if (smoothStatement != null) {
+    if (extraStatements != null) {
       SurfaceInfo info = new SurfaceInfo();
-      info.statement = smoothStatement;
+      info.statement = extraStatements.join(" ");
       return info;
     }
 
