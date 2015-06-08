@@ -1060,14 +1060,15 @@ public class PApplet implements PConstants {
 
 
   /**
-   * @webref environment
+   * @nowebref
    */
   public void smooth() {
     smooth(1);
   }
 
   /**
-   * @param level either 0, 1, 2, 4, 8
+   * @webref environment
+   * @param level either 2, 3, 4, or 8 depending on the renderer
    */
   public void smooth(int level) {
     if (insideSettings) {
