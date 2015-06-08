@@ -25,6 +25,6 @@ package processing.core;
 
 public class PGraphicsFX2D2X extends PGraphics {
   public PGraphicsFX2D2X() {
-    pixelFactor = 2;
+    pixelDensity = 2;
   }
 }

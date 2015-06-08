@@ -698,9 +698,11 @@ public class PGraphics extends PImage implements PConstants {
 
   public void setParent(PApplet parent) {  // ignore
     this.parent = parent;
+
     // Some renderers (OpenGL) need to know what smoothing level will be used
     // before the rendering surface is even created.
     smooth = parent.sketchSmooth();
+    pixelDensity = parent.sketchPixelDensity();
   }
 
 
@@ -747,8 +749,8 @@ public class PGraphics extends PImage implements PConstants {
     height = h;
 
     /** {@link PImage.pixelFactor} set in {@link PImage#PImage()} */
-    pixelWidth = width * pixelFactor;
-    pixelHeight = height * pixelFactor;
+    pixelWidth = width * pixelDensity;
+    pixelHeight = height * pixelDensity;
 
 //    if (surface != null) {
 //      allocate();
@@ -8064,6 +8066,6 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public boolean is2X() {
-    return pixelFactor == 2;
+    return pixelDensity == 2;
   }
 }

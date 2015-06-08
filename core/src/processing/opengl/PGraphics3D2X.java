@@ -26,6 +26,6 @@ public class PGraphics3D2X extends PGraphics3D {
 
   public PGraphics3D2X() {
     super();
-    pixelFactor = 2;
+    pixelDensity = 2;
   }
 }

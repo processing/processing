@@ -1900,8 +1900,8 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void loadPixels() {
 //    pixelFactor = 2;
-    int wide = width * pixelFactor;
-    int high = height * pixelFactor;
+    int wide = width * pixelDensity;
+    int high = height * pixelDensity;
 
     if ((pixels == null) || (pixels.length != wide*high)) {
       pixels = new int[wide * high];
@@ -1917,7 +1917,7 @@ public class PGraphicsFX2D extends PGraphics {
 //      }
 //    }
     SnapshotParameters sp = new SnapshotParameters();
-    if (pixelFactor == 2) {
+    if (pixelDensity == 2) {
       sp.setTransform(Transform.scale(2, 2));
     }
     WritableImage wi = ((PSurfaceFX) surface).canvas.snapshot(sp, null);

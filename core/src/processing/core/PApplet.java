@@ -810,6 +810,7 @@ public class PApplet implements PConstants {
   boolean fullScreen;
   int display = -1;  // use default
   GraphicsDevice[] displayDevices;
+  int pixelDensity = 1;
 
   String outputPath;
   OutputStream outputStream;
@@ -967,6 +968,14 @@ public class PApplet implements PConstants {
   }
 
 
+  final public int sketchPixelDensity() {
+    return pixelDensity;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   public int displayDensity() {
     if (display == SPAN) {
       // walk through all displays, use lowest common denominator
@@ -1026,6 +1035,15 @@ public class PApplet implements PConstants {
       }
     }
     return 1;
+  }
+
+
+  public void pixelDensity(int density) {
+    if (density != this.pixelDensity) {
+      if (insideSettings("pixelDensity", density)) {
+        this.pixelDensity = density;
+      }
+    }
   }
 
 
@@ -5237,7 +5255,7 @@ public class PApplet implements PConstants {
 
         vessel.pixelWidth = actual.width;
         vessel.pixelHeight = actual.height;
-        vessel.pixelFactor = 1;
+        vessel.pixelDensity = 1;
       }
       requestImageCount--;
     }

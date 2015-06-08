@@ -706,7 +706,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public float getPixelScale() {
-    if (surfaceJOGL == null) return pixelFactor;
+    if (surfaceJOGL == null) return pixelDensity;
     else return surfaceJOGL.getPixelScale();
   }
 

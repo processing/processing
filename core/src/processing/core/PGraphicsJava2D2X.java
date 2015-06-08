@@ -13,7 +13,7 @@ public class PGraphicsJava2D2X extends PGraphicsJava2D {
 
 
   public PGraphicsJava2D2X() {
-    pixelFactor = 2;
+    pixelDensity = 2;
 //    retina = new PImage();
 //    retina.format = RGB;
   }

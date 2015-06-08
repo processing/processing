@@ -272,8 +272,8 @@ public class PGraphicsJava2D extends PGraphics {
 
   public Graphics2D checkImage() {
     if (image == null ||
-      ((BufferedImage) image).getWidth() != width*pixelFactor ||
-      ((BufferedImage) image).getHeight() != height*pixelFactor) {
+      ((BufferedImage) image).getWidth() != width*pixelDensity ||
+      ((BufferedImage) image).getHeight() != height*pixelDensity) {
 //      ((VolatileImage) image).getWidth() != width ||
 //      ((VolatileImage) image).getHeight() != height) {
 //        image = new BufferedImage(width * pixelFactor, height * pixelFactor
@@ -299,8 +299,8 @@ public class PGraphicsJava2D extends PGraphics {
 
       // Formerly this was broken into separate versions based on offscreen or
       // not, but we may as well create a compatible image; it won't hurt, right?
-      int wide = width * pixelFactor;
-      int high = height * pixelFactor;
+      int wide = width * pixelDensity;
+      int high = height * pixelDensity;
 //      System.out.println("re-creating image");
       image = gc.createCompatibleImage(wide, high);
 //      image = gc.createCompatibleVolatileImage(wide, high);
@@ -375,6 +375,8 @@ public class PGraphicsJava2D extends PGraphics {
     checkSettings();
     resetMatrix(); // reset model matrix
     vertexCount = 0;
+
+    g2.scale(pixelDensity, pixelDensity);
   }
 
 

@@ -95,7 +95,7 @@ public class PImage implements PConstants, Cloneable {
   public int[] pixels;
 
   /** 1 for most images, 2 for hi-dpi/retina */
-  public int pixelFactor;
+  public int pixelDensity = 1;
 
   /** Actual dimensions of pixels array, taking into account the 2x setting. */
   public int pixelWidth;
@@ -210,7 +210,7 @@ public class PImage implements PConstants, Cloneable {
    */
   public PImage() {
     format = ARGB;  // default to ARGB images for release 0116
-    pixelFactor = 1;
+    pixelDensity = 1;
   }
 
 
@@ -266,10 +266,10 @@ public class PImage implements PConstants, Cloneable {
     this.width = width;
     this.height = height;
     this.format = format;
-    this.pixelFactor = factor;
+    this.pixelDensity = factor;
 
-    pixelWidth = width * pixelFactor;
-    pixelHeight = height * pixelFactor;
+    pixelWidth = width * pixelDensity;
+    pixelHeight = height * pixelDensity;
     this.pixels = new int[pixelWidth * pixelHeight];
   }
 
@@ -330,7 +330,7 @@ public class PImage implements PConstants, Cloneable {
         pg.grabPixels();
       } catch (InterruptedException e) { }
     }
-    pixelFactor = 1;
+    pixelDensity = 1;
     pixelWidth = width;
     pixelHeight = height;
   }
@@ -632,7 +632,7 @@ public class PImage implements PConstants, Cloneable {
     }
 
     BufferedImage img =
-      shrinkImage((BufferedImage) getNative(), w*pixelFactor, h*pixelFactor);
+      shrinkImage((BufferedImage) getNative(), w*pixelDensity, h*pixelDensity);
 
     PImage temp = new PImage(img);
     this.pixelWidth = temp.width;
@@ -641,8 +641,8 @@ public class PImage implements PConstants, Cloneable {
     // Get the resized pixel array
     this.pixels = temp.pixels;
 
-    this.width = pixelWidth / pixelFactor;
-    this.height = pixelHeight / pixelFactor;
+    this.width = pixelWidth / pixelDensity;
+    this.height = pixelHeight / pixelDensity;
 
     // Mark the pixels array as altered
     updatePixels();
@@ -858,9 +858,9 @@ public class PImage implements PConstants, Cloneable {
       targetFormat = ARGB;
     }
 
-    PImage target = new PImage(targetWidth / pixelFactor,
-                               targetHeight / pixelFactor,
-                               targetFormat, pixelFactor);
+    PImage target = new PImage(targetWidth / pixelDensity,
+                               targetHeight / pixelDensity,
+                               targetFormat, pixelDensity);
     target.parent = parent;  // parent may be null so can't use createImage()
     if (w > 0 && h > 0) {
       getImpl(x, y, w, h, target, targetX, targetY);
