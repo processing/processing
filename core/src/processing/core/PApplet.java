@@ -1572,7 +1572,17 @@ public class PApplet implements PConstants {
    * Create a full-screen sketch using the default renderer.
    */
   public void fullScreen() {
-    fullScreen(sketchRenderer());
+    if (insideSettings("fullScreen")) {
+      this.fullScreen = true;
+    }
+  }
+
+
+  public void fullScreen(int display) {
+    if (insideSettings("fullScreen", display)) {
+      this.fullScreen = true;
+      this.display = display;
+    }
   }
 
 
@@ -1591,7 +1601,7 @@ public class PApplet implements PConstants {
   */
   public void fullScreen(String renderer) {
     if (insideSettings("fullScreen", renderer)) {
-      fullScreen = true;
+      this.fullScreen = true;
       this.renderer = renderer;
     }
   }
@@ -1602,7 +1612,7 @@ public class PApplet implements PConstants {
    */
   public void fullScreen(String renderer, int display) {
     if (insideSettings("fullScreen", renderer, display)) {
-      fullScreen = true;
+      this.fullScreen = true;
       this.renderer = renderer;
       this.display = display;
     }
