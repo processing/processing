@@ -27,7 +27,6 @@ o Update Windows icons for multiple sizes, implement them in the PDE
 o   http://code.google.com/p/processing/issues/detail?id=632
 X   closed during the 2.x cycle
 
-
 contribs
 X several Greek translation updates
 X   https://github.com/processing/processing/issues/3329
@@ -56,6 +55,8 @@ _   a checkbox for "show this welcome each time" (default to checked)
 _   a button to dismiss the welcome screen (e.g., "get started")
 _ 2.x vs 3.x sketchbook battle (part of the welcome screen item)
 _   if a v2 sketchbook already exists, show a prompt to choose either creating a new Processing 3 sketch folder or use the existing v2 one, plus a link to GitHub wiki page with details
+_ send list of installed Libraries, Modes, Tools, and Examples on update
+_   https://github.com/processing/processing/issues/3365
 
 
 gui

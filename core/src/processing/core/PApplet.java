@@ -1050,7 +1050,12 @@ public class PApplet implements PConstants {
         if (density != 1 && density != 2) {
           throw new RuntimeException("pixelDensity() can only be 1 or 2");
         }
-        this.pixelDensity = density;
+        if (density == 2 && displayDensity() == 1) {
+          // Don't throw exception because the sketch should still work
+          System.err.println("pixelDensity(2) is not available for this display, using pixelDensity(1) instead");
+        } else {
+          this.pixelDensity = density;
+        }
       }
     }
   }

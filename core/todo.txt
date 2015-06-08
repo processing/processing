@@ -83,6 +83,10 @@ X   just do pixelFactor() (and pull it during compilation)?
 X   add sketchPixelFactor() to handle the scenario?
 X   or is it just a boolean, because pixelFactor(2) is the only option?
 X remove retina hint
+X move checkRetina()/highResDisplay() to PApplet
+X   and out of Toolkit and PSurfaceAWT
+X prevent running _2X renderers on non-2x hardware
+X   pixelDensity() needs to be called after size() or fullScreen()
 
 andres/opengl
 X set(0, 0, image) does not set alpha channel to opaque in P2D/P3D
@@ -134,7 +138,6 @@ _ sketch sometimes doesn't show with noLoop() on Linux
 _   https://github.com/processing/processing/issues/3316
 _ sketch not always showing with empty draw()
 _   https://github.com/processing/processing/issues/3363
-_ prevent running _2X renderers on non-2x hardware
 _ PGraphic ignores PNG transparency (regression from 3.0a5)
 _   https://github.com/processing/processing/issues/3317
 _ strokeWeight() in setup() not working for default renderer
@@ -442,8 +445,6 @@ _ add requestFocus() method to PApplet (or surface?)
 o destroy() removed, but bring back? is that better than dispose()?
 _   destroy() only called dispose(), so no difference
 _   Python Mode has a hook for when it's called
-_ move checkRetina()/highResDisplay() to PApplet
-_   and out of Toolkit and PSurfaceAWT
 _ probably should also check to make sure PApplet running JVM 8
 _   or compile against 1.8 and force it?
 
