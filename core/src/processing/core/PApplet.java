@@ -1039,6 +1039,11 @@ public class PApplet implements PConstants {
   }
 
 
+ /**
+  * @webref environment
+  * @param density 1 or 2
+  *
+  */
   public void pixelDensity(int density) {
     if (density != this.pixelDensity) {
       if (insideSettings("pixelDensity", density)) {
@@ -1681,7 +1686,7 @@ public class PApplet implements PConstants {
   *
   * ( end auto-generated )
   * @webref environment
-  * @param renderer the renderer to use, e.g. JAVA2D, JAVA2D_2X, P2D, P2D_2X, P3D, P3D_2X
+  * @param renderer the renderer to use, e.g. P2D, P3D, JAVA2D (default)
   * @see PApplet#settings()
   * @see PApplet#setup()
   * @see PApplet#size()
@@ -3184,7 +3189,7 @@ public class PApplet implements PConstants {
 
 
   /**
-   * ( begin auto-generated from open.xml )
+   * ( begin auto-generated from launch.xml )
    *
    * Attempts to open an application or file using your platform's launcher.
    * The <b>file</b> parameter is a String specifying the file name and
