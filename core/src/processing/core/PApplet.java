@@ -39,6 +39,7 @@ import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
+
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -1041,6 +1042,9 @@ public class PApplet implements PConstants {
   public void pixelDensity(int density) {
     if (density != this.pixelDensity) {
       if (insideSettings("pixelDensity", density)) {
+        if (density != 1 && density != 2) {
+          throw new RuntimeException("pixelDensity() can only be 1 or 2");
+        }
         this.pixelDensity = density;
       }
     }
