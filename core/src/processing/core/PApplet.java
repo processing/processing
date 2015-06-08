@@ -39,7 +39,6 @@ import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
-
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -100,10 +99,6 @@ import processing.opengl.*;
  * than working around legacy Java code.
  */
 public class PApplet implements PConstants {
-//public class PApplet extends Applet
-//  implements PConstants, Runnable,
-//             MouseListener, MouseWheelListener, MouseMotionListener, KeyListener, FocusListener
-//{
   /**
    * Full name of the Java version (i.e. 1.5.0_11).
    */
@@ -850,8 +845,12 @@ public class PApplet implements PConstants {
   void handleSettings() {
     insideSettings = true;
 
-    // Workaround for https://github.com/processing/processing/issues/3295
-    // until we resolve https://github.com/processing/processing/issues/3296
+    // Need the list of display devices to be queried already for usage below.
+    // https://github.com/processing/processing/issues/3295
+    // https://github.com/processing/processing/issues/3296
+    // Not doing this from a static initializer because it may cause
+    // PApplet to cache and the values to stick through subsequent runs.
+    // Instead make it a runtime thing and a local variable.
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice device = ge.getDefaultScreenDevice();
     displayDevices = ge.getScreenDevices();
@@ -965,6 +964,68 @@ public class PApplet implements PConstants {
 
   final public int sketchWindowColor() {
     return windowColor;
+  }
+
+
+  public int displayDensity() {
+    if (display == SPAN) {
+      // walk through all displays, use lowest common denominator
+      for (int i = 0; i < displayDevices.length; i++) {
+        if (displayDensity(i) != 2) {
+          return 1;
+        }
+      }
+      return 2;
+    }
+    return displayDensity(display);
+  }
+
+
+  static public int displayDensity(int display) {
+    if (PApplet.platform == PConstants.MACOSX) {
+      // This should probably be reset each time there's a display change.
+      // A 5-minute search didn't turn up any such event in the Java 7 API.
+      // Also, should we use the Toolkit associated with the editor window?
+      final String javaVendor = System.getProperty("java.vendor");
+      if (javaVendor.contains("Oracle")) {
+        GraphicsDevice device;
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+        if (display == -1) {
+          device = env.getDefaultScreenDevice();
+
+        } else if (display == SPAN) {
+          throw new RuntimeException("displayDensity() only works with specific display numbers");
+
+        } else {
+          GraphicsDevice[] devices = env.getScreenDevices();
+          if (display > 0 && display <= devices.length) {
+            device = devices[display - 1];
+          } else {
+            if (devices.length == 1) {
+              System.err.println("Only one display is currently known, use displayDensity(1).");
+            } else {
+              System.err.format("Your displays are numbered %d through %d, " +
+                "pass one of those numbers to displayDensity()", 1, devices.length);
+            }
+            throw new RuntimeException("Display " + display + " does not exist.");
+          }
+        }
+
+        try {
+          Field field = device.getClass().getDeclaredField("scale");
+          if (field != null) {
+            field.setAccessible(true);
+            Object scale = field.get(device);
+
+            if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
+              return 2;
+            }
+          }
+        } catch (Exception ignore) { }
+      }
+    }
+    return 1;
   }
 
 
