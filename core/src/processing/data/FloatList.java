@@ -28,12 +28,14 @@ public class FloatList implements Iterable<Float> {
     data = new float[10];
   }
 
+
   /**
    * @nowebref
    */
   public FloatList(int length) {
     data = new float[length];
   }
+
 
   /**
    * @nowebref
@@ -44,13 +46,49 @@ public class FloatList implements Iterable<Float> {
     System.arraycopy(list, 0, data, 0, count);
   }
 
+
   /**
+   * Construct an FloatList from an iterable pile of objects.
+   * For instance, a float array, an array of strings, who knows).
+   * Un-parseable or null values will be set to NaN.
    * @nowebref
    */
-  public FloatList(Iterable<Float> iter) {
+  public FloatList(Iterable<Object> iter) {
     this(10);
-    for (float v : iter) {
-      append(v);
+    for (Object o : iter) {
+      if (o == null) {
+        append(Float.NaN);
+      } else if (o instanceof Number) {
+        append(((Number) o).floatValue());
+      } else {
+        append(PApplet.parseFloat(o.toString().trim()));
+      }
+    }
+    crop();
+  }
+
+
+  /**
+   * Construct an FloatList from a random pile of objects.
+   * Un-parseable or null values will be set to NaN.
+   */
+  public FloatList(Object... items) {
+    // nuts, no good way to pass missingValue to this fn (varargs must be last)
+    final float missingValue = Float.NaN;
+
+    count = items.length;
+    data = new float[count];
+    int index = 0;
+    for (Object o : items) {
+      float value = missingValue;
+      if (o != null) {
+        if (o instanceof Number) {
+          value = ((Number) o).floatValue();
+        } else {
+          value = PApplet.parseFloat(o.toString().trim(), missingValue);
+        }
+      }
+      data[index++] = value;
     }
   }
 

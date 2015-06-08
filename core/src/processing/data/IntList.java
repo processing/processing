@@ -33,12 +33,14 @@ public class IntList implements Iterable<Integer> {
     data = new int[10];
   }
 
+
   /**
    * @nowebref
    */
   public IntList(int length) {
     data = new int[length];
   }
+
 
   /**
    * @nowebref
@@ -49,13 +51,48 @@ public class IntList implements Iterable<Integer> {
     System.arraycopy(source, 0, data, 0, count);
   }
 
+
   /**
+   * Construct an IntList from an iterable pile of objects.
+   * For instance, a float array, an array of strings, who knows).
+   * Un-parseable or null values will be set to 0.
    * @nowebref
    */
-  public IntList(Iterable<Integer> iter) {
+  public IntList(Iterable<Object> iter) {
     this(10);
-    for (int v : iter) {
-      append(v);
+    for (Object o : iter) {
+      if (o == null) {
+        append(0);  // missing value default
+      } else if (o instanceof Number) {
+        append(((Number) o).intValue());
+      } else {
+        append(PApplet.parseInt(o.toString().trim()));
+      }
+    }
+    crop();
+  }
+
+
+  /**
+   * Construct an IntList from a random pile of objects.
+   * Un-parseable or null values will be set to zero.
+   */
+  public IntList(Object... items) {
+    final int missingValue = 0;  // nuts, can't be last/final/second arg
+
+    count = items.length;
+    data = new int[count];
+    int index = 0;
+    for (Object o : items) {
+      int value = missingValue;
+      if (o != null) {
+        if (o instanceof Number) {
+          value = ((Number) o).intValue();
+        } else {
+          value = PApplet.parseInt(o.toString().trim(), missingValue);
+        }
+      }
+      data[index++] = value;
     }
   }
 
