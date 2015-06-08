@@ -77,6 +77,8 @@ _   surface.size(), surface.noSmooth()... just like PGraphics methods?
 X sketchXxxx() methods
 _   make final to move folks away from these?
 _   or is this a bad move until we've sorted out Android?
+_ _2X last call
+_   https://github.com/processing/processing/issues/3361
 
 
 critical

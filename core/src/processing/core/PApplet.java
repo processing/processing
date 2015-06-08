@@ -39,6 +39,7 @@ import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
+
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -1572,16 +1573,20 @@ public class PApplet implements PConstants {
    * Create a full-screen sketch using the default renderer.
    */
   public void fullScreen() {
-    if (insideSettings("fullScreen")) {
-      this.fullScreen = true;
+    if (!fullScreen) {
+      if (insideSettings("fullScreen")) {
+        this.fullScreen = true;
+      }
     }
   }
 
 
   public void fullScreen(int display) {
-    if (insideSettings("fullScreen", display)) {
-      this.fullScreen = true;
-      this.display = display;
+    if (!fullScreen || display != this.display) {
+      if (insideSettings("fullScreen", display)) {
+        this.fullScreen = true;
+        this.display = display;
+      }
     }
   }
 
@@ -1600,9 +1605,12 @@ public class PApplet implements PConstants {
   * @see PApplet#smooth()
   */
   public void fullScreen(String renderer) {
-    if (insideSettings("fullScreen", renderer)) {
-      this.fullScreen = true;
-      this.renderer = renderer;
+    if (!fullScreen ||
+        !renderer.equals(this.renderer)) {
+      if (insideSettings("fullScreen", renderer)) {
+        this.fullScreen = true;
+        this.renderer = renderer;
+      }
     }
   }
 
@@ -1611,10 +1619,14 @@ public class PApplet implements PConstants {
    * @param display the screen to run the sketch on (1, 2, 3, etc.)
    */
   public void fullScreen(String renderer, int display) {
-    if (insideSettings("fullScreen", renderer, display)) {
-      this.fullScreen = true;
-      this.renderer = renderer;
-      this.display = display;
+    if (!fullScreen ||
+        !renderer.equals(this.renderer) ||
+        display != this.display) {
+      if (insideSettings("fullScreen", renderer, display)) {
+        this.fullScreen = true;
+        this.renderer = renderer;
+        this.display = display;
+      }
     }
   }
 
