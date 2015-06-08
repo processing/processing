@@ -39,7 +39,7 @@ X   https://github.com/processing/processing/pull/3319
 
 
 gui
-_ implement 'welcome' screen
+_ add "welcome" or "what's new" window to explain features in 3
 _   https://github.com/processing/processing/issues/3358
 _   a summary of what's new, plus a link to GitHub wiki page with details
 _   a warning that some Processing 2 sketches may not be compatible
@@ -57,7 +57,6 @@ _ make breakpoints more prominent
 _   https://github.com/processing/processing/issues/3307
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
-_ add a "what's new" window to explain features in 3
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 _ tiny trail of dots when moving the selection bar up/down on retina
 _ need 'actively pressed' version of 'play' and 'stop'
@@ -128,7 +127,11 @@ _ add last revision used / max revision used settings?
 
 
 crashing
-_ hard crash on startup in HD 5000 graphics
+_ rolled back to 3.0a5 version of appbundler
+_   this re-introduces two bugs (serial export and scrolling)
+_ another possible culprit
+_   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
+_ EXC_BAD_ACCESS inside AppleIntelHD5000GraphicsGLDriver when starting 3.0a8+
 _   https://github.com/processing/processing/issues/3359
 _ Hard crash on startup inside strlen call when using 3.0a8+ on OS X
 _   https://github.com/processing/processing/issues/3360

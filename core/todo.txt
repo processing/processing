@@ -1,19 +1,50 @@
 0237 (3.0a10)
 X retain original java.awt.Frame when it's in use
+_   need to add the "don't use this" warning back again
 X set frame icon images for Java2D (dock and cmd-tab) 
-X size() inside setup() can only have numbers
-X   size() inside settings() is left alone and can do whatever it wants
-X   comments are being removed before size() is getting checked
-X     probably remove anything inside settings() as well?
+
+fixed earlier/can no longer reproduce
+X strips when rendering spheres with lights and anti-aliasing
+X   https://github.com/processing/processing/issues/1185
+
+smooth and noSmooth
 o add imageSmooth()?
 o   https://github.com/processing/processing/issues/1272
 X   decided no, again
 X sketchQuality() vs sketchSmooth()?
 X   'quality' is being removed since smoothing will be a one-time thing
+X smooth() and noSmooth()
+X   goes before the first beginDraw() with createGraphics()
+X   sketchQuality() needs to be rooted out
+X   don't make this final, since it'll break a bunch of code
+X     it'd be a nice indicator for renderers, but not worth what it breaks
+X   https://github.com/processing/processing/issues/3357
+X   https://github.com/processing/processing-docs/issues/251
+X   can only be called inside setup(), show warning elsewhere
+X   is lifted out of setup() and into settings()
+X   can't use them together
 
-fixed earlier/can no longer reproduce
-X strips when rendering spheres with lights and anti-aliasing
-X   https://github.com/processing/processing/issues/1185
+size, fullScreen, displays
+X fix up handling of fullScreen()
+X   https://github.com/processing/processing-docs/issues/250
+X   https://github.com/processing/processing/issues/3296
+X   right now using a (display ignoring) hack to displayWidth/Height
+X   maybe we use the AWT screen sizes first, then match the others w/ em?
+X   --full-screen replaced with --present (to untangle things)
+X     if you want full screen, use the fullScreen() method
+X   --span removed as an option, better to just do this from code
+X   docs: no mixing size() and fullScreen(). pick one.
+X instead of all these sketchXxxx() methods, should we have sketchSetting()
+o   too much soup inside main() to handle arg parsing and passing to the sketch
+X   moved things to settings()
+X split 'present' and 'full screen'?
+X   --full-screen causes considerable flicker at this point
+X   or split them when sketchWidth/Height are implemented?
+X add displayDensity() methods
+X size() inside setup() can only have numbers
+X   size() inside settings() is left alone and can do whatever it wants
+X   comments are being removed before size() is getting checked
+X     probably remove anything inside settings() as well?
 
 andres/opengl
 X set(0, 0, image) does not set alpha channel to opaque in P2D/P3D
@@ -45,39 +76,14 @@ X move glsl entries to their own subdirectory
 
 
 beta
-X fix up handling of fullScreen()
-X   https://github.com/processing/processing-docs/issues/250
-X   https://github.com/processing/processing/issues/3296
-X   right now using a (display ignoring) hack to displayWidth/Height
-X   maybe we use the AWT screen sizes first, then match the others w/ em?
-X   --full-screen replaced with --present (to untangle things)
-X     if you want full screen, use the fullScreen() method
-X   --span removed as an option, better to just do this from code
-X   docs: no mixing size() and fullScreen(). pick one.
-X instead of all these sketchXxxx() methods, should we have sketchSetting()
-o   too much soup inside main() to handle arg parsing and passing to the sketch
-X   moved things to settings()
-X split 'present' and 'full screen'?
-X   --full-screen causes considerable flicker at this point
-X   or split them when sketchWidth/Height are implemented?
-_ smooth() and noSmooth()
-X   goes before the first beginDraw() with createGraphics()
-X   sketchQuality() needs to be rooted out
-X   don't make this final, since it'll break a bunch of code
-X     it'd be a nice indicator for renderers, but not worth what it breaks
-_   https://github.com/processing/processing/issues/3357
-_   https://github.com/processing/processing-docs/issues/251
-_   can only be called inside setup(), show warning elsewhere
-_   is lifted out of setup() and into settings()
 _ replace sketchXxxx() methods with another mechanism?
 _   and an internal dictionary that stores them all?
 _   intParam(), stringParam() and setParam()? 
 _   or sketchInt() or settingsInt()?
 _   surface.size(), surface.noSmooth()... just like PGraphics methods?
-X sketchXxxx() methods
 _   make final to move folks away from these?
 _   or is this a bad move until we've sorted out Android?
-_ _2X last call
+_ 2X nomenclature last call
 _   https://github.com/processing/processing/issues/3361
 
 
