@@ -324,9 +324,16 @@ public class PdePreprocessor {
       }
     }
 
+    String[] sizeContents = matchMethod("size", searchArea);
+    String[] fullContents = matchMethod("fullScreen", searchArea);
+    // First check and make sure they aren't both being used, otherwise it'll
+    // throw a confusing state exception error that one "can't be used here".
+    if (sizeContents != null && fullContents != null) {
+      throw new SketchException("size() and fullScreen() cannot be used in the same sketch", false);
+    }
+
     // Get everything inside the parens for the size() method
     //String[] contents = PApplet.match(searchArea, SIZE_CONTENTS_REGEX);
-    String[] sizeContents = matchMethod("size", searchArea);
     if (sizeContents != null) {
       StringList args = breakCommas(sizeContents[1]);
       SurfaceInfo info = new SurfaceInfo();
@@ -366,7 +373,6 @@ public class PdePreprocessor {
     }
     // if no size() found, check for fullScreen()
     //contents = PApplet.match(searchArea, FULL_SCREEN_CONTENTS_REGEX);
-    String[] fullContents = matchMethod("fullScreen", searchArea);
     if (fullContents != null) {
       SurfaceInfo info = new SurfaceInfo();
       info.statement = fullContents[0];
