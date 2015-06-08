@@ -126,6 +126,12 @@ public class ModeContribution extends LocalContribution {
         if (!existing.containsKey(folder)) {
           try {
             contribModes.add(new ModeContribution(base, folder, null));
+          } catch (NoSuchMethodError nsme) {
+            System.err.println(folder.getName() + " contains an incompatible Mode");
+            System.err.println(nsme.getMessage());
+          } catch (NoClassDefFoundError ncdfe) {
+            System.err.println(folder.getName() + " contains an incompatible Mode");
+            System.err.println(ncdfe.getMessage());
           } catch (IgnorableException ig) {
             Base.log(ig.getMessage());
           } catch (Throwable e) {
