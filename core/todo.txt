@@ -1,7 +1,10 @@
 0237 (3.0a10)
 X retain original java.awt.Frame when it's in use
-_   need to add the "don't use this" warning back again
 X set frame icon images for Java2D (dock and cmd-tab) 
+X re-opened the Gates of Hell by adding chaining operations to PVector
+X   https://github.com/processing/processing/issues/257
+X change open() to launch() to fix conflicts in Python (and elsewhere?)
+X change exec() to use varargs for convenience
 
 fixed earlier/can no longer reproduce
 X strips when rendering spheres with lights and anti-aliasing
@@ -123,6 +126,7 @@ _   map() is bad for Python and JavaScript
 
 
 high priority
+_ add the "don't use this" warning to the JFrame in PSurfaceAWT 
 _ draw() executes twice when noLoop() called in setup()
 _   https://github.com/processing/processing/issues/3310
 _   broken since 3.0a7, but not in 3.0a5

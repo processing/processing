@@ -3173,7 +3173,7 @@ public class PApplet implements PConstants {
         Desktop.getDesktop().browse(new URI(url));
       } else {
         // Just pass it off to open() and hope for the best
-        open(url);
+        launch(url);
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -3220,22 +3220,22 @@ public class PApplet implements PConstants {
    * @param filename name of the file
    * @usage Application
    */
-  static public void open(String filename) {
-    open(new String[] { filename });
+  static public void launch(String filename) {
+    launch(filename);
   }
 
 
   static String openLauncher;
 
   /**
-   * Launch a process using a platforms shell. This version uses an array
+   * Launch a process using the platform's shell. This version uses an array
    * to make it easier to deal with spaces in the individual elements.
    * (This avoids the situation of trying to put single or double quotes
    * around different bits).
    *
-   * @param argv list of commands passed to the command line
+   * @param args list of commands passed to the command line
    */
-  static public Process open(String argv[]) {
+  static public Process launch(String... args) {
     String[] params = null;
 
     if (platform == WINDOWS) {
@@ -3279,27 +3279,34 @@ public class PApplet implements PConstants {
     }
     if (params != null) {
       // If the 'open', 'gnome-open' or 'cmd' are already included
-      if (params[0].equals(argv[0])) {
+      if (params[0].equals(args[0])) {
         // then don't prepend those params again
-        return exec(argv);
+        return exec(args);
       } else {
-        params = concat(params, argv);
+        params = concat(params, args);
         return exec(params);
       }
     } else {
-      return exec(argv);
+      return exec(args);
     }
   }
 
 
-  static public Process exec(String[] argv) {
+  static public Process exec(String... args) {
     try {
-      return Runtime.getRuntime().exec(argv);
+      return Runtime.getRuntime().exec(args);
     } catch (Exception e) {
       e.printStackTrace();
-      throw new RuntimeException("Could not open " + join(argv, ' '));
+      throw new RuntimeException("Could not open " + join(args, ' '));
     }
   }
+
+
+  // yuck.. maybe this is just a class
+//  static public int exec(StringList stdout, StringList stderr, String... args) {
+//    Process p = exec(args);
+//    int result = p.waitFor();
+//  }
 
 
   //////////////////////////////////////////////////////////////

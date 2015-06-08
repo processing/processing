@@ -11,7 +11,11 @@ X     handled with the .desktop file, nothing has changed for the file location
 X   add larger icons to core folder
 X   update export icons in java/application (export.icns and export.ico)
 X remove no longer used 'pdex' directory
-
+X rolled back to 3.0a5 version of appbundler
+X   this re-introduces two bugs (serial export and scrolling)
+X   and any other changes later than 16 November 2015:
+X   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
+X   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
 fixed earlier
 X Can't set Breakpoint from the Breakpoint bar at the side
 X   https://github.com/processing/processing/issues/2835
@@ -29,6 +33,8 @@ X   https://github.com/processing/processing/pull/3340
 X   https://github.com/processing/processing/pull/3354
 X add i18n for Archiver and missing text
 X   https://github.com/processing/processing/pull/3349
+X Fix case-related bugs in Toolkit.setMenuMnemonics()
+X   https://github.com/processing/processing/pull/3366
 
 gsoc
 X contrib manager scroll bar only shows up when needed
@@ -127,7 +133,7 @@ _ add last revision used / max revision used settings?
 
 
 crashing
-_ rolled back to 3.0a5 version of appbundler
+_ fix appbundler problems due to rollback
 _   this re-introduces two bugs (serial export and scrolling)
 _ another possible culprit
 _   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
@@ -165,6 +171,8 @@ _   https://github.com/processing/processing/issues/1898
 _ search the source for 'applet' references (i.e. SVG docs)
 _ update list of option JRE files
 _   https://github.com/processing/processing/issues/3288
+_ 2.x Modes, Tools, and Libraries will need to be updated for 3.x
+_   https://github.com/processing/processing/issues/3080
 
 
 sketchbook
