@@ -222,9 +222,9 @@ public class PSurfaceJOGL implements PSurface {
         displayDevice = monitors.get(displayNum - 1);
       } else {
         System.err.format("Display %d does not exist, " +
-          "using the default display instead.", displayNum);
+          "using the default display instead.%n", displayNum);
         for (int i = 0; i < monitors.size(); i++) {
-          System.err.format("Display %d is %s\n", i+1, monitors.get(i));
+          System.err.format("Display %d is %s%n", i+1, monitors.get(i));
         }
       }
     }
