@@ -143,7 +143,6 @@ public class PreferencesFrame {
     // get a wide name in there before getPreferredSize() is called
     fontSelectionBox = new JComboBox<String>(new String[] { Toolkit.getMonoFontName() });
     fontSelectionBox.setToolTipText(fontTip);
-    //updateDisplayList();
     fontSelectionBox.setEnabled(false);  // don't enable until fonts are loaded
 
 
@@ -317,17 +316,18 @@ public class PreferencesFrame {
 
     // Run sketches on display [  1 ]
 
-    JLabel displayLabel = new JLabel(Language.text("preferences.run_sketches_on_display")+": ");
+    JLabel displayLabel = new JLabel(Language.text("preferences.run_sketches_on_display") + ": ");
     final String tip = "<html>" + Language.text("preferences.run_sketches_on_display.tip");
     displayLabel.setToolTipText(tip);
     displaySelectionBox = new JComboBox<String>();
     updateDisplayList();  // needs to happen here for getPreferredSize()
 
+
     // [ ] Automatically associate .pde files with Processing
 
-      autoAssociateBox =
-        new JCheckBox(Language.text("preferences.automatically_associate_pde_files"));
-      autoAssociateBox.setVisible(false);
+    autoAssociateBox =
+      new JCheckBox(Language.text("preferences.automatically_associate_pde_files"));
+    autoAssociateBox.setVisible(false);
 
 
     // More preferences are in the ...
@@ -577,17 +577,21 @@ public class PreferencesFrame {
       Language.saveLanguage(language);
     }
 
-    int oldDisplayIndex = Preferences.getInteger("run.display"); //$NON-NLS-1$
-    int displayIndex = 0;
-    for (int d = 0; d < displaySelectionBox.getItemCount(); d++) {
-      if (displaySelectionBox.getSelectedIndex() == d) {
-        displayIndex = d;
+    // The preference will have already been reset when the window was created
+    if (displaySelectionBox.isEnabled()) {
+      int oldDisplayNum = Preferences.getInteger("run.display");
+      int displayNum = -1;
+      for (int d = 0; d < displaySelectionBox.getItemCount(); d++) {
+        if (displaySelectionBox.getSelectedIndex() == d) {
+          displayNum = d + 1;
+        }
       }
-    }
-    if (oldDisplayIndex != displayIndex) {
-      Preferences.setInteger("run.display", displayIndex); //$NON-NLS-1$
-      for (Editor editor : base.getEditors()) {
-        editor.setSketchLocation(null);
+      if ((displayNum != -1) && (displayNum != oldDisplayNum)) {
+        Preferences.setInteger("run.display", displayNum); //$NON-NLS-1$
+        // Reset the location of the sketch, the window has changed
+        for (Editor editor : base.getEditors()) {
+          editor.setSketchLocation(null);
+        }
       }
     }
 
@@ -670,11 +674,14 @@ public class PreferencesFrame {
     sketchbookLocationField.setText(Preferences.getSketchbookPath());
     checkUpdatesBox.setSelected(Preferences.getBoolean("update.check")); //$NON-NLS-1$
 
-    updateDisplayList();
+    int defaultDisplayNum = updateDisplayList();
     int displayNum = Preferences.getInteger("run.display"); //$NON-NLS-1$
-    if (displayNum >= 0 && displayNum < displayCount) {
-      displaySelectionBox.setSelectedIndex(displayNum);
+    //if (displayNum > 0 && displayNum <= displayCount) {
+    if (displayNum < 1 || displayNum > displayCount) {
+      displayNum = defaultDisplayNum;
+      Preferences.setInteger("run.display", displayNum);
     }
+    displaySelectionBox.setSelectedIndex(displayNum-1);
 
     // This takes a while to load, so run it from a separate thread
     //EventQueue.invokeLater(new Runnable() {
@@ -749,11 +756,15 @@ public class PreferencesFrame {
   }
 
 
-  void updateDisplayList() {
+  /**
+   * @return the number (1..whatever, not 0-indexed) of the default display
+   */
+  int updateDisplayList() {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice defaultDevice = ge.getDefaultScreenDevice();
     GraphicsDevice[] devices = ge.getScreenDevices();
 
+    int defaultNum = -1;
     displayCount = devices.length;
     String[] items = new String[displayCount];
     for (int i = 0; i < displayCount; i++) {
@@ -762,6 +773,7 @@ public class PreferencesFrame {
                                    i + 1, mode.getWidth(), mode.getHeight());
       if (devices[i] == defaultDevice) {
         title += " default";
+        defaultNum = i + 1;
       }
       items[i] = title;
     }
@@ -771,5 +783,6 @@ public class PreferencesFrame {
     if (displayCount == 1) {
       displaySelectionBox.setEnabled(false);
     }
+    return defaultNum;
   }
 }

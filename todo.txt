@@ -26,6 +26,8 @@ X   https://github.com/processing/processing/issues/2843
 o Update Windows icons for multiple sizes, implement them in the PDE
 o   http://code.google.com/p/processing/issues/detail?id=632
 X   closed during the 2.x cycle
+X try to clean up the Recent menu with the home icon
+_   make sure it doesn't break on Windows
 
 contribs
 X several Greek translation updates

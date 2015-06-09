@@ -398,6 +398,7 @@ public class PSurfaceAWT extends PSurfaceNone {
       GraphicsEnvironment.getLocalGraphicsEnvironment();
 
     int displayNum = sketch.sketchDisplay();
+//    System.out.println("display from sketch is " + displayNum);
     if (displayNum > 0) {  // if -1, use the default device
       GraphicsDevice[] devices = environment.getScreenDevices();
       if (displayNum <= devices.length) {
@@ -694,6 +695,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
     int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
 
+    // Ignore previous sketch placement when dealing with full screen
     if (sketch.sketchFullScreen()) {
       location = null;
     }

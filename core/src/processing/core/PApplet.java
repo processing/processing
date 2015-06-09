@@ -9655,8 +9655,10 @@ public class PApplet implements PConstants {
 
 
   void frameMoved(int x, int y) {
-    System.err.println(EXTERNAL_MOVE + " " + x + " " + y);
-    System.err.flush();  // doesn't seem to help or hurt
+    if (!fullScreen) {
+      System.err.println(EXTERNAL_MOVE + " " + x + " " + y);
+      System.err.flush();  // doesn't seem to help or hurt
+    }
   }
 
 
@@ -9818,7 +9820,7 @@ public class PApplet implements PConstants {
     int stopColor = 0xff808080;
     boolean hideStop = false;
 
-    int displayIndex = -1;  // use default
+    int displayNum = -1;  // use default
 //    boolean fullScreen = false;
     boolean present = false;
 //    boolean spanDisplays = false;
@@ -9838,8 +9840,8 @@ public class PApplet implements PConstants {
           editorLocation = parseInt(split(value, ','));
 
         } else if (param.equals(ARGS_DISPLAY)) {
-          displayIndex = parseInt(value, -1);
-          if (displayIndex == -1) {
+          displayNum = parseInt(value, -1);
+          if (displayNum == -1) {
             System.err.println("Could not parse " + value + " for " + ARGS_DISPLAY);
           }
 
@@ -9925,6 +9927,10 @@ public class PApplet implements PConstants {
         e.printStackTrace();  // That's unfortunate
       }
     }
+
+    // Set the suggested display that's coming from the command line
+    // (and most likely, from the PDE's preference setting).
+    sketch.display = displayNum;
 
     // Call the settings() method which will give us our size() call
 //    try {
