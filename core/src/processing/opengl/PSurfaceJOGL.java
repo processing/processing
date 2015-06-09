@@ -195,13 +195,7 @@ public class PSurfaceJOGL implements PSurface {
 //  caps.setPBuffer(false);
 //  caps.setFBO(false);
 
-    if (graphics.smooth == 0) {
-      pgl.reqNumSamples = 1;
-    } else if (graphics.smooth == 1) {
-      pgl.reqNumSamples = 2;
-    } else {
-      pgl.reqNumSamples = 2 * graphics.smooth;
-    }
+    pgl.reqNumSamples = PGL.smoothToSamples(graphics.smooth);
     caps.setSampleBuffers(true);
     caps.setNumSamples(pgl.reqNumSamples);
     caps.setBackgroundOpaque(true);

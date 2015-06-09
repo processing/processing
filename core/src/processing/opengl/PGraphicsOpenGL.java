@@ -1852,7 +1852,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     pgl.depthFunc(PGL.LEQUAL);
 
-    if (smooth < 2) {
+    if (smooth < 1) {
       pgl.disable(PGL.MULTISAMPLE);
     } else {
       pgl.enable(PGL.MULTISAMPLE);
@@ -6545,9 +6545,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     boolean packed = depthBits == 24 && stencilBits == 8 &&
                      packedDepthStencilSupported;
-    if (PGraphicsOpenGL.fboMultisampleSupported && 1 < smooth) {
+    if (PGraphicsOpenGL.fboMultisampleSupported && 1 < PGL.smoothToSamples(smooth)) {
       multisampleFramebuffer =
-        new FrameBuffer(this, texture.glWidth, texture.glHeight, smooth, 0,
+        new FrameBuffer(this, texture.glWidth, texture.glHeight, PGL.smoothToSamples(smooth), 0,
                         depthBits, stencilBits, packed, false);
 
       multisampleFramebuffer.clear();
@@ -6672,14 +6672,14 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (primaryGraphics) {
-      pgl.getIntegerv(PGL.SAMPLES, intBuffer);
-      int temp = intBuffer.get(0);
-      if (smooth != temp && 1 < temp && 1 < smooth) {
+//      pgl.getIntegerv(PGL.SAMPLES, intBuffer);
+//      int temp = intBuffer.get(0);
+//      if (smooth != temp && 1 < temp && 1 < smooth) {
         // TODO check why the samples is higher that initialized smooth level.
 //        quality = temp;
-      }
+//      }
     }
-    if (smooth < 2) {
+    if (smooth < 1) {
       pgl.disable(PGL.MULTISAMPLE);
     } else {
       pgl.enable(PGL.MULTISAMPLE);
