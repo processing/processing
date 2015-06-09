@@ -96,8 +96,8 @@ HSB	LITERAL2	colorMode_
 IMAGE	LITERAL2	textureMode_
 INVERT	LITERAL2	filter_
 JAVA2D	LITERAL2	size_
-JAVA2D_2X	LITERAL2	size_
 JPEG	LITERAL2	
+JFX	LITERAL2	size_
 LEFT	LITERAL2	keyCode
 LIGHTEST	LITERAL2	blend_
 LINE	LITERAL2	createShape_
@@ -125,8 +125,6 @@ PAL	LITERAL2
 PDF	LITERAL2	size_
 P2D	LITERAL2	size_
 P3D	LITERAL2	size_
-P2D_2X	LITERAL2	size_
-P3D_2X	LITERAL2	size_
 PERSPECTIVE	LITERAL2
 PI	LITERAL2	PI
 PIE	LITERAL2	
@@ -156,7 +154,8 @@ ROUND	LITERAL2	strokeCap_
 SCREEN	LITERAL2	blend_
 SECAM	LITERAL2	
 SHAPE	LITERAL2	textMode_
-SHIFT	LITERAL2	
+SHIFT	LITERAL2
+SPAN	LITERAL2	fullScreen_	
 SPECULAR	LITERAL2
 SPHERE	LITERAL2	createShape_
 SOFT_LIGHT	LITERAL2	blend_
@@ -585,6 +584,7 @@ keyPressed	FUNCTION4	keyPressed
 keyPressed	KEYWORD4	keyPressed
 keyReleased	FUNCTION4	keyReleased
 keyTyped	FUNCTION4	keyTyped
+launch	FUNCTION1	launch_
 lerp	FUNCTION1	lerp_
 lerpColor	FUNCTION1	lerpColor_
 lightFalloff	FUNCTION1	lightFalloff_
@@ -643,7 +643,6 @@ normal	FUNCTION1	normal_
 noSmooth	FUNCTION1	noSmooth_
 noStroke	FUNCTION1	noStroke_
 noTint	FUNCTION1	noTint_
-open	FUNCTION1	open_
 ortho	FUNCTION1	ortho_
 parseXML	FUNCTION1	parseXML_
 perspective	FUNCTION1	perspective_
@@ -665,6 +664,7 @@ resize	FUNCTION2	PImage_resize_
 save	FUNCTION2	PImage_save_
 set	FUNCTION2	PImage_set_
 updatePixels	FUNCTION2	PImage_updatePixels_
+pixelDensity	FUNCTION1	pixelDensity_
 pixels	KEYWORD4	pixels
 pmouseX	KEYWORD4	pmouseX
 pmouseY	KEYWORD4	pmouseY
