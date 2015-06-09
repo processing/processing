@@ -104,4 +104,19 @@ public class SurfaceInfo {
   public String getStatement() {
     return statement;
   }
+  
+  
+  public String getWidth() {
+    return width;
+  }
+  
+  
+  public String getHeight() {
+    return height;
+  }
+  
+  
+  public String getRenderer() {
+    return renderer;
+  }
 }
