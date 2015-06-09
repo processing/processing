@@ -76,6 +76,10 @@ X full screen doesn't work on second window w/o present mode
 X   https://github.com/processing/processing/issues/3271
 _ "run sketches on display" not working in 3.0a7
 _   https://github.com/processing/processing/issues/3264
+_   with prefs display set to 2, fullScreen(1) is wrong
+_     does full screen on display 1
+_     but then moves window to main display
+_     and keeps the 1024x768 size
 
 pixelDensity and 2X
 X add displayDensity() methods
