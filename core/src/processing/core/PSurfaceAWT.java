@@ -497,7 +497,8 @@ public class PSurfaceAWT extends PSurfaceNone {
 //      }
       // this may be the bounds of all screens
       frame.setBounds(screenRect);
-      frame.setVisible(true);  // re-add native resources
+      // will be set visible in placeWindow() [3.0a10]
+      //frame.setVisible(true);  // re-add native resources
     }
     frame.setLayout(null);
     //frame.add(applet);
@@ -695,56 +696,46 @@ public class PSurfaceAWT extends PSurfaceNone {
     int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
     int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
 
-    // Ignore previous sketch placement when dealing with full screen
-    if (sketch.sketchFullScreen()) {
-      location = null;
-    }
+    // Ignore placement of previous window and editor when full screen
+    if (!sketch.sketchFullScreen()) {
+      if (location != null) {
+        // a specific location was received from the Runner
+        // (applet has been run more than once, user placed window)
+        frame.setLocation(location[0], location[1]);
 
-    if (location != null) {
-      // a specific location was received from the Runner
-      // (applet has been run more than once, user placed window)
-      frame.setLocation(location[0], location[1]);
+      } else if (editorLocation != null) {
+        int locationX = editorLocation[0] - 20;
+        int locationY = editorLocation[1];
 
-    } else if (editorLocation != null) {
-      int locationX = editorLocation[0] - 20;
-      int locationY = editorLocation[1];
+        if (locationX - window.width > 10) {
+          // if it fits to the left of the window
+          frame.setLocation(locationX - window.width, locationY);
 
-      if (locationX - window.width > 10) {
-        // if it fits to the left of the window
-        frame.setLocation(locationX - window.width, locationY);
+        } else {  // doesn't fit
+          // if it fits inside the editor window,
+          // offset slightly from upper lefthand corner
+          // so that it's plunked inside the text area
+          locationX = editorLocation[0] + 66;
+          locationY = editorLocation[1] + 66;
 
-      } else {  // doesn't fit
-        // if it fits inside the editor window,
-        // offset slightly from upper lefthand corner
-        // so that it's plunked inside the text area
-        locationX = editorLocation[0] + 66;
-        locationY = editorLocation[1] + 66;
-
-        if ((locationX + window.width > sketch.displayWidth - 33) ||
+          if ((locationX + window.width > sketch.displayWidth - 33) ||
             (locationY + window.height > sketch.displayHeight - 33)) {
-          // otherwise center on screen
-          locationX = (sketch.displayWidth - window.width) / 2;
-          locationY = (sketch.displayHeight - window.height) / 2;
+            // otherwise center on screen
+            locationX = (sketch.displayWidth - window.width) / 2;
+            locationY = (sketch.displayHeight - window.height) / 2;
+          }
+          frame.setLocation(locationX, locationY);
         }
-        frame.setLocation(locationX, locationY);
+      } else {  // just center on screen
+        setFrameCentered();
       }
-    } else {  // just center on screen
-      setFrameCentered();
+      Point frameLoc = frame.getLocation();
+      if (frameLoc.y < 0) {
+        // Windows actually allows you to place frames where they can't be
+        // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
+        frame.setLocation(frameLoc.x, 30);
+      }
     }
-    Point frameLoc = frame.getLocation();
-    if (frameLoc.y < 0) {
-      // Windows actually allows you to place frames where they can't be
-      // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
-      frame.setLocation(frameLoc.x, 30);
-    }
-
-//    if (backgroundColor != null) {
-////    if (backgroundColor == Color.black) {  //BLACK) {
-////      // this means no bg color unless specified
-////      backgroundColor = SystemColor.control;
-////    }
-//      ((JFrame) frame).getContentPane().setBackground(backgroundColor);
-//    }
 
     canvas.setBounds((contentW - sketchWidth)/2,
                      (contentH - sketchHeight)/2,
@@ -753,7 +744,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     // handle frame resizing events
     setupFrameResizeListener();
 
-    // TODO this is much too late... why even create the enormous frame for PDF?
+    // If displayable() is false, then PSurfaceNone should be used, but...
     if (sketch.getGraphics().displayable()) {
       frame.setVisible(true);
     }

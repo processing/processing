@@ -74,6 +74,8 @@ X looks like we're off by 1 on monitor numbering
 X   https://github.com/processing/processing/issues/3309
 X full screen doesn't work on second window w/o present mode
 X   https://github.com/processing/processing/issues/3271
+X full screen on OS X 10.9 shows a bar at the top with Java2D
+X   https://github.com/processing/processing/issues/3305
 _ "run sketches on display" not working in 3.0a7
 _   https://github.com/processing/processing/issues/3264
 _   with prefs display set to 2, fullScreen(1) is wrong
