@@ -13188,7 +13188,7 @@ public class PGraphicsOpenGL extends PGraphics {
       texCacheMap     = new int[triangleCount];
       indexCacheMap   = new int[triangleCount];
 
-      screenVertices  = new float[4*triangleCount];
+      screenVertices  = new float[9*triangleCount];
 
       swapped = new int[8];
       marked = new int[8];
@@ -13203,10 +13203,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
       { // Map vertices to screen
         float[] polyVertices = tessGeo.polyVertices;
-        if (screenVertices.length != tessGeo.polyVertices.length) {
-          screenVertices = new float[tessGeo.polyVertices.length];
+        int polyVertexCount = tessGeo.polyVertexCount;
+        if (screenVertices.length < 3*polyVertexCount) {
+          screenVertices = new float[3*polyVertexCount];
         }
-        for (int i = 0; i < tessGeo.polyVertexCount; i++) {
+        for (int i = 0; i < polyVertexCount; i++) {
           float x = polyVertices[4*i+X];
           float y = polyVertices[4*i+Y];
           float z = polyVertices[4*i+Z];
