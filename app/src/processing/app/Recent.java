@@ -120,7 +120,6 @@ public class Recent {
   private void updateMenu(JMenu menu) {
     menu.removeAll();
     String sketchbookPath = Base.getSketchbookFolder().getAbsolutePath();
-//    String homePath = System.getProperty("user.home");
     for (Record rec : records) {
       updateMenuRecord(menu, rec, sketchbookPath);
     }
@@ -176,11 +175,12 @@ public class Recent {
         }
       }
       if (purtyPath == null) {
-//        if (recPath.startsWith(homePath)) {
-//          purtyPath = "\u2302 \u2192 " + recPath.substring(homePath.length() + 1);
-//        } else {
-        purtyPath = recPath;
-//        }
+        String homePath = System.getProperty("user.home");
+        if (recPath.startsWith(homePath)) {
+          purtyPath = "\u2302 \u2192 " + recPath.substring(homePath.length() + 1);
+        } else {
+          purtyPath = recPath;
+        }
       }
 
 //      JMenuItem item = new JMenuItem(rec.getName() + " | " + purtyPath);
