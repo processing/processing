@@ -76,12 +76,18 @@ X full screen doesn't work on second window w/o present mode
 X   https://github.com/processing/processing/issues/3271
 X full screen on OS X 10.9 shows a bar at the top with Java2D
 X   https://github.com/processing/processing/issues/3305
-_ "run sketches on display" not working in 3.0a7
-_   https://github.com/processing/processing/issues/3264
-_   with prefs display set to 2, fullScreen(1) is wrong
-_     does full screen on display 1
-_     but then moves window to main display
-_     and keeps the 1024x768 size
+X "run sketches on display" not working in 3.0a7
+X   https://github.com/processing/processing/issues/3264
+X   with prefs display set to 2, fullScreen(1) is wrong
+X     does full screen on display 1
+X     but then moves window to main display
+X     and keeps the 1024x768 size
+X Comments influencing code (preproc issues in parsing)
+X   https://github.com/processing/processing/issues/3326
+X Sketch not appearing depending on arangement of external display on OS X
+X   https://github.com/processing/processing/issues/3118
+X Sketch launching on second display that's not currently in use
+X   https://github.com/processing/processing/issues/3082
 
 pixelDensity and 2X
 X add displayDensity() methods
