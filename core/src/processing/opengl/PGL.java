@@ -359,10 +359,13 @@ public abstract class PGL {
 
   static protected int smoothToSamples(int smooth) {
     if (smooth == 0) {
+      // smooth(0) is noSmooth(), which is 1x sampling
       return 1;
     } else if (smooth == 1) {
+      // smooth(1) means "default smoothing", which is 2x for OpenGL
       return 2;
     } else {
+      // smooth(N) can be used for 4x, 8x, etc
       return smooth;
     }
   }
