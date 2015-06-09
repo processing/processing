@@ -442,7 +442,9 @@ public class PSurfaceJOGL implements PSurface {
 
     window.setSize(screenRect.width, screenRect.height);
     PApplet.hideMenuBar();
-    window.setTopLevelPosition(0, 0);
+    window.setTopLevelPosition(sketchX + screenRect.x,
+                               sketchY + screenRect.y);
+//    window.setTopLevelPosition(0, 0);
     window.setFullscreen(true);
 
 
