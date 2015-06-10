@@ -49,6 +49,8 @@ X   https://github.com/processing/processing-docs/issues/251
 X   can only be called inside setup(), show warning elsewhere
 X   is lifted out of setup() and into settings()
 X   can't use them together
+X final implentation in OpenGL
+X   https://github.com/processing/processing/issues/3367
 
 size, fullScreen, displays
 X fix up handling of fullScreen()
@@ -103,6 +105,9 @@ X move checkRetina()/highResDisplay() to PApplet
 X   and out of Toolkit and PSurfaceAWT
 X prevent running _2X renderers on non-2x hardware
 X   pixelDensity() needs to be called after size() or fullScreen()
+X no high-res display support for OpenGL
+X   https://github.com/processing/processing/issues/2573
+X   https://jogamp.org/bugzilla/show_bug.cgi?id=741
 
 andres/opengl
 X set(0, 0, image) does not set alpha channel to opaque in P2D/P3D
@@ -308,9 +313,6 @@ _   https://github.com/processing/processing/issues/3364
 _ save() and saveFrame() with 2X renderers fails
 _   https://github.com/processing/processing/issues/3255
 _ saveFrame() with retina render is making black images
-_ no high-res display support for OpenGL
-_   https://github.com/processing/processing/issues/2573
-_   https://jogamp.org/bugzilla/show_bug.cgi?id=741
 _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start
