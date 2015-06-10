@@ -1,3 +1,53 @@
+0237 (3.0a10)
+X debug message showing up when dragging and dropping files
+X add new app and export icons (downloaded)
+X   add versions for OS X (build process?)
+X   add support for the 1024 file
+X   Windows versions of the icons
+X     https://msdn.microsoft.com/en-us/library/dn742485.aspx
+X     merged list of sizes: 16, 24, 32, 48, 64, 256
+X   Linux version of updated icon
+X     handled with the .desktop file, nothing has changed for the file location
+X   add larger icons to core folder
+X   update export icons in java/application (export.icns and export.ico)
+X remove no longer used 'pdex' directory
+X rolled back to 3.0a5 version of appbundler due to crash on startup
+X   https://github.com/processing/processing/issues/3359
+X   https://github.com/processing/processing/issues/3360
+X   this re-introduces two bugs (serial export and scrolling)
+X   and any other changes later than 16 November 2015:
+X   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
+X   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
+fixed earlier
+X Can't set Breakpoint from the Breakpoint bar at the side
+X   https://github.com/processing/processing/issues/2835
+X Old version number shown in Mode Manager dialog
+X   https://github.com/processing/processing/issues/2843
+o Update Windows icons for multiple sizes, implement them in the PDE
+o   http://code.google.com/p/processing/issues/detail?id=632
+X   closed during the 2.x cycle
+X try to clean up the Recent menu with the home icon
+_   make sure it doesn't break on Windows
+
+contribs
+X several Greek translation updates
+X   https://github.com/processing/processing/issues/3329
+X   https://github.com/processing/processing/pull/3330
+X   https://github.com/processing/processing/pull/3340
+X   https://github.com/processing/processing/pull/3354
+X add i18n for Archiver and missing text
+X   https://github.com/processing/processing/pull/3349
+X Fix case-related bugs in Toolkit.setMenuMnemonics()
+X   https://github.com/processing/processing/pull/3366
+
+gsoc
+X contrib manager scroll bar only shows up when needed
+X   https://github.com/processing/processing/pull/3343
+X Progress bar added to Contrib Manager
+X   https://github.com/processing/processing/issues/3160
+X   https://github.com/processing/processing/pull/3319
+
+
 0236 (3.0a9)
 X show screen dimensions in the Preferences window for display selector
 
