@@ -272,7 +272,7 @@ public class JavaEditor extends Editor {
 
   public JMenu buildFileMenu() {
     //String appTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, false);
-    String appTitle = Language.text("toolbar.export_application");
+    String appTitle = Language.text("menu.file.export_application");
     JMenuItem exportApplication = Toolkit.newJMenuItemShift(appTitle, 'E');
     exportApplication.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -285,21 +285,21 @@ public class JavaEditor extends Editor {
 
 
   public JMenu buildSketchMenu() {
-    JMenuItem runItem = Toolkit.newJMenuItem(Language.text("toolbar.run"), 'R');
+    JMenuItem runItem = Toolkit.newJMenuItem(Language.text("menu.sketch.run"), 'R');
     runItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleRun();
       }
     });
 
-    JMenuItem presentItem = Toolkit.newJMenuItemShift(Language.text("toolbar.present"), 'R');
+    JMenuItem presentItem = Toolkit.newJMenuItemShift(Language.text("menu.sketch.present"), 'R');
     presentItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handlePresent();
       }
     });
 
-    JMenuItem stopItem = new JMenuItem(Language.text("toolbar.stop"));
+    JMenuItem stopItem = new JMenuItem(Language.text("menu.sketch.stop"));
     stopItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (isDebuggerEnabled()) {
