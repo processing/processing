@@ -522,8 +522,9 @@ public class PSurfaceJOGL implements PSurface {
 //      System.err.println("3. set size");
 
       if (!presentMode) {
-        sketch.width = width;
-        sketch.height = height;
+//        sketch.width = width;
+//        sketch.height = height;
+        sketch.setSize(width, height);
         sketchWidth = width;
         sketchHeight = height;
         graphics.setSize(width, height);

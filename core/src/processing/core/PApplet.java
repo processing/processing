@@ -294,6 +294,18 @@ public class PApplet implements PConstants {
   public int height = DEFAULT_HEIGHT;
 
   /**
+   * Width of the pixels in this drawing surface
+   * (takes pixelDensity into account).
+   */
+  public int pixelWidth;
+
+  /**
+   * Height of the pixels in this drawing surface
+   * (takes pixelDensity into account).
+   */
+  public int pixelHeight;
+
+  /**
    * ( begin auto-generated from mouseX.xml )
    *
    * The system variable <b>mouseX</b> always contains the current horizontal
@@ -811,7 +823,7 @@ public class PApplet implements PConstants {
   boolean fullScreen;
   int display = -1;  // use default
   GraphicsDevice[] displayDevices;
-  int pixelDensity = 1;
+  public int pixelDensity = 1;
 
   String outputPath;
   OutputStream outputStream;
@@ -897,19 +909,16 @@ public class PApplet implements PConstants {
 
 
   final public int sketchWidth() {
-    //return DEFAULT_WIDTH;
     return width;
   }
 
 
   final public int sketchHeight() {
-    //return DEFAULT_HEIGHT;
     return height;
   }
 
 
   final public String sketchRenderer() {
-    //return JAVA2D;
     return renderer;
   }
 
@@ -1058,6 +1067,18 @@ public class PApplet implements PConstants {
         }
       }
     }
+  }
+
+
+  /**
+   * Called by PSurface objects to set the width and height variables,
+   * and update the pixelWidth and pixelHeight variables.
+   */
+  public void setSize(int width, int height) {
+    this.width = width;
+    this.height = height;
+    pixelWidth = width * pixelDensity;
+    pixelHeight = height * pixelDensity;
   }
 
 

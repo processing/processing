@@ -168,12 +168,14 @@ public class PSurfaceAWT extends PSurfaceNone {
       super.validate();
       newSize.width = getWidth();
       newSize.height = getHeight();
-      if (oldSize.equals(newSize)) {
-//        System.out.println("validate() return " + oldSize);
-        return;
-      } else {
+//      if (oldSize.equals(newSize)) {
+////        System.out.println("validate() return " + oldSize);
+//        return;
+//      } else {
+      if (!oldSize.equals(newSize)) {
 //        System.out.println("validate() render old=" + oldSize + " -> new=" + newSize);
         oldSize = newSize;
+        sketch.setSize(newSize.width, newSize.height);
         render();
       }
     }
@@ -783,8 +785,9 @@ public class PSurfaceAWT extends PSurfaceNone {
     //initImage(graphics, wide, high);
 
     //throw new RuntimeException("implement me, see readme.md");
-    sketch.width = wide;
-    sketch.height = high;
+    sketch.setSize(wide, high);
+//    sketch.width = wide;
+//    sketch.height = high;
 
     // set PGraphics variables for width/height/pixelWidth/pixelHeight
     graphics.setSize(wide, high);

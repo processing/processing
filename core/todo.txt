@@ -1,10 +1,20 @@
 0238 (3.0b1)
 
+retina fixes
+X make g.pixelDensity public inside PApplet (so accessible by sketches)
+o   or is it akin to g.fill and the rest?
+X   it's in PApplet, but not public.. will be the same as g.pixelDensity
+X add pixelWidth/Height to PApplet
+X   add setSize() method for surfaces
+X   tricky cuz we'll need a getter/setter when surface messes w/ things
+
 text/fonts
 X Text looks blurry in GL Retina
 X   https://github.com/processing/processing/issues/2739
 X text not getting the correct font in Retina2D
 X   https://github.com/processing/processing/issues/2617
+X Text is half size in PGraphicsRetina2D
+X   https://github.com/processing/processing/issues/2738
 
 andres
 X ortho function is broken
@@ -14,6 +24,14 @@ X   https://github.com/processing/processing/issues/3379
 
 
 beta
+_ need to be able to call pixelDensity(2) before beginDraw()
+_   add pixelDensity() method to PImage/PGraphics
+_   pixelDensity(2) does: pixelWidth = width; width /= 2; pixelDensity = 2;
+_   this works for both PGraphics and images (though they're a little backwards)
+_   for PGraphics it comes early enough
+_ pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
+_ NPE when using image() created with createGraphics(PGraphicsRetina2D)
+_   https://github.com/processing/processing/issues/2510
 _ replace sketchXxxx() methods with another mechanism?
 _   and an internal dictionary that stores them all?
 _   intParam(), stringParam() and setParam()? 
@@ -22,13 +40,6 @@ _   surface.size(), surface.noSmooth()... just like PGraphics methods?
 _   make final to move folks away from these?
 _   or is this a bad move until we've sorted out Android?
 _ update wiki/docs to say "don't override sketchXxxx() methods"
-_ pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
-_ add pixelDensity() method to PImage/PGraphics
-_   pixelDensity(2) does: pixelWidth = width; width /= 2; pixelDensity = 2;
-_   this works for both PGraphics and images (though they're a little backwards)
-_   for PGraphics it comes early enough
-_ g.pixelDensity should prolly move to PApplet?
-_   or is it akin to g.fill and the rest?
 
 
 high priority
@@ -194,11 +205,6 @@ _ retina sketches slow to start
 _   https://github.com/processing/processing/issues/2357
 _ zero alpha values still a problem with retina renderer
 _   https://github.com/processing/processing/issues/2030
-_ NPE when using image() created with createGraphics(PGraphicsRetina2D)
-_   https://github.com/processing/processing/issues/2510
-_ check retina with PGraphicsRetina2D
-_ Text is half size in PGraphicsRetina2D
-_   https://github.com/processing/processing/issues/2738
 
 
 decisions/misc
