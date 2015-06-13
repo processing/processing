@@ -1,5 +1,12 @@
 0238 (3.0b1)
 
+gsoc
+X Mode problems window wasn't doing line breaks
+X   https://github.com/processing/processing/issues/3369
+X   https://github.com/processing/processing/pull/3370
+
+"OS X v10.11 is the last major release of OS X that will support the previously deprecated Java 6 runtime and tools provided by Apple. Applications or features that depend upon Java 6 may not function properly or will not launch when Java 6 is removed." https://developer.apple.com/library/prerelease/mac/releasenotes/General/rn-osx-10.11/index.html
+
 
 beta
 _ add "welcome" or "what's new" window to explain features in 3

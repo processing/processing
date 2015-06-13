@@ -28,6 +28,7 @@ package processing.core;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
@@ -4117,7 +4118,7 @@ public class PGraphics extends PImage implements PConstants {
         // float w = font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
       }
       */
-      textSize(which.size);
+      textSize(which.getDefaultSize());
 
     } else {
       throw new RuntimeException(ERROR_TEXTFONT_NULL_PFONT);
@@ -4806,10 +4807,10 @@ public class PGraphics extends PImage implements PConstants {
     PFont.Glyph glyph = textFont.getGlyph(ch);
     if (glyph != null) {
       if (textMode == MODEL) {
-        float high    = glyph.height     / (float) textFont.size;
-        float bwidth  = glyph.width      / (float) textFont.size;
-        float lextent = glyph.leftExtent / (float) textFont.size;
-        float textent = glyph.topExtent  / (float) textFont.size;
+        float high    = glyph.height     / (float) textFont.getSize();
+        float bwidth  = glyph.width      / (float) textFont.getSize();
+        float lextent = glyph.leftExtent / (float) textFont.getSize();
+        float textent = glyph.topExtent  / (float) textFont.getSize();
 
         float x1 = x + lextent * textSize;
         float y1 = y - textent * textSize;
@@ -4858,6 +4859,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /*
   protected void textCharScreenImpl(PImage glyph,
                                     int xx, int yy,
                                     int w0, int h0) {
@@ -4908,6 +4910,7 @@ public class PGraphics extends PImage implements PConstants {
       }
     }
   }
+  */
 
 
   /**
@@ -4917,6 +4920,10 @@ public class PGraphics extends PImage implements PConstants {
    */
   @SuppressWarnings("deprecation")
   public FontMetrics getFontMetrics(Font font) {  // ignore
+    Frame frame = parent.getFrame();
+    if (frame != null) {
+      return frame.getToolkit().getFontMetrics(font);
+    }
     return Toolkit.getDefaultToolkit().getFontMetrics(font);
   }
 

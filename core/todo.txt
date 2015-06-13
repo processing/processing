@@ -1,5 +1,15 @@
 0238 (3.0b1)
 
+text/fonts
+X Text looks blurry in GL Retina
+X   https://github.com/processing/processing/issues/2739
+
+andres
+X ortho function is broken
+X   https://github.com/processing/processing/issues/1278
+X errors with loading SVGs in P3D/P2D
+X   https://github.com/processing/processing/issues/3379
+
 
 beta
 _ replace sketchXxxx() methods with another mechanism?
@@ -10,9 +20,24 @@ _   surface.size(), surface.noSmooth()... just like PGraphics methods?
 _   make final to move folks away from these?
 _   or is this a bad move until we've sorted out Android?
 _ update wiki/docs to say "don't override sketchXxxx() methods"
+_ pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
+_ add pixelDensity() method to PImage/PGraphics
+_   pixelDensity(2) does: pixelWidth = width; width /= 2; pixelDensity = 2;
+_   this works for both PGraphics and images (though they're a little backwards)
+_   for PGraphics it comes early enough
+_ g.pixelDensity should prolly move to PApplet?
+_   or is it akin to g.fill and the rest?
 
 
 high priority
+_ sketches with new fullScreen() method should grab focus by default
+_   https://github.com/processing/processing/issues/3380
+_ fullScreen(SPAN) not working
+_   probably need to re-query for displays each time opening prefs
+_   what happens when a screen is added after p5 has started?
+_   https://github.com/processing/processing/issues/3381
+_ clear() is broken
+_   https://github.com/processing/processing/issues/3378
 _ add the "don't use this" warning to the JFrame in PSurfaceAWT 
 _ draw() executes twice when noLoop() called in setup()
 _   https://github.com/processing/processing/issues/3310
@@ -88,8 +113,6 @@ _   also not API we want to expose, so sort this out
 _   or maybe we're fine b/c now FX2D needs it as well
 _ when did setPath() sneak into PShape? API is nothing like anything else
 _   probably from the material stuff, but we need to fix that
-_ ortho function is broken
-_   https://github.com/processing/processing/issues/1278
 
 
 full screen
@@ -171,8 +194,6 @@ _ zero alpha values still a problem with retina renderer
 _   https://github.com/processing/processing/issues/2030
 _ NPE when using image() created with createGraphics(PGraphicsRetina2D)
 _   https://github.com/processing/processing/issues/2510
-_ Text looks blurry in GL Retina (andres)
-_   https://github.com/processing/processing/issues/2739
 _ check retina with PGraphicsRetina2D
 _ Text is half size in PGraphicsRetina2D
 _   https://github.com/processing/processing/issues/2738

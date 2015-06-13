@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-10 Ben Fry & Casey Reas
+  Copyright (c) 2012-15 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry & Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -84,7 +85,15 @@ public class PFont implements PConstants {
   /**
    * The original size of the font when it was first created
    */
-  protected int size;
+  //protected int size;
+  private int size;
+
+  protected int density;
+//  /**
+//   * The size that this font will default to when drawn. Used to create fonts
+//   * at 2x the size for high-res displays in OpenGL.
+//   */
+//  protected int defaultSize;
 
   /** true if smoothing was enabled for this font, used for native impl */
   protected boolean smooth;
@@ -124,11 +133,10 @@ public class PFont implements PConstants {
   protected Font font;
 
   /**
-   * True if this font was loaded from a stream, rather than from the OS.
-   * It's always safe to use the native version of a font loaded from a TTF
-   * file, since that's how it'll look when exported. Otherwise, you'll have
-   * to use hint(ENABLE_NATIVE_FONTS) to get the native version working with
-   * renderers that support it.
+   * True if this font was loaded from an InputStream, rather than by name
+   * from the OS. It's best to use the native version of a font loaded from
+   * a TTF file, since that will ensure that the font is available when the
+   * sketch is exported.
    */
   protected boolean stream;
 
@@ -329,9 +337,11 @@ public class PFont implements PConstants {
    *
    * @nowebref
    */
-  public PFont(Font font, boolean smooth, char charset[], boolean stream) {
+  public PFont(Font font, boolean smooth, char charset[],
+               boolean stream, int density) {
     this(font, smooth, charset);
     this.stream = stream;
+    this.density = density;
   }
 
   /**
@@ -533,6 +543,24 @@ public class PFont implements PConstants {
    */
   public int getSize() {
     return size;
+  }
+
+
+//  public void setDefaultSize(int size) {
+//    defaultSize = size;
+//  }
+
+
+  /**
+   * Returns the size that will be used when textFont(font) is called.
+   * When drawing with 2x pixel density, bitmap fonts in OpenGL need to be
+   * created (behind the scenes) at double the requested size. This ensures
+   * that they're shown at half on displays (so folks don't have to change
+   * their sketch code).
+   */
+  public int getDefaultSize() {
+    //return defaultSize;
+    return size / density;
   }
 
 

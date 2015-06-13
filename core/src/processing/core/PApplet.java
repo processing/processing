@@ -5962,7 +5962,7 @@ public class PApplet implements PConstants {
    * @see PApplet#loadFont(String)
    */
   public PFont createFont(String name, float size,
-                          boolean smooth, char charset[]) {
+                          boolean smooth, char[] charset) {
     String lowerName = name.toLowerCase();
     Font baseFont = null;
 
@@ -5982,11 +5982,12 @@ public class PApplet implements PConstants {
       } else {
         baseFont = PFont.findFont(name);
       }
-      return new PFont(baseFont.deriveFont(size), smooth, charset,
-                       stream != null);
+      return new PFont(baseFont.deriveFont(size * pixelDensity),
+                       smooth, charset, stream != null,
+                       pixelDensity);
 
     } catch (Exception e) {
-      System.err.println("Problem createFont(" + name + ")");
+      System.err.println("Problem with createFont(\"" + name + "\")");
       e.printStackTrace();
       return null;
     }
