@@ -93,9 +93,12 @@ public class PGraphicsJava2D extends PGraphics {
   public boolean fillGradient;
   public Paint fillGradientObject;
 
+  protected Stroke strokeObject;
   protected Color strokeColorObject;
   public boolean strokeGradient;
   public Paint strokeGradientObject;
+
+  Font fontObject;
 
 
 
@@ -317,7 +320,14 @@ public class PGraphicsJava2D extends PGraphics {
     // Calling getGraphics() seems to nuke several settings.
     // It seems to be re-creating a new Graphics2D object each time.
     // https://github.com/processing/processing/issues/3331
-    strokeImpl();
+    if (strokeObject != null) {
+      g2.setStroke(strokeObject);
+    }
+    // https://github.com/processing/processing/issues/2617
+    if (fontObject != null) {
+      g2.setFont(fontObject);
+    }
+
     handleSmooth();
 
     /*
@@ -1898,6 +1908,7 @@ public class PGraphicsJava2D extends PGraphics {
       font = font.deriveFont(map);
       g2.setFont(font);
       textFont.setNative(font);
+      fontObject = font;
 
 //      Font dfont = font.deriveFont(size);
 ////      Map<TextAttribute, ?> attrs = dfont.getAttributes();
@@ -2371,7 +2382,8 @@ public class PGraphicsJava2D extends PGraphics {
       join = BasicStroke.JOIN_ROUND;
     }
 
-    g2.setStroke(new BasicStroke(strokeWeight, cap, join));
+    strokeObject = new BasicStroke(strokeWeight, cap, join);
+    g2.setStroke(strokeObject);
   }
 
 

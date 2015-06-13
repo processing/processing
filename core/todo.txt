@@ -3,6 +3,8 @@
 text/fonts
 X Text looks blurry in GL Retina
 X   https://github.com/processing/processing/issues/2739
+X text not getting the correct font in Retina2D
+X   https://github.com/processing/processing/issues/2617
 
 andres
 X ortho function is broken
@@ -197,8 +199,6 @@ _   https://github.com/processing/processing/issues/2510
 _ check retina with PGraphicsRetina2D
 _ Text is half size in PGraphicsRetina2D
 _   https://github.com/processing/processing/issues/2738
-_ text not getting the correct font in Retina2D
-_   https://github.com/processing/processing/issues/2617
 
 
 decisions/misc
