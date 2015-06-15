@@ -34,10 +34,12 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+
 
 
 // used by loadImage() functions
@@ -823,6 +825,8 @@ public class PApplet implements PConstants {
   boolean fullScreen;
   int display = -1;  // use default
   GraphicsDevice[] displayDevices;
+  // Unlike the others above, needs to be public to support
+  // the pixelWidth and pixelHeight fields.
   public int pixelDensity = 1;
 
   String outputPath;
@@ -9766,7 +9770,12 @@ public class PApplet implements PConstants {
    * </PRE>
    */
   static public void main(final String[] args) {
-    runSketch(args, null);
+    try {
+      runSketch(args, null);
+    } catch (HeadlessException e) {
+      System.err.println("Cannot run sketch without a display. Read this for possible solutions:");
+      System.err.println("https://github.com/processing/processing/wiki/Running-without-a-Display");
+    }
   }
 
 
