@@ -9770,12 +9770,7 @@ public class PApplet implements PConstants {
    * </PRE>
    */
   static public void main(final String[] args) {
-    try {
-      runSketch(args, null);
-    } catch (HeadlessException e) {
-      System.err.println("Cannot run sketch without a display. Read this for possible solutions:");
-      System.err.println("https://github.com/processing/processing/wiki/Running-without-a-Display");
-    }
+    runSketch(args, null);
   }
 
 
@@ -9830,8 +9825,16 @@ public class PApplet implements PConstants {
     // Supposed to help with flicker, but no effect on OS X.
     // TODO IIRC this helped on Windows, but need to double check.
     System.setProperty("sun.awt.noerasebackground", "true");
-    // Call validate() while resize events are in progress
-    Toolkit.getDefaultToolkit().setDynamicLayout(true);
+
+    // Catch any HeadlessException to provide more useful feedback
+    try {
+      // Call validate() while resize events are in progress
+      Toolkit.getDefaultToolkit().setDynamicLayout(true);
+    } catch (HeadlessException e) {
+      System.err.println("Cannot run sketch without a display. Read this for possible solutions:");
+      System.err.println("https://github.com/processing/processing/wiki/Running-without-a-Display");
+      System.exit(1);
+    }
 
     // So that the system proxy setting are used by default
     System.setProperty("java.net.useSystemProxies", "true");
