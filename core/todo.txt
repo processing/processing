@@ -1,4 +1,5 @@
 0238 (3.0b1)
+X add note about headless exceptions that points to Github
 
 retina fixes
 X make g.pixelDensity public inside PApplet (so accessible by sketches)
@@ -63,6 +64,8 @@ _ sketch not always showing with empty draw()
 _   https://github.com/processing/processing/issues/3363
 _ PGraphic ignores PNG transparency (regression from 3.0a5)
 _   https://github.com/processing/processing/issues/3317
+_ clear() seems to be broken (maybe related to 3317)
+_   https://github.com/processing/processing/issues/3378
 _ sketch window briefly appears on top left corner when using OpenGL
 _   https://github.com/processing/processing/issues/3308
 _ sketch window is not placed at correct location when running a second time

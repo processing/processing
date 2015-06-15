@@ -780,9 +780,9 @@ public class PreferencesFrame {
     displaySelectionBox.setModel(new DefaultComboBoxModel<String>(items));
 
     // Disable it if you can't actually change the default display
-    if (displayCount == 1) {
-      displaySelectionBox.setEnabled(false);
-    }
+    displaySelectionBox.setEnabled(displayCount != 1);
+
+    // Send back the number (1-indexed) of the default display
     return defaultNum;
   }
 }

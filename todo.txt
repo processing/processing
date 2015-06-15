@@ -1,4 +1,6 @@
 0238 (3.0b1)
+X Re-enable the display menu in Preferences after display added
+X   Previously, the checkbox menu stayed disabled (though it updated the list)
 
 gsoc
 X Mode problems window wasn't doing line breaks
@@ -55,6 +57,10 @@ _   otherwise could run in one mode, then try to stop in another
 
 
 pde/build
+_ weird drag and drop exceptions in 3.x 
+_   https://github.com/processing/processing/issues/3383
+_ need to show error message instead of exceptions when loading Android Mode
+_   https://github.com/processing/processing/issues/3386
 _ when variables used in size(), getting exceptions instead of any warning
 _   https://github.com/processing/processing/issues/3311
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
