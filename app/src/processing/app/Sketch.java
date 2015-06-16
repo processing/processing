@@ -25,11 +25,14 @@ package processing.app;
 
 import processing.core.*;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FileDialog;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -1333,25 +1336,27 @@ public class Sketch {
    */
   public boolean isReadOnly() {
     String apath = folder.getAbsolutePath();
-    Mode mode = editor.getMode();
-    if (apath.startsWith(mode.getExamplesFolder().getAbsolutePath()) ||
-        apath.startsWith(mode.getLibrariesFolder().getAbsolutePath())) {
-      return true;
-
-      // canWrite() doesn't work on directories
-      //} else if (!folder.canWrite()) {
-    } else {
-      // check to see if each modified code file can be written to
-      for (int i = 0; i < codeCount; i++) {
-        if (code[i].isModified() &&
-            code[i].fileReadOnly() &&
-            code[i].fileExists()) {
-          //System.err.println("found a read-only file " + code[i].file);
-          return true;
-        }
+    List<Mode> modes = editor.getBase().getModeList();
+    // Make sure it's not read-only for another Mode besides this one
+    // https://github.com/processing/processing/issues/773
+    for (Mode mode : modes) {
+      if (apath.startsWith(mode.getExamplesFolder().getAbsolutePath()) ||
+          apath.startsWith(mode.getLibrariesFolder().getAbsolutePath())) {
+        return true;
       }
-      //return true;
     }
+
+    // check to see if each modified code file can be written to
+    // canWrite() doesn't work on directories
+    for (int i = 0; i < codeCount; i++) {
+      if (code[i].isModified() &&
+        code[i].fileReadOnly() &&
+        code[i].fileExists()) {
+        //System.err.println("found a read-only file " + code[i].file);
+        return true;
+      }
+    }
+
     return false;
   }
 
