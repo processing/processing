@@ -2076,9 +2076,9 @@ public class Base {
       t.printStackTrace(new PrintWriter(sw));
       // Necessary to replace \n with <br/> (even if pre) otherwise Java
       // treats it as a closed tag and reverts to plain formatting.
-      message = "<html>" + message.replaceAll("\n", "<br/>") +
-        "<br/><font size=2><br/>" +
-        sw.toString().replaceAll("\n", "<br/>") + "</html>";
+      message = ("<html>" + message +
+                 "<br/><font size=2><br/>" +
+                 sw + "</html>").replaceAll("\n", "<br/>");
 
       JOptionPane.showMessageDialog(new Frame(), message, title,
                                     fatal ?
