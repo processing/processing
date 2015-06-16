@@ -69,8 +69,7 @@ public class ProgressFrame extends JFrame implements PropertyChangeListener {
             // been redesigned to change progress every 0.5MB so that
             // the progress bar doesn't stagnate during that time
             progress += calcSize(copyable);
-            setProgress((int) Math.min(Math.ceil(progress * 100.0 / totalSize),
-                                       100));
+            setProgress((int) (progress * 100L / totalSize));
           }
         }
       }
@@ -159,7 +158,7 @@ public class ProgressFrame extends JFrame implements PropertyChangeListener {
       // to close the progress bar automatically when done, and to
       // print that Saving is done in Message Area
       editor.statusNotice(Language.text("editor.status.saving.done"));
-      ProgressFrame.this.closeProgressBar();
+      dispose();
     }
   }
 
@@ -235,9 +234,10 @@ public class ProgressFrame extends JFrame implements PropertyChangeListener {
       setProgress(status);
     }
 
+
     @Override
     public void done() {
-      ProgressFrame.this.closeProgressBar();
+      dispose();
     }
   }
 
@@ -333,10 +333,5 @@ public class ProgressFrame extends JFrame implements PropertyChangeListener {
     if ("progress".equals(evt.getPropertyName())) {
       progressBar.setValue((Integer) evt.getNewValue());
     }
-  }
-
-
-  private void closeProgressBar() {
-    this.dispose();
   }
 }

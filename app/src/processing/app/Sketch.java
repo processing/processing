@@ -1139,19 +1139,21 @@ public class Sketch {
       return false;
     }
 
-    // in case the user is "adding" the code in an attempt
-    // to update the sketch's tabs
-	if (!sourceFile.equals(destFile)) {
-		final File sourceFile2 = sourceFile;
-		final File destFile2 = destFile;
-	    // Create a new event dispatch thread- to display ProgressBar
-	    // while Saving As
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        new ProgressFrame(sourceFile2, destFile2, editor);
+    // Handles "Add File" when a .pde is used. For beta 1, this no longer runs
+    // on a separate thread because it's totally unnecessary (a .pde file is
+    // not going to be so large that it's ever required) and otherwise we have
+    // to introduce a threading block here.
+    // https://github.com/processing/processing/issues/3383
+    if (!sourceFile.equals(destFile)) {
+      try {
+        Base.copyFile(sourceFile, destFile);
+
+      } catch (IOException e) {
+        Base.showWarning("Error adding file",
+                         "Could not add '" + filename + "' to the sketch.", e);
+        return false;
       }
-    });
-	}
+    }
 
     if (codeExtension != null) {
       SketchCode newCode = new SketchCode(destFile, codeExtension);

@@ -51,6 +51,8 @@ _   for PGraphics it comes early enough
 _ pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
 _ NPE when using image() created with createGraphics(PGraphicsRetina2D)
 _   https://github.com/processing/processing/issues/2510
+_ save() and saveFrame() with 2X renderers fails
+_   https://github.com/processing/processing/issues/3255
 _ surface.setXxx() handling
 _   https://github.com/processing/processing/issues/3388
 _   setResizable, setVisible, setTitle
@@ -72,6 +74,8 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 _ add the "don't use this" warning to the JFrame in PSurfaceAWT
 _ sketches with new fullScreen() method should grab focus by default
 _   https://github.com/processing/processing/issues/3380
+_ sketches not getting focus with Java2D
+_   https://github.com/processing/processing/issues/3389
 _ draw() executes twice when noLoop() called in setup()
 _   https://github.com/processing/processing/issues/3310
 _   broken since 3.0a7, but not in 3.0a5
@@ -217,9 +221,6 @@ _   at least with the Java2D renderer
 retina/hidpi
 _ How do images behave when pixelDensity(2) is set?
 _   https://github.com/processing/processing/issues/3364
-_ save() and saveFrame() with 2X renderers fails
-_   https://github.com/processing/processing/issues/3255
-_ saveFrame() with retina render is making black images
 _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start

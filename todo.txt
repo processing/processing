@@ -4,6 +4,8 @@ X   Previously, the checkbox menu stayed disabled (though it updated the list)
 X sketch.isReadOnly returns false for examples coming from multiple modes
 o   http://code.google.com/p/processing/issues/detail?id=734
 X   https://github.com/processing/processing/issues/773
+X Drag and Drop & "Add File" broken for .pde files in 3.0a10
+X   https://github.com/processing/processing/issues/3383
 
 gsoc
 X Mode problems window wasn't doing line breaks
@@ -71,8 +73,6 @@ _   otherwise could run in one mode, then try to stop in another
 
 
 pde/build
-_ weird drag and drop exceptions in 3.x 
-_   https://github.com/processing/processing/issues/3383
 _ need to show error message instead of exceptions when loading Android Mode
 _   https://github.com/processing/processing/issues/3386
 _ when variables used in size(), getting exceptions instead of any warning
