@@ -108,7 +108,10 @@ public class PApplet implements PConstants {
 
   /** Short name of Java version, i.e. 1.8. */
   static public final String javaVersionShort =
-    javaVersionName.substring(0, javaVersionName.indexOf("_"));
+    //javaVersionName.substring(0, 3);
+    javaVersionName.substring(0, javaVersionName.indexOf(".", 2));
+    // can't use this one, it's 1.8.0 and breaks things
+    //javaVersionName.substring(0, javaVersionName.indexOf("_"));
 
   /**
    * Version of Java that's in use, whether 1.1 or 1.3 or whatever,
