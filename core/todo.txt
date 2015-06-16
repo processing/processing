@@ -8,10 +8,20 @@ X   https://github.com/processing/processing/issues/3381
 X add javaPlatform variable (i.e. 7 or 8)
 X clear() seems to be broken (maybe related to 3317)
 X   https://github.com/processing/processing/issues/3378
+X PGraphic ignores PNG transparency (regression from 3.0a5)
+X   https://github.com/processing/processing/issues/3317
+X   (same issue as 3378)
 X move error messages out of PConstants (into PApplet? PGraphics?) 
-
-_ note that full screen and present are now different
-_   on Export to Application, this has an impact
+o replace sketchXxxx() methods with another mechanism?
+o   and an internal dictionary that stores them all?
+o   intParam(), stringParam() and setParam()? 
+o   or sketchInt() or settingsInt()?
+o   surface.size(), surface.noSmooth()... just like PGraphics methods?
+o   make final to move folks away from these?
+o   or is this a bad move until we've sorted out Android?
+X   HashMap sucks b/c we'd have to cast everything
+X   doesn't help to have intParam() etc, too many types (5ish? OutputStream)
+X   just stick with the current setup
 
 cleaning
 o possible addition for 'implementation' variable
@@ -46,19 +56,19 @@ X sketch window is not placed at correct location when running a second time
 X   https://github.com/processing/processing/issues/3125
 X full screen needs to ignore prev location setting for frame?
 X   https://github.com/processing/processing/issues/3305
+X save() and saveFrame() with 2X renderers fails
+X   https://github.com/processing/processing/issues/3255
+X NPE when using image() created with createGraphics(PGraphicsRetina2D)
+X   https://github.com/processing/processing/issues/2510
+
+docs
+_ note that full screen and present are now different
+_   on Export to Application, this has an impact
+_ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 beta
-_ need to be able to call pixelDensity(2) before beginDraw()
-_   add pixelDensity() method to PImage/PGraphics
-_   pixelDensity(2) does: pixelWidth = width; width /= 2; pixelDensity = 2;
-_   this works for both PGraphics and images (though they're a little backwards)
-_   for PGraphics it comes early enough
 _ pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
-_ NPE when using image() created with createGraphics(PGraphicsRetina2D)
-_   https://github.com/processing/processing/issues/2510
-_ save() and saveFrame() with 2X renderers fails
-_   https://github.com/processing/processing/issues/3255
 _ surface.setXxx() handling
 _   https://github.com/processing/processing/issues/3388
 _   setResizable, setVisible, setTitle
@@ -66,17 +76,6 @@ _   setIconImage(java.awt.Image) -> take a PImage instead?
 _   removeNotify(), addNotify(), setUndecorated(boolean)
 _   setting menubar will be surface-specific
 _   setLocation(int, int) and setSize(int, int)
-_ replace sketchXxxx() methods with another mechanism?
-_   and an internal dictionary that stores them all?
-_   intParam(), stringParam() and setParam()? 
-_   or sketchInt() or settingsInt()?
-_   surface.size(), surface.noSmooth()... just like PGraphics methods?
-_   make final to move folks away from these?
-_   or is this a bad move until we've sorted out Android?
-_   HashMap sucks b/c we'd have to cast everything
-_   doesn't help to have intParam() etc, too many types (5ish? OutputStream)
-_   just stick with the current setup
-_ update wiki/docs to say "don't override sketchXxxx() methods"
 _ add the "don't use this" warning to the JFrame in PSurfaceAWT
 _ sketches with new fullScreen() method should grab focus by default
 _   https://github.com/processing/processing/issues/3380
@@ -91,8 +90,6 @@ _ sketch sometimes doesn't show with noLoop() on Linux
 _   https://github.com/processing/processing/issues/3316
 _ sketch not always showing with empty draw()
 _   https://github.com/processing/processing/issues/3363
-_ PGraphic ignores PNG transparency (regression from 3.0a5)
-_   https://github.com/processing/processing/issues/3317
 _ sketch window briefly appears on top left corner when using OpenGL
 _   https://github.com/processing/processing/issues/3308
 _ Window never shows with exported application on 64-bit Linux
@@ -168,6 +165,11 @@ _   https://github.com/processing/processing/issues/3381
 
 
 graphics
+_ need to be able to call pixelDensity(2) before beginDraw()
+_   add pixelDensity() method to PImage/PGraphics
+_   pixelDensity(2) does: pixelWidth = width; width /= 2; pixelDensity = 2;
+_   this works for both PGraphics and images (though they're a little backwards)
+_   for PGraphics it comes early enough
 _ should the re-alloc of the drawing surface happen in beginDraw()
 _   that way it won't blit to the screen until we have a fresh redraw?
 _   otherwise it'll also be resizing on another thread.. badness
@@ -176,8 +178,6 @@ _ createGraphics() currently broken in Java2D
 _ size() command not working to do a resize
 _   need a programmatic way to set size
 _ deal with applySettings() change (maybe not a problem?)
-_ textAlign(RIGHT) including spaces at the end of each line
-_   https://github.com/processing/processing/issues/3028
 _ check on performance of the new EDT setup
 _ present mode is 30-40% slower than windowed
 _   w/ this example: https://github.com/processing/processing/issues/2423
