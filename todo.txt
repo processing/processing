@@ -186,6 +186,7 @@ _ improve start time by populating sketchbook/libraries on threads
 _   https://github.com/processing/processing/issues/2945
 _ longer PR about sketchbook stuff, but closed
 _   https://github.com/processing/processing/pull/3178
+_ disable the Export button if no platforms selected on Export to Application
 
 
 help me

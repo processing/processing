@@ -6,6 +6,9 @@ X show warning when display spanning is turned off with fullScreen(SPAN)
 X   defaults read com.apple.spaces spans-displays
 X   https://github.com/processing/processing/issues/3381
 X add javaPlatform variable (i.e. 7 or 8)
+X clear() seems to be broken (maybe related to 3317)
+X   https://github.com/processing/processing/issues/3378
+
 _ note that full screen and present are now different
 _   on Export to Application, this has an impact
 
@@ -90,10 +93,10 @@ _ sketch not always showing with empty draw()
 _   https://github.com/processing/processing/issues/3363
 _ PGraphic ignores PNG transparency (regression from 3.0a5)
 _   https://github.com/processing/processing/issues/3317
-_ clear() seems to be broken (maybe related to 3317)
-_   https://github.com/processing/processing/issues/3378
 _ sketch window briefly appears on top left corner when using OpenGL
 _   https://github.com/processing/processing/issues/3308
+_ Window never shows with exported application on 64-bit Linux
+_   https://github.com/processing/processing/issues/3303
 
 
 javafx

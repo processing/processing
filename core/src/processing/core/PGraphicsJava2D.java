@@ -305,7 +305,7 @@ public class PGraphicsJava2D extends PGraphics {
       int wide = width * pixelDensity;
       int high = height * pixelDensity;
 //      System.out.println("re-creating image");
-      image = gc.createCompatibleImage(wide, high);
+      image = gc.createCompatibleImage(wide, high, Transparency.TRANSLUCENT);
 //      image = gc.createCompatibleVolatileImage(wide, high);
       //image = surface.getComponent().createImage(width, height);
     }
