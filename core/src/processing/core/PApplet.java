@@ -102,25 +102,28 @@ import processing.opengl.*;
  * than working around legacy Java code.
  */
 public class PApplet implements PConstants {
-  /**
-   * Full name of the Java version (i.e. 1.5.0_11).
-   */
-  public static final String javaVersionName =
+  /** Full name of the Java version (i.e. 1.5.0_11). */
+  static public final String javaVersionName =
     System.getProperty("java.version");
+
+  /** Short name of Java version, i.e. 1.8. */
+  static public final String javaVersionShort =
+    javaVersionName.substring(0, javaVersionName.indexOf("_"));
 
   /**
    * Version of Java that's in use, whether 1.1 or 1.3 or whatever,
    * stored as a float.
    * <p>
-   * Note that because this is stored as a float, the values may
-   * not be <EM>exactly</EM> 1.3 or 1.4. Instead, make sure you're
-   * comparing against 1.3f or 1.4f, which will have the same amount
-   * of error (i.e. 1.40000001). This could just be a double, but
-   * since Processing only uses floats, it's safer for this to be a float
-   * because specifying a double with the preprocessor is awkward.
+   * Note that because this is stored as a float, the values may not be
+   * <EM>exactly</EM> 1.3 or 1.4. The PDE will make 1.8 or whatever into
+   * a float automatically, so outside the PDE, make sure you're comparing
+   * against 1.3f or 1.4f, which will have the same amount of error
+   * (i.e. 1.40000001). This could just be a double, but since Processing
+   * only uses floats, it's safer as a float because specifying a double
+   * (with this narrow case especially) with the preprocessor is awkward.
    */
   public static final float javaVersion =
-    new Float(javaVersionName.substring(0, 3)).floatValue();
+    new Float(javaVersionShort).floatValue();
 
   /**
    * Current platform in use, one of the

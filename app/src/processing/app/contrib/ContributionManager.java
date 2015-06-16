@@ -30,6 +30,7 @@ import javax.swing.SwingWorker;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Language;
+import processing.core.PApplet;
 
 
 public class ContributionManager {
@@ -176,13 +177,24 @@ public class ContributionManager {
             }
             contribZip.delete();
 
+          //} catch (NoClassDefFoundError ncdfe) {
           } catch (Exception e) {
-            // Hiding stack trace. The error message ought to suffice.
-//            e.printStackTrace();
-            status
-              .setErrorMessage(Language
-                .interpolate("contrib.errors.download_and_install",
-                             ad.getName()));
+            String msg = null;
+            if (e instanceof RuntimeException) {
+              Throwable cause = ((RuntimeException) e).getCause();
+              if (cause instanceof NoClassDefFoundError ||
+                  cause instanceof NoSuchMethodError) {
+                msg = "This item is not compatible with this version of Processing";
+              } else if (cause instanceof UnsupportedClassVersionError) {
+                msg = "This item needs to be recompiled for Java " +
+                  PApplet.javaVersionShort;
+              }
+            }
+
+            if (msg == null) {
+              msg = Language.interpolate("contrib.errors.download_and_install", ad.getName());
+            }
+            status.setErrorMessage(msg);
             downloadProgress.cancel();
             installProgress.cancel();
           }
