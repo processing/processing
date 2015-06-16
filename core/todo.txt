@@ -37,6 +37,9 @@ X   https://github.com/processing/processing/issues/3305
 
 
 beta
+_ show warning when display spanning is turned off (breaks fullScreen(SPAN)?)
+_   defaults read com.apple.spaces spans-displays
+_   https://github.com/processing/processing/issues/3381
 _ move error messages out of PConstants (into PApplet? PGraphics?) 
 _ need to be able to call pixelDensity(2) before beginDraw()
 _   add pixelDensity() method to PImage/PGraphics
@@ -138,8 +141,6 @@ _   should just be the constructor doing this, or copy()
 
 full screen
 _ present window draws in stages (OS X)
-_ show warning when display spanning is turned off
-_   defaults read com.apple.spaces spans-displays
 _ crash on startup when "Mirror Displays" selected (cantfix?)
 _   suspect that this is a specific chipset since Oracle didn't reproduce
 _   AMD Radeon HD 6770M was in the Oracle bug report
