@@ -5,6 +5,7 @@ X   https://github.com/processing/processing/issues/3347
 X show warning when display spanning is turned off with fullScreen(SPAN)
 X   defaults read com.apple.spaces spans-displays
 X   https://github.com/processing/processing/issues/3381
+X add javaPlatform variable (i.e. 7 or 8)
 _ note that full screen and present are now different
 _   on Export to Application, this has an impact
 
