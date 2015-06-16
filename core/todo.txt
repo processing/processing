@@ -1,5 +1,7 @@
 0238 (3.0b1)
 X add note about headless exceptions that points to Github
+X resize children[] so that getChildren() returns a correctly-sized array
+X   https://github.com/processing/processing/issues/3347
 
 cleaning
 o possible addition for 'implementation' variable
