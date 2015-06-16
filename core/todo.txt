@@ -1,6 +1,12 @@
 0238 (3.0b1)
 X add note about headless exceptions that points to Github
 
+cleaning
+o possible addition for 'implementation' variable
+X   http://code.google.com/p/processing/issues/detail?id=281
+X   https://github.com/processing/processing/issues/320
+X   closing as wontfix
+
 retina fixes
 X make g.pixelDensity public inside PApplet (so accessible by sketches)
 o   or is it akin to g.fill and the rest?
@@ -23,8 +29,15 @@ X   https://github.com/processing/processing/issues/1278
 X errors with loading SVGs in P3D/P2D
 X   https://github.com/processing/processing/issues/3379
 
+fixed earlier
+X sketch window is not placed at correct location when running a second time
+X   https://github.com/processing/processing/issues/3125
+X full screen needs to ignore prev location setting for frame?
+X   https://github.com/processing/processing/issues/3305
+
 
 beta
+_ move error messages out of PConstants (into PApplet? PGraphics?) 
 _ need to be able to call pixelDensity(2) before beginDraw()
 _   add pixelDensity() method to PImage/PGraphics
 _   pixelDensity(2) does: pixelWidth = width; width /= 2; pixelDensity = 2;
@@ -33,6 +46,13 @@ _   for PGraphics it comes early enough
 _ pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
 _ NPE when using image() created with createGraphics(PGraphicsRetina2D)
 _   https://github.com/processing/processing/issues/2510
+_ surface.setXxx() handling
+_   https://github.com/processing/processing/issues/3388
+_   setResizable, setVisible, setTitle
+_   setIconImage(java.awt.Image) -> take a PImage instead?
+_   removeNotify(), addNotify(), setUndecorated(boolean)
+_   setting menubar will be surface-specific
+_   setLocation(int, int) and setSize(int, int)
 _ replace sketchXxxx() methods with another mechanism?
 _   and an internal dictionary that stores them all?
 _   intParam(), stringParam() and setParam()? 
@@ -40,19 +60,13 @@ _   or sketchInt() or settingsInt()?
 _   surface.size(), surface.noSmooth()... just like PGraphics methods?
 _   make final to move folks away from these?
 _   or is this a bad move until we've sorted out Android?
+_   HashMap sucks b/c we'd have to cast everything
+_   doesn't help to have intParam() etc, too many types (5ish? OutputStream)
+_   just stick with the current setup
 _ update wiki/docs to say "don't override sketchXxxx() methods"
-
-
-high priority
+_ add the "don't use this" warning to the JFrame in PSurfaceAWT
 _ sketches with new fullScreen() method should grab focus by default
 _   https://github.com/processing/processing/issues/3380
-_ fullScreen(SPAN) not working
-_   probably need to re-query for displays each time opening prefs
-_   what happens when a screen is added after p5 has started?
-_   https://github.com/processing/processing/issues/3381
-_ clear() is broken
-_   https://github.com/processing/processing/issues/3378
-_ add the "don't use this" warning to the JFrame in PSurfaceAWT 
 _ draw() executes twice when noLoop() called in setup()
 _   https://github.com/processing/processing/issues/3310
 _   broken since 3.0a7, but not in 3.0a5
@@ -68,16 +82,6 @@ _ clear() seems to be broken (maybe related to 3317)
 _   https://github.com/processing/processing/issues/3378
 _ sketch window briefly appears on top left corner when using OpenGL
 _   https://github.com/processing/processing/issues/3308
-_ sketch window is not placed at correct location when running a second time
-_   https://github.com/processing/processing/issues/3125
-_ y-location of frame might be negative, but that might be ok 
-_   right now, on Windows it moves it on-screen (b/c of previous bug reports)
-_   may be cause of some of the display placement issues w/ multiple displays
-_   seem to recall one of the bugs mentioning stacked displays
-_   need to change to iterate through display rectangles
-_   may be related to full-screen bug filed recently
-_ closing a sketch window manually (not hitting Stop) not killing sketch
-_   at least with the Java2D renderer
 
 
 javafx
@@ -101,8 +105,9 @@ _ save() and saveFrame()
 _ get() and set()
 _ clip/noClip
 _   https://github.com/processing/processing/issues/3274
-_ getNative() is problematic because it gives back a BufferedImage
+_ getNative() in PImage problematic because it gives back a BufferedImage
 _   move loadImage() into PGraphics, with AWT version the default?
+_   or pass createImage() through to renderer?
 _ implement frameRate()
 _ implement external messages (moving the window)
 
@@ -111,10 +116,6 @@ opengl
 _ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
 _ Closing OpenGL sketch from the PDE doesn't stop java.exe process
 _   https://github.com/processing/processing/issues/2335
-_ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
-_   shouldn't be static, run it from the renderer, that's point of createXxx()
-_ public createShape() method that takes another shape as param?
-_   should just be the constructor doing this, or copy()
 _ add attrib() method
 _   https://github.com/processing/processing/issues/2963
 _   andres needs input on how the api works
@@ -129,11 +130,13 @@ _   also not API we want to expose, so sort this out
 _   or maybe we're fine b/c now FX2D needs it as well
 _ when did setPath() sneak into PShape? API is nothing like anything else
 _   probably from the material stuff, but we need to fix that
+_ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
+_   shouldn't be static, run it from the renderer, that's point of createXxx()
+_ public createShape() method that takes another shape as param?
+_   should just be the constructor doing this, or copy()
 
 
 full screen
-_ full screen needs to ignore prev location setting for frame?
-_   https://github.com/processing/processing/issues/3305
 _ present window draws in stages (OS X)
 _ show warning when display spanning is turned off
 _   defaults read com.apple.spaces spans-displays
@@ -145,6 +148,10 @@ _   https://bugs.openjdk.java.net/browse/JDK-8027391
 _   test with JG's 13" retina laptop
 _ Ubuntu Unity prevents full screen from working properly
 _   https://github.com/processing/processing/issues/3158
+_ fullScreen(SPAN) reported not working (cannot reproduce)
+X   probably need to re-query for displays each time opening prefs
+X   what happens when a screen is added after p5 has started?
+_   https://github.com/processing/processing/issues/3381
 
 
 graphics
@@ -194,6 +201,14 @@ _   https://github.com/processing/processing/issues/2428
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
+_ y-location of frame might be negative, but that might be ok 
+_   right now, on Windows it moves it on-screen (b/c of previous bug reports)
+_   may be cause of some of the display placement issues w/ multiple displays
+_   seem to recall one of the bugs mentioning stacked displays
+_   need to change to iterate through display rectangles
+_   may be related to full-screen bug filed recently
+_ closing a sketch window manually (not hitting Stop) not killing sketch
+_   at least with the Java2D renderer
 
 
 retina/hidpi
@@ -251,9 +266,6 @@ _ add options for image.save() (or saveImage?)
 _   add quality=[0,1] for jpeg images
 _   add dpi=[0,n] for for png images
 _   implemented internally, just needs the wrapper for the args
-_ possible addition for 'implementation' variable
-X   http://code.google.com/p/processing/issues/detail?id=281
-_   https://github.com/processing/processing/issues/320
 _ should map() actually constrain to the low and high values?
 _   or have an alternate version that does that? (or boolean param at end?)
 _ decide whether to keep:

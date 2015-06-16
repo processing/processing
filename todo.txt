@@ -1,11 +1,25 @@
 0238 (3.0b1)
 X Re-enable the display menu in Preferences after display added
 X   Previously, the checkbox menu stayed disabled (though it updated the list)
+X sketch.isReadOnly returns false for examples coming from multiple modes
+o   http://code.google.com/p/processing/issues/detail?id=734
+X   https://github.com/processing/processing/issues/773
 
 gsoc
 X Mode problems window wasn't doing line breaks
 X   https://github.com/processing/processing/issues/3369
 X   https://github.com/processing/processing/pull/3370
+
+fixed earlier
+X dim edit menus as appropriate during selection/no selection/etc
+o   http://code.google.com/p/processing/issues/detail?id=14
+X   https://github.com/processing/processing/issues/53
+
+cleaning
+o libraries in java tabs (separate .java files) are reported missing
+o   need to scan the .java files for imports that need to be included
+o   http://code.google.com/p/processing/issues/detail?id=459
+X   https://github.com/processing/processing/issues/498
 
 "OS X v10.11 is the last major release of OS X that will support the previously deprecated Java 6 runtime and tools provided by Apple. Applications or features that depend upon Java 6 may not function properly or will not launch when Java 6 is removed." https://developer.apple.com/library/prerelease/mac/releasenotes/General/rn-osx-10.11/index.html
 
@@ -531,8 +545,6 @@ _ option to just print all code in project
 _   http://code.google.com/p/processing/issues/detail?id=11
 _   https://github.com/processing/processing/issues/50
 _   or option to export all the code as colored html?
-_ dim edit menus as appropriate during selection/no selection/etc
-_   http://code.google.com/p/processing/issues/detail?id=14
 _ implement better method of showing curly brace closure
 _   http://code.google.com/p/processing/issues/detail?id=55
 _ sketches should only write to the console of their editor window
@@ -615,8 +627,6 @@ _   though will that require the sketch to be saved before export?
 _   https://github.com/processing/processing/issues/2459
 _ examples window sketches should load in proper environment
 _ write build.xml file to automatically update the examples
-_ sketch.isReadOnly returns false for examples coming from multiple modes
-_   http://code.google.com/p/processing/issues/detail?id=734
 _ see how library installation goes, then possibly do same w/ examples
 
 
@@ -653,9 +663,6 @@ _   but it won't reload the library mapping table
 _ make sure there aren't library jar files named the same thing 
 _   i.e. if one library has db.jar, then that's gonna kill another db.jar
 _   when the files are copied over
-_ libraries in java tabs (separate .java files) are reported missing
-_   need to scan the .java files for imports that need to be included
-_   http://code.google.com/p/processing/issues/detail?id=459
 _ library.properties and tool.properties should reflect supported modes
 _   http://code.google.com/p/processing/issues/detail?id=1050
 _ versioning info 
