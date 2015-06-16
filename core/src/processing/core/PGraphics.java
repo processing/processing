@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-14 The Processing Foundation
+  Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -445,6 +445,9 @@ public class PGraphics extends PImage implements PConstants {
   /** The current text leading (read-only) */
   public float textLeading;
 
+  static final protected String ERROR_TEXTFONT_NULL_PFONT =
+    "A null PFont was passed to textFont()";
+
   // ........................................................
 
   // Material properties
@@ -483,6 +486,11 @@ public class PGraphics extends PImage implements PConstants {
   protected float backgroundR, backgroundG, backgroundB, backgroundA;
   protected int backgroundRi, backgroundGi, backgroundBi, backgroundAi;
 
+  static final protected String ERROR_BACKGROUND_IMAGE_SIZE =
+    "background image must be the same size as your application";
+  static final protected String ERROR_BACKGROUND_IMAGE_FORMAT =
+    "background images should be RGB or ARGB";
+
 
   /** The current blending mode. */
   protected int blendMode;
@@ -506,6 +514,12 @@ public class PGraphics extends PImage implements PConstants {
 //  int matrixStackDepth;
 
   static final int MATRIX_STACK_DEPTH = 32;
+
+  static final protected String ERROR_PUSHMATRIX_OVERFLOW =
+    "Too many calls to pushMatrix().";
+  static final protected String ERROR_PUSHMATRIX_UNDERFLOW =
+    "Too many calls to popMatrix(), and not enough to pushMatrix().";
+
 
   // ........................................................
 

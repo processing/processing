@@ -515,19 +515,4 @@ public interface PConstants {
   static final int DISABLE_STROKE_PURE        = -9;
 
   static final int HINT_COUNT                 = 10;
-
-  // error messages
-
-  static final String ERROR_BACKGROUND_IMAGE_SIZE =
-    "background image must be the same size as your application";
-  static final String ERROR_BACKGROUND_IMAGE_FORMAT =
-    "background images should be RGB or ARGB";
-
-  static final String ERROR_TEXTFONT_NULL_PFONT =
-    "A null PFont was passed to textFont()";
-
-  static final String ERROR_PUSHMATRIX_OVERFLOW =
-    "Too many calls to pushMatrix().";
-  static final String ERROR_PUSHMATRIX_UNDERFLOW =
-    "Too many calls to popMatrix(), and not enough to pushMatrix().";
 }

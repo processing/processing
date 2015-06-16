@@ -8,6 +8,7 @@ X   https://github.com/processing/processing/issues/3381
 X add javaPlatform variable (i.e. 7 or 8)
 X clear() seems to be broken (maybe related to 3317)
 X   https://github.com/processing/processing/issues/3378
+X move error messages out of PConstants (into PApplet? PGraphics?) 
 
 _ note that full screen and present are now different
 _   on Export to Application, this has an impact
@@ -48,7 +49,6 @@ X   https://github.com/processing/processing/issues/3305
 
 
 beta
-_ move error messages out of PConstants (into PApplet? PGraphics?) 
 _ need to be able to call pixelDensity(2) before beginDraw()
 _   add pixelDensity() method to PImage/PGraphics
 _   pixelDensity(2) does: pixelWidth = width; width /= 2; pixelDensity = 2;
