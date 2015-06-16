@@ -2,6 +2,9 @@
 X add note about headless exceptions that points to Github
 X resize children[] so that getChildren() returns a correctly-sized array
 X   https://github.com/processing/processing/issues/3347
+X show warning when display spanning is turned off with fullScreen(SPAN)
+X   defaults read com.apple.spaces spans-displays
+X   https://github.com/processing/processing/issues/3381
 
 cleaning
 o possible addition for 'implementation' variable
@@ -39,9 +42,6 @@ X   https://github.com/processing/processing/issues/3305
 
 
 beta
-_ show warning when display spanning is turned off (breaks fullScreen(SPAN)?)
-_   defaults read com.apple.spaces spans-displays
-_   https://github.com/processing/processing/issues/3381
 _ move error messages out of PConstants (into PApplet? PGraphics?) 
 _ need to be able to call pixelDensity(2) before beginDraw()
 _   add pixelDensity() method to PImage/PGraphics

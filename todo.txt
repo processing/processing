@@ -8,6 +8,7 @@ X Drag and Drop & "Add File" broken for .pde files in 3.0a10
 X   https://github.com/processing/processing/issues/3383
 X Show "not compatible" error message in the manager
 X   https://github.com/processing/processing/issues/3386
+X Add more code for handling low-level errors on startup
 
 gsoc
 X Mode problems window wasn't doing line breaks
