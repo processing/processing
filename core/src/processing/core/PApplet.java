@@ -44,11 +44,11 @@ import java.awt.image.BufferedImage;
 
 
 
+
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-
 import javax.swing.JOptionPane;
 // used by desktopFile() method
 import javax.swing.filechooser.FileSystemView;
@@ -109,12 +109,22 @@ public class PApplet implements PConstants {
   static public final String javaVersionName =
     System.getProperty("java.version");
 
-  /** Short name of Java version, i.e. 1.8. */
-  static public final String javaVersionShort =
-    //javaVersionName.substring(0, 3);
-    javaVersionName.substring(0, javaVersionName.indexOf(".", 2));
-    // can't use this one, it's 1.8.0 and breaks things
-    //javaVersionName.substring(0, javaVersionName.indexOf("_"));
+//  /** Short name of Java version, i.e. 1.8. */
+//  static public final String javaVersionShort =
+//    //javaVersionName.substring(0, 3);
+//    javaVersionName.substring(0, javaVersionName.indexOf(".", 2));
+//    // can't use this one, it's 1.8.0 and breaks things
+//    //javaVersionName.substring(0, javaVersionName.indexOf("_"));
+
+  static public final int javaPlatform =
+    PApplet.parseInt(PApplet.split(javaVersionName, '.')[1]);
+//  static {
+//    try {
+//      javaPlatform = PApplet.split(javaVersionName, '.')[1];
+//    } catch (Exception e) {
+//      javaPlatform = "8";  // set a default in case
+//    }
+//  }
 
   /**
    * Version of Java that's in use, whether 1.1 or 1.3 or whatever,
@@ -127,9 +137,17 @@ public class PApplet implements PConstants {
    * (i.e. 1.40000001). This could just be a double, but since Processing
    * only uses floats, it's safer as a float because specifying a double
    * (with this narrow case especially) with the preprocessor is awkward.
+   * <p>
+   * @deprecated Java 10 is around the corner. Use javaPlatform when you need
+   * a number for comparisons, i.e. "if (javaPlatform >= 7)".
    */
+  @Deprecated
   public static final float javaVersion =
-    new Float(javaVersionShort).floatValue();
+    new Float(javaVersionName.substring(0, 3));
+//  public static final float javaVersion =
+//    new Float(javaVersionName.substring(0, javaVersionName.indexOf(".", 2))).floatValue();
+//  // Making this a String in 3.0, in anticipation of Java 10
+//  public static final String javaVersion = "1." + javaPlatform;
 
   /**
    * Current platform in use, one of the

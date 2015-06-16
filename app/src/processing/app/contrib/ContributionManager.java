@@ -187,7 +187,7 @@ public class ContributionManager {
                 msg = "This item is not compatible with this version of Processing";
               } else if (cause instanceof UnsupportedClassVersionError) {
                 msg = "This item needs to be recompiled for Java " +
-                  PApplet.javaVersionShort;
+                  PApplet.javaPlatform;
               }
             }
 
