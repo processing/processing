@@ -148,7 +148,13 @@ public class Base {
   static public void main(final String[] args) {
     EventQueue.invokeLater(new Runnable() {
         public void run() {
-          createAndShowGUI(args);
+          try {
+            createAndShowGUI(args);
+          } catch (Exception e) {
+            showBadnessTrace("It was not meant to be",
+                             "A serious problem happened during startup. Please report:\n" +
+                             "http://github.com/processing/processing/issues/new", e, true);
+          }
         }
     });
   }
