@@ -743,7 +743,7 @@ public class JavaEditor extends Editor {
     showStopButton.setEnabled(Preferences.getBoolean("export.application.present"));
     showStopButton.setBorder(new EmptyBorder(3, 13 + indent, 6, 13));
 
-    final JCheckBox presentButton = new JCheckBox(Language.text("export.options.fullscreen"));
+    final JCheckBox presentButton = new JCheckBox(Language.text("export.options.present"));
     presentButton.setSelected(Preferences.getBoolean("export.application.present"));
     presentButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
