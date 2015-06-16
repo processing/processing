@@ -833,7 +833,8 @@ public class JavaEditor extends Editor {
 //      "<html><body><font size=2>" +
       "Embedding Java will make the " + platformName + " application " +
       "larger, but it will be far more likely to work. " +
-      "Users on other platforms will need to <a href=\"\">install Java 7</a>.";
+      "Users on other platforms will need to " +
+      "<a href=\"\">install Java " + PApplet.javaVersionShort + "</a>.";
     final String nopeWarning =
       "<html><div width=\"" + divWidth + "\"><font size=\"2\">" +
 //      "<html><body><font size=2>" +
