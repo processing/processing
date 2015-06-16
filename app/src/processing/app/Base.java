@@ -150,10 +150,10 @@ public class Base {
         public void run() {
           try {
             createAndShowGUI(args);
-          } catch (Exception e) {
+          } catch (Throwable t) {
             showBadnessTrace("It was not meant to be",
                              "A serious problem happened during startup. Please report:\n" +
-                             "http://github.com/processing/processing/issues/new", e, true);
+                             "http://github.com/processing/processing/issues/new", t, true);
           }
         }
     });
