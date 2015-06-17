@@ -95,11 +95,11 @@ public interface PSurface {
 
   //public Component getComponent();
 
-  /**
-   * Sometimes smoothing must be set at the drawing surface level
-   * not just inside the renderer itself.
-   */
-  public void setSmooth(int level);
+//  /**
+//   * Sometimes smoothing must be set at the drawing surface level
+//   * not just inside the renderer itself.
+//   */
+//  public void setSmooth(int level);
 
   public void setFrameRate(float fps);
 
