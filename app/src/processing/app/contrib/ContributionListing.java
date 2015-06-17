@@ -396,6 +396,9 @@ public class ContributionListing {
     new Thread(new Runnable() {
       public void run() {
         downloadingListingLock.lock();
+//        if(hasDownloadedLatestList == true){
+//          return;
+//        }
 
         URL url = null;
         try {
