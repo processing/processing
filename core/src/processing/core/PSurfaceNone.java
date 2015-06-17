@@ -236,7 +236,8 @@ public class PSurfaceNone implements PSurface {
       super("Animation Thread");
     }
 
-    public void render() {
+    // broken out so it can be overridden by Danger et al
+    public void callDraw() {
       sketch.handleDraw();
     }
 
@@ -291,7 +292,9 @@ public class PSurfaceNone implements PSurface {
 //        try {
 //          EventQueue.invokeAndWait(new Runnable() {
 //            public void run() {
-        render();
+//        System.out.println("calling draw, finished = " + sketch.finished);
+        //System.out.println("calling draw, looping = " + sketch.looping + ", frameCount = " + sketch.frameCount);
+        callDraw();
 
 //        EventQueue.invokeLater(new Runnable() {
 //          public void run() {

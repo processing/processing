@@ -49,7 +49,7 @@ public class PSurfaceAWT extends PSurfaceNone {
   Rectangle screenRect;
 
   // 3.0a5 didn't use strategy, and active was shut off during init() w/ retina
-  boolean useStrategy = true;
+//  boolean useStrategy = true;
 
 //  Canvas canvas;
   Component canvas;
@@ -85,9 +85,9 @@ public class PSurfaceAWT extends PSurfaceNone {
 //      useStrategy = false;
     }
     canvas = new SmoothCanvas();
-    if (useStrategy) {
-      canvas.setIgnoreRepaint(true);
-    }
+//    if (useStrategy) {
+    canvas.setIgnoreRepaint(true);
+//    }
 
     // Pass tab key to the sketch, rather than moving between components
     canvas.setFocusTraversalKeysEnabled(false);
@@ -191,22 +191,21 @@ public class PSurfaceAWT extends PSurfaceNone {
     @Override
     public void paint(Graphics screen) {
 //      System.out.println("painting");
-//    validate();
-      if (useStrategy) {
-        render();
+//      if (useStrategy) {
+      render();
 
-      } else {
-//        new Exception("painting").printStackTrace(System.out);
-//        if (graphics.image != null) { // && !sketch.insideDraw) {
-        if (onscreen != null) {
-//          synchronized (graphics.image) {
-          // Needs the width/height to be set so that retina images are properly scaled down
-//          screen.drawImage(graphics.image, 0, 0, sketchWidth, sketchHeight, null);
-          synchronized (offscreenLock) {
-            screen.drawImage(onscreen, 0, 0, sketchWidth, sketchHeight, null);
-          }
-        }
-      }
+//      } else {
+////        new Exception("painting").printStackTrace(System.out);
+////        if (graphics.image != null) { // && !sketch.insideDraw) {
+//        if (onscreen != null) {
+////          synchronized (graphics.image) {
+//          // Needs the width/height to be set so that retina images are properly scaled down
+////          screen.drawImage(graphics.image, 0, 0, sketchWidth, sketchHeight, null);
+//          synchronized (offscreenLock) {
+//            screen.drawImage(onscreen, 0, 0, sketchWidth, sketchHeight, null);
+//          }
+//        }
+//      }
     }
   }
 
@@ -313,12 +312,12 @@ public class PSurfaceAWT extends PSurfaceNone {
   }
 
 
-  Object offscreenLock = new Object();
-  BufferedImage offscreen;
-  BufferedImage onscreen;
-//  Graphics off;
+//  Object offscreenLock = new Object();
+//  BufferedImage offscreen;
+//  BufferedImage onscreen;
 
 
+  /*
   protected void blit() {
     // Other folks that call render() (i.e. paint()) are already on the EDT.
     // We need to be using the EDT since we're messing with the Canvas
@@ -360,6 +359,7 @@ public class PSurfaceAWT extends PSurfaceNone {
       }
     }
   }
+  */
 
 
   // what needs to happen here?
@@ -1372,9 +1372,10 @@ public class PSurfaceAWT extends PSurfaceNone {
   public Thread createThread() {
     return new AnimationThread() {
       @Override
-      public void render() {
+      public void callDraw() {
         sketch.handleDraw();
-        blit();
+        //blit();
+        render();
       }
     };
   }

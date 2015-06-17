@@ -67,7 +67,7 @@ public interface PConstants {
   static final String OPENGL = P3D;
 
   // Experimental, higher-performance Java 2D renderer (but no pixel ops)
-  static final String E2D = PGraphicsDanger2D.class.getName();
+//  static final String E2D = PGraphicsDanger2D.class.getName();
 
   // Experimental JavaFX renderer; even better 2D performance
   static final String FX2D = PGraphicsFX2D.class.getName();
