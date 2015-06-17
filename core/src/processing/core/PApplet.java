@@ -2269,105 +2269,109 @@ public class PApplet implements PConstants {
 
   public void handleDraw() {
     //debug("handleDraw() " + g + " " + looping + " " + redraw + " valid:" + this.isValid() + " visible:" + this.isVisible());
-    if (canDraw()) {
-      if (!g.canDraw()) {
-        debug("g.canDraw() is false");
-        // Don't draw if the renderer is not yet ready.
-        // (e.g. OpenGL has to wait for a peer to be on screen)
-        return;
-      }
 
-      // Store the quality setting in case it's changed during draw and the
-      // drawing context needs to be re-built before the next frame.
-      int pquality = g.smooth;
+    // canDraw = g != null && (looping || redraw);
+    if (g == null) return;
+    if (!looping && !redraw) return;
+    //System.out.println("looping/redraw = " + looping + " " + redraw);
 
-      if (insideDraw) {
-        System.err.println("handleDraw() called before finishing");
-        System.exit(1);
-      }
+    if (!g.canDraw()) {
+      debug("g.canDraw() is false");
+      // Don't draw if the renderer is not yet ready.
+      // (e.g. OpenGL has to wait for a peer to be on screen)
+      return;
+    }
 
-      insideDraw = true;
-      g.beginDraw();
-      if (recorder != null) {
-        recorder.beginDraw();
-      }
+    // Store the quality setting in case it's changed during draw and the
+    // drawing context needs to be re-built before the next frame.
+//    int pquality = g.smooth;
 
-      long now = System.nanoTime();
+    if (insideDraw) {
+      System.err.println("handleDraw() called before finishing");
+      System.exit(1);
+    }
 
-      if (frameCount == 0) {
+    insideDraw = true;
+    g.beginDraw();
+    if (recorder != null) {
+      recorder.beginDraw();
+    }
+
+    long now = System.nanoTime();
+
+    if (frameCount == 0) {
         // 3.0a5 should be no longer needed; handled by PSurface
         //surface.checkDisplaySize();
 
 //        try {
         //println("Calling setup()");
-        setup();
+      setup();
         //println("Done with setup()");
 
 //        } catch (RendererChangeException e) {
 //          // Give up, instead set the new renderer and re-attempt setup()
 //          return;
 //        }
-        defaultSize = false;
+      defaultSize = false;
 
-      } else {  // frameCount > 0, meaning an actual draw()
-        // update the current frameRate
-        double rate = 1000000.0 / ((now - frameRateLastNanos) / 1000000.0);
-        float instantaneousRate = (float) rate / 1000.0f;
-        frameRate = (frameRate * 0.9f) + (instantaneousRate * 0.1f);
-
-        if (frameCount != 0) {
-          handleMethods("pre");
-        }
-
-        // use dmouseX/Y as previous mouse pos, since this is the
-        // last position the mouse was in during the previous draw.
-        pmouseX = dmouseX;
-        pmouseY = dmouseY;
-
-        //println("Calling draw()");
-        draw();
-        //println("Done calling draw()");
-
-        // dmouseX/Y is updated only once per frame (unlike emouseX/Y)
-        dmouseX = mouseX;
-        dmouseY = mouseY;
-
-        // these are called *after* loop so that valid
-        // drawing commands can be run inside them. it can't
-        // be before, since a call to background() would wipe
-        // out anything that had been drawn so far.
-        dequeueEvents();
-
-        handleMethods("draw");
-
-        redraw = false;  // unset 'redraw' flag in case it was set
-        // (only do this once draw() has run, not just setup())
-      }
-      g.endDraw();
-
-      if (pquality != g.smooth) {
-        surface.setSmooth(g.smooth);
-      }
-
-      if (recorder != null) {
-        recorder.endDraw();
-      }
-      insideDraw = false;
+    } else {  // frameCount > 0, meaning an actual draw()
+      // update the current frameRate
+      double rate = 1000000.0 / ((now - frameRateLastNanos) / 1000000.0);
+      float instantaneousRate = (float) (rate / 1000.0);
+      frameRate = (frameRate * 0.9f) + (instantaneousRate * 0.1f);
 
       if (frameCount != 0) {
-        handleMethods("post");
+        handleMethods("pre");
       }
 
-      frameRateLastNanos = now;
-      frameCount++;
+      // use dmouseX/Y as previous mouse pos, since this is the
+      // last position the mouse was in during the previous draw.
+      pmouseX = dmouseX;
+      pmouseY = dmouseY;
+
+        //println("Calling draw()");
+      draw();
+        //println("Done calling draw()");
+
+      // dmouseX/Y is updated only once per frame (unlike emouseX/Y)
+      dmouseX = mouseX;
+      dmouseY = mouseY;
+
+      // these are called *after* loop so that valid
+      // drawing commands can be run inside them. it can't
+      // be before, since a call to background() would wipe
+      // out anything that had been drawn so far.
+      dequeueEvents();
+
+      handleMethods("draw");
+
+      redraw = false;  // unset 'redraw' flag in case it was set
+      // (only do this once draw() has run, not just setup())
     }
+    g.endDraw();
+
+//    if (pquality != g.smooth) {
+//      surface.setSmooth(g.smooth);
+//    }
+
+    if (recorder != null) {
+      recorder.endDraw();
+    }
+    insideDraw = false;
+
+    if (frameCount != 0) {
+      handleMethods("post");
+    }
+
+    frameRateLastNanos = now;
+    frameCount++;
   }
 
 
-  /** Not official API, not guaranteed to work in the future. */
-  public boolean canDraw() {
-    return g != null && (looping || redraw);
-  }
+//  /** Not official API, not guaranteed to work in the future. */
+//  public boolean canDraw() {
+//    return g != null && (looping || redraw);
+//  }
 
 
   //////////////////////////////////////////////////////////////
