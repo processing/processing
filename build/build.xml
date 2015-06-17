@@ -668,7 +668,7 @@
   
   <target name="linux-clean" depends="subprojects-clean" description="Clean linux version">
     <delete dir="linux/work" />
-    <delete dir="linux/processing-3*tgz" />
+    <delete file="linux/processing-3*tgz" />
   </target>
   
   <target name="linux-check-os" unless="linux">
@@ -914,7 +914,7 @@
   <target name="windows-clean" depends="subprojects-clean"
           description="Clean windows version">
     <delete dir="windows/work" />
-    <delete dir="windows/processing-3*zip" />
+    <delete file="windows/processing-3*zip" />
   </target>
   
   <target name="windows-check-os" unless="windows">
