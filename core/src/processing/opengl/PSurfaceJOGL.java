@@ -160,13 +160,13 @@ public class PSurfaceJOGL implements PSurface {
   protected void initGL() {
 //  System.out.println("*******************************");
     if (profile == null) {
-      if (PJOGL.PROFILE == 2) {
+      if (PJOGL.profile == 2) {
         try {
           profile = GLProfile.getGL2ES1();
         } catch (GLException ex) {
           profile = GLProfile.getMaxFixedFunc(true);
         }
-      } else if (PJOGL.PROFILE == 3) {
+      } else if (PJOGL.profile == 3) {
         try {
           profile = GLProfile.getGL2GL3();
         } catch (GLException ex) {
@@ -175,7 +175,7 @@ public class PSurfaceJOGL implements PSurface {
         if (!profile.isGL3()) {
           PGraphics.showWarning("Requested profile GL3 but is not available, got: " + profile);
         }
-      } else if (PJOGL.PROFILE == 4) {
+      } else if (PJOGL.profile == 4) {
         try {
           profile = GLProfile.getGL4ES3();
         } catch (GLException ex) {
