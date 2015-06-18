@@ -3292,6 +3292,9 @@ public class PApplet implements PConstants {
   }
 
 
+  static String openLauncher;
+
+
   /**
    * ( begin auto-generated from launch.xml )
    *
@@ -3310,7 +3313,8 @@ public class PApplet implements PConstants {
    * <br/> <br/>
    * If args is a String (not an array), then it can only be a single file or
    * application with no parameters. It's not the same as executing that
-   * String using a shell. For instance, open("jikes -help") will not work properly.
+   * String using a shell. For instance, launch("javac -help") will not work
+   * properly.
    * <br/> <br/>
    * This function behaves differently on each platform. On Windows, the
    * parameters are sent to the Windows shell via "cmd /c". On Mac OS X, the
@@ -3328,21 +3332,6 @@ public class PApplet implements PConstants {
    * @webref input:files
    * @param filename name of the file
    * @usage Application
-   */
-  static public void launch(String filename) {
-    launch(filename);
-  }
-
-
-  static String openLauncher;
-
-  /**
-   * Launch a process using the platform's shell. This version uses an array
-   * to make it easier to deal with spaces in the individual elements.
-   * (This avoids the situation of trying to put single or double quotes
-   * around different bits).
-   *
-   * @param args list of commands passed to the command line
    */
   static public Process launch(String... args) {
     String[] params = null;

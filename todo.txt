@@ -10,10 +10,16 @@ X Show "not compatible" error message in the manager
 X   https://github.com/processing/processing/issues/3386
 X Add more code for handling low-level errors on startup
 
+contribs
+X Use correct localized strings in JavaEditor.java
+X   https://github.com/processing/processing/pull/3376
+
 gsoc
 X Mode problems window wasn't doing line breaks
 X   https://github.com/processing/processing/issues/3369
 X   https://github.com/processing/processing/pull/3370
+X Add missing internationalization in app/Sketch.java
+X   https://github.com/processing/processing/pull/3392
 
 fixed earlier
 X dim edit menus as appropriate during selection/no selection/etc
@@ -76,8 +82,8 @@ _   otherwise could run in one mode, then try to stop in another
 
 
 pde/build
-_ need to show error message instead of exceptions when loading Android Mode
-_   https://github.com/processing/processing/issues/3386
+_ error message caused by curly bracket in a println string
+_   https://github.com/processing/processing/issues/3394
 _ when variables used in size(), getting exceptions instead of any warning
 _   https://github.com/processing/processing/issues/3311
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
@@ -160,6 +166,7 @@ _ don't allow users to create 'blah.java' when 'blah.pde' already in sketch
 
 
 3.0 beta/final
+_ wonder if "Save As" is causing the problems with auto-reload
 _ look at the sound library https://github.com/wirsing/ProcessingSound
 _   sound is not yet supported on Windows
 _ clean out the repo

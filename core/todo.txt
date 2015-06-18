@@ -22,6 +22,7 @@ o   or is this a bad move until we've sorted out Android?
 X   HashMap sucks b/c we'd have to cast everything
 X   doesn't help to have intParam() etc, too many types (5ish? OutputStream)
 X   just stick with the current setup
+X remove launch(String) since it was calling itself, and anachronistic
 
 cleaning
 o possible addition for 'implementation' variable
@@ -60,6 +61,7 @@ X save() and saveFrame() with 2X renderers fails
 X   https://github.com/processing/processing/issues/3255
 X NPE when using image() created with createGraphics(PGraphicsRetina2D)
 X   https://github.com/processing/processing/issues/2510
+
 
 docs
 _ note that full screen and present are now different
