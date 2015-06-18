@@ -141,10 +141,8 @@ public class PSurfaceNone implements PSurface {
 
   }
 
-  void requestFocus() {
-    // TODO Auto-generated method stub
-
-  }
+//  void requestFocus() {
+//  }
 
 //  public void blit() {
 //    // TODO Auto-generated method stub
@@ -298,9 +296,9 @@ public class PSurfaceNone implements PSurface {
 
 //        EventQueue.invokeLater(new Runnable() {
 //          public void run() {
-        if (sketch.frameCount == 1) {
-          requestFocus();
-        }
+//        if (sketch.frameCount == 1) {
+//          requestFocus();
+//        }
 //          }
 //        });
 

@@ -26,7 +26,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
-import java.lang.reflect.*;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -64,6 +63,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     //this.graphics = graphics;
     super(graphics);
 
+    /*
     if (checkRetina()) {
 //      System.out.println("retina in use");
 
@@ -84,6 +84,7 @@ public class PSurfaceAWT extends PSurfaceNone {
       // flicker--pushing pixels out before the screen has finished rendering.
 //      useStrategy = false;
     }
+    */
     canvas = new SmoothCanvas();
 //    if (useStrategy) {
     canvas.setIgnoreRepaint(true);
@@ -104,36 +105,40 @@ public class PSurfaceAWT extends PSurfaceNone {
   }
 
 
-  /**
-   * Handle grabbing the focus on startup. Other renderers can override this
-   * if handling needs to be different. For the AWT, the request is invoked
-   * later on the EDT. Other implementations may not require that, so the
-   * invokeLater() happens in here rather than requiring the caller to wrap it.
-   */
-  @Override
-  void requestFocus() {
-    // for 2.0a6, moving this request to the EDT
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        // Call the request focus event once the image is sure to be on
-        // screen and the component is valid. The OpenGL renderer will
-        // request focus for its canvas inside beginDraw().
-        // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
-        // Disabling for 0185, because it causes an assertion failure on OS X
-        // http://code.google.com/p/processing/issues/detail?id=258
-        //        requestFocus();
-
-        // Changing to this version for 0187
-        // http://code.google.com/p/processing/issues/detail?id=279
-        //requestFocusInWindow();
-
-        // For 3.0, just call this directly on the Canvas object
-        if (canvas != null) {
-          canvas.requestFocusInWindow();
-        }
-      }
-    });
-  }
+//  /**
+//   * Handle grabbing the focus on startup. Other renderers can override this
+//   * if handling needs to be different. For the AWT, the request is invoked
+//   * later on the EDT. Other implementations may not require that, so the
+//   * invokeLater() happens in here rather than requiring the caller to wrap it.
+//   */
+//  @Override
+//  void requestFocus() {
+////    System.out.println("requesFocus() outer " + EventQueue.isDispatchThread());
+//    // for 2.0a6, moving this request to the EDT
+//    EventQueue.invokeLater(new Runnable() {
+//      public void run() {
+//        // Call the request focus event once the image is sure to be on
+//        // screen and the component is valid. The OpenGL renderer will
+//        // request focus for its canvas inside beginDraw().
+//        // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
+//        // Disabling for 0185, because it causes an assertion failure on OS X
+//        // http://code.google.com/p/processing/issues/detail?id=258
+//        //        requestFocus();
+//
+//        // Changing to this version for 0187
+//        // http://code.google.com/p/processing/issues/detail?id=279
+//        //requestFocusInWindow();
+//
+//        // For 3.0, just call this directly on the Canvas object
+//        if (canvas != null) {
+//          //System.out.println("requesting focus " + EventQueue.isDispatchThread());
+//          //System.out.println("requesting focus " + frame.isVisible());
+//          //canvas.requestFocusInWindow();
+//          canvas.requestFocus();
+//        }
+//      }
+//    });
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -749,6 +754,12 @@ public class PSurfaceAWT extends PSurfaceNone {
     // If displayable() is false, then PSurfaceNone should be used, but...
     if (sketch.getGraphics().displayable()) {
       frame.setVisible(true);
+      System.out.println("setting visible on EDT? " + EventQueue.isDispatchThread());
+      //requestFocus();
+      if (canvas != null) {
+        //canvas.requestFocusInWindow();
+        canvas.requestFocus();
+      }
     }
   }
 
@@ -827,6 +838,7 @@ public class PSurfaceAWT extends PSurfaceNone {
   }
 
 
+  /*
   private boolean checkRetina() {
     if (PApplet.platform == PConstants.MACOSX) {
       // This should probably be reset each time there's a display change.
@@ -852,6 +864,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     }
     return false;
   }
+  */
 
 
   /** Get the bounds rectangle for all displays. */
@@ -1262,11 +1275,13 @@ public class PSurfaceAWT extends PSurfaceNone {
     canvas.addFocusListener(new FocusListener() {
 
       public void focusGained(FocusEvent e) {
+        System.out.println(e);
         sketch.focused = true;
         sketch.focusGained();
       }
 
       public void focusLost(FocusEvent e) {
+        System.out.println(e);
         sketch.focused = false;
         sketch.focusLost();
       }

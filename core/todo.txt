@@ -23,6 +23,10 @@ X   HashMap sucks b/c we'd have to cast everything
 X   doesn't help to have intParam() etc, too many types (5ish? OutputStream)
 X   just stick with the current setup
 X remove launch(String) since it was calling itself, and anachronistic
+X sketches with new fullScreen() method should grab focus by default
+X   https://github.com/processing/processing/issues/3380
+X sketches not getting focus with Java2D
+X   https://github.com/processing/processing/issues/3389
 
 cleaning
 o possible addition for 'implementation' variable
@@ -51,6 +55,8 @@ X ortho function is broken
 X   https://github.com/processing/processing/issues/1278
 X errors with loading SVGs in P3D/P2D
 X   https://github.com/processing/processing/issues/3379
+X sketch window briefly appears on top left corner when using OpenGL
+X   https://github.com/processing/processing/issues/3308
 
 fixed earlier
 X sketch window is not placed at correct location when running a second time
@@ -61,6 +67,8 @@ X save() and saveFrame() with 2X renderers fails
 X   https://github.com/processing/processing/issues/3255
 X NPE when using image() created with createGraphics(PGraphicsRetina2D)
 X   https://github.com/processing/processing/issues/2510
+X Closing OpenGL sketch from the PDE doesn't stop java.exe process
+X   https://github.com/processing/processing/issues/2335
 
 
 docs
@@ -79,10 +87,6 @@ _   removeNotify(), addNotify(), setUndecorated(boolean)
 _   setting menubar will be surface-specific
 _   setLocation(int, int) and setSize(int, int)
 _ add the "don't use this" warning to the JFrame in PSurfaceAWT
-_ sketches with new fullScreen() method should grab focus by default
-_   https://github.com/processing/processing/issues/3380
-_ sketches not getting focus with Java2D
-_   https://github.com/processing/processing/issues/3389
 _ draw() executes twice when noLoop() called in setup()
 _   https://github.com/processing/processing/issues/3310
 _   broken since 3.0a7, but not in 3.0a5
@@ -92,8 +96,6 @@ _ sketch sometimes doesn't show with noLoop() on Linux
 _   https://github.com/processing/processing/issues/3316
 _ sketch not always showing with empty draw()
 _   https://github.com/processing/processing/issues/3363
-_ sketch window briefly appears on top left corner when using OpenGL
-_   https://github.com/processing/processing/issues/3308
 _ Window never shows with exported application on 64-bit Linux
 _   https://github.com/processing/processing/issues/3303
 
@@ -128,8 +130,6 @@ _ implement external messages (moving the window)
 
 opengl
 _ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
-_ Closing OpenGL sketch from the PDE doesn't stop java.exe process
-_   https://github.com/processing/processing/issues/2335
 _ add attrib() method
 _   https://github.com/processing/processing/issues/2963
 _   andres needs input on how the api works
@@ -139,6 +139,8 @@ _   https://github.com/processing/processing/issues/3339
 
 
 opengl questions
+_ issues with how JOGL handles window layout/sizing
+_   https://github.com/processing/processing/issues/3401
 _ exitCalled() and exitActual made public by Andres, breaks Python
 _   also not API we want to expose, so sort this out
 _   or maybe we're fine b/c now FX2D needs it as well
