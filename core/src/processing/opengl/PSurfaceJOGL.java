@@ -67,6 +67,8 @@ public class PSurfaceJOGL implements PSurface {
   Object waitObject = new Object();
 
   NewtCanvasAWT canvas;
+  boolean placedWindow = false;
+  boolean requestedStart = false;
 
   float[] currentPixelScale = {0, 0};
 
@@ -106,7 +108,6 @@ public class PSurfaceJOGL implements PSurface {
     initWindow();
     initListeners();
     initAnimator();
-    window.setVisible(true);
   }
 
 
@@ -270,6 +271,7 @@ public class PSurfaceJOGL implements PSurface {
     if (fullScreen) {
       PApplet.hideMenuBar();
       window.setTopLevelPosition(sketchX, sketchY);
+      placedWindow = true;
       if (spanDisplays) {
         window.setFullscreen(monitors);
       } else {
@@ -350,29 +352,8 @@ public class PSurfaceJOGL implements PSurface {
 
   }
 
-  private void setFrameCentered() {
-    // Can't use frame.setLocationRelativeTo(null) because it sends the
-    // frame to the main display, which undermines the --display setting.
-    int sketchX = displayDevice.getViewportInWindowUnits().getX();
-    int sketchY = displayDevice.getViewportInWindowUnits().getY();
-//    System.err.println("just center on the screen at " + sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2 + ", " +
-//                                                         sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
-//
-//    System.err.println("  Display starts at " +  sketchX + ", " + sketchY);
-//    System.err.println("  Screen rect pos: " +  screenRect.x + ", " + screenRect.y);
-//    System.err.println("  Screen rect w/h: " +  screenRect.width + ", " + screenRect.height);
-//    System.err.println("  Sketch w/h: " +  sketchWidth + ", " + sketchHeight);
-
-    int w = sketchWidth;
-    int h = sketchHeight;
-//    if (graphics.is2X()) {
-//      w /= 2;
-//      h /= 2;
-//    }
-
-    window.setTopLevelPosition(sketchX + screenRect.x + (screenRect.width - w) / 2,
-                               sketchY + screenRect.y + (screenRect.height - h) / 2);
-  }
+//  private void setFrameCentered() {
+//  }
 
 
   @Override
@@ -415,7 +396,28 @@ public class PSurfaceJOGL implements PSurface {
         window.setTopLevelPosition(locationX, locationY);
       }
     } else {  // just center on screen
-      setFrameCentered();
+      // Can't use frame.setLocationRelativeTo(null) because it sends the
+      // frame to the main display, which undermines the --display setting.
+      int sketchX = displayDevice.getViewportInWindowUnits().getX();
+      int sketchY = displayDevice.getViewportInWindowUnits().getY();
+//      System.err.println("just center on the screen at " + sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2 + ", " +
+//                                                           sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
+  //
+//      System.err.println("  Display starts at " +  sketchX + ", " + sketchY);
+//      System.err.println("  Screen rect pos: " +  screenRect.x + ", " + screenRect.y);
+//      System.err.println("  Screen rect w/h: " +  screenRect.width + ", " + screenRect.height);
+//      System.err.println("  Sketch w/h: " +  sketchWidth + ", " + sketchHeight);
+
+//      int w = sketchWidth;
+//      int h = sketchHeight;
+//      if (graphics.is2X()) {
+//        w /= 2;
+//        h /= 2;
+//      }
+
+      window.setTopLevelPosition(sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2,
+                                 sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
+
     }
 
     Point frameLoc = new Point(x, y);
@@ -425,6 +427,8 @@ public class PSurfaceJOGL implements PSurface {
       window.setTopLevelPosition(frameLoc.x, 30);
     }
 
+    placedWindow = true;
+    if (requestedStart) startThread();
 //    canvas.setBounds((contentW - sketchWidth)/2,
 //                     (contentH - sketchHeight)/2,
 //                     sketchWidth, sketchHeight);
@@ -432,6 +436,7 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void placePresent(int stopColor) {
+
 //    if (presentMode) {
 //      System.err.println("Present mode");
 //    System.err.println("WILL USE FBO");
@@ -448,7 +453,8 @@ public class PSurfaceJOGL implements PSurface {
     window.setFullscreen(true);
 
 
-
+    placedWindow = true;
+    if (requestedStart) startThread();
 
 //    }
   }
@@ -471,16 +477,21 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void startThread() {
-    if (animator != null) {
-//      System.err.println("5. start animator");
+    if (animator == null) return;
+    if (placedWindow) {
+      window.setVisible(true);
       animator.start();
-
-      if (0 < sketchX && 0 < sketchY) {
-//          System.err.println("5.1 set inital window position");
-          window.setTopLevelPosition(sketchX, sketchY);
-          sketchX = sketchY = 0;
-      }
-//      animator.getThread().setName("Processing-GL-draw");
+      requestedStart = false;
+    } else {
+      // The GL window is not visible until it has been placed, so we cannot
+      // start the animator because it requires the window to be visible.
+      requestedStart = true;
+      // Need this assignment to bypass the while loop in runSketch, otherwise
+      // the programs hangs waiting for defaultSize to be false, but it never
+      // happens because the animation thread is not yet running to avoid showing
+      // the window in the wrong place:
+      // https://github.com/processing/processing/issues/3308
+      sketch.defaultSize = false;
     }
   }
 
