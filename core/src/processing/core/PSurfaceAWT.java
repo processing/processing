@@ -149,6 +149,11 @@ public class PSurfaceAWT extends PSurfaceNone {
     private Dimension newSize = new Dimension(0, 0);
 
 
+    public Frame getFrame() {
+      return frame;
+    }
+
+
     @Override
     public Dimension getPreferredSize() {
       return new Dimension(sketchWidth, sketchHeight);
@@ -531,7 +536,13 @@ public class PSurfaceAWT extends PSurfaceNone {
     // http://code.google.com/p/processing/issues/detail?id=467
     frame.setResizable(false);
 
-    sketch.setFrame(frame);
+//    sketch.setFrame(frame);
+  }
+
+
+  @Override
+  public Object getNative() {
+    return canvas;
   }
 
 
@@ -833,9 +844,9 @@ public class PSurfaceAWT extends PSurfaceNone {
 //  }
 
 
-  @Override
-  public void setSmooth(int level) {
-  }
+//  @Override
+//  public void setSmooth(int level) {
+//  }
 
 
   /*

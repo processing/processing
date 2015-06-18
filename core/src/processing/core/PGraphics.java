@@ -4934,7 +4934,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   @SuppressWarnings("deprecation")
   public FontMetrics getFontMetrics(Font font) {  // ignore
-    Frame frame = parent.getFrame();
+    Frame frame = parent.frame;
     if (frame != null) {
       return frame.getToolkit().getFontMetrics(font);
     }

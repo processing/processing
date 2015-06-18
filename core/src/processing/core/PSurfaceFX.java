@@ -68,6 +68,11 @@ public class PSurfaceFX implements PSurface {
   }
 
 
+  public Object getNative() {
+    return canvas;
+  }
+
+
   class ResizableCanvas extends Canvas {
 
     public ResizableCanvas() {
@@ -139,6 +144,10 @@ public class PSurfaceFX implements PSurface {
           }
         }
       });
+    }
+
+    public Stage getStage() {
+      return stage;
     }
 
     @Override
@@ -245,6 +254,11 @@ public class PSurfaceFX implements PSurface {
 //    if (stage != null) {
     stage.setResizable(resizable);
 //    }
+  }
+
+
+  public void setIcon(PImage icon) {
+    // TODO implement this in JavaFX
   }
 
 
@@ -383,6 +397,12 @@ public class PSurfaceFX implements PSurface {
         sketch.exit();
       }
     });
+  }
+
+
+  public void setLocation(int x, int y) {
+    stage.setX(x);
+    stage.setY(y);
   }
 
 

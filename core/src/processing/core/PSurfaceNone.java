@@ -67,25 +67,37 @@ public class PSurfaceNone implements PSurface {
   }
 
 
+  public Object getNative() {
+    return null;
+  }
+
+
   /** Set the window (and dock, or whatever necessary) title. */
+  @Override
   public void setTitle(String title) {
-    // TODO ignored?
+    // You're in a utopian PSurface implementation where titles don't exist.
+  }
+
+
+  @Override
+  public void setIcon(PImage image) {
+    // I ain't visible, man.
   }
 
 
   /** Show or hide the window. */
+  @Override
   public void setVisible(boolean visible) {
-    // TODO ignored?
+    // I'm always invisible. You can't catch me.
   }
 
 
   /** Set true if we want to resize things (default is not resizable) */
+  @Override
   public void setResizable(boolean resizable) {
-    // TODO ignored?
+    // I don't need size to know my worth.
   }
 
-
-//  public void placeWindow(int[] location) { }
 
   @Override
   public void placeWindow(int[] location, int[] editorLocation) { }
@@ -100,6 +112,12 @@ public class PSurfaceNone implements PSurface {
 
 
   //
+
+
+  @Override
+  public void setLocation(int x, int y) {
+    // I'm everywhere, because I'm nowhere.
+  }
 
 
   @Override
@@ -136,10 +154,9 @@ public class PSurfaceNone implements PSurface {
 //  }
 
 
-  public void setSmooth(int level) {
-    // TODO Auto-generated method stub
-
-  }
+//  public void setSmooth(int level) {
+//    // TODO Auto-generated method stub
+//  }
 
 //  void requestFocus() {
 //  }

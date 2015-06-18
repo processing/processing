@@ -81,11 +81,11 @@ beta
 _ pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
 _ surface.setXxx() handling
 _   https://github.com/processing/processing/issues/3388
-_   setResizable, setVisible, setTitle
-_   setIconImage(java.awt.Image) -> take a PImage instead?
+X   setResizable, setVisible, setTitle
+X   setIconImage(java.awt.Image) -> take a PImage instead?
 _   removeNotify(), addNotify(), setUndecorated(boolean)
-_   setting menubar will be surface-specific
-_   setLocation(int, int) and setSize(int, int)
+X   setting menubar will be surface-specific
+X   setLocation(int, int) and setSize(int, int)
 _ add the "don't use this" warning to the JFrame in PSurfaceAWT
 _ draw() executes twice when noLoop() called in setup()
 _   https://github.com/processing/processing/issues/3310
@@ -126,6 +126,7 @@ _   move loadImage() into PGraphics, with AWT version the default?
 _   or pass createImage() through to renderer?
 _ implement frameRate()
 _ implement external messages (moving the window)
+_ implement PSurfaceFX.setIcon()
 
 
 opengl

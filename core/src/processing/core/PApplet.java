@@ -772,18 +772,21 @@ public class PApplet implements PConstants {
   protected PSurface surface;
 
 
-  /** The frame containing this sketch (if any) */
+  /**
+   * A dummy frame to keep compatibility with 2.x code
+   * and encourage users to update.
+   */
   public Frame frame;
 
 
-  public Frame getFrame() {
-    return frame;
-  }
-
-
-  public void setFrame(Frame frame) {
-    this.frame = frame;
-  }
+//  public Frame getFrame() {
+//    return frame;
+//  }
+//
+//
+//  public void setFrame(Frame frame) {
+//    this.frame = frame;
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

@@ -111,6 +111,12 @@ public class PSurfaceJOGL implements PSurface {
   }
 
 
+  public Object getNative() {
+    System.err.println("PSurfaceJOGL.getNative() not implemented");
+    return null;
+  }
+
+
   protected void initScreen() {
     display = NewtFactory.createDisplay(null);
     display.addReference();
@@ -336,21 +342,39 @@ public class PSurfaceJOGL implements PSurface {
     }).start();
   }
 
+
   @Override
   public void setTitle(String title) {
     window.setTitle(title);
   }
+
 
   @Override
   public void setVisible(boolean visible) {
     window.setVisible(visible);
   }
 
+
   @Override
   public void setResizable(boolean resizable) {
     // TODO Auto-generated method stub
-
   }
+
+
+  public void setIcon(PImage icon) {
+    // TODO Auto-generated method stub
+  }
+
+
+  protected void initIcons() {
+    final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
+    String[] iconImages = new String[sizes.length];
+    for (int i = 0; i < sizes.length; i++) {
+      iconImages[i] = "/icon/icon-" + sizes[i] + ".png";
+    }
+    NewtFactory.setWindowIcons(new ClassResources(PApplet.class, iconImages));
+  }
+
 
 //  private void setFrameCentered() {
 //  }
@@ -460,16 +484,6 @@ public class PSurfaceJOGL implements PSurface {
   }
 
 
-  protected void initIcons() {
-    final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
-    String[] iconImages = new String[sizes.length];
-    for (int i = 0; i < sizes.length; i++) {
-      iconImages[i] = "/icon/icon-" + sizes[i] + ".png";
-    }
-    NewtFactory.setWindowIcons(new ClassResources(PApplet.class, iconImages));
-  }
-
-
   public void setupExternalMessages() {
     // TODO Auto-generated method stub
 
@@ -522,6 +536,13 @@ public class PSurfaceJOGL implements PSurface {
       return true;
     }
   }
+
+
+  public void setLocation(int x, int y) {
+    // TODO implement me!
+    System.err.println("PSurfaceJOGL.setLocation() not yet implemented.");
+  }
+
 
   public void setSize(int width, int height) {
     if (width == sketch.width && height == sketch.height) {
