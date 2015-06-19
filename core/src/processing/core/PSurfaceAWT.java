@@ -402,7 +402,7 @@ public class PSurfaceAWT extends PSurfaceNone {
 
 
   @Override
-  public void initFrame(PApplet sketch) {/*, int backgroundColor,
+  public void initFrame(final PApplet sketch) {/*, int backgroundColor,
                         int deviceIndex, boolean fullScreen, boolean spanDisplays) {*/
     this.sketch = sketch;
 
@@ -535,6 +535,13 @@ public class PSurfaceAWT extends PSurfaceNone {
     // disabling resize has to happen after pack() to avoid apparent Apple bug
     // http://code.google.com/p/processing/issues/detail?id=467
     frame.setResizable(false);
+
+    frame.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+        sketch.exit();  // don't quit, need to just shut everything down (0133)
+      }
+    });
 
 //    sketch.setFrame(frame);
   }
@@ -925,12 +932,6 @@ public class PSurfaceAWT extends PSurfaceNone {
         sketch.frameMoved(where.x, where.y);
       }
     });
-    frame.addWindowListener(new WindowAdapter() {
-      @Override
-      public void windowClosing(WindowEvent e) {
-        sketch.exit();  // don't quit, need to just shut everything down (0133)
-      }
-    });
   }
 
 
@@ -938,7 +939,7 @@ public class PSurfaceAWT extends PSurfaceNone {
    * Set up a listener that will fire proper component resize events
    * in cases where frame.setResizable(true) is called.
    */
-  public void setupFrameResizeListener() {
+  private void setupFrameResizeListener() {
     frame.addWindowStateListener(new WindowStateListener() {
       @Override
       // Detecting when the frame is resized in order to handle the frame
