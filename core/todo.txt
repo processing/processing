@@ -27,6 +27,9 @@ X sketches with new fullScreen() method should grab focus by default
 X   https://github.com/processing/processing/issues/3380
 X sketches not getting focus with Java2D
 X   https://github.com/processing/processing/issues/3389
+X draw() executes twice when noLoop() called in setup()
+X   https://github.com/processing/processing/issues/3310
+X   broken since 3.0a7, but not in 3.0a5
 
 cleaning
 o possible addition for 'implementation' variable
@@ -87,9 +90,6 @@ _   removeNotify(), addNotify(), setUndecorated(boolean)
 X   setting menubar will be surface-specific
 X   setLocation(int, int) and setSize(int, int)
 _ add the "don't use this" warning to the JFrame in PSurfaceAWT
-_ draw() executes twice when noLoop() called in setup()
-_   https://github.com/processing/processing/issues/3310
-_   broken since 3.0a7, but not in 3.0a5
 _ static mode broken with Java2D on Windows and Linux
 _   https://github.com/processing/processing/issues/3315
 _ sketch sometimes doesn't show with noLoop() on Linux
