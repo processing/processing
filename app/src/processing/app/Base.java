@@ -1383,7 +1383,7 @@ public class Base {
    * Show the library installer window.
    */
   public void handleOpenLibraryManager() {
-    contributionManagerFrame.showFrame(activeEditor);
+    contributionManagerFrame.showFrame(activeEditor,ContributionType.LIBRARY);
   }
 
 
@@ -1391,7 +1391,7 @@ public class Base {
    * Show the tool installer window.
    */
   public void handleOpenToolManager() {
-    contributionManagerFrame.showFrame(activeEditor);
+    contributionManagerFrame.showFrame(activeEditor,ContributionType.TOOL);
   }
 
 
@@ -1399,7 +1399,7 @@ public class Base {
    * Show the mode installer window.
    */
   public void handleOpenModeManager() {
-    contributionManagerFrame.showFrame(activeEditor);
+    contributionManagerFrame.showFrame(activeEditor,ContributionType.MODE);
   }
 
 
@@ -1407,12 +1407,12 @@ public class Base {
    * Show the examples installer window.
    */
   public void handleOpenExampleManager() {
-    contributionManagerFrame.showFrame(activeEditor);
+    contributionManagerFrame.showFrame(activeEditor,ContributionType.EXAMPLES);
   }
 
 
   public void handleShowUpdates() {
-    contributionManagerFrame.showFrame(activeEditor);
+    contributionManagerFrame.showFrame(activeEditor,null);
   }
 
 

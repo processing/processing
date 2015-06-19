@@ -21,19 +21,9 @@
  */
 package processing.app.contrib;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -42,44 +32,27 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Language;
-import processing.app.Library;
 import processing.app.Toolkit;
 
 public class ContributionManagerDialog {
   static final String ANY_CATEGORY = Language.text("contrib.all");
 
   JFrame dialog;
+
+  JTabbedPane tabbedPane;
 
   String title;
 
@@ -129,40 +102,56 @@ public class ContributionManagerDialog {
     return panel;
   }
 
-  public void showFrame(final Editor editor) {
+  public void showFrame(final Editor editor, ContributionType contributionType) {
     this.editor = editor;
 
+    int index;
+    if (contributionType == ContributionType.TOOL) {
+      index = 0;
+    } else if (contributionType == ContributionType.LIBRARY) {
+      index = 1;
+    } else if (contributionType == ContributionType.MODE) {
+      index = 2;
+    } else if (contributionType == ContributionType.EXAMPLES) {
+      index = 3;
+    } else {
+      index = 4;
+    }
     if (dialog == null) {
       makeFrame(editor);
+      tabbedPane.setSelectedIndex(index);
+      downloadAndUpdateContributionListing();
     }
+    tabbedPane.setSelectedIndex(index);
     dialog.setVisible(true);
   }
 
   public void makeFrame(final Editor editor) {
     dialog = new JFrame(title);
-    JTabbedPane tabbedPane = new JTabbedPane();
+    tabbedPane = new JTabbedPane();
 
     toolsContributionTab.showFrame(editor);
 
-    tabbedPane
-      .addTab("Tools", null, toolsContributionTab.panel, "Does nothing");
+    tabbedPane.addTab("Tools", null, toolsContributionTab.panel, "Tools");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
     librariesContributionTab.showFrame(editor);
     tabbedPane.addTab("Libraries", null, librariesContributionTab.panel,
-                      "Does twice as much nothing");
+                      "Libraries");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
     modesContributionTab.showFrame(editor);
-    tabbedPane.addTab("Modes", null, modesContributionTab.panel,
-                      "Still does nothing");
+    tabbedPane.addTab("Modes", null, modesContributionTab.panel, "Modes");
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
     examplesContributionTab.showFrame(editor);
-    examplesContributionTab.panel.setPreferredSize(new Dimension(410, 50));
     tabbedPane.addTab("Examples", null, examplesContributionTab.panel,
-                      "Does nothing at all");
+                      "Examples");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
+
+    updatesContributionTab.showFrame(editor);
+    tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
+    tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
 
     dialog.add(tabbedPane);
 
@@ -495,53 +484,77 @@ public class ContributionManagerDialog {
 //    }
 //  }
 //
-//  protected void downloadAndUpdateContributionListing() {
-//    retryConnectingButton.setEnabled(false);
-//    status.setMessage(Language.text("contrib.status.downloading_list"));
-//    contribListing.downloadAvailableList(new ContribProgressBar(progressBar) {
-//
-//      @Override
-//      public void startTask(String name, int maxValue) {
-//        super.startTask(name, maxValue);
-//        progressBar.setString(null);
-//      }
-//
-//      @Override
-//      public void setProgress(int value) {
-//        super.setProgress(value);
-////        int percent = 100 * value / this.max;
-//        progressBar.setValue(value);
-//        progressBar.setStringPainted(true);
-//        status.setMessage(Language.text("contrib.status.downloading_list"));
-//      }
-//
-//      @Override
-//      public void finishedAction() {
-//        progressBar.setVisible(false);
-//
-//        updateContributionListing();
-//        updateCategoryChooser();
-//
-//        retryConnectingButton.setEnabled(true);
-//
-//        if (error) {
-//          if (exception instanceof SocketTimeoutException) {
-//            status.setErrorMessage(Language
-//              .text("contrib.errors.list_download.timeout"));
-//          } else {
-//            status.setErrorMessage(Language
-//              .text("contrib.errors.list_download"));
-//          }
-//          exception.printStackTrace();
-//          retryConnectingButton.setVisible(true);
-//
-//        } else {
-//          status.setMessage(Language.text("contrib.status.done"));
-//          retryConnectingButton.setVisible(false);
-//        }
-//      }
-//    });
-//  }
+  protected void downloadAndUpdateContributionListing() {
+    final ContributionTab activeTab = getActiveTab();
+    activeTab.retryConnectingButton.setEnabled(false);
+    activeTab.status.setMessage(Language
+      .text("contrib.status.downloading_list"));
+    activeTab.contribListing.downloadAvailableList(new ContribProgressBar(
+      activeTab.progressBar) {
+
+      @Override
+      public void startTask(String name, int maxValue) {
+        super.startTask(name, maxValue);
+        progressBar.setVisible(true);
+        progressBar.setString(null);
+      }
+
+      @Override
+      public void setProgress(int value) {
+        super.setProgress(value);
+//        int percent = 100 * value / this.max;
+        progressBar.setValue(value);
+        progressBar.setStringPainted(true);
+        activeTab.status.setMessage(Language
+          .text("contrib.status.downloading_list"));
+      }
+
+      @Override
+      public void finishedAction() {
+        progressBar.setVisible(false);
+//        activeTab.contribListing.setAdvertisedList(activeTab.contribListing.listingFile);
+        activeTab.updateContributionListing();
+//        toolsContributionTab.updateContributionListing();
+        activeTab.updateCategoryChooser();
+
+        activeTab.retryConnectingButton.setEnabled(true);
+
+        if (error) {
+          if (exception instanceof SocketTimeoutException) {
+            activeTab.status.setErrorMessage(Language
+              .text("contrib.errors.list_download.timeout"));
+          } else {
+            activeTab.status.setErrorMessage(Language
+              .text("contrib.errors.list_download"));
+          }
+          exception.printStackTrace();
+          activeTab.retryConnectingButton.setVisible(true);
+
+        } else {
+          activeTab.status.setMessage(Language.text("contrib.status.done"));
+          activeTab.retryConnectingButton.setVisible(false);
+        }
+      }
+    });
+  }
+
+  private ContributionTab getActiveTab() {
+    
+    switch (tabbedPane.getSelectedIndex()) {
+    case 0:
+      return toolsContributionTab;
+    case 1:
+      return librariesContributionTab;
+    case 2:
+      return modesContributionTab;
+    case 3:
+      return examplesContributionTab;
+    default:
+      return updatesContributionTab;
+    }
+    
+  }
+
 //
 //  protected void setFilterText(String filter) {
 //    if (filter == null || filter.isEmpty()) {

@@ -138,6 +138,7 @@ public class ContributionTab {
     panel.add(filler);
     return panel;
   }
+  
   public void showFrame(final Editor editor) {
     this.editor = editor;
 
@@ -145,14 +146,12 @@ public class ContributionTab {
       makePanel(editor);
     }
     panel.setVisible(true);
-    contributionListPanel.grabFocus();
+//    contributionListPanel.grabFocus();
 
-    if (!contribListing.hasDownloadedLatestList() && contributionType == ContributionType.TOOL) {
+//    if (!contribListing.hasDownloadedLatestList()) {
 //      updateContributionListing();
-
-    } else {
-      downloadAndUpdateContributionListing();
-    }
+//      downloadAndUpdateContributionListing();
+//    }
   }
 
 
@@ -220,7 +219,7 @@ public class ContributionTab {
     });
 
     progressBar = new JProgressBar();
-    progressBar.setVisible(true);
+    progressBar.setVisible(false);
 
     createComponents();
     
@@ -255,7 +254,9 @@ public class ContributionTab {
 
       categoryChooser = new JComboBox<String>();
       categoryChooser.setMaximumRowCount(20);
+      
       updateCategoryChooser();
+      
 //      filterPanel.add(categoryChooser, c);
       filterPanel.add(categoryChooser);
       categoryChooser.addItemListener(new ItemListener() {
@@ -394,7 +395,7 @@ public class ContributionTab {
   }
 
 
-  private void updateCategoryChooser() {
+  protected void updateCategoryChooser() {
     if (categoryChooser != null) {
       ArrayList<String> categories;
       categoryChooser.removeAllItems();
