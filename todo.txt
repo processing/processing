@@ -58,6 +58,10 @@ _ no setting breakpoints when debugger is off
 _   https://github.com/processing/processing/issues/3306
 _ make breakpoints more prominent
 _   https://github.com/processing/processing/issues/3307
+_ import suggestions box needs design review
+_   https://github.com/processing/processing/issues/3407
+_ distinguish errors and warnings
+_   https://github.com/processing/processing/issues/3406
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice

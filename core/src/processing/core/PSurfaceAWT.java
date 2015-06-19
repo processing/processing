@@ -230,8 +230,8 @@ public class PSurfaceAWT extends PSurfaceNone {
     */
 
 
-  protected synchronized void render() {
-      //System.out.println("render() top");
+  synchronized protected void render() {
+//      System.out.println("render() top");
 
       /*
       if (!EventQueue.isDispatchThread()) {
@@ -765,7 +765,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     // If displayable() is false, then PSurfaceNone should be used, but...
     if (sketch.getGraphics().displayable()) {
       frame.setVisible(true);
-      System.out.println("setting visible on EDT? " + EventQueue.isDispatchThread());
+//      System.out.println("setting visible on EDT? " + EventQueue.isDispatchThread());
       //requestFocus();
       if (canvas != null) {
         //canvas.requestFocusInWindow();
@@ -1286,13 +1286,11 @@ public class PSurfaceAWT extends PSurfaceNone {
     canvas.addFocusListener(new FocusListener() {
 
       public void focusGained(FocusEvent e) {
-        System.out.println(e);
         sketch.focused = true;
         sketch.focusGained();
       }
 
       public void focusLost(FocusEvent e) {
-        System.out.println(e);
         sketch.focused = false;
         sketch.focusLost();
       }
