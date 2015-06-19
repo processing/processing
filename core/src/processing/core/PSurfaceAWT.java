@@ -88,7 +88,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     */
     canvas = new SmoothCanvas();
 //    if (useStrategy) {
-    canvas.setIgnoreRepaint(true);
+    //canvas.setIgnoreRepaint(true);
 //    }
 
     // Pass tab key to the sketch, rather than moving between components
@@ -210,6 +210,12 @@ public class PSurfaceAWT extends PSurfaceNone {
 //      System.out.println("painting");
 //      if (useStrategy) {
       render();
+      /*
+      if (graphics != null) {
+        System.out.println("drawing to screen " + canvas);
+        screen.drawImage(graphics.image, 0, 0, sketchWidth, sketchHeight, null);
+      }
+      */
 
 //      } else {
 ////        new Exception("painting").printStackTrace(System.out);
