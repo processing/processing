@@ -10075,6 +10075,7 @@ public class PApplet implements PConstants {
     // Wait until the applet has figured out its width. In a static mode app,
     // everything happens inside setup(), so this will be after setup() has
     // completed, and the empty draw() has set "finished" to true.
+    /*
     while (sketch.defaultSize && !sketch.finished) {
       //System.out.println("default size");
       try {
@@ -10084,6 +10085,7 @@ public class PApplet implements PConstants {
         //System.out.println("interrupt");
       }
     }
+    */
 
     if (present) {
       if (hideStop) {
