@@ -1036,11 +1036,9 @@ public class PSurfaceAWT extends PSurfaceNone {
         final String td = "processing.core.ThinkDifferent";
         Class<?> thinkDifferent =
           Thread.currentThread().getContextClassLoader().loadClass(td);
-
         Method method =
           thinkDifferent.getMethod("setIconImage", new Class[] { java.awt.Image.class });
         method.invoke(null, new Object[] { Toolkit.getDefaultToolkit().getImage(url) });
-
       } catch (Exception e) {
         e.printStackTrace();  // That's unfortunate
       }
