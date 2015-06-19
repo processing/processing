@@ -26,6 +26,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -1029,7 +1030,21 @@ public class PSurfaceAWT extends PSurfaceNone {
       // On OS X, set this for AWT surfaces, which handles the dock image
       // as well as the cmd-tab image that's shown. Just one size, I guess.
       URL url = PApplet.class.getResource("/icon/icon-512.png");
-      ThinkDifferent.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
+      // Seems dangerous to have this in code instead of using reflection, no?
+      //ThinkDifferent.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
+      try {
+        final String td = "processing.core.ThinkDifferent";
+        Class<?> thinkDifferent =
+          Thread.currentThread().getContextClassLoader().loadClass(td);
+
+        Method method =
+          thinkDifferent.getMethod("setIconImage", new Class[] { java.awt.Image.class });
+        method.invoke(null, new Object[] { Toolkit.getDefaultToolkit().getImage(url) });
+
+      } catch (Exception e) {
+        e.printStackTrace();  // That's unfortunate
+      }
+
     }
   }
 
