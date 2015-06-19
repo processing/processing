@@ -2278,12 +2278,13 @@ public class PApplet implements PConstants {
     if (!looping && !redraw) return;
     //System.out.println("looping/redraw = " + looping + " " + redraw);
 
-    if (!g.canDraw()) {
-      debug("g.canDraw() is false");
-      // Don't draw if the renderer is not yet ready.
-      // (e.g. OpenGL has to wait for a peer to be on screen)
-      return;
-    }
+    // no longer in use by any of our renderers
+//    if (!g.canDraw()) {
+//      debug("g.canDraw() is false");
+//      // Don't draw if the renderer is not yet ready.
+//      // (e.g. OpenGL has to wait for a peer to be on screen)
+//      return;
+//    }
 
     // Store the quality setting in case it's changed during draw and the
     // drawing context needs to be re-built before the next frame.

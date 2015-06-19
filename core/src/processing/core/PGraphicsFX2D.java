@@ -115,10 +115,10 @@ public class PGraphicsFX2D extends PGraphics {
   // FRAME
 
 
-  @Override
-  public boolean canDraw() {
-    return true;
-  }
+//  @Override
+//  public boolean canDraw() {
+//    return true;
+//  }
 
 
   @Override
