@@ -97,7 +97,13 @@ public class PSurfaceAWT extends PSurfaceNone {
       @Override
       public void componentResized(ComponentEvent e) {
         if (!sketch.looping) {
-          sketch.redraw();
+          // make sure this is a real resize event, not just initial setup
+          // https://github.com/processing/processing/issues/3310
+          Dimension canvasSize = canvas.getSize();
+          if (canvasSize.width != sketch.sketchWidth() ||
+              canvasSize.height != sketch.sketchHeight()) {
+            sketch.redraw();
+          }
         }
       }
     });

@@ -2276,7 +2276,7 @@ public class PApplet implements PConstants {
     // canDraw = g != null && (looping || redraw);
     if (g == null) return;
     if (!looping && !redraw) return;
-    //System.out.println("looping/redraw = " + looping + " " + redraw);
+//    System.out.println("looping/redraw = " + looping + " " + redraw);
 
     // no longer in use by any of our renderers
 //    if (!g.canDraw()) {
