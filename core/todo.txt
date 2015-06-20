@@ -30,10 +30,27 @@ X   https://github.com/processing/processing/issues/3389
 X draw() executes twice when noLoop() called in setup()
 X   https://github.com/processing/processing/issues/3310
 X   broken since 3.0a7, but not in 3.0a5
+o pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
+X   nixed by Casey for now
+X surface.setXxx() handling
+X   https://github.com/processing/processing/issues/3388
+X   setResizable, setVisible, setTitle
+X   setIconImage(java.awt.Image) -> take a PImage instead?
+o   removeNotify(), addNotify()
+X   setUndecorated(boolean)
+X   setting menubar will be surface-specific
+X   setLocation(int, int) and setSize(int, int)
+X add the "don't use this" warning to the JFrame in PSurfaceAWT
 
 threading headaches
 X sketch not always showing with empty draw()
 X   https://github.com/processing/processing/issues/3363
+X static mode broken with Java2D on Windows and Linux
+X   https://github.com/processing/processing/issues/3315
+X sketch sometimes doesn't show with noLoop() on Linux
+X   https://github.com/processing/processing/issues/3316
+X Window never shows with exported application on 64-bit Linux
+X   https://github.com/processing/processing/issues/3303
 
 cleaning
 o possible addition for 'implementation' variable
@@ -65,6 +82,10 @@ X   https://github.com/processing/processing/issues/3379
 X sketch window briefly appears on top left corner when using OpenGL
 X   https://github.com/processing/processing/issues/3308
 
+contribs
+X Fix NullPointerException in DepthSorter
+X   https://github.com/processing/processing/pull/3410
+
 fixed earlier
 X sketch window is not placed at correct location when running a second time
 X   https://github.com/processing/processing/issues/3125
@@ -85,24 +106,15 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 beta
-_ pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
-_ surface.setXxx() handling
-_   https://github.com/processing/processing/issues/3388
-X   setResizable, setVisible, setTitle
-X   setIconImage(java.awt.Image) -> take a PImage instead?
-_   removeNotify(), addNotify(), setUndecorated(boolean)
-X   setting menubar will be surface-specific
-X   setLocation(int, int) and setSize(int, int)
-_ add the "don't use this" warning to the JFrame in PSurfaceAWT
-X static mode broken with Java2D on Windows and Linux
-_   https://github.com/processing/processing/issues/3315
-_ sketch sometimes doesn't show with noLoop() on Linux
-_   https://github.com/processing/processing/issues/3316
-_ Window never shows with exported application on 64-bit Linux
-_   https://github.com/processing/processing/issues/3303
+_ still some spinning when sketches break
+_ settings() is probably not showing exceptions since we're back to the EDT
+_   can't call handleSettings() on the anim thread since it sets the surface
+_   so maybe the first part is on the EDT, but other threads run this stuff
 
 
 javafx
+_ Error on size() when using FX2D due to stage inset issues
+_   https://github.com/processing/processing/issues/3412
 _ static mode sketches (draw once and halt w/o closing window)
 _ fix display handling, line up the device order with AWT
 _   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html

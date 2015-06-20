@@ -40,11 +40,6 @@ import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
-
-
-
-
-
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -52,8 +47,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 // used by desktopFile() method
 import javax.swing.filechooser.FileSystemView;
-import javax.xml.parsers.ParserConfigurationException;
 
+// loadXML() error handling
+import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import java.io.*;
@@ -1914,6 +1910,7 @@ public class PApplet implements PConstants {
     if (width != this.width ||
         height != this.height ||
         !renderer.equals(this.renderer)) {
+      println(width, height, renderer, this.width, this.height, this.renderer);
       if (insideSettings("size", width, height, renderer)) {
         this.width = width;
         this.height = height;
@@ -5688,7 +5685,7 @@ public class PApplet implements PConstants {
       return new XML(createReader(filename), options);
 
       // can't use catch-all exception, since it might catch the
-      // RuntimException about the incorrect case sensitivity
+      // RuntimeException about the incorrect case sensitivity
     } catch (IOException e) {
       throw new RuntimeException(e);
 
@@ -10105,8 +10102,8 @@ public class PApplet implements PConstants {
     g = createPrimaryGraphics();
     surface = g.createSurface();
 
-    // if the PSurface calls setFrame() no need to create a fake frame
-    if (g.displayable() && frame == null) {
+    // Create fake Frame object to warn user about the changes
+    if (g.displayable()) {
       frame = new Frame() {
         @Override
         public void setResizable(boolean resizable) {
@@ -10124,6 +10121,24 @@ public class PApplet implements PConstants {
         public void setTitle(String title) {
           deprecationWarning("setTitle");
           surface.setTitle(title);
+        }
+
+        @Override
+        public void setUndecorated(boolean ignored) {
+          throw new RuntimeException("'frame' has been removed from Processing 3, " +
+            "use fullScreen() to get an undecorated full screen frame");
+        }
+
+        @Override
+        public void setLocation(int x, int y) {
+          deprecationWarning("setLocation");
+          surface.setLocation(x, y);
+        }
+
+        @Override
+        public void setSize(int w, int h) {
+          deprecationWarning("setSize");
+          surface.setLocation(w, h);
         }
 
         private void deprecationWarning(String method) {

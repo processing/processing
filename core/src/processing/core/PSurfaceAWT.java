@@ -151,7 +151,7 @@ public class PSurfaceAWT extends PSurfaceNone {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  class SmoothCanvas extends Canvas {
+  public class SmoothCanvas extends Canvas {
     private Dimension oldSize = new Dimension(0, 0);
     private Dimension newSize = new Dimension(0, 0);
 
