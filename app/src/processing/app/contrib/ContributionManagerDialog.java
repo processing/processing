@@ -47,28 +47,30 @@ import processing.app.Editor;
 import processing.app.Language;
 import processing.app.Toolkit;
 
+/**
+ * 
+ * @author akarshit
+ * 
+ * This class is the main Contribution Manager Dialog.
+ * It contains all the contributions tab and the upadate tab.
+ *
+ */
 public class ContributionManagerDialog {
   static final String ANY_CATEGORY = Language.text("contrib.all");
 
   JFrame dialog;
-
   JTabbedPane tabbedPane;
-
   String title;
-
   JButton restartButton;
 
   // the calling editor, so updates can be applied
   Editor editor;
-
+  
+  //The tabs
   ContributionTab toolsContributionTab;
-
   ContributionTab librariesContributionTab;
-
   ContributionTab examplesContributionTab;
-
   ContributionTab modesContributionTab;
-
   ContributionTab updatesContributionTab;
 
   public ContributionManagerDialog() {
@@ -105,6 +107,7 @@ public class ContributionManagerDialog {
   public void showFrame(final Editor editor, ContributionType contributionType) {
     this.editor = editor;
 
+    //Calculating index to switch to the required tab
     int index;
     if (contributionType == ContributionType.TOOL) {
       index = 0;
@@ -119,10 +122,10 @@ public class ContributionManagerDialog {
     }
     if (dialog == null) {
       makeFrame(editor);
-      tabbedPane.setSelectedIndex(index);
+      tabbedPane.setSelectedIndex(index); //done before as downloadAndUpdateContributionListing() requires the current selected tab
       downloadAndUpdateContributionListing();
     }
-    tabbedPane.setSelectedIndex(index);
+    tabbedPane.setSelectedIndex(index); 
     dialog.setVisible(true);
   }
 
@@ -485,6 +488,9 @@ public class ContributionManagerDialog {
 //  }
 //
   protected void downloadAndUpdateContributionListing() {
+    
+    //activeTab is required now but should be removed
+    //as there is only one instance of contribListing and it should be present in this class
     final ContributionTab activeTab = getActiveTab();
     activeTab.retryConnectingButton.setEnabled(false);
     activeTab.status.setMessage(Language
@@ -512,9 +518,7 @@ public class ContributionManagerDialog {
       @Override
       public void finishedAction() {
         progressBar.setVisible(false);
-//        activeTab.contribListing.setAdvertisedList(activeTab.contribListing.listingFile);
         activeTab.updateContributionListing();
-//        toolsContributionTab.updateContributionListing();
         activeTab.updateCategoryChooser();
 
         activeTab.retryConnectingButton.setEnabled(true);
@@ -538,6 +542,10 @@ public class ContributionManagerDialog {
     });
   }
 
+  /**
+   * 
+   * @return the currently selected tab
+   */
   private ContributionTab getActiveTab() {
     
     switch (tabbedPane.getSelectedIndex()) {
