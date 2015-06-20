@@ -209,6 +209,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // Depth sorter
 
   protected DepthSorter sorter;
+  protected boolean isDepthSortingEnabled;
 
   // ........................................................
 
@@ -2166,12 +2167,14 @@ public class PGraphicsOpenGL extends PGraphics {
       if (is3D()) {
         flush();
         if (sorter == null) sorter = new DepthSorter(this);
+        isDepthSortingEnabled = true;
       } else {
         PGraphics.showWarning("Depth sorting can only be enabled in 3D");
       }
     } else if (which == DISABLE_DEPTH_SORT) {
       if (is3D()) {
         flush();
+        isDepthSortingEnabled = false;
       }
     }
   }
@@ -2547,7 +2550,7 @@ public class PGraphicsOpenGL extends PGraphics {
         projmodelview.set(projection);
       }
 
-      if (hasPolys && !getHint(ENABLE_DEPTH_SORT)) {
+      if (hasPolys && !isDepthSortingEnabled) {
         flushPolys();
         if (raw != null) {
           rawPolys();
@@ -2570,7 +2573,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
 
-      if (hasPolys && getHint(ENABLE_DEPTH_SORT)) {
+      if (hasPolys && isDepthSortingEnabled) {
         // We flush after lines so they are visible
         // under transparent polygons
         flushSortedPolys();
