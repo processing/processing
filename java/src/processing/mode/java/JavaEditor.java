@@ -272,7 +272,7 @@ public class JavaEditor extends Editor {
 
   public JMenu buildFileMenu() {
     //String appTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, false);
-    String appTitle = Language.text("toolbar.export_application");
+    String appTitle = Language.text("menu.file.export_application");
     JMenuItem exportApplication = Toolkit.newJMenuItemShift(appTitle, 'E');
     exportApplication.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -285,21 +285,21 @@ public class JavaEditor extends Editor {
 
 
   public JMenu buildSketchMenu() {
-    JMenuItem runItem = Toolkit.newJMenuItem(Language.text("toolbar.run"), 'R');
+    JMenuItem runItem = Toolkit.newJMenuItem(Language.text("menu.sketch.run"), 'R');
     runItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleRun();
       }
     });
 
-    JMenuItem presentItem = Toolkit.newJMenuItemShift(Language.text("toolbar.present"), 'R');
+    JMenuItem presentItem = Toolkit.newJMenuItemShift(Language.text("menu.sketch.present"), 'R');
     presentItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handlePresent();
       }
     });
 
-    JMenuItem stopItem = new JMenuItem(Language.text("toolbar.stop"));
+    JMenuItem stopItem = new JMenuItem(Language.text("menu.sketch.stop"));
     stopItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (isDebuggerEnabled()) {
@@ -743,7 +743,7 @@ public class JavaEditor extends Editor {
     showStopButton.setEnabled(Preferences.getBoolean("export.application.present"));
     showStopButton.setBorder(new EmptyBorder(3, 13 + indent, 6, 13));
 
-    final JCheckBox presentButton = new JCheckBox(Language.text("export.options.fullscreen"));
+    final JCheckBox presentButton = new JCheckBox(Language.text("export.options.present"));
     presentButton.setSelected(Preferences.getBoolean("export.application.present"));
     presentButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -825,20 +825,19 @@ public class JavaEditor extends Editor {
       platformName = "Linux (" + Base.getNativeBits() + "-bit)";
     }
 
-    final String javaPlatform =
-      PApplet.split(System.getProperty("java.version"), '.')[1];
     boolean embed = Preferences.getBoolean("export.application.embed_java");
     final String embedWarning =
       "<html><div width=\"" + divWidth + "\"><font size=\"2\">" +
 //      "<html><body><font size=2>" +
       "Embedding Java will make the " + platformName + " application " +
       "larger, but it will be far more likely to work. " +
-      "Users on other platforms will need to <a href=\"\">install Java 7</a>.";
+      "Users on other platforms will need to " +
+      "<a href=\"\">install Java " + PApplet.javaPlatform + "</a>.";
     final String nopeWarning =
       "<html><div width=\"" + divWidth + "\"><font size=\"2\">" +
 //      "<html><body><font size=2>" +
       "Users on all platforms will have to install the latest " +
-      "version of Java " + javaPlatform +
+      "version of Java " + PApplet.javaPlatform +
       " from <a href=\"\">http://java.com/download</a>. " +
       "<br/>&nbsp;";
       //"from <a href=\"http://java.com/download\">java.com/download</a>.";
@@ -2029,21 +2028,16 @@ public class JavaEditor extends Editor {
     try {
       if (sketch.isModified() && !sketch.isUntitled()) {
         if (JavaMode.autoSavePromptEnabled) {
-          final JDialog autoSaveDialog = new JDialog(
-                                                     base.getActiveEditor(), this.getSketch().getName(),
-                                                     true);
+          final JDialog autoSaveDialog =
+            new JDialog(base.getActiveEditor(), getSketch().getName(), true);
           Container container = autoSaveDialog.getContentPane();
 
           JPanel panelMain = new JPanel();
-          panelMain.setBorder(BorderFactory.createEmptyBorder(4, 0,
-                                                              2, 2));
-          panelMain.setLayout(new BoxLayout(panelMain,
-                                            BoxLayout.PAGE_AXIS));
+          panelMain.setBorder(BorderFactory.createEmptyBorder(4, 0, 2, 2));
+          panelMain.setLayout(new BoxLayout(panelMain, BoxLayout.PAGE_AXIS));
 
-          JPanel panelLabel = new JPanel(new FlowLayout(
-                                                        FlowLayout.LEFT));
-          JLabel label = new JLabel(
-                                    "<html><body>&nbsp;There are unsaved"
+          JPanel panelLabel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+          JLabel label = new JLabel("<html><body>&nbsp;There are unsaved"
                                     + " changes in your sketch.<br />"
                                     + "&nbsp;&nbsp;&nbsp; Do you want to save it before"
                                     + " running? </body></html>");
@@ -2051,14 +2045,11 @@ public class JavaEditor extends Editor {
                                  Font.PLAIN, label.getFont().getSize() + 1));
           panelLabel.add(label);
           panelMain.add(panelLabel);
-          final JCheckBox dontRedisplay = new JCheckBox(
-                                                        "Remember this decision");
+          final JCheckBox dontRedisplay = new JCheckBox("Remember this decision");
+          JPanel panelButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 2));
 
-          JPanel panelButtons = new JPanel(new FlowLayout(
-                                                          FlowLayout.CENTER, 8, 2));
           JButton btnRunSave = new JButton("Save and Run");
           btnRunSave.addActionListener(new ActionListener() {
-
               @Override
               public void actionPerformed(ActionEvent e) {
                 handleSave(true);
@@ -2071,9 +2062,9 @@ public class JavaEditor extends Editor {
               }
             });
           panelButtons.add(btnRunSave);
+
           JButton btnRunNoSave = new JButton("Run, Don't Save");
           btnRunNoSave.addActionListener(new ActionListener() {
-
               @Override
               public void actionPerformed(ActionEvent e) {
                 if (dontRedisplay.isSelected()) {
@@ -2088,8 +2079,7 @@ public class JavaEditor extends Editor {
           panelMain.add(panelButtons);
 
           JPanel panelCheck = new JPanel();
-          panelCheck
-            .setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+          panelCheck.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
           panelCheck.add(dontRedisplay);
           panelMain.add(panelCheck);
 
@@ -2107,7 +2097,6 @@ public class JavaEditor extends Editor {
     } catch (Exception e) {
       statusError(e);
     }
-
   }
 
 

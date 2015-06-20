@@ -1,115 +1,103 @@
-0237 (3.0a10)
-X retain original java.awt.Frame when it's in use
-X set frame icon images for Java2D (dock and cmd-tab) 
-X size() inside setup() can only have numbers
-X   size() inside settings() is left alone and can do whatever it wants
-X   comments are being removed before size() is getting checked
-X     probably remove anything inside settings() as well?
-o add imageSmooth()?
-o   https://github.com/processing/processing/issues/1272
-X   decided no, again
-X sketchQuality() vs sketchSmooth()?
-X   'quality' is being removed since smoothing will be a one-time thing
+0238 (3.0b1)
+X add note about headless exceptions that points to Github
+X resize children[] so that getChildren() returns a correctly-sized array
+X   https://github.com/processing/processing/issues/3347
+X show warning when display spanning is turned off with fullScreen(SPAN)
+X   defaults read com.apple.spaces spans-displays
+X   https://github.com/processing/processing/issues/3381
+X add javaPlatform variable (i.e. 7 or 8)
+X clear() seems to be broken (maybe related to 3317)
+X   https://github.com/processing/processing/issues/3378
+X PGraphic ignores PNG transparency (regression from 3.0a5)
+X   https://github.com/processing/processing/issues/3317
+X   (same issue as 3378)
+X move error messages out of PConstants (into PApplet? PGraphics?) 
+o replace sketchXxxx() methods with another mechanism?
+o   and an internal dictionary that stores them all?
+o   intParam(), stringParam() and setParam()? 
+o   or sketchInt() or settingsInt()?
+o   surface.size(), surface.noSmooth()... just like PGraphics methods?
+o   make final to move folks away from these?
+o   or is this a bad move until we've sorted out Android?
+X   HashMap sucks b/c we'd have to cast everything
+X   doesn't help to have intParam() etc, too many types (5ish? OutputStream)
+X   just stick with the current setup
+X remove launch(String) since it was calling itself, and anachronistic
+X sketches with new fullScreen() method should grab focus by default
+X   https://github.com/processing/processing/issues/3380
+X sketches not getting focus with Java2D
+X   https://github.com/processing/processing/issues/3389
+X draw() executes twice when noLoop() called in setup()
+X   https://github.com/processing/processing/issues/3310
+X   broken since 3.0a7, but not in 3.0a5
 
-fixed earlier/can no longer reproduce
-X strips when rendering spheres with lights and anti-aliasing
-X   https://github.com/processing/processing/issues/1185
+cleaning
+o possible addition for 'implementation' variable
+X   http://code.google.com/p/processing/issues/detail?id=281
+X   https://github.com/processing/processing/issues/320
+X   closing as wontfix
 
-andres/opengl
-X set(0, 0, image) does not set alpha channel to opaque in P2D/P3D
-X   https://github.com/processing/processing/issues/2125
-X group shapes are broken in 3.0a9
-X   https://github.com/processing/processing/issues/3336
-X only a quarter of the sketch is appearing with P2D_2X and P3D_2X
-X   (i.e. the image shows up too large) 
-X   https://github.com/processing/processing/issues/3332
-X   https://github.com/processing/processing/issues/3327
-X single transparent pixel at end of textures in OpenGL
-X   https://github.com/processing/processing/issues/115
-X implement setImpl() instead of set() inside PGraphicsOpenGL
-X   https://github.com/processing/processing/issues/160
-X   https://github.com/processing/processing/issues/3012
-X PShape 3D: strange extra lines
-X   https://github.com/processing/processing/issues/3006
-X backspace key is identified as delete in OpenGL renderers
-X   https://github.com/processing/processing/issues/3338
-X set icon for OpenGL windows
-X   https://github.com/processing/processing/issues/3348
-X key problem with DELETE, BACKSPACE and CMD in P3D / P2D
-X   https://github.com/processing/processing/issues/3352
-X save() and saveFrame() with OPENGL renderer fails
-X   https://github.com/processing/processing/issues/3334
-X Errors in glsl code are only caught when set() is used
-X   https://github.com/processing/processing/issues/2268
-X move glsl entries to their own subdirectory
+retina fixes
+X make g.pixelDensity public inside PApplet (so accessible by sketches)
+o   or is it akin to g.fill and the rest?
+X   it's in PApplet, but not public.. will be the same as g.pixelDensity
+X add pixelWidth/Height to PApplet
+X   add setSize() method for surfaces
+X   tricky cuz we'll need a getter/setter when surface messes w/ things
+
+text/fonts
+X Text looks blurry in GL Retina
+X   https://github.com/processing/processing/issues/2739
+X text not getting the correct font in Retina2D
+X   https://github.com/processing/processing/issues/2617
+X Text is half size in PGraphicsRetina2D
+X   https://github.com/processing/processing/issues/2738
+
+andres
+X ortho function is broken
+X   https://github.com/processing/processing/issues/1278
+X errors with loading SVGs in P3D/P2D
+X   https://github.com/processing/processing/issues/3379
+X sketch window briefly appears on top left corner when using OpenGL
+X   https://github.com/processing/processing/issues/3308
+
+fixed earlier
+X sketch window is not placed at correct location when running a second time
+X   https://github.com/processing/processing/issues/3125
+X full screen needs to ignore prev location setting for frame?
+X   https://github.com/processing/processing/issues/3305
+X save() and saveFrame() with 2X renderers fails
+X   https://github.com/processing/processing/issues/3255
+X NPE when using image() created with createGraphics(PGraphicsRetina2D)
+X   https://github.com/processing/processing/issues/2510
+X Closing OpenGL sketch from the PDE doesn't stop java.exe process
+X   https://github.com/processing/processing/issues/2335
+
+
+docs
+_ note that full screen and present are now different
+_   on Export to Application, this has an impact
+_ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 beta
-X fix up handling of fullScreen()
-X   https://github.com/processing/processing-docs/issues/250
-X   https://github.com/processing/processing/issues/3296
-X   right now using a (display ignoring) hack to displayWidth/Height
-X   maybe we use the AWT screen sizes first, then match the others w/ em?
-X   --full-screen replaced with --present (to untangle things)
-X     if you want full screen, use the fullScreen() method
-X   --span removed as an option, better to just do this from code
-X   docs: no mixing size() and fullScreen(). pick one.
-X instead of all these sketchXxxx() methods, should we have sketchSetting()
-o   too much soup inside main() to handle arg parsing and passing to the sketch
-X   moved things to settings()
-X split 'present' and 'full screen'?
-X   --full-screen causes considerable flicker at this point
-X   or split them when sketchWidth/Height are implemented?
-_ smooth() and noSmooth()
-X   goes before the first beginDraw() with createGraphics()
-X   sketchQuality() needs to be rooted out
-X   don't make this final, since it'll break a bunch of code
-X     it'd be a nice indicator for renderers, but not worth what it breaks
-_   https://github.com/processing/processing/issues/3357
-_   https://github.com/processing/processing-docs/issues/251
-_   can only be called inside setup(), show warning elsewhere
-_   is lifted out of setup() and into settings()
-_ replace sketchXxxx() methods with another mechanism?
-_   and an internal dictionary that stores them all?
-_   intParam(), stringParam() and setParam()? 
-_   or sketchInt() or settingsInt()?
-_   surface.size(), surface.noSmooth()... just like PGraphics methods?
-X sketchXxxx() methods
-_   make final to move folks away from these?
-_   or is this a bad move until we've sorted out Android?
-
-
-critical
-_ draw() executes twice when noLoop() called in setup()
-_   https://github.com/processing/processing/issues/3310
-_   broken since 3.0a7, but not in 3.0a5
+_ pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
+_ surface.setXxx() handling
+_   https://github.com/processing/processing/issues/3388
+X   setResizable, setVisible, setTitle
+X   setIconImage(java.awt.Image) -> take a PImage instead?
+_   removeNotify(), addNotify(), setUndecorated(boolean)
+X   setting menubar will be surface-specific
+X   setLocation(int, int) and setSize(int, int)
+_ add the "don't use this" warning to the JFrame in PSurfaceAWT
 _ static mode broken with Java2D on Windows and Linux
 _   https://github.com/processing/processing/issues/3315
 _ sketch sometimes doesn't show with noLoop() on Linux
 _   https://github.com/processing/processing/issues/3316
-
-
-high priority
-_ prevent running _2X renderers on non-2x hardware
-_ PGraphic ignores PNG transparency (regression from 3.0a5)
-_   https://github.com/processing/processing/issues/3317
-_ strokeWeight() in setup() not working for default renderer
-_   https://github.com/processing/processing/issues/3331
-_ sketch window briefly appears on top left corner when using OpenGL
-_   https://github.com/processing/processing/issues/3308
-_ looks like we're off by 1 on monitor numbering 
-_   https://github.com/processing/processing/issues/3309
-_ update documentation to say "don't override sketchXxxx() methods"
-_ sketch window is not placed at correct location when running a second time
-_   https://github.com/processing/processing/issues/3125
-_ y-location of frame might be negative, but that might be ok 
-_   right now, on Windows it moves it on-screen (b/c of previous bug reports)
-_   may be cause of some of the display placement issues w/ multiple displays
-_   seem to recall one of the bugs mentioning stacked displays
-_   need to change to iterate through display rectangles
-_   may be related to full-screen bug filed recently
-_ closing a sketch window manually (not hitting Stop) not killing sketch
-_   at least with the Java2D renderer
+_ sketch not always showing with empty draw()
+_   https://github.com/processing/processing/issues/3363
+_ Window never shows with exported application on 64-bit Linux
+_   https://github.com/processing/processing/issues/3303
 
 
 javafx
@@ -133,20 +121,16 @@ _ save() and saveFrame()
 _ get() and set()
 _ clip/noClip
 _   https://github.com/processing/processing/issues/3274
-_ getNative() is problematic because it gives back a BufferedImage
+_ getNative() in PImage problematic because it gives back a BufferedImage
 _   move loadImage() into PGraphics, with AWT version the default?
+_   or pass createImage() through to renderer?
 _ implement frameRate()
 _ implement external messages (moving the window)
+_ implement PSurfaceFX.setIcon()
 
 
 opengl
 _ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
-_ Closing OpenGL sketch from the PDE doesn't stop java.exe process
-_   https://github.com/processing/processing/issues/2335
-_ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
-_   shouldn't be static, run it from the renderer, that's point of createXxx()
-_ public createShape() method that takes another shape as param?
-_   should just be the constructor doing this, or copy()
 _ add attrib() method
 _   https://github.com/processing/processing/issues/2963
 _   andres needs input on how the api works
@@ -156,25 +140,21 @@ _   https://github.com/processing/processing/issues/3339
 
 
 opengl questions
+_ issues with how JOGL handles window layout/sizing
+_   https://github.com/processing/processing/issues/3401
 _ exitCalled() and exitActual made public by Andres, breaks Python
 _   also not API we want to expose, so sort this out
 _   or maybe we're fine b/c now FX2D needs it as well
 _ when did setPath() sneak into PShape? API is nothing like anything else
 _   probably from the material stuff, but we need to fix that
-_ ortho function is broken
-_   https://github.com/processing/processing/issues/1278
+_ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
+_   shouldn't be static, run it from the renderer, that's point of createXxx()
+_ public createShape() method that takes another shape as param?
+_   should just be the constructor doing this, or copy()
 
 
 full screen
-_ full screen needs to ignore location setting for frame?
-_   https://github.com/processing/processing/issues/3305
 _ present window draws in stages (OS X)
-_ "run sketches on display" not working in 3.0a7
-_   https://github.com/processing/processing/issues/3264
-_ full screen doesn't work on second window w/o present mode
-_   https://github.com/processing/processing/issues/3271
-_ show warning when display spanning is turned off
-_   defaults read com.apple.spaces spans-displays
 _ crash on startup when "Mirror Displays" selected (cantfix?)
 _   suspect that this is a specific chipset since Oracle didn't reproduce
 _   AMD Radeon HD 6770M was in the Oracle bug report
@@ -183,9 +163,18 @@ _   https://bugs.openjdk.java.net/browse/JDK-8027391
 _   test with JG's 13" retina laptop
 _ Ubuntu Unity prevents full screen from working properly
 _   https://github.com/processing/processing/issues/3158
+_ fullScreen(SPAN) reported not working (cannot reproduce)
+X   probably need to re-query for displays each time opening prefs
+X   what happens when a screen is added after p5 has started?
+_   https://github.com/processing/processing/issues/3381
 
 
 graphics
+_ need to be able to call pixelDensity(2) before beginDraw()
+_   add pixelDensity() method to PImage/PGraphics
+_   pixelDensity(2) does: pixelWidth = width; width /= 2; pixelDensity = 2;
+_   this works for both PGraphics and images (though they're a little backwards)
+_   for PGraphics it comes early enough
 _ should the re-alloc of the drawing surface happen in beginDraw()
 _   that way it won't blit to the screen until we have a fresh redraw?
 _   otherwise it'll also be resizing on another thread.. badness
@@ -194,32 +183,9 @@ _ createGraphics() currently broken in Java2D
 _ size() command not working to do a resize
 _   need a programmatic way to set size
 _ deal with applySettings() change (maybe not a problem?)
-_ textAlign(RIGHT) including spaces at the end of each line
-_   https://github.com/processing/processing/issues/3028
-_ loadImage() doesn't follow redirects
-_   https://github.com/processing/processing-docs/issues/218
 _ check on performance of the new EDT setup
 _ present mode is 30-40% slower than windowed
 _   w/ this example: https://github.com/processing/processing/issues/2423
-
-
-breaking api
-_ bring back chaining in JSON (and add to XML)
-_ add chaining operations to PVector
-_   https://github.com/processing/processing/issues/257
-_ min() and max() to use varargs
-_   https://github.com/processing/processing/issues/3027
-_ make join() work with Iterable or Object... or both?
-_   will this collide with the current String[] version?
-_ remove OPENGL constant (tell people to use P3D or P2D)
-_ exec() and open() to use varargs
-_ join() to use varargs
-_ break PUtil out from PApplet
-_   pro: weird to call PApplet for things like hex/join/etc
-_   con: still lots of things like selectFolder() that need GUI
-_ cross-language awkwardness
-_   python has to use launch() instead of open()
-_   map() is bad for Python and JavaScript
 
 
 data
@@ -253,35 +219,25 @@ _   https://github.com/processing/processing/issues/2428
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
+_ y-location of frame might be negative, but that might be ok 
+_   right now, on Windows it moves it on-screen (b/c of previous bug reports)
+_   may be cause of some of the display placement issues w/ multiple displays
+_   seem to recall one of the bugs mentioning stacked displays
+_   need to change to iterate through display rectangles
+_   may be related to full-screen bug filed recently
+_ closing a sketch window manually (not hitting Stop) not killing sketch
+_   at least with the Java2D renderer
 
 
 retina/hidpi
-_ save() and saveFrame() with 2X renderers fails
-_   https://github.com/processing/processing/issues/3255
-_ the 2X thing on the renderer name is unnecessary
-_   just do pixelFactor() (and pull it during compilation)?
-_   add sketchPixelFactor() to handle the scenario?
-_   or is it just a boolean, because pixelFactor(2) is the only option?
-_ remove retina hint
-_ saveFrame() with retina render is making black images
-_ no high-res display support for OpenGL
-_   https://github.com/processing/processing/issues/2573
-_   https://jogamp.org/bugzilla/show_bug.cgi?id=741
+_ How do images behave when pixelDensity(2) is set?
+_   https://github.com/processing/processing/issues/3364
 _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start
 _   https://github.com/processing/processing/issues/2357
 _ zero alpha values still a problem with retina renderer
 _   https://github.com/processing/processing/issues/2030
-_ NPE when using image() created with createGraphics(PGraphicsRetina2D)
-_   https://github.com/processing/processing/issues/2510
-_ Text looks blurry in GL Retina (andres)
-_   https://github.com/processing/processing/issues/2739
-_ check retina with PGraphicsRetina2D
-_ Text is half size in PGraphicsRetina2D
-_   https://github.com/processing/processing/issues/2738
-_ text not getting the correct font in Retina2D
-_   https://github.com/processing/processing/issues/2617
 
 
 decisions/misc
@@ -325,9 +281,6 @@ _ add options for image.save() (or saveImage?)
 _   add quality=[0,1] for jpeg images
 _   add dpi=[0,n] for for png images
 _   implemented internally, just needs the wrapper for the args
-_ possible addition for 'implementation' variable
-X   http://code.google.com/p/processing/issues/detail?id=281
-_   https://github.com/processing/processing/issues/320
 _ should map() actually constrain to the low and high values?
 _   or have an alternate version that does that? (or boolean param at end?)
 _ decide whether to keep:
@@ -392,10 +345,6 @@ _ deprecate the older splice() etc API inside PApplet?
 _ splice() throws ClassCastException when used with objects like PVector 
 _   http://code.google.com/p/processing/issues/detail?id=1407
 _ add notes about the new shader setup
-_ online is there but deprecated
-_   doesn't test net connection to see if 'online'
-_   only tests whether running inside an applet viewer (not relevant)
-_   remove 'online' from the docs
 _ add reference/docs for urlEncode() and urlDecode()
 _ verify (and document) public access members of PApplet
 _   http://code.google.com/p/processing/issues/detail?id=83
@@ -405,12 +354,7 @@ _   also set the font *after* the record has started
 _   maybe should instead make textMode(SHAPE) the norm? 
 _   and people can change it to textMode(MODEL) if they want?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1535 (no gcode)
-_ fix regex documentation (assigned to Shiffman)
-_   http://code.google.com/p/processing/issues/detail?id=169
-_ OpenGL offscreen requires primary surface to be OpenGL
 _ explain the new PGL interface
-_ can't really change the smoothing/options on offscreen
-_   is this still true?
 _ decide how disconnectEvent should actually be handled (and name?)
 _   was disconnect always there? 
 _   will need documentation
@@ -420,8 +364,6 @@ _ add requestFocus() method to PApplet (or surface?)
 o destroy() removed, but bring back? is that better than dispose()?
 _   destroy() only called dispose(), so no difference
 _   Python Mode has a hook for when it's called
-_ move checkRetina()/highResDisplay() to PApplet
-_   and out of Toolkit and PSurfaceAWT
 _ probably should also check to make sure PApplet running JVM 8
 _   or compile against 1.8 and force it?
 

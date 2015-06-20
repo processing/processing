@@ -56,11 +56,10 @@ import processing.core.*;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 237;
+  static private final int REVISION = 238;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0237"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0238"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
-//  static private boolean RELEASE = false;
 
   /** True if heavy debugging error/log messages are enabled */
   static public boolean DEBUG = false;
@@ -146,7 +145,13 @@ public class Base {
   static public void main(final String[] args) {
     EventQueue.invokeLater(new Runnable() {
         public void run() {
-          createAndShowGUI(args);
+          try {
+            createAndShowGUI(args);
+          } catch (Throwable t) {
+            showBadnessTrace("It was not meant to be",
+                             "A serious problem happened during startup. Please report:\n" +
+                             "http://github.com/processing/processing/issues/new", t, true);
+          }
         }
     });
   }
@@ -777,16 +782,29 @@ public class Base {
       }
 
 //    Editor.State state = new Editor.State(editors);
-      Editor editor = nextMode.createEditor(this, path, state);
+      Editor editor = null;
+      try {
+        editor = nextMode.createEditor(this, path, state);
+
+      } catch (NoSuchMethodError nsme) {
+        Base.showWarning("Mode out of date",
+                         nextMode.getTitle() + " is not compatible with this version of Processing.\n" +
+                         "Try updating the Mode or contact its author for a new version.", nsme);
+      } catch (Throwable t) {
+        showBadnessTrace("Mode Problems",
+                         "A nasty error occurred while trying to use " + nextMode.getTitle() + ".\n" +
+                         "It may not be compatible with this version of Processing.\n" +
+                         "Try updating the Mode or contact its author for a new version.", t, false);
+      }
       if (editor == null) {
-        // if it's not mode[0] already, then don't go into an infinite loop
+        // if the bad mode is the default mode, don't go into an infinite loop
         // trying to recreate a window with the default mode.
         Mode defaultMode = getDefaultMode();
         if (nextMode == defaultMode) {
           Base.showError("Editor Problems",
                          "An error occurred while trying to change modes.\n" +
                          "We'll have to quit for now because it's an\n" +
-                         "unfortunate bit of indigestion.",
+                         "unfortunate bit of indigestion with the default Mode.",
                          null);
         } else {
           editor = defaultMode.createEditor(this, path, state);
@@ -808,6 +826,9 @@ public class Base {
       editor.setVisible(true);
 
       return editor;
+
+//    } catch (NoSuchMethodError nsme) {
+//      Base.showWarning(title, message);
 
     } catch (Throwable t) {
       showBadnessTrace("Terrible News",
@@ -2050,8 +2071,9 @@ public class Base {
       t.printStackTrace(new PrintWriter(sw));
       // Necessary to replace \n with <br/> (even if pre) otherwise Java
       // treats it as a closed tag and reverts to plain formatting.
-      message = "<html>" + message + "<br/><font size=2><br/>" +
-        sw.toString().replaceAll("\n", "<br/>");
+      message = ("<html>" + message +
+                 "<br/><font size=2><br/>" +
+                 sw + "</html>").replaceAll("\n", "<br/>");
 
       JOptionPane.showMessageDialog(new Frame(), message, title,
                                     fatal ?

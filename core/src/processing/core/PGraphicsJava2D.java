@@ -93,9 +93,12 @@ public class PGraphicsJava2D extends PGraphics {
   public boolean fillGradient;
   public Paint fillGradientObject;
 
+  protected Stroke strokeObject;
   protected Color strokeColorObject;
   public boolean strokeGradient;
   public Paint strokeGradientObject;
+
+  Font fontObject;
 
 
 
@@ -252,10 +255,10 @@ public class PGraphicsJava2D extends PGraphics {
   // FRAME
 
 
-  @Override
-  public boolean canDraw() {
-    return true;
-  }
+//  @Override
+//  public boolean canDraw() {
+//    return true;
+//  }
 
 
 //  @Override
@@ -272,8 +275,8 @@ public class PGraphicsJava2D extends PGraphics {
 
   public Graphics2D checkImage() {
     if (image == null ||
-      ((BufferedImage) image).getWidth() != width*pixelFactor ||
-      ((BufferedImage) image).getHeight() != height*pixelFactor) {
+      ((BufferedImage) image).getWidth() != width*pixelDensity ||
+      ((BufferedImage) image).getHeight() != height*pixelDensity) {
 //      ((VolatileImage) image).getWidth() != width ||
 //      ((VolatileImage) image).getHeight() != height) {
 //        image = new BufferedImage(width * pixelFactor, height * pixelFactor
@@ -299,10 +302,10 @@ public class PGraphicsJava2D extends PGraphics {
 
       // Formerly this was broken into separate versions based on offscreen or
       // not, but we may as well create a compatible image; it won't hurt, right?
-      int wide = width * pixelFactor;
-      int high = height * pixelFactor;
+      int wide = width * pixelDensity;
+      int high = height * pixelDensity;
 //      System.out.println("re-creating image");
-      image = gc.createCompatibleImage(wide, high);
+      image = gc.createCompatibleImage(wide, high, Transparency.TRANSLUCENT);
 //      image = gc.createCompatibleVolatileImage(wide, high);
       //image = surface.getComponent().createImage(width, height);
     }
@@ -313,10 +316,18 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public void beginDraw() {
     g2 = checkImage();
-    //g2 = (Graphics2D) image.getGraphics();
 
-    // Calling getGraphics() seems to nuke the smoothing settings
-    //smooth(quality);
+    // Calling getGraphics() seems to nuke several settings.
+    // It seems to be re-creating a new Graphics2D object each time.
+    // https://github.com/processing/processing/issues/3331
+    if (strokeObject != null) {
+      g2.setStroke(strokeObject);
+    }
+    // https://github.com/processing/processing/issues/2617
+    if (fontObject != null) {
+      g2.setFont(fontObject);
+    }
+
     handleSmooth();
 
     /*
@@ -375,6 +386,8 @@ public class PGraphicsJava2D extends PGraphics {
     checkSettings();
     resetMatrix(); // reset model matrix
     vertexCount = 0;
+
+    g2.scale(pixelDensity, pixelDensity);
   }
 
 
@@ -1895,6 +1908,7 @@ public class PGraphicsJava2D extends PGraphics {
       font = font.deriveFont(map);
       g2.setFont(font);
       textFont.setNative(font);
+      fontObject = font;
 
 //      Font dfont = font.deriveFont(size);
 ////      Map<TextAttribute, ?> attrs = dfont.getAttributes();
@@ -2368,7 +2382,8 @@ public class PGraphicsJava2D extends PGraphics {
       join = BasicStroke.JOIN_ROUND;
     }
 
-    g2.setStroke(new BasicStroke(strokeWeight, cap, join));
+    strokeObject = new BasicStroke(strokeWeight, cap, join);
+    g2.setStroke(strokeObject);
   }
 
 

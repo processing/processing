@@ -1,3 +1,163 @@
+PROCESSING 3.0a10 (REV 0237) - 9 June 2015
+
+Huge release! Knocking on the door for beta, this includes many changes
+and improvements for how displays of all kinds (single, multiple, retina, 
+high dpi) are handled, plus smoothing, full screen, etc etc. 
+
+
+[ breaking things for the future ] 
+
++ Added fullScreen() method to make it far easier to run sketches 
+  using the full screen. Reference notes and explanation here:
+  https://github.com/processing/processing-docs/issues/250
+  https://github.com/processing/processing/issues/3296
+
++ smooth() and noSmooth() can only be used once per sketch, in setup().
+  See the changes, the explanation, and the discussion here:
+  https://github.com/processing/processing-docs/issues/251
+  https://github.com/processing/processing/issues/3357
+
++ Re-opened the Gates of Hell by adding chaining operations to PVector
+  https://github.com/processing/processing/issues/257
+  
++ Changed exec() and open() to use varargs. Changed open() to launch()
+  to prevent problems with Python Mode.
+
++ Replaced --full-screen command line option with --present to untangle
+  full screen versus the "Present" command that places blanks the rest
+  of the screen around a sketch.
+  
++ ortho() function is being reworked to make it compliant
+  https://github.com/processing/processing/issues/1278
+
+
+[ other changes and additions ]
+
++ Added new application and export icons. Mmm!
+
++ Add retina/high-res display support to OpenGL
+  https://github.com/processing/processing/issues/2573
+
++ Add pixelDensity(2) command to enable retina or high-dpi mode for
+  your sketch. Make things look beautiful and crisp on expensive hardware!
+  https://github.com/processing/processing/issues/3361
+
++ Added displayDensity() methods to get the pixel density for individual
+  displays. displayDensity() returns the density (1 or 2) of the default
+  (or currently selected) display, displayDensity(1) returns the density
+  of display 1. Guess how you get the density of display 2?
+
++ Add useful constructors to the Int/Float/StringList classes
+
+
+[ bug fixes ]
+
++ Fix monitor numbering problems
+  https://github.com/processing/processing/issues/3309
+
++ Full screen doesn't work on second window w/o present mode
+  https://github.com/processing/processing/issues/3271
+  
++ Full screen on OS X 10.9 has incorrect placement
+  https://github.com/processing/processing/issues/3305
+
++ "Run sketches on display" not working properly
+  https://github.com/processing/processing/issues/3264
+
++ Comments influencing code (preproc issues in parsing)
+  https://github.com/processing/processing/issues/3326
+  
++ Sketch not appearing depending on arangement of external display on OS X
+  https://github.com/processing/processing/issues/3118
+  
++ Sketch launching on second display that's not currently in use
+  https://github.com/processing/processing/issues/3082
+  
++ strokeWeight() in setup() not working for default renderer
+  https://github.com/processing/processing/issues/3331
+
++ Retain original java.awt.Frame when it's available from PSurfaceAWT
+
++ Set frame icon images for Java2D (dock and cmd-tab) 
+  https://github.com/processing/processing/issues/257
+
++ Debug message showing up in 3.0a9 when dragging and dropping files
+
++ Rolled back to 3.0a5 version of appbundler due to crash on startup
+  https://github.com/processing/processing/issues/3359
+  https://github.com/processing/processing/issues/3360
+  This re-introduces a few bugs related to the serial library and 
+  scrolling and any other changes later than 16 November 2015
+  https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
+  https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
+
+
+[ andres vs opengl, episode eleventy three ]
+
++ set(0, 0, image) does not set alpha channel to opaque in P2D/P3D
+  https://github.com/processing/processing/issues/2125
+  
++ GROUP shapes are broken in 3.0a9
+  https://github.com/processing/processing/issues/3336
+  
++ Only a quarter of the sketch is appearing in 2x mode
+  https://github.com/processing/processing/issues/3332
+  https://github.com/processing/processing/issues/3327
+  
++ Single transparent pixel at end of textures in OpenGL
+  https://github.com/processing/processing/issues/115
+  
++ Implement setImpl() instead of set() inside PGraphicsOpenGL
+  https://github.com/processing/processing/issues/160
+  https://github.com/processing/processing/issues/3012
+  
++ Strange extra lines with PShape 3D
+  https://github.com/processing/processing/issues/3006
+  
++ BACKSPACE key is identified as DELETE in OpenGL renderers
+  https://github.com/processing/processing/issues/3338
+
++ More key issues in OpenGL 
+  https://github.com/processing/processing/issues/3352
+
++ Set icon for OpenGL windows
+  https://github.com/processing/processing/issues/3348
+  
++ save() and saveFrame() with OPENGL renderer fails
+  https://github.com/processing/processing/issues/3334
+  
++ Errors in glsl code are only caught when set() is used
+  https://github.com/processing/processing/issues/2268
+  
++ Strips when rendering spheres with lights and anti-aliasing
+  https://github.com/processing/processing/issues/1185
+
+
+[ valuable contributions from the community ]
+
++ Several Greek translation updates
+  https://github.com/processing/processing/issues/3329
+  https://github.com/processing/processing/pull/3330
+  https://github.com/processing/processing/pull/3340
+  https://github.com/processing/processing/pull/3354
+
++ Add i18n for Archiver Tool and missing text
+  https://github.com/processing/processing/pull/3349
+  
++ Fix case-related bugs in Toolkit.setMenuMnemonics()
+  https://github.com/processing/processing/pull/3366
+
++ Contribution manager scroll bar only shows up when needed
+  https://github.com/processing/processing/pull/3343
+
++ Progress bar added to Contribution Manager
+  https://github.com/processing/processing/issues/3160
+  https://github.com/processing/processing/pull/3319
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 3.0a9 (REV 0236) - 19 May 2015
 
 More work as we head toward beta. Mostly improvements to the GUI 

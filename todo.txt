@@ -1,51 +1,54 @@
-0237 (3.0a10)
-X debug message showing up when dragging and dropping files
-X add new app and export icons (downloaded)
-X   add versions for OS X (build process?)
-X   add support for the 1024 file
-X   Windows versions of the icons
-X     https://msdn.microsoft.com/en-us/library/dn742485.aspx
-X     merged list of sizes: 16, 24, 32, 48, 64, 256
-X   Linux version of updated icon
-X     handled with the .desktop file, nothing has changed for the file location
-X   add larger icons to core folder
-X   update export icons in java/application (export.icns and export.ico)
-X remove no longer used 'pdex' directory
-
-fixed earlier
-X Can't set Breakpoint from the Breakpoint bar at the side
-X   https://github.com/processing/processing/issues/2835
-X Old version number shown in Mode Manager dialog
-X   https://github.com/processing/processing/issues/2843
-o Update Windows icons for multiple sizes, implement them in the PDE
-o   http://code.google.com/p/processing/issues/detail?id=632
-X   closed during the 2.x cycle
+0238 (3.0b1)
+X Re-enable the display menu in Preferences after display added
+X   Previously, the checkbox menu stayed disabled (though it updated the list)
+X sketch.isReadOnly returns false for examples coming from multiple modes
+o   http://code.google.com/p/processing/issues/detail?id=734
+X   https://github.com/processing/processing/issues/773
+X Drag and Drop & "Add File" broken for .pde files in 3.0a10
+X   https://github.com/processing/processing/issues/3383
+X Show "not compatible" error message in the manager
+X   https://github.com/processing/processing/issues/3386
+X Add more code for handling low-level errors on startup
 
 contribs
-X several Greek translation updates
-X   https://github.com/processing/processing/issues/3329
-X   https://github.com/processing/processing/pull/3330
-X   https://github.com/processing/processing/pull/3340
-X   https://github.com/processing/processing/pull/3354
-X add i18n for Archiver and missing text
-X   https://github.com/processing/processing/pull/3349
+X Use correct localized strings in JavaEditor.java
+X   https://github.com/processing/processing/pull/3376
 
 gsoc
-X contrib manager scroll bar only shows up when needed
-X   https://github.com/processing/processing/pull/3343
-X Progress bar added to Contrib Manager
-X   https://github.com/processing/processing/issues/3160
-X   https://github.com/processing/processing/pull/3319
+X Mode problems window wasn't doing line breaks
+X   https://github.com/processing/processing/issues/3369
+X   https://github.com/processing/processing/pull/3370
+X Add missing internationalization in app/Sketch.java
+X   https://github.com/processing/processing/pull/3392
+
+fixed earlier
+X dim edit menus as appropriate during selection/no selection/etc
+o   http://code.google.com/p/processing/issues/detail?id=14
+X   https://github.com/processing/processing/issues/53
+
+cleaning
+o libraries in java tabs (separate .java files) are reported missing
+o   need to scan the .java files for imports that need to be included
+o   http://code.google.com/p/processing/issues/detail?id=459
+X   https://github.com/processing/processing/issues/498
+
+"OS X v10.11 is the last major release of OS X that will support the previously deprecated Java 6 runtime and tools provided by Apple. Applications or features that depend upon Java 6 may not function properly or will not launch when Java 6 is removed." https://developer.apple.com/library/prerelease/mac/releasenotes/General/rn-osx-10.11/index.html
 
 
-gui
-_ implement 'welcome' screen
+beta
+_ add "welcome" or "what's new" window to explain features in 3
 _   https://github.com/processing/processing/issues/3358
 _   a summary of what's new, plus a link to GitHub wiki page with details
 _   a warning that some Processing 2 sketches may not be compatible
-_   if a v2 sketchbook already exists, show a prompt to choose either creating a new Processing 3 sketch folder or use the existing v2 one, plus a link to GitHub wiki page with details
 _   a checkbox for "show this welcome each time" (default to checked)
--   a button to dismiss the welcome screen (e.g., "get started")
+_   a button to dismiss the welcome screen (e.g., "get started")
+_ 2.x vs 3.x sketchbook battle (part of the welcome screen item)
+_   if a v2 sketchbook already exists, show a prompt to choose either creating a new Processing 3 sketch folder or use the existing v2 one, plus a link to GitHub wiki page with details
+_ send list of installed Libraries, Modes, Tools, and Examples on update
+_   https://github.com/processing/processing/issues/3365
+
+
+gui
 _ add new lower console/errors icons
 _ show hover text with 'debug'
 _ inquire about updated document icon
@@ -55,9 +58,12 @@ _ no setting breakpoints when debugger is off
 _   https://github.com/processing/processing/issues/3306
 _ make breakpoints more prominent
 _   https://github.com/processing/processing/issues/3307
+_ import suggestions box needs design review
+_   https://github.com/processing/processing/issues/3407
+_ distinguish errors and warnings
+_   https://github.com/processing/processing/issues/3406
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
-_ add a "what's new" window to explain features in 3
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 _ tiny trail of dots when moving the selection bar up/down on retina
 _ need 'actively pressed' version of 'play' and 'stop'
@@ -80,6 +86,8 @@ _   otherwise could run in one mode, then try to stop in another
 
 
 pde/build
+_ error message caused by curly bracket in a println string
+_   https://github.com/processing/processing/issues/3394
 _ when variables used in size(), getting exceptions instead of any warning
 _   https://github.com/processing/processing/issues/3311
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
@@ -128,7 +136,14 @@ _ add last revision used / max revision used settings?
 
 
 crashing
-_ hard crash on startup in HD 5000 graphics
+_ fix appbundler problems due to rollback
+_   this re-introduces two bugs (serial export and scrolling)
+_   and any other changes later than 16 November 2015:
+_   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
+_   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
+_ another possible culprit
+_   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
+_ EXC_BAD_ACCESS inside AppleIntelHD5000GraphicsGLDriver when starting 3.0a8+
 _   https://github.com/processing/processing/issues/3359
 _ Hard crash on startup inside strlen call when using 3.0a8+ on OS X
 _   https://github.com/processing/processing/issues/3360
@@ -155,6 +170,7 @@ _ don't allow users to create 'blah.java' when 'blah.pde' already in sketch
 
 
 3.0 beta/final
+_ wonder if "Save As" is causing the problems with auto-reload
 _ look at the sound library https://github.com/wirsing/ProcessingSound
 _   sound is not yet supported on Windows
 _ clean out the repo
@@ -162,6 +178,8 @@ _   https://github.com/processing/processing/issues/1898
 _ search the source for 'applet' references (i.e. SVG docs)
 _ update list of option JRE files
 _   https://github.com/processing/processing/issues/3288
+_ 2.x Modes, Tools, and Libraries will need to be updated for 3.x
+_   https://github.com/processing/processing/issues/3080
 
 
 sketchbook
@@ -179,6 +197,7 @@ _ improve start time by populating sketchbook/libraries on threads
 _   https://github.com/processing/processing/issues/2945
 _ longer PR about sketchbook stuff, but closed
 _   https://github.com/processing/processing/pull/3178
+_ disable the Export button if no platforms selected on Export to Application
 
 
 help me
@@ -541,8 +560,6 @@ _ option to just print all code in project
 _   http://code.google.com/p/processing/issues/detail?id=11
 _   https://github.com/processing/processing/issues/50
 _   or option to export all the code as colored html?
-_ dim edit menus as appropriate during selection/no selection/etc
-_   http://code.google.com/p/processing/issues/detail?id=14
 _ implement better method of showing curly brace closure
 _   http://code.google.com/p/processing/issues/detail?id=55
 _ sketches should only write to the console of their editor window
@@ -625,8 +642,6 @@ _   though will that require the sketch to be saved before export?
 _   https://github.com/processing/processing/issues/2459
 _ examples window sketches should load in proper environment
 _ write build.xml file to automatically update the examples
-_ sketch.isReadOnly returns false for examples coming from multiple modes
-_   http://code.google.com/p/processing/issues/detail?id=734
 _ see how library installation goes, then possibly do same w/ examples
 
 
@@ -663,9 +678,6 @@ _   but it won't reload the library mapping table
 _ make sure there aren't library jar files named the same thing 
 _   i.e. if one library has db.jar, then that's gonna kill another db.jar
 _   when the files are copied over
-_ libraries in java tabs (separate .java files) are reported missing
-_   need to scan the .java files for imports that need to be included
-_   http://code.google.com/p/processing/issues/detail?id=459
 _ library.properties and tool.properties should reflect supported modes
 _   http://code.google.com/p/processing/issues/detail?id=1050
 _ versioning info 

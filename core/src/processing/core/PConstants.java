@@ -57,23 +57,20 @@ public interface PConstants {
   });
   */
 
-  static final String JAVA2D    = "processing.core.PGraphicsJava2D";
-  static final String JAVA2D_2X = "processing.core.PGraphicsJava2D2X";
+  static final String JAVA2D = "processing.core.PGraphicsJava2D";
 
-  static final String P2D    = "processing.opengl.PGraphics2D";
-  static final String P2D_2X = "processing.opengl.PGraphics2D2X";
-  static final String P3D    = "processing.opengl.PGraphics3D";
-  static final String P3D_2X = "processing.opengl.PGraphics3D2X";
+  static final String P2D = "processing.opengl.PGraphics2D";
+  static final String P3D = "processing.opengl.PGraphics3D";
 
-  // When will it be time to remove this to have people use P3D instead?
+  // When will it be time to remove this?
+  @Deprecated
   static final String OPENGL = P3D;
 
   // Experimental, higher-performance Java 2D renderer (but no pixel ops)
-  static final String E2D = PGraphicsDanger2D.class.getName();
+//  static final String E2D = PGraphicsDanger2D.class.getName();
 
   // Experimental JavaFX renderer; even better 2D performance
   static final String FX2D = PGraphicsFX2D.class.getName();
-  static final String FX2D_2X = PGraphicsFX2D2X.class.getName();
 
   static final String PDF = "processing.pdf.PGraphicsPDF";
   static final String SVG = "processing.svg.PGraphicsSVG";
@@ -517,23 +514,5 @@ public interface PConstants {
   static final int ENABLE_STROKE_PURE         =  9;
   static final int DISABLE_STROKE_PURE        = -9;
 
-  static final int ENABLE_RETINA_PIXELS       =  10;
-  static final int DISABLE_RETINA_PIXELS      = -10;
-
-  static final int HINT_COUNT                 = 11;
-
-  // error messages
-
-  static final String ERROR_BACKGROUND_IMAGE_SIZE =
-    "background image must be the same size as your application";
-  static final String ERROR_BACKGROUND_IMAGE_FORMAT =
-    "background images should be RGB or ARGB";
-
-  static final String ERROR_TEXTFONT_NULL_PFONT =
-    "A null PFont was passed to textFont()";
-
-  static final String ERROR_PUSHMATRIX_OVERFLOW =
-    "Too many calls to pushMatrix().";
-  static final String ERROR_PUSHMATRIX_UNDERFLOW =
-    "Too many calls to popMatrix(), and not enough to pushMatrix().";
+  static final int HINT_COUNT                 = 10;
 }

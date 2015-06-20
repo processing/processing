@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-14 The Processing Foundation
+  Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -28,6 +28,7 @@ package processing.core;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
@@ -444,6 +445,9 @@ public class PGraphics extends PImage implements PConstants {
   /** The current text leading (read-only) */
   public float textLeading;
 
+  static final protected String ERROR_TEXTFONT_NULL_PFONT =
+    "A null PFont was passed to textFont()";
+
   // ........................................................
 
   // Material properties
@@ -482,6 +486,11 @@ public class PGraphics extends PImage implements PConstants {
   protected float backgroundR, backgroundG, backgroundB, backgroundA;
   protected int backgroundRi, backgroundGi, backgroundBi, backgroundAi;
 
+  static final protected String ERROR_BACKGROUND_IMAGE_SIZE =
+    "background image must be the same size as your application";
+  static final protected String ERROR_BACKGROUND_IMAGE_FORMAT =
+    "background images should be RGB or ARGB";
+
 
   /** The current blending mode. */
   protected int blendMode;
@@ -505,6 +514,12 @@ public class PGraphics extends PImage implements PConstants {
 //  int matrixStackDepth;
 
   static final int MATRIX_STACK_DEPTH = 32;
+
+  static final protected String ERROR_PUSHMATRIX_OVERFLOW =
+    "Too many calls to pushMatrix().";
+  static final protected String ERROR_PUSHMATRIX_UNDERFLOW =
+    "Too many calls to popMatrix(), and not enough to pushMatrix().";
+
 
   // ........................................................
 
@@ -698,9 +713,11 @@ public class PGraphics extends PImage implements PConstants {
 
   public void setParent(PApplet parent) {  // ignore
     this.parent = parent;
+
     // Some renderers (OpenGL) need to know what smoothing level will be used
     // before the rendering surface is even created.
     smooth = parent.sketchSmooth();
+    pixelDensity = parent.sketchPixelDensity();
   }
 
 
@@ -747,8 +764,8 @@ public class PGraphics extends PImage implements PConstants {
     height = h;
 
     /** {@link PImage.pixelFactor} set in {@link PImage#PImage()} */
-    pixelWidth = width * pixelFactor;
-    pixelHeight = height * pixelFactor;
+    pixelWidth = width * pixelDensity;
+    pixelHeight = height * pixelDensity;
 
 //    if (surface != null) {
 //      allocate();
@@ -832,12 +849,12 @@ public class PGraphics extends PImage implements PConstants {
   // FRAME
 
 
-  /**
-   * Some renderers have requirements re: when they are ready to draw.
-   */
-  public boolean canDraw() {  // ignore
-    return true;
-  }
+//  /**
+//   * Some renderers have requirements re: when they are ready to draw.
+//   */
+//  public boolean canDraw() {  // ignore
+//    return true;
+//  }
 
 
   // removing because renderers will have their own animation threads and
@@ -4115,7 +4132,7 @@ public class PGraphics extends PImage implements PConstants {
         // float w = font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
       }
       */
-      textSize(which.size);
+      textSize(which.getDefaultSize());
 
     } else {
       throw new RuntimeException(ERROR_TEXTFONT_NULL_PFONT);
@@ -4804,10 +4821,10 @@ public class PGraphics extends PImage implements PConstants {
     PFont.Glyph glyph = textFont.getGlyph(ch);
     if (glyph != null) {
       if (textMode == MODEL) {
-        float high    = glyph.height     / (float) textFont.size;
-        float bwidth  = glyph.width      / (float) textFont.size;
-        float lextent = glyph.leftExtent / (float) textFont.size;
-        float textent = glyph.topExtent  / (float) textFont.size;
+        float high    = glyph.height     / (float) textFont.getSize();
+        float bwidth  = glyph.width      / (float) textFont.getSize();
+        float lextent = glyph.leftExtent / (float) textFont.getSize();
+        float textent = glyph.topExtent  / (float) textFont.getSize();
 
         float x1 = x + lextent * textSize;
         float y1 = y - textent * textSize;
@@ -4856,6 +4873,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  /*
   protected void textCharScreenImpl(PImage glyph,
                                     int xx, int yy,
                                     int w0, int h0) {
@@ -4906,6 +4924,7 @@ public class PGraphics extends PImage implements PConstants {
       }
     }
   }
+  */
 
 
   /**
@@ -4915,6 +4934,10 @@ public class PGraphics extends PImage implements PConstants {
    */
   @SuppressWarnings("deprecation")
   public FontMetrics getFontMetrics(Font font) {  // ignore
+    Frame frame = parent.frame;
+    if (frame != null) {
+      return frame.getToolkit().getFontMetrics(font);
+    }
     return Toolkit.getDefaultToolkit().getFontMetrics(font);
   }
 
@@ -8064,6 +8087,6 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public boolean is2X() {
-    return pixelFactor == 2;
+    return pixelDensity == 2;
   }
 }

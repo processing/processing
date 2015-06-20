@@ -667,7 +667,10 @@
   <!-- - - - - - - - -->
   
   <target name="linux-clean" depends="subprojects-clean" description="Clean linux version">
-    <delete dir="linux/work" />
+    <delete>
+      <fileset dir="linux" includes="work" />
+      <fileset dir="linux" includes="processing-*tgz" />
+    </delete>
   </target>
   
   <target name="linux-check-os" unless="linux">
@@ -912,7 +915,10 @@
   
   <target name="windows-clean" depends="subprojects-clean"
           description="Clean windows version">
-    <delete dir="windows/work" />
+    <delete>
+      <fileset dir="windows" includes="work" />
+      <fileset dir="windows" includes="processing-*zip" />
+    </delete>
   </target>
   
   <target name="windows-check-os" unless="windows">

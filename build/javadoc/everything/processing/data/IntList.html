@@ -152,7 +152,14 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <td class="colOne"><code><span class="memberNameLink"><a href="../../processing/data/IntList.html#IntList-int:A-">IntList</a></span>(int[]&nbsp;source)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../processing/data/IntList.html#IntList-java.lang.Iterable-">IntList</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;iter)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../processing/data/IntList.html#IntList-java.lang.Iterable-">IntList</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&gt;&nbsp;iter)</code>
+<div class="block">Construct an IntList from an iterable pile of objects.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../processing/data/IntList.html#IntList-java.lang.Object...-">IntList</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>...&nbsp;items)</code>
+<div class="block">Construct an IntList from a random pile of objects.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -461,10 +468,24 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.
 <a name="IntList-java.lang.Iterable-">
 <!--   -->
 </a>
+<ul class="blockList">
+<li class="blockList">
+<h4>IntList</h4>
+<pre>public&nbsp;IntList(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&gt;&nbsp;iter)</pre>
+<div class="block">Construct an IntList from an iterable pile of objects.
+ For instance, a float array, an array of strings, who knows).
+ Un-parseable or null values will be set to 0.</div>
+</li>
+</ul>
+<a name="IntList-java.lang.Object...-">
+<!--   -->
+</a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>IntList</h4>
-<pre>public&nbsp;IntList(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html?is-external=true" title="class or interface in java.lang">Iterable</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Integer.html?is-external=true" title="class or interface in java.lang">Integer</a>&gt;&nbsp;iter)</pre>
+<pre>public&nbsp;IntList(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>...&nbsp;items)</pre>
+<div class="block">Construct an IntList from a random pile of objects.
+ Un-parseable or null values will be set to zero.</div>
 </li>
 </ul>
 </li>

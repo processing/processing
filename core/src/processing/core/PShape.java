@@ -1854,7 +1854,17 @@ public class PShape implements PConstants {
   }
 
 
+  /** Resize the children[] array to be in line with childCount */
+  protected void crop() {
+    // https://github.com/processing/processing/issues/3347
+    if (children.length != childCount) {
+      children = (PShape[]) PApplet.subset(children, 0, childCount);
+    }
+  }
+
+
   public PShape[] getChildren() {
+    crop();
     return children;
   }
 
@@ -1873,6 +1883,7 @@ public class PShape implements PConstants {
    * @see PShape#addChild(PShape)
    */
   public PShape getChild(int index) {
+    crop();
     return children[index];
   }
 

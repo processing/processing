@@ -25,11 +25,14 @@ package processing.app;
 
 import processing.core.*;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FileDialog;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -447,17 +450,17 @@ public class Sketch {
     }
 
     if (newName.startsWith(".")) {
-      Base.showWarning("Problem with rename",
-                       "The name cannot start with a period.");
+      Base.showWarning(Language.text("name.messages.problem_renaming"),
+                       Language.text("name.messages.starts_with_dot.description"));
       return;
     }
 
     int dot = newName.lastIndexOf('.');
     String newExtension = newName.substring(dot+1).toLowerCase();
     if (!mode.validExtension(newExtension)) {
-      Base.showWarning("Problem with rename",
-                       "\"." + newExtension + "\"" +
-                       "is not a valid extension.");
+      Base.showWarning(Language.text("name.messages.problem_renaming"),
+                       Language.interpolate("name.messages.invalid_extension.description",
+                        newExtension));
       return;
     }
 
@@ -465,10 +468,9 @@ public class Sketch {
     if (!mode.isDefaultExtension(newExtension)) {
       if (renamingCode) {  // If creating a new tab, don't show this error
         if (current == code[0]) {  // If this is the main tab, disallow
-          Base.showWarning("Problem with rename",
-                           "The first tab cannot be a ." + newExtension + " file.\n" +
-                           "(It may be time for you to graduate to a\n" +
-                           "\"real\" programming environment, hotshot.)");
+          Base.showWarning(Language.text("name.messages.problem_renaming"),
+                           Language.interpolate("name.messages.main_java_extension.description",
+                            newExtension));
           return;
         }
       }
@@ -492,9 +494,9 @@ public class Sketch {
       // http://processing.org/bugs/bugzilla/543.html
       for (SketchCode c : code) {
         if (c != current && sanitaryName.equalsIgnoreCase(c.getPrettyName())) {
-          Base.showMessage("Nope",
-                           "A file named \"" + c.getFileName() + "\" already exists at\n" +
-                             "\"" + folder.getAbsolutePath() + "\"");
+          Base.showMessage(Language.text("name.messages.new_sketch_exists"),
+                           Language.interpolate("name.messages.new_sketch_exists.description",
+                            c.getFileName(), folder.getAbsolutePath()));
           return;
         }
       }
@@ -508,16 +510,17 @@ public class Sketch {
         String folderName = newName.substring(0, newName.indexOf('.'));
         File newFolder = new File(folder.getParentFile(), folderName);
         if (newFolder.exists()) {
-          Base.showWarning("Cannot Rename",
-                           "Sorry, a sketch (or folder) named " +
-                           "\"" + newName + "\" already exists.");
+          Base.showWarning(Language.text("name.messages.new_folder_exists"),
+                           Language.interpolate("name.messages.new_folder_exists.description",
+                            newName));
           return;
         }
 
         // renaming the containing sketch folder
         boolean success = folder.renameTo(newFolder);
         if (!success) {
-          Base.showWarning("Error", "Could not rename the sketch folder.");
+          Base.showWarning(Language.text("name.messages.error"),
+            Language.text("name.messages.no_rename_folder.description"));
           return;
         }
         // let this guy know where he's living (at least for a split second)
@@ -537,9 +540,9 @@ public class Sketch {
         // This isn't changing folders, just changes the name
         newFile = new File(newFolder, newName);
         if (!current.renameTo(newFile, newExtension)) {
-          Base.showWarning("Error",
-                           "Could not rename \"" + current.getFileName() +
-                           "\" to \"" + newFile.getName() + "\"");
+          Base.showWarning(Language.text("name.messages.error"),
+                           Language.interpolate("name.messages.no_rename_file.description",
+                            current.getFileName(), newFile.getName()));
           return;
         }
 
@@ -569,9 +572,9 @@ public class Sketch {
 
       } else {  // else if something besides code[0]
         if (!current.renameTo(newFile, newExtension)) {
-          Base.showWarning("Error",
-                           "Could not rename \"" + current.getFileName() +
-                           "\" to \"" + newFile.getName() + "\"");
+          Base.showWarning(Language.text("name.messages.error"),
+                           Language.interpolate("name.messages.no_rename_file.description",
+                            current.getFileName(), newFile.getName()));
           return;
         }
       }
@@ -583,9 +586,10 @@ public class Sketch {
           throw new IOException("createNewFile() returned false");
         }
       } catch (IOException e) {
-        Base.showWarning("Error",
-                         "Could not create the file \"" + newFile + "\"\n" +
-                         "in \"" + folder.getAbsolutePath() + "\"", e);
+        Base.showWarning(Language.text("name.messages.error"),
+                         Language.interpolate("name.messages.no_create_file.description",
+                          newFile, folder.getAbsolutePath()),
+                         e);
         return;
       }
       SketchCode newCode = new SketchCode(newFile, newExtension);
@@ -768,9 +772,8 @@ public class Sketch {
 
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage("Sketch is read-only",
-                       "Some files are marked \"read-only\", so you'll\n" +
-                       "need to re-save this sketch to another location.");
+      Base.showMessage(Language.text("save_file.messages.is_read_only"),
+                       Language.text("save_file.messages.is_read_only.description"));
       // if the user cancels, give up on the save()
       if (!saveAs()) return false;
     }
@@ -843,9 +846,9 @@ public class Sketch {
     String sanitaryName = Sketch.checkName(newName);
     File newFolder = new File(newParentDir, sanitaryName);
     if (!sanitaryName.equals(newName) && newFolder.exists()) {
-      Base.showMessage("Cannot Save",
-                       "A sketch with the cleaned name\n" +
-                       "“" + sanitaryName + "” already exists.");
+      Base.showMessage(Language.text("save_file.messages.sketch_exists"),
+                       Language.interpolate("save_file.messages.sketch_exists.description",
+                        sanitaryName));
       return false;
     }
     newName = sanitaryName;
@@ -862,9 +865,9 @@ public class Sketch {
     // resaved (with the same name) to another location/folder.
     for (int i = 1; i < codeCount; i++) {
       if (newName.equalsIgnoreCase(code[i].getPrettyName())) {
-        Base.showMessage("Nope",
-                         "You can't save the sketch as \"" + newName + "\"\n" +
-                         "because the sketch already has a tab with that name.");
+        Base.showMessage(Language.text("save_file.messages.tab_exists"),
+                         Language.interpolate("save_file.messages.tab_exists.description",
+                          newName));
         return false;
       }
     }
@@ -882,9 +885,9 @@ public class Sketch {
       String oldPath = folder.getCanonicalPath() + File.separator;
 
       if (newPath.indexOf(oldPath) == 0) {
-        Base.showWarning("How very Borges of you",
-                         "You cannot save the sketch into a folder\n" +
-                         "inside itself. This would go on forever.", null);
+        Base.showWarning(Language.text("save_file.messages.recursive_save"),
+                         Language.text("save_file.messages.recursive_save.description"),
+                         null);
         return false;
       }
     } catch (IOException e) { }
@@ -1019,10 +1022,8 @@ public class Sketch {
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage("Sketch is Read-Only",
-                       "Some files are marked \"read-only\", so you'll\n" +
-                       "need to re-save the sketch in another location,\n" +
-                       "and try again.");
+      Base.showMessage(Language.text("add_file.messages.is_read_only"),
+                       Language.text("add_file.messages.is_read_only.description"));
       return;
     }
 
@@ -1098,7 +1099,8 @@ public class Sketch {
     // check whether this file already exists
     if (destFile.exists()) {
       Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
-      String prompt = "Replace the existing version of " + filename + "?";
+      String prompt = Language.interpolate("add_file.messages.confirm_replace", 
+                                           filename);
       int result = JOptionPane.showOptionDialog(editor,
                                                 prompt,
                                                 "Replace",
@@ -1120,35 +1122,39 @@ public class Sketch {
     if (replacement) {
       boolean muchSuccess = destFile.delete();
       if (!muchSuccess) {
-        Base.showWarning("Error adding file",
-                         "Could not delete the existing '" +
-                         filename + "' file.", null);
+        Base.showWarning(Language.text("add_file.messages.error_adding"),
+                         Language.interpolate("add_file.messages.cannot_delete.description",
+                          filename),
+                         null);
         return false;
       }
     }
 
     // make sure they aren't the same file
     if ((codeExtension == null) && sourceFile.equals(destFile)) {
-      Base.showWarning("You can't fool me",
-                       "This file has already been copied to the\n" +
-                       "location from which where you're trying to add it.\n" +
-                       "I ain't not doin nuthin'.", null);
+      Base.showWarning(Language.text("add_file.messages.same_file"),
+                       Language.text("add_file.messages.same_file.description"),
+                       null);
       return false;
     }
 
-    // in case the user is "adding" the code in an attempt
-    // to update the sketch's tabs
-	if (!sourceFile.equals(destFile)) {
-		final File sourceFile2 = sourceFile;
-		final File destFile2 = destFile;
-	    // Create a new event dispatch thread- to display ProgressBar
-	    // while Saving As
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        new ProgressFrame(sourceFile2, destFile2, editor);
+    // Handles "Add File" when a .pde is used. For beta 1, this no longer runs
+    // on a separate thread because it's totally unnecessary (a .pde file is
+    // not going to be so large that it's ever required) and otherwise we have
+    // to introduce a threading block here.
+    // https://github.com/processing/processing/issues/3383
+    if (!sourceFile.equals(destFile)) {
+      try {
+        Base.copyFile(sourceFile, destFile);
+
+      } catch (IOException e) {
+        Base.showWarning(Language.text("add_file.messages.error_adding"),
+                         Language.interpolate("add_file.messages.cannot_add.description",
+                          filename),
+                         e);
+        return false;
       }
-    });
-	}
+    }
 
     if (codeExtension != null) {
       SketchCode newCode = new SketchCode(destFile, codeExtension);
@@ -1245,8 +1251,9 @@ public class Sketch {
 //                         "Could not create a place to build the sketch.", null);
 //      }
     } catch (IOException e) {
-      Base.showWarning("Build folder bad",
-                       "Could not find a place to build the sketch.", e);
+      Base.showWarning(Language.text("temp_dir.messages.bad_build_folder"),
+                       Language.text("temp_dir.messages.bad_build_folder.description"),
+                       e);
     }
     return null;
   }
@@ -1302,10 +1309,9 @@ public class Sketch {
   public void ensureExistence() {
     if (!folder.exists()) {
       // Disaster recovery, try to salvage what's there already.
-      Base.showWarning("Sketch Disappeared",
-                       "The sketch folder has disappeared.\n " +
-                       "Will attempt to re-save in the same location,\n" +
-                       "but anything besides the code will be lost.", null);
+      Base.showWarning(Language.text("ensure_exist.messages.missing_sketch"),
+                       Language.text("ensure_exist.messages.missing_sketch.description"),
+                       null);
       try {
         folder.mkdirs();
         modified = true;
@@ -1316,11 +1322,9 @@ public class Sketch {
         calcModified();
 
       } catch (Exception e) {
-        Base.showWarning("Could not re-save sketch",
-                         "Could not properly re-save the sketch. " +
-                         "You may be in trouble at this point,\n" +
-                         "and it might be time to copy and paste " +
-                         "your code to another text editor.", e);
+        Base.showWarning(Language.text("ensure_exist.messages.unrecoverable"),
+                         Language.text("ensure_exist.messages.unrecoverable.description"),
+                         e);
       }
     }
   }
@@ -1333,25 +1337,27 @@ public class Sketch {
    */
   public boolean isReadOnly() {
     String apath = folder.getAbsolutePath();
-    Mode mode = editor.getMode();
-    if (apath.startsWith(mode.getExamplesFolder().getAbsolutePath()) ||
-        apath.startsWith(mode.getLibrariesFolder().getAbsolutePath())) {
-      return true;
-
-      // canWrite() doesn't work on directories
-      //} else if (!folder.canWrite()) {
-    } else {
-      // check to see if each modified code file can be written to
-      for (int i = 0; i < codeCount; i++) {
-        if (code[i].isModified() &&
-            code[i].fileReadOnly() &&
-            code[i].fileExists()) {
-          //System.err.println("found a read-only file " + code[i].file);
-          return true;
-        }
+    List<Mode> modes = editor.getBase().getModeList();
+    // Make sure it's not read-only for another Mode besides this one
+    // https://github.com/processing/processing/issues/773
+    for (Mode mode : modes) {
+      if (apath.startsWith(mode.getExamplesFolder().getAbsolutePath()) ||
+          apath.startsWith(mode.getLibrariesFolder().getAbsolutePath())) {
+        return true;
       }
-      //return true;
     }
+
+    // check to see if each modified code file can be written to
+    // canWrite() doesn't work on directories
+    for (int i = 0; i < codeCount; i++) {
+      if (code[i].isModified() &&
+        code[i].fileReadOnly() &&
+        code[i].fileExists()) {
+        //System.err.println("found a read-only file " + code[i].file);
+        return true;
+      }
+    }
+
     return false;
   }
 
@@ -1519,9 +1525,7 @@ public class Sketch {
 
     if (!newName.equals(origName)) {
       String msg =
-        "The sketch name had to be modified. Sketch names can only consist\n" +
-        "of ASCII characters and numbers (but cannot start with a number).\n" +
-        "They should also be less than 64 characters long.";
+        Language.text("check_name.messages.is_name_modified");
       System.out.println(msg);
     }
     return newName;

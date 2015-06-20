@@ -126,7 +126,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
       obj = new PShapeOBJ(pg.parent, filename);
       int prevTextureMode = pg.textureMode;
       pg.textureMode = NORMAL;
-      PShapeOpenGL p3d = PShapeOpenGL.createShape3D((PGraphicsOpenGL)pg, obj);
+      PShapeOpenGL p3d = PShapeOpenGL.createShape((PGraphicsOpenGL)pg, obj);
       pg.textureMode = prevTextureMode;
       return p3d;
     }

@@ -67,25 +67,37 @@ public class PSurfaceNone implements PSurface {
   }
 
 
+  public Object getNative() {
+    return null;
+  }
+
+
   /** Set the window (and dock, or whatever necessary) title. */
+  @Override
   public void setTitle(String title) {
-    // TODO ignored?
+    // You're in a utopian PSurface implementation where titles don't exist.
+  }
+
+
+  @Override
+  public void setIcon(PImage image) {
+    // I ain't visible, man.
   }
 
 
   /** Show or hide the window. */
+  @Override
   public void setVisible(boolean visible) {
-    // TODO ignored?
+    // I'm always invisible. You can't catch me.
   }
 
 
   /** Set true if we want to resize things (default is not resizable) */
+  @Override
   public void setResizable(boolean resizable) {
-    // TODO ignored?
+    // I don't need size to know my worth.
   }
 
-
-//  public void placeWindow(int[] location) { }
 
   @Override
   public void placeWindow(int[] location, int[] editorLocation) { }
@@ -100,6 +112,12 @@ public class PSurfaceNone implements PSurface {
 
 
   //
+
+
+  @Override
+  public void setLocation(int x, int y) {
+    // I'm everywhere, because I'm nowhere.
+  }
 
 
   @Override
@@ -136,15 +154,12 @@ public class PSurfaceNone implements PSurface {
 //  }
 
 
-  public void setSmooth(int level) {
-    // TODO Auto-generated method stub
+//  public void setSmooth(int level) {
+//    // TODO Auto-generated method stub
+//  }
 
-  }
-
-  void requestFocus() {
-    // TODO Auto-generated method stub
-
-  }
+//  void requestFocus() {
+//  }
 
 //  public void blit() {
 //    // TODO Auto-generated method stub
@@ -236,7 +251,8 @@ public class PSurfaceNone implements PSurface {
       super("Animation Thread");
     }
 
-    public void render() {
+    // broken out so it can be overridden by Danger et al
+    public void callDraw() {
       sketch.handleDraw();
     }
 
@@ -291,13 +307,15 @@ public class PSurfaceNone implements PSurface {
 //        try {
 //          EventQueue.invokeAndWait(new Runnable() {
 //            public void run() {
-        render();
+//        System.out.println("calling draw, finished = " + sketch.finished);
+        //System.out.println("calling draw, looping = " + sketch.looping + ", frameCount = " + sketch.frameCount);
+        callDraw();
 
 //        EventQueue.invokeLater(new Runnable() {
 //          public void run() {
-        if (sketch.frameCount == 1) {
-          requestFocus();
-        }
+//        if (sketch.frameCount == 1) {
+//          requestFocus();
+//        }
 //          }
 //        });
 

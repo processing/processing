@@ -51,7 +51,11 @@ public class ModeContribution extends LocalContribution {
     } catch (Throwable err) {
       // Throwable to catch Exceptions or UnsupportedClassVersionError et al
       if (searchName == null) {
-        err.printStackTrace();
+        //err.printStackTrace(System.out);
+        // for 3.0b1, pass this through to the Contribution Manager so that
+        // we can provide better error messages
+        throw new RuntimeException(err);
+
       } else {
         // For the built-in modes, don't print the exception, just log it
         // for debugging. This should be impossible for most users to reach,
@@ -126,6 +130,12 @@ public class ModeContribution extends LocalContribution {
         if (!existing.containsKey(folder)) {
           try {
             contribModes.add(new ModeContribution(base, folder, null));
+          } catch (NoSuchMethodError nsme) {
+            System.err.println(folder.getName() + " contains an incompatible Mode");
+            System.err.println(nsme.getMessage());
+          } catch (NoClassDefFoundError ncdfe) {
+            System.err.println(folder.getName() + " contains an incompatible Mode");
+            System.err.println(ncdfe.getMessage());
           } catch (IgnorableException ig) {
             Base.log(ig.getMessage());
           } catch (Throwable e) {

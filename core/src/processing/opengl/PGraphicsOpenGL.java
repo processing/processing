@@ -206,6 +206,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // ........................................................
 
+  // Depth sorter
+
+  protected DepthSorter sorter;
+
+  // ........................................................
+
   // Camera:
 
   /** Camera field of view. */
@@ -706,7 +712,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public float getPixelScale() {
-    if (surfaceJOGL == null) return pixelFactor;
+    if (surfaceJOGL == null) return pixelDensity;
     else return surfaceJOGL.getPixelScale();
   }
 
@@ -1852,7 +1858,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     pgl.depthFunc(PGL.LEQUAL);
 
-    if (smooth < 2) {
+    if (smooth < 1) {
       pgl.disable(PGL.MULTISAMPLE);
     } else {
       pgl.enable(PGL.MULTISAMPLE);
@@ -2154,6 +2160,17 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (which == ENABLE_STROKE_PERSPECTIVE) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
         // We flush the geometry using the previous line setting.
+        flush();
+      }
+    } else if (which == ENABLE_DEPTH_SORT) {
+      if (is3D()) {
+        flush();
+        if (sorter == null) sorter = new DepthSorter(this);
+      } else {
+        PGraphics.showWarning("Depth sorting can only be enabled in 3D");
+      }
+    } else if (which == DISABLE_DEPTH_SORT) {
+      if (is3D()) {
         flush();
       }
     }
@@ -2530,7 +2547,7 @@ public class PGraphicsOpenGL extends PGraphics {
         projmodelview.set(projection);
       }
 
-      if (hasPolys) {
+      if (hasPolys && !getHint(ENABLE_DEPTH_SORT)) {
         flushPolys();
         if (raw != null) {
           rawPolys();
@@ -2550,6 +2567,15 @@ public class PGraphicsOpenGL extends PGraphics {
           if (raw != null) {
             rawPoints();
           }
+        }
+      }
+
+      if (hasPolys && getHint(ENABLE_DEPTH_SORT)) {
+        // We flush after lines so they are visible
+        // under transparent polygons
+        flushSortedPolys();
+        if (raw != null) {
+          rawSortedPolys();
         }
       }
 
@@ -2645,122 +2671,77 @@ public class PGraphicsOpenGL extends PGraphics {
     unbindPolyBuffers();
   }
 
+  protected void flushSortedPolys() {
+    boolean customShader = polyShader != null;
+    boolean needNormals = customShader ? polyShader.accessNormals() : false;
+    boolean needTexCoords = customShader ? polyShader.accessTexCoords() : false;
 
-  static class Triangle {
-    int i0, i1, i2;
-    PImage tex;
-    float dist;
-    Triangle(int i0, int i1, int i2, PImage tex, float dist) {
-      this.i0 = i0;
-      this.i1 = i1;
-      this.i2 = i2;
-      this.tex = tex;
-      this.dist = dist;
-    }
-  }
-  // Adapted from Ben Van Citters code:
-  // http://openprocessing.org/sketch/100912
-  Triangle[] sortedPolyTriangles = null;
-  int sortedTriangleCount = 0;
-  void sortTriangles() {
-    if (sortedPolyTriangles == null) {
-      sortedPolyTriangles = new Triangle[512];
-    }
+    updatePolyBuffers(lights, texCache.hasTextures, needNormals, needTexCoords);
 
-    float[] vertices = tessGeo.polyVertices;
-    short[] indices = tessGeo.polyIndices;
-    float[] src0 = {0, 0, 0, 0};
-    float[] src1 = {0, 0, 0, 0};
-    float[] src2 = {0, 0, 0, 0};
-    float[] pt0 = {0, 0, 0, 0};
-    float[] pt1 = {0, 0, 0, 0};
-    float[] pt2 = {0, 0, 0, 0};
+    sorter.sort(tessGeo);
+    int[] triangleIndices = sorter.triangleIndices;
+    int[] texCacheMap = sorter.texCacheMap;
+    int[] indexCacheMap = sorter.indexCacheMap;
 
-    sortedTriangleCount = 0;
-    for (int i = 0; i < texCache.size; i++) {
-      PImage textureImage = texCache.getTextureImage(i);
-      int first = texCache.firstCache[i];
-      int last = texCache.lastCache[i];
-      IndexCache cache = tessGeo.polyIndexCache;
-      for (int n = first; n <= last; n++) {
-        int ioffset = n == first ? texCache.firstIndex[i] :
-                                   cache.indexOffset[n];
-        int icount = n == last ? texCache.lastIndex[i] - ioffset + 1 :
-                                 cache.indexOffset[n] + cache.indexCount[n] -
-                                 ioffset;
-        int voffset = cache.vertexOffset[n];
-        for (int tr = ioffset / 3; tr < (ioffset + icount) / 3; tr++) {
-          if (sortedPolyTriangles.length == sortedTriangleCount) {
-            // expand array
-            int newSize = sortedTriangleCount << 1;
-            Triangle[] temp = new Triangle[newSize];
-            PApplet.arrayCopy(sortedPolyTriangles, 0, temp, 0, newSize);
-            sortedPolyTriangles = temp;
-          }
+    for (int i = 0; i < tessGeo.polyIndexCount/3; i++) {
+      int ti = triangleIndices[i];
+      Texture tex = texCache.getTexture(texCacheMap[ti]);
+      int voffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[ti]];
 
-          int i0 = voffset + indices[3 * tr + 0];
-          int i1 = voffset + indices[3 * tr + 1];
-          int i2 = voffset + indices[3 * tr + 2];
-          PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
-          PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);
-          PApplet.arrayCopy(vertices, 4 * i2, src2, 0, 4);
-          modelview.mult(src0, pt0);
-          modelview.mult(src1, pt1);
-          modelview.mult(src2, pt2);
-          // add all three verts together and divide...  could use another determination
-          // of the 'depth' of the triangle such as min or max vert dist...
-          float[] pos = new float[]{(pt0[X] + pt1[X] + pt2[X]) /3,
-                                    (pt0[Y] + pt1[Y] + pt2[Y]) /3,
-                                    (pt0[Z] + pt1[Z] + pt2[Z]) /3};
+      // If the renderer is 2D, then lights should always be false,
+      // so no need to worry about that.
+      PShader shader = getPolyShader(lights, tex != null);
+      shader.bind();
 
-          // pt0, pt1 and pt2 are in eye coordinates since they have been
-          // multiplied by the modelview matrix.
-          float d = PApplet.dist(0f, 0f, 0f, pos[0], pos[1], pos[2]);
+      int ioffset = 3*ti;
+      int icount = 3;
 
-          Triangle tri = new Triangle(i0, i1, i2, textureImage, d);
-          sortedPolyTriangles[sortedTriangleCount] = tri;
-          sortedTriangleCount++;
-        }
+      shader.setVertexAttribute(glPolyVertex, 4, PGL.FLOAT, 0,
+                                4 * voffset * PGL.SIZEOF_FLOAT);
+      shader.setColorAttribute(glPolyColor, 4, PGL.UNSIGNED_BYTE, 0,
+                               4 * voffset * PGL.SIZEOF_BYTE);
+
+      if (lights) {
+        shader.setNormalAttribute(glPolyNormal, 3, PGL.FLOAT, 0,
+                                  3 * voffset * PGL.SIZEOF_FLOAT);
+        shader.setAmbientAttribute(glPolyAmbient, 4, PGL.UNSIGNED_BYTE, 0,
+                                   4 * voffset * PGL.SIZEOF_BYTE);
+        shader.setSpecularAttribute(glPolySpecular, 4, PGL.UNSIGNED_BYTE, 0,
+                                    4 * voffset * PGL.SIZEOF_BYTE);
+        shader.setEmissiveAttribute(glPolyEmissive, 4, PGL.UNSIGNED_BYTE, 0,
+                                    4 * voffset * PGL.SIZEOF_BYTE);
+        shader.setShininessAttribute(glPolyShininess, 1, PGL.FLOAT, 0,
+                                     voffset * PGL.SIZEOF_FLOAT);
       }
-    }
-    quickSortTris(0, sortedTriangleCount - 1);
-  }
 
-  // an 'in-place' implementation of quick I whipped together late at night
-  // based off of the algorithm found on wikipedia: http://en.wikipedia.org/wiki/Quicksort
-  private void quickSortTris(int leftI, int rightI) {
-    if (leftI < rightI) {
-      int pivotIndex = (leftI + rightI)/2;
-      int newPivotIndex = partition(leftI,rightI,pivotIndex);
-      quickSortTris(leftI, newPivotIndex-1);
-      quickSortTris(newPivotIndex+1, rightI);
-    }
-  }
-
-  //part of quicksort
-  private int partition(int leftIndex, int rightIndex, int pivotIndex) {
-    float pivotVal = sortedPolyTriangles[pivotIndex].dist;
-    swapTris(pivotIndex,rightIndex);
-    int storeIndex = leftIndex;
-    for(int i = leftIndex; i < rightIndex; i++)
-    {
-      if(sortedPolyTriangles[i].dist > pivotVal)
-      {
-        swapTris(i,storeIndex);
-        storeIndex++;
+      if (lights || needNormals) {
+        shader.setNormalAttribute(glPolyNormal, 3, PGL.FLOAT, 0,
+                                  3 * voffset * PGL.SIZEOF_FLOAT);
       }
+
+      if (tex != null || needTexCoords) {
+        shader.setTexcoordAttribute(glPolyTexcoord, 2, PGL.FLOAT, 0,
+                                    2 * voffset * PGL.SIZEOF_FLOAT);
+        shader.setTexture(tex);
+      }
+
+      for (VertexAttribute attrib: polyAttribs.values()) {
+        if (!attrib.active(shader)) continue;
+        attrib.bind(pgl);
+        shader.setAttributeVBO(attrib.glLoc, attrib.glName,
+                               attrib.tessSize, attrib.type,
+                               attrib.isColor(), 0, attrib.sizeInBytes(voffset));
+      }
+
+      shader.draw(glPolyIndex, icount, ioffset);
+
+      for (VertexAttribute attrib: polyAttribs.values()) {
+        if (attrib.active(shader)) attrib.unbind(pgl);
+      }
+      shader.unbind();
     }
-    swapTris(rightIndex,storeIndex);
-    return storeIndex;
+    unbindPolyBuffers();
   }
-
-  //part of quicksort
-  private void swapTris(int a, int b) {
-    Triangle tmp = sortedPolyTriangles[a];
-    sortedPolyTriangles[a] = sortedPolyTriangles[b];
-    sortedPolyTriangles[b] = tmp;
-  }
-
 
 
   void rawPolys() {
@@ -2768,96 +2749,10 @@ public class PGraphicsOpenGL extends PGraphics {
     raw.noStroke();
     raw.beginShape(TRIANGLES);
 
-
-    //sortTriangles();
-
     float[] vertices = tessGeo.polyVertices;
     int[] color = tessGeo.polyColors;
     float[] uv = tessGeo.polyTexCoords;
-    short[] indices = tessGeo.polyIndices;  // unused [fry]
-
-/*
-    sortTriangles();
-    for (int i = 0; i < sortedTriangleCount; i++) {
-      Triangle tri = sortedPolyTriangles[i];
-      int i0 = tri.i0;
-      int i1 = tri.i1;
-      int i2 = tri.i2;
-      PImage tex = tri.tex;
-
-      float[] pt0 = {0, 0, 0, 0};
-      float[] pt1 = {0, 0, 0, 0};
-      float[] pt2 = {0, 0, 0, 0};
-      int argb0 = PGL.nativeToJavaARGB(color[i0]);
-      int argb1 = PGL.nativeToJavaARGB(color[i1]);
-      int argb2 = PGL.nativeToJavaARGB(color[i2]);
-
-      if (flushMode == FLUSH_CONTINUOUSLY) {
-        float[] src0 = {0, 0, 0, 0};
-        float[] src1 = {0, 0, 0, 0};
-        float[] src2 = {0, 0, 0, 0};
-        PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i2, src2, 0, 4);
-        modelview.mult(src0, pt0);
-        modelview.mult(src1, pt1);
-        modelview.mult(src2, pt2);
-      } else {
-        PApplet.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i1, pt1, 0, 4);
-        PApplet.arrayCopy(vertices, 4 * i2, pt2, 0, 4);
-      }
-
-      if (tex != null) {
-        raw.texture(tex);
-        if (raw.is3D()) {
-          raw.fill(argb0);
-          raw.vertex(pt0[X], pt0[Y], pt0[Z], uv[2 * i0 + 0], uv[2 * i0 + 1]);
-          raw.fill(argb1);
-          raw.vertex(pt1[X], pt1[Y], pt1[Z], uv[2 * i1 + 0], uv[2 * i1 + 1]);
-          raw.fill(argb2);
-          raw.vertex(pt2[X], pt2[Y], pt2[Z], uv[2 * i2 + 0], uv[2 * i2 + 1]);
-        } else if (raw.is2D()) {
-          float sx0 = screenXImpl(pt0[0], pt0[1], pt0[2], pt0[3]);
-          float sy0 = screenYImpl(pt0[0], pt0[1], pt0[2], pt0[3]);
-          float sx1 = screenXImpl(pt1[0], pt1[1], pt1[2], pt1[3]);
-          float sy1 = screenYImpl(pt1[0], pt1[1], pt1[2], pt1[3]);
-          float sx2 = screenXImpl(pt2[0], pt2[1], pt2[2], pt2[3]);
-          float sy2 = screenYImpl(pt2[0], pt2[1], pt2[2], pt2[3]);
-          raw.fill(argb0);
-          raw.vertex(sx0, sy0, uv[2 * i0 + 0], uv[2 * i0 + 1]);
-          raw.fill(argb1);
-          raw.vertex(sx1, sy1, uv[2 * i1 + 0], uv[2 * i1 + 1]);
-          raw.fill(argb1);
-          raw.vertex(sx2, sy2, uv[2 * i2 + 0], uv[2 * i2 + 1]);
-        }
-      } else {
-        if (raw.is3D()) {
-          raw.fill(argb0);
-          raw.vertex(pt0[X], pt0[Y], pt0[Z]);
-          raw.fill(argb1);
-          raw.vertex(pt1[X], pt1[Y], pt1[Z]);
-          raw.fill(argb2);
-          raw.vertex(pt2[X], pt2[Y], pt2[Z]);
-        } else if (raw.is2D()) {
-          float sx0 = screenXImpl(pt0[0], pt0[1], pt0[2], pt0[3]);
-          float sy0 = screenYImpl(pt0[0], pt0[1], pt0[2], pt0[3]);
-          float sx1 = screenXImpl(pt1[0], pt1[1], pt1[2], pt1[3]);
-          float sy1 = screenYImpl(pt1[0], pt1[1], pt1[2], pt1[3]);
-          float sx2 = screenXImpl(pt2[0], pt2[1], pt2[2], pt2[3]);
-          float sy2 = screenYImpl(pt2[0], pt2[1], pt2[2], pt2[3]);
-          raw.fill(argb0);
-          raw.vertex(sx0, sy0);
-          raw.fill(argb1);
-          raw.vertex(sx1, sy1);
-          raw.fill(argb2);
-          raw.vertex(sx2, sy2);
-        }
-      }
-
-    }
-*/
-
+    short[] indices = tessGeo.polyIndices;
 
     for (int i = 0; i < texCache.size; i++) {
       PImage textureImage = texCache.getTextureImage(i);
@@ -2951,6 +2846,105 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
+
+    raw.endShape();
+  }
+
+
+  void rawSortedPolys() {
+    raw.colorMode(RGB);
+    raw.noStroke();
+    raw.beginShape(TRIANGLES);
+
+    float[] vertices = tessGeo.polyVertices;
+    int[] color = tessGeo.polyColors;
+    float[] uv = tessGeo.polyTexCoords;
+    short[] indices = tessGeo.polyIndices;
+
+    sorter.sort(tessGeo);
+    int[] triangleIndices = sorter.triangleIndices;
+    int[] texCacheMap = sorter.texCacheMap;
+    int[] indexCacheMap = sorter.indexCacheMap;
+
+    for (int i = 0; i < tessGeo.polyIndexCount/3; i++) {
+      int ti = triangleIndices[i];
+      PImage tex = texCache.getTextureImage(texCacheMap[ti]);
+      int voffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[ti]];
+
+      int i0 = voffset + indices[3*ti+0];
+      int i1 = voffset + indices[3*ti+1];
+      int i2 = voffset + indices[3*ti+2];
+
+      float[] pt0 = {0, 0, 0, 0};
+      float[] pt1 = {0, 0, 0, 0};
+      float[] pt2 = {0, 0, 0, 0};
+      int argb0 = PGL.nativeToJavaARGB(color[i0]);
+      int argb1 = PGL.nativeToJavaARGB(color[i1]);
+      int argb2 = PGL.nativeToJavaARGB(color[i2]);
+
+      if (flushMode == FLUSH_CONTINUOUSLY) {
+        float[] src0 = {0, 0, 0, 0};
+        float[] src1 = {0, 0, 0, 0};
+        float[] src2 = {0, 0, 0, 0};
+        PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
+        PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);
+        PApplet.arrayCopy(vertices, 4 * i2, src2, 0, 4);
+        modelview.mult(src0, pt0);
+        modelview.mult(src1, pt1);
+        modelview.mult(src2, pt2);
+      } else {
+        PApplet.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
+        PApplet.arrayCopy(vertices, 4 * i1, pt1, 0, 4);
+        PApplet.arrayCopy(vertices, 4 * i2, pt2, 0, 4);
+      }
+
+      if (tex != null) {
+        raw.texture(tex);
+        if (raw.is3D()) {
+          raw.fill(argb0);
+          raw.vertex(pt0[X], pt0[Y], pt0[Z], uv[2 * i0 + 0], uv[2 * i0 + 1]);
+          raw.fill(argb1);
+          raw.vertex(pt1[X], pt1[Y], pt1[Z], uv[2 * i1 + 0], uv[2 * i1 + 1]);
+          raw.fill(argb2);
+          raw.vertex(pt2[X], pt2[Y], pt2[Z], uv[2 * i2 + 0], uv[2 * i2 + 1]);
+        } else if (raw.is2D()) {
+          float sx0 = screenXImpl(pt0[0], pt0[1], pt0[2], pt0[3]);
+          float sy0 = screenYImpl(pt0[0], pt0[1], pt0[2], pt0[3]);
+          float sx1 = screenXImpl(pt1[0], pt1[1], pt1[2], pt1[3]);
+          float sy1 = screenYImpl(pt1[0], pt1[1], pt1[2], pt1[3]);
+          float sx2 = screenXImpl(pt2[0], pt2[1], pt2[2], pt2[3]);
+          float sy2 = screenYImpl(pt2[0], pt2[1], pt2[2], pt2[3]);
+          raw.fill(argb0);
+          raw.vertex(sx0, sy0, uv[2 * i0 + 0], uv[2 * i0 + 1]);
+          raw.fill(argb1);
+          raw.vertex(sx1, sy1, uv[2 * i1 + 0], uv[2 * i1 + 1]);
+          raw.fill(argb1);
+          raw.vertex(sx2, sy2, uv[2 * i2 + 0], uv[2 * i2 + 1]);
+        }
+      } else {
+        if (raw.is3D()) {
+          raw.fill(argb0);
+          raw.vertex(pt0[X], pt0[Y], pt0[Z]);
+          raw.fill(argb1);
+          raw.vertex(pt1[X], pt1[Y], pt1[Z]);
+          raw.fill(argb2);
+          raw.vertex(pt2[X], pt2[Y], pt2[Z]);
+        } else if (raw.is2D()) {
+          float sx0 = screenXImpl(pt0[0], pt0[1], pt0[2], pt0[3]);
+          float sy0 = screenYImpl(pt0[0], pt0[1], pt0[2], pt0[3]);
+          float sx1 = screenXImpl(pt1[0], pt1[1], pt1[2], pt1[3]);
+          float sy1 = screenYImpl(pt1[0], pt1[1], pt1[2], pt1[3]);
+          float sx2 = screenXImpl(pt2[0], pt2[1], pt2[2], pt2[3]);
+          float sy2 = screenYImpl(pt2[0], pt2[1], pt2[2], pt2[3]);
+          raw.fill(argb0);
+          raw.vertex(sx0, sy0);
+          raw.fill(argb1);
+          raw.vertex(sx1, sy1);
+          raw.fill(argb2);
+          raw.vertex(sx2, sy2);
+        }
+      }
+    }
 
     raw.endShape();
   }
@@ -6545,9 +6539,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     boolean packed = depthBits == 24 && stencilBits == 8 &&
                      packedDepthStencilSupported;
-    if (PGraphicsOpenGL.fboMultisampleSupported && 1 < smooth) {
+    if (PGraphicsOpenGL.fboMultisampleSupported && 1 < PGL.smoothToSamples(smooth)) {
       multisampleFramebuffer =
-        new FrameBuffer(this, texture.glWidth, texture.glHeight, smooth, 0,
+        new FrameBuffer(this, texture.glWidth, texture.glHeight, PGL.smoothToSamples(smooth), 0,
                         depthBits, stencilBits, packed, false);
 
       multisampleFramebuffer.clear();
@@ -6672,14 +6666,14 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (primaryGraphics) {
-      pgl.getIntegerv(PGL.SAMPLES, intBuffer);
-      int temp = intBuffer.get(0);
-      if (smooth != temp && 1 < temp && 1 < smooth) {
+//      pgl.getIntegerv(PGL.SAMPLES, intBuffer);
+//      int temp = intBuffer.get(0);
+//      if (smooth != temp && 1 < temp && 1 < smooth) {
         // TODO check why the samples is higher that initialized smooth level.
 //        quality = temp;
-      }
+//      }
     }
-    if (smooth < 2) {
+    if (smooth < 1) {
       pgl.disable(PGL.MULTISAMPLE);
     } else {
       pgl.enable(PGL.MULTISAMPLE);
@@ -13213,4 +13207,340 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
   }
+
+
+  static protected class DepthSorter {
+
+    static final int X = 0;
+    static final int Y = 1;
+    static final int Z = 2;
+    static final int W = 3;
+
+    int[] triangleIndices;
+    int[] texCacheMap;
+    int[] indexCacheMap;
+
+    float[] screenVertices;
+
+    int[] swapped;
+    int[] marked;
+
+    PGraphicsOpenGL pg;
+    TessGeometry tessGeo;
+
+    DepthSorter (PGraphicsOpenGL pg) {
+      this.pg = pg;
+
+      int triangleCount = 256;
+
+      triangleIndices = new int[triangleCount];
+      texCacheMap     = new int[triangleCount];
+      indexCacheMap   = new int[triangleCount];
+
+      screenVertices  = new float[9*triangleCount];
+
+      swapped = new int[8];
+      marked = new int[8];
+    }
+
+    // Sorting --------------------------------------------
+
+    void sort(TessGeometry tessGeo) {
+      this.tessGeo = tessGeo;
+
+      int triangleCount = tessGeo.polyIndexCount / 3;
+
+      { // Map vertices to screen
+        float[] polyVertices = tessGeo.polyVertices;
+        int polyVertexCount = tessGeo.polyVertexCount;
+        if (screenVertices.length < 3*polyVertexCount) {
+          screenVertices = new float[3*polyVertexCount];
+        }
+        for (int i = 0; i < polyVertexCount; i++) {
+          float x = polyVertices[4*i+X];
+          float y = polyVertices[4*i+Y];
+          float z = polyVertices[4*i+Z];
+          float w = polyVertices[4*i+W];
+
+          screenVertices[3*i+X] = pg.screenXImpl(x, y, z, w);
+          screenVertices[3*i+Y] = pg.screenYImpl(x, y, z, w);
+          screenVertices[3*i+Z] = -pg.screenZImpl(x, y, z, w)
+            * (pg.cameraFar - pg.cameraNear);
+        }
+      }
+
+      { // Map caches to triangles
+        for (int i = 0; i < pg.texCache.size; i++) {
+          int first = pg.texCache.firstCache[i];
+          int last = pg.texCache.lastCache[i];
+          IndexCache cache = tessGeo.polyIndexCache;
+          for (int n = first; n <= last; n++) {
+            int ioffset = n == first ? pg.texCache.firstIndex[i] :
+                                       cache.indexOffset[n];
+            int icount = n == last ? pg.texCache.lastIndex[i] - ioffset + 1 :
+                                     cache.indexOffset[n] + cache.indexCount[n] -
+                                     ioffset;
+
+            for (int tr = ioffset / 3; tr < (ioffset + icount) / 3; tr++) {
+              texCacheMap[tr] = i;
+              indexCacheMap[tr] = n;
+            }
+          }
+        }
+      }
+
+      { // Initialize triangle indices
+        if (triangleIndices.length < triangleCount) {
+          triangleIndices = new int[triangleCount];
+        }
+        for (int i = 0; i < triangleCount; i++) {
+          triangleIndices[i] = i;
+        }
+      }
+
+      sortByMinZ(0, triangleCount-1);
+
+      int activeTid = 0;
+
+      int markedCount = 0;
+
+      while (activeTid < triangleCount){
+        int testTid = activeTid + 1;
+        boolean draw = false;
+        int swappedCount = 0;
+
+        while (!draw && testTid < triangleCount) {
+
+          int ati = triangleIndices[activeTid];
+          int bti = triangleIndices[testTid];
+
+          // TEST 1 // Z overlap
+          if (maxCoord(ati, Z) <= minCoord(bti, Z) &&
+              !contains(marked, markedCount, triangleIndices[testTid]) &&
+              !contains(marked, markedCount, triangleIndices[activeTid])) {
+            draw = true; // pass, not overlapping in Z, draw it
+
+          // TEST 2 // XY overlap using square window
+          } else if (
+              maxCoord(ati, X) <= minCoord(bti, X) ||
+              maxCoord(ati, Y) <= minCoord(bti, Y) ||
+              minCoord(ati, X) >= maxCoord(bti, X) ||
+              minCoord(ati, Y) >= maxCoord(bti, Y)) {
+            testTid++; // pass, not overlapping in XY
+
+          // TEST 3 // test on which side ACTIVE is relative to TEST
+          } else if (side(bti, ati, -1) > 0) {
+            testTid++; // pass, ACTIVE is in halfspace behind current TEST
+
+          // TEST 4 // test on which side TEST is relative to ACTIVE
+          } else if (side(ati, bti, 1) > 0) {
+            testTid++; // pass, current TEST is in halfspace in front of ACTIVE
+
+          // FAIL, wrong depth order, swap
+          } else {
+            rotateRight(triangleIndices, activeTid, testTid);
+
+            marked = arrayCheck(marked, markedCount, 1);
+            if (insert(marked, markedCount, triangleIndices[activeTid])) {
+              markedCount++;
+            }
+
+            swapped = arrayCheck(swapped, swappedCount, 1);
+            if (insert(swapped, swappedCount, triangleIndices[activeTid])) {
+              swappedCount++;
+              testTid = activeTid + 1;
+            } else {
+              // oops, we already tested this one, probably intersecting or
+              // interlocked in loop with others, just draw it incorrectly :(
+              draw = true;
+            }
+          }
+        }
+
+        if (remove(marked, markedCount, activeTid)) {
+          markedCount--;
+        }
+        if (draw || testTid >= triangleCount) {
+          activeTid++;
+        }
+      }
+    }
+
+    void sortByMinZ(int leftTid, int rightTid) {
+
+      // swap pivot to the front
+      swap(triangleIndices, leftTid, ((leftTid + rightTid) / 2));
+
+      int k = leftTid;
+      float leftMinZ = minCoord(triangleIndices[leftTid], Z);
+
+      // sort by min z
+      for (int tid = leftTid+1; tid <= rightTid; tid++) {
+        if (minCoord(triangleIndices[tid], Z) < leftMinZ) {
+          swap(triangleIndices, ++k, tid);
+        }
+      }
+
+      // swap pivot back to the middle
+      swap(triangleIndices, leftTid, k);
+
+      if (leftTid  < k - 1) sortByMinZ(leftTid,  k - 1);
+      if (k + 1 < rightTid) sortByMinZ(k + 1, rightTid);
+    }
+
+    // Math -----------------------------------------------
+
+    float minCoord(int ti, int off) {
+      int voffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[ti]];
+      short[] is = tessGeo.polyIndices;
+      float[] vs = screenVertices;
+      int i0 = voffset + is[3*ti+0];
+      int i1 = voffset + is[3*ti+1];
+      int i2 = voffset + is[3*ti+2];
+      return Math.min(vs[3*i0+off], Math.min(vs[3*i1+off], vs[3*i2+off]));
+    }
+
+    float maxCoord(int ti, int off) {
+      int voffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[ti]];
+      short[] is = tessGeo.polyIndices;
+      float[] vs = screenVertices;
+      int i0 = voffset + is[3*ti+0];
+      int i1 = voffset + is[3*ti+1];
+      int i2 = voffset + is[3*ti+2];
+      return Math.max(vs[3*i0+off], Math.max(vs[3*i1+off], vs[3*i2+off]));
+    }
+
+    int side(int ti, int testTi, float tz) {
+      short[] is = tessGeo.polyIndices;
+      float[] vs = screenVertices;
+
+      int avoffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[ti]];
+      int bvoffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[testTi]];
+
+      int ia0 = avoffset + is[3*ti+0];
+      int ia1 = avoffset + is[3*ti+1];
+      int ia2 = avoffset + is[3*ti+2];
+      int ib0 = bvoffset + is[3*testTi+0];
+      int ib1 = bvoffset + is[3*testTi+1];
+      int ib2 = bvoffset + is[3*testTi+2];
+
+      float Dx, Dy, Dz, Dw;
+      { // Get the equation of the plane
+        float
+            ABx = vs[3*ia1+X] - vs[3*ia0+X], ACx = vs[3*ia2+X] - vs[3*ia0+X],
+            ABy = vs[3*ia1+Y] - vs[3*ia0+Y], ACy = vs[3*ia2+Y] - vs[3*ia0+Y],
+            ABz = vs[3*ia1+Z] - vs[3*ia0+Z], ACz = vs[3*ia2+Z] - vs[3*ia0+Z];
+
+        Dx = ABy*ACz - ABz*ACy; Dy = ABz*ACx - ABx*ACz; Dz = ABx*ACy - ABy*ACx;
+
+        // Normalize normal vector
+        float rMag = 1.0f/(float) Math.sqrt(Dx * Dx + Dy * Dy + Dz * Dz);
+        Dx *= rMag; Dy *= rMag; Dz *= rMag;
+
+        Dw = -dot(Dx, Dy, Dz, vs[3*ia0+X], vs[3*ia0+Y], vs[3*ia0+Z]);
+      }
+
+      float distTest = dot(Dx, Dy, Dz,
+                           vs[3*ia0+X], vs[3*ia0+Y], vs[3*ia0+Z] + 100*tz) + Dw;
+
+      float distA = dot(Dx, Dy, Dz, vs[3*ib0+X], vs[3*ib0+Y], vs[3*ib0+Z]) + Dw;
+      float distB = dot(Dx, Dy, Dz, vs[3*ib1+X], vs[3*ib1+Y], vs[3*ib1+Z]) + Dw;
+      float distC = dot(Dx, Dy, Dz, vs[3*ib2+X], vs[3*ib2+Y], vs[3*ib2+Z]) + Dw;
+
+      { // Ignore relatively close vertices to get stable results
+        // when some parts of polygons are close to each other
+        float maxDist = Math.max(Math.abs(distA),
+            Math.max(Math.abs(distB), Math.abs(distC)));
+        float eps = maxDist * 0.1f;
+
+        if (Math.abs(distA) < eps) distA = 0.0f;
+        if (Math.abs(distB) < eps) distB = 0.0f;
+        if (Math.abs(distC) < eps) distC = 0.0f;
+      }
+
+      float sideA = distA * distTest;
+      float sideB = distB * distTest;
+      float sideC = distC * distTest;
+
+      boolean sameSide    = sideA >= 0 && sideB >= 0 && sideC >= 0;
+      boolean notSameSide = sideA <= 0 && sideB <= 0 && sideC <= 0;
+
+      return sameSide ? 1 : notSameSide ? -1 : 0;
+    }
+
+    static float dot(float a1, float a2, float a3,
+                     float b1, float b2, float b3) {
+      return a1 * b1 + a2 * b2 + a3 * b3;
+    }
+
+
+    // Array check ---------------------------------------
+
+    static int[] arrayCheck(int[] array, int size, int requested) {
+      if (size + requested > array.length) {
+        int newLength = Math.max(size + requested, 2 * array.length);
+        int[] temp = new int[newLength];
+        PApplet.arrayCopy(array, 0, temp, 0, size);
+        array = temp;
+      }
+      return array;
+    }
+
+    static void swap(int[] array, int i1, int i2) {
+      int temp = array[i1];
+      array[i1] = array[i2];
+      array[i2] = temp;
+    }
+
+    static void rotateRight(int[] array, int i1, int i2) {
+      if (i1 == i2) return;
+      int temp = array[i2];
+      if (i2 - i1 < 100) {
+        for (int i = i2; i > i1; i--) {
+          array[i] = array[i-1];
+        }
+      } else {
+        PApplet.arrayCopy(array, i1, array, i2, i2 - i1);
+      }
+      array[i1] = temp;
+    }
+
+    // if the value is not in the array, inserts the value
+    // returns true if the value was inserted, false if found
+    static boolean insert(int[] array, int count, int value) {
+      int index = Arrays.binarySearch(array, 0, count, value);
+      if (index >= 0) return false;
+      index = -(index + 1);
+      if (count - index > 100) {
+        System.arraycopy(array, index, array, index+1, count - index);
+      } else {
+        for (int i = count; i > index; i--) {
+          array[i] = array[i-1];
+        }
+      }
+      array[index] = value;
+      return true;
+    }
+
+    // if the value is in the array, removes the value
+    // returns true if the value was removed, false if found
+    static boolean remove(int[] array, int count, int value) {
+      int index = Arrays.binarySearch(array, 0, count, value);
+      if (index < 0) return false;
+      if (count - index > 100) {
+        System.arraycopy(array, index+1, array, index, count - index - 1);
+      } else {
+        for (int i = index; i < count-1; i++) {
+          array[i] = array[i+1];
+        }
+      }
+      return true;
+    }
+
+    static boolean contains(int[] array, int count, int value) {
+      return Arrays.binarySearch(array, 0, count, value) >= 0;
+    }
+
+  }
+
 }
