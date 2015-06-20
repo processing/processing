@@ -336,7 +336,7 @@ public class PApplet implements PConstants {
    * ( end auto-generated )
    * 
    * @webref environment
-   * @see PApplet#width
+   * @see PApplet#pixelWidth
    * @see pixelDensity()
    * @see displayDensity()
    */
@@ -360,7 +360,7 @@ public class PApplet implements PConstants {
    * ( end auto-generated )
    * 
    * @webref environment
-   * @see PApplet#height
+   * @see PApplet#pixelHeight
    * @see pixelDensity()
    * @see displayDensity()
    */
