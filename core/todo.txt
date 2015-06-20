@@ -31,6 +31,10 @@ X draw() executes twice when noLoop() called in setup()
 X   https://github.com/processing/processing/issues/3310
 X   broken since 3.0a7, but not in 3.0a5
 
+threading headaches
+X sketch not always showing with empty draw()
+X   https://github.com/processing/processing/issues/3363
+
 cleaning
 o possible addition for 'implementation' variable
 X   http://code.google.com/p/processing/issues/detail?id=281
@@ -90,12 +94,10 @@ _   removeNotify(), addNotify(), setUndecorated(boolean)
 X   setting menubar will be surface-specific
 X   setLocation(int, int) and setSize(int, int)
 _ add the "don't use this" warning to the JFrame in PSurfaceAWT
-_ static mode broken with Java2D on Windows and Linux
+X static mode broken with Java2D on Windows and Linux
 _   https://github.com/processing/processing/issues/3315
 _ sketch sometimes doesn't show with noLoop() on Linux
 _   https://github.com/processing/processing/issues/3316
-_ sketch not always showing with empty draw()
-_   https://github.com/processing/processing/issues/3363
 _ Window never shows with exported application on 64-bit Linux
 _   https://github.com/processing/processing/issues/3303
 

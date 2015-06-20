@@ -46,6 +46,8 @@ _ 2.x vs 3.x sketchbook battle (part of the welcome screen item)
 _   if a v2 sketchbook already exists, show a prompt to choose either creating a new Processing 3 sketch folder or use the existing v2 one, plus a link to GitHub wiki page with details
 _ send list of installed Libraries, Modes, Tools, and Examples on update
 _   https://github.com/processing/processing/issues/3365
+_ processing-java command line mode not working on Mac
+_   https://github.com/processing/processing/issues/3409
 
 
 gui
