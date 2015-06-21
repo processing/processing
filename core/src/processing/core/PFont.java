@@ -88,12 +88,8 @@ public class PFont implements PConstants {
   //protected int size;
   private int size;
 
-  protected int density;
-//  /**
-//   * The size that this font will default to when drawn. Used to create fonts
-//   * at 2x the size for high-res displays in OpenGL.
-//   */
-//  protected int defaultSize;
+  /** Default density set to 1 for backwards compatibility with loadFont(). */
+  protected int density = 1;
 
   /** true if smoothing was enabled for this font, used for native impl */
   protected boolean smooth;
