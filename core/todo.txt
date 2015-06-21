@@ -53,6 +53,7 @@ X sketch sometimes doesn't show with noLoop() on Linux
 X   https://github.com/processing/processing/issues/3316
 X Window never shows with exported application on 64-bit Linux
 X   https://github.com/processing/processing/issues/3303
+X present mode is now broken
 
 cleaning
 o possible addition for 'implementation' variable
@@ -112,6 +113,10 @@ _ still some spinning when sketches break
 _ settings() is probably not showing exceptions since we're back to the EDT
 _   can't call handleSettings() on the anim thread since it sets the surface
 _   so maybe the first part is on the EDT, but other threads run this stuff
+_ try using Frame instead of JFrame
+_   default sketch location using insets incorrectly
+_   use the BufferStrategy directly from the Frame object?
+_     might fix performance issues w/ Presentation mode
 
 
 javafx
@@ -126,7 +131,8 @@ _   https://github.com/processing/processing/issues/3290
 _   what's the way to do this after the deprecation?
 _   if this is going to be the default renderer, has to be ironed out
 _ displayWidth, displayHeight, full screen, display number
-_ present mode (stage in the center, clear the rest of the screen)
+_ present mode not working at all
+_   stage in the center, clear the rest of the screen
 _ createGraphics() should probably create PGraphicsJava2D
 _   or is Canvas specific to the PGraphics, and we get another Context2D?
 _   http://docs.oracle.com/javafx/2/api/javafx/scene/canvas/Canvas.html

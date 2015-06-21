@@ -26,7 +26,6 @@ package processing.core;
 
 // used by link()
 import java.awt.Desktop;
-
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.FileDialog;
@@ -39,6 +38,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+
 
 // used by loadImage() functions
 import javax.imageio.ImageIO;
@@ -53,6 +53,7 @@ import javax.swing.filechooser.FileSystemView;
 
 // loadXML() error handling
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.xml.sax.SAXException;
 
 import java.io.*;
@@ -1964,7 +1965,7 @@ public class PApplet implements PConstants {
     if (width != this.width ||
         height != this.height ||
         !renderer.equals(this.renderer)) {
-      println(width, height, renderer, this.width, this.height, this.renderer);
+      //println(width, height, renderer, this.width, this.height, this.renderer);
       if (insideSettings("size", width, height, renderer)) {
         this.width = width;
         this.height = height;
@@ -10144,6 +10145,12 @@ public class PApplet implements PConstants {
     } else {
       surface.placeWindow(location, editorLocation);
     }
+
+    // checking with Andres about this one
+//    if (sketch.getGraphics().displayable()) {
+//      surface.setVisible(true);
+//    }
+
     // not always running externally when in present mode
     if (external) {
       surface.setupExternalMessages();
@@ -10183,11 +10190,14 @@ public class PApplet implements PConstants {
             "use fullScreen() to get an undecorated full screen frame");
         }
 
+        // Can't override this one because it's called by Window's constructor
+        /*
         @Override
         public void setLocation(int x, int y) {
           deprecationWarning("setLocation");
           surface.setLocation(x, y);
         }
+        */
 
         @Override
         public void setSize(int w, int h) {
@@ -10198,6 +10208,7 @@ public class PApplet implements PConstants {
         private void deprecationWarning(String method) {
           PGraphics.showWarning("Use surface." + method + "() instead of " +
                                 "frame." + method + " in Processing 3");
+          //new Exception(method).printStackTrace(System.out);
         }
       };
 

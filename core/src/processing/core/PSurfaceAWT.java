@@ -55,8 +55,8 @@ public class PSurfaceAWT extends PSurfaceNone {
   // 3.0a5 didn't use strategy, and active was shut off during init() w/ retina
 //  boolean useStrategy = true;
 
-//  Canvas canvas;
-  Component canvas;
+  Canvas canvas;
+//  Component canvas;
 
 //  PGraphics graphics;  // moved to PSurfaceNone
 
@@ -283,7 +283,8 @@ public class PSurfaceAWT extends PSurfaceNone {
       return;
     }
 
-    Canvas c = (Canvas) canvas;
+    Canvas c = canvas;
+//    Frame c = frame;
 //      System.out.println("render(), canvas bounds are " + canvas.getBounds());
     if (c.getBufferStrategy() == null) {  // whole block [121222]
 //        System.out.println("creating a strategy");
@@ -480,6 +481,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     // OS X. It's time for a turnaround: Redmond is thinking different too!
     // https://github.com/processing/processing/issues/1955
     frame = new JFrame(displayDevice.getDefaultConfiguration());
+//    frame = new Frame(displayDevice.getDefaultConfiguration());
 //    // Default Processing gray, which will be replaced below if another
 //    // color is specified on the command line (i.e. in the prefs).
 //    ((JFrame) frame).getContentPane().setBackground(WINDOW_BGCOLOR);
@@ -511,6 +513,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     frame.add(canvas);
     setSize(sketchWidth, sketchHeight);
 
+    /*
     if (fullScreen) {
       // Called here because the graphics device is needed before we can
       // determine whether the sketch wants size(displayWidth, displayHeight),
@@ -533,6 +536,7 @@ public class PSurfaceAWT extends PSurfaceNone {
       // will be set visible in placeWindow() [3.0a10]
       //frame.setVisible(true);  // re-add native resources
     }
+    */
     frame.setLayout(null);
     //frame.add(applet);
 
@@ -596,6 +600,12 @@ public class PSurfaceAWT extends PSurfaceNone {
   public void setVisible(boolean visible) {
     frame.setVisible(visible);
 
+    // Generally useful whenever setting the frame visible
+    if (canvas != null) {
+      //canvas.requestFocusInWindow();
+      canvas.requestFocus();
+    }
+
     // removing per https://github.com/processing/processing/pull/3162
     // can remove the code below once 3.0a6 is tested and behaving
 /*
@@ -618,8 +628,10 @@ public class PSurfaceAWT extends PSurfaceNone {
   //public void placeFullScreen(boolean hideStop) {
   @Override
   public void placePresent(int stopColor) {
+    setFullFrame();
+
     // After the pack(), the screen bounds are gonna be 0s
-    frame.setBounds(screenRect);
+//    frame.setBounds(screenRect);  // already called in setFullFrame()
     canvas.setBounds((screenRect.width - sketchWidth) / 2,
                      (screenRect.height - sketchHeight) / 2,
                      sketchWidth, sketchHeight);
@@ -646,6 +658,10 @@ public class PSurfaceAWT extends PSurfaceNone {
       labelSize = new Dimension(100, labelSize.height);
       label.setSize(labelSize);
       label.setLocation(20, screenRect.height - labelSize.height - 20);
+    }
+
+    if (sketch.getGraphics().displayable()) {
+      setVisible(true);
     }
   }
 
@@ -734,6 +750,28 @@ public class PSurfaceAWT extends PSurfaceNone {
   }
 
 
+  /** Hide the menu bar, make the Frame undecorated, set it to screenRect. */
+  private void setFullFrame() {
+    // Called here because the graphics device is needed before we can
+    // determine whether the sketch wants size(displayWidth, displayHeight),
+    // and getting the graphics device will be PSurface-specific.
+    PApplet.hideMenuBar();
+
+    // Tried to use this to fix the 'present' mode issue.
+    // Did not help, and the screenRect setup seems to work fine.
+    //frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+
+    // https://github.com/processing/processing/pull/3162
+    frame.dispose();  // release native resources, allows setUndecorated()
+    frame.setUndecorated(true);
+
+    // this may be the bounds of all screens
+    frame.setBounds(screenRect);
+    // will be set visible in placeWindow() [3.0a10]
+    //frame.setVisible(true);  // re-add native resources
+  }
+
+
   @Override
   public void placeWindow(int[] location, int[] editorLocation) {
     //Dimension window = setFrameSize(sketchWidth, sketchHeight);
@@ -741,6 +779,10 @@ public class PSurfaceAWT extends PSurfaceNone {
 
     int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
     int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
+
+    if (sketch.sketchFullScreen()) {
+      setFullFrame();
+    }
 
     // Ignore placement of previous window and editor when full screen
     if (!sketch.sketchFullScreen()) {
@@ -790,15 +832,20 @@ public class PSurfaceAWT extends PSurfaceNone {
     // handle frame resizing events
     setupFrameResizeListener();
 
+    /*
     // If displayable() is false, then PSurfaceNone should be used, but...
     if (sketch.getGraphics().displayable()) {
       frame.setVisible(true);
 //      System.out.println("setting visible on EDT? " + EventQueue.isDispatchThread());
       //requestFocus();
-      if (canvas != null) {
-        //canvas.requestFocusInWindow();
-        canvas.requestFocus();
-      }
+//      if (canvas != null) {
+//        //canvas.requestFocusInWindow();
+//        canvas.requestFocus();
+//      }
+    }
+    */
+    if (sketch.getGraphics().displayable()) {
+      setVisible(true);
     }
   }
 
