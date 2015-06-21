@@ -332,7 +332,7 @@ public class PShapeOpenGL extends PShape {
     glPointAttrib = 0;
     glPointIndex = 0;
 
-    this.tessellator = PGraphicsOpenGL.tessellator;
+    this.tessellator = pg.tessellator;
     this.root = this;
     this.parent = null;
     this.tessellated = false;
