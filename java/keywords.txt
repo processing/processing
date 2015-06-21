@@ -435,6 +435,7 @@ curveVertex	FUNCTION1	curveVertex_
 day	FUNCTION1	day_
 degrees	FUNCTION1	degrees_
 directionalLight	FUNCTION1	directionalLight_
+displayDensity	FUNCTION1	displayDensity_
 displayHeight	KEYWORD4	displayHeight
 displayWidth	KEYWORD4	displayWidth
 dist	FUNCTION1	dist_
@@ -665,7 +666,9 @@ save	FUNCTION2	PImage_save_
 set	FUNCTION2	PImage_set_
 updatePixels	FUNCTION2	PImage_updatePixels_
 pixelDensity	FUNCTION1	pixelDensity_
+pixelHeight	FUNCTION1	pixelHeight_
 pixels	KEYWORD4	pixels
+pixelWidth	KEYWORD4	pixelWidth
 pmouseX	KEYWORD4	pmouseX
 pmouseY	KEYWORD4	pmouseY
 point	FUNCTION1	point_

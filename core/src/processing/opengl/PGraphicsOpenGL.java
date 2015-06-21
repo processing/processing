@@ -202,7 +202,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected InGeometry inGeo;
   protected TessGeometry tessGeo;
   protected TexCache texCache;
-  static protected Tessellator tessellator;
+  protected Tessellator tessellator;
 
   // ........................................................
 
@@ -530,10 +530,6 @@ public class PGraphicsOpenGL extends PGraphics {
   public PGraphicsOpenGL() {
     pgl = createPGL(this);
 
-    if (tessellator == null) {
-      tessellator = new Tessellator();
-    }
-
     if (intBuffer == null) {
       intBuffer = PGL.allocateIntBuffer(2);
       floatBuffer = PGL.allocateFloatBuffer(2);
@@ -575,6 +571,9 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primary) {
       fbStack = new FrameBuffer[FB_STACK_DEPTH];
       fontMap = new WeakHashMap<PFont, FontTexture>();
+      tessellator = new Tessellator();
+    } else {
+      tessellator = getPrimaryPG().tessellator;
     }
   }
 
@@ -741,6 +740,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // RESOURCE HANDLING
 
 
+  // http://www.oracle.com/technetwork/articles/java/finalization-137655.html
   protected static class GLResource {
     int id;
     int context;

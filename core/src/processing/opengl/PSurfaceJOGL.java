@@ -92,7 +92,6 @@ public class PSurfaceJOGL implements PSurface {
     if (window != null) {
       canvas = new NewtCanvasAWT(window);
       canvas.setBounds(0, 0, window.getWidth(), window.getHeight());
-//      canvas.setBackground(new Color(pg.backgroundColor, true));
       canvas.setFocusable(true);
     }
   }
@@ -112,8 +111,11 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public Object getNative() {
-    System.err.println("PSurfaceJOGL.getNative() not implemented");
-    return null;
+//    if (canvas == null) {
+//      initOffscreen(sketch);
+//    }
+//    return canvas;
+    return window;
   }
 
 
@@ -539,8 +541,8 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void setLocation(int x, int y) {
-    // TODO implement me!
-    System.err.println("PSurfaceJOGL.setLocation() not yet implemented.");
+    if (window == null) return;
+    window.setTopLevelPosition(x, y);
   }
 
 
@@ -606,6 +608,7 @@ public class PSurfaceJOGL implements PSurface {
   }
 
   public void requestFocus() {
+    if (window == null) return;
     window.requestFocus();
   }
 
@@ -965,10 +968,12 @@ public class PSurfaceJOGL implements PSurface {
   }
 
   public void showCursor() {
+    if (window == null) return;
     window.setPointerVisible(true);
   }
 
   public void hideCursor() {
+    if (window != null) return;
     window.setPointerVisible(false);
   }
 }

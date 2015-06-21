@@ -312,6 +312,7 @@ public class PApplet implements PConstants {
    * <b>size()</b> is called.
    *
    * ( end auto-generated )
+   *
    * @webref environment
    * @see PApplet#width
    * @see PApplet#size(int, int)
@@ -319,14 +320,49 @@ public class PApplet implements PConstants {
   public int height = DEFAULT_HEIGHT;
 
   /**
-   * Width of the pixels in this drawing surface
-   * (takes pixelDensity into account).
+   * ( begin auto-generated from pixelWidth.xml )
+   *
+   * When <b>pixelDensity(2)</d> is used to make use of a high resolution 
+   * display (called a Retina display on OS X or high-dpi on Windows and 
+   * Linux), the width and height of the sketch do not change, but the 
+   * number of pixels is doubled. As a result, all operations that use pixels 
+   * (like <b>loadPixels()</b>, <b>get()</b>, <b>set()</b>, etc.) happen 
+   * in this doubled space. As a convenience, the variables <b>pixelWidth</b> 
+   * and <b>pixelHeight<b> hold the actual width and height of the sketch 
+   * in pixels. This is useful for any sketch that uses the <b>pixels[]</b> 
+   * array, for instance, because the number of elements in the array will 
+   * be <b>pixelWidth*pixelHeight</b>, not <b>width*height</b>.
+   *
+   * ( end auto-generated )
+   * 
+   * @webref environment
+   * @see PApplet#pixelWidth
+   * @see pixelDensity()
+   * @see displayDensity()
    */
   public int pixelWidth;
 
+  
   /**
-   * Height of the pixels in this drawing surface
-   * (takes pixelDensity into account).
+   * ( begin auto-generated from pixelHeight.xml )
+   *
+   * When <b>pixelDensity(2)</d> is used to make use of a high resolution 
+   * display (called a Retina display on OS X or high-dpi on Windows and 
+   * Linux), the width and height of the sketch do not change, but the 
+   * number of pixels is doubled. As a result, all operations that use pixels 
+   * (like <b>loadPixels()</b>, <b>get()</b>, <b>set()</b>, etc.) happen 
+   * in this doubled space. As a convenience, the variables <b>pixelWidth</b> 
+   * and <b>pixelHeight<b> hold the actual width and height of the sketch 
+   * in pixels. This is useful for any sketch that uses the <b>pixels[]</b> 
+   * array, for instance, because the number of elements in the array will 
+   * be <b>pixelWidth*pixelHeight</b>, not <b>width*height</b>.
+   *
+   * ( end auto-generated )
+   * 
+   * @webref environment
+   * @see PApplet#pixelHeight
+   * @see pixelDensity()
+   * @see displayDensity()
    */
   public int pixelHeight;
 
@@ -1057,7 +1093,20 @@ public class PApplet implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
+ /**
+  * ( begin auto-generated from displayDensity.xml )
+  *
+  * This function returns the number "2" if the screen is a high-density 
+  * screen (called a Retina display on OS X or high-dpi on Windows and Linux) 
+  * and a "1" if not. This information is useful for a program to adapt to 
+  * run at double the pixel density on a screen that supports it.
+  *
+  * ( end auto-generated )
+  *
+  * @webref environment
+  * @see PApplet#pixelDensity()
+  * @see PApplet#size()
+  */
   public int displayDensity() {
     if (display == SPAN) {
       // walk through all displays, use lowest common denominator
@@ -1071,7 +1120,9 @@ public class PApplet implements PConstants {
     return displayDensity(display);
   }
 
-
+ /**
+  * @param display the display number to check
+  */
   static public int displayDensity(int display) {
     if (PApplet.platform == PConstants.MACOSX) {
       // This should probably be reset each time there's a display change.
