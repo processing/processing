@@ -541,8 +541,9 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void setLocation(int x, int y) {
-    if (window == null) return;
-    window.setTopLevelPosition(x, y);
+    if (window != null) {
+      window.setTopLevelPosition(x, y);
+    }
   }
 
 
@@ -608,8 +609,9 @@ public class PSurfaceJOGL implements PSurface {
   }
 
   public void requestFocus() {
-    if (window == null) return;
-    window.requestFocus();
+    if (window != null) {
+      window.requestFocus();
+    }
   }
 
   class DrawListener implements GLEventListener {
@@ -968,12 +970,14 @@ public class PSurfaceJOGL implements PSurface {
   }
 
   public void showCursor() {
-    if (window == null) return;
-    window.setPointerVisible(true);
+    if (window != null) {
+      window.setPointerVisible(true);
+    }
   }
 
   public void hideCursor() {
-    if (window != null) return;
-    window.setPointerVisible(false);
+    if (window != null) {
+      window.setPointerVisible(false);
+    }
   }
 }
