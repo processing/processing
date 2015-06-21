@@ -41,6 +41,8 @@ X   setUndecorated(boolean)
 X   setting menubar will be surface-specific
 X   setLocation(int, int) and setSize(int, int)
 X add the "don't use this" warning to the JFrame in PSurfaceAWT
+X ArithmeticException: / by zero when using fonts opened with loadFont()
+X   https://github.com/processing/processing/issues/3413
 
 threading headaches
 X sketch not always showing with empty draw()

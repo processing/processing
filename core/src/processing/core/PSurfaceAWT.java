@@ -43,7 +43,11 @@ public class PSurfaceAWT extends PSurfaceNone {
 //  boolean resizable;  // default is false
 
   // Internally, we know it's always a JFrame (not just a Frame)
-  JFrame frame;
+//  JFrame frame;
+  // Trying Frame again with a11 to see if this avoids some Swing nastiness.
+  // In the past, AWT Frames caused some problems on Windows and Linux,
+  // but those may not be a problem for our reworked PSurfaceAWT class.
+  Frame frame;
 
   // Note that x and y may not be zero, depending on the display configuration
   Rectangle screenRect;
@@ -487,7 +491,11 @@ public class PSurfaceAWT extends PSurfaceNone {
 //      backgroundColor = WINDOW_BGCOLOR;
 //    }
     final Color windowColor = new Color(sketch.sketchWindowColor(), false);
-    frame.getContentPane().setBackground(windowColor);
+    if (frame instanceof JFrame) {
+      ((JFrame) frame).getContentPane().setBackground(windowColor);
+    } else {
+      frame.setBackground(windowColor);
+    }
 
     // Put the p5 logo in the Frame's corner to override the Java coffee cup.
     setIconImage(frame);
