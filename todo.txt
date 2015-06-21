@@ -48,6 +48,7 @@ _ send list of installed Libraries, Modes, Tools, and Examples on update
 _   https://github.com/processing/processing/issues/3365
 _ processing-java command line mode not working on Mac
 _   https://github.com/processing/processing/issues/3409
+_ font fixes for Georgia in the examples
 
 
 gui

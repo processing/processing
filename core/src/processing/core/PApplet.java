@@ -10146,10 +10146,11 @@ public class PApplet implements PConstants {
       surface.placeWindow(location, editorLocation);
     }
 
-    // checking with Andres about this one
-//    if (sketch.getGraphics().displayable()) {
-//      surface.setVisible(true);
-//    }
+    // Helps avoid this code being duplicated 2x per surface class.
+    // Andres is testing to make sure this doesn't cause trouble.
+    if (sketch.getGraphics().displayable()) {
+      surface.setVisible(true);
+    }
 
     // not always running externally when in present mode
     if (external) {

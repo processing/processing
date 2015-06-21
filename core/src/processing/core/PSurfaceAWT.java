@@ -660,9 +660,9 @@ public class PSurfaceAWT extends PSurfaceNone {
       label.setLocation(20, screenRect.height - labelSize.height - 20);
     }
 
-    if (sketch.getGraphics().displayable()) {
-      setVisible(true);
-    }
+//    if (sketch.getGraphics().displayable()) {
+//      setVisible(true);
+//    }
   }
 
 
@@ -844,9 +844,9 @@ public class PSurfaceAWT extends PSurfaceNone {
 //      }
     }
     */
-    if (sketch.getGraphics().displayable()) {
-      setVisible(true);
-    }
+//    if (sketch.getGraphics().displayable()) {
+//      setVisible(true);
+//    }
   }
 
 
