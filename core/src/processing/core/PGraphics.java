@@ -513,7 +513,7 @@ public class PGraphics extends PImage implements PConstants {
 //  float[][] matrixInvStack = new float[MATRIX_STACK_DEPTH][16];
 //  int matrixStackDepth;
 
-  static final int MATRIX_STACK_DEPTH = 32;
+  static final protected int MATRIX_STACK_DEPTH = 32;
 
   static final protected String ERROR_PUSHMATRIX_OVERFLOW =
     "Too many calls to pushMatrix().";

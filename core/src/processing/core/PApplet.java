@@ -9799,7 +9799,7 @@ public class PApplet implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  void frameMoved(int x, int y) {
+  public void frameMoved(int x, int y) {
     if (!fullScreen) {
       System.err.println(EXTERNAL_MOVE + " " + x + " " + y);
       System.err.flush();  // doesn't seem to help or hurt
@@ -9807,8 +9807,7 @@ public class PApplet implements PConstants {
   }
 
 
-  void frameResized(int w, int h) {
-
+  public void frameResized(int w, int h) {
   }
 
 
