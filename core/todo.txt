@@ -1,4 +1,4 @@
-0238 (3.0b1)
+0238 (3.0a11)
 X add note about headless exceptions that points to Github
 X resize children[] so that getChildren() returns a correctly-sized array
 X   https://github.com/processing/processing/issues/3347
@@ -117,6 +117,8 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 beta
+X move Java2D and JavaFX classes to their own packages
+_   make notes about this in the README
 _ run only the necessary pieces on the EDT
 _   in part because FX doesn't even use the EDT
 _   re-check the Linux frame visibility stuff

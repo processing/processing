@@ -26,16 +26,11 @@
 package processing.core;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Frame;
 import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.font.FontRenderContext;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
-import processing.awt.PSurfaceAWT;
 import processing.opengl.PGL;
 import processing.opengl.PShader;
 
@@ -799,7 +794,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public PSurface createSurface() {  // ignore
-    return surface = new PSurfaceAWT(this);
+    return surface = new PSurfaceNone(this);
   }
 
 
@@ -4928,27 +4923,27 @@ public class PGraphics extends PImage implements PConstants {
   */
 
 
-  /**
-   * Convenience method to get a legit FontMetrics object. Where possible,
-   * override this any renderer subclass so that you're not using what's
-   * returned by getDefaultToolkit() to get your metrics.
-   */
-  @SuppressWarnings("deprecation")
-  public FontMetrics getFontMetrics(Font font) {  // ignore
-    Frame frame = parent.frame;
-    if (frame != null) {
-      return frame.getToolkit().getFontMetrics(font);
-    }
-    return Toolkit.getDefaultToolkit().getFontMetrics(font);
-  }
-
-
-  /**
-   * Convenience method to jump through some Java2D hoops and get an FRC.
-   */
-  public FontRenderContext getFontRenderContext(Font font) {  // ignore
-    return getFontMetrics(font).getFontRenderContext();
-  }
+//  /**
+//   * Convenience method to get a legit FontMetrics object. Where possible,
+//   * override this any renderer subclass so that you're not using what's
+//   * returned by getDefaultToolkit() to get your metrics.
+//   */
+//  @SuppressWarnings("deprecation")
+//  public FontMetrics getFontMetrics(Font font) {  // ignore
+//    Frame frame = parent.frame;
+//    if (frame != null) {
+//      return frame.getToolkit().getFontMetrics(font);
+//    }
+//    return Toolkit.getDefaultToolkit().getFontMetrics(font);
+//  }
+//
+//
+//  /**
+//   * Convenience method to jump through some Java2D hoops and get an FRC.
+//   */
+//  public FontRenderContext getFontRenderContext(Font font) {  // ignore
+//    return getFontMetrics(font).getFontRenderContext();
+//  }
 
 
 
@@ -7934,7 +7929,7 @@ public class PGraphics extends PImage implements PConstants {
   // WARNINGS and EXCEPTIONS
 
 
-  static protected HashMap<String, Object> warnings;
+  static protected Map<String, Object> warnings;
 
 
   /**

@@ -1,4 +1,4 @@
-0238 (3.0b1)
+0238 (3.0a11)
 X Re-enable the display menu in Preferences after display added
 X   Previously, the checkbox menu stayed disabled (though it updated the list)
 X sketch.isReadOnly returns false for examples coming from multiple modes
@@ -86,6 +86,7 @@ _ deactivate step, continue, stop when not running?
 _ update EditorButton rollover label when pressing shift or alt
 _ disable the debug toggle menu while running
 _   otherwise could run in one mode, then try to stop in another
+_ recent menu gets huge with other p5 versions on osx
 
 
 pde/build

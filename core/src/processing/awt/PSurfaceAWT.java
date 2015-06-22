@@ -520,6 +520,11 @@ public class PSurfaceAWT extends PSurfaceNone {
   }
 
 
+//  public Toolkit getToolkit() {
+//    return canvas.getToolkit();
+//  }
+
+
   /** Set the window (and dock, or whatever necessary) title. */
   @Override
   public void setTitle(String title) {

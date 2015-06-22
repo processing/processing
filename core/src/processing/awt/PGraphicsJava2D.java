@@ -250,7 +250,6 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public PSurface createSurface() {
     return surface = new PSurfaceAWT(this);
-//    return new PSurfaceAWT(this);
   }
 
 
@@ -2066,9 +2065,43 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
-  @Override
-  public FontMetrics getFontMetrics(Font font) {
-    return (g2 != null) ? g2.getFontMetrics(font) : super.getFontMetrics(font);
+//  /**
+//   * Convenience method to get a legit FontMetrics object. Where possible,
+//   * override this any renderer subclass so that you're not using what's
+//   * returned by getDefaultToolkit() to get your metrics.
+//   */
+//  @SuppressWarnings("deprecation")
+//  public FontMetrics getFontMetrics(Font font) {  // ignore
+//    Frame frame = parent.frame;
+//    if (frame != null) {
+//      return frame.getToolkit().getFontMetrics(font);
+//    }
+//    return Toolkit.getDefaultToolkit().getFontMetrics(font);
+//  }
+//
+//
+//  /**
+//   * Convenience method to jump through some Java2D hoops and get an FRC.
+//   */
+//  public FontRenderContext getFontRenderContext(Font font) {  // ignore
+//    return getFontMetrics(font).getFontRenderContext();
+//  }
+
+  Toolkit toolkit;
+
+  @SuppressWarnings("deprecation")
+  protected FontMetrics getFontMetrics(Font font) {
+    if (toolkit == null) {
+      try {
+        Canvas canvas = (Canvas) surface.getNative();
+        toolkit = canvas.getToolkit();
+      } catch (Exception e) {
+        // May error out if it's a PSurfaceNone or similar
+        toolkit = Toolkit.getDefaultToolkit();
+      }
+    }
+    return toolkit.getFontMetrics(font);
+    //return (g2 != null) ? g2.getFontMetrics(font) : super.getFontMetrics(font);
   }
 
 
