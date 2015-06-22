@@ -392,7 +392,8 @@ public class ContributionListing {
    * Starts a new thread to download the advertised list of contributions.
    * Only one instance will run at a time.
    */
-  protected void downloadAvailableList(final ContribProgressMonitor progress) {
+  protected void downloadAvailableList(final Base base,
+                                       final ContribProgressMonitor progress) {
     new Thread(new Runnable() {
       public void run() {
         downloadingListingLock.lock();
@@ -400,6 +401,12 @@ public class ContributionListing {
         URL url = null;
         try {
           url = new URL(LISTING_URL);
+//          final String contribInfo =
+//            base.getInstalledContribsInfo();
+////            "?id=" + Preferences.get("update.id") +
+////            "&" + base.getInstalledContribsInfo();
+//          url = new URL(LISTING_URL + "?" + contribInfo);
+//          System.out.println(contribInfo.length() + " " + contribInfo);
         } catch (MalformedURLException e) {
           progress.error(e);
           progress.finished();

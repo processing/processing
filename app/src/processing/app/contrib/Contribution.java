@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -32,28 +32,21 @@ abstract public class Contribution {
   static final String SPECIAL_CATEGORY_NAME = "Starred";
   static final List validCategories =
     Arrays.asList("3D", "Animation", "Data", "Geometry", "GUI", "Hardware",
-                  "I/O", "Math", "Simulation", "Sound", SPECIAL_CATEGORY_NAME, "Typography",
-                  "Utilities", "Video & Vision", "Other");
+                  "I/O", "Math", "Simulation", "Sound", SPECIAL_CATEGORY_NAME,
+                  "Typography", "Utilities", "Video & Vision", "Other");
 
-  //protected String category;      // "Sound"
   protected List<String> categories;  // "Sound", "Typography"
-  protected String name;          // "pdf" or "PDF Export"
-  protected String authorList;    // Ben Fry
-  protected String url;           // http://processing.org
-  protected String sentence;      // Write graphics to PDF files.
-  protected String paragraph;     // <paragraph length description for site>
-  protected int version;          // 102
-  protected String prettyVersion; // "1.0.2"
-  protected long lastUpdated;   //  1402805757
-  protected int minRevision;    //  0
-  protected int maxRevision;    //  227
-  protected List<String> specifiedImports; // pdf.export.*,pdf.convert.common.*
-
-
-  // "Sound"
-//  public String getCategory() {
-//    return category;
-//  }
+  protected String name;              // "pdf" or "PDF Export"
+  protected String authorList;        // [Ben Fry](http://benfry.com)
+  protected String url;               // http://processing.org
+  protected String sentence;          // Write graphics to PDF files.
+  protected String paragraph;         // <paragraph length description for site>
+  protected int version;              // 102
+  protected String prettyVersion;     // "1.0.2"
+  protected long lastUpdated;         // 1402805757
+  protected int minRevision;          // 0
+  protected int maxRevision;          // 227
+  protected List<String> imports;     // pdf.export.*,pdf.convert.common.*
 
 
   // "Sound", "Utilities"... see valid list in ContributionListing
@@ -87,16 +80,16 @@ abstract public class Contribution {
 
   // pdf.export.*,pdf.convert.common.*
   protected List<String> getImports() {
-    return specifiedImports;
+    return imports;
   }
 
 
   protected String getImportStr() {
-    if (specifiedImports == null || specifiedImports.isEmpty()) {
+    if (imports == null || imports.isEmpty()) {
       return "";
     }
     StringBuilder sb = new StringBuilder();
-    for (String importName : specifiedImports) {
+    for (String importName : imports) {
       sb.append(importName);
       sb.append(',');
     }
@@ -104,9 +97,10 @@ abstract public class Contribution {
     return sb.toString();
   }
 
+
   protected boolean hasImport(String importName) {
-    if (specifiedImports != null && importName != null) {
-      for (String c : specifiedImports) {
+    if (imports != null && importName != null) {
+      for (String c : imports) {
         if (importName.equalsIgnoreCase(c)) {
           return true;
         }

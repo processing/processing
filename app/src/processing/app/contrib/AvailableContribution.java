@@ -44,7 +44,7 @@ public class AvailableContribution extends Contribution {
     
     //category = ContributionListing.getCategory(params.get("category"));
     categories = parseCategories(params.get("category"));
-    specifiedImports = parseImports(params.get("imports"));
+    imports = parseImports(params.get("imports"));
     name = params.get("name");
     authorList = params.get("authorList");
     url = params.get("url");
@@ -258,7 +258,7 @@ public class AvailableContribution extends Contribution {
         specifiedImport = getImportStr();
       } else {
         StringBuilder sbImport = new StringBuilder();
-        for (String it : specifiedImports) {
+        for (String it : imports) {
           sbImport.append(it);
           sbImport.append(',');
         }

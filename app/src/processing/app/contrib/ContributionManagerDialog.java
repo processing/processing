@@ -103,6 +103,7 @@ public class ContributionManagerDialog {
     return contribListing.hasUpdates(base);
   }
 
+
   public void showFrame(final Editor editor) {
     this.editor = editor;
 
@@ -132,6 +133,8 @@ public class ContributionManagerDialog {
             }
           }
 
+          // Why the f*k is this happening here? This is nuts, and likely
+          // to cause all kinds of hell across different platforms. [fry]
           // Thanks to http://stackoverflow.com/a/4160543
           StringBuilder cmd = new StringBuilder();
           cmd.append(System.getProperty("java.home") + File.separator + "bin"
@@ -165,7 +168,7 @@ public class ContributionManagerDialog {
           // The message is set to null so that every time the retry button is hit
           // no previous error is displayed in the status
           status.setMessage(null);
-          downloadAndUpdateContributionListing();
+          downloadAndUpdateContributionListing(editor.getBase());
         }
       });
 
@@ -186,7 +189,7 @@ public class ContributionManagerDialog {
       updateContributionListing();
 
     } else {
-      downloadAndUpdateContributionListing();
+      downloadAndUpdateContributionListing(editor.getBase());
     }
   }
 
@@ -433,9 +436,9 @@ public class ContributionManagerDialog {
 
   protected void updateContributionListing() {
     if (editor != null) {
-      ArrayList<Contribution> contributions = new ArrayList<Contribution>();
+      List<Contribution> contributions = new ArrayList<Contribution>();
 
-      ArrayList<Library> libraries =
+      List<Library> libraries =
         new ArrayList<Library>(editor.getMode().contribLibraries);
       contributions.addAll(libraries);
 
@@ -467,11 +470,10 @@ public class ContributionManagerDialog {
   }
 
 
-  protected void downloadAndUpdateContributionListing() {
+  protected void downloadAndUpdateContributionListing(Base base) {
     retryConnectingButton.setEnabled(false);
     status.setMessage(Language.text("contrib.status.downloading_list"));
-    contribListing.downloadAvailableList(new ContribProgressBar(progressBar) {
-
+    contribListing.downloadAvailableList(base, new ContribProgressBar(progressBar) {
 
       @Override
       public void startTask(String name, int maxValue) {

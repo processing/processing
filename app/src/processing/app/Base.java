@@ -28,7 +28,6 @@ import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -45,6 +44,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import processing.app.contrib.*;
 import processing.core.*;
+import processing.data.StringList;
 
 
 /**
@@ -525,6 +525,58 @@ public class Base {
 
   public List<ExamplesContribution> getExampleContribs() {
     return exampleContribs;
+  }
+
+
+  private List<Contribution> getInstalledContribs() {
+    List<Contribution> contributions = new ArrayList<Contribution>();
+
+    List<ModeContribution> modeContribs = getModeContribs();
+    contributions.addAll(modeContribs);
+
+    for (ModeContribution modeContrib : modeContribs) {
+      Mode mode = modeContrib.getMode();
+      contributions.addAll(new ArrayList<Library>(mode.contribLibraries));
+    }
+
+    // TODO this duplicates code in Editor, but it's not editor-specific
+//    List<ToolContribution> toolContribs =
+//      ToolContribution.loadAll(Base.getSketchbookToolsFolder());
+//    contributions.addAll(toolContribs);
+    contributions.addAll(ToolContribution.loadAll(getSketchbookToolsFolder()));
+
+    contributions.addAll(getExampleContribs());
+    return contributions;
+  }
+
+
+  public String getInstalledContribsInfo() {
+    List<Contribution> contribs = getInstalledContribs();
+    StringList entries = new StringList();
+    for (Contribution c : contribs) {
+      String entry = c.getTypeName() + "=" +
+        PApplet.urlEncode(String.format("name=%s\nurl=%s\nrevision=%d\nversion=%s",
+                                        c.getName(), c.getUrl(),
+                                        c.getVersion(), c.getPrettyVersion()));
+      entries.append(entry);
+    }
+    String joined = "id=" + Preferences.get("update.id") + entries.join("&");
+    StringBuilder sb = new StringBuilder();
+    try {
+      // Truly ridiculous attempt to shove everything into a GET request.
+      // More likely to be seen as part of a grand plot.
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      GZIPOutputStream output = new GZIPOutputStream(baos);
+      PApplet.saveStream(output, new ByteArrayInputStream(joined.getBytes()));
+      output.close();
+      byte[] b = baos.toByteArray();
+      for (int i = 0; i < b.length; i++) {
+        sb.append(PApplet.hex(b[i], 2));
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return sb.toString();
   }
 
 

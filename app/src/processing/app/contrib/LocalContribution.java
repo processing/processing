@@ -60,7 +60,7 @@ public abstract class LocalContribution extends Contribution {
       name = properties.get("name");
       id = properties.get("id");
       categories = parseCategories(properties.get("category"));
-      specifiedImports = parseImports(properties.get("imports"));
+      imports = parseImports(properties.get("imports"));
       if (name == null) {
         name = folder.getName();
       }
@@ -550,7 +550,7 @@ public abstract class LocalContribution extends Contribution {
    */
   public String[] getSpecifiedImports() {
     
-    return specifiedImports != null ? specifiedImports.toArray(new String[0]) : null;
+    return imports != null ? imports.toArray(new String[0]) : null;
   }
 
   /**

@@ -67,8 +67,8 @@ public class UpdateCheck {
         } catch (Exception e) {
           // This can safely be ignored, too many situations where no net
           // connection is available that behave in strange ways.
-          // Covers likely IOException, InterruptedException, and any others. 
-        } 
+          // Covers likely IOException, InterruptedException, and any others.
+        }
       }
     }, "Update Checker").start();
   }
@@ -122,14 +122,14 @@ public class UpdateCheck {
         // Wait for xml file to be downloaded and updates to come in.
         // (this should really be handled better).
         Thread.sleep(5 * 1000);
-        if ((!base.libraryManagerFrame.hasAlreadyBeenOpened()
-              && !base.toolManagerFrame.hasAlreadyBeenOpened()
-              && !base.modeManagerFrame.hasAlreadyBeenOpened()
-              && !base.exampleManagerFrame.hasAlreadyBeenOpened())
-          && (base.libraryManagerFrame.hasUpdates(base)
-              || base.toolManagerFrame.hasUpdates(base)
-              || base.modeManagerFrame.hasUpdates(base)
-              || base.exampleManagerFrame.hasUpdates(base))) {
+        if ((!base.libraryManagerFrame.hasAlreadyBeenOpened() &&
+             !base.toolManagerFrame.hasAlreadyBeenOpened() &&
+             !base.modeManagerFrame.hasAlreadyBeenOpened() &&
+             !base.exampleManagerFrame.hasAlreadyBeenOpened()) &&
+             (base.libraryManagerFrame.hasUpdates(base) ||
+              base.toolManagerFrame.hasUpdates(base) ||
+              base.modeManagerFrame.hasUpdates(base) ||
+              base.exampleManagerFrame.hasUpdates(base))) {
           promptToOpenContributionManager();
         }
       }
