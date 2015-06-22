@@ -185,6 +185,7 @@ public class Recent {
             //purtyPath = "\u2302 \u2192 " + recPath.substring(homePath.length() + 1);
             //purtyPath = "Home \u2192 " + recPath.substring(homePath.length() + 1);
             String userName = new File(homePath).getName();
+            //purtyPath = "\u2302 " + userName + " \u2192 " + recPath.substring(homePath.length() + 1);
             purtyPath = userName + " \u2192 " + recPath.substring(homePath.length() + 1);
           }
         } else {
