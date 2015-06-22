@@ -109,31 +109,20 @@ public class PShapeSVG extends PShape {
   String fillName;  // id of another object
 
 
-//  /**
-//   * Initializes a new SVG Object with the given filename.
-//   */
-//  public PShapeSVG(PApplet parent, String filename) {
-//    // this will grab the root document, starting <svg ...>
-//    // the xml version and initial comments are ignored
-//    this(parent.loadXML(filename));
-//  }
-
-
   /**
-   * Initializes a new SVG Object from the given XML.
+   * Initializes a new SVG object from the given XML object.
    */
   public PShapeSVG(XML svg) {
     this(null, svg, true);
 
     if (!svg.getName().equals("svg")) {
-      throw new RuntimeException("The root node is not <svg>, it's <" + svg.getName() + ">." +
-         (svg.getName().toLowerCase().equals("html") ?
-         " That means it's just a webpage. Did you download it right?" : ""));
+      if (svg.getName().toLowerCase().equals("html")) {
+        // Common case is that files aren't downloaded properly
+        throw new RuntimeException("This appears to be a web page, not an SVG file.");
+      } else {
+        throw new RuntimeException("The root node is not <svg>, it's <" + svg.getName() + ">");
+      }
     }
-
-
-    //root = new Group(null, svg);
-//    parseChildren(svg);  // ?
   }
 
 

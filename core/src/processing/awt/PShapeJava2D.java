@@ -60,6 +60,8 @@ public class PShapeJava2D extends PShapeSVG {
 
   @Override
   protected void setParent(PShapeSVG parent) {
+    super.setParent(parent);
+
     if (parent instanceof PShapeJava2D) {
       PShapeJava2D pj = (PShapeJava2D) parent;
       fillGradientPaint = pj.fillGradientPaint;
@@ -79,6 +81,19 @@ public class PShapeJava2D extends PShapeSVG {
   }
 
 
+  /*
+  @Override
+  public void setColor(String colorText, boolean isFill) {
+    super.setColor(colorText, isFill);
+
+    if (fillGradient != null) {
+      fillGradientPaint = calcGradientPaint(fillGradient);
+    }
+    if (strokeGradient != null) {
+      strokeGradientPaint = calcGradientPaint(strokeGradient);
+    }
+  }
+  */
 
 
   static class LinearGradientPaint implements Paint {
@@ -286,14 +301,14 @@ public class PShapeJava2D extends PShapeSVG {
 
   protected Paint calcGradientPaint(Gradient gradient) {
     if (gradient instanceof LinearGradient) {
-      System.out.println("creating linear gradient");
+//      System.out.println("creating linear gradient");
       LinearGradient grad = (LinearGradient) gradient;
       return new LinearGradientPaint(grad.x1, grad.y1, grad.x2, grad.y2,
                                      grad.offset, grad.color, grad.count,
                                      opacity);
 
     } else if (gradient instanceof RadialGradient) {
-      System.out.println("creating radial gradient");
+//      System.out.println("creating radial gradient");
       RadialGradient grad = (RadialGradient) gradient;
       return new RadialGradientPaint(grad.cx, grad.cy, grad.r,
                                      grad.offset, grad.color, grad.count,
