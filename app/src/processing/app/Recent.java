@@ -177,7 +177,16 @@ public class Recent {
       if (purtyPath == null) {
         String homePath = System.getProperty("user.home");
         if (recPath.startsWith(homePath)) {
-          purtyPath = "\u2302 \u2192 " + recPath.substring(homePath.length() + 1);
+          // Not localized, but this is gravy. It'll work on OS X & EN Windows
+          String desktopPath = homePath + File.separator + "Desktop";
+          if (recPath.startsWith(desktopPath)) {
+            purtyPath = "Desktop \u2192 " + recPath.substring(desktopPath.length() + 1);
+          } else {
+            //purtyPath = "\u2302 \u2192 " + recPath.substring(homePath.length() + 1);
+            //purtyPath = "Home \u2192 " + recPath.substring(homePath.length() + 1);
+            String userName = new File(homePath).getName();
+            purtyPath = userName + " \u2192 " + recPath.substring(homePath.length() + 1);
+          }
         } else {
           purtyPath = recPath;
         }
