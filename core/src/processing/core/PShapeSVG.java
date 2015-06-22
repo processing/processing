@@ -35,6 +35,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.util.Map;
 import java.util.HashMap;
 
 
@@ -1351,7 +1352,8 @@ public class PShapeSVG extends PShape {
    */
   static protected int parseSimpleColor(String colorText) {
     colorText = colorText.toLowerCase().trim();
-    if (colorNames.containsKey(colorText)) {
+    //if (colorNames.containsKey(colorText)) {
+    if (colorNames.hasKey(colorText)) {
       return colorNames.get(colorText);
     } else if (colorText.startsWith("#")) {
       if (colorText.length() == 4) {
@@ -1373,29 +1375,49 @@ public class PShapeSVG extends PShape {
    * Deliberately conforms to HTML 4.01 color spec + en-gb grey,
    * not SVG's 147-color system.
    */
-  static protected HashMap<String, Integer> colorNames;
+  static protected IntDict colorNames = new IntDict(new Object[][] {
+    { "aqua",    0x00ffff },
+    { "black",   0x000000 },
+    { "blue",    0x0000ff },
+    { "fuchsia", 0xff00ff },
+    { "gray",    0x808080 },
+    { "grey",    0x808080 },
+    { "green",   0x008000 },
+    { "lime",    0x00ff00 },
+    { "maroon",  0x800000 },
+    { "navy",    0x000080 },
+    { "olive",   0x808000 },
+    { "purple",  0x800080 },
+    { "red",     0xff0000 },
+    { "silver",  0xc0c0c0 },
+    { "teal",    0x008080 },
+    { "white",   0xffffff },
+    { "yellow",  0xffff00 }
+  });
 
+  /*
+  static protected Map<String, Integer> colorNames;
   static {
     colorNames = new HashMap<String, Integer>();
-    colorNames.put("aqua",         0x00ffff);
-    colorNames.put("black",        0x000000);
-    colorNames.put("blue",         0x0000ff);
-    colorNames.put("fuchsia",      0xff00ff);
-    colorNames.put("gray",         0x808080);
-    colorNames.put("grey",         0x808080);
-    colorNames.put("green",        0x008000);
-    colorNames.put("lime",         0x00ff00);
-    colorNames.put("maroon",       0x800000);
-    colorNames.put("navy",         0x000080);
-    colorNames.put("olive",        0x808000);
-    colorNames.put("purple",       0x800080);
-    colorNames.put("red",          0xff0000);
-    colorNames.put("silver",       0xc0c0c0);
-    colorNames.put("teal",         0x008080);
-    colorNames.put("white",        0xffffff);
-    colorNames.put("yellow",       0xffff00);
+    colorNames.put("aqua",    0x00ffff);
+    colorNames.put("black",   0x000000);
+    colorNames.put("blue",    0x0000ff);
+    colorNames.put("fuchsia", 0xff00ff);
+    colorNames.put("gray",    0x808080);
+    colorNames.put("grey",    0x808080);
+    colorNames.put("green",   0x008000);
+    colorNames.put("lime",    0x00ff00);
+    colorNames.put("maroon",  0x800000);
+    colorNames.put("navy",    0x000080);
+    colorNames.put("olive",   0x808000);
+    colorNames.put("purple",  0x800080);
+    colorNames.put("red",     0xff0000);
+    colorNames.put("silver",  0xc0c0c0);
+    colorNames.put("teal",    0x008080);
+    colorNames.put("white",   0xffffff);
+    colorNames.put("yellow",  0xffff00);
   }
-
+  */
 
   static protected int parseRGB(String what) {
     int leftParen = what.indexOf('(') + 1;
@@ -1419,14 +1441,18 @@ public class PShapeSVG extends PShape {
   }
 
 
-  static protected HashMap<String, String> parseStyleAttributes(String style) {
-    HashMap<String, String> table = new HashMap<String, String>();
-    if (style == null) return table;
-
-    String[] pieces = style.split(";");
-    for (int i = 0; i < pieces.length; i++) {
-      String[] parts = pieces[i].split(":");
-      table.put(parts[0], parts[1]);
+  //static protected Map<String, String> parseStyleAttributes(String style) {
+  static protected StringDict parseStyleAttributes(String style) {
+    //Map<String, String> table = new HashMap<String, String>();
+    StringDict table = new StringDict();
+//    if (style == null) return table;
+    if (style != null) {
+      String[] pieces = style.split(";");
+      for (int i = 0; i < pieces.length; i++) {
+        String[] parts = pieces[i].split(":");
+        //table.put(parts[0], parts[1]);
+        table.set(parts[0], parts[1]);
+      }
     }
     return table;
   }
@@ -1522,7 +1548,8 @@ public class PShapeSVG extends PShape {
           offset[count] = parseFloatOrPercent(offsetAttr);
 
           String style = elem.getString("style");
-          HashMap<String, String> styles = parseStyleAttributes(style);
+          //Map<String, String> styles = parseStyleAttributes(style);
+          StringDict styles = parseStyleAttributes(style);
 
           String colorStr = styles.get("stop-color");
           if (colorStr == null) {
@@ -1891,8 +1918,8 @@ public class PShapeSVG extends PShape {
   public static class Font extends PShapeSVG {
     public FontFace face;
 
-    public HashMap<String,FontGlyph> namedGlyphs;
-    public HashMap<Character,FontGlyph> unicodeGlyphs;
+    public Map<String, FontGlyph> namedGlyphs;
+    public Map<Character, FontGlyph> unicodeGlyphs;
 
     public int glyphCount;
     public FontGlyph[] glyphs;
@@ -1909,8 +1936,8 @@ public class PShapeSVG extends PShape {
 
       horizAdvX = properties.getInt("horiz-adv-x", 0);
 
-      namedGlyphs = new HashMap<String,FontGlyph>();
-      unicodeGlyphs = new HashMap<Character,FontGlyph>();
+      namedGlyphs = new HashMap<String, FontGlyph>();
+      unicodeGlyphs = new HashMap<Character, FontGlyph>();
       glyphCount = 0;
       glyphs = new FontGlyph[elements.length];
 
