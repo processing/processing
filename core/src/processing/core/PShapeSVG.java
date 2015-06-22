@@ -137,64 +137,6 @@ public class PShapeSVG extends PShape {
   }
 
 
-  // Broken out so that subclasses can copy any additional variables
-  // (i.e. fillGradientPaint and strokeGradientPaint)
-  protected void setParent(PShapeSVG parent) {
-    // Need to set this so that findChild() works.
-    // Otherwise 'parent' is null until addChild() is called later.
-    this.parent = parent;
-
-    if (parent == null) {
-      // set values to their defaults according to the SVG spec
-      stroke = false;
-      strokeColor = 0xff000000;
-      strokeWeight = 1;
-      strokeCap = PConstants.SQUARE;  // equivalent to BUTT in svg spec
-      strokeJoin = PConstants.MITER;
-      strokeGradient = null;
-//      strokeGradientPaint = null;
-      strokeName = null;
-
-      fill = true;
-      fillColor = 0xff000000;
-      fillGradient = null;
-//      fillGradientPaint = null;
-      fillName = null;
-
-      //hasTransform = false;
-      //transformation = null; //new float[] { 1, 0, 0, 1, 0, 0 };
-
-      // svgWidth, svgHeight, and svgXYSize done below.
-
-      strokeOpacity = 1;
-      fillOpacity = 1;
-      opacity = 1;
-
-    } else {
-      stroke = parent.stroke;
-      strokeColor = parent.strokeColor;
-      strokeWeight = parent.strokeWeight;
-      strokeCap = parent.strokeCap;
-      strokeJoin = parent.strokeJoin;
-      strokeGradient = parent.strokeGradient;
-//      strokeGradientPaint = parent.strokeGradientPaint;
-      strokeName = parent.strokeName;
-
-      fill = parent.fill;
-      fillColor = parent.fillColor;
-      fillGradient = parent.fillGradient;
-//      fillGradientPaint = parent.fillGradientPaint;
-      fillName = parent.fillName;
-
-      svgWidth  = parent.svgWidth;
-      svgHeight = parent.svgHeight;
-      svgXYSize = parent.svgXYSize;
-
-      opacity = parent.opacity;
-    }
-  }
-
-
   protected PShapeSVG(PShapeSVG parent, XML properties, boolean parseKids) {
     setParent(parent);
 
@@ -280,6 +222,70 @@ public class PShapeSVG extends PShape {
   }
 
 
+  // Broken out so that subclasses can copy any additional variables
+  // (i.e. fillGradientPaint and strokeGradientPaint)
+  protected void setParent(PShapeSVG parent) {
+    // Need to set this so that findChild() works.
+    // Otherwise 'parent' is null until addChild() is called later.
+    this.parent = parent;
+
+    if (parent == null) {
+      // set values to their defaults according to the SVG spec
+      stroke = false;
+      strokeColor = 0xff000000;
+      strokeWeight = 1;
+      strokeCap = PConstants.SQUARE;  // equivalent to BUTT in svg spec
+      strokeJoin = PConstants.MITER;
+      strokeGradient = null;
+//      strokeGradientPaint = null;
+      strokeName = null;
+
+      fill = true;
+      fillColor = 0xff000000;
+      fillGradient = null;
+//      fillGradientPaint = null;
+      fillName = null;
+
+      //hasTransform = false;
+      //transformation = null; //new float[] { 1, 0, 0, 1, 0, 0 };
+
+      // svgWidth, svgHeight, and svgXYSize done below.
+
+      strokeOpacity = 1;
+      fillOpacity = 1;
+      opacity = 1;
+
+    } else {
+      stroke = parent.stroke;
+      strokeColor = parent.strokeColor;
+      strokeWeight = parent.strokeWeight;
+      strokeCap = parent.strokeCap;
+      strokeJoin = parent.strokeJoin;
+      strokeGradient = parent.strokeGradient;
+//      strokeGradientPaint = parent.strokeGradientPaint;
+      strokeName = parent.strokeName;
+
+      fill = parent.fill;
+      fillColor = parent.fillColor;
+      fillGradient = parent.fillGradient;
+//      fillGradientPaint = parent.fillGradientPaint;
+      fillName = parent.fillName;
+
+      svgWidth  = parent.svgWidth;
+      svgHeight = parent.svgHeight;
+      svgXYSize = parent.svgXYSize;
+
+      opacity = parent.opacity;
+    }
+  }
+
+
+  /** Factory method for subclasses. */
+  protected PShapeSVG createShape(PShapeSVG parent, XML properties, boolean parseKids) {
+    return new PShapeSVG(parent, properties, parseKids);
+  }
+
+
   protected void parseChildren(XML graphics) {
     XML[] elements = graphics.getChildren();
     children = new PShape[elements.length];
@@ -307,49 +313,39 @@ public class PShapeSVG extends PShape {
       // just some whitespace that can be ignored (hopefully)
 
     } else if (name.equals("g")) {
-      //return new BaseObject(this, elem);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
 
     } else if (name.equals("defs")) {
       // generally this will contain gradient info, so may
       // as well just throw it into a group element for parsing
-      //return new BaseObject(this, elem);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
 
     } else if (name.equals("line")) {
-      //return new Line(this, elem);
-      //return new BaseObject(this, elem, LINE);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parseLine();
 
     } else if (name.equals("circle")) {
-      //return new BaseObject(this, elem, ELLIPSE);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parseEllipse(true);
 
     } else if (name.equals("ellipse")) {
-      //return new BaseObject(this, elem, ELLIPSE);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parseEllipse(false);
 
     } else if (name.equals("rect")) {
-      //return new BaseObject(this, elem, RECT);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parseRect();
 
     } else if (name.equals("polygon")) {
-      //return new BaseObject(this, elem, POLYGON);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parsePoly(true);
 
     } else if (name.equals("polyline")) {
-      //return new BaseObject(this, elem, POLYGON);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parsePoly(false);
 
     } else if (name.equals("path")) {
-      //return new BaseObject(this, elem, PATH);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parsePath();
 
     } else if (name.equals("radialGradient")) {

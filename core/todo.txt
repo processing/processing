@@ -115,6 +115,8 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 beta
+_ gradients currently broken for Java2D
+_   https://github.com/processing/processing/issues/3417
 _ run only the necessary pieces on the EDT
 _   in part because FX doesn't even use the EDT
 _   re-check the Linux frame visibility stuff
