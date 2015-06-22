@@ -40,9 +40,11 @@ import processing.core.*;
  * <p>
  * To get access to the Java 2D "Graphics2D" object for the default
  * renderer, use:
- * <PRE>Graphics2D g2 = ((PGraphicsJava2D)g).g2;</PRE>
- * This will let you do Java 2D stuff directly, but is not supported in
- * any way shape or form. Which just means "have fun, but don't complain
+ * <PRE>
+ * Graphics2D g2 = (Graphics2D) g.getNative();
+ * </PRE>
+ * This will let you do Graphics2D calls directly, but is not supported
+ * in any way shape or form. Which just means "have fun, but don't complain
  * if it breaks."
  * <p>
  * Advanced <a href="http://docs.oracle.com/javase/7/docs/webnotes/tsg/TSG-Desktop/html/java2d.html">debugging notes</a> for Java2D.
@@ -1822,7 +1824,7 @@ public class PGraphicsJava2D extends PGraphics {
   public PShape loadShape(String filename, String options) {
     String extension = PApplet.getExtension(filename);
     if (extension.equals("svg") || extension.equals("svgz")) {
-      return new PShapeSVG(parent.loadXML(filename));
+      return new PShapeJava2D(parent.loadXML(filename));
     }
     PGraphics.showWarning("Unsupported format: " + filename);
     return null;
