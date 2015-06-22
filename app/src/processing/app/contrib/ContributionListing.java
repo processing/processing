@@ -37,6 +37,8 @@ public class ContributionListing {
   // Stable URL that will redirect to wherever we're hosting the file
   static final String LISTING_URL =
     "http://download.processing.org/contribs.txt";
+  static final String LOCAL_FILENAME = "contribs.txt";
+
 
   static volatile ContributionListing singleInstance;
 
@@ -59,7 +61,8 @@ public class ContributionListing {
     allContributions = new ArrayList<Contribution>();
     downloadingListingLock = new ReentrantLock();
 
-    listingFile = Base.getSettingsFile("contributions.txt");
+    //listingFile = Base.getSettingsFile("contributions.txt");
+    listingFile = Base.getSettingsFile(LOCAL_FILENAME);
     listingFile.setWritable(true);
     if (listingFile.exists()) {
       setAdvertisedList(listingFile);
