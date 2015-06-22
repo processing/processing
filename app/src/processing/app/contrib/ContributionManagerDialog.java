@@ -471,6 +471,14 @@ public class ContributionManagerDialog {
 
 
   protected void downloadAndUpdateContributionListing(Base base) {
+    if (!UpdateCheck.isAllowed()) {
+      // A dialog box seems to in-your-face, but not saying anything seems
+      // problematic. This isn't a great option but it'll do for beta 1.
+      System.out.println("Cannot update contributions because " +
+                         "updates are disabled in preferences.");
+      return;  // update checking phones home! IT! PHONES! HOME!
+    }
+
     retryConnectingButton.setEnabled(false);
     status.setMessage(Language.text("contrib.status.downloading_list"));
     contribListing.downloadAvailableList(base, new ContribProgressBar(progressBar) {

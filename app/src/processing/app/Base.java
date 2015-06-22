@@ -450,9 +450,7 @@ public class Base {
     }
 
     // check for updates
-    if (Preferences.getBoolean("update.check")) { //$NON-NLS-1$
-      new UpdateCheck(this);
-    }
+    new UpdateCheck(this);
   }
 
 
