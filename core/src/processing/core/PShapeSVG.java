@@ -45,23 +45,30 @@ import java.util.HashMap;
  * use of this class. Using this class directly will cause your code to break
  * when combined with future versions of Processing.
  * <p>
- * SVG stands for Scalable Vector Graphics, a portable graphics format. It is
- * a vector format so it allows for infinite resolution and relatively small
- * file sizes. Most modern media software can view SVG files, including Adobe
- * products, Firefox, etc. Illustrator and Inkscape can edit SVG files.
+ * SVG stands for Scalable Vector Graphics, a portable graphics format.
+ * It is a vector format so it allows for "infinite" resolution and relatively
+ * small file sizes. Most modern media software can view SVG files, including
+ * Adobe products, Firefox, etc. Illustrator and Inkscape can edit SVG files.
+ * View the SVG specification <A HREF="http://www.w3.org/TR/SVG">here</A>.
  * <p>
  * We have no intention of turning this into a full-featured SVG library.
- * The goal of this project is a basic shape importer that is small enough
- * to be included with applets, meaning that its download size should be
- * in the neighborhood of 25-30k. Starting with release 0149, this library
- * has been incorporated into the core via the loadShape() command, because
- * vector shape data is just as important as the image data from loadImage().
+ * The goal of this project is a basic shape importer that originally was small
+ * enough to be included with applets, meaning that its download size should be
+ * in the neighborhood of 25-30 Kb. Though we're far less limited nowadays on
+ * size constraints, we remain extremely limited in terms of time, and do not
+ * have volunteers who are available to maintain a larger SVG library.
  * <p>
  * For more sophisticated import/export, consider the
  * <A HREF="http://xmlgraphics.apache.org/batik/">Batik</A>
- * library from the Apache Software Foundation. Future improvements to this
- * library may focus on this properly supporting a specific subset of SVG,
- * for instance the simpler SVG profiles known as
+ * library from the Apache Software Foundation.
+ * <p>
+ * Batik is used in the SVG Export library in Processing 3, however using it
+ * for full SVG import is still a considerable amount of work. Wiring it to
+ * Java2D wouldn't be too bad, but using it with OpenGL, JavaFX, and features
+ * like begin/endRecord() and begin/endRaw() would be considerable effort.
+ * <p>
+ * Future improvements to this library may focus on this properly supporting
+ * a specific subset of SVG, for instance the simpler SVG profiles known as
  * <A HREF="http://www.w3.org/TR/SVGMobile/">SVG Tiny or Basic</A>,
  * although we still would not support the interactivity options.
  *
@@ -82,70 +89,6 @@ import java.util.HashMap;
  *   shape(moo, mouseX, mouseY);
  * }
  * </PRE>
- *
- * This code is based on the Candy library written by Michael Chang, which was
- * later revised and expanded for use as a Processing core library by Ben Fry.
- * Thanks to Ricard Marxer Pinon for help with better Inkscape support in 0154.
- *
- * <p> <hr noshade> <p>
- *
- * Late October 2008 revisions from ricardmp, incorporated by fry (0154)
- * <UL>
- * <LI>Better style attribute handling, enabling better Inkscape support.
- * </UL>
- *
- * October 2008 revisions by fry (Processing 0149, pre-1.0)
- * <UL>
- * <LI> Candy is no longer a separate library, and is instead part of core.
- * <LI> Loading now works through loadShape()
- * <LI> Shapes are now drawn using the new PGraphics shape() method.
- * </UL>
- *
- * August 2008 revisions by fry (Processing 0149)
- * <UL>
- * <LI> Major changes to rework around PShape.
- * <LI> Now implementing more of the "transform" attribute.
- * </UL>
- *
- * February 2008 revisions by fry (Processing 0136)
- * <UL>
- * <LI> Added support for quadratic curves in paths (Q, q, T, and t operators)
- * <LI> Support for reading SVG font data (though not rendering it yet)
- * </UL>
- *
- * Revisions for "Candy 2" November 2006 by fry
- * <UL>
- * <LI> Switch to the new processing.xml library
- * <LI> Several bug fixes for parsing of shape data
- * <LI> Support for linear and radial gradients
- * <LI> Support for additional types of shapes
- * <LI> Added compound shapes (shapes with interior points)
- * <LI> Added methods to get shapes from an internal table
- * </UL>
- *
- * Revision 10/31/06 by flux
- * <UL>
- * <LI> Now properly supports Processing 0118
- * <LI> Fixed a bunch of things for Casey's students and general buggity.
- * <LI> Will now properly draw #FFFFFFFF colors (were being represented as -1)
- * <LI> SVGs without &lt;g&gt; tags are now properly caught and loaded
- * <LI> Added a method customStyle() for overriding SVG colors/styles
- * <LI> Added a method SVGStyle() to go back to using SVG colors/styles
- * </UL>
- *
- * Some SVG objects and features may not yet be supported.
- * Here is a partial list of non-included features
- * <UL>
- * <LI> Rounded rectangles
- * <LI> Drop shadow objects
- * <LI> Typography
- * <LI> <STRIKE>Layers</STRIKE> added for Candy 2
- * <LI> Patterns
- * <LI> Embedded images
- * </UL>
- *
- * For those interested, the SVG specification can be found
- * <A HREF="http://www.w3.org/TR/SVG">here</A>.
  */
 public class PShapeSVG extends PShape {
   XML element;
