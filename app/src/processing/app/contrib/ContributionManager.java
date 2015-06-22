@@ -24,6 +24,7 @@ package processing.app.contrib;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.zip.GZIPOutputStream;
 
 import javax.swing.SwingWorker;
 
@@ -45,27 +46,39 @@ public class ContributionManager {
   /**
    * Blocks until the file is downloaded or an error occurs.
    *
-   * @return true if the file was successfully downloaded, false otherwise.
-   *
    * @param source the URL of the file to download
+   * @param post Binary blob of POST data if a payload should be sent.
+   *             Must already be URL-encoded and will be Gzipped for upload.
    * @param dest The file on the local system where the file will be written.
    *             This must be a file (not a directory), and must already exist.
    * @param progress null if progress is irrelevant, such as when downloading
    *                 for an install during startup, when the ProgressMonitor
    *                 is useless since UI isn't setup yet.
-   * @throws FileNotFoundException if an error occurred downloading the file
+   *
+   * @return true if the file was successfully downloaded, false otherwise.
    */
-  static boolean download(URL source, File dest, ContribProgressMonitor progress) {
+  static boolean download(URL source, byte[] post,
+                          File dest, ContribProgressMonitor progress) {
     boolean success = false;
     try {
-//      System.out.println("downloading file " + source);
-//      URLConnection conn = source.openConnection();
+
       HttpURLConnection conn = (HttpURLConnection) source.openConnection();
       HttpURLConnection.setFollowRedirects(true);
       conn.setConnectTimeout(15 * 1000);
       conn.setReadTimeout(60 * 1000);
-      conn.setRequestMethod("GET");
-      conn.connect();
+
+      if (post == null) {
+        conn.setRequestMethod("GET");
+        conn.connect();
+      } else {
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        conn.setRequestProperty("Content-Encoding", "gzip");
+        conn.setUseCaches(false);
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
+        conn.getOutputStream().write(gzipEncode(post));
+      }
 
       if (progress != null) {
         // TODO this is often -1, may need to set progress to indeterminate
@@ -116,6 +129,15 @@ public class ContributionManager {
   }
 
 
+  static private byte[] gzipEncode(byte[] what) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    GZIPOutputStream output = new GZIPOutputStream(baos);
+    PApplet.saveStream(output, new ByteArrayInputStream(what));
+    output.close();
+    return baos.toByteArray();
+  }
+
+
   /**
    * Non-blocking call to download and install a contribution in a new thread.
    *
@@ -143,7 +165,7 @@ public class ContributionManager {
           contribZip.setWritable(true);  // necessary?
 
           try {
-            download(url, contribZip, downloadProgress);
+            download(url, null, contribZip, downloadProgress);
 
             if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
               installProgress.startTask(Language.text("contrib.progress.installing"), ContribProgressMonitor.UNKNOWN);
@@ -230,7 +252,7 @@ public class ContributionManager {
           contribZip.setWritable(true); // necessary?
 
           try {
-            download(url, contribZip, null);
+            download(url, null, contribZip, null);
 
             LocalContribution contribution = ad.install(base, contribZip,
                                                         false, null);
@@ -361,7 +383,7 @@ public class ContributionManager {
 
             isPrevDone = false;
 
-            download(url, contribZip, null);
+            download(url, null, contribZip, null);
 
             String arg = "contrib.import.progress.install";
             base.getActiveEditor().statusNotice(Language.interpolate(arg,ad.name));

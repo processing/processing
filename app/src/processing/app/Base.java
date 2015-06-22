@@ -549,7 +549,7 @@ public class Base {
   }
 
 
-  public String getInstalledContribsInfo() {
+  public byte[] getInstalledContribsInfo() {
     List<Contribution> contribs = getInstalledContribs();
     StringList entries = new StringList();
     for (Contribution c : contribs) {
@@ -560,22 +560,23 @@ public class Base {
       entries.append(entry);
     }
     String joined = "id=" + Preferences.get("update.id") + entries.join("&");
-    StringBuilder sb = new StringBuilder();
-    try {
-      // Truly ridiculous attempt to shove everything into a GET request.
-      // More likely to be seen as part of a grand plot.
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      GZIPOutputStream output = new GZIPOutputStream(baos);
-      PApplet.saveStream(output, new ByteArrayInputStream(joined.getBytes()));
-      output.close();
-      byte[] b = baos.toByteArray();
-      for (int i = 0; i < b.length; i++) {
-        sb.append(PApplet.hex(b[i], 2));
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return sb.toString();
+//    StringBuilder sb = new StringBuilder();
+//    try {
+//      // Truly ridiculous attempt to shove everything into a GET request.
+//      // More likely to be seen as part of a grand plot.
+//      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//      GZIPOutputStream output = new GZIPOutputStream(baos);
+//      PApplet.saveStream(output, new ByteArrayInputStream(joined.getBytes()));
+//      output.close();
+//      byte[] b = baos.toByteArray();
+//      for (int i = 0; i < b.length; i++) {
+//        sb.append(PApplet.hex(b[i], 2));
+//      }
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    }
+//    return sb.toString();
+    return joined.getBytes();
   }
 
 

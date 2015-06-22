@@ -23,7 +23,6 @@ package processing.app.contrib;
 
 import java.io.*;
 import java.net.*;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -407,32 +406,31 @@ public class ContributionListing {
           url = new URL(LISTING_URL);
 //          final String contribInfo =
 //            base.getInstalledContribsInfo();
-////            "?id=" + Preferences.get("update.id") +
-////            "&" + base.getInstalledContribsInfo();
+//            "?id=" + Preferences.get("update.id") +
+//            "&" + base.getInstalledContribsInfo();
 //          url = new URL(LISTING_URL + "?" + contribInfo);
 //          System.out.println(contribInfo.length() + " " + contribInfo);
+
+          File tempContribFile = Base.getSettingsFile("contribs.tmp");
+          tempContribFile.setWritable(true);
+          ContributionManager.download(url, base.getInstalledContribsInfo(),
+                                       tempContribFile, progress);
+          if (!progress.isCanceled() && !progress.isError()) {
+            if (listingFile.exists()) {
+              listingFile.delete();  // may silently fail, but below may still work
+            }
+            if (tempContribFile.renameTo(listingFile)) {
+              hasDownloadedLatestList = true;
+              hasListDownloadFailed = false;
+              setAdvertisedList(listingFile);
+            } else {
+              hasListDownloadFailed = true;
+            }
+          }
+
         } catch (MalformedURLException e) {
           progress.error(e);
           progress.finished();
-        }
-
-        if (!progress.isFinished()) {
-          File tempContribFile = Base.getSettingsFile("contributions_temp.txt");
-          tempContribFile.setWritable(true);
-          ContributionManager.download(url, tempContribFile, progress);
-          if (!progress.isCanceled() && !progress.isError()) {
-            try {
-              Files.deleteIfExists(listingFile.toPath());
-              listingFile = new File(Files.move(tempContribFile.toPath(), tempContribFile.toPath().resolveSibling(listingFile.toPath())).toString());
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-            hasDownloadedLatestList = true;
-            hasListDownloadFailed = false;
-            setAdvertisedList(listingFile);
-          }
-          else
-            hasListDownloadFailed = true;
         }
         downloadingListingLock.unlock();
       }
