@@ -2526,6 +2526,11 @@ public class PApplet implements PConstants {
   }
 
 
+  public boolean isLooping() {
+    return looping;
+  }
+
+
   //////////////////////////////////////////////////////////////
 
 

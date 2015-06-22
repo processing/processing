@@ -23,6 +23,7 @@
 
 package processing.core;
 
+import processing.awt.PGraphicsJava2D;
 import processing.data.*;
 
 import java.awt.Paint;

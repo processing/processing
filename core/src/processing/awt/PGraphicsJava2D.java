@@ -22,7 +22,7 @@
   Boston, MA  02111-1307  USA
 */
 
-package processing.core;
+package processing.awt;
 
 import java.awt.*;
 import java.awt.font.TextAttribute;
@@ -31,6 +31,8 @@ import java.awt.image.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import processing.core.*;
 
 
 /**
@@ -1571,7 +1573,7 @@ public class PGraphicsJava2D extends PGraphics {
       cash = new ImageCache(); //who);
       setCache(who, cash);
       who.updatePixels();  // mark the whole thing for update
-      who.modified = true;
+      who.setModified();
     }
 
     // If image previously was tinted, or the color changed
@@ -1583,7 +1585,7 @@ public class PGraphicsJava2D extends PGraphics {
       who.updatePixels();
     }
 
-    if (who.modified) {
+    if (who.isModified()) {
       if (who.pixels == null) {
         // This might be a PGraphics that hasn't been drawn to yet.
         // Can't just bail because the cache has been created above.
@@ -1591,7 +1593,7 @@ public class PGraphicsJava2D extends PGraphics {
         who.pixels = new int[who.width * who.height];
       }
       cash.update(who, tint, tintColor);
-      who.modified = false;
+      who.setModified(false);
     }
 
     g2.drawImage(((ImageCache) getCache(who)).image,
@@ -2030,7 +2032,7 @@ public class PGraphicsJava2D extends PGraphics {
       // also changes global setting for antialiasing, but this is because it's
       // not possible to enable/disable them independently in some situations.
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                          textFont.smooth ?
+                          textFont.isSmooth() ?
                           RenderingHints.VALUE_ANTIALIAS_ON :
                           RenderingHints.VALUE_ANTIALIAS_OFF);
 

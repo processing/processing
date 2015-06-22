@@ -57,7 +57,7 @@ public interface PConstants {
   });
   */
 
-  static final String JAVA2D = "processing.core.PGraphicsJava2D";
+  static final String JAVA2D = "processing.awt.PGraphicsJava2D";
 
   static final String P2D = "processing.opengl.PGraphics2D";
   static final String P3D = "processing.opengl.PGraphics3D";
@@ -70,7 +70,7 @@ public interface PConstants {
 //  static final String E2D = PGraphicsDanger2D.class.getName();
 
   // Experimental JavaFX renderer; even better 2D performance
-  static final String FX2D = "processing.core.PGraphicsFX2D";
+  static final String FX2D = "processing.javafx.PGraphicsFX2D";
 
   static final String PDF = "processing.pdf.PGraphicsPDF";
   static final String SVG = "processing.svg.PGraphicsSVG";

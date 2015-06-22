@@ -35,6 +35,7 @@ import java.awt.font.FontRenderContext;
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
+import processing.awt.PSurfaceAWT;
 import processing.opengl.PGL;
 import processing.opengl.PShader;
 

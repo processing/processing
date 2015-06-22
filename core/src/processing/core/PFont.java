@@ -560,6 +560,11 @@ public class PFont implements PConstants {
   }
 
 
+  public boolean isSmooth() {
+    return smooth;
+  }
+
+
   public boolean isStream() {
     return stream;
   }

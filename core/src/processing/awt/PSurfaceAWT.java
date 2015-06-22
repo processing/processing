@@ -20,7 +20,7 @@
   Boston, MA  02111-1307  USA
 */
 
-package processing.core;
+package processing.awt;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -32,6 +32,11 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
+import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PGraphics;
+import processing.core.PImage;
+import processing.core.PSurfaceNone;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
@@ -101,7 +106,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     canvas.addComponentListener(new ComponentAdapter() {
       @Override
       public void componentResized(ComponentEvent e) {
-        if (!sketch.looping) {
+        if (!sketch.isLooping()) {
           // make sure this is a real resize event, not just initial setup
           // https://github.com/processing/processing/issues/3310
           Dimension canvasSize = canvas.getSize();
@@ -792,16 +797,16 @@ public class PSurfaceAWT extends PSurfaceNone {
   // needs to resize the frame, which will resize the canvas, and so on...
   @Override
   public void setSize(int wide, int high) {
-    if (PApplet.DEBUG) {
-      //System.out.format("frame visible %b, setSize(%d, %d) %n", frame.isVisible(), wide, high);
-      new Exception(String.format("setSize(%d, %d)", wide, high)).printStackTrace(System.out);
-    }
+//    if (PApplet.DEBUG) {
+//      //System.out.format("frame visible %b, setSize(%d, %d) %n", frame.isVisible(), wide, high);
+//      new Exception(String.format("setSize(%d, %d)", wide, high)).printStackTrace(System.out);
+//    }
 
     //if (wide == sketchWidth && high == sketchHeight) {  // doesn't work on launch
     if (wide == sketch.width && high == sketch.height) {
-      if (PApplet.DEBUG) {
-        new Exception("w/h unchanged " + wide + " " + high).printStackTrace(System.out);
-      }
+//      if (PApplet.DEBUG) {
+//        new Exception("w/h unchanged " + wide + " " + high).printStackTrace(System.out);
+//      }
       return;  // unchanged, don't rebuild everything
     }
 
