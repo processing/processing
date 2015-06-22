@@ -543,10 +543,12 @@ public abstract class LocalContribution extends Contribution {
   }
   */
   /**
-   * Returns the imports (package-names) for a library, as specified in its library.properties
+   * Returns the imports (package-names) for a library, as specified in its 
+   * library.properties
    * (e.g., imports=libname.*,libname.support.*) 
    * 
-   * @return String[] packageNames (without wildcards) or null if none are specified
+   * @return String[] packageNames (without wildcards) or null if 
+   * none are specified
    */
   public String[] getSpecifiedImports() {
     
@@ -554,8 +556,8 @@ public abstract class LocalContribution extends Contribution {
   }
 
   /**
-   * @return the list of Java imports to be added to the sketch when the library is imported
-   * or null if none are specified
+   * @return the list of Java imports to be added to the sketch when the 
+   * library is imported or null if none are specified
    */
   protected static List<String> parseImports(String importsStr) {
     
@@ -576,7 +578,13 @@ public abstract class LocalContribution extends Contribution {
       }
     }
     
-    return (outgoing.size() > 0) ? outgoing : null; 
+    if (outgoing.size() > 1 || (outgoing.size() == 1 && 
+        !outgoing.get(0).isEmpty())) {
+      return outgoing;
+    }
+    else {
+      return null;
+    }
   }
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
