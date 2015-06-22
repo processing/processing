@@ -40,6 +40,7 @@ import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
 
+
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 // allows us to remove our own MediaTracker code
@@ -256,7 +257,7 @@ public class PApplet implements PConstants {
    * true if no size() command has been executed. This is used to wait until
    * a size has been set before placing in the window and showing it.
    */
-  public boolean defaultSize;
+//  public boolean defaultSize;
 
 //  /** Storage for the current renderer size to avoid re-allocation. */
 //  Dimension currentSize = new Dimension();
@@ -507,7 +508,7 @@ public class PApplet implements PConstants {
    * across platforms and input methods.
    */
   @Deprecated
-  public boolean firstMouse;
+  public boolean firstMouse = true;
 
   /**
    * ( begin auto-generated from mouseButton.xml )
@@ -706,10 +707,10 @@ public class PApplet implements PConstants {
    */
   public float frameRate = 10;
 
-  protected boolean looping;
+  protected boolean looping = true;
 
   /** flag set to true when a redraw is asked for by the user */
-  protected boolean redraw;
+  protected boolean redraw = true;
 
   /**
    * ( begin auto-generated from frameCount.xml )
@@ -828,55 +829,55 @@ public class PApplet implements PConstants {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  /**
-   * Applet initialization. This can do GUI work because the components have
-   * not been 'realized' yet: things aren't visible, displayed, etc.
-   */
-  public void init() {
-//    println("init() called " + Integer.toHexString(hashCode()));
-    // using a local version here since the class variable is deprecated
-//    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-//    screenWidth = screen.width;
-//    screenHeight = screen.height;
-
-    defaultSize = true;
-    finished = false; // just for clarity
-
-    // this will be cleared by draw() if it is not overridden
-    looping = true;
-    redraw = true;  // draw this guy at least once
-    firstMouse = true;
-
-    // calculated dynamically on first call
-//    // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
-//    // inside runSketch(), but if this sketch takes care of calls to init()
-//    // when PApplet.main() is not used (i.e. it's in a Java application).
-//    // THe path needs to be set here so that loadXxxx() functions work.
-//    if (sketchPath == null) {
-//      sketchPath = calcSketchPath();
-//    }
-
-    // set during Surface.initFrame()
-//    // Figure out the available display width and height.
-//    // No major problem if this fails, we have to try again anyway in
-//    // handleDraw() on the first (== 0) frame.
-//    checkDisplaySize();
-
-//    // Set the default size, until the user specifies otherwise
-//    int w = sketchWidth();
-//    int h = sketchHeight();
-//    defaultSize = (w == DEFAULT_WIDTH) && (h == DEFAULT_HEIGHT);
+//  /**
+//   * Applet initialization. This can do GUI work because the components have
+//   * not been 'realized' yet: things aren't visible, displayed, etc.
+//   */
+//  public void init() {
+////    println("init() called " + Integer.toHexString(hashCode()));
+//    // using a local version here since the class variable is deprecated
+////    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+////    screenWidth = screen.width;
+////    screenHeight = screen.height;
 //
-//    g = makeGraphics(w, h, sketchRenderer(), null, true);
-//    // Fire component resize event
-//    setSize(w, h);
-//    setPreferredSize(new Dimension(w, h));
+//    defaultSize = true;
+//    finished = false; // just for clarity
 //
-//    width = g.width;
-//    height = g.height;
-
-    surface.startThread();
-  }
+//    // this will be cleared by draw() if it is not overridden
+//    looping = true;
+//    redraw = true;  // draw this guy at least once
+//    firstMouse = true;
+//
+//    // calculated dynamically on first call
+////    // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
+////    // inside runSketch(), but if this sketch takes care of calls to init()
+////    // when PApplet.main() is not used (i.e. it's in a Java application).
+////    // THe path needs to be set here so that loadXxxx() functions work.
+////    if (sketchPath == null) {
+////      sketchPath = calcSketchPath();
+////    }
+//
+//    // set during Surface.initFrame()
+////    // Figure out the available display width and height.
+////    // No major problem if this fails, we have to try again anyway in
+////    // handleDraw() on the first (== 0) frame.
+////    checkDisplaySize();
+//
+////    // Set the default size, until the user specifies otherwise
+////    int w = sketchWidth();
+////    int h = sketchHeight();
+////    defaultSize = (w == DEFAULT_WIDTH) && (h == DEFAULT_HEIGHT);
+////
+////    g = makeGraphics(w, h, sketchRenderer(), null, true);
+////    // Fire component resize event
+////    setSize(w, h);
+////    setPreferredSize(new Dimension(w, h));
+////
+////    width = g.width;
+////    height = g.height;
+//
+//    surface.startThread();
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -2368,7 +2369,7 @@ public class PApplet implements PConstants {
 //          // Give up, instead set the new renderer and re-attempt setup()
 //          return;
 //        }
-      defaultSize = false;
+//      defaultSize = false;
 
     } else {  // frameCount > 0, meaning an actual draw()
       // update the current frameRate
@@ -10119,7 +10120,7 @@ public class PApplet implements PConstants {
       sketch.windowColor = windowColor;
     }
 
-    PSurface surface = sketch.initSurface();
+    final PSurface surface = sketch.initSurface();
 //      sketch.initSurface(windowColor, displayIndex, fullScreen, spanDisplays);
 
     /*
@@ -10146,6 +10147,9 @@ public class PApplet implements PConstants {
       surface.placeWindow(location, editorLocation);
     }
 
+//    EventQueue.invokeLater(new Runnable() {
+//      public void run() {
+
     // Helps avoid this code being duplicated 2x per surface class.
     // Andres is testing to make sure this doesn't cause trouble.
     if (sketch.getGraphics().displayable()) {
@@ -10153,9 +10157,15 @@ public class PApplet implements PConstants {
     }
 
     // not always running externally when in present mode
-    if (external) {
+    if (sketch.external) {
       surface.setupExternalMessages();
     }
+
+    //sketch.init();
+    surface.startThread();
+
+//      }
+//    });
   }
 
 
@@ -10220,7 +10230,7 @@ public class PApplet implements PConstants {
       surface.initOffscreen(this);  // for PDF/PSurfaceNone and friends
     }
 
-    init();
+//    init();
     return surface;
   }
 

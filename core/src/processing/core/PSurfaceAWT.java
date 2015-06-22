@@ -160,6 +160,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     private Dimension newSize = new Dimension(0, 0);
 
 
+    // Turns out getParent() returns a JPanel on a JFrame. Yech.
     public Frame getFrame() {
       return frame;
     }
@@ -197,7 +198,11 @@ public class PSurfaceAWT extends PSurfaceNone {
 //        System.out.println("validate() render old=" + oldSize + " -> new=" + newSize);
         oldSize = newSize;
         sketch.setSize(newSize.width, newSize.height);
+//        try {
         render();
+//        } catch (IllegalStateException ise) {
+//          System.out.println(ise.getMessage());
+//        }
       }
     }
 
@@ -248,101 +253,33 @@ public class PSurfaceAWT extends PSurfaceNone {
 
 
   synchronized protected void render() {
-//      System.out.println("render() top");
-
-      /*
-      if (!EventQueue.isDispatchThread()) {
-        //throw new IllegalStateException("render() called outside the EDT");
-        //System.err.println("render() called outside the EDT");
-        new Exception("render() called outside the EDT").printStackTrace();
+    if (canvas.isDisplayable() &&
+        graphics.image != null) {
+      if (canvas.getBufferStrategy() == null) {
+        canvas.createBufferStrategy(2);
       }
-      */
-//      if (canvas == null) {
-//        removeListeners(this);
-//        canvas = new Canvas();
-//        add(canvas);
-//        setIgnoreRepaint(true);
-//        canvas.setIgnoreRepaint(true);
-//        addListeners(canvas);
-////        add(canvas, BorderLayout.CENTER);
-////        doLayout();
-//      }
+      BufferStrategy strategy = canvas.getBufferStrategy();
+      if (strategy != null) {
+        // Render single frame
+//        try {
+        do {
+          // The following loop ensures that the contents of the drawing buffer
+          // are consistent in case the underlying surface was recreated
+          do {
+            Graphics2D draw = (Graphics2D) strategy.getDrawGraphics();
+            // draw to width/height, since this may be a 2x image
+            draw.drawImage(graphics.image, 0, 0, sketchWidth, sketchHeight, null);
+            draw.dispose();
+          } while (strategy.contentsRestored());
 
-      // not sure why this was here, can't be good
-      //canvas.setBounds(0, 0, sketch.width, sketch.height);
+          // Display the buffer
+          strategy.show();
 
-    if (!canvas.isDisplayable()) {
-//        System.out.println("no peer.. holding");
-      return;
-    }
-
-    if (graphics.image == null) {
-      if (PApplet.DEBUG) {
-        new Exception("image is null, returning").printStackTrace(System.out);
+          // Repeat the rendering if the drawing buffer was lost
+        } while (strategy.contentsLost());
       }
-      return;
     }
-
-    Canvas c = canvas;
-//    Frame c = frame;
-//      System.out.println("render(), canvas bounds are " + canvas.getBounds());
-    if (c.getBufferStrategy() == null) {  // whole block [121222]
-//        System.out.println("creating a strategy");
-      c.createBufferStrategy(2);
-    }
-    BufferStrategy strategy = c.getBufferStrategy();
-//      System.out.println(strategy);
-    if (strategy == null) {
-      return;
-    }
-    // Render single frame
-    do {
-      // The following loop ensures that the contents of the drawing buffer
-      // are consistent in case the underlying surface was recreated
-      do {
-        Graphics2D draw = (Graphics2D) strategy.getDrawGraphics();
-        //draw.drawImage(pg.image, 0, 0, sketch.width, sketch.height, null);
-        //System.out.println("render() drawing image");
-          /*
-          while (sketch.insideDraw) {
-            System.out.println("render() yielding because inside draw");
-            //Thread.yield();
-            try {
-              Thread.sleep(1);
-            } catch (InterruptedException e) { }
-          }
-          */
-
-          // this wasn't any faster than setting the image size while drawing
-//          if (graphics.pixelFactor == 2) {
-//            draw.scale(0.5, 0.5);
-//          }
-
-        // draw to width/height, since this may be a 2x image
-        draw.drawImage(graphics.image, 0, 0, sketchWidth, sketchHeight, null);
-//          draw.drawImage(graphics.image, 0, 0, null);
-        draw.dispose();
-
-        // Repeat the rendering if the drawing buffer contents
-        // were restored
-//          System.out.println("restored " + strategy.contentsRestored());
-      } while (strategy.contentsRestored());
-
-      // Display the buffer
-//        System.out.println("showing");
-      strategy.show();
-
-      // Repeat the rendering if the drawing buffer was lost
-//        System.out.println("lost " + strategy.contentsLost());
-//        System.out.println();
-    } while (strategy.contentsLost());
-//      System.out.println("render() bottom");
   }
-
-
-//  Object offscreenLock = new Object();
-//  BufferedImage offscreen;
-//  BufferedImage onscreen;
 
 
   /*
@@ -762,8 +699,10 @@ public class PSurfaceAWT extends PSurfaceNone {
     //frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 
     // https://github.com/processing/processing/pull/3162
-    frame.dispose();  // release native resources, allows setUndecorated()
+    //frame.dispose();  // release native resources, allows setUndecorated()
+    frame.removeNotify();
     frame.setUndecorated(true);
+    frame.addNotify();
 
     // this may be the bounds of all screens
     frame.setBounds(screenRect);
@@ -1479,7 +1418,6 @@ public class PSurfaceAWT extends PSurfaceNone {
       @Override
       public void callDraw() {
         sketch.handleDraw();
-        //blit();
         render();
       }
     };

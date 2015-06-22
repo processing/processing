@@ -493,21 +493,22 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void startThread() {
-    if (animator == null) return;
-    if (placedWindow) {
-      window.setVisible(true);
-      animator.start();
-      requestedStart = false;
-    } else {
-      // The GL window is not visible until it has been placed, so we cannot
-      // start the animator because it requires the window to be visible.
-      requestedStart = true;
-      // Need this assignment to bypass the while loop in runSketch, otherwise
-      // the programs hangs waiting for defaultSize to be false, but it never
-      // happens because the animation thread is not yet running to avoid showing
-      // the window in the wrong place:
-      // https://github.com/processing/processing/issues/3308
-      sketch.defaultSize = false;
+    if (animator != null) {
+      if (placedWindow) {
+        window.setVisible(true);
+        animator.start();
+        requestedStart = false;
+      } else {
+        // The GL window is not visible until it has been placed, so we cannot
+        // start the animator because it requires the window to be visible.
+        requestedStart = true;
+        // Need this assignment to bypass the while loop in runSketch, otherwise
+        // the programs hangs waiting for defaultSize to be false, but it never
+        // happens because the animation thread is not yet running to avoid showing
+        // the window in the wrong place:
+        // https://github.com/processing/processing/issues/3308
+//      sketch.defaultSize = false;
+      }
     }
   }
 
