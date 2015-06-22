@@ -43,20 +43,17 @@ public class ContributionManager {
 
 
   /**
-   * Blocks until the file is downloaded or an error occurs. Returns true if the
-   * file was successfully downloaded, false otherwise.
+   * Blocks until the file is downloaded or an error occurs.
    *
-   * @param source
-   *          the URL of the file to download
-   * @param dest
-   *          the file on the local system where the file will be written. This
-   *          must be a file (not a directory), and must already exist.
-   * @param progress
-   *          null if progress is irrelevant, such as when downloading for an
-   *          install during startup, when the ProgressMonitor is useless since
-   *          UI isn't setup yet.
-   * @throws FileNotFoundException
-   *           if an error occurred downloading the file
+   * @return true if the file was successfully downloaded, false otherwise.
+   *
+   * @param source the URL of the file to download
+   * @param dest The file on the local system where the file will be written.
+   *             This must be a file (not a directory), and must already exist.
+   * @param progress null if progress is irrelevant, such as when downloading
+   *                 for an install during startup, when the ProgressMonitor
+   *                 is useless since UI isn't setup yet.
+   * @throws FileNotFoundException if an error occurred downloading the file
    */
   static boolean download(URL source, File dest, ContribProgressMonitor progress) {
     boolean success = false;

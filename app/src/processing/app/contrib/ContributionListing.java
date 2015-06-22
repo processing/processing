@@ -450,15 +450,21 @@ public class ContributionListing {
   }
 
   boolean hasUpdates(Base base) {
-    for (ModeContribution m : base.getModeContribs())
-      if (hasUpdates(m))
+    for (ModeContribution mc : base.getModeContribs()) {
+      if (hasUpdates(mc)) {
         return true;
-    for (Library l : base.getActiveEditor().getMode().contribLibraries)
-      if (hasUpdates(l))
+      }
+    }
+    for (Library lib : base.getActiveEditor().getMode().contribLibraries) {
+      if (hasUpdates(lib)) {
         return true;
-    for (ToolContribution t : base.getActiveEditor().getToolContribs())
-      if (hasUpdates(t))
+      }
+    }
+    for (ToolContribution tc : base.getActiveEditor().getToolContribs()) {
+      if (hasUpdates(tc)) {
         return true;
+      }
+    }
     return false;
   }
 
