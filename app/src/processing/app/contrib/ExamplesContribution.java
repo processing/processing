@@ -1,65 +1,73 @@
 package processing.app.contrib;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import processing.app.Base;
 import processing.core.PApplet;
+import processing.data.StringDict;
+import processing.data.StringList;
+import static processing.app.contrib.ContributionType.EXAMPLES;
+
 
 public class ExamplesContribution extends LocalContribution {
+  private StringList modeList;
 
-  private ArrayList<String> compatibleModesList;
 
   static public ExamplesContribution load(File folder) {
     return new ExamplesContribution(folder);
   }
 
+
   private ExamplesContribution(File folder) {
     super(folder);
+
     if (properties != null) {
-      compatibleModesList = parseCompatibleModesList(properties
-        .get("compatibleModesList"));
+      modeList = parseModeList(properties);
     }
   }
 
-  private static ArrayList<String> parseCompatibleModesList(String unparsedModes) {
-    ArrayList<String> modesList = new ArrayList<String>();
-    if (unparsedModes == null || unparsedModes.isEmpty())
-      return modesList;
-    String[] splitStr = PApplet.trim(PApplet.split(unparsedModes, ','));//unparsedModes.split(",");
-    for (String mode : splitStr)
-      modesList.add(mode.trim());
-    return modesList;
+
+  static private StringList parseModeList(StringDict properties) {
+    String unparsedModes = properties.get(MODES_PROPERTY);
+    StringList outgoing = new StringList();
+    if (unparsedModes != null) {
+      outgoing.append(PApplet.trim(PApplet.split(unparsedModes, ',')));
+    }
+    return outgoing;
   }
+
 
   /**
    * Function to determine whether or not the example present in the
-   * exampleLocation directory is compatible with the present mode.
+   * exampleLocation directory is compatible with the current mode.
    *
    * @param base
-   * @param exampleLocationFolder
+   * @param exampleFolder
    * @return true if the example is compatible with the mode of the currently
    *         active editor
    */
-  public static boolean isExamplesCompatible(Base base,
-                                            File exampleLocationFolder) {
-    File propertiesFile = new File(exampleLocationFolder,
-                                   ContributionType.EXAMPLES.toString()
-                                     + ".properties");
+  public boolean isCompatible(Base base, File exampleFolder) {
+    String currentIdentifier = base.getActiveEditor().getMode().getIdentifier();
+    File propertiesFile =
+      new File(exampleFolder, getPropertiesName());
     if (propertiesFile.exists()) {
-      ArrayList<String> compModesList = parseCompatibleModesList(Base
-        .readSettings(propertiesFile).get("compatibleModesList"));
-      for (String c : compModesList) {
-        if (c.equalsIgnoreCase(base.getActiveEditor().getMode().getIdentifier())) {
+      StringList compatibleList =
+        parseModeList(Base.readSettings(propertiesFile));
+      if (compatibleList.size() == 0) {
+        return true;  // if no mode specified, just include everywhere
+      }
+      for (String c : compatibleList) {
+        if (c.equals(currentIdentifier)) {
           return true;
         }
       }
     }
     return false;
   }
+
 
   static public void loadMissing(Base base) {
     File examplesFolder = Base.getSketchbookExamplesFolder();
@@ -69,7 +77,7 @@ public class ExamplesContribution extends LocalContribution {
     for (ExamplesContribution contrib : contribExamples) {
       existing.put(contrib.getFolder(), contrib);
     }
-    File[] potential = ContributionType.EXAMPLES.listCandidates(examplesFolder);
+    File[] potential = EXAMPLES.listCandidates(examplesFolder);
     // If modesFolder does not exist or is inaccessible (folks might like to
     // mess with folders then report it as a bug) 'potential' will be null.
     if (potential != null) {
@@ -81,13 +89,14 @@ public class ExamplesContribution extends LocalContribution {
     }
   }
 
+
   @Override
   public ContributionType getType() {
-    return ContributionType.EXAMPLES;
+    return EXAMPLES;
   }
 
-  public ArrayList<String> getCompatibleModesList() {
-    return compatibleModesList;
-  }
 
+  public StringList getModeList() {
+    return modeList;
+  }
 }

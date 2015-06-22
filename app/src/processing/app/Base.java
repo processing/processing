@@ -44,6 +44,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import processing.app.contrib.*;
 import processing.core.*;
+import processing.data.StringDict;
 import processing.data.StringList;
 
 
@@ -2398,7 +2399,7 @@ public class Base {
    * Changed in 3.0a6 to return null (rather than empty hash) if no file,
    * and changed return type to Map instead of HashMap.
    */
-  static public Map<String, String> readSettings(File inputFile) {
+  static public StringDict readSettings(File inputFile) {
     if (!inputFile.exists()) {
       if (DEBUG) System.err.println(inputFile + " does not exist.");
       return null;
@@ -2416,13 +2417,13 @@ public class Base {
    * Parse a String array that contains attribute/value pairs separated
    * by = (the equals sign). The # (hash) symbol is used to denote comments.
    * Comments can be anywhere on a line. Blank lines are ignored.
-   * In 3.0a6, no longer taking a blank HahMap as param; no cases in the main
+   * In 3.0a6, no longer taking a blank HashMap as param; no cases in the main
    * PDE code of adding to a (Hash)Map. Also returning the Map instead of void.
    * Both changes modify the method signature, but this was only used by the
    * contrib classes.
    */
-  static public Map<String, String> readSettings(String filename, String[] lines) {
-    Map<String, String> settings = new HashMap<>();
+  static public StringDict readSettings(String filename, String[] lines) {
+    StringDict settings = new StringDict();
     for (String line : lines) {
       // Remove comments
       int commentMarker = line.indexOf('#');
@@ -2442,7 +2443,7 @@ public class Base {
         } else {
           String attr = line.substring(0, equals).trim();
           String valu = line.substring(equals + 1).trim();
-          settings.put(attr, valu);
+          settings.set(attr, valu);
         }
       }
     }
@@ -2797,8 +2798,9 @@ public class Base {
    * @param path the input classpath
    * @return array of possible package names
    */
-  static public String[] packageListFromClassPath(String path) {
-    Map<String, Object> map = new HashMap<String, Object>();
+  static public StringList packageListFromClassPath(String path) {
+//    Map<String, Object> map = new HashMap<String, Object>();
+    StringList list = new StringList();
     String pieces[] =
       PApplet.split(path, File.pathSeparatorChar);
 
@@ -2809,32 +2811,35 @@ public class Base {
       if (pieces[i].toLowerCase().endsWith(".jar") ||
           pieces[i].toLowerCase().endsWith(".zip")) {
         //System.out.println("checking " + pieces[i]);
-        packageListFromZip(pieces[i], map);
+        packageListFromZip(pieces[i], list);
 
       } else {  // it's another type of file or directory
         File dir = new File(pieces[i]);
         if (dir.exists() && dir.isDirectory()) {
-          packageListFromFolder(dir, null, map);
+          packageListFromFolder(dir, null, list);
           //importCount = magicImportsRecursive(dir, null,
           //                                  map);
                                               //imports, importCount);
         }
       }
     }
-    int mapCount = map.size();
-    String output[] = new String[mapCount];
-    int index = 0;
-    Set<String> set = map.keySet();
-    for (String s : set) {
-      output[index++] = s.replace('/', '.');
+//    int mapCount = map.size();
+//    String output[] = new String[mapCount];
+//    int index = 0;
+//    Set<String> set = map.keySet();
+//    for (String s : set) {
+//      output[index++] = s.replace('/', '.');
+//    }
+//    return output;
+    StringList outgoing = new StringList(list.size());
+    for (String item : list) {
+      outgoing.append(item.replace('/', '.'));
     }
-    //System.arraycopy(imports, 0, output, 0, importCount);
-    //PApplet.printarr(output);
-    return output;
+    return outgoing;
   }
 
 
-  static private void packageListFromZip(String filename, Map<String, Object> map) {
+  static private void packageListFromZip(String filename, StringList list) {
     try {
       ZipFile file = new ZipFile(filename);
       Enumeration entries = file.entries();
@@ -2849,9 +2854,10 @@ public class Base {
             if (slash == -1) continue;
 
             String pname = name.substring(0, slash);
-            if (map.get(pname) == null) {
-              map.put(pname, new Object());
-            }
+//            if (map.get(pname) == null) {
+//              map.put(pname, new Object());
+//            }
+            list.appendUnique(pname);
           }
         }
       }
@@ -2870,10 +2876,8 @@ public class Base {
    * walk down into that folder and continue.
    */
   static private void packageListFromFolder(File dir, String sofar,
-                                            Map<String, Object> map) {
-                                          //String imports[],
-                                          //int importCount) {
-    //System.err.println("checking dir '" + dir + "'");
+                                            StringList list) {
+//                                            Map<String, Object> map) {
     boolean foundClass = false;
     String files[] = dir.list();
 
@@ -2884,7 +2888,7 @@ public class Base {
       if (sub.isDirectory()) {
         String nowfar =
           (sofar == null) ? files[i] : (sofar + "." + files[i]);
-        packageListFromFolder(sub, nowfar, map);
+        packageListFromFolder(sub, nowfar, list);
         //System.out.println(nowfar);
         //imports[importCount++] = nowfar;
         //importCount = magicImportsRecursive(sub, nowfar,
@@ -2892,7 +2896,8 @@ public class Base {
       } else if (!foundClass) {  // if no classes found in this folder yet
         if (files[i].endsWith(".class")) {
           //System.out.println("unique class: " + files[i] + " for " + sofar);
-          map.put(sofar, new Object());
+//          map.put(sofar, new Object());
+          list.appendUnique(sofar);
           foundClass = true;
         }
       }

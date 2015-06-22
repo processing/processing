@@ -22,6 +22,7 @@ import javax.swing.text.Document;
 import org.eclipse.jdt.core.compiler.IProblem;
 
 import processing.core.PApplet;
+import processing.data.StringList;
 import processing.app.*;
 import processing.app.Toolkit;
 import processing.app.contrib.AvailableContribution;
@@ -527,7 +528,7 @@ public class JavaEditor extends Editor {
    *          are to be added
    * @return true if and only if any JMenuItems were added; false otherwise
    */
-  private boolean addLibReferencesToSubMenu(ArrayList<Library> libsList, JMenu subMenu) {
+  private boolean addLibReferencesToSubMenu(List<Library> libsList, JMenu subMenu) {
     boolean isItemAdded = false;
     Iterator<Library> iter = libsList.iterator();
     while (iter.hasNext()) {
@@ -1265,16 +1266,18 @@ public class JavaEditor extends Editor {
     // could also scan the text in the file to see if each import
     // statement is already in there, but if the user has the import
     // commented out, then this will be a problem.
-    String[] list = lib.getSpecifiedImports(); // ask the library for its imports
+    StringList list = lib.getImports(); // ask the library for its imports
     if (list == null) {
       // Default to old behavior and load each package in the primary jar
       list = Base.packageListFromClassPath(lib.getJarPath());
     }
 
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < list.length; i++) {
+//    for (int i = 0; i < list.length; i++) {
+    for (String item : list) {
       sb.append("import ");
-      sb.append(list[i]);
+//      sb.append(list[i]);
+      sb.append(item);
       sb.append(".*;\n");
     }
     sb.append('\n');

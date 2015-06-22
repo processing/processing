@@ -21,36 +21,45 @@
 */
 package processing.app.contrib;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import processing.core.PApplet;
+import processing.data.StringDict;
+import processing.data.StringList;
 import processing.app.Language;
 
 abstract public class Contribution {
-  static final String SPECIAL_CATEGORY_NAME = "Starred";
+  static final String IMPORTS_PROPERTY = "imports";
+  static final String CATEGORIES_PROPERTY = "category";
+  //static final String MODES_PROPERTY = "compatibleModesList";
+  static final String MODES_PROPERTY = "modes";
+  //static final String AUTHORS_PROPERTY = "authorList";
+  static final String AUTHORS_PROPERTY = "authors";
+
+  static final String SPECIAL_CATEGORY = "Starred";
+  static final String UNKNOWN_CATEGORY = "Unknown";
   static final List validCategories =
     Arrays.asList("3D", "Animation", "Data", "Geometry", "GUI", "Hardware",
-                  "I/O", "Math", "Simulation", "Sound", SPECIAL_CATEGORY_NAME,
+                  "I/O", "Math", "Simulation", "Sound", SPECIAL_CATEGORY,
                   "Typography", "Utilities", "Video & Vision", "Other");
 
-  protected List<String> categories;  // "Sound", "Typography"
-  protected String name;              // "pdf" or "PDF Export"
-  protected String authorList;        // [Ben Fry](http://benfry.com)
-  protected String url;               // http://processing.org
-  protected String sentence;          // Write graphics to PDF files.
-  protected String paragraph;         // <paragraph length description for site>
-  protected int version;              // 102
-  protected String prettyVersion;     // "1.0.2"
-  protected long lastUpdated;         // 1402805757
-  protected int minRevision;          // 0
-  protected int maxRevision;          // 227
-  protected List<String> imports;     // pdf.export.*,pdf.convert.common.*
+  protected StringList categories;  // "Sound", "Typography"
+  protected String name;            // "pdf" or "PDF Export"
+  protected String authors;         // [Ben Fry](http://benfry.com)
+  protected String url;             // http://processing.org
+  protected String sentence;        // Write graphics to PDF files.
+  protected String paragraph;       // <paragraph length description for site>
+  protected int version;            // 102
+  protected String prettyVersion;   // "1.0.2"
+  protected long lastUpdated;       // 1402805757
+  protected int minRevision;        // 0
+  protected int maxRevision;        // 227
+  protected StringList imports;     // pdf.export,pdf.convert.common (list of packages, not imports)
 
 
   // "Sound", "Utilities"... see valid list in ContributionListing
-  protected List<String> getCategories() {
+  protected StringList getCategories() {
     return categories;
   }
 
@@ -79,11 +88,11 @@ abstract public class Contribution {
 
 
   // pdf.export.*,pdf.convert.common.*
-  protected List<String> getImports() {
+  protected StringList getImports() {
     return imports;
   }
 
-
+/*
   protected String getImportStr() {
     if (imports == null || imports.isEmpty()) {
       return "";
@@ -96,12 +105,12 @@ abstract public class Contribution {
     sb.deleteCharAt(sb.length() - 1); // delete last comma
     return sb.toString();
   }
-
+*/
 
   protected boolean hasImport(String importName) {
     if (imports != null && importName != null) {
       for (String c : imports) {
-        if (importName.equalsIgnoreCase(c)) {
+        if (importName.equals(c)) {
           return true;
         }
       }
@@ -118,7 +127,7 @@ abstract public class Contribution {
 
   // "[Ben Fry](http://benfry.com/)"
   public String getAuthorList() {
-    return authorList;
+    return authors;
   }
 
 
@@ -180,6 +189,12 @@ abstract public class Contribution {
   }
 
 
+  /** Get the name of the properties file for this type of contribution. */
+  public String getPropertiesName() {
+    return getTypeName() + ".properties";
+  }
+
+
   abstract public boolean isInstalled();
 
 
@@ -209,28 +224,29 @@ abstract public class Contribution {
 
 
   /**
-   * Returns true if the contribution is a starred/recommended contribution, or
-   * is by the Processing Foundation.
-   *
-   * @return
+   * Returns true if the contribution is a starred/recommended contribution,
+   * or is by the Processing Foundation.
    */
   boolean isSpecial() {
-    try {
-      return (authorList.indexOf("The Processing Foundation") != -1 ||
-              categories.contains(SPECIAL_CATEGORY_NAME));
-    } catch (NullPointerException npe) {
-      return false;
+    if (authors != null &&
+        authors.contains("The Processing Foundation")) {
+      return true;
     }
+
+    if (categories != null &&
+        categories.hasValue(SPECIAL_CATEGORY)) {
+      return true;
+    }
+
+    return false;
   }
 
 
   /**
    * @return a single element list with "Unknown" as the category.
    */
-  static List<String> defaultCategory() {
-    List<String> outgoing = new ArrayList<String>();
-    outgoing.add("Unknown");
-    return outgoing;
+  static StringList unknownCategory() {
+    return new StringList(UNKNOWN_CATEGORY);
   }
 
 
@@ -238,35 +254,42 @@ abstract public class Contribution {
    * @return the list of categories that this contribution is part of
    *         (e.g. "Typography / Geometry"). "Unknown" if the category null.
    */
-  static List<String> parseCategories(String categoryStr) {
-    List<String> outgoing = new ArrayList<String>();
+  static StringList parseCategories(StringDict properties) {
+    StringList outgoing = new StringList();
 
+    String categoryStr = properties.get(CATEGORIES_PROPERTY);
     if (categoryStr != null) {
       String[] listing = PApplet.trim(PApplet.split(categoryStr, ','));
       for (String category : listing) {
         if (validCategories.contains(category)) {
           category = translateCategory(category);
-          outgoing.add(category);
+          outgoing.append(category);
         }
       }
     }
     if (outgoing.size() == 0) {
-      return defaultCategory();
+      return unknownCategory();
     }
     return outgoing;
   }
 
 
   /**
-   * @return the list of imports that this contribution (library) contains.
+   * Returns the list of imports specified by this library author. Only
+   * necessary for library authors that want to override the default behavior
+   * of importing all packages in their library.
+   * @return null if no entries found
    */
-  static List<String> parseImports(String importStr) {
-    List<String> outgoing = new ArrayList<String>();
+  static StringList parseImports(StringDict properties) {
+    StringList outgoing = new StringList();
 
+    String importStr = properties.get(IMPORTS_PROPERTY);
     if (importStr != null) {
       String[] importList = PApplet.trim(PApplet.split(importStr, ','));
       for (String importName : importList) {
-        outgoing.add(importName);
+        if (!importName.isEmpty()) {
+          outgoing.append(importName);
+        }
       }
     }
     return (outgoing.size() > 0) ? outgoing : null;

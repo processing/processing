@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import processing.app.Base;
 import processing.app.Library;
 import processing.core.PApplet;
+import processing.data.StringDict;
 
 
 public class ContributionListing {
@@ -555,7 +556,7 @@ public class ContributionListing {
 
           String[] contribLines = PApplet.subset(lines, start, end-start);
 
-          Map<String, String> contribParams = Base.readSettings(file.getName(), contribLines);
+          StringDict contribParams = Base.readSettings(file.getName(), contribLines);
 
           outgoing.add(new AvailableContribution(contribType, contribParams));
           start = end + 1;

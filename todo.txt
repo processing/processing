@@ -10,6 +10,12 @@ X Show "not compatible" error message in the manager
 X   https://github.com/processing/processing/issues/3386
 X Add more code for handling low-level errors on startup
 
+manager
+X changed compatibleModesList to modes in examples.properties
+X changed authorList to authors to keep in line w/ the others
+_ need to make a note of these
+_   should we change category to categories?
+
 contribs
 X Use correct localized strings in JavaEditor.java
 X   https://github.com/processing/processing/pull/3376

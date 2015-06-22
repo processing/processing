@@ -29,6 +29,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -76,8 +77,8 @@ public abstract class Mode {
 
   protected File examplesContribFolder;
 
-  public ArrayList<Library> coreLibraries;
-  public ArrayList<Library> contribLibraries;
+  public List<Library> coreLibraries;
+  public List<Library> contribLibraries;
 
   /** Library folder for core. (Used for OpenGL in particular.) */
   protected Library coreLibrary;

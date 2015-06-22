@@ -31,6 +31,7 @@ import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Language;
 import processing.core.PApplet;
+import processing.data.StringDict;
 
 
 public class ContributionManager {
@@ -613,9 +614,8 @@ public class ContributionManager {
       propFileName = "libraries.properties";
 
     for (File folder : markedForUpdate) {
-      Map<String, String> properties =
-        Base.readSettings(new File(folder, propFileName));
-      updateContribsNames.add(properties.get("name"));
+      StringDict props = Base.readSettings(new File(folder, propFileName));
+      updateContribsNames.add(props.get("name"));
       Base.removeDir(folder);
     }
 
