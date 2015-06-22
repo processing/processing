@@ -25,8 +25,12 @@
 
 package processing.core;
 
+// Used for color conversion functions
 import java.awt.Color;
+
+// Used for the 'image' object that's been here forever
 import java.awt.Image;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.util.WeakHashMap;
