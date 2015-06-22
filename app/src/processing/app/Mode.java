@@ -38,6 +38,8 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.*;
 
+import processing.app.contrib.ContributionType;
+import processing.app.contrib.ExamplesContribution;
 import processing.app.syntax.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -678,23 +680,68 @@ public abstract class Mode {
       }
 
       // Get examples for third party libraries
-      DefaultMutableTreeNode contributed = new
+      DefaultMutableTreeNode contributedLibExamples = new
         DefaultMutableTreeNode(Language.text("examples.libraries"));
       for (Library lib : contribLibraries) {
         if (lib.hasExamples()) {
-            DefaultMutableTreeNode libNode = new DefaultMutableTreeNode(lib.getName());
+            DefaultMutableTreeNode libNode =
+              new DefaultMutableTreeNode(lib.getName());
             base.addSketches(libNode, lib.getExamplesFolder());
-          contributed.add(libNode);
+          contributedLibExamples.add(libNode);
         }
       }
-      if(contributed.getChildCount() > 0){
-        root.add(contributed);
+      if(contributedLibExamples.getChildCount() > 0){
+        root.add(contributedLibExamples);
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
+    
+    DefaultMutableTreeNode contributedExamplesNode =
+      buildContributedExamplesTrees();
+    if(contributedExamplesNode.getChildCount() > 0){
+      root.add(contributedExamplesNode);
+    }
 
     return root;
+  }
+
+
+  private DefaultMutableTreeNode buildContributedExamplesTrees() {
+    DefaultMutableTreeNode contribExamplesNode =
+      new DefaultMutableTreeNode(Language.text("examples.contributed"));
+
+    try {
+      File[] subfolders =
+        ContributionType.EXAMPLES.listCandidates(examplesContribFolder);
+      if (subfolders == null) {
+        subfolders = new File[0]; //empty array
+      }
+      for (File sub : subfolders) {
+        if (!ExamplesContribution.isExamplesCompatible(base, sub))
+          continue;
+        DefaultMutableTreeNode subNode =
+          new DefaultMutableTreeNode(sub.getName());
+        if (base.addSketches(subNode, sub)) {
+          contribExamplesNode.add(subNode);
+          int exampleNodeNumber = -1;
+          for (int y = 0; y < subNode.getChildCount(); y++)
+            if (subNode.getChildAt(y).toString().equals("examples"))
+              exampleNodeNumber = y;
+          if (exampleNodeNumber == -1)
+            continue;
+          TreeNode exampleNode = subNode.getChildAt(exampleNodeNumber);
+          subNode.remove(exampleNodeNumber);
+          int count = exampleNode.getChildCount();
+          for (int x = 0; x < count; x++) {
+            subNode.add((DefaultMutableTreeNode) exampleNode.getChildAt(0));
+          }
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return contribExamplesNode;
   }
 
 
