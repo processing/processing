@@ -154,7 +154,7 @@ public class ContributionManagerDialog {
 
     updatesContributionTab.showFrame(editor);
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
-    tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
+    tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
     dialog.add(tabbedPane);
 

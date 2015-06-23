@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -130,14 +129,14 @@ public class ContributionTab {
     return contribListing.hasUpdates(base);
   }
 
-  protected JPanel makeTextPanel(String text) {
-    JPanel panel = new JPanel(false);
-    JLabel filler = new JLabel(text);
-    filler.setHorizontalAlignment(JLabel.CENTER);
-    panel.setLayout(new GridLayout(1, 1));
-    panel.add(filler);
-    return panel;
-  }
+//  protected JPanel makeTextPanel(String text) {
+//    JPanel panel = new JPanel(false);
+//    JLabel filler = new JLabel(text);
+//    filler.setHorizontalAlignment(JLabel.CENTER);
+//    panel.setLayout(new GridLayout(1, 1));
+//    panel.add(filler);
+//    return panel;
+//  }
   
   public void showFrame(final Editor editor) {
     this.editor = editor;
@@ -155,8 +154,8 @@ public class ContributionTab {
   }
 
 
-  public JPanel makePanel(final Editor editor) {
-    panel = makeTextPanel("Panel #1");
+  public void makePanel(final Editor editor) {
+    panel = new JPanel(true);
     
     restartButton = new JButton(Language.text("contrib.restart"));
     restartButton.setVisible(false);
@@ -222,8 +221,6 @@ public class ContributionTab {
     progressBar.setVisible(false);
 
     createComponents();
-    
-    return panel;
   }
 
 
