@@ -29,6 +29,7 @@ import java.util.*;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
 
+import processing.awt.PGraphicsJava2D;
 import processing.core.*;
 
 

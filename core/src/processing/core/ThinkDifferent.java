@@ -71,7 +71,7 @@ public class ThinkDifferent {
   }
 
 
-  static void setIconImage(Image image) {
+  static public void setIconImage(Image image) {
     application.setDockIconImage(image);
   }
 }

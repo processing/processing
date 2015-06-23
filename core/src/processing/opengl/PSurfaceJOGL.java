@@ -92,7 +92,6 @@ public class PSurfaceJOGL implements PSurface {
     if (window != null) {
       canvas = new NewtCanvasAWT(window);
       canvas.setBounds(0, 0, window.getWidth(), window.getHeight());
-//      canvas.setBackground(new Color(pg.backgroundColor, true));
       canvas.setFocusable(true);
     }
   }
@@ -112,8 +111,11 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public Object getNative() {
-    System.err.println("PSurfaceJOGL.getNative() not implemented");
-    return null;
+//    if (canvas == null) {
+//      initOffscreen(sketch);
+//    }
+//    return canvas;
+    return window;
   }
 
 
@@ -491,21 +493,22 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void startThread() {
-    if (animator == null) return;
-    if (placedWindow) {
-      window.setVisible(true);
-      animator.start();
-      requestedStart = false;
-    } else {
-      // The GL window is not visible until it has been placed, so we cannot
-      // start the animator because it requires the window to be visible.
-      requestedStart = true;
-      // Need this assignment to bypass the while loop in runSketch, otherwise
-      // the programs hangs waiting for defaultSize to be false, but it never
-      // happens because the animation thread is not yet running to avoid showing
-      // the window in the wrong place:
-      // https://github.com/processing/processing/issues/3308
-      sketch.defaultSize = false;
+    if (animator != null) {
+      if (placedWindow) {
+        window.setVisible(true);
+        animator.start();
+        requestedStart = false;
+      } else {
+        // The GL window is not visible until it has been placed, so we cannot
+        // start the animator because it requires the window to be visible.
+        requestedStart = true;
+        // Need this assignment to bypass the while loop in runSketch, otherwise
+        // the programs hangs waiting for defaultSize to be false, but it never
+        // happens because the animation thread is not yet running to avoid showing
+        // the window in the wrong place:
+        // https://github.com/processing/processing/issues/3308
+//      sketch.defaultSize = false;
+      }
     }
   }
 
@@ -539,8 +542,9 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void setLocation(int x, int y) {
-    // TODO implement me!
-    System.err.println("PSurfaceJOGL.setLocation() not yet implemented.");
+    if (window != null) {
+      window.setTopLevelPosition(x, y);
+    }
   }
 
 
@@ -606,7 +610,9 @@ public class PSurfaceJOGL implements PSurface {
   }
 
   public void requestFocus() {
-    window.requestFocus();
+    if (window != null) {
+      window.requestFocus();
+    }
   }
 
   class DrawListener implements GLEventListener {
@@ -965,10 +971,14 @@ public class PSurfaceJOGL implements PSurface {
   }
 
   public void showCursor() {
-    window.setPointerVisible(true);
+    if (window != null) {
+      window.setPointerVisible(true);
+    }
   }
 
   public void hideCursor() {
-    window.setPointerVisible(false);
+    if (window != null) {
+      window.setPointerVisible(false);
+    }
   }
 }

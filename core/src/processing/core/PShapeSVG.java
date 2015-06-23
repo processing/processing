@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2006-11 Ben Fry and Casey Reas
+  Copyright (c) 2012-15 The Processing Foundation
+  Copyright (c) 2006-12 Ben Fry and Casey Reas
   Copyright (c) 2004-06 Michael Chang
 
   This library is free software; you can redistribute it and/or
@@ -25,16 +26,11 @@ package processing.core;
 
 import processing.data.*;
 
-import java.awt.Paint;
-import java.awt.PaintContext;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
+// TODO replace these with PMatrix2D
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.ColorModel;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
+
+import java.util.Map;
 import java.util.HashMap;
 
 
@@ -44,23 +40,30 @@ import java.util.HashMap;
  * use of this class. Using this class directly will cause your code to break
  * when combined with future versions of Processing.
  * <p>
- * SVG stands for Scalable Vector Graphics, a portable graphics format. It is
- * a vector format so it allows for infinite resolution and relatively small
- * file sizes. Most modern media software can view SVG files, including Adobe
- * products, Firefox, etc. Illustrator and Inkscape can edit SVG files.
+ * SVG stands for Scalable Vector Graphics, a portable graphics format.
+ * It is a vector format so it allows for "infinite" resolution and relatively
+ * small file sizes. Most modern media software can view SVG files, including
+ * Adobe products, Firefox, etc. Illustrator and Inkscape can edit SVG files.
+ * View the SVG specification <A HREF="http://www.w3.org/TR/SVG">here</A>.
  * <p>
  * We have no intention of turning this into a full-featured SVG library.
- * The goal of this project is a basic shape importer that is small enough
- * to be included with applets, meaning that its download size should be
- * in the neighborhood of 25-30k. Starting with release 0149, this library
- * has been incorporated into the core via the loadShape() command, because
- * vector shape data is just as important as the image data from loadImage().
+ * The goal of this project is a basic shape importer that originally was small
+ * enough to be included with applets, meaning that its download size should be
+ * in the neighborhood of 25-30 Kb. Though we're far less limited nowadays on
+ * size constraints, we remain extremely limited in terms of time, and do not
+ * have volunteers who are available to maintain a larger SVG library.
  * <p>
  * For more sophisticated import/export, consider the
  * <A HREF="http://xmlgraphics.apache.org/batik/">Batik</A>
- * library from the Apache Software Foundation. Future improvements to this
- * library may focus on this properly supporting a specific subset of SVG,
- * for instance the simpler SVG profiles known as
+ * library from the Apache Software Foundation.
+ * <p>
+ * Batik is used in the SVG Export library in Processing 3, however using it
+ * for full SVG import is still a considerable amount of work. Wiring it to
+ * Java2D wouldn't be too bad, but using it with OpenGL, JavaFX, and features
+ * like begin/endRecord() and begin/endRaw() would be considerable effort.
+ * <p>
+ * Future improvements to this library may focus on this properly supporting
+ * a specific subset of SVG, for instance the simpler SVG profiles known as
  * <A HREF="http://www.w3.org/TR/SVGMobile/">SVG Tiny or Basic</A>,
  * although we still would not support the interactivity options.
  *
@@ -81,186 +84,50 @@ import java.util.HashMap;
  *   shape(moo, mouseX, mouseY);
  * }
  * </PRE>
- *
- * This code is based on the Candy library written by Michael Chang, which was
- * later revised and expanded for use as a Processing core library by Ben Fry.
- * Thanks to Ricard Marxer Pinon for help with better Inkscape support in 0154.
- *
- * <p> <hr noshade> <p>
- *
- * Late October 2008 revisions from ricardmp, incorporated by fry (0154)
- * <UL>
- * <LI>Better style attribute handling, enabling better Inkscape support.
- * </UL>
- *
- * October 2008 revisions by fry (Processing 0149, pre-1.0)
- * <UL>
- * <LI> Candy is no longer a separate library, and is instead part of core.
- * <LI> Loading now works through loadShape()
- * <LI> Shapes are now drawn using the new PGraphics shape() method.
- * </UL>
- *
- * August 2008 revisions by fry (Processing 0149)
- * <UL>
- * <LI> Major changes to rework around PShape.
- * <LI> Now implementing more of the "transform" attribute.
- * </UL>
- *
- * February 2008 revisions by fry (Processing 0136)
- * <UL>
- * <LI> Added support for quadratic curves in paths (Q, q, T, and t operators)
- * <LI> Support for reading SVG font data (though not rendering it yet)
- * </UL>
- *
- * Revisions for "Candy 2" November 2006 by fry
- * <UL>
- * <LI> Switch to the new processing.xml library
- * <LI> Several bug fixes for parsing of shape data
- * <LI> Support for linear and radial gradients
- * <LI> Support for additional types of shapes
- * <LI> Added compound shapes (shapes with interior points)
- * <LI> Added methods to get shapes from an internal table
- * </UL>
- *
- * Revision 10/31/06 by flux
- * <UL>
- * <LI> Now properly supports Processing 0118
- * <LI> Fixed a bunch of things for Casey's students and general buggity.
- * <LI> Will now properly draw #FFFFFFFF colors (were being represented as -1)
- * <LI> SVGs without &lt;g&gt; tags are now properly caught and loaded
- * <LI> Added a method customStyle() for overriding SVG colors/styles
- * <LI> Added a method SVGStyle() to go back to using SVG colors/styles
- * </UL>
- *
- * Some SVG objects and features may not yet be supported.
- * Here is a partial list of non-included features
- * <UL>
- * <LI> Rounded rectangles
- * <LI> Drop shadow objects
- * <LI> Typography
- * <LI> <STRIKE>Layers</STRIKE> added for Candy 2
- * <LI> Patterns
- * <LI> Embedded images
- * </UL>
- *
- * For those interested, the SVG specification can be found
- * <A HREF="http://www.w3.org/TR/SVG">here</A>.
  */
 public class PShapeSVG extends PShape {
   XML element;
 
   /// Values between 0 and 1.
-  float opacity;
+  protected float opacity;
   float strokeOpacity;
   float fillOpacity;
 
-  /**
-   * Used for percentages. Width of containing SVG.
-   */
+  /** Width of containing SVG (used for percentages). */
   protected float svgWidth;
-  /**
-   * Used for percentages. Height of containing SVG.
-   */
+
+  /** Height of containing SVG (used for percentages). */
   protected float svgHeight;
-  /**
-   * Used for percentages. √((w² + h²)/2) of containing SVG.
-   */
+
+  /** √((w² + h²)/2) of containing SVG (used for percentages). */
   protected float svgXYSize;
 
-
-  Gradient strokeGradient;
-  Paint strokeGradientPaint;
+  protected Gradient strokeGradient;
   String strokeName;  // id of another object, gradients only?
 
-  Gradient fillGradient;
-  Paint fillGradientPaint;
+  protected Gradient fillGradient;
   String fillName;  // id of another object
 
 
-//  /**
-//   * Initializes a new SVG Object with the given filename.
-//   */
-//  public PShapeSVG(PApplet parent, String filename) {
-//    // this will grab the root document, starting <svg ...>
-//    // the xml version and initial comments are ignored
-//    this(parent.loadXML(filename));
-//  }
-
-
   /**
-   * Initializes a new SVG Object from the given XML.
+   * Initializes a new SVG object from the given XML object.
    */
   public PShapeSVG(XML svg) {
     this(null, svg, true);
 
     if (!svg.getName().equals("svg")) {
-      throw new RuntimeException("The root node is not <svg>, it's <" + svg.getName() + ">." +
-         (svg.getName().toLowerCase().equals("html") ?
-         " That means it's just a webpage. Did you download it right?" : ""));
+      if (svg.getName().toLowerCase().equals("html")) {
+        // Common case is that files aren't downloaded properly
+        throw new RuntimeException("This appears to be a web page, not an SVG file.");
+      } else {
+        throw new RuntimeException("The root node is not <svg>, it's <" + svg.getName() + ">");
+      }
     }
-
-
-    //root = new Group(null, svg);
-//    parseChildren(svg);  // ?
   }
 
 
   protected PShapeSVG(PShapeSVG parent, XML properties, boolean parseKids) {
-    // Need to set this so that findChild() works.
-    // Otherwise 'parent' is null until addChild() is called later.
-    this.parent = parent;
-
-    if (parent == null) {
-      // set values to their defaults according to the SVG spec
-      stroke = false;
-      strokeColor = 0xff000000;
-      strokeWeight = 1;
-      strokeCap = PConstants.SQUARE;  // equivalent to BUTT in svg spec
-      strokeJoin = PConstants.MITER;
-      strokeGradient = null;
-      strokeGradientPaint = null;
-      strokeName = null;
-
-      fill = true;
-      fillColor = 0xff000000;
-      fillGradient = null;
-      fillGradientPaint = null;
-      fillName = null;
-
-      //hasTransform = false;
-      //transformation = null; //new float[] { 1, 0, 0, 1, 0, 0 };
-
-      // svgWidth, svgHeight, and svgXYSize done below.
-
-      strokeOpacity = 1;
-      fillOpacity = 1;
-      opacity = 1;
-
-    } else {
-      stroke = parent.stroke;
-      strokeColor = parent.strokeColor;
-      strokeWeight = parent.strokeWeight;
-      strokeCap = parent.strokeCap;
-      strokeJoin = parent.strokeJoin;
-      strokeGradient = parent.strokeGradient;
-      strokeGradientPaint = parent.strokeGradientPaint;
-      strokeName = parent.strokeName;
-
-      fill = parent.fill;
-      fillColor = parent.fillColor;
-      fillGradient = parent.fillGradient;
-      fillGradientPaint = parent.fillGradientPaint;
-      fillName = parent.fillName;
-
-      //hasTransform = parent.hasTransform;
-      //transformation = parent.transformation;
-
-      svgWidth  = parent.svgWidth;
-      svgHeight = parent.svgHeight;
-      svgXYSize = parent.svgXYSize;
-
-      opacity = parent.opacity;
-    }
+    setParent(parent);
 
     // Need to get width/height in early.
     if (properties.getName().equals("svg")) {
@@ -344,6 +211,70 @@ public class PShapeSVG extends PShape {
   }
 
 
+  // Broken out so that subclasses can copy any additional variables
+  // (i.e. fillGradientPaint and strokeGradientPaint)
+  protected void setParent(PShapeSVG parent) {
+    // Need to set this so that findChild() works.
+    // Otherwise 'parent' is null until addChild() is called later.
+    this.parent = parent;
+
+    if (parent == null) {
+      // set values to their defaults according to the SVG spec
+      stroke = false;
+      strokeColor = 0xff000000;
+      strokeWeight = 1;
+      strokeCap = PConstants.SQUARE;  // equivalent to BUTT in svg spec
+      strokeJoin = PConstants.MITER;
+      strokeGradient = null;
+//      strokeGradientPaint = null;
+      strokeName = null;
+
+      fill = true;
+      fillColor = 0xff000000;
+      fillGradient = null;
+//      fillGradientPaint = null;
+      fillName = null;
+
+      //hasTransform = false;
+      //transformation = null; //new float[] { 1, 0, 0, 1, 0, 0 };
+
+      // svgWidth, svgHeight, and svgXYSize done below.
+
+      strokeOpacity = 1;
+      fillOpacity = 1;
+      opacity = 1;
+
+    } else {
+      stroke = parent.stroke;
+      strokeColor = parent.strokeColor;
+      strokeWeight = parent.strokeWeight;
+      strokeCap = parent.strokeCap;
+      strokeJoin = parent.strokeJoin;
+      strokeGradient = parent.strokeGradient;
+//      strokeGradientPaint = parent.strokeGradientPaint;
+      strokeName = parent.strokeName;
+
+      fill = parent.fill;
+      fillColor = parent.fillColor;
+      fillGradient = parent.fillGradient;
+//      fillGradientPaint = parent.fillGradientPaint;
+      fillName = parent.fillName;
+
+      svgWidth  = parent.svgWidth;
+      svgHeight = parent.svgHeight;
+      svgXYSize = parent.svgXYSize;
+
+      opacity = parent.opacity;
+    }
+  }
+
+
+  /** Factory method for subclasses. */
+  protected PShapeSVG createShape(PShapeSVG parent, XML properties, boolean parseKids) {
+    return new PShapeSVG(parent, properties, parseKids);
+  }
+
+
   protected void parseChildren(XML graphics) {
     XML[] elements = graphics.getChildren();
     children = new PShape[elements.length];
@@ -371,49 +302,39 @@ public class PShapeSVG extends PShape {
       // just some whitespace that can be ignored (hopefully)
 
     } else if (name.equals("g")) {
-      //return new BaseObject(this, elem);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
 
     } else if (name.equals("defs")) {
       // generally this will contain gradient info, so may
       // as well just throw it into a group element for parsing
-      //return new BaseObject(this, elem);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
 
     } else if (name.equals("line")) {
-      //return new Line(this, elem);
-      //return new BaseObject(this, elem, LINE);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parseLine();
 
     } else if (name.equals("circle")) {
-      //return new BaseObject(this, elem, ELLIPSE);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parseEllipse(true);
 
     } else if (name.equals("ellipse")) {
-      //return new BaseObject(this, elem, ELLIPSE);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parseEllipse(false);
 
     } else if (name.equals("rect")) {
-      //return new BaseObject(this, elem, RECT);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parseRect();
 
     } else if (name.equals("polygon")) {
-      //return new BaseObject(this, elem, POLYGON);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parsePoly(true);
 
     } else if (name.equals("polyline")) {
-      //return new BaseObject(this, elem, POLYGON);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parsePoly(false);
 
     } else if (name.equals("path")) {
-      //return new BaseObject(this, elem, PATH);
-      shape = new PShapeSVG(this, elem, true);
+      shape = createShape(this, elem, true);
       shape.parsePath();
 
     } else if (name.equals("radialGradient")) {
@@ -1311,7 +1232,7 @@ public class PShapeSVG extends PShape {
     String name = "";
 //    String lColorText = colorText.toLowerCase();
     Gradient gradient = null;
-    Paint paint = null;
+//    Object paint = null;
     if (colorText.equals("none")) {
       visible = false;
     } else if (colorText.startsWith("url(#")) {
@@ -1319,7 +1240,8 @@ public class PShapeSVG extends PShape {
       Object object = findChild(name);
       if (object instanceof Gradient) {
         gradient = (Gradient) object;
-        paint = calcGradientPaint(gradient); //, opacity);
+        // in 3.0a11, do this on first draw inside PShapeJava2D
+//        paint = calcGradientPaint(gradient); //, opacity);
       } else {
 //        visible = false;
         System.err.println("url " + name + " refers to unexpected data: " + object);
@@ -1333,13 +1255,13 @@ public class PShapeSVG extends PShape {
       fillColor = color;
       fillName = name;
       fillGradient = gradient;
-      fillGradientPaint = paint;
+//      fillGradientPaint = paint;
     } else {
       stroke = visible;
       strokeColor = color;
       strokeName = name;
       strokeGradient = gradient;
-      strokeGradientPaint = paint;
+//      strokeGradientPaint = paint;
     }
   }
 
@@ -1351,7 +1273,8 @@ public class PShapeSVG extends PShape {
    */
   static protected int parseSimpleColor(String colorText) {
     colorText = colorText.toLowerCase().trim();
-    if (colorNames.containsKey(colorText)) {
+    //if (colorNames.containsKey(colorText)) {
+    if (colorNames.hasKey(colorText)) {
       return colorNames.get(colorText);
     } else if (colorText.startsWith("#")) {
       if (colorText.length() == 4) {
@@ -1370,32 +1293,52 @@ public class PShapeSVG extends PShape {
 
 
   /**
-   * Deliberately conforms to HTML 4.01 color spec + en-gb grey,
-   * not SVG's 147-color system.
+   * Deliberately conforms to the HTML 4.01 color spec + en-gb grey, rather
+   * than the (unlikely to be useful) entire 147-color system used in SVG.
    */
-  static protected HashMap<String, Integer> colorNames;
+  static protected IntDict colorNames = new IntDict(new Object[][] {
+    { "aqua",    0x00ffff },
+    { "black",   0x000000 },
+    { "blue",    0x0000ff },
+    { "fuchsia", 0xff00ff },
+    { "gray",    0x808080 },
+    { "grey",    0x808080 },
+    { "green",   0x008000 },
+    { "lime",    0x00ff00 },
+    { "maroon",  0x800000 },
+    { "navy",    0x000080 },
+    { "olive",   0x808000 },
+    { "purple",  0x800080 },
+    { "red",     0xff0000 },
+    { "silver",  0xc0c0c0 },
+    { "teal",    0x008080 },
+    { "white",   0xffffff },
+    { "yellow",  0xffff00 }
+  });
 
+  /*
+  static protected Map<String, Integer> colorNames;
   static {
     colorNames = new HashMap<String, Integer>();
-    colorNames.put("aqua",         0x00ffff);
-    colorNames.put("black",        0x000000);
-    colorNames.put("blue",         0x0000ff);
-    colorNames.put("fuchsia",      0xff00ff);
-    colorNames.put("gray",         0x808080);
-    colorNames.put("grey",         0x808080);
-    colorNames.put("green",        0x008000);
-    colorNames.put("lime",         0x00ff00);
-    colorNames.put("maroon",       0x800000);
-    colorNames.put("navy",         0x000080);
-    colorNames.put("olive",        0x808000);
-    colorNames.put("purple",       0x800080);
-    colorNames.put("red",          0xff0000);
-    colorNames.put("silver",       0xc0c0c0);
-    colorNames.put("teal",         0x008080);
-    colorNames.put("white",        0xffffff);
-    colorNames.put("yellow",       0xffff00);
+    colorNames.put("aqua",    0x00ffff);
+    colorNames.put("black",   0x000000);
+    colorNames.put("blue",    0x0000ff);
+    colorNames.put("fuchsia", 0xff00ff);
+    colorNames.put("gray",    0x808080);
+    colorNames.put("grey",    0x808080);
+    colorNames.put("green",   0x008000);
+    colorNames.put("lime",    0x00ff00);
+    colorNames.put("maroon",  0x800000);
+    colorNames.put("navy",    0x000080);
+    colorNames.put("olive",   0x808000);
+    colorNames.put("purple",  0x800080);
+    colorNames.put("red",     0xff0000);
+    colorNames.put("silver",  0xc0c0c0);
+    colorNames.put("teal",    0x008080);
+    colorNames.put("white",   0xffffff);
+    colorNames.put("yellow",  0xffff00);
   }
-
+  */
 
   static protected int parseRGB(String what) {
     int leftParen = what.indexOf('(') + 1;
@@ -1419,14 +1362,18 @@ public class PShapeSVG extends PShape {
   }
 
 
-  static protected HashMap<String, String> parseStyleAttributes(String style) {
-    HashMap<String, String> table = new HashMap<String, String>();
-    if (style == null) return table;
-
-    String[] pieces = style.split(";");
-    for (int i = 0; i < pieces.length; i++) {
-      String[] parts = pieces[i].split(":");
-      table.put(parts[0], parts[1]);
+  //static protected Map<String, String> parseStyleAttributes(String style) {
+  static protected StringDict parseStyleAttributes(String style) {
+    //Map<String, String> table = new HashMap<String, String>();
+    StringDict table = new StringDict();
+//    if (style == null) return table;
+    if (style != null) {
+      String[] pieces = style.split(";");
+      for (int i = 0; i < pieces.length; i++) {
+        String[] parts = pieces[i].split(":");
+        //table.put(parts[0], parts[1]);
+        table.set(parts[0], parts[1]);
+      }
     }
     return table;
   }
@@ -1499,12 +1446,12 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  static class Gradient extends PShapeSVG {
+  static public class Gradient extends PShapeSVG {
     AffineTransform transform;
 
-    float[] offset;
-    int[] color;
-    int count;
+    public float[] offset;
+    public int[] color;
+    public int count;
 
     public Gradient(PShapeSVG parent, XML properties) {
       super(parent, properties, true);
@@ -1522,7 +1469,8 @@ public class PShapeSVG extends PShape {
           offset[count] = parseFloatOrPercent(offsetAttr);
 
           String style = elem.getString("style");
-          HashMap<String, String> styles = parseStyleAttributes(style);
+          //Map<String, String> styles = parseStyleAttributes(style);
+          StringDict styles = parseStyleAttributes(style);
 
           String colorStr = styles.get("stop-color");
           if (colorStr == null) {
@@ -1546,8 +1494,8 @@ public class PShapeSVG extends PShape {
   }
 
 
-  static class LinearGradient extends Gradient {
-    float x1, y1, x2, y2;
+  public class LinearGradient extends Gradient {
+    public float x1, y1, x2, y2;
 
     public LinearGradient(PShapeSVG parent, XML properties) {
       super(parent, properties);
@@ -1576,8 +1524,8 @@ public class PShapeSVG extends PShape {
   }
 
 
-  static class RadialGradient extends Gradient {
-    float cx, cy, r;
+  public class RadialGradient extends Gradient {
+    public float cx, cy, r;
 
     public RadialGradient(PShapeSVG parent, XML properties) {
       super(parent, properties);
@@ -1604,295 +1552,14 @@ public class PShapeSVG extends PShape {
   }
 
 
-
-  static class LinearGradientPaint implements Paint {
-    float x1, y1, x2, y2;
-    float[] offset;
-    int[] color;
-    int count;
-    float opacity;
-
-    public LinearGradientPaint(float x1, float y1, float x2, float y2,
-                               float[] offset, int[] color, int count,
-                               float opacity) {
-      this.x1 = x1;
-      this.y1 = y1;
-      this.x2 = x2;
-      this.y2 = y2;
-      this.offset = offset;
-      this.color = color;
-      this.count = count;
-      this.opacity = opacity;
-    }
-
-    public PaintContext createContext(ColorModel cm,
-                                      Rectangle deviceBounds, Rectangle2D userBounds,
-                                      AffineTransform xform, RenderingHints hints) {
-      Point2D t1 = xform.transform(new Point2D.Float(x1, y1), null);
-      Point2D t2 = xform.transform(new Point2D.Float(x2, y2), null);
-      return new LinearGradientContext((float) t1.getX(), (float) t1.getY(),
-                                       (float) t2.getX(), (float) t2.getY());
-    }
-
-    public int getTransparency() {
-      return TRANSLUCENT;  // why not.. rather than checking each color
-    }
-
-    public class LinearGradientContext implements PaintContext {
-      int ACCURACY = 2;
-      float tx1, ty1, tx2, ty2;
-
-      public LinearGradientContext(float tx1, float ty1, float tx2, float ty2) {
-        this.tx1 = tx1;
-        this.ty1 = ty1;
-        this.tx2 = tx2;
-        this.ty2 = ty2;
-      }
-
-      public void dispose() { }
-
-      public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
-
-      public Raster getRaster(int x, int y, int w, int h) {
-        WritableRaster raster =
-          getColorModel().createCompatibleWritableRaster(w, h);
-
-        int[] data = new int[w * h * 4];
-
-        // make normalized version of base vector
-        float nx = tx2 - tx1;
-        float ny = ty2 - ty1;
-        float len = (float) Math.sqrt(nx*nx + ny*ny);
-        if (len != 0) {
-          nx /= len;
-          ny /= len;
-        }
-
-        int span = (int) PApplet.dist(tx1, ty1, tx2, ty2) * ACCURACY;
-        if (span <= 0) {
-          //System.err.println("span is too small");
-          // annoying edge case where the gradient isn't legit
-          int index = 0;
-          for (int j = 0; j < h; j++) {
-            for (int i = 0; i < w; i++) {
-              data[index++] = 0;
-              data[index++] = 0;
-              data[index++] = 0;
-              data[index++] = 255;
-            }
-          }
-
-        } else {
-          int[][] interp = new int[span][4];
-          int prev = 0;
-          for (int i = 1; i < count; i++) {
-            int c0 = color[i-1];
-            int c1 = color[i];
-            int last = (int) (offset[i] * (span-1));
-            //System.out.println("last is " + last);
-            for (int j = prev; j <= last; j++) {
-              float btwn = PApplet.norm(j, prev, last);
-              interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
-              interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
-              interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
-              interp[j][3] = (int) (PApplet.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
-              //System.out.println(j + " " + interp[j][0] + " " + interp[j][1] + " " + interp[j][2]);
-            }
-            prev = last;
-          }
-
-          int index = 0;
-          for (int j = 0; j < h; j++) {
-            for (int i = 0; i < w; i++) {
-              //float distance = 0; //PApplet.dist(cx, cy, x + i, y + j);
-              //int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
-              float px = (x + i) - tx1;
-              float py = (y + j) - ty1;
-              // distance up the line is the dot product of the normalized
-              // vector of the gradient start/stop by the point being tested
-              int which = (int) ((px*nx + py*ny) * ACCURACY);
-              if (which < 0) which = 0;
-              if (which > interp.length-1) which = interp.length-1;
-              //if (which > 138) System.out.println("grabbing " + which);
-
-              data[index++] = interp[which][0];
-              data[index++] = interp[which][1];
-              data[index++] = interp[which][2];
-              data[index++] = interp[which][3];
-            }
-          }
-        }
-        raster.setPixels(0, 0, w, h, data);
-
-        return raster;
-      }
-    }
-  }
-
-
-  static class RadialGradientPaint implements Paint {
-    float cx, cy, radius;
-    float[] offset;
-    int[] color;
-    int count;
-    float opacity;
-
-    public RadialGradientPaint(float cx, float cy, float radius,
-                               float[] offset, int[] color, int count,
-                               float opacity) {
-      this.cx = cx;
-      this.cy = cy;
-      this.radius = radius;
-      this.offset = offset;
-      this.color = color;
-      this.count = count;
-      this.opacity = opacity;
-    }
-
-    public PaintContext createContext(ColorModel cm,
-                                      Rectangle deviceBounds, Rectangle2D userBounds,
-                                      AffineTransform xform, RenderingHints hints) {
-      return new RadialGradientContext();
-    }
-
-    public int getTransparency() {
-      return TRANSLUCENT;
-    }
-
-    public class RadialGradientContext implements PaintContext {
-      int ACCURACY = 5;
-
-      public void dispose() {}
-
-      public ColorModel getColorModel() { return ColorModel.getRGBdefault(); }
-
-      public Raster getRaster(int x, int y, int w, int h) {
-        WritableRaster raster =
-          getColorModel().createCompatibleWritableRaster(w, h);
-
-        int span = (int) radius * ACCURACY;
-        int[][] interp = new int[span][4];
-        int prev = 0;
-        for (int i = 1; i < count; i++) {
-          int c0 = color[i-1];
-          int c1 = color[i];
-          int last = (int) (offset[i] * (span - 1));
-          for (int j = prev; j <= last; j++) {
-            float btwn = PApplet.norm(j, prev, last);
-            interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
-            interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
-            interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
-            interp[j][3] = (int) (PApplet.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
-          }
-          prev = last;
-        }
-
-        int[] data = new int[w * h * 4];
-        int index = 0;
-        for (int j = 0; j < h; j++) {
-          for (int i = 0; i < w; i++) {
-            float distance = PApplet.dist(cx, cy, x + i, y + j);
-            int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
-
-            data[index++] = interp[which][0];
-            data[index++] = interp[which][1];
-            data[index++] = interp[which][2];
-            data[index++] = interp[which][3];
-          }
-        }
-        raster.setPixels(0, 0, w, h, data);
-
-        return raster;
-      }
-    }
-  }
-
-
-  protected Paint calcGradientPaint(Gradient gradient) {
-    if (gradient instanceof LinearGradient) {
-      LinearGradient grad = (LinearGradient) gradient;
-      return new LinearGradientPaint(grad.x1, grad.y1, grad.x2, grad.y2,
-                                     grad.offset, grad.color, grad.count,
-                                     opacity);
-
-    } else if (gradient instanceof RadialGradient) {
-      RadialGradient grad = (RadialGradient) gradient;
-      return new RadialGradientPaint(grad.cx, grad.cy, grad.r,
-                                     grad.offset, grad.color, grad.count,
-                                     opacity);
-    }
-    return null;
-  }
-
-
-//  protected Paint calcGradientPaint(Gradient gradient,
-//                                    float x1, float y1, float x2, float y2) {
-//    if (gradient instanceof LinearGradient) {
-//      LinearGradient grad = (LinearGradient) gradient;
-//      return new LinearGradientPaint(x1, y1, x2, y2,
-//                                     grad.offset, grad.color, grad.count,
-//                                     opacity);
-//    }
-//    throw new RuntimeException("Not a linear gradient.");
-//  }
-
-
-//  protected Paint calcGradientPaint(Gradient gradient,
-//                                    float cx, float cy, float r) {
-//    if (gradient instanceof RadialGradient) {
-//      RadialGradient grad = (RadialGradient) gradient;
-//      return new RadialGradientPaint(cx, cy, r,
-//                                     grad.offset, grad.color, grad.count,
-//                                     opacity);
-//    }
-//    throw new RuntimeException("Not a radial gradient.");
-//  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  @Override
-  protected void styles(PGraphics g) {
-    super.styles(g);
-
-    if (g instanceof PGraphicsJava2D) {
-      PGraphicsJava2D p2d = (PGraphicsJava2D) g;
-
-      if (strokeGradient != null) {
-        p2d.strokeGradient = true;
-        p2d.strokeGradientObject = strokeGradientPaint;
-      } else {
-        // need to shut off, in case parent object has a gradient applied
-        //p2d.strokeGradient = false;
-      }
-      if (fillGradient != null) {
-        p2d.fillGradient = true;
-        p2d.fillGradientObject = fillGradientPaint;
-      } else {
-        // need to shut off, in case parent object has a gradient applied
-        //p2d.fillGradient = false;
-      }
-    }
-  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  //public void drawImpl(PGraphics g) {
-  // do nothing
-  //}
-
-
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   public static class Font extends PShapeSVG {
     public FontFace face;
 
-    public HashMap<String,FontGlyph> namedGlyphs;
-    public HashMap<Character,FontGlyph> unicodeGlyphs;
+    public Map<String, FontGlyph> namedGlyphs;
+    public Map<Character, FontGlyph> unicodeGlyphs;
 
     public int glyphCount;
     public FontGlyph[] glyphs;
@@ -1909,8 +1576,8 @@ public class PShapeSVG extends PShape {
 
       horizAdvX = properties.getInt("horiz-adv-x", 0);
 
-      namedGlyphs = new HashMap<String,FontGlyph>();
-      unicodeGlyphs = new HashMap<Character,FontGlyph>();
+      namedGlyphs = new HashMap<String, FontGlyph>();
+      unicodeGlyphs = new HashMap<Character, FontGlyph>();
       glyphCount = 0;
       glyphs = new FontGlyph[elements.length];
 

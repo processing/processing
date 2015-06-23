@@ -20,7 +20,7 @@
   Boston, MA  02111-1307  USA
 */
 
-package processing.core;
+package processing.javafx;
 
 import java.nio.IntBuffer;
 
@@ -41,6 +41,8 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
+
+import processing.core.*;
 
 
 public class PGraphicsFX2D extends PGraphics {
@@ -107,6 +109,13 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public PSurface createSurface() {
     return surface = new PSurfaceFX(this);
+  }
+
+
+  /** Returns the javafx.scene.canvas.GraphicsContext used by this renderer. */
+  @Override
+  public Object getNative() {
+    return context;
   }
 
 
@@ -906,7 +915,7 @@ public class PGraphicsFX2D extends PGraphics {
       cash = new ImageCache(); //who);
       setCache(who, cash);
       who.updatePixels();  // mark the whole thing for update
-      who.modified = true;
+      who.setModified();
     }
 
     // If image previously was tinted, or the color changed
@@ -918,7 +927,7 @@ public class PGraphicsFX2D extends PGraphics {
       who.updatePixels();
     }
 
-    if (who.modified) {
+    if (who.isModified()) {
       if (who.pixels == null) {
         // This might be a PGraphics that hasn't been drawn to yet.
         // Can't just bail because the cache has been created above.
@@ -926,7 +935,7 @@ public class PGraphicsFX2D extends PGraphics {
         who.pixels = new int[who.width * who.height];
       }
       cash.update(who, tint, tintColor);
-      who.modified = false;
+      who.setModified(false);
     }
 
     context.drawImage(((ImageCache) getCache(who)).image,

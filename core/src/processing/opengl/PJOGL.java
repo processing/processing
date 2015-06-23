@@ -26,6 +26,7 @@ package processing.opengl;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.PathIterator;
@@ -1192,16 +1193,34 @@ public class PJOGL extends PGL {
   }
 
 
+  /**
+   * Convenience method to get a legit FontMetrics object. Where possible,
+   * override this any renderer subclass so that you're not using what's
+   * returned by getDefaultToolkit() to get your metrics.
+   */
+  @SuppressWarnings("deprecation")
+  private FontMetrics getFontMetrics(Font font) {  // ignore
+    return Toolkit.getDefaultToolkit().getFontMetrics(font);
+  }
+
+
+  /**
+   * Convenience method to jump through some Java2D hoops and get an FRC.
+   */
+  private FontRenderContext getFontRenderContext(Font font) {  // ignore
+    return getFontMetrics(font).getFontRenderContext();
+  }
+
 
   @Override
   protected int getFontAscent(Object font) {
-    return pg.getFontMetrics((Font) font).getAscent();
+    return getFontMetrics((Font) font).getAscent();
   }
 
 
   @Override
   protected int getFontDescent(Object font) {
-    return pg.getFontMetrics((Font) font).getDescent();
+    return getFontMetrics((Font) font).getDescent();
   }
 
 
@@ -1209,7 +1228,7 @@ public class PJOGL extends PGL {
   protected int getTextWidth(Object font, char[] buffer, int start, int stop) {
     // maybe should use one of the newer/fancier functions for this?
     int length = stop - start;
-    FontMetrics metrics = pg.getFontMetrics((Font) font);
+    FontMetrics metrics = getFontMetrics((Font) font);
     return metrics.charsWidth(buffer, start, length);
   }
 
@@ -1394,7 +1413,7 @@ public class PJOGL extends PGL {
 
     public FontOutline(char ch, Font font) {
       char textArray[] = new char[] { ch };
-      FontRenderContext frc = pg.getFontRenderContext(font);
+      FontRenderContext frc = getFontRenderContext(font);
       GlyphVector gv = font.createGlyphVector(frc, textArray);
       Shape shp = gv.getOutline();
       iter = shp.getPathIterator(null);
