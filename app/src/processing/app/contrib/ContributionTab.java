@@ -213,7 +213,7 @@ public class ContributionTab {
         // The message is set to null so that every time the retry button is hit
         // no previous error is displayed in the status
         status.setMessage(null);
-        downloadAndUpdateContributionListing();
+        downloadAndUpdateContributionListing(editor.getBase());
       }
     });
 
@@ -466,10 +466,10 @@ public class ContributionTab {
   }
 
 
-  protected void downloadAndUpdateContributionListing() {
+  protected void downloadAndUpdateContributionListing(Base base) {
     retryConnectingButton.setEnabled(false);
     status.setMessage(Language.text("contrib.status.downloading_list"));
-    contribListing.downloadAvailableList(new ContribProgressBar(progressBar) {
+    contribListing.downloadAvailableList(base, new ContribProgressBar(progressBar) {
 
 
       @Override
