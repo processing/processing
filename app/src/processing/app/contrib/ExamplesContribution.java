@@ -49,10 +49,10 @@ public class ExamplesContribution extends LocalContribution {
    * @return true if the example is compatible with the mode of the currently
    *         active editor
    */
-  public boolean isCompatible(Base base, File exampleFolder) {
+  static public boolean isCompatible(Base base, File exampleFolder) {
     String currentIdentifier = base.getActiveEditor().getMode().getIdentifier();
     File propertiesFile =
-      new File(exampleFolder, getPropertiesName());
+      new File(exampleFolder, EXAMPLES.getPropertiesName());
     if (propertiesFile.exists()) {
       StringList compatibleList =
         parseModeList(Base.readSettings(propertiesFile));

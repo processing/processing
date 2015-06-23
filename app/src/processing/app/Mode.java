@@ -696,7 +696,7 @@ public abstract class Mode {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    
+
     DefaultMutableTreeNode contributedExamplesNode =
       buildContributedExamplesTrees();
     if(contributedExamplesNode.getChildCount() > 0){
@@ -718,7 +718,7 @@ public abstract class Mode {
         subfolders = new File[0]; //empty array
       }
       for (File sub : subfolders) {
-        if (!ExamplesContribution.isExamplesCompatible(base, sub))
+        if (!ExamplesContribution.isCompatible(base, sub))
           continue;
         DefaultMutableTreeNode subNode =
           new DefaultMutableTreeNode(sub.getName());

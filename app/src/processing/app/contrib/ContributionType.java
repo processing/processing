@@ -77,6 +77,12 @@ public enum ContributionType {
 //  }
 
 
+  /** Get the name of the properties file for this type of contribution. */
+  public String getPropertiesName() {
+    return toString() + ".properties";
+  }
+
+
   public File createTempFolder() throws IOException {
     return Base.createTempFolder(toString(), "tmp", getSketchbookFolder());
   }

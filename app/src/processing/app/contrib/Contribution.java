@@ -189,12 +189,6 @@ abstract public class Contribution {
   }
 
 
-  /** Get the name of the properties file for this type of contribution. */
-  public String getPropertiesName() {
-    return getTypeName() + ".properties";
-  }
-
-
   abstract public boolean isInstalled();
 
 
