@@ -24,6 +24,7 @@
 package processing.opengl;
 
 import processing.core.*;
+import processing.opengl.PGraphicsOpenGL.GLResourceShader;
 
 import java.net.URL;
 import java.nio.FloatBuffer;
@@ -88,6 +89,7 @@ public class PShader implements PConstants {
   public int glProgram;
   public int glVertex;
   public int glFragment;
+  private GLResourceShader glres;
 
   protected URL vertexURL;
   protected URL fragmentURL;
@@ -303,22 +305,22 @@ public class PShader implements PConstants {
   }
 
 
-  @Override
-  protected void finalize() throws Throwable {
-    try {
-      if (glVertex != 0) {
-        PGraphicsOpenGL.finalizeGLSLVertShaderObject(glVertex, context);
-      }
-      if (glFragment != 0) {
-        PGraphicsOpenGL.finalizeGLSLFragShaderObject(glFragment, context);
-      }
-      if (glProgram != 0) {
-        PGraphicsOpenGL.finalizeGLSLProgramObject(glProgram, context);
-      }
-    } finally {
-      super.finalize();
-    }
-  }
+//  @Override
+//  protected void finalize() throws Throwable {
+//    try {
+//      if (glVertex != 0) {
+//        PGraphicsOpenGL.finalizeGLSLVertShaderObject(glVertex, context);
+//      }
+//      if (glFragment != 0) {
+//        PGraphicsOpenGL.finalizeGLSLFragShaderObject(glFragment, context);
+//      }
+//      if (glProgram != 0) {
+//        PGraphicsOpenGL.finalizeGLSLProgramObject(glProgram, context);
+//      }
+//    } finally {
+//      super.finalize();
+//    }
+//  }
 
 
   public void setVertexShader(String vertFilename) {
@@ -917,7 +919,11 @@ public class PShader implements PConstants {
 
   protected void create() {
     context = pgl.getCurrentContext();
-    glProgram = PGraphicsOpenGL.createGLSLProgramObject(context, pgl);
+    glres = new GLResourceShader(this);
+
+//    glProgram = PGraphicsOpenGL.createGLSLProgramObject(context, pgl);
+//    glVertex = PGraphicsOpenGL.createGLSLVertShaderObject(context, pgl);
+//    glFragment = PGraphicsOpenGL.createGLSLFragShaderObject(context, pgl);
   }
 
 
@@ -961,13 +967,10 @@ public class PShader implements PConstants {
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
-      PGraphicsOpenGL.removeGLSLProgramObject(glProgram, context);
-      PGraphicsOpenGL.removeGLSLVertShaderObject(glVertex, context);
-      PGraphicsOpenGL.removeGLSLFragShaderObject(glFragment, context);
-
-      glProgram = 0;
-      glVertex = 0;
-      glFragment = 0;
+//      PGraphicsOpenGL.removeGLSLProgramObject(glProgram, context);
+//      PGraphicsOpenGL.removeGLSLVertShaderObject(glVertex, context);
+//      PGraphicsOpenGL.removeGLSLFragShaderObject(glFragment, context);
+      dispose();
     }
     return outdated;
   }
@@ -988,7 +991,7 @@ public class PShader implements PConstants {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileVertexShader() {
-    glVertex = PGraphicsOpenGL.createGLSLVertShaderObject(context, pgl);
+//    glVertex = PGraphicsOpenGL.createGLSLVertShaderObject(context, pgl);
 
     pgl.shaderSource(glVertex, PApplet.join(vertexShaderSource, "\n"));
     pgl.compileShader(glVertex);
@@ -1009,7 +1012,7 @@ public class PShader implements PConstants {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileFragmentShader() {
-    glFragment = PGraphicsOpenGL.createGLSLFragShaderObject(context, pgl);
+//    glFragment = PGraphicsOpenGL.createGLSLFragShaderObject(context, pgl);
 
     pgl.shaderSource(glFragment, PApplet.join(fragmentShaderSource, "\n"));
     pgl.compileShader(glFragment);
@@ -1027,18 +1030,25 @@ public class PShader implements PConstants {
 
 
   protected void dispose() {
-    if (glVertex != 0) {
-      PGraphicsOpenGL.deleteGLSLVertShaderObject(glVertex, context, pgl);
+    if (glres != null) {
+      glres.dispose();
       glVertex = 0;
-    }
-    if (glFragment != 0) {
-      PGraphicsOpenGL.deleteGLSLFragShaderObject(glFragment, context, pgl);
       glFragment = 0;
-    }
-    if (glProgram != 0) {
-      PGraphicsOpenGL.deleteGLSLProgramObject(glProgram, context, pgl);
       glProgram = 0;
+      glres = null;
     }
+//    if (glVertex != 0) {
+//      PGraphicsOpenGL.deleteGLSLVertShaderObject(glVertex, context, pgl);
+//      glVertex = 0;
+//    }
+//    if (glFragment != 0) {
+//      PGraphicsOpenGL.deleteGLSLFragShaderObject(glFragment, context, pgl);
+//      glFragment = 0;
+//    }
+//    if (glProgram != 0) {
+//      PGraphicsOpenGL.deleteGLSLProgramObject(glProgram, context, pgl);
+//      glProgram = 0;
+//    }
   }
 
 
