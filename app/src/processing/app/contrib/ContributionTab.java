@@ -26,43 +26,18 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.*;
 
-import processing.app.Base;
-import processing.app.Editor;
-import processing.app.Language;
-import processing.app.Library;
+import processing.app.*;
 
 
 public class ContributionTab {
@@ -432,9 +407,9 @@ public class ContributionTab {
 
   protected void updateContributionListing() {
     if (editor != null) {
-      ArrayList<Contribution> contributions = new ArrayList<Contribution>();
+      List<Contribution> contributions = new ArrayList<Contribution>();
 
-      ArrayList<Library> libraries =
+      List<Library> libraries =
         new ArrayList<Library>(editor.getMode().contribLibraries);
       contributions.addAll(libraries);
 
