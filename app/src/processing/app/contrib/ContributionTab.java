@@ -200,7 +200,7 @@ public class ContributionTab {
 
 
   /** Creates and arranges the Swing components in the dialog. 
-   * @param panel1 */
+   */
   private void createComponents() {
 
     Container pane = panel;
