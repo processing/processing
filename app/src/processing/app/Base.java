@@ -105,12 +105,9 @@ public class Base {
   PreferencesFrame preferencesFrame;
 
   // A single instance of the library manager window
-  ContributionManagerDialog libraryManagerFrame;
-  ContributionManagerDialog toolManagerFrame;
-  ContributionManagerDialog modeManagerFrame;
-  ContributionManagerDialog exampleManagerFrame;
-  ContributionManagerDialog updateManagerFrame;
+  ContributionManagerDialog contributionManagerFrame;
 
+  
   // Location for untitled items
   static File untitledFolder;
 
@@ -397,16 +394,8 @@ public class Base {
       }
     }
 
-    libraryManagerFrame =
-      new ContributionManagerDialog(ContributionType.LIBRARY);
-    toolManagerFrame =
-      new ContributionManagerDialog(ContributionType.TOOL);
-    modeManagerFrame =
-      new ContributionManagerDialog(ContributionType.MODE);
-    exampleManagerFrame =
-      new ContributionManagerDialog(ContributionType.EXAMPLES);
-    updateManagerFrame =
-      new ContributionManagerDialog(null);
+    contributionManagerFrame =
+      new ContributionManagerDialog();
 
     // Make sure ThinkDifferent has library examples too
     nextMode.rebuildLibraryList();
@@ -1468,7 +1457,7 @@ public class Base {
    * Show the library installer window.
    */
   public void handleOpenLibraryManager() {
-    libraryManagerFrame.showFrame(activeEditor);
+    contributionManagerFrame.showFrame(activeEditor,ContributionType.LIBRARY);
   }
 
 
@@ -1476,7 +1465,7 @@ public class Base {
    * Show the tool installer window.
    */
   public void handleOpenToolManager() {
-    toolManagerFrame.showFrame(activeEditor);
+    contributionManagerFrame.showFrame(activeEditor,ContributionType.TOOL);
   }
 
 
@@ -1484,7 +1473,7 @@ public class Base {
    * Show the mode installer window.
    */
   public void handleOpenModeManager() {
-    modeManagerFrame.showFrame(activeEditor);
+    contributionManagerFrame.showFrame(activeEditor,ContributionType.MODE);
   }
 
 
@@ -1492,12 +1481,12 @@ public class Base {
    * Show the examples installer window.
    */
   public void handleOpenExampleManager() {
-    exampleManagerFrame.showFrame(activeEditor);
+    contributionManagerFrame.showFrame(activeEditor,ContributionType.EXAMPLES);
   }
 
 
   public void handleShowUpdates() {
-    updateManagerFrame.showFrame(activeEditor);
+    contributionManagerFrame.showFrame(activeEditor,null);
   }
 
 

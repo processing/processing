@@ -41,7 +41,7 @@ import processing.app.Base;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
 
-  ContributionManagerDialog contribManager;
+  ContributionTab contributionTab;
   TreeMap<Contribution, ContributionPanel> panelByContribution;
 
   static HyperlinkListener nullHyperlinkListener = new HyperlinkListener() {
@@ -56,10 +56,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   private ContributionListing contribListing = ContributionListing.getInstance();
 
 
-  public ContributionListPanel(ContributionManagerDialog libraryManager,
+  public ContributionListPanel(ContributionTab contributionTab,
                                ContributionFilter filter) {
     super();
-    this.contribManager = libraryManager;
+    this.contributionTab = contributionTab;
     this.filter = filter;
 
 //    contribListing = ContributionListing.getInstance();
