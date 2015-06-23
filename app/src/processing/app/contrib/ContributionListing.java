@@ -35,9 +35,9 @@ import processing.data.StringDict;
 public class ContributionListing {
   // Stable URL that will redirect to wherever we're hosting the file
   static final String LISTING_URL =
-    "http://download.processing.org/contribs.txt";
+    "http://download.processing.org/contribs";
+    //"http://download.processing.org/contribs.txt";
   static final String LOCAL_FILENAME = "contribs.txt";
-
 
   static volatile ContributionListing singleInstance;
 
@@ -404,6 +404,11 @@ public class ContributionListing {
         URL url = null;
         try {
           url = new URL(LISTING_URL);
+          // testing port
+//          url = new URL("http", "download.processing.org", 8989, "/contribs");
+
+//          "http://download.processing.org/contribs";
+//          System.out.println(url);
 //          final String contribInfo =
 //            base.getInstalledContribsInfo();
 //            "?id=" + Preferences.get("update.id") +

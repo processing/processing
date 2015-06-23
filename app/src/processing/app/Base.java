@@ -559,7 +559,8 @@ public class Base {
                                         c.getVersion(), c.getPrettyVersion()));
       entries.append(entry);
     }
-    String joined = "id=" + Preferences.get("update.id") + entries.join("&");
+    String joined =
+      "id=" + Preferences.get("update.id") + "&" + entries.join("&");
 //    StringBuilder sb = new StringBuilder();
 //    try {
 //      // Truly ridiculous attempt to shove everything into a GET request.

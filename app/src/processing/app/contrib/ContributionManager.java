@@ -71,13 +71,16 @@ public class ContributionManager {
         conn.setRequestMethod("GET");
         conn.connect();
       } else {
+        post = gzipEncode(post);
+
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setRequestProperty("Content-Encoding", "gzip");
+        conn.setRequestProperty("Content-Length", String.valueOf(post.length));
         conn.setUseCaches(false);
         conn.setDoInput(true);
         conn.setDoOutput(true);
-        conn.getOutputStream().write(gzipEncode(post));
+        conn.getOutputStream().write(post);
       }
 
       if (progress != null) {

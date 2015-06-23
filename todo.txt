@@ -13,8 +13,11 @@ X Add more code for handling low-level errors on startup
 manager
 X changed compatibleModesList to modes in examples.properties
 X changed authorList to authors to keep in line w/ the others
+`authorList` has now changed to `authors` (though `authorList` still works to keep compatibility) Oddly enough, authorList was not a list (it's free-form text that might be a list), yet others that were lists didn't have 'list' in the name
 _ need to make a note of these
 _   should we change category to categories?
+X send list of installed Libraries, Modes, Tools, and Examples on update
+X   https://github.com/processing/processing/issues/3365
 
 contribs
 X Use correct localized strings in JavaEditor.java
@@ -30,6 +33,9 @@ X   https://github.com/processing/processing/issues/3369
 X   https://github.com/processing/processing/pull/3370
 X Add missing internationalization in app/Sketch.java
 X   https://github.com/processing/processing/pull/3392
+X Examples window shows contributed examples
+X   https://github.com/processing/processing/pull/3421
+X   https://github.com/processing/processing/pull/3421
 
 cleaning
 o libraries in java tabs (separate .java files) are reported missing
@@ -49,8 +55,6 @@ _   a checkbox for "show this welcome each time" (default to checked)
 _   a button to dismiss the welcome screen (e.g., "get started")
 _ 2.x vs 3.x sketchbook battle (part of the welcome screen item)
 _   if a v2 sketchbook already exists, show a prompt to choose either creating a new Processing 3 sketch folder or use the existing v2 one, plus a link to GitHub wiki page with details
-_ send list of installed Libraries, Modes, Tools, and Examples on update
-_   https://github.com/processing/processing/issues/3365
 _ processing-java command line mode not working on Mac
 _   https://github.com/processing/processing/issues/3409
 _ font fixes for Georgia in the examples
