@@ -22,33 +22,45 @@
 package processing.app.contrib;
 
 import java.awt.Color;
+
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 
-class StatusPanel extends JLabel {
+class StatusPanel extends JPanel {
+  
+  JLabel label;
+  JButton installButton;
+  JButton upadteButton;
+  JButton removeButton;
   
   public StatusPanel() {
-    super(" ");  // need to have some size
+    super();  // need to have some size
+    label = new JLabel("");
+    label.setVisible(true);
+    add(label);
 //    setBackground(null);
 //    setBorder(null);
   }
   
   void setMessage(String message) {
-    setForeground(Color.BLACK);
-    setText(message);
-    repaint();
+    
+    label.setForeground(Color.BLACK);
+    label.setText(message);
+    label.repaint();
   }
   
   void setErrorMessage(String message) {
     //setForeground(Color.RED);
-    setForeground(new Color(160, 0, 0));
-    setText(message);
-    repaint();
+    label.setForeground(new Color(160, 0, 0));
+    label.setText(message);
+    label.repaint();
   }
   
   void clear() {
-    setText("");
-    repaint();
+    label.setText("");
+    label.repaint();
   }
 }
 
