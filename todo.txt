@@ -9,15 +9,16 @@ X   https://github.com/processing/processing/issues/3383
 X Show "not compatible" error message in the manager
 X   https://github.com/processing/processing/issues/3386
 X Add more code for handling low-level errors on startup
+X update the "Supported Platforms" wiki page with current status
 
 manager
 X changed compatibleModesList to modes in examples.properties
 X changed authorList to authors to keep in line w/ the others
-`authorList` has now changed to `authors` (though `authorList` still works to keep compatibility) Oddly enough, authorList was not a list (it's free-form text that might be a list), yet others that were lists didn't have 'list' in the name
-_ need to make a note of these
-_   should we change category to categories?
+X changed category to categories
 X send list of installed Libraries, Modes, Tools, and Examples on update
 X   https://github.com/processing/processing/issues/3365
+X disable contrib manager updates when "check for updates" is turned off
+X   update the FAQ to cover the changes
 
 contribs
 X Use correct localized strings in JavaEditor.java
@@ -26,6 +27,10 @@ X dim edit menus as appropriate during selection/no selection/etc
 o   http://code.google.com/p/processing/issues/detail?id=14
 X   https://github.com/processing/processing/issues/53
 X   https://github.com/processing/processing/pull/3419
+X Internationalize MovieMaker.java
+X   https://github.com/processing/processing/pull/3424
+X Auto-completion does not seem to be working
+X   https://github.com/processing/processing/issues/3111
 
 gsoc
 X Mode problems window wasn't doing line breaks
@@ -36,14 +41,18 @@ X   https://github.com/processing/processing/pull/3392
 X Examples window shows contributed examples
 X   https://github.com/processing/processing/pull/3421
 X   https://github.com/processing/processing/pull/3421
+X reworking the Contribution Manager according to Scott's redesign
+X   https://github.com/processing/processing/pull/3423
+X finish adding 'examples' contribs
+X   https://github.com/processing/processing/issues/2953
+o   don't return here, allow contrib types to fail:
+o   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
 
 cleaning
 o libraries in java tabs (separate .java files) are reported missing
 o   need to scan the .java files for imports that need to be included
 o   http://code.google.com/p/processing/issues/detail?id=459
 X   https://github.com/processing/processing/issues/498
-
-"OS X v10.11 is the last major release of OS X that will support the previously deprecated Java 6 runtime and tools provided by Apple. Applications or features that depend upon Java 6 may not function properly or will not launch when Java 6 is removed." https://developer.apple.com/library/prerelease/mac/releasenotes/General/rn-osx-10.11/index.html
 
 
 beta
@@ -100,7 +109,12 @@ _ recent menu gets huge with other p5 versions on osx
 
 pde/build
 _ error message caused by curly bracket in a println string
+_   ((?<![\\])['"])((?:.(?!(?<![\\])\1))*.?)\1 to match quoted strings
 _   https://github.com/processing/processing/issues/3394
+_ dim out the Run button if there are compile errors detected
+_   the AST checker has better error message handling for those cases
+_   and hitting Run replaces the useful error with something weird
+_   https://github.com/processing/processing/issues/3408
 _ when variables used in size(), getting exceptions instead of any warning
 _   https://github.com/processing/processing/issues/3311
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
@@ -118,10 +132,6 @@ _   make a Tool that installs it for all platforms, not just OS X
 _   not really part of the 'build' anymore
 _ break out Mode options to their own panels in prefs
 _   Mode should just provide a panel for their prefs
-_ finish adding 'examples' contribs
-_   https://github.com/processing/processing/issues/2953
-_   don't return here, allow contrib types to fail:
-_   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
 _ add build.xml prompt for OS X developers to download the JDK update
 _ make examples pull/build automatic during dist
 _ dist needs to do a git pull on processing-docs

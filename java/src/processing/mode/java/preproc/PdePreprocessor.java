@@ -288,10 +288,12 @@ public class PdePreprocessor {
       char[] c = searchArea.toCharArray();
       int depth = 0;
       int closeBrace = -1;
+//      boolean literal;  // inside a quoted literal?
       StringBuilder sb = new StringBuilder();
       for (int i = openBrace; i < c.length; i++) {
         if (c[i] == '{') {
           depth++;
+//        } else if (c[i] == '\'') {
         } else if (c[i] == '}') {
           depth--;
           if (depth == 0) {

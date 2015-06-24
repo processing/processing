@@ -31,7 +31,8 @@ import processing.app.Language;
 
 abstract public class Contribution {
   static final String IMPORTS_PROPERTY = "imports";
-  static final String CATEGORIES_PROPERTY = "category";
+//  static final String CATEGORIES_PROPERTY = "category";
+  static final String CATEGORIES_PROPERTY = "categories";
   //static final String MODES_PROPERTY = "compatibleModesList";
   static final String MODES_PROPERTY = "modes";
   //static final String AUTHORS_PROPERTY = "authorList";
@@ -252,6 +253,9 @@ abstract public class Contribution {
     StringList outgoing = new StringList();
 
     String categoryStr = properties.get(CATEGORIES_PROPERTY);
+    if (categoryStr == null) {
+      categoryStr = properties.get("category");  // try the old way
+    }
     if (categoryStr != null) {
       String[] listing = PApplet.trim(PApplet.split(categoryStr, ','));
       for (String category : listing) {
