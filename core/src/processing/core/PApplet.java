@@ -24,8 +24,7 @@
 
 package processing.core;
 
-// these are used for various methods (url opening, file selection, etc)
-// how many more can we remove?
+// used by link()
 import java.awt.Desktop;
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
@@ -40,16 +39,22 @@ import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
+
+
 // used by loadImage() functions
 import javax.imageio.ImageIO;
+// allows us to remove our own MediaTracker code
 import javax.swing.ImageIcon;
+// used by selectInput(), selectOutput(), selectFolder()
 import javax.swing.JFileChooser;
+// used to present the fullScreen() warning about Spaces on OS X
 import javax.swing.JOptionPane;
 // used by desktopFile() method
 import javax.swing.filechooser.FileSystemView;
 
 // loadXML() error handling
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.xml.sax.SAXException;
 
 import java.io.*;
@@ -252,7 +257,7 @@ public class PApplet implements PConstants {
    * true if no size() command has been executed. This is used to wait until
    * a size has been set before placing in the window and showing it.
    */
-  public boolean defaultSize;
+//  public boolean defaultSize;
 
 //  /** Storage for the current renderer size to avoid re-allocation. */
 //  Dimension currentSize = new Dimension();
@@ -322,19 +327,19 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from pixelWidth.xml )
    *
-   * When <b>pixelDensity(2)</d> is used to make use of a high resolution 
-   * display (called a Retina display on OS X or high-dpi on Windows and 
-   * Linux), the width and height of the sketch do not change, but the 
-   * number of pixels is doubled. As a result, all operations that use pixels 
-   * (like <b>loadPixels()</b>, <b>get()</b>, <b>set()</b>, etc.) happen 
-   * in this doubled space. As a convenience, the variables <b>pixelWidth</b> 
-   * and <b>pixelHeight<b> hold the actual width and height of the sketch 
-   * in pixels. This is useful for any sketch that uses the <b>pixels[]</b> 
-   * array, for instance, because the number of elements in the array will 
+   * When <b>pixelDensity(2)</d> is used to make use of a high resolution
+   * display (called a Retina display on OS X or high-dpi on Windows and
+   * Linux), the width and height of the sketch do not change, but the
+   * number of pixels is doubled. As a result, all operations that use pixels
+   * (like <b>loadPixels()</b>, <b>get()</b>, <b>set()</b>, etc.) happen
+   * in this doubled space. As a convenience, the variables <b>pixelWidth</b>
+   * and <b>pixelHeight<b> hold the actual width and height of the sketch
+   * in pixels. This is useful for any sketch that uses the <b>pixels[]</b>
+   * array, for instance, because the number of elements in the array will
    * be <b>pixelWidth*pixelHeight</b>, not <b>width*height</b>.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref environment
    * @see PApplet#pixelHeight
    * @see pixelDensity()
@@ -342,23 +347,23 @@ public class PApplet implements PConstants {
    */
   public int pixelWidth;
 
-  
+
   /**
    * ( begin auto-generated from pixelHeight.xml )
    *
-   * When <b>pixelDensity(2)</d> is used to make use of a high resolution 
-   * display (called a Retina display on OS X or high-dpi on Windows and 
-   * Linux), the width and height of the sketch do not change, but the 
-   * number of pixels is doubled. As a result, all operations that use pixels 
-   * (like <b>loadPixels()</b>, <b>get()</b>, <b>set()</b>, etc.) happen 
-   * in this doubled space. As a convenience, the variables <b>pixelWidth</b> 
-   * and <b>pixelHeight<b> hold the actual width and height of the sketch 
-   * in pixels. This is useful for any sketch that uses the <b>pixels[]</b> 
-   * array, for instance, because the number of elements in the array will 
+   * When <b>pixelDensity(2)</d> is used to make use of a high resolution
+   * display (called a Retina display on OS X or high-dpi on Windows and
+   * Linux), the width and height of the sketch do not change, but the
+   * number of pixels is doubled. As a result, all operations that use pixels
+   * (like <b>loadPixels()</b>, <b>get()</b>, <b>set()</b>, etc.) happen
+   * in this doubled space. As a convenience, the variables <b>pixelWidth</b>
+   * and <b>pixelHeight<b> hold the actual width and height of the sketch
+   * in pixels. This is useful for any sketch that uses the <b>pixels[]</b>
+   * array, for instance, because the number of elements in the array will
    * be <b>pixelWidth*pixelHeight</b>, not <b>width*height</b>.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref environment
    * @see PApplet#pixelWidth
    * @see pixelDensity()
@@ -503,7 +508,7 @@ public class PApplet implements PConstants {
    * across platforms and input methods.
    */
   @Deprecated
-  public boolean firstMouse;
+  public boolean firstMouse = true;
 
   /**
    * ( begin auto-generated from mouseButton.xml )
@@ -702,10 +707,10 @@ public class PApplet implements PConstants {
    */
   public float frameRate = 10;
 
-  protected boolean looping;
+  protected boolean looping = true;
 
   /** flag set to true when a redraw is asked for by the user */
-  protected boolean redraw;
+  protected boolean redraw = true;
 
   /**
    * ( begin auto-generated from frameCount.xml )
@@ -824,55 +829,55 @@ public class PApplet implements PConstants {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  /**
-   * Applet initialization. This can do GUI work because the components have
-   * not been 'realized' yet: things aren't visible, displayed, etc.
-   */
-  public void init() {
-//    println("init() called " + Integer.toHexString(hashCode()));
-    // using a local version here since the class variable is deprecated
-//    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-//    screenWidth = screen.width;
-//    screenHeight = screen.height;
-
-    defaultSize = true;
-    finished = false; // just for clarity
-
-    // this will be cleared by draw() if it is not overridden
-    looping = true;
-    redraw = true;  // draw this guy at least once
-    firstMouse = true;
-
-    // calculated dynamically on first call
-//    // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
-//    // inside runSketch(), but if this sketch takes care of calls to init()
-//    // when PApplet.main() is not used (i.e. it's in a Java application).
-//    // THe path needs to be set here so that loadXxxx() functions work.
-//    if (sketchPath == null) {
-//      sketchPath = calcSketchPath();
-//    }
-
-    // set during Surface.initFrame()
-//    // Figure out the available display width and height.
-//    // No major problem if this fails, we have to try again anyway in
-//    // handleDraw() on the first (== 0) frame.
-//    checkDisplaySize();
-
-//    // Set the default size, until the user specifies otherwise
-//    int w = sketchWidth();
-//    int h = sketchHeight();
-//    defaultSize = (w == DEFAULT_WIDTH) && (h == DEFAULT_HEIGHT);
+//  /**
+//   * Applet initialization. This can do GUI work because the components have
+//   * not been 'realized' yet: things aren't visible, displayed, etc.
+//   */
+//  public void init() {
+////    println("init() called " + Integer.toHexString(hashCode()));
+//    // using a local version here since the class variable is deprecated
+////    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+////    screenWidth = screen.width;
+////    screenHeight = screen.height;
 //
-//    g = makeGraphics(w, h, sketchRenderer(), null, true);
-//    // Fire component resize event
-//    setSize(w, h);
-//    setPreferredSize(new Dimension(w, h));
+//    defaultSize = true;
+//    finished = false; // just for clarity
 //
-//    width = g.width;
-//    height = g.height;
-
-    surface.startThread();
-  }
+//    // this will be cleared by draw() if it is not overridden
+//    looping = true;
+//    redraw = true;  // draw this guy at least once
+//    firstMouse = true;
+//
+//    // calculated dynamically on first call
+////    // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
+////    // inside runSketch(), but if this sketch takes care of calls to init()
+////    // when PApplet.main() is not used (i.e. it's in a Java application).
+////    // THe path needs to be set here so that loadXxxx() functions work.
+////    if (sketchPath == null) {
+////      sketchPath = calcSketchPath();
+////    }
+//
+//    // set during Surface.initFrame()
+////    // Figure out the available display width and height.
+////    // No major problem if this fails, we have to try again anyway in
+////    // handleDraw() on the first (== 0) frame.
+////    checkDisplaySize();
+//
+////    // Set the default size, until the user specifies otherwise
+////    int w = sketchWidth();
+////    int h = sketchHeight();
+////    defaultSize = (w == DEFAULT_WIDTH) && (h == DEFAULT_HEIGHT);
+////
+////    g = makeGraphics(w, h, sketchRenderer(), null, true);
+////    // Fire component resize event
+////    setSize(w, h);
+////    setPreferredSize(new Dimension(w, h));
+////
+////    width = g.width;
+////    height = g.height;
+//
+//    surface.startThread();
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -1096,9 +1101,9 @@ public class PApplet implements PConstants {
  /**
   * ( begin auto-generated from displayDensity.xml )
   *
-  * This function returns the number "2" if the screen is a high-density 
-  * screen (called a Retina display on OS X or high-dpi on Windows and Linux) 
-  * and a "1" if not. This information is useful for a program to adapt to 
+  * This function returns the number "2" if the screen is a high-density
+  * screen (called a Retina display on OS X or high-dpi on Windows and Linux)
+  * and a "1" if not. This information is useful for a program to adapt to
   * run at double the pixel density on a screen that supports it.
   *
   * ( end auto-generated )
@@ -1961,7 +1966,7 @@ public class PApplet implements PConstants {
     if (width != this.width ||
         height != this.height ||
         !renderer.equals(this.renderer)) {
-      println(width, height, renderer, this.width, this.height, this.renderer);
+      //println(width, height, renderer, this.width, this.height, this.renderer);
       if (insideSettings("size", width, height, renderer)) {
         this.width = width;
         this.height = height;
@@ -2364,7 +2369,7 @@ public class PApplet implements PConstants {
 //          // Give up, instead set the new renderer and re-attempt setup()
 //          return;
 //        }
-      defaultSize = false;
+//      defaultSize = false;
 
     } else {  // frameCount > 0, meaning an actual draw()
       // update the current frameRate
@@ -2518,6 +2523,11 @@ public class PApplet implements PConstants {
     if (looping) {
       looping = false;
     }
+  }
+
+
+  public boolean isLooping() {
+    return looping;
   }
 
 
@@ -9794,7 +9804,7 @@ public class PApplet implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  void frameMoved(int x, int y) {
+  public void frameMoved(int x, int y) {
     if (!fullScreen) {
       System.err.println(EXTERNAL_MOVE + " " + x + " " + y);
       System.err.flush();  // doesn't seem to help or hurt
@@ -9802,8 +9812,7 @@ public class PApplet implements PConstants {
   }
 
 
-  void frameResized(int w, int h) {
-
+  public void frameResized(int w, int h) {
   }
 
 
@@ -10115,7 +10124,7 @@ public class PApplet implements PConstants {
       sketch.windowColor = windowColor;
     }
 
-    PSurface surface = sketch.initSurface();
+    final PSurface surface = sketch.initSurface();
 //      sketch.initSurface(windowColor, displayIndex, fullScreen, spanDisplays);
 
     /*
@@ -10141,10 +10150,26 @@ public class PApplet implements PConstants {
     } else {
       surface.placeWindow(location, editorLocation);
     }
+
+//    EventQueue.invokeLater(new Runnable() {
+//      public void run() {
+
+    // Helps avoid this code being duplicated 2x per surface class.
+    // Andres is testing to make sure this doesn't cause trouble.
+    if (sketch.getGraphics().displayable()) {
+      surface.setVisible(true);
+    }
+
     // not always running externally when in present mode
-    if (external) {
+    if (sketch.external) {
       surface.setupExternalMessages();
     }
+
+    //sketch.init();
+    surface.startThread();
+
+//      }
+//    });
   }
 
 
@@ -10180,11 +10205,14 @@ public class PApplet implements PConstants {
             "use fullScreen() to get an undecorated full screen frame");
         }
 
+        // Can't override this one because it's called by Window's constructor
+        /*
         @Override
         public void setLocation(int x, int y) {
           deprecationWarning("setLocation");
           surface.setLocation(x, y);
         }
+        */
 
         @Override
         public void setSize(int w, int h) {
@@ -10195,6 +10223,7 @@ public class PApplet implements PConstants {
         private void deprecationWarning(String method) {
           PGraphics.showWarning("Use surface." + method + "() instead of " +
                                 "frame." + method + " in Processing 3");
+          //new Exception(method).printStackTrace(System.out);
         }
       };
 
@@ -10205,7 +10234,7 @@ public class PApplet implements PConstants {
       surface.initOffscreen(this);  // for PDF/PSurfaceNone and friends
     }
 
-    init();
+//    init();
     return surface;
   }
 

@@ -5,6 +5,8 @@ import java.util.*;
 
 import processing.app.contrib.*;
 import processing.core.*;
+import processing.data.StringDict;
+import processing.data.StringList;
 
 
 public class Library extends LocalContribution {
@@ -23,7 +25,7 @@ public class Library extends LocalContribution {
   protected String group;
 
   /** Packages provided by this library. */
-  String[] packageList;
+  StringList packageList;
 
   /** Per-platform exports for this library. */
   HashMap<String,String[]> exportList;
@@ -113,8 +115,8 @@ public class Library extends LocalContribution {
     referenceFile = new File(folder, "reference/index.html");
 
     File exportSettings = new File(libraryFolder, "export.txt");
-    Map<String, String> exportTable = exportSettings.exists() ?
-      Base.readSettings(exportSettings) : new HashMap<String, String>();
+    StringDict exportTable = exportSettings.exists() ?
+      Base.readSettings(exportSettings) : new StringDict();
 
     exportList = new HashMap<String, String[]>();
 
@@ -437,23 +439,23 @@ public class Library extends LocalContribution {
   };
 
 
-  static public ArrayList<File> discover(File folder) {
-    ArrayList<File> libraries = new ArrayList<File>();
-    discover(folder, libraries);
-    return libraries;
-  }
-
-
-  static public void discover(File folder, ArrayList<File> libraries) {
-    String[] list = folder.list(junkFolderFilter);
+  static public List<File> discover(File folder) {
+    List<File> libraries = new ArrayList<File>();
+//    discover(folder, libraries);
+//    return libraries;
+//  }
+//
+//
+//  static void discover(File folder, List<File> libraries) {
+    String[] folderNames = folder.list(junkFolderFilter);
 
     // if a bad folder or something like that, this might come back null
-    if (list != null) {
+    if (folderNames != null) {
       // alphabetize list, since it's not always alpha order
       // replaced hella slow bubble sort with this feller for 0093
-      Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
+      Arrays.sort(folderNames, String.CASE_INSENSITIVE_ORDER);
 
-      for (String potentialName : list) {
+      for (String potentialName : folderNames) {
         File baseFolder = new File(folder, potentialName);
         File libraryFolder = new File(baseFolder, "library");
         File libraryJar = new File(libraryFolder, potentialName + ".jar");
@@ -476,32 +478,37 @@ public class Library extends LocalContribution {
         }
       }
     }
-  }
-
-
-  static protected ArrayList<Library> list(File folder) {
-    ArrayList<Library> libraries = new ArrayList<Library>();
-    list(folder, libraries);
     return libraries;
   }
 
 
-  static protected void list(File folder, ArrayList<Library> libraries) {
-    ArrayList<File> librariesFolders = new ArrayList<File>();
-    discover(folder, librariesFolders);
+  static public List<Library> list(File folder) {
+    List<Library> libraries = new ArrayList<Library>();
+//    list(folder, libraries);
+//    return libraries;
+//  }
+//
+//
+//  static void list(File folder, List<Library> libraries) {
+    List<File> librariesFolders = new ArrayList<File>();
+    librariesFolders.addAll(discover(folder));
 
     for (File baseFolder : librariesFolders) {
       libraries.add(new Library(baseFolder));
     }
 
-    String[] list = folder.list(junkFolderFilter);
-    if (list != null) {
-      for (String subfolderName : list) {
+    // Support libraries inside of one level of subfolders? I believe this was
+    // the compromise for supporting library groups, but probably a bad idea
+    // because it's not compatible with the Manager.
+    String[] folderNames = folder.list(junkFolderFilter);
+    if (folderNames != null) {
+      for (String subfolderName : folderNames) {
         File subfolder = new File(folder, subfolderName);
 
         if (!librariesFolders.contains(subfolder)) {
-          ArrayList<File> discoveredLibFolders = new ArrayList<File>();
-          discover(subfolder, discoveredLibFolders);
+//          ArrayList<File> discoveredLibFolders = new ArrayList<File>();
+//          discover(subfolder, discoveredLibFolders);
+          List<File> discoveredLibFolders = discover(subfolder);
 
           for (File discoveredFolder : discoveredLibFolders) {
             libraries.add(new Library(discoveredFolder, subfolderName));
@@ -509,6 +516,7 @@ public class Library extends LocalContribution {
         }
       }
     }
+    return libraries;
   }
 
 

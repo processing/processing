@@ -1,4 +1,4 @@
-0238 (3.0b1)
+0238 (3.0a11)
 X add note about headless exceptions that points to Github
 X resize children[] so that getChildren() returns a correctly-sized array
 X   https://github.com/processing/processing/issues/3347
@@ -41,6 +41,10 @@ X   setUndecorated(boolean)
 X   setting menubar will be surface-specific
 X   setLocation(int, int) and setSize(int, int)
 X add the "don't use this" warning to the JFrame in PSurfaceAWT
+X ArithmeticException: / by zero when using fonts opened with loadFont()
+X   https://github.com/processing/processing/issues/3413
+X SVG briefly broken for Java2D
+X   https://github.com/processing/processing/issues/3417
 
 threading headaches
 X sketch not always showing with empty draw()
@@ -51,6 +55,13 @@ X sketch sometimes doesn't show with noLoop() on Linux
 X   https://github.com/processing/processing/issues/3316
 X Window never shows with exported application on 64-bit Linux
 X   https://github.com/processing/processing/issues/3303
+X present mode is now broken
+o still some spinning when sketches break
+X   fixed because we're back off the EDT
+o settings() is probably not showing exceptions since we're back to the EDT
+o   can't call handleSettings() on the anim thread since it sets the surface
+o   so maybe the first part is on the EDT, but other threads run this stuff
+X remove the init() method
 
 cleaning
 o possible addition for 'implementation' variable
@@ -106,10 +117,15 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 beta
-_ still some spinning when sketches break
-_ settings() is probably not showing exceptions since we're back to the EDT
-_   can't call handleSettings() on the anim thread since it sets the surface
-_   so maybe the first part is on the EDT, but other threads run this stuff
+X move Java2D and JavaFX classes to their own packages
+_   make notes about this in the README
+_ run only the necessary pieces on the EDT
+_   in part because FX doesn't even use the EDT
+_   re-check the Linux frame visibility stuff
+_ try using Frame instead of JFrame
+_   default sketch location using insets incorrectly
+_   use the BufferStrategy directly from the Frame object?
+_     might fix performance issues w/ Presentation mode
 
 
 javafx
@@ -124,7 +140,8 @@ _   https://github.com/processing/processing/issues/3290
 _   what's the way to do this after the deprecation?
 _   if this is going to be the default renderer, has to be ironed out
 _ displayWidth, displayHeight, full screen, display number
-_ present mode (stage in the center, clear the rest of the screen)
+_ present mode not working at all
+_   stage in the center, clear the rest of the screen
 _ createGraphics() should probably create PGraphicsJava2D
 _   or is Canvas specific to the PGraphics, and we get another Context2D?
 _   http://docs.oracle.com/javafx/2/api/javafx/scene/canvas/Canvas.html
@@ -141,6 +158,8 @@ _   or pass createImage() through to renderer?
 _ implement frameRate()
 _ implement external messages (moving the window)
 _ implement PSurfaceFX.setIcon()
+_ javafx not supported with ARM (so we're screwed on raspberry pi)
+_   https://www.linkedin.com/pulse/oracle-just-removed-javafx-support-arm-jan-snelders
 
 
 opengl

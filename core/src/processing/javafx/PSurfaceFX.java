@@ -20,7 +20,7 @@
   Boston, MA  02111-1307  USA
 */
 
-package processing.core;
+package processing.javafx;
 
 //import java.awt.event.FocusEvent;
 //import java.awt.event.FocusListener;
@@ -49,6 +49,8 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
+import processing.core.*;
 
 
 public class PSurfaceFX implements PSurface {
@@ -470,7 +472,7 @@ public class PSurfaceFX implements PSurface {
           //System.out.println("handle(" + now + ") calling handleDraw()");
           sketch.handleDraw();
 
-          if (sketch.exitCalled) {
+          if (sketch.exitCalled()) {
             //sketch.exitActual();  // just calls System.exit()
             Platform.exit();  // version for safe JavaFX shutdown
           }

@@ -34,6 +34,7 @@ import org.apache.tools.ant.ProjectHelper;
 import processing.app.*;
 import processing.app.exec.ProcessHelper;
 import processing.core.*;
+import processing.data.StringList;
 import processing.data.XML;
 import processing.mode.java.preproc.*;
 
@@ -212,7 +213,7 @@ public class JavaBuild {
 
     // figure out the contents of the code folder to see if there
     // are files that need to be added to the imports
-    String[] codeFolderPackages = null;
+    StringList codeFolderPackages = null;
     if (sketch.hasCodeFolder()) {
       File codeFolder = sketch.getCodeFolder();
       javaLibraryPath = codeFolder.getAbsolutePath();

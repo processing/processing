@@ -30,6 +30,7 @@ import org.apache.batik.dom.GenericDOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.DOMImplementation;
 
+import processing.awt.PGraphicsJava2D;
 import processing.core.*;
 
 

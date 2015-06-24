@@ -28,12 +28,12 @@ package processing.core;
  * class for other drawing surfaces. It includes the standard rendering loop.
  */
 public class PSurfaceNone implements PSurface {
-  PApplet sketch;
-  PGraphics graphics;
+  protected PApplet sketch;
+  protected PGraphics graphics;
 
-  Thread thread;
-  boolean paused;
-  Object pauseObject = new Object();
+  protected Thread thread;
+  protected boolean paused;
+  protected Object pauseObject = new Object();
 
   protected float frameRateTarget = 60;
   protected long frameRatePeriod = 1000000000L / 60L;
@@ -245,7 +245,7 @@ public class PSurfaceNone implements PSurface {
   }
 
 
-  class AnimationThread extends Thread {
+  public class AnimationThread extends Thread {
 
     public AnimationThread() {
       super("Animation Thread");

@@ -264,9 +264,10 @@ class FontTexture implements PConstants {
     }
     if (outdated) {
       for (int i = 0; i < textures.length; i++) {
-        PGraphicsOpenGL.removeTextureObject(textures[i].glName,
-                                            textures[i].context);
-        textures[i].glName = 0;
+        textures[i].dispose();
+//        PGraphicsOpenGL.removeTextureObject(textures[i].glName,
+//                                            textures[i].context);
+//        textures[i].glName = 0;
       }
     }
     return outdated;
