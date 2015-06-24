@@ -24,6 +24,7 @@ package processing.opengl;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
+import processing.opengl.PGraphicsOpenGL.GLResourceTexture;
 
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
@@ -84,6 +85,7 @@ public class Texture implements PConstants {
   public int glWrapT;
   public int glWidth;
   public int glHeight;
+  private GLResourceTexture glres;
 
   protected PGraphicsOpenGL pg;
   protected PGL pgl;                // The interface between Processing and OpenGL.
@@ -167,16 +169,16 @@ public class Texture implements PConstants {
   }
 
 
-  @Override
-  protected void finalize() throws Throwable {
-    try {
-      if (glName != 0) {
-        PGraphicsOpenGL.finalizeTextureObject(glName, context);
-      }
-    } finally {
-      super.finalize();
-    }
-  }
+//  @Override
+//  protected void finalize() throws Throwable {
+//    try {
+//      if (glName != 0) {
+//        PGraphicsOpenGL.finalizeTextureObject(glName, context);
+//      }
+//    } finally {
+//      super.finalize();
+//    }
+//  }
 
 
   ////////////////////////////////////////////////////////////
@@ -1148,7 +1150,7 @@ public class Texture implements PConstants {
     }
 
     context = pgl.getCurrentContext();
-    glName = PGraphicsOpenGL.createTextureObject(context, pgl);
+    glres = new GLResourceTexture(this);
 
     pgl.bindTexture(glTarget, glName);
     pgl.texParameteri(glTarget, PGL.TEXTURE_MIN_FILTER, glMinFilter);
@@ -1182,24 +1184,22 @@ public class Texture implements PConstants {
    * Marks the texture object for deletion.
    */
   protected void dispose() {
-    if (glName != 0) {
-      PGraphicsOpenGL.finalizeTextureObject(glName, context);
+    if (glres != null) {
+      glres.dispose();
+      glres = null;
       glName = 0;
     }
+//    if (glName != 0) {
+//      PGraphicsOpenGL.finalizeTextureObject(glName, context);
+//      glName = 0;
+//    }
   }
 
 
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
-      // Removing the texture object from the renderer's list so it
-      // doesn't get deleted by OpenGL. The texture object was
-      // automatically disposed when the old context was destroyed.
-      PGraphicsOpenGL.removeTextureObject(glName, context);
-
-      // And then set the id to zero, so it doesn't try to be
-      // deleted when the object's finalizer is invoked by the GC.
-      glName = 0;
+      dispose();
     }
     return outdated;
   }

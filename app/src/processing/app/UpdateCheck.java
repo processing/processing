@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-12 Ben Fry and Casey Reas
+  Copyright (c) 2005-15 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -43,9 +43,12 @@ import processing.core.PApplet;
  * to check for updates. Also included is the operating system and
  * its version and the version of Java being used to run Processing.
  * <P>
- * The ID number also helps provide us a general idea of how many
- * people are using Processing, which helps us when writing grant
- * proposals and that kind of thing so that we can keep Processing free.
+ * Aside from the privacy invasion of knowing that an anonymous Processing
+ * user opened the software at one time during a 24-hour period somewhere
+ * in the world, we use the ID number to give us a general idea of how many
+ * people are using Processing, which helps us when writing grant proposals
+ * and that kind of thing so that we can keep Processing free. The numbers
+ * are also sometimes used in ugly charts when Ben and Casey present.
  */
 public class UpdateCheck {
   private final Base base;
@@ -55,22 +58,27 @@ public class UpdateCheck {
 
   static private final long ONE_DAY = 24 * 60 * 60 * 1000;
 
+  static boolean allowed;
+
 
   public UpdateCheck(Base base) {
     this.base = base;
-    new Thread(new Runnable() {
-      public void run() {
-        try {
-          Thread.sleep(20 * 1000);  // give the PDE time to get rolling
-          updateCheck();
 
-        } catch (Exception e) {
-          // This can safely be ignored, too many situations where no net
-          // connection is available that behave in strange ways.
-          // Covers likely IOException, InterruptedException, and any others. 
-        } 
-      }
-    }, "Update Checker").start();
+    if (isAllowed()) {
+      new Thread(new Runnable() {
+        public void run() {
+          try {
+            Thread.sleep(5 * 1000);  // give the PDE time to get rolling
+            updateCheck();
+
+          } catch (Exception e) {
+            // This can safely be ignored, too many situations where no net
+            // connection is available that behave in strange ways.
+            // Covers likely IOException, InterruptedException, and any others.
+          }
+        }
+      }, "Update Checker").start();
+    }
   }
 
 
@@ -122,14 +130,8 @@ public class UpdateCheck {
         // Wait for xml file to be downloaded and updates to come in.
         // (this should really be handled better).
         Thread.sleep(5 * 1000);
-        if ((!base.libraryManagerFrame.hasAlreadyBeenOpened()
-              && !base.toolManagerFrame.hasAlreadyBeenOpened()
-              && !base.modeManagerFrame.hasAlreadyBeenOpened()
-              && !base.exampleManagerFrame.hasAlreadyBeenOpened())
-          && (base.libraryManagerFrame.hasUpdates(base)
-              || base.toolManagerFrame.hasUpdates(base)
-              || base.modeManagerFrame.hasUpdates(base)
-              || base.exampleManagerFrame.hasUpdates(base))) {
+        if ((!base.contributionManagerFrame.hasAlreadyBeenOpened()
+          && (base.contributionManagerFrame.hasUpdates(base)))){
           promptToOpenContributionManager();
         }
       }
@@ -185,5 +187,11 @@ public class UpdateCheck {
     InputStreamReader isr = new InputStreamReader(stream);
     BufferedReader reader = new BufferedReader(isr);
     return Integer.parseInt(reader.readLine());
+  }
+
+
+  static public boolean isAllowed() {
+    // Disable update checks for the paranoid
+    return Preferences.getBoolean("update.check");
   }
 }

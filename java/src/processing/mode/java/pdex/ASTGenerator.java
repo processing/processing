@@ -901,9 +901,9 @@ public class ASTGenerator {
               if (td.getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY) != null) {
                 SimpleType st = (SimpleType) td.getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
                 log("Superclass " + st.getName());
-                ArrayList<CompletionCandidate> candidates =
+                ArrayList<CompletionCandidate> tempCandidates =
                   getMembersForType(st.getName().toString(), word2, noCompare, false);
-                for (CompletionCandidate can : candidates) {
+                for (CompletionCandidate can : tempCandidates) {
                   candidates.add(can);
                 }
                 //findDeclaration(st.getName())

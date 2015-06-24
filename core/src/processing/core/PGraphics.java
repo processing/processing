@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-14 The Processing Foundation
+  Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -25,13 +25,13 @@
 
 package processing.core;
 
+// Used for color conversion functions
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Frame;
+
+// Used for the 'image' object that's been here forever
 import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.font.FontRenderContext;
+
+import java.util.Map;
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
@@ -445,6 +445,9 @@ public class PGraphics extends PImage implements PConstants {
   /** The current text leading (read-only) */
   public float textLeading;
 
+  static final protected String ERROR_TEXTFONT_NULL_PFONT =
+    "A null PFont was passed to textFont()";
+
   // ........................................................
 
   // Material properties
@@ -483,6 +486,11 @@ public class PGraphics extends PImage implements PConstants {
   protected float backgroundR, backgroundG, backgroundB, backgroundA;
   protected int backgroundRi, backgroundGi, backgroundBi, backgroundAi;
 
+  static final protected String ERROR_BACKGROUND_IMAGE_SIZE =
+    "background image must be the same size as your application";
+  static final protected String ERROR_BACKGROUND_IMAGE_FORMAT =
+    "background images should be RGB or ARGB";
+
 
   /** The current blending mode. */
   protected int blendMode;
@@ -505,7 +513,13 @@ public class PGraphics extends PImage implements PConstants {
 //  float[][] matrixInvStack = new float[MATRIX_STACK_DEPTH][16];
 //  int matrixStackDepth;
 
-  static final int MATRIX_STACK_DEPTH = 32;
+  static final protected int MATRIX_STACK_DEPTH = 32;
+
+  static final protected String ERROR_PUSHMATRIX_OVERFLOW =
+    "Too many calls to pushMatrix().";
+  static final protected String ERROR_PUSHMATRIX_UNDERFLOW =
+    "Too many calls to popMatrix(), and not enough to pushMatrix().";
+
 
   // ........................................................
 
@@ -784,7 +798,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public PSurface createSurface() {  // ignore
-    return surface = new PSurfaceAWT(this);
+    return surface = new PSurfaceNone(this);
   }
 
 
@@ -835,12 +849,12 @@ public class PGraphics extends PImage implements PConstants {
   // FRAME
 
 
-  /**
-   * Some renderers have requirements re: when they are ready to draw.
-   */
-  public boolean canDraw() {  // ignore
-    return true;
-  }
+//  /**
+//   * Some renderers have requirements re: when they are ready to draw.
+//   */
+//  public boolean canDraw() {  // ignore
+//    return true;
+//  }
 
 
   // removing because renderers will have their own animation threads and
@@ -4913,27 +4927,27 @@ public class PGraphics extends PImage implements PConstants {
   */
 
 
-  /**
-   * Convenience method to get a legit FontMetrics object. Where possible,
-   * override this any renderer subclass so that you're not using what's
-   * returned by getDefaultToolkit() to get your metrics.
-   */
-  @SuppressWarnings("deprecation")
-  public FontMetrics getFontMetrics(Font font) {  // ignore
-    Frame frame = parent.getFrame();
-    if (frame != null) {
-      return frame.getToolkit().getFontMetrics(font);
-    }
-    return Toolkit.getDefaultToolkit().getFontMetrics(font);
-  }
-
-
-  /**
-   * Convenience method to jump through some Java2D hoops and get an FRC.
-   */
-  public FontRenderContext getFontRenderContext(Font font) {  // ignore
-    return getFontMetrics(font).getFontRenderContext();
-  }
+//  /**
+//   * Convenience method to get a legit FontMetrics object. Where possible,
+//   * override this any renderer subclass so that you're not using what's
+//   * returned by getDefaultToolkit() to get your metrics.
+//   */
+//  @SuppressWarnings("deprecation")
+//  public FontMetrics getFontMetrics(Font font) {  // ignore
+//    Frame frame = parent.frame;
+//    if (frame != null) {
+//      return frame.getToolkit().getFontMetrics(font);
+//    }
+//    return Toolkit.getDefaultToolkit().getFontMetrics(font);
+//  }
+//
+//
+//  /**
+//   * Convenience method to jump through some Java2D hoops and get an FRC.
+//   */
+//  public FontRenderContext getFontRenderContext(Font font) {  // ignore
+//    return getFontMetrics(font).getFontRenderContext();
+//  }
 
 
 
@@ -7919,7 +7933,7 @@ public class PGraphics extends PImage implements PConstants {
   // WARNINGS and EXCEPTIONS
 
 
-  static protected HashMap<String, Object> warnings;
+  static protected Map<String, Object> warnings;
 
 
   /**

@@ -31,25 +31,24 @@ import com.apple.eawt.QuitResponse;
 
 
 /**
- * Deal with issues related to thinking differently. This handles the basic
- * Mac OS X menu commands (and apple events) for open, about, prefs, etc.
+ * Deal with issues related to thinking differently.
+ *
+ * We have to register a quit handler to safely shut down the sketch,
+ * otherwise OS X will just kill the sketch when a user hits Cmd-Q.
+ * In addition, we have a method to set the dock icon image so we look more
+ * like a native application.
  *
  * This is a stripped-down version of what's in processing.app.platform to fix
  * <a href="https://github.com/processing/processing/issues/3301">3301</a>.
  */
 public class ThinkDifferent {
 
-  // pseudo-singleton model; no point in making multiple instances
-  // of the EAWT application or our adapter
-//  private static ThinkDifferent adapter;
   // http://developer.apple.com/documentation/Java/Reference/1.4.2/appledoc/api/com/apple/eawt/Application.html
   private static Application application;
 
-  // reference to the app where the existing quit, about, prefs code is
-  //private Base base;
-
   // True if user has tried to quit once. Prevents us from canceling the quit
-  // call if the sketch is held up for some reason.
+  // call if the sketch is held up for some reason, like an exception that's
+  // managed to put the sketch in a bad state.
   static boolean attemptedQuit;
 
 
@@ -57,39 +56,6 @@ public class ThinkDifferent {
     if (application == null) {
       application = Application.getApplication();
     }
-//    if (adapter == null) {
-//      adapter = new ThinkDifferent();  //base);
-//    }
-
-    // Keeping these around in case we decide we want to add generic handlers
-    // for these other features. Not sure how this affects JavaFX.
-    /*
-    application.setAboutHandler(new AboutHandler() {
-      public void handleAbout(AboutEvent ae) {
-        new About(null);
-      }
-    });
-
-    application.setPreferencesHandler(new PreferencesHandler() {
-      public void handlePreferences(PreferencesEvent arg0) {
-        base.handlePrefs();
-      }
-    });
-
-    application.setOpenFileHandler(new OpenFilesHandler() {
-      public void openFiles(OpenFilesEvent event) {
-        for (File file : event.getFiles()) {
-          base.handleOpen(file.getAbsolutePath());
-        }
-      }
-    });
-
-    application.setPrintFileHandler(new PrintFilesHandler() {
-      public void printFiles(PrintFilesEvent event) {
-        // TODO not yet implemented
-      }
-    });
-    */
 
     application.setQuitHandler(new QuitHandler() {
       public void handleQuitRequestWith(QuitEvent event, QuitResponse response) {
@@ -102,27 +68,10 @@ public class ThinkDifferent {
         }
       }
     });
-
-    /*
-    // Set the menubar to be used when nothing else is open.
-    JMenuBar defaultMenuBar = new JMenuBar();
-    JMenu fileMenu = buildFileMenu(base);
-    defaultMenuBar.add(fileMenu);
-    // This is kind of a gross way to do this, but the alternatives? Hrm.
-    Base.defaultFileMenu = fileMenu;
-
-//    if (PApplet.javaVersion <= 1.6f) {  // doesn't work on Oracle's Java
-    try {
-      application.setDefaultMenuBar(defaultMenuBar);
-
-    } catch (Exception e) {
-      e.printStackTrace();  // oh well, never mind
-    }
-    */
   }
 
 
-  static void setIconImage(Image image) {
+  static public void setIconImage(Image image) {
     application.setDockIconImage(image);
   }
 }

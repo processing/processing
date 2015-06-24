@@ -23,10 +23,10 @@
 
 package processing.opengl;
 
-import java.awt.Canvas;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.PathIterator;
@@ -36,9 +36,6 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-//import java.util.concurrent.CountDownLatch;
-
-
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -50,10 +47,6 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilitiesImmutable;
 import com.jogamp.opengl.GLContext;
 import com.jogamp.opengl.GLDrawable;
-//import javax.media.opengl.GLEventListener;
-//import javax.media.opengl.GLFBODrawable;
-import com.jogamp.opengl.GLProfile;
-//import javax.media.opengl.awt.GLCanvas;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUtessellator;
@@ -64,17 +57,10 @@ import processing.core.PGraphics;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
-//import com.jogamp.newt.awt.NewtCanvasAWT;
-//import com.jogamp.newt.opengl.GLWindow;
-//import com.jogamp.opengl.FBObject;
-
 
 public class PJOGL extends PGL {
   // OpenGL profile to use (2, 3 or 4)
-  public static int PROFILE = 2;
-
-  // Enables/disables Retina support on OSX
-  public static boolean RETINA = false;
+  public static int profile = 2;
 
   // The two windowing toolkits available to use in JOGL:
   public static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
@@ -92,12 +78,6 @@ public class PJOGL extends PGL {
 
   /** The rendering context (holds rendering state info) */
   public GLContext context;
-
-  /** The canvas where OpenGL rendering takes place */
-  public Canvas canvas;
-
-  /** Selected GL profile */
-  public static GLProfile profile;
 
   // ........................................................
 
@@ -1193,7 +1173,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected void enableTexturing(int target) {
-    if (PROFILE == 2) enable(target);
+    if (profile == 2) enable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = true;
     } else if (target == TEXTURE_RECTANGLE) {
@@ -1204,7 +1184,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected void disableTexturing(int target) {
-    if (PROFILE == 2) disable(target);
+    if (profile == 2) disable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = false;
     } else if (target == TEXTURE_RECTANGLE) {
@@ -1213,16 +1193,34 @@ public class PJOGL extends PGL {
   }
 
 
+  /**
+   * Convenience method to get a legit FontMetrics object. Where possible,
+   * override this any renderer subclass so that you're not using what's
+   * returned by getDefaultToolkit() to get your metrics.
+   */
+  @SuppressWarnings("deprecation")
+  private FontMetrics getFontMetrics(Font font) {  // ignore
+    return Toolkit.getDefaultToolkit().getFontMetrics(font);
+  }
+
+
+  /**
+   * Convenience method to jump through some Java2D hoops and get an FRC.
+   */
+  private FontRenderContext getFontRenderContext(Font font) {  // ignore
+    return getFontMetrics(font).getFontRenderContext();
+  }
+
 
   @Override
   protected int getFontAscent(Object font) {
-    return pg.getFontMetrics((Font) font).getAscent();
+    return getFontMetrics((Font) font).getAscent();
   }
 
 
   @Override
   protected int getFontDescent(Object font) {
-    return pg.getFontMetrics((Font) font).getDescent();
+    return getFontMetrics((Font) font).getDescent();
   }
 
 
@@ -1230,7 +1228,7 @@ public class PJOGL extends PGL {
   protected int getTextWidth(Object font, char[] buffer, int start, int stop) {
     // maybe should use one of the newer/fancier functions for this?
     int length = stop - start;
-    FontMetrics metrics = pg.getFontMetrics((Font) font);
+    FontMetrics metrics = getFontMetrics((Font) font);
     return metrics.charsWidth(buffer, start, length);
   }
 
@@ -1243,7 +1241,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected String[] loadVertexShader(String filename, int version) {
-    if (2 < PROFILE && version < 150) {
+    if (2 < profile && version < 150) {
       String[] fragSrc0 = pg.parent.loadStrings(filename);
       return convertFragmentSource(fragSrc0, version, 150);
     } else {
@@ -1254,7 +1252,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected String[] loadFragmentShader(String filename, int version) {
-    if (2 < PROFILE && version < 150) {
+    if (2 < profile && version < 150) {
       String[] vertSrc0 = pg.parent.loadStrings(filename);
       return convertVertexSource(vertSrc0, version, 150);
     } else {
@@ -1266,7 +1264,7 @@ public class PJOGL extends PGL {
   @Override
   protected String[] loadFragmentShader(URL url, int version) {
     try {
-      if (2 < PROFILE && version < 150) {
+      if (2 < profile && version < 150) {
         String[] fragSrc0 = PApplet.loadStrings(url.openStream());
         return convertFragmentSource(fragSrc0, version, 150);
       } else {
@@ -1282,7 +1280,7 @@ public class PJOGL extends PGL {
   @Override
   protected String[] loadVertexShader(URL url, int version) {
     try {
-      if (2 < PROFILE && version < 150) {
+      if (2 < profile && version < 150) {
         String[] vertSrc0 = PApplet.loadStrings(url.openStream());
         return convertVertexSource(vertSrc0, version, 150);
       } else {
@@ -1415,7 +1413,7 @@ public class PJOGL extends PGL {
 
     public FontOutline(char ch, Font font) {
       char textArray[] = new char[] { ch };
-      FontRenderContext frc = pg.getFontRenderContext(font);
+      FontRenderContext frc = getFontRenderContext(font);
       GlyphVector gv = font.createGlyphVector(frc, textArray);
       Shape shp = gv.getOutline();
       iter = shp.getPathIterator(null);

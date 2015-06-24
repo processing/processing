@@ -37,3 +37,6 @@ http://download.eclipse.org/eclipse/updates/4.4/R-4.4.1-201409250400/plugins/org
 . . . 
 
 Updated 19 January 2015 to fix Java 8 support. The previous versions gave an "Annotation processing got disabled, since it requires a 1.6 compliant JVM" error.
+
+Finally, the archive site contains additional jars for the 4.4.1 release, including the JDT Core Batch Compiler (ECJ):
+http://archive.eclipse.org/eclipse/downloads/drops4/R-4.4.1-201409250400/

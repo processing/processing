@@ -22,6 +22,7 @@ import javax.swing.text.Document;
 import org.eclipse.jdt.core.compiler.IProblem;
 
 import processing.core.PApplet;
+import processing.data.StringList;
 import processing.app.*;
 import processing.app.Toolkit;
 import processing.app.contrib.AvailableContribution;
@@ -272,7 +273,7 @@ public class JavaEditor extends Editor {
 
   public JMenu buildFileMenu() {
     //String appTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, false);
-    String appTitle = Language.text("toolbar.export_application");
+    String appTitle = Language.text("menu.file.export_application");
     JMenuItem exportApplication = Toolkit.newJMenuItemShift(appTitle, 'E');
     exportApplication.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -285,21 +286,21 @@ public class JavaEditor extends Editor {
 
 
   public JMenu buildSketchMenu() {
-    JMenuItem runItem = Toolkit.newJMenuItem(Language.text("toolbar.run"), 'R');
+    JMenuItem runItem = Toolkit.newJMenuItem(Language.text("menu.sketch.run"), 'R');
     runItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleRun();
       }
     });
 
-    JMenuItem presentItem = Toolkit.newJMenuItemShift(Language.text("toolbar.present"), 'R');
+    JMenuItem presentItem = Toolkit.newJMenuItemShift(Language.text("menu.sketch.present"), 'R');
     presentItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handlePresent();
       }
     });
 
-    JMenuItem stopItem = new JMenuItem(Language.text("toolbar.stop"));
+    JMenuItem stopItem = new JMenuItem(Language.text("menu.sketch.stop"));
     stopItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (isDebuggerEnabled()) {
@@ -527,7 +528,7 @@ public class JavaEditor extends Editor {
    *          are to be added
    * @return true if and only if any JMenuItems were added; false otherwise
    */
-  private boolean addLibReferencesToSubMenu(ArrayList<Library> libsList, JMenu subMenu) {
+  private boolean addLibReferencesToSubMenu(List<Library> libsList, JMenu subMenu) {
     boolean isItemAdded = false;
     Iterator<Library> iter = libsList.iterator();
     while (iter.hasNext()) {
@@ -743,7 +744,7 @@ public class JavaEditor extends Editor {
     showStopButton.setEnabled(Preferences.getBoolean("export.application.present"));
     showStopButton.setBorder(new EmptyBorder(3, 13 + indent, 6, 13));
 
-    final JCheckBox presentButton = new JCheckBox(Language.text("export.options.fullscreen"));
+    final JCheckBox presentButton = new JCheckBox(Language.text("export.options.present"));
     presentButton.setSelected(Preferences.getBoolean("export.application.present"));
     presentButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -825,20 +826,19 @@ public class JavaEditor extends Editor {
       platformName = "Linux (" + Base.getNativeBits() + "-bit)";
     }
 
-    final String javaPlatform =
-      PApplet.split(System.getProperty("java.version"), '.')[1];
     boolean embed = Preferences.getBoolean("export.application.embed_java");
     final String embedWarning =
       "<html><div width=\"" + divWidth + "\"><font size=\"2\">" +
 //      "<html><body><font size=2>" +
       "Embedding Java will make the " + platformName + " application " +
       "larger, but it will be far more likely to work. " +
-      "Users on other platforms will need to <a href=\"\">install Java 7</a>.";
+      "Users on other platforms will need to " +
+      "<a href=\"\">install Java " + PApplet.javaPlatform + "</a>.";
     final String nopeWarning =
       "<html><div width=\"" + divWidth + "\"><font size=\"2\">" +
 //      "<html><body><font size=2>" +
       "Users on all platforms will have to install the latest " +
-      "version of Java " + javaPlatform +
+      "version of Java " + PApplet.javaPlatform +
       " from <a href=\"\">http://java.com/download</a>. " +
       "<br/>&nbsp;";
       //"from <a href=\"http://java.com/download\">java.com/download</a>.";
@@ -1266,16 +1266,18 @@ public class JavaEditor extends Editor {
     // could also scan the text in the file to see if each import
     // statement is already in there, but if the user has the import
     // commented out, then this will be a problem.
-    String[] list = lib.getSpecifiedImports(); // ask the library for its imports
+    StringList list = lib.getImports(); // ask the library for its imports
     if (list == null) {
       // Default to old behavior and load each package in the primary jar
       list = Base.packageListFromClassPath(lib.getJarPath());
     }
 
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < list.length; i++) {
+//    for (int i = 0; i < list.length; i++) {
+    for (String item : list) {
       sb.append("import ");
-      sb.append(list[i]);
+//      sb.append(list[i]);
+      sb.append(item);
       sb.append(".*;\n");
     }
     sb.append('\n');

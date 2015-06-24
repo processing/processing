@@ -24,8 +24,7 @@
 
 package processing.core;
 
-// these are used for various methods (url opening, file selection, etc)
-// how many more can we remove?
+// used by link()
 import java.awt.Desktop;
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
@@ -44,11 +43,16 @@ import java.awt.image.BufferedImage;
 
 // used by loadImage() functions
 import javax.imageio.ImageIO;
+// allows us to remove our own MediaTracker code
 import javax.swing.ImageIcon;
+// used by selectInput(), selectOutput(), selectFolder()
 import javax.swing.JFileChooser;
-
+// used to present the fullScreen() warning about Spaces on OS X
+import javax.swing.JOptionPane;
 // used by desktopFile() method
 import javax.swing.filechooser.FileSystemView;
+
+// loadXML() error handling
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
@@ -102,25 +106,49 @@ import processing.opengl.*;
  * than working around legacy Java code.
  */
 public class PApplet implements PConstants {
-  /**
-   * Full name of the Java version (i.e. 1.5.0_11).
-   */
-  public static final String javaVersionName =
+  /** Full name of the Java version (i.e. 1.5.0_11). */
+  static public final String javaVersionName =
     System.getProperty("java.version");
+
+//  /** Short name of Java version, i.e. 1.8. */
+//  static public final String javaVersionShort =
+//    //javaVersionName.substring(0, 3);
+//    javaVersionName.substring(0, javaVersionName.indexOf(".", 2));
+//    // can't use this one, it's 1.8.0 and breaks things
+//    //javaVersionName.substring(0, javaVersionName.indexOf("_"));
+
+  static public final int javaPlatform =
+    PApplet.parseInt(PApplet.split(javaVersionName, '.')[1]);
+//  static {
+//    try {
+//      javaPlatform = PApplet.split(javaVersionName, '.')[1];
+//    } catch (Exception e) {
+//      javaPlatform = "8";  // set a default in case
+//    }
+//  }
 
   /**
    * Version of Java that's in use, whether 1.1 or 1.3 or whatever,
    * stored as a float.
    * <p>
-   * Note that because this is stored as a float, the values may
-   * not be <EM>exactly</EM> 1.3 or 1.4. Instead, make sure you're
-   * comparing against 1.3f or 1.4f, which will have the same amount
-   * of error (i.e. 1.40000001). This could just be a double, but
-   * since Processing only uses floats, it's safer for this to be a float
-   * because specifying a double with the preprocessor is awkward.
+   * Note that because this is stored as a float, the values may not be
+   * <EM>exactly</EM> 1.3 or 1.4. The PDE will make 1.8 or whatever into
+   * a float automatically, so outside the PDE, make sure you're comparing
+   * against 1.3f or 1.4f, which will have the same amount of error
+   * (i.e. 1.40000001). This could just be a double, but since Processing
+   * only uses floats, it's safer as a float because specifying a double
+   * (with this narrow case especially) with the preprocessor is awkward.
+   * <p>
+   * @deprecated Java 10 is around the corner. Use javaPlatform when you need
+   * a number for comparisons, i.e. "if (javaPlatform >= 7)".
    */
+  @Deprecated
   public static final float javaVersion =
-    new Float(javaVersionName.substring(0, 3)).floatValue();
+    new Float(javaVersionName.substring(0, 3));
+//  public static final float javaVersion =
+//    new Float(javaVersionName.substring(0, javaVersionName.indexOf(".", 2))).floatValue();
+//  // Making this a String in 3.0, in anticipation of Java 10
+//  public static final String javaVersion = "1." + javaPlatform;
 
   /**
    * Current platform in use, one of the
@@ -229,7 +257,7 @@ public class PApplet implements PConstants {
    * true if no size() command has been executed. This is used to wait until
    * a size has been set before placing in the window and showing it.
    */
-  public boolean defaultSize;
+//  public boolean defaultSize;
 
 //  /** Storage for the current renderer size to avoid re-allocation. */
 //  Dimension currentSize = new Dimension();
@@ -289,6 +317,7 @@ public class PApplet implements PConstants {
    * <b>size()</b> is called.
    *
    * ( end auto-generated )
+   *
    * @webref environment
    * @see PApplet#width
    * @see PApplet#size(int, int)
@@ -296,14 +325,49 @@ public class PApplet implements PConstants {
   public int height = DEFAULT_HEIGHT;
 
   /**
-   * Width of the pixels in this drawing surface
-   * (takes pixelDensity into account).
+   * ( begin auto-generated from pixelWidth.xml )
+   *
+   * When <b>pixelDensity(2)</d> is used to make use of a high resolution
+   * display (called a Retina display on OS X or high-dpi on Windows and
+   * Linux), the width and height of the sketch do not change, but the
+   * number of pixels is doubled. As a result, all operations that use pixels
+   * (like <b>loadPixels()</b>, <b>get()</b>, <b>set()</b>, etc.) happen
+   * in this doubled space. As a convenience, the variables <b>pixelWidth</b>
+   * and <b>pixelHeight<b> hold the actual width and height of the sketch
+   * in pixels. This is useful for any sketch that uses the <b>pixels[]</b>
+   * array, for instance, because the number of elements in the array will
+   * be <b>pixelWidth*pixelHeight</b>, not <b>width*height</b>.
+   *
+   * ( end auto-generated )
+   *
+   * @webref environment
+   * @see PApplet#pixelWidth
+   * @see pixelDensity()
+   * @see displayDensity()
    */
   public int pixelWidth;
 
+
   /**
-   * Height of the pixels in this drawing surface
-   * (takes pixelDensity into account).
+   * ( begin auto-generated from pixelHeight.xml )
+   *
+   * When <b>pixelDensity(2)</d> is used to make use of a high resolution
+   * display (called a Retina display on OS X or high-dpi on Windows and
+   * Linux), the width and height of the sketch do not change, but the
+   * number of pixels is doubled. As a result, all operations that use pixels
+   * (like <b>loadPixels()</b>, <b>get()</b>, <b>set()</b>, etc.) happen
+   * in this doubled space. As a convenience, the variables <b>pixelWidth</b>
+   * and <b>pixelHeight<b> hold the actual width and height of the sketch
+   * in pixels. This is useful for any sketch that uses the <b>pixels[]</b>
+   * array, for instance, because the number of elements in the array will
+   * be <b>pixelWidth*pixelHeight</b>, not <b>width*height</b>.
+   *
+   * ( end auto-generated )
+   *
+   * @webref environment
+   * @see PApplet#pixelHeight
+   * @see pixelDensity()
+   * @see displayDensity()
    */
   public int pixelHeight;
 
@@ -444,7 +508,7 @@ public class PApplet implements PConstants {
    * across platforms and input methods.
    */
   @Deprecated
-  public boolean firstMouse;
+  public boolean firstMouse = true;
 
   /**
    * ( begin auto-generated from mouseButton.xml )
@@ -643,10 +707,10 @@ public class PApplet implements PConstants {
    */
   public float frameRate = 10;
 
-  protected boolean looping;
+  protected boolean looping = true;
 
   /** flag set to true when a redraw is asked for by the user */
-  protected boolean redraw;
+  protected boolean redraw = true;
 
   /**
    * ( begin auto-generated from frameCount.xml )
@@ -745,72 +809,75 @@ public class PApplet implements PConstants {
   protected PSurface surface;
 
 
-  /** The frame containing this sketch (if any) */
+  /**
+   * A dummy frame to keep compatibility with 2.x code
+   * and encourage users to update.
+   */
   public Frame frame;
 
 
-  public Frame getFrame() {
-    return frame;
-  }
-
-
-  public void setFrame(Frame frame) {
-    this.frame = frame;
-  }
+//  public Frame getFrame() {
+//    return frame;
+//  }
+//
+//
+//  public void setFrame(Frame frame) {
+//    this.frame = frame;
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  /**
-   * Applet initialization. This can do GUI work because the components have
-   * not been 'realized' yet: things aren't visible, displayed, etc.
-   */
-  public void init() {
-//    println("init() called " + Integer.toHexString(hashCode()));
-    // using a local version here since the class variable is deprecated
-//    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-//    screenWidth = screen.width;
-//    screenHeight = screen.height;
-
-    defaultSize = true;
-    finished = false; // just for clarity
-
-    // this will be cleared by draw() if it is not overridden
-    looping = true;
-    redraw = true;  // draw this guy at least once
-    firstMouse = true;
-
-    // calculated dynamically on first call
-//    // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
-//    // inside runSketch(), but if this sketch takes care of calls to init()
-//    // when PApplet.main() is not used (i.e. it's in a Java application).
-//    // THe path needs to be set here so that loadXxxx() functions work.
-//    if (sketchPath == null) {
-//      sketchPath = calcSketchPath();
-//    }
-
-    // set during Surface.initFrame()
-//    // Figure out the available display width and height.
-//    // No major problem if this fails, we have to try again anyway in
-//    // handleDraw() on the first (== 0) frame.
-//    checkDisplaySize();
-
-//    // Set the default size, until the user specifies otherwise
-//    int w = sketchWidth();
-//    int h = sketchHeight();
-//    defaultSize = (w == DEFAULT_WIDTH) && (h == DEFAULT_HEIGHT);
+//  /**
+//   * Applet initialization. This can do GUI work because the components have
+//   * not been 'realized' yet: things aren't visible, displayed, etc.
+//   */
+//  public void init() {
+////    println("init() called " + Integer.toHexString(hashCode()));
+//    // using a local version here since the class variable is deprecated
+////    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+////    screenWidth = screen.width;
+////    screenHeight = screen.height;
 //
-//    g = makeGraphics(w, h, sketchRenderer(), null, true);
-//    // Fire component resize event
-//    setSize(w, h);
-//    setPreferredSize(new Dimension(w, h));
+//    defaultSize = true;
+//    finished = false; // just for clarity
 //
-//    width = g.width;
-//    height = g.height;
-
-    surface.startThread();
-  }
+//    // this will be cleared by draw() if it is not overridden
+//    looping = true;
+//    redraw = true;  // draw this guy at least once
+//    firstMouse = true;
+//
+//    // calculated dynamically on first call
+////    // Removed in 2.1.2, brought back for 2.1.3. Usually sketchPath is set
+////    // inside runSketch(), but if this sketch takes care of calls to init()
+////    // when PApplet.main() is not used (i.e. it's in a Java application).
+////    // THe path needs to be set here so that loadXxxx() functions work.
+////    if (sketchPath == null) {
+////      sketchPath = calcSketchPath();
+////    }
+//
+//    // set during Surface.initFrame()
+////    // Figure out the available display width and height.
+////    // No major problem if this fails, we have to try again anyway in
+////    // handleDraw() on the first (== 0) frame.
+////    checkDisplaySize();
+//
+////    // Set the default size, until the user specifies otherwise
+////    int w = sketchWidth();
+////    int h = sketchHeight();
+////    defaultSize = (w == DEFAULT_WIDTH) && (h == DEFAULT_HEIGHT);
+////
+////    g = makeGraphics(w, h, sketchRenderer(), null, true);
+////    // Fire component resize event
+////    setSize(w, h);
+////    setPreferredSize(new Dimension(w, h));
+////
+////    width = g.width;
+////    height = g.height;
+//
+//    surface.startThread();
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -886,6 +953,48 @@ public class PApplet implements PConstants {
     // Here's where size(), fullScreen(), smooth(N) and noSmooth() might
     // be called, conjuring up the demons of various rendering configurations.
     settings();
+
+    if (display == SPAN && platform == MACOSX) {
+      // Make sure "Displays have separate Spaces" is unchecked
+      // in System Preferences > Mission Control
+      Process p = exec("defaults", "read", "com.apple.spaces", "spans-displays");
+      BufferedReader outReader = createReader(p.getInputStream());
+      BufferedReader errReader = createReader(p.getErrorStream());
+      StringBuilder stdout = new StringBuilder();
+      StringBuilder stderr = new StringBuilder();
+      String line = null;
+      try {
+        while ((line = outReader.readLine()) != null) {
+          stdout.append(line);
+        }
+        while ((line = errReader.readLine()) != null) {
+          stderr.append(line);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      int resultCode = -1;
+      try {
+        resultCode = p.waitFor();
+      } catch (InterruptedException e) { }
+
+      String result = trim(stdout.toString());
+      if ("0".equals(result)) {
+        EventQueue.invokeLater(new Runnable() {
+          public void run() {
+            final String msg =
+              "To use fullScreen(SPAN), first turn off “Displays have separate spaces”\n" +
+              "in System Preferences \u2192 Mission Control. Then log out and log back in.";
+            JOptionPane.showMessageDialog(null, msg, "Apple's Defaults Stink",
+                                          JOptionPane.WARNING_MESSAGE);
+          }
+        });
+      } else if (!result.equals("1")) {
+        System.err.println("Could not check the status of “Displays have separate spaces.”");
+        System.err.format("Received message '%s' and result code %d.%n", trim(stderr.toString()), resultCode);
+      }
+    }
 
     insideSettings = false;
   }
@@ -989,7 +1098,20 @@ public class PApplet implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
+ /**
+  * ( begin auto-generated from displayDensity.xml )
+  *
+  * This function returns the number "2" if the screen is a high-density
+  * screen (called a Retina display on OS X or high-dpi on Windows and Linux)
+  * and a "1" if not. This information is useful for a program to adapt to
+  * run at double the pixel density on a screen that supports it.
+  *
+  * ( end auto-generated )
+  *
+  * @webref environment
+  * @see PApplet#pixelDensity()
+  * @see PApplet#size()
+  */
   public int displayDensity() {
     if (display == SPAN) {
       // walk through all displays, use lowest common denominator
@@ -1003,7 +1125,9 @@ public class PApplet implements PConstants {
     return displayDensity(display);
   }
 
-
+ /**
+  * @param display the display number to check
+  */
   static public int displayDensity(int display) {
     if (PApplet.platform == PConstants.MACOSX) {
       // This should probably be reset each time there's a display change.
@@ -1842,6 +1966,7 @@ public class PApplet implements PConstants {
     if (width != this.width ||
         height != this.height ||
         !renderer.equals(this.renderer)) {
+      //println(width, height, renderer, this.width, this.height, this.renderer);
       if (insideSettings("size", width, height, renderer)) {
         this.width = width;
         this.height = height;
@@ -2200,105 +2325,110 @@ public class PApplet implements PConstants {
 
   public void handleDraw() {
     //debug("handleDraw() " + g + " " + looping + " " + redraw + " valid:" + this.isValid() + " visible:" + this.isVisible());
-    if (canDraw()) {
-      if (!g.canDraw()) {
-        debug("g.canDraw() is false");
-        // Don't draw if the renderer is not yet ready.
-        // (e.g. OpenGL has to wait for a peer to be on screen)
-        return;
-      }
 
-      // Store the quality setting in case it's changed during draw and the
-      // drawing context needs to be re-built before the next frame.
-      int pquality = g.smooth;
+    // canDraw = g != null && (looping || redraw);
+    if (g == null) return;
+    if (!looping && !redraw) return;
+//    System.out.println("looping/redraw = " + looping + " " + redraw);
 
-      if (insideDraw) {
-        System.err.println("handleDraw() called before finishing");
-        System.exit(1);
-      }
+    // no longer in use by any of our renderers
+//    if (!g.canDraw()) {
+//      debug("g.canDraw() is false");
+//      // Don't draw if the renderer is not yet ready.
+//      // (e.g. OpenGL has to wait for a peer to be on screen)
+//      return;
+//    }
 
-      insideDraw = true;
-      g.beginDraw();
-      if (recorder != null) {
-        recorder.beginDraw();
-      }
+    // Store the quality setting in case it's changed during draw and the
+    // drawing context needs to be re-built before the next frame.
+//    int pquality = g.smooth;
 
-      long now = System.nanoTime();
+    if (insideDraw) {
+      System.err.println("handleDraw() called before finishing");
+      System.exit(1);
+    }
 
-      if (frameCount == 0) {
+    insideDraw = true;
+    g.beginDraw();
+    if (recorder != null) {
+      recorder.beginDraw();
+    }
+
+    long now = System.nanoTime();
+
+    if (frameCount == 0) {
         // 3.0a5 should be no longer needed; handled by PSurface
         //surface.checkDisplaySize();
 
 //        try {
         //println("Calling setup()");
-        setup();
+      setup();
         //println("Done with setup()");
 
 //        } catch (RendererChangeException e) {
 //          // Give up, instead set the new renderer and re-attempt setup()
 //          return;
 //        }
-        defaultSize = false;
+//      defaultSize = false;
 
-      } else {  // frameCount > 0, meaning an actual draw()
-        // update the current frameRate
-        double rate = 1000000.0 / ((now - frameRateLastNanos) / 1000000.0);
-        float instantaneousRate = (float) rate / 1000.0f;
-        frameRate = (frameRate * 0.9f) + (instantaneousRate * 0.1f);
-
-        if (frameCount != 0) {
-          handleMethods("pre");
-        }
-
-        // use dmouseX/Y as previous mouse pos, since this is the
-        // last position the mouse was in during the previous draw.
-        pmouseX = dmouseX;
-        pmouseY = dmouseY;
-
-        //println("Calling draw()");
-        draw();
-        //println("Done calling draw()");
-
-        // dmouseX/Y is updated only once per frame (unlike emouseX/Y)
-        dmouseX = mouseX;
-        dmouseY = mouseY;
-
-        // these are called *after* loop so that valid
-        // drawing commands can be run inside them. it can't
-        // be before, since a call to background() would wipe
-        // out anything that had been drawn so far.
-        dequeueEvents();
-
-        handleMethods("draw");
-
-        redraw = false;  // unset 'redraw' flag in case it was set
-        // (only do this once draw() has run, not just setup())
-      }
-      g.endDraw();
-
-      if (pquality != g.smooth) {
-        surface.setSmooth(g.smooth);
-      }
-
-      if (recorder != null) {
-        recorder.endDraw();
-      }
-      insideDraw = false;
+    } else {  // frameCount > 0, meaning an actual draw()
+      // update the current frameRate
+      double rate = 1000000.0 / ((now - frameRateLastNanos) / 1000000.0);
+      float instantaneousRate = (float) (rate / 1000.0);
+      frameRate = (frameRate * 0.9f) + (instantaneousRate * 0.1f);
 
       if (frameCount != 0) {
-        handleMethods("post");
+        handleMethods("pre");
       }
 
-      frameRateLastNanos = now;
-      frameCount++;
+      // use dmouseX/Y as previous mouse pos, since this is the
+      // last position the mouse was in during the previous draw.
+      pmouseX = dmouseX;
+      pmouseY = dmouseY;
+
+        //println("Calling draw()");
+      draw();
+        //println("Done calling draw()");
+
+      // dmouseX/Y is updated only once per frame (unlike emouseX/Y)
+      dmouseX = mouseX;
+      dmouseY = mouseY;
+
+      // these are called *after* loop so that valid
+      // drawing commands can be run inside them. it can't
+      // be before, since a call to background() would wipe
+      // out anything that had been drawn so far.
+      dequeueEvents();
+
+      handleMethods("draw");
+
+      redraw = false;  // unset 'redraw' flag in case it was set
+      // (only do this once draw() has run, not just setup())
     }
+    g.endDraw();
+
+//    if (pquality != g.smooth) {
+//      surface.setSmooth(g.smooth);
+//    }
+
+    if (recorder != null) {
+      recorder.endDraw();
+    }
+    insideDraw = false;
+
+    if (frameCount != 0) {
+      handleMethods("post");
+    }
+
+    frameRateLastNanos = now;
+    frameCount++;
   }
 
 
-  /** Not official API, not guaranteed to work in the future. */
-  public boolean canDraw() {
-    return g != null && (looping || redraw);
-  }
+//  /** Not official API, not guaranteed to work in the future. */
+//  public boolean canDraw() {
+//    return g != null && (looping || redraw);
+//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -2393,6 +2523,11 @@ public class PApplet implements PConstants {
     if (looping) {
       looping = false;
     }
+  }
+
+
+  public boolean isLooping() {
+    return looping;
   }
 
 
@@ -3219,6 +3354,9 @@ public class PApplet implements PConstants {
   }
 
 
+  static String openLauncher;
+
+
   /**
    * ( begin auto-generated from launch.xml )
    *
@@ -3237,7 +3375,8 @@ public class PApplet implements PConstants {
    * <br/> <br/>
    * If args is a String (not an array), then it can only be a single file or
    * application with no parameters. It's not the same as executing that
-   * String using a shell. For instance, open("jikes -help") will not work properly.
+   * String using a shell. For instance, launch("javac -help") will not work
+   * properly.
    * <br/> <br/>
    * This function behaves differently on each platform. On Windows, the
    * parameters are sent to the Windows shell via "cmd /c". On Mac OS X, the
@@ -3255,21 +3394,6 @@ public class PApplet implements PConstants {
    * @webref input:files
    * @param filename name of the file
    * @usage Application
-   */
-  static public void launch(String filename) {
-    launch(filename);
-  }
-
-
-  static String openLauncher;
-
-  /**
-   * Launch a process using the platform's shell. This version uses an array
-   * to make it easier to deal with spaces in the individual elements.
-   * (This avoids the situation of trying to put single or double quotes
-   * around different bits).
-   *
-   * @param args list of commands passed to the command line
    */
   static public Process launch(String... args) {
     String[] params = null;
@@ -5622,7 +5746,7 @@ public class PApplet implements PConstants {
       return new XML(createReader(filename), options);
 
       // can't use catch-all exception, since it might catch the
-      // RuntimException about the incorrect case sensitivity
+      // RuntimeException about the incorrect case sensitivity
     } catch (IOException e) {
       throw new RuntimeException(e);
 
@@ -9680,7 +9804,7 @@ public class PApplet implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  void frameMoved(int x, int y) {
+  public void frameMoved(int x, int y) {
     if (!fullScreen) {
       System.err.println(EXTERNAL_MOVE + " " + x + " " + y);
       System.err.flush();  // doesn't seem to help or hurt
@@ -9688,8 +9812,7 @@ public class PApplet implements PConstants {
   }
 
 
-  void frameResized(int w, int h) {
-
+  public void frameResized(int w, int h) {
   }
 
 
@@ -9818,7 +9941,7 @@ public class PApplet implements PConstants {
 //
 //  /**
 //   * Moving this to the EDT for 3.0a6 because that's the proper thing to do
-//   * when messing with AWT/Swing components. And boy, do we mess with 'em.
+//   * when messing with Swing components. But mostly we're AWT, so who knows.
 //   */
 //  static protected void runSketchEDT(final String[] args,
 //                                     final PApplet constructedSketch) {
@@ -9952,11 +10075,9 @@ public class PApplet implements PConstants {
         final String td = "processing.core.ThinkDifferent";
         Class<?> thinkDifferent =
           Thread.currentThread().getContextClassLoader().loadClass(td);
-
         Method method =
           thinkDifferent.getMethod("init", new Class[] { PApplet.class });
         method.invoke(null, new Object[] { sketch });
-
       } catch (Exception e) {
         e.printStackTrace();  // That's unfortunate
       }
@@ -10003,9 +10124,10 @@ public class PApplet implements PConstants {
       sketch.windowColor = windowColor;
     }
 
-    PSurface surface = sketch.initSurface();
+    final PSurface surface = sketch.initSurface();
 //      sketch.initSurface(windowColor, displayIndex, fullScreen, spanDisplays);
 
+    /*
     // Wait until the applet has figured out its width. In a static mode app,
     // everything happens inside setup(), so this will be after setup() has
     // completed, and the empty draw() has set "finished" to true.
@@ -10018,6 +10140,7 @@ public class PApplet implements PConstants {
         //System.out.println("interrupt");
       }
     }
+    */
 
     if (present) {
       if (hideStop) {
@@ -10027,10 +10150,26 @@ public class PApplet implements PConstants {
     } else {
       surface.placeWindow(location, editorLocation);
     }
+
+//    EventQueue.invokeLater(new Runnable() {
+//      public void run() {
+
+    // Helps avoid this code being duplicated 2x per surface class.
+    // Andres is testing to make sure this doesn't cause trouble.
+    if (sketch.getGraphics().displayable()) {
+      surface.setVisible(true);
+    }
+
     // not always running externally when in present mode
-    if (external) {
+    if (sketch.external) {
       surface.setupExternalMessages();
     }
+
+    //sketch.init();
+    surface.startThread();
+
+//      }
+//    });
   }
 
 
@@ -10039,8 +10178,8 @@ public class PApplet implements PConstants {
     g = createPrimaryGraphics();
     surface = g.createSurface();
 
-    // if the PSurface calls setFrame() no need to create a fake frame
-    if (g.displayable() && frame == null) {
+    // Create fake Frame object to warn user about the changes
+    if (g.displayable()) {
       frame = new Frame() {
         @Override
         public void setResizable(boolean resizable) {
@@ -10060,9 +10199,31 @@ public class PApplet implements PConstants {
           surface.setTitle(title);
         }
 
+        @Override
+        public void setUndecorated(boolean ignored) {
+          throw new RuntimeException("'frame' has been removed from Processing 3, " +
+            "use fullScreen() to get an undecorated full screen frame");
+        }
+
+        // Can't override this one because it's called by Window's constructor
+        /*
+        @Override
+        public void setLocation(int x, int y) {
+          deprecationWarning("setLocation");
+          surface.setLocation(x, y);
+        }
+        */
+
+        @Override
+        public void setSize(int w, int h) {
+          deprecationWarning("setSize");
+          surface.setLocation(w, h);
+        }
+
         private void deprecationWarning(String method) {
           PGraphics.showWarning("Use surface." + method + "() instead of " +
                                 "frame." + method + " in Processing 3");
+          //new Exception(method).printStackTrace(System.out);
         }
       };
 
@@ -10073,7 +10234,7 @@ public class PApplet implements PConstants {
       surface.initOffscreen(this);  // for PDF/PSurfaceNone and friends
     }
 
-    init();
+//    init();
     return surface;
   }
 

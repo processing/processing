@@ -645,7 +645,7 @@ public class PdePreprocessor {
 
 
   public PreprocessorResult write(Writer out, String program,
-                                  String codeFolderPackages[])
+                                  StringList codeFolderPackages)
       throws SketchException, RecognitionException, TokenStreamException {
 
     // these ones have the .* at the end, since a class name might be at the end

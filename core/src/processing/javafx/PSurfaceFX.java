@@ -20,7 +20,7 @@
   Boston, MA  02111-1307  USA
 */
 
-package processing.core;
+package processing.javafx;
 
 //import java.awt.event.FocusEvent;
 //import java.awt.event.FocusListener;
@@ -50,6 +50,8 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import processing.core.*;
+
 
 public class PSurfaceFX implements PSurface {
   PApplet sketch;
@@ -65,6 +67,11 @@ public class PSurfaceFX implements PSurface {
     fx = graphics;
     canvas = new ResizableCanvas();
     fx.context = canvas.getGraphicsContext2D();
+  }
+
+
+  public Object getNative() {
+    return canvas;
   }
 
 
@@ -139,6 +146,10 @@ public class PSurfaceFX implements PSurface {
           }
         }
       });
+    }
+
+    public Stage getStage() {
+      return stage;
     }
 
     @Override
@@ -245,6 +256,11 @@ public class PSurfaceFX implements PSurface {
 //    if (stage != null) {
     stage.setResizable(resizable);
 //    }
+  }
+
+
+  public void setIcon(PImage icon) {
+    // TODO implement this in JavaFX
   }
 
 
@@ -386,6 +402,12 @@ public class PSurfaceFX implements PSurface {
   }
 
 
+  public void setLocation(int x, int y) {
+    stage.setX(x);
+    stage.setY(y);
+  }
+
+
   public void setSize(int width, int height) {
     //System.out.format("%s.setSize(%d, %d)%n", getClass().getSimpleName(), width, height);
     stage.setWidth(width);
@@ -450,7 +472,7 @@ public class PSurfaceFX implements PSurface {
           //System.out.println("handle(" + now + ") calling handleDraw()");
           sketch.handleDraw();
 
-          if (sketch.exitCalled) {
+          if (sketch.exitCalled()) {
             //sketch.exitActual();  // just calls System.exit()
             Platform.exit();  // version for safe JavaFX shutdown
           }

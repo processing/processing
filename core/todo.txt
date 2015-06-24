@@ -1,7 +1,67 @@
-0238 (3.0b1)
+0238 (3.0a11)
 X add note about headless exceptions that points to Github
 X resize children[] so that getChildren() returns a correctly-sized array
 X   https://github.com/processing/processing/issues/3347
+X show warning when display spanning is turned off with fullScreen(SPAN)
+X   defaults read com.apple.spaces spans-displays
+X   https://github.com/processing/processing/issues/3381
+X add javaPlatform variable (i.e. 7 or 8)
+X clear() seems to be broken (maybe related to 3317)
+X   https://github.com/processing/processing/issues/3378
+X PGraphic ignores PNG transparency (regression from 3.0a5)
+X   https://github.com/processing/processing/issues/3317
+X   (same issue as 3378)
+X move error messages out of PConstants (into PApplet? PGraphics?) 
+o replace sketchXxxx() methods with another mechanism?
+o   and an internal dictionary that stores them all?
+o   intParam(), stringParam() and setParam()? 
+o   or sketchInt() or settingsInt()?
+o   surface.size(), surface.noSmooth()... just like PGraphics methods?
+o   make final to move folks away from these?
+o   or is this a bad move until we've sorted out Android?
+X   HashMap sucks b/c we'd have to cast everything
+X   doesn't help to have intParam() etc, too many types (5ish? OutputStream)
+X   just stick with the current setup
+X remove launch(String) since it was calling itself, and anachronistic
+X sketches with new fullScreen() method should grab focus by default
+X   https://github.com/processing/processing/issues/3380
+X sketches not getting focus with Java2D
+X   https://github.com/processing/processing/issues/3389
+X draw() executes twice when noLoop() called in setup()
+X   https://github.com/processing/processing/issues/3310
+X   broken since 3.0a7, but not in 3.0a5
+o pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
+X   nixed by Casey for now
+X surface.setXxx() handling
+X   https://github.com/processing/processing/issues/3388
+X   setResizable, setVisible, setTitle
+X   setIconImage(java.awt.Image) -> take a PImage instead?
+o   removeNotify(), addNotify()
+X   setUndecorated(boolean)
+X   setting menubar will be surface-specific
+X   setLocation(int, int) and setSize(int, int)
+X add the "don't use this" warning to the JFrame in PSurfaceAWT
+X ArithmeticException: / by zero when using fonts opened with loadFont()
+X   https://github.com/processing/processing/issues/3413
+X SVG briefly broken for Java2D
+X   https://github.com/processing/processing/issues/3417
+
+threading headaches
+X sketch not always showing with empty draw()
+X   https://github.com/processing/processing/issues/3363
+X static mode broken with Java2D on Windows and Linux
+X   https://github.com/processing/processing/issues/3315
+X sketch sometimes doesn't show with noLoop() on Linux
+X   https://github.com/processing/processing/issues/3316
+X Window never shows with exported application on 64-bit Linux
+X   https://github.com/processing/processing/issues/3303
+X present mode is now broken
+o still some spinning when sketches break
+X   fixed because we're back off the EDT
+o settings() is probably not showing exceptions since we're back to the EDT
+o   can't call handleSettings() on the anim thread since it sets the surface
+o   so maybe the first part is on the EDT, but other threads run this stuff
+X remove the init() method
 
 cleaning
 o possible addition for 'implementation' variable
@@ -30,66 +90,47 @@ X ortho function is broken
 X   https://github.com/processing/processing/issues/1278
 X errors with loading SVGs in P3D/P2D
 X   https://github.com/processing/processing/issues/3379
+X sketch window briefly appears on top left corner when using OpenGL
+X   https://github.com/processing/processing/issues/3308
+
+contribs
+X Fix NullPointerException in DepthSorter
+X   https://github.com/processing/processing/pull/3410
 
 fixed earlier
 X sketch window is not placed at correct location when running a second time
 X   https://github.com/processing/processing/issues/3125
 X full screen needs to ignore prev location setting for frame?
 X   https://github.com/processing/processing/issues/3305
+X save() and saveFrame() with 2X renderers fails
+X   https://github.com/processing/processing/issues/3255
+X NPE when using image() created with createGraphics(PGraphicsRetina2D)
+X   https://github.com/processing/processing/issues/2510
+X Closing OpenGL sketch from the PDE doesn't stop java.exe process
+X   https://github.com/processing/processing/issues/2335
+
+
+docs
+_ note that full screen and present are now different
+_   on Export to Application, this has an impact
+_ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 beta
-_ show warning when display spanning is turned off (breaks fullScreen(SPAN)?)
-_   defaults read com.apple.spaces spans-displays
-_   https://github.com/processing/processing/issues/3381
-_ move error messages out of PConstants (into PApplet? PGraphics?) 
-_ need to be able to call pixelDensity(2) before beginDraw()
-_   add pixelDensity() method to PImage/PGraphics
-_   pixelDensity(2) does: pixelWidth = width; width /= 2; pixelDensity = 2;
-_   this works for both PGraphics and images (though they're a little backwards)
-_   for PGraphics it comes early enough
-_ pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
-_ NPE when using image() created with createGraphics(PGraphicsRetina2D)
-_   https://github.com/processing/processing/issues/2510
-_ surface.setXxx() handling
-_   https://github.com/processing/processing/issues/3388
-_   setResizable, setVisible, setTitle
-_   setIconImage(java.awt.Image) -> take a PImage instead?
-_   removeNotify(), addNotify(), setUndecorated(boolean)
-_   setting menubar will be surface-specific
-_   setLocation(int, int) and setSize(int, int)
-_ replace sketchXxxx() methods with another mechanism?
-_   and an internal dictionary that stores them all?
-_   intParam(), stringParam() and setParam()? 
-_   or sketchInt() or settingsInt()?
-_   surface.size(), surface.noSmooth()... just like PGraphics methods?
-_   make final to move folks away from these?
-_   or is this a bad move until we've sorted out Android?
-_   HashMap sucks b/c we'd have to cast everything
-_   doesn't help to have intParam() etc, too many types (5ish? OutputStream)
-_   just stick with the current setup
-_ update wiki/docs to say "don't override sketchXxxx() methods"
-_ add the "don't use this" warning to the JFrame in PSurfaceAWT
-_ sketches with new fullScreen() method should grab focus by default
-_   https://github.com/processing/processing/issues/3380
-_ draw() executes twice when noLoop() called in setup()
-_   https://github.com/processing/processing/issues/3310
-_   broken since 3.0a7, but not in 3.0a5
-_ static mode broken with Java2D on Windows and Linux
-_   https://github.com/processing/processing/issues/3315
-_ sketch sometimes doesn't show with noLoop() on Linux
-_   https://github.com/processing/processing/issues/3316
-_ sketch not always showing with empty draw()
-_   https://github.com/processing/processing/issues/3363
-_ PGraphic ignores PNG transparency (regression from 3.0a5)
-_   https://github.com/processing/processing/issues/3317
-_ clear() seems to be broken (maybe related to 3317)
-_   https://github.com/processing/processing/issues/3378
-_ sketch window briefly appears on top left corner when using OpenGL
-_   https://github.com/processing/processing/issues/3308
+X move Java2D and JavaFX classes to their own packages
+_   make notes about this in the README
+_ run only the necessary pieces on the EDT
+_   in part because FX doesn't even use the EDT
+_   re-check the Linux frame visibility stuff
+_ try using Frame instead of JFrame
+_   default sketch location using insets incorrectly
+_   use the BufferStrategy directly from the Frame object?
+_     might fix performance issues w/ Presentation mode
 
 
 javafx
+_ Error on size() when using FX2D due to stage inset issues
+_   https://github.com/processing/processing/issues/3412
 _ static mode sketches (draw once and halt w/o closing window)
 _ fix display handling, line up the device order with AWT
 _   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
@@ -99,7 +140,8 @@ _   https://github.com/processing/processing/issues/3290
 _   what's the way to do this after the deprecation?
 _   if this is going to be the default renderer, has to be ironed out
 _ displayWidth, displayHeight, full screen, display number
-_ present mode (stage in the center, clear the rest of the screen)
+_ present mode not working at all
+_   stage in the center, clear the rest of the screen
 _ createGraphics() should probably create PGraphicsJava2D
 _   or is Canvas specific to the PGraphics, and we get another Context2D?
 _   http://docs.oracle.com/javafx/2/api/javafx/scene/canvas/Canvas.html
@@ -115,12 +157,13 @@ _   move loadImage() into PGraphics, with AWT version the default?
 _   or pass createImage() through to renderer?
 _ implement frameRate()
 _ implement external messages (moving the window)
+_ implement PSurfaceFX.setIcon()
+_ javafx not supported with ARM (so we're screwed on raspberry pi)
+_   https://www.linkedin.com/pulse/oracle-just-removed-javafx-support-arm-jan-snelders
 
 
 opengl
 _ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
-_ Closing OpenGL sketch from the PDE doesn't stop java.exe process
-_   https://github.com/processing/processing/issues/2335
 _ add attrib() method
 _   https://github.com/processing/processing/issues/2963
 _   andres needs input on how the api works
@@ -130,6 +173,8 @@ _   https://github.com/processing/processing/issues/3339
 
 
 opengl questions
+_ issues with how JOGL handles window layout/sizing
+_   https://github.com/processing/processing/issues/3401
 _ exitCalled() and exitActual made public by Andres, breaks Python
 _   also not API we want to expose, so sort this out
 _   or maybe we're fine b/c now FX2D needs it as well
@@ -158,6 +203,11 @@ _   https://github.com/processing/processing/issues/3381
 
 
 graphics
+_ need to be able to call pixelDensity(2) before beginDraw()
+_   add pixelDensity() method to PImage/PGraphics
+_   pixelDensity(2) does: pixelWidth = width; width /= 2; pixelDensity = 2;
+_   this works for both PGraphics and images (though they're a little backwards)
+_   for PGraphics it comes early enough
 _ should the re-alloc of the drawing surface happen in beginDraw()
 _   that way it won't blit to the screen until we have a fresh redraw?
 _   otherwise it'll also be resizing on another thread.. badness
@@ -166,8 +216,6 @@ _ createGraphics() currently broken in Java2D
 _ size() command not working to do a resize
 _   need a programmatic way to set size
 _ deal with applySettings() change (maybe not a problem?)
-_ textAlign(RIGHT) including spaces at the end of each line
-_   https://github.com/processing/processing/issues/3028
 _ check on performance of the new EDT setup
 _ present mode is 30-40% slower than windowed
 _   w/ this example: https://github.com/processing/processing/issues/2423
@@ -217,9 +265,6 @@ _   at least with the Java2D renderer
 retina/hidpi
 _ How do images behave when pixelDensity(2) is set?
 _   https://github.com/processing/processing/issues/3364
-_ save() and saveFrame() with 2X renderers fails
-_   https://github.com/processing/processing/issues/3255
-_ saveFrame() with retina render is making black images
 _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
 _ retina sketches slow to start

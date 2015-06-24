@@ -106,12 +106,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
   private Point sketchWindowLocation;
 
   // undo fellers
-  private JMenuItem undoItem, redoItem, copyItems, cutItems;
+  private JMenuItem undoItem, redoItem;
   protected UndoAction undoAction;
   protected RedoAction redoAction;
-  /** the currently selected tab's undo manager */
-  protected CopyAction copyAction;
   protected CutAction cutAction;
+  protected CopyAction copyAction;
+  protected CopyAsHtmlAction copyAsHtmlAction;
+  protected PasteAction pasteAction;
+  /** Menu Actions updated on the opening of the edit menu. */
+  protected List<UpdatableAction> editMenuUpdatable = new ArrayList<UpdatableAction>();
+
+  /** The currently selected tab's undo manager */
   private UndoManager undo;
   // used internally for every edit. Groups hotkey-event text manipulations and
   // groups  multi-character inputs into a single undos.
@@ -870,45 +875,34 @@ public abstract class Editor extends JFrame implements RunnerListener {
     JMenu menu = new JMenu(Language.text("menu.edit"));
     JMenuItem item;
 
-    undoItem = Toolkit.newJMenuItem(Language.text("menu.edit.undo"), 'Z');
-    undoItem.addActionListener(undoAction = new UndoAction());
+    undoItem = Toolkit.newJMenuItem(undoAction = new UndoAction(), 'Z');
     menu.add(undoItem);
 
     // Gotta follow them interface guidelines
     // http://code.google.com/p/processing/issues/detail?id=363
     if (Base.isWindows()) {
-      redoItem = Toolkit.newJMenuItem(Language.text("menu.edit.redo"), 'Y');
+      redoItem = Toolkit.newJMenuItem(redoAction = new RedoAction(), 'Y');
     } else {  // Linux and OS X
-      redoItem = Toolkit.newJMenuItemShift(Language.text("menu.edit.redo"), 'Z');
+      redoItem = Toolkit.newJMenuItemShift(redoAction = new RedoAction(), 'Z');
     }
-    redoItem.addActionListener(redoAction = new RedoAction());
     menu.add(redoItem);
 
     menu.addSeparator();
 
-    cutItems = Toolkit.newJMenuItem(Language.text("menu.edit.cut"), 'X');
-    cutItems.addActionListener(cutAction = new CutAction());
-    menu.add(cutItems);
-
-    copyItems = Toolkit.newJMenuItem(Language.text("menu.edit.copy"), 'C');
-    copyItems.addActionListener(copyAction = new CopyAction());
-    menu.add(copyItems);
-
-    item = Toolkit.newJMenuItemShift(Language.text("menu.edit.copy_as_html"), 'C');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleCopyAsHTML();
-        }
-      });
+    item = Toolkit.newJMenuItem(cutAction = new CutAction(), 'X');
+    editMenuUpdatable.add(cutAction);
     menu.add(item);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.paste"), 'V');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          textarea.paste();
-          sketch.setModified(true);
-        }
-      });
+    item = Toolkit.newJMenuItem(copyAction = new CopyAction(), 'C');
+    editMenuUpdatable.add(copyAction);
+    menu.add(item);
+
+    item = Toolkit.newJMenuItemShift(copyAsHtmlAction = new CopyAsHtmlAction(), 'C');
+    editMenuUpdatable.add(copyAsHtmlAction);
+    menu.add(item);
+
+    item = Toolkit.newJMenuItem(pasteAction = new PasteAction(), 'V');
+    editMenuUpdatable.add(pasteAction);
     menu.add(item);
 
     item = Toolkit.newJMenuItem(Language.text("menu.edit.select_all"), 'A');
@@ -997,60 +991,43 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     menu.add(item);
 
-    // TODO find next should only be enabled after a
-    // search has actually taken place
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.find_next"), 'G');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if (find != null) {
-            find.findNext();
-          }
-        }
-      });
+    UpdatableAction action;
+    item = Toolkit.newJMenuItem(action = new FindNextAction(), 'G');
+    editMenuUpdatable.add(action);
     menu.add(item);
 
-    item = Toolkit.newJMenuItemShift(Language.text("menu.edit.find_previous"), 'G');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if (find != null) {
-            find.findPrevious();
-          }
-        }
-      });
+    item = Toolkit.newJMenuItemShift(action = new FindPreviousAction(), 'G');
+    editMenuUpdatable.add(action);
     menu.add(item);
 
     // For Arduino and Mac, this should be command-E, but that currently conflicts with Export Applet
     //item = Toolkit.newJMenuItemAlt(Language.text("menu.edit.use_selection_for_find"), 'F');
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.use_selection_for_find"), 'E');
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if (find == null) {
-            find = new FindReplace(Editor.this);
-          }
-          find.setFindText(getSelectedText());
-        }
-      });
+    item = Toolkit.newJMenuItem(action = new SelectionForFindAction(), 'E');
+    editMenuUpdatable.add(action);
     menu.add(item);
 
     // Update copy/cut state on selection/de-selection
     menu.addMenuListener(new MenuListener() {
-
+      // UndoAction and RedoAction do this for themselves.
       @Override
       public void menuCanceled(MenuEvent e) {
-        copyItems.setEnabled(true);
-        cutItems.setEnabled(true);
+        for (UpdatableAction a : editMenuUpdatable) {
+          a.setEnabled(true);
+        }
       }
 
       @Override
       public void menuDeselected(MenuEvent e) {
-        copyItems.setEnabled(true);
-        cutItems.setEnabled(true);
+        for (UpdatableAction a : editMenuUpdatable) {
+          a.setEnabled(true);
+        }
       }
 
       @Override
       public void menuSelected(MenuEvent e) {
-        copyAction.updateCopyState();
-        cutAction.updateCutState();
+        for (UpdatableAction a : editMenuUpdatable) {
+          a.updateState();
+        }
       }
     });
     return menu;
@@ -1456,43 +1433,88 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  class CutAction extends AbstractAction {
-    public CutAction() {
-      super(Language.text("menu.edit.cut"));
-      this.setEnabled(false);
+  /**
+   * Subclass if you want to have setEnabled(canDo()); called when your menu
+   * is opened.
+   */
+  abstract class UpdatableAction extends AbstractAction {
+    public UpdatableAction(String name) {
+      super(name);
     }
 
+    abstract public boolean canDo();
+
+    public void updateState() {
+      setEnabled(canDo());
+    }
+  }
+
+
+  class CutAction extends UpdatableAction {
+    public CutAction() {
+      super(Language.text("menu.edit.cut"));
+    }
+
+    @Override
     public void actionPerformed(ActionEvent e) {
       handleCut();
     }
 
-    public void updateCutState() {
-      cutItems.setEnabled(canCut());
-    }
-
-    public boolean canCut() {
+    public boolean canDo() {
       return textarea.isSelectionActive();
     }
   }
 
-  class CopyAction extends AbstractAction {
+
+  class CopyAction extends UpdatableAction {
     public CopyAction() {
       super(Language.text("menu.edit.copy"));
-      this.setEnabled(false);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
-      textarea.copy();
+      handleCopy();
     }
 
-    public void updateCopyState() {
-      copyItems.setEnabled(canCopy());
-    }
-
-    public boolean canCopy() {
+    public boolean canDo() {
       return textarea.isSelectionActive();
     }
   }
+
+
+  class CopyAsHtmlAction extends UpdatableAction {
+    public CopyAsHtmlAction() {
+      super(Language.text("menu.edit.copy_as_html"));
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      handleCopyAsHTML();
+    }
+
+    public boolean canDo() {
+      return textarea.isSelectionActive();
+    }
+  }
+
+
+  class PasteAction extends UpdatableAction {
+    public PasteAction() {
+      super(Language.text("menu.edit.paste"));
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      textarea.paste();
+      sketch.setModified(true);
+    }
+
+    public boolean canDo() {
+      return getToolkit().getSystemClipboard()
+          .isDataFlavorAvailable(DataFlavor.stringFlavor);
+    }
+  }
+
 
   class UndoAction extends AbstractAction {
     public UndoAction() {
@@ -1584,9 +1606,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
         redoItem.setEnabled(true);
         String newRedoPresentationName = Language.text("menu.edit.redo");
         if (undo.getRedoPresentationName().equals("Redo addition")) {
-          newRedoPresentationName += " "+Language.text("menu.edit.action.addition");
+          newRedoPresentationName += " " + Language.text("menu.edit.action.addition");
         } else if (undo.getRedoPresentationName().equals("Redo deletion")) {
-          newRedoPresentationName += " "+Language.text("menu.edit.action.deletion");
+          newRedoPresentationName += " " + Language.text("menu.edit.action.deletion");
         }
         redoItem.setText(newRedoPresentationName);
         putValue(Action.NAME, newRedoPresentationName);
@@ -1599,6 +1621,56 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
   }
 
+
+  class FindNextAction extends UpdatableAction {
+    public FindNextAction() {
+      super(Language.text("menu.edit.find_next"));
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      if (find != null) find.findNext();
+    }
+
+    public boolean canDo() {
+      return find != null && find.canFindNext();
+    }
+  }
+
+
+  class FindPreviousAction extends UpdatableAction {
+    public FindPreviousAction() {
+      super(Language.text("menu.edit.find_previous"));
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      if (find != null) find.findPrevious();
+    }
+
+    public boolean canDo() {
+      return find != null && find.canFindNext();
+    }
+  }
+
+
+  class SelectionForFindAction extends UpdatableAction {
+    public SelectionForFindAction() {
+      super(Language.text("menu.edit.use_selection_for_find"));
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      if (find == null) {
+        find = new FindReplace(Editor.this);
+      }
+      find.setFindText(getSelectedText());
+    }
+
+    public boolean canDo() {
+      return textarea.isSelectionActive();
+    }
+  }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -1965,6 +2037,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  /**
+   * Implements Edit &rarr; Copy as HTML.
+   */
   public void handleCopyAsHTML() {
     textarea.copyAsHTML();
     statusNotice(Language.text("editor.status.copy_as_html"));
@@ -2962,7 +3037,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
    */
   class TextAreaPopup extends JPopupMenu {
     JMenuItem cutItem, copyItem, discourseItem, pasteItem,
-      selectAllItem, commUncommItem, incIndItem, decIndItem,
       referenceItem;
 
     public TextAreaPopup() {
@@ -2992,13 +3066,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
         });
       this.add(discourseItem);
 
-      item = new JMenuItem(Language.text("menu.edit.paste"));
-      item.addActionListener(new ActionListener() {
+      pasteItem = new JMenuItem(Language.text("menu.edit.paste"));
+      pasteItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             handlePaste();
           }
         });
-      this.add(item);
+      this.add(pasteItem);
 
       item = new JMenuItem(Language.text("menu.edit.select_all"));
       item.addActionListener(new ActionListener() {
@@ -3064,11 +3138,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //        discourseItem.setEnabled(false);
 ////        referenceItem.setEnabled(false);
 //      }
-      boolean active = textarea.isSelectionActive();
-      cutItem.setEnabled(active);
-      copyItem.setEnabled(active);
-      discourseItem.setEnabled(active);
 
+      // Centralize the checks for each item at the Action.
+//      boolean active = textarea.isSelectionActive();
+      cutItem.setEnabled(cutAction.canDo());
+      copyItem.setEnabled(copyAction.canDo());
+      discourseItem.setEnabled(copyAsHtmlAction.canDo());
+      pasteItem.setEnabled(pasteAction.canDo());
       referenceItem.setEnabled(referenceCheck(false) != null);
       super.show(component, x, y);
     }

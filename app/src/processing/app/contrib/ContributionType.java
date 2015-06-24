@@ -54,29 +54,32 @@ public enum ContributionType {
    * @return Mode for mode, Tool for tool, etc.
    */
   public String getTitle() {
-    String s = toString();
-    if (this == EXAMPLES)
-      return Character.toUpperCase(s.charAt(0))
-        + s.substring(1, s.indexOf('-') + 1)
-        + Character.toUpperCase(s.charAt(s.indexOf('-') + 1))
-        + s.substring(s.indexOf('-') + 2);
-    else
-      return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    String lower = toString();
+    return Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
   }
 
 
-  public String getFolderName() {
-    switch (this) {
-    case LIBRARY:
-      return "libraries";
-    case TOOL:
-      return "tools";
-    case MODE:
-      return "modes";
-    case EXAMPLES:
-      return "examples";
-    }
-    return null;  // should be unreachable
+//  public String getFolderName() {
+//    return toString();
+//    /*
+//    switch (this) {
+//    case LIBRARY:
+//      return "libraries";
+//    case TOOL:
+//      return "tools";
+//    case MODE:
+//      return "modes";
+//    case EXAMPLES:
+//      return "examples";
+//    }
+//    return null;  // should be unreachable
+//    */
+//  }
+
+
+  /** Get the name of the properties file for this type of contribution. */
+  public String getPropertiesName() {
+    return toString() + ".properties";
   }
 
 

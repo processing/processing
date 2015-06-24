@@ -22,7 +22,7 @@
   Boston, MA  02111-1307  USA
 */
 
-package processing.core;
+package processing.awt;
 
 import java.awt.*;
 import java.awt.font.TextAttribute;
@@ -32,15 +32,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import processing.core.*;
+
 
 /**
  * Subclass for PGraphics that implements the graphics API using Java2D.
  * <p>
  * To get access to the Java 2D "Graphics2D" object for the default
  * renderer, use:
- * <PRE>Graphics2D g2 = ((PGraphicsJava2D)g).g2;</PRE>
- * This will let you do Java 2D stuff directly, but is not supported in
- * any way shape or form. Which just means "have fun, but don't complain
+ * <PRE>
+ * Graphics2D g2 = (Graphics2D) g.getNative();
+ * </PRE>
+ * This will let you do Graphics2D calls directly, but is not supported
+ * in any way shape or form. Which just means "have fun, but don't complain
  * if it breaks."
  * <p>
  * Advanced <a href="http://docs.oracle.com/javase/7/docs/webnotes/tsg/TSG-Desktop/html/java2d.html">debugging notes</a> for Java2D.
@@ -246,7 +250,13 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public PSurface createSurface() {
     return surface = new PSurfaceAWT(this);
-//    return new PSurfaceAWT(this);
+  }
+
+
+  /** Returns the java.awt.Graphics2D object used by this renderer. */
+  @Override
+  public Object getNative() {
+    return g2;
   }
 
 
@@ -255,10 +265,10 @@ public class PGraphicsJava2D extends PGraphics {
   // FRAME
 
 
-  @Override
-  public boolean canDraw() {
-    return true;
-  }
+//  @Override
+//  public boolean canDraw() {
+//    return true;
+//  }
 
 
 //  @Override
@@ -305,7 +315,7 @@ public class PGraphicsJava2D extends PGraphics {
       int wide = width * pixelDensity;
       int high = height * pixelDensity;
 //      System.out.println("re-creating image");
-      image = gc.createCompatibleImage(wide, high);
+      image = gc.createCompatibleImage(wide, high, Transparency.TRANSLUCENT);
 //      image = gc.createCompatibleVolatileImage(wide, high);
       //image = surface.getComponent().createImage(width, height);
     }
@@ -1564,7 +1574,7 @@ public class PGraphicsJava2D extends PGraphics {
       cash = new ImageCache(); //who);
       setCache(who, cash);
       who.updatePixels();  // mark the whole thing for update
-      who.modified = true;
+      who.setModified();
     }
 
     // If image previously was tinted, or the color changed
@@ -1576,7 +1586,7 @@ public class PGraphicsJava2D extends PGraphics {
       who.updatePixels();
     }
 
-    if (who.modified) {
+    if (who.isModified()) {
       if (who.pixels == null) {
         // This might be a PGraphics that hasn't been drawn to yet.
         // Can't just bail because the cache has been created above.
@@ -1584,7 +1594,7 @@ public class PGraphicsJava2D extends PGraphics {
         who.pixels = new int[who.width * who.height];
       }
       cash.update(who, tint, tintColor);
-      who.modified = false;
+      who.setModified(false);
     }
 
     g2.drawImage(((ImageCache) getCache(who)).image,
@@ -1813,7 +1823,7 @@ public class PGraphicsJava2D extends PGraphics {
   public PShape loadShape(String filename, String options) {
     String extension = PApplet.getExtension(filename);
     if (extension.equals("svg") || extension.equals("svgz")) {
-      return new PShapeSVG(parent.loadXML(filename));
+      return new PShapeJava2D(parent.loadXML(filename));
     }
     PGraphics.showWarning("Unsupported format: " + filename);
     return null;
@@ -2023,7 +2033,7 @@ public class PGraphicsJava2D extends PGraphics {
       // also changes global setting for antialiasing, but this is because it's
       // not possible to enable/disable them independently in some situations.
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                          textFont.smooth ?
+                          textFont.isSmooth() ?
                           RenderingHints.VALUE_ANTIALIAS_ON :
                           RenderingHints.VALUE_ANTIALIAS_OFF);
 
@@ -2055,9 +2065,43 @@ public class PGraphicsJava2D extends PGraphics {
   }
 
 
-  @Override
-  public FontMetrics getFontMetrics(Font font) {
-    return (g2 != null) ? g2.getFontMetrics(font) : super.getFontMetrics(font);
+//  /**
+//   * Convenience method to get a legit FontMetrics object. Where possible,
+//   * override this any renderer subclass so that you're not using what's
+//   * returned by getDefaultToolkit() to get your metrics.
+//   */
+//  @SuppressWarnings("deprecation")
+//  public FontMetrics getFontMetrics(Font font) {  // ignore
+//    Frame frame = parent.frame;
+//    if (frame != null) {
+//      return frame.getToolkit().getFontMetrics(font);
+//    }
+//    return Toolkit.getDefaultToolkit().getFontMetrics(font);
+//  }
+//
+//
+//  /**
+//   * Convenience method to jump through some Java2D hoops and get an FRC.
+//   */
+//  public FontRenderContext getFontRenderContext(Font font) {  // ignore
+//    return getFontMetrics(font).getFontRenderContext();
+//  }
+
+  Toolkit toolkit;
+
+  @SuppressWarnings("deprecation")
+  protected FontMetrics getFontMetrics(Font font) {
+    if (toolkit == null) {
+      try {
+        Canvas canvas = (Canvas) surface.getNative();
+        toolkit = canvas.getToolkit();
+      } catch (Exception e) {
+        // May error out if it's a PSurfaceNone or similar
+        toolkit = Toolkit.getDefaultToolkit();
+      }
+    }
+    return toolkit.getFontMetrics(font);
+    //return (g2 != null) ? g2.getFontMetrics(font) : super.getFontMetrics(font);
   }
 
 

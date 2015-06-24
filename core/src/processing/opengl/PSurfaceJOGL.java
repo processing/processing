@@ -67,6 +67,8 @@ public class PSurfaceJOGL implements PSurface {
   Object waitObject = new Object();
 
   NewtCanvasAWT canvas;
+  boolean placedWindow = false;
+  boolean requestedStart = false;
 
   float[] currentPixelScale = {0, 0};
 
@@ -90,7 +92,6 @@ public class PSurfaceJOGL implements PSurface {
     if (window != null) {
       canvas = new NewtCanvasAWT(window);
       canvas.setBounds(0, 0, window.getWidth(), window.getHeight());
-//      canvas.setBackground(new Color(pg.backgroundColor, true));
       canvas.setFocusable(true);
     }
   }
@@ -106,7 +107,15 @@ public class PSurfaceJOGL implements PSurface {
     initWindow();
     initListeners();
     initAnimator();
-    window.setVisible(true);
+  }
+
+
+  public Object getNative() {
+//    if (canvas == null) {
+//      initOffscreen(sketch);
+//    }
+//    return canvas;
+    return window;
   }
 
 
@@ -159,13 +168,13 @@ public class PSurfaceJOGL implements PSurface {
   protected void initGL() {
 //  System.out.println("*******************************");
     if (profile == null) {
-      if (PJOGL.PROFILE == 2) {
+      if (PJOGL.profile == 2) {
         try {
           profile = GLProfile.getGL2ES1();
         } catch (GLException ex) {
           profile = GLProfile.getMaxFixedFunc(true);
         }
-      } else if (PJOGL.PROFILE == 3) {
+      } else if (PJOGL.profile == 3) {
         try {
           profile = GLProfile.getGL2GL3();
         } catch (GLException ex) {
@@ -174,7 +183,7 @@ public class PSurfaceJOGL implements PSurface {
         if (!profile.isGL3()) {
           PGraphics.showWarning("Requested profile GL3 but is not available, got: " + profile);
         }
-      } else if (PJOGL.PROFILE == 4) {
+      } else if (PJOGL.profile == 4) {
         try {
           profile = GLProfile.getGL4ES3();
         } catch (GLException ex) {
@@ -270,6 +279,7 @@ public class PSurfaceJOGL implements PSurface {
     if (fullScreen) {
       PApplet.hideMenuBar();
       window.setTopLevelPosition(sketchX, sketchY);
+      placedWindow = true;
       if (spanDisplays) {
         window.setFullscreen(monitors);
       } else {
@@ -334,45 +344,42 @@ public class PSurfaceJOGL implements PSurface {
     }).start();
   }
 
+
   @Override
   public void setTitle(String title) {
     window.setTitle(title);
   }
+
 
   @Override
   public void setVisible(boolean visible) {
     window.setVisible(visible);
   }
 
+
   @Override
   public void setResizable(boolean resizable) {
     // TODO Auto-generated method stub
-
   }
 
-  private void setFrameCentered() {
-    // Can't use frame.setLocationRelativeTo(null) because it sends the
-    // frame to the main display, which undermines the --display setting.
-    int sketchX = displayDevice.getViewportInWindowUnits().getX();
-    int sketchY = displayDevice.getViewportInWindowUnits().getY();
-//    System.err.println("just center on the screen at " + sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2 + ", " +
-//                                                         sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
-//
-//    System.err.println("  Display starts at " +  sketchX + ", " + sketchY);
-//    System.err.println("  Screen rect pos: " +  screenRect.x + ", " + screenRect.y);
-//    System.err.println("  Screen rect w/h: " +  screenRect.width + ", " + screenRect.height);
-//    System.err.println("  Sketch w/h: " +  sketchWidth + ", " + sketchHeight);
 
-    int w = sketchWidth;
-    int h = sketchHeight;
-//    if (graphics.is2X()) {
-//      w /= 2;
-//      h /= 2;
-//    }
-
-    window.setTopLevelPosition(sketchX + screenRect.x + (screenRect.width - w) / 2,
-                               sketchY + screenRect.y + (screenRect.height - h) / 2);
+  public void setIcon(PImage icon) {
+    // TODO Auto-generated method stub
   }
+
+
+  protected void initIcons() {
+    final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
+    String[] iconImages = new String[sizes.length];
+    for (int i = 0; i < sizes.length; i++) {
+      iconImages[i] = "/icon/icon-" + sizes[i] + ".png";
+    }
+    NewtFactory.setWindowIcons(new ClassResources(PApplet.class, iconImages));
+  }
+
+
+//  private void setFrameCentered() {
+//  }
 
 
   @Override
@@ -415,7 +422,28 @@ public class PSurfaceJOGL implements PSurface {
         window.setTopLevelPosition(locationX, locationY);
       }
     } else {  // just center on screen
-      setFrameCentered();
+      // Can't use frame.setLocationRelativeTo(null) because it sends the
+      // frame to the main display, which undermines the --display setting.
+      int sketchX = displayDevice.getViewportInWindowUnits().getX();
+      int sketchY = displayDevice.getViewportInWindowUnits().getY();
+//      System.err.println("just center on the screen at " + sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2 + ", " +
+//                                                           sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
+  //
+//      System.err.println("  Display starts at " +  sketchX + ", " + sketchY);
+//      System.err.println("  Screen rect pos: " +  screenRect.x + ", " + screenRect.y);
+//      System.err.println("  Screen rect w/h: " +  screenRect.width + ", " + screenRect.height);
+//      System.err.println("  Sketch w/h: " +  sketchWidth + ", " + sketchHeight);
+
+//      int w = sketchWidth;
+//      int h = sketchHeight;
+//      if (graphics.is2X()) {
+//        w /= 2;
+//        h /= 2;
+//      }
+
+      window.setTopLevelPosition(sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2,
+                                 sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
+
     }
 
     Point frameLoc = new Point(x, y);
@@ -425,6 +453,8 @@ public class PSurfaceJOGL implements PSurface {
       window.setTopLevelPosition(frameLoc.x, 30);
     }
 
+    placedWindow = true;
+    if (requestedStart) startThread();
 //    canvas.setBounds((contentW - sketchWidth)/2,
 //                     (contentH - sketchHeight)/2,
 //                     sketchWidth, sketchHeight);
@@ -432,6 +462,7 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void placePresent(int stopColor) {
+
 //    if (presentMode) {
 //      System.err.println("Present mode");
 //    System.err.println("WILL USE FBO");
@@ -448,19 +479,10 @@ public class PSurfaceJOGL implements PSurface {
     window.setFullscreen(true);
 
 
-
+    placedWindow = true;
+    if (requestedStart) startThread();
 
 //    }
-  }
-
-
-  protected void initIcons() {
-    final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
-    String[] iconImages = new String[sizes.length];
-    for (int i = 0; i < sizes.length; i++) {
-      iconImages[i] = "/icon/icon-" + sizes[i] + ".png";
-    }
-    NewtFactory.setWindowIcons(new ClassResources(PApplet.class, iconImages));
   }
 
 
@@ -472,15 +494,21 @@ public class PSurfaceJOGL implements PSurface {
 
   public void startThread() {
     if (animator != null) {
-//      System.err.println("5. start animator");
-      animator.start();
-
-      if (0 < sketchX && 0 < sketchY) {
-//          System.err.println("5.1 set inital window position");
-          window.setTopLevelPosition(sketchX, sketchY);
-          sketchX = sketchY = 0;
+      if (placedWindow) {
+        window.setVisible(true);
+        animator.start();
+        requestedStart = false;
+      } else {
+        // The GL window is not visible until it has been placed, so we cannot
+        // start the animator because it requires the window to be visible.
+        requestedStart = true;
+        // Need this assignment to bypass the while loop in runSketch, otherwise
+        // the programs hangs waiting for defaultSize to be false, but it never
+        // happens because the animation thread is not yet running to avoid showing
+        // the window in the wrong place:
+        // https://github.com/processing/processing/issues/3308
+//      sketch.defaultSize = false;
       }
-//      animator.getThread().setName("Processing-GL-draw");
     }
   }
 
@@ -511,6 +539,14 @@ public class PSurfaceJOGL implements PSurface {
       return true;
     }
   }
+
+
+  public void setLocation(int x, int y) {
+    if (window != null) {
+      window.setTopLevelPosition(x, y);
+    }
+  }
+
 
   public void setSize(int width, int height) {
     if (width == sketch.width && height == sketch.height) {
@@ -574,7 +610,9 @@ public class PSurfaceJOGL implements PSurface {
   }
 
   public void requestFocus() {
-    window.requestFocus();
+    if (window != null) {
+      window.requestFocus();
+    }
   }
 
   class DrawListener implements GLEventListener {
@@ -933,10 +971,14 @@ public class PSurfaceJOGL implements PSurface {
   }
 
   public void showCursor() {
-    window.setPointerVisible(true);
+    if (window != null) {
+      window.setPointerVisible(true);
+    }
   }
 
   public void hideCursor() {
-    window.setPointerVisible(false);
+    if (window != null) {
+      window.setPointerVisible(false);
+    }
   }
 }

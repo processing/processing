@@ -55,6 +55,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -92,13 +93,25 @@ public class Toolkit {
 
 
   /**
-   * A software engineer, somewhere, needs to have his abstraction
-   * taken away. In some countries they jail or beat people for crafting
-   * the sort of API that would require a five line helper function
-   * just to set the shortcut key for a menu item.
+   * A software engineer, somewhere, needs to have their abstraction
+   * taken away. Who crafts the sort of API that would require a
+   * five-line helper function just to set the shortcut key for a
+   * menu item?
    */
   static public JMenuItem newJMenuItem(String title, int what) {
     JMenuItem menuItem = new JMenuItem(title);
+    int modifiers = awtToolkit.getMenuShortcutKeyMask();
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
+    return menuItem;
+  }
+
+
+  /**
+   * @param action: use an Action, which sets the title, reaction
+   *                and enabled-ness all by itself.
+   */
+  static public JMenuItem newJMenuItem(Action action, int what) {
+    JMenuItem menuItem = new JMenuItem(action);
     int modifiers = awtToolkit.getMenuShortcutKeyMask();
     menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
     return menuItem;
@@ -110,6 +123,18 @@ public class Toolkit {
    */
   static public JMenuItem newJMenuItemShift(String title, int what) {
     JMenuItem menuItem = new JMenuItem(title);
+    int modifiers = awtToolkit.getMenuShortcutKeyMask();
+    modifiers |= ActionEvent.SHIFT_MASK;
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
+    return menuItem;
+  }
+
+
+  /**
+   * Like newJMenuItem() but adds shift as a modifier for the shortcut.
+   */
+  static public JMenuItem newJMenuItemShift(Action action, int what) {
+    JMenuItem menuItem = new JMenuItem(action);
     int modifiers = awtToolkit.getMenuShortcutKeyMask();
     modifiers |= ActionEvent.SHIFT_MASK;
     menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
