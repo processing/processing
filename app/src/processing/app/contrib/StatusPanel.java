@@ -41,10 +41,11 @@ class StatusPanel extends JPanel {
   JButton removeButton;
   
   public StatusPanel() {
+    
     label = new JLabel("");
     installButton = new JButton("Install");
     installProgressBar = new JProgressBar();
-    upadteLabel = new JLabel("Update to Infinite");
+    upadteLabel = new JLabel("Update to Infinite 1.1");
     upadteButton = new JButton("Update");
     removeButton = new JButton("Remove");
     
@@ -75,7 +76,7 @@ class StatusPanel extends JPanel {
                   .addComponent(upadteButton).addComponent(removeButton)));
     
     layout.linkSize(SwingConstants.HORIZONTAL, installButton,
-                    installProgressBar, upadteButton, removeButton);
+                    installProgressBar, upadteLabel, upadteButton, removeButton);
     
     installProgressBar.setVisible(false);
     
