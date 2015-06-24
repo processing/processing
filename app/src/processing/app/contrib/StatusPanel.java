@@ -23,29 +23,65 @@ package processing.app.contrib;
 
 import java.awt.Color;
 
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
 
 
 class StatusPanel extends JPanel {
   
   JLabel label;
   JButton installButton;
+  JProgressBar installProgressBar;
+  JLabel upadteLabel;
   JButton upadteButton;
   JButton removeButton;
   
   public StatusPanel() {
-    super();  // need to have some size
     label = new JLabel("");
-    label.setVisible(true);
-    add(label);
-//    setBackground(null);
-//    setBorder(null);
+    installButton = new JButton("Install");
+    installProgressBar = new JProgressBar();
+    upadteLabel = new JLabel("Update to Infinite");
+    upadteButton = new JButton("Update");
+    removeButton = new JButton("Remove");
+    
+    GroupLayout layout = new GroupLayout(this);
+    this.setLayout(layout);
+    
+    layout.setAutoCreateContainerGaps(true);
+    layout.setAutoCreateGaps(true);
+
+    layout.setHorizontalGroup(layout
+      .createSequentialGroup()
+      .addComponent(label)
+      .addGroup(layout.createParallelGroup()
+                  .addComponent(installButton, GroupLayout.Alignment.CENTER)
+                  .addComponent(installProgressBar, GroupLayout.Alignment.CENTER)
+                  .addComponent(upadteLabel, GroupLayout.Alignment.CENTER)
+                  .addComponent(upadteButton, GroupLayout.Alignment.CENTER)
+                  .addComponent(removeButton, GroupLayout.Alignment.CENTER)));
+
+    layout.setVerticalGroup(layout
+      .createParallelGroup()
+      .addComponent(label)
+      .addGroup(layout.createSequentialGroup()
+                  .addComponent(installButton)
+                  .addGroup(layout.createParallelGroup()
+                              .addComponent(installProgressBar)
+                              .addComponent(upadteLabel))
+                  .addComponent(upadteButton).addComponent(removeButton)));
+    
+    layout.linkSize(SwingConstants.HORIZONTAL, installButton,
+                    installProgressBar, upadteButton, removeButton);
+    
+    installProgressBar.setVisible(false);
+    
   }
   
   void setMessage(String message) {
-    
     label.setForeground(Color.BLACK);
     label.setText(message);
     label.repaint();
