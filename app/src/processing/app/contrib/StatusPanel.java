@@ -21,40 +21,94 @@
 */
 package processing.app.contrib;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.util.Date;
 
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JTextPane;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+
+import processing.app.Base;
+import processing.app.Language;
+import processing.app.Toolkit;
+
 
 
 class StatusPanel extends JPanel {
   
   final int BUTTON_WIDTH = 20;
   
-  JLabel label;
+  JTextPane label;
   JButton installButton;
   JProgressBar installProgressBar;
-  JLabel upadteLabel;
-  JButton upadteButton;
+  JLabel updateLabel;
+  JButton updateButton;
   JButton removeButton;
   
-  public StatusPanel(int width) {
-    
+  ContributionListing contributionListing = ContributionListing.getInstance();
+  ContributionManagerDialog contributionManagerDialog;
+  
+  public StatusPanel(int width, ContributionManagerDialog contributionManagerDialog) {
     final int BUTTON_WIDTH = 20;
-    
-    label = new JLabel("");
-    installButton = new JButton("Install");
-    installProgressBar = new JProgressBar();
-    upadteLabel = new JLabel("Update to Infinite 1.1");
-    upadteButton = new JButton("Update");
-    removeButton = new JButton("Remove");
+    this.contributionManagerDialog  = contributionManagerDialog;
+    label = new JTextPane();
+    label.setEditable(false);
+    label.setOpaque(false);
+    label.setContentType("text/html");
+    label.addHyperlinkListener(new HyperlinkListener() {
 
-    int labelWidth = width != 0 ? width * 2 / 3 : GroupLayout.PREFERRED_SIZE;
+      @Override
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          if (e.getURL() != null) {
+            Base.openURL(e.getURL().toString());
+          }
+        }
+      }
+    });
+    installButton = new JButton("Install");
+    installButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel
+          .getSelectedPanel().install();
+      }
+    });
+    installProgressBar = new JProgressBar();
+    updateLabel = new JLabel("Update to Infinite 1.1");
+    updateButton = new JButton("Update");
+    updateButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel.getSelectedPanel().update();
+      }
+    });
+    
+    removeButton = new JButton("Remove");
+    removeButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel.getSelectedPanel().remove();
+      }
+    });
+
+    int labelWidth = width != 0 ? width * 3 / 4 : GroupLayout.PREFERRED_SIZE;
    this.setSize(450, 200);
     GroupLayout layout = new GroupLayout(this);
     this.setLayout(layout);
@@ -71,7 +125,7 @@ class StatusPanel extends JPanel {
                   .createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(installButton, BUTTON_WIDTH, BUTTON_WIDTH,
                                 BUTTON_WIDTH).addComponent(installProgressBar)
-                  .addComponent(upadteLabel).addComponent(upadteButton)
+                  .addComponent(updateLabel).addComponent(updateButton)
                   .addComponent(removeButton)));
 
     layout.setVerticalGroup(layout
@@ -82,12 +136,12 @@ class StatusPanel extends JPanel {
                   .addComponent(installButton)
                   .addGroup(layout.createParallelGroup()
                               .addComponent(installProgressBar)
-                              .addComponent(upadteLabel))
-                  .addComponent(upadteButton).addComponent(removeButton)));
+                              .addComponent(updateLabel))
+                  .addComponent(updateButton).addComponent(removeButton)));
 
     layout
       .linkSize(SwingConstants.HORIZONTAL, installButton, installProgressBar,
-                upadteLabel, upadteButton, removeButton);
+                updateLabel, updateButton, removeButton);
     
     installProgressBar.setVisible(false);
   }
@@ -106,8 +160,13 @@ class StatusPanel extends JPanel {
   }
   
   void clear() {
-    label.setText("");
+    label.setText(null);
     label.repaint();
+  }
+
+  public void update(ContributionPanel panel) {
+    
+    label.setText(panel.description.toString());
   }
 }
 

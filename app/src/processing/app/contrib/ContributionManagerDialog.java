@@ -47,6 +47,7 @@ public class ContributionManagerDialog {
   JTabbedPane tabbedPane;
   String title;
   JButton restartButton;
+  StatusPanel statusPanel;
 
   // the calling editor, so updates can be applied
   Editor editor;
@@ -57,13 +58,16 @@ public class ContributionManagerDialog {
   ContributionTab examplesContributionTab;
   ContributionTab modesContributionTab;
   ContributionTab updatesContributionTab;
+  
+  ContributionListing contributionListing = ContributionListing.getInstance(); 
 
   public ContributionManagerDialog() {
-    toolsContributionTab = new ContributionTab(ContributionType.TOOL);
-    librariesContributionTab = new ContributionTab(ContributionType.LIBRARY);
-    modesContributionTab = new ContributionTab(ContributionType.MODE);
-    examplesContributionTab = new ContributionTab(ContributionType.EXAMPLES);
-    updatesContributionTab = new ContributionTab(null);
+    statusPanel = new StatusPanel(450,this);
+    toolsContributionTab = new ContributionTab(ContributionType.TOOL, statusPanel, this);
+    librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, statusPanel, this);
+    modesContributionTab = new ContributionTab(ContributionType.MODE, statusPanel, this);
+    examplesContributionTab = new ContributionTab(ContributionType.EXAMPLES, statusPanel, this);
+    updatesContributionTab = new ContributionTab(null, statusPanel, this);
   }
 
   public boolean hasUpdates() {
@@ -131,8 +135,12 @@ public class ContributionManagerDialog {
     updatesContributionTab.showFrame(editor);
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
-
-    dialog.add(tabbedPane);
+    
+    GroupLayout layout = new GroupLayout(dialog.getContentPane());
+    dialog.getContentPane().setLayout(layout);
+    
+    layout.setHorizontalGroup(layout.createParallelGroup().addComponent(tabbedPane).addComponent(statusPanel));
+    layout.setVerticalGroup(layout.createSequentialGroup().addComponent(tabbedPane).addComponent(statusPanel));
 
     restartButton = new JButton(Language.text("contrib.restart"));
     restartButton.setVisible(false);
@@ -469,7 +477,7 @@ public class ContributionManagerDialog {
     //as there is only one instance of contribListing and it should be present in this class
     final ContributionTab activeTab = getActiveTab();
     activeTab.retryConnectingButton.setEnabled(false);
-    activeTab.status.setMessage(Language
+    activeTab.statusPanel.setMessage(Language
       .text("contrib.status.downloading_list"));
     activeTab.contribListing.downloadAvailableList(base, new ContribProgressBar(
       activeTab.progressBar) {
@@ -487,7 +495,7 @@ public class ContributionManagerDialog {
 //        int percent = 100 * value / this.max;
         progressBar.setValue(value);
         progressBar.setStringPainted(true);
-        activeTab.status.setMessage(Language
+        activeTab.statusPanel.setMessage(Language
           .text("contrib.status.downloading_list"));
       }
 
@@ -501,17 +509,17 @@ public class ContributionManagerDialog {
 
         if (error) {
           if (exception instanceof SocketTimeoutException) {
-            activeTab.status.setErrorMessage(Language
+            activeTab.statusPanel.setErrorMessage(Language
               .text("contrib.errors.list_download.timeout"));
           } else {
-            activeTab.status.setErrorMessage(Language
+            activeTab.statusPanel.setErrorMessage(Language
               .text("contrib.errors.list_download"));
           }
           exception.printStackTrace();
           activeTab.retryConnectingButton.setVisible(true);
 
         } else {
-          activeTab.status.setMessage(Language.text("contrib.status.done"));
+          activeTab.statusPanel.setMessage(Language.text("contrib.status.done"));
           activeTab.retryConnectingButton.setVisible(false);
         }
       }
@@ -522,7 +530,7 @@ public class ContributionManagerDialog {
    * 
    * @return the currently selected tab
    */
-  private ContributionTab getActiveTab() {
+  public ContributionTab getActiveTab() {
     
     switch (tabbedPane.getSelectedIndex()) {
     case 0:
@@ -633,5 +641,9 @@ public class ContributionManagerDialog {
 
   public boolean hasAlreadyBeenOpened() {
     return dialog != null;
+  }
+
+  public void updateStatusPanel(ContributionPanel contributionPanel) {
+      statusPanel.update(contributionPanel);
   }
 }
