@@ -62,7 +62,7 @@ class StatusPanel extends JPanel {
   ContributionManagerDialog contributionManagerDialog;
   
   public StatusPanel(int width, ContributionManagerDialog contributionManagerDialog) {
-    final int BUTTON_WIDTH = 20;
+    final int BUTTON_WIDTH = 150;
     this.contributionManagerDialog  = contributionManagerDialog;
     label = new JTextPane();
     label.setEditable(false);
@@ -89,7 +89,7 @@ class StatusPanel extends JPanel {
       }
     });
     installProgressBar = new JProgressBar();
-    updateLabel = new JLabel("Update to Infinite 1.1");
+    updateLabel = new JLabel("  ");
     updateButton = new JButton("Update");
     updateButton.addActionListener(new ActionListener() {
       
@@ -139,10 +139,17 @@ class StatusPanel extends JPanel {
                   .addComponent(updateButton).addComponent(removeButton)));
 
     layout
-      .linkSize(SwingConstants.HORIZONTAL, installButton, installProgressBar,
-                updateLabel, updateButton, removeButton);
+      .linkSize(SwingConstants.HORIZONTAL, installButton, installProgressBar, updateButton, removeButton);
     
     installProgressBar.setVisible(false);
+    updateLabel.setVisible(false);
+    
+    installButton.setEnabled(false);
+    updateButton.setEnabled(false);
+    removeButton.setEnabled(false);
+    
+    layout.setHonorsVisibility(updateLabel, false); // Makes the label take up space even though not visible
+    
   }
   
   void setMessage(String message) {
@@ -170,11 +177,40 @@ class StatusPanel extends JPanel {
     updateButton.setEnabled(!contributionListing.hasListDownloadFailed()
       && (contributionListing.hasUpdates(panel.getContrib()) && !panel
         .getContrib().isUpdateFlagged()));
-      
+    
+    String latestVersion = contributionListing.getLatestVersion(panel.getContrib());
+    String currentVersion = panel.getContrib().getPrettyVersion();
+    
+    if(latestVersion != null){
+      latestVersion = "Update to " + latestVersion;
+    }else{
+      latestVersion = "Update";
+    }
+    
+    if(currentVersion != null){
+      currentVersion = "Version " + currentVersion;
+    }else{
+      currentVersion = "";
+    }
+    
+    if(updateButton.isEnabled()){
+      updateButton.setText(latestVersion);
+    }else{
+      updateButton.setText("Update");
+    }
+    
     installButton.setEnabled(!panel.getContrib().isInstalled() && !contributionListing.hasListDownloadFailed());
     
+      
+    if(installButton.isEnabled()){
+      updateLabel.setText(currentVersion + " available");
+    }else{
+      updateLabel.setText(currentVersion + " installed");
+    }
+    
+    updateLabel.setVisible(true);
+    
     removeButton.setEnabled(panel.getContrib().isInstalled());
-//    reorganizePaneComponents();
 
   }
 }
