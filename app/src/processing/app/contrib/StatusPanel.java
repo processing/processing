@@ -109,7 +109,6 @@ class StatusPanel extends JPanel {
     });
 
     int labelWidth = width != 0 ? width * 3 / 4 : GroupLayout.PREFERRED_SIZE;
-   this.setSize(450, 200);
     GroupLayout layout = new GroupLayout(this);
     this.setLayout(layout);
     
