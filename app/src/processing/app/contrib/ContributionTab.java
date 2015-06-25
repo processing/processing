@@ -287,10 +287,10 @@ public class ContributionTab {
       pane.add(Box.createHorizontalStrut(10), BorderLayout.WEST);
       pane.add(Box.createHorizontalStrut(10), BorderLayout.EAST);
 
-      status = new StatusPanel();
+      status = new StatusPanel(450);
 //      status.setBorder(new EmptyBorder(7, 7, 7, 7));
 
-      JPanel statusRestartPane = new JPanel();
+      /*JPanel statusRestartPane = new JPanel();
       statusRestartPane.setLayout(new BorderLayout());
 
       statusRestartPane.setBorder(new EmptyBorder(7, 7, 7, 7));
@@ -302,9 +302,9 @@ public class ContributionTab {
     // Adding both of these to EAST shouldn't pose too much of a problem,
     // since they can never get added together.
       statusRestartPane.add(restartButton, BorderLayout.EAST);
-      statusRestartPane.add(retryConnectingButton, BorderLayout.EAST);
+      statusRestartPane.add(retryConnectingButton, BorderLayout.EAST);*/
 
-      pane.add(statusRestartPane, BorderLayout.SOUTH);
+      pane.add(status, BorderLayout.SOUTH);
 
 
 //      status = new StatusPanel();

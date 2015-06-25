@@ -28,10 +28,13 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 
 
 class StatusPanel extends JPanel {
+  
+  final int BUTTON_WIDTH = 20;
   
   JLabel label;
   JButton installButton;
@@ -40,7 +43,9 @@ class StatusPanel extends JPanel {
   JButton upadteButton;
   JButton removeButton;
   
-  public StatusPanel() {
+  public StatusPanel(int width) {
+    
+    final int BUTTON_WIDTH = 20;
     
     label = new JLabel("");
     installButton = new JButton("Install");
@@ -48,7 +53,9 @@ class StatusPanel extends JPanel {
     upadteLabel = new JLabel("Update to Infinite 1.1");
     upadteButton = new JButton("Update");
     removeButton = new JButton("Remove");
-    
+
+    int labelWidth = width != 0 ? width * 2 / 3 : GroupLayout.PREFERRED_SIZE;
+   this.setSize(450, 200);
     GroupLayout layout = new GroupLayout(this);
     this.setLayout(layout);
     
@@ -57,29 +64,32 @@ class StatusPanel extends JPanel {
 
     layout.setHorizontalGroup(layout
       .createSequentialGroup()
-      .addComponent(label)
-      .addGroup(layout.createParallelGroup()
-                  .addComponent(installButton, GroupLayout.Alignment.CENTER)
-                  .addComponent(installProgressBar, GroupLayout.Alignment.CENTER)
-                  .addComponent(upadteLabel, GroupLayout.Alignment.CENTER)
-                  .addComponent(upadteButton, GroupLayout.Alignment.CENTER)
-                  .addComponent(removeButton, GroupLayout.Alignment.CENTER)));
+      .addComponent(label, labelWidth, labelWidth, labelWidth)
+      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+      .addGroup(layout
+                  .createParallelGroup(GroupLayout.Alignment.CENTER)
+                  .addComponent(installButton, BUTTON_WIDTH, BUTTON_WIDTH,
+                                BUTTON_WIDTH).addComponent(installProgressBar)
+                  .addComponent(upadteLabel).addComponent(upadteButton)
+                  .addComponent(removeButton)));
 
     layout.setVerticalGroup(layout
       .createParallelGroup()
       .addComponent(label)
-      .addGroup(layout.createSequentialGroup()
+      .addGroup(layout
+                  .createSequentialGroup()
                   .addComponent(installButton)
                   .addGroup(layout.createParallelGroup()
                               .addComponent(installProgressBar)
                               .addComponent(upadteLabel))
                   .addComponent(upadteButton).addComponent(removeButton)));
-    
-    layout.linkSize(SwingConstants.HORIZONTAL, installButton,
-                    installProgressBar, upadteLabel, upadteButton, removeButton);
+
+    layout
+      .linkSize(SwingConstants.HORIZONTAL, installButton, installProgressBar,
+                upadteLabel, upadteButton, removeButton);
     
     installProgressBar.setVisible(false);
-    
   }
   
   void setMessage(String message) {

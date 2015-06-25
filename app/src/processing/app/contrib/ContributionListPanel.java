@@ -50,7 +50,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   private ContributionPanel selectedPanel;
 //  protected JPanel statusPlaceholder;
-  private StatusPanel status;
+//  private StatusPanel status;
   private ContributionFilter filter;
 //  private ContributionListing contribListing;
   private ContributionListing contribListing = ContributionListing.getInstance();
@@ -81,7 +81,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
 //    statusPlaceholder = new JPanel();
 //    statusPlaceholder.setVisible(false);
-    status = new StatusPanel();
+//    status = new StatusPanel(null);
   }
 
 
@@ -97,7 +97,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
       add(entry.getValue(), c);
     }
-
+/*
     GridBagConstraints c = new GridBagConstraints();
     c.fill = GridBagConstraints.BOTH;
     c.weightx = 1;
@@ -105,7 +105,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     c.gridx = 0;
     c.gridy = row++;
     c.anchor = GridBagConstraints.NORTH;
-    add(status, c);
+    add(status, c);*/
   }
 
 
