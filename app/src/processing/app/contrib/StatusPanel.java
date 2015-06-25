@@ -166,6 +166,16 @@ class StatusPanel extends JPanel {
   public void update(ContributionPanel panel) {
     
     label.setText(panel.description.toString());
+
+    updateButton.setEnabled(!contributionListing.hasListDownloadFailed()
+      && (contributionListing.hasUpdates(panel.getContrib()) && !panel
+        .getContrib().isUpdateFlagged()));
+      
+    installButton.setEnabled(!panel.getContrib().isInstalled() && !contributionListing.hasListDownloadFailed());
+    
+    removeButton.setEnabled(panel.getContrib().isInstalled());
+//    reorganizePaneComponents();
+
   }
 }
 

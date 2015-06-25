@@ -87,6 +87,11 @@ class ContributionPanel extends JPanel {
    */
   private Contribution contrib;
 
+  public Contribution getContrib() {
+    return contrib;
+  }
+
+
   private boolean alreadySelected;
   private boolean enableHyperlinks;
   private HyperlinkListener conditionalHyperlinkOpener;
@@ -103,7 +108,7 @@ class ContributionPanel extends JPanel {
   private ActionListener installActionListener;
   private ActionListener undoActionListener;
 
-  private boolean isUpdateInProgress;
+  boolean isUpdateInProgress;
   private boolean isInstallInProgress;
   private boolean isRemoveInProgress;
   
@@ -188,8 +193,8 @@ class ContributionPanel extends JPanel {
         if (contrib.isCompatible(Base.getRevision())) {
           listPanel.setSelectedPanel(ContributionPanel.this);
         } else {
-          final String msg = contrib.getName() +
-            " is not compatible with this version of Processing";
+          final String msg = contrib.getName()
+            + " is not compatible with this version of Processing";
           listPanel.contributionTab.statusPanel.setErrorMessage(msg);
         }
       }
