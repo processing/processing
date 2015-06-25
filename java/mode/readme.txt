@@ -10,6 +10,9 @@ The jdi.jar and jdimodel.jar files are unpacked from org.eclipse.jdt.debug.jar.
 
 This Mode does not use ecj.jar from the original Java mode, because its files are contained in the JARs below.
 
+For 3.0 alpha 11, the signature files were removed from oorg.eclipse.jdt.core.jar to fix a signing conflict with Android Mode and Ant.
+https://github.com/processing/processing/pull/3324
+
 . . . 
 
 http://download.eclipse.org/eclipse/updates/4.4/R-4.4.1-201409250400/plugins/com.ibm.icu_52.1.0.v201404241930.jar
