@@ -55,6 +55,13 @@ o   http://code.google.com/p/processing/issues/detail?id=459
 X   https://github.com/processing/processing/issues/498
 
 
+contribs pending
+_ Error during installation of any contribution
+_   https://github.com/processing/processing/issues/3429
+_ Ready to add contributed example packages?
+_   https://github.com/processing/processing/issues/2953
+
+
 beta
 _ add "welcome" or "what's new" window to explain features in 3
 _   https://github.com/processing/processing/issues/3358

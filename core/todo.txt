@@ -109,6 +109,16 @@ X   https://github.com/processing/processing/issues/2510
 X Closing OpenGL sketch from the PDE doesn't stop java.exe process
 X   https://github.com/processing/processing/issues/2335
 
+cleaning
+o keep Danger2D? 
+o   can't do version that draws to BufferStrategy directly
+o   pixel operations (get/set/loadPixels/saveFrame) might be fixable
+o   but can't re-run draw() to re-blit the screen
+o     because we don't split calc() and draw()
+o   even with the split, handleDraw() might need to live in PSurface
+o   add calc() option? this could ease transition
+X   decided to put efforts into JavaFX
+
 
 docs
 _ note that full screen and present are now different
@@ -274,13 +284,7 @@ _   https://github.com/processing/processing/issues/2030
 
 
 decisions/misc
-_ keep Danger2D? 
-_   can't do version that draws to BufferStrategy directly
-_   pixel operations (get/set/loadPixels/saveFrame) might be fixable
-_   but can't re-run draw() to re-blit the screen
-_     because we don't split calc() and draw()
-_   even with the split, handleDraw() might need to live in PSurface
-_   add calc() option? this could ease transition
+_ Separately, if we wanted, we could add a method that can safely do drawing calls, but that won't be any faster or make use of more processors the way that `thread()` does. 
 _ need reference update for createShape()
 _   though we need to verify the behavior here
 _   createShape(RECT) uses x/y/w/h, and optionally adds a mode param
