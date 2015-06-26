@@ -255,22 +255,7 @@ public class AvailableContribution extends Contribution {
         category = sb.toString();
       }
 
-      //String specifiedImport = "";
       StringList importsList = parseImports(properties);
-      /*
-      if (importsList == null || importsList.isEmpty()) {
-        specifiedImport = getImportStr();
-      } else {
-        StringBuilder sbImport = new StringBuilder();
-        for (String it : imports) {
-          sbImport.append(it);
-          sbImport.append(',');
-        }
-        sbImport.deleteCharAt(sbImport.length() - 1);
-        specifiedImport = sbImport.toString();
-      }
-      */
-      String importItem = importsList.join(",");
 
       String authors = properties.get(AUTHORS_PROPERTY);
       if (authors == null) {
@@ -358,8 +343,8 @@ public class AvailableContribution extends Contribution {
         writer.println("lastUpdated=" + lastUpdated);
         writer.println("minRevision=" + minRev);
         writer.println("maxRevision=" + maxRev);
-        if (getType() == ContributionType.LIBRARY) {
-          writer.println("imports=" + importItem);
+        if (getType() == ContributionType.LIBRARY && importsList != null) {
+          writer.println("imports=" + importsList.join(","));
         }
         if (getType() == ContributionType.EXAMPLES) {
           writer.println(MODES_PROPERTY + "=" + compatibleContribsList);
