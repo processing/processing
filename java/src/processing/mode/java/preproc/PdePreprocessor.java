@@ -329,6 +329,11 @@ public class PdePreprocessor {
     String[] pixelDensityContents = matchMethod("pixelDensity", searchArea);
     if (pixelDensityContents != null) {
       extraStatements.append(pixelDensityContents[0]);
+    } else {
+      pixelDensityContents = matchDensityMess(searchArea);
+      if (pixelDensityContents != null) {
+        extraStatements.append(pixelDensityContents[0]);
+      }
     }
 
     String[] sizeContents = matchMethod("size", searchArea);
@@ -430,6 +435,13 @@ public class PdePreprocessor {
     //final String right = "\\s*\\(([^\\)]+)\\)\\s*\\;";
     final String right = "\\s*\\(([^\\)]*)\\)\\s*\\;";
     return PApplet.match(searchArea, left + methodName + right);
+  }
+
+
+  static protected String[] matchDensityMess(String searchArea) {
+    final String regexp =
+      "(?:^|\\s|;)pixelDensity\\s*\\(\\s*displayDensity\\s*\\([^\\)]*\\)\\s*\\)\\s*\\;";
+    return PApplet.match(searchArea, regexp);
   }
 
 

@@ -1120,6 +1120,7 @@ public class PApplet implements PConstants {
           return 1;
         }
       }
+      // If nobody's density is 1 (or != 2, to be exact) then everyone is 2
       return 2;
     }
     return displayDensity(display);
@@ -1153,7 +1154,7 @@ public class PApplet implements PConstants {
               System.err.println("Only one display is currently known, use displayDensity(1).");
             } else {
               System.err.format("Your displays are numbered %d through %d, " +
-                "pass one of those numbers to displayDensity()", 1, devices.length);
+                "pass one of those numbers to displayDensity()%n", 1, devices.length);
             }
             throw new RuntimeException("Display " + display + " does not exist.");
           }
