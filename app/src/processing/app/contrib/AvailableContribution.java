@@ -270,7 +270,10 @@ public class AvailableContribution extends Contribution {
         specifiedImport = sbImport.toString();
       }
       */
-      String importItem = importsList.join(",");
+      String importItem = "";
+      if(importsList != null){
+        importItem = importsList.join(",");
+      }
 
       String authors = properties.get(AUTHORS_PROPERTY);
       if (authors == null) {
