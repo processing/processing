@@ -27,10 +27,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
-import processing.app.*;
+import processing.app.Base;
+import processing.app.Preferences;
+import processing.app.RunnerListener;
+import processing.app.Sketch;
+import processing.app.SketchException;
 import processing.app.contrib.ModeContribution;
 import processing.core.PApplet;
-import processing.mode.java.runner.*;
+import processing.mode.java.runner.Runner;
 
 
 /**

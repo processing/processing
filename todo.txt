@@ -12,6 +12,9 @@ X Add more code for handling low-level errors on startup
 X update the "Supported Platforms" wiki page with current status
 X displayDensity() not functioning properly
 X   https://github.com/processing/processing/issues/3436
+X error message caused by curly bracket in a println string
+X   ((?<![\\])['"])((?:.(?!(?<![\\])\1))*.?)\1 to match quoted strings
+X   https://github.com/processing/processing/issues/3394
 
 manager
 X changed compatibleModesList to modes in examples.properties
@@ -119,9 +122,6 @@ _ recent menu gets huge with other p5 versions on osx
 
 
 pde/build
-_ error message caused by curly bracket in a println string
-_   ((?<![\\])['"])((?:.(?!(?<![\\])\1))*.?)\1 to match quoted strings
-_   https://github.com/processing/processing/issues/3394
 _ dim out the Run button if there are compile errors detected
 _   the AST checker has better error message handling for those cases
 _   and hitting Run replaces the useful error with something weird

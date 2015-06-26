@@ -5,21 +5,20 @@ import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 
-//import javax.swing.SwingUtilities;
 
 /**
  * This code is placed here in anticipation of running the reference from an
  * internal web server that reads the docs from a zip file, instead of using
  * thousands of .html files on the disk, which is really inefficient.
  * <p/>
- * This is a very simple, multi-threaded HTTP server, originally based on 
+ * This is a very simple, multi-threaded HTTP server, originally based on
  * <a href="http://j.mp/6BQwpI">this</a> article on java.sun.com.
  */
 public class WebServer implements HttpConstants {
 
     /* Where worker threads stand idle */
     static Vector threads = new Vector();
- 
+
     /* the web server's virtual root */
     //static File root;
 
@@ -29,7 +28,7 @@ public class WebServer implements HttpConstants {
     /* max # worker threads */
     static int workers = 5;
 
-//    static PrintStream log = System.out; 
+//    static PrintStream log = System.out;
 
 
     /*
@@ -88,7 +87,7 @@ public class WebServer implements HttpConstants {
     }
     */
 
-    
+
     /* print to stdout */
 //    protected static void p(String s) {
 //        System.out.println(s);
@@ -105,7 +104,7 @@ public class WebServer implements HttpConstants {
 //        }
     }
 
-    
+
     //public static void main(String[] a) throws Exception {
     static public int launch(String zipPath) throws IOException {
       final ZipFile zip = new ZipFile(zipPath);
@@ -226,7 +225,7 @@ class WebServerWorker /*extends WebServer*/ implements HttpConstants, Runnable {
         }
     }
 
-    
+
     void handleClient() throws IOException {
         InputStream is = new BufferedInputStream(s.getInputStream());
         PrintStream ps = new PrintStream(s.getOutputStream());
@@ -240,7 +239,7 @@ class WebServerWorker /*extends WebServer*/ implements HttpConstants, Runnable {
             buf[i] = 0;
         }
         try {
-          // We only support HTTP GET/HEAD, and don't support any fancy HTTP 
+          // We only support HTTP GET/HEAD, and don't support any fancy HTTP
           // options, so we're only interested really in the first line.
             int nread = 0, r = 0;
 
@@ -254,7 +253,7 @@ outerloop:
                 nread += r;
                 for (; i < nread; i++) {
                     if (buf[i] == (byte)'\n' || buf[i] == (byte)'\r') {
-                        break outerloop;  // read one line 
+                        break outerloop;  // read one line
                     }
                 }
             }
@@ -312,7 +311,7 @@ outerloop:
               send404(ps);
             }
             /*
-            String fname = 
+            String fname =
               (new String(buf, 0, index, i-index)).replace('/', File.separatorChar);
             if (fname.startsWith(File.separator)) {
                 fname = fname.substring(1);
@@ -338,7 +337,7 @@ outerloop:
         }
     }
 
-    
+
     boolean printHeaders(ZipEntry targ, PrintStream ps) throws IOException {
       boolean ret = false;
       int rCode = 0;
@@ -386,8 +385,8 @@ outerloop:
       ps.write(EOL);  // adding another newline here [fry]
       return ret;
   }
-    
-    
+
+
     boolean printHeaders(File targ, PrintStream ps) throws IOException {
         boolean ret = false;
         int rCode = 0;
@@ -432,7 +431,7 @@ outerloop:
         return ret;
     }
 
-    
+
     void send404(PrintStream ps) throws IOException {
         ps.write(EOL);
         ps.write(EOL);
@@ -442,7 +441,7 @@ outerloop:
         ps.write(EOL);
     }
 
-    
+
     void sendFile(File targ, PrintStream ps) throws IOException {
         InputStream is = null;
         ps.write(EOL);
@@ -454,8 +453,8 @@ outerloop:
         }
         sendFile(is, ps);
     }
-    
-    
+
+
     void sendFile(InputStream is, PrintStream ps) throws IOException {
         try {
             int n;
@@ -489,19 +488,19 @@ outerloop:
         setSuffix(".snd", "audio/basic");
         setSuffix(".au", "audio/basic");
         setSuffix(".wav", "audio/x-wav");
-        
+
         setSuffix(".gif", "image/gif");
         setSuffix(".jpg", "image/jpeg");
         setSuffix(".jpeg", "image/jpeg");
-        
+
         setSuffix(".htm", "text/html");
         setSuffix(".html", "text/html");
-        setSuffix(".css", "text/css"); 
+        setSuffix(".css", "text/css");
         setSuffix(".java", "text/javascript");
-        
+
         setSuffix(".txt", "text/plain");
         setSuffix(".java", "text/plain");
-        
+
         setSuffix(".c", "text/plain");
         setSuffix(".cc", "text/plain");
         setSuffix(".c++", "text/plain");

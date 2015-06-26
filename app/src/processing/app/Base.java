@@ -107,7 +107,6 @@ public class Base {
   // A single instance of the library manager window
   ContributionManagerDialog contributionManagerFrame;
 
-  
   // Location for untitled items
   static File untitledFolder;
 
@@ -353,23 +352,9 @@ public class Base {
 
 
   public Base(String[] args) throws Exception {
-//    // Get the sketchbook path, and make sure it's set properly
-//    determineSketchbookFolder();
-
-    // Delete all modes and tools that have been flagged for deletion before
-    // they are initialized by an editor.
-//    ArrayList<InstalledContribution> contribs = new ArrayList<InstalledContribution>();
-//    contribs.addAll(ModeContribution.list(getSketchbookModesFolder()));
-//    contribs.addAll(ToolContribution.list(getSketchbookToolsFolder(), false));
-//    for (InstalledContribution contrib : contribs) {
-//      if (ContributionManager.isDeletionFlagSet(contrib)) {
-//        removeDir(contrib.getFolder());
-//      }
-//    }
     ContributionManager.cleanup(this);
     buildCoreModes();
     rebuildContribModes();
-
     rebuildContribExamples();
 
     // Needs to happen after the sketchbook folder has been located.
@@ -394,8 +379,7 @@ public class Base {
       }
     }
 
-    contributionManagerFrame =
-      new ContributionManagerDialog();
+    contributionManagerFrame = new ContributionManagerDialog();
 
     // Make sure ThinkDifferent has library examples too
     nextMode.rebuildLibraryList();
