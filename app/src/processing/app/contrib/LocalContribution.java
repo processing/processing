@@ -110,7 +110,7 @@ public abstract class LocalContribution extends Contribution {
       Base.log("No properties file at " + propertiesFile.getAbsolutePath());
       // We'll need this to be set at a minimum.
       name = folder.getName();
-      categories = unknownCategory();
+      categories = unknownCategoryList();
     }
 
     if (categories.hasValue(SPECIAL_CATEGORY)) {

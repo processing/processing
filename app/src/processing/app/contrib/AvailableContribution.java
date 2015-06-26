@@ -243,9 +243,11 @@ public class AvailableContribution extends Contribution {
 
       String category;
       StringList categoryList = parseCategories(properties);
-      if (categoryList.size() == 1 && categoryList.get(0).equals("Unknown")) {
+      if (categoryList.size() == 1 &&
+          categoryList.get(0).equals(UNKNOWN_CATEGORY)) {
         category = getCategoryStr();
       } else {
+        /*
         StringBuilder sb = new StringBuilder();
         for (String cat : categories) {
           sb.append(cat);
@@ -253,6 +255,8 @@ public class AvailableContribution extends Contribution {
         }
         sb.deleteCharAt(sb.length() - 1);
         category = sb.toString();
+        */
+        category = categoryList.join(",");
       }
 
       StringList importsList = parseImports(properties);

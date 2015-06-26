@@ -240,7 +240,7 @@ abstract public class Contribution {
   /**
    * @return a single element list with "Unknown" as the category.
    */
-  static StringList unknownCategory() {
+  static StringList unknownCategoryList() {
     return new StringList(UNKNOWN_CATEGORY);
   }
 
@@ -257,6 +257,7 @@ abstract public class Contribution {
       categoryStr = properties.get("category");  // try the old way
     }
     if (categoryStr != null) {
+      // Can't use splitTokens() because the names sometimes have spaces
       String[] listing = PApplet.trim(PApplet.split(categoryStr, ','));
       for (String category : listing) {
         if (validCategories.contains(category)) {
@@ -266,7 +267,7 @@ abstract public class Contribution {
       }
     }
     if (outgoing.size() == 0) {
-      return unknownCategory();
+      return unknownCategoryList();
     }
     return outgoing;
   }
