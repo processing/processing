@@ -24,6 +24,8 @@ package processing.app.ui;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
+import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -33,7 +35,19 @@ import javafx.scene.web.WebView;
 
 import javax.swing.*;
 
-import java.awt.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
+
+import processing.app.Base;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+//import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -93,9 +107,10 @@ public class Welcome extends JFrame {
 
     getContentPane().add(panel);
 
-    setPreferredSize(new Dimension(1024, 600));
+    setPreferredSize(new Dimension(500, 500));
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     pack();
+    setLocationRelativeTo(null);
   }
 
 
@@ -162,15 +177,47 @@ public class Welcome extends JFrame {
               SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                  JOptionPane.showMessageDialog(
-                                                panel,
-                                                (value != null)
-                                                ? engine.getLocation() + "\n" + value.getMessage()
-                                                  : engine.getLocation() + "\nUnexpected error.",
-                                                  "Loading error...",
-                                                  JOptionPane.ERROR_MESSAGE);
+                  JOptionPane.showMessageDialog(panel,
+                                                (value != null) ?
+                                                engine.getLocation() + "\n" + value.getMessage() :
+                                                engine.getLocation() + "\nUnexpected error.",
+                                                "Loading error...",
+                                                JOptionPane.ERROR_MESSAGE);
                 }
               });
+            }
+          }
+        });
+
+        final String EVENT_TYPE_CLICK = "click";
+        engine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
+          @Override
+          public void changed(ObservableValue ov, State oldState, State newState) {
+            if (newState == Worker.State.SUCCEEDED) {
+              EventListener listener = new EventListener() {
+                @Override
+                public void handleEvent(final Event ev) {
+                  String domEventType = ev.getType();
+                  //System.err.println("EventType: " + domEventType);
+                  if (domEventType.equals(EVENT_TYPE_CLICK)) {
+                    //System.out.println("href is " + href);
+                    EventQueue.invokeLater(new Runnable() {
+                      public void run() {
+                        String href = ((Element)ev.getTarget()).getAttribute("href");
+                        Base.openURL(href);
+                      }
+                    });
+                  }
+                }
+              };
+
+              Document doc = engine.getDocument();
+              NodeList nodeList = doc.getElementsByTagName("a");
+              for (int i = 0; i < nodeList.getLength(); i++) {
+                ((EventTarget) nodeList.item(i)).addEventListener(EVENT_TYPE_CLICK, listener, false);
+                //((EventTarget) nodeList.item(i)).addEventListener(EVENT_TYPE_MOUSEOVER, listener, false);
+                //((EventTarget) nodeList.item(i)).addEventListener(EVENT_TYPE_MOUSEOVER, listener, false);
+              }
             }
           }
         });
@@ -217,6 +264,8 @@ public class Welcome extends JFrame {
       public void run() {
         Welcome browser = new Welcome();
         browser.setVisible(true);
+
+        Base.initPlatform();
 
         try {
           //System.out.println(System.getProperty("user.dir"));
