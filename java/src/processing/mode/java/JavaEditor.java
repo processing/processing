@@ -2407,7 +2407,7 @@ public class JavaEditor extends Editor {
    * @param code tab to switch to
    */
   @Override
-  protected void setCode(SketchCode code) {
+  public void setCode(SketchCode code) {
     //System.out.println("tab switch: " + code.getFileName());
     // set the new document in the textarea, etc. need to do this first
     super.setCode(code);
