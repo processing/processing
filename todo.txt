@@ -56,6 +56,7 @@ X StatusPanel created for Contribution Manager
 X   https://github.com/processing/processing/pull/3432
 X Error during installation of any contribution
 X   https://github.com/processing/processing/issues/3429
+X   https://github.com/processing/processing/pull/3438
 
 cleaning
 o libraries in java tabs (separate .java files) are reported missing
