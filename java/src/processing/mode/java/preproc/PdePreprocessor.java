@@ -288,12 +288,20 @@ public class PdePreprocessor {
       char[] c = searchArea.toCharArray();
       int depth = 0;
       int closeBrace = -1;
-//      boolean literal;  // inside a quoted literal?
       StringBuilder sb = new StringBuilder();
       for (int i = openBrace; i < c.length; i++) {
         if (c[i] == '{') {
           depth++;
-//        } else if (c[i] == '\'') {
+        } else if (c[i] == '\'') {
+          String quoted = readSingleQuote(c, i);
+          sb.append(quoted);
+          i += quoted.length() - 1;
+
+        } else if (c[i] == '\"') {
+          String quoted = readDoubleQuote(c, i);
+          sb.append(quoted);
+          i += quoted.length() - 1;
+
         } else if (c[i] == '}') {
           depth--;
           if (depth == 0) {
@@ -426,6 +434,51 @@ public class PdePreprocessor {
     // not an error, just no size() specified
     //return new String[] { null, null, null, null, null };
     return new SurfaceInfo();
+  }
+
+
+  static String readSingleQuote(char[] c, int i) {
+    StringBuilder sb = new StringBuilder();
+    try {
+      sb.append(c[i++]);  // add the quote
+      if (c[i] == '\\') {
+        sb.append(c[i++]);  // add the escape
+        if (c[i] == 'u') {
+          // grabs uNNN and the fourth N will be added below
+          for (int j = 0; j < 4; j++) {
+            sb.append(c[i++]);
+          }
+        }
+      }
+      sb.append(c[i++]);  // get the char, escapee, or last unicode digit
+      sb.append(c[i++]);  // get the closing quote
+
+    } catch (ArrayIndexOutOfBoundsException ignored) {
+      // this means they have bigger problems with their code
+    }
+    return sb.toString();
+  }
+
+
+  static String readDoubleQuote(char[] c, int i) {
+    StringBuilder sb = new StringBuilder();
+    try {
+      sb.append(c[i++]);  // add the quote
+      while (i < c.length) {
+        if (c[i] == '\\') {
+          sb.append(c[i++]);  // add the escape
+          sb.append(c[i++]);  // add whatever was escaped
+        } else if (c[i] == '\"') {
+          sb.append(c[i++]);
+          break;
+        } else {
+          sb.append(c[i++]);
+        }
+      }
+    } catch (ArrayIndexOutOfBoundsException ignored) {
+      // this means they have bigger problems with their code
+    }
+    return sb.toString();
   }
 
 
