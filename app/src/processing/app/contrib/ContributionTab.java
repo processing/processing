@@ -44,14 +44,15 @@ import processing.app.ui.Editor;
 public class ContributionTab {
   static final String ANY_CATEGORY = Language.text("contrib.all");
 
+  ContributionType contributionType;
+  ContributionManagerDialog contributionManagerDialog;
   JPanel panel;
-  ContributionType contributionType; 
   String title;
   ContributionFilter filter;
   JComboBox<String> categoryChooser;
   JScrollPane scrollPane;
   ContributionListPanel contributionListPanel;
-  StatusPanel status;
+  StatusPanel statusPanel;
   FilterField filterField;
   JButton restartButton;
   JButton retryConnectingButton;
@@ -65,7 +66,7 @@ public class ContributionTab {
   ContributionListing contribListing;
 
 
-  public ContributionTab(ContributionType type) {
+  public ContributionTab(ContributionType type,StatusPanel statusPanel, ContributionManagerDialog contributionManagerDialog) {
     if (type == null) {
       title = Language.text("contrib.manager_title.update");
       filter = ContributionType.createUpdateFilter();
@@ -90,8 +91,10 @@ public class ContributionTab {
 
       filter = type.createFilter();
     }
+    this.statusPanel = statusPanel;
+    this.contributionManagerDialog = contributionManagerDialog;
     contribListing = ContributionListing.getInstance();
-    contributionListPanel = new ContributionListPanel(this, filter);
+    contributionListPanel = new ContributionListPanel(this, filter, statusPanel);
     contribListing.addContributionListener(contributionListPanel);
   }
 
@@ -188,7 +191,7 @@ public class ContributionTab {
       public void actionPerformed(ActionEvent arg0) {
         // The message is set to null so that every time the retry button is hit
         // no previous error is displayed in the status
-        status.setMessage(null);
+        statusPanel.setMessage(null);
         downloadAndUpdateContributionListing(editor.getBase());
       }
     });
@@ -288,10 +291,9 @@ public class ContributionTab {
       pane.add(Box.createHorizontalStrut(10), BorderLayout.WEST);
       pane.add(Box.createHorizontalStrut(10), BorderLayout.EAST);
 
-      status = new StatusPanel();
 //      status.setBorder(new EmptyBorder(7, 7, 7, 7));
 
-      JPanel statusRestartPane = new JPanel();
+      /*JPanel statusRestartPane = new JPanel();
       statusRestartPane.setLayout(new BorderLayout());
 
       statusRestartPane.setBorder(new EmptyBorder(7, 7, 7, 7));
@@ -303,9 +305,9 @@ public class ContributionTab {
     // Adding both of these to EAST shouldn't pose too much of a problem,
     // since they can never get added together.
       statusRestartPane.add(restartButton, BorderLayout.EAST);
-      statusRestartPane.add(retryConnectingButton, BorderLayout.EAST);
+      statusRestartPane.add(retryConnectingButton, BorderLayout.EAST);*/
 
-      pane.add(statusRestartPane, BorderLayout.SOUTH);
+//      pane.add(statusPanel, BorderLayout.SOUTH);
 
 
 //      status = new StatusPanel();
@@ -444,7 +446,7 @@ public class ContributionTab {
 
   protected void downloadAndUpdateContributionListing(Base base) {
     retryConnectingButton.setEnabled(false);
-    status.setMessage(Language.text("contrib.status.downloading_list"));
+    statusPanel.setMessage(Language.text("contrib.status.downloading_list"));
     contribListing.downloadAvailableList(base, new ContribProgressBar(progressBar) {
 
 
@@ -460,7 +462,7 @@ public class ContributionTab {
 //        int percent = 100 * value / this.max;
         progressBar.setValue(value);
         progressBar.setStringPainted(true);
-        status.setMessage(Language.text("contrib.status.downloading_list"));
+        statusPanel.setMessage(Language.text("contrib.status.downloading_list"));
       }
 
       @Override
@@ -474,17 +476,17 @@ public class ContributionTab {
 
         if (error) {
           if (exception instanceof SocketTimeoutException) {
-            status.setErrorMessage(Language
+            statusPanel.setErrorMessage(Language
               .text("contrib.errors.list_download.timeout"));
           } else {
-            status.setErrorMessage(Language
+            statusPanel.setErrorMessage(Language
               .text("contrib.errors.list_download"));
           }
           exception.printStackTrace();
           retryConnectingButton.setVisible(true);
 
         } else {
-          status.setMessage(Language.text("contrib.status.done"));
+          statusPanel.setMessage(Language.text("contrib.status.done"));
           retryConnectingButton.setVisible(false);
         }
       }

@@ -42,6 +42,7 @@ import processing.app.Base;
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
 
   ContributionTab contributionTab;
+  StatusPanel statusPanel;
   TreeMap<Contribution, ContributionPanel> panelByContribution;
 
   static HyperlinkListener nullHyperlinkListener = new HyperlinkListener() {
@@ -50,16 +51,17 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   private ContributionPanel selectedPanel;
 //  protected JPanel statusPlaceholder;
-  private StatusPanel status;
+//  private StatusPanel status;
   private ContributionFilter filter;
 //  private ContributionListing contribListing;
   private ContributionListing contribListing = ContributionListing.getInstance();
 
 
   public ContributionListPanel(ContributionTab contributionTab,
-                               ContributionFilter filter) {
+                               ContributionFilter filter, StatusPanel statusPanel) {
     super();
     this.contributionTab = contributionTab;
+    this.statusPanel = statusPanel;
     this.filter = filter;
 
 //    contribListing = ContributionListing.getInstance();
@@ -81,7 +83,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
 //    statusPlaceholder = new JPanel();
 //    statusPlaceholder.setVisible(false);
-    status = new StatusPanel();
+//    status = new StatusPanel(null);
   }
 
 
@@ -97,7 +99,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
       add(entry.getValue(), c);
     }
-
+/*
     GridBagConstraints c = new GridBagConstraints();
     c.fill = GridBagConstraints.BOTH;
     c.weightx = 1;
@@ -105,7 +107,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     c.gridx = 0;
     c.gridy = row++;
     c.anchor = GridBagConstraints.NORTH;
-    add(status, c);
+    add(status, c);*/
   }
 
 
@@ -200,18 +202,20 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   }
 
 
-  protected void setSelectedPanel(ContributionPanel panel) {
-    if (selectedPanel == panel) {
+  protected void setSelectedPanel(ContributionPanel contributionPanel) {
+    if (selectedPanel == contributionPanel) {
       selectedPanel.setSelected(true);
 
     } else {
+      
+      contributionTab.contributionManagerDialog.updateStatusPanel(contributionPanel);
       ContributionPanel lastSelected = selectedPanel;
-      selectedPanel = panel;
+      selectedPanel = contributionPanel;
 
       if (lastSelected != null) {
         lastSelected.setSelected(false);
       }
-      panel.setSelected(true);
+      contributionPanel.setSelected(true);
 
       updateColors();
       requestFocusInWindow();

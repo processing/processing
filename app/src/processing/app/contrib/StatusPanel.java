@@ -21,34 +21,197 @@
 */
 package processing.app.contrib;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.util.Date;
+
+import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JTextPane;
+import javax.swing.LayoutStyle;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+
+import processing.app.Base;
+import processing.app.Language;
+import processing.app.Toolkit;
 
 
-class StatusPanel extends JLabel {
+
+class StatusPanel extends JPanel {
   
-  public StatusPanel() {
-    super(" ");  // need to have some size
-//    setBackground(null);
-//    setBorder(null);
+  final int BUTTON_WIDTH = 20;
+  
+  JTextPane label;
+  JButton installButton;
+  JProgressBar installProgressBar;
+  JLabel updateLabel;
+  JButton updateButton;
+  JButton removeButton;
+  
+  ContributionListing contributionListing = ContributionListing.getInstance();
+  ContributionManagerDialog contributionManagerDialog;
+  
+  public StatusPanel(int width, ContributionManagerDialog contributionManagerDialog) {
+    final int BUTTON_WIDTH = 150;
+    this.contributionManagerDialog  = contributionManagerDialog;
+    label = new JTextPane();
+    label.setEditable(false);
+    label.setOpaque(false);
+    label.setContentType("text/html");
+    label.addHyperlinkListener(new HyperlinkListener() {
+
+      @Override
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          if (e.getURL() != null) {
+            Base.openURL(e.getURL().toString());
+          }
+        }
+      }
+    });
+    installButton = new JButton("Install");
+    installButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel
+          .getSelectedPanel().install();
+      }
+    });
+    installProgressBar = new JProgressBar();
+    updateLabel = new JLabel("  ");
+    updateButton = new JButton("Update");
+    updateButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel.getSelectedPanel().update();
+      }
+    });
+    
+    removeButton = new JButton("Remove");
+    removeButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel.getSelectedPanel().remove();
+      }
+    });
+
+    int labelWidth = width != 0 ? width * 3 / 4 : GroupLayout.PREFERRED_SIZE;
+    GroupLayout layout = new GroupLayout(this);
+    this.setLayout(layout);
+    
+    layout.setAutoCreateContainerGaps(true);
+    layout.setAutoCreateGaps(true);
+
+    layout.setHorizontalGroup(layout
+      .createSequentialGroup()
+      .addComponent(label, labelWidth, labelWidth, labelWidth)
+      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+      .addGroup(layout
+                  .createParallelGroup(GroupLayout.Alignment.CENTER)
+                  .addComponent(installButton, BUTTON_WIDTH, BUTTON_WIDTH,
+                                BUTTON_WIDTH).addComponent(installProgressBar)
+                  .addComponent(updateLabel).addComponent(updateButton)
+                  .addComponent(removeButton)));
+
+    layout.setVerticalGroup(layout
+      .createParallelGroup()
+      .addComponent(label)
+      .addGroup(layout
+                  .createSequentialGroup()
+                  .addComponent(installButton)
+                  .addGroup(layout.createParallelGroup()
+                              .addComponent(installProgressBar)
+                              .addComponent(updateLabel))
+                  .addComponent(updateButton).addComponent(removeButton)));
+
+    layout
+      .linkSize(SwingConstants.HORIZONTAL, installButton, installProgressBar, updateButton, removeButton);
+    
+    installProgressBar.setVisible(false);
+    updateLabel.setVisible(false);
+    
+    installButton.setEnabled(false);
+    updateButton.setEnabled(false);
+    removeButton.setEnabled(false);
+    
+    layout.setHonorsVisibility(updateLabel, false); // Makes the label take up space even though not visible
+    
   }
   
   void setMessage(String message) {
-    setForeground(Color.BLACK);
-    setText(message);
-    repaint();
+    label.setForeground(Color.BLACK);
+    label.setText(message);
+    label.repaint();
   }
   
   void setErrorMessage(String message) {
     //setForeground(Color.RED);
-    setForeground(new Color(160, 0, 0));
-    setText(message);
-    repaint();
+    label.setForeground(new Color(160, 0, 0));
+    label.setText(message);
+    label.repaint();
   }
   
   void clear() {
-    setText("");
-    repaint();
+    label.setText(null);
+    label.repaint();
+  }
+
+  public void update(ContributionPanel panel) {
+    
+    label.setText(panel.description.toString());
+
+    updateButton.setEnabled(!contributionListing.hasListDownloadFailed()
+      && (contributionListing.hasUpdates(panel.getContrib()) && !panel
+        .getContrib().isUpdateFlagged()));
+    
+    String latestVersion = contributionListing.getLatestVersion(panel.getContrib());
+    String currentVersion = panel.getContrib().getPrettyVersion();
+    
+    if(latestVersion != null){
+      latestVersion = "Update to " + latestVersion;
+    }else{
+      latestVersion = "Update";
+    }
+    
+    if(currentVersion != null){
+      currentVersion = "Version " + currentVersion;
+    }else{
+      currentVersion = "";
+    }
+    
+    if(updateButton.isEnabled()){
+      updateButton.setText(latestVersion);
+    }else{
+      updateButton.setText("Update");
+    }
+    
+    installButton.setEnabled(!panel.getContrib().isInstalled() && !contributionListing.hasListDownloadFailed());
+    
+      
+    if(installButton.isEnabled()){
+      updateLabel.setText(currentVersion + " available");
+    }else{
+      updateLabel.setText(currentVersion + " installed");
+    }
+    
+    updateLabel.setVisible(true);
+    
+    removeButton.setEnabled(panel.getContrib().isInstalled());
+
   }
 }
 
