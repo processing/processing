@@ -10,6 +10,8 @@ X Show "not compatible" error message in the manager
 X   https://github.com/processing/processing/issues/3386
 X Add more code for handling low-level errors on startup
 X update the "Supported Platforms" wiki page with current status
+X displayDensity() not functioning properly
+X   https://github.com/processing/processing/issues/3436
 
 manager
 X changed compatibleModesList to modes in examples.properties
@@ -63,6 +65,8 @@ _   https://github.com/processing/processing/issues/2953
 
 
 beta
+_ Tweak mode broken (re: new settings() function)
+_   https://github.com/processing/processing/issues/3435
 _ add "welcome" or "what's new" window to explain features in 3
 _   https://github.com/processing/processing/issues/3358
 _   a summary of what's new, plus a link to GitHub wiki page with details
