@@ -41,6 +41,9 @@ import javax.swing.tree.*;
 import processing.app.contrib.ContributionType;
 import processing.app.contrib.ExamplesContribution;
 import processing.app.syntax.*;
+import processing.app.ui.Editor;
+import processing.app.ui.EditorState;
+import processing.app.ui.Toolkit;
 import processing.core.PApplet;
 import processing.core.PConstants;
 

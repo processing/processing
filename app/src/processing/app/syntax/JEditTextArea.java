@@ -1749,7 +1749,7 @@ public class JEditTextArea extends JComponent
 
     HtmlSelection formatted = new HtmlSelection(cf.toString());
 
-    Clipboard clipboard = processing.app.Toolkit.getSystemClipboard();
+    Clipboard clipboard = processing.app.ui.Toolkit.getSystemClipboard();
     clipboard.setContents(formatted, new ClipboardOwner() {
       public void lostOwnership(Clipboard clipboard, Transferable contents) {
         // i don't care about ownership

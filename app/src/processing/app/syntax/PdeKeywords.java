@@ -26,7 +26,7 @@ package processing.app.syntax;
 
 import javax.swing.text.Segment;
 
-import processing.app.Editor;
+import processing.app.ui.Editor;
 
 
 public class PdeKeywords extends TokenMarker {

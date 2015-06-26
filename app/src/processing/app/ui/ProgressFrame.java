@@ -1,4 +1,4 @@
-package processing.app;
+package processing.app.ui;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -14,6 +14,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
+
+import processing.app.Base;
+import processing.app.Language;
 
 
 // TODO This code was contributed and needs a lot of work. [fry]

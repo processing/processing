@@ -29,8 +29,8 @@ import java.util.zip.GZIPOutputStream;
 import javax.swing.SwingWorker;
 
 import processing.app.Base;
-import processing.app.Editor;
 import processing.app.Language;
+import processing.app.ui.Editor;
 import processing.core.PApplet;
 import processing.data.StringDict;
 

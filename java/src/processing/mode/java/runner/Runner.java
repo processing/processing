@@ -24,6 +24,7 @@ package processing.mode.java.runner;
 
 import processing.app.*;
 import processing.app.exec.StreamRedirectThread;
+import processing.app.ui.Editor;
 import processing.core.*;
 import processing.mode.java.JavaBuild;
 

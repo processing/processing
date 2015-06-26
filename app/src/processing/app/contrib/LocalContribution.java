@@ -31,6 +31,7 @@ import java.util.zip.*;
 import javax.swing.JOptionPane;
 
 import processing.app.*;
+import processing.app.ui.Editor;
 import processing.core.PApplet;
 import processing.data.StringDict;
 import processing.data.StringList;

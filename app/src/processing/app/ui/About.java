@@ -20,7 +20,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -33,6 +33,8 @@ import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import processing.app.Base;
 
 
 public class About extends Window {

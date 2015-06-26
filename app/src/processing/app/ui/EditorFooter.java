@@ -22,7 +22,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.ui;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -38,6 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
+
+import processing.app.Mode;
+import processing.app.Sketch;
 
 
 /**

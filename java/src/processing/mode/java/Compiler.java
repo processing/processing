@@ -24,6 +24,7 @@
 package processing.mode.java;
 
 import processing.app.*;
+import processing.app.ui.Editor;
 import processing.core.*;
 
 import java.io.*;

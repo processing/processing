@@ -43,6 +43,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import processing.app.contrib.*;
+import processing.app.ui.Editor;
+import processing.app.ui.EditorConsole;
+import processing.app.ui.EditorState;
+import processing.app.ui.PreferencesFrame;
+import processing.app.ui.Recent;
 import processing.core.*;
 import processing.data.StringDict;
 import processing.data.StringList;
@@ -237,7 +242,7 @@ public class Base {
   }
 
 
-  static protected boolean isCommandLine() {
+  static public boolean isCommandLine() {
     return commandLine;
   }
 
@@ -446,7 +451,7 @@ public class Base {
    * The call has already checked to make sure this sketch is not modified,
    * now change the mode.
    */
-  protected void changeMode(Mode mode) {
+  public void changeMode(Mode mode) {
     if (activeEditor.getMode() != mode) {
       Sketch sketch = activeEditor.getSketch();
       nextMode = mode;
@@ -558,7 +563,7 @@ public class Base {
   // changes to the focused and active Windows can be made. Developers must
   // never assume that this Window is the focused or active Window until this
   // Window receives a WINDOW_GAINED_FOCUS or WINDOW_ACTIVATED event.
-  protected void handleActivated(Editor whichEditor) {
+  public void handleActivated(Editor whichEditor) {
     activeEditor = whichEditor;
 
     // set the current window to be the console that's getting output
@@ -1192,25 +1197,6 @@ public class Base {
   }
 
 
-//  public JMenu getSketchbookMenu() {
-//    if (sketchbookMenu == null) {
-//      sketchbookMenu = new JMenu(Language.text("menu.file.sketchbook"));
-//      rebuildSketchbookMenu();
-//    }
-//    return sketchbookMenu;
-//  }
-
-
-//  public JMenu getRecentMenu() {
-//    if (recentMenu == null) {
-//      recentMenu = recent.createMenu();
-//    } else {
-//      recent.updateMenu(recentMenu);
-//    }
-//    return recentMenu;
-//  }
-
-
   public JMenu getRecentMenu() {
     return recent.getMenu();
   }
@@ -1224,9 +1210,12 @@ public class Base {
   public void handleRecent(Editor editor) {
     recent.handle(editor);
   }
+
+
   public void handleRecentRename(Editor editor,String oldPath){
     recent.handleRename(editor,oldPath);
   }
+
 
   /**
    * Called before a sketch is renamed so that its old name is
@@ -1863,7 +1852,7 @@ public class Base {
    * Used to determine whether to disable the "Show Sketch Folder" option.
    * @return true If a means of opening a folder is known to be available.
    */
-  static protected boolean openFolderAvailable() {
+  static public boolean openFolderAvailable() {
     return platform.openFolderAvailable();
   }
 

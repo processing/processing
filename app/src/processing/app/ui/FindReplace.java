@@ -20,7 +20,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.ui;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -29,6 +29,10 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Group;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+
+import processing.app.Base;
+import processing.app.Language;
+import processing.app.Sketch;
 
 
 /**

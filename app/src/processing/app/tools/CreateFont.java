@@ -24,6 +24,8 @@
 package processing.app.tools;
 
 import processing.app.*;
+import processing.app.ui.Editor;
+import processing.app.ui.Toolkit;
 import processing.core.*;
 
 import java.awt.Component;

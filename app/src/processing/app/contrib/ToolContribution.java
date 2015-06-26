@@ -28,8 +28,8 @@ import java.util.*;
 
 import processing.app.Base;
 //import processing.app.Base;
-import processing.app.Editor;
 import processing.app.tools.Tool;
+import processing.app.ui.Editor;
 
 
 public class ToolContribution extends LocalContribution implements Tool {

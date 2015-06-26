@@ -25,6 +25,7 @@ import java.awt.*;
 import java.io.*;
 import java.util.*;
 
+import processing.app.ui.Toolkit;
 import processing.core.*;
 
 
@@ -52,27 +53,6 @@ public class Preferences {
   static HashMap<String, String> defaults;
   static HashMap<String, String> table = new HashMap<String, String>();
   static File preferencesFile;
-
-  static final String PROMPT_YES     = Language.text("prompt.yes");
-  static final String PROMPT_NO      = Language.text("prompt.no");
-  static final String PROMPT_CANCEL  = Language.text("prompt.cancel");
-  static final String PROMPT_OK      = Language.text("prompt.ok");
-  static final String PROMPT_BROWSE  = Language.text("prompt.browse");
-
-  /**
-   * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
-   * Windows XP needs 66, and my Ubuntu machine needs 80+, so 80 seems proper.
-   */
-  static public int BUTTON_WIDTH =
-    Integer.parseInt(Language.text("preferences.button.width"));
-
-  // Indents and spacing standards. These probably need to be modified
-  // per platform as well, because Mac OS X is so huge, Windows is smaller,
-  // and Linux is all over the map. Consider these deprecated.
-
-  static final int GUI_BIG     = 13;
-  static final int GUI_BETWEEN = 8;
-  static final int GUI_SMALL   = 6;
 
 
   static public void init() {
@@ -192,7 +172,7 @@ public class Preferences {
   }
 
 
-  static protected String getPreferencesPath() {
+  static public String getPreferencesPath() {
     return preferencesFile.getAbsolutePath();
   }
 
@@ -262,7 +242,7 @@ public class Preferences {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  static protected void save() {
+  static public void save() {
     // on startup, don't worry about it
     // this is trying to update the prefs for who is open
     // before Preferences.init() has been called.
@@ -452,7 +432,7 @@ public class Preferences {
   }
 
 
-  static protected String getSketchbookPath() {
+  static public String getSketchbookPath() {
     return get("sketchbook.path.three"); //$NON-NLS-1$
   }
 

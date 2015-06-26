@@ -21,7 +21,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.ui;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -32,8 +32,10 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
-import processing.app.ColorChooser;
+import processing.app.Base;
 import processing.app.Language;
+import processing.app.Preferences;
+import processing.app.ui.ColorChooser;
 import processing.core.*;
 
 
@@ -92,7 +94,6 @@ public class PreferencesFrame {
 
     pain.setLayout(layout);
 
-    final int BUTTON_WIDTH = Preferences.BUTTON_WIDTH;
     final int BORDER = Base.isMacOS() ? 20 : 13;
 
     JLabel sketchbookLocationLabel, restartProcessingLabel;
@@ -106,7 +107,7 @@ public class PreferencesFrame {
 
     sketchbookLocationField = new JTextField(40);
 
-    browseButton = new JButton(Preferences.PROMPT_BROWSE);
+    browseButton = new JButton(Toolkit.PROMPT_BROWSE);
     browseButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           File dflt = new File(sketchbookLocationField.getText());
@@ -359,7 +360,7 @@ public class PreferencesFrame {
 
     // [  OK  ] [ Cancel ]
 
-    okButton = new JButton(Preferences.PROMPT_OK);
+    okButton = new JButton(Toolkit.PROMPT_OK);
     okButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           applyFrame();
@@ -367,7 +368,7 @@ public class PreferencesFrame {
         }
       });
 
-    JButton cancelButton = new JButton(Preferences.PROMPT_CANCEL);
+    JButton cancelButton = new JButton(Toolkit.PROMPT_CANCEL);
     cancelButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           disposeFrame();
@@ -428,8 +429,8 @@ public class PreferencesFrame {
           .addComponent(preferencePathLabel)
           .addComponent(preferenceHintLabel)
           .addGroup(GroupLayout.Alignment.TRAILING,layout.createSequentialGroup() // Trailing so that the buttons are to the right
-                      .addComponent(okButton, BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, BUTTON_WIDTH) // Ok and Cancel buttton are now of size BUTTON_WIDTH
-                      .addComponent(cancelButton, BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, BUTTON_WIDTH)
+                      .addComponent(okButton, Toolkit.BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, Toolkit.BUTTON_WIDTH) // Ok and Cancel buttton are now of size BUTTON_WIDTH
+                      .addComponent(cancelButton, Toolkit.BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, Toolkit.BUTTON_WIDTH)
           ))
       .addGap(BORDER)
     );
@@ -660,7 +661,7 @@ public class PreferencesFrame {
   }
 
 
-  protected void showFrame() {
+  public void showFrame() {
     editorAntialiasBox.setSelected(Preferences.getBoolean("editor.smooth")); //$NON-NLS-1$
     inputMethodBox.setSelected(Preferences.getBoolean("editor.input_method_support")); //$NON-NLS-1$
     errorCheckerBox.setSelected(Preferences.getBoolean("pdex.errorCheckEnabled"));

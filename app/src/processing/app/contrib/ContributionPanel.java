@@ -41,9 +41,9 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 
 import processing.app.Base;
-import processing.app.Editor;
-import processing.app.Toolkit;
 import processing.app.Language;
+import processing.app.ui.Editor;
+import processing.app.ui.Toolkit;
 
 
 // TODO clean up accessors (too many cases of several de-references for basic tasks

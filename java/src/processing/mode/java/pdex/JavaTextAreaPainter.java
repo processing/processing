@@ -48,12 +48,12 @@ import javax.swing.text.Segment;
 import javax.swing.text.Utilities;
 
 import processing.app.Base;
-import processing.app.Editor;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
 import processing.app.syntax.TextAreaDefaults;
 import processing.app.syntax.TextAreaPainter;
 import processing.app.syntax.TokenMarker;
+import processing.app.ui.Editor;
 
 
 /**

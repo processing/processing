@@ -25,6 +25,7 @@
 package processing.app.tools;
 
 import processing.app.*;
+import processing.app.ui.Editor;
 import processing.core.PApplet;
 
 import java.io.*;

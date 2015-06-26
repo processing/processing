@@ -31,6 +31,8 @@ import java.util.*;
 import javax.swing.*;
 
 import processing.app.*;
+import processing.app.ui.Editor;
+import processing.app.ui.Toolkit;
 
 /**
  * 

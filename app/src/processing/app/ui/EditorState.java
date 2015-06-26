@@ -19,7 +19,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package processing.app;
+package processing.app.ui;
 
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
@@ -29,6 +29,7 @@ import java.awt.Rectangle;
 import java.io.*;
 import java.util.List;
 
+import processing.app.Preferences;
 import processing.core.PApplet;
 
 //import processing.core.PApplet;
@@ -65,7 +66,7 @@ public class EditorState {
    * set its placement relative to the last opened window.
    * @param editors List of active editor objects
    */
-  EditorState(List<Editor> editors) {
+  public EditorState(List<Editor> editors) {
     defaultConfig();
     defaultLocation(editors);
   }

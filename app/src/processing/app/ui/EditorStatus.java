@@ -21,12 +21,14 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.ui;
 
 import java.awt.*;
 
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
+
+import processing.app.Mode;
 
 
 /**
@@ -34,6 +36,7 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
  */
 public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   static final int HIGH = 28;
+  static final int GUI_SMALL = 6;
 
   Color[] bgcolor;
   Color[] fgcolor;
@@ -211,14 +214,14 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     // https://github.com/processing/processing/issues/3265
     if (message != null) {
       g.setFont(font); // needs to be set each time on osx
-      g.drawString(message, Preferences.GUI_SMALL, (sizeH + ascent) / 2);
+      g.drawString(message, GUI_SMALL, (sizeH + ascent) / 2);
     }
 
     if (indeterminate) {
       //int x = cancelButton.getX();
       //int w = cancelButton.getWidth();
-      int w = Preferences.BUTTON_WIDTH;
-      int x = getWidth() - Preferences.GUI_SMALL - w;
+      int w = Toolkit.BUTTON_WIDTH;
+      int x = getWidth() - GUI_SMALL - w;
       int y = getHeight() / 3;
       int h = getHeight() / 3;
       g.setColor(new Color(0x80000000, true));

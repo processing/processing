@@ -24,10 +24,10 @@
 
 package processing.mode.java;
 
-import processing.app.Editor;
 import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.syntax.*;
+import processing.app.ui.Editor;
 
 import java.awt.*;
 import java.awt.event.*;

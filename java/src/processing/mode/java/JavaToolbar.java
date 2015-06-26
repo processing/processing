@@ -28,10 +28,10 @@ import java.util.List;
 
 import javax.swing.Box;
 
-import processing.app.Editor;
-import processing.app.EditorButton;
-import processing.app.EditorToolbar;
 import processing.app.Language;
+import processing.app.ui.Editor;
+import processing.app.ui.EditorButton;
+import processing.app.ui.EditorToolbar;
 
 
 public class JavaToolbar extends EditorToolbar {

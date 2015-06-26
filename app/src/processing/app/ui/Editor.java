@@ -21,8 +21,17 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.ui;
 
+import processing.app.Base;
+import processing.app.Formatter;
+import processing.app.Language;
+import processing.app.Mode;
+import processing.app.Preferences;
+import processing.app.RunnerListener;
+import processing.app.Sketch;
+import processing.app.SketchCode;
+import processing.app.SketchException;
 import processing.app.contrib.ToolContribution;
 import processing.app.syntax.*;
 import processing.app.tools.*;
@@ -531,6 +540,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   public Mode getMode() {
     return mode;
+  }
+
+
+  public void repaintHeader() {
+    header.repaint();
+  }
+
+
+  public void rebuildHeader() {
+    header.rebuild();
   }
 
 
@@ -1912,7 +1931,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Switch between tabs, this swaps out the Document object
    * that's currently being manipulated.
    */
-  protected void setCode(SketchCode code) {
+  public void setCode(SketchCode code) {
     SyntaxDocument document = (SyntaxDocument) code.getDocument();
 
     if (document == null) {  // this document not yet inited
@@ -2500,7 +2519,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Check if the sketch is modified and ask user to save changes.
    * @return false if canceling the close/quit operation
    */
-  protected boolean checkModified() {
+  public boolean checkModified() {
     if (!sketch.isModified()) return true;
 
     // As of Processing 1.0.10, this always happens immediately.

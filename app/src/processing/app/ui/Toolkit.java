@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012 The Processing Foundation
+  Copyright (c) 2012-15 The Processing Foundation
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -19,7 +19,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.ui;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -66,6 +66,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
+import processing.app.Base;
+import processing.app.Language;
+import processing.app.Preferences;
+
 
 /**
  * Utility functions for base that require a java.awt.Toolkit object. These
@@ -74,6 +78,20 @@ import javax.swing.KeyStroke;
  * @author fry
  */
 public class Toolkit {
+  static public final String PROMPT_YES     = Language.text("prompt.yes");
+  static public final String PROMPT_NO      = Language.text("prompt.no");
+  static public final String PROMPT_CANCEL  = Language.text("prompt.cancel");
+  static public final String PROMPT_OK      = Language.text("prompt.ok");
+  static public final String PROMPT_BROWSE  = Language.text("prompt.browse");
+
+  /**
+   * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
+   * Windows XP needs 66, and my Ubuntu machine needs 80+, so 80 seems proper.
+   */
+  static public int BUTTON_WIDTH =
+    //Integer.parseInt(Language.text("preferences.button.width"));
+    Preferences.getInteger("preferences.button.width");
+
   static final java.awt.Toolkit awtToolkit =
     java.awt.Toolkit.getDefaultToolkit();
 

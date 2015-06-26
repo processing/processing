@@ -32,6 +32,8 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 import processing.app.*;
+import processing.app.ui.Editor;
+import processing.app.ui.EditorState;
 import processing.mode.java.runner.Runner;
 import processing.mode.java.tweak.SketchParser;
 

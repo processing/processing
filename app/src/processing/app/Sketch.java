@@ -23,6 +23,9 @@
 
 package processing.app;
 
+import processing.app.ui.Editor;
+import processing.app.ui.ProgressFrame;
+import processing.app.ui.Toolkit;
 import processing.core.*;
 
 import java.awt.Component;
@@ -407,8 +410,8 @@ public class Sketch {
                                                  JOptionPane.OK_CANCEL_OPTION,
                                                  JOptionPane.PLAIN_MESSAGE,
                                                  null, new Object[] {
-                                                 Preferences.PROMPT_OK,
-                                                 Preferences.PROMPT_CANCEL },
+                                                 Toolkit.PROMPT_OK,
+                                                 Toolkit.PROMPT_CANCEL },
                                                  field);
 
     if (userReply == JOptionPane.OK_OPTION) {
@@ -604,7 +607,7 @@ public class Sketch {
     setCurrentCode(newName);
 
     // update the tabs
-    editor.header.rebuild();
+    editor.rebuildHeader();
   }
 
 
@@ -657,7 +660,7 @@ public class Sketch {
         // make a new sketch, and i think this will rebuild the sketch menu
         //editor.handleNewUnchecked();
         //editor.handleClose2();
-        editor.base.handleClose(editor, false);
+        editor.getBase().handleClose(editor, false);
 
       } else {
         // delete the file
@@ -675,7 +678,7 @@ public class Sketch {
         setCurrentCode(0);
 
         // update the tabs
-        editor.header.repaint();
+        editor.repaintHeader();
       }
     }
   }
@@ -737,7 +740,7 @@ public class Sketch {
         break;
       }
     }
-    editor.header.repaint();
+    editor.repaintHeader();
 
     if (Base.isMacOS()) {
       // http://developer.apple.com/qa/qa2001/qa1146.html
@@ -797,7 +800,7 @@ public class Sketch {
    * Also removes the previously-generated .class and .jar files,
    * because they can cause trouble.
    */
-  protected boolean saveAs() throws IOException {
+  public boolean saveAs() throws IOException {
     String newParentDir = null;
     String newName = null;
 
@@ -1005,8 +1008,8 @@ public class Sketch {
     calcModified();
 //    System.out.println("modified is now " + modified);
     editor.updateTitle();
-    editor.base.rebuildSketchbookMenus();
-    editor.base.handleRecentRename(editor,oldPath);
+    editor.getBase().rebuildSketchbookMenus();
+    editor.getBase().handleRecentRename(editor,oldPath);
 //    editor.header.rebuild();
   }
 
@@ -1099,7 +1102,7 @@ public class Sketch {
     // check whether this file already exists
     if (destFile.exists()) {
       Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
-      String prompt = Language.interpolate("add_file.messages.confirm_replace", 
+      String prompt = Language.interpolate("add_file.messages.confirm_replace",
                                            filename);
       int result = JOptionPane.showOptionDialog(editor,
                                                 prompt,
@@ -1167,7 +1170,7 @@ public class Sketch {
         sortCode();
       }
       setCurrentCode(filename);
-      editor.header.repaint();
+      editor.repaintHeader();
       if (isUntitled()) {  // TODO probably not necessary? problematic?
         // Mark the new code as modified so that the sketch is saved
         current.setModified(true);
@@ -1217,8 +1220,7 @@ public class Sketch {
     current.visited = System.currentTimeMillis();
 
     editor.setCode(current);
-//    editor.header.rebuild();
-    editor.header.repaint();
+    editor.repaintHeader();
   }
 
 
@@ -1226,7 +1228,7 @@ public class Sketch {
    * Internal helper function to set the current tab based on a name.
    * @param findName the file name (not pretty name) to be shown
    */
-  protected void setCurrentCode(String findName) {
+  public void setCurrentCode(String findName) {
     for (int i = 0; i < codeCount; i++) {
       if (findName.equals(code[i].getFileName()) ||
           findName.equals(code[i].getPrettyName())) {

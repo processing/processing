@@ -21,7 +21,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.ui;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -29,6 +29,10 @@ import java.io.*;
 
 import javax.swing.*;
 import javax.swing.text.*;
+
+import processing.app.Base;
+import processing.app.Mode;
+import processing.app.Preferences;
 import processing.core.PApplet;
 
 import java.text.SimpleDateFormat;

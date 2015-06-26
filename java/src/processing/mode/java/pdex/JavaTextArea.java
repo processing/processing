@@ -36,11 +36,11 @@ import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;
 
 import processing.app.Base;
-import processing.app.Editor;
 import processing.app.Mode;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.app.syntax.TextAreaDefaults;
+import processing.app.ui.Editor;
 
 
 // TODO The way listeners are added/removed here is fragile and

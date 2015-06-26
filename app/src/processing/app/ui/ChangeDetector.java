@@ -1,4 +1,4 @@
-package processing.app;
+package processing.app.ui;
 
 import java.awt.EventQueue;
 import java.awt.Frame;
@@ -9,6 +9,11 @@ import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JOptionPane;
+
+import processing.app.Base;
+import processing.app.Preferences;
+import processing.app.Sketch;
+import processing.app.SketchCode;
 
 
 public class ChangeDetector implements WindowFocusListener {

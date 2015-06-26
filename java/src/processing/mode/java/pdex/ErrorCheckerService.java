@@ -50,11 +50,11 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 
 import processing.app.Base;
-import processing.app.Editor;
-import processing.app.EditorStatus;
 import processing.app.Library;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
+import processing.app.ui.Editor;
+import processing.app.ui.EditorStatus;
 import processing.core.PApplet;
 import processing.mode.java.JavaMode;
 import processing.mode.java.JavaEditor;

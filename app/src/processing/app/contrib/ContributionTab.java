@@ -38,6 +38,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 
 import processing.app.*;
+import processing.app.ui.Editor;
 
 
 public class ContributionTab {

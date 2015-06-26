@@ -22,7 +22,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.ui;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -30,6 +30,12 @@ import java.awt.geom.GeneralPath;
 import java.util.Arrays;
 
 import javax.swing.*;
+
+import processing.app.Base;
+import processing.app.Language;
+import processing.app.Mode;
+import processing.app.Sketch;
+import processing.app.SketchCode;
 
 
 /**
@@ -502,7 +508,7 @@ public class EditorHeader extends JComponent {
       public void actionPerformed(ActionEvent e) {
         Sketch sketch = editor.getSketch();
         if (!Base.isMacOS() &&  // ok on OS X
-            editor.base.editors.size() == 1 &&  // mmm! accessor
+            editor.base.getEditors().size() == 1 &&  // mmm! accessor
             sketch.getCurrentCodeIndex() == 0) {
             Base.showWarning(Language.text("editor.header.delete.warning.title"),
                              Language.text("editor.header.delete.warning.text"), null);

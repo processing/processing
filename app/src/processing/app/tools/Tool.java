@@ -23,7 +23,7 @@
 
 package processing.app.tools;
 
-import processing.app.Editor;
+import processing.app.ui.Editor;
 
 
 /**

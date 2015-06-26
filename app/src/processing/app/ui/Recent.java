@@ -19,7 +19,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.ui;
 
 import java.awt.event.*;
 import java.io.*;
@@ -28,6 +28,11 @@ import java.util.List;
 
 import javax.swing.*;
 
+import processing.app.Base;
+import processing.app.Language;
+import processing.app.Library;
+import processing.app.Mode;
+import processing.app.Preferences;
 import processing.core.PApplet;
 
 
@@ -226,7 +231,7 @@ public class Recent {
   }
 
 
-  synchronized void remove(Editor editor) {
+  synchronized public void remove(Editor editor) {
     int index = findRecord(editor.getSketch().getMainFilePath());
     if (index != -1) {
       records.remove(index);
@@ -273,7 +278,7 @@ public class Recent {
    * entry on the Recent queue. If the sketch is already in the list, it is
    * first removed so it doesn't show up multiple times.
    */
-  synchronized void handle(Editor editor) {
+  synchronized public void handle(Editor editor) {
     if (!editor.getSketch().isUntitled()) {
       // If this sketch is already in the menu, remove it
       remove(editor);
@@ -294,7 +299,7 @@ public class Recent {
   }
 
 //handles renaming done within  processing
-synchronized void handleRename(Editor editor,String oldPath){
+  synchronized public void handleRename(Editor editor,String oldPath){
       if (records.size() == remember) {
         records.remove(0);  // remove the first entry
       }
@@ -305,7 +310,8 @@ synchronized void handleRename(Editor editor,String oldPath){
       }
       records.add(new Record(editor));
       save();
-}
+  }
+
 
   int findRecord(String path) {
     for (int i = 0; i < records.size(); i++) {

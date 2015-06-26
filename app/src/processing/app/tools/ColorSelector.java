@@ -22,6 +22,9 @@
 package processing.app.tools;
 
 import processing.app.*;
+import processing.app.ui.ColorChooser;
+import processing.app.ui.Editor;
+import processing.app.ui.Toolkit;
 
 import java.awt.Color;
 import java.awt.datatransfer.Clipboard;

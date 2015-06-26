@@ -18,12 +18,14 @@
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-package processing.app;
+package processing.app.ui;
 
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+
+import processing.app.Mode;
 
 
 abstract public class EditorButton extends JComponent

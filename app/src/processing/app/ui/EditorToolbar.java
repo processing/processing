@@ -21,7 +21,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -40,6 +40,10 @@ import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+
+import processing.app.Base;
+import processing.app.Language;
+import processing.app.Mode;
 
 
 /**

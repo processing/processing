@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import processing.app.Base;
-import processing.app.Editor;
 import processing.app.Library;
+import processing.app.ui.Editor;
 
 public enum ContributionType {
   LIBRARY, TOOL, MODE, EXAMPLES;
