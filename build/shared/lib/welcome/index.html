@@ -1,0 +1,31 @@
+<html>
+  <body> 
+    <form>
+      <p>
+        <a href="">Read about what&rsquo;s new in 3.0</a> &rarr;
+      </p>
+      <p>
+        Note that some sketches from Processing 2 may not be compatible.
+        <a href="">What has changed?</a>
+      </p>
+      
+      <div id="new_sketchbook">
+        <p>
+          Since older sketches may not be compatible, we recommend creating a new sketchbook folder, so Processing 2 and 3 can happily coexist. This is a one-time process. <a href="">Read more about it.</a>
+        </p>
+
+        <input type="radio" name="sketchbook" value="create_new" /> 
+        Create a new sketchbook folder for use with Processing 3 sketches <i>(recommended!)</i>
+        <br/>
+        <input type="radio" name="sketchbook" value="use_existing" />
+        Use the existing sketchbook folder for both old and new sketches (may cause conflicts with installed libraries)
+        <br/>
+      </div>
+      
+      <input type="checkbox" name="show_each_time" checked />
+      Show this welcome message each time
+      <br/>
+      <input type="button" value="Get Started" />
+    </form>
+  </body>
+</html>
