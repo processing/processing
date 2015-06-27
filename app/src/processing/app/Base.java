@@ -227,8 +227,12 @@ public class Base {
         SingleInstance.startServer(base);
 
       } catch (Throwable t) {
-        // Catch-all to hopefully pick up some of the weirdness we've been
-        // running into lately.
+        // Catch-all to pick up badness during startup.
+        if (t.getCause() != null) {
+          // Usually this is the more important piece of information. We'll
+          // show this one so that it's not truncated in the error window.
+          t = t.getCause();
+        }
         showBadnessTrace("We're off on the wrong foot",
                          "An error occurred during startup.", t, true);
       }
