@@ -21,6 +21,75 @@
 
 package processing.app.ui;
 
+import java.awt.EventQueue;
+import java.io.File;
+
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.text.html.*;
+
+import processing.app.Base;
+import processing.core.PApplet;
+import processing.data.StringDict;
+
+
+public class Welcome {
+
+  static public void main(String[] args) {
+    Base.initPlatform();
+
+    //File indexFile = Base.getLibFile("welcome/index.html");
+    final File indexFile = new File("../build/shared/lib/welcome/index.html");
+
+    EventQueue.invokeLater(new Runnable() {
+      public void run() {
+        JFrame frame = new JFrame("Welcome to Processing 3");
+        frame.setSize(500, 400);
+        frame.setLocationRelativeTo(null);
+
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+
+        JTextPane textPane = new JTextPane();
+        textPane.setContentType("text/html");
+        textPane.setEditable(false);
+        String[] lines = PApplet.loadStrings(indexFile);
+        textPane.setText(PApplet.join(lines, "\n"));
+
+        //frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+        frame.getContentPane().add(textPane);
+
+        HTMLEditorKit kit = (HTMLEditorKit) textPane.getEditorKit();
+        kit.setAutoFormSubmission(false);
+        textPane.addHyperlinkListener(new HyperlinkListener() {
+
+          @Override
+          public void hyperlinkUpdate(HyperlinkEvent e) {
+            //System.out.println(e);
+            if (e instanceof FormSubmitEvent) {
+              //System.out.println("got submit event");
+              String result = ((FormSubmitEvent) e).getData();
+              StringDict dict = new StringDict();
+              String[] pairs = result.split("&");
+              for (String pair : pairs) {
+                String[] pieces = pair.split("=");
+                String attr = PApplet.urlDecode(pieces[0]);
+                String valu = PApplet.urlDecode(pieces[1]);
+                dict.set(attr, valu);
+              }
+              dict.print();
+            } else if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+              //System.out.println("clicked " + e.getURL());
+              Base.openURL(e.getURL().toExternalForm());
+            }
+          }
+        });
+      }
+    });
+  }
+}
+
+/*
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -279,3 +348,4 @@ public class Welcome extends JFrame {
     });
   }
 }
+*/

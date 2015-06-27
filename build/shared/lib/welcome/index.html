@@ -1,6 +1,7 @@
 <html>
-  <body> 
-    <form>
+  <body>
+    <!-- action needs to exist (even though blank), otherwise causes NPE -->
+    <form action="">
       <p>
         <a href="https://github.com/processing/processing/wiki/Changes-in-3.0">Read about what&rsquo;s new in 3.0</a> &rarr;
       </p>
@@ -14,7 +15,7 @@
           Since older sketches may not be compatible, we recommend creating a new sketchbook folder, so Processing 2 and 3 can happily coexist. This is a one-time process. <a href="https://github.com/processing/processing/wiki/Multiple-Sketchbooks">Read more about it.</a>
         </p>
 
-        <input type="radio" name="sketchbook" value="create_new" /> 
+        <input type="radio" name="sketchbook" value="create_new" checked /> 
         Create a new sketchbook folder for use with Processing 3 sketches <i>(recommended!)</i>
         <br/>
         <input type="radio" name="sketchbook" value="use_existing" />
@@ -25,7 +26,7 @@
       <input type="checkbox" name="show_each_time" checked />
       Show this welcome message each time
       <br/>
-      <input type="button" value="Get Started" />
+      <input type="submit" value="Get Started" />
     </form>
   </body>
 </html>
