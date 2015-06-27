@@ -74,4 +74,10 @@ public class ThinkDifferent {
   static public void setIconImage(Image image) {
     application.setDockIconImage(image);
   }
+
+
+  // Instead, just use Application.getApplication() inside your app
+//  static public Application getApplication() {
+//    return application;
+//  }
 }
