@@ -23,6 +23,8 @@ package processing.app.ui;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.*;
@@ -67,12 +69,23 @@ public class Welcome {
         //frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
         frame.getContentPane().add(textPane);
 
+        Toolkit.registerWindowCloseKeys(frame.getRootPane(), new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            System.exit(0);
+          }
+        });
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
         HTMLEditorKit kit = (HTMLEditorKit) textPane.getEditorKit();
         kit.setAutoFormSubmission(false);
+
+        Object title = textPane.getDocument().getProperty("title");
+        if (title instanceof String) {
+          frame.setTitle((String) title);
+        }
 
         textPane.addHyperlinkListener(new HyperlinkListener() {
 
