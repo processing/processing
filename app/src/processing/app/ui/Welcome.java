@@ -21,6 +21,7 @@
 
 package processing.app.ui;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.io.File;
 
@@ -44,23 +45,35 @@ public class Welcome {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         JFrame frame = new JFrame("Welcome to Processing 3");
-        frame.setSize(500, 400);
-        frame.setLocationRelativeTo(null);
-
-        frame.setVisible(true);
+//        frame.setSize(500, 400);
         frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 
-        JTextPane textPane = new JTextPane();
-        textPane.setContentType("text/html");
-        textPane.setEditable(false);
         String[] lines = PApplet.loadStrings(indexFile);
-        textPane.setText(PApplet.join(lines, "\n"));
+        String content = PApplet.join(lines, "\n");
+
+        int high = getContentHeight(400, content);
+        //System.out.println(high);
+        //JTextPane textPane = new JTextPane();
+        //JEditorPane textPane = new JEditorPane();
+        JEditorPane textPane = new JEditorPane("text/html", content);
+        //textPane.setContentType("text/html");
+        textPane.setEditable(false);
+        textPane.setPreferredSize(new Dimension(400, high));
+        //String[] lines = PApplet.loadStrings(indexFile);
+        //textPane.setText(PApplet.join(lines, "\n"));
+//        System.out.println(textPane.getPreferredSize().height);
+//        textPane.setSize(400, textPane.getPreferredSize().height);
 
         //frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
         frame.getContentPane().add(textPane);
 
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
         HTMLEditorKit kit = (HTMLEditorKit) textPane.getEditorKit();
         kit.setAutoFormSubmission(false);
+
         textPane.addHyperlinkListener(new HyperlinkListener() {
 
           @Override
@@ -86,6 +99,14 @@ public class Welcome {
         });
       }
     });
+  }
+
+
+  // Why this doesn't work inline above is beyoned me
+  static int getContentHeight(int width, String content) {
+    JEditorPane dummy = new JEditorPane("text/html", content);
+    dummy.setSize(width, Short.MAX_VALUE);
+    return dummy.getPreferredSize().height;
   }
 }
 
