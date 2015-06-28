@@ -10152,30 +10152,40 @@ public class PApplet implements PConstants {
       surface.placeWindow(location, editorLocation);
     }
 
-//    EventQueue.invokeLater(new Runnable() {
-//      public void run() {
-
-    // Helps avoid this code being duplicated 2x per surface class.
-    // Andres is testing to make sure this doesn't cause trouble.
-    if (sketch.getGraphics().displayable()) {
-      surface.setVisible(true);
-    }
-
     // not always running externally when in present mode
+    // moved above setVisible() in 3.0 alpha 11
     if (sketch.external) {
       surface.setupExternalMessages();
     }
 
+    sketch.showSurface();
+    sketch.startSurface();
+    /*
+    if (sketch.getGraphics().displayable()) {
+      surface.setVisible(true);
+    }
+
     //sketch.init();
     surface.startThread();
-
-//      }
-//    });
+    */
   }
 
 
-  protected PSurface initSurface() {/*int backgroundColor, int displayNum,
-                                 boolean fullScreen, boolean spanDisplays) {*/
+  /** Danger: available for advanced subclassing, but here be dragons. */
+  protected void showSurface() {
+    if (getGraphics().displayable()) {
+      surface.setVisible(true);
+    }
+  }
+
+
+  /** See warning in showSurface() */
+  protected void startSurface() {
+    surface.startThread();
+  }
+
+
+  protected PSurface initSurface() {
     g = createPrimaryGraphics();
     surface = g.createSurface();
 
@@ -10229,7 +10239,7 @@ public class PApplet implements PConstants {
       };
 
       surface.initFrame(this); //, backgroundColor, displayNum, fullScreen, spanDisplays);
-      surface.setTitle(getClass().getName());
+      surface.setTitle(getClass().getSimpleName());
 
     } else {
       surface.initOffscreen(this);  // for PDF/PSurfaceNone and friends
