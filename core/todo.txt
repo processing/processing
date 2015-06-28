@@ -45,6 +45,7 @@ X ArithmeticException: / by zero when using fonts opened with loadFont()
 X   https://github.com/processing/processing/issues/3413
 X SVG briefly broken for Java2D
 X   https://github.com/processing/processing/issues/3417
+X change how font metrics are pulled to fix text width issues
 
 threading headaches
 X sketch not always showing with empty draw()

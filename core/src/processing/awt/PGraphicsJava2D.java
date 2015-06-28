@@ -1850,7 +1850,8 @@ public class PGraphicsJava2D extends PGraphics {
 
     Font font = (Font) textFont.getNative();
     if (font != null) {
-      return getFontMetrics(font).getAscent();
+      //return getFontMetrics(font).getAscent();
+      return g2.getFontMetrics(font).getAscent();
     }
     return super.textAscent();
   }
@@ -1863,7 +1864,8 @@ public class PGraphicsJava2D extends PGraphics {
     }
     Font font = (Font) textFont.getNative();
     if (font != null) {
-      return getFontMetrics(font).getDescent();
+      //return getFontMetrics(font).getDescent();
+      return g2.getFontMetrics(font).getDescent();
     }
     return super.textDescent();
   }
@@ -1949,11 +1951,14 @@ public class PGraphicsJava2D extends PGraphics {
     }
 
     Font font = (Font) textFont.getNative();
+//    System.out.println(font);
     //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
     if (font != null) {
+//      System.out.println("using charswidth for " + new String(buffer, start, stop-start));
       // maybe should use one of the newer/fancier functions for this?
-      int length = stop - start;
-      FontMetrics metrics = getFontMetrics(font);
+//      int length = stop - start;
+//      FontMetrics metrics = getFontMetrics(font);
+      FontMetrics metrics = g2.getFontMetrics(font);
       // Using fractional metrics makes the measurement worse, not better,
       // at least on OS X 10.6 (November, 2010).
       // TextLayout returns the same value as charsWidth().
@@ -1961,13 +1966,16 @@ public class PGraphicsJava2D extends PGraphics {
 //      g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
 //                          RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 //      float m1 = metrics.charsWidth(buffer, start, length);
-//      //float m2 = (float) metrics.getStringBounds(buffer, start, stop, g2).getWidth();
+//      float m2 = (float) metrics.getStringBounds(buffer, start, stop, g2).getWidth();
 //      TextLayout tl = new TextLayout(new String(buffer, start, length), font, g2.getFontRenderContext());
-//      float m2 = (float) tl.getBounds().getWidth();
-//      System.err.println(m1 + " " + m2);
-////      return m1;
+//      float m3 = (float) tl.getBounds().getWidth();
+//      System.err.println(m1 + " " + m2 + " " + m3);
+//////      return m1;
+////      return m2;
+////      return metrics.charsWidth(buffer, start, length);
 //      return m2;
-      return metrics.charsWidth(buffer, start, length);
+      return (float)
+        metrics.getStringBounds(buffer, start, stop, g2).getWidth();
     }
 //    System.err.println("not native");
     return super.textWidthImpl(buffer, start, stop);
@@ -2087,6 +2095,7 @@ public class PGraphicsJava2D extends PGraphics {
 //    return getFontMetrics(font).getFontRenderContext();
 //  }
 
+  /*
   Toolkit toolkit;
 
   @SuppressWarnings("deprecation")
@@ -2103,6 +2112,7 @@ public class PGraphicsJava2D extends PGraphics {
     return toolkit.getFontMetrics(font);
     //return (g2 != null) ? g2.getFontMetrics(font) : super.getFontMetrics(font);
   }
+  */
 
 
   //////////////////////////////////////////////////////////////
