@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.processing</groupId>
         <artifactId>processing-complete</artifactId>
-        <version>3.0a5-SNAPSHOT</version>
+        <version>3.0a10</version>
         <relativePath>../build/pom.xml</relativePath>
     </parent>
     
@@ -19,7 +19,32 @@
         This core package contains the core : PApplet, Graphics. Without the IDE and libraries. 
     </description>
 
-                
+              
+    <dependencies>
+        <dependency>
+            <groupId>gluegen-rt</groupId>  
+            <artifactId>gluegen-rt</artifactId>  
+            <version>3.0</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/library/gluegen-rt.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>jogl-all</groupId>  
+            <artifactId>jogl-all</artifactId>  
+            <version>3.0</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/library/jogl-all.jar</systemPath>
+        </dependency>
+        
+        <dependency>
+            <groupId>apple</groupId>  
+            <artifactId>apple</artifactId>  
+            <version>3.0</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/apple.jar</systemPath>
+        </dependency>
+        
+    </dependencies> 
     <build>
         <sourceDirectory>src</sourceDirectory>
         
@@ -64,9 +89,10 @@
                 <artifactId>maven-jar-plugin</artifactId>
             </plugin> 
             
-            <plugin>
+            <!--// Disabled for beta-->
+<!--            <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
+            </plugin>-->
             
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
@@ -81,5 +107,7 @@
     </build>
     <properties>
         <netbeans.hint.license>license</netbeans.hint.license>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 </project>
