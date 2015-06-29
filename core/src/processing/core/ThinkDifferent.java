@@ -72,6 +72,11 @@ public class ThinkDifferent {
 
 
   static public void setIconImage(Image image) {
+    // When already set, is a sun.awt.image.MultiResolutionCachedImage on OS X
+//    Image current = application.getDockIconImage();
+//    System.out.println("current dock icon image is " + current);
+//    System.out.println("changing to " + image);
+
     application.setDockIconImage(image);
   }
 

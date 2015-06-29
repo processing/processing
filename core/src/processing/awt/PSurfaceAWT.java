@@ -442,7 +442,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     }
 
     // Put the p5 logo in the Frame's corner to override the Java coffee cup.
-    setIconImage(frame);
+    setProcessingIcon(frame);
 
     // For 0149, moving this code (up to the pack() method) before init().
     // For OpenGL (and perhaps other renderers in the future), a peer is
@@ -539,6 +539,73 @@ public class PSurfaceAWT extends PSurfaceNone {
 
     if (frame != null) {
       frame.setResizable(resizable);
+    }
+  }
+
+
+  @Override
+  public void setIcon(PImage image) {
+    Image awtImage = (Image) image.getNative();
+
+    if (PApplet.platform != PConstants.MACOSX) {
+      frame.setIconImage(awtImage);
+
+    } else {
+      try {
+        final String td = "processing.core.ThinkDifferent";
+        Class<?> thinkDifferent =
+          Thread.currentThread().getContextClassLoader().loadClass(td);
+        Method method =
+          thinkDifferent.getMethod("setIconImage", new Class[] { java.awt.Image.class });
+        method.invoke(null, new Object[] { awtImage });
+      } catch (Exception e) {
+        e.printStackTrace();  // That's unfortunate
+      }
+    }
+  }
+
+
+  static ArrayList<Image> iconImages;
+
+  static protected void setProcessingIcon(Frame frame) {
+    // On OS X, this only affects what shows up in the dock when minimized.
+    // So replacing it is actually a step backwards. Brilliant.
+    if (PApplet.platform != PConstants.MACOSX) {
+      //Image image = Toolkit.getDefaultToolkit().createImage(ICON_IMAGE);
+      //frame.setIconImage(image);
+      try {
+        if (iconImages == null) {
+          iconImages = new ArrayList<Image>();
+          final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
+
+          for (int sz : sizes) {
+            //URL url = getClass().getResource("/icon/icon-" + sz + ".png");
+            URL url = PApplet.class.getResource("/icon/icon-" + sz + ".png");
+            Image image = Toolkit.getDefaultToolkit().getImage(url);
+            iconImages.add(image);
+            //iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png", frame));
+          }
+        }
+        frame.setIconImages(iconImages);
+
+      } catch (Exception e) { }  // harmless; keep this to ourselves
+
+    } else {
+      // On OS X, set this for AWT surfaces, which handles the dock image
+      // as well as the cmd-tab image that's shown. Just one size, I guess.
+      URL url = PApplet.class.getResource("/icon/icon-512.png");
+      // Seems dangerous to have this in code instead of using reflection, no?
+      //ThinkDifferent.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
+      try {
+        final String td = "processing.core.ThinkDifferent";
+        Class<?> thinkDifferent =
+          Thread.currentThread().getContextClassLoader().loadClass(td);
+        Method method =
+          thinkDifferent.getMethod("setIconImage", new Class[] { java.awt.Image.class });
+        method.invoke(null, new Object[] { Toolkit.getDefaultToolkit().getImage(url) });
+      } catch (Exception e) {
+        e.printStackTrace();  // That's unfortunate
+      }
     }
   }
 
@@ -1008,52 +1075,6 @@ public class PSurfaceAWT extends PSurfaceNone {
         }
       }
     });
-  }
-
-
-  static ArrayList<Image> iconImages;
-
-  static protected void setIconImage(Frame frame) {
-    // On OS X, this only affects what shows up in the dock when minimized.
-    // So replacing it is actually a step backwards. Brilliant.
-    if (PApplet.platform != PConstants.MACOSX) {
-      //Image image = Toolkit.getDefaultToolkit().createImage(ICON_IMAGE);
-      //frame.setIconImage(image);
-      try {
-        if (iconImages == null) {
-          iconImages = new ArrayList<Image>();
-          final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
-
-          for (int sz : sizes) {
-            //URL url = getClass().getResource("/icon/icon-" + sz + ".png");
-            URL url = PApplet.class.getResource("/icon/icon-" + sz + ".png");
-            Image image = Toolkit.getDefaultToolkit().getImage(url);
-            iconImages.add(image);
-            //iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png", frame));
-          }
-        }
-        frame.setIconImages(iconImages);
-
-      } catch (Exception e) { }  // harmless; keep this to ourselves
-
-    } else {
-      // On OS X, set this for AWT surfaces, which handles the dock image
-      // as well as the cmd-tab image that's shown. Just one size, I guess.
-      URL url = PApplet.class.getResource("/icon/icon-512.png");
-      // Seems dangerous to have this in code instead of using reflection, no?
-      //ThinkDifferent.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
-      try {
-        final String td = "processing.core.ThinkDifferent";
-        Class<?> thinkDifferent =
-          Thread.currentThread().getContextClassLoader().loadClass(td);
-        Method method =
-          thinkDifferent.getMethod("setIconImage", new Class[] { java.awt.Image.class });
-        method.invoke(null, new Object[] { Toolkit.getDefaultToolkit().getImage(url) });
-      } catch (Exception e) {
-        e.printStackTrace();  // That's unfortunate
-      }
-
-    }
   }
 
 
