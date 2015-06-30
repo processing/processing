@@ -24,8 +24,11 @@ package processing.app.contrib;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import processing.app.Base;
 import processing.app.Mode;
@@ -77,16 +80,37 @@ public class ModeContribution extends LocalContribution {
   private ModeContribution(Base base, File folder,
                            String className) throws Exception {
     super(folder);
-
+    System.err.println("OOOLALALA ");
     className = initLoader(className);
+    System.err.println("LALALA " + loader.toString());
     if (className != null) {
-      Class<?> modeClass = loader.loadClass(className);
-      Base.log("Got mode class " + modeClass);
-      Constructor con = modeClass.getConstructor(Base.class, File.class);
-      mode = (Mode) con.newInstance(base, folder);
-      mode.setClassLoader(loader);
-      if (base != null) {
-        mode.setupGUI();
+      try {
+        Class<?> modeClass = loader.loadClass(className);
+        Base.log("Got mode class " + modeClass);
+        Constructor con = modeClass.getConstructor(Base.class, File.class);
+        mode = (Mode) con.newInstance(base, folder);
+        mode.setClassLoader(loader);
+        if (base != null) {
+          mode.setupGUI();
+        }
+      } catch (NoClassDefFoundError ncdfe) {
+        System.err.println("OOPS " + ncdfe.getMessage() + " :" + Base.getContentFile("modes/java/mode/JavaMode.jar").exists());
+        if (ncdfe.getMessage().equals("processing/mode/java/JavaMode")) {
+          System.err.println("OOPS2 " + ncdfe.getMessage());
+          className = initLoader(className, new URL[]{Base.getContentFile("modes/java/mode/JavaMode.jar").toURI().toURL()});
+          Class<?> modeClass = loader.loadClass(className);
+          System.err.println("Reloading mode class " + modeClass + " with JavaMode" + Base.getContentFile("modes/java/mode/JavaMode.jar").toURI().toURL());
+          
+          Constructor con = modeClass.getConstructor(Base.class, File.class);
+          mode = (Mode) con.newInstance(base, folder);
+          mode.setClassLoader(loader);
+          if (base != null) {
+            mode.setupGUI();
+          }
+        } else {
+          throw new NoClassDefFoundError(ncdfe.getMessage() + " no class definition found.");
+        }
+//        throw new NoClassDefFoundError(ncdfe.getMessage() + " no class definition found.");
       }
     }
   }
@@ -131,10 +155,13 @@ public class ModeContribution extends LocalContribution {
           try {
             contribModes.add(new ModeContribution(base, folder, null));
           } catch (NoSuchMethodError nsme) {
+            System.err.println("1" + nsme.getMessage());
             System.err.println(folder.getName() + " contains an incompatible Mode");
             System.err.println(nsme.getMessage());
           } catch (NoClassDefFoundError ncdfe) {
+            System.err.println("2" + ncdfe.getMessage());
             System.err.println(folder.getName() + " contains an incompatible Mode");
+            ncdfe.printStackTrace();
             System.err.println(ncdfe.getMessage());
           } catch (IgnorableException ig) {
             Base.log(ig.getMessage());
