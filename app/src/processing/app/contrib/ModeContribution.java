@@ -80,9 +80,7 @@ public class ModeContribution extends LocalContribution {
   private ModeContribution(Base base, File folder,
                            String className) throws Exception {
     super(folder);
-    System.err.println("OOOLALALA ");
     className = initLoader(className);
-    System.err.println("LALALA " + loader.toString());
     if (className != null) {
       try {
         Class<?> modeClass = loader.loadClass(className);
@@ -94,13 +92,11 @@ public class ModeContribution extends LocalContribution {
           mode.setupGUI();
         }
       } catch (NoClassDefFoundError ncdfe) {
-        System.err.println("OOPS " + ncdfe.getMessage() + " :" + Base.getContentFile("modes/java/mode/JavaMode.jar").exists());
+        // Reinitialise loader with JaavMode
         if (ncdfe.getMessage().equals("processing/mode/java/JavaMode")) {
-          System.err.println("OOPS2 " + ncdfe.getMessage());
+          Base.log(folder.getAbsolutePath() + " extends JavaMode, reloading with javamode.");
           className = initLoader(className, new URL[]{Base.getContentFile("modes/java/mode/JavaMode.jar").toURI().toURL()});
           Class<?> modeClass = loader.loadClass(className);
-          System.err.println("Reloading mode class " + modeClass + " with JavaMode" + Base.getContentFile("modes/java/mode/JavaMode.jar").toURI().toURL());
-          
           Constructor con = modeClass.getConstructor(Base.class, File.class);
           mode = (Mode) con.newInstance(base, folder);
           mode.setClassLoader(loader);
@@ -108,9 +104,9 @@ public class ModeContribution extends LocalContribution {
             mode.setupGUI();
           }
         } else {
+          // Some other issue
           throw new NoClassDefFoundError(ncdfe.getMessage() + " no class definition found.");
         }
-//        throw new NoClassDefFoundError(ncdfe.getMessage() + " no class definition found.");
       }
     }
   }

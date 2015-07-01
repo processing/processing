@@ -176,6 +176,9 @@ public abstract class LocalContribution extends Contribution {
   }
   
   public String initLoader(String className, URL[] extraUrls) throws Exception {
+    
+    // initLoader(String) can call this with a null URL array
+    
     File modeDirectory = new File(folder, getTypeName());
     if (modeDirectory.exists()) {
       Base.log("checking mode folder regarding " + className);
