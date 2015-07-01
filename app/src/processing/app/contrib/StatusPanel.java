@@ -21,6 +21,7 @@
 */
 package processing.app.contrib;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,10 +46,11 @@ class StatusPanel extends JPanel {
 
   JTextPane label;
   JButton installButton;
-  JProgressBar installProgressBar;
+  JPanel progressBarPanel;
   JLabel updateLabel;
   JButton updateButton;
   JButton removeButton;
+  GroupLayout layout;
 
   ContributionListing contributionListing = ContributionListing.getInstance();
   ContributionManagerDialog contributionManagerDialog;
@@ -76,18 +78,24 @@ class StatusPanel extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel
-          .getSelectedPanel().install();
+        ContributionPanel currentPanel = StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel
+          .getSelectedPanel();
+        currentPanel.install();
+        StatusPanel.this.update(currentPanel);
       }
     });
-    installProgressBar = new JProgressBar();
+    progressBarPanel = new JPanel();
+    progressBarPanel.setLayout(new BorderLayout());;
     updateLabel = new JLabel("  ");
     updateButton = new JButton("Update");
     updateButton.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel.getSelectedPanel().update();
+        ContributionPanel currentPanel = StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel
+          .getSelectedPanel();
+        currentPanel.update();
+        StatusPanel.this.update(currentPanel);
       }
     });
 
@@ -96,12 +104,15 @@ class StatusPanel extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel.getSelectedPanel().remove();
+        ContributionPanel currentPanel = StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel
+          .getSelectedPanel();
+        currentPanel.remove();
+        StatusPanel.this.update(currentPanel);
       }
     });
 
     int labelWidth = width != 0 ? width * 3 / 4 : GroupLayout.PREFERRED_SIZE;
-    GroupLayout layout = new GroupLayout(this);
+    layout = new GroupLayout(this);
     this.setLayout(layout);
 
     layout.setAutoCreateContainerGaps(true);
@@ -115,7 +126,7 @@ class StatusPanel extends JPanel {
       .addGroup(layout
                   .createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(installButton, BUTTON_WIDTH, BUTTON_WIDTH,
-                                BUTTON_WIDTH).addComponent(installProgressBar)
+                                BUTTON_WIDTH).addComponent(progressBarPanel)
                   .addComponent(updateLabel).addComponent(updateButton)
                   .addComponent(removeButton)));
 
@@ -126,14 +137,14 @@ class StatusPanel extends JPanel {
                   .createSequentialGroup()
                   .addComponent(installButton)
                   .addGroup(layout.createParallelGroup()
-                              .addComponent(installProgressBar)
+                              .addComponent(progressBarPanel)
                               .addComponent(updateLabel))
                   .addComponent(updateButton).addComponent(removeButton)));
 
     layout
-      .linkSize(SwingConstants.HORIZONTAL, installButton, installProgressBar, updateButton, removeButton);
+      .linkSize(SwingConstants.HORIZONTAL, installButton, progressBarPanel, updateButton, removeButton);
 
-    installProgressBar.setVisible(false);
+    progressBarPanel.setVisible(false);
     updateLabel.setVisible(false);
 
     installButton.setEnabled(false);
@@ -163,6 +174,8 @@ class StatusPanel extends JPanel {
   }
 
   public void update(ContributionPanel panel) {
+    
+    progressBarPanel.removeAll();
 
     label.setText(panel.description.toString());
 
@@ -200,10 +213,13 @@ class StatusPanel extends JPanel {
       updateLabel.setText(currentVersion + " installed");
     }
 
-    updateLabel.setVisible(true);
-
     removeButton.setEnabled(panel.getContrib().isInstalled());
-
+    progressBarPanel.add(panel.installProgressBar);
+    if (panel.installProgressBar.isEnabled()) {
+      progressBarPanel.setVisible(true);
+      updateLabel.setVisible(false);
+      progressBarPanel.repaint();
+    }
   }
 }
 
