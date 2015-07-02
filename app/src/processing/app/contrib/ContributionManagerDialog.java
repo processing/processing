@@ -21,6 +21,7 @@
  */
 package processing.app.contrib;
 
+import java.awt.Dimension;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +30,9 @@ import java.net.SocketTimeoutException;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import processing.app.*;
 import processing.app.ui.Editor;
@@ -50,7 +54,13 @@ public class ContributionManagerDialog {
   String title;
   JButton restartButton;
   StatusPanel statusPanel;
-
+  
+  
+  JPanel errorPanel;
+  JTextPane errorMessage;
+  JButton tryAgainButton;
+  JButton closeButton;
+  
   // the calling editor, so updates can be applied
   Editor editor;
   
@@ -138,12 +148,16 @@ public class ContributionManagerDialog {
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
     
+    buildErrorPanel();
+    
     GroupLayout layout = new GroupLayout(dialog.getContentPane());
     dialog.getContentPane().setLayout(layout);
     
-    layout.setHorizontalGroup(layout.createParallelGroup().addComponent(tabbedPane).addComponent(statusPanel));
-    layout.setVerticalGroup(layout.createSequentialGroup().addComponent(tabbedPane).addComponent(statusPanel));
+    layout.setHorizontalGroup(layout.createParallelGroup().addComponent(tabbedPane).addComponent(errorPanel).addComponent(statusPanel));
+    layout.setVerticalGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(tabbedPane).addComponent(errorPanel)).addComponent(statusPanel));
 
+    dialog.getContentPane().setComponentZOrder(errorPanel, 0);
+    
     restartButton = new JButton(Language.text("contrib.restart"));
     restartButton.setVisible(false);
     restartButton.addActionListener(new ActionListener() {
@@ -195,6 +209,60 @@ public class ContributionManagerDialog {
 
     dialog.pack();
     dialog.setLocationRelativeTo(null);
+  }
+  
+  private void buildErrorPanel(){
+    errorPanel = new JPanel();
+    GroupLayout layout = new GroupLayout(errorPanel);
+    layout.setAutoCreateGaps(true);
+    layout.setAutoCreateContainerGaps(true);
+    errorPanel.setLayout(layout);
+    errorMessage = new JTextPane();
+    errorMessage.setText("Could not connect to the Processing server. "
+      + "Contributions cannot be installed or updated without an Internet connection. "
+      + "Please verify your network connection again, then try connecting again.");
+    errorMessage.setMaximumSize(new Dimension(450, 20));
+    errorMessage.setOpaque(false);
+    
+    StyledDocument doc = errorMessage.getStyledDocument();
+    SimpleAttributeSet center = new SimpleAttributeSet();
+    StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+    doc.setParagraphAttributes(0, doc.getLength(), center, false);
+    
+    
+    closeButton = new JButton("");
+    closeButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        errorPanel.setVisible(false);
+      }
+    });
+    tryAgainButton = new JButton("Try Again");
+    tryAgainButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // TODO Auto-generated method stub
+        
+      }
+    });
+    layout.setHorizontalGroup(layout
+      .createSequentialGroup()
+      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                  .addComponent(errorMessage).addComponent(tryAgainButton))
+      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+      .addComponent(closeButton));
+    layout.setVerticalGroup(layout
+      .createSequentialGroup()
+      .addGroup(layout.createParallelGroup().addComponent(errorMessage)
+                  .addComponent(closeButton)).addComponent(tryAgainButton));
+    errorPanel.setLocation(tabbedPane.getHeight() - errorPanel.getHeight(),0);
+    
+    errorPanel.setVisible(false);
   }
 
   /**

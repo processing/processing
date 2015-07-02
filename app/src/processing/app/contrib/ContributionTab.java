@@ -91,6 +91,7 @@ public class ContributionTab {
 
       filter = type.createFilter();
     }
+    this.contributionType = type;
     this.statusPanel = statusPanel;
     this.contributionManagerDialog = contributionManagerDialog;
     contribListing = ContributionListing.getInstance();
