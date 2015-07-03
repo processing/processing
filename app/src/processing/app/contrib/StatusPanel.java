@@ -178,7 +178,7 @@ class StatusPanel extends JPanel {
 
     label.setText(panel.description.toString());
 
-    updateButton.setEnabled(!contributionListing.hasListDownloadFailed()
+    updateButton.setEnabled(contributionListing.hasDownloadedLatestList()
       && (contributionListing.hasUpdates(panel.getContrib()) && !panel
         .getContrib().isUpdateFlagged()));
 
@@ -203,7 +203,7 @@ class StatusPanel extends JPanel {
       updateButton.setText("Update");
     }
 
-    installButton.setEnabled(!panel.getContrib().isInstalled() && !contributionListing.hasListDownloadFailed());
+    installButton.setEnabled(!panel.getContrib().isInstalled() && contributionListing.hasDownloadedLatestList());
 
 
     if(installButton.isEnabled()){
