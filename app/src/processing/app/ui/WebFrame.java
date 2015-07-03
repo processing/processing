@@ -22,7 +22,6 @@
 package processing.app.ui;
 
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -37,29 +36,6 @@ import processing.data.StringDict;
 
 
 public class WebFrame extends JFrame {
-
-  static public void main(String[] args) {
-    Base.initPlatform();
-
-    //File indexFile = Base.getLibFile("welcome/index.html");
-    final File indexFile = new File("../build/shared/lib/welcome/index.html");
-
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        new WebFrame(indexFile, 400) {
-          public void handleSubmit(StringDict dict) {
-            dict.print();
-            handleClose();
-          }
-
-          public void handleClose() {
-            System.exit(0);
-          }
-        };
-      }
-    });
-  }
-
 
   public WebFrame(File file, int width) {
     //setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
@@ -89,7 +65,6 @@ public class WebFrame extends JFrame {
     }
 
     textPane.addHyperlinkListener(new HyperlinkListener() {
-
       @Override
       public void hyperlinkUpdate(HyperlinkEvent e) {
         //System.out.println(e);
@@ -115,7 +90,7 @@ public class WebFrame extends JFrame {
     });
     pack();
     setLocationRelativeTo(null);
-    setVisible(true);
+    //setVisible(true);
   }
 
 

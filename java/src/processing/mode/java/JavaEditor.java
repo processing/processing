@@ -39,6 +39,7 @@ import processing.app.ui.EditorHeader;
 import processing.app.ui.EditorState;
 import processing.app.ui.EditorToolbar;
 import processing.app.ui.Toolkit;
+import processing.app.ui.Welcome;
 import processing.mode.java.debug.LineBreakpoint;
 import processing.mode.java.debug.LineHighlight;
 import processing.mode.java.debug.LineID;
@@ -348,6 +349,14 @@ public class JavaEditor extends Editor {
       });
       menu.add(item);
     }
+
+    item = new JMenuItem("Welcome to Processing 3");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        new Welcome();
+      }
+    });
+    menu.add(item);
 
     item = new JMenuItem(Language.text("menu.help.environment"));
     item.addActionListener(new ActionListener() {
