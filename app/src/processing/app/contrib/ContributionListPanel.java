@@ -226,12 +226,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
 
   protected void setSelectedPanel(ContributionPanel contributionPanel) {
+    contributionTab.contributionManagerDialog.updateStatusPanel(contributionPanel);
     if (selectedPanel == contributionPanel) {
       selectedPanel.setSelected(true);
 
     } else {
       
-      contributionTab.contributionManagerDialog.updateStatusPanel(contributionPanel);
       ContributionPanel lastSelected = selectedPanel;
       selectedPanel = contributionPanel;
 

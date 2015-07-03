@@ -31,6 +31,8 @@ import java.net.SocketTimeoutException;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -148,6 +150,17 @@ public class ContributionManagerDialog {
     updatesContributionTab.showFrame(editor);
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
+    
+    tabbedPane.addChangeListener(new ChangeListener() {
+      
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        // When the tab is changed update status to the current selected panel
+        getActiveTab().contributionListPanel
+          .setSelectedPanel(getActiveTab().contributionListPanel
+            .getSelectedPanel());
+      }
+    });
     
     
 //    tabbedPane.setSize(450, 400);
