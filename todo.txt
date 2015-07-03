@@ -15,6 +15,9 @@ X   https://github.com/processing/processing/issues/3436
 X error message caused by curly bracket in a println string
 X   ((?<![\\])['"])((?:.(?!(?<![\\])\1))*.?)\1 to match quoted strings
 X   https://github.com/processing/processing/issues/3394
+X Tweak mode broken (re: new settings() function)
+X   https://github.com/processing/processing/issues/3435
+X   looks like 'class' def from tweak needs to go below setup
 
 manager
 X changed compatibleModesList to modes in examples.properties
@@ -78,9 +81,6 @@ _   https://github.com/processing/processing/issues/2953
 
 
 beta
-_ Tweak mode broken (re: new settings() function)
-_   https://github.com/processing/processing/issues/3435
-_   looks like 'class' def from tweak needs to go below setup
 _ make modes load their parent class
 _   https://github.com/processing/processing/issues/3443
 _ add "welcome" or "what's new" window to explain features in 3
