@@ -101,6 +101,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         add(entry.getValue(), c);
       }
     } else {
+      //TODO This is where the status tab will be made
+      
       int row = 0;
       for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
         GridBagConstraints c = new GridBagConstraints();
@@ -119,7 +121,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       c.gridx = 0;
       c.gridy = row++;
       c.anchor = GridBagConstraints.NORTH;
-      add(new JLabel("gdgsdgGrthsrhrr"), c);
     }
 /*
     GridBagConstraints c = new GridBagConstraints();
