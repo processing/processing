@@ -35,36 +35,37 @@ public class SketchParser {
 
 	String[] codeTabs;
 	boolean requiresComment;
-	ArrayList<ColorMode> colorModes;
+	List<ColorMode> colorModes;
 
 	List<List<Range>> scientificNotations;
-	
+
 	Range setupFunction;
-	
+
 	List<List<Range>> commentBlocks;
 	List<int[]> curlyScopes;
-	
+
+
 	public SketchParser(String[] codeTabs, boolean requiresComment) {
 		this.codeTabs = codeTabs;
 		this.requiresComment = requiresComment;
-		intVarCount=0;
-		floatVarCount=0;
-		
+		intVarCount = 0;
+		floatVarCount = 0;
+
 		// get all comment blocks
 		commentBlocks = new ArrayList<>();
 		for (String code : codeTabs) {
 			commentBlocks.add(getCommentBlocks(code));
 		}
-		
+
 		// get setup function range (to ignore all numbers there)
 		setupFunction = new Range(getSetupStart(codeTabs[0]), getSetupEnd(codeTabs[0]));
-		
+
 		// build curly scope for every character in the code
 		curlyScopes = new ArrayList<>();
 		for (String code : codeTabs) {
-			curlyScopes.add(getCurlyScopes(code));			
+			curlyScopes.add(getCurlyScopes(code));
 		}
-		
+
 		// get all scientific notation (to ignore them)
 		scientificNotations = getAllScientificNotations();
 
@@ -84,7 +85,7 @@ public class SketchParser {
 	}
 
 
-	public void addAllNumbers() {
+	private void addAllNumbers() {
 		allHandles = new ArrayList<>();
 
 		addAllDecimalNumbers();
@@ -123,7 +124,7 @@ public class SketchParser {
 					// ignore comments
 					continue;
 				}
-				
+
 				if (setupFunction.contains(start)) {
 					// ignore numbers in setup
 					continue;
@@ -215,7 +216,7 @@ public class SketchParser {
 					// ignore comments
 					continue;
 				}
-				
+
 				if (setupFunction.contains(start)) {
 					// ignore number in setup
 					continue;
@@ -276,7 +277,7 @@ public class SketchParser {
 					// ignore comments
 					continue;
 				}
-				
+
 				if (setupFunction.contains(start)) {
 					// ignore number in setup
 					continue;
@@ -380,7 +381,7 @@ public class SketchParser {
 					// ignore colors in a comment
 					continue;
 				}
-				
+
 				if (setupFunction.contains(m.start())) {
 					// ignore number in setup
 					continue;
@@ -464,7 +465,7 @@ public class SketchParser {
 					// ignore colors in a comment
 					continue;
 				}
-				
+
 				if (setupFunction.contains(m.start())) {
 					// ignore number in setup
 					continue;
@@ -683,28 +684,28 @@ public class SketchParser {
 
 		return false;
 	}
-	
+
 	/**
 	 * Builds an int array for every tab that represents the scope depth at each character
-	 * 
+	 *
 	 * @return
 	 */
 	static private int[] getCurlyScopes(String code)
 	{
 		List<Range> comments = getCommentBlocks(code);
-		
+
 		int[] scopes = new int[code.length()];
 		int curlyScope = 0;
 		boolean arrayAssignmentMaybeCommingFlag = false;
 		int arrayAssignmentCurlyScope = 0;
 		for (int pos=0; pos<code.length(); pos++) {
 			scopes[pos] = curlyScope;
-				
+
 			if (isInRangeList(pos, comments)) {
 				// we are inside a comment, ignore and move on
 				continue;
 			}
-				
+
 			if (code.charAt(pos) == '{') {
 				if (arrayAssignmentMaybeCommingFlag ||
 					arrayAssignmentCurlyScope>0) {
@@ -731,10 +732,10 @@ public class SketchParser {
 				arrayAssignmentMaybeCommingFlag = false;
 			}
 		}
-		
+
 		return scopes;
 	}
-	
+
 	static private boolean isWhiteSpace(char c) {
 		return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 	}
@@ -745,15 +746,15 @@ public class SketchParser {
 	* @param codeTabIndex index of the code in codeTabs
 	* @return
 	* true if the position 'pos' is in global scope in the code 'codeTabs[codeTabIndex]'
-	* 
+	*
  	*/
 	private boolean isGlobal(int pos, int codeTabIndex) {
 		return (curlyScopes.get(codeTabIndex)[pos]==0);
 	};
 
-	public static List<Range> getCommentBlocks(String code) {
+	static private List<Range> getCommentBlocks(String code) {
 		List<Range> commentBlocks = new ArrayList<Range>();
-			
+
 		int lastBlockStart=0;
 		boolean lookForEnd = false;
 		for (int pos=0; pos<code.length()-1; pos++) {
@@ -775,19 +776,19 @@ public class SketchParser {
 					commentBlocks.add(new Range(pos, getEndOfLine(pos, code)));
 				}
 			}
-			
+
 		}
-		
+
 		return commentBlocks;
 	}
-	
+
 	private static boolean isInRangeList(int pos, List<Range> rangeList) {
 		for (Range r : rangeList) {
 			if (r.contains(pos)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -826,7 +827,7 @@ public class SketchParser {
 	}
 
 
-	public static int getSetupStart(String code) {
+	static public int getSetupStart(String code) {
 		Pattern p = Pattern.compile("void[\\s\\t\\r\\n]*setup[\\s\\t]*\\(\\)[\\s\\t\\r\\n]*\\{");
 		Matcher m = p.matcher(code);
 
@@ -836,42 +837,43 @@ public class SketchParser {
 
 		return -1;
 	}
-	
-	public static int getSetupEnd(String code) {
+
+
+	static public int getSetupEnd(String code) {
 		List<Range> comments = getCommentBlocks(code);
-		
+
 		int setupStart = getSetupStart(code);
 		if (setupStart == -1) {
 			return -1;
 		}
-		
+
 		System.out.println("setup start = " + setupStart);
-		
+
 		// count brackets to look for setup end
 		int bracketCount=1;
 		int pos = setupStart;
 		while (bracketCount>0 && pos<code.length()) {
-			
+
 			if (isInRangeList(pos, comments)) {
 				// in a comment, ignore and move on
 				pos++;
 				continue;
 			}
-			
+
 			if (code.charAt(pos) == '{') {
 				bracketCount++;
 			}
 			else if (code.charAt(pos) == '}') {
 				bracketCount--;
 			}
-			
+
 			pos++;
 		}
-		
+
 		if (bracketCount == 0) {
 			return pos-1;
 		}
-		
+
 		return -1;
 	}
 
@@ -880,12 +882,12 @@ public class SketchParser {
 		int start;
 		int end;
 
-		public Range(int s, int e) {
+		Range(int s, int e) {
 			start = s;
 			end = e;
 		}
 
-		public boolean contains(int v) {
+		boolean contains(int v) {
 			return v >= start && v < end;
 		}
 	}
