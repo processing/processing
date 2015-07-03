@@ -173,7 +173,7 @@ class StatusPanel extends JPanel {
   }
 
   public void update(ContributionPanel panel) {
-    
+
     progressBarPanel.removeAll();
 
     label.setText(panel.description.toString());

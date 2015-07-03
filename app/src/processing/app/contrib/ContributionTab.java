@@ -367,7 +367,7 @@ public class ContributionTab {
 //      pane.add(filterField, c);
 //    }
 
-    panel.setMinimumSize(new Dimension(450, 400));
+//    panel.setSize(new Dimension(450, 400));//TODO try to remove this
   }
 
 
@@ -485,7 +485,6 @@ public class ContributionTab {
           }
           exception.printStackTrace();
           retryConnectingButton.setVisible(true);
-
         } else {
           statusPanel.setMessage(Language.text("contrib.status.done"));
           retryConnectingButton.setVisible(false);
