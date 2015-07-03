@@ -271,6 +271,7 @@ _   need to change to iterate through display rectangles
 _   may be related to full-screen bug filed recently
 _ closing a sketch window manually (not hitting Stop) not killing sketch
 _   at least with the Java2D renderer
+_ don't override the window icon w/ p5 logo if already set
 
 
 retina/hidpi
