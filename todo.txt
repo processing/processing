@@ -74,11 +74,8 @@ X   https://github.com/processing/processing/issues/498
 
 
 contribs pending
-_ Error during installation of any contribution
-_   https://github.com/processing/processing/issues/3429
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
-
 
 beta
 _ make modes load their parent class
@@ -94,6 +91,8 @@ _   if a v2 sketchbook already exists, show a prompt to choose either creating a
 _ processing-java command line mode not working on Mac
 _   https://github.com/processing/processing/issues/3409
 _ font fixes for Georgia in the examples
+_ CM ongoing notes and questions
+_   https://github.com/processing/processing/issues/3440
 
 
 gui
