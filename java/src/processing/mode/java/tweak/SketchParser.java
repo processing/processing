@@ -847,8 +847,6 @@ public class SketchParser {
 			return -1;
 		}
 
-		System.out.println("setup start = " + setupStart);
-
 		// count brackets to look for setup end
 		int bracketCount=1;
 		int pos = setupStart;
