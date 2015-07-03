@@ -55,7 +55,6 @@ public class ContributionTab {
   StatusPanel statusPanel;
   FilterField filterField;
   JButton restartButton;
-  JButton retryConnectingButton;
   JProgressBar progressBar;
 
   // the calling editor, so updates can be applied
@@ -91,6 +90,7 @@ public class ContributionTab {
 
       filter = type.createFilter();
     }
+    this.contributionType = type;
     this.statusPanel = statusPanel;
     this.contributionManagerDialog = contributionManagerDialog;
     contribListing = ContributionListing.getInstance();
@@ -183,18 +183,6 @@ public class ContributionTab {
 
     });
 
-    retryConnectingButton = new JButton("Retry");
-    retryConnectingButton.setVisible(false);
-    retryConnectingButton.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        // The message is set to null so that every time the retry button is hit
-        // no previous error is displayed in the status
-        statusPanel.setMessage(null);
-        downloadAndUpdateContributionListing(editor.getBase());
-      }
-    });
 
     progressBar = new JProgressBar();
     progressBar.setVisible(false);
@@ -366,7 +354,7 @@ public class ContributionTab {
 //      pane.add(filterField, c);
 //    }
 
-    panel.setMinimumSize(new Dimension(450, 400));
+//    panel.setSize(new Dimension(450, 400));//TODO try to remove this
   }
 
 
@@ -445,7 +433,6 @@ public class ContributionTab {
 
 
   protected void downloadAndUpdateContributionListing(Base base) {
-    retryConnectingButton.setEnabled(false);
     statusPanel.setMessage(Language.text("contrib.status.downloading_list"));
     contribListing.downloadAvailableList(base, new ContribProgressBar(progressBar) {
 
@@ -472,7 +459,6 @@ public class ContributionTab {
         updateContributionListing();
         updateCategoryChooser();
 
-        retryConnectingButton.setEnabled(true);
 
         if (error) {
           if (exception instanceof SocketTimeoutException) {
@@ -483,11 +469,8 @@ public class ContributionTab {
               .text("contrib.errors.list_download"));
           }
           exception.printStackTrace();
-          retryConnectingButton.setVisible(true);
-
         } else {
           statusPanel.setMessage(Language.text("contrib.status.done"));
-          retryConnectingButton.setVisible(false);
         }
       }
     });

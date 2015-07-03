@@ -88,16 +88,39 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
 
   private void updatePanelOrdering() {
-    int row = 0;
-    for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
+    if(contributionTab.contributionType != null){
+      int row = 0;
+      for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1;
+        c.gridx = 0;
+        c.gridy = row++;
+        c.anchor = GridBagConstraints.NORTH;
+
+        add(entry.getValue(), c);
+      }
+    } else {
+      //TODO This is where the status tab will be made
+      
+      int row = 0;
+      for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1;
+        c.gridx = 0;
+        c.gridy = row++;
+        c.anchor = GridBagConstraints.NORTH;
+
+        add(entry.getValue(), c);
+      }
       GridBagConstraints c = new GridBagConstraints();
-      c.fill = GridBagConstraints.HORIZONTAL;
+      c.fill = GridBagConstraints.BOTH;
       c.weightx = 1;
+      c.weighty = 1;
       c.gridx = 0;
       c.gridy = row++;
       c.anchor = GridBagConstraints.NORTH;
-
-      add(entry.getValue(), c);
     }
 /*
     GridBagConstraints c = new GridBagConstraints();
@@ -203,12 +226,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
 
   protected void setSelectedPanel(ContributionPanel contributionPanel) {
+    contributionTab.contributionManagerDialog.updateStatusPanel(contributionPanel);
     if (selectedPanel == contributionPanel) {
       selectedPanel.setSelected(true);
 
     } else {
       
-      contributionTab.contributionManagerDialog.updateStatusPanel(contributionPanel);
       ContributionPanel lastSelected = selectedPanel;
       selectedPanel = contributionPanel;
 
