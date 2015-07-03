@@ -585,7 +585,6 @@ public class ContributionManagerDialog {
     //activeTab is required now but should be removed
     //as there is only one instance of contribListing and it should be present in this class
     final ContributionTab activeTab = getActiveTab();
-    activeTab.retryConnectingButton.setEnabled(false);
     activeTab.statusPanel.setMessage(Language
       .text("contrib.status.downloading_list"));
     activeTab.contribListing.downloadAvailableList(base, new ContribProgressBar(
@@ -614,7 +613,6 @@ public class ContributionManagerDialog {
         activeTab.updateContributionListing();
         activeTab.updateCategoryChooser();
 
-        activeTab.retryConnectingButton.setEnabled(true);
 
         if (error) {
           if (exception instanceof SocketTimeoutException) {
@@ -625,13 +623,11 @@ public class ContributionManagerDialog {
               .text("contrib.errors.list_download"));
           }
           exception.printStackTrace();
-          activeTab.retryConnectingButton.setVisible(true);
           
           setLayoutWithError();
           
         } else {
           activeTab.statusPanel.setMessage(Language.text("contrib.status.done"));
-          activeTab.retryConnectingButton.setVisible(false);
         }
       }
 
