@@ -156,9 +156,11 @@ public class ContributionManagerDialog {
       @Override
       public void stateChanged(ChangeEvent e) {
         // When the tab is changed update status to the current selected panel
-        getActiveTab().contributionListPanel
-          .setSelectedPanel(getActiveTab().contributionListPanel
-            .getSelectedPanel());
+        ContributionPanel currentPanel = getActiveTab().contributionListPanel
+          .getSelectedPanel();
+        if (currentPanel != null) {
+          getActiveTab().contributionListPanel.setSelectedPanel(currentPanel);
+        }
       }
     });
     
