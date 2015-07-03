@@ -151,6 +151,7 @@ public class ContributionManagerDialog {
     
     
 //    tabbedPane.setSize(450, 400);
+    buildErrorPanel();
     setLayoutWithoutError();
     
     restartButton = new JButton(Language.text("contrib.restart"));
@@ -207,7 +208,6 @@ public class ContributionManagerDialog {
   }
 
   private void setLayoutWithError() {
-    System.out.println(tabbedPane.getPreferredSize());
     GroupLayout layout = new GroupLayout(dialog.getContentPane());
     dialog.getContentPane().setLayout(layout);
     dialog.setResizable(true);
@@ -627,11 +627,9 @@ public class ContributionManagerDialog {
           exception.printStackTrace();
           activeTab.retryConnectingButton.setVisible(true);
           
-          buildErrorPanel();
           setLayoutWithError();
           
         } else {
-          
           activeTab.statusPanel.setMessage(Language.text("contrib.status.done"));
           activeTab.retryConnectingButton.setVisible(false);
         }
