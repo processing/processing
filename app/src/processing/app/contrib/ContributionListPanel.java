@@ -27,11 +27,15 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import javafx.collections.transformation.SortedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -49,6 +53,8 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -66,7 +72,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   ContributionTab contributionTab;
   StatusPanel statusPanel;
-  TreeMap<Contribution,ContributionPanel> panelByContribution;
+  TreeMap<Contribution, ContributionPanel> panelByContribution;
 
   static HyperlinkListener nullHyperlinkListener = new HyperlinkListener() {
     public void hyperlinkUpdate(HyperlinkEvent e) { }
@@ -82,7 +88,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   DefaultTableModel dtm;
 
 
-  public ContributionListPanel(ContributionTab contributionTab,
+  public ContributionListPanel(final ContributionTab contributionTab,
                                ContributionFilter filter, StatusPanel statusPanel) {
     super();
     this.contributionTab = contributionTab;
@@ -136,7 +142,15 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     table.setShowGrid(false);
     table.setColumnSelectionAllowed(false);
     table.setCellSelectionEnabled(false);
+    table.setAutoCreateColumnsFromModel(true);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+      public void valueChanged(ListSelectionEvent event) {
+          //TODO this executes 2 times when clicked and 1 time when traversed using arrow keys
+          panelByContribution.get(table.getValueAt(table.getSelectedRow(), 0)).setSelected(true);
+          contributionTab.contributionManagerDialog.updateStatusPanel(panelByContribution.get(table.getValueAt(table.getSelectedRow(), 0)));
+      }
+  });
     
     GroupLayout layout = new GroupLayout(this);
     layout.setHorizontalGroup(layout.createParallelGroup().addComponent(scrollPane));
@@ -256,7 +270,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
   }
 
-  private void updatePanelOrdering() {
+  private void updatePanelOrdering(Set<Contribution> contributionsSet) {
     /*   int row = 0;
     for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
       GridBagConstraints c = new GridBagConstraints();
@@ -277,9 +291,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     c.gridy = row++;
     c.anchor = GridBagConstraints.NORTH;
     add(status, c);*/
+//    System.out.println(dtm.getDataVector());
     dtm.getDataVector().removeAllElements();
     dtm.fireTableDataChanged();
-    for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
+    for (Contribution entry : contributionsSet) {
 //      ImageIcon icon = null;
 //      if (entry.getKey().isInstalled()) {
 //        icon = Toolkit.getLibIcon("icons/pde-16.png");
@@ -290,7 +305,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 //          icon = Toolkit.getLibIcon("icons/pde-16.png");
 //        }
 //      }
-      ((DefaultTableModel)table.getModel()).addRow(new Object[]{entry.getKey(), entry.getKey(), entry.getKey()});//"<html><body><b>"
+      ((DefaultTableModel)table.getModel()).addRow(new Object[]{entry, entry, entry});//"<html><body><b>"
 //      + entry.getKey().getName() + "</b> - " + entry.getKey().getSentence()
 //      + "</body></html>"
     }
@@ -310,7 +325,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             if (newPanel != null) {
               newPanel.setContribution(contribution);
               add(newPanel);
-              updatePanelOrdering();
+              updatePanelOrdering(panelByContribution.keySet());
               updateColors();  // XXX this is the place
             }
           }
@@ -337,7 +352,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             panelByContribution.remove(contribution);
           }
         }
-        updatePanelOrdering();
+        updatePanelOrdering(panelByContribution.keySet());
         updateColors();
         updateUI();
       }
@@ -357,7 +372,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             panelByContribution.remove(oldContrib);
             panel.setContribution(newContrib);
             panelByContribution.put(newContrib, panel);
-            updatePanelOrdering();
+            updatePanelOrdering(panelByContribution.keySet());
           }
         }
       }
@@ -367,7 +382,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   public void filterLibraries(List<Contribution> filteredContributions) {
     synchronized (panelByContribution) {
-      Set<Contribution> hiddenPanels =
+      /*Set<Contribution> hiddenPanels =
         new TreeSet<Contribution>(contribListing.getComparator());
       hiddenPanels.addAll(panelByContribution.keySet());
 
@@ -384,7 +399,14 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         if (panel != null) {
           panel.setVisible(false);
         }
+      }*/
+      TreeSet<Contribution> panelInThisTab = new TreeSet<Contribution>(contribListing.getComparator());
+      for (Contribution contribution : filteredContributions) {
+        if(contribution.getType() == this.contributionTab.contributionType){
+          panelInThisTab.add(contribution);
+        }
       }
+      updatePanelOrdering(panelInThisTab);
     }
   }
 
