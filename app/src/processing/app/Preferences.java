@@ -21,7 +21,9 @@
 
 package processing.app;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.SystemColor;
 import java.io.*;
 import java.util.*;
 

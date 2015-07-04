@@ -21,6 +21,8 @@
  */
 package processing.app.contrib;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +31,11 @@ import java.net.SocketTimeoutException;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import processing.app.*;
 import processing.app.ui.Editor;
@@ -50,7 +57,13 @@ public class ContributionManagerDialog {
   String title;
   JButton restartButton;
   StatusPanel statusPanel;
-
+  
+  
+  JPanel errorPanel;
+  JTextPane errorMessage;
+  JButton tryAgainButton;
+  JButton closeButton;
+  
   // the calling editor, so updates can be applied
   Editor editor;
   
@@ -138,12 +151,24 @@ public class ContributionManagerDialog {
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
     
-    GroupLayout layout = new GroupLayout(dialog.getContentPane());
-    dialog.getContentPane().setLayout(layout);
+    tabbedPane.addChangeListener(new ChangeListener() {
+      
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        // When the tab is changed update status to the current selected panel
+        ContributionPanel currentPanel = getActiveTab().contributionListPanel
+          .getSelectedPanel();
+        if (currentPanel != null) {
+          getActiveTab().contributionListPanel.setSelectedPanel(currentPanel);
+        }
+      }
+    });
     
-    layout.setHorizontalGroup(layout.createParallelGroup().addComponent(tabbedPane).addComponent(statusPanel));
-    layout.setVerticalGroup(layout.createSequentialGroup().addComponent(tabbedPane).addComponent(statusPanel));
-
+    
+//    tabbedPane.setSize(450, 400);
+    buildErrorPanel();
+    setLayoutWithoutError();
+    
     restartButton = new JButton(Language.text("contrib.restart"));
     restartButton.setVisible(false);
     restartButton.addActionListener(new ActionListener() {
@@ -195,6 +220,103 @@ public class ContributionManagerDialog {
 
     dialog.pack();
     dialog.setLocationRelativeTo(null);
+  }
+
+  private void setLayoutWithError() {
+    GroupLayout layout = new GroupLayout(dialog.getContentPane());
+    dialog.getContentPane().setLayout(layout);
+    dialog.setResizable(true);
+    layout.setHorizontalGroup(layout.createParallelGroup()
+      .addComponent(statusPanel).addComponent(errorPanel)
+      .addComponent(tabbedPane));
+    layout.setVerticalGroup(layout
+      .createSequentialGroup()
+      .addComponent(tabbedPane,
+                    tabbedPane.getSize().height
+                      - errorPanel.getPreferredSize().height - 200,
+                    tabbedPane.getSize().height
+                      - errorPanel.getPreferredSize().height,
+                    GroupLayout.PREFERRED_SIZE)
+      .addComponent(errorPanel, GroupLayout.PREFERRED_SIZE,
+                    GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+      .addComponent(statusPanel, GroupLayout.PREFERRED_SIZE,
+                    GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
+    errorPanel.setVisible(true);
+    dialog.validate();
+    dialog.pack();
+    dialog.repaint();
+  }
+  
+  private void setLayoutWithoutError() {
+    GroupLayout layout = new GroupLayout(dialog.getContentPane());
+    dialog.getContentPane().setLayout(layout);
+    
+    layout.setVerticalGroup(layout
+      .createSequentialGroup()
+      .addComponent(tabbedPane)
+      .addComponent(statusPanel));
+    layout.setHorizontalGroup(layout.createParallelGroup()
+      .addComponent(tabbedPane)
+      .addComponent(statusPanel));
+
+    dialog.pack();
+  }
+  
+  private void buildErrorPanel(){
+    errorPanel = new JPanel();
+    GroupLayout layout = new GroupLayout(errorPanel);
+    layout.setAutoCreateGaps(true);
+    layout.setAutoCreateContainerGaps(true);
+    errorPanel.setLayout(layout);
+    errorMessage = new JTextPane();
+    errorMessage.setEditable(false);
+    errorMessage.setText("Could not connect to the Processing server. "
+      + "Contributions cannot be installed or updated without an Internet connection. "
+      + "Please verify your network connection again, then try connecting again.");
+    errorMessage.setMaximumSize(new Dimension(450, 50));
+    errorMessage.setOpaque(false);
+    
+    StyledDocument doc = errorMessage.getStyledDocument();
+    SimpleAttributeSet center = new SimpleAttributeSet();
+    StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+    doc.setParagraphAttributes(0, doc.getLength(), center, false);
+    
+    
+    closeButton = new JButton("");
+    closeButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        errorPanel.setVisible(false);
+        setLayoutWithoutError();
+      }
+    });
+    tryAgainButton = new JButton("Try Again");
+    tryAgainButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // TODO see if this is complete
+        closeButton.doClick();
+        downloadAndUpdateContributionListing(editor.getBase());
+      }
+    });
+    layout.setHorizontalGroup(layout
+      .createSequentialGroup()
+      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                  .addComponent(errorMessage).addComponent(tryAgainButton))
+      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+      .addComponent(closeButton));
+    layout.setVerticalGroup(layout
+      .createSequentialGroup()
+      .addGroup(layout.createParallelGroup().addComponent(errorMessage)
+                  .addComponent(closeButton)).addComponent(tryAgainButton));
+    errorPanel.setBackground(Color.BLUE);
+    
+    errorPanel.setVisible(false);
   }
 
   /**
@@ -478,7 +600,6 @@ public class ContributionManagerDialog {
     //activeTab is required now but should be removed
     //as there is only one instance of contribListing and it should be present in this class
     final ContributionTab activeTab = getActiveTab();
-    activeTab.retryConnectingButton.setEnabled(false);
     activeTab.statusPanel.setMessage(Language
       .text("contrib.status.downloading_list"));
     activeTab.contribListing.downloadAvailableList(base, new ContribProgressBar(
@@ -507,7 +628,6 @@ public class ContributionManagerDialog {
         activeTab.updateContributionListing();
         activeTab.updateCategoryChooser();
 
-        activeTab.retryConnectingButton.setEnabled(true);
 
         if (error) {
           if (exception instanceof SocketTimeoutException) {
@@ -518,16 +638,18 @@ public class ContributionManagerDialog {
               .text("contrib.errors.list_download"));
           }
           exception.printStackTrace();
-          activeTab.retryConnectingButton.setVisible(true);
-
+          
+          setLayoutWithError();
+          
         } else {
           activeTab.statusPanel.setMessage(Language.text("contrib.status.done"));
-          activeTab.retryConnectingButton.setVisible(false);
         }
       }
+
     });
   }
 
+  
   /**
    * 
    * @return the currently selected tab

@@ -15,6 +15,9 @@ X   https://github.com/processing/processing/issues/3436
 X error message caused by curly bracket in a println string
 X   ((?<![\\])['"])((?:.(?!(?<![\\])\1))*.?)\1 to match quoted strings
 X   https://github.com/processing/processing/issues/3394
+X Tweak mode broken (re: new settings() function)
+X   https://github.com/processing/processing/issues/3435
+X   looks like 'class' def from tweak needs to go below setup
 
 manager
 X changed compatibleModesList to modes in examples.properties
@@ -36,6 +39,9 @@ X Internationalize MovieMaker.java
 X   https://github.com/processing/processing/pull/3424
 X Auto-completion does not seem to be working
 X   https://github.com/processing/processing/issues/3111
+X Re-enable export to application with command line
+X   https://github.com/processing/processing/pull/3451
+X   https://github.com/processing/processing/issues/2760
 
 gsoc
 X Mode problems window wasn't doing line breaks
@@ -57,6 +63,8 @@ X   https://github.com/processing/processing/pull/3432
 X Error during installation of any contribution
 X   https://github.com/processing/processing/issues/3429
 X   https://github.com/processing/processing/pull/3438
+X CM with updated statusPanel and error popup
+X   https://github.com/processing/processing/pull/3452
 
 cleaning
 o libraries in java tabs (separate .java files) are reported missing
@@ -66,15 +74,12 @@ X   https://github.com/processing/processing/issues/498
 
 
 contribs pending
-_ Error during installation of any contribution
-_   https://github.com/processing/processing/issues/3429
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
 
-
 beta
-_ Tweak mode broken (re: new settings() function)
-_   https://github.com/processing/processing/issues/3435
+_ make modes load their parent class
+_   https://github.com/processing/processing/issues/3443
 _ add "welcome" or "what's new" window to explain features in 3
 _   https://github.com/processing/processing/issues/3358
 _   a summary of what's new, plus a link to GitHub wiki page with details
@@ -86,6 +91,8 @@ _   if a v2 sketchbook already exists, show a prompt to choose either creating a
 _ processing-java command line mode not working on Mac
 _   https://github.com/processing/processing/issues/3409
 _ font fixes for Georgia in the examples
+_ CM ongoing notes and questions
+_   https://github.com/processing/processing/issues/3440
 
 
 gui

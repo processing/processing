@@ -257,24 +257,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   }
 
   private void updatePanelOrdering() {
-    dtm.getDataVector().removeAllElements();
-    dtm.fireTableDataChanged();
-    for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
-//      ImageIcon icon = null;
-//      if (entry.getKey().isInstalled()) {
-//        icon = Toolkit.getLibIcon("icons/pde-16.png");
-//        if (contribListing.hasUpdates(entry.getKey())) {
-//          icon = Toolkit.getLibIcon("icons/pde-16.png");
-//        }
-//        if (!entry.getKey().isCompatible(Base.getRevision())) {
-//          icon = Toolkit.getLibIcon("icons/pde-16.png");
-//        }
-//      }
-      ((DefaultTableModel)table.getModel()).addRow(new Object[]{entry.getKey(), entry.getKey(), entry.getKey()});//"<html><body><b>"
-//      + entry.getKey().getName() + "</b> - " + entry.getKey().getSentence()
-//      + "</body></html>"
-    }
- /*   int row = 0;
+    /*   int row = 0;
     for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
       GridBagConstraints c = new GridBagConstraints();
       c.fill = GridBagConstraints.HORIZONTAL;
@@ -294,6 +277,24 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     c.gridy = row++;
     c.anchor = GridBagConstraints.NORTH;
     add(status, c);*/
+    dtm.getDataVector().removeAllElements();
+    dtm.fireTableDataChanged();
+    for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
+//      ImageIcon icon = null;
+//      if (entry.getKey().isInstalled()) {
+//        icon = Toolkit.getLibIcon("icons/pde-16.png");
+//        if (contribListing.hasUpdates(entry.getKey())) {
+//          icon = Toolkit.getLibIcon("icons/pde-16.png");
+//        }
+//        if (!entry.getKey().isCompatible(Base.getRevision())) {
+//          icon = Toolkit.getLibIcon("icons/pde-16.png");
+//        }
+//      }
+      ((DefaultTableModel)table.getModel()).addRow(new Object[]{entry.getKey(), entry.getKey(), entry.getKey()});//"<html><body><b>"
+//      + entry.getKey().getName() + "</b> - " + entry.getKey().getSentence()
+//      + "</body></html>"
+    }
+ 
   }
 
 

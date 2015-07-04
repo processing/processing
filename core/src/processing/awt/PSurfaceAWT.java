@@ -22,13 +22,30 @@
 
 package processing.awt;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -565,9 +582,9 @@ public class PSurfaceAWT extends PSurfaceNone {
   }
 
 
-  static ArrayList<Image> iconImages;
+  List<Image> iconImages;
 
-  static protected void setProcessingIcon(Frame frame) {
+  protected void setProcessingIcon(Frame frame) {
     // On OS X, this only affects what shows up in the dock when minimized.
     // So replacing it is actually a step backwards. Brilliant.
     if (PApplet.platform != PConstants.MACOSX) {
@@ -590,23 +607,42 @@ public class PSurfaceAWT extends PSurfaceNone {
 
       } catch (Exception e) { }  // harmless; keep this to ourselves
 
-    } else {
-      // On OS X, set this for AWT surfaces, which handles the dock image
-      // as well as the cmd-tab image that's shown. Just one size, I guess.
-      URL url = PApplet.class.getResource("/icon/icon-512.png");
-      // Seems dangerous to have this in code instead of using reflection, no?
-      //ThinkDifferent.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
-      try {
-        final String td = "processing.core.ThinkDifferent";
-        Class<?> thinkDifferent =
-          Thread.currentThread().getContextClassLoader().loadClass(td);
-        Method method =
-          thinkDifferent.getMethod("setIconImage", new Class[] { java.awt.Image.class });
-        method.invoke(null, new Object[] { Toolkit.getDefaultToolkit().getImage(url) });
-      } catch (Exception e) {
-        e.printStackTrace();  // That's unfortunate
+    } else {  // handle OS X differently
+      if (!dockIconSpecified()) {  // don't override existing -Xdock param
+        // On OS X, set this for AWT surfaces, which handles the dock image
+        // as well as the cmd-tab image that's shown. Just one size, I guess.
+        URL url = PApplet.class.getResource("/icon/icon-512.png");
+        // Seems dangerous to have this in code instead of using reflection, no?
+        //ThinkDifferent.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
+        try {
+          final String td = "processing.core.ThinkDifferent";
+          Class<?> thinkDifferent =
+            Thread.currentThread().getContextClassLoader().loadClass(td);
+          Method method =
+            thinkDifferent.getMethod("setIconImage", new Class[] { java.awt.Image.class });
+          method.invoke(null, new Object[] { Toolkit.getDefaultToolkit().getImage(url) });
+        } catch (Exception e) {
+          e.printStackTrace();  // That's unfortunate
+        }
       }
     }
+  }
+
+
+  /**
+   * @return true if -Xdock:icon was specified on the command line
+   */
+  private boolean dockIconSpecified() {
+    // TODO This is incomplete... Haven't yet found a way to figure out if
+    //      the app has an icns file specified already. Help?
+    List<String> jvmArgs =
+      ManagementFactory.getRuntimeMXBean().getInputArguments();
+    for (String arg : jvmArgs) {
+      if (arg.startsWith("-Xdock:icon")) {
+        return true;  // dock image already set
+      }
+    }
+    return false;
   }
 
 

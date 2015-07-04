@@ -39,6 +39,7 @@ import processing.app.ui.EditorHeader;
 import processing.app.ui.EditorState;
 import processing.app.ui.EditorToolbar;
 import processing.app.ui.Toolkit;
+import processing.app.ui.Welcome;
 import processing.mode.java.debug.LineBreakpoint;
 import processing.mode.java.debug.LineHighlight;
 import processing.mode.java.debug.LineID;
@@ -348,6 +349,14 @@ public class JavaEditor extends Editor {
       });
       menu.add(item);
     }
+
+    item = new JMenuItem("Welcome to Processing 3");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        new Welcome();
+      }
+    });
+    menu.add(item);
 
     item = new JMenuItem(Language.text("menu.help.environment"));
     item.addActionListener(new ActionListener() {
@@ -2677,8 +2686,8 @@ public class JavaEditor extends Editor {
 
   // TWEAK MODE
 
-  static final String prefTweakPort = "tweak.port";
-  static final String prefTweakShowCode = "tweak.showcode";
+  static final String PREF_TWEAK_PORT = "tweak.port";
+  static final String PREF_TWEAK_SHOW_CODE = "tweak.showcode";
 
   public String[] baseCode;
   TweakClient tweakClient;
@@ -2881,9 +2890,9 @@ public class JavaEditor extends Editor {
 
     // get port number from preferences.txt
     int port;
-    String portStr = Preferences.get(prefTweakPort);
+    String portStr = Preferences.get(PREF_TWEAK_PORT);
     if (portStr == null) {
-      Preferences.set(prefTweakPort, "auto");
+      Preferences.set(PREF_TWEAK_PORT, "auto");
       portStr = "auto";
     }
 
@@ -2891,7 +2900,7 @@ public class JavaEditor extends Editor {
       // random port for udp (0xc000 - 0xffff)
       port = (int)(Math.random()*0x3fff) + 0xc000;
     } else {
-      port = Preferences.getInteger(prefTweakPort);
+      port = Preferences.getInteger(PREF_TWEAK_PORT);
     }
 
     // create the client that will send the new values to the sketch
@@ -2946,7 +2955,7 @@ public class JavaEditor extends Editor {
     }
 
     // add the server code that will receive the value change messages
-    header += TweakClient.getServerCode(port, numOfInts>0, numOfFloats>0);
+//    header += TweakClient.getServerCode(port, numOfInts>0, numOfFloats>0);
     header += "TweakModeServer tweakmode_Server;\n";
 
     header += "void tweakmode_initAllVars() {\n";
@@ -2975,15 +2984,18 @@ public class JavaEditor extends Editor {
     setupEndPos = SketchParser.getSetupEnd(c);
     c = replaceString(c, setupEndPos, setupEndPos, addToSetup);
 
-    code[0].setProgram(header + c);
+    // Server code defines a class, so it should go later in the sketch
+    String serverCode =
+      TweakClient.getServerCode(port, numOfInts>0, numOfFloats>0);
+    code[0].setProgram(header + c + serverCode);
 
     // print out modified code
-    String showModCode = Preferences.get(prefTweakShowCode);
+    String showModCode = Preferences.get(PREF_TWEAK_SHOW_CODE);
     if (showModCode == null) {
-      Preferences.setBoolean(prefTweakShowCode, false);
+      Preferences.setBoolean(PREF_TWEAK_SHOW_CODE, false);
     }
 
-    if (Preferences.getBoolean(prefTweakShowCode)) {
+    if (Preferences.getBoolean(PREF_TWEAK_SHOW_CODE)) {
       System.out.println("\nTweakMode modified code:\n");
       for (int i=0; i<code.length; i++) {
         System.out.println("tab " + i + "\n");
