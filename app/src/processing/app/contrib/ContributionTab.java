@@ -376,7 +376,8 @@ public class ContributionTab {
           categoriesFound = true;
         }
       }
-      categoryChooser.setEnabled(categoriesFound);
+      //TODO: a really ugly hack to solve focus problem
+//      categoryChooser.setEnabled(categoriesFound);
     }
   }
 
@@ -493,7 +494,7 @@ public class ContributionTab {
 //    return contributionListPanel.statusPlaceholder;
 //  }
 
-
+  //TODO: this is causing a lot of bugs as the hint is wrongly firing applyFilter()
   class FilterField extends JTextField {
     String filterHint;
     boolean showingHint;

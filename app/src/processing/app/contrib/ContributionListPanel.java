@@ -40,7 +40,6 @@ import javafx.collections.transformation.SortedList;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -146,9 +145,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
       public void valueChanged(ListSelectionEvent event) {
-          //TODO this executes 2 times when clicked and 1 time when traversed using arrow keys
-          panelByContribution.get(table.getValueAt(table.getSelectedRow(), 0)).setSelected(true);
-          contributionTab.contributionManagerDialog.updateStatusPanel(panelByContribution.get(table.getValueAt(table.getSelectedRow(), 0)));
+        //TODO this executes 2 times when clicked and 1 time when traversed using arrow keys
+        //Ideally this should always be try but while clearing the table something fishy is going on
+        if(table.getSelectedRow() != -1){
+          setSelectedPanel(panelByContribution.get(table.getValueAt(table.getSelectedRow(), 0)));
+        }
       }
   });
     
@@ -292,23 +293,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     c.anchor = GridBagConstraints.NORTH;
     add(status, c);*/
 //    System.out.println(dtm.getDataVector());
-    dtm.getDataVector().removeAllElements();
-    dtm.fireTableDataChanged();
-    for (Contribution entry : contributionsSet) {
-//      ImageIcon icon = null;
-//      if (entry.getKey().isInstalled()) {
-//        icon = Toolkit.getLibIcon("icons/pde-16.png");
-//        if (contribListing.hasUpdates(entry.getKey())) {
-//          icon = Toolkit.getLibIcon("icons/pde-16.png");
-//        }
-//        if (!entry.getKey().isCompatible(Base.getRevision())) {
-//          icon = Toolkit.getLibIcon("icons/pde-16.png");
-//        }
-//      }
-      ((DefaultTableModel)table.getModel()).addRow(new Object[]{entry, entry, entry});//"<html><body><b>"
-//      + entry.getKey().getName() + "</b> - " + entry.getKey().getSentence()
-//      + "</body></html>"
-    }
+      dtm.getDataVector().removeAllElements();
+      dtm.fireTableDataChanged();
+      for (Contribution entry : contributionsSet) {
+        ((MyTableModel) table.getModel()).addRow(new Object[] {
+          entry, entry, entry });
+      }
  
   }
 
@@ -412,12 +402,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
 
   protected void setSelectedPanel(ContributionPanel contributionPanel) {
+    contributionTab.contributionManagerDialog.updateStatusPanel(contributionPanel);
     if (selectedPanel == contributionPanel) {
       selectedPanel.setSelected(true);
 
     } else {
       
-      contributionTab.contributionManagerDialog.updateStatusPanel(contributionPanel);
       ContributionPanel lastSelected = selectedPanel;
       selectedPanel = contributionPanel;
 
