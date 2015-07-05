@@ -266,6 +266,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     c.anchor = GridBagConstraints.NORTH;
     add(status, c);*/
 //    System.out.println(dtm.getDataVector());
+    if(contributionTab.contributionType == null){
+      contributionTab.contributionManagerDialog.numberLabel.setText(Integer.toString(panelByContribution.size()));
+    }
       dtm.getDataVector().removeAllElements();
       dtm.fireTableDataChanged();
       for (Contribution entry : contributionsSet) {
@@ -517,5 +520,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   public boolean getScrollableTracksViewportWidth() {
     return true;
+  }
+
+
+  public int getNoOfRows() {
+    return panelByContribution.size();
   }
 }

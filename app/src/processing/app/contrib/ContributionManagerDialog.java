@@ -22,7 +22,10 @@
 package processing.app.contrib;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +36,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -74,9 +78,12 @@ public class ContributionManagerDialog {
   ContributionTab modesContributionTab;
   ContributionTab updatesContributionTab;
   
+  JLabel numberLabel;
+  
   ContributionListing contributionListing = ContributionListing.getInstance(); 
 
   public ContributionManagerDialog() {
+    numberLabel = new JLabel();
     statusPanel = new StatusPanel(450,this);
     toolsContributionTab = new ContributionTab(ContributionType.TOOL, statusPanel, this);
     librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, statusPanel, this);
@@ -150,6 +157,20 @@ public class ContributionManagerDialog {
     updatesContributionTab.showFrame(editor);
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
+    tabbedPane.setUI(new SpacedTabbedPaneUI());
+    
+    
+    JPanel updateTabPanel = new JPanel(true);
+    numberLabel.setOpaque(true);
+    numberLabel.setBackground(Color.BLUE);
+    JLabel updateTabLabel = new JLabel("Update");
+    
+    GroupLayout tabLayout = new GroupLayout(updateTabPanel);
+    tabLayout.setAutoCreateGaps(true);
+    updateTabPanel.setLayout(tabLayout);
+    tabLayout.setHorizontalGroup(tabLayout.createSequentialGroup().addComponent(numberLabel).addComponent(updateTabLabel));
+    tabLayout.setVerticalGroup(tabLayout.createParallelGroup().addComponent(numberLabel).addComponent(updateTabLabel));
+    tabbedPane.setTabComponentAt(4, updateTabPanel);
     
     tabbedPane.addChangeListener(new ChangeListener() {
       
@@ -222,6 +243,26 @@ public class ContributionManagerDialog {
     dialog.setLocationRelativeTo(null);
   }
 
+  public class SpacedTabbedPaneUI extends BasicTabbedPaneUI {
+    
+    @Override
+    protected LayoutManager createLayoutManager() {
+      return new BasicTabbedPaneUI.TabbedPaneLayout() {
+        @Override
+        protected void calculateTabRects(int tabPlacement, int tabCount) {
+          super.calculateTabRects(tabPlacement, tabCount);
+          for (int i = 0; i < rects.length; i++) {
+            if (i == 4) {
+              rects[i].x = tabbedPane.getWidth() - rects[i].width;
+            }
+            rects[i].y -= 5;
+            rects[i].height += 5;
+          }
+        }
+      };
+    }
+  }
+  
   private void setLayoutWithError() {
     GroupLayout layout = new GroupLayout(dialog.getContentPane());
     dialog.getContentPane().setLayout(layout);
