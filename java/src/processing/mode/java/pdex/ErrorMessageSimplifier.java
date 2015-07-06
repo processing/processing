@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
+import processing.app.Base;
 import processing.app.Language;
 import processing.core.PApplet;
 import processing.data.StringList;
@@ -161,6 +162,21 @@ public class ErrorMessageSimplifier {
               Language.interpolate("editor.status.missing.add", args[1]);
           }
         }
+      }
+      break;
+  
+    case IProblem.UndefinedConstructor:
+      if (args.length == 2) {
+        String constructorName = args[0];
+        // For messages such as "contructor sketch_name.ClassXYZ() is undefined", change 
+        // constructor name to "ClassXYZ()". See #3434
+        if (constructorName.contains(".")) {
+          // arg[0] contains sketch name twice: sketch_150705a.sketch_150705a.Thing
+          constructorName = constructorName.substring(constructorName.indexOf('.') + 1);
+          constructorName = constructorName.substring(constructorName.indexOf('.') + 1);
+        }
+        String constructorArgs = removePackagePrefixes(args[args.length - 1]);
+        result = Language.interpolate("editor.status.undefined_constructor", constructorName, constructorArgs);
       }
       break;
 
