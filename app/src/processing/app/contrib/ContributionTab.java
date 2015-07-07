@@ -36,6 +36,9 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import processing.app.*;
 import processing.app.ui.Editor;
@@ -55,46 +58,47 @@ public class ContributionTab {
   StatusPanel statusPanel;
   FilterField filterField;
   JButton restartButton;
-  JProgressBar progressBar;
+  JLabel categoryLabel;
+  
+  
+  JPanel errorPanel;
+  JTextPane errorMessage;
+  JButton tryAgainButton;
+  JButton closeButton;
 
   // the calling editor, so updates can be applied
   Editor editor;
   String category;
-  String compatibleCheckboxLabel;
-  boolean isCompatibilityFilter;
   ContributionListing contribListing;
+  
+  JProgressBar progressBar;
 
 
-  public ContributionTab(ContributionType type,StatusPanel statusPanel, ContributionManagerDialog contributionManagerDialog) {
+  public ContributionTab(ContributionType type,ContributionManagerDialog contributionManagerDialog) {
     if (type == null) {
       title = Language.text("contrib.manager_title.update");
       filter = ContributionType.createUpdateFilter();
-      compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.update");
     } else {
       if (type == ContributionType.MODE) {
         title = Language.text("contrib.manager_title.mode");
-        compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.mode");
       }
       else if (type == ContributionType.TOOL) {
         title = Language.text("contrib.manager_title.tool");
-        compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.tool");
       }
       else if (type == ContributionType.LIBRARY) {
         title = Language.text("contrib.manager_title.library");
-        compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.library");
       }
       else if (type == ContributionType.EXAMPLES) {
         title = Language.text("contrib.manager_title.examples");
-        compatibleCheckboxLabel = Language.text("contrib.show_only_compatible.examples");
       }
 
       filter = type.createFilter();
     }
+    statusPanel = new StatusPanel(450,this);
     this.contributionType = type;
-    this.statusPanel = statusPanel;
     this.contributionManagerDialog = contributionManagerDialog;
     contribListing = ContributionListing.getInstance();
-    contributionListPanel = new ContributionListPanel(this, filter, statusPanel);
+    contributionListPanel = new ContributionListPanel(this, filter);
     contribListing.addContributionListener(contributionListPanel);
   }
 
@@ -117,11 +121,18 @@ public class ContributionTab {
 //    return panel;
 //  }
   
-  public void showFrame(final Editor editor) {
-    this.editor = editor;
+  
 
+
+  public void showFrame(final Editor editor, boolean activateErrorPanel) {
+    this.editor = editor;
+    
     if (panel == null) {
-      makePanel(editor);
+      setLayout(editor, false);
+    } else {
+      if (activateErrorPanel ^ errorPanel.isVisible()) {
+        setLayout(editor, activateErrorPanel);
+      }
     }
     panel.setVisible(true);
 //    contributionListPanel.grabFocus();
@@ -133,10 +144,15 @@ public class ContributionTab {
   }
 
 
-  public void makePanel(final Editor editor) {
-    panel = new JPanel(true);
+  public void setLayout(final Editor editor, boolean activateErrorPanel) {
+    if(panel == null){
+      progressBar = new JProgressBar();
+      progressBar.setVisible(false);
+      createComponents();
+      panel = new JPanel(true);
+    }
     
-    restartButton = new JButton(Language.text("contrib.restart"));
+    /*restartButton = new JButton(Language.text("contrib.restart"));
     restartButton.setVisible(false);
     restartButton.addActionListener(new ActionListener() {
 
@@ -181,13 +197,30 @@ public class ContributionTab {
 
       }
 
-    });
+    });*/
 
+ 
 
-    progressBar = new JProgressBar();
-    progressBar.setVisible(false);
-
-    createComponents();
+      GroupLayout layout = new GroupLayout(panel);
+      panel.setLayout(layout);
+      layout.setAutoCreateContainerGaps(true);
+      layout.setAutoCreateGaps(true);
+      layout.setHorizontalGroup(layout
+        .createParallelGroup()
+        .addGroup(layout.createSequentialGroup().addComponent(categoryLabel)
+                    .addComponent(categoryChooser).addComponent(filterField))
+        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING) 
+        .addComponent(contributionListPanel).addComponent(errorPanel))
+        .addComponent(statusPanel));
+      layout.setVerticalGroup(layout
+        .createSequentialGroup()
+        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                    .addComponent(categoryLabel).addComponent(categoryChooser)
+                    .addComponent(filterField))
+        .addComponent(contributionListPanel).addComponent(errorPanel)
+        .addComponent(statusPanel));
+      errorPanel.setVisible(activateErrorPanel);
+      panel.repaint();
   }
 
 
@@ -195,167 +228,86 @@ public class ContributionTab {
    */
   private void createComponents() {
 
-    Container pane = panel;
-//    pane.setLayout(new GridBagLayout());
-//
-//    { // Shows "Filter by Category" and the combo box for selecting a category
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 0;
-//      c.gridy = 0;
-    pane.setLayout(new BorderLayout());
-
-      JPanel filterPanel = new JPanel();
-      filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
-//      pane.add(filterPanel, c);
-      pane.add(filterPanel, BorderLayout.NORTH);
-
-      filterPanel.add(Box.createHorizontalStrut(6));
-
-      JLabel categoryLabel = new JLabel(Language.text("contrib.category"));
-      filterPanel.add(categoryLabel);
-
-      filterPanel.add(Box.createHorizontalStrut(5));
+      categoryLabel = new JLabel(Language.text("contrib.category"));
 
       categoryChooser = new JComboBox<String>();
       categoryChooser.setMaximumRowCount(20);
       
       updateCategoryChooser();
       
-//      filterPanel.add(categoryChooser, c);
-      filterPanel.add(categoryChooser);
       categoryChooser.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
           category = (String) categoryChooser.getSelectedItem();
           if (ContributionManagerDialog.ANY_CATEGORY.equals(category)) {
             category = null;
           }
-          filterLibraries(category, filterField.filters, isCompatibilityFilter);
+          filterLibraries(category, filterField.filters);
           contributionListPanel.updateColors();
         }
       });
 
-      filterPanel.add(Box.createHorizontalStrut(5));
-//      filterPanel.add(Box.createHorizontalGlue());
       filterField = new FilterField();
-      filterPanel.add(filterField);
-
-      filterPanel.add(Box.createHorizontalStrut(5));
-
-      final JCheckBox compatibleContrib = new JCheckBox(compatibleCheckboxLabel);
-      compatibleContrib.addItemListener(new ItemListener() {
-
-        @Override
-        public void itemStateChanged(ItemEvent arg0) {
-          isCompatibilityFilter = compatibleContrib.isSelected();
-          filterLibraries(category, filterField.filters, isCompatibilityFilter);
-          contributionListPanel.updateColors();
-        }
-      });
-      filterPanel.add(compatibleContrib);
-//      filterPanel.add(Box.createHorizontalGlue());
-//    }
-      //filterPanel.setBorder(new EmptyBorder(13, 13, 13, 13));
-      filterPanel.setBorder(new EmptyBorder(7, 7, 7, 7));
-
-//    { // The scroll area containing the contribution listing and the status bar.
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.fill = GridBagConstraints.BOTH;
-//      c.gridx = 0;
-//      c.gridy = 1;
-//      c.gridwidth = 2;
-//      c.weighty = 1;
-//      c.weightx = 1;
-
-      scrollPane = new JScrollPane();
-      scrollPane.setPreferredSize(new Dimension(300, 300));
-      scrollPane.setViewportView(contributionListPanel);
-//      scrollPane.getViewport().setOpaque(true);
-//      scrollPane.getViewport().setBackground(contributionListPanel.getBackground());
-      scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-      scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-//      scrollPane.setBorder(new EmptyBorder(0, 7, 0, 7));
-      pane.add(scrollPane, BorderLayout.CENTER);
-
-      pane.add(Box.createHorizontalStrut(10), BorderLayout.WEST);
-      pane.add(Box.createHorizontalStrut(10), BorderLayout.EAST);
-
-//      status.setBorder(new EmptyBorder(7, 7, 7, 7));
-
-      /*JPanel statusRestartPane = new JPanel();
-      statusRestartPane.setLayout(new BorderLayout());
-
-      statusRestartPane.setBorder(new EmptyBorder(7, 7, 7, 7));
-      statusRestartPane.setOpaque(false);
-
-      statusRestartPane.add(status, BorderLayout.WEST);
-      statusRestartPane.add(progressBar, BorderLayout.LINE_END);
-
-    // Adding both of these to EAST shouldn't pose too much of a problem,
-    // since they can never get added together.
-      statusRestartPane.add(restartButton, BorderLayout.EAST);
-      statusRestartPane.add(retryConnectingButton, BorderLayout.EAST);*/
-
-//      pane.add(statusPanel, BorderLayout.SOUTH);
-
-
-//      status = new StatusPanel();
-//      status.setBorder(BorderFactory.createEtchedBorder());
-
-//      final JLayeredPane layeredPane = new JLayeredPane();
-//      layeredPane.add(scrollPane, JLayeredPane.DEFAULT_LAYER);
-//      layeredPane.add(status, JLayeredPane.PALETTE_LAYER);
-//
-//      layeredPane.addComponentListener(new ComponentAdapter() {
-//
-//        void resizeLayers() {
-//          scrollPane.setSize(layeredPane.getSize());
-//          scrollPane.updateUI();
-//        }
-//
-//        public void componentShown(ComponentEvent e) {
-//          resizeLayers();
-//        }
-//
-//        public void componentResized(ComponentEvent arg0) {
-//          resizeLayers();
-//        }
-//      });
-//
-//      final JViewport viewport = scrollPane.getViewport();
-//      viewport.addComponentListener(new ComponentAdapter() {
-//        void resizeLayers() {
-//          status.setLocation(0, viewport.getHeight() - 18);
-//
-//          Dimension d = viewport.getSize();
-//          d.height = 20;
-//          d.width += 3;
-//          status.setSize(d);
-//        }
-//        public void componentShown(ComponentEvent e) {
-//          resizeLayers();
-//        }
-//        public void componentResized(ComponentEvent e) {
-//          resizeLayers();
-//        }
-//      });
-//
-//      pane.add(layeredPane, c);
-//    }
-
-//    { // The filter text area
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 0;
-//      c.gridy = 2;
-//      c.gridwidth = 2;
-//      c.weightx = 1;
-//      c.fill = GridBagConstraints.HORIZONTAL;
-//      filterField = new FilterField();
-//
-//      pane.add(filterField, c);
-//    }
-
-//    panel.setSize(new Dimension(450, 400));//TODO try to remove this
+      
+      buildErrorPanel();
+     
   }
+  private void buildErrorPanel(){
+    errorPanel = new JPanel();
+    GroupLayout layout = new GroupLayout(errorPanel);
+    layout.setAutoCreateGaps(true);
+    layout.setAutoCreateContainerGaps(true);
+    errorPanel.setLayout(layout);
+    errorMessage = new JTextPane();
+    errorMessage.setEditable(false);
+    errorMessage.setText("Could not connect to the Processing server. "
+      + "Contributions cannot be installed or updated without an Internet connection. "
+      + "Please verify your network connection again, then try connecting again.");
+    errorMessage.setMaximumSize(new Dimension(450, 50));
+    errorMessage.setOpaque(false);
+    
+    StyledDocument doc = errorMessage.getStyledDocument();
+    SimpleAttributeSet center = new SimpleAttributeSet();
+    StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+    doc.setParagraphAttributes(0, doc.getLength(), center, false);
+    
+    
+    closeButton = new JButton("X");
+    closeButton.setOpaque(false);
+    closeButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        contributionManagerDialog.removeErrorPanel();
+      }
+    });
+    tryAgainButton = new JButton("Try Again");
+    tryAgainButton.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // TODO see if this is complete
+        closeButton.doClick();
+        contributionManagerDialog.downloadAndUpdateContributionListing(editor.getBase());
+      }
+    });
+    layout.setHorizontalGroup(layout
+      .createSequentialGroup()
+      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                  .addComponent(errorMessage).addComponent(tryAgainButton))
+      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+      .addComponent(closeButton));
+    layout.setVerticalGroup(layout
+      .createSequentialGroup()
+      .addGroup(layout.createParallelGroup().addComponent(errorMessage)
+                  .addComponent(closeButton)).addComponent(tryAgainButton));
+    errorPanel.setBackground(Color.BLUE);
+    
+    errorPanel.setVisible(false);
+  }
+
 
 
   protected void updateCategoryChooser() {
@@ -388,13 +340,13 @@ public class ContributionTab {
     contributionListPanel.filterLibraries(filteredLibraries);
   }
 
-
+/*
   protected void filterLibraries(String category, List<String> filters, boolean isCompatibilityFilter) {
     List<Contribution> filteredLibraries =
       contribListing.getFilteredLibraryList(category, filters);
     filteredLibraries = contribListing.getCompatibleContributionList(filteredLibraries, isCompatibilityFilter);
     contributionListPanel.filterLibraries(filteredLibraries);
-  }
+  }*/
 
 
   protected void updateContributionListing() {
@@ -433,50 +385,7 @@ public class ContributionTab {
   }
 
 
-  protected void downloadAndUpdateContributionListing(Base base) {
-    statusPanel.setMessage(Language.text("contrib.status.downloading_list"));
-    contribListing.downloadAvailableList(base, new ContribProgressBar(progressBar) {
-
-
-      @Override
-      public void startTask(String name, int maxValue) {
-        super.startTask(name, maxValue);
-        progressBar.setString(null);
-      }
-
-      @Override
-      public void setProgress(int value) {
-        super.setProgress(value);
-//        int percent = 100 * value / this.max;
-        progressBar.setValue(value);
-        progressBar.setStringPainted(true);
-        statusPanel.setMessage(Language.text("contrib.status.downloading_list"));
-      }
-
-      @Override
-      public void finishedAction() {
-        progressBar.setVisible(false);
-
-        updateContributionListing();
-        updateCategoryChooser();
-
-
-        if (error) {
-          if (exception instanceof SocketTimeoutException) {
-            statusPanel.setErrorMessage(Language
-              .text("contrib.errors.list_download.timeout"));
-          } else {
-            statusPanel.setErrorMessage(Language
-              .text("contrib.errors.list_download"));
-          }
-          exception.printStackTrace();
-        } else {
-          statusPanel.setMessage(Language.text("contrib.status.done"));
-        }
-      }
-    });
-  }
-
+ 
 
   protected void setFilterText(String filter) {
     if (filter == null || filter.isEmpty()) {
@@ -547,7 +456,7 @@ public class ContributionTab {
       // Replace anything but 0-9, a-z, or : with a space
       filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a^\\x3a]", " ");
       filters = Arrays.asList(filter.split(" "));
-      filterLibraries(category, filters, isCompatibilityFilter);
+      filterLibraries(category, filters);
 
       contributionListPanel.updateColors();
     }
@@ -572,5 +481,9 @@ public class ContributionTab {
 
   public boolean hasAlreadyBeenOpened() {
     return panel != null;
+  }
+
+  public void updateStatusPanel(ContributionPanel contributionPanel) {
+    statusPanel.update(contributionPanel);
   }
 }

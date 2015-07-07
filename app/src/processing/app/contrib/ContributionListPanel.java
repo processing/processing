@@ -43,7 +43,6 @@ import processing.app.ui.Toolkit;
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
 
   ContributionTab contributionTab;
-  StatusPanel statusPanel;
   TreeMap<Contribution, ContributionPanel> panelByContribution;
 
   static HyperlinkListener nullHyperlinkListener = new HyperlinkListener() {
@@ -61,10 +60,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
 
   public ContributionListPanel(final ContributionTab contributionTab,
-                               ContributionFilter filter, StatusPanel statusPanel) {
+                               ContributionFilter filter) {
     super();
     this.contributionTab = contributionTab;
-    this.statusPanel = statusPanel;
     this.filter = filter;
 
 //    contribListing = ContributionListing.getInstance();
@@ -378,7 +376,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
 
   protected void setSelectedPanel(ContributionPanel contributionPanel) {
-    contributionTab.contributionManagerDialog.updateStatusPanel(contributionPanel);
+    contributionTab.updateStatusPanel(contributionPanel);
     if (selectedPanel == contributionPanel) {
       selectedPanel.setSelected(true);
 

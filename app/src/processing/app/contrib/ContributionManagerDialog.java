@@ -21,11 +21,7 @@
  */
 package processing.app.contrib;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -34,12 +30,10 @@ import java.net.SocketTimeoutException;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 import processing.app.*;
 import processing.app.ui.Editor;
@@ -60,13 +54,7 @@ public class ContributionManagerDialog {
   JTabbedPane tabbedPane;
   String title;
   JButton restartButton;
-  StatusPanel statusPanel;
-  
-  
-  JPanel errorPanel;
-  JTextPane errorMessage;
-  JButton tryAgainButton;
-  JButton closeButton;
+
   
   // the calling editor, so updates can be applied
   Editor editor;
@@ -84,12 +72,11 @@ public class ContributionManagerDialog {
 
   public ContributionManagerDialog() {
     numberLabel = new JLabel();
-    statusPanel = new StatusPanel(450,this);
-    toolsContributionTab = new ContributionTab(ContributionType.TOOL, statusPanel, this);
-    librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, statusPanel, this);
-    modesContributionTab = new ContributionTab(ContributionType.MODE, statusPanel, this);
-    examplesContributionTab = new ContributionTab(ContributionType.EXAMPLES, statusPanel, this);
-    updatesContributionTab = new ContributionTab(null, statusPanel, this);
+    toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
+    librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
+    modesContributionTab = new ContributionTab(ContributionType.MODE, this);
+    examplesContributionTab = new ContributionTab(ContributionType.EXAMPLES, this);
+    updatesContributionTab = new ContributionTab(null, this);
   }
 
   public boolean hasUpdates() {
@@ -135,26 +122,26 @@ public class ContributionManagerDialog {
     dialog = new JFrame(title);
     tabbedPane = new JTabbedPane();
 
-    toolsContributionTab.showFrame(editor);
+    toolsContributionTab.showFrame(editor,false);
 
     tabbedPane.addTab("Tools", null, toolsContributionTab.panel, "Tools");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-    librariesContributionTab.showFrame(editor);
+    librariesContributionTab.showFrame(editor,false);
     tabbedPane.addTab("Libraries", null, librariesContributionTab.panel,
                       "Libraries");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-    modesContributionTab.showFrame(editor);
+    modesContributionTab.showFrame(editor,false);
     tabbedPane.addTab("Modes", null, modesContributionTab.panel, "Modes");
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-    examplesContributionTab.showFrame(editor);
+    examplesContributionTab.showFrame(editor,false);
     tabbedPane.addTab("Examples", null, examplesContributionTab.panel,
                       "Examples");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
-    updatesContributionTab.showFrame(editor);
+    updatesContributionTab.showFrame(editor,false);
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
     tabbedPane.setUI(new SpacedTabbedPaneUI());
@@ -187,8 +174,7 @@ public class ContributionManagerDialog {
     
     
 //    tabbedPane.setSize(450, 400);
-    buildErrorPanel();
-    setLayoutWithoutError();
+    setLayout();
     
     restartButton = new JButton(Language.text("contrib.restart"));
     restartButton.setVisible(false);
@@ -263,102 +249,22 @@ public class ContributionManagerDialog {
     }
   }
   
-  private void setLayoutWithError() {
+  private void setLayout() {
     GroupLayout layout = new GroupLayout(dialog.getContentPane());
     dialog.getContentPane().setLayout(layout);
     dialog.setResizable(true);
     layout.setHorizontalGroup(layout.createParallelGroup()
-      .addComponent(statusPanel).addComponent(errorPanel)
       .addComponent(tabbedPane));
     layout.setVerticalGroup(layout
       .createSequentialGroup()
-      .addComponent(tabbedPane,
-                    tabbedPane.getSize().height
-                      - errorPanel.getPreferredSize().height - 200,
-                    tabbedPane.getSize().height
-                      - errorPanel.getPreferredSize().height,
-                    GroupLayout.PREFERRED_SIZE)
-      .addComponent(errorPanel, GroupLayout.PREFERRED_SIZE,
-                    GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-      .addComponent(statusPanel, GroupLayout.PREFERRED_SIZE,
-                    GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
-    errorPanel.setVisible(true);
+      .addComponent(tabbedPane));
     dialog.validate();
     dialog.pack();
     dialog.repaint();
   }
   
-  private void setLayoutWithoutError() {
-    GroupLayout layout = new GroupLayout(dialog.getContentPane());
-    dialog.getContentPane().setLayout(layout);
-    
-    layout.setVerticalGroup(layout
-      .createSequentialGroup()
-      .addComponent(tabbedPane)
-      .addComponent(statusPanel));
-    layout.setHorizontalGroup(layout.createParallelGroup()
-      .addComponent(tabbedPane)
-      .addComponent(statusPanel));
-
-    dialog.pack();
-  }
   
-  private void buildErrorPanel(){
-    errorPanel = new JPanel();
-    GroupLayout layout = new GroupLayout(errorPanel);
-    layout.setAutoCreateGaps(true);
-    layout.setAutoCreateContainerGaps(true);
-    errorPanel.setLayout(layout);
-    errorMessage = new JTextPane();
-    errorMessage.setEditable(false);
-    errorMessage.setText("Could not connect to the Processing server. "
-      + "Contributions cannot be installed or updated without an Internet connection. "
-      + "Please verify your network connection again, then try connecting again.");
-    errorMessage.setMaximumSize(new Dimension(450, 50));
-    errorMessage.setOpaque(false);
-    
-    StyledDocument doc = errorMessage.getStyledDocument();
-    SimpleAttributeSet center = new SimpleAttributeSet();
-    StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
-    doc.setParagraphAttributes(0, doc.getLength(), center, false);
-    
-    
-    closeButton = new JButton("");
-    closeButton.addActionListener(new ActionListener() {
-      
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        errorPanel.setVisible(false);
-        setLayoutWithoutError();
-      }
-    });
-    tryAgainButton = new JButton("Try Again");
-    tryAgainButton.addActionListener(new ActionListener() {
-      
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        // TODO see if this is complete
-        closeButton.doClick();
-        downloadAndUpdateContributionListing(editor.getBase());
-      }
-    });
-    layout.setHorizontalGroup(layout
-      .createSequentialGroup()
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                  .addComponent(errorMessage).addComponent(tryAgainButton))
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-      .addComponent(closeButton));
-    layout.setVerticalGroup(layout
-      .createSequentialGroup()
-      .addGroup(layout.createParallelGroup().addComponent(errorMessage)
-                  .addComponent(closeButton)).addComponent(tryAgainButton));
-    errorPanel.setBackground(Color.BLUE);
-    
-    errorPanel.setVisible(false);
-  }
+  
 
   /**
    * Close the window after an OK or Cancel.
@@ -679,9 +585,11 @@ public class ContributionManagerDialog {
               .text("contrib.errors.list_download"));
           }
           exception.printStackTrace();
-          
-          setLayoutWithError();
-          
+          toolsContributionTab.showFrame(editor, true);
+          librariesContributionTab.showFrame(editor, true);
+          modesContributionTab.showFrame(editor, true);
+          examplesContributionTab.showFrame(editor, true);
+          updatesContributionTab.showFrame(editor, true);
         } else {
           activeTab.statusPanel.setMessage(Language.text("contrib.status.done"));
         }
@@ -808,7 +716,11 @@ public class ContributionManagerDialog {
     return dialog != null;
   }
 
-  public void updateStatusPanel(ContributionPanel contributionPanel) {
-      statusPanel.update(contributionPanel);
+  public void removeErrorPanel() {
+    toolsContributionTab.showFrame(editor, false);
+    librariesContributionTab.showFrame(editor, false);
+    modesContributionTab.showFrame(editor, false);
+    examplesContributionTab.showFrame(editor, false);
+    updatesContributionTab.showFrame(editor, false);
   }
 }
