@@ -174,64 +174,6 @@ public abstract class LocalContribution extends Contribution {
     }
     return className;
   }
-  
-  public String initLoader(String className, URL[] extraUrls) throws Exception {
-    
-    // initLoader(String) can call this with a null URL array
-    
-    File modeDirectory = new File(folder, getTypeName());
-    if (modeDirectory.exists()) {
-      Base.log("checking mode folder regarding " + className);
-      // If no class name specified, search the main <modename>.jar for the
-      // full name package and mode name.
-      if (className == null) {
-        String shortName = folder.getName();
-        File mainJar = new File(modeDirectory, shortName + ".jar");
-        if (mainJar.exists()) {
-          className = findClassInZipFile(shortName, mainJar);
-        } else {
-          throw new IgnorableException(mainJar.getAbsolutePath() + " does not exist.");
-        }
-
-        if (className == null) {
-          throw new IgnorableException("Could not find " + shortName +
-                                       " class inside " + mainJar.getAbsolutePath());
-        }
-      }
-
-      // Add .jar and .zip files from the "mode" folder into the classpath
-      File[] archives = Base.listJarFiles(modeDirectory);
-      if (archives != null && archives.length > 0) {
-        int arrLen = archives.length;
-        if (extraUrls != null) {
-          arrLen += extraUrls.length;
-        }
-        URL[] urlList = new URL[arrLen];
-        int j = 0;
-        if (extraUrls != null) {
-          for (; j < extraUrls.length; j++) {
-            //Base.log("Found archive " + archives[j] + " for " + getName());
-            urlList[j] = extraUrls[j];
-          }
-        }
-        for (int k = 0; k < archives.length; k++,j++) {
-          Base.log("Found archive " + archives[k] + " for " + getName());
-          urlList[j] = archives[k].toURI().toURL();
-        }
-//        loader = new URLClassLoader(urlList, Thread.currentThread().getContextClassLoader());
-        loader = new URLClassLoader(urlList);
-        Base.log("loading above JARs with loader " + loader);
-//        System.out.println("listing classes for loader " + loader);
-//        listClasses(loader);
-      }
-    }
-
-    // If no archives were found, just use the regular ClassLoader
-    if (loader == null) {
-      loader = Thread.currentThread().getContextClassLoader();
-    }
-    return className;
-  }
 
 
   /*

@@ -26,12 +26,15 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import processing.app.Base;
 import processing.app.Mode;
+import processing.app.contrib.LocalContribution.IgnorableException;
 
 
 public class ModeContribution extends LocalContribution {
@@ -80,33 +83,15 @@ public class ModeContribution extends LocalContribution {
   private ModeContribution(Base base, File folder,
                            String className) throws Exception {
     super(folder);
-    className = initLoader(className);
+    className = initLoader(base, className);
     if (className != null) {
-      try {
-        Class<?> modeClass = loader.loadClass(className);
-        Base.log("Got mode class " + modeClass);
-        Constructor con = modeClass.getConstructor(Base.class, File.class);
-        mode = (Mode) con.newInstance(base, folder);
-        mode.setClassLoader(loader);
-        if (base != null) {
-          mode.setupGUI();
-        }
-      } catch (NoClassDefFoundError ncdfe) {
-        // Reinitialise loader with JaavMode
-        if (ncdfe.getMessage().equals("processing/mode/java/JavaMode")) {
-          Base.log(folder.getAbsolutePath() + " extends JavaMode, reloading with javamode.");
-          className = initLoader(className, new URL[]{Base.getContentFile("modes/java/mode/JavaMode.jar").toURI().toURL()});
-          Class<?> modeClass = loader.loadClass(className);
-          Constructor con = modeClass.getConstructor(Base.class, File.class);
-          mode = (Mode) con.newInstance(base, folder);
-          mode.setClassLoader(loader);
-          if (base != null) {
-            mode.setupGUI();
-          }
-        } else {
-          // Some other issue
-          throw new NoClassDefFoundError(ncdfe.getMessage() + " no class definition found.");
-        }
+      Class<?> modeClass = loader.loadClass(className);
+      Base.log("Got mode class " + modeClass);
+      Constructor con = modeClass.getConstructor(Base.class, File.class);
+      mode = (Mode) con.newInstance(base, folder);
+      mode.setClassLoader(loader);
+      if (base != null) {
+        mode.setupGUI();
       }
     }
   }
@@ -194,6 +179,88 @@ public class ModeContribution extends LocalContribution {
     }
     ModeContribution other = (ModeContribution) o;
     return loader.equals(other.loader) && mode.equals(other.getMode());
+  }
+  
+  public String initLoader(Base base, String className) throws Exception {
+    
+    File modeDirectory = new File(folder, getTypeName());
+    if (modeDirectory.exists()) {
+      Base.log("checking mode folder regarding " + className);
+      // If no class name specified, search the main <modename>.jar for the
+      // full name package and mode name.
+      if (className == null) {
+        String shortName = folder.getName();
+        File mainJar = new File(modeDirectory, shortName + ".jar");
+        if (mainJar.exists()) {
+          className = findClassInZipFile(shortName, mainJar);
+        } else {
+          throw new IgnorableException(mainJar.getAbsolutePath() + " does not exist.");
+        }
+
+        if (className == null) {
+          throw new IgnorableException("Could not find " + shortName +
+                                       " class inside " + mainJar.getAbsolutePath());
+        }
+      }
+      
+      ArrayList<URL> extraUrls = new ArrayList<>();
+      if (imports != null && imports.size() > 0) {
+        // if the mode has any dependencies (defined as imports in mode.properties),
+        // add the dependencies to the classloader
+        
+        HashMap<String, Mode> installedModes = new HashMap<>();
+        for(Mode m: base.getModeList()){
+          // Base.log("Mode contrib: " + m.getClass().getName() + " : "+ m.getFolder());
+          installedModes.put(m.getClass().getName(), m);
+        }
+        
+        for(String modeImport: imports){
+          if (installedModes.containsKey(modeImport)) {
+            Base.log("Found mode dependency " + modeImport);
+            File[] archives = Base.listJarFiles(new File(installedModes.get(modeImport).
+                               getFolder().getAbsolutePath() + File.separator + "mode"));
+            if (archives != null && archives.length > 0) {
+              for (int i = 0; i < archives.length; i++) {
+                // Base.log("Adding jar dependency: " + archives[i].getAbsolutePath());
+                extraUrls.add(archives[i].toURI().toURL());
+              }
+            }
+          } else {
+            throw new IgnorableException("Dependency mode "+ modeImport + " could not be"
+              + " found. Can't load " + className);
+          }
+        }
+      }
+
+      // Add .jar and .zip files from the "mode" folder into the classpath
+      File[] archives = Base.listJarFiles(modeDirectory);
+      if (archives != null && archives.length > 0) {
+        int arrLen = archives.length + extraUrls.size();
+        URL[] urlList = new URL[arrLen];
+        
+        int j = 0;
+        for (; j < extraUrls.size(); j++) {
+          //Base.log("Found archive " + archives[j] + " for " + getName());
+          urlList[j] = extraUrls.get(j);
+        }
+        
+        for (int k = 0; k < archives.length; k++,j++) {
+          Base.log("Found archive " + archives[k] + " for " + getName());
+          urlList[j] = archives[k].toURI().toURL();
+        }
+
+        loader = new URLClassLoader(urlList);
+        Base.log("loading above JARs with loader " + loader);
+//        System.out.println("listing classes for loader " + loader);
+//        listClasses(loader);
+      }
+    }
+
+    // If no archives were found, just use the regular ClassLoader
+    if (loader == null) {
+      loader = Thread.currentThread().getContextClassLoader();
+    }
+    return className;
   }
 
 
