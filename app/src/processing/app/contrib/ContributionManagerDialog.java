@@ -122,26 +122,26 @@ public class ContributionManagerDialog {
     
     tabbedPane = new JTabbedPane();
 
-    toolsContributionTab.showFrame(editor,false);
+    toolsContributionTab.showFrame(editor,false, true);
 
     tabbedPane.addTab("Tools", null, toolsContributionTab.panel, "Tools");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-    librariesContributionTab.showFrame(editor,false);
+    librariesContributionTab.showFrame(editor,false, true);
     tabbedPane.addTab("Libraries", null, librariesContributionTab.panel,
                       "Libraries");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-    modesContributionTab.showFrame(editor,false);
+    modesContributionTab.showFrame(editor,false, true);
     tabbedPane.addTab("Modes", null, modesContributionTab.panel, "Modes");
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-    examplesContributionTab.showFrame(editor,false);
+    examplesContributionTab.showFrame(editor,false, true);
     tabbedPane.addTab("Examples", null, examplesContributionTab.panel,
                       "Examples");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
-    updatesContributionTab.showFrame(editor,false);
+    updatesContributionTab.showFrame(editor,false, true);
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
     tabbedPane.setUI(new SpacedTabbedPaneUI());
@@ -586,12 +586,17 @@ public class ContributionManagerDialog {
               .text("contrib.errors.list_download"));
           }
           exception.printStackTrace();
+          toolsContributionTab.showFrame(editor, true, false);
+          librariesContributionTab.showFrame(editor, true, false);
+          modesContributionTab.showFrame(editor, true, false);
+          examplesContributionTab.showFrame(editor, true, false);
+          updatesContributionTab.showFrame(editor, true, false);
         } else {
-          toolsContributionTab.showFrame(editor, true);
-          librariesContributionTab.showFrame(editor, true);
-          modesContributionTab.showFrame(editor, true);
-          examplesContributionTab.showFrame(editor, true);
-          updatesContributionTab.showFrame(editor, true);
+          toolsContributionTab.showFrame(editor, false, false);
+          librariesContributionTab.showFrame(editor, false, false);
+          modesContributionTab.showFrame(editor, false, false);
+          examplesContributionTab.showFrame(editor, false, false);
+          updatesContributionTab.showFrame(editor, false, false);
           activeTab.statusPanel.setMessage(Language.text("contrib.status.done"));
         }
       }
@@ -717,11 +722,11 @@ public class ContributionManagerDialog {
     return dialog != null;
   }
 
-  public void removeErrorPanel() {
-    toolsContributionTab.showFrame(editor, false);
-    librariesContributionTab.showFrame(editor, false);
-    modesContributionTab.showFrame(editor, false);
-    examplesContributionTab.showFrame(editor, false);
-    updatesContributionTab.showFrame(editor, false);
+  public void removeErrorPanel(boolean isLoading) {
+    toolsContributionTab.showFrame(editor, false, isLoading);
+    librariesContributionTab.showFrame(editor, false, isLoading);
+    modesContributionTab.showFrame(editor, false, isLoading);
+    examplesContributionTab.showFrame(editor, false, isLoading);
+    updatesContributionTab.showFrame(editor, false, isLoading);
   }
 }

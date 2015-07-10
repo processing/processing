@@ -21,24 +21,15 @@
 */
 package processing.app.contrib;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.net.SocketTimeoutException;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
+import javax.swing.text.*;
 
 import processing.app.*;
 import processing.app.ui.Editor;
@@ -125,27 +116,21 @@ public class ContributionTab {
   
 
 
-  public void showFrame(final Editor editor, boolean activateErrorPanel) {
+  public void showFrame(final Editor editor, boolean activateErrorPanel, final boolean isLoading) {
     this.editor = editor;
-    
     if (panel == null) {
-      setLayout(editor, false);
-    } else {
-      if (activateErrorPanel ^ errorPanel.isVisible()) {
-        setLayout(editor, activateErrorPanel);
-      }
+      setLayout(editor, activateErrorPanel, isLoading);
     }
+    contributionListPanel.setVisible(!isLoading);
+    loaderLabel.setVisible(isLoading);
+    errorPanel.setVisible(activateErrorPanel);
+    panel.validate();
+    panel.repaint();
     panel.setVisible(true);
-//    contributionListPanel.grabFocus();
-
-//    if (!contribListing.hasDownloadedLatestList()) {
-//      updateContributionListing();
-//      downloadAndUpdateContributionListing();
-//    }
   }
 
 
-  public void setLayout(final Editor editor, boolean activateErrorPanel) {
+  public void setLayout(final Editor editor, boolean activateErrorPanel, boolean isLoading) {
     if(panel == null){
       progressBar = new JProgressBar();
       progressBar.setVisible(false);
@@ -204,30 +189,29 @@ public class ContributionTab {
     });*/
 
  
-
     GroupLayout layout = new GroupLayout(panel);
     panel.setLayout(layout);
     layout.setAutoCreateContainerGaps(true);
     layout.setAutoCreateGaps(true);
-    layout
-      .setHorizontalGroup(layout
-        .createParallelGroup()
-        .addGroup(layout.createSequentialGroup().addComponent(categoryLabel)
-                    .addComponent(categoryChooser).addComponent(filterField))
-        .addGroup(layout.createParallelGroup()
-                    .addComponent(contributionListPanel)
-                    .addComponent(errorPanel)).addComponent(statusPanel));
+    layout.setHorizontalGroup(layout
+      .createParallelGroup(GroupLayout.Alignment.CENTER)
+      .addGroup(layout.createSequentialGroup().addComponent(categoryLabel)
+                  .addComponent(categoryChooser).addComponent(filterField))
+      .addComponent(loaderLabel).addComponent(contributionListPanel)
+      .addComponent(errorPanel).addComponent(statusPanel));
     layout.setVerticalGroup(layout
       .createSequentialGroup()
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(categoryLabel).addComponent(categoryChooser)
                   .addComponent(filterField))
-      .addComponent(contributionListPanel).addComponent(errorPanel)
-      .addComponent(statusPanel));
-    errorPanel.setVisible(activateErrorPanel);
-    layout.setHonorsVisibility(contributionListPanel, true);
-    panel.repaint();
-  }
+      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                  .addComponent(loaderLabel)
+                  .addComponent(contributionListPanel))
+      .addComponent(errorPanel)
+      .addComponent(statusPanel, GroupLayout.PREFERRED_SIZE,
+                    GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
+    layout.setHonorsVisibility(contributionListPanel, false);
+ }
 
 
   /** Creates and arranges the Swing components in the dialog. 
@@ -283,7 +267,7 @@ public class ContributionTab {
       
       @Override
       public void actionPerformed(ActionEvent e) {
-        contributionManagerDialog.removeErrorPanel();
+        contributionManagerDialog.removeErrorPanel(false);
       }
     });
     tryAgainButton = new JButton("Try Again");
@@ -310,8 +294,6 @@ public class ContributionTab {
       .addGroup(layout.createParallelGroup().addComponent(errorMessage)
                   .addComponent(closeButton)).addComponent(tryAgainButton));
     errorPanel.setBackground(Color.BLUE);
-    
-    errorPanel.setVisible(false);
   }
 
 
