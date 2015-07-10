@@ -42,6 +42,7 @@ import javax.swing.text.StyledDocument;
 
 import processing.app.*;
 import processing.app.ui.Editor;
+import processing.app.ui.Toolkit;
 
 
 public class ContributionTab {
@@ -59,7 +60,7 @@ public class ContributionTab {
   FilterField filterField;
   JButton restartButton;
   JLabel categoryLabel;
-  
+  JLabel loaderLabel;
   
   JPanel errorPanel;
   JTextPane errorMessage;
@@ -150,6 +151,9 @@ public class ContributionTab {
       progressBar.setVisible(false);
       createComponents();
       panel = new JPanel(true);
+      loaderLabel = new JLabel(Toolkit.getLibIcon("icons/loader.gif"));
+      loaderLabel.setOpaque(false);
+      loaderLabel.setBackground(Color.WHITE);
     }
     
     /*restartButton = new JButton(Language.text("contrib.restart"));
@@ -201,26 +205,28 @@ public class ContributionTab {
 
  
 
-      GroupLayout layout = new GroupLayout(panel);
-      panel.setLayout(layout);
-      layout.setAutoCreateContainerGaps(true);
-      layout.setAutoCreateGaps(true);
-      layout.setHorizontalGroup(layout
+    GroupLayout layout = new GroupLayout(panel);
+    panel.setLayout(layout);
+    layout.setAutoCreateContainerGaps(true);
+    layout.setAutoCreateGaps(true);
+    layout
+      .setHorizontalGroup(layout
         .createParallelGroup()
         .addGroup(layout.createSequentialGroup().addComponent(categoryLabel)
                     .addComponent(categoryChooser).addComponent(filterField))
-        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING) 
-        .addComponent(contributionListPanel).addComponent(errorPanel))
-        .addComponent(statusPanel));
-      layout.setVerticalGroup(layout
-        .createSequentialGroup()
-        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                    .addComponent(categoryLabel).addComponent(categoryChooser)
-                    .addComponent(filterField))
-        .addComponent(contributionListPanel).addComponent(errorPanel)
-        .addComponent(statusPanel));
-      errorPanel.setVisible(activateErrorPanel);
-      panel.repaint();
+        .addGroup(layout.createParallelGroup()
+                    .addComponent(contributionListPanel)
+                    .addComponent(errorPanel)).addComponent(statusPanel));
+    layout.setVerticalGroup(layout
+      .createSequentialGroup()
+      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                  .addComponent(categoryLabel).addComponent(categoryChooser)
+                  .addComponent(filterField))
+      .addComponent(contributionListPanel).addComponent(errorPanel)
+      .addComponent(statusPanel));
+    errorPanel.setVisible(activateErrorPanel);
+    layout.setHonorsVisibility(contributionListPanel, true);
+    panel.repaint();
   }
 
 

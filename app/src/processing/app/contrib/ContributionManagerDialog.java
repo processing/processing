@@ -30,7 +30,6 @@ import java.net.SocketTimeoutException;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
@@ -44,7 +43,7 @@ import processing.app.ui.Toolkit;
  * @author akarshit
  * 
  * This class is the main Contribution Manager Dialog.
- * It contains all the contributions tab and the upadate tab.
+ * It contains all the contributions tab and the update tab.
  *
  */
 public class ContributionManagerDialog {
@@ -120,6 +119,7 @@ public class ContributionManagerDialog {
 
   public void makeFrame(final Editor editor) {
     dialog = new JFrame(title);
+    
     tabbedPane = new JTabbedPane();
 
     toolsContributionTab.showFrame(editor,false);
@@ -163,12 +163,12 @@ public class ContributionManagerDialog {
       
       @Override
       public void stateChanged(ChangeEvent e) {
-        // When the tab is changed update status to the current selected panel
-        ContributionPanel currentPanel = getActiveTab().contributionListPanel
-          .getSelectedPanel();
-        if (currentPanel != null) {
-          getActiveTab().contributionListPanel.setSelectedPanel(currentPanel);
-        }
+//        // When the tab is changed update status to the current selected panel
+//        ContributionPanel currentPanel = getActiveTab().contributionListPanel
+//          .getSelectedPanel();
+//        if (currentPanel != null) {
+//          getActiveTab().contributionListPanel.setSelectedPanel(currentPanel);
+//        }
       }
     });
     
@@ -254,10 +254,11 @@ public class ContributionManagerDialog {
     dialog.getContentPane().setLayout(layout);
     dialog.setResizable(true);
     layout.setHorizontalGroup(layout.createParallelGroup()
-      .addComponent(tabbedPane));
+                              .addComponent(tabbedPane));
     layout.setVerticalGroup(layout
-      .createSequentialGroup()
+      .createParallelGroup()
       .addComponent(tabbedPane));
+    layout.setHonorsVisibility(tabbedPane, true);
     dialog.validate();
     dialog.pack();
     dialog.repaint();
@@ -585,12 +586,12 @@ public class ContributionManagerDialog {
               .text("contrib.errors.list_download"));
           }
           exception.printStackTrace();
+        } else {
           toolsContributionTab.showFrame(editor, true);
           librariesContributionTab.showFrame(editor, true);
           modesContributionTab.showFrame(editor, true);
           examplesContributionTab.showFrame(editor, true);
           updatesContributionTab.showFrame(editor, true);
-        } else {
           activeTab.statusPanel.setMessage(Language.text("contrib.status.done"));
         }
       }
