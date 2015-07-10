@@ -116,7 +116,8 @@ public class ContributionTab {
   
 
 
-  public void showFrame(final Editor editor, boolean activateErrorPanel, final boolean isLoading) {
+  public void showFrame(final Editor editor, boolean activateErrorPanel,
+                        final boolean isLoading) {
     this.editor = editor;
     if (panel == null) {
       setLayout(editor, activateErrorPanel, isLoading);
@@ -126,7 +127,6 @@ public class ContributionTab {
     errorPanel.setVisible(activateErrorPanel);
     panel.validate();
     panel.repaint();
-    panel.setVisible(true);
   }
 
 
@@ -135,7 +135,7 @@ public class ContributionTab {
       progressBar = new JProgressBar();
       progressBar.setVisible(false);
       createComponents();
-      panel = new JPanel(true);
+      panel = new JPanel(false);
       loaderLabel = new JLabel(Toolkit.getLibIcon("icons/loader.gif"));
       loaderLabel.setOpaque(false);
       loaderLabel.setBackground(Color.WHITE);
@@ -267,7 +267,7 @@ public class ContributionTab {
       
       @Override
       public void actionPerformed(ActionEvent e) {
-        contributionManagerDialog.removeErrorPanel(false);
+        contributionManagerDialog.makeAndShowTab(false, false);
       }
     });
     tryAgainButton = new JButton("Try Again");
@@ -275,8 +275,7 @@ public class ContributionTab {
       
       @Override
       public void actionPerformed(ActionEvent e) {
-        // TODO see if this is complete
-        closeButton.doClick();
+        contributionManagerDialog.makeAndShowTab(false, true);
         contributionManagerDialog.downloadAndUpdateContributionListing(editor.getBase());
       }
     });
