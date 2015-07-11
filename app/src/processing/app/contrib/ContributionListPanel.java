@@ -52,13 +52,15 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   private ContributionPanel selectedPanel;
 //  protected JPanel statusPlaceholder;
 //  private StatusPanel status;
-  private ContributionFilter filter;
+  protected ContributionFilter filter;
 //  private ContributionListing contribListing;
   private ContributionListing contribListing = ContributionListing.getInstance();
-  private JTable table;
+  protected JTable table;
   DefaultTableModel dtm;
 
-
+  public ContributionListPanel() {
+    // TODO Auto-generated constructor stub
+  }
   public ContributionListPanel(final ContributionTab contributionTab,
                                ContributionFilter filter) {
     super();
@@ -117,7 +119,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
       public void valueChanged(ListSelectionEvent event) {
         //TODO this executes 2 times when clicked and 1 time when traversed using arrow keys
-        //Ideally this should always be try but while clearing the table something fishy is going on
+        //Ideally this should always be true but while clearing the table something fishy is going on
         if(table.getSelectedRow() != -1){
           setSelectedPanel(panelByContribution.get(table.getValueAt(table.getSelectedRow(), 0)));
         }
@@ -164,6 +166,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         JTextPane name = new JTextPane();
         name.setContentType("text/html");
         name.setEditable(false);
+        if(!contribution.isCompatible(Base.getRevision())){
+          name.setForeground(Color.LIGHT_GRAY);
+        }
         name.setText("<html><body><b>" + contribution.getName() + "</b> - "
           + contribution.getSentence() + "</body></html>");
         GroupLayout layout = new GroupLayout(label);
@@ -204,6 +209,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         author.setText(name.toString());
         author.setEditable(false);
         author.setOpaque(false);
+        if(!contribution.isCompatible(Base.getRevision())){
+          author.setForeground(Color.LIGHT_GRAY);
+        }
         if (table.isRowSelected(row)) {
           label.setBackground(Color.BLUE);
         }
@@ -222,7 +230,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
 
   }
-  class MyTableModel extends DefaultTableModel{
+  private class MyTableModel extends DefaultTableModel{
     MyTableModel() {
       super(0,0);
     }
@@ -232,17 +240,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-//      if(columnIndex == 0){
-//        return Icon.class;
-//      }
-//      if(columnIndex == 1){
-//        return String.class;
-//      }
       return Contribution.class;
     }
   }
 
-  private void updatePanelOrdering(Set<Contribution> contributionsSet) {
+  void updatePanelOrdering(Set<Contribution> contributionsSet) {
     /*   int row = 0;
     for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
       GridBagConstraints c = new GridBagConstraints();
@@ -264,15 +266,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     c.anchor = GridBagConstraints.NORTH;
     add(status, c);*/
 //    System.out.println(dtm.getDataVector());
-    if(contributionTab.contributionType == null){
-      contributionTab.contributionManagerDialog.numberLabel.setText(Integer.toString(panelByContribution.size()));
+    dtm.getDataVector().removeAllElements();
+    dtm.fireTableDataChanged();
+    for (Contribution entry : contributionsSet) {
+      ((MyTableModel) table.getModel()).addRow(new Object[] {
+        entry, entry, entry });
     }
-      dtm.getDataVector().removeAllElements();
-      dtm.fireTableDataChanged();
-      for (Contribution entry : contributionsSet) {
-        ((MyTableModel) table.getModel()).addRow(new Object[] {
-          entry, entry, entry });
-      }
  
   }
 

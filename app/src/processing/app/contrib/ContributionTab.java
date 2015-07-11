@@ -86,11 +86,15 @@ public class ContributionTab {
 
       filter = type.createFilter();
     }
-    statusPanel = new StatusPanel(450,this);
+    this.statusPanel = new StatusPanel(450,this);
     this.contributionType = type;
     this.contributionManagerDialog = contributionManagerDialog;
     contribListing = ContributionListing.getInstance();
-    contributionListPanel = new ContributionListPanel(this, filter);
+    if (contributionType == null) {
+      contributionListPanel = new UpdateContribListingPanel(this, filter);
+    } else {
+      contributionListPanel = new ContributionListPanel(this, filter);
+    }
     contribListing.addContributionListener(contributionListPanel);
   }
 
