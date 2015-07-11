@@ -5,6 +5,7 @@
  * than the screen. When PDF is used as the renderer
  * (the third parameter of size) the display window 
  * does not open. The file is saved to the sketch folder.
+ * You can open it by "Sketch->Show Sketch Folder."
  */
 
 
