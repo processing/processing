@@ -1172,6 +1172,15 @@ public abstract class InputHandler extends KeyAdapter
                                 textArea.getToolkit().beep();
                         }
                 }
+
+                public boolean hasBracketsAndQuotes(String str){
+                        for (String bracketsAndQuotes : bracketsAndQuotesMap.keySet())
+                        {
+                                if (str.equals(bracketsAndQuotes))
+                                        return true;
+                        }
+                        return false;
+                }
         }
         
         
