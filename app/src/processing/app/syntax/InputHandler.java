@@ -92,6 +92,14 @@ public abstract class InputHandler extends KeyAdapter
 
         private static Map<String, ActionListener> actions;
 
+        private static final Map<String, String> bracketsAndQuotesMap = new HashMap<String, String>(){
+                {put("(", ")");}
+                {put("{", "}");}
+                {put("[", "]");}
+                {put("\"", "\"");}
+                {put("\'", "\'");}
+        };
+
         static
         {
                 actions = new HashMap<String, ActionListener>();
