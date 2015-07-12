@@ -1173,6 +1173,14 @@ public abstract class InputHandler extends KeyAdapter
                         }
                 }
 
+                public void matchBracketsAndQuotes(String str, ActionEvent evt,
+                                                  JEditTextArea textArea, StringBuilder sb)
+                {
+                        sb.append(bracketsAndQuotesMap.get(str));
+                        textArea.overwriteSetSelectedText(sb.toString());
+                        InputHandler.PREV_CHAR.actionPerformed(evt);
+                }
+
                 public boolean hasBracketsAndQuotes(String str){
                         for (String bracketsAndQuotes : bracketsAndQuotesMap.keySet())
                         {
