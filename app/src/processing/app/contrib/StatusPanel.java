@@ -41,7 +41,7 @@ import processing.app.Base;
 
 class StatusPanel extends JPanel {
 
-  final int BUTTON_WIDTH = 20;
+  final int BUTTON_WIDTH = 150;
 
   JTextPane label;
   JButton installButton;
@@ -55,7 +55,6 @@ class StatusPanel extends JPanel {
   ContributionTab contributionTab;
 
   public StatusPanel(int width, final ContributionTab contributionTab) {
-    final int BUTTON_WIDTH = 150;
     this.contributionTab  = contributionTab;
     label = new JTextPane();
     label.setEditable(false);
@@ -152,6 +151,10 @@ class StatusPanel extends JPanel {
 
     layout.setHonorsVisibility(updateLabel, false); // Makes the label take up space even though not visible
 
+  }
+
+  public StatusPanel() {
+    // TODO Auto-generated constructor stub
   }
 
   void setMessage(String message) {
