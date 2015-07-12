@@ -1165,7 +1165,11 @@ public abstract class InputHandler extends KeyAdapter
                                 StringBuilder sb = new StringBuilder();
                                 for(int i = 0; i < repeatCount; i++)
                                         sb.append(str);
-                                textArea.overwriteSetSelectedText(sb.toString());
+                                if (hasBracketsAndQuotes(str)) {
+                                        matchBracketsAndQuotes(str, evt, textArea, sb);
+                                } else {
+                                        textArea.overwriteSetSelectedText(sb.toString());
+                                }
                         }
                         else
                         {
