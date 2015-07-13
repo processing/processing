@@ -2626,37 +2626,71 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   @Override
+  public void attribPosition(String name, float x, float y, float z) {
+    VertexAttribute attrib = attribImpl(name, VertexAttribute.POSITION,
+                                        PGL.FLOAT, 3);
+    if (attrib != null) attrib.set(x, y, z);
+  }
+
+
+  @Override
+  public void attribNormal(String name, float nx, float ny, float nz) {
+    VertexAttribute attrib = attribImpl(name, VertexAttribute.NORMAL,
+                                        PGL.FLOAT, 3);
+    if (attrib != null) attrib.set(nx, ny, nz);
+  }
+
+
+  @Override
+  public void attribColor(String name, int color) {
+    VertexAttribute attrib = attribImpl(name, VertexAttribute.COLOR, PGL.INT, 1);
+    if (attrib != null) attrib.set(new int[] {color});
+  }
+
+
+  @Override
   public void attrib(String name, float... values) {
-    VertexAttribute attrib = attribImpl(name, PGL.FLOAT, values.length);
+    VertexAttribute attrib = attribImpl(name, VertexAttribute.OTHER,
+                                        PGL.FLOAT, values.length);
     if (attrib != null) attrib.set(values);
   }
 
 
   @Override
   public void attrib(String name, int... values) {
-    VertexAttribute attrib = attribImpl(name, PGL.INT, values.length);
+    VertexAttribute attrib = attribImpl(name, VertexAttribute.OTHER,
+                                        PGL.INT, values.length);
     if (attrib != null) attrib.set(values);
   }
 
 
   @Override
   public void attrib(String name, boolean... values) {
-    VertexAttribute attrib = attribImpl(name, PGL.BOOL, values.length);
+    VertexAttribute attrib = attribImpl(name, VertexAttribute.OTHER,
+                                        PGL.BOOL, values.length);
     if (attrib != null) attrib.set(values);
   }
 
 
-  protected VertexAttribute attribImpl(String name, int type, int size) {
+  protected VertexAttribute attribImpl(String name, int kind, int type, int size) {
     if (4 < size) {
       PGraphics.showWarning("Vertex attributes cannot have more than 4 values");
       return null;
     }
     VertexAttribute attrib = polyAttribs.get(name);
     if (attrib == null) {
-      attrib = new VertexAttribute(this, name, type, size);
+      attrib = new VertexAttribute(this, name, kind, type, size);
       polyAttribs.put(name, attrib);
       inGeo.initAttrib(attrib);
       tessGeo.initAttrib(attrib);
+    }
+    if (attrib.kind != kind) {
+      PGraphics.showWarning("The attribute kind cannot be changed after creation");
+      return null;
+    }
+    if (attrib.type != type) {
+      PGraphics.showWarning("The attribute type cannot be changed after creation");
+      return null;
     }
     if (attrib.size != size) {
       PGraphics.showWarning("New value for vertex attribute has wrong number of values");
@@ -7398,23 +7432,17 @@ public class PGraphicsOpenGL extends PGraphics {
     int lastModified;
     boolean active;
 
-    VertexAttribute(PGraphicsOpenGL pg, String name, int type, int size) {
+    VertexAttribute(PGraphicsOpenGL pg, String name, int kind, int type, int size) {
       this.pg = pg;
       this.name = name;
+      this.kind = kind;
       this.type = type;
       this.size = size;
 
-      tessSize = size;
-
-      if (name.indexOf("pos") == 0 && type == PGL.FLOAT && size == 3) {
-        kind = POSITION;
-        tessSize = 4;
-      } else if (name.indexOf("norm") == 0 && type == PGL.FLOAT && size == 3) {
-        kind = NORMAL;
-      } else if (name.indexOf("color") == 0 && type == PGL.INT && size == 1) {
-        kind = COLOR;
+      if (kind == POSITION) {
+        tessSize = 4; // for w
       } else {
-        kind = OTHER;
+        tessSize = size;
       }
 
       if (type == PGL.FLOAT) {
@@ -7518,6 +7546,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
     int sizeInBytes(int length) {
       return length * tessSize * elementSize;
+    }
+
+    void set(float x, float y, float z) {
+      fvalues[0] = x;
+      fvalues[1] = y;
+      fvalues[2] = z;
+    }
+
+    void set(int c) {
+      ivalues[0] = c;
     }
 
     void set(float[] values) {
