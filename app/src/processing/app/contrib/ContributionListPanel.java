@@ -116,15 +116,21 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     table.setCellSelectionEnabled(false);
     table.setAutoCreateColumnsFromModel(true);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-      public void valueChanged(ListSelectionEvent event) {
-        //TODO this executes 2 times when clicked and 1 time when traversed using arrow keys
-        //Ideally this should always be true but while clearing the table something fishy is going on
-        if(table.getSelectedRow() != -1){
-          setSelectedPanel(panelByContribution.get(table.getValueAt(table.getSelectedRow(), 0)));
+    table.getSelectionModel()
+      .addListSelectionListener(new ListSelectionListener() {
+        public void valueChanged(ListSelectionEvent event) {
+          //TODO this executes 2 times when clicked and 1 time when traversed using arrow keys
+          //Ideally this should always be true but while clearing the table something fishy is going on
+          if (table.getSelectedRow() != -1) {
+            setSelectedPanel(panelByContribution.get(table.getValueAt(table
+              .getSelectedRow(), 0)));
+          }
         }
-      }
-  });
+      });
+
+    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
+    table.setRowSorter(sorter);
+    sorter.setComparator(1, contribListing.getComparator());
     
     GroupLayout layout = new GroupLayout(this);
     layout.setHorizontalGroup(layout.createParallelGroup().addComponent(scrollPane));
