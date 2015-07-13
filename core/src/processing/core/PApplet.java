@@ -10651,6 +10651,24 @@ public class PApplet implements PConstants {
   }
 
 
+  public void attribPosition(String name, float x, float y, float z) {
+    if (recorder != null) recorder.attribPosition(name, x, y, z);
+    g.attribPosition(name, x, y, z);
+  }
+
+
+  public void attribNormal(String name, float nx, float ny, float nz) {
+    if (recorder != null) recorder.attribNormal(name, nx, ny, nz);
+    g.attribNormal(name, nx, ny, nz);
+  }
+
+
+  public void attribColor(String name, int color) {
+    if (recorder != null) recorder.attribColor(name, color);
+    g.attribColor(name, color);
+  }
+
+
   public void attrib(String name, float... values) {
     if (recorder != null) recorder.attrib(name, values);
     g.attrib(name, values);
