@@ -52,11 +52,11 @@ class StatusPanel extends JPanel {
   GroupLayout layout;
 
   ContributionListing contributionListing = ContributionListing.getInstance();
-  ContributionManagerDialog contributionManagerDialog;
+  ContributionTab contributionTab;
 
-  public StatusPanel(int width, ContributionManagerDialog contributionManagerDialog) {
+  public StatusPanel(int width, final ContributionTab contributionTab) {
     final int BUTTON_WIDTH = 150;
-    this.contributionManagerDialog  = contributionManagerDialog;
+    this.contributionTab  = contributionTab;
     label = new JTextPane();
     label.setEditable(false);
     label.setOpaque(false);
@@ -77,7 +77,7 @@ class StatusPanel extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        ContributionPanel currentPanel = StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel
+        ContributionPanel currentPanel = contributionTab.contributionListPanel
           .getSelectedPanel();
         currentPanel.install();
         StatusPanel.this.update(currentPanel);
@@ -91,7 +91,7 @@ class StatusPanel extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        ContributionPanel currentPanel = StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel
+        ContributionPanel currentPanel = contributionTab.contributionListPanel
           .getSelectedPanel();
         currentPanel.update();
         StatusPanel.this.update(currentPanel);
@@ -103,7 +103,7 @@ class StatusPanel extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        ContributionPanel currentPanel = StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel
+        ContributionPanel currentPanel = contributionTab.contributionListPanel
           .getSelectedPanel();
         currentPanel.remove();
         StatusPanel.this.update(currentPanel);
