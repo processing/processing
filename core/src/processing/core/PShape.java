@@ -716,6 +716,17 @@ public class PShape implements PConstants {
   }
 
 
+  public void attribPosition(String name, float x, float y, float z) {
+  }
+
+  public void attribNormal(String name, float nx, float ny, float nz) {
+  }
+
+
+  public void attribColor(String name, int color) {
+  }
+
+
   public void attrib(String name, float... values) {
   }
 

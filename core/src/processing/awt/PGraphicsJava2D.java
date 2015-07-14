@@ -2903,6 +2903,9 @@ public class PGraphicsJava2D extends PGraphics {
     if ((sourceX == 0) && (sourceY == 0) &&
         (sourceWidth == sourceImage.width) &&
         (sourceHeight == sourceImage.height)) {
+//      System.out.format("%d %d  %dx%d  %d%n", targetX, targetY,
+//                             sourceImage.width, sourceImage.height,
+//                             sourceImage.pixels.length);
       raster.setDataElements(targetX, targetY,
                              sourceImage.width, sourceImage.height,
                              sourceImage.pixels);

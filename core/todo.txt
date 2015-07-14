@@ -46,6 +46,9 @@ X   https://github.com/processing/processing/issues/3413
 X SVG briefly broken for Java2D
 X   https://github.com/processing/processing/issues/3417
 X change how font metrics are pulled to fix text width issues
+X check alpha when image extension is "unknown"
+X   https://github.com/processing/processing/issues/3442
+X add support for more Image types (BGR) with PImage(java.awt.Image) constructor
 
 threading headaches
 X sketch not always showing with empty draw()
@@ -93,6 +96,10 @@ X errors with loading SVGs in P3D/P2D
 X   https://github.com/processing/processing/issues/3379
 X sketch window briefly appears on top left corner when using OpenGL
 X   https://github.com/processing/processing/issues/3308
+X add attrib() method
+X   https://github.com/processing/processing/issues/2963
+X   andres needs input on how the api works
+o   assign this to DXF as well?
 
 contribs
 X Fix NullPointerException in DepthSorter
@@ -130,6 +137,8 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 beta
 X move Java2D and JavaFX classes to their own packages
 _   make notes about this in the README
+_ move AWT image loading into PImageAWT
+_   look into how GL and FX will handle from there
 _ run only the necessary pieces on the EDT
 _   in part because FX doesn't even use the EDT
 _   re-check the Linux frame visibility stuff
@@ -175,10 +184,6 @@ _   https://www.linkedin.com/pulse/oracle-just-removed-javafx-support-arm-jan-sn
 
 opengl
 _ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
-_ add attrib() method
-_   https://github.com/processing/processing/issues/2963
-_   andres needs input on how the api works
-_   assign this to DXF as well?
 _ window loses focus after maximizing
 _   https://github.com/processing/processing/issues/3339
 

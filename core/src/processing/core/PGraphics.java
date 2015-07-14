@@ -1239,6 +1239,21 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  public void attribPosition(String name, float x, float y, float z) {
+    showMissingWarning("attrib");
+  }
+
+
+  public void attribNormal(String name, float nx, float ny, float nz) {
+    showMissingWarning("attrib");
+  }
+
+
+  public void attribColor(String name, int color) {
+    showMissingWarning("attrib");
+  }
+
+
   public void attrib(String name, float... values) {
     showMissingWarning("attrib");
   }

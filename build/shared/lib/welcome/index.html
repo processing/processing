@@ -2,21 +2,64 @@
   <head>
     <title> Welcome to Processing 3 </title>    
     <style type="text/css">
-      <!-- use the Processing font -->
-      body { font-family: "Source Sans Pro" }
+
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        padding: 20px;
+        /* Use the Processing font */
+        font-family: "Source Sans Pro";
+      }
+
+      h1 {
+        margin-bottom: 0;
+        font-size: 16px;
+      }
+
+      p {
+        margin-bottom: 0;
+        font-size: 11px;
+        line-height: 12px;
+      }
+
+      table {
+        margin-top: 10px;
+        margin-bottom: 0;
+      }
+
+      p.inset, table.inset {
+        padding: 10px;
+        background-color: rgb(224, 253, 251); 
+      }
+
+      a {
+        color: #2c7bb5;
+        text-decoration: none;
+      }
+
+      #startButton {
+        margin-left: 50px;
+      }
+
     </style>
   </head>
   <body>    
+
     <!-- action needs to exist (even though blank), otherwise causes NPE -->
     <form action="">
-      <p>Welcome to Processing 3</p>
+
+      <h1>Welcome to Processing 3</h1>
       
       <p>
-        <a href="https://github.com/processing/processing/wiki/Changes-in-3.0">Read about what&rsquo;s new in 3.0</a> &rarr;
+        <a href="https://github.com/processing/processing/wiki/Changes-in-3.0">Read about what&rsquo;s new in 3.0 &rarr;</a>
       </p>
-      <p>
+
+      <p class="inset">
         Note that some sketches from Processing 2 may not be compatible.
-        <a href="https://github.com/processing/processing/wiki/Changes">What has changed?</a>
+        <a href="https://github.com/processing/processing/wiki/Changes-in-3.0">What has changed?</a>
       </p>
       
       <div id="new_sketchbook">
@@ -24,19 +67,42 @@
           Since older sketches may not be compatible, we recommend creating a new sketchbook folder, so Processing 2 and 3 can happily coexist. This is a one-time process. <a href="https://github.com/processing/processing/wiki/Multiple-Sketchbooks">Read more about it.</a>
         </p>
 
-        <input type="radio" name="sketchbook" value="create_new" checked /> 
-        Create a new sketchbook folder for use with Processing 3 sketches <i>(recommended!)</i>
-        <br/>
-        <input type="radio" name="sketchbook" value="use_existing" />
-        Use the existing sketchbook folder for both old and new sketches (may cause conflicts with installed libraries)
-        <br/>
+        <table class="inset">
+          <tr>
+            <td>
+              <input type="radio" name="sketchbook" value="create_new" checked />
+            </td>
+            <td>
+              Create a new sketchbook folder for use with Processing 3 sketches <em>(recommended!)</em>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input type="radio" name="sketchbook" value="use_existing" />
+            </td>
+            <td>
+              Use the existing sketchbook folder for both old and new sketches (may cause conflicts with installed libraries)
+            </td>
+          </tr>
+        </table>
+
       </div>
       
-      <input type="checkbox" name="show_each_time" checked />
-      Show this welcome message each time
-      <br/>
-      <input type="submit" value="Get Started" />
+      <table>
+        <tr>
+          <td>
+            <input type="checkbox" name="show_each_time" checked />
+          </td>
+          <td>
+            Show this welcome<br/>message each time
+          </td>
+          <td>
+            <input id="startButton" type="submit" value="Get Started" />
+          </td>
+        </tr>
+      </table>
+
     </form>
-    </font>
+
   </body>
 </html>
