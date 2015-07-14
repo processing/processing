@@ -5294,7 +5294,8 @@ public class PApplet implements PConstants {
           }
 
           // if it's a .gif image, test to see if it has transparency
-          if (extension.equals("gif") || extension.equals("png")) {
+          if (extension.equals("gif") || extension.equals("png") ||
+              extension.equals("unknown")) {
             image.checkAlpha();
           }
 

@@ -42,6 +42,8 @@ X   https://github.com/processing/processing/issues/3111
 X Re-enable export to application with command line
 X   https://github.com/processing/processing/pull/3451
 X   https://github.com/processing/processing/issues/2760
+X change undefined constructor error message for clarity
+X   https://github.com/processing/processing/issues/3434
 
 gsoc
 X Mode problems window wasn't doing line breaks
@@ -65,6 +67,10 @@ X   https://github.com/processing/processing/issues/3429
 X   https://github.com/processing/processing/pull/3438
 X CM with updated statusPanel and error popup
 X   https://github.com/processing/processing/pull/3452
+X allow modes to import other modes
+X   https://github.com/processing/processing/pull/3444
+X CM list converted into table
+X   https://github.com/processing/processing/pull/3454
 
 cleaning
 o libraries in java tabs (separate .java files) are reported missing
@@ -134,6 +140,7 @@ _ recent menu gets huge with other p5 versions on osx
 
 
 pde/build
+_ Cannot find "processing.core" library. Line 12 in tab sketch_150704a
 _ dim out the Run button if there are compile errors detected
 _   the AST checker has better error message handling for those cases
 _   and hitting Run replaces the useful error with something weird

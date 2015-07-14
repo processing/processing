@@ -71,6 +71,7 @@ public class ThinkDifferent {
   }
 
 
+  // Called via reflection from PSurfaceAWT and others
   static public void setIconImage(Image image) {
     // When already set, is a sun.awt.image.MultiResolutionCachedImage on OS X
 //    Image current = application.getDockIconImage();

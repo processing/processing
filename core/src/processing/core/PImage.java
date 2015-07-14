@@ -309,18 +309,31 @@ public class PImage implements PConstants, Cloneable {
       BufferedImage bi = (BufferedImage) img;
       width = bi.getWidth();
       height = bi.getHeight();
-      pixels = new int[width * height];
-      pixels = ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
       int type = bi.getType();
-      if (type == BufferedImage.TYPE_INT_ARGB) {
-        format = ARGB;
-      } else if (type == BufferedImage.TYPE_INT_RGB) {
-        for (int i = 0; i < pixels.length; i++) {
-          pixels[i] = 0xFF000000 | pixels[i];
+      if (type == BufferedImage.TYPE_3BYTE_BGR ||
+          type == BufferedImage.TYPE_4BYTE_ABGR) {
+        pixels = new int[width * height];
+        bi.getRGB(0, 0, width, height, pixels, 0, width);
+        if (type == BufferedImage.TYPE_4BYTE_ABGR) {
+          format = ARGB;
+        } else {
+          opaque();
+        }
+      } else {
+        DataBuffer db = bi.getRaster().getDataBuffer();
+        if (db instanceof DataBufferInt) {
+          pixels = ((DataBufferInt) db).getData();
+          if (type == BufferedImage.TYPE_INT_ARGB) {
+            format = ARGB;
+          } else if (type == BufferedImage.TYPE_INT_RGB) {
+            opaque();
+          }
         }
       }
-
-    } else {  // go the old school java 1.0 route
+    }
+    // Implements fall-through if not DataBufferInt above, or not a
+    // known type, or not DataBufferInt for the data itself.
+    if (pixels == null) {  // go the old school Java 1.0 route
       width = img.getWidth(null);
       height = img.getHeight(null);
       pixels = new int[width * height];
@@ -1260,6 +1273,14 @@ public class PImage implements PConstants, Cloneable {
                                      "filter(DILATE, param)");
     }
     updatePixels();  // mark as modified
+  }
+
+
+  /** Set the high bits of all pixels to opaque. */
+  protected void opaque() {
+    for (int i = 0; i < pixels.length; i++) {
+      pixels[i] = 0xFF000000 | pixels[i];
+    }
   }
 
 
