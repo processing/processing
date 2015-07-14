@@ -55,7 +55,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 //  private StatusPanel status;
   protected ContributionFilter filter;
 //  private ContributionListing contribListing;
-  private ContributionListing contribListing = ContributionListing.getInstance();
+  protected ContributionListing contribListing = ContributionListing.getInstance();
   protected JTable table;
   DefaultTableModel dtm;
 
@@ -107,6 +107,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     dtm.setColumnIdentifiers(colName);
     JScrollPane scrollPane = new JScrollPane(table);
     table.setFillsViewportHeight(true);
+//    table.setBorder();
     table.setDefaultRenderer(Contribution.class, new StatusRendere());
     table.setRowHeight(30);
     table.setRowMargin(6);
@@ -251,12 +252,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         Icon icon = null;
         label.setBorder(BorderFactory.createEmptyBorder(0, 17, 0, 0));
         if (contribution.isInstalled()) {
-          icon = UIManager.getIcon("OptionPane.warningIcon");
+          icon = Toolkit.getLibIcon("icons/installedAndUptodate.png");
           if (contribListing.hasUpdates(contribution)) {
-            icon = Toolkit.getLibIcon("icons/pde-16.png");
+            icon = Toolkit.getLibIcon("icons/installedNeedsUpdate.png");
           }
           if (!contribution.isCompatible(Base.getRevision())) {
-            icon = Toolkit.getLibIcon("icons/pde-16.png");
+            icon = Toolkit.getLibIcon("icons/installedIncompatible.png");
           }
         }
         label.setIcon(icon);

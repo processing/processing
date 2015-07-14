@@ -119,7 +119,7 @@ public class ContributionManagerDialog {
 
   public void makeFrame(final Editor editor) {
     dialog = new JFrame(title);
-    
+    String[] tabTitles = { "Tools","Libraries","Modes","Examples","Updates"};
     tabbedPane = new JTabbedPane();
 
     makeAndShowTab(false, true);
@@ -141,19 +141,43 @@ public class ContributionManagerDialog {
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
     tabbedPane.setUI(new SpacedTabbedPaneUI());
+    tabbedPane.setBackground(Color.WHITE);
+    tabbedPane.setOpaque(true);
+    tabbedPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
     
     
     JPanel updateTabPanel = new JPanel(true);
-    numberLabel.setOpaque(true);
-    numberLabel.setBackground(Color.BLUE);
+    numberLabel.setOpaque(false);
+    numberLabel.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
+    JLabel numberBackground = new JLabel(Toolkit.getLibIcon("icons/notification.png"));
     JLabel updateTabLabel = new JLabel("Update");
+    updateTabPanel.setOpaque(false);
+    updateTabPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
+      .createMatteBorder(0, 2, 0, 0, Color.BLACK), BorderFactory
+      .createEmptyBorder(4, 4, 4, 4)));
+    tabbedPane.setTabComponentAt(4, updateTabPanel);
+    
+    JLabel tabLabels[] = new JLabel[4];
+    for(int i = 0 ; i < tabLabels.length;i++){
+      tabLabels[i] = new JLabel(tabTitles[i]);
+      tabLabels[i]
+        .setBorder(BorderFactory.createCompoundBorder(BorderFactory
+          .createMatteBorder(0, (i == 0 ? 0 : 2), 0, (i == 3 ? 2 : 0),
+                             Color.BLACK), BorderFactory
+          .createEmptyBorder(4, 4, 4, 4)));
+      tabbedPane.setTabComponentAt(i, tabLabels[i]);
+    }
     
     GroupLayout tabLayout = new GroupLayout(updateTabPanel);
     tabLayout.setAutoCreateGaps(true);
     updateTabPanel.setLayout(tabLayout);
-    tabLayout.setHorizontalGroup(tabLayout.createSequentialGroup().addComponent(numberLabel).addComponent(updateTabLabel));
-    tabLayout.setVerticalGroup(tabLayout.createParallelGroup().addComponent(numberLabel).addComponent(updateTabLabel));
-    tabbedPane.setTabComponentAt(4, updateTabPanel);
+    tabLayout.setHorizontalGroup(tabLayout
+      .createSequentialGroup()
+      .addGroup(tabLayout.createParallelGroup().addComponent(numberLabel)
+                  .addComponent(numberBackground)).addComponent(updateTabLabel));
+    tabLayout.setVerticalGroup(tabLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+      .addComponent(numberBackground).addComponent(numberLabel)
+      .addComponent(updateTabLabel));
     
     tabbedPane.addChangeListener(new ChangeListener() {
       
@@ -227,18 +251,40 @@ public class ContributionManagerDialog {
 
   public class SpacedTabbedPaneUI extends BasicTabbedPaneUI {
     
+    
+    @Override
+    protected void installDefaults() {
+      UIManager.put("TabbedPane.selected", Color.WHITE);
+      super.installDefaults();
+      highlight = Color.WHITE;
+      lightHighlight = Color.WHITE;
+      shadow = Color.WHITE;
+      darkShadow = Color.WHITE;
+      focus = Color.LIGHT_GRAY;
+      tabInsets = new Insets(0, 0, 0, 0);
+      contentBorderInsets = new Insets(0, 0, 0, 0);
+      tabAreaInsets = new Insets(0, 0, 0, 0);
+      selectedTabPadInsets = new Insets(0, 0, 0, 0);
+    }
+    
     @Override
     protected LayoutManager createLayoutManager() {
       return new BasicTabbedPaneUI.TabbedPaneLayout() {
+        
+        @Override
+        public void addLayoutComponent(String name, Component comp) {
+          // TODO Auto-generated method stub
+          super.addLayoutComponent(name, comp);
+        }
         @Override
         protected void calculateTabRects(int tabPlacement, int tabCount) {
           super.calculateTabRects(tabPlacement, tabCount);
           for (int i = 0; i < rects.length; i++) {
+            rects[i].y -= 10;
+            rects[i].height += 15;
             if (i == 4) {
-              rects[i].x = tabbedPane.getWidth() - rects[i].width;
+              rects[i].x = tabbedPane.getWidth() - rects[i].width - 2;
             }
-            rects[i].y -= 5;
-            rects[i].height += 5;
           }
         }
       };
@@ -249,14 +295,15 @@ public class ContributionManagerDialog {
     GroupLayout layout = new GroupLayout(dialog.getContentPane());
     dialog.getContentPane().setLayout(layout);
     dialog.setResizable(true);
+    layout.setAutoCreateContainerGaps(true);
     layout.setHorizontalGroup(layout.createParallelGroup()
                               .addComponent(tabbedPane));
     layout.setVerticalGroup(layout
       .createParallelGroup()
       .addComponent(tabbedPane));
     layout.setHonorsVisibility(tabbedPane, true);
+    dialog.getContentPane().setBackground(Color.WHITE);
     dialog.validate();
-    dialog.pack();
     dialog.repaint();
   }
   

@@ -8,15 +8,19 @@ import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
 import processing.app.Base;
+import processing.app.contrib.ContributionListPanel.MyColumnHeaderRenderer;
+import processing.app.ui.Toolkit;
 
 public class UpdateContribListingPanel extends ContributionListPanel {
 
@@ -83,7 +87,26 @@ public class UpdateContribListingPanel extends ContributionListPanel {
     table.setRowSelectionAllowed(true);
     table.setAutoCreateColumnsFromModel(true);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    
+    table.getTableHeader().setDefaultRenderer(new MyColumnHeaderRenderer() {
+      @Override
+      public Component getTableCellRendererComponent(JTable table,
+                                                     Object value,
+                                                     boolean isSelected,
+                                                     boolean hasFocus, int row,
+                                                     int column) {
+        super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
+                                            row, column);
+        JTableHeader tableHeader = table.getTableHeader();
+        if (tableHeader != null) {
+          setForeground(tableHeader.getForeground());
+        }
+        setIcon(getIcon(table, column));
+        setBackground(Color.WHITE);
+        setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, Color.BLACK));
+        return this;
+      }
+    });
+
     GroupLayout layout = new GroupLayout(this);
     layout.setHorizontalGroup(layout.createParallelGroup().addComponent(scrollPane));
     layout.setVerticalGroup(layout.createSequentialGroup().addComponent(scrollPane));
@@ -164,9 +187,19 @@ public class UpdateContribListingPanel extends ContributionListPanel {
           }
         }
       }
+      Icon icon = null;
+      if (entry.isInstalled()) {
+        icon = Toolkit.getLibIcon("icons/installedAndUptodate.png");
+        if (contribListing.hasUpdates(entry)) {
+          icon = Toolkit.getLibIcon("icons/installedNeedsUpdate.png");
+        }
+        if (!entry.isCompatible(Base.getRevision())) {
+          icon = Toolkit.getLibIcon("icons/installedIncompatible.png");
+        }
+      }
       dtm
         .addRow(new Object[] {
-          "", "<html><b>" + entry.getName() + "</b></html>", name, entry.getPrettyVersion(),
+          icon, "<html><b>" + entry.getName() + "</b></html>", name, entry.getPrettyVersion(),
           contributionTab.contribListing.getLatestVersion(entry) });
     }
   }
@@ -177,6 +210,13 @@ public class UpdateContribListingPanel extends ContributionListPanel {
     @Override
     public boolean isCellEditable(int row, int column) {
       return false;
+    }
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+      if(columnIndex == 0){
+        return Icon.class;
+      }
+      return super.getColumnClass(columnIndex);
     }
   }
 }
