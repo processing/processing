@@ -52,7 +52,7 @@ public class ContributionTab {
   JButton restartButton;
   JLabel categoryLabel;
   JLabel loaderLabel;
-  
+
   JPanel errorPanel;
   JTextPane errorMessage;
   JButton tryAgainButton;
@@ -62,7 +62,7 @@ public class ContributionTab {
   Editor editor;
   String category;
   ContributionListing contribListing;
-  
+
   JProgressBar progressBar;
 
 
@@ -112,8 +112,8 @@ public class ContributionTab {
 //    panel.add(filler);
 //    return panel;
 //  }
-  
-  
+
+
 
 
   public void showFrame(final Editor editor, boolean activateErrorPanel,
@@ -140,7 +140,7 @@ public class ContributionTab {
       loaderLabel.setOpaque(false);
       loaderLabel.setBackground(Color.WHITE);
     }
-    
+
     /*restartButton = new JButton(Language.text("contrib.restart"));
     restartButton.setVisible(false);
     restartButton.addActionListener(new ActionListener() {
@@ -188,7 +188,7 @@ public class ContributionTab {
 
     });*/
 
- 
+
     GroupLayout layout = new GroupLayout(panel);
     panel.setLayout(layout);
     layout.setAutoCreateContainerGaps(true);
@@ -214,7 +214,7 @@ public class ContributionTab {
  }
 
 
-  /** Creates and arranges the Swing components in the dialog. 
+  /** Creates and arranges the Swing components in the dialog.
    */
   private void createComponents() {
 
@@ -222,9 +222,9 @@ public class ContributionTab {
 
       categoryChooser = new JComboBox<String>();
       categoryChooser.setMaximumRowCount(20);
-      
+
       updateCategoryChooser();
-      
+
       categoryChooser.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
           category = (String) categoryChooser.getSelectedItem();
@@ -237,9 +237,9 @@ public class ContributionTab {
       });
 
       filterField = new FilterField();
-      
+
       buildErrorPanel();
-     
+
   }
   private void buildErrorPanel(){
     errorPanel = new JPanel();
@@ -254,17 +254,17 @@ public class ContributionTab {
       + "Please verify your network connection again, then try connecting again.");
     errorMessage.setMaximumSize(new Dimension(450, 50));
     errorMessage.setOpaque(false);
-    
+
     StyledDocument doc = errorMessage.getStyledDocument();
     SimpleAttributeSet center = new SimpleAttributeSet();
     StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
     doc.setParagraphAttributes(0, doc.getLength(), center, false);
-    
-    
+
+
     closeButton = new JButton("X");
     closeButton.setOpaque(false);
     closeButton.addActionListener(new ActionListener() {
-      
+
       @Override
       public void actionPerformed(ActionEvent e) {
         contributionManagerDialog.makeAndShowTab(false, false);
@@ -272,7 +272,7 @@ public class ContributionTab {
     });
     tryAgainButton = new JButton("Try Again");
     tryAgainButton.addActionListener(new ActionListener() {
-      
+
       @Override
       public void actionPerformed(ActionEvent e) {
         contributionManagerDialog.makeAndShowTab(false, true);
@@ -307,11 +307,12 @@ public class ContributionTab {
 //      }
       Collections.sort(categories);
 //    categories.add(0, ContributionManagerDialog.ANY_CATEGORY);
+      @SuppressWarnings("unused")
       boolean categoriesFound = false;
       categoryChooser.addItem(ContributionManagerDialog.ANY_CATEGORY);
       for (String s : categories) {
         categoryChooser.addItem(s);
-        if (!s.equals("Unknown")) {
+        if (!s.equals(Contribution.UNKNOWN_CATEGORY)) {
           categoriesFound = true;
         }
       }
@@ -372,7 +373,7 @@ public class ContributionTab {
   }
 
 
- 
+
 
   protected void setFilterText(String filter) {
     if (filter == null || filter.isEmpty()) {
