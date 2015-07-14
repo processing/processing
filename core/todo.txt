@@ -48,6 +48,7 @@ X   https://github.com/processing/processing/issues/3417
 X change how font metrics are pulled to fix text width issues
 X check alpha when image extension is "unknown"
 X   https://github.com/processing/processing/issues/3442
+X add support for more Image types (BGR) with PImage(java.awt.Image) constructor
 
 threading headaches
 X sketch not always showing with empty draw()
@@ -132,12 +133,6 @@ _ note that full screen and present are now different
 _   on Export to Application, this has an impact
 _ update wiki/docs to say "don't override sketchXxxx() methods"
 
-
-_ change "PythonMode contains an incompatible Mode" message
-_   to "PythonMode is not compatible with Processing 3"
-_ another "incompatible tool" case
-java.lang.AbstractMethodError
-  at processing.app.contrib.ToolContribution.init(ToolContribution.java:134)
 
 beta
 X move Java2D and JavaFX classes to their own packages

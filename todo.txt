@@ -18,6 +18,12 @@ X   https://github.com/processing/processing/issues/3394
 X Tweak mode broken (re: new settings() function)
 X   https://github.com/processing/processing/issues/3435
 X   looks like 'class' def from tweak needs to go below setup
+X change "PythonMode contains an incompatible Mode" message
+X   to "PythonMode is not compatible with Processing 3"
+X another "incompatible tool" case
+X   java.lang.AbstractMethodError
+X     at processing.app.contrib.ToolContribution.init(ToolContribution.java:134)
+X   unfortunately happens at a level where we can only println about it
 
 manager
 X changed compatibleModesList to modes in examples.properties
@@ -82,6 +88,7 @@ X   https://github.com/processing/processing/issues/498
 contribs pending
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
+
 
 beta
 _ make modes load their parent class

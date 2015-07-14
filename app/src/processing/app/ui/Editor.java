@@ -1288,6 +1288,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
         System.err.println("The " + ncdfe.getMessage() + " class is no longer available.");
         Base.loge("Incompatible Tool found during tool.init()", ncdfe);
 
+      } catch (AbstractMethodError ame) {
+        System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
+                           "compatible with this version of Processing");
+//        ame.printStackTrace();
+
       } catch (Error err) {
         System.err.println("An error occurred inside \"" + tool.getMenuTitle() + "\"");
         err.printStackTrace();
