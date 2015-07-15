@@ -63,19 +63,18 @@ public class ContributionManagerDialog {
   ContributionTab librariesContributionTab;
   ContributionTab examplesContributionTab;
   ContributionTab modesContributionTab;
-  ContributionTab updatesContributionTab;
-
+  UpdateContributionTab updatesContributionTab;
   JLabel numberLabel;
 
   ContributionListing contributionListing = ContributionListing.getInstance();
 
   public ContributionManagerDialog() {
-    numberLabel = new JLabel();
+    numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification.png"), SwingConstants.CENTER);
     toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
     librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
     modesContributionTab = new ContributionTab(ContributionType.MODE, this);
     examplesContributionTab = new ContributionTab(ContributionType.EXAMPLES, this);
-    updatesContributionTab = new ContributionTab(null, this);
+    updatesContributionTab = new UpdateContributionTab(null, this);
   }
 
   public boolean hasUpdates() {
@@ -147,10 +146,9 @@ public class ContributionManagerDialog {
 
 
     JPanel updateTabPanel = new JPanel(true);
-    numberLabel.setOpaque(false);
-    numberLabel.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
-    JLabel numberBackground = new JLabel(Toolkit.getLibIcon("manager/notification.png"));
     JLabel updateTabLabel = new JLabel("Update");
+    numberLabel.setVerticalTextPosition(SwingConstants.CENTER);
+    numberLabel.setHorizontalTextPosition(SwingConstants.CENTER);
     updateTabPanel.setOpaque(false);
     updateTabPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
       .createMatteBorder(0, 2, 0, 0, Color.BLACK), BorderFactory
@@ -173,10 +171,10 @@ public class ContributionManagerDialog {
     updateTabPanel.setLayout(tabLayout);
     tabLayout.setHorizontalGroup(tabLayout
       .createSequentialGroup()
-      .addGroup(tabLayout.createParallelGroup().addComponent(numberLabel)
-                  .addComponent(numberBackground)).addComponent(updateTabLabel));
+      .addComponent(numberLabel)
+                  .addComponent(updateTabLabel));
     tabLayout.setVerticalGroup(tabLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-      .addComponent(numberBackground).addComponent(numberLabel)
+     .addComponent(numberLabel)
       .addComponent(updateTabLabel));
 
     tabbedPane.addChangeListener(new ChangeListener() {
