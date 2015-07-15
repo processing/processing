@@ -87,8 +87,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 //    statusPlaceholder = new JPanel();
 //    statusPlaceholder.setVisible(false);
 //    status = new StatusPanel(null);
-    
-    
+
+
     dtm = new MyTableModel();
     table = new JTable(dtm){
       @Override
@@ -144,11 +144,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
     this.setLayout(layout);
     table.setVisible(true);
-    
+
   }
-  
+
   class MyColumnHeaderRenderer extends DefaultTableCellRenderer {
-    
+
     /**
      * Constructs a <code>DefaultTableHeaderCellRenderer</code>.
      * <P>
@@ -161,7 +161,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 //      setVerticalAlignment(BOTTOM);
       setOpaque(true);
     }
-    
+
     /**
      * Returns the default table header cell renderer.
      * <P>
@@ -252,12 +252,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         Icon icon = null;
         label.setBorder(BorderFactory.createEmptyBorder(0, 17, 0, 0));
         if (contribution.isInstalled()) {
-          icon = Toolkit.getLibIcon("icons/installedAndUptodate.png");
+          icon = Toolkit.getLibIcon("manager/up-to-date.png");
           if (contribListing.hasUpdates(contribution)) {
-            icon = Toolkit.getLibIcon("icons/installedNeedsUpdate.png");
+            icon = Toolkit.getLibIcon("manager/update-available.png");
           }
           if (!contribution.isCompatible(Base.getRevision())) {
-            icon = Toolkit.getLibIcon("icons/installedIncompatible.png");
+            icon = Toolkit.getLibIcon("manager/incompatible.png");
           }
         }
         label.setIcon(icon);
@@ -376,7 +376,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       ((MyTableModel) table.getModel()).addRow(new Object[] {
         entry, entry, entry });
     }
- 
+
   }
 
 
@@ -484,7 +484,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       selectedPanel.setSelected(true);
 
     } else {
-      
+
       ContributionPanel lastSelected = selectedPanel;
       selectedPanel = contributionPanel;
 
