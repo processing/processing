@@ -299,7 +299,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           label.setBackground(Color.BLUE);
           name.setOpaque(false);
         }
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 00, 0));
         label.setOpaque(true);
         label.setLayout(layout);
       } else {
