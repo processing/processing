@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -41,7 +42,7 @@ import processing.app.Base;
 
 class StatusPanel extends JPanel {
 
-  final int BUTTON_WIDTH = 20;
+  final int BUTTON_WIDTH = 150;
 
   JTextPane label;
   JButton installButton;
@@ -55,7 +56,9 @@ class StatusPanel extends JPanel {
   ContributionTab contributionTab;
 
   public StatusPanel(int width, final ContributionTab contributionTab) {
-    final int BUTTON_WIDTH = 150;
+    super();
+    setBackground(Color.WHITE);
+    setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
     this.contributionTab  = contributionTab;
     label = new JTextPane();
     label.setEditable(false);
@@ -73,6 +76,8 @@ class StatusPanel extends JPanel {
       }
     });
     installButton = new JButton("Install");
+    installButton.setContentAreaFilled(false);
+    installButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     installButton.addActionListener(new ActionListener() {
 
       @Override
@@ -84,9 +89,12 @@ class StatusPanel extends JPanel {
       }
     });
     progressBarPanel = new JPanel();
-    progressBarPanel.setLayout(new BorderLayout());;
-    updateLabel = new JLabel("  ");
+    progressBarPanel.setLayout(new BorderLayout());
+    progressBarPanel.setOpaque(false);
+    updateLabel = new JLabel(" ");
     updateButton = new JButton("Update");
+    updateButton.setContentAreaFilled(false);
+    updateButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     updateButton.addActionListener(new ActionListener() {
 
       @Override
@@ -99,6 +107,8 @@ class StatusPanel extends JPanel {
     });
 
     removeButton = new JButton("Remove");
+    removeButton.setContentAreaFilled(false);
+    removeButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     removeButton.addActionListener(new ActionListener() {
 
       @Override
@@ -151,7 +161,13 @@ class StatusPanel extends JPanel {
     removeButton.setEnabled(false);
 
     layout.setHonorsVisibility(updateLabel, false); // Makes the label take up space even though not visible
+    
+    validate();
 
+  }
+
+  public StatusPanel() {
+    // TODO Auto-generated constructor stub
   }
 
   void setMessage(String message) {

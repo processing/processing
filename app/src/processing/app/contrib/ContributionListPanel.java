@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import javax.swing.*;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.border.Border;
 import javax.swing.event.*;
 import javax.swing.table.*;
@@ -52,13 +53,15 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   private ContributionPanel selectedPanel;
 //  protected JPanel statusPlaceholder;
 //  private StatusPanel status;
-  private ContributionFilter filter;
+  protected ContributionFilter filter;
 //  private ContributionListing contribListing;
-  private ContributionListing contribListing = ContributionListing.getInstance();
-  private JTable table;
+  protected ContributionListing contribListing = ContributionListing.getInstance();
+  protected JTable table;
   DefaultTableModel dtm;
 
-
+  public ContributionListPanel() {
+    // TODO Auto-generated constructor stub
+  }
   public ContributionListPanel(final ContributionTab contributionTab,
                                ContributionFilter filter) {
     super();
@@ -104,6 +107,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     dtm.setColumnIdentifiers(colName);
     JScrollPane scrollPane = new JScrollPane(table);
     table.setFillsViewportHeight(true);
+//    table.setBorder();
     table.setDefaultRenderer(Contribution.class, new StatusRendere());
     table.setRowHeight(30);
     table.setRowMargin(6);
@@ -113,17 +117,27 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     table.setColumnSelectionAllowed(false);
     table.setCellSelectionEnabled(false);
     table.setAutoCreateColumnsFromModel(true);
+    table.setAutoCreateRowSorter(false);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-      public void valueChanged(ListSelectionEvent event) {
-        //TODO this executes 2 times when clicked and 1 time when traversed using arrow keys
-        //Ideally this should always be try but while clearing the table something fishy is going on
-        if(table.getSelectedRow() != -1){
-          setSelectedPanel(panelByContribution.get(table.getValueAt(table.getSelectedRow(), 0)));
+    table.getSelectionModel()
+      .addListSelectionListener(new ListSelectionListener() {
+        public void valueChanged(ListSelectionEvent event) {
+          //TODO this executes 2 times when clicked and 1 time when traversed using arrow keys
+          //Ideally this should always be true but while clearing the table something fishy is going on
+          if (table.getSelectedRow() != -1) {
+            setSelectedPanel(panelByContribution.get(table.getValueAt(table
+              .getSelectedRow(), 0)));
+          }
         }
-      }
-  });
-    
+      });
+
+    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
+    table.setRowSorter(sorter);
+    sorter.setComparator(1, contribListing.getComparator());
+    sorter.setSortable(0, false);
+    sorter.setSortable(2, false);
+    table.getTableHeader().setDefaultRenderer(new MyColumnHeaderRenderer());
+
     GroupLayout layout = new GroupLayout(this);
     layout.setHorizontalGroup(layout.createParallelGroup().addComponent(scrollPane));
     layout.setVerticalGroup(layout.createSequentialGroup().addComponent(scrollPane));
@@ -132,6 +146,98 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     table.setVisible(true);
     
   }
+  
+  class MyColumnHeaderRenderer extends DefaultTableCellRenderer {
+    
+    /**
+     * Constructs a <code>DefaultTableHeaderCellRenderer</code>.
+     * <P>
+     * The horizontal alignment and text position are set as appropriate to a
+     * table header cell, and the opaque property is set to false.
+     */
+    public MyColumnHeaderRenderer() {
+//      setHorizontalAlignment(CENTER);
+      setHorizontalTextPosition(LEFT);
+//      setVerticalAlignment(BOTTOM);
+      setOpaque(true);
+    }
+    
+    /**
+     * Returns the default table header cell renderer.
+     * <P>
+     * If the column is sorted, the appropriate icon is retrieved from the
+     * current Look and Feel, and a border appropriate to a table header cell
+     * is applied.
+     * <P>
+     * Subclasses may override this method to provide custom content or
+     * formatting.
+     *
+     * @param table the <code>JTable</code>.
+     * @param value the value to assign to the header cell
+     * @param isSelected This parameter is ignored.
+     * @param hasFocus This parameter is ignored.
+     * @param row This parameter is ignored.
+     * @param column the column of the header cell to render
+     * @return the default table header cell renderer
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value,
+            boolean isSelected, boolean hasFocus, int row, int column) {
+      super.getTableCellRendererComponent(table, value,
+              isSelected, hasFocus, row, column);
+      JTableHeader tableHeader = table.getTableHeader();
+      if (tableHeader != null) {
+        setForeground(tableHeader.getForeground());
+      }
+      setIcon(getIcon(table, column));
+      setBackground(Color.WHITE);
+      setBorder(BorderFactory.createCompoundBorder(BorderFactory
+        .createMatteBorder(2, 0, 2, 0, Color.BLACK), BorderFactory
+        .createEmptyBorder(0, (column == 2 ? 17 : 0), 0, 0)));
+      return this;
+    }
+
+    /**
+     * Overloaded to return an icon suitable to the primary sorted column, or null if
+     * the column is not the primary sort key.
+     *
+     * @param table the <code>JTable</code>.
+     * @param column the column index.
+     * @return the sort icon, or null if the column is unsorted.
+     */
+    protected Icon getIcon(JTable table, int column) {
+      SortKey sortKey = getSortKey(table, column);
+      if (sortKey != null && table.convertColumnIndexToView(sortKey.getColumn()) == column) {
+        switch (sortKey.getSortOrder()) {
+          case ASCENDING:
+            return UIManager.getIcon("Table.ascendingSortIcon");
+          case DESCENDING:
+            return UIManager.getIcon("Table.descendingSortIcon");
+        }
+      }
+      return null;
+    }
+
+    /**
+     * Returns the current sort key, or null if the column is unsorted.
+     *
+     * @param table the table
+     * @param column the column index
+     * @return the SortKey, or null if the column is unsorted
+     */
+    protected SortKey getSortKey(JTable table, int column) {
+      RowSorter rowSorter = table.getRowSorter();
+      if (rowSorter == null) {
+        return null;
+      }
+
+      List sortedColumns = rowSorter.getSortKeys();
+      if (sortedColumns.size() > 0) {
+        return (SortKey) sortedColumns.get(0);
+      }
+      return null;
+    }
+}
 
   class StatusRendere extends DefaultTableCellRenderer {
 
@@ -146,12 +252,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         Icon icon = null;
         label.setBorder(BorderFactory.createEmptyBorder(0, 17, 0, 0));
         if (contribution.isInstalled()) {
-          icon = UIManager.getIcon("OptionPane.warningIcon");
+          icon = Toolkit.getLibIcon("icons/installedAndUptodate.png");
           if (contribListing.hasUpdates(contribution)) {
-            icon = Toolkit.getLibIcon("icons/pde-16.png");
+            icon = Toolkit.getLibIcon("icons/installedNeedsUpdate.png");
           }
           if (!contribution.isCompatible(Base.getRevision())) {
-            icon = Toolkit.getLibIcon("icons/pde-16.png");
+            icon = Toolkit.getLibIcon("icons/installedIncompatible.png");
           }
         }
         label.setIcon(icon);
@@ -164,6 +270,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         JTextPane name = new JTextPane();
         name.setContentType("text/html");
         name.setEditable(false);
+        if(!contribution.isCompatible(Base.getRevision())){
+          name.setForeground(Color.LIGHT_GRAY);
+        }
         name.setText("<html><body><b>" + contribution.getName() + "</b> - "
           + contribution.getSentence() + "</body></html>");
         GroupLayout layout = new GroupLayout(label);
@@ -204,6 +313,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         author.setText(name.toString());
         author.setEditable(false);
         author.setOpaque(false);
+        if(!contribution.isCompatible(Base.getRevision())){
+          author.setForeground(Color.LIGHT_GRAY);
+        }
         if (table.isRowSelected(row)) {
           label.setBackground(Color.BLUE);
         }
@@ -222,7 +334,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
 
   }
-  class MyTableModel extends DefaultTableModel{
+  private class MyTableModel extends DefaultTableModel{
     MyTableModel() {
       super(0,0);
     }
@@ -232,17 +344,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-//      if(columnIndex == 0){
-//        return Icon.class;
-//      }
-//      if(columnIndex == 1){
-//        return String.class;
-//      }
       return Contribution.class;
     }
   }
 
-  private void updatePanelOrdering(Set<Contribution> contributionsSet) {
+  void updatePanelOrdering(Set<Contribution> contributionsSet) {
     /*   int row = 0;
     for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
       GridBagConstraints c = new GridBagConstraints();
@@ -264,15 +370,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     c.anchor = GridBagConstraints.NORTH;
     add(status, c);*/
 //    System.out.println(dtm.getDataVector());
-    if(contributionTab.contributionType == null){
-      contributionTab.contributionManagerDialog.numberLabel.setText(Integer.toString(panelByContribution.size()));
+    dtm.getDataVector().removeAllElements();
+    dtm.fireTableDataChanged();
+    for (Contribution entry : contributionsSet) {
+      ((MyTableModel) table.getModel()).addRow(new Object[] {
+        entry, entry, entry });
     }
-      dtm.getDataVector().removeAllElements();
-      dtm.fireTableDataChanged();
-      for (Contribution entry : contributionsSet) {
-        ((MyTableModel) table.getModel()).addRow(new Object[] {
-          entry, entry, entry });
-      }
  
   }
 

@@ -26,10 +26,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
+
+import java.awt.*;
+
+import javax.swing.border.*;
 
 import processing.app.*;
 import processing.app.ui.Editor;
@@ -49,6 +54,7 @@ public class ContributionTab {
   ContributionListPanel contributionListPanel;
   StatusPanel statusPanel;
   FilterField filterField;
+  JLabel filterLabel;
   JButton restartButton;
   JLabel categoryLabel;
   JLabel loaderLabel;
@@ -86,11 +92,16 @@ public class ContributionTab {
 
       filter = type.createFilter();
     }
-    statusPanel = new StatusPanel(450,this);
     this.contributionType = type;
     this.contributionManagerDialog = contributionManagerDialog;
     contribListing = ContributionListing.getInstance();
-    contributionListPanel = new ContributionListPanel(this, filter);
+    if (contributionType == null) {
+      contributionListPanel = new UpdateContribListingPanel(this, filter);
+      statusPanel = new UpdateStatusPanel(650, this);
+    } else {
+      statusPanel = new StatusPanel(650,this);
+      contributionListPanel = new ContributionListPanel(this, filter);
+    }
     contribListing.addContributionListener(contributionListPanel);
   }
 
@@ -139,6 +150,8 @@ public class ContributionTab {
       loaderLabel = new JLabel(Toolkit.getLibIcon("icons/loader.gif"));
       loaderLabel.setOpaque(false);
       loaderLabel.setBackground(Color.WHITE);
+      filterLabel = new JLabel("Filter");
+      filterLabel.setOpaque(false);
     }
 
     /*restartButton = new JButton(Language.text("contrib.restart"));
@@ -191,18 +204,29 @@ public class ContributionTab {
 
     GroupLayout layout = new GroupLayout(panel);
     panel.setLayout(layout);
-    layout.setAutoCreateContainerGaps(true);
-    layout.setAutoCreateGaps(true);
+//    layout.setAutoCreateContainerGaps(true);
+//    layout.setAutoCreateGaps(true);
     layout.setHorizontalGroup(layout
       .createParallelGroup(GroupLayout.Alignment.CENTER)
-      .addGroup(layout.createSequentialGroup().addComponent(categoryLabel)
-                  .addComponent(categoryChooser).addComponent(filterField))
-      .addComponent(loaderLabel).addComponent(contributionListPanel)
-      .addComponent(errorPanel).addComponent(statusPanel));
+      .addGroup(layout
+                  .createSequentialGroup()
+                  .addContainerGap()
+                  .addComponent(filterLabel)
+                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                  .addComponent(filterField)
+                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                  .addComponent(categoryChooser,
+                                categoryChooser.getPreferredSize().width + 20,
+                                categoryChooser.getPreferredSize().width + 20,
+                                categoryChooser.getPreferredSize().width + 20)
+                  .addContainerGap()).addComponent(loaderLabel)
+      .addComponent(contributionListPanel).addComponent(errorPanel)
+      .addComponent(statusPanel));
+
     layout.setVerticalGroup(layout
       .createSequentialGroup()
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                  .addComponent(categoryLabel).addComponent(categoryChooser)
+                  .addComponent(filterLabel).addComponent(categoryChooser)
                   .addComponent(filterField))
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(loaderLabel)
@@ -210,7 +234,11 @@ public class ContributionTab {
       .addComponent(errorPanel)
       .addComponent(statusPanel, GroupLayout.PREFERRED_SIZE,
                     GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
+    layout.linkSize(SwingConstants.VERTICAL, categoryChooser, filterField);
     layout.setHonorsVisibility(contributionListPanel, false);
+
+    panel.setBackground(Color.WHITE);
+    panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
  }
 
 
@@ -262,7 +290,7 @@ public class ContributionTab {
 
 
     closeButton = new JButton("X");
-    closeButton.setOpaque(false);
+    closeButton.setContentAreaFilled(false);
     closeButton.addActionListener(new ActionListener() {
 
       @Override
@@ -271,6 +299,8 @@ public class ContributionTab {
       }
     });
     tryAgainButton = new JButton("Try Again");
+    tryAgainButton.setContentAreaFilled(false);
+    tryAgainButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     tryAgainButton.addActionListener(new ActionListener() {
 
       @Override
@@ -283,8 +313,12 @@ public class ContributionTab {
       .createSequentialGroup()
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                  .addComponent(errorMessage).addComponent(tryAgainButton))
+      .addGroup(layout
+                  .createParallelGroup(GroupLayout.Alignment.CENTER)
+                  .addComponent(errorMessage)
+                  .addComponent(tryAgainButton, statusPanel.BUTTON_WIDTH,
+                                statusPanel.BUTTON_WIDTH,
+                                statusPanel.BUTTON_WIDTH))
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
       .addComponent(closeButton));
@@ -292,7 +326,8 @@ public class ContributionTab {
       .createSequentialGroup()
       .addGroup(layout.createParallelGroup().addComponent(errorMessage)
                   .addComponent(closeButton)).addComponent(tryAgainButton));
-    errorPanel.setBackground(Color.BLUE);
+    errorPanel.setBackground(Color.PINK);
+    errorPanel.validate();
   }
 
 
@@ -316,8 +351,7 @@ public class ContributionTab {
           categoriesFound = true;
         }
       }
-      //TODO: a really ugly hack to solve focus problem
-//      categoryChooser.setEnabled(categoriesFound);
+      categoryChooser.setEnabled(categoriesFound);
     }
   }
 
@@ -372,16 +406,11 @@ public class ContributionTab {
     }
   }
 
-
-
-
   protected void setFilterText(String filter) {
     if (filter == null || filter.isEmpty()) {
       filterField.setText("");
-      filterField.showingHint = true;
     } else {
       filterField.setText(filter);
-      filterField.showingHint = false;
     }
     filterField.applyFilter();
   }
@@ -393,32 +422,26 @@ public class ContributionTab {
 
   //TODO: this is causing a lot of bugs as the hint is wrongly firing applyFilter()
   class FilterField extends JTextField {
-    String filterHint;
-    boolean showingHint;
+    Icon searchIcon;
     List<String> filters;
 
     public FilterField () {
-      super(Language.text("contrib.filter_your_search"));
-      filterHint = Language.text("contrib.filter_your_search");
 
-      showingHint = true;
+      super("");
+      searchIcon = Toolkit.getLibIcon("icons/searchIcon.png");
+      setOpaque(false);
+
       filters = new ArrayList<String>();
-      updateStyle();
 
       addFocusListener(new FocusListener() {
         public void focusLost(FocusEvent focusEvent) {
-          if (filterField.getText().isEmpty()) {
-            showingHint = true;
+          if (getText().isEmpty()) {
+            setBorder(BorderFactory.createMatteBorder(0, 33, 0, 0, searchIcon));
           }
-          updateStyle();
         }
 
         public void focusGained(FocusEvent focusEvent) {
-          if (showingHint) {
-            showingHint = false;
-            filterField.setText("");
-          }
-          updateStyle();
+          setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
         }
       });
 
@@ -436,9 +459,9 @@ public class ContributionTab {
         }
       });
     }
-
+    
     public void applyFilter() {
-      String filter = filterField.getFilterText();
+      String filter = getText();
       filter = filter.toLowerCase();
 
       // Replace anything but 0-9, a-z, or : with a space
@@ -449,21 +472,6 @@ public class ContributionTab {
       contributionListPanel.updateColors();
     }
 
-    public String getFilterText() {
-      return showingHint ? "" : getText();
-    }
-
-    public void updateStyle() {
-      if (showingHint) {
-        setText(filterHint);
-        // setForeground(UIManager.getColor("TextField.light")); // too light
-        setForeground(Color.gray);
-        setFont(getFont().deriveFont(Font.ITALIC));
-      } else {
-        setForeground(UIManager.getColor("TextField.foreground"));
-        setFont(getFont().deriveFont(Font.PLAIN));
-      }
-    }
   }
 
 
