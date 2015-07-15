@@ -23,7 +23,6 @@ package processing.app.contrib;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
@@ -31,10 +30,6 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
-
-import java.awt.*;
-
-import javax.swing.border.*;
 
 import processing.app.*;
 import processing.app.ui.Editor;
@@ -147,7 +142,7 @@ public class ContributionTab {
       progressBar.setVisible(false);
       createComponents();
       panel = new JPanel(false);
-      loaderLabel = new JLabel(Toolkit.getLibIcon("icons/loader.gif"));
+      loaderLabel = new JLabel(Toolkit.getLibIcon("manager/loader.gif"));
       loaderLabel.setOpaque(false);
       loaderLabel.setBackground(Color.WHITE);
       filterLabel = new JLabel("Filter");
@@ -342,7 +337,6 @@ public class ContributionTab {
 //      }
       Collections.sort(categories);
 //    categories.add(0, ContributionManagerDialog.ANY_CATEGORY);
-      @SuppressWarnings("unused")
       boolean categoriesFound = false;
       categoryChooser.addItem(ContributionManagerDialog.ANY_CATEGORY);
       for (String s : categories) {
@@ -428,7 +422,7 @@ public class ContributionTab {
     public FilterField () {
 
       super("");
-      searchIcon = Toolkit.getLibIcon("icons/searchIcon.png");
+      searchIcon = Toolkit.getLibIcon("manager/search.png");
       setOpaque(false);
 
       filters = new ArrayList<String>();
@@ -459,7 +453,7 @@ public class ContributionTab {
         }
       });
     }
-    
+
     public void applyFilter() {
       String filter = getText();
       filter = filter.toLowerCase();

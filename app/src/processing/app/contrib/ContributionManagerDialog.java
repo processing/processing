@@ -39,9 +39,9 @@ import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
 /**
- * 
+ *
  * @author akarshit
- * 
+ *
  * This class is the main Contribution Manager Dialog.
  * It contains all the contributions tab and the update tab.
  *
@@ -54,20 +54,20 @@ public class ContributionManagerDialog {
   String title;
   JButton restartButton;
 
-  
+
   // the calling editor, so updates can be applied
   Editor editor;
-  
+
   //The tabs
   ContributionTab toolsContributionTab;
   ContributionTab librariesContributionTab;
   ContributionTab examplesContributionTab;
   ContributionTab modesContributionTab;
   ContributionTab updatesContributionTab;
-  
+
   JLabel numberLabel;
-  
-  ContributionListing contributionListing = ContributionListing.getInstance(); 
+
+  ContributionListing contributionListing = ContributionListing.getInstance();
 
   public ContributionManagerDialog() {
     numberLabel = new JLabel();
@@ -113,7 +113,7 @@ public class ContributionManagerDialog {
       tabbedPane.setSelectedIndex(index); //done before as downloadAndUpdateContributionListing() requires the current selected tab
       downloadAndUpdateContributionListing(editor.getBase());
     }
-    tabbedPane.setSelectedIndex(index); 
+    tabbedPane.setSelectedIndex(index);
     dialog.setVisible(true);
   }
 
@@ -144,19 +144,19 @@ public class ContributionManagerDialog {
     tabbedPane.setBackground(Color.WHITE);
     tabbedPane.setOpaque(true);
     tabbedPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-    
-    
+
+
     JPanel updateTabPanel = new JPanel(true);
     numberLabel.setOpaque(false);
     numberLabel.setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
-    JLabel numberBackground = new JLabel(Toolkit.getLibIcon("icons/notification.png"));
+    JLabel numberBackground = new JLabel(Toolkit.getLibIcon("manager/notification.png"));
     JLabel updateTabLabel = new JLabel("Update");
     updateTabPanel.setOpaque(false);
     updateTabPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
       .createMatteBorder(0, 2, 0, 0, Color.BLACK), BorderFactory
       .createEmptyBorder(4, 4, 4, 4)));
     tabbedPane.setTabComponentAt(4, updateTabPanel);
-    
+
     JLabel tabLabels[] = new JLabel[4];
     for(int i = 0 ; i < tabLabels.length;i++){
       tabLabels[i] = new JLabel(tabTitles[i]);
@@ -167,7 +167,7 @@ public class ContributionManagerDialog {
           .createEmptyBorder(4, 4, 4, 4)));
       tabbedPane.setTabComponentAt(i, tabLabels[i]);
     }
-    
+
     GroupLayout tabLayout = new GroupLayout(updateTabPanel);
     tabLayout.setAutoCreateGaps(true);
     updateTabPanel.setLayout(tabLayout);
@@ -178,9 +178,9 @@ public class ContributionManagerDialog {
     tabLayout.setVerticalGroup(tabLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
       .addComponent(numberBackground).addComponent(numberLabel)
       .addComponent(updateTabLabel));
-    
+
     tabbedPane.addChangeListener(new ChangeListener() {
-      
+
       @Override
       public void stateChanged(ChangeEvent e) {
 //        // When the tab is changed update status to the current selected panel
@@ -191,11 +191,11 @@ public class ContributionManagerDialog {
 //        }
       }
     });
-    
-    
+
+
 //    tabbedPane.setSize(450, 400);
     setLayout();
-    
+
     restartButton = new JButton(Language.text("contrib.restart"));
     restartButton.setVisible(false);
     restartButton.addActionListener(new ActionListener() {
@@ -250,8 +250,8 @@ public class ContributionManagerDialog {
   }
 
   public class SpacedTabbedPaneUI extends BasicTabbedPaneUI {
-    
-    
+
+
     @Override
     protected void installDefaults() {
       UIManager.put("TabbedPane.selected", Color.WHITE);
@@ -266,11 +266,11 @@ public class ContributionManagerDialog {
       tabAreaInsets = new Insets(0, 0, 0, 0);
       selectedTabPadInsets = new Insets(0, 0, 0, 0);
     }
-    
+
     @Override
     protected LayoutManager createLayoutManager() {
       return new BasicTabbedPaneUI.TabbedPaneLayout() {
-        
+
         @Override
         public void addLayoutComponent(String name, Component comp) {
           // TODO Auto-generated method stub
@@ -290,7 +290,7 @@ public class ContributionManagerDialog {
       };
     }
   }
-  
+
   private void setLayout() {
     GroupLayout layout = new GroupLayout(dialog.getContentPane());
     dialog.getContentPane().setLayout(layout);
@@ -306,9 +306,9 @@ public class ContributionManagerDialog {
     dialog.validate();
     dialog.repaint();
   }
-  
-  
-  
+
+
+
 
   /**
    * Close the window after an OK or Cancel.
@@ -320,7 +320,7 @@ public class ContributionManagerDialog {
 
 /*  *//**
    * Creates and arranges the Swing components in the dialog.
-   * 
+   *
    * @param panel1
    *//*
   private void createComponents(JPanel panel1) {
@@ -587,7 +587,7 @@ public class ContributionManagerDialog {
   }
 */
   protected void downloadAndUpdateContributionListing(Base base) {
-    
+
     //activeTab is required now but should be removed
     //as there is only one instance of contribListing and it should be present in this class
     final ContributionTab activeTab = getActiveTab();
@@ -636,7 +636,7 @@ public class ContributionManagerDialog {
         }
       }
 
-   
+
 
     });
   }
@@ -648,13 +648,13 @@ public class ContributionManagerDialog {
     examplesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
     updatesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
   }
-  
+
   /**
-   * 
+   *
    * @return the currently selected tab
    */
   public ContributionTab getActiveTab() {
-    
+
     switch (tabbedPane.getSelectedIndex()) {
     case 0:
       return toolsContributionTab;
@@ -667,7 +667,7 @@ public class ContributionManagerDialog {
     default:
       return updatesContributionTab;
     }
-    
+
   }
 
 /*

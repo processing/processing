@@ -42,7 +42,7 @@ public class UpdateContribListingPanel extends ContributionListPanel {
 //    statusPlaceholder = new JPanel();
 //    statusPlaceholder.setVisible(false);
 //    status = new StatusPanel(null);
-    
+
     String[] colName = { "", "Name", "Author", "Installed", "Update To" };
     dtm = new MyTableModel();
     dtm.setColumnIdentifiers(colName);
@@ -113,7 +113,7 @@ public class UpdateContribListingPanel extends ContributionListPanel {
 
     this.setLayout(layout);
     table.setVisible(true);
-    
+
     panelByContribution = new TreeMap<Contribution, ContributionPanel>(new Comparator<Contribution>() {
 
       @Override
@@ -146,16 +146,16 @@ public class UpdateContribListingPanel extends ContributionListPanel {
         return val1 - val2;
       }
     });
-    
+
   }
-//  
+//
 //  @Override
 //  public void contributionAdded(Contribution contribution) {
 //    if(filter.matches(contribution)){
 //    super.contributionAdded(contribution);
 //    }
 //  }
-//  
+//
   @Override
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
     contributionTab.contributionManagerDialog.numberLabel.setText(Integer
@@ -189,12 +189,12 @@ public class UpdateContribListingPanel extends ContributionListPanel {
       }
       Icon icon = null;
       if (entry.isInstalled()) {
-        icon = Toolkit.getLibIcon("icons/installedAndUptodate.png");
+        icon = Toolkit.getLibIcon("manager/up-to-date.png");
         if (contribListing.hasUpdates(entry)) {
-          icon = Toolkit.getLibIcon("icons/installedNeedsUpdate.png");
+          icon = Toolkit.getLibIcon("manager/update-available.png");
         }
         if (!entry.isCompatible(Base.getRevision())) {
-          icon = Toolkit.getLibIcon("icons/installedIncompatible.png");
+          icon = Toolkit.getLibIcon("manager/incompatible.png");
         }
       }
       dtm
