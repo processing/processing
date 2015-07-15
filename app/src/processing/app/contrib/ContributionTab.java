@@ -73,36 +73,28 @@ public class ContributionTab {
 
 
   public ContributionTab(ContributionType type,ContributionManagerDialog contributionManagerDialog) {
-    if (type == null) {
-      title = Language.text("contrib.manager_title.update");
-      filter = ContributionType.createUpdateFilter();
-    } else {
-      if (type == ContributionType.MODE) {
-        title = Language.text("contrib.manager_title.mode");
-      }
-      else if (type == ContributionType.TOOL) {
-        title = Language.text("contrib.manager_title.tool");
-      }
-      else if (type == ContributionType.LIBRARY) {
-        title = Language.text("contrib.manager_title.library");
-      }
-      else if (type == ContributionType.EXAMPLES) {
-        title = Language.text("contrib.manager_title.examples");
-      }
-
-      filter = type.createFilter();
+    if (type == ContributionType.MODE) {
+      title = Language.text("contrib.manager_title.mode");
+    } else if (type == ContributionType.TOOL) {
+      title = Language.text("contrib.manager_title.tool");
+    } else if (type == ContributionType.LIBRARY) {
+      title = Language.text("contrib.manager_title.library");
+    } else if (type == ContributionType.EXAMPLES) {
+      title = Language.text("contrib.manager_title.examples");
     }
+
+    filter = type.createFilter();
     this.contributionType = type;
     this.contributionManagerDialog = contributionManagerDialog;
     contribListing = ContributionListing.getInstance();
-    if (contributionType == null) {
-      contributionListPanel = new UpdateContribListingPanel(this, filter);
-      statusPanel = new UpdateStatusPanel(650, this);
-    } else {
       statusPanel = new StatusPanel(650,this);
       contributionListPanel = new ContributionListPanel(this, filter);
-    }
     contribListing.addContributionListener(contributionListPanel);
+  }
+
+
+  public ContributionTab() {
+    // TODO Auto-generated constructor stub
   }
 
 
@@ -269,7 +261,7 @@ public class ContributionTab {
       buildErrorPanel();
 
   }
-  private void buildErrorPanel(){
+  void buildErrorPanel(){
     errorPanel = new JPanel();
     GroupLayout layout = new GroupLayout(errorPanel);
     layout.setAutoCreateGaps(true);

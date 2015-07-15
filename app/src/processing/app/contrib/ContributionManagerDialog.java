@@ -63,7 +63,7 @@ public class ContributionManagerDialog {
   ContributionTab librariesContributionTab;
   ContributionTab examplesContributionTab;
   ContributionTab modesContributionTab;
-  ContributionTab updatesContributionTab;
+  UpdateContributionTab updatesContributionTab;
   
   JLabel numberLabel;
   
@@ -75,7 +75,7 @@ public class ContributionManagerDialog {
     librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
     modesContributionTab = new ContributionTab(ContributionType.MODE, this);
     examplesContributionTab = new ContributionTab(ContributionType.EXAMPLES, this);
-    updatesContributionTab = new ContributionTab(null, this);
+    updatesContributionTab = new UpdateContributionTab(null, this);
   }
 
   public boolean hasUpdates() {
