@@ -19,8 +19,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
 import processing.app.Base;
-import processing.app.contrib.ContributionListPanel.MyColumnHeaderRenderer;
 import processing.app.ui.Toolkit;
+
 
 public class UpdateContribListingPanel extends ContributionListPanel {
 
