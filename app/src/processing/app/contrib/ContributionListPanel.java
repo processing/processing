@@ -242,6 +242,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   class StatusRendere extends DefaultTableCellRenderer {
 
     @Override
+    public void setVerticalAlignment(int alignment) {
+      super.setVerticalAlignment(SwingConstants.CENTER);
+    }
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value,
                                                    boolean isSelected,
                                                    boolean hasFocus, int row,
@@ -250,7 +254,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       JLabel label = new JLabel();
       if (column == 0) {
         Icon icon = null;
-        label.setBorder(BorderFactory.createEmptyBorder(0, 17, 0, 0));
+        label.setBorder(BorderFactory.createEmptyBorder(2, 17, 0, 0));
         if (contribution.isInstalled()) {
           icon = Toolkit.getLibIcon("manager/up-to-date.png");
           if (contribListing.hasUpdates(contribution)) {
@@ -267,6 +271,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         label.setOpaque(true);
 //        return table.getDefaultRenderer(Icon.class).getTableCellRendererComponent(table, icon, isSelected, false, row, column);
       } else if (column == 1) {
+        //TODO add ellipses, currently the height of JTextPane = height of font + 4 
         JTextPane name = new JTextPane();
         name.setContentType("text/html");
         name.setEditable(false);
@@ -275,23 +280,32 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         }
         name.setText("<html><body><b>" + contribution.getName() + "</b> - "
           + contribution.getSentence() + "</body></html>");
+        int textHeight = table.getFontMetrics(table.getFont().deriveFont(Font.BOLD)).getHeight() + 4;
+        
         GroupLayout layout = new GroupLayout(label);
-
         layout.setAutoCreateGaps(true);
         layout.setHorizontalGroup(layout.createSequentialGroup()
           .addComponent(name));
-        layout
-          .setVerticalGroup(layout.createParallelGroup().addComponent(name));
+        layout.setVerticalGroup(layout
+          .createSequentialGroup()
+          .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                           GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+          .addComponent(name, 0,
+                        textHeight,
+                        textHeight)
+          .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                           GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE));
         if (table.isRowSelected(row)) {
-          name.setBackground(Color.BLUE);
-          name.setOpaque(true);
+          label.setBackground(Color.BLUE);
+          name.setOpaque(false);
         }
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 00, 0));
+        label.setOpaque(true);
         label.setLayout(layout);
       } else {
-        JLabel icon = new JLabel(
+        label = new JLabel(
                                  contribution.isSpecial() ? Toolkit
                                    .getLibIcon("icons/pde-16.png") : null);
-        JTextPane author = new JTextPane();
         StringBuilder name = new StringBuilder("");
         String authorList = contribution.getAuthorList();
         if (authorList != null) {
@@ -310,24 +324,14 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             }
           }
         }
-        author.setText(name.toString());
-        author.setEditable(false);
-        author.setOpaque(false);
+        label.setText(name.toString());
+        label.setHorizontalAlignment(SwingConstants.LEFT);
         if(!contribution.isCompatible(Base.getRevision())){
-          author.setForeground(Color.LIGHT_GRAY);
+          label.setForeground(Color.LIGHT_GRAY);
         }
         if (table.isRowSelected(row)) {
           label.setBackground(Color.BLUE);
         }
-        GroupLayout layout = new GroupLayout(label);
-
-//        layout.setAutoCreateGaps(true);
-        layout.setHorizontalGroup(layout.createSequentialGroup()
-          .addContainerGap().addComponent(icon).addComponent(author));
-        layout.setVerticalGroup(layout
-          .createParallelGroup(GroupLayout.Alignment.CENTER)
-          .addComponent(author).addComponent(icon));
-        label.setLayout(layout);
         label.setOpaque(true);
       }
       return label;
