@@ -184,8 +184,10 @@ class StatusPanel extends JPanel {
   }
 
   void clear() {
-    label.setText(null);
-    label.repaint();
+    if (label != null) {
+      label.setText(null);
+      label.repaint();
+    }
   }
 
   public void update(ContributionPanel panel) {
