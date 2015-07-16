@@ -290,7 +290,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
               break;
             }
           }
-          label.setText(name + sentence.substring(0, i) + " ...</body></html>");
+          // Adding ellipses only if text doesn't fits into the column
+          if(i != sentence.length()){
+            label.setText(name + sentence.substring(0, i) + " ...</body></html>");
+          }else {
+            label.setText(name + sentence + "</body></html>");
+          }
         }
         if (!contribution.isCompatible(Base.getRevision())) {
           label.setForeground(Color.LIGHT_GRAY);
