@@ -486,6 +486,9 @@ public class ContributionListing {
 
   String getLatestVersion(Contribution contribution) {
     Contribution newestContrib = getAvailableContribution(contribution);
+    if(newestContrib == null){
+      return null;
+    }
     String latestVersion = newestContrib.getPrettyVersion();
     if (latestVersion != null && !latestVersion.isEmpty()) {
       if (latestVersion.toLowerCase().startsWith("build")) // For Python mode
