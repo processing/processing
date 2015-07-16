@@ -109,7 +109,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     table.setFillsViewportHeight(true);
 //    table.setBorder();
     table.setDefaultRenderer(Contribution.class, new StatusRendere());
-    table.setRowHeight(40);
+    table.setRowHeight(30);
     table.setRowMargin(6);
     table.getColumnModel().setColumnMargin(-1);
     table.getColumnModel().getColumn(0).setMaxWidth(60);
