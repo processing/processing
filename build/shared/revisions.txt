@@ -14,7 +14,7 @@ Hopefully the last release before we go to beta.
 [ breaking all of the things ]
 
 + For Tool and Mode authors, you'll need to make some (small) changes.
-  These aren't invasive, but will require a rebuild of your code.
+  These aren't structural, but will require a rebuild of your code.
   Our hope is that this will be the last round of changes for the 3.x
   series, and that it's now safe to update your Modes and Tools to be
   compatible with the final 3.x release. Changes in this release:
