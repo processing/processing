@@ -20,7 +20,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.LayoutStyle;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -31,7 +30,7 @@ import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
 public class UpdateContributionTab extends ContributionTab {
-  
+
   public UpdateContributionTab(ContributionType type,ContributionManagerDialog contributionManagerDialog) {
     super();
     filter = ContributionType.createUpdateFilter();
@@ -99,7 +98,7 @@ public class UpdateContributionTab extends ContributionTab {
 //      statusPlaceholder = new JPanel();
 //      statusPlaceholder.setVisible(false);
 //      status = new StatusPanel(null);
-      
+
       String[] colName = { "", "Name", "Author", "Installed", "Update To" };
       dtm = new MyTableModel();
       dtm.setColumnIdentifiers(colName);
@@ -170,7 +169,7 @@ public class UpdateContributionTab extends ContributionTab {
 
       this.setLayout(layout);
       table.setVisible(true);
-      
+
       panelByContribution = new TreeMap<Contribution, ContributionPanel>(new Comparator<Contribution>() {
 
         @Override
@@ -203,16 +202,16 @@ public class UpdateContributionTab extends ContributionTab {
           return val1 - val2;
         }
       });
-      
+
     }
-  //  
+  //
 //    @Override
 //    public void contributionAdded(Contribution contribution) {
 //      if(filter.matches(contribution)){
 //      super.contributionAdded(contribution);
 //      }
 //    }
-  //  
+  //
     @Override
     void updatePanelOrdering(Set<Contribution> contributionsSet) {
       contributionTab.contributionManagerDialog.numberLabel.setText(Integer
@@ -284,7 +283,7 @@ public class UpdateContributionTab extends ContributionTab {
       updateButton.setContentAreaFilled(false);
       updateButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
       updateButton.addActionListener(new ActionListener() {
-        
+
         @Override
         public void actionPerformed(ActionEvent e) {
           // TODO Auto-generated method stub
@@ -297,7 +296,7 @@ public class UpdateContributionTab extends ContributionTab {
       this.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
       layout = new GroupLayout(this);
       this.setLayout(layout);
-      
+
       layout.setAutoCreateContainerGaps(true);
       layout.setAutoCreateGaps(true);
 
@@ -312,7 +311,7 @@ public class UpdateContributionTab extends ContributionTab {
     }
     @Override
     public void update(ContributionPanel panel) {
-      
+
     }
   }
 }
