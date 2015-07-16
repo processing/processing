@@ -271,40 +271,38 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         label.setOpaque(true);
 //        return table.getDefaultRenderer(Icon.class).getTableCellRendererComponent(table, icon, isSelected, false, row, column);
       } else if (column == 1) {
-        //TODO add ellipses, currently the height of JTextPane = height of font + 4 
-        JTextPane name = new JTextPane();
-        name.setContentType("text/html");
-        name.setEditable(false);
-        if(!contribution.isCompatible(Base.getRevision())){
-          name.setForeground(Color.LIGHT_GRAY);
+        // Generating ellipses based on fontMetrics
+        FontMetrics fontMetrics = table.getFontMetrics(table.getFont());
+        int colSize = table.getColumnModel().getColumn(1).getWidth();
+        String sentence = contribution.getSentence();
+        int currentWidth = table.getFontMetrics(table.getFont().deriveFont(Font.BOLD)).stringWidth(contribution.getName());
+        int ellipsesWidth = fontMetrics.stringWidth("  ...");
+        String name = "<html><body><b>" + contribution.getName() + "</b>";
+        if (sentence == null) {
+          label.setText(name + "</body></html>");
+        } else {
+          sentence = " - " + sentence;
+          currentWidth += ellipsesWidth;
+          int i = 0;
+          for (i = 0; i < sentence.length(); i++) {
+            currentWidth += fontMetrics.charWidth(sentence.charAt(i));
+            if (currentWidth >= colSize) {
+              break;
+            }
+          }
+          label.setText(name + sentence.substring(0, i) + " ...</body></html>");
         }
-        name.setText("<html><body><b>" + contribution.getName() + "</b> - "
-          + contribution.getSentence() + "</body></html>");
-        int textHeight = table.getFontMetrics(table.getFont().deriveFont(Font.BOLD)).getHeight() + 4;
-        
-        GroupLayout layout = new GroupLayout(label);
-        layout.setAutoCreateGaps(true);
-        layout.setHorizontalGroup(layout.createSequentialGroup()
-          .addComponent(name));
-        layout.setVerticalGroup(layout
-          .createSequentialGroup()
-          .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-                           GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-          .addComponent(name, 0,
-                        textHeight,
-                        textHeight)
-          .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-                           GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE));
+        if (!contribution.isCompatible(Base.getRevision())) {
+          label.setForeground(Color.LIGHT_GRAY);
+        }
         if (table.isRowSelected(row)) {
           label.setBackground(Color.BLUE);
-          name.setOpaque(false);
         }
         label.setOpaque(true);
-        label.setLayout(layout);
       } else {
         label = new JLabel(
-                                 contribution.isSpecial() ? Toolkit
-                                   .getLibIcon("icons/pde-16.png") : null);
+                           contribution.isSpecial() ? Toolkit
+                             .getLibIcon("icons/pde-16.png") : null);
         StringBuilder name = new StringBuilder("");
         String authorList = contribution.getAuthorList();
         if (authorList != null) {

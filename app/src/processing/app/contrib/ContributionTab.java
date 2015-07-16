@@ -262,12 +262,14 @@ public class ContributionTab {
     layout.setAutoCreateGaps(true);
     layout.setAutoCreateContainerGaps(true);
     errorPanel.setLayout(layout);
+    errorPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
     errorMessage = new JTextPane();
     errorMessage.setEditable(false);
-    errorMessage.setText("Could not connect to the Processing server. "
-      + "Contributions cannot be installed or updated without an Internet connection. "
-      + "Please verify your network connection again, then try connecting again.");
-    errorMessage.setMaximumSize(new Dimension(450, 50));
+    errorMessage.setContentType("text/html");
+    errorMessage.setText("<html><body>Could not connect to the Processing server.<br>"
+      + "Contributions cannot be installed or updated without an Internet connection.<br>"
+      + "Please verify your network connection again, then try connecting again.</body></html>");
+    errorMessage.setMaximumSize(new Dimension(550, 50));
     errorMessage.setOpaque(false);
 
     StyledDocument doc = errorMessage.getStyledDocument();
@@ -312,7 +314,7 @@ public class ContributionTab {
     layout.setVerticalGroup(layout
       .createSequentialGroup()
       .addGroup(layout.createParallelGroup().addComponent(errorMessage)
-                  .addComponent(closeButton)).addComponent(tryAgainButton));
+                  .addComponent(closeButton)).addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED).addComponent(tryAgainButton));
     errorPanel.setBackground(Color.PINK);
     errorPanel.validate();
   }
