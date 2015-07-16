@@ -48,6 +48,7 @@ import processing.app.ui.EditorConsole;
 import processing.app.ui.EditorState;
 import processing.app.ui.PreferencesFrame;
 import processing.app.ui.Recent;
+import processing.app.ui.Welcome;
 import processing.core.*;
 import processing.data.StringDict;
 import processing.data.StringList;
@@ -193,22 +194,38 @@ public class Base {
     // run static initialization that grabs all the prefs
     Preferences.init();
 
-    // Get the sketchbook path, and make sure it's set properly
-    locateSketchbookFolder();
-
-//    String filename = args.length > 1 ? args[0] : null;
     if (!SingleInstance.alreadyRunning(args)) {
-//      SingleInstance.startServer(platform);
-
       // Set the look and feel before opening the window
       try {
         platform.setLookAndFeel();
       } catch (Exception e) {
-//        String mess = e.getMessage();
-//        if (!mess.contains("ch.randelshofer.quaqua.QuaquaLookAndFeel")) {
         loge("Could not set the Look & Feel", e); //$NON-NLS-1$
-//        }
       }
+
+      boolean sketchbookPrompt = false;
+      if (Preferences.getBoolean("welcome.show")) {
+        if (!Preferences.getBoolean("welcome.seen")) {
+          // Check if there's a 2.0 sketchbook present
+          String oldPath = Preferences.getOldSketchbookPath();
+          if (oldPath != null) {
+            String newPath = Preferences.getSketchbookPath();
+            // If newPath is null, this is the first run of any 3.x version
+            if (newPath == null) {
+              sketchbookPrompt = true;
+
+            } else if (oldPath.equals(newPath)) {
+              // If both exist and are identical, then the user has been using
+              // alpha releases of 3.x and needs to be warned about the larger
+              // changes in this release.
+              sketchbookPrompt = true;
+            }
+          }
+        }
+      }
+
+      // Get the sketchbook path, and make sure it's set properly
+      locateSketchbookFolder();
+
 
       // Create a location for untitled sketches
       try {
@@ -222,9 +239,20 @@ public class Base {
 
       log("about to create base..."); //$NON-NLS-1$
       try {
-        Base base = new Base(args);
+        final Base base = new Base(args);
         // Prevent more than one copy of the PDE from running.
         SingleInstance.startServer(base);
+
+        // Needs to be shown after the first editor window opens, so that it
+        // shows up on top, and doesn't prevent an editor window from opening.
+        if (Preferences.getBoolean("welcome.show")) {
+          final boolean prompt = sketchbookPrompt;
+          EventQueue.invokeLater(new Runnable() {
+            public void run() {
+              new Welcome(base, prompt);
+            }
+          });
+        }
 
       } catch (Throwable t) {
         // Catch-all to pick up badness during startup.

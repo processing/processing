@@ -52,11 +52,13 @@ public class Preferences {
   static final String DEFAULTS_FILE = "defaults.txt"; //$NON-NLS-1$
   static final String PREFS_FILE = "preferences.txt"; //$NON-NLS-1$
 
-  static HashMap<String, String> defaults;
-  static HashMap<String, String> table = new HashMap<String, String>();
+  static Map<String, String> defaults;
+  static Map<String, String> table = new HashMap<String, String>();
   static File preferencesFile;
 
 
+//  /** @return true if the sketchbook file did not exist */
+//  static public boolean init() {
   static public void init() {
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
@@ -101,7 +103,8 @@ public class Preferences {
 
     // next load user preferences file
     preferencesFile = Base.getSettingsFile(PREFS_FILE);
-    if (preferencesFile.exists()) {
+    boolean firstRun = !preferencesFile.exists();
+    if (!firstRun) {
       try {
         load(new FileInputStream(preferencesFile));
 
@@ -114,7 +117,8 @@ public class Preferences {
       }
     }
 
-    if (checkSketchbookPref() || !preferencesFile.exists()) {
+    if (checkSketchbookPref() || firstRun) {
+//    if (firstRun) {
       // create a new preferences file if none exists
       // saves the defaults out to the file
       save();
@@ -135,30 +139,6 @@ public class Preferences {
     handleProxy("http", "http.proxyHost", "http.proxyPort");
     handleProxy("https", "https.proxyHost", "https.proxyPort");
     handleProxy("socks", "socksProxyHost", "socksProxyPort");
-
-    /*
-    String httpProxyHost = get("proxy.http.host");
-    String httpProxyPort = get("proxy.http.port");
-    if (httpProxyHost != null && httpProxyHost.length() != 0 &&
-        httpProxyPort != null && httpProxyPort.length() != 0) {
-      System.setProperty("http.proxyHost", httpProxyHost);
-      System.setProperty("http.proxyPort", httpProxyPort);
-    }
-    String httpsProxyHost = get("proxy.https.host");
-    String httpsProxyPort = get("proxy.https.port");
-    if (httpsProxyHost != null && httpsProxyHost.length() != 0 &&
-        httpsProxyPort != null && httpsProxyPort.length() != 0) {
-      System.setProperty("https.proxyHost", httpsProxyHost);
-      System.setProperty("https.proxyPort", httpsProxyPort);
-    }
-    String socksProxyHost = get("proxy.socks.host");
-    String socksProxyPort = get("proxy.socks.port");
-    if (socksProxyHost != null && socksProxyHost.length() != 0 &&
-        socksProxyPort != null && socksProxyPort.length() != 0) {
-      System.setProperty("socksProxyHost", socksProxyHost);
-      System.setProperty("socksProxyPort", socksProxyPort);
-    }
-    */
   }
 
 
@@ -431,6 +411,11 @@ public class Preferences {
       // Otherwise it'll be null, and reset properly by Base
     }
     return false;
+  }
+
+
+  static public String getOldSketchbookPath() {
+    return get("sketchbook.path");
   }
 
 

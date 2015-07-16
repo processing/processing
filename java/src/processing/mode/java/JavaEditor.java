@@ -353,7 +353,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem("Welcome to Processing 3");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        new Welcome();
+        new Welcome(base, Preferences.getSketchbookPath().equals(Preferences.getOldSketchbookPath()));
       }
     });
     menu.add(item);

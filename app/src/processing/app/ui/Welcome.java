@@ -25,50 +25,94 @@ import java.awt.EventQueue;
 import java.io.File;
 
 import processing.app.Base;
+import processing.app.Language;
+import processing.app.Preferences;
+import processing.core.PApplet;
 import processing.data.StringDict;
 
 
-public class Welcome {
+public class Welcome extends WebFrame {
+  Base base;
 
-  public Welcome() {
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        // eventually this will be correct
-        //File indexFile = Base.getLibFile("welcome/index.html");
-        // version when running from command line for editing
-        File indexFile = new File("../build/shared/lib/welcome/index.html");
-        if (!indexFile.exists()) {
-//          System.out.println("user dir is " + System.getProperty("user.dir"));
-//          System.out.println(new File("").getAbsolutePath());
-          // processing/build/macosx/work/Processing.app/Contents/Java
-          // version for Scott to use for OS X debugging
-          indexFile = Base.getContentFile("../../../../../shared/lib/welcome/index.html");
-//          try {
-//            System.out.println(indexFile.getCanonicalPath());
-//          } catch (IOException e) {
-//            e.printStackTrace();
-//          }
-        }
 
-        WebFrame frame = new WebFrame(indexFile, 400) {
-          public void handleSubmit(StringDict dict) {
-            dict.print();
-            handleClose();
-          }
+  public Welcome(Base base, boolean sketchbook) {
+    super(getIndexFile(sketchbook), 400);
+    this.base = base;
+    //addStyle("#new_sketchbook { background-color: rgb(0, 255, 0); }");
+    setVisible(true);
+  }
 
-          public void handleClose() {
-            //System.exit(0);
-            dispose();
-          }
-        };
-        frame.setVisible(true);
+
+  public void handleSubmit(StringDict dict) {
+    // sketchbook = "create_new" or "use_existing"
+    // show_each_time = "on" or <not param>
+    //dict.print();
+
+    String sketchbookAction = dict.get("sketchbook", null);
+    if ("create_new".equals(sketchbookAction)) {
+      // open file dialog
+      // on affirmative selection, update sketchbook folder
+//      String path = Preferences.getSketchbookPath() + "3";
+//      File folder = new File(path);
+//      folder.mkdirs();
+      File folder = new File(Preferences.getSketchbookPath()).getParentFile();
+      PApplet.selectFolder(Language.text("preferences.sketchbook_location.popup"),
+                           "sketchbookCallback", folder,
+                           this, this);
+    }
+
+    boolean keepShowing = "on".equals(dict.get("show_each_time", null));
+    Preferences.setBoolean("welcome.show", keepShowing);
+    Preferences.save();
+
+    handleClose();
+  }
+
+
+  /** Callback for the folder selector. */
+  public void sketchbookCallback(File folder) {
+    if (folder != null) {
+      if (base != null) {
+        base.setSketchbookFolder(folder);
+      } else {
+        System.out.println("user selected " + folder);
       }
-    });
+    }
+  }
+
+
+  public void handleClose() {
+    dispose();
+  }
+
+
+  static private File getIndexFile(boolean sketchbook) {
+    String filename =
+      "welcome/" + (sketchbook ? "sketchbook.html" : "generic.html");
+    // eventually this will be correct
+    //File indexFile = Base.getLibFile(filename);
+    // version when running from command line for editing
+    File htmlFile = new File("../build/shared/lib/" + filename);
+    if (!htmlFile.exists()) {
+      // processing/build/macosx/work/Processing.app/Contents/Java
+      // version for Scott to use for OS X debugging
+      htmlFile = Base.getContentFile("../../../../../shared/lib/" + filename);
+    }
+    return htmlFile;
   }
 
 
   static public void main(String[] args) {
     Base.initPlatform();
-    new Welcome();
+
+    EventQueue.invokeLater(new Runnable() {
+      public void run() {
+        new Welcome(null, true) {
+          public void handleClose() {
+            System.exit(0);
+          }
+        };
+      }
+    });
   }
 }
