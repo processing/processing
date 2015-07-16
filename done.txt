@@ -1,3 +1,115 @@
+0238 (3.0a11)
+X Re-enable the display menu in Preferences after display added
+X   Previously, the checkbox menu stayed disabled (though it updated the list)
+X sketch.isReadOnly returns false for examples coming from multiple modes
+o   http://code.google.com/p/processing/issues/detail?id=734
+X   https://github.com/processing/processing/issues/773
+X Drag and Drop & "Add File" broken for .pde files in 3.0a10
+X   https://github.com/processing/processing/issues/3383
+X Show "not compatible" error message in the manager
+X   https://github.com/processing/processing/issues/3386
+X Add more code for handling low-level errors on startup
+X update the "Supported Platforms" wiki page with current status
+X error message caused by curly bracket in a println string
+X   ((?<![\\])['"])((?:.(?!(?<![\\])\1))*.?)\1 to match quoted strings
+X   https://github.com/processing/processing/issues/3394
+X Tweak mode broken (re: new settings() function)
+X   https://github.com/processing/processing/issues/3435
+X   looks like 'class' def from tweak needs to go below setup
+X change "PythonMode contains an incompatible Mode" message
+X   to "PythonMode is not compatible with Processing 3"
+X another "incompatible tool" case
+X   java.lang.AbstractMethodError
+X     at processing.app.contrib.ToolContribution.init(ToolContribution.java:134)
+X   unfortunately happens at a level where we can only println about it
+o processing-java command line mode not working on Mac
+o   https://github.com/processing/processing/issues/3409
+X add build.xml prompt for OS X developers to download the JDK update
+X break out a gui package (get class count down in .app)
+X move utility functions out of Base and into Util
+
+welcome
+X add "welcome" or "what's new" window to explain features in 3
+X   https://github.com/processing/processing/issues/3358
+X   a summary of what's new, plus a link to GitHub wiki page with details
+X   a warning that some Processing 2 sketches may not be compatible
+X   a checkbox for "show this welcome each time" (default to checked)
+X   a button to dismiss the welcome screen (e.g., "get started")
+X 2.x vs 3.x sketchbook battle (part of the welcome screen item)
+X   if a v2 sketchbook already exists, show a prompt to choose either creating a new Processing 3 sketch folder or use the existing v2 one, plus a link to GitHub wiki page with details
+
+manager
+X changed compatibleModesList to modes in examples.properties
+X changed authorList to authors to keep in line w/ the others
+X changed category to categories
+X send list of installed Libraries, Modes, Tools, and Examples on update
+X   https://github.com/processing/processing/issues/3365
+X disable contrib manager updates when "check for updates" is turned off
+X   update the FAQ to cover the changes
+
+contribs
+X Use correct localized strings in JavaEditor.java
+X   https://github.com/processing/processing/pull/3376
+X dim edit menus as appropriate during selection/no selection/etc
+o   http://code.google.com/p/processing/issues/detail?id=14
+X   https://github.com/processing/processing/issues/53
+X   https://github.com/processing/processing/pull/3419
+X Internationalize MovieMaker.java
+X   https://github.com/processing/processing/pull/3424
+X Auto-completion does not seem to be working
+X   https://github.com/processing/processing/issues/3111
+X Re-enable export to application with command line
+X   https://github.com/processing/processing/pull/3451
+X   https://github.com/processing/processing/issues/2760
+X change undefined constructor error message for clarity
+X   https://github.com/processing/processing/issues/3434
+
+gsoc
+X Mode problems window wasn't doing line breaks
+X   https://github.com/processing/processing/issues/3369
+X   https://github.com/processing/processing/pull/3370
+X Add missing internationalization in app/Sketch.java
+X   https://github.com/processing/processing/pull/3392
+X Examples window shows contributed examples
+X   https://github.com/processing/processing/pull/3421
+X   https://github.com/processing/processing/pull/3421
+X reworking the Contribution Manager according to Scott's redesign
+X   https://github.com/processing/processing/pull/3423
+X finish adding 'examples' contribs
+X   https://github.com/processing/processing/issues/2953
+o   don't return here, allow contrib types to fail:
+o   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
+X StatusPanel created for Contribution Manager
+X   https://github.com/processing/processing/pull/3432
+X Error during installation of any contribution
+X   https://github.com/processing/processing/issues/3429
+X   https://github.com/processing/processing/pull/3438
+X CM with updated statusPanel and error popup
+X   https://github.com/processing/processing/pull/3452
+X allow modes to import other modes
+X   https://github.com/processing/processing/pull/3444
+X CM list converted into table
+X   https://github.com/processing/processing/pull/3454
+X more CM updates to fix #3465
+X   https://github.com/processing/processing/pull/3465
+X https://github.com/processing/processing/pull/3468
+X   Added ellipses, improved error Panel, fixed a previous NPE bug
+X make modes load their parent class
+X   https://github.com/processing/processing/issues/3443
+
+cleaning/earlier
+o libraries in java tabs (separate .java files) are reported missing
+o   need to scan the .java files for imports that need to be included
+o   http://code.google.com/p/processing/issues/detail?id=459
+X   https://github.com/processing/processing/issues/498
+X should be able to build p5 without a JDK install, just a JRE
+X   https://github.com/processing/processing/issues/1840
+X   need to have ecj.jar accessible to ant, then modify build.xml to use this:
+X   <property name="build.compiler" 
+X             value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+X   http://help.eclipse.org/juno/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Ftasks%2Ftask-ant_javac_adapter.htm
+
+
 0237 (3.0a10)
 X debug message showing up when dragging and dropping files
 X add new app and export icons (downloaded)
