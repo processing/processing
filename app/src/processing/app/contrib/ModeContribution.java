@@ -33,6 +33,7 @@ import java.util.Map;
 
 import processing.app.Base;
 import processing.app.Mode;
+import processing.app.Util;
 
 
 public class ModeContribution extends LocalContribution {
@@ -215,8 +216,8 @@ public class ModeContribution extends LocalContribution {
         for(String modeImport: imports){
           if (installedModes.containsKey(modeImport)) {
             Base.log("Found mode dependency " + modeImport);
-            File[] archives = Base.listJarFiles(new File(installedModes.get(modeImport).
-                               getFolder().getAbsolutePath() + File.separator + "mode"));
+            File modeFolder = installedModes.get(modeImport).getFolder();
+            File[] archives = Util.listJarFiles(new File(modeFolder, "mode"));
             if (archives != null && archives.length > 0) {
               for (int i = 0; i < archives.length; i++) {
                 // Base.log("Adding jar dependency: " + archives[i].getAbsolutePath());
@@ -231,7 +232,7 @@ public class ModeContribution extends LocalContribution {
       }
 
       // Add .jar and .zip files from the "mode" folder into the classpath
-      File[] archives = Base.listJarFiles(modeDirectory);
+      File[] archives = Util.listJarFiles(modeDirectory);
       if (archives != null && archives.length > 0) {
         int arrLen = archives.length + extraUrls.size();
         URL[] urlList = new URL[arrLen];

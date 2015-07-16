@@ -59,7 +59,7 @@ public abstract class LocalContribution extends Contribution {
     // required for contributed modes, but not for built-in core modes
     File propertiesFile = new File(folder, getTypeName() + ".properties");
     if (propertiesFile.exists()) {
-      properties = Base.readSettings(propertiesFile);
+      properties = Util.readSettings(propertiesFile);
 
       name = properties.get("name");
       id = properties.get("id");
@@ -153,7 +153,7 @@ public abstract class LocalContribution extends Contribution {
       }
 
       // Add .jar and .zip files from the "mode" folder into the classpath
-      File[] archives = Base.listJarFiles(modeDirectory);
+      File[] archives = Util.listJarFiles(modeDirectory);
       if (archives != null && archives.length > 0) {
         URL[] urlList = new URL[archives.length];
         for (int j = 0; j < urlList.length; j++) {
@@ -301,14 +301,15 @@ public abstract class LocalContribution extends Contribution {
 
       // At this point it should be safe to replace this fella
       if (contribFolder.exists()) {
-        Base.removeDir(contribFolder);
+        Util.removeDir(contribFolder);
       }
 
     }
     else {
-      // This if should ideally never happen, since this function is to be called only when restarting on update
+      // This if should ideally never happen, since this function
+      // is to be called only when restarting on update
       if (contribFolder.exists() && contribFolder.isDirectory()) {
-        Base.removeDir(contribFolder);
+        Util.removeDir(contribFolder);
       }
       else if (contribFolder.exists()) {
         contribFolder.delete();
@@ -319,7 +320,7 @@ public abstract class LocalContribution extends Contribution {
     File oldFolder = getFolder();
 
     try {
-      Base.copyDir(oldFolder,  contribFolder);
+      Util.copyDir(oldFolder, contribFolder);
     } catch (IOException e) {
       status.setErrorMessage("Could not copy " + getTypeName() +
                              " \"" + getName() + "\" to the sketchbook.");
@@ -361,7 +362,7 @@ public abstract class LocalContribution extends Contribution {
         success = getFolder().renameTo(backupSubFolder);
       } else {
         try {
-          Base.copyDir(getFolder(), backupSubFolder);
+          Util.copyDir(getFolder(), backupSubFolder);
           success = true;
         } catch (IOException e) { }
       }
@@ -440,7 +441,7 @@ public abstract class LocalContribution extends Contribution {
     if (doBackup) {
       success = backup(editor, true, status);
     } else {
-      Base.removeDir(getFolder());
+      Util.removeDir(getFolder());
       success = !getFolder().exists();
     }
 

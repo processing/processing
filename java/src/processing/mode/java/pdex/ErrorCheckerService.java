@@ -52,6 +52,7 @@ import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import processing.app.Base;
 import processing.app.Library;
 import processing.app.SketchCode;
+import processing.app.Util;
 import processing.app.syntax.SyntaxDocument;
 import processing.app.ui.Editor;
 import processing.app.ui.EditorStatus;
@@ -875,7 +876,7 @@ public class ErrorCheckerService implements Runnable {
 
               // get a list of .jar files in the "code" folder
               // (class files in subfolders should also be picked up)
-              String codeFolderClassPath = Base.contentsToClassPath(codeFolder);
+              String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
               codeFolderChecked = true;
               // huh? doesn't this mean .length() == 0? [fry]
               if (codeFolderClassPath.equalsIgnoreCase("")) {
@@ -1098,10 +1099,9 @@ public class ErrorCheckerService implements Runnable {
         if (sc.isExtension("pde")) {
           int len = 0;
           if (editor.getSketch().getCurrentCode().equals(sc)) {
-            len = Base.countLines(sc.getDocument().getText(0,
-                sc.getDocument().getLength())) + 1;
+            len = Util.countLines(sc.getDocument().getText(0, sc.getDocument().getLength())) + 1;
           } else {
-            len = Base.countLines(sc.getProgram()) + 1;
+            len = Util.countLines(sc.getProgram()) + 1;
           }
 
           // log("x,len, CI: " + x + "," + len + ","
@@ -1185,10 +1185,9 @@ public class ErrorCheckerService implements Runnable {
         if (sc.isExtension("pde")) {
           int len = 0;
           if (editor.getSketch().getCurrentCode().equals(sc)) {
-            len = Base.countLines(sc.getDocument().getText(0,
-                sc.getDocument().getLength())) + 1;
+            len = Util.countLines(sc.getDocument().getText(0, sc.getDocument().getLength())) + 1;
           } else {
-            len = Base.countLines(sc.getProgram()) + 1;
+            len = Util.countLines(sc.getProgram()) + 1;
           }
 
           // log("x,len, CI: " + x + "," + len + ","
@@ -1240,7 +1239,7 @@ public class ErrorCheckerService implements Runnable {
     int jLineNum = programImports.size() + 1;
     for (int i = 0; i < tab; i++) {
       SketchCode sc = editor.getSketch().getCode(i);
-      int len = Base.countLines(sc.getProgram()) + 1;
+      int len = Util.countLines(sc.getProgram()) + 1;
       jLineNum += len;
     }
     return jLineNum;
@@ -1466,7 +1465,7 @@ public class ErrorCheckerService implements Runnable {
       // exception all the time would cause the editor to shut down over
       // trivial/recoverable quirks. It's the least bad option. [fry]
       final Document doc = editor.getTextArea().getDocument();
-      final int lineCount = Base.countLines(doc.getText(0, doc.getLength()));
+      final int lineCount = Util.countLines(doc.getText(0, doc.getLength()));
       if (p.getLineNumber() < lineCount && p.getLineNumber() >= 0) {
         editor.getTextArea().scrollTo(p.getLineNumber(), 0);
       }
@@ -1581,8 +1580,8 @@ public class ErrorCheckerService implements Runnable {
       // log(" - "
       // + Base.countLines(tabSource.substring(0, idx)) + " tab "
       // + tabNumber);
-      programImports.add(new ImportStatement(piece, tabNumber, Base
-        .countLines(tabSource.substring(0, idx))));
+      int lineCount = Util.countLines(tabSource.substring(0, idx));
+      programImports.add(new ImportStatement(piece, tabNumber, lineCount));
       // Remove the import from the main program
       // Substitute with white spaces
       String whiteSpace = "";

@@ -1285,7 +1285,7 @@ public class JavaEditor extends Editor {
     StringList list = lib.getImports(); // ask the library for its imports
     if (list == null) {
       // Default to old behavior and load each package in the primary jar
-      list = Base.packageListFromClassPath(lib.getJarPath());
+      list = Util.packageListFromClassPath(lib.getJarPath());
     }
 
     StringBuilder sb = new StringBuilder();

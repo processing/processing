@@ -173,7 +173,7 @@ public class Platform {
       return true;
 
     } else if (file.isDirectory()) {
-      Base.removeDir(file);
+      Util.removeDir(file);
       return true;
 
     } else {

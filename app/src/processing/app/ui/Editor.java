@@ -32,6 +32,7 @@ import processing.app.RunnerListener;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.SketchException;
+import processing.app.Util;
 import processing.app.contrib.ToolContribution;
 import processing.app.syntax.*;
 import processing.app.tools.*;
@@ -2691,7 +2692,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         File properPdeFile = new File(properFolder, file.getName());
         File origPdeFile = new File(path);
         try {
-          Base.copyFile(origPdeFile, properPdeFile);
+          Util.copyFile(origPdeFile, properPdeFile);
         } catch (IOException e) {
           Base.showWarning("Error", "Could not copy to a proper location.", e);
           return false;

@@ -32,6 +32,7 @@ import processing.app.Preferences;
 import processing.app.RunnerListener;
 import processing.app.Sketch;
 import processing.app.SketchException;
+import processing.app.Util;
 import processing.app.contrib.ModeContribution;
 import processing.core.PApplet;
 import processing.mode.java.runner.Runner;
@@ -208,7 +209,7 @@ public class Commander implements RunnerListener {
       outputFolder = new File(outputPath);
       if (outputFolder.exists()) {
         if (force) {
-          Base.removeDir(outputFolder);
+          Util.removeDir(outputFolder);
         } else {
           complainAndQuit("The output folder already exists. " +
                           "Use --force to remove it.", false);

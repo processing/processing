@@ -30,6 +30,7 @@ import javax.swing.SwingWorker;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Util;
 import processing.app.ui.Editor;
 import processing.core.PApplet;
 import processing.data.StringDict;
@@ -314,7 +315,7 @@ public class ContributionManager {
             return file.equals(ac.getType() + ".properties");
           }
         });
-        if (contents.length > 0 && Base.readSettings(contents[0]).get("name").equals(ac.getName())) {
+        if (contents.length > 0 && Util.readSettings(contents[0]).get("name").equals(ac.getName())) {
           return;
         }
       }
@@ -553,7 +554,7 @@ public class ContributionManager {
     Iterator<File> folderIter = deleteList.iterator();
 
     while (folderIter.hasNext()) {
-      Base.removeDir(folderIter.next());
+      Util.removeDir(folderIter.next());
     }
   }
 
@@ -572,7 +573,7 @@ public class ContributionManager {
       }
     });
     for (File folder : markedForDeletion) {
-      Base.removeDir(folder);
+      Util.removeDir(folder);
     }
   }
 
@@ -636,9 +637,9 @@ public class ContributionManager {
       propFileName = "libraries.properties";
 
     for (File folder : markedForUpdate) {
-      StringDict props = Base.readSettings(new File(folder, propFileName));
+      StringDict props = Util.readSettings(new File(folder, propFileName));
       updateContribsNames.add(props.get("name"));
-      Base.removeDir(folder);
+      Util.removeDir(folder);
     }
 
     Iterator<AvailableContribution> iter = contribListing.advertisedContributions.iterator();

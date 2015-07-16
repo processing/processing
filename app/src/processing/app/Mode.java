@@ -1399,7 +1399,7 @@ public abstract class Mode {
       // Nuke the old applet/application folder because it can cause trouble
       if (Preferences.getBoolean("export.delete_target_folder")) {
 //        System.out.println("temporarily skipping deletion of " + targetFolder);
-        Base.removeDir(targetFolder);
+        Util.removeDir(targetFolder);
         //      targetFolder.renameTo(dest);
       }
       // Create a fresh output folder (needed before preproc is run next)

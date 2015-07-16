@@ -26,6 +26,7 @@ import java.io.*;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Util;
 import processing.core.PApplet;
 import processing.data.StringDict;
 import processing.data.StringList;
@@ -107,7 +108,7 @@ public class AvailableContribution extends Contribution {
         status.setErrorMessage(Language.text("contrib.errors.temporary_directory"));
       return null;
     }
-    Base.unzip(contribArchive, tempFolder);
+    Util.unzip(contribArchive, tempFolder);
 //    System.out.println("temp folder is " + tempFolder);
 //    Base.openFolder(tempFolder);
 
@@ -194,7 +195,7 @@ public class AvailableContribution extends Contribution {
         }
 
         // 4. Okay, now actually delete that temp folder
-        Base.removeDir(newContribFolder);
+        Util.removeDir(newContribFolder);
 
       } else {
         if (status != null) {
@@ -205,7 +206,7 @@ public class AvailableContribution extends Contribution {
 
     // Remove any remaining boogers
     if (tempFolder.exists()) {
-      Base.removeDir(tempFolder);
+      Util.removeDir(tempFolder);
     }
     return installedContrib;
   }
@@ -235,7 +236,7 @@ public class AvailableContribution extends Contribution {
    */
   public boolean writePropertiesFile(File propFile) {
     try {
-      StringDict properties = Base.readSettings(propFile);
+      StringDict properties = Util.readSettings(propFile);
 
       String name = properties.get("name");
       if (name == null || name.isEmpty())

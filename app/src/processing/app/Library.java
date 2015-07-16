@@ -116,7 +116,7 @@ public class Library extends LocalContribution {
 
     File exportSettings = new File(libraryFolder, "export.txt");
     StringDict exportTable = exportSettings.exists() ?
-      Base.readSettings(exportSettings) : new StringDict();
+      Util.readSettings(exportSettings) : new StringDict();
 
     exportList = new HashMap<String, String[]>();
 
@@ -214,7 +214,7 @@ public class Library extends LocalContribution {
 //    }
 
     // get the path for all .jar files in this code folder
-    packageList = Base.packageListFromClassPath(getClassPath());
+    packageList = Util.packageListFromClassPath(getClassPath());
   }
 
 

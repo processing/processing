@@ -28,6 +28,7 @@ o processing-java command line mode not working on Mac
 o   https://github.com/processing/processing/issues/3409
 X add build.xml prompt for OS X developers to download the JDK update
 X break out a gui package (get class count down in .app)
+X move utility functions out of Base and into Util
 
 welcome
 X add "welcome" or "what's new" window to explain features in 3
@@ -117,6 +118,7 @@ _   https://github.com/processing/processing/issues/2953
 
 
 beta
+_ write notes about changes with Toolkit and Util, and packages
 _ write text for non-sketchbook version of welcome screen
 _ font fixes for Georgia in the examples
 _ CM ongoing notes and questions
