@@ -79,6 +79,8 @@ X CM list converted into table
 X   https://github.com/processing/processing/pull/3454
 X more CM updates to fix #3465
 X   https://github.com/processing/processing/pull/3465
+X https://github.com/processing/processing/pull/3468
+X   Added ellipses, improved error Panel, fixed a previous NPE bug
 
 cleaning
 o libraries in java tabs (separate .java files) are reported missing

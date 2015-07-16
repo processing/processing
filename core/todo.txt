@@ -89,7 +89,7 @@ X   https://github.com/processing/processing/issues/2617
 X Text is half size in PGraphicsRetina2D
 X   https://github.com/processing/processing/issues/2738
 
-andres
+andres/opengl
 X ortho function is broken
 X   https://github.com/processing/processing/issues/1278
 X errors with loading SVGs in P3D/P2D
@@ -100,6 +100,8 @@ X add attrib() method
 X   https://github.com/processing/processing/issues/2963
 X   andres needs input on how the api works
 o   assign this to DXF as well?
+X beginShape(POINTS) don't show up in P2D
+X   https://github.com/processing/processing/issues/3029
 
 contribs
 X Fix NullPointerException in DepthSorter
