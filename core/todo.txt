@@ -32,6 +32,8 @@ X   https://github.com/processing/processing/issues/3310
 X   broken since 3.0a7, but not in 3.0a5
 o pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
 X   nixed by Casey for now
+X displayDensity() not functioning properly
+X   https://github.com/processing/processing/issues/3436
 X surface.setXxx() handling
 X   https://github.com/processing/processing/issues/3388
 X   setResizable, setVisible, setTitle
@@ -49,6 +51,7 @@ X change how font metrics are pulled to fix text width issues
 X check alpha when image extension is "unknown"
 X   https://github.com/processing/processing/issues/3442
 X add support for more Image types (BGR) with PImage(java.awt.Image) constructor
+X move Java2D and JavaFX classes to their own packages
 
 threading headaches
 X sketch not always showing with empty draw()
@@ -137,8 +140,7 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 beta
-X move Java2D and JavaFX classes to their own packages
-_   make notes about this in the README
+_ make notes about Java2D and JavaFX packages in the README
 _ move AWT image loading into PImageAWT
 _   look into how GL and FX will handle from there
 _ run only the necessary pieces on the EDT
