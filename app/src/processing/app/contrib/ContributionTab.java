@@ -308,13 +308,13 @@ public class ContributionTab {
                   .addComponent(tryAgainButton, statusPanel.BUTTON_WIDTH,
                                 statusPanel.BUTTON_WIDTH,
                                 statusPanel.BUTTON_WIDTH))
-      .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
+      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
       .addComponent(closeButton));
     layout.setVerticalGroup(layout
       .createSequentialGroup()
       .addGroup(layout.createParallelGroup().addComponent(errorMessage)
-                  .addComponent(closeButton)).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(tryAgainButton));
+                  .addComponent(closeButton)).addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED).addComponent(tryAgainButton));
     errorPanel.setBackground(Color.PINK);
     errorPanel.validate();
   }
