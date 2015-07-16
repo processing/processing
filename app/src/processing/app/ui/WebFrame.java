@@ -36,6 +36,9 @@ import processing.data.StringDict;
 
 
 public class WebFrame extends JFrame {
+  JEditorPane editorPane;
+  HTMLEditorKit editorKit;
+
 
   public WebFrame(File file, int width) {
     //setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
@@ -43,11 +46,11 @@ public class WebFrame extends JFrame {
     String[] lines = PApplet.loadStrings(file);
     String content = PApplet.join(lines, "\n");
 
-    int high = getContentHeight(400, content);
-    JEditorPane textPane = new JEditorPane("text/html", content);
-    textPane.setEditable(false);
-    textPane.setPreferredSize(new Dimension(400, high));
-    getContentPane().add(textPane);
+    int high = getContentHeight(width, content);
+    editorPane = new JEditorPane("text/html", content);
+    editorPane.setEditable(false);
+    editorPane.setPreferredSize(new Dimension(width, high));
+    getContentPane().add(editorPane);
 
     Toolkit.registerWindowCloseKeys(getRootPane(), new ActionListener() {
       @Override
@@ -56,15 +59,15 @@ public class WebFrame extends JFrame {
       }
     });
 
-    HTMLEditorKit kit = (HTMLEditorKit) textPane.getEditorKit();
-    kit.setAutoFormSubmission(false);
+    editorKit = (HTMLEditorKit) editorPane.getEditorKit();
+    editorKit.setAutoFormSubmission(false);
 
-    Object title = textPane.getDocument().getProperty("title");
+    Object title = editorPane.getDocument().getProperty("title");
     if (title instanceof String) {
       setTitle((String) title);
     }
 
-    textPane.addHyperlinkListener(new HyperlinkListener() {
+    editorPane.addHyperlinkListener(new HyperlinkListener() {
       @Override
       public void hyperlinkUpdate(HyperlinkEvent e) {
         //System.out.println(e);
@@ -92,6 +95,17 @@ public class WebFrame extends JFrame {
     setLocationRelativeTo(null);
     //setVisible(true);
   }
+
+
+  /* not yet working
+  public void addStyle(String rule) {
+    StyleSheet sheet = kit.getStyleSheet();
+    System.out.println(sheet);
+    sheet.addRule(rule);
+    kit.setStyleSheet(sheet);
+    //textPane.setEditorKit(kit);  // nukes everything
+  }
+  */
 
 
   public void handleClose() {
