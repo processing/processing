@@ -190,11 +190,6 @@
   <echo message="${java.class.path}" />
   -->
 
-  <!-- our special JRE downloader task -->
-  <taskdef name="downloader" 
-	   classname="Downloader"
-	   classpath="jre/downloader.jar" />
-
   <!-- Set a property named macosx, linux, or windows. 
        The 'value' chosen is arbitrary. -->
   <property name="${platform}" value="${platform}" />
@@ -203,19 +198,19 @@
 
   <property name="jre.tgz.path" value="${platform}/jre-${jdk.short}.tgz" />
 
+  <!-- make sure we're built -->
+  <subant buildpath="jre" target="dist" />
+
+  <!-- our special JRE downloader task -->
+  <taskdef name="downloader" 
+	   classname="Downloader"
+	   classpath="jre/downloader.jar" />
+
   <target name="jre-check"> 
     <available file="${jre.tgz.path}" property="jre.tgz.downloaded" />
   </target>
 
   <target name="jre-download" depends="jre-check" unless="jre.tgz.downloaded">
-    <!-- make sure we're built -->
-    <subant buildpath="jre" target="dist" />
-
-    <!-- our special JRE downloader task -->
-    <taskdef name="downloader" 
-	     classname="Downloader"
-	     classpath="jre/downloader.jar" />
-
     <downloader version="${jdk.version}" 
                 update="${jdk.update}" 
                 build="${jdk.build}" 
