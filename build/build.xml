@@ -198,19 +198,22 @@
 
   <property name="jre.tgz.path" value="${platform}/jre-${jdk.short}.tgz" />
 
-  <!-- make sure we're built -->
-  <subant buildpath="jre" target="dist" />
-
-  <!-- our special JRE downloader task -->
-  <taskdef name="downloader" 
-	   classname="Downloader"
-	   classpath="jre/downloader.jar" />
-
   <target name="jre-check"> 
     <available file="${jre.tgz.path}" property="jre.tgz.downloaded" />
   </target>
 
-  <target name="jre-download" depends="jre-check" unless="jre.tgz.downloaded">
+  <target name="downloader-setup">
+    <!-- make sure we're built -->
+    <subant buildpath="jre" target="dist" />
+
+    <!-- define our special JRE downloader task -->
+    <taskdef name="downloader" 
+	     classname="Downloader"
+	     classpath="jre/downloader.jar" />
+  </target>
+
+  <target name="jre-download" depends="jre-check, downloader-setup"
+          unless="jre.tgz.downloaded">
     <downloader version="${jdk.version}" 
                 update="${jdk.update}" 
                 build="${jdk.build}" 
@@ -219,7 +222,7 @@
                 path="${jre.tgz.path}" />    
   </target>
 
-  <target name="download-jdk-macosx">
+  <target name="download-jdk-macosx" depends="downloader-setup">
     <downloader version="${jdk.version}" 
                 update="${jdk.update}" 
                 build="${jdk.build}" 
