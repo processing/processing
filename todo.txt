@@ -24,6 +24,20 @@ X another "incompatible tool" case
 X   java.lang.AbstractMethodError
 X     at processing.app.contrib.ToolContribution.init(ToolContribution.java:134)
 X   unfortunately happens at a level where we can only println about it
+o processing-java command line mode not working on Mac
+o   https://github.com/processing/processing/issues/3409
+X add build.xml prompt for OS X developers to download the JDK update
+X break out a gui package (get class count down in .app)
+
+welcome
+X add "welcome" or "what's new" window to explain features in 3
+X   https://github.com/processing/processing/issues/3358
+X   a summary of what's new, plus a link to GitHub wiki page with details
+X   a warning that some Processing 2 sketches may not be compatible
+X   a checkbox for "show this welcome each time" (default to checked)
+X   a button to dismiss the welcome screen (e.g., "get started")
+X 2.x vs 3.x sketchbook battle (part of the welcome screen item)
+X   if a v2 sketchbook already exists, show a prompt to choose either creating a new Processing 3 sketch folder or use the existing v2 one, plus a link to GitHub wiki page with details
 
 manager
 X changed compatibleModesList to modes in examples.properties
@@ -81,12 +95,20 @@ X more CM updates to fix #3465
 X   https://github.com/processing/processing/pull/3465
 X https://github.com/processing/processing/pull/3468
 X   Added ellipses, improved error Panel, fixed a previous NPE bug
+X make modes load their parent class
+X   https://github.com/processing/processing/issues/3443
 
-cleaning
+cleaning/earlier
 o libraries in java tabs (separate .java files) are reported missing
 o   need to scan the .java files for imports that need to be included
 o   http://code.google.com/p/processing/issues/detail?id=459
 X   https://github.com/processing/processing/issues/498
+X should be able to build p5 without a JDK install, just a JRE
+X   https://github.com/processing/processing/issues/1840
+X   need to have ecj.jar accessible to ant, then modify build.xml to use this:
+X   <property name="build.compiler" 
+X             value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+X   http://help.eclipse.org/juno/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Ftasks%2Ftask-ant_javac_adapter.htm
 
 
 contribs pending
@@ -95,18 +117,7 @@ _   https://github.com/processing/processing/issues/2953
 
 
 beta
-_ make modes load their parent class
-_   https://github.com/processing/processing/issues/3443
-_ add "welcome" or "what's new" window to explain features in 3
-_   https://github.com/processing/processing/issues/3358
-_   a summary of what's new, plus a link to GitHub wiki page with details
-_   a warning that some Processing 2 sketches may not be compatible
-_   a checkbox for "show this welcome each time" (default to checked)
-_   a button to dismiss the welcome screen (e.g., "get started")
-_ 2.x vs 3.x sketchbook battle (part of the welcome screen item)
-_   if a v2 sketchbook already exists, show a prompt to choose either creating a new Processing 3 sketch folder or use the existing v2 one, plus a link to GitHub wiki page with details
-_ processing-java command line mode not working on Mac
-_   https://github.com/processing/processing/issues/3409
+_ write text for non-sketchbook version of welcome screen
 _ font fixes for Georgia in the examples
 _ CM ongoing notes and questions
 _   https://github.com/processing/processing/issues/3440
@@ -173,7 +184,6 @@ _   make a Tool that installs it for all platforms, not just OS X
 _   not really part of the 'build' anymore
 _ break out Mode options to their own panels in prefs
 _   Mode should just provide a panel for their prefs
-_ add build.xml prompt for OS X developers to download the JDK update
 _ make examples pull/build automatic during dist
 _ dist needs to do a git pull on processing-docs
 _ make reference build process part of dist
@@ -214,7 +224,6 @@ _   https://github.com/processing/processing/issues/3360
 
 
 breakage
-_ break out a gui package (get class count down in .app)
 _ remove deprecated methods
 _ do the right thing on passing around List vs ArrayList and others
 _ PreferencesFrame is a misnomer (not a frame itself)
@@ -949,12 +958,6 @@ How the environment gets packed up, downloaded, and installed.
 
 DIST / General 
 
-_ should be able to build p5 without a JDK install, just a JRE
-_   https://github.com/processing/processing/issues/1840
-_   need to have ecj.jar accessible to ant, then modify build.xml to use this:
-_   <property name="build.compiler" 
-_             value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-_   http://help.eclipse.org/juno/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Ftasks%2Ftask-ant_javac_adapter.htm
 _ line ending issues
 _   doesn't really help on Windows since we use Cygwin
 _     but it would be helpful for people not using it (ant/other LF issues)

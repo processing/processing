@@ -190,6 +190,11 @@
   <echo message="${java.class.path}" />
   -->
 
+  <!-- our special JRE downloader task -->
+  <taskdef name="downloader" 
+	   classname="Downloader"
+	   classpath="jre/downloader.jar" />
+
   <!-- Set a property named macosx, linux, or windows. 
        The 'value' chosen is arbitrary. -->
   <property name="${platform}" value="${platform}" />
@@ -219,6 +224,15 @@
                 path="${jre.tgz.path}" />    
   </target>
 
+  <target name="download-jdk-macosx">
+    <downloader version="${jdk.version}" 
+                update="${jdk.update}" 
+                build="${jdk.build}" 
+                jdk="true" 
+                flavor="macosx-x64.dmg"
+                path="${env.HOME}/Desktop/jdk-${jdk.short}.dmg" />
+  </target>
+
   <!-- code signing hack, turns on code signing during dist -->
   <condition property="codesign"> 
     <equals arg1="${env.USER}" arg2="fry" />
@@ -231,7 +245,7 @@
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
   <fail if="macosx" unless="macosx_jdk_found"
-        message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
+        message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again.${line.separator}Or... type 'ant download-jdk-macosx' to download it to your Desktop." />
   <!--
   <fail if="linux" unless="java_tools_found" 
         message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
