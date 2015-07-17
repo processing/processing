@@ -13562,31 +13562,37 @@ public class PGraphicsOpenGL extends PGraphics {
     static final int Z = 2;
     static final int W = 3;
 
-    int[] triangleIndices;
-    int[] texCacheMap;
-    int[] indexCacheMap;
+    int[] triangleIndices = new int[0];
+    int[] texCacheMap = new int[0];
+    int[] indexCacheMap = new int[0];
 
-    float[] screenVertices;
+    float[] screenVertices = new float[0];
 
-    int[] swapped;
-    int[] marked;
+    int[] swapped = new int[8];
+    int[] marked = new int[8];
 
     PGraphicsOpenGL pg;
     TessGeometry tessGeo;
 
     DepthSorter (PGraphicsOpenGL pg) {
       this.pg = pg;
+    }
 
-      int triangleCount = 256;
+    void checkIndexBuffers(int newTriangleCount) {
+      if (triangleIndices.length < newTriangleCount) {
+        int newSize = (newTriangleCount / 4 + 1) * 5;
+        triangleIndices = new int[newSize];
+        texCacheMap     = new int[newSize];
+        indexCacheMap   = new int[newSize];
+      }
+    }
 
-      triangleIndices = new int[triangleCount];
-      texCacheMap     = new int[triangleCount];
-      indexCacheMap   = new int[triangleCount];
-
-      screenVertices  = new float[9*triangleCount];
-
-      swapped = new int[8];
-      marked = new int[8];
+    void checkVertexBuffer(int newVertexCount) {
+      int coordCount = 3*newVertexCount;
+      if (screenVertices.length < coordCount) {
+        int newSize = (coordCount / 4 + 1) * 5;
+        screenVertices  = new float[newSize];
+      }
     }
 
     // Sorting --------------------------------------------
@@ -13595,13 +13601,13 @@ public class PGraphicsOpenGL extends PGraphics {
       this.tessGeo = tessGeo;
 
       int triangleCount = tessGeo.polyIndexCount / 3;
+      checkIndexBuffers(triangleCount);
 
       { // Map vertices to screen
         float[] polyVertices = tessGeo.polyVertices;
         int polyVertexCount = tessGeo.polyVertexCount;
-        if (screenVertices.length < 3*polyVertexCount) {
-          screenVertices = new float[3*polyVertexCount];
-        }
+        checkVertexBuffer(polyVertexCount);
+
         for (int i = 0; i < polyVertexCount; i++) {
           float x = polyVertices[4*i+X];
           float y = polyVertices[4*i+Y];
@@ -13826,7 +13832,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (size + requested > array.length) {
         int newLength = Math.max(size + requested, 2 * array.length);
         int[] temp = new int[newLength];
-        PApplet.arrayCopy(array, 0, temp, 0, size);
+        System.arraycopy(array, 0, temp, 0, size);
         array = temp;
       }
       return array;
@@ -13846,7 +13852,7 @@ public class PGraphicsOpenGL extends PGraphics {
           array[i] = array[i-1];
         }
       } else {
-        PApplet.arrayCopy(array, i1, array, i2, i2 - i1);
+        System.arraycopy(array, i1, array, i1 + 1, i2 - i1);
       }
       array[i1] = temp;
     }
