@@ -1,4 +1,9 @@
 0239
+X Welcome screen completely broken/looking for debug files
+X   https://github.com/processing/processing/issues/3474
+
+fixed earlier
+X font fixes for Georgia in the examples
 
 
 contribs pending
@@ -9,9 +14,10 @@ _   https://github.com/processing/processing/issues/2953
 beta
 _ write notes about changes with Toolkit and Util, and packages
 _ write text for non-sketchbook version of welcome screen
-_ font fixes for Georgia in the examples
 _ CM ongoing notes and questions
 _   https://github.com/processing/processing/issues/3440
+_ Contribution Manager design is really rough
+_   https://github.com/processing/processing/issues/3464
 
 
 gui

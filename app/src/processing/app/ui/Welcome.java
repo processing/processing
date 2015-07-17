@@ -89,16 +89,25 @@ public class Welcome extends WebFrame {
   static private File getIndexFile(boolean sketchbook) {
     String filename =
       "welcome/" + (sketchbook ? "sketchbook.html" : "generic.html");
-    // eventually this will be correct
-    //File indexFile = Base.getLibFile(filename);
+
     // version when running from command line for editing
     File htmlFile = new File("../build/shared/lib/" + filename);
-    if (!htmlFile.exists()) {
-      // processing/build/macosx/work/Processing.app/Contents/Java
-      // version for Scott to use for OS X debugging
-      htmlFile = Base.getContentFile("../../../../../shared/lib/" + filename);
+    if (htmlFile.exists()) {
+      return htmlFile;
     }
-    return htmlFile;
+    // processing/build/macosx/work/Processing.app/Contents/Java
+    // version for Scott to use for OS X debugging
+    htmlFile = Base.getContentFile("../../../../../shared/lib/" + filename);
+    if (htmlFile.exists()) {
+      return htmlFile;
+    }
+
+    try {
+      return Base.getLibFile(filename);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
 

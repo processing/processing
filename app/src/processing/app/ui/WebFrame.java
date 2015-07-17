@@ -43,8 +43,11 @@ public class WebFrame extends JFrame {
   public WebFrame(File file, int width) {
     //setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 
-    String[] lines = PApplet.loadStrings(file);
-    String content = PApplet.join(lines, "\n");
+    String content = "Could not load " + file.getAbsolutePath();
+    if (file != null) {
+      String[] lines = PApplet.loadStrings(file);
+      content = PApplet.join(lines, "\n");
+    }
 
     int high = getContentHeight(width, content);
     editorPane = new JEditorPane("text/html", content);
