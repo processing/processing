@@ -22,6 +22,8 @@ _   https://github.com/processing/processing/issues/3464
 
 gui
 _ add new lower console/errors icons
+_ fix the red for the console/error stuff
+_   also the sidebar, the squiggly line beneath code, and the status bar
 _ show hover text with 'debug'
 _ inquire about updated document icon
 _ don't show breakpoints when debugger is off

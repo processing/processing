@@ -3,9 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-15 The Processing Foundation
-  Copyright (c) 2004-13 Ben Fry and Casey Reas
-  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2015 The Processing Foundation
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -57,7 +55,11 @@ public class EditorFooter extends Box {
   // amount of extra space between individual tabs
   static final int TAB_BETWEEN = 3;
   // amount of margin on the left/right for the text on the tab
-  static final int TEXT_MARGIN = 16;
+  static final int MARGIN = 16;
+
+  static final int ICON_WIDTH = 14;
+  static final int ICON_HEIGHT = 13;
+  static final int ICON_TOP = 5;
 
   Color[] textColor = new Color[2];
   Color[] tabColor = new Color[2];
@@ -102,8 +104,20 @@ public class EditorFooter extends Box {
   }
 
 
-  public void addPanel(String name, Component comp) {
-    tabs.add(new Tab(name, comp));
+  /** Add a panel with no icon. */
+  public void addPanel(Component comp, String name) {
+    addPanel(comp, name, null);
+  }
+
+
+  /**
+   * Add a panel with a name and icon.
+   * @param comp Component that will be shown when this tab is selected
+   * @param name Title to appear on the tab itself
+   * @param icon Prefix of the file name for the icon
+   */
+  public void addPanel(Component comp, String name, String icon) {
+    tabs.add(new Tab(comp, name, icon));
     cardPanel.add(name, comp);
   }
 
@@ -237,21 +251,27 @@ public class EditorFooter extends Box {
       int x = left;
 
       for (Tab tab : tabs) {
-        int state = tab.isCurrent() ? SELECTED : UNSELECTED;
         tab.left = x;
-        x += TEXT_MARGIN;
-        x += tab.textWidth + TEXT_MARGIN;
+        x += MARGIN;
+        if (tab.hasIcon()) {
+          x += ICON_WIDTH + MARGIN;
+        }
+        x += tab.textWidth + MARGIN;
         tab.right = x;
 
         // if drawing and not just placing
         if (g != null) {
+          tab.draw(g);
+          /*
+          int state = tab.isCurrent() ? SELECTED : UNSELECTED;
           g.setColor(tabColor[state]);
           if (tab.notification) {
             g.setColor(errorColor);
           }
-          drawTab(g, tab.left, tab.right, tab.isFirst(), tab.isLast());
+          //drawTab(g, tab.left, tab.right, tab.isFirst(), tab.isLast());
+          tab.draw(g);
 
-          int textLeft = tab.left + ((tab.right - tab.left) - tab.textWidth) / 2;
+          int textLeft = tab.getTextLeft();
           if (tab.notification && state == UNSELECTED) {
             g.setColor(Color.LIGHT_GRAY);
           } else {
@@ -260,12 +280,14 @@ public class EditorFooter extends Box {
           int tabHeight = TAB_BOTTOM - TAB_TOP;
           int baseline = TAB_TOP + (tabHeight + fontAscent) / 2;
           g.drawString(tab.name, textLeft, baseline);
+          */
         }
         x += TAB_BETWEEN;
       }
     }
 
 
+    /*
     private void drawTab(Graphics g, int left, int right,
                          boolean leftNotch, boolean rightNotch) {
       Graphics2D g2 = (Graphics2D) g;
@@ -273,6 +295,7 @@ public class EditorFooter extends Box {
                                       rightNotch ? CURVE_RADIUS : 0,
                                       leftNotch ? CURVE_RADIUS : 0));
     }
+    */
 
 
     public Dimension getPreferredSize() {
@@ -299,13 +322,26 @@ public class EditorFooter extends Box {
     Component comp;
     boolean notification;
 
+    Image enabledIcon;
+    Image selectedIcon;
+
     int left;
     int right;
     int textWidth;
 
-    Tab(String name, Component comp) {
-      this.name = name;
+    Tab(Component comp, String name, String icon) {
       this.comp = comp;
+      this.name = name;
+
+      if (icon != null) {
+        Mode mode = editor.getMode();
+        final int res = Toolkit.highResDisplay() ? 2 : 1;
+        enabledIcon = mode.loadImage(icon + "-enabled-" + res + "x.png");
+        selectedIcon = mode.loadImage(icon + "-selected-" + res + "x.png");
+        if (selectedIcon == null) {
+          selectedIcon = enabledIcon;  // use this as the default
+        }
+      }
     }
 
     boolean contains(int x) {
@@ -322,6 +358,46 @@ public class EditorFooter extends Box {
 
     boolean isLast() {
       return tabs.get(tabs.size() - 1) == this;
+    }
+
+    int getTextLeft() {
+      int links = left;
+      if (enabledIcon != null) {
+        links += ICON_WIDTH;
+      }
+      return links + ((right - links) - textWidth) / 2;
+    }
+
+    boolean hasIcon() {
+      return enabledIcon != null;
+    }
+
+    void draw(Graphics g) {
+      int state = isCurrent() ? SELECTED : UNSELECTED;
+      g.setColor(tabColor[state]);
+      if (notification) {
+        g.setColor(errorColor);
+      }
+
+      Graphics2D g2 = (Graphics2D) g;
+      g2.fill(Toolkit.createRoundRect(left, TAB_TOP, right, TAB_BOTTOM, 0, 0,
+                                      isLast() ? CURVE_RADIUS : 0,
+                                      isFirst() ? CURVE_RADIUS : 0));
+
+      if (hasIcon()) {
+        Image icon = isCurrent() ? selectedIcon : enabledIcon;
+        g.drawImage(icon, left + MARGIN, ICON_TOP, ICON_WIDTH, ICON_HEIGHT, null);
+      }
+
+      int textLeft = getTextLeft();
+      if (notification && state == UNSELECTED) {
+        g.setColor(Color.LIGHT_GRAY);
+      } else {
+        g.setColor(textColor[state]);
+      }
+      int tabHeight = TAB_BOTTOM - TAB_TOP;
+      int baseline = TAB_TOP + (tabHeight + fontAscent) / 2;
+      g.drawString(name, textLeft, baseline);
     }
   }
 }
