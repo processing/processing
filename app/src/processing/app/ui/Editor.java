@@ -434,7 +434,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public EditorFooter createFooter() {
     EditorFooter ef = new EditorFooter(this);
     console = new EditorConsole(this);
-    ef.addPanel(Language.text("editor.footer.console"), console);
+    ef.addPanel(console, Language.text("editor.footer.console"), "/lib/footer/console");
     return ef;
 
     /*

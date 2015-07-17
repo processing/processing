@@ -1,6 +1,12 @@
 0239 core
 
 
+opengl
+X ArrayIndexOutOfBoundsException error when enabling depth sorting in P3D
+X   https://github.com/processing/processing/pull/3477
+X   https://github.com/processing/processing/issues/3476
+
+
 docs
 _ note that full screen and present are now different
 _   on Export to Application, this has an impact

@@ -264,7 +264,7 @@ public class JavaEditor extends Editor {
 
 //    console = new EditorConsole(this);
 //    footer.addPanel(Language.text("editor.footer.console"), console);
-    footer.addPanel(Language.text("editor.footer.errors"), errorTableScrollPane);
+    footer.addPanel(errorTableScrollPane, Language.text("editor.footer.errors"), "/lib/footer/error");
 
     //return consolePanel;
     return footer;
