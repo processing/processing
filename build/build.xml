@@ -19,6 +19,11 @@
     </and>
   </condition>
 
+  <target name="ignore-tools">
+    <echo message="Ignore the 'Unable to locate tools.jar' message." />
+    <echo message="The tools.jar file is not required to build Processing." />
+  </target>
+
   <!-- Require Java 8 everywhere. -->
   <fail message="Unsupported Java version: ${java.version}. To build, make sure that Java 8 (aka Java 1.8) is installed."> 
     <condition> 
@@ -709,7 +714,7 @@
     <fail message="wrong platform (${os.name})" />
   </target>
   
-  <target name="linux-build" depends="revision-check, linux-check-os, jre-download, subprojects-build" description="Build Linux version">
+  <target name="linux-build" depends="ignore-tools, revision-check, linux-check-os, jre-download, subprojects-build" description="Build Linux version">
     <mkdir dir="linux/work" />
     
     <copy todir="linux/work">
@@ -957,7 +962,7 @@
     <fail message="wrong platform (${os.name})" />
   </target>
   
-  <target name="windows-build" depends="revision-check, windows-check-os, jre-download, subprojects-build" description="Build Windows version">
+  <target name="windows-build" depends="ignore-tools, revision-check, windows-check-os, jre-download, subprojects-build" description="Build Windows version">
     <mkdir dir="windows/work" />
     
     <!-- assemble the pde -->
