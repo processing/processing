@@ -11,12 +11,13 @@
       body {
         padding: 20px;
         /* Use the Processing font */
-        font-family: "Source Sans Pro";
+        font-family: "Source Sans Pro", sans-serif;
       }
 
       h1 {
-        margin-bottom: 0;
+        margin: 0;
         font-size: 16px;
+        font-family: "Source Sans Pro Semibold", sans-serif;
       }
 
       p {
@@ -26,8 +27,8 @@
       }
 
       table {
-        margin-top: 10px;
-        margin-bottom: 0;
+        margin: 10px 0 0 0;
+        padding: 0;
       }
 
       p.inset, table.inset {
@@ -38,6 +39,7 @@
       a {
         color: #2c7bb5;
         text-decoration: none;
+        font-family: "Source Sans Pro Semibold", sans-serif;
       }
 
       #startButton {
@@ -51,7 +53,14 @@
     <!-- action needs to exist (even though blank), otherwise causes NPE -->
     <form action="">
 
-      <h1>Welcome to Processing 3</h1>
+      <!-- Using a table here only as a layout hack, as CSS "vertical-align: middle;"
+           is not supported by the Java HTML renderer. Grr! -->
+      <table>
+        <tr>
+          <td valign="top"><img src="../icons/pde-64.png" width="64" height="64"></td>
+          <td valign="middle"><h1>Welcome to Processing 3</h1></td>
+        </tr>
+      </table>
       
       <p>
         <a href="https://github.com/processing/processing/wiki/Changes-in-3.0">Read about what&rsquo;s new in 3.0 &rarr;</a>
