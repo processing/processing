@@ -564,6 +564,7 @@ public class PSurfaceJOGL implements PSurface {
         sketchWidth = width;
         sketchHeight = height;
         graphics.setSize(width, height);
+        window.setSize(width, height);
       }
 
 

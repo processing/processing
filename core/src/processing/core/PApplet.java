@@ -10235,7 +10235,7 @@ public class PApplet implements PConstants {
         @Override
         public void setSize(int w, int h) {
           deprecationWarning("setSize");
-          surface.setLocation(w, h);
+          surface.setSize(w, h);
         }
 
         private void deprecationWarning(String method) {
