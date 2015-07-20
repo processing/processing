@@ -1,14 +1,22 @@
 0239
 X Welcome screen completely broken/looking for debug files
 X   https://github.com/processing/processing/issues/3474
+X Add message that says it's safe to ignore the tools.jar warning
 
 fixed earlier
 X font fixes for Georgia in the examples
+X contribs listed multiple times
+X   because they're listed multiple times in contribs.txt
+X   https://github.com/processing/processing/issues/3353
 
+contribs
+X Fix contribution compatibility check
+X   https://github.com/processing/processing/pull/3479
 
-contribs pending
-_ Ready to add contributed example packages?
-_   https://github.com/processing/processing/issues/2953
+gsoc
+X CM updates dialog box doesn't open CM
+X   https://github.com/processing/processing/issues/3481
+X   https://github.com/processing/processing/pull/3489
 
 
 beta
@@ -18,6 +26,8 @@ _ CM ongoing notes and questions
 _   https://github.com/processing/processing/issues/3440
 _ Contribution Manager design is really rough
 _   https://github.com/processing/processing/issues/3464
+_ Ready to add contributed example packages?
+_   https://github.com/processing/processing/issues/2953
 
 
 gui

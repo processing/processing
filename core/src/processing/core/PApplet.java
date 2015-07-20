@@ -809,6 +809,11 @@ public class PApplet implements PConstants {
   protected PSurface surface;
 
 
+  public PSurface getSurface() {
+    return surface;
+  }
+
+
   /**
    * A dummy frame to keep compatibility with 2.x code
    * and encourage users to update.

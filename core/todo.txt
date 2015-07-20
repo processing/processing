@@ -1,4 +1,5 @@
 0239 core
+X add getSurface() method ('surface' is protected in PApplet)
 
 
 opengl
@@ -24,6 +25,8 @@ _ try using Frame instead of JFrame
 _   default sketch location using insets incorrectly
 _   use the BufferStrategy directly from the Frame object?
 _     might fix performance issues w/ Presentation mode
+_ sketch placement (window insets) not properly set on Linux
+_   https://github.com/processing/processing/issues/2063
 
 
 javafx
