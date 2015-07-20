@@ -13083,7 +13083,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       if (stroke) addStrokeVertex(x, y, z, strokeColor, strokeWeight);
 
-      for (int j = 0; j < pg.curveDetail; j++) {
+      for (int j = 0; j < pg.curveDetail - 1; j++) {
         x += xplot1; xplot1 += xplot2; xplot2 += xplot3;
         y += yplot1; yplot1 += yplot2; yplot2 += yplot3;
         z += zplot1; zplot1 += zplot2; zplot2 += zplot3;
