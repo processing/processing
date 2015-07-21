@@ -12986,6 +12986,10 @@ public class PGraphicsOpenGL extends PGraphics {
       pg.curveVertexCount++;
 
       // draw a segment if there are enough points
+      if (pg.curveVertexCount == 3) {
+        float[] v = pg.curveVertices[pg.curveVertexCount - 2];
+        addCurveInitialVertex(i, v[X], v[Y], v[Z]);
+      }
       if (pg.curveVertexCount > 3) {
         float[] v1 = pg.curveVertices[pg.curveVertexCount - 4];
         float[] v2 = pg.curveVertices[pg.curveVertexCount - 3];
@@ -12996,6 +13000,71 @@ public class PGraphicsOpenGL extends PGraphics {
                                  v3[X], v3[Y], v3[Z],
                                  v4[X], v4[Y], v4[Z]);
       }
+    }
+
+    void addCurveInitialVertex(int i, float x, float y, float z) {
+      int strokeColor = 0;
+      float strokeWeight = 0;
+      if (stroke) {
+        strokeColor = in.strokeColors[i];
+        strokeWeight = in.strokeWeights[i];
+      }
+
+      int fcol = 0, fa = 0, fr = 0, fg = 0, fb = 0;
+      int acol = 0, aa = 0, ar = 0, ag = 0, ab = 0;
+      int scol = 0, sa = 0, sr = 0, sg = 0, sb = 0;
+      int ecol = 0, ea = 0, er = 0, eg = 0, eb = 0;
+      float nx = 0, ny = 0, nz = 0, u = 0, v = 0, sh = 0;
+      if (fill) {
+        fcol = in.colors[i];
+        fa = (fcol >> 24) & 0xFF;
+        fr = (fcol >> 16) & 0xFF;
+        fg = (fcol >>  8) & 0xFF;
+        fb = (fcol >>  0) & 0xFF;
+
+        acol = in.ambient[i];
+        aa = (acol >> 24) & 0xFF;
+        ar = (acol >> 16) & 0xFF;
+        ag = (acol >>  8) & 0xFF;
+        ab = (acol >>  0) & 0xFF;
+
+        scol = in.specular[i];
+        sa = (scol >> 24) & 0xFF;
+        sr = (scol >> 16) & 0xFF;
+        sg = (scol >>  8) & 0xFF;
+        sb = (scol >>  0) & 0xFF;
+
+        ecol = in.emissive[i];
+        ea = (ecol >> 24) & 0xFF;
+        er = (ecol >> 16) & 0xFF;
+        eg = (ecol >>  8) & 0xFF;
+        eb = (ecol >>  0) & 0xFF;
+
+        nx = in.normals[3*i + 0];
+        ny = in.normals[3*i + 1];
+        nz = in.normals[3*i + 2];
+        u = in.texcoords[2*i + 0];
+        v = in.texcoords[2*i + 1];
+        sh = in.shininess[i];
+      }
+
+      if (fill) {
+        double[] vertex0 = new double[] {
+          x, y, z,
+          fa, fr, fg, fb,
+          nx, ny, nz,
+          u, v,
+          aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
+        double[] avect = in.getAttribVector(i);
+        if (0 < avect.length) {
+          double temp[] = new double[vertex0.length + avect.length];
+          PApplet.arrayCopy(vertex0, 0, temp, 0, vertex0.length);
+          PApplet.arrayCopy(avect, 0, temp, vertex0.length, avect.length);
+          vertex0 = temp;
+        }
+        gluTess.addVertex(vertex0);
+      }
+      if (stroke) addStrokeVertex(x, y, z, strokeColor, strokeWeight);
     }
 
     void addCurveVertexSegment(int i, float x1, float y1, float z1,
@@ -13065,25 +13134,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
       float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
 
-      if (fill) {
-        double[] vertex0 = new double[] {
-          x, y, z,
-          fa, fr, fg, fb,
-          nx, ny, nz,
-          u, v,
-          aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
-        double[] avect = in.getAttribVector(i);
-        if (0 < avect.length) {
-          double temp[] = new double[vertex0.length + avect.length];
-          PApplet.arrayCopy(vertex0, 0, temp, 0, vertex0.length);
-          PApplet.arrayCopy(avect, 0, temp, vertex0.length, avect.length);
-          vertex0 = temp;
-        }
-        gluTess.addVertex(vertex0);
-      }
-      if (stroke) addStrokeVertex(x, y, z, strokeColor, strokeWeight);
-
-      for (int j = 0; j < pg.curveDetail - 1; j++) {
+      for (int j = 0; j < pg.curveDetail; j++) {
         x += xplot1; xplot1 += xplot2; xplot2 += xplot3;
         y += yplot1; yplot1 += yplot2; yplot2 += yplot3;
         z += zplot1; zplot1 += zplot2; zplot2 += zplot3;
