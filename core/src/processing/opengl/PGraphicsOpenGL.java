@@ -12781,43 +12781,7 @@ public class PGraphicsOpenGL extends PGraphics {
         strokeWeight = in.strokeWeights[i];
       }
 
-      int fcol = 0, fa = 0, fr = 0, fg = 0, fb = 0;
-      int acol = 0, aa = 0, ar = 0, ag = 0, ab = 0;
-      int scol = 0, sa = 0, sr = 0, sg = 0, sb = 0;
-      int ecol = 0, ea = 0, er = 0, eg = 0, eb = 0;
-      float nx = 0, ny = 0, nz = 0, u = 0, v = 0, sh = 0;
-      if (fill) {
-        fcol = in.colors[i];
-        fa = (fcol >> 24) & 0xFF;
-        fr = (fcol >> 16) & 0xFF;
-        fg = (fcol >>  8) & 0xFF;
-        fb = (fcol >>  0) & 0xFF;
-
-        acol = in.ambient[i];
-        aa = (acol >> 24) & 0xFF;
-        ar = (acol >> 16) & 0xFF;
-        ag = (acol >>  8) & 0xFF;
-        ab = (acol >>  0) & 0xFF;
-
-        scol = in.specular[i];
-        sa = (scol >> 24) & 0xFF;
-        sr = (scol >> 16) & 0xFF;
-        sg = (scol >>  8) & 0xFF;
-        sb = (scol >>  0) & 0xFF;
-
-        ecol = in.emissive[i];
-        ea = (ecol >> 24) & 0xFF;
-        er = (ecol >> 16) & 0xFF;
-        eg = (ecol >>  8) & 0xFF;
-        eb = (ecol >>  0) & 0xFF;
-
-        nx = in.normals[3*i + 0];
-        ny = in.normals[3*i + 1];
-        nz = in.normals[3*i + 2];
-        u = in.texcoords[2*i + 0];
-        v = in.texcoords[2*i + 1];
-        sh = in.shininess[i];
-      }
+      double[] vertexT = fill ? collectVertexAttributes(i) : null;
 
       float x2 = in.vertices[3*i + 0];
       float y2 = in.vertices[3*i + 1];
@@ -12846,22 +12810,12 @@ public class PGraphicsOpenGL extends PGraphics {
         y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
         z1 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
         if (fill) {
-          double[] vertex = new double[] {
-            x1, y1, z1,
-            fa, fr, fg, fb,
-            nx, ny, nz,
-            u, v,
-            aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
-          double[] avect = in.getAttribVector(i);
-          if (0 < avect.length) {
-            double temp[] = new double[vertex.length + avect.length];
-            PApplet.arrayCopy(vertex, 0, temp, 0, vertex.length);
-            PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length);
-            vertex = temp;
-          }
+          double[] vertex = Arrays.copyOf(vertexT, vertexT.length);
+          vertex[0] = x1;
+          vertex[1] = y1;
+          vertex[2] = z1;
           gluTess.addVertex(vertex);
         }
-
         if (stroke) addStrokeVertex(x1, y1, z1, strokeColor, strokeWeight);
       }
     }
@@ -12885,43 +12839,7 @@ public class PGraphicsOpenGL extends PGraphics {
         strokeWeight = in.strokeWeights[i];
       }
 
-      int fcol = 0, fa = 0, fr = 0, fg = 0, fb = 0;
-      int acol = 0, aa = 0, ar = 0, ag = 0, ab = 0;
-      int scol = 0, sa = 0, sr = 0, sg = 0, sb = 0;
-      int ecol = 0, ea = 0, er = 0, eg = 0, eb = 0;
-      float nx = 0, ny = 0, nz = 0, u = 0, v = 0, sh = 0;
-      if (fill) {
-        fcol = in.colors[i];
-        fa = (fcol >> 24) & 0xFF;
-        fr = (fcol >> 16) & 0xFF;
-        fg = (fcol >>  8) & 0xFF;
-        fb = (fcol >>  0) & 0xFF;
-
-        acol = in.ambient[i];
-        aa = (acol >> 24) & 0xFF;
-        ar = (acol >> 16) & 0xFF;
-        ag = (acol >>  8) & 0xFF;
-        ab = (acol >>  0) & 0xFF;
-
-        scol = in.specular[i];
-        sa = (scol >> 24) & 0xFF;
-        sr = (scol >> 16) & 0xFF;
-        sg = (scol >>  8) & 0xFF;
-        sb = (scol >>  0) & 0xFF;
-
-        ecol = in.emissive[i];
-        ea = (ecol >> 24) & 0xFF;
-        er = (ecol >> 16) & 0xFF;
-        eg = (ecol >>  8) & 0xFF;
-        eb = (ecol >>  0) & 0xFF;
-
-        nx = in.normals[3*i + 0];
-        ny = in.normals[3*i + 1];
-        nz = in.normals[3*i + 2];
-        u = in.texcoords[2*i + 0];
-        v = in.texcoords[2*i + 1];
-        sh = in.shininess[i];
-      }
+      double[] vertexT = fill ? collectVertexAttributes(i) : null;
 
       float cx = in.vertices[3*i + 0];
       float cy = in.vertices[3*i + 1];
@@ -12957,19 +12875,10 @@ public class PGraphicsOpenGL extends PGraphics {
         y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
         z1 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
         if (fill) {
-          double[] vertex = new double[] {
-            x1, y1, z1,
-            fa, fr, fg, fb,
-            nx, ny, nz,
-            u, v,
-            aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
-          double[] avect = in.getAttribVector(i);
-          if (0 < avect.length) {
-            double temp[] = new double[vertex.length + avect.length];
-            PApplet.arrayCopy(vertex, 0, temp, 0, vertex.length);
-            PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length);
-            vertex = temp;
-          }
+          double[] vertex = Arrays.copyOf(vertexT, vertexT.length);
+          vertex[0] = x1;
+          vertex[1] = y1;
+          vertex[2] = z1;
           gluTess.addVertex(vertex);
         }
         if (stroke) addStrokeVertex(x1, y1, z1, strokeColor, strokeWeight);
@@ -13003,68 +12912,16 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void addCurveInitialVertex(int i, float x, float y, float z) {
-      int strokeColor = 0;
-      float strokeWeight = 0;
-      if (stroke) {
-        strokeColor = in.strokeColors[i];
-        strokeWeight = in.strokeWeights[i];
-      }
-
-      int fcol = 0, fa = 0, fr = 0, fg = 0, fb = 0;
-      int acol = 0, aa = 0, ar = 0, ag = 0, ab = 0;
-      int scol = 0, sa = 0, sr = 0, sg = 0, sb = 0;
-      int ecol = 0, ea = 0, er = 0, eg = 0, eb = 0;
-      float nx = 0, ny = 0, nz = 0, u = 0, v = 0, sh = 0;
       if (fill) {
-        fcol = in.colors[i];
-        fa = (fcol >> 24) & 0xFF;
-        fr = (fcol >> 16) & 0xFF;
-        fg = (fcol >>  8) & 0xFF;
-        fb = (fcol >>  0) & 0xFF;
-
-        acol = in.ambient[i];
-        aa = (acol >> 24) & 0xFF;
-        ar = (acol >> 16) & 0xFF;
-        ag = (acol >>  8) & 0xFF;
-        ab = (acol >>  0) & 0xFF;
-
-        scol = in.specular[i];
-        sa = (scol >> 24) & 0xFF;
-        sr = (scol >> 16) & 0xFF;
-        sg = (scol >>  8) & 0xFF;
-        sb = (scol >>  0) & 0xFF;
-
-        ecol = in.emissive[i];
-        ea = (ecol >> 24) & 0xFF;
-        er = (ecol >> 16) & 0xFF;
-        eg = (ecol >>  8) & 0xFF;
-        eb = (ecol >>  0) & 0xFF;
-
-        nx = in.normals[3*i + 0];
-        ny = in.normals[3*i + 1];
-        nz = in.normals[3*i + 2];
-        u = in.texcoords[2*i + 0];
-        v = in.texcoords[2*i + 1];
-        sh = in.shininess[i];
-      }
-
-      if (fill) {
-        double[] vertex0 = new double[] {
-          x, y, z,
-          fa, fr, fg, fb,
-          nx, ny, nz,
-          u, v,
-          aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
-        double[] avect = in.getAttribVector(i);
-        if (0 < avect.length) {
-          double temp[] = new double[vertex0.length + avect.length];
-          PApplet.arrayCopy(vertex0, 0, temp, 0, vertex0.length);
-          PApplet.arrayCopy(avect, 0, temp, vertex0.length, avect.length);
-          vertex0 = temp;
-        }
+        double[] vertex0 = collectVertexAttributes(i);
+        vertex0[0] = x;
+        vertex0[1] = y;
+        vertex0[2] = z;
         gluTess.addVertex(vertex0);
       }
-      if (stroke) addStrokeVertex(x, y, z, strokeColor, strokeWeight);
+      if (stroke) {
+        addStrokeVertex(x, y, z, in.strokeColors[i], strokeWeight);
+      }
     }
 
     void addCurveVertexSegment(int i, float x1, float y1, float z1,
@@ -13078,43 +12935,7 @@ public class PGraphicsOpenGL extends PGraphics {
         strokeWeight = in.strokeWeights[i];
       }
 
-      int fcol = 0, fa = 0, fr = 0, fg = 0, fb = 0;
-      int acol = 0, aa = 0, ar = 0, ag = 0, ab = 0;
-      int scol = 0, sa = 0, sr = 0, sg = 0, sb = 0;
-      int ecol = 0, ea = 0, er = 0, eg = 0, eb = 0;
-      float nx = 0, ny = 0, nz = 0, u = 0, v = 0, sh = 0;
-      if (fill) {
-        fcol = in.colors[i];
-        fa = (fcol >> 24) & 0xFF;
-        fr = (fcol >> 16) & 0xFF;
-        fg = (fcol >>  8) & 0xFF;
-        fb = (fcol >>  0) & 0xFF;
-
-        acol = in.ambient[i];
-        aa = (acol >> 24) & 0xFF;
-        ar = (acol >> 16) & 0xFF;
-        ag = (acol >>  8) & 0xFF;
-        ab = (acol >>  0) & 0xFF;
-
-        scol = in.specular[i];
-        sa = (scol >> 24) & 0xFF;
-        sr = (scol >> 16) & 0xFF;
-        sg = (scol >>  8) & 0xFF;
-        sb = (scol >>  0) & 0xFF;
-
-        ecol = in.emissive[i];
-        ea = (ecol >> 24) & 0xFF;
-        er = (ecol >> 16) & 0xFF;
-        eg = (ecol >>  8) & 0xFF;
-        eb = (ecol >>  0) & 0xFF;
-
-        nx = in.normals[3*i + 0];
-        ny = in.normals[3*i + 1];
-        nz = in.normals[3*i + 2];
-        u = in.texcoords[2*i + 0];
-        v = in.texcoords[2*i + 1];
-        sh = in.shininess[i];
-      }
+      double[] vertexT = fill ? collectVertexAttributes(i) : null;
 
       float x = x2;
       float y = y2;
@@ -13139,19 +12960,10 @@ public class PGraphicsOpenGL extends PGraphics {
         y += yplot1; yplot1 += yplot2; yplot2 += yplot3;
         z += zplot1; zplot1 += zplot2; zplot2 += zplot3;
         if (fill) {
-          double[] vertex1 = new double[] {
-            x, y, z,
-            fa, fr, fg, fb,
-            nx, ny, nz,
-            u, v,
-            aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
-          double[] avect = in.getAttribVector(i);
-          if (0 < avect.length) {
-            double temp[] = new double[vertex1.length + avect.length];
-            PApplet.arrayCopy(vertex1, 0, temp, 0, vertex1.length);
-            PApplet.arrayCopy(avect, 0, temp, vertex1.length, avect.length);
-            vertex1 = temp;
-          }
+          double[] vertex1 = Arrays.copyOf(vertexT, vertexT.length);
+          vertex1[0] = x;
+          vertex1[1] = y;
+          vertex1[2] = z;
           gluTess.addVertex(vertex1);
         }
         if (stroke) addStrokeVertex(x, y, z, strokeColor, strokeWeight);
@@ -13165,62 +12977,64 @@ public class PGraphicsOpenGL extends PGraphics {
       float y = in.vertices[3*i + 1];
       float z = in.vertices[3*i + 2];
 
-      int strokeColor = 0;
-      float strokeWeight = 0;
-      if (stroke) {
-        strokeColor = in.strokeColors[i];
-        strokeWeight = in.strokeWeights[i];
-      }
-
       if (fill) {
-        // Separating colors into individual rgba components for interpolation.
-        int fcol = in.colors[i];
-        int fa = (fcol >> 24) & 0xFF;
-        int fr = (fcol >> 16) & 0xFF;
-        int fg = (fcol >>  8) & 0xFF;
-        int fb = (fcol >>  0) & 0xFF;
-
-        int acol = in.ambient[i];
-        int aa = (acol >> 24) & 0xFF;
-        int ar = (acol >> 16) & 0xFF;
-        int ag = (acol >>  8) & 0xFF;
-        int ab = (acol >>  0) & 0xFF;
-
-        int scol = in.specular[i];
-        int sa = (scol >> 24) & 0xFF;
-        int sr = (scol >> 16) & 0xFF;
-        int sg = (scol >>  8) & 0xFF;
-        int sb = (scol >>  0) & 0xFF;
-
-        int ecol = in.emissive[i];
-        int ea = (ecol >> 24) & 0xFF;
-        int er = (ecol >> 16) & 0xFF;
-        int eg = (ecol >>  8) & 0xFF;
-        int eb = (ecol >>  0) & 0xFF;
-
-        float nx = in.normals[3*i + 0];
-        float ny = in.normals[3*i + 1];
-        float nz = in.normals[3*i + 2];
-        float u = in.texcoords[2*i + 0];
-        float v = in.texcoords[2*i + 1];
-        float sh = in.shininess[i];
-
-        double[] vertex = new double[] {
-          x, y, z,
-          fa, fr, fg, fb,
-          nx, ny, nz,
-          u, v,
-          aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, sh};
-        double[] avect = in.getAttribVector(i);
-        if (0 < avect.length) {
-          double temp[] = new double[vertex.length + avect.length];
-          PApplet.arrayCopy(vertex, 0, temp, 0, vertex.length);
-          PApplet.arrayCopy(avect, 0, temp, vertex.length, avect.length);
-          vertex = temp;
-        }
+        double[] vertex = collectVertexAttributes(i);
+        vertex[0] = x;
+        vertex[1] = y;
+        vertex[2] = z;
         gluTess.addVertex(vertex);
       }
-      if (stroke) addStrokeVertex(x, y, z, strokeColor, strokeWeight);
+      if (stroke) {
+        addStrokeVertex(x, y, z, in.strokeColors[i], in.strokeWeights[i]);
+      }
+    }
+
+    double[] collectVertexAttributes(int i) {
+      final int COORD_COUNT = 3;
+      final int ATTRIB_COUNT = 22;
+
+      double[] avect = in.getAttribVector(i);
+
+      double[] r = new double[COORD_COUNT + ATTRIB_COUNT + avect.length];
+
+      int j = COORD_COUNT;
+
+      int fcol = in.colors[i];
+      r[j++] = (fcol >> 24) & 0xFF; // fa
+      r[j++] = (fcol >> 16) & 0xFF; // fr
+      r[j++] = (fcol >>  8) & 0xFF; // fg
+      r[j++] = (fcol >>  0) & 0xFF; // fb
+
+      r[j++] = in.normals[3*i + 0]; // nx
+      r[j++] = in.normals[3*i + 1]; // ny
+      r[j++] = in.normals[3*i + 2]; // nz
+
+      r[j++] = in.texcoords[2*i + 0]; // u
+      r[j++] = in.texcoords[2*i + 1]; // v
+
+      int acol = in.ambient[i];
+      r[j++] = (acol >> 24) & 0xFF; // aa
+      r[j++] = (acol >> 16) & 0xFF; // ar
+      r[j++] = (acol >>  8) & 0xFF; // ag
+      r[j++] = (acol >>  0) & 0xFF; // ab
+
+      int scol = in.specular[i];
+      r[j++] = (scol >> 24) & 0xFF; // sa
+      r[j++] = (scol >> 16) & 0xFF; // sr
+      r[j++] = (scol >>  8) & 0xFF; // sg
+      r[j++] = (scol >>  0) & 0xFF; // sb
+
+      int ecol = in.emissive[i];
+      r[j++] = (ecol >> 24) & 0xFF; // ea
+      r[j++] = (ecol >> 16) & 0xFF; // er
+      r[j++] = (ecol >>  8) & 0xFF; // eg
+      r[j++] = (ecol >>  0) & 0xFF; // eb
+
+      r[j++] = in.shininess[i]; // sh
+
+      System.arraycopy(avect, 0, r, j, avect.length);
+
+      return r;
     }
 
     void beginPolygonStroke() {
