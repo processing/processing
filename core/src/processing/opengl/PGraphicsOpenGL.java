@@ -3012,25 +3012,43 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean needNormals = customShader ? polyShader.accessNormals() : false;
     boolean needTexCoords = customShader ? polyShader.accessTexCoords() : false;
 
+    sorter.sort(tessGeo);
+
+    int triangleCount = tessGeo.polyIndexCount / 3;
+    int[] texMap = sorter.texMap;
+    int[] voffsetMap = sorter.voffsetMap;
+
+    int[] vertexOffset = tessGeo.polyIndexCache.vertexOffset;
+
     updatePolyBuffers(lights, texCache.hasTextures, needNormals, needTexCoords);
 
-    sorter.sort(tessGeo);
-    int[] triangleIndices = sorter.triangleIndices;
-    int[] texCacheMap = sorter.texCacheMap;
-    int[] indexCacheMap = sorter.indexCacheMap;
+    int ti = 0;
 
-    for (int i = 0; i < tessGeo.polyIndexCount/3; i++) {
-      int ti = triangleIndices[i];
-      Texture tex = texCache.getTexture(texCacheMap[ti]);
-      int voffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[ti]];
+    while (ti < triangleCount) {
+
+      int startTi = ti;
+      int texId = texMap[ti];
+      int voffsetId = voffsetMap[ti];
+
+      do {
+        ++ti;
+      } while (ti < triangleCount &&
+          texId == texMap[ti] &&
+          voffsetId == voffsetMap[ti]);
+
+      int endTi = ti;
+
+      Texture tex = texCache.getTexture(texId);
+
+      int voffset = vertexOffset[voffsetId];
+
+      int ioffset = 3 * startTi;
+      int icount = 3 * (endTi - startTi);
 
       // If the renderer is 2D, then lights should always be false,
       // so no need to worry about that.
       PShader shader = getPolyShader(lights, tex != null);
       shader.bind();
-
-      int ioffset = 3*ti;
-      int icount = 3;
 
       shader.setVertexAttribute(bufPolyVertex.glId, 4, PGL.FLOAT, 0,
                                 4 * voffset * PGL.SIZEOF_FLOAT);
@@ -3199,13 +3217,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
     sorter.sort(tessGeo);
     int[] triangleIndices = sorter.triangleIndices;
-    int[] texCacheMap = sorter.texCacheMap;
-    int[] indexCacheMap = sorter.indexCacheMap;
+    int[] texMap = sorter.texMap;
+    int[] voffsetMap = sorter.voffsetMap;
+
+    int[] vertexOffset = tessGeo.polyIndexCache.vertexOffset;
 
     for (int i = 0; i < tessGeo.polyIndexCount/3; i++) {
       int ti = triangleIndices[i];
-      PImage tex = texCache.getTextureImage(texCacheMap[ti]);
-      int voffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[ti]];
+      PImage tex = texCache.getTextureImage(texMap[ti]);
+      int voffset = vertexOffset[voffsetMap[ti]];
 
       int i0 = voffset + indices[3*ti+0];
       int i1 = voffset + indices[3*ti+1];
@@ -13427,17 +13447,36 @@ public class PGraphicsOpenGL extends PGraphics {
     static final int Z = 2;
     static final int W = 3;
 
+    static final int X0 = 0;
+    static final int Y0 = 1;
+    static final int Z0 = 2;
+    static final int X1 = 3;
+    static final int Y1 = 4;
+    static final int Z1 = 5;
+    static final int X2 = 6;
+    static final int Y2 = 7;
+    static final int Z2 = 8;
+
     int[] triangleIndices = new int[0];
-    int[] texCacheMap = new int[0];
-    int[] indexCacheMap = new int[0];
+    int[] texMap = new int[0];
+    int[] voffsetMap = new int[0];
+
+    float[] minXBuffer = new float[0];
+    float[] minYBuffer = new float[0];
+    float[] minZBuffer = new float[0];
+    float[] maxXBuffer = new float[0];
+    float[] maxYBuffer = new float[0];
+    float[] maxZBuffer = new float[0];
 
     float[] screenVertices = new float[0];
 
-    int[] swapped = new int[8];
-    int[] marked = new int[8];
+    float[] triA = new float[9];
+    float[] triB = new float[9];
+
+    BitSet marked = new BitSet();
+    BitSet swapped = new BitSet();
 
     PGraphicsOpenGL pg;
-    TessGeometry tessGeo;
 
     DepthSorter (PGraphicsOpenGL pg) {
       this.pg = pg;
@@ -13447,8 +13486,14 @@ public class PGraphicsOpenGL extends PGraphics {
       if (triangleIndices.length < newTriangleCount) {
         int newSize = (newTriangleCount / 4 + 1) * 5;
         triangleIndices = new int[newSize];
-        texCacheMap     = new int[newSize];
-        indexCacheMap   = new int[newSize];
+        texMap          = new int[newSize];
+        voffsetMap      = new int[newSize];
+        minXBuffer      = new float[newSize];
+        minYBuffer      = new float[newSize];
+        minZBuffer      = new float[newSize];
+        maxXBuffer      = new float[newSize];
+        maxYBuffer      = new float[newSize];
+        maxZBuffer      = new float[newSize];
       }
     }
 
@@ -13463,15 +13508,49 @@ public class PGraphicsOpenGL extends PGraphics {
     // Sorting --------------------------------------------
 
     void sort(TessGeometry tessGeo) {
-      this.tessGeo = tessGeo;
 
       int triangleCount = tessGeo.polyIndexCount / 3;
       checkIndexBuffers(triangleCount);
+      int[] triangleIndices = this.triangleIndices;
+      int[] texMap = this.texMap;
+      int[] voffsetMap = this.voffsetMap;
+
+      { // Initialize triangle indices
+        for (int i = 0; i < triangleCount; i++) {
+          triangleIndices[i] = i;
+        }
+      }
+
+      { // Map caches to triangles
+        TexCache texCache = pg.texCache;
+        IndexCache indexCache = tessGeo.polyIndexCache;
+        for (int i = 0; i < texCache.size; i++) {
+          int first = texCache.firstCache[i];
+          int last = texCache.lastCache[i];
+          for (int n = first; n <= last; n++) {
+            int ioffset = n == first
+                ? texCache.firstIndex[i]
+                : indexCache.indexOffset[n];
+            int icount = n == last
+                ? texCache.lastIndex[i] - ioffset + 1
+                : indexCache.indexOffset[n] + indexCache.indexCount[n] - ioffset;
+
+            for (int tr = ioffset / 3; tr < (ioffset + icount) / 3; tr++) {
+              texMap[tr] = i;
+              voffsetMap[tr] = n;
+            }
+          }
+        }
+      }
 
       { // Map vertices to screen
-        float[] polyVertices = tessGeo.polyVertices;
         int polyVertexCount = tessGeo.polyVertexCount;
         checkVertexBuffer(polyVertexCount);
+        float[] screenVertices = this.screenVertices;
+
+        float[] polyVertices = tessGeo.polyVertices;
+
+        PMatrix3D projection = pg.projection;
 
         for (int i = 0; i < polyVertexCount; i++) {
           float x = polyVertices[4*i+X];
@@ -13479,121 +13558,186 @@ public class PGraphicsOpenGL extends PGraphics {
           float z = polyVertices[4*i+Z];
           float w = polyVertices[4*i+W];
 
-          screenVertices[3*i+X] = pg.screenXImpl(x, y, z, w);
-          screenVertices[3*i+Y] = pg.screenYImpl(x, y, z, w);
-          screenVertices[3*i+Z] = -pg.screenZImpl(x, y, z, w)
-            * (pg.cameraFar - pg.cameraNear);
-        }
-      }
-
-      { // Map caches to triangles
-        for (int i = 0; i < pg.texCache.size; i++) {
-          int first = pg.texCache.firstCache[i];
-          int last = pg.texCache.lastCache[i];
-          IndexCache cache = tessGeo.polyIndexCache;
-          for (int n = first; n <= last; n++) {
-            int ioffset = n == first ? pg.texCache.firstIndex[i] :
-                                       cache.indexOffset[n];
-            int icount = n == last ? pg.texCache.lastIndex[i] - ioffset + 1 :
-                                     cache.indexOffset[n] + cache.indexCount[n] -
-                                     ioffset;
-
-            for (int tr = ioffset / 3; tr < (ioffset + icount) / 3; tr++) {
-              texCacheMap[tr] = i;
-              indexCacheMap[tr] = n;
-            }
+          float ox = projection.m00 * x + projection.m01 * y +
+              projection.m02 * z + projection.m03 * w;
+          float oy = projection.m10 * x + projection.m11 * y +
+              projection.m12 * z + projection.m13 * w;
+          float oz = projection.m20 * x + projection.m21 * y +
+              projection.m22 * z + projection.m23 * w;
+          float ow = projection.m30 * x + projection.m31 * y +
+              projection.m32 * z + projection.m33 * w;
+          if (nonZero(ow)) {
+            ox /= ow;
+            oy /= ow;
+            oz /= ow;
           }
+          screenVertices[3*i+X] = ox;
+          screenVertices[3*i+Y] = oy;
+          screenVertices[3*i+Z] = -oz;
         }
       }
+      float[] screenVertices = this.screenVertices;
 
-      { // Initialize triangle indices
-        if (triangleIndices.length < triangleCount) {
-          triangleIndices = new int[triangleCount];
-        }
-        for (int i = 0; i < triangleCount; i++) {
-          triangleIndices[i] = i;
-        }
+      int[] vertexOffset = tessGeo.polyIndexCache.vertexOffset;
+      short[] polyIndices = tessGeo.polyIndices;
+
+      float[] triA = this.triA;
+      float[] triB = this.triB;
+
+      for (int i = 0; i < triangleCount; i++) {
+        fetchTriCoords(triA, i, vertexOffset, voffsetMap, screenVertices, polyIndices);
+        minXBuffer[i] = PApplet.min(triA[X0], triA[X1], triA[X2]);
+        maxXBuffer[i] = PApplet.max(triA[X0], triA[X1], triA[X2]);
+        minYBuffer[i] = PApplet.min(triA[Y0], triA[Y1], triA[Y2]);
+        maxYBuffer[i] = PApplet.max(triA[Y0], triA[Y1], triA[Y2]);
+        minZBuffer[i] = PApplet.min(triA[Z0], triA[Z1], triA[Z2]);
+        maxZBuffer[i] = PApplet.max(triA[Z0], triA[Z1], triA[Z2]);
       }
 
-      sortByMinZ(0, triangleCount-1);
+      sortByMinZ(0, triangleCount - 1, triangleIndices, minZBuffer);
 
       int activeTid = 0;
 
-      int markedCount = 0;
+      BitSet marked = this.marked;
+      BitSet swapped = this.swapped;
 
-      while (activeTid < triangleCount){
+      marked.clear();
+
+      while (activeTid < triangleCount) {
         int testTid = activeTid + 1;
         boolean draw = false;
-        int swappedCount = 0;
+
+        swapped.clear();
+
+        int ati = triangleIndices[activeTid];
+        float minXA = minXBuffer[ati];
+        float maxXA = maxXBuffer[ati];
+        float minYA = minYBuffer[ati];
+        float maxYA = maxYBuffer[ati];
+        float maxZA = maxZBuffer[ati];
+
+        fetchTriCoords(triA, ati, vertexOffset, voffsetMap, screenVertices, polyIndices);
 
         while (!draw && testTid < triangleCount) {
-
-          int ati = triangleIndices[activeTid];
-          int bti = triangleIndices[testTid];
+          int tti = triangleIndices[testTid];
 
           // TEST 1 // Z overlap
-          if (maxCoord(ati, Z) <= minCoord(bti, Z) &&
-              !contains(marked, markedCount, triangleIndices[testTid]) &&
-              !contains(marked, markedCount, triangleIndices[activeTid])) {
+          if (maxZA <= minZBuffer[tti] && !marked.get(tti)) {
             draw = true; // pass, not overlapping in Z, draw it
 
-          // TEST 2 // XY overlap using square window
-          } else if (
-              maxCoord(ati, X) <= minCoord(bti, X) ||
-              maxCoord(ati, Y) <= minCoord(bti, Y) ||
-              minCoord(ati, X) >= maxCoord(bti, X) ||
-              minCoord(ati, Y) >= maxCoord(bti, Y)) {
+            // TEST 2 // XY overlap using square window
+          } else if (maxXA <= minXBuffer[tti] || maxYA <= minYBuffer[tti] ||
+              minXA >= maxXBuffer[tti] || minYA >= maxYBuffer[tti]) {
             testTid++; // pass, not overlapping in XY
 
-          // TEST 3 // test on which side ACTIVE is relative to TEST
-          } else if (side(bti, ati, -1) > 0) {
-            testTid++; // pass, ACTIVE is in halfspace behind current TEST
-
-          // TEST 4 // test on which side TEST is relative to ACTIVE
-          } else if (side(ati, bti, 1) > 0) {
-            testTid++; // pass, current TEST is in halfspace in front of ACTIVE
-
-          // FAIL, wrong depth order, swap
+            // TEST 3 // test on which side ACTIVE is relative to TEST
           } else {
-            rotateRight(triangleIndices, activeTid, testTid);
+            fetchTriCoords(triB, tti, vertexOffset, voffsetMap,
+                screenVertices, polyIndices);
+            if (side(triB, triA, -1) > 0) {
+              testTid++; // pass, ACTIVE is in halfspace behind current TEST
 
-            marked = arrayCheck(marked, markedCount, 1);
-            if (insert(marked, markedCount, triangleIndices[activeTid])) {
-              markedCount++;
-            }
+              // TEST 4 // test on which side TEST is relative to ACTIVE
+            } else if (side(triA, triB, 1) > 0) {
+              testTid++; // pass, current TEST is in halfspace in front of ACTIVE
 
-            swapped = arrayCheck(swapped, swappedCount, 1);
-            if (insert(swapped, swappedCount, triangleIndices[activeTid])) {
-              swappedCount++;
-              testTid = activeTid + 1;
+              // FAIL, wrong depth order, swap
             } else {
-              // oops, we already tested this one, probably intersecting or
-              // interlocked in loop with others, just draw it incorrectly :(
-              draw = true;
+              if (!swapped.get(tti)) {
+                swapped.set(ati);
+                marked.set(tti);
+                rotateRight(triangleIndices, activeTid, testTid);
+
+                ati = tti;
+                System.arraycopy(triB, 0, triA, 0, 9);
+                minXA = minXBuffer[ati];
+                maxXA = maxXBuffer[ati];
+                minYA = minYBuffer[ati];
+                maxYA = maxYBuffer[ati];
+                maxZA = maxZBuffer[ati];
+
+                testTid = activeTid + 1;
+              } else {
+                // oops, we already tested this one, probably intersecting or
+                // interlocked in loop with others, just draw it incorrectly :(
+                draw = true;
+              }
             }
           }
         }
+        activeTid++;
+      }
 
-        if (remove(marked, markedCount, activeTid)) {
-          markedCount--;
-        }
-        if (draw || testTid >= triangleCount) {
-          activeTid++;
+      { // Reorder the buffers
+        for (int id = 0; id < triangleCount; id++) {
+          int mappedId = triangleIndices[id];
+          if (id != mappedId) {
+
+            // put the first index aside
+            short i0 = polyIndices[3*id+0];
+            short i1 = polyIndices[3*id+1];
+            short i2 = polyIndices[3*id+2];
+            int texId = texMap[id];
+            int voffsetId = voffsetMap[id];
+
+            // process the whole permutation cycle
+            int currId = id;
+            int nextId = mappedId;
+            do {
+              triangleIndices[currId] = currId;
+              polyIndices[3*currId+0] = polyIndices[3*nextId+0];
+              polyIndices[3*currId+1] = polyIndices[3*nextId+1];
+              polyIndices[3*currId+2] = polyIndices[3*nextId+2];
+              texMap[currId] = texMap[nextId];
+              voffsetMap[currId] = voffsetMap[nextId];
+
+              currId = nextId;
+              nextId = triangleIndices[nextId];
+            } while (nextId != id);
+
+            // place the first index at the end
+            triangleIndices[currId] = currId;
+            polyIndices[3*currId+0] = i0;
+            polyIndices[3*currId+1] = i1;
+            polyIndices[3*currId+2] = i2;
+            texMap[currId] = texId;
+            voffsetMap[currId] = voffsetId;
+          }
         }
       }
+
     }
 
-    void sortByMinZ(int leftTid, int rightTid) {
+    static void fetchTriCoords(float[] tri, int ti, int[] vertexOffset,
+        int[] voffsetMap, float[] screenVertices, short[] polyIndices) {
+      int voffset = vertexOffset[voffsetMap[ti]];
+      int i0 = 3 * (voffset + polyIndices[3*ti+0]);
+      int i1 = 3 * (voffset + polyIndices[3*ti+1]);
+      int i2 = 3 * (voffset + polyIndices[3*ti+2]);
+      tri[X0] = screenVertices[i0+X];
+      tri[Y0] = screenVertices[i0+Y];
+      tri[Z0] = screenVertices[i0+Z];
+      tri[X1] = screenVertices[i1+X];
+      tri[Y1] = screenVertices[i1+Y];
+      tri[Z1] = screenVertices[i1+Z];
+      tri[X2] = screenVertices[i2+X];
+      tri[Y2] = screenVertices[i2+Y];
+      tri[Z2] = screenVertices[i2+Z];
+    }
+
+    static void sortByMinZ(int leftTid, int rightTid, int[] triangleIndices,
+        float[] minZBuffer) {
 
       // swap pivot to the front
       swap(triangleIndices, leftTid, ((leftTid + rightTid) / 2));
 
       int k = leftTid;
-      float leftMinZ = minCoord(triangleIndices[leftTid], Z);
+      float leftMinZ = minZBuffer[triangleIndices[leftTid]];
 
       // sort by min z
       for (int tid = leftTid+1; tid <= rightTid; tid++) {
-        if (minCoord(triangleIndices[tid], Z) < leftMinZ) {
+        float minZ = minZBuffer[triangleIndices[tid]];
+        if (minZ < leftMinZ) {
           swap(triangleIndices, ++k, tid);
         }
       }
@@ -13601,52 +13745,21 @@ public class PGraphicsOpenGL extends PGraphics {
       // swap pivot back to the middle
       swap(triangleIndices, leftTid, k);
 
-      if (leftTid  < k - 1) sortByMinZ(leftTid,  k - 1);
-      if (k + 1 < rightTid) sortByMinZ(k + 1, rightTid);
+      if (leftTid  < k - 1) sortByMinZ(leftTid,  k - 1, triangleIndices,
+          minZBuffer);
+      if (k + 1 < rightTid) sortByMinZ(k + 1, rightTid, triangleIndices,
+          minZBuffer);
     }
 
     // Math -----------------------------------------------
 
-    float minCoord(int ti, int off) {
-      int voffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[ti]];
-      short[] is = tessGeo.polyIndices;
-      float[] vs = screenVertices;
-      int i0 = voffset + is[3*ti+0];
-      int i1 = voffset + is[3*ti+1];
-      int i2 = voffset + is[3*ti+2];
-      return Math.min(vs[3*i0+off], Math.min(vs[3*i1+off], vs[3*i2+off]));
-    }
-
-    float maxCoord(int ti, int off) {
-      int voffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[ti]];
-      short[] is = tessGeo.polyIndices;
-      float[] vs = screenVertices;
-      int i0 = voffset + is[3*ti+0];
-      int i1 = voffset + is[3*ti+1];
-      int i2 = voffset + is[3*ti+2];
-      return Math.max(vs[3*i0+off], Math.max(vs[3*i1+off], vs[3*i2+off]));
-    }
-
-    int side(int ti, int testTi, float tz) {
-      short[] is = tessGeo.polyIndices;
-      float[] vs = screenVertices;
-
-      int avoffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[ti]];
-      int bvoffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[testTi]];
-
-      int ia0 = avoffset + is[3*ti+0];
-      int ia1 = avoffset + is[3*ti+1];
-      int ia2 = avoffset + is[3*ti+2];
-      int ib0 = bvoffset + is[3*testTi+0];
-      int ib1 = bvoffset + is[3*testTi+1];
-      int ib2 = bvoffset + is[3*testTi+2];
-
+    static int side(float[] tri1, float[] tri2, float tz) {
       float Dx, Dy, Dz, Dw;
       { // Get the equation of the plane
         float
-            ABx = vs[3*ia1+X] - vs[3*ia0+X], ACx = vs[3*ia2+X] - vs[3*ia0+X],
-            ABy = vs[3*ia1+Y] - vs[3*ia0+Y], ACy = vs[3*ia2+Y] - vs[3*ia0+Y],
-            ABz = vs[3*ia1+Z] - vs[3*ia0+Z], ACz = vs[3*ia2+Z] - vs[3*ia0+Z];
+            ABx = tri1[X1] - tri1[X0], ACx = tri1[X2] - tri1[X0],
+            ABy = tri1[Y1] - tri1[Y0], ACy = tri1[Y2] - tri1[Y0],
+            ABz = tri1[Z1] - tri1[Z0], ACz = tri1[Z2] - tri1[Z0];
 
         Dx = ABy*ACz - ABz*ACy; Dy = ABz*ACx - ABx*ACz; Dz = ABx*ACy - ABy*ACx;
 
@@ -13654,30 +13767,26 @@ public class PGraphicsOpenGL extends PGraphics {
         float rMag = 1.0f/(float) Math.sqrt(Dx * Dx + Dy * Dy + Dz * Dz);
         Dx *= rMag; Dy *= rMag; Dz *= rMag;
 
-        Dw = -dot(Dx, Dy, Dz, vs[3*ia0+X], vs[3*ia0+Y], vs[3*ia0+Z]);
+        Dw = -dot(Dx, Dy, Dz, tri1[X0], tri1[Y0], tri1[Z0]);
       }
 
       float distTest = dot(Dx, Dy, Dz,
-                           vs[3*ia0+X], vs[3*ia0+Y], vs[3*ia0+Z] + 100*tz) + Dw;
+          tri1[X0], tri1[Y0], tri1[Z0] + 100*tz) + Dw;
 
-      float distA = dot(Dx, Dy, Dz, vs[3*ib0+X], vs[3*ib0+Y], vs[3*ib0+Z]) + Dw;
-      float distB = dot(Dx, Dy, Dz, vs[3*ib1+X], vs[3*ib1+Y], vs[3*ib1+Z]) + Dw;
-      float distC = dot(Dx, Dy, Dz, vs[3*ib2+X], vs[3*ib2+Y], vs[3*ib2+Z]) + Dw;
+      float distA = dot(Dx, Dy, Dz, tri2[X0], tri2[Y0], tri2[Z0]) + Dw;
+      float distB = dot(Dx, Dy, Dz, tri2[X1], tri2[Y1], tri2[Z1]) + Dw;
+      float distC = dot(Dx, Dy, Dz, tri2[X2], tri2[Y2], tri2[Z2]) + Dw;
 
-      { // Ignore relatively close vertices to get stable results
-        // when some parts of polygons are close to each other
-        float maxDist = Math.max(Math.abs(distA),
-            Math.max(Math.abs(distB), Math.abs(distC)));
-        float eps = maxDist * 0.1f;
+      // Ignore relatively close vertices to get stable results
+      // when some parts of polygons are close to each other
+      float absA = PApplet.abs(distA);
+      float absB = PApplet.abs(distB);
+      float absC = PApplet.abs(distC);
+      float eps = PApplet.max(absA, absB, absC) * 0.1f;
 
-        if (Math.abs(distA) < eps) distA = 0.0f;
-        if (Math.abs(distB) < eps) distB = 0.0f;
-        if (Math.abs(distC) < eps) distC = 0.0f;
-      }
-
-      float sideA = distA * distTest;
-      float sideB = distB * distTest;
-      float sideC = distC * distTest;
+      float sideA = ((absA < eps) ? 0.0f : distA) * distTest;
+      float sideB = ((absB < eps) ? 0.0f : distB) * distTest;
+      float sideC = ((absC < eps) ? 0.0f : distC) * distTest;
 
       boolean sameSide    = sideA >= 0 && sideB >= 0 && sideC >= 0;
       boolean notSameSide = sideA <= 0 && sideB <= 0 && sideC <= 0;
@@ -13691,17 +13800,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
 
-    // Array check ---------------------------------------
-
-    static int[] arrayCheck(int[] array, int size, int requested) {
-      if (size + requested > array.length) {
-        int newLength = Math.max(size + requested, 2 * array.length);
-        int[] temp = new int[newLength];
-        System.arraycopy(array, 0, temp, 0, size);
-        array = temp;
-      }
-      return array;
-    }
+    // Array utils ---------------------------------------
 
     static void swap(int[] array, int i1, int i2) {
       int temp = array[i1];
@@ -13712,50 +13811,8 @@ public class PGraphicsOpenGL extends PGraphics {
     static void rotateRight(int[] array, int i1, int i2) {
       if (i1 == i2) return;
       int temp = array[i2];
-      if (i2 - i1 < 100) {
-        for (int i = i2; i > i1; i--) {
-          array[i] = array[i-1];
-        }
-      } else {
-        System.arraycopy(array, i1, array, i1 + 1, i2 - i1);
-      }
+      System.arraycopy(array, i1, array, i1 + 1, i2 - i1);
       array[i1] = temp;
-    }
-
-    // if the value is not in the array, inserts the value
-    // returns true if the value was inserted, false if found
-    static boolean insert(int[] array, int count, int value) {
-      int index = Arrays.binarySearch(array, 0, count, value);
-      if (index >= 0) return false;
-      index = -(index + 1);
-      if (count - index > 100) {
-        System.arraycopy(array, index, array, index+1, count - index);
-      } else {
-        for (int i = count; i > index; i--) {
-          array[i] = array[i-1];
-        }
-      }
-      array[index] = value;
-      return true;
-    }
-
-    // if the value is in the array, removes the value
-    // returns true if the value was removed, false if found
-    static boolean remove(int[] array, int count, int value) {
-      int index = Arrays.binarySearch(array, 0, count, value);
-      if (index < 0) return false;
-      if (count - index > 100) {
-        System.arraycopy(array, index+1, array, index, count - index - 1);
-      } else {
-        for (int i = index; i < count-1; i++) {
-          array[i] = array[i+1];
-        }
-      }
-      return true;
-    }
-
-    static boolean contains(int[] array, int count, int value) {
-      return Arrays.binarySearch(array, 0, count, value) >= 0;
     }
 
   }
