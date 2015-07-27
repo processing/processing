@@ -3014,24 +3014,41 @@ public class PGraphicsOpenGL extends PGraphics {
 
     sorter.sort(tessGeo);
 
-    int[] triangleIndices = sorter.triangleIndices;
-    int[] texCacheMap = sorter.texCacheMap;
-    int[] indexCacheMap = sorter.indexCacheMap;
+    int triangleCount = tessGeo.polyIndexCount / 3;
+    int[] texMap = sorter.texMap;
+    int[] voffsetMap = sorter.voffsetMap;
 
-    for (int i = 0; i < tessGeo.polyIndexCount/3; i++) {
-      int ti = triangleIndices[i];
-      Texture tex = texCache.getTexture(texCacheMap[ti]);
-      int voffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[ti]];
+    int[] vertexOffset = tessGeo.polyIndexCache.vertexOffset;
+
     updatePolyBuffers(lights, texCache.hasTextures, needNormals, needTexCoords);
 
+    int ti = 0;
+
+    while (ti < triangleCount) {
+
+      int startTi = ti;
+      int texId = texMap[ti];
+      int voffsetId = voffsetMap[ti];
+
+      do {
+        ++ti;
+      } while (ti < triangleCount &&
+          texId == texMap[ti] &&
+          voffsetId == voffsetMap[ti]);
+
+      int endTi = ti;
+
+      Texture tex = texCache.getTexture(texId);
+
+      int voffset = vertexOffset[voffsetId];
+
+      int ioffset = 3 * startTi;
+      int icount = 3 * (endTi - startTi);
 
       // If the renderer is 2D, then lights should always be false,
       // so no need to worry about that.
       PShader shader = getPolyShader(lights, tex != null);
       shader.bind();
-
-      int ioffset = 3*ti;
-      int icount = 3;
 
       shader.setVertexAttribute(bufPolyVertex.glId, 4, PGL.FLOAT, 0,
                                 4 * voffset * PGL.SIZEOF_FLOAT);
@@ -3200,13 +3217,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
     sorter.sort(tessGeo);
     int[] triangleIndices = sorter.triangleIndices;
-    int[] texCacheMap = sorter.texCacheMap;
-    int[] indexCacheMap = sorter.indexCacheMap;
+    int[] texMap = sorter.texMap;
+    int[] voffsetMap = sorter.voffsetMap;
+
+    int[] vertexOffset = tessGeo.polyIndexCache.vertexOffset;
 
     for (int i = 0; i < tessGeo.polyIndexCount/3; i++) {
       int ti = triangleIndices[i];
-      PImage tex = texCache.getTextureImage(texCacheMap[ti]);
-      int voffset = tessGeo.polyIndexCache.vertexOffset[indexCacheMap[ti]];
+      PImage tex = texCache.getTextureImage(texMap[ti]);
+      int voffset = vertexOffset[voffsetMap[ti]];
 
       int i0 = voffset + indices[3*ti+0];
       int i1 = voffset + indices[3*ti+1];
@@ -13439,8 +13458,8 @@ public class PGraphicsOpenGL extends PGraphics {
     static final int Z2 = 8;
 
     int[] triangleIndices = new int[0];
-    int[] texCacheMap = new int[0];
-    int[] indexCacheMap = new int[0];
+    int[] texMap = new int[0];
+    int[] voffsetMap = new int[0];
 
     float[] minXBuffer = new float[0];
     float[] minYBuffer = new float[0];
@@ -13467,8 +13486,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (triangleIndices.length < newTriangleCount) {
         int newSize = (newTriangleCount / 4 + 1) * 5;
         triangleIndices = new int[newSize];
-        texCacheMap     = new int[newSize];
-        indexCacheMap   = new int[newSize];
+        texMap          = new int[newSize];
+        voffsetMap      = new int[newSize];
         minXBuffer      = new float[newSize];
         minYBuffer      = new float[newSize];
         minZBuffer      = new float[newSize];
@@ -13493,8 +13512,8 @@ public class PGraphicsOpenGL extends PGraphics {
       int triangleCount = tessGeo.polyIndexCount / 3;
       checkIndexBuffers(triangleCount);
       int[] triangleIndices = this.triangleIndices;
-      int[] texCacheMap = this.texCacheMap;
-      int[] indexCacheMap = this.indexCacheMap;
+      int[] texMap = this.texMap;
+      int[] voffsetMap = this.voffsetMap;
 
       { // Initialize triangle indices
         for (int i = 0; i < triangleCount; i++) {
@@ -13517,8 +13536,8 @@ public class PGraphicsOpenGL extends PGraphics {
                 : indexCache.indexOffset[n] + indexCache.indexCount[n] - ioffset;
 
             for (int tr = ioffset / 3; tr < (ioffset + icount) / 3; tr++) {
-              texCacheMap[tr] = i;
-              indexCacheMap[tr] = n;
+              texMap[tr] = i;
+              voffsetMap[tr] = n;
             }
           }
         }
@@ -13566,7 +13585,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float[] triB = this.triB;
 
       for (int i = 0; i < triangleCount; i++) {
-        fetchTriCoords(triA, i, vertexOffset, indexCacheMap, screenVertices, polyIndices);
+        fetchTriCoords(triA, i, vertexOffset, voffsetMap, screenVertices, polyIndices);
         minXBuffer[i] = PApplet.min(triA[X0], triA[X1], triA[X2]);
         maxXBuffer[i] = PApplet.max(triA[X0], triA[X1], triA[X2]);
         minYBuffer[i] = PApplet.min(triA[Y0], triA[Y1], triA[Y2]);
@@ -13597,7 +13616,7 @@ public class PGraphicsOpenGL extends PGraphics {
         float maxYA = maxYBuffer[ati];
         float maxZA = maxZBuffer[ati];
 
-        fetchTriCoords(triA, ati, vertexOffset, indexCacheMap, screenVertices, polyIndices);
+        fetchTriCoords(triA, ati, vertexOffset, voffsetMap, screenVertices, polyIndices);
 
         while (!draw && testTid < triangleCount) {
           int tti = triangleIndices[testTid];
@@ -13613,7 +13632,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
             // TEST 3 // test on which side ACTIVE is relative to TEST
           } else {
-            fetchTriCoords(triB, tti, vertexOffset, indexCacheMap,
+            fetchTriCoords(triB, tti, vertexOffset, voffsetMap,
                 screenVertices, polyIndices);
             if (side(triB, triA, -1) > 0) {
               testTid++; // pass, ACTIVE is in halfspace behind current TEST
@@ -13658,8 +13677,8 @@ public class PGraphicsOpenGL extends PGraphics {
             short i0 = polyIndices[3*id+0];
             short i1 = polyIndices[3*id+1];
             short i2 = polyIndices[3*id+2];
-            int texCache = texCacheMap[id];
-            int indexCache = indexCacheMap[id];
+            int texId = texMap[id];
+            int voffsetId = voffsetMap[id];
 
             // process the whole permutation cycle
             int currId = id;
@@ -13669,8 +13688,8 @@ public class PGraphicsOpenGL extends PGraphics {
               polyIndices[3*currId+0] = polyIndices[3*nextId+0];
               polyIndices[3*currId+1] = polyIndices[3*nextId+1];
               polyIndices[3*currId+2] = polyIndices[3*nextId+2];
-              texCacheMap[currId] = texCacheMap[nextId];
-              indexCacheMap[currId] = indexCacheMap[nextId];
+              texMap[currId] = texMap[nextId];
+              voffsetMap[currId] = voffsetMap[nextId];
 
               currId = nextId;
               nextId = triangleIndices[nextId];
@@ -13681,8 +13700,8 @@ public class PGraphicsOpenGL extends PGraphics {
             polyIndices[3*currId+0] = i0;
             polyIndices[3*currId+1] = i1;
             polyIndices[3*currId+2] = i2;
-            texCacheMap[currId] = texCache;
-            indexCacheMap[currId] = indexCache;
+            texMap[currId] = texId;
+            voffsetMap[currId] = voffsetId;
           }
         }
       }
@@ -13690,8 +13709,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     static void fetchTriCoords(float[] tri, int ti, int[] vertexOffset,
-        int[] indexCacheMap, float[] screenVertices, short[] polyIndices) {
-      int voffset = vertexOffset[indexCacheMap[ti]];
+        int[] voffsetMap, float[] screenVertices, short[] polyIndices) {
+      int voffset = vertexOffset[voffsetMap[ti]];
       int i0 = 3 * (voffset + polyIndices[3*ti+0]);
       int i1 = 3 * (voffset + polyIndices[3*ti+1]);
       int i2 = 3 * (voffset + polyIndices[3*ti+2]);
