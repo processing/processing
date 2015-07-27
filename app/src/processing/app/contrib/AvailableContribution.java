@@ -348,7 +348,7 @@ public class AvailableContribution extends Contribution {
         writer.println("lastUpdated=" + lastUpdated);
         writer.println("minRevision=" + minRev);
         writer.println("maxRevision=" + maxRev);
-        if (getType() == ContributionType.LIBRARY && importsList != null) {
+        if ((getType() == ContributionType.LIBRARY || getType() == ContributionType.MODE) && importsList != null) {
           writer.println("imports=" + importsList.join(","));
         }
         if (getType() == ContributionType.EXAMPLES) {
