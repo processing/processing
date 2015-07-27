@@ -2424,6 +2424,12 @@ public class PApplet implements PConstants {
 
     if (frameCount != 0) {
       handleMethods("post");
+    } else {
+      if ((P2D.equals(renderer) || P3D.equals(renderer))) {
+        // Makes sure both textures have the same content
+        // after setup and there is no flickering
+        ((PGraphicsOpenGL) g).loadTexture();
+      }
     }
 
     frameRateLastNanos = now;
