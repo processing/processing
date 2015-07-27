@@ -2,6 +2,8 @@
 X Welcome screen completely broken/looking for debug files
 X   https://github.com/processing/processing/issues/3474
 X Add message that says it's safe to ignore the tools.jar warning
+X add new lower console/errors icons
+_ don't show display warning when display 1 doesn't exist
 
 fixed earlier
 X font fixes for Georgia in the examples
@@ -17,9 +19,15 @@ gsoc
 X CM updates dialog box doesn't open CM
 X   https://github.com/processing/processing/issues/3481
 X   https://github.com/processing/processing/pull/3489
+X include mode imports when rewriting .properties file
+X   https://github.com/processing/processing/pull/3499
+_   https://github.com/processing/processing/issues/3492
 
 
 beta
+_ try to get images working in welcome screen
+_   https://github.com/processing/processing/blob/master/build/shared/lib/welcome/sketchbook.html#L60
+_   https://github.com/processing/processing/issues/3494
 _ write notes about changes with Toolkit and Util, and packages
 _ write text for non-sketchbook version of welcome screen
 _ CM ongoing notes and questions
@@ -31,7 +39,6 @@ _   https://github.com/processing/processing/issues/2953
 
 
 gui
-_ add new lower console/errors icons
 _ fix the red for the console/error stuff
 _   also the sidebar, the squiggly line beneath code, and the status bar
 _ show hover text with 'debug'

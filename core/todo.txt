@@ -6,6 +6,14 @@ opengl
 X ArrayIndexOutOfBoundsException error when enabling depth sorting in P3D
 X   https://github.com/processing/processing/pull/3477
 X   https://github.com/processing/processing/issues/3476
+X Fix curves - properly this time
+X   https://github.com/processing/processing/pull/3501
+X Remove duplicate curve vertex
+X   https://github.com/processing/processing/pull/3496
+X   https://github.com/processing/processing/issues/2937
+X JOGL window size is now set properly
+X   https://github.com/processing/processing/pull/3493
+X   https://github.com/processing/processing/issues/3223
 
 
 docs
@@ -15,6 +23,8 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 beta
+_ size() errors
+_   https://github.com/processing/processing/issues/3483
 _ make notes about Java2D and JavaFX packages in the README
 _ move AWT image loading into PImageAWT
 _   look into how GL and FX will handle from there
