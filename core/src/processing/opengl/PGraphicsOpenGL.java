@@ -7161,6 +7161,16 @@ public class PGraphicsOpenGL extends PGraphics {
       maxAnisoAmount = floatBuffer.get(0);
     }
 
+    // overwrite the default shaders with vendor specific versions
+    // if needed
+    if (OPENGL_RENDERER.equals("VideoCore IV HW") ||    // Broadcom's binary driver for Raspberry Pi
+      OPENGL_RENDERER.equals("Gallium 0.4 on VC4")) {   // Mesa driver for same hardware
+        defLightShaderVertURL =
+          PGraphicsOpenGL.class.getResource("/processing/opengl/shaders/quirks/vc4-LightVert.glsl");
+        defTexlightShaderVertURL =
+          PGraphicsOpenGL.class.getResource("/processing/opengl/shaders/quirks/vc4-TexLightVert.glsl");
+    }
+
     glParamsRead = true;
   }
 
