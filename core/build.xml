@@ -63,8 +63,9 @@
     <!-- Copy shaders to bin. (Eclipse does this automatically.) -->
     <copy todir="bin">
       <fileset dir="src">
-	<include name="processing/opengl/shaders/*.glsl" />
-	<include name="icon/*.png" />
+        <include name="processing/opengl/shaders/*.glsl" />
+        <include name="processing/opengl/shaders/quirks/*.glsl" />
+        <include name="icon/*.png" />
       </fileset>
     </copy>
   </target>		

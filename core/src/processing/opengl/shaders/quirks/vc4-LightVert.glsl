@@ -94,7 +94,9 @@ void main() {
   vec3 totalBackDiffuse = vec3(0, 0, 0);
   vec3 totalBackSpecular = vec3(0, 0, 0);
   
-  for (int i = 0; i < 8; i++) {
+  // prevent register allocation failure by limiting ourselves to
+  // two lights for now
+  for (int i = 0; i < 2; i++) {
     if (lightCount == i) break;
     
     vec3 lightPos = lightPosition[i].xyz;
