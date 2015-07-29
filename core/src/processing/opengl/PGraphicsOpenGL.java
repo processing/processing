@@ -899,8 +899,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     @Override
     public boolean equals(Object obj) {
-      GLResourceTexture other = (GLResourceTexture)obj;
-      return other.glName == glId &&
+      GLResourceVertexBuffer other = (GLResourceVertexBuffer)obj;
+      return other.glId == glId &&
              other.context == context;
     }
 
