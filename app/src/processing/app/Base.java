@@ -56,9 +56,9 @@ import processing.data.StringList;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 238;
+  static private final int REVISION = 242;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0238"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0242"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 
   /** True if heavy debugging error/log messages are enabled */
@@ -97,6 +97,8 @@ public class Base {
       }
     }
   }
+
+  static String nativeArch = System.getProperty("os.arch");
 
   static private boolean commandLine;
 
@@ -242,7 +244,13 @@ public class Base {
           final boolean prompt = sketchbookPrompt;
           EventQueue.invokeLater(new Runnable() {
             public void run() {
-              new Welcome(base, prompt);
+              try {
+                new Welcome(base, prompt);
+              } catch (IOException e) {
+                Base.showBadnessTrace("Unwelcoming",
+                                      "Please report this error to\n" +
+                                      "https://github.com/processing/processing/issues", e, false);
+              }
             }
           });
         }
@@ -1338,15 +1346,35 @@ public class Base {
   }
 
 
-  protected boolean addSketches(DefaultMutableTreeNode node, File folder) throws IOException {
+  public boolean addSketches(DefaultMutableTreeNode node,
+                             File folder,
+                             boolean examples) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) {
       return false;
     }
 
-    if (folder.getName().equals("libraries")) {
-      return false;  // let's not go there
+    final String folderName = folder.getName();
+
+    // Don't look inside the 'libraries' folders in the sketchbook
+    if (folderName.equals("libraries")) {
+      return false;
     }
+
+    // When building the sketchbook, don't show the contributed 'examples'
+    // like it's a subfolder. But when loading examples, allow the folder
+    // to be named 'examples'.
+    if (!examples && folderName.equals("examples")) {
+      return false;
+    }
+
+//    // Conversely, when looking for examples, ignore the other folders
+//    // (to avoid going through hoops with the tree node setup).
+//    if (examples && !folderName.equals("examples")) {
+//      return false;
+//    }
+//    // Doesn't quite work because the parent will be 'examples', and we want
+//    // to walk inside that, but the folder itself will have a different name
 
     String[] fileList = folder.list();
     // If a bad folder or unreadable or whatever, this will come back null
@@ -1357,34 +1385,11 @@ public class Base {
     // Alphabetize the list, since it's not always alpha order
     Arrays.sort(fileList, String.CASE_INSENSITIVE_ORDER);
 
-//    ActionListener listener = new ActionListener() {
-//        public void actionPerformed(ActionEvent e) {
-//          String path = e.getActionCommand();
-//          if (new File(path).exists()) {
-//            handleOpen(path);
-//          } else {
-//            showWarning("Sketch Disappeared",
-//                        "The selected sketch no longer exists.\n" +
-//                        "You may need to restart Processing to update\n" +
-//                        "the sketchbook menu.", null);
-//          }
-//        }
-//    };
-    // offers no speed improvement
-    //menu.addActionListener(listener);
-
     boolean found = false;
     for (String name : fileList) {
-      //Skip hidden files
-      if (name.charAt(0) == '.') {
+      if (name.charAt(0) == '.') {  // Skip hidden files
         continue;
       }
-
-//      JTree tree = null;
-//      TreePath[] a = tree.getSelectionPaths();
-//      for (TreePath path : a) {
-//        Object[] o = path.getPath();
-//      }
 
       File subfolder = new File(folder, name);
       if (subfolder.isDirectory()) {
@@ -1400,7 +1405,7 @@ public class Base {
           // not a sketch folder, but maybe a subfolder containing sketches
           DefaultMutableTreeNode subnode = new DefaultMutableTreeNode(name);
           // needs to be separate var otherwise would set ifound to false
-          boolean anything = addSketches(subnode, subfolder);
+          boolean anything = addSketches(subnode, subfolder, examples);
           if (anything) {
             node.add(subnode);
             found = true;
@@ -1540,6 +1545,30 @@ public class Base {
     return nativeBits;
   }
 
+  /**
+   * Return the value of the os.arch propery
+   */
+  static public String getNativeArch() {
+    return nativeArch;
+  }
+
+  /*
+   * Return a string that identifies the variant of a platform
+   * e.g. "32" or "64" on Intel
+   */
+  static public String getVariant() {
+    return getVariant(PApplet.platform, getNativeArch(), getNativeBits());
+  }
+
+  static public String getVariant(int platform, String arch, int bits) {
+    if (platform == PConstants.LINUX && bits == 32 && "arm".equals(Base.getNativeArch())) {
+      // assume armv6hf for now
+      return "armv6hf";
+    } else {
+      // 32 or 64
+      return Integer.toString(bits);
+    }
+  }
 
   /*
   static public String getPlatformName() {
@@ -1753,12 +1782,7 @@ public class Base {
         sketchbookFolder.mkdirs();
       }
     }
-
-    getSketchbookLibrariesFolder().mkdir();
-    getSketchbookToolsFolder().mkdir();
-    getSketchbookModesFolder().mkdir();
-    getSketchbookExamplesFolder().mkdir();
-//    System.err.println("sketchbook: " + sketchbookFolder);
+    makeSketchbookSubfolders();
   }
 
 
@@ -1766,6 +1790,18 @@ public class Base {
     sketchbookFolder = folder;
     Preferences.setSketchbookPath(folder.getAbsolutePath());
     rebuildSketchbookMenus();
+    makeSketchbookSubfolders();
+  }
+
+
+  /**
+   * Create the libraries, modes, tools, examples folders in the sketchbook.
+   */
+  static protected void makeSketchbookSubfolders() {
+    getSketchbookLibrariesFolder().mkdirs();
+    getSketchbookToolsFolder().mkdirs();
+    getSketchbookModesFolder().mkdirs();
+    getSketchbookExamplesFolder().mkdirs();
   }
 
 
@@ -2116,7 +2152,7 @@ public class Base {
                         JOptionPane.QUESTION_MESSAGE);
 
       String[] options = new String[] {
-          "Yes", "No"
+        "Yes", "No"
       };
       pane.setOptions(options);
 
@@ -2142,7 +2178,8 @@ public class Base {
 
   /**
    * Get reference to a file adjacent to the executable on Windows and Linux,
-   * or inside Contents/Resources/Java on Mac OS X.
+   * or inside Contents/Resources/Java on Mac OS X. This will return the local
+   * JRE location, *whether or not it is the active JRE*.
    */
   static public File getContentFile(String name) {
     if (processingRoot == null) {

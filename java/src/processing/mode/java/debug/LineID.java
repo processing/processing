@@ -147,7 +147,9 @@ public class LineID implements DocumentListener {
                 return; // line doesn't exist
             }
             String lineText = doc.getText(line.getStartOffset(), line.getEndOffset() - line.getStartOffset());
-            // set tracking position at (=before) first non-white space character on line
+            // set tracking position at (=before) first non-white space character on line,
+            // or, if the line consists of entirely white spaces, just before the newline
+            // character
             pos = doc.createPosition(line.getStartOffset() + nonWhiteSpaceOffset(lineText));
             this.doc = doc;
             doc.addDocumentListener(this);
@@ -222,7 +224,14 @@ public class LineID implements DocumentListener {
                 return i;
             }
         }
-        return str.length();
+        
+        /* If we've reached here, that implies the line consists of purely white 
+         * space. So return at a position just after the whitespace (i.e., 
+         * just before the newline).
+         * 
+         * The " - 1" part resolves issue #3552
+         */
+        return str.length() - 1;
     }
 
     /**

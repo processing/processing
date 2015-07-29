@@ -155,11 +155,11 @@ implements MouseListener, MouseMotionListener, ActionListener {
 
   @Override
   public void mouseClicked(MouseEvent e) {
-    if (isEnabled()) {
-      shift = e.isShiftDown();
-      actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-                                      null, e.getModifiers()));
-    }
+//    if (isEnabled()) {
+//      shift = e.isShiftDown();
+//      actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+//                                      null, e.getModifiers()));
+//    }
   }
 
 
@@ -171,6 +171,13 @@ implements MouseListener, MouseMotionListener, ActionListener {
   @Override
   public void mousePressed(MouseEvent e) {
     setPressed(true);
+
+    // Need to fire here (or on mouse up) because mouseClicked()
+    // won't be fired if the user nudges the mouse while clicking.
+    // https://github.com/processing/processing/issues/3529
+    shift = e.isShiftDown();
+    actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+                                    null, e.getModifiers()));
   }
 
 

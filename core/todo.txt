@@ -1,137 +1,11 @@
-0238 (3.0a11)
-X add note about headless exceptions that points to Github
-X resize children[] so that getChildren() returns a correctly-sized array
-X   https://github.com/processing/processing/issues/3347
-X show warning when display spanning is turned off with fullScreen(SPAN)
-X   defaults read com.apple.spaces spans-displays
-X   https://github.com/processing/processing/issues/3381
-X add javaPlatform variable (i.e. 7 or 8)
-X clear() seems to be broken (maybe related to 3317)
-X   https://github.com/processing/processing/issues/3378
-X PGraphic ignores PNG transparency (regression from 3.0a5)
-X   https://github.com/processing/processing/issues/3317
-X   (same issue as 3378)
-X move error messages out of PConstants (into PApplet? PGraphics?) 
-o replace sketchXxxx() methods with another mechanism?
-o   and an internal dictionary that stores them all?
-o   intParam(), stringParam() and setParam()? 
-o   or sketchInt() or settingsInt()?
-o   surface.size(), surface.noSmooth()... just like PGraphics methods?
-o   make final to move folks away from these?
-o   or is this a bad move until we've sorted out Android?
-X   HashMap sucks b/c we'd have to cast everything
-X   doesn't help to have intParam() etc, too many types (5ish? OutputStream)
-X   just stick with the current setup
-X remove launch(String) since it was calling itself, and anachronistic
-X sketches with new fullScreen() method should grab focus by default
-X   https://github.com/processing/processing/issues/3380
-X sketches not getting focus with Java2D
-X   https://github.com/processing/processing/issues/3389
-X draw() executes twice when noLoop() called in setup()
-X   https://github.com/processing/processing/issues/3310
-X   broken since 3.0a7, but not in 3.0a5
-o pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
-X   nixed by Casey for now
-X displayDensity() not functioning properly
-X   https://github.com/processing/processing/issues/3436
-X surface.setXxx() handling
-X   https://github.com/processing/processing/issues/3388
-X   setResizable, setVisible, setTitle
-X   setIconImage(java.awt.Image) -> take a PImage instead?
-o   removeNotify(), addNotify()
-X   setUndecorated(boolean)
-X   setting menubar will be surface-specific
-X   setLocation(int, int) and setSize(int, int)
-X add the "don't use this" warning to the JFrame in PSurfaceAWT
-X ArithmeticException: / by zero when using fonts opened with loadFont()
-X   https://github.com/processing/processing/issues/3413
-X SVG briefly broken for Java2D
-X   https://github.com/processing/processing/issues/3417
-X change how font metrics are pulled to fix text width issues
-X check alpha when image extension is "unknown"
-X   https://github.com/processing/processing/issues/3442
-X add support for more Image types (BGR) with PImage(java.awt.Image) constructor
-X move Java2D and JavaFX classes to their own packages
+0242 core (3.0b4)
 
-threading headaches
-X sketch not always showing with empty draw()
-X   https://github.com/processing/processing/issues/3363
-X static mode broken with Java2D on Windows and Linux
-X   https://github.com/processing/processing/issues/3315
-X sketch sometimes doesn't show with noLoop() on Linux
-X   https://github.com/processing/processing/issues/3316
-X Window never shows with exported application on 64-bit Linux
-X   https://github.com/processing/processing/issues/3303
-X present mode is now broken
-o still some spinning when sketches break
-X   fixed because we're back off the EDT
-o settings() is probably not showing exceptions since we're back to the EDT
-o   can't call handleSettings() on the anim thread since it sets the surface
-o   so maybe the first part is on the EDT, but other threads run this stuff
-X remove the init() method
 
-cleaning
-o possible addition for 'implementation' variable
-X   http://code.google.com/p/processing/issues/detail?id=281
-X   https://github.com/processing/processing/issues/320
-X   closing as wontfix
-
-retina fixes
-X make g.pixelDensity public inside PApplet (so accessible by sketches)
-o   or is it akin to g.fill and the rest?
-X   it's in PApplet, but not public.. will be the same as g.pixelDensity
-X add pixelWidth/Height to PApplet
-X   add setSize() method for surfaces
-X   tricky cuz we'll need a getter/setter when surface messes w/ things
-
-text/fonts
-X Text looks blurry in GL Retina
-X   https://github.com/processing/processing/issues/2739
-X text not getting the correct font in Retina2D
-X   https://github.com/processing/processing/issues/2617
-X Text is half size in PGraphicsRetina2D
-X   https://github.com/processing/processing/issues/2738
-
-andres/opengl
-X ortho function is broken
-X   https://github.com/processing/processing/issues/1278
-X errors with loading SVGs in P3D/P2D
-X   https://github.com/processing/processing/issues/3379
-X sketch window briefly appears on top left corner when using OpenGL
-X   https://github.com/processing/processing/issues/3308
-X add attrib() method
-X   https://github.com/processing/processing/issues/2963
-X   andres needs input on how the api works
-o   assign this to DXF as well?
-X beginShape(POINTS) don't show up in P2D
-X   https://github.com/processing/processing/issues/3029
-
-contribs
-X Fix NullPointerException in DepthSorter
-X   https://github.com/processing/processing/pull/3410
-
-fixed earlier
-X sketch window is not placed at correct location when running a second time
-X   https://github.com/processing/processing/issues/3125
-X full screen needs to ignore prev location setting for frame?
-X   https://github.com/processing/processing/issues/3305
-X save() and saveFrame() with 2X renderers fails
-X   https://github.com/processing/processing/issues/3255
-X NPE when using image() created with createGraphics(PGraphicsRetina2D)
-X   https://github.com/processing/processing/issues/2510
-X Closing OpenGL sketch from the PDE doesn't stop java.exe process
-X   https://github.com/processing/processing/issues/2335
-
-cleaning
-o keep Danger2D? 
-o   can't do version that draws to BufferStrategy directly
-o   pixel operations (get/set/loadPixels/saveFrame) might be fixable
-o   but can't re-run draw() to re-blit the screen
-o     because we don't split calc() and draw()
-o   even with the split, handleDraw() might need to live in PSurface
-o   add calc() option? this could ease transition
-X   decided to put efforts into JavaFX
-
+opengl
+_ Use PBOs for async texture copy
+_   https://github.com/processing/processing/issues/3569
+_ filter(PShader) broken in HiDPI mode
+_   https://github.com/processing/processing/issues/3577
 
 docs
 _ note that full screen and present are now different
@@ -139,8 +13,10 @@ _   on Export to Application, this has an impact
 _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
-beta
-_ make notes about Java2D and JavaFX packages in the README
+3.0 final
+_ move blending calculations from PImage into PGraphics
+_   tricky because that means moving blend_resize() as well
+_   and should that live in PGraphics or be its own class or ??
 _ move AWT image loading into PImageAWT
 _   look into how GL and FX will handle from there
 _ run only the necessary pieces on the EDT
@@ -150,6 +26,11 @@ _ try using Frame instead of JFrame
 _   default sketch location using insets incorrectly
 _   use the BufferStrategy directly from the Frame object?
 _     might fix performance issues w/ Presentation mode
+_ sketch placement (window insets) not properly set on Linux
+_   https://github.com/processing/processing/issues/2063
+_ are we clear on sketchPath() for OS X?
+_   working dir (user.dir?) returns home dir, not app dir in Oracle Java
+_   could add -Dapp.root=$APP_ROOT and get via System.getProperty("app.root")
 
 
 javafx
@@ -171,6 +52,7 @@ _   or is Canvas specific to the PGraphics, and we get another Context2D?
 _   http://docs.oracle.com/javafx/2/api/javafx/scene/canvas/Canvas.html
 _ loadPixels() (also 2x)
 _ text and fonts?
+_   maybe helpful: https://wiki.openjdk.java.net/display/OpenJFX/Font+Setup
 _ updatePixels()
 _ save() and saveFrame()
 _ get() and set()
@@ -190,6 +72,8 @@ opengl
 _ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
 _ window loses focus after maximizing
 _   https://github.com/processing/processing/issues/3339
+_ Implement standard cursor types in OpenGL
+_   https://github.com/processing/processing/issues/3554
 
 
 opengl questions
@@ -242,6 +126,7 @@ _   w/ this example: https://github.com/processing/processing/issues/2423
 
 
 data
+_ implement strip(), lstrip(), rstrip?
 _ handling of 'missing' values in Table needs serious work
 _   if missing int is zero, can't just remove those values from saving a table
 _   but for NaN values, it's a necessity
@@ -337,7 +222,6 @@ _ add version of math functions that use doubles?
 _   what other methods should work with doubles? all math functions?
 _   seems like internal (mostly static) things, but not graphics api
 _ new PGraphics(... OutputStream) 
-X   http://code.google.com/p/processing/issues/detail?id=246
 _   https://github.com/processing/processing/issues/285
 _   already added for PDF, just need to work out the API
 _ if save() returns boolean, does saveFrame()?
@@ -360,8 +244,6 @@ _   decision: add error messages where possible
 _   idea: set frameCount to -1 when setup not run yet?
 _     then set frameCount to 0 when setup() starts?
 _ need to clean up the hints in the reference/source
-_ sort out edge + 1 issue on stroke/fill for rectangles
-_   http://code.google.com/p/processing/issues/detail?id=509
 _ exactly how should pixel filling work with single pixel strokes?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1025 (no gcode)
 _ y2 position of rectangles not same as y2 position of lines
@@ -384,18 +266,14 @@ _ wrap exceptions with die() and warn() methods
 _   this way, people can make use of exceptions if they would rather
 _   or shut them off if they don't want to 
 _   also need to explain exception handling in general
-_   http://code.google.com/p/processing/issues/detail?id=183
+_   https://github.com/processing/processing/issues/222
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
 _ finish adding loadStrings(BufferedReader)
 _   decide if we want to keep this (and/or others?)
 _   port to android
 _ deprecate the older splice() etc API inside PApplet?
-_ splice() throws ClassCastException when used with objects like PVector 
-_   http://code.google.com/p/processing/issues/detail?id=1407
 _ add notes about the new shader setup
 _ add reference/docs for urlEncode() and urlDecode()
-_ verify (and document) public access members of PApplet
-_   http://code.google.com/p/processing/issues/detail?id=83
 _ add explanation to the reference about using beginRecord() with fonts
 _   pdf.textMode(SHAPE)
 _   also set the font *after* the record has started
@@ -431,15 +309,6 @@ _   volatile images
 _   http://www.javalobby.org/forums/thread.jspa?threadID=16840&tstart=0
 _   http://www.javalobby.org/forums/thread.jspa?threadID=16867&tstart=0
 _   http://www.gamedev.net/page/resources/_/technical/general-programming/java-games-active-rendering-r2418
-_ look into using BufferStrategy again to improve performance
-_   there are more improvements to be made ala issue #729
-_ make sure rendering is happening on the EDT
-_   (hopefully fixes flicker issues)
-_   change PApplet.java javadoc to reflect the change
-_   Update http://wiki.processing.org/w/Troubleshooting#Flicker
-_   http://code.google.com/p/processing/issues/detail?id=775
-_ thread() causes weird flickering
-_   http://code.google.com/p/processing/issues/detail?id=742
 
 
 CORE / stop() 
@@ -451,8 +320,9 @@ _   move that stuff to destroy()
 _ pause()/resume() need to work on the desktop side as well
 _   notify ddf when pause/resume implemented
 _ stop() not called in 1.5
-_   http://code.google.com/p/processing/issues/detail?id=636
-_   In reply to c#1, I noticed that dispose() is getting called. stop() isn't.
+_   https://github.com/processing/processing/issues/675
+_   noticed that dispose() is getting called. stop() isn't.
+_   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
 _ static mode sketches seem to break ESC... noLoop() problem?
 _   need to find another way to get ESC on static mode
 _   b/c static mode sketches *do* finish because they have no draw()
@@ -472,14 +342,7 @@ _   does stop() unwind the thread, or does the thread unwind call stop?
 _   browser will call start() and stop() methods
 _ need to figure out start/stop signals coming from the browser
 _   is it dispose/destroy? 
-_ stop() not getting called
-_   http://code.google.com/p/processing/issues/detail?id=43
-_   major problem for libraries
-_   and start() is supposedly called by the applet viewer
-_   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
-_   need to track this stuff down a bit
 _ when closing a sketch via the close box, make sure stop() getting called
-X   found a problem for release 0133
 _   test to see if it's working
 _ what's up with stop() vs exit()?
 _   need to get this straightened for p5 (i.e. bc has this problem)
@@ -488,11 +351,8 @@ _   i.e. problem with main calling itself multiple times in Alpheus
 _   if exit() (or stop) is called, then System.exit() gets called,
 _   even though the main() wants to keep going
 _ hitting ESC in a running noLoop()ed sketch won't close the sketch?
-o   work through serial examples
 _ noloop ref even says that redraw will be called on resize, make sure it is
 _ focus not coming through, ESC no longer working(?)
-_ stop() not called in 1.5 when closing the sketch window
-_   http://code.google.com/p/processing/issues/detail?id=636
 _ hitting cmd-q when an applet is running quits p5 (on macosx)
 _   but cmd-q when running externally is ok because it just quits
 _   is there a way to catch cmd-q when running a sketch? 
@@ -503,21 +363,17 @@ _     maybe a hack where a new menubar is added?
 
 CORE / PFont and text()
 
-_ text() wraps words differently depending on whether space seen or not
-_   http://code.google.com/p/processing/issues/detail?id=439
 _ remove subsetting stuff from PFont?
 _   or use hint(ENABLE_FONT_SUBSETTING)? 
 _ what's the difference with ascent on loadFont vs. createFont?
 _ svg fonts
 _   would be nifty if we could convert on the fly to ttf for speed...
-X   http://code.google.com/p/processing/issues/detail?id=748
 _   https://github.com/processing/processing/issues/787
 _ font rotation (native font problem?) with natives?
-X   http://code.google.com/p/processing/issues/detail?id=692
 _   https://github.com/processing/processing/issues/731
 _ text position is quantized in JAVA2D
 _   text placement is ugly, seems like fractional metrics problem
-_   http://code.google.com/p/processing/issues/detail?id=99
+_   https://github.com/processing/processing/issues/138
 _ text(char c) with char 0 and undefined should print nothing
 _   perhaps also DEL or other nonprintables?
 _   book example 25-03
@@ -560,7 +416,7 @@ _   https://github.com/processing/processing/issues/2096
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
-_   http://code.google.com/p/processing/issues/detail?id=60
+_   https://github.com/processing/processing/issues/99
 _ loadPixels() implementation needs to be in PApplet, not PGraphics
 _ this is a tricky thing to implement because of how OpenGL is handled
 
@@ -572,21 +428,16 @@ _   would using a BufferedImage work better?
 _   is the image actually a BufferedImage so PixelGrabber is a waste?
 
 _ fix blue-channel bias on blend()
-_   http://code.google.com/p/processing/issues/detail?id=475
+_   https://github.com/processing/processing/issues/514
 _ improve blend() accuracy when using ADD
-_   http://code.google.com/p/processing/issues/detail?id=133
+_   https://github.com/processing/processing/issues/172
 _   includes code for a slow but more accurate mode
 _ deprecate the blend() function
 
 _ implement unified means to specify smoothing level for image scaling
-_   http://code.google.com/p/processing/issues/detail?id=165
-_ blend() and copy() are not pixel accurate for copy/scale
-_   http://code.google.com/p/processing/issues/detail?id=285
+_   https://github.com/processing/processing/issues/204
 _ accuracy problems make alpha channel go to FE with image.copy()
-_   http://code.google.com/p/processing/issues/detail?id=219
-
-_ Semitransparent rect drawn over image not rendered correctly
-_   http://code.google.com/p/processing/issues/detail?id=182
+_   https://github.com/processing/processing/issues/258
 
 
 CORE / PShape
@@ -597,8 +448,6 @@ _ PShape should be cached as well
 _ major surgery to put loadShape() back into PApplet/PGraphics
 _   then have the OpenGL or Java2D versions as cached objects
 _ PShape s = createShape(); / s.beginShape(QUADS);
-_ createShape() not yet implemented for Java2D
-_   http://code.google.com/p/processing/issues/detail?id=1400
 _ keeping these public for now
 _   get/setNormal
 _   get/setTextureUV
@@ -627,7 +476,7 @@ _   better lockout inside beginShape() to keep other things from happening
 _   don't allow you to draw stroked items unless stroke() is called
 _   don't allow beginShape() if shape is already set
 _     (otherwise will cause some very strange errors)
-_   http://code.google.com/p/processing/issues/detail?id=135
+_   https://github.com/processing/processing/issues/174
 _ make determination on shape(x,y,z,w,h,d) or no
 _ PShape API to handle internal vertex stuff
 _   add deconstruct() method for paths
@@ -644,12 +493,10 @@ _ for PShape, need to be able to set the origin (flash people)
 CORE / PShapeSVG
 
 _ implement support for SVG gradients from Inkscape
-_   http://code.google.com/p/processing/issues/detail?id=1142
+_   https://github.com/processing/processing/issues/1180
 _ need to handle <!ENTITY tags in XML for SVG documents
 _   get entity tags working in xml library for SVG
 _ cover the svg changes in a future release
-_ load PShape from a string object
-_   http://code.google.com/p/processing/issues/detail?id=277
 _ breaking up classes / figure out how to handle fonts subclass
 _ when using get(), reset the bounds for the objects
 _   otherwise it's always relative to the original document
@@ -666,7 +513,6 @@ _   also curveto with multiple sets of points is ignored
 _ document somehow.. svg viewer will be discontinued
 _   http://www.adobe.com/svg/eol.html
 _ PShape getVertex() not implemented properly for SVG files
-X   https://code.google.com/p/processing/issues/detail?id=1558
 _   https://github.com/processing/processing/issues/1596
 
 
@@ -678,71 +524,20 @@ _   maybe screenVec()? or screenXYZ()?
 
 CORE / OpenGL (Andres)
 
-_ ortho() issues
-_   http://code.google.com/p/processing/issues/detail?id=1240
-_ hint(DISABLE_PERSPECTIVE_CORRECTED_STROKE)
 _ textureWrap(CLAMP / REPEAT)
-_ implement setImpl() instead of set() inside PGraphicsOpenGL
-_   http://code.google.com/p/processing/issues/detail?id=121
-_ first few frames of OpenGL sketches on Windows run slowly
-_   http://code.google.com/p/processing/issues/detail?id=107
-_ implement textMode(SHAPE) with OPENGL
-_   https://github.com/processing/processing/issues/777
-X   http://code.google.com/p/processing/issues/detail?id=738
-_ Signature issue on contributed libraries affects unrelated opengl sketches
-_   http://code.google.com/p/processing/issues/detail?id=261
 _ simple NPE in OpenGL causes really large, not useful, stack trace
 _ why is initPrimarySurface() public?
 _ why is setFramerate() public? (also should be setFrameRate or just frameRate)
 _ where did hintEnabled() come from?
 _ remove 'params' from createImage (is it on loadImage too?)
-_ OpenGL noSmooth() problems
-_   http://code.google.com/p/processing/issues/detail?id=328
-_ OS X slow with FSEM enabled
-_   http://code.google.com/p/processing/issues/detail?id=737
-_ get() with OPENGL is grabbing the wrong coords
-_   http://code.google.com/p/processing/issues/detail?id=191
-_ deal with issue of single pixel seam at the edge of textures
-_   should vertexTexture() divide by width/height or width-1/height-1?
-_   http://code.google.com/p/processing/issues/detail?id=76
-_ lousy graphics cards cause background to flicker if background() not used
-_   http://code.google.com/p/processing/issues/detail?id=146
-_   OPENGL sketches flicker w/ Vista when background() not used inside draw()
-_   Disabling Aero scheme sometimes prevents the problem
-_   Updating graphics drivers may prevent the problem 
-_ ellipse scaling method isn't great
-_   http://code.google.com/p/processing/issues/detail?id=87
-_ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
-_   https://github.com/processing/processing/issues/90
-_   for begin/endRaw: https://github.com/processing/processing/issues/2235
-_   http://code.google.com/p/processing/issues/detail?id=51
-_   polygon z-order depth sorting with alpha in opengl
-_   complete the implementation of hint() with proper implementation
-_   gl alpha on images when flipped around backwards
-_     will sorting based on depth help this? also ask simon for ideas
-_   need to merge sorting/drawing of lines and triangles
-_     lines will occlude tris and vice versa
-_     will need to split each based on the other
-_     sort issues will affect both
-_ Stroking a rect() leaves off the upper right pixel
-_   http://code.google.com/p/processing/issues/detail?id=67
-_ Signature issue on contributed libraries affects unrelated opengl sketches
-_   http://code.google.com/p/processing/issues/detail?id=261
 _ remove matrixMode(), add a projection() method
-_ opengl applet problems with tabs - needs to handle stop() and start() 
-_   http://code.google.com/p/processing/issues/detail?id=196
-_   stop() called between tabs/pages, start() may be called again
-_   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
-_   really, stop() should just call noLoop() (and start re-enable if done)
-_     and on android, start/stop can be used to save state information
-_   need to fix opengl applets so that we can safely kill P3D
 _ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
 _   libraries have to do a lot of casting
 _ opengl isn't drawing rectangles out to raw properly with fonts
 _   when not in textMode(SHAPE) should have rects
 _ InvScreenX, Y, Z to convert screen (mouse) coordinates to model coordinates
 _   https://github.com/processing/processing/issues/1609
-X   https://code.google.com/p/processing/issues/detail?id=1571
+
 
 CORE / Mac OS X
 
@@ -756,7 +551,6 @@ CORE / Events
 
 _ Implement a way to disable automatic key repeat
 _   https://github.com/processing/processing/issues/1622
-X   https://code.google.com/p/processing/issues/detail?id=1584
 _ touch events.. can't do MouseEvent et al with Android
 _   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
 _   http://www.html5rocks.com/en/mobile/touch.html

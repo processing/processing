@@ -171,16 +171,20 @@ class StatusPanel extends JPanel {
   }
 
   void setMessage(String message) {
-    label.setForeground(Color.BLACK);
-    label.setText(message);
-    label.repaint();
+    if (label != null) {
+      label.setForeground(Color.BLACK);
+      label.setText(message);
+      label.repaint();
+    }
   }
 
   void setErrorMessage(String message) {
-    //setForeground(Color.RED);
-    label.setForeground(new Color(160, 0, 0));
-    label.setText(message);
-    label.repaint();
+    if (label != null) {
+      //setForeground(Color.RED);
+      label.setForeground(new Color(160, 0, 0));
+      label.setText(message);
+      label.repaint();
+    }
   }
 
   void clear() {

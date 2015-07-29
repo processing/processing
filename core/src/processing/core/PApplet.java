@@ -809,6 +809,11 @@ public class PApplet implements PConstants {
   protected PSurface surface;
 
 
+  public PSurface getSurface() {
+    return surface;
+  }
+
+
   /**
    * A dummy frame to keep compatibility with 2.x code
    * and encourage users to update.
@@ -4797,7 +4802,24 @@ public class PApplet implements PConstants {
   static public final float map(float value,
                                 float start1, float stop1,
                                 float start2, float stop2) {
-    return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    float outgoing =
+      start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    String badness = null;
+    if (outgoing != outgoing) {
+      badness = "NaN (not a number)";
+
+    } else if (outgoing == Float.NEGATIVE_INFINITY ||
+               outgoing == Float.POSITIVE_INFINITY) {
+      badness = "infinity";
+    }
+    if (badness != null) {
+      final String msg =
+        String.format("map(%s, %s, %s, %s, %s) called, which returns %s",
+                      nf(value), nf(start1), nf(stop1),
+                      nf(start2), nf(stop2), badness);
+      PGraphics.showWarning(msg);
+    }
+    return outgoing;
   }
 
 
@@ -6647,6 +6669,11 @@ public class PApplet implements PConstants {
   public InputStream createInputRaw(String filename) {
     if (filename == null) return null;
 
+    if (sketchPath == null) {
+      System.err.println("The sketch path is not set.");
+      throw new RuntimeException("Files must be loaded inside setup() or after it has been called.");
+    }
+
     if (filename.length() == 0) {
       // an error will be called by the parent function
       //System.err.println("The filename passed to openStream() was empty.");
@@ -6659,18 +6686,21 @@ public class PApplet implements PConstants {
       try {
         URL url = new URL(filename);
         URLConnection conn = url.openConnection();
-        HttpURLConnection httpConn = (HttpURLConnection) conn;
-        // Will not handle a protocol change (see below)
-        httpConn.setInstanceFollowRedirects(true);
-        int response = httpConn.getResponseCode();
-        // Normally will not follow HTTPS redirects from HTTP due to security concerns
-        // http://stackoverflow.com/questions/1884230/java-doesnt-follow-redirect-in-urlconnection/1884427
-        if (response >= 300 && response < 400) {
-          String newLocation = httpConn.getHeaderField("Location");
-          return createInputRaw(newLocation);
+        if (conn instanceof HttpURLConnection) {
+          HttpURLConnection httpConn = (HttpURLConnection) conn;
+          // Will not handle a protocol change (see below)
+          httpConn.setInstanceFollowRedirects(true);
+          int response = httpConn.getResponseCode();
+          // Normally will not follow HTTPS redirects from HTTP due to security concerns
+          // http://stackoverflow.com/questions/1884230/java-doesnt-follow-redirect-in-urlconnection/1884427
+          if (response >= 300 && response < 400) {
+            String newLocation = httpConn.getHeaderField("Location");
+            return createInputRaw(newLocation);
+          }
+          return conn.getInputStream();
+        } else if (conn instanceof JarURLConnection) {
+          return url.openStream();
         }
-        return conn.getInputStream();
-
       } catch (MalformedURLException mfue) {
         // not a url, that's fine
 
@@ -9183,6 +9213,24 @@ public class PApplet implements PConstants {
   // INT NUMBER FORMATTING
 
 
+  static public String nf(float num) {
+    int inum = (int) num;
+    if (num == inum) {
+      return str(inum);
+    }
+    return str(num);
+  }
+
+
+  static public String[] nf(float[] num) {
+    String[] outgoing = new String[num.length];
+    for (int i = 0; i < num.length; i++) {
+      outgoing[i] = nf(num[i]);
+    }
+    return outgoing;
+  }
+
+
   /**
    * Integer number formatter.
    */
@@ -10068,7 +10116,11 @@ public class PApplet implements PConstants {
         Class<?> c =
           Thread.currentThread().getContextClassLoader().loadClass(name);
         sketch = (PApplet) c.newInstance();
+      } catch (RuntimeException re) {
+        // Don't re-package runtime exceptions
+        throw re;
       } catch (Exception e) {
+        // Package non-runtime exceptions so we can throw them freely
         throw new RuntimeException(e);
       }
     }
@@ -10230,7 +10282,7 @@ public class PApplet implements PConstants {
         @Override
         public void setSize(int w, int h) {
           deprecationWarning("setSize");
-          surface.setLocation(w, h);
+          surface.setSize(w, h);
         }
 
         private void deprecationWarning(String method) {
@@ -10335,7 +10387,7 @@ public class PApplet implements PConstants {
    * ( end auto-generated )
    *
    * @webref output:files
-   * @param renderer for example, PDF
+   * @param renderer PDF or SVG
    * @param filename filename for output
    * @see PApplet#endRecord()
    */

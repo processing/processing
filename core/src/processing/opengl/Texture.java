@@ -1246,7 +1246,7 @@ public class Texture implements PConstants {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
       pgl.drawTexture(tex.glTarget, tex.glName, tex.glWidth, tex.glHeight,
-                      0, 0, tempFbo.width, tempFbo.height,
+                      0, 0, tempFbo.width, tempFbo.height, 1,
                       x, y, x + w, y + h, 0, 0, width, height);
 
     } else {
@@ -1254,7 +1254,7 @@ public class Texture implements PConstants {
       // of the source texture fall in the corresponding texels of the
       // destination.
       pgl.drawTexture(tex.glTarget, tex.glName, tex.glWidth, tex.glHeight,
-                      0, 0, tempFbo.width, tempFbo.height,
+                      0, 0, tempFbo.width, tempFbo.height, 1,
                       x, y, x + w, y + h, x, y, x + w, y + h);
     }
     pg.popFramebuffer();

@@ -1,4 +1,7 @@
-Copyright (c) 2004, 2014 Grzegorz Kowal
+Launch4j (http://launch4j.sourceforge.net/)
+Cross-platform Java application wrapper for creating Windows native executables.
+
+Copyright (c) 2004, 2015 Grzegorz Kowal
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

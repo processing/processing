@@ -76,26 +76,23 @@ public class JavaTextAreaPainter extends TextAreaPainter
   protected Font gutterTextFont;
   protected Color gutterTextColor;
   protected Color gutterLineHighlightColor;
-//  protected Color gutterTempColor;
 
   public static class ErrorLineCoord {
-	public int xStart;
-	public int xEnd;
-	public int yStart;
-	public int yEnd;
-	public Problem problem;
+    public int xStart;
+    public int xEnd;
+    public int yStart;
+    public int yEnd;
+    public Problem problem;
 
-	public ErrorLineCoord(int xStart, int xEnd, int yStart, int yEnd, Problem problem) {
-	  this.xStart = xStart;
-	  this.xEnd = xEnd;
-	  this.yStart = yStart;
-	  this.yEnd = yEnd;
-	  this.problem = problem;
+    public ErrorLineCoord(int xStart, int xEnd, int yStart, int yEnd, Problem problem) {
+      this.xStart = xStart;
+      this.xEnd = xEnd;
+      this.yStart = yStart;
+      this.yEnd = yEnd;
+      this.problem = problem;
     }
   }
   public List<ErrorLineCoord> errorLineCoords = new ArrayList<>();
-
-//  static int ctrlMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
 
   public JavaTextAreaPainter(JavaTextArea textArea, TextAreaDefaults defaults) {
@@ -118,16 +115,21 @@ public class JavaTextAreaPainter extends TextAreaPainter
       long lastTime;  // OS X seems to be firing multiple mouse events
 
       public void mousePressed(MouseEvent event) {
-        long thisTime = event.getWhen();
-        if (thisTime - lastTime > 100) {
-          if (event.getX() < Editor.LEFT_GUTTER) {
-            int offset = getTextArea().xyToOffset(event.getX(), event.getY());
-            if (offset >= 0) {
-              int lineIndex = getTextArea().getLineOfOffset(offset);
-              getEditor().toggleBreakpoint(lineIndex);
+        JavaEditor javaEditor = getEditor();
+        // Don't toggle breakpoints when the debugger isn't enabled
+        // https://github.com/processing/processing/issues/3306
+        if (javaEditor.isDebuggerEnabled()) {
+          long thisTime = event.getWhen();
+          if (thisTime - lastTime > 100) {
+            if (event.getX() < Editor.LEFT_GUTTER) {
+              int offset = getTextArea().xyToOffset(event.getX(), event.getY());
+              if (offset >= 0) {
+                int lineIndex = getTextArea().getLineOfOffset(offset);
+                javaEditor.toggleBreakpoint(lineIndex);
+              }
             }
+            lastTime = thisTime;
           }
-          lastTime = thisTime;
         }
       }
     });
@@ -146,7 +148,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     });
 
     // TweakMode code
-    interactiveMode = false;
+    tweakMode = false;
     cursorType = Cursor.DEFAULT_CURSOR;
   }
 
@@ -271,7 +273,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
     }
     gfx.fillRect(0, y, Editor.LEFT_GUTTER, fm.getHeight());
 
-    String text = getTextArea().getGutterText(line);
+    String text = null;
+    if (getEditor().isDebuggerEnabled()) {
+      text = getTextArea().getGutterText(line);
+    }
     // if no special text for a breakpoint, just show the line number
     if (text == null) {
       text = String.valueOf(line + 1);
@@ -293,6 +298,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
   }
 
 
+  /*
   // Failed attempt to switch line numbers to old-style figures
   String makeOSF(String what) {
     char[] c = what.toCharArray();
@@ -301,81 +307,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     }
     return new String(c);
   }
-
-
-//  /**
-//   * Paint the gutter background (solid color).
-//   *
-//   * @param gfx
-//   *          the graphics context
-//   * @param line
-//   *          0-based line number
-//   * @param x
-//   *          horizontal position
-//   */
-//  protected void paintGutterBg(Graphics gfx, int line, int x) {
-//    gfx.setColor(getTextArea().gutterBgColor);
-//    gfx.setColor(Color.ORANGE);
-//    int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
-//    gfx.fillRect(0, y, Editor.LEFT_GUTTER, fm.getHeight());
-//  }
-
-
-//  /**
-//   * Paint the vertical gutter separator line.
-//   *
-//   * @param gfx
-//   *          the graphics context
-//   * @param line
-//   *          0-based line number
-//   * @param x
-//   *          horizontal position
-//   */
-//  protected void paintGutterLine(Graphics gfx, int line, int x) {
-//    int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
-//    gfx.setColor(getTextArea().gutterLineColor);
-//    gfx.setColor(Color.GREEN);
-//    gfx.drawLine(Editor.LEFT_GUTTER, y,
-//                 Editor.LEFT_GUTTER, y + fm.getHeight());
-//  }
-
-
-//  /**
-//   * Paint the gutter text.
-//   *
-//   * @param gfx
-//   *          the graphics context
-//   * @param line
-//   *          0-based line number
-//   * @param x
-//   *          horizontal position
-//   */
-//  protected void paintGutterText(Graphics gfx, int line, int x) {
-//    String text = getTextArea().getGutterText(line);
-//    if (text == null) {
-//      return;
-//    }
-//
-//    gfx.setFont(getFont());
-//    Color textColor = getTextArea().getGutterTextColor(line);
-//    if (textColor == null) {
-//      gfx.setColor(getForeground());
-//    } else {
-//      gfx.setColor(textColor);
-//    }
-//    int y = textArea.lineToY(line) + fm.getHeight();
-//
-//    // draw 4 times to make it appear bold, displaced 1px to the right, to the bottom and bottom right.
-//    //int len = text.length() > ta.gutterChars ? ta.gutterChars : text.length();
-//    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-//                             Editor.GUTTER_MARGIN, y, gfx, this, 0);
-//    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-//                             Editor.GUTTER_MARGIN + 1, y, gfx, this, 0);
-//    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-//                             Editor.GUTTER_MARGIN, y + 1, gfx, this, 0);
-//    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-//                             Editor.GUTTER_MARGIN + 1, y + 1, gfx, this, 0);
-//  }
+  */
 
 
   /**
@@ -650,9 +582,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
   // TweakMode code
 	protected int horizontalAdjustment = 0;
 
-	public boolean interactiveMode = false;
-//	public ArrayList<Handle> handles[];
-//	public ArrayList<ColorControlBox> colorBoxes[];
+	public boolean tweakMode = false;
 	public List<List<Handle>> handles;
 	public List<List<ColorControlBox>> colorBoxes;
 
@@ -661,22 +591,19 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 	int cursorType;
 	BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-
-	// Create a new blank cursor.
-	Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-	    cursorImg, new Point(0, 0), "blank cursor");
+	Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
 
 
 	@Override
 	synchronized public void paint(Graphics gfx) {
 		super.paint(gfx);
 
-		if (interactiveMode && handles != null) {
+		if (tweakMode && handles != null) {
 			int currentTab = getCurrentCodeIndex();
 			// enable anti-aliasing
 			Graphics2D g2d = (Graphics2D)gfx;
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                				RenderingHints.VALUE_ANTIALIAS_ON);
+                				   RenderingHints.VALUE_ANTIALIAS_ON);
 
 			for (Handle n : handles.get(currentTab)) {
 				// update n position and width, and draw it
@@ -701,22 +628,23 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	}
 
 
-	protected void startInterativeMode() {
+	protected void startTweakMode() {
 	  addMouseListener(this);
 	  addMouseMotionListener(this);
-	  interactiveMode = true;
+	  tweakMode = true;
 	  setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		repaint();
 	}
 
 
-	protected void stopInteractiveMode() {
-		interactiveMode = false;
+	protected void stopTweakMode() {
+		tweakMode = false;
 
 		if (colorSelector != null) {
-			// close color selector
 			colorSelector.hide();
-			colorSelector.frame.dispatchEvent(new WindowEvent(colorSelector.frame, WindowEvent.WINDOW_CLOSING));
+			WindowEvent windowEvent =
+			  new WindowEvent(colorSelector.frame, WindowEvent.WINDOW_CLOSING);
+			colorSelector.frame.dispatchEvent(windowEvent);
 		}
 
 		setCursor(new Cursor(Cursor.TEXT_CURSOR));
@@ -724,9 +652,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	}
 
 
-	// Update the interface
-	//public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[]) {
-	protected void updateInterface(List<List<Handle>> handles, List<List<ColorControlBox>> colorBoxes) {
+	protected void updateInterface(List<List<Handle>> handles,
+	                               List<List<ColorControlBox>> colorBoxes) {
 		this.handles = handles;
 		this.colorBoxes = colorBoxes;
 
@@ -908,13 +835,13 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 				colorSelector = new ColorSelector(box);
 				colorSelector.frame.addWindowListener(new WindowAdapter() {
-				        public void windowClosing(WindowEvent e) {
-				        	colorSelector.frame.setVisible(false);
-				        	colorSelector = null;
-				        }
-				      });
-				colorSelector.show(this.getLocationOnScreen().x + e.getX() + 30,
-						this.getLocationOnScreen().y + e.getY() - 130);
+				  public void windowClosing(WindowEvent e) {
+				    colorSelector.frame.setVisible(false);
+				    colorSelector = null;
+				  }
+				});
+				colorSelector.show(getLocationOnScreen().x + e.getX() + 30,
+				                   getLocationOnScreen().y + e.getY() - 130);
 			}
 		}
 	}
@@ -967,33 +894,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
   }
 
 
-//	private int getGutterMargins() {
-//	  return ((JavaTextArea) textArea).getGutterMargins();
-//	}
-
-
-//	private int getGutterWidth() {
-//	  return ((JavaTextArea) textArea).getGutterWidth();
-//	}
-
-
 	private JavaTextArea getTextArea() {
 	  return (JavaTextArea) textArea;
 	}
-
-
-//	private Color getGutterBgColor() {
-//    return ((JavaTextArea) textArea).gutterBgColor;
-//  }
-
-
-//	private boolean isDebugToolbarEnabled() {
-//	  AtomicBoolean enabled = getEditor().debugToolbarEnabled;
-//	  return (enabled != null && enabled.get());
-//	}
-
-
-//	private boolean hasJavaTabs() {
-//	  return getEditor().hasJavaTabs();
-//	}
 }

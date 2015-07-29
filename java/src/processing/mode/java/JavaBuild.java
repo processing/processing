@@ -258,16 +258,23 @@ public class JavaBuild {
     }
     //System.out.format("size() is '%s'%n", info[0]);
 
-    /*
-    // Remove the size() statement (will be added back by writeFooter())
-    if (sizeInfo != null) {
-      String sizeStatement = sizeInfo.getStatement();
-      if (sizeStatement != null) {
-        int index = bigCode.indexOf(sizeStatement);
-        bigCode.delete(index, index + sizeStatement.length());
+    // Remove the entries being moved to settings(). They will be re-inserted
+    // by writeFooter() when it emits the settings() method.
+    if (sizeInfo != null && sizeInfo.hasSettings()) {
+//      String sizeStatement = sizeInfo.getStatement();
+      for (String stmt : sizeInfo.getStatements()) {
+//      if (sizeStatement != null) {
+        //System.out.format("size stmt is '%s'%n", sizeStatement);
+        int index = bigCode.indexOf(stmt);
+        if (index != -1) {
+          bigCode.delete(index, index + stmt.length());
+        } else {
+          // TODO remove once we hit final; but prevent an exception like in
+          // https://github.com/processing/processing/issues/3531
+          System.err.format("Error removing '%s' from the code.", stmt);
+        }
       }
     }
-    */
 
     PreprocessorResult result;
     try {
@@ -785,21 +792,28 @@ public class JavaBuild {
       boolean embedJava = (platform == PApplet.platform) &&
         Preferences.getBoolean("export.application.embed_java");
 
-      if (Preferences.getBoolean("export.application.platform." + platformName)) {
+      if (Preferences.getBoolean(JavaEditor.EXPORT_PREFIX + platformName)) {
         if (Library.hasMultipleArch(platform, importedLibraries)) {
           // export the 32-bit version
           folder = new File(sketch.getFolder(), "application." + platformName + "32");
-          if (!exportApplication(folder, platform, 32, embedJava && Base.getNativeBits() == 32)) {
+          if (!exportApplication(folder, platform, "32", embedJava && Base.getNativeBits() == 32 && "x86".equals(Base.getNativeArch()))) {
             return false;
           }
           // export the 64-bit version
           folder = new File(sketch.getFolder(), "application." + platformName + "64");
-          if (!exportApplication(folder, platform, 64, embedJava && Base.getNativeBits() == 64)) {
+          if (!exportApplication(folder, platform, "64", embedJava && Base.getNativeBits() == 64 && "x86".equals(Base.getNativeArch()))) {
             return false;
+          }
+          if (platform == PConstants.LINUX) {
+            // export the armv6hf version as well
+            folder = new File(sketch.getFolder(), "application.linux-armv6hf");
+            if (!exportApplication(folder, platform, "armv6hf", embedJava && Base.getNativeBits() == 32 && "arm".equals(Base.getNativeArch()))) {
+              return false;
+            }
           }
         } else { // just make a single one for this platform
           folder = new File(sketch.getFolder(), "application." + platformName);
-          if (!exportApplication(folder, platform, 0, embedJava)) {
+          if (!exportApplication(folder, platform, "", embedJava)) {
             return false;
           }
         }
@@ -840,18 +854,18 @@ public class JavaBuild {
    */
   protected boolean exportApplication(File destFolder,
                                       int exportPlatform,
-                                      int exportBits,
+                                      String exportVariant,
                                       boolean embedJava) throws IOException, SketchException {
     // TODO this should probably be a dialog box instead of a warning
     // on the terminal. And the message should be written better than this.
     // http://code.google.com/p/processing/issues/detail?id=884
     for (Library library : importedLibraries) {
-      if (!library.supportsArch(exportPlatform, exportBits)) {
+      if (!library.supportsArch(exportPlatform, exportVariant)) {
         String pn = PConstants.platformNames[exportPlatform];
         Base.showWarning("Quibbles 'n Bits",
-                         "The application." + pn + exportBits +
+                         "The application." + pn + exportVariant +
                          " folder will not be created\n" +
-                         "because no " + exportBits + "-bit version of " +
+                         "because no " + exportVariant + " version of " +
                          library.getName() + " is available for " + pn, null);
         return true;  // don't cancel all exports for this, just move along
       }
@@ -1055,7 +1069,7 @@ public class JavaBuild {
     /// add contents of 'library' folders to the export
     for (Library library : importedLibraries) {
       // add each item from the library folder / export list to the output
-      for (File exportFile : library.getApplicationExports(exportPlatform, exportBits)) {
+      for (File exportFile : library.getApplicationExports(exportPlatform, exportVariant)) {
 //        System.out.println("export: " + exportFile);
         String exportName = exportFile.getName();
         if (!exportFile.exists()) {

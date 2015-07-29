@@ -24,7 +24,11 @@ package processing.app.ui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -38,18 +42,32 @@ import processing.data.StringDict;
 public class WebFrame extends JFrame {
   JEditorPane editorPane;
   HTMLEditorKit editorKit;
+//  int contentHeight;
+  boolean ready;
 
 
-  public WebFrame(File file, int width) {
-    //setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+  public WebFrame(File file, int width) throws IOException {
+    // Need to use the URL version so that relative paths work for images
+    // https://github.com/processing/processing/issues/3494
+    URL fileUrl = file.toURI().toURL();  //.toExternalForm();
+    requestContentHeight(width, fileUrl);
 
-    String[] lines = PApplet.loadStrings(file);
-    String content = PApplet.join(lines, "\n");
+    editorPane = new JEditorPane();
 
-    int high = getContentHeight(width, content);
-    editorPane = new JEditorPane("text/html", content);
+    // Title cannot be set until the page has loaded
+    editorPane.addPropertyChangeListener("page", new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent evt) {
+        Object title = editorPane.getDocument().getProperty("title");
+        if (title instanceof String) {
+          setTitle((String) title);
+        }
+      }
+    });
+
+    editorPane.setPage(fileUrl);
     editorPane.setEditable(false);
-    editorPane.setPreferredSize(new Dimension(width, high));
+    // set height to something generic
+    editorPane.setPreferredSize(new Dimension(width, width));
     getContentPane().add(editorPane);
 
     Toolkit.registerWindowCloseKeys(getRootPane(), new ActionListener() {
@@ -62,25 +80,22 @@ public class WebFrame extends JFrame {
     editorKit = (HTMLEditorKit) editorPane.getEditorKit();
     editorKit.setAutoFormSubmission(false);
 
-    Object title = editorPane.getDocument().getProperty("title");
-    if (title instanceof String) {
-      setTitle((String) title);
-    }
-
     editorPane.addHyperlinkListener(new HyperlinkListener() {
       @Override
       public void hyperlinkUpdate(HyperlinkEvent e) {
         //System.out.println(e);
         if (e instanceof FormSubmitEvent) {
-          //System.out.println("got submit event");
           String result = ((FormSubmitEvent) e).getData();
           StringDict dict = new StringDict();
-          String[] pairs = result.split("&");
-          for (String pair : pairs) {
-            String[] pieces = pair.split("=");
-            String attr = PApplet.urlDecode(pieces[0]);
-            String valu = PApplet.urlDecode(pieces[1]);
-            dict.set(attr, valu);
+          if (result.trim().length() != 0) {
+            String[] pairs = result.split("&");
+            for (String pair : pairs) {
+              //System.out.println("pair is " + pair);
+              String[] pieces = pair.split("=");
+              String attr = PApplet.urlDecode(pieces[0]);
+              String valu = PApplet.urlDecode(pieces[1]);
+              dict.set(attr, valu);
+            }
           }
           //dict.print();
           handleSubmit(dict);
@@ -91,9 +106,6 @@ public class WebFrame extends JFrame {
         }
       }
     });
-    pack();
-    setLocationRelativeTo(null);
-    //setVisible(true);
   }
 
 
@@ -108,6 +120,22 @@ public class WebFrame extends JFrame {
   */
 
 
+  public void setVisible(final boolean visible) {
+    new Thread(new Runnable() {
+      public void run() {
+        while (!ready) {
+          try {
+            Thread.sleep(5);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        }
+        WebFrame.super.setVisible(visible);
+      }
+    }).start();
+  }
+
+
   public void handleClose() {
     dispose();
   }
@@ -116,7 +144,7 @@ public class WebFrame extends JFrame {
   /**
    * Override this to do something interesting when a form is submitted.
    * To keep things simple, this doesn't allow for multiple params with the
-   * same name.
+   * same name. If no params submitted, the Dict will be empty (not null).
    */
   public void handleSubmit(StringDict dict) {
   }
@@ -127,10 +155,41 @@ public class WebFrame extends JFrame {
   }
 
 
-  // Why this doesn't work inline above is beyoned me
+  /*
+  // Why this doesn't work inline above is beyond me
   static int getContentHeight(int width, String content) {
     JEditorPane dummy = new JEditorPane("text/html", content);
     dummy.setSize(width, Short.MAX_VALUE);
     return dummy.getPreferredSize().height;
+  }
+  */
+
+
+  // Unlike the static version above that uses an (already loaded) String for
+  // the content, using setPage() makes things run asynchronously, causing
+  // getContentHeight() to fail because it returns zero. Instead we make
+  // things 10x more complicated so that images will work.
+  void requestContentHeight(final int width, final URL url) {
+    new Thread(new Runnable() {
+      public void run() {
+        final JEditorPane dummy = new JEditorPane();
+        dummy.addPropertyChangeListener("page", new PropertyChangeListener() {
+          @Override
+          public void propertyChange(PropertyChangeEvent evt) {
+            int high = dummy.getPreferredSize().height;
+            editorPane.setPreferredSize(new Dimension(width, high));
+            pack();
+            setLocationRelativeTo(null);
+            ready = true;
+          }
+        });
+        try {
+          dummy.setPage(url);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        dummy.setSize(width, Short.MAX_VALUE);
+      }
+    }).start();
   }
 }

@@ -40,8 +40,8 @@
 
   <messages>
     <startupErr>An error occurred while starting the application.</startupErr>
-    <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted.</bundledJreErr>
-    <jreVersionErr>This application requires Java to be installed</jreVersionErr>
+    <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted. If running from a folder with non-ASCII characters, try moving this folder to another location.</bundledJreErr>
+    <jreVersionErr>Required files could not be found. If running from a folder with non-ASCII characters, try moving this folder to another location.</jreVersionErr>
     <launcherErr>The registry refers to a nonexistent Java installation or the runtime is corrupted.</launcherErr>
     <instanceAlreadyExistsMsg>An application instance is already running.</instanceAlreadyExistsMsg>
   </messages>

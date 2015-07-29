@@ -874,8 +874,8 @@ public class PVector implements Serializable {
    * @brief Calculate the angle of rotation for this vector
    */
   public float heading() {
-    float angle = (float) Math.atan2(-y, x);
-    return -1*angle;
+    float angle = (float) Math.atan2(y, x);
+    return angle;
   }
 
 

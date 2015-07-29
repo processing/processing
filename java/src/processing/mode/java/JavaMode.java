@@ -209,7 +209,7 @@ public class JavaMode extends Mode {
             // next lines are executed when the sketch quits
             if (launchInteractive) {
                 editor.initEditorCode(parser.allHandles, false);
-                editor.stopInteractiveMode(parser.allHandles);
+                editor.stopTweakMode(parser.allHandles);
             }
           }
         }).start();
@@ -218,7 +218,7 @@ public class JavaMode extends Mode {
         // replace editor code with baseCode
         editor.initEditorCode(parser.allHandles, false);
         editor.updateInterface(parser.allHandles, parser.colorBoxes);
-        editor.startInteractiveMode();
+        editor.startTweakMode();
       }
       return runtime;
     }

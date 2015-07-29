@@ -32,6 +32,11 @@
     </condition>
     <!--<echo message="compiler is ${build.compiler}" />-->
 
+    <!-- JavaFX got removed from the Oracle's JDK for arm -->
+    <condition property="fx.unavailable" value="true">
+      <equals arg1="${os.arch}" arg2="arm" />
+    </condition>
+
     <!-- link against apple.jar for the ThinkDifferent class -->
     <mkdir dir="bin" />
     <javac source="1.7"
@@ -39,13 +44,16 @@
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   debug="true"
-	   srcdir="src" destdir="bin"
+	   destdir="bin"
 	   classpath="apple.jar; 
                       library/jogl-all.jar; 
                       library/gluegen-rt.jar"
 	   nowarn="true">
       <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
       <compilerclasspath path="${jdt.jar}; ../java/mode/jdtCompilerAdapter.jar" />
+      <src path="src" />
+      <include name="processing/**" />
+      <exclude name="processing/javafx/**" if="fx.unavailable" />
     </javac>
     
     <!-- Copy the jnilib to the bin folder so it's included. -->
@@ -55,8 +63,8 @@
     <!-- Copy shaders to bin. (Eclipse does this automatically.) -->
     <copy todir="bin">
       <fileset dir="src">
-	<include name="processing/opengl/shaders/*.glsl" />
-	<include name="icon/*.png" />
+        <include name="processing/opengl/shaders/*.glsl" />
+        <include name="icon/*.png" />
       </fileset>
     </copy>
   </target>		

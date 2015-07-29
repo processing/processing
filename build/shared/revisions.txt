@@ -1,3 +1,318 @@
+PROCESSING 3.0b3 (REV 0241) - 11 August 2015
+
+You get a beta! YOU get a beta! *YOU* get a beta! Everybody gets a beta!
+
+
+[ bug fixes & changes ] 
+
++ Prevent 'examples' from showing as a folder in the sketchbook window
+  (instead only show it in the Examples window)
+
++ Don't show breakpoints when debugger is off
+  https://github.com/processing/processing/issues/3093
+
++ No setting breakpoints when debugger is off
+  https://github.com/processing/processing/issues/3306
+
++ Foundation library examples should appear under "Core" or "Foundation"
+  https://github.com/processing/processing/issues/3524
+
++ Use ctrl-pageup/down on Linux for prev/next tab
+  https://github.com/processing/processing/issues/3416
+
++ Library names not showing up correctly ("pdf" instead of "PDF Export")
+  https://github.com/processing/processing/issues/3574
+
++ Contributed Examples were using their folder name, not the 'name' field 
+  from their properties file when shown in the Examples window.
+
++ Include name of sketch when asking user "Save sketch before closing?"
+  Did i18n changes for OS X and other platforms, though some languages
+  will need additional updates to be compatible.
+  https://github.com/processing/processing/issues/3418
+
++ Modify naming of contributed examples
+  https://github.com/processing/processing/issues/3573
+
++ Show a warning when map() prints a bad value
+  https://github.com/processing/processing/issues/3314
+
++ Implement a nf(float) function to support the changes in map()
+
++ Breakpoints don't 'jump' after hitting Enter on blank line
+  https://github.com/processing/processing/issues/3552
+  https://github.com/processing/processing/pull/3571
+
++ Implement focusGained(), focusLost(), and 'focused' variable in P2D/P3D
+  https://github.com/processing/processing/issues/3564
+
++ IndexOutOfBoundsException with pixelDensity(2) and P2D
+  https://github.com/processing/processing/issues/3568
+
++ Shaders output to bottom left corner rather than full window in 3.0b2
+  https://github.com/processing/processing/issues/3572
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+PROCESSING 3.0b2 (REV 0240) - 9 August 2015
+
+Several delicious bug fixes to repair things that cropped up in the first
+beta release. Please keep the reports & code coming and help us get to 3.0.
+
+
+[ bug fixes ]
+
++ "Add Library..." fails with "Could not write to temporary directory"
+  https://github.com/processing/processing/issues/3548
+
++ Make size(displayWidth, displayHeight) still run in a window.
+  Fixes "fullScreen() cannot be used here" message on startup.
+  https://github.com/processing/processing/issues/3545
+  In the past we were auto-detecting if it was the screen size, 
+  and switching to full screen mode. But that's now removed because
+  fullScreen() is so easy, and full screen may not be wanted.
+
++ Cannot find "processing.core" library. Line 12 in tab sketch_150704a"
+  also happens with "import to com.jogamp.opengl.GL2"
+  https://github.com/processing/processing/issues/3547
+  Code still ran properly, but looked like errors in the editor.
+
++ Remove "pair is" debug messages from Welcome screen
+
++ Save Export to Application settings between uses
+  
++ Fix NullPointerException in setVertex()
+  https://github.com/processing/processing/pull/3553
+  https://github.com/processing/processing/issues/3550
+
++ Toggling between noLights and PointLight in draw() behaving strangely
+  https://github.com/processing/processing/issues/3546
+  
++ NullPointerException in Planets demo
+  https://github.com/processing/processing/issues/3551
+
++ Late breaking fix to repair Tweak mode
+  https://github.com/processing/processing/issues/3562
+  https://github.com/processing/processing/pull/3563
+
+
+[ changes and improvements ]
+
++ Show contributed examples in the Examples window
+  https://github.com/processing/processing/issues/3420
+
++ Initialize the Find dialog with the current selection
+  https://github.com/processing/processing/issues/3457
+
++ Disable Export button when no platforms selected. In previous releases,
+  it would report "done exporting!" but nothing had actually happened.
+
++ Prevent Export with examples and untitled/unsaved sketches
+  
++ Links in error bar are not selectable nor clickable
+  https://github.com/processing/processing/issues/3471
+
+
+[ internal/development fixes ]
+
++ Building: make the download-jdk-macosx target work properly
+
++ Throw an error when using methods that require sketchPath outside setup()
+  https://github.com/processing/processing/issues/3433
+
++ Cleaned up the advanced OpenGL wiki page
+  
++ cursor(CROSS) breaks when using surface.setTitle()
+  https://github.com/processing/processing/issues/3472
+
+
+[ fixed earlier ]
+
++ blend() and copy() are not pixel accurate for copy/scale
+  https://github.com/processing/processing/issues/324
+  Fixed somewhere between 0179 and 0184
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+PROCESSING 3.0b1 (REV 0239) - 6 August 2015
+
+This is the big one! The first beta, which will now be the default download
+on the site. That means we think this is the best release of Processing that's
+currently available, and that nearly everyone should be using it. It doesn't
+mean we've worked out all the bugs just yet, but hey, who has?
+
+A still-in-progress rundown of the changes in Processing 3 is here:
+https://github.com/processing/processing/wiki/Changes-in-3.0
+
+2.x Modes, Tools, and Libraries will need to be updated for 3.x, so if you're
+an author of these, see the notes in the link above. We're also planning some
+sort of online Q & A / office hours / talk to Ben about what's changed session
+to help folks along. We want to help, we just need to find the time.
+
+And for those into the nitty gritty, or who enjoy lame jokes about esoteric 
+technical details, the detailed changes since 3.0 alpha 11 are below.
+
+
+[ bug fixes ] 
+
++ The new Welcome screen! was... completely broken
+  https://github.com/processing/processing/issues/3474
+
++ StringIndexOutOfBoundsException while preprocessing
+  https://github.com/processing/processing/issues/3531
+
++ Run/Stop/Debug buttons do not fire if the mouse moves during the click
+  https://github.com/processing/processing/issues/3529
+
++ Some contributions were listed multiple times
+  https://github.com/processing/processing/issues/3353
+
++ Do not filter Ctrl+Alt+? out as menu mnemonics
+  https://github.com/processing/processing/issues/3536
+  https://github.com/processing/processing/pull/3537
+
++ Fix delete tab shortcut in toolbar popup
+  https://github.com/processing/processing/pull/3535
+
++ Deleted tab still present in tab menu
+  https://github.com/processing/processing/issues/3534
+  https://github.com/processing/processing/pull/3542
+  https://github.com/processing/processing/pull/3541
+
++ Make PFont.size protected again
+  https://github.com/processing/processing/issues/3519
+
++ Tweak implementation of PVector.heading()
+  https://github.com/processing/processing/issues/3511
+
++ Fix problem with JAR loading inside createInputRaw()
+  https://github.com/processing/processing/pull/3514
+
+
+[ changes, because not everything is a bug ] 
+
++ Add new console/errors icons to the tabs in the footer
+
++ Get images working in the Welcome screen
+  https://github.com/processing/processing/issues/3494
+
++ Add getSurface() method ('surface' is protected in PApplet)
+
++ Remove 'contrib updates available' dialog box for now. A new version
+  is coming soon that will be better-integrated with the editor.
+
+
+[ internal changes you'll probably never notice ] 
+
++ Add message that says it's safe to ignore the tools.jar warning
+
++ Add "git pull" on processing-docs for "dist" target
+
++ Update to launch4j 3.8
+
+
+[ contributions by our fine community ] 
+
++ Fix contribution compatibility check
+  https://github.com/processing/processing/pull/3479
+
++ Update Spanish translation
+  https://github.com/processing/processing/pull/3480
+
++ Fix bug with tab sorting when adding new tabs
+  https://github.com/processing/processing/pull/3540
+  https://github.com/processing/processing/issues/3099
+
+
+[ this summer, Google's paying folks to stay indoors & work on Processing ]
+
++ CM updates dialog box doesn't open CM
+  https://github.com/processing/processing/issues/3481
+  https://github.com/processing/processing/pull/3489
+
++ Adding CM ellipses only when text is long
+  https://github.com/processing/processing/pull/3470
+
++ Include mode imports when rewriting .properties file
+  https://github.com/processing/processing/pull/3499
+  https://github.com/processing/processing/issues/3492
+
++ Assortment of patches from gohai's arm-3.0 branch
+  https://github.com/processing/processing/pull/3522
+
+
+[ Jakub joins Andres in a battle of wits and test of wills against OpenGL ] 
+
++ Implement depth sorting! Use hint(ENABLE_DEPTH_SORT) and say goobye
+  to your 3D transparency woes! 
+  https://github.com/processing/processing/issues/90
+  https://github.com/processing/processing/issues/2235
+  https://github.com/processing/processing/pull/3507
+  https://github.com/processing/processing/pull/3477
+  https://github.com/processing/processing/pull/3410
+  https://github.com/processing/processing/pull/3372
+
++ Remove size() from setup() when copying to settings()
+  https://github.com/processing/processing/pull/3517
+
++ Remove mode parameters from createShape(), fixes parameter collision issues
+  https://github.com/processing/processing/pull/3516
+
++ Radius for rect not working on PShape
+  https://github.com/processing/processing/issues/2646
+
++ Bug in arc with createShape()
+  https://github.com/processing/processing/issues/3018
+
++ OpenGL sketch flickers when draw() is missing or empty
+  https://github.com/processing/processing/issues/3473
+  https://github.com/processing/processing/pull/3521
+
++ size() errors
+  https://github.com/processing/processing/issues/3483
+
++ rect() with stroke outline renders 1px wider and taller in P2D
+  behavior is correct, explanation provided
+  https://github.com/processing/processing/issues/2065
+  https://github.com/processing/processing/issues/2065
+
++ setVertex() not working in P3D and P2D
+  https://github.com/processing/processing/issues/3022
+  https://github.com/processing/processing/pull/3528
+
++ Add hint(ENABLE_BUFFER_READING) to handle stencil/depth buffers
+  https://github.com/processing/processing/pull/3527
+  https://github.com/processing/processing/issues/2771
+
++ ArrayIndexOutOfBoundsException error when enabling depth sorting in P3D
+  https://github.com/processing/processing/pull/3477
+  https://github.com/processing/processing/issues/3476
+
++ Fix curves - properly this time
+  https://github.com/processing/processing/pull/3501
+
++ Remove duplicate curve vertex
+  https://github.com/processing/processing/pull/3496
+  https://github.com/processing/processing/issues/2937
+
++ JOGL window size is now set properly
+  https://github.com/processing/processing/pull/3493
+  https://github.com/processing/processing/issues/3223
+
++ Device parsing on Linux is incorrect, causing "display 1 doesn't exist" msg
+  https://github.com/processing/processing/issues/3532
+
++ Flush geometry when lighting changes, otherwise lights apply to entire scene
+  https://github.com/processing/processing/issues/3533
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.0a11 (REV 0238) - 16 July 2015
 
 Hopefully the last release before we go to beta. 

@@ -39,7 +39,8 @@ public class SketchParser {
 
   List<List<Range>> scientificNotations;
 
-  Range setupFunction;
+  // currently is used to ignore numbers in 'setup' and 'settings' functions
+  List<Range> ignoreFunctions;
 
   List<List<Range>> commentBlocks;
   List<int[]> curlyScopes;
@@ -57,8 +58,12 @@ public class SketchParser {
       commentBlocks.add(getCommentBlocks(code));
     }
 
-    // get setup function range (to ignore all numbers there)
-    setupFunction = new Range(getSetupStart(codeTabs[0]), getSetupEnd(codeTabs[0]));
+    // add 'settings' and 'setup' to ignore list (to ignore all numbers there)
+    ignoreFunctions = new ArrayList<Range>();
+    ignoreFunctions.add(new Range(getVoidFunctionStart(codeTabs[0], "settings"),
+                                  getVoidFunctionEnd(codeTabs[0], "settings")));
+    ignoreFunctions.add(new Range(getVoidFunctionStart(codeTabs[0], "setup"),
+                                  getVoidFunctionEnd(codeTabs[0], "setup")));
 
     // build curly scope for every character in the code
     curlyScopes = new ArrayList<>();
@@ -125,8 +130,8 @@ public class SketchParser {
           continue;
         }
 
-        if (setupFunction.contains(start)) {
-          // ignore numbers in setup
+        if (isInRangeList(start, ignoreFunctions)) {
+          // ignore numbers in predefined functions
           continue;
         }
 
@@ -217,8 +222,8 @@ public class SketchParser {
           continue;
         }
 
-        if (setupFunction.contains(start)) {
-          // ignore number in setup
+        if (isInRangeList(start, ignoreFunctions)) {
+          // ignore numbers in predefined functions
           continue;
         }
 
@@ -278,8 +283,8 @@ public class SketchParser {
           continue;
         }
 
-        if (setupFunction.contains(start)) {
-          // ignore number in setup
+        if (isInRangeList(start, ignoreFunctions)) {
+          // ignore numbers in predefined functions
           continue;
         }
 
@@ -382,8 +387,8 @@ public class SketchParser {
           continue;
         }
 
-        if (setupFunction.contains(m.start())) {
-          // ignore number in setup
+        if (isInRangeList(m.start(), ignoreFunctions)) {
+          // ignore numbers in predefined functions
           continue;
         }
 
@@ -466,8 +471,8 @@ public class SketchParser {
           continue;
         }
 
-        if (setupFunction.contains(m.start())) {
-          // ignore number in setup
+        if (isInRangeList(m.start(), ignoreFunctions)) {
+          // ignore numbers in predefined functions
           continue;
         }
 
@@ -827,6 +832,50 @@ public class SketchParser {
     return obj;
   }
 
+  static public int getVoidFunctionStart(String code, String functionName) {
+    Pattern p = Pattern.compile("void[\\s\\t\\r\\n]*"+functionName+"[\\s\\t]*\\(\\)[\\s\\t\\r\\n]*\\{");
+    Matcher m = p.matcher(code);
+
+    if (m.find()) {
+      return m.end();
+    }
+
+    return -1;
+  }
+
+  static public int getVoidFunctionEnd(String code, String functionName) {
+    List<Range> comments = getCommentBlocks(code);
+
+    int start = getVoidFunctionStart(code, functionName);
+    if (start == -1) {
+      return -1;
+    }
+
+    // count brackets to look for setup end
+    int bracketCount=1;
+    int pos = start;
+    while (bracketCount > 0 && pos < code.length()) {
+      if (isInRangeList(pos, comments)) {
+        // in a comment, ignore and move on
+        pos++;
+        continue;
+      }
+
+      if (code.charAt(pos) == '{') {
+        bracketCount++;
+      }
+      else if (code.charAt(pos) == '}') {
+        bracketCount--;
+      }
+      pos++;
+    }
+
+    if (bracketCount == 0) {
+      return pos-1;
+    }
+    return -1;
+  }
+
 
   static public int getSetupStart(String code) {
     Pattern p = Pattern.compile("void[\\s\\t\\r\\n]*setup[\\s\\t]*\\(\\)[\\s\\t\\r\\n]*\\{");
@@ -838,7 +887,6 @@ public class SketchParser {
 
     return -1;
   }
-
 
   static public int getSetupEnd(String code) {
     List<Range> comments = getCommentBlocks(code);
@@ -873,6 +921,67 @@ public class SketchParser {
     return -1;
   }
 
+  static public int getAfterSizePos(String code) {
+    List<Range> comments = getCommentBlocks(code);
+
+    // find the size function
+    Pattern p = Pattern.compile("size[\\s\\t]*\\(");
+    Matcher m = p.matcher(code);
+
+    while (m.find()) {
+      if (isInRangeList(m.start(), comments) ||
+            isInRangeList(m.end(), comments)) {
+        // this is a comment, next
+        continue;
+      }
+
+      // count brackets to look for size call end
+      int bracketCount=1;
+      int pos = m.end();
+      while (bracketCount > 0 && pos < code.length()) {
+        if (isInRangeList(pos, comments)) {
+          // in a comment, ignore and move on
+          pos++;
+          continue;
+        }
+
+        if (code.charAt(pos) == '(') {
+          bracketCount++;
+        }
+        else if (code.charAt(pos) == ')') {
+          bracketCount--;
+        }
+        pos++;
+      }
+
+      if (bracketCount != 0) {
+        // could not find closing ')'. next
+        continue;
+      }
+
+      // find ';' sign
+      boolean found = false;
+      while (pos < code.length()) {
+        if (code.charAt(pos) == ';' &&
+              !isInRangeList(pos, comments)) {
+          found = true;
+          break;
+        }
+        pos++;
+      }
+
+      if (!found) {
+        // didn't find the ';'. next
+        continue;
+      }
+
+      // success! we found the place
+      return pos+1;
+    }
+
+    // nothing was found
+    return -1;
+  }
 
   static class Range {
     int start;

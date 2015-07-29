@@ -116,16 +116,18 @@ public class UpdateCheck {
     Preferences.set("update.last", String.valueOf(now));
 
     if (base.activeEditor != null) {
-      boolean offerToUpdateContributions = true;
+//      boolean offerToUpdateContributions = true;
 
       if (latest > Base.getRevision()) {
         System.out.println("You are running Processing revision 0" +
                            Base.getRevision() + ", the latest build is 0" +
                            latest + ".");
         // Assume the person is busy downloading the latest version
-        offerToUpdateContributions = !promptToVisitDownloadPage();
+//        offerToUpdateContributions = !promptToVisitDownloadPage();
+        promptToVisitDownloadPage();
       }
 
+      /*
       if (offerToUpdateContributions) {
         // Wait for xml file to be downloaded and updates to come in.
         // (this should really be handled better).
@@ -135,6 +137,7 @@ public class UpdateCheck {
           promptToOpenContributionManager();
         }
       }
+      */
     }
   }
 

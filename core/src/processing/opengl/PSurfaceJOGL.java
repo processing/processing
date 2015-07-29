@@ -127,40 +127,65 @@ public class PSurfaceJOGL implements PSurface {
 
     monitors = new ArrayList<MonitorDevice>();
     GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsDevice[] devices = environment.getScreenDevices();
-    for (GraphicsDevice device: devices) {
-      String did = device.getIDstring();
-      String[] parts = did.split("Display");
-      String id1 = "";
-      if (1 < parts.length) {
-        id1 = parts[1].trim();
-      }
-      MonitorDevice monitor = null;
-      for (int i = 0; i < screen.getMonitorDevices().size(); i++) {
-        MonitorDevice mon = screen.getMonitorDevices().get(i);
-        String mid = String.valueOf(mon.getId());
-        if (id1.equals(mid)) {
-//          System.out.println("Monitor " + monitor.getId() + " ************");
-//          System.out.println(monitor.toString());
-//          System.out.println(monitor.getViewportInWindowUnits());
-//          System.out.println(monitor.getViewport());
-          monitor = mon;
-          break;
+    GraphicsDevice[] awtDevices = environment.getScreenDevices();
+    List<MonitorDevice> newtDevices = screen.getMonitorDevices();
+
+    // AWT and NEWT name devices in different ways, depending on the platform,
+    // and also appear to order them in different ways. The following code
+    // tries to address the differences.
+    if (PApplet.platform == PConstants.LINUX) {
+      for (GraphicsDevice device: awtDevices) {
+        String did = device.getIDstring();
+        String[] parts = did.split("\\.");
+        String id1 = "";
+        if (1 < parts.length) {
+          id1 = parts[1].trim();
         }
-      }
-      if (monitor == null) {
-        // Didn't find a matching monitor, try using less stringent id check
-        for (int i = 0; i < screen.getMonitorDevices().size(); i++) {
-          MonitorDevice mon = screen.getMonitorDevices().get(i);
-          String mid = String.valueOf(mon.getId());
-          if (-1 < did.indexOf(mid)) {
+        MonitorDevice monitor = null;
+        int id0 = newtDevices.size() > 0 ? newtDevices.get(0).getId() : 0;
+        for (int i = 0; i < newtDevices.size(); i++) {
+          MonitorDevice mon = newtDevices.get(i);
+          String mid = String.valueOf(mon.getId() - id0);
+          if (id1.equals(mid)) {
             monitor = mon;
             break;
           }
         }
+        if (monitor != null) {
+          monitors.add(monitor);
+        }
       }
-      if (monitor != null) {
-        monitors.add(monitor);
+    } else { // All the other platforms...
+      for (GraphicsDevice device: awtDevices) {
+        String did = device.getIDstring();
+        String[] parts = did.split("Display");
+        String id1 = "";
+        if (1 < parts.length) {
+          id1 = parts[1].trim();
+        }
+        MonitorDevice monitor = null;
+        for (int i = 0; i < newtDevices.size(); i++) {
+          MonitorDevice mon = newtDevices.get(i);
+          String mid = String.valueOf(mon.getId());
+          if (id1.equals(mid)) {
+            monitor = mon;
+            break;
+          }
+        }
+        if (monitor == null) {
+          // Didn't find a matching monitor, try using less stringent id check
+          for (int i = 0; i < newtDevices.size(); i++) {
+            MonitorDevice mon = newtDevices.get(i);
+            String mid = String.valueOf(mon.getId());
+            if (-1 < did.indexOf(mid)) {
+              monitor = mon;
+              break;
+            }
+          }
+        }
+        if (monitor != null) {
+          monitors.add(monitor);
+        }
       }
     }
   }
@@ -170,7 +195,13 @@ public class PSurfaceJOGL implements PSurface {
     if (profile == null) {
       if (PJOGL.profile == 2) {
         try {
-          profile = GLProfile.getGL2ES1();
+          if ("arm".equals(System.getProperty("os.arch"))) {
+            // request at least GL2 or GLES2
+            profile = GLProfile.getGL2ES2();
+          } else {
+            // stay compatible with previous versions for now
+            profile = GLProfile.getGL2ES1();
+          }
         } catch (GLException ex) {
           profile = GLProfile.getMaxFixedFunc(true);
         }
@@ -248,6 +279,11 @@ public class PSurfaceJOGL implements PSurface {
     sketchHeight = sketch.sketchHeight();
 
     boolean fullScreen = sketch.sketchFullScreen();
+    // Removing the section below because sometimes people want to do the
+    // full screen size in a window, and it also breaks insideSettings().
+    // With 3.x, fullScreen() is so easy, that it's just better that way.
+    // https://github.com/processing/processing/issues/3545
+    /*
     // Sketch has already requested to be the same as the screen's
     // width and height, so let's roll with full screen mode.
     if (screenRect.width == sketchWidth &&
@@ -255,6 +291,7 @@ public class PSurfaceJOGL implements PSurface {
       fullScreen = true;
       sketch.fullScreen();
     }
+    */
 
     if (fullScreen || spanDisplays) {
       sketchWidth = screenRect.width;
@@ -564,6 +601,7 @@ public class PSurfaceJOGL implements PSurface {
         sketchWidth = width;
         sketchHeight = height;
         graphics.setSize(width, height);
+        window.setSize(width, height);
       }
 
 
@@ -687,12 +725,16 @@ public class PSurfaceJOGL implements PSurface {
     public void windowGainedFocus(com.jogamp.newt.event.WindowEvent arg0) {
 //      pg.parent.focusGained(null);
 //      System.err.println("gain focus");
+      sketch.focused = true;
+      sketch.focusGained();
     }
 
     @Override
     public void windowLostFocus(com.jogamp.newt.event.WindowEvent arg0) {
 //      pg.parent.focusLost(null);
 //      System.err.println("lost focus");
+      sketch.focused = false;
+      sketch.focusLost();
     }
 
     @Override
@@ -943,11 +985,12 @@ public class PSurfaceJOGL implements PSurface {
     return def;
   }
 
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   public void setCursor(int kind) {
-    System.err.println("Cursor types not supported in OpenGL, provide your cursor image");
+    PGraphics.showWarning("Cursor types not yet supported in OpenGL, provide your cursor image");
   }
 
 

@@ -1,3 +1,335 @@
+0241 core (3.0b3)
+X `focused` variable always false in P2D/P3D
+X   https://github.com/processing/processing/issues/3564
+X implement a nf(float) function to support the changes in map()
+X show a warning when map() prints a bad value
+X   https://github.com/processing/processing/issues/3314
+
+opengl
+X IndexOutOfBoundsException with pixelDensity(2) and P2D
+X   https://github.com/processing/processing/issues/3568
+X Shaders output to bottom left corner rather than full window in 3.0b2
+X   https://github.com/processing/processing/issues/3572
+
+
+0240 core (3.0b2)
+X make size(displayWidth, displayHeight) still run in a window
+X   prevents "fullScreen() cannot be used here" message on startup
+X   https://github.com/processing/processing/issues/3545
+X throw an error when using methods that require sketchPath outside setup()
+X   https://github.com/processing/processing/issues/3433
+X cursor(CROSS) breaks when using surface.setTitle()
+X   https://github.com/processing/processing/issues/3472
+X Fix null pointer exception in setVertex
+X   https://github.com/processing/processing/pull/3553
+X   https://github.com/processing/processing/issues/3550
+
+andres/jakub
+X toggling between noLights and PointLight in draw() behaving strangely
+X   https://github.com/processing/processing/issues/3546
+X NPE in Planets demo
+X   https://github.com/processing/processing/issues/3551
+
+fixed earlier
+X blend() and copy() are not pixel accurate for copy/scale
+X   https://github.com/processing/processing/issues/324
+X   Jakub: fixed somewhere between 0179 and 0184
+
+cleaning/fixed earlier
+X splice() throws ClassCastException when used with objects like PVector 
+X   http://code.google.com/p/processing/issues/detail?id=1407
+X   https://github.com/processing/processing/issues/1445
+o Semitransparent rect drawn over image not rendered correctly
+o   http://code.google.com/p/processing/issues/detail?id=182
+X   https://github.com/processing/processing/issues/221
+X text() wraps words differently depending on whether space seen or not
+X   http://code.google.com/p/processing/issues/detail?id=439
+X   https://github.com/processing/processing/issues/478
+o make sure rendering is happening on the EDT
+o   (hopefully fixes flicker issues)
+o   change PApplet.java javadoc to reflect the change
+o   Update http://wiki.processing.org/w/Troubleshooting#Flicker
+X   http://code.google.com/p/processing/issues/detail?id=775
+X look into using BufferStrategy again to improve performance
+X   there are more improvements to be made ala issue #729
+o thread() causes weird flickering
+X   http://code.google.com/p/processing/issues/detail?id=742
+o stop() not getting called
+o   http://code.google.com/p/processing/issues/detail?id=43
+o   major problem for libraries
+o   and start() is supposedly called by the applet viewer
+o   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
+o   need to track this stuff down a bit
+X   closed with work from Lonnen, but still some issues around this
+X createShape() not yet implemented for Java2D
+X   http://code.google.com/p/processing/issues/detail?id=1400
+X   https://github.com/processing/processing/issues/1438
+o load PShape from a string object
+X   http://code.google.com/p/processing/issues/detail?id=277
+X ortho() issues
+X   http://code.google.com/p/processing/issues/detail?id=1240
+X   https://github.com/processing/processing/issues/1278
+X hint(DISABLE_PERSPECTIVE_CORRECTED_STROKE)
+X implement textMode(SHAPE) with OPENGL
+X   https://github.com/processing/processing/issues/777
+X   http://code.google.com/p/processing/issues/detail?id=738
+X implement setImpl() instead of set() inside PGraphicsOpenGL
+X   http://code.google.com/p/processing/issues/detail?id=121
+X   https://github.com/processing/processing/issues/160
+X first few frames of OpenGL sketches on Windows run slowly
+X   http://code.google.com/p/processing/issues/detail?id=107
+X   https://github.com/processing/processing/issues/146
+X Signature issue on contributed libraries affects unrelated opengl sketches
+X   http://code.google.com/p/processing/issues/detail?id=261
+X OpenGL noSmooth() problems
+X   http://code.google.com/p/processing/issues/detail?id=328
+o OS X slow with FSEM enabled
+X   http://code.google.com/p/processing/issues/detail?id=737
+X get() with OPENGL is grabbing the wrong coords
+X   http://code.google.com/p/processing/issues/detail?id=191
+X deal with issue of single pixel seam at the edge of textures
+X   should vertexTexture() divide by width/height or width-1/height-1?
+X   http://code.google.com/p/processing/issues/detail?id=76
+X   https://github.com/processing/processing/issues/115
+X lousy graphics cards cause background to flicker if background() not used
+X   http://code.google.com/p/processing/issues/detail?id=146
+X   https://github.com/processing/processing/issues/185
+X   OPENGL sketches flicker w/ Vista when background() not used inside draw()
+X   Disabling Aero scheme sometimes prevents the problem
+X   Updating graphics drivers may prevent the problem 
+X ellipse scaling method isn't great
+X   http://code.google.com/p/processing/issues/detail?id=87
+X Stroking a rect() leaves off the upper right pixel
+X   http://code.google.com/p/processing/issues/detail?id=67
+X   https://github.com/processing/processing/issues/106
+X opengl applet problems with tabs - needs to handle stop() and start() 
+X   http://code.google.com/p/processing/issues/detail?id=196
+X   stop() called between tabs/pages, start() may be called again
+X   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
+X   really, stop() should just call noLoop() (and start re-enable if done)
+X     and on android, start/stop can be used to save state information
+X   need to fix opengl applets so that we can safely kill P3D
+X Signature issue on contributed libraries affects unrelated opengl sketches
+X   http://code.google.com/p/processing/issues/detail?id=261
+
+
+0239 core (3.0b1)
+X add getSurface() method ('surface' is protected in PApplet)
+X tweak implementation of PVector.heading()
+X   https://github.com/processing/processing/issues/3511
+X make PFont.size protected again
+X   https://github.com/processing/processing/issues/3519
+X fix problem with JAR loading inside createInputRaw()
+o   https://github.com/processing/processing/pull/3514
+X remove 'contrib updates available' dialog box for now
+X   new version coming soon in the UI
+X make notes about Java2D and JavaFX packages in the README
+
+fixed earlier
+X Cannot use this version of rotate() on a PMatrix2D with PShape.rotateX()
+X   https://github.com/processing/processing/issues/1342
+
+opengl
+X Remove size() from setup() when copying to settings()
+X   https://github.com/processing/processing/pull/3517
+X Remove mode parameters from createShape(), fixes parameter collision issues
+X   https://github.com/processing/processing/pull/3516
+X radius for rect not working on PShape
+X   https://github.com/processing/processing/issues/2646
+X bug in arc with createShape 
+X   https://github.com/processing/processing/issues/3018
+X OpenGL sketch flickers when draw() is missing or empty
+X   https://github.com/processing/processing/issues/3473
+X   https://github.com/processing/processing/pull/3521
+X size() errors
+X   https://github.com/processing/processing/issues/3483
+X improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
+X   https://github.com/processing/processing/issues/90
+X   also for begin/endRaw: 
+X     https://github.com/processing/processing/issues/2235
+X   polygon z-order depth sorting with alpha in opengl
+X   complete the implementation of hint() with proper implementation
+X   gl alpha on images when flipped around backwards
+X     will sorting based on depth help this? also ask simon for ideas
+X   need to merge sorting/drawing of lines and triangles
+X     lines will occlude tris and vice versa
+X     will need to split each based on the other
+X     sort issues will affect both
+X   https://github.com/processing/processing/pull/3507
+X   https://github.com/processing/processing/pull/3477
+X   https://github.com/processing/processing/pull/3410
+X   https://github.com/processing/processing/pull/3372
+o rect() with stroke outline renders 1px wider and taller in P2D
+X   behavior is correct, explanation provided
+X   https://github.com/processing/processing/issues/2065
+X   sort out edge + 1 issue on stroke/fill for rectangles
+X   http://code.google.com/p/processing/issues/detail?id=509
+X setVertex() not working in P3D and P2D
+X   https://github.com/processing/processing/issues/3022
+X   https://github.com/processing/processing/pull/3528
+X add hint(ENABLE_DEPTH_READING) to handle stencil/depth buffers
+X   https://github.com/processing/processing/pull/3527
+X   https://github.com/processing/processing/issues/2771
+X ArrayIndexOutOfBoundsException error when enabling depth sorting in P3D
+X   https://github.com/processing/processing/pull/3477
+X   https://github.com/processing/processing/issues/3476
+X Fix curves - properly this time
+X   https://github.com/processing/processing/pull/3501
+X Remove duplicate curve vertex
+X   https://github.com/processing/processing/pull/3496
+X   https://github.com/processing/processing/issues/2937
+X JOGL window size is now set properly
+X   https://github.com/processing/processing/pull/3493
+X   https://github.com/processing/processing/issues/3223
+X more sorter work
+X   https://github.com/processing/processing/pull/3507
+X Depth sorting wrong when drawing inside setup(), P3D
+X   can no longer be reproduced
+X   https://github.com/processing/processing/issues/2483
+X Device parsing on Linux is incorrect
+X   https://github.com/processing/processing/issues/3532
+o don't show display warning when display 1 doesn't exist
+X   apparently this was an OpenGL bug (#3532)
+X flush geometry when lighting changes 
+X   otherwise lights apply to the entire scene
+X   https://github.com/processing/processing/issues/3533
+
+
+0238 (3.0a11)
+X add note about headless exceptions that points to Github
+X resize children[] so that getChildren() returns a correctly-sized array
+X   https://github.com/processing/processing/issues/3347
+X show warning when display spanning is turned off with fullScreen(SPAN)
+X   defaults read com.apple.spaces spans-displays
+X   https://github.com/processing/processing/issues/3381
+X add javaPlatform variable (i.e. 7 or 8)
+X clear() seems to be broken (maybe related to 3317)
+X   https://github.com/processing/processing/issues/3378
+X PGraphic ignores PNG transparency (regression from 3.0a5)
+X   https://github.com/processing/processing/issues/3317
+X   (same issue as 3378)
+X move error messages out of PConstants (into PApplet? PGraphics?) 
+o replace sketchXxxx() methods with another mechanism?
+o   and an internal dictionary that stores them all?
+o   intParam(), stringParam() and setParam()? 
+o   or sketchInt() or settingsInt()?
+o   surface.size(), surface.noSmooth()... just like PGraphics methods?
+o   make final to move folks away from these?
+o   or is this a bad move until we've sorted out Android?
+X   HashMap sucks b/c we'd have to cast everything
+X   doesn't help to have intParam() etc, too many types (5ish? OutputStream)
+X   just stick with the current setup
+X remove launch(String) since it was calling itself, and anachronistic
+X sketches with new fullScreen() method should grab focus by default
+X   https://github.com/processing/processing/issues/3380
+X sketches not getting focus with Java2D
+X   https://github.com/processing/processing/issues/3389
+X draw() executes twice when noLoop() called in setup()
+X   https://github.com/processing/processing/issues/3310
+X   broken since 3.0a7, but not in 3.0a5
+o pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
+X   nixed by Casey for now
+X displayDensity() not functioning properly
+X   https://github.com/processing/processing/issues/3436
+X surface.setXxx() handling
+X   https://github.com/processing/processing/issues/3388
+X   setResizable, setVisible, setTitle
+X   setIconImage(java.awt.Image) -> take a PImage instead?
+o   removeNotify(), addNotify()
+X   setUndecorated(boolean)
+X   setting menubar will be surface-specific
+X   setLocation(int, int) and setSize(int, int)
+X add the "don't use this" warning to the JFrame in PSurfaceAWT
+X ArithmeticException: / by zero when using fonts opened with loadFont()
+X   https://github.com/processing/processing/issues/3413
+X SVG briefly broken for Java2D
+X   https://github.com/processing/processing/issues/3417
+X change how font metrics are pulled to fix text width issues
+X check alpha when image extension is "unknown"
+X   https://github.com/processing/processing/issues/3442
+X add support for more Image types (BGR) with PImage(java.awt.Image) constructor
+X move Java2D and JavaFX classes to their own packages
+
+threading headaches
+X sketch not always showing with empty draw()
+X   https://github.com/processing/processing/issues/3363
+X static mode broken with Java2D on Windows and Linux
+X   https://github.com/processing/processing/issues/3315
+X sketch sometimes doesn't show with noLoop() on Linux
+X   https://github.com/processing/processing/issues/3316
+X Window never shows with exported application on 64-bit Linux
+X   https://github.com/processing/processing/issues/3303
+X present mode is now broken
+o still some spinning when sketches break
+X   fixed because we're back off the EDT
+o settings() is probably not showing exceptions since we're back to the EDT
+o   can't call handleSettings() on the anim thread since it sets the surface
+o   so maybe the first part is on the EDT, but other threads run this stuff
+X remove the init() method
+
+cleaning
+o possible addition for 'implementation' variable
+X   http://code.google.com/p/processing/issues/detail?id=281
+X   https://github.com/processing/processing/issues/320
+X   closing as wontfix
+
+retina fixes
+X make g.pixelDensity public inside PApplet (so accessible by sketches)
+o   or is it akin to g.fill and the rest?
+X   it's in PApplet, but not public.. will be the same as g.pixelDensity
+X add pixelWidth/Height to PApplet
+X   add setSize() method for surfaces
+X   tricky cuz we'll need a getter/setter when surface messes w/ things
+
+text/fonts
+X Text looks blurry in GL Retina
+X   https://github.com/processing/processing/issues/2739
+X text not getting the correct font in Retina2D
+X   https://github.com/processing/processing/issues/2617
+X Text is half size in PGraphicsRetina2D
+X   https://github.com/processing/processing/issues/2738
+
+andres/opengl
+X ortho function is broken
+X   https://github.com/processing/processing/issues/1278
+X errors with loading SVGs in P3D/P2D
+X   https://github.com/processing/processing/issues/3379
+X sketch window briefly appears on top left corner when using OpenGL
+X   https://github.com/processing/processing/issues/3308
+X add attrib() method
+X   https://github.com/processing/processing/issues/2963
+X   andres needs input on how the api works
+o   assign this to DXF as well?
+X beginShape(POINTS) don't show up in P2D
+X   https://github.com/processing/processing/issues/3029
+
+contribs
+X Fix NullPointerException in DepthSorter
+X   https://github.com/processing/processing/pull/3410
+
+fixed earlier
+X sketch window is not placed at correct location when running a second time
+X   https://github.com/processing/processing/issues/3125
+X full screen needs to ignore prev location setting for frame?
+X   https://github.com/processing/processing/issues/3305
+X save() and saveFrame() with 2X renderers fails
+X   https://github.com/processing/processing/issues/3255
+X NPE when using image() created with createGraphics(PGraphicsRetina2D)
+X   https://github.com/processing/processing/issues/2510
+X Closing OpenGL sketch from the PDE doesn't stop java.exe process
+X   https://github.com/processing/processing/issues/2335
+
+cleaning
+o keep Danger2D? 
+o   can't do version that draws to BufferStrategy directly
+o   pixel operations (get/set/loadPixels/saveFrame) might be fixable
+o   but can't re-run draw() to re-blit the screen
+o     because we don't split calc() and draw()
+o   even with the split, handleDraw() might need to live in PSurface
+o   add calc() option? this could ease transition
+X   decided to put efforts into JavaFX
+
+
 0237 (3.0a10)
 X retain original java.awt.Frame when it's available from PSurfaceAWT
 X set frame icon images for Java2D (dock and cmd-tab) 

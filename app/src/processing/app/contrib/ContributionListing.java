@@ -35,19 +35,17 @@ import processing.data.StringDict;
 
 public class ContributionListing {
   // Stable URL that will redirect to wherever we're hosting the file
-  static final String LISTING_URL =
-    "http://download.processing.org/contribs";
-    //"http://download.processing.org/contribs.txt";
+  static final String LISTING_URL = "http://download.processing.org/contribs";
   static final String LOCAL_FILENAME = "contribs.txt";
 
   static volatile ContributionListing singleInstance;
 
   File listingFile;
-  ArrayList<ContributionChangeListener> listeners;
-  ArrayList<AvailableContribution> advertisedContributions;
+  List<ContributionChangeListener> listeners;
+  List<AvailableContribution> advertisedContributions;
   Map<String, List<Contribution>> librariesByCategory;
   public Map<String, Contribution> librariesByImportHeader;
-  ArrayList<Contribution> allContributions;
+  List<Contribution> allContributions;
   boolean hasDownloadedLatestList;
   boolean hasListDownloadFailed;
   ReentrantLock downloadingListingLock;
@@ -444,6 +442,7 @@ public class ContributionListing {
   }
 
 
+  /*
   boolean hasUpdates() {
     for (Contribution info : allContributions) {
       if (hasUpdates(info)) {
@@ -452,6 +451,36 @@ public class ContributionListing {
     }
     return false;
   }
+  */
+
+
+  /**
+   * TODO This needs to be called when the listing loads, and also whenever
+   * the contribs list has been updated (for whatever reason). In addition,
+   * the caller (presumably Base) should update all Editor windows with the
+   * correct information on the number of items available.
+   * @return The number of contributions that have available updates.
+   */
+  int countUpdates(Base base) {
+    int count = 0;
+    for (ModeContribution mc : base.getModeContribs()) {
+      if (hasUpdates(mc)) {
+        count++;
+      }
+    }
+    for (Library lib : base.getActiveEditor().getMode().contribLibraries) {
+      if (hasUpdates(lib)) {
+        count++;
+      }
+    }
+    for (ToolContribution tc : base.getActiveEditor().getToolContribs()) {
+      if (hasUpdates(tc)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
 
   boolean hasUpdates(Base base) {
     for (ModeContribution mc : base.getModeContribs()) {

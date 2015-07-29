@@ -3,10 +3,11 @@
 status.notice.fgcolor = #000000
 status.notice.bgcolor = #818b95
 status.error.fgcolor = #ffffff
-status.error.bgcolor = #662000
+#status.error.bgcolor = #662000
+status.error.bgcolor = #9e1916
 status.edit.fgcolor = #000000
 status.edit.bgcolor = #cc9900
-status.font = processing.sans,plain,14
+status.font = processing.sans,plain,13
 
 # TABS
 # Settings for the tab area at the top.
@@ -28,12 +29,17 @@ footer.gradient.top = #132638
 footer.gradient.bottom = #122535
 footer.tab.selected.color = #3D5362
 footer.tab.unselected.color = #2d4251
+# updates orange #eb7f15
 
 # CONSOLE
 # The font is handled by preferences, so its size/etc are modifiable.
 console.color = #000000
 console.output.color = #cccccc
-console.error.color = #ff3000
+#console.error.color = #ff3000
+# too dark!
+#console.error.color = #9e1916
+# brightened version
+console.error.color = #d9211e
 
 # TOOLBAR BUTTONS
 buttons.bgcolor = #000000

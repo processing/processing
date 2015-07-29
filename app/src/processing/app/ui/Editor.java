@@ -434,7 +434,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public EditorFooter createFooter() {
     EditorFooter ef = new EditorFooter(this);
     console = new EditorConsole(this);
-    ef.addPanel(Language.text("editor.footer.console"), console);
+    ef.addPanel(console, Language.text("editor.footer.console"), "/lib/footer/console");
     return ef;
 
     /*
@@ -1005,7 +1005,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
           if (find == null) {
             find = new FindReplace(Editor.this);
           }
-          //new FindReplace(Editor.this).show();
+          // https://github.com/processing/processing/issues/3457
+          String selection = getSelectedText();
+          if (selection != null && selection.length() != 0 &&
+              !selection.contains("\n")) {
+            find.setFindText(selection);
+          }
           find.setVisible(true);
         }
       });
@@ -1020,8 +1025,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     editMenuUpdatable.add(action);
     menu.add(item);
 
-    // For Arduino and Mac, this should be command-E, but that currently conflicts with Export Applet
-    //item = Toolkit.newJMenuItemAlt(Language.text("menu.edit.use_selection_for_find"), 'F');
     item = Toolkit.newJMenuItem(action = new SelectionForFindAction(), 'E');
     editMenuUpdatable.add(action);
     menu.add(item);
@@ -2534,10 +2537,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // With Java 7u40 on OS X, need to bring the window forward.
     toFront();
 
-    String prompt = Language.text("close.unsaved_changes") + " " +
-      sketch.getName() + "?  ";
-
     if (!Base.isMacOS()) {
+      String prompt =
+        Language.interpolate("close.unsaved_changes", sketch.getName());
       int result =
         JOptionPane.showConfirmDialog(this, prompt,
                                       Language.text("menu.file.close"),
@@ -2575,7 +2577,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
                         "b { font: 13pt \"Lucida Grande\" }"+
                         "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
                         "</style> </head>" +
-                        "<b>" + Language.text("save.title") + "</b>" +
+                        "<b>" + Language.interpolate("save.title", sketch.getName()) + "</b>" +
                         "<p>" + Language.text("save.hint") + "</p>",
                         JOptionPane.QUESTION_MESSAGE);
 
@@ -2984,6 +2986,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
       String illString = "IllegalArgumentException: ";
       if (mess.startsWith(illString)) {
         mess = mess.substring(illString.length());
+      }
+      // This is confusing and common with the size() and fullScreen() changes
+      String illState = "IllegalStateException: ";
+      if (mess.startsWith(illState)) {
+        mess = mess.substring(illState.length());
       }
       statusError(mess);
     }

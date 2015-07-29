@@ -51,22 +51,29 @@
     <!-- action needs to exist (even though blank), otherwise causes NPE -->
     <form action="">
 
+<!--
       <h1>Welcome to Processing 3</h1>
+-->
+      <!-- Using a table here as a layout hack, as CSS "vertical-align: middle;"
+           is not supported by the Java HTML renderer. -->
+      <table>
+        <tr>
+          <td valign="top">
+            <img src="../icons/pde-64.png" width="64" height="64">
+          </td>
+          <td valign="middle">
+            <h1>Welcome to Processing 3</h1>
+          </td>
+        </tr>
+      </table>
       
       <p>
         <a href="https://github.com/processing/processing/wiki/Changes-in-3.0">Read about what&rsquo;s new in 3.0 &rarr;</a>
       </p>
 
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris convallis porta dui, eget iaculis velit ornare at. 
-      </p>
-      
       <p class="inset">
-        Quisque eu ultrices erat. Curabitur vel vulputate turpis. Morbi efficitur feugiat augue eget euismod. Fusce vehicula velit libero. Praesent urna dolor, tincidunt ut massa a, rhoncus blandit justo.
-      </p>
-      
-      <p>
-        Curabitur laoreet vestibulum nibh, egestas semper eros viverra nec. Praesent luctus enim commodo mauris ultricies, non efficitur justo vestibulum.
+        Note that some sketches from Processing 2 may not be compatible.
+        <a href="https://github.com/processing/processing/wiki/Changes-in-3.0">What has changed?</a>
       </p>
       
       <table>
@@ -87,3 +94,4 @@
 
   </body>
 </html>
+

@@ -115,6 +115,9 @@ public class PShape implements PConstants {
   static public final String NO_VERTICES_ERROR =
     "getVertexCount() only works with PATH or GEOMETRY shapes";
 
+  public static final String NOT_A_SIMPLE_VERTEX =
+      "%1$s can not be called on quadratic or bezier vertices";
+
   // boundary box of this shape
   //protected float x;
   //protected float y;
@@ -331,10 +334,8 @@ public class PShape implements PConstants {
 //    curveDetail = pg.curveDetail;
 //    curveTightness = pg.curveTightness;
 
-    // The rect and ellipse modes are set to CORNER since it is the expected
-    // mode for svg shapes.
-    rectMode = CORNER;
-    ellipseMode = CORNER;
+    rectMode = g.rectMode;
+    ellipseMode = g.ellipseMode;
 
 //    normalX = normalY = 0;
 //    normalZ = 1;
@@ -1639,26 +1640,36 @@ public class PShape implements PConstants {
 
     } else if (kind == RECT) {
       if (image != null) {
-        g.imageMode(CORNER);
         g.image(image, params[0], params[1], params[2], params[3]);
       } else {
-        if(params.length != 5){
-          g.rectMode(CORNER);
+        if (params.length == 4) {
+          g.rect(params[0], params[1],
+                 params[2], params[3]);
+        } else if (params.length == 5) {
+          g.rect(params[0], params[1],
+                 params[2], params[3],
+                 params[4]);
+        } else if (params.length == 8) {
+          g.rect(params[0], params[1],
+                 params[2], params[3],
+                 params[4], params[5],
+                 params[6], params[7]);
         }
-        else{
-          g.rectMode((int) params[4]);
-        }
-        g.rect(params[0], params[1], params[2], params[3]);
       }
-
     } else if (kind == ELLIPSE) {
-      g.ellipseMode(CORNER);
-      g.ellipse(params[0], params[1], params[2], params[3]);
-
+      g.ellipse(params[0], params[1],
+                params[2], params[3]);
     } else if (kind == ARC) {
-      g.ellipseMode(CORNER);
-      g.arc(params[0], params[1], params[2], params[3], params[4], params[5]);
-
+      if (params.length == 6) {
+        g.arc(params[0], params[1],
+              params[2], params[3],
+              params[4], params[5]);
+      } else if (params.length == 7) {
+        g.arc(params[0], params[1],
+              params[2], params[3],
+              params[4], params[5],
+              (int) params[6]);
+      }
     } else if (kind == BOX) {
       if (params.length == 1) {
         g.box(params[0]);

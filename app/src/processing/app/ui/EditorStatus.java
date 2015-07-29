@@ -24,11 +24,15 @@
 package processing.app.ui;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
+import processing.app.Base;
 import processing.app.Mode;
+import processing.core.PApplet;
 
 
 /**
@@ -36,7 +40,9 @@ import processing.app.Mode;
  */
 public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   static final int HIGH = 28;
-  static final int GUI_SMALL = 6;
+  static final int LEFT_MARGIN = Editor.LEFT_GUTTER;
+  static final int RIGHT_MARGIN = 20;
+
 
   Color[] bgcolor;
   Color[] fgcolor;
@@ -56,6 +62,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
   int mode;
   String message;
+  String url;
 
   Font font;
   FontMetrics metrics;
@@ -80,6 +87,29 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     this.editor = editor;
     empty();
     updateMode();
+
+    addMouseListener(new MouseAdapter() {
+      public void mouseEntered(MouseEvent e) {
+        if (url != null) {
+          setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+      }
+
+      public void mousePressed(MouseEvent e) {
+        if (url != null) {
+          Base.openURL(url);
+        }
+      }
+    });
+  }
+
+
+  static String findURL(String message) {
+    String[] m = PApplet.match(message, "http\\S+");
+    if (m != null) {
+      return m[0];
+    }
+    return null;
   }
 
 
@@ -105,6 +135,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   public void empty() {
     mode = NOTICE;
     message = NO_MESSAGE;
+    url = null;
     repaint();
   }
 
@@ -112,6 +143,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   public void notice(String message) {
     mode = NOTICE;
     this.message = message;
+    url = findURL(message);
     repaint();
   }
 
@@ -124,6 +156,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   public void error(String message) {
     mode = ERR;
     this.message = message;
+    url = findURL(message);
     repaint();
   }
 
@@ -214,14 +247,14 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     // https://github.com/processing/processing/issues/3265
     if (message != null) {
       g.setFont(font); // needs to be set each time on osx
-      g.drawString(message, GUI_SMALL, (sizeH + ascent) / 2);
+      g.drawString(message, LEFT_MARGIN, (sizeH + ascent) / 2);
     }
 
     if (indeterminate) {
       //int x = cancelButton.getX();
       //int w = cancelButton.getWidth();
       int w = Toolkit.BUTTON_WIDTH;
-      int x = getWidth() - GUI_SMALL - w;
+      int x = getWidth() - RIGHT_MARGIN - w;
       int y = getHeight() / 3;
       int h = getHeight() / 3;
       g.setColor(new Color(0x80000000, true));

@@ -1891,8 +1891,12 @@ public class PJOGL extends PGL {
   @Override
   public void viewport(int x, int y, int w, int h) {
     float scale = pg.getPixelScale();
-    gl.glViewport((int)scale * x, (int)(scale * y), (int)(scale * w), (int)(scale * h));
-//    gl.glViewport(x, y, w, h);
+    viewportImpl((int)scale * x, (int)(scale * y), (int)(scale * w), (int)(scale * h));
+  }
+
+  @Override
+  protected void viewportImpl(int x, int y, int w, int h) {
+    gl.glViewport(x, y, w, h);
   }
 
   //////////////////////////////////////////////////////////////////////////////

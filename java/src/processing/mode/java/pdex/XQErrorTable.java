@@ -1,26 +1,27 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-Part of the Processing project - http://processing.org
-Copyright (c) 2012-15 The Processing Foundation
+  Part of the Processing project - http://processing.org
+  Copyright (c) 2012-15 The Processing Foundation
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License version 2
-as published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License version 2
+  as published by the Free Software Foundation.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software Foundation, Inc.
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation, Inc.
+  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
 package processing.mode.java.pdex;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.event.*;
 import java.util.List;
@@ -29,47 +30,46 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.ui.Editor;
+import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
 
 
-/**
- * Custom JTable implementation for XQMode. Minor tweaks and addtions.
- * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
- */
 public class XQErrorTable extends JTable {
-  JavaEditor editor;
+  Editor editor;
 
-	/** Column Names of JTable */
-	public static final String[] columnNames = {
+	static final String[] columnNames = {
 	  Language.text("editor.footer.errors.problem"),
 	  Language.text("editor.footer.errors.tab"),
 	  Language.text("editor.footer.errors.line")
 	};
 
-	/** Column Widths of JTable. */
-	public int[] columnWidths = { 600, 100, 50 }; // Default Values
+	int[] columnWidths = { 400, 100, 50 };
 
 	/** Is the column being resized? */
 	private boolean columnResizing = false;
 
-	/** ErrorCheckerService instance */
-//	protected ErrorCheckerService errorCheckerService;
 
-
-//	public XQErrorTable(final ErrorCheckerService errorCheckerService) {
-//		this.errorCheckerService = errorCheckerService;
 	public XQErrorTable(final JavaEditor editor) {
 	  this.editor = editor;
-		for (int i = 0; i < this.getColumnModel().getColumnCount(); i++) {
-			getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
-		}
+	  JTableHeader header = getTableHeader();
 
-		getTableHeader().setReorderingAllowed(false);
+	  // Try to make things a little less awful until I find time to finish it
+	  Font font = Toolkit.getSansFont(12, Font.PLAIN);
+	  setFont(font);
+	  header.setFont(font);
+	  //setBorder(new EmptyBorder(0, Editor.LEFT_GUTTER, 0, 0));  // no effect
+
+	  TableColumnModel columnModel = getColumnModel();
+		for (int i = 0; i < columnModel.getColumnCount(); i++) {
+			columnModel.getColumn(i).setPreferredWidth(columnWidths[i]);
+		}
 
 		addMouseListener(new MouseAdapter() {
 			@Override
@@ -83,10 +83,7 @@ public class XQErrorTable extends JTable {
 			}
 		});
 
-//		final XQErrorTable thisTable = this;
-
-		this.addMouseMotionListener(new MouseMotionAdapter() {
-
+		addMouseMotionListener(new MouseMotionAdapter() {
       @Override
       public void mouseMoved(MouseEvent evt) {
         int rowIndex = rowAtPoint(evt.getPoint());
@@ -117,11 +114,13 @@ public class XQErrorTable extends JTable {
       }
     });
 
+		header.setReorderingAllowed(false);
+
 		// Handles the resizing of columns. When mouse press is detected on
 		// table header, Stop updating the table, store new values of column
 		// widths,and resume updating. Updating is disabled as long as
 		// columnResizing is true
-		this.getTableHeader().addMouseListener(new MouseAdapter() {
+		header.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -131,9 +130,10 @@ public class XQErrorTable extends JTable {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				columnResizing = false;
-				for (int i = 0; i < ((JTableHeader) e.getSource()).getColumnModel().getColumnCount(); i++) {
-					columnWidths[i] = ((JTableHeader) e.getSource()).getColumnModel().getColumn(i).getWidth();
-					// System.out.println("nw " + columnWidths[i]);
+				TableColumnModel columnModel =
+				  ((JTableHeader) e.getSource()).getColumnModel();
+				for (int i = 0; i < columnModel.getColumnCount(); i++) {
+					columnWidths[i] = columnModel.getColumn(i).getWidth();
 				}
 			}
 		});
@@ -144,7 +144,7 @@ public class XQErrorTable extends JTable {
 
 	@Override
   public boolean isCellEditable(int rowIndex, int colIndex) {
-    return false; // Disallow the editing of any cell
+    return false;  // Disallow the editing of any cell
   }
 
 
@@ -154,11 +154,7 @@ public class XQErrorTable extends JTable {
 	 * @return boolean - If table data was updated
 	 */
 	synchronized public boolean updateTable(final TableModel tableModel) {
-
-		// If problems list is not visible, no need to update
-		if (!this.isVisible()) {
-			return false;
-		}
+	  if (!isVisible()) return false;
 
 		SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
@@ -172,8 +168,7 @@ public class XQErrorTable extends JTable {
 
 					// Set column widths to user defined widths
 					for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
-						getColumnModel().getColumn(i).setPreferredWidth(
-								columnWidths[i]);
+						getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
 					}
 					getTableHeader().setReorderingAllowed(false);
 					validate();
@@ -200,7 +195,7 @@ public class XQErrorTable extends JTable {
 
 	JFrame frmImportSuggest;
 
-	private void showImportSuggestion(String list[], int x, int y){
+	private void showImportSuggestion(String[] list, int x, int y) {
 	  if (frmImportSuggest != null) {
 //	    frmImportSuggest.setVisible(false);
 //	    frmImportSuggest = null;

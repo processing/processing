@@ -29,7 +29,7 @@ uniform vec4 lightPosition[8];
 uniform vec3 lightNormal[8];
 uniform vec3 lightAmbient[8];
 uniform vec3 lightDiffuse[8];
-uniform vec3 lightSpecular[8];      
+uniform vec3 lightSpecular[8];
 uniform vec3 lightFalloff[8];
 uniform vec2 lightSpot[8];
 
