@@ -3211,9 +3211,6 @@ public class PShapeOpenGL extends PShape {
       b = params[1];
       c = params[2];
       d = params[3];
-      if (params.length == 5) {
-        mode = (int)(params[4]);
-      }
     }
 
     float x = a;
