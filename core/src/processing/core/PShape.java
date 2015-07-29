@@ -1637,18 +1637,22 @@ public class PShape implements PConstants {
 
     } else if (kind == RECT) {
       if (image != null) {
-        g.imageMode(CORNER);
         g.image(image, params[0], params[1], params[2], params[3]);
       } else {
-        if(params.length != 5){
-          g.rectMode(CORNER);
+        if (params.length == 4) {
+          g.rect(params[0], params[1],
+                 params[2], params[3]);
+        } else if (params.length == 5) {
+          g.rect(params[0], params[1],
+                 params[2], params[3],
+                 params[4]);
+        } else if (params.length == 8) {
+          g.rect(params[0], params[1],
+                 params[2], params[3],
+                 params[4], params[5],
+                 params[6], params[7]);
         }
-        else{
-          g.rectMode((int) params[4]);
-        }
-        g.rect(params[0], params[1], params[2], params[3]);
       }
-
     } else if (kind == ELLIPSE) {
       g.ellipseMode(CORNER);
       g.ellipse(params[0], params[1], params[2], params[3]);

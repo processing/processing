@@ -1789,7 +1789,7 @@ public class PGraphics extends PImage implements PConstants {
       return createShapePrimitive(kind, p);
 
     } else if (kind == RECT) {
-      if (len != 4 && len != 5 && len != 8 && len != 9) {
+      if (len != 4 && len != 5 && len != 8) {
         throw new IllegalArgumentException("Wrong number of parameters for createShape(RECT), see the reference");
       }
       return createShapePrimitive(kind, p);

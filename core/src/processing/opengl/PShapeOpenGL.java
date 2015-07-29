@@ -3129,11 +3129,15 @@ public class PShapeOpenGL extends PShape {
       b = params[1];
       c = params[2];
       d = params[3];
-      if (params.length == 5) {
-        mode = (int)(params[4]);
-      }
       rounded = false;
-    } else if (params.length == 8 || params.length == 9) {
+      if (params.length == 5) {
+        tl = params[4];
+        tr = params[4];
+        br = params[4];
+        bl = params[4];
+        rounded = true;
+      }
+    } else if (params.length == 8) {
       a = params[0];
       b = params[1];
       c = params[2];
@@ -3142,9 +3146,6 @@ public class PShapeOpenGL extends PShape {
       tr = params[5];
       br = params[6];
       bl = params[7];
-      if (params.length == 9) {
-        mode = (int)(params[8]);
-      }
       rounded = true;
     }
 
