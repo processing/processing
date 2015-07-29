@@ -6664,18 +6664,24 @@ public class PApplet implements PConstants {
       try {
         URL url = new URL(filename);
         URLConnection conn = url.openConnection();
-        HttpURLConnection httpConn = (HttpURLConnection) conn;
-        // Will not handle a protocol change (see below)
-        httpConn.setInstanceFollowRedirects(true);
-        int response = httpConn.getResponseCode();
-        // Normally will not follow HTTPS redirects from HTTP due to security concerns
-        // http://stackoverflow.com/questions/1884230/java-doesnt-follow-redirect-in-urlconnection/1884427
-        if (response >= 300 && response < 400) {
-          String newLocation = httpConn.getHeaderField("Location");
-          return createInputRaw(newLocation);
+        if (conn instanceof HttpURLConnection){
+        
+            HttpURLConnection httpConn = (HttpURLConnection) conn;
+            // Will not handle a protocol change (see below)
+            httpConn.setInstanceFollowRedirects(true);
+            int response = httpConn.getResponseCode();
+            // Normally will not follow HTTPS redirects from HTTP due to security concerns
+            // http://stackoverflow.com/questions/1884230/java-doesnt-follow-redirect-in-urlconnection/1884427
+            if (response >= 300 && response < 400) {
+              String newLocation = httpConn.getHeaderField("Location");
+              return createInputRaw(newLocation);
+            }
+            return conn.getInputStream();
         }
-        return conn.getInputStream();
-
+        if(conn instanceof JarURLConnection){
+            return url.openStream();
+        }
+        
       } catch (MalformedURLException mfue) {
         // not a url, that's fine
 
