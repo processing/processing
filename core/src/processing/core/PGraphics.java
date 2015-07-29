@@ -1802,7 +1802,7 @@ public class PGraphics extends PImage implements PConstants {
 
     } else if (kind == ARC) {
       if (len != 6 && len != 7) {
-        throw new IllegalArgumentException("Use createShape(ARC, x, y, w, h, start, stop)");
+        throw new IllegalArgumentException("Use createShape(ARC, x, y, w, h, start, stop) or createShape(ARC, x, y, w, h, start, stop, arcMode)");
       }
       return createShapePrimitive(kind, p);
 

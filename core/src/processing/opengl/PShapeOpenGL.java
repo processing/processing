@@ -3257,6 +3257,7 @@ public class PShapeOpenGL extends PShape {
     float a = 0, b = 0, c = 0, d = 0;
     float start = 0, stop = 0;
     int mode = ellipseMode;
+    int arcMode = 0;
 
     if (6 <= params.length) {
       a = params[0];
@@ -3266,7 +3267,7 @@ public class PShapeOpenGL extends PShape {
       start = params[4];
       stop = params[5];
       if (params.length == 7) {
-        mode = (int)(params[6]);
+        arcMode = (int)(params[6]);
       }
     }
 
@@ -3301,13 +3302,13 @@ public class PShapeOpenGL extends PShape {
         }
 
         if (stop - start > TWO_PI) {
-          start = 0;
-          stop = TWO_PI;
+          // don't change start, it is visible in PIE mode
+          stop = start + TWO_PI;
         }
         inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                           ambientColor, specularColor, emissiveColor, shininess);
         inGeo.setNormal(normalX, normalY, normalZ);
-        inGeo.addArc(x, y, w, h, start, stop, fill, stroke, mode);
+        inGeo.addArc(x, y, w, h, start, stop, fill, stroke, arcMode);
         tessellator.tessellateTriangleFan();
       }
     }

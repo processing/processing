@@ -1654,9 +1654,16 @@ public class PShape implements PConstants {
       g.ellipse(params[0], params[1], params[2], params[3]);
 
     } else if (kind == ARC) {
-      g.ellipseMode(CORNER);
-      g.arc(params[0], params[1], params[2], params[3], params[4], params[5]);
-
+      if (params.length == 6) {
+        g.arc(params[0], params[1],
+              params[2], params[3],
+              params[4], params[5]);
+      } else if (params.length == 7) {
+        g.arc(params[0], params[1],
+              params[2], params[3],
+              params[4], params[5],
+              (int) params[6]);
+      }
     } else if (kind == BOX) {
       if (params.length == 1) {
         g.box(params[0]);
